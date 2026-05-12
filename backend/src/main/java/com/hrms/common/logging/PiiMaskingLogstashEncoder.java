@@ -42,28 +42,6 @@ public class PiiMaskingLogstashEncoder extends LogstashEncoder {
     private static final Pattern AADHAAR_PATTERN = Pattern.compile(
             "\\b\\d{4}\\s?\\d{4}\\s?\\d{4}\\b");
 
-    @Override
-    public byte[] encode(ILoggingEvent event) {
-        byte[] raw = super.encode(event);
-        if (raw == null || raw.length == 0) {
-            return raw;
-        }
-        return maskJson(raw);
-    }
-
-    @Override
-    public void encode(ILoggingEvent event, OutputStream outputStream) throws IOException {
-        // Some appender paths call the streaming overload directly. Capture
-        // super's output, mask it, then write — keeps both paths in sync.
-        ByteArrayOutputStream buffer = new ByteArrayOutputStream(512);
-        super.encode(event, buffer);
-        byte[] raw = buffer.toByteArray();
-        if (raw.length == 0) {
-            return;
-        }
-        outputStream.write(maskJson(raw));
-    }
-
     /**
      * Apply masking regexes to the full JSON byte payload. Replacement tokens
      * contain no double-quotes / backslashes, so JSON structure is preserved.
@@ -91,5 +69,27 @@ public class PiiMaskingLogstashEncoder extends LogstashEncoder {
         json = PAN_PATTERN.matcher(json).replaceAll("***PAN***");
 
         return json.getBytes(StandardCharsets.UTF_8);
+    }
+
+    @Override
+    public byte[] encode(ILoggingEvent event) {
+        byte[] raw = super.encode(event);
+        if (raw == null || raw.length == 0) {
+            return raw;
+        }
+        return maskJson(raw);
+    }
+
+    @Override
+    public void encode(ILoggingEvent event, OutputStream outputStream) throws IOException {
+        // Some appender paths call the streaming overload directly. Capture
+        // super's output, mask it, then write — keeps both paths in sync.
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream(512);
+        super.encode(event, buffer);
+        byte[] raw = buffer.toByteArray();
+        if (raw.length == 0) {
+            return;
+        }
+        outputStream.write(maskJson(raw));
     }
 }

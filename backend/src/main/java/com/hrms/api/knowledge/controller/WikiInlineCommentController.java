@@ -110,8 +110,8 @@ public class WikiInlineCommentController {
         Map<UUID, Employee> authorsByUserId = authorUserIds.isEmpty()
                 ? Map.of()
                 : employeeRepository.findAllByUserIdIn(authorUserIds).stream()
-                        .filter(e -> e.getUser() != null)
-                        .collect(Collectors.toMap(e -> e.getUser().getId(), Function.identity(), (a, b) -> a));
+                  .filter(e -> e.getUser() != null)
+                  .collect(Collectors.toMap(e -> e.getUser().getId(), Function.identity(), (a, b) -> a));
 
         // Convert all entities to DTOs (flat, no replies yet)
         Map<UUID, WikiInlineCommentDto> dtoMap = new LinkedHashMap<>();

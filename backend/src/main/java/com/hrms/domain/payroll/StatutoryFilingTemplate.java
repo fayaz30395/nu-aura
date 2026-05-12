@@ -2,9 +2,9 @@ package com.hrms.domain.payroll;
 
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
-import org.hibernate.annotations.Where;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.Where;
 
 /**
  * Defines a statutory filing format template (e.g., PF ECR, ESI Return, Form 16).

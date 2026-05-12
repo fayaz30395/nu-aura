@@ -5,7 +5,7 @@ import {motion} from 'framer-motion';
 import dynamic from 'next/dynamic';
 import {useRouter} from 'next/navigation';
 import {Permissions} from '@/lib/hooks/usePermissions';
-import {PermissionGate, PageDeniedFallback} from '@/components/auth/PermissionGate';
+import {PageDeniedFallback, PermissionGate} from '@/components/auth/PermissionGate';
 import {BookOpen, Eye, FileText, Heart, MessageCircle, TrendingUp,} from 'lucide-react';
 import {AppLayout} from '@/components/layout';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
@@ -447,7 +447,7 @@ function FluenceAnalyticsPageContent() {
 export default function FluenceAnalyticsPage() {
   return (
     <PermissionGate permission={Permissions.KNOWLEDGE_VIEW} fallback={<PageDeniedFallback/>}>
-      <FluenceAnalyticsPageContent />
+      <FluenceAnalyticsPageContent/>
     </PermissionGate>
   );
 }

@@ -1,4 +1,4 @@
-import { apiClient } from '../../api/client';
+import {apiClient} from '../../api/client';
 
 // Types
 export interface AuthorInfo {
@@ -114,10 +114,10 @@ class WallService {
   }
 
   async getPosts(page = 0, size = 10): Promise<PageResponse<WallPostResponse>> {
-    const empty = { content: [], totalElements: 0, totalPages: 0, size, number: page } as PageResponse<WallPostResponse>;
+    const empty = {content: [], totalElements: 0, totalPages: 0, size, number: page} as PageResponse<WallPostResponse>;
     try {
       const response = await apiClient.getPermissive<PageResponse<WallPostResponse>>('/wall/posts', {
-        params: { page, size },
+        params: {page, size},
       });
       return response.status === 403 ? empty : response.data;
     } catch {
@@ -127,7 +127,7 @@ class WallService {
 
   async getPostsByType(type: PostType, page = 0, size = 10): Promise<PageResponse<WallPostResponse>> {
     const response = await apiClient.get<PageResponse<WallPostResponse>>(`/wall/posts/type/${type}`, {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   }
@@ -148,7 +148,7 @@ class WallService {
 
   async pinPost(postId: string, pinned: boolean): Promise<WallPostResponse> {
     const response = await apiClient.patch<WallPostResponse>(`/wall/posts/${postId}/pin`, null, {
-      params: { pinned },
+      params: {pinned},
     });
     return response.data;
   }
@@ -156,7 +156,7 @@ class WallService {
   // ==================== REACTIONS ====================
 
   async addReaction(postId: string, reactionType: ReactionType): Promise<void> {
-    await apiClient.post(`/wall/posts/${postId}/reactions`, { reactionType });
+    await apiClient.post(`/wall/posts/${postId}/reactions`, {reactionType});
   }
 
   async removeReaction(postId: string): Promise<void> {
@@ -165,7 +165,7 @@ class WallService {
 
   async getPostReactions(postId: string, page = 0, size = 20): Promise<PageResponse<ReactorInfo>> {
     const response = await apiClient.get<PageResponse<ReactorInfo>>(`/wall/posts/${postId}/reactions/details`, {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   }
@@ -179,14 +179,14 @@ class WallService {
 
   async getComments(postId: string, page = 0, size = 20): Promise<PageResponse<CommentResponse>> {
     const response = await apiClient.get<PageResponse<CommentResponse>>(`/wall/posts/${postId}/comments`, {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   }
 
   async getReplies(commentId: string, page = 0, size = 20): Promise<PageResponse<CommentResponse>> {
     const response = await apiClient.get<PageResponse<CommentResponse>>(`/wall/comments/${commentId}/replies`, {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   }
@@ -198,7 +198,7 @@ class WallService {
   // ==================== POLLS ====================
 
   async vote(postId: string, optionId: string): Promise<WallPostResponse> {
-    const response = await apiClient.post<WallPostResponse>(`/wall/posts/${postId}/vote`, { optionId });
+    const response = await apiClient.post<WallPostResponse>(`/wall/posts/${postId}/vote`, {optionId});
     return response.data;
   }
 
@@ -210,7 +210,7 @@ class WallService {
 
   async getPraiseForEmployee(employeeId: string, page = 0, size = 10): Promise<PageResponse<WallPostResponse>> {
     const response = await apiClient.get<PageResponse<WallPostResponse>>(`/wall/praise/employee/${employeeId}`, {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   }

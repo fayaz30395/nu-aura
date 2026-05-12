@@ -1,6 +1,7 @@
 package com.hrms.domain.user;
 
 import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -24,7 +25,8 @@ public class PasswordHistory {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    protected PasswordHistory() {}
+    protected PasswordHistory() {
+    }
 
     public PasswordHistory(UUID userId, UUID tenantId, String passwordHash) {
         this.userId = userId;
@@ -33,9 +35,23 @@ public class PasswordHistory {
         this.createdAt = LocalDateTime.now();
     }
 
-    public Long getId() { return id; }
-    public UUID getUserId() { return userId; }
-    public UUID getTenantId() { return tenantId; }
-    public String getPasswordHash() { return passwordHash; }
-    public LocalDateTime getCreatedAt() { return createdAt; }
+    public Long getId() {
+        return id;
+    }
+
+    public UUID getUserId() {
+        return userId;
+    }
+
+    public UUID getTenantId() {
+        return tenantId;
+    }
+
+    public String getPasswordHash() {
+        return passwordHash;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
 }

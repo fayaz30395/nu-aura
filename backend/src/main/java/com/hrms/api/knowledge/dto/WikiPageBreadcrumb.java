@@ -5,4 +5,5 @@ import java.util.UUID;
 /**
  * Breadcrumb entry for wiki page ancestor chain navigation.
  */
-public record WikiPageBreadcrumb(UUID id, String title, String slug) {}
+public record WikiPageBreadcrumb(UUID id, String title, String slug) {
+}

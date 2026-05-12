@@ -204,7 +204,7 @@ export default function ProbationPage() {
     return (
       <AppLayout>
         <div className="p-6 space-y-4">
-          <SkeletonTable rows={5} columns={5} />
+          <SkeletonTable rows={5} columns={5}/>
         </div>
       </AppLayout>
     );
@@ -535,7 +535,7 @@ export default function ProbationPage() {
         {activeTab === 'active' && (
           <div>
             {isActiveLoading ? (
-              <SkeletonTable rows={5} columns={5} />
+              <SkeletonTable rows={5} columns={5}/>
             ) : !activeData || activeData.content.length === 0 ? (
               <EmptyState
                 title="No active probations"
@@ -555,7 +555,7 @@ export default function ProbationPage() {
         {activeTab === 'upcoming' && (
           <div>
             {isUpcomingLoading ? (
-              <SkeletonTable rows={5} columns={4} />
+              <SkeletonTable rows={5} columns={4}/>
             ) : endingSoon.length === 0 ? (
               <EmptyState
                 title="No upcoming reviews"
@@ -577,7 +577,7 @@ export default function ProbationPage() {
         {activeTab === 'history' && (
           <div>
             {isHistoryLoading ? (
-              <SkeletonTable rows={5} columns={5} />
+              <SkeletonTable rows={5} columns={5}/>
             ) : !historyData || historyData.content.length === 0 ? (
               <EmptyState
                 title="No completed probations"

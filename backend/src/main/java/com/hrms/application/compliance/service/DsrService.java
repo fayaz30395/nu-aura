@@ -44,43 +44,49 @@ import java.util.UUID;
 @Slf4j
 public class DsrService {
 
+    private final DsrRequestRepository dsrRequestRepository;
+    private final AuditLogService auditLogService;
+    private final JavaMailSender mailSender;
+    private final DsrExportService dsrExportService;
+    private final DsrErasureService dsrErasureService;
     /**
      * Inbox monitored by ops to fulfil DSR requests. Externalised so non-prod
      * environments can redirect to a staging mailbox without code changes.
      */
     @Value("${app.compliance.dsr.support-email:support@nulogic.io}")
     private String supportEmail;
-
     @Value("${spring.mail.from:noreply@hrms.com}")
     private String fromEmail;
 
-    private final DsrRequestRepository dsrRequestRepository;
-    private final AuditLogService auditLogService;
-    private final JavaMailSender mailSender;
-    private final DsrExportService dsrExportService;
-    private final DsrErasureService dsrErasureService;
-
     // ==================== Create endpoints (Articles 15 / 17 / 20 / 16) ====================
 
-    /** GDPR Article 15 — right of access. */
+    /**
+     * GDPR Article 15 — right of access.
+     */
     @Transactional
     public DsrRequest createAccessRequest(UUID userId, String reason) {
         return createRequest(userId, DsrRequest.RequestType.ACCESS, reason);
     }
 
-    /** GDPR Article 17 — right to erasure ("right to be forgotten"). */
+    /**
+     * GDPR Article 17 — right to erasure ("right to be forgotten").
+     */
     @Transactional
     public DsrRequest createErasureRequest(UUID userId, String reason) {
         return createRequest(userId, DsrRequest.RequestType.ERASURE, reason);
     }
 
-    /** GDPR Article 20 — right to data portability. */
+    /**
+     * GDPR Article 20 — right to data portability.
+     */
     @Transactional
     public DsrRequest createPortabilityRequest(UUID userId, String reason) {
         return createRequest(userId, DsrRequest.RequestType.PORTABILITY, reason);
     }
 
-    /** GDPR Article 16 — right to rectification of inaccurate personal data. */
+    /**
+     * GDPR Article 16 — right to rectification of inaccurate personal data.
+     */
     @Transactional
     public DsrRequest createRectificationRequest(UUID userId, String reason) {
         return createRequest(userId, DsrRequest.RequestType.RECTIFICATION, reason);

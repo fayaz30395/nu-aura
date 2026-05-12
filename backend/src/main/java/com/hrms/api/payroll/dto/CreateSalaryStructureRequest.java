@@ -41,31 +41,40 @@ public class CreateSalaryStructureRequest {
     @Digits(integer = 12, fraction = 2)
     private BigDecimal basicSalary;
 
-    @PositiveOrZero @Digits(integer = 12, fraction = 2)
+    @PositiveOrZero
+    @Digits(integer = 12, fraction = 2)
     private BigDecimal hra;
 
-    @PositiveOrZero @Digits(integer = 12, fraction = 2)
+    @PositiveOrZero
+    @Digits(integer = 12, fraction = 2)
     private BigDecimal conveyanceAllowance;
 
-    @PositiveOrZero @Digits(integer = 12, fraction = 2)
+    @PositiveOrZero
+    @Digits(integer = 12, fraction = 2)
     private BigDecimal medicalAllowance;
 
-    @PositiveOrZero @Digits(integer = 12, fraction = 2)
+    @PositiveOrZero
+    @Digits(integer = 12, fraction = 2)
     private BigDecimal specialAllowance;
 
-    @PositiveOrZero @Digits(integer = 12, fraction = 2)
+    @PositiveOrZero
+    @Digits(integer = 12, fraction = 2)
     private BigDecimal otherAllowances;
 
-    @PositiveOrZero @Digits(integer = 12, fraction = 2)
+    @PositiveOrZero
+    @Digits(integer = 12, fraction = 2)
     private BigDecimal providentFund;
 
-    @PositiveOrZero @Digits(integer = 12, fraction = 2)
+    @PositiveOrZero
+    @Digits(integer = 12, fraction = 2)
     private BigDecimal professionalTax;
 
-    @PositiveOrZero @Digits(integer = 12, fraction = 2)
+    @PositiveOrZero
+    @Digits(integer = 12, fraction = 2)
     private BigDecimal incomeTax;
 
-    @PositiveOrZero @Digits(integer = 12, fraction = 2)
+    @PositiveOrZero
+    @Digits(integer = 12, fraction = 2)
     private BigDecimal otherDeductions;
 
     @Schema(description = "Whether this structure is active (defaults to true)")

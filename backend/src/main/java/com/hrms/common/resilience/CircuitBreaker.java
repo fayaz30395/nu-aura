@@ -32,12 +32,14 @@ public class CircuitBreaker {
     private final AtomicInteger failureCount = new AtomicInteger(0);
     private final AtomicInteger successCount = new AtomicInteger(0);
     private final AtomicReference<Instant> lastStateChange = new AtomicReference<>(Instant.now());
+
     /**
      * Create a circuit breaker with default settings.
      */
     public CircuitBreaker(String name) {
         this(name, 5, 2, Duration.ofSeconds(30));
     }
+
     /**
      * Create a circuit breaker with custom settings.
      *

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.common.exception.BusinessException;
 import com.hrms.common.resilience.CircuitBreaker;
 import com.hrms.common.resilience.CircuitBreakerRegistry;
-import com.hrms.common.security.TenantContext;
 import com.hrms.common.util.UrlAllowlistValidator;
 import lombok.Builder;
 import lombok.Data;
@@ -12,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.net.URI;
@@ -22,12 +22,9 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service for sending notifications to Slack channels and users.

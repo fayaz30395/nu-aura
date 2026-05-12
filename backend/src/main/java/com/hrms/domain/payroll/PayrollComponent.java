@@ -2,14 +2,13 @@ package com.hrms.domain.payroll;
 
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
-import org.hibernate.annotations.Where;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.Where;
 
 import java.math.BigDecimal;
-import java.util.UUID;
 
 /**
  * Represents a configurable salary component with optional SpEL formula.

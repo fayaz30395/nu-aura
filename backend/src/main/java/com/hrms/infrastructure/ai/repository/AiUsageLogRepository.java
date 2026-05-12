@@ -32,5 +32,5 @@ public interface AiUsageLogRepository extends JpaRepository<AiUsageLog, UUID> {
             "AND a.tokensUsed > 0 " +
             "AND a.createdAt BETWEEN :from AND :to")
     List<AiUsageLog> findUnpricedBetween(@Param("from") LocalDateTime from,
-                                          @Param("to") LocalDateTime to);
+                                         @Param("to") LocalDateTime to);
 }

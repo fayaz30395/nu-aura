@@ -9,6 +9,7 @@ import com.hrms.common.security.RequiresPermission;
 import com.hrms.domain.knowledge.BlogCategory;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,8 +20,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
-import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/knowledge/blogs/categories")

@@ -7,8 +7,8 @@ import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
 import com.hrms.config.TestSecurityConfig;
 import com.hrms.domain.attendance.AttendanceRecord;
-import com.hrms.domain.attendance.AttendanceTimeEntry;
 import com.hrms.domain.employee.Employee;
+import com.hrms.domain.user.RoleScope;
 import com.hrms.domain.user.User;
 import com.hrms.infrastructure.attendance.repository.AttendanceRecordRepository;
 import com.hrms.infrastructure.attendance.repository.AttendanceTimeEntryRepository;
@@ -30,11 +30,11 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
 
-import com.hrms.domain.user.RoleScope;
-
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * End-to-End tests for Attendance functionality.

@@ -5,9 +5,6 @@ import com.hrms.api.benefits.dto.BenefitPlanResponse;
 import com.hrms.application.benefits.service.BenefitManagementService;
 import com.hrms.common.security.RequiresPermission;
 import com.hrms.domain.benefits.BenefitPlan;
-
-import static com.hrms.common.security.Permission.*;
-
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -18,6 +15,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
+
+import static com.hrms.common.security.Permission.BENEFIT_MANAGE;
+import static com.hrms.common.security.Permission.BENEFIT_VIEW;
 
 @RestController
 @RequestMapping("/api/v1/benefits")

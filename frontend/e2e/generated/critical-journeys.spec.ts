@@ -1,4 +1,4 @@
-import {test, expect} from '@playwright/test';
+import {expect, test} from '@playwright/test';
 
 // Hand-curated multi-step flows. Generator deliberately stops at smoke + matrix;
 // these are the journeys whose value is in the *interaction sequence*, not in
@@ -11,7 +11,8 @@ test.describe('@journey critical user flows', () => {
     // can invalidate the saved cookie. The test is meaningful as long as the
     // dashboard OR a recognizable auth-aware page renders.
     const res = await page.goto('/me/dashboard', {waitUntil: 'domcontentloaded', timeout: 30000});
-    await page.waitForLoadState('networkidle', {timeout: 15000}).catch(() => {});
+    await page.waitForLoadState('networkidle', {timeout: 15000}).catch(() => {
+    });
 
     expect(res?.status() ?? 0, 'dashboard route did not return a valid response').toBeLessThan(500);
     await expect(page.locator('body')).toContainText(
@@ -26,7 +27,8 @@ test.describe('@journey critical user flows', () => {
       const signOut = page.getByRole('menuitem', {name: /sign out|logout|log out/i}).first();
       if (await signOut.isVisible({timeout: 2000}).catch(() => false)) {
         await signOut.click();
-        await page.waitForURL(/\/auth\/login/, {timeout: 15000}).catch(() => {});
+        await page.waitForURL(/\/auth\/login/, {timeout: 15000}).catch(() => {
+        });
       }
     }
   });

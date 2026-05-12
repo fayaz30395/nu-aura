@@ -42,13 +42,19 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class TenantTimeService {
 
-    /** Default zone used when the tenant is missing or its timezone string is unparseable. */
+    /**
+     * Default zone used when the tenant is missing or its timezone string is unparseable.
+     */
     static final ZoneId DEFAULT_ZONE = ZoneId.of("Asia/Kolkata");
 
-    /** Max cached entries before we trigger a sweep. Keeps memory bounded under any load. */
+    /**
+     * Max cached entries before we trigger a sweep. Keeps memory bounded under any load.
+     */
     private static final int MAX_CACHE_SIZE = 1000;
 
-    /** Cached {@link ZoneId} entries expire after this many millis. */
+    /**
+     * Cached {@link ZoneId} entries expire after this many millis.
+     */
     private static final long CACHE_TTL_MILLIS = 60L * 60L * 1000L; // 1 hour
 
     private final TenantRepository tenantRepository;
@@ -135,7 +141,7 @@ public class TenantTimeService {
             // so reaching this branch means the constraint was bypassed or a zone was retired
             // from the tz database after backfill.
             log.error("TenantTimeService: tenant {} has unparseable timezone '{}' — falling back to {}. "
-                    + "Check DB integrity, V165 regex should have blocked this.",
+                            + "Check DB integrity, V165 regex should have blocked this.",
                     tenantId, tz, DEFAULT_ZONE, e);
             return DEFAULT_ZONE;
         }
@@ -157,7 +163,9 @@ public class TenantTimeService {
         }
     }
 
-    /** Holder for a cached {@link ZoneId} with its expiry timestamp (epoch millis). */
+    /**
+     * Holder for a cached {@link ZoneId} with its expiry timestamp (epoch millis).
+     */
     private static final class CachedZone {
         final ZoneId zone;
         final long expiresAtMillis;

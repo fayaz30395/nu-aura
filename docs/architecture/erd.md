@@ -244,13 +244,13 @@ instead of solid FK lines.
 
 If you only need to remember the cross-cluster joins:
 
-| Need to find...                            | Start from              | Key join                           |
-|--------------------------------------------|-------------------------|------------------------------------|
-| Who created this row?                      | any entity              | `created_by` → `users.id`          |
-| What permissions does this role grant?     | `roles`                 | `role_permissions` → `permissions` |
-| What's a user's effective tenant access?   | `users`                 | `user_roles` → `roles`             |
-| Payslip for an employee in a month?        | `payroll_runs`          | → `payslips` → `employees`         |
-| Wiki page version history?                 | `wiki_pages`            | → `wiki_page_versions`             |
-| Drive file for a logical path?             | application layer       | `drive_file_mapping(tenant_id, logical_path)` |
-| All audit entries for an actor?            | `audit_logs`            | `(actor_id, impersonator_id)`      |
-| Pending DSR request for a user?            | `dsr_requests`          | `(tenant_id, subject_user_id, status='PENDING')` |
+| Need to find...                          | Start from        | Key join                                         |
+|------------------------------------------|-------------------|--------------------------------------------------|
+| Who created this row?                    | any entity        | `created_by` → `users.id`                        |
+| What permissions does this role grant?   | `roles`           | `role_permissions` → `permissions`               |
+| What's a user's effective tenant access? | `users`           | `user_roles` → `roles`                           |
+| Payslip for an employee in a month?      | `payroll_runs`    | → `payslips` → `employees`                       |
+| Wiki page version history?               | `wiki_pages`      | → `wiki_page_versions`                           |
+| Drive file for a logical path?           | application layer | `drive_file_mapping(tenant_id, logical_path)`    |
+| All audit entries for an actor?          | `audit_logs`      | `(actor_id, impersonator_id)`                    |
+| Pending DSR request for a user?          | `dsr_requests`    | `(tenant_id, subject_user_id, status='PENDING')` |

@@ -1083,7 +1083,7 @@ function HistorySection() {
   const {data: historyPage, isLoading} = useKekaImportHistory(page, 20);
 
   if (isLoading) {
-    return <SkeletonTable rows={5} columns={4} />;
+    return <SkeletonTable rows={5} columns={4}/>;
   }
 
   if (!historyPage || historyPage.content.length === 0) {

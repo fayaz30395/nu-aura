@@ -1,18 +1,13 @@
 package com.hrms.config;
 
+import com.hrms.common.security.Permission;
+import com.hrms.common.security.SecurityContext;
+import com.hrms.domain.user.RoleScope;
+import jakarta.annotation.PostConstruct;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Profile;
-import com.hrms.common.security.SecurityContext;
-import com.hrms.common.security.Permission;
-import jakarta.annotation.PostConstruct;
 
-import java.util.Set;
-import java.util.Map;
-import java.util.HashSet;
-import java.util.HashMap;
-import java.util.UUID;
-
-import com.hrms.domain.user.RoleScope;
+import java.util.*;
 
 /**
  * Test configuration to set up SecurityContext for integration tests

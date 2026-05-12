@@ -28,12 +28,16 @@ import java.util.UUID;
 @Slf4j
 public class ShiftManagementController {
 
-    /** Allow-list of sortable fields for {@code Shift} entity — prevents reflection-based sort injection. */
+    /**
+     * Allow-list of sortable fields for {@code Shift} entity — prevents reflection-based sort injection.
+     */
     private static final java.util.Set<String> ALLOWED_SHIFT_SORT_FIELDS = java.util.Set.of(
             "shiftName", "shiftCode", "shiftType", "isActive", "createdAt", "updatedAt"
     );
 
-    /** Allow-list of sortable fields for {@code ShiftPattern} entity. */
+    /**
+     * Allow-list of sortable fields for {@code ShiftPattern} entity.
+     */
     private static final java.util.Set<String> ALLOWED_PATTERN_SORT_FIELDS = java.util.Set.of(
             "name", "rotationType", "cycleDays", "isActive", "createdAt", "updatedAt"
     );

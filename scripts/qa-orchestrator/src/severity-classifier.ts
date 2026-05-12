@@ -111,7 +111,7 @@ export function getReleaseSeverity(results: TestResult[]): ReleaseDecision {
 export function groupResultsBySeverity(
   results: TestResult[],
 ): Record<Severity | 'PASS', number> {
-  const counts: Record<Severity | 'PASS', number> = { P0: 0, P1: 0, P2: 0, PASS: 0 };
+  const counts: Record<Severity | 'PASS', number> = {P0: 0, P1: 0, P2: 0, PASS: 0};
 
   for (const r of results) {
     if (r.status === 'failed' && r.severity) {

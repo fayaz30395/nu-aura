@@ -11,14 +11,14 @@ gaps flagged by the wave-3 audit.
 
 ## 1. Recovery Objectives
 
-| Metric | Target | Current State |
-|--------|--------|---------------|
-| RTO (Recovery Time Objective) | 4 hours | Documented; not yet drill-validated |
-| RPO (Recovery Point Objective) | 15 minutes | Achievable via Neon PITR; gaps in Elasticsearch / files |
-| Restore drill cadence | Quarterly | First drill scheduled |
-| Backup retention (Postgres) | 30 days (prod) / 7 days (dev) | Configurable per environment |
-| Backup retention (Files) | 90 days versioning | Drive default + 1y for payslips per legal |
-| Backup retention (Elasticsearch) | Snapshot lifecycle: 30 days | Not yet wired (flagged) |
+| Metric                           | Target                        | Current State                                           |
+|----------------------------------|-------------------------------|---------------------------------------------------------|
+| RTO (Recovery Time Objective)    | 4 hours                       | Documented; not yet drill-validated                     |
+| RPO (Recovery Point Objective)   | 15 minutes                    | Achievable via Neon PITR; gaps in Elasticsearch / files |
+| Restore drill cadence            | Quarterly                     | First drill scheduled                                   |
+| Backup retention (Postgres)      | 30 days (prod) / 7 days (dev) | Configurable per environment                            |
+| Backup retention (Files)         | 90 days versioning            | Drive default + 1y for payslips per legal               |
+| Backup retention (Elasticsearch) | Snapshot lifecycle: 30 days   | Not yet wired (flagged)                                 |
 
 These targets are stated commitments. Until the quarterly drill is run end-to-end, treat
 them as best-effort.
@@ -43,11 +43,11 @@ them as best-effort.
 Neon provides continuous WAL archiving with point-in-time recovery to any moment in the
 retention window.
 
-| Environment | PITR window | Branch policy |
-|-------------|-------------|---------------|
-| Dev | 7 days | Branches per developer allowed |
-| Staging | 14 days | One staging branch |
-| Prod | 30 days | Branches only for restore drills and incidents |
+| Environment | PITR window | Branch policy                                  |
+|-------------|-------------|------------------------------------------------|
+| Dev         | 7 days      | Branches per developer allowed                 |
+| Staging     | 14 days     | One staging branch                             |
+| Prod        | 30 days     | Branches only for restore drills and incidents |
 
 #### Verify PITR is enabled
 
@@ -296,8 +296,9 @@ curl -X POST "http://elasticsearch:9200/_aliases" \
 ```
 
 Until SLM is wired, full Elasticsearch loss requires a **re-index from source** (Postgres
+
 + application services). This is a multi-hour operation and breaks RTO. Wiring SLM is a
-sprint-5 priority.
+  sprint-5 priority.
 
 ---
 
@@ -417,11 +418,11 @@ a full post-incident review and will share findings within 5 business days.
 
 ## 10. Known Gaps (Wave-3 Audit, Tracked)
 
-| Gap | Impact | Sprint Target |
-|-----|--------|---------------|
-| `pg_dump` CronJob not deployed | Recovery beyond 30-day Neon window requires manual export | Sprint 5 |
-| Elasticsearch SLM not wired | Index loss = multi-hour re-index from Postgres | Sprint 5 |
-| Restore drill never executed end-to-end | RTO / RPO targets unvalidated | Sprint 5 |
-| Drive backup is versioning-only | No off-platform copy; relies on Google retention | Sprint 6 |
-| Redis snapshots not configured on Memorystore | Rate-limit / idempotency state lost on instance failure | Sprint 5 |
-| No automated restore-verification job | Backups could be silently corrupt | Sprint 6 |
+| Gap                                           | Impact                                                    | Sprint Target |
+|-----------------------------------------------|-----------------------------------------------------------|---------------|
+| `pg_dump` CronJob not deployed                | Recovery beyond 30-day Neon window requires manual export | Sprint 5      |
+| Elasticsearch SLM not wired                   | Index loss = multi-hour re-index from Postgres            | Sprint 5      |
+| Restore drill never executed end-to-end       | RTO / RPO targets unvalidated                             | Sprint 5      |
+| Drive backup is versioning-only               | No off-platform copy; relies on Google retention          | Sprint 6      |
+| Redis snapshots not configured on Memorystore | Rate-limit / idempotency state lost on instance failure   | Sprint 5      |
+| No automated restore-verification job         | Backups could be silently corrupt                         | Sprint 6      |

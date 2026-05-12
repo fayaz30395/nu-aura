@@ -1,6 +1,7 @@
 package com.hrms.api.wellness.dto;
 
-import com.hrms.domain.wellness.WellnessChallenge.*;
+import com.hrms.domain.wellness.WellnessChallenge.ChallengeType;
+import com.hrms.domain.wellness.WellnessChallenge.TrackingType;
 import lombok.*;
 
 import java.time.LocalDate;

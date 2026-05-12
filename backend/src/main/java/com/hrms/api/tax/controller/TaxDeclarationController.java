@@ -1,6 +1,9 @@
 package com.hrms.api.tax.controller;
 
-import com.hrms.api.tax.dto.*;
+import com.hrms.api.tax.dto.TaxDeclarationRequest;
+import com.hrms.api.tax.dto.TaxDeclarationResponse;
+import com.hrms.api.tax.dto.TaxProofRequest;
+import com.hrms.api.tax.dto.TaxProofResponse;
 import com.hrms.application.tax.service.TaxDeclarationService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;

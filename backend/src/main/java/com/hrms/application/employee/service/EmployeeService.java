@@ -4,16 +4,16 @@ import com.hrms.api.employee.dto.AdminEmployeeUpdateRequest;
 import com.hrms.api.employee.dto.CreateEmployeeRequest;
 import com.hrms.api.employee.dto.EmployeeResponse;
 import com.hrms.api.employee.dto.UpdateEmployeeRequest;
-import com.hrms.application.event.DomainEventPublisher;
 import com.hrms.application.audit.service.AuditLogService;
+import com.hrms.application.event.DomainEventPublisher;
 import com.hrms.common.config.CacheConfig;
-import com.hrms.domain.audit.AuditLog.AuditAction;
 import com.hrms.common.exception.DuplicateResourceException;
 import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.security.DataScopeService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.TenantContext;
 import com.hrms.common.security.TokenBlacklistService;
+import com.hrms.domain.audit.AuditLog.AuditAction;
 import com.hrms.domain.employee.Department;
 import com.hrms.domain.employee.Employee;
 import com.hrms.domain.event.employee.*;
@@ -38,18 +38,8 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
-import java.util.Collections;
 
 @Service
 public class EmployeeService {
@@ -60,6 +50,21 @@ public class EmployeeService {
      * Maximum depth for recursive org-chart traversal (prevents OOM on circular/deep hierarchies).
      */
     private static final int MAX_HIERARCHY_DEPTH = 10;
+    /**
+     * Wave-3 business-logic F10.1 fix: previously {@code createEmployee} ran a
+     * {@code count++ / existsByEmployeeCode} loop which is a TOCTOU race
+     * — two concurrent creates can observe the same count and produce a duplicate
+     * code (the existsBy check then masks the dup until DB constraint fires).
+     * <p>
+     * Mirrors the V145 expense-claim pattern: V148 adds an
+     * {@code employee_code_sequence(tenant_id, year_month, current_value)} table
+     * and we allocate via atomic INSERT ... ON CONFLICT ... DO UPDATE ... RETURNING.
+     * Format: {@code EMP-yyyyMM-NNNN}.
+     */
+    private static final String NEXT_EMPLOYEE_CODE_SEQ_SQL =
+            "INSERT INTO employee_code_sequence(tenant_id, year_month, current_value) VALUES(?, ?, 1) " +
+                    "ON CONFLICT(tenant_id, year_month) DO UPDATE SET current_value = employee_code_sequence.current_value + 1 " +
+                    "RETURNING current_value";
     private final EmployeeRepository employeeRepository;
     private final DepartmentRepository departmentRepository;
     private final UserRepository userRepository;
@@ -89,22 +94,6 @@ public class EmployeeService {
         this.jdbcTemplate = jdbcTemplate;
         this.tokenBlacklistService = tokenBlacklistService;
     }
-
-    /**
-     * Wave-3 business-logic F10.1 fix: previously {@code createEmployee} ran a
-     * {@code count++ / existsByEmployeeCode} loop which is a TOCTOU race
-     * — two concurrent creates can observe the same count and produce a duplicate
-     * code (the existsBy check then masks the dup until DB constraint fires).
-     * <p>
-     * Mirrors the V145 expense-claim pattern: V148 adds an
-     * {@code employee_code_sequence(tenant_id, year_month, current_value)} table
-     * and we allocate via atomic INSERT ... ON CONFLICT ... DO UPDATE ... RETURNING.
-     * Format: {@code EMP-yyyyMM-NNNN}.
-     */
-    private static final String NEXT_EMPLOYEE_CODE_SEQ_SQL =
-            "INSERT INTO employee_code_sequence(tenant_id, year_month, current_value) VALUES(?, ?, 1) " +
-                    "ON CONFLICT(tenant_id, year_month) DO UPDATE SET current_value = employee_code_sequence.current_value + 1 " +
-                    "RETURNING current_value";
 
     private String generateEmployeeCode(UUID tenantId) {
         String ym = LocalDate.now(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("yyyyMM"));

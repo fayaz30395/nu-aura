@@ -8,8 +8,8 @@ import com.hrms.domain.employee.Employee;
 import com.hrms.domain.recruitment.Candidate;
 import com.hrms.domain.recruitment.Interview;
 import com.hrms.domain.recruitment.JobOpening;
-import com.hrms.domain.user.User;
 import com.hrms.domain.user.RoleScope;
+import com.hrms.domain.user.User;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.recruitment.repository.CandidateRepository;
 import com.hrms.infrastructure.recruitment.repository.InterviewRepository;
@@ -26,11 +26,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;

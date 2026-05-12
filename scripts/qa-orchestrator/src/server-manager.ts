@@ -1,7 +1,7 @@
-import { spawn } from 'node:child_process';
+import {spawn} from 'node:child_process';
 import * as path from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { QA_CONFIG } from './config.js';
+import {fileURLToPath} from 'node:url';
+import {QA_CONFIG} from './config.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -17,7 +17,7 @@ export async function checkServer(url: string): Promise<boolean> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), PROBE_TIMEOUT_MS);
   try {
-    await fetch(url, { signal: controller.signal });
+    await fetch(url, {signal: controller.signal});
     return true; // any HTTP response means port is listening
   } catch {
     return false;
@@ -47,12 +47,12 @@ export async function waitForServer(url: string, timeoutMs: number): Promise<voi
  * Returns the live status of both servers in a single call.
  */
 export async function getServerStatus(): Promise<{ frontend: boolean; backend: boolean }> {
-  const { frontend, backend } = QA_CONFIG.servers;
+  const {frontend, backend} = QA_CONFIG.servers;
   const [frontendUp, backendUp] = await Promise.all([
     checkServer(frontend.url + frontend.healthPath),
     checkServer(backend.url + backend.healthPath),
   ]);
-  return { frontend: frontendUp, backend: backendUp };
+  return {frontend: frontendUp, backend: backendUp};
 }
 
 /**
@@ -61,7 +61,7 @@ export async function getServerStatus(): Promise<{ frontend: boolean; backend: b
  * - Throws if the Spring Boot backend is unreachable (cannot be auto-started).
  */
 export async function ensureServersRunning(): Promise<void> {
-  const { frontend, backend } = QA_CONFIG.servers;
+  const {frontend, backend} = QA_CONFIG.servers;
   const status = await getServerStatus();
 
   if (!status.backend) {

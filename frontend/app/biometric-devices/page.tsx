@@ -20,7 +20,7 @@ import {
 import {AppLayout} from '@/components/layout';
 import {Card, CardContent} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
-import {PermissionGate, PageDeniedFallback} from '@/components/auth/PermissionGate';
+import {PageDeniedFallback, PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
@@ -210,7 +210,8 @@ function DeviceListPanel({
       {/* Actions Row */}
       <div className="row-between">
         <p className="text-body-muted">
-          {data ? `${data.totalElements} device(s) registered` : <span className="skeleton-aura inline-block h-4 w-32 rounded" />}
+          {data ? `${data.totalElements} device(s) registered` :
+            <span className="skeleton-aura inline-block h-4 w-32 rounded"/>}
         </p>
         <Button
           onClick={() => setShowRegisterModal(true)}
@@ -706,7 +707,8 @@ function PendingPunchesPanel({
     <div className="space-y-4">
       <div className="row-between">
         <p className="text-body-muted">
-          {data ? `${data.totalElements} unprocessed punch(es)` : <span className="skeleton-aura inline-block h-4 w-40 rounded" />}
+          {data ? `${data.totalElements} unprocessed punch(es)` :
+            <span className="skeleton-aura inline-block h-4 w-40 rounded"/>}
         </p>
         <Button
           onClick={() => reprocessMutation.mutate()}
@@ -786,7 +788,7 @@ function ApiKeysPanel({
     <div className="space-y-4">
       <div className="row-between">
         <p className="text-body-muted">
-          {keys ? `${keys.length} API key(s)` : <span className="skeleton-aura inline-block h-4 w-28 rounded" />}
+          {keys ? `${keys.length} API key(s)` : <span className="skeleton-aura inline-block h-4 w-28 rounded"/>}
         </p>
         <Button
           onClick={() => setShowModal(true)}

@@ -4,13 +4,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.domain.employee.Employee;
 import com.hrms.domain.leave.LeaveBalance;
+import com.hrms.domain.leave.LeaveType;
 import com.hrms.domain.notification.NotificationChannel;
 import com.hrms.domain.notification.NotificationChannelConfig;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
-import com.hrms.infrastructure.notification.repository.NotificationChannelConfigRepository;
-import com.hrms.domain.leave.LeaveType;
 import com.hrms.infrastructure.leave.repository.LeaveBalanceRepository;
 import com.hrms.infrastructure.leave.repository.LeaveTypeRepository;
+import com.hrms.infrastructure.notification.repository.NotificationChannelConfigRepository;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -19,15 +19,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Year;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 /**
@@ -58,6 +59,16 @@ public class SlackCommandService {
     @Value("${app.frontend.url:http://localhost:3000}")
     private String appUrl;
 
+    private static String bytesToHex(byte[] bytes) {
+        StringBuilder sb = new StringBuilder();
+        for (byte b : bytes) {
+            sb.append(String.format("%02x", b));
+        }
+        return sb.toString();
+    }
+
+    // ==================== Command Handlers ====================
+
     /**
      * Wave-3 W5-D #14: fail fast at startup when running in prod without a Slack
      * signing secret. The previous dev-bypass would silently accept any signature,
@@ -67,23 +78,13 @@ public class SlackCommandService {
     void validateProdConfig() {
         boolean isProd = activeProfile != null
                 && java.util.Arrays.stream(activeProfile.split(","))
-                        .map(String::trim)
-                        .anyMatch(PROD_PROFILE::equalsIgnoreCase);
+                .map(String::trim)
+                .anyMatch(PROD_PROFILE::equalsIgnoreCase);
         if (isProd && (signingSecret == null || signingSecret.isBlank())) {
             throw new IllegalStateException(
                     "app.slack.signing-secret must be configured in production. " +
-                    "Refusing to start with Slack signature verification disabled.");
+                            "Refusing to start with Slack signature verification disabled.");
         }
-    }
-
-    // ==================== Command Handlers ====================
-
-    private static String bytesToHex(byte[] bytes) {
-        StringBuilder sb = new StringBuilder();
-        for (byte b : bytes) {
-            sb.append(String.format("%02x", b));
-        }
-        return sb.toString();
     }
 
     /**

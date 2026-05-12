@@ -110,10 +110,10 @@ public class UserAnonymizer {
      * @param userId   the user to anonymise (must belong to {@code tenantId})
      * @param tenantId the tenant context the DSR was raised under
      * @return the original email (used for hashing in the audit row), or
-     *         {@code null} when the user was already anonymised or not found
+     * {@code null} when the user was already anonymised or not found
      * @throws IllegalArgumentException when {@code userId} or {@code tenantId}
-     *         is null (defensive — neither should ever be null at the call
-     *         sites in {@code DsrErasureService})
+     *                                  is null (defensive — neither should ever be null at the call
+     *                                  sites in {@code DsrErasureService})
      */
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public String anonymize(UUID userId, UUID tenantId) {

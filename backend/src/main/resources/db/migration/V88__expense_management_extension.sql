@@ -320,7 +320,8 @@ ALTER TABLE expense_advances ENABLE ROW LEVEL SECURITY;
 DO
 $$
 BEGIN
-    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'expense_categories_tenant_isolation') THEN
+    IF
+NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'expense_categories_tenant_isolation') THEN
         CREATE
 POLICY expense_categories_tenant_isolation ON expense_categories
             USING (tenant_id = current_setting('app.tenant_id', true)::uuid);

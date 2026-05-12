@@ -24,37 +24,58 @@
 -- created_by / updated_by here because the seed rows are inserted by the
 -- migration itself and would have no meaningful user attribution.
 
-CREATE TABLE IF NOT EXISTS onboarding_task_templates (
-    id                    UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    tenant_id             UUID NOT NULL,
-    role_filter           VARCHAR(100),
-    department_filter     UUID,
-    task_name             VARCHAR(200) NOT NULL,
-    task_description      TEXT,
-    sequence_order        INT NOT NULL DEFAULT 0,
-    due_days_after_join   INT NOT NULL DEFAULT 7,
-    assignee_role         VARCHAR(50),
-    is_active             BOOLEAN NOT NULL DEFAULT TRUE,
-    is_deleted            BOOLEAN NOT NULL DEFAULT FALSE,
-    deleted_at            TIMESTAMP WITH TIME ZONE,
-    created_at            TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at            TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    version               BIGINT NOT NULL DEFAULT 0
-);
+CREATE TABLE IF NOT EXISTS onboarding_task_templates
+(
+  id
+  UUID
+  PRIMARY
+  KEY
+  DEFAULT
+  gen_random_uuid
+(
+),
+  tenant_id UUID NOT NULL,
+  role_filter VARCHAR
+(
+  100
+),
+  department_filter UUID,
+  task_name VARCHAR
+(
+  200
+) NOT NULL,
+  task_description TEXT,
+  sequence_order INT NOT NULL DEFAULT 0,
+  due_days_after_join INT NOT NULL DEFAULT 7,
+  assignee_role VARCHAR
+(
+  50
+),
+  is_active BOOLEAN NOT NULL DEFAULT TRUE,
+  is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
+  deleted_at TIMESTAMP WITH TIME ZONE,
+  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                         version BIGINT NOT NULL DEFAULT 0
+                         );
 
 -- Hot-path index for role-filtered lookups during createProcess. The partial
 -- predicate keeps the index small (only active, non-deleted rows).
 CREATE INDEX IF NOT EXISTS idx_onboarding_templates_tenant_role
-    ON onboarding_task_templates (tenant_id, role_filter)
-    WHERE is_active = TRUE AND is_deleted = FALSE;
+  ON onboarding_task_templates (tenant_id, role_filter)
+  WHERE is_active = TRUE AND is_deleted = FALSE;
 
-COMMENT ON TABLE onboarding_task_templates IS
+COMMENT
+ON TABLE onboarding_task_templates IS
     'Role-aware default task templates consulted by OnboardingManagementService.createProcess (F4.6). Distinct from onboarding_template_tasks, which belong to user-managed checklist templates.';
-COMMENT ON COLUMN onboarding_task_templates.role_filter IS
+COMMENT
+ON COLUMN onboarding_task_templates.role_filter IS
     'Nullable. NULL = applies to all roles. Matched case-insensitively against employees.designation at the application layer.';
-COMMENT ON COLUMN onboarding_task_templates.department_filter IS
+COMMENT
+ON COLUMN onboarding_task_templates.department_filter IS
     'Nullable. NULL = applies to all departments. Reserved for future use — the service currently filters on role only.';
-COMMENT ON COLUMN onboarding_task_templates.assignee_role IS
+COMMENT
+ON COLUMN onboarding_task_templates.assignee_role IS
     'Logical role of the task assignee (HR_ADMIN, MANAGER, EMPLOYEE, IT_ADMIN). Stored as metadata; the existing onboarding_tasks table uses assigned_to (UUID) and does not have a role column, so this value is preserved in task.description until that schema is extended.';
 
 -- ============================================================================
@@ -65,58 +86,76 @@ COMMENT ON COLUMN onboarding_task_templates.assignee_role IS
 -- own checksum, so we keep the clause defensive against manual re-runs only.
 
 INSERT INTO onboarding_task_templates
-    (tenant_id, role_filter, task_name, task_description, sequence_order, due_days_after_join, assignee_role)
-SELECT t.id, NULL,
+(tenant_id, role_filter, task_name, task_description, sequence_order, due_days_after_join, assignee_role)
+SELECT t.id,
+       NULL,
        'Welcome orientation',
        'Complete day-1 welcome session and platform tour with HR.',
-       1, 1, 'HR_ADMIN'
-FROM tenants t WHERE t.is_deleted = FALSE
-ON CONFLICT DO NOTHING;
+       1,
+       1,
+       'HR_ADMIN'
+FROM tenants t
+WHERE t.is_deleted = FALSE ON CONFLICT DO NOTHING;
 
 INSERT INTO onboarding_task_templates
-    (tenant_id, role_filter, task_name, task_description, sequence_order, due_days_after_join, assignee_role)
-SELECT t.id, NULL,
+(tenant_id, role_filter, task_name, task_description, sequence_order, due_days_after_join, assignee_role)
+SELECT t.id,
+       NULL,
        'Complete personal information',
        'Fill out personal profile, emergency contacts, and bank details in NU-HRMS.',
-       2, 2, 'EMPLOYEE'
-FROM tenants t WHERE t.is_deleted = FALSE
-ON CONFLICT DO NOTHING;
+       2,
+       2,
+       'EMPLOYEE'
+FROM tenants t
+WHERE t.is_deleted = FALSE ON CONFLICT DO NOTHING;
 
 INSERT INTO onboarding_task_templates
-    (tenant_id, role_filter, task_name, task_description, sequence_order, due_days_after_join, assignee_role)
-SELECT t.id, NULL,
+(tenant_id, role_filter, task_name, task_description, sequence_order, due_days_after_join, assignee_role)
+SELECT t.id,
+       NULL,
        'Submit identity & address documents',
        'Upload government ID, address proof, and educational certificates for verification.',
-       3, 3, 'EMPLOYEE'
-FROM tenants t WHERE t.is_deleted = FALSE
-ON CONFLICT DO NOTHING;
+       3,
+       3,
+       'EMPLOYEE'
+FROM tenants t
+WHERE t.is_deleted = FALSE ON CONFLICT DO NOTHING;
 
 INSERT INTO onboarding_task_templates
-    (tenant_id, role_filter, task_name, task_description, sequence_order, due_days_after_join, assignee_role)
-SELECT t.id, NULL,
+(tenant_id, role_filter, task_name, task_description, sequence_order, due_days_after_join, assignee_role)
+SELECT t.id,
+       NULL,
        'IT workstation & access setup',
        'Provision laptop, email, SSO, VPN, and required application access.',
-       4, 3, 'IT_ADMIN'
-FROM tenants t WHERE t.is_deleted = FALSE
-ON CONFLICT DO NOTHING;
+       4,
+       3,
+       'IT_ADMIN'
+FROM tenants t
+WHERE t.is_deleted = FALSE ON CONFLICT DO NOTHING;
 
 INSERT INTO onboarding_task_templates
-    (tenant_id, role_filter, task_name, task_description, sequence_order, due_days_after_join, assignee_role)
-SELECT t.id, NULL,
+(tenant_id, role_filter, task_name, task_description, sequence_order, due_days_after_join, assignee_role)
+SELECT t.id,
+       NULL,
        'Manager 1:1 introduction',
        'Schedule and complete first 1:1 with reporting manager — goals and 30/60/90 plan.',
-       5, 5, 'MANAGER'
-FROM tenants t WHERE t.is_deleted = FALSE
-ON CONFLICT DO NOTHING;
+       5,
+       5,
+       'MANAGER'
+FROM tenants t
+WHERE t.is_deleted = FALSE ON CONFLICT DO NOTHING;
 
 INSERT INTO onboarding_task_templates
-    (tenant_id, role_filter, task_name, task_description, sequence_order, due_days_after_join, assignee_role)
-SELECT t.id, NULL,
+(tenant_id, role_filter, task_name, task_description, sequence_order, due_days_after_join, assignee_role)
+SELECT t.id,
+       NULL,
        'Compliance & policy acknowledgement',
        'Read and acknowledge code of conduct, IT acceptable-use, and POSH policies.',
-       6, 7, 'EMPLOYEE'
-FROM tenants t WHERE t.is_deleted = FALSE
-ON CONFLICT DO NOTHING;
+       6,
+       7,
+       'EMPLOYEE'
+FROM tenants t
+WHERE t.is_deleted = FALSE ON CONFLICT DO NOTHING;
 
 -- ============================================================================
 -- Seed: role-specific extras (Manager / Engineer examples) for every tenant.
@@ -124,19 +163,25 @@ ON CONFLICT DO NOTHING;
 -- ============================================================================
 
 INSERT INTO onboarding_task_templates
-    (tenant_id, role_filter, task_name, task_description, sequence_order, due_days_after_join, assignee_role)
-SELECT t.id, 'Manager',
+(tenant_id, role_filter, task_name, task_description, sequence_order, due_days_after_join, assignee_role)
+SELECT t.id,
+       'Manager',
        'Team & stakeholder mapping',
        'Meet direct reports and cross-functional stakeholders; document org map.',
-       10, 10, 'MANAGER'
-FROM tenants t WHERE t.is_deleted = FALSE
-ON CONFLICT DO NOTHING;
+       10,
+       10,
+       'MANAGER'
+FROM tenants t
+WHERE t.is_deleted = FALSE ON CONFLICT DO NOTHING;
 
 INSERT INTO onboarding_task_templates
-    (tenant_id, role_filter, task_name, task_description, sequence_order, due_days_after_join, assignee_role)
-SELECT t.id, 'Engineer',
+(tenant_id, role_filter, task_name, task_description, sequence_order, due_days_after_join, assignee_role)
+SELECT t.id,
+       'Engineer',
        'Development environment setup',
        'Install required SDKs, clone primary repositories, and complete first commit walkthrough.',
-       10, 5, 'IT_ADMIN'
-FROM tenants t WHERE t.is_deleted = FALSE
-ON CONFLICT DO NOTHING;
+       10,
+       5,
+       'IT_ADMIN'
+FROM tenants t
+WHERE t.is_deleted = FALSE ON CONFLICT DO NOTHING;

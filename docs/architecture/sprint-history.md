@@ -64,12 +64,13 @@ data" anti-pattern that the audit caught in three independent services.
    `MobileLeaveService`, `ResourcePoolController`, `CalendarService`, `KekaImportService`,
    `StripeAdapter`, `RazorpayAdapter`, and `LWFService` were all returning fabricated success
    responses for paths that weren't implemented. We introduced a uniform pattern:
-   - Gate with `app.features.<feature-name>` (default **false**).
-   - Throw `UnsupportedOperationException` (mapped to 501 — see sprint 3) when disabled.
-   - Real implementations land later with the flag flipped on.
 
-   Decision driver: a "soft 200 with mock data" is indistinguishable from a working
-   integration at the audit boundary, and burns trust silently.
+- Gate with `app.features.<feature-name>` (default **false**).
+- Throw `UnsupportedOperationException` (mapped to 501 — see sprint 3) when disabled.
+- Real implementations land later with the flag flipped on.
+
+Decision driver: a "soft 200 with mock data" is indistinguishable from a working
+integration at the audit boundary, and burns trust silently.
 
 2. **Tenant lifecycle is enforced at the auth filter, not downstream.**
    `JwtAuthenticationFilter` now rejects requests with a `SUSPENDED` / `DELETED` tenant **before**
@@ -215,9 +216,10 @@ performance (V151 trigram), legacy PII cleanup (encryption backfill prod run).
    pipeline for marginal benefit at our scale.
 
 3. **Dependabot grouped minor/patch PRs, weekly cadence.** Tuned to avoid PR noise:
-   - Maven: grouped by `org.springframework.*` / `com.amazonaws.*` / everything-else.
-   - npm: grouped by `@mui/*` / `react*` / everything-else.
-   - Schedule weekly Monday 09:00 IST so the on-call sees the batch before the standup.
+
+- Maven: grouped by `org.springframework.*` / `com.amazonaws.*` / everything-else.
+- npm: grouped by `@mui/*` / `react*` / everything-else.
+- Schedule weekly Monday 09:00 IST so the on-call sees the batch before the standup.
 
 4. **V152 splits HTML from `body_text`.** Wiki / Blog / Wall post content used to be stored
    as a single HTML column. FTS indexed the HTML tags; notification preview emails rendered

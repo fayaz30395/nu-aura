@@ -91,7 +91,7 @@ public class LeaveRecordRedactor {
      *                   subject has no linked employee row)
      * @param tenantId   the tenant the DSR was raised under; required
      * @return per-collection counts of newly-deleted vs. previously-deleted
-     *         rows, used by the orchestrator to build the DSR summary
+     * rows, used by the orchestrator to build the DSR summary
      * @throws IllegalArgumentException when {@code tenantId} is {@code null}
      */
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -159,8 +159,8 @@ public class LeaveRecordRedactor {
         }
 
         log.info("LeaveRecordRedactor: soft-deleted {} leave_request(s) and {} leave_balance(s) "
-                + "for employee {} in tenant {} (skipped {} request(s) and {} balance(s) "
-                + "already deleted)",
+                        + "for employee {} in tenant {} (skipped {} request(s) and {} balance(s) "
+                        + "already deleted)",
                 leaveRequestsSoftDeleted, leaveBalancesSoftDeleted, employeeId, tenantId,
                 leaveRequestsAlreadyDeleted, leaveBalancesAlreadyDeleted);
 
@@ -191,13 +191,15 @@ public class LeaveRecordRedactor {
 
         /**
          * @return true when no row was touched by this cascade step (either
-         *         because nothing existed, or every row was already deleted).
+         * because nothing existed, or every row was already deleted).
          */
         public boolean isNoOp() {
             return leaveRequestsSoftDeleted == 0 && leaveBalancesSoftDeleted == 0;
         }
 
-        /** @return total newly soft-deleted rows across both collections. */
+        /**
+         * @return total newly soft-deleted rows across both collections.
+         */
         public int totalSoftDeleted() {
             return leaveRequestsSoftDeleted + leaveBalancesSoftDeleted;
         }

@@ -3,7 +3,6 @@ package com.hrms.application.knowledge.service;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.knowledge.BlogPost;
-import com.hrms.domain.knowledge.DocumentTemplate;
 import com.hrms.domain.knowledge.KnowledgeSearch;
 import com.hrms.domain.knowledge.WikiPage;
 import com.hrms.infrastructure.knowledge.repository.BlogPostRepository;
@@ -14,8 +13,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.InvalidDataAccessResourceUsageException;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -7,9 +7,8 @@ import com.hrms.application.integration.service.IntegrationEventLogService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
 import com.hrms.common.security.TenantContext;
-import com.hrms.domain.integration.ConnectorCapabilities;
-import com.hrms.domain.integration.ConnectorConfig;
 import com.hrms.domain.integration.ConnectionTestResult;
+import com.hrms.domain.integration.ConnectorConfig;
 import com.hrms.domain.integration.IntegrationConnector;
 import com.hrms.domain.integration.IntegrationEventLog;
 import com.hrms.infrastructure.integration.repository.IntegrationConnectorConfigRepository;
@@ -25,11 +24,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -49,8 +44,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class IntegrationConnectorController {
 
-    /** Allow-list of sortable fields for {@code IntegrationEventLog} — prevents reflection-based
-     *  sort injection via {@code sortBy} query param. Only @Column scalar fields. */
+    /**
+     * Allow-list of sortable fields for {@code IntegrationEventLog} — prevents reflection-based
+     * sort injection via {@code sortBy} query param. Only @Column scalar fields.
+     */
     private static final Set<String> ALLOWED_SORT_FIELDS = Set.of(
             "createdAt", "connectorId", "eventType", "entityType", "status", "durationMs"
     );

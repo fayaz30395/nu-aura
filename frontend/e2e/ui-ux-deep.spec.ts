@@ -370,8 +370,8 @@ test('UI-04: responsive layout — tablet 768x1024', async ({page}) => {
 // ─── UI-05: Responsive — Mobile 375×812 ──────────────────────────────────────
 
 test('UI-05: responsive layout — mobile 375x812 (critical: no horizontal scroll)', async ({
-  page,
-}) => {
+                                                                                            page,
+                                                                                          }) => {
   await loginAs(page, demoUsers.superAdmin.email);
   await page.setViewportSize({width: 375, height: 812});
   await navigateTo(page, '/employees');
@@ -425,8 +425,8 @@ test('UI-06: loading states — skeleton / shimmer indicators present', async ({
     const loadingIndicators = await page
       .locator(
         '[class*="skeleton" i], [class*="shimmer" i], ' +
-          '[class*="loading" i], [class*="Loading"], [class*="animate-pulse"], ' +
-          '[data-testid*="skeleton"]'
+        '[class*="loading" i], [class*="Loading"], [class*="animate-pulse"], ' +
+        '[data-testid*="skeleton"]'
       )
       .count();
     console.log(`UI-06: route=${route} loading indicators found:`, loadingIndicators);
@@ -475,9 +475,9 @@ test('UI-07: empty state components shown when no data', async ({page}) => {
       const hasEmptyState = await page
         .locator(
           '[class*="EmptyState" i], [class*="empty-state" i], [class*="empty" i], ' +
-            'text=/No announcements/i, text=/nothing here/i, text=/Get started/i, ' +
-            'text=/No results/i, text=/No data/i, text=/No tickets/i, ' +
-            'text=/No helpdesk/i, text=/Create your first/i'
+          'text=/No announcements/i, text=/nothing here/i, text=/Get started/i, ' +
+          'text=/No results/i, text=/No data/i, text=/No tickets/i, ' +
+          'text=/No helpdesk/i, text=/Create your first/i'
         )
         .first()
         .isVisible()
@@ -514,8 +514,8 @@ test('UI-07: empty state components shown when no data', async ({page}) => {
 // ─── UI-08: Error State Handling (API 500) ────────────────────────────────────
 
 test('UI-08: graceful error handling — aborted API requests show no raw stack traces', async ({
-  page,
-}) => {
+                                                                                                page,
+                                                                                              }) => {
   await loginAs(page, demoUsers.superAdmin.email);
 
   // Abort employee API calls to simulate network failure / 500
@@ -539,7 +539,7 @@ test('UI-08: graceful error handling — aborted API requests show no raw stack 
   const hasErrorUI = await page
     .locator(
       'text=/error/i, text=/something went wrong/i, text=/unable to load/i, ' +
-        'text=/failed to load/i, text=/try again/i, [class*="error" i]'
+      'text=/failed to load/i, text=/try again/i, [class*="error" i]'
     )
     .first()
     .isVisible()
@@ -548,7 +548,7 @@ test('UI-08: graceful error handling — aborted API requests show no raw stack 
   if (!hasErrorUI) {
     console.warn(
       'UI-08: No user-friendly error message shown when API call fails — ' +
-        'consider adding an error boundary or error state component'
+      'consider adding an error boundary or error state component'
     );
   } else {
     console.log('UI-08: user-friendly error message shown on API failure');
@@ -572,7 +572,7 @@ test('UI-09: global search via keyboard shortcut', async ({page}) => {
     const searchPanelOpen = await page
       .locator(
         '[role="dialog"], [class*="command" i], [class*="search-panel" i], ' +
-          '[class*="CommandPalette" i], input[placeholder*="search" i]:visible'
+        '[class*="CommandPalette" i], input[placeholder*="search" i]:visible'
       )
       .first()
       .isVisible()
@@ -655,7 +655,7 @@ test('UI-10: notifications bell opens panel with content or empty state', async 
   const panelOpen = await page
     .locator(
       '[class*="notification" i], [class*="Notification"], [class*="panel" i], ' +
-        '[class*="popover" i], [class*="Popover"]'
+      '[class*="popover" i], [class*="Popover"]'
     )
     .first()
     .isVisible()
@@ -672,7 +672,7 @@ test('UI-10: notifications bell opens panel with content or empty state', async 
   const hasContent = await page
     .locator(
       '[class*="notification-item" i], [class*="notif-item" i], ' +
-        '[class*="empty" i], li, [class*="list-item" i]'
+      '[class*="empty" i], li, [class*="list-item" i]'
     )
     .first()
     .isVisible()
@@ -847,7 +847,7 @@ test('UI-13: breadcrumbs present and contextual', async ({page}) => {
   const breadcrumb = page
     .locator(
       '[class*="breadcrumb" i], [aria-label="breadcrumb"], nav[aria-label*="bread" i], ' +
-        '[data-testid="breadcrumb"]'
+      '[data-testid="breadcrumb"]'
     )
     .first();
 
@@ -914,9 +914,10 @@ test('UI-14: keyboard tab order — focus moves through interactive elements', a
   await page.waitForTimeout(1500);
 
   // Click into the page first to ensure focus context is set
-  await page.click('main, body', {timeout: 5000}).catch(() => {});
+  await page.click('main, body', {timeout: 5000}).catch(() => {
+  });
 
-  const focusedElements: Array<{tag: string; text: string; class: string}> = [];
+  const focusedElements: Array<{ tag: string; text: string; class: string }> = [];
 
   for (let i = 0; i < 10; i++) {
     await page.keyboard.press('Tab');
@@ -948,7 +949,7 @@ test('UI-14: keyboard tab order — focus moves through interactive elements', a
   if (focusedElements.length < 5) {
     console.warn(
       `UI-14: only ${focusedElements.length}/10 tab presses moved focus — ` +
-        'many interactive elements may be missing tabIndex or have focus:outline-none without replacement'
+      'many interactive elements may be missing tabIndex or have focus:outline-none without replacement'
     );
   }
 
@@ -966,7 +967,7 @@ test('UI-14: keyboard tab order — focus moves through interactive elements', a
 test('UI-15: page titles are contextual and not generic', async ({page}) => {
   await loginAs(page, demoUsers.superAdmin.email);
 
-  const pageChecks: Array<{route: string; expectedTitle: RegExp}> = [
+  const pageChecks: Array<{ route: string; expectedTitle: RegExp }> = [
     {route: '/dashboard', expectedTitle: /dashboard|home|nu-?aura/i},
     {route: '/employees', expectedTitle: /employee/i},
     {route: '/leave', expectedTitle: /leave/i},
@@ -990,14 +991,14 @@ test('UI-15: page titles are contextual and not generic', async ({page}) => {
     if (isGeneric) {
       console.warn(
         `UI-15: ${check.route} has generic/empty title "${title}" — ` +
-          'update <title> or next/head to reflect the page context'
+        'update <title> or next/head to reflect the page context'
       );
     }
 
     if (!check.expectedTitle.test(title)) {
       console.warn(
         `UI-15: ${check.route} title "${title}" does not match expected pattern ` +
-          check.expectedTitle.toString()
+        check.expectedTitle.toString()
       );
     }
 
@@ -1014,7 +1015,7 @@ test('UI-15: page titles are contextual and not generic', async ({page}) => {
   if (titleOnEmployees === titleOnLeave && titleOnEmployees !== '') {
     console.warn(
       `UI-15: page title did not change when navigating from /employees to /leave ` +
-        `(both = "${titleOnLeave}") — single-page app may need dynamic title updates`
+      `(both = "${titleOnLeave}") — single-page app may need dynamic title updates`
     );
   } else {
     console.log(

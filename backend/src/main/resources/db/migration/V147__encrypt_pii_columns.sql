@@ -20,20 +20,28 @@
 
 -- benefit_dependents: identification, contact, address, health
 ALTER TABLE benefit_dependents
-    ALTER COLUMN national_id              TYPE VARCHAR(512),
-    ALTER COLUMN passport_number          TYPE VARCHAR(512),
-    ALTER COLUMN phone                    TYPE VARCHAR(512),
-    ALTER COLUMN email                    TYPE VARCHAR(512),
-    ALTER COLUMN address                  TYPE VARCHAR(2048),
-    ALTER COLUMN pre_existing_conditions  TYPE TEXT;
+ALTER
+COLUMN national_id              TYPE VARCHAR(512),
+    ALTER
+COLUMN passport_number          TYPE VARCHAR(512),
+    ALTER
+COLUMN phone                    TYPE VARCHAR(512),
+    ALTER
+COLUMN email                    TYPE VARCHAR(512),
+    ALTER
+COLUMN address                  TYPE VARCHAR(2048),
+    ALTER
+COLUMN pre_existing_conditions  TYPE TEXT;
 
 -- tax_declarations: previous-employer PAN (India ITA + GDPR)
 ALTER TABLE tax_declarations
-    ALTER COLUMN previous_employer_pan TYPE VARCHAR(256);
+ALTER
+COLUMN previous_employer_pan TYPE VARCHAR(256);
 
 -- users: TOTP MFA seed
 ALTER TABLE users
-    ALTER COLUMN mfa_secret TYPE VARCHAR(256);
+ALTER
+COLUMN mfa_secret TYPE VARCHAR(256);
 
 -- =============================================================================
 -- Follow-up (NOT performed here):

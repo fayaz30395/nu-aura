@@ -4,30 +4,26 @@ import com.hrms.api.monitoring.dto.MetricsResponse;
 import com.hrms.api.monitoring.dto.SystemHealthResponse;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.Timer;
 import io.micrometer.core.instrument.search.Search;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.actuate.health.Health;
+import org.springframework.boot.actuate.health.CompositeHealth;
 import org.springframework.boot.actuate.health.HealthComponent;
 import org.springframework.boot.actuate.health.HealthEndpoint;
 import org.springframework.boot.actuate.health.Status;
-import org.springframework.boot.actuate.health.CompositeHealth;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.lang.management.MemoryUsage;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service for aggregating monitoring metrics for frontend display

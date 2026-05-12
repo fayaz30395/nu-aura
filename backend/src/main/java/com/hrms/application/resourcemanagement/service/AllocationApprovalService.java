@@ -1,6 +1,5 @@
 package com.hrms.application.resourcemanagement.service;
 
-import com.hrms.api.resourcemanagement.dto.*;
 import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.SecurityContext;
@@ -21,7 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static com.hrms.api.resourcemanagement.dto.ApprovalDTOs.*;
+import static com.hrms.api.resourcemanagement.dto.ApprovalDTOs.AllocationApprovalResponse;
+import static com.hrms.api.resourcemanagement.dto.ApprovalDTOs.CreateAllocationRequest;
 
 /**
  * Handles the full lifecycle of allocation approval requests:

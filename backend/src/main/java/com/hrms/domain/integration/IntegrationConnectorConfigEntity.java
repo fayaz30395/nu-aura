@@ -1,11 +1,13 @@
 package com.hrms.domain.integration;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.common.converter.EncryptedStringConverter;
 import com.hrms.common.entity.TenantAware;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.Where;

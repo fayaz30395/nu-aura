@@ -7,7 +7,6 @@ import com.hrms.application.attendance.service.BiometricIntegrationService;
 import com.hrms.domain.attendance.BiometricApiKey;
 import com.hrms.domain.attendance.BiometricDevice;
 import com.hrms.domain.attendance.BiometricPunchLog;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,7 +20,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)

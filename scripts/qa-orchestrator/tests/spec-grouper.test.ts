@@ -1,7 +1,7 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import {beforeEach, describe, expect, it, vi} from 'vitest';
 import * as fs from 'node:fs';
-import { getAllSpecFiles, groupSpecsByAgent, getUnassignedSpecs } from '../src/spec-grouper.js';
-import { QA_CONFIG } from '../src/config.js';
+import {getAllSpecFiles, getUnassignedSpecs, groupSpecsByAgent} from '../src/spec-grouper.js';
+import {QA_CONFIG} from '../src/config.js';
 
 vi.mock('node:fs');
 

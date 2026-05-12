@@ -60,23 +60,33 @@ public class CookieConfig {
     // must remain unchanged.
     // ---------------------------------------------------------------------
 
-    /** Legacy access-token cookie name. Kept for one-deploy backward compat. */
+    /**
+     * Legacy access-token cookie name. Kept for one-deploy backward compat.
+     */
     public static final String ACCESS_TOKEN_COOKIE = "access_token";
 
-    /** Legacy refresh-token cookie name. Kept for one-deploy backward compat. */
+    /**
+     * Legacy refresh-token cookie name. Kept for one-deploy backward compat.
+     */
     public static final String REFRESH_TOKEN_COOKIE = "refresh_token";
 
-    /** CSRF double-submit cookie name. Frontend reads this by name. */
+    /**
+     * CSRF double-submit cookie name. Frontend reads this by name.
+     */
     public static final String CSRF_TOKEN_COOKIE = "XSRF-TOKEN";
 
     // ---------------------------------------------------------------------
     // Hardened cookie names with __Host- prefix (S10-J).
     // ---------------------------------------------------------------------
 
-    /** Hardened access-token cookie name. Browser enforces Path=/, Secure, no Domain. */
+    /**
+     * Hardened access-token cookie name. Browser enforces Path=/, Secure, no Domain.
+     */
     public static final String ACCESS_TOKEN_COOKIE_HOST = "__Host-hrms-access";
 
-    /** Hardened refresh-token cookie name. Browser enforces Path=/, Secure, no Domain. */
+    /**
+     * Hardened refresh-token cookie name. Browser enforces Path=/, Secure, no Domain.
+     */
     public static final String REFRESH_TOKEN_COOKIE_HOST = "__Host-hrms-refresh";
 
     @Value("${app.cookie.secure:true}")
@@ -114,7 +124,9 @@ public class CookieConfig {
         return (useHostPrefix && secureCookie) ? ACCESS_TOKEN_COOKIE_HOST : ACCESS_TOKEN_COOKIE;
     }
 
-    /** Resolve the active refresh-token cookie name. See {@link #getAccessTokenCookieName()}. */
+    /**
+     * Resolve the active refresh-token cookie name. See {@link #getAccessTokenCookieName()}.
+     */
     public String getRefreshTokenCookieName() {
         return (useHostPrefix && secureCookie) ? REFRESH_TOKEN_COOKIE_HOST : REFRESH_TOKEN_COOKIE;
     }
@@ -143,12 +155,16 @@ public class CookieConfig {
         return buildLegacyRefreshTokenCookie(token, refreshTokenExpiration / 1000);
     }
 
-    /** Cookie to clear the active access-token cookie (logout). */
+    /**
+     * Cookie to clear the active access-token cookie (logout).
+     */
     public ResponseCookie createClearAccessTokenCookie() {
         return buildAccessTokenCookie("", getAccessTokenCookieName(), 0);
     }
 
-    /** Cookie to clear the active refresh-token cookie (logout). */
+    /**
+     * Cookie to clear the active refresh-token cookie (logout).
+     */
     public ResponseCookie createClearRefreshTokenCookie() {
         if (useHostPrefix && secureCookie) {
             return buildHostRefreshTokenCookie("", 0);
@@ -161,22 +177,30 @@ public class CookieConfig {
     // Existing call sites continue to use createAccessTokenCookie / createRefreshTokenCookie.
     // ---------------------------------------------------------------------
 
-    /** Hardened {@code __Host-hrms-access} cookie. {@code Secure} is forced on. */
+    /**
+     * Hardened {@code __Host-hrms-access} cookie. {@code Secure} is forced on.
+     */
     public ResponseCookie createHardenedAccessTokenCookie(String token) {
         return buildAccessTokenCookie(token, ACCESS_TOKEN_COOKIE_HOST, accessTokenExpiration / 1000);
     }
 
-    /** Hardened {@code __Host-hrms-refresh} cookie at {@code Path=/}. */
+    /**
+     * Hardened {@code __Host-hrms-refresh} cookie at {@code Path=/}.
+     */
     public ResponseCookie createHardenedRefreshTokenCookie(String token) {
         return buildHostRefreshTokenCookie(token, refreshTokenExpiration / 1000);
     }
 
-    /** Clear cookie for the hardened {@code __Host-hrms-access} name. */
+    /**
+     * Clear cookie for the hardened {@code __Host-hrms-access} name.
+     */
     public ResponseCookie createClearHardenedAccessTokenCookie() {
         return buildAccessTokenCookie("", ACCESS_TOKEN_COOKIE_HOST, 0);
     }
 
-    /** Clear cookie for the hardened {@code __Host-hrms-refresh} name. */
+    /**
+     * Clear cookie for the hardened {@code __Host-hrms-refresh} name.
+     */
     public ResponseCookie createClearHardenedRefreshTokenCookie() {
         return buildHostRefreshTokenCookie("", 0);
     }
@@ -186,22 +210,30 @@ public class CookieConfig {
     // host-prefix mode is enabled but legacy clients still need the old cookie.
     // ---------------------------------------------------------------------
 
-    /** Legacy unprefixed access-token cookie. */
+    /**
+     * Legacy unprefixed access-token cookie.
+     */
     public ResponseCookie createLegacyAccessTokenCookie(String token) {
         return buildAccessTokenCookie(token, ACCESS_TOKEN_COOKIE, accessTokenExpiration / 1000);
     }
 
-    /** Legacy unprefixed refresh-token cookie at {@code /api/v1/auth}. */
+    /**
+     * Legacy unprefixed refresh-token cookie at {@code /api/v1/auth}.
+     */
     public ResponseCookie createLegacyRefreshTokenCookie(String token) {
         return buildLegacyRefreshTokenCookie(token, refreshTokenExpiration / 1000);
     }
 
-    /** Clear cookie for the legacy access-token name. */
+    /**
+     * Clear cookie for the legacy access-token name.
+     */
     public ResponseCookie createClearLegacyAccessTokenCookie() {
         return buildAccessTokenCookie("", ACCESS_TOKEN_COOKIE, 0);
     }
 
-    /** Clear cookie for the legacy refresh-token name. */
+    /**
+     * Clear cookie for the legacy refresh-token name.
+     */
     public ResponseCookie createClearLegacyRefreshTokenCookie() {
         return buildLegacyRefreshTokenCookie("", 0);
     }

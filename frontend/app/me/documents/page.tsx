@@ -8,16 +8,7 @@ import {z} from 'zod';
 import {format} from 'date-fns';
 import {AlertCircle, CheckCircle, Clock, Download, FileText, Plus, Truck, X, XCircle,} from 'lucide-react';
 import {AppLayout} from '@/components/layout';
-import {
-  Button,
-  Card,
-  CardContent,
-  EmptyState,
-  Modal,
-  ModalBody,
-  ModalFooter,
-  ModalHeader,
-} from '@/components/ui';
+import {Button, Card, CardContent, EmptyState, Modal, ModalBody, ModalFooter, ModalHeader,} from '@/components/ui';
 import {SkeletonTable} from '@/components/ui/Skeleton';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {safeWindowOpen} from '@/lib/utils/url';
@@ -190,7 +181,7 @@ export default function MyDocumentsPage() {
         ]}
       >
         <div className="p-6">
-          <SkeletonTable rows={5} columns={4} />
+          <SkeletonTable rows={5} columns={4}/>
         </div>
       </AppLayout>
     );

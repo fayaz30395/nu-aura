@@ -1,13 +1,13 @@
 package com.hrms.api.preboarding.controller;
 
-import com.hrms.api.preboarding.dto.*;
+import com.hrms.api.preboarding.dto.CreatePreboardingRequest;
+import com.hrms.api.preboarding.dto.PreboardingCandidateResponse;
+import com.hrms.api.preboarding.dto.UpdateBankDetailsRequest;
+import com.hrms.api.preboarding.dto.UpdatePersonalInfoRequest;
 import com.hrms.application.preboarding.service.PreboardingService;
 import com.hrms.common.security.RequiresPermission;
 import com.hrms.domain.preboarding.PreboardingCandidate;
 import com.hrms.domain.preboarding.PreboardingCandidate.PreboardingStatus;
-
-import static com.hrms.common.security.Permission.*;
-
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,6 +19,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
+import static com.hrms.common.security.Permission.*;
 
 @RestController
 @RequestMapping("/api/v1/preboarding")

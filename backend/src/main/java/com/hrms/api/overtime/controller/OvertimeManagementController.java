@@ -7,6 +7,8 @@ import com.hrms.application.overtime.service.OvertimeManagementService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
 import com.hrms.common.security.SecurityContext;
+import com.hrms.domain.overtime.CompTimeBalance;
+import com.hrms.domain.overtime.CompTimeTransaction;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,13 +22,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.HashMap;
-
-import com.hrms.domain.overtime.CompTimeBalance;
-import com.hrms.domain.overtime.CompTimeTransaction;
 
 @RestController
 @RequestMapping("/api/v1/overtime")
@@ -34,7 +33,9 @@ import com.hrms.domain.overtime.CompTimeTransaction;
 @Slf4j
 public class OvertimeManagementController {
 
-    /** Allow-list of sortable fields for {@code OvertimeRecord} entity — prevents sort injection. */
+    /**
+     * Allow-list of sortable fields for {@code OvertimeRecord} entity — prevents sort injection.
+     */
     private static final java.util.Set<String> ALLOWED_SORT_FIELDS = java.util.Set.of(
             "overtimeDate", "createdAt", "updatedAt", "status", "overtimeType",
             "overtimeHours", "effectiveHours", "approvedAt"

@@ -1,14 +1,14 @@
-import { apiClient } from '../../api/client';
+import {apiClient} from '../../api/client';
 import {
-  RecruitmentAgency,
-  AgencySubmission,
   AgencyPerformance,
-  CreateAgencyRequest,
-  UpdateAgencyRequest,
-  CreateSubmissionRequest,
-  UpdateSubmissionStatusRequest,
   AgencyStatus,
+  AgencySubmission,
+  CreateAgencyRequest,
+  CreateSubmissionRequest,
   Page,
+  RecruitmentAgency,
+  UpdateAgencyRequest,
+  UpdateSubmissionStatusRequest,
 } from '../../types/hire/recruitment';
 
 class AgencyService {
@@ -28,12 +28,12 @@ class AgencyService {
     status?: AgencyStatus,
     search?: string
   ): Promise<Page<RecruitmentAgency>> {
-    const params: Record<string, unknown> = { page, size };
+    const params: Record<string, unknown> = {page, size};
     if (status) params.status = status;
     if (search) params.search = search;
     const response = await apiClient.get<Page<RecruitmentAgency>>(
       '/recruitment/agencies',
-      { params }
+      {params}
     );
     return response.data;
   }
@@ -92,7 +92,7 @@ class AgencyService {
   ): Promise<Page<AgencySubmission>> {
     const response = await apiClient.get<Page<AgencySubmission>>(
       `/recruitment/agencies/${agencyId}/submissions`,
-      { params: { page, size } }
+      {params: {page, size}}
     );
     return response.data;
   }
@@ -104,7 +104,7 @@ class AgencyService {
   ): Promise<Page<AgencySubmission>> {
     const response = await apiClient.get<Page<AgencySubmission>>(
       `/recruitment/agencies/submissions/job/${jobOpeningId}`,
-      { params: { page, size } }
+      {params: {page, size}}
     );
     return response.data;
   }

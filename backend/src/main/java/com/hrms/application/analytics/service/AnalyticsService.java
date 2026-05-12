@@ -3,7 +3,6 @@ package com.hrms.application.analytics.service;
 import com.hrms.application.analytics.dto.*;
 import com.hrms.common.config.CacheConfig;
 import com.hrms.common.security.TenantContext;
-import com.hrms.domain.attendance.AttendanceRecord;
 import com.hrms.domain.leave.LeaveRequest;
 import com.hrms.domain.recruitment.JobOpening;
 import com.hrms.domain.workflow.StepExecution;
@@ -23,12 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Service for generating analytics and dashboard metrics.

@@ -8,13 +8,14 @@ type: process
 
 This skill **does not** reinvent QA. It composes three already-mature pieces:
 
-| Piece | Owns | Output |
-|---|---|---|
-| `nu-usecase-runner` | parses `docs/qa/use-cases.v2.yaml`, runs API + Chrome UCs, 9 QA + 2 Dev pools | `docs/qa/findings/usecase/<uc-id>.json` |
-| `nu-rbac-autonomous` | 2025-probe matrix across 9 roles via curl, browser-verifies suspicious | `docs/qa/findings/rbac/<role>__<route>.json` |
-| **DEV fixer** (this skill) | watches both findings streams, applies ≤3-line fixes, queues retest | `docs/qa/fixed.log`, `docs/qa/queue/retest` |
+| Piece                      | Owns                                                                          | Output                                       |
+|----------------------------|-------------------------------------------------------------------------------|----------------------------------------------|
+| `nu-usecase-runner`        | parses `docs/qa/use-cases.v2.yaml`, runs API + Chrome UCs, 9 QA + 2 Dev pools | `docs/qa/findings/usecase/<uc-id>.json`      |
+| `nu-rbac-autonomous`       | 2025-probe matrix across 9 roles via curl, browser-verifies suspicious        | `docs/qa/findings/rbac/<role>__<route>.json` |
+| **DEV fixer** (this skill) | watches both findings streams, applies ≤3-line fixes, queues retest           | `docs/qa/fixed.log`, `docs/qa/queue/retest`  |
 
-The orchestrator (you) just spawns three things in parallel and waits on two sentinels — `USECASE-DONE` and `RBAC-DONE`. No polling, no narration, no ASCII tables.
+The orchestrator (you) just spawns three things in parallel and waits on two sentinels —
+`USECASE-DONE` and `RBAC-DONE`. No polling, no narration, no ASCII tables.
 
 ## Source of truth
 
@@ -50,9 +51,9 @@ Use the shared bootstrap (docker infra + backend + frontend) — one script, ide
 bash .claude/skills/playwright-autonomous/scripts/bootstrap.sh || exit 1
 ```
 
-That brings up redis/kafka/elasticsearch via docker-compose, then backend on :8080, then frontend on :3000. On failure it tails the relevant log inline and exits — no silent retries. Then the legacy verify block below is the safety net (which you can keep or replace):
-
-
+That brings up redis/kafka/elasticsearch via docker-compose, then backend on :8080, then frontend
+on :3000. On failure it tails the relevant log inline and exits — no silent retries. Then the legacy
+verify block below is the safety net (which you can keep or replace):
 
 ```bash
 test -f docs/qa/use-cases.v2.yaml || { echo "NO YAML — regenerate first"; exit 1; }
@@ -86,7 +87,10 @@ rm -f docs/qa/{USECASE-DONE,RBAC-DONE,LOOP-DONE,queue/retest,fixed.log}
 : > docs/qa/fixed.log
 ```
 
-Auto-start is the default. Servers are launched in the background (5min timeout each, ~5s poll). Only stop and tell the user if startup itself fails — check `/tmp/backend.log` / `/tmp/frontend.log` for the cause. If the user explicitly says "don't start servers", honor that and stop on DOWN instead.
+Auto-start is the default. Servers are launched in the background (5min timeout each, ~5s poll).
+Only stop and tell the user if startup itself fails — check `/tmp/backend.log` / `/tmp/frontend.log`
+for the cause. If the user explicitly says "don't start servers", honor that and stop on DOWN
+instead.
 
 ## Step 1 — Spawn three agents (single message, parallel)
 
@@ -193,8 +197,11 @@ echo DEV-DRAINED
 Don't ping agents. Don't print tables. The agents work.
 
 **Crash recovery** (only on background-task notification of agent death):
+
 - If runner/rbac agent died → respawn it; their per-UC files are idempotent.
-- If DEV died from a build break → `cd frontend && lsof -ti:3000 | xargs kill -9; nohup npm run dev > /tmp/frontend.log 2>&1 &` then respawn DEV.
+- If DEV died from a build break →
+  `cd frontend && lsof -ti:3000 | xargs kill -9; nohup npm run dev > /tmp/frontend.log 2>&1 &` then
+  respawn DEV.
 - Don't `rm -rf .next` unless graceful restart fails twice.
 
 ## Step 3 — Final report
@@ -226,7 +233,8 @@ Touch `docs/qa/LOOP-DONE`. Exit. Do not ask "anything else?".
 
 ## Hard rules
 
-1. **Compose, don't reinvent.** This skill spawns the existing skills. If runner/rbac semantics need to change, change those skills, not this one.
+1. **Compose, don't reinvent.** This skill spawns the existing skills. If runner/rbac semantics need
+   to change, change those skills, not this one.
 2. **Single source of truth = `use-cases.v2.yaml`.** Regenerate before running if stale.
 3. **Two parallel testers + one fixer + one dumb orchestrator.** Four roles, no more.
 4. **Sentinels only for exit.** No SendMessage timers, no progress narration, no tables.
@@ -237,11 +245,15 @@ Touch `docs/qa/LOOP-DONE`. Exit. Do not ask "anything else?".
 ## Why this is the right shape
 
 Old `qa-dev-loop` (v1) reinvented QA and tested 20 routes. Wrong abstraction. The user already has:
+
 - a YAML catalog covering 263 routes / 1563 endpoints / 9 roles / 9180 total UCs
 - two skills that consume it and produce findings
 - a memory entry confirming 2016 RBAC probes ran with 0 escalations last sweep
 
-So the right primitive is a **thin parallel-and-listen** wrapper. ~150 lines of skill instead of ~600. The two existing skills do all the heavy lifting; this one only adds: (a) a parallel DEV fixer that consumes their unified findings stream, (b) a sentinel-based exit.
+So the right primitive is a **thin parallel-and-listen** wrapper. ~150 lines of skill instead of ~
+
+600. The two existing skills do all the heavy lifting; this one only adds: (a) a parallel DEV fixer
+     that consumes their unified findings stream, (b) a sentinel-based exit.
 
 ## Invocation
 
@@ -249,6 +261,7 @@ User: "full qa loop" / "release readiness" / `/qa-dev-loop`
 
 Skill response (one line, then go):
 
-> "Running full QA+DEV sweep against use-cases.v2.yaml (UC + RBAC + DEV). Will write report to docs/qa/qa-dev-report-<date>.md."
+> "Running full QA+DEV sweep against use-cases.v2.yaml (UC + RBAC + DEV). Will write report to
+> docs/qa/qa-dev-report-<date>.md."
 
 Then Step 0 → Step 1 (single message, three Agent calls).

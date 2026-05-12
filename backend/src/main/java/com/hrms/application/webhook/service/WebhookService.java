@@ -269,19 +269,6 @@ public class WebhookService {
     }
 
     /**
-     * Result of {@link #rotateSecret(UUID)}.
-     *
-     * <p>The newly generated secret is returned ONCE so the admin can share it with the
-     * consumer out-of-band. We do NOT expose any endpoint to read it back — once the
-     * admin loses this response the only remaining recovery is to rotate again.</p>
-     *
-     * <p>{@code previousSecretExpiresAt} tells the admin how long the old secret will
-     * keep working — typically 24h.</p>
-     */
-    public record SecretRotationResult(UUID webhookId, String newSecret, LocalDateTime previousSecretExpiresAt) {
-    }
-
-    /**
      * Admin-only: rotate a webhook's HMAC signing secret with a dual-secret window.
      *
      * <p>Behaviour:</p>
@@ -371,5 +358,18 @@ public class WebhookService {
         byte[] bytes = new byte[SECRET_BYTES];
         SECURE_RANDOM.nextBytes(bytes);
         return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
+    }
+
+    /**
+     * Result of {@link #rotateSecret(UUID)}.
+     *
+     * <p>The newly generated secret is returned ONCE so the admin can share it with the
+     * consumer out-of-band. We do NOT expose any endpoint to read it back — once the
+     * admin loses this response the only remaining recovery is to rotate again.</p>
+     *
+     * <p>{@code previousSecretExpiresAt} tells the admin how long the old secret will
+     * keep working — typically 24h.</p>
+     */
+    public record SecretRotationResult(UUID webhookId, String newSecret, LocalDateTime previousSecretExpiresAt) {
     }
 }

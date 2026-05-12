@@ -16,15 +16,15 @@ incident.
 Roll back **without further investigation** if any of the following are observed within
 30 minutes of a deploy:
 
-| Trigger | Action |
-|---------|--------|
-| Flyway migration `FAILED` row in `flyway_schema_history` | Roll back app + run compensating migration |
-| Auth broken (login or `/me` returning 5xx for >1 min) | Roll back app immediately |
-| p95 latency > 2s sustained 5+ min | Roll back app, investigate offline |
-| Error rate > 2% sustained 5+ min | Roll back app, investigate offline |
-| CrashLoopBackoff on any pod after startup probe should have passed | Roll back app |
-| Confirmed data corruption | Stop writes, roll back app, restore from PITR |
-| Confirmed security incident (leaked secret, AuthZ bypass) | Rotate secrets THEN roll back |
+| Trigger                                                            | Action                                        |
+|--------------------------------------------------------------------|-----------------------------------------------|
+| Flyway migration `FAILED` row in `flyway_schema_history`           | Roll back app + run compensating migration    |
+| Auth broken (login or `/me` returning 5xx for >1 min)              | Roll back app immediately                     |
+| p95 latency > 2s sustained 5+ min                                  | Roll back app, investigate offline            |
+| Error rate > 2% sustained 5+ min                                   | Roll back app, investigate offline            |
+| CrashLoopBackoff on any pod after startup probe should have passed | Roll back app                                 |
+| Confirmed data corruption                                          | Stop writes, roll back app, restore from PITR |
+| Confirmed security incident (leaked secret, AuthZ bypass)          | Rotate secrets THEN roll back                 |
 
 Investigate first (do not auto-rollback) for:
 

@@ -497,7 +497,7 @@ export default function AdminEmployeesPage() {
           </CardHeader>
           <CardContent>
             {employeesLoading ? (
-              <SkeletonTable rows={8} columns={5} />
+              <SkeletonTable rows={8} columns={5}/>
             ) : employeesError ? (
               <div className="flex flex-col items-center gap-4 py-12">
                 <div

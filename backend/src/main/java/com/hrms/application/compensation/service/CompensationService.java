@@ -1,19 +1,17 @@
 package com.hrms.application.compensation.service;
 
 import com.hrms.api.compensation.dto.*;
+import com.hrms.application.audit.service.AuditLogService;
 import com.hrms.common.exception.BusinessException;
 import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
+import com.hrms.domain.audit.AuditLog.AuditAction;
 import com.hrms.domain.compensation.CompensationReviewCycle;
 import com.hrms.domain.compensation.CompensationReviewCycle.CycleStatus;
-import com.hrms.domain.compensation.CompensationReviewCycle.CycleType;
 import com.hrms.domain.compensation.SalaryRevision;
 import com.hrms.domain.compensation.SalaryRevision.RevisionStatus;
-import com.hrms.domain.compensation.SalaryRevision.RevisionType;
 import com.hrms.domain.employee.Employee;
-import com.hrms.application.audit.service.AuditLogService;
-import com.hrms.domain.audit.AuditLog.AuditAction;
 import com.hrms.infrastructure.compensation.repository.CompensationReviewCycleRepository;
 import com.hrms.infrastructure.compensation.repository.SalaryRevisionRepository;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
@@ -27,13 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service

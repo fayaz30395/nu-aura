@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import java.lang.reflect.Method;
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Reflection-based tests that verify {@code @RequiresPermission(revalidate = true)}

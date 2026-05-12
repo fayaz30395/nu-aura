@@ -36,7 +36,10 @@ test.describe.serial('Expense End-to-End — happy path @regression @critical', 
     const hasCreate = await createBtn.isVisible({timeout: 8000}).catch(() => false);
 
     if (!hasCreate) {
-      test.info().annotations.push({type: 'skip-reason', description: 'No create-claim entry point visible on /expenses'});
+      test.info().annotations.push({
+        type: 'skip-reason',
+        description: 'No create-claim entry point visible on /expenses'
+      });
       return;
     }
 
@@ -56,7 +59,8 @@ test.describe.serial('Expense End-to-End — happy path @regression @critical', 
     const submitBtn = page.locator('button:has-text("Submit"), button:has-text("Save"), button[type="submit"]').last();
     if (await submitBtn.isVisible({timeout: 3000}).catch(() => false)) {
       await submitBtn.click();
-      await page.waitForLoadState('networkidle').catch(() => {});
+      await page.waitForLoadState('networkidle').catch(() => {
+      });
     }
 
     await expect(page.locator('text=/something went wrong|internal server/i')).not.toBeVisible();
@@ -85,7 +89,8 @@ test.describe.serial('Expense End-to-End — happy path @regression @critical', 
       if (await confirmBtn.isVisible({timeout: 2000}).catch(() => false)) {
         await confirmBtn.click();
       }
-      await page.waitForLoadState('networkidle').catch(() => {});
+      await page.waitForLoadState('networkidle').catch(() => {
+      });
     }
 
     await expect(page.locator('text=/something went wrong|internal server/i')).not.toBeVisible();
@@ -108,7 +113,8 @@ test.describe.serial('Expense End-to-End — happy path @regression @critical', 
       if (await confirmBtn.isVisible({timeout: 2000}).catch(() => false)) {
         await confirmBtn.click();
       }
-      await page.waitForLoadState('networkidle').catch(() => {});
+      await page.waitForLoadState('networkidle').catch(() => {
+      });
     }
 
     await expect(page.locator('text=/something went wrong|internal server/i')).not.toBeVisible();
@@ -156,7 +162,8 @@ test.describe('Expense End-to-End — negative path @regression', () => {
       const confirmBtn = page.locator('button:has-text("Confirm"), button:has-text("Reject"), button:has-text("Submit")').last();
       if (await confirmBtn.isVisible({timeout: 2000}).catch(() => false)) {
         await confirmBtn.click();
-        await page.waitForLoadState('networkidle').catch(() => {});
+        await page.waitForLoadState('networkidle').catch(() => {
+        });
       }
     }
 

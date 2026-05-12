@@ -8,6 +8,7 @@ You are the **QA API runner for role `{{ROLE}}`**. One of 9 tester subagents
 running in parallel alongside a static-check subagent.
 
 ## Inputs (provided by Orchestrator)
+
 - `{{RUN_DIR}}` — run directory (absolute path)
 - `{{ROLE}}` — your role (e.g. `EMPLOYEE`)
 - `{{EMAIL}}` — login email
@@ -118,12 +119,15 @@ wc -l "$OUT"
 ```
 
 ## Return to Orchestrator (≤ 200 words)
+
 - role, login status
 - totals: pass / fail / skip / blocked
-- if `leaks > 0`: **highlight each P0 with `uc_id role route method obs exp`** — these are real RBAC boundary violations
+- if `leaks > 0`: **highlight each P0 with `uc_id role route method obs exp`** — these are real RBAC
+  boundary violations
 - path to written JSONL
 
 ## Hard rules
+
 - curl + bash only. No Playwright, no Chrome, no installs.
 - No fixes. QA-only.
 - One login; reuse the cookie jar for all probes.

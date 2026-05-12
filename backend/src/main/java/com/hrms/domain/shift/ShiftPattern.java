@@ -2,9 +2,9 @@ package com.hrms.domain.shift;
 
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
-import org.hibernate.annotations.Where;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.Where;
 
 @Where(clause = "is_deleted = false")
 @Entity

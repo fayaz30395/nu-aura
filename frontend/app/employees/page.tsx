@@ -1,22 +1,22 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { useEmployees, useManagers, useCreateEmployee, useDeleteEmployee } from '@/lib/hooks/queries/useEmployees';
-import { useActiveDepartments } from '@/lib/hooks/queries/useDepartments';
-import { Employee, CreateEmployeeRequest } from '@/lib/types/hrms/employee';
-import { AppLayout } from '@/components/layout';
-import { motion } from 'framer-motion';
-import { Users } from 'lucide-react';
-import { EmptyState } from '@/components/ui/EmptyState';
-import { Button } from '@/components/ui/Button';
-import { SkeletonTable } from '@/components/ui/Skeleton';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
-import { createLogger } from '@/lib/utils/logger';
+import {useEffect, useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {Controller, useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {useCreateEmployee, useDeleteEmployee, useEmployees, useManagers} from '@/lib/hooks/queries/useEmployees';
+import {useActiveDepartments} from '@/lib/hooks/queries/useDepartments';
+import {CreateEmployeeRequest, Employee} from '@/lib/types/hrms/employee';
+import {AppLayout} from '@/components/layout';
+import {motion} from 'framer-motion';
+import {Users} from 'lucide-react';
+import {EmptyState} from '@/components/ui/EmptyState';
+import {Button} from '@/components/ui/Button';
+import {SkeletonTable} from '@/components/ui/Skeleton';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {createLogger} from '@/lib/utils/logger';
 
 const log = createLogger('EmployeesPage');
 
@@ -64,7 +64,7 @@ type CreateEmployeeFormData = z.infer<typeof createEmployeeFormSchema>;
 
 export default function EmployeesPage() {
   const router = useRouter();
-  const { hasPermission, isReady: permReady } = usePermissions();
+  const {hasPermission, isReady: permReady} = usePermissions();
 
   // ALL hooks must be called unconditionally before any returns (React rules)
   const canCreate = hasPermission(Permissions.EMPLOYEE_CREATE);
@@ -78,12 +78,12 @@ export default function EmployeesPage() {
   const PAGE_SIZE = 20;
 
   // React Query - fetch employees, managers, and departments
-  const { data: employeeResponse, isLoading: employeesLoading, error: employeesError } = useEmployees(
+  const {data: employeeResponse, isLoading: employeesLoading, error: employeesError} = useEmployees(
     currentPage, PAGE_SIZE, 'createdAt', 'DESC',
     searchQuery || undefined, statusFilter || undefined
   );
-  const { data: managers = [], isLoading: managersLoading } = useManagers();
-  const { data: departments = [], isLoading: departmentsLoading } = useActiveDepartments();
+  const {data: managers = [], isLoading: managersLoading} = useManagers();
+  const {data: departments = [], isLoading: departmentsLoading} = useActiveDepartments();
 
   const employees = employeeResponse?.content ?? [];
   const totalPages = employeeResponse?.totalPages ?? 1;
@@ -112,7 +112,7 @@ export default function EmployeesPage() {
     handleSubmit,
     reset,
     control,
-    formState: { errors, isSubmitting },
+    formState: {errors, isSubmitting},
   } = useForm<CreateEmployeeFormData>({
     resolver: zodResolver(createEmployeeFormSchema),
     defaultValues: {
@@ -165,10 +165,10 @@ export default function EmployeesPage() {
         <div className="p-6">
           <div className="max-w-7xl mx-auto">
             <div className="mb-8">
-              <div className="h-10 bg-[var(--skeleton-base)] rounded-lg w-1/3 mb-4" />
-              <div className="h-5 bg-[var(--skeleton-base)] rounded-lg w-2/3" />
+              <div className="h-10 bg-[var(--skeleton-base)] rounded-lg w-1/3 mb-4"/>
+              <div className="h-5 bg-[var(--skeleton-base)] rounded-lg w-2/3"/>
             </div>
-            <SkeletonTable rows={5} columns={4} />
+            <SkeletonTable rows={5} columns={4}/>
           </div>
         </div>
       </AppLayout>
@@ -242,10 +242,14 @@ export default function EmployeesPage() {
 
   const getStatusBadgeColor = (status: string) => {
     switch (status) {
-      case 'ACTIVE': return 'bg-success-100 dark:bg-success-900/30 text-success-800 dark:text-success-300';
-      case 'ON_LEAVE': return 'bg-warning-100 dark:bg-warning-900/30 text-warning-800 dark:text-warning-300';
-      case 'TERMINATED': return 'bg-danger-100 dark:bg-danger-900/30 text-danger-800 dark:text-danger-300';
-      default: return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
+      case 'ACTIVE':
+        return 'bg-success-100 dark:bg-success-900/30 text-success-800 dark:text-success-300';
+      case 'ON_LEAVE':
+        return 'bg-warning-100 dark:bg-warning-900/30 text-warning-800 dark:text-warning-300';
+      case 'TERMINATED':
+        return 'bg-danger-100 dark:bg-danger-900/30 text-danger-800 dark:text-danger-300';
+      default:
+        return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
     }
   };
 
@@ -253,15 +257,17 @@ export default function EmployeesPage() {
     <AppLayout activeMenuItem="employees">
       <motion.div
         className="space-y-6"
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.25, ease: 'easeOut' }}
+        initial={{opacity: 0, y: 8}}
+        animate={{opacity: 1, y: 0}}
+        transition={{duration: 0.25, ease: 'easeOut'}}
       >
         {/* Page Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-xl sm:text-xl font-bold tracking-tight text-[var(--text-primary)] skeuo-emboss">Employee Management</h1>
-            <p className="text-xs sm:text-sm text-body-secondary mt-1 skeuo-deboss">Manage your organization&apos;s employees</p>
+            <h1 className="text-xl sm:text-xl font-bold tracking-tight text-[var(--text-primary)] skeuo-emboss">Employee
+              Management</h1>
+            <p className="text-xs sm:text-sm text-body-secondary mt-1 skeuo-deboss">Manage your organization&apos;s
+              employees</p>
           </div>
           <div className="flex items-center gap-2">
             <Button
@@ -293,7 +299,8 @@ export default function EmployeesPage() {
         </div>
         {/* Error Message */}
         {error && (
-          <div className="p-4 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-xl">
+          <div
+            className="p-4 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-xl">
             <p className="text-sm text-danger-600 dark:text-danger-400">{error}</p>
           </div>
         )}
@@ -320,7 +327,10 @@ export default function EmployeesPage() {
           <select
             id="employee-status-filter"
             value={statusFilter}
-            onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(0); }}
+            onChange={(e) => {
+              setStatusFilter(e.target.value);
+              setCurrentPage(0);
+            }}
             aria-label="Filter employees by status"
             className="h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all skeuo-input"
           >
@@ -334,19 +344,19 @@ export default function EmployeesPage() {
         {/* Employee Table */}
         <div className="card-aura skeuo-card overflow-hidden">
           {loading ? (
-            <SkeletonTable rows={8} columns={7} />
+            <SkeletonTable rows={8} columns={7}/>
           ) : employees.length === 0 ? (
             <EmptyState
-              icon={<Users className="h-12 w-12" />}
+              icon={<Users className="h-12 w-12"/>}
               title={searchQuery.trim() ? 'No employees match your search' : 'No Employees Found'}
               description={searchQuery.trim() ? 'Try adjusting your search terms' : 'Add your first employee to get started'}
-              action={canCreate ? { label: 'Add Employee', onClick: () => setShowAddModal(true) } : undefined}
+              action={canCreate ? {label: 'Add Employee', onClick: () => setShowAddModal(true)} : undefined}
             />
           ) : (
             <>
-            <div className="overflow-x-auto">
-              <table className="table-aura">
-                <thead className="skeuo-table-header">
+              <div className="overflow-x-auto">
+                <table className="table-aura">
+                  <thead className="skeuo-table-header">
                   <tr>
                     <th>
                       Employee
@@ -373,121 +383,124 @@ export default function EmployeesPage() {
                       Actions
                     </th>
                   </tr>
-                </thead>
-                <tbody>
+                  </thead>
+                  <tbody>
                   {employees.map((employee) => (
-                  <tr key={employee.id} className="h-11">
-                    <td className="whitespace-nowrap">
-                      <div className="flex items-center gap-4">
-                        <div className="flex-shrink-0 h-10 w-10 bg-accent-100 dark:bg-accent-900/30 rounded-lg flex items-center justify-center">
+                    <tr key={employee.id} className="h-11">
+                      <td className="whitespace-nowrap">
+                        <div className="flex items-center gap-4">
+                          <div
+                            className="flex-shrink-0 h-10 w-10 bg-accent-100 dark:bg-accent-900/30 rounded-lg flex items-center justify-center">
                           <span className="text-sm font-medium text-accent-700 dark:text-accent-300">
                             {employee.firstName.charAt(0)}{employee.lastName?.charAt(0) || ''}
                           </span>
+                          </div>
+                          <div>
+                            <div className="text-sm font-medium text-[var(--text-primary)]">{employee.fullName}</div>
+                            <div className="text-caption">{employee.workEmail}</div>
+                          </div>
                         </div>
-                        <div>
-                          <div className="text-sm font-medium text-[var(--text-primary)]">{employee.fullName}</div>
-                          <div className="text-caption">{employee.workEmail}</div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="whitespace-nowrap">
-                      <span className="text-sm font-mono text-[var(--text-secondary)]">{employee.employeeCode}</span>
-                    </td>
-                    <td className="whitespace-nowrap">
-                      <span className="text-sm text-[var(--text-primary)]">{employee.designation}</span>
-                    </td>
-                    <td className="whitespace-nowrap">
-                      <span className="text-sm text-[var(--text-primary)]">{employee.departmentName || '-'}</span>
-                    </td>
-                    <td className="whitespace-nowrap text-center">
-                      {employee.level ? (
-                        <span className="px-2 py-0.5 inline-flex text-xs font-medium rounded-md bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300">
+                      </td>
+                      <td className="whitespace-nowrap">
+                        <span className="text-sm font-mono text-[var(--text-secondary)]">{employee.employeeCode}</span>
+                      </td>
+                      <td className="whitespace-nowrap">
+                        <span className="text-sm text-[var(--text-primary)]">{employee.designation}</span>
+                      </td>
+                      <td className="whitespace-nowrap">
+                        <span className="text-sm text-[var(--text-primary)]">{employee.departmentName || '-'}</span>
+                      </td>
+                      <td className="whitespace-nowrap text-center">
+                        {employee.level ? (
+                          <span
+                            className="px-2 py-0.5 inline-flex text-xs font-medium rounded-md bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300">
                           {employee.level.replace('_', ' ')}
                         </span>
-                      ) : (
-                        <span className="text-body-muted">-</span>
-                      )}
-                    </td>
-                    <td className="whitespace-nowrap">
-                      <span className="text-sm text-[var(--text-primary)]">{employee.managerName || '-'}</span>
-                    </td>
-                    <td className="whitespace-nowrap text-center">
-                      <span className={`px-2 py-0.5 inline-flex text-xs font-medium rounded-md ${getStatusBadgeColor(employee.status)}`}>
+                        ) : (
+                          <span className="text-body-muted">-</span>
+                        )}
+                      </td>
+                      <td className="whitespace-nowrap">
+                        <span className="text-sm text-[var(--text-primary)]">{employee.managerName || '-'}</span>
+                      </td>
+                      <td className="whitespace-nowrap text-center">
+                      <span
+                        className={`px-2 py-0.5 inline-flex text-xs font-medium rounded-md ${getStatusBadgeColor(employee.status)}`}>
                         {employee.status ? employee.status.replace('_', ' ') : '-'}
                       </span>
-                    </td>
-                    <td className="whitespace-nowrap text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="xs"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            e.preventDefault();
-                            router.push(`/employees/${employee.id}`);
-                          }}
-                        >
-                          View
-                        </Button>
-                        <PermissionGate permission={Permissions.EMPLOYEE_DELETE}>
+                      </td>
+                      <td className="whitespace-nowrap text-right">
+                        <div className="flex items-center justify-end gap-2">
                           <Button
                             type="button"
                             variant="ghost"
                             size="xs"
-                            className="text-danger-600 dark:text-danger-400 hover:text-danger-700 hover:bg-danger-50 dark:hover:bg-danger-950/30"
                             onClick={(e) => {
                               e.stopPropagation();
-                              setEmployeeToDelete(employee);
-                              setShowDeleteModal(true);
+                              e.preventDefault();
+                              router.push(`/employees/${employee.id}`);
                             }}
                           >
-                            Delete
+                            View
                           </Button>
-                        </PermissionGate>
-                      </div>
-                    </td>
-                  </tr>
+                          <PermissionGate permission={Permissions.EMPLOYEE_DELETE}>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="xs"
+                              className="text-danger-600 dark:text-danger-400 hover:text-danger-700 hover:bg-danger-50 dark:hover:bg-danger-950/30"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setEmployeeToDelete(employee);
+                                setShowDeleteModal(true);
+                              }}
+                            >
+                              Delete
+                            </Button>
+                          </PermissionGate>
+                        </div>
+                      </td>
+                    </tr>
                   ))}
-                </tbody>
-              </table>
-            </div>
+                  </tbody>
+                </table>
+              </div>
 
-            {totalPages > 1 && (
-              <div className="px-6 py-4 border-t border-[var(--border-subtle)] row-between">
-                <p className="text-body-secondary">
-                  Showing{' '}
-                  <span className="font-medium text-[var(--text-primary)]">{currentPage * PAGE_SIZE + 1}</span>
-                  {' '}–{' '}
-                  <span className="font-medium text-[var(--text-primary)]">
+              {totalPages > 1 && (
+                <div className="px-6 py-4 border-t border-[var(--border-subtle)] row-between">
+                  <p className="text-body-secondary">
+                    Showing{' '}
+                    <span className="font-medium text-[var(--text-primary)]">{currentPage * PAGE_SIZE + 1}</span>
+                    {' '}–{' '}
+                    <span className="font-medium text-[var(--text-primary)]">
                     {Math.min((currentPage + 1) * PAGE_SIZE, totalElements)}
                   </span>
-                  {' '}of{' '}
-                  <span className="font-medium text-[var(--text-primary)]">{totalElements}</span> employees
-                </p>
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="xs"
-                    onClick={() => setCurrentPage(p => Math.max(0, p - 1))}
-                    disabled={currentPage === 0}
-                  >
-                    Previous
-                  </Button>
-                  <span className="px-2 text-body-muted tabular-nums">
+                    {' '}of{' '}
+                    <span className="font-medium text-[var(--text-primary)]">{totalElements}</span> employees
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="xs"
+                      onClick={() => setCurrentPage(p => Math.max(0, p - 1))}
+                      disabled={currentPage === 0}
+                    >
+                      Previous
+                    </Button>
+                    <span className="px-2 text-body-muted tabular-nums">
                     {currentPage + 1} / {totalPages}
                   </span>
-                  <Button
-                    variant="outline"
-                    size="xs"
-                    onClick={() => setCurrentPage(p => Math.min(totalPages - 1, p + 1))}
-                    disabled={currentPage >= totalPages - 1}
-                  >
-                    Next
-                  </Button>
+                    <Button
+                      variant="outline"
+                      size="xs"
+                      onClick={() => setCurrentPage(p => Math.min(totalPages - 1, p + 1))}
+                      disabled={currentPage >= totalPages - 1}
+                    >
+                      Next
+                    </Button>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
             </>
           )}
         </div>
@@ -509,7 +522,7 @@ export default function EmployeesPage() {
                     className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-md"
                   >
                     <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"/>
                     </svg>
                   </button>
                 </div>
@@ -563,399 +576,458 @@ export default function EmployeesPage() {
                 <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
                   {/* Basic Info Tab */}
                   <div className={currentTab === 'basic' ? 'space-y-4' : 'hidden'}>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <label htmlFor="emp-code" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                            Employee Code *
-                          </label>
-                          <input
-                            id="emp-code"
-                            type="text"
-                            {...register('employeeCode')}
-                            className="input-aura"
-                            placeholder="EMP001"
-                            aria-invalid={!!errors.employeeCode}
-                          />
-                          {errors.employeeCode && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.employeeCode.message}</p>}
-                        </div>
-                        <div>
-                          <label htmlFor="emp-work-email" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                            Work Email *
-                          </label>
-                          <input
-                            id="emp-work-email"
-                            type="email"
-                            {...register('workEmail')}
-                            className="input-aura"
-                            placeholder="employee@company.com"
-                            aria-invalid={!!errors.workEmail}
-                          />
-                          {errors.workEmail && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.workEmail.message}</p>}
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-3 gap-4">
-                        <div>
-                          <label htmlFor="emp-first-name" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                            First Name *
-                          </label>
-                          <input
-                            id="emp-first-name"
-                            type="text"
-                            {...register('firstName')}
-                            className="input-aura"
-                            aria-invalid={!!errors.firstName}
-                          />
-                          {errors.firstName && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.firstName.message}</p>}
-                        </div>
-                        <div>
-                          <label htmlFor="emp-middle-name" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                            Middle Name
-                          </label>
-                          <input
-                            id="emp-middle-name"
-                            type="text"
-                            {...register('middleName')}
-                            className="input-aura"
-                          />
-                          {errors.middleName && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.middleName.message}</p>}
-                        </div>
-                        <div>
-                          <label htmlFor="emp-last-name" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                            Last Name
-                          </label>
-                          <input
-                            id="emp-last-name"
-                            type="text"
-                            {...register('lastName')}
-                            className="input-aura"
-                          />
-                          {errors.lastName && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.lastName.message}</p>}
-                        </div>
-                      </div>
-
+                    <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label htmlFor="emp-password" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                          Initial Password *
+                        <label htmlFor="emp-code"
+                               className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                          Employee Code *
                         </label>
                         <input
-                          id="emp-password"
-                          type="password"
-                          {...register('password')}
+                          id="emp-code"
+                          type="text"
+                          {...register('employeeCode')}
                           className="input-aura"
-                          placeholder="Employee will change on first login"
-                          aria-invalid={!!errors.password}
+                          placeholder="EMP001"
+                          aria-invalid={!!errors.employeeCode}
                         />
-                        {errors.password && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.password.message}</p>}
+                        {errors.employeeCode && <p
+                          className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.employeeCode.message}</p>}
                       </div>
+                      <div>
+                        <label htmlFor="emp-work-email"
+                               className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                          Work Email *
+                        </label>
+                        <input
+                          id="emp-work-email"
+                          type="email"
+                          {...register('workEmail')}
+                          className="input-aura"
+                          placeholder="employee@company.com"
+                          aria-invalid={!!errors.workEmail}
+                        />
+                        {errors.workEmail && <p
+                          className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.workEmail.message}</p>}
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-4">
+                      <div>
+                        <label htmlFor="emp-first-name"
+                               className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                          First Name *
+                        </label>
+                        <input
+                          id="emp-first-name"
+                          type="text"
+                          {...register('firstName')}
+                          className="input-aura"
+                          aria-invalid={!!errors.firstName}
+                        />
+                        {errors.firstName && <p
+                          className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.firstName.message}</p>}
+                      </div>
+                      <div>
+                        <label htmlFor="emp-middle-name"
+                               className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                          Middle Name
+                        </label>
+                        <input
+                          id="emp-middle-name"
+                          type="text"
+                          {...register('middleName')}
+                          className="input-aura"
+                        />
+                        {errors.middleName && <p
+                          className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.middleName.message}</p>}
+                      </div>
+                      <div>
+                        <label htmlFor="emp-last-name"
+                               className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                          Last Name
+                        </label>
+                        <input
+                          id="emp-last-name"
+                          type="text"
+                          {...register('lastName')}
+                          className="input-aura"
+                        />
+                        {errors.lastName && <p
+                          className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.lastName.message}</p>}
+                      </div>
+                    </div>
+
+                    <div>
+                      <label htmlFor="emp-password"
+                             className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                        Initial Password *
+                      </label>
+                      <input
+                        id="emp-password"
+                        type="password"
+                        {...register('password')}
+                        className="input-aura"
+                        placeholder="Employee will change on first login"
+                        aria-invalid={!!errors.password}
+                      />
+                      {errors.password &&
+                        <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.password.message}</p>}
+                    </div>
                   </div>
 
                   {/* Personal Details Tab */}
                   <div className={currentTab === 'personal' ? 'space-y-4' : 'hidden'}>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                            Personal Email
-                          </label>
-                          <input
-                            type="email"
-                            {...register('personalEmail')}
-                            className="input-aura"
-                            placeholder="personal@email.com"
-                          />
-                          {errors.personalEmail && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.personalEmail.message}</p>}
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                            Phone Number
-                          </label>
-                          <input
-                            type="tel"
-                            {...register('phoneNumber')}
-                            className="input-aura"
-                            placeholder="+1 234 567 8900"
-                          />
-                          {errors.phoneNumber && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.phoneNumber.message}</p>}
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                            Emergency Contact
-                          </label>
-                          <input
-                            type="tel"
-                            {...register('emergencyContactNumber')}
-                            className="input-aura"
-                            placeholder="+1 234 567 8900"
-                          />
-                          {errors.emergencyContactNumber && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.emergencyContactNumber.message}</p>}
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                            Date of Birth
-                          </label>
-                          <input
-                            type="date"
-                            {...register('dateOfBirth')}
-                            className="input-aura"
-                          />
-                          {errors.dateOfBirth && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.dateOfBirth.message}</p>}
-                        </div>
-                      </div>
-
+                    <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                          Gender
+                          Personal Email
+                        </label>
+                        <input
+                          type="email"
+                          {...register('personalEmail')}
+                          className="input-aura"
+                          placeholder="personal@email.com"
+                        />
+                        {errors.personalEmail && <p
+                          className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.personalEmail.message}</p>}
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                          Phone Number
+                        </label>
+                        <input
+                          type="tel"
+                          {...register('phoneNumber')}
+                          className="input-aura"
+                          placeholder="+1 234 567 8900"
+                        />
+                        {errors.phoneNumber && <p
+                          className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.phoneNumber.message}</p>}
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                          Emergency Contact
+                        </label>
+                        <input
+                          type="tel"
+                          {...register('emergencyContactNumber')}
+                          className="input-aura"
+                          placeholder="+1 234 567 8900"
+                        />
+                        {errors.emergencyContactNumber && <p
+                          className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.emergencyContactNumber.message}</p>}
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                          Date of Birth
+                        </label>
+                        <input
+                          type="date"
+                          {...register('dateOfBirth')}
+                          className="input-aura"
+                        />
+                        {errors.dateOfBirth && <p
+                          className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.dateOfBirth.message}</p>}
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                        Gender
+                      </label>
+                      <Controller
+                        name="gender"
+                        control={control}
+                        render={({field}) => (
+                          <select
+                            {...field}
+                            value={field.value || ''}
+                            className="input-aura"
+                          >
+                            <option value="">Select Gender</option>
+                            <option value="MALE">Male</option>
+                            <option value="FEMALE">Female</option>
+                            <option value="OTHER">Other</option>
+                            <option value="PREFER_NOT_TO_SAY">Prefer not to say</option>
+                          </select>
+                        )}
+                      />
+                      {errors.gender &&
+                        <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.gender.message}</p>}
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                        Address
+                      </label>
+                      <textarea
+                        rows={2}
+                        {...register('address')}
+                        className="input-aura min-h-[80px] py-2"
+                        placeholder="Street address"
+                      />
+                      {errors.address &&
+                        <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.address.message}</p>}
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                          City
+                        </label>
+                        <input
+                          type="text"
+                          {...register('city')}
+                          className="input-aura"
+                        />
+                        {errors.city &&
+                          <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.city.message}</p>}
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                          State/Province
+                        </label>
+                        <input
+                          type="text"
+                          {...register('state')}
+                          className="input-aura"
+                        />
+                        {errors.state &&
+                          <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.state.message}</p>}
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                          Postal Code
+                        </label>
+                        <input
+                          type="text"
+                          {...register('postalCode')}
+                          className="input-aura"
+                        />
+                        {errors.postalCode && <p
+                          className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.postalCode.message}</p>}
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                          Country
+                        </label>
+                        <input
+                          type="text"
+                          {...register('country')}
+                          className="input-aura"
+                        />
+                        {errors.country &&
+                          <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.country.message}</p>}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Employment Tab */}
+                  <div className={currentTab === 'employment' ? 'space-y-4' : 'hidden'}>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                          Designation *
+                        </label>
+                        <input
+                          type="text"
+                          {...register('designation')}
+                          className="input-aura"
+                          placeholder="Senior Software Engineer"
+                        />
+                        {errors.designation && <p
+                          className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.designation.message}</p>}
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                          Employment Type *
                         </label>
                         <Controller
-                          name="gender"
+                          name="employmentType"
                           control={control}
-                          render={({ field }) => (
+                          render={({field}) => (
+                            <select
+                              {...field}
+                              className="input-aura"
+                            >
+                              <option value="FULL_TIME">Full Time</option>
+                              <option value="PART_TIME">Part Time</option>
+                              <option value="CONTRACT">Contract</option>
+                              <option value="INTERN">Intern</option>
+                            </select>
+                          )}
+                        />
+                        {errors.employmentType && <p
+                          className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.employmentType.message}</p>}
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                        Department *
+                      </label>
+                      <Controller
+                        name="departmentId"
+                        control={control}
+                        render={({field}) => (
+                          <select
+                            {...field}
+                            className="input-aura"
+                          >
+                            <option value="">Select Department</option>
+                            {departments.map((dept) => (
+                              <option key={dept.id} value={dept.id}>
+                                {dept.name} ({dept.code})
+                              </option>
+                            ))}
+                          </select>
+                        )}
+                      />
+                      {errors.departmentId && <p
+                        className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.departmentId.message}</p>}
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                          Employee Level
+                        </label>
+                        <Controller
+                          name="level"
+                          control={control}
+                          render={({field}) => (
                             <select
                               {...field}
                               value={field.value || ''}
                               className="input-aura"
                             >
-                              <option value="">Select Gender</option>
-                              <option value="MALE">Male</option>
-                              <option value="FEMALE">Female</option>
+                              <option value="">Select Level</option>
+                              <option value="ENTRY">Entry</option>
+                              <option value="MID">Mid</option>
+                              <option value="SENIOR">Senior</option>
+                              <option value="LEAD">Lead</option>
+                              <option value="MANAGER">Manager</option>
+                              <option value="SENIOR_MANAGER">Senior Manager</option>
+                              <option value="DIRECTOR">Director</option>
+                              <option value="VP">Vice President</option>
+                              <option value="SVP">Senior Vice President</option>
+                              <option value="CXO">C-Level Executive</option>
+                            </select>
+                          )}
+                        />
+                        {errors.level &&
+                          <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.level.message}</p>}
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                          Job Role
+                        </label>
+                        <Controller
+                          name="jobRole"
+                          control={control}
+                          render={({field}) => (
+                            <select
+                              {...field}
+                              value={field.value || ''}
+                              className="input-aura"
+                            >
+                              <option value="">Select Role</option>
+                              <option value="ENGINEER">Engineer</option>
+                              <option value="MANAGER">Manager</option>
+                              <option value="ANALYST">Analyst</option>
+                              <option value="DESIGNER">Designer</option>
+                              <option value="SUPPORT">Support</option>
+                              <option value="SALES">Sales</option>
+                              <option value="MARKETING">Marketing</option>
+                              <option value="HR">HR</option>
+                              <option value="FINANCE">Finance</option>
+                              <option value="OPERATIONS">Operations</option>
                               <option value="OTHER">Other</option>
-                              <option value="PREFER_NOT_TO_SAY">Prefer not to say</option>
                             </select>
                           )}
                         />
-                        {errors.gender && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.gender.message}</p>}
+                        {errors.jobRole &&
+                          <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.jobRole.message}</p>}
                       </div>
+                    </div>
 
+                    <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                          Address
+                          Joining Date *
                         </label>
-                        <textarea
-                          rows={2}
-                          {...register('address')}
-                          className="input-aura min-h-[80px] py-2"
-                          placeholder="Street address"
+                        <input
+                          type="date"
+                          {...register('joiningDate')}
+                          className="input-aura"
                         />
-                        {errors.address && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.address.message}</p>}
+                        {errors.joiningDate && <p
+                          className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.joiningDate.message}</p>}
                       </div>
-
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                            City
-                          </label>
-                          <input
-                            type="text"
-                            {...register('city')}
-                            className="input-aura"
-                          />
-                          {errors.city && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.city.message}</p>}
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                            State/Province
-                          </label>
-                          <input
-                            type="text"
-                            {...register('state')}
-                            className="input-aura"
-                          />
-                          {errors.state && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.state.message}</p>}
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                            Postal Code
-                          </label>
-                          <input
-                            type="text"
-                            {...register('postalCode')}
-                            className="input-aura"
-                          />
-                          {errors.postalCode && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.postalCode.message}</p>}
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                            Country
-                          </label>
-                          <input
-                            type="text"
-                            {...register('country')}
-                            className="input-aura"
-                          />
-                          {errors.country && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.country.message}</p>}
-                        </div>
-                      </div>
-                  </div>
-
-                  {/* Employment Tab */}
-                  <div className={currentTab === 'employment' ? 'space-y-4' : 'hidden'}>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                            Designation *
-                          </label>
-                          <input
-                            type="text"
-                            {...register('designation')}
-                            className="input-aura"
-                            placeholder="Senior Software Engineer"
-                          />
-                          {errors.designation && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.designation.message}</p>}
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                            Employment Type *
-                          </label>
-                          <Controller
-                            name="employmentType"
-                            control={control}
-                            render={({ field }) => (
-                              <select
-                                {...field}
-                                className="input-aura"
-                              >
-                                <option value="FULL_TIME">Full Time</option>
-                                <option value="PART_TIME">Part Time</option>
-                                <option value="CONTRACT">Contract</option>
-                                <option value="INTERN">Intern</option>
-                              </select>
-                            )}
-                          />
-                          {errors.employmentType && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.employmentType.message}</p>}
-                        </div>
-                      </div>
-
                       <div>
                         <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                          Department *
+                          Confirmation Date
+                        </label>
+                        <input
+                          type="date"
+                          {...register('confirmationDate')}
+                          className="input-aura"
+                        />
+                        {errors.confirmationDate && <p
+                          className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.confirmationDate.message}</p>}
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                        Reporting Manager
+                      </label>
+                      <Controller
+                        name="managerId"
+                        control={control}
+                        render={({field}) => (
+                          <select
+                            {...field}
+                            className="input-aura"
+                          >
+                            <option value="">Select Manager</option>
+                            <option value="SELF">Self (No Reporting Manager)</option>
+                            {managers.map((manager) => (
+                              <option key={manager.id} value={manager.id}>
+                                {manager.fullName} ({manager.employeeCode})
+                              </option>
+                            ))}
+                          </select>
+                        )}
+                      />
+                      <p className="mt-1 text-caption">
+                        Select &ldquo;Self&rdquo; for top-level employees who don&apos;t report to anyone.
+                      </p>
+                      {errors.managerId &&
+                        <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.managerId.message}</p>}
+                    </div>
+
+                    {/* Dotted-Line Managers (Optional, Matrix Reporting) */}
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                          Dotted-Line Manager 1 <span className="text-[var(--text-muted)]">(Optional)</span>
                         </label>
                         <Controller
-                          name="departmentId"
+                          name="dottedLineManager1Id"
                           control={control}
-                          render={({ field }) => (
+                          render={({field}) => (
                             <select
                               {...field}
                               className="input-aura"
                             >
-                              <option value="">Select Department</option>
-                              {departments.map((dept) => (
-                                <option key={dept.id} value={dept.id}>
-                                  {dept.name} ({dept.code})
-                                </option>
-                              ))}
-                            </select>
-                          )}
-                        />
-                        {errors.departmentId && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.departmentId.message}</p>}
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                            Employee Level
-                          </label>
-                          <Controller
-                            name="level"
-                            control={control}
-                            render={({ field }) => (
-                              <select
-                                {...field}
-                                value={field.value || ''}
-                                className="input-aura"
-                              >
-                                <option value="">Select Level</option>
-                                <option value="ENTRY">Entry</option>
-                                <option value="MID">Mid</option>
-                                <option value="SENIOR">Senior</option>
-                                <option value="LEAD">Lead</option>
-                                <option value="MANAGER">Manager</option>
-                                <option value="SENIOR_MANAGER">Senior Manager</option>
-                                <option value="DIRECTOR">Director</option>
-                                <option value="VP">Vice President</option>
-                                <option value="SVP">Senior Vice President</option>
-                                <option value="CXO">C-Level Executive</option>
-                              </select>
-                            )}
-                          />
-                          {errors.level && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.level.message}</p>}
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                            Job Role
-                          </label>
-                          <Controller
-                            name="jobRole"
-                            control={control}
-                            render={({ field }) => (
-                              <select
-                                {...field}
-                                value={field.value || ''}
-                                className="input-aura"
-                              >
-                                <option value="">Select Role</option>
-                                <option value="ENGINEER">Engineer</option>
-                                <option value="MANAGER">Manager</option>
-                                <option value="ANALYST">Analyst</option>
-                                <option value="DESIGNER">Designer</option>
-                                <option value="SUPPORT">Support</option>
-                                <option value="SALES">Sales</option>
-                                <option value="MARKETING">Marketing</option>
-                                <option value="HR">HR</option>
-                                <option value="FINANCE">Finance</option>
-                                <option value="OPERATIONS">Operations</option>
-                                <option value="OTHER">Other</option>
-                              </select>
-                            )}
-                          />
-                          {errors.jobRole && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.jobRole.message}</p>}
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                            Joining Date *
-                          </label>
-                          <input
-                            type="date"
-                            {...register('joiningDate')}
-                            className="input-aura"
-                          />
-                          {errors.joiningDate && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.joiningDate.message}</p>}
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                            Confirmation Date
-                          </label>
-                          <input
-                            type="date"
-                            {...register('confirmationDate')}
-                            className="input-aura"
-                          />
-                          {errors.confirmationDate && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.confirmationDate.message}</p>}
-                        </div>
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                          Reporting Manager
-                        </label>
-                        <Controller
-                          name="managerId"
-                          control={control}
-                          render={({ field }) => (
-                            <select
-                              {...field}
-                              className="input-aura"
-                            >
-                              <option value="">Select Manager</option>
-                              <option value="SELF">Self (No Reporting Manager)</option>
+                              <option value="">None</option>
                               {managers.map((manager) => (
                                 <option key={manager.id} value={manager.id}>
                                   {manager.fullName} ({manager.employeeCode})
@@ -964,125 +1036,103 @@ export default function EmployeesPage() {
                             </select>
                           )}
                         />
-                        <p className="mt-1 text-caption">
-                          Select &ldquo;Self&rdquo; for top-level employees who don&apos;t report to anyone.
-                        </p>
-                        {errors.managerId && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.managerId.message}</p>}
                       </div>
-
-                      {/* Dotted-Line Managers (Optional, Matrix Reporting) */}
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                            Dotted-Line Manager 1 <span className="text-[var(--text-muted)]">(Optional)</span>
-                          </label>
-                          <Controller
-                            name="dottedLineManager1Id"
-                            control={control}
-                            render={({ field }) => (
-                              <select
-                                {...field}
-                                className="input-aura"
-                              >
-                                <option value="">None</option>
-                                {managers.map((manager) => (
-                                  <option key={manager.id} value={manager.id}>
-                                    {manager.fullName} ({manager.employeeCode})
-                                  </option>
-                                ))}
-                              </select>
-                            )}
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                            Dotted-Line Manager 2 <span className="text-[var(--text-muted)]">(Optional)</span>
-                          </label>
-                          <Controller
-                            name="dottedLineManager2Id"
-                            control={control}
-                            render={({ field }) => (
-                              <select
-                                {...field}
-                                className="input-aura"
-                              >
-                                <option value="">None</option>
-                                {managers.map((manager) => (
-                                  <option key={manager.id} value={manager.id}>
-                                    {manager.fullName} ({manager.employeeCode})
-                                  </option>
-                                ))}
-                              </select>
-                            )}
-                          />
-                        </div>
+                      <div>
+                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                          Dotted-Line Manager 2 <span className="text-[var(--text-muted)]">(Optional)</span>
+                        </label>
+                        <Controller
+                          name="dottedLineManager2Id"
+                          control={control}
+                          render={({field}) => (
+                            <select
+                              {...field}
+                              className="input-aura"
+                            >
+                              <option value="">None</option>
+                              {managers.map((manager) => (
+                                <option key={manager.id} value={manager.id}>
+                                  {manager.fullName} ({manager.employeeCode})
+                                </option>
+                              ))}
+                            </select>
+                          )}
+                        />
                       </div>
-                      <p className="text-caption">
-                        Dotted-line managers represent matrix reporting relationships. They are informational only and do not participate in approval workflows.
-                      </p>
+                    </div>
+                    <p className="text-caption">
+                      Dotted-line managers represent matrix reporting relationships. They are informational only and do
+                      not participate in approval workflows.
+                    </p>
                   </div>
 
                   {/* Banking & Tax Tab */}
                   <div className={currentTab === 'bank' ? 'space-y-4' : 'hidden'}>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                            Bank Account Number
-                          </label>
-                          <input
-                            type="text"
-                            {...register('bankAccountNumber')}
-                            className="input-aura"
-                            placeholder="1234567890"
-                          />
-                          {errors.bankAccountNumber && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.bankAccountNumber.message}</p>}
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                            Bank Name
-                          </label>
-                          <input
-                            type="text"
-                            {...register('bankName')}
-                            className="input-aura"
-                            placeholder="Bank of America"
-                          />
-                          {errors.bankName && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.bankName.message}</p>}
-                        </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                          Bank Account Number
+                        </label>
+                        <input
+                          type="text"
+                          {...register('bankAccountNumber')}
+                          className="input-aura"
+                          placeholder="1234567890"
+                        />
+                        {errors.bankAccountNumber && <p
+                          className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.bankAccountNumber.message}</p>}
                       </div>
+                      <div>
+                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                          Bank Name
+                        </label>
+                        <input
+                          type="text"
+                          {...register('bankName')}
+                          className="input-aura"
+                          placeholder="Bank of America"
+                        />
+                        {errors.bankName && <p
+                          className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.bankName.message}</p>}
+                      </div>
+                    </div>
 
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                            IFSC Code / Routing Number
-                          </label>
-                          <input
-                            type="text"
-                            {...register('bankIfscCode')}
-                            className="input-aura"
-                            placeholder="HDFC0001234"
-                          />
-                          {errors.bankIfscCode && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.bankIfscCode.message}</p>}
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                            Tax ID / SSN
-                          </label>
-                          <input
-                            type="text"
-                            {...register('taxId')}
-                            className="input-aura"
-                            placeholder="XXX-XX-XXXX"
-                          />
-                          {errors.taxId && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.taxId.message}</p>}
-                        </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                          IFSC Code / Routing Number
+                        </label>
+                        <input
+                          type="text"
+                          {...register('bankIfscCode')}
+                          className="input-aura"
+                          placeholder="HDFC0001234"
+                        />
+                        {errors.bankIfscCode && <p
+                          className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.bankIfscCode.message}</p>}
                       </div>
+                      <div>
+                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                          Tax ID / SSN
+                        </label>
+                        <input
+                          type="text"
+                          {...register('taxId')}
+                          className="input-aura"
+                          placeholder="XXX-XX-XXXX"
+                        />
+                        {errors.taxId &&
+                          <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.taxId.message}</p>}
+                      </div>
+                    </div>
 
-                      <div className="bg-accent-50 dark:bg-accent-950/30 border border-accent-200 dark:border-accent-800 rounded-xl p-4">
-                        <p className="text-sm text-accent-700 dark:text-accent-400">
-                          <strong>Note:</strong> Banking and tax information is encrypted and stored securely. This information will be used for payroll processing.
-                        </p>
-                      </div>
+                    <div
+                      className="bg-accent-50 dark:bg-accent-950/30 border border-accent-200 dark:border-accent-800 rounded-xl p-4">
+                      <p className="text-sm text-accent-700 dark:text-accent-400">
+                        <strong>Note:</strong> Banking and tax information is encrypted and stored securely. This
+                        information will be used for payroll processing.
+                      </p>
+                    </div>
                   </div>
 
                   <div className="flex gap-4 pt-6 border-t border-[var(--border-subtle)]">
@@ -1119,15 +1169,20 @@ export default function EmployeesPage() {
           <div className="fixed inset-0 glass-aura !rounded-none flex items-center justify-center p-4 z-50">
             <div className="skeuo-card rounded-xl max-w-md w-full p-6">
               <div className="flex items-center gap-4 mb-4">
-                <div className="flex-shrink-0 h-10 w-10 rounded-lg bg-danger-100 dark:bg-danger-900/30 flex items-center justify-center">
-                  <svg className="h-5 w-5 text-danger-600 dark:text-danger-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                <div
+                  className="flex-shrink-0 h-10 w-10 rounded-lg bg-danger-100 dark:bg-danger-900/30 flex items-center justify-center">
+                  <svg className="h-5 w-5 text-danger-600 dark:text-danger-400" fill="none" viewBox="0 0 24 24"
+                       stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                          d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
                   </svg>
                 </div>
                 <h3 className="text-xl font-semibold text-[var(--text-primary)]">Delete Employee</h3>
               </div>
               <p className="text-body-secondary mb-6">
-                Are you sure you want to delete <strong className="text-[var(--text-primary)]">{employeeToDelete.fullName}</strong>? This action cannot be undone.
+                Are you sure you want to delete <strong
+                className="text-[var(--text-primary)]">{employeeToDelete.fullName}</strong>? This action cannot be
+                undone.
               </p>
               <div className="flex gap-4">
                 <Button

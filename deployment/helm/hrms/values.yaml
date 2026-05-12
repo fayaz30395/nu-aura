@@ -16,7 +16,7 @@ imageRegistry: gcr.io/PROJECT_ID
 
 # Image pull secrets list (if your registry requires auth). Each entry is the
 # name of a docker-registry Secret in the target namespace.
-imagePullSecrets: []
+imagePullSecrets: [ ]
 #  - name: gcr-pull-secret
 
 # -----------------------------------------------------------------------------
@@ -194,8 +194,8 @@ serviceAccount:
   enabled: false
   backend:
     name: hrms-backend-sa
-    annotations: {}
+    annotations: { }
     # iam.gke.io/gcp-service-account: hrms-backend@PROJECT_ID.iam.gserviceaccount.com
   frontend:
     name: hrms-frontend-sa
-    annotations: {}
+    annotations: { }

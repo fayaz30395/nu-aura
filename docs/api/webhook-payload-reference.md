@@ -1,13 +1,17 @@
 # NU-AURA Webhook Payload Reference
 
-**Audience:** Tenant administrators and integration developers building HTTP receivers for NU-AURA webhook events.
-**Companion:** Use this alongside the external API guide (`external-api-guide.md`) for authentication, rate limits, and CORS, and the Swagger UI for `/api/v1/webhooks` endpoint schemas.
+**Audience:** Tenant administrators and integration developers building HTTP receivers for NU-AURA
+webhook events.
+**Companion:** Use this alongside the external API guide (`external-api-guide.md`) for
+authentication, rate limits, and CORS, and the Swagger UI for `/api/v1/webhooks` endpoint schemas.
 
 ---
 
 ## 1. Overview
 
-NU-AURA fires outbound HTTP `POST` webhooks to subscribed URLs whenever configurable domain events occur. Webhooks are the recommended way to drive near-real-time integrations (ERP sync, finance reconciliation, slack/teams alerts, etc.) without polling the API.
+NU-AURA fires outbound HTTP `POST` webhooks to subscribed URLs whenever configurable domain events
+occur. Webhooks are the recommended way to drive near-real-time integrations (ERP sync, finance
+reconciliation, slack/teams alerts, etc.) without polling the API.
 
 **Delivery model:**
 
@@ -63,32 +67,33 @@ Content-Type: application/json
 }
 ```
 
-> **The `secret` is never returned again after creation.** Store it in your secret manager. To rotate, call `POST /api/v1/webhooks/{id}/rotate-secret`.
+> **The `secret` is never returned again after creation.** Store it in your secret manager. To
+> rotate, call `POST /api/v1/webhooks/{id}/rotate-secret`.
 
 ### 2.2 Field requirements
 
-| Field            | Required | Notes                                                                 |
-|------------------|----------|-----------------------------------------------------------------------|
-| `url`            | yes      | HTTPS only; must respond `2xx` within 10s on the ping test            |
-| `events`         | yes      | Non-empty array; see section 7 catalog                                |
-| `secret`         | yes      | 16+ characters; recommended 32+ bytes of cryptographic random         |
-| `customHeaders`  | no       | Map of additional headers; allowlist enforced (section 8)             |
-| `description`    | no       | Free-text label for your own bookkeeping                              |
-| `active`         | no       | Default `true`; set `false` to pause deliveries without deleting      |
+| Field           | Required | Notes                                                            |
+|-----------------|----------|------------------------------------------------------------------|
+| `url`           | yes      | HTTPS only; must respond `2xx` within 10s on the ping test       |
+| `events`        | yes      | Non-empty array; see section 7 catalog                           |
+| `secret`        | yes      | 16+ characters; recommended 32+ bytes of cryptographic random    |
+| `customHeaders` | no       | Map of additional headers; allowlist enforced (section 8)        |
+| `description`   | no       | Free-text label for your own bookkeeping                         |
+| `active`        | no       | Default `true`; set `false` to pause deliveries without deleting |
 
 ### 2.3 Manage subscriptions
 
-| Operation                 | Endpoint                                            |
-|---------------------------|-----------------------------------------------------|
-| List                      | `GET /api/v1/webhooks`                              |
-| Get                       | `GET /api/v1/webhooks/{id}`                         |
-| Update                    | `PATCH /api/v1/webhooks/{id}`                       |
-| Delete                    | `DELETE /api/v1/webhooks/{id}`                      |
-| Pause                     | `PATCH /api/v1/webhooks/{id}` with `{"active":false}` |
-| Rotate secret             | `POST /api/v1/webhooks/{id}/rotate-secret`          |
-| Send test ping            | `POST /api/v1/webhooks/{id}/test`                   |
-| List delivery attempts    | `GET /api/v1/webhooks/{id}/deliveries`              |
-| Replay a delivery         | `POST /api/v1/webhooks/{id}/deliveries/{deliveryId}/replay` |
+| Operation              | Endpoint                                                    |
+|------------------------|-------------------------------------------------------------|
+| List                   | `GET /api/v1/webhooks`                                      |
+| Get                    | `GET /api/v1/webhooks/{id}`                                 |
+| Update                 | `PATCH /api/v1/webhooks/{id}`                               |
+| Delete                 | `DELETE /api/v1/webhooks/{id}`                              |
+| Pause                  | `PATCH /api/v1/webhooks/{id}` with `{"active":false}`       |
+| Rotate secret          | `POST /api/v1/webhooks/{id}/rotate-secret`                  |
+| Send test ping         | `POST /api/v1/webhooks/{id}/test`                           |
+| List delivery attempts | `GET /api/v1/webhooks/{id}/deliveries`                      |
+| Replay a delivery      | `POST /api/v1/webhooks/{id}/deliveries/{deliveryId}/replay` |
 
 ---
 
@@ -100,9 +105,12 @@ Your endpoint must:
 2. Respond with a `2xx` status within **10 seconds** to acknowledge receipt.
 3. Validate the HMAC signature **before** trusting the payload.
 4. Be idempotent on the envelope `id` field (deliveries can be repeated on retry).
-5. Process the event asynchronously after returning `2xx` — do not block the response on downstream work.
+5. Process the event asynchronously after returning `2xx` — do not block the response on downstream
+   work.
 
-A `2xx` is treated as success. Any `4xx` (except `408`/`429`) is treated as a permanent failure and is **not** retried (the assumption is the request is malformed and retrying will not help). `408`, `429`, `5xx`, timeouts, and TCP-level errors trigger retry.
+A `2xx` is treated as success. Any `4xx` (except `408`/`429`) is treated as a permanent failure and
+is **not** retried (the assumption is the request is malformed and retrying will not help). `408`,
+`429`, `5xx`, timeouts, and TCP-level errors trigger retry.
 
 ---
 
@@ -125,7 +133,8 @@ The signature is computed over the **exact raw request body bytes** as:
 HMAC_SHA256(secret, "{timestamp}.{raw_body}")
 ```
 
-`t=` is the Unix timestamp (seconds) used in the HMAC input, and `v1=` is the lowercase hex digest. Reject deliveries where `|now - t|` exceeds 5 minutes (replay protection).
+`t=` is the Unix timestamp (seconds) used in the HMAC input, and `v1=` is the lowercase hex digest.
+Reject deliveries where `|now - t|` exceeds 5 minutes (replay protection).
 
 ### 4.1 Python (Flask example)
 
@@ -262,7 +271,8 @@ func handler(w http.ResponseWriter, r *http.Request) {
 }
 ```
 
-> **Always use a constant-time compare** (`hmac.compare_digest`, `crypto.timingSafeEqual`, `hmac.Equal`). Do not use `==` on strings — it leaks information through timing.
+> **Always use a constant-time compare** (`hmac.compare_digest`, `crypto.timingSafeEqual`,
+`hmac.Equal`). Do not use `==` on strings — it leaks information through timing.
 
 ---
 
@@ -283,34 +293,37 @@ Every event body uses the same envelope:
 }
 ```
 
-| Field        | Type    | Description                                                  |
-|--------------|---------|--------------------------------------------------------------|
-| `id`         | UUID    | Unique per **delivery** — repeats on retry. Idempotency key. |
-| `event`      | string  | Event type, dotted notation (resource.action)                |
-| `timestamp`  | ISO-8601 UTC | When the event was emitted server-side                  |
-| `tenantId`   | UUID    | Tenant the event belongs to                                  |
-| `data`       | object  | Event-specific payload                                       |
-| `version`    | string  | Envelope schema version (semver). Currently `1.0`.           |
+| Field       | Type         | Description                                                  |
+|-------------|--------------|--------------------------------------------------------------|
+| `id`        | UUID         | Unique per **delivery** — repeats on retry. Idempotency key. |
+| `event`     | string       | Event type, dotted notation (resource.action)                |
+| `timestamp` | ISO-8601 UTC | When the event was emitted server-side                       |
+| `tenantId`  | UUID         | Tenant the event belongs to                                  |
+| `data`      | object       | Event-specific payload                                       |
+| `version`   | string       | Envelope schema version (semver). Currently `1.0`.           |
 
-Inside `data`, **timestamps are ISO-8601 UTC**, **IDs are UUIDs**, and **monetary amounts are objects** of the shape `{"amount": "1234.56", "currency": "USD"}` (string amount to avoid float precision loss).
+Inside `data`, **timestamps are ISO-8601 UTC**, **IDs are UUIDs**, and **monetary amounts are
+objects** of the shape `{"amount": "1234.56", "currency": "USD"}` (string amount to avoid float
+precision loss).
 
-Receivers MUST ignore unknown fields in both envelope and `data`. We add fields without bumping `version`.
+Receivers MUST ignore unknown fields in both envelope and `data`. We add fields without bumping
+`version`.
 
 ---
 
 ## 6. Retry Policy & Circuit Breaker
 
-| Property                | Value                                                                  |
-|-------------------------|------------------------------------------------------------------------|
-| Total attempts          | **3** (1 initial + 2 retries)                                          |
-| Backoff schedule        | `4s`, `16s`, `60s` (exponential, jittered ±20%)                        |
-| Request timeout         | 10 seconds per attempt (connect + first-byte + body)                   |
-| Retry triggers          | `408`, `429`, `5xx`, connection error, TLS error, timeout              |
-| Permanent-failure triggers | `400`, `401`, `403`, `404`, `410`, `415`, `422`                     |
-| Circuit breaker         | Opens after 10 consecutive permanent failures within 5 minutes         |
-| Open-state duration     | 5 minutes; deliveries marked `FAILED` and not attempted                |
-| Half-open               | After 5 minutes, a single test ping is sent; success closes the breaker |
-| Final state             | After 3 attempts fail, the delivery is marked `FAILED` and the event is dead-lettered |
+| Property                   | Value                                                                                 |
+|----------------------------|---------------------------------------------------------------------------------------|
+| Total attempts             | **3** (1 initial + 2 retries)                                                         |
+| Backoff schedule           | `4s`, `16s`, `60s` (exponential, jittered ±20%)                                       |
+| Request timeout            | 10 seconds per attempt (connect + first-byte + body)                                  |
+| Retry triggers             | `408`, `429`, `5xx`, connection error, TLS error, timeout                             |
+| Permanent-failure triggers | `400`, `401`, `403`, `404`, `410`, `415`, `422`                                       |
+| Circuit breaker            | Opens after 10 consecutive permanent failures within 5 minutes                        |
+| Open-state duration        | 5 minutes; deliveries marked `FAILED` and not attempted                               |
+| Half-open                  | After 5 minutes, a single test ping is sent; success closes the breaker               |
+| Final state                | After 3 attempts fail, the delivery is marked `FAILED` and the event is dead-lettered |
 
 ### 6.1 Delivery log
 
@@ -353,13 +366,15 @@ The replay carries the same envelope `id` — your idempotency logic will see it
 
 ### 6.3 Bulk replay after outage
 
-If your receiver was down, list `FAILED` deliveries and replay them in batch. The admin UI also exposes a one-click "Replay all failed in last 24h" button.
+If your receiver was down, list `FAILED` deliveries and replay them in batch. The admin UI also
+exposes a one-click "Replay all failed in last 24h" button.
 
 ---
 
 ## 7. Event Catalog
 
-Below are all currently supported event types, grouped by domain. Each shows the `data` payload shape. Optional fields may be omitted when null.
+Below are all currently supported event types, grouped by domain. Each shows the `data` payload
+shape. Optional fields may be omitted when null.
 
 ### 7.1 Employee events
 
@@ -659,7 +674,9 @@ Same shape as `employee.created`, plus a `changedFields` array:
 
 ## 8. Custom Headers — Allowlist & Forbidden List
 
-When registering a webhook, you may add custom headers (e.g. for downstream auth, tracing, source tagging). To prevent abuse, NU-AURA enforces a forbidden list — registration fails if any forbidden header is supplied.
+When registering a webhook, you may add custom headers (e.g. for downstream auth, tracing, source
+tagging). To prevent abuse, NU-AURA enforces a forbidden list — registration fails if any forbidden
+header is supplied.
 
 ### 8.1 Forbidden custom headers
 
@@ -681,7 +698,8 @@ These cannot be set via `customHeaders`:
 - `X-Real-IP`
 - Any header starting with `X-NU-` (reserved for NU-AURA-controlled metadata)
 
-Why: forbidden headers either control transport semantics, fake provenance, or impersonate NU-AURA's own signature/event headers.
+Why: forbidden headers either control transport semantics, fake provenance, or impersonate NU-AURA's
+own signature/event headers.
 
 ### 8.2 Allowed custom headers
 
@@ -696,7 +714,8 @@ Typical legitimate uses:
 - `X-Acme-Source: nu-aura` — tag the source for your gateway
 - `X-Acme-Env: prod` — route by environment
 - `X-Tenant-Id: acme` — flatten multi-tenant routing
-- `Idempotency-Key: <static-or-templated>` — feed into your dedup logic (note: NU-AURA's envelope `id` is the recommended idempotency key)
+- `Idempotency-Key: <static-or-templated>` — feed into your dedup logic (note: NU-AURA's envelope
+  `id` is the recommended idempotency key)
 
 ### 8.3 NU-AURA-controlled headers (reserved)
 
@@ -715,16 +734,16 @@ You cannot override these.
 
 ## 9. Troubleshooting
 
-| Symptom                                  | Likely cause                                          | Fix                                                          |
-|------------------------------------------|-------------------------------------------------------|--------------------------------------------------------------|
-| Signature always fails                   | Comparing parsed JSON instead of raw bytes            | Use raw request body in HMAC input                           |
-| Signature fails intermittently           | Body parser middleware rewrites payload before HMAC  | Capture raw body before any JSON parsing                     |
-| Replays not recognized as duplicates     | Idempotency keyed on payload contents, not envelope `id` | Use envelope `id` as the dedup key                        |
-| Sporadic timeouts at 10s                  | Synchronous downstream call in handler                | Ack first, process async                                     |
-| Webhook silently stops firing             | Circuit breaker opened                                 | Check `GET /api/v1/webhooks/{id}` — `breakerState: OPEN`     |
-| Receiving events I didn't subscribe to    | Filter cached at edge for ~5min after update          | Wait or call `PATCH` again to bust cache                     |
-| Missing `data` fields                     | Event fired before optional fields populated          | Ignore unknown/missing fields; rely on `version` semantics    |
-| Timestamp drift > 5min                    | NTP not synced on receiver                            | Sync clock; tolerance is 5 minutes                           |
+| Symptom                                | Likely cause                                             | Fix                                                        |
+|----------------------------------------|----------------------------------------------------------|------------------------------------------------------------|
+| Signature always fails                 | Comparing parsed JSON instead of raw bytes               | Use raw request body in HMAC input                         |
+| Signature fails intermittently         | Body parser middleware rewrites payload before HMAC      | Capture raw body before any JSON parsing                   |
+| Replays not recognized as duplicates   | Idempotency keyed on payload contents, not envelope `id` | Use envelope `id` as the dedup key                         |
+| Sporadic timeouts at 10s               | Synchronous downstream call in handler                   | Ack first, process async                                   |
+| Webhook silently stops firing          | Circuit breaker opened                                   | Check `GET /api/v1/webhooks/{id}` — `breakerState: OPEN`   |
+| Receiving events I didn't subscribe to | Filter cached at edge for ~5min after update             | Wait or call `PATCH` again to bust cache                   |
+| Missing `data` fields                  | Event fired before optional fields populated             | Ignore unknown/missing fields; rely on `version` semantics |
+| Timestamp drift > 5min                 | NTP not synced on receiver                               | Sync clock; tolerance is 5 minutes                         |
 
 ---
 

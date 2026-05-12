@@ -17,14 +17,14 @@ limit scalability at enterprise scale.
 
 ### Key Findings
 
-| Dimension                     | Score | Assessment                                                                      |
-|-------------------------------|-------|---------------------------------------------------------------------------------|
-| **System Architecture**       | 7/10  | Solid monolith with clean domain separation, but lacks microservice scalability |
-| **Data Architecture**         | 8/10  | Well-normalized schema (254 tables), strong RLS, but missing critical indexes   |
-| **Integration Architecture**  | 8/10  | Event-driven with Kafka, REST APIs, but no GraphQL or gRPC                      |
-| **Security Architecture**     | 9/10  | Industry-leading JWT+RBAC, OWASP headers, rate limiting, tenant isolation       |
+| Dimension                     | Score | Assessment                                                                        |
+|-------------------------------|-------|-----------------------------------------------------------------------------------|
+| **System Architecture**       | 7/10  | Solid monolith with clean domain separation, but lacks microservice scalability   |
+| **Data Architecture**         | 8/10  | Well-normalized schema (254 tables), strong RLS, but missing critical indexes     |
+| **Integration Architecture**  | 8/10  | Event-driven with Kafka, REST APIs, but no GraphQL or gRPC                        |
+| **Security Architecture**     | 9/10  | Industry-leading JWT+RBAC, OWASP headers, rate limiting, tenant isolation         |
 | **Performance & Reliability** | 6/10  | Improved: Redis caching (20+ named caches), Bucket4j rate limiting, batch loading |
-| **Scalability**               | 6/10  | Limited by monolith + shared DB, HikariCP pool size (10), single tenant context |
+| **Scalability**               | 6/10  | Limited by monolith + shared DB, HikariCP pool size (10), single tenant context   |
 
 **Overall Grade:** **7.7/10** — Strong foundations, performance improved with Redis caching layer
 

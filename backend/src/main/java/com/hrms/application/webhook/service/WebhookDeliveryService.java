@@ -7,8 +7,11 @@ import com.hrms.common.metrics.MetricsService;
 import com.hrms.common.resilience.CircuitBreaker;
 import com.hrms.common.security.TenantContext;
 import com.hrms.common.validation.SsrfProtectionUtils;
-import com.hrms.domain.webhook.*;
+import com.hrms.domain.webhook.Webhook;
+import com.hrms.domain.webhook.WebhookDelivery;
 import com.hrms.domain.webhook.WebhookDelivery.DeliveryStatus;
+import com.hrms.domain.webhook.WebhookEventType;
+import com.hrms.domain.webhook.WebhookStatus;
 import com.hrms.infrastructure.webhook.repository.WebhookDeliveryRepository;
 import com.hrms.infrastructure.webhook.repository.WebhookRepository;
 import io.micrometer.core.instrument.Counter;
@@ -33,12 +36,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -70,7 +68,12 @@ public class WebhookDeliveryService {
     private static final Set<String> SENSITIVE_RESPONSE_HEADERS = Set.of(
             "authorization", "cookie", "set-cookie", "proxy-authorization"
     );
-
+    // Headers a webhook owner must NEVER be able to control on outbound delivery —
+    // mirrors the controller-side allowlist filter. Defense in depth.
+    private static final Set<String> FORBIDDEN_CUSTOM_HEADERS = Set.of(
+            "authorization", "cookie", "set-cookie", "host", "content-length",
+            "x-forwarded-for", "x-real-ip", "x-forwarded-host", "proxy-authorization"
+    );
     private final WebhookRepository webhookRepository;
     private final WebhookDeliveryRepository deliveryRepository;
     private final WebhookService webhookService;
@@ -81,10 +84,10 @@ public class WebhookDeliveryService {
     // for outbound webhook delivery — instead deliveryRestTemplate (built in @PostConstruct)
     // has redirect-following disabled to close an SSRF-via-redirect bypass.
     private final RestTemplate restTemplate;
-    // Webhook-scoped RestTemplate with redirect-following disabled.
-    private RestTemplate deliveryRestTemplate;
     // Circuit breakers per webhook URL to prevent cascading failures
     private final Map<UUID, CircuitBreaker> circuitBreakers = new HashMap<>();
+    // Webhook-scoped RestTemplate with redirect-following disabled.
+    private RestTemplate deliveryRestTemplate;
 
     /**
      * Build a webhook-scoped RestTemplate with redirect-following disabled.
@@ -317,13 +320,6 @@ public class WebhookDeliveryService {
         return headers;
     }
 
-    // Headers a webhook owner must NEVER be able to control on outbound delivery —
-    // mirrors the controller-side allowlist filter. Defense in depth.
-    private static final Set<String> FORBIDDEN_CUSTOM_HEADERS = Set.of(
-            "authorization", "cookie", "set-cookie", "host", "content-length",
-            "x-forwarded-for", "x-real-ip", "x-forwarded-host", "proxy-authorization"
-    );
-
     /**
      * Compute HMAC-SHA256 signature for payload verification.
      */
@@ -368,7 +364,7 @@ public class WebhookDeliveryService {
      * @param providedSignatureHex hex signature received from the caller
      *                             (without any "sha256=" prefix — strip that upstream)
      * @return true iff {@code providedSignatureHex} matches a signature computed from
-     *         either the current secret or a non-expired previous secret
+     * either the current secret or a non-expired previous secret
      */
     public boolean verifySignature(Webhook webhook, String payload, String providedSignatureHex) {
         if (webhook == null || providedSignatureHex == null || providedSignatureHex.isBlank()) {

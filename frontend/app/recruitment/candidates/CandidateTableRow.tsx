@@ -153,18 +153,24 @@ export const CandidateTableRow = memo(function CandidateTableRow({
               className="p-1.5 text-[var(--text-muted)] hover:text-accent-700 dark:hover:text-accent-400 transition-colors rounded-md cursor-pointer"
             >
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/>
+                <circle cx="12" cy="5" r="1"/>
+                <circle cx="12" cy="12" r="1"/>
+                <circle cx="12" cy="19" r="1"/>
               </svg>
             </button>
-            <div className="absolute right-0 top-full mt-1 w-48 bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg shadow-[var(--shadow-dropdown)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-20">
+            <div
+              className="absolute right-0 top-full mt-1 w-48 bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg shadow-[var(--shadow-dropdown)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-20">
               {/* AI Actions */}
-              <div className="px-2 py-1 text-2xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">AI Actions</div>
+              <div className="px-2 py-1 text-2xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">AI
+                Actions
+              </div>
               <button
                 onClick={() => onCalculateMatch(candidate)}
                 disabled={aiLoadingState === `match-${candidate.id}`}
                 className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] flex items-center gap-2 disabled:opacity-50 cursor-pointer"
               >
-                {aiLoadingState === `match-${candidate.id}` ? <Loader2 className="h-3.5 w-3.5 animate-spin"/> : <Brain className="h-3.5 w-3.5"/>}
+                {aiLoadingState === `match-${candidate.id}` ? <Loader2 className="h-3.5 w-3.5 animate-spin"/> :
+                  <Brain className="h-3.5 w-3.5"/>}
                 Match Score
               </button>
               <button
@@ -172,7 +178,8 @@ export const CandidateTableRow = memo(function CandidateTableRow({
                 disabled={aiLoadingState === `screening-${candidate.id}`}
                 className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] flex items-center gap-2 disabled:opacity-50 cursor-pointer"
               >
-                {aiLoadingState === `screening-${candidate.id}` ? <Loader2 className="h-3.5 w-3.5 animate-spin"/> : <FileText className="h-3.5 w-3.5"/>}
+                {aiLoadingState === `screening-${candidate.id}` ? <Loader2 className="h-3.5 w-3.5 animate-spin"/> :
+                  <FileText className="h-3.5 w-3.5"/>}
                 Screening Summary
               </button>
               <button
@@ -180,7 +187,8 @@ export const CandidateTableRow = memo(function CandidateTableRow({
                 disabled={aiLoadingState === `feedback-${candidate.id}`}
                 className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] flex items-center gap-2 disabled:opacity-50 cursor-pointer"
               >
-                {aiLoadingState === `feedback-${candidate.id}` ? <Loader2 className="h-3.5 w-3.5 animate-spin"/> : <MessageSquare className="h-3.5 w-3.5"/>}
+                {aiLoadingState === `feedback-${candidate.id}` ? <Loader2 className="h-3.5 w-3.5 animate-spin"/> :
+                  <MessageSquare className="h-3.5 w-3.5"/>}
                 Synthesize Feedback
               </button>
 

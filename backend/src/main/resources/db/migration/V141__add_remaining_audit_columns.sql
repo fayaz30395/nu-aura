@@ -11,28 +11,30 @@
 -- Idempotent: ADD COLUMN IF NOT EXISTS.
 -- ============================================================================
 
-DO $$
+DO
+$$
 DECLARE
-    tbl TEXT;
+tbl TEXT;
 BEGIN
-    FOR tbl IN
-        SELECT unnest(ARRAY[
-            'asset_maintenance_requests',
-            'integration_connector_configs',
-            'fluence_favorites',
-            'mileage_policies',
-            'mileage_logs',
-            'docusign_envelopes'
-        ])
-    LOOP
-        IF EXISTS (SELECT 1 FROM pg_tables WHERE schemaname = 'public' AND tablename = tbl) THEN
+FOR tbl IN
+SELECT unnest(ARRAY[
+                'asset_maintenance_requests',
+              'integration_connector_configs',
+              'fluence_favorites',
+              'mileage_policies',
+              'mileage_logs',
+              'docusign_envelopes'
+                ])
+         LOOP
+  IF EXISTS (SELECT 1 FROM pg_tables WHERE schemaname = 'public' AND tablename = tbl) THEN
             EXECUTE format('ALTER TABLE %I ADD COLUMN IF NOT EXISTS version BIGINT DEFAULT 0', tbl);
-            EXECUTE format('ALTER TABLE %I ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW()', tbl);
-            EXECUTE format('ALTER TABLE %I ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ DEFAULT NOW()', tbl);
-            EXECUTE format('ALTER TABLE %I ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ', tbl);
-            EXECUTE format('ALTER TABLE %I ADD COLUMN IF NOT EXISTS is_deleted BOOLEAN NOT NULL DEFAULT FALSE', tbl);
-        END IF;
-    END LOOP;
+EXECUTE format('ALTER TABLE %I ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW()', tbl);
+EXECUTE format('ALTER TABLE %I ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ DEFAULT NOW()', tbl);
+EXECUTE format('ALTER TABLE %I ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ', tbl);
+EXECUTE format('ALTER TABLE %I ADD COLUMN IF NOT EXISTS is_deleted BOOLEAN NOT NULL DEFAULT FALSE', tbl);
+END IF;
+END LOOP;
 
-    RAISE NOTICE 'V141: version / updated_at / created_at / deleted_at / is_deleted columns ensured';
+    RAISE
+NOTICE 'V141: version / updated_at / created_at / deleted_at / is_deleted columns ensured';
 END $$;

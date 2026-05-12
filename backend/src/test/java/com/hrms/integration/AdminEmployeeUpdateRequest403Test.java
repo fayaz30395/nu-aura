@@ -107,7 +107,9 @@ class AdminEmployeeUpdateRequest403Test {
         return employeeRepository.save(employee);
     }
 
-    /** Plain employee — has EMPLOYEE:UPDATE for self-service only, no admin powers. */
+    /**
+     * Plain employee — has EMPLOYEE:UPDATE for self-service only, no admin powers.
+     */
     private void setupPlainEmployee(UUID employeeId) {
         Map<String, RoleScope> permissions = new HashMap<>();
         permissions.put(Permission.EMPLOYEE_READ, RoleScope.SELF);
@@ -117,7 +119,9 @@ class AdminEmployeeUpdateRequest403Test {
         SecurityContext.setCurrentTenantId(TENANT_ID);
     }
 
-    /** Tenant admin — bypasses @RequiresPermission via SecurityContext#isTenantAdmin(). */
+    /**
+     * Tenant admin — bypasses @RequiresPermission via SecurityContext#isTenantAdmin().
+     */
     private void setupTenantAdmin(UUID employeeId) {
         Map<String, RoleScope> permissions = new HashMap<>();
         permissions.put(Permission.SYSTEM_ADMIN, RoleScope.ALL);

@@ -1,6 +1,9 @@
 package com.hrms.api.training.controller;
 
-import com.hrms.api.training.dto.*;
+import com.hrms.api.training.dto.TrainingEnrollmentRequest;
+import com.hrms.api.training.dto.TrainingEnrollmentResponse;
+import com.hrms.api.training.dto.TrainingProgramRequest;
+import com.hrms.api.training.dto.TrainingProgramResponse;
 import com.hrms.application.training.service.TrainingManagementService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;

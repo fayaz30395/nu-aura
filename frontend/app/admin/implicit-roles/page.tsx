@@ -248,7 +248,7 @@ export default function ImplicitRolesPage() {
   if (isLoading) {
     return (
       <div className="p-4 md:p-6 lg:p-8">
-        <SkeletonTable rows={6} columns={4} />
+        <SkeletonTable rows={6} columns={4}/>
       </div>
     );
   }
@@ -746,7 +746,7 @@ function AffectedUsersModal({rule, onClose}: AffectedUsersModalProps) {
           </button>
         </div>
 
-        {usersQuery.isLoading && <SkeletonTable rows={3} columns={3} />}
+        {usersQuery.isLoading && <SkeletonTable rows={3} columns={3}/>}
 
         {usersQuery.data && (
           <div className="skeuo-card overflow-x-auto">

@@ -192,7 +192,7 @@ export default function ShiftDashboardPage() {
 
           {/* Schedule Grid */}
           {isLoading ? (
-            <SkeletonTable rows={6} columns={6} />
+            <SkeletonTable rows={6} columns={6}/>
           ) : scheduleByEmployee.length === 0 ? (
             <EmptyState
               icon={<Users className="w-12 h-12 text-surface-400"/>}

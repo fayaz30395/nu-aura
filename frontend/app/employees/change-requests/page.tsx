@@ -253,7 +253,7 @@ export default function EmploymentChangeRequestsPage() {
         {/* Requests List */}
         <div className="space-y-4">
           {loading ? (
-            <SkeletonTable rows={5} columns={4} />
+            <SkeletonTable rows={5} columns={4}/>
           ) : requests.length === 0 ? (
             <div className="skeuo-card p-12 text-center">
               <User className="h-12 w-12 mx-auto text-[var(--text-muted)] mb-4"/>

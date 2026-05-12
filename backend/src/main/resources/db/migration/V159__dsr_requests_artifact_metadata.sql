@@ -34,10 +34,12 @@
 --     This migration occupies V159 by sprint plan.
 
 ALTER TABLE dsr_requests
-    ADD COLUMN IF NOT EXISTS artifact_sha256 CHAR(64),
-    ADD COLUMN IF NOT EXISTS artifact_size   BIGINT;
+  ADD COLUMN IF NOT EXISTS artifact_sha256 CHAR (64),
+  ADD COLUMN IF NOT EXISTS artifact_size BIGINT;
 
-COMMENT ON COLUMN dsr_requests.artifact_sha256 IS
+COMMENT
+ON COLUMN dsr_requests.artifact_sha256 IS
     'Lowercase hex SHA-256 of the exported artefact bytes (ACCESS / PORTABILITY fulfilment). Tamper-evident anchor for the audit chain.';
-COMMENT ON COLUMN dsr_requests.artifact_size IS
+COMMENT
+ON COLUMN dsr_requests.artifact_size IS
     'Size in bytes of the exported artefact (ACCESS / PORTABILITY fulfilment). Surfaces payload size in the admin queue without re-rendering.';

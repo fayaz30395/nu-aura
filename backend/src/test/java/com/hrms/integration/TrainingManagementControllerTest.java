@@ -13,7 +13,9 @@ import com.hrms.domain.user.RoleScope;
 import com.hrms.domain.user.User;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.user.repository.UserRepository;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,9 +31,10 @@ import java.time.LocalDate;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * Integration tests for Training Management use cases.
@@ -46,10 +49,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class TrainingManagementControllerTest {
 
     private static final UUID TENANT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
-    private UUID userId;
-    private UUID employeeId;
     private static final String BASE = "/api/v1/training";
-
     @Autowired
     MockMvc mockMvc;
     @Autowired
@@ -58,6 +58,8 @@ class TrainingManagementControllerTest {
     UserRepository userRepository;
     @Autowired
     EmployeeRepository employeeRepository;
+    private UUID userId;
+    private UUID employeeId;
 
     @BeforeEach
     void setUpSuperAdminContext() {

@@ -1,18 +1,17 @@
-import { spawn } from 'child_process';
+import {spawn} from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
 import {
   classifyFailure,
+  type CycleResult,
   getReleaseSeverity,
   groupResultsBySeverity,
   shouldBlockRelease,
   type TestResult,
-  type CycleResult,
-  type Severity,
 } from './severity-classifier.js';
 
 // Re-export utilities so consumers only need one import
-export { groupResultsBySeverity, shouldBlockRelease };
+export {groupResultsBySeverity, shouldBlockRelease};
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -177,7 +176,7 @@ export async function runAgentGroup(
   specFiles: string[],
   outputDir: string,
 ): Promise<TestResult[]> {
-  fs.mkdirSync(outputDir, { recursive: true });
+  fs.mkdirSync(outputDir, {recursive: true});
 
   const timestamp = Date.now();
   const jsonPath = path.join(outputDir, `${groupName}-${timestamp}.json`);
@@ -192,7 +191,7 @@ export async function runAgentGroup(
     '--no-deps',  // auth setup runs once before parallel groups
   ];
 
-  await spawnPlaywright(args, FRONTEND_DIR, { PLAYWRIGHT_JSON_OUTPUT_NAME: jsonPath });
+  await spawnPlaywright(args, FRONTEND_DIR, {PLAYWRIGHT_JSON_OUTPUT_NAME: jsonPath});
 
   if (!fs.existsSync(jsonPath)) {
     console.warn(`[qa-orchestrator] No JSON output found for group ${groupName}`);
@@ -201,7 +200,7 @@ export async function runAgentGroup(
 
   const results = parsePlaywrightJson(jsonPath);
   // Tag each result with the group name
-  return results.map((r) => ({ ...r, agentGroup: groupName }));
+  return results.map((r) => ({...r, agentGroup: groupName}));
 }
 
 /** Runs `npx <args>` in cwd, resolves when the process exits (regardless of code). */
@@ -210,7 +209,7 @@ function spawnPlaywright(args: string[], cwd: string, env: Record<string, string
     const child = spawn('npx', args, {
       cwd,
       stdio: ['ignore', 'pipe', 'pipe'],
-      env: { ...process.env, ...env },
+      env: {...process.env, ...env},
     });
 
     child.stdout.on('data', (chunk: Buffer) => process.stdout.write(chunk));
@@ -298,8 +297,8 @@ export async function startContinuousLoop(
     stopSignal?: { stop: boolean };
   } = {},
 ): Promise<void> {
-  const { cooldownMs = 30_000, outputDir = DEFAULT_REPORT_DIR, onCycleComplete } = options;
-  const stopSignal = options.stopSignal ?? { stop: false };
+  const {cooldownMs = 30_000, outputDir = DEFAULT_REPORT_DIR, onCycleComplete} = options;
+  const stopSignal = options.stopSignal ?? {stop: false};
 
   // Allow the caller to cancel via SIGINT
   const handleSigint = () => {
@@ -318,11 +317,11 @@ export async function startContinuousLoop(
 
       const result = await runAllGroups(groups, outputDir);
 
-      const { summary, releaseDecision } = result;
+      const {summary, releaseDecision} = result;
       console.log(
         `[qa-orchestrator] Cycle ${cycleNumber} complete — ` +
-          `total=${summary.total} passed=${summary.passed} failed=${summary.failed} ` +
-          `P0=${summary.p0} P1=${summary.p1} P2=${summary.p2} decision=${releaseDecision}`,
+        `total=${summary.total} passed=${summary.passed} failed=${summary.failed} ` +
+        `P0=${summary.p0} P1=${summary.p1} P2=${summary.p2} decision=${releaseDecision}`,
       );
 
       onCycleComplete?.(result);

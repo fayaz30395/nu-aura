@@ -1,6 +1,7 @@
 # NU-AURA API Quick Start
 
-**Goal:** Make your first authenticated request, register your first webhook, and handle pagination + errors — in **5 minutes**.
+**Goal:** Make your first authenticated request, register your first webhook, and handle
+pagination + errors — in **5 minutes**.
 
 **Companion docs:**
 
@@ -27,7 +28,8 @@ export NU_BASE="https://api.nu-aura.example.com"
 
 ## Step 1 — Get an API key (60 seconds)
 
-You can mint a key either from the admin UI (recommended for humans) or from the admin endpoint (recommended for scripts and CI).
+You can mint a key either from the admin UI (recommended for humans) or from the admin endpoint (
+recommended for scripts and CI).
 
 ### Option A — admin UI
 
@@ -38,7 +40,8 @@ You can mint a key either from the admin UI (recommended for humans) or from the
 
 ### Option B — admin endpoint
 
-If you already have a key with `apikey:manage` scope (or are using a JWT cookie session), you can mint additional keys via HTTP:
+If you already have a key with `apikey:manage` scope (or are using a JWT cookie session), you can
+mint additional keys via HTTP:
 
 ```bash
 curl -s -X POST "$NU_BASE/api/v1/admin/api-keys" \
@@ -95,13 +98,15 @@ Expected (shape):
 }
 ```
 
-If you got a `401`, your key is wrong or missing the right scope. If `403`, the key is valid but lacks the scope. If `429`, slow down — you hit the rate limiter.
+If you got a `401`, your key is wrong or missing the right scope. If `403`, the key is valid but
+lacks the scope. If `429`, slow down — you hit the rate limiter.
 
 ---
 
 ## Step 3 — Your first webhook (90 seconds)
 
-Stand up a receiver (anything that prints request headers + body). For a one-off test, [webhook.site](https://webhook.site) gives you a free disposable URL.
+Stand up a receiver (anything that prints request headers + body). For a one-off
+test, [webhook.site](https://webhook.site) gives you a free disposable URL.
 
 ### Register the subscription
 
@@ -134,7 +139,8 @@ Refresh webhook.site — you should see the `POST` arrive within a few seconds, 
 
 - `X-NU-Event: webhook.test`
 - `X-NU-Signature: t=...,v1=...`
-- A JSON body with the standard envelope (`id`, `event`, `timestamp`, `tenantId`, `data`, `version`).
+- A JSON body with the standard envelope (`id`, `event`, `timestamp`, `tenantId`, `data`,
+  `version`).
 
 ### Verify the signature
 
@@ -177,7 +183,8 @@ Your receiver should get the `employee.created` delivery within a few seconds.
 
 ## Step 4 — Filter & paginate (45 seconds)
 
-All list endpoints accept `page`, `size`, `sort`, and a free-text `q`. They follow the same envelope shape.
+All list endpoints accept `page`, `size`, `sort`, and a free-text `q`. They follow the same envelope
+shape.
 
 ### Paginate
 
@@ -206,7 +213,8 @@ curl -s "$NU_BASE/api/v1/external/employees?q=jane" \
   -H "X-API-Key: $NU_API_KEY" | jq .
 ```
 
-Search uses Elasticsearch fuzzy match across name, email, and code. Empty `q` is treated as no filter.
+Search uses Elasticsearch fuzzy match across name, email, and code. Empty `q` is treated as no
+filter.
 
 ### Loop through all pages
 
@@ -246,7 +254,7 @@ Every error response uses the canonical `ErrorResponse` envelope:
 
 ### What to do per status
 
-| Status | Handle by                                                                  |
+| Status | Handle by                                                                 |
 |--------|---------------------------------------------------------------------------|
 | `400`  | Show `fieldErrors` to the user; do not retry                              |
 | `401`  | Refresh credentials or surface "auth failed"; do not retry blindly        |
@@ -281,7 +289,8 @@ raise TransientError("exhausted retries")
 
 ## SDK pseudocode
 
-NU-AURA doesn't ship official SDKs yet, but the API is small enough to wrap. Sketches for the three common stacks:
+NU-AURA doesn't ship official SDKs yet, but the API is small enough to wrap. Sketches for the three
+common stacks:
 
 ### Python
 
@@ -456,7 +465,8 @@ func (c *Client) ListEmployees(q url.Values) (map[string]any, error) {
 ## Where to next
 
 - **Endpoint catalog (interactive)** — `/api/v1/swagger-ui.html`
-- **Full API conventions** — `external-api-guide.md` (auth, rate limits, pagination, errors, versioning)
+- **Full API conventions** — `external-api-guide.md` (auth, rate limits, pagination, errors,
+  versioning)
 - **Webhook contract** — `webhook-payload-reference.md` (HMAC, retries, event catalog)
 - **Status page** — `https://status.nu-aura.example.com`
 - **Support** — include the `traceId` from the failing response

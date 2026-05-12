@@ -1,16 +1,16 @@
 'use client';
 
-import { useMemo } from 'react';
-import { IconActivity, IconFlame, IconTrendingUp } from '@tabler/icons-react';
-import { AppLayout } from '@/components/layout';
-import { Permissions } from '@/lib/hooks/usePermissions';
-import { PermissionGate, PageDeniedFallback } from '@/components/auth/PermissionGate';
+import {useMemo} from 'react';
+import {IconActivity, IconFlame, IconTrendingUp} from '@tabler/icons-react';
+import {AppLayout} from '@/components/layout';
+import {Permissions} from '@/lib/hooks/usePermissions';
+import {PageDeniedFallback, PermissionGate} from '@/components/auth/PermissionGate';
 import ActivityFeed from '@/components/fluence/ActivityFeed';
-import { PostComposer } from '@/components/wall';
-import { useCreatePost } from '@/lib/hooks/queries/useWall';
-import { useWikiPages, useBlogPosts, useActivityFeed } from '@/lib/hooks/queries/useFluence';
-import { notifications } from '@mantine/notifications';
-import { Eye, Heart, BookOpen, Newspaper } from 'lucide-react';
+import {PostComposer} from '@/components/wall';
+import {useCreatePost} from '@/lib/hooks/queries/useWall';
+import {useActivityFeed, useBlogPosts, useWikiPages} from '@/lib/hooks/queries/useFluence';
+import {notifications} from '@mantine/notifications';
+import {BookOpen, Eye, Heart, Newspaper} from 'lucide-react';
 
 interface TrendingItem {
   id: string;
@@ -22,9 +22,9 @@ interface TrendingItem {
 }
 
 function TrendingSidebar() {
-  const { data: wikiData } = useWikiPages(undefined, 0, 20);
-  const { data: blogData } = useBlogPosts(0, 20);
-  const { data: activityData } = useActivityFeed(0, 10);
+  const {data: wikiData} = useWikiPages(undefined, 0, 20);
+  const {data: blogData} = useBlogPosts(0, 20);
+  const {data: activityData} = useActivityFeed(0, 10);
 
   const trendingItems = useMemo(() => {
     const items: TrendingItem[] = [];
@@ -65,14 +65,14 @@ function TrendingSidebar() {
       {/* Trending Content */}
       <div className="skeuo-card p-4 rounded-xl">
         <div className="flex items-center gap-2 mb-4">
-          <IconTrendingUp size={18} className="text-[var(--text-primary)]" aria-hidden="true" />
+          <IconTrendingUp size={18} className="text-[var(--text-primary)]" aria-hidden="true"/>
           <h2 className="text-sm font-semibold text-[var(--text-primary)]">
             Trending Content
           </h2>
         </div>
         {trendingItems.length === 0 ? (
           <div className="flex flex-col items-center gap-2 py-4">
-            <IconFlame size={32} strokeWidth={1.5} className="text-[var(--text-muted)]" aria-hidden="true" />
+            <IconFlame size={32} strokeWidth={1.5} className="text-[var(--text-muted)]" aria-hidden="true"/>
             <p className="text-caption text-center">
               No trending content yet. Start creating and sharing to see what is popular.
             </p>
@@ -92,21 +92,24 @@ function TrendingSidebar() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5 mb-0.5">
                       {item.type === 'WIKI' ? (
-                        <BookOpen className="h-3 w-3 text-accent-600 dark:text-accent-400 flex-shrink-0" aria-hidden="true" />
+                        <BookOpen className="h-3 w-3 text-accent-600 dark:text-accent-400 flex-shrink-0"
+                                  aria-hidden="true"/>
                       ) : (
-                        <Newspaper className="h-3 w-3 text-accent-600 dark:text-accent-400 flex-shrink-0" aria-hidden="true" />
+                        <Newspaper className="h-3 w-3 text-accent-600 dark:text-accent-400 flex-shrink-0"
+                                   aria-hidden="true"/>
                       )}
-                      <span className="text-xs font-medium text-[var(--text-primary)] truncate group-hover:text-accent-700 dark:group-hover:text-accent-400">
+                      <span
+                        className="text-xs font-medium text-[var(--text-primary)] truncate group-hover:text-accent-700 dark:group-hover:text-accent-400">
                         {item.title}
                       </span>
                     </div>
                     <div className="flex items-center gap-2 text-2xs text-[var(--text-muted)]">
                       <span className="flex items-center gap-0.5">
-                        <Eye className="h-2.5 w-2.5" aria-hidden="true" />
+                        <Eye className="h-2.5 w-2.5" aria-hidden="true"/>
                         {item.viewCount}
                       </span>
                       <span className="flex items-center gap-0.5">
-                        <Heart className="h-2.5 w-2.5" aria-hidden="true" />
+                        <Heart className="h-2.5 w-2.5" aria-hidden="true"/>
                         {item.likeCount}
                       </span>
                     </div>
@@ -121,7 +124,7 @@ function TrendingSidebar() {
       {/* Recent Activity Summary */}
       <div className="skeuo-card p-4 rounded-xl">
         <div className="flex items-center gap-2 mb-4">
-          <IconActivity size={18} className="text-[var(--text-primary)]" />
+          <IconActivity size={18} className="text-[var(--text-primary)]"/>
           <span className="text-sm font-semibold text-[var(--text-primary)]">
             Recent Activity
           </span>
@@ -135,7 +138,8 @@ function TrendingSidebar() {
                 key={act.id}
                 className="flex items-start gap-2 py-1.5 border-b border-[var(--border-subtle)] last:border-0"
               >
-                <div className="h-5 w-5 rounded-full bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <div
+                  className="h-5 w-5 rounded-full bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center flex-shrink-0 mt-0.5">
                   <span className="text-3xs font-medium text-accent-700 dark:text-accent-400">
                     {(act.actorName || 'U')[0].toUpperCase()}
                   </span>
@@ -184,7 +188,7 @@ function WallPageContent() {
     <AppLayout>
       <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6">
         <div className="flex items-center gap-4 mb-6">
-          <IconActivity size={28} className="text-[var(--text-primary)]" aria-hidden="true" />
+          <IconActivity size={28} className="text-[var(--text-primary)]" aria-hidden="true"/>
           <div>
             <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Activity Wall
@@ -193,7 +197,9 @@ function WallPageContent() {
               See what is happening across your knowledge base
             </p>
           </div>
-          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-accent-100 text-accent-700 dark:bg-accent-900/30 dark:text-accent-400" aria-label="Live updates">
+          <span
+            className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-accent-100 text-accent-700 dark:bg-accent-900/30 dark:text-accent-400"
+            aria-label="Live updates">
             Live
           </span>
         </div>
@@ -225,11 +231,11 @@ function WallPageContent() {
               }}
               isSubmitting={createPost.isPending}
             />
-            <ActivityFeed />
+            <ActivityFeed/>
           </div>
 
           <div className="md:col-span-4">
-            <TrendingSidebar />
+            <TrendingSidebar/>
           </div>
         </div>
       </div>
@@ -239,8 +245,9 @@ function WallPageContent() {
 
 export default function WallPage() {
   return (
-    <PermissionGate anyOf={[Permissions.KNOWLEDGE_VIEW, Permissions.WALL_FLUENCE_VIEW]} fallback={<PageDeniedFallback/>}>
-      <WallPageContent />
+    <PermissionGate anyOf={[Permissions.KNOWLEDGE_VIEW, Permissions.WALL_FLUENCE_VIEW]}
+                    fallback={<PageDeniedFallback/>}>
+      <WallPageContent/>
     </PermissionGate>
   );
 }

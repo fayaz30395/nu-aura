@@ -6,8 +6,8 @@ import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.common.ContentView.ContentType;
 import com.hrms.domain.employee.Employee;
-import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.domain.wall.model.*;
+import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.wall.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,12 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -151,11 +146,6 @@ public class WallService {
         return new ViewerContext(currentUserId, viewer.getDepartmentId(), viewer.getTeamId());
     }
 
-    /** Bundles the viewer's identity + scope fields used by the visibility predicate. */
-    private record ViewerContext(UUID employeeId, UUID departmentId, UUID teamId) {
-        static final ViewerContext ANONYMOUS = new ViewerContext(null, null, null);
-    }
-
     /**
      * Wave-3 NU-Fluence 3.5: defence-in-depth visibility check for single-post
      * lookup paths (e.g. {@link #getPostById}). The feed-level filter now runs
@@ -259,8 +249,6 @@ public class WallService {
         return mapToResponse(savedPost, null);
     }
 
-    // ==================== REACTIONS ====================
-
     @Transactional
     public void addReaction(UUID postId, UUID employeeId, PostReaction.ReactionType reactionType) {
         UUID tenantId = TenantContext.requireCurrentTenant();
@@ -298,6 +286,8 @@ public class WallService {
         }
     }
 
+    // ==================== REACTIONS ====================
+
     @Transactional
     public void removeReaction(UUID postId, UUID employeeId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
@@ -326,8 +316,6 @@ public class WallService {
         return reactions.map(this::mapToReactorInfo);
     }
 
-    // ==================== COMMENTS ====================
-
     @Transactional
     public CommentResponse addComment(UUID postId, CreateCommentRequest request, UUID authorId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
@@ -353,6 +341,8 @@ public class WallService {
 
         return mapCommentToResponse(savedComment);
     }
+
+    // ==================== COMMENTS ====================
 
     @Transactional(readOnly = true)
     public Page<CommentResponse> getComments(UUID postId, Pageable pageable) {
@@ -387,8 +377,6 @@ public class WallService {
             wallPostRepository.save(post);
         }
     }
-
-    // ==================== POLLS ====================
 
     public WallPostResponse vote(UUID postId, UUID optionId, UUID employeeId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
@@ -426,12 +414,12 @@ public class WallService {
         return mapToResponse(post, employeeId);
     }
 
+    // ==================== POLLS ====================
+
     @Transactional
     public void removeVote(UUID postId, UUID employeeId) {
         pollVoteRepository.deleteByPollOptionPostIdAndEmployeeId(postId, employeeId);
     }
-
-    // ==================== PRAISE ====================
 
     @Transactional(readOnly = true)
     public Page<WallPostResponse> getPraiseForEmployee(UUID employeeId, Pageable pageable, UUID currentUserId) {
@@ -440,7 +428,7 @@ public class WallService {
         return posts.map(post -> mapToResponse(post, currentUserId));
     }
 
-    // ==================== BATCH MAPPING (BUG-001 FIX) ====================
+    // ==================== PRAISE ====================
 
     /**
      * Batch-maps a page of WallPost entities to WallPostResponse DTOs using
@@ -605,7 +593,7 @@ public class WallService {
         });
     }
 
-    // ==================== MAPPING HELPERS ====================
+    // ==================== BATCH MAPPING (BUG-001 FIX) ====================
 
     private WallPostResponse mapToResponse(WallPost post, UUID currentUserId) {
         WallPostResponse response = new WallPostResponse();
@@ -694,6 +682,8 @@ public class WallService {
         return response;
     }
 
+    // ==================== MAPPING HELPERS ====================
+
     private WallPostResponse.AuthorInfo mapToAuthorInfo(Employee employee) {
         WallPostResponse.AuthorInfo authorInfo = new WallPostResponse.AuthorInfo();
         authorInfo.setId(employee.getId());
@@ -739,5 +729,12 @@ public class WallService {
         response.setCreatedAt(comment.getCreatedAt());
         response.setUpdatedAt(comment.getUpdatedAt());
         return response;
+    }
+
+    /**
+     * Bundles the viewer's identity + scope fields used by the visibility predicate.
+     */
+    private record ViewerContext(UUID employeeId, UUID departmentId, UUID teamId) {
+        static final ViewerContext ANONYMOUS = new ViewerContext(null, null, null);
     }
 }

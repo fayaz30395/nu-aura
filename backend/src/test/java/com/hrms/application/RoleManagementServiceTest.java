@@ -7,17 +7,11 @@ import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.exception.ValidationException;
 import com.hrms.common.security.RoleHierarchy;
 import com.hrms.common.security.SecurityContext;
-import com.hrms.domain.user.Permission;
-import com.hrms.domain.user.Role;
-import com.hrms.domain.user.User;
+import com.hrms.domain.user.*;
 import com.hrms.infrastructure.user.repository.PermissionRepository;
 import com.hrms.infrastructure.user.repository.RoleRepository;
 import com.hrms.infrastructure.user.repository.UserRepository;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -27,9 +21,6 @@ import org.springframework.security.access.AccessDeniedException;
 
 import java.time.LocalDateTime;
 import java.util.*;
-
-import com.hrms.domain.user.RolePermission;
-import com.hrms.domain.user.RoleScope;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;

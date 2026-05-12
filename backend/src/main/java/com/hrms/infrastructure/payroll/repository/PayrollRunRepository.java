@@ -2,9 +2,9 @@ package com.hrms.infrastructure.payroll.repository;
 
 import com.hrms.domain.payroll.PayrollRun;
 import com.hrms.domain.payroll.PayrollRun.PayrollStatus;
+import jakarta.persistence.LockModeType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;

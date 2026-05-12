@@ -1,11 +1,12 @@
 package com.hrms.infrastructure.kafka.consumer;
 
 import com.hrms.common.security.TenantContext;
-import com.hrms.infrastructure.kafka.KafkaTopics;
-import com.hrms.infrastructure.kafka.IdempotencyService;
-import com.hrms.infrastructure.kafka.events.AuditEvent;
-import com.hrms.infrastructure.audit.repository.AuditLogRepository;
 import com.hrms.domain.audit.AuditLog;
+import com.hrms.infrastructure.audit.repository.AuditLogRepository;
+import com.hrms.infrastructure.kafka.IdempotencyService;
+import com.hrms.infrastructure.kafka.KafkaTopics;
+import com.hrms.infrastructure.kafka.events.AuditEvent;
+import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
@@ -13,8 +14,6 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
-
-import jakarta.annotation.PreDestroy;
 
 import java.util.ArrayList;
 import java.util.List;

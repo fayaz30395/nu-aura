@@ -210,7 +210,8 @@ SELECT gen_random_uuid(),
 FROM tenants t
 WHERE NOT EXISTS (SELECT 1
                   FROM shifts s
-                  WHERE s.tenant_id = t.id AND s.shift_code = 'GEN');
+                  WHERE s.tenant_id = t.id
+                    AND s.shift_code = 'GEN');
 
 INSERT INTO shifts (id, tenant_id, shift_code, shift_name, description, start_time, end_time,
                     grace_period_in_minutes, late_mark_after_minutes, half_day_after_minutes,
@@ -246,7 +247,8 @@ SELECT gen_random_uuid(),
 FROM tenants t
 WHERE NOT EXISTS (SELECT 1
                   FROM shifts s
-                  WHERE s.tenant_id = t.id AND s.shift_code = 'MOR');
+                  WHERE s.tenant_id = t.id
+                    AND s.shift_code = 'MOR');
 
 INSERT INTO shifts (id, tenant_id, shift_code, shift_name, description, start_time, end_time,
                     grace_period_in_minutes, late_mark_after_minutes, half_day_after_minutes,
@@ -282,7 +284,8 @@ SELECT gen_random_uuid(),
 FROM tenants t
 WHERE NOT EXISTS (SELECT 1
                   FROM shifts s
-                  WHERE s.tenant_id = t.id AND s.shift_code = 'AFT');
+                  WHERE s.tenant_id = t.id
+                    AND s.shift_code = 'AFT');
 
 INSERT INTO shifts (id, tenant_id, shift_code, shift_name, description, start_time, end_time,
                     grace_period_in_minutes, late_mark_after_minutes, half_day_after_minutes,
@@ -318,7 +321,8 @@ SELECT gen_random_uuid(),
 FROM tenants t
 WHERE NOT EXISTS (SELECT 1
                   FROM shifts s
-                  WHERE s.tenant_id = t.id AND s.shift_code = 'NGT');
+                  WHERE s.tenant_id = t.id
+                    AND s.shift_code = 'NGT');
 
 INSERT INTO shifts (id, tenant_id, shift_code, shift_name, description, start_time, end_time,
                     grace_period_in_minutes, late_mark_after_minutes, half_day_after_minutes,
@@ -354,4 +358,5 @@ SELECT gen_random_uuid(),
 FROM tenants t
 WHERE NOT EXISTS (SELECT 1
                   FROM shifts s
-                  WHERE s.tenant_id = t.id AND s.shift_code = 'FLX');
+                  WHERE s.tenant_id = t.id
+                    AND s.shift_code = 'FLX');

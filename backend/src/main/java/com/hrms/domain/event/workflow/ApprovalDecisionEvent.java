@@ -2,7 +2,6 @@ package com.hrms.domain.event.workflow;
 
 import com.hrms.domain.event.DomainEvent;
 import com.hrms.domain.workflow.StepExecution;
-import com.hrms.domain.workflow.WorkflowDefinition;
 import com.hrms.domain.workflow.WorkflowExecution;
 import lombok.Getter;
 

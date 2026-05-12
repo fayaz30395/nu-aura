@@ -134,7 +134,8 @@ test.describe.serial('S1 — Hire-to-Retire @lifecycle', () => {
     await page.waitForTimeout(1500);
     // Job may or may not appear — success if no 5xx error shown
     const error = page.locator('text=/500|Internal Server Error/i');
-    await expect(error).not.toBeVisible({timeout: 3000}).catch(() => {});
+    await expect(error).not.toBeVisible({timeout: 3000}).catch(() => {
+    });
   });
 
   // ── S1.4  Create Employee (HRA flow — core of lifecycle) ───────────────
@@ -194,7 +195,8 @@ test.describe.serial('S1 — Hire-to-Retire @lifecycle', () => {
     }
 
     const error = page.locator('text=/500|Internal Server Error/i');
-    await expect(error).not.toBeVisible({timeout: 3000}).catch(() => {});
+    await expect(error).not.toBeVisible({timeout: 3000}).catch(() => {
+    });
   });
 
   // ── S1.5  Onboarding Checklist ──────────────────────────────────────────
@@ -318,7 +320,8 @@ test.describe.serial('S1 — Hire-to-Retire @lifecycle', () => {
 
     await page.waitForTimeout(1500);
     const error = page.locator('text=/500|Internal Server Error/i');
-    await expect(error).not.toBeVisible({timeout: 3000}).catch(() => {});
+    await expect(error).not.toBeVisible({timeout: 3000}).catch(() => {
+    });
   });
 
   // ── S1.9  Login / Logout Cycle ───────────────────────────────────────────
@@ -599,7 +602,7 @@ test.describe.serial('S2 — Expense Lifecycle @lifecycle', () => {
 
     // Form should still be open or show an error
     const stillOpen = await page.locator('[role="dialog"], form').first().isVisible().catch(() => false);
-    const hasError  = await page.locator('text=/required|invalid|minimum/i').isVisible().catch(() => false);
+    const hasError = await page.locator('text=/required|invalid|minimum/i').isVisible().catch(() => false);
     expect(stillOpen || hasError).toBe(true);
   });
 
@@ -893,7 +896,8 @@ test.describe.serial('S5 — Asset Lifecycle @lifecycle', () => {
         } else {
           await empSel.fill(demoUsers.employeeSaran.name);
           await page.waitForTimeout(500);
-          await page.locator('[class*="option"]').first().click().catch(() => {});
+          await page.locator('[class*="option"]').first().click().catch(() => {
+          });
         }
       }
 
@@ -909,7 +913,8 @@ test.describe.serial('S5 — Asset Lifecycle @lifecycle', () => {
     await page.waitForTimeout(1500);
 
     const serverError = page.locator('text=/500|Forbidden|403/');
-    await expect(serverError).not.toBeVisible({timeout: 3000}).catch(() => {});
+    await expect(serverError).not.toBeVisible({timeout: 3000}).catch(() => {
+    });
   });
 
   test('S5.4: admin returns asset', async ({page}) => {
@@ -990,7 +995,8 @@ test.describe.serial('S6 — Loan Lifecycle @lifecycle', () => {
 
     await page.waitForTimeout(1500);
     const serverError = page.locator('text=/500|Internal Server Error/i');
-    await expect(serverError).not.toBeVisible({timeout: 3000}).catch(() => {});
+    await expect(serverError).not.toBeVisible({timeout: 3000}).catch(() => {
+    });
   });
 });
 
@@ -1173,7 +1179,8 @@ test.describe.serial('S9 — Announcement Flow @lifecycle', () => {
 
     await page.waitForTimeout(1500);
     const serverError = page.locator('text=/500|Internal Server Error/i');
-    await expect(serverError).not.toBeVisible({timeout: 3000}).catch(() => {});
+    await expect(serverError).not.toBeVisible({timeout: 3000}).catch(() => {
+    });
   });
 
   test('S9.4: HRA deletes announcement', async ({page}) => {
@@ -1272,12 +1279,13 @@ test.describe('S10 — Session Isolation @lifecycle @security', () => {
     }
 
     const serverError = page.locator('text=/500|Internal Server Error/i');
-    await expect(serverError).not.toBeVisible({timeout: 3000}).catch(() => {});
+    await expect(serverError).not.toBeVisible({timeout: 3000}).catch(() => {
+    });
   });
 
   test('S10.4: concurrent sessions are independent', async ({browser}) => {
-    const ctxEss  = await browser.newContext();
-    const ctxMgr  = await browser.newContext();
+    const ctxEss = await browser.newContext();
+    const ctxMgr = await browser.newContext();
     const pageEss = await ctxEss.newPage();
     const pageMgr = await ctxMgr.newPage();
 
@@ -1368,7 +1376,8 @@ test.describe.serial('S11 — OKR + Recognition @lifecycle', () => {
     if (await empInput.isVisible({timeout: 3000}).catch(() => false)) {
       await empInput.fill(demoUsers.employeeSaran.name);
       await page.waitForTimeout(500);
-      await page.locator('[class*="option"], li').first().click().catch(() => {});
+      await page.locator('[class*="option"], li').first().click().catch(() => {
+      });
     }
 
     await tryFill(page, 'Great progress on v2.0 testing',
@@ -1378,6 +1387,7 @@ test.describe.serial('S11 — OKR + Recognition @lifecycle', () => {
     await page.waitForTimeout(1500);
 
     const error = page.locator('text=/500|Internal Server Error/i');
-    await expect(error).not.toBeVisible({timeout: 3000}).catch(() => {});
+    await expect(error).not.toBeVisible({timeout: 3000}).catch(() => {
+    });
   });
 });

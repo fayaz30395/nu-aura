@@ -1,7 +1,13 @@
 package com.hrms.application.platform.service;
 
-import com.hrms.domain.platform.*;
-import com.hrms.infrastructure.platform.repository.*;
+import com.hrms.domain.platform.AppPermission;
+import com.hrms.domain.platform.AppRole;
+import com.hrms.domain.platform.NuApplication;
+import com.hrms.domain.platform.TenantApplication;
+import com.hrms.infrastructure.platform.repository.AppPermissionRepository;
+import com.hrms.infrastructure.platform.repository.AppRoleRepository;
+import com.hrms.infrastructure.platform.repository.NuApplicationRepository;
+import com.hrms.infrastructure.platform.repository.TenantApplicationRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,11 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**

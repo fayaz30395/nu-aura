@@ -2,12 +2,7 @@ package com.hrms.api.payroll.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.Digits;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -52,31 +47,40 @@ public class UpdatePayslipRequest {
     @Digits(integer = 12, fraction = 2, message = "Basic salary must have at most 12 digits and 2 decimals")
     private BigDecimal basicSalary;
 
-    @PositiveOrZero @Digits(integer = 12, fraction = 2)
+    @PositiveOrZero
+    @Digits(integer = 12, fraction = 2)
     private BigDecimal hra;
 
-    @PositiveOrZero @Digits(integer = 12, fraction = 2)
+    @PositiveOrZero
+    @Digits(integer = 12, fraction = 2)
     private BigDecimal conveyanceAllowance;
 
-    @PositiveOrZero @Digits(integer = 12, fraction = 2)
+    @PositiveOrZero
+    @Digits(integer = 12, fraction = 2)
     private BigDecimal medicalAllowance;
 
-    @PositiveOrZero @Digits(integer = 12, fraction = 2)
+    @PositiveOrZero
+    @Digits(integer = 12, fraction = 2)
     private BigDecimal specialAllowance;
 
-    @PositiveOrZero @Digits(integer = 12, fraction = 2)
+    @PositiveOrZero
+    @Digits(integer = 12, fraction = 2)
     private BigDecimal otherAllowances;
 
-    @PositiveOrZero @Digits(integer = 12, fraction = 2)
+    @PositiveOrZero
+    @Digits(integer = 12, fraction = 2)
     private BigDecimal providentFund;
 
-    @PositiveOrZero @Digits(integer = 12, fraction = 2)
+    @PositiveOrZero
+    @Digits(integer = 12, fraction = 2)
     private BigDecimal professionalTax;
 
-    @PositiveOrZero @Digits(integer = 12, fraction = 2)
+    @PositiveOrZero
+    @Digits(integer = 12, fraction = 2)
     private BigDecimal incomeTax;
 
-    @PositiveOrZero @Digits(integer = 12, fraction = 2)
+    @PositiveOrZero
+    @Digits(integer = 12, fraction = 2)
     private BigDecimal otherDeductions;
 
     @Min(value = 0, message = "Working days must be non-negative")

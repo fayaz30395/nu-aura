@@ -5,4 +5,4 @@
 -- Uses IF NOT EXISTS so this is safe on any fresh install that already has the column.
 
 ALTER TABLE assets
-    ADD COLUMN IF NOT EXISTS version BIGINT DEFAULT 0;
+  ADD COLUMN IF NOT EXISTS version BIGINT DEFAULT 0;

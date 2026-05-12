@@ -44,13 +44,15 @@ test.describe('Wiki Edit Lock — concurrent editors @regression', () => {
       }
 
       await firstArticle.click();
-      await pageA.waitForLoadState('networkidle').catch(() => {});
+      await pageA.waitForLoadState('networkidle').catch(() => {
+      });
 
       // Acquire lock via edit button
       const editBtnA = pageA.locator('a[href*="/edit"], button').filter({hasText: /edit/i}).first();
       if (!(await editBtnA.isVisible({timeout: 5000}).catch(() => false))) return;
       await editBtnA.click();
-      await pageA.waitForLoadState('networkidle').catch(() => {});
+      await pageA.waitForLoadState('networkidle').catch(() => {
+      });
 
       // Capture A's edit URL so B can open the exact same article
       const editUrlA = pageA.url();
@@ -62,7 +64,8 @@ test.describe('Wiki Edit Lock — concurrent editors @regression', () => {
       // User B logs in and navigates to the same edit URL
       await loginAs(pageB, demoUsers.hrManager.email);
       await pageB.goto(editUrlA);
-      await pageB.waitForLoadState('networkidle').catch(() => {});
+      await pageB.waitForLoadState('networkidle').catch(() => {
+      });
 
       // B should see lock-warning copy — names of the warning vary across the codebase
       const lockWarning = pageB.locator(
@@ -90,12 +93,14 @@ test.describe('Wiki Edit Lock — concurrent editors @regression', () => {
       const firstArticle = pageA.locator('[class*="card"]').filter({hasNotText: 'Spaces'}).first();
       if (!(await firstArticle.isVisible({timeout: 5000}).catch(() => false))) return;
       await firstArticle.click();
-      await pageA.waitForLoadState('networkidle').catch(() => {});
+      await pageA.waitForLoadState('networkidle').catch(() => {
+      });
 
       const editBtnA = pageA.locator('a[href*="/edit"], button').filter({hasText: /edit/i}).first();
       if (!(await editBtnA.isVisible({timeout: 5000}).catch(() => false))) return;
       await editBtnA.click();
-      await pageA.waitForLoadState('networkidle').catch(() => {});
+      await pageA.waitForLoadState('networkidle').catch(() => {
+      });
 
       // Wait ~6s to allow at least one heartbeat tick (default heartbeat is ~3-5s).
       // We don't await 5min — just verify editor stays usable while heartbeat fires.

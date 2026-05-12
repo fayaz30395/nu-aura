@@ -25,7 +25,9 @@ import java.io.InputStream;
 @Slf4j
 public class AttachmentTextExtractionService {
 
-    /** Cap returned text at 100k chars to bound memory and downstream row size. */
+    /**
+     * Cap returned text at 100k chars to bound memory and downstream row size.
+     */
     public static final int MAX_CHARS = 100_000;
 
     private final Tika tika = new Tika();

@@ -6860,7 +6860,8 @@ Execute use cases in the following priority order for regression testing:
 ## P2 — NU-Fluence Module Tests (Knowledge Management / Confluence Replacement)
 
 > **Added 2026-04-07** — NU-Fluence frontend is now ~90% complete. Backend is 100%.
-> These use cases cover the wiki, blogs, templates, search, drive, wall, analytics, AI chat, and inline comments.
+> These use cases cover the wiki, blogs, templates, search, drive, wall, analytics, AI chat, and
+> inline comments.
 
 ### UC-FLUENCE-001 — Wiki Space CRUD
 
@@ -6900,11 +6901,13 @@ Execute use cases in the following priority order for regression testing:
   1. Navigate to `/fluence/wiki` → click "New Page"
   2. Select target space from dropdown
   3. Enter title, use Tiptap editor to add content:
-     - Headings (H1, H2, H3)
-     - Bold, italic, bullet/numbered lists
-     - Code blocks, blockquotes
-     - Tables
-     - Image upload
+
+  - Headings (H1, H2, H3)
+  - Bold, italic, bullet/numbered lists
+  - Code blocks, blockquotes
+  - Tables
+  - Image upload
+
   4. Set visibility (PUBLIC/ORGANIZATION/DEPARTMENT/PRIVATE)
   5. Select parent page (for nesting)
   6. Click Save → verify redirect to page view
@@ -7235,7 +7238,8 @@ Execute use cases in the following priority order for regression testing:
 - **Permissions Required:** AGENCY:CREATE, AGENCY:UPDATE, AGENCY:DELETE
 - **Test Steps:**
   1. Navigate to `/recruitment/agencies`
-  2. Click "Add Agency" → fill: name, contact person, email, phone, fee type (percentage/fixed), fee amount, specializations, status
+  2. Click "Add Agency" → fill: name, contact person, email, phone, fee type (percentage/fixed), fee
+     amount, specializations, status
   3. Save → verify agency in list with correct details
   4. Click agency → view detail page at `/recruitment/agencies/[id]`
   5. Edit agency details → save
@@ -7295,7 +7299,8 @@ Execute use cases in the following priority order for regression testing:
 - **API Endpoint:** POST /api/v1/recruitment/scorecard-templates
 - **Test Steps:**
   1. Navigate to recruitment settings → scorecard templates
-  2. Create template: name, criteria list (technical skills, communication, cultural fit, etc.), rating scale (1-5)
+  2. Create template: name, criteria list (technical skills, communication, cultural fit, etc.),
+     rating scale (1-5)
   3. Assign template to job opening
   4. Edit template → add/remove criteria
   5. Delete unused template
@@ -7467,47 +7472,47 @@ Execute use cases in the following priority order for regression testing:
 
 ## Appendix D: Updated Module Coverage Summary
 
-| Module | UC Count (Original) | UC Count (Added) | Total |
-|--------|--------------------:|------------------:|------:|
-| Auth & Security | 19 | 0 | 19 |
-| Employee | 18 | 0 | 18 |
-| Attendance | 11 | 0 | 11 |
-| Leave | 15 | 0 | 15 |
-| Payroll | 16 | 0 | 16 |
-| Statutory | 10 | 0 | 10 |
-| Benefits | 8 | 0 | 8 |
-| Assets | 8 | 0 | 8 |
-| Expenses | 10 | 0 | 10 |
-| Loans | 6 | 0 | 6 |
-| Travel | 6 | 0 | 6 |
-| Contracts | 6 | 0 | 6 |
-| Letters | 7 | 0 | 7 |
-| Documents | 5 | 0 | 5 |
-| Departments | 6 | 0 | 6 |
-| Helpdesk | 7 | 0 | 7 |
-| Timesheets | 6 | 0 | 6 |
-| Resources | 7 | 0 | 7 |
-| Reports | 10 | 0 | 10 |
-| Admin & Settings | 19 | 0 | 19 |
-| Notifications | 6 | 0 | 6 |
-| Announcements | 4 | 0 | 4 |
-| Calendar | 5 | 0 | 5 |
-| Probation | 5 | 0 | 5 |
-| My Space | 8 | 0 | 8 |
-| Dashboard | 8 | 0 | 8 |
-| F&F Settlement | 5 | 0 | 5 |
-| App Switcher | 1 | 0 | 1 |
-| Smoke | 1 | 0 | 1 |
-| NU-Hire | 18 | 0 | 18 |
-| NU-Grow | 22 | 0 | 22 |
-| Performance Baselines | 8 | 0 | 8 |
-| RBAC (original) | 20 | 5 | 25 |
-| **NU-Fluence** | **0** | **17** | **17** |
-| **Agencies** | **0** | **3** | **3** |
-| **Scorecards** | **0** | **2** | **2** |
-| **Diversity** | **0** | **1** | **1** |
-| **KEKA Import** | **0** | **3** | **3** |
-| **Total** | **318** | **31** | **349** |
+| Module                | UC Count (Original) | UC Count (Added) |   Total |
+|-----------------------|--------------------:|-----------------:|--------:|
+| Auth & Security       |                  19 |                0 |      19 |
+| Employee              |                  18 |                0 |      18 |
+| Attendance            |                  11 |                0 |      11 |
+| Leave                 |                  15 |                0 |      15 |
+| Payroll               |                  16 |                0 |      16 |
+| Statutory             |                  10 |                0 |      10 |
+| Benefits              |                   8 |                0 |       8 |
+| Assets                |                   8 |                0 |       8 |
+| Expenses              |                  10 |                0 |      10 |
+| Loans                 |                   6 |                0 |       6 |
+| Travel                |                   6 |                0 |       6 |
+| Contracts             |                   6 |                0 |       6 |
+| Letters               |                   7 |                0 |       7 |
+| Documents             |                   5 |                0 |       5 |
+| Departments           |                   6 |                0 |       6 |
+| Helpdesk              |                   7 |                0 |       7 |
+| Timesheets            |                   6 |                0 |       6 |
+| Resources             |                   7 |                0 |       7 |
+| Reports               |                  10 |                0 |      10 |
+| Admin & Settings      |                  19 |                0 |      19 |
+| Notifications         |                   6 |                0 |       6 |
+| Announcements         |                   4 |                0 |       4 |
+| Calendar              |                   5 |                0 |       5 |
+| Probation             |                   5 |                0 |       5 |
+| My Space              |                   8 |                0 |       8 |
+| Dashboard             |                   8 |                0 |       8 |
+| F&F Settlement        |                   5 |                0 |       5 |
+| App Switcher          |                   1 |                0 |       1 |
+| Smoke                 |                   1 |                0 |       1 |
+| NU-Hire               |                  18 |                0 |      18 |
+| NU-Grow               |                  22 |                0 |      22 |
+| Performance Baselines |                   8 |                0 |       8 |
+| RBAC (original)       |                  20 |                5 |      25 |
+| **NU-Fluence**        |               **0** |           **17** |  **17** |
+| **Agencies**          |               **0** |            **3** |   **3** |
+| **Scorecards**        |               **0** |            **2** |   **2** |
+| **Diversity**         |               **0** |            **1** |   **1** |
+| **KEKA Import**       |               **0** |            **3** |   **3** |
+| **Total**             |             **318** |           **31** | **349** |
 
 ---
 

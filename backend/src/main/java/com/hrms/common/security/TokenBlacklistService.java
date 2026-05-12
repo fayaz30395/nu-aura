@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -13,8 +14,6 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service for managing JWT token revocation.
@@ -31,26 +30,26 @@ import org.springframework.transaction.annotation.Transactional;
 public class TokenBlacklistService {
 
     private static final String BLACKLIST_PREFIX = "token:blacklist:";
-
-    private final StringRedisTemplate redisTemplate;
-
-    // Fallback in-memory blacklist (used when Redis unavailable)
-    private final ConcurrentHashMap<String, Long> inMemoryBlacklist = new ConcurrentHashMap<>();
-
     /**
      * Per-user revoked-before timestamp (epoch-ms) used when Redis is unavailable.
      * Mirrors the Redis key {@code user:token:revoked_before:<userId>} so logout/
      * password-change revocation survives Redis outages on a single-pod fallback.
      */
     private static final ConcurrentHashMap<String, Long> revokedBeforeFallback = new ConcurrentHashMap<>();
-
+    private final StringRedisTemplate redisTemplate;
+    // Fallback in-memory blacklist (used when Redis unavailable)
+    private final ConcurrentHashMap<String, Long> inMemoryBlacklist = new ConcurrentHashMap<>();
+    /**
+     * Latched so we only log the multi-pod logout-bypass warning once per outage
+     * (cleared on Redis recovery). Avoids log flooding when Redis is sustained-down.
+     */
+    private final AtomicBoolean fallbackWarningEmitted = new AtomicBoolean(false);
     /**
      * Refresh token expiration in milliseconds — used as the TTL for the
      * "revoked before" timestamp record.
      */
     @Value("${app.jwt.refresh-expiration:86400000}")
     private long refreshExpirationMs;
-
     /**
      * Whether Redis is currently reachable. Updated at construction and
      * by {@link #redisHealthProbe()} every 30 s. Reads / writes are racy
@@ -59,12 +58,6 @@ public class TokenBlacklistService {
      * the field at most once.
      */
     private volatile boolean redisAvailable = true;
-
-    /**
-     * Latched so we only log the multi-pod logout-bypass warning once per outage
-     * (cleared on Redis recovery). Avoids log flooding when Redis is sustained-down.
-     */
-    private final AtomicBoolean fallbackWarningEmitted = new AtomicBoolean(false);
 
     public TokenBlacklistService(StringRedisTemplate redisTemplate) {
         this.redisTemplate = redisTemplate;

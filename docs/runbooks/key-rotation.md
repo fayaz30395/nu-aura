@@ -12,18 +12,18 @@ user passwords. Document each rotation in the audit log.
 
 ## 1. Rotation Cadence
 
-| Secret | Quarterly | Emergency Trigger |
-|--------|-----------|-------------------|
-| `JWT_SECRET` | Yes | Token leak, JWT signing compromise |
-| `APP_SECURITY_ENCRYPTION_KEY` (CryptoConverter) | Yes | Hex key leak, suspicious decryption |
-| Google OAuth client secret | Yes | Suspicious sign-in pattern |
-| SAML signing certificate | Annually | Cert near expiry, IdP key rotation |
-| Per-tenant API keys | On request | Tenant suspects leak |
-| Webhook signing secret | Yes | Public exposure suspected |
-| Slack signing secret | Yes | Slack notifies of key compromise |
-| Database password (Neon) | Yes | DBA password leak |
-| Redis password | Yes | Connection-string leak |
-| Kafka SASL credentials | Yes | Broker-side rotation |
+| Secret                                          | Quarterly  | Emergency Trigger                   |
+|-------------------------------------------------|------------|-------------------------------------|
+| `JWT_SECRET`                                    | Yes        | Token leak, JWT signing compromise  |
+| `APP_SECURITY_ENCRYPTION_KEY` (CryptoConverter) | Yes        | Hex key leak, suspicious decryption |
+| Google OAuth client secret                      | Yes        | Suspicious sign-in pattern          |
+| SAML signing certificate                        | Annually   | Cert near expiry, IdP key rotation  |
+| Per-tenant API keys                             | On request | Tenant suspects leak                |
+| Webhook signing secret                          | Yes        | Public exposure suspected           |
+| Slack signing secret                            | Yes        | Slack notifies of key compromise    |
+| Database password (Neon)                        | Yes        | DBA password leak                   |
+| Redis password                                  | Yes        | Connection-string leak              |
+| Kafka SASL credentials                          | Yes        | Broker-side rotation                |
 
 Calendar the rotation cycle on Jan 15 / Apr 15 / Jul 15 / Oct 15 each year.
 

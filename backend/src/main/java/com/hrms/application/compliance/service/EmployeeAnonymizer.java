@@ -207,7 +207,7 @@ public class EmployeeAnonymizer {
         employeeRepository.save(employee);
 
         log.info("EmployeeAnonymizer: anonymised employee {} (user {}) in tenant {} — "
-                + "name/contact/address/bank/tax PII wiped; employeeCode={} and joiningDate={} preserved",
+                        + "name/contact/address/bank/tax PII wiped; employeeCode={} and joiningDate={} preserved",
                 employee.getId(), userId, tenantId, employee.getEmployeeCode(), employee.getJoiningDate());
 
         return Result.ANONYMIZED;
@@ -238,11 +238,17 @@ public class EmployeeAnonymizer {
      * exactly what happened in the cascade step.
      */
     public enum Result {
-        /** Employee row was wiped on this call. */
+        /**
+         * Employee row was wiped on this call.
+         */
         ANONYMIZED,
-        /** Sentinel matched — no rewrite needed. */
+        /**
+         * Sentinel matched — no rewrite needed.
+         */
         ALREADY_ANONYMIZED,
-        /** No employee row linked to the user (service-account or never-onboarded). */
+        /**
+         * No employee row linked to the user (service-account or never-onboarded).
+         */
         NOT_FOUND
     }
 }

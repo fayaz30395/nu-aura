@@ -2,12 +2,10 @@ package com.hrms.application.notification.service;
 
 import com.hrms.domain.notification.EmailNotification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-
 import java.util.Map;
-
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class EmailTemplateService {

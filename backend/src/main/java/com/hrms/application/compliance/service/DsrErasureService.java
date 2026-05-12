@@ -18,11 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.HexFormat;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Orchestrates GDPR Article 17 ("right to be forgotten") fulfilment for a
@@ -110,6 +106,28 @@ public class DsrErasureService {
     private final AttendanceRecordRedactor attendanceRecordRedactor;
 
     /**
+     * Returns the lowercase hex SHA-256 of {@code input}. Used to record the
+     * data subject's pre-anonymisation email in the audit row without
+     * persisting the cleartext after fulfilment.
+     *
+     * <p>SHA-256 (not BCrypt / Argon2) is the right choice here: this is a
+     * one-way trace fingerprint, not a credential — we never compare it
+     * against user input. The collision resistance of SHA-256 is more than
+     * sufficient to identify a specific user record from a compliant inquiry.</p>
+     */
+    private static String sha256Hex(String input) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] digest = md.digest(input.getBytes(StandardCharsets.UTF_8));
+            return HexFormat.of().formatHex(digest);
+        } catch (NoSuchAlgorithmException e) {
+            // SHA-256 is mandated by every JRE since 1.4.2 — this branch is
+            // effectively unreachable but kept for completeness.
+            throw new IllegalStateException("SHA-256 unavailable on this JVM", e);
+        }
+    }
+
+    /**
      * Fulfils the Article 17 erasure described by {@code request}.
      *
      * <p>Flow:</p>
@@ -145,12 +163,12 @@ public class DsrErasureService {
      *                {@link DsrRequest.RequestType#ERASURE} and in a non-terminal
      *                status. The method moves it to {@link DsrRequest.Status#COMPLETED}.
      * @return the same {@link DsrRequest}, now {@code status=COMPLETED} with
-     *         {@code adminNotes} populated with the per-data-class result summary.
-     * @throws AccessDeniedException     when the caller is neither the data
-     *                                   subject nor a SYSTEM_ADMIN.
-     * @throws IllegalArgumentException  when the request is null, not an
-     *                                   erasure request, or already in a
-     *                                   terminal state.
+     * {@code adminNotes} populated with the per-data-class result summary.
+     * @throws AccessDeniedException    when the caller is neither the data
+     *                                  subject nor a SYSTEM_ADMIN.
+     * @throws IllegalArgumentException when the request is null, not an
+     *                                  erasure request, or already in a
+     *                                  terminal state.
      */
     @Transactional
     public DsrRequest processErasure(DsrRequest request) {
@@ -285,7 +303,7 @@ public class DsrErasureService {
         // Sanity-log a cascade summary line. Useful for ops debugging when a
         // DSR completes but a tenant later complains about a missed row.
         log.info("DSR {} cascade complete — employee={}, salary={}/{}, leaveRequests={}, "
-                + "leaveBalances={}, attendance={}",
+                        + "leaveBalances={}, attendance={}",
                 request.getId(),
                 employeeResult,
                 salaryResult.kind(), salaryResult.count(),
@@ -294,46 +312,6 @@ public class DsrErasureService {
                 attendanceResult.softDeleted());
 
         return new CascadeOutcome(employeeResult, salaryResult, leaveResult, attendanceResult);
-    }
-
-    /**
-     * Aggregated cascade result that the audit row + adminNotes summary both
-     * consume. Kept as a private record on the orchestrator (rather than a
-     * top-level type) because it has no callers outside this class and
-     * carrying it via a single object simplifies the
-     * {@code buildResultNotes} / audit-emission call sites.
-     */
-    private record CascadeOutcome(
-            EmployeeAnonymizer.Result employee,
-            SalaryStructureAnonymizer.Result salary,
-            LeaveRecordRedactor.Result leave,
-            AttendanceRecordRedactor.Result attendance) {
-
-        /**
-         * Returns the cascade outcome in the shape the audit row's
-         * {@code newValue.cascade} expects. Kept here rather than inlined
-         * so the audit format and the {@code adminNotes} format share one
-         * source of truth and stay in sync.
-         */
-        Map<String, Object> asAuditMap() {
-            Map<String, Object> map = new LinkedHashMap<>();
-            map.put("Employee", employee.name());
-            Map<String, Object> salaryMap = new LinkedHashMap<>();
-            salaryMap.put("kind", salary.kind().name());
-            salaryMap.put("rowsRetained", salary.count());
-            map.put("SalaryStructure", salaryMap);
-            Map<String, Object> leaveMap = new LinkedHashMap<>();
-            leaveMap.put("leaveRequestsSoftDeleted", leave.leaveRequestsSoftDeleted());
-            leaveMap.put("leaveRequestsAlreadyDeleted", leave.leaveRequestsAlreadyDeleted());
-            leaveMap.put("leaveBalancesSoftDeleted", leave.leaveBalancesSoftDeleted());
-            leaveMap.put("leaveBalancesAlreadyDeleted", leave.leaveBalancesAlreadyDeleted());
-            map.put("Leave", leaveMap);
-            Map<String, Object> attendanceMap = new LinkedHashMap<>();
-            attendanceMap.put("softDeleted", attendance.softDeleted());
-            attendanceMap.put("alreadyDeleted", attendance.alreadyDeleted());
-            map.put("AttendanceRecord", attendanceMap);
-            return map;
-        }
     }
 
     /**
@@ -373,7 +351,7 @@ public class DsrErasureService {
         // adminNotes summary so the legal-hold rationale is explicit.
         if (hasActivePayrollWithinRetentionWindow(request.getRequesterUserId(), request.getTenantId())) {
             log.info("DSR {} — payroll records within {}-year retention window detected; "
-                    + "Employee policy locked to ANONYMIZE (Indian Income Tax Act §139A)",
+                            + "Employee policy locked to ANONYMIZE (Indian Income Tax Act §139A)",
                     request.getId(), PAYROLL_RETENTION_YEARS);
             matrix.put("Employee", ErasurePolicy.ANONYMIZE);
             matrix.put("SalaryStructure", ErasurePolicy.ANONYMIZE);
@@ -480,24 +458,42 @@ public class DsrErasureService {
     }
 
     /**
-     * Returns the lowercase hex SHA-256 of {@code input}. Used to record the
-     * data subject's pre-anonymisation email in the audit row without
-     * persisting the cleartext after fulfilment.
-     *
-     * <p>SHA-256 (not BCrypt / Argon2) is the right choice here: this is a
-     * one-way trace fingerprint, not a credential — we never compare it
-     * against user input. The collision resistance of SHA-256 is more than
-     * sufficient to identify a specific user record from a compliant inquiry.</p>
+     * Aggregated cascade result that the audit row + adminNotes summary both
+     * consume. Kept as a private record on the orchestrator (rather than a
+     * top-level type) because it has no callers outside this class and
+     * carrying it via a single object simplifies the
+     * {@code buildResultNotes} / audit-emission call sites.
      */
-    private static String sha256Hex(String input) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            byte[] digest = md.digest(input.getBytes(StandardCharsets.UTF_8));
-            return HexFormat.of().formatHex(digest);
-        } catch (NoSuchAlgorithmException e) {
-            // SHA-256 is mandated by every JRE since 1.4.2 — this branch is
-            // effectively unreachable but kept for completeness.
-            throw new IllegalStateException("SHA-256 unavailable on this JVM", e);
+    private record CascadeOutcome(
+            EmployeeAnonymizer.Result employee,
+            SalaryStructureAnonymizer.Result salary,
+            LeaveRecordRedactor.Result leave,
+            AttendanceRecordRedactor.Result attendance) {
+
+        /**
+         * Returns the cascade outcome in the shape the audit row's
+         * {@code newValue.cascade} expects. Kept here rather than inlined
+         * so the audit format and the {@code adminNotes} format share one
+         * source of truth and stay in sync.
+         */
+        Map<String, Object> asAuditMap() {
+            Map<String, Object> map = new LinkedHashMap<>();
+            map.put("Employee", employee.name());
+            Map<String, Object> salaryMap = new LinkedHashMap<>();
+            salaryMap.put("kind", salary.kind().name());
+            salaryMap.put("rowsRetained", salary.count());
+            map.put("SalaryStructure", salaryMap);
+            Map<String, Object> leaveMap = new LinkedHashMap<>();
+            leaveMap.put("leaveRequestsSoftDeleted", leave.leaveRequestsSoftDeleted());
+            leaveMap.put("leaveRequestsAlreadyDeleted", leave.leaveRequestsAlreadyDeleted());
+            leaveMap.put("leaveBalancesSoftDeleted", leave.leaveBalancesSoftDeleted());
+            leaveMap.put("leaveBalancesAlreadyDeleted", leave.leaveBalancesAlreadyDeleted());
+            map.put("Leave", leaveMap);
+            Map<String, Object> attendanceMap = new LinkedHashMap<>();
+            attendanceMap.put("softDeleted", attendance.softDeleted());
+            attendanceMap.put("alreadyDeleted", attendance.alreadyDeleted());
+            map.put("AttendanceRecord", attendanceMap);
+            return map;
         }
     }
 }

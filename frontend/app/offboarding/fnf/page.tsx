@@ -1,41 +1,34 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import {useState} from 'react';
+import {useRouter} from 'next/navigation';
 import {
-  Title,
-  Text,
-  Paper,
-  Group,
-  Stack,
+  ActionIcon,
   Badge,
   Button,
-  Table,
-  Loader,
   Center,
-  SimpleGrid,
-  Select,
-  ActionIcon,
-  Tooltip,
+  Group,
+  Loader,
   Pagination,
+  Paper,
+  Select,
+  SimpleGrid,
+  Stack,
+  Table,
+  Text,
   TextInput,
+  Title,
+  Tooltip,
 } from '@mantine/core';
-import { notifications } from '@mantine/notifications';
-import {
-  IconCheck,
-  IconEye,
-  IconSearch,
-  IconCash,
-  IconAlertCircle,
-  IconRefresh,
-} from '@tabler/icons-react';
-import { AppLayout } from '@/components/layout/AppLayout';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
-import { useFnFList, useFnFApprove } from '@/lib/hooks/queries/useFnF';
-import { SettlementStatus } from '@/lib/types/hrms/exit';
-import { formatCurrency, formatDate } from '@/lib/utils';
-import type { FnFCalculationResponse } from '@/lib/services/hrms/fnf.service';
+import {notifications} from '@mantine/notifications';
+import {IconAlertCircle, IconCash, IconCheck, IconEye, IconRefresh, IconSearch,} from '@tabler/icons-react';
+import {AppLayout} from '@/components/layout/AppLayout';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
+import {useFnFApprove, useFnFList} from '@/lib/hooks/queries/useFnF';
+import {SettlementStatus} from '@/lib/types/hrms/exit';
+import {formatCurrency, formatDate} from '@/lib/utils';
+import type {FnFCalculationResponse} from '@/lib/services/hrms/fnf.service';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -49,13 +42,13 @@ const STATUS_COLOR: Record<string, string> = {
 };
 
 const STATUS_OPTIONS = [
-  { value: '', label: 'All Statuses' },
-  { value: SettlementStatus.DRAFT, label: 'Draft' },
-  { value: SettlementStatus.PENDING_APPROVAL, label: 'Pending Approval' },
-  { value: SettlementStatus.APPROVED, label: 'Approved' },
-  { value: SettlementStatus.PROCESSING, label: 'Processing' },
-  { value: SettlementStatus.PAID, label: 'Paid' },
-  { value: SettlementStatus.CANCELLED, label: 'Cancelled' },
+  {value: '', label: 'All Statuses'},
+  {value: SettlementStatus.DRAFT, label: 'Draft'},
+  {value: SettlementStatus.PENDING_APPROVAL, label: 'Pending Approval'},
+  {value: SettlementStatus.APPROVED, label: 'Approved'},
+  {value: SettlementStatus.PROCESSING, label: 'Processing'},
+  {value: SettlementStatus.PAID, label: 'Paid'},
+  {value: SettlementStatus.CANCELLED, label: 'Cancelled'},
 ];
 
 const PAGE_SIZE = 20;
@@ -73,11 +66,11 @@ interface StatCardProps {
   sub?: string;
 }
 
-function StatCard({ label, value, color = 'var(--text-primary)', sub }: StatCardProps) {
+function StatCard({label, value, color = 'var(--text-primary)', sub}: StatCardProps) {
   return (
     <Paper withBorder p="md" radius="md" className="shadow-[var(--shadow-card)]">
       <Text size="xs" c="dimmed" mb={4}>{label}</Text>
-      <Text size="xl" fw={700} style={{ color }}>{value}</Text>
+      <Text size="xl" fw={700} style={{color}}>{value}</Text>
       {sub && <Text size="xs" c="dimmed" mt={2}>{sub}</Text>}
     </Paper>
   );
@@ -91,7 +84,7 @@ export default function FnFManagementPage() {
   const [statusFilter, setStatusFilter] = useState<string>('');
   const [search, setSearch] = useState('');
 
-  const { data, isLoading, error, refetch } = useFnFList(page - 1, PAGE_SIZE);
+  const {data, isLoading, error, refetch} = useFnFList(page - 1, PAGE_SIZE);
   const approveMutation = useFnFApprove();
 
   const handleApprove = async (exitProcessId: string, employeeName: string) => {
@@ -101,14 +94,14 @@ export default function FnFManagementPage() {
         title: 'Settlement Approved',
         message: `F&F settlement for ${employeeName} has been approved`,
         color: 'green',
-        icon: <IconCheck size={16} />,
+        icon: <IconCheck size={16}/>,
       });
     } catch {
       notifications.show({
         title: 'Approval Failed',
         message: 'Unable to approve settlement. Please try again.',
         color: 'red',
-        icon: <IconAlertCircle size={16} />,
+        icon: <IconAlertCircle size={16}/>,
       });
     }
   };
@@ -153,7 +146,7 @@ export default function FnFManagementPage() {
             </div>
             <Button
               variant="subtle"
-              leftSection={<IconRefresh size={16} />}
+              leftSection={<IconRefresh size={16}/>}
               onClick={() => refetch()}
               className="cursor-pointer"
             >
@@ -162,7 +155,7 @@ export default function FnFManagementPage() {
           </Group>
 
           {/* ── Stats ── */}
-          <SimpleGrid cols={{ base: 2, sm: 4 }} spacing="md">
+          <SimpleGrid cols={{base: 2, sm: 4}} spacing="md">
             <StatCard
               label="Total (this page)"
               value={data?.totalElements ?? 0}
@@ -190,10 +183,10 @@ export default function FnFManagementPage() {
             <Group gap="sm">
               <TextInput
                 placeholder="Search by employee name..."
-                leftSection={<IconSearch size={14} />}
+                leftSection={<IconSearch size={14}/>}
                 value={search}
                 onChange={(e) => setSearch(e.currentTarget.value)}
-                style={{ flex: 1, minWidth: 200 }}
+                style={{flex: 1, minWidth: 200}}
               />
               <Select
                 placeholder="Filter by status"
@@ -201,13 +194,16 @@ export default function FnFManagementPage() {
                 value={statusFilter}
                 onChange={(v) => setStatusFilter(v ?? '')}
                 clearable
-                style={{ minWidth: 180 }}
+                style={{minWidth: 180}}
               />
               {(statusFilter || search) && (
                 <Button
                   variant="subtle"
                   size="sm"
-                  onClick={() => { setStatusFilter(''); setSearch(''); }}
+                  onClick={() => {
+                    setStatusFilter('');
+                    setSearch('');
+                  }}
                   className="cursor-pointer"
                 >
                   Clear
@@ -218,11 +214,11 @@ export default function FnFManagementPage() {
 
           {/* ── Table ── */}
           {isLoading ? (
-            <Center h={300}><Loader size="lg" /></Center>
+            <Center h={300}><Loader size="lg"/></Center>
           ) : error ? (
             <Center h={200}>
               <Stack align="center" gap="sm">
-                <IconAlertCircle size={32} color="var(--mantine-color-red-6)" />
+                <IconAlertCircle size={32} color="var(--mantine-color-red-6)"/>
                 <Text c="dimmed">Failed to load F&amp;F settlements.</Text>
                 <Button variant="outline" size="sm" onClick={() => refetch()}>Retry</Button>
               </Stack>
@@ -230,7 +226,7 @@ export default function FnFManagementPage() {
           ) : filtered.length === 0 ? (
             <Center h={200}>
               <Stack align="center" gap="xs">
-                <IconCash size={40} color="var(--text-muted)" />
+                <IconCash size={40} color="var(--text-muted)"/>
                 <Text c="dimmed">No settlements found</Text>
                 {(statusFilter || search) && (
                   <Text size="xs" c="dimmed">Try clearing your filters</Text>
@@ -238,7 +234,7 @@ export default function FnFManagementPage() {
               </Stack>
             </Center>
           ) : (
-            <Paper withBorder radius="md" className="shadow-[var(--shadow-card)]" style={{ overflow: 'hidden' }}>
+            <Paper withBorder radius="md" className="shadow-[var(--shadow-card)]" style={{overflow: 'hidden'}}>
               <Table striped highlightOnHover withColumnBorders={false}>
                 <Table.Thead className="bg-surface-100 dark:bg-surface-800">
                   <Table.Tr>
@@ -312,7 +308,7 @@ export default function FnFManagementPage() {
                                   router.push(`/offboarding/${row.exitProcessId}/fnf`)
                                 }
                               >
-                                <IconEye size={16} />
+                                <IconEye size={16}/>
                               </ActionIcon>
                             </Tooltip>
                             {canApprove && (
@@ -329,7 +325,7 @@ export default function FnFManagementPage() {
                                   }
                                   onClick={() => handleApprove(row.exitProcessId, row.employeeName)}
                                 >
-                                  <IconCheck size={16} />
+                                  <IconCheck size={16}/>
                                 </ActionIcon>
                               </Tooltip>
                             )}

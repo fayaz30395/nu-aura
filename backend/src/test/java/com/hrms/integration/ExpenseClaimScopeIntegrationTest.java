@@ -7,8 +7,8 @@ import com.hrms.common.security.TenantContext;
 import com.hrms.config.TestSecurityConfig;
 import com.hrms.domain.employee.Employee;
 import com.hrms.domain.expense.ExpenseClaim;
-import com.hrms.domain.user.User;
 import com.hrms.domain.user.RoleScope;
+import com.hrms.domain.user.User;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.expense.repository.ExpenseClaimRepository;
 import com.hrms.infrastructure.user.repository.UserRepository;
@@ -26,8 +26,10 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * End-to-end integration tests for Expense Claim scope enforcement.

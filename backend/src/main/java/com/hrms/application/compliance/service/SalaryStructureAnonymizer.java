@@ -121,11 +121,30 @@ public class SalaryStructureAnonymizer {
         // here, wipe it in this loop before the count is returned.
         int retained = structures.size();
         log.info("SalaryStructureAnonymizer: retained {} salary structure row(s) for employee {} "
-                + "in tenant {} under Indian Income Tax Act §139A (amounts preserved, "
-                + "no PII columns to wipe on this entity)",
+                        + "in tenant {} under Indian Income Tax Act §139A (amounts preserved, "
+                        + "no PII columns to wipe on this entity)",
                 retained, employeeId, tenantId);
 
         return new Result(ResultKind.RETAINED_AMOUNTS, retained);
+    }
+
+    /**
+     * Classifies the cascade outcome so the orchestrator can pick the right
+     * summary phrasing without inspecting the count.
+     */
+    public enum ResultKind {
+        /**
+         * Rows present; amounts kept under §139A retention.
+         */
+        RETAINED_AMOUNTS,
+        /**
+         * Employee exists, but no salary structures on file.
+         */
+        NO_RECORDS,
+        /**
+         * No linked employee — orchestrator short-circuit.
+         */
+        NO_EMPLOYEE
     }
 
     /**
@@ -140,18 +159,5 @@ public class SalaryStructureAnonymizer {
          * have to construct a zero-count record inline.
          */
         public static final Result NO_EMPLOYEE = new Result(ResultKind.NO_EMPLOYEE, 0);
-    }
-
-    /**
-     * Classifies the cascade outcome so the orchestrator can pick the right
-     * summary phrasing without inspecting the count.
-     */
-    public enum ResultKind {
-        /** Rows present; amounts kept under §139A retention. */
-        RETAINED_AMOUNTS,
-        /** Employee exists, but no salary structures on file. */
-        NO_RECORDS,
-        /** No linked employee — orchestrator short-circuit. */
-        NO_EMPLOYEE
     }
 }

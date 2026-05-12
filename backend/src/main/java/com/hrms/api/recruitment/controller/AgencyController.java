@@ -51,7 +51,7 @@ public class AgencyController {
     @PutMapping("/{id}")
     @RequiresPermission(Permission.AGENCY_UPDATE)
     public ResponseEntity<AgencyDto> updateAgency(@PathVariable UUID id,
-                                                   @Valid @RequestBody UpdateAgencyRequest request) {
+                                                  @Valid @RequestBody UpdateAgencyRequest request) {
         return ResponseEntity.ok(agencyService.updateAgency(id, request));
     }
 
@@ -74,7 +74,7 @@ public class AgencyController {
     @PostMapping("/{id}/submissions")
     @RequiresPermission(Permission.AGENCY_MANAGE)
     public ResponseEntity<AgencySubmissionDto> submitCandidate(@PathVariable UUID id,
-                                                                @Valid @RequestBody CreateSubmissionRequest request) {
+                                                               @Valid @RequestBody CreateSubmissionRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(agencyService.submitCandidate(id, request));
     }
 

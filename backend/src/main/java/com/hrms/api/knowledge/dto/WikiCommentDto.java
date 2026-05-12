@@ -1,7 +1,10 @@
 package com.hrms.api.knowledge.dto;
 
 import com.hrms.domain.knowledge.WikiPageComment;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;

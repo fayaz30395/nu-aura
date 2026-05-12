@@ -3,7 +3,9 @@
  * Run with: npx vitest run lib/services/wellness.service.test.ts
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import {beforeEach, describe, expect, it, vi} from 'vitest';
+import {wellnessService} from './wellness.service';
+import {apiClient} from '@/lib/api/client';
 
 // Mock the API client
 vi.mock('@/lib/api/client', () => ({
@@ -15,9 +17,6 @@ vi.mock('@/lib/api/client', () => ({
     delete: vi.fn(),
   },
 }));
-
-import { wellnessService } from './wellness.service';
-import { apiClient } from '@/lib/api/client';
 
 // Minimal inline mock types
 interface MockWellnessDashboard {
@@ -148,7 +147,7 @@ describe('WellnessService', () => {
         ],
       };
 
-      mockedApiClient.get.mockResolvedValueOnce({ data: mockDashboard });
+      mockedApiClient.get.mockResolvedValueOnce({data: mockDashboard});
 
       const result = await wellnessService.getDashboard();
 
@@ -182,7 +181,7 @@ describe('WellnessService', () => {
         isFeatured: false,
       };
 
-      mockedApiClient.post.mockResolvedValueOnce({ data: mockProgram });
+      mockedApiClient.post.mockResolvedValueOnce({data: mockProgram});
 
       const result = await wellnessService.createProgram(programData);
 
@@ -192,7 +191,7 @@ describe('WellnessService', () => {
     });
 
     it('should handle error when creating program', async () => {
-      const error = { response: { status: 400, data: { message: 'Invalid program data' } } };
+      const error = {response: {status: 400, data: {message: 'Invalid program data'}}};
       mockedApiClient.post.mockRejectedValueOnce(error);
 
       await expect(wellnessService.createProgram({})).rejects.toEqual(error);
@@ -220,7 +219,7 @@ describe('WellnessService', () => {
         },
       ];
 
-      mockedApiClient.get.mockResolvedValueOnce({ data: mockPrograms });
+      mockedApiClient.get.mockResolvedValueOnce({data: mockPrograms});
 
       const result = await wellnessService.getActivePrograms();
 
@@ -250,7 +249,7 @@ describe('WellnessService', () => {
         },
       ];
 
-      mockedApiClient.get.mockResolvedValueOnce({ data: mockPrograms });
+      mockedApiClient.get.mockResolvedValueOnce({data: mockPrograms});
 
       const result = await wellnessService.getFeaturedPrograms();
 
@@ -260,7 +259,7 @@ describe('WellnessService', () => {
     });
 
     it('should handle empty featured programs list', async () => {
-      mockedApiClient.get.mockResolvedValueOnce({ data: [] });
+      mockedApiClient.get.mockResolvedValueOnce({data: []});
 
       const result = await wellnessService.getFeaturedPrograms();
 
@@ -287,7 +286,7 @@ describe('WellnessService', () => {
         isActive: true,
       };
 
-      mockedApiClient.post.mockResolvedValueOnce({ data: mockChallenge });
+      mockedApiClient.post.mockResolvedValueOnce({data: mockChallenge});
 
       const result = await wellnessService.createChallenge(programId, challengeData);
 
@@ -315,7 +314,7 @@ describe('WellnessService', () => {
         isActive: true,
       };
 
-      mockedApiClient.post.mockResolvedValueOnce({ data: mockChallenge });
+      mockedApiClient.post.mockResolvedValueOnce({data: mockChallenge});
 
       const result = await wellnessService.createChallenge(null, challengeData);
 
@@ -325,7 +324,7 @@ describe('WellnessService', () => {
     });
 
     it('should handle error when creating challenge', async () => {
-      const error = { response: { status: 400, data: { message: 'Invalid challenge data' } } };
+      const error = {response: {status: 400, data: {message: 'Invalid challenge data'}}};
       mockedApiClient.post.mockRejectedValueOnce(error);
 
       await expect(wellnessService.createChallenge('prog-1', {})).rejects.toEqual(error);
@@ -347,7 +346,7 @@ describe('WellnessService', () => {
         },
       ];
 
-      mockedApiClient.get.mockResolvedValueOnce({ data: mockChallenges });
+      mockedApiClient.get.mockResolvedValueOnce({data: mockChallenges});
 
       const result = await wellnessService.getActiveChallenges();
 
@@ -379,7 +378,7 @@ describe('WellnessService', () => {
         },
       ];
 
-      mockedApiClient.get.mockResolvedValueOnce({ data: mockChallenges });
+      mockedApiClient.get.mockResolvedValueOnce({data: mockChallenges});
 
       const result = await wellnessService.getUpcomingChallenges();
 
@@ -389,7 +388,7 @@ describe('WellnessService', () => {
     });
 
     it('should handle empty upcoming challenges', async () => {
-      mockedApiClient.get.mockResolvedValueOnce({ data: [] });
+      mockedApiClient.get.mockResolvedValueOnce({data: []});
 
       const result = await wellnessService.getUpcomingChallenges();
 
@@ -474,7 +473,7 @@ describe('WellnessService', () => {
         ...healthData,
       };
 
-      mockedApiClient.post.mockResolvedValueOnce({ data: mockLog });
+      mockedApiClient.post.mockResolvedValueOnce({data: mockLog});
 
       const result = await wellnessService.logHealth(healthData);
 
@@ -484,7 +483,7 @@ describe('WellnessService', () => {
     });
 
     it('should handle error when logging health', async () => {
-      const error = { response: { status: 400, data: { message: 'Invalid value' } } };
+      const error = {response: {status: 400, data: {message: 'Invalid value'}}};
       mockedApiClient.post.mockRejectedValueOnce(error);
 
       const healthData: MockHealthLog = {
@@ -518,18 +517,18 @@ describe('WellnessService', () => {
         },
       ];
 
-      mockedApiClient.get.mockResolvedValueOnce({ data: mockLogs });
+      mockedApiClient.get.mockResolvedValueOnce({data: mockLogs});
 
       const result = await wellnessService.getHealthLogs(startDate, endDate);
 
       expect(mockedApiClient.get).toHaveBeenCalledWith(
-        `/wellness/health-logs`, { params: { startDate, endDate } }
+        `/wellness/health-logs`, {params: {startDate, endDate}}
       );
       expect(result).toHaveLength(2);
     });
 
     it('should handle empty health logs', async () => {
-      mockedApiClient.get.mockResolvedValueOnce({ data: [] });
+      mockedApiClient.get.mockResolvedValueOnce({data: []});
 
       const result = await wellnessService.getHealthLogs('2024-03-01', '2024-03-05');
 
@@ -559,7 +558,7 @@ describe('WellnessService', () => {
         streak: 15,
       };
 
-      mockedApiClient.get.mockResolvedValueOnce({ data: mockPoints });
+      mockedApiClient.get.mockResolvedValueOnce({data: mockPoints});
 
       const result = await wellnessService.getMyPoints();
 
@@ -579,11 +578,11 @@ describe('WellnessService', () => {
   describe('getLeaderboard', () => {
     it('should fetch leaderboard with default limit', async () => {
       const mockLeaderboard: MockLeaderboardEntry[] = [
-        { rank: 1, employeeId: 'emp-1', employeeName: 'Alice Johnson', points: 5000 },
-        { rank: 2, employeeId: 'emp-2', employeeName: 'Bob Smith', points: 4800 },
+        {rank: 1, employeeId: 'emp-1', employeeName: 'Alice Johnson', points: 5000},
+        {rank: 2, employeeId: 'emp-2', employeeName: 'Bob Smith', points: 4800},
       ];
 
-      mockedApiClient.get.mockResolvedValueOnce({ data: mockLeaderboard });
+      mockedApiClient.get.mockResolvedValueOnce({data: mockLeaderboard});
 
       const result = await wellnessService.getLeaderboard();
 
@@ -596,10 +595,10 @@ describe('WellnessService', () => {
 
     it('should fetch leaderboard with custom limit', async () => {
       const mockLeaderboard: MockLeaderboardEntry[] = [
-        { rank: 1, employeeId: 'emp-1', employeeName: 'Alice Johnson', points: 5000 },
+        {rank: 1, employeeId: 'emp-1', employeeName: 'Alice Johnson', points: 5000},
       ];
 
-      mockedApiClient.get.mockResolvedValueOnce({ data: mockLeaderboard });
+      mockedApiClient.get.mockResolvedValueOnce({data: mockLeaderboard});
 
       const result = await wellnessService.getLeaderboard(20);
 
@@ -620,11 +619,11 @@ describe('WellnessService', () => {
   describe('getChallengeLeaderboard', () => {
     it('should fetch challenge leaderboard with default limit', async () => {
       const mockLeaderboard: MockLeaderboardEntry[] = [
-        { rank: 1, employeeId: 'emp-1', employeeName: 'Alice Johnson', points: 1000 },
-        { rank: 2, employeeId: 'emp-3', employeeName: 'Charlie Brown', points: 950 },
+        {rank: 1, employeeId: 'emp-1', employeeName: 'Alice Johnson', points: 1000},
+        {rank: 2, employeeId: 'emp-3', employeeName: 'Charlie Brown', points: 950},
       ];
 
-      mockedApiClient.get.mockResolvedValueOnce({ data: mockLeaderboard });
+      mockedApiClient.get.mockResolvedValueOnce({data: mockLeaderboard});
 
       const result = await wellnessService.getChallengeLeaderboard('chal-1');
 
@@ -638,7 +637,7 @@ describe('WellnessService', () => {
     it('should fetch challenge leaderboard with custom limit', async () => {
       const mockLeaderboard: MockLeaderboardEntry[] = [];
 
-      mockedApiClient.get.mockResolvedValueOnce({ data: mockLeaderboard });
+      mockedApiClient.get.mockResolvedValueOnce({data: mockLeaderboard});
 
       const result = await wellnessService.getChallengeLeaderboard('chal-1', 50);
 
@@ -650,7 +649,7 @@ describe('WellnessService', () => {
     });
 
     it('should handle error when fetching challenge leaderboard', async () => {
-      const error = { response: { status: 404, data: { message: 'Challenge not found' } } };
+      const error = {response: {status: 404, data: {message: 'Challenge not found'}}};
       mockedApiClient.get.mockRejectedValueOnce(error);
 
       await expect(wellnessService.getChallengeLeaderboard('non-existent')).rejects.toEqual(error);

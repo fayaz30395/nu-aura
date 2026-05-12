@@ -363,7 +363,7 @@ export default function AdminLayoutInner({
           <main className="flex-1 overflow-auto bg-[var(--bg-page)]">
             {!isReady ? (
               <div className="p-6">
-                <SkeletonDashboard />
+                <SkeletonDashboard/>
               </div>
             ) : !hasAdminAccess ? (
               <div className="flex h-full items-center justify-center">

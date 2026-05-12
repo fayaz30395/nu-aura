@@ -20,16 +20,12 @@ import org.springframework.dao.InvalidDataAccessResourceUsageException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.lang.Nullable;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -67,7 +63,7 @@ public class WikiPageService {
         createPageVersion(saved, "Initial version", tenantId, page.getCreatedBy());
 
         log.info("Created wiki page: {} in space: {}", saved.getId(),
-            page.getSpace() != null ? page.getSpace().getId() : null);
+                page.getSpace() != null ? page.getSpace().getId() : null);
         publishFluenceEvent(saved.getId(), tenantId, FluenceContentEvent.ACTION_CREATED);
         recordActivity(tenantId, page.getCreatedBy(), "CREATED", saved);
         return saved;

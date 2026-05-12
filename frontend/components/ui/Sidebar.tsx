@@ -670,7 +670,8 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
           )}
 
           {/* Navigation */}
-          <nav className="flex-1 overflow-y-auto overflow-x-hidden px-4 py-4 space-y-1 scrollbar-hide" aria-label="Primary navigation">
+          <nav className="flex-1 overflow-y-auto overflow-x-hidden px-4 py-4 space-y-1 scrollbar-hide"
+               aria-label="Primary navigation">
             {groupedItems.map((section, sectionIndex) => {
               const isSectionExpanded = !collapsedSections.has(section.id);
 
@@ -745,18 +746,23 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
                 background: 'rgba(37, 99, 235, 0.10)',
                 border: '1px solid rgba(37, 99, 235, 0.18)',
               }}>
-                <div className="flex items-center justify-center w-7 h-7 rounded-md" style={{background: 'rgba(37, 99, 235, 0.18)'}}>
+                <div className="flex items-center justify-center w-7 h-7 rounded-md"
+                     style={{background: 'rgba(37, 99, 235, 0.18)'}}>
                   <Sparkles className="h-3.5 w-3.5 text-blue-400"/>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-semibold truncate" style={{color: 'var(--sidebar-text-active)'}}>All Modules Active</p>
+                  <p className="text-xs font-semibold truncate" style={{color: 'var(--sidebar-text-active)'}}>All
+                    Modules Active</p>
                   <p className="text-2xs" style={{color: 'var(--sidebar-text-muted)'}}>Pro Plan</p>
                 </div>
               </div>
             ) : (
-              <div className="w-7 h-7 rounded-md flex items-center justify-center group relative transition-all duration-200 hover:scale-105" style={{background: 'rgba(37, 99, 235, 0.18)'}}>
+              <div
+                className="w-7 h-7 rounded-md flex items-center justify-center group relative transition-all duration-200 hover:scale-105"
+                style={{background: 'rgba(37, 99, 235, 0.18)'}}>
                 <Sparkles className="h-3.5 w-3.5 text-blue-400"/>
-                <div className="absolute left-full ml-2 px-2.5 py-1.5 bg-[var(--bg-elevated)] border border-[var(--border-main)] text-[var(--text-primary)] text-xs rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 whitespace-nowrap z-50 shadow-[var(--shadow-dropdown)]">
+                <div
+                  className="absolute left-full ml-2 px-2.5 py-1.5 bg-[var(--bg-elevated)] border border-[var(--border-main)] text-[var(--text-primary)] text-xs rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 whitespace-nowrap z-50 shadow-[var(--shadow-dropdown)]">
                   All Modules Active
                 </div>
               </div>

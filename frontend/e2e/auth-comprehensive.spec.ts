@@ -27,7 +27,7 @@
  *   - Console-error filters exclude known benign noise (HMR, favicon, Next.js hydration).
  */
 
-import {Browser, BrowserContext, expect, Page, test} from '@playwright/test';
+import {expect, Page, test} from '@playwright/test';
 import {loginAs, loginViaUI, logout, navigateTo} from './fixtures/helpers';
 import {demoUsers} from './fixtures/testData';
 
@@ -421,7 +421,8 @@ test.describe('AUTH-07: Logout flow', () => {
     expect(page.url()).toContain('/auth/login');
 
     // Back button should NOT show protected content (no data leakage)
-    await page.goBack().catch(() => {});
+    await page.goBack().catch(() => {
+    });
     await page.waitForLoadState('domcontentloaded');
     // After back, we should either still be on login, or if briefly shown,
     // attempting navigation to a protected route redirects back to login

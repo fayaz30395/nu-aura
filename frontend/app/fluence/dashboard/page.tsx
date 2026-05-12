@@ -3,7 +3,7 @@
 import {motion} from 'framer-motion';
 import {useRouter} from 'next/navigation';
 import {Permissions} from '@/lib/hooks/usePermissions';
-import {PermissionGate, PageDeniedFallback} from '@/components/auth/PermissionGate';
+import {PageDeniedFallback, PermissionGate} from '@/components/auth/PermissionGate';
 import {BookOpen, Clock, FileText, Pen, Plus, TrendingUp,} from 'lucide-react';
 import {AppLayout} from '@/components/layout';
 import {Button} from '@/components/ui/Button';

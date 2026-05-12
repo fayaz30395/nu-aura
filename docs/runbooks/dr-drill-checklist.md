@@ -13,14 +13,14 @@ ways it isn't, in a controlled window, before a real event finds them for us.
 
 ## 1. Cadence
 
-| Item | Value |
-|------|-------|
-| Frequency | Quarterly — first Wednesday of each quarter |
-| Window | 09:00 – 17:00 IST |
-| Environment | Staging (mirrors prod schema, anonymized data) |
-| Owner | SRE on-call lead for the quarter |
-| Approver | VP Engineering |
-| Calendar quarters | Q1 = Jan, Q2 = Apr, Q3 = Jul, Q4 = Oct |
+| Item              | Value                                          |
+|-------------------|------------------------------------------------|
+| Frequency         | Quarterly — first Wednesday of each quarter    |
+| Window            | 09:00 – 17:00 IST                              |
+| Environment       | Staging (mirrors prod schema, anonymized data) |
+| Owner             | SRE on-call lead for the quarter               |
+| Approver          | VP Engineering                                 |
+| Calendar quarters | Q1 = Jan, Q2 = Apr, Q3 = Jul, Q4 = Oct         |
 
 If the first Wednesday falls on a public holiday, slip to the next Wednesday.
 Never skip a quarter. A skipped quarter is logged as a P1 process gap.
@@ -30,21 +30,21 @@ Never skip a quarter. A skipped quarter is logged as a P1 process gap.
 ## 2. Pre-Drill (T-14 days)
 
 - [ ] **T-14d** — SRE lead opens Linear ticket `DR-DRILL-<YYYY>-Q<n>` and assigns
-      participants (IC, SRE, Backend lead, DBA, Comms lead).
+  participants (IC, SRE, Backend lead, DBA, Comms lead).
 - [ ] **T-14d** — Notify stakeholders: engineering all-hands Slack, leadership,
-      customer success (so they can answer "did anything happen?" externally).
+  customer success (so they can answer "did anything happen?" externally).
 - [ ] **T-14d** — Confirm staging environment is at parity with prod
-      (Helm chart version, Postgres schema, Redis config, Kafka topics).
+  (Helm chart version, Postgres schema, Redis config, Kafka topics).
 - [ ] **T-7d** — Snapshot the staging Postgres branch — this is the "prod" we will
-      destroy and recover during the drill.
+  destroy and recover during the drill.
 - [ ] **T-7d** — Schedule the maintenance window on staging status page.
 - [ ] **T-3d** — Distribute the drill scenario (section 3) and individual role cards.
-      Participants should NOT see the scenario before this; surprise is part of the
-      test, but participants need basic prep time.
+  Participants should NOT see the scenario before this; surprise is part of the
+  test, but participants need basic prep time.
 - [ ] **T-1d** — Verify `neonctl`, `kubectl`, `helm`, `gsutil` access for all
-      drill participants. Renew expired creds.
+  drill participants. Renew expired creds.
 - [ ] **T-1d** — Verify the comms templates in `disaster-recovery.md` section 6 are
-      current.
+  current.
 
 ---
 
@@ -53,14 +53,14 @@ Never skip a quarter. A skipped quarter is logged as a P1 process gap.
 One scenario per quarter. Rotate through the full set so every procedure in
 `disaster-recovery.md` section 4 is drill-validated at least once per year.
 
-| Quarter | Scenario | Procedure validated |
-|---------|----------|---------------------|
-| Q1 | Primary Postgres loss — Neon PITR restore | DR §4.1 |
-| Q2 | Redis cluster total loss + cache warm-up | DR §4.2 |
-| Q3 | Cross-subsystem: Kafka + Elasticsearch lost simultaneously | DR §4.3 + §4.4 |
-| Q4 | Tenant accidental hard-delete | DR §4.7 |
-| (Annual, off-cycle) | Ransomware tabletop — discussion only, no destructive action | DR §4.6 |
-| (When implemented) | Full region failover to `asia-southeast1` | DR §5 |
+| Quarter             | Scenario                                                     | Procedure validated |
+|---------------------|--------------------------------------------------------------|---------------------|
+| Q1                  | Primary Postgres loss — Neon PITR restore                    | DR §4.1             |
+| Q2                  | Redis cluster total loss + cache warm-up                     | DR §4.2             |
+| Q3                  | Cross-subsystem: Kafka + Elasticsearch lost simultaneously   | DR §4.3 + §4.4      |
+| Q4                  | Tenant accidental hard-delete                                | DR §4.7             |
+| (Annual, off-cycle) | Ransomware tabletop — discussion only, no destructive action | DR §4.6             |
+| (When implemented)  | Full region failover to `asia-southeast1`                    | DR §5               |
 
 **Scenario rules:**
 
@@ -79,28 +79,28 @@ One scenario per quarter. Rotate through the full set so every procedure in
 
 - [ ] **09:00** — IC briefs the room. Read scenario aloud. Start the RTO clock.
 - [ ] **09:15** — IC declares DR (mock). First status-page post within 15 min using
-      the template from `disaster-recovery.md` §6.
+  the template from `disaster-recovery.md` §6.
 - [ ] **09:30** — Execute the destructive action per the scenario (e.g., `DROP
       DATABASE staging_db` on the snapshotted branch, kill all Redis pods, etc.).
 - [ ] **09:30 – 12:00** — Execute the recovery procedure from
-      `disaster-recovery.md` section 4. Follow the runbook **exactly as written**.
-      If the runbook is wrong or unclear, do not improvise — note the gap, then
-      improvise. Both the gap and the fix go into the post-drill report.
+  `disaster-recovery.md` section 4. Follow the runbook **exactly as written**.
+  If the runbook is wrong or unclear, do not improvise — note the gap, then
+  improvise. Both the gap and the fix go into the post-drill report.
 
 ### Afternoon (12:00 – 17:00) — validation + report
 
 - [ ] **12:00 – 13:00** — Lunch break. Recovery should be complete or near-complete.
-      If not, this itself is a finding.
+  If not, this itself is a finding.
 - [ ] **13:00 – 15:00** — Run Tier-1 smoke tests against recovered staging:
-      - [ ] Login flow (JWT issuance, refresh, blacklist behavior)
-      - [ ] Tenant CRUD via API
-      - [ ] Employee directory list + search (Postgres fallback OK if ES not yet ready)
-      - [ ] Permissions check via `RolePermissionService`
-      - [ ] At least one write that triggers a Kafka event end-to-end
-      - [ ] Frontend home page loads, sidebar renders, no 5xx in browser console
+  - [ ] Login flow (JWT issuance, refresh, blacklist behavior)
+  - [ ] Tenant CRUD via API
+  - [ ] Employee directory list + search (Postgres fallback OK if ES not yet ready)
+  - [ ] Permissions check via `RolePermissionService`
+  - [ ] At least one write that triggers a Kafka event end-to-end
+  - [ ] Frontend home page loads, sidebar renders, no 5xx in browser console
 - [ ] **15:00 – 16:00** — Validate success criteria (section 5).
 - [ ] **16:00 – 17:00** — Write the 1-page report (template in section 6). File
-      action items in Linear. Mark Linear drill ticket complete.
+  action items in Linear. Mark Linear drill ticket complete.
 
 ---
 
@@ -110,15 +110,15 @@ A drill is **PASS** if all of:
 
 - [ ] **RTO met** — recovered to Tier-1 health within 4 hours of declaration.
 - [ ] **RPO met** — data loss measured against the destructive timestamp is
-      ≤ 1 hour. Verified by row-count comparison on a representative table
-      (`audit_log`, `tenant`, `user`).
+  ≤ 1 hour. Verified by row-count comparison on a representative table
+  (`audit_log`, `tenant`, `user`).
 - [ ] **All Tier-1 services pass smoke tests** within the drill window (see section
-      4 afternoon checklist).
+  4 afternoon checklist).
 - [ ] **Comms cadence honored** — first status-page post within 15 min; hourly
-      updates thereafter.
+  updates thereafter.
 - [ ] **No undocumented improvisation** required. If the IC had to invent a step
-      not in the runbook, the drill is conditional pass with a P0 action item to
-      update the runbook.
+  not in the runbook, the drill is conditional pass with a P0 action item to
+  update the runbook.
 
 A drill is **FAIL** if any of:
 
@@ -192,14 +192,14 @@ items. File at `docs/postmortems/dr-drill-<YYYY>-Q<n>.md`.
 
 ## 7. Roles and Responsibilities
 
-| Role | Responsibility during drill |
-|------|----------------------------|
-| Incident Commander | Declares mock DR, calls timeboxes, makes go/no-go calls, owns the report |
-| SRE on-call lead | Owns the drill ticket, environment setup, execution coordination |
-| Backend lead | Executes backend-side recovery steps, smoke-test owner |
-| DBA | Executes Postgres PITR commands, validates data integrity post-restore |
-| Comms lead | Status-page posts on cadence, mock customer email if scenario requires |
-| Observer (rotating) | Junior engineer shadows IC — no execution role, learns the flow |
+| Role                | Responsibility during drill                                              |
+|---------------------|--------------------------------------------------------------------------|
+| Incident Commander  | Declares mock DR, calls timeboxes, makes go/no-go calls, owns the report |
+| SRE on-call lead    | Owns the drill ticket, environment setup, execution coordination         |
+| Backend lead        | Executes backend-side recovery steps, smoke-test owner                   |
+| DBA                 | Executes Postgres PITR commands, validates data integrity post-restore   |
+| Comms lead          | Status-page posts on cadence, mock customer email if scenario requires   |
+| Observer (rotating) | Junior engineer shadows IC — no execution role, learns the flow          |
 
 The observer role is intentional. It is how we grow the next IC. Every drill must
 have one.

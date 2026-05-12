@@ -3,11 +3,9 @@ package com.hrms.domain.payment;
 import com.hrms.common.converter.EncryptedStringConverter;
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
-import org.hibernate.annotations.Where;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-
-import java.time.LocalDateTime;
+import org.hibernate.annotations.Where;
 
 @Where(clause = "is_deleted = false")
 @Entity

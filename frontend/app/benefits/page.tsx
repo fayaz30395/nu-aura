@@ -10,10 +10,10 @@ import {
   Calendar,
   CheckCircle,
   CreditCard,
-  IndianRupee,
   FileText,
   Gift,
   Heart,
+  IndianRupee,
   Loader2,
   Plus,
   Receipt,
@@ -43,7 +43,7 @@ import {createLogger} from '@/lib/utils/logger';
 const log = createLogger('BenefitsPage');
 
 function formatINR(amount: number): string {
-  return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(amount);
+  return new Intl.NumberFormat('en-IN', {style: 'currency', currency: 'INR', maximumFractionDigits: 0}).format(amount);
 }
 
 const enrollmentFormSchema = z.object({
@@ -810,7 +810,9 @@ export default function BenefitsPage() {
               <div className="text-white">
                 <h3 className="text-base font-semibold">Open Enrollment Period</h3>
                 <p className="mt-1 opacity-90">
-                  March 1 - March 31, {new Date().getMonth() < 2 ? new Date().getFullYear() : new Date().getFullYear() + 1}. Review and update your benefits selections.
+                  March 1 - March
+                  31, {new Date().getMonth() < 2 ? new Date().getFullYear() : new Date().getFullYear() + 1}. Review and
+                  update your benefits selections.
                 </p>
               </div>
               <Button variant="secondary" onClick={() => setActiveTab('plans')}>

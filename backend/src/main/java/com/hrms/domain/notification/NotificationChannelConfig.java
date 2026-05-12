@@ -2,12 +2,12 @@ package com.hrms.domain.notification;
 
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
-import org.hibernate.annotations.Where;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
-
-import java.time.LocalDateTime;
-import java.util.UUID;
+import org.hibernate.annotations.Where;
 
 @Where(clause = "is_deleted = false")
 @Entity

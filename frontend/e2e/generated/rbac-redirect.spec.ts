@@ -1,4 +1,4 @@
-import {test, expect, request} from '@playwright/test';
+import {expect, test} from '@playwright/test';
 import matrix from './rbac-matrix.json';
 import {demoUsers} from '../fixtures/testData';
 
@@ -29,7 +29,7 @@ const LOW_PRIV = new Set(['EMPLOYEE', 'TEAM_LEAD', 'MANAGER']);
 const isAdminScoped = (route: string) => ADMIN_PREFIXES.some((re) => re.test(route));
 
 // Negative cells only: low-priv role × admin-scoped route. ~30-50 cells.
-const negativeCells = (matrix as Array<{role: string; route: string; id: string}>).filter(
+const negativeCells = (matrix as Array<{ role: string; route: string; id: string }>).filter(
   (c) => LOW_PRIV.has(c.role) && isAdminScoped(c.route),
 );
 
@@ -40,9 +40,9 @@ test.describe.parallel('@rbac low-priv denied on admin scope', () => {
 
   for (const cell of negativeCells) {
     const fixtureKey = ROLE_MAP[cell.role];
-    const user = (demoUsers as Record<string, {email: string; password?: string; name: string}>)[
+    const user = (demoUsers as Record<string, { email: string; password?: string; name: string }>)[
       fixtureKey as string
-    ];
+      ];
     if (!user) continue; // role missing from fixtures — skip rather than crash
 
     test(`${cell.role} → ${cell.route} (deny)`, async ({page}) => {
@@ -82,7 +82,8 @@ test.describe.parallel('@rbac low-priv denied on admin scope', () => {
       try {
         await page.waitForURL(/\/dashboard|\/me\//, {timeout: 90000});
       } catch {
-        await page.waitForLoadState('networkidle').catch(() => {});
+        await page.waitForLoadState('networkidle').catch(() => {
+        });
       }
       // Cookie check with short retries — Set-Cookie can lag the navigation
       // event on slow runs.

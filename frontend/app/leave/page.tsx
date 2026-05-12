@@ -53,7 +53,12 @@ export default function LeavePage() {
     error: balancesError,
     fetchStatus: balancesFetchStatus,
   } = useEmployeeBalancesForYear(employeeId, year, !!employeeId);
-  const {data: leaveTypesData = [], isLoading: isTypesLoading, error: typesError, fetchStatus: typesFetchStatus} = useActiveLeaveTypes(!!employeeId);
+  const {
+    data: leaveTypesData = [],
+    isLoading: isTypesLoading,
+    error: typesError,
+    fetchStatus: typesFetchStatus
+  } = useActiveLeaveTypes(!!employeeId);
   const {
     data: requestsData,
     isLoading: isRequestsLoading,
@@ -142,7 +147,7 @@ export default function LeavePage() {
   if (loading) {
     return (
       <AppLayout activeMenuItem="leave">
-        <SkeletonDashboard />
+        <SkeletonDashboard/>
       </AppLayout>
     );
   }

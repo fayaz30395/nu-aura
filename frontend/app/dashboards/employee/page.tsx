@@ -156,7 +156,8 @@ export default function EmployeeDashboardPage() {
     return (
       <AppLayout activeMenuItem="dashboard" showBreadcrumbs={false}>
         <div className="space-y-6">
-          <div className="flex items-center gap-4 p-4 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elevated)]">
+          <div
+            className="flex items-center gap-4 p-4 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elevated)]">
             <AlertCircle className="h-5 w-5 text-[var(--status-warning-text)] flex-shrink-0"/>
             <p className="text-sm text-[var(--text-secondary)] flex-1">
               Dashboard data is temporarily unavailable. Some metrics may not be displayed.

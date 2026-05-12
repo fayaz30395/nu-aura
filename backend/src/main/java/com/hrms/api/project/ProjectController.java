@@ -26,7 +26,9 @@ import java.util.UUID;
 @Tag(name = "Projects", description = "Project management and team allocation APIs")
 public class ProjectController {
 
-    /** Allow-list of sortable fields for {@code Project} entity — prevents reflection-based sort injection. */
+    /**
+     * Allow-list of sortable fields for {@code Project} entity — prevents reflection-based sort injection.
+     */
     private static final java.util.Set<String> ALLOWED_SORT_FIELDS = java.util.Set.of(
             "createdAt", "updatedAt", "name", "projectCode", "status", "priority", "startDate", "endDate", "expectedEndDate"
     );

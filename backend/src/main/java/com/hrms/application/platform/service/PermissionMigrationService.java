@@ -1,11 +1,17 @@
 package com.hrms.application.platform.service;
 
 import com.hrms.common.security.TenantContext;
-import com.hrms.domain.platform.*;
+import com.hrms.domain.platform.AppPermission;
+import com.hrms.domain.platform.AppRole;
+import com.hrms.domain.platform.NuApplication;
+import com.hrms.domain.platform.UserAppAccess;
 import com.hrms.domain.user.Permission;
 import com.hrms.domain.user.Role;
 import com.hrms.domain.user.User;
-import com.hrms.infrastructure.platform.repository.*;
+import com.hrms.infrastructure.platform.repository.AppPermissionRepository;
+import com.hrms.infrastructure.platform.repository.AppRoleRepository;
+import com.hrms.infrastructure.platform.repository.NuApplicationRepository;
+import com.hrms.infrastructure.platform.repository.UserAppAccessRepository;
 import com.hrms.infrastructure.user.repository.PermissionRepository;
 import com.hrms.infrastructure.user.repository.RoleRepository;
 import com.hrms.infrastructure.user.repository.UserRepository;
@@ -15,12 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**

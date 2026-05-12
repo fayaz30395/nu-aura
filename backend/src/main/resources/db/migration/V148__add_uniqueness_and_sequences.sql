@@ -20,9 +20,10 @@
 -- 1. WikiPageVersion uniqueness
 -- ---------------------------------------------------------------------------
 ALTER TABLE wiki_page_versions
-    DROP CONSTRAINT IF EXISTS uq_wiki_page_version;
+DROP
+CONSTRAINT IF EXISTS uq_wiki_page_version;
 ALTER TABLE wiki_page_versions
-    ADD CONSTRAINT uq_wiki_page_version
+  ADD CONSTRAINT uq_wiki_page_version
     UNIQUE (tenant_id, page_id, version_number);
 
 -- ---------------------------------------------------------------------------
@@ -31,25 +32,39 @@ ALTER TABLE wiki_page_versions
 -- Pre-clean duplicate rows (keep oldest) so the ADD CONSTRAINT cannot fail
 -- on existing data. Without this, a duplicate that escaped the in-memory
 -- check before V148 deploys would block the migration entirely.
-DELETE FROM post_reactions a
-USING post_reactions b
-WHERE  a.ctid < b.ctid
-  AND  a.tenant_id   = b.tenant_id
-  AND  a.post_id     = b.post_id
-  AND  a.employee_id = b.employee_id;
+DELETE
+FROM post_reactions a USING post_reactions b
+WHERE a.ctid
+    < b.ctid
+  AND a.tenant_id = b.tenant_id
+  AND a.post_id = b.post_id
+  AND a.employee_id = b.employee_id;
 
 ALTER TABLE post_reactions
-    DROP CONSTRAINT IF EXISTS uq_post_reaction_user;
+DROP
+CONSTRAINT IF EXISTS uq_post_reaction_user;
 ALTER TABLE post_reactions
-    ADD CONSTRAINT uq_post_reaction_user
+  ADD CONSTRAINT uq_post_reaction_user
     UNIQUE (tenant_id, post_id, employee_id);
 
 -- ---------------------------------------------------------------------------
 -- 3. Employee-code sequence (mirrors V145 claim sequences)
 -- ---------------------------------------------------------------------------
-CREATE TABLE IF NOT EXISTS employee_code_sequence (
-    tenant_id     UUID        NOT NULL,
-    year_month    VARCHAR(7)  NOT NULL,
-    current_value BIGINT      NOT NULL DEFAULT 0,
-    PRIMARY KEY (tenant_id, year_month)
-);
+CREATE TABLE IF NOT EXISTS employee_code_sequence
+(
+  tenant_id
+  UUID
+  NOT
+  NULL,
+  year_month
+  VARCHAR
+(
+  7
+) NOT NULL,
+  current_value BIGINT NOT NULL DEFAULT 0,
+  PRIMARY KEY
+(
+  tenant_id,
+  year_month
+)
+  );

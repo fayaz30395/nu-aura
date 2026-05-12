@@ -331,11 +331,11 @@ Updated frequently as the project evolves.
 
 ## 2.2 Flyway Migration Status
 
-| Field             | Value                                                                 |
-|-------------------|-----------------------------------------------------------------------|
-| Active migrations | V0–V146 (138 files; sprint-3 added V147–V149)                         |
-| Next migration    | **V150** (after sprint-3 lands)                                       |
-| Legacy Liquibase  | `db/changelog/` — **DO NOT USE**                                      |
+| Field             | Value                                         |
+|-------------------|-----------------------------------------------|
+| Active migrations | V0–V146 (138 files; sprint-3 added V147–V149) |
+| Next migration    | **V150** (after sprint-3 lands)               |
+| Legacy Liquibase  | `db/changelog/` — **DO NOT USE**              |
 
 **Security sprints (May 2026):**
 

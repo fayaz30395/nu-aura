@@ -19,16 +19,22 @@ import java.util.UUID;
 @Data
 public class AdminPasswordResetRequest {
 
-    /** Target user whose password will be rotated. */
+    /**
+     * Target user whose password will be rotated.
+     */
     @NotNull
     private UUID userId;
 
-    /** Human-readable justification recorded in the audit log (5–200 chars). */
+    /**
+     * Human-readable justification recorded in the audit log (5–200 chars).
+     */
     @NotBlank
     @Size(min = 5, max = 200)
     private String reason;
 
-    /** Explicit confirmation; must be {@code true} for the request to validate. */
+    /**
+     * Explicit confirmation; must be {@code true} for the request to validate.
+     */
     @AssertTrue(message = "must confirm")
     private Boolean confirmReset;
 }

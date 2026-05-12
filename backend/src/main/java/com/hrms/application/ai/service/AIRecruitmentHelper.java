@@ -29,17 +29,6 @@ import java.util.Map;
 @Slf4j
 class AIRecruitmentHelper {
 
-    private final RestTemplate restTemplate;
-
-    @Value("${ai.openai.api-key:}")
-    private String openAiApiKey;
-
-    @Value("${ai.openai.base-url:https://api.openai.com/v1}")
-    private String openAiBaseUrl;
-
-    @Value("${ai.openai.model:gpt-4o-mini}")
-    private String openAiModel;
-
     /**
      * Standard EEOC / UK Equality Act guardrail clause appended to every
      * recruitment prompt. Prevents the model from inferring or commenting on
@@ -53,34 +42,28 @@ class AIRecruitmentHelper {
             disability, sexual orientation, etc.). Base your assessment ONLY on documented
             skills, experience, and qualifications.
             """;
+    private final RestTemplate restTemplate;
+    @Value("${ai.openai.api-key:}")
+    private String openAiApiKey;
+    @Value("${ai.openai.base-url:https://api.openai.com/v1}")
+    private String openAiBaseUrl;
+    @Value("${ai.openai.model:gpt-4o-mini}")
+    private String openAiModel;
 
     // ==================== OPENAI ====================
 
-    /**
-     * Result of a chat-completion call: assistant message content plus token usage.
-     * Token counts are best-effort — OpenAI does not always populate the usage block,
-     * and self-hosted gateways may omit it entirely.
-     */
-    static class ChatCompletionResult {
-        final String content;
-        final long promptTokens;
-        final long completionTokens;
-        final long totalTokens;
-
-        ChatCompletionResult(String content, long promptTokens, long completionTokens, long totalTokens) {
-            this.content = content;
-            this.promptTokens = promptTokens;
-            this.completionTokens = completionTokens;
-            this.totalTokens = totalTokens;
+    private static long toLong(Object raw) {
+        if (raw instanceof Number num) {
+            return num.longValue();
         }
-
-        String getContent() {
-            return content;
+        if (raw instanceof String str) {
+            try {
+                return Long.parseLong(str);
+            } catch (NumberFormatException ignored) {
+                return 0L;
+            }
         }
-
-        long getTotalTokens() {
-            return totalTokens;
-        }
+        return 0L;
     }
 
     /**
@@ -183,22 +166,6 @@ class AIRecruitmentHelper {
         return openAiModel;
     }
 
-    private static long toLong(Object raw) {
-        if (raw instanceof Number num) {
-            return num.longValue();
-        }
-        if (raw instanceof String str) {
-            try {
-                return Long.parseLong(str);
-            } catch (NumberFormatException ignored) {
-                return 0L;
-            }
-        }
-        return 0L;
-    }
-
-    // ==================== JSON EXTRACTION ====================
-
     String extractJson(String response) {
         // Handle markdown code blocks first (```json...``` or ```...```)
         String json = response;
@@ -225,7 +192,7 @@ class AIRecruitmentHelper {
         return json;
     }
 
-    // ==================== PARSE HELPERS ====================
+    // ==================== JSON EXTRACTION ====================
 
     double parseDouble(String value, double defaultValue) {
         if (value == null || value.isEmpty()) {
@@ -238,11 +205,40 @@ class AIRecruitmentHelper {
         }
     }
 
+    // ==================== PARSE HELPERS ====================
+
     double parseDouble(Number value, double defaultValue) {
         if (value == null) {
             return defaultValue;
         }
         return value.doubleValue();
+    }
+
+    /**
+     * Result of a chat-completion call: assistant message content plus token usage.
+     * Token counts are best-effort — OpenAI does not always populate the usage block,
+     * and self-hosted gateways may omit it entirely.
+     */
+    static class ChatCompletionResult {
+        final String content;
+        final long promptTokens;
+        final long completionTokens;
+        final long totalTokens;
+
+        ChatCompletionResult(String content, long promptTokens, long completionTokens, long totalTokens) {
+            this.content = content;
+            this.promptTokens = promptTokens;
+            this.completionTokens = completionTokens;
+            this.totalTokens = totalTokens;
+        }
+
+        String getContent() {
+            return content;
+        }
+
+        long getTotalTokens() {
+            return totalTokens;
+        }
     }
 
     // Mock fabrication path (getMockResponse + seeded score generators) was removed

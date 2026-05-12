@@ -30,7 +30,8 @@ WHERE r.code = 'DEPARTMENT_HEAD'
 UPDATE roles
 SET parent_role_id = (SELECT id
                       FROM roles
-                      WHERE code = 'TEAM_LEAD' AND tenant_id = '660e8400-e29b-41d4-a716-446655440001')
+                      WHERE code = 'TEAM_LEAD'
+                        AND tenant_id = '660e8400-e29b-41d4-a716-446655440001')
 WHERE code = 'MANAGER'
   AND tenant_id = '660e8400-e29b-41d4-a716-446655440001'
   AND parent_role_id IS NULL;
@@ -38,7 +39,8 @@ WHERE code = 'MANAGER'
 UPDATE roles
 SET parent_role_id = (SELECT id
                       FROM roles
-                      WHERE code = 'EMPLOYEE' AND tenant_id = '660e8400-e29b-41d4-a716-446655440001')
+                      WHERE code = 'EMPLOYEE'
+                        AND tenant_id = '660e8400-e29b-41d4-a716-446655440001')
 WHERE code = 'TEAM_LEAD'
   AND tenant_id = '660e8400-e29b-41d4-a716-446655440001'
   AND parent_role_id IS NULL;

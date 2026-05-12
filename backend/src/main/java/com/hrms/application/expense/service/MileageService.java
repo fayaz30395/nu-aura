@@ -8,7 +8,6 @@ import com.hrms.api.expense.dto.MileageSummaryResponse;
 import com.hrms.common.exception.ValidationException;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
-import com.hrms.domain.employee.Employee;
 import com.hrms.domain.expense.ExpenseClaim;
 import com.hrms.domain.expense.MileageLog;
 import com.hrms.domain.expense.MileagePolicy;
@@ -30,19 +29,14 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class MileageService {
-
-    private final MileageLogRepository mileageLogRepository;
-    private final MileagePolicyService mileagePolicyService;
-    private final ExpenseClaimRepository expenseClaimRepository;
-    private final EmployeeRepository employeeRepository;
-    private final ObjectMapper objectMapper;
-    private final JdbcTemplate jdbcTemplate;
 
     /**
      * HIGH-003 FIX (V145): atomic per-tenant/per-month sequence allocator for
@@ -54,6 +48,12 @@ public class MileageService {
             "INSERT INTO mileage_claim_sequence(tenant_id, year_month, current_value) VALUES(?, ?, 1) " +
                     "ON CONFLICT(tenant_id, year_month) DO UPDATE SET current_value = mileage_claim_sequence.current_value + 1 " +
                     "RETURNING current_value";
+    private final MileageLogRepository mileageLogRepository;
+    private final MileagePolicyService mileagePolicyService;
+    private final ExpenseClaimRepository expenseClaimRepository;
+    private final EmployeeRepository employeeRepository;
+    private final ObjectMapper objectMapper;
+    private final JdbcTemplate jdbcTemplate;
 
     private String generateMileageClaimNumber(UUID tenantId) {
         String ym = LocalDate.now(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("yyyyMM"));

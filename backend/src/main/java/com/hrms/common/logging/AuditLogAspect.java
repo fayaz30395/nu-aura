@@ -2,7 +2,6 @@ package com.hrms.common.logging;
 
 import com.hrms.application.audit.service.AuditLogService;
 import com.hrms.common.security.TenantContext;
-import com.hrms.domain.audit.AuditLog.AuditAction;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;

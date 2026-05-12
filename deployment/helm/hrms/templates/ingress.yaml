@@ -1,4 +1,4 @@
-{{- if .Values.ingress.enabled }}
+{ { - if .Values.ingress.enabled } }
 # Ingress — Helm-templated version of deployment/kubernetes/ingress.yaml.
 # Includes GCE Ingress + BackendConfig + ManagedCertificate so a single
 # `helm install` provisions the full edge tier.
@@ -11,29 +11,29 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: hrms-ingress
-  namespace: {{ .Values.namespace }}
+  namespace: { { .Values.namespace } }
   labels:
     app: hrms
   annotations:
-    kubernetes.io/ingress.class: {{ .Values.ingress.className | quote }}
-    kubernetes.io/ingress.global-static-ip-name: {{ .Values.ingress.staticIpName | quote }}
-    networking.gke.io/managed-certificates: {{ .Values.ingress.managedCertificateName | quote }}
-    ingress.gcp.kubernetes.io/pre-shared-cert: {{ .Values.ingress.preSharedCert | quote }}
+    kubernetes.io/ingress.class: { { .Values.ingress.className | quote } }
+    kubernetes.io/ingress.global-static-ip-name: { { .Values.ingress.staticIpName | quote } }
+    networking.gke.io/managed-certificates: { { .Values.ingress.managedCertificateName | quote } }
+    ingress.gcp.kubernetes.io/pre-shared-cert: { { .Values.ingress.preSharedCert | quote } }
     cloud.google.com/backend-config: '{"default": "hrms-backend-config"}'
     cloud.google.com/armor-config: '{"hrms-frontend": "{{ .Values.ingress.cloudArmorPolicy }}", "hrms-backend": "{{ .Values.ingress.cloudArmorPolicy }}"}'
     cloud.google.com/connection-draining-timeout: "{{ .Values.ingress.connectionDrainingTimeoutSec }}"
-    cloud.google.com/session-affinity: {{ .Values.ingress.sessionAffinity | quote }}
+    cloud.google.com/session-affinity: { { .Values.ingress.sessionAffinity | quote } }
     ingress.kubernetes.io/health-check-path: "/api/health"
 spec:
   tls:
-    - secretName: {{ .Values.ingress.tls.secretName }}
+    - secretName: { { .Values.ingress.tls.secretName } }
       hosts:
-        - {{ .Values.ingress.hosts.frontend }}
-        - {{ .Values.ingress.hosts.api }}
+        - { { .Values.ingress.hosts.frontend } }
+        - { { .Values.ingress.hosts.api } }
 
   rules:
     # Frontend routing
-    - host: {{ .Values.ingress.hosts.frontend }}
+    - host: { { .Values.ingress.hosts.frontend } }
       http:
         paths:
           - path: /api/*
@@ -84,7 +84,7 @@ spec:
                   number: 3000
 
     # API subdomain (optional - direct API access)
-    - host: {{ .Values.ingress.hosts.api }}
+    - host: { { .Values.ingress.hosts.api } }
       http:
         paths:
           - path: /*
@@ -101,14 +101,14 @@ apiVersion: cloud.google.com/v1
 kind: BackendConfig
 metadata:
   name: hrms-backend-config
-  namespace: {{ .Values.namespace }}
+  namespace: { { .Values.namespace } }
 spec:
   timeoutSec: 30
   connectionDraining:
-    drainingTimeoutSec: {{ .Values.ingress.connectionDrainingTimeoutSec }}
+    drainingTimeoutSec: { { .Values.ingress.connectionDrainingTimeoutSec } }
   sessionAffinity:
-    affinityType: {{ .Values.ingress.sessionAffinity | quote }}
-    affinityCookieTtlSec: {{ .Values.ingress.sessionAffinityCookieTtlSec }}
+    affinityType: { { .Values.ingress.sessionAffinity | quote } }
+    affinityCookieTtlSec: { { .Values.ingress.sessionAffinityCookieTtlSec } }
   healthCheck:
     checkIntervalSec: 10
     timeoutSec: 5
@@ -130,10 +130,10 @@ spec:
 apiVersion: networking.gke.io/v1
 kind: ManagedCertificate
 metadata:
-  name: {{ .Values.ingress.managedCertificateName }}
-  namespace: {{ .Values.namespace }}
+  name: { { .Values.ingress.managedCertificateName } }
+  namespace: { { .Values.namespace } }
 spec:
   domains:
-    - {{ .Values.ingress.hosts.frontend }}
-    - {{ .Values.ingress.hosts.api }}
-{{- end }}
+    - { { .Values.ingress.hosts.frontend } }
+    - { { .Values.ingress.hosts.api } }
+  { { - end } }

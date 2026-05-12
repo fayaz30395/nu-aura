@@ -8,11 +8,7 @@ import com.hrms.api.webhook.dto.WebhookResponse;
 import com.hrms.application.webhook.service.WebhookService;
 import com.hrms.common.exception.BusinessException;
 import com.hrms.common.exception.ResourceNotFoundException;
-import com.hrms.common.security.Permission;
-import com.hrms.common.security.RequiresPermission;
-import com.hrms.common.security.RequiresWebhookScope;
-import com.hrms.common.security.TenantContext;
-import com.hrms.common.security.WebhookScopes;
+import com.hrms.common.security.*;
 import com.hrms.domain.webhook.Webhook;
 import com.hrms.domain.webhook.WebhookDelivery;
 import com.hrms.domain.webhook.WebhookStatus;
@@ -29,11 +25,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**

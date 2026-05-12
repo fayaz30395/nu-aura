@@ -14,6 +14,8 @@ import java.util.UUID;
 @Data
 public class MoveWikiPageRequest {
 
-    /** Target parent page; {@code null} moves the page to the space root. */
+    /**
+     * Target parent page; {@code null} moves the page to the space root.
+     */
     private UUID parentPageId;
 }

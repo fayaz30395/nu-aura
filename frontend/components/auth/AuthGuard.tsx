@@ -1,16 +1,12 @@
 'use client';
 
-import { useEffect, useState, useRef, ReactNode } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { usePermissions } from '@/lib/hooks/usePermissions';
-import {
-  findRouteConfig,
-  isPublicRoute,
-  RouteConfig,
-} from '@/lib/config/routes';
-import { SkeletonDashboard } from '@/components/ui/Skeleton';
-import { logger } from '@/lib/utils/logger';
+import {ReactNode, useEffect, useRef, useState} from 'react';
+import {usePathname, useRouter} from 'next/navigation';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {usePermissions} from '@/lib/hooks/usePermissions';
+import {findRouteConfig, isPublicRoute, RouteConfig,} from '@/lib/config/routes';
+import {SkeletonDashboard} from '@/components/ui/Skeleton';
+import {logger} from '@/lib/utils/logger';
 
 interface AuthGuardProps {
   children: ReactNode;
@@ -34,13 +30,13 @@ interface AuthGuardProps {
  * }
  */
 export function AuthGuard({
-  children,
-  loadingComponent,
-  accessDeniedComponent,
-}: AuthGuardProps): ReactNode {
+                            children,
+                            loadingComponent,
+                            accessDeniedComponent,
+                          }: AuthGuardProps): ReactNode {
   const router = useRouter();
   const pathname = usePathname();
-  const { user, isAuthenticated, hasHydrated, restoreSession } = useAuth();
+  const {user, isAuthenticated, hasHydrated, restoreSession} = useAuth();
   const {
     hasPermission,
     hasAnyPermission,
@@ -248,7 +244,7 @@ export function AuthGuard({
 
     return (
       <div className="p-6">
-        <SkeletonDashboard />
+        <SkeletonDashboard/>
       </div>
     );
   }

@@ -4,11 +4,7 @@ import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.Where;
 
@@ -44,11 +40,15 @@ import java.util.UUID;
 @SuperBuilder
 public class OnboardingTaskTemplate extends TenantAware {
 
-    /** Optional case-insensitive role filter (matched against {@code employees.designation}). Null = applies to all. */
+    /**
+     * Optional case-insensitive role filter (matched against {@code employees.designation}). Null = applies to all.
+     */
     @Column(name = "role_filter", length = 100)
     private String roleFilter;
 
-    /** Optional department filter (matched against {@code employees.department_id}). Null = applies to all. */
+    /**
+     * Optional department filter (matched against {@code employees.department_id}). Null = applies to all.
+     */
     @Column(name = "department_filter")
     private UUID departmentFilter;
 

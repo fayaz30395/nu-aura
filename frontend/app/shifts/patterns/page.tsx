@@ -229,7 +229,7 @@ export default function ShiftPatternsPage() {
           {isLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {Array.from({length: 4}).map((_, i) => (
-                <SkeletonCard key={i} />
+                <SkeletonCard key={i}/>
               ))}
             </div>
           ) : patterns.length === 0 ? (

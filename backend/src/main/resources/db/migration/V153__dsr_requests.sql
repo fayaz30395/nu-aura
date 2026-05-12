@@ -28,35 +28,53 @@
 --     of the requester user (Article 17 fulfilment) and the parent tenant
 --     records for retention. The IDs are kept as logical references only.
 
-CREATE TABLE IF NOT EXISTS dsr_requests (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    tenant_id UUID NOT NULL,
-    requester_user_id UUID NOT NULL,
-    request_type VARCHAR(32) NOT NULL,          -- ACCESS / ERASURE / PORTABILITY / RECTIFICATION
-    status VARCHAR(32) NOT NULL DEFAULT 'PENDING',  -- PENDING / IN_PROGRESS / COMPLETED / REJECTED
-    reason TEXT,
-    admin_notes TEXT,
-    requested_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    completed_at TIMESTAMP WITH TIME ZONE,
-    handler_user_id UUID,
-    is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
-    deleted_at TIMESTAMP WITH TIME ZONE,
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    version BIGINT NOT NULL DEFAULT 0
-);
+CREATE TABLE IF NOT EXISTS dsr_requests
+(
+  id
+  UUID
+  PRIMARY
+  KEY
+  DEFAULT
+  gen_random_uuid
+(
+),
+  tenant_id UUID NOT NULL,
+  requester_user_id UUID NOT NULL,
+  request_type VARCHAR
+(
+  32
+) NOT NULL, -- ACCESS / ERASURE / PORTABILITY / RECTIFICATION
+  status VARCHAR
+(
+  32
+) NOT NULL DEFAULT 'PENDING', -- PENDING / IN_PROGRESS / COMPLETED / REJECTED
+  reason TEXT,
+  admin_notes TEXT,
+  requested_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  completed_at TIMESTAMP WITH TIME ZONE,
+  handler_user_id UUID,
+  is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
+  deleted_at TIMESTAMP WITH TIME ZONE,
+  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                         version BIGINT NOT NULL DEFAULT 0
+                         );
 
 CREATE INDEX IF NOT EXISTS idx_dsr_requests_tenant_status
-    ON dsr_requests (tenant_id, status);
+  ON dsr_requests (tenant_id, status);
 
 CREATE INDEX IF NOT EXISTS idx_dsr_requests_requester
-    ON dsr_requests (requester_user_id);
+  ON dsr_requests (requester_user_id);
 
-COMMENT ON TABLE dsr_requests IS
+COMMENT
+ON TABLE dsr_requests IS
     'GDPR Article 15/17/20 Data Subject Rights request queue. Manual-fulfilment scaffold while automated export/erasure cascading is built out.';
-COMMENT ON COLUMN dsr_requests.request_type IS
+COMMENT
+ON COLUMN dsr_requests.request_type IS
     'GDPR right exercised: ACCESS (Art. 15), ERASURE (Art. 17), PORTABILITY (Art. 20), RECTIFICATION (Art. 16).';
-COMMENT ON COLUMN dsr_requests.status IS
+COMMENT
+ON COLUMN dsr_requests.status IS
     'Workflow: PENDING (intake) -> IN_PROGRESS (ops working) -> COMPLETED or REJECTED (terminal).';
-COMMENT ON COLUMN dsr_requests.handler_user_id IS
+COMMENT
+ON COLUMN dsr_requests.handler_user_id IS
     'SYSTEM_ADMIN user that moved the request to a terminal state. Null while PENDING.';

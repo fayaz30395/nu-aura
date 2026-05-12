@@ -1,9 +1,5 @@
-import { apiClient } from '../../api/client';
-import type {
-  Survey,
-  SurveyRequest,
-  SurveyStatus,
-} from '../../types/grow/survey';
+import {apiClient} from '../../api/client';
+import type {Survey, SurveyRequest, SurveyStatus,} from '../../types/grow/survey';
 
 const BASE_URL = '/survey-management';
 
@@ -27,7 +23,7 @@ export const surveyService = {
   },
 
   async updateStatus(surveyId: string, status: SurveyStatus): Promise<Survey> {
-    const response = await apiClient.patch<Survey>(`${BASE_URL}/${surveyId}/status`, { params: { status } });
+    const response = await apiClient.patch<Survey>(`${BASE_URL}/${surveyId}/status`, {params: {status}});
     return response.data;
   },
 
@@ -47,7 +43,7 @@ export const surveyService = {
   },
 
   async getAllSurveys(page = 0, size = 20): Promise<PagedResponse<Survey>> {
-    const response = await apiClient.get<PagedResponse<Survey>>(BASE_URL, { params: { page, size } });
+    const response = await apiClient.get<PagedResponse<Survey>>(BASE_URL, {params: {page, size}});
     return response.data;
   },
 

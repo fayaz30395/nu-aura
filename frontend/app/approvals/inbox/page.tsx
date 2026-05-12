@@ -326,7 +326,7 @@ export default function ApprovalInboxPage() {
     return (
       <AppLayout activeMenuItem="approvals">
         <div className="flex h-full items-center justify-center p-8">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-accent-500 border-t-transparent" />
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-accent-500 border-t-transparent"/>
         </div>
       </AppLayout>
     );

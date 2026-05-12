@@ -54,7 +54,7 @@ public class WebhookRotationController {
      *
      * @param id webhook UUID — must belong to the caller's tenant
      * @return {@link RotateSecretResponse} containing the freshly minted secret and
-     *         the timestamp at which the previous secret stops being honoured
+     * the timestamp at which the previous secret stops being honoured
      */
     @PostMapping("/{id}/rotate-secret")
     @RequiresPermission(value = SYSTEM_ADMIN, revalidate = true)

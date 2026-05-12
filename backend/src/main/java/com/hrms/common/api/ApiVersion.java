@@ -35,6 +35,7 @@ public final class ApiVersion {
     public static final String HEADER_API_SUNSET = "Sunset";
     public static final String HEADER_API_DEPRECATION_NOTICE = "X-API-Deprecation-Notice";
     public static final String HEADER_API_LATEST_VERSION = "X-API-Latest-Version";
+
     private ApiVersion() {
         // Utility class
     }

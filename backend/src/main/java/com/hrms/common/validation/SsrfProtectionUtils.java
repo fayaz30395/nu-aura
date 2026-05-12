@@ -3,11 +3,7 @@ package com.hrms.common.validation;
 import com.hrms.common.exception.BusinessException;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.InetAddress;
-import java.net.URI;
-import java.net.URL;
-import java.net.UnknownHostException;
+import java.net.*;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -200,7 +196,7 @@ public final class SsrfProtectionUtils {
      *   <li>disable redirect-following so callers must re-validate any 3xx Location</li>
      * </ol>
      *
-     * @param url             the URL to fetch (must pass SSRF validation)
+     * @param url              the URL to fetch (must pass SSRF validation)
      * @param connectTimeoutMs connect timeout in milliseconds
      * @return an unconnected {@link HttpURLConnection} with redirects disabled
      * @throws BusinessException if URL fails SSRF validation

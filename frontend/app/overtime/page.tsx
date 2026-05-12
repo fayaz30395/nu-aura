@@ -456,7 +456,7 @@ export default function OvertimePage() {
         {activeTab === 'my-overtime' && (
           <div>
             {isMyLoading ? (
-              <SkeletonTable rows={5} columns={5} />
+              <SkeletonTable rows={5} columns={5}/>
             ) : !myRecords || myRecords.content.length === 0 ? (
               <EmptyState
                 title="No overtime records"
@@ -625,7 +625,7 @@ export default function OvertimePage() {
           <PermissionGate permission={Permissions.ATTENDANCE_APPROVE}>
             <div>
               {isPendingLoading ? (
-                <SkeletonTable rows={5} columns={5} />
+                <SkeletonTable rows={5} columns={5}/>
               ) : !pendingRecords || pendingRecords.content.length === 0 ? (
                 <EmptyState
                   title="No pending approvals"
@@ -647,7 +647,7 @@ export default function OvertimePage() {
           <PermissionGate permission={Permissions.ATTENDANCE_VIEW_ALL}>
             <div>
               {isAllLoading ? (
-                <SkeletonTable rows={5} columns={5} />
+                <SkeletonTable rows={5} columns={5}/>
               ) : !allRecords || allRecords.content.length === 0 ? (
                 <EmptyState
                   title="No overtime records"

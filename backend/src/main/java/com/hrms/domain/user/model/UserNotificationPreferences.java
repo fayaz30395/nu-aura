@@ -4,11 +4,11 @@ import com.hrms.common.entity.BaseEntity;
 import com.hrms.domain.tenant.Tenant;
 import com.hrms.domain.user.User;
 import jakarta.persistence.*;
-import org.hibernate.annotations.Where;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Where;
 
 import java.util.UUID;
 

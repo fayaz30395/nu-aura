@@ -4,13 +4,12 @@ import com.hrms.api.project.dto.*;
 import com.hrms.application.project.service.ResourceAllocationService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
-
-import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/resources")

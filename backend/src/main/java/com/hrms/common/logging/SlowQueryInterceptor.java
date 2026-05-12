@@ -4,7 +4,6 @@ import com.hrms.common.security.TenantContext;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.resource.jdbc.spi.StatementInspector;
 import org.slf4j.MDC;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;

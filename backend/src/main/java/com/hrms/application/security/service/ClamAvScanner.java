@@ -1,11 +1,11 @@
 package com.hrms.application.security.service;
 
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
-import jakarta.annotation.PostConstruct;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,13 +46,19 @@ import java.nio.charset.StandardCharsets;
 )
 public class ClamAvScanner implements VirusScanService {
 
-    /** Default chunk size for INSTREAM framing. 8 KiB balances syscall count vs. memory churn. */
+    /**
+     * Default chunk size for INSTREAM framing. 8 KiB balances syscall count vs. memory churn.
+     */
     private static final int CHUNK_SIZE = 8 * 1024;
 
-    /** Wire command for streaming scans. {@code z} prefix → NUL-terminated reply. */
+    /**
+     * Wire command for streaming scans. {@code z} prefix → NUL-terminated reply.
+     */
     private static final byte[] INSTREAM_CMD = "zINSTREAM\0".getBytes(StandardCharsets.US_ASCII);
 
-    /** Reply markers from clamd. */
+    /**
+     * Reply markers from clamd.
+     */
     private static final String OK_SUFFIX = "OK";
     private static final String FOUND_SUFFIX = "FOUND";
     private static final String ERROR_SUFFIX = "ERROR";

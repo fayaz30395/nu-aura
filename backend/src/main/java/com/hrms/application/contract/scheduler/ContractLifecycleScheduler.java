@@ -1,5 +1,6 @@
 package com.hrms.application.contract.scheduler;
 
+import com.hrms.application.notification.service.NotificationService;
 import com.hrms.common.metrics.MetricsService;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.contract.Contract;
@@ -7,7 +8,6 @@ import com.hrms.domain.contract.ContractReminder;
 import com.hrms.domain.contract.ContractStatus;
 import com.hrms.domain.contract.ReminderType;
 import com.hrms.domain.notification.Notification;
-import com.hrms.application.notification.service.NotificationService;
 import com.hrms.infrastructure.contract.repository.ContractReminderRepository;
 import com.hrms.infrastructure.contract.repository.ContractRepository;
 import lombok.RequiredArgsConstructor;

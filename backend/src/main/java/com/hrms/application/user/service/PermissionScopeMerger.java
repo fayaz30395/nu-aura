@@ -1,18 +1,16 @@
 package com.hrms.application.user.service;
 
-import com.hrms.domain.user.*;
+import com.hrms.domain.user.CustomScopeTarget;
+import com.hrms.domain.user.Role;
+import com.hrms.domain.user.RolePermission;
+import com.hrms.domain.user.RoleScope;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Service for merging permissions from multiple roles for a user.

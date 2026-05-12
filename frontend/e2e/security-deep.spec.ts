@@ -68,7 +68,9 @@ test.describe('S-SEC-1: OWASP Security Headers @security', () => {
         try {
           const r = await fetch(`${apiBase}/employees?page=0&size=1`, {credentials: 'include'});
           const entries: Record<string, string> = {};
-          r.headers.forEach((v, k) => { entries[k.toLowerCase()] = v; });
+          r.headers.forEach((v, k) => {
+            entries[k.toLowerCase()] = v;
+          });
           return entries;
         } catch {
           return {};
@@ -93,7 +95,9 @@ test.describe('S-SEC-1: OWASP Security Headers @security', () => {
       try {
         const r = await fetch(`${apiBase}/employees?page=0&size=1`, {credentials: 'include'});
         const entries: Record<string, string> = {};
-        r.headers.forEach((v, k) => { entries[k.toLowerCase()] = v; });
+        r.headers.forEach((v, k) => {
+          entries[k.toLowerCase()] = v;
+        });
         return entries;
       } catch {
         return {};
@@ -138,7 +142,9 @@ test.describe('S-SEC-1: OWASP Security Headers @security', () => {
       try {
         const r = await fetch(`${apiBase}/employees?page=0&size=1`, {credentials: 'include'});
         const entries: Record<string, string> = {};
-        r.headers.forEach((v, k) => { entries[k.toLowerCase()] = v; });
+        r.headers.forEach((v, k) => {
+          entries[k.toLowerCase()] = v;
+        });
         return entries;
       } catch {
         return {};
@@ -1040,7 +1046,7 @@ test.describe('S-SEC-10: Rate Limiting on Auth Endpoint @security', () => {
     // A large timing difference (>3x) could indicate user enumeration via timing
     const ratio = timings.existingUserMs > 0 && timings.nonExistingUserMs > 0
       ? Math.max(timings.existingUserMs, timings.nonExistingUserMs) /
-        Math.min(timings.existingUserMs, timings.nonExistingUserMs)
+      Math.min(timings.existingUserMs, timings.nonExistingUserMs)
       : 1;
 
     if (ratio > 3) {

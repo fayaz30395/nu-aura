@@ -6,7 +6,9 @@ import com.hrms.api.wall.dto.WallPostResponse;
 import com.hrms.application.wall.service.WallService;
 import com.hrms.common.exception.BusinessException;
 import com.hrms.common.security.TenantContext;
-import com.hrms.domain.recognition.*;
+import com.hrms.domain.employee.Employee;
+import com.hrms.domain.recognition.EmployeePoints;
+import com.hrms.domain.recognition.Recognition;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.recognition.repository.*;
 import com.hrms.infrastructure.wall.repository.PostReactionRepository;
@@ -19,12 +21,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
-import com.hrms.domain.employee.Employee;
-
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 

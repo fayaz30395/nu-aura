@@ -11,6 +11,7 @@ import com.hrms.domain.employee.Employee;
 import com.hrms.domain.leave.LeaveBalance;
 import com.hrms.domain.leave.LeaveRequest;
 import com.hrms.domain.leave.LeaveType;
+import com.hrms.domain.user.RoleScope;
 import com.hrms.domain.user.User;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.leave.repository.LeaveBalanceRepository;
@@ -32,11 +33,10 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
 
-import com.hrms.domain.user.RoleScope;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * End-to-End tests for Leave Request functionality.

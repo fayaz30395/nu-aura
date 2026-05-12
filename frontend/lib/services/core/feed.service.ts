@@ -1,18 +1,14 @@
-import { homeService } from './home.service';
-import { announcementService } from '../platform/announcement.service';
-import { recognitionService } from '../grow/recognition.service';
-import { linkedinService } from '../platform/linkedin.service';
-import { wallService } from './wall.service';
-import type { WallPostResponse } from './wall.service';
-import type { FeedItem } from '@/lib/types/core/feed';
-import type { Announcement } from '../platform/announcement.service';
-import type { Recognition } from '@/lib/types/grow/recognition';
-import type { LinkedInPost } from '@/lib/types/platform/linkedin';
-import type {
-  BirthdayResponse,
-  WorkAnniversaryResponse,
-  NewJoineeResponse,
-} from './home.service';
+import type {BirthdayResponse, NewJoineeResponse, WorkAnniversaryResponse,} from './home.service';
+import {homeService} from './home.service';
+import type {Announcement} from '../platform/announcement.service';
+import {announcementService} from '../platform/announcement.service';
+import {recognitionService} from '../grow/recognition.service';
+import {linkedinService} from '../platform/linkedin.service';
+import type {WallPostResponse} from './wall.service';
+import {wallService} from './wall.service';
+import type {FeedItem} from '@/lib/types/core/feed';
+import type {Recognition} from '@/lib/types/grow/recognition';
+import type {LinkedInPost} from '@/lib/types/platform/linkedin';
 
 /**
  * Feed Service — aggregates announcements, celebrations, and recognitions

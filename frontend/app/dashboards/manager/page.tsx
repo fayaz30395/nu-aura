@@ -161,7 +161,8 @@ export default function ManagerDashboardPage() {
             <h1 className="text-xl font-bold skeuo-emboss">Team Dashboard</h1>
             <p className="text-[var(--text-secondary)] mt-1">Manager overview</p>
           </div>
-          <div className="flex items-center gap-4 p-4 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elevated)]">
+          <div
+            className="flex items-center gap-4 p-4 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elevated)]">
             <AlertCircle className="h-5 w-5 text-[var(--status-warning-text)] flex-shrink-0"/>
             <p className="text-sm text-[var(--text-secondary)] flex-1">
               Team dashboard data is temporarily unavailable. Some metrics may not be displayed.
@@ -246,7 +247,8 @@ export default function ManagerDashboardPage() {
                 : 'bg-warning-500/10 border-warning-500/20 text-warning-700 dark:text-warning-400'
               }`}>
               <Activity className="h-4 w-4"/>
-              <span className="font-bold">Health: {teamOverview.teamHealthStatus ? teamOverview.teamHealthStatus.replace('_', ' ') : '-'}</span>
+              <span
+                className="font-bold">Health: {teamOverview.teamHealthStatus ? teamOverview.teamHealthStatus.replace('_', ' ') : '-'}</span>
             </div>
           </div>
         </motion.div>

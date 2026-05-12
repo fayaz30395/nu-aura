@@ -1,18 +1,8 @@
 package com.hrms.domain.compliance;
 
 import com.hrms.common.entity.TenantAware;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.Index;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.Where;
 
@@ -66,18 +56,24 @@ public class DsrRequest extends TenantAware {
     @Builder.Default
     private Status status = Status.PENDING;
 
-    /** Free-text justification supplied by the requester. Optional. */
+    /**
+     * Free-text justification supplied by the requester. Optional.
+     */
     @Column(name = "reason", columnDefinition = "TEXT")
     private String reason;
 
-    /** Notes from the ops handler explaining fulfilment / rejection. */
+    /**
+     * Notes from the ops handler explaining fulfilment / rejection.
+     */
     @Column(name = "admin_notes", columnDefinition = "TEXT")
     private String adminNotes;
 
     @Column(name = "requested_at", nullable = false)
     private LocalDateTime requestedAt;
 
-    /** Set when status transitions to {@link Status#COMPLETED} or {@link Status#REJECTED}. */
+    /**
+     * Set when status transitions to {@link Status#COMPLETED} or {@link Status#REJECTED}.
+     */
     @Column(name = "completed_at")
     private LocalDateTime completedAt;
 
@@ -96,7 +92,9 @@ public class DsrRequest extends TenantAware {
     @Column(name = "artifact_sha256", length = 64)
     private String artifactSha256;
 
-    /** Byte size of the exported artefact (see {@link #artifactSha256}). */
+    /**
+     * Byte size of the exported artefact (see {@link #artifactSha256}).
+     */
     @Column(name = "artifact_size")
     private Long artifactSize;
 
@@ -110,7 +108,9 @@ public class DsrRequest extends TenantAware {
         }
     }
 
-    /** Marks the request as terminal and records the handler + timestamp. */
+    /**
+     * Marks the request as terminal and records the handler + timestamp.
+     */
     public void complete(UUID handlerId, String notes) {
         this.status = Status.COMPLETED;
         this.handlerUserId = handlerId;
@@ -118,7 +118,9 @@ public class DsrRequest extends TenantAware {
         this.completedAt = LocalDateTime.now();
     }
 
-    /** Marks the request as rejected (e.g. identity verification failed). */
+    /**
+     * Marks the request as rejected (e.g. identity verification failed).
+     */
     public void reject(UUID handlerId, String notes) {
         this.status = Status.REJECTED;
         this.handlerUserId = handlerId;
@@ -131,25 +133,43 @@ public class DsrRequest extends TenantAware {
      * regulation; surfaced in the OpenAPI annotations on {@code DsrController}.
      */
     public enum RequestType {
-        /** Article 15 — right to confirmation + copy of personal data held. */
+        /**
+         * Article 15 — right to confirmation + copy of personal data held.
+         */
         ACCESS,
-        /** Article 17 — right to erasure ("right to be forgotten"). */
+        /**
+         * Article 17 — right to erasure ("right to be forgotten").
+         */
         ERASURE,
-        /** Article 20 — right to receive data in a portable, machine-readable form. */
+        /**
+         * Article 20 — right to receive data in a portable, machine-readable form.
+         */
         PORTABILITY,
-        /** Article 16 — right to rectification of inaccurate personal data. */
+        /**
+         * Article 16 — right to rectification of inaccurate personal data.
+         */
         RECTIFICATION
     }
 
-    /** Lifecycle of an intake request. */
+    /**
+     * Lifecycle of an intake request.
+     */
     public enum Status {
-        /** Awaiting ops triage. */
+        /**
+         * Awaiting ops triage.
+         */
         PENDING,
-        /** A handler has picked up the request and started fulfilment. */
+        /**
+         * A handler has picked up the request and started fulfilment.
+         */
         IN_PROGRESS,
-        /** Fulfilled — export delivered / data erased / record corrected. */
+        /**
+         * Fulfilled — export delivered / data erased / record corrected.
+         */
         COMPLETED,
-        /** Refused (e.g. identity not verified, or request out of scope). */
+        /**
+         * Refused (e.g. identity not verified, or request out of scope).
+         */
         REJECTED
     }
 }

@@ -28,7 +28,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -121,6 +120,14 @@ class DsrServiceIntegrationTest {
 
     private UUID dataSubjectUserId;
     private UUID dataSubjectEmployeeId;
+    /**
+     * Returns a non-mock {@link DsrExportService} instance by reading the
+     * production beans via the test's own ApplicationContext. Used by the
+     * happy-path test stubs to route through the real export logic while still
+     * intercepting via {@link MockBean} on the {@link DsrService} dependency.
+     */
+    @Autowired
+    private org.springframework.context.ApplicationContext applicationContext;
 
     @BeforeEach
     void seedTenantGraph() {
@@ -480,15 +487,6 @@ class DsrServiceIntegrationTest {
         // the exception escapes the service (the controller test verifies the
         // HTTP-status mapping).
     }
-
-    /**
-     * Returns a non-mock {@link DsrExportService} instance by reading the
-     * production beans via the test's own ApplicationContext. Used by the
-     * happy-path test stubs to route through the real export logic while still
-     * intercepting via {@link MockBean} on the {@link DsrService} dependency.
-     */
-    @Autowired
-    private org.springframework.context.ApplicationContext applicationContext;
 
     private DsrExportService realExportService() {
         // Build a fresh real instance using the autowired collaborators so the

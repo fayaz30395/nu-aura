@@ -1,15 +1,15 @@
 package com.hrms.domain.integration.docusign;
 
-import lombok.extern.slf4j.Slf4j;
-
 import com.hrms.common.entity.TenantAware;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Index;
+import jakarta.persistence.Table;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.Where;
-
-import java.util.UUID;
 
 /**
  * JPA entity representing a mapping between a document type and a DocuSign template.

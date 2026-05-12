@@ -1,6 +1,11 @@
 package com.hrms.application.ai.service;
 
-import com.hrms.api.recruitment.dto.ai.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hrms.api.recruitment.dto.ai.AIFeedbackSynthesisDTO;
+import com.hrms.api.recruitment.dto.ai.AIInterviewQuestionsDTO;
+import com.hrms.api.recruitment.dto.ai.FeedbackSynthesisResponse;
+import com.hrms.api.recruitment.dto.ai.InterviewQuestionsResponse;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.ai.AiUsageLog;
 import com.hrms.domain.recruitment.Candidate;
@@ -10,8 +15,6 @@ import com.hrms.infrastructure.ai.repository.AiUsageLogRepository;
 import com.hrms.infrastructure.recruitment.repository.CandidateRepository;
 import com.hrms.infrastructure.recruitment.repository.InterviewRepository;
 import com.hrms.infrastructure.recruitment.repository.JobOpeningRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -109,8 +112,8 @@ public class InterviewGenerationService {
      * This is guidance for hiring teams only and must not be used for automated decisions.
      *
      * @throws com.hrms.common.exception.BusinessException if the OpenAI API key is not configured
-     *     (only when there is actually feedback to synthesize — the empty case still returns a
-     *     deterministic "no data" response so the UI degrades gracefully)
+     *                                                     (only when there is actually feedback to synthesize — the empty case still returns a
+     *                                                     deterministic "no data" response so the UI degrades gracefully)
      */
     public FeedbackSynthesisResponse synthesizeInterviewFeedback(UUID candidateId, UUID jobOpeningId) {
         UUID tenantId = TenantContext.getCurrentTenant();

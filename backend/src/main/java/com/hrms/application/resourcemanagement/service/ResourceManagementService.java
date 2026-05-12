@@ -1,20 +1,20 @@
 package com.hrms.application.resourcemanagement.service;
 
-import com.hrms.api.resourcemanagement.dto.*;
+import com.hrms.api.resourcemanagement.dto.AvailabilityDTOs;
 import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.security.SecurityContext;
+import com.hrms.domain.attendance.Holiday;
 import com.hrms.domain.employee.Employee;
+import com.hrms.domain.leave.LeaveRequest;
 import com.hrms.domain.project.Project;
 import com.hrms.domain.project.ProjectEmployee;
 import com.hrms.domain.resourcemanagement.AllocationApprovalRequest;
+import com.hrms.infrastructure.attendance.repository.HolidayRepository;
+import com.hrms.infrastructure.employee.repository.DepartmentRepository;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
+import com.hrms.infrastructure.leave.repository.LeaveRequestRepository;
 import com.hrms.infrastructure.project.repository.HrmsProjectRepository;
 import com.hrms.infrastructure.project.repository.ProjectEmployeeRepository;
-import com.hrms.domain.attendance.Holiday;
-import com.hrms.domain.leave.LeaveRequest;
-import com.hrms.infrastructure.attendance.repository.HolidayRepository;
-import com.hrms.infrastructure.leave.repository.LeaveRequestRepository;
-import com.hrms.infrastructure.employee.repository.DepartmentRepository;
 import com.hrms.infrastructure.resourcemanagement.repository.AllocationApprovalRequestRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -26,17 +26,14 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.hrms.api.resourcemanagement.dto.AllocationDTOs.*;
-import static com.hrms.api.resourcemanagement.dto.ApprovalDTOs.*;
-import static com.hrms.api.resourcemanagement.dto.WorkloadDTOs.*;
+import static com.hrms.api.resourcemanagement.dto.ApprovalDTOs.AllocationApprovalResponse;
+import static com.hrms.api.resourcemanagement.dto.ApprovalDTOs.CreateAllocationRequest;
 import static com.hrms.api.resourcemanagement.dto.AvailabilityDTOs.*;
+import static com.hrms.api.resourcemanagement.dto.WorkloadDTOs.*;
 
 /**
  * Facade for resource management. Owns core capacity and availability logic.

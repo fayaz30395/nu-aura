@@ -1,10 +1,12 @@
 package com.hrms.domain.wellness;
 
 import com.hrms.common.entity.TenantAware;
-import jakarta.persistence.*;
-import org.hibernate.annotations.Where;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

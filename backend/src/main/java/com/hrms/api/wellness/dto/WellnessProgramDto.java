@@ -1,6 +1,7 @@
 package com.hrms.api.wellness.dto;
 
-import com.hrms.domain.wellness.WellnessProgram.*;
+import com.hrms.domain.wellness.WellnessProgram.ProgramCategory;
+import com.hrms.domain.wellness.WellnessProgram.ProgramType;
 import lombok.*;
 
 import java.math.BigDecimal;

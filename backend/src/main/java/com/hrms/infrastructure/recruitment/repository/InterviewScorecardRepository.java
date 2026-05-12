@@ -18,5 +18,5 @@ public interface InterviewScorecardRepository extends JpaRepository<InterviewSco
     List<InterviewScorecard> findByTenantIdAndApplicantId(UUID tenantId, UUID applicantId);
 
     List<InterviewScorecard> findByTenantIdAndInterviewerIdAndStatus(UUID tenantId, UUID interviewerId,
-                                                                      InterviewScorecard.ScorecardStatus status);
+                                                                     InterviewScorecard.ScorecardStatus status);
 }

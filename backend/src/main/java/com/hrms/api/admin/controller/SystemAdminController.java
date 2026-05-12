@@ -159,7 +159,7 @@ public class SystemAdminController {
     @PostMapping("/users/reset-password")
     @RequiresPermission(value = SYSTEM_ADMIN, revalidate = true)
     @Operation(summary = "Admin-initiated user password reset",
-               description = "Generates a random temp password, sets force-change flag on next login, emails user")
+            description = "Generates a random temp password, sets force-change flag on next login, emails user")
     public AdminPasswordResetResponse adminResetPassword(@Valid @RequestBody AdminPasswordResetRequest request) {
         log.info("SuperAdmin initiating password reset for user {} (reason length={})",
                 request.getUserId(), request.getReason() == null ? 0 : request.getReason().length());

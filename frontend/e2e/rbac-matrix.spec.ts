@@ -1,6 +1,6 @@
-import { test, expect } from '@playwright/test';
-import { loginAs, navigateTo } from './fixtures/helpers';
-import { demoUsers } from './fixtures/testData';
+import {expect, test} from '@playwright/test';
+import {loginAs, navigateTo} from './fixtures/helpers';
+import {demoUsers} from './fixtures/testData';
 
 /**
  * Comprehensive RBAC Matrix Tests
@@ -26,7 +26,7 @@ async function isBlocked(page: import('@playwright/test').Page, requestedPath: s
   const hasErrorMsg = await page
     .locator('text=/403|Forbidden|Access Denied|not authorized|not allowed/i')
     .first()
-    .isVisible({ timeout: 3000 })
+    .isVisible({timeout: 3000})
     .catch(() => false);
   const wasRedirected =
     !currentUrl.includes(requestedPath.split('?')[0]) ||
@@ -55,19 +55,19 @@ const MY_SPACE_ROUTES = [
 ];
 
 const MY_SPACE_ROLES: Array<{ key: keyof typeof demoUsers; label: string }> = [
-  { key: 'superAdmin', label: 'SUPER_ADMIN' },
-  { key: 'hrManager', label: 'HR_MANAGER' },
-  { key: 'managerEng', label: 'MANAGER' },
-  { key: 'employeeSaran', label: 'EMPLOYEE' },
-  { key: 'recruitmentAdmin', label: 'RECRUITMENT_ADMIN' },
+  {key: 'superAdmin', label: 'SUPER_ADMIN'},
+  {key: 'hrManager', label: 'HR_MANAGER'},
+  {key: 'managerEng', label: 'MANAGER'},
+  {key: 'employeeSaran', label: 'EMPLOYEE'},
+  {key: 'recruitmentAdmin', label: 'RECRUITMENT_ADMIN'},
 ];
 
 test.describe('RBAC-01: MY SPACE Routes — All roles must access @rbac @critical', () => {
   test.setTimeout(90000);
 
-  for (const { key, label } of MY_SPACE_ROLES) {
+  for (const {key, label} of MY_SPACE_ROLES) {
     for (const route of MY_SPACE_ROUTES) {
-      test(`${label} can access ${route} @rbac @critical`, async ({ page }) => {
+      test(`${label} can access ${route} @rbac @critical`, async ({page}) => {
         await loginAs(page, demoUsers[key].email);
         const finalUrl = await goAndWait(page, route);
 
@@ -75,7 +75,7 @@ test.describe('RBAC-01: MY SPACE Routes — All roles must access @rbac @critica
         const has403 = await page
           .locator('text=/403|Forbidden|Access Denied/i')
           .first()
-          .isVisible({ timeout: 3000 })
+          .isVisible({timeout: 3000})
           .catch(() => false);
 
         const bodyText = await page.locator('body').textContent().catch(() => '');
@@ -108,7 +108,7 @@ test.describe('RBAC-01: MY SPACE Routes — All roles must access @rbac @critica
 test.describe('RBAC-02: Admin Routes @rbac @critical', () => {
   test.setTimeout(90000);
 
-  test('SUPER_ADMIN can access /admin @rbac @critical', async ({ page }) => {
+  test('SUPER_ADMIN can access /admin @rbac @critical', async ({page}) => {
     await loginAs(page, demoUsers.superAdmin.email);
     await goAndWait(page, '/admin');
 
@@ -117,12 +117,12 @@ test.describe('RBAC-02: Admin Routes @rbac @critical', () => {
     const hasContent = await page
       .locator('h1, h2, main')
       .first()
-      .isVisible({ timeout: 10000 })
+      .isVisible({timeout: 10000})
       .catch(() => false);
     const hasAccessDenied = await page
       .locator('text=/403|Forbidden|Access Denied/i')
       .first()
-      .isVisible({ timeout: 3000 })
+      .isVisible({timeout: 3000})
       .catch(() => false);
 
     expect(
@@ -132,7 +132,7 @@ test.describe('RBAC-02: Admin Routes @rbac @critical', () => {
     console.log('RBAC_ADMIN_SYS:/admin=PASS');
   });
 
-  test('HR_MANAGER is blocked or redirected from /admin @rbac', async ({ page }) => {
+  test('HR_MANAGER is blocked or redirected from /admin @rbac', async ({page}) => {
     await loginAs(page, demoUsers.hrManager.email);
     await goAndWait(page, '/admin');
 
@@ -156,7 +156,7 @@ test.describe('RBAC-02: Admin Routes @rbac @critical', () => {
     ).toBe(true);
   });
 
-  test('EMPLOYEE (ESS) is blocked or redirected from /admin @rbac @critical', async ({ page }) => {
+  test('EMPLOYEE (ESS) is blocked or redirected from /admin @rbac @critical', async ({page}) => {
     await loginAs(page, demoUsers.employeeSaran.email);
     await goAndWait(page, '/admin');
 
@@ -186,21 +186,21 @@ test.describe('RBAC-03: Employee Management @rbac', () => {
   test.setTimeout(90000);
 
   test('SUPER_ADMIN sees employee list with multiple rows and Add Employee button @rbac @critical', async ({
-    page,
-  }) => {
+                                                                                                             page,
+                                                                                                           }) => {
     await loginAs(page, demoUsers.superAdmin.email);
     await goAndWait(page, '/employees');
 
     expect(page.url()).not.toContain('/auth/login');
-    await expect(page.locator('h1, h2').first()).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('h1, h2').first()).toBeVisible({timeout: 10000});
 
-    const addBtn = page.locator('button').filter({ hasText: /add employee/i }).first();
-    const hasAddBtn = await addBtn.isVisible({ timeout: 5000 }).catch(() => false);
+    const addBtn = page.locator('button').filter({hasText: /add employee/i}).first();
+    const hasAddBtn = await addBtn.isVisible({timeout: 5000}).catch(() => false);
     console.log(`RBAC_EMPLOYEES_SYS: addEmployee=${hasAddBtn}`);
     expect(hasAddBtn).toBe(true);
   });
 
-  test('HR_MANAGER can access /employees @rbac @critical', async ({ page }) => {
+  test('HR_MANAGER can access /employees @rbac @critical', async ({page}) => {
     await loginAs(page, demoUsers.hrManager.email);
     await goAndWait(page, '/employees');
 
@@ -208,13 +208,13 @@ test.describe('RBAC-03: Employee Management @rbac', () => {
     const hasContent = await page
       .locator('h1, h2, main')
       .first()
-      .isVisible({ timeout: 10000 })
+      .isVisible({timeout: 10000})
       .catch(() => false);
     expect(hasContent).toBe(true);
     console.log('RBAC_EMPLOYEES_HRM:PASS');
   });
 
-  test('MANAGER can access /employees @rbac', async ({ page }) => {
+  test('MANAGER can access /employees @rbac', async ({page}) => {
     await loginAs(page, demoUsers.managerEng.email);
     await goAndWait(page, '/employees');
 
@@ -223,7 +223,7 @@ test.describe('RBAC-03: Employee Management @rbac', () => {
     expect(accessible).toBe(true);
   });
 
-  test('EMPLOYEE (ESS) on /employees — warn if full list visible @rbac', async ({ page }) => {
+  test('EMPLOYEE (ESS) on /employees — warn if full list visible @rbac', async ({page}) => {
     await loginAs(page, demoUsers.employeeSaran.email);
     await goAndWait(page, '/employees');
 
@@ -251,7 +251,7 @@ test.describe('RBAC-03: Employee Management @rbac', () => {
 test.describe('RBAC-04: Payroll Access @rbac', () => {
   test.setTimeout(90000);
 
-  test('SUPER_ADMIN can access /payroll @rbac @critical', async ({ page }) => {
+  test('SUPER_ADMIN can access /payroll @rbac @critical', async ({page}) => {
     await loginAs(page, demoUsers.superAdmin.email);
     await goAndWait(page, '/payroll');
 
@@ -259,13 +259,13 @@ test.describe('RBAC-04: Payroll Access @rbac', () => {
     const hasContent = await page
       .locator('h1, h2, main')
       .first()
-      .isVisible({ timeout: 10000 })
+      .isVisible({timeout: 10000})
       .catch(() => false);
     expect(hasContent).toBe(true);
     console.log('RBAC_PAYROLL_SYS:PASS');
   });
 
-  test('HR_MANAGER on /payroll — log accessible or blocked @rbac', async ({ page }) => {
+  test('HR_MANAGER on /payroll — log accessible or blocked @rbac', async ({page}) => {
     await loginAs(page, demoUsers.hrManager.email);
     await goAndWait(page, '/payroll');
 
@@ -277,7 +277,7 @@ test.describe('RBAC-04: Payroll Access @rbac', () => {
     // Not a hard assert — HR may or may not have payroll read access per config
   });
 
-  test('RECRUITMENT_ADMIN is blocked from /payroll @rbac @critical', async ({ page }) => {
+  test('RECRUITMENT_ADMIN is blocked from /payroll @rbac @critical', async ({page}) => {
     await loginAs(page, demoUsers.recruitmentAdmin.email);
     await goAndWait(page, '/payroll');
 
@@ -301,8 +301,8 @@ test.describe('RBAC-04: Payroll Access @rbac', () => {
   });
 
   test('EMPLOYEE (ESS) cannot access /payroll admin — only own payslips @rbac @critical', async ({
-    page,
-  }) => {
+                                                                                                   page,
+                                                                                                 }) => {
     await loginAs(page, demoUsers.employeeSaran.email);
     await goAndWait(page, '/payroll');
 
@@ -320,7 +320,7 @@ test.describe('RBAC-04: Payroll Access @rbac', () => {
     const has500 = await page
       .locator('text=/500|internal server error/i')
       .first()
-      .isVisible({ timeout: 3000 })
+      .isVisible({timeout: 3000})
       .catch(() => false);
     expect(has500).toBe(false);
   });
@@ -333,7 +333,7 @@ test.describe('RBAC-04: Payroll Access @rbac', () => {
 test.describe('RBAC-05: Recruitment Access @rbac', () => {
   test.setTimeout(90000);
 
-  test('RECRUITMENT_ADMIN can access /recruitment @rbac @critical', async ({ page }) => {
+  test('RECRUITMENT_ADMIN can access /recruitment @rbac @critical', async ({page}) => {
     await loginAs(page, demoUsers.recruitmentAdmin.email);
     await goAndWait(page, '/recruitment');
 
@@ -341,13 +341,13 @@ test.describe('RBAC-05: Recruitment Access @rbac', () => {
     const hasContent = await page
       .locator('h1, h2, main')
       .first()
-      .isVisible({ timeout: 10000 })
+      .isVisible({timeout: 10000})
       .catch(() => false);
     expect(hasContent).toBe(true);
     console.log('RBAC_RECRUITMENT_REC:PASS');
   });
 
-  test('SUPER_ADMIN can access /recruitment @rbac @critical', async ({ page }) => {
+  test('SUPER_ADMIN can access /recruitment @rbac @critical', async ({page}) => {
     await loginAs(page, demoUsers.superAdmin.email);
     await goAndWait(page, '/recruitment');
 
@@ -355,13 +355,13 @@ test.describe('RBAC-05: Recruitment Access @rbac', () => {
     const hasContent = await page
       .locator('h1, h2, main')
       .first()
-      .isVisible({ timeout: 10000 })
+      .isVisible({timeout: 10000})
       .catch(() => false);
     expect(hasContent).toBe(true);
     console.log('RBAC_RECRUITMENT_SYS:PASS');
   });
 
-  test('HR_MANAGER can access /recruitment @rbac @critical', async ({ page }) => {
+  test('HR_MANAGER can access /recruitment @rbac @critical', async ({page}) => {
     await loginAs(page, demoUsers.hrManager.email);
     await goAndWait(page, '/recruitment');
 
@@ -369,13 +369,13 @@ test.describe('RBAC-05: Recruitment Access @rbac', () => {
     const hasContent = await page
       .locator('h1, h2, main')
       .first()
-      .isVisible({ timeout: 10000 })
+      .isVisible({timeout: 10000})
       .catch(() => false);
     expect(hasContent).toBe(true);
     console.log('RBAC_RECRUITMENT_HRM:PASS');
   });
 
-  test('EMPLOYEE (ESS) on /recruitment — log accessible or blocked @rbac', async ({ page }) => {
+  test('EMPLOYEE (ESS) on /recruitment — log accessible or blocked @rbac', async ({page}) => {
     await loginAs(page, demoUsers.employeeSaran.email);
     await goAndWait(page, '/recruitment');
 
@@ -394,7 +394,7 @@ test.describe('RBAC-05: Recruitment Access @rbac', () => {
 test.describe('RBAC-06: Performance & OKR Access @rbac', () => {
   test.setTimeout(90000);
 
-  test('SUPER_ADMIN can access /performance @rbac @critical', async ({ page }) => {
+  test('SUPER_ADMIN can access /performance @rbac @critical', async ({page}) => {
     await loginAs(page, demoUsers.superAdmin.email);
     await goAndWait(page, '/performance');
 
@@ -402,13 +402,13 @@ test.describe('RBAC-06: Performance & OKR Access @rbac', () => {
     const hasContent = await page
       .locator('h1, h2, main')
       .first()
-      .isVisible({ timeout: 10000 })
+      .isVisible({timeout: 10000})
       .catch(() => false);
     expect(hasContent).toBe(true);
     console.log('RBAC_PERFORMANCE_SYS:PASS');
   });
 
-  test('HR_MANAGER can access /performance @rbac @critical', async ({ page }) => {
+  test('HR_MANAGER can access /performance @rbac @critical', async ({page}) => {
     await loginAs(page, demoUsers.hrManager.email);
     await goAndWait(page, '/performance');
 
@@ -416,13 +416,13 @@ test.describe('RBAC-06: Performance & OKR Access @rbac', () => {
     const hasContent = await page
       .locator('h1, h2, main')
       .first()
-      .isVisible({ timeout: 10000 })
+      .isVisible({timeout: 10000})
       .catch(() => false);
     expect(hasContent).toBe(true);
     console.log('RBAC_PERFORMANCE_HRM:PASS');
   });
 
-  test('MANAGER can access /performance and sees team context @rbac', async ({ page }) => {
+  test('MANAGER can access /performance and sees team context @rbac', async ({page}) => {
     await loginAs(page, demoUsers.managerEng.email);
     await goAndWait(page, '/performance');
 
@@ -433,7 +433,7 @@ test.describe('RBAC-06: Performance & OKR Access @rbac', () => {
     console.log(`RBAC_PERFORMANCE_MGR: accessible=true reviewItems=${reviewList}`);
   });
 
-  test('EMPLOYEE (ESS) can access /performance for self-assessment @rbac', async ({ page }) => {
+  test('EMPLOYEE (ESS) can access /performance for self-assessment @rbac', async ({page}) => {
     await loginAs(page, demoUsers.employeeSaran.email);
     await goAndWait(page, '/performance');
 
@@ -443,12 +443,12 @@ test.describe('RBAC-06: Performance & OKR Access @rbac', () => {
     const hasOwnReview = await page
       .locator('text=/self|my review|my assessment/i')
       .first()
-      .isVisible({ timeout: 5000 })
+      .isVisible({timeout: 5000})
       .catch(() => false);
     console.log(`RBAC_PERFORMANCE_ESS: accessible=true ownReviewVisible=${hasOwnReview}`);
   });
 
-  test('RECRUITMENT_ADMIN on /performance — log result @rbac', async ({ page }) => {
+  test('RECRUITMENT_ADMIN on /performance — log result @rbac', async ({page}) => {
     await loginAs(page, demoUsers.recruitmentAdmin.email);
     await goAndWait(page, '/performance');
 
@@ -466,8 +466,8 @@ test.describe('RBAC-07: Leave Administration @rbac', () => {
   test.setTimeout(90000);
 
   test('HR_MANAGER can access /leave and scope is all-employees @rbac @critical', async ({
-    page,
-  }) => {
+                                                                                           page,
+                                                                                         }) => {
     await loginAs(page, demoUsers.hrManager.email);
     await goAndWait(page, '/leave');
 
@@ -475,19 +475,19 @@ test.describe('RBAC-07: Leave Administration @rbac', () => {
     const hasContent = await page
       .locator('h1, h2, main')
       .first()
-      .isVisible({ timeout: 10000 })
+      .isVisible({timeout: 10000})
       .catch(() => false);
     expect(hasContent).toBe(true);
 
     const teamFilterVisible = await page
       .locator('text=/all employees|department/i')
       .first()
-      .isVisible({ timeout: 3000 })
+      .isVisible({timeout: 3000})
       .catch(() => false);
     console.log(`RBAC_LEAVE_HRM_SCOPE: allEmployees=${teamFilterVisible}`);
   });
 
-  test('MANAGER can access /leave and sees team filter @rbac', async ({ page }) => {
+  test('MANAGER can access /leave and sees team filter @rbac', async ({page}) => {
     await loginAs(page, demoUsers.managerEng.email);
     await goAndWait(page, '/leave');
 
@@ -495,19 +495,19 @@ test.describe('RBAC-07: Leave Administration @rbac', () => {
     const hasContent = await page
       .locator('h1, h2, main')
       .first()
-      .isVisible({ timeout: 10000 })
+      .isVisible({timeout: 10000})
       .catch(() => false);
     expect(hasContent).toBe(true);
 
     const myTeamFilter = await page
       .locator('text=/my team|team/i')
       .first()
-      .isVisible({ timeout: 3000 })
+      .isVisible({timeout: 3000})
       .catch(() => false);
     console.log(`RBAC_LEAVE_MGR_SCOPE: teamFilter=${myTeamFilter}`);
   });
 
-  test('EMPLOYEE (ESS) can access /leave for own requests @rbac @critical', async ({ page }) => {
+  test('EMPLOYEE (ESS) can access /leave for own requests @rbac @critical', async ({page}) => {
     await loginAs(page, demoUsers.employeeSaran.email);
     await goAndWait(page, '/leave');
 
@@ -515,7 +515,7 @@ test.describe('RBAC-07: Leave Administration @rbac', () => {
     const hasContent = await page
       .locator('h1, h2, main')
       .first()
-      .isVisible({ timeout: 10000 })
+      .isVisible({timeout: 10000})
       .catch(() => false);
     expect(hasContent).toBe(true);
 
@@ -523,7 +523,7 @@ test.describe('RBAC-07: Leave Administration @rbac', () => {
     const hasTeamMgmt = await page
       .locator('text=/all employees|manage leave/i')
       .first()
-      .isVisible({ timeout: 3000 })
+      .isVisible({timeout: 3000})
       .catch(() => false);
     console.log(`RBAC_LEAVE_ESS: ownLeaveAccess=true teamMgmt=${hasTeamMgmt}`);
   });
@@ -536,7 +536,7 @@ test.describe('RBAC-07: Leave Administration @rbac', () => {
 test.describe('RBAC-08: Reports & Analytics Access @rbac', () => {
   test.setTimeout(90000);
 
-  test('SUPER_ADMIN can access /reports @rbac @critical', async ({ page }) => {
+  test('SUPER_ADMIN can access /reports @rbac @critical', async ({page}) => {
     await loginAs(page, demoUsers.superAdmin.email);
     await goAndWait(page, '/reports');
 
@@ -544,13 +544,13 @@ test.describe('RBAC-08: Reports & Analytics Access @rbac', () => {
     const hasContent = await page
       .locator('h1, h2, main')
       .first()
-      .isVisible({ timeout: 10000 })
+      .isVisible({timeout: 10000})
       .catch(() => false);
     expect(hasContent).toBe(true);
     console.log('RBAC_REPORTS_SYS:PASS');
   });
 
-  test('HR_MANAGER can access /reports @rbac @critical', async ({ page }) => {
+  test('HR_MANAGER can access /reports @rbac @critical', async ({page}) => {
     await loginAs(page, demoUsers.hrManager.email);
     await goAndWait(page, '/reports');
 
@@ -558,13 +558,13 @@ test.describe('RBAC-08: Reports & Analytics Access @rbac', () => {
     const hasContent = await page
       .locator('h1, h2, main')
       .first()
-      .isVisible({ timeout: 10000 })
+      .isVisible({timeout: 10000})
       .catch(() => false);
     expect(hasContent).toBe(true);
     console.log('RBAC_REPORTS_HRM:PASS');
   });
 
-  test('MANAGER on /reports — log accessible result @rbac', async ({ page }) => {
+  test('MANAGER on /reports — log accessible result @rbac', async ({page}) => {
     await loginAs(page, demoUsers.managerEng.email);
     await goAndWait(page, '/reports');
 
@@ -574,12 +574,12 @@ test.describe('RBAC-08: Reports & Analytics Access @rbac', () => {
     const has500 = await page
       .locator('text=/500|internal server error/i')
       .first()
-      .isVisible({ timeout: 3000 })
+      .isVisible({timeout: 3000})
       .catch(() => false);
     expect(has500).toBe(false);
   });
 
-  test('EMPLOYEE (ESS) on /reports — should be blocked or redirected @rbac', async ({ page }) => {
+  test('EMPLOYEE (ESS) on /reports — should be blocked or redirected @rbac', async ({page}) => {
     await loginAs(page, demoUsers.employeeSaran.email);
     await goAndWait(page, '/reports');
 
@@ -609,7 +609,7 @@ const FEATURE_FLAGGED_ROUTES = [
 test.describe('RBAC-09: Feature Flag Bypass for SUPER_ADMIN @rbac @critical', () => {
   test.setTimeout(90000);
 
-  test('SUPER_ADMIN bypasses all @RequiresFeature flags @rbac @critical', async ({ page }) => {
+  test('SUPER_ADMIN bypasses all @RequiresFeature flags @rbac @critical', async ({page}) => {
     await loginAs(page, demoUsers.superAdmin.email);
 
     for (const route of FEATURE_FLAGGED_ROUTES) {
@@ -619,7 +619,7 @@ test.describe('RBAC-09: Feature Flag Bypass for SUPER_ADMIN @rbac @critical', ()
       const hasFeatureDisabledMsg = await page
         .locator('text=/feature.*not available|coming soon|disabled/i')
         .first()
-        .isVisible({ timeout: 3000 })
+        .isVisible({timeout: 3000})
         .catch(() => false);
 
       if (hasFeatureDisabledMsg) {
@@ -651,8 +651,8 @@ test.describe('RBAC-10: Cross-Tenant Isolation @rbac @security', () => {
   test.setTimeout(90000);
 
   test('EMPLOYEE cannot access injected tenant data via URL params @rbac @security', async ({
-    page,
-  }) => {
+                                                                                              page,
+                                                                                            }) => {
     await loginAs(page, demoUsers.employeeSaran.email);
 
     for (const url of TENANT_INJECTION_ATTEMPTS) {
@@ -662,7 +662,7 @@ test.describe('RBAC-10: Cross-Tenant Isolation @rbac @security', () => {
       const has500 = await page
         .locator('text=/500|internal server error/i')
         .first()
-        .isVisible({ timeout: 3000 })
+        .isVisible({timeout: 3000})
         .catch(() => false);
 
       const bodyText = await page
@@ -677,15 +677,15 @@ test.describe('RBAC-10: Cross-Tenant Isolation @rbac @security', () => {
   });
 
   test('EMPLOYEE API call with forged X-Tenant-Id header is rejected @rbac @security', async ({
-    page,
-  }) => {
+                                                                                                page,
+                                                                                              }) => {
     await loginAs(page, demoUsers.employeeSaran.email);
     // Navigate to a valid page first so the page context is ready
     await goAndWait(page, '/me/profile');
 
     await page.evaluate(async () => {
       const response = await fetch('/api/v1/employees', {
-        headers: { 'X-Tenant-Id': '99999999-9999-9999-9999-999999999999' },
+        headers: {'X-Tenant-Id': '99999999-9999-9999-9999-999999999999'},
         credentials: 'include',
       });
       console.log('CROSS_TENANT_STATUS:' + response.status);
@@ -697,7 +697,7 @@ test.describe('RBAC-10: Cross-Tenant Isolation @rbac @security', () => {
     const has500 = await page
       .locator('text=/500|internal server error/i')
       .first()
-      .isVisible({ timeout: 3000 })
+      .isVisible({timeout: 3000})
       .catch(() => false);
     expect(has500).toBe(false);
   });
@@ -710,7 +710,7 @@ test.describe('RBAC-10: Cross-Tenant Isolation @rbac @security', () => {
 test.describe('RBAC-11: Manager Team Scope @rbac', () => {
   test.setTimeout(90000);
 
-  test('MANAGER sees own team members but warns if cross-team visible @rbac', async ({ page }) => {
+  test('MANAGER sees own team members but warns if cross-team visible @rbac', async ({page}) => {
     await loginAs(page, demoUsers.managerEng.email);
     await goAndWait(page, '/employees');
 
@@ -718,14 +718,14 @@ test.describe('RBAC-11: Manager Team Scope @rbac', () => {
     const maniVisible = await page
       .locator('text=Mani')
       .first()
-      .isVisible({ timeout: 5000 })
+      .isVisible({timeout: 5000})
       .catch(() => false);
 
     // Jagadeesh is HR Manager — different branch, not in Sumit's chain
     const jagadeeshVisible = await page
       .locator('text=Jagadeesh')
       .first()
-      .isVisible({ timeout: 3000 })
+      .isVisible({timeout: 3000})
       .catch(() => false);
 
     console.log(
@@ -758,7 +758,7 @@ test.describe('RBAC-12: Direct URL Bypass — EMPLOYEE (ESS) @rbac @critical', (
   test.setTimeout(90000);
 
   for (const url of RESTRICTED_URLS) {
-    test(`EMPLOYEE cannot bypass RBAC at ${url} @rbac @critical`, async ({ page }) => {
+    test(`EMPLOYEE cannot bypass RBAC at ${url} @rbac @critical`, async ({page}) => {
       await loginAs(page, demoUsers.employeeSaran.email);
       await goAndWait(page, url);
 
@@ -766,7 +766,7 @@ test.describe('RBAC-12: Direct URL Bypass — EMPLOYEE (ESS) @rbac @critical', (
       const hasErrorMsg = await page
         .locator('text=/403|Forbidden|Access Denied|not authorized|not allowed/i')
         .first()
-        .isVisible({ timeout: 3000 })
+        .isVisible({timeout: 3000})
         .catch(() => false);
       const wasRedirected =
         !currentUrl.includes(url.split('?')[0]) ||

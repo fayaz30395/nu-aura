@@ -1,8 +1,12 @@
 package com.hrms.api.timetracking.dto;
 
 import com.hrms.domain.timetracking.TimeEntry;
-import com.hrms.domain.timetracking.TimeEntry.*;
-import lombok.*;
+import com.hrms.domain.timetracking.TimeEntry.EntryType;
+import com.hrms.domain.timetracking.TimeEntry.TimeEntryStatus;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

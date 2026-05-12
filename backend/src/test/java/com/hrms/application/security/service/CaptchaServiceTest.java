@@ -18,14 +18,8 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.contains;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit tests for {@link CaptchaService}'s two implementations (S12-J).
@@ -39,7 +33,7 @@ import static org.mockito.Mockito.when;
  *       threshold, fail closed on misconfiguration / network / parse errors,
  *       and retry exactly once on transient {@link ResourceAccessException}.</li>
  * </ul>
- *
+ * <p>
  * The {@link RestTemplate} is mocked so the suite never touches the network —
  * we drive every code path by returning canned JSON bodies (or throwing) for
  * each test case.
@@ -48,13 +42,19 @@ import static org.mockito.Mockito.when;
 @DisplayName("CaptchaService Tests")
 class CaptchaServiceTest {
 
-    /** Stable client IP for siteverify calls — value is opaque to the test. */
+    /**
+     * Stable client IP for siteverify calls — value is opaque to the test.
+     */
     private static final String REMOTE_IP = "203.0.113.7";
 
-    /** Non-empty secret so the misconfigured-secret short-circuit does not fire. */
+    /**
+     * Non-empty secret so the misconfigured-secret short-circuit does not fire.
+     */
     private static final String TEST_SECRET = "test-secret-key";
 
-    /** Default v3 score threshold (matches {@code app.security.captcha.min-score} default). */
+    /**
+     * Default v3 score threshold (matches {@code app.security.captcha.min-score} default).
+     */
     private static final double DEFAULT_MIN_SCORE = 0.5;
 
     @Nested
@@ -88,10 +88,9 @@ class CaptchaServiceTest {
     @DisplayName("Google (CAPTCHA enabled)")
     class GoogleScanner {
 
+        private final ObjectMapper objectMapper = new ObjectMapper();
         @Mock
         private RestTemplate restTemplate;
-
-        private final ObjectMapper objectMapper = new ObjectMapper();
         private CaptchaService.Google scanner;
 
         @BeforeEach
@@ -236,7 +235,8 @@ class CaptchaServiceTest {
 
         @Test
         @DisplayName("Forwards secret + token + remoteIp to Google in form body")
-        @SuppressWarnings("unchecked") // entity body type comes from form-encoded ctor — cast is safe under HttpEntity contract
+        @SuppressWarnings("unchecked")
+            // entity body type comes from form-encoded ctor — cast is safe under HttpEntity contract
         void sendsExpectedFormFields() {
             String body = "{\"success\":true,\"score\":0.9}";
             when(restTemplate.postForEntity(anyString(), any(HttpEntity.class), eq(String.class)))

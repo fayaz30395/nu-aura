@@ -1,4 +1,4 @@
-import { apiClient } from '../../api/client';
+import {apiClient} from '../../api/client';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -140,7 +140,7 @@ class ImportExportService {
     const response = await apiClient.post<ImportResult>(
       `/api/v1/migration/${type}`,
       formData,
-      { headers: { 'Content-Type': 'multipart/form-data' } },
+      {headers: {'Content-Type': 'multipart/form-data'}},
     );
     return response.data;
   }
@@ -156,7 +156,7 @@ class ImportExportService {
     const response = await apiClient.post<FileValidationResult>(
       '/api/v1/migration/validate',
       formData,
-      { headers: { 'Content-Type': 'multipart/form-data' }, params: { type } },
+      {headers: {'Content-Type': 'multipart/form-data'}, params: {type}},
     );
     return response.data;
   }
@@ -183,7 +183,7 @@ class ImportExportService {
     const response = await apiClient.post<EmployeeImportPreview>(
       '/api/v1/employees/import/preview',
       formData,
-      { headers: { 'Content-Type': 'multipart/form-data' } },
+      {headers: {'Content-Type': 'multipart/form-data'}},
     );
     return response.data;
   }
@@ -194,7 +194,7 @@ class ImportExportService {
     const response = await apiClient.post<EmployeeImportResult>(
       '/api/v1/employees/import/execute',
       formData,
-      { headers: { 'Content-Type': 'multipart/form-data' }, params: { skipInvalid } },
+      {headers: {'Content-Type': 'multipart/form-data'}, params: {skipInvalid}},
     );
     return response.data;
   }
@@ -209,7 +209,7 @@ class ImportExportService {
     const response = await apiClient.post<Blob>(
       `/api/v1/export/${type}`,
       request,
-      { responseType: 'blob', params: { format } },
+      {responseType: 'blob', params: {format}},
     );
     return response.data;
   }

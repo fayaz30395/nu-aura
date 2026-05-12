@@ -9,7 +9,8 @@ sequencing required to bring tiered services back inside the stated RTO / RPO bu
 
 This runbook composes with — it does not duplicate — the following sibling documents:
 
-- [`backup-restore.md`](backup-restore.md) — backup mechanics, Neon PITR commands, restore drill template
+- [`backup-restore.md`](backup-restore.md) — backup mechanics, Neon PITR commands, restore drill
+  template
 - [`incident-response.md`](incident-response.md) — Sev classification, incident commander roles
 - [`rollback.md`](rollback.md) — Helm-level rollback for routine bad deploys
 - [`deployment.md`](deployment.md) — GitHub Actions promotion flow
@@ -25,14 +26,14 @@ multiple subsystems or destroys persistent state.
 
 A DR event is declared when **one or more** of the following are true:
 
-| Trigger | Examples |
-|---------|----------|
-| Full region / cloud-provider outage | GCP `asia-south1` (Mumbai) unreachable for >30 min; Neon control plane down >30 min |
-| Loss of primary persistent store | Postgres primary unrecoverable; Redis cluster lost with no warm cache; Elasticsearch indices corrupted |
-| Destructive operation that bypasses soft-delete | Accidental `DROP TABLE`, `DROP DATABASE`, full-tenant purge, mass `UPDATE` without `WHERE` |
-| Ransomware / confirmed compromise | Encrypted volumes, attacker persistence, exfiltration confirmed by `aidefence_scan` or external SOC |
-| Helm release corruption beyond rollback | Multiple successive bad revisions; release history truncated; CRDs misaligned |
-| Data integrity event > RPO budget | Silent data corruption detected after >1h; reconciliation impossible without restore |
+| Trigger                                         | Examples                                                                                               |
+|-------------------------------------------------|--------------------------------------------------------------------------------------------------------|
+| Full region / cloud-provider outage             | GCP `asia-south1` (Mumbai) unreachable for >30 min; Neon control plane down >30 min                    |
+| Loss of primary persistent store                | Postgres primary unrecoverable; Redis cluster lost with no warm cache; Elasticsearch indices corrupted |
+| Destructive operation that bypasses soft-delete | Accidental `DROP TABLE`, `DROP DATABASE`, full-tenant purge, mass `UPDATE` without `WHERE`             |
+| Ransomware / confirmed compromise               | Encrypted volumes, attacker persistence, exfiltration confirmed by `aidefence_scan` or external SOC    |
+| Helm release corruption beyond rollback         | Multiple successive bad revisions; release history truncated; CRDs misaligned                          |
+| Data integrity event > RPO budget               | Silent data corruption detected after >1h; reconciliation impossible without restore                   |
 
 A DR event is **NOT**:
 
@@ -49,13 +50,13 @@ explicit sign-off from CTO or VP Engineering. Declaration triggers the comms pla
 
 ## 2. Recovery Objectives
 
-| Metric | Target | Mechanism |
-|--------|--------|-----------|
-| **RTO** (full platform back to read-write) | **4 hours** | Tiered recovery; Tier-1 first |
-| **RPO** (max acceptable data loss) | **1 hour** | Hourly Postgres WAL shipping; Redis RDB every 30 min |
-| **Status-page first update** | 15 minutes from declaration | Manual; template in section 6 |
-| **Customer notification (GDPR Art. 33)** | 24 hours from confirmed personal-data impact | Email + status page |
-| **Post-mortem published** | 5 business days after recovery | Template linked in section 7 |
+| Metric                                     | Target                                       | Mechanism                                            |
+|--------------------------------------------|----------------------------------------------|------------------------------------------------------|
+| **RTO** (full platform back to read-write) | **4 hours**                                  | Tiered recovery; Tier-1 first                        |
+| **RPO** (max acceptable data loss)         | **1 hour**                                   | Hourly Postgres WAL shipping; Redis RDB every 30 min |
+| **Status-page first update**               | 15 minutes from declaration                  | Manual; template in section 6                        |
+| **Customer notification (GDPR Art. 33)**   | 24 hours from confirmed personal-data impact | Email + status page                                  |
+| **Post-mortem published**                  | 5 business days after recovery               | Template linked in section 7                         |
 
 These are commitments. They become real only after the quarterly drill (see
 `dr-drill-checklist.md`) has validated each procedure end-to-end at least once.
@@ -84,30 +85,30 @@ Bring tiers back in order. Do not start Tier 2 until Tier 1 health-checks are gr
 
 ### Tier 1 — must be back within RTO (4h)
 
-| Service | Why it's Tier 1 |
-|---------|-----------------|
-| Postgres (Neon primary) | Source of truth for 360+ entities; every other service derives from it |
-| Backend API (Spring Boot, 170+ controllers) | Frontend and integrations are blocked without it |
-| Redis (7.x cluster) | Rate limiting, token blacklist, account lockout, WebSocket relay — auth flows fail without it |
-| Frontend (Next.js 14) | Customer-visible; without it the platform is "down" even if APIs work |
-| Auth / JWT issuer | Subset of backend; called out separately because it gates everything else |
+| Service                                     | Why it's Tier 1                                                                               |
+|---------------------------------------------|-----------------------------------------------------------------------------------------------|
+| Postgres (Neon primary)                     | Source of truth for 360+ entities; every other service derives from it                        |
+| Backend API (Spring Boot, 170+ controllers) | Frontend and integrations are blocked without it                                              |
+| Redis (7.x cluster)                         | Rate limiting, token blacklist, account lockout, WebSocket relay — auth flows fail without it |
+| Frontend (Next.js 14)                       | Customer-visible; without it the platform is "down" even if APIs work                         |
+| Auth / JWT issuer                           | Subset of backend; called out separately because it gates everything else                     |
 
 ### Tier 2 — degraded mode acceptable, recover within 8h
 
-| Service | Degraded behavior |
-|---------|-------------------|
-| Elasticsearch | Search returns "indexing in progress" banner; falls back to Postgres `ILIKE` for critical entity types (employee, candidate) |
-| Kafka | Async workflows queue locally on backend; eventual consistency delayed but not lost (idempotency keys protect against replay) |
-| Google Drive integration | File uploads buffered to local pod storage; flushed on recovery |
-| Scheduled jobs (25 `@Scheduled` tasks) | Resume on next cron tick after backend up |
+| Service                                | Degraded behavior                                                                                                             |
+|----------------------------------------|-------------------------------------------------------------------------------------------------------------------------------|
+| Elasticsearch                          | Search returns "indexing in progress" banner; falls back to Postgres `ILIKE` for critical entity types (employee, candidate)  |
+| Kafka                                  | Async workflows queue locally on backend; eventual consistency delayed but not lost (idempotency keys protect against replay) |
+| Google Drive integration               | File uploads buffered to local pod storage; flushed on recovery                                                               |
+| Scheduled jobs (25 `@Scheduled` tasks) | Resume on next cron tick after backend up                                                                                     |
 
 ### Tier 3 — recover within 24h, do not block Tier 1/2
 
-| Service | Notes |
-|---------|-------|
+| Service                             | Notes                                                                     |
+|-------------------------------------|---------------------------------------------------------------------------|
 | Prometheus / Grafana / AlertManager | DR itself is monitored externally (status page, manual checks) until back |
-| Centralized logging | Pods write to stdout; loss of aggregation is recoverable, not blocking |
-| Non-critical analytics dashboards | Recharts-driven; data is in Postgres, just no UI |
+| Centralized logging                 | Pods write to stdout; loss of aggregation is recoverable, not blocking    |
+| Non-critical analytics dashboards   | Recharts-driven; data is in Postgres, just no UI                          |
 
 ---
 
@@ -386,14 +387,14 @@ faster from silence than from bad news.
 
 ### Timeline
 
-| T+ | Action | Owner |
-|----|--------|-------|
-| 0 min | DR declared by IC | IC |
-| +15 min | First status-page post (acknowledgment) | Comms lead |
-| +30 min | Internal Slack thread (#incident) with ETA | IC |
-| Hourly | Status-page update — even if "no change, still working" | Comms lead |
-| +24 h | GDPR Art. 33 notification (if personal data confirmed exposed) | DPO + Legal |
-| +5 d | Post-mortem published to customers (internal first, redacted external) | IC + Engineering |
+| T+      | Action                                                                 | Owner            |
+|---------|------------------------------------------------------------------------|------------------|
+| 0 min   | DR declared by IC                                                      | IC               |
+| +15 min | First status-page post (acknowledgment)                                | Comms lead       |
+| +30 min | Internal Slack thread (#incident) with ETA                             | IC               |
+| Hourly  | Status-page update — even if "no change, still working"                | Comms lead       |
+| +24 h   | GDPR Art. 33 notification (if personal data confirmed exposed)         | DPO + Legal      |
+| +5 d    | Post-mortem published to customers (internal first, redacted external) | IC + Engineering |
 
 ### Status-page templates
 
@@ -455,16 +456,16 @@ quarter is treated as theoretical.
 
 ## 8. Quick Reference
 
-| Failure | Procedure | Target |
-|---------|-----------|--------|
-| Postgres primary lost | 4.1 — Neon PITR branch | 30 min |
-| Redis cluster lost | 4.2 — RDB restore + warm cache | 20 min |
-| Elasticsearch lost | 4.3 — reindex from Postgres | 45 min |
-| Kafka lost | 4.4 — replay from offset / outbox | 30 min |
-| Helm release corrupt | 4.5 — `helm rollback` | 10 min |
-| Ransomware | 4.6 — contain → forensics → restore | hours / declare maintenance |
-| Tenant accidental drop | 4.7 — tenant-scoped PITR restore | 30 min |
-| Full region outage | section 5 — cloud-provider dependent | not yet self-sufficient |
+| Failure                | Procedure                            | Target                      |
+|------------------------|--------------------------------------|-----------------------------|
+| Postgres primary lost  | 4.1 — Neon PITR branch               | 30 min                      |
+| Redis cluster lost     | 4.2 — RDB restore + warm cache       | 20 min                      |
+| Elasticsearch lost     | 4.3 — reindex from Postgres          | 45 min                      |
+| Kafka lost             | 4.4 — replay from offset / outbox    | 30 min                      |
+| Helm release corrupt   | 4.5 — `helm rollback`                | 10 min                      |
+| Ransomware             | 4.6 — contain → forensics → restore  | hours / declare maintenance |
+| Tenant accidental drop | 4.7 — tenant-scoped PITR restore     | 30 min                      |
+| Full region outage     | section 5 — cloud-provider dependent | not yet self-sufficient     |
 
 **On-call escalation:** PagerDuty rotation → IC declares → CTO/VP-E confirms DR.
 

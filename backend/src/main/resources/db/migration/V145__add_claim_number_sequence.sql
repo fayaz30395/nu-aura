@@ -11,16 +11,40 @@
 -- month, matching the existing claim-number format prefix (EXP-YYYYMM-NNNN /
 -- MIL-YYYYMM-NNNN).
 
-CREATE TABLE IF NOT EXISTS expense_claim_sequence (
-    tenant_id     UUID        NOT NULL,
-    year_month    VARCHAR(7)  NOT NULL,
-    current_value BIGINT      NOT NULL DEFAULT 0,
-    PRIMARY KEY (tenant_id, year_month)
-);
+CREATE TABLE IF NOT EXISTS expense_claim_sequence
+(
+  tenant_id
+  UUID
+  NOT
+  NULL,
+  year_month
+  VARCHAR
+(
+  7
+) NOT NULL,
+  current_value BIGINT NOT NULL DEFAULT 0,
+  PRIMARY KEY
+(
+  tenant_id,
+  year_month
+)
+  );
 
-CREATE TABLE IF NOT EXISTS mileage_claim_sequence (
-    tenant_id     UUID        NOT NULL,
-    year_month    VARCHAR(7)  NOT NULL,
-    current_value BIGINT      NOT NULL DEFAULT 0,
-    PRIMARY KEY (tenant_id, year_month)
-);
+CREATE TABLE IF NOT EXISTS mileage_claim_sequence
+(
+  tenant_id
+  UUID
+  NOT
+  NULL,
+  year_month
+  VARCHAR
+(
+  7
+) NOT NULL,
+  current_value BIGINT NOT NULL DEFAULT 0,
+  PRIMARY KEY
+(
+  tenant_id,
+  year_month
+)
+  );

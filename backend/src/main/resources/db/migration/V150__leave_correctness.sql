@@ -7,7 +7,7 @@
 -- F2.3: max_encashable_at_exit       — caps lump-sum encashment at full-and-final.
 
 ALTER TABLE leave_types
-    ADD COLUMN IF NOT EXISTS max_encashable_days_per_year DECIMAL(5,2);
+  ADD COLUMN IF NOT EXISTS max_encashable_days_per_year DECIMAL (5,2);
 
 ALTER TABLE leave_types
-    ADD COLUMN IF NOT EXISTS max_encashable_at_exit DECIMAL(5,2);
+  ADD COLUMN IF NOT EXISTS max_encashable_at_exit DECIMAL (5,2);

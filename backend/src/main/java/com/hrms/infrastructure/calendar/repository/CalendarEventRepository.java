@@ -1,7 +1,9 @@
 package com.hrms.infrastructure.calendar.repository;
 
 import com.hrms.domain.calendar.CalendarEvent;
-import com.hrms.domain.calendar.CalendarEvent.*;
+import com.hrms.domain.calendar.CalendarEvent.EventStatus;
+import com.hrms.domain.calendar.CalendarEvent.EventType;
+import com.hrms.domain.calendar.CalendarEvent.SyncProvider;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

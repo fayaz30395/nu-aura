@@ -11,7 +11,8 @@
 DO
 $$
 BEGIN
-    IF EXISTS (SELECT 1
+    IF
+EXISTS (SELECT 1
                FROM information_schema.columns
                WHERE table_name = 'social_posts'
                  AND column_name = 'deleted')
@@ -19,9 +20,9 @@ BEGIN
                        FROM information_schema.columns
                        WHERE table_name = 'social_posts'
                          AND column_name = 'is_deleted') THEN
-        ALTER TABLE social_posts
-            RENAME COLUMN deleted TO is_deleted;
-    END IF;
+ALTER TABLE social_posts
+  RENAME COLUMN deleted TO is_deleted;
+END IF;
 END
 $$;
 
@@ -29,7 +30,8 @@ $$;
 DO
 $$
 BEGIN
-    IF EXISTS (SELECT 1
+    IF
+EXISTS (SELECT 1
                FROM information_schema.columns
                WHERE table_name = 'social_posts'
                  AND column_name = 'deleted')
@@ -37,11 +39,13 @@ BEGIN
                    FROM information_schema.columns
                    WHERE table_name = 'social_posts'
                      AND column_name = 'is_deleted') THEN
-        UPDATE social_posts
-        SET is_deleted = deleted
-        WHERE is_deleted IS DISTINCT FROM deleted;
-        ALTER TABLE social_posts
-            DROP COLUMN deleted;
-    END IF;
+UPDATE social_posts
+SET is_deleted = deleted
+WHERE is_deleted IS DISTINCT
+FROM deleted;
+ALTER TABLE social_posts
+DROP
+COLUMN deleted;
+END IF;
 END
 $$;

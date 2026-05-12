@@ -20,8 +20,8 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.Map;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -147,8 +147,8 @@ public class PayrollRunService {
                 long missing = activeEmployeeCount - employeesWithStructure;
                 throw new ValidationException(
                         "Payroll pre-flight failed: " + missing + " active employee(s) are missing an active " +
-                        "salary structure. Assign salary structures before processing payroll for period " +
-                        payrollRun.getPayPeriodYear() + "/" + payrollRun.getPayPeriodMonth() + ".");
+                                "salary structure. Assign salary structures before processing payroll for period " +
+                                payrollRun.getPayPeriodYear() + "/" + payrollRun.getPayPeriodMonth() + ".");
             }
         } catch (ValidationException e) {
             throw e;

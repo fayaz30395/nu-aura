@@ -1,5 +1,6 @@
 package com.hrms.application.shift.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.api.shift.dto.ShiftRuleViolation;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.employee.Employee;
@@ -9,7 +10,6 @@ import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.shift.repository.ShiftAssignmentRepository;
 import com.hrms.infrastructure.shift.repository.ShiftPatternRepository;
 import com.hrms.infrastructure.shift.repository.ShiftRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -22,11 +22,15 @@ import org.mockito.quality.Strictness;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)

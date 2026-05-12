@@ -337,7 +337,7 @@ export default function OfficeLocationsPage() {
         )}
 
         {loading ? (
-          <div className="py-4"><SkeletonTable rows={5} columns={4} /></div>
+          <div className="py-4"><SkeletonTable rows={5} columns={4}/></div>
         ) : (
           <div className="bg-[var(--bg-card)] rounded-lg shadow-[var(--shadow-elevated)] overflow-hidden">
             <table className="min-w-full divide-y divide-surface-200 dark:divide-surface-700">

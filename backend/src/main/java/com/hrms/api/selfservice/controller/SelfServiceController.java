@@ -43,7 +43,7 @@ public class SelfServiceController {
         if (employeeId == null) {
             throw new com.hrms.common.exception.BusinessException(
                     "No employee record is associated with the current user. " +
-                    "Contact HR to link your account.");
+                            "Contact HR to link your account.");
         }
         log.info("Creating profile update request for employee: {}", employeeId);
         return ResponseEntity.status(HttpStatus.CREATED)

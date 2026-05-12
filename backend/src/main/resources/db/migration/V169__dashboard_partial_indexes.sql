@@ -35,48 +35,63 @@
 -- =============================================================================
 
 -- 1) multi_channel_notifications — failed deliveries surfaced on admin dash --
-DO $$ BEGIN
-    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'multi_channel_notifications') THEN
-        CREATE INDEX IF NOT EXISTS idx_mcn_failed
-            ON multi_channel_notifications (tenant_id, created_at DESC)
-            WHERE status = 'FAILED';
-    END IF;
+DO
+$$
+BEGIN
+    IF
+EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'multi_channel_notifications') THEN
+CREATE INDEX IF NOT EXISTS idx_mcn_failed
+  ON multi_channel_notifications (tenant_id, created_at DESC)
+  WHERE status = 'FAILED';
+END IF;
 END $$;
 
 -- 2) email_notifications — failed transactional emails ----------------------
-DO $$ BEGIN
-    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'email_notifications') THEN
-        CREATE INDEX IF NOT EXISTS idx_email_notifications_failed
-            ON email_notifications (tenant_id, created_at DESC)
-            WHERE status = 'FAILED';
-    END IF;
+DO
+$$
+BEGIN
+    IF
+EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'email_notifications') THEN
+CREATE INDEX IF NOT EXISTS idx_email_notifications_failed
+  ON email_notifications (tenant_id, created_at DESC)
+  WHERE status = 'FAILED';
+END IF;
 END $$;
 
 -- 3) webhook_deliveries — failed outbound webhook attempts ------------------
-DO $$ BEGIN
-    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'webhook_deliveries') THEN
-        CREATE INDEX IF NOT EXISTS idx_webhook_deliveries_failed
-            ON webhook_deliveries (tenant_id, created_at DESC)
-            WHERE status = 'FAILED';
-    END IF;
+DO
+$$
+BEGIN
+    IF
+EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'webhook_deliveries') THEN
+CREATE INDEX IF NOT EXISTS idx_webhook_deliveries_failed
+  ON webhook_deliveries (tenant_id, created_at DESC)
+  WHERE status = 'FAILED';
+END IF;
 END $$;
 
 -- 4) leave_requests — pending-approval inbox --------------------------------
-DO $$ BEGIN
-    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'leave_requests') THEN
-        CREATE INDEX IF NOT EXISTS idx_leave_requests_pending
-            ON leave_requests (tenant_id, created_at DESC)
-            WHERE status = 'PENDING';
-    END IF;
+DO
+$$
+BEGIN
+    IF
+EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'leave_requests') THEN
+CREATE INDEX IF NOT EXISTS idx_leave_requests_pending
+  ON leave_requests (tenant_id, created_at DESC)
+  WHERE status = 'PENDING';
+END IF;
 END $$;
 
 -- 5) expense_claims — pending-approval inbox --------------------------------
-DO $$ BEGIN
-    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'expense_claims') THEN
-        CREATE INDEX IF NOT EXISTS idx_expense_claims_pending
-            ON expense_claims (tenant_id, created_at DESC)
-            WHERE status = 'PENDING';
-    END IF;
+DO
+$$
+BEGIN
+    IF
+EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'expense_claims') THEN
+CREATE INDEX IF NOT EXISTS idx_expense_claims_pending
+  ON expense_claims (tenant_id, created_at DESC)
+  WHERE status = 'PENDING';
+END IF;
 END $$;
 
 -- 6) employee_loans — active / overdue loans on payroll widget --------------
@@ -84,31 +99,40 @@ END $$;
 --     LoanStatus enum has no OVERDUE value — closest live-loan states are
 --     ACTIVE and DISBURSED. We index the two live states the dashboard
 --     widget actually filters on.)
-DO $$ BEGIN
-    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'employee_loans') THEN
-        CREATE INDEX IF NOT EXISTS idx_employee_loans_active
-            ON employee_loans (tenant_id, created_at DESC)
-            WHERE status IN ('ACTIVE', 'DISBURSED');
-    END IF;
+DO
+$$
+BEGIN
+    IF
+EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'employee_loans') THEN
+CREATE INDEX IF NOT EXISTS idx_employee_loans_active
+  ON employee_loans (tenant_id, created_at DESC)
+  WHERE status IN ('ACTIVE', 'DISBURSED');
+END IF;
 END $$;
 
 -- 7) tickets — open helpdesk tickets ----------------------------------------
 --    (Spec called this "helpdesk_tickets"; canonical table name is tickets.)
-DO $$ BEGIN
-    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'tickets') THEN
-        CREATE INDEX IF NOT EXISTS idx_tickets_open
-            ON tickets (tenant_id, created_at DESC)
-            WHERE status = 'OPEN';
-    END IF;
+DO
+$$
+BEGIN
+    IF
+EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'tickets') THEN
+CREATE INDEX IF NOT EXISTS idx_tickets_open
+  ON tickets (tenant_id, created_at DESC)
+  WHERE status = 'OPEN';
+END IF;
 END $$;
 
 -- 8) signature_requests — pending e-sign actions ----------------------------
-DO $$ BEGIN
-    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'signature_requests') THEN
-        CREATE INDEX IF NOT EXISTS idx_signature_requests_pending
-            ON signature_requests (tenant_id, created_at DESC)
-            WHERE status = 'PENDING';
-    END IF;
+DO
+$$
+BEGIN
+    IF
+EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'signature_requests') THEN
+CREATE INDEX IF NOT EXISTS idx_signature_requests_pending
+  ON signature_requests (tenant_id, created_at DESC)
+  WHERE status = 'PENDING';
+END IF;
 END $$;
 
 -- 9) interview_scorecards — SKIPPED -----------------------------------------

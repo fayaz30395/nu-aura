@@ -3,11 +3,11 @@ package com.hrms.common.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
 
 import java.util.UUID;
 

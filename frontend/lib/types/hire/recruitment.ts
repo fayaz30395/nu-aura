@@ -246,7 +246,14 @@ export interface CreateOfferRequest {
 
 export type AgencyStatus = 'ACTIVE' | 'INACTIVE' | 'BLACKLISTED' | 'PENDING_APPROVAL';
 export type AgencyFeeType = 'FIXED' | 'PERCENTAGE' | 'RETAINER';
-export type AgencySubmissionStatus = 'SUBMITTED' | 'SCREENING' | 'SHORTLISTED' | 'INTERVIEW' | 'HIRED' | 'REJECTED' | 'WITHDRAWN';
+export type AgencySubmissionStatus =
+  'SUBMITTED'
+  | 'SCREENING'
+  | 'SHORTLISTED'
+  | 'INTERVIEW'
+  | 'HIRED'
+  | 'REJECTED'
+  | 'WITHDRAWN';
 export type AgencyInvoiceStatus = 'NOT_APPLICABLE' | 'PENDING' | 'INVOICED' | 'PAID';
 
 export interface RecruitmentAgency {

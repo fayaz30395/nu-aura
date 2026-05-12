@@ -1,11 +1,13 @@
 package com.hrms.api.letter.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.context.annotation.Import;
-import com.hrms.common.config.TestMeterRegistryConfig;
-import com.hrms.api.letter.dto.*;
+import com.hrms.api.letter.dto.GenerateLetterRequest;
+import com.hrms.api.letter.dto.GeneratedLetterResponse;
+import com.hrms.api.letter.dto.LetterTemplateRequest;
+import com.hrms.api.letter.dto.LetterTemplateResponse;
 import com.hrms.application.letter.service.LetterPdfService;
 import com.hrms.application.letter.service.LetterService;
+import com.hrms.common.config.TestMeterRegistryConfig;
 import com.hrms.common.exception.GlobalExceptionHandler;
 import com.hrms.common.security.*;
 import com.hrms.domain.letter.GeneratedLetter.LetterStatus;
@@ -17,14 +19,18 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.domain.*;
+import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.lang.reflect.Method;
@@ -36,7 +42,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(LetterController.class)
 @ContextConfiguration(classes = {LetterController.class, GlobalExceptionHandler.class, LetterControllerTest.TestConfig.class})

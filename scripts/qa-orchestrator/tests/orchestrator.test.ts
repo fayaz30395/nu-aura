@@ -1,9 +1,9 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import type { TestResult } from '../src/severity-classifier.js';
+import {beforeEach, describe, expect, it, vi} from 'vitest';
+import type {TestResult} from '../src/severity-classifier.js';
 import {
   buildPlaywrightCommand,
-  parsePlaywrightJson,
   groupResultsBySeverity,
+  parsePlaywrightJson,
   shouldBlockRelease,
 } from '../src/orchestrator.js';
 
@@ -53,22 +53,22 @@ describe('buildPlaywrightCommand', () => {
   });
 
   it('includes --workers flag when workers option is provided', () => {
-    const cmd = buildPlaywrightCommand(['e2e/spec.ts'], { workers: 4 });
+    const cmd = buildPlaywrightCommand(['e2e/spec.ts'], {workers: 4});
     expect(cmd).toContain('--workers=4');
   });
 
   it('includes --reporter flag when reporter option is provided', () => {
-    const cmd = buildPlaywrightCommand(['e2e/spec.ts'], { reporter: 'json' });
+    const cmd = buildPlaywrightCommand(['e2e/spec.ts'], {reporter: 'json'});
     expect(cmd).toContain('--reporter=json');
   });
 
   it('includes --project flag when project option is provided', () => {
-    const cmd = buildPlaywrightCommand(['e2e/spec.ts'], { project: 'chromium' });
+    const cmd = buildPlaywrightCommand(['e2e/spec.ts'], {project: 'chromium'});
     expect(cmd).toContain('--project=chromium');
   });
 
   it('includes --timeout flag when timeout option is provided', () => {
-    const cmd = buildPlaywrightCommand(['e2e/spec.ts'], { timeout: 30000 });
+    const cmd = buildPlaywrightCommand(['e2e/spec.ts'], {timeout: 30000});
     expect(cmd).toContain('--timeout=30000');
   });
 
@@ -91,7 +91,7 @@ describe('buildPlaywrightCommand', () => {
   });
 
   it('handles a single spec file', () => {
-    const cmd = buildPlaywrightCommand(['e2e/only.spec.ts'], { project: 'chromium' });
+    const cmd = buildPlaywrightCommand(['e2e/only.spec.ts'], {project: 'chromium'});
     expect(cmd).toContain('e2e/only.spec.ts');
   });
 });
@@ -103,7 +103,7 @@ describe('parsePlaywrightJson', () => {
   const makePlaywrightJson = (suites: unknown[]) =>
     JSON.stringify({
       suites,
-      stats: { expected: 0, unexpected: 0, flaky: 0, skipped: 0, ok: false, duration: 0 },
+      stats: {expected: 0, unexpected: 0, flaky: 0, skipped: 0, ok: false, duration: 0},
     });
 
   const makeSuite = (file: string, specs: unknown[]) => ({
@@ -124,7 +124,7 @@ describe('parsePlaywrightJson', () => {
             status: ok ? 'passed' : 'failed',
             duration: durationMs,
             retry: retries,
-            error: ok ? undefined : { message: 'Expected element to be visible' },
+            error: ok ? undefined : {message: 'Expected element to be visible'},
           },
         ],
       },

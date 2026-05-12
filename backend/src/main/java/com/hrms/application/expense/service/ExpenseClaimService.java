@@ -4,24 +4,24 @@ import com.hrms.api.expense.dto.ExpenseClaimRequest;
 import com.hrms.api.expense.dto.ExpenseClaimResponse;
 import com.hrms.api.workflow.dto.WorkflowExecutionRequest;
 import com.hrms.application.audit.service.AuditLogService;
-import com.hrms.application.notification.service.WebSocketNotificationService;
+import com.hrms.application.event.DomainEventPublisher;
 import com.hrms.application.notification.service.NotificationService;
-import com.hrms.domain.audit.AuditLog.AuditAction;
+import com.hrms.application.notification.service.WebSocketNotificationService;
 import com.hrms.application.workflow.callback.ApprovalCallbackHandler;
 import com.hrms.application.workflow.service.WorkflowService;
+import com.hrms.common.exception.ValidationException;
 import com.hrms.common.security.DataScopeService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
+import com.hrms.domain.audit.AuditLog.AuditAction;
 import com.hrms.domain.employee.Employee;
-import com.hrms.domain.expense.ExpenseClaim;
 import com.hrms.domain.event.expense.ExpenseApprovedEvent;
-import com.hrms.application.event.DomainEventPublisher;
+import com.hrms.domain.expense.ExpenseClaim;
 import com.hrms.domain.user.RoleScope;
 import com.hrms.domain.workflow.WorkflowDefinition;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.expense.repository.ExpenseClaimRepository;
-import com.hrms.common.exception.ValidationException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -36,20 +36,26 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @Slf4j
 public class ExpenseClaimService implements ApprovalCallbackHandler {
 
+    /**
+     * HIGH-003 FIX (V145): Generates a unique claim number using an atomic
+     * INSERT ... ON CONFLICT ... DO UPDATE ... RETURNING upsert on the
+     * {@code expense_claim_sequence} table. This is process-safe across all
+     * JVM pods, replacing the prior per-JVM {@code synchronized} block which
+     * could not prevent duplicates under horizontal scale.
+     * <p>
+     * The year-month bucket is computed in UTC so the sequence roll-over is
+     * deterministic regardless of JVM zone.
+     */
+    private static final String NEXT_EXPENSE_SEQ_SQL =
+            "INSERT INTO expense_claim_sequence(tenant_id, year_month, current_value) VALUES(?, ?, 1) " +
+                    "ON CONFLICT(tenant_id, year_month) DO UPDATE SET current_value = expense_claim_sequence.current_value + 1 " +
+                    "RETURNING current_value";
     private final ExpenseClaimRepository expenseClaimRepository;
     private final EmployeeRepository employeeRepository;
     private final DataScopeService dataScopeService;
@@ -512,6 +518,8 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
         return enrichResponse(ExpenseClaimResponse.fromEntity(saved));
     }
 
+    // ======================== ApprovalCallbackHandler ========================
+
     @Transactional(readOnly = true)
     public List<String> validatePolicy(UUID employeeId, java.math.BigDecimal amount) {
         if (expensePolicyService != null) {
@@ -519,8 +527,6 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
         }
         return Collections.emptyList();
     }
-
-    // ======================== ApprovalCallbackHandler ========================
 
     @Override
     public WorkflowDefinition.EntityType getEntityType() {
@@ -579,6 +585,8 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
         notifyExpenseRejected(claim, reason);
     }
 
+    // ======================== Claim Number Generation ========================
+
     private void startExpenseApprovalWorkflow(ExpenseClaim claim, UUID tenantId) {
         try {
             String employeeName = employeeRepository.findByIdAndTenantId(claim.getEmployeeId(), tenantId)
@@ -598,23 +606,6 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
                     claim.getClaimNumber(), e.getMessage());
         }
     }
-
-    // ======================== Claim Number Generation ========================
-
-    /**
-     * HIGH-003 FIX (V145): Generates a unique claim number using an atomic
-     * INSERT ... ON CONFLICT ... DO UPDATE ... RETURNING upsert on the
-     * {@code expense_claim_sequence} table. This is process-safe across all
-     * JVM pods, replacing the prior per-JVM {@code synchronized} block which
-     * could not prevent duplicates under horizontal scale.
-     * <p>
-     * The year-month bucket is computed in UTC so the sequence roll-over is
-     * deterministic regardless of JVM zone.
-     */
-    private static final String NEXT_EXPENSE_SEQ_SQL =
-            "INSERT INTO expense_claim_sequence(tenant_id, year_month, current_value) VALUES(?, ?, 1) " +
-                    "ON CONFLICT(tenant_id, year_month) DO UPDATE SET current_value = expense_claim_sequence.current_value + 1 " +
-                    "RETURNING current_value";
 
     private String generateClaimNumber(UUID tenantId) {
         String ym = LocalDate.now(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("yyyyMM"));

@@ -19,12 +19,20 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AdminPasswordResetResponse {
-    /** Whether the reset was applied successfully. */
+    /**
+     * Whether the reset was applied successfully.
+     */
     private boolean success;
-    /** Target user whose password was rotated. */
+    /**
+     * Target user whose password was rotated.
+     */
     private UUID userId;
-    /** Timestamp at which the reset was applied. */
+    /**
+     * Timestamp at which the reset was applied.
+     */
     private LocalDateTime resetAt;
-    /** Indicates the user must change the temp password on their next login. */
+    /**
+     * Indicates the user must change the temp password on their next login.
+     */
     private boolean mustChange;
 }

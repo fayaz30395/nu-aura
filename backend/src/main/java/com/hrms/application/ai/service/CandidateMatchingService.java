@@ -1,5 +1,7 @@
 package com.hrms.application.ai.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.api.recruitment.dto.ai.*;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.ai.AiUsageLog;
@@ -10,8 +12,6 @@ import com.hrms.infrastructure.ai.repository.AiUsageLogRepository;
 import com.hrms.infrastructure.ai.repository.CandidateMatchScoreRepository;
 import com.hrms.infrastructure.recruitment.repository.CandidateRepository;
 import com.hrms.infrastructure.recruitment.repository.JobOpeningRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

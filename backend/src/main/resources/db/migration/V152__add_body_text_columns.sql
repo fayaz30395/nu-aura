@@ -44,36 +44,41 @@
 -- ============================================================================
 -- pg_trgm extension (idempotent — V151 also installs this)
 -- ============================================================================
-CREATE EXTENSION IF NOT EXISTS pg_trgm;
+CREATE
+EXTENSION IF NOT EXISTS pg_trgm;
 
 -- ============================================================================
 -- WIKI_PAGES — body_text column + trigram GIN
 -- ============================================================================
 ALTER TABLE wiki_pages
-    ADD COLUMN IF NOT EXISTS body_text TEXT;
+  ADD COLUMN IF NOT EXISTS body_text TEXT;
 
 CREATE INDEX IF NOT EXISTS idx_wiki_pages_body_text_trgm
-    ON wiki_pages USING gin (body_text gin_trgm_ops)
-    WHERE is_deleted = false;
+  ON wiki_pages USING gin (body_text gin_trgm_ops)
+  WHERE is_deleted = false;
 
-COMMENT ON COLUMN wiki_pages.body_text
+COMMENT
+ON COLUMN wiki_pages.body_text
     IS 'Plain-text projection of the TipTap JSONB content column, populated by WikiPageService.{createPage,updatePage}. Indexed by idx_wiki_pages_body_text_trgm for substring search from the RAG retriever (FluenceContentRetriever).';
 
-COMMENT ON INDEX idx_wiki_pages_body_text_trgm
+COMMENT
+ON INDEX idx_wiki_pages_body_text_trgm
     IS 'Trigram GIN for RAG retriever ILIKE / %>% queries against wiki body text. Replaces seq-scan on CAST(content AS TEXT).';
 
 -- ============================================================================
 -- BLOG_POSTS — body_text column + trigram GIN
 -- ============================================================================
 ALTER TABLE blog_posts
-    ADD COLUMN IF NOT EXISTS body_text TEXT;
+  ADD COLUMN IF NOT EXISTS body_text TEXT;
 
 CREATE INDEX IF NOT EXISTS idx_blog_posts_body_text_trgm
-    ON blog_posts USING gin (body_text gin_trgm_ops)
-    WHERE is_deleted = false;
+  ON blog_posts USING gin (body_text gin_trgm_ops)
+  WHERE is_deleted = false;
 
-COMMENT ON COLUMN blog_posts.body_text
+COMMENT
+ON COLUMN blog_posts.body_text
     IS 'Plain-text projection of the TipTap JSONB content column, populated by BlogPostService.{createPost,updatePost}. Indexed by idx_blog_posts_body_text_trgm for substring search from the RAG retriever (FluenceContentRetriever).';
 
-COMMENT ON INDEX idx_blog_posts_body_text_trgm
+COMMENT
+ON INDEX idx_blog_posts_body_text_trgm
     IS 'Trigram GIN for RAG retriever ILIKE / %>% queries against blog body text. Replaces seq-scan on CAST(content AS TEXT).';

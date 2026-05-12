@@ -7,7 +7,10 @@ import com.hrms.common.security.JwtTokenProvider;
 import com.hrms.domain.auth.SamlIdentityProvider;
 import com.hrms.domain.employee.Employee;
 import com.hrms.domain.platform.UserAppAccess;
-import com.hrms.domain.user.*;
+import com.hrms.domain.user.AuthProvider;
+import com.hrms.domain.user.Role;
+import com.hrms.domain.user.RoleScope;
+import com.hrms.domain.user.User;
 import com.hrms.infrastructure.auth.repository.SamlIdentityProviderRepository;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.platform.repository.UserAppAccessRepository;
@@ -20,14 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Random;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**

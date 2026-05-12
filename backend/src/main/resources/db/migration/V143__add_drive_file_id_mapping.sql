@@ -22,18 +22,35 @@
 --   taken by V130__seed_enable_lms_feature_flag.sql, so it landed in V143.
 -- ============================================================================
 
-CREATE TABLE IF NOT EXISTS drive_file_mapping (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    tenant_id UUID NOT NULL,
-    object_name VARCHAR(512) NOT NULL,
-    drive_file_id VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT uk_drive_mapping_object_name UNIQUE (object_name),
-    CONSTRAINT uk_drive_mapping_drive_id UNIQUE (drive_file_id)
-);
+CREATE TABLE IF NOT EXISTS drive_file_mapping
+(
+  id
+  UUID
+  PRIMARY
+  KEY
+  DEFAULT
+  gen_random_uuid
+(
+),
+  tenant_id UUID NOT NULL,
+  object_name VARCHAR
+(
+  512
+) NOT NULL,
+  drive_file_id VARCHAR
+(
+  255
+) NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                         CONSTRAINT uk_drive_mapping_object_name UNIQUE (object_name),
+  CONSTRAINT uk_drive_mapping_drive_id UNIQUE
+(
+  drive_file_id
+)
+  );
 
 CREATE INDEX IF NOT EXISTS idx_drive_mapping_tenant
-    ON drive_file_mapping(tenant_id);
+  ON drive_file_mapping(tenant_id);
 
 CREATE INDEX IF NOT EXISTS idx_drive_mapping_object_name_tenant
-    ON drive_file_mapping(tenant_id, object_name);
+  ON drive_file_mapping(tenant_id, object_name);

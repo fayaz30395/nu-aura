@@ -200,7 +200,8 @@ export default function ExecutiveDashboardPage() {
               <p className="text-[var(--text-secondary)] mt-1">Comprehensive C-suite insights and analytics</p>
             </div>
           </div>
-          <div className="flex items-center gap-4 p-4 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elevated)]">
+          <div
+            className="flex items-center gap-4 p-4 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elevated)]">
             <AlertCircle className="h-5 w-5 text-[var(--status-warning-text)] flex-shrink-0"/>
             <p className="text-sm text-[var(--text-secondary)] flex-1">
               Executive dashboard data is temporarily unavailable. Some metrics may not be displayed.

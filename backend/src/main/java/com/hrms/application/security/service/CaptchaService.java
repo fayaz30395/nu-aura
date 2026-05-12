@@ -2,6 +2,7 @@ package com.hrms.application.security.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -16,7 +17,6 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import jakarta.annotation.PostConstruct;
 import java.time.Duration;
 
 /**
@@ -57,7 +57,7 @@ public interface CaptchaService {
      *                 to Google's siteverify endpoint for risk-scoring but
      *                 {@code null} is permitted (Google treats it as optional)
      * @return {@code true} iff Google accepts the token AND the returned score
-     *         meets the configured minimum (v3 only — v2 callers always pass).
+     * meets the configured minimum (v3 only — v2 callers always pass).
      */
     boolean verify(String token, String remoteIp);
 

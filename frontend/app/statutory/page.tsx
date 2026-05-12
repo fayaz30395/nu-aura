@@ -10,7 +10,6 @@ import {
   Container,
   Grid,
   Group,
-
   Select,
   Table,
   Tabs,
@@ -333,7 +332,7 @@ export default function StatutoryPage() {
                   {Array.from({length: 4}).map((_, i) => (
                     <div key={i} className="flex gap-4">
                       {Array.from({length: 5}).map((_, j) => (
-                        <div key={j} className="skeleton-aura h-4 rounded flex-1" />
+                        <div key={j} className="skeleton-aura h-4 rounded flex-1"/>
                       ))}
                     </div>
                   ))}

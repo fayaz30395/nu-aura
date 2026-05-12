@@ -12,12 +12,13 @@ import com.hrms.infrastructure.letter.repository.GeneratedLetterRepository;
 import com.hrms.infrastructure.letter.repository.LetterTemplateRepository;
 import com.hrms.infrastructure.recruitment.repository.CandidateRepository;
 import com.lowagie.text.*;
+import com.lowagie.text.Font;
 import com.lowagie.text.pdf.PdfWriter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.awt.Color;
+import java.awt.*;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.time.LocalDate;

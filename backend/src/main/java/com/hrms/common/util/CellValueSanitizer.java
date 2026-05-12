@@ -41,20 +41,25 @@ import java.util.regex.Pattern;
 public class CellValueSanitizer {
 
     /**
+     * Default mode: prefix with a single quote so Excel treats as literal text.
+     */
+    static final String MODE_PREFIX = "prefix";
+    /**
+     * Alternate mode: strip the leading formula-trigger character entirely.
+     */
+    static final String MODE_STRIP = "strip";
+    /**
      * Leading characters that cause a spreadsheet application to parse the rest
      * of the cell as a formula. Order matches OWASP CSV Injection Prevention.
      */
     private static final Pattern FORMULA_LEAD =
             Pattern.compile("^[=+\\-@\\t\\r].*", Pattern.DOTALL);
-
-    /** Default mode: prefix with a single quote so Excel treats as literal text. */
-    static final String MODE_PREFIX = "prefix";
-
-    /** Alternate mode: strip the leading formula-trigger character entirely. */
-    static final String MODE_STRIP = "strip";
-
     @Value("${nuaura.security.cell-sanitizer.mode:prefix}")
     private String mode;
+
+    private static boolean isFormulaLead(char c) {
+        return c == '=' || c == '+' || c == '-' || c == '@' || c == '\t' || c == '\r';
+    }
 
     /**
      * Neutralize a single cell value read from a user-supplied CSV/Excel file.
@@ -105,9 +110,5 @@ public class CellValueSanitizer {
             return null;
         }
         return raw;
-    }
-
-    private static boolean isFormulaLead(char c) {
-        return c == '=' || c == '+' || c == '-' || c == '@' || c == '\t' || c == '\r';
     }
 }

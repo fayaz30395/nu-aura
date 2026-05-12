@@ -14,14 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -157,14 +150,20 @@ public class DsrController {
 
     // ==================== Request / response DTOs (inline for scaffold scope) ====================
 
-    /** Common payload for all four create endpoints — reason is optional. */
+    /**
+     * Common payload for all four create endpoints — reason is optional.
+     */
     @Data
     public static class DsrRequestBody {
-        /** Free-text justification or context. Optional; ops uses it to triage. */
+        /**
+         * Free-text justification or context. Optional; ops uses it to triage.
+         */
         private String reason;
     }
 
-    /** Admin status update body. */
+    /**
+     * Admin status update body.
+     */
     @Data
     public static class DsrStatusUpdateBody {
         @NotNull
@@ -172,7 +171,9 @@ public class DsrController {
         private String adminNotes;
     }
 
-    /** Wire-format projection of {@link DsrRequest}. */
+    /**
+     * Wire-format projection of {@link DsrRequest}.
+     */
     @Data
     public static class DsrRequestResponse {
         private UUID id;

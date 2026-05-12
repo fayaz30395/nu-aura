@@ -13,6 +13,7 @@ import com.hrms.domain.knowledge.BlogPost;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,8 +25,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
-import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/knowledge/blogs")

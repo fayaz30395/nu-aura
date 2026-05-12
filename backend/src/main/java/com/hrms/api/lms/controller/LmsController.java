@@ -1,22 +1,16 @@
 package com.hrms.api.lms.controller;
 
 import com.hrms.api.lms.dto.CourseCatalogResponse;
-import com.hrms.api.lms.dto.CourseRequest;
 import com.hrms.api.lms.dto.SkillGapReport;
 import com.hrms.application.lms.service.LmsService;
-import com.hrms.application.lms.service.SkillGapAnalysisService;
 import com.hrms.application.lms.service.QuizManagementService;
+import com.hrms.application.lms.service.SkillGapAnalysisService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
-import com.hrms.common.security.RequiresFeature;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
-import com.hrms.domain.featureflag.FeatureFlag;
-import com.hrms.domain.lms.Certificate;
-import com.hrms.domain.lms.ContentProgress;
-import com.hrms.domain.lms.Course;
-import com.hrms.domain.lms.Quiz;
-import com.hrms.domain.lms.QuizQuestion;
+import com.hrms.domain.lms.*;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,8 +18,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-
-import jakarta.validation.Valid;
 
 import java.util.List;
 import java.util.Map;

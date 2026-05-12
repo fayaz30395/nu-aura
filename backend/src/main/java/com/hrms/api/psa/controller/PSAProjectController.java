@@ -3,6 +3,7 @@ package com.hrms.api.psa.controller;
 import com.hrms.application.psa.service.PSAService;
 import com.hrms.common.security.RequiresPermission;
 import com.hrms.domain.psa.PSAProject;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,13 +12,12 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.validation.Valid;
-
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static com.hrms.common.security.Permission.*;
+import static com.hrms.common.security.Permission.PROJECT_CREATE;
+import static com.hrms.common.security.Permission.PROJECT_VIEW;
 
 /**
  * REST controller for PSA Project management.

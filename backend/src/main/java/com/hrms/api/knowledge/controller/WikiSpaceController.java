@@ -1,19 +1,16 @@
 package com.hrms.api.knowledge.controller;
 
-import com.hrms.api.knowledge.dto.AddSpaceMemberRequest;
-import com.hrms.api.knowledge.dto.CreateWikiSpaceRequest;
-import com.hrms.api.knowledge.dto.SpaceMemberDto;
-import com.hrms.api.knowledge.dto.UpdateSpaceMemberRequest;
-import com.hrms.api.knowledge.dto.WikiSpaceDto;
+import com.hrms.api.knowledge.dto.*;
 import com.hrms.application.knowledge.service.SpacePermissionService;
 import com.hrms.application.knowledge.service.WikiSpaceService;
-import com.hrms.domain.knowledge.SpaceMember;
 import com.hrms.common.api.ApiResponses;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
+import com.hrms.domain.knowledge.SpaceMember;
 import com.hrms.domain.knowledge.WikiSpace;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,8 +21,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
-import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/knowledge/wiki/spaces")

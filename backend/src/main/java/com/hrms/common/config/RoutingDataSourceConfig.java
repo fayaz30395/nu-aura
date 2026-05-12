@@ -108,7 +108,7 @@ import java.util.Map;
 @Configuration
 @ConditionalOnExpression(
         "'${spring.datasource.replica.url:}'.length() > 0 "
-        + "&& !'${spring.datasource.replica.url:}'.equalsIgnoreCase('false')")
+                + "&& !'${spring.datasource.replica.url:}'.equalsIgnoreCase('false')")
 @Slf4j
 public class RoutingDataSourceConfig {
 

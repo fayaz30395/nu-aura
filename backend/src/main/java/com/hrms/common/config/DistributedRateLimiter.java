@@ -104,7 +104,11 @@ public class DistributedRateLimiter {
     private final RedisScript<Long> rateLimitScript = RedisScript.of(RATE_LIMIT_SCRIPT, Long.class);
     private final RedisScript<Long> tenantRateLimitScript =
             RedisScript.of(TENANT_RATE_LIMIT_SCRIPT, Long.class);
-
+    /**
+     * Bucket4j fallback for per-tenant rate limiting, keyed by
+     * {@code tenantId:resource}. Used when Redis is unavailable.
+     */
+    private final Map<String, Bucket> tenantFallbackBuckets = new ConcurrentHashMap<>();
     /**
      * Spring {@link Environment} for resolving per-resource tunables at lookup
      * time. Marked {@code required = false} so unit tests can construct the
@@ -114,14 +118,15 @@ public class DistributedRateLimiter {
     @Autowired(required = false)
     private Environment environment;
 
-    /**
-     * Bucket4j fallback for per-tenant rate limiting, keyed by
-     * {@code tenantId:resource}. Used when Redis is unavailable.
-     */
-    private final Map<String, Bucket> tenantFallbackBuckets = new ConcurrentHashMap<>();
-
     public DistributedRateLimiter(RedisTemplate<String, Object> redisTemplate) {
         this.redisTemplate = redisTemplate;
+    }
+
+    /**
+     * Build the canonical per-tenant rate-limit Redis key. Exposed for tests.
+     */
+    static String buildTenantKey(UUID tenantId, String resource) {
+        return "rl:tenant:" + tenantId + ":" + resource;
     }
 
     /**
@@ -270,13 +275,6 @@ public class DistributedRateLimiter {
      */
     public RateLimitResult tryConsumePerTenant(UUID tenantId, String resource) {
         return tryConsumePerTenant(tenantId, resource, 1);
-    }
-
-    /**
-     * Build the canonical per-tenant rate-limit Redis key. Exposed for tests.
-     */
-    static String buildTenantKey(UUID tenantId, String resource) {
-        return "rl:tenant:" + tenantId + ":" + resource;
     }
 
     private int resolveTenantCapacity(String resource) {

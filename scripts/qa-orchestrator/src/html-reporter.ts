@@ -1,18 +1,18 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import type { CycleResult, TestResult, Severity, ReleaseDecision } from './severity-classifier.js';
+import type {CycleResult, ReleaseDecision, Severity, TestResult} from './severity-classifier.js';
 
 // ── Badge colours ─────────────────────────────────────────────────────────────
 
 const BADGE_STYLES: Record<string, { bg: string; color: string }> = {
-  P0:   { bg: '#dc2626', color: '#fff' },
-  P1:   { bg: '#ea580c', color: '#fff' },
-  P2:   { bg: '#ca8a04', color: '#fff' },
-  PASS: { bg: '#16a34a', color: '#fff' },
-  FAIL: { bg: '#dc2626', color: '#fff' },
+  P0: {bg: '#dc2626', color: '#fff'},
+  P1: {bg: '#ea580c', color: '#fff'},
+  P2: {bg: '#ca8a04', color: '#fff'},
+  PASS: {bg: '#16a34a', color: '#fff'},
+  FAIL: {bg: '#dc2626', color: '#fff'},
 };
 
-const DEFAULT_BADGE = { bg: '#6b7280', color: '#fff' };
+const DEFAULT_BADGE = {bg: '#6b7280', color: '#fff'};
 
 // ── Public API ────────────────────────────────────────────────────────────────
 
@@ -162,8 +162,8 @@ export function generateReport(cycle: CycleResult): string {
     ${failureSection('P1', p1Tests, '#ea580c', '#ea580c')}
     ${failureSection('P2', p2Tests, '#ca8a04', '#ca8a04')}
     ${p0Tests.length === 0 && p1Tests.length === 0 && p2Tests.length === 0
-      ? '<p style="color:#16a34a;font-size:13px;font-weight:600;">No failures — all tests passed.</p>'
-      : ''}
+    ? '<p style="color:#16a34a;font-size:13px;font-weight:600;">No failures — all tests passed.</p>'
+    : ''}
   </div>
 
   <!-- All Tests Table -->
@@ -203,7 +203,7 @@ export function saveReport(cycle: CycleResult, outputDir: string): string {
   const filename = `qa-report-${datePart}-${timePart}.html`;
   const filePath = path.join(outputDir, filename);
 
-  fs.mkdirSync(outputDir, { recursive: true });
+  fs.mkdirSync(outputDir, {recursive: true});
   fs.writeFileSync(filePath, generateReport(cycle), 'utf8');
 
   return filePath;

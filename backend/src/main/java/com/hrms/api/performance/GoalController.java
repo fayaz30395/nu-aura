@@ -31,7 +31,9 @@ import java.util.UUID;
 @Tag(name = "Performance Goals", description = "Employee performance goal management APIs")
 public class GoalController {
 
-    /** Allow-list of sortable fields for {@code Goal} entity — prevents sort injection. */
+    /**
+     * Allow-list of sortable fields for {@code Goal} entity — prevents sort injection.
+     */
     private static final java.util.Set<String> ALLOWED_SORT_FIELDS = java.util.Set.of(
             "createdAt", "updatedAt", "title", "goalType", "category", "status",
             "startDate", "dueDate", "progressPercentage"

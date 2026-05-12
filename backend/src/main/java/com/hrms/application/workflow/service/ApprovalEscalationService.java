@@ -1,7 +1,6 @@
 package com.hrms.application.workflow.service;
 
 import com.hrms.domain.employee.Employee;
-import com.hrms.domain.user.EscalationType;
 import com.hrms.domain.workflow.ApprovalEscalationConfig;
 import com.hrms.domain.workflow.StepExecution;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;

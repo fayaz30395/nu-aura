@@ -1,11 +1,12 @@
 package com.hrms.application.ai.service;
 
-import com.hrms.api.recruitment.dto.ai.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hrms.api.recruitment.dto.ai.AIResumeParseDTO;
+import com.hrms.api.recruitment.dto.ai.ResumeParseResponse;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.ai.AiUsageLog;
 import com.hrms.infrastructure.ai.repository.AiUsageLogRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tika.exception.TikaException;
@@ -262,7 +263,7 @@ public class ResumeParserService {
      * @param initialUrl the URL after the initial SSRF check passed
      * @param maxHops    maximum number of redirect hops to follow (3 is the standard limit)
      * @return a connected {@link java.net.HttpURLConnection} positioned on a 2xx response,
-     *         or {@code null} if we ran out of hops or any hop failed SSRF validation
+     * or {@code null} if we ran out of hops or any hop failed SSRF validation
      */
     private java.net.HttpURLConnection openConnectionWithManualRedirects(java.net.URL initialUrl, int maxHops)
             throws java.io.IOException {

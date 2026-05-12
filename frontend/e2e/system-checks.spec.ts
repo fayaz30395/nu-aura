@@ -1,6 +1,6 @@
-import { expect, test } from '@playwright/test';
-import { loginAs, navigateTo } from './fixtures/helpers';
-import { demoUsers } from './fixtures/testData';
+import {expect, test} from '@playwright/test';
+import {loginAs, navigateTo} from './fixtures/helpers';
+import {demoUsers} from './fixtures/testData';
 
 /**
  * System Infrastructure Checks — NU-AURA
@@ -30,17 +30,17 @@ const BACKEND_HEALTH_URL = 'http://localhost:8080/actuator/health';
 // ─── SYS-01: Backend Health Endpoint ─────────────────────────────────────────
 
 test.describe('SYS-01: Backend Health Endpoint', () => {
-  test('actuator/health returns 200 with status UP', async ({ page }) => {
+  test('actuator/health returns 200 with status UP', async ({page}) => {
     let backendUp = false;
 
     try {
       const response = await page.evaluate(async (url: string) => {
         try {
-          const r = await fetch(url, { signal: AbortSignal.timeout(10000) });
+          const r = await fetch(url, {signal: AbortSignal.timeout(10000)});
           const body = await r.text();
-          return { status: r.status, body };
+          return {status: r.status, body};
         } catch (e) {
-          return { status: 0, body: String(e) };
+          return {status: 0, body: String(e)};
         }
       }, BACKEND_HEALTH_URL);
 
@@ -67,7 +67,7 @@ test.describe('SYS-01: Backend Health Endpoint', () => {
 // ─── SYS-02: WebSocket / STOMP Connection ─────────────────────────────────────
 
 test.describe('SYS-02: WebSocket / STOMP Connection', () => {
-  test('dashboard loads without WebSocket connection error', async ({ page }) => {
+  test('dashboard loads without WebSocket connection error', async ({page}) => {
     const stompMessages: string[] = [];
     const wsErrors: string[] = [];
 
@@ -152,7 +152,7 @@ test.describe('SYS-02: WebSocket / STOMP Connection', () => {
 // ─── SYS-03: Elasticsearch Search ─────────────────────────────────────────────
 
 test.describe('SYS-03: Elasticsearch Search', () => {
-  test('search API responds without 500 and returns structured data', async ({ page }) => {
+  test('search API responds without 500 and returns structured data', async ({page}) => {
     await loginAs(page, demoUsers.superAdmin.email);
     await navigateTo(page, '/me/dashboard');
 
@@ -173,10 +173,10 @@ test.describe('SYS-03: Elasticsearch Search', () => {
         }
         console.log('search_status:' + status);
         console.log('search_keys:' + JSON.stringify(keys));
-        return { status, keys };
+        return {status, keys};
       } catch (e) {
         console.log('search_error:' + String(e));
-        return { status: -1, keys: [], error: String(e) };
+        return {status: -1, keys: [], error: String(e)};
       }
     });
 
@@ -189,7 +189,7 @@ test.describe('SYS-03: Elasticsearch Search', () => {
     ).not.toBe(500);
   });
 
-  test('global search UI opens and shows results or empty state', async ({ page }) => {
+  test('global search UI opens and shows results or empty state', async ({page}) => {
     await loginAs(page, demoUsers.superAdmin.email);
     await navigateTo(page, '/me/dashboard');
 
@@ -245,10 +245,10 @@ test.describe('SYS-03: Elasticsearch Search', () => {
     }
   });
 
-  test('/fluence/search page loads without 500', async ({ page }) => {
+  test('/fluence/search page loads without 500', async ({page}) => {
     await loginAs(page, demoUsers.superAdmin.email);
 
-    const fluenceSearch = await page.goto('/fluence/search', { waitUntil: 'domcontentloaded' });
+    const fluenceSearch = await page.goto('/fluence/search', {waitUntil: 'domcontentloaded'});
     await page.waitForTimeout(2000);
 
     const has500 = await page
@@ -268,7 +268,7 @@ test.describe('SYS-03: Elasticsearch Search', () => {
 // ─── SYS-04: File Upload & Storage ────────────────────────────────────────────
 
 test.describe('SYS-04: File Upload & Storage', () => {
-  test('files API endpoint is reachable without 500', async ({ page }) => {
+  test('files API endpoint is reachable without 500', async ({page}) => {
     await loginAs(page, demoUsers.superAdmin.email);
     await navigateTo(page, '/me/dashboard');
 
@@ -279,10 +279,10 @@ test.describe('SYS-04: File Upload & Storage', () => {
           signal: AbortSignal.timeout(10000),
         });
         console.log('files_status:' + r.status);
-        return { status: r.status };
+        return {status: r.status};
       } catch (e) {
         console.log('files_error:' + String(e));
-        return { status: -1, error: String(e) };
+        return {status: -1, error: String(e)};
       }
     });
 
@@ -292,9 +292,9 @@ test.describe('SYS-04: File Upload & Storage', () => {
     expect(filesResult.status, 'Files API returned 500').not.toBe(500);
   });
 
-  test('/nu-drive page loads without 500', async ({ page }) => {
+  test('/nu-drive page loads without 500', async ({page}) => {
     await loginAs(page, demoUsers.superAdmin.email);
-    await page.goto('/nu-drive', { waitUntil: 'domcontentloaded' });
+    await page.goto('/nu-drive', {waitUntil: 'domcontentloaded'});
     await page.waitForTimeout(2000);
 
     const has500 = await page
@@ -309,7 +309,7 @@ test.describe('SYS-04: File Upload & Storage', () => {
     console.log(`SYS-04: /nu-drive content visible=${hasContent}`);
   });
 
-  test('/expenses page loads and file upload input exists', async ({ page }) => {
+  test('/expenses page loads and file upload input exists', async ({page}) => {
     await loginAs(page, demoUsers.superAdmin.email);
     await navigateTo(page, '/expenses');
     await page.waitForTimeout(2000);
@@ -379,7 +379,7 @@ test.describe('SYS-04: File Upload & Storage', () => {
 // ─── SYS-05: Redis Cache — Permission Check Latency ───────────────────────────
 
 test.describe('SYS-05: Redis Cache — Permission Check Latency', () => {
-  test('hrManager can load permission-guarded pages within 5s', async ({ page }) => {
+  test('hrManager can load permission-guarded pages within 5s', async ({page}) => {
     await loginAs(page, demoUsers.hrManager.email);
 
     const start = Date.now();
@@ -400,8 +400,8 @@ test.describe('SYS-05: Redis Cache — Permission Check Latency', () => {
   });
 
   test('rapid navigation through 5 permission-guarded pages completes within 10s each', async ({
-    page,
-  }) => {
+                                                                                                 page,
+                                                                                               }) => {
     await loginAs(page, demoUsers.hrManager.email);
 
     const routes = ['/employees', '/leave', '/attendance', '/payroll', '/employees'];
@@ -409,10 +409,10 @@ test.describe('SYS-05: Redis Cache — Permission Check Latency', () => {
 
     for (const route of routes) {
       const t0 = Date.now();
-      await page.goto(route, { waitUntil: 'domcontentloaded' });
+      await page.goto(route, {waitUntil: 'domcontentloaded'});
       await page.waitForTimeout(500);
       const ms = Date.now() - t0;
-      timings.push({ route, ms });
+      timings.push({route, ms});
       console.log(`SYS-05: ${route} = ${ms}ms`);
     }
 
@@ -424,7 +424,7 @@ test.describe('SYS-05: Redis Cache — Permission Check Latency', () => {
       });
     });
 
-    for (const { route, ms } of timings) {
+    for (const {route, ms} of timings) {
       expect(ms, `${route} took more than 10s — Redis may not be serving permissions`).toBeLessThan(10000);
     }
 
@@ -437,7 +437,7 @@ test.describe('SYS-05: Redis Cache — Permission Check Latency', () => {
 // ─── SYS-06: Kafka Event Processing ───────────────────────────────────────────
 
 test.describe.serial('SYS-06: Kafka Event Processing (Indirect)', () => {
-  test('employee can submit a leave request and it appears in pending list', async ({ page }) => {
+  test('employee can submit a leave request and it appears in pending list', async ({page}) => {
     await loginAs(page, demoUsers.employeeSaran.email);
     await navigateTo(page, '/leave');
     await page.waitForTimeout(1000);
@@ -465,7 +465,7 @@ test.describe.serial('SYS-06: Kafka Event Processing (Indirect)', () => {
     // Fill leave type
     const leaveTypeSelect = modal.locator('select').first();
     if (await leaveTypeSelect.isVisible().catch(() => false)) {
-      await leaveTypeSelect.selectOption({ index: 1 });
+      await leaveTypeSelect.selectOption({index: 1});
     }
 
     // Fill dates — 30 days out to avoid conflicts
@@ -489,7 +489,7 @@ test.describe.serial('SYS-06: Kafka Event Processing (Indirect)', () => {
       .last();
 
     // Verify submit button enabled within 3s
-    await expect(submitBtn).toBeEnabled({ timeout: 3000 });
+    await expect(submitBtn).toBeEnabled({timeout: 3000});
     await submitBtn.click();
 
     // Wait for success (modal close or toast)
@@ -509,7 +509,7 @@ test.describe.serial('SYS-06: Kafka Event Processing (Indirect)', () => {
     expect(requestFlowedThrough, 'Leave submit: no success toast and modal did not close').toBe(true);
   });
 
-  test('leave request appears in hrManager approvals after Kafka consumer delay', async ({ page }) => {
+  test('leave request appears in hrManager approvals after Kafka consumer delay', async ({page}) => {
     await loginAs(page, demoUsers.hrManager.email);
     await navigateTo(page, '/approvals');
     await page.waitForTimeout(3000); // Kafka consumer time
@@ -538,7 +538,7 @@ test.describe.serial('SYS-06: Kafka Event Processing (Indirect)', () => {
 // ─── SYS-07: Audit Log Entries ─────────────────────────────────────────────────
 
 test.describe('SYS-07: Audit Log Entries', () => {
-  test('audit API endpoint responds without 500', async ({ page }) => {
+  test('audit API endpoint responds without 500', async ({page}) => {
     await loginAs(page, demoUsers.superAdmin.email);
     await navigateTo(page, '/me/dashboard');
 
@@ -558,10 +558,10 @@ test.describe('SYS-07: Audit Log Entries', () => {
           // non-JSON
         }
         console.log('audit_count:' + (totalElements ?? JSON.stringify(keys)));
-        return { status: r.status, keys, totalElements };
+        return {status: r.status, keys, totalElements};
       } catch (e) {
         console.log('audit_error:' + String(e));
-        return { status: -1, keys: [], error: String(e) };
+        return {status: -1, keys: [], error: String(e)};
       }
     });
 
@@ -569,11 +569,11 @@ test.describe('SYS-07: Audit Log Entries', () => {
     expect(auditResult.status, 'Audit API returned 500').not.toBe(500);
   });
 
-  test('/admin/audit page loads without error', async ({ page }) => {
+  test('/admin/audit page loads without error', async ({page}) => {
     await loginAs(page, demoUsers.superAdmin.email);
 
     // Navigate to audit page — route may be /admin/audit or /admin (check both)
-    await page.goto('/admin/audit', { waitUntil: 'domcontentloaded' });
+    await page.goto('/admin/audit', {waitUntil: 'domcontentloaded'});
     await page.waitForTimeout(2000);
 
     const has500 = await page
@@ -608,7 +608,7 @@ test.describe('SYS-07: Audit Log Entries', () => {
 // ─── SYS-08: Feature Flags Status ─────────────────────────────────────────────
 
 test.describe('SYS-08: Feature Flags Status', () => {
-  test('feature flags API is accessible and key flags are enabled', async ({ page }) => {
+  test('feature flags API is accessible and key flags are enabled', async ({page}) => {
     await loginAs(page, demoUsers.superAdmin.email);
     await navigateTo(page, '/me/dashboard');
 
@@ -625,10 +625,10 @@ test.describe('SYS-08: Feature Flags Status', () => {
           // non-JSON
         }
         console.log('flags:' + JSON.stringify(flags));
-        return { status: r.status, flags };
+        return {status: r.status, flags};
       } catch (e) {
         console.log('flags_error:' + String(e));
-        return { status: -1, flags: {}, error: String(e) };
+        return {status: -1, flags: {}, error: String(e)};
       }
     });
 
@@ -664,9 +664,9 @@ test.describe('SYS-08: Feature Flags Status', () => {
     }
   });
 
-  test('/admin/features page loads without error if it exists', async ({ page }) => {
+  test('/admin/features page loads without error if it exists', async ({page}) => {
     await loginAs(page, demoUsers.superAdmin.email);
-    await page.goto('/admin/features', { waitUntil: 'domcontentloaded' });
+    await page.goto('/admin/features', {waitUntil: 'domcontentloaded'});
     await page.waitForTimeout(1500);
 
     const has500 = await page
@@ -685,7 +685,7 @@ test.describe('SYS-08: Feature Flags Status', () => {
 test.describe('SYS-09: All Major Module Routes — Smoke Test (No 500s)', () => {
   test.setTimeout(120000);
 
-  test('all 40+ routes load without 500 errors', async ({ page }) => {
+  test('all 40+ routes load without 500 errors', async ({page}) => {
     await loginAs(page, demoUsers.superAdmin.email);
 
     const routes = [
@@ -753,7 +753,7 @@ test.describe('SYS-09: All Major Module Routes — Smoke Test (No 500s)', () => 
 
     for (const route of routes) {
       try {
-        await page.goto(route, { waitUntil: 'domcontentloaded', timeout: 20000 });
+        await page.goto(route, {waitUntil: 'domcontentloaded', timeout: 20000});
         await page.waitForTimeout(2000);
 
         const has500 = await page
@@ -797,7 +797,7 @@ test.describe('SYS-09: All Major Module Routes — Smoke Test (No 500s)', () => 
 // ─── SYS-10: API Response Time Audit ──────────────────────────────────────────
 
 test.describe('SYS-10: API Response Time Audit', () => {
-  test('API calls on core pages are under 3000ms', async ({ page }) => {
+  test('API calls on core pages are under 3000ms', async ({page}) => {
     const slowApis: { url: string; ms: number }[] = [];
 
     page.on('response', (response) => {
@@ -806,7 +806,7 @@ test.describe('SYS-10: API Response Time Audit', () => {
         if (timing && timing.responseEnd > 0 && timing.requestStart > 0) {
           const duration = timing.responseEnd - timing.requestStart;
           if (duration > 3000) {
-            const entry = { url: response.url(), ms: Math.round(duration) };
+            const entry = {url: response.url(), ms: Math.round(duration)};
             console.warn(`SLOW_API:${entry.url}=${entry.ms}ms`);
             slowApis.push(entry);
           }
@@ -819,7 +819,7 @@ test.describe('SYS-10: API Response Time Audit', () => {
     const pagesUnderTest = ['/employees', '/leave', '/payroll', '/attendance', '/me/dashboard'];
 
     for (const route of pagesUnderTest) {
-      await page.goto(route, { waitUntil: 'domcontentloaded', timeout: 30000 });
+      await page.goto(route, {waitUntil: 'domcontentloaded', timeout: 30000});
       await page.waitForTimeout(1500);
       console.log(`SYS-10: Navigated to ${route}`);
     }
@@ -827,7 +827,7 @@ test.describe('SYS-10: API Response Time Audit', () => {
     if (slowApis.length > 0) {
       console.warn(
         `SYS-10: ${slowApis.length} slow API call(s) detected (>3s):\n` +
-          slowApis.map((a) => `  ${a.url} = ${a.ms}ms`).join('\n')
+        slowApis.map((a) => `  ${a.url} = ${a.ms}ms`).join('\n')
       );
       // Log as performance concern — do not hard fail (CI may be slow)
       // Uncomment the line below to enforce in production:
@@ -846,7 +846,7 @@ test.describe('SYS-10: API Response Time Audit', () => {
 // ─── SYS-11: Loading States — Skeleton Validation ─────────────────────────────
 
 test.describe('SYS-11: Loading States — Skeleton Validation', () => {
-  test('skeleton loaders are visible during slow network on /employees', async ({ page }) => {
+  test('skeleton loaders are visible during slow network on /employees', async ({page}) => {
     await loginAs(page, demoUsers.superAdmin.email);
 
     // Apply slow network conditions via CDP
@@ -868,7 +868,7 @@ test.describe('SYS-11: Loading States — Skeleton Validation', () => {
     }
 
     // Navigate and quickly capture initial render state
-    const navigationPromise = page.goto('/employees', { waitUntil: 'domcontentloaded' });
+    const navigationPromise = page.goto('/employees', {waitUntil: 'domcontentloaded'});
 
     // Give React ~500ms to render initial loading state before data arrives
     await page.waitForTimeout(500);
@@ -879,17 +879,17 @@ test.describe('SYS-11: Loading States — Skeleton Validation', () => {
           '[class*="skeleton" i], [class*="shimmer" i], [data-testid*="skeleton"], [aria-label*="loading" i]'
         )
         .first()
-        .isVisible({ timeout: 2000 })
+        .isVisible({timeout: 2000})
         .catch(() => false),
       page
         .locator('[class*="loader" i], [class*="Loader"], [class*="Loading"]')
         .first()
-        .isVisible({ timeout: 2000 })
+        .isVisible({timeout: 2000})
         .catch(() => false),
       page
         .locator('[class*="animate-pulse"], [class*="animate_pulse"]')
         .first()
-        .isVisible({ timeout: 2000 })
+        .isVisible({timeout: 2000})
         .catch(() => false),
     ]);
 
@@ -902,7 +902,7 @@ test.describe('SYS-11: Loading States — Skeleton Validation', () => {
     } else {
       console.warn(
         'SYS-11: No skeleton/loader detected on /employees — ' +
-          'component may use a plain spinner or render synchronously'
+        'component may use a plain spinner or render synchronously'
       );
     }
 
@@ -916,7 +916,8 @@ test.describe('SYS-11: Loading States — Skeleton Validation', () => {
     }
 
     // Wait for actual content to load before the test exits
-    await page.waitForLoadState('domcontentloaded').catch(() => {});
+    await page.waitForLoadState('domcontentloaded').catch(() => {
+    });
     await page.waitForTimeout(2000);
 
     const hasContent = await page.locator('h1, h2, table, main').first().isVisible().catch(() => false);

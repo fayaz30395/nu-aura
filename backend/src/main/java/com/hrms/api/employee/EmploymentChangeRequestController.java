@@ -24,7 +24,9 @@ import java.util.UUID;
 @Tag(name = "Employment Change Requests", description = "APIs for managing employment detail change requests requiring HR approval")
 public class EmploymentChangeRequestController {
 
-    /** Allow-list of sortable fields for {@code EmploymentChangeRequest} entity — prevents sort injection. */
+    /**
+     * Allow-list of sortable fields for {@code EmploymentChangeRequest} entity — prevents sort injection.
+     */
     private static final java.util.Set<String> ALLOWED_SORT_FIELDS = java.util.Set.of(
             "createdAt", "updatedAt", "status", "changeType", "effectiveDate", "approvedAt"
     );

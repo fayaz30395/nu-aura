@@ -209,7 +209,9 @@ export default function TaxDeclarationsPage() {
                   {Array.from({length: 4}).map((_, i) => (
                     <Table.Tr key={i}>
                       {Array.from({length: 6}).map((_, j) => (
-                        <Table.Td key={j}><div className="skeleton-aura h-4 rounded w-full" /></Table.Td>
+                        <Table.Td key={j}>
+                          <div className="skeleton-aura h-4 rounded w-full"/>
+                        </Table.Td>
                       ))}
                     </Table.Tr>
                   ))}

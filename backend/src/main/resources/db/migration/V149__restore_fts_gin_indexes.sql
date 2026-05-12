@@ -21,30 +21,32 @@
 -- WIKI_PAGES
 -- ============================================================================
 ALTER TABLE wiki_pages
-    ADD COLUMN IF NOT EXISTS search_vector tsvector
-        GENERATED ALWAYS AS (
-            setweight(to_tsvector('english', coalesce(title, '')), 'A') ||
-            setweight(to_tsvector('english', coalesce(excerpt, '')), 'B')
-        ) STORED;
+  ADD COLUMN IF NOT EXISTS search_vector tsvector
+  GENERATED ALWAYS AS (
+  setweight(to_tsvector('english', coalesce (title, '')), 'A') ||
+  setweight(to_tsvector('english', coalesce (excerpt, '')), 'B')
+  ) STORED;
 
 CREATE INDEX IF NOT EXISTS idx_wiki_pages_search_vector
-    ON wiki_pages USING gin (search_vector);
+  ON wiki_pages USING gin (search_vector);
 
-COMMENT ON COLUMN wiki_pages.search_vector
+COMMENT
+ON COLUMN wiki_pages.search_vector
     IS 'Tsvector for full-text search on title (weight A) and excerpt (weight B).';
 
 -- ============================================================================
 -- BLOG_POSTS
 -- ============================================================================
 ALTER TABLE blog_posts
-    ADD COLUMN IF NOT EXISTS search_vector tsvector
-        GENERATED ALWAYS AS (
-            setweight(to_tsvector('english', coalesce(title, '')), 'A') ||
-            setweight(to_tsvector('english', coalesce(excerpt, '')), 'B')
-        ) STORED;
+  ADD COLUMN IF NOT EXISTS search_vector tsvector
+  GENERATED ALWAYS AS (
+  setweight(to_tsvector('english', coalesce (title, '')), 'A') ||
+  setweight(to_tsvector('english', coalesce (excerpt, '')), 'B')
+  ) STORED;
 
 CREATE INDEX IF NOT EXISTS idx_blog_posts_search_vector
-    ON blog_posts USING gin (search_vector);
+  ON blog_posts USING gin (search_vector);
 
-COMMENT ON COLUMN blog_posts.search_vector
+COMMENT
+ON COLUMN blog_posts.search_vector
     IS 'Tsvector for full-text search on title (weight A) and excerpt (weight B).';

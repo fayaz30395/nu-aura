@@ -1,6 +1,9 @@
 package com.hrms.api.survey.dto;
 
-import com.hrms.domain.survey.SurveyInsight.*;
+import com.hrms.domain.survey.SurveyInsight.ActionStatus;
+import com.hrms.domain.survey.SurveyInsight.InsightPriority;
+import com.hrms.domain.survey.SurveyInsight.InsightType;
+import com.hrms.domain.survey.SurveyInsight.TrendDirection;
 import com.hrms.domain.survey.SurveyQuestion.EngagementCategory;
 import lombok.*;
 

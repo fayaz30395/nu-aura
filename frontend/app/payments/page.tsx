@@ -5,7 +5,7 @@ import {useRouter} from 'next/navigation';
 import {AppLayout} from '@/components/layout';
 import {AlertCircle, CheckCircle, ChevronDown, Clock, CreditCard, Filter, Search, XCircle,} from 'lucide-react';
 import {Permissions} from '@/lib/hooks/usePermissions';
-import {PermissionGate, PageDeniedFallback} from '@/components/auth/PermissionGate';
+import {PageDeniedFallback, PermissionGate} from '@/components/auth/PermissionGate';
 import {usePayments, usePaymentStats} from '@/lib/hooks/queries/usePayments';
 import {paymentService} from '@/lib/services/core/payment.service';
 import {PaymentProvider, PaymentStatus, PaymentType,} from '@/lib/types/core/payment';

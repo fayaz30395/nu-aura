@@ -10,7 +10,6 @@ import org.springframework.util.StringUtils;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 /**
  * Servlet filter that sanitizes query parameters and form values against XSS.

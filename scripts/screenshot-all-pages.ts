@@ -3,7 +3,7 @@
  * NU-AURA — Full Platform Screenshot Capture
  * Logs in as TENANT_ADMIN and captures all 261 pages to docs/screenshots/
  */
-import { chromium, Browser, Page } from 'playwright';
+import {Browser, chromium, Page} from 'playwright';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as yaml from 'js-yaml';
@@ -14,8 +14,8 @@ const OUT_DIR = path.resolve(__dirname, '../../docs/screenshots/qa-sweep-2026-05
 const YAML_PATH = path.resolve(__dirname, '../../docs/qa/use-cases.v2.yaml');
 
 const ROLES = [
-  { code: 'TENANT_ADMIN', email: 'admin@nuaura.dev' },
-  { code: 'EMPLOYEE',     email: 'employee@nuaura.dev' },
+  {code: 'TENANT_ADMIN', email: 'admin@nuaura.dev'},
+  {code: 'EMPLOYEE', email: 'employee@nuaura.dev'},
 ];
 
 const PASSWORD = 'Welcome@123';
@@ -30,19 +30,21 @@ async function login(page: Page, email: string): Promise<boolean> {
   try {
     const res = await fetch(`${API_URL}/api/v1/auth/login`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password: PASSWORD, tenantId: TENANT_ID }),
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({email, password: PASSWORD, tenantId: TENANT_ID}),
     });
     const data = await res.json() as Record<string, unknown>;
-    const token = (data.token || (data.data as Record<string,unknown>)?.token || data.accessToken) as string | undefined;
+    const token = (data.token || (data.data as Record<string, unknown>)?.token || data.accessToken) as string | undefined;
     if (!token) return false;
-    await page.goto(`${BASE_URL}/auth/login`, { waitUntil: 'domcontentloaded', timeout: 30000 });
+    await page.goto(`${BASE_URL}/auth/login`, {waitUntil: 'domcontentloaded', timeout: 30000});
     await page.evaluate((t) => {
       document.cookie = `nu_aura_token=${t}; path=/; max-age=86400`;
       localStorage.setItem('nu_aura_token', t);
     }, token);
     return true;
-  } catch { return false; }
+  } catch {
+    return false;
+  }
 }
 
 async function screenshot(page: Page, route: string, label: string, outDir: string): Promise<string | null> {
@@ -51,24 +53,26 @@ async function screenshot(page: Page, route: string, label: string, outDir: stri
   const file = path.join(outDir, `${label}__${slug}.png`);
 
   try {
-    await page.goto(url, { waitUntil: 'networkidle', timeout: 60000 });
+    await page.goto(url, {waitUntil: 'networkidle', timeout: 60000});
     // Wait for skeleton loaders to resolve
     await page.waitForTimeout(1500);
-    await page.screenshot({ path: file, fullPage: false });
+    await page.screenshot({path: file, fullPage: false});
     return file;
   } catch (e) {
     // Try with domcontentloaded
     try {
-      await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
+      await page.goto(url, {waitUntil: 'domcontentloaded', timeout: 30000});
       await page.waitForTimeout(2000);
-      await page.screenshot({ path: file, fullPage: false });
+      await page.screenshot({path: file, fullPage: false});
       return file;
-    } catch { return null; }
+    } catch {
+      return null;
+    }
   }
 }
 
 async function main() {
-  fs.mkdirSync(OUT_DIR, { recursive: true });
+  fs.mkdirSync(OUT_DIR, {recursive: true});
 
   // Load routes from YAML
   const yamlData = yaml.load(fs.readFileSync(YAML_PATH, 'utf8')) as {
@@ -85,15 +89,15 @@ async function main() {
 
   console.log(`Capturing ${routes.length} pages to ${OUT_DIR}`);
 
-  const browser: Browser = await chromium.launch({ headless: true });
+  const browser: Browser = await chromium.launch({headless: true});
   const results: { route: string; role: string; file: string | null }[] = [];
 
   for (const role of ROLES) {
     const roleDir = path.join(OUT_DIR, role.code.toLowerCase());
-    fs.mkdirSync(roleDir, { recursive: true });
+    fs.mkdirSync(roleDir, {recursive: true});
 
     const context = await browser.newContext({
-      viewport: { width: 1440, height: 900 },
+      viewport: {width: 1440, height: 900},
       userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
     });
     const page = await context.newPage();
@@ -110,7 +114,7 @@ async function main() {
     let captured = 0, failed = 0;
     for (const route of routes) {
       const file = await screenshot(page, route, role.code, roleDir);
-      results.push({ route, role: role.code, file });
+      results.push({route, role: role.code, file});
       if (file) {
         captured++;
         if (captured % 20 === 0) console.log(`  [${role.code}] ${captured}/${routes.length} captured`);
@@ -146,4 +150,7 @@ async function main() {
   console.log(`Done. ${results.filter(r => r.file).length} screenshots saved to ${OUT_DIR}`);
 }
 
-main().catch(err => { console.error(err); process.exit(1); });
+main().catch(err => {
+  console.error(err);
+  process.exit(1);
+});

@@ -4,14 +4,14 @@ import com.hrms.application.meeting.service.MeetingService;
 import com.hrms.common.security.RequiresPermission;
 import com.hrms.domain.engagement.OneOnOneMeeting;
 import jakarta.validation.Valid;
-import lombok.*;
-import org.springframework.http.*;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
 
-import static com.hrms.common.security.Permission.*;
+import static com.hrms.common.security.Permission.EMPLOYEE_VIEW_SELF;
 
 @RestController
 @RequestMapping("/api/v1/one-on-one")

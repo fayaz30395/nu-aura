@@ -127,7 +127,7 @@ public class AttendanceRecordRedactor {
         }
 
         log.info("AttendanceRecordRedactor: soft-deleted {} attendance_record(s) for employee {} "
-                + "in tenant {} (skipped {} record(s) already deleted)",
+                        + "in tenant {} (skipped {} record(s) already deleted)",
                 softDeleted, employeeId, tenantId, alreadyDeleted);
 
         return new Result(softDeleted, alreadyDeleted);
@@ -147,7 +147,9 @@ public class AttendanceRecordRedactor {
          */
         public static final Result NO_EMPLOYEE = new Result(0, 0);
 
-        /** @return true when no row was newly soft-deleted by this run. */
+        /**
+         * @return true when no row was newly soft-deleted by this run.
+         */
         public boolean isNoOp() {
             return softDeleted == 0;
         }

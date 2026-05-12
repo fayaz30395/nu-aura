@@ -1,9 +1,10 @@
 package com.hrms.application.performance.service;
 
 import com.hrms.api.performance.dto.OKRGraphResponse;
-import com.hrms.api.performance.dto.OKRGraphResponse.*;
+import com.hrms.api.performance.dto.OKRGraphResponse.OKRLink;
+import com.hrms.api.performance.dto.OKRGraphResponse.OKRNode;
 import com.hrms.api.performance.dto.PerformanceSpiderResponse;
-import com.hrms.api.performance.dto.PerformanceSpiderResponse.*;
+import com.hrms.api.performance.dto.PerformanceSpiderResponse.SpiderData;
 import com.hrms.domain.performance.Objective;
 import com.hrms.infrastructure.performance.repository.ObjectiveRepository;
 import lombok.RequiredArgsConstructor;

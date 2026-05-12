@@ -1,38 +1,43 @@
 package com.hrms.performance;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hrms.application.payroll.service.PayrollRunService;
-import com.hrms.application.leave.service.LeaveRequestService;
-import com.hrms.application.selfservice.service.SelfServiceService;
 import com.hrms.api.selfservice.dto.SelfServiceDashboardResponse;
-import com.hrms.domain.leave.LeaveRequest;
+import com.hrms.application.leave.service.LeaveRequestService;
+import com.hrms.application.payroll.service.PayrollRunService;
+import com.hrms.application.selfservice.service.SelfServiceService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.config.TestSecurityConfig;
+import com.hrms.domain.leave.LeaveRequest;
 import com.hrms.domain.payroll.PayrollRun;
 import com.hrms.domain.user.RoleScope;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.time.LocalDate;
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * Performance use-case benchmark tests — UC-PERF-001 through UC-PERF-008.
@@ -71,7 +76,9 @@ class PerformanceUseCaseBenchmarkTest {
         applySuperAdminContext();
     }
 
-    /** Applied per-thread (ThreadLocal) — must be re-applied inside concurrent worker threads. */
+    /**
+     * Applied per-thread (ThreadLocal) — must be re-applied inside concurrent worker threads.
+     */
     private void applySuperAdminContext() {
         Map<String, RoleScope> permissions = new HashMap<>();
         permissions.put(Permission.SYSTEM_ADMIN, RoleScope.ALL);

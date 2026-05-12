@@ -3,7 +3,10 @@ package com.hrms.api.recognition.dto;
 import com.hrms.domain.recognition.Recognition;
 import com.hrms.domain.recognition.Recognition.RecognitionCategory;
 import com.hrms.domain.recognition.Recognition.RecognitionType;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

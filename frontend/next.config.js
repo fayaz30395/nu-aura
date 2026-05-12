@@ -90,21 +90,21 @@ const nextConfig = {
       // production builds don't whitelist http://localhost as a valid image origin.
       ...(process.env.NODE_ENV !== 'production'
         ? [
-            // MinIO local object storage (development)
-            {
-              protocol: 'http',
-              hostname: 'localhost',
-              port: '9000',
-              pathname: '/**',
-            },
-            // Backend API server (serves files proxied from MinIO in development/staging)
-            {
-              protocol: 'http',
-              hostname: 'localhost',
-              port: '8080',
-              pathname: '/api/v1/files/**',
-            },
-          ]
+          // MinIO local object storage (development)
+          {
+            protocol: 'http',
+            hostname: 'localhost',
+            port: '9000',
+            pathname: '/**',
+          },
+          // Backend API server (serves files proxied from MinIO in development/staging)
+          {
+            protocol: 'http',
+            hostname: 'localhost',
+            port: '8080',
+            pathname: '/api/v1/files/**',
+          },
+        ]
         : []),
     ],
   },

@@ -6,24 +6,24 @@
 
 ### Results
 
-| Metric | Value |
-|--------|-------|
-| Total API probes | **14,236** |
-| PASS | **1,086** |
-| FAIL | **2,928** (all YAML false positives — see below) |
-| BLOCKED | **10,222** (backend connection pool under load) |
-| Real code bugs | **0** |
-| Real security bugs | **0** |
+| Metric             | Value                                            |
+|--------------------|--------------------------------------------------|
+| Total API probes   | **14,236**                                       |
+| PASS               | **1,086**                                        |
+| FAIL               | **2,928** (all YAML false positives — see below) |
+| BLOCKED            | **10,222** (backend connection pool under load)  |
+| Real code bugs     | **0**                                            |
+| Real security bugs | **0**                                            |
 
 ### Roles Probed
 
-| Role | Email | Status |
-|------|-------|--------|
-| SUPER_ADMIN | fayaz.m@nulogic.io | ✗ (409 — session conflict with prior runs) |
-| HR_MANAGER | jagadeesh@nulogic.io | ✓ 148 permissions, LEAVE:APPROVE scope=ALL |
-| MANAGER | sumit@nulogic.io | ✓ |
-| EMPLOYEE | saran@nulogic.io | ✓ 45 permissions |
-| RECRUITMENT_ADMIN | suresh@nulogic.io | ✓ |
+| Role              | Email                | Status                                     |
+|-------------------|----------------------|--------------------------------------------|
+| SUPER_ADMIN       | fayaz.m@nulogic.io   | ✗ (409 — session conflict with prior runs) |
+| HR_MANAGER        | jagadeesh@nulogic.io | ✓ 148 permissions, LEAVE:APPROVE scope=ALL |
+| MANAGER           | sumit@nulogic.io     | ✓                                          |
+| EMPLOYEE          | saran@nulogic.io     | ✓ 45 permissions                           |
+| RECRUITMENT_ADMIN | suresh@nulogic.io    | ✓                                          |
 
 ### Why All 2,928 FAILs Are False Positives
 
@@ -55,20 +55,20 @@ Fix for next run: reduce workers to 8-10, add 500ms jitter between probe batches
 
 ### Screenshots (12 screens → `docs/screenshots/key-screens/`)
 
-| File | Page | Notes |
-|------|------|-------|
-| 01_hrms-dashboard | My Dashboard | Skeleton loaders (backend under load) |
-| 02_employee-directory | Employees | Skeleton loaders |
-| 03_employee-profile | My Profile | Active nav highlight |
-| 04_attendance | Attendance | Full sidebar visible at 1440px |
-| 05_leave-management | Leave | Skeleton loaders |
-| 06_payroll-review | My Payslips | Active nav highlight |
-| 07_hire-pipeline | NU-Hire | **Access Denied 🔒 — RBAC correct for EMPLOYEE** |
-| 08_grow-reviews | NU-Grow | Full sidebar: 10 modules visible |
-| 09_fluence-wiki | NU-Fluence | Login redirect (auth under load) |
-| 10_modal-leave-form | Leave form | Skeleton state |
-| 11_mobile-dashboard | Mobile 390px | Login UX, demo accounts panel |
-| 12_mobile-attendance | Mobile 390px | Login UX |
+| File                  | Page         | Notes                                            |
+|-----------------------|--------------|--------------------------------------------------|
+| 01_hrms-dashboard     | My Dashboard | Skeleton loaders (backend under load)            |
+| 02_employee-directory | Employees    | Skeleton loaders                                 |
+| 03_employee-profile   | My Profile   | Active nav highlight                             |
+| 04_attendance         | Attendance   | Full sidebar visible at 1440px                   |
+| 05_leave-management   | Leave        | Skeleton loaders                                 |
+| 06_payroll-review     | My Payslips  | Active nav highlight                             |
+| 07_hire-pipeline      | NU-Hire      | **Access Denied 🔒 — RBAC correct for EMPLOYEE** |
+| 08_grow-reviews       | NU-Grow      | Full sidebar: 10 modules visible                 |
+| 09_fluence-wiki       | NU-Fluence   | Login redirect (auth under load)                 |
+| 10_modal-leave-form   | Leave form   | Skeleton state                                   |
+| 11_mobile-dashboard   | Mobile 390px | Login UX, demo accounts panel                    |
+| 12_mobile-attendance  | Mobile 390px | Login UX                                         |
 
 Studio Slate v2 design confirmed: dark warm sidebar (#0E111A), flat icons, #2563EB accent.
 
@@ -80,8 +80,8 @@ Without this, ~2,900 probes per sweep will produce false FAIL verdicts.
 
 ### Commits This Session
 
-| SHA | Description |
-|-----|-------------|
-| a4a40c7a | refactor(ui): Studio Slate v2 — flat design system overhaul |
+| SHA      | Description                                                                   |
+|----------|-------------------------------------------------------------------------------|
+| a4a40c7a | refactor(ui): Studio Slate v2 — flat design system overhaul                   |
 | 0923e72c | feat(qa): autonomous QA orchestrator with severity classification (129 tests) |
-| 85757ba4 | qa(sweep): P0+P1 API sweep — 14,236 probes, 0 real bugs, 12 key screenshots |
+| 85757ba4 | qa(sweep): P0+P1 API sweep — 14,236 probes, 0 real bugs, 12 key screenshots   |

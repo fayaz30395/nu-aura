@@ -72,17 +72,25 @@ public class UrlAllowlistValidator {
             "kubernetes.default.svc"      // Kubernetes API from inside the cluster
     );
 
-    /** Dotted-quad IPv4 literal. */
+    /**
+     * Dotted-quad IPv4 literal.
+     */
     private static final Pattern IPV4_DOTTED = Pattern.compile(
             "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$");
 
-    /** Decimal IPv4 literal (e.g. 2130706433 = 127.0.0.1). */
+    /**
+     * Decimal IPv4 literal (e.g. 2130706433 = 127.0.0.1).
+     */
     private static final Pattern IPV4_DECIMAL = Pattern.compile("^\\d{1,10}$");
 
-    /** Hex IPv4 literal (e.g. 0x7f000001 = 127.0.0.1). */
+    /**
+     * Hex IPv4 literal (e.g. 0x7f000001 = 127.0.0.1).
+     */
     private static final Pattern IPV4_HEX = Pattern.compile("^0x[0-9a-fA-F]+$");
 
-    /** Octal IPv4 literal (e.g. 0177.0.0.1). */
+    /**
+     * Octal IPv4 literal (e.g. 0177.0.0.1).
+     */
     private static final Pattern IPV4_OCTAL_COMPONENT = Pattern.compile("^0[0-7]+(\\.[0-7]+){3}$");
 
     private final boolean allowHttp;

@@ -46,7 +46,9 @@ import java.util.Map;
  */
 public enum ErasurePolicy {
 
-    /** Physical row removal. Used when no downstream FKs or legal-hold apply. */
+    /**
+     * Physical row removal. Used when no downstream FKs or legal-hold apply.
+     */
     HARD_DELETE,
 
     /**

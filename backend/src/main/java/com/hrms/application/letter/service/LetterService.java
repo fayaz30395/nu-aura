@@ -1,34 +1,33 @@
 package com.hrms.application.letter.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hrms.api.esignature.dto.SignatureApprovalRequest;
+import com.hrms.api.esignature.dto.SignatureRequestRequest;
+import com.hrms.api.esignature.dto.SignatureRequestResponse;
 import com.hrms.api.letter.dto.*;
+import com.hrms.application.esignature.service.ESignatureService;
+import com.hrms.common.exception.BusinessException;
+import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.security.DataScopeService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.TenantContext;
-import com.hrms.common.exception.BusinessException;
-import com.hrms.common.exception.ResourceNotFoundException;
+import com.hrms.domain.employee.Department;
 import com.hrms.domain.employee.Employee;
+import com.hrms.domain.esignature.SignatureApproval;
+import com.hrms.domain.esignature.SignatureRequest;
 import com.hrms.domain.letter.GeneratedLetter;
 import com.hrms.domain.letter.GeneratedLetter.LetterStatus;
 import com.hrms.domain.letter.LetterTemplate;
 import com.hrms.domain.letter.LetterTemplate.LetterCategory;
 import com.hrms.domain.recruitment.Candidate;
 import com.hrms.domain.recruitment.JobOpening;
-import com.hrms.domain.employee.Department;
 import com.hrms.infrastructure.employee.repository.DepartmentRepository;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.letter.repository.GeneratedLetterRepository;
 import com.hrms.infrastructure.letter.repository.LetterTemplateRepository;
 import com.hrms.infrastructure.recruitment.repository.CandidateRepository;
 import com.hrms.infrastructure.recruitment.repository.JobOpeningRepository;
-import com.hrms.api.esignature.dto.SignatureApprovalRequest;
-import com.hrms.api.esignature.dto.SignatureRequestRequest;
-import com.hrms.api.esignature.dto.SignatureRequestResponse;
-import com.hrms.application.esignature.service.ESignatureService;
-import com.hrms.domain.esignature.SignatureRequest;
-import com.hrms.domain.esignature.SignatureApproval;
-import com.fasterxml.jackson.core.JsonProcessingException;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -39,11 +38,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor

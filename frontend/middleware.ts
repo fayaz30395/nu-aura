@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import type {NextRequest} from 'next/server';
+import {NextResponse} from 'next/server';
 
 /**
  * Next.js Edge Middleware for route protection and security hardening.
@@ -147,7 +147,7 @@ function decodeJwt(token: string): {
 } {
   try {
     const [, base64Url] = token.split('.');
-    if (!base64Url) return { roles: [], isExpired: true };
+    if (!base64Url) return {roles: [], isExpired: true};
 
     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
     const jsonPayload =
@@ -170,9 +170,9 @@ function decodeJwt(token: string): {
     const exp: number | undefined = payload.exp;
     const isExpired = exp !== undefined ? Date.now() / 1000 > exp : false;
 
-    return { role: singleRole, roles, isExpired };
+    return {role: singleRole, roles, isExpired};
   } catch {
-    return { roles: [], isExpired: true };
+    return {roles: [], isExpired: true};
   }
 }
 
@@ -289,7 +289,7 @@ function addSecurityHeaders(response: NextResponse): NextResponse {
 }
 
 export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  const {pathname} = request.nextUrl;
 
   // Skip API routes and static assets
   if (matchesPattern(pathname, SKIP_PATTERNS)) {
@@ -326,7 +326,7 @@ export function middleware(request: NextRequest) {
   }
 
   // DEF-29: Decode JWT and check expiry
-  const { role, roles, isExpired } = decodeJwt(accessToken);
+  const {role, roles, isExpired} = decodeJwt(accessToken);
 
   // P0-SESSION-FIX: Check if a valid refresh token cookie exists alongside
   // the expired access token. If so, let the page load — the client-side

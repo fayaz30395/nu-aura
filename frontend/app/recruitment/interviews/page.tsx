@@ -1,9 +1,9 @@
 'use client';
 
-import React, {Suspense, useEffect, useMemo, useRef, useState} from 'react';
+import React, {Suspense, useMemo, useRef, useState} from 'react';
 import {useRouter, useSearchParams} from 'next/navigation';
 import {Permissions} from '@/lib/hooks/usePermissions';
-import {PermissionGate, PageDeniedFallback} from '@/components/auth/PermissionGate';
+import {PageDeniedFallback, PermissionGate} from '@/components/auth/PermissionGate';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {notifications} from '@mantine/notifications';

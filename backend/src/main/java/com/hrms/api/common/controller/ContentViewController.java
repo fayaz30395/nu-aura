@@ -1,11 +1,12 @@
 package com.hrms.api.common.controller;
 
 import com.hrms.application.common.service.ContentViewService;
-import com.hrms.application.common.service.ContentViewService.ViewerInfo;
 import com.hrms.application.common.service.ContentViewService.ViewStats;
+import com.hrms.application.common.service.ContentViewService.ViewerInfo;
 import com.hrms.common.security.RequiresPermission;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.domain.common.ContentView.ContentType;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,8 +15,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import static com.hrms.common.security.Permission.EMPLOYEE_VIEW_SELF;
-
-import jakarta.validation.Valid;
 
 /**
  * REST controller for content view tracking.

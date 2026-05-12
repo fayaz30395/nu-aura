@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { checkServer, waitForServer, getServerStatus } from '../src/server-manager.js';
+import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
+import {checkServer, getServerStatus, waitForServer} from '../src/server-manager.js';
 
 // Mock global fetch
 const mockFetch = vi.fn();
@@ -11,18 +11,18 @@ describe('checkServer', () => {
   });
 
   it('returns true when server responds with 200', async () => {
-    mockFetch.mockResolvedValueOnce({ ok: true, status: 200 });
+    mockFetch.mockResolvedValueOnce({ok: true, status: 200});
     const result = await checkServer('http://localhost:3000');
     expect(result).toBe(true);
     expect(mockFetch).toHaveBeenCalledWith(
       'http://localhost:3000',
-      expect.objectContaining({ signal: expect.any(AbortSignal) }),
+      expect.objectContaining({signal: expect.any(AbortSignal)}),
     );
   });
 
   it('returns true when server responds with non-200 (port is listening)', async () => {
     // Any HTTP response means the port is up, even 500 (e.g. Next.js dev startup error page)
-    mockFetch.mockResolvedValueOnce({ ok: false, status: 500 });
+    mockFetch.mockResolvedValueOnce({ok: false, status: 500});
     const result = await checkServer('http://localhost:3000');
     expect(result).toBe(true);
   });
@@ -41,7 +41,7 @@ describe('checkServer', () => {
   });
 
   it('uses the provided URL in the fetch call', async () => {
-    mockFetch.mockResolvedValueOnce({ ok: true, status: 200 });
+    mockFetch.mockResolvedValueOnce({ok: true, status: 200});
     await checkServer('http://localhost:8080/actuator/health');
     expect(mockFetch).toHaveBeenCalledWith(
       'http://localhost:8080/actuator/health',
@@ -61,7 +61,7 @@ describe('waitForServer', () => {
   });
 
   it('resolves immediately when server is already up', async () => {
-    mockFetch.mockResolvedValue({ ok: true, status: 200 });
+    mockFetch.mockResolvedValue({ok: true, status: 200});
     const promise = waitForServer('http://localhost:3000', 5000);
     // Advance time slightly to allow the first check to complete
     await vi.runAllTimersAsync();
@@ -73,7 +73,7 @@ describe('waitForServer', () => {
     mockFetch
       .mockRejectedValueOnce(new Error('ECONNREFUSED'))
       .mockRejectedValueOnce(new Error('ECONNREFUSED'))
-      .mockResolvedValueOnce({ ok: true, status: 200 });
+      .mockResolvedValueOnce({ok: true, status: 200});
 
     const promise = waitForServer('http://localhost:3000', 10000);
     await vi.runAllTimersAsync();
@@ -100,36 +100,36 @@ describe('getServerStatus', () => {
   });
 
   it('returns { frontend: true, backend: true } when both servers are up', async () => {
-    mockFetch.mockResolvedValue({ ok: true, status: 200 });
+    mockFetch.mockResolvedValue({ok: true, status: 200});
     const status = await getServerStatus();
-    expect(status).toEqual({ frontend: true, backend: true });
+    expect(status).toEqual({frontend: true, backend: true});
     expect(mockFetch).toHaveBeenCalledTimes(2);
   });
 
   it('returns { frontend: false, backend: true } when only frontend is down', async () => {
     mockFetch
       .mockRejectedValueOnce(new Error('ECONNREFUSED')) // frontend
-      .mockResolvedValueOnce({ ok: true, status: 200 }); // backend
+      .mockResolvedValueOnce({ok: true, status: 200}); // backend
     const status = await getServerStatus();
-    expect(status).toEqual({ frontend: false, backend: true });
+    expect(status).toEqual({frontend: false, backend: true});
   });
 
   it('returns { frontend: true, backend: false } when only backend is down', async () => {
     mockFetch
-      .mockResolvedValueOnce({ ok: true, status: 200 }) // frontend
+      .mockResolvedValueOnce({ok: true, status: 200}) // frontend
       .mockRejectedValueOnce(new Error('ECONNREFUSED')); // backend
     const status = await getServerStatus();
-    expect(status).toEqual({ frontend: true, backend: false });
+    expect(status).toEqual({frontend: true, backend: false});
   });
 
   it('returns { frontend: false, backend: false } when both servers are down', async () => {
     mockFetch.mockRejectedValue(new Error('ECONNREFUSED'));
     const status = await getServerStatus();
-    expect(status).toEqual({ frontend: false, backend: false });
+    expect(status).toEqual({frontend: false, backend: false});
   });
 
   it('checks frontend URL (localhost:3000) and backend URL (localhost:8080)', async () => {
-    mockFetch.mockResolvedValue({ ok: true, status: 200 });
+    mockFetch.mockResolvedValue({ok: true, status: 200});
     await getServerStatus();
     const calledUrls = mockFetch.mock.calls.map((call) => call[0] as string);
     expect(calledUrls.some((url) => url.includes('3000'))).toBe(true);

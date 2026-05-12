@@ -190,7 +190,8 @@ export default function SecurityPage() {
             Enterprise-grade security you can trust
           </h1>
           <p className="text-xl text-[var(--text-secondary)] mb-8">
-            AES-256-GCM field-level encryption, security practices aligned with SOC 2 and GDPR; certifications in progress.
+            AES-256-GCM field-level encryption, security practices aligned with SOC 2 and GDPR; certifications in
+            progress.
           </p>
           <Button size="lg" variant="outline" className="gap-2">
             <Download className="h-5 w-5"/>

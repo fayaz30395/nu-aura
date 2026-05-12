@@ -1,13 +1,8 @@
 package com.hrms.api.survey.dto;
 
-import lombok.*;
-
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.*;
+import lombok.*;
 
 import java.util.List;
 import java.util.UUID;

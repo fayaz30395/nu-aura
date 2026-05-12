@@ -25,16 +25,16 @@ out-of-band hotfixes, see `rollback.md` and `incident-response.md`.
 
 Run all of these before triggering a deploy. Any RED item is a blocker.
 
-| Check | Command / Location | Expected |
-|-------|--------------------|----------|
-| Build green on `main` | GitHub Actions `main` workflow | All checks pass |
-| Backend tests green | `./mvnw test` (or CI) | 0 failures |
-| Frontend tests green | `npm test` in `nu-aura-fe/` | 0 failures |
-| Lint green | `npm run lint`, `./mvnw spotless:check` | 0 violations |
-| Flyway dry-run | See section 3 | All new migrations parse |
-| Open P0/P1 incidents | Incident log / Slack | None active |
-| Deploy freeze window | Eng calendar | Not in freeze |
-| Tenant maintenance window | Operations Slack | Confirmed if needed |
+| Check                     | Command / Location                      | Expected                 |
+|---------------------------|-----------------------------------------|--------------------------|
+| Build green on `main`     | GitHub Actions `main` workflow          | All checks pass          |
+| Backend tests green       | `./mvnw test` (or CI)                   | 0 failures               |
+| Frontend tests green      | `npm test` in `nu-aura-fe/`             | 0 failures               |
+| Lint green                | `npm run lint`, `./mvnw spotless:check` | 0 violations             |
+| Flyway dry-run            | See section 3                           | All new migrations parse |
+| Open P0/P1 incidents      | Incident log / Slack                    | None active              |
+| Deploy freeze window      | Eng calendar                            | Not in freeze            |
+| Tenant maintenance window | Operations Slack                        | Confirmed if needed      |
 
 Document the commit SHA you intend to deploy. Post in `#deploys`:
 
@@ -126,11 +126,11 @@ filename. Versioning is monotonic — never re-use or re-order existing version 
 
 ### Migration types and sequencing
 
-| Type | When | Example |
-|------|------|---------|
-| Additive (new table / column nullable) | Anytime | `V129__add_employee_emergency_contact.sql` |
-| Backfill (UPDATE existing rows) | After app code that writes the new column is deployed | `V130__backfill_employee_emergency_contact.sql` |
-| Destructive (drop column / NOT NULL) | After 2 deploys: app no longer reads/writes the old column | `V131__drop_legacy_emergency_field.sql` |
+| Type                                   | When                                                       | Example                                         |
+|----------------------------------------|------------------------------------------------------------|-------------------------------------------------|
+| Additive (new table / column nullable) | Anytime                                                    | `V129__add_employee_emergency_contact.sql`      |
+| Backfill (UPDATE existing rows)        | After app code that writes the new column is deployed      | `V130__backfill_employee_emergency_contact.sql` |
+| Destructive (drop column / NOT NULL)   | After 2 deploys: app no longer reads/writes the old column | `V131__drop_legacy_emergency_field.sql`         |
 
 Three-deploy pattern for breaking schema changes:
 
@@ -192,11 +192,11 @@ kubectl patch deployment hrms-backend -n hrms -p \
 
 The backend exposes three probes via Spring Boot Actuator:
 
-| Probe | Path | Purpose | Failure action |
-|-------|------|---------|----------------|
-| `startupProbe` | `/actuator/health/readiness` | Boot complete (Flyway done, beans ready) | K8s waits up to 5 min |
-| `readinessProbe` | `/actuator/health/readiness` | Ready to serve traffic | Pod removed from Service endpoints |
-| `livenessProbe` | `/actuator/health/liveness` | App process responsive (PING only) | Pod killed and restarted |
+| Probe            | Path                         | Purpose                                  | Failure action                     |
+|------------------|------------------------------|------------------------------------------|------------------------------------|
+| `startupProbe`   | `/actuator/health/readiness` | Boot complete (Flyway done, beans ready) | K8s waits up to 5 min              |
+| `readinessProbe` | `/actuator/health/readiness` | Ready to serve traffic                   | Pod removed from Service endpoints |
+| `livenessProbe`  | `/actuator/health/liveness`  | App process responsive (PING only)       | Pod killed and restarted           |
 
 **Sprint 2 correction:** liveness was previously aggregating DB + Kafka + Redis health, which
 caused cascading restarts during transient downstream blips. It is now ping-only — the pod is
@@ -250,14 +250,14 @@ Differences vs GKE:
 
 Roll back immediately if **any** of these fire within 30 minutes of the deploy:
 
-| Trigger | Threshold | Where to check |
-|---------|-----------|----------------|
-| Failed Flyway migration | Any `FAILED` status row | `flyway_schema_history` table |
-| p95 API latency | > 2000 ms for 5+ min | Grafana > API Metrics dashboard |
-| Error rate | > 2% of requests for 5+ min | Grafana > System Overview |
-| Liveness probe failures | > 1 pod restart in 10 min | `kubectl get events -n hrms` |
-| Failed payroll / scheduled job | Any P1+ scheduled job failure | Grafana > Business Metrics |
-| Spike in 5xx | > 10 / min for 5 min | Prometheus alert `Hrms5xxSpike` |
+| Trigger                        | Threshold                     | Where to check                  |
+|--------------------------------|-------------------------------|---------------------------------|
+| Failed Flyway migration        | Any `FAILED` status row       | `flyway_schema_history` table   |
+| p95 API latency                | > 2000 ms for 5+ min          | Grafana > API Metrics dashboard |
+| Error rate                     | > 2% of requests for 5+ min   | Grafana > System Overview       |
+| Liveness probe failures        | > 1 pod restart in 10 min     | `kubectl get events -n hrms`    |
+| Failed payroll / scheduled job | Any P1+ scheduled job failure | Grafana > Business Metrics      |
+| Spike in 5xx                   | > 10 / min for 5 min          | Prometheus alert `Hrms5xxSpike` |
 
 Execute the rollback per `rollback.md`. Notify `#deploys` and incident channels immediately.
 

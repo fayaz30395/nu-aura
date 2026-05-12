@@ -1,18 +1,16 @@
 package com.hrms.api.resourcemanagement;
 
-import com.hrms.api.resourcemanagement.dto.*;
 import com.hrms.application.resourcemanagement.service.ResourceManagementService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import jakarta.validation.Valid;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -21,8 +19,8 @@ import java.util.UUID;
 
 import static com.hrms.api.resourcemanagement.dto.AllocationDTOs.*;
 import static com.hrms.api.resourcemanagement.dto.ApprovalDTOs.*;
-import static com.hrms.api.resourcemanagement.dto.WorkloadDTOs.*;
 import static com.hrms.api.resourcemanagement.dto.AvailabilityDTOs.*;
+import static com.hrms.api.resourcemanagement.dto.WorkloadDTOs.*;
 
 @RestController
 @RequestMapping("/api/v1/resource-management")

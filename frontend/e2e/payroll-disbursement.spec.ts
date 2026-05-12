@@ -59,7 +59,8 @@ test.describe.serial('Payroll Disbursement — create + process + view payslip @
       ).last();
       if (await submitBtn.isVisible({timeout: 3000}).catch(() => false)) {
         await submitBtn.click();
-        await page.waitForLoadState('networkidle').catch(() => {});
+        await page.waitForLoadState('networkidle').catch(() => {
+        });
       }
     }
 
@@ -88,14 +89,16 @@ test.describe.serial('Payroll Disbursement — create + process + view payslip @
         if (await confirm.isVisible({timeout: 2000}).catch(() => false)) {
           await confirm.click();
         }
-        await page.waitForLoadState('networkidle').catch(() => {});
+        await page.waitForLoadState('networkidle').catch(() => {
+        });
       }
 
       // Optional approve step
       const approveBtn = page.locator('button:has-text("Approve")').first();
       if (await approveBtn.isVisible({timeout: 3000}).catch(() => false)) {
         await approveBtn.click();
-        await page.waitForLoadState('networkidle').catch(() => {});
+        await page.waitForLoadState('networkidle').catch(() => {
+        });
       }
     }
 

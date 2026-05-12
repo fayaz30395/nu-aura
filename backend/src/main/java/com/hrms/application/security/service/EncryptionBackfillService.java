@@ -148,8 +148,9 @@ public class EncryptionBackfillService {
     /**
      * Result of a backfill pass.
      *
-     * @param totalCandidates rows matching the legacy pattern at scan time
+     * @param totalCandidates      rows matching the legacy pattern at scan time
      * @param successfullyMigrated rows successfully re-saved (and therefore re-encrypted)
      */
-    public record BackfillResult(int totalCandidates, int successfullyMigrated) {}
+    public record BackfillResult(int totalCandidates, int successfullyMigrated) {
+    }
 }

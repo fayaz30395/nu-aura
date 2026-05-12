@@ -34,11 +34,7 @@ import org.springframework.test.context.ActiveProfiles;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -336,7 +332,7 @@ class DsrErasureServiceIntegrationTest {
         // idempotent, but the orchestrator must refuse a re-entry so the
         // legal team isn't paged twice for the same erasure.
         org.assertj.core.api.Assertions.assertThatThrownBy(
-                () -> dsrService.processErasure(dsrRequestId))
+                        () -> dsrService.processErasure(dsrRequestId))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("terminal");
 

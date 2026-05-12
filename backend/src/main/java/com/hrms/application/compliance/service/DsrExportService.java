@@ -29,11 +29,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HexFormat;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * GDPR Article 15 (right of access) and Article 20 (right to data portability)
@@ -68,14 +64,20 @@ import java.util.UUID;
 @Slf4j
 public class DsrExportService {
 
-    /** Hard ceiling on the in-memory payload, in bytes. Beyond this we must spool to disk / object storage. */
+    /**
+     * Hard ceiling on the in-memory payload, in bytes. Beyond this we must spool to disk / object storage.
+     */
     static final int MAX_ARTIFACT_BYTES = 50 * 1024 * 1024;
 
     /** Trailing window for attendance — Article 15 says "personal data being processed", */
-    /** which we operationalise as the last 90 days for high-volume daily rows. */
+    /**
+     * which we operationalise as the last 90 days for high-volume daily rows.
+     */
     static final int ATTENDANCE_WINDOW_DAYS = 90;
 
-    /** Hard cap on audit-log rows pulled into the export to bound memory & artefact size. */
+    /**
+     * Hard cap on audit-log rows pulled into the export to bound memory & artefact size.
+     */
     static final int AUDIT_LOG_LIMIT = 5_000;
 
     /**
@@ -215,8 +217,8 @@ public class DsrExportService {
         // per employee per year) that paging would be over-engineering here.
         List<LeaveRequest> leaveRequests = employeeId != null
                 ? leaveRequestRepository.findAllByTenantIdAndEmployeeId(
-                        tenantId, employeeId, PageRequest.of(0, 500, Sort.by(Sort.Direction.DESC, "startDate")))
-                        .getContent()
+                tenantId, employeeId, PageRequest.of(0, 500, Sort.by(Sort.Direction.DESC, "startDate")))
+                  .getContent()
                 : List.of();
 
         // Salary structure — latest active only. The full salary history is

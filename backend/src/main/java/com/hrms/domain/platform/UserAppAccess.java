@@ -3,15 +3,15 @@ package com.hrms.domain.platform;
 import com.hrms.common.entity.TenantAware;
 import com.hrms.domain.user.User;
 import jakarta.persistence.*;
-import org.hibernate.annotations.Where;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * Represents a user's access to a specific NU application.

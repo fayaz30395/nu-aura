@@ -308,7 +308,7 @@ export default function RolesPage() {
   if (isLoading) {
     return (
       <div className="p-4 md:p-6 lg:p-8">
-        <SkeletonTable rows={6} columns={4} />
+        <SkeletonTable rows={6} columns={4}/>
       </div>
     );
   }

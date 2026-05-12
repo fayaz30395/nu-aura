@@ -4,9 +4,9 @@ import com.hrms.api.lms.dto.CourseCatalogResponse;
 import com.hrms.api.lms.dto.CourseCatalogResponse.CourseSummaryDto;
 import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.domain.lms.*;
+import com.hrms.domain.lms.ContentProgress.ProgressStatus;
 import com.hrms.domain.lms.Course.CourseStatus;
 import com.hrms.domain.lms.CourseEnrollment.EnrollmentStatus;
-import com.hrms.domain.lms.ContentProgress.ProgressStatus;
 import com.hrms.infrastructure.lms.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -17,12 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service

@@ -29,28 +29,31 @@
 -- ============================================================================
 -- pg_trgm extension
 -- ============================================================================
-CREATE EXTENSION IF NOT EXISTS pg_trgm;
+CREATE
+EXTENSION IF NOT EXISTS pg_trgm;
 
 -- ============================================================================
 -- EMPLOYEES — name + employee_code substring search
 -- ============================================================================
 CREATE INDEX IF NOT EXISTS idx_employees_search_trgm
-    ON employees USING gin (
-        (LOWER(first_name) || ' ' || LOWER(COALESCE(last_name, '')) || ' ' || LOWER(employee_code)) gin_trgm_ops
-    )
-    WHERE is_deleted = false;
+  ON employees USING gin (
+  (LOWER (first_name) || ' ' || LOWER (COALESCE (last_name, '')) || ' ' || LOWER (employee_code)) gin_trgm_ops
+  )
+  WHERE is_deleted = false;
 
-COMMENT ON INDEX idx_employees_search_trgm
+COMMENT
+ON INDEX idx_employees_search_trgm
     IS 'Trigram GIN for /employees/search substring matches. Used by ILIKE and %>% queries against the combined name + code expression.';
 
 -- ============================================================================
 -- CANDIDATES — name + email substring search
 -- ============================================================================
 CREATE INDEX IF NOT EXISTS idx_candidates_search_trgm
-    ON candidates USING gin (
-        (LOWER(first_name) || ' ' || LOWER(COALESCE(last_name, '')) || ' ' || LOWER(email)) gin_trgm_ops
-    )
-    WHERE is_deleted = false;
+  ON candidates USING gin (
+  (LOWER (first_name) || ' ' || LOWER (COALESCE (last_name, '')) || ' ' || LOWER (email)) gin_trgm_ops
+  )
+  WHERE is_deleted = false;
 
-COMMENT ON INDEX idx_candidates_search_trgm
+COMMENT
+ON INDEX idx_candidates_search_trgm
     IS 'Trigram GIN for recruitment candidate substring matches. Used by ILIKE and %>% queries against the combined name + email expression.';

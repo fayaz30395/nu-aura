@@ -4,6 +4,9 @@ import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -12,10 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 
 import java.time.Instant;
 import java.util.Collections;
@@ -56,56 +55,6 @@ public class ResourcePoolController {
 
     // -----------------------------------------------------------------------
     // DTOs (static inner classes — no separate DTO file needed at stub stage)
-    // -----------------------------------------------------------------------
-
-    @Data
-    @NoArgsConstructor
-    public static class ResourcePoolSummary {
-        private UUID id;
-        private String name;
-        private String description;
-        private String poolType;        // SHARED | EXCLUSIVE
-        private int memberCount;
-        private boolean isActive;
-        private String createdAt;
-    }
-
-    @Data
-    @NoArgsConstructor
-    public static class ResourcePoolMember {
-        private UUID employeeId;
-        private String employeeName;
-        private String designation;
-        private int currentAllocationPercent;
-        private int availablePercent;
-        private String joinedPoolAt;
-    }
-
-    @Data
-    @NoArgsConstructor
-    public static class CreatePoolRequest {
-        @NotBlank
-        private String name;
-        private String description;
-        private String poolType = "SHARED";
-        private List<UUID> memberEmployeeIds;
-    }
-
-    @Data
-    @NoArgsConstructor
-    public static class CreatePoolResponse {
-        private UUID id;
-        private String name;
-        private String description;
-        private String poolType;
-        private int memberCount;
-        private boolean isActive;
-        private String createdAt;
-        private String message;
-    }
-
-    // -----------------------------------------------------------------------
-    // Endpoints
     // -----------------------------------------------------------------------
 
     /**
@@ -187,6 +136,10 @@ public class ResourcePoolController {
         return ResponseEntity.ok(Collections.emptyList());
     }
 
+    // -----------------------------------------------------------------------
+    // Endpoints
+    // -----------------------------------------------------------------------
+
     /**
      * POST /api/v1/resource-pools/{id}/members
      * Add employees to a resource pool.
@@ -221,5 +174,51 @@ public class ResourcePoolController {
             return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
         }
         return ResponseEntity.noContent().build();
+    }
+
+    @Data
+    @NoArgsConstructor
+    public static class ResourcePoolSummary {
+        private UUID id;
+        private String name;
+        private String description;
+        private String poolType;        // SHARED | EXCLUSIVE
+        private int memberCount;
+        private boolean isActive;
+        private String createdAt;
+    }
+
+    @Data
+    @NoArgsConstructor
+    public static class ResourcePoolMember {
+        private UUID employeeId;
+        private String employeeName;
+        private String designation;
+        private int currentAllocationPercent;
+        private int availablePercent;
+        private String joinedPoolAt;
+    }
+
+    @Data
+    @NoArgsConstructor
+    public static class CreatePoolRequest {
+        @NotBlank
+        private String name;
+        private String description;
+        private String poolType = "SHARED";
+        private List<UUID> memberEmployeeIds;
+    }
+
+    @Data
+    @NoArgsConstructor
+    public static class CreatePoolResponse {
+        private UUID id;
+        private String name;
+        private String description;
+        private String poolType;
+        private int memberCount;
+        private boolean isActive;
+        private String createdAt;
+        private String message;
     }
 }

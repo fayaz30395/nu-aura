@@ -33,12 +33,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.format.TextStyle;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -50,6 +45,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SystemAdminService {
 
+    /**
+     * Cryptographically-secure RNG for temp-password byte generation.
+     */
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
     private final TenantRepository tenantRepository;
     private final UserRepository userRepository;
     private final EmployeeRepository employeeRepository;
@@ -70,9 +69,6 @@ public class SystemAdminService {
     // and deliver it out-of-band via email so it never appears in the API response.
     private final PasswordEncoder passwordEncoder;
     private final EmailNotificationService emailNotificationService;
-
-    /** Cryptographically-secure RNG for temp-password byte generation. */
-    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
     /**
      * Get comprehensive system overview across all tenants

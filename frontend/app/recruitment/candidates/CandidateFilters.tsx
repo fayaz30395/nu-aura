@@ -50,7 +50,8 @@ export const CandidateFilters = memo(function CandidateFilters({
       <CardContent className="p-4">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]" aria-hidden="true"/>
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]"
+                    aria-hidden="true"/>
             <label htmlFor="candidate-search" className="sr-only">Search candidates</label>
             <input
               id="candidate-search"

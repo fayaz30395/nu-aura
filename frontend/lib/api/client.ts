@@ -1,7 +1,7 @@
-import axios, { AxiosInstance, AxiosRequestConfig, InternalAxiosRequestConfig, AxiosResponse } from 'axios';
-import { apiConfig } from '@/lib/config';
-import { logger } from '@/lib/utils/logger';
-import { safeStorage } from '@/lib/utils/safeStorage';
+import axios, {AxiosInstance, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig} from 'axios';
+import {apiConfig} from '@/lib/config';
+import {logger} from '@/lib/utils/logger';
+import {safeStorage} from '@/lib/utils/safeStorage';
 
 const API_URL = apiConfig.baseUrl;
 
@@ -120,7 +120,9 @@ class ApiClient {
             const promise = refreshPromise ?? (refreshPromise = this.client.post('/auth/refresh', null)
               .then((res) => res.status === 200)
               .catch(() => false)
-              .finally(() => { refreshPromise = null; }));
+              .finally(() => {
+                refreshPromise = null;
+              }));
 
             const refreshed = await promise;
 
@@ -150,6 +152,69 @@ class ApiClient {
         return Promise.reject(error);
       }
     );
+  }
+
+  /**
+   * Store tenant ID in localStorage.
+   * Called after successful login.
+   */
+  setTenantId(tenantId: string): void {
+    safeStorage.set('tenantId', tenantId);
+  }
+
+  /**
+   * Clear all client-side auth state.
+   * Note: httpOnly cookies are cleared by backend on logout.
+   */
+  clearTokens(): void {
+    safeStorage.remove('tenantId');
+    if (typeof window !== 'undefined') {
+      try {
+        sessionStorage.removeItem('auth-storage');
+      } catch { /* ignore — best-effort */
+      }
+    }
+  }
+
+  /**
+   * Reset the 401 redirect debounce flag.
+   * Must be called after successful login to restore the interceptor's ability
+   * to handle future 401s properly.
+   */
+  resetRedirectFlag(): void {
+    isRedirecting = false;
+  }
+
+  get<T>(url: string, config?: AxiosRequestConfig) {
+    return this.client.get<T>(this.normalizeUrl(url), config);
+  }
+
+  /**
+   * GET that treats 403/404 as non-errors (returns the response instead of throwing).
+   * Use for endpoints where the current role may lack permission — callers check
+   * response.status and return a fallback instead of showing console errors.
+   */
+  getPermissive<T>(url: string, config?: AxiosRequestConfig) {
+    return this.client.get<T>(this.normalizeUrl(url), {
+      ...config,
+      validateStatus: (s: number) => s < 500,
+    });
+  }
+
+  post<T, D = unknown>(url: string, data?: D, config?: AxiosRequestConfig) {
+    return this.client.post<T>(this.normalizeUrl(url), data, config);
+  }
+
+  put<T, D = unknown>(url: string, data?: D, config?: AxiosRequestConfig) {
+    return this.client.put<T>(this.normalizeUrl(url), data, config);
+  }
+
+  patch<T, D = unknown>(url: string, data?: D, config?: AxiosRequestConfig) {
+    return this.client.patch<T>(this.normalizeUrl(url), data, config);
+  }
+
+  delete<T>(url: string, config?: AxiosRequestConfig) {
+    return this.client.delete<T>(this.normalizeUrl(url), config);
   }
 
   /**
@@ -207,68 +272,6 @@ class ApiClient {
    */
   private getTenantId(): string | null {
     return safeStorage.get('tenantId');
-  }
-
-  /**
-   * Store tenant ID in localStorage.
-   * Called after successful login.
-   */
-  setTenantId(tenantId: string): void {
-    safeStorage.set('tenantId', tenantId);
-  }
-
-  /**
-   * Clear all client-side auth state.
-   * Note: httpOnly cookies are cleared by backend on logout.
-   */
-  clearTokens(): void {
-    safeStorage.remove('tenantId');
-    if (typeof window !== 'undefined') {
-      try {
-        sessionStorage.removeItem('auth-storage');
-      } catch { /* ignore — best-effort */ }
-    }
-  }
-
-  /**
-   * Reset the 401 redirect debounce flag.
-   * Must be called after successful login to restore the interceptor's ability
-   * to handle future 401s properly.
-   */
-  resetRedirectFlag(): void {
-    isRedirecting = false;
-  }
-
-  get<T>(url: string, config?: AxiosRequestConfig) {
-    return this.client.get<T>(this.normalizeUrl(url), config);
-  }
-
-  /**
-   * GET that treats 403/404 as non-errors (returns the response instead of throwing).
-   * Use for endpoints where the current role may lack permission — callers check
-   * response.status and return a fallback instead of showing console errors.
-   */
-  getPermissive<T>(url: string, config?: AxiosRequestConfig) {
-    return this.client.get<T>(this.normalizeUrl(url), {
-      ...config,
-      validateStatus: (s: number) => s < 500,
-    });
-  }
-
-  post<T, D = unknown>(url: string, data?: D, config?: AxiosRequestConfig) {
-    return this.client.post<T>(this.normalizeUrl(url), data, config);
-  }
-
-  put<T, D = unknown>(url: string, data?: D, config?: AxiosRequestConfig) {
-    return this.client.put<T>(this.normalizeUrl(url), data, config);
-  }
-
-  patch<T, D = unknown>(url: string, data?: D, config?: AxiosRequestConfig) {
-    return this.client.patch<T>(this.normalizeUrl(url), data, config);
-  }
-
-  delete<T>(url: string, config?: AxiosRequestConfig) {
-    return this.client.delete<T>(this.normalizeUrl(url), config);
   }
 }
 

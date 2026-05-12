@@ -24,14 +24,11 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * Integration tests for settings use cases.
@@ -46,15 +43,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class SettingsUseCaseIntegrationTest {
 
     private static final UUID TENANT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
-    private UUID userId;
-    private UUID employeeId = UUID.fromString("111e8400-e29b-41d4-a716-446655440099");
-
     @Autowired
     MockMvc mockMvc;
     @Autowired
     ObjectMapper objectMapper;
     @Autowired
     UserRepository userRepository;
+    private UUID userId;
+    private UUID employeeId = UUID.fromString("111e8400-e29b-41d4-a716-446655440099");
 
     @BeforeEach
     void setUpSuperAdminContext() {

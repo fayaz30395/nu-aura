@@ -1,6 +1,9 @@
 package com.hrms.application.recruitment.service;
 
-import com.hrms.api.recruitment.dto.*;
+import com.hrms.api.recruitment.dto.ScorecardSubmissionRequest;
+import com.hrms.api.recruitment.dto.ScorecardSubmissionResponse;
+import com.hrms.api.recruitment.dto.ScorecardTemplateRequest;
+import com.hrms.api.recruitment.dto.ScorecardTemplateResponse;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.recruitment.InterviewScorecard;
@@ -225,16 +228,16 @@ public class ScorecardService {
                 .status(scorecard.getStatus())
                 .submittedAt(scorecard.getSubmittedAt())
                 .criteriaScores(scorecard.getCriteria() != null ? scorecard.getCriteria().stream()
-                        .map(c -> ScorecardSubmissionResponse.CriterionScoreResponse.builder()
-                                .id(c.getId())
-                                .name(c.getName())
-                                .category(c.getCategory())
-                                .rating(c.getRating())
-                                .weight(c.getWeight())
-                                .notes(c.getNotes())
-                                .orderIndex(c.getOrderIndex())
-                                .build())
-                        .collect(Collectors.toList()) : List.of())
+                                                                  .map(c -> ScorecardSubmissionResponse.CriterionScoreResponse.builder()
+                                                                            .id(c.getId())
+                                                                            .name(c.getName())
+                                                                            .category(c.getCategory())
+                                                                            .rating(c.getRating())
+                                                                            .weight(c.getWeight())
+                                                                            .notes(c.getNotes())
+                                                                            .orderIndex(c.getOrderIndex())
+                                                                            .build())
+                                                                  .collect(Collectors.toList()) : List.of())
                 .createdAt(scorecard.getCreatedAt())
                 .updatedAt(scorecard.getUpdatedAt())
                 .build();

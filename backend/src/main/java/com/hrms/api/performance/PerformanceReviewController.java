@@ -29,7 +29,9 @@ import java.util.UUID;
 @Tag(name = "Performance Reviews", description = "Performance review cycle management, competency assessment, and submission workflow")
 public class PerformanceReviewController {
 
-    /** Allow-list of sortable fields for {@code PerformanceReview} entity — prevents sort injection. */
+    /**
+     * Allow-list of sortable fields for {@code PerformanceReview} entity — prevents sort injection.
+     */
     private static final java.util.Set<String> ALLOWED_SORT_FIELDS = java.util.Set.of(
             "createdAt", "updatedAt", "status", "reviewType", "reviewPeriodStart", "reviewPeriodEnd",
             "overallRating", "finalRating"

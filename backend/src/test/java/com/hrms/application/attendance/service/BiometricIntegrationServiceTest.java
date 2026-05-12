@@ -5,9 +5,14 @@ import com.hrms.api.attendance.dto.BiometricPunchRequest;
 import com.hrms.application.attendance.adapter.BiometricAdapter;
 import com.hrms.common.security.TenantContext;
 import com.hrms.common.util.TenantTimeService;
-import com.hrms.domain.attendance.*;
+import com.hrms.domain.attendance.BiometricApiKey;
+import com.hrms.domain.attendance.BiometricDevice;
+import com.hrms.domain.attendance.BiometricPunchLog;
 import com.hrms.domain.employee.Employee;
-import com.hrms.infrastructure.attendance.repository.*;
+import com.hrms.infrastructure.attendance.repository.AttendanceRecordRepository;
+import com.hrms.infrastructure.attendance.repository.BiometricApiKeyRepository;
+import com.hrms.infrastructure.attendance.repository.BiometricDeviceRepository;
+import com.hrms.infrastructure.attendance.repository.BiometricPunchLogRepository;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.kafka.producer.EventPublisher;
 import org.junit.jupiter.api.AfterEach;
@@ -19,12 +24,15 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class BiometricIntegrationServiceTest {

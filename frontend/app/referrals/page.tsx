@@ -345,7 +345,7 @@ export default function ReferralsPage() {
         {activeTab === 'my-referrals' && (
           <div>
             {isMyLoading ? (
-              <SkeletonTable rows={5} columns={4} />
+              <SkeletonTable rows={5} columns={4}/>
             ) : myReferrals.length === 0 ? (
               <EmptyState
                 title="No referrals yet"
@@ -594,7 +594,7 @@ export default function ReferralsPage() {
             {isPoliciesLoading ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {Array.from({length: 4}).map((_, i) => (
-                  <SkeletonCard key={i} />
+                  <SkeletonCard key={i}/>
                 ))}
               </div>
             ) : policies.length === 0 ? (
@@ -677,7 +677,7 @@ export default function ReferralsPage() {
           <PermissionGate permission={Permissions.REFERRAL_MANAGE}>
             <div>
               {isAllLoading ? (
-                <SkeletonTable rows={8} columns={5} />
+                <SkeletonTable rows={8} columns={5}/>
               ) : !allReferralsData || allReferralsData.content.length === 0 ? (
                 <EmptyState
                   title="No referrals found"

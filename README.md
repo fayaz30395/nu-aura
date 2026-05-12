@@ -103,7 +103,8 @@ See [SETUP.md](SETUP.md) for detailed setup instructions and environment variabl
 - **Payroll:** SpEL formula engine with DAG-ordered component evaluation, always transactional.
 - **Workflow:** Generic approval engine — `workflow_def` > `workflow_step` > `approval_instance` >
   `approval_task`.
-- **Migrations:** Flyway only (V0–V146, 138 files). Next migration: V147. Legacy Liquibase deprecated.
+- **Migrations:** Flyway only (V0–V146, 138 files). Next migration: V147. Legacy Liquibase
+  deprecated.
 - **Security hardening (Sprints 1–3, May 2026):** 79 wave-1 findings, ~50 wave-2 findings, and
   wave-3 regression follow-ups closed across auth, IDOR, injection, SSRF, Drive tenant isolation,
   dependencies, mass-assignment, and field-level AES-GCM encryption for PII. See `CHANGELOG.md` and

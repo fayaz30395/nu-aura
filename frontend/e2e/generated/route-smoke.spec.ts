@@ -1,4 +1,4 @@
-import {test, expect} from '@playwright/test';
+import {expect, test} from '@playwright/test';
 import routes from './routes.json';
 import {isNoise} from './known-noise';
 
@@ -7,7 +7,7 @@ import {isNoise} from './known-noise';
 // Pass criteria: page returns < 500, no un-suppressed console errors, no
 // uncaught page exceptions, body has > 0 visible text.
 test.describe.parallel('@smoke route renders', () => {
-  for (const r of routes as Array<{path: string; module: string}>) {
+  for (const r of routes as Array<{ path: string; module: string }>) {
     test(`${r.path} (${r.module})`, async ({page}) => {
       const consoleErrors: string[] = [];
       const pageErrors: string[] = [];
@@ -23,7 +23,8 @@ test.describe.parallel('@smoke route renders', () => {
       expect(res?.status() ?? 0, `HTTP status for ${r.path}`).toBeLessThan(500);
 
       // Wait for app shell to settle (tolerate slow hydration without full networkidle).
-      await page.waitForLoadState('networkidle', {timeout: 15000}).catch(() => {});
+      await page.waitForLoadState('networkidle', {timeout: 15000}).catch(() => {
+      });
 
       const body = await page.locator('body').innerText().catch(() => '');
       expect(body.length, `body text on ${r.path}`).toBeGreaterThan(0);

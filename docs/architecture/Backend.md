@@ -55,42 +55,45 @@ survey, tax, timetracking, training, travel, user, wall, webhook, workflow, well
 
 ## Controllers by Module
 
-| Module       | Controllers                                                                                                                    | Key Endpoints                                          |
-|--------------|--------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------|
-| auth         | AuthController, MfaController                                                                                                  | POST /api/v1/auth/login, /google, /mfa-login, /refresh |
-| employee     | EmployeeController                                                                                                             | CRUD /api/v1/employees, /hierarchy, /subordinates      |
-| leave        | LeaveRequestController, LeaveBalanceController                                                                                 | CRUD /api/v1/leaves, /balance, /approve, /reject       |
-| attendance   | AttendanceController, MobileAttendanceController, HolidayController, CompOffController                                         | /api/v1/attendance, /holidays, /comp-off               |
-| payroll      | PayrollController, PayrollStatutoryController                                                                                  | /api/v1/payroll, /payslips, /statutory                 |
-| recruitment  | RecruitmentController, JobBoardController, ApplicantController, AIRecruitmentController                                        | /api/v1/recruitment, /job-boards, /applicants          |
-| performance  | PerformanceRevolutionController, Feedback360Controller, OkrController                                                          | /api/v1/performance, /feedback360, /okr                |
-| user         | UserController, RoleController, PermissionController                                                                           | /api/v1/users, /roles, /permissions                    |
-| knowledge    | WikiSpaceController, WikiPageController, BlogPostController, BlogCategoryController, TemplateController                        | /api/v1/wiki, /blogs, /templates                       |
-| notification | NotificationController, MultiChannelNotificationController, SmsNotificationController                                          | /api/v1/notifications, /sms                            |
-| mobile       | MobileApprovalController, MobileLeaveController, MobileDashboardController, MobileNotificationController, MobileSyncController | /api/v1/mobile/*                                       |
-| analytics    | AnalyticsController, AdvancedAnalyticsController, OrganizationHealthController, ScheduledReportController                      | /api/v1/analytics, /reports                            |
-| wall         | WallPostController, AnnouncementController                                                                                     | /api/v1/wall, /announcements                           |
-| project      | ProjectController, TaskController                                                                                              | /api/v1/projects, /tasks                               |
-| expense      | ExpenseController                                                                                                              | /api/v1/expenses                                       |
-| asset        | AssetController                                                                                                                | /api/v1/assets                                         |
-| contract     | ContractController                                                                                                             | /api/v1/contracts                                      |
-| document     | DocumentController                                                                                                             | /api/v1/documents                                      |
-| training     | TrainingController                                                                                                             | /api/v1/training                                       |
-| wellness     | WellnessController                                                                                                             | /api/v1/wellness                                       |
-| admin        | SystemAuditLogController, EncryptionBackfillController, AdminPasswordResetController (sprint 6), TenantAdminController          | /api/v1/admin/audit-logs, /encryption-backfill, /password-reset, /tenants |
-| payroll      | PayrollController, PayrollStatutoryController, **BonusController** (sprint 4)                                                  | /api/v1/payroll, /bonus, /statutory                    |
-| compliance   | ComplianceAuditController, **DsrController** (sprint 7-A — DSR scaffold)                                                       | /api/v1/compliance, /dsr/{export,erase,status}         |
+| Module       | Controllers                                                                                                                    | Key Endpoints                                                             |
+|--------------|--------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------|
+| auth         | AuthController, MfaController                                                                                                  | POST /api/v1/auth/login, /google, /mfa-login, /refresh                    |
+| employee     | EmployeeController                                                                                                             | CRUD /api/v1/employees, /hierarchy, /subordinates                         |
+| leave        | LeaveRequestController, LeaveBalanceController                                                                                 | CRUD /api/v1/leaves, /balance, /approve, /reject                          |
+| attendance   | AttendanceController, MobileAttendanceController, HolidayController, CompOffController                                         | /api/v1/attendance, /holidays, /comp-off                                  |
+| payroll      | PayrollController, PayrollStatutoryController                                                                                  | /api/v1/payroll, /payslips, /statutory                                    |
+| recruitment  | RecruitmentController, JobBoardController, ApplicantController, AIRecruitmentController                                        | /api/v1/recruitment, /job-boards, /applicants                             |
+| performance  | PerformanceRevolutionController, Feedback360Controller, OkrController                                                          | /api/v1/performance, /feedback360, /okr                                   |
+| user         | UserController, RoleController, PermissionController                                                                           | /api/v1/users, /roles, /permissions                                       |
+| knowledge    | WikiSpaceController, WikiPageController, BlogPostController, BlogCategoryController, TemplateController                        | /api/v1/wiki, /blogs, /templates                                          |
+| notification | NotificationController, MultiChannelNotificationController, SmsNotificationController                                          | /api/v1/notifications, /sms                                               |
+| mobile       | MobileApprovalController, MobileLeaveController, MobileDashboardController, MobileNotificationController, MobileSyncController | /api/v1/mobile/*                                                          |
+| analytics    | AnalyticsController, AdvancedAnalyticsController, OrganizationHealthController, ScheduledReportController                      | /api/v1/analytics, /reports                                               |
+| wall         | WallPostController, AnnouncementController                                                                                     | /api/v1/wall, /announcements                                              |
+| project      | ProjectController, TaskController                                                                                              | /api/v1/projects, /tasks                                                  |
+| expense      | ExpenseController                                                                                                              | /api/v1/expenses                                                          |
+| asset        | AssetController                                                                                                                | /api/v1/assets                                                            |
+| contract     | ContractController                                                                                                             | /api/v1/contracts                                                         |
+| document     | DocumentController                                                                                                             | /api/v1/documents                                                         |
+| training     | TrainingController                                                                                                             | /api/v1/training                                                          |
+| wellness     | WellnessController                                                                                                             | /api/v1/wellness                                                          |
+| admin        | SystemAuditLogController, EncryptionBackfillController, AdminPasswordResetController (sprint 6), TenantAdminController         | /api/v1/admin/audit-logs, /encryption-backfill, /password-reset, /tenants |
+| payroll      | PayrollController, PayrollStatutoryController, **BonusController** (sprint 4)                                                  | /api/v1/payroll, /bonus, /statutory                                       |
+| compliance   | ComplianceAuditController, **DsrController** (sprint 7-A — DSR scaffold)                                                       | /api/v1/compliance, /dsr/{export,erase,status}                            |
 
 **REST Convention**: `/api/v1/{module}/{resource}` with standard CRUD + custom actions.
 
 **New since V119 / sprint 1-6** (additions over the table above):
+
 - `SystemAuditLogController` (admin) — query/export the central audit feed.
 - `EncryptionBackfillController` (admin) — one-shot re-encryption job for legacy plaintext PII rows
   (deferred item #6 from sprint 3, delivered in sprint 4).
-- `BonusController` (payroll) — split out of `PayrollController` per the mass-assignment DTO refactor.
+- `BonusController` (payroll) — split out of `PayrollController` per the mass-assignment DTO
+  refactor.
 - `DsrController` (compliance) — GDPR data-subject-request scaffold from sprint 7-A.
 - `AdminPasswordResetController` (admin) — sprint 6 added a force-reset endpoint behind
-  `PERMISSION_ADMIN_PASSWORD_RESET`; uses `AdminPasswordResetRequest` / `AdminPasswordResetResponse` DTOs.
+  `PERMISSION_ADMIN_PASSWORD_RESET`; uses `AdminPasswordResetRequest` / `AdminPasswordResetResponse`
+  DTOs.
 
 ---
 
@@ -291,51 +294,51 @@ Recognition
 
 ### Pre-sprint baseline (V0–V119)
 
-| Range     | Description                                                                             |
-|-----------|-----------------------------------------------------------------------------------------|
-| V0        | Core schema: tenants, users, roles, permissions, employees, leaves, attendance, payroll |
-| V1–V7     | Performance reviews, exit interviews, project allocation, payroll statutory, LMS        |
-| V8        | Demo seed data (gated by `demo` profile)                                                |
-| V9        | Performance indexes (N+1 prevention)                                                    |
-| V10       | Comp-off, shift swap, job boards                                                        |
-| V11       | MFA, quiz, learning paths                                                               |
-| V12–V14   | Recruitment offer workflow, app access, webhook delivery                                |
-| V15       | Knowledge/Fluence schema (wiki, blogs, templates)                                       |
-| V16–V18   | Contract management, payment gateway, document workflow                                 |
-| V19       | Platform seed data (apps, permissions)                                                  |
-| V20–V26   | Recruitment pipeline, audit backfill, Google Meet, RLS policies                         |
-| V30       | Comprehensive demo seed data                                                            |
-| V31–V33   | Dotted-line managers, failed Kafka events, knowledge indexes                            |
-| V34       | Production hardening indexes                                                            |
-| V35       | Foreign key constraints (referential integrity)                                         |
-| V36–V38   | RLS policies (complete coverage)                                                        |
-| V39–V47   | Indexes, AI logging, avatar URL, wall post IDs, soft delete indexes, FK constraints     |
-| V48–V117  | Module-by-module hardening (payroll, recruitment, performance, wall, fluence)           |
-| V118      | Recruitment agencies + scorecards                                                       |
-| V119      | Wiki inline comments                                                                    |
+| Range    | Description                                                                             |
+|----------|-----------------------------------------------------------------------------------------|
+| V0       | Core schema: tenants, users, roles, permissions, employees, leaves, attendance, payroll |
+| V1–V7    | Performance reviews, exit interviews, project allocation, payroll statutory, LMS        |
+| V8       | Demo seed data (gated by `demo` profile)                                                |
+| V9       | Performance indexes (N+1 prevention)                                                    |
+| V10      | Comp-off, shift swap, job boards                                                        |
+| V11      | MFA, quiz, learning paths                                                               |
+| V12–V14  | Recruitment offer workflow, app access, webhook delivery                                |
+| V15      | Knowledge/Fluence schema (wiki, blogs, templates)                                       |
+| V16–V18  | Contract management, payment gateway, document workflow                                 |
+| V19      | Platform seed data (apps, permissions)                                                  |
+| V20–V26  | Recruitment pipeline, audit backfill, Google Meet, RLS policies                         |
+| V30      | Comprehensive demo seed data                                                            |
+| V31–V33  | Dotted-line managers, failed Kafka events, knowledge indexes                            |
+| V34      | Production hardening indexes                                                            |
+| V35      | Foreign key constraints (referential integrity)                                         |
+| V36–V38  | RLS policies (complete coverage)                                                        |
+| V39–V47  | Indexes, AI logging, avatar URL, wall post IDs, soft delete indexes, FK constraints     |
+| V48–V117 | Module-by-module hardening (payroll, recruitment, performance, wall, fluence)           |
+| V118     | Recruitment agencies + scorecards                                                       |
+| V119     | Wiki inline comments                                                                    |
 
 ### Sprint 1-7 high points (V120–V154)
 
-| Migration       | Title                                  | Why it matters                                                                                                                                              |
-|-----------------|----------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| V120–V127       | Password history, demo password resets, missing-column fixes, wall_view permission seed | Operational cleanups across `recognitions`, `expense_claims`, `training_programs`, role-permission table. |
-| **V128**        | `fix_deleted_at_missing_tables`        | Adds `deleted_at TIMESTAMPTZ` to 20 tables that had `is_deleted` but no timestamp — unblocks soft-delete audit + future hard-delete cron.                  |
-| V129            | Missing-column P2/P3 patch             | Fills 12 columns flagged by the QA sweep regression.                                                                                                        |
-| V130–V133       | Seed feature flags + role-permission backfills | `lms.enabled`, `lms_course.view` for EMPLOYEE, `analytics.view` for HR roles, P1 post-500 schema safety. |
-| **V134**        | `add_password_reset_token_hash`        | Sprint 1 auth hardening — token stored as 256-bit BCrypt hash; legacy plaintext column kept for one release for rollback, then dropped.                     |
-| V140–V142       | Audit-column backfill                  | Adds `created_at/by`, `updated_at/by` to historically inconsistent tables (integration_audit_log, etc.).                                                     |
-| **V143**        | `add_drive_file_id_mapping`            | **CRITICAL Drive tenant isolation** — `drive_file_mapping(logical_path, drive_file_id, tenant_id)`; logical-path becomes the canonical handle, opaque Drive fileId is no longer returned to clients. |
-| **V144**        | `wallpost_deleted_to_is_deleted`       | Normalizes the wall_post `deleted` column to `is_deleted` to match the rest of the soft-delete contract; backfill + drop old column.                       |
-| **V145**        | `add_claim_number_sequence`            | `expense_claim_sequence(tenant_id, year_month)` + mileage equivalent — replaces in-JVM `synchronized` counter; atomic `INSERT … ON CONFLICT … RETURNING`.   |
-| **V146**        | `add_audit_log_impersonator_id`        | `audit_logs.impersonator_id UUID NULL` — required for SuperAdmin tenant impersonation traceability (sprint 2 finding).                                       |
-| **V147**        | `encrypt_pii_columns`                  | Widens columns covered by `EncryptedStringConverter` to AES-GCM ciphertext length: `BenefitDependent.{nationalId, passportNumber, phone, email, address, preExistingConditions}`, `TaxDeclaration.{previousEmployerPan,…}`, `User.mfaSecret`. |
-| **V148**        | `add_uniqueness_and_sequences`         | Unique constraint on `post_reactions(post_id, user_id)` (Wall double-react race), `wiki_page_versions(page_id, version_number)`; `employee_code_sequence` atomic table. |
-| **V149**        | `restore_fts_gin_indexes`              | Re-materialises `search_vector tsvector` generated columns + GIN indexes on `wiki_pages` and `blog_posts` that V15 had left as TODOs. (Repository ILIKE migration still pending — see Open Items.) |
-| **V150**        | `leave_correctness`                    | Sprint 4 — fixes leave-balance accounting: deletes orphaned `leave_balance` rows for archived employees; adds CHECK `available_days >= 0`; adds composite UNIQUE on `(employee_id, leave_type_id, year)`. |
-| **V151**        | `employee_search_trgm`                 | Sprint 5 — `pg_trgm` GIN index on `employees(full_name, employee_code, email)` for fuzzy search; the existing ILIKE queries become index-backed without code changes. |
-| **V152**        | `add_body_text_columns`                | Splits stored HTML out of `wiki_pages.content`, `blog_posts.content`, `social_posts.content` into a separate plaintext `body_text` column used by FTS and notification previews. |
-| **V153**        | `dsr_requests`                         | Sprint 7-A scaffold — `dsr_requests(tenant_id, subject_user_id, type, status, requested_at, completed_at)` for GDPR/DPDP export and erasure requests; row-level policy mirrors `audit_logs`. |
-| **V154**        | `onboarding_templates`                 | Sprint 7 — `onboarding_templates`, `onboarding_template_tasks`, `employee_onboarding_runs`; replaces hard-coded NEW_HIRE checklists.                        |
+| Migration | Title                                                                                   | Why it matters                                                                                                                                                                                                                                |
+|-----------|-----------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| V120–V127 | Password history, demo password resets, missing-column fixes, wall_view permission seed | Operational cleanups across `recognitions`, `expense_claims`, `training_programs`, role-permission table.                                                                                                                                     |
+| **V128**  | `fix_deleted_at_missing_tables`                                                         | Adds `deleted_at TIMESTAMPTZ` to 20 tables that had `is_deleted` but no timestamp — unblocks soft-delete audit + future hard-delete cron.                                                                                                     |
+| V129      | Missing-column P2/P3 patch                                                              | Fills 12 columns flagged by the QA sweep regression.                                                                                                                                                                                          |
+| V130–V133 | Seed feature flags + role-permission backfills                                          | `lms.enabled`, `lms_course.view` for EMPLOYEE, `analytics.view` for HR roles, P1 post-500 schema safety.                                                                                                                                      |
+| **V134**  | `add_password_reset_token_hash`                                                         | Sprint 1 auth hardening — token stored as 256-bit BCrypt hash; legacy plaintext column kept for one release for rollback, then dropped.                                                                                                       |
+| V140–V142 | Audit-column backfill                                                                   | Adds `created_at/by`, `updated_at/by` to historically inconsistent tables (integration_audit_log, etc.).                                                                                                                                      |
+| **V143**  | `add_drive_file_id_mapping`                                                             | **CRITICAL Drive tenant isolation** — `drive_file_mapping(logical_path, drive_file_id, tenant_id)`; logical-path becomes the canonical handle, opaque Drive fileId is no longer returned to clients.                                          |
+| **V144**  | `wallpost_deleted_to_is_deleted`                                                        | Normalizes the wall_post `deleted` column to `is_deleted` to match the rest of the soft-delete contract; backfill + drop old column.                                                                                                          |
+| **V145**  | `add_claim_number_sequence`                                                             | `expense_claim_sequence(tenant_id, year_month)` + mileage equivalent — replaces in-JVM `synchronized` counter; atomic `INSERT … ON CONFLICT … RETURNING`.                                                                                     |
+| **V146**  | `add_audit_log_impersonator_id`                                                         | `audit_logs.impersonator_id UUID NULL` — required for SuperAdmin tenant impersonation traceability (sprint 2 finding).                                                                                                                        |
+| **V147**  | `encrypt_pii_columns`                                                                   | Widens columns covered by `EncryptedStringConverter` to AES-GCM ciphertext length: `BenefitDependent.{nationalId, passportNumber, phone, email, address, preExistingConditions}`, `TaxDeclaration.{previousEmployerPan,…}`, `User.mfaSecret`. |
+| **V148**  | `add_uniqueness_and_sequences`                                                          | Unique constraint on `post_reactions(post_id, user_id)` (Wall double-react race), `wiki_page_versions(page_id, version_number)`; `employee_code_sequence` atomic table.                                                                       |
+| **V149**  | `restore_fts_gin_indexes`                                                               | Re-materialises `search_vector tsvector` generated columns + GIN indexes on `wiki_pages` and `blog_posts` that V15 had left as TODOs. (Repository ILIKE migration still pending — see Open Items.)                                            |
+| **V150**  | `leave_correctness`                                                                     | Sprint 4 — fixes leave-balance accounting: deletes orphaned `leave_balance` rows for archived employees; adds CHECK `available_days >= 0`; adds composite UNIQUE on `(employee_id, leave_type_id, year)`.                                     |
+| **V151**  | `employee_search_trgm`                                                                  | Sprint 5 — `pg_trgm` GIN index on `employees(full_name, employee_code, email)` for fuzzy search; the existing ILIKE queries become index-backed without code changes.                                                                         |
+| **V152**  | `add_body_text_columns`                                                                 | Splits stored HTML out of `wiki_pages.content`, `blog_posts.content`, `social_posts.content` into a separate plaintext `body_text` column used by FTS and notification previews.                                                              |
+| **V153**  | `dsr_requests`                                                                          | Sprint 7-A scaffold — `dsr_requests(tenant_id, subject_user_id, type, status, requested_at, completed_at)` for GDPR/DPDP export and erasure requests; row-level policy mirrors `audit_logs`.                                                  |
+| **V154**  | `onboarding_templates`                                                                  | Sprint 7 — `onboarding_templates`, `onboarding_template_tasks`, `employee_onboarding_runs`; replaces hard-coded NEW_HIRE checklists.                                                                                                          |
 
 **Next migration**: V155
 

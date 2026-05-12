@@ -21,19 +21,21 @@
 --   The hot path is "list a process's tasks filtered by assignee_role" — a
 --   simple b-tree on assignee_role is sufficient at expected cardinality.
 
-ALTER TABLE onboarding_tasks ADD COLUMN assignee_role VARCHAR(40);
+ALTER TABLE onboarding_tasks
+  ADD COLUMN assignee_role VARCHAR(40);
 
 -- Backfill: regex-extract from description "[Assignee:ROLE_NAME]" if present
 UPDATE onboarding_tasks
-   SET assignee_role = substring(description from '\[Assignee:\s*([A-Z_]+)\s*\]')
- WHERE description ~ '\[Assignee:';
+SET assignee_role = substring(description from '\[Assignee:\s*([A-Z_]+)\s*\]')
+WHERE description ~ '\[Assignee:';
 
 -- Strip the prefix from description after extraction
 UPDATE onboarding_tasks
-   SET description = regexp_replace(description, '\[Assignee:\s*[A-Z_]+\s*\]\s*', '', 'g')
- WHERE description ~ '\[Assignee:';
+SET description = regexp_replace(description, '\[Assignee:\s*[A-Z_]+\s*\]\s*', '', 'g')
+WHERE description ~ '\[Assignee:';
 
-CREATE INDEX idx_onboarding_tasks_assignee_role ON onboarding_tasks(assignee_role);
+CREATE INDEX idx_onboarding_tasks_assignee_role ON onboarding_tasks (assignee_role);
 
-COMMENT ON COLUMN onboarding_tasks.assignee_role IS
+COMMENT
+ON COLUMN onboarding_tasks.assignee_role IS
     'Logical role of the task assignee (HR_ADMIN, MANAGER, EMPLOYEE, IT_ADMIN). Populated from OnboardingTaskTemplate.assignee_role at task generation. assigned_to (UUID) remains the concrete user assignment; resolving role->user is a workflow-engine concern.';

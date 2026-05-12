@@ -1,6 +1,9 @@
 package com.hrms.api.recruitment.controller;
 
-import com.hrms.api.recruitment.dto.*;
+import com.hrms.api.recruitment.dto.ScorecardSubmissionRequest;
+import com.hrms.api.recruitment.dto.ScorecardSubmissionResponse;
+import com.hrms.api.recruitment.dto.ScorecardTemplateRequest;
+import com.hrms.api.recruitment.dto.ScorecardTemplateResponse;
 import com.hrms.application.recruitment.service.ScorecardService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;

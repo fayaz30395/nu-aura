@@ -25,7 +25,8 @@
 --     anonymisation queries.
 
 ALTER TABLE users
-    ADD COLUMN IF NOT EXISTS anonymized_at TIMESTAMP WITH TIME ZONE;
+  ADD COLUMN IF NOT EXISTS anonymized_at TIMESTAMP WITH TIME ZONE;
 
-COMMENT ON COLUMN users.anonymized_at IS
+COMMENT
+ON COLUMN users.anonymized_at IS
     'GDPR Article 17 fulfilment timestamp. Non-null means PII fields (email, firstName, lastName, profilePictureUrl, mfaSecret, mfaBackupCodes) have been replaced with anonymised values and the row retained only for FK integrity / legal-hold (Indian Income Tax Act §139A, 7-year payroll retention). Written by UserAnonymizer in a single transaction with status=INACTIVE.';

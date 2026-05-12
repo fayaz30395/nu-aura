@@ -1,17 +1,8 @@
 'use client';
 
-import { Fragment, useMemo } from 'react';
-import type {
-  TiptapNode,
-  MacroType,
-  CalloutVariant,
-} from '@/lib/types/platform/macro';
-import {
-  MacroTableOfContents,
-  CalloutPanel,
-  ExpandCollapse,
-  MacroCodeBlock,
-} from './macros';
+import {Fragment, useMemo} from 'react';
+import type {CalloutVariant, MacroType, TiptapNode,} from '@/lib/types/platform/macro';
+import {CalloutPanel, ExpandCollapse, MacroCodeBlock, MacroTableOfContents,} from './macros';
 
 // ── Macro Type Detection ─────────────────────────────────────────────────────
 
@@ -148,17 +139,17 @@ interface MacroRendererProps {
  * ```
  */
 export function MacroRenderer({
-  content,
-  className = '',
-  renderDefault,
-}: MacroRendererProps) {
+                                content,
+                                className = '',
+                                renderDefault,
+                              }: MacroRendererProps) {
   const documentContent = useMemo(
     () => (content.content as TiptapNode[]) ?? [],
     [content.content],
   );
 
   const context: MacroRenderContext = useMemo(
-    () => ({ documentContent }),
+    () => ({documentContent}),
     [documentContent],
   );
 
@@ -181,7 +172,7 @@ export function MacroRenderer({
 
   return (
     <div className={`space-y-4 ${className}`}>
-      {macroNodes.map(({ node, index, isMacro }) => {
+      {macroNodes.map(({node, index, isMacro}) => {
         if (isMacro) {
           return renderMacro(node, index, context);
         }

@@ -1,6 +1,9 @@
 package com.hrms.api.lms.controller;
 
-import com.hrms.api.lms.dto.*;
+import com.hrms.api.lms.dto.QuizAttemptRequest;
+import com.hrms.api.lms.dto.QuizAttemptResponse;
+import com.hrms.api.lms.dto.QuizDetailResponse;
+import com.hrms.api.lms.dto.QuizResultResponse;
 import com.hrms.application.lms.service.QuizAssessmentService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
@@ -12,11 +15,12 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-// @PreAuthorize removed — @RequiresPermission handles auth + authorization via PermissionAspect
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
+
+// @PreAuthorize removed — @RequiresPermission handles auth + authorization via PermissionAspect
 
 @RestController
 @RequestMapping("/api/v1/lms/quizzes")

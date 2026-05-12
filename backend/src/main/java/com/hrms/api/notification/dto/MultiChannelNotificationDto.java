@@ -1,6 +1,9 @@
 package com.hrms.api.notification.dto;
 
-import com.hrms.domain.notification.*;
+import com.hrms.domain.notification.MultiChannelNotification;
+import com.hrms.domain.notification.NotificationChannel;
+import com.hrms.domain.notification.NotificationPriority;
+import com.hrms.domain.notification.NotificationStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

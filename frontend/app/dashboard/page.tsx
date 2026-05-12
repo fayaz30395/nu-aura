@@ -537,11 +537,11 @@ export default function DashboardPage() {
     viewType: 'EMPLOYEE' as const,
     viewLabel: 'Dashboard',
     teamSize: 0,
-    attendance: { present: 0, absent: 0, onLeave: 0, onTime: 0, late: 0, attendancePercentage: 0, trend: [] },
-    leave: { pending: 0, approved: 0, rejected: 0, utilizationPercentage: 0, trend: [], distribution: [] },
+    attendance: {present: 0, absent: 0, onLeave: 0, onTime: 0, late: 0, attendancePercentage: 0, trend: []},
+    leave: {pending: 0, approved: 0, rejected: 0, utilizationPercentage: 0, trend: [], distribution: []},
     payroll: null,
-    headcount: { total: 0, newJoinees: 0, exits: 0, growthPercentage: 0, trend: [], departmentDistribution: [] },
-    upcomingEvents: { birthdays: [], anniversaries: [], holidays: [] },
+    headcount: {total: 0, newJoinees: 0, exits: 0, growthPercentage: 0, trend: [], departmentDistribution: []},
+    upcomingEvents: {birthdays: [], anniversaries: [], holidays: []},
   };
 
   const viewBadgeClass = safeAnalytics.viewType === 'ADMIN'
@@ -831,7 +831,8 @@ export default function DashboardPage() {
                       {notification.subtitle}
                     </p>
                     {notification.hasVideo && (
-                      <Video className="h-3 w-3 text-[var(--status-info-text)] flex-shrink-0" aria-label="Has video call"/>
+                      <Video className="h-3 w-3 text-[var(--status-info-text)] flex-shrink-0"
+                             aria-label="Has video call"/>
                     )}
                   </div>
                 </div>
@@ -923,7 +924,8 @@ export default function DashboardPage() {
       <div className="space-y-8">
         {/* Inline analytics error banner — dashboard still usable */}
         {analyticsUnavailable && (
-          <div className="flex items-center gap-4 p-4 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elevated)]">
+          <div
+            className="flex items-center gap-4 p-4 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elevated)]">
             <AlertCircle className="h-5 w-5 text-[var(--status-warning-text)] flex-shrink-0"/>
             <p className="text-sm text-[var(--text-secondary)] flex-1">
               {error ? `Analytics temporarily unavailable: ${error}` : 'Analytics data could not be loaded.'}

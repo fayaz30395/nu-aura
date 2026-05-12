@@ -1,9 +1,9 @@
-import type { Metadata, Viewport } from 'next';
-import { Montserrat, Open_Sans, Roboto_Mono } from 'next/font/google';
-import { ColorSchemeScript } from '@mantine/core';
-import { getThemeScript } from '@/lib/theme/theme-script';
+import type {Metadata, Viewport} from 'next';
+import {Montserrat, Open_Sans, Roboto_Mono} from 'next/font/google';
+import {ColorSchemeScript} from '@mantine/core';
+import {getThemeScript} from '@/lib/theme/theme-script';
 import './globals.css';
-import { Providers } from './providers';
+import {Providers} from './providers';
 
 const openSans = Open_Sans({
   subsets: ['latin'],
@@ -41,26 +41,26 @@ export const viewport: Viewport = {
 };
 
 export default function RootLayout({
-  children,
-}: {
+                                     children,
+                                   }: {
   children: React.ReactNode;
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        {/* FOUC prevention — runs synchronously before paint */}
-        <script dangerouslySetInnerHTML={{ __html: getThemeScript() }} />
-        <ColorSchemeScript defaultColorScheme="dark" />
-      </head>
-      <body className={`${openSans.variable} ${montserrat.variable} ${robotoMono.variable} font-sans overflow-x-hidden`}>
-        <a
-          href="#main-content"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:px-3 focus:py-2 focus:bg-accent-600 focus:text-white focus:rounded"
-        >
-          Skip to content
-        </a>
-        <Providers>{children}</Providers>
-      </body>
+    <head>
+      {/* FOUC prevention — runs synchronously before paint */}
+      <script dangerouslySetInnerHTML={{__html: getThemeScript()}}/>
+      <ColorSchemeScript defaultColorScheme="dark"/>
+    </head>
+    <body className={`${openSans.variable} ${montserrat.variable} ${robotoMono.variable} font-sans overflow-x-hidden`}>
+    <a
+      href="#main-content"
+      className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:px-3 focus:py-2 focus:bg-accent-600 focus:text-white focus:rounded"
+    >
+      Skip to content
+    </a>
+    <Providers>{children}</Providers>
+    </body>
     </html>
   );
 }

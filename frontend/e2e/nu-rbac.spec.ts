@@ -1,4 +1,4 @@
-import {test, expect, Page} from '@playwright/test';
+import {expect, Page, test} from '@playwright/test';
 import * as fs from 'fs';
 import * as path from 'path';
 import {demoUsers} from './fixtures/testData';
@@ -53,7 +53,7 @@ function parseCatalog(): UC[] {
     const val = v === 'null' ? null : v.replace(/^["']|["']$/g, '');
     (cur as Record<string, unknown>)[k] = val;
   }
-  if (cur.id && (cur as UC & {category?: string}).category === 'RBAC') {
+  if (cur.id && (cur as UC & { category?: string }).category === 'RBAC') {
     out.push(cur as UC);
   }
   return out;
@@ -76,9 +76,9 @@ const roleToDemo: Record<Role, keyof typeof demoUsers | null> = {
 async function loginAs(page: Page, role: Role): Promise<boolean> {
   const key = roleToDemo[role];
   if (!key) return false;
-  const user = (demoUsers as Record<string, {name: string; email: string; password: string}>)[
+  const user = (demoUsers as Record<string, { name: string; email: string; password: string }>)[
     key as string
-  ];
+    ];
   if (!user) return false;
 
   await page.goto('/auth/login', {waitUntil: 'domcontentloaded'});
@@ -159,7 +159,8 @@ for (const [role, ucs] of byRole.entries()) {
         let reason = '';
         try {
           await page.goto(uc.route, {waitUntil: 'domcontentloaded', timeout: 20000});
-          await page.waitForLoadState('networkidle', {timeout: 8000}).catch(() => {});
+          await page.waitForLoadState('networkidle', {timeout: 8000}).catch(() => {
+          });
           observedUrl = new URL(page.url()).pathname;
           if (uc.expect === 'render') {
             if (observedUrl !== uc.route && !observedUrl.startsWith(uc.route)) {

@@ -1,12 +1,18 @@
 package com.hrms.application.analytics.service;
 
 import com.hrms.api.analytics.dto.*;
-import com.hrms.common.security.TenantContext;
 import com.hrms.common.exception.ResourceNotFoundException;
-import com.hrms.domain.analytics.*;
+import com.hrms.common.security.TenantContext;
+import com.hrms.domain.analytics.AnalyticsInsight;
+import com.hrms.domain.analytics.AttritionPrediction;
+import com.hrms.domain.analytics.SkillGap;
+import com.hrms.domain.analytics.WorkforceTrend;
 import com.hrms.domain.employee.Employee;
 import com.hrms.domain.payroll.SalaryStructure;
-import com.hrms.infrastructure.analytics.repository.*;
+import com.hrms.infrastructure.analytics.repository.AnalyticsInsightRepository;
+import com.hrms.infrastructure.analytics.repository.AttritionPredictionRepository;
+import com.hrms.infrastructure.analytics.repository.SkillGapRepository;
+import com.hrms.infrastructure.analytics.repository.WorkforceTrendRepository;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.payroll.repository.SalaryStructureRepository;
 import lombok.RequiredArgsConstructor;

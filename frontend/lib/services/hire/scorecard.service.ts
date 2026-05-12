@@ -1,10 +1,10 @@
-import { apiClient } from '../../api/client';
+import {apiClient} from '../../api/client';
 import type {
+  CreateScorecardRequest,
+  CreateScorecardTemplateRequest,
   InterviewScorecard,
   ScorecardTemplate,
-  CreateScorecardRequest,
   UpdateScorecardRequest,
-  CreateScorecardTemplateRequest,
 } from '../../types/hire/scorecard';
 
 class ScorecardService {

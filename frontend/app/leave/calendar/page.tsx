@@ -224,7 +224,8 @@ export default function LeaveCalendarPage() {
             <div className="text-center py-12">
               <div className="flex flex-col items-center gap-4">
                 <AlertCircle className="w-8 h-8 text-danger-500"/>
-                <span className="text-[var(--text-secondary)]">Failed to load leave data. The server may be unreachable.</span>
+                <span
+                  className="text-[var(--text-secondary)]">Failed to load leave data. The server may be unreachable.</span>
                 <button
                   onClick={() => window.location.reload()}
                   className="skeuo-button px-4 py-2 text-sm cursor-pointer active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)]"

@@ -1,9 +1,13 @@
 package com.hrms.application.performance.service;
 
-import com.hrms.domain.performance.*;
+import com.hrms.domain.performance.KeyResult;
+import com.hrms.domain.performance.Objective;
 import com.hrms.domain.performance.Objective.ObjectiveLevel;
 import com.hrms.domain.performance.Objective.ObjectiveStatus;
-import com.hrms.infrastructure.performance.repository.*;
+import com.hrms.domain.performance.OkrCheckIn;
+import com.hrms.infrastructure.performance.repository.KeyResultRepository;
+import com.hrms.infrastructure.performance.repository.ObjectiveRepository;
+import com.hrms.infrastructure.performance.repository.OkrCheckInRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -15,12 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor

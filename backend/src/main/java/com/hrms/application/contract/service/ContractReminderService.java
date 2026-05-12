@@ -1,7 +1,6 @@
 package com.hrms.application.contract.service;
 
 import com.hrms.common.security.TenantContext;
-import com.hrms.domain.contract.Contract;
 import com.hrms.domain.contract.ContractReminder;
 import com.hrms.domain.contract.ReminderType;
 import com.hrms.infrastructure.contract.repository.ContractReminderRepository;

@@ -7,7 +7,6 @@ import com.hrms.api.expense.dto.MileageSummaryResponse;
 import com.hrms.common.exception.ValidationException;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
-import com.hrms.domain.employee.Employee;
 import com.hrms.domain.expense.ExpenseClaim;
 import com.hrms.domain.expense.MileageLog;
 import com.hrms.domain.expense.MileagePolicy;
@@ -34,7 +33,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;

@@ -4,9 +4,12 @@ import com.hrms.common.converter.EncryptedStringConverter;
 import com.hrms.common.entity.TenantAware;
 import com.hrms.domain.user.User;
 import jakarta.persistence.*;
-import org.hibernate.annotations.Where;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.Where;
 
 import java.time.LocalDate;
 import java.util.UUID;

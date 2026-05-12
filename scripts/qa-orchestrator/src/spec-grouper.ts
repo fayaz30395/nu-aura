@@ -1,6 +1,6 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import { QA_CONFIG } from './config.js';
+import {QA_CONFIG} from './config.js';
 
 /**
  * Reads the e2e directory and returns full paths of every `*.spec.ts` file,

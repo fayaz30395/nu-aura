@@ -2,13 +2,12 @@ package com.hrms.application.organization.service;
 
 import com.hrms.api.organization.dto.NineBoxDataResponse;
 import com.hrms.api.organization.dto.SuccessionAnalyticsResponse;
-import com.hrms.common.logging.Audited;
-import com.hrms.common.security.TenantContext;
 import com.hrms.common.exception.BusinessException;
 import com.hrms.common.exception.ResourceNotFoundException;
+import com.hrms.common.logging.Audited;
+import com.hrms.common.security.TenantContext;
 import com.hrms.domain.audit.AuditLog.AuditAction;
 import com.hrms.domain.organization.*;
-import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.organization.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,12 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service

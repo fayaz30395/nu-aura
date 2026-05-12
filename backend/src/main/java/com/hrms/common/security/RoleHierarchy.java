@@ -1,10 +1,6 @@
 package com.hrms.common.security;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Defines role hierarchy and default permissions for each role.

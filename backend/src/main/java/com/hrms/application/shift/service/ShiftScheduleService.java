@@ -1,5 +1,7 @@
 package com.hrms.application.shift.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.api.shift.dto.GenerateScheduleRequest;
 import com.hrms.api.shift.dto.ScheduleEntryResponse;
 import com.hrms.api.shift.dto.ShiftRuleViolation;
@@ -13,8 +15,6 @@ import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.shift.repository.ShiftAssignmentRepository;
 import com.hrms.infrastructure.shift.repository.ShiftPatternRepository;
 import com.hrms.infrastructure.shift.repository.ShiftRepository;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,13 +24,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**

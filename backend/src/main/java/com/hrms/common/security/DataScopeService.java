@@ -1,18 +1,15 @@
 package com.hrms.common.security;
 
 import com.hrms.domain.user.RoleScope;
-import jakarta.persistence.criteria.*;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.*;
 
 /**
  * Service to generate JPA Specifications based on User's RoleScope.

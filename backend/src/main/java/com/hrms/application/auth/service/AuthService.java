@@ -1,10 +1,13 @@
 package com.hrms.application.auth.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
 import com.hrms.api.auth.dto.*;
+import com.hrms.application.notification.service.EmailNotificationService;
 import com.hrms.application.platform.service.HrmsPermissionInitializer;
 import com.hrms.application.security.service.CaptchaService;
 import com.hrms.application.user.service.ImplicitRoleService;
@@ -13,22 +16,21 @@ import com.hrms.common.exception.AuthenticationException;
 import com.hrms.common.exception.BusinessException;
 import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.exception.ValidationException;
-import com.hrms.domain.user.PasswordHistory;
-import com.hrms.infrastructure.user.repository.PasswordHistoryRepository;
+import com.hrms.common.metrics.MetricsService;
+import com.hrms.common.security.AccountLockoutService;
 import com.hrms.common.security.JwtTokenProvider;
 import com.hrms.common.security.UserPrincipal;
 import com.hrms.domain.employee.Employee;
 import com.hrms.domain.platform.UserAppAccess;
+import com.hrms.domain.user.PasswordHistory;
 import com.hrms.domain.user.User;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.platform.repository.UserAppAccessRepository;
+import com.hrms.infrastructure.user.repository.PasswordHistoryRepository;
 import com.hrms.infrastructure.user.repository.UserRepository;
-import com.hrms.application.notification.service.EmailNotificationService;
-import com.hrms.common.metrics.MetricsService;
-import com.hrms.common.security.AccountLockoutService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataAccessException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -37,9 +39,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.net.URI;
@@ -52,21 +51,21 @@ import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Base64;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 public class AuthService {
 
+    /**
+     * Redis key prefix for the failed-attempt counter. MUST match the constant
+     * in {@code AccountLockoutService} (intentional duplication — that service
+     * is out of scope for this change and we read the same counter so a single
+     * brute-force window drives both the captcha gate and the lockout cap).
+     */
+    private static final String LOCKOUT_ATTEMPTS_KEY_PREFIX = "lockout:attempts:";
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
     private final EmployeeRepository employeeRepository;
@@ -82,15 +81,6 @@ public class AuthService {
     private final PasswordPolicyConfig passwordPolicyConfig;
     private final CaptchaService captchaService;
     private final StringRedisTemplate stringRedisTemplate;
-
-    /**
-     * Redis key prefix for the failed-attempt counter. MUST match the constant
-     * in {@code AccountLockoutService} (intentional duplication — that service
-     * is out of scope for this change and we read the same counter so a single
-     * brute-force window drives both the captcha gate and the lockout cap).
-     */
-    private static final String LOCKOUT_ATTEMPTS_KEY_PREFIX = "lockout:attempts:";
-
     @Value("${app.jwt.expiration}")
     private long jwtExpiration;
     @Value("${app.security.captcha.threshold-attempts:3}")
@@ -569,6 +559,8 @@ public class AuthService {
         log.info("All tokens revoked for user {} after password change", userId);
     }
 
+    // ==================== NU Platform RBAC Helper Methods ====================
+
     /**
      * Load permissions for a user using a pre-fetched UserAppAccess.
      * Accepts the already-loaded employee to avoid redundant DB lookups.
@@ -657,8 +649,6 @@ public class AuthService {
         return permissionScopes;
     }
 
-    // ==================== NU Platform RBAC Helper Methods ====================
-
     private boolean isHigherScope(com.hrms.domain.user.RoleScope newScope,
                                   com.hrms.domain.user.RoleScope existingScope) {
         return newScope.isMorePermissiveThan(existingScope);
@@ -737,6 +727,8 @@ public class AuthService {
         }
     }
 
+    // ==================== Password Reset ====================
+
     /**
      * Request a password reset for the given email.
      * For security, always returns success even if email doesn't exist.
@@ -783,7 +775,7 @@ public class AuthService {
         }
     }
 
-    // ==================== Password Reset ====================
+    // ==================== Password Reset Helpers ====================
 
     /**
      * Reset password using a valid reset token.
@@ -853,10 +845,6 @@ public class AuthService {
         String userName = user.getFullName() != null ? user.getFullName() : user.getEmail();
         emailNotificationService.sendPasswordChangedEmail(user.getEmail(), userName);
     }
-
-    // ==================== Password Reset Helpers ====================
-
-    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
     /**
      * Generate a URL-safe Base64-encoded random token containing {@code byteLength}

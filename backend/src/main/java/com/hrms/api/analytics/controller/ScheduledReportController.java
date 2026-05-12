@@ -17,7 +17,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
-import static com.hrms.common.security.Permission.*;
+import static com.hrms.common.security.Permission.REPORT_CREATE;
+import static com.hrms.common.security.Permission.REPORT_VIEW;
 
 @RestController
 @RequestMapping("/api/v1/scheduled-reports")

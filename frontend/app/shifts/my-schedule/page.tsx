@@ -136,7 +136,7 @@ export default function MySchedulePage() {
             </div>
 
             {isLoading ? (
-              <SkeletonTable rows={5} columns={7} />
+              <SkeletonTable rows={5} columns={7}/>
             ) : (
               <>
                 {/* Day headers */}

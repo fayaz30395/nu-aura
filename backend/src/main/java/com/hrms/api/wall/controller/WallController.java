@@ -20,9 +20,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import static com.hrms.common.security.Permission.*;
-
 import java.util.UUID;
+
+import static com.hrms.common.security.Permission.*;
 
 @RestController
 @RequestMapping("/api/v1/wall")

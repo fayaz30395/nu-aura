@@ -1,17 +1,16 @@
 package com.hrms.application.payment.service;
 
 import com.hrms.domain.payment.PaymentConfig;
-import com.hrms.domain.payment.PaymentTransaction;
 import com.hrms.domain.payment.PaymentRefund;
+import com.hrms.domain.payment.PaymentTransaction;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Razorpay payment gateway adapter
@@ -25,15 +24,15 @@ import org.springframework.transaction.annotation.Transactional;
 public class RazorpayAdapter implements PaymentGatewayAdapter {
 
     /**
+     * Latches so {@link #verifyWebhookSignature(String, String)} logs at most one WARN per startup.
+     */
+    private static final AtomicBoolean SIGNATURE_WARN_LOGGED = new AtomicBoolean(false);
+    /**
      * QA sweep S2-C K-6: same enabled flag as the Stripe stub — payment-service can
      * inspect it to refuse real charges while the adapter is still a stub.
      */
     @Value("${app.payments.adapters.enabled:false}")
     private boolean enabled;
-
-    /** Latches so {@link #verifyWebhookSignature(String, String)} logs at most one WARN per startup. */
-    private static final AtomicBoolean SIGNATURE_WARN_LOGGED = new AtomicBoolean(false);
-
     private PaymentConfig config;
 
     @PostConstruct

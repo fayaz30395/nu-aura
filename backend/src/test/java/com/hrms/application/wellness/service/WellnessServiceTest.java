@@ -3,7 +3,9 @@ package com.hrms.application.wellness.service;
 import com.hrms.api.wellness.dto.WellnessChallengeDto;
 import com.hrms.api.wellness.dto.WellnessProgramDto;
 import com.hrms.common.security.TenantContext;
-import com.hrms.domain.wellness.*;
+import com.hrms.domain.wellness.ChallengeParticipant;
+import com.hrms.domain.wellness.WellnessChallenge;
+import com.hrms.domain.wellness.WellnessProgram;
 import com.hrms.infrastructure.user.repository.UserRepository;
 import com.hrms.infrastructure.wellness.repository.*;
 import org.junit.jupiter.api.*;
@@ -20,7 +22,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 

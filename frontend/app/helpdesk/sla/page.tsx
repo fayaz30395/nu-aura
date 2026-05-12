@@ -438,7 +438,7 @@ export default function HelpdeskSLAPage() {
         )}
 
         {loading ? (
-          <SkeletonTable rows={5} columns={4} />
+          <SkeletonTable rows={5} columns={4}/>
         ) : (
           <>
             {/* Dashboard Tab */}

@@ -1,11 +1,12 @@
 package com.hrms.api.performance.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hrms.api.performance.dto.*;
+import com.hrms.api.performance.dto.CheckInRequest;
+import com.hrms.api.performance.dto.KeyResultRequest;
+import com.hrms.api.performance.dto.ObjectiveRequest;
 import com.hrms.application.performance.service.OkrService;
-import com.hrms.common.exception.GlobalExceptionHandler;
 import com.hrms.common.config.TestMeterRegistryConfig;
-import org.springframework.context.annotation.Import;
+import com.hrms.common.exception.GlobalExceptionHandler;
 import com.hrms.common.security.*;
 import com.hrms.domain.performance.KeyResult;
 import com.hrms.domain.performance.Objective;
@@ -18,12 +19,16 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.data.domain.*;
+import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
@@ -31,10 +36,12 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(OkrController.class)
 @ContextConfiguration(classes = {OkrController.class, GlobalExceptionHandler.class})

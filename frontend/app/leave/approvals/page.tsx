@@ -12,7 +12,7 @@ import {
   useRejectLeaveRequest
 } from '@/lib/hooks/queries/useLeaves';
 import {useAuth} from '@/lib/hooks/useAuth';
-import {PermissionGate, PageDeniedFallback} from '@/components/auth/PermissionGate';
+import {PageDeniedFallback, PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {useToast} from '@/components/notifications/ToastProvider';
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
@@ -34,7 +34,11 @@ function LeaveApprovalsPageContent() {
       router.push('/auth/login');
     }
   }, [hasHydrated, isAuthenticated, router]);
-  const {data: pendingData, isError: isPendingError, fetchStatus: pendingFetchStatus} = useLeaveRequestsByStatus('PENDING', 0, 50);
+  const {
+    data: pendingData,
+    isError: isPendingError,
+    fetchStatus: pendingFetchStatus
+  } = useLeaveRequestsByStatus('PENDING', 0, 50);
   const {data: leaveTypes = []} = useActiveLeaveTypes();
   const {data: employeeData} = useEmployees(0, 500);
   const approveLeaveRequest = useApproveLeaveRequest();
@@ -361,7 +365,7 @@ function LeaveApprovalsPageContent() {
 export default function LeaveApprovalsPage() {
   return (
     <PermissionGate permission={Permissions.LEAVE_APPROVE} fallback={<PageDeniedFallback/>}>
-      <LeaveApprovalsPageContent />
+      <LeaveApprovalsPageContent/>
     </PermissionGate>
   );
 }

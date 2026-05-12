@@ -13,23 +13,23 @@ gaps.
 
 ## At-a-glance status
 
-| Layer                          | Status        | Owner control                                     |
-|--------------------------------|---------------|---------------------------------------------------|
-| Authentication                 | Strong        | JWT in httpOnly cookie + Bearer gated default-off |
-| Tenancy isolation              | Strong        | Filter chain + RLS + Drive mapping                |
-| Authorization (RBAC)           | Strong        | 98% coverage; CUSTOM scope strict allowlist       |
-| Input validation / mass-assign | Strong        | Whitelist DTOs across payroll, employee, payment  |
-| IDOR / BOLA                    | Strong        | Sweep on loan, expense, payment, employee, asset  |
-| Cryptography (at rest)         | Strong        | AES-GCM `EncryptedStringConverter` widening V147  |
-| Secrets management             | Adequate      | Env vars; rotation tracked in runbooks            |
-| Rate limiting / DoS            | Strong        | Bucket4j + Redis distributed limiter              |
-| SSRF / outbound egress         | Strong        | SsrfProtectionUtils + dedicated webhook RT        |
-| Audit trail                    | Strong        | `audit_logs` + `system_audit_logs` + impersonator |
-| GDPR / DPDP DSR                | **Scaffolded**| Sprint 7-A — `dsr_requests` (V153), endpoint stub |
-| Statutory compliance engine    | **Skeleton**  | Sprint 7-B — design only, not production-ready    |
-| Native mobile hardening        | **Open**      | Mobile endpoints gated by feature flags           |
-| OpenTelemetry / distributed tracing | **Open** | Micrometer Prometheus only today                  |
-| Elasticsearch re-index pipeline | **Open**     | Manual rebuild; idempotent pipeline pending       |
+| Layer                               | Status         | Owner control                                     |
+|-------------------------------------|----------------|---------------------------------------------------|
+| Authentication                      | Strong         | JWT in httpOnly cookie + Bearer gated default-off |
+| Tenancy isolation                   | Strong         | Filter chain + RLS + Drive mapping                |
+| Authorization (RBAC)                | Strong         | 98% coverage; CUSTOM scope strict allowlist       |
+| Input validation / mass-assign      | Strong         | Whitelist DTOs across payroll, employee, payment  |
+| IDOR / BOLA                         | Strong         | Sweep on loan, expense, payment, employee, asset  |
+| Cryptography (at rest)              | Strong         | AES-GCM `EncryptedStringConverter` widening V147  |
+| Secrets management                  | Adequate       | Env vars; rotation tracked in runbooks            |
+| Rate limiting / DoS                 | Strong         | Bucket4j + Redis distributed limiter              |
+| SSRF / outbound egress              | Strong         | SsrfProtectionUtils + dedicated webhook RT        |
+| Audit trail                         | Strong         | `audit_logs` + `system_audit_logs` + impersonator |
+| GDPR / DPDP DSR                     | **Scaffolded** | Sprint 7-A — `dsr_requests` (V153), endpoint stub |
+| Statutory compliance engine         | **Skeleton**   | Sprint 7-B — design only, not production-ready    |
+| Native mobile hardening             | **Open**       | Mobile endpoints gated by feature flags           |
+| OpenTelemetry / distributed tracing | **Open**       | Micrometer Prometheus only today                  |
+| Elasticsearch re-index pipeline     | **Open**       | Manual rebuild; idempotent pipeline pending       |
 
 ---
 
@@ -398,18 +398,18 @@ during the migration.
 
 ## OWASP Top 10 (2021) coverage
 
-| Code  | Risk                                       | Coverage    | Notes                                                                       |
-|-------|--------------------------------------------|-------------|-----------------------------------------------------------------------------|
-| A01   | Broken Access Control                      | Strong      | Sprint 1 IDOR sweep; DataScope CUSTOM allowlist; 98% endpoint authz coverage |
-| A02   | Cryptographic Failures                     | Strong      | AES-GCM PII (V147), BCrypt password / reset-token hashing (V134), JWT HS256 |
-| A03   | Injection                                  | Strong      | Parameterized JPQL/SQL; `websearch_to_tsquery`; sortBy allowlist; CSV escape |
-| A04   | Insecure Design                            | Adequate    | Filter chain order documented; stub services fail-closed (sprint 2)         |
-| A05   | Security Misconfiguration                  | Strong      | swagger-ui / actuator hardened in prod; CSRF double-submit; security headers |
-| A06   | Vulnerable & Outdated Components           | Strong      | Dependabot (sprint 5); `mvn dependency-check` in CI                          |
-| A07   | Identification & Authentication Failures   | Strong      | JWT in httpOnly cookie; Bearer gated off; MFA; account lockout; timing-equalized login |
-| A08   | Software & Data Integrity Failures         | Adequate    | Webhook signature verification; Kafka producer idempotent; **gap:** SBOM / sigstore not yet wired |
-| A09   | Security Logging & Monitoring Failures     | Adequate    | `audit_logs` + `system_audit_logs` + impersonator_id; **gap:** distributed tracing |
-| A10   | Server-Side Request Forgery (SSRF)         | Strong      | `SsrfProtectionUtils` with CG-NAT / IPv6 ULA blocks; webhook RT no-follow-redirects |
+| Code | Risk                                     | Coverage | Notes                                                                                             |
+|------|------------------------------------------|----------|---------------------------------------------------------------------------------------------------|
+| A01  | Broken Access Control                    | Strong   | Sprint 1 IDOR sweep; DataScope CUSTOM allowlist; 98% endpoint authz coverage                      |
+| A02  | Cryptographic Failures                   | Strong   | AES-GCM PII (V147), BCrypt password / reset-token hashing (V134), JWT HS256                       |
+| A03  | Injection                                | Strong   | Parameterized JPQL/SQL; `websearch_to_tsquery`; sortBy allowlist; CSV escape                      |
+| A04  | Insecure Design                          | Adequate | Filter chain order documented; stub services fail-closed (sprint 2)                               |
+| A05  | Security Misconfiguration                | Strong   | swagger-ui / actuator hardened in prod; CSRF double-submit; security headers                      |
+| A06  | Vulnerable & Outdated Components         | Strong   | Dependabot (sprint 5); `mvn dependency-check` in CI                                               |
+| A07  | Identification & Authentication Failures | Strong   | JWT in httpOnly cookie; Bearer gated off; MFA; account lockout; timing-equalized login            |
+| A08  | Software & Data Integrity Failures       | Adequate | Webhook signature verification; Kafka producer idempotent; **gap:** SBOM / sigstore not yet wired |
+| A09  | Security Logging & Monitoring Failures   | Adequate | `audit_logs` + `system_audit_logs` + impersonator_id; **gap:** distributed tracing                |
+| A10  | Server-Side Request Forgery (SSRF)       | Strong   | `SsrfProtectionUtils` with CG-NAT / IPv6 ULA blocks; webhook RT no-follow-redirects               |
 
 Full evidence per item is in the sprint 1 commit message (`a93d4093`) and per-finding tickets in
 the audit backlog.

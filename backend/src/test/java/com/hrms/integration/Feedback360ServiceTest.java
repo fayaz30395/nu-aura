@@ -2,7 +2,6 @@ package com.hrms.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.api.performance.dto.Feedback360CycleRequest;
-import com.hrms.api.performance.dto.Feedback360ResponseRequest;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.config.TestSecurityConfig;
@@ -12,7 +11,9 @@ import com.hrms.domain.user.RoleScope;
 import com.hrms.domain.user.User;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.user.repository.UserRepository;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,9 +28,10 @@ import java.time.LocalDate;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * Integration tests for 360 Feedback use cases.
@@ -44,10 +46,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class Feedback360ServiceTest {
 
     private static final UUID TENANT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
-    private UUID USER_ID;
-    private UUID EMPLOYEE_ID;
     private static final String BASE = "/api/v1/feedback360";
-
     @Autowired
     MockMvc mockMvc;
     @Autowired
@@ -56,6 +55,8 @@ class Feedback360ServiceTest {
     UserRepository userRepository;
     @Autowired
     EmployeeRepository employeeRepository;
+    private UUID USER_ID;
+    private UUID EMPLOYEE_ID;
 
     @BeforeEach
     void setUpSuperAdminContext() {

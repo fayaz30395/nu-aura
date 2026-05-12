@@ -1,7 +1,10 @@
 package com.hrms.application.employee.service;
 
 import com.hrms.api.employee.dto.TalentProfileResponse;
-import com.hrms.api.employee.dto.TalentProfileResponse.*;
+import com.hrms.api.employee.dto.TalentProfileResponse.AchievementDto;
+import com.hrms.api.employee.dto.TalentProfileResponse.FeedbackSnippet;
+import com.hrms.api.employee.dto.TalentProfileResponse.MilestoneDto;
+import com.hrms.api.employee.dto.TalentProfileResponse.SkillDto;
 import com.hrms.domain.employee.Employee;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import lombok.RequiredArgsConstructor;

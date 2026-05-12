@@ -43,7 +43,7 @@ public interface StatutoryCalculator {
      * @return a {@link StatutoryResult} with country-specific deductions and
      * contributions; never {@code null}
      * @throws UnsupportedOperationException if a country implementation has not
-     * yet been wired (skeleton-only)
+     *                                       yet been wired (skeleton-only)
      */
     StatutoryResult calculate(StatutoryCalculationInput input);
 

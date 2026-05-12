@@ -1,13 +1,8 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import {beforeEach, describe, expect, it, vi} from 'vitest';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import {
-  generateSummaryBadge,
-  generateTestRow,
-  generateReport,
-  saveReport,
-} from '../src/html-reporter.js';
-import type { CycleResult, TestResult } from '../src/severity-classifier.js';
+import {generateReport, generateSummaryBadge, generateTestRow, saveReport,} from '../src/html-reporter.js';
+import type {CycleResult, TestResult} from '../src/severity-classifier.js';
 
 vi.mock('node:fs');
 vi.mock('node:path', async (importOriginal) => {
@@ -42,10 +37,34 @@ const makeCycleResult = (overrides: Partial<CycleResult> = {}): CycleResult => (
   completedAt: new Date('2026-05-02T10:05:00Z'),
   releaseDecision: 'FAIL',
   tests: [
-    makeTestResult({ testTitle: 'login works', status: 'passed', severity: 'P0', agentGroup: 'smoke', errorMessage: undefined }),
-    makeTestResult({ testTitle: 'dashboard loads', status: 'failed', severity: 'P0', agentGroup: 'hrms-core', errorMessage: 'Element not found' }),
-    makeTestResult({ testTitle: 'employee list', status: 'failed', severity: 'P1', agentGroup: 'hrms-core', errorMessage: 'Timeout' }),
-    makeTestResult({ testTitle: 'wiki renders', status: 'passed', severity: 'P2', agentGroup: 'fluence-edge', errorMessage: undefined }),
+    makeTestResult({
+      testTitle: 'login works',
+      status: 'passed',
+      severity: 'P0',
+      agentGroup: 'smoke',
+      errorMessage: undefined
+    }),
+    makeTestResult({
+      testTitle: 'dashboard loads',
+      status: 'failed',
+      severity: 'P0',
+      agentGroup: 'hrms-core',
+      errorMessage: 'Element not found'
+    }),
+    makeTestResult({
+      testTitle: 'employee list',
+      status: 'failed',
+      severity: 'P1',
+      agentGroup: 'hrms-core',
+      errorMessage: 'Timeout'
+    }),
+    makeTestResult({
+      testTitle: 'wiki renders',
+      status: 'passed',
+      severity: 'P2',
+      agentGroup: 'fluence-edge',
+      errorMessage: undefined
+    }),
   ],
   summary: {
     total: 4,
@@ -105,42 +124,42 @@ describe('generateSummaryBadge', () => {
 
 describe('generateTestRow', () => {
   it('returns a string containing the test title', () => {
-    const row = generateTestRow(makeTestResult({ testTitle: 'my test title' }));
+    const row = generateTestRow(makeTestResult({testTitle: 'my test title'}));
     expect(row).toContain('my test title');
   });
 
   it('includes a severity badge in the row', () => {
-    const row = generateTestRow(makeTestResult({ severity: 'P1' }));
+    const row = generateTestRow(makeTestResult({severity: 'P1'}));
     expect(row).toContain('P1');
   });
 
   it('includes the duration formatted as a number', () => {
-    const row = generateTestRow(makeTestResult({ durationMs: 1234 }));
+    const row = generateTestRow(makeTestResult({durationMs: 1234}));
     expect(row).toContain('1234');
   });
 
   it('includes the agent group', () => {
-    const row = generateTestRow(makeTestResult({ agentGroup: 'rbac-security' }));
+    const row = generateTestRow(makeTestResult({agentGroup: 'rbac-security'}));
     expect(row).toContain('rbac-security');
   });
 
   it('includes "passed" status indicator for passed tests', () => {
-    const row = generateTestRow(makeTestResult({ status: 'passed' }));
+    const row = generateTestRow(makeTestResult({status: 'passed'}));
     expect(row.toLowerCase()).toMatch(/pass/);
   });
 
   it('includes "failed" status indicator for failed tests', () => {
-    const row = generateTestRow(makeTestResult({ status: 'failed' }));
+    const row = generateTestRow(makeTestResult({status: 'failed'}));
     expect(row.toLowerCase()).toMatch(/fail/);
   });
 
   it('includes truncated error message when error is present', () => {
-    const row = generateTestRow(makeTestResult({ errorMessage: 'Element not found in DOM' }));
+    const row = generateTestRow(makeTestResult({errorMessage: 'Element not found in DOM'}));
     expect(row).toContain('Element not found');
   });
 
   it('does not throw when error is undefined', () => {
-    expect(() => generateTestRow(makeTestResult({ errorMessage: undefined }))).not.toThrow();
+    expect(() => generateTestRow(makeTestResult({errorMessage: undefined}))).not.toThrow();
   });
 
   it('returns an HTML table row (contains <tr)', () => {
@@ -159,7 +178,7 @@ describe('generateReport', () => {
   });
 
   it('HTML includes the cycle ID', () => {
-    const cycle = makeCycleResult({ cycleId: 'cycle-2026-05-02T10-00-00' });
+    const cycle = makeCycleResult({cycleId: 'cycle-2026-05-02T10-00-00'});
     const html = generateReport(cycle);
     expect(html).toContain('cycle-2026-05-02T10-00-00');
   });
@@ -185,17 +204,17 @@ describe('generateReport', () => {
   });
 
   it('HTML includes release decision (PASS or FAIL)', () => {
-    const html = generateReport(makeCycleResult({ releaseDecision: 'PASS' }));
+    const html = generateReport(makeCycleResult({releaseDecision: 'PASS'}));
     expect(html).toContain('PASS');
   });
 
   it('HTML includes READY FOR RELEASE banner when decision is PASS', () => {
-    const html = generateReport(makeCycleResult({ releaseDecision: 'PASS' }));
+    const html = generateReport(makeCycleResult({releaseDecision: 'PASS'}));
     expect(html.toUpperCase()).toContain('READY FOR RELEASE');
   });
 
   it('HTML includes BLOCKED banner when decision is FAIL', () => {
-    const html = generateReport(makeCycleResult({ releaseDecision: 'FAIL' }));
+    const html = generateReport(makeCycleResult({releaseDecision: 'FAIL'}));
     expect(html.toUpperCase()).toContain('BLOCKED');
   });
 
@@ -256,7 +275,7 @@ describe('saveReport', () => {
   });
 
   it('file name matches pattern qa-report-{YYYY-MM-DD}-{HH-mm-ss}.html', () => {
-    const cycle = makeCycleResult({ startedAt: new Date('2026-05-02T14:35:07Z') });
+    const cycle = makeCycleResult({startedAt: new Date('2026-05-02T14:35:07Z')});
     const result = saveReport(cycle, '/tmp/qa-reports');
     const filename = result.split('/').pop()!;
     expect(filename).toMatch(/^qa-report-\d{4}-\d{2}-\d{2}-\d{2}-\d{2}-\d{2}\.html$/);
@@ -265,7 +284,7 @@ describe('saveReport', () => {
   it('creates the output directory recursively before writing', () => {
     const cycle = makeCycleResult();
     saveReport(cycle, '/tmp/deeply/nested/dir');
-    expect(mockMkdirSync).toHaveBeenCalledWith('/tmp/deeply/nested/dir', { recursive: true });
+    expect(mockMkdirSync).toHaveBeenCalledWith('/tmp/deeply/nested/dir', {recursive: true});
   });
 
   it('writes HTML content (not empty string)', () => {

@@ -11,7 +11,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.annotation.Annotation;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;

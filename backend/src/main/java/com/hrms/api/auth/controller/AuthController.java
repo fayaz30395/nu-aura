@@ -1,10 +1,6 @@
 package com.hrms.api.auth.controller;
 
 import com.hrms.api.auth.dto.*;
-
-import java.util.Map;
-import java.util.UUID;
-
 import com.hrms.application.auth.service.AuthService;
 import com.hrms.application.auth.service.MfaService;
 import com.hrms.common.config.CookieConfig;
@@ -22,6 +18,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
+import java.util.UUID;
 
 // Public endpoints - no RBAC required
 @RestController
@@ -43,6 +42,52 @@ public class AuthController {
         this.mfaService = mfaService;
         this.cookieConfig = cookieConfig;
         this.tokenProvider = tokenProvider;
+    }
+
+    /**
+     * Adds a {@link ResponseCookie} to the response as a {@code Set-Cookie} header
+     * if the supplied cookie is non-null. Defensive guard for the rollover window:
+     * a test double or a mis-wired bean could return {@code null} from a hardened-cookie
+     * helper, and we don't want that to produce a 500 on every login.
+     */
+    private static void addCookieIfPresent(HttpServletResponse response, ResponseCookie cookie) {
+        if (cookie != null) {
+            response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        }
+    }
+
+    /**
+     * Read the first cookie value matching either of the two supplied names.
+     *
+     * <p>Used during the {@code __Host-} rollover window so every reader accepts
+     * EITHER the hardened name OR the legacy name. The hardened name is checked
+     * first because, when both are present, the {@code __Host-} prefix carries
+     * the stronger browser-enforced guarantees (Secure, Path=/, no Domain) and
+     * therefore wins.</p>
+     *
+     * @param request  incoming request
+     * @param hardened the {@code __Host-} prefixed cookie name to prefer
+     * @param legacy   the legacy cookie name to accept as fallback
+     * @return the matching cookie value, or {@code null} if neither cookie is present
+     */
+    private static String readCookieValue(HttpServletRequest request, String hardened, String legacy) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies == null) {
+            return null;
+        }
+        String legacyValue = null;
+        for (Cookie c : cookies) {
+            String name = c.getName();
+            if (hardened.equals(name)) {
+                // Hardened wins immediately.
+                return c.getValue();
+            }
+            if (legacy.equals(name)) {
+                legacyValue = c.getValue();
+                // Keep scanning — a __Host- cookie may appear later in the array.
+            }
+        }
+        return legacyValue;
     }
 
     @GetMapping("/me")
@@ -216,6 +261,8 @@ public class AuthController {
         return ResponseEntity.ok().build();
     }
 
+    // ==================== Cookie Helper Methods ====================
+
     @PostMapping("/forgot-password")
     @Operation(summary = "Request password reset", description = "Request a password reset link via email. Returns authProvider=GOOGLE if user uses SSO.")
     public ResponseEntity<Map<String, String>> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
@@ -232,8 +279,6 @@ public class AuthController {
         authService.resetPassword(request);
         return ResponseEntity.ok(Map.of("message", "Password has been reset successfully."));
     }
-
-    // ==================== Cookie Helper Methods ====================
 
     /**
      * Set secure httpOnly cookies for access and refresh tokens.
@@ -269,51 +314,5 @@ public class AuthController {
         response.addHeader(HttpHeaders.SET_COOKIE, cookieConfig.createClearRefreshTokenCookie().toString());
         addCookieIfPresent(response, cookieConfig.createClearHardenedAccessTokenCookie());
         addCookieIfPresent(response, cookieConfig.createClearHardenedRefreshTokenCookie());
-    }
-
-    /**
-     * Adds a {@link ResponseCookie} to the response as a {@code Set-Cookie} header
-     * if the supplied cookie is non-null. Defensive guard for the rollover window:
-     * a test double or a mis-wired bean could return {@code null} from a hardened-cookie
-     * helper, and we don't want that to produce a 500 on every login.
-     */
-    private static void addCookieIfPresent(HttpServletResponse response, ResponseCookie cookie) {
-        if (cookie != null) {
-            response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-        }
-    }
-
-    /**
-     * Read the first cookie value matching either of the two supplied names.
-     *
-     * <p>Used during the {@code __Host-} rollover window so every reader accepts
-     * EITHER the hardened name OR the legacy name. The hardened name is checked
-     * first because, when both are present, the {@code __Host-} prefix carries
-     * the stronger browser-enforced guarantees (Secure, Path=/, no Domain) and
-     * therefore wins.</p>
-     *
-     * @param request    incoming request
-     * @param hardened   the {@code __Host-} prefixed cookie name to prefer
-     * @param legacy     the legacy cookie name to accept as fallback
-     * @return the matching cookie value, or {@code null} if neither cookie is present
-     */
-    private static String readCookieValue(HttpServletRequest request, String hardened, String legacy) {
-        Cookie[] cookies = request.getCookies();
-        if (cookies == null) {
-            return null;
-        }
-        String legacyValue = null;
-        for (Cookie c : cookies) {
-            String name = c.getName();
-            if (hardened.equals(name)) {
-                // Hardened wins immediately.
-                return c.getValue();
-            }
-            if (legacy.equals(name)) {
-                legacyValue = c.getValue();
-                // Keep scanning — a __Host- cookie may appear later in the array.
-            }
-        }
-        return legacyValue;
     }
 }

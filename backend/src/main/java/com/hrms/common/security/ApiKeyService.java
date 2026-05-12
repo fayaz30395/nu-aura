@@ -8,12 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
-import java.util.Base64;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Service for managing API keys for external integrations.
@@ -27,6 +22,7 @@ public class ApiKeyService {
     private static final SecureRandom secureRandom = new SecureRandom();
     private final ApiKeyRepository apiKeyRepository;
     private final PasswordEncoder passwordEncoder;
+
     public ApiKeyService(@Lazy ApiKeyRepository apiKeyRepository, PasswordEncoder passwordEncoder) {
         this.apiKeyRepository = apiKeyRepository;
         this.passwordEncoder = passwordEncoder;

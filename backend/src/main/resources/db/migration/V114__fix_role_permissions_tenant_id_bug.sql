@@ -33,44 +33,43 @@ SELECT gen_random_uuid(),
        false
 FROM permissions p
 WHERE p.code IN (
-    -- Payroll: process and approve payroll
-    'PAYROLL:PROCESS',
-    'PAYROLL:VIEW_ALL',
-    'PAYROLL:APPROVE',
+  -- Payroll: process and approve payroll
+                 'PAYROLL:PROCESS',
+                 'PAYROLL:VIEW_ALL',
+                 'PAYROLL:APPROVE',
 
-    -- Goals: view, update, delete (CREATE and APPROVE already in V107)
-    'GOAL:VIEW',
-    'GOAL:UPDATE',
-    'GOAL:DELETE',
+  -- Goals: view, update, delete (CREATE and APPROVE already in V107)
+                 'GOAL:VIEW',
+                 'GOAL:UPDATE',
+                 'GOAL:DELETE',
 
-    -- OKR: full access for HR_MANAGER
-    'OKR:VIEW',
-    'OKR:VIEW_ALL',
-    'OKR:CREATE',
-    'OKR:UPDATE',
-    'OKR:APPROVE',
-    'OKR:DELETE',
+  -- OKR: full access for HR_MANAGER
+                 'OKR:VIEW',
+                 'OKR:VIEW_ALL',
+                 'OKR:CREATE',
+                 'OKR:UPDATE',
+                 'OKR:APPROVE',
+                 'OKR:DELETE',
 
-    -- 360 Feedback: view, create, submit, and manage
-    'FEEDBACK_360:VIEW',
-    'FEEDBACK_360:CREATE',
-    'FEEDBACK_360:SUBMIT',
-    'FEEDBACK_360:MANAGE',
+  -- 360 Feedback: view, create, submit, and manage
+                 'FEEDBACK_360:VIEW',
+                 'FEEDBACK_360:CREATE',
+                 'FEEDBACK_360:SUBMIT',
+                 'FEEDBACK_360:MANAGE',
 
-    -- Feedback (general): create and manage
-    'FEEDBACK:CREATE',
-    'FEEDBACK:UPDATE',
+  -- Feedback (general): create and manage
+                 'FEEDBACK:CREATE',
+                 'FEEDBACK:UPDATE',
 
-    -- Notifications: both naming variants used by controllers
-    'NOTIFICATIONS:VIEW',
-    'NOTIFICATION:VIEW',
+  -- Notifications: both naming variants used by controllers
+                 'NOTIFICATIONS:VIEW',
+                 'NOTIFICATION:VIEW',
 
-    -- Workflow inbox
-    'WORKFLOW:VIEW',
-    'WORKFLOW:EXECUTE'
-)
-  AND p.is_deleted = false
-  ON CONFLICT DO NOTHING;
+  -- Workflow inbox
+                 'WORKFLOW:VIEW',
+                 'WORKFLOW:EXECUTE'
+  )
+  AND p.is_deleted = false ON CONFLICT DO NOTHING;
 
 -- ============================================================================
 -- HR_ADMIN: Same permissions (should have everything HR_MANAGER has)
@@ -87,16 +86,15 @@ SELECT gen_random_uuid(),
        false
 FROM permissions p
 WHERE p.code IN (
-    'PAYROLL:PROCESS', 'PAYROLL:VIEW_ALL', 'PAYROLL:APPROVE',
-    'GOAL:VIEW', 'GOAL:UPDATE', 'GOAL:DELETE',
-    'OKR:VIEW', 'OKR:VIEW_ALL', 'OKR:CREATE', 'OKR:UPDATE', 'OKR:APPROVE', 'OKR:DELETE',
-    'FEEDBACK_360:VIEW', 'FEEDBACK_360:CREATE', 'FEEDBACK_360:SUBMIT', 'FEEDBACK_360:MANAGE',
-    'FEEDBACK:CREATE', 'FEEDBACK:UPDATE',
-    'NOTIFICATIONS:VIEW', 'NOTIFICATION:VIEW',
-    'WORKFLOW:VIEW', 'WORKFLOW:EXECUTE'
-)
-  AND p.is_deleted = false
-  ON CONFLICT DO NOTHING;
+                 'PAYROLL:PROCESS', 'PAYROLL:VIEW_ALL', 'PAYROLL:APPROVE',
+                 'GOAL:VIEW', 'GOAL:UPDATE', 'GOAL:DELETE',
+                 'OKR:VIEW', 'OKR:VIEW_ALL', 'OKR:CREATE', 'OKR:UPDATE', 'OKR:APPROVE', 'OKR:DELETE',
+                 'FEEDBACK_360:VIEW', 'FEEDBACK_360:CREATE', 'FEEDBACK_360:SUBMIT', 'FEEDBACK_360:MANAGE',
+                 'FEEDBACK:CREATE', 'FEEDBACK:UPDATE',
+                 'NOTIFICATIONS:VIEW', 'NOTIFICATION:VIEW',
+                 'WORKFLOW:VIEW', 'WORKFLOW:EXECUTE'
+  )
+  AND p.is_deleted = false ON CONFLICT DO NOTHING;
 
 -- ============================================================================
 -- RECRUITMENT_ADMIN: Add notification and workflow permissions
@@ -113,13 +111,12 @@ SELECT gen_random_uuid(),
        false
 FROM permissions p
 WHERE p.code IN (
-    'NOTIFICATIONS:VIEW',
-    'NOTIFICATION:VIEW',
-    'WORKFLOW:VIEW',
-    'WORKFLOW:EXECUTE'
-)
-  AND p.is_deleted = false
-  ON CONFLICT DO NOTHING;
+                 'NOTIFICATIONS:VIEW',
+                 'NOTIFICATION:VIEW',
+                 'WORKFLOW:VIEW',
+                 'WORKFLOW:EXECUTE'
+  )
+  AND p.is_deleted = false ON CONFLICT DO NOTHING;
 
 -- ============================================================================
 -- MANAGER: Add OKR, Feedback, Notifications, Workflow for team leads
@@ -136,13 +133,12 @@ SELECT gen_random_uuid(),
        false
 FROM permissions p
 WHERE p.code IN (
-    'OKR:VIEW', 'OKR:CREATE', 'OKR:UPDATE',
-    'FEEDBACK_360:VIEW', 'FEEDBACK_360:CREATE', 'FEEDBACK_360:SUBMIT',
-    'NOTIFICATIONS:VIEW', 'NOTIFICATION:VIEW',
-    'WORKFLOW:VIEW', 'WORKFLOW:EXECUTE'
-)
-  AND p.is_deleted = false
-  ON CONFLICT DO NOTHING;
+                 'OKR:VIEW', 'OKR:CREATE', 'OKR:UPDATE',
+                 'FEEDBACK_360:VIEW', 'FEEDBACK_360:CREATE', 'FEEDBACK_360:SUBMIT',
+                 'NOTIFICATIONS:VIEW', 'NOTIFICATION:VIEW',
+                 'WORKFLOW:VIEW', 'WORKFLOW:EXECUTE'
+  )
+  AND p.is_deleted = false ON CONFLICT DO NOTHING;
 
 -- ============================================================================
 -- TEAM_LEAD: Add OKR, Feedback, Notifications, Workflow for team leads
@@ -159,14 +155,13 @@ SELECT gen_random_uuid(),
        false
 FROM permissions p
 WHERE p.code IN (
-    'OKR:VIEW', 'OKR:CREATE', 'OKR:UPDATE',
-    'FEEDBACK_360:VIEW', 'FEEDBACK_360:CREATE', 'FEEDBACK_360:SUBMIT',
-    'GOAL:VIEW', 'GOAL:CREATE', 'GOAL:UPDATE',
-    'NOTIFICATIONS:VIEW', 'NOTIFICATION:VIEW',
-    'WORKFLOW:VIEW', 'WORKFLOW:EXECUTE'
-)
-  AND p.is_deleted = false
-  ON CONFLICT DO NOTHING;
+                 'OKR:VIEW', 'OKR:CREATE', 'OKR:UPDATE',
+                 'FEEDBACK_360:VIEW', 'FEEDBACK_360:CREATE', 'FEEDBACK_360:SUBMIT',
+                 'GOAL:VIEW', 'GOAL:CREATE', 'GOAL:UPDATE',
+                 'NOTIFICATIONS:VIEW', 'NOTIFICATION:VIEW',
+                 'WORKFLOW:VIEW', 'WORKFLOW:EXECUTE'
+  )
+  AND p.is_deleted = false ON CONFLICT DO NOTHING;
 
 -- ============================================================================
 -- EMPLOYEE: Add basic notification and goal view permissions
@@ -183,11 +178,10 @@ SELECT gen_random_uuid(),
        false
 FROM permissions p
 WHERE p.code IN (
-    'GOAL:VIEW',
-    'OKR:VIEW',
-    'FEEDBACK_360:VIEW', 'FEEDBACK_360:SUBMIT',
-    'NOTIFICATIONS:VIEW', 'NOTIFICATION:VIEW',
-    'WORKFLOW:VIEW'
-)
-  AND p.is_deleted = false
-  ON CONFLICT DO NOTHING;
+                 'GOAL:VIEW',
+                 'OKR:VIEW',
+                 'FEEDBACK_360:VIEW', 'FEEDBACK_360:SUBMIT',
+                 'NOTIFICATIONS:VIEW', 'NOTIFICATION:VIEW',
+                 'WORKFLOW:VIEW'
+  )
+  AND p.is_deleted = false ON CONFLICT DO NOTHING;

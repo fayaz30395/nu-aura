@@ -3,8 +3,8 @@ package com.hrms.api.analytics.dto;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.UUID;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Context for role-based dashboard analytics.

@@ -25,8 +25,6 @@ import java.util.UUID;
 @Slf4j
 public class AiUsageService {
 
-    private final AiUsageLogRepository aiUsageLogRepository;
-
     /**
      * Approximate USD cost per 1,000 tokens, keyed by lower-case model name.
      * Sourced from each vendor's public pricing page as of 2026-05; numbers are
@@ -40,6 +38,29 @@ public class AiUsageService {
             "llama-3.1-8b-instant", new BigDecimal("0.00005"), // Groq pricing approx
             "claude-3-haiku", new BigDecimal("0.00025")
     );
+    private final AiUsageLogRepository aiUsageLogRepository;
+
+    /**
+     * S3-G follow-up: compute an estimated USD cost for a single usage row.
+     * Pure function — safe to call from anywhere, including in tests.
+     *
+     * @param modelName  the upstream model identifier (case-insensitive)
+     * @param tokensUsed total tokens (prompt + completion) for the call
+     * @return cost in USD rounded to 6 decimal places, or {@link BigDecimal#ZERO}
+     * when the model is unknown or no tokens were charged
+     */
+    public static BigDecimal estimateCost(String modelName, Integer tokensUsed) {
+        if (modelName == null || tokensUsed == null || tokensUsed == 0) {
+            return BigDecimal.ZERO;
+        }
+        BigDecimal rate = COST_PER_1K_TOKENS.getOrDefault(
+                modelName.toLowerCase(), BigDecimal.ZERO);
+        if (rate.signum() == 0) {
+            return BigDecimal.ZERO;
+        }
+        return rate.multiply(BigDecimal.valueOf(tokensUsed))
+                .divide(BigDecimal.valueOf(1000L), 6, RoundingMode.HALF_UP);
+    }
 
     /**
      * Get total AI credits/tokens used by a specific tenant.
@@ -61,28 +82,6 @@ public class AiUsageService {
     @Transactional(readOnly = true)
     public long getAiCreditsUsedAcrossAllTenants() {
         return aiUsageLogRepository.sumAllTokens();
-    }
-
-    /**
-     * S3-G follow-up: compute an estimated USD cost for a single usage row.
-     * Pure function — safe to call from anywhere, including in tests.
-     *
-     * @param modelName the upstream model identifier (case-insensitive)
-     * @param tokensUsed total tokens (prompt + completion) for the call
-     * @return cost in USD rounded to 6 decimal places, or {@link BigDecimal#ZERO}
-     *         when the model is unknown or no tokens were charged
-     */
-    public static BigDecimal estimateCost(String modelName, Integer tokensUsed) {
-        if (modelName == null || tokensUsed == null || tokensUsed == 0) {
-            return BigDecimal.ZERO;
-        }
-        BigDecimal rate = COST_PER_1K_TOKENS.getOrDefault(
-                modelName.toLowerCase(), BigDecimal.ZERO);
-        if (rate.signum() == 0) {
-            return BigDecimal.ZERO;
-        }
-        return rate.multiply(BigDecimal.valueOf(tokensUsed))
-                .divide(BigDecimal.valueOf(1000L), 6, RoundingMode.HALF_UP);
     }
 
     /**

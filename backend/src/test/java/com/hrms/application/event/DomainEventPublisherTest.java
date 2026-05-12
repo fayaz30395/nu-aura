@@ -1,8 +1,8 @@
 package com.hrms.application.event;
 
+import com.hrms.domain.employee.Employee;
 import com.hrms.domain.event.DomainEvent;
 import com.hrms.domain.event.employee.EmployeeCreatedEvent;
-import com.hrms.domain.employee.Employee;
 import com.hrms.domain.user.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -3,9 +3,9 @@ package com.hrms.domain.leave;
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.AssertTrue;
-import org.hibernate.annotations.Where;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.Where;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

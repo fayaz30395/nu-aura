@@ -1,12 +1,12 @@
 #!/usr/bin/env node
-import { ensureServersRunning } from './server-manager.js';
-import { getAllSpecFiles, groupSpecsByAgent } from './spec-grouper.js';
-import { startContinuousLoop } from './orchestrator.js';
-import { saveReport } from './html-reporter.js';
-import { QA_CONFIG } from './config.js';
+import {ensureServersRunning} from './server-manager.js';
+import {getAllSpecFiles, groupSpecsByAgent} from './spec-grouper.js';
+import {startContinuousLoop} from './orchestrator.js';
+import {saveReport} from './html-reporter.js';
+import {QA_CONFIG} from './config.js';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import {fileURLToPath} from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // Project root is 3 levels up from src/ → scripts/qa-orchestrator/src/
@@ -19,7 +19,7 @@ async function main(): Promise<void> {
 
   // Ensure output dir exists
   const reportDir = path.join(PROJECT_ROOT, 'frontend', 'playwright-report', 'autonomous');
-  fs.mkdirSync(reportDir, { recursive: true });
+  fs.mkdirSync(reportDir, {recursive: true});
 
   // Step 1: Ensure servers are running
   console.log('\n[1/3] Checking servers...');

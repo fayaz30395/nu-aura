@@ -1,44 +1,32 @@
 package com.hrms.application.user.service;
 
 import com.hrms.api.user.dto.*;
-import com.hrms.common.security.SecurityContext;
-import com.hrms.common.security.TenantContext;
+import com.hrms.common.config.CacheConfig;
 import com.hrms.common.exception.BusinessException;
 import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.exception.ValidationException;
-import com.hrms.domain.employee.Department;
+import com.hrms.common.security.RoleHierarchy;
+import com.hrms.common.security.SecurityContext;
+import com.hrms.common.security.TenantContext;
 import com.hrms.domain.attendance.OfficeLocation;
+import com.hrms.domain.employee.Department;
 import com.hrms.domain.user.*;
 import com.hrms.infrastructure.attendance.repository.OfficeLocationRepository;
 import com.hrms.infrastructure.employee.repository.DepartmentRepository;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
-import com.hrms.common.config.CacheConfig;
 import com.hrms.infrastructure.user.repository.CustomScopeTargetRepository;
 import com.hrms.infrastructure.user.repository.PermissionRepository;
 import com.hrms.infrastructure.user.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.hrms.common.security.RoleHierarchy;
-import org.springframework.security.access.AccessDeniedException;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Queue;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j

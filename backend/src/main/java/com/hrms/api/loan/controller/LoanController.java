@@ -1,10 +1,6 @@
 package com.hrms.api.loan.controller;
 
-import com.hrms.api.loan.dto.ApproveLoanRequest;
-import com.hrms.api.loan.dto.CreateLoanRequest;
-import com.hrms.api.loan.dto.EmployeeLoanDto;
-import com.hrms.api.loan.dto.RecordRepaymentRequest;
-import com.hrms.api.loan.dto.RejectLoanRequest;
+import com.hrms.api.loan.dto.*;
 import com.hrms.application.loan.service.LoanService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;

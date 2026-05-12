@@ -7,7 +7,7 @@ import {PayslipCard} from '@/components/payroll/PayslipCard';
 import {Button} from '@/components/ui/Button';
 import {Download, Search} from 'lucide-react';
 import {Permissions} from '@/lib/hooks/usePermissions';
-import {PermissionGate, PageDeniedFallback} from '@/components/auth/PermissionGate';
+import {PageDeniedFallback, PermissionGate} from '@/components/auth/PermissionGate';
 import {usePayslips} from '@/lib/hooks/queries/usePayroll';
 import {payrollService} from '@/lib/services/hrms/payroll.service';
 
