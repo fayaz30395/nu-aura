@@ -30,5 +30,5 @@ server:
 
 logging:
   level:
-    com.hrms: DEBUG
+    com.nulogic: DEBUG
     org.springframework: INFO

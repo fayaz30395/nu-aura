@@ -220,7 +220,7 @@ app:
 logging:
   level:
     root: INFO
-    com.hrms: INFO
+    com.nulogic: INFO
     org.springframework.security: INFO
     # Silence SQL and parameter-binding logs in production to prevent PII leakage
     org.hibernate.SQL: WARN

@@ -1,0 +1,67 @@
+package com.nulogic.api.performance;
+
+import com.nulogic.application.performance.dto.*;
+import com.nulogic.application.performance.service.PIPService;
+import com.nulogic.common.security.Permission;
+import com.nulogic.common.security.RequiresPermission;
+import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
+
+@RestController
+@RequestMapping("/api/v1/performance/pip")
+public class PIPController {
+
+    private final PIPService pipService;
+
+    public PIPController(PIPService pipService) {
+        this.pipService = pipService;
+    }
+
+    @PostMapping
+    @RequiresPermission(Permission.PIP_CREATE)
+    public ResponseEntity<PIPResponse> create(@Valid @RequestBody CreatePIPRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(pipService.create(request));
+    }
+
+    @GetMapping("/{id}")
+    @RequiresPermission(Permission.PIP_VIEW)
+    public ResponseEntity<PIPResponse> getById(@PathVariable UUID id) {
+        return ResponseEntity.ok(pipService.getById(id));
+    }
+
+    @GetMapping
+    @RequiresPermission(Permission.PIP_VIEW)
+    public ResponseEntity<Page<PIPResponse>> getAll(
+            @RequestParam(required = false) UUID employeeId,
+            @RequestParam(required = false) UUID managerId,
+            @PageableDefault(size = 20, sort = "startDate", direction = Sort.Direction.DESC) Pageable pageable) {
+        if (employeeId != null) return ResponseEntity.ok(pipService.getForEmployee(employeeId, pageable));
+        if (managerId != null) return ResponseEntity.ok(pipService.getForManager(managerId, pageable));
+        return ResponseEntity.ok(pipService.getAll(pageable));
+    }
+
+    @PostMapping("/{id}/check-in")
+    @RequiresPermission(Permission.PIP_MANAGE)
+    public ResponseEntity<PIPCheckInResponse> recordCheckIn(
+            @PathVariable UUID id,
+            @Valid @RequestBody PIPCheckInRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(pipService.recordCheckIn(id, request));
+    }
+
+    @PutMapping("/{id}/close")
+    @RequiresPermission(Permission.PIP_MANAGE)
+    public ResponseEntity<Void> close(
+            @PathVariable UUID id,
+            @Valid @RequestBody ClosePIPRequest request) {
+        pipService.close(id, request);
+        return ResponseEntity.ok().build();
+    }
+}

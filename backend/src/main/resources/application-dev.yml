@@ -148,7 +148,7 @@ server:
 
 logging:
   level:
-    com.hrms: DEBUG
+    com.nulogic: DEBUG
     # Security DEBUG generates hundreds of lines during startup — use INFO
     org.springframework.security: INFO
     # SQL DEBUG: logs every statement — useful for N+1 diagnosis; set to WARN when not needed

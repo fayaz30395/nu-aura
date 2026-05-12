@@ -125,7 +125,7 @@ ai:
 logging:
   level:
     root: WARN
-    com.hrms: INFO
+    com.nulogic: INFO
     org.springframework.test: WARN
     org.hibernate: WARN
     org.springframework.boot.autoconfigure: ERROR

@@ -26,7 +26,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <groupId>com.hrms</groupId>
+    <groupId>com.nulogic</groupId>
     <artifactId>hrms-backend</artifactId>
     <version>1.0.0</version>
     <name>HRMS Platform Backend</name>

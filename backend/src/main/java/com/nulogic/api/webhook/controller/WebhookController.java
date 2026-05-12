@@ -1,0 +1,279 @@
+package com.nulogic.api.webhook.controller;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nulogic.api.webhook.dto.WebhookDeliveryResponse;
+import com.nulogic.api.webhook.dto.WebhookRequest;
+import com.nulogic.api.webhook.dto.WebhookResponse;
+import com.nulogic.application.webhook.service.WebhookService;
+import com.nulogic.common.exception.BusinessException;
+import com.nulogic.common.exception.ResourceNotFoundException;
+import com.nulogic.common.security.*;
+import com.nulogic.domain.webhook.Webhook;
+import com.nulogic.domain.webhook.WebhookDelivery;
+import com.nulogic.domain.webhook.WebhookStatus;
+import com.nulogic.infrastructure.webhook.repository.WebhookDeliveryRepository;  // kept for getDeliveries query
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+/**
+ * REST controller for managing webhooks.
+ *
+ * <p>Provides endpoints for CRUD operations on webhooks and
+ * viewing delivery history.</p>
+ *
+ * <p>Supports two authentication methods:</p>
+ * <ul>
+ *   <li><strong>JWT</strong>: Requires SYSTEM:ADMIN permission</li>
+ *   <li><strong>API Key</strong>: Requires appropriate webhook:* scopes</li>
+ * </ul>
+ *
+ * @see WebhookScopes
+ */
+@Slf4j
+@RestController
+@RequestMapping("/api/webhooks")
+@RequiredArgsConstructor
+@Tag(name = "Webhooks", description = "Webhook management APIs - supports JWT and API key authentication")
+@SecurityRequirement(name = "bearerAuth")
+@SecurityRequirement(name = "apiKeyAuth")
+public class WebhookController {
+
+    // Forbidden custom-header names (case-insensitive). A webhook owner must NEVER be able
+    // to set these on outbound requests — they would let them inject auth, leak secrets to
+    // other services, or break HTTP framing on the delivery side.
+    private static final Set<String> FORBIDDEN_HEADER_NAMES = Set.of(
+            "authorization", "cookie", "set-cookie", "host", "content-length",
+            "x-forwarded-for", "x-real-ip", "x-forwarded-host", "proxy-authorization"
+    );
+
+    private final WebhookService webhookService;
+    private final WebhookDeliveryRepository deliveryRepository;
+    private final ObjectMapper objectMapper;
+
+    /**
+     * List all webhooks for the current tenant.
+     */
+    @GetMapping
+    @RequiresPermission(Permission.SYSTEM_ADMIN)
+    @RequiresWebhookScope(WebhookScopes.WEBHOOK_READ)
+    @Operation(summary = "List webhooks", description = "Get all webhooks for the current tenant")
+    public ResponseEntity<List<WebhookResponse>> listWebhooks() {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        List<WebhookResponse> webhooks = webhookService.findAllByTenant(tenantId)
+                .stream()
+                .map(WebhookResponse::fromEntity)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(webhooks);
+    }
+
+    /**
+     * Get a specific webhook by ID.
+     */
+    @GetMapping("/{id}")
+    @RequiresPermission(Permission.SYSTEM_ADMIN)
+    @RequiresWebhookScope(WebhookScopes.WEBHOOK_READ)
+    @Operation(summary = "Get webhook", description = "Get a specific webhook by ID")
+    public ResponseEntity<WebhookResponse> getWebhook(@PathVariable UUID id) {
+        return webhookService.findById(id)
+                .map(WebhookResponse::fromEntity)
+                .map(ResponseEntity::ok)
+                .orElseThrow(() -> new ResourceNotFoundException("Webhook", "id", id));
+    }
+
+    /**
+     * Create a new webhook.
+     */
+    @PostMapping
+    @RequiresPermission(Permission.SYSTEM_ADMIN)
+    @RequiresWebhookScope(WebhookScopes.WEBHOOK_WRITE)
+    @Operation(summary = "Create webhook", description = "Create a new webhook configuration")
+    public ResponseEntity<WebhookResponse> createWebhook(@Valid @RequestBody WebhookRequest request) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+
+        // SECURITY: filter forbidden headers before persisting. See FORBIDDEN_HEADER_NAMES.
+        String sanitizedHeaders = sanitizeCustomHeaders(request.getCustomHeaders());
+
+        Webhook webhook = Webhook.builder()
+                .name(request.getName())
+                .description(request.getDescription())
+                .url(request.getUrl())
+                .secret(request.getSecret())
+                .events(request.getEvents())
+                .status(WebhookStatus.ACTIVE)
+                .customHeaders(sanitizedHeaders)
+                .build();
+        webhook.setTenantId(tenantId);
+
+        Webhook created = webhookService.create(webhook);
+        log.info("Created webhook {} for tenant {}", created.getId(), tenantId);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(WebhookResponse.fromEntity(created));
+    }
+
+    /**
+     * Update an existing webhook.
+     */
+    @PutMapping("/{id}")
+    @RequiresPermission(Permission.SYSTEM_ADMIN)
+    @RequiresWebhookScope(WebhookScopes.WEBHOOK_WRITE)
+    @Operation(summary = "Update webhook", description = "Update an existing webhook configuration")
+    public ResponseEntity<WebhookResponse> updateWebhook(
+            @PathVariable UUID id,
+            @Valid @RequestBody WebhookRequest request) {
+
+        Webhook existing = webhookService.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Webhook", "id", id));
+
+        existing.setName(request.getName());
+        existing.setDescription(request.getDescription());
+        existing.setUrl(request.getUrl());
+        if (request.getSecret() != null && !request.getSecret().isBlank()) {
+            existing.setSecret(request.getSecret());
+        }
+        existing.setEvents(request.getEvents());
+        // SECURITY: filter forbidden headers before persisting. See FORBIDDEN_HEADER_NAMES.
+        existing.setCustomHeaders(sanitizeCustomHeaders(request.getCustomHeaders()));
+
+        Webhook updated = webhookService.update(existing);
+        log.info("Updated webhook {}", id);
+
+        return ResponseEntity.ok(WebhookResponse.fromEntity(updated));
+    }
+
+    /**
+     * Delete a webhook.
+     */
+    @DeleteMapping("/{id}")
+    @RequiresPermission(Permission.SYSTEM_ADMIN)
+    @RequiresWebhookScope(WebhookScopes.WEBHOOK_DELETE)
+    @Operation(summary = "Delete webhook", description = "Delete a webhook configuration")
+    public ResponseEntity<Void> deleteWebhook(@PathVariable UUID id) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        webhookService.delete(id, tenantId);
+        log.info("Deleted webhook {} for tenant {}", id, tenantId);
+        return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * Activate a webhook.
+     */
+    @PostMapping("/{id}/activate")
+    @RequiresPermission(Permission.SYSTEM_ADMIN)
+    @RequiresWebhookScope(WebhookScopes.WEBHOOK_MANAGE)
+    @Operation(summary = "Activate webhook", description = "Activate a disabled webhook")
+    public ResponseEntity<WebhookResponse> activateWebhook(@PathVariable UUID id) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        return webhookService.activate(id, tenantId)
+                .map(WebhookResponse::fromEntity)
+                .map(ResponseEntity::ok)
+                .orElseThrow(() -> new ResourceNotFoundException("Webhook", "id", id));
+    }
+
+    /**
+     * Deactivate a webhook.
+     */
+    @PostMapping("/{id}/deactivate")
+    @RequiresPermission(Permission.SYSTEM_ADMIN)
+    @RequiresWebhookScope(WebhookScopes.WEBHOOK_MANAGE)
+    @Operation(summary = "Deactivate webhook", description = "Deactivate an active webhook")
+    public ResponseEntity<WebhookResponse> deactivateWebhook(@PathVariable UUID id) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        return webhookService.deactivate(id, tenantId)
+                .map(WebhookResponse::fromEntity)
+                .map(ResponseEntity::ok)
+                .orElseThrow(() -> new ResourceNotFoundException("Webhook", "id", id));
+    }
+
+    /**
+     * Get delivery history for a webhook.
+     * BUG-016 FIX: The delivery query now uses a method that includes a tenantId
+     * filter (findByWebhookIdAndTenantIdOrderByCreatedAtDesc) instead of relying
+     * solely on the indirect webhook-existence check for tenant isolation.
+     */
+    @GetMapping("/{id}/deliveries")
+    @RequiresPermission(Permission.SYSTEM_ADMIN)
+    @RequiresWebhookScope(WebhookScopes.WEBHOOK_DELIVERIES_READ)
+    @Operation(summary = "Get deliveries", description = "Get delivery history for a webhook")
+    public ResponseEntity<Page<WebhookDeliveryResponse>> getDeliveries(
+            @PathVariable UUID id,
+            Pageable pageable) {
+
+        UUID tenantId = TenantContext.getCurrentTenant();
+
+        // Verify webhook exists and belongs to this tenant
+        webhookService.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Webhook", "id", id));
+
+        // BUG-016 FIX: Pass tenantId explicitly to the repository so the delivery
+        // query has its own tenant guard — not just the webhook ownership check above.
+        Page<WebhookDeliveryResponse> deliveries = deliveryRepository
+                .findByWebhookIdAndTenantIdOrderByCreatedAtDesc(id, tenantId, pageable)
+                .map(WebhookDeliveryResponse::fromEntity);
+
+        return ResponseEntity.ok(deliveries);
+    }
+
+    /**
+     * Retry a failed delivery.
+     * BUG-008 FIX: All state mutation (status reset + save) now happens inside
+     * WebhookService#retryDelivery which is @Transactional, eliminating the race
+     * condition between the status-reset write and the webhook dispatcher.
+     */
+    @PostMapping("/deliveries/{deliveryId}/retry")
+    @RequiresPermission(Permission.SYSTEM_ADMIN)
+    @RequiresWebhookScope(WebhookScopes.WEBHOOK_DELIVERIES_RETRY)
+    @Operation(summary = "Retry delivery", description = "Retry a failed webhook delivery")
+    public ResponseEntity<WebhookDeliveryResponse> retryDelivery(@PathVariable UUID deliveryId) {
+        WebhookDelivery saved = webhookService.retryDelivery(deliveryId);
+        log.info("Scheduled retry for delivery {}", deliveryId);
+        return ResponseEntity.ok(WebhookDeliveryResponse.fromEntity(saved));
+    }
+
+    /**
+     * Strip forbidden header names from the user-supplied customHeaders JSON string.
+     *
+     * <p>customHeaders is stored as a JSON object string (Map&lt;String,String&gt;).
+     * We parse, filter forbidden keys (case-insensitive), and re-serialize so the
+     * downstream {@code WebhookDeliveryService} can never inject them on outbound calls.</p>
+     *
+     * @param customHeadersJson raw JSON string from the request DTO (may be null/blank)
+     * @return sanitized JSON string (same shape) or the original value if blank/unparseable
+     */
+    private String sanitizeCustomHeaders(String customHeadersJson) {
+        if (customHeadersJson == null || customHeadersJson.isBlank()) {
+            return customHeadersJson;
+        }
+        try {
+            @SuppressWarnings("unchecked")
+            Map<String, String> parsed = objectMapper.readValue(customHeadersJson, Map.class);
+            // Preserve insertion order; strip forbidden keys case-insensitively.
+            Map<String, String> filtered = new LinkedHashMap<>();
+            parsed.forEach((k, v) -> {
+                if (k == null) return;
+                if (FORBIDDEN_HEADER_NAMES.contains(k.toLowerCase())) {
+                    log.warn("Stripping forbidden custom header '{}' from webhook payload", k);
+                    return;
+                }
+                filtered.put(k, v);
+            });
+            return objectMapper.writeValueAsString(filtered);
+        } catch (JsonProcessingException e) {
+            // Malformed JSON — surface as a 4xx rather than silently storing untrusted bytes.
+            throw new BusinessException("customHeaders must be a JSON object of string keys/values");
+        }
+    }
+}

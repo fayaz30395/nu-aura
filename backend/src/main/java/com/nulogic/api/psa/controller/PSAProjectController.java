@@ -1,0 +1,85 @@
+package com.nulogic.api.psa.controller;
+
+import com.nulogic.application.psa.service.PSAService;
+import com.nulogic.common.security.RequiresPermission;
+import com.nulogic.domain.psa.PSAProject;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import static com.nulogic.common.security.Permission.PROJECT_CREATE;
+import static com.nulogic.common.security.Permission.PROJECT_VIEW;
+
+/**
+ * REST controller for PSA Project management.
+ *
+ * <p><strong>SECURITY:</strong> All operations enforce tenant isolation through the PSAService layer.
+ * Projects are always scoped to the current tenant from TenantContext.</p>
+ */
+@RestController
+@RequestMapping("/api/v1/psa/projects")
+@RequiredArgsConstructor
+public class PSAProjectController {
+    private final PSAService psaService;
+
+    @PostMapping
+    @RequiresPermission(PROJECT_CREATE)
+    public ResponseEntity<PSAProject> createProject(@Valid @RequestBody PSAProject project) {
+        return ResponseEntity.ok(psaService.createProject(project));
+    }
+
+    @GetMapping
+    @RequiresPermission(PROJECT_VIEW)
+    public ResponseEntity<Page<PSAProject>> getAllProjects(
+            @PageableDefault(size = 20, sort = "startDate", direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok(psaService.getAllProjects(pageable));
+    }
+
+    @GetMapping("/{id}")
+    @RequiresPermission(PROJECT_VIEW)
+    public ResponseEntity<PSAProject> getProject(@PathVariable UUID id) {
+        return psaService.getProject(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/status/{status}")
+    @RequiresPermission(PROJECT_VIEW)
+    public ResponseEntity<List<PSAProject>> getProjectsByStatus(@PathVariable PSAProject.ProjectStatus status) {
+        return ResponseEntity.ok(psaService.getProjectsByStatus(status));
+    }
+
+    @PutMapping("/{id}")
+    @RequiresPermission(PROJECT_CREATE)
+    public ResponseEntity<PSAProject> updateProject(@PathVariable UUID id, @Valid @RequestBody PSAProject project) {
+        return psaService.updateProject(id, project)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping("/{id}")
+    @RequiresPermission(PROJECT_CREATE)
+    public ResponseEntity<Void> deleteProject(@PathVariable UUID id) {
+        if (psaService.deleteProject(id)) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @PostMapping("/{id}/allocate")
+    @RequiresPermission(PROJECT_CREATE)
+    public ResponseEntity<PSAProject> allocateResources(@PathVariable UUID id, @Valid @RequestBody Map<String, Object> allocation) {
+        return psaService.allocateResources(id, allocation)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+}

@@ -1,0 +1,38 @@
+package com.nulogic.application.user.service;
+
+import com.nulogic.common.security.UserPrincipal;
+import com.nulogic.domain.user.User;
+import com.nulogic.infrastructure.user.repository.UserRepository;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@lombok.extern.slf4j.Slf4j
+public class CustomUserDetailsService implements UserDetailsService {
+
+    private final UserRepository userRepository;
+
+    public CustomUserDetailsService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        // Try tenant-scoped lookup first, then fall back to cross-tenant for login
+        // (AuthService.login sets TenantContext from findByEmail result)
+        User user = userRepository.findByEmailAndTenantId(username,
+                        com.nulogic.common.security.TenantContext.getCurrentTenant())
+                .or(() -> userRepository.findByEmail(username))
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+
+        // SEC-C01 FIX: Removed password hash details from log output to prevent
+        // credential leakage if an attacker gains access to application logs.
+        log.debug("Loading user: email={}, id={}", user.getEmail(), user.getId());
+
+        return UserPrincipal.create(user);
+    }
+}

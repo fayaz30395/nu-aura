@@ -1,0 +1,33 @@
+package com.nulogic.api.knowledge.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class UpdateBlogPostRequest {
+
+    private UUID categoryId;
+
+    private String title;
+    private String slug;
+    private String excerpt;
+    private String featuredImageUrl;
+    private String content;
+
+    private String visibility;
+    private String status;
+
+    private LocalDateTime scheduledFor;
+    private Integer readTimeMinutes;
+
+    private Boolean isFeatured;
+    private LocalDateTime featuredUntil;
+}

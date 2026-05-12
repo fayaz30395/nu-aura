@@ -1,0 +1,60 @@
+package com.nulogic.api.user.controller;
+
+import com.nulogic.api.user.dto.AssignRolesRequest;
+import com.nulogic.api.user.dto.UserResponse;
+import com.nulogic.application.user.service.RoleManagementService;
+import com.nulogic.common.security.RequiresPermission;
+import com.nulogic.common.security.SecurityContext;
+import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
+
+import static com.nulogic.common.security.Permission.USER_MANAGE;
+import static com.nulogic.common.security.Permission.USER_VIEW;
+
+@RestController
+@RequestMapping("/api/v1/users")
+@RequiredArgsConstructor
+public class UserController {
+
+    private final RoleManagementService roleManagementService;
+
+    /**
+     * BUG-022 FIX: Self-service endpoint intentionally lacks @RequiresPermission.
+     * This endpoint is open to all authenticated users and returns only their own profile data.
+     * The JWT authentication layer (JwtAuthenticationFilter) ensures the user is authenticated.
+     * No additional permission check is needed since users only see their own data.
+     */
+    @GetMapping("/me")
+    @Operation(summary = "Get current user profile", description = "Returns the profile of the currently authenticated user with roles")
+    public ResponseEntity<UserResponse> getCurrentUser() {
+        UUID userId = SecurityContext.getCurrentUserId();
+        UserResponse user = roleManagementService.getUserById(userId);
+        return ResponseEntity.ok(user);
+    }
+
+    @GetMapping
+    @RequiresPermission(USER_VIEW)
+    public ResponseEntity<Page<UserResponse>> getAllUsers(
+            @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<UserResponse> users = roleManagementService.getAllUsers(pageable);
+        return ResponseEntity.ok(users);
+    }
+
+    @PutMapping("/{id}/roles")
+    @RequiresPermission(USER_MANAGE)
+    public ResponseEntity<UserResponse> assignRoles(
+            @PathVariable UUID id,
+            @Valid @RequestBody AssignRolesRequest request) {
+        UserResponse user = roleManagementService.assignRolesToUser(id, request);
+        return ResponseEntity.ok(user);
+    }
+}
