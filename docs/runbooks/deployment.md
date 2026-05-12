@@ -220,22 +220,6 @@ for pod in $(kubectl get pods -n hrms -l app=hrms-backend -o jsonpath='{.items[*
 done
 ```
 
----
-
-## 7. Render Deploy Path (Fallback)
-
-Render is used for the staging environment and as a fallback if GKE is unavailable. The
-`render.yaml` blueprint defines both services.
-
-```bash
-# Manual deploy via Render CLI
-render deploys create --service-id=<backend-svc-id> --commit=<sha>
-render deploys create --service-id=<frontend-svc-id> --commit=<sha>
-
-# Monitor
-render deploys list --service-id=<backend-svc-id> --limit=5
-render logs --service-id=<backend-svc-id> --tail
-```
 
 Differences vs GKE:
 

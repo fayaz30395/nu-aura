@@ -6,6 +6,55 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Repo layout cleanup (Phase 1 — 2026-05-13)
+
+#### Changed
+
+- Top-level `deployment/`, `monitoring/`, `lib/`, `prometheus.yml` moved to `infra/{deployment,monitoring,mvn-local-deps}`.
+- `themes/` → `docs/design-system/`
+- `AGENTS.md` → `docs/agents/overview.md`
+- `SETUP.md` content merged into `README.md`
+- `db/seed/V001__seed_data.sql` → `backend/src/main/resources/db/migration/V171__seed_data.sql`
+- `scripts/` namespaced into `dev/`, `db/`, `docker/`, `qa/`, `setup/`
+- `.claude/skills/nu-aura-team-roles/` → `docs/team/roles/`
+- `backend/DEVELOPER_CHECKLIST.md`, `TESTING_GUIDE.md` → `docs/runbooks/`
+- `backend/docs/assets/` → `docs/architecture/backend-assets/`
+- `frontend/docs/DESIGN_SYSTEM_REDESIGN.md` → `docs/architecture/frontend/design-system-redesign.md`
+
+#### Removed
+
+- 4 byte-identical duplicate root scripts (`setup-claude-personal.sh`, `start-dev.sh`, `stop-dev.sh`, `promote-superadmin.sql`)
+- 3 stale root `.skill` files + `nu-aura-dev/`, `nu-aura-qa/` dirs (not referenced in `skills-lock.json`)
+- `config/` (byte-identical to `deployment/config/`)
+- `railway.json`, `render.yaml` (zero functional refs; project ships via GCP cloudbuild)
+- `tools/` (only contained byte-identical duplicate of `scripts/test_ui_with_ai.py`)
+- `script.sh` (one-off zshrc installer)
+- 33+ MB of committed runtime logs in `backend/` and `backend/logs/`
+- Stray `backend/.next/`, `backend/.github/`, `backend/anthropic-ai-sdk-0.78.0.tgz`, ad-hoc API result JSONs
+- `frontend/sessions/` (~120 .next-dev cache files), `spinner-mega-preview.html`, `spinner-preview-v2.html`, runtime log files
+- `qa-reports/` (full history, gitignored), `docs/validation/` (47 loop logs), `docs/qa/*` loose files
+- `NU-AURA-QA-Report-2026-04-01.xlsx`, `docs/architecture/NU_AURA_PLATFORM_ARCHITECTURE.docx`, `docs/assets/Nu Talent Management System*.pdf` (pre-rename project name)
+- `docs/screenshots/qa-sweep-2026-05-02/`, `.github/java-upgrade/2026*/` (committed tool runs)
+- `.claude/skills/rails-backend/` (wrong stack), `.claude/skills/nu-usecase-runner/` (incomplete)
+- `scripts/migrate-nuhire-to-nuaura.mjs` (one-time migration, completed)
+- `backend/docker-compose.yml` (diverges from root, unreferenced)
+- All `.DS_Store` files
+
+#### Added
+
+- New top-level `infra/` directory (`deployment/`, `monitoring/`, `mvn-local-deps/`) with `infra/README.md` describing the bucket
+- `docs/team/roles/` (formerly `.claude/skills/nu-aura-team-roles/`)
+- `docs/qa/README.md` stub for new retention policy
+- Naming convention: `lower-kebab-case` for files/dirs; `UPPER-CASE.md` for root meta only
+- Expanded `.gitignore` for logs, build outputs, runtime artifacts (`*.tgz`, `nohup.out`, `**/.next/`, `**/test-results/`, `**/playwright-report/`, `**/.claude-flow/`, `**/.playwright-mcp/`, `frontend/sessions/`, `.vercel/`, `.claude/skills/nu-chrome-e2e/runs/`, `.github/java-upgrade/2*/`)
+
+#### Updated references
+
+- `.github/workflows/ci.yml`: 3 `mvn install:install-file` paths → `infra/mvn-local-deps/`
+- `docker-compose.yml`: prometheus mount path → `./infra/monitoring/prometheus.yml`
+- `infra/deployment/cloudbuild.yaml`: 14 `'deployment/...'` refs → `'infra/deployment/...'`
+- `frontend/package.json`: `test:e2e:autonomous` → `bash ../scripts/qa/qa-orchestrator/run.sh`
+
 ### Security (Sprint 3 — 2026-05-12)
 
 - Closed regressions from sprint-2: DataScope CUSTOM scope strict allowlist,
