@@ -47,6 +47,14 @@ public class Tenant extends BaseEntity {
     @Builder.Default
     private String country = "IN";
 
+    // IANA timezone identifier — drives per-tenant local-time resolution (attendance, payroll
+    // cutoffs, leave accrual). V165 backfills 'Asia/Kolkata' for legacy rows and enforces
+    // NOT NULL + regex shape check. TenantTimeService is the canonical resolver and falls back
+    // to Asia/Kolkata on parse failure so a bad value cannot crash scheduled jobs.
+    @Column(name = "timezone", nullable = false, length = 40)
+    @Builder.Default
+    private String timezone = "Asia/Kolkata";
+
     public void activate() {
         if (this.status == TenantStatus.PENDING_ACTIVATION || this.status == TenantStatus.SUSPENDED) {
             this.status = TenantStatus.ACTIVE;

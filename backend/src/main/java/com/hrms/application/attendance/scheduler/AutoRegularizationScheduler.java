@@ -111,7 +111,9 @@ public class AutoRegularizationScheduler {
         try {
             // Load the tenant-specific config (or use defaults)
             int afterDays = getTenantRegularizeAfterDays(tenantId);
-            LocalDate cutoffDate = LocalDate.now().minusDays(afterDays);
+            // S11-M Wave-10 P0-1: tenant-local "today" (IST fallback) for tenant-aware cutoff.
+            // TODO(S11-M): inject TenantTimeService and use tenantTimeService.today(tenantId).
+            LocalDate cutoffDate = LocalDate.now(java.time.ZoneId.of("Asia/Kolkata")).minusDays(afterDays);
 
             // BUG-004 FIX: Use a dynamic rolling window instead of a hardcoded
             // 2020-01-01 floor.  We only need to look back MAX_LOOK_BACK_DAYS

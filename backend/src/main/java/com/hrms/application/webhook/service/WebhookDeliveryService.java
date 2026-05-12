@@ -30,6 +30,7 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -346,6 +347,83 @@ public class WebhookDeliveryService {
             sb.append(String.format("%02x", b));
         }
         return sb.toString();
+    }
+
+    /**
+     * Verify an inbound webhook signature, accepting EITHER the current secret OR the
+     * previous secret while the rotation window has not expired.
+     *
+     * <p>This is the consumer-side of the dual-secret rotation contract introduced in
+     * V166: when an admin rotates a webhook's secret, payloads already in-flight (or
+     * stored for later replay by the consumer) may still carry signatures generated
+     * with the prior secret. Until {@link Webhook#getPreviousSecretExpiresAt()}, we
+     * accept either signature; afterwards, only the current secret is valid.</p>
+     *
+     * <p>NOTE: NU-AURA currently has no inbound webhook endpoint. This method exists
+     * so future inbound paths and unit tests can validate that the rotation window
+     * behaves correctly without duplicating the dual-secret logic.</p>
+     *
+     * @param webhook              the webhook whose signature we are verifying
+     * @param payload              the raw payload bytes that were signed (UTF-8 JSON)
+     * @param providedSignatureHex hex signature received from the caller
+     *                             (without any "sha256=" prefix — strip that upstream)
+     * @return true iff {@code providedSignatureHex} matches a signature computed from
+     *         either the current secret or a non-expired previous secret
+     */
+    public boolean verifySignature(Webhook webhook, String payload, String providedSignatureHex) {
+        if (webhook == null || providedSignatureHex == null || providedSignatureHex.isBlank()) {
+            return false;
+        }
+        // Try the current secret first — the common case, even mid-rotation, is that
+        // the consumer has already updated.
+        if (matchesSignature(payload, webhook.getSecret(), providedSignatureHex)) {
+            return true;
+        }
+        // Then try the previous secret iff the rotation window is still open. A NULL
+        // previousSecret or an expired previousSecretExpiresAt collapses this to false
+        // without invoking HMAC — important to avoid acting on stale grace-period state.
+        LocalDateTime previousExpiresAt = webhook.getPreviousSecretExpiresAt();
+        if (previousExpiresAt != null && previousExpiresAt.isAfter(LocalDateTime.now())) {
+            return matchesSignature(payload, webhook.getPreviousSecret(), providedSignatureHex);
+        }
+        return false;
+    }
+
+    /**
+     * Constant-time HMAC comparison. Returns false on any nullity/blank/error path so
+     * callers cannot accidentally treat a misconfigured webhook as verified.
+     */
+    private boolean matchesSignature(String payload, String secret, String providedSignatureHex) {
+        if (secret == null || secret.isBlank() || payload == null) {
+            return false;
+        }
+        String expected = computeSignature(payload, secret);
+        if (expected.isEmpty()) {
+            return false;
+        }
+        byte[] a = expected.getBytes(StandardCharsets.UTF_8);
+        byte[] b = providedSignatureHex.getBytes(StandardCharsets.UTF_8);
+        // MessageDigest.isEqual is constant-time on length-equal inputs (and returns
+        // false in constant time when lengths differ) — exactly what HMAC verification needs.
+        return MessageDigest.isEqual(a, b);
+    }
+
+    /**
+     * V166: hourly sweep that clears expired previous secrets so they cannot be used to
+     * verify a signature past the rotation window. Bulk UPDATE keeps the sweep cheap.
+     *
+     * <p>ShedLock keeps the job single-flighted in a multi-pod deployment; the partial
+     * index {@code idx_webhooks_previous_secret_expires} keeps the predicate fast.</p>
+     */
+    @Scheduled(cron = "0 0 * * * *") // top of every hour
+    @SchedulerLock(name = "webhookClearExpiredPreviousSecrets",
+            lockAtLeastFor = "PT5M", lockAtMostFor = "PT55M")
+    @Transactional
+    public void clearExpiredPreviousSecrets() {
+        int cleared = webhookRepository.clearExpiredPreviousSecrets(LocalDateTime.now());
+        if (cleared > 0) {
+            log.info("Cleared {} expired previous_secret(s) on webhooks", cleared);
+        }
     }
 
     /**

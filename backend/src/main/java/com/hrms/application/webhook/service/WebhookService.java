@@ -1,10 +1,12 @@
 package com.hrms.application.webhook.service;
 
+import com.hrms.application.audit.service.AuditLogService;
 import com.hrms.common.config.CacheConfig;
 import com.hrms.common.exception.BusinessException;
 import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.security.TenantContext;
 import com.hrms.common.validation.SsrfProtectionUtils;
+import com.hrms.domain.audit.AuditLog.AuditAction;
 import com.hrms.domain.webhook.Webhook;
 import com.hrms.domain.webhook.WebhookDelivery;
 import com.hrms.domain.webhook.WebhookStatus;
@@ -18,6 +20,9 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.SecureRandom;
+import java.time.LocalDateTime;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -33,9 +38,27 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class WebhookService {
 
+    /**
+     * Length of the rotation window during which the previous secret remains valid for
+     * verification. 24h matches our longest webhook retry backoff plus consumer redeploy
+     * windows — anything shorter would risk breaking in-flight retries on slow consumers.
+     */
+    private static final int ROTATION_WINDOW_HOURS = 24;
+
+    /**
+     * Secret material width: 32 bytes (256 bits) of CSPRNG output, Base64-encoded.
+     * Matches HMAC-SHA256 block size and is intentionally longer than the prior practice
+     * of leaving the value to admins.
+     */
+    private static final int SECRET_BYTES = 32;
+
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
+
     private final WebhookDeliveryRepository deliveryRepository;
 
     private final WebhookRepository webhookRepository;
+
+    private final AuditLogService auditLogService;
 
     /**
      * Find all active webhooks for a tenant.
@@ -243,5 +266,110 @@ public class WebhookService {
         delivery.setStatus(WebhookDelivery.DeliveryStatus.PENDING);
         delivery.setNextRetryAt(null);
         return deliveryRepository.save(delivery);
+    }
+
+    /**
+     * Result of {@link #rotateSecret(UUID)}.
+     *
+     * <p>The newly generated secret is returned ONCE so the admin can share it with the
+     * consumer out-of-band. We do NOT expose any endpoint to read it back — once the
+     * admin loses this response the only remaining recovery is to rotate again.</p>
+     *
+     * <p>{@code previousSecretExpiresAt} tells the admin how long the old secret will
+     * keep working — typically 24h.</p>
+     */
+    public record SecretRotationResult(UUID webhookId, String newSecret, LocalDateTime previousSecretExpiresAt) {
+    }
+
+    /**
+     * Admin-only: rotate a webhook's HMAC signing secret with a dual-secret window.
+     *
+     * <p>Behaviour:</p>
+     * <ul>
+     *   <li>Generates a fresh {@value #SECRET_BYTES}-byte CSPRNG secret, Base64-encoded.</li>
+     *   <li>Moves the current secret into {@code previousSecret} and stamps
+     *       {@code previousSecretExpiresAt} = now + {@value #ROTATION_WINDOW_HOURS}h.</li>
+     *   <li>Writes the new secret into {@code secret}.</li>
+     *   <li>Audits the action so we have a paper trail of who rotated and when.</li>
+     *   <li>Evicts webhook caches so the dispatcher picks up the new secret immediately.</li>
+     * </ul>
+     *
+     * <p>SCOPE NOTE: the new secret is returned to the caller only — there is no API to
+     * retrieve it later. The admin is responsible for sharing it with the consumer.</p>
+     *
+     * @param webhookId webhook to rotate (must belong to current tenant)
+     * @return the new secret + rotation-window expiry. Newly-minted secret returned ONCE.
+     * @throws ResourceNotFoundException if webhook does not exist for current tenant
+     */
+    @Caching(evict = {
+            @CacheEvict(value = CacheConfig.WEBHOOKS, key = "#root.target.tenantKey()"),
+            @CacheEvict(value = CacheConfig.ACTIVE_WEBHOOKS, key = "#root.target.tenantKey()")
+    })
+    @Transactional
+    public SecretRotationResult rotateSecret(UUID webhookId) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        if (tenantId == null) {
+            throw new BusinessException("Cannot rotate webhook secret: no tenant context");
+        }
+
+        Webhook webhook = webhookRepository.findByIdAndTenantId(webhookId, tenantId)
+                .orElseThrow(() -> new ResourceNotFoundException("Webhook", "id", webhookId));
+
+        String newSecret = generateSecret();
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime expiresAt = now.plusHours(ROTATION_WINDOW_HOURS);
+
+        // Preserve the existing secret for the rotation window so in-flight retries
+        // (and consumer-side verification of payloads signed with the old key) still work.
+        // If there was no prior secret we simply leave previousSecret null — there's no
+        // history to grace-period through.
+        String currentSecret = webhook.getSecret();
+        if (currentSecret != null && !currentSecret.isBlank()) {
+            webhook.setPreviousSecret(currentSecret);
+            webhook.setPreviousSecretExpiresAt(expiresAt);
+        }
+        webhook.setSecret(newSecret);
+
+        webhookRepository.save(webhook);
+
+        // Audit trail — using AuditAction.UPDATE because the enum has no dedicated
+        // ROTATE_SECRET value (extending the enum is out of scope for this fix;
+        // entityType + description carry the semantic detail downstream).
+        auditLogService.logAction(
+                "Webhook",
+                webhookId,
+                AuditAction.UPDATE,
+                null,
+                null,
+                "ROTATE_SECRET — previous secret valid until " + expiresAt
+        );
+
+        log.info("Rotated secret for webhook {} (tenant {}); previous secret valid until {}",
+                webhookId, tenantId, expiresAt);
+
+        return new SecretRotationResult(webhookId, newSecret, expiresAt);
+    }
+
+    /**
+     * SpEL helper for {@link #rotateSecret} cache eviction. The webhook entity carries
+     * its own tenantId, but {@code #root.target} makes that awkward inside the
+     * {@code @Caching} annotation — exposing the lookup via a method avoids that
+     * gymnastic and keeps the cache key identical to the rest of this class
+     * ({@link TenantContext#getCurrentTenant()}).
+     */
+    public String tenantKey() {
+        UUID t = TenantContext.getCurrentTenant();
+        return t == null ? "anon" : t.toString();
+    }
+
+    /**
+     * Generate a {@value #SECRET_BYTES}-byte CSPRNG secret, Base64-encoded (no padding,
+     * URL-safe alphabet). Result is roughly 43 characters and fits in the
+     * {@code VARCHAR(255)} column comfortably with room for future encryption envelope.
+     */
+    private String generateSecret() {
+        byte[] bytes = new byte[SECRET_BYTES];
+        SECURE_RANDOM.nextBytes(bytes);
+        return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
     }
 }

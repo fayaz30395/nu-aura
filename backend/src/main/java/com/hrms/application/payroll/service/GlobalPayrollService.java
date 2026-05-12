@@ -446,7 +446,9 @@ public class GlobalPayrollService {
     @Transactional(readOnly = true)
     public GlobalPayrollDashboard getDashboard() {
         UUID tenantId = TenantContext.requireCurrentTenant();
-        int currentYear = Year.now().getValue();
+        // S11-M Wave-10 P0-1: tenant-local year (IST fallback) so YTD totals don't blip on Jan 1.
+        // TODO(S11-M): inject TenantTimeService and use tenantTimeService.today(tenantId).getYear().
+        int currentYear = Year.now(java.time.ZoneId.of("Asia/Kolkata")).getValue();
 
         // Get counts
         List<PayrollLocation> activeLocations = locationRepository.findByTenantIdAndIsActiveTrue(tenantId);

@@ -83,7 +83,9 @@ public class AttendanceRecordService {
         validateEmployeeId(employeeId);
         UUID tenantId = validateAndGetTenantId();
 
-        LocalDateTime actualCheckInTime = checkInTime != null ? checkInTime : LocalDateTime.now();
+        // S11-M Wave-10 P0-1: tenant-local fallback (IST) so a UTC JVM doesn't shift attendance day.
+        // TODO(S11-M): inject TenantTimeService and use tenantTimeService.now(tenantId).
+        LocalDateTime actualCheckInTime = checkInTime != null ? checkInTime : LocalDateTime.now(java.time.ZoneId.of("Asia/Kolkata"));
         // Use provided attendanceDate if available, otherwise extract from checkInTime
         LocalDate checkInDate = attendanceDate != null ? attendanceDate : actualCheckInTime.toLocalDate();
 
@@ -177,7 +179,9 @@ public class AttendanceRecordService {
         validateEmployeeId(employeeId);
         UUID tenantId = validateAndGetTenantId();
 
-        LocalDateTime actualCheckOutTime = checkOutTime != null ? checkOutTime : LocalDateTime.now();
+        // S11-M Wave-10 P0-1: tenant-local fallback (IST) — same rationale as checkIn.
+        // TODO(S11-M): inject TenantTimeService.
+        LocalDateTime actualCheckOutTime = checkOutTime != null ? checkOutTime : LocalDateTime.now(java.time.ZoneId.of("Asia/Kolkata"));
         // Use provided attendanceDate if available, otherwise extract from checkOutTime
         LocalDate checkOutDate = attendanceDate != null ? attendanceDate : actualCheckOutTime.toLocalDate();
 
@@ -282,8 +286,9 @@ public class AttendanceRecordService {
         if (tenantId == null) {
             throw new IllegalStateException("Tenant context not set. Please re-authenticate.");
         }
-        LocalDate today = checkInTime != null ? checkInTime.toLocalDate() : LocalDate.now();
-        LocalDateTime actualCheckInTime = checkInTime != null ? checkInTime : LocalDateTime.now();
+        // S11-M Wave-10 P0-1: tenant-local fallbacks (IST). TODO(S11-M): inject TenantTimeService.
+        LocalDate today = checkInTime != null ? checkInTime.toLocalDate() : LocalDate.now(java.time.ZoneId.of("Asia/Kolkata"));
+        LocalDateTime actualCheckInTime = checkInTime != null ? checkInTime : LocalDateTime.now(java.time.ZoneId.of("Asia/Kolkata"));
 
         // Get or create attendance record for today
         AttendanceRecord record = attendanceRecordRepository
@@ -311,8 +316,9 @@ public class AttendanceRecordService {
         if (tenantId == null) {
             throw new IllegalStateException("Tenant context not set. Please re-authenticate.");
         }
-        LocalDate today = checkOutTime != null ? checkOutTime.toLocalDate() : LocalDate.now();
-        LocalDateTime actualCheckOutTime = checkOutTime != null ? checkOutTime : LocalDateTime.now();
+        // S11-M Wave-10 P0-1: tenant-local fallbacks (IST). TODO(S11-M): inject TenantTimeService.
+        LocalDate today = checkOutTime != null ? checkOutTime.toLocalDate() : LocalDate.now(java.time.ZoneId.of("Asia/Kolkata"));
+        LocalDateTime actualCheckOutTime = checkOutTime != null ? checkOutTime : LocalDateTime.now(java.time.ZoneId.of("Asia/Kolkata"));
 
         AttendanceRecord record = attendanceRecordRepository
                 .findByEmployeeIdAndAttendanceDateAndTenantId(employeeId, today, tenantId)
@@ -671,7 +677,8 @@ public class AttendanceRecordService {
     public boolean isEmployeeCheckedIn(UUID employeeId) {
         validateEmployeeId(employeeId);
         UUID tenantId = validateAndGetTenantId();
-        LocalDate today = LocalDate.now();
+        // S11-M Wave-10 P0-1: tenant-local "today" (IST fallback). TODO(S11-M): inject TenantTimeService.
+        LocalDate today = LocalDate.now(java.time.ZoneId.of("Asia/Kolkata"));
 
         return attendanceRecordRepository
                 .findByEmployeeIdAndAttendanceDateAndTenantId(employeeId, today, tenantId)
@@ -684,7 +691,8 @@ public class AttendanceRecordService {
      */
     @Transactional(readOnly = true)
     public Optional<AttendanceRecord> getTodayAttendance(UUID employeeId) {
-        return getAttendanceForDate(employeeId, LocalDate.now());
+        // S11-M Wave-10 P0-1: tenant-local "today" (IST fallback). TODO(S11-M): inject TenantTimeService.
+        return getAttendanceForDate(employeeId, LocalDate.now(java.time.ZoneId.of("Asia/Kolkata")));
     }
 
     /**

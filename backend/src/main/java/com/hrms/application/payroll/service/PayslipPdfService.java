@@ -294,7 +294,8 @@ public class PayslipPdfService {
         document.add(footer);
 
         Paragraph generated = new Paragraph(
-                "Generated on: " + LocalDate.now().format(DateTimeFormatter.ofPattern("dd MMM yyyy")),
+                // S11-M Wave-10 P0-1: tenant-local civil day (IST fallback). TODO(S11-M): inject TenantTimeService.
+                "Generated on: " + LocalDate.now(java.time.ZoneId.of("Asia/Kolkata")).format(DateTimeFormatter.ofPattern("dd MMM yyyy")),
                 new Font(Font.HELVETICA, 8, Font.NORMAL, new Color(108, 117, 125)));
         generated.setAlignment(Element.ALIGN_CENTER);
         document.add(generated);

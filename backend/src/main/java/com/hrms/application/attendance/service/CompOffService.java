@@ -186,13 +186,15 @@ public class CompOffService {
      */
     @Transactional
     public int autoApproveEligibleRequests(UUID tenantId, int autoApproveAfterDays) {
-        LocalDate cutoff = LocalDate.now().minusDays(autoApproveAfterDays);
+        // S11-M Wave-10 P0-1: tenant-local "today" (IST fallback). TODO(S11-M): inject TenantTimeService.
+        LocalDate cutoff = LocalDate.now(java.time.ZoneId.of("Asia/Kolkata")).minusDays(autoApproveAfterDays);
         // R2-009 FIX: Replace hardcoded epoch date (2020-01-01) with a rolling 6-month
         // lookback window.  The epoch date caused the query to scan ALL pending comp-off
         // requests since the beginning of time on every nightly run, growing linearly
         // with the size of the dataset.  A 6-month window is large enough to catch any
         // legitimately pending request while keeping the query bounded.
-        LocalDate lookbackStart = LocalDate.now().minusMonths(6);
+        // S11-M Wave-10 P0-1: tenant-local "today" (IST fallback). TODO(S11-M): inject TenantTimeService.
+        LocalDate lookbackStart = LocalDate.now(java.time.ZoneId.of("Asia/Kolkata")).minusMonths(6);
         List<CompOffRequest> pending = compOffRequestRepository
                 .findPendingInDateRange(tenantId, lookbackStart, cutoff);
 
@@ -224,7 +226,8 @@ public class CompOffService {
                         compOffLeaveCode + " leave type not found for tenant " + tenantId +
                                 ". Please create a leave type with code " + compOffLeaveCode + "."));
 
-        int year = Year.now().getValue();
+        // S11-M Wave-10 P0-1: tenant-local year (IST fallback). TODO(S11-M): inject TenantTimeService.
+        int year = Year.now(java.time.ZoneId.of("Asia/Kolkata")).getValue();
         LeaveBalance balance = leaveBalanceRepository
                 .findByEmployeeIdAndLeaveTypeIdAndYearAndTenantId(
                         employeeId, compOffType.getId(), year, tenantId)

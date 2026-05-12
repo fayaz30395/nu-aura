@@ -424,4 +424,11 @@ spec:
           secret:
             secretName: hrms-google-drive-credentials
 
-      terminationGracePeriodSeconds: 30
+      # Wave-10 P2-6: 60s exceeds spring.lifecycle.timeout-per-shutdown-phase
+      # (30s default / 45s in prod profile) so the pod has headroom for:
+      #   1) the @PreDestroy STOMP shutdown broadcast (WebSocketConfig)
+      #   2) the embedded Tomcat finishing in-flight HTTP requests
+      #   3) Hikari / Lettuce / Kafka producers closing cleanly
+      # Setting this too low (e.g. the old 30s) causes K8s to SIGKILL mid-flush,
+      # leaving STOMP clients to retry storm against the next-ready pod.
+      terminationGracePeriodSeconds: 60

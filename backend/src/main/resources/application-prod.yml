@@ -3,6 +3,15 @@ spring:
     activate:
       on-profile: prod
 
+  # Wave-10 P2-6: production gets a longer per-phase shutdown budget (45s vs
+  # 30s default in application.yml). Real prod traffic carries longer-running
+  # uploads/exports/STOMP sessions; the extra 15s avoids forcibly killing
+  # in-flight work during a rolling deploy. Pod terminationGracePeriodSeconds
+  # in the Helm chart is 60s, which exceeds this with headroom for the
+  # Tomcat-stop and STOMP-broadcast phases combined.
+  lifecycle:
+    timeout-per-shutdown-phase: 45s
+
   datasource:
     hikari:
       # Neon cloud PostgreSQL limits: 100 connections per endpoint (free tier).

@@ -63,6 +63,29 @@ public class Webhook extends TenantAware {
     private String secret;
 
     /**
+     * Previous HMAC secret retained during a rotation window so in-flight deliveries
+     * (and consumer-side verification of any payload signed pre-rotation) keep working.
+     *
+     * <p>Set by {@code WebhookService#rotateSecret}; nulled out by a scheduled sweep
+     * once {@link #previousSecretExpiresAt} is in the past (see V166 migration).</p>
+     *
+     * <p>Signing always uses the current {@link #secret}. Verification accepts EITHER
+     * the current secret OR this previous secret while {@code previousSecretExpiresAt}
+     * has not yet elapsed — anything else is a verification failure.</p>
+     */
+    @Convert(converter = EncryptedStringConverter.class)
+    @Column(name = "previous_secret", length = 256)
+    private String previousSecret;
+
+    /**
+     * When the {@link #previousSecret} rotation window closes. After this timestamp,
+     * cleanup nulls out {@link #previousSecret} and verification falls back to the
+     * current secret only.
+     */
+    @Column(name = "previous_secret_expires_at")
+    private LocalDateTime previousSecretExpiresAt;
+
+    /**
      * Events this webhook subscribes to.
      */
     @ElementCollection(fetch = FetchType.LAZY)

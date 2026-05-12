@@ -116,8 +116,9 @@ public class StatutoryDeductionService {
             BigDecimal grossSalary,
             String state) {
 
-        // Delegate to the overloaded method with current month/year
-        LocalDate now = LocalDate.now();
+        // S11-M Wave-10 P0-1: tenant-local civil day (IST fallback) so payroll month resolves correctly.
+        // TODO(S11-M): inject TenantTimeService and use tenantTimeService.today(tenantId).
+        LocalDate now = LocalDate.now(java.time.ZoneId.of("Asia/Kolkata"));
         return calculate(employeeId, basicSalary, grossSalary, state,
                 now.getMonthValue(), now.getYear());
     }

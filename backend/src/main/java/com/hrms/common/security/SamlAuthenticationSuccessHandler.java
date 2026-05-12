@@ -187,24 +187,30 @@ public class SamlAuthenticationSuccessHandler implements AuthenticationSuccessHa
         return parts[parts.length - 1];
     }
 
+    /**
+     * Plant the post-SAML auth cookies.
+     *
+     * <p>SEC (S11-I): Dual-emit pattern. Sends BOTH the active default-named
+     * variant (legacy or hardened, controlled by {@code app.cookie.use-host-prefix})
+     * and the explicitly hardened {@code __Host-} variant so that a production
+     * flag-flip is non-breaking — every reader has been migrated to accept either
+     * name. Delegates attribute construction to {@link CookieConfig} so the
+     * SameSite / Secure / Path attributes cannot drift from the password-login
+     * path served by {@link com.hrms.api.auth.controller.AuthController}.</p>
+     */
     private void setAuthCookies(HttpServletResponse response, String accessToken, String refreshToken) {
-        ResponseCookie accessCookie = ResponseCookie.from(CookieConfig.ACCESS_TOKEN_COOKIE, accessToken)
-                .httpOnly(true)
-                .secure(cookieConfig.isSecureCookie())
-                .path("/")
-                .maxAge(3600)
-                .sameSite("Lax") // Lax required for SAML redirect flow (cross-origin POST)
-                .build();
-
-        ResponseCookie refreshCookie = ResponseCookie.from(CookieConfig.REFRESH_TOKEN_COOKIE, refreshToken)
-                .httpOnly(true)
-                .secure(cookieConfig.isSecureCookie())
-                .path("/api/v1/auth")
-                .maxAge(86400)
-                .sameSite("Lax")
-                .build();
-
-        response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
-        response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
+        // Default-named variant (legacy unless app.cookie.use-host-prefix=true).
+        response.addHeader(HttpHeaders.SET_COOKIE, cookieConfig.createAccessTokenCookie(accessToken).toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, cookieConfig.createRefreshTokenCookie(refreshToken).toString());
+        // Hardened __Host- variant — safe to emit unconditionally because all
+        // readers accept either name after S10-J + S11-I.
+        ResponseCookie hardenedAccess = cookieConfig.createHardenedAccessTokenCookie(accessToken);
+        if (hardenedAccess != null) {
+            response.addHeader(HttpHeaders.SET_COOKIE, hardenedAccess.toString());
+        }
+        ResponseCookie hardenedRefresh = cookieConfig.createHardenedRefreshTokenCookie(refreshToken);
+        if (hardenedRefresh != null) {
+            response.addHeader(HttpHeaders.SET_COOKIE, hardenedRefresh.toString());
+        }
     }
 }

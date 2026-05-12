@@ -173,8 +173,9 @@ public class RestrictedHolidayService {
         if (policy != null) {
             // Check minimum days before selection
             if (policy.getMinDaysBeforeSelection() != null) {
+                // S11-M Wave-10 P0-1: tenant-local "today" (IST fallback). TODO(S11-M): inject TenantTimeService.
                 long daysUntilHoliday = java.time.temporal.ChronoUnit.DAYS.between(
-                        LocalDate.now(), holiday.getHolidayDate());
+                        LocalDate.now(java.time.ZoneId.of("Asia/Kolkata")), holiday.getHolidayDate());
                 if (daysUntilHoliday < policy.getMinDaysBeforeSelection()) {
                     throw new IllegalArgumentException(
                             "Selection must be made at least " + policy.getMinDaysBeforeSelection()

@@ -465,7 +465,8 @@ public class BiometricIntegrationService {
 
     public BiometricDeviceResponse toDeviceResponse(BiometricDevice device) {
         UUID tenantId = device.getTenantId();
-        LocalDateTime todayStart = LocalDate.now().atStartOfDay();
+        // S11-M Wave-10 P0-1: tenant-local "today" (IST fallback). TODO(S11-M): inject TenantTimeService.
+        LocalDateTime todayStart = LocalDate.now(java.time.ZoneId.of("Asia/Kolkata")).atStartOfDay();
 
         long totalToday = punchLogRepository.countByDeviceAndStatusSince(
                 device.getId(), tenantId, BiometricPunchLog.ProcessedStatus.PROCESSED, todayStart)

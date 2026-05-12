@@ -51,8 +51,10 @@ public class LeaveAccrualScheduler {
      * Main monthly accrual job.
      * Cron: 2:00 AM UTC on the 1st of every month.
      */
+    // Wave-10 P0-4: PT60M → PT4H. Monthly cadence (720h) tolerates a 4h window
+    // and prevents lock-expiry-during-execution under 3-replica K8s.
     @Scheduled(cron = "${app.leave.accrual.cron:0 0 2 1 * *}", zone = "UTC")
-    @SchedulerLock(name = "accrueMonthlyLeave", lockAtLeastFor = "PT15M", lockAtMostFor = "PT60M")
+    @SchedulerLock(name = "accrueMonthlyLeave", lockAtLeastFor = "PT5M", lockAtMostFor = "PT4H")
     public void accrueMonthlyLeave() {
         log.info("LeaveAccrualScheduler: starting monthly leave accrual run");
 

@@ -99,7 +99,8 @@ public class AttendanceImportService {
             // Add sample data row
             Row sampleRow = sheet.createRow(1);
             sampleRow.createCell(0).setCellValue("EMP001");
-            sampleRow.createCell(1).setCellValue(LocalDate.now().format(DATE_FORMATTER));
+            // S11-M Wave-10 P0-1: tenant-local civil day (IST fallback). TODO(S11-M): inject TenantTimeService.
+            sampleRow.createCell(1).setCellValue(LocalDate.now(java.time.ZoneId.of("Asia/Kolkata")).format(DATE_FORMATTER));
             sampleRow.createCell(2).setCellValue("09:00");
             sampleRow.createCell(3).setCellValue("18:00");
             sampleRow.createCell(4).setCellValue("PRESENT");

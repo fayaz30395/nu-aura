@@ -132,8 +132,17 @@ public class TenantFilter extends OncePerRequestFilter {
     }
 
     /**
-     * Returns true if the request carries the access_token httpOnly cookie.
-     * Used to decide whether the X-Tenant-ID header should be honoured.
+     * Returns true if the request carries an access-token httpOnly cookie under
+     * EITHER the hardened {@code __Host-hrms-access} name OR the legacy
+     * {@code access_token} name. Used to decide whether the {@code X-Tenant-ID}
+     * header should be honoured.
+     *
+     * <p>SEC (S11-I): The dual-name check is required during the {@code __Host-}
+     * cookie rollover window. Once {@code app.cookie.use-host-prefix=true} ships
+     * to prod, an authenticated request will carry the hardened cookie and the
+     * legacy check alone would have wrongly fallen through to the
+     * "anonymous-with-header" branch, letting the X-Tenant-ID header override
+     * what should be a JWT-authoritative tenant.</p>
      */
     private boolean hasAccessTokenCookie(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
@@ -141,7 +150,9 @@ public class TenantFilter extends OncePerRequestFilter {
             return false;
         }
         for (Cookie c : cookies) {
-            if (CookieConfig.ACCESS_TOKEN_COOKIE.equals(c.getName())
+            String name = c.getName();
+            if ((CookieConfig.ACCESS_TOKEN_COOKIE_HOST.equals(name)
+                    || CookieConfig.ACCESS_TOKEN_COOKIE.equals(name))
                     && c.getValue() != null && !c.getValue().isBlank()) {
                 return true;
             }

@@ -12,11 +12,14 @@ import com.hrms.common.security.JwtTokenProvider;
 import com.hrms.common.security.SecurityContext;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -133,8 +136,16 @@ public class AuthController {
     @Operation(summary = "Refresh access token", description = "Use refresh token to get new access token")
     public ResponseEntity<AuthResponse> refresh(
             @RequestHeader(value = "X-Refresh-Token", required = false) String refreshTokenHeader,
-            @CookieValue(value = CookieConfig.REFRESH_TOKEN_COOKIE, required = false) String refreshTokenCookie,
+            HttpServletRequest request,
             HttpServletResponse response) {
+
+        // SEC (S11-I): Accept EITHER the hardened __Host-hrms-refresh cookie OR the
+        // legacy refresh_token cookie. Hardened wins when both are present (browser
+        // enforces Secure / Path=/ / no Domain on the __Host- prefix, so it cannot
+        // have been planted over plain HTTP or by a sibling subdomain).
+        String refreshTokenCookie = readCookieValue(request,
+                CookieConfig.REFRESH_TOKEN_COOKIE_HOST,
+                CookieConfig.REFRESH_TOKEN_COOKIE);
 
         // Support both header and cookie (prefer cookie for security)
         String refreshToken = refreshTokenCookie != null ? refreshTokenCookie : refreshTokenHeader;
@@ -163,9 +174,17 @@ public class AuthController {
     @Operation(summary = "Logout user", description = "Revoke tokens and clear authentication state")
     public ResponseEntity<Void> logout(
             @RequestHeader(value = "Authorization", required = false) String authHeader,
-            @CookieValue(value = CookieConfig.ACCESS_TOKEN_COOKIE, required = false) String accessTokenCookie,
-            @CookieValue(value = CookieConfig.REFRESH_TOKEN_COOKIE, required = false) String refreshTokenCookie,
+            HttpServletRequest request,
             HttpServletResponse response) {
+
+        // SEC (S11-I): Accept EITHER the hardened __Host- cookie OR the legacy
+        // unprefixed cookie. Hardened wins when both are present.
+        String accessTokenCookie = readCookieValue(request,
+                CookieConfig.ACCESS_TOKEN_COOKIE_HOST,
+                CookieConfig.ACCESS_TOKEN_COOKIE);
+        String refreshTokenCookie = readCookieValue(request,
+                CookieConfig.REFRESH_TOKEN_COOKIE_HOST,
+                CookieConfig.REFRESH_TOKEN_COOKIE);
 
         // Extract access token from header or cookie
         String accessToken = accessTokenCookie != null
@@ -218,19 +237,83 @@ public class AuthController {
 
     /**
      * Set secure httpOnly cookies for access and refresh tokens.
-     * Uses ResponseCookie for proper SameSite support.
+     *
+     * <p>SEC (S11-I): Dual-emit pattern. Sends BOTH the active variant (legacy or
+     * hardened, controlled by {@code app.cookie.use-host-prefix}) and the
+     * explicitly hardened {@code __Host-} variant on every successful auth so a
+     * production flag-flip is non-breaking: every reader has already been
+     * migrated to accept either name, and every writer plants both. Duplicate
+     * {@code Set-Cookie} headers with different names are legal and browsers
+     * keep them in distinct cookie slots.</p>
      */
     private void setAuthCookies(HttpServletResponse response, String accessToken, String refreshToken) {
-        // SEC: Delegate to CookieConfig which sets HttpOnly, Secure, SameSite=Strict, Path
+        // Default-named variant (legacy unless app.cookie.use-host-prefix=true).
         response.addHeader(HttpHeaders.SET_COOKIE, cookieConfig.createAccessTokenCookie(accessToken).toString());
         response.addHeader(HttpHeaders.SET_COOKIE, cookieConfig.createRefreshTokenCookie(refreshToken).toString());
+        // Hardened __Host- variant. Safe to emit unconditionally because all readers
+        // (JwtAuthenticationFilter, TenantFilter, RateLimitingFilter, this controller)
+        // accept either name after S10-J + S11-I.
+        addCookieIfPresent(response, cookieConfig.createHardenedAccessTokenCookie(accessToken));
+        addCookieIfPresent(response, cookieConfig.createHardenedRefreshTokenCookie(refreshToken));
     }
 
     /**
      * Clear auth cookies (for logout).
+     *
+     * <p>SEC (S11-I): Clear BOTH the legacy and hardened names so a logout
+     * during the rollover window evicts whichever cookie the browser is
+     * holding.</p>
      */
     private void clearAuthCookies(HttpServletResponse response) {
         response.addHeader(HttpHeaders.SET_COOKIE, cookieConfig.createClearAccessTokenCookie().toString());
         response.addHeader(HttpHeaders.SET_COOKIE, cookieConfig.createClearRefreshTokenCookie().toString());
+        addCookieIfPresent(response, cookieConfig.createClearHardenedAccessTokenCookie());
+        addCookieIfPresent(response, cookieConfig.createClearHardenedRefreshTokenCookie());
+    }
+
+    /**
+     * Adds a {@link ResponseCookie} to the response as a {@code Set-Cookie} header
+     * if the supplied cookie is non-null. Defensive guard for the rollover window:
+     * a test double or a mis-wired bean could return {@code null} from a hardened-cookie
+     * helper, and we don't want that to produce a 500 on every login.
+     */
+    private static void addCookieIfPresent(HttpServletResponse response, ResponseCookie cookie) {
+        if (cookie != null) {
+            response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        }
+    }
+
+    /**
+     * Read the first cookie value matching either of the two supplied names.
+     *
+     * <p>Used during the {@code __Host-} rollover window so every reader accepts
+     * EITHER the hardened name OR the legacy name. The hardened name is checked
+     * first because, when both are present, the {@code __Host-} prefix carries
+     * the stronger browser-enforced guarantees (Secure, Path=/, no Domain) and
+     * therefore wins.</p>
+     *
+     * @param request    incoming request
+     * @param hardened   the {@code __Host-} prefixed cookie name to prefer
+     * @param legacy     the legacy cookie name to accept as fallback
+     * @return the matching cookie value, or {@code null} if neither cookie is present
+     */
+    private static String readCookieValue(HttpServletRequest request, String hardened, String legacy) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies == null) {
+            return null;
+        }
+        String legacyValue = null;
+        for (Cookie c : cookies) {
+            String name = c.getName();
+            if (hardened.equals(name)) {
+                // Hardened wins immediately.
+                return c.getValue();
+            }
+            if (legacy.equals(name)) {
+                legacyValue = c.getValue();
+                // Keep scanning — a __Host- cookie may appear later in the array.
+            }
+        }
+        return legacyValue;
     }
 }

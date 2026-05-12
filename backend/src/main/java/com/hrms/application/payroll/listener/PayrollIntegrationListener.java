@@ -84,7 +84,8 @@ public class PayrollIntegrationListener {
                         event.getClaimNumber(), event.getCurrency(), event.getAmount()))
                 .sourceModule("EXPENSE")
                 .sourceId(event.getAggregateId())
-                .effectiveDate(LocalDate.now())
+                // S11-M Wave-10 P0-1: tenant-local civil day (IST fallback). TODO(S11-M): inject TenantTimeService.
+                .effectiveDate(LocalDate.now(java.time.ZoneId.of("Asia/Kolkata")))
                 .build();
 
         adjustmentRepository.save(adjustment);

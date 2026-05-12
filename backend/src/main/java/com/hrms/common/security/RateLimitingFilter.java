@@ -322,20 +322,31 @@ public class RateLimitingFilter extends OncePerRequestFilter {
             return "ip:" + getClientIp(request);
         }
 
-        // 2. Fallback: derive bucket key from httpOnly access_token cookie (primary auth mechanism)
+        // 2. Fallback: derive bucket key from httpOnly access-token cookie (primary auth mechanism).
+        // SEC (S11-I): Accept EITHER the hardened __Host-hrms-access cookie OR the legacy
+        // access_token cookie. Hardened wins when both are present, mirroring
+        // JwtAuthenticationFilter's precedence from S10-J.
         if (request.getCookies() != null) {
+            String hardenedValue = null;
+            String legacyValue = null;
             for (Cookie cookie : request.getCookies()) {
-                if (CookieConfig.ACCESS_TOKEN_COOKIE.equals(cookie.getName())) {
-                    try {
-                        String tokenKey = deriveTokenBucketKey(cookie.getValue());
-                        if (tokenKey != null) {
-                            return "user:" + tokenKey;
-                        }
-                    } catch (Exception e) {
-                        log.debug("Failed to derive bucket key from access_token cookie", e);
-                        // Fall through to API key / IP-based identification
+                String name = cookie.getName();
+                if (CookieConfig.ACCESS_TOKEN_COOKIE_HOST.equals(name)) {
+                    hardenedValue = cookie.getValue();
+                } else if (CookieConfig.ACCESS_TOKEN_COOKIE.equals(name) && legacyValue == null) {
+                    legacyValue = cookie.getValue();
+                }
+            }
+            String cookieToken = hardenedValue != null ? hardenedValue : legacyValue;
+            if (cookieToken != null) {
+                try {
+                    String tokenKey = deriveTokenBucketKey(cookieToken);
+                    if (tokenKey != null) {
+                        return "user:" + tokenKey;
                     }
-                    break;
+                } catch (Exception e) {
+                    log.debug("Failed to derive bucket key from access-token cookie", e);
+                    // Fall through to API key / IP-based identification
                 }
             }
         }

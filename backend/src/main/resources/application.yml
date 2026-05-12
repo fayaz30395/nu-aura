@@ -5,6 +5,16 @@ spring:
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:dev}
 
+  # Wave-10 P2-6: graceful shutdown. When SIGTERM arrives, the embedded Tomcat
+  # stops accepting new connections, in-flight HTTP requests are allowed to
+  # finish, and STOMP/WebSocket sessions are signalled (WebSocketConfig
+  # @PreDestroy broadcasts /topic/system.shutdown so clients reconnect cleanly
+  # to another pod instead of taking a TCP RST). Pod terminationGracePeriodSeconds
+  # MUST exceed this value (deployment/helm/hrms/templates/backend-deployment.yaml
+  # is set to 60s; prod profile bumps phase timeout to 45s).
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
+
   datasource:
     # SECURITY: Database credentials must be provided via environment variables
     # For local dev, use application-dev.yml with localhost defaults
@@ -233,6 +243,11 @@ management:
 server:
   port: ${PORT:8080}
   address: 0.0.0.0
+  # Wave-10 P2-6: graceful shutdown of the embedded Tomcat. Pairs with
+  # spring.lifecycle.timeout-per-shutdown-phase above. Together they let
+  # in-flight HTTP requests finish and STOMP clients reconnect to another
+  # pod (see WebSocketConfig.broadcastShutdownNotice) before the pod exits.
+  shutdown: graceful
   error:
     # Suppressed in prod profile; exposed in dev for easier debugging
     include-message: ${SERVER_ERROR_INCLUDE_MESSAGE:never}
