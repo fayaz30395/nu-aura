@@ -1,0 +1,98 @@
+name: Security Scan
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    # Weekly Sunday 02:00 UTC
+    - cron: '0 2 * * 0'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+
+jobs:
+  codeql-java:
+    name: CodeQL — Java
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Init CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: java
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+      - name: Install internal modules
+        run: |
+          mvn install:install-file -Dfile=infra/mvn-local-deps/nulogic-platform-1.0.0.pom -DgroupId=com.nulogic -DartifactId=nulogic-platform -Dversion=1.0.0 -Dpackaging=pom
+          mvn install:install-file -Dfile=infra/mvn-local-deps/common-module-1.0.0.jar -DpomFile=infra/mvn-local-deps/common-module-1.0.0.pom
+          mvn install:install-file -Dfile=infra/mvn-local-deps/pm-module-1.0.0.jar -DpomFile=infra/mvn-local-deps/pm-module-1.0.0.pom
+      - name: Build
+        working-directory: backend
+        run: mvn package -DskipTests -q
+      - name: Analyse
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:java"
+
+  codeql-js:
+    name: CodeQL — JavaScript/TypeScript
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Init CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: javascript-typescript
+      - name: Analyse
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:javascript-typescript"
+
+  secret-scan:
+    name: Secret scan (gitleaks)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  container-scan:
+    name: Container scan (Trivy)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build backend image
+        run: docker build -f infra/deployment/docker/Dockerfile.backend -t nu-aura-backend:scan .
+      - name: Build frontend image
+        run: docker build -f infra/deployment/docker/Dockerfile.frontend -t nu-aura-frontend:scan .
+      - name: Trivy backend
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: nu-aura-backend:scan
+          severity: CRITICAL,HIGH
+          exit-code: '0'
+          format: sarif
+          output: trivy-backend.sarif
+      - name: Trivy frontend
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: nu-aura-frontend:scan
+          severity: CRITICAL,HIGH
+          exit-code: '0'
+          format: sarif
+          output: trivy-frontend.sarif
+      - name: Upload SARIF to security tab
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: '.'

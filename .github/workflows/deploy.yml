@@ -1,0 +1,140 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: 'Deploy target'
+        required: true
+        default: 'staging'
+        type: choice
+        options: [staging, production]
+      ref:
+        description: 'Git ref to deploy (commit SHA or tag)'
+        required: true
+        default: 'main'
+
+env:
+  GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  GCP_REGION: us-central1
+
+jobs:
+  build:
+    name: Build images
+    runs-on: ubuntu-latest
+    outputs:
+      backend-image: ${{ steps.images.outputs.backend }}
+      frontend-image: ${{ steps.images.outputs.frontend }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+
+      - name: Image tags
+        id: images
+        run: |
+          SHA=$(git rev-parse --short HEAD)
+          echo "backend=gcr.io/${GCP_PROJECT_ID}/nu-aura-backend:${SHA}" >> $GITHUB_OUTPUT
+          echo "frontend=gcr.io/${GCP_PROJECT_ID}/nu-aura-frontend:${SHA}" >> $GITHUB_OUTPUT
+
+      - name: Auth GCP
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Configure docker for GCR
+        run: gcloud auth configure-docker gcr.io --quiet
+
+      - name: Build + push backend
+        run: |
+          docker build -f infra/deployment/docker/Dockerfile.backend -t ${{ steps.images.outputs.backend }} .
+          docker push ${{ steps.images.outputs.backend }}
+
+      - name: Build + push frontend
+        run: |
+          docker build -f infra/deployment/docker/Dockerfile.frontend -t ${{ steps.images.outputs.frontend }} .
+          docker push ${{ steps.images.outputs.frontend }}
+
+  deploy-staging:
+    name: Deploy → staging
+    needs: build
+    if: ${{ inputs.target == 'staging' || inputs.target == 'production' }}
+    runs-on: ubuntu-latest
+    environment:
+      name: staging
+      url: https://staging.nu-aura.nulogic.com
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+
+      - name: Auth GCP
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: GKE auth
+        uses: google-github-actions/get-gke-credentials@v2
+        with:
+          cluster_name: nu-aura-staging
+          location: ${{ env.GCP_REGION }}
+
+      - name: Helm upgrade staging
+        run: |
+          helm upgrade --install nu-aura infra/deployment/helm/hrms \
+            --namespace nu-aura --create-namespace \
+            --values infra/deployment/helm/hrms/values-staging.yaml \
+            --set backend.image=${{ needs.build.outputs.backend-image }} \
+            --set frontend.image=${{ needs.build.outputs.frontend-image }}
+
+      - name: Smoke test
+        run: |
+          for i in {1..20}; do
+            if curl -sf https://staging.nu-aura.nulogic.com/actuator/health | grep -q UP; then
+              echo "Backend up"; exit 0
+            fi
+            sleep 15
+          done
+          echo "Smoke test failed"; exit 1
+
+  deploy-production:
+    name: Deploy → production
+    needs: deploy-staging
+    if: ${{ inputs.target == 'production' }}
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://nu-aura.nulogic.com
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+
+      - name: Auth GCP
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: GKE auth
+        uses: google-github-actions/get-gke-credentials@v2
+        with:
+          cluster_name: nu-aura-prod
+          location: ${{ env.GCP_REGION }}
+
+      - name: Helm upgrade production
+        run: |
+          helm upgrade --install nu-aura infra/deployment/helm/hrms \
+            --namespace nu-aura --create-namespace \
+            --values infra/deployment/helm/hrms/values-prod.yaml \
+            --set backend.image=${{ needs.build.outputs.backend-image }} \
+            --set frontend.image=${{ needs.build.outputs.frontend-image }}
+
+      - name: Smoke test
+        run: |
+          for i in {1..20}; do
+            if curl -sf https://nu-aura.nulogic.com/actuator/health | grep -q UP; then
+              echo "Backend up"; exit 0
+            fi
+            sleep 15
+          done
+          echo "Smoke test failed"; exit 1

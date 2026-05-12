@@ -1,0 +1,85 @@
+name: PR Validation
+
+on:
+  pull_request:
+    branches: [main, develop]
+
+env:
+  JAVA_VERSION: '21'
+  NODE_VERSION: '18'
+
+jobs:
+  backend-validate:
+    name: Backend (typecheck + unit tests)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Install internal modules from infra/mvn-local-deps/
+        run: |
+          mvn install:install-file -Dfile=infra/mvn-local-deps/nulogic-platform-1.0.0.pom -DgroupId=com.nulogic -DartifactId=nulogic-platform -Dversion=1.0.0 -Dpackaging=pom
+          mvn install:install-file -Dfile=infra/mvn-local-deps/common-module-1.0.0.jar -DpomFile=infra/mvn-local-deps/common-module-1.0.0.pom
+          mvn install:install-file -Dfile=infra/mvn-local-deps/pm-module-1.0.0.jar -DpomFile=infra/mvn-local-deps/pm-module-1.0.0.pom
+
+      - name: Compile (no tests)
+        working-directory: backend
+        run: mvn compile -DskipTests -q
+
+      - name: Run backend unit tests
+        working-directory: backend
+        run: mvn test -q
+
+  frontend-validate:
+    name: Frontend (lint + typecheck + build)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install
+        working-directory: frontend
+        run: npm ci
+
+      - name: Lint
+        working-directory: frontend
+        run: npm run lint
+
+      - name: Typecheck
+        working-directory: frontend
+        run: npx tsc --noEmit
+
+      - name: Build
+        working-directory: frontend
+        run: npm run build
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:8080/api/v1
+
+  compose-validate:
+    name: docker-compose config
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate compose files
+        env:
+          REDIS_PASSWORD: stub
+          POSTGRES_PASSWORD: stub
+          POSTGRES_USER: stub
+          POSTGRES_DB: stub
+          JWT_SECRET: stub
+        run: |
+          docker compose config > /dev/null
+          docker compose -f docker-compose.yml -f docker-compose.prod.yml config > /dev/null
+          docker compose -f docker-compose.yml -f docker-compose.override.yml config > /dev/null
