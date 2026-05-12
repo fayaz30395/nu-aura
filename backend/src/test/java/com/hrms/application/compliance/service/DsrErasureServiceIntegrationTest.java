@@ -64,7 +64,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 // See note in DsrServiceIntegrationTest — the literal "false" override
 // disables RoutingDataSourceConfig's @ConditionalOnProperty so the H2 test
 // profile's auto-configured primary dataSource is sufficient.
-@SpringBootTest(properties = "spring.datasource.replica.url=false")
+// "spring.main.allow-circular-references=true" works around a pre-existing
+// WebSocketConfig <-> RedisWebSocketRelay circular DI that Spring Boot 3
+// rejects by default; allowing it at test-load time lets the full context
+// boot without touching production code.
+@SpringBootTest(properties = {
+        "spring.datasource.replica.url=false",
+        "spring.main.allow-circular-references=true"
+})
 @ActiveProfiles("test")
 @Import(TestSecurityConfig.class)
 @DisplayName("DsrErasureService Integration Tests — Article 17 cascade")
@@ -257,8 +264,8 @@ class DsrErasureServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("processErasure cascades the Employee row (firstName=ANONYMIZED, contact PII null)")
-    void processErasure_cascadesEmployee() {
+    @DisplayName("processErasure cascades to the Employee row (firstName=ANONYMIZED, contact PII null)")
+    void processErasure_cascadesToEmployee() {
         dsrService.processErasure(dsrRequestId);
 
         Employee reloaded = employeeRepository.findById(dataSubjectEmployeeId).orElseThrow();
@@ -315,8 +322,8 @@ class DsrErasureServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("processErasure is idempotent — second invocation throws on terminal DSR row")
-    void processErasure_idempotent_secondCallIsNoOp() {
+    @DisplayName("processErasure is idempotent — second invocation on terminal DSR row is a no-op (rejected)")
+    void processErasure_idempotent() {
         // First pass — completes the cascade and moves the DSR row to COMPLETED.
         dsrService.processErasure(dsrRequestId);
 
@@ -340,8 +347,8 @@ class DsrErasureServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("processErasure forces ANONYMIZE over HARD_DELETE when payroll exists in last 7 years (§139A)")
-    void processErasure_appliesAnonymizeOverHardDeleteWhenPayrollInLast7Years() {
+    @DisplayName("processErasure applies ANONYMIZE when payroll exists within 7 years (§139A retention check)")
+    void processErasure_appliesAnonymizeWhenPayrollWithin7Years() {
         // Seed a payroll record inside the 7-year retention window — this
         // forces DsrErasureService.resolvePolicies to lock Employee +
         // SalaryStructure to ANONYMIZE regardless of the default matrix.

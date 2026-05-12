@@ -17,8 +17,8 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.context.annotation.Import;
 import java.util.concurrent.CompletableFuture;
 import static org.mockito.ArgumentMatchers.any;
@@ -60,9 +60,9 @@ class PayrollE2ETest {
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
-    @SpyBean
+    @MockitoSpyBean
     private PayrollRunService payrollRunService;
-    @MockBean
+    @MockitoBean
     private EventPublisher eventPublisher;
     @Autowired
     private PayrollRunRepository payrollRunRepository;

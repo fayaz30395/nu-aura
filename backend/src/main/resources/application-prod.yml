@@ -135,10 +135,11 @@ management:
     diskSpace:
       enabled: true
       threshold: 1GB
-  metrics:
-    export:
-      prometheus:
+  prometheus:
+    metrics:
+      export:
         enabled: true
+  metrics:
     tags:
       application: ${spring.application.name}
       region: ${METRICS_REGION:default}
