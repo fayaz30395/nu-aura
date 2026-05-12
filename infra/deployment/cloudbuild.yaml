@@ -22,7 +22,7 @@ steps:
     args:
       - 'build'
       - '-f'
-      - 'deployment/docker/Dockerfile.backend'
+      - 'infra/deployment/docker/Dockerfile.backend'
       - '-t'
       - 'gcr.io/$PROJECT_ID/${_BACKEND_IMAGE_NAME}:$SHORT_SHA'
       - '-t'
@@ -44,7 +44,7 @@ steps:
     args:
       - 'build'
       - '-f'
-      - 'deployment/docker/Dockerfile.frontend'
+      - 'infra/deployment/docker/Dockerfile.frontend'
       - '-t'
       - 'gcr.io/$PROJECT_ID/${_FRONTEND_IMAGE_NAME}:$SHORT_SHA'
       - '-t'
@@ -101,7 +101,7 @@ steps:
     args:
       - 'apply'
       - '-f'
-      - 'deployment/kubernetes/namespace.yaml'
+      - 'infra/deployment/kubernetes/namespace.yaml'
     env:
       - 'CLOUDSDK_COMPUTE_ZONE=${_GKE_ZONE}'
       - 'CLOUDSDK_CONTAINER_CLUSTER=${_GKE_CLUSTER}'
@@ -115,7 +115,7 @@ steps:
     args:
       - 'apply'
       - '-f'
-      - 'deployment/kubernetes/configmap.yaml'
+      - 'infra/deployment/kubernetes/configmap.yaml'
     env:
       - 'CLOUDSDK_COMPUTE_ZONE=${_GKE_ZONE}'
       - 'CLOUDSDK_CONTAINER_CLUSTER=${_GKE_CLUSTER}'
@@ -147,7 +147,7 @@ steps:
     args:
       - 'set'
       - 'image'
-      - 'deployment/hrms-backend'
+      - 'infra/deployment/hrms-backend'
       - 'backend=gcr.io/$PROJECT_ID/${_BACKEND_IMAGE_NAME}:$SHORT_SHA'
       - '-n'
       - '${_NAMESPACE}'
@@ -164,7 +164,7 @@ steps:
     args:
       - 'set'
       - 'image'
-      - 'deployment/hrms-frontend'
+      - 'infra/deployment/hrms-frontend'
       - 'frontend=gcr.io/$PROJECT_ID/${_FRONTEND_IMAGE_NAME}:$SHORT_SHA'
       - '-n'
       - '${_NAMESPACE}'
@@ -181,7 +181,7 @@ steps:
     args:
       - 'apply'
       - '-f'
-      - 'deployment/kubernetes/backend-service.yaml'
+      - 'infra/deployment/kubernetes/backend-service.yaml'
     env:
       - 'CLOUDSDK_COMPUTE_ZONE=${_GKE_ZONE}'
       - 'CLOUDSDK_CONTAINER_CLUSTER=${_GKE_CLUSTER}'
@@ -195,7 +195,7 @@ steps:
     args:
       - 'apply'
       - '-f'
-      - 'deployment/kubernetes/frontend-service.yaml'
+      - 'infra/deployment/kubernetes/frontend-service.yaml'
     env:
       - 'CLOUDSDK_COMPUTE_ZONE=${_GKE_ZONE}'
       - 'CLOUDSDK_CONTAINER_CLUSTER=${_GKE_CLUSTER}'
@@ -209,7 +209,7 @@ steps:
     args:
       - 'apply'
       - '-f'
-      - 'deployment/kubernetes/ingress.yaml'
+      - 'infra/deployment/kubernetes/ingress.yaml'
     env:
       - 'CLOUDSDK_COMPUTE_ZONE=${_GKE_ZONE}'
       - 'CLOUDSDK_CONTAINER_CLUSTER=${_GKE_CLUSTER}'
@@ -223,7 +223,7 @@ steps:
     args:
       - 'apply'
       - '-f'
-      - 'deployment/kubernetes/hpa.yaml'
+      - 'infra/deployment/kubernetes/hpa.yaml'
     env:
       - 'CLOUDSDK_COMPUTE_ZONE=${_GKE_ZONE}'
       - 'CLOUDSDK_CONTAINER_CLUSTER=${_GKE_CLUSTER}'
@@ -237,7 +237,7 @@ steps:
     args:
       - 'apply'
       - '-f'
-      - 'deployment/kubernetes/network-policy.yaml'
+      - 'infra/deployment/kubernetes/network-policy.yaml'
     env:
       - 'CLOUDSDK_COMPUTE_ZONE=${_GKE_ZONE}'
       - 'CLOUDSDK_CONTAINER_CLUSTER=${_GKE_CLUSTER}'
@@ -251,7 +251,7 @@ steps:
     args:
       - 'rollout'
       - 'status'
-      - 'deployment/hrms-backend'
+      - 'infra/deployment/hrms-backend'
       - '-n'
       - '${_NAMESPACE}'
       - '--timeout=10m'
@@ -268,7 +268,7 @@ steps:
     args:
       - 'rollout'
       - 'status'
-      - 'deployment/hrms-frontend'
+      - 'infra/deployment/hrms-frontend'
       - '-n'
       - '${_NAMESPACE}'
       - '--timeout=10m'
@@ -309,4 +309,4 @@ artifacts:
   objects:
     location: 'gs://${PROJECT_ID}_cloudbuild/artifacts/$BUILD_ID'
     paths:
-      - 'deployment/kubernetes/*.yaml'
+      - 'infra/deployment/kubernetes/*.yaml'
