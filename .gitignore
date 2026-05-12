@@ -99,6 +99,7 @@ deployment/kubernetes/secrets.yaml
 .claude/commands/
 .claude/helpers/
 .claude/skills/
+.claude/scheduled_tasks.lock
 
 # QA sweep artifacts (regenerable; only the dated *report*.md is durable)
 docs/qa/findings/
