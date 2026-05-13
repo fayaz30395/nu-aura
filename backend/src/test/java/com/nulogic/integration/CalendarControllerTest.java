@@ -149,8 +149,10 @@ class CalendarControllerTest extends AbstractPostgresIntegrationTest {
         return CreateCalendarEventRequest.builder()
                 .title(title)
                 .description("Integration test event")
-                .startTime(LocalDateTime.now().plusDays(1).withHour(10).withMinute(0))
-                .endTime(LocalDateTime.now().plusDays(1).withHour(11).withMinute(0))
+                // Zone-explicit fixtures: anchor on tenant DEFAULT_ZONE (Asia/Kolkata) so the
+                // request payload does not vary with the JVM default zone.
+                .startTime(FIXTURE_START)
+                .endTime(FIXTURE_END)
                 .allDay(false)
                 .eventType(type)
                 .isRecurring(false)

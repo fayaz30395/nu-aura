@@ -27,6 +27,7 @@ import {
   ModalFooter,
   ModalHeader,
 } from '@/components/ui';
+import {SkeletonStatCard, SkeletonTable} from '@/components/ui/Skeleton';
 import {StatusBadge} from '@/components/ui/StatusBadge';
 import {TIMESHEET_STATUS} from '@/lib/status/vocabulary';
 import {useAuth} from '@/lib/hooks/useAuth';
@@ -261,9 +262,13 @@ export default function TimesheetsPage() {
   if (isLoading && timesheets.length === 0 && user?.employeeId) {
     return (
       <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="timesheets">
-        <div className="flex items-center justify-center h-64">
-          <Loader2 className="h-8 w-8 animate-spin text-accent-500"/>
-          <span className="ml-2 text-[var(--text-secondary)]">Loading timesheets...</span>
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {Array.from({length: 4}).map((_, i) => (
+              <SkeletonStatCard key={i}/>
+            ))}
+          </div>
+          <SkeletonTable rows={6} columns={5}/>
         </div>
       </AppLayout>
     );

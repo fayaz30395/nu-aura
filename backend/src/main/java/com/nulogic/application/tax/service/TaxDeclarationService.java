@@ -223,7 +223,7 @@ public class TaxDeclarationService {
         proof.setStatus(TaxProof.ProofStatus.VERIFIED);
         proof.setApprovedAmount(approvedAmount != null ? approvedAmount : proof.getDeclaredAmount());
         proof.setVerifiedBy(verifiedBy);
-        proof.setVerifiedAt(LocalDateTime.now());
+        proof.setVerifiedAt(tenantTimeService.now(tenantId));
         proof.setVerificationNotes(notes);
 
         TaxProof updated = taxProofRepository.save(proof);

@@ -146,6 +146,14 @@ class ScheduledReportServiceTest {
             when(scheduledReportRepository.save(any(ScheduledReport.class)))
                     .thenAnswer(inv -> inv.getArgument(0));
 
+            // Pin "today" to an explicit snapshot captured BEFORE invoking the service so the
+            // assertion does not depend on a second JVM-zone LocalDate.now() call (IST-leak fix:
+            // a re-read of LocalDate.now() at assertion time could straddle midnight and is
+            // implicitly bound to whichever zone the JVM is running in). The service-under-test
+            // currently calls LocalDate.now() with the JVM default zone, so capturing the same
+            // value here keeps the comparison deterministic and zone-stable.
+            LocalDate expectedDate = LocalDate.now();
+
             // When
             scheduledReportService.createScheduledReport(request, createdBy);
 
@@ -154,7 +162,7 @@ class ScheduledReportServiceTest {
             verify(scheduledReportRepository).save(captor.capture());
 
             ScheduledReport saved = captor.getValue();
-            assertThat(saved.getNextRunAt().toLocalDate()).isEqualTo(LocalDate.now());
+            assertThat(saved.getNextRunAt().toLocalDate()).isEqualTo(expectedDate);
             assertThat(saved.getNextRunAt().toLocalTime()).isEqualTo(futureTime);
         }
 

@@ -228,7 +228,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({report, onClose, onDownloa
           {report.requiresDateRange && (
             <div>
               <label className="block text-sm font-medium text-[var(--text-secondary)] mb-4">
-                Date Range <span className="text-danger-500">*</span>
+                Date Range <span aria-hidden="true" className="text-danger-500">*</span>
               </label>
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -240,6 +240,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({report, onClose, onDownloa
                     placeholder="YYYY-MM-DD"
                     clearable
                     size="sm"
+                    aria-required="true"
                   />
                 </div>
                 <div>
@@ -251,6 +252,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({report, onClose, onDownloa
                     placeholder="YYYY-MM-DD"
                     clearable
                     size="sm"
+                    aria-required="true"
                   />
                 </div>
               </div>

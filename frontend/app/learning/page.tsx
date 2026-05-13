@@ -290,11 +290,14 @@ export default function LearningPage() {
                     </div>
                   ))
                 ) : (
-                  <div className="bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] p-8 text-center">
-                    <AlertCircle className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4"/>
-                    <p className="text-[var(--text-muted)] text-lg font-medium mb-2">You haven&apos;t enrolled in any
-                      courses yet.</p>
-                    <p className="text-[var(--text-secondary)]">Browse the catalog to get started!</p>
+                  <div className="bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)]">
+                    <EmptyState
+                      icon={<GraduationCap className="w-full h-full"/>}
+                      title="No enrollments yet"
+                      description="Browse the catalog to enroll in your first course."
+                      actionLabel="Browse catalog"
+                      onAction={() => setActiveTab('catalog')}
+                    />
                   </div>
                 )}
               </div>
@@ -353,10 +356,14 @@ export default function LearningPage() {
                   ))
                 ) : (
                   <div
-                    className="col-span-2 bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] p-8 text-center">
-                    <AlertCircle className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4"/>
-                    <p className="text-[var(--text-muted)] text-lg font-medium mb-2">No certificates earned yet.</p>
-                    <p className="text-[var(--text-secondary)]">Complete courses to earn certificates!</p>
+                    className="col-span-full bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)]">
+                    <EmptyState
+                      icon={<Award className="w-full h-full"/>}
+                      title="No certificates yet"
+                      description="Complete a course to earn your first certificate."
+                      actionLabel="Browse catalog"
+                      onAction={() => setActiveTab('catalog')}
+                    />
                   </div>
                 )}
               </div>

@@ -312,7 +312,7 @@ public class KekaMigrationService {
                         .map(LeaveType::getId)
                         .orElseGet(() -> createLeaveType(name, tenantId)));
 
-        int year = Integer.parseInt(row.getOrDefault("year", String.valueOf(LocalDate.now().getYear())));
+        int year = Integer.parseInt(row.getOrDefault("year", String.valueOf(tenantTimeService.today(tenantId).getYear())));
 
         LeaveBalance balance = LeaveBalance.builder()
                 .employeeId(employeeId)
@@ -381,7 +381,7 @@ public class KekaMigrationService {
 
         SalaryStructure salary = SalaryStructure.builder()
                 .employeeId(employeeId)
-                .effectiveDate(parseDate(row.getOrDefault("effective_date", LocalDate.now().toString())))
+                .effectiveDate(parseDate(row.getOrDefault("effective_date", tenantTimeService.today(tenantId).toString())))
                 .basicSalary(parseBigDecimal(basicStr))
                 .hra(parseBigDecimal(row.get("hra")))
                 .conveyanceAllowance(parseBigDecimal(row.get("conveyance")))

@@ -3,6 +3,7 @@ package com.nulogic.application.attendance.service;
 import com.nulogic.application.shift.service.ShiftAttendanceService;
 import com.nulogic.common.config.AttendanceConfigProperties;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.attendance.AttendanceRecord;
 import com.nulogic.domain.attendance.AttendanceTimeEntry;
 import com.nulogic.infrastructure.attendance.repository.AttendanceRecordRepository;

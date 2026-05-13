@@ -9,6 +9,7 @@ import {Permissions} from '@/lib/hooks/usePermissions';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {useEmployeeLoans} from '@/lib/hooks/queries/useLoans';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {SkeletonStatCard, SkeletonTable} from '@/components/ui/Skeleton';
 import {StatusBadge} from '@/components/ui/StatusBadge';
 import {LOAN_STATUS} from '@/lib/status/vocabulary';
 import {
@@ -67,11 +68,13 @@ export default function LoansPage() {
   if (loading) {
     return (
       <AppLayout activeMenuItem="loans">
-        <div className="flex items-center justify-center h-[calc(100vh-200px)]">
-          <div className="flex flex-col items-center gap-4">
-            <Loader2 className="h-8 w-8 animate-spin text-accent-500"/>
-            <p className="text-[var(--text-secondary)]">Loading loans data...</p>
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {Array.from({length: 4}).map((_, i) => (
+              <SkeletonStatCard key={i}/>
+            ))}
           </div>
+          <SkeletonTable rows={6} columns={5}/>
         </div>
       </AppLayout>
     );

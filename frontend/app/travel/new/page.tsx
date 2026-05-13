@@ -358,11 +358,13 @@ export default function NewTravelRequestPage() {
                   type="text"
                   {...register('destinationCity')}
                   aria-required="true"
+                  aria-invalid={errors.destinationCity ? 'true' : 'false'}
+                  aria-describedby={errors.destinationCity ? 'travel-destination-city-error' : undefined}
                   placeholder="e.g., Delhi"
                   className={cardInputClass(!!errors.destinationCity)}
                 />
                 {errors.destinationCity && (
-                  <p className="mt-1 text-sm text-danger-500">{errors.destinationCity.message}</p>
+                  <p id="travel-destination-city-error" className="mt-1 text-sm text-danger-500">{errors.destinationCity.message}</p>
                 )}
               </div>
 
@@ -375,10 +377,12 @@ export default function NewTravelRequestPage() {
                   type="date"
                   {...register('departureDate')}
                   aria-required="true"
+                  aria-invalid={errors.departureDate ? 'true' : 'false'}
+                  aria-describedby={errors.departureDate ? 'travel-departure-date-error' : undefined}
                   className={cardInputClass(!!errors.departureDate)}
                 />
                 {errors.departureDate && (
-                  <p className="mt-1 text-sm text-danger-500">{errors.departureDate.message}</p>
+                  <p id="travel-departure-date-error" className="mt-1 text-sm text-danger-500">{errors.departureDate.message}</p>
                 )}
               </div>
 
@@ -392,10 +396,12 @@ export default function NewTravelRequestPage() {
                   {...register('returnDate')}
                   min={watchedDepartureDate}
                   aria-required="true"
+                  aria-invalid={errors.returnDate ? 'true' : 'false'}
+                  aria-describedby={errors.returnDate ? 'travel-return-date-error' : undefined}
                   className={cardInputClass(!!errors.returnDate)}
                 />
                 {errors.returnDate && (
-                  <p className="mt-1 text-sm text-danger-500">{errors.returnDate.message}</p>
+                  <p id="travel-return-date-error" className="mt-1 text-sm text-danger-500">{errors.returnDate.message}</p>
                 )}
               </div>
             </div>
@@ -441,6 +447,8 @@ export default function NewTravelRequestPage() {
                   id="travel-transport-mode"
                   {...register('transportMode')}
                   aria-required="true"
+                  aria-invalid={errors.transportMode ? 'true' : 'false'}
+                  aria-describedby={errors.transportMode ? 'travel-transport-mode-error' : undefined}
                   className={inputClass(!!errors.transportMode)}
                 >
                   <option value="FLIGHT">Flight</option>
@@ -450,7 +458,7 @@ export default function NewTravelRequestPage() {
                   <option value="SELF_ARRANGED">Self Arranged</option>
                 </select>
                 {errors.transportMode && (
-                  <p className="mt-1 text-sm text-danger-500">{errors.transportMode.message}</p>
+                  <p id="travel-transport-mode-error" className="mt-1 text-sm text-danger-500">{errors.transportMode.message}</p>
                 )}
               </div>
 
@@ -521,10 +529,12 @@ export default function NewTravelRequestPage() {
                     {...register('checkInDate')}
                     min={watchedDepartureDate}
                     aria-required="true"
+                    aria-invalid={errors.checkInDate ? 'true' : 'false'}
+                    aria-describedby={errors.checkInDate ? 'travel-check-in-date-error' : undefined}
                     className={cardInputClass(!!errors.checkInDate)}
                   />
                   {errors.checkInDate && (
-                    <p className="mt-1 text-sm text-danger-500">{errors.checkInDate.message}</p>
+                    <p id="travel-check-in-date-error" className="mt-1 text-sm text-danger-500">{errors.checkInDate.message}</p>
                   )}
                 </div>
 
@@ -537,10 +547,12 @@ export default function NewTravelRequestPage() {
                     type="date"
                     {...register('checkOutDate')}
                     aria-required="true"
+                    aria-invalid={errors.checkOutDate ? 'true' : 'false'}
+                    aria-describedby={errors.checkOutDate ? 'travel-check-out-date-error' : undefined}
                     className={cardInputClass(!!errors.checkOutDate)}
                   />
                   {errors.checkOutDate && (
-                    <p className="mt-1 text-sm text-danger-500">{errors.checkOutDate.message}</p>
+                    <p id="travel-check-out-date-error" className="mt-1 text-sm text-danger-500">{errors.checkOutDate.message}</p>
                   )}
                 </div>
               </div>
@@ -568,11 +580,13 @@ export default function NewTravelRequestPage() {
                   min="0"
                   {...register('estimatedCost', {valueAsNumber: true})}
                   aria-required="true"
+                  aria-invalid={errors.estimatedCost ? 'true' : 'false'}
+                  aria-describedby={errors.estimatedCost ? 'travel-estimated-cost-error' : undefined}
                   placeholder="0.00"
                   className={inputClass(!!errors.estimatedCost)}
                 />
                 {errors.estimatedCost && (
-                  <p className="mt-1 text-sm text-danger-500">{errors.estimatedCost.message}</p>
+                  <p id="travel-estimated-cost-error" className="mt-1 text-sm text-danger-500">{errors.estimatedCost.message}</p>
                 )}
               </div>
 

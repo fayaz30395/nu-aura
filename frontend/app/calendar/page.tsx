@@ -5,6 +5,7 @@ import {useRouter} from 'next/navigation';
 import {AppLayout} from '@/components/layout/AppLayout';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
+import {Skeleton, SkeletonCard} from '@/components/ui/Skeleton';
 import {calendarService} from '@/lib/services/hrms/calendar.service';
 import {CalendarEvent, EventStatus} from '@/lib/types/hrms/calendar';
 import {useAuth} from '@/lib/hooks/useAuth';
@@ -119,11 +120,12 @@ export default function CalendarPage() {
   if (isLoading && events.length === 0) {
     return (
       <AppLayout activeMenuItem="calendar">
-        <div className="flex items-center justify-center h-[calc(100vh-200px)]">
-          <div className="flex flex-col items-center gap-4">
-            <Loader2
-              className="h-8 w-8 animate-spin text-accent-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
-            <p className="text-[var(--text-secondary)]">Loading calendar...</p>
+        <div className="space-y-6">
+          <Skeleton height={48} width="40%"/>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {Array.from({length: 6}).map((_, i) => (
+              <SkeletonCard key={i}/>
+            ))}
           </div>
         </div>
       </AppLayout>

@@ -679,7 +679,7 @@ export default function ApprovalInboxPage() {
           </p>
           <div className="mt-4">
             <label className="block text-sm font-medium text-[var(--text-secondary)]">
-              Reason <span
+              Reason <span aria-hidden="true"
               className="text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">*</span>
             </label>
             <textarea
@@ -688,6 +688,7 @@ export default function ApprovalInboxPage() {
               placeholder="Explain why this request is being rejected…"
               className="mt-1 w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] p-4 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
               rows={3}
+              aria-required="true"
             />
           </div>
         </ModalBody>

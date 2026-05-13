@@ -177,7 +177,8 @@ public class AttendanceController {
     @PostMapping("/multi-check-in")
     @RequiresPermission(Permission.ATTENDANCE_MARK)
     public ResponseEntity<TimeEntryResponse> multiCheckIn(@Valid @RequestBody MultiCheckInRequest request) {
-        LocalDateTime checkInTime = request.getCheckInTime() != null ? request.getCheckInTime() : LocalDateTime.now();
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        LocalDateTime checkInTime = request.getCheckInTime() != null ? request.getCheckInTime() : tenantTimeService.now(tenantId);
         UUID employeeId = resolveEmployeeId(request.getEmployeeId(), Permission.ATTENDANCE_MARK);
         AttendanceTimeEntry entry = attendanceService.multiCheckIn(
                 employeeId,
@@ -193,8 +194,9 @@ public class AttendanceController {
     @PostMapping("/multi-check-out")
     @RequiresPermission(Permission.ATTENDANCE_MARK)
     public ResponseEntity<TimeEntryResponse> multiCheckOut(@Valid @RequestBody MultiCheckOutRequest request) {
+        UUID tenantId = TenantContext.requireCurrentTenant();
         LocalDateTime checkOutTime = request.getCheckOutTime() != null ? request.getCheckOutTime()
-                : LocalDateTime.now();
+                : tenantTimeService.now(tenantId);
         UUID employeeId = resolveEmployeeId(request.getEmployeeId(), Permission.ATTENDANCE_MARK);
         AttendanceTimeEntry entry = attendanceService.multiCheckOut(
                 employeeId,
@@ -232,7 +234,8 @@ public class AttendanceController {
     @PostMapping("/bulk-check-in")
     @RequiresPermission(Permission.ATTENDANCE_VIEW_ALL)
     public ResponseEntity<BulkAttendanceResponse> bulkCheckIn(@Valid @RequestBody BulkCheckInRequest request) {
-        LocalDateTime checkInTime = request.getCheckInTime() != null ? request.getCheckInTime() : LocalDateTime.now();
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        LocalDateTime checkInTime = request.getCheckInTime() != null ? request.getCheckInTime() : tenantTimeService.now(tenantId);
         AttendanceRecordService.BulkResult result = attendanceService.bulkCheckIn(
                 request.getEmployeeIds(),
                 checkInTime,
@@ -245,8 +248,9 @@ public class AttendanceController {
     @PostMapping("/bulk-check-out")
     @RequiresPermission(Permission.ATTENDANCE_VIEW_ALL)
     public ResponseEntity<BulkAttendanceResponse> bulkCheckOut(@Valid @RequestBody BulkCheckOutRequest request) {
+        UUID tenantId = TenantContext.requireCurrentTenant();
         LocalDateTime checkOutTime = request.getCheckOutTime() != null ? request.getCheckOutTime()
-                : LocalDateTime.now();
+                : tenantTimeService.now(tenantId);
         AttendanceRecordService.BulkResult result = attendanceService.bulkCheckOut(
                 request.getEmployeeIds(),
                 checkOutTime,
