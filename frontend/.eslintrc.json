@@ -13,6 +13,18 @@
         "caughtErrorsIgnorePattern": "^_"
       }
     ],
+    "@typescript-eslint/no-restricted-imports": [
+      "error",
+      {
+        "paths": [
+          {
+            "name": "axios",
+            "message": "Import axios only from lib/api/. Use the typed client at @/lib/api/client instead — see docs/architecture/frontend/api-layer.md for the boundary rules.",
+            "allowTypeImports": true
+          }
+        ]
+      }
+    ],
     "no-restricted-syntax": [
       "warn",
       {
@@ -59,6 +71,15 @@
             "caughtErrorsIgnorePattern": "^_"
           }
         ]
+      }
+    },
+    {
+      "files": [
+        "lib/api/**/*",
+        "lib/services/**/*"
+      ],
+      "rules": {
+        "@typescript-eslint/no-restricted-imports": "off"
       }
     }
   ]

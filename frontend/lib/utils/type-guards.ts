@@ -283,7 +283,11 @@ export function narrowResponse<T>(
 export interface AxiosErrorResponse {
   response?: {
     status?: number;
-    data?: unknown;
+    data?: {
+      message?: string;
+      error?: string;
+      [key: string]: unknown;
+    };
   };
   message?: string;
 }

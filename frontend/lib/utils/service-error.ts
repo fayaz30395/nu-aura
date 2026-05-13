@@ -8,7 +8,7 @@
  * - Integration with global error handler
  */
 
-import {AxiosError} from 'axios';
+import type {AxiosError} from 'axios';
 import {ErrorCategory, getUserMessage, handleError} from './error-handler';
 import {logger} from './logger';
 
