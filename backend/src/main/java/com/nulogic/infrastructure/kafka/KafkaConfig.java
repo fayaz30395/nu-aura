@@ -449,7 +449,15 @@ public class KafkaConfig {
         config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
         config.put(JsonDeserializer.VALUE_DEFAULT_TYPE, valueClass.getName());
-        config.put(JsonDeserializer.TRUSTED_PACKAGES, "com.nulogic.infrastructure.kafka.events");
+        // Trust both new and old FQN packages so consumers can still drain in-flight
+        // messages produced before the com.hrms -> com.nulogic rename (Phase 4a).
+        config.put(JsonDeserializer.TRUSTED_PACKAGES,
+                "com.nulogic.infrastructure.kafka.events,com.hrms.infrastructure.kafka.events");
+        // Ignore __TypeId__ headers entirely and deserialize as VALUE_DEFAULT_TYPE.
+        // Hardens us against stale headers from pre-rename payloads — the consumer
+        // always builds the new com.nulogic class regardless of what the producer put
+        // in the header. Required for the rolling-window tolerance noted in plan section 4a.
+        config.put(JsonDeserializer.USE_TYPE_INFO_HEADERS, false);
         config.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, autoOffsetReset);
         config.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, maxPollRecords);
         config.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, sessionTimeoutMs);
