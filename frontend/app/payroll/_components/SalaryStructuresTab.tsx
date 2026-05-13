@@ -35,10 +35,11 @@ export function SalaryStructuresTab({
       <div className="flex justify-between items-center mb-6">
         <div className="flex gap-4">
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+            <label htmlFor="payroll-structures-status-filter" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Filter by Status
             </label>
             <select
+              id="payroll-structures-status-filter"
               value={structureFilter}
               onChange={(e) => onFilterChange(e.target.value as 'ACTIVE' | 'INACTIVE' | 'PENDING' | 'ALL')}
               className="px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"

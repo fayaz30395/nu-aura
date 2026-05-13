@@ -2,6 +2,7 @@
 
 import React from 'react';
 import {Button} from '@/components/ui/Button';
+import {Modal, ModalBody} from '@/components/ui/Modal';
 import {CheckCircle} from 'lucide-react';
 import {Candidate} from '@/lib/types/hire/recruitment';
 
@@ -22,12 +23,11 @@ export function AcceptOfferModal({
                                    onConfirm,
                                    onClose,
                                  }: AcceptOfferModalProps) {
-  if (!open || !candidate) return null;
+  if (!candidate) return null;
 
   return (
-    <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
-      <div
-        className="bg-[var(--bg-card)] rounded-lg max-w-md w-full p-6 border border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
+    <Modal isOpen={open} onClose={onClose} size="sm">
+      <ModalBody>
         <div className="flex items-center mb-4">
           <div
             className="flex-shrink-0 h-12 w-12 rounded-xl bg-success-100 dark:bg-success-900/30 flex items-center justify-center">
@@ -39,8 +39,9 @@ export function AcceptOfferModal({
           Mark offer as accepted for <strong className="text-[var(--text-secondary)]">{candidate.fullName}</strong>?
         </p>
         <div className="mb-6">
-          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Confirmed Joining Date</label>
+          <label htmlFor="accept-offer-joining-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Confirmed Joining Date</label>
           <input
+            id="accept-offer-joining-date"
             type="date"
             value={confirmedJoiningDate}
             onChange={(e) => onJoiningDateChange(e.target.value)}
@@ -55,7 +56,7 @@ export function AcceptOfferModal({
             Accept Offer
           </Button>
         </div>
-      </div>
-    </div>
+      </ModalBody>
+    </Modal>
   );
 }

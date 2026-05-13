@@ -229,18 +229,22 @@ export default function TemplateEditorPage() {
                 </CardHeader>
                 <CardContent className="p-8 space-y-8">
                   <div className="space-y-4">
-                    <label className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)]">Template
+                    <label htmlFor="onboarding-template-title"
+                           className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)]">Template
                       Title</label>
                     <Input
+                      id="onboarding-template-title"
                       className="input-aura rounded-lg bg-[var(--bg-input)] border-0 font-black text-lg focus:ring-2 focus:ring-accent-500"
                       value={localTemplate?.name || ''}
                       onChange={(e) => setLocalTemplate(prev => prev ? {...prev, name: e.target.value} : null)}
                     />
                   </div>
                   <div className="space-y-4">
-                    <label className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)]">Mission
+                    <label htmlFor="onboarding-template-mission-description"
+                           className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)]">Mission
                       Description</label>
                     <textarea
+                      id="onboarding-template-mission-description"
                       rows={5}
                       className="w-full rounded-lg bg-[var(--bg-input)] border-0 p-4 font-bold text-[var(--text-secondary)] dark:text-[var(--text-secondary)]200 focus:ring-2 focus:ring-accent-500 outline-none"
                       value={localTemplate?.description || ''}
@@ -393,9 +397,11 @@ export default function TemplateEditorPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div className="col-span-full space-y-4">
-                    <label className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)]">Task
+                    <label htmlFor="onboarding-task-name"
+                           className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)]">Task
                       Objective</label>
                     <Input
+                      id="onboarding-task-name"
                       className="input-aura rounded-lg bg-[var(--bg-secondary)] dark:bg-black/20 border-0 py-6 px-6 font-black text-lg focus:ring-2 focus:ring-accent-500"
                       placeholder="e.g., Set up workstation and systems"
                       value={taskForm.taskName}
@@ -404,9 +410,11 @@ export default function TemplateEditorPage() {
                   </div>
 
                   <div className="col-span-full space-y-4">
-                    <label className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)]">Tactical
+                    <label htmlFor="onboarding-task-description"
+                           className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)]">Tactical
                       Description</label>
                     <textarea
+                      id="onboarding-task-description"
                       rows={3}
                       className="w-full rounded-lg bg-[var(--bg-secondary)] dark:bg-black/20 border-0 p-6 font-bold text-[var(--text-secondary)] dark:text-[var(--text-secondary)]200 focus:ring-2 focus:ring-accent-500 outline-none"
                       placeholder="Detailed instructions for this specific step..."
@@ -416,12 +424,13 @@ export default function TemplateEditorPage() {
                   </div>
 
                   <div className="space-y-4">
-                    <label
+                    <label htmlFor="onboarding-task-category"
                       className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)] flex items-center gap-2">
                       <Layers className="h-3.5 w-3.5"/>
                       Category
                     </label>
                     <select
+                      id="onboarding-task-category"
                       className="w-full rounded-lg bg-[var(--bg-secondary)] dark:bg-black/20 border-0 p-6 font-black uppercase tracking-widest text-xs focus:ring-2 focus:ring-accent-500 outline-none"
                       value={taskForm.category}
                       onChange={(e) => setTaskForm({...taskForm, category: e.target.value as OnboardingTaskCategory})}
@@ -436,12 +445,13 @@ export default function TemplateEditorPage() {
                   </div>
 
                   <div className="space-y-4">
-                    <label
+                    <label htmlFor="onboarding-task-priority"
                       className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)] flex items-center gap-2">
                       <Zap className="h-3.5 w-3.5"/>
                       Priority
                     </label>
                     <select
+                      id="onboarding-task-priority"
                       className="w-full rounded-lg bg-[var(--bg-secondary)] dark:bg-black/20 border-0 p-6 font-black uppercase tracking-widest text-xs focus:ring-2 focus:ring-accent-500 outline-none"
                       value={taskForm.priority}
                       onChange={(e) => setTaskForm({...taskForm, priority: e.target.value as OnboardingTaskPriority})}
@@ -453,12 +463,13 @@ export default function TemplateEditorPage() {
                   </div>
 
                   <div className="space-y-4">
-                    <label
+                    <label htmlFor="onboarding-task-due-date"
                       className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)] flex items-center gap-2">
                       <Clock className="h-3.5 w-3.5"/>
                       Estimated Days
                     </label>
                     <Input
+                      id="onboarding-task-due-date"
                       type="number"
                       className="rounded-lg bg-[var(--bg-secondary)] dark:bg-black/20 border-0 p-6 font-black focus:ring-2 focus:ring-accent-500"
                       value={taskForm.estimatedDaysFromStart || 0}

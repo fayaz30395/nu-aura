@@ -239,9 +239,9 @@ export default function TravelPage() {
                           </div>
                           <div>
                             <div className="flex items-center gap-2">
-                              <h3 className="text-xl font-semibold text-[var(--text-primary)]">
+                              <h2 className="text-xl font-semibold text-[var(--text-primary)]">
                                 {request.requestNumber}
-                              </h3>
+                              </h2>
                               <StatusBadge status={request.status} domain={TRAVEL_STATUS}/>
                             </div>
                             <p className="text-body-secondary mt-1">

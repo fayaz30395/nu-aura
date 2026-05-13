@@ -2,7 +2,8 @@
 
 import React from 'react';
 import {Button} from '@/components/ui/Button';
-import {MessageSquare, X} from 'lucide-react';
+import {Modal, ModalBody, ModalHeader} from '@/components/ui/Modal';
+import {MessageSquare} from 'lucide-react';
 import {FeedbackSynthesisResponse} from '@/lib/types/hire/ai-recruitment';
 
 interface FeedbackSynthesisModalProps {
@@ -16,24 +17,17 @@ export function FeedbackSynthesisModal({
                                          feedbackSynthesis,
                                          onClose,
                                        }: FeedbackSynthesisModalProps) {
-  if (!open || !feedbackSynthesis) return null;
+  if (!feedbackSynthesis) return null;
 
   return (
-    <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
-      <div
-        className="bg-[var(--bg-card)] rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
-        <div className="p-6">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-[var(--text-primary)] flex items-center gap-2">
-              <MessageSquare className="h-6 w-6 text-success-500"/>
-              Feedback Synthesis
-            </h2>
-            <button onClick={onClose} aria-label="Close modal"
-                    className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
-              <X className="h-6 w-6"/>
-            </button>
-          </div>
-
+    <Modal isOpen={open} onClose={onClose} size="lg">
+      <ModalHeader onClose={onClose}>
+        <h2 className="text-xl font-semibold text-[var(--text-primary)] flex items-center gap-2">
+          <MessageSquare className="h-5 w-5 text-success-500"/>
+          Feedback Synthesis
+        </h2>
+      </ModalHeader>
+      <ModalBody>
           <div className="space-y-6">
             <div className="p-4 bg-[var(--bg-secondary)] rounded-xl">
               <p className="text-caption mb-1">Candidate</p>
@@ -111,8 +105,7 @@ export function FeedbackSynthesisModal({
               </Button>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
+      </ModalBody>
+    </Modal>
   );
 }

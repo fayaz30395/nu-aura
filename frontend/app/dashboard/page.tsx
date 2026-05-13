@@ -27,12 +27,12 @@ import {
   Users as UsersIcon,
   UserX,
   Video,
-  X,
 } from 'lucide-react';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {AppLayout} from '@/components/layout';
 import {Card, CardContent} from '@/components/ui/Card';
+import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
 import {Button} from '@/components/ui/Button';
 import {PremiumMetricCard} from '@/components/ui/PremiumMetricCard';
 import type {DashboardWidget} from '@/components/ui/DashboardGrid';
@@ -986,8 +986,8 @@ export default function DashboardPage() {
                   <Clock className="h-6 w-6 sm:h-7 sm:w-7 text-[var(--accent-primary)]"/>
                 </div>
                 <div>
-                  <h3 className="text-base sm:text-xl font-semibold text-[var(--text-primary)]">Today&apos;s
-                    Attendance</h3>
+                  <h2 className="text-base sm:text-xl font-semibold text-[var(--text-primary)]">Today&apos;s
+                    Attendance</h2>
                   {timeEntries.length > 0 ? (
                     <div className="flex flex-wrap items-center gap-4 mt-1">
                       {/* Show first check-in time */}
@@ -1094,25 +1094,13 @@ export default function DashboardPage() {
 
       {/* Calendar Event Modal */}
       {selectedEvent && selectedEvent.calendarEvent && (
-        <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
-          <div className="bg-[var(--bg-card)] rounded-lg shadow-dropdown max-w-lg w-full max-h-[90vh] overflow-hidden">
-            <div className="row-between p-4 border-b border-[var(--border-main)]">
-              <h3 className="text-xl font-semibold text-[var(--text-primary)]">
-                Event Details
-              </h3>
-              <button
-                onClick={() => setSelectedEvent(null)}
-                className="p-2 rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                aria-label="Close event details"
-              >
-                <X className="h-5 w-5 text-[var(--text-secondary)]"/>
-              </button>
-            </div>
-            <div className="p-6 space-y-4 overflow-y-auto max-h-[calc(90vh-140px)]">
+        <Modal isOpen={!!(selectedEvent && selectedEvent.calendarEvent)} onClose={() => setSelectedEvent(null)} size="md">
+          <ModalHeader onClose={() => setSelectedEvent(null)}>Event Details</ModalHeader>
+          <ModalBody className="space-y-4">
               <div>
-                <h4 className="text-xl font-semibold text-[var(--text-primary)]">
+                <h3 className="text-xl font-semibold text-[var(--text-primary)]">
                   {selectedEvent.calendarEvent.summary}
-                </h4>
+                </h3>
                 {selectedEvent.calendarEvent.organizer && (
                   <p className="text-body-secondary mt-1">
                     Organized
@@ -1215,116 +1203,106 @@ export default function DashboardPage() {
                   </p>
                 </div>
               )}
-            </div>
-            <div className="p-4 border-t border-[var(--border-main)] flex gap-4">
-              {selectedEvent.calendarEvent.hangoutLink && (
-                <Button
-                  variant="primary"
-                  className="flex-1"
-                  leftIcon={<Video className="h-4 w-4"/>}
-                  onClick={() => safeWindowOpen(selectedEvent.calendarEvent!.hangoutLink, '_blank')}
-                >
-                  Join Meeting
-                </Button>
-              )}
+          </ModalBody>
+          <ModalFooter className="gap-4">
+            {selectedEvent.calendarEvent.hangoutLink && (
               <Button
-                variant="outline"
-                className={selectedEvent.calendarEvent.hangoutLink ? '' : 'flex-1'}
-                leftIcon={<ExternalLink className="h-4 w-4"/>}
-                onClick={() => safeWindowOpen(selectedEvent.calendarEvent!.htmlLink, '_blank')}
+                variant="primary"
+                className="flex-1"
+                leftIcon={<Video className="h-4 w-4"/>}
+                onClick={() => safeWindowOpen(selectedEvent.calendarEvent!.hangoutLink, '_blank')}
               >
-                Open in Calendar
+                Join Meeting
               </Button>
-            </div>
-          </div>
-        </div>
+            )}
+            <Button
+              variant="outline"
+              className={selectedEvent.calendarEvent.hangoutLink ? '' : 'flex-1'}
+              leftIcon={<ExternalLink className="h-4 w-4"/>}
+              onClick={() => safeWindowOpen(selectedEvent.calendarEvent!.htmlLink, '_blank')}
+            >
+              Open in Calendar
+            </Button>
+          </ModalFooter>
+        </Modal>
       )}
 
       {/* Email Preview Modal */}
       {selectedEmail && (
-        <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
-          <div className="bg-[var(--bg-card)] rounded-lg shadow-dropdown max-w-2xl w-full max-h-[90vh] overflow-hidden">
-            <div className="row-between p-4 border-b border-[var(--border-main)]">
-              <h3 className="text-xl font-semibold text-[var(--text-primary)] truncate pr-4">
-                {selectedEmail.title}
-              </h3>
-              <button
-                onClick={() => {
-                  setSelectedEmail(null);
-                  setEmailContent('');
-                }}
-                className="p-2 rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors flex-shrink-0 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                aria-label="Close email details"
-              >
-                <X className="h-5 w-5 text-[var(--text-secondary)]"/>
-              </button>
-            </div>
-            <div className="p-6 space-y-4 overflow-y-auto max-h-[calc(90vh-140px)]">
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center status-danger">
-                  <Mail className="h-5 w-5"/>
-                </div>
-                <div>
-                  <p className="font-medium text-[var(--text-primary)]">
-                    {selectedEmail.emailData?.from?.split('<')[0]?.trim() || 'Unknown Sender'}
-                  </p>
-                  <p className="text-body-secondary">
-                    {formatRelativeTime(selectedEmail.timestamp)}
-                  </p>
-                </div>
+        <Modal
+          isOpen={!!selectedEmail}
+          onClose={() => {
+            setSelectedEmail(null);
+            setEmailContent('');
+          }}
+          size="lg"
+        >
+          <ModalHeader
+            onClose={() => {
+              setSelectedEmail(null);
+              setEmailContent('');
+            }}
+          >
+            {selectedEmail.title}
+          </ModalHeader>
+          <ModalBody className="space-y-4">
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center status-danger">
+                <Mail className="h-5 w-5"/>
               </div>
+              <div>
+                <p className="font-medium text-[var(--text-primary)]">
+                  {selectedEmail.emailData?.from?.split('<')[0]?.trim() || 'Unknown Sender'}
+                </p>
+                <p className="text-body-secondary">
+                  {formatRelativeTime(selectedEmail.timestamp)}
+                </p>
+              </div>
+            </div>
 
-              <div className="border-t border-[var(--border-main)] pt-4">
-                {emailLoading ? (
-                  <div className="flex items-center justify-center py-8">
-                    <Loader2 className="h-6 w-6 animate-spin text-[var(--accent-primary)]"/>
-                  </div>
-                ) : (
-                  <div
-                    className="prose prose-sm dark:prose-invert max-w-none"
-                    dangerouslySetInnerHTML={{__html: sanitizeEmailHtml(emailContent)}}
-                  />
-                )}
-              </div>
+            <div className="border-t border-[var(--border-main)] pt-4">
+              {emailLoading ? (
+                <div className="flex items-center justify-center py-8">
+                  <Loader2 className="h-6 w-6 animate-spin text-[var(--accent-primary)]"/>
+                </div>
+              ) : (
+                <div
+                  className="prose prose-sm dark:prose-invert max-w-none"
+                  dangerouslySetInnerHTML={{__html: sanitizeEmailHtml(emailContent)}}
+                />
+              )}
             </div>
-            <div className="p-4 border-t border-[var(--border-main)] flex gap-4">
-              <Button
-                variant="primary"
-                className="flex-1"
-                leftIcon={<ExternalLink className="h-4 w-4"/>}
-                onClick={() => router.push('/nu-mail')}
-              >
-                Open in NU-Mail
-              </Button>
-            </div>
-          </div>
-        </div>
+          </ModalBody>
+          <ModalFooter className="gap-4">
+            <Button
+              variant="primary"
+              className="flex-1"
+              leftIcon={<ExternalLink className="h-4 w-4"/>}
+              onClick={() => router.push('/nu-mail')}
+            >
+              Open in NU-Mail
+            </Button>
+          </ModalFooter>
+        </Modal>
       )}
 
       {/* Drive File Preview Modal */}
       {selectedFile && selectedFile.driveFile && (
-        <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
-          <div className="bg-[var(--bg-card)] rounded-lg shadow-dropdown max-w-4xl w-full max-h-[90vh] overflow-hidden">
-            <div className="row-between p-4 border-b border-[var(--border-main)]">
-              <div className="flex items-center gap-4 min-w-0">
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 status-warning">
-                  <HardDrive className="h-5 w-5"/>
-                </div>
-                <div className="min-w-0">
-                  <h3 className="text-xl font-semibold text-[var(--text-primary)] truncate">
-                    {selectedFile.driveFile.name}
-                  </h3>
-                  <p className="text-body-secondary">{selectedFile.subtitle}</p>
-                </div>
+        <Modal isOpen={!!(selectedFile && selectedFile.driveFile)} onClose={() => setSelectedFile(null)} size="xl">
+          <ModalHeader onClose={() => setSelectedFile(null)}>
+            <div className="flex items-center gap-4 min-w-0">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 status-warning">
+                <HardDrive className="h-5 w-5"/>
               </div>
-              <button
-                onClick={() => setSelectedFile(null)}
-                className="p-2 rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors flex-shrink-0 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                aria-label="Close file preview"
-              >
-                <X className="h-5 w-5 text-[var(--text-secondary)]"/>
-              </button>
+              <div className="min-w-0">
+                <h2 className="text-xl font-semibold text-[var(--text-primary)] truncate">
+                  {selectedFile.driveFile.name}
+                </h2>
+                <p className="text-body-secondary">{selectedFile.subtitle}</p>
+              </div>
             </div>
+          </ModalHeader>
+          <ModalBody className="p-0">
             <div className="relative h-[60vh] bg-[var(--bg-elevated)]">
               {selectedFile.driveFile.mimeType?.startsWith('image/') ? (
                 <Image
@@ -1342,27 +1320,27 @@ export default function DashboardPage() {
                 />
               )}
             </div>
-            <div className="p-4 border-t border-[var(--border-main)] flex gap-4">
+          </ModalBody>
+          <ModalFooter className="gap-4">
+            <Button
+              variant="primary"
+              className="flex-1"
+              leftIcon={<ExternalLink className="h-4 w-4"/>}
+              onClick={() => router.push('/nu-drive')}
+            >
+              Open in NU-Drive
+            </Button>
+            {selectedFile.driveFile.webViewLink && (
               <Button
-                variant="primary"
-                className="flex-1"
+                variant="outline"
                 leftIcon={<ExternalLink className="h-4 w-4"/>}
-                onClick={() => router.push('/nu-drive')}
+                onClick={() => safeWindowOpen(selectedFile.driveFile!.webViewLink, '_blank')}
               >
-                Open in NU-Drive
+                Open in Drive
               </Button>
-              {selectedFile.driveFile.webViewLink && (
-                <Button
-                  variant="outline"
-                  leftIcon={<ExternalLink className="h-4 w-4"/>}
-                  onClick={() => safeWindowOpen(selectedFile.driveFile!.webViewLink, '_blank')}
-                >
-                  Open in Drive
-                </Button>
-              )}
-            </div>
-          </div>
-        </div>
+            )}
+          </ModalFooter>
+        </Modal>
       )}
     </AppLayout>
   );

@@ -498,9 +498,11 @@ export default function EditEmployeePage() {
                       {...register('employeeCode')}
                       className="input-aura"
                       placeholder="EMP001"
+                      aria-invalid={errors.employeeCode ? 'true' : 'false'}
+                      aria-describedby={errors.employeeCode ? 'employee-edit-code-error' : undefined}
                     />
                     {errors.employeeCode &&
-                      <p className="text-danger-500 text-sm mt-1">{errors.employeeCode.message}</p>}
+                      <p id="employee-edit-code-error" className="text-danger-500 text-sm mt-1">{errors.employeeCode.message}</p>}
                     <p className="mt-1 text-caption">
                       Unique identifier for this employee. Changing this may affect integrations.
                     </p>
@@ -517,8 +519,10 @@ export default function EditEmployeePage() {
                         required
                         {...register('firstName')}
                         className="input-aura"
+                        aria-invalid={errors.firstName ? 'true' : 'false'}
+                        aria-describedby={errors.firstName ? 'employee-edit-first-name-error' : undefined}
                       />
-                      {errors.firstName && <p className="text-danger-500 text-sm mt-1">{errors.firstName.message}</p>}
+                      {errors.firstName && <p id="employee-edit-first-name-error" className="text-danger-500 text-sm mt-1">{errors.firstName.message}</p>}
                     </div>
                     <div>
                       <label htmlFor="employee-edit-middle-name" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
@@ -529,8 +533,10 @@ export default function EditEmployeePage() {
                         type="text"
                         {...register('middleName')}
                         className="input-aura"
+                        aria-invalid={errors.middleName ? 'true' : 'false'}
+                        aria-describedby={errors.middleName ? 'employee-edit-middle-name-error' : undefined}
                       />
-                      {errors.middleName && <p className="text-danger-500 text-sm mt-1">{errors.middleName.message}</p>}
+                      {errors.middleName && <p id="employee-edit-middle-name-error" className="text-danger-500 text-sm mt-1">{errors.middleName.message}</p>}
                     </div>
                     <div>
                       <label htmlFor="employee-edit-last-name" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
@@ -541,8 +547,10 @@ export default function EditEmployeePage() {
                         type="text"
                         {...register('lastName')}
                         className="input-aura"
+                        aria-invalid={errors.lastName ? 'true' : 'false'}
+                        aria-describedby={errors.lastName ? 'employee-edit-last-name-error' : undefined}
                       />
-                      {errors.lastName && <p className="text-danger-500 text-sm mt-1">{errors.lastName.message}</p>}
+                      {errors.lastName && <p id="employee-edit-last-name-error" className="text-danger-500 text-sm mt-1">{errors.lastName.message}</p>}
                     </div>
                   </div>
 
@@ -561,6 +569,8 @@ export default function EditEmployeePage() {
                           value={field.value || ''}
                           onChange={(e) => field.onChange(toEmployeeStatus(e.target.value) || undefined)}
                           className="input-aura"
+                          aria-invalid={errors.status ? 'true' : 'false'}
+                          aria-describedby={errors.status ? 'employee-edit-status-error' : undefined}
                         >
                           <option value="">Select Status</option>
                           <option value="ACTIVE">Active</option>
@@ -571,7 +581,7 @@ export default function EditEmployeePage() {
                         </select>
                       )}
                     />
-                    {errors.status && <p className="text-danger-500 text-sm mt-1">{errors.status.message}</p>}
+                    {errors.status && <p id="employee-edit-status-error" className="text-danger-500 text-sm mt-1">{errors.status.message}</p>}
                   </div>
                 </div>
               )}
@@ -590,9 +600,11 @@ export default function EditEmployeePage() {
                         {...register('personalEmail')}
                         className="input-aura"
                         placeholder="personal@email.com"
+                        aria-invalid={errors.personalEmail ? 'true' : 'false'}
+                        aria-describedby={errors.personalEmail ? 'employee-edit-personal-email-error' : undefined}
                       />
                       {errors.personalEmail &&
-                        <p className="text-danger-500 text-sm mt-1">{errors.personalEmail.message}</p>}
+                        <p id="employee-edit-personal-email-error" className="text-danger-500 text-sm mt-1">{errors.personalEmail.message}</p>}
                     </div>
                     <div>
                       <label htmlFor="employee-edit-phone-number" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
@@ -604,9 +616,11 @@ export default function EditEmployeePage() {
                         {...register('phoneNumber')}
                         className="input-aura"
                         placeholder="+1 234 567 8900"
+                        aria-invalid={errors.phoneNumber ? 'true' : 'false'}
+                        aria-describedby={errors.phoneNumber ? 'employee-edit-phone-number-error' : undefined}
                       />
                       {errors.phoneNumber &&
-                        <p className="text-danger-500 text-sm mt-1">{errors.phoneNumber.message}</p>}
+                        <p id="employee-edit-phone-number-error" className="text-danger-500 text-sm mt-1">{errors.phoneNumber.message}</p>}
                     </div>
                   </div>
 
@@ -621,9 +635,11 @@ export default function EditEmployeePage() {
                         {...register('emergencyContactNumber')}
                         className="input-aura"
                         placeholder="+1 234 567 8900"
+                        aria-invalid={errors.emergencyContactNumber ? 'true' : 'false'}
+                        aria-describedby={errors.emergencyContactNumber ? 'employee-edit-emergency-contact-error' : undefined}
                       />
                       {errors.emergencyContactNumber &&
-                        <p className="text-danger-500 text-sm mt-1">{errors.emergencyContactNumber.message}</p>}
+                        <p id="employee-edit-emergency-contact-error" className="text-danger-500 text-sm mt-1">{errors.emergencyContactNumber.message}</p>}
                     </div>
                     <div>
                       <label htmlFor="employee-edit-date-of-birth" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
@@ -634,9 +650,11 @@ export default function EditEmployeePage() {
                         type="date"
                         {...register('dateOfBirth')}
                         className="input-aura"
+                        aria-invalid={errors.dateOfBirth ? 'true' : 'false'}
+                        aria-describedby={errors.dateOfBirth ? 'employee-edit-date-of-birth-error' : undefined}
                       />
                       {errors.dateOfBirth &&
-                        <p className="text-danger-500 text-sm mt-1">{errors.dateOfBirth.message}</p>}
+                        <p id="employee-edit-date-of-birth-error" className="text-danger-500 text-sm mt-1">{errors.dateOfBirth.message}</p>}
                     </div>
                   </div>
 
@@ -654,6 +672,8 @@ export default function EditEmployeePage() {
                           value={field.value || ''}
                           onChange={(e) => field.onChange(toGender(e.target.value) || undefined)}
                           className="input-aura"
+                          aria-invalid={errors.gender ? 'true' : 'false'}
+                          aria-describedby={errors.gender ? 'employee-edit-gender-error' : undefined}
                         >
                           <option value="">Select Gender</option>
                           <option value="MALE">Male</option>
@@ -663,7 +683,7 @@ export default function EditEmployeePage() {
                         </select>
                       )}
                     />
-                    {errors.gender && <p className="text-danger-500 text-sm mt-1">{errors.gender.message}</p>}
+                    {errors.gender && <p id="employee-edit-gender-error" className="text-danger-500 text-sm mt-1">{errors.gender.message}</p>}
                   </div>
 
                   <div>
@@ -676,8 +696,10 @@ export default function EditEmployeePage() {
                       {...register('address')}
                       className="input-aura"
                       placeholder="Street address"
+                      aria-invalid={errors.address ? 'true' : 'false'}
+                      aria-describedby={errors.address ? 'employee-edit-address-error' : undefined}
                     />
-                    {errors.address && <p className="text-danger-500 text-sm mt-1">{errors.address.message}</p>}
+                    {errors.address && <p id="employee-edit-address-error" className="text-danger-500 text-sm mt-1">{errors.address.message}</p>}
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
@@ -690,8 +712,10 @@ export default function EditEmployeePage() {
                         type="text"
                         {...register('city')}
                         className="input-aura"
+                        aria-invalid={errors.city ? 'true' : 'false'}
+                        aria-describedby={errors.city ? 'employee-edit-city-error' : undefined}
                       />
-                      {errors.city && <p className="text-danger-500 text-sm mt-1">{errors.city.message}</p>}
+                      {errors.city && <p id="employee-edit-city-error" className="text-danger-500 text-sm mt-1">{errors.city.message}</p>}
                     </div>
                     <div>
                       <label htmlFor="employee-edit-state" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
@@ -702,8 +726,10 @@ export default function EditEmployeePage() {
                         type="text"
                         {...register('state')}
                         className="input-aura"
+                        aria-invalid={errors.state ? 'true' : 'false'}
+                        aria-describedby={errors.state ? 'employee-edit-state-error' : undefined}
                       />
-                      {errors.state && <p className="text-danger-500 text-sm mt-1">{errors.state.message}</p>}
+                      {errors.state && <p id="employee-edit-state-error" className="text-danger-500 text-sm mt-1">{errors.state.message}</p>}
                     </div>
                   </div>
 
@@ -717,8 +743,10 @@ export default function EditEmployeePage() {
                         type="text"
                         {...register('postalCode')}
                         className="input-aura"
+                        aria-invalid={errors.postalCode ? 'true' : 'false'}
+                        aria-describedby={errors.postalCode ? 'employee-edit-postal-code-error' : undefined}
                       />
-                      {errors.postalCode && <p className="text-danger-500 text-sm mt-1">{errors.postalCode.message}</p>}
+                      {errors.postalCode && <p id="employee-edit-postal-code-error" className="text-danger-500 text-sm mt-1">{errors.postalCode.message}</p>}
                     </div>
                     <div>
                       <label htmlFor="employee-edit-country" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
@@ -729,8 +757,10 @@ export default function EditEmployeePage() {
                         type="text"
                         {...register('country')}
                         className="input-aura"
+                        aria-invalid={errors.country ? 'true' : 'false'}
+                        aria-describedby={errors.country ? 'employee-edit-country-error' : undefined}
                       />
-                      {errors.country && <p className="text-danger-500 text-sm mt-1">{errors.country.message}</p>}
+                      {errors.country && <p id="employee-edit-country-error" className="text-danger-500 text-sm mt-1">{errors.country.message}</p>}
                     </div>
                   </div>
                 </div>
@@ -767,9 +797,11 @@ export default function EditEmployeePage() {
                       rows={2}
                       className="input-aura"
                       placeholder="Please provide a reason for the employment changes (e.g., Promotion, Role change, Transfer)"
+                      aria-invalid={errors.changeRequestReason ? 'true' : 'false'}
+                      aria-describedby={errors.changeRequestReason ? 'employee-edit-change-reason-error' : undefined}
                     />
                     {errors.changeRequestReason &&
-                      <p className="text-danger-500 text-sm mt-1">{errors.changeRequestReason.message}</p>}
+                      <p id="employee-edit-change-reason-error" className="text-danger-500 text-sm mt-1">{errors.changeRequestReason.message}</p>}
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
@@ -784,9 +816,11 @@ export default function EditEmployeePage() {
                         {...register('designation')}
                         className="input-aura"
                         placeholder="Senior Software Engineer"
+                        aria-invalid={errors.designation ? 'true' : 'false'}
+                        aria-describedby={errors.designation ? 'employee-edit-designation-error' : undefined}
                       />
                       {errors.designation &&
-                        <p className="text-danger-500 text-sm mt-1">{errors.designation.message}</p>}
+                        <p id="employee-edit-designation-error" className="text-danger-500 text-sm mt-1">{errors.designation.message}</p>}
                     </div>
                     <div>
                       <label htmlFor="employee-edit-employment-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
@@ -803,6 +837,8 @@ export default function EditEmployeePage() {
                             value={field.value || ''}
                             onChange={(e) => field.onChange(toEmploymentType(e.target.value) || undefined)}
                             className="input-aura"
+                            aria-invalid={errors.employmentType ? 'true' : 'false'}
+                            aria-describedby={errors.employmentType ? 'employee-edit-employment-type-error' : undefined}
                           >
                             <option value="">Select Type</option>
                             <option value="FULL_TIME">Full Time</option>
@@ -814,7 +850,7 @@ export default function EditEmployeePage() {
                         )}
                       />
                       {errors.employmentType &&
-                        <p className="text-danger-500 text-sm mt-1">{errors.employmentType.message}</p>}
+                        <p id="employee-edit-employment-type-error" className="text-danger-500 text-sm mt-1">{errors.employmentType.message}</p>}
                     </div>
                   </div>
 
@@ -831,6 +867,8 @@ export default function EditEmployeePage() {
                           {...field}
                           value={field.value || ''}
                           className="input-aura"
+                          aria-invalid={errors.departmentId ? 'true' : 'false'}
+                          aria-describedby={errors.departmentId ? 'employee-edit-department-error' : undefined}
                         >
                           <option value="">Select Department</option>
                           {departments.map((dept) => (
@@ -842,7 +880,7 @@ export default function EditEmployeePage() {
                       )}
                     />
                     {errors.departmentId &&
-                      <p className="text-danger-500 text-sm mt-1">{errors.departmentId.message}</p>}
+                      <p id="employee-edit-department-error" className="text-danger-500 text-sm mt-1">{errors.departmentId.message}</p>}
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
@@ -860,6 +898,8 @@ export default function EditEmployeePage() {
                             value={field.value || ''}
                             onChange={(e) => field.onChange(toEmployeeLevel(e.target.value) || undefined)}
                             className="input-aura"
+                            aria-invalid={errors.level ? 'true' : 'false'}
+                            aria-describedby={errors.level ? 'employee-edit-level-error' : undefined}
                           >
                             <option value="">Select Level</option>
                             <option value="ENTRY">Entry (Junior/Associate)</option>
@@ -875,7 +915,7 @@ export default function EditEmployeePage() {
                           </select>
                         )}
                       />
-                      {errors.level && <p className="text-danger-500 text-sm mt-1">{errors.level.message}</p>}
+                      {errors.level && <p id="employee-edit-level-error" className="text-danger-500 text-sm mt-1">{errors.level.message}</p>}
                     </div>
                     <div>
                       <label htmlFor="employee-edit-job-role" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
@@ -891,6 +931,8 @@ export default function EditEmployeePage() {
                             value={field.value || ''}
                             onChange={(e) => field.onChange(toJobRole(e.target.value) || undefined)}
                             className="input-aura"
+                            aria-invalid={errors.jobRole ? 'true' : 'false'}
+                            aria-describedby={errors.jobRole ? 'employee-edit-job-role-error' : undefined}
                           >
                             <option value="">Select Role</option>
                             <optgroup label="Engineering">
@@ -970,7 +1012,7 @@ export default function EditEmployeePage() {
                           </select>
                         )}
                       />
-                      {errors.jobRole && <p className="text-danger-500 text-sm mt-1">{errors.jobRole.message}</p>}
+                      {errors.jobRole && <p id="employee-edit-job-role-error" className="text-danger-500 text-sm mt-1">{errors.jobRole.message}</p>}
                     </div>
                   </div>
 
@@ -984,9 +1026,11 @@ export default function EditEmployeePage() {
                         type="date"
                         {...register('confirmationDate')}
                         className="input-aura"
+                        aria-invalid={errors.confirmationDate ? 'true' : 'false'}
+                        aria-describedby={errors.confirmationDate ? 'employee-edit-confirmation-date-error' : undefined}
                       />
                       {errors.confirmationDate &&
-                        <p className="text-danger-500 text-sm mt-1">{errors.confirmationDate.message}</p>}
+                        <p id="employee-edit-confirmation-date-error" className="text-danger-500 text-sm mt-1">{errors.confirmationDate.message}</p>}
                     </div>
                     <div>
                       <label htmlFor="employee-edit-manager" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
@@ -1001,6 +1045,8 @@ export default function EditEmployeePage() {
                             required
                             {...field}
                             className="input-aura"
+                            aria-invalid={errors.managerId ? 'true' : 'false'}
+                            aria-describedby={errors.managerId ? 'employee-edit-manager-error' : undefined}
                           >
                             <option value="">Select Manager</option>
                             <option value={employeeId}>Self (No Reporting Manager)</option>
@@ -1012,7 +1058,7 @@ export default function EditEmployeePage() {
                           </select>
                         )}
                       />
-                      {errors.managerId && <p className="text-danger-500 text-sm mt-1">{errors.managerId.message}</p>}
+                      {errors.managerId && <p id="employee-edit-manager-error" className="text-danger-500 text-sm mt-1">{errors.managerId.message}</p>}
                       <p className="mt-1 text-caption">
                         Select &quot;Self&quot; for top-level employees who don&apos;t report to anyone.
                       </p>
@@ -1089,13 +1135,15 @@ export default function EditEmployeePage() {
                         {...register('bankAccountNumber')}
                         className="input-aura"
                         placeholder={employee?.bankAccountNumber ? `Currently: ${employee.bankAccountNumber}` : 'Enter account number'}
+                        aria-invalid={errors.bankAccountNumber ? 'true' : 'false'}
+                        aria-describedby={errors.bankAccountNumber ? 'employee-edit-bank-account-error' : undefined}
                       />
                       {employee?.bankAccountNumber && (
                         <p className="text-xs text-[var(--text-muted)] mt-1">Leave blank to keep current account
                           ({employee.bankAccountNumber})</p>
                       )}
                       {errors.bankAccountNumber &&
-                        <p className="text-danger-500 text-sm mt-1">{errors.bankAccountNumber.message}</p>}
+                        <p id="employee-edit-bank-account-error" className="text-danger-500 text-sm mt-1">{errors.bankAccountNumber.message}</p>}
                     </div>
                     <div>
                       <label htmlFor="employee-edit-bank-name" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
@@ -1107,8 +1155,10 @@ export default function EditEmployeePage() {
                         {...register('bankName')}
                         className="input-aura"
                         placeholder="Bank of America"
+                        aria-invalid={errors.bankName ? 'true' : 'false'}
+                        aria-describedby={errors.bankName ? 'employee-edit-bank-name-error' : undefined}
                       />
-                      {errors.bankName && <p className="text-danger-500 text-sm mt-1">{errors.bankName.message}</p>}
+                      {errors.bankName && <p id="employee-edit-bank-name-error" className="text-danger-500 text-sm mt-1">{errors.bankName.message}</p>}
                     </div>
                   </div>
 
@@ -1123,9 +1173,11 @@ export default function EditEmployeePage() {
                         {...register('bankIfscCode')}
                         className="input-aura"
                         placeholder="HDFC0001234"
+                        aria-invalid={errors.bankIfscCode ? 'true' : 'false'}
+                        aria-describedby={errors.bankIfscCode ? 'employee-edit-bank-ifsc-error' : undefined}
                       />
                       {errors.bankIfscCode &&
-                        <p className="text-danger-500 text-sm mt-1">{errors.bankIfscCode.message}</p>}
+                        <p id="employee-edit-bank-ifsc-error" className="text-danger-500 text-sm mt-1">{errors.bankIfscCode.message}</p>}
                     </div>
                     <div>
                       <label htmlFor="employee-edit-tax-id" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
@@ -1137,8 +1189,10 @@ export default function EditEmployeePage() {
                         {...register('taxId')}
                         className="input-aura"
                         placeholder="XXX-XX-XXXX"
+                        aria-invalid={errors.taxId ? 'true' : 'false'}
+                        aria-describedby={errors.taxId ? 'employee-edit-tax-id-error' : undefined}
                       />
-                      {errors.taxId && <p className="text-danger-500 text-sm mt-1">{errors.taxId.message}</p>}
+                      {errors.taxId && <p id="employee-edit-tax-id-error" className="text-danger-500 text-sm mt-1">{errors.taxId.message}</p>}
                     </div>
                   </div>
 

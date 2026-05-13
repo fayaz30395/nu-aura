@@ -235,8 +235,9 @@ export default function TicketListPage() {
           <Card className="p-4">
             <div className="flex flex-wrap gap-4 items-end">
               <div>
-                <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Status</label>
+                <label htmlFor="ticket-filter-status" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Status</label>
                 <select
+                  id="ticket-filter-status"
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value as TicketStatus | '')}
                   className="input-aura text-sm"
@@ -248,8 +249,9 @@ export default function TicketListPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Priority</label>
+                <label htmlFor="ticket-filter-priority" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Priority</label>
                 <select
+                  id="ticket-filter-priority"
                   value={priorityFilter}
                   onChange={(e) => setPriorityFilter(e.target.value as TicketPriority | '')}
                   className="input-aura text-sm"
@@ -411,8 +413,9 @@ export default function TicketListPage() {
           <ModalBody>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-[var(--text-primary)] mb-1.5">Subject *</label>
+                <label htmlFor="ticket-subject" className="block text-sm font-medium text-[var(--text-primary)] mb-1.5">Subject *</label>
                 <input
+                  id="ticket-subject"
                   type="text"
                   placeholder="Brief description of the issue"
                   className="input-aura w-full"
@@ -422,8 +425,9 @@ export default function TicketListPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[var(--text-primary)] mb-1.5">Description *</label>
+                <label htmlFor="ticket-description" className="block text-sm font-medium text-[var(--text-primary)] mb-1.5">Description *</label>
                 <textarea
+                  id="ticket-description"
                   placeholder="Provide details about your issue..."
                   rows={5}
                   className="w-full px-4 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-700 text-sm"
@@ -434,8 +438,8 @@ export default function TicketListPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1.5">Priority</label>
-                  <select className="input-aura w-full" {...register('priority')}>
+                  <label htmlFor="ticket-priority" className="block text-sm font-medium text-[var(--text-primary)] mb-1.5">Priority</label>
+                  <select id="ticket-priority" className="input-aura w-full" {...register('priority')}>
                     <option value="LOW">Low</option>
                     <option value="MEDIUM">Medium</option>
                     <option value="HIGH">High</option>
@@ -443,8 +447,8 @@ export default function TicketListPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1.5">Category</label>
-                  <select className="input-aura w-full" {...register('categoryId')}>
+                  <label htmlFor="ticket-category" className="block text-sm font-medium text-[var(--text-primary)] mb-1.5">Category</label>
+                  <select id="ticket-category" className="input-aura w-full" {...register('categoryId')}>
                     <option value="">Select category</option>
                     {categories.map((cat) => (
                       <option key={cat.id} value={cat.id}>{cat.name}</option>
@@ -454,8 +458,9 @@ export default function TicketListPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[var(--text-primary)] mb-1.5">Tags</label>
+                <label htmlFor="ticket-tags" className="block text-sm font-medium text-[var(--text-primary)] mb-1.5">Tags</label>
                 <input
+                  id="ticket-tags"
                   type="text"
                   placeholder="Comma-separated tags (e.g. vpn, network, access)"
                   className="input-aura w-full"

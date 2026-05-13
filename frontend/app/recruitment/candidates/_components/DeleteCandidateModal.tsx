@@ -2,6 +2,7 @@
 
 import React from 'react';
 import {Button} from '@/components/ui/Button';
+import {Modal, ModalBody} from '@/components/ui/Modal';
 import {Trash2} from 'lucide-react';
 import {Candidate} from '@/lib/types/hire/recruitment';
 
@@ -20,12 +21,11 @@ export function DeleteCandidateModal({
                                        onConfirm,
                                        onClose,
                                      }: DeleteCandidateModalProps) {
-  if (!open || !candidate) return null;
+  if (!candidate) return null;
 
   return (
-    <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
-      <div
-        className="bg-[var(--bg-card)] rounded-lg max-w-md w-full p-6 border border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
+    <Modal isOpen={open} onClose={onClose} size="sm">
+      <ModalBody>
         <div className="flex items-center mb-4">
           <div
             className="flex-shrink-0 h-12 w-12 rounded-xl bg-danger-100 dark:bg-danger-900/30 flex items-center justify-center">
@@ -45,7 +45,7 @@ export function DeleteCandidateModal({
             Delete
           </Button>
         </div>
-      </div>
-    </div>
+      </ModalBody>
+    </Modal>
   );
 }

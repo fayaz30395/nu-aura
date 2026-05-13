@@ -107,38 +107,39 @@ export const ProgramFormModal = React.memo(function ProgramFormModal({
         <ModalBody>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+              <label htmlFor="training-program-code" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                 Program Code *
               </label>
-              <Input {...register('programCode')} placeholder="e.g., TRN-001"/>
+              <Input id="training-program-code" {...register('programCode')} placeholder="e.g., TRN-001"/>
               {errors.programCode && (
                 <p className="text-xs text-danger-600 mt-1">{errors.programCode.message}</p>
               )}
             </div>
             <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+              <label htmlFor="training-program-name" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                 Program Name *
               </label>
-              <Input {...register('programName')} placeholder="Enter program name"/>
+              <Input id="training-program-name" {...register('programName')} placeholder="Enter program name"/>
               {errors.programName && (
                 <p className="text-xs text-danger-600 mt-1">{errors.programName.message}</p>
               )}
             </div>
             <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+              <label htmlFor="training-program-description" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                 Description
               </label>
               <Textarea
+                id="training-program-description"
                 {...register('description')}
                 placeholder="Enter program description"
                 rows={3}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+              <label htmlFor="training-program-category" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                 Category *
               </label>
-              <Select {...register('category')}>
+              <Select id="training-program-category" {...register('category')}>
                 {categoryOptions.map((option) => (
                   <option key={option.value} value={option.value}>
                     {option.label}
@@ -147,10 +148,10 @@ export const ProgramFormModal = React.memo(function ProgramFormModal({
               </Select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+              <label htmlFor="training-program-delivery-mode" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                 Delivery Mode *
               </label>
-              <Select {...register('deliveryMode')}>
+              <Select id="training-program-delivery-mode" {...register('deliveryMode')}>
                 {deliveryModeOptions.map((option) => (
                   <option key={option.value} value={option.value}>
                     {option.label}
@@ -159,10 +160,10 @@ export const ProgramFormModal = React.memo(function ProgramFormModal({
               </Select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+              <label htmlFor="training-program-status" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                 Status
               </label>
-              <Select {...register('status')}>
+              <Select id="training-program-status" {...register('status')}>
                 {statusOptions.map((option) => (
                   <option key={option.value} value={option.value}>
                     {option.label}
@@ -171,38 +172,40 @@ export const ProgramFormModal = React.memo(function ProgramFormModal({
               </Select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+              <label htmlFor="training-program-duration-hours" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                 Duration (Hours)
               </label>
               <Input
+                id="training-program-duration-hours"
                 type="number"
                 {...register('durationHours', {valueAsNumber: true})}
                 placeholder="Enter duration"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+              <label htmlFor="training-program-start-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                 Start Date
               </label>
-              <Input type="date" {...register('startDate')} />
+              <Input id="training-program-start-date" type="date" {...register('startDate')} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+              <label htmlFor="training-program-end-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                 End Date
               </label>
-              <Input type="date" {...register('endDate')} />
+              <Input id="training-program-end-date" type="date" {...register('endDate')} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+              <label htmlFor="training-program-trainer-name" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                 Trainer Name
               </label>
-              <Input {...register('trainerName')} placeholder="Enter trainer name"/>
+              <Input id="training-program-trainer-name" {...register('trainerName')} placeholder="Enter trainer name"/>
             </div>
             <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+              <label htmlFor="training-program-trainer-email" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                 Trainer Email
               </label>
               <Input
+                id="training-program-trainer-email"
                 type="email"
                 {...register('trainerEmail')}
                 placeholder="Enter trainer email"
@@ -212,36 +215,39 @@ export const ProgramFormModal = React.memo(function ProgramFormModal({
               )}
             </div>
             <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+              <label htmlFor="training-program-location" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                 Location
               </label>
-              <Input {...register('location')} placeholder="Enter location"/>
+              <Input id="training-program-location" {...register('location')} placeholder="Enter location"/>
             </div>
             <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+              <label htmlFor="training-program-max-participants" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                 Max Participants
               </label>
               <Input
+                id="training-program-max-participants"
                 type="number"
                 {...register('maxParticipants', {valueAsNumber: true})}
                 placeholder="Enter max participants"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+              <label htmlFor="training-program-cost-per-participant" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                 Cost per Participant ($)
               </label>
               <Input
+                id="training-program-cost-per-participant"
                 type="number"
                 {...register('costPerParticipant', {valueAsNumber: true})}
                 placeholder="Enter cost"
               />
             </div>
             <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+              <label htmlFor="training-program-learning-objectives" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                 Learning Objectives
               </label>
               <Textarea
+                id="training-program-learning-objectives"
                 {...register('learningObjectives')}
                 placeholder="Enter learning objectives"
                 rows={2}

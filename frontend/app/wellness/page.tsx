@@ -507,7 +507,7 @@ export default function WellnessPage() {
             <ModalBody>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                  <label htmlFor="wellness-log-metric-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Metric Type
                   </label>
                   <Controller
@@ -515,6 +515,7 @@ export default function WellnessPage() {
                     control={logControl}
                     render={({field}) => (
                       <Select
+                        id="wellness-log-metric-type"
                         value={field.value}
                         onChange={(e) => field.onChange(e.target.value)}
                       >
@@ -531,10 +532,11 @@ export default function WellnessPage() {
                   )}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                  <label htmlFor="wellness-log-value" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Value
                   </label>
                   <Input
+                    id="wellness-log-value"
                     type="number"
                     {...registerLog('value')}
                     placeholder="Enter value"
@@ -544,10 +546,11 @@ export default function WellnessPage() {
                   )}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                  <label htmlFor="wellness-log-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Date
                   </label>
                   <Input
+                    id="wellness-log-date"
                     type="date"
                     {...registerLog('loggedAt')}
                   />
@@ -556,10 +559,11 @@ export default function WellnessPage() {
                   )}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                  <label htmlFor="wellness-log-notes" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Notes (Optional)
                   </label>
                   <Textarea
+                    id="wellness-log-notes"
                     {...registerLog('notes')}
                     placeholder="Add any notes..."
                     rows={2}

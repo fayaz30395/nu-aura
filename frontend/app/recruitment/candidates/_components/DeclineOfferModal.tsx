@@ -2,6 +2,7 @@
 
 import React from 'react';
 import {Button} from '@/components/ui/Button';
+import {Modal, ModalBody} from '@/components/ui/Modal';
 import {XCircle} from 'lucide-react';
 import {Candidate} from '@/lib/types/hire/recruitment';
 
@@ -22,12 +23,11 @@ export function DeclineOfferModal({
                                     onConfirm,
                                     onClose,
                                   }: DeclineOfferModalProps) {
-  if (!open || !candidate) return null;
+  if (!candidate) return null;
 
   return (
-    <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
-      <div
-        className="bg-[var(--bg-card)] rounded-lg max-w-md w-full p-6 border border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
+    <Modal isOpen={open} onClose={onClose} size="sm">
+      <ModalBody>
         <div className="flex items-center mb-4">
           <div
             className="flex-shrink-0 h-12 w-12 rounded-xl bg-danger-100 dark:bg-danger-900/30 flex items-center justify-center">
@@ -39,8 +39,9 @@ export function DeclineOfferModal({
           Mark offer as declined for <strong className="text-[var(--text-secondary)]">{candidate.fullName}</strong>?
         </p>
         <div className="mb-6">
-          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Decline Reason</label>
+          <label htmlFor="decline-offer-reason" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Decline Reason</label>
           <textarea
+            id="decline-offer-reason"
             rows={3}
             value={declineReason}
             onChange={(e) => onDeclineReasonChange(e.target.value)}
@@ -56,7 +57,7 @@ export function DeclineOfferModal({
             Decline Offer
           </Button>
         </div>
-      </div>
-    </div>
+      </ModalBody>
+    </Modal>
   );
 }

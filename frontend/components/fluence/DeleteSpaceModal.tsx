@@ -316,10 +316,11 @@ export function DeleteSpaceModal({
 
             {/* Type to confirm */}
             <div>
-              <label className="text-sm font-medium text-[var(--text-secondary)] mb-2 block">
+              <label htmlFor="delete-space-confirm" className="text-sm font-medium text-[var(--text-secondary)] mb-2 block">
                 Type <strong className="text-[var(--text-primary)]">{space.name}</strong> to confirm
               </label>
               <input
+                id="delete-space-confirm"
                 type="text"
                 value={confirmText}
                 onChange={(e) => setConfirmText(e.target.value)}

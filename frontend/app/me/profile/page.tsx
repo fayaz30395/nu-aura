@@ -399,11 +399,12 @@ export default function MyProfilePage() {
                 <p className="text-[var(--text-primary)] mt-1">{employee.workEmail}</p>
               </div>
               <div>
-                <label className="text-sm font-medium text-[var(--text-secondary)]">
+                <label htmlFor="profile-personal-email" className="text-sm font-medium text-[var(--text-secondary)]">
                   Personal Email
                 </label>
                 {isEditing ? (
                   <input
+                    id="profile-personal-email"
                     type="email"
                     {...profileForm.register('personalEmail')}
                     className="input-aura w-full mt-1 px-4 py-2 rounded-lg"
@@ -415,11 +416,12 @@ export default function MyProfilePage() {
                 )}
               </div>
               <div>
-                <label className="text-sm font-medium text-[var(--text-secondary)]">
+                <label htmlFor="profile-phone-number" className="text-sm font-medium text-[var(--text-secondary)]">
                   Phone Number
                 </label>
                 {isEditing ? (
                   <input
+                    id="profile-phone-number"
                     type="tel"
                     {...profileForm.register('phoneNumber')}
                     className="input-aura w-full mt-1 px-4 py-2 rounded-lg"
@@ -431,11 +433,12 @@ export default function MyProfilePage() {
                 )}
               </div>
               <div>
-                <label className="text-sm font-medium text-[var(--text-secondary)]">
+                <label htmlFor="profile-emergency-contact" className="text-sm font-medium text-[var(--text-secondary)]">
                   Emergency Contact
                 </label>
                 {isEditing ? (
                   <input
+                    id="profile-emergency-contact"
                     type="tel"
                     {...profileForm.register('emergencyContactNumber')}
                     className="input-aura w-full mt-1 px-4 py-2 rounded-lg"
@@ -460,11 +463,12 @@ export default function MyProfilePage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <label className="text-sm font-medium text-[var(--text-secondary)]">
+                <label htmlFor="profile-address" className="text-sm font-medium text-[var(--text-secondary)]">
                   Street Address
                 </label>
                 {isEditing ? (
                   <textarea
+                    id="profile-address"
                     {...profileForm.register('address')}
                     rows={2}
                     className="input-aura w-full mt-1 px-4 py-2 rounded-lg"
@@ -477,11 +481,12 @@ export default function MyProfilePage() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-medium text-[var(--text-secondary)]">
+                  <label htmlFor="profile-city" className="text-sm font-medium text-[var(--text-secondary)]">
                     City
                   </label>
                   {isEditing ? (
                     <input
+                      id="profile-city"
                       type="text"
                       {...profileForm.register('city')}
                       className="input-aura w-full mt-1 px-4 py-2 rounded-lg"
@@ -493,11 +498,12 @@ export default function MyProfilePage() {
                   )}
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-[var(--text-secondary)]">
+                  <label htmlFor="profile-state" className="text-sm font-medium text-[var(--text-secondary)]">
                     State
                   </label>
                   {isEditing ? (
                     <input
+                      id="profile-state"
                       type="text"
                       {...profileForm.register('state')}
                       className="input-aura w-full mt-1 px-4 py-2 rounded-lg"
@@ -511,11 +517,12 @@ export default function MyProfilePage() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-medium text-[var(--text-secondary)]">
+                  <label htmlFor="profile-postal-code" className="text-sm font-medium text-[var(--text-secondary)]">
                     Postal Code
                   </label>
                   {isEditing ? (
                     <input
+                      id="profile-postal-code"
                       type="text"
                       {...profileForm.register('postalCode')}
                       className="input-aura w-full mt-1 px-4 py-2 rounded-lg"
@@ -527,11 +534,12 @@ export default function MyProfilePage() {
                   )}
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-[var(--text-secondary)]">
+                  <label htmlFor="profile-country" className="text-sm font-medium text-[var(--text-secondary)]">
                     Country
                   </label>
                   {isEditing ? (
                     <input
+                      id="profile-country"
                       type="text"
                       {...profileForm.register('country')}
                       className="input-aura w-full mt-1 px-4 py-2 rounded-lg"
@@ -739,10 +747,11 @@ export default function MyProfilePage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
+                    <label htmlFor="profile-bank-name" className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
                       New Bank Name *
                     </label>
                     <input
+                      id="profile-bank-name"
                       type="text"
                       {...bankChangeForm.register('bankName')}
                       placeholder="e.g., State Bank of India"
@@ -753,10 +762,11 @@ export default function MyProfilePage() {
                     )}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
+                    <label htmlFor="profile-bank-account-number" className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
                       New Account Number *
                     </label>
                     <input
+                      id="profile-bank-account-number"
                       type="text"
                       {...bankChangeForm.register('bankAccountNumber')}
                       placeholder="Enter full account number"
@@ -768,10 +778,11 @@ export default function MyProfilePage() {
                     )}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
+                    <label htmlFor="profile-bank-ifsc-code" className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
                       New IFSC Code *
                     </label>
                     <input
+                      id="profile-bank-ifsc-code"
                       type="text"
                       {...bankChangeForm.register('bankIfscCode')}
                       placeholder="e.g., SBIN0001234"
@@ -783,10 +794,11 @@ export default function MyProfilePage() {
                     )}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
+                    <label htmlFor="profile-bank-change-reason" className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
                       Reason for Change *
                     </label>
                     <textarea
+                      id="profile-bank-change-reason"
                       {...bankChangeForm.register('reason')}
                       rows={3}
                       placeholder="e.g., Changed salary account to new bank"

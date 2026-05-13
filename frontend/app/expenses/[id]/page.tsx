@@ -415,17 +415,17 @@ export default function ExpenseDetailPage() {
             <ModalBody>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Description
+                  <label htmlFor="expense-item-description" className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Description
                     *</label>
-                  <input {...register('description')}
+                  <input id="expense-item-description" {...register('description')}
                          className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"/>
                   {errors.description && <p className="text-danger-500 text-sm mt-1">{errors.description.message}</p>}
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Amount
+                    <label htmlFor="expense-item-amount" className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Amount
                       *</label>
-                    <input type="number" step="0.01" {...register('amount')}
+                    <input id="expense-item-amount" type="number" step="0.01" {...register('amount')}
                            className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"/>
                     {errors.amount && <p className="text-danger-500 text-sm mt-1">{errors.amount.message}</p>}
                   </div>
@@ -451,9 +451,9 @@ export default function ExpenseDetailPage() {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label
+                    <label htmlFor="expense-item-category"
                       className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Category</label>
-                    <select {...register('categoryId')}
+                    <select id="expense-item-category" {...register('categoryId')}
                             className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2">
                       <option value="">Select category</option>
                       {categories.map((cat) => (
@@ -462,15 +462,15 @@ export default function ExpenseDetailPage() {
                     </select>
                   </div>
                   <div>
-                    <label
+                    <label htmlFor="expense-item-merchant"
                       className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Merchant</label>
-                    <input {...register('merchantName')}
+                    <input id="expense-item-merchant" {...register('merchantName')}
                            className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"/>
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Notes</label>
-                  <textarea {...register('notes')} rows={2}
+                  <label htmlFor="expense-item-notes" className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Notes</label>
+                  <textarea id="expense-item-notes" {...register('notes')} rows={2}
                             className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"/>
                 </div>
                 <label className="flex items-center gap-2">
@@ -497,9 +497,10 @@ export default function ExpenseDetailPage() {
           <ModalHeader>Reject Expense Claim</ModalHeader>
           <ModalBody>
             <div>
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Reason for
+              <label htmlFor="expense-claim-reject-reason" className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Reason for
                 Rejection *</label>
               <textarea
+                id="expense-claim-reject-reason"
                 value={rejectReason}
                 onChange={(e) => setRejectReason(e.target.value)}
                 rows={3}

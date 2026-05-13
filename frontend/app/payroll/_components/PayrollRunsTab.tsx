@@ -39,10 +39,11 @@ export function PayrollRunsTab({
       <div className="flex justify-between items-center mb-6">
         <div className="flex gap-4">
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+            <label htmlFor="payroll-runs-status-filter" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Filter by Status
             </label>
             <select
+              id="payroll-runs-status-filter"
               value={payrollRunFilter}
               onChange={(e) => onFilterChange(e.target.value as PayrollRunStatus | 'ALL')}
               className="input-aura px-4 py-2 rounded-lg"

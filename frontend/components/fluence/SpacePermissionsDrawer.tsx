@@ -371,8 +371,9 @@ export function SpacePermissionsDrawer({
 
               {/* Description */}
               <div>
-                <label className={dsInput.label}>Description</label>
+                <label htmlFor="space-permissions-description" className={dsInput.label}>Description</label>
                 <textarea
+                  id="space-permissions-description"
                   {...register('description')}
                   rows={3}
                   placeholder="Describe this space..."
@@ -387,8 +388,9 @@ export function SpacePermissionsDrawer({
 
               {/* Icon */}
               <div>
-                <label className={dsInput.label}>Icon (emoji or symbol)</label>
+                <label htmlFor="space-permissions-icon" className={dsInput.label}>Icon (emoji or symbol)</label>
                 <input
+                  id="space-permissions-icon"
                   {...register('icon')}
                   type="text"
                   placeholder="e.g. books or lightning"

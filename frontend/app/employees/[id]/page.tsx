@@ -29,6 +29,7 @@ import {
 import CustomFieldsSection from '@/components/custom-fields/CustomFieldsSection';
 import {EntityType} from '@/lib/types/core/custom-fields';
 import {AppLayout} from '@/components/layout';
+import {Modal, ModalBody, ModalHeader} from '@/components/ui/Modal';
 import TalentJourneyTab from '@/components/employee/talent-profiles/TalentJourneyTab';
 import {useDeleteEmployee, useDottedLineReports, useEmployee, useSubordinates,} from '@/lib/hooks/queries/useEmployees';
 import {useAssetsByEmployee} from '@/lib/hooks/queries/useAssets';
@@ -132,9 +133,9 @@ function SectionCard({
   return (
     <Card className={className}>
       <CardContent className="p-6">
-        <h4 className="text-sm font-semibold text-[var(--text-primary)] mb-4 uppercase tracking-wider">
+        <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-4 uppercase tracking-wider">
           {title}
-        </h4>
+        </h2>
         {children}
       </CardContent>
     </Card>
@@ -586,7 +587,7 @@ export default function EmployeeDetailPage() {
                   </div>
 
                   {/* Right column — Skills, Reporting Team, Recognition */}
-                  <div className="space-y-6">
+                  <aside className="space-y-6" aria-label="Employee summary details">
                     {/* Reporting Team */}
                     <SectionCard title="Reporting Team">
                       {subordinates.length > 0 ? (
@@ -630,7 +631,7 @@ export default function EmployeeDetailPage() {
                         )}
                       </div>
                     </SectionCard>
-                  </div>
+                  </aside>
                 </div>
               )}
 
@@ -643,9 +644,9 @@ export default function EmployeeDetailPage() {
               {aboutSubTab === 'wall' && (
                 <div className="text-center py-16">
                   <MessageSquare className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4"/>
-                  <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
+                  <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                     Wall Activity
-                  </h3>
+                  </h2>
                   <p className="text-body-muted max-w-md mx-auto">
                     Social feed posts, recognitions, and announcements involving{' '}
                     {employee.firstName} will appear here.
@@ -1071,9 +1072,9 @@ export default function EmployeeDetailPage() {
                   ) : (
                     <div className="text-center py-16">
                       <Package className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4"/>
-                      <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
+                      <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                         No Assets Assigned
-                      </h3>
+                      </h2>
                       <p className="text-body-muted">
                         No assets are currently assigned to this employee.
                       </p>
@@ -1086,9 +1087,9 @@ export default function EmployeeDetailPage() {
               {assetSubTab === 'requests' && (
                 <div className="text-center py-16">
                   <Package className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4"/>
-                  <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
+                  <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                     Asset Requests
-                  </h3>
+                  </h2>
                   <p className="text-body-muted max-w-md mx-auto">
                     Asset requests made by {employee.firstName} will appear here.
                   </p>
@@ -1099,9 +1100,9 @@ export default function EmployeeDetailPage() {
               {assetSubTab === 'damages' && (
                 <div className="text-center py-16">
                   <AlertTriangle className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4"/>
-                  <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
+                  <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                     Asset Damage Charges
-                  </h3>
+                  </h2>
                   <p className="text-body-muted max-w-md mx-auto">
                     Any damage charges for assets assigned to {employee.firstName} will appear here.
                   </p>
@@ -1112,41 +1113,45 @@ export default function EmployeeDetailPage() {
         </main>
 
         {/* ── DELETE CONFIRMATION MODAL ─────────────────────────────── */}
-        {showDeleteModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="card-elevated max-w-md w-full p-6">
-              <div className="flex items-center mb-4">
-                <div
-                  className="flex-shrink-0 h-12 w-12 rounded-full bg-danger-100 dark:bg-danger-900/30 flex items-center justify-center">
-                  <AlertTriangle className="h-6 w-6 text-danger-600 dark:text-danger-400"/>
-                </div>
-                <h3 className="ml-4 text-lg font-medium text-[var(--text-primary)]">
-                  Delete Employee
-                </h3>
+        <Modal
+          isOpen={showDeleteModal}
+          onClose={() => setShowDeleteModal(false)}
+          size="sm"
+        >
+          <ModalHeader onClose={() => setShowDeleteModal(false)}>
+            <div className="flex items-center gap-3">
+              <div
+                className="flex-shrink-0 h-12 w-12 rounded-full bg-danger-100 dark:bg-danger-900/30 flex items-center justify-center">
+                <AlertTriangle className="h-6 w-6 text-danger-600 dark:text-danger-400"/>
               </div>
-              <p className="text-body-muted mb-6">
-                Are you sure you want to delete <strong>{employee.fullName}</strong>? This action
-                cannot be undone.
-              </p>
-              <div className="flex gap-4">
-                <button
-                  onClick={() => setShowDeleteModal(false)}
-                  disabled={deleteEmployeeMutation.isPending}
-                  className="flex-1 px-4 py-2 border border-[var(--border-main)] rounded-md text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] disabled:opacity-50"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleDelete}
-                  disabled={deleteEmployeeMutation.isPending}
-                  className="flex-1 px-4 py-2 bg-danger-600 text-white rounded-md hover:bg-danger-700 disabled:opacity-50"
-                >
-                  {deleteEmployeeMutation.isPending ? 'Deleting...' : 'Delete'}
-                </button>
-              </div>
+              <h2 className="text-lg font-medium text-[var(--text-primary)]">
+                Delete Employee
+              </h2>
             </div>
-          </div>
-        )}
+          </ModalHeader>
+          <ModalBody>
+            <p className="text-body-muted mb-6">
+              Are you sure you want to delete <strong>{employee.fullName}</strong>? This action
+              cannot be undone.
+            </p>
+            <div className="flex gap-4">
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                disabled={deleteEmployeeMutation.isPending}
+                className="flex-1 px-4 py-2 border border-[var(--border-main)] rounded-md text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDelete}
+                disabled={deleteEmployeeMutation.isPending}
+                className="flex-1 px-4 py-2 bg-danger-600 text-white rounded-md hover:bg-danger-700 disabled:opacity-50"
+              >
+                {deleteEmployeeMutation.isPending ? 'Deleting...' : 'Delete'}
+              </button>
+            </div>
+          </ModalBody>
+        </Modal>
       </div>
     </AppLayout>
   );

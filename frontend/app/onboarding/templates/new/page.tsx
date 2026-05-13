@@ -81,12 +81,13 @@ export default function NewTemplatePage() {
             <CardContent className="p-10">
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
                 <div className="space-y-4">
-                  <label
+                  <label htmlFor="onboarding-template-name"
                     className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)] flex items-center gap-2">
                     <ClipboardList className="h-3.5 w-3.5"/>
                     Template Name
                   </label>
                   <Input
+                    id="onboarding-template-name"
                     placeholder="e.g., Engineering Onboarding - Standard"
                     className="input-aura rounded-lg bg-[var(--bg-input)] border-0 py-8 px-6 text-xl font-black focus:ring-2 focus:ring-accent-500"
                     {...register('name')}
@@ -95,12 +96,13 @@ export default function NewTemplatePage() {
                 </div>
 
                 <div className="space-y-4">
-                  <label
+                  <label htmlFor="onboarding-template-description"
                     className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)] flex items-center gap-2">
                     <Info className="h-3.5 w-3.5"/>
                     Description
                   </label>
                   <textarea
+                    id="onboarding-template-description"
                     rows={4}
                     placeholder="Briefly describe what this template is for and which departments should use it."
                     className="w-full rounded-lg bg-[var(--bg-input)] border-0 p-6 font-bold text-[var(--text-secondary)] dark:text-[var(--text-secondary)]200 focus:ring-2 focus:ring-accent-500 outline-none"

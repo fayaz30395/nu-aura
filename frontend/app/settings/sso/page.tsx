@@ -360,10 +360,11 @@ export default function SsoSettingsPage() {
               <CardContent className="space-y-4">
                 {/* Name */}
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
+                  <label htmlFor="settings-sso-name" className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                     IdP Name <span className="text-danger-500">*</span>
                   </label>
                   <input
+                    id="settings-sso-name"
                     {...register('name')}
                     placeholder="e.g., Okta Production"
                     className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
@@ -375,10 +376,11 @@ export default function SsoSettingsPage() {
 
                 {/* Entity ID */}
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
+                  <label htmlFor="settings-sso-entity-id" className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                     Entity ID <span className="text-danger-500">*</span>
                   </label>
                   <input
+                    id="settings-sso-entity-id"
                     {...register('entityId')}
                     placeholder="e.g., http://www.okta.com/exk123abc"
                     className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
@@ -390,10 +392,11 @@ export default function SsoSettingsPage() {
 
                 {/* SSO URL */}
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
+                  <label htmlFor="settings-sso-url" className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                     SSO URL <span className="text-danger-500">*</span>
                   </label>
                   <input
+                    id="settings-sso-url"
                     {...register('ssoUrl')}
                     placeholder="https://your-idp.example.com/sso/saml"
                     className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
@@ -405,10 +408,11 @@ export default function SsoSettingsPage() {
 
                 {/* SLO URL (optional) */}
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
+                  <label htmlFor="settings-sso-slo-url" className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                     SLO URL (optional)
                   </label>
                   <input
+                    id="settings-sso-slo-url"
                     {...register('sloUrl')}
                     placeholder="https://your-idp.example.com/slo/saml"
                     className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
@@ -420,10 +424,11 @@ export default function SsoSettingsPage() {
 
                 {/* Metadata URL */}
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
+                  <label htmlFor="settings-sso-metadata-url" className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                     Metadata URL (optional)
                   </label>
                   <input
+                    id="settings-sso-metadata-url"
                     {...register('metadataUrl')}
                     placeholder="https://your-idp.example.com/metadata.xml"
                     className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
@@ -438,10 +443,11 @@ export default function SsoSettingsPage() {
 
                 {/* SP Entity ID override */}
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
+                  <label htmlFor="settings-sso-sp-entity-id" className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                     SP Entity ID (optional)
                   </label>
                   <input
+                    id="settings-sso-sp-entity-id"
                     {...register('spEntityId')}
                     placeholder="Leave blank for auto-generated"
                     className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
@@ -480,10 +486,11 @@ export default function SsoSettingsPage() {
                 )}
 
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
+                  <label htmlFor="settings-sso-certificate" className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                     Certificate (PEM)
                   </label>
                   <textarea
+                    id="settings-sso-certificate"
                     {...register('certificate')}
                     rows={6}
                     placeholder={`-----BEGIN CERTIFICATE-----\nMIID...\n-----END CERTIFICATE-----`}
@@ -540,10 +547,11 @@ export default function SsoSettingsPage() {
                     {field: 'attributeMappingDepartment' as const, label: 'Department', placeholder: 'customAttr2'},
                   ].map(({field, label, placeholder}) => (
                     <div key={field}>
-                      <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
+                      <label htmlFor={`settings-sso-${field}`} className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                         {label}
                       </label>
                       <input
+                        id={`settings-sso-${field}`}
                         {...register(field)}
                         placeholder={placeholder}
                         className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 text-sm"
@@ -590,10 +598,11 @@ export default function SsoSettingsPage() {
 
                 {/* Default Role */}
                 <div className="py-4">
-                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
+                  <label htmlFor="settings-sso-default-role-id" className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                     Default Role for Auto-Provisioned Users
                   </label>
                   <input
+                    id="settings-sso-default-role-id"
                     {...register('defaultRoleId')}
                     placeholder="Role UUID (leave blank for no default role)"
                     className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 text-sm"

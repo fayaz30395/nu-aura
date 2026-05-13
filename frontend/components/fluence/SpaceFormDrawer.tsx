@@ -171,11 +171,12 @@ export function SpaceFormDrawer({
       >
         {/* Name */}
         <div>
-          <label className="flex items-center gap-2 text-sm font-medium text-[var(--text-secondary)] mb-2">
+          <label htmlFor="space-name" className="flex items-center gap-2 text-sm font-medium text-[var(--text-secondary)] mb-2">
             <Type className="h-4 w-4"/>
             Space Name <span className="text-danger-500">*</span>
           </label>
           <input
+            id="space-name"
             {...register('name')}
             placeholder="e.g., Engineering, Product, HR Operations"
             className="input-aura w-full"
@@ -188,11 +189,12 @@ export function SpaceFormDrawer({
 
         {/* Description */}
         <div>
-          <label className="flex items-center gap-2 text-sm font-medium text-[var(--text-secondary)] mb-2">
+          <label htmlFor="space-description" className="flex items-center gap-2 text-sm font-medium text-[var(--text-secondary)] mb-2">
             <AlignLeft className="h-4 w-4"/>
             Description
           </label>
           <textarea
+            id="space-description"
             {...register('description')}
             placeholder="What is this space about?"
             rows={3}

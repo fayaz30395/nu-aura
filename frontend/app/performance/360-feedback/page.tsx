@@ -1126,8 +1126,8 @@ export default function Feedback360Page() {
                     placeholder="Any other feedback or observations?"
                   />
                 </div>
-              </div>
-              <div className="px-6 py-4 border-t border-[var(--border-main)] flex justify-between">
+              </ModalBody>
+              <ModalFooter className="!justify-between">
                 <button
                   onClick={() => {
                     setShowResponseModal(false);
@@ -1157,10 +1157,10 @@ export default function Feedback360Page() {
                     </button>
                   </PermissionGate>
                 </div>
-              </div>
-            </div>
-          </div>
-        )}
+              </ModalFooter>
+            </>
+          )}
+        </Modal>
 
         {/* Activate Cycle Confirmation */}
         <ConfirmDialog

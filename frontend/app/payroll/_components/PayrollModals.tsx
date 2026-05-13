@@ -44,9 +44,11 @@ export const PayrollRunModal = React.memo(function PayrollRunModal({
                   {...formHook.register('runName')}
                   className="input-aura w-full px-4 py-2 rounded-lg"
                   placeholder="e.g., November 2024 Payroll"
+                  aria-invalid={formHook.formState.errors.runName ? 'true' : 'false'}
+                  aria-describedby={formHook.formState.errors.runName ? 'payroll-run-name-error' : undefined}
                 />
                 {formHook.formState.errors.runName && (
-                  <p className="text-danger-500 text-xs mt-1">{formHook.formState.errors.runName.message}</p>
+                  <p id="payroll-run-name-error" className="text-danger-500 text-xs mt-1">{formHook.formState.errors.runName.message}</p>
                 )}
               </div>
 
@@ -58,9 +60,11 @@ export const PayrollRunModal = React.memo(function PayrollRunModal({
                     type="date"
                     {...formHook.register('payrollPeriodStart')}
                     className="input-aura w-full px-4 py-2 rounded-lg"
+                    aria-invalid={formHook.formState.errors.payrollPeriodStart ? 'true' : 'false'}
+                    aria-describedby={formHook.formState.errors.payrollPeriodStart ? 'payroll-run-period-start-error' : undefined}
                   />
                   {formHook.formState.errors.payrollPeriodStart && (
-                    <p
+                    <p id="payroll-run-period-start-error"
                       className="text-danger-500 text-xs mt-1">{formHook.formState.errors.payrollPeriodStart.message}</p>
                   )}
                 </div>
@@ -71,9 +75,11 @@ export const PayrollRunModal = React.memo(function PayrollRunModal({
                     type="date"
                     {...formHook.register('payrollPeriodEnd')}
                     className="input-aura w-full px-4 py-2 rounded-lg"
+                    aria-invalid={formHook.formState.errors.payrollPeriodEnd ? 'true' : 'false'}
+                    aria-describedby={formHook.formState.errors.payrollPeriodEnd ? 'payroll-run-period-end-error' : undefined}
                   />
                   {formHook.formState.errors.payrollPeriodEnd && (
-                    <p className="text-danger-500 text-xs mt-1">{formHook.formState.errors.payrollPeriodEnd.message}</p>
+                    <p id="payroll-run-period-end-error" className="text-danger-500 text-xs mt-1">{formHook.formState.errors.payrollPeriodEnd.message}</p>
                   )}
                 </div>
               </div>
@@ -85,9 +91,11 @@ export const PayrollRunModal = React.memo(function PayrollRunModal({
                   type="date"
                   {...formHook.register('paymentDate')}
                   className="input-aura w-full px-4 py-2 rounded-lg"
+                  aria-invalid={formHook.formState.errors.paymentDate ? 'true' : 'false'}
+                  aria-describedby={formHook.formState.errors.paymentDate ? 'payroll-run-payment-date-error' : undefined}
                 />
                 {formHook.formState.errors.paymentDate && (
-                  <p className="text-danger-500 text-xs mt-1">{formHook.formState.errors.paymentDate.message}</p>
+                  <p id="payroll-run-payment-date-error" className="text-danger-500 text-xs mt-1">{formHook.formState.errors.paymentDate.message}</p>
                 )}
               </div>
 
@@ -164,9 +172,11 @@ export const PayslipModal = React.memo(function PayslipModal({
                     type="text"
                     {...formHook.register('employeeId')}
                     className="input-aura w-full px-4 py-2 rounded-lg"
+                    aria-invalid={formHook.formState.errors.employeeId ? 'true' : 'false'}
+                    aria-describedby={formHook.formState.errors.employeeId ? 'payslip-employee-id-error' : undefined}
                   />
                   {formHook.formState.errors.employeeId && (
-                    <p className="text-danger-500 text-xs mt-1">{formHook.formState.errors.employeeId.message}</p>
+                    <p id="payslip-employee-id-error" className="text-danger-500 text-xs mt-1">{formHook.formState.errors.employeeId.message}</p>
                   )}
                 </div>
                 <div>
@@ -177,9 +187,11 @@ export const PayslipModal = React.memo(function PayslipModal({
                     type="text"
                     {...formHook.register('payrollRunId')}
                     className="input-aura w-full px-4 py-2 rounded-lg"
+                    aria-invalid={formHook.formState.errors.payrollRunId ? 'true' : 'false'}
+                    aria-describedby={formHook.formState.errors.payrollRunId ? 'payslip-payroll-run-id-error' : undefined}
                   />
                   {formHook.formState.errors.payrollRunId && (
-                    <p className="text-danger-500 text-xs mt-1">{formHook.formState.errors.payrollRunId.message}</p>
+                    <p id="payslip-payroll-run-id-error" className="text-danger-500 text-xs mt-1">{formHook.formState.errors.payrollRunId.message}</p>
                   )}
                 </div>
               </div>
@@ -192,9 +204,11 @@ export const PayslipModal = React.memo(function PayslipModal({
                     type="date"
                     {...formHook.register('payrollPeriodStart')}
                     className="input-aura w-full px-4 py-2 rounded-lg"
+                    aria-invalid={formHook.formState.errors.payrollPeriodStart ? 'true' : 'false'}
+                    aria-describedby={formHook.formState.errors.payrollPeriodStart ? 'payslip-period-start-error' : undefined}
                   />
                   {formHook.formState.errors.payrollPeriodStart && (
-                    <p
+                    <p id="payslip-period-start-error"
                       className="text-danger-500 text-xs mt-1">{formHook.formState.errors.payrollPeriodStart.message}</p>
                   )}
                 </div>
@@ -205,9 +219,11 @@ export const PayslipModal = React.memo(function PayslipModal({
                     type="date"
                     {...formHook.register('payrollPeriodEnd')}
                     className="input-aura w-full px-4 py-2 rounded-lg"
+                    aria-invalid={formHook.formState.errors.payrollPeriodEnd ? 'true' : 'false'}
+                    aria-describedby={formHook.formState.errors.payrollPeriodEnd ? 'payslip-period-end-error' : undefined}
                   />
                   {formHook.formState.errors.payrollPeriodEnd && (
-                    <p className="text-danger-500 text-xs mt-1">{formHook.formState.errors.payrollPeriodEnd.message}</p>
+                    <p id="payslip-period-end-error" className="text-danger-500 text-xs mt-1">{formHook.formState.errors.payrollPeriodEnd.message}</p>
                   )}
                 </div>
               </div>
@@ -219,9 +235,11 @@ export const PayslipModal = React.memo(function PayslipModal({
                   type="date"
                   {...formHook.register('paymentDate')}
                   className="input-aura w-full px-4 py-2 rounded-lg"
+                  aria-invalid={formHook.formState.errors.paymentDate ? 'true' : 'false'}
+                  aria-describedby={formHook.formState.errors.paymentDate ? 'payslip-payment-date-error' : undefined}
                 />
                 {formHook.formState.errors.paymentDate && (
-                  <p className="text-danger-500 text-xs mt-1">{formHook.formState.errors.paymentDate.message}</p>
+                  <p id="payslip-payment-date-error" className="text-danger-500 text-xs mt-1">{formHook.formState.errors.paymentDate.message}</p>
                 )}
               </div>
 
@@ -234,9 +252,11 @@ export const PayslipModal = React.memo(function PayslipModal({
                     step="0.01"
                     {...formHook.register('baseSalary', {valueAsNumber: true})}
                     className="input-aura w-full px-4 py-2 rounded-lg"
+                    aria-invalid={formHook.formState.errors.baseSalary ? 'true' : 'false'}
+                    aria-describedby={formHook.formState.errors.baseSalary ? 'payslip-base-salary-error' : undefined}
                   />
                   {formHook.formState.errors.baseSalary && (
-                    <p className="text-danger-500 text-xs mt-1">{formHook.formState.errors.baseSalary.message}</p>
+                    <p id="payslip-base-salary-error" className="text-danger-500 text-xs mt-1">{formHook.formState.errors.baseSalary.message}</p>
                   )}
                 </div>
                 <div>
@@ -335,9 +355,11 @@ export const SalaryStructureModal = React.memo(function SalaryStructureModal({
                     type="text"
                     {...formHook.register('employeeId')}
                     className="input-aura w-full px-4 py-2 rounded-lg"
+                    aria-invalid={formHook.formState.errors.employeeId ? 'true' : 'false'}
+                    aria-describedby={formHook.formState.errors.employeeId ? 'salary-structure-employee-id-error' : undefined}
                   />
                   {formHook.formState.errors.employeeId && (
-                    <p className="text-danger-500 text-xs mt-1">{formHook.formState.errors.employeeId.message}</p>
+                    <p id="salary-structure-employee-id-error" className="text-danger-500 text-xs mt-1">{formHook.formState.errors.employeeId.message}</p>
                   )}
                 </div>
                 <div>
@@ -348,9 +370,11 @@ export const SalaryStructureModal = React.memo(function SalaryStructureModal({
                     type="date"
                     {...formHook.register('effectiveDate')}
                     className="input-aura w-full px-4 py-2 rounded-lg"
+                    aria-invalid={formHook.formState.errors.effectiveDate ? 'true' : 'false'}
+                    aria-describedby={formHook.formState.errors.effectiveDate ? 'salary-structure-effective-date-error' : undefined}
                   />
                   {formHook.formState.errors.effectiveDate && (
-                    <p className="text-danger-500 text-xs mt-1">{formHook.formState.errors.effectiveDate.message}</p>
+                    <p id="salary-structure-effective-date-error" className="text-danger-500 text-xs mt-1">{formHook.formState.errors.effectiveDate.message}</p>
                   )}
                 </div>
               </div>
@@ -363,9 +387,11 @@ export const SalaryStructureModal = React.memo(function SalaryStructureModal({
                   step="0.01"
                   {...formHook.register('baseSalary', {valueAsNumber: true})}
                   className="input-aura w-full px-4 py-2 rounded-lg"
+                  aria-invalid={formHook.formState.errors.baseSalary ? 'true' : 'false'}
+                  aria-describedby={formHook.formState.errors.baseSalary ? 'salary-structure-base-salary-error' : undefined}
                 />
                 {formHook.formState.errors.baseSalary && (
-                  <p className="text-danger-500 text-xs mt-1">{formHook.formState.errors.baseSalary.message}</p>
+                  <p id="salary-structure-base-salary-error" className="text-danger-500 text-xs mt-1">{formHook.formState.errors.baseSalary.message}</p>
                 )}
               </div>
 

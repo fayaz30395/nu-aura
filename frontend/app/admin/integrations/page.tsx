@@ -437,8 +437,9 @@ export default function AdminIntegrationsPage() {
             </h3>
             <div className="space-y-4">
               <div>
-                <Label>Phone Number</Label>
+                <Label htmlFor="integrations-sms-phone">Phone Number</Label>
                 <Input
+                  id="integrations-sms-phone"
                   placeholder="+1234567890"
                   value={sendPhoneNumber}
                   onChange={(e) => setSendPhoneNumber(e.target.value)}
@@ -446,8 +447,9 @@ export default function AdminIntegrationsPage() {
                 />
               </div>
               <div>
-                <Label>Template (Optional)</Label>
+                <Label htmlFor="integrations-sms-template">Template (Optional)</Label>
                 <select
+                  id="integrations-sms-template"
                   className="input-aura w-full px-4 py-2 rounded-lg"
                   value={selectedTemplate}
                   onChange={(e) => setSelectedTemplate(e.target.value)}
@@ -463,8 +465,9 @@ export default function AdminIntegrationsPage() {
               </div>
               {!selectedTemplate && (
                 <div>
-                  <Label>Message</Label>
+                  <Label htmlFor="integrations-sms-message">Message</Label>
                   <textarea
+                    id="integrations-sms-message"
                     className="input-aura w-full px-4 py-2 rounded-lg"
                     placeholder="Enter your message here..."
                     value={sendMessage}

@@ -56,9 +56,11 @@ export function CandidateFormModal({
                   {...candidateForm.register('candidateCode')}
                   className={inputCls}
                   placeholder="CAN-001"
+                  aria-invalid={candidateForm.formState.errors.candidateCode ? 'true' : 'false'}
+                  aria-describedby={candidateForm.formState.errors.candidateCode ? 'candidate-code-error' : undefined}
                 />
                 {candidateForm.formState.errors.candidateCode && (
-                  <p className="text-xs text-danger-500 mt-1">{candidateForm.formState.errors.candidateCode.message}</p>
+                  <p id="candidate-code-error" className="text-xs text-danger-500 mt-1">{candidateForm.formState.errors.candidateCode.message}</p>
                 )}
               </div>
               <div>
@@ -67,6 +69,8 @@ export function CandidateFormModal({
                   id="candidate-job-opening"
                   {...candidateForm.register('jobOpeningId')}
                   className={inputCls}
+                  aria-invalid={candidateForm.formState.errors.jobOpeningId ? 'true' : 'false'}
+                  aria-describedby={candidateForm.formState.errors.jobOpeningId ? 'candidate-job-opening-error' : undefined}
                 >
                   <option value="">Select Job Opening</option>
                   {jobOpenings.map((job) => (
@@ -74,7 +78,7 @@ export function CandidateFormModal({
                   ))}
                 </select>
                 {candidateForm.formState.errors.jobOpeningId && (
-                  <p className="text-xs text-danger-500 mt-1">{candidateForm.formState.errors.jobOpeningId.message}</p>
+                  <p id="candidate-job-opening-error" className="text-xs text-danger-500 mt-1">{candidateForm.formState.errors.jobOpeningId.message}</p>
                 )}
               </div>
             </div>
@@ -87,9 +91,11 @@ export function CandidateFormModal({
                   type="text"
                   {...candidateForm.register('firstName')}
                   className={inputCls}
+                  aria-invalid={candidateForm.formState.errors.firstName ? 'true' : 'false'}
+                  aria-describedby={candidateForm.formState.errors.firstName ? 'candidate-first-name-error' : undefined}
                 />
                 {candidateForm.formState.errors.firstName && (
-                  <p className="text-xs text-danger-500 mt-1">{candidateForm.formState.errors.firstName.message}</p>
+                  <p id="candidate-first-name-error" className="text-xs text-danger-500 mt-1">{candidateForm.formState.errors.firstName.message}</p>
                 )}
               </div>
               <div>
@@ -99,9 +105,11 @@ export function CandidateFormModal({
                   type="text"
                   {...candidateForm.register('lastName')}
                   className={inputCls}
+                  aria-invalid={candidateForm.formState.errors.lastName ? 'true' : 'false'}
+                  aria-describedby={candidateForm.formState.errors.lastName ? 'candidate-last-name-error' : undefined}
                 />
                 {candidateForm.formState.errors.lastName && (
-                  <p className="text-xs text-danger-500 mt-1">{candidateForm.formState.errors.lastName.message}</p>
+                  <p id="candidate-last-name-error" className="text-xs text-danger-500 mt-1">{candidateForm.formState.errors.lastName.message}</p>
                 )}
               </div>
             </div>
@@ -114,9 +122,11 @@ export function CandidateFormModal({
                   type="email"
                   {...candidateForm.register('email')}
                   className={inputCls}
+                  aria-invalid={candidateForm.formState.errors.email ? 'true' : 'false'}
+                  aria-describedby={candidateForm.formState.errors.email ? 'candidate-email-error' : undefined}
                 />
                 {candidateForm.formState.errors.email && (
-                  <p className="text-xs text-danger-500 mt-1">{candidateForm.formState.errors.email.message}</p>
+                  <p id="candidate-email-error" className="text-xs text-danger-500 mt-1">{candidateForm.formState.errors.email.message}</p>
                 )}
               </div>
               <div>
@@ -126,9 +136,11 @@ export function CandidateFormModal({
                   type="tel"
                   {...candidateForm.register('phone')}
                   className={inputCls}
+                  aria-invalid={candidateForm.formState.errors.phone ? 'true' : 'false'}
+                  aria-describedby={candidateForm.formState.errors.phone ? 'candidate-phone-error' : undefined}
                 />
                 {candidateForm.formState.errors.phone && (
-                  <p className="text-xs text-danger-500 mt-1">{candidateForm.formState.errors.phone.message}</p>
+                  <p id="candidate-phone-error" className="text-xs text-danger-500 mt-1">{candidateForm.formState.errors.phone.message}</p>
                 )}
               </div>
             </div>
@@ -257,9 +269,11 @@ export function CandidateFormModal({
                   {...candidateForm.register('resumeUrl')}
                   className={inputCls}
                   placeholder="https://..."
+                  aria-invalid={candidateForm.formState.errors.resumeUrl ? 'true' : 'false'}
+                  aria-describedby={candidateForm.formState.errors.resumeUrl ? 'candidate-resume-url-error' : undefined}
                 />
                 {candidateForm.formState.errors.resumeUrl && (
-                  <p className="text-xs text-danger-500 mt-1">{candidateForm.formState.errors.resumeUrl.message}</p>
+                  <p id="candidate-resume-url-error" className="text-xs text-danger-500 mt-1">{candidateForm.formState.errors.resumeUrl.message}</p>
                 )}
               </div>
             </div>

@@ -29,26 +29,28 @@ export function EnrollEmployeeModal({
       <ModalBody>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+            <label htmlFor="training-enroll-program" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
               Program
             </label>
-            <Input value={programName} disabled/>
+            <Input id="training-enroll-program" value={programName} disabled/>
           </div>
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+            <label htmlFor="training-enroll-employee-id" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
               Employee ID *
             </label>
             <Input
+              id="training-enroll-employee-id"
               value={enrollFormData.employeeId ?? ''}
               onChange={(e) => onEnrollFormChange({...enrollFormData, employeeId: e.target.value})}
               placeholder="Enter employee ID"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+            <label htmlFor="training-enroll-enrollment-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
               Enrollment Date
             </label>
             <Input
+              id="training-enroll-enrollment-date"
               type="date"
               value={enrollFormData.enrollmentDate ?? ''}
               onChange={(e) =>

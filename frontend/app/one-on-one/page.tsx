@@ -34,6 +34,7 @@ import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
 import {SkeletonStatCard} from '@/components/ui/Skeleton';
 import {PageErrorFallback} from '@/components/errors/PageErrorFallback';
 import {
@@ -1121,122 +1122,160 @@ export default function OneOnOnePage() {
 
               {/* ── Modals ── */}
               {/* Cancel Modal */}
-              {showCancelModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-                  <div className="bg-[var(--bg-card)] rounded-lg shadow-[var(--shadow-dropdown)] max-w-md w-full p-6">
-                    <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-4">Cancel Meeting</h3>
-                    <textarea
-                      value={cancelReason}
-                      onChange={(e) => setCancelReason(e.target.value)}
-                      placeholder="Reason for cancellation..."
-                      rows={3}
-                      className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700 mb-4"
-                    />
-                    <div className="flex justify-end gap-2">
-                      <button
-                        onClick={() => {
-                          setShowCancelModal(false);
-                          setCancelReason('');
-                        }}
-                        className="px-4 py-2 text-sm border border-[var(--border-main)] text-[var(--text-primary)] rounded-lg"
-                      >
-                        Back
-                      </button>
-                      <button
-                        onClick={handleCancelMeeting}
-                        disabled={!cancelReason || cancelMutation.isPending}
-                        className="px-4 py-2 text-sm bg-danger-600 hover:bg-danger-700 text-white rounded-lg disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                      >
-                        {cancelMutation.isPending ? 'Cancelling...' : 'Cancel Meeting'}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
+              <Modal
+                isOpen={showCancelModal}
+                onClose={() => {
+                  setShowCancelModal(false);
+                  setCancelReason('');
+                }}
+                size="sm"
+              >
+                <ModalHeader
+                  onClose={() => {
+                    setShowCancelModal(false);
+                    setCancelReason('');
+                  }}
+                >
+                  Cancel Meeting
+                </ModalHeader>
+                <ModalBody>
+                  <textarea
+                    value={cancelReason}
+                    onChange={(e) => setCancelReason(e.target.value)}
+                    placeholder="Reason for cancellation..."
+                    rows={3}
+                    className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
+                  />
+                </ModalBody>
+                <ModalFooter>
+                  <button
+                    onClick={() => {
+                      setShowCancelModal(false);
+                      setCancelReason('');
+                    }}
+                    className="px-4 py-2 text-sm border border-[var(--border-main)] text-[var(--text-primary)] rounded-lg"
+                  >
+                    Back
+                  </button>
+                  <button
+                    onClick={handleCancelMeeting}
+                    disabled={!cancelReason || cancelMutation.isPending}
+                    className="px-4 py-2 text-sm bg-danger-600 hover:bg-danger-700 text-white rounded-lg disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                  >
+                    {cancelMutation.isPending ? 'Cancelling...' : 'Cancel Meeting'}
+                  </button>
+                </ModalFooter>
+              </Modal>
 
               {/* Reschedule Modal */}
-              {showRescheduleModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-                  <div className="bg-[var(--bg-card)] rounded-lg shadow-[var(--shadow-dropdown)] max-w-md w-full p-6">
-                    <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-4">Reschedule Meeting</h3>
-                    <div className="space-y-4 mb-4">
-                      <div>
-                        <label htmlFor="one-on-one-reschedule-date" className="block text-sm font-medium text-[var(--text-primary)] mb-1">New Date</label>
-                        <input
-                          id="one-on-one-reschedule-date"
-                          type="date"
-                          value={rescheduleDate}
-                          onChange={(e) => setRescheduleDate(e.target.value)}
-                          className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
-                        />
-                      </div>
-                      <div>
-                        <label htmlFor="one-on-one-reschedule-time" className="block text-sm font-medium text-[var(--text-primary)] mb-1">New Time</label>
-                        <input
-                          id="one-on-one-reschedule-time"
-                          type="time"
-                          value={rescheduleTime}
-                          onChange={(e) => setRescheduleTime(e.target.value)}
-                          className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
-                        />
-                      </div>
+              <Modal
+                isOpen={showRescheduleModal}
+                onClose={() => {
+                  setShowRescheduleModal(false);
+                  setRescheduleDate('');
+                  setRescheduleTime('');
+                }}
+                size="sm"
+              >
+                <ModalHeader
+                  onClose={() => {
+                    setShowRescheduleModal(false);
+                    setRescheduleDate('');
+                    setRescheduleTime('');
+                  }}
+                >
+                  Reschedule Meeting
+                </ModalHeader>
+                <ModalBody>
+                  <div className="space-y-4">
+                    <div>
+                      <label htmlFor="one-on-one-reschedule-date" className="block text-sm font-medium text-[var(--text-primary)] mb-1">New Date</label>
+                      <input
+                        id="one-on-one-reschedule-date"
+                        type="date"
+                        value={rescheduleDate}
+                        onChange={(e) => setRescheduleDate(e.target.value)}
+                        className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
+                      />
                     </div>
-                    <div className="flex justify-end gap-2">
-                      <button
-                        onClick={() => {
-                          setShowRescheduleModal(false);
-                          setRescheduleDate('');
-                          setRescheduleTime('');
-                        }}
-                        className="px-4 py-2 text-sm border border-[var(--border-main)] text-[var(--text-primary)] rounded-lg"
-                      >
-                        Back
-                      </button>
-                      <button
-                        onClick={handleRescheduleMeeting}
-                        disabled={!rescheduleDate || !rescheduleTime || rescheduleMutation.isPending}
-                        className="px-4 py-2 text-sm bg-accent-700 hover:bg-accent-800 text-white rounded-lg disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                      >
-                        {rescheduleMutation.isPending ? 'Rescheduling...' : 'Reschedule'}
-                      </button>
+                    <div>
+                      <label htmlFor="one-on-one-reschedule-time" className="block text-sm font-medium text-[var(--text-primary)] mb-1">New Time</label>
+                      <input
+                        id="one-on-one-reschedule-time"
+                        type="time"
+                        value={rescheduleTime}
+                        onChange={(e) => setRescheduleTime(e.target.value)}
+                        className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
+                      />
                     </div>
                   </div>
-                </div>
-              )}
+                </ModalBody>
+                <ModalFooter>
+                  <button
+                    onClick={() => {
+                      setShowRescheduleModal(false);
+                      setRescheduleDate('');
+                      setRescheduleTime('');
+                    }}
+                    className="px-4 py-2 text-sm border border-[var(--border-main)] text-[var(--text-primary)] rounded-lg"
+                  >
+                    Back
+                  </button>
+                  <button
+                    onClick={handleRescheduleMeeting}
+                    disabled={!rescheduleDate || !rescheduleTime || rescheduleMutation.isPending}
+                    className="px-4 py-2 text-sm bg-accent-700 hover:bg-accent-800 text-white rounded-lg disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                  >
+                    {rescheduleMutation.isPending ? 'Rescheduling...' : 'Reschedule'}
+                  </button>
+                </ModalFooter>
+              </Modal>
 
               {/* Complete Modal */}
-              {showCompleteModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-                  <div className="bg-[var(--bg-card)] rounded-lg shadow-[var(--shadow-dropdown)] max-w-md w-full p-6">
-                    <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-4">Complete Meeting</h3>
-                    <textarea
-                      value={completeSummary}
-                      onChange={(e) => setCompleteSummary(e.target.value)}
-                      placeholder="Meeting summary (optional)..."
-                      rows={4}
-                      className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700 mb-4"
-                    />
-                    <div className="flex justify-end gap-2">
-                      <button
-                        onClick={() => {
-                          setShowCompleteModal(false);
-                          setCompleteSummary('');
-                        }}
-                        className="px-4 py-2 text-sm border border-[var(--border-main)] text-[var(--text-primary)] rounded-lg"
-                      >
-                        Back
-                      </button>
-                      <button
-                        onClick={handleCompleteMeeting}
-                        disabled={completeMutation.isPending}
-                        className="px-4 py-2 text-sm bg-accent-700 hover:bg-accent-800 text-white rounded-lg cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                      >
-                        {completeMutation.isPending ? 'Completing...' : 'Complete'}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
+              <Modal
+                isOpen={showCompleteModal}
+                onClose={() => {
+                  setShowCompleteModal(false);
+                  setCompleteSummary('');
+                }}
+                size="sm"
+              >
+                <ModalHeader
+                  onClose={() => {
+                    setShowCompleteModal(false);
+                    setCompleteSummary('');
+                  }}
+                >
+                  Complete Meeting
+                </ModalHeader>
+                <ModalBody>
+                  <textarea
+                    value={completeSummary}
+                    onChange={(e) => setCompleteSummary(e.target.value)}
+                    placeholder="Meeting summary (optional)..."
+                    rows={4}
+                    className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
+                  />
+                </ModalBody>
+                <ModalFooter>
+                  <button
+                    onClick={() => {
+                      setShowCompleteModal(false);
+                      setCompleteSummary('');
+                    }}
+                    className="px-4 py-2 text-sm border border-[var(--border-main)] text-[var(--text-primary)] rounded-lg"
+                  >
+                    Back
+                  </button>
+                  <button
+                    onClick={handleCompleteMeeting}
+                    disabled={completeMutation.isPending}
+                    className="px-4 py-2 text-sm bg-accent-700 hover:bg-accent-800 text-white rounded-lg cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                  >
+                    {completeMutation.isPending ? 'Completing...' : 'Complete'}
+                  </button>
+                </ModalFooter>
+              </Modal>
             </>
           )}
         </div>

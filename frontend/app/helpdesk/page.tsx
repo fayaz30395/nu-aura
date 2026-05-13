@@ -107,9 +107,9 @@ export default function HelpdeskPage() {
             className="bg-warning-50 dark:bg-warning-950/20 border border-warning-200 dark:border-warning-800 rounded-xl p-4">
             <div className="flex items-center gap-2 mb-4">
               <AlertTriangle className="w-5 h-5 text-warning-600"/>
-              <h3 className="font-semibold text-warning-800 dark:text-warning-300">
+              <h2 className="font-semibold text-warning-800 dark:text-warning-300">
                 Pending Escalations ({escalations.length})
-              </h3>
+              </h2>
             </div>
             <div className="space-y-2">
               {escalations.filter(Boolean).slice(0, 5).map((esc) => (
@@ -210,7 +210,7 @@ export default function HelpdeskPage() {
         {/* Summary Stats */}
         {dashboard && (
           <div className="card-aura p-4">
-            <h3 className="font-semibold text-[var(--text-primary)] mb-4">Overview</h3>
+            <h2 className="font-semibold text-[var(--text-primary)] mb-4">Overview</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
               <div>
                 <p className="text-xl font-bold text-success-600">{dashboard.slaMetCount}</p>

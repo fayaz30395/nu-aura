@@ -247,7 +247,7 @@ export default function ShiftPatternsPage() {
                 >
                   <div className="flex items-start justify-between mb-4">
                     <div>
-                      <h3 className="font-semibold text-surface-900 dark:text-white">{pattern.name}</h3>
+                      <h2 className="font-semibold text-surface-900 dark:text-white">{pattern.name}</h2>
                       <p className="text-xs text-surface-500 dark:text-surface-400">
                         {pattern.rotationType} - {pattern.cycleDays} day cycle
                       </p>

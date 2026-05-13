@@ -2,7 +2,8 @@
 
 import React from 'react';
 import {Button} from '@/components/ui/Button';
-import {Building, Mail, MapPin, Phone, X} from 'lucide-react';
+import {Modal, ModalBody, ModalHeader} from '@/components/ui/Modal';
+import {Building, Mail, MapPin, Phone} from 'lucide-react';
 import {Candidate} from '@/lib/types/hire/recruitment';
 import {getStageColor, getStatusColor} from '../utils';
 
@@ -21,21 +22,12 @@ export function ViewCandidateModal({
                                      onEdit,
                                      onScheduleInterview,
                                    }: ViewCandidateModalProps) {
-  if (!open || !candidate) return null;
+  if (!candidate) return null;
 
   return (
-    <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
-      <div
-        className="bg-[var(--bg-card)] rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
-        <div className="p-6">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-[var(--text-primary)]">Candidate Details</h2>
-            <button onClick={onClose} aria-label="Close modal"
-                    className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
-              <X className="h-6 w-6"/>
-            </button>
-          </div>
-
+    <Modal isOpen={open} onClose={onClose} size="lg">
+      <ModalHeader onClose={onClose}>Candidate Details</ModalHeader>
+      <ModalBody>
           <div className="space-y-6">
             <div className="flex items-center gap-4">
               <div
@@ -147,8 +139,7 @@ export function ViewCandidateModal({
               </Button>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
+      </ModalBody>
+    </Modal>
   );
 }

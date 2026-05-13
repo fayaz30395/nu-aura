@@ -273,9 +273,11 @@ export default function NewOnboardingPage() {
                 </CardHeader>
                 <CardContent className="p-8 space-y-6">
                   <div>
-                    <label className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)] block mb-2">Kickoff
+                    <label htmlFor="onboarding-start-date"
+                           className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)] block mb-2">Kickoff
                       Date</label>
                     <Input
+                      id="onboarding-start-date"
                       type="date"
                       {...register('startDate')}
                       className="rounded-lg border-0 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] font-bold"

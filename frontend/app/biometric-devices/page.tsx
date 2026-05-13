@@ -325,9 +325,9 @@ function DeviceCard({
         <div className="flex items-start justify-between">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
-              <h3 className="text-sm font-semibold text-[var(--text-primary)] truncate">
+              <h2 className="text-sm font-semibold text-[var(--text-primary)] truncate">
                 {device.deviceName}
-              </h3>
+              </h2>
               {device.isOnline ? (
                 <Wifi className="h-4 w-4 text-success-500 flex-shrink-0"/>
               ) : (
@@ -590,10 +590,10 @@ function DeviceLogsDrawer({
         className="w-full max-w-xl bg-[var(--bg-surface)] shadow-[var(--shadow-dropdown)] overflow-y-auto"
       >
         <div className="sticky top-0 z-10 row-between divider-b bg-[var(--bg-surface)] px-6 py-4">
-          <h3 className="text-xl font-semibold text-[var(--text-primary)] flex items-center gap-2">
+          <h2 className="text-xl font-semibold text-[var(--text-primary)] flex items-center gap-2">
             <Activity className="h-5 w-5 text-accent-700"/>
             Punch Logs
-          </h3>
+          </h2>
           <Button variant="ghost" size="sm" onClick={onClose}>
             Close
           </Button>

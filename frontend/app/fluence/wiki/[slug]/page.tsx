@@ -912,11 +912,12 @@ export default function WikiPageDetailPage() {
           </motion.div>
 
           {/* Sidebar */}
-          <motion.div
+          <motion.aside
             initial={{opacity: 0, x: 12}}
             animate={{opacity: 1, x: 0}}
             transition={{duration: 0.3, ease: 'easeOut', delay: 0.15}}
             className="lg:col-span-1"
+            aria-label="Page details"
           >
             {/* Stats Card */}
             <motion.div
@@ -1059,7 +1060,7 @@ export default function WikiPageDetailPage() {
                 </div>
               </motion.div>
             )}
-          </motion.div>
+          </motion.aside>
         </div>
 
         {/* ═══════════════════════════════════════════════════════════

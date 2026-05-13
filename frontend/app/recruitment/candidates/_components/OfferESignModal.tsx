@@ -8,6 +8,7 @@ import {notifications} from '@mantine/notifications';
 import {Button} from '@/components/ui/Button';
 import {Badge} from '@/components/ui/Badge';
 import {Skeleton} from '@/components/ui/Skeleton';
+import {Modal, ModalBody, ModalHeader} from '@/components/ui/Modal';
 import {
   AlertCircle,
   CheckCircle,
@@ -17,7 +18,6 @@ import {
   FileSignature,
   RefreshCw,
   Send,
-  X,
   XCircle,
 } from 'lucide-react';
 import {
@@ -266,7 +266,7 @@ export function OfferESignModal({
     },
   });
 
-  if (!open || !candidate) return null;
+  if (!candidate) return null;
 
   const inputCls =
     'w-full px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500 text-sm';
@@ -323,28 +323,17 @@ export function OfferESignModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
-      <div
-        className="bg-[var(--bg-card)] rounded-xl max-w-lg w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)] shadow-[var(--shadow-elevated)]">
-        <div className="p-6">
-          {/* Header */}
-          <div className="flex justify-between items-center mb-6">
-            <div>
-              <h2 className="text-xl font-bold text-[var(--text-primary)] flex items-center gap-2">
-                <FileSignature className="h-5 w-5 text-accent-500"/>
-                Offer Letter E-Sign
-              </h2>
-              <p className="text-body-muted mt-0.5">{candidate.fullName}</p>
-            </div>
-            <button
-              onClick={onClose}
-              aria-label="Close modal"
-              className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded-md"
-            >
-              <X className="h-5 w-5"/>
-            </button>
-          </div>
-
+    <Modal isOpen={open} onClose={onClose} size="md">
+      <ModalHeader onClose={onClose}>
+        <div>
+          <h2 className="text-xl font-semibold text-[var(--text-primary)] flex items-center gap-2">
+            <FileSignature className="h-5 w-5 text-accent-500"/>
+            Offer Letter E-Sign
+          </h2>
+          <p className="text-body-muted mt-0.5">{candidate.fullName}</p>
+        </div>
+      </ModalHeader>
+      <ModalBody>
           {/* Body: Create or Track */}
           {!createdRequestId ? (
             /* ========== Create New Request Form ========== */
@@ -355,22 +344,23 @@ export function OfferESignModal({
               </p>
 
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                <label htmlFor="esign-signer-email" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Candidate Email *
                 </label>
-                <input type="email" {...register('signerEmail')} className={inputCls}/>
+                <input id="esign-signer-email" type="email" {...register('signerEmail')} className={inputCls}/>
                 {errors.signerEmail && (
                   <p className="text-xs text-danger-500 mt-1">{errors.signerEmail.message}</p>
                 )}
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                <label htmlFor="esign-document-url" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Document URL
                   <span
                     className="text-[var(--text-muted)] ml-1 font-normal">(optional — PDF link to offer letter)</span>
                 </label>
                 <input
+                  id="esign-document-url"
                   type="url"
                   {...register('documentUrl')}
                   placeholder="https://storage.example.com/offer-letter.pdf"
@@ -383,10 +373,11 @@ export function OfferESignModal({
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                  <label htmlFor="esign-expires-in-days" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Expires After (days)
                   </label>
                   <input
+                    id="esign-expires-in-days"
                     type="number"
                     {...register('expiresInDays', {valueAsNumber: true})}
                     min={1}
@@ -398,10 +389,11 @@ export function OfferESignModal({
                   )}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                  <label htmlFor="esign-reminder-frequency-days" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Reminder (every N days)
                   </label>
                   <input
+                    id="esign-reminder-frequency-days"
                     type="number"
                     {...register('reminderFrequencyDays', {valueAsNumber: true})}
                     min={1}
@@ -444,8 +436,7 @@ export function OfferESignModal({
               isCancelling={cancelMutation.isPending}
             />
           )}
-        </div>
-      </div>
-    </div>
+      </ModalBody>
+    </Modal>
   );
 }

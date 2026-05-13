@@ -43,8 +43,9 @@ export function CreateOfferModal({
 
           <form onSubmit={offerForm.handleSubmit(onSubmit)} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Offered Salary *</label>
+              <label htmlFor="create-offer-salary" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Offered Salary *</label>
               <input
+                id="create-offer-salary"
                 type="number"
                 {...offerForm.register('offeredSalary', {valueAsNumber: true})}
                 className={inputCls}
@@ -55,8 +56,9 @@ export function CreateOfferModal({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Position Title</label>
+              <label htmlFor="create-offer-position-title" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Position Title</label>
               <input
+                id="create-offer-position-title"
                 type="text"
                 {...offerForm.register('positionTitle')}
                 className={inputCls}
@@ -64,8 +66,9 @@ export function CreateOfferModal({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Joining Date *</label>
+              <label htmlFor="create-offer-joining-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Joining Date *</label>
               <input
+                id="create-offer-joining-date"
                 type="date"
                 {...offerForm.register('joiningDate')}
                 className={inputCls}
@@ -76,8 +79,9 @@ export function CreateOfferModal({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Offer Expiry Date</label>
+              <label htmlFor="create-offer-expiry-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Offer Expiry Date</label>
               <input
+                id="create-offer-expiry-date"
                 type="date"
                 {...offerForm.register('offerExpiryDate')}
                 className={inputCls}
@@ -85,8 +89,9 @@ export function CreateOfferModal({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Notes</label>
+              <label htmlFor="create-offer-notes" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Notes</label>
               <textarea
+                id="create-offer-notes"
                 rows={3}
                 {...offerForm.register('notes')}
                 className={inputCls}

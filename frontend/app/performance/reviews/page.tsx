@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import {AppLayout} from '@/components/layout';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
 import {
   useCreateReview,
   useDeleteReview,
@@ -407,17 +408,25 @@ export default function PerformanceReviewsPage() {
           </div>
         )}
 
-        {showModal && (
-          <div
-            className="fixed inset-0 glass-aura !rounded-none flex items-center justify-center p-4 z-50 overflow-y-auto">
-            <div
-              className="card-elevated max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-              <div className="p-6">
-                <h2 className="text-xl font-bold mb-6 text-[var(--text-primary)]">
-                  {selectedReview ? 'Edit Review' : 'Create Review'}
-                </h2>
-                <form onSubmit={handleSubmit(handleFormSubmit)}>
-                  <div className="space-y-4">
+        <Modal
+          isOpen={showModal}
+          onClose={() => {
+            setShowModal(false);
+            resetFormHandler();
+          }}
+          size="xl"
+        >
+          <ModalHeader
+            onClose={() => {
+              setShowModal(false);
+              resetFormHandler();
+            }}
+          >
+            {selectedReview ? 'Edit Review' : 'Create Review'}
+          </ModalHeader>
+          <form onSubmit={handleSubmit(handleFormSubmit)}>
+            <ModalBody>
+              <div className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label htmlFor="review-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
@@ -585,61 +594,70 @@ export default function PerformanceReviewsPage() {
                         <p className="text-danger-500 text-sm mt-1">{errors.employeeComments.message}</p>
                       )}
                     </div>
-                  </div>
-
-                  <div className="flex gap-4 mt-6">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setShowModal(false);
-                        resetFormHandler();
-                      }}
-                      className="flex-1 btn-secondary px-4 py-2 rounded-lg"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="submit"
-                      disabled={isSubmitting}
-                      className="flex-1 btn-primary px-4 py-2 rounded-lg disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                    >
-                      {isSubmitting ? 'Saving...' : selectedReview ? 'Update' : 'Create'}
-                    </button>
-                  </div>
-                </form>
               </div>
-            </div>
-          </div>
-        )}
+            </ModalBody>
+            <ModalFooter>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowModal(false);
+                  resetFormHandler();
+                }}
+                className="flex-1 btn-secondary px-4 py-2 rounded-lg"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="flex-1 btn-primary px-4 py-2 rounded-lg disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+              >
+                {isSubmitting ? 'Saving...' : selectedReview ? 'Update' : 'Create'}
+              </button>
+            </ModalFooter>
+          </form>
+        </Modal>
 
-        {showDeleteConfirm && selectedReview && (
-          <div className="fixed inset-0 glass-aura !rounded-none flex items-center justify-center p-4 z-50">
-            <div className="card-elevated max-w-md w-full p-6">
-              <h2 className="text-xl font-bold mb-4 text-[var(--text-primary)]">Delete Review</h2>
-              <p className="text-[var(--text-secondary)] mb-6">
-                Are you sure you want to delete this review? This action cannot be undone.
-              </p>
-              <div className="flex gap-4">
-                <button
-                  onClick={() => {
-                    setShowDeleteConfirm(false);
-                    setSelectedReview(null);
-                  }}
-                  className="flex-1 btn-secondary px-4 py-2 rounded-lg"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleDelete}
-                  disabled={loading}
-                  className="flex-1 btn-primary px-4 py-2 rounded-lg bg-danger-600 hover:bg-danger-700 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                >
-                  {loading ? 'Deleting...' : 'Delete'}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+        <Modal
+          isOpen={showDeleteConfirm && !!selectedReview}
+          onClose={() => {
+            setShowDeleteConfirm(false);
+            setSelectedReview(null);
+          }}
+          size="sm"
+        >
+          <ModalHeader
+            onClose={() => {
+              setShowDeleteConfirm(false);
+              setSelectedReview(null);
+            }}
+          >
+            Delete Review
+          </ModalHeader>
+          <ModalBody>
+            <p className="text-[var(--text-secondary)]">
+              Are you sure you want to delete this review? This action cannot be undone.
+            </p>
+          </ModalBody>
+          <ModalFooter>
+            <button
+              onClick={() => {
+                setShowDeleteConfirm(false);
+                setSelectedReview(null);
+              }}
+              className="flex-1 btn-secondary px-4 py-2 rounded-lg"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleDelete}
+              disabled={loading}
+              className="flex-1 btn-primary px-4 py-2 rounded-lg bg-danger-600 hover:bg-danger-700 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+            >
+              {loading ? 'Deleting...' : 'Delete'}
+            </button>
+          </ModalFooter>
+        </Modal>
       </div>
     </AppLayout>
   );

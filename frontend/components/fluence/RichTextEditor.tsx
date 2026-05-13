@@ -616,10 +616,11 @@ export default function RichTextEditor({
         <ModalBody>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+              <label htmlFor="rich-text-url-input" className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
                 {urlModalType === 'image' ? 'Image URL' : 'URL'}
               </label>
               <Input
+                id="rich-text-url-input"
                 type="url"
                 value={urlInput}
                 onChange={(e) => setUrlInput(e.target.value)}

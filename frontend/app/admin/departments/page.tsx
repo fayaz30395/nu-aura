@@ -382,43 +382,43 @@ export default function DepartmentsPage() {
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="admin-dept-code" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
                       Code <span className="text-danger-500">*</span>
                     </label>
-                    <input {...register('code')} placeholder="ENG" className="input-aura w-full uppercase"/>
+                    <input id="admin-dept-code" {...register('code')} placeholder="ENG" className="input-aura w-full uppercase"/>
                     {errors.code && <p className="text-danger-500 text-xs mt-1">{errors.code.message}</p>}
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="admin-dept-name" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
                       Name <span className="text-danger-500">*</span>
                     </label>
-                    <input {...register('name')} placeholder="Engineering" className="input-aura w-full"/>
+                    <input id="admin-dept-name" {...register('name')} placeholder="Engineering" className="input-aura w-full"/>
                     {errors.name && <p className="text-danger-500 text-xs mt-1">{errors.name.message}</p>}
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Type</label>
-                  <select {...register('type')} className="input-aura w-full">
+                  <label htmlFor="admin-dept-type" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Type</label>
+                  <select id="admin-dept-type" {...register('type')} className="input-aura w-full">
                     <option value="">Select type…</option>
                     {DEPT_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Description</label>
-                  <textarea {...register('description')} rows={2} placeholder="Optional description…"
+                  <label htmlFor="admin-dept-description" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Description</label>
+                  <textarea id="admin-dept-description" {...register('description')} rows={2} placeholder="Optional description…"
                             className="input-aura w-full resize-none"/>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Location</label>
-                    <input {...register('location')} placeholder="e.g. Chennai" className="input-aura w-full"/>
+                    <label htmlFor="admin-dept-location" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Location</label>
+                    <input id="admin-dept-location" {...register('location')} placeholder="e.g. Chennai" className="input-aura w-full"/>
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Cost Center</label>
-                    <input {...register('costCenter')} placeholder="e.g. CC-001" className="input-aura w-full"/>
+                    <label htmlFor="admin-dept-cost-center" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Cost Center</label>
+                    <input id="admin-dept-cost-center" {...register('costCenter')} placeholder="e.g. CC-001" className="input-aura w-full"/>
                   </div>
                 </div>
 

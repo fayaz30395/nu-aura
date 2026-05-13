@@ -320,10 +320,11 @@ export default function ApprovalsPage() {
             total capacity.
           </p>
           <div className="mt-4">
-            <label className="block text-sm font-medium text-[var(--text-secondary)]">
+            <label htmlFor="allocation-approve-comment" className="block text-sm font-medium text-[var(--text-secondary)]">
               Comment (optional)
             </label>
             <textarea
+              id="allocation-approve-comment"
               value={approveComment}
               onChange={(e) => setApproveComment(e.target.value)}
               placeholder="Add a comment for the requester..."
@@ -356,10 +357,11 @@ export default function ApprovalsPage() {
             <strong>{selectedRequest?.employeeName}</strong>.
           </p>
           <div className="mt-4">
-            <label className="block text-sm font-medium text-[var(--text-secondary)]">
+            <label htmlFor="allocation-reject-reason" className="block text-sm font-medium text-[var(--text-secondary)]">
               Reason <span className="text-danger-500">*</span>
             </label>
             <textarea
+              id="allocation-reject-reason"
               value={rejectReason}
               onChange={(e) => setRejectReason(e.target.value)}
               placeholder="Explain why this request is being rejected..."

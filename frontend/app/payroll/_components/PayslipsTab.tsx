@@ -44,8 +44,9 @@ export function PayslipsTab({
       <div className="flex justify-between items-center mb-6">
         <div className="flex gap-4">
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Month</label>
+            <label htmlFor="payslips-search-month" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Month</label>
             <input
+              id="payslips-search-month"
               type="month"
               value={payslipSearchMonth}
               onChange={(e) => onMonthChange(e.target.value)}
@@ -53,8 +54,9 @@ export function PayslipsTab({
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Employee Name</label>
+            <label htmlFor="payslips-search-employee" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Employee Name</label>
             <input
+              id="payslips-search-employee"
               type="text"
               placeholder="Search by employee..."
               value={payslipSearchEmployee}

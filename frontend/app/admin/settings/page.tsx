@@ -164,10 +164,10 @@ export default function AdminSettingsPage() {
                   <ChevronRight
                     className="h-5 w-5 text-[var(--text-muted)] group-hover:text-accent-500 group-hover:translate-x-1 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
                 </div>
-                <h3
+                <h2
                   className="mt-4 font-semibold text-[var(--text-primary)] group-hover:text-accent-700 dark:group-hover:text-accent-400 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                   {card.title}
-                </h3>
+                </h2>
                 <p className="mt-1 text-body-secondary">
                   {card.description}
                 </p>

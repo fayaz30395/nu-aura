@@ -29,7 +29,6 @@ import {
   Trash2,
   Users,
   Wrench,
-  X,
 } from 'lucide-react';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {isAdmin} from '@/lib/utils';
@@ -47,6 +46,7 @@ import {safeUrl} from '@/lib/utils/safeUrl';
 import {useToast} from '@/components/notifications/ToastProvider';
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
 import {createLogger} from '@/lib/utils/logger';
 import {useDebounce} from '@/lib/hooks/useDebounce';
 import {
@@ -542,141 +542,123 @@ export default function AnnouncementsPage() {
           </motion.div>
 
           {/* Announcement Detail Modal */}
-          <AnimatePresence>
-            {selectedAnnouncement && (
-              <motion.div
-                initial={{opacity: 0}}
-                animate={{opacity: 1}}
-                exit={{opacity: 0}}
-                className="fixed inset-0 z-50 flex items-center justify-center glass-aura !rounded-none p-4"
-                onClick={() => setSelectedAnnouncement(null)}
+          {selectedAnnouncement && (
+            <Modal
+              isOpen={!!selectedAnnouncement}
+              onClose={() => setSelectedAnnouncement(null)}
+              size="lg"
+            >
+              <ModalHeader
+                onClose={() => setSelectedAnnouncement(null)}
+                className="bg-gradient-to-r from-accent-700 to-accent-800 !border-0"
               >
-                <motion.div
-                  initial={{scale: 0.95, opacity: 0}}
-                  animate={{scale: 1, opacity: 1}}
-                  exit={{scale: 0.95, opacity: 0}}
-                  className="skeuo-card rounded-lg max-w-2xl w-full max-h-[90vh] overflow-hidden"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  {/* Modal Header */}
-                  <div className="bg-gradient-to-r from-accent-700 to-accent-800 px-6 py-4 relative">
-                    <button
-                      onClick={() => setSelectedAnnouncement(null)}
-                      className="absolute top-4 right-4 p-2 bg-white/20 hover:bg-white/30 rounded-full transition-colors"
-                    >
-                      <X className="w-5 h-5 text-white"/>
-                    </button>
-                    <div className="flex items-center gap-4">
-                      {(() => {
-                        const Icon = getCategoryIcon(selectedAnnouncement.category);
-                        return (
-                          <div className="p-4 bg-white/20 rounded-lg">
-                            <Icon className="w-6 h-6 text-white"/>
-                          </div>
-                        );
-                      })()}
-                      <div>
-                        <div className="flex items-center gap-2 mb-1">
-                        <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-white/20 text-white">
-                          {getCategoryLabel(selectedAnnouncement.category)}
-                        </span>
-                          <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-white/20 text-white">
-                          {priorityLabels[selectedAnnouncement.priority]}
-                        </span>
-                        </div>
-                        <h2 className="text-xl font-bold text-white">
-                          {selectedAnnouncement.title}
-                        </h2>
+                <div className="flex items-center gap-4">
+                  {(() => {
+                    const Icon = getCategoryIcon(selectedAnnouncement.category);
+                    return (
+                      <div className="p-4 bg-white/20 rounded-lg">
+                        <Icon className="w-6 h-6 text-white"/>
                       </div>
-                    </div>
-                  </div>
-
-                  {/* Modal Content */}
-                  <div className="p-6 overflow-y-auto max-h-[60vh]">
-                    <div className="flex items-center gap-4 mb-6 text-body-muted">
-                    <span className="flex items-center gap-1">
-                      <Calendar className="w-4 h-4"/>
-                      Published {formatDate(selectedAnnouncement.publishedAt)}
-                    </span>
-                      <span className="flex items-center gap-1">
-                      <Eye className="w-4 h-4"/>
-                        {selectedAnnouncement.readCount} views
-                    </span>
-                      {selectedAnnouncement.isPinned && (
-                        <span className="flex items-center gap-1 text-warning-600">
-                        <Pin className="w-4 h-4"/>
-                        Pinned
+                    );
+                  })()}
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-white/20 text-white">
+                        {getCategoryLabel(selectedAnnouncement.category)}
                       </span>
-                      )}
+                      <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-white/20 text-white">
+                        {priorityLabels[selectedAnnouncement.priority]}
+                      </span>
                     </div>
+                    <h2 className="text-xl font-bold text-white">
+                      {selectedAnnouncement.title}
+                    </h2>
+                  </div>
+                </div>
+              </ModalHeader>
 
-                    <div
-                      className="prose dark:prose-invert max-w-none"
-                      dangerouslySetInnerHTML={{__html: sanitizeAnnouncementHtml(selectedAnnouncement.content)}}
-                    />
+              <ModalBody>
+                <div className="flex items-center gap-4 mb-6 text-body-muted">
+                  <span className="flex items-center gap-1">
+                    <Calendar className="w-4 h-4"/>
+                    Published {formatDate(selectedAnnouncement.publishedAt)}
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Eye className="w-4 h-4"/>
+                    {selectedAnnouncement.readCount} views
+                  </span>
+                  {selectedAnnouncement.isPinned && (
+                    <span className="flex items-center gap-1 text-warning-600">
+                      <Pin className="w-4 h-4"/>
+                      Pinned
+                    </span>
+                  )}
+                </div>
 
-                    {selectedAnnouncement.attachmentUrl && (
-                      <div className="mt-6 p-4 bg-[var(--bg-secondary)]/50 rounded-lg">
-                        <a
-                          href={safeUrl(selectedAnnouncement.attachmentUrl)}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-accent-700 hover:text-accent-800 font-medium flex items-center gap-2"
+                <div
+                  className="prose dark:prose-invert max-w-none"
+                  dangerouslySetInnerHTML={{__html: sanitizeAnnouncementHtml(selectedAnnouncement.content)}}
+                />
+
+                {selectedAnnouncement.attachmentUrl && (
+                  <div className="mt-6 p-4 bg-[var(--bg-secondary)]/50 rounded-lg">
+                    <a
+                      href={safeUrl(selectedAnnouncement.attachmentUrl)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-accent-700 hover:text-accent-800 font-medium flex items-center gap-2"
+                    >
+                      <BookOpen className="w-4 h-4"/>
+                      View Attachment
+                    </a>
+                  </div>
+                )}
+              </ModalBody>
+
+              <ModalFooter className="justify-between">
+                <div className="flex items-center gap-2 text-body-muted">
+                  <CheckCircle className="w-4 h-4 text-success-500"/>
+                  Marked as read
+                </div>
+                <div className="flex items-center gap-2">
+                  {canEditAnnouncement(selectedAnnouncement) && (
+                    <>
+                      <PermissionGate permission={Permissions.ANNOUNCEMENT_MANAGE}>
+                        <button
+                          onClick={() => {
+                            setEditingAnnouncement(selectedAnnouncement);
+                            setSelectedAnnouncement(null);
+                            setShowCreateModal(true);
+                          }}
+                          className="flex items-center gap-2 px-4 py-2 text-accent-600 bg-accent-50 dark:bg-accent-900/30 hover:bg-accent-100 dark:hover:bg-accent-900/50 rounded-lg transition-colors font-medium"
                         >
-                          <BookOpen className="w-4 h-4"/>
-                          View Attachment
-                        </a>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Modal Footer */}
-                  <div className="px-6 py-4 border-t border-[var(--border-main)] flex justify-between items-center">
-                    <div className="flex items-center gap-2 text-body-muted">
-                      <CheckCircle className="w-4 h-4 text-success-500"/>
-                      Marked as read
-                    </div>
-                    <div className="flex items-center gap-2">
-                      {canEditAnnouncement(selectedAnnouncement) && (
-                        <>
-                          <PermissionGate permission={Permissions.ANNOUNCEMENT_MANAGE}>
-                            <button
-                              onClick={() => {
-                                setEditingAnnouncement(selectedAnnouncement);
-                                setSelectedAnnouncement(null);
-                                setShowCreateModal(true);
-                              }}
-                              className="flex items-center gap-2 px-4 py-2 text-accent-600 bg-accent-50 dark:bg-accent-900/30 hover:bg-accent-100 dark:hover:bg-accent-900/50 rounded-lg transition-colors font-medium"
-                            >
-                              <Edit2 className="w-4 h-4"/>
-                              Edit
-                            </button>
-                          </PermissionGate>
-                          <PermissionGate permission={Permissions.ANNOUNCEMENT_MANAGE}>
-                            <button
-                              onClick={() => {
-                                setShowDeleteConfirm(selectedAnnouncement.id);
-                              }}
-                              className="flex items-center gap-2 px-4 py-2 text-danger-600 bg-danger-50 dark:bg-danger-900/30 hover:bg-danger-100 dark:hover:bg-danger-900/50 rounded-lg transition-colors font-medium"
-                            >
-                              <Trash2 className="w-4 h-4"/>
-                              Delete
-                            </button>
-                          </PermissionGate>
-                        </>
-                      )}
-                      <button
-                        onClick={() => setSelectedAnnouncement(null)}
-                        className="px-4 py-2 bg-[var(--bg-surface)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-surface)] transition-colors font-medium"
-                      >
-                        Close
-                      </button>
-                    </div>
-                  </div>
-                </motion.div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+                          <Edit2 className="w-4 h-4"/>
+                          Edit
+                        </button>
+                      </PermissionGate>
+                      <PermissionGate permission={Permissions.ANNOUNCEMENT_MANAGE}>
+                        <button
+                          onClick={() => {
+                            setShowDeleteConfirm(selectedAnnouncement.id);
+                          }}
+                          className="flex items-center gap-2 px-4 py-2 text-danger-600 bg-danger-50 dark:bg-danger-900/30 hover:bg-danger-100 dark:hover:bg-danger-900/50 rounded-lg transition-colors font-medium"
+                        >
+                          <Trash2 className="w-4 h-4"/>
+                          Delete
+                        </button>
+                      </PermissionGate>
+                    </>
+                  )}
+                  <button
+                    onClick={() => setSelectedAnnouncement(null)}
+                    className="px-4 py-2 bg-[var(--bg-surface)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-surface)] transition-colors font-medium"
+                  >
+                    Close
+                  </button>
+                </div>
+              </ModalFooter>
+            </Modal>
+          )}
 
           {/* Create/Edit Announcement Modal - Only for admins */}
           <AnimatePresence>
@@ -812,42 +794,20 @@ function CreateAnnouncementModal({announcement, onClose, onSuccess}: CreateAnnou
   };
 
   return (
-    <motion.div
-      initial={{opacity: 0}}
-      animate={{opacity: 1}}
-      exit={{opacity: 0}}
-      className="fixed inset-0 z-50 flex items-center justify-center glass-aura !rounded-none p-4"
-      onClick={onClose}
-    >
-      <motion.div
-        initial={{scale: 0.95, opacity: 0}}
-        animate={{scale: 1, opacity: 1}}
-        exit={{scale: 0.95, opacity: 0}}
-        className="skeuo-card rounded-lg max-w-2xl w-full max-h-[90vh] overflow-hidden"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Header */}
-        <div className="px-6 py-4 border-b border-[var(--border-main)] row-between">
-          <h2 className="text-xl font-bold text-[var(--text-primary)]">
-            {isEditing ? 'Edit Announcement' : 'Create Announcement'}
-          </h2>
-          <button onClick={handleClose}
-                  aria-label="Close dialog"
-                  className="p-2 hover:bg-[var(--bg-surface)] dark:hover:bg-[var(--bg-surface)] rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-          >
-            <X className="w-5 h-5 text-[var(--text-muted)]"/>
-          </button>
-        </div>
+    <Modal isOpen={true} onClose={handleClose} size="lg">
+      <ModalHeader onClose={handleClose}>
+        {isEditing ? 'Edit Announcement' : 'Create Announcement'}
+      </ModalHeader>
 
-        {/* Content */}
-        <form onSubmit={formHandleSubmit(onSubmit)} className="flex flex-col h-full">
-          <div className="p-6 overflow-y-auto max-h-[60vh] space-y-4">
+      <form onSubmit={formHandleSubmit(onSubmit)} className="flex flex-col flex-1 min-h-0">
+        <ModalBody className="space-y-4">
             {/* Title */}
             <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+              <label htmlFor="announcement-title" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 Title <span className="text-danger-500">*</span>
               </label>
               <input
+                id="announcement-title"
                 type="text"
                 {...register('title')}
                 className={`input-aura ${
@@ -860,10 +820,11 @@ function CreateAnnouncementModal({announcement, onClose, onSuccess}: CreateAnnou
 
             {/* Content */}
             <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+              <label htmlFor="announcement-content" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 Content <span className="text-danger-500">*</span>
               </label>
               <textarea
+                id="announcement-content"
                 {...register('content')}
                 rows={5}
                 className={`input-aura resize-none ${
@@ -877,10 +838,11 @@ function CreateAnnouncementModal({announcement, onClose, onSuccess}: CreateAnnou
             {/* Category and Priority */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                <label htmlFor="announcement-category" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Category
                 </label>
                 <select
+                  id="announcement-category"
                   {...register('category')}
                   className="input-aura"
                 >
@@ -892,10 +854,11 @@ function CreateAnnouncementModal({announcement, onClose, onSuccess}: CreateAnnou
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                <label htmlFor="announcement-priority" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Priority
                 </label>
                 <select
+                  id="announcement-priority"
                   {...register('priority')}
                   className="input-aura"
                 >
@@ -910,10 +873,11 @@ function CreateAnnouncementModal({announcement, onClose, onSuccess}: CreateAnnou
 
             {/* Target Audience */}
             <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+              <label htmlFor="announcement-target-audience" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 Target Audience
               </label>
               <select
+                id="announcement-target-audience"
                 {...register('targetAudience')}
                 className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg dark:bg-[var(--bg-secondary)] dark:text-white"
               >
@@ -927,9 +891,9 @@ function CreateAnnouncementModal({announcement, onClose, onSuccess}: CreateAnnou
             {/* Department Selection - Only shown when SPECIFIC_DEPARTMENTS is selected */}
             {watchTargetAudience === 'SPECIFIC_DEPARTMENTS' && (
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                <span id="announcement-departments-label" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Select Departments <span className="text-danger-500">*</span>
-                </label>
+                </span>
                 {loadingDepartments ? (
                   <div className="flex items-center justify-center py-4">
                     <Loader2 className="w-5 h-5 animate-spin text-accent-700"/>
@@ -990,42 +954,40 @@ function CreateAnnouncementModal({announcement, onClose, onSuccess}: CreateAnnou
               </label>
             </div>
 
-            {/* Error */}
-            {error && (
-              <div
-                className="p-4 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-lg text-sm text-danger-600 dark:text-danger-400">
-                {error}
-              </div>
-            )}
-          </div>
+          {/* Error */}
+          {error && (
+            <div
+              className="p-4 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-lg text-sm text-danger-600 dark:text-danger-400">
+              {error}
+            </div>
+          )}
+        </ModalBody>
 
-          {/* Footer */}
-          <div className="px-6 py-4 border-t border-[var(--border-main)] flex gap-4">
-            <button type="button"
-                    onClick={handleClose}
-                    className="flex-1 btn-secondary cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-            >
-              Cancel
-            </button>
-            <button type="submit"
-                    disabled={createMutation.isPending || updateMutation.isPending}
-                    className="flex-1 btn-primary flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-            >
-              {createMutation.isPending || updateMutation.isPending ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin"/>
-                  {isEditing ? 'Updating...' : 'Publishing...'}
-                </>
-              ) : (
-                <>
-                  <Megaphone className="w-4 h-4"/>
-                  {isEditing ? 'Update' : 'Publish'}
-                </>
-              )}
-            </button>
-          </div>
-        </form>
-      </motion.div>
-    </motion.div>
+        <ModalFooter className="gap-4">
+          <button type="button"
+                  onClick={handleClose}
+                  className="flex-1 btn-secondary cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+          >
+            Cancel
+          </button>
+          <button type="submit"
+                  disabled={createMutation.isPending || updateMutation.isPending}
+                  className="flex-1 btn-primary flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+          >
+            {createMutation.isPending || updateMutation.isPending ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin"/>
+                {isEditing ? 'Updating...' : 'Publishing...'}
+              </>
+            ) : (
+              <>
+                <Megaphone className="w-4 h-4"/>
+                {isEditing ? 'Update' : 'Publish'}
+              </>
+            )}
+          </button>
+        </ModalFooter>
+      </form>
+    </Modal>
   );
 }

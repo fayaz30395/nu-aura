@@ -671,7 +671,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
 
           {/* Navigation */}
           <nav className="flex-1 overflow-y-auto overflow-x-hidden px-4 py-4 space-y-1 scrollbar-hide"
-               aria-label="Primary navigation">
+               aria-label="Main navigation">
             {groupedItems.map((section, sectionIndex) => {
               const isSectionExpanded = !collapsedSections.has(section.id);
 

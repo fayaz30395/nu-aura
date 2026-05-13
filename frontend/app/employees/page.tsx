@@ -13,6 +13,7 @@ import {motion} from 'framer-motion';
 import {Users} from 'lucide-react';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {Button} from '@/components/ui/Button';
+import {Modal, ModalBody, ModalHeader} from '@/components/ui/Modal';
 import {SkeletonTable} from '@/components/ui/Skeleton';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
@@ -506,28 +507,26 @@ export default function EmployeesPage() {
         </div>
 
         {/* Add Employee Modal */}
-        {showAddModal && (
-          <div className="fixed inset-0 glass-aura !rounded-none flex items-center justify-center p-4 z-50">
-            <div className="card-elevated w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-              <div className="p-6">
-                <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-xl font-bold text-[var(--text-primary)]">Add New Employee</h2>
-                  <button
-                    onClick={() => {
-                      setShowAddModal(false);
-                      reset();
-                      setCurrentTab('basic');
-                    }}
-                    aria-label="Close add employee dialog"
-                    className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-md"
-                  >
-                    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
-                  </button>
-                </div>
-
-                {/* Tabs */}
+        <Modal
+          isOpen={showAddModal}
+          onClose={() => {
+            setShowAddModal(false);
+            reset();
+            setCurrentTab('basic');
+          }}
+          size="xl"
+        >
+          <ModalHeader
+            onClose={() => {
+              setShowAddModal(false);
+              reset();
+              setCurrentTab('basic');
+            }}
+          >
+            Add New Employee
+          </ModalHeader>
+          <ModalBody>
+            {/* Tabs */}
                 <div className="mb-6 border-b border-[var(--border-main)]">
                   <nav className="-mb-px flex space-x-8">
                     <button
@@ -1183,56 +1182,66 @@ export default function EmployeesPage() {
                     </Button>
                   </div>
                 </form>
-              </div>
-            </div>
-          </div>
-        )}
+          </ModalBody>
+        </Modal>
 
         {/* Delete Confirmation Modal */}
-        {showDeleteModal && employeeToDelete && (
-          <div className="fixed inset-0 glass-aura !rounded-none flex items-center justify-center p-4 z-50">
-            <div className="card-elevated max-w-md w-full p-6">
-              <div className="flex items-center gap-4 mb-4">
-                <div
-                  className="flex-shrink-0 h-10 w-10 rounded-lg bg-danger-100 dark:bg-danger-900/30 flex items-center justify-center">
-                  <svg className="h-5 w-5 text-danger-600 dark:text-danger-400" fill="none" viewBox="0 0 24 24"
-                       stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                          d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-                  </svg>
-                </div>
-                <h3 className="text-xl font-semibold text-[var(--text-primary)]">Delete Employee</h3>
+        <Modal
+          isOpen={showDeleteModal && !!employeeToDelete}
+          onClose={() => {
+            setShowDeleteModal(false);
+            setEmployeeToDelete(null);
+          }}
+          size="sm"
+        >
+          <ModalHeader
+            onClose={() => {
+              setShowDeleteModal(false);
+              setEmployeeToDelete(null);
+            }}
+          >
+            <div className="flex items-center gap-3">
+              <div
+                className="flex-shrink-0 h-10 w-10 rounded-lg bg-danger-100 dark:bg-danger-900/30 flex items-center justify-center">
+                <svg className="h-5 w-5 text-danger-600 dark:text-danger-400" fill="none" viewBox="0 0 24 24"
+                     stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                </svg>
               </div>
-              <p className="text-body-secondary mb-6">
-                Are you sure you want to delete <strong
-                className="text-[var(--text-primary)]">{employeeToDelete.fullName}</strong>? This action cannot be
-                undone.
-              </p>
-              <div className="flex gap-4">
-                <Button
-                  variant="outline"
-                  className="flex-1"
-                  onClick={() => {
-                    setShowDeleteModal(false);
-                    setEmployeeToDelete(null);
-                  }}
-                  disabled={deleteEmployeeMutation.isPending}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  variant="danger"
-                  className="flex-1"
-                  onClick={handleDelete}
-                  isLoading={deleteEmployeeMutation.isPending}
-                  disabled={deleteEmployeeMutation.isPending}
-                >
-                  {deleteEmployeeMutation.isPending ? 'Deleting...' : 'Delete'}
-                </Button>
-              </div>
+              <h2 className="text-xl font-semibold text-[var(--text-primary)]">Delete Employee</h2>
             </div>
-          </div>
-        )}
+          </ModalHeader>
+          <ModalBody>
+            <p className="text-body-secondary mb-6">
+              Are you sure you want to delete <strong
+              className="text-[var(--text-primary)]">{employeeToDelete?.fullName}</strong>? This action cannot be
+              undone.
+            </p>
+            <div className="flex gap-4">
+              <Button
+                variant="outline"
+                className="flex-1"
+                onClick={() => {
+                  setShowDeleteModal(false);
+                  setEmployeeToDelete(null);
+                }}
+                disabled={deleteEmployeeMutation.isPending}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="danger"
+                className="flex-1"
+                onClick={handleDelete}
+                isLoading={deleteEmployeeMutation.isPending}
+                disabled={deleteEmployeeMutation.isPending}
+              >
+                {deleteEmployeeMutation.isPending ? 'Deleting...' : 'Delete'}
+              </Button>
+            </div>
+          </ModalBody>
+        </Modal>
       </motion.div>
     </AppLayout>
   );

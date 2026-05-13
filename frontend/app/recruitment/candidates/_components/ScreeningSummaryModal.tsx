@@ -2,7 +2,8 @@
 
 import React from 'react';
 import {Button} from '@/components/ui/Button';
-import {AlertTriangle, Brain, CheckCircle, MessageSquare, ShieldAlert, Sparkles, X} from 'lucide-react';
+import {Modal, ModalBody, ModalHeader} from '@/components/ui/Modal';
+import {AlertTriangle, Brain, CheckCircle, MessageSquare, ShieldAlert, Sparkles} from 'lucide-react';
 import {CandidateScreeningSummaryResponse} from '@/lib/types/hire/ai-recruitment';
 
 interface ScreeningSummaryModalProps {
@@ -16,13 +17,17 @@ export function ScreeningSummaryModal({
                                         screeningSummary,
                                         onClose,
                                       }: ScreeningSummaryModalProps) {
-  if (!open || !screeningSummary) return null;
+  if (!screeningSummary) return null;
 
   return (
-    <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
-      <div
-        className="bg-[var(--bg-card)] rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
-        <div className="p-6">
+    <Modal isOpen={open} onClose={onClose} size="xl">
+      <ModalHeader onClose={onClose}>
+        <h2 className="text-xl font-semibold text-[var(--text-primary)] flex items-center gap-2">
+          <Brain className="h-5 w-5 text-accent-700"/>
+          AI Screening Summary
+        </h2>
+      </ModalHeader>
+      <ModalBody>
           {/* Demo Mode Banner */}
           {screeningSummary.aiModelVersion === 'mock-v1' && (
             <div
@@ -34,18 +39,6 @@ export function ScreeningSummaryModal({
               </div>
             </div>
           )}
-
-          {/* Header */}
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-[var(--text-primary)] flex items-center gap-2">
-              <Brain className="h-6 w-6 text-accent-700"/>
-              AI Screening Summary
-            </h2>
-            <button onClick={onClose} aria-label="Close modal"
-                    className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
-              <X className="h-6 w-6"/>
-            </button>
-          </div>
 
           {/* Info Bar */}
           <div className="mb-6 space-y-4">
@@ -182,8 +175,7 @@ export function ScreeningSummaryModal({
               Close
             </Button>
           </div>
-        </div>
-      </div>
-    </div>
+      </ModalBody>
+    </Modal>
   );
 }

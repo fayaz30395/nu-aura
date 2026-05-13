@@ -4,7 +4,8 @@ import React, {useCallback, useRef, useState} from 'react';
 import {UseFormReturn} from 'react-hook-form';
 import {Button} from '@/components/ui/Button';
 import {Badge} from '@/components/ui/Badge';
-import {AlertCircle, CheckCircle, FileText, Link, Loader2, Sparkles, Type, Upload, X} from 'lucide-react';
+import {Modal, ModalBody, ModalHeader} from '@/components/ui/Modal';
+import {AlertCircle, CheckCircle, FileText, Link, Loader2, Sparkles, Type, Upload} from 'lucide-react';
 import {ResumeParseFormData} from '@/lib/validations/recruitment';
 import {ResumeParseResponse} from '@/lib/types/hire/ai-recruitment';
 
@@ -86,8 +87,6 @@ export function ParseResumeModal({
     if (selectedFile) onFileUpload(selectedFile);
   };
 
-  if (!open) return null;
-
   const inputCls = 'w-full px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500';
 
   const tabs: { key: InputMethod; label: string; Icon: React.ElementType }[] = [
@@ -97,25 +96,14 @@ export function ParseResumeModal({
   ];
 
   return (
-    <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
-      <div
-        className="bg-[var(--bg-card)] rounded-xl max-w-xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)] shadow-[var(--shadow-elevated)]">
-        <div className="p-6">
-          {/* Header */}
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-bold text-[var(--text-primary)] flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-accent-500"/>
-              AI Resume Parser
-            </h2>
-            <button
-              onClick={onClose}
-              aria-label="Close modal"
-              className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded-md"
-            >
-              <X className="h-5 w-5"/>
-            </button>
-          </div>
-
+    <Modal isOpen={open} onClose={onClose} size="lg">
+      <ModalHeader onClose={onClose}>
+        <h2 className="text-xl font-semibold text-[var(--text-primary)] flex items-center gap-2">
+          <Sparkles className="h-5 w-5 text-accent-500"/>
+          AI Resume Parser
+        </h2>
+      </ModalHeader>
+      <ModalBody>
           {/* Input Form */}
           {!parsedResume ? (
             <div className="space-y-4">
@@ -222,10 +210,11 @@ export function ParseResumeModal({
               {inputMethod === 'text' && (
                 <form onSubmit={resumeParseForm.handleSubmit(onSubmit)} className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="parse-resume-text" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Resume Text
                     </label>
                     <textarea
+                      id="parse-resume-text"
                       {...resumeParseForm.register('resumeText')}
                       rows={8}
                       placeholder="Paste the full resume content here…"
@@ -256,10 +245,11 @@ export function ParseResumeModal({
               {inputMethod === 'url' && (
                 <form onSubmit={resumeParseForm.handleSubmit(onSubmit)} className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="parse-resume-url" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Resume URL
                     </label>
                     <input
+                      id="parse-resume-url"
                       {...resumeParseForm.register('resumeUrl')}
                       type="url"
                       placeholder="https://example.com/resume.pdf"
@@ -443,8 +433,7 @@ export function ParseResumeModal({
               </div>
             </div>
           )}
-        </div>
-      </div>
-    </div>
+      </ModalBody>
+    </Modal>
   );
 }

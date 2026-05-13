@@ -35,10 +35,11 @@ export const NewFolderModal = React.memo(function NewFolderModal({
       <ModalHeader onClose={onClose}>Create New Folder</ModalHeader>
       <ModalBody>
         <div>
-          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+          <label htmlFor="drive-folder-name" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
             Folder Name
           </label>
           <Input
+            id="drive-folder-name"
             value={newFolderName}
             onChange={(e) => onNameChange(e.target.value)}
             placeholder="Enter folder name"
@@ -113,10 +114,11 @@ export const ShareModal = React.memo(function ShareModal({
         )}
 
         <div>
-          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+          <label htmlFor="drive-share-email" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
             Share with
           </label>
           <Input
+            id="drive-share-email"
             value={shareEmail}
             onChange={(e) => onEmailChange(e.target.value)}
             placeholder="Enter email address"
@@ -125,10 +127,11 @@ export const ShareModal = React.memo(function ShareModal({
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+          <label htmlFor="drive-share-role" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
             Permission
           </label>
           <select
+            id="drive-share-role"
             value={shareRole}
             onChange={(e) => onRoleChange(e.target.value as 'reader' | 'writer' | 'commenter')}
             className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
@@ -150,12 +153,12 @@ export const ShareModal = React.memo(function ShareModal({
         </Button>
 
         <div className="border-t border-[var(--border-main)] pt-4">
-          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+          <label htmlFor="drive-share-link" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
             Get shareable link
           </label>
           {shareLink ? (
             <div className="flex items-center gap-2">
-              <Input value={shareLink} readOnly className="flex-1"/>
+              <Input id="drive-share-link" value={shareLink} readOnly className="flex-1"/>
               <Button
                 variant="outline"
                 onClick={onCopyLink}
@@ -205,10 +208,11 @@ export const RenameModal = React.memo(function RenameModal({
       <ModalHeader onClose={onClose}>Rename</ModalHeader>
       <ModalBody>
         <div>
-          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+          <label htmlFor="drive-rename-input" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
             New name
           </label>
           <Input
+            id="drive-rename-input"
             value={renameValue}
             onChange={(e) => onRenameChange(e.target.value)}
             placeholder="Enter new name"

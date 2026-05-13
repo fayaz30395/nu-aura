@@ -65,22 +65,22 @@ export function ViewProgramModal({
 
             {program.description && (
               <div>
-                <h4 className="font-medium text-[var(--text-primary)] mb-2">Description</h4>
+                <h3 className="font-medium text-[var(--text-primary)] mb-2">Description</h3>
                 <p className="text-body-secondary">{program.description}</p>
               </div>
             )}
 
             {program.learningObjectives && (
               <div>
-                <h4 className="font-medium text-[var(--text-primary)] mb-2">Learning Objectives</h4>
+                <h3 className="font-medium text-[var(--text-primary)] mb-2">Learning Objectives</h3>
                 <p className="text-body-secondary">{program.learningObjectives}</p>
               </div>
             )}
 
             <div>
-              <h4 className="font-medium text-[var(--text-primary)] mb-2">
+              <h3 className="font-medium text-[var(--text-primary)] mb-2">
                 Enrollments ({enrollments.length})
-              </h4>
+              </h3>
               {enrollments.length === 0 ? (
                 <EmptyState
                   icon={<Users className="w-full h-full"/>}

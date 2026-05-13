@@ -22,6 +22,7 @@ import {
   X,
 } from 'lucide-react';
 import {useCourseDetail, useMyEnrollments, useUpdateCourseProgress} from '@/lib/hooks/queries/useLearning';
+import {Modal, ModalBody, ModalFooter} from '@/components/ui';
 
 type ContentStatus = 'not_started' | 'in_progress' | 'completed';
 
@@ -562,36 +563,38 @@ export default function CoursePlayerPage() {
         </div>
 
         {/* Completion overlay */}
-        {showCompletion && (
-          <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50">
-            <div className="skeuo-card p-8 max-w-sm w-full mx-4 text-center">
-              <div className="flex justify-center mb-4">
-                <div className="p-4 bg-success-100 rounded-full">
-                  <Award className="h-12 w-12 text-success-600"/>
-                </div>
-              </div>
-              <h2 className="text-xl font-bold text-[var(--text-primary)] mb-2">Course Complete!</h2>
-              <p className="text-[var(--text-muted)] text-sm mb-6">
-                You&apos;ve completed <span className="font-semibold text-[var(--text-primary)]">{course.title}</span>.
-                {enrollment?.certificateId && ' Your certificate has been issued.'}
-              </p>
-              <div className="flex flex-col gap-2">
-                {enrollment?.certificateId && (
-                  <button
-                    className="w-full px-4 py-2 bg-success-600 text-white rounded-md font-medium hover:bg-success-700 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
-                    Download Certificate
-                  </button>
-                )}
-                <Link
-                  href="/learning"
-                  className="block w-full px-4 py-2 border border-[var(--border-main)] text-[var(--text-primary)] rounded-md font-medium hover:bg-[var(--bg-surface)] text-center"
-                >
-                  Back to Learning
-                </Link>
+        <Modal
+          isOpen={showCompletion}
+          onClose={() => setShowCompletion(false)}
+          size="sm"
+        >
+          <ModalBody className="text-center">
+            <div className="flex justify-center mb-4">
+              <div className="p-4 bg-success-100 rounded-full">
+                <Award className="h-12 w-12 text-success-600"/>
               </div>
             </div>
-          </div>
-        )}
+            <h2 className="text-xl font-bold text-[var(--text-primary)] mb-2">Course Complete!</h2>
+            <p className="text-[var(--text-muted)] text-sm">
+              You&apos;ve completed <span className="font-semibold text-[var(--text-primary)]">{course.title}</span>.
+              {enrollment?.certificateId && ' Your certificate has been issued.'}
+            </p>
+          </ModalBody>
+          <ModalFooter className="flex-col gap-2">
+            {enrollment?.certificateId && (
+              <button
+                className="w-full px-4 py-2 bg-success-600 text-white rounded-md font-medium hover:bg-success-700 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                Download Certificate
+              </button>
+            )}
+            <Link
+              href="/learning"
+              className="block w-full px-4 py-2 border border-[var(--border-main)] text-[var(--text-primary)] rounded-md font-medium hover:bg-[var(--bg-surface)] text-center"
+            >
+              Back to Learning
+            </Link>
+          </ModalFooter>
+        </Modal>
       </div>
     </AppLayout>
   );

@@ -149,7 +149,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({report, onClose, onDownloa
             <report.icon className={`h-5 w-5 ${report.color}`}/>
           </div>
           <div>
-            <h3 className="font-semibold text-[var(--text-primary)]">{report.title}</h3>
+            <h2 className="font-semibold text-[var(--text-primary)]">{report.title}</h2>
             <p className="text-body-muted">{report.category}</p>
           </div>
         </div>
@@ -430,7 +430,7 @@ export default function ReportsPage() {
               <div className="flex items-start gap-4">
                 <FileText className="h-5 w-5 text-accent-600 dark:text-accent-400 mt-0.5"/>
                 <div>
-                  <h3 className="font-semibold text-accent-900 dark:text-accent-100">Report Generation Tips</h3>
+                  <h2 className="font-semibold text-accent-900 dark:text-accent-100">Report Generation Tips</h2>
                   <ul className="text-sm text-accent-700 dark:text-accent-300 mt-2 space-y-1">
                     <li>• Excel format is recommended for data analysis and further processing</li>
                     <li>• PDF format is ideal for printing and sharing official documents</li>

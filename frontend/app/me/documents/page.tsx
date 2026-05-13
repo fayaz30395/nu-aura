@@ -388,10 +388,11 @@ export default function MyDocumentsPage() {
             <div className="space-y-4">
               {/* Document Type */}
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                <label htmlFor="me-documents-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Document Type *
                 </label>
                 <select
+                  id="me-documents-type"
                   {...register('documentType')}
                   className="input-aura w-full px-4 py-2 rounded-lg"
                 >
@@ -408,10 +409,11 @@ export default function MyDocumentsPage() {
 
               {/* Purpose */}
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                <label htmlFor="me-documents-purpose" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Purpose *
                 </label>
                 <textarea
+                  id="me-documents-purpose"
                   {...register('purpose')}
                   placeholder="Why do you need this document?"
                   rows={3}
@@ -424,10 +426,11 @@ export default function MyDocumentsPage() {
 
               {/* Addressed To */}
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                <label htmlFor="me-documents-addressed-to" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Addressed To (Optional)
                 </label>
                 <input
+                  id="me-documents-addressed-to"
                   type="text"
                   {...register('addressedTo')}
                   placeholder="e.g., Immigration Department, Bank Name"
@@ -437,10 +440,11 @@ export default function MyDocumentsPage() {
 
               {/* Required By Date */}
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                <label htmlFor="me-documents-required-by" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Required By *
                 </label>
                 <input
+                  id="me-documents-required-by"
                   type="date"
                   {...register('requiredByDate')}
                   min={format(new Date(), 'yyyy-MM-dd')}
@@ -476,10 +480,11 @@ export default function MyDocumentsPage() {
               {/* Delivery Address - only for physical delivery */}
               {(watchedDeliveryMode === 'PHYSICAL' || watchedDeliveryMode === 'BOTH') && (
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                  <label htmlFor="me-documents-delivery-address" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Delivery Address *
                   </label>
                   <textarea
+                    id="me-documents-delivery-address"
                     {...register('deliveryAddress')}
                     placeholder="Enter delivery address"
                     rows={2}
@@ -490,10 +495,11 @@ export default function MyDocumentsPage() {
 
               {/* Priority */}
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                <label htmlFor="me-documents-priority" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Priority
                 </label>
                 <select
+                  id="me-documents-priority"
                   {...register('priority', {valueAsNumber: true})}
                   className="input-aura w-full px-4 py-2 rounded-lg"
                 >

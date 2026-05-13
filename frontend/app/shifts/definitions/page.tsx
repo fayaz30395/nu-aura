@@ -242,9 +242,9 @@ export default function ShiftDefinitionsPage() {
                         style={{backgroundColor: shift.colorCode || CATEGORICAL_UNSET}}
                       />
                       <div>
-                        <h3 className="font-semibold text-surface-900 dark:text-white text-sm">
+                        <h2 className="font-semibold text-surface-900 dark:text-white text-sm">
                           {shift.shiftName}
-                        </h3>
+                        </h2>
                         <p className="text-xs text-surface-500 dark:text-surface-400">{shift.shiftCode}</p>
                       </div>
                     </div>
