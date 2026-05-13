@@ -216,7 +216,7 @@ export function PostCard({
               <div className="overflow-hidden rounded-lg bg-[var(--bg-secondary)]">
                 <Image
                   src={post.imageUrl}
-                  alt="Post content"
+                  alt={`Image attached to post by ${post.author.fullName}`}
                   width={800}
                   height={450}
                   className="h-auto w-full object-cover"

@@ -76,6 +76,10 @@ export default function PayrollPage() {
     }
   }, [permReady, hasPermission, router]);
 
+  useEffect(() => {
+    document.title = 'Payroll | NU-AURA';
+  }, []);
+
   if (!permReady) {
     // Show loading skeleton while permissions are being loaded
     return (

@@ -159,6 +159,10 @@ export default function EmployeesPage() {
     }
   }, [permReady, hasPermission, router]);
 
+  useEffect(() => {
+    document.title = 'Employees | NU-AURA';
+  }, []);
+
   // Show skeleton while permissions loading
   if (!permReady) {
     return (
@@ -1200,7 +1204,7 @@ export default function EmployeesPage() {
               setEmployeeToDelete(null);
             }}
           >
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <div
                 className="flex-shrink-0 h-10 w-10 rounded-lg bg-danger-100 dark:bg-danger-900/30 flex items-center justify-center">
                 <svg className="h-5 w-5 text-danger-600 dark:text-danger-400" fill="none" viewBox="0 0 24 24"

@@ -108,6 +108,10 @@ export default function MyAttendancePage() {
     }
   }, [hasHydrated, isAuthenticated, user, router]);
 
+  useEffect(() => {
+    document.title = 'My Attendance | NU-AURA';
+  }, []);
+
   const handleDateSelect = (day: Date) => {
     setSelectedDate(day);
   };

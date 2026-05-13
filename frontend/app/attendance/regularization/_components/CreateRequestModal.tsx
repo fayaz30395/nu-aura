@@ -171,7 +171,7 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
                       >
                         <div>
                           <label className="block text-sm font-semibold text-[var(--text-primary)] mb-4">
-                            Which date do you want to regularize? <span className="text-danger-500">*</span>
+                            Which date do you want to regularize? <span aria-hidden="true" className="text-danger-500">*</span>
                           </label>
                           <Controller
                             name="attendanceDate"
@@ -185,6 +185,7 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
                                 placeholder="YYYY-MM-DD"
                                 clearable
                                 size="sm"
+                                aria-required="true"
                                 classNames={{input: 'input-aura'}}
                               />
                             )}
@@ -292,10 +293,11 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
 
                         <div>
                           <label className="block text-sm font-semibold text-[var(--text-primary)] mb-4">
-                            Why do you need this regularization? <span className="text-danger-500">*</span>
+                            Why do you need this regularization? <span aria-hidden="true" className="text-danger-500">*</span>
                           </label>
                           <textarea
                             {...register('reason')}
+                            aria-required="true"
                             rows={4}
                             className="input-aura w-full px-4 py-4"
                             placeholder="Please explain why you need attendance regularization..."

@@ -372,16 +372,16 @@ export default function DepartmentsPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label htmlFor="admin-dept-code" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
-                      Code <span className="text-danger-500">*</span>
+                      Code <span aria-hidden="true" className="text-danger-500">*</span>
                     </label>
-                    <input id="admin-dept-code" {...register('code')} placeholder="ENG" className="input-aura w-full uppercase"/>
+                    <input id="admin-dept-code" {...register('code')} aria-required="true" placeholder="ENG" className="input-aura w-full uppercase"/>
                     {errors.code && <p className="text-danger-500 text-xs mt-1">{errors.code.message}</p>}
                   </div>
                   <div>
                     <label htmlFor="admin-dept-name" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
-                      Name <span className="text-danger-500">*</span>
+                      Name <span aria-hidden="true" className="text-danger-500">*</span>
                     </label>
-                    <input id="admin-dept-name" {...register('name')} placeholder="Engineering" className="input-aura w-full"/>
+                    <input id="admin-dept-name" {...register('name')} aria-required="true" placeholder="Engineering" className="input-aura w-full"/>
                     {errors.name && <p className="text-danger-500 text-xs mt-1">{errors.name.message}</p>}
                   </div>
                 </div>

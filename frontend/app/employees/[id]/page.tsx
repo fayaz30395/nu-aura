@@ -1119,7 +1119,7 @@ export default function EmployeeDetailPage() {
           size="sm"
         >
           <ModalHeader onClose={() => setShowDeleteModal(false)}>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <div
                 className="flex-shrink-0 h-12 w-12 rounded-full bg-danger-100 dark:bg-danger-900/30 flex items-center justify-center">
                 <AlertTriangle className="h-6 w-6 text-danger-600 dark:text-danger-400"/>

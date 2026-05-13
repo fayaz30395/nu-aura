@@ -74,10 +74,11 @@ export function RejectRequestModal({
                   <div className="space-y-4">
                     <div>
                       <label className="block text-sm font-semibold text-[var(--text-primary)] mb-4">
-                        Reason for Rejection <span className="text-danger-500">*</span>
+                        Reason for Rejection <span aria-hidden="true" className="text-danger-500">*</span>
                       </label>
                       <textarea
                         {...register('reason')}
+                        aria-required="true"
                         rows={4}
                         className="input-aura w-full px-4 py-4"
                         placeholder="Please explain why you are rejecting this regularization request..."

@@ -1,6 +1,6 @@
 'use client';
 
-import {useMemo, useState} from 'react';
+import {useEffect, useMemo, useState} from 'react';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
@@ -21,7 +21,7 @@ import {useAuth} from '@/lib/hooks/useAuth';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {CreateExpenseClaimRequest, CurrencyCode, ExpenseCategory} from '@/lib/types/hrms/expense';
-import {ConfirmDialog, EmptyState} from '@/components/ui';
+import {ConfirmDialog, EmptyState, Stat} from '@/components/ui';
 import {StatusBadge} from '@/components/ui/StatusBadge';
 import {EXPENSE_STATUS} from '@/lib/status/vocabulary';
 import {ExpenseAnalytics} from '@/components/expenses';
@@ -68,6 +68,9 @@ interface Filters {
 
 export default function ExpenseClaims() {
   const {user, hasHydrated} = useAuth();
+  useEffect(() => {
+    document.title = 'Expenses | NU-AURA';
+  }, []);
   const [showForm, setShowForm] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>('my-claims');
   const [error, setError] = useState<string | null>(null);
@@ -418,49 +421,35 @@ export default function ExpenseClaims() {
         {/* Statistics */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-[var(--border-main)] skeuo-card">
-            <div className="flex items-center gap-4">
-              <div className="p-2 rounded-lg bg-warning-100 dark:bg-warning-900/30 text-warning-600">
-                <AlertCircle className="w-5 h-5"/>
-              </div>
-              <div>
-                <p className="text-xl font-bold text-[var(--text-primary)] tabular-nums">{statistics.pendingCount}</p>
-                <p className="text-body-muted">Pending</p>
-              </div>
-            </div>
+            <Stat
+              label="Pending"
+              value={statistics.pendingCount}
+              tone="warning"
+              icon={<AlertCircle className="w-3.5 h-3.5"/>}
+            />
           </div>
           <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-[var(--border-main)] skeuo-card">
-            <div className="flex items-center gap-4">
-              <div className="p-2 rounded-lg bg-success-100 dark:bg-success-900/30 text-success-600">
-                <CheckCircle className="w-5 h-5"/>
-              </div>
-              <div>
-                <p className="text-xl font-bold text-[var(--text-primary)] tabular-nums">{statistics.approvedCount}</p>
-                <p className="text-body-muted">Approved</p>
-              </div>
-            </div>
+            <Stat
+              label="Approved"
+              value={statistics.approvedCount}
+              tone="success"
+              icon={<CheckCircle className="w-3.5 h-3.5"/>}
+            />
           </div>
           <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-[var(--border-main)] skeuo-card">
-            <div className="flex items-center gap-4">
-              <div className="p-2 rounded-lg bg-accent-100 dark:bg-accent-900/30 text-accent-700">
-                <DollarSign className="w-5 h-5"/>
-              </div>
-              <div>
-                <p
-                  className="text-xl font-bold text-[var(--text-primary)] tabular-nums">{formatCurrency(statistics.totalPendingAmount)}</p>
-                <p className="text-body-muted">Pending Amount</p>
-              </div>
-            </div>
+            <Stat
+              label="Pending Amount"
+              value={formatCurrency(statistics.totalPendingAmount)}
+              tone="accent"
+              icon={<DollarSign className="w-3.5 h-3.5"/>}
+            />
           </div>
           <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-[var(--border-main)] skeuo-card">
-            <div className="flex items-center gap-4">
-              <div className="p-2 rounded-lg bg-info-100 dark:bg-info-900/30 text-info-600">
-                <FileText className="w-5 h-5"/>
-              </div>
-              <div>
-                <p className="text-xl font-bold text-[var(--text-primary)] tabular-nums">{statistics.totalClaims}</p>
-                <p className="text-body-muted">Total Claims</p>
-              </div>
-            </div>
+            <Stat
+              label="Total Claims"
+              value={statistics.totalClaims}
+              icon={<FileText className="w-3.5 h-3.5"/>}
+            />
           </div>
         </div>
 

@@ -144,7 +144,7 @@ export default function ScheduledReportsPage() {
     // Filter out empty recipients
     const filteredRecipients = data.recipients.filter(r => r.email.trim() !== '').map(r => r.email);
     if (filteredRecipients.length === 0) {
-      toast.error('Please add at least one recipient email');
+      toast.warning('Please add at least one recipient email');
       return;
     }
 

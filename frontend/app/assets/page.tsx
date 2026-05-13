@@ -46,6 +46,7 @@ import {
 } from '@/lib/hooks/queries';
 import {createLogger} from '@/lib/utils/logger';
 import {formatCurrency} from '@/lib/utils';
+import {formatDate as formatDateCanonical} from '@/lib/utils/format/date';
 import {StatusBadge} from '@/components/ui/StatusBadge';
 import {ASSET_STATUS} from '@/lib/status/vocabulary';
 

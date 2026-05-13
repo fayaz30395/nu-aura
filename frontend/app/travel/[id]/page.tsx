@@ -88,7 +88,7 @@ export default function TravelRequestDetailsPage() {
     if (!user?.employeeId || !travelRequest) return;
 
     if (!rejectReason.trim()) {
-      toast.error('Please enter a rejection reason');
+      toast.warning('Please enter a rejection reason');
       return;
     }
 
@@ -113,7 +113,7 @@ export default function TravelRequestDetailsPage() {
     if (!travelRequest) return;
 
     if (!cancelReason.trim()) {
-      toast.error('Please enter a cancellation reason');
+      toast.warning('Please enter a cancellation reason');
       return;
     }
 

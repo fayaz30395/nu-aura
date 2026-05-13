@@ -6,6 +6,7 @@ import {Badge, Button, EmptyState, Modal, ModalBody, ModalFooter, ModalHeader,} 
 import type {TrainingEnrollment, TrainingProgram} from '@/lib/types/grow/training';
 import {EnrollmentStatus} from '@/lib/types/grow/training';
 import {toBadgeVariant} from '@/lib/utils/type-guards';
+import {formatDate} from '@/lib/utils/format/date';
 
 interface ViewProgramModalProps {
   isOpen: boolean;
@@ -99,7 +100,7 @@ export function ViewProgramModal({
                           {enrollment.employeeName || enrollment.employeeId}
                         </p>
                         <p className="text-caption">
-                          Enrolled: {new Date(enrollment.enrollmentDate || '').toLocaleDateString()}
+                          Enrolled: {formatDate(enrollment.enrollmentDate || '')}
                         </p>
                       </div>
                       <Badge

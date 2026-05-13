@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {Controller, useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
@@ -314,6 +314,9 @@ function InlineRoleEditor({employee, onClose}: { employee: Employee; onClose: ()
 // ──────────────────────────────────────────────
 export default function AdminEmployeesPage() {
   const {hasPermission, isAdmin, isReady} = usePermissions();
+  useEffect(() => {
+    document.title = 'Admin · Employees | NU-AURA';
+  }, []);
   const [page, setPage] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
   const [showCreateModal, setShowCreateModal] = useState(false);

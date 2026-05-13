@@ -117,6 +117,10 @@ export default function DashboardPage() {
   const [emailLoading, setEmailLoading] = useState(false);
 
   useEffect(() => {
+    document.title = 'Dashboard | NU-AURA';
+  }, []);
+
+  useEffect(() => {
     // Initialize on client only to prevent SSR hydration mismatch
     setCurrentTime(new Date());
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);

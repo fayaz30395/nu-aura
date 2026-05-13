@@ -213,6 +213,10 @@ export default function RecruitmentDashboard() {
     return () => clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+    document.title = 'Recruitment | NU-AURA';
+  }, []);
+
   // P0-001: Block non-recruitment roles AFTER all hooks (React rules of hooks)
   if (isReady && !hasAccess) {
     return (

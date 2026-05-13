@@ -20,6 +20,7 @@ import {EmptyState} from '@/components/ui/EmptyState';
 import {EmployeeSearchAutocomplete} from '@/components/ui/EmployeeSearchAutocomplete';
 import {card, input as dsInput, typography} from '@/lib/theme/design-system';
 import {getInitials} from '@/lib/utils';
+import {formatDate} from '@/lib/utils/format/date';
 import type {SpaceMember, SpaceMemberRole, WikiSpace, WikiVisibility} from '@/lib/types/platform/fluence';
 
 // ─── Zod Schema ───────────────────────────────────────────────────────────────
@@ -518,7 +519,7 @@ export function SpacePermissionsDrawer({
                             </p>
                             {member.addedAt && (
                               <p className="text-xs text-[var(--text-muted)] truncate">
-                                Added {new Date(member.addedAt).toLocaleDateString()}
+                                Added {formatDate(member.addedAt)}
                               </p>
                             )}
                           </div>

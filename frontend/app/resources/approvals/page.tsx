@@ -358,7 +358,7 @@ export default function ApprovalsPage() {
           </p>
           <div className="mt-4">
             <label htmlFor="allocation-reject-reason" className="block text-sm font-medium text-[var(--text-secondary)]">
-              Reason <span className="text-danger-500">*</span>
+              Reason <span aria-hidden="true" className="text-danger-500">*</span>
             </label>
             <textarea
               id="allocation-reject-reason"
@@ -368,6 +368,7 @@ export default function ApprovalsPage() {
               className="mt-1 w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] p-4 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]"
               rows={3}
               required
+              aria-required="true"
             />
           </div>
         </ModalBody>

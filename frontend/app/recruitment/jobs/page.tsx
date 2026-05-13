@@ -550,10 +550,12 @@ export default function JobOpeningsPage() {
                         id="job-form-code"
                         type="text"
                         {...register('jobCode')}
+                        aria-invalid={errors.jobCode ? 'true' : 'false'}
+                        aria-describedby={errors.jobCode ? 'job-form-code-error' : undefined}
                         className="input-aura"
                         placeholder="JOB-001"
                       />
-                      {errors.jobCode && <p className="text-xs text-danger-600 mt-1">{errors.jobCode.message}</p>}
+                      {errors.jobCode && <p id="job-form-code-error" className="text-xs text-danger-600 mt-1">{errors.jobCode.message}</p>}
                     </div>
                     <div>
                       <label htmlFor="job-form-title" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Job Title *</label>
@@ -561,10 +563,12 @@ export default function JobOpeningsPage() {
                         id="job-form-title"
                         type="text"
                         {...register('jobTitle')}
+                        aria-invalid={errors.jobTitle ? 'true' : 'false'}
+                        aria-describedby={errors.jobTitle ? 'job-form-title-error' : undefined}
                         className="input-aura"
                         placeholder="Senior Software Engineer"
                       />
-                      {errors.jobTitle && <p className="text-xs text-danger-600 mt-1">{errors.jobTitle.message}</p>}
+                      {errors.jobTitle && <p id="job-form-title-error" className="text-xs text-danger-600 mt-1">{errors.jobTitle.message}</p>}
                     </div>
                   </div>
 
@@ -574,6 +578,8 @@ export default function JobOpeningsPage() {
                       <select
                         id="job-form-department"
                         {...register('departmentId')}
+                        aria-invalid={errors.departmentId ? 'true' : 'false'}
+                        aria-describedby={errors.departmentId ? 'job-form-department-error' : undefined}
                         className="input-aura"
                       >
                         <option value="">Select Department</option>
@@ -582,7 +588,7 @@ export default function JobOpeningsPage() {
                         ))}
                       </select>
                       {errors.departmentId &&
-                        <p className="text-xs text-danger-600 mt-1">{errors.departmentId.message}</p>}
+                        <p id="job-form-department-error" className="text-xs text-danger-600 mt-1">{errors.departmentId.message}</p>}
                     </div>
                     <div>
                       <label htmlFor="job-form-hiring-manager" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Hiring
@@ -590,6 +596,8 @@ export default function JobOpeningsPage() {
                       <select
                         id="job-form-hiring-manager"
                         {...register('hiringManagerId')}
+                        aria-invalid={errors.hiringManagerId ? 'true' : 'false'}
+                        aria-describedby={errors.hiringManagerId ? 'job-form-hiring-manager-error' : undefined}
                         className="input-aura"
                       >
                         <option value="">Select Manager</option>
@@ -598,7 +606,7 @@ export default function JobOpeningsPage() {
                         ))}
                       </select>
                       {errors.hiringManagerId &&
-                        <p className="text-xs text-danger-600 mt-1">{errors.hiringManagerId.message}</p>}
+                        <p id="job-form-hiring-manager-error" className="text-xs text-danger-600 mt-1">{errors.hiringManagerId.message}</p>}
                     </div>
                   </div>
 
@@ -609,10 +617,12 @@ export default function JobOpeningsPage() {
                         id="job-form-location"
                         type="text"
                         {...register('location')}
+                        aria-invalid={errors.location ? 'true' : 'false'}
+                        aria-describedby={errors.location ? 'job-form-location-error' : undefined}
                         className="input-aura"
                         placeholder="Remote / City"
                       />
-                      {errors.location && <p className="text-xs text-danger-600 mt-1">{errors.location.message}</p>}
+                      {errors.location && <p id="job-form-location-error" className="text-xs text-danger-600 mt-1">{errors.location.message}</p>}
                     </div>
                     <div>
                       <label htmlFor="job-form-employment-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Employment
@@ -620,6 +630,8 @@ export default function JobOpeningsPage() {
                       <select
                         id="job-form-employment-type"
                         {...register('employmentType')}
+                        aria-invalid={errors.employmentType ? 'true' : 'false'}
+                        aria-describedby={errors.employmentType ? 'job-form-employment-type-error' : undefined}
                         className="input-aura"
                       >
                         <option value="FULL_TIME">Full Time</option>
@@ -629,7 +641,7 @@ export default function JobOpeningsPage() {
                         <option value="INTERNSHIP">Internship</option>
                       </select>
                       {errors.employmentType &&
-                        <p className="text-xs text-danger-600 mt-1">{errors.employmentType.message}</p>}
+                        <p id="job-form-employment-type-error" className="text-xs text-danger-600 mt-1">{errors.employmentType.message}</p>}
                     </div>
                     <div>
                       <label htmlFor="job-form-number-of-openings" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">No. of
@@ -639,10 +651,12 @@ export default function JobOpeningsPage() {
                         type="number"
                         min="1"
                         {...register('numberOfOpenings')}
+                        aria-invalid={errors.numberOfOpenings ? 'true' : 'false'}
+                        aria-describedby={errors.numberOfOpenings ? 'job-form-number-of-openings-error' : undefined}
                         className="input-aura"
                       />
                       {errors.numberOfOpenings &&
-                        <p className="text-xs text-danger-600 mt-1">{errors.numberOfOpenings.message}</p>}
+                        <p id="job-form-number-of-openings-error" className="text-xs text-danger-600 mt-1">{errors.numberOfOpenings.message}</p>}
                     </div>
                   </div>
 
@@ -653,10 +667,12 @@ export default function JobOpeningsPage() {
                         id="job-form-min-salary"
                         type="number"
                         {...register('minSalary')}
+                        aria-invalid={errors.minSalary ? 'true' : 'false'}
+                        aria-describedby={errors.minSalary ? 'job-form-min-salary-error' : undefined}
                         className="input-aura"
                         placeholder="50000"
                       />
-                      {errors.minSalary && <p className="text-xs text-danger-600 mt-1">{errors.minSalary.message}</p>}
+                      {errors.minSalary && <p id="job-form-min-salary-error" className="text-xs text-danger-600 mt-1">{errors.minSalary.message}</p>}
                     </div>
                     <div>
                       <label htmlFor="job-form-max-salary" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Max Salary</label>
@@ -664,10 +680,12 @@ export default function JobOpeningsPage() {
                         id="job-form-max-salary"
                         type="number"
                         {...register('maxSalary')}
+                        aria-invalid={errors.maxSalary ? 'true' : 'false'}
+                        aria-describedby={errors.maxSalary ? 'job-form-max-salary-error' : undefined}
                         className="input-aura"
                         placeholder="80000"
                       />
-                      {errors.maxSalary && <p className="text-xs text-danger-600 mt-1">{errors.maxSalary.message}</p>}
+                      {errors.maxSalary && <p id="job-form-max-salary-error" className="text-xs text-danger-600 mt-1">{errors.maxSalary.message}</p>}
                     </div>
                     <div>
                       <label htmlFor="job-form-experience-required" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Experience
@@ -676,11 +694,13 @@ export default function JobOpeningsPage() {
                         id="job-form-experience-required"
                         type="text"
                         {...register('experienceRequired')}
+                        aria-invalid={errors.experienceRequired ? 'true' : 'false'}
+                        aria-describedby={errors.experienceRequired ? 'job-form-experience-required-error' : undefined}
                         className="input-aura"
                         placeholder="3-5 years"
                       />
                       {errors.experienceRequired &&
-                        <p className="text-xs text-danger-600 mt-1">{errors.experienceRequired.message}</p>}
+                        <p id="job-form-experience-required-error" className="text-xs text-danger-600 mt-1">{errors.experienceRequired.message}</p>}
                     </div>
                   </div>
 
@@ -690,6 +710,8 @@ export default function JobOpeningsPage() {
                       <select
                         id="job-form-status"
                         {...register('status')}
+                        aria-invalid={errors.status ? 'true' : 'false'}
+                        aria-describedby={errors.status ? 'job-form-status-error' : undefined}
                         className="input-aura"
                       >
                         <option value="DRAFT">Draft</option>
@@ -698,13 +720,15 @@ export default function JobOpeningsPage() {
                         <option value="CLOSED">Closed</option>
                         <option value="CANCELLED">Cancelled</option>
                       </select>
-                      {errors.status && <p className="text-xs text-danger-600 mt-1">{errors.status.message}</p>}
+                      {errors.status && <p id="job-form-status-error" className="text-xs text-danger-600 mt-1">{errors.status.message}</p>}
                     </div>
                     <div>
                       <label htmlFor="job-form-priority" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Priority</label>
                       <select
                         id="job-form-priority"
                         {...register('priority')}
+                        aria-invalid={errors.priority ? 'true' : 'false'}
+                        aria-describedby={errors.priority ? 'job-form-priority-error' : undefined}
                         className="input-aura"
                       >
                         <option value="LOW">Low</option>
@@ -712,7 +736,7 @@ export default function JobOpeningsPage() {
                         <option value="HIGH">High</option>
                         <option value="URGENT">Urgent</option>
                       </select>
-                      {errors.priority && <p className="text-xs text-danger-600 mt-1">{errors.priority.message}</p>}
+                      {errors.priority && <p id="job-form-priority-error" className="text-xs text-danger-600 mt-1">{errors.priority.message}</p>}
                     </div>
                     <div>
                       <label htmlFor="job-form-closing-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Closing
@@ -721,10 +745,12 @@ export default function JobOpeningsPage() {
                         id="job-form-closing-date"
                         type="date"
                         {...register('closingDate')}
+                        aria-invalid={errors.closingDate ? 'true' : 'false'}
+                        aria-describedby={errors.closingDate ? 'job-form-closing-date-error' : undefined}
                         className="input-aura"
                       />
                       {errors.closingDate &&
-                        <p className="text-xs text-danger-600 mt-1">{errors.closingDate.message}</p>}
+                        <p id="job-form-closing-date-error" className="text-xs text-danger-600 mt-1">{errors.closingDate.message}</p>}
                     </div>
                   </div>
 
@@ -745,11 +771,13 @@ export default function JobOpeningsPage() {
                       id="job-form-description"
                       rows={4}
                       {...register('jobDescription')}
+                      aria-invalid={errors.jobDescription ? 'true' : 'false'}
+                      aria-describedby={errors.jobDescription ? 'job-form-description-error' : undefined}
                       className="w-full px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
                       placeholder="Describe the job role and responsibilities..."
                     />
                     {errors.jobDescription &&
-                      <p className="text-xs text-danger-600 mt-1">{errors.jobDescription.message}</p>}
+                      <p id="job-form-description-error" className="text-xs text-danger-600 mt-1">{errors.jobDescription.message}</p>}
                   </div>
 
                   <div>

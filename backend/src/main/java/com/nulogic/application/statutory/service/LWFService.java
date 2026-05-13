@@ -6,6 +6,7 @@ import com.nulogic.api.statutory.dto.LWFRemittanceReportDto;
 import com.nulogic.common.exception.BusinessException;
 import com.nulogic.common.exception.ResourceNotFoundException;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.statutory.LWFConfiguration;
 import com.nulogic.domain.statutory.LWFConfiguration.LWFFrequency;
 import com.nulogic.domain.statutory.LWFDeduction;
@@ -54,6 +55,7 @@ public class LWFService {
 
     private final LWFConfigurationRepository configRepository;
     private final LWFDeductionRepository deductionRepository;
+    private final TenantTimeService tenantTimeService;
 
     /**
      * QA sweep S2-C K-7 / S4-G wave-3: bulk per-payroll-run LWF computation is incomplete — the

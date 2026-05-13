@@ -309,7 +309,7 @@ public class GlobalPayrollService {
         run.setEmployeeCount(records.size());
         run.setLocationCount(recordRepository.countDistinctLocationsByTenantIdAndPayrollRun(tenantId, runId));
         run.setErrorCount(errorCount);
-        run.setProcessedAt(LocalDateTime.now());
+        run.setProcessedAt(tenantTimeService.now(tenantId));
         run.setProcessedBy(currentUserId);
         run.setStatus(errorCount > 0 ? GlobalPayrollRun.PayrollRunStatus.ERROR
                 : GlobalPayrollRun.PayrollRunStatus.PENDING_APPROVAL);
@@ -335,7 +335,7 @@ public class GlobalPayrollService {
         }
 
         run.setStatus(GlobalPayrollRun.PayrollRunStatus.APPROVED);
-        run.setApprovedAt(LocalDateTime.now());
+        run.setApprovedAt(tenantTimeService.now(tenantId));
         run.setApprovedBy(currentUserId);
         run = payrollRunRepository.save(run);
 

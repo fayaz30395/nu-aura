@@ -105,7 +105,7 @@ export default function AdminIntegrationsPage() {
 
   const handleTestSms = () => {
     if (isProduction) {
-      toast.error('SMS testing is disabled in production. Use a staging environment.');
+      toast.warning('SMS testing is disabled in production. Use a staging environment.');
       return;
     }
 
@@ -132,7 +132,7 @@ export default function AdminIntegrationsPage() {
 
   const handleSendSms = () => {
     if (isProduction) {
-      toast.error('Direct SMS sending is disabled in production. Use the notification service instead.');
+      toast.warning('Direct SMS sending is disabled in production. Use the notification service instead.');
       return;
     }
 
@@ -171,7 +171,7 @@ export default function AdminIntegrationsPage() {
 
   const handleTestPayment = () => {
     if (isProduction) {
-      toast.error('Payment gateway testing is disabled in production. Use a staging environment.');
+      toast.warning('Payment gateway testing is disabled in production. Use a staging environment.');
       return;
     }
 

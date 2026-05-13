@@ -145,6 +145,9 @@ const priorityLabels: Record<AnnouncementPriority, string> = {
 
 export default function AnnouncementsPage() {
   const {user} = useAuth();
+  useEffect(() => {
+    document.title = 'Announcements | NU-AURA';
+  }, []);
   const toast = useToast();
   const [selectedAnnouncement, setSelectedAnnouncement] = useState<Announcement | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -286,12 +289,13 @@ export default function AnnouncementsPage() {
                 <Pin className="w-5 h-5 text-warning-500"/>
                 Pinned
               </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4" role="list" aria-label="Pinned announcements">
                 {pinnedAnnouncements.map((announcement, index) => {
                   const Icon = getCategoryIcon(announcement.category);
                   return (
                     <motion.div
                       key={announcement.id}
+                      role="listitem"
                       initial={{opacity: 0, x: -20}}
                       animate={{opacity: 1, x: 0}}
                       transition={{delay: index * 0.1}}
@@ -417,12 +421,13 @@ export default function AnnouncementsPage() {
                 description="No announcements to display"
               />
             ) : (
-              <div className="space-y-4">
+              <div className="space-y-4" role="list" aria-label="Announcements">
                 {filteredAnnouncements.map((announcement, index) => {
                   const Icon = getCategoryIcon(announcement.category);
                   return (
                     <motion.div
                       key={announcement.id}
+                      role="listitem"
                       initial={{opacity: 0, y: 20}}
                       animate={{opacity: 1, y: 0}}
                       transition={{delay: index * 0.05}}

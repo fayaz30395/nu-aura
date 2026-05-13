@@ -71,7 +71,7 @@ export default function ApplyLeavePage() {
   const onSubmit = async (data: LeaveFormData) => {
     try {
       if (!user?.employeeId) {
-        toast.error('No employee profile linked to your account');
+        toast.warning('No employee profile linked to your account');
         return;
       }
 

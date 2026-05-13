@@ -77,7 +77,7 @@ export default function EmploymentChangeRequestsPage() {
 
   const handleReject = async (id: string) => {
     if (!rejectionReason.trim()) {
-      toast.error('Please provide a rejection reason');
+      toast.warning('Please provide a rejection reason');
       return;
     }
 

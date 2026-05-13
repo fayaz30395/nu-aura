@@ -1,6 +1,6 @@
 'use client';
 
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {Controller, useForm} from 'react-hook-form';
 import {DateInput} from '@mantine/dates';
@@ -50,6 +50,9 @@ const HOLIDAY_TYPES: HolidayType[] = ['NATIONAL', 'REGIONAL', 'OPTIONAL', 'RESTR
 
 export default function HolidaysPage() {
   const router = useRouter();
+  useEffect(() => {
+    document.title = 'Holidays | NU-AURA';
+  }, []);
   const {isAuthenticated, hasHydrated} = useAuth();
   const {hasAnyRole, isReady} = usePermissions();
   const currentYear = new Date().getFullYear();
@@ -372,7 +375,7 @@ export default function HolidaysPage() {
           {isLoading ? (
             <div className="p-6 space-y-6">
               {Array.from({length: 3}).map((_, monthIdx) => (
-                <div key={monthIdx} className="space-y-3">
+                <div key={monthIdx} className="space-y-4">
                   <Skeleton height={20} width={120}/>
                   <div className="space-y-2">
                     {Array.from({length: 2}).map((_, rowIdx) => (

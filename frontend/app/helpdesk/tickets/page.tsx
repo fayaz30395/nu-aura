@@ -134,7 +134,7 @@ export default function TicketListPage() {
 
   const onCreateSubmit = async (data: CreateTicketFormData) => {
     if (!user?.employeeId) {
-      toast.error('Employee ID not found. Please log in again.');
+      toast.warning('Employee ID not found. Please log in again.');
       return;
     }
     try {

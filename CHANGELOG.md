@@ -6,6 +6,50 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Phase 7 a11y polish (2026-05-13 to 2026-05-14)
+
+WCAG 2.1 AA sweep across 4 waves (~5 commits, ~280 fixes per wave at peak).
+
+#### Added
+
+- Platform-wide live regions: `Spinner` + `EmptyState` now announce loading
+  states via `role="status"` + `aria-live="polite"` with `sr-only` labels.
+- Skip-to-main-content link and `<main>` / `<nav>` / `<aside>` ARIA landmarks
+  across `AppLayout`, `Sidebar`, `Header`, employees/[id], wiki/[slug].
+- Global `prefers-reduced-motion` CSS rule in `globals.css` — disables
+  animations/transitions for users who opt out.
+- Print stylesheet (`@media print` in `globals.css`) for invoice / payslip /
+  contract printability: hides nav/aside/header, forces light surfaces,
+  break-inside avoid for cards/tables, prints URLs after external links.
+- `loading.tsx` + `error.tsx` coverage across high-traffic routes
+  (admin/employees and rest already covered).
+
+#### Changed
+
+- 56 ad-hoc modals migrated to canonical `<Modal>` across recruitment,
+  NU-Grow, admin, dashboard, drive/mail, biometric, holidays, learning —
+  focus trap, Escape, `aria-modal`, `role="dialog"` all built in.
+- ~400 form inputs gained `htmlFor` / `id` linkage for screen-reader labels
+  across recruitment, onboarding, training, wellness, surveys, admin,
+  settings, payroll, fluence, drive, expenses, employees/[id]/edit.
+- 87 heading-tag swaps (h1 → h3 hierarchy skips eliminated) across HRMS,
+  NU-Hire, NU-Fluence, NU-Grow, shifts, employees, dashboard, reports.
+- 38 form fields gained `aria-invalid` + `aria-describedby` for inline
+  errors (employees/[id]/edit, CandidateFormModal, PayrollModals).
+- 24 icon-only buttons gained `aria-label` (modal close, calendar prev/next,
+  toast dismiss, notifications, EmployeeSearch clear).
+- 7 color-only status dots gained `aria-hidden` + `sr-only` text equivalents
+  (expense approval flow, project calendar current-time).
+- 5 grouped checkbox sections wrapped in `fieldset` / `legend` (announcements
+  departments, 360-feedback types, leave-types, custom-fields).
+- 19 div-onClick patterns made keyboard accessible (org-hierarchy, pipeline,
+  CalendarView, nu-calendar, admin/roles, workflows, AdminLayoutInner).
+- 31 numeric table cells gained `tabular-nums` for digit alignment across
+  payroll, expenses, employees, dashboard.
+- 10 delete confirmation modals normalized to "Delete X?" wording with
+  "This action cannot be undone." prefix.
+- 5 heavy modals lazy-loaded via `next/dynamic` in recruitment/candidates.
+
 ### Frontend polish program (2026-05-13)
 
 #### Added

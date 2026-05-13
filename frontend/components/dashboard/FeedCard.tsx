@@ -494,7 +494,9 @@ export function FeedCard({item, onDeleted, onUpdated}: FeedCardProps) {
         {/* Post image */}
         {item.wallPostImageUrl && (
           <div className="relative w-full h-48 bg-[var(--bg-secondary)]">
-            <Image src={item.wallPostImageUrl} alt="Post image" fill className="object-cover"
+            <Image src={item.wallPostImageUrl}
+                   alt={`Image attached to post by ${item.wallPostAuthor ?? 'team member'}`} fill
+                   className="object-cover"
                    sizes="(max-width: 768px) 100vw, 600px"/>
           </div>
         )}

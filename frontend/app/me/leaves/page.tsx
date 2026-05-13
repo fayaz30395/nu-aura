@@ -141,6 +141,10 @@ export default function MyLeavesPage() {
     }
   }, [hasHydrated, isAuthenticated, user, router]);
 
+  useEffect(() => {
+    document.title = 'My Leaves | NU-AURA';
+  }, []);
+
   const startDate = watchLeave('startDate');
   const endDate = watchLeave('endDate');
   const isHalfDay = watchLeave('isHalfDay');
