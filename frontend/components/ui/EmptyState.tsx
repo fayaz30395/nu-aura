@@ -4,21 +4,27 @@ import React from 'react';
 import {motion} from 'framer-motion';
 import {cn} from '@/lib/utils';
 
+/** Legacy nested action shape. Prefer the flat `actionLabel`/`onAction` props. */
 interface EmptyStateAction {
   label: string;
   onClick: () => void;
   loading?: boolean;
 }
 
+/** Props for {@link EmptyState}. */
 interface EmptyStateProps {
+  /** Icon node; sized by the wrapper, so use `w-full h-full` on the inner SVG. */
   icon?: React.ReactNode;
+  /** Tailwind classes for the icon container (background + foreground). */
   iconColor?: string;
   title: string;
   description?: string;
+  /** Flat action label. Wins over legacy `action.label` when both are set. */
   actionLabel?: string;
+  /** Flat action handler. Wins over legacy `action.onClick` when both are set. */
   onAction?: () => void;
   actionLoading?: boolean;
-  // Legacy prop support
+  /** Legacy combined action prop kept for back-compat with older call sites. */
   action?: EmptyStateAction;
   iconSize?: number | string;
   /**
@@ -30,6 +36,10 @@ interface EmptyStateProps {
   size?: 'default' | 'compact';
 }
 
+/**
+ * Canonical empty-state surface: icon + title + optional description + optional action.
+ * Pair with `EmptyStatePresets` for shared iconography across the product.
+ */
 export function EmptyState({
                              icon,
                              iconColor,

@@ -6,14 +6,11 @@ import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {AppLayout} from '@/components/layout';
 import {Card, CardContent} from '@/components/ui/Card';
 import {cn} from '@/lib/utils';
-import {createLogger} from '@/lib/utils/logger';
 import {FileUploader} from '@/components/fluence/FileUploader';
 import {FileList} from '@/components/fluence/FileList';
 import {useDeleteAttachment, useRecentAttachments, useUploadAttachment,} from '@/lib/hooks/queries/useFluence';
 import {FluenceAttachment} from '@/lib/types/platform/fluence';
 import {TextInput} from '@mantine/core';
-
-const _log = createLogger('FluenceDrivePage');
 
 type FileCategory = 'all' | 'documents' | 'images' | 'spreadsheets' | 'other';
 

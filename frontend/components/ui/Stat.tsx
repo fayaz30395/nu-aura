@@ -3,8 +3,10 @@
 import React from 'react';
 import {cn} from '@/lib/utils';
 
+/** Semantic tone for the value text. Surface stays neutral regardless. */
 export type StatTone = 'default' | 'accent' | 'success' | 'warning' | 'danger' | 'muted';
 
+/** Props for {@link Stat}. */
 export interface StatProps {
   label: React.ReactNode;
   value: React.ReactNode;
@@ -19,6 +21,7 @@ export interface StatProps {
   className?: string;
 }
 
+/** Tailwind class applied to the value text per tone. */
 const toneToValueColor: Record<StatTone, string> = {
   default: 'text-[var(--text-primary)]',
   accent: 'text-accent-700 dark:text-accent-400',
@@ -54,7 +57,12 @@ export function Stat({
         {icon ? <span className="inline-flex h-3.5 w-3.5">{icon}</span> : null}
         <span>{label}</span>
       </div>
-      <div className={cn(valueClass, toneToValueColor[tone])}>{value}</div>
+      {/* `valueClass` (font-size/line-height/tabular-nums) and the tone color class
+          are split across parent + child so tailwind-merge can't collapse them
+          into a single `text-*` group. */}
+      <div className={valueClass}>
+        <span className={toneToValueColor[tone]}>{value}</span>
+      </div>
       {caption ? (
         <div className="text-xs text-[var(--text-secondary)]">{caption}</div>
       ) : null}

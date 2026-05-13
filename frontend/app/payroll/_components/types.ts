@@ -2,6 +2,7 @@
 
 import {z} from 'zod';
 import {PayrollRun, PayrollRunStatus, Payslip, SalaryStructure,} from '@/lib/types/hrms/payroll';
+import {formatDate as formatDateCanonical} from '@/lib/utils/format/date';
 
 export type {PayrollRun, Payslip, SalaryStructure, PayrollRunStatus};
 
@@ -57,11 +58,7 @@ export function formatDate(dateString: string | null | undefined) {
   if (!dateString) return '—';
   const date = new Date(dateString);
   if (isNaN(date.getTime())) return '—';
-  return date.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  });
+  return formatDateCanonical(date);
 }
 
 export function getStatusColor(status: string) {

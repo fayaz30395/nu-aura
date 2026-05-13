@@ -3,6 +3,7 @@
 import {useState} from 'react';
 import {ChevronDown, ChevronRight, Star, User} from 'lucide-react';
 import type {InterviewScorecard, ScorecardRecommendation,} from '@/lib/types/hire/scorecard';
+import {formatDate} from '@/lib/utils/format/date';
 
 // ==================== Constants ====================
 
@@ -141,7 +142,7 @@ function ScorecardCard({scorecard}: ScorecardCardProps) {
             </p>
             <p className="text-2xs text-[var(--text-muted)]">
               {scorecard.submittedAt
-                ? `Submitted ${new Date(scorecard.submittedAt).toLocaleDateString()}`
+                ? `Submitted ${formatDate(scorecard.submittedAt)}`
                 : scorecard.status === 'DRAFT'
                   ? 'Draft'
                   : 'Submitted'}

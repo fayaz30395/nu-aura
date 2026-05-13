@@ -41,22 +41,11 @@ import {useProjects} from '@/lib/hooks/queries/useProjects';
 import {ActivityType, CreateTimeEntryRequest, Timesheet} from '@/lib/types/hrms/timesheet';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
+import {formatDateShort, formatDate as formatDateCanonical} from '@/lib/utils/format/date';
 
-const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-  });
-};
+const formatDate = (dateString: string) => formatDateShort(dateString);
 
-const formatFullDate = (dateString: string) => {
-  return new Date(dateString).toLocaleDateString('en-US', {
-    weekday: 'short',
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  });
-};
+const formatFullDate = (dateString: string) => formatDateCanonical(dateString);
 
 const ACTIVITY_TYPES: { value: ActivityType; label: string }[] = [
   {value: 'DEVELOPMENT', label: 'Development'},

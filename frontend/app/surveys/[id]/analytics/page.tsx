@@ -12,7 +12,6 @@ import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {useSurveyDetail} from '@/lib/hooks/queries/useSurveys';
 import {useSurveyAnalytics} from '@/lib/hooks/queries/useSurveyQuestions';
-import {QuestionType} from '@/lib/types/grow/survey';
 import {chartColors, iconSize, motion as dsMotion, typography,} from '@/lib/theme/design-system';
 
 // S10-K: recharts (~180 KB gz) is lazy-loaded — per-question chart subtree
@@ -42,15 +41,6 @@ const PIE_COLORS = [
   chartColors.accent,
   chartColors.muted,
 ];
-
-const _isRatingType = (questionType: string): boolean =>
-  questionType === QuestionType.RATING ||
-  questionType === QuestionType.NPS ||
-  questionType === QuestionType.SCALE;
-
-const _isChoiceType = (questionType: string): boolean =>
-  questionType === QuestionType.SINGLE_CHOICE ||
-  questionType === QuestionType.MULTIPLE_CHOICE;
 
 export default function SurveyAnalyticsPage() {
   const params = useParams();

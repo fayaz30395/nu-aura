@@ -4,6 +4,7 @@ import React from 'react';
 import {Badge, Card, CardContent} from '@/components/ui';
 import {HrmsProject, ProjectStatus, ProjectType} from '@/lib/types/hrms/hrms-project';
 import {formatCurrency} from '@/lib/utils';
+import {formatDate as formatDateCanonical} from '@/lib/utils/format/date';
 
 interface OverviewTabProps {
   project: HrmsProject;
@@ -30,7 +31,7 @@ const formatDate = (value?: string | null) => {
   if (!value) return '—';
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return '—';
-  return date.toLocaleDateString('en-IN', {day: '2-digit', month: 'short', year: 'numeric'});
+  return formatDateCanonical(date);
 };
 
 

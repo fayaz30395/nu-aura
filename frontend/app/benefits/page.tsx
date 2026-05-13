@@ -39,6 +39,7 @@ import {
   useTerminateEnrollment,
 } from '@/lib/hooks/queries';
 import {createLogger} from '@/lib/utils/logger';
+import {formatDate} from '@/lib/utils/format/date';
 
 const log = createLogger('BenefitsPage');
 
@@ -142,15 +143,6 @@ const coverageLevelLabels: Record<CoverageLevel, string> = {
   'EMPLOYEE_SPOUSE': 'Employee + Spouse',
   'EMPLOYEE_CHILDREN': 'Employee + Children',
   'FAMILY': 'Family',
-};
-
-const _claimStatusColors: Record<string, string> = {
-  'SUBMITTED': 'bg-accent-100 text-accent-800 dark:bg-accent-900/50 dark:text-accent-300',
-  'UNDER_REVIEW': 'bg-warning-100 text-warning-800 dark:bg-warning-900/50 dark:text-warning-300',
-  'APPROVED': 'bg-success-100 text-success-800 dark:bg-success-900/50 dark:text-success-300',
-  'REJECTED': 'bg-danger-100 text-danger-800 dark:bg-danger-900/50 dark:text-danger-300',
-  'PAID': 'bg-accent-100 text-accent-800 dark:bg-accent-900/50 dark:text-accent-300',
-  'APPEALED': 'bg-warning-100 text-warning-800 dark:bg-warning-900/50 dark:text-warning-300',
 };
 
 export default function BenefitsPage() {
@@ -693,7 +685,7 @@ export default function BenefitsPage() {
                           </div>
                           <div>
                             <span className="text-[var(--text-secondary)]">Effective Date:</span>
-                            <p className="font-medium">{new Date(enrollment.effectiveDate).toLocaleDateString()}</p>
+                            <p className="font-medium">{formatDate(enrollment.effectiveDate)}</p>
                           </div>
                           <div>
                             <span className="text-[var(--text-secondary)]">Monthly Premium:</span>
@@ -771,7 +763,7 @@ export default function BenefitsPage() {
                           </div>
                           <div>
                             <span className="text-[var(--text-secondary)]">Service Date:</span>
-                            <p className="font-medium">{new Date(claim.serviceDate).toLocaleDateString()}</p>
+                            <p className="font-medium">{formatDate(claim.serviceDate)}</p>
                           </div>
                           <div>
                             <span className="text-[var(--text-secondary)]">Claim Amount:</span>

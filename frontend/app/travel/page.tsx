@@ -12,6 +12,7 @@ import {Permissions} from '@/lib/hooks/usePermissions';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {StatusBadge} from '@/components/ui/StatusBadge';
 import {TRAVEL_STATUS} from '@/lib/status/vocabulary';
+import {formatDate as formatDateCanonical} from '@/lib/utils/format/date';
 import {
   AlertCircle,
   Briefcase,
@@ -81,13 +82,7 @@ export default function TravelPage() {
     return icons[mode] || Car;
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-IN', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-    });
-  };
+  const formatDate = (dateString: string) => formatDateCanonical(dateString);
 
 
   if (isLoading && travelRequests.length === 0) {

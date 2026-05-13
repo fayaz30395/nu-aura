@@ -58,6 +58,7 @@ import {
   useUpdateAnnouncement,
 } from '@/lib/hooks/queries/useAnnouncements';
 import {useActiveDepartments} from '@/lib/hooks/queries/useDepartments';
+import {formatDate as formatDateCanonical} from '@/lib/utils/format/date';
 
 /** Maps each announcement category to a background class for the icon container. */
 const categoryIconBgColors: Record<AnnouncementCategory, string> = {
@@ -232,7 +233,7 @@ export default function AnnouncementsPage() {
     if (days === 0) return 'Today';
     if (days === 1) return 'Yesterday';
     if (days < 7) return `${days} days ago`;
-    return date.toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'});
+    return formatDateCanonical(date);
   };
 
   const getCategoryIcon = (category: AnnouncementCategory) => {

@@ -20,6 +20,7 @@ import {
   useUpdateSpotlight
 } from '@/lib/hooks/queries/useSpotlight';
 import {createLogger} from '@/lib/utils/logger';
+import {formatDate as formatDateCanonical} from '@/lib/utils/format/date';
 
 const logger = createLogger('CompanySpotlight');
 
@@ -116,10 +117,7 @@ export default function CompanySpotlightPage() {
     );
   }
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'});
-  };
+  const formatDate = (dateString: string) => formatDateCanonical(dateString);
 
   const getGradientClass = (gradient?: string) => {
     if (!gradient) return 'from-surface-600 to-surface-700';

@@ -38,10 +38,6 @@ const optionalDateSchema = z
     'Please enter a valid date'
   );
 
-const _uuidSchema = z
-  .string()
-  .uuid('Invalid ID format');
-
 const optionalUuidSchema = z
   .string()
   .optional()

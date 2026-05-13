@@ -108,7 +108,6 @@ export function useLetterTemplate(templateId: string, enabled: boolean = true) {
 
 export function useGenerateLetter() {
   const queryClient = useQueryClient();
-  const _userId = ''; // Will be set via useAuth in the component
 
   return useMutation({
     mutationFn: ({data, generatedBy}: { data: GenerateLetterRequest; generatedBy: string }) =>

@@ -42,6 +42,7 @@ import {
   useUpdateScheduledReport,
 } from '@/lib/hooks/queries/useReports';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {formatDate} from '@/lib/utils/format/date';
 
 const REPORT_TYPE_ICONS: Record<ReportType, React.ElementType> = {
   EMPLOYEE_DIRECTORY: Users,
@@ -404,7 +405,7 @@ export default function ScheduledReportsPage() {
                       )}
                       {report.nextRunAt && report.isActive && (
                         <span className="text-caption ml-2">
-                          Next: {new Date(report.nextRunAt).toLocaleDateString()}
+                          Next: {formatDate(report.nextRunAt)}
                         </span>
                       )}
                     </div>

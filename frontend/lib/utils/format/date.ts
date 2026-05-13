@@ -1,12 +1,19 @@
 import {format, formatDistanceToNow} from 'date-fns';
 
+/** Accepted shapes for date inputs: Date instance, ISO string, or epoch ms. */
 export type DateInput = Date | string | number;
 
+/** Normalize any {@link DateInput} into a Date. */
 function toDate(d: DateInput): Date {
   return d instanceof Date ? d : new Date(d);
 }
 
-/** "May 15, 2026" — default for record dates, transactions, audit logs. */
+/**
+ * "May 15, 2026" — default for record dates, transactions, audit logs.
+ *
+ * @example
+ *   formatDate('2026-05-15') // → 'May 15, 2026'
+ */
 export function formatDate(d: DateInput): string {
   return format(toDate(d), 'MMM d, yyyy');
 }
@@ -26,7 +33,12 @@ export function formatDateTime(d: DateInput): string {
   return format(toDate(d), 'MMM d, yyyy, h:mm a');
 }
 
-/** "2h ago" / "3 days ago" — relative; falls back to formatDate for >30d. */
+/**
+ * "2h ago" / "3 days ago" — relative; falls back to formatDate for >30d.
+ *
+ * @example
+ *   formatRelative(Date.now() - 7200_000) // → 'about 2 hours ago'
+ */
 export function formatRelative(d: DateInput): string {
   const date = toDate(d);
   const diffDays = Math.floor((Date.now() - date.getTime()) / 86_400_000);
@@ -34,7 +46,13 @@ export function formatRelative(d: DateInput): string {
   return formatDistanceToNow(date, {addSuffix: true});
 }
 
-/** "May 15 – May 22, 2026" or "May 15, 2026 – Jun 3, 2026" — date range. */
+/**
+ * Date range. Collapses the start year when both ends share it.
+ *
+ * @example
+ *   formatDateRange('2026-05-15', '2026-05-22') // → 'May 15 – May 22, 2026'
+ *   formatDateRange('2025-12-30', '2026-01-03') // → 'Dec 30, 2025 – Jan 3, 2026'
+ */
 export function formatDateRange(start: DateInput, end: DateInput): string {
   const a = toDate(start), b = toDate(end);
   const sameYear = a.getFullYear() === b.getFullYear();

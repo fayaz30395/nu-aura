@@ -24,6 +24,7 @@ import {
   useUpdateTicketStatus,
 } from '@/lib/hooks/queries/useHelpdesk';
 import type {TicketPriority, TicketResponse, TicketStatus} from '@/lib/services/hrms/helpdesk.service';
+import {formatDate as formatDateCanonical} from '@/lib/utils/format/date';
 import {
   AlertTriangle,
   ChevronLeft,
@@ -169,11 +170,7 @@ export default function TicketListPage() {
 
   const formatDate = (dateString: string | null) => {
     if (!dateString) return '-';
-    return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
+    return formatDateCanonical(dateString);
   };
 
   const clearFilters = () => {

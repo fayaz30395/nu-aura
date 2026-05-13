@@ -23,6 +23,7 @@ import {CheckCircle, Clock, Plus, Timer,} from 'lucide-react';
 import type {OvertimeRecordResponse} from '@/lib/types/hrms/overtime';
 import {StatusBadge} from '@/components/ui/StatusBadge';
 import {OVERTIME_STATUS} from '@/lib/status/vocabulary';
+import {formatDate as formatDateCanonical} from '@/lib/utils/format/date';
 
 // ── Zod schema for overtime request form ─────────────────────
 const overtimeFormSchema = z.object({
@@ -161,11 +162,7 @@ export default function OvertimePage() {
 
   const formatDate = (dateStr: string | null | undefined) => {
     if (!dateStr) return '-';
-    return new Date(dateStr).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
+    return formatDateCanonical(dateStr);
   };
 
   // ── Reusable overtime table ────────────────────────────────

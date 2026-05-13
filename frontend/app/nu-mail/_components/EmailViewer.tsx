@@ -19,6 +19,7 @@ import {
 import {Button} from '@/components/ui/Button';
 import {sanitizeEmailHtml} from '@/lib/utils/sanitize';
 import {EmailAttachment, EmailMessage} from './types';
+import {formatDateTime} from '@/lib/utils/format/date';
 
 interface EmailViewerProps {
   email: EmailMessage;
@@ -150,7 +151,7 @@ export function EmailViewer({
           </div>
           <div className="flex items-center gap-2 text-body-muted">
             <Calendar className="h-4 w-4"/>
-            {new Date(email.date).toLocaleString()}
+            {formatDateTime(email.date)}
           </div>
         </div>
 

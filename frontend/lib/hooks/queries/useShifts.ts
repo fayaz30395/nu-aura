@@ -337,13 +337,19 @@ export function useRejectSwapRequest() {
 export const useShiftsList = useShiftDefinitions;
 export const useCreateNewShift = useCreateShiftDefinition;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+/**
+ * Backward-compat wrapper that accepts partial shift updates (callers send e.g.
+ * `{isActive: !shift.isActive}` for quick toggles). The underlying mutation
+ * still validates the full shape on the server, so partials are cast through.
+ */
 export function useUpdateShiftDetails(shiftId: string) {
   const mutation = useUpdateShiftDefinition();
   return {
     ...mutation,
-    mutateAsync: (data: any) => mutation.mutateAsync({id: shiftId, data}),  // eslint-disable-line @typescript-eslint/no-explicit-any
-    mutate: (data: any) => mutation.mutate({id: shiftId, data}),  // eslint-disable-line @typescript-eslint/no-explicit-any
+    mutateAsync: (data: Partial<ShiftDefinitionRequest>) =>
+      mutation.mutateAsync({id: shiftId, data: data as ShiftDefinitionRequest}),
+    mutate: (data: Partial<ShiftDefinitionRequest>) =>
+      mutation.mutate({id: shiftId, data: data as ShiftDefinitionRequest}),
   };
 }
 

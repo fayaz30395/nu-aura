@@ -159,8 +159,6 @@ export default function ShiftPatternsPage() {
     [form]
   );
 
-  const _cycleDays = form.watch('cycleDays');
-
   // Sync slots when cycleDays changes
   const handleCycleDaysChange = useCallback(
     (newDays: number) => {
@@ -193,7 +191,6 @@ export default function ShiftPatternsPage() {
   );
 
   const patterns = data?.content ?? [];
-  const _totalPages = data?.totalPages ?? 0;
 
   return (
     <AppLayout>

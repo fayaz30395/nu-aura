@@ -43,10 +43,7 @@ import {
   useHrmsProjects,
   useUpdateHrmsProject,
 } from '@/lib/hooks/queries/useProjects';
-import {createLogger} from '@/lib/utils/logger';
 import {formatDate as formatCanonicalDate} from '@/lib/utils/format/date';
-
-const _log = createLogger('ProjectsPage');
 
 interface EmployeeSummary {
   id: string;

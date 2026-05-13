@@ -4,8 +4,10 @@ import React from 'react';
 import {AlertCircle, AlertTriangle, CheckCircle, Info} from 'lucide-react';
 import {cn} from '@/lib/utils';
 
+/** Semantic tone driving surface, border, icon, and text color. */
 export type CalloutTone = 'info' | 'success' | 'warning' | 'danger' | 'neutral';
 
+/** Props for {@link Callout}. */
 export interface CalloutProps {
   tone?: CalloutTone;
   /** Heading rendered above the body. */

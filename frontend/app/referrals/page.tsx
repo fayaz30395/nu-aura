@@ -24,6 +24,7 @@ import {CheckCircle, DollarSign, FileText, Plus, TrendingUp, UserPlus, Users,} f
 import type {ReferralRelationship, ReferralResponse} from '@/lib/types/hire/referral';
 import {StatusBadge} from '@/components/ui/StatusBadge';
 import {REFERRAL_STATUS} from '@/lib/status/vocabulary';
+import {formatDate as formatDateCanonical} from '@/lib/utils/format/date';
 
 // ── Zod schema for submit referral form ──────────────────────
 const referralFormSchema = z.object({
@@ -140,11 +141,7 @@ export default function ReferralsPage() {
 
   const formatDate = (dateStr: string | null | undefined) => {
     if (!dateStr) return '-';
-    return new Date(dateStr).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
+    return formatDateCanonical(dateStr);
   };
 
   const formatCurrency = (amount: number | null | undefined) => {

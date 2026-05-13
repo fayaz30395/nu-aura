@@ -48,7 +48,6 @@ export default function MyLeavesPage() {
   const requestsData = filterStatus ? statusRequests.data : employeeRequests.data;
   const requests = requestsData?.content ?? [];
   const totalPages = requestsData?.totalPages ?? 0;
-  const _loading = !requestsData;
 
   const handleCancelClick = (id: string) => {
     setSelectedLeaveId(id);

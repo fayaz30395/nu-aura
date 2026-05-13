@@ -54,6 +54,7 @@ import type {
   SalaryRevision,
 } from '@/lib/types/hrms/compensation';
 import {createLogger} from '@/lib/utils/logger';
+import {formatDate} from '@/lib/utils/format/date';
 
 const cycleTypeLabels: Record<CycleType, string> = {
   ANNUAL: 'Annual',
@@ -383,7 +384,7 @@ export default function CompensationPage() {
                       </div>
                       <h3 className="text-xl font-semibold">{activeCycle.name}</h3>
                       <p className="mt-1 opacity-90 text-sm">
-                        Effective: {new Date(activeCycle.effectiveDate).toLocaleDateString()}
+                        Effective: {formatDate(activeCycle.effectiveDate)}
                       </p>
                     </div>
                     <div className="flex flex-col sm:flex-row gap-4">
@@ -449,7 +450,7 @@ export default function CompensationPage() {
                       <div className="row-between text-sm">
                         <span className="text-[var(--text-muted)]">Effective Date</span>
                         <span className="text-[var(--text-primary)]">
-                          {new Date(cycle.effectiveDate).toLocaleDateString()}
+                          {formatDate(cycle.effectiveDate)}
                         </span>
                       </div>
                     </div>
@@ -717,19 +718,19 @@ export default function CompensationPage() {
                   <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
                     <p className="text-body-muted">Start Date</p>
                     <p className="text-lg font-medium text-[var(--text-primary)]">
-                      {new Date(selectedCycle.startDate).toLocaleDateString()}
+                      {formatDate(selectedCycle.startDate)}
                     </p>
                   </div>
                   <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
                     <p className="text-body-muted">End Date</p>
                     <p className="text-lg font-medium text-[var(--text-primary)]">
-                      {new Date(selectedCycle.endDate).toLocaleDateString()}
+                      {formatDate(selectedCycle.endDate)}
                     </p>
                   </div>
                   <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
                     <p className="text-body-muted">Effective Date</p>
                     <p className="text-lg font-medium text-[var(--text-primary)]">
-                      {new Date(selectedCycle.effectiveDate).toLocaleDateString()}
+                      {formatDate(selectedCycle.effectiveDate)}
                     </p>
                   </div>
                   <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
@@ -896,7 +897,7 @@ export default function CompensationPage() {
                   <div className="flex justify-between text-sm">
                     <span className="text-[var(--text-muted)]">Effective Date</span>
                     <span className="text-[var(--text-primary)]">
-                      {new Date(selectedRevision.effectiveDate).toLocaleDateString()}
+                      {formatDate(selectedRevision.effectiveDate)}
                     </span>
                   </div>
                   {selectedRevision.newDesignation && (

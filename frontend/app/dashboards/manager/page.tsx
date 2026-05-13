@@ -35,6 +35,7 @@ import {useAuth} from '@/lib/hooks/useAuth';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {useManagerDashboard, useManagerTeamProjects} from '@/lib/hooks/queries';
 import type {TeamMemberProjectAllocation, TeamMemberWithProjects} from '@/lib/types/core/dashboard';
+import {formatDateShort} from '@/lib/utils/format/date';
 
 const ManagerAttendanceTrendChart = dynamic(
   () => import('./ManagerCharts').then((mod) => ({default: mod.ManagerAttendanceTrendChart})),
@@ -47,12 +48,7 @@ const ManagerPerformanceRadarChart = dynamic(
 );
 
 // Utility function to format dates
-const formatDate = (dateStr: string) => {
-  return new Date(dateStr).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-  });
-};
+const formatDate = (dateStr: string) => formatDateShort(dateStr);
 
 // Utility: format role strings like TECHNOLOGY_LEAD → "Technology Lead"
 const formatRole = (role: string) =>

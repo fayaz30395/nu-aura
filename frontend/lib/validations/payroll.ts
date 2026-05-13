@@ -7,11 +7,6 @@ const dateSchema = z
   .min(1, 'Date is required')
   .refine((val) => !isNaN(Date.parse(val)), 'Please enter a valid date');
 
-const _optionalDateSchema = z
-  .string()
-  .optional()
-  .refine((val) => !val || !isNaN(Date.parse(val)), 'Please enter a valid date');
-
 const uuidSchema = z.string().uuid('Invalid ID format');
 
 const optionalUuidSchema = z

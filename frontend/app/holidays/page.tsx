@@ -18,6 +18,7 @@ import {
   useHolidaysByYear,
   useUpdateHoliday,
 } from '@/lib/hooks/queries/useAttendance';
+import {formatDateShort} from '@/lib/utils/format/date';
 
 const ADMIN_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
 
@@ -322,7 +323,7 @@ export default function HolidaysPage() {
                   <CalendarDays className="h-4 w-4 text-accent-500"/>
                   <span className="text-sm font-medium text-[var(--text-primary)]">{h.holidayName}</span>
                   <span className="text-caption">
-                  {new Date(h.holidayDate).toLocaleDateString('en-US', {month: 'short', day: 'numeric'})}
+                  {formatDateShort(h.holidayDate)}
                 </span>
                   <span className="text-xs font-medium text-accent-700 dark:text-accent-400">
                   {getDaysUntil(h.holidayDate)}

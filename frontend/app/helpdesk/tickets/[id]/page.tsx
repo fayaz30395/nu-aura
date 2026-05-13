@@ -28,6 +28,7 @@ import {
 } from '@/lib/hooks/queries/useHelpdesk';
 import {useTicketEscalations, useTicketMetrics} from '@/lib/hooks/queries/useHelpdeskSla';
 import type {TicketCommentResponse, TicketPriority, TicketStatus} from '@/lib/services/hrms/helpdesk.service';
+import {formatDateTime} from '@/lib/utils/format/date';
 import {
   Activity,
   AlertTriangle,
@@ -182,13 +183,7 @@ export default function TicketDetailPage() {
 
   const formatDate = (dateString: string | null | undefined) => {
     if (!dateString) return '-';
-    return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
+    return formatDateTime(dateString);
   };
 
   const formatMinutes = (minutes: number | null | undefined) => {

@@ -3,6 +3,7 @@ import {HelpCircle} from 'lucide-react';
 import {cn} from '@/lib/utils';
 import {resolveStatus, type StatusMeta, type StatusTone} from '@/lib/status/vocabulary';
 
+/** Props for {@link StatusBadge}. */
 export interface StatusBadgeProps {
   /**
    * Either pass a raw status enum value + a domain map (looked up via

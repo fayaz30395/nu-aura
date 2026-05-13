@@ -5,6 +5,7 @@ import {AlertCircle, CheckCircle2, ChevronLeft, ChevronRight, Loader2, XCircle} 
 import {Button} from '@/components/ui/Button';
 import {useIntegrationEvents} from '@/lib/hooks/queries/useConnectors';
 import {IntegrationEventLog} from '@/lib/types/core/connector';
+import {formatDateTime} from '@/lib/utils/format/date';
 
 interface IntegrationActivityLogProps {
   connectorId?: string;
@@ -45,7 +46,7 @@ export function IntegrationActivityLog({connectorId, pageSize = 20}: Integration
 
   const formatDate = (dateStr: string) => {
     try {
-      return new Date(dateStr).toLocaleString();
+      return formatDateTime(dateStr);
     } catch {
       return dateStr;
     }

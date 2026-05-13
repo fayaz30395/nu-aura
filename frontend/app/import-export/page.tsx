@@ -53,6 +53,7 @@ import {
 } from 'lucide-react';
 import {AnimatePresence, motion} from 'framer-motion';
 import {notifications} from '@mantine/notifications';
+import {formatDate} from '@/lib/utils/format/date';
 
 // ─── Constants ──────────────────────────────────────────────────────────────
 
@@ -1124,7 +1125,7 @@ function HistorySection() {
                 {entry.duration ? `${(entry.duration / 1000).toFixed(1)}s` : '-'}
               </td>
               <td className="px-4 py-4 text-[var(--text-muted)]">
-                {entry.uploadedAt ? new Date(entry.uploadedAt).toLocaleDateString() : '-'}
+                {entry.uploadedAt ? formatDate(entry.uploadedAt) : '-'}
               </td>
             </tr>
           ))}

@@ -8,6 +8,7 @@ import {BULK_PROCESSING_AVAILABLE, payrollService} from '@/lib/services/hrms/pay
 import {Employee} from '@/lib/types/hrms/employee';
 import {logger} from '@/lib/utils/logger';
 import {cn, formatCurrency} from '@/lib/utils';
+import {formatDate} from '@/lib/utils/format/date';
 import {
   AlertCircle,
   Calendar,
@@ -475,8 +476,8 @@ export const BulkProcessingWizard: React.FC = () => {
                       <div className="flex justify-between">
                         <span className="text-surface-600 dark:text-surface-400">Period:</span>
                         <span className="font-medium text-surface-900 dark:text-surface-50">
-                          {new Date(payrollPeriodStart).toLocaleDateString()} -{' '}
-                          {new Date(payrollPeriodEnd).toLocaleDateString()}
+                          {formatDate(payrollPeriodStart)} -{' '}
+                          {formatDate(payrollPeriodEnd)}
                         </span>
                       </div>
                     )}
@@ -484,7 +485,7 @@ export const BulkProcessingWizard: React.FC = () => {
                       <div className="flex justify-between">
                         <span className="text-surface-600 dark:text-surface-400">Payment Date:</span>
                         <span className="font-medium text-surface-900 dark:text-surface-50">
-                          {new Date(paymentDate).toLocaleDateString()}
+                          {formatDate(paymentDate)}
                         </span>
                       </div>
                     )}

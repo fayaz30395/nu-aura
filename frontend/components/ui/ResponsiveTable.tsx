@@ -132,7 +132,6 @@ function ResponsiveTable<T>({
     );
   }
 
-  const _primaryColumns = columns.filter((c) => c.mobilePriority !== 'hidden');
   const mobileVisibleColumns = columns.filter(
     (c) => c.mobilePriority === 'primary' || c.mobilePriority === 'secondary'
   );

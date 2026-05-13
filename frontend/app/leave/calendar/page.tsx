@@ -73,7 +73,6 @@ export default function LeaveCalendarPage() {
     const month = currentDate.getMonth();
 
     const firstDay = new Date(year, month, 1);
-    const _lastDay = new Date(year, month + 1, 0);
     const startDate = new Date(firstDay);
     startDate.setDate(startDate.getDate() - startDate.getDay());
 
@@ -117,11 +116,6 @@ export default function LeaveCalendarPage() {
 
   const goToToday = () => {
     setCurrentDate(new Date());
-  };
-
-  const _getLeaveTypeColor = (leaveTypeId: string) => {
-    const leaveType = leaveTypes.find(t => t.id === leaveTypeId);
-    return leaveType?.colorCode || '#3B82F6';
   };
 
   const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];

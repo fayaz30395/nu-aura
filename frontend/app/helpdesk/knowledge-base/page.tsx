@@ -32,6 +32,7 @@ import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal'
 import {Card} from '@/components/ui/Card';
 import {Badge} from '@/components/ui/Badge';
 import {Skeleton} from '@/components/ui/Skeleton';
+import {formatDate as formatDateCanonical, formatDateShort} from '@/lib/utils/format/date';
 
 // ─── Zod Schemas ──────────────────────────────────────────────────────────────
 
@@ -78,11 +79,9 @@ const ArticleCard: React.FC<ArticleCardProps> = ({article, onView}) => {
     if (date.toDateString() === today.toDateString()) return 'Today';
     if (date.toDateString() === yesterday.toDateString()) return 'Yesterday';
 
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: date.getFullYear() !== today.getFullYear() ? 'numeric' : undefined,
-    });
+    return date.getFullYear() !== today.getFullYear()
+      ? formatDateCanonical(date)
+      : formatDateShort(date);
   };
 
   const getCategoryColor = (category: string) => {

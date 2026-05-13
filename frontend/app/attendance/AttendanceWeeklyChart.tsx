@@ -15,6 +15,7 @@ import {
 } from 'recharts';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
 import {STANDARD_WORK_HOURS} from './utils';
+import {formatDateShort} from '@/lib/utils/format/date';
 
 // ─── Chart Data Shape ─────────────────────────────────────────────────────────
 export interface ChartEntry {
@@ -39,7 +40,7 @@ function CustomTooltip({active, payload}: { active?: boolean; payload?: Array<{ 
     <div
       className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl shadow-[var(--shadow-dropdown)] p-4 min-w-[180px]">
       <div className="text-xs font-semibold text-[var(--text-primary)] mb-2">
-        {d.name} · {new Date(d.date + 'T00:00:00').toLocaleDateString('en-US', {month: 'short', day: 'numeric'})}
+        {d.name} · {formatDateShort(d.date + 'T00:00:00')}
       </div>
       {d.isHoliday ? (
         <div className="flex items-center gap-1.5 text-xs text-accent-600"><Sun className="h-3 w-3"/> Holiday</div>

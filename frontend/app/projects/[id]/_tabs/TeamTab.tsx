@@ -28,6 +28,7 @@ import {
   useProjectAllocations,
 } from '@/lib/hooks/queries/useProjects';
 import {createLogger} from '@/lib/utils/logger';
+import {formatDate as formatDateCanonical} from '@/lib/utils/format/date';
 
 const log = createLogger('TeamTab');
 
@@ -80,7 +81,7 @@ const formatDate = (value?: string | null) => {
   if (!value) return '—';
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return '—';
-  return date.toLocaleDateString('en-IN', {day: '2-digit', month: 'short', year: 'numeric'});
+  return formatDateCanonical(date);
 };
 
 const formatPercent = (value?: number | null) => {

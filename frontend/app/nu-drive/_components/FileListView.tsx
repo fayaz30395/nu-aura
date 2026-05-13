@@ -5,6 +5,7 @@ import {Clock, MoreVertical, Star, Users} from 'lucide-react';
 import {Card} from '@/components/ui/Card';
 import {DriveFile, ViewTab} from './types';
 import {formatBytes, getFileIcon} from './fileUtils';
+import {formatDate} from '@/lib/utils/format/date';
 
 interface FileListViewProps {
   files: DriveFile[];
@@ -53,7 +54,7 @@ export function FileListView({files, activeTab, onFileClick, onContextMenu}: Fil
                 {file.modifiedTime && (
                   <span className="text-caption flex items-center gap-1">
                     <Clock className="h-3 w-3"/>
-                    {new Date(file.modifiedTime).toLocaleDateString()}
+                    {formatDate(file.modifiedTime)}
                   </span>
                 )}
                 {file.size && (

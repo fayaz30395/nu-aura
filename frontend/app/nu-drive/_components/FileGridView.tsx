@@ -4,6 +4,7 @@ import React from 'react';
 import {MoreVertical, Star, Users} from 'lucide-react';
 import {DriveFile} from './types';
 import {getFileIcon} from './fileUtils';
+import {formatDate} from '@/lib/utils/format/date';
 
 interface FileGridViewProps {
   files: DriveFile[];
@@ -38,7 +39,7 @@ export function FileGridView({files, onFileClick, onContextMenu}: FileGridViewPr
             </p>
             {file.modifiedTime && (
               <p className="text-caption mt-1">
-                {new Date(file.modifiedTime).toLocaleDateString()}
+                {formatDate(file.modifiedTime)}
               </p>
             )}
             <div className="flex items-center gap-1 mt-1">

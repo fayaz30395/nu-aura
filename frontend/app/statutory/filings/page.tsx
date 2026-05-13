@@ -57,6 +57,7 @@ import {
   useValidateFiling,
 } from '@/lib/hooks/queries/useStatutoryFiling';
 import type {FilingRunResponse, FilingStatus, FilingType, FilingTypeInfo,} from '@/lib/types/hrms/statutory-filing';
+import {formatDateTime} from '@/lib/utils/format/date';
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
@@ -362,10 +363,7 @@ export default function StatutoryFilingsPage() {
                           <Table.Td>
                             <Text size="xs" c="dimmed">
                               {run.generatedAt
-                                ? new Date(run.generatedAt).toLocaleDateString('en-IN', {
-                                  day: '2-digit', month: 'short', year: 'numeric',
-                                  hour: '2-digit', minute: '2-digit',
-                                })
+                                ? formatDateTime(run.generatedAt)
                                 : '-'}
                             </Text>
                           </Table.Td>

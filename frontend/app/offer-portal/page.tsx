@@ -100,7 +100,7 @@ function OfferPortalPage() {
   const handleAcceptOffer = async (formData: AcceptOfferFormData) => {
     if (!offer || !offer.email || !token) return;
     try {
-      const _response = await acceptMutation.mutateAsync({
+      await acceptMutation.mutateAsync({
         token,
         data: {
           email: offer.email,

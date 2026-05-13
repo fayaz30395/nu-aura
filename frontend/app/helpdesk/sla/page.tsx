@@ -23,6 +23,7 @@ import {
   useUpdateSlaConfig,
 } from '@/lib/hooks/queries/useHelpdeskSla';
 import {Stat} from '@/components/ui/Stat';
+import {formatDateTime} from '@/lib/utils/format/date';
 
 // ─── Validation Schemas ───────────────────────────────────────────────────────
 
@@ -612,7 +613,7 @@ export default function HelpdeskSLAPage() {
                             <div className="text-body-secondary mt-2">{escalation.notes}</div>
                           )}
                           <div className="text-body-secondary mt-2">
-                            Escalated: {new Date(escalation.escalatedAt).toLocaleString()}
+                            Escalated: {formatDateTime(escalation.escalatedAt)}
                           </div>
                         </div>
                         <PermissionGate permission={Permissions.HELPDESK_SLA_MANAGE}>

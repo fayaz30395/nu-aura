@@ -12,7 +12,6 @@ import {
   useAddEvaluation,
   useAllProbations,
   useConfirmEmployee,
-  useExtendProbation,
   useProbationsByStatus,
   useProbationsEndingSoon,
   useProbationStatistics,
@@ -97,7 +96,6 @@ export default function ProbationPage() {
 
   // Mutations
   const confirmEmployee = useConfirmEmployee();
-  const _extendProbation = useExtendProbation();
   const addEvaluation = useAddEvaluation();
 
   // Form

@@ -10,6 +10,7 @@ import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
 import {DriveFile} from './types';
 import {getFileIcon, getPreviewUrl} from './fileUtils';
 import {safeWindowOpen} from '@/lib/utils/url';
+import {formatDate} from '@/lib/utils/format/date';
 
 // ---- New Folder Modal ----
 interface NewFolderModalProps {
@@ -300,7 +301,7 @@ export const FilePreviewModal = React.memo(function FilePreviewModal({
             <h3 className="font-medium text-white truncate max-w-md">{file.name}</h3>
             {file.modifiedTime && (
               <p className="text-caption">
-                Modified {new Date(file.modifiedTime).toLocaleDateString()}
+                Modified {formatDate(file.modifiedTime)}
               </p>
             )}
           </div>

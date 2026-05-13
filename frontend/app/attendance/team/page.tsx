@@ -34,6 +34,7 @@ import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {useAuth} from '@/lib/hooks/useAuth';
 import dynamic from 'next/dynamic';
 import {ChartLoadingFallback} from '@/lib/utils/lazy-components';
+import {formatDate} from '@/lib/utils/format/date';
 
 const TeamStatusChart = dynamic(
   () => import('./TeamStatusChart'),
@@ -270,7 +271,7 @@ export default function TeamAttendancePage() {
             </button>
             <div className="text-center min-w-max">
               <p className="text-sm font-semibold text-[var(--text-primary)]">
-                {new Date(selectedDate).toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'})}
+                {formatDate(selectedDate)}
               </p>
               <p className="text-caption">
                 {new Date(selectedDate).toLocaleDateString('en-US', {weekday: 'short'})}

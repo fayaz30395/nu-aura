@@ -11,6 +11,7 @@ import {Payslip} from '@/lib/types/hrms/payroll';
 import {createLogger} from '@/lib/utils/logger';
 import {formatCurrency} from '@/lib/utils';
 import {Stat} from '@/components/ui/Stat';
+import {formatDate as formatDateCanonical} from '@/lib/utils/format/date';
 
 const log = createLogger('PayslipsPage');
 
@@ -63,13 +64,7 @@ export default function MyPayslipsPage() {
   };
 
 
-  const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
-  };
+  const formatDate = (date: string) => formatDateCanonical(date);
 
   const formatMonthYear = (date: string) => {
     return new Date(date).toLocaleDateString('en-US', {

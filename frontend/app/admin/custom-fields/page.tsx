@@ -117,7 +117,6 @@ export default function CustomFieldsPage() {
   });
 
   const fieldType = watch('fieldType');
-  const _optionsText = watch('optionsText');
 
   useEffect(() => {
     if (!hasHydrated || !isReady) return;

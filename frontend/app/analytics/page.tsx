@@ -57,36 +57,6 @@ const AnalyticsHeadcountChart = dynamic(
 // Chart colors - now using CSS variables defined in globals.css
 const COLORS = chartColors.palette();
 
-interface TooltipPayloadEntry {
-  name: string;
-  value: number | string;
-  color: string;
-}
-
-interface CustomTooltipProps {
-  active?: boolean;
-  payload?: TooltipPayloadEntry[];
-  label?: string | number;
-}
-
-// Custom tooltip component
-const _CustomTooltip = ({active, payload, label}: CustomTooltipProps) => {
-  if (active && payload && payload.length) {
-    return (
-      <div
-        className="bg-[var(--bg-input)] p-4 rounded-lg shadow-[var(--shadow-dropdown)] border border-[var(--border-main)]">
-        <p className="text-sm font-medium text-[var(--text-primary)]">{label}</p>
-        {payload.map((entry: TooltipPayloadEntry, index: number) => (
-          <p key={index} className="text-sm" style={{color: entry.color}}>
-            {entry.name}: {entry.value}
-          </p>
-        ))}
-      </div>
-    );
-  }
-  return null;
-};
-
 export default function AnalyticsPage() {
   const router = useRouter();
   const {isAuthenticated, hasHydrated} = useAuth();

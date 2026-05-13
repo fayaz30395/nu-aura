@@ -5,6 +5,7 @@ import {useRouter} from 'next/navigation';
 import {Eye, Heart, MessageCircle} from 'lucide-react';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
 import {iconSize, typography} from '@/lib/theme/design-system';
+import {formatDate} from '@/lib/utils/format/date';
 
 export interface ContentItem {
   id: string;
@@ -156,7 +157,7 @@ export function ContentGrid({
                     <span className="text-caption">{item.authorName}</span>
                   )}
                   <span className="text-caption">
-                    {new Date(item.updatedAt).toLocaleDateString()}
+                    {formatDate(item.updatedAt)}
                   </span>
                 </div>
               </CardContent>

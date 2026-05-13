@@ -49,6 +49,7 @@ import {sanitizeEmailHtml} from '@/lib/utils/sanitize';
 import {createLogger} from '@/lib/utils/logger';
 import {formatCurrency} from '@/lib/utils';
 import {safeWindowOpen} from '@/lib/utils/url';
+import {formatDateShort} from '@/lib/utils/format/date';
 
 const log = createLogger('DashboardPage');
 
@@ -375,7 +376,7 @@ export default function DashboardPage() {
     if (diffMins < 60) return `${diffMins}m ago`;
     if (diffHours < 24) return `${diffHours}h ago`;
     if (diffDays < 7) return `${diffDays}d ago`;
-    return date.toLocaleDateString('en-US', {month: 'short', day: 'numeric'});
+    return formatDateShort(date);
   };
 
   const getNotificationIcon = (type: 'email' | 'drive' | 'calendar') => {
@@ -749,10 +750,7 @@ export default function DashboardPage() {
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-[var(--text-primary)] truncate">{event.employeeName}</p>
-              <p className="text-xs text-[var(--text-secondary)]">{new Date(event.date).toLocaleDateString('en-US', {
-                month: 'short',
-                day: 'numeric'
-              })}</p>
+              <p className="text-xs text-[var(--text-secondary)]">{formatDateShort(event.date)}</p>
             </div>
           </div>
         ))}
@@ -764,10 +762,7 @@ export default function DashboardPage() {
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-[var(--text-primary)] truncate">{event.name}</p>
-              <p className="text-xs text-[var(--text-secondary)]">{new Date(event.date).toLocaleDateString('en-US', {
-                month: 'short',
-                day: 'numeric'
-              })}</p>
+              <p className="text-xs text-[var(--text-secondary)]">{formatDateShort(event.date)}</p>
             </div>
           </div>
         ))}

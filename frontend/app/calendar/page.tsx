@@ -150,9 +150,6 @@ export default function CalendarPage() {
   const todayEvents = events.filter(
     (e) => new Date(e.startTime).toDateString() === new Date().toDateString()
   );
-  const _upcomingEvents = events
-    .filter((e) => new Date(e.startTime) > new Date())
-    .slice(0, 5);
 
   return (
     <AppLayout activeMenuItem="calendar">

@@ -36,6 +36,10 @@ export const CATEGORICAL_OFF = '#9CA3AF'; // tailwind gray-400
 /**
  * Map an integer index to a palette color, wrapping if out of range.
  * Useful for deterministically coloring items by their list position.
+ *
+ * @example
+ *   pickCategoricalColor(0)  // → '#2563EB' (accent)
+ *   pickCategoricalColor(11) // → '#16A34A' (wraps; same as index 1)
  */
 export function pickCategoricalColor(index: number): string {
   if (Number.isNaN(index) || index < 0) return CATEGORICAL_DEFAULT;

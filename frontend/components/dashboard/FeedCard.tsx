@@ -403,13 +403,6 @@ export function FeedCard({item, onDeleted, onUpdated}: FeedCardProps) {
 
   // ─── WALL_POST: social-style card ────────────────────────────────────
   if (item.type === 'WALL_POST') {
-    const _authorInitials = (item.wallPostAuthor ?? '')
-      .split(' ')
-      .map((n) => n[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2);
-
     const isOwnPost = user?.employeeId === item.wallPostAuthorId;
     const avatarUrl = item.personAvatarUrl
       || (isOwnPost && user?.profilePictureUrl ? user.profilePictureUrl : null)

@@ -2,19 +2,6 @@ import {z} from 'zod';
 
 // ─── Shared Field Schemas ───────────────────────────────────────────────────
 
-const _slugSchema = z
-  .string()
-  .min(1, 'Slug is required')
-  .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'Slug must contain only lowercase letters, numbers, and hyphens');
-
-const _optionalSlugSchema = z
-  .string()
-  .optional()
-  .refine(
-    (val) => !val || /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(val),
-    'Slug must contain only lowercase letters, numbers, and hyphens'
-  );
-
 const jsonContentSchema = z
   .record(z.any())
   .describe('JSON content (e.g., TipTap editor state)');

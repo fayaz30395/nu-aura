@@ -5,6 +5,7 @@ import {useRouter} from 'next/navigation';
 import {Clock, Eye, Heart} from 'lucide-react';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
 import {iconSize, typography} from '@/lib/theme/design-system';
+import {formatDate} from '@/lib/utils/format/date';
 
 export interface RelatedItem {
   id: string;
@@ -105,7 +106,7 @@ export function RelatedContent({
               <CardContent className="space-y-2 pt-0">
                 <div className="flex items-center gap-2 text-caption">
                   <Clock className={iconSize.meta}/>
-                  <span>{new Date(item.updatedAt).toLocaleDateString()}</span>
+                  <span>{formatDate(item.updatedAt)}</span>
                 </div>
 
                 {(item.viewCount || item.likeCount) && (

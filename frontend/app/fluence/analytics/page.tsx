@@ -51,7 +51,6 @@ function FluenceAnalyticsPageContent() {
   const metrics = useMemo(() => {
     const wikiPages = wikiData?.content || [];
     const blogPosts = blogData?.content || [];
-    const _templates = templatesData?.content || [];
 
     const totalViews =
       wikiPages.reduce((sum, p) => sum + (p.viewCount || 0), 0) +
@@ -70,7 +69,7 @@ function FluenceAnalyticsPageContent() {
     const activeContent = publishedWiki + publishedBlogs;
 
     return {totalViews, totalLikes, totalComments, activeContent};
-  }, [wikiData, blogData, templatesData?.content]);
+  }, [wikiData, blogData]);
 
   // Activity trend data (group by day, last 30 days)
   const activityTrendData = useMemo(() => {
@@ -465,13 +464,6 @@ interface KpiCardProps {
 }
 
 function KpiCard({icon: IconComponent, label, value, color}: KpiCardProps) {
-  const _colorMap = {
-    primary: 'from-accent-600 to-accent-700',
-    secondary: 'from-info-600 to-info-700',
-    warning: 'from-warning-600 to-warning-700',
-    success: 'from-success-600 to-success-700',
-  };
-
   const bgMap = {
     primary: 'bg-accent-100 dark:bg-accent-900/30',
     secondary: 'bg-info-100 dark:bg-info-900/30',

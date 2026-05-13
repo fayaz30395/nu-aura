@@ -131,18 +131,6 @@ const RISK_COLORS = {
   LOW: 'var(--chart-success)',
 } as const;
 
-const _STATUS_COLORS = {
-  GOOD: 'var(--chart-success)',
-  WARNING: 'var(--chart-warning)',
-  CRITICAL: 'var(--chart-danger)',
-} as const;
-
-const _SEVERITY_COLORS = {
-  INFO: 'var(--chart-info)',
-  WARNING: 'var(--chart-warning)',
-  CRITICAL: 'var(--chart-danger)',
-} as const;
-
 // ==================== Sub-components ====================
 
 function TrendIcon({trend}: { trend: 'UP' | 'DOWN' | 'STABLE' }) {

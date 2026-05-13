@@ -13,6 +13,7 @@ import {ScheduleEntry} from '@/lib/types/hrms/shift';
 import {CATEGORICAL_UNSET} from '@/lib/utils/categoricalPalette';
 import {ArrowLeftRight, Calendar, CalendarDays, ChevronLeft, ChevronRight, List, Settings, Users,} from 'lucide-react';
 import {motion} from 'framer-motion';
+import {formatDateRange} from '@/lib/utils/format/date';
 
 function getWeekDates(baseDate: Date): { start: string; end: string; dates: Date[] } {
   const d = new Date(baseDate);
@@ -172,8 +173,7 @@ export default function ShiftDashboardPage() {
             </button>
             <div className="text-center">
               <p className="font-semibold text-surface-900 dark:text-white">
-                {dates[0].toLocaleDateString('en-US', {month: 'short', day: 'numeric'})} -{' '}
-                {dates[6].toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'})}
+                {formatDateRange(dates[0], dates[6])}
               </p>
               <button
                 onClick={() => setCurrentWeekOffset(0)}

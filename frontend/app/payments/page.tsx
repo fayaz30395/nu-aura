@@ -12,9 +12,6 @@ import {EmptyState} from '@/components/ui';
 import {DateInput} from '@mantine/dates';
 import {endOfMonth, format, startOfMonth} from 'date-fns';
 
-// Phase 2 stabilization: payments module gated behind feature flag
-const _PAYMENTS_ENABLED = process.env.NEXT_PUBLIC_PAYMENTS_ENABLED === 'true';
-
 type TabType = 'all' | 'completed' | 'failed' | 'pending';
 
 interface Filters {

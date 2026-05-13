@@ -38,6 +38,7 @@ import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {createLogger} from '@/lib/utils/logger';
 import {useDebounce} from '@/lib/hooks/useDebounce';
+import {formatDate as formatDateCanonical} from '@/lib/utils/format/date';
 
 const logger = createLogger('LinkedInPosts');
 
@@ -84,10 +85,7 @@ export default function LinkedInPostsPage() {
     return matchesSearch;
   });
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'});
-  };
+  const formatDate = (dateString: string) => formatDateCanonical(dateString);
 
   return (
     <AppLayout activeMenuItem="linkedin-posts">

@@ -17,21 +17,20 @@ import {
   Ticket,
 } from 'lucide-react';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {formatDate} from '@/lib/utils/format/date';
 
 export default function HelpdeskPage() {
   const router = useRouter();
   const {hasPermission} = usePermissions();
   const isHelpdeskAdmin = hasPermission(Permissions.SYSTEM_ADMIN);
   const {data: dashboard, isLoading: dashboardLoading, error: dashboardError} = useSLADashboard();
-  const {data: escalations = [], isLoading: escalationsLoading} = useMyPendingEscalations();
+  const {data: escalations = []} = useMyPendingEscalations();
   const {data: slasResponse} = useSlaConfigs(0, 100);
 
   const activeSlaCount = useMemo(
     () => (slasResponse?.content ?? []).filter((s) => s?.isActive).length,
     [slasResponse],
   );
-
-  const _isLoading = dashboardLoading || escalationsLoading;
 
   const getStatValue = (formatter: () => string): string => {
     if (dashboardLoading) return '...';
@@ -127,7 +126,7 @@ export default function HelpdeskPage() {
                     </span>
                   </div>
                   <span className="text-caption">
-                    {new Date(esc.escalatedAt).toLocaleDateString()}
+                    {formatDate(esc.escalatedAt)}
                   </span>
                 </div>
               ))}

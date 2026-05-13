@@ -28,6 +28,7 @@ import {useEmployeeDashboard} from '@/lib/hooks/queries';
 import {ChartLoadingFallback} from '@/lib/utils/lazy-components';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {Stat} from '@/components/ui/Stat';
+import {formatDateShort} from '@/lib/utils/format/date';
 
 const EmployeeAttendanceChart = dynamic(
   () => import('./EmployeeAttendanceChart'),
@@ -109,12 +110,7 @@ export default function EmployeeDashboardPage() {
     });
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-    });
-  };
+  const formatDate = (dateString: string) => formatDateShort(dateString);
 
   if (loading) {
     return (

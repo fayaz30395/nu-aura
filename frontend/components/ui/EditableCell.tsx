@@ -5,6 +5,7 @@ import {AnimatePresence, motion} from 'framer-motion';
 import {Loader2, Pencil} from 'lucide-react';
 import {NumberInput, Select, TextInput} from '@mantine/core';
 import {cn} from '@/lib/utils';
+import {formatDate} from '@/lib/utils/format/date';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -135,7 +136,7 @@ function EditableCell<T = string | number>({
       return '';
     }
     if (type === 'date' && displayValue instanceof Date) {
-      return displayValue.toLocaleDateString();
+      return formatDate(displayValue);
     }
     if (type === 'select' && options) {
       const option = options.find((o) => o.value === displayValue);

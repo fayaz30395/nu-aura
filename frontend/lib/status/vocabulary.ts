@@ -38,6 +38,7 @@ import {
   XCircle,
 } from 'lucide-react';
 
+/** Semantic tone; maps 1:1 to `.status-*` classes in globals.css. */
 export type StatusTone = 'success' | 'warning' | 'danger' | 'info' | 'neutral';
 
 export interface StatusMeta {
@@ -380,10 +381,13 @@ export const EVENT_STATUS: Record<string, StatusMeta> = {
 /* ── Resolver ───────────────────────────────────────────────────────── */
 
 /**
- * Resolve a status value to its canonical meta. Falls back to a neutral
- * "Unknown" badge if the value isn't in the supplied domain map — this
- * keeps badges from silently rendering without color (the bug we fixed
- * in attendance/my-attendance).
+ * Resolve a status value to its canonical meta. Never returns null —
+ * unknown values get a neutral "Unknown" badge with the input title-cased,
+ * so badges always render with both color and label.
+ *
+ * @example
+ *   resolveStatus('PENDING', LEAVE_STATUS) // → {label: 'Pending', tone: 'warning', ...}
+ *   resolveStatus('FOO_BAR', LEAVE_STATUS) // → {label: 'Foo Bar', tone: 'neutral', ...}
  */
 export function resolveStatus(
   value: string | null | undefined,
@@ -393,6 +397,7 @@ export function resolveStatus(
   return domain[value] ?? {...UNKNOWN_META, label: titleCase(value)};
 }
 
+/** Convert ENUM_LIKE strings to Title Case fallback labels. */
 function titleCase(s: string): string {
   return s
     .toLowerCase()

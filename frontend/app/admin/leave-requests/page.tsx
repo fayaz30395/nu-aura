@@ -9,6 +9,7 @@ import {useToast} from '@/components/notifications/ToastProvider';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {StatusBadge} from '@/components/ui/StatusBadge';
 import {LEAVE_STATUS} from '@/lib/status/vocabulary';
+import {formatDate as formatDateCanonical} from '@/lib/utils/format/date';
 import {Inbox} from 'lucide-react';
 import {
   useActiveLeaveTypes,
@@ -116,13 +117,7 @@ export default function AdminLeaveRequestsPage() {
     return type?.leaveName || 'Unknown';
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
-  };
+  const formatDate = (dateString: string) => formatDateCanonical(dateString);
 
   if (loading && leaveRequests.length === 0) {
     return (

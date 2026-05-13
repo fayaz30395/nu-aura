@@ -29,6 +29,7 @@ import Link from 'next/link';
 import type {ReportType} from '@/lib/types/core/analytics';
 import {REPORT_TYPE_LABELS} from '@/lib/types/core/analytics';
 import type {ReportRequest} from '@/lib/services/core/report.service';
+import {formatDate} from '@/lib/utils/format/date';
 
 // ─── Report download definitions ─────────────────────────────────────────────
 
@@ -242,7 +243,7 @@ export default function AdminReportsPage() {
                       </p>
                       <p className="text-caption">
                         {REPORT_TYPE_LABELS[sr.reportType]} · {frequencyLabel(sr.frequency)}
-                        {sr.nextRunAt ? ` · Next: ${new Date(sr.nextRunAt).toLocaleDateString()}` : ''}
+                        {sr.nextRunAt ? ` · Next: ${formatDate(sr.nextRunAt)}` : ''}
                       </p>
                     </div>
                     <span className="shrink-0 text-caption">

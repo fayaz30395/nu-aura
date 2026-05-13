@@ -18,6 +18,7 @@ import {SkeletonListItem} from '@/components/ui/Skeleton';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {motion} from 'framer-motion';
 import {ArrowLeftRight, Check, ChevronLeft, Inbox, Send, Shield, X,} from 'lucide-react';
+import {formatDateTime} from '@/lib/utils/format/date';
 import {useRouter} from 'next/navigation';
 
 const STATUS_CONFIG: Record<SwapStatus, { label: string; color: string; bgColor: string }> = {
@@ -90,12 +91,7 @@ function SwapCard({
           </div>
         )}
         <div className="text-xs text-surface-400">
-          Requested {new Date(swap.requestedAt).toLocaleDateString('en-US', {
-          month: 'short',
-          day: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit',
-        })}
+          Requested {formatDateTime(swap.requestedAt)}
         </div>
       </div>
 

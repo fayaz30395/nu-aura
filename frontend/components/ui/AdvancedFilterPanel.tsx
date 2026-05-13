@@ -133,7 +133,6 @@ const FilterRow: React.FC<FilterRowProps> = ({
   const selectedField = fields.find((f) => f.key === condition.field);
   const fieldType = selectedField?.type ?? 'text';
   const operators = OPERATORS[fieldType] ?? OPERATORS.text;
-  const _operatorObj = operators.find((op) => op.value === condition.operator);
 
   const handleFieldChange = (newField: string) => {
     const field = fields.find((f) => f.key === newField);

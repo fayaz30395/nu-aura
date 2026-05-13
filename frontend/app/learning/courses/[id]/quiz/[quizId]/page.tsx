@@ -339,7 +339,6 @@ export default function QuizPage() {
   // ─── TAKING QUIZ STATE ────────────────────────────────────────────────────
   if (state === 'taking' && currentQuestion) {
     const answerValue = answers.get(currentQuestion.id) || '';
-    const _isAnswered = answerValue !== '';
     const isLastQuestion = currentQuestionIdx === quiz.questions.length - 1;
 
     return (

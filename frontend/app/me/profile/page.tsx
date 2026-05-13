@@ -31,6 +31,7 @@ import {getInitials} from '@/lib/utils';
 import {createLogger} from '@/lib/utils/logger';
 import {employmentChangeRequestService} from '@/lib/services/hrms/employment-change-request.service';
 import {isAxiosError} from '@/lib/utils/type-guards';
+import {formatDate as formatDateCanonical} from '@/lib/utils/format/date';
 
 const log = createLogger('ProfilePage');
 
@@ -216,11 +217,7 @@ export default function MyProfilePage() {
     if (!date) return 'N/A';
     const parsed = new Date(date);
     if (Number.isNaN(parsed.getTime())) return 'N/A';
-    return parsed.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
+    return formatDateCanonical(parsed);
   };
 
   const formatEnumValue = (value?: string) => {
