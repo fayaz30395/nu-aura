@@ -19,7 +19,6 @@ import {
   CreditCard,
   DollarSign,
   FileText,
-  Loader2,
   Plus,
   TrendingUp,
   Wallet,

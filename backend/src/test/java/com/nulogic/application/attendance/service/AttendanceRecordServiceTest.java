@@ -39,6 +39,12 @@ import static org.mockito.Mockito.*;
 @DisplayName("AttendanceRecordService Tests")
 class AttendanceRecordServiceTest {
 
+    // IST-leak hardening: pin the test clock so business-hour scenarios don't depend on
+    // the JVM's wall clock or default zone. The production class resolves "now" via
+    // TenantTimeService, which is mocked below to return these fixed values.
+    private static final LocalDateTime FIXED_NOW = LocalDateTime.of(2026, 5, 14, 9, 0);
+    private static final LocalDate FIXED_TODAY = FIXED_NOW.toLocalDate();
+
     private static MockedStatic<TenantContext> tenantContextMock;
     @Mock
     private AttendanceRecordRepository attendanceRecordRepository;
@@ -52,6 +58,8 @@ class AttendanceRecordServiceTest {
     private ShiftAttendanceService shiftAttendanceService;
     @Mock
     private TenantAttendanceConfigService tenantAttendanceConfigService;
+    @Mock
+    private TenantTimeService tenantTimeService;
     @InjectMocks
     private AttendanceRecordService attendanceRecordService;
     private UUID tenantId;
@@ -74,11 +82,18 @@ class AttendanceRecordServiceTest {
     void setUp() {
         tenantId = UUID.randomUUID();
         employeeId = UUID.randomUUID();
-        checkInTime = LocalDateTime.now().withHour(9).withMinute(0);
-        checkOutTime = LocalDateTime.now().withHour(18).withMinute(0);
+        // Deterministic 9 AM check-in / 6 PM check-out on the fixed test day (2026-05-14).
+        checkInTime = FIXED_NOW.withHour(9).withMinute(0);
+        checkOutTime = FIXED_NOW.withHour(18).withMinute(0);
 
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
         tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
+
+        // Pin TenantTimeService to the fixed clock so production fallbacks
+        // (checkInTime == null, multiCheckIn today, isEmployeeCheckedIn, etc.)
+        // don't leak the JVM's default zone into assertions.
+        lenient().when(tenantTimeService.now(any())).thenReturn(FIXED_NOW);
+        lenient().when(tenantTimeService.today(any())).thenReturn(FIXED_TODAY);
 
         // Setup config defaults
         when(config.getMaxLookbackDays()).thenReturn(2);
@@ -176,7 +191,9 @@ class AttendanceRecordServiceTest {
         @Test
         @DisplayName("Should extract date from checkInTime parameter, not use LocalDate.now()")
         void shouldExtractDateFromCheckInTimeParameter() {
-            LocalDateTime pastCheckInTime = LocalDateTime.now().minusDays(5).withHour(9).withMinute(0);
+            // Derive past time from the pinned FIXED_NOW so the assertion is deterministic
+            // across CI zones and clocks.
+            LocalDateTime pastCheckInTime = FIXED_NOW.minusDays(5).withHour(9).withMinute(0);
             LocalDate pastDate = pastCheckInTime.toLocalDate();
 
             when(attendanceRecordRepository.findByEmployeeIdAndAttendanceDateAndTenantId(

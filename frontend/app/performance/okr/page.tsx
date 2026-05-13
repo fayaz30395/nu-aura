@@ -633,11 +633,13 @@ export default function OKRPage() {
                 id="objective-title"
                 type="text"
                 {...objectiveForm.register('title')}
+                aria-invalid={objectiveForm.formState.errors.title ? 'true' : 'false'}
+                aria-describedby={objectiveForm.formState.errors.title ? 'objective-title-error' : undefined}
                 className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
                 placeholder="What do you want to achieve?"
               />
               {objectiveForm.formState.errors.title && (
-                <p className="text-danger-500 text-xs mt-1">{objectiveForm.formState.errors.title.message}</p>
+                <p id="objective-title-error" className="text-danger-500 text-xs mt-1">{objectiveForm.formState.errors.title.message}</p>
               )}
             </div>
             <div>
