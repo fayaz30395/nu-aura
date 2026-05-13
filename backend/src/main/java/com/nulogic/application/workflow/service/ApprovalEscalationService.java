@@ -1,5 +1,6 @@
 package com.nulogic.application.workflow.service;
 
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.workflow.ApprovalEscalationConfig;
 import com.nulogic.domain.workflow.StepExecution;
@@ -33,6 +34,7 @@ public class ApprovalEscalationService {
 
     private final EmployeeRepository employeeRepository;
     private final UserRepository userRepository;
+    private final TenantTimeService tenantTimeService;
 
     /**
      * Resolve the escalation target user ID based on the escalation type.

@@ -823,12 +823,13 @@ export default function ApprovalInboxPage() {
             {/* End date */}
             <div>
               <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                End date <span
+                End date <span aria-hidden="true"
                 className="text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">*</span>
               </label>
               <input
                 type="date"
                 {...delegationForm.register('endDate')}
+                aria-required="true"
                 className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
               />
               {delegationForm.formState.errors.endDate && (

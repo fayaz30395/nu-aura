@@ -221,7 +221,8 @@ class AttendanceRecordServiceTest {
         @Test
         @DisplayName("Should use current time when checkInTime is null")
         void shouldUseCurrentTimeWhenCheckInTimeIsNull() {
-            LocalDate today = LocalDate.now();
+            // Production resolves "now" via TenantTimeService — stubbed to FIXED_NOW in setUp().
+            LocalDate today = FIXED_TODAY;
 
             when(attendanceRecordRepository.findByEmployeeIdAndAttendanceDateAndTenantId(
                     employeeId, today, tenantId))

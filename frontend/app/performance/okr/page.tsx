@@ -771,11 +771,13 @@ export default function OKRPage() {
                 id="key-result-title"
                 type="text"
                 {...keyResultForm.register('title')}
+                aria-invalid={keyResultForm.formState.errors.title ? 'true' : 'false'}
+                aria-describedby={keyResultForm.formState.errors.title ? 'key-result-title-error' : undefined}
                 className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
                 placeholder="What measurable outcome will you achieve?"
               />
               {keyResultForm.formState.errors.title && (
-                <p className="text-danger-500 text-xs mt-1">{keyResultForm.formState.errors.title.message}</p>
+                <p id="key-result-title-error" className="text-danger-500 text-xs mt-1">{keyResultForm.formState.errors.title.message}</p>
               )}
             </div>
             <div>
@@ -839,10 +841,12 @@ export default function OKRPage() {
                   id="key-result-target-value"
                   type="number"
                   {...keyResultForm.register('targetValue', {valueAsNumber: true})}
+                  aria-invalid={keyResultForm.formState.errors.targetValue ? 'true' : 'false'}
+                  aria-describedby={keyResultForm.formState.errors.targetValue ? 'key-result-target-value-error' : undefined}
                   className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
                 />
                 {keyResultForm.formState.errors.targetValue && (
-                  <p
+                  <p id="key-result-target-value-error"
                     className="text-danger-500 text-xs mt-1">{keyResultForm.formState.errors.targetValue.message}</p>
                 )}
               </div>

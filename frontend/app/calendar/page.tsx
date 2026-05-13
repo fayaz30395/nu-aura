@@ -18,7 +18,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Clock,
-  Loader2,
   MapPin,
   Plus,
   RefreshCw,

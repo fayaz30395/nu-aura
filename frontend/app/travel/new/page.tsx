@@ -557,15 +557,15 @@ export default function NewTravelRequestPage() {
                 </div>
               </div>
             )}
-          </div>
+          </section>
 
           {/* Budget */}
-          <div className="p-6 space-y-6">
+          <section aria-labelledby="budget-details-heading" className="p-6 space-y-6">
             <div className="flex items-center gap-4 pb-4 border-b border-[var(--border-main)]">
               <div className="p-2 bg-warning-100 dark:bg-warning-900/30 rounded-lg">
                 <DollarSign className="h-5 w-5 text-warning-600 dark:text-warning-400"/>
               </div>
-              <h2 className="text-xl font-semibold text-[var(--text-primary)]">Budget Details</h2>
+              <h2 id="budget-details-heading" className="text-xl font-semibold text-[var(--text-primary)]">Budget Details</h2>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
