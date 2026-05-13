@@ -311,10 +311,12 @@ class AttendanceRecordServiceTest {
         @Test
         @DisplayName("Should check out using yesterday's record for overnight shifts")
         void shouldCheckOutUsingYesterdaysRecordForOvernightShifts() {
-            LocalDateTime yesterdayCheckIn = LocalDateTime.now().minusDays(1).withHour(22).withMinute(0);
+            // Pin both endpoints of the overnight shift to FIXED_NOW so the day boundary
+            // (yesterday 22:00 → today 06:00) is deterministic regardless of CI zone.
+            LocalDateTime yesterdayCheckIn = FIXED_NOW.minusDays(1).withHour(22).withMinute(0);
             LocalDate yesterday = yesterdayCheckIn.toLocalDate();
 
-            LocalDateTime todayCheckOut = LocalDateTime.now().withHour(6).withMinute(0);
+            LocalDateTime todayCheckOut = FIXED_NOW.withHour(6).withMinute(0);
             LocalDate today = todayCheckOut.toLocalDate();
 
             AttendanceRecord yesterdayRecord = AttendanceRecord.builder()

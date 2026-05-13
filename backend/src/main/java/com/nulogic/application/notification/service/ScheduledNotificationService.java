@@ -3,6 +3,7 @@ package com.nulogic.application.notification.service;
 import com.nulogic.api.notification.dto.SendNotificationRequest;
 import com.nulogic.api.notification.dto.SendNotificationRequest.RecipientInfo;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.attendance.AttendanceRecord;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.notification.NotificationChannel;

@@ -1,5 +1,6 @@
 package com.nulogic.application.compliance.service;
 
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.user.User;
 import com.nulogic.infrastructure.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +10,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
-import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.UUID;
 

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.attendance.AttendanceRecord;
 import com.nulogic.domain.compliance.DsrRequest;
 import com.nulogic.domain.employee.Employee;
@@ -95,6 +96,7 @@ public class DsrExportService {
     private final SalaryStructureRepository salaryStructureRepository;
     private final AuditLogRepository auditLogRepository;
     private final ObjectMapper objectMapper;
+    private final TenantTimeService tenantTimeService;
 
     /**
      * Build a JSON artefact for the given DSR request. The {@code request}

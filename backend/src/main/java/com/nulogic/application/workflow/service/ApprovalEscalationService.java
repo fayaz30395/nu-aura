@@ -227,9 +227,10 @@ public class ApprovalEscalationService {
 
         UUID tenantId = step.getTenantId();
 
-        // Mark current step as escalated
+        // Mark current step as escalated (tenant-local time via TenantTimeService)
+        LocalDateTime nowInTenantZone = tenantTimeService.now(tenantId);
         step.setEscalated(true);
-        step.setEscalatedAt(LocalDateTime.now());
+        step.setEscalatedAt(nowInTenantZone);
         step.setEscalatedToUserId(targetUserId);
         step.setReminderCount(step.getReminderCount() + 1);
 
@@ -242,7 +243,7 @@ public class ApprovalEscalationService {
                 .stepName("Escalated: " + step.getStepName().replaceAll("^(Escalated: )+", ""))
                 .status(StepExecution.StepStatus.PENDING)
                 .assignedToUserId(targetUserId)
-                .assignedAt(LocalDateTime.now())
+                .assignedAt(nowInTenantZone)
                 .deadline(step.getDeadline())
                 .build();
 

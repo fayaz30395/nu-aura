@@ -927,7 +927,7 @@ export default function CompensationPage() {
             {showRejectionReasonInput && selectedRevision && (selectedRevision.status === 'PENDING_REVIEW' || selectedRevision.status === 'PENDING_APPROVAL') && (
               <div className="w-full space-y-4 border-t border-[var(--border-main)] pt-4">
                 <label className="block text-sm font-medium text-[var(--text-secondary)]">
-                  Rejection Reason <span
+                  Rejection Reason <span aria-hidden="true"
                   className="text-danger-600 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">*</span>
                 </label>
                 <Textarea
@@ -935,6 +935,7 @@ export default function CompensationPage() {
                   value={rejectionReason}
                   onChange={(e) => setRejectionReason(e.target.value)}
                   className="min-h-24"
+                  aria-required="true"
                 />
               </div>
             )}

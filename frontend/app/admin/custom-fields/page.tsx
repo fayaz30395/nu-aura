@@ -446,11 +446,13 @@ export default function CustomFieldsPage() {
                       id="custom-field-code"
                       type="text"
                       {...register('fieldCode')}
+                      aria-invalid={errors.fieldCode ? 'true' : 'false'}
+                      aria-describedby={errors.fieldCode ? 'custom-field-code-error' : undefined}
                       className="input-aura"
                       placeholder="e.g., blood_group"
                       disabled={showEditModal}
                     />
-                    {errors.fieldCode && <p className="text-danger-500 text-sm mt-1">{errors.fieldCode.message}</p>}
+                    {errors.fieldCode && <p id="custom-field-code-error" className="text-danger-500 text-sm mt-1">{errors.fieldCode.message}</p>}
                   </div>
                   <div>
                     <label htmlFor="custom-field-name" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">

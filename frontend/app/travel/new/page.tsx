@@ -618,7 +618,7 @@ export default function NewTravelRequestPage() {
                 className={`${inputClass(false)} resize-none`}
               />
             </div>
-          </div>
+          </section>
         </div>
 
         {/* Action Buttons */}
