@@ -7,6 +7,7 @@ import type {TrainingEnrollment} from '@/lib/types/grow/training';
 import {EnrollmentStatus} from '@/lib/types/grow/training';
 import {toBadgeVariant} from '@/lib/utils/type-guards';
 import {safeWindowOpen} from '@/lib/utils/url';
+import {formatDate} from '@/lib/utils/format/date';
 
 interface MyTrainingsTabProps {
   enrollments: TrainingEnrollment[];
@@ -79,7 +80,7 @@ export function MyTrainingsTab({enrollments, loading, onNavigateToCatalog}: MyTr
                     <span className="text-[var(--text-secondary)]">Enrolled:</span>
                     <p className="font-medium">
                       {enrollment.enrollmentDate
-                        ? new Date(enrollment.enrollmentDate).toLocaleDateString()
+                        ? formatDate(enrollment.enrollmentDate)
                         : 'N/A'}
                     </p>
                   </div>
@@ -87,7 +88,7 @@ export function MyTrainingsTab({enrollments, loading, onNavigateToCatalog}: MyTr
                     <div>
                       <span className="text-[var(--text-secondary)]">Completed:</span>
                       <p className="font-medium">
-                        {new Date(enrollment.completedAt).toLocaleDateString()}
+                        {formatDate(enrollment.completedAt)}
                       </p>
                     </div>
                   )}

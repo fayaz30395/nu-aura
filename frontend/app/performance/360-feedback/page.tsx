@@ -42,6 +42,7 @@ import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
 import {createLogger} from '@/lib/utils/logger';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
+import {formatDate} from '@/lib/utils/format/date';
 
 const log = createLogger('FeedbackPage');
 
@@ -415,8 +416,8 @@ export default function Feedback360Page() {
                       <div className="flex justify-between">
                         <span>Period:</span>
                         <span>
-                        {new Date(cycle.startDate).toLocaleDateString()} -{' '}
-                          {new Date(cycle.endDate).toLocaleDateString()}
+                        {formatDate(cycle.startDate)} -{' '}
+                          {formatDate(cycle.endDate)}
                       </span>
                       </div>
                       <div className="flex justify-between">
@@ -548,7 +549,7 @@ export default function Feedback360Page() {
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-body-muted">
-                          {new Date(request.createdAt).toLocaleDateString()}
+                          {formatDate(request.createdAt)}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right">
                           <PermissionGate permission={Permissions.FEEDBACK_360_SUBMIT}>

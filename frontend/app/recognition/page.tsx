@@ -37,6 +37,7 @@ import {
   Skeleton,
   Textarea,
 } from '@/components/ui';
+import {EmptyState} from '@/components/ui/EmptyState';
 import type {RecognitionRequest} from '@/lib/types/grow/recognition';
 import {ReactionType, RecognitionCategory, RecognitionType} from '@/lib/types/grow/recognition';
 import {
@@ -386,19 +387,24 @@ export default function RecognitionPage() {
               </div>
             ) : recognitions.length === 0 ? (
               <Card>
-                <CardContent className="flex flex-col items-center justify-center py-12">
-                  <Award className="h-12 w-12 text-[var(--text-muted)]"/>
-                  <p className="mt-4 text-lg font-medium text-[var(--text-primary)]">
-                    No recognitions yet
-                  </p>
-                  <p className="text-[var(--text-secondary)]">
-                    Be the first to recognize a colleague!
-                  </p>
-                  <PermissionGate permission={Permissions.RECOGNITION_CREATE}>
-                    <Button onClick={handleGiveRecognition} className="mt-4">
-                      <Sparkles className="mr-2 h-4 w-4"/>
-                      Give Recognition
-                    </Button>
+                <CardContent>
+                  <PermissionGate
+                    permission={Permissions.RECOGNITION_CREATE}
+                    fallback={
+                      <EmptyState
+                        icon={<Award className="h-8 w-8"/>}
+                        title="No recognitions yet"
+                        description="Be the first to recognize a colleague for their great work."
+                      />
+                    }
+                  >
+                    <EmptyState
+                      icon={<Award className="h-8 w-8"/>}
+                      title="No recognitions yet"
+                      description="Be the first to recognize a colleague for their great work."
+                      actionLabel="Give Recognition"
+                      onAction={handleGiveRecognition}
+                    />
                   </PermissionGate>
                 </CardContent>
               </Card>
@@ -556,10 +562,11 @@ export default function RecognitionPage() {
                     ))}
                   </div>
                 ) : leaderboard.length === 0 ? (
-                  <div className="text-center py-6">
-                    <AlertCircle className="h-8 w-8 text-[var(--text-muted)] mx-auto mb-2"/>
-                    <p className="text-body-muted">No data yet</p>
-                  </div>
+                  <EmptyState
+                    icon={<Trophy className="h-8 w-8"/>}
+                    title="No data yet"
+                    description="The leaderboard will populate once recognitions start flowing."
+                  />
                 ) : (
                   <div className="space-y-4">
                     {leaderboard.map((employee, index) => (

@@ -19,6 +19,7 @@ import {
   useResendPreboardingInvitation,
 } from '@/lib/hooks/queries/usePreboarding';
 import {createLogger} from '@/lib/utils/logger';
+import {formatDate} from '@/lib/utils/format/date';
 
 const preBoardingFormSchema = z.object({
   firstName: z.string().min(1, 'First name required'),
@@ -309,7 +310,7 @@ export default function PreboardingPage() {
                           <p className="text-sm text-[var(--text-primary)]">{candidate.designation || '-'}</p>
                           <p className="text-caption">
                             <Calendar className="h-3 w-3 inline mr-1"/>
-                            Joining: {new Date(candidate.expectedJoiningDate).toLocaleDateString()}
+                            Joining: {formatDate(candidate.expectedJoiningDate)}
                           </p>
                         </div>
 

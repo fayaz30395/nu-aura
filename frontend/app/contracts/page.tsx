@@ -14,6 +14,8 @@ import {Badge, Button, Input, Select, Table} from '@mantine/core';
 import {AlertCircle, FileText, Plus, RefreshCw, Search} from 'lucide-react';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
+import {StatusBadge} from '@/components/ui/StatusBadge';
+import {CONTRACT_STATUS} from '@/lib/status/vocabulary';
 
 export default function ContractsPage() {
   const router = useRouter();
@@ -161,9 +163,7 @@ export default function ContractsPage() {
                     <Table.Td className="font-medium">{contract.title}</Table.Td>
                     <Table.Td>{contractService.getTypeLabel(contract.type)}</Table.Td>
                     <Table.Td>
-                      <Badge color={contract.status === 'ACTIVE' ? 'green' : 'gray'}>
-                        {contractService.getStatusLabel(contract.status)}
-                      </Badge>
+                      <StatusBadge status={contract.status} domain={CONTRACT_STATUS}/>
                     </Table.Td>
                     <Table.Td>{contract.employeeName || contract.vendorName || '—'}</Table.Td>
                     <Table.Td>{contract.endDate ? contractService.formatDate(contract.endDate) : '—'}</Table.Td>

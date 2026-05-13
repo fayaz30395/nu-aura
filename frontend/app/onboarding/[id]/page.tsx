@@ -35,6 +35,7 @@ import {useGoogleLogin} from '@react-oauth/google';
 import {useToast} from '@/components/notifications/ToastProvider';
 import {createLogger} from '@/lib/utils/logger';
 import {safeSessionStorage} from '@/lib/utils/safeStorage';
+import {formatDate} from '@/lib/utils/format/date';
 
 const log = createLogger('OnboardingPage');
 
@@ -188,7 +189,7 @@ export default function OnboardingDetailPage() {
                                     </span>
                     <span className="flex items-center gap-1.5 bg-[var(--bg-secondary)] px-4 py-1 rounded-full text-xs">
                                         <Calendar className="h-3.5 w-3.5"/>
-                                        Started {new Date(process.startDate).toLocaleDateString()}
+                                        Started {formatDate(process.startDate)}
                                     </span>
                     <Badge variant={process.status === 'COMPLETED' ? 'success' : 'warning'}
                            className="rounded-full px-4">
@@ -398,7 +399,7 @@ export default function OnboardingDetailPage() {
                       </div>
                       <div className="pb-4">
                         <p className="text-xs font-black text-[var(--text-primary)]">Process Initiated</p>
-                        <p className="text-caption font-bold">{new Date(process.createdAt).toLocaleDateString()}</p>
+                        <p className="text-caption font-bold">{formatDate(process.createdAt)}</p>
                       </div>
                     </div>
                     {process.notes && (

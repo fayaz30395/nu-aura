@@ -15,6 +15,7 @@ import {apiClient} from '@/lib/api/client';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {safeUrl} from '@/lib/utils/safeUrl';
+import {formatDate} from '@/lib/utils/format/date';
 
 const postJobBoardSchema = z.object({
   jobId: z.string().min(1, 'Select a job opening'),
@@ -261,9 +262,9 @@ export default function JobBoardsPage() {
                     </div>
                     {(posting.postedAt || posting.expiresAt) && (
                       <p className="text-caption mt-2">
-                        {posting.postedAt && `Posted: ${new Date(posting.postedAt).toLocaleDateString()}`}
-                        {posting.expiresAt && ` · Expires: ${new Date(posting.expiresAt).toLocaleDateString()}`}
-                        {posting.lastSyncedAt && ` · Synced: ${new Date(posting.lastSyncedAt).toLocaleDateString()}`}
+                        {posting.postedAt && `Posted: ${formatDate(posting.postedAt)}`}
+                        {posting.expiresAt && ` · Expires: ${formatDate(posting.expiresAt)}`}
+                        {posting.lastSyncedAt && ` · Synced: ${formatDate(posting.lastSyncedAt)}`}
                       </p>
                     )}
                   </CardContent>

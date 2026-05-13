@@ -4,16 +4,15 @@ import {useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {AppLayout} from '@/components/layout/AppLayout';
 import {loanService} from '@/lib/services/hrms/loan.service';
-import {LoanStatus} from '@/lib/types/hrms/loan';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {useEmployeeLoans} from '@/lib/hooks/queries/useLoans';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {StatusBadge} from '@/components/ui/StatusBadge';
+import {LOAN_STATUS} from '@/lib/status/vocabulary';
 import {
   AlertCircle,
-  Banknote,
-  CheckCircle,
   ChevronRight,
   Clock,
   CreditCard,
@@ -23,7 +22,6 @@ import {
   Plus,
   TrendingUp,
   Wallet,
-  XCircle,
 } from 'lucide-react';
 
 export default function LoansPage() {
@@ -64,52 +62,6 @@ export default function LoansPage() {
     totalOutstanding,
     totalRepaid,
     pendingApprovals,
-  };
-
-  const getStatusConfig = (status: LoanStatus) => {
-    const configs: Record<LoanStatus, { bg: string; text: string; icon: typeof Clock }> = {
-      PENDING: {
-        bg: 'bg-warning-100 dark:bg-warning-900/30',
-        text: 'text-warning-700 dark:text-warning-400',
-        icon: Clock,
-      },
-      APPROVED: {
-        bg: 'bg-accent-100 dark:bg-accent-900/30',
-        text: 'text-accent-700 dark:text-accent-400',
-        icon: CheckCircle,
-      },
-      REJECTED: {
-        bg: 'bg-danger-100 dark:bg-danger-900/30',
-        text: 'text-danger-700 dark:text-danger-400',
-        icon: XCircle,
-      },
-      DISBURSED: {
-        bg: 'bg-accent-300 dark:bg-accent-900/30',
-        text: 'text-accent-900 dark:text-accent-600',
-        icon: Banknote,
-      },
-      ACTIVE: {
-        bg: 'bg-success-100 dark:bg-success-900/30',
-        text: 'text-success-700 dark:text-success-400',
-        icon: TrendingUp,
-      },
-      CLOSED: {
-        bg: 'bg-success-100 dark:bg-success-900/30',
-        text: 'text-success-700 dark:text-success-400',
-        icon: CheckCircle,
-      },
-      DEFAULTED: {
-        bg: 'bg-danger-200 dark:bg-danger-900/50',
-        text: 'text-danger-800 dark:text-danger-300',
-        icon: AlertCircle,
-      },
-      CANCELLED: {
-        bg: 'bg-[var(--bg-secondary)]',
-        text: 'text-[var(--text-secondary)]',
-        icon: XCircle,
-      },
-    };
-    return configs[status] || configs.PENDING;
   };
 
   if (loading) {
@@ -274,9 +226,6 @@ export default function LoansPage() {
                 </thead>
                 <tbody className="divide-y divide-surface-100 dark:divide-surface-800">
                 {loans.map((loan) => {
-                  const statusConfig = getStatusConfig(loan.status);
-                  const StatusIcon = statusConfig.icon;
-
                   return (
                     <tr
                       key={loan.id}
@@ -304,12 +253,7 @@ export default function LoansPage() {
                           </span>
                       </td>
                       <td className="px-6 py-4 text-center">
-                          <span
-                            className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-lg justify-center ${statusConfig.bg} ${statusConfig.text}`}
-                          >
-                            <StatusIcon className="h-3.5 w-3.5"/>
-                            {loan.status ? loan.status.replace('_', ' ') : '-'}
-                          </span>
+                        <StatusBadge status={loan.status} domain={LOAN_STATUS}/>
                       </td>
                       <td className="px-6 py-4 text-right">
                           <span className="text-body-secondary">

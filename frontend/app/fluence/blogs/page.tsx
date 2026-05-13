@@ -12,6 +12,7 @@ import {typography} from '@/lib/theme/design-system';
 import {useBlogCategories, useBlogPosts} from '@/lib/hooks/queries/useFluence';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
+import {formatDate as canonicalFormatDate} from '@/lib/utils/format/date';
 
 interface BlogPost {
   id: string;
@@ -80,11 +81,7 @@ export default function BlogsPage() {
 
   const formatDate = (date: string | undefined): string => {
     if (!date) return '';
-    return new Date(date).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    });
+    return canonicalFormatDate(date);
   };
 
   return (

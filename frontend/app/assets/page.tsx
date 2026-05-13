@@ -45,6 +45,8 @@ import {
 } from '@/lib/hooks/queries';
 import {createLogger} from '@/lib/utils/logger';
 import {formatCurrency} from '@/lib/utils';
+import {StatusBadge} from '@/components/ui/StatusBadge';
+import {ASSET_STATUS} from '@/lib/status/vocabulary';
 
 const log = createLogger('AssetsPage');
 
@@ -114,23 +116,6 @@ const getCategoryColor = (category: AssetCategory) => {
       return 'bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-300';
     default:
       return 'bg-[var(--bg-surface)] text-[var(--text-secondary)]';
-  }
-};
-
-const getStatusColor = (status: AssetStatus) => {
-  switch (status) {
-    case AssetStatus.AVAILABLE:
-      return 'badge-status status-success';
-    case AssetStatus.ASSIGNED:
-      return 'badge-status status-info';
-    case AssetStatus.IN_MAINTENANCE:
-      return 'badge-status status-warning';
-    case AssetStatus.RETIRED:
-      return 'badge-status status-neutral';
-    case AssetStatus.LOST:
-      return 'badge-status status-danger';
-    default:
-      return 'badge-status status-neutral';
   }
 };
 
@@ -555,9 +540,7 @@ export default function AssetManagementPage() {
                           </span>
                       </td>
                       <td className="px-4 py-4 whitespace-nowrap text-center">
-                          <span className={getStatusColor(asset.status)}>
-                            {asset.status?.replace(/_/g, ' ') ?? '-'}
-                          </span>
+                        <StatusBadge status={asset.status} domain={ASSET_STATUS}/>
                       </td>
                       <td className="px-4 py-4 whitespace-nowrap">
                           <span className="text-body-secondary">
@@ -909,9 +892,7 @@ export default function AssetManagementPage() {
             {selectedAsset && (
               <div className="space-y-6">
                 <div className="flex flex-wrap gap-2">
-                  <span className={getStatusColor(selectedAsset.status)}>
-                    {selectedAsset.status?.replace(/_/g, ' ') ?? '-'}
-                  </span>
+                  <StatusBadge status={selectedAsset.status} domain={ASSET_STATUS}/>
                   <span
                     className={`px-4 py-1 text-sm font-medium rounded-full ${getCategoryColor(selectedAsset.category)}`}>
                     {selectedAsset.category?.replace(/_/g, ' ') ?? '-'}

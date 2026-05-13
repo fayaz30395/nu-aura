@@ -32,6 +32,7 @@ import {formatDate as canonicalFormatDate} from '@/lib/utils/format/date';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {SkeletonStatCard} from '@/components/ui/Skeleton';
 import {PageErrorFallback} from '@/components/errors/PageErrorFallback';
 import {
@@ -519,7 +520,11 @@ export default function OneOnOnePage() {
               <SkeletonStatCard/>
             </div>
           ) : !meeting ? (
-            <div className="text-center py-12 text-[var(--text-muted)]">Meeting not found.</div>
+            <EmptyState
+              icon={<Calendar className="h-8 w-8"/>}
+              title="Meeting not found"
+              description="This meeting may have been deleted or you may not have access to it."
+            />
           ) : (
             <>
               {/* Meeting Header */}
@@ -724,10 +729,11 @@ export default function OneOnOnePage() {
                       )}
 
                       {(meeting.agendaItems || []).length === 0 ? (
-                        <div className="text-center py-8 text-[var(--text-muted)]">
-                          <ListChecks className="h-8 w-8 mx-auto mb-2 opacity-40"/>
-                          <p>No talking points yet. Add one to get started.</p>
-                        </div>
+                        <EmptyState
+                          icon={<ListChecks className="h-8 w-8"/>}
+                          title="No talking points yet"
+                          description="Add talking points to structure the conversation and keep the meeting on track."
+                        />
                       ) : (
                         <div className="space-y-2">
                           {(meeting.agendaItems || []).map((item: MeetingAgendaItemResponse) => (
@@ -892,10 +898,11 @@ export default function OneOnOnePage() {
                       )}
 
                       {(meeting.actionItems || []).length === 0 ? (
-                        <div className="text-center py-8 text-[var(--text-muted)]">
-                          <CheckCircle2 className="h-8 w-8 mx-auto mb-2 opacity-40"/>
-                          <p>No action items yet.</p>
-                        </div>
+                        <EmptyState
+                          icon={<CheckCircle2 className="h-8 w-8"/>}
+                          title="No action items yet"
+                          description="Capture follow-ups and tasks here so nothing falls through the cracks."
+                        />
                       ) : (
                         <div className="space-y-2">
                           {(meeting.actionItems || []).map((item: MeetingActionItemResponse) => (
@@ -1087,16 +1094,13 @@ export default function OneOnOnePage() {
                               </div>
                             </form>
                           ) : (
-                            <div className="text-center py-8">
-                              <Star className="h-8 w-8 mx-auto mb-2 text-[var(--text-muted)] opacity-40"/>
-                              <p className="text-[var(--text-muted)] mb-4">No feedback submitted yet.</p>
-                              <button
-                                onClick={() => setShowFeedbackForm(true)}
-                                className="px-4 py-2 text-sm bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors"
-                              >
-                                Submit Feedback
-                              </button>
-                            </div>
+                            <EmptyState
+                              icon={<Star className="h-8 w-8"/>}
+                              title="No feedback submitted yet"
+                              description="Share how this meeting went so you can both improve future 1-on-1s."
+                              actionLabel="Submit Feedback"
+                              onAction={() => setShowFeedbackForm(true)}
+                            />
                           )}
                         </div>
                       ) : (
@@ -1589,15 +1593,15 @@ export default function OneOnOnePage() {
             {isLoading ? (
               <div className="p-8 text-center text-[var(--text-muted)]">Loading meetings...</div>
             ) : displayMeetings.length === 0 ? (
-              <div className="p-12 text-center">
-                <Users className="h-10 w-10 mx-auto mb-4 text-[var(--text-muted)] opacity-40"/>
-                <p className="text-[var(--text-muted)] mb-1">No meetings found</p>
-                <p className="text-caption">
-                  {activeTab === 'upcoming'
+              <EmptyState
+                icon={<Users className="h-8 w-8"/>}
+                title="No meetings found"
+                description={
+                  activeTab === 'upcoming'
                     ? 'Schedule a new 1-on-1 to get started.'
-                    : 'Try adjusting your filters.'}
-                </p>
-              </div>
+                    : 'Try adjusting your filters to see more meetings.'
+                }
+              />
             ) : (
               displayMeetings.map((m) => {
                 const badge = getStatusBadge(m.status);

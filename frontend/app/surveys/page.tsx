@@ -51,6 +51,7 @@ import {
   useLaunchSurvey,
   useUpdateSurvey,
 } from '@/lib/hooks/queries/useSurveys';
+import {formatDate} from '@/lib/utils/format/date';
 
 const surveyTypeOptions = [
   {value: SurveyType.ENGAGEMENT, label: 'Engagement'},
@@ -397,8 +398,8 @@ export default function SurveysPage() {
                         <div className="flex items-center gap-2 text-[var(--text-secondary)]">
                           <Calendar className="h-4 w-4"/>
                           <span>
-                            {new Date(survey.startDate).toLocaleDateString()}
-                            {survey.endDate && ` - ${new Date(survey.endDate).toLocaleDateString()}`}
+                            {formatDate(survey.startDate)}
+                            {survey.endDate && ` - ${formatDate(survey.endDate)}`}
                           </span>
                         </div>
                       )}
@@ -671,7 +672,7 @@ export default function SurveysPage() {
                     <span className="text-[var(--text-muted)]">Start Date:</span>
                     <p className="font-medium text-[var(--text-primary)]">
                       {selectedSurvey.startDate
-                        ? new Date(selectedSurvey.startDate).toLocaleDateString()
+                        ? formatDate(selectedSurvey.startDate)
                         : 'Not set'}
                     </p>
                   </div>
@@ -679,7 +680,7 @@ export default function SurveysPage() {
                     <span className="text-[var(--text-muted)]">End Date:</span>
                     <p className="font-medium text-[var(--text-primary)]">
                       {selectedSurvey.endDate
-                        ? new Date(selectedSurvey.endDate).toLocaleDateString()
+                        ? formatDate(selectedSurvey.endDate)
                         : 'Not set'}
                     </p>
                   </div>

@@ -32,6 +32,7 @@ import {
   useUpcomingChallenges,
 } from '@/lib/hooks/queries/useWellness';
 import type {ProgramCategory, ProgramType} from '@/lib/types/grow/wellness';
+import {formatDate} from '@/lib/utils/format/date';
 
 // ─── Schemas ──────────────────────────────────────────────────────────────────
 
@@ -208,7 +209,7 @@ function ChallengeCard({challenge}: {
             <div className="flex items-center gap-4 text-caption">
               <span className="flex items-center gap-1">
                 <Calendar size={10}/>
-                {start.toLocaleDateString()} – {end.toLocaleDateString()}
+                {formatDate(start)} – {formatDate(end)}
               </span>
               <span className="flex items-center gap-1">
                 <Trophy size={10}/>

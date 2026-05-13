@@ -53,6 +53,7 @@ import {
 } from '@/lib/hooks/queries/useWellness';
 import type {HealthLog} from '@/lib/types/grow/wellness';
 import {MetricType, ProgramCategory} from '@/lib/types/grow/wellness';
+import {formatDate} from '@/lib/utils/format/date';
 
 const healthLogSchema = z.object({
   metricType: z.string().min(1, 'Select a metric type'),
@@ -414,7 +415,7 @@ export default function WellnessPage() {
                         <div className="flex items-center gap-4 mt-4 text-body-muted">
                           <span className="flex items-center gap-1">
                             <Calendar className="h-4 w-4"/>
-                            {new Date(challenge.startDate).toLocaleDateString()} - {new Date(challenge.endDate).toLocaleDateString()}
+                            {formatDate(challenge.startDate)} - {formatDate(challenge.endDate)}
                           </span>
                           <span className="flex items-center gap-1">
                             <Trophy className="h-4 w-4"/>

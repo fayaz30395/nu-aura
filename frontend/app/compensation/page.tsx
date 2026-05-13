@@ -41,9 +41,13 @@ import {
 } from '@/lib/hooks/queries/useCompensation';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {PermissionGate} from '@/components/auth/PermissionGate';
+import {StatusBadge} from '@/components/ui/StatusBadge';
+import {
+  COMPENSATION_CYCLE_STATUS,
+  COMPENSATION_REVISION_STATUS,
+} from '@/lib/status/vocabulary';
 import type {
   CompensationReviewCycle,
-  CycleStatus,
   CycleType,
   RevisionStatus,
   RevisionType,
@@ -61,17 +65,6 @@ const cycleTypeLabels: Record<CycleType, string> = {
 
 const log = createLogger('CompensationPage');
 
-const cycleStatusLabels: Record<CycleStatus, string> = {
-  DRAFT: 'Draft',
-  PLANNING: 'Planning',
-  IN_PROGRESS: 'In Progress',
-  REVIEW: 'Review',
-  APPROVAL: 'Approval',
-  APPROVED: 'Approved',
-  COMPLETED: 'Completed',
-  CANCELLED: 'Cancelled',
-};
-
 const revisionTypeLabels: Record<RevisionType, string> = {
   ANNUAL_INCREMENT: 'Annual Increment',
   PROMOTION: 'Promotion',
@@ -82,45 +75,6 @@ const revisionTypeLabels: Record<RevisionType, string> = {
   PROBATION_CONFIRMATION: 'Probation Confirmation',
   RETENTION: 'Retention',
   CORRECTION: 'Correction',
-};
-
-const revisionStatusLabels: Record<RevisionStatus, string> = {
-  DRAFT: 'Draft',
-  PENDING_REVIEW: 'Pending Review',
-  REVIEWED: 'Reviewed',
-  PENDING_APPROVAL: 'Pending Approval',
-  APPROVED: 'Approved',
-  REJECTED: 'Rejected',
-  CANCELLED: 'Cancelled',
-  APPLIED: 'Applied',
-};
-
-const getCycleStatusColor = (status: CycleStatus) => {
-  const colors: Record<CycleStatus, string> = {
-    DRAFT: 'default',
-    PLANNING: 'info',
-    IN_PROGRESS: 'warning',
-    REVIEW: 'info',
-    APPROVAL: 'warning',
-    APPROVED: 'success',
-    COMPLETED: 'success',
-    CANCELLED: 'danger',
-  };
-  return colors[status] || 'default';
-};
-
-const getRevisionStatusColor = (status: RevisionStatus) => {
-  const colors: Record<RevisionStatus, string> = {
-    DRAFT: 'default',
-    PENDING_REVIEW: 'warning',
-    REVIEWED: 'info',
-    PENDING_APPROVAL: 'warning',
-    APPROVED: 'success',
-    REJECTED: 'danger',
-    CANCELLED: 'default',
-    APPLIED: 'success',
-  };
-  return colors[status] || 'default';
 };
 
 export default function CompensationPage() {
@@ -464,10 +418,7 @@ export default function CompensationPage() {
                           {cycleTypeLabels[cycle.cycleType]} - FY{cycle.fiscalYear}
                         </p>
                       </div>
-                      <Badge
-                        variant={getCycleStatusColor(cycle.status) as 'default' | 'success' | 'warning' | 'danger' | 'info'}>
-                        {cycleStatusLabels[cycle.status]}
-                      </Badge>
+                      <StatusBadge status={cycle.status} domain={COMPENSATION_CYCLE_STATUS}/>
                     </div>
 
                     {cycle.description && (
@@ -617,10 +568,7 @@ export default function CompensationPage() {
                         </div>
                       </td>
                       <td className="p-4 text-center">
-                        <Badge
-                          variant={getRevisionStatusColor(revision.status) as 'default' | 'success' | 'warning' | 'danger' | 'info'}>
-                          {revisionStatusLabels[revision.status]}
-                        </Badge>
+                        <StatusBadge status={revision.status} domain={COMPENSATION_REVISION_STATUS}/>
                       </td>
                       <td className="p-4 text-right">
                         <Button
@@ -671,10 +619,7 @@ export default function CompensationPage() {
                               <h3 className="font-semibold text-[var(--text-primary)]">
                                 {revision.employeeName}
                               </h3>
-                              <Badge
-                                variant={getRevisionStatusColor(revision.status) as 'default' | 'success' | 'warning' | 'danger' | 'info'}>
-                                {revisionStatusLabels[revision.status]}
-                              </Badge>
+                              <StatusBadge status={revision.status} domain={COMPENSATION_REVISION_STATUS}/>
                             </div>
                             <p className="text-body-muted">
                               {revision.employeeCode} - {revision.department} - {revision.designation}
@@ -759,10 +704,7 @@ export default function CompensationPage() {
             {selectedCycle && (
               <div className="space-y-6">
                 <div className="flex items-center gap-2">
-                  <Badge
-                    variant={getCycleStatusColor(selectedCycle.status) as 'default' | 'success' | 'warning' | 'danger' | 'info'}>
-                    {cycleStatusLabels[selectedCycle.status]}
-                  </Badge>
+                  <StatusBadge status={selectedCycle.status} domain={COMPENSATION_CYCLE_STATUS}/>
                 </div>
 
                 {selectedCycle.description && (
@@ -897,12 +839,11 @@ export default function CompensationPage() {
                       {selectedRevision.designation}
                     </p>
                   </div>
-                  <Badge
-                    variant={getRevisionStatusColor(selectedRevision.status) as 'default' | 'success' | 'warning' | 'danger' | 'info'}
+                  <StatusBadge
+                    status={selectedRevision.status}
+                    domain={COMPENSATION_REVISION_STATUS}
                     className="ml-auto"
-                  >
-                    {revisionStatusLabels[selectedRevision.status]}
-                  </Badge>
+                  />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4 p-4 bg-[var(--bg-secondary)] rounded-lg">

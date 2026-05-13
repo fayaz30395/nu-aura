@@ -5,7 +5,8 @@ import {useQueryClient} from '@tanstack/react-query';
 import {useRouter} from 'next/navigation';
 import {AppLayout} from '@/components/layout/AppLayout';
 import {timeTrackingService} from '@/lib/services/hrms/time-tracking.service';
-import {TimeEntryStatus} from '@/lib/types/hrms/time-tracking';
+import {StatusBadge} from '@/components/ui/StatusBadge';
+import {TIME_ENTRY_STATUS} from '@/lib/status/vocabulary';
 import {
   useMyTimeTrackingEntries,
   useSubmitMultipleTimeEntries,
@@ -17,7 +18,6 @@ import {TablePagination,} from '@/components/ui';
 import {
   AlertCircle,
   CalendarDays,
-  CheckCircle,
   ChevronRight,
   Clock,
   DollarSign,
@@ -26,7 +26,6 @@ import {
   Plus,
   Send,
   Timer,
-  XCircle,
 } from 'lucide-react';
 import {createLogger} from '@/lib/utils/logger';
 import {Stat} from '@/components/ui/Stat';
@@ -78,32 +77,6 @@ export default function TimeTrackingPage() {
   }, [entries, summaryData]);
 
   if (!permissionsReady || !hasAccess) return null;
-
-  const getStatusConfig = (status: TimeEntryStatus) => {
-    const configs: Record<TimeEntryStatus, { bg: string; text: string; icon: typeof Clock }> = {
-      DRAFT: {
-        bg: 'bg-[var(--bg-secondary)]',
-        text: 'text-[var(--text-secondary)]',
-        icon: FileText,
-      },
-      SUBMITTED: {
-        bg: 'bg-warning-100 dark:bg-warning-900/30',
-        text: 'text-warning-700 dark:text-warning-400',
-        icon: Clock,
-      },
-      APPROVED: {
-        bg: 'bg-success-100 dark:bg-success-900/30',
-        text: 'text-success-700 dark:text-success-400',
-        icon: CheckCircle,
-      },
-      REJECTED: {
-        bg: 'bg-danger-100 dark:bg-danger-900/30',
-        text: 'text-danger-700 dark:text-danger-400',
-        icon: XCircle,
-      },
-    };
-    return configs[status] || configs.DRAFT;
-  };
 
   const handleSelectEntry = (id: string) => {
     setSelectedEntries((prev) =>
@@ -315,8 +288,6 @@ export default function TimeTrackingPage() {
                 </thead>
                 <tbody className="divide-y divide-surface-100 dark:divide-surface-800">
                 {entries.map((entry) => {
-                  const statusConfig = getStatusConfig(entry.status);
-                  const StatusIcon = statusConfig.icon;
                   const isDraft = entry.status === 'DRAFT';
 
                   return (
@@ -364,12 +335,7 @@ export default function TimeTrackingPage() {
                           </span>
                       </td>
                       <td className="px-6 py-4">
-                          <span
-                            className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-lg ${statusConfig.bg} ${statusConfig.text}`}
-                          >
-                            <StatusIcon className="h-3.5 w-3.5"/>
-                            {entry.status}
-                          </span>
+                        <StatusBadge status={entry.status} domain={TIME_ENTRY_STATUS}/>
                       </td>
                       <td className="px-6 py-4">
                         <button

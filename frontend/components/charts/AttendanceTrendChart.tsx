@@ -2,8 +2,10 @@
 
 import React from 'react';
 import {CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis} from 'recharts';
+import {LineChart as LineChartIcon} from 'lucide-react';
 import {TrendData} from '@/lib/types/core/analytics';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
+import {EmptyState} from '@/components/ui/EmptyState';
 
 interface AttendanceTrendChartProps {
   data: TrendData[];
@@ -53,10 +55,11 @@ export const AttendanceTrendChart: React.FC<AttendanceTrendChartProps> = ({data,
           </ResponsiveContainer>
         ) : (
           <div className="h-[300px] flex items-center justify-center">
-            <div className="text-center text-[var(--text-muted)]">
-              <p className="text-sm font-medium">No attendance data available</p>
-              <p className="text-xs mt-1">Attendance records will appear here once logged</p>
-            </div>
+            <EmptyState
+              icon={<LineChartIcon className="h-8 w-8"/>}
+              title="No attendance data available"
+              description="Attendance records will appear here once logged."
+            />
           </div>
         )}
       </CardContent>

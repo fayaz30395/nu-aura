@@ -10,7 +10,8 @@ import {
   startOfWeek,
   subWeeks,
 } from 'date-fns';
-import {RefreshCw} from 'lucide-react';
+import {Activity, RefreshCw} from 'lucide-react';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {feedService} from '@/lib/services/core/feed.service';
 import type {FeedItem, FeedItemType} from '@/lib/types/core/feed';
 import {logger} from '@/lib/utils/logger';
@@ -233,11 +234,11 @@ export function CompanyFeed({employeeId, refreshKey = 0}: CompanyFeedProps) {
           })}
         </div>
       ) : (
-        <div className="text-center py-6">
-          <p className="text-caption">
-            {activeFilter === 'ALL' ? 'No feed items yet.' : `No ${FEED_LABELS[activeFilter as FeedItemType]?.toLowerCase()} items.`}
-          </p>
-        </div>
+        <EmptyState
+          icon={<Activity className="h-8 w-8"/>}
+          title={activeFilter === 'ALL' ? 'No feed items yet' : `No ${FEED_LABELS[activeFilter as FeedItemType]?.toLowerCase()} items`}
+          description="Activity from across the company will appear here as it happens."
+        />
       )}
     </div>
   );

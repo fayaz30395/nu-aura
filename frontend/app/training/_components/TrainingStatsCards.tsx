@@ -3,6 +3,7 @@
 import React from 'react';
 import {Award, BookOpen, GraduationCap, PlayCircle} from 'lucide-react';
 import {Card, CardContent} from '@/components/ui';
+import {Stat} from '@/components/ui/Stat';
 
 export interface TrainingStats {
   total: number;
@@ -23,54 +24,42 @@ export function TrainingStatsCards({stats}: TrainingStatsCardsProps) {
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
       <Card className="skeuo-card">
         <CardContent className="p-4">
-          <div className="flex items-center gap-4">
-            <div className="rounded-lg bg-accent-100 p-4 dark:bg-accent-900">
-              <BookOpen className="h-6 w-6 text-accent-600 dark:text-accent-400"/>
-            </div>
-            <div>
-              <p className="text-body-secondary">My Enrollments</p>
-              <p className="text-xl font-bold text-[var(--text-primary)]">{stats.myEnrolled}</p>
-            </div>
-          </div>
+          <Stat
+            label="My Enrollments"
+            value={stats.myEnrolled}
+            tone="accent"
+            icon={<BookOpen className="h-3.5 w-3.5"/>}
+          />
         </CardContent>
       </Card>
       <Card className="skeuo-card">
         <CardContent className="p-4">
-          <div className="flex items-center gap-4">
-            <div className="rounded-lg bg-warning-100 p-4 dark:bg-warning-900">
-              <PlayCircle className="h-6 w-6 text-warning-600 dark:text-warning-400"/>
-            </div>
-            <div>
-              <p className="text-body-secondary">In Progress</p>
-              <p className="text-xl font-bold text-[var(--text-primary)]">{stats.myInProgress}</p>
-            </div>
-          </div>
+          <Stat
+            label="In Progress"
+            value={stats.myInProgress}
+            tone="warning"
+            icon={<PlayCircle className="h-3.5 w-3.5"/>}
+          />
         </CardContent>
       </Card>
       <Card className="skeuo-card">
         <CardContent className="p-4">
-          <div className="flex items-center gap-4">
-            <div className="rounded-lg bg-success-100 p-4 dark:bg-success-900">
-              <Award className="h-6 w-6 text-success-600 dark:text-success-400"/>
-            </div>
-            <div>
-              <p className="text-body-secondary">Completed</p>
-              <p className="text-xl font-bold text-[var(--text-primary)]">{stats.myCompleted}</p>
-            </div>
-          </div>
+          <Stat
+            label="Completed"
+            value={stats.myCompleted}
+            tone="success"
+            icon={<Award className="h-3.5 w-3.5"/>}
+          />
         </CardContent>
       </Card>
       <Card className="skeuo-card">
         <CardContent className="p-4">
-          <div className="flex items-center gap-4">
-            <div className="rounded-lg bg-accent-700 p-4 dark:bg-accent-800">
-              <GraduationCap className="h-6 w-6 text-white dark:text-accent-200"/>
-            </div>
-            <div>
-              <p className="text-body-secondary">Available Programs</p>
-              <p className="text-xl font-bold text-[var(--text-primary)]">{stats.total}</p>
-            </div>
-          </div>
+          <Stat
+            label="Available Programs"
+            value={stats.total}
+            tone="default"
+            icon={<GraduationCap className="h-3.5 w-3.5"/>}
+          />
         </CardContent>
       </Card>
     </div>

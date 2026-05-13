@@ -21,7 +21,9 @@ import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {CheckCircle, DollarSign, FileText, Plus, TrendingUp, UserPlus, Users,} from 'lucide-react';
-import type {ReferralRelationship, ReferralResponse, ReferralStatus} from '@/lib/types/hire/referral';
+import type {ReferralRelationship, ReferralResponse} from '@/lib/types/hire/referral';
+import {StatusBadge} from '@/components/ui/StatusBadge';
+import {REFERRAL_STATUS} from '@/lib/status/vocabulary';
 
 // ── Zod schema for submit referral form ──────────────────────
 const referralFormSchema = z.object({
@@ -42,78 +44,6 @@ const referralFormSchema = z.object({
 });
 
 type ReferralFormValues = z.infer<typeof referralFormSchema>;
-
-// ── Status configuration ─────────────────────────────────────
-const getStatusConfig = (status: ReferralStatus) => {
-  switch (status) {
-    case 'SUBMITTED':
-      return {
-        bg: 'bg-accent-100 dark:bg-accent-900/30',
-        text: 'text-accent-700 dark:text-accent-400',
-        label: 'Submitted'
-      };
-    case 'SCREENING':
-      return {
-        bg: 'bg-warning-100 dark:bg-warning-900/30',
-        text: 'text-warning-700 dark:text-warning-400',
-        label: 'Screening'
-      };
-    case 'INTERVIEW_SCHEDULED':
-      return {
-        bg: 'bg-accent-100 dark:bg-accent-900/30',
-        text: 'text-accent-700 dark:text-accent-400',
-        label: 'Interview Scheduled'
-      };
-    case 'INTERVIEW_COMPLETED':
-      return {
-        bg: 'bg-accent-100 dark:bg-accent-900/30',
-        text: 'text-accent-700 dark:text-accent-400',
-        label: 'Interview Done'
-      };
-    case 'OFFER_MADE':
-      return {
-        bg: 'bg-accent-100 dark:bg-accent-900/30',
-        text: 'text-accent-700 dark:text-accent-400',
-        label: 'Offer Made'
-      };
-    case 'OFFER_ACCEPTED':
-      return {
-        bg: 'bg-success-100 dark:bg-success-900/30',
-        text: 'text-success-700 dark:text-success-400',
-        label: 'Offer Accepted'
-      };
-    case 'JOINED':
-      return {
-        bg: 'bg-success-100 dark:bg-success-900/30',
-        text: 'text-success-700 dark:text-success-400',
-        label: 'Joined'
-      };
-    case 'REJECTED':
-      return {
-        bg: 'bg-danger-100 dark:bg-danger-900/30',
-        text: 'text-danger-700 dark:text-danger-400',
-        label: 'Rejected'
-      };
-    case 'WITHDRAWN':
-      return {
-        bg: 'bg-surface-100 dark:bg-surface-900/30',
-        text: 'text-surface-700 dark:text-surface-400',
-        label: 'Withdrawn'
-      };
-    case 'ON_HOLD':
-      return {
-        bg: 'bg-warning-100 dark:bg-warning-900/30',
-        text: 'text-warning-700 dark:text-warning-400',
-        label: 'On Hold'
-      };
-    default:
-      return {
-        bg: 'bg-surface-100 dark:bg-surface-900/30',
-        text: 'text-surface-700 dark:text-surface-400',
-        label: status
-      };
-  }
-};
 
 const RELATIONSHIP_LABELS: Record<ReferralRelationship, string> = {
   FORMER_COLLEAGUE: 'Former Colleague',
@@ -383,7 +313,6 @@ export default function ReferralsPage() {
                     </thead>
                     <tbody className="divide-y divide-[var(--border-main)]">
                     {myReferrals.map((referral: ReferralResponse) => {
-                      const statusConfig = getStatusConfig(referral.status);
                       return (
                         <tr
                           key={referral.id}
@@ -403,11 +332,7 @@ export default function ReferralsPage() {
                             {referral.jobTitle || '-'}
                           </td>
                           <td className="px-6 py-4">
-                              <span
-                                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusConfig.bg} ${statusConfig.text}`}
-                              >
-                                {statusConfig.label}
-                              </span>
+                            <StatusBadge status={referral.status} domain={REFERRAL_STATUS}/>
                           </td>
                           <td className="px-6 py-4 text-body-secondary">
                             {formatDate(referral.submittedDate)}
@@ -720,7 +645,6 @@ export default function ReferralsPage() {
                         </thead>
                         <tbody className="divide-y divide-[var(--border-main)]">
                         {allReferralsData.content.map((referral: ReferralResponse) => {
-                          const statusConfig = getStatusConfig(referral.status);
                           return (
                             <tr
                               key={referral.id}
@@ -743,11 +667,7 @@ export default function ReferralsPage() {
                                 {referral.jobTitle || '-'}
                               </td>
                               <td className="px-6 py-4">
-                                  <span
-                                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusConfig.bg} ${statusConfig.text}`}
-                                  >
-                                    {statusConfig.label}
-                                  </span>
+                                <StatusBadge status={referral.status} domain={REFERRAL_STATUS}/>
                               </td>
                               <td className="px-6 py-4 text-body-secondary">
                                 {formatDate(referral.submittedDate)}

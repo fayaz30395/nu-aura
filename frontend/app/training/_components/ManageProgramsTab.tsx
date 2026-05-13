@@ -25,6 +25,7 @@ import {Badge, Button, Card, CardContent, EmptyState, Input, Select} from '@/com
 import type {TrainingProgram} from '@/lib/types/grow/training';
 import {ProgramStatus, TrainingCategory} from '@/lib/types/grow/training';
 import {toBadgeVariant} from '@/lib/utils/type-guards';
+import {formatDate} from '@/lib/utils/format/date';
 
 const categoryOptions = [
   {value: TrainingCategory.TECHNICAL, label: 'Technical'},
@@ -228,8 +229,8 @@ export function ManageProgramsTab({
                       <div className="flex items-center gap-2 text-[var(--text-secondary)]">
                         <Calendar className="h-4 w-4"/>
                         <span>
-                          {new Date(program.startDate).toLocaleDateString()}
-                          {program.endDate && ` - ${new Date(program.endDate).toLocaleDateString()}`}
+                          {formatDate(program.startDate)}
+                          {program.endDate && ` - ${formatDate(program.endDate)}`}
                         </span>
                       </div>
                     )}

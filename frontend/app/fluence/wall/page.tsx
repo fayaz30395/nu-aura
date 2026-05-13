@@ -12,6 +12,7 @@ import {useActivityFeed, useBlogPosts, useWikiPages} from '@/lib/hooks/queries/u
 import {notifications} from '@mantine/notifications';
 import {BookOpen, Eye, Heart, Newspaper} from 'lucide-react';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {formatDateShort} from '@/lib/utils/format/date';
 
 interface TrendingItem {
   id: string;
@@ -178,10 +179,7 @@ function formatTimeAgo(dateString: string): string {
   if (hours < 24) return `${hours}h ago`;
   const days = Math.floor(hours / 24);
   if (days < 7) return `${days}d ago`;
-  return new Date(dateString).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-  });
+  return formatDateShort(dateString);
 }
 
 function WallPageContent() {

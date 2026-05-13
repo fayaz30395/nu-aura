@@ -25,6 +25,7 @@ import {
 } from '@/lib/hooks/queries/useFluence';
 
 import type {InstantiateTemplateRequest} from '@/lib/types/platform/fluence';
+import {formatDate} from '@/lib/utils/format/date';
 
 /** Form-level schema — excludes templateId which is injected at submit time */
 const instantiateFormSchema = instantiateTemplateSchema.pick({
@@ -162,7 +163,7 @@ export default function TemplateDetailPage() {
               </div>
               <div className="flex items-center gap-1">
                 <Calendar className="w-4 h-4"/>
-                {new Date(template.updatedAt).toLocaleDateString()}
+                {formatDate(template.updatedAt)}
               </div>
               <div className="flex items-center gap-1">
                 <Copy className="w-4 h-4"/>
@@ -228,7 +229,7 @@ export default function TemplateDetailPage() {
                 )}
                 <div className="row-between">
                   <span className="text-body-secondary">Created</span>
-                  <span className="text-sm">{new Date(template.createdAt).toLocaleDateString()}</span>
+                  <span className="text-sm">{formatDate(template.createdAt)}</span>
                 </div>
               </CardContent>
             </Card>

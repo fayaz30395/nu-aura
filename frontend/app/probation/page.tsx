@@ -26,48 +26,9 @@ import type {
   EvaluationType,
   ProbationPeriodResponse,
   ProbationRecommendation,
-  ProbationStatus,
 } from '@/lib/types/hrms/probation';
-
-// ── Status configuration ─────────────────────────────────────
-const getStatusConfig = (status: ProbationStatus) => {
-  switch (status) {
-    case 'ACTIVE':
-      return {bg: 'bg-accent-100 dark:bg-accent-900/30', text: 'text-accent-700 dark:text-accent-400', label: 'Active'};
-    case 'EXTENDED':
-      return {
-        bg: 'bg-warning-100 dark:bg-warning-900/30',
-        text: 'text-warning-700 dark:text-warning-400',
-        label: 'Extended'
-      };
-    case 'CONFIRMED':
-      return {
-        bg: 'bg-success-100 dark:bg-success-900/30',
-        text: 'text-success-700 dark:text-success-400',
-        label: 'Confirmed'
-      };
-    case 'FAILED':
-      return {bg: 'bg-danger-100 dark:bg-danger-900/30', text: 'text-danger-700 dark:text-danger-400', label: 'Failed'};
-    case 'TERMINATED':
-      return {
-        bg: 'bg-danger-100 dark:bg-danger-900/30',
-        text: 'text-danger-700 dark:text-danger-400',
-        label: 'Terminated'
-      };
-    case 'ON_HOLD':
-      return {
-        bg: 'bg-warning-100 dark:bg-warning-900/30',
-        text: 'text-warning-700 dark:text-warning-400',
-        label: 'On Hold'
-      };
-    default:
-      return {
-        bg: 'bg-surface-100 dark:bg-surface-900/30',
-        text: 'text-surface-700 dark:text-surface-400',
-        label: status
-      };
-  }
-};
+import {StatusBadge} from '@/components/ui/StatusBadge';
+import {PROBATION_STATUS} from '@/lib/status/vocabulary';
 
 // ── Evaluation form schema ───────────────────────────────────
 const evaluationFormSchema = z.object({
@@ -281,7 +242,6 @@ export default function ProbationPage() {
           </thead>
           <tbody className="divide-y divide-[var(--border-main)]">
           {records.map((probation) => {
-            const statusConfig = getStatusConfig(probation.status);
             return (
               <tr
                 key={probation.id}
@@ -313,16 +273,14 @@ export default function ProbationPage() {
                   </div>
                 </td>
                 <td className="px-6 py-4">
-                    <span
-                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusConfig.bg} ${statusConfig.text}`}
-                    >
-                      {statusConfig.label}
-                    </span>
+                  <StatusBadge status={probation.status} domain={PROBATION_STATUS}/>
                   {probation.isOverdue && (
-                    <span
-                      className="ml-1 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-danger-100 text-danger-700 dark:bg-danger-900/30 dark:text-danger-400">
-                        Overdue
-                      </span>
+                    <StatusBadge
+                      label="Overdue"
+                      tone="danger"
+                      iconHidden
+                      className="ml-1"
+                    />
                   )}
                 </td>
                 <td className="px-6 py-4">

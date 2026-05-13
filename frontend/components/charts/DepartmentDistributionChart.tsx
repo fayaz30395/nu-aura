@@ -2,8 +2,10 @@
 
 import React from 'react';
 import {Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis} from 'recharts';
+import {BarChart3} from 'lucide-react';
 import {DepartmentDistribution} from '@/lib/types/core/analytics';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
+import {EmptyState} from '@/components/ui/EmptyState';
 
 interface DepartmentDistributionChartProps {
   data: DepartmentDistribution[];
@@ -53,10 +55,11 @@ export const DepartmentDistributionChart: React.FC<DepartmentDistributionChartPr
           </ResponsiveContainer>
         ) : (
           <div className="h-[300px] flex items-center justify-center">
-            <div className="text-center text-[var(--text-muted)]">
-              <p className="text-sm font-medium">No department data available</p>
-              <p className="text-xs mt-1">Department distribution will appear here once employees are assigned</p>
-            </div>
+            <EmptyState
+              icon={<BarChart3 className="h-8 w-8"/>}
+              title="No department data available"
+              description="Department distribution will appear here once employees are assigned."
+            />
           </div>
         )}
       </CardContent>

@@ -27,6 +27,7 @@ import {useAuth} from '@/lib/hooks/useAuth';
 import {createLogger} from '@/lib/utils/logger';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
+import {formatDate} from '@/lib/utils/format/date';
 
 const log = createLogger('ReviewsPage');
 
@@ -355,7 +356,7 @@ export default function PerformanceReviewsPage() {
                       </span>
                     </div>
                     <div className="text-body-secondary">
-                      Period: {review.reviewPeriodStart ? new Date(review.reviewPeriodStart).toLocaleDateString() : 'N/A'} - {review.reviewPeriodEnd ? new Date(review.reviewPeriodEnd).toLocaleDateString() : 'N/A'}
+                      Period: {review.reviewPeriodStart ? formatDate(review.reviewPeriodStart) : 'N/A'} - {review.reviewPeriodEnd ? formatDate(review.reviewPeriodEnd) : 'N/A'}
                     </div>
                   </div>
                   <div className="text-right">

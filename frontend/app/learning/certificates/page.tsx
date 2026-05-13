@@ -27,6 +27,7 @@ import type {Certificate} from '@/lib/services/grow/lms.service';
 import {safeWindowOpen} from '@/lib/utils/url';
 import {StatusBadge} from '@/components/ui/StatusBadge';
 import {LIFECYCLE_STATUS} from '@/lib/status/vocabulary';
+import {formatDate} from '@/lib/utils/format/date';
 
 export default function CertificateGalleryPage() {
   const router = useRouter();
@@ -124,14 +125,6 @@ export default function CertificateGalleryPage() {
   const getStatusBadge = (isActive: boolean) => (
     <StatusBadge status={isActive ? 'ACTIVE' : 'EXPIRED'} domain={LIFECYCLE_STATUS}/>
   );
-
-  const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
-  };
 
   return (
     <AppLayout activeMenuItem="learning">

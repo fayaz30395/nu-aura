@@ -25,6 +25,7 @@ import {Permissions} from '@/lib/hooks/usePermissions';
 import {apiClient} from '@/lib/api/client';
 import {useToast} from '@/components/notifications/ToastProvider';
 import {useCourseDetail, useEnrollCourse, useMyEnrollments} from '@/lib/hooks/queries/useLearning';
+import {formatDate} from '@/lib/utils/format/date';
 
 interface Quiz {
   id: string;
@@ -223,7 +224,7 @@ export default function CourseDetailPage() {
                   <p className="text-caption">
                     Status: <span
                     className="font-medium capitalize text-[var(--text-primary)]">{enrollment?.status ? enrollment.status.toLowerCase().replace('_', ' ') : '-'}</span>
-                    {enrollment?.completedAt && ` · Completed ${new Date(enrollment.completedAt).toLocaleDateString()}`}
+                    {enrollment?.completedAt && ` · Completed ${formatDate(enrollment.completedAt)}`}
                   </p>
                 </div>
 

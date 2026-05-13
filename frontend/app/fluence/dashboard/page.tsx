@@ -8,6 +8,7 @@ import {BookOpen, Clock, FileText, Pen, Plus, TrendingUp,} from 'lucide-react';
 import {AppLayout} from '@/components/layout';
 import {Button} from '@/components/ui/Button';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {useBlogPosts, useFluenceTemplates, useWikiPages,} from '@/lib/hooks/queries/useFluence';
 import {ContentGrid, type ContentItem} from '@/components/fluence/ContentGrid';
 import {card, iconSize, layout, motion as dsMotion, typography} from '@/lib/theme/design-system';
@@ -200,9 +201,11 @@ function FluenceDashboardPageContent() {
               </CardHeader>
               <CardContent className="space-y-4 pt-4">
                 {recentWiki.length === 0 ? (
-                  <p className={typography.bodySecondary}>
-                    No wiki pages yet
-                  </p>
+                  <EmptyState
+                    icon={<BookOpen className="h-8 w-8"/>}
+                    title="No wiki pages yet"
+                    description="Create your first wiki page to start building team knowledge."
+                  />
                 ) : (
                   recentWiki.map((page) => (
                     <motion.button
@@ -245,9 +248,11 @@ function FluenceDashboardPageContent() {
               </CardHeader>
               <CardContent className="space-y-4 pt-4">
                 {recentBlogs.length === 0 ? (
-                  <p className={typography.bodySecondary}>
-                    No blog posts yet
-                  </p>
+                  <EmptyState
+                    icon={<Pen className="h-8 w-8"/>}
+                    title="No blog posts yet"
+                    description="Share updates, ideas, and stories with the team."
+                  />
                 ) : (
                   recentBlogs.map((post) => (
                     <motion.button
@@ -290,9 +295,11 @@ function FluenceDashboardPageContent() {
               </CardHeader>
               <CardContent className="space-y-4 pt-4">
                 {templates.length === 0 ? (
-                  <p className={typography.bodySecondary}>
-                    No templates yet
-                  </p>
+                  <EmptyState
+                    icon={<FileText className="h-8 w-8"/>}
+                    title="No templates yet"
+                    description="Templates speed up creating consistent wiki pages and blog posts."
+                  />
                 ) : (
                   templates.map((template) => (
                     <motion.button

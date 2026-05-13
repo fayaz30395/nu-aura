@@ -21,7 +21,7 @@ import {useAuth} from '@/lib/hooks/useAuth';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {CreateExpenseClaimRequest, CurrencyCode, ExpenseCategory} from '@/lib/types/hrms/expense';
-import {ConfirmDialog, EmptyState, Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui';
+import {ConfirmDialog, EmptyState} from '@/components/ui';
 import {StatusBadge} from '@/components/ui/StatusBadge';
 import {EXPENSE_STATUS} from '@/lib/status/vocabulary';
 import {ExpenseAnalytics} from '@/components/expenses';
@@ -92,7 +92,6 @@ export default function ExpenseClaims() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showRejectConfirm, setShowRejectConfirm] = useState(false);
   const [selectedClaimForAction, setSelectedClaimForAction] = useState<string | null>(null);
-  const [rejectReason, setRejectReason] = useState('');
 
   // Filters
   const [showFilters, setShowFilters] = useState(false);
@@ -317,19 +316,18 @@ export default function ExpenseClaims() {
 
   const handleRejectStart = (claimId: string) => {
     setSelectedClaimForAction(claimId);
-    setRejectReason('');
     setShowRejectConfirm(true);
   };
 
-  const handleRejectConfirm = async () => {
-    if (!user?.employeeId || !selectedClaimForAction || !rejectReason.trim()) return;
+  const handleRejectConfirm = async (reason?: string) => {
+    const trimmed = (reason ?? '').trim();
+    if (!user?.employeeId || !selectedClaimForAction || !trimmed) return;
 
     try {
-      await rejectMutation.mutateAsync({claimId: selectedClaimForAction, reason: rejectReason});
+      await rejectMutation.mutateAsync({claimId: selectedClaimForAction, reason: trimmed});
       showNotification('Expense claim rejected', 'success');
       setShowRejectConfirm(false);
       setSelectedClaimForAction(null);
-      setRejectReason('');
     } catch (err) {
       log.error('Error rejecting claim:', err);
       showNotification('Failed to reject expense claim', 'error');
@@ -1015,60 +1013,25 @@ export default function ExpenseClaims() {
         />
 
         {/* Reject Confirmation Dialog */}
-        <Modal
+        <ConfirmDialog
           isOpen={showRejectConfirm}
           onClose={() => {
             setShowRejectConfirm(false);
             setSelectedClaimForAction(null);
-            setRejectReason('');
           }}
-          size="md"
-        >
-          <ModalHeader onClose={() => {
-            setShowRejectConfirm(false);
-            setSelectedClaimForAction(null);
-            setRejectReason('');
-          }}>
-            Reject Expense Claim
-          </ModalHeader>
-          <ModalBody>
-            <p className="text-[var(--text-secondary)] mb-4">
-              Please provide a reason for rejecting this expense claim.
-            </p>
-            <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                Rejection Reason <span className="text-danger-500">*</span>
-              </label>
-              <textarea
-                value={rejectReason}
-                onChange={(e) => setRejectReason(e.target.value)}
-                rows={3}
-                className="input-aura"
-                placeholder="Enter reason for rejection..."
-              />
-            </div>
-          </ModalBody>
-          <ModalFooter>
-            <button
-              onClick={() => {
-                setShowRejectConfirm(false);
-                setSelectedClaimForAction(null);
-                setRejectReason('');
-              }}
-              className="px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleRejectConfirm}
-              disabled={!rejectReason.trim() || rejectMutation.isPending}
-              className="px-4 py-2 bg-danger-600 text-white rounded-lg hover:bg-danger-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-            >
-              <XCircle className="w-4 h-4"/>
-              {rejectMutation.isPending ? 'Rejecting...' : 'Reject'}
-            </button>
-          </ModalFooter>
-        </Modal>
+          onConfirm={handleRejectConfirm}
+          title="Reject Expense Claim"
+          message="Please provide a reason for rejecting this expense claim."
+          confirmText="Reject"
+          cancelText="Cancel"
+          type="danger"
+          loading={rejectMutation.isPending}
+          reason={{
+            label: 'Rejection reason',
+            placeholder: 'Enter reason for rejection...',
+            required: true,
+          }}
+        />
       </div>
     </AppLayout>
   );

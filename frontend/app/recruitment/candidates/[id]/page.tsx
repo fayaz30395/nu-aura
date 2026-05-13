@@ -10,6 +10,7 @@ import {useCandidate} from '@/lib/hooks/queries/useRecruitment';
 import {getStageColor, getStatusColor} from '../utils';
 import {AlertCircle, ArrowLeft, Briefcase, Building, Calendar, Edit2, ExternalLink, Mail, MapPin, Phone, User,} from 'lucide-react';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {formatDate as canonicalFormatDate} from '@/lib/utils/format/date';
 
 export default function CandidateDetailPage() {
   const router = useRouter();
@@ -20,11 +21,7 @@ export default function CandidateDetailPage() {
 
   const formatDate = (date?: string) => {
     if (!date) return '-';
-    return new Date(date).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
+    return canonicalFormatDate(date);
   };
 
   if (isLoading) {

@@ -2,8 +2,10 @@
 
 import React from 'react';
 import {Area, AreaChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis} from 'recharts';
+import {TrendingUp} from 'lucide-react';
 import {TrendData} from '@/lib/types/core/analytics';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
+import {EmptyState} from '@/components/ui/EmptyState';
 
 interface HeadcountTrendChartProps {
   data: TrendData[];
@@ -59,10 +61,11 @@ export const HeadcountTrendChart: React.FC<HeadcountTrendChartProps> = ({data, c
           </ResponsiveContainer>
         ) : (
           <div className="h-[300px] flex items-center justify-center">
-            <div className="text-center text-[var(--text-muted)]">
-              <p className="text-sm font-medium">No headcount data available</p>
-              <p className="text-xs mt-1">Employee count history will appear here</p>
-            </div>
+            <EmptyState
+              icon={<TrendingUp className="h-8 w-8"/>}
+              title="No headcount data available"
+              description="Employee count history will appear here."
+            />
           </div>
         )}
       </CardContent>

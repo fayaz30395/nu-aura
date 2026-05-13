@@ -2,8 +2,10 @@
 
 import React from 'react';
 import {Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis} from 'recharts';
+import {BarChart3} from 'lucide-react';
 import {PayrollTrendData} from '@/lib/types/core/analytics';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {formatCurrency} from '@/lib/utils';
 
 interface PayrollCostTrendChartProps {
@@ -51,10 +53,11 @@ export const PayrollCostTrendChart: React.FC<PayrollCostTrendChartProps> = ({dat
           </ResponsiveContainer>
         ) : (
           <div className="h-[300px] flex items-center justify-center">
-            <div className="text-center text-[var(--text-muted)]">
-              <p className="text-sm font-medium">No payroll data available</p>
-              <p className="text-xs mt-1">Payroll history will appear here once processed</p>
-            </div>
+            <EmptyState
+              icon={<BarChart3 className="h-8 w-8"/>}
+              title="No payroll data available"
+              description="Payroll history will appear here once processed."
+            />
           </div>
         )}
       </CardContent>

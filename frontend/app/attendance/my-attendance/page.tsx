@@ -55,9 +55,8 @@ function formatHoursFromMinutes(minutes: number | undefined): string {
 }
 
 // ─── Helper: format time from ISO string ───────────────────────────
-// FOLLOW-UP: `use24h` toggle now no-op — canonical NU-AURA format is 12-hour.
-// Remove the toggle UI (line ~566) and the use24h state after Phase 5.
-function formatTime(isoString: string | undefined, _use24h: boolean): string {
+// Canonical NU-AURA format is 12-hour (enforced by date-canonicalizer).
+function formatTime(isoString: string | undefined): string {
   if (!isoString) return '--:--';
   try {
     return canonicalFormatTime(isoString);
@@ -157,7 +156,6 @@ export default function MyAttendancePage() {
   const router = useRouter();
   const {hasPermission, isReady: permReady} = usePermissions();
   const [activeTab, setActiveTab] = useState<TabView>('log');
-  const [use24h, setUse24h] = useState(true);
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [periodFilter, setPeriodFilter] = useState<PeriodFilter>('30days');
@@ -365,8 +363,8 @@ export default function MyAttendancePage() {
     const rows = sortedRecords.map((r) => [
       r.attendanceDate,
       r.status,
-      r.checkInTime ? formatTime(r.checkInTime, true) : '',
-      r.checkOutTime ? formatTime(r.checkOutTime, true) : '',
+      r.checkInTime ? formatTime(r.checkInTime) : '',
+      r.checkOutTime ? formatTime(r.checkOutTime) : '',
       formatDuration(r.workDurationMinutes),
       formatHoursFromMinutes(r.workDurationMinutes),
     ]);
@@ -522,7 +520,7 @@ export default function MyAttendancePage() {
                     hour: '2-digit',
                     minute: '2-digit',
                     second: '2-digit',
-                    hour12: !use24h,
+                    hour12: true,
                   })}
                 </p>
                 <p className="text-caption mt-1">
@@ -558,25 +556,6 @@ export default function MyAttendancePage() {
               <CardTitle className="text-section-title text-[var(--text-primary)]">
                 Logs &amp; Requests
               </CardTitle>
-              {/* 24h toggle */}
-              <div className="flex items-center gap-2">
-                <span className="text-caption">24 hour format</span>
-                <button
-                  onClick={() => setUse24h(!use24h)}
-                  className={`
-                    cursor-pointer relative w-10 h-5 rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2
-                    ${use24h ? 'bg-accent-700' : 'bg-[var(--border-main)]'}
-                  `}
-                  aria-label={`Toggle 24 hour format (currently ${use24h ? 'on' : 'off'})`}
-                >
-                  <div
-                    className={`
-                      absolute top-0.5 w-4 h-4 rounded-full bg-[var(--bg-card)] shadow transition-transform
-                      ${use24h ? 'translate-x-5' : 'translate-x-0.5'}
-                    `}
-                  />
-                </button>
-              </div>
             </div>
 
             {/* Tabs */}

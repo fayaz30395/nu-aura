@@ -29,6 +29,7 @@ import {
   Users,
   XCircle,
 } from 'lucide-react';
+import {formatDate as canonicalFormatDate} from '@/lib/utils/format/date';
 
 const containerVariants = {
   hidden: {opacity: 0},
@@ -63,9 +64,7 @@ function getInvoiceVariant(status: AgencyInvoiceStatus): 'success' | 'warning' |
 
 function formatDate(dateString?: string): string {
   if (!dateString) return '-';
-  return new Date(dateString).toLocaleDateString('en-US', {
-    month: 'short', day: 'numeric', year: 'numeric',
-  });
+  return canonicalFormatDate(dateString);
 }
 
 function formatCurrency(amount?: number, currency: string = 'INR'): string {

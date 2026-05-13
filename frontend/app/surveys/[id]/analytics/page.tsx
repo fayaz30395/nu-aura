@@ -7,6 +7,7 @@ import {motion} from 'framer-motion';
 import {ArrowLeft, BarChart3, MessageSquare, PieChart as PieChartIcon, TrendingUp, Users,} from 'lucide-react';
 import {AppLayout} from '@/components/layout/AppLayout';
 import {Button, Card, CardContent,} from '@/components/ui';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {useSurveyDetail} from '@/lib/hooks/queries/useSurveys';
@@ -258,14 +259,12 @@ export default function SurveyAnalyticsPage() {
           {!isLoading &&
             (!analytics?.questionStats || analytics.questionStats.length === 0) && (
               <Card className="card-aura">
-                <CardContent className="flex flex-col items-center justify-center py-12">
-                  <BarChart3 className="h-12 w-12 text-[var(--text-muted)]"/>
-                  <p className="mt-4 text-lg font-medium text-[var(--text-primary)]">
-                    No analytics data yet
-                  </p>
-                  <p className={typography.bodySecondary}>
-                    Analytics will appear once responses are collected
-                  </p>
+                <CardContent>
+                  <EmptyState
+                    icon={<BarChart3 className="h-8 w-8"/>}
+                    title="No analytics data yet"
+                    description="Analytics charts and insights will appear once responses are collected."
+                  />
                 </CardContent>
               </Card>
             )}

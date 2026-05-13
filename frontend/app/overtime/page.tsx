@@ -21,6 +21,8 @@ import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {CheckCircle, Clock, Plus, Timer,} from 'lucide-react';
 import type {OvertimeRecordResponse} from '@/lib/types/hrms/overtime';
+import {StatusBadge} from '@/components/ui/StatusBadge';
+import {OVERTIME_STATUS} from '@/lib/status/vocabulary';
 
 // ── Zod schema for overtime request form ─────────────────────
 const overtimeFormSchema = z.object({
@@ -33,38 +35,6 @@ const overtimeFormSchema = z.object({
 });
 
 type OvertimeFormValues = z.infer<typeof overtimeFormSchema>;
-
-// ── Status config ────────────────────────────────────────────
-const getStatusConfig = (status: string) => {
-  switch (status) {
-    case 'APPROVED':
-      return {
-        bg: 'bg-success-100 dark:bg-success-900/30',
-        text: 'text-success-700 dark:text-success-400',
-        label: 'Approved'
-      };
-    case 'PENDING':
-      return {
-        bg: 'bg-warning-100 dark:bg-warning-900/30',
-        text: 'text-warning-700 dark:text-warning-400',
-        label: 'Pending'
-      };
-    case 'REJECTED':
-      return {
-        bg: 'bg-danger-100 dark:bg-danger-900/30',
-        text: 'text-danger-700 dark:text-danger-400',
-        label: 'Rejected'
-      };
-    case 'CANCELLED':
-      return {
-        bg: 'bg-surface-100 dark:bg-surface-900/30',
-        text: 'text-surface-700 dark:text-surface-400',
-        label: 'Cancelled'
-      };
-    default:
-      return {bg: 'bg-accent-100 dark:bg-accent-900/30', text: 'text-accent-700 dark:text-accent-400', label: status};
-  }
-};
 
 const OVERTIME_TYPE_LABELS: Record<string, string> = {
   REGULAR: 'Regular',
@@ -245,7 +215,6 @@ export default function OvertimePage() {
           </thead>
           <tbody className="divide-y divide-[var(--border-main)]">
           {records.map((record) => {
-            const statusConfig = getStatusConfig(record.status);
             return (
               <tr
                 key={record.id}
@@ -283,11 +252,7 @@ export default function OvertimePage() {
                   {record.multiplier ? `${record.multiplier}x` : '-'}
                 </td>
                 <td className="px-6 py-4 text-center">
-                    <span
-                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusConfig.bg} ${statusConfig.text}`}
-                    >
-                      {statusConfig.label}
-                    </span>
+                  <StatusBadge status={record.status} domain={OVERTIME_STATUS}/>
                 </td>
                 {showActions && record.status === 'PENDING' && (
                   <td className="px-6 py-4">

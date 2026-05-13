@@ -37,6 +37,7 @@ import {
   Select,
   Textarea,
 } from '@/components/ui';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {useLaunchSurvey, useSurveyDetail} from '@/lib/hooks/queries/useSurveys';
@@ -44,6 +45,7 @@ import {useAddQuestion, useDeleteQuestion, useSurveyQuestions,} from '@/lib/hook
 import {QuestionType, SurveyStatus} from '@/lib/types/grow/survey';
 import {toBadgeVariant} from '@/lib/utils/type-guards';
 import {iconSize, motion as dsMotion, typography,} from '@/lib/theme/design-system';
+import {formatDate} from '@/lib/utils/format/date';
 
 // ─── Question type metadata ────────────────────────────────────────────────
 const questionTypeOptions = [
@@ -188,9 +190,9 @@ export default function SurveyDetailPage() {
                 <p className={typography.bodySecondary}>
                   {survey.surveyCode}
                   {survey.startDate &&
-                    ` | ${new Date(survey.startDate).toLocaleDateString()}`}
+                    ` | ${formatDate(survey.startDate)}`}
                   {survey.endDate &&
-                    ` - ${new Date(survey.endDate).toLocaleDateString()}`}
+                    ` - ${formatDate(survey.endDate)}`}
                 </p>
               )}
             </div>
@@ -304,15 +306,11 @@ export default function SurveyDetailPage() {
                 ))}
               </div>
             ) : !questions || questions.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-12">
-                <Type className="h-12 w-12 text-[var(--text-muted)]"/>
-                <p className="mt-4 text-lg font-medium text-[var(--text-primary)]">
-                  No questions yet
-                </p>
-                <p className={typography.bodySecondary}>
-                  Add questions to build your survey
-                </p>
-              </div>
+              <EmptyState
+                icon={<Type className="h-8 w-8"/>}
+                title="No questions yet"
+                description="Add questions to build your survey and start collecting responses."
+              />
             ) : (
               <motion.div className="space-y-2" {...dsMotion.staggerContainer}>
                 {questions

@@ -11,6 +11,7 @@ import {useFluenceFavorites, useMyBlogPosts, useMyWikiPages,} from '@/lib/hooks/
 import type {BlogPost, FluenceFavorite, WikiPage} from '@/lib/types/platform/fluence';
 import {card, iconSize, layout, motion as dsMotion, typography} from '@/lib/theme/design-system';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {formatDate} from '@/lib/utils/format/date';
 
 type TabType = 'wiki' | 'blog' | 'favorites';
 
@@ -274,7 +275,7 @@ function WikiPageList({
             title={page.title}
             status={page.status}
             metadata={[
-              {label: new Date(page.updatedAt).toLocaleDateString(), icon: Calendar},
+              {label: formatDate(page.updatedAt), icon: Calendar},
               {label: `${page.viewCount || 0}`, icon: Eye},
               {label: `${page.likeCount || 0}`, icon: Heart},
             ]}
@@ -325,7 +326,7 @@ function BlogPostList({
             subtitle={post.excerpt}
             status={post.status}
             metadata={[
-              {label: new Date(post.publishedAt || post.updatedAt).toLocaleDateString(), icon: Calendar},
+              {label: formatDate(post.publishedAt || post.updatedAt), icon: Calendar},
               {label: `${post.viewCount || 0}`, icon: Eye},
               {label: `${post.likeCount || 0}`, icon: Heart},
               {label: `${post.commentCount || 0}`, icon: MessageCircle},
@@ -397,7 +398,7 @@ function FavoritesList({
               typeColor={typeColor}
               title={fav.contentTitle}
               contentType={fav.contentType}
-              dateAdded={new Date(fav.createdAt).toLocaleDateString()}
+              dateAdded={formatDate(fav.createdAt)}
               onClick={() => onNavigate(fav)}
             />
           </motion.div>

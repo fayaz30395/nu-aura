@@ -28,6 +28,7 @@ import {REVIEW_STATUS} from '@/lib/status/vocabulary';
 import {useOnboardingProcesses} from '@/lib/hooks/queries/useOnboarding';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
+import {formatDate} from '@/lib/utils/format/date';
 import {Skeleton} from '@/components/ui/Skeleton';
 
 export default function OnboardingPage() {
@@ -238,7 +239,7 @@ export default function OnboardingPage() {
                               className="flex items-center gap-4 mt-1 text-xs font-black uppercase tracking-widest text-[var(--text-muted)]">
                                                             <span className="flex items-center gap-1.5">
                                                                 <Calendar className="h-3.5 w-3.5"/>
-                                                                Starts {new Date(process.startDate).toLocaleDateString()}
+                                                                Starts {formatDate(process.startDate)}
                                                             </span>
                               {process.assignedBuddyName && (
                                 <span className="flex items-center gap-1.5 text-accent-500">

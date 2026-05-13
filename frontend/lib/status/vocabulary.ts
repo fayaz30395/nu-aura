@@ -251,6 +251,93 @@ export const WELLNESS_FLAG: Record<string, StatusMeta> = {
   TEAM: {label: 'Team', tone: 'info', icon: Users},
 };
 
+export const LOAN_STATUS: Record<string, StatusMeta> = {
+  PENDING: PENDING_META,
+  APPROVED: APPROVED_META,
+  REJECTED: REJECTED_META,
+  DISBURSED: {label: 'Disbursed', tone: 'success', icon: Send},
+  ACTIVE: ACTIVE_META,
+  CLOSED: {label: 'Closed', tone: 'neutral', icon: Ban},
+  DEFAULTED: {label: 'Defaulted', tone: 'danger', icon: AlertCircle},
+  CANCELLED: CANCELLED_META,
+};
+
+export const ASSET_STATUS: Record<string, StatusMeta> = {
+  AVAILABLE: {label: 'Available', tone: 'success', icon: CheckCircle},
+  ASSIGNED: {label: 'Assigned', tone: 'info', icon: Send},
+  IN_MAINTENANCE: {label: 'In Maintenance', tone: 'warning', icon: AlertTriangle},
+  RETIRED: {label: 'Retired', tone: 'neutral', icon: Ban},
+  LOST: {label: 'Lost', tone: 'danger', icon: AlertCircle},
+};
+
+export const CONTRACT_STATUS: Record<string, StatusMeta> = {
+  DRAFT: DRAFT_META,
+  PENDING_REVIEW: {label: 'Pending Review', tone: 'warning', icon: Clock},
+  PENDING_SIGNATURES: {label: 'Pending Signatures', tone: 'warning', icon: Clock},
+  ACTIVE: ACTIVE_META,
+  EXPIRED: EXPIRED_META,
+  TERMINATED: {label: 'Terminated', tone: 'danger', icon: Ban},
+  RENEWED: {label: 'Renewed', tone: 'success', icon: CheckCircle},
+};
+
+export const PROBATION_STATUS: Record<string, StatusMeta> = {
+  ACTIVE: ACTIVE_META,
+  EXTENDED: {label: 'Extended', tone: 'warning', icon: Clock},
+  CONFIRMED: {label: 'Confirmed', tone: 'success', icon: CheckCircle},
+  FAILED: {label: 'Failed', tone: 'danger', icon: XCircle},
+  TERMINATED: {label: 'Terminated', tone: 'danger', icon: Ban},
+  ON_HOLD: ON_HOLD_META,
+};
+
+export const OVERTIME_STATUS: Record<string, StatusMeta> = {
+  PENDING: PENDING_META,
+  APPROVED: APPROVED_META,
+  REJECTED: REJECTED_META,
+  CANCELLED: CANCELLED_META,
+};
+
+export const TIME_ENTRY_STATUS: Record<string, StatusMeta> = {
+  DRAFT: DRAFT_META,
+  SUBMITTED: SUBMITTED_META,
+  APPROVED: APPROVED_META,
+  REJECTED: REJECTED_META,
+};
+
+export const REFERRAL_STATUS: Record<string, StatusMeta> = {
+  SUBMITTED: SUBMITTED_META,
+  SCREENING: {label: 'Screening', tone: 'warning', icon: Clock},
+  INTERVIEW_SCHEDULED: {label: 'Interview Scheduled', tone: 'info', icon: Clock},
+  INTERVIEW_COMPLETED: {label: 'Interview Done', tone: 'info', icon: CheckCircle},
+  OFFER_MADE: {label: 'Offer Made', tone: 'info', icon: Send},
+  OFFER_ACCEPTED: {label: 'Offer Accepted', tone: 'success', icon: CheckCircle},
+  JOINED: {label: 'Joined', tone: 'success', icon: CheckCircle},
+  REJECTED: REJECTED_META,
+  WITHDRAWN: {label: 'Withdrawn', tone: 'neutral', icon: Ban},
+  ON_HOLD: ON_HOLD_META,
+};
+
+export const COMPENSATION_CYCLE_STATUS: Record<string, StatusMeta> = {
+  DRAFT: DRAFT_META,
+  PLANNING: {label: 'Planning', tone: 'info', icon: Clock},
+  IN_PROGRESS: IN_PROGRESS_META,
+  REVIEW: {label: 'Review', tone: 'info', icon: Clock},
+  APPROVAL: {label: 'Approval', tone: 'warning', icon: Clock},
+  APPROVED: APPROVED_META,
+  COMPLETED: COMPLETED_META,
+  CANCELLED: CANCELLED_META,
+};
+
+export const COMPENSATION_REVISION_STATUS: Record<string, StatusMeta> = {
+  DRAFT: DRAFT_META,
+  PENDING_REVIEW: {label: 'Pending Review', tone: 'warning', icon: Clock},
+  REVIEWED: {label: 'Reviewed', tone: 'info', icon: CheckCircle},
+  PENDING_APPROVAL: {label: 'Pending Approval', tone: 'warning', icon: Clock},
+  APPROVED: APPROVED_META,
+  REJECTED: REJECTED_META,
+  CANCELLED: CANCELLED_META,
+  APPLIED: {label: 'Applied', tone: 'success', icon: CheckCircle},
+};
+
 /* ── Resolver ───────────────────────────────────────────────────────── */
 
 /**
