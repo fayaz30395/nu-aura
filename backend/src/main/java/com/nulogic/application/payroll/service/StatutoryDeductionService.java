@@ -2,6 +2,8 @@ package com.nulogic.application.payroll.service;
 
 import com.nulogic.application.payroll.dto.StatutoryDeductions;
 import com.nulogic.application.statutory.service.LWFService;
+import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.employee.Employee;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -90,6 +92,7 @@ public class StatutoryDeductionService {
     private static final BigDecimal MH_PT_1 = new BigDecimal("175");
     private static final BigDecimal MH_PT_2 = new BigDecimal("200");
     private final LWFService lwfService;
+    private final TenantTimeService tenantTimeService;
 
     /**
      * F1.1: When true (default), employee PF is capped at the ₹15,000 wage ceiling
@@ -115,9 +118,9 @@ public class StatutoryDeductionService {
             BigDecimal grossSalary,
             String state) {
 
-        // S11-M Wave-10 P0-1: tenant-local civil day (IST fallback) so payroll month resolves correctly.
-        // TODO(S11-M): inject TenantTimeService and use tenantTimeService.today(tenantId).
-        LocalDate now = LocalDate.now(java.time.ZoneId.of("Asia/Kolkata"));
+        // S12-B: tenant-local civil day so payroll month resolves correctly — resolved via TenantTimeService.
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        LocalDate now = tenantTimeService.today(tenantId);
         return calculate(employeeId, basicSalary, grossSalary, state,
                 now.getMonthValue(), now.getYear());
     }

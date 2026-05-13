@@ -16,10 +16,10 @@ import {
   ToggleLeft,
   ToggleRight,
   Trash2,
-  X,
 } from 'lucide-react';
 import {AdminPageContent} from '@/components/layout';
 import {Button} from '@/components/ui/Button';
+import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
 import {useToast} from '@/components/notifications/ToastProvider';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
@@ -363,23 +363,12 @@ export default function DepartmentsPage() {
         )}
 
         {/* Create / Edit Modal */}
-        {showModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-            <div className="w-full max-w-lg skeuo-card p-6 shadow-[var(--shadow-elevated)]">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-lg font-bold">
-                  {editTarget ? 'Edit Department' : 'New Department'}
-                </h2>
-                <button
-                  aria-label="Close modal"
-                  onClick={closeModal}
-                  className="p-1.5 rounded-md text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-elevated)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)]"
-                >
-                  <X className="h-4 w-4"/>
-                </button>
-              </div>
-
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <Modal isOpen={showModal} onClose={closeModal} size="md">
+          <ModalHeader onClose={closeModal}>
+            {editTarget ? 'Edit Department' : 'New Department'}
+          </ModalHeader>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <ModalBody className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label htmlFor="admin-dept-code" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
@@ -422,46 +411,41 @@ export default function DepartmentsPage() {
                   </div>
                 </div>
 
-                <div className="flex justify-end gap-2 pt-2">
-                  <Button type="button" variant="ghost" onClick={closeModal}>Cancel</Button>
-                  <Button type="submit" variant="primary" disabled={isPending}>
-                    {isPending ? 'Saving…' : editTarget ? 'Save Changes' : 'Create Department'}
-                  </Button>
-                </div>
-              </form>
-            </div>
-          </div>
-        )}
+            </ModalBody>
+            <ModalFooter>
+              <Button type="button" variant="ghost" onClick={closeModal}>Cancel</Button>
+              <Button type="submit" variant="primary" disabled={isPending}>
+                {isPending ? 'Saving…' : editTarget ? 'Save Changes' : 'Create Department'}
+              </Button>
+            </ModalFooter>
+          </form>
+        </Modal>
 
         {/* Delete Confirmation */}
-        {deleteTarget && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-            <div className="w-full max-w-sm skeuo-card p-6 shadow-[var(--shadow-elevated)]">
-              <div className="flex items-start gap-2 mb-4">
-                <div className="p-2 rounded-lg bg-danger-100 dark:bg-danger-900/30">
-                  <Trash2 className="h-5 w-5 text-danger-600"/>
-                </div>
-                <div>
-                  <h3 className="font-semibold text-[var(--text-primary)]">Delete Department</h3>
-                  <p className="text-sm text-[var(--text-secondary)] mt-1">
-                    Delete <strong>{deleteTarget.name}</strong>? This cannot be undone. Departments with active
-                    employees cannot be deleted.
-                  </p>
-                </div>
+        <Modal isOpen={!!deleteTarget} onClose={() => setDeleteTarget(null)} size="sm">
+          <ModalHeader onClose={() => setDeleteTarget(null)}>Delete Department</ModalHeader>
+          <ModalBody>
+            <div className="flex items-start gap-2">
+              <div className="p-2 rounded-lg bg-danger-100 dark:bg-danger-900/30">
+                <Trash2 className="h-5 w-5 text-danger-600"/>
               </div>
-              <div className="flex justify-end gap-2">
-                <Button variant="ghost" onClick={() => setDeleteTarget(null)}>Cancel</Button>
-                <Button
-                  variant="danger"
-                  disabled={deleteMutation.isPending}
-                  onClick={() => deleteMutation.mutate(deleteTarget.id)}
-                >
-                  {deleteMutation.isPending ? 'Deleting…' : 'Delete'}
-                </Button>
-              </div>
+              <p className="text-sm text-[var(--text-secondary)] mt-1">
+                Delete <strong>{deleteTarget?.name}</strong>? This cannot be undone. Departments with active
+                employees cannot be deleted.
+              </p>
             </div>
-          </div>
-        )}
+          </ModalBody>
+          <ModalFooter>
+            <Button variant="ghost" onClick={() => setDeleteTarget(null)}>Cancel</Button>
+            <Button
+              variant="danger"
+              disabled={deleteMutation.isPending}
+              onClick={() => deleteTarget && deleteMutation.mutate(deleteTarget.id)}
+            >
+              {deleteMutation.isPending ? 'Deleting…' : 'Delete'}
+            </Button>
+          </ModalFooter>
+        </Modal>
       </PermissionGate>
     </AdminPageContent>
   );

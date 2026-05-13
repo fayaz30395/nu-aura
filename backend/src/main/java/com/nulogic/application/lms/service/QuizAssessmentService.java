@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nulogic.api.lms.dto.*;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.lms.*;
 import com.nulogic.infrastructure.lms.repository.*;
 import jakarta.persistence.EntityNotFoundException;
@@ -14,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -32,6 +32,7 @@ public class QuizAssessmentService {
     private final CourseEnrollmentRepository enrollmentRepository;
     private final CertificateRepository certificateRepository;
     private final ObjectMapper objectMapper;
+    private final TenantTimeService tenantTimeService;
 
     /**
      * Start a new quiz attempt
@@ -386,8 +387,8 @@ public class QuizAssessmentService {
                 .employeeId(employeeId)
                 .enrollmentId(enrollmentId)
                 .issuedAt(LocalDateTime.now())
-                // S12-B: tenant-local completion date for certificate (IST fallback) — date-only field. TODO(S12-B): inject TenantTimeService and use tenantTimeService.today(tenantId).
-                .completionDate(LocalDate.now(java.time.ZoneId.of("Asia/Kolkata")))
+                // S12-B: tenant-local completion date for certificate — date-only field; resolved via TenantTimeService.
+                .completionDate(tenantTimeService.today(tenantId))
                 .isActive(true)
                 .scoreAchieved(enrollment.getQuizScore() != null ? enrollment.getQuizScore().intValue() : 0)
                 .tenantId(tenantId)

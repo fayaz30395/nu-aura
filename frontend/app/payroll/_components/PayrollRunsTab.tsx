@@ -109,7 +109,7 @@ export function PayrollRunsTab({
               <tr key={run.id}
                   className="border-b hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50">
                 <td className="px-6 py-4 text-sm font-medium">{run.runName}</td>
-                <td className="px-6 py-4 text-body-secondary">
+                <td className="px-6 py-4 text-body-secondary tabular-nums">
                   {formatDate(run.payrollPeriodStart)} - {formatDate(run.payrollPeriodEnd)}
                 </td>
                 <td className="px-6 py-4 text-sm">
@@ -118,8 +118,8 @@ export function PayrollRunsTab({
                       {run.status}
                     </span>
                 </td>
-                <td className="px-6 py-4 text-sm">{run.totalEmployees}</td>
-                <td className="px-6 py-4 text-sm font-semibold">{formatCurrency(run.totalGrossAmount)}</td>
+                <td className="px-6 py-4 text-sm tabular-nums">{run.totalEmployees}</td>
+                <td className="px-6 py-4 text-sm font-semibold tabular-nums">{formatCurrency(run.totalGrossAmount)}</td>
                 <td className="px-6 py-4 text-sm">
                   <div className="flex gap-2">
                     {run.status === 'DRAFT' && (

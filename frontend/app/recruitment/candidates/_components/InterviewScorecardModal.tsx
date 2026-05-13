@@ -13,7 +13,6 @@ import {
   MessageSquare,
   Sparkles,
   Star,
-  TrendingUp,
   Users,
   XCircle,
 } from 'lucide-react';

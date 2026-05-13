@@ -42,6 +42,7 @@ import type {ConnectorConfigRequest} from '@/lib/types/core/connector';
 import {ConnectorCard} from '@/components/integrations/ConnectorCard';
 import {ConnectorConfigPanel} from '@/components/integrations/ConnectorConfigPanel';
 import {IntegrationActivityLog} from '@/components/integrations/IntegrationActivityLog';
+import {Skeleton, SkeletonCard} from '@/components/ui/Skeleton';
 
 const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
 
@@ -239,8 +240,19 @@ export default function AdminIntegrationsPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-96">
-        <Loader2 className="h-8 w-8 animate-spin text-accent-700"/>
+      <div className="p-6 space-y-6">
+        <div className="flex items-center gap-4">
+          <Skeleton height={56} width={56} className="rounded-xl"/>
+          <div className="space-y-2 flex-1">
+            <Skeleton height={24} width={180}/>
+            <Skeleton height={14} width={280}/>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {Array.from({length: 6}).map((_, i) => (
+            <SkeletonCard key={i}/>
+          ))}
+        </div>
       </div>
     );
   }

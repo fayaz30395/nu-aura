@@ -7,6 +7,7 @@ import com.nulogic.common.security.DataScopeService;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.audit.AuditLog.AuditAction;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.recruitment.JobOpening;
@@ -23,7 +24,6 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Year;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -38,6 +38,7 @@ public class JobOpeningService {
     private final EmployeeRepository employeeRepository;
     private final DataScopeService dataScopeService;
     private final AuditLogService auditLogService;
+    private final TenantTimeService tenantTimeService;
 
     // ==================== Job Opening Operations ====================
 
@@ -456,8 +457,8 @@ public class JobOpeningService {
     }
 
     private String generateUniqueJobCode(UUID tenantId) {
-        // S12-B: tenant-local year for job-code prefix (IST fallback). TODO(S12-B): inject TenantTimeService and use tenantTimeService.year(tenantId).
-        String year = String.valueOf(Year.now(java.time.ZoneId.of("Asia/Kolkata")).getValue());
+        // S12-B: tenant-local year for job-code prefix — resolved via TenantTimeService.
+        int year = tenantTimeService.today(tenantId).getYear();
         String base = "JOB-" + year + "-";
         int seq = 1;
         String code;

@@ -390,8 +390,8 @@ export default function HolidayCalendarManagementPage() {
             setHolidayToDelete(null);
           }}
           onConfirm={performDelete}
-          title="Delete Holiday"
-          message={`Are you sure you want to delete "${holidayToDelete?.holidayName}"? This action cannot be undone.`}
+          title="Delete Holiday?"
+          message={`This action cannot be undone. Holiday "${holidayToDelete?.holidayName}" will be permanently deleted.`}
           confirmText="Delete"
           cancelText="Cancel"
           type="danger"

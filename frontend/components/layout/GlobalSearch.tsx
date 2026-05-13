@@ -825,7 +825,8 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({className, onSelect, 
                 setApiResults(null);
                 setFluenceResults(null);
               }}
-              className="p-1 rounded-lg text-surface-400 hover:text-surface-600 hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors"
+              aria-label="Close search"
+              className="p-2.5 rounded-lg text-surface-400 hover:text-surface-600 hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors"
             >
               <X className="h-4 w-4"/>
             </button>

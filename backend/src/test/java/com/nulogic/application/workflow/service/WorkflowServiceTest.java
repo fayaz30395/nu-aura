@@ -7,6 +7,7 @@ import com.nulogic.application.event.DomainEventPublisher;
 import com.nulogic.common.exception.BusinessException;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.event.workflow.ApprovalDecisionEvent;
 import com.nulogic.domain.workflow.ApprovalStep;
@@ -75,6 +76,8 @@ class WorkflowServiceTest {
     private AuditLogService auditLogService;
     @Mock
     private LeaveRequestRepository leaveRequestRepository;
+    @Mock
+    private TenantTimeService tenantTimeService;
     private WorkflowService workflowService;
     private MockedStatic<TenantContext> tenantContextMock;
     private MockedStatic<SecurityContext> securityContextMock;
@@ -87,6 +90,9 @@ class WorkflowServiceTest {
 
         securityContextMock = mockStatic(SecurityContext.class);
         securityContextMock.when(SecurityContext::getCurrentUserId).thenReturn(USER_ID);
+
+        when(tenantTimeService.now(any())).thenReturn(LocalDateTime.now());
+        when(tenantTimeService.today(any())).thenReturn(LocalDate.now());
 
         workflowService = new WorkflowService(
                 workflowDefinitionRepository,
@@ -101,6 +107,7 @@ class WorkflowServiceTest {
                 domainEventPublisher,
                 auditLogService,
                 leaveRequestRepository,
+                tenantTimeService,
                 Collections.emptyList());
     }
 

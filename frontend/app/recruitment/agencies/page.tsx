@@ -4,7 +4,7 @@ import {useMemo, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {motion} from 'framer-motion';
 import {AppLayout} from '@/components/layout';
-import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
+import {Card, CardContent} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {StatusBadge} from '@/components/ui/StatusBadge';
 import {AGENCY_STATUS} from '@/lib/status/vocabulary';
@@ -34,8 +34,8 @@ import {
   Trash2,
   TrendingUp,
   Users,
-  X,
 } from 'lucide-react';
+import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
@@ -282,33 +282,12 @@ export default function AgenciesPage() {
           </motion.div>
 
           {/* Agency Form Modal */}
-          {showForm && (
-            <motion.div
-              initial={{opacity: 0, y: -8}}
-              animate={{opacity: 1, y: 0}}
-              className="fixed inset-0 z-50 flex items-start justify-center pt-20 bg-black/40"
-              onClick={() => setShowForm(false)}
-            >
-              <Card
-                className="w-full max-w-2xl max-h-[80vh] overflow-y-auto mx-4"
-                onClick={(e: React.MouseEvent) => e.stopPropagation()}
-              >
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <CardTitle>
-                      {editingAgency ? 'Edit Agency' : 'Add New Agency'}
-                    </CardTitle>
-                    <button
-                      onClick={() => setShowForm(false)}
-                      className="p-1.5 rounded-md hover:bg-[var(--bg-secondary)] cursor-pointer"
-                      aria-label="Close form"
-                    >
-                      <X className="h-4 w-4"/>
-                    </button>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <Modal isOpen={showForm} onClose={() => setShowForm(false)} size="lg">
+            <ModalHeader onClose={() => setShowForm(false)}>
+              {editingAgency ? 'Edit Agency' : 'Add New Agency'}
+            </ModalHeader>
+            <form onSubmit={form.handleSubmit(onSubmit)}>
+              <ModalBody className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
@@ -475,30 +454,28 @@ export default function AgenciesPage() {
                         placeholder="Additional notes..."
                       />
                     </div>
-                    <div className="flex justify-end gap-2 pt-2">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() => setShowForm(false)}
-                      >
-                        Cancel
-                      </Button>
-                      <Button
-                        type="submit"
-                        disabled={createMutation.isPending || updateMutation.isPending}
-                      >
-                        {createMutation.isPending || updateMutation.isPending
-                          ? 'Saving...'
-                          : editingAgency
-                            ? 'Update Agency'
-                            : 'Create Agency'}
-                      </Button>
-                    </div>
-                  </form>
-                </CardContent>
-              </Card>
-            </motion.div>
-          )}
+              </ModalBody>
+              <ModalFooter>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setShowForm(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={createMutation.isPending || updateMutation.isPending}
+                >
+                  {createMutation.isPending || updateMutation.isPending
+                    ? 'Saving...'
+                    : editingAgency
+                      ? 'Update Agency'
+                      : 'Create Agency'}
+                </Button>
+              </ModalFooter>
+            </form>
+          </Modal>
 
           {/* Agency List */}
           {agenciesQuery.isLoading ? (

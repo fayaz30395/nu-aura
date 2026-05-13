@@ -304,6 +304,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
     <div className={cn('flex h-screen overflow-hidden bg-main text-primary transition-colors duration-300', className)}>
       {/* Sidebar — fixed width, never flexes, prevents content shift */}
       <aside
+        data-print-hide="true"
         className="hidden md:flex flex-shrink-0 transition-[width] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]"
         style={{
           width: isCollapsed ? SIDEBAR_WIDTH_COLLAPSED : SIDEBAR_WIDTH_EXPANDED,

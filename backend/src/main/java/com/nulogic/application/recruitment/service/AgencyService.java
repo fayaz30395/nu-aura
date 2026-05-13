@@ -2,6 +2,7 @@ package com.nulogic.application.recruitment.service;
 
 import com.nulogic.api.recruitment.dto.*;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.recruitment.AgencySubmission;
 import com.nulogic.domain.recruitment.AgencySubmission.InvoiceStatus;
 import com.nulogic.domain.recruitment.AgencySubmission.SubmissionStatus;
@@ -37,6 +38,7 @@ public class AgencyService {
     private final AgencySubmissionRepository submissionRepository;
     private final CandidateRepository candidateRepository;
     private final JobOpeningRepository jobOpeningRepository;
+    private final TenantTimeService tenantTimeService;
 
     // ==================== Agency CRUD ====================
 
@@ -167,8 +169,8 @@ public class AgencyService {
         submission.setStatus(request.getStatus());
 
         if (request.getStatus() == SubmissionStatus.HIRED) {
-            // S12-B: tenant-local hired date (IST fallback) — LocalDate (date-only). TODO(S12-B): inject TenantTimeService and use tenantTimeService.today(tenantId).
-            submission.setHiredAt(request.getHiredAt() != null ? request.getHiredAt() : java.time.LocalDate.now(java.time.ZoneId.of("Asia/Kolkata")));
+            // S12-B: tenant-local hired date — LocalDate (date-only). Resolved via TenantTimeService.
+            submission.setHiredAt(request.getHiredAt() != null ? request.getHiredAt() : tenantTimeService.today(tenantId));
             if (submission.getInvoiceStatus() == InvoiceStatus.NOT_APPLICABLE) {
                 submission.setInvoiceStatus(InvoiceStatus.PENDING);
             }

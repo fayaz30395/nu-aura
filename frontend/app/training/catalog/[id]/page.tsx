@@ -329,6 +329,7 @@ function ModuleItem({
       {/* Module header */}
       <button
         onClick={() => setExpanded((v) => !v)}
+        aria-expanded={expanded}
         className="w-full row-between px-4 py-2 bg-[var(--bg-surface)] hover:bg-[var(--bg-muted)] transition-colors text-left"
       >
         <div className="flex items-center gap-4 flex-1 min-w-0">

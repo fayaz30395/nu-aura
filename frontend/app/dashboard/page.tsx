@@ -686,7 +686,7 @@ export default function DashboardPage() {
               <div key={idx}>
                 <div className="row-between mb-2">
                   <span className="text-sm font-medium text-[var(--text-secondary)]">{dept.department}</span>
-                  <span className="text-body-secondary">{dept.count} ({percentage}%)</span>
+                  <span className="text-body-secondary tabular-nums">{dept.count} ({percentage}%)</span>
                 </div>
                 <div className="w-full h-2 bg-[var(--bg-card-hover)] rounded-full overflow-hidden">
                   <div
@@ -722,12 +722,12 @@ export default function DashboardPage() {
             <div className="row-between mb-4">
               <span className="text-body-secondary">Processed</span>
               <span
-                className="text-sm font-medium text-[var(--text-primary)]">{safeAnalytics.payroll.currentMonth.processed}</span>
+                className="text-sm font-medium text-[var(--text-primary)] tabular-nums">{safeAnalytics.payroll.currentMonth.processed}</span>
             </div>
             <div className="row-between">
               <span className="text-body-secondary">Pending</span>
               <span
-                className="text-sm font-medium text-[var(--text-primary)]">{safeAnalytics.headcount.total - safeAnalytics.payroll.currentMonth.processed}</span>
+                className="text-sm font-medium text-[var(--text-primary)] tabular-nums">{safeAnalytics.headcount.total - safeAnalytics.payroll.currentMonth.processed}</span>
             </div>
           </div>
         </div>
@@ -994,7 +994,7 @@ export default function DashboardPage() {
                       <div className="flex items-center gap-1.5 text-sm">
                         <LogIn className="h-4 w-4 text-[var(--status-success-text)]"/>
                         <span className="text-[var(--text-secondary)]">First In:</span>
-                        <span className="font-medium text-[var(--text-primary)]">
+                        <span className="font-medium text-[var(--text-primary)] tabular-nums">
                           {new Date(timeEntries[0].checkInTime).toLocaleTimeString('en-US', {
                             hour: '2-digit',
                             minute: '2-digit'
@@ -1006,7 +1006,7 @@ export default function DashboardPage() {
                         <div className="flex items-center gap-1.5 text-sm">
                           <LogOut className="h-4 w-4 text-[var(--status-info-text)]"/>
                           <span className="text-[var(--text-secondary)]">Last Out:</span>
-                          <span className="font-medium text-[var(--text-primary)]">
+                          <span className="font-medium text-[var(--text-primary)] tabular-nums">
                             {new Date(timeEntries.filter(e => e.checkOutTime).slice(-1)[0].checkOutTime!).toLocaleTimeString('en-US', {
                               hour: '2-digit',
                               minute: '2-digit'
@@ -1034,7 +1034,7 @@ export default function DashboardPage() {
                         <div className="flex items-center gap-1.5 text-sm">
                           <LogIn className="h-4 w-4 text-[var(--status-success-text)]"/>
                           <span className="text-[var(--text-secondary)]">In:</span>
-                          <span className="font-medium text-[var(--text-primary)]">
+                          <span className="font-medium text-[var(--text-primary)] tabular-nums">
                             {new Date(todayAttendance.checkInTime).toLocaleTimeString('en-US', {
                               hour: '2-digit',
                               minute: '2-digit'
@@ -1046,7 +1046,7 @@ export default function DashboardPage() {
                         <div className="flex items-center gap-1.5 text-sm">
                           <LogOut className="h-4 w-4 text-[var(--status-info-text)]"/>
                           <span className="text-[var(--text-secondary)]">Out:</span>
-                          <span className="font-medium text-[var(--text-primary)]">
+                          <span className="font-medium text-[var(--text-primary)] tabular-nums">
                             {new Date(todayAttendance.checkOutTime).toLocaleTimeString('en-US', {
                               hour: '2-digit',
                               minute: '2-digit'

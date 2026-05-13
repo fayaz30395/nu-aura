@@ -1,6 +1,6 @@
 'use client';
 
-import {useCallback, useState} from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
 import {
   Activity,
   AlertTriangle,
@@ -579,10 +579,28 @@ function DeviceLogsDrawer({
 }) {
   const [logPage, setLogPage] = useState(0);
   const {data, isLoading} = useDeviceLogs(deviceId, logPage, 20);
+  const drawerRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLElement | null>(null);
+
+  // WCAG 2.4.3 / 2.4.11: focus first interactive on open, restore on unmount
+  useEffect(() => {
+    triggerRef.current = document.activeElement as HTMLElement;
+    const firstFocusable = drawerRef.current?.querySelector<HTMLElement>(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+    firstFocusable?.focus();
+    return () => {
+      triggerRef.current?.focus();
+    };
+  }, []);
 
   return (
     <div className="fixed inset-0 z-50 flex justify-end bg-black/30">
       <motion.div
+        ref={drawerRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Punch Logs"
         initial={{x: '100%'}}
         animate={{x: 0}}
         exit={{x: '100%'}}

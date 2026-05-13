@@ -3,6 +3,7 @@ package com.nulogic.application.workflow.scheduler;
 import com.nulogic.application.notification.service.NotificationService;
 import com.nulogic.common.config.WorkflowEscalationConfig;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.notification.Notification;
 import com.nulogic.domain.workflow.ApprovalStep;
 import com.nulogic.domain.workflow.StepExecution;
@@ -52,6 +53,7 @@ public class WorkflowEscalationScheduler {
     private final NotificationService notificationService;
     private final UserRepository userRepository;
     private final JdbcTemplate jdbcTemplate;
+    private final TenantTimeService tenantTimeService;
 
     /**
      * Main escalation job - runs hourly.
@@ -95,8 +97,8 @@ public class WorkflowEscalationScheduler {
      */
     @Transactional
     public int processOverdueEscalations(UUID tenantId) {
-        // S12-B: tenant-local "now" for overdue evaluation (IST fallback). TODO(S12-B): inject TenantTimeService and use tenantTimeService.now(tenantId).
-        LocalDateTime now = LocalDateTime.now(java.time.ZoneId.of("Asia/Kolkata"));
+        // S12-B: tenant-local "now" for overdue evaluation — resolved via TenantTimeService.
+        LocalDateTime now = tenantTimeService.now(tenantId);
         List<StepExecution> overdueSteps = stepExecutionRepository.findOverdueStepsWithExecution(tenantId, now);
 
         int escalatedCount = 0;
@@ -162,8 +164,8 @@ public class WorkflowEscalationScheduler {
      */
     @Transactional
     public int processAutoTimeoutActions(UUID tenantId) {
-        // S12-B: tenant-local "now" for auto-timeout evaluation (IST fallback). TODO(S12-B): inject TenantTimeService.
-        LocalDateTime now = LocalDateTime.now(java.time.ZoneId.of("Asia/Kolkata"));
+        // S12-B: tenant-local "now" for auto-timeout evaluation — resolved via TenantTimeService.
+        LocalDateTime now = tenantTimeService.now(tenantId);
         List<StepExecution> overdueSteps = stepExecutionRepository.findOverdueStepsWithExecution(tenantId, now);
 
         int autoActionedCount = 0;
@@ -210,8 +212,8 @@ public class WorkflowEscalationScheduler {
      */
     @Transactional
     public int sendDeadlineReminders(UUID tenantId) {
-        // S12-B: tenant-local "now" for reminder threshold evaluation (IST fallback). TODO(S12-B): inject TenantTimeService.
-        LocalDateTime now = LocalDateTime.now(java.time.ZoneId.of("Asia/Kolkata"));
+        // S12-B: tenant-local "now" for reminder threshold evaluation — resolved via TenantTimeService.
+        LocalDateTime now = tenantTimeService.now(tenantId);
         LocalDateTime reminderThreshold = now.plusHours(config.getReminderHoursBeforeDeadline());
 
         // Find pending steps with deadline approaching
@@ -409,8 +411,8 @@ public class WorkflowEscalationScheduler {
             }
 
             WorkflowExecution execution = step.getWorkflowExecution();
-            // S12-B: tenant-local "now" for hours-remaining calc in reminder message (IST fallback). TODO(S12-B): inject TenantTimeService.
-            long hoursRemaining = Duration.between(LocalDateTime.now(java.time.ZoneId.of("Asia/Kolkata")), step.getDeadline()).toHours();
+            // S12-B: tenant-local "now" for hours-remaining calc in reminder message — resolved via TenantTimeService.
+            long hoursRemaining = Duration.between(tenantTimeService.now(step.getTenantId()), step.getDeadline()).toHours();
 
             String title = "Reminder: Pending Approval";
             String message = String.format(

@@ -1438,3 +1438,50 @@ html, body {
     scroll-behavior: auto !important;
   }
 }
+
+/* ================================================================
+   PRINT STYLES (payslips, contracts, offer letters, invoices)
+   ----------------------------------------------------------------
+   Hide nav/chrome, expand main, force light theme for printer
+   output. Use class `.print-hide` or attribute
+   `data-print-hide="true"` on any element that should disappear
+   when printing.
+   ================================================================ */
+@media print {
+  /* Hide chrome */
+  .print-hide,
+  nav, aside, header,
+  [data-print-hide="true"] {
+    display: none !important;
+  }
+
+  /* Force light surfaces for printer */
+  body {
+    background: white !important;
+    color: black !important;
+  }
+
+  main {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+  }
+
+  /* Avoid awkward page breaks inside cards */
+  .card-aura, .card-elevated, .card-interactive,
+  table, tr {
+    break-inside: avoid;
+  }
+
+  /* Show URLs after links */
+  a[href]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.85em;
+    color: #555;
+  }
+  /* But not for in-app navigation */
+  a[href^="/"]::after,
+  a[href^="#"]::after {
+    content: "";
+  }
+}

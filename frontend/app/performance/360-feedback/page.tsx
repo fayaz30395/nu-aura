@@ -910,8 +910,8 @@ export default function Feedback360Page() {
                     />
                   </div>
                 </div>
-                <div className="space-y-4 border-t border-[var(--border-main)] pt-4">
-                  <h3 className="text-sm font-medium text-[var(--text-primary)]">Review Types</h3>
+                <fieldset className="space-y-4 border-t border-[var(--border-main)] pt-4">
+                  <legend className="text-sm font-medium text-[var(--text-primary)]">Review Types</legend>
                   <div className="grid grid-cols-2 gap-4">
                     <label className="flex items-center">
                       <input
@@ -971,7 +971,7 @@ export default function Feedback360Page() {
                     Anonymous peer feedback
                   </span>
                   </label>
-                </div>
+                </fieldset>
           </ModalBody>
           <ModalFooter>
             <button
@@ -1204,8 +1204,8 @@ export default function Feedback360Page() {
               setDeleteConfirm(null);
             }
           }}
-          title="Delete Cycle"
-          message="Are you sure you want to delete this feedback cycle? This action cannot be undone."
+          title="Delete Cycle?"
+          message="This action cannot be undone. The feedback cycle will be permanently deleted."
           confirmText="Delete"
           type="danger"
         />

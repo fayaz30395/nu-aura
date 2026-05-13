@@ -1,6 +1,7 @@
 package com.nulogic.application.payroll.service;
 
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.payroll.Payslip;
 import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
@@ -19,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.awt.*;
 import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
@@ -44,13 +44,14 @@ public class PayslipPdfService {
     private static final Color BORDER_COLOR = new Color(222, 226, 230);
     private final PayslipRepository payslipRepository;
     private final EmployeeRepository employeeRepository;
+    private final TenantTimeService tenantTimeService;
 
     /**
      * Generate PDF for a specific payslip
      */
     @Transactional(readOnly = true)
     public byte[] generatePayslipPdf(UUID payslipId) throws DocumentException {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         Payslip payslip = payslipRepository.findById(payslipId)
                 .filter(p -> p.getTenantId().equals(tenantId))
@@ -59,7 +60,7 @@ public class PayslipPdfService {
         Employee employee = employeeRepository.findByIdAndTenantId(payslip.getEmployeeId(), tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Employee not found"));
 
-        return generatePdf(payslip, employee);
+        return generatePdf(payslip, employee, tenantId);
     }
 
     /**
@@ -67,7 +68,7 @@ public class PayslipPdfService {
      */
     @Transactional(readOnly = true)
     public byte[] generatePayslipPdf(UUID employeeId, int year, int month) throws DocumentException {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         Payslip payslip = payslipRepository.findByEmployeeIdAndPayPeriodYearAndPayPeriodMonthAndTenantId(
                         employeeId, year, month, tenantId)
@@ -76,10 +77,10 @@ public class PayslipPdfService {
         Employee employee = employeeRepository.findByIdAndTenantId(employeeId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Employee not found"));
 
-        return generatePdf(payslip, employee);
+        return generatePdf(payslip, employee, tenantId);
     }
 
-    private byte[] generatePdf(Payslip payslip, Employee employee) throws DocumentException {
+    private byte[] generatePdf(Payslip payslip, Employee employee, UUID tenantId) throws DocumentException {
         Document document = new Document(PageSize.A4);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
@@ -106,7 +107,7 @@ public class PayslipPdfService {
             addNetPaySection(document, payslip);
 
             // Add footer
-            addFooter(document);
+            addFooter(document, tenantId);
 
             return out.toByteArray();
         } catch (RuntimeException e) {
@@ -287,16 +288,16 @@ public class PayslipPdfService {
         document.add(inWords);
     }
 
-    private void addFooter(Document document) throws DocumentException {
+    private void addFooter(Document document, UUID tenantId) throws DocumentException {
         Paragraph footer = new Paragraph("This is a computer-generated document. No signature is required.",
                 new Font(Font.HELVETICA, 8, Font.ITALIC, new Color(108, 117, 125)));
         footer.setAlignment(Element.ALIGN_CENTER);
         footer.setSpacingBefore(30f);
         document.add(footer);
 
+        // S12-B: tenant-local civil day for payslip footer — resolved via TenantTimeService.
         Paragraph generated = new Paragraph(
-                // S11-M Wave-10 P0-1: tenant-local civil day (IST fallback). TODO(S11-M): inject TenantTimeService.
-                "Generated on: " + LocalDate.now(java.time.ZoneId.of("Asia/Kolkata")).format(DateTimeFormatter.ofPattern("dd MMM yyyy")),
+                "Generated on: " + tenantTimeService.today(tenantId).format(DateTimeFormatter.ofPattern("dd MMM yyyy")),
                 new Font(Font.HELVETICA, 8, Font.NORMAL, new Color(108, 117, 125)));
         generated.setAlignment(Element.ALIGN_CENTER);
         document.add(generated);

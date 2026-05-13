@@ -1,6 +1,6 @@
 'use client';
 
-import {useEffect, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {AnimatePresence, motion} from 'framer-motion';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
@@ -227,10 +227,30 @@ export function InlineCommentsPanel({pageId, isOpen, onToggle}: InlineCommentsPa
   const [showResolved, setShowResolved] = useState(false);
   const commentsQuery = useInlineComments(pageId, isOpen);
   const createMutation = useCreateInlineComment();
+  const panelRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLElement | null>(null);
 
   const form = useForm<CommentFormValues>({
     resolver: zodResolver(commentSchema),
   });
+
+  // WCAG 2.4.3 / 2.4.11: focus first interactive on open, restore on close
+  useEffect(() => {
+    if (isOpen) {
+      triggerRef.current = document.activeElement as HTMLElement;
+      // Defer to allow framer-motion to mount the panel content
+      const t = setTimeout(() => {
+        const firstFocusable = panelRef.current?.querySelector<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        firstFocusable?.focus();
+      }, 50);
+      return () => clearTimeout(t);
+    } else if (triggerRef.current) {
+      triggerRef.current.focus();
+      triggerRef.current = null;
+    }
+  }, [isOpen]);
 
   // Listen for text selection
   useEffect(() => {
@@ -291,6 +311,10 @@ export function InlineCommentsPanel({pageId, isOpen, onToggle}: InlineCommentsPa
       <AnimatePresence>
         {isOpen && (
           <motion.div
+            ref={panelRef}
+            role="dialog"
+            aria-modal="false"
+            aria-label="Inline comments"
             initial={{x: 340, opacity: 0}}
             animate={{x: 0, opacity: 1}}
             exit={{x: 340, opacity: 0}}

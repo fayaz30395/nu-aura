@@ -273,9 +273,9 @@ export default function IntegrationsPage() {
                   >
                     <integration.icon className="h-7 w-7 text-white"/>
                   </div>
-                  <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
+                  <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                     {integration.name}
-                  </h3>
+                  </h2>
                   <p className="text-body-secondary mb-4 leading-relaxed">
                     {integration.description}
                   </p>

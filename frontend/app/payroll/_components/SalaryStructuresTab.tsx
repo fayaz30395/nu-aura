@@ -79,7 +79,7 @@ export function SalaryStructuresTab({
               <div className="flex justify-between items-start mb-4">
                 <div>
                   <h3 className="text-xl font-semibold">{structure.employeeName || structure.employeeId || '—'}</h3>
-                  <p className="text-body-secondary">
+                  <p className="text-body-secondary tabular-nums">
                     Effective: {formatDate(structure.effectiveDate)}
                   </p>
                 </div>
@@ -92,11 +92,11 @@ export function SalaryStructuresTab({
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
                     <span className="text-[var(--text-secondary)]">Base Salary</span>
-                    <p className="font-semibold text-lg">{formatCurrency(structure.baseSalary)}</p>
+                    <p className="font-semibold text-lg tabular-nums">{formatCurrency(structure.baseSalary)}</p>
                   </div>
                   <div>
                     <span className="text-[var(--text-secondary)]">Total CTC</span>
-                    <p className="font-semibold text-lg">{formatCurrency(structure.totalCTC)}</p>
+                    <p className="font-semibold text-lg tabular-nums">{formatCurrency(structure.totalCTC)}</p>
                   </div>
                 </div>
               </div>
@@ -108,7 +108,7 @@ export function SalaryStructuresTab({
                     {structure.allowances.map((allow, idx) => (
                       <div key={idx} className="flex justify-between text-sm">
                         <span className="text-[var(--text-secondary)]">{allow.name}</span>
-                        <span className="text-success-600 font-medium">{formatCurrency(allow.amount)}</span>
+                        <span className="text-success-600 font-medium tabular-nums">{formatCurrency(allow.amount)}</span>
                       </div>
                     ))}
                   </div>
@@ -122,7 +122,7 @@ export function SalaryStructuresTab({
                     {structure.deductions.map((ded, idx) => (
                       <div key={idx} className="flex justify-between text-sm">
                         <span className="text-[var(--text-secondary)]">{ded.name}</span>
-                        <span className="text-danger-600 font-medium">{formatCurrency(ded.amount)}</span>
+                        <span className="text-danger-600 font-medium tabular-nums">{formatCurrency(ded.amount)}</span>
                       </div>
                     ))}
                   </div>

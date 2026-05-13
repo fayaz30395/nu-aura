@@ -1,6 +1,7 @@
 'use client';
 
 import React, {Suspense, useCallback, useMemo, useState} from 'react';
+import dynamic from 'next/dynamic';
 import {useRouter, useSearchParams} from 'next/navigation';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
@@ -57,20 +58,38 @@ import {CandidateFilters} from './CandidateFilters';
 import {CandidateTableRow} from './CandidateTableRow';
 import {computeStats, filterCandidates} from './utils';
 
-// Co-located modal components
+// Co-located modal components — light/always-visible-ish modals stay eager
 import {
   AcceptOfferModal,
-  CandidateFormModal,
-  CreateOfferModal,
   DeclineOfferModal,
   DeleteCandidateModal,
   FeedbackSynthesisModal,
-  InterviewScorecardModal,
-  OfferESignModal,
-  ParseResumeModal,
   ScreeningSummaryModal,
   ViewCandidateModal,
 } from './_components';
+
+// Heavy modals (RHF forms, AI panels, e-sign) — defer until first open to trim
+// the page bundle. Gated behind `show*Modal` state so they aren't on first paint.
+const CandidateFormModal = dynamic(
+  () => import('./_components/CandidateFormModal').then(m => ({default: m.CandidateFormModal})),
+  {ssr: false},
+);
+const CreateOfferModal = dynamic(
+  () => import('./_components/CreateOfferModal').then(m => ({default: m.CreateOfferModal})),
+  {ssr: false},
+);
+const ParseResumeModal = dynamic(
+  () => import('./_components/ParseResumeModal').then(m => ({default: m.ParseResumeModal})),
+  {ssr: false},
+);
+const InterviewScorecardModal = dynamic(
+  () => import('./_components/InterviewScorecardModal').then(m => ({default: m.InterviewScorecardModal})),
+  {ssr: false},
+);
+const OfferESignModal = dynamic(
+  () => import('./_components/OfferESignModal').then(m => ({default: m.OfferESignModal})),
+  {ssr: false},
+);
 
 // ==================== Loading Fallback ====================
 
@@ -749,35 +768,39 @@ function CandidatesPage() {
 
         {/* ==================== MODALS ==================== */}
 
-        <ParseResumeModal
-          open={showParseResumeModal}
-          parsedResume={parsedResume}
-          aiLoadingState={aiLoadingState}
-          resumeParseForm={resumeParseForm}
-          onSubmit={handleParseResume}
-          onFileUpload={handleParseResumeFile}
-          onApply={applyParsedResume}
-          onClose={() => {
-            setShowParseResumeModal(false);
-            setParsedResume(null);
-            resumeParseForm.reset();
-          }}
-        />
+        {showParseResumeModal && (
+          <ParseResumeModal
+            open={showParseResumeModal}
+            parsedResume={parsedResume}
+            aiLoadingState={aiLoadingState}
+            resumeParseForm={resumeParseForm}
+            onSubmit={handleParseResume}
+            onFileUpload={handleParseResumeFile}
+            onApply={applyParsedResume}
+            onClose={() => {
+              setShowParseResumeModal(false);
+              setParsedResume(null);
+              resumeParseForm.reset();
+            }}
+          />
+        )}
 
-        <CandidateFormModal
-          open={showAddModal}
-          editingCandidate={editingCandidate}
-          candidateForm={candidateForm}
-          jobOpenings={jobOpenings}
-          recruiters={recruiters}
-          isSubmitting={createCandidateMutation.isPending || updateCandidateMutation.isPending}
-          onSubmit={handleCandidateSubmit}
-          onClose={() => {
-            setShowAddModal(false);
-            setEditingCandidate(null);
-            candidateForm.reset();
-          }}
-        />
+        {showAddModal && (
+          <CandidateFormModal
+            open={showAddModal}
+            editingCandidate={editingCandidate}
+            candidateForm={candidateForm}
+            jobOpenings={jobOpenings}
+            recruiters={recruiters}
+            isSubmitting={createCandidateMutation.isPending || updateCandidateMutation.isPending}
+            onSubmit={handleCandidateSubmit}
+            onClose={() => {
+              setShowAddModal(false);
+              setEditingCandidate(null);
+              candidateForm.reset();
+            }}
+          />
+        )}
 
         <ViewCandidateModal
           open={showViewModal}
@@ -816,28 +839,32 @@ function CandidatesPage() {
           }}
         />
 
-        <InterviewScorecardModal
-          open={showScorecardModal}
-          candidateId={scorecardCandidate?.id ?? ''}
-          candidateName={scorecardCandidate?.fullName ?? ''}
-          onSynthesizeFeedback={() => {
-            setShowScorecardModal(false);
-            if (scorecardCandidate) handleSynthesizeFeedback(scorecardCandidate);
-          }}
-          onClose={() => {
-            setShowScorecardModal(false);
-            setScorecardCandidate(null);
-          }}
-        />
+        {showScorecardModal && (
+          <InterviewScorecardModal
+            open={showScorecardModal}
+            candidateId={scorecardCandidate?.id ?? ''}
+            candidateName={scorecardCandidate?.fullName ?? ''}
+            onSynthesizeFeedback={() => {
+              setShowScorecardModal(false);
+              if (scorecardCandidate) handleSynthesizeFeedback(scorecardCandidate);
+            }}
+            onClose={() => {
+              setShowScorecardModal(false);
+              setScorecardCandidate(null);
+            }}
+          />
+        )}
 
-        <CreateOfferModal
-          open={showOfferModal}
-          candidate={candidateForOffer}
-          offerForm={offerForm}
-          isSubmitting={createOfferMutation.isPending}
-          onSubmit={handleOfferSubmit}
-          onClose={() => setShowOfferModal(false)}
-        />
+        {showOfferModal && (
+          <CreateOfferModal
+            open={showOfferModal}
+            candidate={candidateForOffer}
+            offerForm={offerForm}
+            isSubmitting={createOfferMutation.isPending}
+            onSubmit={handleOfferSubmit}
+            onClose={() => setShowOfferModal(false)}
+          />
+        )}
 
         <AcceptOfferModal
           open={showAcceptModal}
@@ -862,14 +889,16 @@ function CandidatesPage() {
             setCandidateForOffer(null);
           }}
         />
-        <OfferESignModal
-          open={showESignModal}
-          candidate={eSignCandidate}
-          onClose={() => {
-            setShowESignModal(false);
-            setESignCandidate(null);
-          }}
-        />
+        {showESignModal && (
+          <OfferESignModal
+            open={showESignModal}
+            candidate={eSignCandidate}
+            onClose={() => {
+              setShowESignModal(false);
+              setESignCandidate(null);
+            }}
+          />
+        )}
       </motion.div>
     </AppLayout>
   );

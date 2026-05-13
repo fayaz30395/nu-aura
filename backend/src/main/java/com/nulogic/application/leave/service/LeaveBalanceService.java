@@ -3,6 +3,7 @@ package com.nulogic.application.leave.service;
 import com.nulogic.api.leave.dto.LeaveBalanceResponse;
 import com.nulogic.common.config.CacheConfig;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.leave.LeaveBalance;
 import com.nulogic.domain.leave.LeaveType;
 import com.nulogic.infrastructure.leave.repository.LeaveBalanceRepository;
@@ -17,7 +18,6 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.time.Year;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -30,6 +30,8 @@ public class LeaveBalanceService {
     private final LeaveBalanceRepository leaveBalanceRepository;
     // R2-007 FIX: Inject LeaveTypeRepository to seed openingBalance from annualQuota
     private final LeaveTypeRepository leaveTypeRepository;
+    // S12-B: Tenant-local "now" / "today" for accrual, balance, pending and credit operations.
+    private final TenantTimeService tenantTimeService;
 
     /**
      * Get or create a leave balance for the given employee / leave-type / year.
@@ -156,7 +158,9 @@ public class LeaveBalanceService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     @CacheEvict(value = CacheConfig.LEAVE_BALANCES, allEntries = true)
     public LeaveBalance accrueLeave(UUID employeeId, UUID leaveTypeId, BigDecimal days) {
-        LeaveBalance balance = getOrCreateBalanceForUpdate(employeeId, leaveTypeId, Year.now(java.time.ZoneId.of("Asia/Kolkata")).getValue() /* S11-M Wave-10 P0-1: tenant-local year (IST fallback); TODO(S11-M): tenantTimeService.today(tenantId).getYear() */);
+        UUID tenantId = TenantContext.getCurrentTenant();
+        // S12-B: tenant-local year for accrual — resolved via TenantTimeService.
+        LeaveBalance balance = getOrCreateBalanceForUpdate(employeeId, leaveTypeId, tenantTimeService.today(tenantId).getYear());
         balance.accrueLeave(days);
         return leaveBalanceRepository.save(balance);
     }
@@ -168,7 +172,8 @@ public class LeaveBalanceService {
     @Transactional(readOnly = true)
     public BigDecimal getAvailableBalance(UUID employeeId, UUID leaveTypeId) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return leaveBalanceRepository.findByEmployeeIdAndYear(employeeId, Year.now(java.time.ZoneId.of("Asia/Kolkata")).getValue() /* S11-M Wave-10 P0-1: tenant-local year (IST fallback); TODO(S11-M): tenantTimeService.today(tenantId).getYear() */, tenantId)
+        // S12-B: tenant-local year for available-balance lookup — resolved via TenantTimeService.
+        return leaveBalanceRepository.findByEmployeeIdAndYear(employeeId, tenantTimeService.today(tenantId).getYear(), tenantId)
                 .stream()
                 .filter(b -> b.getLeaveTypeId().equals(leaveTypeId))
                 .findFirst()
@@ -189,7 +194,9 @@ public class LeaveBalanceService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     @CacheEvict(value = CacheConfig.LEAVE_BALANCES, allEntries = true)
     public void addPendingLeave(UUID employeeId, UUID leaveTypeId, BigDecimal days) {
-        LeaveBalance balance = getOrCreateBalanceForUpdate(employeeId, leaveTypeId, Year.now(java.time.ZoneId.of("Asia/Kolkata")).getValue() /* S11-M Wave-10 P0-1: tenant-local year (IST fallback); TODO(S11-M): tenantTimeService.today(tenantId).getYear() */);
+        UUID tenantId = TenantContext.getCurrentTenant();
+        // S12-B: tenant-local year for pending-leave reservation — resolved via TenantTimeService.
+        LeaveBalance balance = getOrCreateBalanceForUpdate(employeeId, leaveTypeId, tenantTimeService.today(tenantId).getYear());
         if (balance.getAvailable().compareTo(days) < 0) {
             throw new IllegalArgumentException(String.format(
                     "Insufficient leave balance. Available: %.1f day(s), Requested: %.1f day(s)",
@@ -207,8 +214,9 @@ public class LeaveBalanceService {
     @CacheEvict(value = CacheConfig.LEAVE_BALANCES, allEntries = true)
     public void releasePendingLeave(UUID employeeId, UUID leaveTypeId, BigDecimal days) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        // S12-B: tenant-local year for pending-leave release — resolved via TenantTimeService.
         leaveBalanceRepository
-                .findByEmployeeIdAndLeaveTypeIdAndYearAndTenantId(employeeId, leaveTypeId, Year.now(java.time.ZoneId.of("Asia/Kolkata")).getValue() /* S11-M Wave-10 P0-1: tenant-local year (IST fallback); TODO(S11-M): tenantTimeService.today(tenantId).getYear() */, tenantId)
+                .findByEmployeeIdAndLeaveTypeIdAndYearAndTenantId(employeeId, leaveTypeId, tenantTimeService.today(tenantId).getYear(), tenantId)
                 .ifPresent(balance -> {
                     balance.removePending(days);
                     leaveBalanceRepository.save(balance);
@@ -223,7 +231,9 @@ public class LeaveBalanceService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     @CacheEvict(value = CacheConfig.LEAVE_BALANCES, allEntries = true)
     public LeaveBalance deductLeave(UUID employeeId, UUID leaveTypeId, BigDecimal days) {
-        LeaveBalance balance = getOrCreateBalanceForUpdate(employeeId, leaveTypeId, Year.now(java.time.ZoneId.of("Asia/Kolkata")).getValue() /* S11-M Wave-10 P0-1: tenant-local year (IST fallback); TODO(S11-M): tenantTimeService.today(tenantId).getYear() */);
+        UUID tenantId = TenantContext.getCurrentTenant();
+        // S12-B: tenant-local year for leave deduction — resolved via TenantTimeService.
+        LeaveBalance balance = getOrCreateBalanceForUpdate(employeeId, leaveTypeId, tenantTimeService.today(tenantId).getYear());
         balance.removePending(days); // Release from pending (reserved on leave creation)
         balance.deduct(days);        // Move to used; net effect on available = zero
         return leaveBalanceRepository.save(balance);
@@ -232,7 +242,9 @@ public class LeaveBalanceService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     @CacheEvict(value = CacheConfig.LEAVE_BALANCES, allEntries = true)
     public LeaveBalance creditLeave(UUID employeeId, UUID leaveTypeId, BigDecimal days) {
-        LeaveBalance balance = getOrCreateBalanceForUpdate(employeeId, leaveTypeId, Year.now(java.time.ZoneId.of("Asia/Kolkata")).getValue() /* S11-M Wave-10 P0-1: tenant-local year (IST fallback); TODO(S11-M): tenantTimeService.today(tenantId).getYear() */);
+        UUID tenantId = TenantContext.getCurrentTenant();
+        // S12-B: tenant-local year for leave credit — resolved via TenantTimeService.
+        LeaveBalance balance = getOrCreateBalanceForUpdate(employeeId, leaveTypeId, tenantTimeService.today(tenantId).getYear());
         balance.credit(days);
         return leaveBalanceRepository.save(balance);
     }

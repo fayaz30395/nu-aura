@@ -293,9 +293,9 @@ export default function CourseCatalogPage() {
                   <CardContent className="p-4 flex-1 flex flex-col">
                     {/* Title & difficulty */}
                     <div className="flex items-start justify-between gap-2 mb-2">
-                      <h3 className="font-semibold text-[var(--text-primary)] text-sm leading-snug line-clamp-2">
+                      <h2 className="font-semibold text-[var(--text-primary)] text-sm leading-snug line-clamp-2">
                         {course.title}
-                      </h3>
+                      </h2>
                       <DifficultyBadge level={course.difficultyLevel}/>
                     </div>
 

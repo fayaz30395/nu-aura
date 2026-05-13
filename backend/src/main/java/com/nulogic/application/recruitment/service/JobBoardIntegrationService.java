@@ -1,6 +1,7 @@
 package com.nulogic.application.recruitment.service;
 
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.recruitment.JobBoardPosting;
 import com.nulogic.domain.recruitment.JobOpening;
 import com.nulogic.infrastructure.recruitment.repository.JobBoardPostingRepository;
@@ -44,6 +45,7 @@ public class JobBoardIntegrationService {
     private final JobOpeningRepository jobOpeningRepository;
     private final RestTemplate restTemplate;
     private final org.springframework.jdbc.core.JdbcTemplate jdbcTemplate;
+    private final TenantTimeService tenantTimeService;
     // ---- Naukri config ----
     @Value("${integration.naukri.api-url:https://www.naukri.com/api/v2}")
     private String naukriApiUrl;
@@ -100,8 +102,8 @@ public class JobBoardIntegrationService {
                 }
                 posting.setStatus(JobBoardPosting.PostingStatus.ACTIVE);
                 posting.setPostedAt(LocalDateTime.now());
-                // S12-B: tenant-local 30-day expiry window for job-board posting (IST fallback). TODO(S12-B): inject TenantTimeService.
-                posting.setExpiresAt(LocalDateTime.now(java.time.ZoneId.of("Asia/Kolkata")).plusDays(30));
+                // S12-B: tenant-local 30-day expiry window for job-board posting — resolved via TenantTimeService.
+                posting.setExpiresAt(tenantTimeService.now(tenantId).plusDays(30));
                 posting.setLastSyncedAt(LocalDateTime.now());
                 posting.setErrorMessage(null);
             } catch (Exception e) { // Intentional broad catch — external job board API integration

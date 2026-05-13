@@ -19,6 +19,7 @@ import {
   useHolidaysByYear,
   useUpdateHoliday,
 } from '@/lib/hooks/queries/useAttendance';
+import {Skeleton} from '@/components/ui/Skeleton';
 import {formatDateShort} from '@/lib/utils/format/date';
 
 const ADMIN_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
@@ -369,8 +370,30 @@ export default function HolidaysPage() {
         {/* Holidays List */}
         <div className="card-aura">
           {isLoading ? (
-            <div className="px-6 py-12 text-center text-[var(--text-muted)]">
-              Loading holidays for {selectedYear}...
+            <div className="p-6 space-y-6">
+              {Array.from({length: 3}).map((_, monthIdx) => (
+                <div key={monthIdx} className="space-y-3">
+                  <Skeleton height={20} width={120}/>
+                  <div className="space-y-2">
+                    {Array.from({length: 2}).map((_, rowIdx) => (
+                      <div
+                        key={rowIdx}
+                        className="flex items-center gap-4 p-4 rounded-lg bg-[var(--bg-secondary)]/50"
+                      >
+                        <Skeleton height={56} width={56} className="rounded-lg flex-shrink-0"/>
+                        <div className="flex-1 space-y-2">
+                          <Skeleton height={16} width="40%"/>
+                          <Skeleton height={12} width="60%"/>
+                          <div className="flex gap-2">
+                            <Skeleton height={18} width={72} className="rounded"/>
+                            <Skeleton height={18} width={64} className="rounded"/>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
             </div>
           ) : filteredHolidays.length === 0 ? (
             <div className="px-6 py-12 text-center">
@@ -488,8 +511,8 @@ export default function HolidaysPage() {
             setHolidayToDelete(null);
           }}
           onConfirm={performDelete}
-          title="Delete Holiday"
-          message={`Are you sure you want to delete "${holidayToDelete?.holidayName}"? This action cannot be undone.`}
+          title="Delete Holiday?"
+          message={`This action cannot be undone. Holiday "${holidayToDelete?.holidayName}" will be permanently deleted.`}
           confirmText="Delete"
           cancelText="Cancel"
           type="danger"

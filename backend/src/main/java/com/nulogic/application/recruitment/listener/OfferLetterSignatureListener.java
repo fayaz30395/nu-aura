@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nulogic.application.esignature.event.SignatureCompletedEvent;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.esignature.SignatureRequest;
 import com.nulogic.domain.recruitment.Candidate;
 import com.nulogic.infrastructure.recruitment.repository.CandidateRepository;
@@ -15,7 +16,6 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.UUID;
 
 /**
@@ -30,6 +30,7 @@ public class OfferLetterSignatureListener {
 
     private final CandidateRepository candidateRepository;
     private final ObjectMapper objectMapper;
+    private final TenantTimeService tenantTimeService;
 
     @EventListener
     @Transactional
@@ -73,16 +74,16 @@ public class OfferLetterSignatureListener {
                 case COMPLETED -> {
                     // Candidate signed the offer letter - accept offer
                     candidate.setStatus(Candidate.CandidateStatus.OFFER_ACCEPTED);
-                    // S12-B: tenant-local offer-accepted date (IST fallback). TODO(S12-B): inject TenantTimeService and use tenantTimeService.today(tenantId).
-                    candidate.setOfferAcceptedDate(LocalDate.now(java.time.ZoneId.of("Asia/Kolkata")));
+                    // S12-B: tenant-local offer-accepted date — resolved via TenantTimeService.
+                    candidate.setOfferAcceptedDate(tenantTimeService.today(event.getTenantId()));
                     candidateRepository.save(candidate);
                     log.info("Candidate {} accepted offer via e-signature", candidateId);
                 }
                 case DECLINED -> {
                     // Candidate declined to sign - decline offer
                     candidate.setStatus(Candidate.CandidateStatus.OFFER_DECLINED);
-                    // S12-B: tenant-local offer-declined date (IST fallback). TODO(S12-B): inject TenantTimeService.
-                    candidate.setOfferDeclinedDate(LocalDate.now(java.time.ZoneId.of("Asia/Kolkata")));
+                    // S12-B: tenant-local offer-declined date — resolved via TenantTimeService.
+                    candidate.setOfferDeclinedDate(tenantTimeService.today(event.getTenantId()));
                     candidate.setOfferDeclineReason("Declined via e-signature");
                     candidateRepository.save(candidate);
                     log.info("Candidate {} declined offer via e-signature", candidateId);

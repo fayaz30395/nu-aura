@@ -2,6 +2,7 @@ package com.nulogic.application.workflow.scheduler;
 
 import com.nulogic.application.workflow.service.ApprovalEscalationService;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.tenant.Tenant;
 import com.nulogic.domain.workflow.ApprovalEscalationConfig;
 import com.nulogic.domain.workflow.StepExecution;
@@ -53,6 +54,7 @@ public class ApprovalEscalationJob {
     private final StepExecutionRepository stepExecutionRepository;
     private final ApprovalEscalationConfigRepository escalationConfigRepository;
     private final ApprovalEscalationService escalationService;
+    private final TenantTimeService tenantTimeService;
 
     /**
      * Main escalation job.
@@ -97,8 +99,8 @@ public class ApprovalEscalationJob {
     @Transactional
     int processEscalationsForTenant(UUID tenantId) {
         // Fetch all stale PENDING steps that are eligible for escalation (assigned > 48 hours ago)
-        // S12-B: tenant-local cutoff for stale-step detection (IST fallback). TODO(S12-B): inject TenantTimeService and use tenantTimeService.now(tenantId).
-        LocalDateTime cutoff = LocalDateTime.now(java.time.ZoneId.of("Asia/Kolkata")).minusHours(48);
+        // S12-B: tenant-local cutoff for stale-step detection — resolved via TenantTimeService.
+        LocalDateTime cutoff = tenantTimeService.now(tenantId).minusHours(48);
         List<StepExecution> staleSteps = stepExecutionRepository.findStaleStepsForEscalation(tenantId, cutoff);
 
         int escalatedCount = 0;

@@ -6,6 +6,7 @@ import com.nulogic.application.audit.service.AuditLogService;
 import com.nulogic.application.event.DomainEventPublisher;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.workflow.ApprovalDelegate;
 import com.nulogic.domain.workflow.ApprovalStep;
@@ -26,6 +27,7 @@ import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -73,6 +75,8 @@ class WorkflowServiceAutoDelegationTest {
     private AuditLogService auditLogService;
     @Mock
     private LeaveRequestRepository leaveRequestRepository;
+    @Mock
+    private TenantTimeService tenantTimeService;
 
     private WorkflowService workflowService;
     private MockedStatic<TenantContext> tenantContextMock;
@@ -87,12 +91,16 @@ class WorkflowServiceAutoDelegationTest {
         securityContextMock = mockStatic(SecurityContext.class);
         securityContextMock.when(SecurityContext::getCurrentUserId).thenReturn(EMPLOYEE_ID);
 
+        lenient().when(tenantTimeService.now(any())).thenReturn(LocalDateTime.now());
+        lenient().when(tenantTimeService.today(any())).thenReturn(LocalDate.now());
+
         workflowService = new WorkflowService(
                 workflowDefinitionRepository, approvalStepRepository,
                 workflowExecutionRepository, stepExecutionRepository,
                 approvalDelegateRepository, workflowRuleRepository,
                 employeeRepository, departmentRepository, userRepository,
                 domainEventPublisher, auditLogService, leaveRequestRepository,
+                tenantTimeService,
                 Collections.emptyList());
     }
 

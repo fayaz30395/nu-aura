@@ -478,8 +478,8 @@ export default function SurveysPage() {
               setDeleteConfirmId(null);
             }
           }}
-          title="Delete Survey"
-          message="Are you sure you want to delete this survey? This action cannot be undone."
+          title="Delete Survey?"
+          message="This action cannot be undone. The survey will be permanently deleted."
           confirmText="Delete"
           cancelText="Cancel"
           type="danger"

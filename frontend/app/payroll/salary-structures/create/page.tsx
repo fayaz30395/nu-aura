@@ -103,13 +103,14 @@ export default function CreateSalaryStructurePage() {
                       htmlFor="employeeId"
                       className="block text-sm font-medium text-[var(--text-primary)] mb-1.5"
                     >
-                      Employee ID <span className="text-danger-500">*</span>
+                      Employee ID <span aria-hidden="true" className="text-danger-500">*</span>
                     </label>
                     <input
                       id="employeeId"
                       type="text"
                       placeholder="e.g. EMP-001"
                       {...register('employeeId')}
+                      aria-required="true"
                       className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-input)] px-4 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:ring-offset-2 transition-colors"
                     />
                     {errors.employeeId && (
@@ -123,12 +124,13 @@ export default function CreateSalaryStructurePage() {
                       htmlFor="effectiveDate"
                       className="block text-sm font-medium text-[var(--text-primary)] mb-1.5"
                     >
-                      Effective From <span className="text-danger-500">*</span>
+                      Effective From <span aria-hidden="true" className="text-danger-500">*</span>
                     </label>
                     <input
                       id="effectiveDate"
                       type="date"
                       {...register('effectiveDate')}
+                      aria-required="true"
                       className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-input)] px-4 py-2 text-sm text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:ring-offset-2 transition-colors"
                     />
                     {errors.effectiveDate && (
@@ -142,7 +144,7 @@ export default function CreateSalaryStructurePage() {
                       htmlFor="baseSalary"
                       className="block text-sm font-medium text-[var(--text-primary)] mb-1.5"
                     >
-                      Base Salary (₹) <span className="text-danger-500">*</span>
+                      Base Salary (₹) <span aria-hidden="true" className="text-danger-500">*</span>
                     </label>
                     <input
                       id="baseSalary"
@@ -151,6 +153,7 @@ export default function CreateSalaryStructurePage() {
                       step={1}
                       placeholder="e.g. 50000"
                       {...register('baseSalary', {valueAsNumber: true})}
+                      aria-required="true"
                       className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-input)] px-4 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:ring-offset-2 transition-colors"
                     />
                     {errors.baseSalary && (

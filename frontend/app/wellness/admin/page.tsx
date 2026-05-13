@@ -286,9 +286,9 @@ function CreateProgramModal({
           <div className="space-y-4">
             <div>
               <label htmlFor="wellness-program-name" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                Program Name <span className="text-danger-500">*</span>
+                Program Name <span aria-hidden="true" className="text-danger-500">*</span>
               </label>
-              <Input id="wellness-program-name" {...register('name')} placeholder="e.g. 30-Day Step Challenge"/>
+              <Input id="wellness-program-name" {...register('name')} aria-required="true" placeholder="e.g. 30-Day Step Challenge"/>
               {errors.name && <p className="text-xs text-danger-500 mt-1">{errors.name.message}</p>}
             </div>
 
@@ -302,9 +302,9 @@ function CreateProgramModal({
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label htmlFor="wellness-program-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                  Type <span className="text-danger-500">*</span>
+                  Type <span aria-hidden="true" className="text-danger-500">*</span>
                 </label>
-                <Select id="wellness-program-type" {...register('programType')}>
+                <Select id="wellness-program-type" {...register('programType')} aria-required="true">
                   {Object.entries(PROGRAM_TYPE_LABELS).map(([value, label]) => (
                     <option key={value} value={value}>{label}</option>
                   ))}
@@ -312,9 +312,9 @@ function CreateProgramModal({
               </div>
               <div>
                 <label htmlFor="wellness-program-category" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                  Category <span className="text-danger-500">*</span>
+                  Category <span aria-hidden="true" className="text-danger-500">*</span>
                 </label>
-                <Select id="wellness-program-category" {...register('category')}>
+                <Select id="wellness-program-category" {...register('category')} aria-required="true">
                   {Object.entries(CATEGORY_LABELS).map(([value, label]) => (
                     <option key={value} value={value}>{label}</option>
                   ))}
@@ -463,9 +463,9 @@ function CreateChallengeModal({
           <div className="space-y-4">
             <div>
               <label htmlFor="wellness-challenge-name" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                Challenge Name <span className="text-danger-500">*</span>
+                Challenge Name <span aria-hidden="true" className="text-danger-500">*</span>
               </label>
-              <Input id="wellness-challenge-name" {...register('name')} placeholder="e.g. 10,000 Steps a Day"/>
+              <Input id="wellness-challenge-name" {...register('name')} aria-required="true" placeholder="e.g. 10,000 Steps a Day"/>
               {errors.name && <p className="text-xs text-danger-500 mt-1">{errors.name.message}</p>}
             </div>
 
@@ -479,9 +479,9 @@ function CreateChallengeModal({
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label htmlFor="wellness-challenge-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                  Challenge Type <span className="text-danger-500">*</span>
+                  Challenge Type <span aria-hidden="true" className="text-danger-500">*</span>
                 </label>
-                <Select id="wellness-challenge-type" {...register('challengeType')}>
+                <Select id="wellness-challenge-type" {...register('challengeType')} aria-required="true">
                   <option value="STEPS">Steps</option>
                   <option value="SLEEP">Sleep</option>
                   <option value="WATER_INTAKE">Water Intake</option>
@@ -505,18 +505,18 @@ function CreateChallengeModal({
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label htmlFor="wellness-challenge-start-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                  Start Date <span className="text-danger-500">*</span>
+                  Start Date <span aria-hidden="true" className="text-danger-500">*</span>
                 </label>
-                <Input id="wellness-challenge-start-date" {...register('startDate')} type="date"/>
+                <Input id="wellness-challenge-start-date" {...register('startDate')} type="date" aria-required="true"/>
                 {errors.startDate && (
                   <p className="text-xs text-danger-500 mt-1">{errors.startDate.message}</p>
                 )}
               </div>
               <div>
                 <label htmlFor="wellness-challenge-end-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                  End Date <span className="text-danger-500">*</span>
+                  End Date <span aria-hidden="true" className="text-danger-500">*</span>
                 </label>
-                <Input id="wellness-challenge-end-date" {...register('endDate')} type="date"/>
+                <Input id="wellness-challenge-end-date" {...register('endDate')} type="date" aria-required="true"/>
                 {errors.endDate && (
                   <p className="text-xs text-danger-500 mt-1">{errors.endDate.message}</p>
                 )}

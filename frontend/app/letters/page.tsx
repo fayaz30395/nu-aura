@@ -27,7 +27,7 @@ import {
   XCircle,
 } from 'lucide-react';
 import {AppLayout} from '@/components/layout/AppLayout';
-import {Button, Card, CardContent, Modal, ModalBody, ModalFooter, ModalHeader,} from '@/components/ui';
+import {Button, Card, CardContent, EmptyState, Modal, ModalBody, ModalFooter, ModalHeader,} from '@/components/ui';
 import {StatusBadge} from '@/components/ui/StatusBadge';
 import {LETTER_STATUS} from '@/lib/status/vocabulary';
 import {
@@ -761,22 +761,16 @@ export default function LettersPage() {
             ) : (
               !lettersLoading && (
                 <Card>
-                  <CardContent className="p-12 text-center">
-                    <FileText className="h-12 w-12 mx-auto text-[var(--text-muted)] mb-4"/>
-                    <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
-                      No Letters Found
-                    </h3>
-                    <p className="text-[var(--text-secondary)] mb-4">
-                      {searchQuery || statusFilter || categoryFilter
+                  <CardContent>
+                    <EmptyState
+                      icon={<FileText className="w-full h-full"/>}
+                      title="No Letters Found"
+                      description={searchQuery || statusFilter || categoryFilter
                         ? 'No letters match your search criteria.'
                         : 'Get started by generating your first letter.'}
-                    </p>
-                    {!searchQuery && !statusFilter && !categoryFilter && (
-                      <Button onClick={handleOpenGenerateModal}>
-                        <Plus className="h-4 w-4 mr-2"/>
-                        Generate Letter
-                      </Button>
-                    )}
+                      actionLabel={!searchQuery && !statusFilter && !categoryFilter ? 'Generate Letter' : undefined}
+                      onAction={!searchQuery && !statusFilter && !categoryFilter ? handleOpenGenerateModal : undefined}
+                    />
                   </CardContent>
                 </Card>
               )

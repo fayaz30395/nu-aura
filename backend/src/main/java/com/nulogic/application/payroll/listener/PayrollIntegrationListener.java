@@ -1,5 +1,6 @@
 package com.nulogic.application.payroll.listener;
 
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.event.expense.ExpenseApprovedEvent;
 import com.nulogic.domain.event.leave.LeaveApprovedEvent;
 import com.nulogic.domain.event.overtime.OvertimeApprovedEvent;
@@ -12,7 +13,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 
 /**
  * Listens for cross-module domain events and creates payroll adjustments.
@@ -29,6 +29,7 @@ import java.time.LocalDate;
 public class PayrollIntegrationListener {
 
     private final PayrollAdjustmentRepository adjustmentRepository;
+    private final TenantTimeService tenantTimeService;
 
     /**
      * FIX-001: When overtime is approved, create an earning adjustment for the next payroll run.
@@ -84,8 +85,8 @@ public class PayrollIntegrationListener {
                         event.getClaimNumber(), event.getCurrency(), event.getAmount()))
                 .sourceModule("EXPENSE")
                 .sourceId(event.getAggregateId())
-                // S11-M Wave-10 P0-1: tenant-local civil day (IST fallback). TODO(S11-M): inject TenantTimeService.
-                .effectiveDate(LocalDate.now(java.time.ZoneId.of("Asia/Kolkata")))
+                // S12-B: tenant-local civil day — resolved via TenantTimeService.
+                .effectiveDate(tenantTimeService.today(event.getTenantId()))
                 .build();
 
         adjustmentRepository.save(adjustment);

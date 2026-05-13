@@ -324,8 +324,8 @@ export default function RolesPage() {
           setRoleToDelete(null);
         }}
         onConfirm={performDelete}
-        title="Delete Role"
-        message={`Are you sure you want to delete the role "${roleToDelete?.name}"?`}
+        title="Delete Role?"
+        message={`This action cannot be undone. Role "${roleToDelete?.name}" will be permanently deleted.`}
         confirmText="Delete"
         cancelText="Cancel"
         type="danger"

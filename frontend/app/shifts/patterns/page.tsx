@@ -19,7 +19,8 @@ import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {AnimatePresence, motion} from 'framer-motion';
 import {CATEGORICAL_OFF, CATEGORICAL_UNSET} from '@/lib/utils/categoricalPalette';
-import {ChevronLeft, Edit2, Plus, RotateCcw, Trash2, X,} from 'lucide-react';
+import {ChevronLeft, Edit2, Plus, RotateCcw, Trash2,} from 'lucide-react';
+import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
 import {useRouter} from 'next/navigation';
 
 const patternSchema = z.object({
@@ -300,36 +301,12 @@ export default function ShiftPatternsPage() {
           )}
 
           {/* Create/Edit Modal */}
-          <AnimatePresence>
-            {showForm && (
-              <motion.div
-                initial={{opacity: 0}}
-                animate={{opacity: 1}}
-                exit={{opacity: 0}}
-                className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
-                onClick={(e) => {
-                  if (e.target === e.currentTarget) setShowForm(false);
-                }}
-              >
-                <motion.div
-                  initial={{scale: 0.95, opacity: 0}}
-                  animate={{scale: 1, opacity: 1}}
-                  exit={{scale: 0.95, opacity: 0}}
-                  className="bg-[var(--bg-card)] rounded-lg shadow-[var(--shadow-dropdown)] w-full max-w-2xl max-h-[90vh] overflow-y-auto"
-                >
-                  <div className="row-between p-6 border-b border-surface-200 dark:border-surface-700">
-                    <h2 className="text-xl font-semibold text-surface-900 dark:text-white">
-                      {editingPattern ? 'Edit Pattern' : 'New Pattern'}
-                    </h2>
-                    <button
-                      onClick={() => setShowForm(false)}
-                      className="p-2 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg"
-                    >
-                      <X className="w-5 h-5 text-surface-500"/>
-                    </button>
-                  </div>
-
-                  <form onSubmit={form.handleSubmit(onSubmit)} className="p-6 space-y-4">
+          <Modal isOpen={showForm} onClose={() => setShowForm(false)} size="lg">
+            <ModalHeader onClose={() => setShowForm(false)}>
+              {editingPattern ? 'Edit Pattern' : 'New Pattern'}
+            </ModalHeader>
+            <form onSubmit={form.handleSubmit(onSubmit)}>
+              <ModalBody className="space-y-4">
                     <div>
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
                         Pattern Name *
@@ -425,32 +402,29 @@ export default function ShiftPatternsPage() {
                       />
                     </div>
 
-                    {/* Actions */}
-                    <div className="flex justify-end gap-4 pt-4 border-t border-surface-200 dark:border-surface-700">
-                      <button
-                        type="button"
-                        onClick={() => setShowForm(false)}
-                        className="px-4 py-2 text-sm font-medium text-surface-700 dark:text-surface-300 bg-surface-100 dark:bg-surface-700 rounded-lg hover:bg-surface-200 dark:hover:bg-surface-600"
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        type="submit"
-                        disabled={createMutation.isPending || updateMutation.isPending}
-                        className="px-4 py-2 text-sm font-medium text-white bg-accent-700 hover:bg-accent-800 rounded-lg disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                      >
-                        {createMutation.isPending || updateMutation.isPending
-                          ? 'Saving...'
-                          : editingPattern
-                            ? 'Update Pattern'
-                            : 'Create Pattern'}
-                      </button>
-                    </div>
-                  </form>
-                </motion.div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+              </ModalBody>
+              <ModalFooter>
+                <button
+                  type="button"
+                  onClick={() => setShowForm(false)}
+                  className="px-4 py-2 text-sm font-medium text-surface-700 dark:text-surface-300 bg-surface-100 dark:bg-surface-700 rounded-lg hover:bg-surface-200 dark:hover:bg-surface-600"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={createMutation.isPending || updateMutation.isPending}
+                  className="px-4 py-2 text-sm font-medium text-white bg-accent-700 hover:bg-accent-800 rounded-lg disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                >
+                  {createMutation.isPending || updateMutation.isPending
+                    ? 'Saving...'
+                    : editingPattern
+                      ? 'Update Pattern'
+                      : 'Create Pattern'}
+                </button>
+              </ModalFooter>
+            </form>
+          </Modal>
         </div>
       </PermissionGate>
     </AppLayout>

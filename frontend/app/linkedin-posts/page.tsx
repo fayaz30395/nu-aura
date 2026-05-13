@@ -464,11 +464,12 @@ function CreateLinkedInPostModal({post, onClose, onSuccess}: CreateLinkedInPostM
           {/* Post URL */}
           <div>
             <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-              Post URL <span className="text-danger-500">*</span>
+              Post URL <span aria-hidden="true" className="text-danger-500">*</span>
             </label>
             <input
               type="url"
               {...register('postUrl')}
+              aria-required="true"
               className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent dark:bg-[var(--bg-secondary)] dark:text-white ${
                 errors.postUrl ? 'border-danger-500' : 'border-[var(--border-main)]'
               }`}
@@ -483,11 +484,12 @@ function CreateLinkedInPostModal({post, onClose, onSuccess}: CreateLinkedInPostM
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                Author Name <span className="text-danger-500">*</span>
+                Author Name <span aria-hidden="true" className="text-danger-500">*</span>
               </label>
               <input
                 type="text"
                 {...register('authorName')}
+                aria-required="true"
                 className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent dark:bg-[var(--bg-secondary)] dark:text-white ${
                   errors.authorName ? 'border-danger-500' : 'border-[var(--border-main)]'
                 }`}
@@ -513,10 +515,11 @@ function CreateLinkedInPostModal({post, onClose, onSuccess}: CreateLinkedInPostM
           {/* Content Snippet */}
           <div>
             <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-              Content Snippet <span className="text-danger-500">*</span>
+              Content Snippet <span aria-hidden="true" className="text-danger-500">*</span>
             </label>
             <textarea
               {...register('contentSnippet')}
+              aria-required="true"
               rows={4}
               className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent dark:bg-[var(--bg-secondary)] dark:text-white resize-none ${
                 errors.contentSnippet ? 'border-danger-500' : 'border-[var(--border-main)]'
@@ -549,11 +552,12 @@ function CreateLinkedInPostModal({post, onClose, onSuccess}: CreateLinkedInPostM
           {/* Posted Date */}
           <div>
             <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-              Posted Date <span className="text-danger-500">*</span>
+              Posted Date <span aria-hidden="true" className="text-danger-500">*</span>
             </label>
             <input
               type="date"
               {...register('postedAt')}
+              aria-required="true"
               className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent dark:bg-[var(--bg-secondary)] dark:text-white ${
                 errors.postedAt ? 'border-danger-500' : 'border-[var(--border-main)]'
               }`}

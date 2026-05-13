@@ -2,6 +2,7 @@ package com.nulogic.application.attendance.scheduler;
 
 import com.nulogic.application.attendance.service.CompOffService;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.attendance.AttendanceRecord;
 import com.nulogic.infrastructure.attendance.repository.AttendanceRecordRepository;
 import lombok.RequiredArgsConstructor;
@@ -51,6 +52,7 @@ public class AutoRegularizationScheduler {
     private final AttendanceRecordRepository attendanceRecordRepository;
     private final CompOffService compOffService;
     private final JdbcTemplate jdbcTemplate;
+    private final TenantTimeService tenantTimeService;
 
     /**
      * Auto-regularize INCOMPLETE attendance.
@@ -111,9 +113,8 @@ public class AutoRegularizationScheduler {
         try {
             // Load the tenant-specific config (or use defaults)
             int afterDays = getTenantRegularizeAfterDays(tenantId);
-            // S11-M Wave-10 P0-1: tenant-local "today" (IST fallback) for tenant-aware cutoff.
-            // TODO(S11-M): inject TenantTimeService and use tenantTimeService.today(tenantId).
-            LocalDate cutoffDate = LocalDate.now(java.time.ZoneId.of("Asia/Kolkata")).minusDays(afterDays);
+            // tenant-local now() via TenantTimeService
+            LocalDate cutoffDate = tenantTimeService.today(tenantId).minusDays(afterDays);
 
             // BUG-004 FIX: Use a dynamic rolling window instead of a hardcoded
             // 2020-01-01 floor.  We only need to look back MAX_LOOK_BACK_DAYS

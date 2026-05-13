@@ -20,6 +20,8 @@ export const FluenceChatWidget: React.FC = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const fabRef = useRef<HTMLButtonElement>(null);
+  const triggerRef = useRef<HTMLElement | null>(null);
   const [showScrollDown, setShowScrollDown] = useState(false);
 
   const {messages, isStreaming, sendMessage, abort, clearChat} = useFluenceChat();
@@ -31,10 +33,16 @@ export const FluenceChatWidget: React.FC = () => {
     }
   }, [messages]);
 
-  // Focus input when panel opens
+  // WCAG 2.4.3 / 2.4.11: focus input on open, restore focus to FAB trigger on close
   useEffect(() => {
     if (isOpen) {
-      setTimeout(() => inputRef.current?.focus(), 200);
+      triggerRef.current = document.activeElement as HTMLElement;
+      const t = setTimeout(() => inputRef.current?.focus(), 200);
+      return () => clearTimeout(t);
+    } else if (triggerRef.current) {
+      // Prefer the FAB if it has remounted, otherwise restore prior trigger
+      (fabRef.current ?? triggerRef.current).focus();
+      triggerRef.current = null;
     }
   }, [isOpen]);
 
@@ -79,6 +87,7 @@ export const FluenceChatWidget: React.FC = () => {
       <AnimatePresence>
         {!isOpen && (
           <motion.button
+            ref={fabRef}
             initial={{scale: 0, opacity: 0}}
             animate={{scale: 1, opacity: 1}}
             exit={{scale: 0, opacity: 0}}

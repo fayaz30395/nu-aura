@@ -556,27 +556,33 @@ export default function WorkflowDetailPage() {
                   {/* Name */}
                   <div>
                     <label htmlFor="workflow-name" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                      Workflow Name <span className="text-danger-500">*</span>
+                      Workflow Name <span aria-hidden="true" className="text-danger-500">*</span>
                     </label>
                     <input
                       id="workflow-name"
                       {...form.register('name')}
+                      aria-required="true"
                       placeholder="e.g., Leave Approval - Standard"
+                      aria-invalid={form.formState.errors.name ? 'true' : 'false'}
+                      aria-describedby={form.formState.errors.name ? 'workflow-name-error' : undefined}
                       className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
                     />
                     {form.formState.errors.name && (
-                      <p className="mt-1 text-xs text-danger-500">{form.formState.errors.name.message}</p>
+                      <p id="workflow-name-error" className="mt-1 text-xs text-danger-500">{form.formState.errors.name.message}</p>
                     )}
                   </div>
 
                   {/* Entity Type */}
                   <div>
                     <label htmlFor="workflow-entity-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                      Entity Type <span className="text-danger-500">*</span>
+                      Entity Type <span aria-hidden="true" className="text-danger-500">*</span>
                     </label>
                     <select
                       id="workflow-entity-type"
                       {...form.register('entityType')}
+                      aria-required="true"
+                      aria-invalid={form.formState.errors.entityType ? 'true' : 'false'}
+                      aria-describedby={form.formState.errors.entityType ? 'workflow-entity-type-error' : undefined}
                       className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
                     >
                       {ENTITY_TYPE_OPTIONS.map((o) => (
@@ -584,18 +590,19 @@ export default function WorkflowDetailPage() {
                       ))}
                     </select>
                     {form.formState.errors.entityType && (
-                      <p className="mt-1 text-xs text-danger-500">{form.formState.errors.entityType.message}</p>
+                      <p id="workflow-entity-type-error" className="mt-1 text-xs text-danger-500">{form.formState.errors.entityType.message}</p>
                     )}
                   </div>
 
                   {/* Workflow Type */}
                   <div>
                     <label htmlFor="workflow-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                      Workflow Type <span className="text-danger-500">*</span>
+                      Workflow Type <span aria-hidden="true" className="text-danger-500">*</span>
                     </label>
                     <select
                       id="workflow-type"
                       {...form.register('workflowType')}
+                      aria-required="true"
                       className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
                     >
                       {WORKFLOW_TYPE_OPTIONS.map((o) => (
@@ -762,16 +769,19 @@ export default function WorkflowDetailPage() {
                       {/* Step Name */}
                       <div>
                         <label htmlFor={`workflow-step-${idx}-name`} className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
-                          Step Name <span className="text-danger-500">*</span>
+                          Step Name <span aria-hidden="true" className="text-danger-500">*</span>
                         </label>
                         <input
                           id={`workflow-step-${idx}-name`}
                           {...form.register(`steps.${idx}.stepName`)}
+                          aria-required="true"
                           placeholder="e.g., Manager Approval"
+                          aria-invalid={form.formState.errors.steps?.[idx]?.stepName ? 'true' : 'false'}
+                          aria-describedby={form.formState.errors.steps?.[idx]?.stepName ? `workflow-step-${idx}-name-error` : undefined}
                           className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-1.5 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
                         />
                         {form.formState.errors.steps?.[idx]?.stepName && (
-                          <p className="mt-1 text-xs text-danger-500">
+                          <p id={`workflow-step-${idx}-name-error`} className="mt-1 text-xs text-danger-500">
                             {form.formState.errors.steps[idx]?.stepName?.message}
                           </p>
                         )}
@@ -780,11 +790,12 @@ export default function WorkflowDetailPage() {
                       {/* Approver Type */}
                       <div>
                         <label htmlFor={`workflow-step-${idx}-approver-type`} className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
-                          Approver Type <span className="text-danger-500">*</span>
+                          Approver Type <span aria-hidden="true" className="text-danger-500">*</span>
                         </label>
                         <select
                           id={`workflow-step-${idx}-approver-type`}
                           {...form.register(`steps.${idx}.approverType`)}
+                          aria-required="true"
                           className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-1.5 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
                         >
                           {APPROVER_TYPE_OPTIONS.map((o) => (

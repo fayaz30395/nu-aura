@@ -194,8 +194,8 @@ export default function PermissionsPage() {
           setRoleToDelete(null);
         }}
         onConfirm={performDelete}
-        title="Delete Role"
-        message={`Are you sure you want to delete the role "${roleToDelete?.name}"?`}
+        title="Delete Role?"
+        message={`This action cannot be undone. Role "${roleToDelete?.name}" will be permanently deleted.`}
         confirmText="Delete"
         cancelText="Cancel"
         type="danger"
@@ -414,8 +414,8 @@ export default function PermissionsPage() {
                     description="Try a different search term to find users."
                   />
                 ) : (
-                  <div className="bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] overflow-hidden">
-                    <table className="w-full text-left text-sm">
+                  <div className="bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] overflow-x-auto -mx-4 sm:mx-0">
+                    <table className="w-full min-w-[640px] text-left text-sm">
                       <thead className="bg-[var(--bg-secondary)] text-[var(--text-secondary)]">
                       <tr>
                         <th className="px-6 py-2 font-medium">User</th>

@@ -816,11 +816,11 @@ export default function JobOpeningsPage() {
                 <div className="flex-shrink-0 h-12 w-12 rounded-xl bg-danger-100 flex items-center justify-center">
                   <Trash2 className="h-6 w-6 text-danger-600"/>
                 </div>
-                <h2 className="ml-4 text-lg font-medium text-[var(--text-primary)]">Delete Job Opening</h2>
+                <h2 className="ml-4 text-lg font-medium text-[var(--text-primary)]">Delete Job Opening?</h2>
               </div>
               <p className="text-body-muted mb-6">
-                Are you sure you want to delete <strong
-                className="text-[var(--text-secondary)]">{jobToDelete.jobTitle}</strong>? This action cannot be undone.
+                This action cannot be undone. Job opening <strong
+                className="text-[var(--text-secondary)]">{jobToDelete.jobTitle}</strong> will be permanently deleted.
               </p>
               <div className="flex gap-4">
                 <Button

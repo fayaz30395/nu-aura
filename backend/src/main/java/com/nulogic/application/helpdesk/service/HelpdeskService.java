@@ -3,6 +3,7 @@ package com.nulogic.application.helpdesk.service;
 import com.nulogic.api.helpdesk.dto.*;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.helpdesk.Ticket;
 import com.nulogic.domain.helpdesk.TicketCategory;
 import com.nulogic.domain.helpdesk.TicketComment;
@@ -33,6 +34,7 @@ public class HelpdeskService {
     private final TicketCommentRepository ticketCommentRepository;
     private final TicketCategoryRepository ticketCategoryRepository;
     private final EmployeeRepository employeeRepository;
+    private final TenantTimeService tenantTimeService;
 
     // ==================== Ticket Operations ====================
 
@@ -81,8 +83,8 @@ public class HelpdeskService {
             ticketCategoryRepository.findByIdAndTenantId(request.getCategoryId(), tenantId)
                     .ifPresent(category -> {
                         if (category.getSlaHours() != null) {
-                            // S12-B: tenant-local SLA due-date for helpdesk ticket (IST fallback). TODO(S12-B): inject TenantTimeService and use tenantTimeService.now(tenantId).
-                            ticket.setDueDate(LocalDateTime.now(java.time.ZoneId.of("Asia/Kolkata")).plusHours(category.getSlaHours()));
+                            // S12-B: tenant-local SLA due-date for helpdesk ticket — resolved via TenantTimeService.
+                            ticket.setDueDate(tenantTimeService.now(tenantId).plusHours(category.getSlaHours()));
                         }
                     });
         }

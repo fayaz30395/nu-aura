@@ -640,8 +640,8 @@ export default function LeaveTypesManagementPage() {
                   </div>
 
                   {/* Carry Forward & Encashment */}
-                  <div className="border-b pb-4">
-                    <h3 className="text-lg font-medium text-[var(--text-primary)] mb-4">Carry Forward & Encashment</h3>
+                  <fieldset className="border-b pb-4">
+                    <legend className="text-lg font-medium text-[var(--text-primary)] mb-4">Carry Forward & Encashment</legend>
                     <div className="space-y-4">
                       <label className="flex items-center cursor-pointer">
                         <input
@@ -686,7 +686,7 @@ export default function LeaveTypesManagementPage() {
                         <span className="ml-2 text-body-secondary">Requires Supporting Document</span>
                       </label>
                     </div>
-                  </div>
+                  </fieldset>
 
             </ModalBody>
             <ModalFooter>

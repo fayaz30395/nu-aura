@@ -193,10 +193,11 @@ export default function ContactPage() {
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+                    <label htmlFor="contact-name" className="block text-sm font-medium text-[var(--text-primary)] mb-2">
                       Name *
                     </label>
                     <Input
+                      id="contact-name"
                       type="text"
                       placeholder="John Doe"
                       {...register('name')}
@@ -209,10 +210,11 @@ export default function ContactPage() {
                     )}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+                    <label htmlFor="contact-email" className="block text-sm font-medium text-[var(--text-primary)] mb-2">
                       Email *
                     </label>
                     <Input
+                      id="contact-email"
                       type="email"
                       placeholder="john@company.com"
                       {...register('email')}
@@ -228,10 +230,11 @@ export default function ContactPage() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+                    <label htmlFor="contact-company" className="block text-sm font-medium text-[var(--text-primary)] mb-2">
                       Company *
                     </label>
                     <Input
+                      id="contact-company"
                       type="text"
                       placeholder="Acme Inc."
                       {...register('company')}
@@ -244,10 +247,11 @@ export default function ContactPage() {
                     )}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+                    <label htmlFor="contact-phone" className="block text-sm font-medium text-[var(--text-primary)] mb-2">
                       Phone *
                     </label>
                     <Input
+                      id="contact-phone"
                       type="tel"
                       placeholder="+1 (555) 123-4567"
                       {...register('phone')}
@@ -262,10 +266,11 @@ export default function ContactPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+                  <label htmlFor="contact-subject" className="block text-sm font-medium text-[var(--text-primary)] mb-2">
                     Subject *
                   </label>
                   <Input
+                    id="contact-subject"
                     type="text"
                     placeholder="How can we help?"
                     {...register('subject')}
@@ -279,10 +284,11 @@ export default function ContactPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+                  <label htmlFor="contact-message" className="block text-sm font-medium text-[var(--text-primary)] mb-2">
                     Message *
                   </label>
                   <textarea
+                    id="contact-message"
                     rows={5}
                     placeholder="Tell us more about your inquiry..."
                     className={`input-aura w-full ${errors.message ? 'border-danger-500' : ''}`}

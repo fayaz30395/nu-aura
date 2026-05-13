@@ -423,7 +423,7 @@ export default function ExpenseClaims() {
                 <AlertCircle className="w-5 h-5"/>
               </div>
               <div>
-                <p className="text-xl font-bold text-[var(--text-primary)]">{statistics.pendingCount}</p>
+                <p className="text-xl font-bold text-[var(--text-primary)] tabular-nums">{statistics.pendingCount}</p>
                 <p className="text-body-muted">Pending</p>
               </div>
             </div>
@@ -434,7 +434,7 @@ export default function ExpenseClaims() {
                 <CheckCircle className="w-5 h-5"/>
               </div>
               <div>
-                <p className="text-xl font-bold text-[var(--text-primary)]">{statistics.approvedCount}</p>
+                <p className="text-xl font-bold text-[var(--text-primary)] tabular-nums">{statistics.approvedCount}</p>
                 <p className="text-body-muted">Approved</p>
               </div>
             </div>
@@ -446,7 +446,7 @@ export default function ExpenseClaims() {
               </div>
               <div>
                 <p
-                  className="text-xl font-bold text-[var(--text-primary)]">{formatCurrency(statistics.totalPendingAmount)}</p>
+                  className="text-xl font-bold text-[var(--text-primary)] tabular-nums">{formatCurrency(statistics.totalPendingAmount)}</p>
                 <p className="text-body-muted">Pending Amount</p>
               </div>
             </div>
@@ -457,7 +457,7 @@ export default function ExpenseClaims() {
                 <FileText className="w-5 h-5"/>
               </div>
               <div>
-                <p className="text-xl font-bold text-[var(--text-primary)]">{statistics.totalClaims}</p>
+                <p className="text-xl font-bold text-[var(--text-primary)] tabular-nums">{statistics.totalClaims}</p>
                 <p className="text-body-muted">Total Claims</p>
               </div>
             </div>
@@ -884,7 +884,7 @@ export default function ExpenseClaims() {
                         </div>
                       </div>
                       <div className="text-right">
-                        <div className="text-xl font-bold text-[var(--text-primary)]">
+                        <div className="text-xl font-bold text-[var(--text-primary)] tabular-nums">
                           {formatCurrency(claim.amount, claim.currency)}
                         </div>
                         <div
@@ -895,12 +895,12 @@ export default function ExpenseClaims() {
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mb-4">
                       <div>
                         <span className="text-[var(--text-secondary)]">Claim Date:</span>
-                        <p className="font-medium">{formatDate(claim.claimDate)}</p>
+                        <p className="font-medium tabular-nums">{formatDate(claim.claimDate)}</p>
                       </div>
                       {claim.submittedAt && (
                         <div>
                           <span className="text-[var(--text-secondary)]">Submitted:</span>
-                          <p className="font-medium">{formatDate(claim.submittedAt)}</p>
+                          <p className="font-medium tabular-nums">{formatDate(claim.submittedAt)}</p>
                         </div>
                       )}
                       {claim.approvedAt && (

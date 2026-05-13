@@ -264,11 +264,12 @@ export default function NewTravelRequestPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label htmlFor="travel-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                  Travel Type <span className="text-danger-500">*</span>
+                  Travel Type <span aria-hidden="true" className="text-danger-500">*</span>
                 </label>
                 <select
                   id="travel-type"
                   {...register('travelType')}
+                  aria-required="true"
                   className={inputClass(!!errors.travelType)}
                 >
                   <option value="BUSINESS">Business</option>
@@ -299,11 +300,12 @@ export default function NewTravelRequestPage() {
 
             <div>
               <label htmlFor="travel-purpose" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                Purpose <span className="text-danger-500">*</span>
+                Purpose <span aria-hidden="true" className="text-danger-500">*</span>
               </label>
               <textarea
                 id="travel-purpose"
                 {...register('purpose')}
+                aria-required="true"
                 placeholder="Describe the purpose of your travel"
                 rows={3}
                 className={`${inputClass(!!errors.purpose)} resize-none`}
@@ -326,12 +328,13 @@ export default function NewTravelRequestPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label htmlFor="travel-origin-city" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                  Origin City <span className="text-danger-500">*</span>
+                  Origin City <span aria-hidden="true" className="text-danger-500">*</span>
                 </label>
                 <input
                   id="travel-origin-city"
                   type="text"
                   {...register('originCity')}
+                  aria-required="true"
                   placeholder="e.g., Mumbai"
                   className={cardInputClass(!!errors.originCity)}
                 />
@@ -342,12 +345,13 @@ export default function NewTravelRequestPage() {
 
               <div>
                 <label htmlFor="travel-destination-city" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                  Destination City <span className="text-danger-500">*</span>
+                  Destination City <span aria-hidden="true" className="text-danger-500">*</span>
                 </label>
                 <input
                   id="travel-destination-city"
                   type="text"
                   {...register('destinationCity')}
+                  aria-required="true"
                   placeholder="e.g., Delhi"
                   className={cardInputClass(!!errors.destinationCity)}
                 />
@@ -358,12 +362,13 @@ export default function NewTravelRequestPage() {
 
               <div>
                 <label htmlFor="travel-departure-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                  Departure Date <span className="text-danger-500">*</span>
+                  Departure Date <span aria-hidden="true" className="text-danger-500">*</span>
                 </label>
                 <input
                   id="travel-departure-date"
                   type="date"
                   {...register('departureDate')}
+                  aria-required="true"
                   className={cardInputClass(!!errors.departureDate)}
                 />
                 {errors.departureDate && (
@@ -373,13 +378,14 @@ export default function NewTravelRequestPage() {
 
               <div>
                 <label htmlFor="travel-return-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                  Return Date <span className="text-danger-500">*</span>
+                  Return Date <span aria-hidden="true" className="text-danger-500">*</span>
                 </label>
                 <input
                   id="travel-return-date"
                   type="date"
                   {...register('returnDate')}
                   min={watchedDepartureDate}
+                  aria-required="true"
                   className={cardInputClass(!!errors.returnDate)}
                 />
                 {errors.returnDate && (
@@ -423,11 +429,12 @@ export default function NewTravelRequestPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label htmlFor="travel-transport-mode" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                  Transport Mode <span className="text-danger-500">*</span>
+                  Transport Mode <span aria-hidden="true" className="text-danger-500">*</span>
                 </label>
                 <select
                   id="travel-transport-mode"
                   {...register('transportMode')}
+                  aria-required="true"
                   className={inputClass(!!errors.transportMode)}
                 >
                   <option value="FLIGHT">Flight</option>
@@ -500,13 +507,14 @@ export default function NewTravelRequestPage() {
 
                 <div>
                   <label htmlFor="travel-check-in-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                    Check-in Date <span className="text-danger-500">*</span>
+                    Check-in Date <span aria-hidden="true" className="text-danger-500">*</span>
                   </label>
                   <input
                     id="travel-check-in-date"
                     type="date"
                     {...register('checkInDate')}
                     min={watchedDepartureDate}
+                    aria-required="true"
                     className={cardInputClass(!!errors.checkInDate)}
                   />
                   {errors.checkInDate && (
@@ -516,12 +524,13 @@ export default function NewTravelRequestPage() {
 
                 <div>
                   <label htmlFor="travel-check-out-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                    Check-out Date <span className="text-danger-500">*</span>
+                    Check-out Date <span aria-hidden="true" className="text-danger-500">*</span>
                   </label>
                   <input
                     id="travel-check-out-date"
                     type="date"
                     {...register('checkOutDate')}
+                    aria-required="true"
                     className={cardInputClass(!!errors.checkOutDate)}
                   />
                   {errors.checkOutDate && (
@@ -544,7 +553,7 @@ export default function NewTravelRequestPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label htmlFor="travel-estimated-cost" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                  Estimated Cost (INR) <span className="text-danger-500">*</span>
+                  Estimated Cost (INR) <span aria-hidden="true" className="text-danger-500">*</span>
                 </label>
                 <input
                   id="travel-estimated-cost"
@@ -552,6 +561,7 @@ export default function NewTravelRequestPage() {
                   step="0.01"
                   min="0"
                   {...register('estimatedCost', {valueAsNumber: true})}
+                  aria-required="true"
                   placeholder="0.00"
                   className={inputClass(!!errors.estimatedCost)}
                 />

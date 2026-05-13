@@ -8,6 +8,7 @@ import {AppLayout} from '@/components/layout';
 import {TicketSLA} from '@/lib/services/hrms/helpdesk-sla.service';
 import {useToast} from '@/components/notifications/ToastProvider';
 import {ConfirmDialog} from '@/components/ui';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {SkeletonTable} from '@/components/ui/Skeleton';
 import {StatusBadge} from '@/components/ui/StatusBadge';
 import {LIFECYCLE_STATUS} from '@/lib/status/vocabulary';
@@ -572,8 +573,12 @@ export default function HelpdeskSLAPage() {
                   ))}
                   {slas.length === 0 && (
                     <tr>
-                      <td colSpan={7} className="px-6 py-8 text-center text-[var(--text-secondary)]">
-                        No SLA policies found. Create one to get started.
+                      <td colSpan={7} className="px-6 py-2">
+                        <EmptyState
+                          size="compact"
+                          title="No SLA policies"
+                          description="Create one to get started."
+                        />
                       </td>
                     </tr>
                   )}

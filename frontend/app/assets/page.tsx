@@ -1043,11 +1043,11 @@ export default function AssetManagementPage() {
           isOpen={showDeleteModal}
           onClose={() => setShowDeleteModal(false)}
           onConfirm={handleDelete}
-          title="Delete Asset"
+          title="Delete Asset?"
           message={
             selectedAsset
-              ? `Are you sure you want to delete "${selectedAsset.assetName}"? This action cannot be undone.`
-              : 'This action cannot be undone.'
+              ? `This action cannot be undone. Asset "${selectedAsset.assetName}" will be permanently deleted.`
+              : 'This action cannot be undone. The asset will be permanently deleted.'
           }
           confirmText="Delete"
           cancelText="Cancel"

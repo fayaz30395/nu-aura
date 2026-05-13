@@ -471,13 +471,13 @@ export default function EmployeesPage() {
                 <div className="px-6 py-4 border-t border-[var(--border-subtle)] row-between">
                   <p className="text-body-secondary">
                     Showing{' '}
-                    <span className="font-medium text-[var(--text-primary)]">{currentPage * PAGE_SIZE + 1}</span>
+                    <span className="font-medium text-[var(--text-primary)] tabular-nums">{currentPage * PAGE_SIZE + 1}</span>
                     {' '}–{' '}
-                    <span className="font-medium text-[var(--text-primary)]">
+                    <span className="font-medium text-[var(--text-primary)] tabular-nums">
                     {Math.min((currentPage + 1) * PAGE_SIZE, totalElements)}
                   </span>
                     {' '}of{' '}
-                    <span className="font-medium text-[var(--text-primary)]">{totalElements}</span> employees
+                    <span className="font-medium text-[var(--text-primary)] tabular-nums">{totalElements}</span> employees
                   </p>
                   <div className="flex items-center gap-2">
                     <Button

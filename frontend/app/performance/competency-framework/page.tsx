@@ -24,6 +24,7 @@ import {EmptyState} from '@/components/ui/EmptyState';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
+import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
 import {useAllReviews, useDeleteCompetency, usePerformanceAllCycles,} from '@/lib/hooks/queries/usePerformance';
 import {useAddCompetency, useReviewCompetencies,} from '@/lib/hooks/useCompetency';
 import type {CompetencyCategory, ReviewCompetency} from '@/lib/types/grow/performance';
@@ -282,33 +283,23 @@ function AddCompetencyModal({
     onClose();
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-[var(--bg-surface)] rounded-xl shadow-[var(--shadow-floating)] w-full max-w-md">
-        <div className="row-between px-6 py-4 border-b border-[var(--border-main)]">
-          <h2 className="text-lg font-semibold text-[var(--text-primary)]">Add Competency</h2>
-          <button
-            onClick={onClose}
-            className="text-[var(--text-muted)] hover:text-[var(--text-primary)] cursor-pointer"
-          >
-            ✕
-          </button>
-        </div>
-
-        <form onSubmit={handleSubmit(onSubmit)} className="px-6 py-4 space-y-4">
+    <Modal isOpen={isOpen} onClose={onClose} size="sm">
+      <ModalHeader onClose={onClose}>Add Competency</ModalHeader>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <ModalBody className="space-y-4">
           {/* Hidden reviewId */}
           <input type="hidden" {...register('reviewId')} value={reviewId ?? ''}/>
 
           {/* Competency Name */}
           <div>
             <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-              Competency Name <span className="text-danger-500">*</span>
+              Competency Name <span aria-hidden="true" className="text-danger-500">*</span>
             </label>
             <input
               {...register('competencyName')}
               type="text"
+              aria-required="true"
               placeholder="e.g. System Design, Communication"
               className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
             />
@@ -320,10 +311,11 @@ function AddCompetencyModal({
           {/* Category */}
           <div>
             <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-              Category <span className="text-danger-500">*</span>
+              Category <span aria-hidden="true" className="text-danger-500">*</span>
             </label>
             <select
               {...register('category')}
+              aria-required="true"
               className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
             >
               {CATEGORY_OPTIONS.map((opt) => (
@@ -340,7 +332,7 @@ function AddCompetencyModal({
           {/* Rating */}
           <div>
             <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-              Rating (1–5) <span className="text-danger-500">*</span>
+              Rating (1–5) <span aria-hidden="true" className="text-danger-500">*</span>
             </label>
             <input
               {...register('rating')}
@@ -348,6 +340,7 @@ function AddCompetencyModal({
               min={1}
               max={5}
               step={0.5}
+              aria-required="true"
               className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
             />
             {errors.rating && (
@@ -368,25 +361,25 @@ function AddCompetencyModal({
             />
           </div>
 
-          <div className="flex items-center justify-end gap-4 pt-2">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 rounded-lg border border-[var(--border-main)] text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] transition-colors cursor-pointer"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={isSubmitting || addMutation.isPending}
-              className="px-4 py-2 rounded-lg bg-accent-700 text-white text-sm font-medium hover:bg-accent-800 disabled:opacity-50 transition-colors cursor-pointer"
-            >
-              {addMutation.isPending ? 'Adding…' : 'Add Competency'}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+        </ModalBody>
+        <ModalFooter>
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-4 py-2 rounded-lg border border-[var(--border-main)] text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] transition-colors cursor-pointer"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            disabled={isSubmitting || addMutation.isPending}
+            className="px-4 py-2 rounded-lg bg-accent-700 text-white text-sm font-medium hover:bg-accent-800 disabled:opacity-50 transition-colors cursor-pointer"
+          >
+            {addMutation.isPending ? 'Adding…' : 'Add Competency'}
+          </button>
+        </ModalFooter>
+      </form>
+    </Modal>
   );
 }
 

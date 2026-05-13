@@ -4,6 +4,7 @@ import com.nulogic.common.config.AttendanceConfigProperties;
 import com.nulogic.common.exception.BusinessException;
 import com.nulogic.common.logging.Audited;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.attendance.AttendanceRecord;
 import com.nulogic.domain.attendance.CompOffRequest;
 import com.nulogic.domain.audit.AuditLog.AuditAction;
@@ -26,7 +27,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Year;
 import java.util.List;
 import java.util.UUID;
 
@@ -51,6 +51,7 @@ public class CompOffService {
     private final LeaveBalanceRepository leaveBalanceRepository;
     private final LeaveTypeRepository leaveTypeRepository;
     private final AttendanceConfigProperties config;
+    private final TenantTimeService tenantTimeService;
 
     // ========== Accrual ==========
 
@@ -186,15 +187,15 @@ public class CompOffService {
      */
     @Transactional
     public int autoApproveEligibleRequests(UUID tenantId, int autoApproveAfterDays) {
-        // S11-M Wave-10 P0-1: tenant-local "today" (IST fallback). TODO(S11-M): inject TenantTimeService.
-        LocalDate cutoff = LocalDate.now(java.time.ZoneId.of("Asia/Kolkata")).minusDays(autoApproveAfterDays);
+        // S12-B: tenant-local "today" for auto-approve cutoff — resolved via TenantTimeService.
+        LocalDate today = tenantTimeService.today(tenantId);
+        LocalDate cutoff = today.minusDays(autoApproveAfterDays);
         // R2-009 FIX: Replace hardcoded epoch date (2020-01-01) with a rolling 6-month
         // lookback window.  The epoch date caused the query to scan ALL pending comp-off
         // requests since the beginning of time on every nightly run, growing linearly
         // with the size of the dataset.  A 6-month window is large enough to catch any
         // legitimately pending request while keeping the query bounded.
-        // S11-M Wave-10 P0-1: tenant-local "today" (IST fallback). TODO(S11-M): inject TenantTimeService.
-        LocalDate lookbackStart = LocalDate.now(java.time.ZoneId.of("Asia/Kolkata")).minusMonths(6);
+        LocalDate lookbackStart = today.minusMonths(6);
         List<CompOffRequest> pending = compOffRequestRepository
                 .findPendingInDateRange(tenantId, lookbackStart, cutoff);
 
@@ -226,8 +227,8 @@ public class CompOffService {
                         compOffLeaveCode + " leave type not found for tenant " + tenantId +
                                 ". Please create a leave type with code " + compOffLeaveCode + "."));
 
-        // S11-M Wave-10 P0-1: tenant-local year (IST fallback). TODO(S11-M): inject TenantTimeService.
-        int year = Year.now(java.time.ZoneId.of("Asia/Kolkata")).getValue();
+        // S12-B: tenant-local year for leave balance — resolved via TenantTimeService.
+        int year = tenantTimeService.today(tenantId).getYear();
         LeaveBalance balance = leaveBalanceRepository
                 .findByEmployeeIdAndLeaveTypeIdAndYearAndTenantId(
                         employeeId, compOffType.getId(), year, tenantId)

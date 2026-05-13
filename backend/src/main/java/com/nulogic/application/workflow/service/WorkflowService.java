@@ -7,6 +7,7 @@ import com.nulogic.application.workflow.callback.ApprovalCallbackHandler;
 import com.nulogic.common.exception.BusinessException;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.audit.AuditLog.AuditAction;
 import com.nulogic.domain.event.workflow.ApprovalDecisionEvent;
 import com.nulogic.domain.event.workflow.ApprovalTaskAssignedEvent;
@@ -50,6 +51,7 @@ public class WorkflowService {
     private final DomainEventPublisher domainEventPublisher;
     private final AuditLogService auditLogService;
     private final LeaveRequestRepository leaveRequestRepository;
+    private final TenantTimeService tenantTimeService;
     /**
      * Stored for lazy initialization. Marked @Lazy to break circular dependency
      * (handlers like RecruitmentManagementService depend on WorkflowService).
@@ -75,6 +77,7 @@ public class WorkflowService {
             DomainEventPublisher domainEventPublisher,
             AuditLogService auditLogService,
             LeaveRequestRepository leaveRequestRepository,
+            TenantTimeService tenantTimeService,
             @org.springframework.context.annotation.Lazy @org.springframework.lang.Nullable List<ApprovalCallbackHandler> callbackHandlers) {
         this.workflowDefinitionRepository = workflowDefinitionRepository;
         this.approvalStepRepository = approvalStepRepository;
@@ -88,6 +91,7 @@ public class WorkflowService {
         this.domainEventPublisher = domainEventPublisher;
         this.auditLogService = auditLogService;
         this.leaveRequestRepository = leaveRequestRepository;
+        this.tenantTimeService = tenantTimeService;
         this.callbackHandlers = callbackHandlers;
     }
 
@@ -364,9 +368,9 @@ public class WorkflowService {
         execution.setRequesterName(getUserName(currentUser, tenantId));
 
         // Calculate deadline
-        // S12-B: tenant-local SLA deadline (IST fallback). TODO(S12-B): inject TenantTimeService and use tenantTimeService.now(tenantId).
+        // S12-B: tenant-local SLA deadline — resolved via TenantTimeService.
         if (workflow.getDefaultSlaHours() > 0) {
-            execution.setDeadline(LocalDateTime.now(java.time.ZoneId.of("Asia/Kolkata")).plusHours(workflow.getDefaultSlaHours()));
+            execution.setDeadline(tenantTimeService.now(tenantId).plusHours(workflow.getDefaultSlaHours()));
         }
 
         WorkflowExecution saved = workflowExecutionRepository.save(execution);
@@ -436,8 +440,8 @@ public class WorkflowService {
         stepExecution.setTenantId(execution.getTenantId());
 
         if (firstStep.getSlaHours() > 0) {
-            // S12-B: tenant-local SLA deadline (IST fallback). TODO(S12-B): inject TenantTimeService.
-            stepExecution.setDeadline(LocalDateTime.now(java.time.ZoneId.of("Asia/Kolkata")).plusHours(firstStep.getSlaHours()));
+            // S12-B: tenant-local SLA deadline — resolved via TenantTimeService.
+            stepExecution.setDeadline(tenantTimeService.now(execution.getTenantId()).plusHours(firstStep.getSlaHours()));
         }
 
         execution.addStepExecution(stepExecution);
@@ -462,9 +466,9 @@ public class WorkflowService {
 
     private UUID determineApprover(WorkflowExecution execution, ApprovalStep step) {
         // Check for delegation first
-        // S12-B: tenant-local "today" for delegation lookup (IST fallback). TODO(S12-B): inject TenantTimeService and use tenantTimeService.today(tenantId).
-        LocalDate today = LocalDate.now(java.time.ZoneId.of("Asia/Kolkata"));
         UUID tenantId = execution.getTenantId();
+        // S12-B: tenant-local "today" for delegation lookup — resolved via TenantTimeService.
+        LocalDate today = tenantTimeService.today(tenantId);
         UUID approverId = null;
 
         approverId = switch (step.getApproverType()) {
@@ -838,8 +842,8 @@ public class WorkflowService {
             nextStepExecution.setTenantId(execution.getTenantId());
 
             if (nextStep.getSlaHours() > 0) {
-                // S12-B: tenant-local SLA deadline (IST fallback). TODO(S12-B): inject TenantTimeService.
-                nextStepExecution.setDeadline(LocalDateTime.now(java.time.ZoneId.of("Asia/Kolkata")).plusHours(nextStep.getSlaHours()));
+                // S12-B: tenant-local SLA deadline — resolved via TenantTimeService.
+                nextStepExecution.setDeadline(tenantTimeService.now(execution.getTenantId()).plusHours(nextStep.getSlaHours()));
             }
 
             execution.addStepExecution(nextStepExecution);
@@ -1001,8 +1005,8 @@ public class WorkflowService {
             long pending = stepExecutionRepository.countPendingForUser(tenantId, currentUser);
             counts.put("pending", pending);
 
-            // S12-B: tenant-local "today" for dashboard "approvedToday"/"rejectedToday" counts (IST fallback). TODO(S12-B): inject TenantTimeService and use tenantTimeService.today(tenantId).
-            LocalDateTime startOfDay = LocalDate.now(java.time.ZoneId.of("Asia/Kolkata")).atStartOfDay();
+            // S12-B: tenant-local "today" for dashboard "approvedToday"/"rejectedToday" counts — resolved via TenantTimeService.
+            LocalDateTime startOfDay = tenantTimeService.today(tenantId).atStartOfDay();
             List<Object[]> todayActions = stepExecutionRepository.countTodayActionsByUser(tenantId, currentUser, startOfDay,
                     List.of(StepExecution.ApprovalAction.APPROVE, StepExecution.ApprovalAction.REJECT));
 
@@ -1074,8 +1078,8 @@ public class WorkflowService {
         UUID currentUser = SecurityContext.getCurrentUserId();
 
         // Check for existing active delegation
-        // S12-B: tenant-local "today" for delegation check (IST fallback). TODO(S12-B): inject TenantTimeService.
-        approvalDelegateRepository.findExistingDelegation(tenantId, currentUser, request.getDelegateId(), LocalDate.now(java.time.ZoneId.of("Asia/Kolkata")))
+        // S12-B: tenant-local "today" for delegation check — resolved via TenantTimeService.
+        approvalDelegateRepository.findExistingDelegation(tenantId, currentUser, request.getDelegateId(), tenantTimeService.today(tenantId))
                 .ifPresent(existing -> {
                     throw new BusinessException("Active delegation already exists for this delegate");
                 });
@@ -1122,8 +1126,8 @@ public class WorkflowService {
         UUID tenantId = TenantContext.requireCurrentTenant();
         UUID currentUser = SecurityContext.getCurrentUserId();
 
-        // S12-B: tenant-local "today" for active delegations (IST fallback). TODO(S12-B): inject TenantTimeService.
-        return approvalDelegateRepository.findActiveDelegationsForDelegate(tenantId, currentUser, LocalDate.now(java.time.ZoneId.of("Asia/Kolkata"))).stream()
+        // S12-B: tenant-local "today" for active delegations — resolved via TenantTimeService.
+        return approvalDelegateRepository.findActiveDelegationsForDelegate(tenantId, currentUser, tenantTimeService.today(tenantId)).stream()
                 .map(ApprovalDelegateResponse::from)
                 .collect(Collectors.toList());
     }
@@ -1180,8 +1184,8 @@ public class WorkflowService {
         dashboard.put("pendingByEntityType", pendingByEntityType);
 
         // Overdue executions
-        // S12-B: tenant-local "now" for overdue check (IST fallback). TODO(S12-B): inject TenantTimeService.
-        long overdueCount = workflowExecutionRepository.findOverdueExecutions(tenantId, LocalDateTime.now(java.time.ZoneId.of("Asia/Kolkata"))).size();
+        // S12-B: tenant-local "now" for overdue check — resolved via TenantTimeService.
+        long overdueCount = workflowExecutionRepository.findOverdueExecutions(tenantId, tenantTimeService.now(tenantId)).size();
         dashboard.put("overdueCount", overdueCount);
 
         // Active delegations
@@ -1194,8 +1198,8 @@ public class WorkflowService {
     @Transactional(readOnly = true)
     public List<WorkflowExecutionResponse> getOverdueExecutions() {
         UUID tenantId = TenantContext.requireCurrentTenant();
-        // S12-B: tenant-local "now" for overdue executions (IST fallback). TODO(S12-B): inject TenantTimeService.
-        return workflowExecutionRepository.findOverdueExecutions(tenantId, LocalDateTime.now(java.time.ZoneId.of("Asia/Kolkata"))).stream()
+        // S12-B: tenant-local "now" for overdue executions — resolved via TenantTimeService.
+        return workflowExecutionRepository.findOverdueExecutions(tenantId, tenantTimeService.now(tenantId)).stream()
                 .map(WorkflowExecutionResponse::from)
                 .collect(Collectors.toList());
     }
@@ -1203,8 +1207,8 @@ public class WorkflowService {
     @Transactional(readOnly = true)
     public List<WorkflowExecutionResponse> getExecutionsDueForEscalation() {
         UUID tenantId = TenantContext.requireCurrentTenant();
-        // S12-B: tenant-local "now" for escalation due check (IST fallback). TODO(S12-B): inject TenantTimeService.
-        return workflowExecutionRepository.findDueForEscalation(tenantId, LocalDateTime.now(java.time.ZoneId.of("Asia/Kolkata"))).stream()
+        // S12-B: tenant-local "now" for escalation due check — resolved via TenantTimeService.
+        return workflowExecutionRepository.findDueForEscalation(tenantId, tenantTimeService.now(tenantId)).stream()
                 .map(WorkflowExecutionResponse::from)
                 .collect(Collectors.toList());
     }

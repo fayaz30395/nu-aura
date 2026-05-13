@@ -47,6 +47,7 @@ import {useToast} from '@/components/notifications/ToastProvider';
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
+import {SkeletonCard} from '@/components/ui/Skeleton';
 import {createLogger} from '@/lib/utils/logger';
 import {useDebounce} from '@/lib/hooks/useDebounce';
 import {
@@ -404,8 +405,10 @@ export default function AnnouncementsPage() {
             </h2>
 
             {loading ? (
-              <div className="flex justify-center items-center py-12">
-                <Loader2 className="w-8 h-8 animate-spin text-accent-700"/>
+              <div className="space-y-4">
+                {Array.from({length: 4}).map((_, i) => (
+                  <SkeletonCard key={i}/>
+                ))}
               </div>
             ) : filteredAnnouncements.length === 0 ? (
               <EmptyState
@@ -682,8 +685,8 @@ export default function AnnouncementsPage() {
             isOpen={!!showDeleteConfirm}
             onClose={() => setShowDeleteConfirm(null)}
             onConfirm={handleDeleteAnnouncement}
-            title="Delete Announcement"
-            message="Are you sure you want to delete this announcement? All associated data will be permanently removed. This action cannot be undone."
+            title="Delete Announcement?"
+            message="This action cannot be undone. The announcement and all associated data will be permanently deleted."
             confirmText="Delete"
             cancelText="Cancel"
             type="danger"
@@ -890,10 +893,10 @@ function CreateAnnouncementModal({announcement, onClose, onSuccess}: CreateAnnou
 
             {/* Department Selection - Only shown when SPECIFIC_DEPARTMENTS is selected */}
             {watchTargetAudience === 'SPECIFIC_DEPARTMENTS' && (
-              <div>
-                <span id="announcement-departments-label" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+              <fieldset>
+                <legend id="announcement-departments-label" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Select Departments <span className="text-danger-500">*</span>
-                </span>
+                </legend>
                 {loadingDepartments ? (
                   <div className="flex items-center justify-center py-4">
                     <Loader2 className="w-5 h-5 animate-spin text-accent-700"/>
@@ -931,7 +934,7 @@ function CreateAnnouncementModal({announcement, onClose, onSuccess}: CreateAnnou
                     {targetDepartmentIds.length} department{targetDepartmentIds.length > 1 ? 's' : ''} selected
                   </p>
                 )}
-              </div>
+              </fieldset>
             )}
 
             {/* Options */}

@@ -5,12 +5,14 @@ import {useRouter} from 'next/navigation';
 import {AlertCircle, Calendar, DollarSign, Download, FileText, Filter, Search, TrendingUp, Users,} from 'lucide-react';
 import {AppLayout} from '@/components/layout';
 import {Card, CardContent} from '@/components/ui/Card';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {useDownloadPayslipPdf, usePayslips, usePayslipsByEmployee} from '@/lib/hooks/queries/usePayroll';
 import {Payslip} from '@/lib/types/hrms/payroll';
 import {createLogger} from '@/lib/utils/logger';
 import {formatCurrency} from '@/lib/utils';
 import {Stat} from '@/components/ui/Stat';
+import {SkeletonStatCard, SkeletonTable} from '@/components/ui/Skeleton';
 import {formatDate as formatDateCanonical} from '@/lib/utils/format/date';
 
 const log = createLogger('PayslipsPage');
@@ -128,8 +130,13 @@ export default function MyPayslipsPage() {
   if (isLoading) {
     return (
       <AppLayout activeMenuItem="payslips">
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="w-12 h-12 border-4 border-accent-200 border-t-accent-700 rounded-full animate-spin"/>
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            {Array.from({length: 3}).map((_, i) => (
+              <SkeletonStatCard key={i}/>
+            ))}
+          </div>
+          <SkeletonTable rows={6} columns={5}/>
         </div>
       </AppLayout>
     );
@@ -299,16 +306,14 @@ export default function MyPayslipsPage() {
         {/* Payslips List */}
         {filteredPayslips.length === 0 ? (
           <Card className="card-aura">
-            <CardContent className="py-16 text-center">
-              <FileText className="h-16 w-16 mx-auto text-[var(--text-muted)] mb-4"/>
-              <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
-                No Payslips Found
-              </h3>
-              <p className="text-[var(--text-secondary)]">
-                {searchQuery
+            <CardContent>
+              <EmptyState
+                icon={<FileText className="w-full h-full"/>}
+                title="No Payslips Found"
+                description={searchQuery
                   ? 'Try adjusting your search criteria'
                   : `No payslips available for ${selectedYear}`}
-              </p>
+              />
             </CardContent>
           </Card>
         ) : (

@@ -103,7 +103,7 @@ export function PayslipsTab({
               <div className="mb-4 pb-4 border-b">
                 <div className="flex justify-between text-sm mb-2">
                   <span className="text-[var(--text-secondary)]">Period</span>
-                  <span className="font-medium">
+                  <span className="font-medium tabular-nums">
                     {formatDate(payslip.payrollPeriodStart)} -{' '}
                     {formatDate(payslip.payrollPeriodEnd)}
                   </span>
@@ -113,19 +113,19 @@ export function PayslipsTab({
               <div className="space-y-4 mb-4">
                 <div className="flex justify-between text-sm">
                   <span className="text-[var(--text-secondary)]">Base Salary</span>
-                  <span className="font-medium">{formatCurrency(payslip.baseSalary)}</span>
+                  <span className="font-medium tabular-nums">{formatCurrency(payslip.baseSalary)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-[var(--text-secondary)]">Allowances</span>
-                  <span className="text-success-600 font-medium">{formatCurrency(payslip.allowances)}</span>
+                  <span className="text-success-600 font-medium tabular-nums">{formatCurrency(payslip.allowances)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-[var(--text-secondary)]">Deductions</span>
-                  <span className="text-danger-600 font-medium">{formatCurrency(payslip.deductions)}</span>
+                  <span className="text-danger-600 font-medium tabular-nums">{formatCurrency(payslip.deductions)}</span>
                 </div>
                 <div className="border-t pt-4 flex justify-between text-sm font-semibold">
                   <span className="text-[var(--text-primary)]">Net Amount</span>
-                  <span className="text-accent-700 dark:text-accent-400">{formatCurrency(payslip.netAmount)}</span>
+                  <span className="text-accent-700 dark:text-accent-400 tabular-nums">{formatCurrency(payslip.netAmount)}</span>
                 </div>
               </div>
 

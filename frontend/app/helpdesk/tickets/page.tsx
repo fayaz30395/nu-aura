@@ -9,6 +9,7 @@ import {AppLayout} from '@/components/layout';
 import {Button} from '@/components/ui/Button';
 import {Badge} from '@/components/ui/Badge';
 import {Card} from '@/components/ui/Card';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
 import {Skeleton} from '@/components/ui/Skeleton';
 import {StatusBadge} from '@/components/ui/StatusBadge';
@@ -298,21 +299,16 @@ export default function TicketListPage() {
             </p>
           </Card>
         ) : filteredTickets.length === 0 ? (
-          <Card className="p-12 text-center">
-            <Ticket className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4"/>
-            <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
-              {hasActiveFilters ? 'No tickets match your filters' : 'No tickets yet'}
-            </h3>
-            <p className="text-body-muted mb-4">
-              {hasActiveFilters ? 'Try adjusting your search or filters' : 'Create your first support ticket to get started'}
-            </p>
-            {hasActiveFilters ? (
-              <Button variant="outline" onClick={clearFilters}>Clear Filters</Button>
-            ) : (
-              <Button variant="primary" onClick={() => setShowCreateModal(true)} leftIcon={<Plus className="h-4 w-4"/>}>
-                Create Ticket
-              </Button>
-            )}
+          <Card>
+            <EmptyState
+              icon={<Ticket className="w-full h-full"/>}
+              title={hasActiveFilters ? 'No tickets match your filters' : 'No tickets yet'}
+              description={hasActiveFilters
+                ? 'Try adjusting your search or filters'
+                : 'Create your first support ticket to get started'}
+              actionLabel={hasActiveFilters ? 'Clear Filters' : 'Create Ticket'}
+              onAction={hasActiveFilters ? clearFilters : () => setShowCreateModal(true)}
+            />
           </Card>
         ) : (
           <Card className="p-0 overflow-hidden">

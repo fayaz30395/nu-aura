@@ -201,7 +201,7 @@ export default function ForgotPasswordPage() {
 
               {/* Email Input */}
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-[var(--text-secondary)]">
+                <label htmlFor="forgot-password-email" className="block text-sm font-medium text-[var(--text-secondary)]">
                   Email Address
                 </label>
                 <div className="relative">
@@ -209,6 +209,7 @@ export default function ForgotPasswordPage() {
                     <Mail className="h-5 w-5 text-[var(--text-muted)]"/>
                   </div>
                   <input
+                    id="forgot-password-email"
                     {...register('email')}
                     type="email"
                     autoComplete="email"

@@ -11,6 +11,7 @@ import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {AlertCircle, ArrowRight, CheckCircle, ChevronDown, ChevronUp, Clock, User, XCircle,} from 'lucide-react';
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
+import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
 import {SkeletonTable} from '@/components/ui/Skeleton';
 import {formatDate, formatDateTime} from '@/lib/utils/format/date';
 
@@ -448,43 +449,53 @@ export default function EmploymentChangeRequestsPage() {
       </div>
 
       {/* Reject Modal */}
-      {showRejectModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center glass-aura !rounded-none">
-          <div className="skeuo-card max-w-md w-full mx-4 p-6">
-            <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-4">
-              Reject Change Request
-            </h3>
-            <p className="text-body-secondary mb-4">
-              Please provide a reason for rejecting this change request.
-            </p>
-            <textarea
-              value={rejectionReason}
-              onChange={(e) => setRejectionReason(e.target.value)}
-              placeholder="Enter rejection reason..."
-              rows={4}
-              className="input-aura"
-            />
-            <div className="flex gap-4 mt-4">
-              <button
-                onClick={() => {
-                  setShowRejectModal(null);
-                  setRejectionReason('');
-                }}
-                className="flex-1 btn-secondary"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => handleReject(showRejectModal)}
-                disabled={rejectMutation.isPending || !rejectionReason.trim()}
-                className="flex-1 px-4 py-2 bg-danger-600 text-white rounded-lg hover:bg-danger-700 disabled:opacity-50 font-medium"
-              >
-                {rejectMutation.isPending ? 'Rejecting...' : 'Reject'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <Modal
+        isOpen={!!showRejectModal}
+        onClose={() => {
+          setShowRejectModal(null);
+          setRejectionReason('');
+        }}
+        size="sm"
+      >
+        <ModalHeader
+          onClose={() => {
+            setShowRejectModal(null);
+            setRejectionReason('');
+          }}
+        >
+          Reject Change Request
+        </ModalHeader>
+        <ModalBody>
+          <p className="text-body-secondary mb-4">
+            Please provide a reason for rejecting this change request.
+          </p>
+          <textarea
+            value={rejectionReason}
+            onChange={(e) => setRejectionReason(e.target.value)}
+            placeholder="Enter rejection reason..."
+            rows={4}
+            className="input-aura"
+          />
+        </ModalBody>
+        <ModalFooter>
+          <button
+            onClick={() => {
+              setShowRejectModal(null);
+              setRejectionReason('');
+            }}
+            className="btn-secondary"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={() => showRejectModal && handleReject(showRejectModal)}
+            disabled={rejectMutation.isPending || !rejectionReason.trim()}
+            className="px-4 py-2 bg-danger-600 text-white rounded-lg hover:bg-danger-700 disabled:opacity-50 font-medium"
+          >
+            {rejectMutation.isPending ? 'Rejecting...' : 'Reject'}
+          </button>
+        </ModalFooter>
+      </Modal>
 
       {/* Approve Change Request Confirmation */}
       <ConfirmDialog

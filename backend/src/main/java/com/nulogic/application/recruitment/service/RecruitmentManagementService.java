@@ -10,6 +10,7 @@ import com.nulogic.common.security.DataScopeService;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.audit.AuditLog.AuditAction;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.event.recruitment.CandidateHiredEvent;
@@ -53,6 +54,7 @@ public class RecruitmentManagementService implements ApprovalCallbackHandler {
     private final AuditLogService auditLogService;
     private final DomainEventPublisher eventPublisher;
     private final GoogleMeetService googleMeetService;
+    private final TenantTimeService tenantTimeService;
 
     // Focused sub-services (facade delegation)
     private final JobOpeningService jobOpeningService;
@@ -347,8 +349,8 @@ public class RecruitmentManagementService implements ApprovalCallbackHandler {
 
         Candidate.CandidateStatus oldStatus = candidate.getStatus();
         candidate.setStatus(Candidate.CandidateStatus.OFFER_ACCEPTED);
-        // S12-B: tenant-local offer-accepted date (IST fallback). TODO(S12-B): inject TenantTimeService and use tenantTimeService.today(tenantId).
-        candidate.setOfferAcceptedDate(LocalDate.now(java.time.ZoneId.of("Asia/Kolkata")));
+        // S12-B: tenant-local offer-accepted date — resolved via TenantTimeService.
+        candidate.setOfferAcceptedDate(tenantTimeService.today(tenantId));
 
         if (confirmedJoiningDate != null) {
             candidate.setProposedJoiningDate(confirmedJoiningDate);
@@ -389,8 +391,8 @@ public class RecruitmentManagementService implements ApprovalCallbackHandler {
 
         Candidate.CandidateStatus oldStatus = candidate.getStatus();
         candidate.setStatus(Candidate.CandidateStatus.OFFER_DECLINED);
-        // S12-B: tenant-local offer-declined date (IST fallback). TODO(S12-B): inject TenantTimeService.
-        candidate.setOfferDeclinedDate(LocalDate.now(java.time.ZoneId.of("Asia/Kolkata")));
+        // S12-B: tenant-local offer-declined date — resolved via TenantTimeService.
+        candidate.setOfferDeclinedDate(tenantTimeService.today(tenantId));
         candidate.setOfferDeclineReason(declineReason);
 
         Candidate savedCandidate = candidateRepository.save(candidate);
@@ -493,8 +495,8 @@ public class RecruitmentManagementService implements ApprovalCallbackHandler {
         candidate.setOfferedCtc(request.getOfferedSalary());
         candidate.setOfferedDesignation(request.getPositionTitle());
         candidate.setProposedJoiningDate(request.getJoiningDate());
-        // S12-B: tenant-local offer-extended date (IST fallback). TODO(S12-B): inject TenantTimeService.
-        candidate.setOfferExtendedDate(LocalDate.now(java.time.ZoneId.of("Asia/Kolkata")));
+        // S12-B: tenant-local offer-extended date — resolved via TenantTimeService.
+        candidate.setOfferExtendedDate(tenantTimeService.today(tenantId));
         if (request.getNotes() != null) {
             candidate.setNotes(request.getNotes());
         }

@@ -361,11 +361,12 @@ export default function SsoSettingsPage() {
                 {/* Name */}
                 <div>
                   <label htmlFor="settings-sso-name" className="block text-sm font-medium text-[var(--text-primary)] mb-1">
-                    IdP Name <span className="text-danger-500">*</span>
+                    IdP Name <span aria-hidden="true" className="text-danger-500">*</span>
                   </label>
                   <input
                     id="settings-sso-name"
                     {...register('name')}
+                    aria-required="true"
                     placeholder="e.g., Okta Production"
                     className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                   />
@@ -377,11 +378,12 @@ export default function SsoSettingsPage() {
                 {/* Entity ID */}
                 <div>
                   <label htmlFor="settings-sso-entity-id" className="block text-sm font-medium text-[var(--text-primary)] mb-1">
-                    Entity ID <span className="text-danger-500">*</span>
+                    Entity ID <span aria-hidden="true" className="text-danger-500">*</span>
                   </label>
                   <input
                     id="settings-sso-entity-id"
                     {...register('entityId')}
+                    aria-required="true"
                     placeholder="e.g., http://www.okta.com/exk123abc"
                     className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                   />
@@ -393,11 +395,12 @@ export default function SsoSettingsPage() {
                 {/* SSO URL */}
                 <div>
                   <label htmlFor="settings-sso-url" className="block text-sm font-medium text-[var(--text-primary)] mb-1">
-                    SSO URL <span className="text-danger-500">*</span>
+                    SSO URL <span aria-hidden="true" className="text-danger-500">*</span>
                   </label>
                   <input
                     id="settings-sso-url"
                     {...register('ssoUrl')}
+                    aria-required="true"
                     placeholder="https://your-idp.example.com/sso/saml"
                     className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                   />

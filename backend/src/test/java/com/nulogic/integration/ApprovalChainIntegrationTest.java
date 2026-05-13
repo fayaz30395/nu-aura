@@ -12,6 +12,7 @@ import com.nulogic.application.workflow.callback.ApprovalCallbackHandler;
 import com.nulogic.application.workflow.service.WorkflowService;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.expense.ExpenseClaim;
 import com.nulogic.domain.leave.LeaveRequest;
@@ -96,6 +97,8 @@ class ApprovalChainIntegrationTest {
     private LeaveTypeRepository leaveTypeRepository;
     @Mock
     private ExpenseClaimRepository expenseClaimRepository;
+    @Mock
+    private TenantTimeService tenantTimeService;
 
     private WorkflowService workflowService;
 
@@ -109,6 +112,9 @@ class ApprovalChainIntegrationTest {
         tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(TENANT_ID);
 
         securityContextMock = mockStatic(SecurityContext.class);
+
+        lenient().when(tenantTimeService.now(any())).thenReturn(LocalDateTime.now());
+        lenient().when(tenantTimeService.today(any())).thenReturn(LocalDate.now());
     }
 
     @AfterEach
@@ -135,6 +141,7 @@ class ApprovalChainIntegrationTest {
                 approvalDelegateRepository, workflowRuleRepository,
                 employeeRepository, departmentRepository, userRepository,
                 domainEventPublisher, auditLogService, leaveRequestRepository,
+                tenantTimeService,
                 handlers);
 
         // --- Setup: Workflow definition with 1 step (REPORTING_MANAGER) ---
@@ -263,6 +270,7 @@ class ApprovalChainIntegrationTest {
                 approvalDelegateRepository, workflowRuleRepository,
                 employeeRepository, departmentRepository, userRepository,
                 domainEventPublisher, auditLogService, leaveRequestRepository,
+                tenantTimeService,
                 List.of(expenseHandler));
 
         // --- Setup: 2-step workflow (Manager -> Finance) ---
@@ -440,6 +448,7 @@ class ApprovalChainIntegrationTest {
                 approvalDelegateRepository, workflowRuleRepository,
                 employeeRepository, departmentRepository, userRepository,
                 domainEventPublisher, auditLogService, leaveRequestRepository,
+                tenantTimeService,
                 List.of(leaveService));
 
         WorkflowDefinition definition = createLeaveWorkflowDefinition();
@@ -544,6 +553,7 @@ class ApprovalChainIntegrationTest {
                 approvalDelegateRepository, workflowRuleRepository,
                 employeeRepository, departmentRepository, userRepository,
                 domainEventPublisher, auditLogService, leaveRequestRepository,
+                tenantTimeService,
                 List.of(overtimeHandler));
 
         // 2-step overtime workflow (Manager -> HR)
@@ -627,6 +637,7 @@ class ApprovalChainIntegrationTest {
                 approvalDelegateRepository, workflowRuleRepository,
                 employeeRepository, departmentRepository, userRepository,
                 domainEventPublisher, auditLogService, leaveRequestRepository,
+                tenantTimeService,
                 Collections.emptyList());
 
         securityContextMock.when(SecurityContext::getCurrentUserId).thenReturn(MANAGER_ID);

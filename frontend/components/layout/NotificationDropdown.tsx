@@ -631,7 +631,8 @@ export function NotificationDropdown({isOpen, onClose}: NotificationDropdownProp
                   <h3 className="text-xl font-semibold text-white">{selectedEvent.calendarEvent.summary}</h3>
                 </div>
                 <button onClick={() => setSelectedEvent(null)}
-                        className="p-1 hover:bg-white/20 rounded-lg transition-colors">
+                        aria-label="Close"
+                        className="p-2.5 hover:bg-white/20 rounded-lg transition-colors">
                   <X className="h-5 w-5 text-white"/>
                 </button>
               </div>
@@ -757,7 +758,9 @@ export function NotificationDropdown({isOpen, onClose}: NotificationDropdownProp
                 <button onClick={() => {
                   setSelectedEmail(null);
                   setEmailContent('');
-                }} className="p-1 hover:bg-white/20 rounded-lg transition-colors">
+                }}
+                        aria-label="Close"
+                        className="p-2.5 hover:bg-white/20 rounded-lg transition-colors">
                   <X className="h-5 w-5 text-white"/>
                 </button>
               </div>
@@ -803,7 +806,8 @@ export function NotificationDropdown({isOpen, onClose}: NotificationDropdownProp
                   <h3 className="text-xl font-semibold text-white line-clamp-1">{selectedFile.driveFile.name}</h3>
                 </div>
                 <button onClick={() => setSelectedFile(null)}
-                        className="p-1 hover:bg-white/20 rounded-lg transition-colors">
+                        aria-label="Close"
+                        className="p-2.5 hover:bg-white/20 rounded-lg transition-colors">
                   <X className="h-5 w-5 text-white"/>
                 </button>
               </div>

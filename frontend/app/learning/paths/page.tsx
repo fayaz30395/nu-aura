@@ -197,7 +197,7 @@ export default function LearningPathsPage() {
                 <div className="p-6">
                   {/* Title and Status */}
                   <div className="flex items-start justify-between gap-2 mb-4">
-                    <h3 className="text-xl font-semibold text-[var(--text-primary)] flex-1">{path.title}</h3>
+                    <h2 className="text-xl font-semibold text-[var(--text-primary)] flex-1">{path.title}</h2>
                     {path.status && (
                       <StatusBadge status={path.status} domain={LEARNING_STATUS}/>
                     )}
@@ -294,9 +294,9 @@ export default function LearningPathsPage() {
         ) : (
           <div className="bg-[var(--bg-input)] rounded-lg shadow-[var(--shadow-elevated)] p-12 text-center">
             <Zap className="h-16 w-16 text-[var(--text-muted)] mx-auto mb-4"/>
-            <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
+            <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
               {searchQuery || selectedDifficulty !== 'ALL' ? 'No matching learning paths' : 'No learning paths available'}
-            </h3>
+            </h2>
             <p className="text-[var(--text-secondary)] mb-6">
               {searchQuery || selectedDifficulty !== 'ALL'
                 ? 'Try adjusting your search or filter criteria'

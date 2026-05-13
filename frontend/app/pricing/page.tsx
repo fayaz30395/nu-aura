@@ -377,6 +377,7 @@ export default function PricingPage() {
               <Card key={index} padding="none" className="overflow-hidden">
                 <button
                   onClick={() => setOpenFaq(openFaq === index ? null : index)}
+                  aria-expanded={openFaq === index}
                   className="w-full px-6 py-4 row-between text-left hover:bg-[var(--bg-card-hover)] transition-colors"
                 >
                   <div className="flex items-center gap-4">

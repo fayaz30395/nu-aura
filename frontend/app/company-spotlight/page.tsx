@@ -4,9 +4,10 @@ import {useState} from 'react';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
-import {AnimatePresence, motion} from 'framer-motion';
+import {motion} from 'framer-motion';
 import {AppLayout} from '@/components/layout';
-import {Calendar, Edit2, ExternalLink, Lightbulb, Loader2, Plus, Trash2, X,} from 'lucide-react';
+import {Calendar, Edit2, ExternalLink, Lightbulb, Loader2, Plus, Trash2,} from 'lucide-react';
+import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {isAdmin} from '@/lib/utils';
 import {CreateSpotlightRequest, Spotlight, UpdateSpotlightRequest} from '@/lib/types/platform/spotlight';
@@ -304,22 +305,19 @@ export default function CompanySpotlightPage() {
       </div>
 
       {/* Create/Edit Modal */}
-      <AnimatePresence>
-        {showCreateModal && (
-          <CreateSpotlightModal
-            spotlight={editingSpotlight}
-            onClose={() => {
-              setShowCreateModal(false);
-              setEditingSpotlight(null);
-            }}
-            onSuccess={() => {
-              setShowCreateModal(false);
-              setEditingSpotlight(null);
-              // React Query automatically refetches on mutation success
-            }}
-          />
-        )}
-      </AnimatePresence>
+      <CreateSpotlightModal
+        isOpen={showCreateModal}
+        spotlight={editingSpotlight}
+        onClose={() => {
+          setShowCreateModal(false);
+          setEditingSpotlight(null);
+        }}
+        onSuccess={() => {
+          setShowCreateModal(false);
+          setEditingSpotlight(null);
+          // React Query automatically refetches on mutation success
+        }}
+      />
 
       {/* Delete Confirmation */}
       <ConfirmDialog
@@ -338,12 +336,13 @@ export default function CompanySpotlightPage() {
 }
 
 interface CreateSpotlightModalProps {
+  isOpen: boolean;
   spotlight?: Spotlight | null;
   onClose: () => void;
   onSuccess: () => void;
 }
 
-function CreateSpotlightModal({spotlight, onClose, onSuccess}: CreateSpotlightModalProps) {
+function CreateSpotlightModal({isOpen, spotlight, onClose, onSuccess}: CreateSpotlightModalProps) {
   const toast = useToast();
   const isEditing = !!spotlight;
   const [error, setError] = useState('');
@@ -425,36 +424,11 @@ function CreateSpotlightModal({spotlight, onClose, onSuccess}: CreateSpotlightMo
   };
 
   return (
-    <motion.div
-      initial={{opacity: 0}}
-      animate={{opacity: 1}}
-      exit={{opacity: 0}}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--bg-overlay)] p-4"
-      onClick={onClose}
-    >
-      <motion.div
-        initial={{scale: 0.95, opacity: 0}}
-        animate={{scale: 1, opacity: 1}}
-        exit={{scale: 0.95, opacity: 0}}
-        className="bg-[var(--bg-card)] rounded-lg shadow-[var(--shadow-elevated)] max-w-3xl w-full max-h-[90vh] overflow-hidden"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Header */}
-        <div className="px-6 py-4 border-b border-[var(--border-main)] row-between">
-          <h2 className="text-xl font-bold text-[var(--text-primary)]">
-            {isEditing ? 'Edit Spotlight Slide' : 'Create Spotlight Slide'}
-          </h2>
-          <button
-            onClick={onClose}
-            className="p-2 hover:bg-[var(--bg-surface)] dark:hover:bg-[var(--bg-surface)] rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-            aria-label="Close modal"
-          >
-            <X className="w-5 h-5 text-[var(--text-muted)]"/>
-          </button>
-        </div>
-
-        {/* Content */}
-        <div className="p-6 overflow-y-auto max-h-[60vh] space-y-4">
+    <Modal isOpen={isOpen} onClose={onClose} size="lg">
+      <ModalHeader onClose={onClose}>
+        {isEditing ? 'Edit Spotlight Slide' : 'Create Spotlight Slide'}
+      </ModalHeader>
+      <ModalBody className="space-y-4">
           <div className="grid grid-cols-3 gap-6">
             {/* Left: Form */}
             <div className="col-span-2 space-y-4">
@@ -619,35 +593,32 @@ function CreateSpotlightModal({spotlight, onClose, onSuccess}: CreateSpotlightMo
               </div>
             </div>
           </div>
-        </div>
-
-        {/* Footer */}
-        <div className="px-6 py-4 border-t border-[var(--border-main)] flex gap-4">
-          <button
-            onClick={onClose}
-            className="flex-1 px-4 py-2.5 border border-[var(--border-main)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-surface)] dark:hover:bg-[var(--bg-surface)] transition-colors font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleSubmit(onSubmit)}
-            disabled={createMutation.isPending || updateMutation.isPending}
-            className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-warning-500 text-white rounded-lg hover:bg-warning-600 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-          >
-            {createMutation.isPending || updateMutation.isPending ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin"/>
-                {isEditing ? 'Updating...' : 'Creating...'}
-              </>
-            ) : (
-              <>
-                <Lightbulb className="w-4 h-4"/>
-                {isEditing ? 'Update' : 'Create Slide'}
-              </>
-            )}
-          </button>
-        </div>
-      </motion.div>
-    </motion.div>
+      </ModalBody>
+      <ModalFooter>
+        <button
+          onClick={onClose}
+          className="px-4 py-2.5 border border-[var(--border-main)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-surface)] dark:hover:bg-[var(--bg-surface)] transition-colors font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={handleSubmit(onSubmit)}
+          disabled={createMutation.isPending || updateMutation.isPending}
+          className="flex items-center justify-center gap-2 px-4 py-2.5 bg-warning-500 text-white rounded-lg hover:bg-warning-600 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+        >
+          {createMutation.isPending || updateMutation.isPending ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin"/>
+              {isEditing ? 'Updating...' : 'Creating...'}
+            </>
+          ) : (
+            <>
+              <Lightbulb className="w-4 h-4"/>
+              {isEditing ? 'Update' : 'Create Slide'}
+            </>
+          )}
+        </button>
+      </ModalFooter>
+    </Modal>
   );
 }

@@ -6,6 +6,7 @@ import com.nulogic.common.exception.BusinessException;
 import com.nulogic.common.logging.Audited;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.CellValueSanitizer;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.attendance.AttendanceRecord;
 import com.nulogic.domain.audit.AuditLog.AuditAction;
 import com.nulogic.domain.employee.Employee;
@@ -54,6 +55,7 @@ public class AttendanceImportService {
     private final AttendanceRecordRepository attendanceRecordRepository;
     private final EmployeeRepository employeeRepository;
     private final CellValueSanitizer cellValueSanitizer;
+    private final TenantTimeService tenantTimeService;
 
     /**
      * Generate Excel template for attendance import
@@ -96,8 +98,9 @@ public class AttendanceImportService {
             // Add sample data row
             Row sampleRow = sheet.createRow(1);
             sampleRow.createCell(0).setCellValue("EMP001");
-            // S11-M Wave-10 P0-1: tenant-local civil day (IST fallback). TODO(S11-M): inject TenantTimeService.
-            sampleRow.createCell(1).setCellValue(LocalDate.now(java.time.ZoneId.of("Asia/Kolkata")).format(DATE_FORMATTER));
+            // S12-B: tenant-local civil day for sample template row — resolved via TenantTimeService.
+            UUID tenantId = TenantContext.requireCurrentTenant();
+            sampleRow.createCell(1).setCellValue(tenantTimeService.today(tenantId).format(DATE_FORMATTER));
             sampleRow.createCell(2).setCellValue("09:00");
             sampleRow.createCell(3).setCellValue("18:00");
             sampleRow.createCell(4).setCellValue("PRESENT");

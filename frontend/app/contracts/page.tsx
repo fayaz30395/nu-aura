@@ -15,6 +15,7 @@ import {AlertCircle, FileText, Plus, RefreshCw, Search} from 'lucide-react';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {StatusBadge} from '@/components/ui/StatusBadge';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {CONTRACT_STATUS} from '@/lib/status/vocabulary';
 
 export default function ContractsPage() {
@@ -140,10 +141,13 @@ export default function ContractsPage() {
           {isLoading ? (
             <div className="p-8 text-center text-[var(--text-muted)]">Loading contracts...</div>
           ) : contracts.length === 0 ? (
-            <div className="p-8 text-center text-[var(--text-muted)]">
-              <FileText className="w-12 h-12 mx-auto mb-4 opacity-50"/>
-              <p>No contracts found</p>
-            </div>
+            <EmptyState
+              icon={<FileText className="w-full h-full"/>}
+              title="No contracts found"
+              description={search || statusFilter
+                ? 'Try adjusting your search or filters.'
+                : 'Contracts you create will appear here.'}
+            />
           ) : (
             <Table striped>
               <Table.Thead>

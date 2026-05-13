@@ -190,10 +190,11 @@ export default function NewEventPage() {
         >
           {/* Title */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+            <label htmlFor="calendar-event-title" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Event Title *
             </label>
             <input
+              id="calendar-event-title"
               type="text"
               {...register('title')}
               placeholder="Enter event title"
@@ -263,10 +264,11 @@ export default function NewEventPage() {
 
           {/* Event Type */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+            <label htmlFor="calendar-event-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Event Type
             </label>
             <select
+              id="calendar-event-type"
               {...register('eventType')}
               className="w-full px-4 py-4 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500"
             >
@@ -280,12 +282,13 @@ export default function NewEventPage() {
 
           {/* Location */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+            <label htmlFor="calendar-event-location" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Location
             </label>
             <div className="relative">
               <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]"/>
               <input
+                id="calendar-event-location"
                 type="text"
                 {...register('location')}
                 placeholder="Add location"
@@ -296,12 +299,13 @@ export default function NewEventPage() {
 
           {/* Meeting Link */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+            <label htmlFor="calendar-event-meeting-link" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Meeting Link
             </label>
             <div className="relative">
               <Video className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]"/>
               <input
+                id="calendar-event-meeting-link"
                 type="url"
                 {...register('meetingLink')}
                 placeholder="https://meet.google.com/..."
@@ -318,12 +322,13 @@ export default function NewEventPage() {
 
           {/* Reminder */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+            <label htmlFor="calendar-event-reminder" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Reminder
             </label>
             <div className="relative">
               <Bell className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]"/>
               <select
+                id="calendar-event-reminder"
                 {...register('reminderMinutes', {valueAsNumber: true})}
                 className="w-full pl-12 pr-4 py-4 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500"
               >
@@ -339,12 +344,13 @@ export default function NewEventPage() {
 
           {/* Visibility */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+            <label htmlFor="calendar-event-visibility" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Visibility
             </label>
             <div className="relative">
               <Globe className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]"/>
               <select
+                id="calendar-event-visibility"
                 {...register('visibility')}
                 className="w-full pl-12 pr-4 py-4 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500"
               >
@@ -359,12 +365,13 @@ export default function NewEventPage() {
 
           {/* Description */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+            <label htmlFor="calendar-event-description" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Description
             </label>
             <div className="relative">
               <FileText className="absolute left-4 top-4 h-5 w-5 text-[var(--text-muted)]"/>
               <textarea
+                id="calendar-event-description"
                 {...register('description')}
                 placeholder="Add event description..."
                 rows={4}
@@ -375,10 +382,11 @@ export default function NewEventPage() {
 
           {/* Notes */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+            <label htmlFor="calendar-event-notes" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Notes
             </label>
             <textarea
+              id="calendar-event-notes"
               {...register('notes')}
               placeholder="Private notes..."
               rows={2}

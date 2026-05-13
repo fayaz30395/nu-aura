@@ -3,6 +3,7 @@ package com.nulogic.application.contract.scheduler;
 import com.nulogic.application.notification.service.NotificationService;
 import com.nulogic.common.metrics.MetricsService;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.contract.Contract;
 import com.nulogic.domain.contract.ContractReminder;
 import com.nulogic.domain.contract.ContractStatus;
@@ -63,6 +64,7 @@ public class ContractLifecycleScheduler {
     private final NotificationService notificationService;
     private final MetricsService metricsService;
     private final JdbcTemplate jdbcTemplate;
+    private final TenantTimeService tenantTimeService;
 
     /**
      * Main daily lifecycle job.
@@ -211,8 +213,8 @@ public class ContractLifecycleScheduler {
         int[] reminderDays = getReminderDaysForTenant(tenantId);
         int maxWindow = Arrays.stream(reminderDays).max().orElse(30);
 
-        // S12-B: tenant-local "today" for reminder-window evaluation (IST fallback). TODO(S12-B): inject TenantTimeService and use tenantTimeService.today(tenantId).
-        LocalDate todayLocal = LocalDate.now(java.time.ZoneId.of("Asia/Kolkata"));
+        // S12-B: tenant-local "today" for reminder-window evaluation — resolved via TenantTimeService.
+        LocalDate todayLocal = tenantTimeService.today(tenantId);
         LocalDate windowEnd = todayLocal.plusDays(maxWindow);
         List<Contract> approachingExpiry = contractRepository.findActiveContractsExpiringBefore(tenantId, windowEnd);
 
@@ -252,8 +254,8 @@ public class ContractLifecycleScheduler {
                 LocalDate renewalReminderDate = contract.getEndDate().minusDays(
                         Math.min(reminderDays[0], 7));
 
-                // S12-B: tenant-local "today" for renewal-reminder past check (IST fallback). TODO(S12-B): inject TenantTimeService.
-                if (!renewalReminderDate.isBefore(LocalDate.now(java.time.ZoneId.of("Asia/Kolkata")))
+                // S12-B: tenant-local "today" for renewal-reminder past check — resolved via TenantTimeService.
+                if (!renewalReminderDate.isBefore(tenantTimeService.today(tenantId))
                         && !reminderRepository.existsPendingReminder(
                         contract.getId(), ReminderType.RENEWAL, renewalReminderDate)) {
 
@@ -322,7 +324,7 @@ public class ContractLifecycleScheduler {
                 }
 
                 String title = buildNotificationTitle(reminder, contract);
-                String message = buildNotificationMessage(reminder, contract);
+                String message = buildNotificationMessage(reminder, contract, tenantId);
 
                 notificationService.createNotification(
                         recipientId,
@@ -409,13 +411,13 @@ public class ContractLifecycleScheduler {
 
     // ========== Notification Helpers ==========
 
-    private String buildNotificationMessage(ContractReminder reminder, Contract contract) {
+    private String buildNotificationMessage(ContractReminder reminder, Contract contract, UUID tenantId) {
         if (contract.getEndDate() == null) {
             return String.format("A reminder is due for contract '%s'. Please review and take action.",
                     contract.getTitle());
         }
-        // S12-B: tenant-local "today" for days-until-expiry calc in notification message (IST fallback). TODO(S12-B): inject TenantTimeService.
-        long daysUntilExpiry = java.time.temporal.ChronoUnit.DAYS.between(LocalDate.now(java.time.ZoneId.of("Asia/Kolkata")), contract.getEndDate());
+        // S12-B: tenant-local "today" for days-until-expiry calc in notification message — resolved via TenantTimeService.
+        long daysUntilExpiry = java.time.temporal.ChronoUnit.DAYS.between(tenantTimeService.today(tenantId), contract.getEndDate());
         String daysText = daysUntilExpiry > 0
                 ? daysUntilExpiry + " day(s)"
                 : "today (or already past)";

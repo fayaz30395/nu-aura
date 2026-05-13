@@ -517,8 +517,8 @@ export default function AdminEmployeesPage() {
                           onAction={searchQuery ? undefined : () => setShowCreateModal(true)}/>
             ) : (
               <>
-                <div className="table-aura">
-                  <table>
+                <div className="overflow-x-auto -mx-4 sm:mx-0">
+                  <table className="table-aura min-w-[800px]">
                     <thead>
                     <tr>
                       <th>Employee</th>

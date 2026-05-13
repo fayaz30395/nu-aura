@@ -667,12 +667,16 @@ export default function OneOnOnePage() {
                           <div className="space-y-4">
                             <div>
                               <input
+                                id="agenda-title"
                                 {...agendaForm.register('title')}
                                 placeholder="What would you like to discuss?"
+                                aria-invalid={agendaForm.formState.errors.title ? 'true' : 'false'}
+                                aria-describedby={agendaForm.formState.errors.title ? 'agenda-title-error' : undefined}
                                 className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                               />
                               {agendaForm.formState.errors.title && (
                                 <p
+                                  id="agenda-title-error"
                                   className="text-xs text-danger-500 mt-1">{agendaForm.formState.errors.title.message}</p>
                               )}
                             </div>
@@ -829,12 +833,15 @@ export default function OneOnOnePage() {
                               className="mb-4 p-4 bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-main)]">
                           <div className="space-y-4">
                             <input
+                              id="action-title"
                               {...actionForm.register('title')}
                               placeholder="Action item title"
+                              aria-invalid={actionForm.formState.errors.title ? 'true' : 'false'}
+                              aria-describedby={actionForm.formState.errors.title ? 'action-title-error' : undefined}
                               className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                             />
                             {actionForm.formState.errors.title && (
-                              <p className="text-xs text-danger-500">{actionForm.formState.errors.title.message}</p>
+                              <p id="action-title-error" className="text-xs text-danger-500">{actionForm.formState.errors.title.message}</p>
                             )}
                             <textarea
                               {...actionForm.register('description')}
@@ -844,12 +851,16 @@ export default function OneOnOnePage() {
                             />
                             <div className="grid grid-cols-2 gap-4">
                               <input
+                                id="action-assignee-id"
                                 {...actionForm.register('assigneeId')}
                                 placeholder="Assignee Employee ID"
+                                aria-invalid={actionForm.formState.errors.assigneeId ? 'true' : 'false'}
+                                aria-describedby={actionForm.formState.errors.assigneeId ? 'action-assignee-id-error' : undefined}
                                 className="px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
                               />
                               {actionForm.formState.errors.assigneeId && (
                                 <p
+                                  id="action-assignee-id-error"
                                   className="text-xs text-danger-500 col-span-2">{actionForm.formState.errors.assigneeId.message}</p>
                               )}
                               <select
@@ -1331,10 +1342,12 @@ export default function OneOnOnePage() {
                   id="one-on-one-title"
                   {...scheduleForm.register('title')}
                   placeholder="Weekly 1-on-1 check-in"
+                  aria-invalid={scheduleForm.formState.errors.title ? 'true' : 'false'}
+                  aria-describedby={scheduleForm.formState.errors.title ? 'one-on-one-title-error' : undefined}
                   className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                 />
                 {scheduleForm.formState.errors.title && (
-                  <p className="text-xs text-danger-500 mt-1">{scheduleForm.formState.errors.title.message}</p>
+                  <p id="one-on-one-title-error" className="text-xs text-danger-500 mt-1">{scheduleForm.formState.errors.title.message}</p>
                 )}
               </div>
 
@@ -1346,10 +1359,12 @@ export default function OneOnOnePage() {
                   id="one-on-one-employee-id"
                   {...scheduleForm.register('employeeId')}
                   placeholder="Enter employee ID"
+                  aria-invalid={scheduleForm.formState.errors.employeeId ? 'true' : 'false'}
+                  aria-describedby={scheduleForm.formState.errors.employeeId ? 'one-on-one-employee-id-error' : undefined}
                   className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                 />
                 {scheduleForm.formState.errors.employeeId && (
-                  <p className="text-xs text-danger-500 mt-1">{scheduleForm.formState.errors.employeeId.message}</p>
+                  <p id="one-on-one-employee-id-error" className="text-xs text-danger-500 mt-1">{scheduleForm.formState.errors.employeeId.message}</p>
                 )}
               </div>
 
@@ -1373,10 +1388,12 @@ export default function OneOnOnePage() {
                     id="one-on-one-meeting-date"
                     type="date"
                     {...scheduleForm.register('meetingDate')}
+                    aria-invalid={scheduleForm.formState.errors.meetingDate ? 'true' : 'false'}
+                    aria-describedby={scheduleForm.formState.errors.meetingDate ? 'one-on-one-meeting-date-error' : undefined}
                     className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                   />
                   {scheduleForm.formState.errors.meetingDate && (
-                    <p className="text-xs text-danger-500 mt-1">{scheduleForm.formState.errors.meetingDate.message}</p>
+                    <p id="one-on-one-meeting-date-error" className="text-xs text-danger-500 mt-1">{scheduleForm.formState.errors.meetingDate.message}</p>
                   )}
                 </div>
                 <div>
@@ -1385,10 +1402,12 @@ export default function OneOnOnePage() {
                     id="one-on-one-start-time"
                     type="time"
                     {...scheduleForm.register('startTime')}
+                    aria-invalid={scheduleForm.formState.errors.startTime ? 'true' : 'false'}
+                    aria-describedby={scheduleForm.formState.errors.startTime ? 'one-on-one-start-time-error' : undefined}
                     className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                   />
                   {scheduleForm.formState.errors.startTime && (
-                    <p className="text-xs text-danger-500 mt-1">{scheduleForm.formState.errors.startTime.message}</p>
+                    <p id="one-on-one-start-time-error" className="text-xs text-danger-500 mt-1">{scheduleForm.formState.errors.startTime.message}</p>
                   )}
                 </div>
                 <div>

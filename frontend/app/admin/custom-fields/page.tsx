@@ -657,7 +657,8 @@ export default function CustomFieldsPage() {
                   </div>
                 </div>
 
-                <div className="flex flex-wrap gap-6 mb-6">
+                <fieldset className="flex flex-wrap gap-6 mb-6">
+                  <legend className="sr-only">Field flags</legend>
                   <Controller
                     name="isRequired"
                     control={control}
@@ -703,7 +704,7 @@ export default function CustomFieldsPage() {
                       </label>
                     )}
                   />
-                </div>
+                </fieldset>
 
             </ModalBody>
             <ModalFooter>

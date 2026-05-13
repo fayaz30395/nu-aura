@@ -145,7 +145,7 @@ const ChildrenFlyover: React.FC<{
           </div>
           <button
             onClick={onClose}
-            className="p-1 rounded-md text-secondary hover:text-primary hover:bg-accent-500/10 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+            className="p-2.5 rounded-md text-secondary hover:text-primary hover:bg-accent-500/10 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             aria-label="Close"
           >
             <X className="h-4 w-4"/>

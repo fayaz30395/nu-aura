@@ -3,28 +3,37 @@ package com.nulogic.application.workflow.callback;
 import com.nulogic.application.audit.service.AuditLogService;
 import com.nulogic.application.event.DomainEventPublisher;
 import com.nulogic.application.workflow.service.WorkflowService;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.workflow.WorkflowDefinition;
 import com.nulogic.infrastructure.employee.repository.DepartmentRepository;
 import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import com.nulogic.infrastructure.leave.repository.LeaveRequestRepository;
 import com.nulogic.infrastructure.user.repository.UserRepository;
 import com.nulogic.infrastructure.workflow.repository.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 /**
  * Unit tests for the ApprovalCallbackHandler interface contract and WorkflowService
  * callback dispatch mechanism.
  */
+@MockitoSettings(strictness = Strictness.LENIENT)
 @ExtendWith(MockitoExtension.class)
 @DisplayName("ApprovalCallbackHandler Tests")
 class ApprovalCallbackHandlerTest {
@@ -57,6 +66,14 @@ class ApprovalCallbackHandlerTest {
     private AuditLogService auditLogService;
     @Mock
     private LeaveRequestRepository leaveRequestRepository;
+    @Mock
+    private TenantTimeService tenantTimeService;
+
+    @BeforeEach
+    void setUp() {
+        when(tenantTimeService.now(any())).thenReturn(LocalDateTime.now());
+        when(tenantTimeService.today(any())).thenReturn(LocalDate.now());
+    }
 
     @Test
     @DisplayName("should register callback handlers by entity type at construction time")
@@ -76,6 +93,7 @@ class ApprovalCallbackHandlerTest {
                 approvalDelegateRepository, workflowRuleRepository,
                 employeeRepository, departmentRepository, userRepository,
                 domainEventPublisher, auditLogService, leaveRequestRepository,
+                tenantTimeService,
                 handlers);
 
         // Then: the service should be constructed without errors
@@ -92,6 +110,7 @@ class ApprovalCallbackHandlerTest {
                 approvalDelegateRepository, workflowRuleRepository,
                 employeeRepository, departmentRepository, userRepository,
                 domainEventPublisher, auditLogService, leaveRequestRepository,
+                tenantTimeService,
                 null);
 
         // Then: the service should be constructed without errors
@@ -108,6 +127,7 @@ class ApprovalCallbackHandlerTest {
                 approvalDelegateRepository, workflowRuleRepository,
                 employeeRepository, departmentRepository, userRepository,
                 domainEventPublisher, auditLogService, leaveRequestRepository,
+                tenantTimeService,
                 Collections.emptyList());
 
         // Then: the service should be constructed without errors
@@ -190,6 +210,7 @@ class ApprovalCallbackHandlerTest {
                 approvalDelegateRepository, workflowRuleRepository,
                 employeeRepository, departmentRepository, userRepository,
                 domainEventPublisher, auditLogService, leaveRequestRepository,
+                tenantTimeService,
                 handlers);
 
         assertThat(workflowService).isNotNull();
