@@ -1,5 +1,5 @@
 import {apiClient} from '@/lib/api/client';
-import {formatDate} from '@/lib/utils/format/date';
+import {formatDate as formatDateUtil} from '@/lib/utils/format/date';
 import {wrapServiceCall} from '@/lib/utils/service-error';
 import {
   CreateTaskRequest,
@@ -219,11 +219,7 @@ export const taskService = {
    */
   formatDate(dateString?: string): string {
     if (!dateString) return '-';
-    return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
+    return formatDateUtil(dateString);
   },
 
   /**

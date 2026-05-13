@@ -396,9 +396,9 @@ export const SalaryStructureModal = React.memo(function SalaryStructureModal({
               </div>
 
               {/* Allowances */}
-              <div className="border-t pt-4">
+              <section aria-labelledby="salary-structure-allowances-heading" className="border-t pt-4">
                 <div className="flex justify-between items-center mb-4">
-                  <h3 className="font-semibold text-success-700">Allowances</h3>
+                  <h3 id="salary-structure-allowances-heading" className="font-semibold text-success-700">Allowances</h3>
                   <button
                     type="button"
                     onClick={() => appendAllowance({name: '', amount: 0, type: 'FIXED', description: ''})}

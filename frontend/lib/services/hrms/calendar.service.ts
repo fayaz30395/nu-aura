@@ -1,4 +1,5 @@
 import {apiClient} from '../../api/client';
+import {formatDate as formatDateUtil} from '@/lib/utils/format/date';
 import {
   CalendarEvent,
   CreateCalendarEventRequest,
@@ -186,11 +187,7 @@ class CalendarService {
   }
 
   formatDate(dateTime: string): string {
-    return new Date(dateTime).toLocaleDateString('en-IN', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-    });
+    return formatDateUtil(dateTime);
   }
 
   getWeekRange(date: Date = new Date()): { start: string; end: string } {

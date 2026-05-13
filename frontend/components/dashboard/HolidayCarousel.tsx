@@ -150,21 +150,21 @@ export function HolidayCarousel({
           <h3 className="text-xl font-bold leading-tight truncate">
             {currentHoliday.name}
           </h3>
-          <p className="text-sm text-accent-200 mt-1">
+          <p className="text-sm text-accent-700 dark:text-accent-300 mt-1">
             {formattedDate}
           </p>
           <div className="flex items-center gap-2 mt-2">
             <span
-              className="inline-flex items-center rounded-md bg-white/20 backdrop-blur-sm px-2 py-0.5 text-xs font-semibold uppercase tracking-wide">
+              className="inline-flex items-center rounded-md bg-accent-100 dark:bg-accent-800/60 px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-accent-800 dark:text-accent-200">
               {typeLabel}
             </span>
             {currentHoliday.daysUntil > 0 && (
-              <span className="text-xs text-accent-200">
+              <span className="text-xs text-accent-700 dark:text-accent-300">
                 in {currentHoliday.daysUntil} {currentHoliday.daysUntil === 1 ? 'day' : 'days'}
               </span>
             )}
             {currentHoliday.daysUntil === 0 && (
-              <span className="text-xs font-semibold text-white">Today!</span>
+              <span className="text-xs font-semibold text-accent-900 dark:text-accent-100">Today!</span>
             )}
           </div>
         </div>
@@ -188,8 +188,8 @@ export function HolidayCarousel({
             <button
               key={idx}
               onClick={() => setCurrentIndex(idx)}
-              className={`h-1.5 rounded-full transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 ${
-                idx === currentIndex ? 'w-4 bg-[var(--bg-card)]' : 'w-1.5 bg-white/40'
+              className={`h-1.5 rounded-full transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 ${
+                idx === currentIndex ? 'w-4 bg-accent-600 dark:bg-accent-300' : 'w-1.5 bg-accent-300/60 dark:bg-accent-700/60'
               }`}
               aria-label={`Holiday ${idx + 1}`}
             />

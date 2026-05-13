@@ -457,11 +457,13 @@ export default function LeaveTypesManagementPage() {
                           id="leave-type-code"
                           type="text"
                           {...form.register('leaveCode')}
+                          aria-invalid={form.formState.errors.leaveCode ? 'true' : 'false'}
+                          aria-describedby={form.formState.errors.leaveCode ? 'leave-type-code-error' : undefined}
                           className="input-aura"
                           placeholder="AL, SL, CL"
                         />
                         {form.formState.errors.leaveCode && (
-                          <p className="mt-1 text-xs text-danger-500">{form.formState.errors.leaveCode.message}</p>
+                          <p id="leave-type-code-error" className="mt-1 text-xs text-danger-500">{form.formState.errors.leaveCode.message}</p>
                         )}
                       </div>
                       <div>
@@ -472,11 +474,13 @@ export default function LeaveTypesManagementPage() {
                           id="leave-type-name"
                           type="text"
                           {...form.register('leaveName')}
+                          aria-invalid={form.formState.errors.leaveName ? 'true' : 'false'}
+                          aria-describedby={form.formState.errors.leaveName ? 'leave-type-name-error' : undefined}
                           className="input-aura"
                           placeholder="Annual Leave, Sick Leave"
                         />
                         {form.formState.errors.leaveName && (
-                          <p className="mt-1 text-xs text-danger-500">{form.formState.errors.leaveName.message}</p>
+                          <p id="leave-type-name-error" className="mt-1 text-xs text-danger-500">{form.formState.errors.leaveName.message}</p>
                         )}
                       </div>
                     </div>
