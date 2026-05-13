@@ -1,6 +1,6 @@
 package com.nulogic.application.notification.service;
 
-import com.nulogic.config.TwilioConfig;
+import com.nulogic.infrastructure.sms.TwilioConfig;
 import com.twilio.Twilio;
 import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.rest.api.v2010.account.MessageCreator;

@@ -7,7 +7,7 @@ import com.nulogic.application.notification.service.SmsNotificationService;
 import com.nulogic.application.notification.service.SmsNotificationService.SmsResult;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.RequiresPermission;
-import com.nulogic.config.TwilioConfig;
+import com.nulogic.infrastructure.sms.TwilioConfig;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

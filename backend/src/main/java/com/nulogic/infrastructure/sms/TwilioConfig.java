@@ -1,4 +1,4 @@
-package com.nulogic.config;
+package com.nulogic.infrastructure.sms;
 
 import lombok.Getter;
 import lombok.Setter;

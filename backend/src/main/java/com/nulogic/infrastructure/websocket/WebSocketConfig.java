@@ -1,4 +1,4 @@
-package com.nulogic.config;
+package com.nulogic.infrastructure.websocket;
 
 import com.nulogic.infrastructure.websocket.RedisWebSocketRelay;
 import jakarta.annotation.PreDestroy;

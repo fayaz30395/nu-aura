@@ -1,6 +1,6 @@
 package com.nulogic.application.notification.service;
 
-import com.nulogic.config.TwilioConfig;
+import com.nulogic.infrastructure.sms.TwilioConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
