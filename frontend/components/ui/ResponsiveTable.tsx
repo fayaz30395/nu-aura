@@ -3,6 +3,7 @@
 import React from 'react';
 import {cn} from '@/lib/utils';
 import {ChevronDown, ChevronUp} from 'lucide-react';
+import {EmptyState} from './EmptyState';
 
 // Column definition for the table
 export interface Column<T> {
@@ -119,14 +120,14 @@ function ResponsiveTable<T>({
     );
   }
 
-  // Empty state
+  // Empty state — delegates to canonical EmptyState component
   if (data.length === 0) {
     return (
       <div className={cn('w-full', className)}>
-        <div className="flex flex-col items-center justify-center py-12 text-center">
-          {emptyIcon && <div className="mb-4 text-surface-400">{emptyIcon}</div>}
-          <p className="text-surface-500 dark:text-surface-400">{emptyMessage}</p>
-        </div>
+        <EmptyState
+          icon={emptyIcon}
+          title={emptyMessage}
+        />
       </div>
     );
   }

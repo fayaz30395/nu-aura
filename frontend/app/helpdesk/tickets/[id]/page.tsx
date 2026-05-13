@@ -10,6 +10,8 @@ import {Button} from '@/components/ui/Button';
 import {Badge} from '@/components/ui/Badge';
 import {Card} from '@/components/ui/Card';
 import {Skeleton} from '@/components/ui/Skeleton';
+import {StatusBadge} from '@/components/ui/StatusBadge';
+import {TICKET_STATUS} from '@/lib/status/vocabulary';
 import {ConfirmDialog} from '@/components/ui';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
@@ -32,11 +34,9 @@ import {
   ArrowLeft,
   Calendar,
   CheckCircle2,
-  Circle,
   Clock,
   Lock,
   MessageSquare,
-  Pause,
   Send,
   Tag,
   Trash2,
@@ -52,16 +52,12 @@ const PRIORITY_CONFIG: Record<TicketPriority, { label: string; variant: 'danger'
   LOW: {label: 'Low', variant: 'default'},
 };
 
-const STATUS_CONFIG: Record<TicketStatus, {
-  label: string;
-  variant: 'danger' | 'warning' | 'info' | 'success' | 'default';
-  icon: React.FC<{ className?: string }>
-}> = {
-  OPEN: {label: 'Open', variant: 'info', icon: Circle},
-  IN_PROGRESS: {label: 'In Progress', variant: 'warning', icon: Clock},
-  WAITING_FOR_RESPONSE: {label: 'Waiting', variant: 'default', icon: Pause},
-  RESOLVED: {label: 'Resolved', variant: 'success', icon: CheckCircle2},
-  CLOSED: {label: 'Closed', variant: 'default', icon: CheckCircle2},
+const STATUS_LABELS: Record<TicketStatus, string> = {
+  OPEN: 'Open',
+  IN_PROGRESS: 'In Progress',
+  WAITING_FOR_RESPONSE: 'Waiting',
+  RESOLVED: 'Resolved',
+  CLOSED: 'Closed',
 };
 
 const ALL_STATUSES: TicketStatus[] = ['OPEN', 'IN_PROGRESS', 'WAITING_FOR_RESPONSE', 'RESOLVED', 'CLOSED'];
@@ -117,7 +113,7 @@ export default function TicketDetailPage() {
   const handleStatusChange = async (status: TicketStatus) => {
     try {
       await statusMutation.mutateAsync({id: ticketId, status});
-      toast.success(`Status updated to ${STATUS_CONFIG[status].label}`);
+      toast.success(`Status updated to ${STATUS_LABELS[status]}`);
     } catch (err: unknown) {
       const message = (err as {
         response?: { data?: { message?: string } }
@@ -232,8 +228,6 @@ export default function TicketDetailPage() {
   }
 
   const priorityCfg = PRIORITY_CONFIG[ticket.priority] ?? PRIORITY_CONFIG.MEDIUM;
-  const statusCfg = STATUS_CONFIG[ticket.status] ?? STATUS_CONFIG.OPEN;
-  const StatusIcon = statusCfg.icon;
 
   return (
     <AppLayout activeMenuItem="helpdesk">
@@ -275,10 +269,7 @@ export default function TicketDetailPage() {
               <span className="text-sm font-mono text-accent-700 dark:text-accent-400">
                 {ticket.ticketNumber || ticket.id.slice(0, 8)}
               </span>
-              <Badge variant={statusCfg.variant} size="sm">
-                <StatusIcon className="h-3 w-3"/>
-                {statusCfg.label}
-              </Badge>
+              <StatusBadge status={ticket.status} domain={TICKET_STATUS}/>
               <Badge variant={priorityCfg.variant} size="sm">{priorityCfg.label}</Badge>
             </div>
             <h1 className="text-xl font-bold text-[var(--text-primary)]">{ticket.subject}</h1>
@@ -298,7 +289,7 @@ export default function TicketDetailPage() {
                 onChange={(e) => handleStatusChange(e.target.value as TicketStatus)}
               >
                 {ALL_STATUSES.map((s) => (
-                  <option key={s} value={s}>{STATUS_CONFIG[s].label}</option>
+                  <option key={s} value={s}>{STATUS_LABELS[s]}</option>
                 ))}
               </select>
             </PermissionGate>

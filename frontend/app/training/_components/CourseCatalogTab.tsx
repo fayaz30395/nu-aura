@@ -7,6 +7,7 @@ import {Permissions} from '@/lib/hooks/usePermissions';
 import {Badge, Button, Card, CardContent, Input, Select} from '@/components/ui';
 import type {TrainingProgram} from '@/lib/types/grow/training';
 import {ProgramStatus, TrainingCategory} from '@/lib/types/grow/training';
+import {formatDate} from '@/lib/utils/format/date';
 
 const categoryOptions = [
   {value: TrainingCategory.TECHNICAL, label: 'Technical'},
@@ -171,7 +172,7 @@ export function CourseCatalogTab({
                       {program.startDate && (
                         <div className="flex items-center gap-2 text-[var(--text-secondary)]">
                           <Calendar className="h-4 w-4"/>
-                          <span>Starts: {new Date(program.startDate).toLocaleDateString()}</span>
+                          <span>Starts: {formatDate(program.startDate)}</span>
                         </div>
                       )}
                       {program.location && (

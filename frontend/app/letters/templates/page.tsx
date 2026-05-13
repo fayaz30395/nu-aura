@@ -46,6 +46,7 @@ import {
 } from '@/lib/hooks/queries/useLetter';
 import {CreateLetterTemplateRequest, LetterCategory, LetterTemplate, PlaceholderItem,} from '@/lib/types/hrms/letter';
 import {createLogger} from '@/lib/utils/logger';
+import {formatDate as formatDateCanonical} from '@/lib/utils/format/date';
 
 const log = createLogger('LetterTemplatesPage');
 
@@ -116,11 +117,7 @@ const getCategoryColor = (category: LetterCategory): string => {
 
 const formatDate = (date: string | undefined): string => {
   if (!date) return '-';
-  return new Date(date).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  });
+  return formatDateCanonical(date);
 };
 
 // ─── Placeholder Toolbar Component ────────────────────────────────────────

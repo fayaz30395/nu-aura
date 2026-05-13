@@ -5,6 +5,8 @@ import {AppLayout} from '@/components/layout';
 import {apiClient} from '@/lib/api/client';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
+import {EmptyState} from '@/components/ui/EmptyState';
+import {FileBarChart} from 'lucide-react';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -448,9 +450,12 @@ export default function ReportBuilderPage() {
         )}
 
         {previewRows.length === 0 && !loading && (
-          <div
-            className="bg-[var(--bg-surface)] border border-dashed border-[var(--border-strong)] rounded-lg p-12 text-center text-[var(--text-muted)] text-sm">
-            Select columns and click <strong>Preview Results</strong> to see data.
+          <div className="bg-[var(--bg-surface)] border border-dashed border-[var(--border-strong)] rounded-lg">
+            <EmptyState
+              icon={<FileBarChart className="w-8 h-8"/>}
+              title="No preview yet"
+              description="Select columns and click Preview Results to see data."
+            />
           </div>
         )}
       </div>

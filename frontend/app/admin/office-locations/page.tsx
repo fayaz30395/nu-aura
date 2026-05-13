@@ -10,7 +10,9 @@ import {useAuth} from '@/lib/hooks/useAuth';
 import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
 import {useToast} from '@/components/notifications/ToastProvider';
 import {ConfirmDialog} from '@/components/ui';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {SkeletonTable} from '@/components/ui/Skeleton';
+import {MapPin} from 'lucide-react';
 import {
   useCreateOfficeLocation,
   useDeleteOfficeLocation,
@@ -403,8 +405,12 @@ export default function OfficeLocationsPage() {
               ))}
               {locations.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="px-6 py-8 text-center text-[var(--text-secondary)]">
-                    No office locations found. Add your first location to enable geofencing.
+                  <td colSpan={6}>
+                    <EmptyState
+                      icon={<MapPin className="w-8 h-8"/>}
+                      title="No office locations"
+                      description="Add your first location to enable geofencing."
+                    />
                   </td>
                 </tr>
               )}

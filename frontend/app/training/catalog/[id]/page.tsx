@@ -35,6 +35,7 @@ import {
 import type {CourseModule, ModuleContent} from '@/lib/services/grow/lms.service';
 import {sanitizeHtml} from '@/lib/utils/sanitize';
 import {safeUrl} from '@/lib/utils/safeUrl';
+import {formatDate} from '@/lib/utils/format/date';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -699,7 +700,7 @@ export default function CourseDetailPage() {
                   )}
                   {enrollment?.lastAccessedAt && (
                     <p className="text-caption">
-                      Last accessed: {new Date(enrollment.lastAccessedAt).toLocaleDateString()}
+                      Last accessed: {formatDate(enrollment.lastAccessedAt)}
                     </p>
                   )}
                 </CardContent>

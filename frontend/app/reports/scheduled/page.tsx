@@ -41,6 +41,7 @@ import {
   useToggleScheduledReportStatus,
   useUpdateScheduledReport,
 } from '@/lib/hooks/queries/useReports';
+import {EmptyState} from '@/components/ui/EmptyState';
 
 const REPORT_TYPE_ICONS: Record<ReportType, React.ElementType> = {
   EMPLOYEE_DIRECTORY: Users,
@@ -304,24 +305,22 @@ export default function ScheduledReportsPage() {
             <div className="text-[var(--text-secondary)]">Loading scheduled reports...</div>
           </div>
         ) : filteredReports.length === 0 ? (
-          <div
-            className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] p-12 text-center">
-            <Clock className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4"/>
-            <div className="text-[var(--text-secondary)] mb-4">
-              {filterActive === 'ALL' ? 'No scheduled reports found' : `No ${filterActive.toLowerCase()} scheduled reports`}
-            </div>
-            {filterActive === 'ALL' && (
-              <button
-                onClick={() => {
+          <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)]">
+            <EmptyState
+              icon={<CalendarDays className="w-8 h-8"/>}
+              title={filterActive === 'ALL' ? 'No scheduled reports' : `No ${filterActive.toLowerCase()} reports`}
+              description={filterActive === 'ALL'
+                ? 'Schedule your first report to receive automated insights via email.'
+                : `No ${filterActive.toLowerCase()} scheduled reports were found.`}
+              action={filterActive === 'ALL' ? {
+                label: 'Create Your First Schedule',
+                onClick: () => {
                   reset();
                   setSelectedReport(null);
                   setShowModal(true);
-                }}
-                className="px-4 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-700"
-              >
-                Create Your First Schedule
-              </button>
-            )}
+                },
+              } : undefined}
+            />
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

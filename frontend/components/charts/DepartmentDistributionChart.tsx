@@ -56,6 +56,7 @@ export const DepartmentDistributionChart: React.FC<DepartmentDistributionChartPr
         ) : (
           <div className="h-[300px] flex items-center justify-center">
             <EmptyState
+              size="compact"
               icon={<BarChart3 className="h-8 w-8"/>}
               title="No department data available"
               description="Department distribution will appear here once employees are assigned."

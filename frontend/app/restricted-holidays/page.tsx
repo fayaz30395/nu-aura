@@ -50,6 +50,7 @@ import type {
   RestrictedHolidaySelection,
   SelectionStatus,
 } from '@/lib/types/hrms/restricted-holiday';
+import {formatDate} from '@/lib/utils/format/date';
 
 // ─── Zod Schemas ────────────────────────────────────────────────
 
@@ -421,12 +422,7 @@ function BrowseTab({holidays, isLoading, selectedIds, onSelect, isSelecting, sum
                     {holiday.holidayName}
                   </h3>
                   <p className="text-sm text-surface-500 dark:text-surface-400 mt-0.5">
-                    {new Date(holiday.holidayDate).toLocaleDateString('en-IN', {
-                      weekday: 'long',
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric',
-                    })}
+                    {formatDate(holiday.holidayDate)}
                   </p>
                 </div>
                 <span className={`text-xs px-2 py-1 rounded-full font-medium ${categoryColors[holiday.category]}`}>
@@ -518,12 +514,7 @@ function MySelectionsTab({selections, isLoading, onCancel, isCancelling}: MySele
                 </h4>
                 <p className="text-sm text-surface-500 dark:text-surface-400">
                   {selection.holidayDate
-                    ? new Date(selection.holidayDate).toLocaleDateString('en-IN', {
-                      weekday: 'short',
-                      year: 'numeric',
-                      month: 'short',
-                      day: 'numeric',
-                    })
+                    ? formatDate(selection.holidayDate)
                     : 'Date N/A'}
                 </p>
                 {selection.rejectionReason && (
@@ -598,11 +589,7 @@ function ApprovalsTab({selections, isLoading, onApprove, onReject, isActing}: Ap
               Employee: {selection.employeeId.slice(0, 8)}...
               {' | '}
               {selection.holidayDate
-                ? new Date(selection.holidayDate).toLocaleDateString('en-IN', {
-                  month: 'short',
-                  day: 'numeric',
-                  year: 'numeric',
-                })
+                ? formatDate(selection.holidayDate)
                 : ''}
             </p>
           </div>
@@ -731,11 +718,7 @@ function ManageTab({holidays, isLoading, onAdd, onEdit, onDelete}: ManageTabProp
                   </div>
                 </td>
                 <td className="px-4 py-4 text-surface-600 dark:text-surface-300">
-                  {new Date(holiday.holidayDate).toLocaleDateString('en-IN', {
-                    month: 'short',
-                    day: 'numeric',
-                    year: 'numeric',
-                  })}
+                  {formatDate(holiday.holidayDate)}
                 </td>
                 <td className="px-4 py-4">
                     <span className={`text-xs px-2 py-1 rounded-full font-medium ${categoryColors[holiday.category]}`}>

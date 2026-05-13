@@ -9,6 +9,8 @@ import {TicketSLA} from '@/lib/services/hrms/helpdesk-sla.service';
 import {useToast} from '@/components/notifications/ToastProvider';
 import {ConfirmDialog} from '@/components/ui';
 import {SkeletonTable} from '@/components/ui/Skeleton';
+import {StatusBadge} from '@/components/ui/StatusBadge';
+import {LIFECYCLE_STATUS} from '@/lib/status/vocabulary';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {
@@ -547,11 +549,7 @@ export default function HelpdeskSLAPage() {
                         )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`px-2 py-1 rounded-full text-xs ${
-                            sla.isActive ? 'bg-success-100 text-success-800' : 'bg-[var(--bg-surface)] text-[var(--text-secondary)]'
-                          }`}>
-                            {sla.isActive ? 'Active' : 'Inactive'}
-                          </span>
+                        <StatusBadge status={sla.isActive ? 'ACTIVE' : 'INACTIVE'} domain={LIFECYCLE_STATUS}/>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <PermissionGate permission={Permissions.HELPDESK_SLA_MANAGE}>

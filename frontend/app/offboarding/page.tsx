@@ -47,6 +47,7 @@ import {useRouter} from 'next/navigation';
 import {extractContent} from '@/lib/utils/type-guards';
 import {createLogger} from '@/lib/utils/logger';
 import {formatCurrency} from '@/lib/utils';
+import {formatDate as formatDateCanonical} from '@/lib/utils/format/date';
 
 const log = createLogger('OffboardingPage');
 
@@ -130,11 +131,7 @@ const formatDate = (date: string | undefined) => {
   if (!date) return '-';
   const parsedDate = new Date(date);
   if (Number.isNaN(parsedDate.getTime())) return '-';
-  return parsedDate.toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  });
+  return formatDateCanonical(parsedDate);
 };
 
 const formatStatusLabel = (status: ExitStatus | string | null | undefined) => {

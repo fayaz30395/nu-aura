@@ -12,6 +12,7 @@ import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {AlertCircle, ArrowRight, CheckCircle, ChevronDown, ChevronUp, Clock, User, XCircle,} from 'lucide-react';
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
 import {SkeletonTable} from '@/components/ui/Skeleton';
+import {formatDate, formatDateTime} from '@/lib/utils/format/date';
 
 export default function EmploymentChangeRequestsPage() {
   const toast = useToast();
@@ -377,7 +378,7 @@ export default function EmploymentChangeRequestsPage() {
                                 Effective Date:
                               </span>
                               <p className="text-sm text-[var(--text-primary)] mt-1">
-                                {new Date(request.effectiveDate).toLocaleDateString()}
+                                {formatDate(request.effectiveDate)}
                               </p>
                             </div>
                           )}
@@ -386,7 +387,7 @@ export default function EmploymentChangeRequestsPage() {
                               Requested On:
                             </span>
                             <p className="text-sm text-[var(--text-primary)] mt-1">
-                              {new Date(request.createdAt).toLocaleString()}
+                              {formatDateTime(request.createdAt)}
                             </p>
                           </div>
                           {request.rejectionReason && (

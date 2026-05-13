@@ -6,7 +6,6 @@ import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {Loader2, Plus} from 'lucide-react';
 import {
-  Badge,
   Button,
   Card,
   CardContent,
@@ -18,6 +17,8 @@ import {
   ModalHeader,
   ResponsiveTable,
 } from '@/components/ui';
+import {StatusBadge} from '@/components/ui/StatusBadge';
+import {TIMESHEET_STATUS} from '@/lib/status/vocabulary';
 import {useCreatePsaTimesheet, usePsaProjectTimesheets, useSubmitPsaTimesheet} from '@/lib/hooks/queries/usePsa';
 import {PSATimesheet} from '@/lib/types/hrms/psa';
 
@@ -41,24 +42,6 @@ const formatDate = (value?: string | null) => {
 const formatHours = (value?: number | null) => {
   if (value === null || value === undefined) return '—';
   return `${value.toFixed(1)}h`;
-};
-
-const STATUS_BADGE: Record<string, {
-  label: string;
-  variant: 'success' | 'warning' | 'secondary' | 'danger' | 'primary'
-}> = {
-  DRAFT: {label: 'Draft', variant: 'secondary'},
-  SUBMITTED: {label: 'Submitted', variant: 'primary'},
-  UNDER_REVIEW: {label: 'Under Review', variant: 'warning'},
-  APPROVED: {label: 'Approved', variant: 'success'},
-  REJECTED: {label: 'Rejected', variant: 'danger'},
-};
-
-const getStatusBadge = (status?: string | null) => {
-  if (status && STATUS_BADGE[status]) {
-    return STATUS_BADGE[status];
-  }
-  return {label: status ?? 'Unknown', variant: 'secondary' as const};
 };
 
 export function TimesheetsTab({projectId}: TimesheetsTabProps) {
@@ -139,14 +122,9 @@ export function TimesheetsTab({projectId}: TimesheetsTabProps) {
     {
       key: 'status',
       header: 'Status',
-      accessor: (timesheet: PSATimesheet) => {
-        const badge = getStatusBadge(timesheet.status);
-        return (
-          <Badge variant={badge.variant} size="sm">
-            {badge.label}
-          </Badge>
-        );
-      },
+      accessor: (timesheet: PSATimesheet) => (
+        <StatusBadge status={timesheet.status} domain={TIMESHEET_STATUS}/>
+      ),
       mobilePriority: 'secondary' as const,
     },
     {

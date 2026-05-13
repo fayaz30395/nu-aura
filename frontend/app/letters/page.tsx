@@ -53,6 +53,7 @@ import {
 } from '@/lib/hooks/queries/useLetter';
 import {useCandidates} from '@/lib/hooks/queries/useRecruitment';
 import {createLogger} from '@/lib/utils/logger';
+import {formatDate as formatDateCanonical} from '@/lib/utils/format/date';
 
 const log = createLogger('LettersPage');
 
@@ -114,11 +115,7 @@ const getCategoryLabel = (category: LetterCategory) => {
 
 const formatDate = (date: string | undefined) => {
   if (!date) return '-';
-  return new Date(date).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  });
+  return formatDateCanonical(date);
 };
 
 export default function LettersPage() {

@@ -22,6 +22,7 @@ import {useFeatureFlags, useSetFeatureFlag, useToggleFeatureFlag} from '@/lib/ho
 import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {SkeletonCard} from '@/components/ui/Skeleton';
+import {EmptyState} from '@/components/ui/EmptyState';
 import type {FeatureFlag} from '@/lib/types/core/feature-flag';
 
 const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
@@ -198,14 +199,13 @@ export default function FeatureFlagsPage() {
 
         {filteredFlags.length === 0 && (
           <Card withBorder padding="xl" radius="md" className="skeuo-card">
-            <Stack align="center" gap="sm">
-              <ToggleLeft size={48} className="text-[var(--text-muted)]"/>
-              <Text size="sm" c="dimmed">
-                {search || categoryFilter
-                  ? 'No feature flags match your filters'
-                  : 'No feature flags configured'}
-              </Text>
-            </Stack>
+            <EmptyState
+              icon={<ToggleLeft className="w-8 h-8"/>}
+              title={search || categoryFilter ? 'No matches' : 'No feature flags'}
+              description={search || categoryFilter
+                ? 'No feature flags match your filters'
+                : 'No feature flags configured'}
+            />
           </Card>
         )}
       </Stack>

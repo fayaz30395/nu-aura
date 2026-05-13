@@ -83,6 +83,8 @@ export {ConfirmDialog} from './ConfirmDialog';
 
 // EmptyState Component
 export {EmptyState} from './EmptyState';
+export {EmptyStatePresets} from './empty-state-presets';
+export type {EmptyStatePresetKey} from './empty-state-presets';
 
 // ErrorBoundary Component
 export {ErrorBoundary} from './ErrorBoundary';

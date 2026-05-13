@@ -11,6 +11,8 @@ import {Badge} from '@/components/ui/Badge';
 import {Card} from '@/components/ui/Card';
 import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
 import {Skeleton} from '@/components/ui/Skeleton';
+import {StatusBadge} from '@/components/ui/StatusBadge';
+import {TICKET_STATUS} from '@/lib/status/vocabulary';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {useAuth} from '@/lib/hooks/useAuth';
@@ -24,13 +26,9 @@ import {
 import type {TicketPriority, TicketResponse, TicketStatus} from '@/lib/services/hrms/helpdesk.service';
 import {
   AlertTriangle,
-  CheckCircle2,
   ChevronLeft,
   ChevronRight,
-  Circle,
-  Clock,
   Filter,
-  Pause,
   Plus,
   Search,
   Tag,
@@ -47,16 +45,12 @@ const PRIORITY_CONFIG: Record<TicketPriority, { label: string; variant: 'danger'
   LOW: {label: 'Low', variant: 'default'},
 };
 
-const STATUS_CONFIG: Record<TicketStatus, {
-  label: string;
-  variant: 'danger' | 'warning' | 'info' | 'success' | 'default';
-  icon: React.FC<{ className?: string }>
-}> = {
-  OPEN: {label: 'Open', variant: 'info', icon: Circle},
-  IN_PROGRESS: {label: 'In Progress', variant: 'warning', icon: Clock},
-  WAITING_FOR_RESPONSE: {label: 'Waiting', variant: 'default', icon: Pause},
-  RESOLVED: {label: 'Resolved', variant: 'success', icon: CheckCircle2},
-  CLOSED: {label: 'Closed', variant: 'default', icon: CheckCircle2},
+const STATUS_LABELS: Record<TicketStatus, string> = {
+  OPEN: 'Open',
+  IN_PROGRESS: 'In Progress',
+  WAITING_FOR_RESPONSE: 'Waiting',
+  RESOLVED: 'Resolved',
+  CLOSED: 'Closed',
 };
 
 const ALL_STATUSES: TicketStatus[] = ['OPEN', 'IN_PROGRESS', 'WAITING_FOR_RESPONSE', 'RESOLVED', 'CLOSED'];
@@ -164,7 +158,7 @@ export default function TicketListPage() {
   const handleQuickStatusChange = async (ticketId: string, newStatus: TicketStatus) => {
     try {
       await statusMutation.mutateAsync({id: ticketId, status: newStatus});
-      toast.success(`Ticket status updated to ${STATUS_CONFIG[newStatus].label}`);
+      toast.success(`Ticket status updated to ${STATUS_LABELS[newStatus]}`);
     } catch (err: unknown) {
       const message = (err as {
         response?: { data?: { message?: string } }
@@ -252,7 +246,7 @@ export default function TicketListPage() {
                 >
                   <option value="">All Statuses</option>
                   {ALL_STATUSES.map((s) => (
-                    <option key={s} value={s}>{STATUS_CONFIG[s].label}</option>
+                    <option key={s} value={s}>{STATUS_LABELS[s]}</option>
                   ))}
                 </select>
               </div>
@@ -506,8 +500,6 @@ interface TicketRowProps {
 
 function TicketRow({ticket, onNavigate, onStatusChange, formatDate}: TicketRowProps) {
   const priorityCfg = PRIORITY_CONFIG[ticket.priority] ?? PRIORITY_CONFIG.MEDIUM;
-  const statusCfg = STATUS_CONFIG[ticket.status] ?? STATUS_CONFIG.OPEN;
-  const StatusIcon = statusCfg.icon;
 
   return (
     <tr
@@ -541,10 +533,7 @@ function TicketRow({ticket, onNavigate, onStatusChange, formatDate}: TicketRowPr
         <Badge variant={priorityCfg.variant} size="sm">{priorityCfg.label}</Badge>
       </td>
       <td className="px-4 py-4 whitespace-nowrap text-center">
-        <Badge variant={statusCfg.variant} size="sm">
-          <StatusIcon className="h-3 w-3"/>
-          {statusCfg.label}
-        </Badge>
+        <StatusBadge status={ticket.status} domain={TICKET_STATUS}/>
       </td>
       <td className="px-4 py-4 whitespace-nowrap">
         <span className="text-body-secondary">{ticket.assignedToName || 'Unassigned'}</span>
@@ -560,7 +549,7 @@ function TicketRow({ticket, onNavigate, onStatusChange, formatDate}: TicketRowPr
             onChange={(e) => onStatusChange(ticket.id, e.target.value as TicketStatus)}
           >
             {ALL_STATUSES.map((s) => (
-              <option key={s} value={s}>{STATUS_CONFIG[s].label}</option>
+              <option key={s} value={s}>{STATUS_LABELS[s]}</option>
             ))}
           </select>
         </PermissionGate>

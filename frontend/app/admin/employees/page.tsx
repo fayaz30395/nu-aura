@@ -1,6 +1,6 @@
 'use client';
 
-import {useMemo, useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import {Controller, useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
@@ -41,6 +41,8 @@ import {useAssignRolesToUser, useRoles} from '@/lib/hooks/queries/useRoles';
 import {Permissions, Roles, usePermissions} from '@/lib/hooks/usePermissions';
 import {CreateEmployeeRequest, Employee} from '@/lib/types/hrms/employee';
 import {usersApi} from '@/lib/api/users';
+import {StatusBadge} from '@/components/ui/StatusBadge';
+import {EMPLOYEE_LIFECYCLE_STATUS} from '@/lib/status/vocabulary';
 
 // ──────────────────────────────────────────────
 // Zod schema
@@ -528,41 +530,62 @@ export default function AdminEmployeesPage() {
                     </tr>
                     </thead>
                     <tbody>
-                    {filteredEmployees.map((emp: Employee) => (
-                      <tr key={emp.id} className="hover:bg-[var(--bg-card-hover)] transition-colors">
-                        <td>
-                          <div className="flex items-center gap-2">
-                            <div
-                              className="h-8 w-8 rounded-full bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center text-xs font-semibold text-accent-700 dark:text-accent-300">
-                              {emp.firstName?.[0]}{emp.lastName?.[0]}
-                            </div>
-                            <div>
-                              <p
-                                className="font-medium text-[var(--text-primary)]">{emp.fullName || `${emp.firstName} ${emp.lastName}`}</p>
-                              <p className="text-caption">{emp.workEmail}</p>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="text-caption text-[var(--text-secondary)] font-mono">{emp.employeeCode}</td>
-                        <td className="text-[var(--text-secondary)]">{emp.departmentName || '—'}</td>
-                        <td className="text-[var(--text-secondary)]">{emp.designation || '—'}</td>
-                        <td><span
-                          className="badge-status status-info">{emp.employmentType?.replace('_', ' ') || 'Full Time'}</span>
-                        </td>
-                        <td>
-                            <span
-                              className={`badge-status ${emp.status === 'ACTIVE' ? 'status-success' : emp.status === 'ON_LEAVE' ? 'status-warning' : emp.status === 'TERMINATED' ? 'status-danger' : 'status-neutral'}`}>
-                              {emp.status || 'Active'}
-                            </span>
-                        </td>
-                        <td className="text-right">
-                          <Button variant="ghost" size="icon-sm" onClick={() => setEditingRoleForEmployee(emp)}
-                                  title="Edit roles" aria-label={`Edit roles for ${emp.fullName || emp.firstName}`}>
-                            <Pencil className="h-3.5 w-3.5"/>
-                          </Button>
-                        </td>
-                      </tr>
-                    ))}
+                    {filteredEmployees.map((emp: Employee) => {
+                      const isEditingRoles = editingRoleForEmployee?.id === emp.id;
+                      return (
+                        <React.Fragment key={emp.id}>
+                          <tr className="hover:bg-[var(--bg-card-hover)] transition-colors">
+                            <td>
+                              <div className="flex items-center gap-2">
+                                <div
+                                  className="h-8 w-8 rounded-full bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center text-xs font-semibold text-accent-700 dark:text-accent-300">
+                                  {emp.firstName?.[0]}{emp.lastName?.[0]}
+                                </div>
+                                <div>
+                                  <p
+                                    className="font-medium text-[var(--text-primary)]">{emp.fullName || `${emp.firstName} ${emp.lastName}`}</p>
+                                  <p className="text-caption">{emp.workEmail}</p>
+                                </div>
+                              </div>
+                            </td>
+                            <td className="text-caption text-[var(--text-secondary)] font-mono">{emp.employeeCode}</td>
+                            <td className="text-[var(--text-secondary)]">{emp.departmentName || '—'}</td>
+                            <td className="text-[var(--text-secondary)]">{emp.designation || '—'}</td>
+                            <td><span
+                              className="badge-status status-info">{emp.employmentType?.replace('_', ' ') || 'Full Time'}</span>
+                            </td>
+                            <td>
+                              <StatusBadge status={emp.status || 'ACTIVE'} domain={EMPLOYEE_LIFECYCLE_STATUS}/>
+                            </td>
+                            <td className="text-right">
+                              <Button
+                                variant={isEditingRoles ? 'primary' : 'ghost'}
+                                size="icon-sm"
+                                onClick={() => setEditingRoleForEmployee(isEditingRoles ? null : emp)}
+                                title={isEditingRoles ? 'Close role editor' : 'Edit roles'}
+                                aria-label={`${isEditingRoles ? 'Close role editor for' : 'Edit roles for'} ${emp.fullName || emp.firstName}`}
+                                aria-expanded={isEditingRoles}
+                              >
+                                {isEditingRoles ? <X className="h-3.5 w-3.5"/> : <Pencil className="h-3.5 w-3.5"/>}
+                              </Button>
+                            </td>
+                          </tr>
+                          {isEditingRoles && (
+                            <tr className="bg-[var(--bg-surface)]">
+                              <td colSpan={7} className="p-0">
+                                <div className="border-l-2 border-accent-500 bg-[var(--bg-surface)] px-4 py-4">
+                                  <div className="flex items-center gap-2 mb-3 text-sm font-semibold text-[var(--text-primary)]">
+                                    <Shield className="h-4 w-4 text-accent-500"/>
+                                    <span>Edit Roles</span>
+                                  </div>
+                                  <InlineRoleEditor employee={emp} onClose={() => setEditingRoleForEmployee(null)}/>
+                                </div>
+                              </td>
+                            </tr>
+                          )}
+                        </React.Fragment>
+                      );
+                    })}
                     </tbody>
                   </table>
                 </div>
@@ -588,21 +611,6 @@ export default function AdminEmployeesPage() {
           </CardContent>
         </Card>
       </motion.div>
-
-      {/* ═══ INLINE ROLE EDIT MODAL ═══ */}
-      <Modal isOpen={!!editingRoleForEmployee} onClose={() => setEditingRoleForEmployee(null)} size="md">
-        <ModalHeader onClose={() => setEditingRoleForEmployee(null)}>
-          <div className="flex items-center gap-2">
-            <Shield className="h-5 w-5 text-accent-500"/>
-            <span>Edit Roles</span>
-          </div>
-        </ModalHeader>
-        <ModalBody>
-          {editingRoleForEmployee && (
-            <InlineRoleEditor employee={editingRoleForEmployee} onClose={() => setEditingRoleForEmployee(null)}/>
-          )}
-        </ModalBody>
-      </Modal>
 
       {/* ═══ CREATE EMPLOYEE + ROLE MODAL ═══ */}
       <Modal isOpen={showCreateModal} onClose={handleCloseModal} size="lg">

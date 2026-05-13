@@ -6,6 +6,7 @@ import {Bell, Check, CheckCheck} from 'lucide-react';
 import {cn} from '@/lib/utils';
 import {formatDistanceToNow} from 'date-fns';
 import type {UnifiedNotification} from '@/lib/hooks/useNotifications';
+import {EmptyState} from './EmptyState';
 
 // ─── Props ──────────────────────────────────────────────────────────────
 export interface SimpleNotificationDropdownProps {
@@ -124,10 +125,10 @@ export const SimpleNotificationDropdown: React.FC<SimpleNotificationDropdownProp
             <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent-700 border-t-transparent"/>
           </div>
         ) : displayed.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-8 text-center">
-            <Bell className="h-8 w-8 text-[var(--text-muted)] mb-2"/>
-            <p className="text-body-muted">No notifications</p>
-          </div>
+          <EmptyState
+            icon={<Bell className="w-8 h-8"/>}
+            title="No notifications"
+          />
         ) : (
           <ul role="list">
             {displayed.map((notification) => (

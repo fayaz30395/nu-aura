@@ -7,6 +7,8 @@ import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
 import {LeaveRequest, LeaveRequestStatus} from '@/lib/types/hrms/leave';
 import {useToast} from '@/components/notifications/ToastProvider';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {StatusBadge} from '@/components/ui/StatusBadge';
+import {LEAVE_STATUS} from '@/lib/status/vocabulary';
 import {Inbox} from 'lucide-react';
 import {
   useActiveLeaveTypes,
@@ -112,16 +114,6 @@ export default function AdminLeaveRequestsPage() {
   const getLeaveTypeName = (leaveTypeId: string) => {
     const type = leaveTypes.find(t => t.id === leaveTypeId);
     return type?.leaveName || 'Unknown';
-  };
-
-  const getStatusColor = (status: LeaveRequestStatus) => {
-    const colors = {
-      PENDING: 'badge-status status-warning',
-      APPROVED: 'badge-status status-success',
-      REJECTED: 'badge-status status-danger',
-      CANCELLED: 'badge-status status-neutral',
-    };
-    return colors[status] || 'badge-status status-neutral';
   };
 
   const formatDate = (dateString: string) => {
@@ -239,10 +231,7 @@ export default function AdminLeaveRequestsPage() {
                     {request.totalDays} {request.isHalfDay && '(Half Day)'}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                      <span
-                        className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(request.status)}`}>
-                        {request.status}
-                      </span>
+                    <StatusBadge status={request.status} domain={LEAVE_STATUS}/>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-body-secondary">
                     {formatDate(request.appliedOn)}

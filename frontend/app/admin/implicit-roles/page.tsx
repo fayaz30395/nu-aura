@@ -16,7 +16,9 @@ import {useAuth} from '@/lib/hooks/useAuth';
 import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
 import {AdminPageContent} from '@/components/layout';
 import {ConfirmDialog} from '@/components/ui';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {SkeletonTable} from '@/components/ui/Skeleton';
+import {Shield, Users} from 'lucide-react';
 import {
   useAffectedUsers,
   useBulkActivateRules,
@@ -390,11 +392,12 @@ export default function ImplicitRolesPage() {
             <tbody className="bg-[var(--bg-input)] divide-y divide-[var(--border-main)]">
             {filteredRules.length === 0 && (
               <tr>
-                <td colSpan={9} className="px-6 py-12 text-center">
-                  <p className="text-[var(--text-muted)] text-sm">No rules found</p>
-                  <p className="text-[var(--text-muted)] text-xs mt-1">
-                    Try adjusting your search or create a new rule.
-                  </p>
+                <td colSpan={9}>
+                  <EmptyState
+                    icon={<Shield className="w-8 h-8"/>}
+                    title="No rules found"
+                    description="Try adjusting your search or create a new rule."
+                  />
                 </td>
               </tr>
             )}
@@ -773,8 +776,12 @@ function AffectedUsersModal({rule, onClose}: AffectedUsersModalProps) {
               <tbody className="bg-[var(--bg-input)] divide-y divide-[var(--border-main)]">
               {usersQuery.data.content.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-6 py-8 text-center text-[var(--text-muted)]">
-                    No users affected by this rule
+                  <td colSpan={5}>
+                    <EmptyState
+                      icon={<Users className="w-8 h-8"/>}
+                      title="No affected users"
+                      description="No users affected by this rule."
+                    />
                   </td>
                 </tr>
               )}

@@ -7,6 +7,7 @@ import {Badge, Box, Card, Group, Loader, Stack, Table, Text, Title,} from '@mant
 import {AlertCircle, Banknote, Plus} from 'lucide-react';
 import {useSalaryStructures} from '@/lib/hooks/queries/usePayroll';
 import {useRouter} from 'next/navigation';
+import {formatDate} from '@/lib/utils/format/date';
 
 export default function SalaryStructuresPage() {
   const router = useRouter();
@@ -119,7 +120,7 @@ export default function SalaryStructuresPage() {
                     {structures.filter(Boolean).map((structure) => (
                       <Table.Tr key={structure.id} className="cursor-pointer">
                         <Table.Td>{structure.employeeName || structure.employeeId || '—'}</Table.Td>
-                        <Table.Td>{structure.effectiveDate ? new Date(structure.effectiveDate).toLocaleDateString() : '—'}</Table.Td>
+                        <Table.Td>{structure.effectiveDate ? formatDate(structure.effectiveDate) : '—'}</Table.Td>
                         <Table.Td>{new Intl.NumberFormat('en-IN', {
                           style: 'currency',
                           currency: 'INR'

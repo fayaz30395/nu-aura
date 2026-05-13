@@ -50,6 +50,7 @@ import {
   usePublicFeed,
   useRemoveReaction,
 } from '@/lib/hooks/queries/useRecognition';
+import {formatDate} from '@/lib/utils/format/date';
 
 // Zod schema for recognition form
 const recognitionFormSchema = z.object({
@@ -500,7 +501,7 @@ export default function RecognitionPage() {
                               {recognition.commentsCount}
                             </button>
                             <span className="text-xs">
-                              {new Date(recognition.recognizedAt || recognition.createdAt).toLocaleDateString()}
+                              {formatDate(recognition.recognizedAt || recognition.createdAt)}
                             </span>
                           </div>
 

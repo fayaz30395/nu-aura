@@ -20,6 +20,7 @@ import {
 import {AppLayout} from '@/components/layout';
 import {Card, CardContent} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {PageDeniedFallback, PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {useForm} from 'react-hook-form';
@@ -39,6 +40,7 @@ import {
   useSyncDevice,
 } from '@/lib/hooks/useBiometric';
 import type {BiometricDevice, BiometricDeviceRequest, BiometricPunchLog,} from '@/lib/services/hrms/biometricService';
+import {formatDate, formatDateTime} from '@/lib/utils/format/date';
 
 // ─── Zod Schemas ────────────────────────────────────────────────────────────
 
@@ -313,7 +315,7 @@ function DeviceCard({
   };
 
   const lastSyncFormatted = device.lastSyncAt
-    ? new Date(device.lastSyncAt).toLocaleString()
+    ? formatDateTime(device.lastSyncAt)
     : 'Never';
 
   return (
@@ -609,7 +611,11 @@ function DeviceLogsDrawer({
               ))}
             </div>
           ) : data?.content.length === 0 ? (
-            <p className="text-center text-[var(--text-muted)] py-8">No punch logs found</p>
+            <EmptyState
+              icon={<Activity className="w-8 h-8"/>}
+              title="No punch logs"
+              description="No punch logs found for this device."
+            />
           ) : (
             <>
               {data?.content.map((log) => (
@@ -674,7 +680,7 @@ function PunchLogRow({log}: { log: BiometricPunchLog }) {
               </span>
             </p>
             <p className="text-caption">
-              {new Date(log.punchTime).toLocaleString()}
+              {formatDateTime(log.punchTime)}
             </p>
           </div>
         </div>
@@ -729,10 +735,11 @@ function PendingPunchesPanel({
         </div>
       ) : data?.content.length === 0 ? (
         <Card>
-          <CardContent className="flex flex-col items-center justify-center py-12">
-            <CheckCircle className="h-12 w-12 text-success-500 mb-4"/>
-            <p className="text-[var(--text-muted)]">All punches have been processed</p>
-          </CardContent>
+          <EmptyState
+            icon={<CheckCircle className="w-8 h-8"/>}
+            title="All caught up"
+            description="All punches have been processed."
+          />
         </Card>
       ) : (
         <>
@@ -841,12 +848,11 @@ function ApiKeysPanel({
         </div>
       ) : keys?.length === 0 ? (
         <Card>
-          <CardContent className="flex flex-col items-center justify-center py-12">
-            <Key className="h-12 w-12 text-[var(--text-muted)] mb-4"/>
-            <p className="text-[var(--text-muted)]">
-              No API keys. Generate one to connect biometric devices.
-            </p>
-          </CardContent>
+          <EmptyState
+            icon={<Key className="w-8 h-8"/>}
+            title="No API keys"
+            description="Generate one to connect biometric devices."
+          />
         </Card>
       ) : (
         <div className="space-y-4">
@@ -861,9 +867,9 @@ function ApiKeysPanel({
                 </p>
                 <div className="mt-1 flex items-center gap-4 text-caption">
                   <span>...{key.keySuffix}</span>
-                  <span>Created: {new Date(key.createdAt).toLocaleDateString()}</span>
+                  <span>Created: {formatDate(key.createdAt)}</span>
                   {key.lastUsedAt && (
-                    <span>Last used: {new Date(key.lastUsedAt).toLocaleDateString()}</span>
+                    <span>Last used: {formatDate(key.lastUsedAt)}</span>
                   )}
                   <span className={key.isActive ? 'text-success-600' : 'text-danger-500'}>
                     {key.isActive ? 'Active' : 'Revoked'}

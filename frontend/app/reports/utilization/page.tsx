@@ -24,6 +24,7 @@ import {
 import {Card, CardContent, CardHeader, CardTitle,} from '@/components/ui/Card';
 import {Badge} from '@/components/ui/Badge';
 import {Skeleton} from '@/components/ui/Skeleton';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {
   formatCurrency,
   formatHours,
@@ -470,9 +471,11 @@ export default function UtilizationReportsPage() {
                       </div>
                     ))}
                     {dashboardData.underUtilized.length === 0 && (
-                      <p className="text-center text-[var(--text-muted)] py-8">
-                        All employees are well-utilized!
-                      </p>
+                      <EmptyState
+                        icon={<TrendingUp className="w-8 h-8"/>}
+                        title="All caught up"
+                        description="All employees are well-utilized!"
+                      />
                     )}
                   </div>
                 </CardContent>

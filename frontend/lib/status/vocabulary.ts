@@ -27,6 +27,7 @@ import {
   CheckCircle,
   ClipboardList,
   Clock,
+  CreditCard,
   HelpCircle,
   Pause,
   Play,
@@ -336,6 +337,36 @@ export const COMPENSATION_REVISION_STATUS: Record<string, StatusMeta> = {
   REJECTED: REJECTED_META,
   CANCELLED: CANCELLED_META,
   APPLIED: {label: 'Applied', tone: 'success', icon: CheckCircle},
+};
+
+export const TICKET_STATUS: Record<string, StatusMeta> = {
+  OPEN: {label: 'Open', tone: 'info', icon: Clock},
+  IN_PROGRESS: IN_PROGRESS_META,
+  WAITING_FOR_RESPONSE: {label: 'Waiting', tone: 'warning', icon: Pause},
+  PENDING_CUSTOMER: {label: 'Pending Customer', tone: 'warning', icon: Clock},
+  RESOLVED: {label: 'Resolved', tone: 'success', icon: CheckCircle},
+  CLOSED: {label: 'Closed', tone: 'neutral', icon: Ban},
+  ESCALATED: {label: 'Escalated', tone: 'danger', icon: AlertTriangle},
+};
+
+export const EMPLOYEE_LIFECYCLE_STATUS: Record<string, StatusMeta> = {
+  ACTIVE: ACTIVE_META,
+  INACTIVE: INACTIVE_META,
+  ON_LEAVE: {label: 'On Leave', tone: 'info', icon: Pause},
+  TERMINATED: {label: 'Terminated', tone: 'danger', icon: Ban},
+  PROBATION: {label: 'Probation', tone: 'warning', icon: Clock},
+  RESIGNED: {label: 'Resigned', tone: 'neutral', icon: Ban},
+};
+
+export const KNOWLEDGE_STATUS = PUBLICATION_STATUS;
+
+export const INVOICE_STATUS: Record<string, StatusMeta> = {
+  DRAFT: DRAFT_META,
+  SENT: {label: 'Sent', tone: 'info', icon: Send},
+  PARTIALLY_PAID: {label: 'Partially Paid', tone: 'warning', icon: CreditCard},
+  PAID: {label: 'Paid', tone: 'success', icon: CheckCircle},
+  OVERDUE: {label: 'Overdue', tone: 'danger', icon: AlertTriangle},
+  CANCELLED: CANCELLED_META,
 };
 
 /* ── Resolver ───────────────────────────────────────────────────────── */

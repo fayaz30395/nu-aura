@@ -37,6 +37,7 @@ import {
 } from '@/lib/hooks/queries/useLeaves';
 import {LeaveBalance, LeaveRequest, LeaveRequestRequest, LeaveRequestStatus,} from '@/lib/types/hrms/leave';
 import {createLogger} from '@/lib/utils/logger';
+import {formatDate as formatDateCanonical} from '@/lib/utils/format/date';
 
 const leaveFormSchema = z.object({
   leaveTypeId: z.string().min(1, 'Please select a leave type'),
@@ -240,11 +241,7 @@ export default function MyLeavesPage() {
   };
 
   const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    });
+    return formatDateCanonical(date);
   };
 
   const getLeaveTypeName = (leaveTypeId: string) => {

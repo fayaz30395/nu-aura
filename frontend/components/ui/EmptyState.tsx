@@ -21,6 +21,13 @@ interface EmptyStateProps {
   // Legacy prop support
   action?: EmptyStateAction;
   iconSize?: number | string;
+  /**
+   * Visual size variant.
+   * - `'default'` (existing behavior): large py-16 outer padding, w-16 h-16 icon container, text-xl title.
+   * - `'compact'`: py-6 outer padding, w-10 h-10 icon container, text-sm title, text-xs description.
+   *   Use inside chart tiles (h-[300px]), popovers (max-h-48), and dense table-cell empties.
+   */
+  size?: 'default' | 'compact';
 }
 
 export function EmptyState({
@@ -32,11 +39,13 @@ export function EmptyState({
                              onAction,
                              actionLoading = false,
                              action,
+                             size = 'default',
                            }: EmptyStateProps) {
   // Support legacy 'action' prop for backward compatibility
   const finalActionLabel = actionLabel || action?.label;
   const finalOnAction = onAction || action?.onClick;
   const finalActionLoading = actionLoading || action?.loading || false;
+  const isCompact = size === 'compact';
   return (
     <motion.div
       initial={{opacity: 0, y: 10}}
@@ -44,29 +53,50 @@ export function EmptyState({
       transition={{duration: 0.3, ease: 'easeOut'}}
       className="w-full"
     >
-      <div className="flex flex-col items-center justify-center py-16 px-6">
+      <div
+        className={cn(
+          'flex flex-col items-center justify-center px-6',
+          isCompact ? 'py-6' : 'py-16'
+        )}
+      >
         {/* Icon Container */}
         {icon && (
           <div
             className={cn(
-              'flex items-center justify-center w-16 h-16 rounded-lg mb-6',
+              'flex items-center justify-center rounded-lg',
+              isCompact ? 'w-10 h-10 mb-3' : 'w-16 h-16 mb-6',
               iconColor || 'bg-[var(--bg-surface)] text-[var(--text-muted)]'
             )}
           >
-            <div className="w-8 h-8 flex items-center justify-center">
+            <div
+              className={cn(
+                'flex items-center justify-center',
+                isCompact ? 'w-5 h-5' : 'w-8 h-8'
+              )}
+            >
               {icon}
             </div>
           </div>
         )}
 
         {/* Title */}
-        <h3 className="text-xl font-semibold text-center mb-2 max-w-xs text-[var(--text-primary)]">
+        <h3
+          className={cn(
+            'font-semibold text-center max-w-xs text-[var(--text-primary)]',
+            isCompact ? 'text-sm mb-1' : 'text-xl mb-2'
+          )}
+        >
           {title}
         </h3>
 
         {/* Description */}
         {description && (
-          <p className="text-sm text-center mb-6 max-w-sm leading-relaxed text-[var(--text-secondary)]">
+          <p
+            className={cn(
+              'text-center max-w-sm leading-relaxed text-[var(--text-secondary)]',
+              isCompact ? 'text-xs mb-3' : 'text-sm mb-6'
+            )}
+          >
             {description}
           </p>
         )}

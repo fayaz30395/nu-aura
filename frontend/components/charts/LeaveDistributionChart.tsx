@@ -60,6 +60,7 @@ export const LeaveDistributionChart: React.FC<LeaveDistributionChartProps> = ({d
         ) : (
           <div className="h-[300px] flex items-center justify-center">
             <EmptyState
+              size="compact"
               icon={<PieChartIcon className="h-8 w-8"/>}
               title="No leave data available"
               description="Leave requests will appear here once submitted."

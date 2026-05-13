@@ -62,6 +62,7 @@ export const HeadcountTrendChart: React.FC<HeadcountTrendChartProps> = ({data, c
         ) : (
           <div className="h-[300px] flex items-center justify-center">
             <EmptyState
+              size="compact"
               icon={<TrendingUp className="h-8 w-8"/>}
               title="No headcount data available"
               description="Employee count history will appear here."

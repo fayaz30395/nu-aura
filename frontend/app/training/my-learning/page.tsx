@@ -21,6 +21,7 @@ import {useAuth} from '@/lib/hooks/useAuth';
 import type {CourseEnrollment} from '@/lib/services/grow/lms.service';
 import {useMyEnrollments, useUpdateCourseProgress} from '@/lib/hooks/queries/useLearning';
 import {createLogger} from '@/lib/utils/logger';
+import {formatDate} from '@/lib/utils/format/date';
 
 const log = createLogger('MyLearningPage');
 
@@ -247,13 +248,13 @@ export default function MyLearningPage() {
                           <span>
                             Enrolled{' '}
                             {enrollment.enrolledAt
-                              ? new Date(enrollment.enrolledAt).toLocaleDateString()
+                              ? formatDate(enrollment.enrolledAt)
                               : '—'}
                           </span>
                           {enrollment.completedAt && (
                             <span>
                               Completed{' '}
-                              {new Date(enrollment.completedAt).toLocaleDateString()}
+                              {formatDate(enrollment.completedAt)}
                             </span>
                           )}
                           {enrollment.certificateId && (

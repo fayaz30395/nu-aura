@@ -29,6 +29,7 @@ import type {
 } from '@/lib/types/hrms/probation';
 import {StatusBadge} from '@/components/ui/StatusBadge';
 import {PROBATION_STATUS} from '@/lib/status/vocabulary';
+import {formatDate as formatDateCanonical} from '@/lib/utils/format/date';
 
 // ── Evaluation form schema ───────────────────────────────────
 const evaluationFormSchema = z.object({
@@ -191,11 +192,7 @@ export default function ProbationPage() {
 
   const formatDate = (dateStr: string | null | undefined) => {
     if (!dateStr) return '-';
-    return new Date(dateStr).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
+    return formatDateCanonical(dateStr);
   };
 
   // ── Reusable probation table ───────────────────────────────

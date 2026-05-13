@@ -54,6 +54,7 @@ export const PayrollCostTrendChart: React.FC<PayrollCostTrendChartProps> = ({dat
         ) : (
           <div className="h-[300px] flex items-center justify-center">
             <EmptyState
+              size="compact"
               icon={<BarChart3 className="h-8 w-8"/>}
               title="No payroll data available"
               description="Payroll history will appear here once processed."

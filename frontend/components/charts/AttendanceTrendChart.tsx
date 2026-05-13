@@ -56,6 +56,7 @@ export const AttendanceTrendChart: React.FC<AttendanceTrendChartProps> = ({data,
         ) : (
           <div className="h-[300px] flex items-center justify-center">
             <EmptyState
+              size="compact"
               icon={<LineChartIcon className="h-8 w-8"/>}
               title="No attendance data available"
               description="Attendance records will appear here once logged."

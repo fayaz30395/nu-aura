@@ -18,7 +18,9 @@ import {
 import {useAuth} from '@/lib/hooks/useAuth';
 import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
 import {ConfirmDialog} from '@/components/ui';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {SkeletonTable} from '@/components/ui/Skeleton';
+import {Sliders} from 'lucide-react';
 import {
   useActivateCustomFieldDefinition,
   useCreateCustomFieldDefinition,
@@ -329,8 +331,12 @@ export default function CustomFieldsPage() {
             <tbody className="bg-[var(--bg-input)] divide-y divide-[var(--border-main)]">
             {filteredDefinitions.length === 0 ? (
               <tr>
-                <td colSpan={6} className="px-6 py-8 text-center text-[var(--text-muted)]">
-                  No custom fields found. Create your first custom field to get started.
+                <td colSpan={6}>
+                  <EmptyState
+                    icon={<Sliders className="w-8 h-8"/>}
+                    title="No custom fields"
+                    description="Create your first custom field to get started."
+                  />
                 </td>
               </tr>
             ) : (

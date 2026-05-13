@@ -2,8 +2,10 @@
 
 import React, {useMemo} from 'react';
 import {Loader2, Plus} from 'lucide-react';
-import {Badge, Button, Card, CardContent, EmptyState, ResponsiveTable,} from '@/components/ui';
+import {Button, Card, CardContent, EmptyState, ResponsiveTable,} from '@/components/ui';
 import {StatCard} from '@/components/ui/StatCard';
+import {StatusBadge} from '@/components/ui/StatusBadge';
+import {INVOICE_STATUS} from '@/lib/status/vocabulary';
 import {usePsaProjectInvoices} from '@/lib/hooks/queries/usePsa';
 import {PSAInvoice} from '@/lib/types/hrms/psa';
 import {formatCurrency} from '@/lib/utils';
@@ -19,25 +21,6 @@ const formatDate = (value?: string | null) => {
   return date.toLocaleDateString('en-IN', {day: '2-digit', month: 'short', year: 'numeric'});
 };
 
-
-const STATUS_BADGE: Record<string, {
-  label: string;
-  variant: 'success' | 'warning' | 'secondary' | 'danger' | 'primary'
-}> = {
-  DRAFT: {label: 'Draft', variant: 'secondary'},
-  SENT: {label: 'Sent', variant: 'primary'},
-  PARTIALLY_PAID: {label: 'Partially Paid', variant: 'warning'},
-  PAID: {label: 'Paid', variant: 'success'},
-  OVERDUE: {label: 'Overdue', variant: 'danger'},
-  CANCELLED: {label: 'Cancelled', variant: 'secondary'},
-};
-
-const getStatusBadge = (status?: string | null) => {
-  if (status && STATUS_BADGE[status]) {
-    return STATUS_BADGE[status];
-  }
-  return {label: status ?? 'Unknown', variant: 'secondary' as const};
-};
 
 export function InvoicesTab({projectId}: InvoicesTabProps) {
   const {
@@ -100,14 +83,9 @@ export function InvoicesTab({projectId}: InvoicesTabProps) {
     {
       key: 'status',
       header: 'Status',
-      accessor: (invoice: PSAInvoice) => {
-        const badge = getStatusBadge(invoice.status);
-        return (
-          <Badge variant={badge.variant} size="sm">
-            {badge.label}
-          </Badge>
-        );
-      },
+      accessor: (invoice: PSAInvoice) => (
+        <StatusBadge status={invoice.status} domain={INVOICE_STATUS}/>
+      ),
       mobilePriority: 'secondary' as const,
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps

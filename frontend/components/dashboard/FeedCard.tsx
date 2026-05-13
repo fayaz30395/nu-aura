@@ -34,6 +34,7 @@ import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {cn} from '@/lib/utils';
 import {logger} from '@/lib/utils/logger';
 import {FeedCommentItem} from './FeedCommentThread';
+import {EmptyState} from '@/components/ui/EmptyState';
 
 // ─── Config (co-located with FeedCard, exported for CompanyFeed) ──────
 export const FEED_COLORS: Record<FeedItemType, { bg: string; border: string; icon: string; badge: string }> = {
@@ -702,7 +703,11 @@ export function FeedCard({item, onDeleted, onUpdated}: FeedCardProps) {
                             ))
                           )}
                           {!isLoadingAllReactors && allReactors.length === 0 && localReactors.length === 0 && (
-                            <p className="text-caption text-center py-4">No reactions yet</p>
+                            <EmptyState
+                              size="compact"
+                              icon={<ThumbsUp className="w-full h-full"/>}
+                              title="No reactions yet"
+                            />
                           )}
                         </div>
                       </div>

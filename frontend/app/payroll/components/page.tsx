@@ -34,6 +34,7 @@ import {
 import {notifications} from '@mantine/notifications';
 import {Building2, Code, Pencil, Plus, RefreshCw, Trash2, TrendingDown, TrendingUp,} from 'lucide-react';
 import type {ComponentType, PayrollComponent, PayrollComponentRequest} from '@/lib/types/hrms/payroll';
+import {EmptyState} from '@/components/ui/EmptyState';
 
 // ─── Form schema ──────────────────────────────────────────────────────────────
 
@@ -251,11 +252,11 @@ function ComponentsTable({
 }) {
   if (components.length === 0) {
     return (
-      <div className="py-16 text-center">
-        <Code className="h-10 w-10 text-[var(--text-muted)] mx-auto mb-4"/>
-        <p className="text-sm font-medium text-[var(--text-primary)]">No components in this category</p>
-        <p className="text-caption mt-1">Add a component using the button above</p>
-      </div>
+      <EmptyState
+        icon={<Code className="w-8 h-8"/>}
+        title="No components"
+        description="No components in this category. Add a component using the button above."
+      />
     );
   }
 

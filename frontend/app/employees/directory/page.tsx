@@ -26,6 +26,7 @@ import {apiClient} from '@/lib/api/client';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {getInitials} from '@/lib/utils';
+import {formatDate} from '@/lib/utils/format/date';
 
 interface Employee {
   id: string;
@@ -851,11 +852,7 @@ export default function TeamDirectory() {
                         <div>
                           <p className="text-caption">Joined</p>
                           <p className="font-medium text-[var(--text-primary)]">
-                            {new Date(selectedEmployee.joiningDate).toLocaleDateString('en-US', {
-                              year: 'numeric',
-                              month: 'long',
-                              day: 'numeric',
-                            })}
+                            {formatDate(selectedEmployee.joiningDate)}
                           </p>
                         </div>
                       </div>

@@ -9,6 +9,7 @@ import {z} from 'zod';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {ConfirmDialog, Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {
   useAllExpenseCategories,
   useAllExpensePolicies,
@@ -232,7 +233,11 @@ export default function ExpenseSettingsPage() {
               <div
                 className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg divide-y divide-surface-200 dark:divide-surface-700">
                 {categories.length === 0 ? (
-                  <div className="p-6 text-center text-surface-500">No categories configured yet.</div>
+                  <EmptyState
+                    icon={<Tag className="w-8 h-8"/>}
+                    title="No categories"
+                    description="No categories configured yet."
+                  />
                 ) : (
                   categories.map((cat) => (
                     <div key={cat.id} className="px-6 py-4 flex items-center gap-4">
@@ -306,7 +311,11 @@ export default function ExpenseSettingsPage() {
               <div
                 className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg divide-y divide-surface-200 dark:divide-surface-700">
                 {policies.length === 0 ? (
-                  <div className="p-6 text-center text-surface-500">No policies configured yet.</div>
+                  <EmptyState
+                    icon={<Shield className="w-8 h-8"/>}
+                    title="No policies"
+                    description="No policies configured yet."
+                  />
                 ) : (
                   policies.map((pol) => (
                     <div key={pol.id} className="px-6 py-4 flex items-center gap-4">

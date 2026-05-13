@@ -5,7 +5,8 @@ import {AppLayout} from '@/components/layout';
 import {Payslip} from '@/lib/types/hrms/payroll';
 import {PayslipCard} from '@/components/payroll/PayslipCard';
 import {Button} from '@/components/ui/Button';
-import {Download, Search} from 'lucide-react';
+import {Download, FileText, Search} from 'lucide-react';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {PageDeniedFallback, PermissionGate} from '@/components/auth/PermissionGate';
 import {usePayslips} from '@/lib/hooks/queries/usePayroll';
@@ -233,13 +234,12 @@ function PayslipsPageContent() {
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-500"></div>
             </div>
           ) : filteredPayslips.length === 0 ? (
-            <div className="card-aura rounded-lg p-12 text-center">
-              <div className="text-[var(--text-secondary)] mb-4">
-                No payslips found for the selected filters
-              </div>
-              <p className="text-body-muted">
-                Try adjusting your filters or check back later
-              </p>
+            <div className="card-aura rounded-lg">
+              <EmptyState
+                icon={<FileText className="w-8 h-8"/>}
+                title="No payslips found"
+                description="Try adjusting your filters or check back later."
+              />
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

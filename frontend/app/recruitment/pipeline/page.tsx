@@ -1,6 +1,7 @@
 'use client';
 
 import React, {useEffect, useMemo, useRef, useState} from 'react';
+import {useRouter} from 'next/navigation';
 import {
   AlertCircle,
   ArrowRight,
@@ -30,12 +31,9 @@ import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {Button, Input, Modal, ModalBody, ModalFooter, ModalHeader, Select, Textarea,} from '@/components/ui';
 import {applicantService} from '@/lib/services/hire/applicant.service';
-import {letterService} from '@/lib/services/hrms/letter.service';
-import {LetterCategory} from '@/lib/types/hrms/letter';
 import {useQueryClient} from '@tanstack/react-query';
 import {useJobOpenings} from '@/lib/hooks/queries/useRecruitment';
 import {applicantKeys, usePipelineByJob} from '@/lib/hooks/queries/useApplicants';
-import {useActiveLetterTemplates} from '@/lib/hooks/queries/useLetter';
 import type {Applicant, ApplicantRequest, ApplicantStatusUpdate, PipelineData,} from '@/lib/types/hire/applicant';
 import {ApplicationSource, ApplicationStatus,} from '@/lib/types/hire/applicant';
 import {createLogger} from '@/lib/utils/logger';
@@ -495,11 +493,11 @@ const EMPTY_NEW_APPLICANT: ApplicantRequest = {
 
 export default function ApplicantPipelinePage() {
   // ── React Query Hooks ──────────────────────────────────────────────────────
+  const router = useRouter();
   const queryClient = useQueryClient();
   const jobOpeningsQuery = useJobOpenings(0, 200);
   const [selectedJobId, setSelectedJobId] = useState<string>('');
   const pipelineQuery = usePipelineByJob(selectedJobId, !!selectedJobId);
-  const {data: letterTemplatesData} = useActiveLetterTemplates(true);
 
   // Initialize selectedJobId once on mount
   useEffect(() => {
@@ -517,8 +515,6 @@ export default function ApplicantPipelinePage() {
   const pipelineLoading = pipelineQuery.isLoading;
   const pipelineError = pipelineQuery.isError ? 'Failed to load pipeline' : null;
 
-  const offerTemplates = (letterTemplatesData || []).filter(t => t.category === LetterCategory.OFFER);
-
   // ── Search & Filters ──────────────────────────────────────────────────────
   const [searchQuery, setSearchQuery] = useState('');
   const [sourceFilter, setSourceFilter] = useState<ApplicationSource | ''>('');
@@ -531,46 +527,11 @@ export default function ApplicantPipelinePage() {
   const [addError, setAddError] = useState<string | null>(null);
   const [addLoading, setAddLoading] = useState(false);
 
-  // ── Detail / Move Modal ───────────────────────────────────────────────────
-  const [showDetailModal, setShowDetailModal] = useState(false);
-  const [activeApplicant, setActiveApplicant] = useState<Applicant | null>(null);
-  const [detailNextStatus, setDetailNextStatus] = useState<ApplicationStatus | ''>('');
-  const [detailNotes, setDetailNotes] = useState('');
-  const [detailRejectionReason, setDetailRejectionReason] = useState('');
-  const [detailRating, setDetailRating] = useState(0);
-  const [detailError, setDetailError] = useState<string | null>(null);
-  const [detailLoading, setDetailLoading] = useState(false);
-
   // ── Action loading tracker per-applicant ────────────────────────────────
   const [movingId, setMovingId] = useState<string | null>(null);
 
   // ── Drag-and-drop error toast ──────────────────────────────────────────
   const [dragError, setDragError] = useState<string | null>(null);
-
-  // ── Create Offer Modal ────────────────────────────────────────────────
-  const [showOfferModal, setShowOfferModal] = useState(false);
-  const [offerApplicant, setOfferApplicant] = useState<Applicant | null>(null);
-  const [offerTemplatesLoading] = useState(false);
-  const [offerForm, setOfferForm] = useState({
-    templateId: '',
-    offeredCtc: '',
-    offeredDesignation: '',
-    proposedJoiningDate: '',
-    additionalNotes: '',
-  });
-  const [offerLoading, setOfferLoading] = useState(false);
-  const [offerError, setOfferError] = useState<string | null>(null);
-  const [offerSuccess, setOfferSuccess] = useState<string | null>(null);
-  const offerSuccessTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  // Cleanup offer success timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (offerSuccessTimeoutRef.current) {
-        clearTimeout(offerSuccessTimeoutRef.current);
-      }
-    };
-  }, []);
 
   // ── Clear drag error after 4s ─────────────────────────────────────────
   useEffect(() => {
@@ -635,70 +596,8 @@ export default function ApplicantPipelinePage() {
   };
 
   const openDetailModal = (applicant: Applicant) => {
-    setActiveApplicant(applicant);
-    setDetailNextStatus('');
-    setDetailNotes(applicant.notes || '');
-    setDetailRejectionReason(applicant.rejectionReason || '');
-    setDetailRating(applicant.rating || 0);
-    setDetailError(null);
-    setShowDetailModal(true);
-  };
-
-  const handleUpdateApplicant = async () => {
-    if (!activeApplicant) return;
-    try {
-      setDetailLoading(true);
-      setDetailError(null);
-
-      const targetStatus = (detailNextStatus || activeApplicant.status) as ApplicationStatus;
-      const statusChanged = targetStatus !== activeApplicant.status;
-      const notesChanged = detailNotes !== (activeApplicant.notes || '');
-      const rejectionChanged = detailRejectionReason !== (activeApplicant.rejectionReason || '');
-
-      if (statusChanged || notesChanged || rejectionChanged) {
-        const payload: ApplicantStatusUpdate = {
-          status: targetStatus,
-          notes: detailNotes || undefined,
-          rejectionReason:
-            targetStatus === ApplicationStatus.REJECTED
-              ? detailRejectionReason || undefined
-              : undefined,
-        };
-        await applicantService.updateStatus(activeApplicant.id, payload);
-      }
-
-      if (detailRating && detailRating !== activeApplicant.rating) {
-        await applicantService.rateApplicant(activeApplicant.id, detailRating);
-      }
-
-      setShowDetailModal(false);
-      setActiveApplicant(null);
-      await queryClient.invalidateQueries({queryKey: applicantKeys.pipeline(selectedJobId)});
-    } catch (err) {
-      setDetailError(getErrorMessage(err, 'Failed to update applicant'));
-    } finally {
-      setDetailLoading(false);
-    }
-  };
-
-  const handleRejectApplicant = async () => {
-    if (!activeApplicant) return;
-    try {
-      setDetailLoading(true);
-      setDetailError(null);
-      await applicantService.updateStatus(activeApplicant.id, {
-        status: ApplicationStatus.REJECTED,
-        notes: detailNotes || undefined,
-        rejectionReason: detailRejectionReason || 'Not selected',
-      });
-      setShowDetailModal(false);
-      setActiveApplicant(null);
-      await queryClient.invalidateQueries({queryKey: applicantKeys.pipeline(selectedJobId)});
-    } catch (err) {
-      setDetailError(getErrorMessage(err, 'Failed to reject applicant'));
-    } finally {
-      setDetailLoading(false);
-    }
+    // Navigate to the candidate detail page instead of opening a modal.
+    router.push(`/recruitment/candidates/${applicant.candidateId}`);
   };
 
   const handleMoveToNextStage = async (applicant: Applicant) => {
@@ -772,74 +671,10 @@ export default function ApplicantPipelinePage() {
     }
   };
 
+  // Navigate to the dedicated offer-letter route instead of opening a modal.
+  // Full form logic lives on /recruitment/candidates/[id]/offer.
   const openOfferModal = (applicant: Applicant) => {
-    setOfferApplicant(applicant);
-    setOfferForm({
-      templateId: offerTemplates.length === 1 ? offerTemplates[0].id : '',
-      offeredCtc: applicant.expectedSalary?.toString() ?? '',
-      offeredDesignation: applicant.jobTitle ?? '',
-      proposedJoiningDate: '',
-      additionalNotes: '',
-    });
-    setOfferError(null);
-    setOfferSuccess(null);
-    setShowOfferModal(true);
-  };
-
-  const handleCreateOffer = async () => {
-    if (!offerApplicant) return;
-    if (!offerForm.templateId) {
-      setOfferError('Please select a letter template');
-      return;
-    }
-    if (!offerForm.offeredCtc || isNaN(Number(offerForm.offeredCtc))) {
-      setOfferError('Please enter a valid CTC amount');
-      return;
-    }
-    if (!offerForm.offeredDesignation.trim()) {
-      setOfferError('Please enter the offered designation');
-      return;
-    }
-    if (!offerForm.proposedJoiningDate) {
-      setOfferError('Please select a proposed joining date');
-      return;
-    }
-
-    try {
-      setOfferLoading(true);
-      setOfferError(null);
-
-      const letter = await letterService.generateOfferLetter({
-        templateId: offerForm.templateId,
-        candidateId: offerApplicant.candidateId,
-        offeredCtc: Number(offerForm.offeredCtc),
-        offeredDesignation: offerForm.offeredDesignation.trim(),
-        proposedJoiningDate: offerForm.proposedJoiningDate,
-        additionalNotes: offerForm.additionalNotes || undefined,
-        sendForESign: true,
-      }, '');
-
-      await letterService.generatePdf(letter.id);
-      await letterService.issueOfferLetterWithESign(letter.id, '');
-
-      await applicantService.updateStatus(offerApplicant.id, {
-        status: ApplicationStatus.OFFERED,
-        notes: `Offer letter sent (Ref: ${letter.referenceNumber})`,
-      });
-
-      setOfferSuccess(`Offer letter sent successfully! Reference: ${letter.referenceNumber}`);
-      await queryClient.invalidateQueries({queryKey: applicantKeys.pipeline(selectedJobId)});
-
-      offerSuccessTimeoutRef.current = setTimeout(() => {
-        setShowOfferModal(false);
-        setOfferApplicant(null);
-        setOfferSuccess(null);
-      }, 2000);
-    } catch (err: unknown) {
-      setOfferError(getErrorMessage(err, 'Failed to create and send offer letter'));
-    } finally {
-      setOfferLoading(false);
-    }
+    router.push(`/recruitment/candidates/${applicant.candidateId}/offer`);
   };
 
   // ── Derived data ──────────────────────────────────────────────────────────
@@ -1355,272 +1190,6 @@ export default function ApplicantPipelinePage() {
           </ModalFooter>
         </Modal>
 
-        {/* ── Detail / Edit Modal ──────────────────────────────────────────────── */}
-        <Modal isOpen={showDetailModal} onClose={() => setShowDetailModal(false)} size="lg">
-          <ModalHeader onClose={() => setShowDetailModal(false)}>
-            Applicant Details
-          </ModalHeader>
-          <ModalBody>
-            {activeApplicant && (
-              <div className="space-y-4">
-                {detailError && (
-                  <div className="bg-danger-50 border border-danger-200 text-danger-700 text-sm rounded-lg px-4 py-4">
-                    {detailError}
-                  </div>
-                )}
-
-                {/* Info Grid */}
-                <div className="grid grid-cols-2 gap-4 bg-[var(--bg-secondary)] rounded-lg p-4 text-sm">
-                  <div>
-                    <p className="text-[var(--text-muted)] text-xs mb-0.5">Candidate</p>
-                    <p className="font-semibold text-[var(--text-primary)]">
-                      {activeApplicant.candidateName || `ID: ${activeApplicant.candidateId}`}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-[var(--text-muted)] text-xs mb-0.5">Job Title</p>
-                    <p className="font-medium text-[var(--text-secondary)]">{activeApplicant.jobTitle || '—'}</p>
-                  </div>
-                  <div>
-                    <p className="text-[var(--text-muted)] text-xs mb-0.5">Current Stage</p>
-                    <span
-                      className={`inline-flex text-xs font-semibold px-2 py-0.5 rounded-full ${STAGE_COLORS[activeApplicant.status]?.badge ?? 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]'}`}>
-                    {STAGE_LABELS[activeApplicant.status] ?? formatLabel(activeApplicant.status)}
-                  </span>
-                  </div>
-                  <div>
-                    <p className="text-[var(--text-muted)] text-xs mb-0.5">Source</p>
-                    <p className="font-medium text-[var(--text-secondary)]">
-                      {activeApplicant.source ? formatLabel(activeApplicant.source) : '—'}
-                    </p>
-                  </div>
-                  {activeApplicant.appliedDate && (
-                    <div>
-                      <p className="text-[var(--text-muted)] text-xs mb-0.5">Applied</p>
-                      <p className="font-medium text-[var(--text-secondary)]">
-                        {new Date(activeApplicant.appliedDate).toLocaleDateString('en-IN', {
-                          day: '2-digit', month: 'short', year: 'numeric',
-                        })}
-                      </p>
-                    </div>
-                  )}
-                  <div>
-                    <p className="text-[var(--text-muted)] text-xs mb-0.5">Expected Salary</p>
-                    <p className="font-medium text-[var(--text-secondary)]">
-                      {activeApplicant.expectedSalary
-                        ? activeApplicant.expectedSalary.toLocaleString('en-IN')
-                        : '—'}
-                    </p>
-                  </div>
-                  {activeApplicant.currentStageEnteredAt && (
-                    <div>
-                      <p className="text-[var(--text-muted)] text-xs mb-0.5">Time in Current Stage</p>
-                      <p className="font-medium text-[var(--text-secondary)]">
-                        {getTimeInStage(activeApplicant.currentStageEnteredAt)}
-                      </p>
-                    </div>
-                  )}
-                </div>
-
-                {/* Move to Stage */}
-                {(STATUS_TRANSITIONS[activeApplicant.status] || []).length > 0 && (
-                  <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
-                      Move to Stage
-                    </label>
-                    <Select
-                      value={detailNextStatus}
-                      onChange={e => setDetailNextStatus(e.target.value as ApplicationStatus | '')}
-                    >
-                      <option value="">Keep current stage</option>
-                      {(STATUS_TRANSITIONS[activeApplicant.status] || []).map(s => (
-                        <option key={s} value={s}>
-                          {STAGE_LABELS[s] ?? formatLabel(s)}
-                        </option>
-                      ))}
-                    </Select>
-                  </div>
-                )}
-
-                {/* Rating */}
-                <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                    Rating
-                  </label>
-                  <StarRating
-                    value={detailRating}
-                    onChange={setDetailRating}
-                  />
-                </div>
-
-                {/* Notes */}
-                <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
-                    Notes
-                  </label>
-                  <Textarea
-                    value={detailNotes}
-                    onChange={e => setDetailNotes(e.target.value)}
-                    placeholder="Add notes about this applicant..."
-                    rows={3}
-                  />
-                </div>
-
-                {/* Rejection Reason */}
-                {(detailNextStatus === ApplicationStatus.REJECTED ||
-                  activeApplicant.status === ApplicationStatus.REJECTED) && (
-                  <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
-                      Rejection Reason
-                    </label>
-                    <Textarea
-                      value={detailRejectionReason}
-                      onChange={e => setDetailRejectionReason(e.target.value)}
-                      placeholder="Optional reason for rejection..."
-                      rows={2}
-                    />
-                  </div>
-                )}
-              </div>
-            )}
-          </ModalBody>
-          <ModalFooter className="justify-between">
-            <Button
-              variant="soft-danger"
-              onClick={handleRejectApplicant}
-              isLoading={detailLoading}
-              disabled={activeApplicant?.status === ApplicationStatus.REJECTED}
-            >
-              Reject
-            </Button>
-            <div className="flex items-center gap-4">
-              <Button variant="outline" onClick={() => setShowDetailModal(false)} disabled={detailLoading}>
-                Cancel
-              </Button>
-              <Button variant="primary" onClick={handleUpdateApplicant} isLoading={detailLoading}
-                      loadingText="Saving...">
-                Save Changes
-              </Button>
-            </div>
-          </ModalFooter>
-        </Modal>
-        {/* ── Create Offer Modal ──────────────────────────────────────────────── */}
-        <Modal isOpen={showOfferModal} onClose={() => setShowOfferModal(false)} size="lg">
-          <ModalHeader onClose={() => setShowOfferModal(false)}>
-            Create Offer Letter{offerApplicant ? ` for ${offerApplicant.candidateName || 'Candidate'}` : ''}
-          </ModalHeader>
-          <ModalBody>
-            <div className="space-y-4">
-              {offerError && (
-                <div className="bg-danger-50 border border-danger-200 text-danger-700 text-sm rounded-lg px-4 py-4">
-                  {offerError}
-                </div>
-              )}
-              {offerSuccess && (
-                <div
-                  className="bg-success-50 border border-success-200 text-success-700 text-sm rounded-lg px-4 py-4 flex items-center gap-2">
-                  <svg className="h-4 w-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd"
-                          d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                          clipRule="evenodd"/>
-                  </svg>
-                  {offerSuccess}
-                </div>
-              )}
-
-              {/* Template selector */}
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
-                  Offer Letter Template *
-                </label>
-                {offerTemplatesLoading ? (
-                  <div
-                    className="flex items-center gap-2 h-10 px-4 border border-[var(--border-main)] rounded-lg bg-[var(--bg-secondary)] text-body-muted">
-                    <Loader2 size={14} className="animate-spin"/> Loading templates...
-                  </div>
-                ) : (
-                  <Select
-                    value={offerForm.templateId}
-                    onChange={e => setOfferForm(prev => ({...prev, templateId: e.target.value}))}
-                    disabled={offerLoading}
-                  >
-                    <option value="">Select a template</option>
-                    {offerTemplates.map(t => (
-                      <option key={t.id} value={t.id}>{t.name}</option>
-                    ))}
-                    {offerTemplates.length === 0 && (
-                      <option value="" disabled>No offer templates found — create one in Letters settings</option>
-                    )}
-                  </Select>
-                )}
-              </div>
-
-              <Input
-                label="Offered CTC (Annual, INR) *"
-                type="number"
-                placeholder="e.g. 1200000"
-                value={offerForm.offeredCtc}
-                onChange={e => setOfferForm(prev => ({...prev, offeredCtc: e.target.value}))}
-                disabled={offerLoading}
-              />
-
-              <Input
-                label="Offered Designation *"
-                placeholder="e.g. Senior Software Engineer"
-                value={offerForm.offeredDesignation}
-                onChange={e => setOfferForm(prev => ({...prev, offeredDesignation: e.target.value}))}
-                disabled={offerLoading}
-              />
-
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
-                  Proposed Joining Date *
-                </label>
-                <input
-                  type="date"
-                  value={offerForm.proposedJoiningDate}
-                  onChange={e => setOfferForm(prev => ({...prev, proposedJoiningDate: e.target.value}))}
-                  min={new Date().toISOString().split('T')[0]}
-                  disabled={offerLoading}
-                  className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-input)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500 disabled:bg-[var(--bg-secondary)] disabled:text-[var(--text-muted)]"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
-                  Additional Notes
-                </label>
-                <Textarea
-                  placeholder="Any additional terms or notes to include..."
-                  value={offerForm.additionalNotes}
-                  onChange={e => setOfferForm(prev => ({...prev, additionalNotes: e.target.value}))}
-                  rows={3}
-                  disabled={offerLoading}
-                />
-              </div>
-
-              <div className="bg-accent-50 border border-accent-200 rounded-lg p-4 text-xs text-accent-700">
-                The offer letter will be generated, a PDF created, and a signing link sent to the candidate&apos;s
-                email.
-                The applicant will be moved to <strong>Offered</strong> stage automatically.
-              </div>
-            </div>
-          </ModalBody>
-          <ModalFooter>
-            <Button variant="outline" onClick={() => setShowOfferModal(false)} disabled={offerLoading}>
-              Cancel
-            </Button>
-            <Button
-              variant="primary"
-              onClick={handleCreateOffer}
-              isLoading={offerLoading}
-              loadingText="Sending Offer..."
-              disabled={!!offerSuccess}
-            >
-              Generate & Send Offer
-            </Button>
-          </ModalFooter>
-        </Modal>
       </PermissionGate>
     </AppLayout>
   );
