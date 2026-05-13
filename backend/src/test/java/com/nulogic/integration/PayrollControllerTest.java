@@ -5,6 +5,7 @@ import com.nulogic.application.employee.service.EmployeeService;
 import com.nulogic.application.payroll.service.*;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.SecurityContext;
+import com.nulogic.config.AbstractPostgresIntegrationTest;
 import com.nulogic.config.TestSecurityConfig;
 import com.nulogic.domain.payroll.PayrollComponent;
 import com.nulogic.domain.payroll.PayrollRun;
@@ -48,7 +49,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 @Import(TestSecurityConfig.class)
 @DisplayName("Payroll Controller Integration Tests (UC-PAY-001 through UC-PAY-006)")
-class PayrollControllerTest {
+class PayrollControllerTest extends AbstractPostgresIntegrationTest {
 
     private static final String BASE_URL = "/api/v1/payroll";
     private static final UUID TENANT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");

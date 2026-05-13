@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nulogic.api.report.dto.ReportRequest;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.SecurityContext;
+import com.nulogic.config.AbstractPostgresIntegrationTest;
 import com.nulogic.config.TestSecurityConfig;
 import com.nulogic.domain.user.RoleScope;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,7 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import(TestSecurityConfig.class)
 @Transactional
 @DisplayName("Report Controller Integration Tests")
-class ReportControllerTest {
+class ReportControllerTest extends AbstractPostgresIntegrationTest {
 
     private static final String BASE_URL = "/api/v1/reports";
     private static final UUID TENANT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");

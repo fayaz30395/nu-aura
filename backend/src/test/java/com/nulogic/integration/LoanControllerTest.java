@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nulogic.api.loan.dto.CreateLoanRequest;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.SecurityContext;
+import com.nulogic.config.AbstractPostgresIntegrationTest;
 import com.nulogic.config.TestSecurityConfig;
 import com.nulogic.domain.loan.EmployeeLoan.LoanType;
 import com.nulogic.domain.user.RoleScope;
@@ -40,7 +41,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import(TestSecurityConfig.class)
 @Transactional
 @DisplayName("Loan Controller Integration Tests")
-class LoanControllerTest {
+class LoanControllerTest extends AbstractPostgresIntegrationTest {
 
     private static final String BASE_URL = "/api/v1/loans";
     private static final UUID TENANT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");

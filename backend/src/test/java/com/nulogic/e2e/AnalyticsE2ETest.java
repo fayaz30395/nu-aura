@@ -6,6 +6,7 @@ import com.nulogic.application.analytics.service.AnalyticsService;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.config.AbstractPostgresIntegrationTest;
 import com.nulogic.config.TestSecurityConfig;
 import com.nulogic.domain.user.RoleScope;
 import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
@@ -36,7 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 @Import(TestSecurityConfig.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class AnalyticsE2ETest {
+class AnalyticsE2ETest extends AbstractPostgresIntegrationTest {
 
     private static final String BASE_URL = "/api/v1/analytics";
     private static final UUID TEST_USER_ID = UUID.fromString("660e8400-e29b-41d4-a716-446655440000");

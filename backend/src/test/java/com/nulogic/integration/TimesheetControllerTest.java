@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nulogic.api.project.dto.TimeEntryRequest;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.SecurityContext;
+import com.nulogic.config.AbstractPostgresIntegrationTest;
 import com.nulogic.config.TestSecurityConfig;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.project.Project;
@@ -49,7 +50,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import(TestSecurityConfig.class)
 @Transactional
 @DisplayName("Timesheet Controller Integration Tests")
-class TimesheetControllerTest {
+class TimesheetControllerTest extends AbstractPostgresIntegrationTest {
 
     private static final String BASE_URL = "/api/v1/project-timesheets";
     private static final UUID TENANT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");

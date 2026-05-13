@@ -1,0 +1,43 @@
+package com.nulogic.config;
+
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.utility.DockerImageName;
+
+/**
+ * Base class for integration tests. A single Postgres 16 container is started
+ * once per JVM and shared across every test class that extends this — Flyway
+ * runs against the real schema, per-test isolation comes from @Transactional.
+ *
+ * Matches prod image (postgres:16-alpine) so H2-vs-Postgres divergence stops
+ * being a class of bugs we discover after deploy.
+ */
+public abstract class AbstractPostgresIntegrationTest {
+
+    private static final DockerImageName POSTGRES_IMAGE =
+            DockerImageName.parse("postgres:16-alpine");
+
+    @SuppressWarnings("resource") // singleton container; lifecycle owned by Testcontainers Ryuk
+    protected static final PostgreSQLContainer<?> POSTGRES = new PostgreSQLContainer<>(POSTGRES_IMAGE)
+            .withDatabaseName("nuaura_test")
+            .withUsername("test")
+            .withPassword("test")
+            .withReuse(true);
+
+    static {
+        POSTGRES.start();
+    }
+
+    @DynamicPropertySource
+    static void registerDatasource(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", POSTGRES::getJdbcUrl);
+        registry.add("spring.datasource.username", POSTGRES::getUsername);
+        registry.add("spring.datasource.password", POSTGRES::getPassword);
+        registry.add("spring.datasource.driver-class-name", () -> "org.postgresql.Driver");
+        registry.add("spring.datasource.replica.url", () -> "");
+        registry.add("spring.flyway.url", POSTGRES::getJdbcUrl);
+        registry.add("spring.flyway.user", POSTGRES::getUsername);
+        registry.add("spring.flyway.password", POSTGRES::getPassword);
+    }
+}

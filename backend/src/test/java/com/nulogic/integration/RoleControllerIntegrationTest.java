@@ -6,6 +6,7 @@ import com.nulogic.api.user.dto.CreateRoleRequest;
 import com.nulogic.api.user.dto.UpdateRoleRequest;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.SecurityContext;
+import com.nulogic.config.AbstractPostgresIntegrationTest;
 import com.nulogic.config.TestSecurityConfig;
 import com.nulogic.domain.user.RoleScope;
 import com.nulogic.infrastructure.user.repository.PermissionRepository;
@@ -32,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 @Import(TestSecurityConfig.class)
 @Transactional
-class RoleControllerIntegrationTest {
+class RoleControllerIntegrationTest extends AbstractPostgresIntegrationTest {
 
     private static final String BASE_URL = "/api/v1/roles";
     private static final UUID TEST_USER_ID = UUID.fromString("660e8400-e29b-41d4-a716-446655440000");

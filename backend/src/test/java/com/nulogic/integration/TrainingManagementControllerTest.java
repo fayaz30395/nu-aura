@@ -5,6 +5,7 @@ import com.nulogic.api.training.dto.TrainingEnrollmentRequest;
 import com.nulogic.api.training.dto.TrainingProgramRequest;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.SecurityContext;
+import com.nulogic.config.AbstractPostgresIntegrationTest;
 import com.nulogic.config.TestSecurityConfig;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.training.TrainingProgram;
@@ -46,7 +47,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import(TestSecurityConfig.class)
 @Transactional
 @DisplayName("Training Management Controller Integration Tests — UC-GROW-006, UC-GROW-019, UC-GROW-020")
-class TrainingManagementControllerTest {
+class TrainingManagementControllerTest extends AbstractPostgresIntegrationTest {
 
     private static final UUID TENANT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
     private static final String BASE = "/api/v1/training";

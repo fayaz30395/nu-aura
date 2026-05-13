@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nulogic.api.asset.dto.AssetRequest;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.SecurityContext;
+import com.nulogic.config.AbstractPostgresIntegrationTest;
 import com.nulogic.config.TestSecurityConfig;
 import com.nulogic.domain.asset.Asset.AssetCategory;
 import com.nulogic.domain.asset.Asset.AssetStatus;
@@ -35,7 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc(addFilters = false)
 @ActiveProfiles("test")
 @Import(TestSecurityConfig.class)
-class AssetManagementControllerTest {
+class AssetManagementControllerTest extends AbstractPostgresIntegrationTest {
 
     private static final UUID TENANT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
     private static final UUID USER_ID = UUID.fromString("660e8400-e29b-41d4-a716-446655440000");

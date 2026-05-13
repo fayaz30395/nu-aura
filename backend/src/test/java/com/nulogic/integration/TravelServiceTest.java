@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nulogic.api.travel.dto.CreateTravelRequest;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.SecurityContext;
+import com.nulogic.config.AbstractPostgresIntegrationTest;
 import com.nulogic.config.TestSecurityConfig;
 import com.nulogic.domain.travel.TravelRequest.TransportMode;
 import com.nulogic.domain.travel.TravelRequest.TravelType;
@@ -42,7 +43,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import(TestSecurityConfig.class)
 @Transactional
 @DisplayName("Travel Service Integration Tests")
-class TravelServiceTest {
+class TravelServiceTest extends AbstractPostgresIntegrationTest {
 
     private static final String BASE_URL = "/api/v1/travel";
     private static final UUID TENANT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");

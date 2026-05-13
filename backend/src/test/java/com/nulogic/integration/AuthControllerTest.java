@@ -6,6 +6,7 @@ import com.nulogic.application.auth.service.AuthService;
 import com.nulogic.application.auth.service.MfaService;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.SecurityContext;
+import com.nulogic.config.AbstractPostgresIntegrationTest;
 import com.nulogic.config.TestSecurityConfig;
 import com.nulogic.domain.user.RoleScope;
 import org.junit.jupiter.api.*;
@@ -39,7 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 @Import(TestSecurityConfig.class)
 @DisplayName("Auth Controller Integration Tests (UC-AUTH-001 through UC-AUTH-007)")
-class AuthControllerTest {
+class AuthControllerTest extends AbstractPostgresIntegrationTest {
 
     private static final String BASE_URL = "/api/v1/auth";
     private static final UUID TENANT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");

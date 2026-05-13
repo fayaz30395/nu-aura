@@ -15,21 +15,8 @@ jobs:
   backend:
     name: Backend (Spring Boot)
     runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres:16
-        env:
-          POSTGRES_DB: hrms_test
-          POSTGRES_USER: hrms
-          POSTGRES_PASSWORD: hrms_test
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+    # Postgres is provided by Testcontainers per test session — no `services:` block
+    # needed. ubuntu-latest runners ship with Docker preinstalled.
 
     steps:
       - name: Checkout code
@@ -65,9 +52,9 @@ jobs:
         run: mvn test
         env:
           SPRING_PROFILES_ACTIVE: test
-          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/hrms_test
-          SPRING_DATASOURCE_USERNAME: hrms
-          SPRING_DATASOURCE_PASSWORD: hrms_test
+          # Datasource URL/user/password are injected at runtime by
+          # AbstractPostgresIntegrationTest via @DynamicPropertySource.
+          TESTCONTAINERS_RYUK_DISABLED: 'false'
 
       - name: Generate coverage report
         working-directory: ./backend

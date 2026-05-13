@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.config.AbstractPostgresIntegrationTest;
 import com.nulogic.config.TestSecurityConfig;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.user.RoleScope;
@@ -51,7 +52,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import(TestSecurityConfig.class)
 @Transactional
 @DisplayName("Admin Employee Update Endpoint — 403 & Mass-Assignment Guards")
-class AdminEmployeeUpdateRequest403Test {
+class AdminEmployeeUpdateRequest403Test extends AbstractPostgresIntegrationTest {
 
     private static final UUID TENANT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
     private static final String ORIGINAL_DESIGNATION = "Software Engineer";

@@ -2,46 +2,41 @@ spring:
   main:
     allow-bean-definition-overriding: true
 
+  # Datasource URL / username / password are injected at runtime by
+  # AbstractPostgresIntegrationTest via @DynamicPropertySource. Tests that
+  # load a Spring context MUST extend AbstractPostgresIntegrationTest so the
+  # singleton Postgres container is wired before the ApplicationContext starts.
   datasource:
-    url: jdbc:h2:mem:testdb;MODE=PostgreSQL;DATABASE_TO_UPPER=false;CASE_INSENSITIVE_IDENTIFIERS=TRUE;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;INIT=RUNSCRIPT FROM 'classpath:schema-h2.sql'
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
-    hikari:
-      # Override the PostgreSQL-specific connection-init-sql from application.yml.
-      # H2 does not support SET app.current_tenant_id; use a no-op SELECT instead.
-      connection-init-sql: SELECT 1
-    # Explicit empty replica URL — keeps RoutingDataSourceConfig dormant under H2.
-    # RoutingDataSourceConfig's @ConditionalOnExpression already treats empty/"false"
-    # as disabled, but pinning the override here documents the intent at the test
-    # profile level and avoids accidental activation if the env happens to export
-    # SPRING_DATASOURCE_REPLICA_URL while running the suite locally.
+    driver-class-name: org.postgresql.Driver
+    # Replica URL pinned empty — keeps RoutingDataSourceConfig dormant under
+    # the test profile. Without this, a stray SPRING_DATASOURCE_REPLICA_URL in
+    # the environment could accidentally activate read-replica routing.
     replica:
       url: ""
 
   jpa:
-    open-in-view: true
+    open-in-view: false
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: validate
     show-sql: false
-    defer-datasource-initialization: true
     properties:
       hibernate:
         format_sql: false
-        dialect: org.hibernate.dialect.H2Dialect
-        globally_quoted_identifiers: true
 
   sql:
     init:
       mode: never
 
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    default-schema: public
+    clean-disabled: false
+
   liquibase:
     enabled: false
 
-  flyway:
-    enabled: false
-
-  # Disable Redis for tests - use in-memory cache instead
+  # Redis disabled — tests use the simple in-memory cache below.
   data:
     redis:
       repositories:
@@ -71,7 +66,6 @@ spring:
     host: localhost
     port: 25
 
-# Disable health checks for external services in tests
 management:
   health:
     redis:
@@ -86,7 +80,8 @@ management:
         enabled: false
 
 app:
-  # Disable RLS transaction manager in tests — H2 doesn't support SET LOCAL
+  # RLS disabled in tests — existing tests don't set tenant context.
+  # Flip these on once tests set X-Tenant-ID / SET LOCAL app.current_tenant_id.
   rls:
     transaction-manager:
       enabled: false
@@ -115,13 +110,11 @@ app:
   storage:
     url-expiry-hours: 1
 
-# Disable AI features in tests
 ai:
   openai:
     api-key: test-key
     base-url: http://localhost:8081
 
-# Minimize logging in tests
 logging:
   level:
     root: WARN
@@ -129,8 +122,9 @@ logging:
     org.springframework.test: WARN
     org.hibernate: WARN
     org.springframework.boot.autoconfigure: ERROR
+    org.testcontainers: WARN
+    com.github.dockerjava: WARN
 
-# Disable Swagger in tests
 springdoc:
   api-docs:
     enabled: false

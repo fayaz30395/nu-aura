@@ -6,6 +6,7 @@ import com.nulogic.api.auth.dto.MfaVerifyRequest;
 import com.nulogic.api.user.dto.UpdateNotificationPreferencesRequest;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.SecurityContext;
+import com.nulogic.config.AbstractPostgresIntegrationTest;
 import com.nulogic.config.TestSecurityConfig;
 import com.nulogic.domain.user.AuthProvider;
 import com.nulogic.domain.user.RoleScope;
@@ -40,7 +41,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import(TestSecurityConfig.class)
 @Transactional
 @DisplayName("Settings Use Case Integration Tests")
-class SettingsUseCaseIntegrationTest {
+class SettingsUseCaseIntegrationTest extends AbstractPostgresIntegrationTest {
 
     private static final UUID TENANT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
     @Autowired

@@ -5,6 +5,7 @@ import com.nulogic.api.recruitment.dto.ai.ResumeParseRequest;
 import com.nulogic.api.recruitment.dto.ai.ResumeParseResponse;
 import com.nulogic.application.ai.service.AIRecruitmentService;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.config.AbstractPostgresIntegrationTest;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockedStatic;
@@ -38,7 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("AIRecruitment File Parsing Integration Tests")
 @Tag("integration")
 @Disabled("Requires full application context with database, Redis, and Kafka infrastructure")
-class AIRecruitmentFileParsingIntegrationTest {
+class AIRecruitmentFileParsingIntegrationTest extends AbstractPostgresIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;

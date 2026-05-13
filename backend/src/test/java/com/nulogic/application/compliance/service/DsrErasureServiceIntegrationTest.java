@@ -3,6 +3,7 @@ package com.nulogic.application.compliance.service;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.config.AbstractPostgresIntegrationTest;
 import com.nulogic.config.TestSecurityConfig;
 import com.nulogic.domain.attendance.AttendanceRecord;
 import com.nulogic.domain.compliance.DsrRequest;
@@ -71,7 +72,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ActiveProfiles("test")
 @Import(TestSecurityConfig.class)
 @DisplayName("DsrErasureService Integration Tests — Article 17 cascade")
-class DsrErasureServiceIntegrationTest {
+class DsrErasureServiceIntegrationTest extends AbstractPostgresIntegrationTest {
 
     private static final UUID TENANT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
     private static final UUID HANDLER_USER_ID = UUID.fromString("660e8400-e29b-41d4-a716-446655440000");

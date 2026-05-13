@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.config.AbstractPostgresIntegrationTest;
 import com.nulogic.config.TestSecurityConfig;
 import com.nulogic.domain.attendance.AttendanceRecord;
 import com.nulogic.domain.audit.AuditLog;
@@ -80,7 +81,7 @@ import static org.mockito.Mockito.when;
 @Import(TestSecurityConfig.class)
 @Transactional
 @DisplayName("DsrService Integration Tests — Articles 15 + 20 export pipeline")
-class DsrServiceIntegrationTest {
+class DsrServiceIntegrationTest extends AbstractPostgresIntegrationTest {
 
     private static final UUID TENANT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
     private static final UUID FOREIGN_TENANT_ID = UUID.fromString("99999999-9999-9999-9999-999999999999");

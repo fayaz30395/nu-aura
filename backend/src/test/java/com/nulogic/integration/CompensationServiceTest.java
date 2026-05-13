@@ -5,6 +5,7 @@ import com.nulogic.api.compensation.dto.CompensationCycleRequest;
 import com.nulogic.api.compensation.dto.SalaryRevisionRequest;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.SecurityContext;
+import com.nulogic.config.AbstractPostgresIntegrationTest;
 import com.nulogic.config.TestSecurityConfig;
 import com.nulogic.domain.compensation.CompensationReviewCycle.CycleType;
 import com.nulogic.domain.compensation.SalaryRevision.RevisionType;
@@ -36,7 +37,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @AutoConfigureMockMvc(addFilters = false)
 @ActiveProfiles("test")
 @Import(TestSecurityConfig.class)
-class CompensationServiceTest {
+class CompensationServiceTest extends AbstractPostgresIntegrationTest {
 
     private static final UUID TENANT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
     private static final UUID USER_ID = UUID.fromString("660e8400-e29b-41d4-a716-446655440000");

@@ -5,6 +5,7 @@ import com.nulogic.application.attendance.service.AttendanceRecordService;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.config.AbstractPostgresIntegrationTest;
 import com.nulogic.config.TestSecurityConfig;
 import com.nulogic.domain.attendance.AttendanceRecord;
 import com.nulogic.domain.employee.Employee;
@@ -46,7 +47,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import(TestSecurityConfig.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class AttendanceE2ETest {
+class AttendanceE2ETest extends AbstractPostgresIntegrationTest {
 
     private static final String BASE_URL = "/api/v1/attendance";
     private static final UUID TEST_USER_ID = UUID.fromString("660e8400-e29b-41d4-a716-446655440000");

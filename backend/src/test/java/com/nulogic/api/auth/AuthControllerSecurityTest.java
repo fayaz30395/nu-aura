@@ -14,6 +14,7 @@ import com.nulogic.common.exception.GlobalExceptionHandler;
 import com.nulogic.common.security.JwtAuthenticationFilter;
 import com.nulogic.common.security.JwtTokenProvider;
 import com.nulogic.common.security.TenantFilter;
+import com.nulogic.config.AbstractPostgresIntegrationTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -60,7 +61,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "app.security.captcha.threshold-attempts=3",
         "app.security.captcha.enabled=false"
 })
-class AuthControllerSecurityTest {
+class AuthControllerSecurityTest extends AbstractPostgresIntegrationTest {
 
     /**
      * Stable tenant header used across all login requests in this suite. The

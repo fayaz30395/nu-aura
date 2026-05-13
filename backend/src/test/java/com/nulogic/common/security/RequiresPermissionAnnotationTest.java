@@ -1,5 +1,6 @@
 package com.nulogic.common.security;
 
+import com.nulogic.config.AbstractPostgresIntegrationTest;
 import com.nulogic.domain.user.RoleScope;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -35,7 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc(addFilters = false)
 @ActiveProfiles("test")
 @Import(RequiresPermissionAnnotationTest.TestPermissionController.class)
-class RequiresPermissionAnnotationTest {
+class RequiresPermissionAnnotationTest extends AbstractPostgresIntegrationTest {
 
     private static final UUID TEST_USER_ID = UUID.randomUUID();
     private static final UUID TEST_EMPLOYEE_ID = UUID.randomUUID();

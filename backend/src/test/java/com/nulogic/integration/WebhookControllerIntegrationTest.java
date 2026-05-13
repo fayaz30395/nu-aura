@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nulogic.api.webhook.dto.WebhookRequest;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.SecurityContext;
+import com.nulogic.config.AbstractPostgresIntegrationTest;
 import com.nulogic.config.TestSecurityConfig;
 import com.nulogic.domain.user.RoleScope;
 import com.nulogic.domain.webhook.WebhookEventType;
@@ -32,7 +33,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @ActiveProfiles("test")
 @Import(TestSecurityConfig.class)
 @DisplayName("WebhookController Integration Tests")
-class WebhookControllerIntegrationTest {
+class WebhookControllerIntegrationTest extends AbstractPostgresIntegrationTest {
 
     private static final String BASE_URL = "/api/webhooks";
     private static final UUID TEST_USER_ID = UUID.fromString("660e8400-e29b-41d4-a716-446655440000");

@@ -3,6 +3,7 @@ package com.nulogic.integration;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.config.AbstractPostgresIntegrationTest;
 import com.nulogic.config.TestSecurityConfig;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.recruitment.Candidate;
@@ -38,7 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import(TestSecurityConfig.class)
 @Transactional
 @DisplayName("Recruitment RBAC Scope Integration Tests")
-class RecruitmentScopeIntegrationTest {
+class RecruitmentScopeIntegrationTest extends AbstractPostgresIntegrationTest {
 
     private static final String BASE_URL = "/api/v1/recruitment";
     private static final UUID TENANT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");

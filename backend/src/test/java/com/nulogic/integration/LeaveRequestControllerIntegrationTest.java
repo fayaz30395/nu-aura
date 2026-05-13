@@ -3,6 +3,7 @@ package com.nulogic.integration;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.SecurityContext;
+import com.nulogic.config.AbstractPostgresIntegrationTest;
 import com.nulogic.config.TestSecurityConfig;
 import com.nulogic.domain.user.RoleScope;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc(addFilters = false)
 @ActiveProfiles("test")
 @Import(TestSecurityConfig.class)
-class LeaveRequestControllerIntegrationTest {
+class LeaveRequestControllerIntegrationTest extends AbstractPostgresIntegrationTest {
 
     private static final String BASE_URL = "/api/v1/leave-requests";
     private static final UUID TEST_USER_ID = UUID.fromString("660e8400-e29b-41d4-a716-446655440000");
