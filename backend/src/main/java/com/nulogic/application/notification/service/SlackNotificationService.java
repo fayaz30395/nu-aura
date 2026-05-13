@@ -46,6 +46,11 @@ public class SlackNotificationService {
     // so any future caller passing a user-influenced value must not be able to point us
     // at internal services. Validate every webhook URL before we open the socket.
     private final UrlAllowlistValidator urlAllowlistValidator;
+    // S11-M follow-up: every user-visible date stamp in a Slack message MUST resolve in the
+    // tenant's IANA zone. The platform is country-aware (V155) and tenants outside Asia/Kolkata
+    // would otherwise see a date that silently follows the JVM default. Routing through
+    // TenantTimeService is the single point of resolution mandated by the Wave-10 audit.
+    private final TenantTimeService tenantTimeService;
     private final HttpClient httpClient = HttpClient.newBuilder()
             .connectTimeout(Duration.ofSeconds(10))
             .build();
@@ -60,10 +65,12 @@ public class SlackNotificationService {
 
     public SlackNotificationService(CircuitBreakerRegistry circuitBreakerRegistry,
                                     ObjectMapper objectMapper,
-                                    UrlAllowlistValidator urlAllowlistValidator) {
+                                    UrlAllowlistValidator urlAllowlistValidator,
+                                    TenantTimeService tenantTimeService) {
         this.circuitBreaker = circuitBreakerRegistry.forSlack();
         this.objectMapper = objectMapper;
         this.urlAllowlistValidator = urlAllowlistValidator;
+        this.tenantTimeService = tenantTimeService;
     }
 
     /**
@@ -374,17 +381,22 @@ public class SlackNotificationService {
 
     /**
      * Send a company-wide announcement.
+     *
+     * @param tenantId tenant identifier used to resolve the announcement's "posted on" date in
+     *                 the tenant's local timezone. Must not be {@code null} — the date is rendered
+     *                 verbatim into the message body that ships to Slack.
      */
     @Transactional
-    public void sendAnnouncement(String title, String content, String priority) {
+    public void sendAnnouncement(UUID tenantId, String title, String content, String priority) {
         String emoji = "HIGH".equalsIgnoreCase(priority) ? ":rotating_light:" : ":loudspeaker:";
         String message = String.format("%s *%s*\n%s", emoji, title, content);
 
         List<SlackBlock> blocks = new ArrayList<>();
         blocks.add(SlackBlock.header(emoji + " " + title));
         blocks.add(SlackBlock.section(content));
+        // S11-M: render the "Posted by" timestamp in the tenant's local zone, not the JVM default.
         blocks.add(SlackBlock.context("Posted by HRMS • " +
-                LocalDate.now().format(DateTimeFormatter.ofPattern("MMM dd, yyyy"))));
+                tenantTimeService.today(tenantId).format(DateTimeFormatter.ofPattern("MMM dd, yyyy"))));
 
         sendToChannel(defaultChannel, message, blocks);
     }

@@ -125,7 +125,7 @@ public class HelpdeskSLAService {
                 .reason(reason)
                 .escalatedFrom(escalatedFrom)
                 .escalatedTo(escalatedTo)
-                .escalatedAt(LocalDateTime.now())
+                .escalatedAt(tenantTimeService.now(tenantId))
                 .isAutoEscalated(isAutoEscalated)
                 .notes(notes)
                 .build();
@@ -134,7 +134,7 @@ public class HelpdeskSLAService {
         metricsRepository.findByTicketIdAndTenantId(ticketId, tenantId)
                 .ifPresent(metrics -> {
                     metrics.setEscalationCount(metrics.getEscalationCount() + 1);
-                    metrics.setUpdatedAt(LocalDateTime.now());
+                    metrics.setUpdatedAt(tenantTimeService.now(tenantId));
                     metricsRepository.save(metrics);
                 });
 
@@ -146,7 +146,7 @@ public class HelpdeskSLAService {
     public void acknowledgeEscalation(UUID tenantId, UUID escalationId, UUID acknowledgedBy) {
         escalationRepository.findByIdAndTenantId(escalationId, tenantId)
                 .ifPresent(escalation -> {
-                    escalation.setAcknowledgedAt(LocalDateTime.now());
+                    escalation.setAcknowledgedAt(tenantTimeService.now(tenantId));
                     escalation.setAcknowledgedBy(acknowledgedBy);
                     escalationRepository.save(escalation);
                     log.info("Acknowledged escalation: {}", escalationId);
@@ -184,7 +184,7 @@ public class HelpdeskSLAService {
                     return newMetrics;
                 });
 
-        metrics.setUpdatedAt(LocalDateTime.now());
+        metrics.setUpdatedAt(tenantTimeService.now(tenantId));
         return metricsRepository.save(metrics);
     }
 
@@ -192,7 +192,7 @@ public class HelpdeskSLAService {
     public void recordFirstResponse(UUID tenantId, UUID ticketId, LocalDateTime createdAt) {
         metricsRepository.findByTicketIdAndTenantId(ticketId, tenantId)
                 .ifPresent(metrics -> {
-                    LocalDateTime now = LocalDateTime.now();
+                    LocalDateTime now = tenantTimeService.now(tenantId);
                     metrics.setFirstResponseAt(now);
                     long minutes = ChronoUnit.MINUTES.between(createdAt, now);
                     metrics.setFirstResponseMinutes((int) minutes);
@@ -208,7 +208,7 @@ public class HelpdeskSLAService {
                                 });
                     }
 
-                    metrics.setUpdatedAt(LocalDateTime.now());
+                    metrics.setUpdatedAt(tenantTimeService.now(tenantId));
                     metricsRepository.save(metrics);
                 });
     }

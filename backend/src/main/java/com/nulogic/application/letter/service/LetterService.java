@@ -62,6 +62,7 @@ public class LetterService {
     private final ObjectMapper objectMapper;
     private final DataScopeService dataScopeService;
     private final LetterPdfService letterPdfService;
+    private final TenantTimeService tenantTimeService;
 
     // ==================== Template Operations ====================
 
@@ -184,7 +185,7 @@ public class LetterService {
 
     @Transactional
     public GeneratedLetterResponse generateLetter(GenerateLetterRequest request, UUID generatedBy) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         LetterTemplate template = templateRepository.findByIdAndTenantId(request.getTemplateId(), tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException(TEMPLATE_NOT_FOUND_PREFIX + request.getTemplateId()));
@@ -197,7 +198,7 @@ public class LetterService {
                 .orElseThrow(() -> new ResourceNotFoundException("Employee not found: " + request.getEmployeeId()));
 
         String referenceNumber = generateReferenceNumber(template.getCategory(), tenantId);
-        String content = processTemplate(template.getTemplateContent(), employee, request.getCustomPlaceholderValues());
+        String content = processTemplate(template.getTemplateContent(), employee, request.getCustomPlaceholderValues(), tenantId);
 
         GeneratedLetter entity = GeneratedLetter.builder()
                 .referenceNumber(referenceNumber)
@@ -206,7 +207,7 @@ public class LetterService {
                 .category(template.getCategory())
                 .letterTitle(request.getLetterTitle() != null ? request.getLetterTitle() : template.getName())
                 .generatedContent(content)
-                .letterDate(request.getLetterDate() != null ? request.getLetterDate() : LocalDate.now())
+                .letterDate(request.getLetterDate() != null ? request.getLetterDate() : tenantTimeService.today(tenantId))
                 .effectiveDate(request.getEffectiveDate())
                 .expiryDate(request.getExpiryDate())
                 .status(LetterStatus.DRAFT)
@@ -234,7 +235,7 @@ public class LetterService {
      */
     @Transactional
     public GeneratedLetterResponse generateOfferLetter(GenerateOfferLetterRequest request, UUID generatedBy) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         LetterTemplate template = templateRepository.findByIdAndTenantId(request.getTemplateId(), tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException(TEMPLATE_NOT_FOUND_PREFIX + request.getTemplateId()));
@@ -263,7 +264,7 @@ public class LetterService {
         // Note: offerExtendedDate and OFFER_EXTENDED status are set in issueOfferLetterWithESign()
 
         String referenceNumber = generateReferenceNumber(LetterCategory.OFFER, tenantId);
-        String content = processCandidateTemplate(template.getTemplateContent(), candidate, jobOpening, request);
+        String content = processCandidateTemplate(template.getTemplateContent(), candidate, jobOpening, request, tenantId);
 
         GeneratedLetter entity = GeneratedLetter.builder()
                 .referenceNumber(referenceNumber)
@@ -272,7 +273,7 @@ public class LetterService {
                 .category(LetterCategory.OFFER)
                 .letterTitle(request.getLetterTitle() != null ? request.getLetterTitle() : "Offer Letter - " + candidate.getFullName())
                 .generatedContent(content)
-                .letterDate(request.getLetterDate() != null ? request.getLetterDate() : LocalDate.now())
+                .letterDate(request.getLetterDate() != null ? request.getLetterDate() : tenantTimeService.today(tenantId))
                 .effectiveDate(request.getProposedJoiningDate())
                 .expiryDate(request.getExpiryDate())
                 .status(LetterStatus.DRAFT)

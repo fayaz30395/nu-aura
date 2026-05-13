@@ -355,6 +355,98 @@ public class SystemAdminService {
         return tenant;
     }
 
+    /**
+     * Update the IANA timezone for a tenant and invalidate the per-tenant {@link ZoneId}
+     * cache in {@link TenantTimeService} so the change takes effect within the JVM without
+     * waiting for the 1-hour cache TTL.
+     *
+     * <p><strong>Why invalidate AFTER commit.</strong> If we invalidated before the
+     * transaction commits, a parallel request could:
+     * <ol>
+     *   <li>see the invalidation,</li>
+     *   <li>call {@code zoneFor(tenantId)} which DB-reads the <em>old</em> timezone (the
+     *       update isn't visible to another connection until commit), and</li>
+     *   <li>repopulate the cache with the stale value — leaving us right back where we
+     *       started for up to another TTL window.</li>
+     * </ol>
+     * Deferring to {@code afterCommit} closes that race: by the time the cache is cleared,
+     * any subsequent read will see the new row. If the transaction rolls back, the cache
+     * is left untouched (correct — the DB value didn't change).</p>
+     *
+     * <p><strong>Multi-pod caveat.</strong> This invalidates only the local JVM cache.
+     * Other pods will continue serving the old zone for up to 1 hour. That is acceptable
+     * for admin-triggered changes (rare, plannable) per the wave-10 audit. If we need
+     * cross-pod immediate consistency we should publish a Redis pub/sub event and have
+     * each pod subscribe — out of scope here.</p>
+     *
+     * @param tenantId target tenant
+     * @param newTimezone IANA zone-id; must match the V165 regex (already enforced at
+     *                    the controller boundary, re-validated here as defence-in-depth)
+     * @return the updated tenant
+     */
+    @Transactional
+    public Tenant updateTenantTimezone(UUID tenantId, String newTimezone) {
+        log.info("SuperAdmin updating timezone for tenant {} to '{}'", tenantId, newTimezone);
+
+        if (newTimezone == null || newTimezone.isBlank()) {
+            throw new ValidationException("Timezone is required");
+        }
+
+        // Semantic validation — the regex at the controller checks shape, but only ZoneId.of
+        // can tell us whether the string is a known zone-id. Better to fail here with a clear
+        // error than to write a row that TenantTimeService will silently fall back from.
+        try {
+            ZoneId.of(newTimezone);
+        } catch (DateTimeException e) {
+            throw new ValidationException("Unknown IANA timezone: '" + newTimezone + "'");
+        }
+
+        Tenant tenant = tenantRepository.findById(tenantId)
+                .orElseThrow(() -> new ResourceNotFoundException("Tenant not found with ID: " + tenantId));
+
+        String previousTimezone = tenant.getTimezone();
+        if (newTimezone.equals(previousTimezone)) {
+            log.info("Tenant {} timezone already '{}' — no-op", tenantId, newTimezone);
+            return tenant;
+        }
+
+        tenant.setTimezone(newTimezone);
+        tenantRepository.save(tenant);
+
+        // Defer cache invalidation to afterCommit so a concurrent read cannot repopulate
+        // the cache with the pre-commit (stale) value. Mirrors the DomainEventPublisher
+        // pattern used elsewhere in the codebase.
+        if (TransactionSynchronizationManager.isActualTransactionActive()) {
+            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+                @Override
+                public void afterCommit() {
+                    tenantTimeService.invalidate(tenantId);
+                    log.info("TenantTimeService cache invalidated for tenant {} after timezone commit", tenantId);
+                }
+            });
+        } else {
+            // Defensive branch — @Transactional on this method guarantees a tx is active,
+            // but if a caller ever bypasses the proxy (e.g. self-invocation, test setup),
+            // invalidate inline so behaviour is still correct.
+            tenantTimeService.invalidate(tenantId);
+        }
+
+        // Audit log the timezone change
+        UUID currentUserId = com.nulogic.common.security.SecurityContext.getCurrentUserId();
+        auditLogService.logAction(
+                "TENANT",
+                tenantId,
+                com.nulogic.domain.audit.AuditLog.AuditAction.UPDATE,
+                Map.of("previousTimezone", previousTimezone == null ? "" : previousTimezone,
+                        "newTimezone", newTimezone),
+                Map.of("admin_user_id", currentUserId == null ? "" : currentUserId.toString()),
+                "SuperAdmin updated timezone for tenant: " + tenant.getName()
+        );
+
+        log.info("Tenant {} timezone updated from '{}' to '{}'", tenantId, previousTimezone, newTimezone);
+        return tenant;
+    }
+
     // ===================== Helper Methods =====================
 
     private long countActiveTenants() {

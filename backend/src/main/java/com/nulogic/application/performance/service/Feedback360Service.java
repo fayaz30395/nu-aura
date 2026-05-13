@@ -89,7 +89,7 @@ public class Feedback360Service {
         cycleRepository.findByIdAndTenantId(cycleId, tenantId)
                 .ifPresent(cycle -> {
                     cycle.setStatus(CycleStatus.IN_PROGRESS);
-                    cycle.setUpdatedAt(LocalDateTime.now());
+                    cycle.setUpdatedAt(tenantNow(tenantId));
                     cycleRepository.save(cycle);
                     log.info("Activated 360 feedback cycle: {}", cycleId);
                 });
@@ -100,7 +100,7 @@ public class Feedback360Service {
         cycleRepository.findByIdAndTenantId(cycleId, tenantId)
                 .ifPresent(cycle -> {
                     cycle.setStatus(CycleStatus.CLOSED);
-                    cycle.setUpdatedAt(LocalDateTime.now());
+                    cycle.setUpdatedAt(tenantNow(tenantId));
                     cycleRepository.save(cycle);
                     log.info("Closed 360 feedback cycle: {}", cycleId);
                 });
@@ -130,7 +130,7 @@ public class Feedback360Service {
             request.setStatus(RequestStatus.PENDING);
         }
         if (request.getCreatedAt() == null) {
-            request.setCreatedAt(LocalDateTime.now());
+            request.setCreatedAt(tenantNow(request.getTenantId()));
         }
 
         log.info("Creating 360 feedback request for subject: {} reviewer: {}",
@@ -140,7 +140,7 @@ public class Feedback360Service {
 
     @Transactional
     public Feedback360Request updateRequest(Feedback360Request request) {
-        request.setUpdatedAt(LocalDateTime.now());
+        request.setUpdatedAt(tenantNow(request.getTenantId()));
         return requestRepository.save(request);
     }
 
@@ -168,10 +168,11 @@ public class Feedback360Service {
     public void approveNomination(UUID tenantId, UUID requestId, UUID approverId) {
         requestRepository.findByIdAndTenantId(requestId, tenantId)
                 .ifPresent(request -> {
+                    LocalDateTime now = tenantNow(tenantId);
                     request.setNominationApproved(true);
                     request.setApprovedBy(approverId);
-                    request.setApprovedAt(LocalDateTime.now());
-                    request.setUpdatedAt(LocalDateTime.now());
+                    request.setApprovedAt(now);
+                    request.setUpdatedAt(now);
                     requestRepository.save(request);
                 });
     }
@@ -180,13 +181,14 @@ public class Feedback360Service {
 
     @Transactional
     public Feedback360Response createOrUpdateResponse(Feedback360Response response) {
+        LocalDateTime now = tenantNow(response.getTenantId());
         if (response.getId() == null) {
             response.setId(UUID.randomUUID());
         }
         if (response.getCreatedAt() == null) {
-            response.setCreatedAt(LocalDateTime.now());
+            response.setCreatedAt(now);
         }
-        response.setUpdatedAt(LocalDateTime.now());
+        response.setUpdatedAt(now);
 
         Feedback360Response saved = responseRepository.save(response);
 
@@ -195,7 +197,7 @@ public class Feedback360Service {
             requestRepository.findByIdAndTenantId(response.getRequestId(), response.getTenantId())
                     .ifPresent(request -> {
                         request.setStatus(RequestStatus.SUBMITTED);
-                        request.setUpdatedAt(LocalDateTime.now());
+                        request.setUpdatedAt(now);
                         requestRepository.save(request);
                     });
         }

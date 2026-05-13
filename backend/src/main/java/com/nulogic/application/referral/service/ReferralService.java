@@ -185,18 +185,19 @@ public class ReferralService {
     }
 
     public ReferralResponse linkToHiredEmployee(UUID referralId, UUID hiredEmployeeId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         EmployeeReferral referral = referralRepository.findByIdAndTenantId(referralId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Referral not found"));
 
+        LocalDate today = tenantTimeService.today(tenantId);
         referral.setHiredEmployeeId(hiredEmployeeId);
         referral.setStatus(ReferralStatus.JOINED);
-        referral.setJoiningDate(LocalDate.now());
+        referral.setJoiningDate(today);
         referral.setBonusStatus(BonusStatus.PENDING_ELIGIBILITY);
 
         ReferralPolicy policy = findApplicablePolicy(tenantId, referral.getDepartmentId());
         if (policy != null && policy.getRetentionPeriodMonths() != null) {
-            referral.setBonusEligibleDate(LocalDate.now().plusMonths(policy.getRetentionPeriodMonths()));
+            referral.setBonusEligibleDate(today.plusMonths(policy.getRetentionPeriodMonths()));
         }
 
         return mapToResponse(referralRepository.save(referral));
@@ -206,7 +207,7 @@ public class ReferralService {
 
     @Transactional
     public ReferralResponse processBonus(UUID referralId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         EmployeeReferral referral = referralRepository.findByIdAndTenantId(referralId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Referral not found"));
 
@@ -220,12 +221,12 @@ public class ReferralService {
 
     @Transactional
     public ReferralResponse markBonusPaid(UUID referralId, String paymentReference) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         EmployeeReferral referral = referralRepository.findByIdAndTenantId(referralId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Referral not found"));
 
         referral.setBonusStatus(BonusStatus.PAID);
-        referral.setBonusPaidDate(LocalDate.now());
+        referral.setBonusPaidDate(tenantTimeService.today(tenantId));
         referral.setBonusPaymentReference(paymentReference);
 
         return mapToResponse(referralRepository.save(referral));
@@ -241,8 +242,8 @@ public class ReferralService {
 
     @Transactional(readOnly = true)
     public void checkAndUpdateBonusEligibility() {
-        UUID tenantId = TenantContext.getCurrentTenant();
-        LocalDate today = LocalDate.now();
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        LocalDate today = tenantTimeService.today(tenantId);
         List<EmployeeReferral> dueForEligibility = referralRepository.findBonusEligibilityDue(tenantId, today);
 
         for (EmployeeReferral referral : dueForEligibility) {
@@ -423,9 +424,9 @@ public class ReferralService {
             return; // No policy restrictions
         }
 
-        // Check monthly limit
+        // Check monthly limit (tenant-local "today" via TenantTimeService)
         if (policy.getMaxReferralsPerMonth() != null) {
-            LocalDate now = LocalDate.now();
+            LocalDate now = tenantTimeService.today(tenantId);
             long count = referralRepository.countReferralsByReferrerInMonth(
                     tenantId, referrerId, now.getMonthValue(), now.getYear());
             if (count >= policy.getMaxReferralsPerMonth()) {

@@ -808,7 +808,7 @@ public class ExitManagementService {
 
     @Transactional(readOnly = true)
     public Map<String, Object> getExitDashboard() {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         Map<String, Object> dashboard = new HashMap<>();
 
         // Process stats
@@ -820,9 +820,9 @@ public class ExitManagementService {
         dashboard.put("pendingSettlements", settlementRepository.countByStatus(tenantId, FullAndFinalSettlement.SettlementStatus.PENDING_APPROVAL));
         dashboard.put("approvedSettlements", settlementRepository.countByStatus(tenantId, FullAndFinalSettlement.SettlementStatus.APPROVED));
 
-        // Interview stats
+        // Interview stats — S12-B: tenant-local "today" for overdue calc.
         dashboard.put("scheduledInterviews", exitInterviewRepository.findByTenantIdAndStatus(tenantId, ExitInterview.InterviewStatus.SCHEDULED).size());
-        dashboard.put("overdueInterviews", exitInterviewRepository.findOverdue(tenantId, LocalDate.now()).size());
+        dashboard.put("overdueInterviews", exitInterviewRepository.findOverdue(tenantId, tenantTimeService.today(tenantId)).size());
 
         // Asset stats
         dashboard.put("pendingAssetRecoveries", assetRecoveryRepository.findAllPending(tenantId).size());

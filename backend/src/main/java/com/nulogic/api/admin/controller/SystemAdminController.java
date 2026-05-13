@@ -130,6 +130,31 @@ public class SystemAdminController {
     }
 
     /**
+     * Update a tenant's IANA timezone.
+     *
+     * <p>Persists the new zone-id on the tenant row and (after the transaction commits)
+     * invalidates the per-tenant {@link com.nulogic.common.util.TenantTimeService} cache
+     * entry so all scheduled jobs and request handlers running in this JVM pick up the
+     * new zone on the next call. Other pods catch up within the cache TTL (1 hour).</p>
+     */
+    @PatchMapping("/tenants/{tenantId}/timezone")
+    @Operation(summary = "Update tenant timezone",
+            description = "Update the IANA timezone for a tenant and invalidate the TenantTimeService cache entry on commit")
+    @RequiresPermission(value = SYSTEM_ADMIN, revalidate = true)
+    public ResponseEntity<TenantStatusDTO> updateTenantTimezone(
+            @Parameter(description = "Tenant ID")
+            @PathVariable UUID tenantId,
+            @Valid @RequestBody UpdateTenantTimezoneRequest request) {
+        log.info("SuperAdmin updating timezone for tenant {} to '{}'", tenantId, request.getTimezone());
+        var tenant = systemAdminService.updateTenantTimezone(tenantId, request.getTimezone());
+        return ResponseEntity.ok(TenantStatusDTO.builder()
+                .tenantId(tenant.getId())
+                .name(tenant.getName())
+                .status(tenant.getStatus().name())
+                .build());
+    }
+
+    /**
      * Generate an impersonation token for a specific tenant
      * SuperAdmin can use this token to access a tenant's data
      * Useful for troubleshooting and support

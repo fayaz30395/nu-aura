@@ -44,6 +44,7 @@ import static com.nulogic.api.resourcemanagement.dto.WorkloadDTOs.*;
  * and this sub-service.
  */
 @Service
+@RequiredArgsConstructor
 @Slf4j
 public class WorkloadAnalyticsService {
 
@@ -52,25 +53,13 @@ public class WorkloadAnalyticsService {
     private final ProjectEmployeeRepository projectEmployeeRepository;
     private final DepartmentRepository departmentRepository;
     private final HolidayRepository holidayRepository;
+    private final TenantTimeService tenantTimeService;
 
     /**
      * Lazy-injected to avoid Spring circular dependency:
      * ResourceManagementService → WorkloadAnalyticsService → ResourceManagementService.
      */
     private ResourceManagementService resourceManagementService;
-
-    public WorkloadAnalyticsService(
-            EmployeeRepository employeeRepository,
-            HrmsProjectRepository projectRepository,
-            ProjectEmployeeRepository projectEmployeeRepository,
-            DepartmentRepository departmentRepository,
-            HolidayRepository holidayRepository) {
-        this.employeeRepository = employeeRepository;
-        this.projectRepository = projectRepository;
-        this.projectEmployeeRepository = projectEmployeeRepository;
-        this.departmentRepository = departmentRepository;
-        this.holidayRepository = holidayRepository;
-    }
 
     @Autowired
     public void setResourceManagementService(@Lazy ResourceManagementService resourceManagementService) {
@@ -99,15 +88,16 @@ public class WorkloadAnalyticsService {
                 .filter(wl -> applyFilters(wl, filters))
                 .collect(Collectors.toList());
 
-        WorkloadSummary summary = calculateWorkloadSummary(workloads, activeProjects.size(), filters);
+        WorkloadSummary summary =
+                calculateWorkloadSummary(workloads, activeProjects.size(), filters, tenantId);
 
         List<DepartmentWorkload> deptWorkloads = departmentRepository.findByTenantId(tenantId).stream()
                 .map(dept -> calculateDepartmentWorkload(dept.getId(), dept.getName(), workloads))
                 .collect(Collectors.toList());
 
         List<ProjectWorkloadSummary> projectWorkloads = calculateProjectWorkloads(activeProjects, tenantId);
-        List<WorkloadHeatmapRow> heatmapData = calculateHeatmapData(allEmployees, filters);
-        List<WorkloadTrend> trends = calculateWorkloadTrends(allEmployees);
+        List<WorkloadHeatmapRow> heatmapData = calculateHeatmapData(allEmployees, filters, tenantId);
+        List<WorkloadTrend> trends = calculateWorkloadTrends(allEmployees, tenantId);
 
         return WorkloadDashboardData.builder()
                 .summary(summary)
@@ -296,15 +286,16 @@ public class WorkloadAnalyticsService {
     }
 
     private WorkloadSummary calculateWorkloadSummary(List<EmployeeWorkload> workloads, int projectCount,
-                                                     WorkloadFilterOptions filters) {
+                                                     WorkloadFilterOptions filters, UUID tenantId) {
+        LocalDate today = tenantTimeService.today(tenantId);
         if (workloads.isEmpty()) {
             return WorkloadSummary.builder()
                     .totalEmployees(0).activeProjects(projectCount).averageAllocation(0.0)
                     .medianAllocation(0.0)
                     .overAllocatedCount(0).optimalCount(0).underUtilizedCount(0).unassignedCount(0)
                     .pendingApprovals(0).totalAllocatedHours(0L)
-                    .periodStart(filters != null ? filters.getStartDate() : LocalDate.now())
-                    .periodEnd(filters != null ? filters.getEndDate() : LocalDate.now().plusMonths(1))
+                    .periodStart(filters != null ? filters.getStartDate() : today)
+                    .periodEnd(filters != null ? filters.getEndDate() : today.plusMonths(1))
                     .build();
         }
 
@@ -330,8 +321,8 @@ public class WorkloadAnalyticsService {
                 .unassignedCount(unassigned)
                 .pendingApprovals(pending)
                 .totalAllocatedHours((long) (avg * workloads.size() * 1.6))
-                .periodStart(filters != null ? filters.getStartDate() : LocalDate.now())
-                .periodEnd(filters != null ? filters.getEndDate() : LocalDate.now().plusMonths(1))
+                .periodStart(filters != null ? filters.getStartDate() : today)
+                .periodEnd(filters != null ? filters.getEndDate() : today.plusMonths(1))
                 .build();
     }
 

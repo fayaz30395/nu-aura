@@ -617,10 +617,12 @@ export default function CustomFieldsPage() {
                       id="custom-field-default-value"
                       type="text"
                       {...register('defaultValue')}
+                      aria-invalid={errors.defaultValue ? 'true' : 'false'}
+                      aria-describedby={errors.defaultValue ? 'custom-field-default-value-error' : undefined}
                       className="input-aura"
                     />
                     {errors.defaultValue &&
-                      <p className="text-danger-500 text-sm mt-1">{errors.defaultValue.message}</p>}
+                      <p id="custom-field-default-value-error" className="text-danger-500 text-sm mt-1">{errors.defaultValue.message}</p>}
                   </div>
                 </div>
 
@@ -636,6 +638,8 @@ export default function CustomFieldsPage() {
                         <select
                           id="custom-field-view-visibility"
                           {...field}
+                          aria-invalid={errors.viewVisibility ? 'true' : 'false'}
+                          aria-describedby={errors.viewVisibility ? 'custom-field-view-visibility-error' : undefined}
                           className="input-aura"
                         >
                           {VISIBILITIES.map((v) => (
@@ -647,7 +651,7 @@ export default function CustomFieldsPage() {
                       )}
                     />
                     {errors.viewVisibility &&
-                      <p className="text-danger-500 text-sm mt-1">{errors.viewVisibility.message}</p>}
+                      <p id="custom-field-view-visibility-error" className="text-danger-500 text-sm mt-1">{errors.viewVisibility.message}</p>}
                   </div>
                   <div>
                     <label htmlFor="custom-field-edit-visibility" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
@@ -660,6 +664,8 @@ export default function CustomFieldsPage() {
                         <select
                           id="custom-field-edit-visibility"
                           {...field}
+                          aria-invalid={errors.editVisibility ? 'true' : 'false'}
+                          aria-describedby={errors.editVisibility ? 'custom-field-edit-visibility-error' : undefined}
                           className="input-aura"
                         >
                           {VISIBILITIES.map((v) => (
@@ -671,7 +677,7 @@ export default function CustomFieldsPage() {
                       )}
                     />
                     {errors.editVisibility &&
-                      <p className="text-danger-500 text-sm mt-1">{errors.editVisibility.message}</p>}
+                      <p id="custom-field-edit-visibility-error" className="text-danger-500 text-sm mt-1">{errors.editVisibility.message}</p>}
                   </div>
                 </div>
 

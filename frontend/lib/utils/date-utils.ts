@@ -149,6 +149,7 @@ export function formatDate(
     }),
   };
 
+  // eslint-disable-next-line no-restricted-syntax -- canonical formatter, primitive use is legitimate here
   return date.toLocaleDateString(locale, dateOptions);
 }
 

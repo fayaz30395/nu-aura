@@ -182,7 +182,7 @@ public class MultiChannelNotificationService {
         // Process immediate notifications
         for (MultiChannelNotification notification : saved) {
             if (notification.getScheduledAt() == null ||
-                    notification.getScheduledAt().isBefore(LocalDateTime.now())) {
+                    notification.getScheduledAt().isBefore(tenantTimeService.now(tenantId))) {
                 processNotification(notification);
             }
         }
@@ -273,9 +273,10 @@ public class MultiChannelNotificationService {
                 case SMS -> sendSmsNotification(notification);
                 case PUSH -> sendPushNotification(notification);
                 case IN_APP -> {
+                    LocalDateTime tenantNow = tenantTimeService.now(notification.getTenantId());
                     notification.setStatus(NotificationStatus.DELIVERED);
-                    notification.setSentAt(LocalDateTime.now());
-                    notification.setDeliveredAt(LocalDateTime.now());
+                    notification.setSentAt(tenantNow);
+                    notification.setDeliveredAt(tenantNow);
                 }
                 case SLACK -> sendSlackNotification(notification);
                 case TEAMS -> sendTeamsNotification(notification);
@@ -290,7 +291,7 @@ public class MultiChannelNotificationService {
             notification.setStatus(NotificationStatus.FAILED);
             notification.setErrorMessage(e.getMessage());
             notification.setRetryCount(notification.getRetryCount() + 1);
-            notification.setLastRetryAt(LocalDateTime.now());
+            notification.setLastRetryAt(tenantTimeService.now(notification.getTenantId()));
             notificationRepository.save(notification);
         }
     }
@@ -310,7 +311,7 @@ public class MultiChannelNotificationService {
                 notification.getBody() != null ? notification.getBody() : ""
         );
         notification.setStatus(NotificationStatus.SENT);
-        notification.setSentAt(LocalDateTime.now());
+        notification.setSentAt(tenantTimeService.now(notification.getTenantId()));
     }
 
     private void sendSmsNotification(MultiChannelNotification notification) {
@@ -330,7 +331,7 @@ public class MultiChannelNotificationService {
 
         if (result.success()) {
             notification.setStatus(NotificationStatus.SENT);
-            notification.setSentAt(LocalDateTime.now());
+            notification.setSentAt(tenantTimeService.now(notification.getTenantId()));
             log.info("SMS sent successfully. SID: {}", result.messageSid());
         } else {
             notification.setStatus(NotificationStatus.FAILED);

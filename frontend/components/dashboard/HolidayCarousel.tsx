@@ -85,9 +85,9 @@ export function HolidayCarousel({
           <span className="text-xs opacity-60">View All</span>
         </div>
         <div className="animate-pulse space-y-2">
-          <div className="h-7 w-40 rounded bg-white/20"/>
-          <div className="h-4 w-32 rounded bg-white/10"/>
-          <div className="h-5 w-24 rounded bg-white/10"/>
+          <div className="h-7 w-40 rounded bg-accent-200/60 dark:bg-accent-700/40"/>
+          <div className="h-4 w-32 rounded bg-accent-200/40 dark:bg-accent-700/30"/>
+          <div className="h-5 w-24 rounded bg-accent-200/40 dark:bg-accent-700/30"/>
         </div>
       </div>
     );
@@ -121,12 +121,12 @@ export function HolidayCarousel({
 
       {/* Header */}
       <div className="row-between mb-2 relative z-10">
-        <span className="text-xs font-semibold uppercase tracking-wider text-accent-200">
+        <span className="text-xs font-semibold uppercase tracking-wider text-accent-700 dark:text-accent-300">
           Holidays
         </span>
         <a
           href="/holidays"
-          className="text-xs text-accent-200 hover:text-white transition-colors font-medium"
+          className="text-xs text-accent-700 dark:text-accent-300 hover:text-accent-900 dark:hover:text-accent-100 transition-colors font-medium"
         >
           View All
         </a>
@@ -138,7 +138,7 @@ export function HolidayCarousel({
         {displayedHolidays.length > 1 && (
           <button
             onClick={() => setCurrentIndex((prev) => (prev - 1 + displayedHolidays.length) % displayedHolidays.length)}
-            className="flex-shrink-0 -ml-1 mr-2 rounded-full p-1 text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2"
+            className="flex-shrink-0 -ml-1 mr-2 rounded-full p-1 text-accent-600/70 dark:text-accent-300/70 hover:text-accent-900 dark:hover:text-accent-100 hover:bg-accent-100 dark:hover:bg-accent-800/40 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2"
             aria-label="Previous holiday"
           >
             <ChevronLeft className="h-5 w-5"/>
@@ -173,7 +173,7 @@ export function HolidayCarousel({
         {displayedHolidays.length > 1 && (
           <button
             onClick={() => setCurrentIndex((prev) => (prev + 1) % displayedHolidays.length)}
-            className="flex-shrink-0 -mr-1 ml-2 rounded-full p-1 text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2"
+            className="flex-shrink-0 -mr-1 ml-2 rounded-full p-1 text-accent-600/70 dark:text-accent-300/70 hover:text-accent-900 dark:hover:text-accent-100 hover:bg-accent-100 dark:hover:bg-accent-800/40 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2"
             aria-label="Next holiday"
           >
             <ChevronRight className="h-5 w-5"/>

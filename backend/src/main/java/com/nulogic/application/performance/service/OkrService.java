@@ -31,6 +31,7 @@ public class OkrService {
     private final ObjectiveRepository objectiveRepository;
     private final KeyResultRepository keyResultRepository;
     private final OkrCheckInRepository checkInRepository;
+    private final TenantTimeService tenantTimeService;
 
     // ================== Objectives ==================
 
@@ -43,8 +44,11 @@ public class OkrService {
         if (objective.getStatus() == null) {
             objective.setStatus(ObjectiveStatus.DRAFT);
         }
+        UUID tenantId = objective.getTenantId() != null
+                ? objective.getTenantId()
+                : TenantContext.requireCurrentTenant();
         if (objective.getCreatedAt() == null) {
-            objective.setCreatedAt(LocalDateTime.now());
+            objective.setCreatedAt(tenantTimeService.now(tenantId));
         }
 
         log.info("Creating objective: {} for owner: {}", objective.getTitle(), objective.getOwnerId());
@@ -53,7 +57,10 @@ public class OkrService {
 
     @Transactional
     public Objective updateObjective(Objective objective) {
-        objective.setUpdatedAt(LocalDateTime.now());
+        UUID tenantId = objective.getTenantId() != null
+                ? objective.getTenantId()
+                : TenantContext.requireCurrentTenant();
+        objective.setUpdatedAt(tenantTimeService.now(tenantId));
         return objectiveRepository.save(objective);
     }
 
@@ -153,7 +160,7 @@ public class OkrService {
 
         objective.setStatus(ObjectiveStatus.ACTIVE);
         objective.setApprovedBy(approverId);
-        objective.setUpdatedAt(LocalDateTime.now());
+        objective.setUpdatedAt(tenantTimeService.now(tenantId));
         objectiveRepository.save(objective);
         log.info("Activated objective: {}", id);
     }
@@ -168,8 +175,11 @@ public class OkrService {
         if (keyResult.getStatus() == null) {
             keyResult.setStatus(KeyResult.KeyResultStatus.NOT_STARTED);
         }
+        UUID tenantId = keyResult.getTenantId() != null
+                ? keyResult.getTenantId()
+                : TenantContext.requireCurrentTenant();
         if (keyResult.getCreatedAt() == null) {
-            keyResult.setCreatedAt(LocalDateTime.now());
+            keyResult.setCreatedAt(tenantTimeService.now(tenantId));
         }
 
         KeyResult saved = keyResultRepository.save(keyResult);

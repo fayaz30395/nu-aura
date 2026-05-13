@@ -340,21 +340,21 @@ public class ComplianceService {
 
     @Transactional(readOnly = true)
     public List<ComplianceChecklist> getOverdueChecklists() {
-        UUID tenantId = TenantContext.getCurrentTenant();
-        return checklistRepository.findOverdueChecklists(tenantId, LocalDate.now());
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        return checklistRepository.findOverdueChecklists(tenantId, tenantTimeService.today(tenantId));
     }
 
     @Transactional(readOnly = true)
     public Page<ComplianceChecklist> getOverdueChecklists(Pageable pageable) {
-        UUID tenantId = TenantContext.getCurrentTenant();
-        return checklistRepository.findOverdueChecklists(tenantId, LocalDate.now(), pageable);
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        return checklistRepository.findOverdueChecklists(tenantId, tenantTimeService.today(tenantId), pageable);
     }
 
     // ==================== Audit Logging ====================
 
     public void logAudit(AuditLog.AuditAction action, String entityType, UUID entityId,
                          Map<String, Object> oldValues, Map<String, Object> newValues) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         UUID userId = SecurityContext.getCurrentUserId();
 
         AuditLog.AuditSeverity severity = determineSeverity(action);
@@ -365,7 +365,7 @@ public class ComplianceService {
         auditLog.setEntityType(entityType);
         auditLog.setEntityId(entityId);
         auditLog.setPerformedBy(userId);
-        auditLog.setTimestamp(LocalDateTime.now());
+        auditLog.setTimestamp(tenantTimeService.now(tenantId));
         auditLog.setOldValue(oldValues != null ? oldValues.toString() : null);
         auditLog.setNewValue(newValues != null ? newValues.toString() : null);
         auditLog.setSeverity(severity);
@@ -520,25 +520,26 @@ public class ComplianceService {
 
     @Transactional(readOnly = true)
     public Map<String, Object> getComplianceDashboard() {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        LocalDate today = tenantTimeService.today(tenantId);
         Map<String, Object> dashboard = new HashMap<>();
 
         // Policy stats
-        List<CompliancePolicy> activePolicies = policyRepository.findActivePolicies(tenantId, LocalDate.now());
-        List<CompliancePolicy> expiringPolicies = policyRepository.findExpiringPolicies(tenantId, LocalDate.now().plusDays(30));
+        List<CompliancePolicy> activePolicies = policyRepository.findActivePolicies(tenantId, today);
+        List<CompliancePolicy> expiringPolicies = policyRepository.findExpiringPolicies(tenantId, today.plusDays(30));
         dashboard.put("totalActivePolicies", activePolicies.size());
         dashboard.put("expiringPolicies", expiringPolicies.size());
 
         // Checklist stats
         List<ComplianceChecklist> activeChecklists = checklistRepository.findActiveChecklists(tenantId);
-        List<ComplianceChecklist> overdueChecklists = checklistRepository.findOverdueChecklists(tenantId, LocalDate.now());
+        List<ComplianceChecklist> overdueChecklists = checklistRepository.findOverdueChecklists(tenantId, today);
         dashboard.put("activeChecklists", activeChecklists.size());
         dashboard.put("overdueChecklists", overdueChecklists.size());
 
         // Alert stats
         List<ComplianceAlert> activeAlerts = alertRepository.findActiveAlerts(tenantId);
         List<ComplianceAlert> criticalAlerts = alertRepository.findCriticalAlerts(tenantId);
-        List<ComplianceAlert> overdueAlerts = alertRepository.findOverdueAlerts(tenantId, LocalDate.now());
+        List<ComplianceAlert> overdueAlerts = alertRepository.findOverdueAlerts(tenantId, today);
         dashboard.put("activeAlerts", activeAlerts.size());
         dashboard.put("criticalAlerts", criticalAlerts.size());
         dashboard.put("overdueAlerts", overdueAlerts.size());
@@ -564,7 +565,7 @@ public class ComplianceService {
         dashboard.put("acknowledgmentsByPolicy", acksByPolicy.size());
 
         // Audit activity (last 7 days)
-        List<Object[]> auditActivity = auditLogRepository.countByAction(tenantId, LocalDateTime.now().minusDays(7));
+        List<Object[]> auditActivity = auditLogRepository.countByAction(tenantId, tenantTimeService.now(tenantId).minusDays(7));
         Map<String, Long> auditCounts = new HashMap<>();
         for (Object[] row : auditActivity) {
             auditCounts.put(row[0].toString(), (Long) row[1]);

@@ -1,4 +1,5 @@
 import {apiClient} from '../../api/client';
+import {formatDate, formatDateTime} from '@/lib/utils/format/date';
 import {
   CreatePaymentTransactionRequest,
   Page,
@@ -230,21 +231,11 @@ class PaymentService {
   }
 
   formatDate(dateString: string): string {
-    return new Date(dateString).toLocaleDateString('en-IN', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-    });
+    return formatDate(dateString);
   }
 
   formatDateTime(dateString: string): string {
-    return new Date(dateString).toLocaleDateString('en-IN', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
+    return formatDateTime(dateString);
   }
 }
 

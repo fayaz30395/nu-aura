@@ -31,6 +31,7 @@ import static com.nulogic.api.resourcemanagement.dto.WorkloadDTOs.*;
 public class ResourceManagementController {
 
     private final ResourceManagementService resourceManagementService;
+    private final TenantTimeService tenantTimeService;
 
     @GetMapping("/capacity/employee/{employeeId}")
     @RequiresPermission(Permission.EMPLOYEE_VIEW_ALL)
@@ -38,8 +39,9 @@ public class ResourceManagementController {
     public ResponseEntity<EmployeeCapacity> getEmployeeCapacity(
             @PathVariable UUID employeeId,
             @RequestParam(required = false) LocalDate asOfDate) {
+        UUID tenantId = TenantContext.requireCurrentTenant();
         return ResponseEntity.ok(resourceManagementService.getEmployeeCapacity(employeeId,
-                asOfDate != null ? asOfDate : LocalDate.now()));
+                asOfDate != null ? asOfDate : tenantTimeService.today(tenantId)));
     }
 
     @GetMapping("/capacity/employees")
@@ -48,8 +50,9 @@ public class ResourceManagementController {
     public ResponseEntity<List<EmployeeCapacity>> getEmployeesCapacity(
             @RequestParam(required = false) List<UUID> employeeIds,
             @RequestParam(required = false) LocalDate asOfDate) {
+        UUID tenantId = TenantContext.requireCurrentTenant();
         return ResponseEntity.ok(resourceManagementService.getEmployeesCapacity(employeeIds,
-                asOfDate != null ? asOfDate : LocalDate.now()));
+                asOfDate != null ? asOfDate : tenantTimeService.today(tenantId)));
     }
 
     @PostMapping("/capacity/employees")
@@ -57,8 +60,9 @@ public class ResourceManagementController {
     @Operation(summary = "Get capacity for multiple employees via POST request")
     public ResponseEntity<List<EmployeeCapacity>> getEmployeesCapacityPost(
             @Valid @RequestBody GetEmployeesCapacityRequest request) {
+        UUID tenantId = TenantContext.requireCurrentTenant();
         return ResponseEntity.ok(resourceManagementService.getEmployeesCapacity(request.getEmployeeIds(),
-                request.getAsOfDate() != null ? request.getAsOfDate() : LocalDate.now()));
+                request.getAsOfDate() != null ? request.getAsOfDate() : tenantTimeService.today(tenantId)));
     }
 
     @GetMapping("/allocation/validate")
@@ -70,8 +74,9 @@ public class ResourceManagementController {
             @RequestParam Integer allocationPercentage,
             @RequestParam(required = false) LocalDate startDate,
             @RequestParam(required = false) LocalDate endDate) {
+        UUID tenantId = TenantContext.requireCurrentTenant();
         return ResponseEntity.ok(resourceManagementService.validateAllocation(employeeId, projectId,
-                allocationPercentage, startDate != null ? startDate : LocalDate.now(), endDate));
+                allocationPercentage, startDate != null ? startDate : tenantTimeService.today(tenantId), endDate));
     }
 
     @PostMapping("/allocation/validate")
@@ -79,8 +84,9 @@ public class ResourceManagementController {
     @Operation(summary = "Validate a proposed allocation via POST request")
     public ResponseEntity<AllocationValidationResult> validateAllocationPost(
             @Valid @RequestBody ValidateAllocationRequest request) {
+        UUID tenantId = TenantContext.requireCurrentTenant();
         return ResponseEntity.ok(resourceManagementService.validateAllocation(request.getEmployeeId(),
-                request.getProjectId(), request.getAllocationPercentage(), LocalDate.now(), null));
+                request.getProjectId(), request.getAllocationPercentage(), tenantTimeService.today(tenantId), null));
     }
 
     @PutMapping("/allocation")
