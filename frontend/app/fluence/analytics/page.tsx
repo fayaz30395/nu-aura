@@ -12,6 +12,7 @@ import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
 import {useActivityFeed, useBlogPosts, useFluenceTemplates, useWikiPages,} from '@/lib/hooks/queries/useFluence';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {card, chartColors, iconSize, layout, motion as dsMotion, typography,} from '@/lib/theme/design-system';
+import {formatDateShort, formatDateTime} from '@/lib/utils/format/date';
 
 // S10-K: recharts (~180 KB gz) is lazy-loaded — chart subtree extracted into
 // FluenceAnalyticsCharts.tsx so it ships only when the Analytics route renders.
@@ -93,10 +94,7 @@ function FluenceAnalyticsPageContent() {
 
     return Object.entries(dayMap)
       .map(([date, count]) => ({
-        date: new Date(date).toLocaleDateString('en-US', {
-          month: 'short',
-          day: 'numeric',
-        }),
+        date: formatDateShort(date),
         actions: count,
       }))
       ; // Keep all 30 days so the x-axis is consistent
@@ -429,12 +427,7 @@ function FluenceAnalyticsPageContent() {
                         </p>
                       </div>
                       <p className={typography.caption}>
-                        {new Date(activity.createdAt).toLocaleDateString('en-US', {
-                          month: 'short',
-                          day: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit',
-                        })}
+                        {formatDateTime(activity.createdAt)}
                       </p>
                     </motion.div>
                   ))}

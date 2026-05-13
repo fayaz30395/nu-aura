@@ -224,6 +224,8 @@ cd frontend && npm run lint && npx tsc --noEmit
 | Document                                       | Description                                |
 |------------------------------------------------|--------------------------------------------|
 | [CONTRIBUTING.md](CONTRIBUTING.md)             | Development workflow and code standards    |
+| [DESIGN.md](DESIGN.md)                         | Frontend design system, primitives, banned patterns (Studio Slate v2) |
+| [PRODUCT.md](PRODUCT.md)                       | Product surface map and sub-app conventions |
 | [docs/agents/](docs/agents/)                   | Agent documentation and team prompts       |
 | [docs/adr/](docs/adr/)                         | Architecture Decision Records              |
 | [docs/architecture/](docs/architecture/)       | Technical architecture analysis            |

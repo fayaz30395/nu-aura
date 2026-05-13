@@ -33,6 +33,7 @@ import {sanitizeHtml} from '@/lib/utils/sanitize';
 import {safeStorage} from '@/lib/utils/safeStorage';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {EmptyStatePresets} from '@/components/ui/empty-state-presets';
+import {formatDate} from '@/lib/utils/format/date';
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
@@ -631,11 +632,7 @@ export default function SearchPage() {
                           {result.author && <span>By {result.author}</span>}
                           <span className="flex items-center gap-1">
                             <Clock className={iconSize.meta}/>
-                            {new Date(result.updatedAt).toLocaleDateString('en-US', {
-                              year: 'numeric',
-                              month: 'short',
-                              day: 'numeric',
-                            })}
+                            {formatDate(result.updatedAt)}
                           </span>
                         </div>
                       </div>

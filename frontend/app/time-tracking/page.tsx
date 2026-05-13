@@ -29,6 +29,7 @@ import {
 } from 'lucide-react';
 import {createLogger} from '@/lib/utils/logger';
 import {Stat} from '@/components/ui/Stat';
+import {formatDate} from '@/lib/utils/format/date';
 
 const log = createLogger('TimeTrackingListPage');
 
@@ -307,11 +308,7 @@ export default function TimeTrackingPage() {
                       </td>
                       <td className="px-6 py-4">
                           <span className="text-sm font-medium text-[var(--text-primary)]">
-                            {new Date(entry.entryDate).toLocaleDateString('en-IN', {
-                              day: '2-digit',
-                              month: 'short',
-                              year: 'numeric',
-                            })}
+                            {formatDate(entry.entryDate)}
                           </span>
                       </td>
                       <td className="px-6 py-4">

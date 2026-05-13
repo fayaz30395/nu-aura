@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
 import {createLogger} from '@/lib/utils/logger';
+import {formatDate} from '@/lib/utils/format/date';
 
 const log = createLogger('TimeTrackingPage');
 
@@ -291,11 +292,7 @@ export default function TimeEntryDetailPage() {
                   {entry.status === 'APPROVED' ? 'Approved Date' : 'Review Date'}
                 </p>
                 <p className="text-lg font-medium text-[var(--text-primary)]">
-                  {new Date(entry.approvedDate).toLocaleDateString('en-IN', {
-                    day: '2-digit',
-                    month: 'short',
-                    year: 'numeric',
-                  })}
+                  {formatDate(entry.approvedDate)}
                 </p>
               </div>
             </div>

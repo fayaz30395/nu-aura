@@ -41,6 +41,7 @@ import {
 } from 'lucide-react';
 import {createLogger} from '@/lib/utils/logger';
 import {formatCurrency} from '@/lib/utils';
+import {formatDate as formatDateCanonical} from '@/lib/utils/format/date';
 
 const log = createLogger('TravelPage');
 
@@ -205,13 +206,7 @@ export default function TravelRequestDetailsPage() {
     return configs[status] || configs.DRAFT;
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-IN', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-    });
-  };
+  const formatDate = (dateString: string) => formatDateCanonical(dateString);
 
 
   if (!permissionsReady || !hasPermission(Permissions.TRAVEL_VIEW)) {

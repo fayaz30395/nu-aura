@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import {useInterviewsByCandidate} from '@/lib/hooks/queries/useRecruitment';
 import type {Interview, InterviewResult, InterviewStatus} from '@/lib/types/hire/recruitment';
+import {formatDateTime} from '@/lib/utils/format/date';
 
 interface InterviewScorecardModalProps {
   open: boolean;
@@ -273,13 +274,7 @@ export function InterviewScorecardModal({
                         {interview.scheduledAt && (
                           <span className="flex items-center gap-1">
                             <Clock className="h-3.5 w-3.5"/>
-                            {new Date(interview.scheduledAt).toLocaleDateString('en-US', {
-                              day: 'numeric',
-                              month: 'short',
-                              year: 'numeric',
-                              hour: '2-digit',
-                              minute: '2-digit',
-                            })}
+                            {formatDateTime(interview.scheduledAt)}
                           </span>
                         )}
                       </div>

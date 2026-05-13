@@ -48,6 +48,7 @@ import {useAuth} from '@/lib/hooks/useAuth';
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {EmptyStatePresets} from '@/components/ui/empty-state-presets';
+import {formatDate, formatDateShort} from '@/lib/utils/format/date';
 
 // Dynamically import Tiptap viewer to keep it out of the initial bundle
 const ContentViewer = dynamic(
@@ -272,11 +273,7 @@ export default function BlogPostDetailPage() {
                 <div className="flex items-center gap-2">
                   <Calendar className="w-4 h-4 flex-shrink-0"/>
                   <time dateTime={post.publishedAt || post.updatedAt}>
-                    {new Date(post.publishedAt || post.updatedAt).toLocaleDateString('en-US', {
-                      month: 'long',
-                      day: 'numeric',
-                      year: 'numeric',
-                    })}
+                    {formatDate(post.publishedAt || post.updatedAt)}
                   </time>
                 </div>
 
@@ -651,11 +648,7 @@ export default function BlogPostDetailPage() {
                         {comment.body}
                       </p>
                       <p className="text-caption mt-2">
-                        {new Date(comment.createdAt).toLocaleDateString('en-US', {
-                          month: 'short',
-                          day: 'numeric',
-                          year: 'numeric',
-                        })}
+                        {formatDate(comment.createdAt)}
                       </p>
                     </div>
                   </motion.div>
@@ -727,10 +720,7 @@ export default function BlogPostDetailPage() {
                     </span>
                   </div>
                   <span className="text-caption flex-shrink-0 ml-2">
-                    {new Date(v.viewedAt).toLocaleDateString('en-US', {
-                      month: 'short',
-                      day: 'numeric',
-                    })}
+                    {formatDateShort(v.viewedAt)}
                   </span>
                 </motion.div>
               ))}

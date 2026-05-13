@@ -5,6 +5,7 @@ import {useRouter} from 'next/navigation';
 import {ActionIcon, Avatar, Badge, Collapse, Group, Paper, Stack, Text,} from '@mantine/core';
 import {IconArticle, IconChevronDown, IconChevronUp, IconFileText, IconTemplate,} from '@tabler/icons-react';
 import type {FluenceActivity} from '@/lib/types/platform/fluence';
+import {formatDate, formatDateShort} from '@/lib/utils/format/date';
 
 interface ActivityCardProps {
   activity: FluenceActivity;
@@ -56,11 +57,9 @@ function formatRelativeTime(dateStr: string): string {
   if (diffHour < 24) return `${diffHour} hour${diffHour !== 1 ? 's' : ''} ago`;
   if (diffDay < 7) return `${diffDay} day${diffDay !== 1 ? 's' : ''} ago`;
 
-  return date.toLocaleDateString(undefined, {
-    month: 'short',
-    day: 'numeric',
-    year: date.getFullYear() !== now.getFullYear() ? 'numeric' : undefined,
-  });
+  return date.getFullYear() !== now.getFullYear()
+    ? formatDate(date)
+    : formatDateShort(date);
 }
 
 export default function ActivityCard({activity}: ActivityCardProps) {

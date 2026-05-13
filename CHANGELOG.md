@@ -6,6 +6,64 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Frontend polish program (2026-05-13)
+
+#### Added
+
+- `<Stat>` — canonical flat-tone statistic primitive (`frontend/components/ui/Stat.tsx`).
+- `<Callout>` — inline notification with 5 tones (`frontend/components/ui/Callout.tsx`).
+- `<StatusBadge>` — color + icon + label badge bound to vocabulary maps.
+- `<GoogleGLogo>` — canonical Google SSO mark.
+- `EmptyStatePresets` — 11 recurring empty-state patterns spreadable into `<EmptyState>`.
+- `<EmptyState size="compact">` variant for charts, popovers, dropdowns.
+- `lib/status/vocabulary.ts` — 32 enum-to-meta domain maps + `resolveStatus()`.
+- `lib/utils/format/date.ts` — canonical date helpers (`formatDate`, `formatTime`, `formatDateTime`, `formatRelative`, `formatDateRange`).
+- `lib/utils/categoricalPalette.ts` — 10-color categorical palette + status fallbacks.
+- `styles/mantine-theme.ts` — Mantine theme wired to Studio Slate v2 tokens.
+- `<ConfirmDialog>` extended with `reason?` prop for reject/cancel flows.
+- 66 new primitive unit tests.
+
+#### Changed
+
+- Mantine surfaces (`Card`, `Modal`, `Menu`, `TextInput`, …) now paint with Studio Slate v2 tokens instead of library defaults.
+- ~50 rolled-own status helpers consolidated to canonical `<StatusBadge>`.
+- ~150 empty-state sites consolidated to `<EmptyState>` (+ preset spreads).
+- ~108 bare `.toLocaleDateString()` calls migrated to canonical helpers.
+- ~80 hand-rolled card surfaces converted to `.card-aura` / variants.
+- ~70 hero-metric stat blocks converted to `<Stat>`.
+- ~40 decorative gradient icon-tiles flattened to solid tints.
+- 8 reject/delete modals collapsed to `<ConfirmDialog>` with reason slot.
+- 3 modal-first patterns converted to inline-edit / full-route.
+
+#### Fixed
+
+- `.status-purple` and `.status-orange` were undefined CSS classes silently rendering colorless in `attendance/my-attendance` — mapped to canonical tones.
+- `Stat.tsx` size variants were collapsed by `tailwind-merge` — split onto parent + child elements.
+- Offer-letter flow regression (introduced and resolved in same session — ported full handler to `/recruitment/candidates/[id]/offer`).
+
+#### Removed
+
+- 512 `skeuo-emboss` / `skeuo-deboss` no-op class applications (codemod sweep).
+- 6 orphan legacy files (`aura-dark-theme.css`, `tailwind.config.aura-dark.js`, `globals.aura-dark.css`, `lib/theme/mantine-theme.ts`, …).
+- 33 unused `_var` identifiers + 7 dead top-level declarations.
+- Brand colors (Lapis Blue `#050766`, Red-Orange `#E62A32`, Purple `#8939A1`) from product UI surfaces.
+
+#### Conventions
+
+- Status badges: use `<StatusBadge status={x} domain={DOMAIN_MAP}/>` from `frontend/lib/status/vocabulary.ts`.
+- Empty states: use `<EmptyState>` or `<EmptyState {...EmptyStatePresets.X}>`; pass `size="compact"` for charts/popovers.
+- Dates: use `formatDate` / `formatTime` / `formatDateTime` from `frontend/lib/utils/format/date.ts` — never bare `toLocaleDateString`.
+- Status badges always carry icon + label (not color-only) per WCAG 1.4.1.
+- Reject/cancel flows: extend `<ConfirmDialog>` with `reason={{label, required}}` instead of writing a single-textarea `<Modal>`.
+- Banned patterns: gradient text (`bg-clip-text`), side-stripe `border-l-4 border-X-500` accents, hero-metric template, decorative `bg-gradient-to-br from-X-500 to-X-700` icon tiles, `.status-purple` / `.status-orange` (undefined), `skeuo-emboss`.
+
+#### Quality gates at session end
+
+- TypeScript: clean.
+- ESLint: 0 warnings.
+- Vitest: 2417 / 2417 tests across 87 files.
+- Next.js build: success.
+
 ### Repo layout cleanup (Phase 1 — 2026-05-13)
 
 #### Changed
