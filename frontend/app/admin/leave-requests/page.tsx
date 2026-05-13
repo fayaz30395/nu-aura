@@ -320,7 +320,7 @@ export default function AdminLeaveRequestsPage() {
             </p>
             <div className="mb-4">
               <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                Rejection Reason <span className="text-danger-500">*</span>
+                Rejection Reason <span aria-hidden="true" className="text-danger-500">*</span>
               </label>
               <textarea
                 value={rejectionReason}
@@ -329,6 +329,7 @@ export default function AdminLeaveRequestsPage() {
                 className="input-aura w-full px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-accent-500"
                 placeholder="Explain why this request is being rejected..."
                 required
+                aria-required="true"
               />
             </div>
             <div className="flex justify-end space-x-4">

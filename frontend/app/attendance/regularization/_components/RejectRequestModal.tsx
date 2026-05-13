@@ -127,6 +127,7 @@ export function RejectRequestModal({
                     <Button
                       type="submit"
                       disabled={isPending || isSubmitting}
+                      aria-busy={isPending || isSubmitting}
                       onClick={handleSubmit(onSubmit)}
                       className="w-full bg-danger-600 hover:bg-danger-700 text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                     >

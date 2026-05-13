@@ -9,6 +9,7 @@ import com.nulogic.application.payroll.strategy.StatutoryResult;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.RequiresPermission;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -58,6 +59,11 @@ public class PayrollStatutoryController {
      * BUG-002 FIX: use service, not raw repository.
      */
     private final PayslipService payslipService;
+    /**
+     * Wave-3 i18n: tenant-local "today" for statutory period (month/year) resolution.
+     * Replaces zero-arg {@code LocalDate.now()} which used JVM default zone.
+     */
+    private final TenantTimeService tenantTimeService;
 
     /**
      * Calculates and returns statutory deductions without saving anything.
@@ -73,8 +79,10 @@ public class PayrollStatutoryController {
         log.info("Statutory preview requested: employeeId={}, basic={}, gross={}, state={}",
                 employeeId, basicSalary, grossSalary, state);
 
-        UUID tenantId = TenantContext.getCurrentTenant();
-        LocalDate now = LocalDate.now();
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        // Wave-3 i18n: resolve "today" in tenant zone, not JVM default — period (month/year)
+        // must match the tenant's local calendar for statutory deduction windows.
+        LocalDate now = tenantTimeService.today(tenantId);
         StatutoryCalculationInput input = new StatutoryCalculationInput(
                 employeeId,
                 grossSalary,

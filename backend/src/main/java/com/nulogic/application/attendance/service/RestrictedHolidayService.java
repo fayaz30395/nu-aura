@@ -207,7 +207,8 @@ public class RestrictedHolidayService {
 
         // Auto-approve if no approval required
         if (initialStatus == SelectionStatus.APPROVED) {
-            selection.setApprovedAt(LocalDateTime.now());
+            // S11-M Wave-10 P0: tenant-local datetime — resolved via TenantTimeService.
+            selection.setApprovedAt(tenantTimeService.now(tenantId));
         }
 
         selection = selectionRepository.save(selection);
@@ -235,7 +236,8 @@ public class RestrictedHolidayService {
 
         selection.setStatus(SelectionStatus.APPROVED);
         selection.setApprovedBy(approverId);
-        selection.setApprovedAt(LocalDateTime.now());
+        // S11-M Wave-10 P0: tenant-local datetime — resolved via TenantTimeService.
+        selection.setApprovedAt(tenantTimeService.now(tenantId));
 
         selection = selectionRepository.save(selection);
 

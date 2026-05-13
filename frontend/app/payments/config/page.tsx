@@ -344,6 +344,7 @@ export default function PaymentConfigPage() {
               <button
                 type="submit"
                 disabled={isSubmitting || saveConfigMutation.isPending}
+                aria-busy={isSubmitting || saveConfigMutation.isPending}
                 className="px-6 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 {isSubmitting || saveConfigMutation.isPending ? (
@@ -360,6 +361,7 @@ export default function PaymentConfigPage() {
                 type="button"
                 onClick={handleTestConnection}
                 disabled={testingConnection || testConnectionMutation.isPending}
+                aria-busy={testingConnection || testConnectionMutation.isPending}
                 className="px-6 py-2 border border-accent-500 text-accent-700 rounded-lg hover:bg-accent-50 dark:hover:bg-accent-900/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 {testingConnection || testConnectionMutation.isPending ? (

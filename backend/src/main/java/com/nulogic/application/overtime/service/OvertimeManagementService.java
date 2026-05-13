@@ -11,6 +11,7 @@ import com.nulogic.common.exception.BusinessException;
 import com.nulogic.common.exception.ResourceNotFoundException;
 import com.nulogic.common.exception.ValidationException;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.audit.AuditLog.AuditAction;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.event.overtime.OvertimeApprovedEvent;
@@ -54,6 +55,7 @@ public class OvertimeManagementService {
     private final AuditLogService auditLogService;
     private final WebSocketNotificationService webSocketNotificationService;
     private final NotificationService notificationService;
+    private final TenantTimeService tenantTimeService;
 
     @Transactional
     public OvertimeRecordResponse createOvertimeRecord(OvertimeRecordRequest request) {

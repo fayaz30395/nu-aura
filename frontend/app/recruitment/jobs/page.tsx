@@ -786,11 +786,13 @@ export default function JobOpeningsPage() {
                       id="job-form-requirements"
                       rows={3}
                       {...register('requirements')}
+                      aria-invalid={errors.requirements ? 'true' : 'false'}
+                      aria-describedby={errors.requirements ? 'job-form-requirements-error' : undefined}
                       className="w-full px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
                       placeholder="List the requirements..."
                     />
                     {errors.requirements &&
-                      <p className="text-xs text-danger-600 mt-1">{errors.requirements.message}</p>}
+                      <p id="job-form-requirements-error" className="text-xs text-danger-600 mt-1">{errors.requirements.message}</p>}
                   </div>
 
                   <div>
@@ -800,11 +802,13 @@ export default function JobOpeningsPage() {
                       id="job-form-skills-required"
                       rows={2}
                       {...register('skillsRequired')}
+                      aria-invalid={errors.skillsRequired ? 'true' : 'false'}
+                      aria-describedby={errors.skillsRequired ? 'job-form-skills-required-error' : undefined}
                       className="w-full px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
                       placeholder="React, TypeScript, Node.js..."
                     />
                     {errors.skillsRequired &&
-                      <p className="text-xs text-danger-600 mt-1">{errors.skillsRequired.message}</p>}
+                      <p id="job-form-skills-required-error" className="text-xs text-danger-600 mt-1">{errors.skillsRequired.message}</p>}
                   </div>
 
                   <div className="flex gap-4 pt-4 border-t border-[var(--border-main)]">

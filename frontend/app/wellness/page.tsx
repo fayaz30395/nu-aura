@@ -457,7 +457,12 @@ export default function WellnessPage() {
                   Wellness Leaderboard
                 </h2>
                 {leaderboard.length === 0 ? (
-                  <p className="text-body-muted">No data yet</p>
+                  <EmptyState
+                    size="compact"
+                    icon={<Trophy className="w-full h-full"/>}
+                    title="No leaderboard yet"
+                    description="Join a challenge to start earning points."
+                  />
                 ) : (
                   <div className="space-y-4">
                     {leaderboard.map((entry, index) => (

@@ -33,6 +33,7 @@ public class StatutoryService {
     private final ESIConfigRepository esiConfigRepository;
     private final EmployeeESIRecordRepository employeeESIRecordRepository;
     private final MonthlyStatutoryContributionRepository contributionRepository;
+    private final TenantTimeService tenantTimeService;
 
     // ==================== TDS Operations ====================
 
@@ -79,7 +80,7 @@ public class StatutoryService {
         UUID tenantId = TenantContext.requireCurrentTenant();
         declaration.setId(UUID.randomUUID());
         declaration.setTenantId(tenantId);
-        declaration.setSubmittedAt(LocalDateTime.now());
+        declaration.setSubmittedAt(tenantTimeService.now(tenantId));
         log.info("Submitting TDS declaration for employee {} for financial year {}",
                 declaration.getEmployeeId(), declaration.getFinancialYear());
         return tdsDeclarationRepository.save(declaration);
@@ -110,11 +111,12 @@ public class StatutoryService {
      */
     @Transactional
     public Optional<EmployeeTDSDeclaration> approveTDSDeclaration(UUID declarationId, UUID approverId) {
+        UUID tenantId = TenantContext.requireCurrentTenant();
         log.info("Approving TDS declaration {} by approver {}", declarationId, approverId);
         return tdsDeclarationRepository.findById(declarationId)
                 .map(decl -> {
                     decl.setStatus(EmployeeTDSDeclaration.DeclarationStatus.APPROVED);
-                    decl.setApprovedAt(LocalDateTime.now());
+                    decl.setApprovedAt(tenantTimeService.now(tenantId));
                     decl.setApprovedBy(approverId);
                     return tdsDeclarationRepository.save(decl);
                 });

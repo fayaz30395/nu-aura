@@ -11,6 +11,7 @@ import {LEAVE_STATUS} from '@/lib/status/vocabulary';
 import {RegularizationRequest} from './types';
 import {RequestTimeline} from './RequestTimeline';
 import {formatRelativeTime, formatTime} from './utils';
+import {formatDateShort} from '@/lib/utils/format/date';
 
 interface RequestsTableProps {
   requests: RegularizationRequest[];
@@ -86,10 +87,7 @@ export function RequestsTable({requests, loading, statusFilter, onNewRequest}: R
                     className="hover:bg-[var(--bg-secondary)]/50 transition-colors"
                   >
                     <td className="px-4 md:px-6 py-4 text-sm font-medium text-[var(--text-primary)]">
-                      {new Date(request.attendanceDate).toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: 'numeric',
-                      })}
+                      {formatDateShort(request.attendanceDate)}
                     </td>
                     <td className="hidden md:table-cell px-6 py-4 text-body-secondary">
                       <div className="text-xs">

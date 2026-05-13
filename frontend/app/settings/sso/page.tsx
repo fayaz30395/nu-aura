@@ -726,6 +726,7 @@ export default function SsoSettingsPage() {
                   type="button"
                   onClick={handleTestConnection}
                   disabled={testMutation.isPending}
+                  aria-busy={testMutation.isPending}
                   className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
                   {testMutation.isPending ? (
@@ -768,6 +769,7 @@ export default function SsoSettingsPage() {
                     type="button"
                     onClick={handleDelete}
                     disabled={deleteMutation.isPending}
+                    aria-busy={deleteMutation.isPending}
                     className="inline-flex items-center gap-1 px-4 py-1.5 bg-danger-600 text-white rounded-lg text-sm hover:bg-danger-700 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                   >
                     {deleteMutation.isPending ? <Loader2 className="h-3 w-3 animate-spin"/> : null}

@@ -253,12 +253,12 @@ export default function NewTravelRequestPage() {
 
         <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] overflow-hidden">
           {/* Travel Details */}
-          <div className="p-6 space-y-6">
+          <section aria-labelledby="travel-details-heading" className="p-6 space-y-6">
             <div className="flex items-center gap-4 pb-4 border-b border-[var(--border-main)]">
               <div className="p-2 bg-accent-100 dark:bg-accent-900/30 rounded-lg">
                 <Briefcase className="h-5 w-5 text-accent-700 dark:text-accent-400"/>
               </div>
-              <h2 className="text-xl font-semibold text-[var(--text-primary)]">Travel Details</h2>
+              <h2 id="travel-details-heading" className="text-xl font-semibold text-[var(--text-primary)]">Travel Details</h2>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -314,15 +314,15 @@ export default function NewTravelRequestPage() {
                 <p className="mt-1 text-sm text-danger-500">{errors.purpose.message}</p>
               )}
             </div>
-          </div>
+          </section>
 
           {/* Journey Details */}
-          <div className="p-6 bg-[var(--bg-secondary)]/50 space-y-6">
+          <section aria-labelledby="journey-details-heading" className="p-6 bg-[var(--bg-secondary)]/50 space-y-6">
             <div className="flex items-center gap-4 pb-4 border-b border-[var(--border-main)]">
               <div className="p-2 bg-success-100 dark:bg-success-900/30 rounded-lg">
                 <MapPin className="h-5 w-5 text-success-600 dark:text-success-400"/>
               </div>
-              <h2 className="text-xl font-semibold text-[var(--text-primary)]">Journey Details</h2>
+              <h2 id="journey-details-heading" className="text-xl font-semibold text-[var(--text-primary)]">Journey Details</h2>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -415,15 +415,15 @@ export default function NewTravelRequestPage() {
                 </label>
               )}
             </div>
-          </div>
+          </section>
 
           {/* Transport Details */}
-          <div className="p-6 space-y-6">
+          <section aria-labelledby="transport-details-heading" className="p-6 space-y-6">
             <div className="flex items-center gap-4 pb-4 border-b border-[var(--border-main)]">
               <div className="p-2 bg-accent-100 dark:bg-accent-900/30 rounded-lg">
                 <Plane className="h-5 w-5 text-accent-600 dark:text-accent-400"/>
               </div>
-              <h2 className="text-xl font-semibold text-[var(--text-primary)]">Transport Details</h2>
+              <h2 id="transport-details-heading" className="text-xl font-semibold text-[var(--text-primary)]">Transport Details</h2>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

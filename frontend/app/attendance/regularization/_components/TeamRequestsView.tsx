@@ -13,6 +13,7 @@ import {logger} from '@/lib/utils/logger';
 import {RegularizationRequest} from './types';
 import {RequestTimeline} from './RequestTimeline';
 import {formatRelativeTime} from './utils';
+import {formatDateShort} from '@/lib/utils/format/date';
 
 interface TeamRequestsViewProps {
   onReject: (id: string) => void;
@@ -111,10 +112,7 @@ export function TeamRequestsView({onReject}: TeamRequestsViewProps) {
                       {request.employeeId}
                     </td>
                     <td className="px-4 md:px-6 py-4 text-sm font-medium text-[var(--text-primary)]">
-                      {new Date(request.attendanceDate).toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: 'numeric',
-                      })}
+                      {formatDateShort(request.attendanceDate)}
                     </td>
                     <td className="hidden md:table-cell px-6 py-4 text-body-secondary">
                       <div className="max-w-xs truncate" title={request.reason}>

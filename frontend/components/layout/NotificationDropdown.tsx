@@ -458,10 +458,11 @@ export function NotificationDropdown({isOpen, onClose}: NotificationDropdownProp
                   <p>All caught up!</p>
                 </div>
               ) : (
-                <div className="divide-y divide-surface-100 dark:divide-surface-800">
+                <div className="divide-y divide-surface-100 dark:divide-surface-800" role="list" aria-label="Google notifications">
                   {googleNotifications.map((notification) => (
                     <div
                       key={notification.id}
+                      role="listitem"
                       onClick={() => handleGoogleNotificationClick(notification)}
                       className={cn(
                         "flex gap-4 p-4 hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors cursor-pointer",

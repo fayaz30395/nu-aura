@@ -241,16 +241,14 @@ export default function DepartmentsPage() {
             <span className="text-sm">Failed to load departments. Please try again.</span>
           </div>
         ) : filtered.length === 0 ? (
-          <div className="skeuo-card p-12 flex flex-col items-center gap-2 text-center">
-            <Building2 className="h-10 w-10 text-[var(--text-muted)]"/>
-            <p className="text-sm font-medium text-[var(--text-secondary)]">
-              {search ? 'No departments match your search' : 'No departments yet'}
-            </p>
-            {!search && (
-              <Button variant="ghost" onClick={openCreate} className="mt-2">
-                Create the first department
-              </Button>
-            )}
+          <div className="skeuo-card">
+            <EmptyState
+              icon={<Building2 className="w-full h-full"/>}
+              title={search ? 'No departments match your search' : 'No departments yet'}
+              description={search ? 'Try a different search term.' : 'Create your first department to organize teams.'}
+              actionLabel={!search && canManage ? 'Create department' : undefined}
+              onAction={!search && canManage ? openCreate : undefined}
+            />
           </div>
         ) : (
           <div className="skeuo-card overflow-hidden">

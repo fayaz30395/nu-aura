@@ -7,6 +7,7 @@ import com.nulogic.application.payroll.strategy.StatutoryCalculator.StatutoryCal
 import com.nulogic.application.payroll.strategy.StatutoryCalculatorFactory;
 import com.nulogic.application.payroll.strategy.StatutoryResult;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.audit.AuditLog.AuditAction;
 import com.nulogic.domain.payroll.Payslip;
 import com.nulogic.infrastructure.payroll.repository.PayslipRepository;
@@ -31,6 +32,7 @@ public class PayslipService {
 
     private final PayslipRepository payslipRepository;
     private final AuditLogService auditLogService;
+    private final TenantTimeService tenantTimeService;
     /**
      * S10-B: routes per-tenant to the correct country-specific calculator. For IN tenants
      * this resolves to {@code IndianStatutoryCalculator} which delegates to the legacy

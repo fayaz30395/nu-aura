@@ -385,6 +385,7 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
                       <Button
                         type="submit"
                         disabled={isPending || isSubmitting}
+                        aria-busy={isPending || isSubmitting}
                         onClick={handleSubmit(onSubmit)}
                         className="w-full bg-accent-500 hover:bg-accent-700 text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                       >

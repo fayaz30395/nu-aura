@@ -162,7 +162,7 @@ public class LWFService {
                         "Active LWF configuration not found for state: " + stateCode));
 
         config.setIsActive(false);
-        config.setEffectiveTo(LocalDate.now());
+        config.setEffectiveTo(tenantTimeService.today(tenantId));
         configRepository.save(config);
         log.info("Deactivated LWF config for state {} in tenant {}", stateCode, tenantId);
     }

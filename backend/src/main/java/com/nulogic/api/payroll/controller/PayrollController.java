@@ -7,6 +7,7 @@ import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.RequiresPermission;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.payroll.PayrollComponent;
 import com.nulogic.domain.payroll.PayrollComponent.ComponentType;
 import com.nulogic.domain.payroll.PayrollRun;
@@ -43,6 +44,7 @@ public class PayrollController {
     private final SalaryStructureService salaryStructureService;
     private final EmployeeService employeeService;
     private final EventPublisher eventPublisher;
+    private final TenantTimeService tenantTimeService;
 
     // ===== Payroll Run Endpoints =====
 
@@ -447,7 +449,7 @@ public class PayrollController {
             @RequestParam(required = false) LocalDate date) {
         String permission = determineViewPermission();
         validateEmployeeAccess(employeeId, permission);
-        LocalDate effectiveDate = date != null ? date : LocalDate.now();
+        LocalDate effectiveDate = date != null ? date : tenantTimeService.today(TenantContext.requireCurrentTenant());
         SalaryStructure salaryStructure = salaryStructureService.getActiveSalaryStructure(employeeId, effectiveDate);
         return ResponseEntity.ok(salaryStructure);
     }

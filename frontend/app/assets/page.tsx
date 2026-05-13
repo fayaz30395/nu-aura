@@ -123,11 +123,7 @@ const getCategoryColor = (category: AssetCategory) => {
 
 const formatDate = (date: string | undefined) => {
   if (!date) return '-';
-  return new Date(date).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  });
+  return formatDateCanonical(date);
 };
 
 

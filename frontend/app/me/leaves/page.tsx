@@ -523,10 +523,11 @@ export default function MyLeavesPage() {
                 </button>
               </div>
             ) : (
-              <div className="space-y-4">
+              <div className="space-y-4" role="list" aria-label="Leave requests">
                 {filteredLeaveRequests.map((request) => (
                   <div
                     key={request.id}
+                    role="listitem"
                     className="card-aura p-6 rounded-lg hover:shadow-[var(--shadow-elevated)] transition-shadow"
                   >
                     <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">

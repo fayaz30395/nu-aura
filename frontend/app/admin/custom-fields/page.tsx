@@ -346,7 +346,7 @@ export default function CustomFieldsPage() {
                     <div className="text-sm font-medium text-[var(--text-primary)]">
                       {definition.fieldName}
                       {definition.isRequired && (
-                        <span className="ml-1 text-danger-500">*</span>
+                        <span aria-hidden="true" className="ml-1 text-danger-500">*</span>
                       )}
                     </div>
                     <div className="text-caption">

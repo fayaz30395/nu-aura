@@ -301,9 +301,9 @@ export default function MyDocumentsPage() {
             icon={<FileText className="h-12 w-12"/>}
           />
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-4" role="list" aria-label="Document requests">
             {requests.map((request) => (
-              <Card key={request.id} hover className="card-aura">
+              <Card key={request.id} hover className="card-aura" role="listitem">
                 <CardContent>
                   <div className="flex flex-col sm:flex-row sm:items-start gap-4">
                     {/* Icon and Status */}
