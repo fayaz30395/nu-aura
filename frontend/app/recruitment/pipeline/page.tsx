@@ -673,8 +673,9 @@ export default function ApplicantPipelinePage() {
 
   // Navigate to the dedicated offer-letter route instead of opening a modal.
   // Full form logic lives on /recruitment/candidates/[id]/offer.
+  // The applicantId query param tells the page which application row to update.
   const openOfferModal = (applicant: Applicant) => {
-    router.push(`/recruitment/candidates/${applicant.candidateId}/offer`);
+    router.push(`/recruitment/candidates/${applicant.candidateId}/offer?applicantId=${applicant.id}`);
   };
 
   // ── Derived data ──────────────────────────────────────────────────────────
