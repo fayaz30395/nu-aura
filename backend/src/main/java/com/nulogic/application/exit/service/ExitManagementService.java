@@ -765,14 +765,15 @@ public class ExitManagementService {
     }
 
     public AssetRecoveryResponse verifyAssetReturn(UUID id) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         UUID currentUserId = SecurityContext.getCurrentUserId();
 
         AssetRecovery asset = assetRecoveryRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException(ASSET_RECOVERY_NOT_FOUND));
 
         asset.setVerifiedBy(currentUserId);
-        asset.setVerificationDate(LocalDate.now());
+        // S12-B: tenant-local "today" for verification date — resolved via TenantTimeService.
+        asset.setVerificationDate(tenantTimeService.today(tenantId));
 
         return mapToAssetRecoveryResponse(assetRecoveryRepository.save(asset));
     }

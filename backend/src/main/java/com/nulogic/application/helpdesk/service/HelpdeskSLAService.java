@@ -100,11 +100,12 @@ public class HelpdeskSLAService {
 
     @Transactional
     public TicketEscalation createEscalation(TicketEscalation escalation) {
+        UUID tenantId = TenantContext.requireCurrentTenant();
         if (escalation.getId() == null) {
             escalation.setId(UUID.randomUUID());
         }
         if (escalation.getCreatedAt() == null) {
-            escalation.setCreatedAt(LocalDateTime.now());
+            escalation.setCreatedAt(tenantTimeService.now(tenantId));
         }
 
         log.info("Creating escalation for ticket: {} to user: {}",

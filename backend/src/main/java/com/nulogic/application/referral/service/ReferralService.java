@@ -135,7 +135,7 @@ public class ReferralService {
 
     @Transactional
     public ReferralResponse updateStatus(UUID referralId, ReferralStatus newStatus, String notes) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         EmployeeReferral referral = referralRepository.findByIdAndTenantId(referralId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Referral not found"));
 
@@ -146,20 +146,21 @@ public class ReferralService {
             referral.setProcessingNotes(notes);
         }
 
-        // Update stage-specific dates
+        // Update stage-specific dates (tenant-local "today" via TenantTimeService)
+        LocalDate today = tenantTimeService.today(tenantId);
         switch (newStatus) {
-            case SCREENING -> referral.setScreeningDate(LocalDate.now());
-            case INTERVIEW_SCHEDULED, INTERVIEW_COMPLETED -> referral.setInterviewDate(LocalDate.now());
-            case OFFER_MADE, OFFER_ACCEPTED -> referral.setOfferDate(LocalDate.now());
+            case SCREENING -> referral.setScreeningDate(today);
+            case INTERVIEW_SCHEDULED, INTERVIEW_COMPLETED -> referral.setInterviewDate(today);
+            case OFFER_MADE, OFFER_ACCEPTED -> referral.setOfferDate(today);
             case JOINED -> {
-                referral.setJoiningDate(LocalDate.now());
+                referral.setJoiningDate(today);
                 referral.setBonusStatus(BonusStatus.PENDING_ELIGIBILITY);
                 // Calculate eligibility date based on retention period
                 ReferralPolicy policy = findApplicablePolicy(tenantId, referral.getDepartmentId());
                 if (policy != null && policy.getRetentionPeriodMonths() != null) {
-                    referral.setBonusEligibleDate(LocalDate.now().plusMonths(policy.getRetentionPeriodMonths()));
+                    referral.setBonusEligibleDate(today.plusMonths(policy.getRetentionPeriodMonths()));
                 } else {
-                    referral.setBonusEligibleDate(LocalDate.now().plusMonths(6));
+                    referral.setBonusEligibleDate(today.plusMonths(6));
                 }
             }
             default -> {
@@ -171,7 +172,7 @@ public class ReferralService {
 
     @Transactional
     public ReferralResponse rejectReferral(UUID referralId, String reason, String stage) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         EmployeeReferral referral = referralRepository.findByIdAndTenantId(referralId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Referral not found"));
 

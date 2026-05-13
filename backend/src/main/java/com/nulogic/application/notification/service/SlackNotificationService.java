@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nulogic.common.exception.BusinessException;
 import com.nulogic.common.resilience.CircuitBreaker;
 import com.nulogic.common.resilience.CircuitBreakerRegistry;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.common.util.UrlAllowlistValidator;
 import lombok.Builder;
 import lombok.Data;
@@ -25,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Service for sending notifications to Slack channels and users.

@@ -57,7 +57,7 @@ export function OrbitSpinner({size = 'md', className}: Omit<PremiumSpinnerProps,
         transition={{duration: 2, repeat: Infinity, ease: 'linear'}}
       >
         <div
-          className="absolute top-0 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-gradient-to-br from-accent-500 to-accent-700 shadow-[var(--shadow-dropdown)] shadow-accent-500/50"/>
+          className="absolute top-0 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-accent-50 dark:bg-accent-900/30 shadow-[var(--shadow-dropdown)] shadow-accent-500/50"/>
       </motion.div>
 
       {/* Orbit ring 3 - inner */}
@@ -159,7 +159,7 @@ export function PulseDotsSpinner({size = 'md', className}: Omit<PremiumSpinnerPr
       {[0, 1, 2].map((i) => (
         <motion.div
           key={i}
-          className="rounded-full bg-gradient-to-br from-accent-500 to-accent-700"
+          className="rounded-full bg-accent-50 dark:bg-accent-900/30"
           style={{width: dotSize, height: dotSize}}
           animate={{
             scale: [1, 1.5, 1],

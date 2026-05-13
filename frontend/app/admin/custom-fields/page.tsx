@@ -566,10 +566,12 @@ export default function CustomFieldsPage() {
                       id="custom-field-display-order"
                       type="number"
                       {...register('displayOrder')}
+                      aria-invalid={errors.displayOrder ? 'true' : 'false'}
+                      aria-describedby={errors.displayOrder ? 'custom-field-display-order-error' : undefined}
                       className="input-aura"
                     />
                     {errors.displayOrder &&
-                      <p className="text-danger-500 text-sm mt-1">{errors.displayOrder.message}</p>}
+                      <p id="custom-field-display-order-error" className="text-danger-500 text-sm mt-1">{errors.displayOrder.message}</p>}
                   </div>
                 </div>
 
@@ -581,11 +583,13 @@ export default function CustomFieldsPage() {
                     <textarea
                       id="custom-field-options"
                       {...register('optionsText')}
+                      aria-invalid={errors.optionsText ? 'true' : 'false'}
+                      aria-describedby={errors.optionsText ? 'custom-field-options-error' : undefined}
                       className="input-aura"
                       rows={4}
                       placeholder="Option 1&#10;Option 2&#10;Option 3"
                     />
-                    {errors.optionsText && <p className="text-danger-500 text-sm mt-1">{errors.optionsText.message}</p>}
+                    {errors.optionsText && <p id="custom-field-options-error" className="text-danger-500 text-sm mt-1">{errors.optionsText.message}</p>}
                   </div>
                 )}
 
@@ -598,10 +602,12 @@ export default function CustomFieldsPage() {
                       id="custom-field-placeholder"
                       type="text"
                       {...register('placeholder')}
+                      aria-invalid={errors.placeholder ? 'true' : 'false'}
+                      aria-describedby={errors.placeholder ? 'custom-field-placeholder-error' : undefined}
                       className="input-aura"
                       placeholder="Placeholder text..."
                     />
-                    {errors.placeholder && <p className="text-danger-500 text-sm mt-1">{errors.placeholder.message}</p>}
+                    {errors.placeholder && <p id="custom-field-placeholder-error" className="text-danger-500 text-sm mt-1">{errors.placeholder.message}</p>}
                   </div>
                   <div>
                     <label htmlFor="custom-field-default-value" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">

@@ -75,6 +75,9 @@ public class SystemAdminService {
     // and deliver it out-of-band via email so it never appears in the API response.
     private final PasswordEncoder passwordEncoder;
     private final EmailNotificationService emailNotificationService;
+    // Wave-10 follow-up: tenant-timezone update flow must invalidate the per-tenant ZoneId
+    // cache so a new zone takes effect within the JVM without waiting for the 1-hour TTL.
+    private final TenantTimeService tenantTimeService;
 
     /**
      * Get comprehensive system overview across all tenants

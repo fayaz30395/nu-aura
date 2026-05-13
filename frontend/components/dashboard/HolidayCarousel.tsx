@@ -107,12 +107,7 @@ export function HolidayCarousel({
   }
 
   const currentHoliday = displayedHolidays[currentIndex];
-  const formattedDate = new Date(currentHoliday.date + 'T00:00:00').toLocaleDateString('en-IN', {
-    weekday: 'short',
-    day: '2-digit',
-    month: 'long',
-    year: 'numeric',
-  });
+  const formattedDate = formatDate(currentHoliday.date + 'T00:00:00');
 
   const typeLabel = currentHoliday.type.replace(/_/g, ' ');
 

@@ -7,6 +7,8 @@ import com.nulogic.domain.performance.Feedback360Request.RequestStatus;
 import com.nulogic.domain.performance.Feedback360Request.ReviewerType;
 import com.nulogic.domain.performance.Feedback360Response;
 import com.nulogic.domain.performance.Feedback360Summary;
+import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.infrastructure.performance.repository.Feedback360CycleRepository;
 import com.nulogic.infrastructure.performance.repository.Feedback360RequestRepository;
 import com.nulogic.infrastructure.performance.repository.Feedback360ResponseRepository;
@@ -32,6 +34,18 @@ public class Feedback360Service {
     private final Feedback360RequestRepository requestRepository;
     private final Feedback360ResponseRepository responseRepository;
     private final Feedback360SummaryRepository summaryRepository;
+    private final TenantTimeService tenantTimeService;
+
+    /**
+     * Resolve "now" in the tenant's local zone. Prefers the entity's tenantId when
+     * available (consistent with the entity's actual tenant); falls back to the
+     * security-context tenant otherwise. Centralises every {@code LocalDateTime.now()}
+     * for the 360 feedback module so timestamps reflect tenant-local time, not server-local.
+     */
+    private LocalDateTime tenantNow(UUID tenantId) {
+        UUID resolved = (tenantId != null) ? tenantId : TenantContext.requireCurrentTenant();
+        return tenantTimeService.now(resolved);
+    }
 
     // ================== Cycles ==================
 
@@ -42,7 +56,7 @@ public class Feedback360Service {
             cycle.setStatus(CycleStatus.DRAFT);
         }
         if (cycle.getCreatedAt() == null) {
-            cycle.setCreatedAt(LocalDateTime.now());
+            cycle.setCreatedAt(tenantNow(cycle.getTenantId()));
         }
 
         log.info("Creating 360 feedback cycle: {}", cycle.getName());
@@ -51,7 +65,7 @@ public class Feedback360Service {
 
     @Transactional
     public Feedback360Cycle updateCycle(Feedback360Cycle cycle) {
-        cycle.setUpdatedAt(LocalDateTime.now());
+        cycle.setUpdatedAt(tenantNow(cycle.getTenantId()));
         return cycleRepository.save(cycle);
     }
 

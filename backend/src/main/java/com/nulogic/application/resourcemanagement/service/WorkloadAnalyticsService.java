@@ -2,6 +2,8 @@ package com.nulogic.application.resourcemanagement.service;
 
 import com.nulogic.api.resourcemanagement.dto.AvailabilityDTOs;
 import com.nulogic.common.security.SecurityContext;
+import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.project.Project;
 import com.nulogic.domain.project.ProjectEmployee;
@@ -10,6 +12,7 @@ import com.nulogic.infrastructure.employee.repository.DepartmentRepository;
 import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import com.nulogic.infrastructure.project.repository.HrmsProjectRepository;
 import com.nulogic.infrastructure.project.repository.ProjectEmployeeRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;

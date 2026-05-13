@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nulogic.api.notification.dto.*;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.notification.*;
 import com.nulogic.infrastructure.notification.repository.MultiChannelNotificationRepository;
 import com.nulogic.infrastructure.notification.repository.NotificationChannelConfigRepository;
@@ -34,6 +35,7 @@ public class MultiChannelNotificationService {
     private final ObjectMapper objectMapper;
     private final SmsNotificationService smsNotificationService;
     private final EmailNotificationService emailNotificationService;
+    private final TenantTimeService tenantTimeService;
 
     // ==================== TEMPLATE MANAGEMENT ====================
 

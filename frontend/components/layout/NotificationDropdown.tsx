@@ -40,7 +40,7 @@ import {getNotificationRoute} from '@/lib/utils/notificationRoutes';
 import {sanitizeEmailHtml} from '@/lib/utils/sanitize';
 import {createLogger} from '@/lib/utils/logger';
 import {safeWindowOpen} from '@/lib/utils/url';
-import {formatDateShort} from '@/lib/utils/format/date';
+import {formatDate, formatDateShort} from '@/lib/utils/format/date';
 
 const logger = createLogger('NotificationDropdown');
 
@@ -653,11 +653,7 @@ export function NotificationDropdown({isOpen, onClose}: NotificationDropdownProp
                         hour: 'numeric',
                         minute: '2-digit'
                       })
-                      : new Date(selectedEvent.calendarEvent.start.date!).toLocaleDateString('en-US', {
-                        weekday: 'long',
-                        month: 'long',
-                        day: 'numeric'
-                      })}
+                      : formatDate(selectedEvent.calendarEvent.start.date!)}
                   </p>
                   {selectedEvent.calendarEvent.end.dateTime && (
                     <p className="text-xs text-surface-500 mt-0.5">

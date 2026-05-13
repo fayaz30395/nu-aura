@@ -263,12 +263,12 @@ public class ComplianceService {
     }
 
     public ComplianceChecklist completeChecklist(UUID checklistId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         ComplianceChecklist checklist = checklistRepository.findByIdAndTenantId(checklistId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Checklist not found"));
 
         checklist.setStatus(ComplianceChecklist.ChecklistStatus.COMPLETED);
-        checklist.setLastCompletedDate(LocalDate.now());
+        checklist.setLastCompletedDate(tenantTimeService.today(tenantId));
         checklist.setCompletedItems(checklist.getTotalItems());
 
         // Calculate next due date based on frequency

@@ -379,8 +379,8 @@ public class ProbationService {
 
     @Transactional(readOnly = true)
     public ProbationStatisticsResponse getStatistics() {
-        UUID tenantId = TenantContext.getCurrentTenant();
-        LocalDate today = LocalDate.now();
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        LocalDate today = tenantTimeService.today(tenantId);
         LocalDate monthStart = today.withDayOfMonth(1);
         LocalDate monthEnd = today.withDayOfMonth(today.lengthOfMonth());
 
