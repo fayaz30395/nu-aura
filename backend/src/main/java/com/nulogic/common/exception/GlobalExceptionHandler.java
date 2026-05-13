@@ -449,14 +449,14 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Map {@link com.nulogic.application.security.service.VirusScanService.VirusInfectedFileException}
+     * Map {@link com.nulogic.infrastructure.security.VirusScanService.VirusInfectedFileException}
      * to HTTP 422 Unprocessable Entity. The signature is intentionally NOT echoed to the client —
      * the SECURITY WARN log line in {@code FileStorageService#scanForMalware} carries tenant,
      * user, filename, and signature for audit; the API response stays generic.
      */
-    @ExceptionHandler(com.nulogic.application.security.service.VirusScanService.VirusInfectedFileException.class)
+    @ExceptionHandler(com.nulogic.infrastructure.security.VirusScanService.VirusInfectedFileException.class)
     public ResponseEntity<ErrorResponse> handleVirusInfectedFile(
-            com.nulogic.application.security.service.VirusScanService.VirusInfectedFileException ex,
+            com.nulogic.infrastructure.security.VirusScanService.VirusInfectedFileException ex,
             WebRequest request) {
 
         String path = extractPath(request);

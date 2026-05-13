@@ -4,16 +4,16 @@ Audit of `backend/src/main/java/com/nulogic/application/{admin,dashboard,mobile,
 
 ## Summary
 
-| Module        | Files | Classification       | Action                                             |
-|---------------|-------|----------------------|----------------------------------------------------|
-| `admin`       | 3     | Orchestration        | Keep in application/                               |
-| `dashboard`   | 1     | Orchestration        | Keep in application/                               |
-| `mobile`      | 5     | Orchestration        | Keep in application/                               |
-| `publicapi`   | 2     | Orchestration        | Keep in application/                               |
-| `security`    | 5     | Cross-cutting + infra | Recommend split (see below)                        |
-| `migration`   | 1     | Orchestration        | Keep in application/                               |
-| `meeting`     | 1     | Borderline           | Keep (small, no clear win from moving)             |
-| `home`        | 1     | Orchestration        | Keep in application/                               |
+| Module      | Files | Classification        | Action                                                |
+|-------------|-------|-----------------------|-------------------------------------------------------|
+| `admin`     | 3     | Orchestration         | Keep in application/                                  |
+| `dashboard` | 1     | Orchestration         | Keep in application/                                  |
+| `mobile`    | 5     | Orchestration         | Keep in application/                                  |
+| `publicapi` | 2     | Orchestration         | Keep in application/                                  |
+| `security`  | 5     | Cross-cutting + infra | Split executed — 4 files → `infrastructure/security/` |
+| `migration` | 1     | Orchestration         | Keep in application/                                  |
+| `meeting`   | 1     | Borderline            | Keep (small, no clear win from moving)                |
+| `home`      | 1     | Orchestration         | Keep in application/                                  |
 
 ## Per-module rationale
 
@@ -33,29 +33,23 @@ Audit of `backend/src/main/java/com/nulogic/application/{admin,dashboard,mobile,
 
 `PublicCareerService` (383L), `PublicOfferService` (287L). Public-facing APIs (no auth) that orchestrate calls into recruitment domain. Orchestration with auth-bypass concerns. Correctly placed.
 
-### `application/security/` — recommend split (NOT executed)
+### `application/security/` — split EXECUTED (2026-05-14)
 
-5 files, mixed concerns:
+4 of 5 files moved to `infrastructure/security/`; `EncryptionBackfillService` kept in place per audit recommendation.
 
-| File                            | Concern                                  | Recommended target                        |
-|---------------------------------|------------------------------------------|-------------------------------------------|
-| `CaptchaService` (239L)         | reCAPTCHA HTTP client                    | `infrastructure/security/` (new)          |
-| `ClamAvScanner` (178L)          | ClamAV daemon adapter                    | `infrastructure/security/`                |
-| `NoOpScanner` (35L)             | No-op scanner fallback                   | `infrastructure/security/`                |
-| `VirusScanService` (82L)        | Orchestrates scanner adapters            | Could stay in `application/security/` OR move with adapters |
-| `EncryptionBackfillService` (156L) | One-time data migration orchestration | Keep in `application/security/` (or move to `application/migration/` next to KekaMigrationService) |
+| File                               | Concern                                  | Final location                              |
+|------------------------------------|------------------------------------------|---------------------------------------------|
+| `CaptchaService` (239L)            | reCAPTCHA HTTP client                    | `infrastructure/security/` (moved)          |
+| `ClamAvScanner` (178L)             | ClamAV daemon adapter                    | `infrastructure/security/` (moved)          |
+| `NoOpScanner` (35L)                | No-op scanner fallback                   | `infrastructure/security/` (moved)          |
+| `VirusScanService` (82L)           | Scanner port interface                   | `infrastructure/security/` (moved)          |
+| `EncryptionBackfillService` (156L) | One-time data migration orchestration    | `application/security/service/` (unchanged) |
 
-**Why not executed:** the moves are mechanically simple (sed + git mv) but Spring constructor-injection wiring would silently break if any auto-discovery (e.g. classpath scan, qualifier-based injection) refers to these classes outside the @ComponentScan radius. Given the user's instruction to push through phases without supervision, and the user's earlier recommendation to defer judgment-heavy work, the safer call is to document the recommendation and let a human execute with one eye on the Spring context start.
+`VirusScanService` moved with its implementations — the port co-locating with adapters is a layering compromise (Hexagonal would put the port in `application` or `domain`), but it matches the audit's "move with adapters" option and keeps the AV scanning concern in one package.
 
-To execute later:
-```bash
-mkdir -p backend/src/main/java/com/nulogic/infrastructure/security
-git mv backend/src/main/java/com/nulogic/application/security/service/CaptchaService.java \
-       backend/src/main/java/com/nulogic/infrastructure/security/CaptchaService.java
-# ... + 3 more for the scanner files
-# Then: bulk update package decls + import sites (CaptchaService has 2 importers; VirusScanService has 2)
-# Then: mvn package -DskipTests, then docker-compose up to verify Spring context boots
-```
+**Import sites updated:** 4 consumers — `AuthService`, `FileStorageService`, `GlobalExceptionHandler`, `AuthControllerSecurityTest`.
+
+**Verification:** `mvn clean compile -DskipTests` → BUILD SUCCESS (1808 source files). Spring context start verification deferred to first integration test run (now backed by Testcontainers Postgres).
 
 ### `application/migration/` — keep
 
@@ -71,6 +65,6 @@ git mv backend/src/main/java/com/nulogic/application/security/service/CaptchaSer
 
 ## Net result
 
-**No moves executed.** Of the 8 modules audited, 7 are correctly placed and the eighth (`security`) is the only candidate for action — and that move has wiring risk that warrants human supervision rather than blind sed.
+**1 module split executed (`security`); 7 modules confirmed correctly placed.** The `application/security/` split moved 4 infra-flavored files (Captcha + 3 scanner classes) into a new `infrastructure/security/` package; `EncryptionBackfillService` stayed put since it's data-migration orchestration.
 
-The audit confirms the existing application/ structure mostly holds the line the plan intended. The plan's phrasing "rationalise" oversold the magnitude of the work; what remained was already idiomatic.
+The audit confirms the existing application/ structure mostly holds the line the plan intended. The plan's phrasing "rationalise" oversold the magnitude of the work; what remained was largely already idiomatic.

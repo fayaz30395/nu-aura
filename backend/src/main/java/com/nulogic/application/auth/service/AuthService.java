@@ -9,7 +9,7 @@ import com.google.api.client.json.gson.GsonFactory;
 import com.nulogic.api.auth.dto.*;
 import com.nulogic.application.notification.service.EmailNotificationService;
 import com.nulogic.application.platform.service.HrmsPermissionInitializer;
-import com.nulogic.application.security.service.CaptchaService;
+import com.nulogic.infrastructure.security.CaptchaService;
 import com.nulogic.application.user.service.ImplicitRoleService;
 import com.nulogic.common.config.PasswordPolicyConfig;
 import com.nulogic.common.exception.AuthenticationException;

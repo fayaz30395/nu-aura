@@ -1,6 +1,6 @@
 package com.nulogic.application.document.service;
 
-import com.nulogic.application.security.service.VirusScanService;
+import com.nulogic.infrastructure.security.VirusScanService;
 import com.nulogic.common.exception.BusinessException;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;

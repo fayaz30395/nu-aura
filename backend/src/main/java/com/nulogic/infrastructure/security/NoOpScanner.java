@@ -1,4 +1,4 @@
-package com.nulogic.application.security.service;
+package com.nulogic.infrastructure.security;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;

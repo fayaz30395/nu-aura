@@ -1,4 +1,4 @@
-package com.nulogic.application.security.service;
+package com.nulogic.infrastructure.security;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

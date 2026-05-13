@@ -1,4 +1,4 @@
-package com.nulogic.application.security.service;
+package com.nulogic.infrastructure.security;
 
 /**
  * Contract for AV scanning of uploaded files prior to persistence.

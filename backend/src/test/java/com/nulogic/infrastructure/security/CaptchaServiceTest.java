@@ -1,4 +1,4 @@
-package com.nulogic.application.security.service;
+package com.nulogic.infrastructure.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;

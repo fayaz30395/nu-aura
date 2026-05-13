@@ -6,7 +6,7 @@ import com.nulogic.api.auth.dto.AuthResponse;
 import com.nulogic.api.auth.dto.LoginRequest;
 import com.nulogic.application.auth.service.AuthService;
 import com.nulogic.application.auth.service.MfaService;
-import com.nulogic.application.security.service.CaptchaService;
+import com.nulogic.infrastructure.security.CaptchaService;
 import com.nulogic.common.config.CookieConfig;
 import com.nulogic.common.config.TestMeterRegistryConfig;
 import com.nulogic.common.exception.AuthenticationException;
