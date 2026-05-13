@@ -6,9 +6,11 @@ import {ClipboardCheck, Eye} from 'lucide-react';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
 import {SkeletonTable} from '@/components/ui/Skeleton';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {StatusBadge} from '@/components/ui/StatusBadge';
+import {LEAVE_STATUS} from '@/lib/status/vocabulary';
 import {RegularizationRequest} from './types';
 import {RequestTimeline} from './RequestTimeline';
-import {formatRelativeTime, formatTime, getStatusBadgeClass} from './utils';
+import {formatRelativeTime, formatTime} from './utils';
 
 interface RequestsTableProps {
   requests: RegularizationRequest[];
@@ -103,7 +105,7 @@ export function RequestsTable({requests, loading, statusFilter, onNewRequest}: R
                       </div>
                     </td>
                     <td className="px-4 md:px-6 py-4">
-                      <span className={getStatusBadgeClass(request.status)}>{request.status}</span>
+                      <StatusBadge status={request.status} domain={LEAVE_STATUS}/>
                     </td>
                     <td className="hidden md:table-cell px-6 py-4 text-body-secondary">
                       {formatRelativeTime(request.requestedOn)}

@@ -9,6 +9,7 @@ import {AppLayout} from '@/components/layout';
 import {Button} from '@/components/ui/Button';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {EmptyStatePresets} from '@/components/ui/empty-state-presets';
 import {useBlogPosts, useFluenceTemplates, useWikiPages,} from '@/lib/hooks/queries/useFluence';
 import {ContentGrid, type ContentItem} from '@/components/fluence/ContentGrid';
 import {card, iconSize, layout, motion as dsMotion, typography} from '@/lib/theme/design-system';
@@ -296,8 +297,7 @@ function FluenceDashboardPageContent() {
               <CardContent className="space-y-4 pt-4">
                 {templates.length === 0 ? (
                   <EmptyState
-                    icon={<FileText className="h-8 w-8"/>}
-                    title="No templates yet"
+                    {...EmptyStatePresets.noTemplates}
                     description="Templates speed up creating consistent wiki pages and blog posts."
                   />
                 ) : (

@@ -32,6 +32,7 @@ import {
 } from 'lucide-react';
 import {AppLayout} from '@/components/layout/AppLayout';
 import {Button, Card, CardContent, EmptyState, Modal, ModalBody, ModalFooter, ModalHeader,} from '@/components/ui';
+import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {Asset, AssetCategory, AssetStatus, CreateAssetRequest, UpdateAssetRequest} from '@/lib/types/hrms/asset';
@@ -1024,37 +1025,22 @@ export default function AssetManagementPage() {
           </ModalFooter>
         </Modal>
 
-        {/* Delete Confirmation Modal */}
-        <Modal isOpen={showDeleteModal} onClose={() => setShowDeleteModal(false)} size="sm">
-          <ModalHeader>
-            <h2 className="text-xl font-semibold text-[var(--text-primary)]">
-              Delete Asset
-            </h2>
-          </ModalHeader>
-          <ModalBody>
-            <p className="text-[var(--text-secondary)]">
-              Are you sure you want to delete <strong>{selectedAsset?.assetName}</strong>? This action cannot be undone.
-            </p>
-          </ModalBody>
-          <ModalFooter>
-            <Button variant="outline" onClick={() => setShowDeleteModal(false)}>
-              Cancel
-            </Button>
-            <Button variant="danger" onClick={handleDelete} disabled={deleting}>
-              {deleting ? (
-                <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin"/>
-                  Deleting...
-                </>
-              ) : (
-                <>
-                  <Trash2 className="h-4 w-4 mr-2"/>
-                  Delete
-                </>
-              )}
-            </Button>
-          </ModalFooter>
-        </Modal>
+        {/* Delete Confirmation */}
+        <ConfirmDialog
+          isOpen={showDeleteModal}
+          onClose={() => setShowDeleteModal(false)}
+          onConfirm={handleDelete}
+          title="Delete Asset"
+          message={
+            selectedAsset
+              ? `Are you sure you want to delete "${selectedAsset.assetName}"? This action cannot be undone.`
+              : 'This action cannot be undone.'
+          }
+          confirmText="Delete"
+          cancelText="Cancel"
+          type="danger"
+          loading={deleting}
+        />
 
         {/* Assign Asset Modal */}
         <Modal isOpen={showAssignModal} onClose={() => setShowAssignModal(false)} size="sm">

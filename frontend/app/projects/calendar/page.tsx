@@ -26,6 +26,8 @@ import {toPriority} from '@/lib/utils/type-guards';
 import {useProjects} from '@/lib/hooks/queries/useProjects';
 import {useQuery} from '@tanstack/react-query';
 import {createLogger} from '@/lib/utils/logger';
+import {formatDate, formatDateShort} from '@/lib/utils/format/date';
+import {format as formatFns} from 'date-fns';
 
 const log = createLogger('ProjectCalendarPage');
 
@@ -266,7 +268,7 @@ export default function ProjectCalendarPage() {
 
       switch (zoomLevel) {
         case 'day':
-          label = current.toLocaleDateString('en-US', {month: 'short', day: 'numeric'});
+          label = formatDateShort(current);
           columns.push({date: new Date(current), label, isToday});
           current.setDate(current.getDate() + 1);
           break;
@@ -276,7 +278,7 @@ export default function ProjectCalendarPage() {
           current.setDate(current.getDate() + 7);
           break;
         case 'month':
-          label = current.toLocaleDateString('en-US', {month: 'short', year: '2-digit'});
+          label = formatFns(current, 'MMM yy');
           columns.push({date: new Date(current), label, isToday: false});
           current.setMonth(current.getMonth() + 1);
           break;
@@ -564,10 +566,7 @@ export default function ProjectCalendarPage() {
                     onClick={() => setCurrentDate(new Date())}
                     className="px-4 py-2 text-sm rounded hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] font-medium"
                   >
-                    {viewMode === 'timeline' ? 'Today' : currentDate.toLocaleDateString('en-US', {
-                      month: 'long',
-                      year: 'numeric'
-                    })}
+                    {viewMode === 'timeline' ? 'Today' : formatFns(currentDate, 'MMMM yyyy')}
                   </button>
                   <button
                     onClick={handleNext}
@@ -654,9 +653,9 @@ export default function ProjectCalendarPage() {
                                     </span>
                                   )}
                                   <span className="text-caption">
-                                    {item.startDate.toLocaleDateString('en-US', {month: 'short', day: 'numeric'})}
+                                    {formatDateShort(item.startDate)}
                                     {' → '}
-                                    {item.endDate.toLocaleDateString('en-US', {month: 'short', day: 'numeric'})}
+                                    {formatDateShort(item.endDate)}
                                   </span>
                                 </div>
                               </div>
@@ -672,7 +671,7 @@ export default function ProjectCalendarPage() {
                                   left: position.left,
                                   backgroundColor: item.color,
                                 }}
-                                title={`${item.name} - ${item.startDate.toLocaleDateString()}`}
+                                title={`${item.name} - ${formatDate(item.startDate)}`}
                                 onClick={() => handleEventClick(item)}
                                 onKeyDown={(e) => {
                                   if (e.key === 'Enter' || e.key === ' ') {

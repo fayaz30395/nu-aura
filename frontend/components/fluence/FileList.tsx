@@ -4,6 +4,7 @@ import React from 'react';
 import {Download, File, FileCode, FileImage, FileSpreadsheet, FileText, Trash2,} from 'lucide-react';
 import {Button} from '@/components/ui/Button';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {EmptyStatePresets} from '@/components/ui/empty-state-presets';
 import {FluenceAttachment} from '@/lib/types/platform/fluence';
 import {fluenceService} from '@/lib/services/platform/fluence.service';
 import {cn} from '@/lib/utils';
@@ -60,8 +61,7 @@ export function FileList({attachments, onDelete, isDeleting, className}: FileLis
     return (
       <div className={className}>
         <EmptyState
-          icon={<File className="h-8 w-8"/>}
-          title="No files uploaded yet"
+          {...EmptyStatePresets.noFiles}
           description="Upload files to share them across wiki pages and blog posts."
         />
       </div>

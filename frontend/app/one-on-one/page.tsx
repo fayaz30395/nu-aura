@@ -29,6 +29,7 @@ import {
 } from 'lucide-react';
 import {AppLayout} from '@/components/layout';
 import {formatDate as canonicalFormatDate} from '@/lib/utils/format/date';
+import {format as formatFns} from 'date-fns';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
@@ -1617,7 +1618,7 @@ export default function OneOnOnePage() {
                     <div
                       className="hidden md:flex flex-col items-center justify-center w-14 h-14 rounded-lg bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-400">
                       <span className="text-xs font-medium uppercase">
-                        {new Date(m.meetingDate + 'T00:00:00').toLocaleDateString('en-US', {month: 'short'})}
+                        {formatFns(new Date(m.meetingDate + 'T00:00:00'), 'MMM')}
                       </span>
                       <span className="text-lg font-bold leading-tight">
                         {new Date(m.meetingDate + 'T00:00:00').getDate()}

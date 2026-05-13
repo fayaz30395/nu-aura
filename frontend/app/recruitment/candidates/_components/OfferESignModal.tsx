@@ -28,6 +28,7 @@ import {
   useSignatureRequest,
 } from '@/lib/hooks/queries/useEsignature';
 import type {Candidate} from '@/lib/types/hire/recruitment';
+import {formatDate, formatDateTime} from '@/lib/utils/format/date';
 import type {ApprovalStatus, SignatureStatus} from '@/lib/types/hire/esignature';
 
 // ==================== Zod Schema ====================
@@ -129,10 +130,10 @@ function StatusTracker({signatureRequestId, onCancel, isCancelling}: StatusTrack
             <span>Received: {req.receivedSignatures} signature(s)</span>
           )}
           {req.expiresAt && (
-            <span>Expires: {new Date(req.expiresAt).toLocaleDateString()}</span>
+            <span>Expires: {formatDate(req.expiresAt)}</span>
           )}
           {req.completedAt && (
-            <span className="text-success-600">Signed: {new Date(req.completedAt).toLocaleDateString()}</span>
+            <span className="text-success-600">Signed: {formatDate(req.completedAt)}</span>
           )}
         </div>
         {req.documentUrl && (
@@ -169,7 +170,7 @@ function StatusTracker({signatureRequestId, onCancel, isCancelling}: StatusTrack
                   </p>
                   {approval.signedAt && (
                     <p className="text-xs text-success-600 mt-0.5">
-                      Signed {new Date(approval.signedAt).toLocaleString()}
+                      Signed {formatDateTime(approval.signedAt)}
                     </p>
                   )}
                   {approval.declineReason && (
@@ -179,7 +180,7 @@ function StatusTracker({signatureRequestId, onCancel, isCancelling}: StatusTrack
                   )}
                   {approval.viewedAt && !approval.signedAt && (
                     <p className="text-xs text-warning-600 mt-0.5">
-                      Viewed {new Date(approval.viewedAt).toLocaleString()}
+                      Viewed {formatDateTime(approval.viewedAt)}
                     </p>
                   )}
                 </div>

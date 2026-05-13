@@ -4,10 +4,11 @@ import {useState} from 'react';
 import {notFound, useParams, useRouter} from 'next/navigation';
 import {AppLayout} from '@/components/layout/AppLayout';
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
+import {StatusBadge} from '@/components/ui/StatusBadge';
+import {EVENT_STATUS} from '@/lib/status/vocabulary';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {calendarService} from '@/lib/services/hrms/calendar.service';
-import {EventStatus} from '@/lib/types/hrms/calendar';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {useCalendarEvent, useDeleteCalendarEvent, useSyncEventToGoogle,} from '@/lib/hooks/queries/useCalendar';
 import {
@@ -15,8 +16,6 @@ import {
   ArrowLeft,
   Bell,
   Calendar,
-  CheckCircle,
-  Clock,
   ExternalLink,
   Globe,
   Loader2,
@@ -25,7 +24,6 @@ import {
   Trash2,
   Users,
   Video,
-  XCircle,
 } from 'lucide-react';
 
 export default function EventDetailPage() {
@@ -68,37 +66,6 @@ export default function EventDetailPage() {
     });
   };
 
-  const getStatusConfig = (status: EventStatus) => {
-    const configs: Record<EventStatus, { bg: string; text: string; icon: typeof Clock }> = {
-      SCHEDULED: {
-        bg: 'bg-accent-100 dark:bg-accent-900/30',
-        text: 'text-accent-700 dark:text-accent-400',
-        icon: Clock,
-      },
-      CONFIRMED: {
-        bg: 'bg-success-100 dark:bg-success-900/30',
-        text: 'text-success-700 dark:text-success-400',
-        icon: CheckCircle,
-      },
-      TENTATIVE: {
-        bg: 'bg-warning-100 dark:bg-warning-900/30',
-        text: 'text-warning-700 dark:text-warning-400',
-        icon: AlertCircle,
-      },
-      CANCELLED: {
-        bg: 'bg-danger-100 dark:bg-danger-900/30',
-        text: 'text-danger-700 dark:text-danger-400',
-        icon: XCircle,
-      },
-      COMPLETED: {
-        bg: 'bg-[var(--bg-surface)] dark:bg-[var(--bg-secondary)]',
-        text: 'text-[var(--text-secondary)]',
-        icon: CheckCircle,
-      },
-    };
-    return configs[status] || configs.SCHEDULED;
-  };
-
   if (isLoading) {
     return (
       <AppLayout activeMenuItem="calendar">
@@ -139,9 +106,6 @@ export default function EventDetailPage() {
     );
   }
 
-  const statusConfig = getStatusConfig(event.status);
-  const StatusIcon = statusConfig.icon;
-
   return (
     <AppLayout activeMenuItem="calendar">
       <div className="max-w-3xl mx-auto space-y-6">
@@ -163,12 +127,7 @@ export default function EventDetailPage() {
               <h1 className="text-xl font-bold text-[var(--text-primary)]">
                 {event.title}
               </h1>
-              <span
-                className={`inline-flex items-center gap-1.5 px-4 py-1 text-sm font-medium rounded-lg ${statusConfig.bg} ${statusConfig.text}`}
-              >
-                <StatusIcon className="h-4 w-4"/>
-                {event.status}
-              </span>
+              <StatusBadge status={event.status} domain={EVENT_STATUS}/>
             </div>
             <p className="text-[var(--text-muted)] mt-1">
               {calendarService.getEventTypeLabel(event.eventType)}

@@ -44,6 +44,7 @@ import {
   useUpdateHrmsProject,
 } from '@/lib/hooks/queries/useProjects';
 import {createLogger} from '@/lib/utils/logger';
+import {formatDate as formatCanonicalDate} from '@/lib/utils/format/date';
 
 const _log = createLogger('ProjectsPage');
 
@@ -100,7 +101,7 @@ const formatDate = (value?: string | null) => {
   if (!value) return '—';
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return '—';
-  return date.toLocaleDateString('en-IN', {day: '2-digit', month: 'short', year: 'numeric'});
+  return formatCanonicalDate(date);
 };
 
 const buildEmployeeName = (employee?: EmployeeSummary | null) => {

@@ -5,6 +5,7 @@ import {Modal} from '@mantine/core';
 import {AnimatePresence, motion} from 'framer-motion';
 import {AlertTriangle, ArrowRight, CheckCircle2, FileText, Folder, Shield, Trash2,} from 'lucide-react';
 import {Button} from '@/components/ui/Button';
+import {EmptyState} from '@/components/ui/EmptyState';
 import type {WikiSpace} from '@/lib/types/platform/fluence';
 
 // ─── Props ──────────────────────────────────────────────────────
@@ -192,12 +193,12 @@ export function DeleteSpaceModal({
             {/* Space selector */}
             <div className="space-y-2 max-h-64 overflow-y-auto">
               {otherSpaces.length === 0 ? (
-                <div className="text-center py-8">
-                  <Folder className="h-8 w-8 text-[var(--text-muted)] mx-auto mb-2"/>
-                  <p className="text-body-muted">
-                    No other spaces available. Create a new space first.
-                  </p>
-                </div>
+                <EmptyState
+                  icon={<Folder className="w-full h-full"/>}
+                  title="No other spaces available"
+                  description="Create a new space first."
+                  size="compact"
+                />
               ) : (
                 otherSpaces.map((s) => (
                   <motion.button

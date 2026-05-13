@@ -60,6 +60,7 @@ import {Breadcrumbs} from '@/components/fluence/Breadcrumbs';
 import {WatchButton} from '@/components/fluence/WatchButton';
 import {InlineCommentsPanel} from '@/components/fluence/InlineComments';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {EmptyStatePresets} from '@/components/ui/empty-state-presets';
 import type {FluenceComment} from '@/lib/types/platform/fluence';
 import {formatDate, formatDateTime} from '@/lib/utils/format/date';
 
@@ -1120,8 +1121,7 @@ export default function WikiPageDetailPage() {
             {/* Comments List */}
             {comments.length === 0 ? (
               <EmptyState
-                icon={<MessageCircle className="h-8 w-8" aria-hidden="true"/>}
-                title="No comments yet"
+                {...EmptyStatePresets.noComments}
                 description="Be the first to share your thoughts. Use @ to tag team members."
               />
             ) : (

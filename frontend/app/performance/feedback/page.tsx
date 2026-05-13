@@ -16,6 +16,7 @@ import {
 import {Feedback, FeedbackRequest, FeedbackType} from '@/lib/types/grow/performance';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
+import {formatDateTime} from '@/lib/utils/format/date';
 
 // ─── Validation Schemas ───────────────────────────────────────────────────────
 
@@ -271,13 +272,7 @@ export default function FeedbackPage() {
                       )}
                     </div>
                     <div className="text-body-secondary mb-2">
-                      {feedback.createdAt ? new Date(feedback.createdAt).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                      }) : 'N/A'}
+                      {feedback.createdAt ? formatDateTime(feedback.createdAt) : 'N/A'}
                     </div>
                   </div>
                 </div>

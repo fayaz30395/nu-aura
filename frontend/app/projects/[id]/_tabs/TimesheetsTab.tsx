@@ -21,6 +21,7 @@ import {StatusBadge} from '@/components/ui/StatusBadge';
 import {TIMESHEET_STATUS} from '@/lib/status/vocabulary';
 import {useCreatePsaTimesheet, usePsaProjectTimesheets, useSubmitPsaTimesheet} from '@/lib/hooks/queries/usePsa';
 import {PSATimesheet} from '@/lib/types/hrms/psa';
+import {formatDate as formatCanonicalDate} from '@/lib/utils/format/date';
 
 interface TimesheetsTabProps {
   projectId: string;
@@ -36,7 +37,7 @@ const formatDate = (value?: string | null) => {
   if (!value) return '—';
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return '—';
-  return date.toLocaleDateString('en-IN', {day: '2-digit', month: 'short', year: 'numeric'});
+  return formatCanonicalDate(date);
 };
 
 const formatHours = (value?: number | null) => {

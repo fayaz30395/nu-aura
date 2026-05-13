@@ -1,7 +1,6 @@
 'use client';
 
 import {useMemo, useState} from 'react';
-import {useRouter} from 'next/navigation';
 import {AppLayout} from '@/components/layout';
 import {AlertCircle, CheckCircle, ChevronDown, Clock, CreditCard, Filter, Search, XCircle,} from 'lucide-react';
 import {Permissions} from '@/lib/hooks/usePermissions';
@@ -30,8 +29,6 @@ interface Filters {
 }
 
 function PaymentsPageContent() {
-  const router = useRouter();
-
   // All hooks must be called unconditionally before any early returns
   const {data: paymentsData, isLoading: paymentsLoading} = usePayments();
   const {data: statsData} = usePaymentStats();

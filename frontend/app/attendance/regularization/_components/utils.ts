@@ -28,16 +28,3 @@ export function formatTime(dateString: string): string {
     minute: '2-digit',
   });
 }
-
-export function getStatusBadgeClass(status: string): string {
-  switch (status) {
-    case 'APPROVED':
-      return 'badge-status status-success';
-    case 'PENDING':
-      return 'badge-status status-warning';
-    case 'REJECTED':
-      return 'badge-status status-danger';
-    default:
-      return 'badge-status status-neutral';
-  }
-}

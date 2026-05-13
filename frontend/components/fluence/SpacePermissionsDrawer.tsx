@@ -16,6 +16,7 @@ import {
   useUpdateWikiSpace,
 } from '@/lib/hooks/queries/useFluence';
 import {Button} from '@/components/ui/Button';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {EmployeeSearchAutocomplete} from '@/components/ui/EmployeeSearchAutocomplete';
 import {card, input as dsInput, typography} from '@/lib/theme/design-system';
 import {getInitials} from '@/lib/utils';
@@ -486,13 +487,12 @@ export function SpacePermissionsDrawer({
                 )}
 
                 {!membersLoading && members.length === 0 && (
-                  <div className="flex flex-col items-center py-8">
-                    <UserCheck className="h-8 w-8 text-[var(--text-muted)] mb-2"/>
-                    <p className="text-sm text-[var(--text-muted)]">No members yet</p>
-                    <p className="text-xs text-[var(--text-muted)] mt-1">
-                      Add members using the form above
-                    </p>
-                  </div>
+                  <EmptyState
+                    icon={<UserCheck className="w-full h-full"/>}
+                    title="No members yet"
+                    description="Add members using the form above"
+                    size="compact"
+                  />
                 )}
 
                 {!membersLoading && members.length > 0 && (

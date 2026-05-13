@@ -11,6 +11,7 @@ import {Card, CardContent} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {Input} from '@/components/ui/Input';
 import {createLogger} from '@/lib/utils/logger';
+import {formatDate} from '@/lib/utils/format/date';
 
 const log = createLogger('PreboardingPortalPage');
 
@@ -207,7 +208,7 @@ export default function PreboardingPortalPage() {
           </div>
           <h1 className="text-xl font-bold text-[var(--text-primary)]">Welcome, {data.firstName}!</h1>
           <p className="text-[var(--text-muted)] mt-1">Complete your pre-boarding checklist before joining
-            on {new Date(data.expectedJoiningDate).toLocaleDateString()}</p>
+            on {formatDate(data.expectedJoiningDate)}</p>
         </div>
 
         {/* Progress */}
@@ -444,7 +445,7 @@ export default function PreboardingPortalPage() {
                     <CheckCircle2 className="h-16 w-16 text-success-500 mx-auto mb-4"/>
                     <h3 className="text-xl font-bold text-[var(--text-primary)]">All Done!</h3>
                     <p className="text-[var(--text-muted)] mt-2">You have completed your pre-boarding checklist. See you
-                      on {new Date(data.expectedJoiningDate).toLocaleDateString()}!</p>
+                      on {formatDate(data.expectedJoiningDate)}!</p>
                   </div>
                 ) : (
                   <>

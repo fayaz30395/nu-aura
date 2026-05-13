@@ -1,7 +1,7 @@
 'use client';
 
 import React, {Suspense, useMemo, useRef, useState} from 'react';
-import {useRouter, useSearchParams} from 'next/navigation';
+import {useSearchParams} from 'next/navigation';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {PageDeniedFallback, PermissionGate} from '@/components/auth/PermissionGate';
 import {useForm} from 'react-hook-form';
@@ -203,7 +203,6 @@ export default function InterviewsPageWrapper() {
 }
 
 function InterviewsPage() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const candidateIdFilter = searchParams.get('candidateId');
   // Permission gate handled by <PermissionGate> wrapper in InterviewsPageWrapper.

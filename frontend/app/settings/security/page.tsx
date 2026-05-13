@@ -12,6 +12,7 @@ import {Button} from '@/components/ui/Button';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {useDisableMfa, useMfaStatus} from '@/lib/hooks/queries/useMfa';
 import {MfaSetup} from '@/components/auth/MfaSetup';
+import {formatDateTime} from '@/lib/utils/format/date';
 
 // Zod schema for disable MFA form
 const disableMfaFormSchema = z.object({
@@ -79,13 +80,7 @@ export default function SecuritySettingsPage() {
 
   const formatDate = (dateString: string) => {
     try {
-      return new Date(dateString).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-      });
+      return formatDateTime(dateString);
     } catch {
       return 'Unknown date';
     }

@@ -23,6 +23,7 @@ import {
   XCircle,
 } from 'lucide-react';
 import {formatCurrency} from '@/lib/utils';
+import {formatDate as formatCanonicalDate} from '@/lib/utils/format/date';
 
 const acceptOfferSchema = z.object({
   confirmedJoiningDate: z.string().min(1, 'Please confirm your joining date'),
@@ -147,12 +148,7 @@ function OfferPortalPage() {
 
   const formatDate = (date: string | undefined) => {
     if (!date) return '-';
-    return new Date(date).toLocaleDateString('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
+    return formatCanonicalDate(date);
   };
 
   if (isLoading) {

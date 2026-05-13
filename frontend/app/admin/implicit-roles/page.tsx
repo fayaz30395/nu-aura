@@ -31,6 +31,7 @@ import {
 } from '@/lib/hooks/queries/useImplicitRoles';
 import {useRoles} from '@/lib/hooks/queries/useRoles';
 import {createLogger} from '@/lib/utils/logger';
+import {formatDate} from '@/lib/utils/format/date';
 
 const log = createLogger('ImplicitRolesPage');
 
@@ -791,7 +792,7 @@ function AffectedUsersModal({rule, onClose}: AffectedUsersModalProps) {
                   <td className="px-6 py-4 text-body-muted">{userRole.roleName}</td>
                   <td className="px-6 py-4 text-body-muted">{userRole.scope}</td>
                   <td className="px-6 py-4 text-body-muted">
-                    {new Date(userRole.computedAt).toLocaleDateString()}
+                    {formatDate(userRole.computedAt)}
                   </td>
                   <td className="px-6 py-4 text-sm">
                       <span

@@ -38,6 +38,7 @@ import {
   Textarea,
 } from '@/components/ui';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {EmptyStatePresets} from '@/components/ui/empty-state-presets';
 import type {RecognitionRequest} from '@/lib/types/grow/recognition';
 import {ReactionType, RecognitionCategory, RecognitionType} from '@/lib/types/grow/recognition';
 import {
@@ -393,15 +394,13 @@ export default function RecognitionPage() {
                     permission={Permissions.RECOGNITION_CREATE}
                     fallback={
                       <EmptyState
-                        icon={<Award className="h-8 w-8"/>}
-                        title="No recognitions yet"
+                        {...EmptyStatePresets.noRecognitions}
                         description="Be the first to recognize a colleague for their great work."
                       />
                     }
                   >
                     <EmptyState
-                      icon={<Award className="h-8 w-8"/>}
-                      title="No recognitions yet"
+                      {...EmptyStatePresets.noRecognitions}
                       description="Be the first to recognize a colleague for their great work."
                       actionLabel="Give Recognition"
                       onAction={handleGiveRecognition}

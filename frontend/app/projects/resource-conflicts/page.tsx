@@ -11,6 +11,7 @@ import {Button} from '@/components/ui/Button';
 import {SkeletonTable} from '@/components/ui/Skeleton';
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import {apiClient} from '@/lib/api/client';
+import {formatDate} from '@/lib/utils/format/date';
 
 interface ConflictResult {
   employeeId: string;
@@ -161,7 +162,7 @@ export default function ResourceConflictsPage() {
                         </span>
                     </td>
                     <td className="px-4 py-4 text-caption">
-                      {new Date(c.detected_at).toLocaleDateString()}
+                      {formatDate(c.detected_at)}
                     </td>
                     <td className="px-4 py-4">
                       <Button size="sm" variant="outline"

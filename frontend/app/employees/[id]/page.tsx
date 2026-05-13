@@ -37,6 +37,7 @@ import {createLogger} from '@/lib/utils/logger';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {Card, CardContent} from '@/components/ui/Card';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {Asset} from '@/lib/types/hrms/asset';
 import {Skeleton} from '@mantine/core';
 import {formatDate as canonicalFormatDate} from '@/lib/utils/format/date';
@@ -971,10 +972,10 @@ export default function EmployeeDetailPage() {
               </div>
 
               {filteredDocCategories.length === 0 && (
-                <div className="text-center py-12">
-                  <FolderOpen className="h-10 w-10 text-[var(--text-muted)] mx-auto mb-4"/>
-                  <p className="text-body-muted">No matching categories found.</p>
-                </div>
+                <EmptyState
+                  icon={<FolderOpen className="w-full h-full"/>}
+                  title="No matching categories found"
+                />
               )}
             </div>
           )}

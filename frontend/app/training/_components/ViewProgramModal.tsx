@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import {Loader2, Plus} from 'lucide-react';
-import {Badge, Button, Modal, ModalBody, ModalFooter, ModalHeader,} from '@/components/ui';
+import {Loader2, Plus, Users} from 'lucide-react';
+import {Badge, Button, EmptyState, Modal, ModalBody, ModalFooter, ModalHeader,} from '@/components/ui';
 import type {TrainingEnrollment, TrainingProgram} from '@/lib/types/grow/training';
 import {EnrollmentStatus} from '@/lib/types/grow/training';
 import {toBadgeVariant} from '@/lib/utils/type-guards';
@@ -82,7 +82,11 @@ export function ViewProgramModal({
                 Enrollments ({enrollments.length})
               </h4>
               {enrollments.length === 0 ? (
-                <p className="text-body-muted">No enrollments yet</p>
+                <EmptyState
+                  icon={<Users className="w-full h-full"/>}
+                  title="No enrollments yet"
+                  size="compact"
+                />
               ) : (
                 <div className="space-y-2">
                   {enrollments.map((enrollment) => (

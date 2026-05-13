@@ -1,11 +1,13 @@
 'use client';
 
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {Loader2, Search, User, X} from 'lucide-react';
+import {Loader2, Search, X} from 'lucide-react';
 import {Employee} from '@/lib/types/hrms/employee';
 import {employeeService} from '@/lib/services/hrms/employee.service';
 import {getInitials} from '@/lib/utils';
 import {logger} from '@/lib/utils/logger';
+import {EmptyState} from '@/components/ui/EmptyState';
+import {EmptyStatePresets} from '@/components/ui/empty-state-presets';
 
 interface EmployeeSearchAutocompleteProps {
   value?: { id: string; name: string } | null;
@@ -246,15 +248,13 @@ export function EmployeeSearchAutocomplete({
         {isOpen && query && results.length === 0 && !loading && (
           <div
             ref={dropdownRef}
-            className="absolute z-50 w-full mt-1 bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg shadow-[var(--shadow-dropdown)] p-4"
+            className="absolute z-50 w-full mt-1 bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg shadow-[var(--shadow-dropdown)]"
           >
-            <div className="flex flex-col items-center text-center">
-              <User className="h-8 w-8 text-surface-400 mb-2"/>
-              <p className="text-sm text-surface-500">No employees found</p>
-              <p className="text-xs text-surface-400 mt-1">
-                Try a different search term
-              </p>
-            </div>
+            <EmptyState
+              {...EmptyStatePresets.noEmployees}
+              description="Try a different search term"
+              size="compact"
+            />
           </div>
         )}
       </div>

@@ -174,16 +174,13 @@ function ReviewCompetencyPanel({
               <span className="text-sm">Loading competencies…</span>
             </div>
           ) : competencies.length === 0 ? (
-            <div className="flex items-center gap-2 py-6 text-[var(--text-muted)]">
-              <Info size={16}/>
-              <span className="text-sm">No competencies added yet.</span>
-              <button
-                onClick={() => refetch()}
-                className="text-accent-600 hover:underline text-sm cursor-pointer focus-visible:outline-none"
-              >
-                Refresh
-              </button>
-            </div>
+            <EmptyState
+              icon={<Info className="w-full h-full"/>}
+              title="No competencies added yet"
+              actionLabel="Refresh"
+              onAction={() => refetch()}
+              size="compact"
+            />
           ) : (
             <div className="space-y-4">
               {Object.entries(grouped).map(([category, items]) => (

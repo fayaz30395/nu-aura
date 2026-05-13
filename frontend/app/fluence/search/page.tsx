@@ -32,6 +32,7 @@ import type {SavedSearch} from '@/lib/types/platform/fluence';
 import {sanitizeHtml} from '@/lib/utils/sanitize';
 import {safeStorage} from '@/lib/utils/safeStorage';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {EmptyStatePresets} from '@/components/ui/empty-state-presets';
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
@@ -526,8 +527,7 @@ export default function SearchPage() {
         ) : resultCount === 0 ? (
           <div className={dsCard.base}>
             <EmptyState
-              icon={<Search className="h-8 w-8" aria-hidden="true"/>}
-              title="No results found"
+              {...EmptyStatePresets.noResults}
               description="Try different keywords or remove filters."
               actionLabel={hasActiveFilters ? 'Clear filters' : undefined}
               onAction={hasActiveFilters ? () => {

@@ -24,6 +24,7 @@ import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal'
 import {Card} from '@/components/ui/Card';
 import {Badge} from '@/components/ui/Badge';
 import {Skeleton} from '@/components/ui/Skeleton';
+import {formatDate as formatCanonicalDate} from '@/lib/utils/format/date';
 
 interface Job {
   id: string;
@@ -66,8 +67,7 @@ const JobCard: React.FC<JobCardProps> = ({job, onViewDetails}) => {
     if (diffDays === 0) return 'Today';
     if (diffDays === 1) return 'Yesterday';
     if (diffDays < 7) return `${diffDays} days ago`;
-    if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
-    return `${Math.floor(diffDays / 30)} months ago`;
+    return formatCanonicalDate(date);
   };
 
   const getEmploymentTypeBg = (type: string) => {

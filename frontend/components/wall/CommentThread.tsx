@@ -2,10 +2,11 @@
 
 import React, {useState} from 'react';
 import {motion} from 'framer-motion';
-import {CornerDownRight, MessageCircle, Send, Trash2} from 'lucide-react';
+import {CornerDownRight, Send, Trash2} from 'lucide-react';
 import {formatDistanceToNow} from 'date-fns';
 import {Button} from '@/components/ui/Button';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {EmptyStatePresets} from '@/components/ui/empty-state-presets';
 import {AuthorInfo, CommentResponse} from '@/lib/services/core/wall.service';
 import {cn} from '@/lib/utils';
 
@@ -206,8 +207,7 @@ export function CommentThread({
       {/* No comments state */}
       {!isLoading && comments.length === 0 && (
         <EmptyState
-          icon={<MessageCircle className="h-8 w-8"/>}
-          title="No comments yet"
+          {...EmptyStatePresets.noComments}
           description="Be the first to share your thoughts on this post."
         />
       )}

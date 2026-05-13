@@ -10,6 +10,7 @@ import {
 } from '@/lib/types/hrms/resource-management';
 import {format, parseISO} from 'date-fns';
 import {AlertTriangle, User} from 'lucide-react';
+import {EmptyState, EmptyStatePresets} from '@/components/ui';
 
 interface WorkloadHeatmapProps {
   data: WorkloadHeatmapRow[];
@@ -42,8 +43,12 @@ export function WorkloadHeatmap({
   if (data.length === 0) {
     return (
       <div
-        className="flex h-48 items-center justify-center rounded-lg border border-dashed border-surface-300 dark:border-surface-600">
-        <p className="text-surface-500 dark:text-surface-400">No workload data available</p>
+        className="rounded-lg border border-dashed border-surface-300 dark:border-surface-600">
+        <EmptyState
+          {...EmptyStatePresets.noChartData}
+          description="No workload data available."
+          size="compact"
+        />
       </div>
     );
   }

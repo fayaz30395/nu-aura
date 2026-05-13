@@ -369,6 +369,14 @@ export const INVOICE_STATUS: Record<string, StatusMeta> = {
   CANCELLED: CANCELLED_META,
 };
 
+export const EVENT_STATUS: Record<string, StatusMeta> = {
+  SCHEDULED: {label: 'Scheduled', tone: 'info', icon: Clock},
+  CONFIRMED: {label: 'Confirmed', tone: 'success', icon: CheckCircle},
+  TENTATIVE: {label: 'Tentative', tone: 'warning', icon: HelpCircle},
+  CANCELLED: CANCELLED_META,
+  COMPLETED: COMPLETED_META,
+};
+
 /* ── Resolver ───────────────────────────────────────────────────────── */
 
 /**

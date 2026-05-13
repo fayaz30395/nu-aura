@@ -9,6 +9,7 @@ import {Card, CardContent} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {Skeleton} from '@/components/ui/Skeleton';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {EmptyStatePresets} from '@/components/ui/empty-state-presets';
 import {ResourceAvailabilityCalendar} from '@/components/resource-management/ResourceAvailabilityCalendar';
 import {useTeamAvailability} from '@/lib/hooks/queries/useResources';
 import {
@@ -290,9 +291,8 @@ export default function AvailabilityCalendarPage() {
               />
             ) : (
               <EmptyState
-                title="No employees found"
+                {...EmptyStatePresets.noEmployees}
                 description="Try adjusting your filters or date range"
-                icon={<Users className="h-12 w-12"/>}
               />
             )}
           </CardContent>

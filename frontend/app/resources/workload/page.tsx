@@ -3,10 +3,11 @@
 import React, {useEffect, useMemo, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {AppLayout} from '@/components/layout';
-import {AlertCircle, Download, RefreshCw, Search, Users} from 'lucide-react';
+import {AlertCircle, Download, RefreshCw, Search} from 'lucide-react';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {Skeleton} from '@/components/ui/Skeleton';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {EmptyStatePresets} from '@/components/ui/empty-state-presets';
 import {
   EmployeeAllocationDetailModal,
   EmployeeWorkloadCard,
@@ -594,9 +595,8 @@ export default function WorkloadDashboardPage() {
                   ) : (
                     <div className="py-12">
                       <EmptyState
-                        title="No employees found"
+                        {...EmptyStatePresets.noEmployees}
                         description="Try adjusting your search or filters"
-                        icon={<Users className="h-10 w-10"/>}
                       />
                     </div>
                   )}

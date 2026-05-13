@@ -2,6 +2,7 @@
 
 import React from 'react';
 import {Input} from '@/components/ui/Input';
+import {EmptyState, EmptyStatePresets} from '@/components/ui';
 import {AlertTriangle, Check, Loader2, Percent, Trash2, User,} from 'lucide-react';
 import {Employee} from '@/lib/types/hrms/employee';
 import {Project, ProjectEmployee} from '@/lib/types/hrms/project';
@@ -191,7 +192,7 @@ export function EmployeeStep({
           <div
             className="absolute z-10 w-full mt-1 max-h-60 overflow-y-auto bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg shadow-[var(--shadow-dropdown)]">
             {filteredEmployees.length === 0 ? (
-              <div className="px-4 py-4 text-sm text-surface-500">No employees found</div>
+              <EmptyState {...EmptyStatePresets.noEmployees} size="compact"/>
             ) : (
               filteredEmployees.slice(0, 10).map((emp) => {
                 const capacityInfo = employeeCapacities.get(emp.id);
@@ -356,11 +357,11 @@ export function EmployeeStep({
       )}
 
       {allocations.length === 0 && (
-        <div className="text-center py-8 text-surface-500">
-          <User className="h-12 w-12 mx-auto mb-4 opacity-30"/>
-          <p>No employees added yet</p>
-          <p className="text-sm">Search and add employees to allocate to this project</p>
-        </div>
+        <EmptyState
+          icon={<User className="w-full h-full"/>}
+          title="No employees added yet"
+          description="Search and add employees to allocate to this project."
+        />
       )}
     </>
   );

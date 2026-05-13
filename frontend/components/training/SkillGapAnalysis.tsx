@@ -2,7 +2,7 @@
 
 import React from 'react';
 import {AlertTriangle, ArrowUpRight, BookOpen, Loader2, RefreshCw, Target} from 'lucide-react';
-import {Badge, Button, Card, CardContent} from '@/components/ui';
+import {Badge, Button, Card, CardContent, EmptyState} from '@/components/ui';
 import {useSkillGaps} from '@/lib/hooks/queries/useLearning';
 
 interface SkillGapAnalysisProps {
@@ -40,8 +40,12 @@ export const SkillGapAnalysis: React.FC<SkillGapAnalysisProps> = ({employeeId}) 
   if (!report) {
     return (
       <Card>
-        <CardContent className="p-8 text-center text-surface-600 dark:text-surface-400">
-          No skill gap data found for this employee.
+        <CardContent className="p-0">
+          <EmptyState
+            icon={<Target className="w-full h-full"/>}
+            title="No skill gap data"
+            description="No skill gap data found for this employee."
+          />
         </CardContent>
       </Card>
     );

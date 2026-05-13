@@ -36,6 +36,7 @@ import {
   useUpdateSamlConfig,
 } from '@/lib/hooks/useSamlConfig';
 import {SamlConfigRequest, samlService} from '@/lib/services/core/saml.service';
+import {formatDate} from '@/lib/utils/format/date';
 
 // ==================== Zod Schema ====================
 
@@ -683,7 +684,7 @@ export default function SsoSettingsPage() {
 
                     {testMutation.data.certificateExpiry && (
                       <p className="text-caption">
-                        Certificate expires: {new Date(testMutation.data.certificateExpiry).toLocaleDateString()}
+                        Certificate expires: {formatDate(testMutation.data.certificateExpiry)}
                       </p>
                     )}
                   </div>

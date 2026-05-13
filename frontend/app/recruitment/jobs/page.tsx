@@ -41,6 +41,7 @@ import {
 import {EmptyState} from '@/components/ui/EmptyState';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
+import {formatDate} from '@/lib/utils/format/date';
 
 export default function JobOpeningsPage() {
   const router = useRouter();
@@ -469,7 +470,7 @@ export default function JobOpeningsPage() {
                       {job.closingDate && (
                         <div className="flex items-center gap-2 text-body-secondary">
                           <Calendar className="h-4 w-4"/>
-                          <span>Closes: {new Date(job.closingDate).toLocaleDateString()}</span>
+                          <span>Closes: {formatDate(job.closingDate)}</span>
                         </div>
                       )}
                     </div>

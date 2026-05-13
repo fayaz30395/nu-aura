@@ -28,6 +28,7 @@ import {ExpenseAnalytics} from '@/components/expenses';
 import {safeWindowOpen} from '@/lib/utils/url';
 import {endOfMonth, format, startOfMonth} from 'date-fns';
 import {formatCurrency} from '@/lib/utils';
+import {formatDate} from '@/lib/utils/format/date';
 import {
   useAllExpenseClaims,
   useApproveExpenseClaim,
@@ -894,12 +895,12 @@ export default function ExpenseClaims() {
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mb-4">
                       <div>
                         <span className="text-[var(--text-secondary)]">Claim Date:</span>
-                        <p className="font-medium">{new Date(claim.claimDate).toLocaleDateString()}</p>
+                        <p className="font-medium">{formatDate(claim.claimDate)}</p>
                       </div>
                       {claim.submittedAt && (
                         <div>
                           <span className="text-[var(--text-secondary)]">Submitted:</span>
-                          <p className="font-medium">{new Date(claim.submittedAt).toLocaleDateString()}</p>
+                          <p className="font-medium">{formatDate(claim.submittedAt)}</p>
                         </div>
                       )}
                       {claim.approvedAt && (

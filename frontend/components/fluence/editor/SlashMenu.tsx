@@ -21,6 +21,7 @@ import {
   IconTable,
 } from '@tabler/icons-react';
 import {AnimatePresence, motion} from 'framer-motion';
+import {EmptyState, EmptyStatePresets} from '@/components/ui';
 
 interface SlashMenuItem {
   title: string;
@@ -267,9 +268,7 @@ const SlashMenu = forwardRef<SlashMenuHandle, SlashMenuProps>(
           className="fluence-slash-menu"
           style={{top: position.top, left: position.left}}
         >
-          <div className="px-4 py-6 text-center text-body-muted">
-            No results found
-          </div>
+          <EmptyState {...EmptyStatePresets.noResults} size="compact"/>
         </div>
       );
     }

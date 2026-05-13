@@ -5,6 +5,7 @@ import {AnimatePresence, motion} from 'framer-motion';
 import {AtSign, Search} from 'lucide-react';
 import {employeeService} from '@/lib/services/hrms/employee.service';
 import type {Employee} from '@/lib/types/hrms/employee';
+import {EmptyState} from '@/components/ui/EmptyState';
 
 // ─── Types ──────────────────────────────────────────────────────
 
@@ -315,10 +316,13 @@ export const MentionInput = forwardRef<MentionInputHandle, MentionInputProps>(
               initial={{opacity: 0, y: 4}}
               animate={{opacity: 1, y: 0}}
               exit={{opacity: 0, y: 4}}
-              className="absolute bottom-full left-0 mb-2 w-full max-w-sm z-50 rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] shadow-[var(--shadow-dropdown)] p-4 text-center"
+              className="absolute bottom-full left-0 mb-2 w-full max-w-sm z-50 rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] shadow-[var(--shadow-dropdown)]"
             >
-              <AtSign className="h-5 w-5 text-[var(--text-muted)] mx-auto mb-1"/>
-              <p className="text-body-muted">No matching team members</p>
+              <EmptyState
+                icon={<AtSign className="w-full h-full"/>}
+                title="No matching team members"
+                size="compact"
+              />
             </motion.div>
           )}
         </AnimatePresence>

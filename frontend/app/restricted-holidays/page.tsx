@@ -13,11 +13,9 @@ import {Controller, useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {
-  Ban,
   Calendar,
   CalendarDays,
   CheckCircle,
-  Clock,
   Edit3,
   Plus,
   Settings,
@@ -26,6 +24,8 @@ import {
   XCircle,
 } from 'lucide-react';
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
+import {StatusBadge} from '@/components/ui/StatusBadge';
+import {LEAVE_STATUS} from '@/lib/status/vocabulary';
 import {
   useApproveSelection,
   useAvailableRestrictedHolidays,
@@ -79,23 +79,23 @@ type PolicyFormValues = z.infer<typeof policyFormSchema>;
 
 type TabView = 'browse' | 'my-selections' | 'manage' | 'approvals' | 'policy';
 
-// ─── Status Config ──────────────────────────────────────────────
+// ─── Status card-background tints ──────────────────────────────
+// Note: status badge itself uses canonical `StatusBadge` + `LEAVE_STATUS`
+// from `lib/status/vocabulary.ts`. This map only carries the per-row
+// surface tint used to give each card a subtle status-colored background.
 
-const statusConfig: Record<SelectionStatus, {
-  label: string;
-  color: string;
-  bgColor: string;
-  icon: typeof CheckCircle
-}> = {
-  PENDING: {label: 'Pending', color: 'text-warning-600', bgColor: 'bg-warning-50 border-warning-200', icon: Clock},
-  APPROVED: {
-    label: 'Approved',
-    color: 'text-success-600',
-    bgColor: 'bg-success-50 border-success-200',
-    icon: CheckCircle
-  },
-  REJECTED: {label: 'Rejected', color: 'text-danger-600', bgColor: 'bg-danger-50 border-danger-200', icon: XCircle},
-  CANCELLED: {label: 'Cancelled', color: 'text-surface-500', bgColor: 'bg-surface-50 border-surface-200', icon: Ban},
+const statusCardBg: Record<SelectionStatus, string> = {
+  PENDING: 'bg-warning-50 border-warning-200',
+  APPROVED: 'bg-success-50 border-success-200',
+  REJECTED: 'bg-danger-50 border-danger-200',
+  CANCELLED: 'bg-surface-50 border-surface-200',
+};
+
+const statusIconTone: Record<SelectionStatus, string> = {
+  PENDING: 'text-warning-600',
+  APPROVED: 'text-success-600',
+  REJECTED: 'text-danger-600',
+  CANCELLED: 'text-surface-500',
 };
 
 const categoryLabels: Record<HolidayCategory, string> = {
@@ -493,8 +493,8 @@ function MySelectionsTab({selections, isLoading, onCancel, isCancelling}: MySele
   return (
     <div className="space-y-4">
       {selections.map((selection) => {
-        const config = statusConfig[selection.status];
-        const StatusIcon = config.icon;
+        const cardBg = statusCardBg[selection.status];
+        const iconTone = statusIconTone[selection.status];
         const canCancel = selection.status === 'PENDING' || selection.status === 'APPROVED';
 
         return (
@@ -502,10 +502,10 @@ function MySelectionsTab({selections, isLoading, onCancel, isCancelling}: MySele
             key={selection.id}
             initial={{opacity: 0, x: -10}}
             animate={{opacity: 1, x: 0}}
-            className={`row-between rounded-lg border p-4 ${config.bgColor}`}
+            className={`row-between rounded-lg border p-4 ${cardBg}`}
           >
             <div className="flex items-center gap-4">
-              <div className={`p-2 rounded-lg ${config.color} bg-[var(--bg-card)]`}>
+              <div className={`p-2 rounded-lg ${iconTone} bg-[var(--bg-card)]`}>
                 <CalendarDays className="w-5 h-5"/>
               </div>
               <div>
@@ -525,10 +525,7 @@ function MySelectionsTab({selections, isLoading, onCancel, isCancelling}: MySele
               </div>
             </div>
             <div className="flex items-center gap-4">
-              <span className={`inline-flex items-center gap-1.5 text-sm font-medium ${config.color}`}>
-                <StatusIcon className="w-4 h-4"/>
-                {config.label}
-              </span>
+              <StatusBadge status={selection.status} domain={LEAVE_STATUS}/>
               {canCancel && (
                 <button
                   onClick={() => onCancel(selection.id)}

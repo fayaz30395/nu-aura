@@ -9,6 +9,7 @@ import {INVOICE_STATUS} from '@/lib/status/vocabulary';
 import {usePsaProjectInvoices} from '@/lib/hooks/queries/usePsa';
 import {PSAInvoice} from '@/lib/types/hrms/psa';
 import {formatCurrency} from '@/lib/utils';
+import {formatDate as formatCanonicalDate} from '@/lib/utils/format/date';
 
 interface InvoicesTabProps {
   projectId: string;
@@ -18,7 +19,7 @@ const formatDate = (value?: string | null) => {
   if (!value) return '—';
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return '—';
-  return date.toLocaleDateString('en-IN', {day: '2-digit', month: 'short', year: 'numeric'});
+  return formatCanonicalDate(date);
 };
 
 

@@ -8,6 +8,7 @@ import {AppLayout} from '@/components/layout';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {EmptyStatePresets} from '@/components/ui/empty-state-presets';
 import {card as dsCard, iconSize, input as dsInput, layout, motion as dsMotion, typography,} from '@/lib/theme/design-system';
 import {useFluenceTemplates} from '@/lib/hooks/queries/useFluence';
 import {PermissionGate} from '@/components/auth/PermissionGate';
@@ -123,15 +124,13 @@ export default function TemplatesPage() {
             permission={Permissions.KNOWLEDGE_TEMPLATE_CREATE}
             fallback={
               <EmptyState
-                icon={<FileText className={iconSize.statCard}/>}
-                title="No templates yet"
+                {...EmptyStatePresets.noTemplates}
                 description="Templates will appear here once they have been created."
               />
             }
           >
             <EmptyState
-              icon={<FileText className={iconSize.statCard}/>}
-              title="No templates yet"
+              {...EmptyStatePresets.noTemplates}
               description="Create your first template to get started"
               actionLabel="Create Template"
               onAction={handleCreateTemplate}

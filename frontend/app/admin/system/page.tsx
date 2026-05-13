@@ -17,6 +17,7 @@ import {
 import {MonthlyGrowth, TenantListItem} from '@/lib/types/core/admin-system';
 import {createLogger} from '@/lib/utils/logger';
 import {safeSessionStorage} from '@/lib/utils/safeStorage';
+import {formatDate} from '@/lib/utils/format/date';
 
 const GrowthChart = dynamic(
   () => import('./GrowthChart'),
@@ -347,7 +348,7 @@ export default function SystemDashboard() {
                     </Table.Td>
                     <Table.Td>
                       <Text size="sm" className="text-[var(--text-secondary)]">
-                        {new Date(tenant.createdAt).toLocaleDateString()}
+                        {formatDate(tenant.createdAt)}
                       </Text>
                     </Table.Td>
                     <Table.Td>

@@ -13,6 +13,7 @@ import {
 } from '@/lib/types/hrms/resource-management';
 import {format, isSameDay, isWeekend, parseISO} from 'date-fns';
 import {User} from 'lucide-react';
+import {EmptyState, EmptyStatePresets} from '@/components/ui';
 
 interface ResourceAvailabilityCalendarProps {
   employees: EmployeeAvailability[];
@@ -51,8 +52,12 @@ export function ResourceAvailabilityCalendar({
   if (employees.length === 0) {
     return (
       <div
-        className="flex h-48 items-center justify-center rounded-lg border border-dashed border-surface-300 dark:border-surface-600">
-        <p className="text-surface-500 dark:text-surface-400">No employees to display</p>
+        className="rounded-lg border border-dashed border-surface-300 dark:border-surface-600">
+        <EmptyState
+          {...EmptyStatePresets.noEmployees}
+          description="No employees to display."
+          size="compact"
+        />
       </div>
     );
   }
