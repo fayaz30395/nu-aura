@@ -807,12 +807,13 @@ function CreateAnnouncementModal({announcement, onClose, onSuccess}: CreateAnnou
             {/* Title */}
             <div>
               <label htmlFor="announcement-title" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                Title <span className="text-danger-500">*</span>
+                Title <span aria-hidden="true" className="text-danger-500">*</span>
               </label>
               <input
                 id="announcement-title"
                 type="text"
                 {...register('title')}
+                aria-required="true"
                 className={`input-aura ${
                   errors.title ? '!border-danger-500' : ''
                 }`}
@@ -824,11 +825,12 @@ function CreateAnnouncementModal({announcement, onClose, onSuccess}: CreateAnnou
             {/* Content */}
             <div>
               <label htmlFor="announcement-content" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                Content <span className="text-danger-500">*</span>
+                Content <span aria-hidden="true" className="text-danger-500">*</span>
               </label>
               <textarea
                 id="announcement-content"
                 {...register('content')}
+                aria-required="true"
                 rows={5}
                 className={`input-aura resize-none ${
                   errors.content ? '!border-danger-500' : ''
@@ -893,9 +895,9 @@ function CreateAnnouncementModal({announcement, onClose, onSuccess}: CreateAnnou
 
             {/* Department Selection - Only shown when SPECIFIC_DEPARTMENTS is selected */}
             {watchTargetAudience === 'SPECIFIC_DEPARTMENTS' && (
-              <fieldset>
+              <fieldset aria-required="true">
                 <legend id="announcement-departments-label" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                  Select Departments <span className="text-danger-500">*</span>
+                  Select Departments <span aria-hidden="true" className="text-danger-500">*</span>
                 </legend>
                 {loadingDepartments ? (
                   <div className="flex items-center justify-center py-4">
