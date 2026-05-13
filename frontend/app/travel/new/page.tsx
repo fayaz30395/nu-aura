@@ -270,6 +270,8 @@ export default function NewTravelRequestPage() {
                   id="travel-type"
                   {...register('travelType')}
                   aria-required="true"
+                  aria-invalid={errors.travelType ? 'true' : 'false'}
+                  aria-describedby={errors.travelType ? 'travel-type-error' : undefined}
                   className={inputClass(!!errors.travelType)}
                 >
                   <option value="BUSINESS">Business</option>
@@ -280,7 +282,7 @@ export default function NewTravelRequestPage() {
                   <option value="OTHER">Other</option>
                 </select>
                 {errors.travelType && (
-                  <p className="mt-1 text-sm text-danger-500">{errors.travelType.message}</p>
+                  <p id="travel-type-error" className="mt-1 text-sm text-danger-500">{errors.travelType.message}</p>
                 )}
               </div>
 
@@ -306,12 +308,14 @@ export default function NewTravelRequestPage() {
                 id="travel-purpose"
                 {...register('purpose')}
                 aria-required="true"
+                aria-invalid={errors.purpose ? 'true' : 'false'}
+                aria-describedby={errors.purpose ? 'travel-purpose-error' : undefined}
                 placeholder="Describe the purpose of your travel"
                 rows={3}
                 className={`${inputClass(!!errors.purpose)} resize-none`}
               />
               {errors.purpose && (
-                <p className="mt-1 text-sm text-danger-500">{errors.purpose.message}</p>
+                <p id="travel-purpose-error" className="mt-1 text-sm text-danger-500">{errors.purpose.message}</p>
               )}
             </div>
           </section>
@@ -335,11 +339,13 @@ export default function NewTravelRequestPage() {
                   type="text"
                   {...register('originCity')}
                   aria-required="true"
+                  aria-invalid={errors.originCity ? 'true' : 'false'}
+                  aria-describedby={errors.originCity ? 'travel-origin-city-error' : undefined}
                   placeholder="e.g., Mumbai"
                   className={cardInputClass(!!errors.originCity)}
                 />
                 {errors.originCity && (
-                  <p className="mt-1 text-sm text-danger-500">{errors.originCity.message}</p>
+                  <p id="travel-origin-city-error" className="mt-1 text-sm text-danger-500">{errors.originCity.message}</p>
                 )}
               </div>
 
@@ -470,15 +476,15 @@ export default function NewTravelRequestPage() {
               />
               <span className="text-body-secondary">Local cab/taxi required</span>
             </label>
-          </div>
+          </section>
 
           {/* Accommodation */}
-          <div className="p-6 bg-[var(--bg-secondary)]/50 space-y-6">
+          <section aria-labelledby="accommodation-heading" className="p-6 bg-[var(--bg-secondary)]/50 space-y-6">
             <div className="flex items-center gap-4 pb-4 border-b border-[var(--border-main)]">
               <div className="p-2 bg-accent-300 dark:bg-accent-900/30 rounded-lg">
                 <Hotel className="h-5 w-5 text-accent-800 dark:text-accent-600"/>
               </div>
-              <h2 className="text-xl font-semibold text-[var(--text-primary)]">Accommodation</h2>
+              <h2 id="accommodation-heading" className="text-xl font-semibold text-[var(--text-primary)]">Accommodation</h2>
             </div>
 
             <label className="flex items-center gap-2 cursor-pointer">

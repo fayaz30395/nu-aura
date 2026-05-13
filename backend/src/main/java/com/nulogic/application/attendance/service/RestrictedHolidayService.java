@@ -20,7 +20,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -264,7 +263,8 @@ public class RestrictedHolidayService {
 
         selection.setStatus(SelectionStatus.REJECTED);
         selection.setApprovedBy(approverId);
-        selection.setApprovedAt(LocalDateTime.now());
+        // S11-M Wave-10 P0: tenant-local datetime — resolved via TenantTimeService.
+        selection.setApprovedAt(tenantTimeService.now(tenantId));
         selection.setRejectionReason(rejectionReason);
 
         selection = selectionRepository.save(selection);

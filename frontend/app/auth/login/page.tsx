@@ -1026,6 +1026,7 @@ function LoginPage() {
                     <button
                       type="submit"
                       disabled={isEmailLoading || (captchaRequired && !captchaToken)}
+                      aria-busy={isEmailLoading}
                       className="skeuo-button w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-accent-600 hover:bg-accent-700 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                     >
                       {isEmailLoading ? (

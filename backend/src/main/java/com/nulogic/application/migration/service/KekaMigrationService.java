@@ -4,6 +4,7 @@ import com.nulogic.api.migration.dto.ImportResult;
 import com.nulogic.common.exception.ValidationException;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.CellValueSanitizer;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.attendance.AttendanceRecord;
 import com.nulogic.domain.employee.Department;
 import com.nulogic.domain.employee.Employee;
@@ -60,6 +61,7 @@ public class KekaMigrationService {
     private final SalaryStructureRepository salaryStructureRepository;
     private final PasswordEncoder passwordEncoder;
     private final CellValueSanitizer cellValueSanitizer;
+    private final TenantTimeService tenantTimeService;
     @Value("${app.migration.default-password}")
     private String defaultMigrationPassword;
 

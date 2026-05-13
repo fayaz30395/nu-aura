@@ -435,11 +435,12 @@ function CreateSpotlightModal({isOpen, spotlight, onClose, onSuccess}: CreateSpo
               {/* Title */}
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                  Title <span className="text-danger-500">*</span>
+                  Title <span aria-hidden="true" className="text-danger-500">*</span>
                 </label>
                 <input
                   type="text"
                   {...register('title')}
+                  aria-required="true"
                   className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-warning-500 focus:border-transparent dark:bg-[var(--bg-secondary)] dark:text-white"
                   placeholder="Enter slide title"
                 />

@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import {AdminPageContent} from '@/components/layout';
 import {Button} from '@/components/ui/Button';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
 import {useToast} from '@/components/notifications/ToastProvider';
 import {PermissionGate} from '@/components/auth/PermissionGate';
@@ -246,8 +247,8 @@ export default function DepartmentsPage() {
               icon={<Building2 className="w-full h-full"/>}
               title={search ? 'No departments match your search' : 'No departments yet'}
               description={search ? 'Try a different search term.' : 'Create your first department to organize teams.'}
-              actionLabel={!search && canManage ? 'Create department' : undefined}
-              onAction={!search && canManage ? openCreate : undefined}
+              actionLabel={!search ? 'Create department' : undefined}
+              onAction={!search ? openCreate : undefined}
             />
           </div>
         ) : (

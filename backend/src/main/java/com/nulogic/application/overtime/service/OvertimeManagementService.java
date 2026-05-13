@@ -127,7 +127,7 @@ public class OvertimeManagementService {
         if ("APPROVE".equalsIgnoreCase(request.getAction())) {
             record.setStatus(OvertimeRecord.OvertimeStatus.APPROVED);
             record.setApprovedBy(approverId);
-            record.setApprovedAt(LocalDateTime.now());
+            record.setApprovedAt(tenantTimeService.now(tenantId));
             log.info("Approved overtime record: {}", recordId);
 
             // FIX-001: Publish event for payroll to pick up overtime earnings
@@ -142,7 +142,7 @@ public class OvertimeManagementService {
         } else if ("REJECT".equalsIgnoreCase(request.getAction())) {
             record.setStatus(OvertimeRecord.OvertimeStatus.REJECTED);
             record.setRejectedBy(approverId);
-            record.setRejectedAt(LocalDateTime.now());
+            record.setRejectedAt(tenantTimeService.now(tenantId));
             record.setRejectionReason(request.getRejectionReason());
             log.info("Rejected overtime record: {}", recordId);
 
@@ -211,8 +211,8 @@ public class OvertimeManagementService {
 
     @Transactional(readOnly = true)
     public CompTimeBalance getCompTimeBalance(UUID employeeId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
-        int fiscalYear = java.time.LocalDate.now().getYear();
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        int fiscalYear = tenantTimeService.today(tenantId).getYear();
         return compTimeBalanceRepository.findByTenantIdAndEmployeeIdAndFiscalYear(tenantId, employeeId, fiscalYear)
                 .orElse(null);
     }
@@ -226,8 +226,8 @@ public class OvertimeManagementService {
 
     public void accrueCompTime(UUID employeeId, BigDecimal hours, UUID overtimeRecordId,
                                java.time.LocalDate overtimeDate) {
-        UUID tenantId = TenantContext.getCurrentTenant();
-        int fiscalYear = java.time.LocalDate.now().getYear();
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        int fiscalYear = tenantTimeService.today(tenantId).getYear();
 
         CompTimeBalance balance = compTimeBalanceRepository
                 .findByTenantIdAndEmployeeIdAndFiscalYear(tenantId, employeeId, fiscalYear)
@@ -240,7 +240,7 @@ public class OvertimeManagementService {
                 .transactionType(CompTimeTransaction.TransactionType.ACCRUAL)
                 .hours(hours)
                 .balanceAfter(balance.getCurrentBalance())
-                .transactionDate(java.time.LocalDate.now())
+                .transactionDate(tenantTimeService.today(tenantId))
                 .overtimeDate(overtimeDate)
                 .description("Comp time accrued from overtime on " + overtimeDate)
                 .build();
@@ -251,7 +251,7 @@ public class OvertimeManagementService {
     }
 
     public void useCompTime(UUID employeeId, BigDecimal hours, UUID leaveRequestId, java.time.LocalDate usageDate) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         List<CompTimeBalance> balances = compTimeBalanceRepository.findActiveBalances(tenantId, employeeId);
         if (balances.isEmpty()) {
@@ -272,7 +272,7 @@ public class OvertimeManagementService {
                         .transactionType(CompTimeTransaction.TransactionType.USAGE)
                         .hours(availableFromThisBalance)
                         .balanceAfter(balance.getCurrentBalance())
-                        .transactionDate(java.time.LocalDate.now())
+                        .transactionDate(tenantTimeService.today(tenantId))
                         .leaveRequestId(leaveRequestId)
                         .usageDate(usageDate)
                         .description("Comp time used for leave on " + usageDate)

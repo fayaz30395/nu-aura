@@ -8,6 +8,7 @@ import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.RequiresPermission;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.attendance.AttendanceRecord;
 import com.nulogic.domain.attendance.AttendanceTimeEntry;
 import com.nulogic.domain.employee.Employee;
@@ -56,6 +57,7 @@ public class AttendanceController {
     private final AttendanceImportService attendanceImportService;
     private final com.nulogic.common.security.DataScopeService dataScopeService;
     private final EmployeeService employeeService;
+    private final TenantTimeService tenantTimeService;
 
     // ===================== Single Check-In/Out =====================
 
@@ -68,7 +70,8 @@ public class AttendanceController {
             @ApiResponse(responseCode = "403", description = "Not authorized to mark attendance")
     })
     public ResponseEntity<AttendanceResponse> checkIn(@Valid @RequestBody CheckInRequest request) {
-        LocalDateTime checkInTime = request.getCheckInTime() != null ? request.getCheckInTime() : LocalDateTime.now();
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        LocalDateTime checkInTime = request.getCheckInTime() != null ? request.getCheckInTime() : tenantTimeService.now(tenantId);
         UUID employeeId = resolveEmployeeId(request.getEmployeeId(), Permission.ATTENDANCE_MARK);
         AttendanceRecord record = attendanceService.checkIn(
                 employeeId,
@@ -90,8 +93,9 @@ public class AttendanceController {
             @ApiResponse(responseCode = "403", description = "Not authorized to mark attendance")
     })
     public ResponseEntity<AttendanceResponse> checkOut(@Valid @RequestBody CheckOutRequest request) {
+        UUID tenantId = TenantContext.requireCurrentTenant();
         LocalDateTime checkOutTime = request.getCheckOutTime() != null ? request.getCheckOutTime()
-                : LocalDateTime.now();
+                : tenantTimeService.now(tenantId);
         UUID employeeId = resolveEmployeeId(request.getEmployeeId(), Permission.ATTENDANCE_MARK);
         AttendanceRecord record = attendanceService.checkOut(
                 employeeId,
@@ -115,13 +119,14 @@ public class AttendanceController {
     })
     public ResponseEntity<AttendanceResponse> getTodayAttendance() {
         UUID employeeId = requireCurrentEmployeeId();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         return attendanceService.getTodayAttendance(employeeId)
                 .map(record -> ResponseEntity.ok(toResponse(record)))
                 .orElseGet(() -> {
                     // Return an empty response with today's date — no attendance yet
                     AttendanceResponse empty = new AttendanceResponse();
                     empty.setEmployeeId(employeeId);
-                    empty.setAttendanceDate(java.time.LocalDate.now());
+                    empty.setAttendanceDate(tenantTimeService.today(tenantId));
                     empty.setStatus("NOT_CHECKED_IN");
                     empty.setWorkDurationMinutes(0);
                     empty.setBreakDurationMinutes(0);
@@ -148,7 +153,8 @@ public class AttendanceController {
             @Parameter(description = "End date (ISO format, defaults to today)") @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
             Pageable pageable) {
         UUID employeeId = requireCurrentEmployeeId();
-        LocalDate effectiveEnd = (endDate != null) ? endDate : LocalDate.now();
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        LocalDate effectiveEnd = (endDate != null) ? endDate : tenantTimeService.today(tenantId);
         LocalDate effectiveStart = (startDate != null) ? startDate : effectiveEnd.minusDays(30);
         Page<AttendanceRecord> records = attendanceService.getAttendanceByDateRange(employeeId, effectiveStart, effectiveEnd, pageable);
         return ResponseEntity.ok(records.map(this::toResponse));

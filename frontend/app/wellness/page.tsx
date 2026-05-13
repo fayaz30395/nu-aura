@@ -42,6 +42,7 @@ import {
   StatusBadge,
   Textarea,
 } from '@/components/ui';
+import {SkeletonCard} from '@/components/ui/Skeleton';
 import {WELLNESS_FLAG} from '@/lib/status/vocabulary';
 import {
   useActiveChallenges,
@@ -321,9 +322,10 @@ export default function WellnessPage() {
             </div>
 
             {loading ? (
-              <div className="flex items-center justify-center py-12">
-                <div
-                  className="h-8 w-8 animate-spin rounded-full border-4 border-accent-500 border-t-transparent"></div>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                {Array.from({length: 4}).map((_, i) => (
+                  <SkeletonCard key={i}/>
+                ))}
               </div>
             ) : activeTab === 'programs' ? (
               // Programs Grid

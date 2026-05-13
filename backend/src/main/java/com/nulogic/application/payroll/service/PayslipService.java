@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -166,7 +165,7 @@ public class PayslipService {
      */
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public StatutoryDeductions applyStatutoryDeductions(UUID payslipId, String state) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         Payslip payslip = payslipRepository.findById(payslipId)
                 .filter(p -> p.getTenantId().equals(tenantId))
@@ -197,7 +196,7 @@ public class PayslipService {
         payslip.setEmployerEsi(deductions.getEmployerEsi());
         payslip.setStatutoryProfessionalTax(deductions.getProfessionalTax());
         payslip.setTdsMonthly(deductions.getTdsMonthly());
-        payslip.setStatutoryCalculatedAt(LocalDateTime.now());
+        payslip.setStatutoryCalculatedAt(tenantTimeService.now(tenantId));
         payslip.setProvidentFund(deductions.getEmployeePf());
         payslip.setProfessionalTax(deductions.getProfessionalTax());
         payslip.setIncomeTax(deductions.getTdsMonthly());

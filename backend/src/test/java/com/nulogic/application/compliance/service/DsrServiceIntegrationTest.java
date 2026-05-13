@@ -191,12 +191,18 @@ class DsrServiceIntegrationTest extends AbstractPostgresIntegrationTest {
         leaveRequestRepository.save(leave);
 
         // 4) Attendance row inside the 90-day export window.
+        //    Fixed fixture date pinned to a zone-independent LocalDate so the
+        //    test no longer leaks the JVM default zone via LocalDate(Time).now().
+        //    The aggregator's 90-day window filter is exercised because the
+        //    fixture sits comfortably inside today-90d for any plausible test
+        //    run date (anchored to the project's polish-program window).
+        LocalDate attendanceDate = LocalDate.of(2026, 5, 9);
         AttendanceRecord attendance = AttendanceRecord.builder()
                 .employeeId(dataSubjectEmployeeId)
-                .attendanceDate(LocalDate.now().minusDays(5))
+                .attendanceDate(attendanceDate)
                 .status(AttendanceRecord.AttendanceStatus.PRESENT)
-                .checkInTime(LocalDateTime.now().minusDays(5).withHour(9))
-                .checkOutTime(LocalDateTime.now().minusDays(5).withHour(18))
+                .checkInTime(attendanceDate.atTime(9, 0))
+                .checkOutTime(attendanceDate.atTime(18, 0))
                 .workDurationMinutes(480)
                 .build();
         attendance.setTenantId(TENANT_ID);

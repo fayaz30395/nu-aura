@@ -33,6 +33,14 @@ import static org.mockito.Mockito.when;
 @DisplayName("ShiftAttendanceService Tests")
 class ShiftAttendanceServiceTest {
 
+    /**
+     * Fixed test date — pinned to keep fixtures deterministic and free of
+     * implicit IST assumptions from {@code FIXED_DATE}. Any wall-clock
+     * date works; the service under test only uses the value as an opaque
+     * lookup key for shift-assignment queries.
+     */
+    private static final LocalDate FIXED_DATE = LocalDate.of(2026, 5, 14);
+
     private static MockedStatic<TenantContext> tenantContextMock;
     @Mock
     private ShiftAssignmentRepository shiftAssignmentRepository;
@@ -101,7 +109,7 @@ class ShiftAttendanceServiceTest {
         mockAssignmentWithShift(shift);
 
         int late = shiftAttendanceService.calculateLateMinutes(
-                employeeId, LocalDate.now(), LocalDateTime.of(LocalDate.now(), LocalTime.of(9, 10)));
+                employeeId, FIXED_DATE, LocalDateTime.of(FIXED_DATE, LocalTime.of(9, 10)));
 
         assertThat(late).isEqualTo(0);
     }
@@ -113,7 +121,7 @@ class ShiftAttendanceServiceTest {
         mockAssignmentWithShift(shift);
 
         int late = shiftAttendanceService.calculateLateMinutes(
-                employeeId, LocalDate.now(), LocalDateTime.of(LocalDate.now(), LocalTime.of(9, 30)));
+                employeeId, FIXED_DATE, LocalDateTime.of(FIXED_DATE, LocalTime.of(9, 30)));
 
         assertThat(late).isEqualTo(30);
     }
@@ -125,7 +133,7 @@ class ShiftAttendanceServiceTest {
         mockAssignmentWithShift(shift);
 
         int early = shiftAttendanceService.calculateEarlyDepartureMinutes(
-                employeeId, LocalDate.now(), LocalDateTime.of(LocalDate.now(), LocalTime.of(17, 0)));
+                employeeId, FIXED_DATE, LocalDateTime.of(FIXED_DATE, LocalTime.of(17, 0)));
 
         assertThat(early).isEqualTo(60);
     }
@@ -138,7 +146,7 @@ class ShiftAttendanceServiceTest {
 
         // Worked 10 hours (600 min), expected 8h - 1h break = 420 net, overtime = 180
         int overtime = shiftAttendanceService.calculateOvertimeMinutes(
-                employeeId, LocalDate.now(), 600);
+                employeeId, FIXED_DATE, 600);
 
         assertThat(overtime).isEqualTo(180);
     }
@@ -150,7 +158,7 @@ class ShiftAttendanceServiceTest {
         mockAssignmentWithShift(shift);
 
         int overtime = shiftAttendanceService.calculateOvertimeMinutes(
-                employeeId, LocalDate.now(), 400);
+                employeeId, FIXED_DATE, 400);
 
         assertThat(overtime).isEqualTo(0);
     }
@@ -164,7 +172,7 @@ class ShiftAttendanceServiceTest {
         when(shiftAssignmentRepository.findActiveEffectiveAssignmentsForDate(eq(tenantId), any()))
                 .thenReturn(java.util.Collections.emptyList());
 
-        Shift result = shiftAttendanceService.getAssignedShift(employeeId, LocalDate.now());
+        Shift result = shiftAttendanceService.getAssignedShift(employeeId, FIXED_DATE);
 
         assertThat(result).isNull();
     }
@@ -180,7 +188,7 @@ class ShiftAttendanceServiceTest {
 
         AttendanceRecord record = AttendanceRecord.builder()
                 .employeeId(employeeId)
-                .attendanceDate(LocalDate.now())
+                .attendanceDate(FIXED_DATE)
                 .workDurationMinutes(500)  // 500 min worked, expected 420 => 80 min overtime
                 .build();
         record.setTenantId(tenantId);
@@ -200,7 +208,7 @@ class ShiftAttendanceServiceTest {
 
         AttendanceRecord record = AttendanceRecord.builder()
                 .employeeId(employeeId)
-                .attendanceDate(LocalDate.now())
+                .attendanceDate(FIXED_DATE)
                 .workDurationMinutes(600)
                 .build();
         record.setTenantId(tenantId);
@@ -223,7 +231,7 @@ class ShiftAttendanceServiceTest {
         // 10 hours = 600 minutes, threshold is 540 (9h), overtime = 600 - 480 = 120
         AttendanceRecord record = AttendanceRecord.builder()
                 .employeeId(employeeId)
-                .attendanceDate(LocalDate.now())
+                .attendanceDate(FIXED_DATE)
                 .workDurationMinutes(600)
                 .build();
         record.setTenantId(tenantId);
@@ -246,7 +254,7 @@ class ShiftAttendanceServiceTest {
         // 8.5 hours = 510 minutes, under 540 threshold
         AttendanceRecord record = AttendanceRecord.builder()
                 .employeeId(employeeId)
-                .attendanceDate(LocalDate.now())
+                .attendanceDate(FIXED_DATE)
                 .workDurationMinutes(510)
                 .build();
         record.setTenantId(tenantId);
@@ -262,7 +270,7 @@ class ShiftAttendanceServiceTest {
     void calculateOvertimeForRecord_nullWorkDuration() {
         AttendanceRecord record = AttendanceRecord.builder()
                 .employeeId(employeeId)
-                .attendanceDate(LocalDate.now())
+                .attendanceDate(FIXED_DATE)
                 .workDurationMinutes(0)
                 .build();
         record.setTenantId(tenantId);
@@ -285,7 +293,7 @@ class ShiftAttendanceServiceTest {
         // Exactly 540 minutes (9h) — threshold is > 540, so no overtime
         AttendanceRecord record = AttendanceRecord.builder()
                 .employeeId(employeeId)
-                .attendanceDate(LocalDate.now())
+                .attendanceDate(FIXED_DATE)
                 .workDurationMinutes(540)
                 .build();
         record.setTenantId(tenantId);

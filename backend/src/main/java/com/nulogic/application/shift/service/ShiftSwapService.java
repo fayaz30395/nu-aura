@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.UUID;
 
@@ -67,7 +68,7 @@ public class ShiftSwapService {
                 .swapType(swapType)
                 .status(ShiftSwapRequest.SwapStatus.PENDING)
                 .reason(reason)
-                .requestedAt(LocalDateTime.now())
+                .requestedAt(LocalDateTime.now(ZoneOffset.UTC))
                 .build();
 
         log.info("Shift swap request created: requester={} target={} type={}", requesterEmployeeId, targetEmployeeId, swapType);
@@ -90,15 +91,15 @@ public class ShiftSwapService {
 
         request.setStatus(ShiftSwapRequest.SwapStatus.TARGET_ACCEPTED);
         request.setTargetEmployeeAction("ACCEPTED");
-        request.setTargetEmployeeResponse(LocalDateTime.now());
+        request.setTargetEmployeeResponse(LocalDateTime.now(ZoneOffset.UTC));
 
         // If swap type is GIVE_AWAY / PICK_UP, no manager approval needed — go straight to APPROVED
         if (request.getSwapType() != ShiftSwapRequest.SwapType.SWAP) {
             request.setStatus(ShiftSwapRequest.SwapStatus.APPROVED);
-            request.setApprovedAt(LocalDateTime.now());
+            request.setApprovedAt(LocalDateTime.now(ZoneOffset.UTC));
             executeSwap(request);
             request.setStatus(ShiftSwapRequest.SwapStatus.COMPLETED);
-            request.setCompletedAt(LocalDateTime.now());
+            request.setCompletedAt(LocalDateTime.now(ZoneOffset.UTC));
         } else {
             request.setStatus(ShiftSwapRequest.SwapStatus.PENDING_APPROVAL);
         }
@@ -121,7 +122,7 @@ public class ShiftSwapService {
 
         request.setStatus(ShiftSwapRequest.SwapStatus.TARGET_DECLINED);
         request.setTargetEmployeeAction("DECLINED");
-        request.setTargetEmployeeResponse(LocalDateTime.now());
+        request.setTargetEmployeeResponse(LocalDateTime.now(ZoneOffset.UTC));
 
         log.info("Shift swap declined by target: requestId={}", requestId);
         return swapRequestRepository.save(request);
@@ -140,13 +141,13 @@ public class ShiftSwapService {
 
         request.setStatus(ShiftSwapRequest.SwapStatus.APPROVED);
         request.setApproverId(approverId);
-        request.setApprovedAt(LocalDateTime.now());
+        request.setApprovedAt(LocalDateTime.now(ZoneOffset.UTC));
 
         // Execute the actual shift swap
         executeSwap(request);
 
         request.setStatus(ShiftSwapRequest.SwapStatus.COMPLETED);
-        request.setCompletedAt(LocalDateTime.now());
+        request.setCompletedAt(LocalDateTime.now(ZoneOffset.UTC));
 
         log.info("Shift swap approved by manager {}: requestId={}", approverId, requestId);
         return swapRequestRepository.save(request);
@@ -163,7 +164,7 @@ public class ShiftSwapService {
 
         request.setStatus(ShiftSwapRequest.SwapStatus.REJECTED);
         request.setApproverId(approverId);
-        request.setRejectedAt(LocalDateTime.now());
+        request.setRejectedAt(LocalDateTime.now(ZoneOffset.UTC));
         request.setRejectionReason(rejectionReason);
 
         log.info("Shift swap rejected by manager {}: requestId={}", approverId, requestId);

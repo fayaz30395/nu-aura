@@ -4,6 +4,8 @@ import com.nulogic.api.payroll.dto.*;
 import com.nulogic.application.payroll.service.GlobalPayrollService;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.RequiresPermission;
+import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -29,6 +31,7 @@ import java.util.UUID;
 public class GlobalPayrollController {
 
     private final GlobalPayrollService payrollService;
+    private final TenantTimeService tenantTimeService;
 
     // ==================== DASHBOARD ====================
 
@@ -81,7 +84,7 @@ public class GlobalPayrollController {
             @RequestParam String fromCurrency,
             @RequestParam String toCurrency,
             @RequestParam(required = false) LocalDate date) {
-        LocalDate effectiveDate = date != null ? date : LocalDate.now();
+        LocalDate effectiveDate = date != null ? date : tenantTimeService.today(TenantContext.requireCurrentTenant());
         return ResponseEntity.ok(payrollService.convertAmount(amount, fromCurrency, toCurrency, effectiveDate));
     }
 
@@ -92,7 +95,7 @@ public class GlobalPayrollController {
             @RequestParam String fromCurrency,
             @RequestParam String toCurrency,
             @RequestParam(required = false) LocalDate date) {
-        LocalDate effectiveDate = date != null ? date : LocalDate.now();
+        LocalDate effectiveDate = date != null ? date : tenantTimeService.today(TenantContext.requireCurrentTenant());
         return ResponseEntity.ok(payrollService.getExchangeRate(fromCurrency, toCurrency, effectiveDate));
     }
 

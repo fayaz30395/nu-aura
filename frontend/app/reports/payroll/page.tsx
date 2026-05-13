@@ -117,7 +117,7 @@ export default function PayrollReportsPage() {
               {/* Date Range */}
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-4">
-                  Payroll Period <span className="text-danger-500">*</span>
+                  Payroll Period <span aria-hidden="true" className="text-danger-500">*</span>
                 </label>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -126,6 +126,7 @@ export default function PayrollReportsPage() {
                       type="date"
                       value={startDate}
                       onChange={(e) => setStartDate(e.target.value)}
+                      aria-required="true"
                       className="input-aura"
                     />
                   </div>
@@ -135,6 +136,7 @@ export default function PayrollReportsPage() {
                       type="date"
                       value={endDate}
                       onChange={(e) => setEndDate(e.target.value)}
+                      aria-required="true"
                       className="input-aura"
                     />
                   </div>

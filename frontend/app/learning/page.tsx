@@ -5,8 +5,9 @@ import Image from 'next/image';
 import {AppLayout} from '@/components/layout';
 import {Skeleton} from '@/components/ui/Skeleton';
 import {Stat} from '@/components/ui/Stat';
-import {AlertCircle} from 'lucide-react';
+import {Award, BookOpen, GraduationCap} from 'lucide-react';
 import {Button} from '@/components/ui/Button';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {
   useEnrollCourse,
   useLearningDashboard,
@@ -220,9 +221,12 @@ export default function LearningPage() {
                   ))
                 ) : (
                   <div
-                    className="col-span-3 bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] p-8 text-center">
-                    <AlertCircle className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4"/>
-                    <p className="text-[var(--text-muted)] text-lg font-medium">No courses available at the moment.</p>
+                    className="col-span-full bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)]">
+                    <EmptyState
+                      icon={<BookOpen className="w-full h-full"/>}
+                      title="No courses available"
+                      description="Check back soon — new courses are published regularly."
+                    />
                   </div>
                 )}
               </div>

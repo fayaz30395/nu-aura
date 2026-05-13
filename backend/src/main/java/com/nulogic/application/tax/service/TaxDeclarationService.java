@@ -5,6 +5,7 @@ import com.nulogic.api.tax.dto.TaxDeclarationResponse;
 import com.nulogic.api.tax.dto.TaxProofRequest;
 import com.nulogic.api.tax.dto.TaxProofResponse;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.tax.TaxDeclaration;
 import com.nulogic.domain.tax.TaxProof;
@@ -20,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -37,6 +37,7 @@ public class TaxDeclarationService {
     private final TaxProofRepository taxProofRepository;
     private final TaxRegimeComparisonRepository taxRegimeComparisonRepository;
     private final EmployeeRepository employeeRepository;
+    private final TenantTimeService tenantTimeService;
 
     // ==================== Tax Declaration Operations ====================
 
@@ -97,7 +98,7 @@ public class TaxDeclarationService {
         }
 
         declaration.setStatus(TaxDeclaration.DeclarationStatus.SUBMITTED);
-        declaration.setSubmittedAt(LocalDateTime.now());
+        declaration.setSubmittedAt(tenantTimeService.now(tenantId));
 
         TaxDeclaration updated = taxDeclarationRepository.save(declaration);
         return mapToResponse(updated);
@@ -117,7 +118,7 @@ public class TaxDeclarationService {
 
         declaration.setStatus(TaxDeclaration.DeclarationStatus.APPROVED);
         declaration.setApprovedBy(approverId);
-        declaration.setApprovedAt(LocalDateTime.now());
+        declaration.setApprovedAt(tenantTimeService.now(tenantId));
 
         TaxDeclaration updated = taxDeclarationRepository.save(declaration);
         return mapToResponse(updated);
@@ -133,7 +134,7 @@ public class TaxDeclarationService {
 
         declaration.setStatus(TaxDeclaration.DeclarationStatus.REJECTED);
         declaration.setRejectedBy(rejectedBy);
-        declaration.setRejectedAt(LocalDateTime.now());
+        declaration.setRejectedAt(tenantTimeService.now(tenantId));
         declaration.setRejectionReason(reason);
 
         TaxDeclaration updated = taxDeclarationRepository.save(declaration);

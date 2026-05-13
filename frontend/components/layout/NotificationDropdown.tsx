@@ -551,10 +551,11 @@ export function NotificationDropdown({isOpen, onClose}: NotificationDropdownProp
                   <p>No system notifications</p>
                 </div>
               ) : (
-                <div className="divide-y divide-surface-100 dark:divide-surface-800">
+                <div className="divide-y divide-surface-100 dark:divide-surface-800" role="list" aria-label="System notifications">
                   {wsNotifications.filter(n => !n.read).map((notification, index) => (
                     <div
                       key={`ws-${index}`}
+                      role="listitem"
                       onClick={() => {
                         wsMarkAsRead(index);
                         onClose();
@@ -580,6 +581,7 @@ export function NotificationDropdown({isOpen, onClose}: NotificationDropdownProp
                   {persistedNotifications.map((notification) => (
                     <div
                       key={notification.id}
+                      role="listitem"
                       onClick={() => {
                         if (!notification.isRead) markReadMutation.mutate(notification.id);
                         onClose();

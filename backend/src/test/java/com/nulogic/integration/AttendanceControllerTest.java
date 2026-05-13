@@ -135,11 +135,15 @@ class AttendanceControllerTest extends AbstractPostgresIntegrationTest {
 
     @Test
     void ucAtt002_regularizationSubmit_returns201Pending() throws Exception {
+        // Fixed, zone-independent fixture: use an explicit historical date with explicit times
+        // so the test never depends on the JVM default timezone (was: LocalDateTime.now()...).
+        // Per TenantTimeServiceTest pattern, tests must not leak JVM-zone-dependent now() calls.
+        LocalDate regularizationDate = LocalDate.of(2026, 1, 15);
         Map<String, Object> req = new HashMap<>();
         req.put("employeeId", EMPLOYEE_ID.toString());
-        req.put("date", LocalDate.now().minusDays(2).toString());
-        req.put("checkInTime", LocalDateTime.now().minusDays(2).withHour(9).toString());
-        req.put("checkOutTime", LocalDateTime.now().minusDays(2).withHour(18).toString());
+        req.put("date", regularizationDate.toString());
+        req.put("checkInTime", LocalDateTime.of(regularizationDate, java.time.LocalTime.of(9, 0)).toString());
+        req.put("checkOutTime", LocalDateTime.of(regularizationDate, java.time.LocalTime.of(18, 0)).toString());
         req.put("reason", "Forgot to check in due to client meeting off-site");
 
         mockMvc.perform(post("/api/v1/attendance/regularization")
