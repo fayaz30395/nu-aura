@@ -14,21 +14,19 @@ import {useAuth} from '@/lib/hooks/useAuth';
 import {motion} from 'framer-motion';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {SkeletonDashboard} from '@/components/ui/Skeleton';
+import {StatusBadge} from '@/components/ui/StatusBadge';
+import {LEAVE_STATUS} from '@/lib/status/vocabulary';
 import {
   AlertCircle,
   Baby,
   Briefcase,
   Calendar,
   CalendarDays,
-  CheckCircle,
   ChevronRight,
-  Clock,
   FileText,
   Heart,
-  HelpCircle,
   Plus,
   Umbrella,
-  XCircle,
 } from 'lucide-react';
 import {formatDate, formatDateShort} from '@/lib/utils/format/date';
 
@@ -89,40 +87,6 @@ export default function LeavePage() {
   const isAnyFetching = balancesFetchStatus === 'fetching' || typesFetchStatus === 'fetching' || requestsFetchStatus === 'fetching';
   const loading = !error && (isBalancesLoading || isTypesLoading || isRequestsLoading) && isAnyFetching;
 
-  const getStatusConfig = (status: string) => {
-    switch (status) {
-      case 'APPROVED':
-        return {
-          bg: 'bg-success-100 dark:bg-success-900/30',
-          text: 'text-success-700 dark:text-success-400',
-          icon: CheckCircle,
-        };
-      case 'PENDING':
-        return {
-          bg: 'bg-warning-100 dark:bg-warning-900/30',
-          text: 'text-warning-700 dark:text-warning-400',
-          icon: Clock,
-        };
-      case 'REJECTED':
-        return {
-          bg: 'bg-danger-100 dark:bg-danger-900/30',
-          text: 'text-danger-700 dark:text-danger-400',
-          icon: XCircle,
-        };
-      case 'CANCELLED':
-        return {
-          bg: 'bg-[var(--bg-secondary)]',
-          text: 'text-[var(--text-secondary)]',
-          icon: AlertCircle,
-        };
-      default:
-        return {
-          bg: 'bg-accent-100 dark:bg-accent-900/30',
-          text: 'text-accent-700 dark:text-accent-400',
-          icon: HelpCircle,
-        };
-    }
-  };
 
   const getLeaveTypeIcon = (leaveTypeName: string) => {
     const name = leaveTypeName?.toLowerCase() || '';
@@ -339,8 +303,6 @@ export default function LeavePage() {
                 <tbody className="divide-y divide-surface-100 dark:divide-surface-800">
                 {recentRequests.map((request) => {
                   const leaveType = leaveTypes.find(t => t.id === request.leaveTypeId);
-                  const statusConfig = getStatusConfig(request.status);
-                  const StatusIcon = statusConfig.icon;
 
                   return (
                     <tr
@@ -373,12 +335,7 @@ export default function LeavePage() {
                           </span>
                       </td>
                       <td className="px-6 py-4 text-center">
-                          <span
-                            className={`badge-status ${request.status === 'APPROVED' ? 'status-success' : request.status === 'PENDING' ? 'status-warning' : request.status === 'REJECTED' ? 'status-danger' : request.status === 'CANCELLED' ? 'status-neutral' : 'status-info'} inline-flex items-center gap-1.5 justify-center`}
-                          >
-                            <StatusIcon className="h-3.5 w-3.5"/>
-                            {request.status}
-                          </span>
+                          <StatusBadge status={request.status} domain={LEAVE_STATUS} />
                       </td>
                       <td className="px-6 py-4">
                           <span className="text-body-secondary">

@@ -15,6 +15,7 @@ import {
   RefreshCw,
 } from 'lucide-react';
 import {Badge, Button, Card, CardContent, StatCard,} from '@/components/ui';
+import {EmptyState} from '@/components/ui/EmptyState';
 import type {BadgeVariant} from '@/components/ui/types';
 import {useAuth} from '@/lib/hooks/useAuth';
 import type {CourseEnrollment} from '@/lib/services/grow/lms.service';
@@ -212,21 +213,13 @@ export default function MyLearningPage() {
             <span>Loading your courses…</span>
           </div>
         ) : enrollments.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 text-[var(--text-muted)] space-y-4">
-            <BookOpen className="h-12 w-12 text-[var(--text-muted)]"/>
-            <p className="text-lg font-medium text-[var(--text-muted)]">No courses yet</p>
-            <p className="text-sm">
-              Browse the{' '}
-              <button
-                onClick={() => router.push('/training/catalog')}
-                className="text-accent-600 hover:underline cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
-              >
-                course catalog
-              </button>
-              {' '}
-              to enroll in a course.
-            </p>
-          </div>
+          <EmptyState
+            icon={<BookOpen className="h-8 w-8"/>}
+            title="No courses yet"
+            description="Browse the course catalog to enroll in a course."
+            actionLabel="Browse Catalog"
+            onAction={() => router.push('/training/catalog')}
+          />
         ) : (
           <div className="space-y-4">
             {enrollments.map((enrollment) => {

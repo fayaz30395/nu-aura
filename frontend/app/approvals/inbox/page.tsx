@@ -28,7 +28,6 @@ import {Notification, useWebSocket} from '@/lib/contexts/WebSocketContext';
 import {createLogger} from '@/lib/utils/logger';
 import {useQueryClient} from '@tanstack/react-query';
 import {notifications as mNotifications} from '@mantine/notifications';
-import {format} from 'date-fns';
 import {
   CheckCircle,
   ChevronLeft,
@@ -42,6 +41,7 @@ import {
   Zap,
 } from 'lucide-react';
 import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
+import {formatDateShort, formatDateTime, formatTime} from '@/lib/utils/format/date';
 
 const log = createLogger('ApprovalInbox');
 
@@ -524,11 +524,11 @@ export default function ApprovalInboxPage() {
                     <div className="grid grid-cols-2 gap-4">
                       <DetailRow
                         label="Created"
-                        value={selectedItem.submittedAt ? format(new Date(selectedItem.submittedAt), 'MMM d, yyyy HH:mm') : '—'}
+                        value={selectedItem.submittedAt ? formatDateTime(selectedItem.submittedAt) : '—'}
                       />
                       <DetailRow
                         label="Due"
-                        value={selectedItem.deadline ? format(new Date(selectedItem.deadline), 'MMM d, yyyy HH:mm') : '—'}
+                        value={selectedItem.deadline ? formatDateTime(selectedItem.deadline) : '—'}
                       />
                     </div>
                     {selectedItem.referenceNumber && (
@@ -947,11 +947,11 @@ function InboxListItem({
             <span
               className="inline-flex items-center gap-1 rounded-full bg-warning-50 px-2 py-0.5 text-warning-700 dark:bg-warning-900/30 dark:text-warning-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
               <Clock className="h-3 w-3"/>
-              {format(new Date(item.deadline), 'MMM d')}
+              {formatDateShort(item.deadline)}
             </span>
           )}
           <span className="text-caption">
-            {item.submittedAt ? format(new Date(item.submittedAt), 'MMM d, HH:mm') : ''}
+            {item.submittedAt ? `${formatDateShort(item.submittedAt)}, ${formatTime(item.submittedAt)}` : ''}
           </span>
         </div>
       </CardContent>

@@ -330,9 +330,7 @@ export default function ReviewCyclesPage() {
                       <span className={'px-2 py-1 rounded text-xs font-medium ' + getTypeColor(cycle.cycleType)}>
                         {cycle.cycleType}
                       </span>
-                      <span className={'px-2 py-1 rounded text-xs font-medium ' + getStatusColor(cycle.status)}>
-                        {cycle.status}
-                      </span>
+                      <StatusBadge status={cycle.status} domain={CYCLE_STATUS} />
                     </div>
                   </div>
                 </div>

@@ -25,22 +25,24 @@ import {
 } from 'lucide-react';
 import {AppLayout} from '@/components/layout/AppLayout';
 import {
-  Badge,
   Button,
   Card,
   CardContent,
   ConfirmDialog,
+  EmptyState,
   Input,
   Modal,
   ModalBody,
   ModalFooter,
   ModalHeader,
   Select,
+  Stat,
+  StatusBadge,
   Textarea,
 } from '@/components/ui';
 import type {Survey, SurveyRequest} from '@/lib/types/grow/survey';
 import {SurveyStatus, SurveyType} from '@/lib/types/grow/survey';
-import {toBadgeVariant} from '@/lib/utils/type-guards';
+import {SURVEY_STATUS, SURVEY_TYPE} from '@/lib/status/vocabulary';
 import {
   useAllSurveys,
   useCompleteSurvey,
@@ -242,69 +244,53 @@ export default function SurveysPage() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
-          <Card className="skeuo-card">
+          <Card className="card-aura">
             <CardContent className="p-4">
-              <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-accent-100 p-4 dark:bg-accent-900">
-                  <ClipboardList className="h-6 w-6 text-accent-600 dark:text-accent-400"/>
-                </div>
-                <div>
-                  <p className="text-body-secondary">Total Surveys</p>
-                  <p className="text-xl font-bold text-[var(--text-primary)]">{stats.total}</p>
-                </div>
-              </div>
+              <Stat
+                label="Total Surveys"
+                value={stats.total}
+                icon={<ClipboardList className="h-3.5 w-3.5"/>}
+              />
             </CardContent>
           </Card>
-          <Card className="skeuo-card">
+          <Card className="card-aura">
             <CardContent className="p-4">
-              <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-success-100 p-4 dark:bg-success-900">
-                  <Play className="h-6 w-6 text-success-600 dark:text-success-400"/>
-                </div>
-                <div>
-                  <p className="text-body-secondary">Active</p>
-                  <p className="text-xl font-bold text-[var(--text-primary)]">{stats.active}</p>
-                </div>
-              </div>
+              <Stat
+                label="Active"
+                value={stats.active}
+                tone="success"
+                icon={<Play className="h-3.5 w-3.5"/>}
+              />
             </CardContent>
           </Card>
-          <Card className="skeuo-card">
+          <Card className="card-aura">
             <CardContent className="p-4">
-              <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-[var(--bg-surface)] p-4 dark:bg-[var(--bg-secondary)]">
-                  <FileText className="h-6 w-6 text-[var(--text-secondary)]"/>
-                </div>
-                <div>
-                  <p className="text-body-secondary">Drafts</p>
-                  <p className="text-xl font-bold text-[var(--text-primary)]">{stats.draft}</p>
-                </div>
-              </div>
+              <Stat
+                label="Drafts"
+                value={stats.draft}
+                tone="muted"
+                icon={<FileText className="h-3.5 w-3.5"/>}
+              />
             </CardContent>
           </Card>
-          <Card className="skeuo-card">
+          <Card className="card-aura">
             <CardContent className="p-4">
-              <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-accent-300 p-4 dark:bg-accent-900">
-                  <CheckCircle className="h-6 w-6 text-accent-800 dark:text-accent-600"/>
-                </div>
-                <div>
-                  <p className="text-body-secondary">Completed</p>
-                  <p className="text-xl font-bold text-[var(--text-primary)]">{stats.completed}</p>
-                </div>
-              </div>
+              <Stat
+                label="Completed"
+                value={stats.completed}
+                tone="accent"
+                icon={<CheckCircle className="h-3.5 w-3.5"/>}
+              />
             </CardContent>
           </Card>
-          <Card className="skeuo-card">
+          <Card className="card-aura">
             <CardContent className="p-4">
-              <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-warning-100 p-4 dark:bg-warning-900">
-                  <Users className="h-6 w-6 text-warning-600 dark:text-warning-400"/>
-                </div>
-                <div>
-                  <p className="text-body-secondary">Total Responses</p>
-                  <p className="text-xl font-bold text-[var(--text-primary)]">{stats.totalResponses}</p>
-                </div>
-              </div>
+              <Stat
+                label="Total Responses"
+                value={stats.totalResponses}
+                tone="warning"
+                icon={<Users className="h-3.5 w-3.5"/>}
+              />
             </CardContent>
           </Card>
         </div>
@@ -369,21 +355,15 @@ export default function SurveysPage() {
             </button>
           </div>
         ) : filteredSurveys.length === 0 ? (
-          <Card>
-            <CardContent className="flex flex-col items-center justify-center py-12">
-              <ClipboardList className="h-12 w-12 text-[var(--text-muted)]"/>
-              <p className="mt-4 text-lg font-medium text-[var(--text-primary)]">
-                No surveys found
-              </p>
-              <p className="text-[var(--text-secondary)]">
-                Create your first survey to collect employee feedback
-              </p>
-              <PermissionGate permission={Permissions.SURVEY_MANAGE}>
-                <Button onClick={handleCreateSurvey} className="mt-4">
-                  <Plus className="mr-2 h-4 w-4"/>
-                  Create Survey
-                </Button>
-              </PermissionGate>
+          <Card className="card-aura">
+            <CardContent className="p-0">
+              <EmptyState
+                icon={<ClipboardList className="h-8 w-8"/>}
+                title="No surveys found"
+                description="Create your first survey to collect employee feedback"
+                actionLabel="Create Survey"
+                onAction={handleCreateSurvey}
+              />
             </CardContent>
           </Card>
         ) : (
@@ -391,26 +371,20 @@ export default function SurveysPage() {
             {filteredSurveys.map((survey) => (
               <Card key={survey.id} className="card-interactive overflow-hidden">
                 <CardContent className="p-0">
-                  <div className="bg-gradient-to-r from-accent-500 to-accent-800 p-4 text-white">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <p className="text-sm opacity-80">{survey.surveyCode}</p>
-                        <h3 className="text-xl font-semibold">{survey.title}</h3>
+                  <div className="p-4 border-b border-[var(--border-subtle)] bg-[var(--bg-card-hover)]">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <p className="text-caption font-mono">{survey.surveyCode}</p>
+                        <h3 className="text-lg font-semibold text-[var(--text-primary)] truncate">{survey.title}</h3>
                       </div>
-                      <Badge variant={toBadgeVariant(survey.status)}>
-                        {survey.status}
-                      </Badge>
+                      <StatusBadge status={survey.status} domain={SURVEY_STATUS}/>
                     </div>
                   </div>
                   <div className="p-4 space-y-4">
                     <div className="flex flex-wrap gap-2">
-                      <span className="badge-status status-info">
-                        {survey.surveyType}
-                      </span>
+                      <StatusBadge status={survey.surveyType} domain={SURVEY_TYPE}/>
                       {survey.isAnonymous && (
-                        <span className="badge-status status-neutral">
-                          Anonymous
-                        </span>
+                        <StatusBadge label="Anonymous" tone="neutral" iconHidden/>
                       )}
                     </div>
 
@@ -680,9 +654,7 @@ export default function SurveysPage() {
                   <div>
                     <span className="text-[var(--text-muted)]">Status:</span>
                     <p>
-                      <Badge variant={toBadgeVariant(selectedSurvey.status)}>
-                        {selectedSurvey.status}
-                      </Badge>
+                      <StatusBadge status={selectedSurvey.status} domain={SURVEY_STATUS}/>
                     </p>
                   </div>
                   <div>

@@ -8,7 +8,7 @@ import {formatCurrency} from '@/lib/utils';
 import {format} from 'date-fns';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
-import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui';
+import {ConfirmDialog} from '@/components/ui';
 import {useApproveExpenseClaim, usePendingExpenseClaims, useRejectExpenseClaim,} from '@/lib/hooks/queries';
 import {ExpenseClaim} from '@/lib/types/hrms/expense';
 
@@ -48,10 +48,11 @@ export default function ExpenseApprovalsPage() {
     approveMutation.mutate(claimId);
   };
 
-  const handleReject = () => {
-    if (!selectedClaim || !rejectReason.trim()) return;
+  const handleReject = (reason?: string) => {
+    const trimmed = (reason ?? rejectReason).trim();
+    if (!selectedClaim || !trimmed) return;
     rejectMutation.mutate(
-      {claimId: selectedClaim.id, reason: rejectReason},
+      {claimId: selectedClaim.id, reason: trimmed},
       {
         onSuccess: () => {
           setShowRejectModal(false);
@@ -183,45 +184,27 @@ export default function ExpenseApprovalsPage() {
             </div>
           )}
 
-          {/* Reject Modal */}
-          <Modal isOpen={showRejectModal} onClose={() => setShowRejectModal(false)} size="md">
-            <ModalHeader>Reject Expense: {selectedClaim?.claimNumber}</ModalHeader>
-            <ModalBody>
-              <div className="space-y-4">
-                <div className="bg-surface-50 dark:bg-surface-800 rounded-lg p-4">
-                  <p className="text-sm text-surface-500">Amount: <span
-                    className="font-semibold text-surface-900 dark:text-surface-50">{selectedClaim && formatCurrency(selectedClaim.amount, selectedClaim.currency)}</span>
-                  </p>
-                  <p className="text-sm text-surface-500 mt-1">Employee: <span
-                    className="font-medium">{selectedClaim?.employeeName}</span></p>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Rejection
-                    Reason *</label>
-                  <textarea
-                    value={rejectReason}
-                    onChange={(e) => setRejectReason(e.target.value)}
-                    rows={3}
-                    placeholder="Explain why this claim is being rejected..."
-                    className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
-                  />
-                </div>
-              </div>
-            </ModalBody>
-            <ModalFooter>
-              <button onClick={() => setShowRejectModal(false)}
-                      className="px-4 py-2 text-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
-                Cancel
-              </button>
-              <button
-                onClick={handleReject}
-                disabled={!rejectReason.trim() || rejectMutation.isPending}
-                className="px-4 py-2 bg-danger-600 hover:bg-danger-700 text-white rounded-lg transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-              >
-                {rejectMutation.isPending ? 'Rejecting...' : 'Reject Claim'}
-              </button>
-            </ModalFooter>
-          </Modal>
+          {/* Reject Dialog */}
+          <ConfirmDialog
+            isOpen={showRejectModal}
+            onClose={() => setShowRejectModal(false)}
+            onConfirm={handleReject}
+            title={`Reject Expense: ${selectedClaim?.claimNumber ?? ''}`}
+            message={
+              selectedClaim
+                ? `Amount: ${formatCurrency(selectedClaim.amount, selectedClaim.currency)} · Employee: ${selectedClaim.employeeName}`
+                : 'Please provide a reason for rejecting this expense claim.'
+            }
+            confirmText="Reject Claim"
+            cancelText="Cancel"
+            type="danger"
+            loading={rejectMutation.isPending}
+            reason={{
+              label: 'Rejection reason',
+              placeholder: 'Explain why this claim is being rejected...',
+              required: true,
+            }}
+          />
         </div>
       </PermissionGate>
     </AppLayout>

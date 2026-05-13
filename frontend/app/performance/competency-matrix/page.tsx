@@ -42,6 +42,7 @@ import {
 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import {AppLayout} from '@/components/layout';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {PageErrorFallback} from '@/components/errors/PageErrorFallback';
@@ -497,10 +498,11 @@ function MyCompetenciesTab({employeeId}: { employeeId: string }) {
             Skills Matrix
           </Title>
           {Object.keys(skillsByCategory).length === 0 ? (
-            <div className="text-center py-10">
-              <Target className="h-10 w-10 mx-auto text-[var(--text-muted)] mb-4"/>
-              <Text c="dimmed">No skills recorded yet. Add your first skill to get started.</Text>
-            </div>
+            <EmptyState
+              icon={<Target className="h-8 w-8"/>}
+              title="No skills recorded yet"
+              description="Add your first skill to start tracking your proficiency and growth."
+            />
           ) : (
             <div className="space-y-4">
               {Object.entries(skillsByCategory).map(([category, catSkills]) => (
@@ -580,10 +582,11 @@ function MyCompetenciesTab({employeeId}: { employeeId: string }) {
               <Loader color="indigo" size="md"/>
             </div>
           ) : radarData.length === 0 ? (
-            <div className="text-center py-10">
-              <BarChart3 className="h-10 w-10 mx-auto text-[var(--text-muted)] mb-4"/>
-              <Text c="dimmed">No gap analysis data available.</Text>
-            </div>
+            <EmptyState
+              icon={<BarChart3 className="h-8 w-8"/>}
+              title="No gap analysis data"
+              description="Add skills and link them to required competencies to see gap analysis."
+            />
           ) : (
             <>
               <GapAnalysisRadarChart data={radarData}/>
@@ -814,10 +817,11 @@ function TeamViewTab({managerId}: { managerId: string }) {
             Team Competency Heatmap
           </Title>
           {heatmapData.length === 0 ? (
-            <div className="text-center py-10">
-              <BarChart3 className="h-10 w-10 mx-auto text-[var(--text-muted)] mb-4"/>
-              <Text c="dimmed">No team skills data available.</Text>
-            </div>
+            <EmptyState
+              icon={<BarChart3 className="h-8 w-8"/>}
+              title="No team skills data"
+              description="Team competency heatmap will populate once team members record skills."
+            />
           ) : (
             <CompetencyHeatmapChart data={heatmapData}/>
           )}

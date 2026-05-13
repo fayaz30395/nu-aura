@@ -39,6 +39,7 @@ import {DeleteSpaceModal} from '@/components/fluence/DeleteSpaceModal';
 import {SpacePermissionsDrawer} from '@/components/fluence/SpacePermissionsDrawer';
 import type {WikiSpace} from '@/lib/types/platform/fluence';
 import {card, iconSize, layout, motion as dsMotion, typography,} from '@/lib/theme/design-system';
+import {formatDate} from '@/lib/utils/format/date';
 
 // ─── Roles that can manage spaces ────────────────────────────────
 
@@ -525,7 +526,7 @@ export default function WikiPage() {
                                 className={`${iconSize.meta} text-[var(--text-muted)]`}
                               />
                               <span className={typography.caption}>
-                                {new Date(page.updatedAt).toLocaleDateString()}
+                                {formatDate(page.updatedAt)}
                               </span>
                             </div>
 

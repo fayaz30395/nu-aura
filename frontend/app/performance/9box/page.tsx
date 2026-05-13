@@ -2,8 +2,9 @@
 import {AppLayout} from '@/components/layout';
 
 import {useEffect, useMemo, useState} from 'react';
-import {Download, Grid3x3, Info, RefreshCw, Search, Target, TrendingUp, Users,} from 'lucide-react';
+import {Download, Grid3x3, Info, RefreshCw, Search, Shield, Target, TrendingUp, Users,} from 'lucide-react';
 import {useAllReviews, usePerformanceAllCycles} from '@/lib/hooks/queries/usePerformance';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 
@@ -365,11 +366,11 @@ export default function NineBoxPage() {
   return (
     <AppLayout>
       <PermissionGate permission={Permissions.REVIEW_VIEW} fallback={
-        <div className="flex flex-col items-center justify-center py-20 text-center">
-          <p className="text-[var(--text-secondary)] font-medium">Access Denied</p>
-          <p className="text-[var(--text-muted)] text-sm mt-1">You do not have permission to view the 9-Box talent
-            grid.</p>
-        </div>
+        <EmptyState
+          icon={<Shield className="h-8 w-8"/>}
+          title="Access Denied"
+          description="You do not have permission to view the 9-Box talent grid."
+        />
       }>
         <div className="min-h-screen bg-[var(--bg-secondary)]">
           <div className="max-w-7xl mx-auto p-6 space-y-6">
@@ -497,15 +498,12 @@ export default function NineBoxPage() {
                 <span className="text-[var(--text-muted)]">Loading reviews...</span>
               </div>
             ) : points.length === 0 && selectedCycleId ? (
-              <div
-                className="flex flex-col items-center justify-center py-20 text-center bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)]">
-                <Info size={32} className="text-[var(--text-muted)] mb-4"/>
-                <p className="text-[var(--text-secondary)] font-medium">
-                  No rated reviews found
-                </p>
-                <p className="text-[var(--text-muted)] text-sm mt-1">
-                  Complete reviews with overall ratings to populate the grid
-                </p>
+              <div className="bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)]">
+                <EmptyState
+                  icon={<Grid3x3 className="h-8 w-8"/>}
+                  title="No rated reviews found"
+                  description="Complete reviews with overall ratings to populate the 9-Box grid."
+                />
               </div>
             ) : selectedCycleId ? (
               <div className="space-y-6">

@@ -16,9 +16,6 @@ import {PageDeniedFallback, PermissionGate} from '@/components/auth/PermissionGa
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {useToast} from '@/components/notifications/ToastProvider';
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
-import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
-import {Input} from '@/components/ui/Input';
-import {Button} from '@/components/ui/Button';
 import {useEmployees} from '@/lib/hooks/queries/useEmployees';
 import {Stat} from '@/components/ui/Stat';
 import {formatDate} from '@/lib/utils/format/date';

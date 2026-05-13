@@ -19,6 +19,7 @@ import {
   Users,
 } from 'lucide-react';
 import {Badge, Button, Card, CardContent, Input,} from '@/components/ui';
+import {EmptyState} from '@/components/ui/EmptyState';
 import type {BadgeVariant} from '@/components/ui/types';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {CourseSummaryDto, lmsService} from '@/lib/services/grow/lms.service';
@@ -238,25 +239,24 @@ export default function CourseCatalogPage() {
             <span>Loading catalog…</span>
           </div>
         ) : visibleCourses.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 text-[var(--text-muted)] space-y-4">
-            <GraduationCap className="h-12 w-12 text-[var(--text-muted)]"/>
-            <p className="text-lg font-medium text-[var(--text-muted)]">No courses found</p>
-            {searchQuery && (
-              <p className="text-sm">
-                Try clearing the search or{' '}
-                <button
-                  onClick={() => {
-                    setSearchQuery('');
-                    setFilterMandatory(false);
-                  }}
-                  className="text-accent-600 hover:underline cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
-                >
-                  reset filters
-                </button>
-                .
-              </p>
-            )}
-          </div>
+          <EmptyState
+            icon={<GraduationCap className="h-8 w-8"/>}
+            title="No courses found"
+            description={
+              searchQuery
+                ? 'Try clearing the search or resetting filters to see all available courses.'
+                : 'No courses are available right now. Check back soon.'
+            }
+            actionLabel={searchQuery ? 'Reset Filters' : undefined}
+            onAction={
+              searchQuery
+                ? () => {
+                  setSearchQuery('');
+                  setFilterMandatory(false);
+                }
+                : undefined
+            }
+          />
         ) : (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {visibleCourses.map((course) => {

@@ -24,6 +24,8 @@ import {
   TablePagination,
   Textarea,
 } from '@/components/ui';
+import {StatusBadge} from '@/components/ui/StatusBadge';
+import {PROJECT_STATUS} from '@/lib/status/vocabulary';
 import {
   HrmsProject,
   ProjectCreateRequest,
@@ -75,18 +77,6 @@ interface MultiOwnerTypeaheadProps {
   maxOwners?: number;
 }
 
-const STATUS_BADGE: Record<ProjectStatus, {
-  label: string;
-  variant: 'success' | 'warning' | 'secondary' | 'danger' | 'primary'
-}> = {
-  DRAFT: {label: 'Draft', variant: 'secondary'},
-  PLANNED: {label: 'Planned', variant: 'secondary'},
-  IN_PROGRESS: {label: 'In Progress', variant: 'primary'},
-  ON_HOLD: {label: 'On Hold', variant: 'warning'},
-  COMPLETED: {label: 'Completed', variant: 'success'},
-  CANCELLED: {label: 'Cancelled', variant: 'danger'},
-};
-
 const PRIORITY_BADGE: Record<string, { label: string; variant: 'danger' | 'warning' | 'primary' | 'secondary' }> = {
   LOW: {label: 'Low', variant: 'secondary'},
   MEDIUM: {label: 'Medium', variant: 'primary'},
@@ -97,13 +87,6 @@ const PRIORITY_BADGE: Record<string, { label: string; variant: 'danger' | 'warni
 const TYPE_BADGE: Record<ProjectType, { label: string; variant: 'primary' | 'outline' }> = {
   CLIENT: {label: 'Client', variant: 'primary'},
   INTERNAL: {label: 'Internal', variant: 'outline'},
-};
-
-const getStatusBadge = (status?: ProjectStatus | null) => {
-  if (status && STATUS_BADGE[status]) {
-    return STATUS_BADGE[status];
-  }
-  return {label: status ?? 'Unknown', variant: 'secondary' as const};
 };
 
 const getTypeBadge = (type?: ProjectType | null) => {
@@ -717,14 +700,9 @@ export default function ProjectsPage() {
     {
       key: 'status',
       header: 'Status',
-      accessor: (project: HrmsProject) => {
-        const badge = getStatusBadge(project.status);
-        return (
-          <Badge variant={badge.variant} size="sm">
-            {badge.label}
-          </Badge>
-        );
-      },
+      accessor: (project: HrmsProject) => (
+        <StatusBadge status={project.status} domain={PROJECT_STATUS} compact />
+      ),
       mobilePriority: 'secondary' as const,
     },
     {

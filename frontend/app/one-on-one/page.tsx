@@ -28,6 +28,7 @@ import {
   Video,
 } from 'lucide-react';
 import {AppLayout} from '@/components/layout';
+import {formatDate as canonicalFormatDate} from '@/lib/utils/format/date';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
@@ -193,9 +194,10 @@ function getActionStatusColor(status: MeetingActionStatus): string {
   }
 }
 
+// NOTE: previously included weekday ("Mon, May 15, 2026"); flagged for follow-up after Phase 5 canonical migration.
+// Keeps `T00:00:00` suffix so date-only strings parse in local TZ rather than UTC midnight.
 function formatDate(dateStr: string): string {
-  const date = new Date(dateStr + 'T00:00:00');
-  return date.toLocaleDateString('en-US', {weekday: 'short', month: 'short', day: 'numeric', year: 'numeric'});
+  return canonicalFormatDate(dateStr + 'T00:00:00');
 }
 
 function formatTime(timeStr: string): string {

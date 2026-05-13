@@ -21,6 +21,7 @@ import {Briefcase, Calendar, Clock, FileText, Loader2, MapPin, Plus, User, Users
 import {Candidate, CandidateStatus, Interview, JobOpening} from '@/lib/types/hire/recruitment';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {formatDate as canonicalFormatDate, formatTime as canonicalFormatTime} from '@/lib/utils/format/date';
 
 const containerVariants = {
   hidden: {opacity: 0},
@@ -61,22 +62,12 @@ function getCandidateStatusColor(status: CandidateStatus): 'success' | 'warning'
 
 function formatDate(dateString?: string): string {
   if (!dateString) return 'N/A';
-  const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  });
+  return canonicalFormatDate(dateString);
 }
 
 function formatTime(dateString?: string): string {
   if (!dateString) return 'N/A';
-  const date = new Date(dateString);
-  return date.toLocaleTimeString('en-US', {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: true,
-  });
+  return canonicalFormatTime(dateString);
 }
 
 function isToday(dateString?: string): boolean {

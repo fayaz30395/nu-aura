@@ -16,9 +16,6 @@ import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {LeaveRequest, LeaveRequestStatus} from '@/lib/types/hrms/leave';
 import {useToast} from '@/components/notifications/ToastProvider';
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
-import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
-import {Input} from '@/components/ui/Input';
-import {Button} from '@/components/ui/Button';
 import {formatDate} from '@/lib/utils/format/date';
 
 export default function MyLeavesPage() {
@@ -63,12 +60,13 @@ export default function MyLeavesPage() {
     setShowReasonModal(true);
   };
 
-  const handleReasonSubmit = async () => {
-    if (!cancelReason.trim() || !selectedLeaveId) return;
+  const handleReasonSubmit = async (reason?: string) => {
+    const trimmed = (reason ?? cancelReason).trim();
+    if (!trimmed || !selectedLeaveId) return;
 
     try {
       setIsProcessing(true);
-      await cancelLeaveRequest.mutateAsync({id: selectedLeaveId, reason: cancelReason});
+      await cancelLeaveRequest.mutateAsync({id: selectedLeaveId, reason: trimmed});
       toast.success('Leave request cancelled successfully');
       setShowReasonModal(false);
       setCancelReason('');
@@ -314,47 +312,26 @@ export default function MyLeavesPage() {
           type="warning"
         />
 
-        {/* Cancel Reason Modal */}
-        <Modal
+        {/* Cancel Reason Dialog */}
+        <ConfirmDialog
           isOpen={showReasonModal}
           onClose={() => {
             setShowReasonModal(false);
             setCancelReason('');
           }}
-          size="sm"
-        >
-          <ModalHeader onClose={() => setShowReasonModal(false)}>
-            Reason for Cancellation
-          </ModalHeader>
-          <ModalBody>
-            <Input
-              label="Please provide a reason for cancelling this leave request"
-              value={cancelReason}
-              onChange={(e) => setCancelReason(e.target.value)}
-              placeholder="Enter cancellation reason..."
-              disabled={isProcessing}
-            />
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              variant="outline"
-              onClick={() => {
-                setShowReasonModal(false);
-                setCancelReason('');
-              }}
-              disabled={isProcessing}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="primary"
-              onClick={handleReasonSubmit}
-              disabled={!cancelReason.trim() || isProcessing}
-            >
-              {isProcessing ? 'Cancelling...' : 'Submit'}
-            </Button>
-          </ModalFooter>
-        </Modal>
+          onConfirm={handleReasonSubmit}
+          title="Reason for Cancellation"
+          message="Please provide a reason for cancelling this leave request."
+          confirmText="Submit"
+          cancelText="Cancel"
+          type="warning"
+          loading={isProcessing}
+          reason={{
+            label: 'Cancellation reason',
+            placeholder: 'Enter cancellation reason...',
+            required: true,
+          }}
+        />
       </motion.div>
     </AppLayout>);
 }

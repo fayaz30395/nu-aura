@@ -25,6 +25,7 @@ import {Skeleton} from '@/components/ui/Skeleton';
 import {AttendanceRecord} from '@/lib/types/hrms/attendance';
 import {getDateOffsetString, getLocalDateString, getMonthEndString, getMonthStartString} from '@/lib/utils/dateUtils';
 import {useAttendanceByDateRange, useHolidaysByYear, useMyTimeEntries} from '@/lib/hooks/queries/useAttendance';
+import {formatTime as canonicalFormatTime} from '@/lib/utils/format/date';
 
 type TabView = 'log' | 'calendar' | 'requests';
 type PeriodFilter = '30days' | string; // string for month names
@@ -54,14 +55,12 @@ function formatHoursFromMinutes(minutes: number | undefined): string {
 }
 
 // ─── Helper: format time from ISO string ───────────────────────────
-function formatTime(isoString: string | undefined, use24h: boolean): string {
+// FOLLOW-UP: `use24h` toggle now no-op — canonical NU-AURA format is 12-hour.
+// Remove the toggle UI (line ~566) and the use24h state after Phase 5.
+function formatTime(isoString: string | undefined, _use24h: boolean): string {
   if (!isoString) return '--:--';
   try {
-    const date = new Date(isoString);
-    if (use24h) {
-      return date.toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit', hour12: false});
-    }
-    return date.toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit', hour12: true});
+    return canonicalFormatTime(isoString);
   } catch {
     return '--:--';
   }

@@ -20,7 +20,17 @@ import {
   Variable,
 } from 'lucide-react';
 import {AppLayout} from '@/components/layout/AppLayout';
-import {Badge, Button, Card, CardContent, Modal, ModalBody, ModalFooter, ModalHeader,} from '@/components/ui';
+import {
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  ConfirmDialog,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+} from '@/components/ui';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {useAuth} from '@/lib/hooks/useAuth';
@@ -918,34 +928,20 @@ export default function LetterTemplatesPage() {
           />
         )}
 
-        {/* ── Delete Confirmation Modal ─────────────────────────────────── */}
-        <Modal
+        {/* ── Delete Confirmation Dialog ────────────────────────────────── */}
+        <ConfirmDialog
           isOpen={!!showDeleteConfirm}
           onClose={() => setShowDeleteConfirm(null)}
-          size="sm"
-        >
-          <ModalHeader onClose={() => setShowDeleteConfirm(null)}>
-            Confirm Delete
-          </ModalHeader>
-          <ModalBody>
-            <p className="text-[var(--text-secondary)]">
-              Are you sure you want to deactivate this template? It will no longer be available for letter generation.
-            </p>
-          </ModalBody>
-          <ModalFooter>
-            <Button variant="ghost" onClick={() => setShowDeleteConfirm(null)}>
-              Cancel
-            </Button>
-            <Button
-              variant="danger"
-              onClick={() => showDeleteConfirm && handleDelete(showDeleteConfirm)}
-              disabled={deleteMutation.isPending}
-            >
-              {deleteMutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin"/>}
-              Delete
-            </Button>
-          </ModalFooter>
-        </Modal>
+          onConfirm={() => {
+            if (showDeleteConfirm) handleDelete(showDeleteConfirm);
+          }}
+          title="Confirm Delete"
+          message="Are you sure you want to deactivate this template? It will no longer be available for letter generation."
+          confirmText="Delete"
+          cancelText="Cancel"
+          type="danger"
+          loading={deleteMutation.isPending}
+        />
       </div>
     </AppLayout>
   );

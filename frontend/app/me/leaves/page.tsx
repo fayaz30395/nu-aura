@@ -19,10 +19,11 @@ import {
   Send,
   User,
   X,
-  XCircle,
 } from 'lucide-react';
 import {AppLayout} from '@/components/layout';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
+import {StatusBadge} from '@/components/ui/StatusBadge';
+import {LEAVE_STATUS} from '@/lib/status/vocabulary';
 import {CATEGORICAL_UNSET} from '@/lib/utils/categoricalPalette';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {
@@ -236,30 +237,6 @@ export default function MyLeavesPage() {
     setShowCancelModal(false);
     setCancellingRequest(null);
     resetCancel();
-  };
-
-  const getStatusColor = (status: LeaveRequestStatus) => {
-    switch (status) {
-      case 'APPROVED':
-        return 'badge-status status-success';
-      case 'REJECTED':
-        return 'badge-status status-danger';
-      case 'CANCELLED':
-        return 'badge-status status-neutral';
-      default:
-        return 'badge-status status-warning';
-    }
-  };
-
-  const getStatusIcon = (status: LeaveRequestStatus) => {
-    switch (status) {
-      case 'APPROVED':
-        return <CheckCircle className="h-4 w-4"/>;
-      case 'REJECTED':
-        return <XCircle className="h-4 w-4"/>;
-      default:
-        return <Clock className="h-4 w-4"/>;
-    }
   };
 
   const formatDate = (date: string) => {
@@ -557,14 +534,7 @@ export default function MyLeavesPage() {
                           <h3 className="text-xl font-semibold text-[var(--text-primary)]">
                             {getLeaveTypeName(request.leaveTypeId)}
                           </h3>
-                          <span
-                            className={`inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(
-                              request.status
-                            )}`}
-                          >
-                            {getStatusIcon(request.status)}
-                            {request.status}
-                          </span>
+                          <StatusBadge status={request.status} domain={LEAVE_STATUS} />
                         </div>
                         <div className="meta-row">
                           <div className="flex items-center gap-1">

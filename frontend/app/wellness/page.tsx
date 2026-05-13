@@ -28,18 +28,21 @@ import {
 } from 'lucide-react';
 import {AppLayout} from '@/components/layout/AppLayout';
 import {
-  Badge,
   Button,
   Card,
   CardContent,
+  EmptyState,
   Input,
   Modal,
   ModalBody,
   ModalFooter,
   ModalHeader,
   Select,
+  Stat,
+  StatusBadge,
   Textarea,
 } from '@/components/ui';
+import {WELLNESS_FLAG} from '@/lib/status/vocabulary';
 import {
   useActiveChallenges,
   useActivePrograms,
@@ -80,17 +83,17 @@ const getCategoryIcon = (category: ProgramCategory) => {
 const getCategoryColor = (category: ProgramCategory) => {
   switch (category) {
     case ProgramCategory.PHYSICAL_FITNESS:
-      return 'bg-accent-100 text-accent-800 dark:bg-accent-900 dark:text-accent-200';
+      return 'bg-accent-100 dark:bg-accent-500/10 text-accent-600 dark:text-accent-400';
     case ProgramCategory.MENTAL_HEALTH:
-      return 'bg-accent-300 text-accent-900 dark:bg-accent-900 dark:text-accent-400';
+      return 'bg-accent-100 dark:bg-accent-500/10 text-accent-600 dark:text-accent-400';
     case ProgramCategory.NUTRITION:
-      return 'bg-success-100 text-success-800 dark:bg-success-900 dark:text-success-200';
+      return 'bg-success-100 dark:bg-success-500/10 text-success-600 dark:text-success-400';
     case ProgramCategory.SLEEP:
-      return 'bg-accent-100 text-accent-800 dark:bg-accent-900 dark:text-accent-200';
+      return 'bg-accent-100 dark:bg-accent-500/10 text-accent-600 dark:text-accent-400';
     case ProgramCategory.STRESS_MANAGEMENT:
-      return 'bg-accent-300 text-accent-900 dark:bg-accent-900 dark:text-accent-400';
+      return 'bg-warning-100 dark:bg-warning-500/10 text-warning-600 dark:text-warning-400';
     default:
-      return 'bg-[var(--bg-surface)] text-[var(--text-primary)]';
+      return 'bg-[var(--bg-card-hover)] text-[var(--text-secondary)]';
   }
 };
 
@@ -223,57 +226,44 @@ export default function WellnessPage() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <Card
-            className="bg-gradient-to-br from-success-50 to-success-100 dark:from-success-900/30 dark:to-success-900/30 border-success-200 dark:border-success-800">
+          <Card className="card-aura">
             <CardContent className="p-4">
-              <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-success-500 p-4">
-                  <Trophy className="h-6 w-6 text-white"/>
-                </div>
-                <div>
-                  <p className="text-sm text-success-700 dark:text-success-300">Total Points</p>
-                  <p className="text-xl font-bold text-success-900 dark:text-success-100">{stats.totalPoints}</p>
-                </div>
-              </div>
+              <Stat
+                label="Total Points"
+                value={stats.totalPoints}
+                tone="success"
+                icon={<Trophy className="h-3.5 w-3.5"/>}
+              />
             </CardContent>
           </Card>
-          <Card>
+          <Card className="card-aura">
             <CardContent className="p-4">
-              <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-warning-100 p-4 dark:bg-warning-900">
-                  <Flame className="h-6 w-6 text-warning-600 dark:text-warning-400"/>
-                </div>
-                <div>
-                  <p className="text-body-secondary">Current Streak</p>
-                  <p className="text-xl font-bold text-[var(--text-primary)]">{stats.currentStreak} days</p>
-                </div>
-              </div>
+              <Stat
+                label="Current Streak"
+                value={`${stats.currentStreak} days`}
+                tone="warning"
+                icon={<Flame className="h-3.5 w-3.5"/>}
+              />
             </CardContent>
           </Card>
-          <Card>
+          <Card className="card-aura">
             <CardContent className="p-4">
-              <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-accent-300 p-4 dark:bg-accent-900">
-                  <Star className="h-6 w-6 text-accent-800 dark:text-accent-600"/>
-                </div>
-                <div>
-                  <p className="text-body-secondary">Level</p>
-                  <p className="text-xl font-bold text-[var(--text-primary)]">{stats.level}</p>
-                </div>
-              </div>
+              <Stat
+                label="Level"
+                value={stats.level}
+                tone="accent"
+                icon={<Star className="h-3.5 w-3.5"/>}
+              />
             </CardContent>
           </Card>
-          <Card>
+          <Card className="card-aura">
             <CardContent className="p-4">
-              <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-accent-100 p-4 dark:bg-accent-900">
-                  <Target className="h-6 w-6 text-accent-600 dark:text-accent-400"/>
-                </div>
-                <div>
-                  <p className="text-body-secondary">Active Challenges</p>
-                  <p className="text-xl font-bold text-[var(--text-primary)]">{stats.activeChallenges}</p>
-                </div>
-              </div>
+              <Stat
+                label="Active Challenges"
+                value={stats.activeChallenges}
+                tone="accent"
+                icon={<Target className="h-3.5 w-3.5"/>}
+              />
             </CardContent>
           </Card>
         </div>
@@ -337,15 +327,13 @@ export default function WellnessPage() {
             ) : activeTab === 'programs' ? (
               // Programs Grid
               programs.length === 0 ? (
-                <Card>
-                  <CardContent className="flex flex-col items-center justify-center py-12">
-                    <Heart className="h-12 w-12 text-[var(--text-muted)]"/>
-                    <p className="mt-4 text-lg font-medium text-[var(--text-primary)]">
-                      No wellness programs available
-                    </p>
-                    <p className="text-[var(--text-secondary)]">
-                      Check back later for new programs
-                    </p>
+                <Card className="card-aura">
+                  <CardContent className="p-0">
+                    <EmptyState
+                      icon={<Heart className="h-8 w-8"/>}
+                      title="No wellness programs available"
+                      description="Check back later for new programs"
+                    />
                   </CardContent>
                 </Card>
               ) : (
@@ -364,7 +352,7 @@ export default function WellnessPage() {
                                 {program.name}
                               </h3>
                               {program.isFeatured && (
-                                <Badge variant="warning" className="text-xs">Featured</Badge>
+                                <StatusBadge status="FEATURED" domain={WELLNESS_FLAG} compact/>
                               )}
                             </div>
                             <p className="text-body-secondary mt-1 line-clamp-2">
@@ -394,15 +382,13 @@ export default function WellnessPage() {
             ) : (
               // Challenges Grid
               challenges.length === 0 ? (
-                <Card>
-                  <CardContent className="flex flex-col items-center justify-center py-12">
-                    <Target className="h-12 w-12 text-[var(--text-muted)]"/>
-                    <p className="mt-4 text-lg font-medium text-[var(--text-primary)]">
-                      No active challenges
-                    </p>
-                    <p className="text-[var(--text-secondary)]">
-                      Check back later for new challenges
-                    </p>
+                <Card className="card-aura">
+                  <CardContent className="p-0">
+                    <EmptyState
+                      icon={<Target className="h-8 w-8"/>}
+                      title="No active challenges"
+                      description="Check back later for new challenges"
+                    />
                   </CardContent>
                 </Card>
               ) : (
@@ -420,9 +406,10 @@ export default function WellnessPage() {
                               {challenge.description || 'Join this challenge and compete!'}
                             </p>
                           </div>
-                          <Badge variant={challenge.isJoined ? 'success' : 'default'}>
-                            {challenge.isJoined ? 'Joined' : 'Open'}
-                          </Badge>
+                          <StatusBadge
+                            status={challenge.isJoined ? 'JOINED' : 'OPEN'}
+                            domain={WELLNESS_FLAG}
+                          />
                         </div>
                         <div className="flex items-center gap-4 mt-4 text-body-muted">
                           <span className="flex items-center gap-1">

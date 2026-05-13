@@ -22,6 +22,7 @@ import {
   Users,
 } from 'lucide-react';
 import {Badge, Button, Card, CardContent} from '@/components/ui';
+import {EmptyState} from '@/components/ui/EmptyState';
 import type {BadgeVariant} from '@/components/ui/types';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
@@ -650,9 +651,12 @@ export default function CourseDetailPage() {
             <h2 className="text-lg font-semibold text-[var(--text-primary)]">Course Content</h2>
             {modules.length === 0 ? (
               <Card className="border border-[var(--border-main)]">
-                <CardContent className="flex flex-col items-center justify-center py-12 text-[var(--text-muted)] gap-4">
-                  <BookOpen className="h-10 w-10"/>
-                  <p className="text-sm">No modules available yet.</p>
+                <CardContent>
+                  <EmptyState
+                    icon={<BookOpen className="h-8 w-8"/>}
+                    title="No modules available yet"
+                    description="Course modules will appear here once they have been added."
+                  />
                 </CardContent>
               </Card>
             ) : (

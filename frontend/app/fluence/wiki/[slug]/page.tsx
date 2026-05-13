@@ -61,6 +61,7 @@ import {WatchButton} from '@/components/fluence/WatchButton';
 import {InlineCommentsPanel} from '@/components/fluence/InlineComments';
 import {EmptyState} from '@/components/ui/EmptyState';
 import type {FluenceComment} from '@/lib/types/platform/fluence';
+import {formatDate, formatDateTime} from '@/lib/utils/format/date';
 
 // Dynamically import Tiptap viewer to keep it out of the initial bundle
 const ContentViewer = dynamic(
@@ -153,7 +154,7 @@ function timeAgo(dateStr: string): string {
   if (diffHr < 24) return `${diffHr}h ago`;
   const diffDay = Math.floor(diffHr / 24);
   if (diffDay < 7) return `${diffDay}d ago`;
-  return then.toLocaleDateString();
+  return formatDate(then);
 }
 
 // ─── Comment Thread Component ────────────────────────────────────
@@ -696,7 +697,7 @@ export default function WikiPageDetailPage() {
                   <div className="flex items-center gap-2 text-[var(--text-muted)]">
                     <Calendar className={`${iconSize.cardInline} flex-shrink-0`}/>
                     <span className="text-sm">
-                      {new Date(page.updatedAt).toLocaleDateString()}
+                      {formatDate(page.updatedAt)}
                     </span>
                   </div>
 
@@ -1203,7 +1204,7 @@ export default function WikiPageDetailPage() {
                     <span className={typography.body}>{v.viewerName || 'Unknown'}</span>
                   </div>
                   <span className={typography.caption}>
-                    {new Date(v.viewedAt).toLocaleString()}
+                    {formatDateTime(v.viewedAt)}
                   </span>
                 </motion.div>
               ))}
@@ -1262,7 +1263,7 @@ export default function WikiPageDetailPage() {
                         {rev.authorName || 'Unknown'}
                       </span>
                       <span className="text-caption">
-                        {new Date(rev.createdAt).toLocaleString()}
+                        {formatDateTime(rev.createdAt)}
                       </span>
                     </div>
                     <p

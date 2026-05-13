@@ -2,8 +2,9 @@
 
 import {useEffect, useState} from 'react';
 import {Center, Group, Loader, Pagination, SegmentedControl, Stack, Text,} from '@mantine/core';
-import {IconActivity} from '@tabler/icons-react';
+import {Activity} from 'lucide-react';
 import {useActivityFeed} from '@/lib/hooks/queries/useFluence';
+import {EmptyState} from '@/components/ui/EmptyState';
 import ActivityCard from './ActivityCard';
 
 const FILTER_OPTIONS = [
@@ -64,16 +65,15 @@ export default function ActivityFeed() {
       )}
 
       {!isLoading && activities.length === 0 && (
-        <Center py="xl">
-          <Stack align="center" gap="xs">
-            <IconActivity size={48} color="var(--text-muted)"/>
-            <Text c="dimmed" size="sm">
-              {isError || loadingTimedOut
-                ? 'Unable to load activity feed. The service may be temporarily unavailable.'
-                : 'No activity yet. Create or edit content to see it here.'}
-            </Text>
-          </Stack>
-        </Center>
+        <EmptyState
+          icon={<Activity className="h-8 w-8"/>}
+          title={isError || loadingTimedOut ? 'Activity feed unavailable' : 'No activity yet'}
+          description={
+            isError || loadingTimedOut
+              ? 'Unable to load activity feed. The service may be temporarily unavailable.'
+              : 'Create or edit content to see it here.'
+          }
+        />
       )}
 
       {!isLoading &&

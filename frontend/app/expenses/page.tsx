@@ -231,13 +231,14 @@ export default function ExpenseClaims() {
     }
   };
 
-  const handleBulkReject = async () => {
-    if (!user?.employeeId || selectedClaims.size === 0 || !bulkRejectReason) return;
+  const handleBulkReject = async (reason?: string) => {
+    const trimmed = (reason ?? bulkRejectReason).trim();
+    if (!user?.employeeId || selectedClaims.size === 0 || !trimmed) return;
 
     setBulkProcessing(true);
     try {
       const promises = Array.from(selectedClaims).map((claimId) =>
-        rejectMutation.mutateAsync({claimId, reason: bulkRejectReason})
+        rejectMutation.mutateAsync({claimId, reason: trimmed})
       );
       await Promise.all(promises);
       setSelectedClaims(new Set());
@@ -979,46 +980,23 @@ export default function ExpenseClaims() {
           </div>
         )}
 
-        {/* Bulk Reject Modal */}
-        <Modal isOpen={showBulkRejectModal} onClose={() => setShowBulkRejectModal(false)} size="md">
-          <ModalHeader onClose={() => setShowBulkRejectModal(false)}>
-            Reject {selectedClaims.size} Expense Claim{selectedClaims.size !== 1 ? 's' : ''}
-          </ModalHeader>
-          <ModalBody>
-            <p className="text-[var(--text-secondary)] mb-4">
-              You are about to reject {selectedClaims.size} expense claim{selectedClaims.size !== 1 ? 's' : ''}.
-              Please provide a reason for rejection.
-            </p>
-            <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                Rejection Reason <span className="text-danger-500">*</span>
-              </label>
-              <textarea
-                value={bulkRejectReason}
-                onChange={(e) => setBulkRejectReason(e.target.value)}
-                rows={3}
-                className="input-aura"
-                placeholder="Enter reason for rejection..."
-              />
-            </div>
-          </ModalBody>
-          <ModalFooter>
-            <button
-              onClick={() => setShowBulkRejectModal(false)}
-              className="px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleBulkReject}
-              disabled={!bulkRejectReason.trim() || bulkProcessing}
-              className="px-4 py-2 bg-danger-600 text-white rounded-lg hover:bg-danger-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-            >
-              <XCircle className="w-4 h-4"/>
-              {bulkProcessing ? 'Rejecting...' : `Reject ${selectedClaims.size} Claims`}
-            </button>
-          </ModalFooter>
-        </Modal>
+        {/* Bulk Reject Dialog */}
+        <ConfirmDialog
+          isOpen={showBulkRejectModal}
+          onClose={() => setShowBulkRejectModal(false)}
+          onConfirm={handleBulkReject}
+          title={`Reject ${selectedClaims.size} Expense Claim${selectedClaims.size !== 1 ? 's' : ''}`}
+          message={`You are about to reject ${selectedClaims.size} expense claim${selectedClaims.size !== 1 ? 's' : ''}. Please provide a reason for rejection.`}
+          confirmText={`Reject ${selectedClaims.size} Claim${selectedClaims.size !== 1 ? 's' : ''}`}
+          cancelText="Cancel"
+          type="danger"
+          loading={bulkProcessing}
+          reason={{
+            label: 'Rejection reason',
+            placeholder: 'Enter reason for rejection...',
+            required: true,
+          }}
+        />
 
         {/* Delete Confirmation Dialog */}
         <ConfirmDialog

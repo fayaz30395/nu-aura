@@ -39,6 +39,7 @@ import {Permissions} from '@/lib/hooks/usePermissions';
 import {Card, CardContent} from '@/components/ui/Card';
 import {Asset} from '@/lib/types/hrms/asset';
 import {Skeleton} from '@mantine/core';
+import {formatDate as canonicalFormatDate} from '@/lib/utils/format/date';
 
 const log = createLogger('EmployeePage');
 
@@ -98,11 +99,7 @@ function getStatusBadgeColor(status: string) {
 
 function formatDate(date?: string) {
   if (!date) return '-';
-  return new Date(date).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
+  return canonicalFormatDate(date);
 }
 
 function formatEnumValue(value?: string) {

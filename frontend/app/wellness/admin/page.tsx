@@ -4,23 +4,26 @@ import {useState} from 'react';
 import {Controller, useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
-import {Calendar, Heart, Info, Plus, RefreshCw, Star, Target, Trophy, Users,} from 'lucide-react';
+import {Calendar, Heart, Info, Plus, RefreshCw, Target, Trophy, Users,} from 'lucide-react';
 import {AppLayout} from '@/components/layout/AppLayout';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {
-  Badge,
   Button,
   Card,
   CardContent,
+  EmptyState,
   Input,
   Modal,
   ModalBody,
   ModalFooter,
   ModalHeader,
   Select,
+  Stat,
+  StatusBadge,
   Textarea,
 } from '@/components/ui';
+import {LIFECYCLE_STATUS, WELLNESS_FLAG} from '@/lib/status/vocabulary';
 import {
   useActiveChallenges,
   useActivePrograms,
@@ -121,14 +124,13 @@ function ProgramCard({program}: {
                 {program.name}
               </span>
               {program.isFeatured && (
-                <Badge variant="warning" className="text-xs flex items-center gap-1">
-                  <Star size={10}/>
-                  Featured
-                </Badge>
+                <StatusBadge status="FEATURED" domain={WELLNESS_FLAG} compact/>
               )}
-              <Badge variant={program.isActive ? 'success' : 'secondary'} className="text-xs">
-                {program.isActive ? 'Active' : 'Inactive'}
-              </Badge>
+              <StatusBadge
+                status={program.isActive ? 'ACTIVE' : 'INACTIVE'}
+                domain={LIFECYCLE_STATUS}
+                compact
+              />
             </div>
             {program.description && (
               <p className="text-caption line-clamp-2 mb-2">
@@ -189,14 +191,13 @@ function ChallengeCard({challenge}: {
               <span className="font-semibold text-sm text-[var(--text-primary)] truncate">
                 {challenge.name}
               </span>
-              <Badge variant={challenge.isActive ? 'success' : 'secondary'} className="text-xs">
-                {challenge.isActive ? 'Active' : 'Inactive'}
-              </Badge>
+              <StatusBadge
+                status={challenge.isActive ? 'ACTIVE' : 'INACTIVE'}
+                domain={LIFECYCLE_STATUS}
+                compact
+              />
               {challenge.isTeamBased && (
-                <Badge variant="primary" className="text-xs flex items-center gap-1">
-                  <Users size={10}/>
-                  Team
-                </Badge>
+                <StatusBadge status="TEAM" domain={WELLNESS_FLAG} compact/>
               )}
             </div>
             {challenge.description && (
@@ -658,39 +659,34 @@ export default function WellnessAdminPage() {
 
           {/* Stats */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <Card>
-              <CardContent className="p-4 flex items-center gap-4">
-                <div className="rounded-lg bg-accent-100 p-4 dark:bg-accent-900/30">
-                  <Heart className="h-5 w-5 text-accent-600 dark:text-accent-400"/>
-                </div>
-                <div>
-                  <p className="text-caption">Active Programs</p>
-                  <p className="text-xl font-bold text-[var(--text-primary)]">{programs.length}</p>
-                </div>
+            <Card className="card-aura">
+              <CardContent className="p-4">
+                <Stat
+                  label="Active Programs"
+                  value={programs.length}
+                  tone="accent"
+                  icon={<Heart className="h-3.5 w-3.5"/>}
+                />
               </CardContent>
             </Card>
-            <Card>
-              <CardContent className="p-4 flex items-center gap-4">
-                <div className="rounded-lg bg-success-100 p-4 dark:bg-success-900/30">
-                  <Target className="h-5 w-5 text-success-600 dark:text-success-400"/>
-                </div>
-                <div>
-                  <p className="text-caption">Active Challenges</p>
-                  <p
-                    className="text-xl font-bold text-[var(--text-primary)]">{activeChallenges.length}</p>
-                </div>
+            <Card className="card-aura">
+              <CardContent className="p-4">
+                <Stat
+                  label="Active Challenges"
+                  value={activeChallenges.length}
+                  tone="success"
+                  icon={<Target className="h-3.5 w-3.5"/>}
+                />
               </CardContent>
             </Card>
-            <Card>
-              <CardContent className="p-4 flex items-center gap-4">
-                <div className="rounded-lg bg-warning-100 p-4 dark:bg-warning-900/30">
-                  <Calendar className="h-5 w-5 text-warning-600 dark:text-warning-400"/>
-                </div>
-                <div>
-                  <p className="text-caption">Upcoming Challenges</p>
-                  <p
-                    className="text-xl font-bold text-[var(--text-primary)]">{upcomingChallenges.length}</p>
-                </div>
+            <Card className="card-aura">
+              <CardContent className="p-4">
+                <Stat
+                  label="Upcoming Challenges"
+                  value={upcomingChallenges.length}
+                  tone="warning"
+                  icon={<Calendar className="h-3.5 w-3.5"/>}
+                />
               </CardContent>
             </Card>
           </div>
@@ -721,17 +717,15 @@ export default function WellnessAdminPage() {
             </div>
           ) : activeTab === 'programs' ? (
             programs.length === 0 ? (
-              <Card>
-                <CardContent className="flex flex-col items-center justify-center py-16">
-                  <Info className="h-10 w-10 text-[var(--text-muted)] mb-4"/>
-                  <p className="font-medium text-[var(--text-secondary)]">No programs yet</p>
-                  <p className="text-body-muted mt-1 mb-4">
-                    Create your first wellness program to get started
-                  </p>
-                  <Button onClick={() => setShowProgramModal(true)} className="flex items-center gap-2">
-                    <Plus className="h-4 w-4"/>
-                    Create Program
-                  </Button>
+              <Card className="card-aura">
+                <CardContent className="p-0">
+                  <EmptyState
+                    icon={<Info className="h-8 w-8"/>}
+                    title="No programs yet"
+                    description="Create your first wellness program to get started"
+                    actionLabel="Create Program"
+                    onAction={() => setShowProgramModal(true)}
+                  />
                 </CardContent>
               </Card>
             ) : (
@@ -743,17 +737,15 @@ export default function WellnessAdminPage() {
             )
           ) : (
             allChallenges.length === 0 ? (
-              <Card>
-                <CardContent className="flex flex-col items-center justify-center py-16">
-                  <Info className="h-10 w-10 text-[var(--text-muted)] mb-4"/>
-                  <p className="font-medium text-[var(--text-secondary)]">No challenges yet</p>
-                  <p className="text-body-muted mt-1 mb-4">
-                    Create your first wellness challenge
-                  </p>
-                  <Button onClick={() => setShowChallengeModal(true)} className="flex items-center gap-2">
-                    <Plus className="h-4 w-4"/>
-                    Create Challenge
-                  </Button>
+              <Card className="card-aura">
+                <CardContent className="p-0">
+                  <EmptyState
+                    icon={<Info className="h-8 w-8"/>}
+                    title="No challenges yet"
+                    description="Create your first wellness challenge"
+                    actionLabel="Create Challenge"
+                    onAction={() => setShowChallengeModal(true)}
+                  />
                 </CardContent>
               </Card>
             ) : (

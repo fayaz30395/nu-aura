@@ -41,6 +41,7 @@ import {recruitmentService} from '@/lib/services/hire/recruitment.service';
 import {useRankedCandidates} from '@/lib/hooks/queries/useRecruitment';
 import type {Candidate, RecruitmentStage} from '@/lib/types/hire/recruitment';
 import type {CandidateMatchResponse} from '@/lib/types/hire/ai-recruitment';
+import {formatDate} from '@/lib/utils/format/date';
 
 // ── 13-stage NU-Hire pipeline ──────────────────────────────────────────
 // Terminal / rejection stages are excluded from the main board columns.
@@ -175,7 +176,7 @@ function CandidateCard({
             )}
             {candidate.appliedDate && (
               <Text size="xs" c="dimmed">
-                Applied: {new Date(candidate.appliedDate).toLocaleDateString()}
+                Applied: {formatDate(candidate.appliedDate)}
               </Text>
             )}
 
@@ -581,7 +582,7 @@ export default function KanbanPage() {
                     </Text>
                     {c.appliedDate && (
                       <Text size="xs" c="dimmed">
-                        {new Date(c.appliedDate).toLocaleDateString()}
+                        {formatDate(c.appliedDate)}
                       </Text>
                     )}
                   </Paper>

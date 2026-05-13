@@ -24,6 +24,7 @@ import {
 import type {CreatePIPRequest, PIPCheckInRequest, PIPResponse, PIPStatus,} from '@/lib/types/grow/performance';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
+import {formatDate as canonicalFormatDate} from '@/lib/utils/format/date';
 
 // ─── Validation Schemas ───────────────────────────────────────────────────────
 
@@ -147,11 +148,7 @@ function calculateProgress(startDate: string, endDate: string): number {
 
 function formatDate(dateStr: string): string {
   try {
-    return new Date(dateStr).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    });
+    return canonicalFormatDate(dateStr);
   } catch {
     return dateStr;
   }

@@ -27,13 +27,13 @@ import {
   CheckCircle,
   ClipboardList,
   Clock,
-  GraduationCap,
   HelpCircle,
   Pause,
   Play,
   Send,
   Slash,
   Star,
+  Users,
   XCircle,
 } from 'lucide-react';
 
@@ -248,7 +248,7 @@ export const WELLNESS_FLAG: Record<string, StatusMeta> = {
   OPEN: {label: 'Open', tone: 'info', icon: Send},
   ACTIVE: ACTIVE_META,
   INACTIVE: INACTIVE_META,
-  TEAM: {label: 'Team', tone: 'info', icon: GraduationCap},
+  TEAM: {label: 'Team', tone: 'info', icon: Users},
 };
 
 /* ── Resolver ───────────────────────────────────────────────────────── */

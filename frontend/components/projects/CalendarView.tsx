@@ -136,10 +136,10 @@ export function CalendarView({
           compact ? 'mb-0.5' : 'mb-1'
         }`}
         style={{backgroundColor}}
-        title={`${event.title} - ${format(event.startDate, 'HH:mm')} to ${format(event.endDate, 'HH:mm')}`}
+        title={`${event.title} - ${format(event.startDate, 'h:mm a')} to ${format(event.endDate, 'h:mm a')}`}
       >
         {!event.allDay && !compact && (
-          <span className="mr-1 opacity-80">{format(event.startDate, 'HH:mm')}</span>
+          <span className="mr-1 opacity-80">{format(event.startDate, 'h:mm a')}</span>
         )}
         {event.title}
       </div>
@@ -305,7 +305,7 @@ export function CalendarView({
                   >
                     <div className="font-medium truncate">{event.title}</div>
                     <div className="opacity-80 truncate">
-                      {format(event.startDate, 'HH:mm')} - {format(event.endDate, 'HH:mm')}
+                      {format(event.startDate, 'h:mm a')} - {format(event.endDate, 'h:mm a')}
                     </div>
                   </div>
                 );
@@ -394,7 +394,7 @@ export function CalendarView({
                 >
                   <div className="font-medium">{event.title}</div>
                   <div className="text-sm opacity-80">
-                    {format(event.startDate, 'HH:mm')} - {format(event.endDate, 'HH:mm')}
+                    {format(event.startDate, 'h:mm a')} - {format(event.endDate, 'h:mm a')}
                   </div>
                   {event.description && duration > 1 && (
                     <div className="text-xs opacity-70 mt-1 line-clamp-2">{event.description}</div>

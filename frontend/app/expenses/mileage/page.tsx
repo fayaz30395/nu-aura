@@ -10,7 +10,7 @@ import {useAuth} from '@/lib/hooks/useAuth';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {MileageLogEntry, MileageStatus, VehicleType,} from '@/lib/types/hrms/expense';
-import {EmptyState, Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui';
+import {ConfirmDialog, EmptyState, Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui';
 import {format} from 'date-fns';
 import {formatCurrency} from '@/lib/utils';
 import {
@@ -159,10 +159,11 @@ export default function MileagePage() {
     }
   };
 
-  const handleRejectLog = async () => {
-    if (!selectedLogId || !rejectReason.trim()) return;
+  const handleRejectLog = async (reason?: string) => {
+    const trimmed = (reason ?? rejectReason).trim();
+    if (!selectedLogId || !trimmed) return;
     try {
-      await rejectMutation.mutateAsync({logId: selectedLogId, reason: rejectReason});
+      await rejectMutation.mutateAsync({logId: selectedLogId, reason: trimmed});
       setShowRejectModal(false);
       setSelectedLogId(null);
       setRejectReason('');
@@ -658,39 +659,23 @@ export default function MileagePage() {
           </form>
         </Modal>
 
-        {/* Reject Modal */}
-        <Modal isOpen={showRejectModal} onClose={() => setShowRejectModal(false)} size="sm">
-          <ModalHeader onClose={() => setShowRejectModal(false)}>Reject Mileage Log</ModalHeader>
-          <ModalBody>
-            <div>
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
-                Rejection Reason *
-              </label>
-              <textarea
-                value={rejectReason}
-                onChange={(e) => setRejectReason(e.target.value)}
-                rows={3}
-                placeholder="Enter reason for rejection..."
-                className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-white focus:ring-2 focus:ring-accent-700 focus:border-transparent"
-              />
-            </div>
-          </ModalBody>
-          <ModalFooter>
-            <button
-              onClick={() => setShowRejectModal(false)}
-              className="px-4 py-2 text-sm text-surface-600 hover:bg-surface-100 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleRejectLog}
-              disabled={!rejectReason.trim() || rejectMutation.isPending}
-              className="px-4 py-2 text-sm bg-danger-600 hover:bg-danger-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-            >
-              {rejectMutation.isPending ? 'Rejecting...' : 'Reject'}
-            </button>
-          </ModalFooter>
-        </Modal>
+        {/* Reject Dialog */}
+        <ConfirmDialog
+          isOpen={showRejectModal}
+          onClose={() => setShowRejectModal(false)}
+          onConfirm={handleRejectLog}
+          title="Reject Mileage Log"
+          message="Please provide a reason for rejecting this mileage log."
+          confirmText="Reject"
+          cancelText="Cancel"
+          type="danger"
+          loading={rejectMutation.isPending}
+          reason={{
+            label: 'Rejection reason',
+            placeholder: 'Enter reason for rejection...',
+            required: true,
+          }}
+        />
       </div>
     </AppLayout>
   );

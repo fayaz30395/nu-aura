@@ -19,6 +19,7 @@ import {
   Wallet,
   XCircle,
 } from 'lucide-react';
+import {formatDate} from '@/lib/utils/format/date';
 
 export default function LoanDetailPage() {
   const router = useRouter();
@@ -262,11 +263,7 @@ export default function LoanDetailPage() {
               <div>
                 <p className="text-body-muted mb-1">First EMI Date</p>
                 <p className="text-lg font-medium text-[var(--text-primary)]">
-                  {new Date(loan.firstEmiDate).toLocaleDateString('en-IN', {
-                    day: '2-digit',
-                    month: 'short',
-                    year: 'numeric',
-                  })}
+                  {formatDate(loan.firstEmiDate)}
                 </p>
               </div>
             )}
@@ -274,11 +271,7 @@ export default function LoanDetailPage() {
               <div>
                 <p className="text-body-muted mb-1">Request Date</p>
                 <p className="text-lg font-medium text-[var(--text-primary)]">
-                  {new Date(loan.requestedDate).toLocaleDateString('en-IN', {
-                    day: '2-digit',
-                    month: 'short',
-                    year: 'numeric',
-                  })}
+                  {formatDate(loan.requestedDate)}
                 </p>
               </div>
             )}
@@ -317,22 +310,14 @@ export default function LoanDetailPage() {
               <div>
                 <p className="text-body-muted mb-1">Approved Date</p>
                 <p className="text-lg font-medium text-[var(--text-primary)]">
-                  {new Date(loan.approvedDate).toLocaleDateString('en-IN', {
-                    day: '2-digit',
-                    month: 'short',
-                    year: 'numeric',
-                  })}
+                  {formatDate(loan.approvedDate)}
                 </p>
               </div>
               {loan.disbursementDate && (
                 <div>
                   <p className="text-body-muted mb-1">Disbursed Date</p>
                   <p className="text-lg font-medium text-[var(--text-primary)]">
-                    {new Date(loan.disbursementDate).toLocaleDateString('en-IN', {
-                      day: '2-digit',
-                      month: 'short',
-                      year: 'numeric',
-                    })}
+                    {formatDate(loan.disbursementDate)}
                   </p>
                 </div>
               )}

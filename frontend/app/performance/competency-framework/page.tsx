@@ -20,6 +20,7 @@ import {
   TrendingUp,
 } from 'lucide-react';
 import {AppLayout} from '@/components/layout';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
@@ -435,12 +436,11 @@ export default function CompetencyFrameworkPage() {
       <PermissionGate
         permission={Permissions.REVIEW_VIEW}
         fallback={
-          <div className="flex flex-col items-center justify-center py-20 text-center">
-            <p className="text-[var(--text-secondary)] font-medium">Access Denied</p>
-            <p className="text-[var(--text-muted)] text-sm mt-1">
-              You do not have permission to view competency frameworks.
-            </p>
-          </div>
+          <EmptyState
+            icon={<Shield className="h-8 w-8"/>}
+            title="Access Denied"
+            description="You do not have permission to view competency frameworks."
+          />
         }
       >
         <div className="min-h-screen bg-[var(--bg-secondary)]">
@@ -559,13 +559,12 @@ export default function CompetencyFrameworkPage() {
 
             {/* Review List */}
             {!selectedCycleId ? (
-              <div
-                className="flex flex-col items-center justify-center py-20 bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)]">
-                <Info size={32} className="text-[var(--text-muted)] mb-4"/>
-                <p className="text-[var(--text-secondary)] font-medium">Select a review cycle</p>
-                <p className="text-[var(--text-muted)] text-sm mt-1">
-                  Choose a cycle above to manage competencies for its reviews
-                </p>
+              <div className="bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)]">
+                <EmptyState
+                  icon={<Info className="h-8 w-8"/>}
+                  title="Select a review cycle"
+                  description="Choose a cycle above to manage competencies for its reviews."
+                />
               </div>
             ) : allReviewsQuery.isLoading ? (
               <div className="flex items-center justify-center py-16">
@@ -573,13 +572,12 @@ export default function CompetencyFrameworkPage() {
                 <span className="text-[var(--text-muted)]">Loading reviews…</span>
               </div>
             ) : filteredReviews.length === 0 ? (
-              <div
-                className="flex flex-col items-center justify-center py-20 bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)]">
-                <Info size={32} className="text-[var(--text-muted)] mb-4"/>
-                <p className="text-[var(--text-secondary)] font-medium">No reviews found</p>
-                <p className="text-[var(--text-muted)] text-sm mt-1">
-                  {searchQuery ? 'Try a different search term' : 'No reviews exist for this cycle yet'}
-                </p>
+              <div className="bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)]">
+                <EmptyState
+                  icon={<Info className="h-8 w-8"/>}
+                  title="No reviews found"
+                  description={searchQuery ? 'Try a different search term' : 'No reviews exist for this cycle yet.'}
+                />
               </div>
             ) : (
               <div className="space-y-4">
