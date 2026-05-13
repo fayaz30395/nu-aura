@@ -462,10 +462,12 @@ export default function CustomFieldsPage() {
                       id="custom-field-name"
                       type="text"
                       {...register('fieldName')}
+                      aria-invalid={errors.fieldName ? 'true' : 'false'}
+                      aria-describedby={errors.fieldName ? 'custom-field-name-error' : undefined}
                       className="input-aura"
                       placeholder="e.g., Blood Group"
                     />
-                    {errors.fieldName && <p className="text-danger-500 text-sm mt-1">{errors.fieldName.message}</p>}
+                    {errors.fieldName && <p id="custom-field-name-error" className="text-danger-500 text-sm mt-1">{errors.fieldName.message}</p>}
                   </div>
                 </div>
 
@@ -476,11 +478,13 @@ export default function CustomFieldsPage() {
                   <textarea
                     id="custom-field-description"
                     {...register('description')}
+                    aria-invalid={errors.description ? 'true' : 'false'}
+                    aria-describedby={errors.description ? 'custom-field-description-error' : undefined}
                     className="input-aura"
                     rows={2}
                     placeholder="Optional description..."
                   />
-                  {errors.description && <p className="text-danger-500 text-sm mt-1">{errors.description.message}</p>}
+                  {errors.description && <p id="custom-field-description-error" className="text-danger-500 text-sm mt-1">{errors.description.message}</p>}
                 </div>
 
                 <div className="grid grid-cols-2 gap-4 mb-4">

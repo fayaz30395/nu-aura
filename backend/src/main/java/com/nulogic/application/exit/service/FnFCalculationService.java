@@ -4,6 +4,7 @@ import com.nulogic.application.exit.dto.FnFAdjustmentRequest;
 import com.nulogic.application.exit.dto.FnFCalculationResponse;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.exit.ExitProcess;
 import com.nulogic.domain.exit.FullAndFinalSettlement;
@@ -13,6 +14,7 @@ import com.nulogic.infrastructure.exit.repository.ExitProcessRepository;
 import com.nulogic.infrastructure.exit.repository.FullAndFinalSettlementRepository;
 import com.nulogic.infrastructure.payroll.repository.SalaryStructureRepository;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,22 +30,14 @@ import java.util.UUID;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class FnFCalculationService {
 
     private final FullAndFinalSettlementRepository fnfRepository;
     private final ExitProcessRepository exitProcessRepository;
     private final EmployeeRepository employeeRepository;
     private final SalaryStructureRepository salaryStructureRepository;
-
-    public FnFCalculationService(FullAndFinalSettlementRepository fnfRepository,
-                                 ExitProcessRepository exitProcessRepository,
-                                 EmployeeRepository employeeRepository,
-                                 SalaryStructureRepository salaryStructureRepository) {
-        this.fnfRepository = fnfRepository;
-        this.exitProcessRepository = exitProcessRepository;
-        this.employeeRepository = employeeRepository;
-        this.salaryStructureRepository = salaryStructureRepository;
-    }
+    private final TenantTimeService tenantTimeService;
 
     /**
      * Get or auto-calculate FnF for an exit process.

@@ -48,6 +48,7 @@ public class ScheduledNotificationService {
     private final AttendanceRecordRepository attendanceRecordRepository;
     private final TenantRepository tenantRepository;
     private final MultiChannelNotificationService notificationService;
+    private final TenantTimeService tenantTimeService;
 
     // ==================== BIRTHDAY NOTIFICATIONS ====================
 
@@ -82,7 +83,8 @@ public class ScheduledNotificationService {
     }
 
     private void sendBirthdayNotificationsForTenant(UUID tenantId) {
-        LocalDate today = LocalDate.now();
+        // S12-B: tenant-local "today" for birthday matching — resolved via TenantTimeService.
+        LocalDate today = tenantTimeService.today(tenantId);
 
         // Find employees with birthday today
         List<Employee> birthdayEmployees = employeeRepository.findUpcomingBirthdays(
@@ -201,7 +203,8 @@ public class ScheduledNotificationService {
     }
 
     private void sendAnniversaryNotificationsForTenant(UUID tenantId) {
-        LocalDate today = LocalDate.now();
+        // S12-B: tenant-local "today" for anniversary matching — resolved via TenantTimeService.
+        LocalDate today = tenantTimeService.today(tenantId);
 
         // Find employees with work anniversary today
         List<Employee> anniversaryEmployees = employeeRepository.findUpcomingAnniversaries(
@@ -359,7 +362,8 @@ public class ScheduledNotificationService {
     }
 
     private void sendAttendanceRemindersForTenant(UUID tenantId) {
-        LocalDate today = LocalDate.now();
+        // S12-B: tenant-local "today" for attendance-reminder date filter — resolved via TenantTimeService.
+        LocalDate today = tenantTimeService.today(tenantId);
 
         // Get all active employees — use status-filtered query to avoid loading entire employee table
         List<Employee> activeEmployees = employeeRepository.findByTenantIdAndStatus(tenantId, Employee.EmployeeStatus.ACTIVE);
@@ -413,7 +417,8 @@ public class ScheduledNotificationService {
     }
 
     private void sendCheckoutRemindersForTenant(UUID tenantId) {
-        LocalDate today = LocalDate.now();
+        // S12-B: tenant-local "today" for checkout-reminder date filter — resolved via TenantTimeService.
+        LocalDate today = tenantTimeService.today(tenantId);
 
         // Get today's attendance records without checkout
         List<AttendanceRecord> recordsWithoutCheckout = attendanceRecordRepository

@@ -90,6 +90,7 @@ public class UserAnonymizer {
     private static final String ANONYMIZED_FIRST_NAME = "ANONYMIZED";
 
     private final UserRepository userRepository;
+    private final TenantTimeService tenantTimeService;
     private final SecureRandom secureRandom = new SecureRandom();
 
     /**
@@ -150,7 +151,11 @@ public class UserAnonymizer {
         user.setMfaBackupCodes(null);
         user.setPasswordHash(unguessablePasswordHash());
         user.setStatus(User.UserStatus.INACTIVE);
-        user.setAnonymizedAt(LocalDateTime.now());
+        // Wave-3: tenant-local timestamp via TenantTimeService — never use UTC shortcut.
+        // tenantId is the authoritative DSR-scope value already validated above; we
+        // pass it explicitly rather than re-resolving from TenantContext to keep this
+        // method callable from @Async / job paths that may not have the context set.
+        user.setAnonymizedAt(tenantTimeService.now(tenantId));
 
         // Note: we save explicitly (rather than relying on dirty-checking) to
         // keep the read flow in the audit logger (which runs on a different

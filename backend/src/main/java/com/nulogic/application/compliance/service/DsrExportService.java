@@ -138,8 +138,8 @@ public class DsrExportService {
 
         // ---- Encode ----
         Object envelope = (type == DsrRequest.RequestType.PORTABILITY)
-                ? portabilityEnvelope(payload, request)
-                : accessEnvelope(payload, request);
+                ? portabilityEnvelope(payload, request, tenantId)
+                : accessEnvelope(payload, request, tenantId);
 
         byte[] bytes;
         try {
@@ -204,7 +204,10 @@ public class DsrExportService {
         // artefact and is rarely what an Article 15 requester actually wants.
         List<AttendanceRecord> attendance = List.of();
         if (employeeId != null) {
-            LocalDate today = LocalDate.now();
+            // S-DSR: tenant-local "today" for the trailing 90-day attendance window —
+            // a JVM-default LocalDate.now() would silently shift the window for
+            // tenants outside the server's zone.
+            LocalDate today = tenantTimeService.today(tenantId);
             LocalDate window = today.minusDays(ATTENDANCE_WINDOW_DAYS);
             attendance = attendanceRecordRepository
                     .findAllByTenantIdAndEmployeeIdAndAttendanceDateBetween(tenantId, employeeId, window, today);

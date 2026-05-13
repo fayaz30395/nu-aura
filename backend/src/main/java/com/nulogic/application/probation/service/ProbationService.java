@@ -33,6 +33,7 @@ public class ProbationService {
     private final ProbationPeriodRepository probationPeriodRepository;
     private final ProbationEvaluationRepository probationEvaluationRepository;
     private final EmployeeRepository employeeRepository;
+    private final TenantTimeService tenantTimeService;
 
     // ==================== Probation Period Management ====================
 
@@ -273,7 +274,7 @@ public class ProbationService {
 
     @Transactional
     public ProbationEvaluationResponse addEvaluation(ProbationEvaluationRequest request) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         UUID evaluatorId = SecurityContext.getCurrentUserId();
 
         ProbationPeriod probation = probationPeriodRepository

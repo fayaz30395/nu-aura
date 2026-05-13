@@ -3,6 +3,7 @@ package com.nulogic.application.exit.service;
 import com.nulogic.api.exit.dto.*;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.exit.*;
 import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
@@ -39,6 +40,7 @@ public class ExitManagementService {
     private final AssetRecoveryRepository assetRecoveryRepository;
     private final EmployeeRepository employeeRepository;
     private final EventPublisher eventPublisher;
+    private final TenantTimeService tenantTimeService;
 
     // ==================== Exit Process Operations ====================
 

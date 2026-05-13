@@ -4,6 +4,7 @@ import com.nulogic.application.audit.service.AuditLogService;
 import com.nulogic.application.compliance.policy.ErasurePolicy;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.audit.AuditLog;
 import com.nulogic.domain.compliance.DsrRequest;
 import com.nulogic.infrastructure.compliance.DsrRequestRepository;
@@ -104,6 +105,7 @@ public class DsrErasureService {
     private final SalaryStructureAnonymizer salaryStructureAnonymizer;
     private final LeaveRecordRedactor leaveRecordRedactor;
     private final AttendanceRecordRedactor attendanceRecordRedactor;
+    private final TenantTimeService tenantTimeService;
 
     /**
      * Returns the lowercase hex SHA-256 of {@code input}. Used to record the
@@ -254,7 +256,7 @@ public class DsrErasureService {
         // Step 6: terminal transition. complete() records handler + completedAt;
         // adminNotes carries the per-data-class result summary for the human
         // reviewing the row in the admin UI.
-        request.complete(callerId, buildResultNotes(policies, originalEmail, cascade));
+        request.complete(callerId, buildResultNotes(policies, originalEmail, cascade, tenantId));
         return dsrRequestRepository.save(request);
     }
 
