@@ -499,6 +499,8 @@ export default function CustomFieldsPage() {
                         <select
                           id="custom-field-entity-type"
                           {...field}
+                          aria-invalid={errors.entityType ? 'true' : 'false'}
+                          aria-describedby={errors.entityType ? 'custom-field-entity-type-error' : undefined}
                           className="input-aura"
                           disabled={showEditModal}
                         >
@@ -510,7 +512,7 @@ export default function CustomFieldsPage() {
                         </select>
                       )}
                     />
-                    {errors.entityType && <p className="text-danger-500 text-sm mt-1">{errors.entityType.message}</p>}
+                    {errors.entityType && <p id="custom-field-entity-type-error" className="text-danger-500 text-sm mt-1">{errors.entityType.message}</p>}
                   </div>
                   <div>
                     <label htmlFor="custom-field-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">

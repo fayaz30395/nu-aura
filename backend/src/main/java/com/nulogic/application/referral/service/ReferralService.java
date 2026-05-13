@@ -34,12 +34,13 @@ public class ReferralService {
     private final EmployeeReferralRepository referralRepository;
     private final ReferralPolicyRepository policyRepository;
     private final UserRepository userRepository;
+    private final TenantTimeService tenantTimeService;
 
     // ==================== Referral Submission ====================
 
     @Transactional
     public ReferralResponse submitReferral(UUID referrerId, ReferralRequest request) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         if (referrerId == null) {
             throw new IllegalArgumentException("Referrer identity could not be determined from the current session");

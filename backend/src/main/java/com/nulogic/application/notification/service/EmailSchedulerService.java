@@ -1,6 +1,7 @@
 package com.nulogic.application.notification.service;
 
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.tenant.Tenant;
 import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
@@ -28,6 +29,9 @@ public class EmailSchedulerService {
     // passing null (which caused the birthday/anniversary queries to return 0 rows
     // or throw a SQL error, silently sending no emails).
     private final TenantRepository tenantRepository;
+    // S11-M Wave-3 P0: route every zero-arg LocalDate.now() through TenantTimeService so the
+    // birthday / anniversary window respects the tenant's IANA timezone instead of the JVM zone.
+    private final TenantTimeService tenantTimeService;
 
     /**
      * Send birthday wishes at 9 AM every day.
@@ -41,13 +45,14 @@ public class EmailSchedulerService {
     public void sendBirthdayEmails() {
         log.info("Starting birthday email job");
 
-        LocalDate today = LocalDate.now();
-        LocalDate tomorrow = today.plusDays(1);
         List<Tenant> activeTenants = tenantRepository.findByStatus(Tenant.TenantStatus.ACTIVE);
 
         for (Tenant tenant : activeTenants) {
             TenantContext.setCurrentTenant(tenant.getId());
             try {
+                // S11-M Wave-3 P0: resolve "today" in the tenant's own zone, not the JVM zone.
+                LocalDate today = tenantTimeService.today(tenant.getId());
+                LocalDate tomorrow = today.plusDays(1);
                 List<Employee> birthdayEmployees = employeeRepository.findUpcomingBirthdays(
                         tenant.getId(), today, tomorrow);
                 log.debug("Tenant {}: found {} employees with birthdays today",

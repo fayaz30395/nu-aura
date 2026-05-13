@@ -25,6 +25,7 @@ public class ComplianceService {
     private final ComplianceChecklistRepository checklistRepository;
     private final ComplianceAuditLogRepository auditLogRepository;
     private final ComplianceAlertRepository alertRepository;
+    private final TenantTimeService tenantTimeService;
 
     // ==================== Policy Management ====================
 
@@ -73,12 +74,12 @@ public class ComplianceService {
     }
 
     public CompliancePolicy publishPolicy(UUID policyId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         CompliancePolicy policy = policyRepository.findByIdAndTenantId(policyId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Policy not found"));
 
         policy.setStatus(CompliancePolicy.PolicyStatus.PUBLISHED);
-        policy.setApprovedAt(LocalDate.now());
+        policy.setApprovedAt(tenantTimeService.today(tenantId));
         policy.setApprovedBy(SecurityContext.getCurrentUserId());
 
         CompliancePolicy saved = policyRepository.save(policy);

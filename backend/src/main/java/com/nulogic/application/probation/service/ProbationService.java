@@ -288,7 +288,7 @@ public class ProbationService {
 
         ProbationEvaluation evaluation = ProbationEvaluation.builder()
                 .probationPeriod(probation)
-                .evaluationDate(request.getEvaluationDate() != null ? request.getEvaluationDate() : LocalDate.now())
+                .evaluationDate(request.getEvaluationDate() != null ? request.getEvaluationDate() : tenantTimeService.today(tenantId))
                 .evaluatorId(evaluatorId)
                 .evaluationType(request.getEvaluationType())
                 .performanceRating(request.getPerformanceRating())
@@ -351,8 +351,8 @@ public class ProbationService {
 
     @Transactional(readOnly = true)
     public List<ProbationPeriodResponse> getOverdueProbations() {
-        UUID tenantId = TenantContext.getCurrentTenant();
-        return probationPeriodRepository.findOverdueProbations(tenantId, LocalDate.now())
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        return probationPeriodRepository.findOverdueProbations(tenantId, tenantTimeService.today(tenantId))
                 .stream()
                 .map(this::enrichResponse)
                 .collect(Collectors.toList());

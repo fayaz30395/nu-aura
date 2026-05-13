@@ -1,5 +1,7 @@
 package com.nulogic.application.helpdesk.service;
 
+import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.helpdesk.TicketEscalation;
 import com.nulogic.domain.helpdesk.TicketEscalation.EscalationLevel;
 import com.nulogic.domain.helpdesk.TicketEscalation.EscalationReason;
@@ -27,6 +29,7 @@ public class HelpdeskSLAService {
     private final TicketSLARepository slaRepository;
     private final TicketEscalationRepository escalationRepository;
     private final TicketMetricsRepository metricsRepository;
+    private final TenantTimeService tenantTimeService;
 
     // ================== SLA Management ==================
 

@@ -6,10 +6,12 @@ import com.nulogic.application.notification.service.EmailNotificationService;
 import com.nulogic.common.config.TenantCacheManager;
 import com.nulogic.common.exception.BusinessException;
 import com.nulogic.common.exception.ResourceNotFoundException;
+import com.nulogic.common.exception.ValidationException;
 import com.nulogic.common.security.JwtTokenProvider;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.security.TenantFilter;
 import com.nulogic.common.security.TokenBlacklistService;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.audit.AuditLog;
 import com.nulogic.domain.tenant.Tenant;
 import com.nulogic.domain.user.User;
@@ -26,6 +28,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
+
+import java.time.DateTimeException;
+import java.time.ZoneId;
 
 import java.security.SecureRandom;
 import java.time.Instant;

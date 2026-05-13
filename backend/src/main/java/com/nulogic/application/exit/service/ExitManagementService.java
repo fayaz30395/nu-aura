@@ -509,27 +509,29 @@ public class ExitManagementService {
 
     @Transactional
     public FullAndFinalSettlementResponse approveSettlement(UUID id) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         UUID currentUserId = SecurityContext.getCurrentUserId();
         FullAndFinalSettlement settlement = settlementRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException(SETTLEMENT_NOT_FOUND));
 
         settlement.setStatus(FullAndFinalSettlement.SettlementStatus.APPROVED);
         settlement.setApprovedBy(currentUserId);
-        settlement.setApprovalDate(LocalDate.now());
+        // S12-B: tenant-local "today" for approval date — resolved via TenantTimeService.
+        settlement.setApprovalDate(tenantTimeService.today(tenantId));
         return mapToSettlementResponse(settlementRepository.save(settlement));
     }
 
     @Transactional
     public FullAndFinalSettlementResponse processPayment(UUID id, FullAndFinalSettlement.PaymentMode paymentMode, String paymentReference) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         FullAndFinalSettlement settlement = settlementRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException(SETTLEMENT_NOT_FOUND));
 
         settlement.setStatus(FullAndFinalSettlement.SettlementStatus.PAID);
         settlement.setPaymentMode(paymentMode);
         settlement.setPaymentReference(paymentReference);
-        settlement.setPaymentDate(LocalDate.now());
+        // S12-B: tenant-local "today" for payment date — resolved via TenantTimeService.
+        settlement.setPaymentDate(tenantTimeService.today(tenantId));
         return mapToSettlementResponse(settlementRepository.save(settlement));
     }
 

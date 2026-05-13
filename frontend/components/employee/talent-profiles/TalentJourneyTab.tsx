@@ -218,7 +218,7 @@ function TalentJourneySkeleton() {
         <div className="h-10 w-28 bg-surface-100 dark:bg-surface-800 rounded-full"/>
       </div>
       <div className="grid grid-cols-12 gap-8">
-        <div className="col-span-1 border-l-2 border-surface-200 dark:border-surface-800 pl-8 space-y-6">
+        <div className="col-span-1 pl-8 space-y-6">
           <div className="h-24 bg-surface-100 dark:bg-surface-800 rounded-xl"/>
           <div className="h-24 bg-surface-100 dark:bg-surface-800 rounded-xl"/>
         </div>

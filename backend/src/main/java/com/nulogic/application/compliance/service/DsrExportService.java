@@ -251,10 +251,12 @@ public class DsrExportService {
      * Human-readable Article 15 (Access) shape — a flat map of resource → list
      * of rows. Optimised for a person to read, not for re-import.
      */
-    private Map<String, Object> accessEnvelope(ExportPayload p, DsrRequest request) {
+    private Map<String, Object> accessEnvelope(ExportPayload p, DsrRequest request, UUID tenantId) {
         Map<String, Object> out = new LinkedHashMap<>();
         out.put("gdprArticle", "Article 15 — Right of Access");
-        out.put("generatedAt", LocalDateTime.now().toString());
+        // S-DSR: tenant-local generated-at stamp — the requester reads this artefact
+        // in their own zone; a JVM-default now() would mis-stamp by hours.
+        out.put("generatedAt", tenantTimeService.now(tenantId).toString());
         out.put("requestId", request.getId());
         out.put("tenantId", request.getTenantId());
         out.put("requesterUserId", request.getRequesterUserId());
@@ -274,7 +276,7 @@ public class DsrExportService {
      * fields. Downstream tooling re-importing this artefact can validate
      * against the {@code schemaVersion} before processing.
      */
-    private Map<String, Object> portabilityEnvelope(ExportPayload p, DsrRequest request) {
+    private Map<String, Object> portabilityEnvelope(ExportPayload p, DsrRequest request, UUID tenantId) {
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("user", userProjection(p.user()));
         data.put("employee", employeeProjection(p.employee()));
@@ -295,7 +297,9 @@ public class DsrExportService {
 
         Map<String, Object> envelope = new LinkedHashMap<>();
         envelope.put("gdprArticle", "Article 20 — Right to Data Portability");
-        envelope.put("generatedAt", LocalDateTime.now().toString());
+        // S-DSR: tenant-local generated-at stamp — downstream consumers
+        // re-importing this artefact correlate against the tenant's clock.
+        envelope.put("generatedAt", tenantTimeService.now(tenantId).toString());
         envelope.put("requestId", request.getId());
         envelope.put("tenantId", request.getTenantId());
         envelope.put("requesterUserId", request.getRequesterUserId());

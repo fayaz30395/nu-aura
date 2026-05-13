@@ -415,9 +415,10 @@ public class DsrErasureService {
      */
     private String buildResultNotes(Map<String, ErasurePolicy> policies,
                                     String originalEmail,
-                                    CascadeOutcome cascade) {
+                                    CascadeOutcome cascade,
+                                    UUID tenantId) {
         StringBuilder sb = new StringBuilder();
-        sb.append("GDPR Article 17 fulfilment — ").append(java.time.LocalDateTime.now()).append("\n\n");
+        sb.append("GDPR Article 17 fulfilment — ").append(tenantTimeService.now(tenantId)).append("\n\n");
 
         if (originalEmail == null) {
             sb.append("Note: user was already anonymised on a prior request — this DSR is a no-op "

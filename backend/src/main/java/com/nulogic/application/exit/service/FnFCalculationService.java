@@ -45,7 +45,7 @@ public class FnFCalculationService {
      */
     @Transactional
     public FnFCalculationResponse getOrCalculate(UUID exitProcessId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         ExitProcess exitProcess = exitProcessRepository.findById(exitProcessId)
                 .orElseThrow(() -> new EntityNotFoundException("Exit process not found: " + exitProcessId));
@@ -65,7 +65,7 @@ public class FnFCalculationService {
      */
     @Transactional
     public FnFCalculationResponse addAdjustment(UUID exitProcessId, FnFAdjustmentRequest req) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         FullAndFinalSettlement settlement = fnfRepository.findByExitProcessIdAndTenantId(exitProcessId, tenantId)
                 .orElseThrow(() -> new RuntimeException("Settlement not found — call getOrCalculate first"));
@@ -91,7 +91,7 @@ public class FnFCalculationService {
      */
     @Transactional
     public FnFCalculationResponse approve(UUID exitProcessId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         FullAndFinalSettlement settlement = fnfRepository.findByExitProcessIdAndTenantId(exitProcessId, tenantId)
                 .orElseThrow(() -> new RuntimeException("Settlement not found"));
@@ -102,7 +102,8 @@ public class FnFCalculationService {
         }
 
         settlement.setStatus(FullAndFinalSettlement.SettlementStatus.APPROVED);
-        settlement.setApprovalDate(LocalDate.now());
+        // P0 Wave 3: tenant-local "today" for settlement approval date — resolved via TenantTimeService.
+        settlement.setApprovalDate(tenantTimeService.today(tenantId));
         settlement.setApprovedBy(SecurityContext.getCurrentUserId());
         fnfRepository.save(settlement);
         return mapToResponse(settlement);
@@ -110,7 +111,7 @@ public class FnFCalculationService {
 
     @Transactional(readOnly = true)
     public Page<FnFCalculationResponse> getAll(Pageable pageable) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         return fnfRepository.findByTenantId(tenantId, pageable).map(this::mapToResponse);
     }
 

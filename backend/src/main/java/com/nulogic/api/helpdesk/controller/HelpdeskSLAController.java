@@ -5,6 +5,7 @@ import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.RequiresPermission;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.helpdesk.TicketEscalation;
 import com.nulogic.domain.helpdesk.TicketEscalation.EscalationLevel;
 import com.nulogic.domain.helpdesk.TicketEscalation.EscalationReason;
@@ -31,6 +32,7 @@ import java.util.UUID;
 public class HelpdeskSLAController {
 
     private final HelpdeskSLAService slaService;
+    private final TenantTimeService tenantTimeService;
 
     // ========== SLA Policies ==========
 
