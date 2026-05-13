@@ -139,12 +139,6 @@ export const status = {
   info: 'badge-status status-info',
   /** Gray: Inactive, Unknown, Default */
   neutral: 'badge-status status-neutral',
-  /** Purple: Admin, Manager, Special */
-  purple: 'badge-status status-purple',
-  /** Pink: Birthday, Anniversary, Celebration */
-  pink: 'badge-status status-pink',
-  /** Orange: Urgent, Overdue, Warning */
-  orange: 'badge-status status-orange',
 } as const;
 
 // ── Tinted Background Classes ──────────────────────────

@@ -42,6 +42,48 @@
       {
         "selector": "Literal[value=/\\bm-3\\b/]",
         "message": "⚠ Design system: m-3 (12px) is off the 8px grid. Use m-4 (16px) or m-2 (8px)."
+      },
+      {
+        "selector": "CallExpression[callee.type='MemberExpression'][callee.property.name='toLocaleDateString']",
+        "message": "⚠ Use formatDate / formatDateTime from @/lib/utils/format/date instead of bare .toLocaleDateString(). Bare calls bypass the canonical 12-hour, MMM d, yyyy format."
+      },
+      {
+        "selector": "Literal[value=/bg-clip-text[^\"']*text-transparent|text-transparent[^\"']*bg-clip-text/]",
+        "message": "⚠ Design system: gradient text (bg-clip-text + text-transparent) is banned per DESIGN.md. Use solid text-accent-600 + font-weight emphasis instead."
+      },
+      {
+        "selector": "TemplateElement[value.raw=/bg-clip-text[^`]*text-transparent|text-transparent[^`]*bg-clip-text/]",
+        "message": "⚠ Design system: gradient text (bg-clip-text + text-transparent) is banned per DESIGN.md. Use solid text-accent-600 + font-weight emphasis instead."
+      },
+      {
+        "selector": "Literal[value=/\\bborder-l-(2|4|8)\\s+border-[a-z]+-[0-9]+/]",
+        "message": "⚠ Design system: side-stripe border-l-N + border-color is banned per DESIGN.md. Use full border + tinted bg, or wrap in <Callout>."
+      },
+      {
+        "selector": "TemplateElement[value.raw=/\\bborder-l-(2|4|8)\\s+border-[a-z]+-[0-9]+/]",
+        "message": "⚠ Design system: side-stripe border-l-N + border-color is banned per DESIGN.md. Use full border + tinted bg, or wrap in <Callout>."
+      },
+      {
+        "selector": "Literal[value=/bg-gradient-to-(br|r|b|tr|tl|bl|t|l)\\s+from-(accent|success|warning|danger|info)-(500|600)\\s+to-(accent|success|warning|danger|info)-(700|800)/]",
+        "message": "⚠ Design system: decorative icon-tile gradients are banned per DESIGN.md. Use flat bg-X-100 dark:bg-X-500/10 + text-X-600."
+      },
+      {
+        "selector": "TemplateElement[value.raw=/bg-gradient-to-(br|r|b|tr|tl|bl|t|l)\\s+from-(accent|success|warning|danger|info)-(500|600)\\s+to-(accent|success|warning|danger|info)-(700|800)/]",
+        "message": "⚠ Design system: decorative icon-tile gradients are banned per DESIGN.md. Use flat bg-X-100 dark:bg-X-500/10 + text-X-600."
+      },
+      {
+        "selector": "Literal[value=/\\bstatus-(purple|orange|pink|brown|gray|black|white)\\b/]",
+        "message": "⚠ Design system: undefined .status-* class. Use one of status-success / status-danger / status-warning / status-info / status-neutral."
+      },
+      {
+        "selector": "TemplateElement[value.raw=/\\bstatus-(purple|orange|pink|brown|gray|black|white)\\b/]",
+        "message": "⚠ Design system: undefined .status-* class. Use one of status-success / status-danger / status-warning / status-info / status-neutral."
+      }
+    ],
+    "no-console": [
+      "warn",
+      {
+        "allow": ["warn", "error"]
       }
     ]
   },
@@ -80,6 +122,31 @@
       ],
       "rules": {
         "@typescript-eslint/no-restricted-imports": "off"
+      }
+    },
+    {
+      "files": [
+        "lib/utils/logger.ts",
+        "lib/services/websocket.ts"
+      ],
+      "rules": {
+        "no-console": "off"
+      }
+    },
+    {
+      "files": [
+        "e2e/**/*",
+        "**/*.test.ts",
+        "**/*.test.tsx",
+        "**/*.spec.ts",
+        "**/*.spec.tsx",
+        "*.config.js",
+        "*.config.cjs",
+        "*.config.mjs",
+        "scripts/**/*"
+      ],
+      "rules": {
+        "no-console": "off"
       }
     }
   ]

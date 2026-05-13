@@ -40,6 +40,7 @@ import {getNotificationRoute} from '@/lib/utils/notificationRoutes';
 import {sanitizeEmailHtml} from '@/lib/utils/sanitize';
 import {createLogger} from '@/lib/utils/logger';
 import {safeWindowOpen} from '@/lib/utils/url';
+import {formatDateShort} from '@/lib/utils/format/date';
 
 const logger = createLogger('NotificationDropdown');
 
@@ -98,7 +99,7 @@ function formatRelativeTime(date: Date): string {
   if (diffMins < 60) return `${diffMins}m ago`;
   if (diffHours < 24) return `${diffHours}h ago`;
   if (diffDays < 7) return `${diffDays}d ago`;
-  return date.toLocaleDateString('en-US', {month: 'short', day: 'numeric'});
+  return formatDateShort(date);
 }
 
 function getNotificationIcon(type: 'email' | 'drive' | 'calendar'): React.ReactNode {

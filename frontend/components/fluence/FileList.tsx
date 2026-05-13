@@ -9,6 +9,7 @@ import {FluenceAttachment} from '@/lib/types/platform/fluence';
 import {fluenceService} from '@/lib/services/platform/fluence.service';
 import {cn} from '@/lib/utils';
 import {safeWindowOpen} from '@/lib/utils/url';
+import {formatDate as formatDateCanonical} from '@/lib/utils/format/date';
 
 interface FileListProps {
   attachments: FluenceAttachment[];
@@ -36,12 +37,7 @@ function formatFileSize(bytes: number): string {
 }
 
 function formatDate(dateStr: string): string {
-  const date = new Date(dateStr);
-  return date.toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  });
+  return formatDateCanonical(dateStr);
 }
 
 export function FileList({attachments, onDelete, isDeleting, className}: FileListProps) {

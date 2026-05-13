@@ -7,6 +7,7 @@ import {Button} from '@/components/ui/Button';
 import {Badge} from '@/components/ui/Badge';
 import {Calendar, DollarSign, Download} from 'lucide-react';
 import {formatCurrency} from '@/lib/utils';
+import {formatDate as formatDateCanonical} from '@/lib/utils/format/date';
 
 interface PayslipCardProps {
   payslip: Payslip;
@@ -20,13 +21,7 @@ export const PayslipCard: React.FC<PayslipCardProps> = ({
                                                           loading = false,
                                                         }) => {
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    });
-  };
+  const formatDate = (dateString: string) => formatDateCanonical(dateString);
 
   const getStatusVariant = (status: string): 'success' | 'warning' | 'default' | 'primary' => {
     switch (status) {
