@@ -7,6 +7,7 @@ import {Building2, Download, RefreshCw, TrendingDown, TrendingUp, Users,} from '
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {Stat} from '@/components/ui/Stat';
+import {EmptyState} from '@/components/ui/EmptyState';
 
 interface EmployeeMetrics {
   totalEmployees: number;
@@ -212,7 +213,11 @@ export default function HeadcountReportPage() {
                       ))}
                   </div>
                 ) : (
-                  <p className="text-body-muted text-center py-8">No department data available</p>
+                  <EmptyState
+                    icon={<Building2 className="h-8 w-8"/>}
+                    title="No department data available"
+                    description="Department headcount will appear here once employees are assigned."
+                  />
                 )}
               </div>
 
@@ -239,7 +244,11 @@ export default function HeadcountReportPage() {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-body-muted text-center py-8">No trend data available</p>
+                  <EmptyState
+                    icon={<TrendingUp className="h-8 w-8"/>}
+                    title="No trend data available"
+                    description="12-month headcount history will appear here as data accumulates."
+                  />
                 )}
               </div>
             </div>

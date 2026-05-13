@@ -4,7 +4,19 @@ import {useState} from 'react';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
+import {
+  CheckCircle2,
+  Circle,
+  FileEdit,
+  PauseCircle,
+  Play,
+  Target,
+  TrendingUp,
+  UserCheck,
+  XCircle,
+} from 'lucide-react';
 import {AppLayout} from '@/components/layout';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {useCreateGoal, useDeleteGoal, useEmployeeGoals, useUpdateGoal,} from '@/lib/hooks/queries/usePerformance';
 import {Goal, GoalRequest, GoalStatus, GoalType} from '@/lib/types/grow/performance';
 import {useAuth} from '@/lib/hooks/useAuth';
@@ -144,39 +156,44 @@ export default function GoalsPage() {
   const getStatusColor = (status: GoalStatus) => {
     switch (status) {
       case 'DRAFT':
-        return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
+        return 'badge-status status-neutral';
       case 'ACTIVE':
-        return 'bg-accent-50 dark:bg-accent-950/30 text-accent-800 dark:text-accent-400';
+        return 'badge-status status-info';
       case 'IN_PROGRESS':
-        return 'bg-warning-100 text-warning-800';
+        return 'badge-status status-warning';
       case 'COMPLETED':
-        return 'bg-success-100 text-success-800';
+        return 'badge-status status-success';
       case 'CANCELLED':
-        return 'bg-danger-100 text-danger-800';
+        return 'badge-status status-danger';
       case 'ON_HOLD':
-        return 'bg-warning-100 text-warning-800';
+        return 'badge-status status-warning';
       default:
-        return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
+        return 'badge-status status-neutral';
     }
   };
 
-  const getTypeColor = (type: GoalType) => {
-    switch (type) {
-      case 'OKR':
-        return 'bg-accent-300 text-accent-900';
-      case 'KPI':
-        return 'bg-accent-100 text-accent-800';
-      case 'PERSONAL':
-        return 'bg-success-100 text-success-800';
-      case 'TEAM':
-        return 'bg-accent-50 dark:bg-accent-950/30 text-accent-800 dark:text-accent-400';
-      case 'DEPARTMENT':
-        return 'bg-accent-300 text-accent-900';
-      case 'ORGANIZATION':
-        return 'bg-danger-100 text-danger-800';
+  const getStatusIcon = (status: GoalStatus) => {
+    switch (status) {
+      case 'DRAFT':
+        return <FileEdit className="h-3.5 w-3.5"/>;
+      case 'ACTIVE':
+        return <Play className="h-3.5 w-3.5"/>;
+      case 'IN_PROGRESS':
+        return <TrendingUp className="h-3.5 w-3.5"/>;
+      case 'COMPLETED':
+        return <CheckCircle2 className="h-3.5 w-3.5"/>;
+      case 'CANCELLED':
+        return <XCircle className="h-3.5 w-3.5"/>;
+      case 'ON_HOLD':
+        return <PauseCircle className="h-3.5 w-3.5"/>;
       default:
-        return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
+        return <Circle className="h-3.5 w-3.5"/>;
     }
+  };
+
+  const getTypeColor = (_type: GoalType) => {
+    // Goal type is rendered as a neutral-tinted chip; semantic emphasis is reserved for status.
+    return 'badge-status status-neutral';
   };
 
   const calculateProgress = (current?: number, target?: number) => {
@@ -193,23 +210,13 @@ export default function GoalsPage() {
   if (!user?.employeeId) {
     return (
       <AppLayout activeMenuItem="performance">
-        <div className="text-center py-12">
-          <div className="h-16 w-16 mx-auto text-[var(--text-muted)] mb-4">
-            <svg className="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4"/>
-            </svg>
-          </div>
-          <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">No Employee Profile Linked</h2>
-          <p className="text-[var(--text-muted)] max-w-md mx-auto">
-            Goal management requires an employee profile. Use the admin panels to manage employee goals.
-          </p>
-          <button
-            onClick={() => window.history.back()}
-            className="mt-6 btn-primary !h-auto transition-colors"
-          >
-            Go Back
-          </button>
-        </div>
+        <EmptyState
+          icon={<UserCheck className="h-8 w-8"/>}
+          title="No Employee Profile Linked"
+          description="Goal management requires an employee profile. Use the admin panels to manage employee goals."
+          actionLabel="Go Back"
+          onAction={() => window.history.back()}
+        />
       </AppLayout>
     );
   }
@@ -232,7 +239,7 @@ export default function GoalsPage() {
           </PermissionGate>
         </div>
 
-        <div className="skeuo-card p-4 mb-6">
+        <div className="card-aura p-4 mb-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
@@ -278,18 +285,27 @@ export default function GoalsPage() {
             <div className="text-[var(--text-secondary)]">Loading goals...</div>
           </div>
         ) : filteredGoals.length === 0 ? (
-          <div className="skeuo-card p-12 text-center">
-            <div className="text-[var(--text-secondary)] mb-4">No goals found</div>
-            <PermissionGate permission={Permissions.GOAL_CREATE}>
-              <button
-                onClick={() => {
+          <div className="card-aura">
+            <PermissionGate
+              permission={Permissions.GOAL_CREATE}
+              fallback={
+                <EmptyState
+                  icon={<Target className="h-8 w-8"/>}
+                  title="No goals found"
+                  description="Adjust your filters or check back once goals have been created."
+                />
+              }
+            >
+              <EmptyState
+                icon={<Target className="h-8 w-8"/>}
+                title="No goals found"
+                description="Adjust your filters or create your first goal to start tracking progress."
+                actionLabel="Create Your First Goal"
+                onAction={() => {
                   resetFormHandler();
                   setShowModal(true);
                 }}
-                className="btn-primary !h-auto"
-              >
-                Create Your First Goal
-              </button>
+              />
             </PermissionGate>
           </div>
         ) : (
@@ -297,15 +313,16 @@ export default function GoalsPage() {
             {filteredGoals.map((goal) => {
               const progress = calculateProgress(goal.currentValue, goal.targetValue);
               return (
-                <div key={goal.id} className="skeuo-card p-6 hover:shadow-[var(--shadow-dropdown)] transition-shadow">
+                <div key={goal.id} className="card-aura card-interactive p-6">
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex-1">
-                      <h3 className="text-xl font-semibold mb-2">{goal.title}</h3>
+                      <h3 className="text-lg font-semibold mb-2 text-[var(--text-primary)]">{goal.title}</h3>
                       <div className="flex gap-2 mb-4">
-                        <span className={'px-2 py-1 rounded text-xs font-medium ' + getTypeColor(goal.goalType)}>
+                        <span className={getTypeColor(goal.goalType)}>
                           {goal.goalType}
                         </span>
-                        <span className={'px-2 py-1 rounded text-xs font-medium ' + getStatusColor(goal.status)}>
+                        <span className={getStatusColor(goal.status)}>
+                          {getStatusIcon(goal.status)}
                           {goal.status}
                         </span>
                       </div>
@@ -321,11 +338,11 @@ export default function GoalsPage() {
                       <span className="text-[var(--text-secondary)]">Progress</span>
                       <span className="font-semibold">{progress}%</span>
                     </div>
-                    <div className="w-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full h-2">
+                    <div className="w-full h-2 bg-[var(--border-main)] rounded-full overflow-hidden">
                       <div
-                        className="bg-accent-500 h-2 rounded-full transition-all duration-300"
+                        className="h-full bg-accent-500 transition-all duration-300"
                         style={{width: progress + '%'}}
-                      ></div>
+                      />
                     </div>
                     <div className="flex justify-between text-xs text-[var(--text-secondary)] mt-1">
                       <span>{goal.currentValue} {goal.unit}</span>
@@ -364,7 +381,7 @@ export default function GoalsPage() {
 
         {showModal && (
           <div className="fixed inset-0 glass-aura !rounded-none flex items-center justify-center p-4 z-50">
-            <div className="skeuo-card max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="card-elevated max-w-2xl w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6">
                 <h2 className="text-xl font-bold mb-6">
                   {selectedGoal ? 'Edit Goal' : 'Create Goal'}
@@ -544,7 +561,7 @@ export default function GoalsPage() {
 
         {showDeleteConfirm && selectedGoal && (
           <div className="fixed inset-0 glass-aura !rounded-none flex items-center justify-center p-4 z-50">
-            <div className="skeuo-card max-w-md w-full p-6">
+            <div className="card-elevated max-w-md w-full p-6">
               <h2 className="text-xl font-bold mb-4">Delete Goal</h2>
               <p className="text-[var(--text-secondary)] mb-6">
                 Are you sure you want to delete &quot;{selectedGoal.title}&quot;? This action cannot be undone.

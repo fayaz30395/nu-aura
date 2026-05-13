@@ -10,6 +10,7 @@ import {notifications} from '@mantine/notifications';
 import {AppLayout} from '@/components/layout';
 import {Card, CardContent} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {
   CreateInterviewRequest,
   Interview,
@@ -719,17 +720,26 @@ function InterviewsPage() {
         <Card className="bg-[var(--bg-card)]">
           <CardContent className="p-0">
             {filteredInterviews.length === 0 ? (
-              <div className="text-center py-12">
-                <Calendar className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4"/>
-                <p className="text-[var(--text-muted)]">No interviews found</p>
-                <Button onClick={() => {
-                  resetCreate();
-                  setEditingInterview(null);
-                  setShowAddModal(true);
-                }} className="mt-4">
-                  Schedule First Interview
-                </Button>
-              </div>
+              <EmptyState
+                icon={<Calendar className="h-8 w-8" aria-hidden="true"/>}
+                iconColor="bg-accent-50 text-accent-700 dark:bg-accent-500/10 dark:text-accent-400"
+                title={searchQuery || statusFilter ? 'No interviews match your filters' : 'No interviews scheduled'}
+                description={
+                  searchQuery || statusFilter
+                    ? 'Try clearing filters or searching by a different candidate or job.'
+                    : 'Schedule your first interview to start tracking the loop.'
+                }
+                actionLabel={searchQuery || statusFilter ? undefined : 'Schedule first interview'}
+                onAction={
+                  searchQuery || statusFilter
+                    ? undefined
+                    : () => {
+                        resetCreate();
+                        setEditingInterview(null);
+                        setShowAddModal(true);
+                      }
+                }
+              />
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full table-aura">
@@ -1005,11 +1015,12 @@ function InterviewsPage() {
                     <div
                       className="panel-inset flex items-center gap-4 p-4">
                       <div className="flex items-center gap-2 flex-1">
-                        <Video className="h-5 w-5 text-accent-500"/>
+                        <Video className="h-5 w-5 text-accent-500" aria-hidden="true"/>
                         <div>
                           <span
+                            id="create-meet-toggle-label"
                             className="text-sm font-medium text-[var(--text-secondary)]">Auto-create Google Meet</span>
-                          <p className="text-caption">
+                          <p id="create-meet-toggle-desc" className="text-caption">
                             {hasValidGoogleToken()
                               ? 'Creates a Calendar event with Meet link automatically'
                               : 'Sign in with Google to enable Meet link generation'}
@@ -1018,6 +1029,10 @@ function InterviewsPage() {
                       </div>
                       <button
                         type="button"
+                        role="switch"
+                        aria-checked={createMeetToggle}
+                        aria-labelledby="create-meet-toggle-label"
+                        aria-describedby="create-meet-toggle-desc"
                         onClick={() => {
                           if (hasValidGoogleToken()) {
                             const newState = !createMeetToggle;
@@ -1040,6 +1055,7 @@ function InterviewsPage() {
                         disabled={!hasValidGoogleToken()}
                       >
                         <span
+                          aria-hidden="true"
                           className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-[var(--bg-card)] shadow ring-0 transition duration-200 ease-in-out ${
                             createMeetToggle ? 'translate-x-5' : 'translate-x-0'
                           }`}

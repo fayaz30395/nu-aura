@@ -6,6 +6,8 @@ import {useAuth} from '@/lib/hooks/useAuth';
 import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
 import {LeaveRequest, LeaveRequestStatus} from '@/lib/types/hrms/leave';
 import {useToast} from '@/components/notifications/ToastProvider';
+import {EmptyState} from '@/components/ui/EmptyState';
+import {Inbox} from 'lucide-react';
 import {
   useActiveLeaveTypes,
   useApproveLeaveRequest,
@@ -210,8 +212,12 @@ export default function AdminLeaveRequestsPage() {
             <tbody className="bg-[var(--bg-card)] divide-y divide-surface-200 dark:divide-surface-700">
             {leaveRequests.length === 0 ? (
               <tr>
-                <td colSpan={8} className="px-6 py-12 text-center text-[var(--text-secondary)]">
-                  No leave requests found for {selectedStatus.toLowerCase()} status
+                <td colSpan={8}>
+                  <EmptyState
+                    icon={<Inbox className="h-8 w-8"/>}
+                    title="No leave requests"
+                    description={`No leave requests found for ${selectedStatus.toLowerCase()} status.`}
+                  />
                 </td>
               </tr>
             ) : (

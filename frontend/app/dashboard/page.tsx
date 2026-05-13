@@ -39,6 +39,7 @@ import type {DashboardWidget} from '@/components/ui/DashboardGrid';
 import {DashboardGrid} from '@/components/ui/DashboardGrid';
 import {Skeleton, SkeletonStatCard} from '@/components/ui/Skeleton';
 import {SkeletonChart} from '@/components/ui/Loading';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {getGoogleToken} from '@/lib/utils/googleToken';
 import {useDashboardAnalytics} from '@/lib/hooks/queries/useAnalytics';
 import {useAttendanceByDateRange, useCheckIn, useCheckOut, useMyTimeEntries,} from '@/lib/hooks/queries/useAttendance';
@@ -771,7 +772,11 @@ export default function DashboardPage() {
           </div>
         ))}
         {(!safeAnalytics.upcomingEvents?.birthdays?.length && !safeAnalytics.upcomingEvents?.holidays?.length) && (
-          <p className="text-body-muted text-center py-4">No upcoming events</p>
+          <EmptyState
+            icon={<Calendar className="h-8 w-8"/>}
+            title="No upcoming events"
+            description="Birthdays and holidays will appear here as they approach."
+          />
         )}
       </div>
     ),
@@ -804,10 +809,11 @@ export default function DashboardPage() {
             <Loader2 className="h-6 w-6 animate-spin text-[var(--accent-primary)]"/>
           </div>
         ) : notifications.length === 0 ? (
-          <div className="text-center py-6">
-            <CheckCircle className="h-8 w-8 text-[var(--status-success-text)] mx-auto mb-2"/>
-            <p className="text-body-secondary">All caught up!</p>
-          </div>
+          <EmptyState
+            icon={<CheckCircle className="h-8 w-8"/>}
+            title="All caught up!"
+            description="No new notifications right now. New activity will appear here."
+          />
         ) : (
           <div className="space-y-4">
             {notifications.map((notification) => (

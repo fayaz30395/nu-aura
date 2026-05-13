@@ -4,7 +4,18 @@ import {useState} from 'react';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
+import {
+  CheckCircle2,
+  ClipboardList,
+  Clock,
+  FileEdit,
+  ShieldCheck,
+  Send,
+  UserCheck,
+  XCircle,
+} from 'lucide-react';
 import {AppLayout} from '@/components/layout';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {
   useCreateReview,
   useDeleteReview,
@@ -183,6 +194,25 @@ export default function PerformanceReviewsPage() {
     }
   };
 
+  const getStatusIcon = (status: ReviewStatus) => {
+    switch (status) {
+      case 'DRAFT':
+        return <FileEdit className="h-3.5 w-3.5"/>;
+      case 'SUBMITTED':
+        return <Send className="h-3.5 w-3.5"/>;
+      case 'IN_REVIEW':
+        return <Clock className="h-3.5 w-3.5"/>;
+      case 'COMPLETED':
+        return <CheckCircle2 className="h-3.5 w-3.5"/>;
+      case 'APPROVED':
+        return <ShieldCheck className="h-3.5 w-3.5"/>;
+      case 'REJECTED':
+        return <XCircle className="h-3.5 w-3.5"/>;
+      default:
+        return <FileEdit className="h-3.5 w-3.5"/>;
+    }
+  };
+
   const getTypeColor = (type: ReviewType) => {
     switch (type) {
       case 'SELF':
@@ -223,23 +253,13 @@ export default function PerformanceReviewsPage() {
   if (!user?.employeeId) {
     return (
       <AppLayout activeMenuItem="performance">
-        <div className="text-center py-12">
-          <div className="h-16 w-16 mx-auto text-[var(--text-muted)] mb-4">
-            <svg className="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4"/>
-            </svg>
-          </div>
-          <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">No Employee Profile Linked</h2>
-          <p className="text-[var(--text-muted)] max-w-md mx-auto">
-            Performance reviews require an employee profile. Use the admin panels to manage employee reviews.
-          </p>
-          <button
-            onClick={() => window.history.back()}
-            className="mt-6 px-4 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-700 transition-colors"
-          >
-            Go Back
-          </button>
-        </div>
+        <EmptyState
+          icon={<UserCheck className="h-8 w-8"/>}
+          title="No Employee Profile Linked"
+          description="Performance reviews require an employee profile. Use the admin panels to manage employee reviews."
+          actionLabel="Go Back"
+          onAction={() => window.history.back()}
+        />
       </AppLayout>
     );
   }
@@ -262,7 +282,7 @@ export default function PerformanceReviewsPage() {
           </PermissionGate>
         </div>
 
-        <div className="skeuo-card rounded-lg border border-[var(--border-main)] p-4 mb-6">
+        <div className="card-aura p-4 mb-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
@@ -271,7 +291,7 @@ export default function PerformanceReviewsPage() {
               <select
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value as ReviewType | 'ALL')}
-                className="w-full input-aura px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
+                className="w-full input-aura"
               >
                 <option value="ALL">All Types</option>
                 <option value="SELF">Self Review</option>
@@ -288,7 +308,7 @@ export default function PerformanceReviewsPage() {
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value as ReviewStatus | 'ALL')}
-                className="w-full input-aura px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
+                className="w-full input-aura"
               >
                 <option value="ALL">All Status</option>
                 <option value="DRAFT">Draft</option>
@@ -307,32 +327,30 @@ export default function PerformanceReviewsPage() {
             <div className="text-[var(--text-secondary)]">Loading reviews...</div>
           </div>
         ) : filteredReviews.length === 0 ? (
-          <div className="skeuo-card rounded-lg border border-[var(--border-main)] p-12 text-center">
-            <div className="text-[var(--text-secondary)] mb-4">No reviews found</div>
-            <PermissionGate permission={Permissions.REVIEW_CREATE}>
-              <button
-                onClick={() => {
-                  resetFormHandler();
-                  setShowModal(true);
-                }}
-                className="btn-primary px-4 py-2 rounded-lg"
-              >
-                Create Your First Review
-              </button>
-            </PermissionGate>
+          <div className="card-aura">
+            <EmptyState
+              icon={<ClipboardList className="h-8 w-8"/>}
+              title="No reviews found"
+              description="Adjust your filters or create a new performance review to get started."
+              actionLabel="Create Your First Review"
+              onAction={() => {
+                resetFormHandler();
+                setShowModal(true);
+              }}
+            />
           </div>
         ) : (
           <div className="space-y-4">
             {filteredReviews.map((review) => (
-              <div key={review.id}
-                   className="skeuo-card card-interactive rounded-lg border border-[var(--border-main)] p-6 transition-shadow">
+              <div key={review.id} className="card-aura card-interactive p-6">
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex-1">
                     <div className="flex gap-2 mb-4">
-                      <span className={'px-2 py-1 rounded text-xs font-medium ' + getTypeColor(review.reviewType)}>
+                      <span className={getTypeColor(review.reviewType)}>
                         {review.reviewType}
                       </span>
-                      <span className={'px-2 py-1 rounded text-xs font-medium ' + getStatusColor(review.status)}>
+                      <span className={getStatusColor(review.status)}>
+                        {getStatusIcon(review.status)}
                         {review.status}
                       </span>
                     </div>
@@ -390,7 +408,7 @@ export default function PerformanceReviewsPage() {
           <div
             className="fixed inset-0 glass-aura !rounded-none flex items-center justify-center p-4 z-50 overflow-y-auto">
             <div
-              className="skeuo-card rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)]">
+              className="card-elevated max-w-4xl w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6">
                 <h2 className="text-xl font-bold mb-6 text-[var(--text-primary)]">
                   {selectedReview ? 'Edit Review' : 'Create Review'}
@@ -583,7 +601,7 @@ export default function PerformanceReviewsPage() {
 
         {showDeleteConfirm && selectedReview && (
           <div className="fixed inset-0 glass-aura !rounded-none flex items-center justify-center p-4 z-50">
-            <div className="skeuo-card rounded-lg border border-[var(--border-main)] max-w-md w-full p-6">
+            <div className="card-elevated max-w-md w-full p-6">
               <h2 className="text-xl font-bold mb-4 text-[var(--text-primary)]">Delete Review</h2>
               <p className="text-[var(--text-secondary)] mb-6">
                 Are you sure you want to delete this review? This action cannot be undone.

@@ -8,6 +8,7 @@ import {
   ClipboardCheck,
   Clock,
   Eye,
+  FileEdit,
   Pencil,
   Play,
   Plus,
@@ -16,8 +17,10 @@ import {
   Star,
   Trash2,
   Users,
+  XCircle,
 } from 'lucide-react';
 import {AppLayout} from '@/components/layout';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {
   CycleRequest,
   Feedback360Cycle,
@@ -46,18 +49,36 @@ const log = createLogger('FeedbackPage');
 const getStatusColor = (status: string) => {
   switch (status) {
     case 'DRAFT':
-      return 'bg-[var(--bg-surface)] text-[var(--text-primary)]';
+      return 'badge-status status-neutral';
     case 'ACTIVE':
     case 'IN_PROGRESS':
-      return 'bg-accent-100 text-accent-800';
+      return 'badge-status status-info';
     case 'NOMINATION':
-      return 'bg-warning-100 text-warning-800';
+      return 'badge-status status-warning';
     case 'COMPLETED':
-      return 'bg-success-100 text-success-800';
+      return 'badge-status status-success';
     case 'CLOSED':
-      return 'bg-[var(--bg-surface)] text-[var(--text-muted)]';
+      return 'badge-status status-neutral';
     default:
-      return 'bg-[var(--bg-surface)] text-[var(--text-primary)]';
+      return 'badge-status status-neutral';
+  }
+};
+
+const getStatusIcon = (status: string) => {
+  switch (status) {
+    case 'DRAFT':
+      return <FileEdit className="h-3.5 w-3.5"/>;
+    case 'ACTIVE':
+    case 'IN_PROGRESS':
+      return <Play className="h-3.5 w-3.5"/>;
+    case 'NOMINATION':
+      return <Clock className="h-3.5 w-3.5"/>;
+    case 'COMPLETED':
+      return <CheckCircle className="h-3.5 w-3.5"/>;
+    case 'CLOSED':
+      return <XCircle className="h-3.5 w-3.5"/>;
+    default:
+      return <FileEdit className="h-3.5 w-3.5"/>;
   }
 };
 
@@ -351,29 +372,39 @@ export default function Feedback360Page() {
         {activeTab === 'cycles' && (
           <div className="space-y-4">
             {cycles.length === 0 ? (
-              <div className="text-center py-12 bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)]">
-                <Users className="mx-auto h-12 w-12 text-[var(--text-muted)]"/>
-                <h3 className="mt-2 text-sm font-medium text-[var(--text-primary)]">No feedback cycles</h3>
-                <p className="mt-1 text-body-muted">
-                  Create a new 360-degree feedback cycle to get started.
-                </p>
+              <div className="card-aura">
+                <PermissionGate
+                  permission={Permissions.FEEDBACK_360_CREATE}
+                  fallback={
+                    <EmptyState
+                      icon={<Users className="h-8 w-8"/>}
+                      title="No feedback cycles"
+                      description="Once a 360 cycle is launched, it will appear here."
+                    />
+                  }
+                >
+                  <EmptyState
+                    icon={<Users className="h-8 w-8"/>}
+                    title="No feedback cycles"
+                    description="Create a new 360-degree feedback cycle to gather peer, manager, and self-review input."
+                    actionLabel="New Cycle"
+                    onAction={() => {
+                      resetCycleForm();
+                      setShowCycleModal(true);
+                    }}
+                  />
+                </PermissionGate>
               </div>
             ) : (
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {cycles.map((cycle) => (
-                  <div
-                    key={cycle.id}
-                    className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] shadow-[var(--shadow-card)] p-6"
-                  >
+                  <div key={cycle.id} className="card-aura p-6">
                     <div className="flex justify-between items-start mb-4">
                       <h3 className="text-lg font-medium text-[var(--text-primary)]">{cycle.name}</h3>
-                      <span
-                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(
-                          cycle.status
-                        )}`}
-                      >
-                      {cycle.status}
-                    </span>
+                      <span className={getStatusColor(cycle.status)}>
+                        {getStatusIcon(cycle.status)}
+                        {cycle.status}
+                      </span>
                     </div>
                     {cycle.description && (
                       <p className="text-body-muted mb-4 line-clamp-2">
@@ -460,15 +491,16 @@ export default function Feedback360Page() {
         {activeTab === 'pending' && (
           <div className="space-y-4">
             {pendingReviews.length === 0 ? (
-              <div className="text-center py-12 bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)]">
-                <CheckCircle className="mx-auto h-12 w-12 text-success-400"/>
-                <h3 className="mt-2 text-sm font-medium text-[var(--text-primary)]">All caught up!</h3>
-                <p className="mt-1 text-body-muted">
-                  You have no pending feedback reviews.
-                </p>
+              <div className="card-aura">
+                <EmptyState
+                  icon={<CheckCircle className="h-8 w-8"/>}
+                  iconColor="bg-success-50 text-success-600 dark:bg-success-500/10 dark:text-success-400"
+                  title="All caught up"
+                  description="You have no pending feedback reviews. New requests will appear here."
+                />
               </div>
             ) : (
-              <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)]">
+              <div className="card-aura !p-0 overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="min-w-full divide-y divide-[var(--border-main)]">
                     <thead className="bg-[var(--bg-surface)]">
@@ -504,8 +536,8 @@ export default function Feedback360Page() {
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span
-                            className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-accent-100 text-accent-800">
+                          <span className="badge-status status-info">
+                            <Users className="h-3.5 w-3.5"/>
                             {request.reviewerType}
                           </span>
                         </td>
@@ -543,20 +575,17 @@ export default function Feedback360Page() {
         {activeTab === 'summaries' && (
           <div className="space-y-4">
             {summaries.length === 0 ? (
-              <div className="text-center py-12 bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)]">
-                <BarChart3 className="mx-auto h-12 w-12 text-[var(--text-muted)]"/>
-                <h3 className="mt-2 text-sm font-medium text-[var(--text-primary)]">No results yet</h3>
-                <p className="mt-1 text-body-muted">
-                  Your feedback summaries will appear here once reviews are complete.
-                </p>
+              <div className="card-aura">
+                <EmptyState
+                  icon={<BarChart3 className="h-8 w-8"/>}
+                  title="No results yet"
+                  description="Your feedback summaries will appear here once reviews are complete."
+                />
               </div>
             ) : (
               <div className="grid gap-4 md:grid-cols-2">
                 {summaries.map((summary) => (
-                  <div
-                    key={summary.id}
-                    className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] shadow-[var(--shadow-card)] p-6"
-                  >
+                  <div key={summary.id} className="card-aura p-6">
                     <div className="flex justify-between items-start mb-4">
                       <div>
                         <h3 className="text-lg font-medium text-[var(--text-primary)]">

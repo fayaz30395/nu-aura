@@ -22,6 +22,8 @@ import {Permissions} from '@/lib/hooks/usePermissions';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {CreateExpenseClaimRequest, CurrencyCode, ExpenseCategory} from '@/lib/types/hrms/expense';
 import {ConfirmDialog, EmptyState, Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui';
+import {StatusBadge} from '@/components/ui/StatusBadge';
+import {EXPENSE_STATUS} from '@/lib/status/vocabulary';
 import {ExpenseAnalytics} from '@/components/expenses';
 import {safeWindowOpen} from '@/lib/utils/url';
 import {endOfMonth, format, startOfMonth} from 'date-fns';
@@ -350,17 +352,6 @@ export default function ExpenseClaims() {
       log.error('Error deleting claim:', err);
       showNotification('Failed to delete expense claim', 'error');
     }
-  };
-
-  const getStatusBadge = (status: string) => {
-    const styles: Record<string, string> = {
-      DRAFT: 'bg-[var(--bg-surface)] text-[var(--text-primary)] dark:bg-[var(--bg-secondary)] dark:text-[var(--text-secondary)]',
-      SUBMITTED: 'bg-accent-100 text-accent-800 dark:bg-accent-900/50 dark:text-accent-300',
-      APPROVED: 'bg-success-100 text-success-800 dark:bg-success-900/50 dark:text-success-300',
-      REJECTED: 'bg-danger-100 text-danger-800 dark:bg-danger-900/50 dark:text-danger-300',
-      PAID: 'bg-accent-100 text-accent-800 dark:bg-accent-900/50 dark:text-accent-300'
-    };
-    return styles[status] || 'bg-[var(--bg-surface)] text-[var(--text-primary)] dark:bg-[var(--bg-secondary)] dark:text-[var(--text-secondary)]';
   };
 
   // Show loading state while hydrating
@@ -882,10 +873,7 @@ export default function ExpenseClaims() {
                         <div>
                           <div className="flex items-center gap-4 mb-2">
                             <h3 className="font-semibold text-lg">{claim.claimNumber}</h3>
-                            <span
-                              className={`px-4 py-1 rounded-full text-xs font-medium ${getStatusBadge(claim.status)}`}>
-                            {claim.status}
-                          </span>
+                            <StatusBadge status={claim.status} domain={EXPENSE_STATUS}/>
                           </div>
                           <p className="text-[var(--text-secondary)]">{claim.description}</p>
                           {claim.employeeName && (

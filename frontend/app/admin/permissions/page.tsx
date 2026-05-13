@@ -23,6 +23,7 @@ import {Permission, RoleWithDetails} from '@/lib/types/core/roles';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
 import {ConfirmDialog} from '@/components/ui';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {Button} from '@/components/ui/Button';
 import {
   useAssignPermissions,
@@ -279,10 +280,11 @@ export default function PermissionsPage() {
                 className="space-y-4"
               >
                 {filteredRoles.length === 0 ? (
-                  <div className="text-center py-12 text-[var(--text-muted)]">
-                    <ShieldCheck className="w-12 h-12 mx-auto mb-4 text-[var(--text-muted)]"/>
-                    <p>No roles found</p>
-                  </div>
+                  <EmptyState
+                    icon={<ShieldCheck className="h-8 w-8"/>}
+                    title="No roles found"
+                    description="Try a different search term or create a new role."
+                  />
                 ) : (
                   filteredRoles.map((role) => (
                     <motion.div
@@ -401,10 +403,11 @@ export default function PermissionsPage() {
                 className="space-y-4"
               >
                 {filteredUsers.length === 0 ? (
-                  <div className="text-center py-12 text-[var(--text-muted)]">
-                    <Users className="w-12 h-12 mx-auto mb-4 text-[var(--text-muted)]"/>
-                    <p>No users found</p>
-                  </div>
+                  <EmptyState
+                    icon={<Users className="h-8 w-8"/>}
+                    title="No users found"
+                    description="Try a different search term to find users."
+                  />
                 ) : (
                   <div className="bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] overflow-hidden">
                     <table className="w-full text-left text-sm">

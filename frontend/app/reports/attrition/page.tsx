@@ -8,6 +8,7 @@ import {AlertTriangle, Download, RefreshCw, Shield, TrendingDown, Zap} from 'luc
 import {Button} from '@/components/ui/Button';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
+import {EmptyState} from '@/components/ui/EmptyState';
 
 interface AttritionPrediction {
   id: string;
@@ -181,10 +182,12 @@ export default function AttritionReportPage() {
             <div className="animate-spin h-8 w-8 border-4 border-accent-600 border-t-transparent rounded-full"/>
           </div>
         ) : filtered.length === 0 ? (
-          <div className="text-center py-16 skeuo-card">
-            <Shield className="h-12 w-12 text-success-400 mx-auto mb-4"/>
-            <p className="text-[var(--text-muted)] font-medium">No high-risk employees found</p>
-            <p className="text-body-muted mt-1">Lower the minimum risk score to see more results</p>
+          <div className="skeuo-card">
+            <EmptyState
+              icon={<Shield className="h-8 w-8"/>}
+              title="No high-risk employees found"
+              description="Lower the minimum risk score to see more results."
+            />
           </div>
         ) : (
           <div className="space-y-2">

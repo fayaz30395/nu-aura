@@ -313,13 +313,13 @@ export default function MyAttendancePage() {
         return <span className="badge-status status-info text-xs">HOLIDAY</span>;
       case 'ON_LEAVE':
       case 'LEAVE':
-        return <span className="badge-status status-purple text-xs">LEAVE</span>;
+        return <span className="badge-status status-info text-xs">LEAVE</span>;
       case 'ABSENT':
         return <span className="badge-status status-danger text-xs">ABSENT</span>;
       case 'HALF_DAY':
         return <span className="badge-status status-warning text-xs">HALF DAY</span>;
       case 'LATE':
-        return <span className="badge-status status-orange text-xs">LATE</span>;
+        return <span className="badge-status status-warning text-xs">LATE</span>;
       default:
         return null;
     }

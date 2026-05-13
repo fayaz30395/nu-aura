@@ -9,6 +9,8 @@ import {AccrualType, GenderSpecific, LeaveType, LeaveTypeRequest} from '@/lib/ty
 import {useAuth} from '@/lib/hooks/useAuth';
 import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
 import {ConfirmDialog} from '@/components/ui';
+import {EmptyState} from '@/components/ui/EmptyState';
+import {FileText} from 'lucide-react';
 import {
   useActivateLeaveType,
   useCreateLeaveType,
@@ -323,17 +325,12 @@ export default function LeaveTypesManagementPage() {
               </tr>
             ) : leaveTypes.length === 0 ? (
               <tr>
-                <td colSpan={6} className="px-6 py-12 text-center text-[var(--text-muted)]">
-                  <div className="flex flex-col items-center">
-                    <svg className="h-12 w-12 text-[var(--text-muted)] mb-4" fill="none" viewBox="0 0 24 24"
-                         stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-                    </svg>
-                    <p className="text-[var(--text-secondary)]">No leave types configured</p>
-                    <p className="text-body-muted mt-1">Click &quot;Add Leave Type&quot; to create your first leave
-                      type</p>
-                  </div>
+                <td colSpan={6}>
+                  <EmptyState
+                    icon={<FileText className="h-8 w-8"/>}
+                    title="No leave types configured"
+                    description="Click &quot;Add Leave Type&quot; to create your first leave type."
+                  />
                 </td>
               </tr>
             ) : (

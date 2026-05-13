@@ -17,6 +17,8 @@ import {
 import type {Certificate, Course, CourseEnrollment} from '@/lib/services/grow/lms.service';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
+import {StatusBadge} from '@/components/ui/StatusBadge';
+import {LEARNING_STATUS} from '@/lib/status/vocabulary';
 
 export default function LearningPage() {
   const [activeTab, setActiveTab] = useState<'catalog' | 'my-courses' | 'certificates'>('catalog');
@@ -57,21 +59,6 @@ export default function LearningPage() {
         return 'bg-warning-100 text-warning-800 dark:bg-warning-900/50 dark:text-warning-300';
       case 'ADVANCED':
         return 'bg-danger-100 text-danger-800 dark:bg-danger-900/50 dark:text-danger-300';
-      default:
-        return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
-    }
-  };
-
-  const getStatusColor = (status: string | undefined): string => {
-    switch (status) {
-      case 'ENROLLED':
-        return 'bg-accent-50 dark:bg-accent-950/30 text-accent-700 dark:text-accent-400';
-      case 'IN_PROGRESS':
-        return 'bg-warning-100 text-warning-800 dark:bg-warning-900/50 dark:text-warning-300';
-      case 'COMPLETED':
-        return 'bg-success-100 text-success-800 dark:bg-success-900/50 dark:text-success-300';
-      case 'DROPPED':
-        return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
       default:
         return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
     }
@@ -252,11 +239,7 @@ export default function LearningPage() {
                           <h3 className="text-xl font-semibold text-[var(--text-primary)]">Course
                             #{enrollment.courseId.slice(0, 8)}</h3>
                           <div className="flex gap-2 mt-2">
-                            <span
-                              className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(enrollment.status)}`}
-                              aria-label={`Status: ${enrollment.status}`}>
-                              {enrollment.status}
-                            </span>
+                            <StatusBadge status={enrollment.status} domain={LEARNING_STATUS}/>
                           </div>
                         </div>
                         <div className="text-right">

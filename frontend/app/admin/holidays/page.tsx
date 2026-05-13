@@ -6,9 +6,11 @@ import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {Holiday, HolidayRequest, HolidayType} from '@/lib/types/hrms/attendance';
+import {Calendar} from 'lucide-react';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
 import {ConfirmDialog} from '@/components/ui';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {
   useCreateHoliday,
   useDeleteHoliday,
@@ -299,17 +301,11 @@ export default function HolidayCalendarManagementPage() {
               Loading holidays for {selectedYear}...
             </div>
           ) : holidays.length === 0 ? (
-            <div className="px-6 py-12 text-center text-[var(--text-muted)]">
-              <div className="flex flex-col items-center">
-                <svg className="h-12 w-12 text-[var(--text-muted)] mb-4" fill="none" viewBox="0 0 24 24"
-                     stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                <p className="text-[var(--text-secondary)]">No holidays configured for {selectedYear}</p>
-                <p className="text-body-muted mt-1">Click &quot;Add Holiday&quot; to create your first holiday</p>
-              </div>
-            </div>
+            <EmptyState
+              icon={<Calendar className="h-8 w-8"/>}
+              title={`No holidays configured for ${selectedYear}`}
+              description="Click &quot;Add Holiday&quot; to create your first holiday for this year."
+            />
           ) : (
             <div className="divide-y divide-surface-200 dark:divide-surface-700">
               {months.map((month) => (

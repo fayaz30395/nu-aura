@@ -20,7 +20,9 @@ import {useAuth} from '@/lib/hooks/useAuth';
 import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
 import {AdminPageContent} from '@/components/layout';
 import {ConfirmDialog} from '@/components/ui';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {SkeletonTable} from '@/components/ui/Skeleton';
+import {ShieldCheck} from 'lucide-react';
 import {
   useAssignPermissionsWithScope,
   useCreateRole,
@@ -379,10 +381,12 @@ export default function RolesPage() {
             <tbody className="bg-[var(--bg-input)] divide-y divide-[var(--border-main)]">
             {filteredRoles.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-6 py-12 text-center">
-                  <p className="text-[var(--text-muted)] text-sm">No roles found</p>
-                  <p className="text-[var(--text-muted)] text-xs mt-1">Try adjusting your search or create a new
-                    role.</p>
+                <td colSpan={6}>
+                  <EmptyState
+                    icon={<ShieldCheck className="h-8 w-8"/>}
+                    title="No roles found"
+                    description="Try adjusting your search or create a new role."
+                  />
                 </td>
               </tr>
             )}

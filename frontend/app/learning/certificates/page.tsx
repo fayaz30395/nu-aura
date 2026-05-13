@@ -25,6 +25,8 @@ import {useToast} from '@/components/notifications/ToastProvider';
 import {useMyCertificates} from '@/lib/hooks/queries/useLearning';
 import type {Certificate} from '@/lib/services/grow/lms.service';
 import {safeWindowOpen} from '@/lib/utils/url';
+import {StatusBadge} from '@/components/ui/StatusBadge';
+import {LIFECYCLE_STATUS} from '@/lib/status/vocabulary';
 
 export default function CertificateGalleryPage() {
   const router = useRouter();
@@ -119,14 +121,9 @@ export default function CertificateGalleryPage() {
     copiedTimerRef.current = setTimeout(() => setCopiedId(null), 2000);
   };
 
-  const getStatusBadge = (isActive: boolean) => {
-    if (isActive) {
-      return <span
-        className="badge-status px-4 py-1 bg-success-100 text-success-800 dark:bg-success-900/50 dark:text-success-300 rounded-full text-xs font-semibold">Active</span>;
-    }
-    return <span
-      className="badge-status px-4 py-1 bg-danger-100 text-danger-800 dark:bg-danger-900/50 dark:text-danger-300 rounded-full text-xs font-semibold">Expired</span>;
-  };
+  const getStatusBadge = (isActive: boolean) => (
+    <StatusBadge status={isActive ? 'ACTIVE' : 'EXPIRED'} domain={LIFECYCLE_STATUS}/>
+  );
 
   const formatDate = (date: string) => {
     return new Date(date).toLocaleDateString('en-US', {

@@ -10,6 +10,7 @@ import {
   DollarSign,
   Filter,
   GripVertical,
+  Inbox,
   Loader2,
   MoreHorizontal,
   Plus,
@@ -1098,8 +1099,10 @@ export default function ApplicantPipelinePage() {
                             <div
                               ref={provided.innerRef}
                               {...provided.droppableProps}
-                              className={`flex-shrink-0 w-60 flex flex-col rounded-xl border border-[var(--border-main)] border-t-4 ${colors.col} overflow-hidden transition-colors ${
-                                snapshot.isDraggingOver ? `${colors.bg} ring-2 ring-accent-300` : 'bg-[var(--bg-card)]'
+                              className={`flex-shrink-0 w-60 flex flex-col rounded-xl border border-[var(--border-main)] border-t-2 ${colors.col} bg-[var(--bg-card)] overflow-hidden transition-shadow ${
+                                snapshot.isDraggingOver
+                                  ? 'shadow-[var(--shadow-card-hover)] border-accent-300'
+                                  : ''
                               }`}
                               style={{maxHeight: 'calc(100vh - 380px)'}}
                             >
@@ -1118,8 +1121,11 @@ export default function ApplicantPipelinePage() {
                               {/* Cards scroll area */}
                               <div className="flex-1 overflow-y-auto p-2 space-y-2 min-h-[60px]">
                                 {applicants.length === 0 ? (
-                                  <div className="py-6 text-center text-caption">
-                                    {hasActiveFilters ? 'No matches' : 'No applicants'}
+                                  <div className="flex flex-col items-center justify-center py-6 px-3 text-center">
+                                    <Inbox className="h-6 w-6 text-[var(--text-muted)] opacity-60 mb-2" aria-hidden="true"/>
+                                    <p className="text-caption">
+                                      {hasActiveFilters ? 'No matches in this stage' : 'No applicants here yet'}
+                                    </p>
                                   </div>
                                 ) : (
                                   applicants.map((applicant, index) => {

@@ -46,6 +46,7 @@ import {
 } from '@/lib/hooks/queries/useFluence';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
+import {EmptyState} from '@/components/ui/EmptyState';
 
 // Dynamically import Tiptap viewer to keep it out of the initial bundle
 const ContentViewer = dynamic(
@@ -237,7 +238,6 @@ export default function BlogPostDetailPage() {
               whileHover={{scale: 1.05}}
               transition={{duration: 0.3}}
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"/>
           </motion.div>
         )}
 
@@ -604,13 +604,11 @@ export default function BlogPostDetailPage() {
 
             {/* Comments List */}
             {comments.length === 0 ? (
-              <motion.p
-                initial={{opacity: 0}}
-                animate={{opacity: 1}}
-                className="text-center text-[var(--text-muted)] py-8"
-              >
-                No comments yet. Be the first to share your thoughts!
-              </motion.p>
+              <EmptyState
+                icon={<MessageCircle className="h-8 w-8" aria-hidden="true"/>}
+                title="No comments yet"
+                description="Be the first to share your thoughts on this post."
+              />
             ) : (
               <motion.div
                 className="space-y-4"
@@ -698,13 +696,11 @@ export default function BlogPostDetailPage() {
       >
         <div className="space-y-2 max-h-96 overflow-y-auto">
           {!viewers || viewers.length === 0 ? (
-            <motion.p
-              initial={{opacity: 0}}
-              animate={{opacity: 1}}
-              className="text-center text-[var(--text-muted)] py-8"
-            >
-              No view records yet.
-            </motion.p>
+            <EmptyState
+              icon={<Eye className="h-8 w-8" aria-hidden="true"/>}
+              title="No view records yet"
+              description="When teammates open this post, they'll appear here."
+            />
           ) : (
             <motion.div
               className="space-y-2"

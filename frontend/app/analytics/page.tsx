@@ -18,6 +18,8 @@ import {
 import {AppLayout} from '@/components/layout';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
+import {EmptyState} from '@/components/ui/EmptyState';
+import {BarChart3 as BarChart3Icon, PieChart as PieChartIcon} from 'lucide-react';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import type {DashboardAnalyticsParams} from '@/lib/hooks/queries/useAnalytics';
@@ -356,9 +358,11 @@ export default function AnalyticsPage() {
                 {attendanceTrendData.length > 0 ? (
                   <AnalyticsAttendanceTrendChart data={attendanceTrendData}/>
                 ) : (
-                  <div className="h-full flex items-center justify-center text-[var(--text-muted)]">
-                    No attendance trend data available
-                  </div>
+                  <EmptyState
+                    icon={<TrendingUp className="h-8 w-8"/>}
+                    title="No attendance trend data available"
+                    description="Daily attendance data will appear here once entries are logged."
+                  />
                 )}
               </div>
             </CardContent>
@@ -379,9 +383,11 @@ export default function AnalyticsPage() {
                 {attendancePieData.length > 0 ? (
                   <AnalyticsAttendancePieChart data={attendancePieData}/>
                 ) : (
-                  <div className="w-full text-center text-[var(--text-muted)]">
-                    No attendance data available
-                  </div>
+                  <EmptyState
+                    icon={<PieChartIcon className="h-8 w-8"/>}
+                    title="No attendance data available"
+                    description="Today's attendance breakdown will appear once entries are recorded."
+                  />
                 )}
               </div>
             </CardContent>
@@ -405,9 +411,11 @@ export default function AnalyticsPage() {
                 {departmentData.length > 0 ? (
                   <AnalyticsDeptBarChart data={departmentData}/>
                 ) : (
-                  <div className="h-full flex items-center justify-center text-[var(--text-muted)]">
-                    No department data available
-                  </div>
+                  <EmptyState
+                    icon={<BarChart3Icon className="h-8 w-8"/>}
+                    title="No department data available"
+                    description="Headcount by department will appear here once employees are assigned."
+                  />
                 )}
               </div>
             </CardContent>
@@ -428,9 +436,11 @@ export default function AnalyticsPage() {
                 {leaveDistributionData.length > 0 ? (
                   <AnalyticsLeavePieChart data={leaveDistributionData} colors={COLORS}/>
                 ) : (
-                  <div className="h-full flex items-center justify-center text-[var(--text-muted)]">
-                    No leave distribution data available
-                  </div>
+                  <EmptyState
+                    icon={<Calendar className="h-8 w-8"/>}
+                    title="No leave distribution data available"
+                    description="Leave requests grouped by category will appear once filed."
+                  />
                 )}
               </div>
             </CardContent>

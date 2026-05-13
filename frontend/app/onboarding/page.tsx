@@ -23,11 +23,11 @@ import {AppLayout} from '@/components/layout';
 import {Card, CardContent} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {Input} from '@/components/ui/Input';
-import {Badge} from '@/components/ui/Badge';
+import {StatusBadge} from '@/components/ui/StatusBadge';
+import {REVIEW_STATUS} from '@/lib/status/vocabulary';
 import {useOnboardingProcesses} from '@/lib/hooks/queries/useOnboarding';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
-import type {BadgeVariant} from '@/components/ui/types';
 import {Skeleton} from '@/components/ui/Skeleton';
 
 export default function OnboardingPage() {
@@ -37,21 +37,6 @@ export default function OnboardingPage() {
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
 
   const {data, isLoading, isError, error, refetch} = useOnboardingProcesses(0, 100);
-
-  const getStatusVariant = (status: string): BadgeVariant => {
-    switch (status) {
-      case 'COMPLETED':
-        return 'success';
-      case 'IN_PROGRESS':
-        return 'primary';
-      case 'NOT_STARTED':
-        return 'default';
-      case 'CANCELLED':
-        return 'destructive';
-      default:
-        return 'default';
-    }
-  };
 
   const processes = data?.content || [];
 
@@ -283,12 +268,7 @@ export default function OnboardingPage() {
                             </div>
                           </div>
 
-                          <Badge
-                            variant={getStatusVariant(process.status)}
-                            className="rounded-xl px-4 py-1.5 font-black tracking-widest uppercase text-xs"
-                          >
-                            {process.status ? process.status.replace('_', ' ') : '-'}
-                          </Badge>
+                          <StatusBadge status={process.status} domain={REVIEW_STATUS}/>
 
                           <div
                             className="h-10 w-10 flex items-center justify-center rounded-lg bg-[var(--bg-input)] shadow-[var(--shadow-card)] border border-[var(--border-main)] opacity-0 group-hover:opacity-100 transition-all transform translate-x-4 group-hover:translate-x-0">

@@ -18,7 +18,6 @@ import {
 import {AppLayout} from '@/components/layout/AppLayout';
 import {DateInput} from '@mantine/dates';
 import {
-  Badge,
   Button,
   Card,
   CardContent,
@@ -28,6 +27,8 @@ import {
   ModalFooter,
   ModalHeader,
 } from '@/components/ui';
+import {StatusBadge} from '@/components/ui/StatusBadge';
+import {TIMESHEET_STATUS} from '@/lib/status/vocabulary';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {
   useAddTimeEntry,
@@ -40,17 +41,6 @@ import {useProjects} from '@/lib/hooks/queries/useProjects';
 import {ActivityType, CreateTimeEntryRequest, Timesheet} from '@/lib/types/hrms/timesheet';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
-
-const getStatusColor = (status: string) => {
-  const colors: Record<string, string> = {
-    DRAFT: 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]',
-    SUBMITTED: 'bg-info-100 text-info-700 dark:bg-info-900 dark:text-info-300',
-    UNDER_REVIEW: 'bg-warning-100 text-warning-700 dark:bg-warning-900 dark:text-warning-300',
-    APPROVED: 'bg-success-100 text-success-700 dark:bg-success-900 dark:text-success-300',
-    REJECTED: 'bg-danger-100 text-danger-700 dark:bg-danger-900 dark:text-danger-300',
-  };
-  return colors[status] || colors.DRAFT;
-};
 
 const formatDate = (dateString: string) => {
   return new Date(dateString).toLocaleDateString('en-US', {
@@ -396,9 +386,7 @@ export default function TimesheetsPage() {
 
               {currentWeekTimesheet ? (
                 <div className="flex items-center gap-2">
-                  <Badge className={getStatusColor(currentWeekTimesheet.status)}>
-                    {currentWeekTimesheet.status ? currentWeekTimesheet.status.replace('_', ' ') : '-'}
-                  </Badge>
+                  <StatusBadge status={currentWeekTimesheet.status} domain={TIMESHEET_STATUS}/>
                   <Button size="sm" onClick={() => handleViewTimesheet(currentWeekTimesheet)}>
                     <Eye className="h-4 w-4 mr-2"/>
                     View
@@ -583,9 +571,7 @@ export default function TimesheetsPage() {
                             </p>
                           )}
                         </div>
-                        <Badge className={getStatusColor(timesheet.status)}>
-                          {timesheet.status ? timesheet.status.replace('_', ' ') : '-'}
-                        </Badge>
+                        <StatusBadge status={timesheet.status} domain={TIMESHEET_STATUS}/>
                         <Button size="sm" variant="outline" onClick={() => handleViewTimesheet(timesheet)}>
                           <Eye className="h-4 w-4"/>
                         </Button>
@@ -659,9 +645,7 @@ export default function TimesheetsPage() {
             {selectedTimesheet && (
               <div className="space-y-6">
                 <div className="row-between">
-                  <Badge className={getStatusColor(selectedTimesheet.status)}>
-                    {selectedTimesheet.status ? selectedTimesheet.status.replace('_', ' ') : '-'}
-                  </Badge>
+                  <StatusBadge status={selectedTimesheet.status} domain={TIMESHEET_STATUS}/>
                   <div className="text-right">
                     <p className="text-xl font-bold text-[var(--text-primary)]">
                       {selectedTimesheet.totalHours}h

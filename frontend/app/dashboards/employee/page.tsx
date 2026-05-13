@@ -22,6 +22,7 @@ import {AppLayout} from '@/components/layout';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {Skeleton} from '@/components/ui/Skeleton';
+import {EmptyState} from '@/components/ui/EmptyState';
 import dynamic from 'next/dynamic';
 import {useEmployeeDashboard} from '@/lib/hooks/queries';
 import {ChartLoadingFallback} from '@/lib/utils/lazy-components';
@@ -310,12 +311,11 @@ export default function EmployeeDashboardPage() {
                 {data.attendanceSummary.weeklyTrend.length > 0 ? (
                   <EmployeeAttendanceChart weeklyTrend={data.attendanceSummary.weeklyTrend}/>
                 ) : (
-                  <div className="h-[300px] flex items-center justify-center">
-                    <div className="text-center text-[var(--text-muted)]">
-                      <Clock className="h-12 w-12 mx-auto mb-4"/>
-                      <p className="text-sm font-medium">No attendance data available</p>
-                    </div>
-                  </div>
+                  <EmptyState
+                    icon={<Clock className="h-8 w-8"/>}
+                    title="No attendance data available"
+                    description="Your weekly attendance trend will appear here once you start logging time."
+                  />
                 )}
               </CardContent>
             </Card>
@@ -375,10 +375,11 @@ export default function EmployeeDashboardPage() {
                     ))}
                   </div>
                 ) : (
-                  <div className="text-center py-8 text-[var(--text-muted)]">
-                    <CheckCircle className="h-12 w-12 mx-auto mb-4"/>
-                    <p className="text-sm">No attendance records found</p>
-                  </div>
+                  <EmptyState
+                    icon={<CheckCircle className="h-8 w-8"/>}
+                    title="No attendance records found"
+                    description="Your recent attendance entries for this month will appear here."
+                  />
                 )}
               </CardContent>
             </Card>
@@ -542,10 +543,11 @@ export default function EmployeeDashboardPage() {
                     </div>
                   ))}
                   {data.leaveBalances.length === 0 && (
-                    <div className="text-center py-6 text-[var(--text-muted)]">
-                      <Palmtree className="h-8 w-8 mx-auto mb-2"/>
-                      <p className="text-sm">No leave balances available</p>
-                    </div>
+                    <EmptyState
+                      icon={<Palmtree className="h-8 w-8"/>}
+                      title="No leave balances available"
+                      description="Leave balances will appear here once leave types are assigned to you."
+                    />
                   )}
                 </div>
               </CardContent>

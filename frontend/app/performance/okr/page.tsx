@@ -10,16 +10,22 @@ import {
   CheckCircle,
   ChevronDown,
   ChevronRight,
+  Circle,
   Clock,
+  FileEdit,
   Flag,
+  ListChecks,
   Pencil,
+  Play,
   Plus,
   Trash2,
   User,
   Users,
+  XCircle,
 } from 'lucide-react';
 import {AppLayout} from '@/components/layout';
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {
@@ -81,21 +87,42 @@ const getLevelIcon = (level: string) => {
 const getStatusColor = (status: string) => {
   switch (status) {
     case 'DRAFT':
-      return 'bg-[var(--bg-surface)] text-[var(--text-primary)]';
+      return 'badge-status status-neutral';
     case 'ACTIVE':
-      return 'bg-accent-100 text-accent-800';
+      return 'badge-status status-info';
     case 'ON_TRACK':
-      return 'bg-success-100 text-success-800';
+      return 'badge-status status-success';
     case 'AT_RISK':
-      return 'bg-warning-100 text-warning-800';
+      return 'badge-status status-warning';
     case 'BEHIND':
-      return 'bg-danger-100 text-danger-800';
+      return 'badge-status status-danger';
     case 'COMPLETED':
-      return 'bg-success-100 text-success-800';
+      return 'badge-status status-success';
     case 'CANCELLED':
-      return 'bg-[var(--bg-surface)] text-[var(--text-muted)]';
+      return 'badge-status status-neutral';
     default:
-      return 'bg-[var(--bg-surface)] text-[var(--text-primary)]';
+      return 'badge-status status-neutral';
+  }
+};
+
+const getStatusIcon = (status: string) => {
+  switch (status) {
+    case 'DRAFT':
+      return <FileEdit className="h-3.5 w-3.5"/>;
+    case 'ACTIVE':
+      return <Play className="h-3.5 w-3.5"/>;
+    case 'ON_TRACK':
+      return <CheckCircle className="h-3.5 w-3.5"/>;
+    case 'AT_RISK':
+      return <AlertTriangle className="h-3.5 w-3.5"/>;
+    case 'BEHIND':
+      return <AlertTriangle className="h-3.5 w-3.5"/>;
+    case 'COMPLETED':
+      return <CheckCircle className="h-3.5 w-3.5"/>;
+    case 'CANCELLED':
+      return <XCircle className="h-3.5 w-3.5"/>;
+    default:
+      return <Circle className="h-3.5 w-3.5"/>;
   }
 };
 
@@ -365,12 +392,29 @@ export default function OKRPage() {
         {/* Objectives List */}
         <div className="space-y-4">
           {filteredObjectives.length === 0 ? (
-            <div className="card-aura text-center py-12">
-              <Flag className="mx-auto h-12 w-12 text-[var(--text-muted)]"/>
-              <h3 className="mt-2 text-sm font-medium text-[var(--text-primary)]">No objectives</h3>
-              <p className="mt-1 text-body-muted">
-                Get started by creating a new objective.
-              </p>
+            <div className="card-aura">
+              <PermissionGate
+                permission={Permissions.OKR_CREATE}
+                fallback={
+                  <EmptyState
+                    icon={<Flag className="h-8 w-8"/>}
+                    title="No objectives"
+                    description="Adjust your filters or check back once objectives have been created."
+                  />
+                }
+              >
+                <EmptyState
+                  icon={<Flag className="h-8 w-8"/>}
+                  title="No objectives"
+                  description="Get started by creating a new objective and breaking it into key results."
+                  actionLabel="New Objective"
+                  onAction={() => {
+                    resetObjectiveForm();
+                    setEditingObjective(null);
+                    setShowObjectiveModal(true);
+                  }}
+                />
+              </PermissionGate>
             </div>
           ) : (
             filteredObjectives.map((objective: Objective) => (
@@ -412,13 +456,10 @@ export default function OKRPage() {
                           {new Date(objective.startDate).toLocaleDateString()} -{' '}
                             {new Date(objective.endDate).toLocaleDateString()}
                         </span>
-                          <span
-                            className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${getStatusColor(
-                              objective.status
-                            )}`}
-                          >
-                          {objective.status ? objective.status.replace('_', ' ') : '-'}
-                        </span>
+                          <span className={getStatusColor(objective.status)}>
+                            {getStatusIcon(objective.status)}
+                            {objective.status ? objective.status.replace('_', ' ') : '-'}
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -546,9 +587,14 @@ export default function OKRPage() {
                         ))}
                       </div>
                     ) : (
-                      <p className="text-body-muted text-center py-4">
-                        No key results yet. Add some to track progress.
-                      </p>
+                      <EmptyState
+                        icon={<ListChecks className="h-8 w-8"/>}
+                        title="No key results yet"
+                        description="Break this objective into measurable key results to track progress."
+                        {...(activeTab === 'my'
+                          ? {actionLabel: 'Add Key Result', onAction: () => openAddKeyResult(objective.id)}
+                          : {})}
+                      />
                     )}
                   </div>
                 )}

@@ -10,6 +10,8 @@ import {ArrowLeft, BookOpen, CheckCircle2, Clock, Filter, Play, Search, Users, Z
 import {AppLayout} from '@/components/layout';
 import {apiClient} from '@/lib/api/client';
 import {useToast} from '@/components/notifications/ToastProvider';
+import {StatusBadge} from '@/components/ui/StatusBadge';
+import {LEARNING_STATUS} from '@/lib/status/vocabulary';
 
 interface LearningPath {
   id: string;
@@ -113,19 +115,6 @@ export default function LearningPathsPage() {
     }
   };
 
-  const getStatusColor = (status?: string) => {
-    switch (status) {
-      case 'NOT_STARTED':
-        return 'bg-[var(--bg-surface)] text-[var(--text-primary)]';
-      case 'IN_PROGRESS':
-        return 'bg-warning-100 text-warning-700';
-      case 'COMPLETED':
-        return 'bg-success-100 text-success-700';
-      default:
-        return 'bg-[var(--bg-surface)] text-[var(--text-primary)]';
-    }
-  };
-
   return (
     <AppLayout activeMenuItem="learning">
       <div className="max-w-7xl mx-auto px-4 py-8">
@@ -210,10 +199,7 @@ export default function LearningPathsPage() {
                   <div className="flex items-start justify-between gap-2 mb-4">
                     <h3 className="text-xl font-semibold text-[var(--text-primary)] flex-1">{path.title}</h3>
                     {path.status && (
-                      <span
-                        className={`px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ${getStatusColor(path.status)}`}>
-                        {path.status.replace('_', ' ')}
-                      </span>
+                      <StatusBadge status={path.status} domain={LEARNING_STATUS}/>
                     )}
                   </div>
 

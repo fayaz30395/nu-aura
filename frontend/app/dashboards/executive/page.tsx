@@ -30,6 +30,7 @@ import {AppLayout} from '@/components/layout';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {Skeleton} from '@/components/ui';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {useExecutiveDashboard} from '@/lib/hooks/queries/useDashboards';
@@ -318,12 +319,11 @@ export default function ExecutiveDashboardPage() {
                     formatNumber={formatNumber}
                   />
                 ) : (
-                  <div className="flex items-center justify-center h-full text-[var(--text-muted)]">
-                    <div className="text-center">
-                      <PieChart className="h-10 w-10 mx-auto mb-2 opacity-40"/>
-                      <p className="text-sm">No department data available</p>
-                    </div>
-                  </div>
+                  <EmptyState
+                    icon={<PieChart className="h-8 w-8"/>}
+                    title="No department data available"
+                    description="Department breakdown will appear here once employees are assigned."
+                  />
                 )}
               </CardContent>
             </Card>

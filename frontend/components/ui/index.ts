@@ -44,6 +44,10 @@ export type {CalloutProps, CalloutTone} from './Callout';
 export {GoogleGLogo} from './GoogleGLogo';
 export type {GoogleGLogoProps} from './GoogleGLogo';
 
+// StatusBadge — canonical status badge (color + icon + label per DESIGN.md)
+export {StatusBadge} from './StatusBadge';
+export type {StatusBadgeProps} from './StatusBadge';
+
 // Sidebar Components
 export {Sidebar, SIDEBAR_WIDTH_EXPANDED, SIDEBAR_WIDTH_COLLAPSED, HEADER_HEIGHT} from './Sidebar';
 export type {SidebarProps, SidebarItem, SidebarSection} from './Sidebar';

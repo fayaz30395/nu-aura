@@ -59,6 +59,7 @@ import {TableOfContents} from '@/components/fluence/TableOfContents';
 import {Breadcrumbs} from '@/components/fluence/Breadcrumbs';
 import {WatchButton} from '@/components/fluence/WatchButton';
 import {InlineCommentsPanel} from '@/components/fluence/InlineComments';
+import {EmptyState} from '@/components/ui/EmptyState';
 import type {FluenceComment} from '@/lib/types/platform/fluence';
 
 // Dynamically import Tiptap viewer to keep it out of the initial bundle
@@ -1117,18 +1118,11 @@ export default function WikiPageDetailPage() {
 
             {/* Comments List */}
             {comments.length === 0 ? (
-              <div className="text-center py-12">
-                <div
-                  className="flex items-center justify-center w-12 h-12 rounded-full bg-[var(--bg-secondary)] mx-auto mb-4">
-                  <MessageCircle className="h-6 w-6 text-[var(--text-muted)]"/>
-                </div>
-                <p className="text-sm font-medium text-[var(--text-primary)] mb-1">
-                  No comments yet
-                </p>
-                <p className={typography.caption}>
-                  Be the first to share your thoughts. Use @ to tag team members.
-                </p>
-              </div>
+              <EmptyState
+                icon={<MessageCircle className="h-8 w-8" aria-hidden="true"/>}
+                title="No comments yet"
+                description="Be the first to share your thoughts. Use @ to tag team members."
+              />
             ) : (
               <motion.div
                 initial="hidden"
@@ -1174,9 +1168,11 @@ export default function WikiPageDetailPage() {
       >
         <div className="space-y-2 max-h-96 overflow-y-auto">
           {!viewers || viewers.length === 0 ? (
-            <p className={`${typography.caption} text-center py-8`}>
-              No view records yet.
-            </p>
+            <EmptyState
+              icon={<Eye className="h-8 w-8" aria-hidden="true"/>}
+              title="No view records yet"
+              description="When teammates open this page, they'll appear here."
+            />
           ) : (
             <motion.div
               initial="hidden"
@@ -1226,9 +1222,11 @@ export default function WikiPageDetailPage() {
       >
         <div className="space-y-4 max-h-96 overflow-y-auto">
           {!revisions || revisions.length === 0 ? (
-            <p className={`${typography.caption} text-center py-8`}>
-              No version history available.
-            </p>
+            <EmptyState
+              icon={<History className="h-8 w-8" aria-hidden="true"/>}
+              title="No version history yet"
+              description="Edits will be tracked here once this page is updated."
+            />
           ) : (
             <motion.div
               initial="hidden"

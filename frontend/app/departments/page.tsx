@@ -15,6 +15,7 @@ import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {SkeletonTable} from '@/components/ui/Skeleton';
 import {useToast} from '@/components/notifications/ToastProvider';
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {
   useActivateDepartment,
   useAllDepartments,
@@ -396,19 +397,12 @@ export default function DepartmentsPage() {
                   </tr>
                 ) : filteredDepartments.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="px-6 py-12 text-center">
-                      <div className="flex flex-col items-center gap-4">
-                        <div
-                          className="w-16 h-16 rounded-full bg-[var(--bg-secondary)] flex items-center justify-center">
-                          <Building2 className="h-8 w-8 text-[var(--text-muted)]"/>
-                        </div>
-                        <div>
-                          <p className="text-[var(--text-primary)] font-medium">No departments found</p>
-                          <p className="text-[var(--text-muted)] text-sm mt-1">
-                            {searchQuery ? 'Try a different search term' : 'Click "Add Department" to get started'}
-                          </p>
-                        </div>
-                      </div>
+                    <td colSpan={7}>
+                      <EmptyState
+                        icon={<Building2 className="h-8 w-8"/>}
+                        title="No departments found"
+                        description={searchQuery ? 'Try a different search term.' : 'Click "Add Department" to get started.'}
+                      />
                     </td>
                   </tr>
                 ) : (

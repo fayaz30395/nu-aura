@@ -31,6 +31,7 @@ import {useFluenceSearch} from '@/lib/hooks/queries/useFluence';
 import type {SavedSearch} from '@/lib/types/platform/fluence';
 import {sanitizeHtml} from '@/lib/utils/sanitize';
 import {safeStorage} from '@/lib/utils/safeStorage';
+import {EmptyState} from '@/components/ui/EmptyState';
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
@@ -232,8 +233,8 @@ export default function SearchPage() {
         <div>
           <h1 className={`${typography.pageTitle} flex items-center gap-4`}>
             <div
-              className="w-10 h-10 rounded-lg bg-gradient-to-br from-[var(--accent-500)] to-[var(--accent-800)] flex items-center justify-center flex-shrink-0">
-              <Search className={`${iconSize.pageHeader} text-white`}/>
+              className="w-10 h-10 rounded-lg bg-accent-100 dark:bg-accent-500/10 text-accent-600 dark:text-accent-400 flex items-center justify-center flex-shrink-0">
+              <Search className={iconSize.pageHeader}/>
             </div>
             Search NU-Fluence
           </h1>
@@ -515,54 +516,26 @@ export default function SearchPage() {
             <p className={typography.bodySecondary}>Searching...</p>
           </div>
         ) : debouncedQuery.length <= 1 ? (
-          <motion.div
-            initial={{opacity: 0, scale: 0.95}}
-            animate={{opacity: 1, scale: 1}}
-            transition={{duration: 0.3}}
-          >
-            <Card className={`${dsCard.base} border-dashed border-2`}>
-              <CardContent className="py-16 text-center">
-                <motion.div
-                  initial={{opacity: 0, y: 8}}
-                  animate={{opacity: 1, y: 0}}
-                  transition={{delay: 0.1, duration: 0.3}}
-                >
-                  <Zap className={`${iconSize.statCard} mx-auto mb-4 text-[var(--text-muted)]`}/>
-                  <h3 className={`${typography.sectionTitle} mb-2`}>Start searching</h3>
-                  <p className={typography.bodySecondary}>
-                    Type at least 2 characters to search wiki pages, blog posts, and templates
-                  </p>
-                </motion.div>
-              </CardContent>
-            </Card>
-          </motion.div>
+          <div className={dsCard.base}>
+            <EmptyState
+              icon={<Zap className="h-8 w-8" aria-hidden="true"/>}
+              title="Start searching"
+              description="Type at least 2 characters to search wiki pages, blog posts, and templates."
+            />
+          </div>
         ) : resultCount === 0 ? (
-          <motion.div
-            initial={{opacity: 0, scale: 0.95}}
-            animate={{opacity: 1, scale: 1}}
-            transition={{duration: 0.3}}
-          >
-            <Card className={`${dsCard.base} border-dashed border-2`}>
-              <CardContent className="py-16 text-center">
-                <Search className={`${iconSize.statCard} mx-auto mb-4 text-[var(--text-muted)]`}/>
-                <h3 className={`${typography.sectionTitle} mb-2`}>No results found</h3>
-                <p className={typography.bodySecondary}>
-                  Try different keywords or remove filters
-                </p>
-                {hasActiveFilters && (
-                  <button
-                    onClick={() => {
-                      setSelectedType(undefined);
-                      setSelectedVisibility(undefined);
-                    }}
-                    className="mt-4 text-sm text-[var(--accent-700)] hover:underline cursor-pointer"
-                  >
-                    Clear filters
-                  </button>
-                )}
-              </CardContent>
-            </Card>
-          </motion.div>
+          <div className={dsCard.base}>
+            <EmptyState
+              icon={<Search className="h-8 w-8" aria-hidden="true"/>}
+              title="No results found"
+              description="Try different keywords or remove filters."
+              actionLabel={hasActiveFilters ? 'Clear filters' : undefined}
+              onAction={hasActiveFilters ? () => {
+                setSelectedType(undefined);
+                setSelectedVisibility(undefined);
+              } : undefined}
+            />
+          </div>
         ) : (
           <motion.div className="space-y-4" {...dsMotion.staggerContainer}>
             {/* Result count + search time */}

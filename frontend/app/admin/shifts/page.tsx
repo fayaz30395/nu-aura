@@ -10,6 +10,7 @@ import {Clock, Edit, Plus, ToggleLeft, ToggleRight, Trash2} from 'lucide-react';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
 import {ConfirmDialog} from '@/components/ui';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {useCreateNewShift, useRemoveShift, useShiftsList, useUpdateShiftDetails,} from '@/lib/hooks/queries/useShifts';
 import {createLogger} from '@/lib/utils/logger';
 import {CATEGORICAL_DEFAULT} from '@/lib/utils/categoricalPalette';
@@ -275,10 +276,12 @@ export default function ShiftsManagementPage() {
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-700"></div>
             </div>
           ) : shifts.length === 0 ? (
-            <div className="col-span-full flex flex-col items-center py-12 text-[var(--text-muted)]">
-              <Clock className="h-16 w-16 text-[var(--text-muted)] dark:text-[var(--text-secondary)] mb-4"/>
-              <p className="text-lg font-medium">No shifts configured</p>
-              <p className="text-sm mt-1">Click &quot;Add Shift&quot; to create your first shift</p>
+            <div className="col-span-full">
+              <EmptyState
+                icon={<Clock className="h-8 w-8"/>}
+                title="No shifts configured"
+                description="Click &quot;Add Shift&quot; to create your first shift schedule."
+              />
             </div>
           ) : (
             shifts.map((shift) => (

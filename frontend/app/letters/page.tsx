@@ -28,6 +28,8 @@ import {
 } from 'lucide-react';
 import {AppLayout} from '@/components/layout/AppLayout';
 import {Button, Card, CardContent, Modal, ModalBody, ModalFooter, ModalHeader,} from '@/components/ui';
+import {StatusBadge} from '@/components/ui/StatusBadge';
+import {LETTER_STATUS} from '@/lib/status/vocabulary';
 import {
   GeneratedLetter,
   GenerateLetterRequest,
@@ -108,37 +110,6 @@ const getCategoryLabel = (category: LetterCategory) => {
     [LetterCategory.CUSTOM]: 'Custom Letter',
   };
   return labels[category] || category;
-};
-
-const getStatusColor = (status: LetterStatus) => {
-  switch (status) {
-    case LetterStatus.DRAFT:
-      return 'bg-[var(--bg-surface)] text-[var(--text-secondary)] dark:bg-[var(--bg-primary)] dark:text-[var(--text-secondary)]';
-    case LetterStatus.PENDING_APPROVAL:
-      return 'bg-warning-100 text-warning-700 dark:bg-warning-900 dark:text-warning-300';
-    case LetterStatus.APPROVED:
-      return 'bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-300';
-    case LetterStatus.ISSUED:
-      return 'bg-success-100 text-success-700 dark:bg-success-900 dark:text-success-300';
-    case LetterStatus.REVOKED:
-      return 'bg-danger-100 text-danger-700 dark:bg-danger-900 dark:text-danger-300';
-    case LetterStatus.EXPIRED:
-      return 'bg-accent-300 text-accent-900 dark:bg-accent-900 dark:text-accent-500';
-    default:
-      return 'bg-[var(--bg-surface)] text-[var(--text-secondary)] dark:bg-[var(--bg-primary)] dark:text-[var(--text-secondary)]';
-  }
-};
-
-const getStatusLabel = (status: LetterStatus) => {
-  const labels: Record<LetterStatus, string> = {
-    [LetterStatus.DRAFT]: 'Draft',
-    [LetterStatus.PENDING_APPROVAL]: 'Pending Approval',
-    [LetterStatus.APPROVED]: 'Approved',
-    [LetterStatus.ISSUED]: 'Issued',
-    [LetterStatus.REVOKED]: 'Revoked',
-    [LetterStatus.EXPIRED]: 'Expired',
-  };
-  return labels[status] || status;
 };
 
 const formatDate = (date: string | undefined) => {
@@ -679,10 +650,7 @@ export default function LettersPage() {
                               </span>
                           </td>
                           <td className="px-4 py-4 whitespace-nowrap text-center">
-                              <span
-                                className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(letter.status)}`}>
-                                {getStatusLabel(letter.status)}
-                              </span>
+                            <StatusBadge status={letter.status} domain={LETTER_STATUS}/>
                           </td>
                           <td className="px-4 py-4 whitespace-nowrap">
                               <span className="text-body-secondary">
@@ -1074,10 +1042,7 @@ export default function LettersPage() {
             {selectedLetter && (
               <div className="space-y-6">
                 <div className="flex flex-wrap gap-2">
-                  <span
-                    className={`px-4 py-1 text-sm font-medium rounded-full ${getStatusColor(selectedLetter.status)}`}>
-                    {getStatusLabel(selectedLetter.status)}
-                  </span>
+                  <StatusBadge status={selectedLetter.status} domain={LETTER_STATUS}/>
                   <span
                     className="px-4 py-1 text-sm font-medium rounded-full bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-300">
                     {getCategoryLabel(selectedLetter.category)}

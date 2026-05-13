@@ -10,15 +10,15 @@ import {useTravelRequests} from '@/lib/hooks/queries/useTravel';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {StatusBadge} from '@/components/ui/StatusBadge';
+import {TRAVEL_STATUS} from '@/lib/status/vocabulary';
 import {
   AlertCircle,
   Briefcase,
   Building,
   Calendar,
   Car,
-  CheckCircle,
   ChevronRight,
-  Clock,
   DollarSign,
   Filter,
   GraduationCap,
@@ -30,7 +30,6 @@ import {
   Search,
   Train,
   Users,
-  XCircle,
 } from 'lucide-react';
 
 export default function TravelPage() {
@@ -58,57 +57,6 @@ export default function TravelPage() {
   const travelRequests = data?.content || [];
   const totalPages = data?.totalPages || 0;
   const totalElements = data?.totalElements || 0;
-
-  const getStatusConfig = (status: TravelStatus) => {
-    const configs = {
-      DRAFT: {
-        bg: 'bg-[var(--bg-secondary)]',
-        text: 'text-[var(--text-secondary)]',
-        icon: Clock,
-      },
-      SUBMITTED: {
-        bg: 'bg-accent-100 dark:bg-accent-900/30',
-        text: 'text-accent-700 dark:text-accent-400',
-        icon: Clock,
-      },
-      PENDING_APPROVAL: {
-        bg: 'bg-warning-100 dark:bg-warning-900/30',
-        text: 'text-warning-700 dark:text-warning-400',
-        icon: Clock,
-      },
-      APPROVED: {
-        bg: 'bg-success-100 dark:bg-success-900/30',
-        text: 'text-success-700 dark:text-success-400',
-        icon: CheckCircle,
-      },
-      REJECTED: {
-        bg: 'bg-danger-100 dark:bg-danger-900/30',
-        text: 'text-danger-700 dark:text-danger-400',
-        icon: XCircle,
-      },
-      BOOKED: {
-        bg: 'bg-accent-300 dark:bg-accent-900/30',
-        text: 'text-accent-900 dark:text-accent-600',
-        icon: CheckCircle,
-      },
-      IN_PROGRESS: {
-        bg: 'bg-accent-100 dark:bg-accent-900/30',
-        text: 'text-accent-700 dark:text-accent-400',
-        icon: Plane,
-      },
-      COMPLETED: {
-        bg: 'bg-success-100 dark:bg-success-900/30',
-        text: 'text-success-700 dark:text-success-400',
-        icon: CheckCircle,
-      },
-      CANCELLED: {
-        bg: 'bg-[var(--bg-secondary)]',
-        text: 'text-[var(--text-secondary)]',
-        icon: XCircle,
-      },
-    };
-    return configs[status] || configs.DRAFT;
-  };
 
   const getTravelTypeIcon = (type: TravelType) => {
     const icons = {
@@ -277,8 +225,6 @@ export default function TravelPage() {
         ) : (
           <div className="space-y-4">
             {travelRequests.map((request) => {
-              const statusConfig = getStatusConfig(request.status);
-              const StatusIcon = statusConfig.icon;
               const TypeIcon = getTravelTypeIcon(request.travelType);
               const TransportIcon = getTransportIcon(request.transportMode);
 
@@ -301,12 +247,7 @@ export default function TravelPage() {
                               <h3 className="text-xl font-semibold text-[var(--text-primary)]">
                                 {request.requestNumber}
                               </h3>
-                              <span
-                                className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-lg ${statusConfig.bg} ${statusConfig.text}`}
-                              >
-                                <StatusIcon className="h-3.5 w-3.5"/>
-                                {request.status?.replace(/_/g, ' ') ?? '-'}
-                              </span>
+                              <StatusBadge status={request.status} domain={TRAVEL_STATUS}/>
                             </div>
                             <p className="text-body-secondary mt-1">
                               {request.travelType?.replace(/_/g, ' ') ?? '-'}

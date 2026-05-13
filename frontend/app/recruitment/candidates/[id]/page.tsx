@@ -8,7 +8,8 @@ import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {useCandidate} from '@/lib/hooks/queries/useRecruitment';
 import {getStageColor, getStatusColor} from '../utils';
-import {ArrowLeft, Briefcase, Building, Calendar, Edit2, ExternalLink, Mail, MapPin, Phone, User,} from 'lucide-react';
+import {AlertCircle, ArrowLeft, Briefcase, Building, Calendar, Edit2, ExternalLink, Mail, MapPin, Phone, User,} from 'lucide-react';
+import {EmptyState} from '@/components/ui/EmptyState';
 
 export default function CandidateDetailPage() {
   const router = useRouter();
@@ -55,11 +56,15 @@ export default function CandidateDetailPage() {
             Back to Candidates
           </button>
           <Card className="bg-[var(--bg-card)]">
-            <CardContent className="p-12 text-center">
-              <p className="text-[var(--text-muted)]">Failed to load candidate details.</p>
-              <Button onClick={() => router.push('/recruitment/candidates')} className="mt-4">
-                Return to Candidates
-              </Button>
+            <CardContent className="p-0">
+              <EmptyState
+                icon={<AlertCircle className="h-8 w-8" aria-hidden="true"/>}
+                iconColor="bg-danger-50 text-danger-600 dark:bg-danger-500/10 dark:text-danger-400"
+                title="Couldn't load candidate"
+                description="We hit an error fetching this candidate. Head back to the list and try again."
+                actionLabel="Return to candidates"
+                onAction={() => router.push('/recruitment/candidates')}
+              />
             </CardContent>
           </Card>
         </div>

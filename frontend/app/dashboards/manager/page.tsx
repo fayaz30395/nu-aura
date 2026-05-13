@@ -30,6 +30,7 @@ import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Badge} from '@/components/ui/Badge';
 import {Button} from '@/components/ui/Button';
 import {Skeleton} from '@/components/ui';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {useManagerDashboard, useManagerTeamProjects} from '@/lib/hooks/queries';
@@ -658,16 +659,11 @@ export default function ManagerDashboardPage() {
 
               {/* Empty state */}
               {!teamProjectsLoading && !teamProjectsError && teamProjectsData && teamProjectsData.teamMembers.length === 0 && (
-                <div className="p-8 text-center">
-                  <div
-                    className="h-14 w-14 rounded-full bg-surface-500/10 flex items-center justify-center mx-auto mb-4">
-                    <FolderKanban className="h-7 w-7 text-surface-400"/>
-                  </div>
-                  <p className="text-base font-black text-[var(--text-primary)]">No Project Data</p>
-                  <p className="text-[var(--text-muted)] mt-1 text-sm font-bold">
-                    No team members have project allocations yet.
-                  </p>
-                </div>
+                <EmptyState
+                  icon={<FolderKanban className="h-8 w-8"/>}
+                  title="No project data"
+                  description="No team members have project allocations yet."
+                />
               )}
 
               {/* Team member project cards */}

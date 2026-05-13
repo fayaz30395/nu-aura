@@ -11,6 +11,7 @@ import {useCreatePost} from '@/lib/hooks/queries/useWall';
 import {useActivityFeed, useBlogPosts, useWikiPages} from '@/lib/hooks/queries/useFluence';
 import {notifications} from '@mantine/notifications';
 import {BookOpen, Eye, Heart, Newspaper} from 'lucide-react';
+import {EmptyState} from '@/components/ui/EmptyState';
 
 interface TrendingItem {
   id: string;
@@ -63,7 +64,7 @@ function TrendingSidebar() {
   return (
     <div className="space-y-4">
       {/* Trending Content */}
-      <div className="skeuo-card p-4 rounded-xl">
+      <div className="card-aura p-4">
         <div className="flex items-center gap-2 mb-4">
           <IconTrendingUp size={18} className="text-[var(--text-primary)]" aria-hidden="true"/>
           <h2 className="text-sm font-semibold text-[var(--text-primary)]">
@@ -71,12 +72,11 @@ function TrendingSidebar() {
           </h2>
         </div>
         {trendingItems.length === 0 ? (
-          <div className="flex flex-col items-center gap-2 py-4">
-            <IconFlame size={32} strokeWidth={1.5} className="text-[var(--text-muted)]" aria-hidden="true"/>
-            <p className="text-caption text-center">
-              No trending content yet. Start creating and sharing to see what is popular.
-            </p>
-          </div>
+          <EmptyState
+            icon={<IconFlame size={32} strokeWidth={1.5} aria-hidden="true"/>}
+            title="No trending content yet"
+            description="Start creating and sharing to see what is popular."
+          />
         ) : (
           <ul className="space-y-2" aria-label="Trending content list">
             {trendingItems.map((item, idx) => (
@@ -122,7 +122,7 @@ function TrendingSidebar() {
       </div>
 
       {/* Recent Activity Summary */}
-      <div className="skeuo-card p-4 rounded-xl">
+      <div className="card-aura p-4">
         <div className="flex items-center gap-2 mb-4">
           <IconActivity size={18} className="text-[var(--text-primary)]"/>
           <span className="text-sm font-semibold text-[var(--text-primary)]">
@@ -130,7 +130,11 @@ function TrendingSidebar() {
           </span>
         </div>
         {recentActivity.length === 0 ? (
-          <p className="text-caption text-center py-4">No recent activity</p>
+          <EmptyState
+            icon={<IconActivity size={32} strokeWidth={1.5} aria-hidden="true"/>}
+            title="No recent activity"
+            description="Activity from across your knowledge base will appear here."
+          />
         ) : (
           <div className="space-y-2">
             {recentActivity.map((act) => (
@@ -198,8 +202,9 @@ function WallPageContent() {
             </p>
           </div>
           <span
-            className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-accent-100 text-accent-700 dark:bg-accent-900/30 dark:text-accent-400"
+            className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium bg-accent-100 text-accent-700 dark:bg-accent-900/30 dark:text-accent-400"
             aria-label="Live updates">
+            <span className="h-1.5 w-1.5 rounded-full bg-accent-600 dark:bg-accent-400" aria-hidden="true"/>
             Live
           </span>
         </div>

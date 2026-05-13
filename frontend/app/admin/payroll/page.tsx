@@ -1,6 +1,8 @@
 'use client';
 
+import {useRouter} from 'next/navigation';
 import {AdminPageContent} from '@/components/layout';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {usePayrollRuns, useSalaryStructures} from '@/lib/hooks/queries/usePayroll';
 import {
   AlertCircle,
@@ -121,6 +123,7 @@ function statusBadgeClass(status: PayrollRunStatus): string {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function AdminPayrollPage() {
+  const router = useRouter();
   const {data: runsPage, isLoading: runsLoading} = usePayrollRuns(0, 5);
   const {data: structuresPage, isLoading: structuresLoading} = useSalaryStructures(0, 5);
 
@@ -197,16 +200,13 @@ export default function AdminPayrollPage() {
                 ))}
               </div>
             ) : runs.length === 0 ? (
-              <div className="py-12 text-center">
-                <Banknote className="h-8 w-8 text-[var(--text-muted)] mx-auto mb-2"/>
-                <p className="text-body-muted">No payroll runs yet</p>
-                <Link
-                  href="/payroll/runs"
-                  className="mt-2 inline-block text-xs text-accent-500 hover:underline cursor-pointer"
-                >
-                  Create first run →
-                </Link>
-              </div>
+              <EmptyState
+                icon={<Banknote className="h-8 w-8"/>}
+                title="No payroll runs yet"
+                description="Get started by creating your first payroll run for this pay cycle."
+                actionLabel="Create first run"
+                onAction={() => router.push('/payroll/runs')}
+              />
             ) : (
               <div className="divide-y divide-[var(--border-subtle)]">
                 {runs.map((run) => (
@@ -258,9 +258,11 @@ export default function AdminPayrollPage() {
                 ))}
               </div>
             ) : structures.length === 0 ? (
-              <div className="py-8 text-center">
-                <p className="text-body-muted">No salary structures configured</p>
-              </div>
+              <EmptyState
+                icon={<Layers className="h-8 w-8"/>}
+                title="No salary structures configured"
+                description="Salary structures define CTC, allowances, and deductions for employees."
+              />
             ) : (
               <div className="divide-y divide-[var(--border-subtle)]">
                 {structures.map((s) => (
