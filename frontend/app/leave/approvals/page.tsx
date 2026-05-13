@@ -21,6 +21,7 @@ import {Input} from '@/components/ui/Input';
 import {Button} from '@/components/ui/Button';
 import {useEmployees} from '@/lib/hooks/queries/useEmployees';
 import {Stat} from '@/components/ui/Stat';
+import {formatDate} from '@/lib/utils/format/date';
 
 function LeaveApprovalsPageContent() {
   const toast = useToast();
@@ -98,12 +99,13 @@ function LeaveApprovalsPageContent() {
     setShowRejectReasonModal(true);
   };
 
-  const handleRejectSubmit = async () => {
-    if (!rejectReason.trim() || !selectedRequestId) return;
+  const handleRejectSubmit = async (reason?: string) => {
+    const trimmed = (reason ?? rejectReason).trim();
+    if (!trimmed || !selectedRequestId) return;
 
     try {
       setIsProcessing(true);
-      await rejectLeaveRequest.mutateAsync({id: selectedRequestId, reason: rejectReason});
+      await rejectLeaveRequest.mutateAsync({id: selectedRequestId, reason: trimmed});
       toast.success('Leave request rejected');
       setShowRejectReasonModal(false);
       setRejectReason('');
@@ -253,7 +255,7 @@ function LeaveApprovalsPageContent() {
                       {getLeaveTypeName(request.leaveTypeId)}
                     </td>
                     <td className="px-6 py-4 text-body-secondary">
-                      {new Date(request.startDate).toLocaleDateString()} - {new Date(request.endDate).toLocaleDateString()}
+                      {formatDate(request.startDate)} - {formatDate(request.endDate)}
                     </td>
                     <td className="px-6 py-4 text-body-secondary">
                       {request.totalDays} {request.isHalfDay && '(Half)'}
@@ -264,7 +266,7 @@ function LeaveApprovalsPageContent() {
                       </div>
                     </td>
                     <td className="px-6 py-4 text-body-secondary">
-                      {new Date(request.appliedOn).toLocaleDateString()}
+                      {formatDate(request.appliedOn)}
                     </td>
                     <td className="px-6 py-4 text-sm">
                       <div className="flex gap-2">
@@ -321,47 +323,26 @@ function LeaveApprovalsPageContent() {
           type="danger"
         />
 
-        {/* Reject Reason Modal */}
-        <Modal
+        {/* Reject Reason Dialog */}
+        <ConfirmDialog
           isOpen={showRejectReasonModal}
           onClose={() => {
             setShowRejectReasonModal(false);
             setRejectReason('');
           }}
-          size="sm"
-        >
-          <ModalHeader onClose={() => setShowRejectReasonModal(false)}>
-            Reason for Rejection
-          </ModalHeader>
-          <ModalBody>
-            <Input
-              label="Please provide a reason for rejecting this leave request"
-              value={rejectReason}
-              onChange={(e) => setRejectReason(e.target.value)}
-              placeholder="Enter rejection reason..."
-              disabled={isProcessing}
-            />
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              variant="outline"
-              onClick={() => {
-                setShowRejectReasonModal(false);
-                setRejectReason('');
-              }}
-              disabled={isProcessing}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="primary"
-              onClick={handleRejectSubmit}
-              disabled={!rejectReason.trim() || isProcessing}
-            >
-              {isProcessing ? 'Rejecting...' : 'Reject'}
-            </Button>
-          </ModalFooter>
-        </Modal>
+          onConfirm={handleRejectSubmit}
+          title="Reason for Rejection"
+          message="Please provide a reason for rejecting this leave request."
+          confirmText="Reject"
+          cancelText="Cancel"
+          type="danger"
+          loading={isProcessing}
+          reason={{
+            label: 'Rejection reason',
+            placeholder: 'Enter rejection reason...',
+            required: true,
+          }}
+        />
       </motion.div>
     </AppLayout>
   );

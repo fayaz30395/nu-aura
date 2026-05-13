@@ -28,6 +28,7 @@ import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
+import {formatDate} from '@/lib/utils/format/date';
 import {
   useAddKeyResult,
   useCompanyObjectives,
@@ -453,8 +454,8 @@ export default function OKRPage() {
                         <div className="flex items-center gap-4 text-caption">
                           <span>{objective.objectiveLevel}</span>
                           <span>
-                          {new Date(objective.startDate).toLocaleDateString()} -{' '}
-                            {new Date(objective.endDate).toLocaleDateString()}
+                          {formatDate(objective.startDate)} -{' '}
+                            {formatDate(objective.endDate)}
                         </span>
                           <span className={getStatusColor(objective.status)}>
                             {getStatusIcon(objective.status)}

@@ -23,6 +23,7 @@ import {useAuth} from '@/lib/hooks/useAuth';
 import {createLogger} from '@/lib/utils/logger';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
+import {formatDate} from '@/lib/utils/format/date';
 
 const log = createLogger('GoalsPage');
 
@@ -351,8 +352,8 @@ export default function GoalsPage() {
                   </div>
 
                   <div className="text-body-secondary mb-4">
-                    <div>Start: {goal.startDate ? new Date(goal.startDate).toLocaleDateString() : 'N/A'}</div>
-                    <div>End: {goal.endDate ? new Date(goal.endDate).toLocaleDateString() : 'N/A'}</div>
+                    <div>Start: {goal.startDate ? formatDate(goal.startDate) : 'N/A'}</div>
+                    <div>End: {goal.endDate ? formatDate(goal.endDate) : 'N/A'}</div>
                   </div>
 
                   <div className="flex gap-2">

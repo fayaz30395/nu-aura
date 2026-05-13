@@ -23,11 +23,17 @@ import {
   AlertTriangle,
   Ban,
   BookOpen,
+  Calendar,
   CheckCircle,
+  ClipboardList,
   Clock,
+  GraduationCap,
   HelpCircle,
   Pause,
+  Play,
   Send,
+  Slash,
+  Star,
   XCircle,
 } from 'lucide-react';
 
@@ -113,11 +119,18 @@ export const TRAVEL_STATUS: Record<string, StatusMeta> = {
 };
 
 export const CYCLE_STATUS: Record<string, StatusMeta> = {
+  PLANNING: {label: 'Planning', tone: 'neutral', icon: Clock},
   DRAFT: DRAFT_META,
   ACTIVE: ACTIVE_META,
+  IN_PROGRESS: IN_PROGRESS_META,
+  SELF_ASSESSMENT: {label: 'Self Assessment', tone: 'info', icon: Clock},
+  MANAGER_REVIEW: {label: 'Manager Review', tone: 'info', icon: Clock},
   CALIBRATION: {label: 'Calibration', tone: 'info', icon: Clock},
+  RATINGS_PUBLISHED: {label: 'Ratings Published', tone: 'success', icon: CheckCircle},
   PUBLISHED: {label: 'Published', tone: 'success', icon: CheckCircle},
+  COMPLETED: COMPLETED_META,
   CLOSED: {label: 'Closed', tone: 'neutral', icon: Ban},
+  CANCELLED: CANCELLED_META,
 };
 
 export const REVIEW_STATUS: Record<string, StatusMeta> = {
@@ -169,6 +182,73 @@ export const LEARNING_STATUS: Record<string, StatusMeta> = {
   IN_PROGRESS: IN_PROGRESS_META,
   COMPLETED: COMPLETED_META,
   DROPPED: {label: 'Dropped', tone: 'neutral', icon: Ban},
+};
+
+export const PROJECT_STATUS: Record<string, StatusMeta> = {
+  DRAFT: DRAFT_META,
+  PLANNING: {label: 'Planning', tone: 'neutral', icon: Clock},
+  PLANNED: {label: 'Planned', tone: 'neutral', icon: Clock},
+  ACTIVE: ACTIVE_META,
+  IN_PROGRESS: IN_PROGRESS_META,
+  ON_HOLD: ON_HOLD_META,
+  COMPLETED: COMPLETED_META,
+  CANCELLED: CANCELLED_META,
+};
+
+export const FEEDBACK_360_STATUS: Record<string, StatusMeta> = {
+  DRAFT: DRAFT_META,
+  IN_PROGRESS: IN_PROGRESS_META,
+  SUBMITTED: SUBMITTED_META,
+  COMPLETED: COMPLETED_META,
+  CANCELLED: CANCELLED_META,
+  PRAISE: {label: 'Praise', tone: 'success', icon: CheckCircle},
+  CONSTRUCTIVE: {label: 'Constructive', tone: 'warning', icon: AlertCircle},
+  GENERAL: {label: 'General', tone: 'info', icon: Send},
+  REQUEST: {label: 'Request', tone: 'info', icon: Send},
+};
+
+export const AGENCY_STATUS: Record<string, StatusMeta> = {
+  ACTIVE: ACTIVE_META,
+  INACTIVE: INACTIVE_META,
+  SUSPENDED: {label: 'Suspended', tone: 'warning', icon: Pause},
+  BLACKLISTED: {label: 'Blacklisted', tone: 'danger', icon: Slash},
+  PENDING_APPROVAL: {label: 'Pending Approval', tone: 'warning', icon: Clock},
+};
+
+export const TRAINING_STATUS: Record<string, StatusMeta> = {
+  DRAFT: DRAFT_META,
+  SCHEDULED: {label: 'Scheduled', tone: 'info', icon: Calendar},
+  IN_PROGRESS: IN_PROGRESS_META,
+  COMPLETED: COMPLETED_META,
+  CANCELLED: CANCELLED_META,
+};
+
+export const SURVEY_STATUS: Record<string, StatusMeta> = {
+  DRAFT: DRAFT_META,
+  SCHEDULED: {label: 'Scheduled', tone: 'info', icon: Calendar},
+  ACTIVE: {label: 'Active', tone: 'success', icon: Play},
+  PAUSED: {label: 'Paused', tone: 'warning', icon: Pause},
+  COMPLETED: COMPLETED_META,
+  CLOSED: {label: 'Closed', tone: 'neutral', icon: Ban},
+  ARCHIVED: {label: 'Archived', tone: 'neutral', icon: Pause},
+};
+
+export const SURVEY_TYPE: Record<string, StatusMeta> = {
+  ENGAGEMENT: {label: 'Engagement', tone: 'info', icon: ClipboardList},
+  SATISFACTION: {label: 'Satisfaction', tone: 'info', icon: ClipboardList},
+  PULSE: {label: 'Pulse', tone: 'info', icon: ClipboardList},
+  EXIT: {label: 'Exit', tone: 'neutral', icon: ClipboardList},
+  FEEDBACK: {label: 'Feedback', tone: 'info', icon: ClipboardList},
+  CUSTOM: {label: 'Custom', tone: 'neutral', icon: ClipboardList},
+};
+
+export const WELLNESS_FLAG: Record<string, StatusMeta> = {
+  FEATURED: {label: 'Featured', tone: 'warning', icon: Star},
+  JOINED: {label: 'Joined', tone: 'success', icon: CheckCircle},
+  OPEN: {label: 'Open', tone: 'info', icon: Send},
+  ACTIVE: ACTIVE_META,
+  INACTIVE: INACTIVE_META,
+  TEAM: {label: 'Team', tone: 'info', icon: GraduationCap},
 };
 
 /* ── Resolver ───────────────────────────────────────────────────────── */

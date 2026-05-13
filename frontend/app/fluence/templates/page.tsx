@@ -7,6 +7,7 @@ import {Copy, Download, FileText, Plus, Search, Zap,} from 'lucide-react';
 import {AppLayout} from '@/components/layout';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {card as dsCard, iconSize, input as dsInput, layout, motion as dsMotion, typography,} from '@/lib/theme/design-system';
 import {useFluenceTemplates} from '@/lib/hooks/queries/useFluence';
 import {PermissionGate} from '@/components/auth/PermissionGate';
@@ -112,80 +113,36 @@ export default function TemplatesPage() {
             ))}
           </div>
         ) : isError ? (
-          <motion.div
-            initial={{opacity: 0, scale: 0.95}}
-            animate={{opacity: 1, scale: 1}}
-            transition={{duration: 0.3, ease: 'easeOut'}}
-          >
-            <Card className={`${dsCard.base} border-dashed border-2`}>
-              <CardContent className="py-16 text-center">
-                <FileText className={`${iconSize.statCard} mx-auto mb-4 text-[var(--text-muted)]`}/>
-                <h3 className={`${typography.sectionTitle} mb-2`}>
-                  Unable to load templates
-                </h3>
-                <p className={`${typography.bodySecondary} mb-6`}>
-                  There was an error fetching templates. Please try again later.
-                </p>
-              </CardContent>
-            </Card>
-          </motion.div>
+          <EmptyState
+            icon={<FileText className={iconSize.statCard}/>}
+            title="Unable to load templates"
+            description="There was an error fetching templates. Please try again later."
+          />
         ) : templates.length === 0 ? (
-          <motion.div
-            initial={{opacity: 0, scale: 0.95}}
-            animate={{opacity: 1, scale: 1}}
-            transition={{duration: 0.3, ease: 'easeOut'}}
+          <PermissionGate
+            permission={Permissions.KNOWLEDGE_TEMPLATE_CREATE}
+            fallback={
+              <EmptyState
+                icon={<FileText className={iconSize.statCard}/>}
+                title="No templates yet"
+                description="Templates will appear here once they have been created."
+              />
+            }
           >
-            <Card className={`${dsCard.base} border-dashed border-2`}>
-              <CardContent className="py-16 text-center">
-                <motion.div
-                  initial={{opacity: 0, y: 8}}
-                  animate={{opacity: 1, y: 0}}
-                  transition={{delay: 0.1, duration: 0.3}}
-                >
-                  <FileText className={`${iconSize.statCard} mx-auto mb-4 text-[var(--text-muted)]`}/>
-                  <h3 className={`${typography.sectionTitle} mb-2`}>
-                    No templates yet
-                  </h3>
-                  <p className={`${typography.bodySecondary} mb-6`}>
-                    Create your first template to get started
-                  </p>
-                  <PermissionGate permission={Permissions.KNOWLEDGE_TEMPLATE_CREATE}>
-                    <Button
-                      onClick={handleCreateTemplate}
-                      className="gap-2 bg-[var(--accent-700)] hover:bg-[var(--accent-800)] text-white shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-elevated)] transition-shadow duration-150"
-                    >
-                      <Plus className={iconSize.button}/>
-                      Create Template
-                    </Button>
-                  </PermissionGate>
-                </motion.div>
-              </CardContent>
-            </Card>
-          </motion.div>
+            <EmptyState
+              icon={<FileText className={iconSize.statCard}/>}
+              title="No templates yet"
+              description="Create your first template to get started"
+              actionLabel="Create Template"
+              onAction={handleCreateTemplate}
+            />
+          </PermissionGate>
         ) : filteredTemplates.length === 0 ? (
-          <motion.div
-            initial={{opacity: 0, scale: 0.95}}
-            animate={{opacity: 1, scale: 1}}
-            transition={{duration: 0.3, ease: 'easeOut'}}
-          >
-            <Card className={`${dsCard.base} border-dashed border-2`}>
-              <CardContent className="py-16 text-center">
-                <motion.div
-                  initial={{opacity: 0, y: 8}}
-                  animate={{opacity: 1, y: 0}}
-                  transition={{delay: 0.1, duration: 0.3}}
-                >
-                  <Search className={`${iconSize.statCard} mx-auto mb-4 text-[var(--text-muted)]`}/>
-                  <h3 className={`${typography.sectionTitle} mb-2`}>
-                    No templates match
-                  </h3>
-                  <p className={typography.bodySecondary}>
-                    Try adjusting your search query
-                  </p>
-                </motion.div>
-              </CardContent>
-            </Card>
-          </motion.div>
+          <EmptyState
+            icon={<Search className={iconSize.statCard}/>}
+            title="No templates match"
+            description="Try adjusting your search query"
+          />
         ) : (
           <motion.div
             className={layout.grid3}

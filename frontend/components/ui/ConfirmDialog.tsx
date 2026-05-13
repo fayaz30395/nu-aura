@@ -1,17 +1,41 @@
 'use client';
 
-import {useCallback, useEffect, useRef} from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
+
+/**
+ * Optional textarea slot for "destructive action with reason" pattern
+ * (e.g. Reject Leave, Cancel Request). When `reason` is set, a textarea is
+ * rendered above the action buttons and its value is passed to `onConfirm`.
+ */
+export interface ConfirmDialogReason {
+  /** Field label rendered above the textarea (e.g. "Reason for rejection"). */
+  label: string;
+  /** Optional placeholder text inside the textarea. */
+  placeholder?: string;
+  /** If true, the Confirm button is disabled until the textarea is non-empty (and meets `minLength`). */
+  required?: boolean;
+  /** Minimum trimmed length required to enable Confirm (defaults to 1 when `required`). */
+  minLength?: number;
+  /** Number of visible rows (defaults to 3). */
+  rows?: number;
+}
 
 interface ConfirmDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: () => void | Promise<void>;
+  onConfirm: (reason?: string) => void | Promise<void>;
   title: string;
   message: string;
   confirmText?: string;
   cancelText?: string;
   type?: 'danger' | 'warning' | 'info';
   loading?: boolean;
+  /**
+   * When set, renders a textarea above the action buttons. The trimmed value is
+   * passed as the `reason` argument to `onConfirm`. Existing call sites that
+   * omit this prop continue to work unchanged.
+   */
+  reason?: ConfirmDialogReason;
 }
 
 // Focus-trap pattern adopted from Modal.tsx (S2-E audit N-4)
@@ -28,10 +52,22 @@ export function ConfirmDialog({
                                 cancelText = 'Cancel',
                                 type = 'danger',
                                 loading = false,
+                                reason,
                               }: ConfirmDialogProps) {
   const cancelButtonRef = useRef<HTMLButtonElement>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
+  const [reasonValue, setReasonValue] = useState('');
+
+  // Reset the reason textarea each time the dialog is opened so stale values
+  // don't leak between separate confirm flows.
+  useEffect(() => {
+    if (isOpen) setReasonValue('');
+  }, [isOpen]);
+
+  const trimmedReason = reasonValue.trim();
+  const reasonMinLength = reason?.required ? Math.max(reason.minLength ?? 1, 1) : (reason?.minLength ?? 0);
+  const reasonInvalid = !!reason && (reason.required ?? false) && trimmedReason.length < reasonMinLength;
 
   // Handle escape key + Tab focus trap (cycle within focusable children)
   const handleKeyDown = useCallback(
@@ -125,7 +161,12 @@ export function ConfirmDialog({
   const style = typeStyles[type];
 
   const handleConfirmClick = async () => {
-    await onConfirm();
+    if (reason) {
+      if (reasonInvalid) return;
+      await onConfirm(trimmedReason);
+    } else {
+      await onConfirm();
+    }
   };
 
   const handleBackdropClick = (e: React.MouseEvent) => {
@@ -165,6 +206,26 @@ export function ConfirmDialog({
             >
               {message}
             </p>
+            {reason && (
+              <div className="mb-6">
+                <label
+                  htmlFor="confirm-dialog-reason"
+                  className="block text-sm font-medium text-[var(--text-secondary)] mb-2"
+                >
+                  {reason.label}
+                  {reason.required && <span className="text-danger-500 ml-1">*</span>}
+                </label>
+                <textarea
+                  id="confirm-dialog-reason"
+                  value={reasonValue}
+                  onChange={(e) => setReasonValue(e.target.value)}
+                  rows={reason.rows ?? 3}
+                  placeholder={reason.placeholder}
+                  disabled={loading}
+                  className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-input)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                />
+              </div>
+            )}
             <div className="flex gap-2">
               <button ref={cancelButtonRef}
                       onClick={onClose}
@@ -175,7 +236,7 @@ export function ConfirmDialog({
               </button>
               <button
                 onClick={handleConfirmClick}
-                disabled={loading}
+                disabled={loading || reasonInvalid}
                 className={`flex-1 px-4 py-2.5 ${style.buttonClass} text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 flex items-center justify-center gap-2`}
               >
                 {loading ? (

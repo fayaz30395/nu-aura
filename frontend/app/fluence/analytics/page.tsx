@@ -10,6 +10,7 @@ import {BookOpen, Eye, FileText, Heart, MessageCircle, TrendingUp,} from 'lucide
 import {AppLayout} from '@/components/layout';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
 import {useActivityFeed, useBlogPosts, useFluenceTemplates, useWikiPages,} from '@/lib/hooks/queries/useFluence';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {card, chartColors, iconSize, layout, motion as dsMotion, typography,} from '@/lib/theme/design-system';
 
 // S10-K: recharts (~180 KB gz) is lazy-loaded — chart subtree extracted into
@@ -303,7 +304,11 @@ function FluenceAnalyticsPageContent() {
                   ))}
                 </div>
               ) : topContent.length === 0 ? (
-                <p className={typography.bodySecondary}>No content yet</p>
+                <EmptyState
+                  icon={<BookOpen className={iconSize.statCard}/>}
+                  title="No content yet"
+                  description="Top performing wiki pages and blog posts will appear here once content is published."
+                />
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full">

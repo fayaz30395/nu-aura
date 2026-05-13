@@ -6,7 +6,8 @@ import {motion} from 'framer-motion';
 import {AppLayout} from '@/components/layout';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
-import {Badge} from '@/components/ui/Badge';
+import {StatusBadge} from '@/components/ui/StatusBadge';
+import {AGENCY_STATUS} from '@/lib/status/vocabulary';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {SkeletonCard} from '@/components/ui/Skeleton';
 import {PageErrorFallback} from '@/components/errors/PageErrorFallback';
@@ -67,16 +68,6 @@ const itemVariants = {
   hidden: {opacity: 0, y: 16},
   visible: {opacity: 1, y: 0, transition: {duration: 0.3}},
 };
-
-function getStatusVariant(status: AgencyStatus): 'success' | 'warning' | 'danger' | 'default' {
-  const map: Record<AgencyStatus, 'success' | 'warning' | 'danger' | 'default'> = {
-    ACTIVE: 'success',
-    INACTIVE: 'default',
-    BLACKLISTED: 'danger',
-    PENDING_APPROVAL: 'warning',
-  };
-  return map[status];
-}
 
 function getFeeLabel(feeType?: AgencyFeeType, feeAmount?: number): string {
   if (!feeType || feeAmount === undefined) return 'Not set';
@@ -550,9 +541,7 @@ export default function AgenciesPage() {
                             >
                               {agency.name}
                             </h3>
-                            <Badge variant={getStatusVariant(agency.status)} size="sm">
-                              {agency.status?.replace(/_/g, ' ') ?? '-'}
-                            </Badge>
+                            <StatusBadge status={agency.status} domain={AGENCY_STATUS} compact />
                           </div>
                           <RatingStars rating={agency.rating}/>
                           <div className="mt-2 space-y-1">

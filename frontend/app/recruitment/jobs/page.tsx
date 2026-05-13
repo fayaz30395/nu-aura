@@ -19,7 +19,9 @@ import {
 } from '@/lib/hooks/queries/useRecruitment';
 import {useActiveDepartments} from '@/lib/hooks/queries/useDepartments';
 import {useEmployees} from '@/lib/hooks/queries/useEmployees';
-import {CreateJobOpeningRequest, JobOpening, JobStatus, Priority} from '@/lib/types/hire/recruitment';
+import {CreateJobOpeningRequest, JobOpening, Priority} from '@/lib/types/hire/recruitment';
+import {StatusBadge} from '@/components/ui/StatusBadge';
+import {JOB_STATUS} from '@/lib/status/vocabulary';
 import {Department} from '@/lib/types/hrms/employee';
 import {JobDescriptionResponse} from '@/lib/types/hire/ai-recruitment';
 import {
@@ -232,23 +234,6 @@ export default function JobOpeningsPage() {
     closed: jobOpenings.filter(j => j.status === 'CLOSED').length,
   };
 
-  const getStatusColor = (status: JobStatus) => {
-    switch (status) {
-      case 'OPEN':
-        return 'bg-success-100 text-success-800';
-      case 'DRAFT':
-        return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]';
-      case 'ON_HOLD':
-        return 'bg-warning-100 text-warning-800';
-      case 'CLOSED':
-        return 'bg-accent-100 text-accent-800';
-      case 'CANCELLED':
-        return 'bg-danger-100 text-danger-800';
-      default:
-        return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]';
-    }
-  };
-
   const getPriorityColor = (priority?: Priority) => {
     switch (priority) {
       case 'URGENT':
@@ -455,9 +440,7 @@ export default function JobOpeningsPage() {
                         <h3 className="font-semibold text-[var(--text-primary)] text-lg">{job.jobTitle}</h3>
                         <p className="text-body-muted">{job.jobCode}</p>
                       </div>
-                      <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${getStatusColor(job.status)}`}>
-                      {job.status}
-                    </span>
+                      <StatusBadge status={job.status} domain={JOB_STATUS} />
                     </div>
 
                     <div className="space-y-2 mb-4">

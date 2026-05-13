@@ -19,6 +19,7 @@ import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
 import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
 import {Input} from '@/components/ui/Input';
 import {Button} from '@/components/ui/Button';
+import {formatDate} from '@/lib/utils/format/date';
 
 export default function MyLeavesPage() {
   const toast = useToast();
@@ -232,7 +233,7 @@ export default function MyLeavesPage() {
                         {getLeaveTypeName(request.leaveTypeId)}
                       </td>
                       <td className="px-6 py-4 text-body-secondary">
-                        {new Date(request.startDate).toLocaleDateString()} - {new Date(request.endDate).toLocaleDateString()}
+                        {formatDate(request.startDate)} - {formatDate(request.endDate)}
                       </td>
                       <td className="px-6 py-4 text-body-secondary">
                         {request.totalDays} {request.isHalfDay && '(Half)'}
@@ -247,7 +248,7 @@ export default function MyLeavesPage() {
                           </span>
                       </td>
                       <td className="px-6 py-4 text-body-secondary">
-                        {new Date(request.appliedOn).toLocaleDateString()}
+                        {formatDate(request.appliedOn)}
                       </td>
                       <td className="px-6 py-4 text-sm">
                         {request.status === 'PENDING' && (

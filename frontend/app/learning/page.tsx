@@ -19,6 +19,7 @@ import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {StatusBadge} from '@/components/ui/StatusBadge';
 import {LEARNING_STATUS} from '@/lib/status/vocabulary';
+import {formatDate} from '@/lib/utils/format/date';
 
 export default function LearningPage() {
   const [activeTab, setActiveTab] = useState<'catalog' | 'my-courses' | 'certificates'>('catalog');
@@ -264,10 +265,10 @@ export default function LearningPage() {
                       <div
                         className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 text-body-secondary">
                         <div>
-                          <div>Enrolled: {new Date(enrollment.enrolledAt).toLocaleDateString()}</div>
+                          <div>Enrolled: {formatDate(enrollment.enrolledAt)}</div>
                           {enrollment.lastAccessedAt && (
                             <div>
-                              Last accessed: {new Date(enrollment.lastAccessedAt).toLocaleDateString()}
+                              Last accessed: {formatDate(enrollment.lastAccessedAt)}
                             </div>
                           )}
                         </div>
@@ -320,13 +321,13 @@ export default function LearningPage() {
                         <div>
                           <div className="text-[var(--text-secondary)]">Issued</div>
                           <div
-                            className="font-medium text-[var(--text-primary)]">{new Date(cert.issuedAt).toLocaleDateString()}</div>
+                            className="font-medium text-[var(--text-primary)]">{formatDate(cert.issuedAt)}</div>
                         </div>
                         {cert.expiryDate && (
                           <div>
                             <div className="text-[var(--text-secondary)]">Expires</div>
                             <div
-                              className="font-medium text-[var(--text-primary)]">{new Date(cert.expiryDate).toLocaleDateString()}</div>
+                              className="font-medium text-[var(--text-primary)]">{formatDate(cert.expiryDate)}</div>
                           </div>
                         )}
                         {cert.scoreAchieved && (

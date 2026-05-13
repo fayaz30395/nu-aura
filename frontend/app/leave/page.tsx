@@ -30,6 +30,7 @@ import {
   Umbrella,
   XCircle,
 } from 'lucide-react';
+import {formatDate, formatDateShort} from '@/lib/utils/format/date';
 
 export default function LeavePage() {
   const router = useRouter();
@@ -358,16 +359,9 @@ export default function LeavePage() {
                       </td>
                       <td className="px-6 py-4">
                           <span className="text-body-secondary">
-                            {new Date(request.startDate).toLocaleDateString('en-IN', {
-                              day: '2-digit',
-                              month: 'short',
-                            })}{' '}
+                            {formatDateShort(request.startDate)}{' '}
                             -{' '}
-                            {new Date(request.endDate).toLocaleDateString('en-IN', {
-                              day: '2-digit',
-                              month: 'short',
-                              year: 'numeric',
-                            })}
+                            {formatDate(request.endDate)}
                           </span>
                       </td>
                       <td className="px-6 py-4 text-right">
@@ -388,11 +382,7 @@ export default function LeavePage() {
                       </td>
                       <td className="px-6 py-4">
                           <span className="text-body-secondary">
-                            {new Date(request.appliedOn).toLocaleDateString('en-IN', {
-                              day: '2-digit',
-                              month: 'short',
-                              year: 'numeric',
-                            })}
+                            {formatDate(request.appliedOn)}
                           </span>
                       </td>
                     </tr>

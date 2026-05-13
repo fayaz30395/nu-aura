@@ -27,6 +27,9 @@ import {useActiveOfficeLocations} from '@/lib/hooks/queries/useOfficeLocations';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {Stat} from '@/components/ui/Stat';
+import {StatusBadge} from '@/components/ui/StatusBadge';
+import {CYCLE_STATUS} from '@/lib/status/vocabulary';
+import {formatDate} from '@/lib/utils/format/date';
 
 // ─── Validation Schemas ───────────────────────────────────────────────────────
 
@@ -201,23 +204,6 @@ export default function ReviewCyclesPage() {
     });
   };
 
-  const getStatusColor = (status: CycleStatus) => {
-    switch (status) {
-      case 'PLANNING':
-        return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
-      case 'ACTIVE':
-        return 'bg-accent-50 dark:bg-accent-950/30 text-accent-800 dark:text-accent-400';
-      case 'IN_PROGRESS':
-        return 'bg-warning-100 text-warning-800';
-      case 'COMPLETED':
-        return 'bg-success-100 text-success-800';
-      case 'CANCELLED':
-        return 'bg-danger-100 text-danger-800';
-      default:
-        return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
-    }
-  };
-
   const getTypeColor = (type: CycleType) => {
     switch (type) {
       case 'ANNUAL':
@@ -359,7 +345,7 @@ export default function ReviewCyclesPage() {
                   <div className="text-sm">
                     <span className="text-[var(--text-secondary)]">Period:</span>
                     <div className="font-medium">
-                      {cycle.startDate ? new Date(cycle.startDate).toLocaleDateString() : 'N/A'} - {cycle.endDate ? new Date(cycle.endDate).toLocaleDateString() : 'N/A'}
+                      {cycle.startDate ? formatDate(cycle.startDate) : 'N/A'} - {cycle.endDate ? formatDate(cycle.endDate) : 'N/A'}
                     </div>
                   </div>
 
@@ -367,7 +353,7 @@ export default function ReviewCyclesPage() {
                     <span className="text-[var(--text-secondary)]">Review Deadline:</span>
                     <div
                       className={'font-medium ' + (isDeadlinePassed(cycle.reviewDeadline) ? 'text-danger-600' : isDeadlineNear(cycle.reviewDeadline) ? 'text-warning-600' : '')}>
-                      {cycle.reviewDeadline ? new Date(cycle.reviewDeadline).toLocaleDateString() : 'N/A'}
+                      {cycle.reviewDeadline ? formatDate(cycle.reviewDeadline) : 'N/A'}
                       {isDeadlinePassed(cycle.reviewDeadline) && ' (Passed)'}
                       {isDeadlineNear(cycle.reviewDeadline) && !isDeadlinePassed(cycle.reviewDeadline) && ' (Soon)'}
                     </div>
@@ -378,7 +364,7 @@ export default function ReviewCyclesPage() {
                       <span className="text-[var(--text-secondary)]">Self Review Deadline:</span>
                       <div
                         className={'font-medium ' + (isDeadlinePassed(cycle.selfReviewDeadline) ? 'text-danger-600' : isDeadlineNear(cycle.selfReviewDeadline) ? 'text-warning-600' : '')}>
-                        {new Date(cycle.selfReviewDeadline).toLocaleDateString()}
+                        {formatDate(cycle.selfReviewDeadline)}
                         {isDeadlinePassed(cycle.selfReviewDeadline) && ' (Passed)'}
                         {isDeadlineNear(cycle.selfReviewDeadline) && !isDeadlinePassed(cycle.selfReviewDeadline) && ' (Soon)'}
                       </div>
