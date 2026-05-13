@@ -56,11 +56,15 @@ export default function SignPage() {
     }
   }, [isLoading, docInfo]);
 
+  // Signature ink: intentionally near-pure-black for legal-document legibility on print.
+  // Not theme-tinted — the canvas renders into the signed PDF, which must read as ink.
+  const SIGNATURE_INK = '#1a1a1a';
+
   // Init canvas context when entering sign step
   useEffect(() => {
     if (step === 'sign' && signatureMethod === 'DRAWN' && canvasRef.current) {
       const c = canvasRef.current.getContext('2d')!;
-      c.strokeStyle = '#1a1a1a';
+      c.strokeStyle = SIGNATURE_INK;
       c.lineWidth = 2.5;
       c.lineCap = 'round';
       c.lineJoin = 'round';
@@ -246,7 +250,7 @@ export default function SignPage() {
         className="min-h-screen bg-gradient-to-br from-[var(--bg-main)] to-[var(--bg-surface)] flex items-center justify-center px-4">
         <div className="max-w-md w-full skeuo-card p-8 text-center">
           <XCircle className="h-14 w-14 text-danger-500 mx-auto mb-4"/>
-          <h1 className="text-xl font-semibold text-[var(--text-primary)] skeuo-emboss mb-2">Link Invalid or
+          <h1 className="text-xl font-semibold text-[var(--text-primary)] mb-2">Link Invalid or
             Expired</h1>
           <p className="text-[var(--text-muted)] text-sm mb-2">{error}</p>
           {docInfo?.tokenExpiresAt && (
@@ -273,7 +277,7 @@ export default function SignPage() {
           ) : (
             <AlertCircle className="h-14 w-14 text-warning-500 mx-auto mb-4"/>
           )}
-          <h1 className="text-xl font-semibold text-[var(--text-primary)] skeuo-emboss mb-2">
+          <h1 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
             {isSignedStatus
               ? 'Document Already Signed'
               : isDeclinedStatus
@@ -597,7 +601,7 @@ export default function SignPage() {
                       style={{
                         fontFamily: 'cursive',
                         fontSize: '2rem',
-                        color: '#1a1a1a',
+                        color: SIGNATURE_INK,
                         lineHeight: 1.2,
                       }}
                     >

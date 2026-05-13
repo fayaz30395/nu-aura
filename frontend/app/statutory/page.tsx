@@ -136,7 +136,7 @@ export default function StatutoryPage() {
   return (
     <AppLayout activeMenuItem="statutory">
       <Container size="xl" py="lg">
-        <Title order={2} mb="sm" className="skeuo-emboss">Statutory Compliance</Title>
+        <Title order={2} mb="sm" className="">Statutory Compliance</Title>
         <Text c="dimmed" mb="lg">Manage Provident Fund, ESI, and Professional Tax configurations.</Text>
 
         <Tabs value={activeTab} onChange={setActiveTab} variant="outline" radius="md">

@@ -97,12 +97,10 @@
   box-shadow: 0 0 20px var(--ring-primary);
 }
 
-/* Gradient Text — NULogic dark mode accent */
+/* Primary emphasis — solid accent color (Studio Slate v2 bans gradient text) */
 .dark .gradient-text-primary {
-  background: linear-gradient(135deg, var(--accent-primary) 0%, var(--chart-secondary) 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--accent-primary);
+  font-weight: 700;
 }
 
 /* Card Backgrounds */

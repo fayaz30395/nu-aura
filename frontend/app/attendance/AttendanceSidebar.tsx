@@ -16,7 +16,8 @@ const QUICK_ACTIONS = [
     icon: History,
     title: 'Attendance History',
     desc: 'View complete records & calendar',
-    gradient: 'from-accent-500 to-accent-600',
+    bg: 'bg-accent-100 dark:bg-accent-500/10',
+    text: 'text-accent-600 dark:text-accent-400',
     hoverColor: 'group-hover:text-accent-600 dark:group-hover:text-accent-400'
   },
   {
@@ -24,7 +25,8 @@ const QUICK_ACTIONS = [
     icon: ClipboardCheck,
     title: 'Regularization',
     desc: 'Request corrections',
-    gradient: 'from-accent-500 to-accent-600',
+    bg: 'bg-accent-100 dark:bg-accent-500/10',
+    text: 'text-accent-600 dark:text-accent-400',
     hoverColor: 'group-hover:text-accent-600 dark:group-hover:text-accent-400'
   },
   {
@@ -32,7 +34,8 @@ const QUICK_ACTIONS = [
     icon: Users,
     title: 'Team Attendance',
     desc: 'Monitor your team',
-    gradient: 'from-accent-500 to-accent-600',
+    bg: 'bg-accent-100 dark:bg-accent-500/10',
+    text: 'text-accent-600 dark:text-accent-400',
     hoverColor: 'group-hover:text-accent-600 dark:group-hover:text-accent-400'
   },
 ] as const;
@@ -53,8 +56,8 @@ export const AttendanceQuickActions = memo(function AttendanceQuickActions() {
               <CardContent className="p-4">
                 <div className="flex items-center gap-4">
                   <div
-                    className={`h-11 w-11 rounded-xl bg-gradient-to-br ${action.gradient} flex items-center justify-center shadow-[var(--shadow-elevated)] group-hover:scale-110 group-hover:shadow-[var(--shadow-dropdown)] transition-all`}>
-                    <action.icon className="h-5 w-5 text-white"/>
+                    className={`h-11 w-11 rounded-xl ${action.bg} ${action.text} flex items-center justify-center group-hover:scale-110 transition-transform`}>
+                    <action.icon className="h-5 w-5"/>
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3
@@ -91,10 +94,10 @@ export const AttendanceUpcomingHolidays = memo(function AttendanceUpcomingHolida
       <CardContent className="p-4">
         <div className="flex items-center gap-2 mb-4">
           <div
-            className="h-7 w-7 rounded-lg bg-gradient-to-br from-accent-500 to-accent-600 flex items-center justify-center shadow-[var(--shadow-card)]">
-            <CalendarDays className="h-3.5 w-3.5 text-white"/>
+            className="h-7 w-7 rounded-lg bg-accent-100 dark:bg-accent-500/10 text-accent-600 dark:text-accent-400 flex items-center justify-center">
+            <CalendarDays className="h-3.5 w-3.5"/>
           </div>
-          <h4 className="text-sm font-bold text-[var(--text-primary)] skeuo-emboss">Upcoming Holidays</h4>
+          <h4 className="text-sm font-bold text-[var(--text-primary)]">Upcoming Holidays</h4>
         </div>
         <div className="space-y-2">
           {holidays.map(h => {
@@ -143,10 +146,10 @@ export const AttendanceWeekProgress = memo(function AttendanceWeekProgress({
       <CardContent className="p-4">
         <div className="flex items-center gap-2 mb-4">
           <div
-            className="h-7 w-7 rounded-lg bg-gradient-to-br from-accent-500 to-accent-600 flex items-center justify-center shadow-[var(--shadow-card)]">
-            <Coffee className="h-3.5 w-3.5 text-white"/>
+            className="h-7 w-7 rounded-lg bg-accent-100 dark:bg-accent-500/10 text-accent-600 dark:text-accent-400 flex items-center justify-center">
+            <Coffee className="h-3.5 w-3.5"/>
           </div>
-          <h4 className="text-sm font-bold text-[var(--text-primary)] skeuo-emboss">This Week</h4>
+          <h4 className="text-sm font-bold text-[var(--text-primary)]">This Week</h4>
         </div>
         <div className="space-y-4">
           <div>

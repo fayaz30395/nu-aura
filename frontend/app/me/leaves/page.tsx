@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import {AppLayout} from '@/components/layout';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
+import {CATEGORICAL_UNSET} from '@/lib/utils/categoricalPalette';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {
   useActiveLeaveTypes,
@@ -343,8 +344,8 @@ export default function MyLeavesPage() {
         {/* Header */}
         <div className="row-between">
           <div>
-            <h1 className="text-xl font-bold skeuo-emboss">My Leaves</h1>
-            <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">
+            <h1 className="text-xl font-bold">My Leaves</h1>
+            <p className="text-[var(--text-secondary)] mt-1">
               Manage your leave requests and balances
             </p>
           </div>
@@ -388,11 +389,11 @@ export default function MyLeavesPage() {
                   <div className="row-between mb-4">
                     <div
                       className="w-12 h-12 rounded-full flex items-center justify-center"
-                      style={{backgroundColor: `${leaveType?.colorCode || '#6b7280'}20`}}
+                      style={{backgroundColor: `${leaveType?.colorCode || CATEGORICAL_UNSET}20`}}
                     >
                       <Calendar
                         className="h-6 w-6"
-                        style={{color: leaveType?.colorCode || '#6b7280'}}
+                        style={{color: leaveType?.colorCode || CATEGORICAL_UNSET}}
                       />
                     </div>
                     {isEncashable && (
@@ -417,26 +418,26 @@ export default function MyLeavesPage() {
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
                       <span className="text-[var(--text-secondary)]">Available</span>
-                      <span className="font-semibold text-success-600 dark:text-success-400 skeuo-emboss">
+                      <span className="font-semibold text-success-600 dark:text-success-400">
                         {balance.available}
                       </span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-[var(--text-secondary)]">Used</span>
-                      <span className="font-semibold text-[var(--text-primary)] skeuo-emboss">
+                      <span className="font-semibold text-[var(--text-primary)]">
                         {balance.used}
                       </span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-[var(--text-secondary)]">Pending</span>
-                      <span className="font-semibold text-warning-600 dark:text-warning-400 skeuo-emboss">
+                      <span className="font-semibold text-warning-600 dark:text-warning-400">
                         {balance.pending}
                       </span>
                     </div>
                     {balance.encashed > 0 && (
                       <div className="flex justify-between text-sm">
                         <span className="text-[var(--text-secondary)]">Encashed</span>
-                        <span className="font-semibold text-success-600 dark:text-success-400 skeuo-emboss">
+                        <span className="font-semibold text-success-600 dark:text-success-400">
                           {balance.encashed}
                         </span>
                       </div>
@@ -464,7 +465,7 @@ export default function MyLeavesPage() {
           <CardHeader>
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
               <div>
-                <CardTitle className="flex items-center gap-2 skeuo-emboss">
+                <CardTitle className="flex items-center gap-2">
                   <FileText className="h-5 w-5"/>
                   Leave History
                 </CardTitle>

@@ -616,8 +616,8 @@ function InterviewsPage() {
         {/* Header */}
         <div className="row-between">
           <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">Interviews</h1>
-            <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">Schedule and manage candidate interviews</p>
+            <h1 className="text-xl font-bold text-[var(--text-primary)]">Interviews</h1>
+            <p className="text-[var(--text-secondary)] mt-1">Schedule and manage candidate interviews</p>
           </div>
           <Button onClick={() => {
             resetCreate();
@@ -874,7 +874,7 @@ function InterviewsPage() {
         {showAddModal && (
           <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
             <div
-              className="bg-[var(--bg-card)] rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
+              className="card-elevated max-w-2xl w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-xl font-bold text-[var(--text-primary)]">
@@ -1003,7 +1003,7 @@ function InterviewsPage() {
                   {/* Google Meet Toggle */}
                   {!editingInterview && (
                     <div
-                      className="flex items-center gap-4 p-4 rounded-xl border border-[var(--border-main)] bg-[var(--bg-secondary)]/50">
+                      className="panel-inset flex items-center gap-4 p-4">
                       <div className="flex items-center gap-2 flex-1">
                         <Video className="h-5 w-5 text-accent-500"/>
                         <div>
@@ -1140,7 +1140,7 @@ function InterviewsPage() {
         {showFeedbackModal && selectedInterview && (
           <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
             <div
-              className="bg-[var(--bg-card)] rounded-lg max-w-lg w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
+              className="card-elevated max-w-lg w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-xl font-bold text-[var(--text-primary)]">Interview Feedback</h2>
@@ -1230,7 +1230,7 @@ function InterviewsPage() {
         {showDeleteModal && interviewToDelete && (
           <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
             <div
-              className="bg-[var(--bg-card)] rounded-lg max-w-md w-full p-6 border border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
+              className="card-elevated max-w-md w-full p-6">
               <div className="flex items-center mb-4">
                 <div className="flex-shrink-0 h-12 w-12 rounded-xl bg-danger-100 flex items-center justify-center">
                   <Trash2 className="h-6 w-6 text-danger-600"/>
@@ -1262,7 +1262,7 @@ function InterviewsPage() {
         {showQuestionsModal && generatedQuestions && (
           <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
             <div
-              className="bg-[var(--bg-card)] rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
+              className="card-elevated max-w-2xl w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
                   <div className="flex items-center gap-2">

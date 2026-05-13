@@ -12,6 +12,7 @@ import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
 import {ConfirmDialog} from '@/components/ui';
 import {useCreateNewShift, useRemoveShift, useShiftsList, useUpdateShiftDetails,} from '@/lib/hooks/queries/useShifts';
 import {createLogger} from '@/lib/utils/logger';
+import {CATEGORICAL_DEFAULT} from '@/lib/utils/categoricalPalette';
 
 const log = createLogger('ShiftsPage');
 
@@ -32,7 +33,7 @@ const shiftFormSchema = z.object({
   workingDays: z.string().default('MONDAY,TUESDAY,WEDNESDAY,THURSDAY,FRIDAY'),
   isActive: z.boolean().default(true),
   shiftType: z.string().default('REGULAR'),
-  colorCode: z.string().default('#3B82F6'),
+  colorCode: z.string().default(CATEGORICAL_DEFAULT),
   allowsOvertime: z.boolean().default(true),
   overtimeMultiplier: z.number({coerce: true}).min(1).default(1.5),
 });
@@ -75,7 +76,7 @@ export default function ShiftsManagementPage() {
       workingDays: 'MONDAY,TUESDAY,WEDNESDAY,THURSDAY,FRIDAY',
       isActive: true,
       shiftType: 'REGULAR',
-      colorCode: '#3B82F6',
+      colorCode: CATEGORICAL_DEFAULT,
       allowsOvertime: true,
       overtimeMultiplier: 1.5,
     },
@@ -156,7 +157,7 @@ export default function ShiftsManagementPage() {
       workingDays: 'MONDAY,TUESDAY,WEDNESDAY,THURSDAY,FRIDAY',
       isActive: true,
       shiftType: 'REGULAR',
-      colorCode: '#3B82F6',
+      colorCode: CATEGORICAL_DEFAULT,
       allowsOvertime: true,
       overtimeMultiplier: 1.5,
     });
@@ -179,7 +180,7 @@ export default function ShiftsManagementPage() {
       workingDays: shift.workingDays || '',
       isActive: shift.isActive,
       shiftType: shift.shiftType || 'REGULAR',
-      colorCode: shift.colorCode || '#3B82F6',
+      colorCode: shift.colorCode || CATEGORICAL_DEFAULT,
       allowsOvertime: shift.allowsOvertime || false,
       overtimeMultiplier: shift.overtimeMultiplier || 1.5,
     });
@@ -232,11 +233,11 @@ export default function ShiftsManagementPage() {
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <div>
-            <h1 className="text-xl font-bold skeuo-emboss">
+            <h1 className="text-xl font-bold">
               <Clock className="h-8 w-8 text-accent-700"/>
               Shift Management
             </h1>
-            <p className="mt-1 text-body-secondary skeuo-deboss">
+            <p className="mt-1 text-body-secondary">
               Configure and manage work shifts for your organization
             </p>
           </div>
@@ -284,7 +285,7 @@ export default function ShiftsManagementPage() {
               <div
                 key={shift.id}
                 className="skeuo-card overflow-hidden"
-                style={{borderTop: `4px solid ${shift.colorCode || '#3B82F6'}`}}
+                style={{boxShadow: `inset 0 3px 0 0 ${shift.colorCode || '#2563EB'}`}}
               >
                 <div className="p-6">
                   <div className="flex justify-between items-start mb-4">

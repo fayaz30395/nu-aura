@@ -409,11 +409,11 @@ export default function ExpenseClaims() {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
           <div>
             <h1
-              className="text-xl sm:text-xl font-bold text-[var(--text-primary)] flex items-center gap-2 skeuo-emboss">
+              className="text-xl sm:text-xl font-bold text-[var(--text-primary)] flex items-center gap-2">
               <DollarSign className="w-7 h-7 sm:w-8 sm:h-8"/>
               Expense Claims
             </h1>
-            <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">Submit and manage your expense claims</p>
+            <p className="text-[var(--text-secondary)] mt-1">Submit and manage your expense claims</p>
           </div>
           <button
             onClick={() => setShowForm(!showForm)}
@@ -432,7 +432,7 @@ export default function ExpenseClaims() {
                 <AlertCircle className="w-5 h-5"/>
               </div>
               <div>
-                <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{statistics.pendingCount}</p>
+                <p className="text-xl font-bold text-[var(--text-primary)]">{statistics.pendingCount}</p>
                 <p className="text-body-muted">Pending</p>
               </div>
             </div>
@@ -443,7 +443,7 @@ export default function ExpenseClaims() {
                 <CheckCircle className="w-5 h-5"/>
               </div>
               <div>
-                <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{statistics.approvedCount}</p>
+                <p className="text-xl font-bold text-[var(--text-primary)]">{statistics.approvedCount}</p>
                 <p className="text-body-muted">Approved</p>
               </div>
             </div>
@@ -455,7 +455,7 @@ export default function ExpenseClaims() {
               </div>
               <div>
                 <p
-                  className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{formatCurrency(statistics.totalPendingAmount)}</p>
+                  className="text-xl font-bold text-[var(--text-primary)]">{formatCurrency(statistics.totalPendingAmount)}</p>
                 <p className="text-body-muted">Pending Amount</p>
               </div>
             </div>
@@ -466,7 +466,7 @@ export default function ExpenseClaims() {
                 <FileText className="w-5 h-5"/>
               </div>
               <div>
-                <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{statistics.totalClaims}</p>
+                <p className="text-xl font-bold text-[var(--text-primary)]">{statistics.totalClaims}</p>
                 <p className="text-body-muted">Total Claims</p>
               </div>
             </div>
@@ -582,7 +582,7 @@ export default function ExpenseClaims() {
         {/* New Claim Form */}
         {showForm && (
           <div className="skeuo-card p-4 mb-4">
-            <h2 className="text-base font-semibold mb-4 skeuo-emboss">Create New Expense Claim</h2>
+            <h2 className="text-base font-semibold mb-4">Create New Expense Claim</h2>
             <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Claim Date</label>
@@ -862,10 +862,10 @@ export default function ExpenseClaims() {
                 {filteredClaims.map((claim) => (
                   <div
                     key={claim.id}
-                    className={`border rounded-lg p-4 hover:shadow-[var(--shadow-elevated)] transition-shadow ${
+                    className={`panel-inset p-4 hover:shadow-[var(--shadow-elevated)] transition-shadow ${
                       selectedClaims.has(claim.id)
-                        ? 'border-accent-400 bg-accent-50/50 dark:bg-accent-900/20'
-                        : 'border-[var(--border-main)]'
+                        ? '!border-accent-400 bg-accent-50/50 dark:bg-accent-900/20'
+                        : ''
                     }`}
                   >
                     <div className="flex justify-between items-start mb-4">

@@ -183,7 +183,7 @@ export default function TaxDeclarationsPage() {
       <Container size="xl" py="lg">
         <Group justify="space-between" mb="lg">
           <div>
-            <Title order={2} className="skeuo-emboss">Tax Declarations</Title>
+            <Title order={2} className="">Tax Declarations</Title>
             <Text c="dimmed">Manage employee tax declarations and proofs</Text>
           </div>
           <Button leftSection={<IconPlus size={20}/>} onClick={() => setModalOpen(true)} className="btn-primary">

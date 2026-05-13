@@ -220,7 +220,7 @@ export default function GanttChartPage() {
               <Calendar className="h-6 w-6 text-white"/>
             </div>
             <div>
-              <h1 className="text-xl font-bold skeuo-emboss">
+              <h1 className="text-xl font-bold">
                 Gantt Chart
               </h1>
               <p className="text-[var(--text-secondary)] mt-1">

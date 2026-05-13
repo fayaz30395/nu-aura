@@ -226,9 +226,9 @@ function StatCard({
       className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-4 shadow-[var(--shadow-card)] skeuo-card">
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-sm font-medium text-[var(--text-muted)] skeuo-deboss">{title}</p>
+          <p className="text-sm font-medium text-[var(--text-muted)]">{title}</p>
           <p
-            className="text-xl font-bold text-[var(--text-primary)] dark:text-[var(--text-secondary)] mt-1 skeuo-emboss">
+            className="text-xl font-bold text-[var(--text-primary)] dark:text-[var(--text-secondary)] mt-1">
             {value}
           </p>
           {subtitle && <p className="text-caption mt-1">{subtitle}</p>}
@@ -527,7 +527,7 @@ export default function OneOnOnePage() {
                   <div>
                     <div className="flex items-center gap-4 mb-2">
                       <h1
-                        className="text-xl font-bold text-[var(--text-primary)] dark:text-[var(--text-secondary)] skeuo-emboss">
+                        className="text-xl font-bold text-[var(--text-primary)] dark:text-[var(--text-secondary)]">
                         {meeting.title}
                       </h1>
                       <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${statusBadge.classes}`}>
@@ -1043,7 +1043,8 @@ export default function OneOnOnePage() {
                                           key={s}
                                           type="button"
                                           onClick={() => field.onChange(s)}
-                                          className="focus:outline-none"
+                                          className="rounded"
+                                          aria-label={`Rate ${s} star${s === 1 ? '' : 's'}`}
                                         >
                                           <Star
                                             className={`h-7 w-7 transition-colors ${
@@ -1266,7 +1267,7 @@ export default function OneOnOnePage() {
           <div
             className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6 shadow-[var(--shadow-card)] skeuo-card">
             <h1
-              className="text-xl font-bold text-[var(--text-primary)] dark:text-[var(--text-secondary)] mb-6 skeuo-emboss">
+              className="text-xl font-bold text-[var(--text-primary)] dark:text-[var(--text-secondary)] mb-6">
               Schedule 1-on-1 Meeting
             </h1>
 
@@ -1456,10 +1457,10 @@ export default function OneOnOnePage() {
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
           <div>
             <h1
-              className="text-xl font-bold text-[var(--text-primary)] dark:text-[var(--text-secondary)] skeuo-emboss">
+              className="text-xl font-bold text-[var(--text-primary)] dark:text-[var(--text-secondary)]">
               1-on-1 Meetings
             </h1>
-            <p className="text-body-muted mt-1 skeuo-deboss">
+            <p className="text-body-muted mt-1">
               Schedule, manage, and track your 1-on-1 conversations
             </p>
           </div>

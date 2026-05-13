@@ -176,7 +176,7 @@ export default function FnFPage() {
       <Stack gap="lg" p="md">
         <Group justify="space-between">
           <div>
-            <Title order={2} className="skeuo-emboss">Full & Final Settlement</Title>
+            <Title order={2} className="">Full & Final Settlement</Title>
             <Text c="dimmed" size="sm">{data.employeeName}</Text>
           </div>
           <Group>

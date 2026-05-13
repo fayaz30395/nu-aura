@@ -9,6 +9,7 @@ import {ScheduleEntry} from '@/lib/types/hrms/shift';
 import {ArrowLeftRight, ChevronLeft, ChevronRight, Clock, Moon, Sun,} from 'lucide-react';
 import {motion} from 'framer-motion';
 import {useRouter} from 'next/navigation';
+import {CATEGORICAL_UNSET} from '@/lib/utils/categoricalPalette';
 
 function getMonthDates(year: number, month: number) {
   const firstDay = new Date(year, month, 1);
@@ -184,7 +185,7 @@ export default function MySchedulePage() {
                         {entry ? (
                           <div
                             className="rounded px-1 py-0.5 text-white text-xs font-medium"
-                            style={{backgroundColor: entry.colorCode || '#6B7280'}}
+                            style={{backgroundColor: entry.colorCode || CATEGORICAL_UNSET}}
                           >
                             <div>{entry.shiftCode}</div>
                             <div className="opacity-80 text-2xs">
@@ -230,7 +231,7 @@ export default function MySchedulePage() {
                       >
                         <div
                           className="w-1.5 h-10 rounded-full flex-shrink-0"
-                          style={{backgroundColor: entry.colorCode || '#6B7280'}}
+                          style={{backgroundColor: entry.colorCode || CATEGORICAL_UNSET}}
                         />
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium text-surface-900 dark:text-white">

@@ -250,10 +250,10 @@ export default function RecognitionPage() {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-xl font-bold text-[var(--text-primary)]">
               Employee Recognition
             </h1>
-            <p className="text-[var(--text-secondary)] skeuo-deboss">
+            <p className="text-[var(--text-secondary)]">
               Celebrate achievements and recognize your colleagues
             </p>
           </div>
@@ -275,9 +275,9 @@ export default function RecognitionPage() {
                   <Trophy className="h-6 w-6 text-white"/>
                 </div>
                 <div>
-                  <p className="text-sm text-warning-700 dark:text-warning-300 skeuo-deboss">My Points</p>
+                  <p className="text-sm text-warning-700 dark:text-warning-300">My Points</p>
                   <p
-                    className="text-xl font-bold text-warning-900 dark:text-warning-100 skeuo-emboss">{stats.myPoints}</p>
+                    className="text-xl font-bold text-warning-900 dark:text-warning-100">{stats.myPoints}</p>
                 </div>
               </div>
             </CardContent>
@@ -289,9 +289,9 @@ export default function RecognitionPage() {
                   <Award className="h-6 w-6 text-success-600 dark:text-success-400"/>
                 </div>
                 <div>
-                  <p className="text-body-secondary skeuo-deboss">Received</p>
+                  <p className="text-body-secondary">Received</p>
                   <p
-                    className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.recognitionsReceived}</p>
+                    className="text-xl font-bold text-[var(--text-primary)]">{stats.recognitionsReceived}</p>
                 </div>
               </div>
             </CardContent>
@@ -303,9 +303,9 @@ export default function RecognitionPage() {
                   <Gift className="h-6 w-6 text-accent-600 dark:text-accent-400"/>
                 </div>
                 <div>
-                  <p className="text-body-secondary skeuo-deboss">Given</p>
+                  <p className="text-body-secondary">Given</p>
                   <p
-                    className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.recognitionsGiven}</p>
+                    className="text-xl font-bold text-[var(--text-primary)]">{stats.recognitionsGiven}</p>
                 </div>
               </div>
             </CardContent>
@@ -317,9 +317,9 @@ export default function RecognitionPage() {
                   <TrendingUp className="h-6 w-6 text-accent-800 dark:text-accent-600"/>
                 </div>
                 <div>
-                  <p className="text-body-secondary skeuo-deboss">Total Activity</p>
+                  <p className="text-body-secondary">Total Activity</p>
                   <p
-                    className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.totalRecognitions}</p>
+                    className="text-xl font-bold text-[var(--text-primary)]">{stats.totalRecognitions}</p>
                 </div>
               </div>
             </CardContent>
@@ -545,7 +545,7 @@ export default function RecognitionPage() {
             <Card className="skeuo-card">
               <CardContent className="p-4">
                 <h3
-                  className="flex items-center gap-2 text-xl font-semibold text-[var(--text-primary)] skeuo-emboss mb-4">
+                  className="flex items-center gap-2 text-xl font-semibold text-[var(--text-primary)] mb-4">
                   <Crown className="h-5 w-5 text-warning-500"/>
                   Top Contributors
                 </h3>
@@ -601,7 +601,7 @@ export default function RecognitionPage() {
 
             <Card className="skeuo-card">
               <CardContent className="p-4">
-                <h3 className="text-xl font-semibold text-[var(--text-primary)] skeuo-emboss mb-4">
+                <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-4">
                   Quick Recognize
                 </h3>
                 <div className="grid grid-cols-2 gap-2">

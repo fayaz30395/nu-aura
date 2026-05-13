@@ -625,8 +625,8 @@ function CandidatesPage() {
         {/* Header */}
         <div className="row-between">
           <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">Candidates</h1>
-            <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">Track and manage candidate applications</p>
+            <h1 className="text-xl font-bold text-[var(--text-primary)]">Candidates</h1>
+            <p className="text-[var(--text-secondary)] mt-1">Track and manage candidate applications</p>
           </div>
           <div className="flex gap-2">
             {/* DEF-50: Fix permission from CANDIDATE_VIEW to RECRUITMENT_CREATE for write action */}

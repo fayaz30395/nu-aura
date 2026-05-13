@@ -143,7 +143,7 @@ export default function LoanDetailPage() {
           </button>
           <div className="flex-1">
             <div className="flex items-center gap-4">
-              <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
+              <h1 className="text-xl font-bold text-[var(--text-primary)]">
                 Loan #{loan.loanNumber || loan.id.slice(0, 8).toUpperCase()}
               </h1>
               <span
@@ -161,7 +161,7 @@ export default function LoanDetailPage() {
 
         {/* Amount Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
+          <div className="card-aura p-6">
             <div className="flex items-center gap-4 mb-4">
               <div className="p-2 rounded-lg bg-accent-100 dark:bg-accent-900/30">
                 <DollarSign className="h-5 w-5 text-accent-600 dark:text-accent-400"/>
@@ -170,24 +170,24 @@ export default function LoanDetailPage() {
                 {loan.totalAmount ? 'Total Amount' : 'Principal Amount'}
               </span>
             </div>
-            <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <p className="text-xl font-bold text-[var(--text-primary)]">
               {loanService.formatCurrency(loan.totalAmount || loan.principalAmount)}
             </p>
           </div>
 
-          <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
+          <div className="card-aura p-6">
             <div className="flex items-center gap-4 mb-4">
               <div className="p-2 rounded-lg bg-success-100 dark:bg-success-900/30">
                 <TrendingUp className="h-5 w-5 text-success-600 dark:text-success-400"/>
               </div>
               <span className="text-body-muted">Amount Repaid</span>
             </div>
-            <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <p className="text-xl font-bold text-[var(--text-primary)]">
               {loanService.formatCurrency(loan.paidAmount || 0)}
             </p>
           </div>
 
-          <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
+          <div className="card-aura p-6">
             <div className="flex items-center gap-4 mb-4">
               <div className="p-2 rounded-lg bg-danger-100 dark:bg-danger-900/30">
                 <Wallet className="h-5 w-5 text-danger-600 dark:text-danger-400"/>
@@ -196,7 +196,7 @@ export default function LoanDetailPage() {
                 Outstanding Amount
               </span>
             </div>
-            <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <p className="text-xl font-bold text-[var(--text-primary)]">
               {loanService.formatCurrency(loan.outstandingAmount || 0)}
             </p>
           </div>
@@ -204,7 +204,7 @@ export default function LoanDetailPage() {
 
         {/* Progress Bar */}
         {(loan.status === 'ACTIVE' || loan.status === 'DISBURSED') && (
-          <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
+          <div className="card-aura p-6">
             <div className="row-between mb-4">
               <h3 className="text-xl font-semibold text-[var(--text-primary)]">
                 Repayment Progress
@@ -227,7 +227,7 @@ export default function LoanDetailPage() {
         )}
 
         {/* Loan Details */}
-        <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
+        <div className="card-aura p-6">
           <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-4">
             Loan Details
           </h3>
@@ -286,7 +286,7 @@ export default function LoanDetailPage() {
         </div>
 
         {/* Purpose */}
-        <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
+        <div className="card-aura p-6">
           <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-4">
             Purpose
           </h3>
@@ -303,7 +303,7 @@ export default function LoanDetailPage() {
 
         {/* Approval Info */}
         {loan.approvedDate && (
-          <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
+          <div className="card-aura p-6">
             <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-4">
               Approval Information
             </h3>

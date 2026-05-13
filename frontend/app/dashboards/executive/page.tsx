@@ -35,6 +35,7 @@ import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {useExecutiveDashboard} from '@/lib/hooks/queries/useDashboards';
 import {StrategicAlert} from '@/lib/types/core/dashboard';
 import {formatCurrency} from '@/lib/utils';
+import {Stat} from '@/components/ui/Stat';
 
 const ExecutiveHeadcountChart = dynamic(
   () => import('./ExecutiveCharts').then((mod) => ({default: mod.ExecutiveHeadcountChart})),
@@ -180,7 +181,7 @@ export default function ExecutiveDashboardPage() {
         <div className="space-y-6">
           <div className="row-between">
             <div>
-              <h1 className="text-xl font-bold skeuo-emboss">Executive Dashboard</h1>
+              <h1 className="text-xl font-bold">Executive Dashboard</h1>
               <p className="text-[var(--text-secondary)] mt-1">Comprehensive C-suite insights and analytics</p>
             </div>
           </div>
@@ -196,7 +197,7 @@ export default function ExecutiveDashboardPage() {
         <div className="space-y-6">
           <div className="row-between">
             <div>
-              <h1 className="text-xl font-bold skeuo-emboss">Executive Dashboard</h1>
+              <h1 className="text-xl font-bold">Executive Dashboard</h1>
               <p className="text-[var(--text-secondary)] mt-1">Comprehensive C-suite insights and analytics</p>
             </div>
           </div>
@@ -211,9 +212,7 @@ export default function ExecutiveDashboardPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {['Total Headcount', 'Revenue Per Employee', 'Attrition Rate', 'Engagement Score'].map((label) => (
               <Card key={label} className="p-6">
-                <p className="text-sm font-medium text-[var(--text-muted)]">{label}</p>
-                <p className="text-3xl font-bold text-[var(--text-primary)] mt-1">--</p>
-                <p className="text-caption mt-1">No data</p>
+                <Stat label={label} value="--" caption="No data"/>
               </Card>
             ))}
           </div>
@@ -228,7 +227,7 @@ export default function ExecutiveDashboardPage() {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-xl font-bold skeuo-emboss">Executive Dashboard</h1>
+            <h1 className="text-xl font-bold">Executive Dashboard</h1>
             <p className="text-[var(--text-secondary)] mt-1">
               Comprehensive C-suite insights and analytics
             </p>
@@ -259,20 +258,21 @@ export default function ExecutiveDashboardPage() {
                     className="border-0 shadow-[var(--shadow-elevated)] hover:shadow-[var(--shadow-dropdown)] transition-shadow">
                 <CardContent className="p-6">
                   <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-[var(--text-muted)]">{kpi.name}</p>
-                      <p className="text-3xl font-bold text-[var(--text-primary)] mt-2">
-                        {kpi.value}{kpi.unit && kpi.unit !== '#' ? kpi.unit : ''}
-                      </p>
-                      <div className="flex items-center gap-2 mt-2">
-                        {getTrendIcon(kpi.trend)}
-                        <span
-                          className={`text-sm font-medium ${kpi.trend === 'UP' ? 'text-success-600' : kpi.trend === 'DOWN' ? 'text-danger-600' : 'text-[var(--text-muted)]'}`}>
-                          {kpi.changePercent != null ? formatPercentage(kpi.changePercent) : ''}
+                    <Stat
+                      className="flex-1"
+                      label={kpi.name}
+                      value={`${kpi.value}${kpi.unit && kpi.unit !== '#' ? kpi.unit : ''}`}
+                      caption={
+                        <span className="flex items-center gap-2">
+                          {getTrendIcon(kpi.trend)}
+                          <span
+                            className={`font-medium ${kpi.trend === 'UP' ? 'text-success-600' : kpi.trend === 'DOWN' ? 'text-danger-600' : 'text-[var(--text-muted)]'}`}>
+                            {kpi.changePercent != null ? formatPercentage(kpi.changePercent) : ''}
+                          </span>
+                          <span>{kpi.changeDescription || ''}</span>
                         </span>
-                        <span className="text-caption">{kpi.changeDescription || ''}</span>
-                      </div>
-                    </div>
+                      }
+                    />
                     <div
                       className={`w-12 h-12 rounded-xl flex items-center justify-center ${getStatusColor(kpi.status)}`}>
                       {getKpiIcon(kpi.icon)}

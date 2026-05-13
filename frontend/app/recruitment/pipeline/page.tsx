@@ -378,38 +378,38 @@ const PipelineAnalytics: React.FC<AnalyticsProps> = ({pipelineData}) => {
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
       {/* Total Active */}
-      <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl p-4">
+      <div className="card-aura p-4">
         <div className="flex items-center gap-2 mb-1">
           <User size={14} className="text-accent-500"/>
           <span className="text-caption font-medium">Active Pipeline</span>
         </div>
-        <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{totalActive}</p>
+        <p className="text-xl font-bold text-[var(--text-primary)]">{totalActive}</p>
         <p className="text-caption mt-0.5">{totalAccepted} accepted, {totalRejected} rejected</p>
       </div>
 
       {/* Conversion Rate */}
-      <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl p-4">
+      <div className="card-aura p-4">
         <div className="flex items-center gap-2 mb-1">
           <TrendingUp size={14} className="text-success-500"/>
           <span className="text-caption font-medium">Conversion Rate</span>
         </div>
-        <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{conversionRate}%</p>
+        <p className="text-xl font-bold text-[var(--text-primary)]">{conversionRate}%</p>
         <p className="text-caption mt-0.5">Applied → Accepted</p>
       </div>
 
       {/* Avg Time in Stage */}
-      <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl p-4">
+      <div className="card-aura p-4">
         <div className="flex items-center gap-2 mb-1">
           <Clock size={14} className="text-warning-500"/>
           <span className="text-caption font-medium">Avg. Time in Stage</span>
         </div>
         <p
-          className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{avgDaysInStage !== null ? `${avgDaysInStage}d` : '—'}</p>
+          className="text-xl font-bold text-[var(--text-primary)]">{avgDaysInStage !== null ? `${avgDaysInStage}d` : '—'}</p>
         <p className="text-caption mt-0.5">Across all stages</p>
       </div>
 
       {/* Top Sources */}
-      <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl p-4">
+      <div className="card-aura p-4">
         <div className="flex items-center gap-2 mb-1">
           <BarChart3 size={14} className="text-accent-500"/>
           <span className="text-caption font-medium">Top Sources</span>
@@ -449,7 +449,7 @@ const FunnelBar: React.FC<{ pipelineData: PipelineData }> = ({pipelineData}) => 
   const maxCount = Math.max(...counts, 1);
 
   return (
-    <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl p-4">
+    <div className="card-aura p-4">
       <p className="text-xs font-semibold text-[var(--text-secondary)] mb-4 flex items-center gap-1.5">
         <TrendingUp size={13} className="text-accent-500"/>
         Hiring Funnel
@@ -872,7 +872,7 @@ export default function ApplicantPipelinePage() {
           {/* ── Header ────────────────────────────────────────────────────── */}
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
-              <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">ATS Pipeline</h1>
+              <h1 className="text-xl font-bold text-[var(--text-primary)]">ATS Pipeline</h1>
               <p className="text-body-muted mt-0.5">
                 Drag candidates between stages or use the quick-move buttons
               </p>
@@ -1045,7 +1045,7 @@ export default function ApplicantPipelinePage() {
               {/* ── Filter Dropdowns ───────────────────────────────────── */}
               {showFilters && (
                 <div
-                  className="flex flex-wrap items-end gap-4 bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl p-4 animate-in fade-in slide-in-from-top-1">
+                  className="card-aura flex flex-wrap items-end gap-4 p-4 animate-in fade-in slide-in-from-top-1">
                   <div className="min-w-[160px]">
                     <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Source</label>
                     <select
@@ -1133,10 +1133,10 @@ export default function ApplicantPipelinePage() {
                                           <div
                                             ref={dragProvided.innerRef}
                                             {...dragProvided.draggableProps}
-                                            className={`bg-[var(--bg-card)] border rounded-lg p-4 transition-all cursor-pointer group ${
+                                            className={`card-interactive p-4 group ${
                                               dragSnapshot.isDragging
                                                 ? 'shadow-[var(--shadow-dropdown)] border-accent-300 ring-2 ring-accent-200 rotate-1'
-                                                : 'border-[var(--border-main)] shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-elevated)] hover:border-[var(--border-main)]'
+                                                : ''
                                             } ${isMoving ? 'opacity-50' : ''}`}
                                             onClick={() => !dragSnapshot.isDragging && openDetailModal(applicant)}
                                           >

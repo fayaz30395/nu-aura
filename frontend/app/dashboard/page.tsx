@@ -941,7 +941,7 @@ export default function DashboardPage() {
             <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
               <div className="space-y-2">
                 <div className="flex flex-wrap items-center gap-4">
-                  <h1 className="text-page-title skeuo-emboss">
+                  <h1 className="text-page-title">
                     Welcome back, {user?.firstName || user?.fullName?.split(' ')[0] || 'User'}!
                   </h1>
                   <span className={`badge-status ${viewBadgeClass}`}>{safeAnalytics.viewLabel}</span>

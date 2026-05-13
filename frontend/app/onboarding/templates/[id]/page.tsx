@@ -5,7 +5,6 @@ import {useParams, useRouter} from 'next/navigation';
 import {AnimatePresence, motion} from 'framer-motion';
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
 import {
-  AlertCircle,
   ArrowLeft,
   Clock,
   GripVertical,
@@ -22,6 +21,7 @@ import {AppLayout} from '@/components/layout';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
+import {Callout} from '@/components/ui/Callout';
 import {Button} from '@/components/ui/Button';
 import {Input} from '@/components/ui/Input';
 import {Badge} from '@/components/ui/Badge';
@@ -193,7 +193,7 @@ export default function TemplateEditorPage() {
               </Button>
               <div>
                 <h1
-                  className="text-2xl font-black tracking-tight text-[var(--text-primary)] skeuo-emboss flex items-center gap-4">
+                  className="text-2xl font-black tracking-tight text-[var(--text-primary)] flex items-center gap-4">
                   Blueprint <span className="text-accent-700">Editor</span>
                   <Badge variant="outline"
                          className="rounded-xl px-4 py-1 font-black text-xs uppercase tracking-widest border-accent-500/20 text-accent-600">
@@ -250,20 +250,10 @@ export default function TemplateEditorPage() {
                 </CardContent>
               </Card>
 
-              <Card
-                className="border-0 bg-accent-600/5 dark:bg-accent-600/10 border-l-4 border-accent-600 rounded-lg shadow-[var(--shadow-dropdown)] shadow-accent-500/10">
-                <CardContent className="p-8 space-y-4">
-                  <div className="flex items-center gap-2 text-accent-600 font-black uppercase tracking-widest text-xs">
-                    <AlertCircle className="h-4 w-4"/>
-                    Orchestration Sync
-                  </div>
-                  <p className="text-sm font-bold text-accent-700 dark:text-accent-400">
-                    Changes made here will affect all <span
-                    className="underline decoration-accent-400 decoration-2">future</span> onboarding processes
-                    initiated with this template.
-                  </p>
-                </CardContent>
-              </Card>
+              <Callout tone="info" title="Orchestration sync">
+                Changes made here will affect all <span className="font-semibold underline">future</span> onboarding processes
+                initiated with this template.
+              </Callout>
             </div>
 
             {/* Right Panel: Task Orchestration */}

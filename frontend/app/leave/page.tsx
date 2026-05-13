@@ -132,16 +132,15 @@ export default function LeavePage() {
     return Calendar;
   };
 
-  const getLeaveTypeGradient = (colorCode: string | undefined, index: number) => {
-    const gradients = [
-      'from-accent-500 to-accent-700',
-      'from-success-500 to-success-600',
-      'from-warning-500 to-warning-600',
-      'from-accent-600 to-accent-700',
-      'from-accent-400 to-accent-600',
-      'from-accent-500 to-accent-600',
+  const getLeaveTypeTone = (colorCode: string | undefined, index: number) => {
+    // Studio Slate v2: flat tint pair per leave type. Cycles through 4 system tones.
+    const tones = [
+      {bg: 'bg-accent-100 dark:bg-accent-500/10', text: 'text-accent-600 dark:text-accent-400', bar: 'bg-accent-500'},
+      {bg: 'bg-success-100 dark:bg-success-500/10', text: 'text-success-600 dark:text-success-400', bar: 'bg-success-500'},
+      {bg: 'bg-warning-100 dark:bg-warning-500/10', text: 'text-warning-600 dark:text-warning-400', bar: 'bg-warning-500'},
+      {bg: 'bg-accent-50 dark:bg-accent-500/10', text: 'text-accent-700 dark:text-accent-300', bar: 'bg-accent-400'},
     ];
-    return gradients[index % gradients.length];
+    return tones[index % tones.length];
   };
 
   if (loading) {
@@ -200,20 +199,19 @@ export default function LeavePage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-xl font-bold text-[var(--text-primary)]">
               Leave Management
             </h1>
-            <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">
+            <p className="text-[var(--text-secondary)] mt-1">
               Track your leave balance and requests
             </p>
           </div>
           <PermissionGate anyOf={[Permissions.LEAVE_REQUEST, Permissions.LEAVE_MANAGE]}>
             <button
               onClick={() => router.push('/leave/apply')}
-              className="flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl font-medium shadow-[var(--shadow-dropdown)] shadow-accent-500/25 transition-all duration-200 hover:shadow-[var(--shadow-dropdown)] hover:shadow-accent-500/30 skeuo-button cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+              className="btn-primary gap-2"
             >
-              <Plus
-                className="h-5 w-5 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
+              <Plus className="h-4 w-4"/>
               Apply for Leave
             </button>
           </PermissionGate>
@@ -221,25 +219,25 @@ export default function LeavePage() {
 
         {/* Leave Balance Cards */}
         <div>
-          <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-4 skeuo-emboss">
+          <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-4">
             Leave Balance ({new Date().getFullYear()})
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {balances.map((balance, index) => {
               const leaveType = leaveTypes.find(t => t.id === balance.leaveTypeId);
               const Icon = getLeaveTypeIcon(leaveType?.leaveName || '');
-              const gradient = getLeaveTypeGradient(leaveType?.colorCode, index);
+              const tone = getLeaveTypeTone(leaveType?.colorCode, index);
               const total = balance.openingBalance + balance.accrued;
               const usedPercentage = total > 0 ? (balance.used / total) * 100 : 0;
 
               return (
                 <div
                   key={balance.id}
-                  className="bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-4 hover:shadow-[var(--shadow-dropdown)] transition-all duration-200 skeuo-card"
+                  className="bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-4 hover:shadow-[var(--shadow-card-hover)] transition-all duration-200 skeuo-card"
                 >
                   <div className="flex items-start justify-between mb-4">
-                    <div className={`p-4 rounded-xl bg-gradient-to-br ${gradient}`}>
-                      <Icon className="h-5 w-5 text-white"/>
+                    <div className={`p-3 rounded-xl ${tone.bg} ${tone.text}`}>
+                      <Icon className="h-5 w-5"/>
                     </div>
                     <span
                       className="text-xs font-medium px-2 py-1 bg-[var(--bg-secondary)] text-[var(--text-secondary)] rounded-lg">
@@ -252,7 +250,7 @@ export default function LeavePage() {
                   </h3>
 
                   <div className="flex items-baseline gap-1 mb-4">
-                    <span className="text-xl font-bold skeuo-emboss">
+                    <span className="text-xl font-bold">
                       {balance.available.toFixed(1)}
                     </span>
                     <span className="text-body-muted">
@@ -263,7 +261,7 @@ export default function LeavePage() {
                   {/* Progress Bar */}
                   <div className="h-2 bg-[var(--bg-secondary)] rounded-full overflow-hidden mb-4">
                     <div
-                      className={`h-full bg-gradient-to-r ${gradient} rounded-full transition-all duration-300`}
+                      className={`h-full ${tone.bar} rounded-full transition-all duration-300`}
                       style={{width: `${Math.min(usedPercentage, 100)}%`}}
                     />
                   </div>
@@ -287,7 +285,7 @@ export default function LeavePage() {
         {/* Recent Leave Requests */}
         <div className="skeuo-card rounded-xl border border-[var(--border-main)] overflow-hidden">
           <div className="row-between p-6 border-b border-[var(--border-main)]">
-            <h2 className="text-xl font-semibold text-[var(--text-primary)] skeuo-emboss">
+            <h2 className="text-xl font-semibold text-[var(--text-primary)]">
               Recent Leave Requests
             </h2>
             <button
@@ -415,8 +413,8 @@ export default function LeavePage() {
             <div
               className="row-between mb-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
               <div
-                className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 group-hover:scale-110 transition-transform cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
-                <Plus className="h-5 w-5 text-white"/>
+                className="p-4 rounded-xl bg-accent-100 dark:bg-accent-500/10 text-accent-600 dark:text-accent-400 group-hover:scale-110 transition-transform cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                <Plus className="h-5 w-5"/>
               </div>
               <ChevronRight
                 className="h-5 w-5 text-[var(--text-muted)] group-hover:text-accent-500 group-hover:translate-x-1 transition-all"/>
@@ -436,8 +434,8 @@ export default function LeavePage() {
             <div
               className="row-between mb-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
               <div
-                className="p-4 rounded-xl bg-gradient-to-br from-success-500 to-success-600 group-hover:scale-110 transition-transform cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
-                <FileText className="h-5 w-5 text-white"/>
+                className="p-4 rounded-xl bg-success-100 dark:bg-success-500/10 text-success-600 dark:text-success-400 group-hover:scale-110 transition-transform cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                <FileText className="h-5 w-5"/>
               </div>
               <ChevronRight
                 className="h-5 w-5 text-[var(--text-muted)] group-hover:text-success-500 group-hover:translate-x-1 transition-all"/>
@@ -457,8 +455,8 @@ export default function LeavePage() {
             <div
               className="row-between mb-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
               <div
-                className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-600 group-hover:scale-110 transition-transform cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
-                <CalendarDays className="h-5 w-5 text-white"/>
+                className="p-4 rounded-xl bg-accent-100 dark:bg-accent-500/10 text-accent-600 dark:text-accent-400 group-hover:scale-110 transition-transform cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                <CalendarDays className="h-5 w-5"/>
               </div>
               <ChevronRight
                 className="h-5 w-5 text-[var(--text-muted)] group-hover:text-accent-500 group-hover:translate-x-1 transition-all"/>

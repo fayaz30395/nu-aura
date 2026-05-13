@@ -91,7 +91,7 @@ export default function CalibrationPage() {
       <Stack gap="lg" p="md">
         <Group justify="space-between">
           <div>
-            <Title order={2} className="skeuo-emboss">Calibration</Title>
+            <Title order={2} className="">Calibration</Title>
             <Text c="dimmed" size="sm">{data.cycleName} — {totalEmployees} employees</Text>
           </div>
         </Group>

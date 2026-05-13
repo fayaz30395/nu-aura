@@ -130,7 +130,7 @@ function CommentThread({
         {/* Anchor context */}
         {comment.anchorText && depth === 0 && (
           <div
-            className="mb-1 px-2 py-1 bg-warning-50 dark:bg-warning-900/20 border-l-2 border-warning-400 rounded-r text-2xs text-[var(--text-secondary)] italic truncate">
+            className="mb-1 px-2 py-1 bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800 rounded text-2xs text-[var(--text-secondary)] italic truncate">
             &ldquo;{comment.anchorText}&rdquo;
           </div>
         )}
@@ -345,7 +345,7 @@ export function InlineCommentsPanel({pageId, isOpen, onToggle}: InlineCommentsPa
                 >
                   {selectedText && (
                     <div
-                      className="mb-2 px-2 py-1 bg-warning-50 dark:bg-warning-900/20 border-l-2 border-warning-400 rounded-r text-2xs italic truncate">
+                      className="mb-2 px-2 py-1 bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800 rounded text-2xs italic truncate">
                       &ldquo;{selectedText.text}&rdquo;
                     </div>
                   )}

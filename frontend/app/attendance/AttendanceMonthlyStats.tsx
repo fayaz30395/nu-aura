@@ -22,45 +22,40 @@ export const AttendanceMonthlyStats = memo(function AttendanceMonthlyStats({
     value: number | string;
     total: number | null;
     icon: React.ElementType;
-    color: string;
-    textColor: string;
-    tintClass: string
+    bg: string;
+    text: string;
   }> = [
     {
       label: 'Present',
       value: monthStats.present,
       total: monthStats.businessDays,
       icon: CheckCircle,
-      color: 'from-success-500 to-success-600',
-      textColor: 'text-success-600 dark:text-success-400',
-      tintClass: 'tint-success'
+      bg: 'bg-success-100 dark:bg-success-500/10',
+      text: 'text-success-600 dark:text-success-400',
     },
     {
       label: 'Absent',
       value: monthStats.absent,
       total: monthStats.businessDays,
       icon: AlertCircle,
-      color: 'from-danger-500 to-danger-600',
-      textColor: 'text-danger-600 dark:text-danger-400',
-      tintClass: 'tint-danger'
+      bg: 'bg-danger-100 dark:bg-danger-500/10',
+      text: 'text-danger-600 dark:text-danger-400',
     },
     {
       label: 'Late Arrivals',
       value: monthStats.late,
       total: monthStats.present,
       icon: AlertTriangle,
-      color: 'from-warning-500 to-warning-600',
-      textColor: 'text-warning-600 dark:text-warning-400',
-      tintClass: 'tint-warning'
+      bg: 'bg-warning-100 dark:bg-warning-500/10',
+      text: 'text-warning-600 dark:text-warning-400',
     },
     {
       label: 'Overtime',
       value: `${monthStats.overtimeTotal.toFixed(1)}h`,
       total: null,
       icon: Zap,
-      color: 'from-accent-500 to-accent-600',
-      textColor: 'text-accent-600 dark:text-accent-400',
-      tintClass: 'tint-info'
+      bg: 'bg-accent-100 dark:bg-accent-500/10',
+      text: 'text-accent-600 dark:text-accent-400',
     },
   ];
 
@@ -78,16 +73,16 @@ export const AttendanceMonthlyStats = memo(function AttendanceMonthlyStats({
             <CardContent className="p-4">
               <div className="row-between mb-2">
                 <div
-                  className={`h-10 w-10 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center shadow-[var(--shadow-elevated)]`}>
-                  <stat.icon className="h-5 w-5 text-white"/>
+                  className={`h-10 w-10 rounded-xl ${stat.bg} ${stat.text} flex items-center justify-center`}>
+                  <stat.icon className="h-5 w-5"/>
                 </div>
                 {stat.total !== null && (
                   <span
                     className="text-xs font-medium text-[var(--text-muted)] bg-[var(--bg-secondary)] px-2 py-0.5 rounded-full">/ {stat.total}</span>
                 )}
               </div>
-              <div className={`text-stat-large tabular-nums ${stat.textColor} skeuo-emboss`}>{stat.value}</div>
-              <div className="text-xs font-semibold text-[var(--text-secondary)] mt-1 skeuo-deboss">{stat.label}</div>
+              <div className={`text-stat-large tabular-nums ${stat.text}`}>{stat.value}</div>
+              <div className="text-xs font-semibold text-[var(--text-secondary)] mt-1">{stat.label}</div>
             </CardContent>
           </Card>
         </motion.div>

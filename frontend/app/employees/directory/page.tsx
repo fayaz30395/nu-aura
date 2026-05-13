@@ -243,11 +243,11 @@ export default function TeamDirectory() {
         >
           <div className="row-between">
             <div>
-              <h1 className="text-xl font-bold text-[var(--text-primary)] flex items-center gap-4 skeuo-emboss">
+              <h1 className="text-xl font-bold text-[var(--text-primary)] flex items-center gap-4">
                 <Users className="w-7 h-7 text-accent-700 dark:text-accent-400"/>
                 Team Directory
               </h1>
-              <p className="text-[var(--text-muted)] mt-1 skeuo-deboss">
+              <p className="text-[var(--text-muted)] mt-1">
                 Search and connect with colleagues across the organization
               </p>
             </div>

@@ -86,10 +86,10 @@ export function LeaveBalanceWidget({leaveBalances = null}: LeaveBalanceWidgetPro
   }, []);
   if (!isHydrated) return null;
 
-  // --nu-lapis-blue #050766 ≈ rgb(5, 7, 102); 25% mix ≈ rgba(5, 7, 102, 0.25)
+  // --accent-primary #2563EB ≈ rgb(37, 99, 235); 22% mix ≈ rgba(37, 99, 235, 0.22)
   const buttonShadow = useFallback
-    ? '0 2px 8px rgba(5, 7, 102, 0.25)' // fallback for Safari <=16.1
-    : '0 2px 8px color-mix(in srgb, var(--nu-lapis-blue) 25%, transparent)';
+    ? '0 2px 8px rgba(37, 99, 235, 0.22)' // fallback for Safari <=16.1
+    : '0 2px 8px color-mix(in srgb, var(--accent-primary) 22%, transparent)';
 
   const balances = leaveBalances && leaveBalances.length > 0 ? leaveBalances : DEMO_BALANCES;
   const current = balances[selectedIndex];
@@ -99,7 +99,7 @@ export function LeaveBalanceWidget({leaveBalances = null}: LeaveBalanceWidgetPro
       <div className="row-between mb-4">
         <div className="flex items-center gap-2">
           <Calendar className="h-4 w-4 text-[var(--text-muted)]"/>
-          <h3 className="skeuo-emboss text-sm font-semibold text-[var(--text-primary)]">Leave Balance</h3>
+          <h3 className="text-sm font-semibold text-[var(--text-primary)]">Leave Balance</h3>
         </div>
         <Link
           href="/leave"

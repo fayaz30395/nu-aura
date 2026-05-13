@@ -252,8 +252,8 @@ export function NuAuraLoader({message = 'Loading your workspace...'}: { message?
               <defs>
                 <linearGradient id="nuaura-loader-grad" x1="13.5" y1="0" x2="13.5" y2="38"
                                 gradientUnits="userSpaceOnUse">
-                  <stop stopColor="var(--accent-primary, #2952A3)"/>
-                  <stop offset="1" stopColor="var(--nu-purple, #8939A1)"/>
+                  <stop stopColor="var(--accent-primary, #2563EB)"/>
+                  <stop offset="1" stopColor="var(--accent-400, #60a5fa)"/>
                 </linearGradient>
               </defs>
             </svg>
@@ -317,24 +317,9 @@ export function NuAuraLoader({message = 'Loading your workspace...'}: { message?
         }
 
         /* Shimmer gradient sweep on brand name */
-        @keyframes nuaura-shimmer {
-          0%   { background-position: -200% center; }
-          100% { background-position: 200% center; }
-        }
         .nuaura-shimmer-text {
-          background: linear-gradient(
-            90deg,
-            var(--accent-primary, #2952A3) 0%,
-            var(--nu-purple, #8939A1) 25%,
-            var(--accent-primary, #6884dc) 50%,
-            var(--nu-purple, #8939A1) 75%,
-            var(--accent-primary, #2952A3) 100%
-          );
-          background-size: 200% auto;
-          -webkit-background-clip: text;
-          background-clip: text;
-          -webkit-text-fill-color: transparent;
-          animation: nuaura-shimmer 3s linear infinite;
+          color: var(--accent-primary, #2563EB);
+          font-weight: 600;
         }
 
         /* Gentle fade-in-out for the message */

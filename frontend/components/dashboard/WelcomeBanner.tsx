@@ -42,16 +42,15 @@ export function WelcomeBanner({
   const greeting = getGreeting();
 
   // wave-3 N: fallback to rgba() on Safari <=16.1 (no color-mix support).
-  // --nu-lapis-blue resolves to #050766 ≈ rgb(5, 7, 102). 25% mix with
-  // transparent approximates rgba(5, 7, 102, 0.25) — close enough for a
-  // decorative drop shadow on the welcome banner.
+  // --accent-primary resolves to #2563EB ≈ rgb(37, 99, 235). 22% mix with
+  // transparent approximates rgba(37, 99, 235, 0.22) — Studio Slate accent shadow.
   const [useFallback, setUseFallback] = useState(false);
   useEffect(() => {
     if (!supportsColorMix()) setUseFallback(true);
   }, []);
   const shadowMix = useFallback
-    ? 'rgba(5, 7, 102, 0.25)' // fallback for Safari <=16.1
-    : 'color-mix(in srgb, var(--nu-lapis-blue) 25%, transparent)';
+    ? 'rgba(37, 99, 235, 0.22)' // fallback for Safari <=16.1
+    : 'color-mix(in srgb, var(--accent-primary) 22%, transparent)';
 
   return (
     <div

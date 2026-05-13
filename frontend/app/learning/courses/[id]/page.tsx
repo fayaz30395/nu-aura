@@ -26,12 +26,6 @@ import {apiClient} from '@/lib/api/client';
 import {useToast} from '@/components/notifications/ToastProvider';
 import {useCourseDetail, useEnrollCourse, useMyEnrollments} from '@/lib/hooks/queries/useLearning';
 
-const DIFFICULTY_COLOR = {
-  BEGINNER: 'bg-success-100 text-success-700',
-  INTERMEDIATE: 'bg-warning-100 text-warning-700',
-  ADVANCED: 'bg-danger-100 text-danger-700',
-};
-
 interface Quiz {
   id: string;
   title: string;
@@ -152,26 +146,26 @@ export default function CourseDetailPage() {
     <AppLayout>
       <div className="min-h-screen bg-[var(--bg-secondary)] dark:bg-[var(--bg-primary)]">
         {/* Hero */}
-        <div className="bg-gradient-to-r from-accent-700 to-accent-900 text-white">
+        <div className="bg-[var(--bg-sidebar)] text-white">
           <div className="max-w-5xl mx-auto px-6 py-8">
             <Link href="/learning"
-                  className="flex items-center gap-1 text-accent-200 hover:text-white text-sm mb-4 w-fit">
+                  className="flex items-center gap-1 text-white/60 hover:text-white text-sm mb-4 w-fit transition-colors">
               <ArrowLeft className="h-4 w-4"/> Back to Learning
             </Link>
             {course.isMandatory && (
               <span
-                className="inline-block mb-4 px-2 py-0.5 bg-warning-400 text-white text-xs font-semibold rounded-full">
+                className="inline-block mb-4 px-2 py-0.5 bg-warning-500 text-white text-xs font-semibold rounded-full">
               Mandatory
             </span>
             )}
-            <h1 className="text-xl font-bold skeuo-emboss mb-2">{course.title}</h1>
+            <h1 className="text-2xl font-semibold tracking-tight mb-2">{course.title}</h1>
             {course.shortDescription && (
-              <p className="text-accent-100 text-base mb-4">{course.shortDescription}</p>
+              <p className="text-white/70 text-base mb-4">{course.shortDescription}</p>
             )}
-            <div className="flex flex-wrap items-center gap-4 text-sm text-accent-200">
+            <div className="flex flex-wrap items-center gap-4 text-sm text-white/60">
               {course.difficultyLevel && (
                 <span
-                  className={`px-2 py-0.5 rounded text-xs font-medium ${DIFFICULTY_COLOR[course.difficultyLevel as keyof typeof DIFFICULTY_COLOR] ?? 'bg-[var(--bg-surface)] text-[var(--text-primary)]'}`}>
+                  className="px-2 py-0.5 rounded text-xs font-medium bg-white/10 text-white">
                 {course.difficultyLevel}
               </span>
               )}
@@ -190,7 +184,7 @@ export default function CourseDetailPage() {
               )}
               {course.avgRating && (
                 <span className="flex items-center gap-1">
-                <Star className="h-3.5 w-3.5 fill-warning-300 text-warning-300"/>
+                <Star className="h-3.5 w-3.5 fill-warning-400 text-warning-400"/>
                   {course.avgRating.toFixed(1)} ({course.totalRatings})
               </span>
               )}

@@ -158,7 +158,7 @@ export default function ManagerDashboardPage() {
       <AppLayout activeMenuItem="dashboard">
         <div className="space-y-6 p-6">
           <div>
-            <h1 className="text-xl font-bold skeuo-emboss">Team Dashboard</h1>
+            <h1 className="text-xl font-bold">Team Dashboard</h1>
             <p className="text-[var(--text-secondary)] mt-1">Manager overview</p>
           </div>
           <div
@@ -233,8 +233,7 @@ export default function ManagerDashboardPage() {
                 className="text-2xs font-bold uppercase tracking-wider text-accent-700 dark:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">Live Insights</span>
             </div>
             <h1 className="text-2xl font-extrabold tracking-tight text-[var(--text-primary)] sm:text-3xl">
-              Team <span
-              className="text-transparent bg-clip-text bg-gradient-to-r from-accent-700 to-accent-600 dark:from-accent-400 dark:to-accent-400 skeuo-emboss">Pulse</span>
+              Team <span className="text-accent-600 dark:text-accent-400">Pulse</span>
             </h1>
             <p className="text-[var(--text-secondary)] mt-1 text-sm">
               Optimizing productivity for <span className="font-semibold">{dashboardData.departmentName}</span>
@@ -495,7 +494,7 @@ export default function ManagerDashboardPage() {
                       <div className="row-between">
                         <div className="flex items-center gap-2.5">
                           <div
-                            className="h-7 w-7 rounded-lg bg-gradient-to-br from-accent-500 to-accent-600 text-white flex items-center justify-center font-black text-xs shadow-[var(--shadow-elevated)]">
+                            className="h-7 w-7 rounded-lg bg-accent-100 dark:bg-accent-500/10 text-accent-700 dark:text-accent-400 flex items-center justify-center font-black text-xs">
                             {leave.employeeName?.charAt(0)}
                           </div>
                           <div>
@@ -683,7 +682,7 @@ export default function ManagerDashboardPage() {
                       <div className="row-between mb-2">
                         <div className="flex items-center gap-4">
                           <div
-                            className="h-8 w-8 rounded-lg bg-gradient-to-br from-accent-500 to-accent-600 text-white flex items-center justify-center font-black text-xs shadow-[var(--shadow-elevated)]">
+                            className="h-8 w-8 rounded-lg bg-accent-100 dark:bg-accent-500/10 text-accent-700 dark:text-accent-400 flex items-center justify-center font-black text-xs">
                             {member.employeeName?.charAt(0)}
                           </div>
                           <div>

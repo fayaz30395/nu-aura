@@ -144,10 +144,10 @@ export default function LoansPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-xl font-bold text-[var(--text-primary)]">
               Employee Loans
             </h1>
-            <p className="text-[var(--text-muted)] mt-1 skeuo-deboss">
+            <p className="text-[var(--text-muted)] mt-1">
               Manage your loan applications and repayments
             </p>
           </div>
@@ -166,8 +166,8 @@ export default function LoansPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="skeuo-card p-4">
             <div className="flex items-start justify-between mb-4">
-              <div className="p-2.5 rounded-lg bg-gradient-to-br from-success-500 to-success-600">
-                <CreditCard className="h-5 w-5 text-white"/>
+              <div className="p-2.5 rounded-lg bg-success-100 dark:bg-success-500/10 text-success-600 dark:text-success-400 flex items-center justify-center">
+                <CreditCard className="h-5 w-5"/>
               </div>
             </div>
             <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-1">
@@ -182,8 +182,8 @@ export default function LoansPage() {
 
           <div className="skeuo-card p-4">
             <div className="flex items-start justify-between mb-4">
-              <div className="p-2.5 rounded-lg bg-gradient-to-br from-danger-500 to-danger-600">
-                <DollarSign className="h-5 w-5 text-white"/>
+              <div className="p-2.5 rounded-lg bg-danger-100 dark:bg-danger-500/10 text-danger-600 dark:text-danger-400 flex items-center justify-center">
+                <DollarSign className="h-5 w-5"/>
               </div>
             </div>
             <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-1">
@@ -198,8 +198,8 @@ export default function LoansPage() {
 
           <div className="skeuo-card p-4">
             <div className="flex items-start justify-between mb-4">
-              <div className="p-2.5 rounded-lg bg-gradient-to-br from-success-500 to-success-600">
-                <TrendingUp className="h-5 w-5 text-white"/>
+              <div className="p-2.5 rounded-lg bg-success-100 dark:bg-success-500/10 text-success-600 dark:text-success-400 flex items-center justify-center">
+                <TrendingUp className="h-5 w-5"/>
               </div>
             </div>
             <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-1">
@@ -214,8 +214,8 @@ export default function LoansPage() {
 
           <div className="skeuo-card p-4">
             <div className="flex items-start justify-between mb-4">
-              <div className="p-2.5 rounded-lg bg-gradient-to-br from-warning-500 to-warning-600">
-                <Clock className="h-5 w-5 text-white"/>
+              <div className="p-2.5 rounded-lg bg-warning-100 dark:bg-warning-500/10 text-warning-600 dark:text-warning-400 flex items-center justify-center">
+                <Clock className="h-5 w-5"/>
               </div>
             </div>
             <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-1">
@@ -345,8 +345,8 @@ export default function LoansPage() {
             >
               <div className="row-between mb-4">
                 <div
-                  className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 group-hover:scale-110 transition-transform">
-                  <Plus className="h-5 w-5 text-white"/>
+                  className="p-4 rounded-xl bg-accent-100 dark:bg-accent-500/10 text-accent-600 dark:text-accent-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <Plus className="h-5 w-5"/>
                 </div>
                 <ChevronRight
                   className="h-5 w-5 text-[var(--text-muted)] group-hover:text-accent-500 group-hover:translate-x-1 transition-all"/>
@@ -366,8 +366,8 @@ export default function LoansPage() {
           >
             <div className="row-between mb-4">
               <div
-                className="p-4 rounded-xl bg-gradient-to-br from-success-500 to-success-600 group-hover:scale-110 transition-transform">
-                <FileText className="h-5 w-5 text-white"/>
+                className="p-4 rounded-xl bg-success-100 dark:bg-success-500/10 text-success-600 dark:text-success-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <FileText className="h-5 w-5"/>
               </div>
               <ChevronRight
                 className="h-5 w-5 text-[var(--text-muted)] group-hover:text-success-500 group-hover:translate-x-1 transition-all"/>

@@ -138,7 +138,7 @@ export default function PublicExitInterviewPage() {
   return (
     <Center mih="100vh" bg="gray.0" p="md">
       <Paper withBorder p="xl" w="100%" maw={640}>
-        <Title order={2} mb={4} className="skeuo-emboss">Exit Interview</Title>
+        <Title order={2} mb={4} className="">Exit Interview</Title>
         <Text c="dimmed" size="sm" mb="lg">
           Hi {data?.employeeName}, please share your honest feedback. This is confidential.
         </Text>
@@ -268,7 +268,7 @@ function TextInput({label, value, onChange}: {
         style={{
           width: '100%',
           padding: '8px 12px',
-          border: '1px solid #dee2e6',
+          border: '1px solid var(--border-main)',
           borderRadius: 4,
           fontSize: 14,
         }}

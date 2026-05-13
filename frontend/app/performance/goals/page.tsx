@@ -218,7 +218,7 @@ export default function GoalsPage() {
     <AppLayout activeMenuItem="performance">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-xl font-bold skeuo-emboss">Goals</h1>
+          <h1 className="text-xl font-bold">Goals</h1>
           <PermissionGate permission={Permissions.GOAL_CREATE}>
             <button
               onClick={() => {

@@ -7,6 +7,7 @@ import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {Button} from '@/components/ui/Button';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
+import {GoogleGLogo} from '@/components/ui/GoogleGLogo';
 import {AlertCircle, ArrowLeft, Building2, CheckCircle, ExternalLink, Mail, ShieldCheck,} from 'lucide-react';
 import {apiClient} from '@/lib/api/client';
 
@@ -62,27 +63,27 @@ export default function ForgotPasswordPage() {
   if (isSubmitted) {
     return (
       <div
-        className="min-h-screen flex items-center justify-center bg-gradient-to-br from-accent-50 via-surface-50 to-surface-100 dark:from-surface-950 dark:via-surface-900 dark:to-surface-950 py-12 px-4 sm:px-6 lg:px-8">
+        className="min-h-screen flex items-center justify-center bg-[var(--bg-main)] py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full">
           {/* Logo */}
           <div className="text-center mb-8">
             <div
-              className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-accent-500 to-accent-700 rounded-lg mb-4 shadow-[var(--shadow-dropdown)] shadow-accent-500/25">
-              <Building2 className="w-8 h-8 text-white"/>
+              className="inline-flex items-center justify-center w-16 h-16 bg-accent-100 dark:bg-accent-500/10 text-accent-600 dark:text-accent-400 rounded-lg mb-4">
+              <Building2 className="w-8 h-8"/>
             </div>
-            <h1 className="text-xl font-bold skeuo-emboss">
+            <h1 className="text-xl font-bold">
               NU-AURA
             </h1>
           </div>
 
-          <Card className="bg-[var(--bg-card)] border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
+          <Card className="card-elevated">
             <CardContent className="pt-8 pb-8 text-center">
               {isSsoUser ? (
                 <>
                   {/* Google SSO user — redirect to Google account */}
                   <div
-                    className="inline-flex items-center justify-center w-16 h-16 bg-accent-100 dark:bg-accent-900/30 rounded-full mb-4">
-                    <ShieldCheck className="w-8 h-8 text-accent-700 dark:text-accent-400"/>
+                    className="inline-flex items-center justify-center w-16 h-16 bg-accent-100 dark:bg-accent-500/10 rounded-full mb-4">
+                    <ShieldCheck className="w-8 h-8 text-accent-600 dark:text-accent-400"/>
                   </div>
                   <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                     Google Sign-In Account
@@ -103,24 +104,7 @@ export default function ForgotPasswordPage() {
                     rel="noopener noreferrer"
                     className="inline-flex items-center justify-center w-full gap-2 px-4 py-2 mb-4 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-main)] text-[var(--text-primary)] font-medium hover:bg-[var(--bg-card-hover)] transition-colors"
                   >
-                    <svg className="w-5 h-5" viewBox="0 0 24 24">
-                      <path
-                        fill="#4285F4"
-                        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"
-                      />
-                      <path
-                        fill="#34A853"
-                        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                      />
-                      <path
-                        fill="#FBBC05"
-                        d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                      />
-                      <path
-                        fill="#EA4335"
-                        d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                      />
-                    </svg>
+                    <GoogleGLogo className="w-5 h-5"/>
                     Go to Google Account Security
                     <ExternalLink className="w-4 h-4 text-[var(--text-muted)]"/>
                   </a>
@@ -176,15 +160,15 @@ export default function ForgotPasswordPage() {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center bg-gradient-to-br from-accent-50 via-surface-50 to-surface-100 dark:from-surface-950 dark:via-surface-900 dark:to-surface-950 py-12 px-4 sm:px-6 lg:px-8">
+      className="min-h-screen flex items-center justify-center bg-[var(--bg-main)] py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full">
         {/* Logo and Title */}
         <div className="text-center mb-8">
           <div
-            className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-accent-500 to-accent-700 rounded-lg mb-4 shadow-[var(--shadow-dropdown)] shadow-accent-500/25">
-            <Building2 className="w-8 h-8 text-white"/>
+            className="inline-flex items-center justify-center w-16 h-16 bg-accent-100 dark:bg-accent-500/10 text-accent-600 dark:text-accent-400 rounded-lg mb-4">
+            <Building2 className="w-8 h-8"/>
           </div>
-          <h1 className="text-xl font-bold skeuo-emboss">
+          <h1 className="text-xl font-bold">
             NU-AURA
           </h1>
           <p className="mt-2 text-body-secondary">
@@ -193,9 +177,9 @@ export default function ForgotPasswordPage() {
         </div>
 
         {/* Forgot Password Card */}
-        <Card className="skeuo-card bg-[var(--bg-card)] border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
+        <Card className="card-elevated">
           <CardHeader className="pb-4">
-            <CardTitle className="text-xl skeuo-emboss">Forgot Password</CardTitle>
+            <CardTitle className="text-xl">Forgot Password</CardTitle>
             <CardDescription>
               Enter your email address and we&apos;ll send you a link to reset your password.
             </CardDescription>
@@ -230,10 +214,8 @@ export default function ForgotPasswordPage() {
                     autoComplete="email"
                     disabled={isLoading}
                     placeholder="Enter your email"
-                    className={`input-aura block w-full pl-10 pr-4 py-2 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all ${
-                      errors.email
-                        ? 'border-danger-500 dark:border-danger-500'
-                        : 'border-[var(--border-main)]'
+                    className={`input-aura block w-full pl-10 ${
+                      errors.email ? 'border-danger-500 dark:border-danger-500' : ''
                     } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
                   />
                 </div>

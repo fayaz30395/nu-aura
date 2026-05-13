@@ -135,7 +135,7 @@ export default function LearningPathsPage() {
                 className="flex items-center gap-1 text-accent-600 hover:text-accent-700 mb-4 w-fit text-sm">
             <ArrowLeft className="h-4 w-4"/> Back to Learning
           </Link>
-          <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss mb-2">Learning Paths</h1>
+          <h1 className="text-xl font-bold text-[var(--text-primary)] mb-2">Learning Paths</h1>
           <p className="text-[var(--text-secondary)]">Structured learning journeys to develop specific skills and
             competencies</p>
         </div>
@@ -151,7 +151,7 @@ export default function LearningPathsPage() {
                 placeholder="Search learning paths..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="input-aura w-full pl-10 pr-4 py-2 border border-[var(--border-main)] rounded-lg focus:outline-none focus:border-accent-600 bg-[var(--bg-secondary)] text-[var(--text-primary)]"
+                className="input-aura w-full pl-10 pr-4 py-2 border border-[var(--border-main)] rounded-lg focus:border-accent-600 bg-[var(--bg-secondary)] text-[var(--text-primary)]"
               />
             </div>
 
@@ -161,7 +161,7 @@ export default function LearningPathsPage() {
               <select
                 value={selectedDifficulty}
                 onChange={(e) => setSelectedDifficulty(e.target.value)}
-                className="flex-1 px-4 py-2 border border-[var(--border-main)] rounded-lg focus:outline-none focus:border-accent-600 bg-[var(--bg-secondary)] text-[var(--text-primary)]"
+                className="flex-1 px-4 py-2 border border-[var(--border-main)] rounded-lg focus:border-accent-600 bg-[var(--bg-secondary)] text-[var(--text-primary)]"
               >
                 <option value="ALL">All Difficulty Levels</option>
                 <option value="BEGINNER">Beginner</option>

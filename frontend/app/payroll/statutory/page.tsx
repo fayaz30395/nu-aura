@@ -146,10 +146,10 @@ export default function StatutoryPage() {
           {/* Page header */}
           <Group justify="space-between" align="flex-start">
             <div>
-              <Title order={2} fw={600} className="skeuo-emboss">
+              <Title order={2} fw={600} className="">
                 Statutory Deduction Preview
               </Title>
-              <Text c="dimmed" size="sm" mt={4} className="skeuo-deboss">
+              <Text c="dimmed" size="sm" mt={4} className="">
                 Preview India statutory deductions (PF, ESI, Professional Tax, TDS) before
                 applying them to a payslip.
               </Text>
@@ -163,7 +163,7 @@ export default function StatutoryPage() {
             {/* Left: Input form */}
             <Grid.Col span={{base: 12, md: 5}}>
               <Card withBorder shadow="xs" radius="md" p="lg" className="skeuo-card">
-                <Title order={4} mb="md" fw={500} className="skeuo-emboss">
+                <Title order={4} mb="md" fw={500} className="">
                   Input Parameters
                 </Title>
 
@@ -258,7 +258,7 @@ export default function StatutoryPage() {
             <Grid.Col span={{base: 12, md: 7}}>
               <Card withBorder shadow="xs" radius="md" p="lg" pos="relative" className="skeuo-card">
                 <LoadingOverlay visible={loading} overlayProps={{radius: 'md', blur: 2}}/>
-                <Title order={4} mb="md" fw={500} className="skeuo-emboss">
+                <Title order={4} mb="md" fw={500} className="">
                   Deduction Breakdown
                 </Title>
 

@@ -58,10 +58,10 @@ export function TimeClockWidget({
     if (!supportsColorMix()) setUseColorMixFallback(true);
   }, []);
 
-  // --nu-lapis-blue #050766 ≈ rgb(5, 7, 102); 35% mix ≈ rgba(5, 7, 102, 0.35)
+  // --accent-primary #2563EB ≈ rgb(37, 99, 235); 32% mix ≈ rgba(37, 99, 235, 0.32)
   const clockInShadow = useColorMixFallback
-    ? '0 4px 14px rgba(5, 7, 102, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.15)' // fallback
-    : '0 4px 14px color-mix(in srgb, var(--nu-lapis-blue) 35%, transparent), inset 0 1px 0 rgba(255, 255, 255, 0.15)';
+    ? '0 4px 14px rgba(37, 99, 235, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.15)' // fallback
+    : '0 4px 14px color-mix(in srgb, var(--accent-primary) 32%, transparent), inset 0 1px 0 rgba(255, 255, 255, 0.15)';
 
   useEffect(() => {
     const updateTime = () => {

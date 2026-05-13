@@ -96,10 +96,10 @@ export default function OnboardingPage() {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="space-y-2">
-            <h1 className="text-2xl font-black tracking-tight text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-2xl font-black tracking-tight text-[var(--text-primary)]">
               Talent <span className="text-accent-700">Onboarding</span>
             </h1>
-            <p className="text-[var(--text-muted)] font-bold max-w-md skeuo-deboss">
+            <p className="text-[var(--text-muted)] font-bold max-w-md">
               Orchestrate the first 90 days of your new joiners with precision and care.
             </p>
           </div>
@@ -146,8 +146,8 @@ export default function OnboardingPage() {
                     <TrendingUp className="h-3.5 w-3.5 text-success-500"/>
                   </div>
                   <p
-                    className="text-2xs font-black uppercase tracking-widest text-[var(--text-muted)] mb-0.5 skeuo-deboss">{stat.label}</p>
-                  <p className="text-2xl font-black text-[var(--text-primary)] skeuo-emboss">{stat.value}</p>
+                    className="text-2xs font-black uppercase tracking-widest text-[var(--text-muted)] mb-0.5">{stat.label}</p>
+                  <p className="text-2xl font-black text-[var(--text-primary)]">{stat.value}</p>
                 </CardContent>
               </Card>
             </motion.div>
@@ -241,7 +241,7 @@ export default function OnboardingPage() {
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
                         <div className="flex items-center gap-6">
                           <div
-                            className="w-16 h-16 rounded-3xl bg-gradient-to-br from-accent-500/20 to-accent-600/20 flex items-center justify-center text-accent-700 dark:text-accent-400 font-black text-2xl shadow-inner border border-white/20">
+                            className="w-16 h-16 rounded-3xl bg-accent-100 dark:bg-accent-500/10 flex items-center justify-center text-accent-700 dark:text-accent-400 font-black text-2xl">
                             {process.employeeName?.charAt(0) || 'U'}
                           </div>
                           <div>

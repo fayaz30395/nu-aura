@@ -69,7 +69,7 @@ export function OnLeaveTodayCard() {
 
   return (
     <div className="skeuo-card rounded-lg border border-[var(--border-main)] p-4">
-      <h3 className="skeuo-emboss text-sm font-semibold text-[var(--text-primary)] mb-4">
+      <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-4">
         On Leave Today
       </h3>
 
@@ -113,7 +113,7 @@ export function WorkingRemotelyCard() {
 
   return (
     <div className="skeuo-card rounded-lg border border-[var(--border-main)] p-4">
-      <h3 className="skeuo-emboss text-sm font-semibold text-[var(--text-primary)] mb-4">
+      <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-4">
         Working Remotely
       </h3>
 

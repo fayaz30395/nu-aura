@@ -225,10 +225,10 @@ export default function MyDocumentsPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-xl font-bold text-[var(--text-primary)]">
               Document Requests
             </h1>
-            <p className="text-[var(--text-muted)] mt-1 skeuo-deboss">
+            <p className="text-[var(--text-muted)] mt-1">
               Request official documents and track their status
             </p>
           </div>

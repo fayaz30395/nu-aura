@@ -101,11 +101,11 @@ export default function LinkedInPostsPage() {
           >
             <div className="row-between">
               <div>
-                <h1 className="text-xl font-bold skeuo-emboss">
+                <h1 className="text-xl font-bold">
                   <Linkedin className="w-8 h-8 text-accent-600"/>
                   LinkedIn Posts
                 </h1>
-                <p className="text-[var(--text-secondary)] mt-2 skeuo-deboss">
+                <p className="text-[var(--text-secondary)] mt-2">
                   Curate and manage LinkedIn posts for your company feed
                 </p>
               </div>

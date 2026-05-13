@@ -225,10 +225,10 @@ export default function SurveysPage() {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-xl font-bold text-[var(--text-primary)]">
               Employee Surveys
             </h1>
-            <p className="text-[var(--text-secondary)] skeuo-deboss">
+            <p className="text-[var(--text-secondary)]">
               Create and manage employee surveys and feedback collection
             </p>
           </div>
@@ -249,8 +249,8 @@ export default function SurveysPage() {
                   <ClipboardList className="h-6 w-6 text-accent-600 dark:text-accent-400"/>
                 </div>
                 <div>
-                  <p className="text-body-secondary skeuo-deboss">Total Surveys</p>
-                  <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.total}</p>
+                  <p className="text-body-secondary">Total Surveys</p>
+                  <p className="text-xl font-bold text-[var(--text-primary)]">{stats.total}</p>
                 </div>
               </div>
             </CardContent>
@@ -262,8 +262,8 @@ export default function SurveysPage() {
                   <Play className="h-6 w-6 text-success-600 dark:text-success-400"/>
                 </div>
                 <div>
-                  <p className="text-body-secondary skeuo-deboss">Active</p>
-                  <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.active}</p>
+                  <p className="text-body-secondary">Active</p>
+                  <p className="text-xl font-bold text-[var(--text-primary)]">{stats.active}</p>
                 </div>
               </div>
             </CardContent>
@@ -275,8 +275,8 @@ export default function SurveysPage() {
                   <FileText className="h-6 w-6 text-[var(--text-secondary)]"/>
                 </div>
                 <div>
-                  <p className="text-body-secondary skeuo-deboss">Drafts</p>
-                  <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.draft}</p>
+                  <p className="text-body-secondary">Drafts</p>
+                  <p className="text-xl font-bold text-[var(--text-primary)]">{stats.draft}</p>
                 </div>
               </div>
             </CardContent>
@@ -288,8 +288,8 @@ export default function SurveysPage() {
                   <CheckCircle className="h-6 w-6 text-accent-800 dark:text-accent-600"/>
                 </div>
                 <div>
-                  <p className="text-body-secondary skeuo-deboss">Completed</p>
-                  <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.completed}</p>
+                  <p className="text-body-secondary">Completed</p>
+                  <p className="text-xl font-bold text-[var(--text-primary)]">{stats.completed}</p>
                 </div>
               </div>
             </CardContent>
@@ -301,8 +301,8 @@ export default function SurveysPage() {
                   <Users className="h-6 w-6 text-warning-600 dark:text-warning-400"/>
                 </div>
                 <div>
-                  <p className="text-body-secondary skeuo-deboss">Total Responses</p>
-                  <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.totalResponses}</p>
+                  <p className="text-body-secondary">Total Responses</p>
+                  <p className="text-xl font-bold text-[var(--text-primary)]">{stats.totalResponses}</p>
                 </div>
               </div>
             </CardContent>

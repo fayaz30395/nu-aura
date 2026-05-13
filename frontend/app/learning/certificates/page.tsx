@@ -18,6 +18,7 @@ import {
   Share2,
 } from 'lucide-react';
 import {AppLayout} from '@/components/layout';
+import {Stat} from '@/components/ui/Stat';
 import {apiClient} from '@/lib/api/client';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {useToast} from '@/components/notifications/ToastProvider';
@@ -144,7 +145,7 @@ export default function CertificateGalleryPage() {
                 className="flex items-center gap-1 text-accent-600 hover:text-accent-700 mb-4 w-fit text-sm">
             <ArrowLeft className="h-4 w-4"/> Back to Learning
           </Link>
-          <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss mb-2">My Certificates</h1>
+          <h1 className="text-xl font-bold text-[var(--text-primary)] mb-2">My Certificates</h1>
           <p className="text-[var(--text-secondary)]">Collection of all earned certificates and credentials</p>
         </div>
 
@@ -152,20 +153,21 @@ export default function CertificateGalleryPage() {
         {!isLoading && certificates.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
             <div className="skeuo-card bg-[var(--bg-input)] rounded-lg shadow-[var(--shadow-elevated)] p-6">
-              <div className="text-3xl font-bold text-accent-600 dark:text-accent-400">{certificates.length}</div>
-              <div className="text-[var(--text-secondary)] text-sm">Total Certificates</div>
+              <Stat label="Total Certificates" value={certificates.length} tone="accent" />
             </div>
             <div className="skeuo-card bg-[var(--bg-input)] rounded-lg shadow-[var(--shadow-elevated)] p-6">
-              <div className="text-3xl font-bold text-success-600 dark:text-success-400">
-                {certificates.filter(c => c.isActive).length}
-              </div>
-              <div className="text-[var(--text-secondary)] text-sm">Active Credentials</div>
+              <Stat
+                label="Active Credentials"
+                value={certificates.filter(c => c.isActive).length}
+                tone="success"
+              />
             </div>
             <div className="skeuo-card bg-[var(--bg-input)] rounded-lg shadow-[var(--shadow-elevated)] p-6">
-              <div className="text-3xl font-bold text-warning-600 dark:text-warning-400">
-                {certificates.reduce((sum, c) => sum + (c.scoreAchieved || 0), 0) / Math.max(certificates.length, 1) | 0}%
-              </div>
-              <div className="text-[var(--text-secondary)] text-sm">Average Score</div>
+              <Stat
+                label="Average Score"
+                value={`${certificates.reduce((sum, c) => sum + (c.scoreAchieved || 0), 0) / Math.max(certificates.length, 1) | 0}%`}
+                tone="warning"
+              />
             </div>
           </div>
         )}
@@ -181,7 +183,7 @@ export default function CertificateGalleryPage() {
                 placeholder="Search by course name or certificate number..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="input-aura w-full pl-10 pr-4 py-2 border border-[var(--border-main)] rounded-lg focus:outline-none focus:border-accent-600 dark:bg-[var(--bg-secondary)] dark:text-white"
+                className="input-aura w-full pl-10 pr-4 py-2 border border-[var(--border-main)] rounded-lg focus:border-accent-600 dark:bg-[var(--bg-secondary)] dark:text-white"
               />
             </div>
 
@@ -191,7 +193,7 @@ export default function CertificateGalleryPage() {
               <select
                 value={dateFilter}
                 onChange={(e) => setDateFilter(e.target.value)}
-                className="flex-1 px-4 py-2 border border-[var(--border-main)] rounded-lg focus:outline-none focus:border-accent-600 dark:bg-[var(--bg-secondary)] dark:text-white"
+                className="flex-1 px-4 py-2 border border-[var(--border-main)] rounded-lg focus:border-accent-600 dark:bg-[var(--bg-secondary)] dark:text-white"
               >
                 <option value="ALL">All Time</option>
                 <option value="LAST_30">Last 30 Days</option>
@@ -216,7 +218,7 @@ export default function CertificateGalleryPage() {
             {filteredCerts.map((cert) => (
               <div
                 key={cert.id}
-                className="bg-gradient-to-br from-accent-50 to-accent-250 dark:from-surface-700 dark:to-surface-800 rounded-lg shadow-[var(--shadow-elevated)] overflow-hidden hover:shadow-[var(--shadow-dropdown)] transition-shadow border-l-4 border-warning-500"
+                className="bg-[var(--bg-card)] rounded-lg shadow-[var(--shadow-card)] overflow-hidden hover:shadow-[var(--shadow-card-hover)] transition-shadow border border-warning-200 dark:border-warning-800"
               >
                 {/* Header */}
                 <div className="p-6">

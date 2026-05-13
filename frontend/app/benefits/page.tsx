@@ -414,10 +414,10 @@ export default function BenefitsPage() {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-xl font-bold text-[var(--text-primary)]">
               Benefits Management
             </h1>
-            <p className="text-[var(--text-secondary)] skeuo-deboss">
+            <p className="text-[var(--text-secondary)]">
               View and manage your employee benefits enrollment
             </p>
           </div>
@@ -438,8 +438,8 @@ export default function BenefitsPage() {
                   <CheckCircle className="h-6 w-6 text-success-600 dark:text-success-400"/>
                 </div>
                 <div>
-                  <p className="text-body-secondary skeuo-deboss">Enrolled Plans</p>
-                  <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.totalEnrolled}</p>
+                  <p className="text-body-secondary">Enrolled Plans</p>
+                  <p className="text-xl font-bold text-[var(--text-primary)]">{stats.totalEnrolled}</p>
                 </div>
               </div>
             </CardContent>
@@ -451,9 +451,9 @@ export default function BenefitsPage() {
                   <IndianRupee className="h-6 w-6 text-accent-600 dark:text-accent-400"/>
                 </div>
                 <div>
-                  <p className="text-body-secondary skeuo-deboss">Monthly Premium</p>
+                  <p className="text-body-secondary">Monthly Premium</p>
                   <p
-                    className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{formatINR(stats.monthlyPremium)}</p>
+                    className="text-xl font-bold text-[var(--text-primary)]">{formatINR(stats.monthlyPremium)}</p>
                 </div>
               </div>
             </CardContent>
@@ -465,8 +465,8 @@ export default function BenefitsPage() {
                   <Gift className="h-6 w-6 text-accent-700 dark:text-accent-600"/>
                 </div>
                 <div>
-                  <p className="text-body-secondary skeuo-deboss">Available Plans</p>
-                  <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.availablePlans}</p>
+                  <p className="text-body-secondary">Available Plans</p>
+                  <p className="text-xl font-bold text-[var(--text-primary)]">{stats.availablePlans}</p>
                 </div>
               </div>
             </CardContent>
@@ -478,8 +478,8 @@ export default function BenefitsPage() {
                   <Shield className="h-6 w-6 text-warning-600 dark:text-warning-400"/>
                 </div>
                 <div>
-                  <p className="text-body-secondary skeuo-deboss">Total Coverage</p>
-                  <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
+                  <p className="text-body-secondary">Total Coverage</p>
+                  <p className="text-xl font-bold text-[var(--text-primary)]">
                     {formatINR(stats.totalCoverage)}
                   </p>
                 </div>
@@ -493,8 +493,8 @@ export default function BenefitsPage() {
                   <CreditCard className="h-6 w-6 text-accent-600 dark:text-accent-400"/>
                 </div>
                 <div>
-                  <p className="text-body-secondary skeuo-deboss">Flex Credits</p>
-                  <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
+                  <p className="text-body-secondary">Flex Credits</p>
+                  <p className="text-xl font-bold text-[var(--text-primary)]">
                     {formatINR(stats.flexCredits)}
                   </p>
                 </div>
@@ -791,7 +791,7 @@ export default function BenefitsPage() {
                         )}
                       </div>
                       <div className="text-right">
-                        <div className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
+                        <div className="text-xl font-bold text-[var(--text-primary)]">
                           {formatINR(claim.claimAmount)}
                         </div>
                       </div>
@@ -853,14 +853,14 @@ export default function BenefitsPage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="p-4 skeuo-card rounded-lg">
-                    <p className="text-body-muted skeuo-deboss">Monthly Premium</p>
-                    <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
+                    <p className="text-body-muted">Monthly Premium</p>
+                    <p className="text-xl font-bold text-[var(--text-primary)]">
                       {formatINR(selectedBenefit.monthlyPremium)}
                     </p>
                   </div>
                   <div className="p-4 skeuo-card rounded-lg">
-                    <p className="text-body-muted skeuo-deboss">Coverage Amount</p>
-                    <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
+                    <p className="text-body-muted">Coverage Amount</p>
+                    <p className="text-xl font-bold text-[var(--text-primary)]">
                       {formatINR(selectedBenefit.coverage)}
                     </p>
                   </div>

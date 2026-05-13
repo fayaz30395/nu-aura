@@ -6,6 +6,7 @@ import {AnimatePresence, motion} from 'framer-motion';
 import {BarChart3, Calendar, Eye, FileText, Heart, MessageCircle, Pen, Plus, RefreshCw, Star,} from 'lucide-react';
 import {AppLayout} from '@/components/layout';
 import {Button} from '@/components/ui/Button';
+import {Stat} from '@/components/ui/Stat';
 import {useFluenceFavorites, useMyBlogPosts, useMyWikiPages,} from '@/lib/hooks/queries/useFluence';
 import type {BlogPost, FluenceFavorite, WikiPage} from '@/lib/types/platform/fluence';
 import {card, iconSize, layout, motion as dsMotion, typography} from '@/lib/theme/design-system';
@@ -211,11 +212,13 @@ interface StatCardProps {
 }
 
 function StatCard({icon: Icon, label, value, iconColor}: StatCardProps) {
-  const colorMap = {
+  const iconBoxColor = {
     violet: 'bg-accent-100 dark:bg-accent-950 text-accent-600 dark:text-accent-400',
     amber: 'bg-warning-100 dark:bg-warning-950 text-warning-600 dark:text-warning-400',
     yellow: 'bg-warning-100 dark:bg-warning-950 text-warning-600 dark:text-warning-400',
   };
+
+  const tone: 'accent' | 'warning' = iconColor === 'violet' ? 'accent' : 'warning';
 
   return (
     <motion.div
@@ -223,14 +226,11 @@ function StatCard({icon: Icon, label, value, iconColor}: StatCardProps) {
       whileHover={{y: -2}}
       transition={{duration: 0.2}}
     >
-      <div className={`${colorMap[iconColor]} rounded-lg p-4 flex-shrink-0`}>
+      <div className={`${iconBoxColor[iconColor]} rounded-lg p-4 flex-shrink-0`}>
         <Icon className={iconSize.statCard}/>
       </div>
       <div className="flex-1 min-w-0">
-        <p className={typography.caption}>{label}</p>
-        <p className="text-3xl font-bold tabular-nums text-[var(--text-primary)] mt-1">
-          {value}
-        </p>
+        <Stat label={label} value={value} tone={tone}/>
       </div>
     </motion.div>
   );

@@ -288,7 +288,7 @@ export default function OKRPage() {
       <div className="p-6 max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-6">
           <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">OKR Management</h1>
+            <h1 className="text-xl font-bold text-[var(--text-primary)]">OKR Management</h1>
             <p className="text-body-muted mt-1">
               Objectives and Key Results tracking
             </p>
@@ -365,7 +365,7 @@ export default function OKRPage() {
         {/* Objectives List */}
         <div className="space-y-4">
           {filteredObjectives.length === 0 ? (
-            <div className="text-center py-12 bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)]">
+            <div className="card-aura text-center py-12">
               <Flag className="mx-auto h-12 w-12 text-[var(--text-muted)]"/>
               <h3 className="mt-2 text-sm font-medium text-[var(--text-primary)]">No objectives</h3>
               <p className="mt-1 text-body-muted">
@@ -376,7 +376,7 @@ export default function OKRPage() {
             filteredObjectives.map((objective: Objective) => (
               <div
                 key={objective.id}
-                className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] shadow-[var(--shadow-card)] overflow-hidden"
+                className="card-aura overflow-hidden"
               >
                 {/* Objective Header */}
                 <div className="p-4">
@@ -424,7 +424,7 @@ export default function OKRPage() {
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="text-right mr-4">
-                        <div className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
+                        <div className="text-xl font-bold text-[var(--text-primary)]">
                           {objective.progressPercentage}%
                         </div>
                         <div className="w-24 h-2 bg-[var(--border-main)] rounded-full overflow-hidden">
@@ -482,7 +482,7 @@ export default function OKRPage() {
                         {objective.keyResults.map((kr: KeyResult) => (
                           <div
                             key={kr.id}
-                            className="bg-[var(--bg-card)] rounded-md border border-[var(--border-main)] p-4"
+                            className="panel-inset p-4"
                           >
                             <div className="flex items-start justify-between">
                               <div className="flex items-start gap-2 flex-1">

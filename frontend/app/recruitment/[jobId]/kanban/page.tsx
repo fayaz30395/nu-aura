@@ -506,7 +506,7 @@ export default function KanbanPage() {
                 <IconArrowLeft size={18}/>
               </ActionIcon>
               <div>
-                <Title order={3} className="skeuo-emboss">Recruitment Pipeline</Title>
+                <Title order={3} className="">Recruitment Pipeline</Title>
                 <Text size="sm" c="dimmed">
                   Drag candidates between stages or use arrows to move forward / backward
                 </Text>

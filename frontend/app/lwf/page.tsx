@@ -271,7 +271,7 @@ export default function LWFPage() {
       <Container size="xl" py="lg">
         <Group justify="space-between" mb="sm">
           <div>
-            <Title order={2} className="skeuo-emboss">Labour Welfare Fund (LWF)</Title>
+            <Title order={2} className="">Labour Welfare Fund (LWF)</Title>
             <Text c="dimmed" mt={4}>
               Manage state-wise LWF configurations and track deductions for statutory compliance.
             </Text>

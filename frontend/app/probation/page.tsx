@@ -437,10 +437,10 @@ export default function ProbationPage() {
       >
         {/* Header */}
         <div>
-          <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
+          <h1 className="text-xl font-bold text-[var(--text-primary)]">
             Probation Management
           </h1>
-          <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">
+          <p className="text-[var(--text-secondary)] mt-1">
             Track probation periods, reviews, and confirmations
           </p>
         </div>
@@ -490,7 +490,7 @@ export default function ProbationPage() {
                   </div>
                   <div>
                     <p className="text-xs text-[var(--text-secondary)]">{stat.label}</p>
-                    <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
+                    <p className="text-xl font-bold text-[var(--text-primary)]">
                       {stat.value}
                     </p>
                   </div>
@@ -611,7 +611,7 @@ export default function ProbationPage() {
                   className="bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-6 space-y-6 skeuo-card"
                 >
                   <div>
-                    <h2 className="text-xl font-semibold text-[var(--text-primary)] skeuo-emboss">
+                    <h2 className="text-xl font-semibold text-[var(--text-primary)]">
                       Evaluation for {evaluateTarget.employeeName}
                     </h2>
                     <p className="text-body-secondary mt-1">

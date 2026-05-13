@@ -252,8 +252,8 @@ export default function DepartmentsPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">Departments</h1>
-            <p className="text-[var(--text-muted)] mt-1 skeuo-deboss">
+            <h1 className="text-xl font-bold text-[var(--text-primary)]">Departments</h1>
+            <p className="text-[var(--text-muted)] mt-1">
               Manage your organization&apos;s departments and structure
             </p>
           </div>
@@ -276,8 +276,8 @@ export default function DepartmentsPage() {
             <CardContent className="p-6">
               <div className="row-between">
                 <div>
-                  <p className="text-sm font-medium text-[var(--text-muted)] skeuo-deboss">Total Departments</p>
-                  <p className="text-xl font-bold skeuo-emboss">{departments.length}</p>
+                  <p className="text-sm font-medium text-[var(--text-muted)]">Total Departments</p>
+                  <p className="text-xl font-bold">{departments.length}</p>
                 </div>
                 <div
                   className="w-12 h-12 rounded-xl bg-accent-50 dark:bg-accent-950/30 flex items-center justify-center">
@@ -291,8 +291,8 @@ export default function DepartmentsPage() {
             <CardContent className="p-6">
               <div className="row-between">
                 <div>
-                  <p className="text-sm font-medium text-[var(--text-muted)] skeuo-deboss">Active Departments</p>
-                  <p className="text-xl font-bold skeuo-emboss">{activeDepartments}</p>
+                  <p className="text-sm font-medium text-[var(--text-muted)]">Active Departments</p>
+                  <p className="text-xl font-bold">{activeDepartments}</p>
                 </div>
                 <div
                   className="w-12 h-12 rounded-xl bg-success-50 dark:bg-success-950/30 flex items-center justify-center">
@@ -306,8 +306,8 @@ export default function DepartmentsPage() {
             <CardContent className="p-6">
               <div className="row-between">
                 <div>
-                  <p className="text-sm font-medium text-[var(--text-muted)] skeuo-deboss">Total Employees</p>
-                  <p className="text-xl font-bold skeuo-emboss">{totalEmployees}</p>
+                  <p className="text-sm font-medium text-[var(--text-muted)]">Total Employees</p>
+                  <p className="text-xl font-bold">{totalEmployees}</p>
                 </div>
                 <div
                   className="w-12 h-12 rounded-xl bg-accent-50 dark:bg-accent-950/30 flex items-center justify-center">

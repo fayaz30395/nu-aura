@@ -190,7 +190,7 @@ function WallPageContent() {
         <div className="flex items-center gap-4 mb-6">
           <IconActivity size={28} className="text-[var(--text-primary)]" aria-hidden="true"/>
           <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-xl font-bold text-[var(--text-primary)]">
               Activity Wall
             </h1>
             <p className="text-body-muted">

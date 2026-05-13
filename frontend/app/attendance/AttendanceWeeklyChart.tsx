@@ -107,8 +107,8 @@ export const AttendanceWeeklyChart = memo(function AttendanceWeeklyChart({
         <div className="row-between">
           <CardTitle className="flex items-center gap-2 text-card-title text-[var(--text-primary)]">
             <div
-              className="h-8 w-8 rounded-lg bg-gradient-to-br from-accent-500 to-accent-700 flex items-center justify-center shadow-[var(--shadow-card)]">
-              <BarChart3 className="h-4 w-4 text-white"/>
+              className="h-8 w-8 rounded-lg bg-accent-100 dark:bg-accent-500/10 text-accent-600 dark:text-accent-400 flex items-center justify-center">
+              <BarChart3 className="h-4 w-4"/>
             </div>
             Weekly Overview
           </CardTitle>

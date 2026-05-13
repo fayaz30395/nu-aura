@@ -10,6 +10,7 @@ import {useActiveShiftDefinitions, useTeamSchedule} from '@/lib/hooks/queries/us
 import {SkeletonTable} from '@/components/ui/Skeleton';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {ScheduleEntry} from '@/lib/types/hrms/shift';
+import {CATEGORICAL_UNSET} from '@/lib/utils/categoricalPalette';
 import {ArrowLeftRight, Calendar, CalendarDays, ChevronLeft, ChevronRight, List, Settings, Users,} from 'lucide-react';
 import {motion} from 'framer-motion';
 
@@ -149,7 +150,7 @@ export default function ShiftDashboardPage() {
                 <div key={shift.id} className="flex items-center gap-1.5">
                   <div
                     className="w-3 h-3 rounded-full"
-                    style={{backgroundColor: shift.colorCode || '#6B7280'}}
+                    style={{backgroundColor: shift.colorCode || CATEGORICAL_UNSET}}
                   />
                   <span className="text-xs text-surface-600 dark:text-surface-300">
                     {shift.shiftCode} ({formatTime(shift.startTime)}-{formatTime(shift.endTime)})
@@ -250,7 +251,7 @@ export default function ShiftDashboardPage() {
                             <div
                               className="inline-flex flex-col items-center px-2 py-1 rounded-lg text-white text-xs font-medium"
                               style={{
-                                backgroundColor: entry.colorCode || '#6B7280',
+                                backgroundColor: entry.colorCode || CATEGORICAL_UNSET,
                               }}
                             >
                               <span>{entry.shiftCode}</span>

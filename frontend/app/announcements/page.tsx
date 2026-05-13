@@ -252,11 +252,11 @@ export default function AnnouncementsPage() {
           >
             <div className="row-between">
               <div>
-                <h1 className="text-xl font-bold skeuo-emboss">
+                <h1 className="text-xl font-bold">
                   <Megaphone className="w-8 h-8 text-accent-700"/>
                   Announcements
                 </h1>
-                <p className="text-[var(--text-secondary)] mt-2 skeuo-deboss">
+                <p className="text-[var(--text-secondary)] mt-2">
                   Stay updated with company news and important updates
                 </p>
               </div>
@@ -346,7 +346,7 @@ export default function AnnouncementsPage() {
             initial={{opacity: 0, y: 20}}
             animate={{opacity: 1, y: 0}}
             transition={{delay: 0.2}}
-            className="skeuo-card p-4 mb-6"
+            className="card-aura p-4 mb-6"
           >
             <div className="space-y-4">
               {/* Line 1: Search */}
@@ -423,7 +423,7 @@ export default function AnnouncementsPage() {
                       animate={{opacity: 1, y: 0}}
                       transition={{delay: index * 0.05}}
                       onClick={() => handleAnnouncementClick(announcement)}
-                      className={`bg-[var(--bg-card)] rounded-xl shadow-[var(--shadow-card)] p-6 cursor-pointer hover:shadow-[var(--shadow-dropdown)] transition-all group border-l-4 ${
+                      className={`card-interactive p-6 cursor-pointer group border-l-4 ${
                         announcement.isRead
                           ? 'border-l-[var(--border-main)]'
                           : 'border-l-accent-600'

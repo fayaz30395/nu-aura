@@ -16,15 +16,15 @@ export default function SettingsProfilePage() {
     <AppLayout>
       <div className="max-w-4xl mx-auto p-6 space-y-6">
         <div>
-          <h1 className="text-xl font-bold text-foreground skeuo-emboss">Profile Settings</h1>
-          <p className="text-muted-foreground mt-1 skeuo-deboss">
+          <h1 className="text-xl font-bold text-foreground">Profile Settings</h1>
+          <p className="text-muted-foreground mt-1">
             Manage your personal profile and account preferences
           </p>
         </div>
 
         <Card className="skeuo-card">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 skeuo-emboss">
+            <CardTitle className="flex items-center gap-2">
               <User className="h-5 w-5"/>
               Your Profile
             </CardTitle>

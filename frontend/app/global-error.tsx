@@ -67,11 +67,11 @@ export default function GlobalError({error, reset}: GlobalErrorProps) {
     title: {
       fontSize: '1.5rem',
       fontWeight: '700',
-      color: '#050766',
+      color: '#0e1225',
       margin: '0 0 0.5rem',
     },
     description: {
-      color: '#3E616A',
+      color: '#4e5270',
       margin: '0 0 1.5rem',
       lineHeight: '1.6',
     },
@@ -119,8 +119,8 @@ export default function GlobalError({error, reset}: GlobalErrorProps) {
     secondaryButton: {
       width: '100%',
       padding: '0.75rem 1rem',
-      backgroundColor: '#d4d4f7',
-      color: '#050766',
+      backgroundColor: '#eff6ff',
+      color: '#1d4ed8',
       border: '2px solid transparent',
       borderRadius: '0.5rem',
       fontSize: '0.875rem',
@@ -192,7 +192,7 @@ export default function GlobalError({error, reset}: GlobalErrorProps) {
             <p
               style={{
                 fontSize: '0.75rem',
-                color: '#3E616A',
+                color: '#4e5270',
                 margin: '0 0 0.25rem',
               }}
             >
@@ -202,7 +202,7 @@ export default function GlobalError({error, reset}: GlobalErrorProps) {
               style={{
                 fontSize: '0.875rem',
                 fontFamily: 'monospace',
-                color: '#050766',
+                color: '#1c2033',
                 margin: 0,
               }}
             >
@@ -239,10 +239,10 @@ export default function GlobalError({error, reset}: GlobalErrorProps) {
             }}
             style={styles.secondaryButton}
             onMouseOver={(e) => {
-              e.currentTarget.style.backgroundColor = '#d4d4f7';
+              e.currentTarget.style.backgroundColor = '#dbeafe';
             }}
             onMouseOut={(e) => {
-              e.currentTarget.style.backgroundColor = '#d4d4f7';
+              e.currentTarget.style.backgroundColor = '#eff6ff';
             }}
             onFocus={(e) => {
               e.currentTarget.style.borderColor = 'var(--ring-primary)';

@@ -81,10 +81,10 @@ export default function CreateSalaryStructurePage() {
                     Back
                   </button>
                 </Group>
-                <Title order={2} fw={600} className="skeuo-emboss">
+                <Title order={2} fw={600} className="">
                   Create Salary Structure
                 </Title>
-                <Text c="dimmed" size="sm" mt={4} className="skeuo-deboss">
+                <Text c="dimmed" size="sm" mt={4} className="">
                   Define a salary structure for an employee with base salary and effective date.
                 </Text>
               </div>

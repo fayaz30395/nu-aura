@@ -371,8 +371,8 @@ export default function ReportsPage() {
           className="row-between"
         >
           <div>
-            <h1 className="text-xl font-bold skeuo-emboss">Reports</h1>
-            <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">
+            <h1 className="text-xl font-bold">Reports</h1>
+            <p className="text-[var(--text-secondary)] mt-1">
               Generate and download various HR reports in Excel or PDF format
             </p>
           </div>

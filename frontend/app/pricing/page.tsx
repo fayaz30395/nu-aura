@@ -238,18 +238,18 @@ export default function PricingPage() {
                   variant={plan.popular ? 'elevated' : 'default'}
                   padding="lg"
                   className={`h-full ${
-                    plan.popular ? 'ring-2 ring-accent-500/50 scale-105' : ''
+                    plan.popular ? 'ring-2 ring-accent-500/50' : ''
                   }`}
                 >
                   <CardHeader className="pb-6">
                     <div
-                      className={`w-12 h-12 rounded-xl bg-gradient-to-br ${
+                      className={`w-12 h-12 rounded-xl ${
                         plan.popular
-                          ? 'from-accent-500 to-accent-700'
-                          : 'from-surface-600 to-surface-700'
+                          ? 'bg-accent-100 dark:bg-accent-500/10 text-accent-600 dark:text-accent-400'
+                          : 'bg-[var(--bg-card-hover)] text-[var(--text-secondary)]'
                       } flex items-center justify-center mb-4`}
                     >
-                      <plan.icon className="h-6 w-6 text-white"/>
+                      <plan.icon className="h-6 w-6"/>
                     </div>
                     <CardTitle className="text-2xl">{plan.name}</CardTitle>
                     <p className="text-body-muted">{plan.description}</p>
@@ -265,13 +265,14 @@ export default function PricingPage() {
                             <span className="text-[var(--text-muted)]">/user/month</span>
                           </div>
                           {billingCycle === 'annual' && (
-                            <p className="text-sm text-success-600 dark:text-success-400 mt-1">
+                            <p className="text-sm text-success-600 dark:text-success-400 mt-1 inline-flex items-center gap-1">
+                              <Check className="h-3 w-3"/>
                               Billed annually
                             </p>
                           )}
                         </>
                       ) : (
-                        <div className="text-xl font-bold skeuo-emboss">
+                        <div className="text-xl font-bold">
                           Custom
                         </div>
                       )}
@@ -341,7 +342,7 @@ export default function PricingPage() {
                   <div className="flex items-baseline gap-1">
                     {typeof addon.price === 'number' ? (
                       <>
-                        <span className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
+                        <span className="text-xl font-bold text-[var(--text-primary)]">
                           ${addon.price}
                         </span>
                         <span className="text-body-muted">/user/month</span>

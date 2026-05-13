@@ -621,10 +621,10 @@ export default function WellnessAdminPage() {
           {/* Header */}
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
+              <h1 className="text-xl font-bold text-[var(--text-primary)]">
                 Wellness Admin
               </h1>
-              <p className="text-[var(--text-secondary)] skeuo-deboss text-sm mt-1">
+              <p className="text-[var(--text-secondary)] text-sm mt-1">
                 Create and manage wellness programs and challenges
               </p>
             </div>
@@ -665,7 +665,7 @@ export default function WellnessAdminPage() {
                 </div>
                 <div>
                   <p className="text-caption">Active Programs</p>
-                  <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{programs.length}</p>
+                  <p className="text-xl font-bold text-[var(--text-primary)]">{programs.length}</p>
                 </div>
               </CardContent>
             </Card>
@@ -677,7 +677,7 @@ export default function WellnessAdminPage() {
                 <div>
                   <p className="text-caption">Active Challenges</p>
                   <p
-                    className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{activeChallenges.length}</p>
+                    className="text-xl font-bold text-[var(--text-primary)]">{activeChallenges.length}</p>
                 </div>
               </CardContent>
             </Card>
@@ -689,7 +689,7 @@ export default function WellnessAdminPage() {
                 <div>
                   <p className="text-caption">Upcoming Challenges</p>
                   <p
-                    className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{upcomingChallenges.length}</p>
+                    className="text-xl font-bold text-[var(--text-primary)]">{upcomingChallenges.length}</p>
                 </div>
               </CardContent>
             </Card>

@@ -1116,7 +1116,7 @@ export default function EmployeeDetailPage() {
         {/* ── DELETE CONFIRMATION MODAL ─────────────────────────────── */}
         {showDeleteModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg max-w-md w-full p-6">
+            <div className="card-elevated max-w-md w-full p-6">
               <div className="flex items-center mb-4">
                 <div
                   className="flex-shrink-0 h-12 w-12 rounded-full bg-danger-100 dark:bg-danger-900/30 flex items-center justify-center">

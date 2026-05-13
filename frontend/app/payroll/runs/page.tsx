@@ -176,8 +176,8 @@ export default function PayrollRunsPage() {
           <div className="max-w-7xl mx-auto">
             {/* Header */}
             <div className="mb-8">
-              <h1 className="text-xl font-bold skeuo-emboss">Payroll Runs</h1>
-              <p className="text-[var(--text-secondary)] mt-2 skeuo-deboss">Create and manage payroll processing
+              <h1 className="text-xl font-bold">Payroll Runs</h1>
+              <p className="text-[var(--text-secondary)] mt-2">Create and manage payroll processing
                 runs</p>
             </div>
 

@@ -24,6 +24,7 @@ import {
 import {AppLayout} from '@/components/layout';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
+import {Stat} from '@/components/ui/Stat';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {useOrganizationTrends, usePredictiveDashboard} from '@/lib/hooks/queries/usePredictiveAnalytics';
@@ -642,10 +643,10 @@ export default function PredictiveAnalyticsPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl sm:text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-2xl sm:text-xl font-bold text-[var(--text-primary)]">
               Predictive Analytics
             </h1>
-            <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">
+            <p className="text-[var(--text-secondary)] mt-1">
               AI-powered workforce insights and predictions
             </p>
           </div>
@@ -723,24 +724,29 @@ export default function PredictiveAnalyticsPage() {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
               <Card>
-                <CardContent className="p-4 text-center">
-                  <p
-                    className="text-3xl font-bold text-[var(--text-primary)]">{attritionSummary.avgRiskScore?.toFixed(1) ?? '-'}</p>
-                  <p className="text-body-muted">Avg Risk Score</p>
+                <CardContent className="p-4">
+                  <Stat
+                    label="Avg Risk Score"
+                    value={attritionSummary.avgRiskScore?.toFixed(1) ?? '-'}
+                  />
                 </CardContent>
               </Card>
               <Card>
-                <CardContent className="p-4 text-center">
-                  <p
-                    className="text-3xl font-bold text-danger-600">{attritionSummary.predictedAttritionRate?.toFixed(1) ?? '-'}%</p>
-                  <p className="text-body-muted">Predicted Attrition Rate</p>
+                <CardContent className="p-4">
+                  <Stat
+                    label="Predicted Attrition Rate"
+                    value={`${attritionSummary.predictedAttritionRate?.toFixed(1) ?? '-'}%`}
+                    tone="danger"
+                  />
                 </CardContent>
               </Card>
               <Card>
-                <CardContent className="p-4 text-center">
-                  <p
-                    className="text-3xl font-bold text-accent-600">{attritionSummary.totalEmployees?.toLocaleString() ?? '-'}</p>
-                  <p className="text-body-muted">Total Employees Analyzed</p>
+                <CardContent className="p-4">
+                  <Stat
+                    label="Total Employees Analyzed"
+                    value={attritionSummary.totalEmployees?.toLocaleString() ?? '-'}
+                    tone="accent"
+                  />
                 </CardContent>
               </Card>
             </div>
@@ -789,33 +795,39 @@ export default function PredictiveAnalyticsPage() {
           <div className="space-y-6">
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               <Card>
-                <CardContent className="p-4 text-center">
-                  <p
-                    className="text-3xl font-bold text-accent-600">{workforceSummary.avgEngagementScore?.toFixed(1) ?? '-'}</p>
-                  <p className="text-body-muted">Avg Engagement (out of 5)</p>
+                <CardContent className="p-4">
+                  <Stat
+                    label="Avg Engagement (out of 5)"
+                    value={workforceSummary.avgEngagementScore?.toFixed(1) ?? '-'}
+                    tone="accent"
+                  />
                 </CardContent>
               </Card>
               <Card>
-                <CardContent className="p-4 text-center">
-                  <p
-                    className="text-3xl font-bold text-success-600">{workforceSummary.avgPerformanceRating?.toFixed(1) ?? '-'}</p>
-                  <p className="text-body-muted">Avg Performance Rating</p>
+                <CardContent className="p-4">
+                  <Stat
+                    label="Avg Performance Rating"
+                    value={workforceSummary.avgPerformanceRating?.toFixed(1) ?? '-'}
+                    tone="success"
+                  />
                 </CardContent>
               </Card>
               <Card>
-                <CardContent className="p-4 text-center">
-                  <p className="text-3xl font-bold text-accent-600">
-                    {trends.length > 0 ? (trends[trends.length - 1].highPerformersCount ?? 0) : '-'}
-                  </p>
-                  <p className="text-body-muted">High Performers</p>
+                <CardContent className="p-4">
+                  <Stat
+                    label="High Performers"
+                    value={trends.length > 0 ? (trends[trends.length - 1].highPerformersCount ?? 0) : '-'}
+                    tone="accent"
+                  />
                 </CardContent>
               </Card>
               <Card>
-                <CardContent className="p-4 text-center">
-                  <p className="text-3xl font-bold text-warning-600">
-                    {trends.length > 0 ? (trends[trends.length - 1].lowPerformersCount ?? 0) : '-'}
-                  </p>
-                  <p className="text-body-muted">Needs Improvement</p>
+                <CardContent className="p-4">
+                  <Stat
+                    label="Needs Improvement"
+                    value={trends.length > 0 ? (trends[trends.length - 1].lowPerformersCount ?? 0) : '-'}
+                    tone="warning"
+                  />
                 </CardContent>
               </Card>
             </div>

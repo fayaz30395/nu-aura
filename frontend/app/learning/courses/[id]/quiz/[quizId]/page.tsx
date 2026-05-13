@@ -260,7 +260,7 @@ export default function QuizPage() {
             <div className="skeuo-card overflow-hidden">
               {/* Header */}
               <div className="bg-gradient-to-r from-accent-600 to-accent-700 text-white p-8">
-                <h1 className="text-xl font-bold skeuo-emboss mb-2">{quiz.title}</h1>
+                <h1 className="text-xl font-bold mb-2">{quiz.title}</h1>
                 {quiz.description && (
                   <p className="text-accent-100">{quiz.description}</p>
                 )}

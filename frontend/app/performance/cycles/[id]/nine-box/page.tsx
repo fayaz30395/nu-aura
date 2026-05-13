@@ -87,7 +87,7 @@ export default function NineBoxPage() {
         <Stack gap="lg" p="md">
           <Group justify="space-between">
             <div>
-              <Title order={2} className="skeuo-emboss">9-Box Grid</Title>
+              <Title order={2} className="">9-Box Grid</Title>
               <Text c="dimmed" size="sm">{data.cycleName} — Performance vs Potential</Text>
             </div>
           </Group>

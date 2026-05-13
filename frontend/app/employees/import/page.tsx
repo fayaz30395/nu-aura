@@ -19,6 +19,7 @@ import {
 import {AppLayout} from '@/components/layout';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
+import {Stat} from '@/components/ui/Stat';
 
 type ImportStep = 'upload' | 'preview' | 'result';
 
@@ -185,7 +186,7 @@ export default function EmployeeImportPage() {
               <ArrowLeft className="w-4 h-4 mr-2"/>
               Back to Employees
             </button>
-            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-xl font-bold text-[var(--text-primary)]">
               Bulk Import Employees
             </h1>
             <p className="text-[var(--text-secondary)] mt-1">
@@ -419,7 +420,7 @@ export default function EmployeeImportPage() {
                     <div className="flex items-center">
                       <Users className="w-8 h-8 text-accent-700 dark:text-accent-400 mr-4"/>
                       <div>
-                        <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
+                        <p className="text-xl font-bold text-[var(--text-primary)]">
                           {preview.totalRows}
                         </p>
                         <p className="text-body-muted">
@@ -630,27 +631,14 @@ export default function EmployeeImportPage() {
 
               {/* Result Summary */}
               <div className="grid grid-cols-3 gap-4 mb-8">
-                <div className="bg-accent-50 dark:bg-accent-950/30 rounded-lg p-4 text-center">
-                  <p className="text-3xl font-bold text-accent-700 dark:text-accent-400">
-                    {result.totalProcessed}
-                  </p>
-                  <p className="text-sm text-accent-700 dark:text-accent-400">
-                    Total Processed
-                  </p>
+                <div className="rounded-lg p-4 border border-[var(--border-subtle)]">
+                  <Stat label="Total Processed" value={result.totalProcessed} tone="accent"/>
                 </div>
-                <div className="bg-success-50 dark:bg-success-900/30 rounded-lg p-4 text-center">
-                  <p className="text-3xl font-bold text-success-700 dark:text-success-400">
-                    {result.successCount}
-                  </p>
-                  <p className="text-sm text-success-600 dark:text-success-500">
-                    Successfully Imported
-                  </p>
+                <div className="rounded-lg p-4 border border-[var(--border-subtle)]">
+                  <Stat label="Successfully Imported" value={result.successCount} tone="success"/>
                 </div>
-                <div className="bg-danger-50 dark:bg-danger-900/30 rounded-lg p-4 text-center">
-                  <p className="text-3xl font-bold text-danger-700 dark:text-danger-400">
-                    {result.failedCount}
-                  </p>
-                  <p className="text-sm text-danger-600 dark:text-danger-500">Failed</p>
+                <div className="rounded-lg p-4 border border-[var(--border-subtle)]">
+                  <Stat label="Failed" value={result.failedCount} tone="danger"/>
                 </div>
               </div>
 

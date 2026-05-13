@@ -395,10 +395,10 @@ function StatCard(props: { title: string; value: number | string; description?: 
   const {title, value, description} = props;
   return (
     <div className="skeuo-card rounded-xl border border-[var(--border-main)] px-4 py-4 sm:px-6 sm:py-4">
-      <div className="skeuo-deboss text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide relative z-10">
+      <div className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide relative z-10">
         {title}
       </div>
-      <div className="skeuo-emboss mt-2 text-2xl font-semibold text-[var(--text-primary)] relative z-10">
+      <div className="mt-2 text-2xl font-semibold text-[var(--text-primary)] relative z-10">
         {value}
       </div>
       {description && (
@@ -452,7 +452,7 @@ function SystemHealthCard(props: { isLoading: boolean; health: HealthResponse | 
     >
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
         <div>
-          <h2 className="skeuo-emboss text-base sm:text-xl font-semibold text-[var(--text-primary)]">
+          <h2 className="text-base sm:text-xl font-semibold text-[var(--text-primary)]">
             System Health
           </h2>
           <p className="text-xs sm:text-body-muted mt-1">

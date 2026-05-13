@@ -26,10 +26,10 @@ export default function SalaryStructuresPage() {
             {/* Page header */}
             <Group justify="space-between" align="flex-start">
               <div>
-                <Title order={2} fw={600} className="skeuo-emboss">
+                <Title order={2} fw={600} className="">
                   Salary Structures
                 </Title>
-                <Text c="dimmed" size="sm" mt={4} className="skeuo-deboss">
+                <Text c="dimmed" size="sm" mt={4} className="">
                   Define and manage salary structures with component breakdowns, CTC calculations, and grade-based
                   templates.
                 </Text>
@@ -66,7 +66,7 @@ export default function SalaryStructuresPage() {
                   <div className="rounded-full bg-danger-50 dark:bg-danger-950/20 p-4">
                     <AlertCircle className="w-12 h-12 text-danger-500"/>
                   </div>
-                  <Title order={4} fw={500} ta="center" className="skeuo-emboss">
+                  <Title order={4} fw={500} ta="center" className="">
                     Failed to Load Salary Structures
                   </Title>
                   <Text c="dimmed" size="sm" ta="center" maw={420}>
@@ -83,7 +83,7 @@ export default function SalaryStructuresPage() {
                   <div className="rounded-full bg-[var(--bg-secondary)] p-4">
                     <Banknote className="w-12 h-12 text-[var(--text-muted)]"/>
                   </div>
-                  <Title order={4} fw={500} ta="center" className="skeuo-emboss">
+                  <Title order={4} fw={500} ta="center" className="">
                     No Salary Structures Configured
                   </Title>
                   <Text c="dimmed" size="sm" ta="center" maw={420}>

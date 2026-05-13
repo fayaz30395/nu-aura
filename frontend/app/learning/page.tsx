@@ -4,6 +4,7 @@ import {useState} from 'react';
 import Image from 'next/image';
 import {AppLayout} from '@/components/layout';
 import {Skeleton} from '@/components/ui/Skeleton';
+import {Stat} from '@/components/ui/Stat';
 import {AlertCircle} from 'lucide-react';
 import {Button} from '@/components/ui/Button';
 import {
@@ -85,7 +86,7 @@ export default function LearningPage() {
   return (
     <AppLayout activeMenuItem="learning">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-xl font-bold skeuo-emboss">Learning Management</h1>
+        <h1 className="text-xl font-bold">Learning Management</h1>
 
         {/* Dashboard Cards */}
         {dashboardLoading ? (
@@ -106,28 +107,19 @@ export default function LearningPage() {
         ) : dashboard ? (
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
             <div className="bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-card)] p-6">
-              <div
-                className="text-3xl font-bold text-accent-700 dark:text-accent-400">{dashboard.totalEnrollments}</div>
-              <div className="text-[var(--text-secondary)]">Total Enrollments</div>
+              <Stat label="Total Enrollments" value={dashboard.totalEnrollments} tone="accent" />
             </div>
             <div className="bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-card)] p-6">
-              <div className="text-3xl font-bold text-warning-600 dark:text-warning-400">{dashboard.inProgress}</div>
-              <div className="text-[var(--text-secondary)]">In Progress</div>
+              <Stat label="In Progress" value={dashboard.inProgress} tone="warning" />
             </div>
             <div className="bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-card)] p-6">
-              <div className="text-3xl font-bold text-success-600 dark:text-success-400">{dashboard.completed}</div>
-              <div className="text-[var(--text-secondary)]">Completed</div>
+              <Stat label="Completed" value={dashboard.completed} tone="success" />
             </div>
             <div className="bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-card)] p-6">
-              <div
-                className="text-3xl font-bold text-accent-800 dark:text-accent-600">{dashboard.averageProgress?.toFixed(0) || 0}%
-              </div>
-              <div className="text-[var(--text-secondary)]">Avg Progress</div>
+              <Stat label="Avg Progress" value={`${dashboard.averageProgress?.toFixed(0) || 0}%`} tone="accent" />
             </div>
             <div className="bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-card)] p-6">
-              <div
-                className="text-3xl font-bold text-accent-700 dark:text-accent-400">{dashboard.certificatesEarned}</div>
-              <div className="text-[var(--text-secondary)]">Certificates</div>
+              <Stat label="Certificates" value={dashboard.certificatesEarned} tone="accent" />
             </div>
           </div>
         ) : null}
@@ -326,7 +318,7 @@ export default function LearningPage() {
                 {certificates.length > 0 ? (
                   certificates.map((cert) => (
                     <div key={cert.id}
-                         className="bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] p-6 border-l-4 border-warning-500 hover:shadow-[var(--shadow-dropdown)] transition-shadow">
+                         className="bg-warning-50/40 dark:bg-warning-950/20 rounded-lg shadow-[var(--shadow-card)] p-6 border border-warning-200 dark:border-warning-800 hover:shadow-[var(--shadow-card-hover)] transition-shadow">
                       <div className="flex justify-between items-start">
                         <div>
                           <div className="text-2xl mb-2" aria-label="Certificate">🏆</div>

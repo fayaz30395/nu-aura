@@ -20,6 +20,7 @@ import {
 import {Button} from '@/components/ui/Button';
 import {Card} from '@/components/ui/Card';
 import {Badge} from '@/components/ui/Badge';
+import {Stat} from '@/components/ui/Stat';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 
 export default function SecurityPage() {
@@ -186,7 +187,7 @@ export default function SecurityPage() {
           <Badge size="lg" variant="success" className="mb-6">
             Security & Compliance
           </Badge>
-          <h1 className="text-5xl font-bold text-[var(--text-primary)] skeuo-emboss mb-4">
+          <h1 className="text-5xl font-bold text-[var(--text-primary)] mb-4">
             Enterprise-grade security you can trust
           </h1>
           <p className="text-xl text-[var(--text-secondary)] mb-8">
@@ -233,7 +234,7 @@ export default function SecurityPage() {
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-[var(--bg-surface)]">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss mb-4">
+            <h2 className="text-xl font-bold text-[var(--text-primary)] mb-4">
               Comprehensive security architecture
             </h2>
             <p className="text-lg text-[var(--text-secondary)] max-w-2xl mx-auto">
@@ -342,12 +343,9 @@ export default function SecurityPage() {
                 label: 'Security Monitoring',
               },
             ].map((stat, index) => (
-              <Card key={index} padding="lg" className="text-center">
-                <stat.icon className="h-10 w-10 text-accent-700 dark:text-accent-400 mx-auto mb-4"/>
-                <div className="text-3xl font-bold text-[var(--text-primary)] mb-1">
-                  {stat.value}
-                </div>
-                <div className="text-body-muted">{stat.label}</div>
+              <Card key={index} padding="lg">
+                <stat.icon className="h-10 w-10 text-accent-700 dark:text-accent-400 mb-4"/>
+                <Stat label={stat.label} value={stat.value} />
               </Card>
             ))}
           </div>

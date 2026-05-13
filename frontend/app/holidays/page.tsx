@@ -224,8 +224,8 @@ export default function HolidaysPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
           <div>
-            <h1 className="text-page-title text-[var(--text-primary)] skeuo-emboss">Holiday Calendar</h1>
-            <p className="mt-1 text-body-secondary skeuo-deboss">
+            <h1 className="text-page-title text-[var(--text-primary)]">Holiday Calendar</h1>
+            <p className="mt-1 text-body-secondary">
               {selectedYear} organizational holidays and events
             </p>
           </div>

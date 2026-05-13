@@ -615,7 +615,7 @@ export const AdvancedFilterPanel: React.FC<AdvancedFilterPanelProps> = ({
                             onClick={() => handleLoadPreset(preset.id)}
                             className={cn(
                               'flex-1 text-left text-sm text-[var(--text-primary)]',
-                              'focus:outline-none cursor-pointer'
+                              'cursor-pointer rounded'
                             )}
                           >
                             {preset.name}

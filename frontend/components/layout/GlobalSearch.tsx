@@ -793,7 +793,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({className, onSelect, 
           }}
           onFocus={() => setIsOpen(true)}
           onKeyDown={handleKeyDown}
-          className="w-full bg-transparent pl-10 pr-20 py-2.5 text-sm outline-none text-[var(--text-primary)] placeholder-[var(--text-muted)]"
+          className="w-full bg-transparent pl-10 pr-20 py-2.5 text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)]"
         />
         <div className="absolute right-3 flex items-center gap-1 text-[var(--text-muted)]">
           {isSearching && <Loader2 className="h-3.5 w-3.5 animate-spin text-accent-500"/>}

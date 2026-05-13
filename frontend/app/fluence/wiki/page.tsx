@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import {Tooltip} from '@mantine/core';
 import {notifications} from '@mantine/notifications';
+import {CATEGORICAL_DEFAULT} from '@/lib/utils/categoricalPalette';
 import {AppLayout} from '@/components/layout';
 import {Button} from '@/components/ui/Button';
 import {
@@ -360,7 +361,7 @@ export default function WikiPage() {
                           <div className="flex items-center gap-2">
                             <span
                               className="flex items-center justify-center w-6 h-6 rounded text-sm text-white flex-shrink-0"
-                              style={{backgroundColor: space.color || '#3e63dd'}}
+                              style={{backgroundColor: space.color || CATEGORICAL_DEFAULT}}
                             >
                               {space.icon || '📁'}
                             </span>

@@ -108,10 +108,10 @@ export default function ResourcesPage() {
         <div className="space-y-6 p-6">
           {/* Header */}
           <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-xl font-bold text-[var(--text-primary)]">
               Resource Management
             </h1>
-            <p className="mt-1 text-body-muted skeuo-deboss">
+            <p className="mt-1 text-body-muted">
               Manage team capacity, allocations, and availability
             </p>
           </div>
@@ -186,10 +186,10 @@ export default function ResourcesPage() {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-xl font-bold text-[var(--text-primary)]">
               Resource Management
             </h1>
-            <p className="mt-1 text-body-muted skeuo-deboss">
+            <p className="mt-1 text-body-muted">
               Manage team capacity, allocations, and availability
             </p>
           </div>

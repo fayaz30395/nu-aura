@@ -39,7 +39,7 @@ export default function FeaturesPage() {
       id: 'core',
       name: 'Core HR',
       icon: Users,
-      color: 'from-accent-500 to-accent-600',
+      color: 'bg-accent-100 dark:bg-accent-500/10 text-accent-600 dark:text-accent-400',
       features: [
         {
           title: 'Employee Directory',
@@ -81,7 +81,7 @@ export default function FeaturesPage() {
       id: 'attendance',
       name: 'Attendance & Time',
       icon: Clock,
-      color: 'from-success-500 to-success-600',
+      color: 'bg-success-100 dark:bg-success-500/10 text-success-600 dark:text-success-400',
       features: [
         {
           title: 'Smart Check-in/out',
@@ -122,7 +122,7 @@ export default function FeaturesPage() {
       id: 'leave',
       name: 'Leave Management',
       icon: Calendar,
-      color: 'from-accent-700 to-accent-800',
+      color: 'bg-accent-100 dark:bg-accent-500/10 text-accent-700 dark:text-accent-400',
       features: [
         {
           title: 'Leave Policies',
@@ -163,7 +163,7 @@ export default function FeaturesPage() {
       id: 'payroll',
       name: 'Payroll & Compensation',
       icon: DollarSign,
-      color: 'from-warning-500 to-warning-500',
+      color: 'bg-warning-100 dark:bg-warning-500/10 text-warning-600 dark:text-warning-400',
       features: [
         {
           title: 'Salary Processing',
@@ -204,7 +204,7 @@ export default function FeaturesPage() {
       id: 'performance',
       name: 'Performance & Goals',
       icon: TrendingUp,
-      color: 'from-accent-700 to-danger-600',
+      color: 'bg-accent-100 dark:bg-accent-500/10 text-accent-700 dark:text-accent-400',
       features: [
         {
           title: 'OKRs & Goals',
@@ -245,7 +245,7 @@ export default function FeaturesPage() {
       id: 'recruitment',
       name: 'Recruitment & ATS',
       icon: UserPlus,
-      color: 'from-accent-500 to-accent-500',
+      color: 'bg-accent-100 dark:bg-accent-500/10 text-accent-600 dark:text-accent-400',
       features: [
         {
           title: 'Job Management',
@@ -286,7 +286,7 @@ export default function FeaturesPage() {
       id: 'learning',
       name: 'Learning & Development',
       icon: BookOpen,
-      color: 'from-accent-500 to-accent-800',
+      color: 'bg-accent-100 dark:bg-accent-500/10 text-accent-600 dark:text-accent-400',
       features: [
         {
           title: 'Course Catalog',
@@ -327,7 +327,7 @@ export default function FeaturesPage() {
       id: 'benefits',
       name: 'Benefits & Wellness',
       icon: Heart,
-      color: 'from-danger-500 to-accent-800',
+      color: 'bg-danger-100 dark:bg-danger-500/10 text-danger-600 dark:text-danger-400',
       features: [
         {
           title: 'Benefits Administration',
@@ -405,7 +405,7 @@ export default function FeaturesPage() {
           <Badge size="lg" variant="primary" className="mb-6">
             Platform Features
           </Badge>
-          <h1 className="text-5xl font-bold text-[var(--text-primary)] skeuo-emboss mb-4">
+          <h1 className="text-5xl font-bold text-[var(--text-primary)] mb-4">
             Everything you need to manage your workforce
           </h1>
           <p className="text-xl text-[var(--text-secondary)] mb-8">
@@ -425,7 +425,7 @@ export default function FeaturesPage() {
                 onClick={() => setActiveTab(module.id)}
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                   activeTab === module.id
-                    ? 'bg-accent-500 text-white shadow-[var(--shadow-dropdown)]'
+                    ? 'bg-accent-100 text-accent-700 dark:bg-accent-500/10 dark:text-accent-400'
                     : 'bg-[var(--bg-surface)] text-[var(--text-secondary)] hover:bg-[var(--bg-card)] border border-[var(--border-main)]'
                 }`}
               >
@@ -447,9 +447,9 @@ export default function FeaturesPage() {
                 {selectedModule.features.map((feature, index) => (
                   <Card key={index} hover padding="lg">
                     <div
-                      className={`w-12 h-12 rounded-xl bg-gradient-to-br ${selectedModule.color} flex items-center justify-center mb-4`}
+                      className={`w-12 h-12 rounded-xl ${selectedModule.color} flex items-center justify-center mb-4`}
                     >
-                      <feature.icon className="h-6 w-6 text-white"/>
+                      <feature.icon className="h-6 w-6"/>
                     </div>
                     <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                       {feature.title}
@@ -526,7 +526,7 @@ export default function FeaturesPage() {
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link href="/auth/login">
-              <Button size="lg" className="btn-primary gap-2">
+              <Button size="lg" className="gap-2">
                 Start Free Trial
                 <ArrowRight className="h-5 w-5"/>
               </Button>

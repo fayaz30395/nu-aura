@@ -249,7 +249,7 @@ export default function MobileApiPage() {
         {/* Header */}
         <Group justify="space-between" mb="xl">
           <div>
-            <Title order={1} size="h2" mb="xs" className="skeuo-emboss">
+            <Title order={1} size="h2" mb="xs" className="">
               <Group gap="sm">
                 <ThemeIcon size="lg" color="blue" radius="md">
                   <IconDeviceMobile size={24}/>
@@ -257,7 +257,7 @@ export default function MobileApiPage() {
                 Mobile API Documentation
               </Group>
             </Title>
-            <Text c="dimmed" className="skeuo-deboss">
+            <Text c="dimmed" className="">
               Optimized API endpoints for mobile applications with minimal payloads and offline-first support
             </Text>
           </div>

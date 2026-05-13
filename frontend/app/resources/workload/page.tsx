@@ -286,7 +286,7 @@ export default function WorkloadDashboardPage() {
         {/* Header */}
         <div className="row-between">
           <div>
-            <h1 className="text-lg font-semibold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-lg font-semibold text-[var(--text-primary)]">
               Resource Utilization
             </h1>
             <p className="text-body-muted">

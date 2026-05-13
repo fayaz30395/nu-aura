@@ -96,8 +96,8 @@ export default function LeaveEncashmentPage() {
           <div className="flex items-center gap-2 mb-8">
             <Coins className="h-7 w-7 text-accent-600"/>
             <div>
-              <h1 className="text-xl font-bold skeuo-emboss">Leave Encashment</h1>
-              <p className="text-[var(--text-secondary)] text-sm mt-1 skeuo-deboss">
+              <h1 className="text-xl font-bold">Leave Encashment</h1>
+              <p className="text-[var(--text-secondary)] text-sm mt-1">
                 Convert unused leave days to cash compensation
               </p>
             </div>

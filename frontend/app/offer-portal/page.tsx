@@ -169,7 +169,7 @@ function OfferPortalPage() {
               className="w-16 h-16 bg-danger-100 dark:bg-danger-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
               <AlertCircle className="h-8 w-8 text-danger-600 dark:text-danger-400"/>
             </div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss mb-2">
+            <h1 className="text-xl font-bold text-[var(--text-primary)] mb-2">
               Unable to Load Offer
             </h1>
             <p className="text-[var(--text-muted)]">{error}</p>
@@ -198,7 +198,7 @@ function OfferPortalPage() {
             className="w-20 h-20 bg-accent-100 dark:bg-accent-900/30 rounded-lg flex items-center justify-center mx-auto mb-4">
             <FileText className="h-10 w-10 text-accent-700 dark:text-accent-400"/>
           </div>
-          <h1 className="text-xl font-bold skeuo-emboss mb-2">
+          <h1 className="text-xl font-bold mb-2">
             Your Offer Letter
           </h1>
           <p className="text-[var(--text-secondary)]">
@@ -408,7 +408,7 @@ function OfferPortalPage() {
                   className="w-16 h-16 bg-success-100 dark:bg-success-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
                   <CheckCircle className="h-8 w-8 text-success-600 dark:text-success-400"/>
                 </div>
-                <h2 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss mb-2">
+                <h2 className="text-xl font-bold text-[var(--text-primary)] mb-2">
                   Accept Offer
                 </h2>
                 <p className="text-[var(--text-secondary)]">
@@ -476,7 +476,7 @@ function OfferPortalPage() {
                   className="w-16 h-16 bg-danger-100 dark:bg-danger-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
                   <XCircle className="h-8 w-8 text-danger-600 dark:text-danger-400"/>
                 </div>
-                <h2 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss mb-2">
+                <h2 className="text-xl font-bold text-[var(--text-primary)] mb-2">
                   Decline Offer
                 </h2>
                 <p className="text-[var(--text-secondary)]">

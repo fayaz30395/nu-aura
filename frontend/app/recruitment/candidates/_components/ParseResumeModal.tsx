@@ -361,7 +361,7 @@ export function ParseResumeModal({
                     </p>
                     <div className="space-y-4">
                       {parsedResume.experience.map((exp, idx) => (
-                        <div key={idx} className="pl-4 border-l-2 border-accent-300 dark:border-accent-700">
+                        <div key={idx} className="pl-4">
                           <p className="text-sm font-medium text-[var(--text-primary)]">{exp.designation}</p>
                           <p className="text-caption">
                             {exp.company}
@@ -384,7 +384,7 @@ export function ParseResumeModal({
                     </p>
                     <div className="space-y-2">
                       {parsedResume.education.map((edu, idx) => (
-                        <div key={idx} className="pl-4 border-l-2 border-info-300 dark:border-info-700">
+                        <div key={idx} className="pl-4">
                           <p className="text-sm font-medium text-[var(--text-primary)]">{edu.degree}</p>
                           <p className="text-caption">
                             {edu.institution}

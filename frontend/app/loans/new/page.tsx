@@ -12,6 +12,7 @@ import {LoanType, RepaymentFrequency} from '@/lib/types/hrms/loan';
 import {useCreateLoan} from '@/lib/hooks/queries/useLoans';
 import {loanService} from '@/lib/services/hrms/loan.service';
 import {AlertCircle, ArrowLeft, Calendar, DollarSign, FileText, Loader2, Wallet,} from 'lucide-react';
+import {Stat} from '@/components/ui/Stat';
 
 // ─── Zod Schema ────────────────────────────────────────────────────────────────
 
@@ -129,7 +130,7 @@ export default function NewLoanPage() {
             <ArrowLeft className="h-5 w-5 text-[var(--text-secondary)]"/>
           </button>
           <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">Apply for Loan</h1>
+            <h1 className="text-xl font-bold text-[var(--text-primary)]">Apply for Loan</h1>
             <p className="text-[var(--text-muted)] mt-1">
               Fill in the details for your loan application
             </p>
@@ -291,17 +292,14 @@ export default function NewLoanPage() {
 
           {/* EMI Calculator */}
           {monthlyPayment > 0 && (
-            <div className="bg-gradient-to-br from-accent-500 to-accent-700 rounded-lg p-6 text-white">
-              <div className="flex items-center gap-4 mb-4">
-                <Wallet className="h-6 w-6"/>
-                <h3 className="text-xl font-semibold">Estimated Monthly Payment</h3>
-              </div>
-              <div className="text-4xl font-bold mb-2">
-                {loanService.formatCurrency(monthlyPayment)}
-              </div>
-              <p className="text-accent-100 text-sm">
-                Based on {watchedRate}% interest rate for {watchedTerm} months
-              </p>
+            <div className="card-elevated p-6">
+              <Stat
+                label="Estimated Monthly Payment"
+                icon={<Wallet className="h-3.5 w-3.5"/>}
+                value={<span className="tabular-nums">{loanService.formatCurrency(monthlyPayment)}</span>}
+                tone="accent"
+                caption={`Based on ${watchedRate}% interest rate for ${watchedTerm} months`}
+              />
             </div>
           )}
 

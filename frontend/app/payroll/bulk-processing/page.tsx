@@ -28,10 +28,10 @@ export default function BulkProcessingPage() {
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="mb-8">
-            <h1 className="text-xl font-bold skeuo-emboss">
+            <h1 className="text-xl font-bold">
               Bulk Payroll Processing
             </h1>
-            <p className="text-[var(--text-secondary)] mt-2 skeuo-deboss">
+            <p className="text-[var(--text-secondary)] mt-2">
               Process payroll for multiple employees at once
             </p>
           </div>

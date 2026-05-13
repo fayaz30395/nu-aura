@@ -437,7 +437,7 @@ const SectionDivider: React.FC<{
       className="w-full row-between px-3 py-2 group rounded-md transition-all duration-200"
     >
       <span
-        className="skeuo-deboss text-xs font-semibold uppercase tracking-wider transition-colors duration-200"
+        className="text-xs font-semibold uppercase tracking-wider transition-colors duration-200"
         style={{color: 'var(--sidebar-section-text)'}}
         suppressHydrationWarning
       >
@@ -694,7 +694,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
                       suppressHydrationWarning
                     >
                       <span
-                        className="skeuo-deboss text-xs font-semibold uppercase tracking-wider transition-colors duration-200"
+                        className="text-xs font-semibold uppercase tracking-wider transition-colors duration-200"
                         style={{color: 'var(--sidebar-section-text)'}}
                         suppressHydrationWarning
                       >

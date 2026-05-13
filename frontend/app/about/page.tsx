@@ -7,6 +7,7 @@ import {ArrowRight, Award, Globe, Heart, Rocket, Shield, Target, TrendingUp, Use
 import {Button} from '@/components/ui/Button';
 import {Card} from '@/components/ui/Card';
 import {Badge} from '@/components/ui/Badge';
+import {Stat} from '@/components/ui/Stat';
 
 export default function AboutPage() {
   const values = [
@@ -92,7 +93,7 @@ export default function AboutPage() {
           <Badge size="lg" variant="primary" className="mb-6">
             About Us
           </Badge>
-          <h1 className="text-5xl font-bold text-[var(--text-primary)] skeuo-emboss mb-4">
+          <h1 className="text-5xl font-bold text-[var(--text-primary)] mb-4">
             Building the future of HR technology
           </h1>
           <p className="text-xl text-[var(--text-secondary)] mb-8">
@@ -106,10 +107,10 @@ export default function AboutPage() {
       <section className="py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <Card padding="lg" className="border-l-4 border-l-accent-500">
+            <Card padding="lg" className="border border-accent-200 dark:border-accent-800 bg-accent-50 dark:bg-accent-950/20">
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl bg-accent-50 dark:bg-accent-950 flex items-center justify-center">
-                  <Target className="h-6 w-6 text-accent-700 dark:text-accent-400"/>
+                <div className="w-12 h-12 rounded-xl bg-accent-100 dark:bg-accent-500/10 flex items-center justify-center">
+                  <Target className="h-6 w-6 text-accent-600 dark:text-accent-400"/>
                 </div>
                 <div>
                   <h3 className="text-xl font-bold text-[var(--text-primary)] mb-4">
@@ -123,9 +124,9 @@ export default function AboutPage() {
               </div>
             </Card>
 
-            <Card padding="lg" className="border-l-4 border-l-info-500">
+            <Card padding="lg" className="border border-info-200 dark:border-info-800 bg-info-50 dark:bg-info-950/20">
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl bg-info-50 dark:bg-info-950 flex items-center justify-center">
+                <div className="w-12 h-12 rounded-xl bg-info-100 dark:bg-info-500/10 flex items-center justify-center">
                   <Zap className="h-6 w-6 text-info-600 dark:text-info-400"/>
                 </div>
                 <div>
@@ -147,7 +148,7 @@ export default function AboutPage() {
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-[var(--bg-surface)]">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss mb-4">
+            <h2 className="text-xl font-bold text-[var(--text-primary)] mb-4">
               Our Core Values
             </h2>
             <p className="text-lg text-[var(--text-secondary)] max-w-2xl mx-auto">
@@ -166,8 +167,8 @@ export default function AboutPage() {
               >
                 <Card padding="lg" className="text-center h-full">
                   <div
-                    className="w-14 h-14 rounded-lg bg-gradient-to-br from-accent-500 to-accent-700 flex items-center justify-center mx-auto mb-4">
-                    <value.icon className="h-7 w-7 text-white"/>
+                    className="w-14 h-14 rounded-lg bg-accent-100 dark:bg-accent-500/10 text-accent-600 dark:text-accent-400 flex items-center justify-center mx-auto mb-4">
+                    <value.icon className="h-7 w-7"/>
                   </div>
                   <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                     {value.title}
@@ -186,7 +187,7 @@ export default function AboutPage() {
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss mb-4">
+            <h2 className="text-xl font-bold text-[var(--text-primary)] mb-4">
               Our Journey
             </h2>
             <p className="text-lg text-[var(--text-secondary)]">
@@ -206,7 +207,7 @@ export default function AboutPage() {
               >
                 <div className="flex-shrink-0">
                   <div
-                    className="w-16 h-16 rounded-full bg-gradient-to-br from-accent-500 to-accent-700 flex items-center justify-center text-white font-bold shadow-[var(--shadow-dropdown)]">
+                    className="w-16 h-16 rounded-full bg-accent-100 dark:bg-accent-500/10 text-accent-700 dark:text-accent-400 flex items-center justify-center font-bold">
                     {milestone.year}
                   </div>
                 </div>
@@ -233,13 +234,12 @@ export default function AboutPage() {
                 whileInView={{opacity: 1, y: 0}}
                 viewport={{once: true}}
                 transition={{delay: index * 0.1}}
-                className="text-center"
               >
-                <stat.icon className="h-10 w-10 text-accent-700 dark:text-accent-400 mx-auto mb-4"/>
-                <div className="text-4xl font-bold text-[var(--text-primary)] skeuo-emboss mb-1">
-                  {stat.value}
-                </div>
-                <div className="text-body-muted">{stat.label}</div>
+                <Stat
+                  label={stat.label}
+                  value={stat.value}
+                  icon={<stat.icon className="h-3.5 w-3.5"/>}
+                />
               </motion.div>
             ))}
           </div>

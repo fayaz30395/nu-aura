@@ -8,6 +8,7 @@ import {useAuth} from '@/lib/hooks/useAuth';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {useActiveLeaveTypes, useEmployeeLeaveRequests, useLeaveRequestsByStatus} from '@/lib/hooks/queries/useLeaves';
 import {LeaveRequest} from '@/lib/types/hrms/leave';
+import {Stat} from '@/components/ui/Stat';
 
 interface Holiday {
   id: string;
@@ -142,7 +143,7 @@ export default function LeaveCalendarPage() {
         </div>
 
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-xl font-bold skeuo-emboss">Leave Calendar</h1>
+          <h1 className="text-xl font-bold">Leave Calendar</h1>
           <div className="flex gap-2">
             <button
               onClick={() => setViewMode('my')}
@@ -314,26 +315,29 @@ export default function LeaveCalendarPage() {
         {/* Statistics */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
           <div className="skeuo-card bg-[var(--bg-card)] rounded-lg p-6">
-            <div className="text-body-secondary mb-1">Total Leaves This Month</div>
-            <div className="text-3xl font-bold text-accent-700 dark:text-accent-400">
-              {leaves.filter(l => {
+            <Stat
+              label="Total Leaves This Month"
+              value={leaves.filter(l => {
                 const leaveStart = new Date(l.startDate);
                 return leaveStart.getMonth() === currentDate.getMonth() &&
                   leaveStart.getFullYear() === currentDate.getFullYear();
               }).length}
-            </div>
+              tone="accent"
+            />
           </div>
           <div className="skeuo-card bg-[var(--bg-card)] rounded-lg p-6">
-            <div className="text-body-secondary mb-1">Pending Approvals</div>
-            <div className="text-3xl font-bold text-warning-600 dark:text-warning-500">
-              {leaves.filter(l => l.status === 'PENDING').length}
-            </div>
+            <Stat
+              label="Pending Approvals"
+              value={leaves.filter(l => l.status === 'PENDING').length}
+              tone="warning"
+            />
           </div>
           <div className="skeuo-card bg-[var(--bg-card)] rounded-lg p-6">
-            <div className="text-body-secondary mb-1">Upcoming Leaves</div>
-            <div className="text-3xl font-bold text-accent-600 dark:text-accent-500">
-              {leaves.filter(l => new Date(l.startDate) > new Date()).length}
-            </div>
+            <Stat
+              label="Upcoming Leaves"
+              value={leaves.filter(l => new Date(l.startDate) > new Date()).length}
+              tone="accent"
+            />
           </div>
         </div>
 

@@ -112,7 +112,7 @@ export default function CandidateDetailPage() {
                 </span>
               </div>
               <div className="flex-1 min-w-0">
-                <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
+                <h1 className="text-xl font-bold text-[var(--text-primary)]">
                   {candidate.fullName}
                 </h1>
                 <p className="text-[var(--text-muted)] font-mono text-sm mt-1">{candidate.candidateCode}</p>

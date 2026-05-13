@@ -629,8 +629,7 @@ function PIPCard({pip, onView}: { pip: PIPResponse; onView: () => void }) {
   const statusConfig = STATUS_CONFIG[pip.status];
 
   return (
-    <div
-      className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-4 hover:shadow-[var(--shadow-dropdown)] transition-shadow">
+    <div className="card-interactive p-4">
       <div className="flex items-start justify-between mb-4">
         <div className="flex-1">
           <h3 className="font-semibold text-[var(--text-primary)]">{pip.employeeName}</h3>
@@ -756,7 +755,7 @@ export default function PIPPage() {
           {/* Header */}
           <div className="row-between">
             <div>
-              <h1 className="text-xl font-bold skeuo-emboss">Performance Improvement Plans</h1>
+              <h1 className="text-xl font-bold">Performance Improvement Plans</h1>
               <p className="text-[var(--text-muted)] mt-1">Manage and track employee PIPs</p>
             </div>
             <PermissionGate permission={Permissions.PIP_CREATE}>
@@ -772,7 +771,7 @@ export default function PIPPage() {
 
           {/* Stats */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)] p-4">
+            <div className="card-aura p-4">
               <div className="flex items-center gap-4">
                 <div
                   className="w-10 h-10 rounded-lg bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center">
@@ -780,11 +779,11 @@ export default function PIPPage() {
                 </div>
                 <div>
                   <p className="text-body-muted">Active PIPs</p>
-                  <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.active}</p>
+                  <p className="text-xl font-bold text-[var(--text-primary)]">{stats.active}</p>
                 </div>
               </div>
             </div>
-            <div className="bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)] p-4">
+            <div className="card-aura p-4">
               <div className="flex items-center gap-4">
                 <div
                   className="w-10 h-10 rounded-lg bg-success-100 dark:bg-success-900/30 flex items-center justify-center">
@@ -792,11 +791,11 @@ export default function PIPPage() {
                 </div>
                 <div>
                   <p className="text-body-muted">Completed</p>
-                  <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.completed}</p>
+                  <p className="text-xl font-bold text-[var(--text-primary)]">{stats.completed}</p>
                 </div>
               </div>
             </div>
-            <div className="bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)] p-4">
+            <div className="card-aura p-4">
               <div className="flex items-center gap-4">
                 <div
                   className="w-10 h-10 rounded-lg bg-accent-300 dark:bg-accent-900/30 flex items-center justify-center">
@@ -804,7 +803,7 @@ export default function PIPPage() {
                 </div>
                 <div>
                   <p className="text-body-muted">Avg Duration</p>
-                  <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.avgDuration} days</p>
+                  <p className="text-xl font-bold text-[var(--text-primary)]">{stats.avgDuration} days</p>
                 </div>
               </div>
             </div>
@@ -856,7 +855,7 @@ export default function PIPPage() {
               <div className="w-8 h-8 border-4 border-accent-200 border-t-accent-700 rounded-full animate-spin"/>
             </div>
           ) : pipList.length === 0 ? (
-            <div className="bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)] p-12 text-center">
+            <div className="card-aura p-12 text-center">
               <FileText className="w-12 h-12 text-[var(--text-muted)] dark:text-[var(--text-secondary)] mx-auto mb-4"/>
               <p className="text-[var(--text-secondary)] font-medium">No PIPs found</p>
               <p className="text-[var(--text-muted)] text-sm mt-1">Create your first PIP to get started</p>

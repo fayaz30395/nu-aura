@@ -5,9 +5,10 @@ import {motion} from 'framer-motion';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
-import {ArrowLeft, CheckCircle2, ClipboardList, Info, Save} from 'lucide-react';
+import {ArrowLeft, ClipboardList, Info, Save} from 'lucide-react';
 import {AppLayout} from '@/components/layout';
 import {Card, CardContent} from '@/components/ui/Card';
+import {Callout} from '@/components/ui/Callout';
 import {Button} from '@/components/ui/Button';
 import {Input} from '@/components/ui/Input';
 import {PermissionGate} from '@/components/auth/PermissionGate';
@@ -64,7 +65,7 @@ export default function NewTemplatePage() {
             <ArrowLeft className="h-5 w-5 text-[var(--text-muted)] group-hover:text-accent-700 transition-colors"/>
           </Button>
           <div>
-            <h1 className="text-2xl font-black tracking-tight text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-2xl font-black tracking-tight text-[var(--text-primary)]">
               New <span className="text-accent-700">Template</span>
             </h1>
             <p className="text-[var(--text-muted)] font-bold">Define the core metadata for your onboarding
@@ -127,21 +128,11 @@ export default function NewTemplatePage() {
           </Card>
         </motion.div>
 
-        {/* Info Card */}
-        <Card className="border-0 bg-accent-500/5 dark:bg-accent-500/10 border-l-4 border-accent-500 rounded-lg">
-          <CardContent className="p-6 flex gap-4">
-            <CheckCircle2 className="h-6 w-6 text-accent-500 shrink-0 mt-1"/>
-            <div>
-              <p
-                className="font-black text-accent-900 dark:text-accent-100 uppercase tracking-widest text-xs mb-1">Standardization
-                Tip</p>
-              <p className="text-sm font-bold text-accent-700 dark:text-accent-300">
-                Creating specialized templates for different roles (e.g., &quot;Software Engineer&quot; vs &quot;Account
-                Executive&quot;) ensures that every new hire gets the exact resources they need from day one.
-              </p>
-            </div>
-          </CardContent>
-        </Card>
+        {/* Info Callout */}
+        <Callout tone="info" title="Standardization tip">
+          Creating specialized templates for different roles (e.g., &quot;Software Engineer&quot; vs &quot;Account
+          Executive&quot;) ensures that every new hire gets the exact resources they need from day one.
+        </Callout>
       </div>
     </AppLayout>
   );

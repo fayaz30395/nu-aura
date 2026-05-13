@@ -59,23 +59,35 @@ describe('Button', () => {
   });
 
   describe('sizes', () => {
+    // Studio Slate v2 canonical sizes: md=h-9 (36px), lg=h-11 (44px), xl=h-12 (48px).
+    // See frontend/app/globals.css `.btn-primary` and DESIGN.md "Spacing — Button height".
     it('renders medium size by default', () => {
       render(<Button>Medium</Button>);
-      expect(screen.getByRole('button')).toHaveClass('h-11');
+      expect(screen.getByRole('button')).toHaveClass('h-9');
     });
 
     it('renders small size', () => {
       render(<Button size="sm">Small</Button>);
-      expect(screen.getByRole('button')).toHaveClass('h-9');
+      expect(screen.getByRole('button')).toHaveClass('h-8');
     });
 
     it('renders large size', () => {
       render(<Button size="lg">Large</Button>);
+      expect(screen.getByRole('button')).toHaveClass('h-11');
+    });
+
+    it('renders xl size', () => {
+      render(<Button size="xl">XL</Button>);
       expect(screen.getByRole('button')).toHaveClass('h-12');
     });
 
     it('renders icon size', () => {
       render(<Button size="icon">Icon</Button>);
+      expect(screen.getByRole('button')).toHaveClass('h-9', 'w-9');
+    });
+
+    it('renders icon-lg size', () => {
+      render(<Button size="icon-lg">Icon LG</Button>);
       expect(screen.getByRole('button')).toHaveClass('h-11', 'w-11');
     });
   });

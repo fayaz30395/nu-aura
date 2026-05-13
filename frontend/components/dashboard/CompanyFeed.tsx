@@ -145,7 +145,7 @@ export function CompanyFeed({employeeId, refreshKey = 0}: CompanyFeedProps) {
   if (isLoading) {
     return (
       <div className="skeuo-card rounded-xl border border-[var(--border-main)] p-4">
-        <h3 className="skeuo-emboss text-sm font-semibold text-[var(--text-primary)] mb-4">Company Feed</h3>
+        <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-4">Company Feed</h3>
         <div className="space-y-4">
           {[1, 2, 3].map(i => (
             <div key={i}
@@ -170,7 +170,7 @@ export function CompanyFeed({employeeId, refreshKey = 0}: CompanyFeedProps) {
     <div className="skeuo-card rounded-xl border border-[var(--border-main)] p-4">
       {/* Header */}
       <div className="row-between mb-4">
-        <h3 className="skeuo-emboss text-sm font-semibold text-[var(--text-primary)]">
+        <h3 className="text-sm font-semibold text-[var(--text-primary)]">
           Company Feed
         </h3>
         <button

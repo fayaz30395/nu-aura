@@ -102,7 +102,7 @@ function CapacityRow({emp}: { emp: EmployeeWorkload }) {
               className="absolute top-0 right-0 h-full flex items-center justify-center text-white text-xs font-bold"
               style={{
                 width: `${Math.min(total - 100, 30)}%`,
-                background: 'repeating-linear-gradient(45deg, #ef4444, #ef4444 4px, #fca5a5 4px, #fca5a5 8px)',
+                background: 'repeating-linear-gradient(45deg, var(--chart-danger), var(--chart-danger) 4px, rgb(252 165 165) 4px, rgb(252 165 165) 8px)',
               }}
               title={`Over-allocated by ${total - 100}%`}
             />
@@ -226,7 +226,7 @@ export default function CapacityTimelinePage() {
         {/* Header */}
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">Capacity Timeline</h1>
+            <h1 className="text-xl font-bold text-[var(--text-primary)]">Capacity Timeline</h1>
             <p className="text-body-muted mt-0.5">
               Current allocation per employee across active projects
             </p>
@@ -280,11 +280,11 @@ export default function CapacityTimelinePage() {
         {!isLoading && sorted.length > 0 && (
           <div className="grid grid-cols-3 gap-4">
             <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl px-4 py-4">
-              <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{sorted.length}</p>
+              <p className="text-xl font-bold text-[var(--text-primary)]">{sorted.length}</p>
               <p className="text-caption mt-0.5">Employees shown</p>
             </div>
             <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl px-4 py-4">
-              <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{avgAlloc}%</p>
+              <p className="text-xl font-bold text-[var(--text-primary)]">{avgAlloc}%</p>
               <p className="text-caption mt-0.5">Avg allocation</p>
             </div>
             <div

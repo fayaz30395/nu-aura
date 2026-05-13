@@ -26,6 +26,7 @@ import dynamic from 'next/dynamic';
 import {useEmployeeDashboard} from '@/lib/hooks/queries';
 import {ChartLoadingFallback} from '@/lib/utils/lazy-components';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {Stat} from '@/components/ui/Stat';
 
 const EmployeeAttendanceChart = dynamic(
   () => import('./EmployeeAttendanceChart'),
@@ -165,16 +166,14 @@ export default function EmployeeDashboardPage() {
             <Button variant="outline" size="sm" onClick={() => refetch()}>Retry</Button>
           </div>
           <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">My Dashboard</h1>
+            <h1 className="text-xl font-bold text-[var(--text-primary)]">My Dashboard</h1>
             <p className="text-[var(--text-muted)] mt-1">Employee overview</p>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {['Present Days', 'Leaves Taken', 'Leaves Available', 'Avg Work Hours'].map((label) => (
               <Card key={label}>
                 <CardContent className="p-6">
-                  <p className="text-sm font-medium text-[var(--text-muted)]">{label}</p>
-                  <p className="text-3xl font-bold text-[var(--text-primary)] mt-1">--</p>
-                  <p className="text-caption mt-1">No data</p>
+                  <Stat label={label} value="--" caption="No data"/>
                 </CardContent>
               </Card>
             ))}
@@ -190,7 +189,7 @@ export default function EmployeeDashboardPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-xl font-bold text-[var(--text-primary)]">
               Welcome, {data.employeeName}!
             </h1>
             <p className="text-[var(--text-muted)] mt-1">
@@ -223,17 +222,11 @@ export default function EmployeeDashboardPage() {
           <Card className="hover:shadow-[var(--shadow-elevated)] transition-shadow">
             <CardContent className="p-6">
               <div className="flex items-start justify-between">
-                <div>
-                  <p className="text-sm font-medium text-[var(--text-muted)]">
-                    Present Days
-                  </p>
-                  <p className="text-3xl font-bold text-[var(--text-primary)] mt-1">
-                    {data.attendanceSummary.currentMonth.present}
-                  </p>
-                  <p className="text-xs text-success-600 dark:text-success-400 mt-1">
-                    {data.attendanceSummary.currentMonth.attendancePercentage}% attendance
-                  </p>
-                </div>
+                <Stat
+                  label="Present Days"
+                  value={data.attendanceSummary.currentMonth.present}
+                  caption={<span className="text-success-600 dark:text-success-400">{data.attendanceSummary.currentMonth.attendancePercentage}% attendance</span>}
+                />
                 <div
                   className="w-12 h-12 rounded-xl bg-success-50 dark:bg-success-950/30 flex items-center justify-center">
                   <CheckCircle className="h-6 w-6 text-success-600 dark:text-success-400"/>
@@ -245,15 +238,11 @@ export default function EmployeeDashboardPage() {
           <Card className="hover:shadow-[var(--shadow-elevated)] transition-shadow">
             <CardContent className="p-6">
               <div className="flex items-start justify-between">
-                <div>
-                  <p className="text-sm font-medium text-[var(--text-muted)]">
-                    Leaves Taken
-                  </p>
-                  <p className="text-3xl font-bold text-[var(--text-primary)] mt-1">
-                    {data.stats.totalLeavesTaken}
-                  </p>
-                  <p className="text-caption mt-1">This year</p>
-                </div>
+                <Stat
+                  label="Leaves Taken"
+                  value={data.stats.totalLeavesTaken}
+                  caption="This year"
+                />
                 <div
                   className="w-12 h-12 rounded-xl bg-accent-50 dark:bg-accent-950/30 flex items-center justify-center">
                   <Palmtree className="h-6 w-6 text-accent-600 dark:text-accent-400"/>
@@ -265,15 +254,11 @@ export default function EmployeeDashboardPage() {
           <Card className="hover:shadow-[var(--shadow-elevated)] transition-shadow">
             <CardContent className="p-6">
               <div className="flex items-start justify-between">
-                <div>
-                  <p className="text-sm font-medium text-[var(--text-muted)]">
-                    Leaves Available
-                  </p>
-                  <p className="text-3xl font-bold text-[var(--text-primary)] mt-1">
-                    {data.stats.totalLeavesRemaining}
-                  </p>
-                  <p className="text-caption mt-1">Remaining</p>
-                </div>
+                <Stat
+                  label="Leaves Available"
+                  value={data.stats.totalLeavesRemaining}
+                  caption="Remaining"
+                />
                 <div
                   className="w-12 h-12 rounded-xl bg-warning-50 dark:bg-warning-950/30 flex items-center justify-center">
                   <Calendar className="h-6 w-6 text-warning-600 dark:text-warning-400"/>
@@ -285,15 +270,11 @@ export default function EmployeeDashboardPage() {
           <Card className="hover:shadow-[var(--shadow-elevated)] transition-shadow">
             <CardContent className="p-6">
               <div className="flex items-start justify-between">
-                <div>
-                  <p className="text-sm font-medium text-[var(--text-muted)]">
-                    Avg Work Hours
-                  </p>
-                  <p className="text-3xl font-bold text-[var(--text-primary)] mt-1">
-                    {data.attendanceSummary.currentMonth.averageWorkHours.toFixed(1)}
-                  </p>
-                  <p className="text-caption mt-1">Per day</p>
-                </div>
+                <Stat
+                  label="Avg Work Hours"
+                  value={data.attendanceSummary.currentMonth.averageWorkHours.toFixed(1)}
+                  caption="Per day"
+                />
                 <div
                   className="w-12 h-12 rounded-xl bg-accent-50 dark:bg-accent-950/30 flex items-center justify-center">
                   <Clock className="h-6 w-6 text-accent-700 dark:text-accent-400"/>

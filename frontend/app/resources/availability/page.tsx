@@ -127,7 +127,7 @@ export default function AvailabilityCalendarPage() {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-xl font-bold text-[var(--text-primary)]">
               Team Availability
             </h1>
             <p className="mt-1 text-body-muted">
@@ -163,7 +163,7 @@ export default function AvailabilityCalendarPage() {
                 <select
                   value={selectedDepartment || ''}
                   onChange={(e) => setSelectedDepartment(e.target.value || undefined)}
-                  className="rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2 text-sm focus:border-accent-500 focus:outline-none dark:border-[var(--border-main)] dark:bg-[var(--bg-card)]"
+                  className="rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2 text-sm focus:border-accent-500 dark:border-[var(--border-main)] dark:bg-[var(--bg-card)]"
                 >
                   <option value="">All Departments</option>
                   {/* Department options would be loaded from API */}
@@ -320,7 +320,7 @@ function SummaryCard({
           <Icon className="h-5 w-5"/>
         </div>
         <div>
-          <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{value}</p>
+          <p className="text-xl font-bold text-[var(--text-primary)]">{value}</p>
           <p className="text-caption">{label}</p>
         </div>
       </CardContent>

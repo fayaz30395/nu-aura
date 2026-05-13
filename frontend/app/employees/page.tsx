@@ -264,9 +264,9 @@ export default function EmployeesPage() {
         {/* Page Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-xl sm:text-xl font-bold tracking-tight text-[var(--text-primary)] skeuo-emboss">Employee
+            <h1 className="text-xl sm:text-xl font-bold tracking-tight text-[var(--text-primary)]">Employee
               Management</h1>
-            <p className="text-xs sm:text-sm text-body-secondary mt-1 skeuo-deboss">Manage your organization&apos;s
+            <p className="text-xs sm:text-sm text-body-secondary mt-1">Manage your organization&apos;s
               employees</p>
           </div>
           <div className="flex items-center gap-2">
@@ -342,7 +342,7 @@ export default function EmployeesPage() {
         </div>
 
         {/* Employee Table */}
-        <div className="card-aura skeuo-card overflow-hidden">
+        <div className="card-aura overflow-hidden">
           {loading ? (
             <SkeletonTable rows={8} columns={7}/>
           ) : employees.length === 0 ? (
@@ -508,7 +508,7 @@ export default function EmployeesPage() {
         {/* Add Employee Modal */}
         {showAddModal && (
           <div className="fixed inset-0 glass-aura !rounded-none flex items-center justify-center p-4 z-50">
-            <div className="skeuo-card rounded-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+            <div className="card-elevated w-full max-w-4xl max-h-[90vh] overflow-y-auto">
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-xl font-bold text-[var(--text-primary)]">Add New Employee</h2>
@@ -1167,7 +1167,7 @@ export default function EmployeesPage() {
         {/* Delete Confirmation Modal */}
         {showDeleteModal && employeeToDelete && (
           <div className="fixed inset-0 glass-aura !rounded-none flex items-center justify-center p-4 z-50">
-            <div className="skeuo-card rounded-xl max-w-md w-full p-6">
+            <div className="card-elevated max-w-md w-full p-6">
               <div className="flex items-center gap-4 mb-4">
                 <div
                   className="flex-shrink-0 h-10 w-10 rounded-lg bg-danger-100 dark:bg-danger-900/30 flex items-center justify-center">

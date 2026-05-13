@@ -160,10 +160,10 @@ export default function CalendarPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-xl font-bold text-[var(--text-primary)]">
               Calendar
             </h1>
-            <p className="text-[var(--text-muted)] mt-1 skeuo-deboss">
+            <p className="text-[var(--text-muted)] mt-1">
               Manage your events and schedule
             </p>
           </div>
@@ -179,7 +179,7 @@ export default function CalendarPage() {
         </div>
 
         {/* Navigation */}
-        <div className="row-between bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-4">
+        <div className="row-between card-aura p-4">
           <div className="flex items-center gap-2">
             <button
               onClick={() => navigateDate('prev')}
@@ -238,36 +238,36 @@ export default function CalendarPage() {
 
         {/* Today's Events */}
         {todayEvents.length > 0 && (
-          <div className="bg-gradient-to-br from-accent-500 to-accent-700 rounded-lg p-6 text-white">
-            <div className="flex items-center gap-4 mb-4">
-              <CalendarDays className="h-6 w-6"/>
-              <h2 className="text-xl font-semibold">Today&apos;s Events</h2>
-              <span className="ml-auto px-2.5 py-0.5 bg-white/20 rounded-full text-sm">
+          <div className="card-aura p-6">
+            <div className="flex items-center gap-2 mb-4">
+              <CalendarDays className="h-5 w-5 text-accent-600 dark:text-accent-400"/>
+              <h2 className="text-section-title">Today&apos;s Events</h2>
+              <span className="ml-auto badge-status status-info">
                 {todayEvents.length} events
               </span>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-2">
               {todayEvents.slice(0, 3).map((event) => (
                 <div
                   key={event.id}
                   onClick={() => router.push(`/calendar/${event.id}`)}
-                  className="flex items-center gap-4 p-4 bg-white/10 rounded-xl cursor-pointer hover:bg-white/20 transition-colors"
+                  className="flex items-center gap-4 p-4 rounded-xl cursor-pointer bg-[var(--bg-surface)] hover:bg-[var(--bg-card-hover)] transition-colors border border-[var(--border-subtle)]"
                 >
                   <div className="text-center min-w-[50px]">
-                    <p className="text-sm opacity-80">
+                    <p className="text-sm font-medium text-[var(--text-secondary)] tabular-nums">
                       {calendarService.formatTime(event.startTime)}
                     </p>
                   </div>
                   <div className="flex-1">
-                    <p className="font-medium">{event.title}</p>
+                    <p className="text-sm font-medium text-[var(--text-primary)]">{event.title}</p>
                     {event.location && (
-                      <p className="text-sm opacity-80 flex items-center gap-1 mt-1">
+                      <p className="text-caption flex items-center gap-1 mt-1">
                         <MapPin className="h-3.5 w-3.5"/>
                         {event.location}
                       </p>
                     )}
                   </div>
-                  <ChevronRight className="h-5 w-5 opacity-60"/>
+                  <ChevronRight className="h-4 w-4 text-[var(--text-muted)]"/>
                 </div>
               ))}
             </div>
@@ -275,7 +275,7 @@ export default function CalendarPage() {
         )}
 
         {/* Events List */}
-        <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] overflow-hidden">
+        <div className="card-aura overflow-hidden">
           <div className="row-between p-6 border-b border-[var(--border-main)]">
             <h2 className="text-xl font-semibold text-[var(--text-primary)]">
               {view === 'week' ? 'This Week' : 'This Month'}
@@ -388,12 +388,12 @@ export default function CalendarPage() {
           <PermissionGate permission={Permissions.CALENDAR_CREATE}>
             <button
               onClick={() => router.push('/calendar/new')}
-              className="group bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6 hover:shadow-[var(--shadow-dropdown)] hover:border-accent-300 dark:hover:border-accent-700 transition-all duration-200 text-left"
+              className="group card-interactive p-6 text-left"
             >
               <div className="row-between mb-4">
                 <div
-                  className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 group-hover:scale-110 transition-transform">
-                  <Plus className="h-5 w-5 text-white"/>
+                  className="p-4 rounded-xl bg-accent-100 dark:bg-accent-500/10 text-accent-600 dark:text-accent-400 group-hover:scale-110 transition-transform">
+                  <Plus className="h-5 w-5"/>
                 </div>
                 <ChevronRight
                   className="h-5 w-5 text-[var(--text-muted)] group-hover:text-accent-500 group-hover:translate-x-1 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
@@ -409,12 +409,12 @@ export default function CalendarPage() {
 
           <button
             onClick={() => router.push('/calendar?filter=meetings')}
-            className="group bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6 hover:shadow-[var(--shadow-dropdown)] hover:border-accent-300 dark:hover:border-accent-700 transition-all duration-200 text-left"
+            className="group card-interactive p-6 text-left"
           >
             <div className="row-between mb-4">
               <div
-                className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-600 group-hover:scale-110 transition-transform">
-                <Video className="h-5 w-5 text-white"/>
+                className="p-4 rounded-xl bg-accent-100 dark:bg-accent-500/10 text-accent-600 dark:text-accent-400 group-hover:scale-110 transition-transform">
+                <Video className="h-5 w-5"/>
               </div>
               <ChevronRight
                 className="h-5 w-5 text-[var(--text-muted)] group-hover:text-accent-500 group-hover:translate-x-1 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>

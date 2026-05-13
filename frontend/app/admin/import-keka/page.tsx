@@ -342,10 +342,10 @@ export default function KekaImportPage() {
               <ArrowLeft className="w-4 h-4 mr-2"/>
               Back to Admin
             </button>
-            <h1 className="text-xl font-bold skeuo-emboss">
+            <h1 className="text-xl font-bold">
               KEKA Data Import
             </h1>
-            <p className="text-[var(--text-secondary)] mt-2 skeuo-deboss">
+            <p className="text-[var(--text-secondary)] mt-2">
               Migrate employees and related data from KEKA HRMS into NU-AURA
             </p>
           </div>

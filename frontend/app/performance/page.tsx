@@ -163,9 +163,9 @@ const StatCard = ({
     className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] dark:border-[var(--border-main)] p-4 shadow-[var(--shadow-card)] skeuo-card">
     <div className="flex items-start justify-between">
       <div>
-        <p className="text-sm font-medium text-[var(--text-muted)] skeuo-deboss">{title}</p>
+        <p className="text-sm font-medium text-[var(--text-muted)]">{title}</p>
         <p
-          className="text-xl font-bold text-[var(--text-primary)] dark:text-[var(--text-secondary)] mt-1 skeuo-emboss">{value}</p>
+          className="text-xl font-bold text-[var(--text-primary)] dark:text-[var(--text-secondary)] mt-1">{value}</p>
         {subtitle && <p className="text-caption mt-1">{subtitle}</p>}
       </div>
       <div className={`p-2 rounded-lg ${color}`}>
@@ -262,9 +262,9 @@ export default function PerformancePage() {
       <div className="p-6 max-w-7xl mx-auto">
         <div className="mb-8">
           <h1
-            className="text-xl font-bold text-[var(--text-primary)] dark:text-[var(--text-secondary)] skeuo-emboss">Performance
+            className="text-xl font-bold text-[var(--text-primary)] dark:text-[var(--text-secondary)]">Performance
             Management</h1>
-          <p className="text-body-muted mt-1 skeuo-deboss">
+          <p className="text-body-muted mt-1">
             Track goals, conduct reviews, and manage employee performance
           </p>
         </div>
@@ -419,7 +419,7 @@ export default function PerformancePage() {
         <div
           className="mt-6 skeuo-card rounded-xl border border-[var(--border-main)] dark:border-[var(--border-main)] p-4">
           <h2
-            className="text-base font-semibold text-[var(--text-primary)] dark:text-[var(--text-secondary)] mb-4 skeuo-emboss">Getting
+            className="text-base font-semibold text-[var(--text-primary)] dark:text-[var(--text-secondary)] mb-4">Getting
             Started</h2>
           <div className="grid md:grid-cols-3 gap-4">
             <div className="p-4 tint-info rounded-lg border border-[var(--status-info-border)]">

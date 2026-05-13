@@ -49,21 +49,21 @@ export default function ContactPage() {
       title: 'Email Us',
       description: 'Our team typically responds within 24 hours',
       value: 'sales@nulogic.io',
-      color: 'from-accent-500 to-accent-600',
+      color: 'bg-accent-100 dark:bg-accent-500/10 text-accent-600 dark:text-accent-400',
     },
     {
       icon: Phone,
       title: 'Call Us',
       description: 'Monday to Friday, 9AM - 6PM IST',
       value: '+1 865 408 7639',
-      color: 'from-success-500 to-success-600',
+      color: 'bg-success-100 dark:bg-success-500/10 text-success-600 dark:text-success-400',
     },
     {
       icon: MessageSquare,
       title: 'Live Chat',
       description: 'Chat with our support team',
       value: 'Available 24/7',
-      color: 'from-accent-700 to-accent-800',
+      color: 'bg-accent-100 dark:bg-accent-500/10 text-accent-700 dark:text-accent-400',
     },
   ];
 
@@ -118,7 +118,7 @@ export default function ContactPage() {
           <Badge size="lg" variant="primary" className="mb-6">
             Contact Us
           </Badge>
-          <h1 className="text-5xl font-bold text-[var(--text-primary)] skeuo-emboss mb-4">
+          <h1 className="text-5xl font-bold text-[var(--text-primary)] mb-4">
             Let&apos;s start a conversation
           </h1>
           <p className="text-xl text-[var(--text-secondary)] mb-8">
@@ -141,9 +141,9 @@ export default function ContactPage() {
               >
                 <Card padding="lg" className="text-center h-full">
                   <div
-                    className={`w-14 h-14 rounded-lg bg-gradient-to-br ${method.color} flex items-center justify-center mx-auto mb-4`}
+                    className={`w-14 h-14 rounded-lg ${method.color} flex items-center justify-center mx-auto mb-4`}
                   >
-                    <method.icon className="h-7 w-7 text-white"/>
+                    <method.icon className="h-7 w-7"/>
                   </div>
                   <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                     {method.title}
@@ -165,7 +165,7 @@ export default function ContactPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* Form */}
             <div>
-              <h2 className="text-xl font-bold skeuo-emboss">
+              <h2 className="text-xl font-bold">
                 Send us a message
               </h2>
               <p className="text-[var(--text-secondary)] mb-8">
@@ -285,9 +285,7 @@ export default function ContactPage() {
                   <textarea
                     rows={5}
                     placeholder="Tell us more about your inquiry..."
-                    className={`input-aura w-full px-4 py-2 rounded-lg bg-[var(--bg-input)] border ${
-                      errors.message ? 'border-danger-500' : 'border-[var(--border-main)]'
-                    } text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-500`}
+                    className={`input-aura w-full ${errors.message ? 'border-danger-500' : ''}`}
                     {...register('message')}
                   />
                   {errors.message && (
@@ -300,7 +298,7 @@ export default function ContactPage() {
                 <Button
                   type="submit"
                   size="lg"
-                  className="btn-primary w-full gap-2"
+                  className="w-full gap-2"
                   isLoading={isSubmitting}
                   loadingText="Sending..."
                 >
@@ -372,8 +370,8 @@ export default function ContactPage() {
             {offices.map((office, index) => (
               <Card key={index} padding="lg">
                 <div
-                  className="w-12 h-12 rounded-xl bg-accent-50 dark:bg-accent-950 flex items-center justify-center mb-4">
-                  <MapPin className="h-6 w-6 text-accent-700 dark:text-accent-400"/>
+                  className="w-12 h-12 rounded-xl bg-accent-100 dark:bg-accent-500/10 flex items-center justify-center mb-4">
+                  <MapPin className="h-6 w-6 text-accent-600 dark:text-accent-400"/>
                 </div>
                 <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-1">
                   {office.city}, {office.country}

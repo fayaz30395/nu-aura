@@ -25,6 +25,7 @@ import {AppLayout} from '@/components/layout';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {Input} from '@/components/ui/Input';
+import {Stat} from '@/components/ui/Stat';
 import {SkeletonCard, SkeletonStatCard, SkeletonTable} from '@/components/ui/Skeleton';
 import {AttendanceRecord} from '@/lib/types/hrms/attendance';
 import {getLocalDateString} from '@/lib/utils/dateUtils';
@@ -350,19 +351,22 @@ export default function TeamAttendancePage() {
               initial={{opacity: 0, y: 8}}
               animate={{opacity: 1, y: 0}}
             >
-              <Card className="card-aura h-full border-l-4 border-l-success-500">
+              <Card className="card-aura h-full">
                 <CardContent className="p-6 flex flex-col gap-4">
                   <div
                     className="w-10 h-10 rounded-lg bg-success-50 dark:bg-success-950/30 flex items-center justify-center">
                     <CheckCircle className="h-5 w-5 text-success-600 dark:text-success-400"/>
                   </div>
-                  <div className="flex flex-col gap-2">
-                    <p className="text-caption uppercase font-medium tracking-wide">Present</p>
-                    <p className="text-stat-large font-bold text-[var(--text-primary)]">{stats.present}</p>
-                    <p className="text-xs text-success-600 dark:text-success-400 font-medium">
-                      {stats.total > 0 ? `${Math.round((stats.present / stats.total) * 100)}%` : '0%'}
-                    </p>
-                  </div>
+                  <Stat
+                    label="Present"
+                    value={stats.present}
+                    tone="success"
+                    caption={
+                      <span className="text-success-600 dark:text-success-400 font-medium">
+                        {stats.total > 0 ? `${Math.round((stats.present / stats.total) * 100)}%` : '0%'}
+                      </span>
+                    }
+                  />
                 </CardContent>
               </Card>
             </motion.div>
@@ -372,19 +376,22 @@ export default function TeamAttendancePage() {
               initial={{opacity: 0, y: 8}}
               animate={{opacity: 1, y: 0}}
             >
-              <Card className="card-aura h-full border-l-4 border-l-danger-500">
+              <Card className="card-aura h-full">
                 <CardContent className="p-6 flex flex-col gap-4">
                   <div
                     className="w-10 h-10 rounded-lg bg-danger-50 dark:bg-danger-950/30 flex items-center justify-center">
                     <XCircle className="h-5 w-5 text-danger-600 dark:text-danger-400"/>
                   </div>
-                  <div className="flex flex-col gap-2">
-                    <p className="text-caption uppercase font-medium tracking-wide">Absent</p>
-                    <p className="text-stat-large font-bold text-[var(--text-primary)]">{stats.absent}</p>
-                    <p className="text-xs text-danger-600 dark:text-danger-400 font-medium">
-                      {stats.total > 0 ? `${Math.round((stats.absent / stats.total) * 100)}%` : '0%'}
-                    </p>
-                  </div>
+                  <Stat
+                    label="Absent"
+                    value={stats.absent}
+                    tone="danger"
+                    caption={
+                      <span className="text-danger-600 dark:text-danger-400 font-medium">
+                        {stats.total > 0 ? `${Math.round((stats.absent / stats.total) * 100)}%` : '0%'}
+                      </span>
+                    }
+                  />
                 </CardContent>
               </Card>
             </motion.div>
@@ -394,19 +401,22 @@ export default function TeamAttendancePage() {
               initial={{opacity: 0, y: 8}}
               animate={{opacity: 1, y: 0}}
             >
-              <Card className="card-aura h-full border-l-4 border-l-warning-500">
+              <Card className="card-aura h-full">
                 <CardContent className="p-6 flex flex-col gap-4">
                   <div
                     className="w-10 h-10 rounded-lg bg-warning-50 dark:bg-warning-950/30 flex items-center justify-center">
                     <AlertCircle className="h-5 w-5 text-warning-600 dark:text-warning-400"/>
                   </div>
-                  <div className="flex flex-col gap-2">
-                    <p className="text-caption uppercase font-medium tracking-wide">Late</p>
-                    <p className="text-stat-large font-bold text-[var(--text-primary)]">{stats.late}</p>
-                    <p className="text-xs text-warning-600 dark:text-warning-400 font-medium">
-                      {stats.total > 0 ? `${Math.round((stats.late / stats.total) * 100)}%` : '0%'}
-                    </p>
-                  </div>
+                  <Stat
+                    label="Late"
+                    value={stats.late}
+                    tone="warning"
+                    caption={
+                      <span className="text-warning-600 dark:text-warning-400 font-medium">
+                        {stats.total > 0 ? `${Math.round((stats.late / stats.total) * 100)}%` : '0%'}
+                      </span>
+                    }
+                  />
                 </CardContent>
               </Card>
             </motion.div>
@@ -416,19 +426,22 @@ export default function TeamAttendancePage() {
               initial={{opacity: 0, y: 8}}
               animate={{opacity: 1, y: 0}}
             >
-              <Card className="card-aura h-full border-l-4 border-l-accent-500">
+              <Card className="card-aura h-full">
                 <CardContent className="p-6 flex flex-col gap-4">
                   <div
                     className="w-10 h-10 rounded-lg bg-accent-50 dark:bg-accent-950/30 flex items-center justify-center">
                     <Clock className="h-5 w-5 text-accent-600 dark:text-accent-400"/>
                   </div>
-                  <div className="flex flex-col gap-2">
-                    <p className="text-caption uppercase font-medium tracking-wide">On Leave</p>
-                    <p className="text-stat-large font-bold text-[var(--text-primary)]">{stats.onLeave}</p>
-                    <p className="text-xs text-accent-600 dark:text-accent-400 font-medium">
-                      {stats.total > 0 ? `${Math.round((stats.onLeave / stats.total) * 100)}%` : '0%'}
-                    </p>
-                  </div>
+                  <Stat
+                    label="On Leave"
+                    value={stats.onLeave}
+                    tone="muted"
+                    caption={
+                      <span className="text-accent-600 dark:text-accent-400 font-medium">
+                        {stats.total > 0 ? `${Math.round((stats.onLeave / stats.total) * 100)}%` : '0%'}
+                      </span>
+                    }
+                  />
                 </CardContent>
               </Card>
             </motion.div>
@@ -690,7 +703,7 @@ export default function TeamAttendancePage() {
                       <CardContent className="p-6 flex flex-col gap-4">
                         <div className="flex items-start justify-between gap-2">
                           <div
-                            className="w-12 h-12 rounded-full bg-gradient-to-br from-accent-400 to-accent-700 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                            className="w-12 h-12 rounded-full bg-accent-100 dark:bg-accent-500/10 text-accent-700 dark:text-accent-400 flex items-center justify-center font-bold text-sm flex-shrink-0">
                             {record.employeeId.substring(0, 2).toUpperCase()}
                           </div>
                           <span className={`badge-status ${

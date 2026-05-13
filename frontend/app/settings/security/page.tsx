@@ -96,8 +96,8 @@ export default function SecuritySettingsPage() {
       <div className="space-y-6">
         {/* Header */}
         <div>
-          <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">Security Settings</h1>
-          <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">
+          <h1 className="text-xl font-bold text-[var(--text-primary)]">Security Settings</h1>
+          <p className="text-[var(--text-secondary)] mt-1">
             Manage your account security and authentication
           </p>
         </div>
@@ -313,7 +313,7 @@ export default function SecuritySettingsPage() {
           <CardContent>
             <div className="space-y-4">
               <div
-                className="flex items-start gap-4 p-4 bg-[var(--bg-surface)] rounded-lg border border-[var(--border-main)]">
+                className="flex items-start gap-4 panel-inset p-4">
                 <div className="p-2 bg-accent-100 dark:bg-accent-900/30 rounded-lg flex-shrink-0">
                   <Laptop className="h-5 w-5 text-accent-600 dark:text-accent-400"/>
                 </div>

@@ -156,8 +156,8 @@ export default function CompOffPage() {
         {/* Header */}
         <div className="row-between">
           <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">Compensatory Off</h1>
-            <p className="text-[var(--text-muted)] mt-1 skeuo-deboss">Request and manage comp-off credits for overtime
+            <h1 className="text-xl font-bold text-[var(--text-primary)]">Compensatory Off</h1>
+            <p className="text-[var(--text-muted)] mt-1">Request and manage comp-off credits for overtime
               work</p>
           </div>
           <Button onClick={() => setShowRequestModal(true)}>

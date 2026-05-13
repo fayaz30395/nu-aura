@@ -74,8 +74,8 @@ export default function HelpdeskPage() {
     <AppLayout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">Helpdesk</h1>
-          <p className="text-body-muted mt-1 skeuo-deboss">Manage SLA policies, escalations, and support metrics</p>
+          <h1 className="text-xl font-bold text-[var(--text-primary)]">Helpdesk</h1>
+          <p className="text-body-muted mt-1">Manage SLA policies, escalations, and support metrics</p>
         </div>
 
         {/* Stat Cards — admin-only SLA metrics (DEF-56) */}
@@ -84,7 +84,7 @@ export default function HelpdeskPage() {
             {statCards.map((card) => (
               <div
                 key={card.label}
-                className="skeuo-card p-4"
+                className="card-aura p-4"
               >
                 <div className="flex items-center gap-4">
                   <div className={`p-2 rounded-lg ${card.bg}`}>
@@ -210,7 +210,7 @@ export default function HelpdeskPage() {
 
         {/* Summary Stats */}
         {dashboard && (
-          <div className="skeuo-card p-4">
+          <div className="card-aura p-4">
             <h3 className="font-semibold text-[var(--text-primary)] mb-4">Overview</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
               <div>

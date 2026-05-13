@@ -10,6 +10,7 @@ import {useDownloadPayslipPdf, usePayslips, usePayslipsByEmployee} from '@/lib/h
 import {Payslip} from '@/lib/types/hrms/payroll';
 import {createLogger} from '@/lib/utils/logger';
 import {formatCurrency} from '@/lib/utils';
+import {Stat} from '@/components/ui/Stat';
 
 const log = createLogger('PayslipsPage');
 
@@ -165,10 +166,10 @@ export default function MyPayslipsPage() {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <h1 className="text-xl font-bold skeuo-emboss">
+            <h1 className="text-xl font-bold">
               {isAdminView ? 'All Employee Payslips' : 'My Payslips'}
             </h1>
-            <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">
+            <p className="text-[var(--text-secondary)] mt-1">
               {isAdminView
                 ? 'View and manage all employee salary statements'
                 : 'View and download your salary statements'}
@@ -199,12 +200,7 @@ export default function MyPayslipsPage() {
           <Card className="card-aura">
             <CardContent className="pt-6">
               <div className="row-between">
-                <div>
-                  <p className="text-body-secondary">Total Payslips</p>
-                  <p className="text-3xl font-bold text-[var(--text-primary)] mt-2">
-                    {filteredPayslips.length}
-                  </p>
-                </div>
+                <Stat label="Total Payslips" value={filteredPayslips.length}/>
                 <div
                   className="w-12 h-12 bg-accent-100 dark:bg-accent-950/30 rounded-full flex items-center justify-center">
                   <FileText className="h-6 w-6 text-accent-600 dark:text-accent-400"/>
@@ -217,12 +213,10 @@ export default function MyPayslipsPage() {
             <Card className="card-aura">
               <CardContent className="pt-6">
                 <div className="row-between">
-                  <div>
-                    <p className="text-body-secondary">Employees</p>
-                    <p className="text-3xl font-bold text-[var(--text-primary)] mt-2">
-                      {new Set(filteredPayslips.map(p => p.employeeId)).size}
-                    </p>
-                  </div>
+                  <Stat
+                    label="Employees"
+                    value={new Set(filteredPayslips.map(p => p.employeeId)).size}
+                  />
                   <div
                     className="w-12 h-12 bg-accent-100 dark:bg-accent-950/30 rounded-full flex items-center justify-center">
                     <Users className="h-6 w-6 text-accent-600 dark:text-accent-400"/>
@@ -235,14 +229,11 @@ export default function MyPayslipsPage() {
           <Card className="card-aura">
             <CardContent className="pt-6">
               <div className="row-between">
-                <div>
-                  <p className="text-body-secondary">
-                    {isAdminView ? `Total Payout (${selectedYear})` : `Total Earnings (${selectedYear})`}
-                  </p>
-                  <p className="text-3xl font-bold text-[var(--text-primary)] mt-2">
-                    {formatCurrency(yearlyTotal)}
-                  </p>
-                </div>
+                <Stat
+                  label={isAdminView ? `Total Payout (${selectedYear})` : `Total Earnings (${selectedYear})`}
+                  value={formatCurrency(yearlyTotal)}
+                  tone="success"
+                />
                 <div
                   className="w-12 h-12 bg-success-100 dark:bg-success-950/30 rounded-full flex items-center justify-center">
                   <TrendingUp className="h-6 w-6 text-success-600 dark:text-success-400"/>
@@ -254,14 +245,11 @@ export default function MyPayslipsPage() {
           <Card className="card-aura">
             <CardContent className="pt-6">
               <div className="row-between">
-                <div>
-                  <p className="text-body-secondary">
-                    {isAdminView ? 'Avg. per Employee' : 'Average Salary'}
-                  </p>
-                  <p className="text-3xl font-bold text-[var(--text-primary)] mt-2">
-                    {formatCurrency(yearlyAverage)}
-                  </p>
-                </div>
+                <Stat
+                  label={isAdminView ? 'Avg. per Employee' : 'Average Salary'}
+                  value={formatCurrency(yearlyAverage)}
+                  tone="accent"
+                />
                 <div
                   className="w-12 h-12 bg-accent-300 dark:bg-accent-900/30 rounded-full flex items-center justify-center">
                   <DollarSign className="h-6 w-6 text-accent-800 dark:text-accent-600"/>

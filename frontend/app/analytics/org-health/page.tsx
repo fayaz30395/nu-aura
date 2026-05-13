@@ -25,6 +25,7 @@ import {Button} from '@/components/ui/Button';
 import {useOrganizationHealth} from '@/lib/hooks/queries/useAnalytics';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {chartColors} from '@/lib/utils/theme-colors';
+import {Stat} from '@/components/ui/Stat';
 
 const RetentionSparkline = dynamic(
   () => import('./OrgHealthCharts').then((mod) => ({default: mod.RetentionSparkline})),
@@ -94,7 +95,7 @@ export default function OrganizationHealthPage() {
             initial={{opacity: 0, x: -20}}
             animate={{opacity: 1, x: 0}}
           >
-            <h1 className="text-xl font-bold skeuo-emboss">Organization Health</h1>
+            <h1 className="text-xl font-bold">Organization Health</h1>
             <p className="text-[var(--text-secondary)] mt-1">Executive summary of workforce vitality and performance</p>
           </motion.div>
           <div className="flex items-center gap-4">
@@ -145,10 +146,10 @@ export default function OrganizationHealthPage() {
               </CardHeader>
               <CardContent>
                 <div className="flex items-end justify-between mb-4">
-                  <div>
-                    <div className="text-3xl font-bold">{100 - turnover.annualTurnoverRate}%</div>
-                    <div className="text-body-muted">Annual Stability Rate</div>
-                  </div>
+                  <Stat
+                    label="Annual Stability Rate"
+                    value={`${100 - turnover.annualTurnoverRate}%`}
+                  />
                   <div className="text-right">
                     <div
                       className="text-success-600 dark:text-success-400 font-medium flex items-center justify-end gap-1">
@@ -172,10 +173,10 @@ export default function OrganizationHealthPage() {
               </CardHeader>
               <CardContent>
                 <div className="flex items-end justify-between mb-4">
-                  <div>
-                    <div className="text-3xl font-bold">{engagement.overallEngagementScore}/100</div>
-                    <div className="text-body-muted">Avg Engagement Score</div>
-                  </div>
+                  <Stat
+                    label="Avg Engagement Score"
+                    value={`${engagement.overallEngagementScore}/100`}
+                  />
                   <div className="text-right">
                     <div className="text-accent-700 font-medium">{engagement.participationRate}%</div>
                     <div className="text-caption">Participation</div>

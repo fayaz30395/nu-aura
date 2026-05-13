@@ -100,8 +100,8 @@ export default function TaxOverviewPage() {
       <Container size="xl" py="lg">
         <Group justify="space-between" mb="xl">
           <div>
-            <Title order={2} className="skeuo-emboss">Tax Management</Title>
-            <Text c="dimmed" className="skeuo-deboss">Overview of tax declarations and compliance</Text>
+            <Title order={2} className="">Tax Management</Title>
+            <Text c="dimmed" className="">Overview of tax declarations and compliance</Text>
           </div>
           <PermissionGate permission={Permissions.TAX_VIEW}>
             <Button
@@ -143,7 +143,7 @@ export default function TaxOverviewPage() {
                 </div>
                 <div>
                   <Text size="sm" fw={500} c="dimmed">{stat.label}</Text>
-                  <Text size="xl" fw={700} className="skeuo-emboss">
+                  <Text size="xl" fw={700} className="">
                     {isLoading ? '-' : stat.value}
                   </Text>
                 </div>
@@ -178,7 +178,7 @@ export default function TaxOverviewPage() {
         {/* Recent Declarations */}
         <Card withBorder radius="md" p="md" className="skeuo-card">
           <Group justify="space-between" mb="md">
-            <Title order={4} className="skeuo-emboss">Recent Declarations</Title>
+            <Title order={4} className="">Recent Declarations</Title>
             <Button variant="subtle" size="xs" onClick={() => router.push('/tax/declarations')}>
               View All
             </Button>

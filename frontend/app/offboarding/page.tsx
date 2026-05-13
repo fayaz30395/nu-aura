@@ -359,10 +359,10 @@ export default function OffboardingPage() {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-xl font-bold text-[var(--text-primary)]">
               Exit Management
             </h1>
-            <p className="text-[var(--text-secondary)] skeuo-deboss">
+            <p className="text-[var(--text-secondary)]">
               Manage employee offboarding and exit processes
             </p>
           </div>
@@ -395,8 +395,8 @@ export default function OffboardingPage() {
                   <UserMinus className="h-6 w-6 text-accent-700"/>
                 </div>
                 <div>
-                  <p className="text-body-secondary skeuo-deboss">Total Exits</p>
-                  <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.total}</p>
+                  <p className="text-body-secondary">Total Exits</p>
+                  <p className="text-xl font-bold text-[var(--text-primary)]">{stats.total}</p>
                 </div>
               </div>
             </CardContent>
@@ -408,8 +408,8 @@ export default function OffboardingPage() {
                   <Clock className="h-6 w-6 text-accent-600"/>
                 </div>
                 <div>
-                  <p className="text-body-secondary skeuo-deboss">Initiated</p>
-                  <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.initiated}</p>
+                  <p className="text-body-secondary">Initiated</p>
+                  <p className="text-xl font-bold text-[var(--text-primary)]">{stats.initiated}</p>
                 </div>
               </div>
             </CardContent>
@@ -421,8 +421,8 @@ export default function OffboardingPage() {
                   <Clock className="h-6 w-6 text-warning-600"/>
                 </div>
                 <div>
-                  <p className="text-body-secondary skeuo-deboss">In Progress</p>
-                  <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.inProgress}</p>
+                  <p className="text-body-secondary">In Progress</p>
+                  <p className="text-xl font-bold text-[var(--text-primary)]">{stats.inProgress}</p>
                 </div>
               </div>
             </CardContent>
@@ -434,8 +434,8 @@ export default function OffboardingPage() {
                   <FileText className="h-6 w-6 text-accent-800"/>
                 </div>
                 <div>
-                  <p className="text-body-secondary skeuo-deboss">Clearance Pending</p>
-                  <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.clearancePending}</p>
+                  <p className="text-body-secondary">Clearance Pending</p>
+                  <p className="text-xl font-bold text-[var(--text-primary)]">{stats.clearancePending}</p>
                 </div>
               </div>
             </CardContent>
@@ -447,8 +447,8 @@ export default function OffboardingPage() {
                   <CheckCircle className="h-6 w-6 text-success-600"/>
                 </div>
                 <div>
-                  <p className="text-body-secondary skeuo-deboss">Completed</p>
-                  <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.completed}</p>
+                  <p className="text-body-secondary">Completed</p>
+                  <p className="text-xl font-bold text-[var(--text-primary)]">{stats.completed}</p>
                 </div>
               </div>
             </CardContent>

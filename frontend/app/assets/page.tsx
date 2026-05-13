@@ -369,10 +369,10 @@ export default function AssetManagementPage() {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-xl font-bold text-[var(--text-primary)]">
               Asset Management
             </h1>
-            <p className="text-[var(--text-secondary)] skeuo-deboss">
+            <p className="text-[var(--text-secondary)]">
               Manage and track company assets
             </p>
           </div>
@@ -408,8 +408,8 @@ export default function AssetManagementPage() {
                   <Package className="h-6 w-6 text-accent-700 dark:text-accent-400"/>
                 </div>
                 <div>
-                  <p className="text-body-secondary skeuo-deboss">Total Assets</p>
-                  <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.total}</p>
+                  <p className="text-body-secondary">Total Assets</p>
+                  <p className="text-xl font-bold text-[var(--text-primary)]">{stats.total}</p>
                 </div>
               </div>
             </CardContent>
@@ -421,8 +421,8 @@ export default function AssetManagementPage() {
                   <Package className="h-6 w-6 text-success-600 dark:text-success-400"/>
                 </div>
                 <div>
-                  <p className="text-body-secondary skeuo-deboss">Available</p>
-                  <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.available}</p>
+                  <p className="text-body-secondary">Available</p>
+                  <p className="text-xl font-bold text-[var(--text-primary)]">{stats.available}</p>
                 </div>
               </div>
             </CardContent>
@@ -434,8 +434,8 @@ export default function AssetManagementPage() {
                   <User className="h-6 w-6 text-accent-600 dark:text-accent-400"/>
                 </div>
                 <div>
-                  <p className="text-body-secondary skeuo-deboss">Assigned</p>
-                  <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.assigned}</p>
+                  <p className="text-body-secondary">Assigned</p>
+                  <p className="text-xl font-bold text-[var(--text-primary)]">{stats.assigned}</p>
                 </div>
               </div>
             </CardContent>
@@ -447,8 +447,8 @@ export default function AssetManagementPage() {
                   <AlertCircle className="h-6 w-6 text-warning-600 dark:text-warning-400"/>
                 </div>
                 <div>
-                  <p className="text-body-secondary skeuo-deboss">In Maintenance</p>
-                  <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.maintenance}</p>
+                  <p className="text-body-secondary">In Maintenance</p>
+                  <p className="text-xl font-bold text-[var(--text-primary)]">{stats.maintenance}</p>
                 </div>
               </div>
             </CardContent>

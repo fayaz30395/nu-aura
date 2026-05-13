@@ -29,6 +29,7 @@ import {
   XCircle,
 } from 'lucide-react';
 import {createLogger} from '@/lib/utils/logger';
+import {Stat} from '@/components/ui/Stat';
 
 const log = createLogger('TimeTrackingListPage');
 
@@ -162,10 +163,10 @@ export default function TimeTrackingPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-xl font-bold text-[var(--text-primary)]">
               Time Tracking
             </h1>
-            <p className="text-[var(--text-muted)] mt-1 skeuo-deboss">
+            <p className="text-[var(--text-muted)] mt-1">
               Log and manage your time entries
             </p>
           </div>
@@ -183,67 +184,38 @@ export default function TimeTrackingPage() {
         {/* Summary Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
-            <div className="flex items-start justify-between mb-4">
-              <div className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700">
-                <Timer className="h-5 w-5 text-white"/>
-              </div>
-            </div>
-            <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-1">
-              This Week
-            </h3>
-            <div className="flex items-baseline gap-1">
-              <span className="text-3xl font-bold text-[var(--text-primary)]">
-                {timeTrackingService.formatHours(summary.totalHours)}
-              </span>
-            </div>
+            <Stat
+              label="This Week"
+              value={timeTrackingService.formatHours(summary.totalHours)}
+              icon={<Timer className="h-3.5 w-3.5"/>}
+            />
           </div>
 
           <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
-            <div className="flex items-start justify-between mb-4">
-              <div className="p-4 rounded-xl bg-gradient-to-br from-success-500 to-success-600">
-                <DollarSign className="h-5 w-5 text-white"/>
-              </div>
-            </div>
-            <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-1">
-              Billable Hours
-            </h3>
-            <div className="flex items-baseline gap-1">
-              <span className="text-3xl font-bold text-[var(--text-primary)]">
-                {timeTrackingService.formatHours(summary.billableHours)}
-              </span>
-            </div>
+            <Stat
+              label="Billable Hours"
+              value={timeTrackingService.formatHours(summary.billableHours)}
+              tone="success"
+              icon={<DollarSign className="h-3.5 w-3.5"/>}
+            />
           </div>
 
           <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
-            <div className="flex items-start justify-between mb-4">
-              <div className="p-4 rounded-xl bg-gradient-to-br from-warning-500 to-warning-600">
-                <Clock className="h-5 w-5 text-white"/>
-              </div>
-            </div>
-            <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-1">
-              Pending Approval
-            </h3>
-            <div className="flex items-baseline gap-1">
-              <span className="text-3xl font-bold text-[var(--text-primary)]">
-                {timeTrackingService.formatHours(summary.pendingHours)}
-              </span>
-            </div>
+            <Stat
+              label="Pending Approval"
+              value={timeTrackingService.formatHours(summary.pendingHours)}
+              tone="warning"
+              icon={<Clock className="h-3.5 w-3.5"/>}
+            />
           </div>
 
           <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
-            <div className="flex items-start justify-between mb-4">
-              <div className="p-4 rounded-xl bg-gradient-to-br from-surface-500 to-surface-600">
-                <FileText className="h-5 w-5 text-white"/>
-              </div>
-            </div>
-            <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-1">
-              Draft Entries
-            </h3>
-            <div className="flex items-baseline gap-1">
-              <span className="text-3xl font-bold text-[var(--text-primary)]">
-                {summary.draftCount}
-              </span>
-            </div>
+            <Stat
+              label="Draft Entries"
+              value={summary.draftCount}
+              tone="muted"
+              icon={<FileText className="h-3.5 w-3.5"/>}
+            />
           </div>
         </div>
 

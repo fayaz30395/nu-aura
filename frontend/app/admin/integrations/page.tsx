@@ -251,7 +251,7 @@ export default function AdminIntegrationsPage() {
       <div className="row-between">
         <div className="flex items-center gap-4">
           <div
-            className="skeuo-emboss p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 shadow-[var(--shadow-dropdown)] shadow-accent-500/25">
+            className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 shadow-[var(--shadow-dropdown)] shadow-accent-500/25">
             <Settings className="h-6 w-6 text-white"/>
           </div>
           <div>
@@ -361,20 +361,20 @@ export default function AdminIntegrationsPage() {
           {/* Configuration Info */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="skeuo-card p-4 rounded-lg border border-[var(--border-main)]">
-              <p className="skeuo-deboss text-body-muted">Provider</p>
-              <p className="skeuo-emboss text-lg font-semibold text-[var(--text-primary)] mt-1">
+              <p className="text-body-muted">Provider</p>
+              <p className="text-lg font-semibold text-[var(--text-primary)] mt-1">
                 {smsStatus?.provider || 'Not configured'}
               </p>
             </div>
             <div className="skeuo-card p-4 rounded-lg border border-[var(--border-main)]">
-              <p className="skeuo-deboss text-body-muted">Status</p>
-              <p className="skeuo-emboss text-lg font-semibold text-[var(--text-primary)] mt-1">
+              <p className="text-body-muted">Status</p>
+              <p className="text-lg font-semibold text-[var(--text-primary)] mt-1">
                 {smsStatus?.configured ? 'Configured' : 'Not configured'}
               </p>
             </div>
             <div className="skeuo-card p-4 rounded-lg border border-[var(--border-main)]">
-              <p className="skeuo-deboss text-body-muted">Last Checked</p>
-              <p className="skeuo-emboss text-lg font-semibold text-[var(--text-primary)] mt-1">
+              <p className="text-body-muted">Last Checked</p>
+              <p className="text-lg font-semibold text-[var(--text-primary)] mt-1">
                 {smsStatus?.lastChecked
                   ? new Date(smsStatus.lastChecked).toLocaleTimeString()
                   : 'Never'}
@@ -383,7 +383,7 @@ export default function AdminIntegrationsPage() {
           </div>
 
           {/* Test SMS */}
-          <div className="skeuo-deboss p-4 rounded-lg bg-[var(--bg-secondary)]">
+          <div className="p-4 rounded-lg bg-[var(--bg-secondary)]">
             <h3 className="font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
               <TestTube className="h-4 w-4"/>
               Test SMS Service
@@ -430,7 +430,7 @@ export default function AdminIntegrationsPage() {
           </div>
 
           {/* Send SMS */}
-          <div className="skeuo-deboss p-4 rounded-lg bg-[var(--bg-secondary)]">
+          <div className="p-4 rounded-lg bg-[var(--bg-secondary)]">
             <h3 className="font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
               <Send className="h-4 w-4"/>
               Send SMS
@@ -555,27 +555,27 @@ export default function AdminIntegrationsPage() {
           {/* Configuration Info */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="skeuo-card p-4 rounded-lg border border-[var(--border-main)]">
-              <p className="skeuo-deboss text-body-muted">Provider</p>
-              <p className="skeuo-emboss text-lg font-semibold text-[var(--text-primary)] mt-1">
+              <p className="text-body-muted">Provider</p>
+              <p className="text-lg font-semibold text-[var(--text-primary)] mt-1">
                 {paymentStatus?.provider || 'Not configured'}
               </p>
             </div>
             <div className="skeuo-card p-4 rounded-lg border border-[var(--border-main)]">
-              <p className="skeuo-deboss text-body-muted">Status</p>
-              <p className="skeuo-emboss text-lg font-semibold text-[var(--text-primary)] mt-1">
+              <p className="text-body-muted">Status</p>
+              <p className="text-lg font-semibold text-[var(--text-primary)] mt-1">
                 {paymentStatus?.configured ? 'Configured' : 'Not configured'}
               </p>
             </div>
             <div className="skeuo-card p-4 rounded-lg border border-[var(--border-main)]">
-              <p className="skeuo-deboss text-body-muted">Supported Methods</p>
-              <p className="skeuo-emboss text-lg font-semibold text-[var(--text-primary)] mt-1">
+              <p className="text-body-muted">Supported Methods</p>
+              <p className="text-lg font-semibold text-[var(--text-primary)] mt-1">
                 {paymentStatus?.supportedMethods?.length || 0}
               </p>
             </div>
           </div>
 
           {/* Test Payment Gateway */}
-          <div className="skeuo-deboss p-4 rounded-lg bg-[var(--bg-secondary)]">
+          <div className="p-4 rounded-lg bg-[var(--bg-secondary)]">
             <h3 className="font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
               <TestTube className="h-4 w-4"/>
               Test Payment Gateway
@@ -613,7 +613,7 @@ export default function AdminIntegrationsPage() {
 
           {/* Supported Payment Methods */}
           {paymentStatus?.supportedMethods && paymentStatus.supportedMethods.length > 0 && (
-            <div className="skeuo-deboss p-4 rounded-lg bg-[var(--bg-secondary)]">
+            <div className="p-4 rounded-lg bg-[var(--bg-secondary)]">
               <h3 className="font-semibold text-[var(--text-primary)] mb-4">
                 Supported Payment Methods
               </h3>

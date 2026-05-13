@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import type {PayrollRunStatus} from '@/lib/types/hrms/payroll';
+import {Stat, type StatTone} from '@/components/ui/Stat';
 
 // ─── Quick-link cards ─────────────────────────────────────────────────────────
 
@@ -139,7 +140,7 @@ export default function AdminPayrollPage() {
     <AdminPageContent className="p-4 md:p-6 lg:p-8">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
+        <h1 className="text-xl font-bold text-[var(--text-primary)]">
           Payroll Administration
         </h1>
         <p className="mt-1 text-body-secondary">
@@ -149,21 +150,23 @@ export default function AdminPayrollPage() {
 
       {/* Stat cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        {[
-          {label: 'Total Runs', value: totalRuns, loading: runsLoading, color: 'text-accent-500'},
-          {label: 'Pending / Processing', value: pendingRuns, loading: runsLoading, color: 'text-warning-500'},
-          {label: 'Approved / Locked', value: approvedRuns, loading: runsLoading, color: 'text-success-500'},
-          {label: 'Salary Structures', value: totalStructures, loading: structuresLoading, color: 'text-accent-500'},
-        ].map(({label, value, loading, color}) => (
+        {([
+          {label: 'Total Runs', value: totalRuns, loading: runsLoading, tone: 'accent'},
+          {label: 'Pending / Processing', value: pendingRuns, loading: runsLoading, tone: 'warning'},
+          {label: 'Approved / Locked', value: approvedRuns, loading: runsLoading, tone: 'success'},
+          {label: 'Salary Structures', value: totalStructures, loading: structuresLoading, tone: 'accent'},
+        ] as Array<{label: string; value: number; loading: boolean; tone: StatTone}>).map(({label, value, loading, tone}) => (
           <div
             key={label}
-            className="rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] p-4 shadow-[var(--shadow-card)]"
+            className="card-aura p-4"
           >
-            <p className="text-caption mb-1">{label}</p>
             {loading ? (
-              <div className="h-8 w-16 rounded bg-[var(--skeleton-base)] animate-pulse"/>
+              <>
+                <p className="text-caption mb-1">{label}</p>
+                <div className="h-8 w-16 rounded bg-[var(--skeleton-base)] animate-pulse"/>
+              </>
             ) : (
-              <p className={`text-3xl font-bold skeuo-emboss ${color}`}>{value}</p>
+              <Stat label={label} value={value} tone={tone}/>
             )}
           </div>
         ))}
@@ -173,8 +176,7 @@ export default function AdminPayrollPage() {
         {/* Left: recent data tables */}
         <div className="xl:col-span-2 space-y-4">
           {/* Recent Runs */}
-          <div
-            className="rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] shadow-[var(--shadow-card)] overflow-hidden">
+          <div className="card-aura overflow-hidden">
             <div className="row-between px-4 py-2 divider-b">
               <h2 className="text-sm font-semibold text-[var(--text-primary)]">Recent Payroll Runs</h2>
               <Link
@@ -234,8 +236,7 @@ export default function AdminPayrollPage() {
           </div>
 
           {/* Recent Salary Structures */}
-          <div
-            className="rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] shadow-[var(--shadow-card)] overflow-hidden">
+          <div className="card-aura overflow-hidden">
             <div className="row-between px-4 py-2 divider-b">
               <h2 className="text-sm font-semibold text-[var(--text-primary)]">
                 Recent Salary Structures
@@ -299,7 +300,7 @@ export default function AdminPayrollPage() {
               <Link
                 key={href}
                 href={href}
-                className="flex items-center gap-2 rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] p-4 hover:bg-[var(--surface-hover)] transition-colors shadow-[var(--shadow-card)] cursor-pointer group"
+                className="card-interactive flex items-center gap-2 p-4 cursor-pointer group"
               >
                 <div className={`shrink-0 rounded-lg p-2 ${bg}`}>
                   <Icon className={`h-4 w-4 ${accent}`}/>

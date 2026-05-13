@@ -26,6 +26,7 @@ import {useActiveDepartments} from '@/lib/hooks/queries/useDepartments';
 import {useActiveOfficeLocations} from '@/lib/hooks/queries/useOfficeLocations';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
+import {Stat} from '@/components/ui/Stat';
 
 // ─── Validation Schemas ───────────────────────────────────────────────────────
 
@@ -259,7 +260,7 @@ export default function ReviewCyclesPage() {
     <AppLayout activeMenuItem="performance">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-xl font-bold skeuo-emboss">Review Cycles</h1>
+          <h1 className="text-xl font-bold">Review Cycles</h1>
           <PermissionGate permission={Permissions.REVIEW_CREATE}>
             <button
               onClick={() => {
@@ -273,8 +274,7 @@ export default function ReviewCyclesPage() {
           </PermissionGate>
         </div>
 
-        <div
-          className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] p-4 mb-6">
+        <div className="card-aura p-4 mb-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
@@ -319,8 +319,7 @@ export default function ReviewCyclesPage() {
             <div className="text-[var(--text-secondary)]">Loading review cycles...</div>
           </div>
         ) : filteredCycles.length === 0 ? (
-          <div
-            className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] p-12 text-center">
+          <div className="card-aura p-12 text-center">
             <div className="text-[var(--text-secondary)] mb-4">No review cycles found</div>
             <PermissionGate permission={Permissions.REVIEW_CREATE}>
               <button
@@ -907,14 +906,8 @@ export default function ReviewCyclesPage() {
 
                 <div className="w-full bg-[var(--bg-secondary)] rounded-lg p-4 mb-6">
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="text-center">
-                      <div className="text-3xl font-bold text-accent-700">{activationResult.employeesInScope}</div>
-                      <div className="text-body-secondary">Employees in Scope</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-3xl font-bold text-success-600">{activationResult.reviewsCreated}</div>
-                      <div className="text-body-secondary">Reviews Created</div>
-                    </div>
+                    <Stat label="Employees in Scope" value={activationResult.employeesInScope} tone="accent"/>
+                    <Stat label="Reviews Created" value={activationResult.reviewsCreated} tone="success"/>
                   </div>
                 </div>
 

@@ -119,7 +119,7 @@ export default function ApplyLeavePage() {
           </button>
         </div>
 
-        <h1 className="text-xl font-bold skeuo-emboss">Apply for Leave</h1>
+        <h1 className="text-xl font-bold">Apply for Leave</h1>
 
         <form onSubmit={handleSubmit(onSubmit)} className="skeuo-card p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

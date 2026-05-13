@@ -275,8 +275,8 @@ export default function JobOpeningsPage() {
         {/* Header */}
         <div className="row-between">
           <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">Job Openings</h1>
-            <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">Manage job openings and recruitment
+            <h1 className="text-xl font-bold text-[var(--text-primary)]">Job Openings</h1>
+            <p className="text-[var(--text-secondary)] mt-1">Manage job openings and recruitment
               positions</p>
           </div>
           <PermissionGate permission={Permissions.RECRUITMENT_CREATE}>
@@ -547,7 +547,7 @@ export default function JobOpeningsPage() {
         {showAddModal && (
           <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
             <div
-              className="bg-[var(--bg-card)] rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
+              className="card-elevated max-w-3xl w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-xl font-bold text-[var(--text-primary)]">
@@ -815,7 +815,7 @@ export default function JobOpeningsPage() {
         {showDeleteModal && jobToDelete && (
           <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
             <div
-              className="bg-[var(--bg-card)] rounded-lg max-w-md w-full p-6 border border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
+              className="card-elevated max-w-md w-full p-6">
               <div className="flex items-center mb-4">
                 <div className="flex-shrink-0 h-12 w-12 rounded-xl bg-danger-100 flex items-center justify-center">
                   <Trash2 className="h-6 w-6 text-danger-600"/>
@@ -855,7 +855,7 @@ export default function JobOpeningsPage() {
         {showAiModal && (
           <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
             <div
-              className="bg-[var(--bg-card)] rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
+              className="card-elevated max-w-2xl w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-xl font-bold text-[var(--text-primary)] flex items-center gap-2">

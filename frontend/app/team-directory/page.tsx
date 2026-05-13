@@ -47,7 +47,7 @@ function EmployeeCard({employee, viewMode, onClick}: {
               {/* Avatar */}
               <div className="flex-shrink-0">
                 <div
-                  className="h-12 w-12 rounded-lg bg-gradient-to-br from-accent-400 to-accent-700 flex items-center justify-center text-white font-semibold">
+                  className="h-12 w-12 rounded-lg bg-accent-100 dark:bg-accent-500/10 text-accent-700 dark:text-accent-400 flex items-center justify-center font-semibold">
                   {employee.firstName?.[0]}{employee.lastName?.[0]}
                 </div>
               </div>
@@ -99,7 +99,7 @@ function EmployeeCard({employee, viewMode, onClick}: {
           {/* Avatar */}
           <div className="flex justify-center mb-4">
             <div
-              className="h-20 w-20 rounded-xl bg-gradient-to-br from-accent-400 to-accent-700 flex items-center justify-center text-white text-2xl font-semibold">
+              className="h-20 w-20 rounded-xl bg-accent-100 dark:bg-accent-500/10 text-accent-700 dark:text-accent-400 flex items-center justify-center text-2xl font-semibold">
               {employee.firstName?.[0]}{employee.lastName?.[0]}
             </div>
           </div>
@@ -219,8 +219,8 @@ export default function TeamDirectoryPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl md:text-xl font-bold text-[var(--text-primary)] skeuo-emboss">Team Directory</h1>
-            <p className="text-[var(--text-muted)] mt-1 skeuo-deboss">Browse and connect with team members</p>
+            <h1 className="text-2xl md:text-xl font-bold text-[var(--text-primary)]">Team Directory</h1>
+            <p className="text-[var(--text-muted)] mt-1">Browse and connect with team members</p>
           </div>
           <div
             className="flex items-center gap-2 bg-[var(--bg-surface)] rounded-lg border border-[var(--border-main)] p-1">

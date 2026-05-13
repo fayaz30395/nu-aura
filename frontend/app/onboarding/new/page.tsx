@@ -140,7 +140,7 @@ export default function NewOnboardingPage() {
         {/* Header & Progress */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
           <div className="space-y-2">
-            <h1 className="text-2xl font-extrabold tracking-tight text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-2xl font-extrabold tracking-tight text-[var(--text-primary)]">
               Initiate <span className="text-accent-700">Onboarding</span>
             </h1>
             <p className="text-[var(--text-muted)] font-medium">Step {currentStep} of
@@ -203,7 +203,7 @@ export default function NewOnboardingPage() {
                     <div
                       className="flex items-center gap-6 p-6 rounded-3xl bg-[var(--bg-elevated)] border border-accent-500/10 animate-in fade-in slide-in-from-bottom-2">
                       <div
-                        className="h-20 w-20 rounded-lg bg-gradient-to-br from-accent-500 to-accent-600 text-white flex items-center justify-center font-black text-3xl shadow-[var(--shadow-dropdown)]">
+                        className="h-20 w-20 rounded-lg bg-accent-100 dark:bg-accent-500/10 text-accent-700 dark:text-accent-400 flex items-center justify-center font-black text-3xl">
                         {selectedEmployee.name.charAt(0)}
                       </div>
                       <div>

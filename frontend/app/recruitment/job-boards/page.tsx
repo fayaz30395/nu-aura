@@ -136,8 +136,8 @@ export default function JobBoardsPage() {
       <div className="p-6 max-w-6xl mx-auto space-y-6">
         <div className="row-between">
           <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">Job Board Management</h1>
-            <p className="text-[var(--text-muted)] mt-1 skeuo-deboss">Post jobs to Naukri, Indeed, LinkedIn and track
+            <h1 className="text-xl font-bold text-[var(--text-primary)]">Job Board Management</h1>
+            <p className="text-[var(--text-muted)] mt-1">Post jobs to Naukri, Indeed, LinkedIn and track
               applications</p>
           </div>
           <PermissionGate permission={Permissions.RECRUITMENT_CREATE}>

@@ -80,7 +80,7 @@ export function ContentDistributionChart({data}: { data: ContentDistributionDatu
           labelLine={false}
           label={({name, value}) => `${name}: ${value}`}
           outerRadius={80}
-          fill="#8884d8"
+          fill="var(--chart-secondary)"
           dataKey="value"
         >
           {data.map((entry, index) => (

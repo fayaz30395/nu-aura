@@ -20,6 +20,7 @@ import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal'
 import {Input} from '@/components/ui/Input';
 import {Button} from '@/components/ui/Button';
 import {useEmployees} from '@/lib/hooks/queries/useEmployees';
+import {Stat} from '@/components/ui/Stat';
 
 function LeaveApprovalsPageContent() {
   const toast = useToast();
@@ -137,7 +138,7 @@ function LeaveApprovalsPageContent() {
           </button>
         </div>
 
-        <h1 className="text-xl font-bold skeuo-emboss">Leave Approvals</h1>
+        <h1 className="text-xl font-bold">Leave Approvals</h1>
 
         {/* Error State */}
         {error && (
@@ -160,19 +161,23 @@ function LeaveApprovalsPageContent() {
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="skeuo-card rounded-xl p-6">
-            <div className="skeuo-deboss text-body-secondary mb-1">Pending Requests</div>
-            <div
-              className="skeuo-emboss text-3xl font-bold text-warning-600 dark:text-warning-500">{requests.length}</div>
+            <Stat label="Pending Requests" value={requests.length} tone="warning"/>
           </div>
           <div className="skeuo-card rounded-xl p-6">
-            <div className="skeuo-deboss text-body-secondary mb-1">Approved (This Month)</div>
-            <div className="skeuo-emboss text-3xl font-bold text-success-600 dark:text-success-500">0</div>
-            <p className="text-caption mt-2">Updated when filters applied</p>
+            <Stat
+              label="Approved (This Month)"
+              value={0}
+              tone="success"
+              caption="Updated when filters applied"
+            />
           </div>
           <div className="skeuo-card rounded-xl p-6">
-            <div className="skeuo-deboss text-body-secondary mb-1">Rejected (This Month)</div>
-            <div className="skeuo-emboss text-3xl font-bold text-danger-600 dark:text-danger-500">0</div>
-            <p className="text-caption mt-2">Updated when filters applied</p>
+            <Stat
+              label="Rejected (This Month)"
+              value={0}
+              tone="danger"
+              caption="Updated when filters applied"
+            />
           </div>
         </div>
 

@@ -3,6 +3,7 @@
 import {useMemo, useState} from 'react';
 import dynamic from 'next/dynamic';
 import {AppLayout} from '@/components/layout';
+import {Stat} from '@/components/ui/Stat';
 import {BarChart3, Calendar, PieChart, TrendingUp} from 'lucide-react';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
@@ -112,42 +113,42 @@ export default function ExpenseReportsPage() {
             <>
               {/* Summary Cards */}
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg p-6">
-                  <p className="text-sm text-surface-500 mb-1">Total Claims</p>
-                  <p className="text-3xl font-bold text-surface-900 dark:text-surface-50">{report.totalClaims}</p>
+                <div className="card-aura p-6">
+                  <Stat label="Total Claims" value={report.totalClaims} />
                 </div>
-                <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg p-6">
-                  <p className="text-sm text-surface-500 mb-1">Total Amount</p>
-                  <p className="text-3xl font-bold text-surface-900 dark:text-surface-50">
-                    {new Intl.NumberFormat('en-IN', {
+                <div className="card-aura p-6">
+                  <Stat
+                    label="Total Amount"
+                    value={new Intl.NumberFormat('en-IN', {
                       style: 'currency',
                       currency: 'INR',
                       maximumFractionDigits: 0
                     }).format(report.totalAmount)}
-                  </p>
+                  />
                 </div>
-                <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg p-6">
-                  <p className="text-sm text-surface-500 mb-1">Avg per Claim</p>
-                  <p className="text-3xl font-bold text-surface-900 dark:text-surface-50">
-                    {report.totalClaims > 0
-                      ? new Intl.NumberFormat('en-IN', {
-                        style: 'currency',
-                        currency: 'INR',
-                        maximumFractionDigits: 0
-                      }).format(report.totalAmount / report.totalClaims)
-                      : '-'}
-                  </p>
+                <div className="card-aura p-6">
+                  <Stat
+                    label="Avg per Claim"
+                    value={
+                      report.totalClaims > 0
+                        ? new Intl.NumberFormat('en-IN', {
+                          style: 'currency',
+                          currency: 'INR',
+                          maximumFractionDigits: 0
+                        }).format(report.totalAmount / report.totalClaims)
+                        : '-'
+                    }
+                  />
                 </div>
-                <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg p-6">
-                  <p className="text-sm text-surface-500 mb-1">Categories</p>
-                  <p className="text-3xl font-bold text-surface-900 dark:text-surface-50">{categoryChartData.length}</p>
+                <div className="card-aura p-6">
+                  <Stat label="Categories" value={categoryChartData.length} />
                 </div>
               </div>
 
               {/* Charts */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Monthly Trend */}
-                <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg p-6">
+                <div className="card-aura p-6">
                   <h3 className="font-semibold text-surface-900 dark:text-surface-50 mb-4 flex items-center gap-2">
                     <TrendingUp className="w-4 h-4"/>
                     Monthly Trend
@@ -160,7 +161,7 @@ export default function ExpenseReportsPage() {
                 </div>
 
                 {/* By Category Pie */}
-                <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg p-6">
+                <div className="card-aura p-6">
                   <h3 className="font-semibold text-surface-900 dark:text-surface-50 mb-4 flex items-center gap-2">
                     <PieChart className="w-4 h-4"/>
                     By Category
@@ -174,7 +175,7 @@ export default function ExpenseReportsPage() {
               </div>
 
               {/* Status Breakdown */}
-              <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg p-6">
+              <div className="card-aura p-6">
                 <h3 className="font-semibold text-surface-900 dark:text-surface-50 mb-4 flex items-center gap-2">
                   <BarChart3 className="w-4 h-4"/>
                   By Status

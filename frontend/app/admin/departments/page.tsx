@@ -200,7 +200,7 @@ export default function DepartmentsPage() {
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-xl font-bold skeuo-emboss">Department Management</h1>
+            <h1 className="text-xl font-bold">Department Management</h1>
             <p className="text-sm text-[var(--text-secondary)] mt-0.5">
               {data?.totalElements ?? 0} departments
             </p>
@@ -367,7 +367,7 @@ export default function DepartmentsPage() {
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
             <div className="w-full max-w-lg skeuo-card p-6 shadow-[var(--shadow-elevated)]">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-lg font-bold skeuo-emboss">
+                <h2 className="text-lg font-bold">
                   {editTarget ? 'Edit Department' : 'New Department'}
                 </h2>
                 <button

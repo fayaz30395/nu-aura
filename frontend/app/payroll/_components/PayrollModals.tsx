@@ -29,7 +29,7 @@ export const PayrollRunModal = React.memo(function PayrollRunModal({
       <div
         className="skeuo-card rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)]">
         <div className="p-6">
-          <h2 className="skeuo-emboss text-2xl font-bold mb-6">
+          <h2 className="text-2xl font-bold mb-6">
             {mode === 'create' ? 'Create Payroll Run' : 'Edit Payroll Run'}
           </h2>
           <form onSubmit={formHook.handleSubmit(onSubmit)}>
@@ -146,7 +146,7 @@ export const PayslipModal = React.memo(function PayslipModal({
       <div
         className="skeuo-card rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)]">
         <div className="p-6">
-          <h2 className="skeuo-emboss text-2xl font-bold mb-6">
+          <h2 className="text-2xl font-bold mb-6">
             {mode === 'create' ? 'Create Payslip' : 'Edit Payslip'}
           </h2>
           <form onSubmit={formHook.handleSubmit(onSubmit)}>
@@ -309,7 +309,7 @@ export const SalaryStructureModal = React.memo(function SalaryStructureModal({
       <div
         className="skeuo-card rounded-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)]">
         <div className="p-6">
-          <h2 className="skeuo-emboss text-2xl font-bold mb-6">
+          <h2 className="text-2xl font-bold mb-6">
             {mode === 'create' ? 'Create Salary Structure' : 'Edit Salary Structure'}
           </h2>
           <form onSubmit={formHook.handleSubmit(onSubmit)}>
@@ -488,7 +488,7 @@ export const DeleteConfirmModal = React.memo(function DeleteConfirmModal({
   return (
     <div className="fixed inset-0 glass-aura flex items-center justify-center p-4 z-50">
       <div className="skeuo-card rounded-xl max-w-md w-full p-6 border border-[var(--border-main)]">
-        <h2 className="skeuo-emboss text-xl font-bold mb-4">{title}</h2>
+        <h2 className="text-xl font-bold mb-4">{title}</h2>
         <p className="text-[var(--text-secondary)] mb-6">{message}</p>
         <div className="flex gap-4">
           <button

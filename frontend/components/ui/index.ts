@@ -28,9 +28,21 @@ export type {TextareaProps} from './Textarea';
 export {Badge, badgeVariants} from './Badge';
 export type {BadgeProps} from './Badge';
 
-// StatCard Component
+// StatCard Component (legacy — prefer `<Stat>` for new code)
 export {StatCard} from './StatCard';
 export type {StatCardProps} from './StatCard';
+
+// Stat — flat single-hue statistic (Studio Slate v2)
+export {Stat} from './Stat';
+export type {StatProps, StatTone} from './Stat';
+
+// Callout — inline notification surface (replaces banned side-stripe pattern)
+export {Callout} from './Callout';
+export type {CalloutProps, CalloutTone} from './Callout';
+
+// GoogleGLogo — canonical Google brand mark for SSO buttons
+export {GoogleGLogo} from './GoogleGLogo';
+export type {GoogleGLogoProps} from './GoogleGLogo';
 
 // Sidebar Components
 export {Sidebar, SIDEBAR_WIDTH_EXPANDED, SIDEBAR_WIDTH_COLLAPSED, HEADER_HEIGHT} from './Sidebar';

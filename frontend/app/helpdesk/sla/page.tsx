@@ -20,6 +20,7 @@ import {
   useSLADashboard,
   useUpdateSlaConfig,
 } from '@/lib/hooks/queries/useHelpdeskSla';
+import {Stat} from '@/components/ui/Stat';
 
 // ─── Validation Schemas ───────────────────────────────────────────────────────
 
@@ -207,7 +208,7 @@ export default function HelpdeskSLAPage() {
 
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-xl font-bold skeuo-emboss">SLA Management</h1>
+          <h1 className="text-xl font-bold">SLA Management</h1>
           {activeTab === 'slas' && (
             <PermissionGate permission={Permissions.HELPDESK_SLA_MANAGE}>
               <button
@@ -228,31 +229,34 @@ export default function HelpdeskSLAPage() {
         {dashboardData && (
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
             <div className="skeuo-card p-6">
-              <div
-                className="text-3xl font-bold text-success-600 dark:text-success-400">{dashboardData.slaComplianceRate?.toFixed(1) || 0}%
-              </div>
-              <div className="text-[var(--text-secondary)]">SLA Compliance</div>
-              <div className="text-body-muted mt-1">
-                {dashboardData.slaMetCount} met / {dashboardData.slaBreachedCount} breached
-              </div>
+              <Stat
+                label="SLA Compliance"
+                value={`${dashboardData.slaComplianceRate?.toFixed(1) || 0}%`}
+                tone="success"
+                caption={`${dashboardData.slaMetCount} met / ${dashboardData.slaBreachedCount} breached`}
+              />
             </div>
             <div className="skeuo-card p-6">
-              <div
-                className="text-3xl font-bold text-accent-700 dark:text-accent-400">{formatMinutes(dashboardData.averageFirstResponseMinutes || 0)}</div>
-              <div className="text-[var(--text-secondary)]">Avg First Response</div>
+              <Stat
+                label="Avg First Response"
+                value={formatMinutes(dashboardData.averageFirstResponseMinutes || 0)}
+                tone="accent"
+              />
             </div>
             <div className="skeuo-card p-6">
-              <div
-                className="text-3xl font-bold text-accent-800 dark:text-accent-600">{formatMinutes(dashboardData.averageResolutionMinutes || 0)}</div>
-              <div className="text-[var(--text-secondary)]">Avg Resolution Time</div>
+              <Stat
+                label="Avg Resolution Time"
+                value={formatMinutes(dashboardData.averageResolutionMinutes || 0)}
+                tone="accent"
+              />
             </div>
             <div className="skeuo-card p-6">
-              <div
-                className="text-3xl font-bold text-warning-600 dark:text-warning-400">{dashboardData.averageCSAT?.toFixed(1) || '-'}</div>
-              <div className="text-[var(--text-secondary)]">Avg CSAT Score</div>
-              <div className="text-body-muted mt-1">
-                {dashboardData.firstContactResolutions} FCR
-              </div>
+              <Stat
+                label="Avg CSAT Score"
+                value={dashboardData.averageCSAT?.toFixed(1) || '-'}
+                tone="warning"
+                caption={`${dashboardData.firstContactResolutions} FCR`}
+              />
             </div>
           </div>
         )}
@@ -281,7 +285,7 @@ export default function HelpdeskSLAPage() {
 
         {/* SLA Form */}
         {showForm && activeTab === 'slas' && (
-          <div className="skeuo-card p-6 mb-6">
+          <div className="card-aura p-6 mb-6">
             <h2 className="text-xl font-semibold mb-4">
               {editingId ? 'Edit SLA Policy' : 'Create SLA Policy'}
             </h2>
@@ -443,7 +447,7 @@ export default function HelpdeskSLAPage() {
           <>
             {/* Dashboard Tab */}
             {activeTab === 'dashboard' && dashboardData && (
-              <div className="skeuo-card p-6">
+              <div className="card-aura p-6">
                 <h2 className="text-xl font-semibold mb-4">SLA Performance Overview</h2>
                 <div className="space-y-6">
                   {/* SLA Compliance Bar */}
@@ -490,7 +494,7 @@ export default function HelpdeskSLAPage() {
 
             {/* SLA Policies Tab */}
             {activeTab === 'slas' && (
-              <div className="skeuo-card overflow-hidden">
+              <div className="card-aura overflow-hidden">
                 <table className="table-aura">
                   <thead className="skeuo-table-header">
                   <tr>
@@ -584,7 +588,7 @@ export default function HelpdeskSLAPage() {
               <div className="space-y-4">
                 {escalations.length > 0 ? (
                   escalations.map((escalation) => (
-                    <div key={escalation.id} className="skeuo-card p-6">
+                    <div key={escalation.id} className="card-aura p-6">
                       <div className="flex justify-between items-start">
                         <div>
                           <div className="flex items-center gap-2 mb-2">
@@ -625,7 +629,7 @@ export default function HelpdeskSLAPage() {
                     </div>
                   ))
                 ) : (
-                  <div className="skeuo-card p-8 text-center text-[var(--text-muted)]">
+                  <div className="card-aura p-8 text-center text-[var(--text-muted)]">
                     No pending escalations. All caught up!
                   </div>
                 )}

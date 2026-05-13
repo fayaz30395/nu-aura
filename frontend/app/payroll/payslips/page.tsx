@@ -107,10 +107,10 @@ function PayslipsPageContent() {
           <div className="mb-8">
             <div className="row-between">
               <div>
-                <h1 className="text-xl font-bold skeuo-emboss">
+                <h1 className="text-xl font-bold">
                   Payslips
                 </h1>
-                <p className="text-[var(--text-secondary)] mt-2 skeuo-deboss">
+                <p className="text-[var(--text-secondary)] mt-2">
                   View and download employee payslips
                 </p>
               </div>

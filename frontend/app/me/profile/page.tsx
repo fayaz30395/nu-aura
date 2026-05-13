@@ -235,8 +235,8 @@ export default function MyProfilePage() {
         {/* Header */}
         <div className="row-between">
           <div>
-            <h1 className="text-xl font-bold skeuo-emboss">My Profile</h1>
-            <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">
+            <h1 className="text-xl font-bold">My Profile</h1>
+            <p className="text-[var(--text-secondary)] mt-1">
               Manage your personal information
             </p>
           </div>
@@ -353,7 +353,7 @@ export default function MyProfilePage() {
           {/* Personal Information */}
           <Card className="card-aura">
             <CardHeader>
-              <CardTitle className="skeuo-emboss flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2">
                 <User className="h-5 w-5"/>
                 Personal Information
               </CardTitle>
@@ -388,7 +388,7 @@ export default function MyProfilePage() {
           {/* Contact Information */}
           <Card className="card-aura">
             <CardHeader>
-              <CardTitle className="skeuo-emboss flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2">
                 <Phone className="h-5 w-5"/>
                 Contact Information
               </CardTitle>
@@ -455,7 +455,7 @@ export default function MyProfilePage() {
           {/* Address */}
           <Card className="card-aura">
             <CardHeader>
-              <CardTitle className="skeuo-emboss flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2">
                 <MapPin className="h-5 w-5"/>
                 Address
               </CardTitle>
@@ -552,7 +552,7 @@ export default function MyProfilePage() {
           {/* Employment Details */}
           <Card className="card-aura">
             <CardHeader>
-              <CardTitle className="skeuo-emboss flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2">
                 <Calendar className="h-5 w-5"/>
                 Employment Details
               </CardTitle>
@@ -612,7 +612,7 @@ export default function MyProfilePage() {
             <CardHeader>
               <div className="row-between">
                 <div>
-                  <CardTitle className="skeuo-emboss flex items-center gap-2">
+                  <CardTitle className="flex items-center gap-2">
                     <CreditCard className="h-5 w-5"/>
                     Bank Details
                   </CardTitle>
@@ -668,7 +668,7 @@ export default function MyProfilePage() {
           {/* Tax Details */}
           <Card className="card-aura lg:col-span-2">
             <CardHeader>
-              <CardTitle className="skeuo-emboss flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2">
                 <Shield className="h-5 w-5"/>
                 Tax Information
               </CardTitle>
@@ -691,7 +691,7 @@ export default function MyProfilePage() {
         {showBankChangeModal && (
           <div className="modal-backdrop">
             <div
-              className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-xl max-w-lg w-full shadow-[var(--shadow-dropdown)]">
+              className="card-elevated max-w-lg w-full">
               <div className="p-6 border-b border-[var(--border-main)]">
                 <div className="row-between">
                   <div className="flex items-center gap-4">

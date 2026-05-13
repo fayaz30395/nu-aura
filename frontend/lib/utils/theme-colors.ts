@@ -1,7 +1,7 @@
 /**
- * Theme color utilities for chart components
- * Maps CSS variable names to hex values for use in charts (Recharts, etc.)
- * Uses fallback values for SSR compatibility
+ * Theme color utilities for chart components.
+ * Maps CSS variable names to hex values for use in charts (Recharts, etc.).
+ * Uses fallback values for SSR compatibility — fallbacks track Studio Slate v2.
  */
 
 const getCSSVariable = (varName: string, fallback: string): string => {
@@ -14,27 +14,28 @@ const getCSSVariable = (varName: string, fallback: string): string => {
 
 export const chartColors = {
   /**
-   * Primary chart colors - maps to Recharts color palette
+   * Primary chart colors — Studio Slate v2 palette.
+   * Fallbacks match `--chart-*` tokens in `frontend/app/globals.css`.
    */
-  primary: () => getCSSVariable('--chart-primary', '#050766'),
-  secondary: () => getCSSVariable('--chart-secondary', '#8939A1'),
+  primary: () => getCSSVariable('--chart-primary', '#2563EB'),
+  secondary: () => getCSSVariable('--chart-secondary', '#60a5fa'),
   success: () => getCSSVariable('--chart-success', '#16a34a'),
-  warning: () => getCSSVariable('--chart-warning', '#f59e0b'),
-  danger: () => getCSSVariable('--chart-danger', '#E62A32'),
-  info: () => getCSSVariable('--chart-info', '#61629D'),
-  accent: () => getCSSVariable('--chart-accent', '#EE777C'),
-  muted: () => getCSSVariable('--chart-muted', '#c0c3c8'),
+  warning: () => getCSSVariable('--chart-warning', '#d97706'),
+  danger: () => getCSSVariable('--chart-danger', '#dc2626'),
+  info: () => getCSSVariable('--chart-info', '#3b82f6'),
+  accent: () => getCSSVariable('--chart-accent', '#93c5fd'),
+  muted: () => getCSSVariable('--chart-muted', '#b8bccf'),
 
   /**
-   * Chart infrastructure colors
+   * Chart infrastructure colors.
    */
-  grid: () => getCSSVariable('--chart-grid', '#d8dadd'),
+  grid: () => getCSSVariable('--chart-grid', '#eceef5'),
   tooltipBg: () => getCSSVariable('--chart-tooltip-bg', '#ffffff'),
-  tooltipBorder: () => getCSSVariable('--chart-tooltip-border', '#c0c3c8'),
-  tooltipText: () => getCSSVariable('--chart-tooltip-text', '#050766'),
+  tooltipBorder: () => getCSSVariable('--chart-tooltip-border', '#dfe2ed'),
+  tooltipText: () => getCSSVariable('--chart-tooltip-text', '#1c2033'),
 
   /**
-   * Palette for multi-series charts
+   * Palette for multi-series charts.
    */
   palette: (): string[] => [
     chartColors.primary(),

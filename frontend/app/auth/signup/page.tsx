@@ -170,7 +170,7 @@ export default function SignupPage() {
         <Card
           className="skeuo-card bg-[var(--bg-card)] border-[var(--border-main)]/80 dark:border-[var(--border-main)]/80 shadow-soft-lg">
           <CardHeader className="pb-4">
-            <CardTitle className="text-xl skeuo-emboss">Create your account</CardTitle>
+            <CardTitle className="text-xl">Create your account</CardTitle>
             <CardDescription>Start your free trial — no credit card required</CardDescription>
           </CardHeader>
           <CardContent>

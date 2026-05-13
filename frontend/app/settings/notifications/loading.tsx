@@ -14,7 +14,7 @@ export default function Loading() {
       {/* Notification settings skeleton */}
       <div className="space-y-4">
         {Array.from({length: 6}).map((_, index) => (
-          <div key={index} className="row-between p-4 bg-[var(--bg-card)] rounded-lg">
+          <div key={index} className="row-between card-aura p-4">
             <div className="flex-1 space-y-2">
               <Skeleton height={16} width="30%"/>
               <Skeleton height={12} width="50%"/>

@@ -2,7 +2,7 @@
 
 import {ColorSchemeScript, MantineProvider} from '@mantine/core';
 import {DatesProvider} from '@mantine/dates';
-import {theme} from '@/lib/theme/mantine-theme';
+import {mantineTheme} from '@/styles/mantine-theme';
 import {useDarkMode} from './DarkModeProvider';
 
 // Required for @mantine/dates calendar / DateInput rendering.
@@ -35,7 +35,7 @@ export function MantineThemeProvider({children}: MantineThemeProviderProps) {
     // to 'dark' matching ColorSchemeScript defaultColorScheme="dark" in layout.tsx.
     <div suppressHydrationWarning>
       <MantineProvider
-        theme={theme}
+        theme={mantineTheme}
         forceColorScheme={resolvedTheme}
       >
         <DatesProvider settings={{locale: 'en-IN', firstDayOfWeek: 1, weekendDays: [0]}}>

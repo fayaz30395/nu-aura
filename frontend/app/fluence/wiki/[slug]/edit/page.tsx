@@ -177,7 +177,7 @@ export default function EditWikiPage() {
               >
                 <ArrowLeft className="w-5 h-5"/>
               </button>
-              <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
+              <h1 className="text-xl font-bold text-[var(--text-primary)]">
                 Edit Wiki Page
               </h1>
             </div>

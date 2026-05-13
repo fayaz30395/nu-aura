@@ -104,8 +104,8 @@ export default function FeatureFlagsPage() {
       {/* Header */}
       <Group justify="space-between">
         <div>
-          <Title order={2} className="skeuo-emboss">Feature Flags</Title>
-          <Text size="sm" c="dimmed" className="skeuo-deboss">
+          <Title order={2} className="">Feature Flags</Title>
+          <Text size="sm" c="dimmed" className="">
             {enabledCount} of {totalCount} features enabled for your organization
           </Text>
         </div>

@@ -128,11 +128,11 @@ function PaymentsPageContent() {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
           <div>
             <h1
-              className="text-2xl sm:text-xl font-bold text-[var(--text-primary)] flex items-center gap-2 skeuo-emboss">
+              className="text-2xl sm:text-xl font-bold text-[var(--text-primary)] flex items-center gap-2">
               <CreditCard className="w-7 h-7 sm:w-8 sm:h-8"/>
               Payment Gateway
             </h1>
-            <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">
+            <p className="text-[var(--text-secondary)] mt-1">
               Monitor and manage payment transactions
             </p>
           </div>
@@ -141,7 +141,7 @@ function PaymentsPageContent() {
         {/* Statistics */}
         {statsData && (
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-[var(--border-main)]">
+            <div className="card-aura p-4">
               <div className="flex items-center gap-4">
                 <div className="p-2 rounded-lg bg-accent-100 dark:bg-accent-900/30 text-accent-700">
                   <CreditCard className="w-5 h-5"/>
@@ -155,7 +155,7 @@ function PaymentsPageContent() {
               </div>
             </div>
 
-            <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-[var(--border-main)]">
+            <div className="card-aura p-4">
               <div className="flex items-center gap-4">
                 <div className="p-2 rounded-lg bg-success-100 dark:bg-success-900/30 text-success-600">
                   <CheckCircle className="w-5 h-5"/>
@@ -169,7 +169,7 @@ function PaymentsPageContent() {
               </div>
             </div>
 
-            <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-[var(--border-main)]">
+            <div className="card-aura p-4">
               <div className="flex items-center gap-4">
                 <div className="p-2 rounded-lg bg-warning-100 dark:bg-warning-900/30 text-warning-600">
                   <Clock className="w-5 h-5"/>
@@ -183,7 +183,7 @@ function PaymentsPageContent() {
               </div>
             </div>
 
-            <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-[var(--border-main)]">
+            <div className="card-aura p-4">
               <div className="flex items-center gap-4">
                 <div className="p-2 rounded-lg bg-error-100 dark:bg-error-900/30 text-error-600">
                   <XCircle className="w-5 h-5"/>
@@ -200,7 +200,7 @@ function PaymentsPageContent() {
         )}
 
         {/* Filters Bar */}
-        <div className="bg-[var(--bg-input)] rounded-lg p-4 mb-6 border border-[var(--border-main)]">
+        <div className="card-aura p-4 mb-6">
           <div className="flex flex-wrap items-center gap-4">
             {/* Search */}
             <div className="relative flex-1 min-w-[200px]">
@@ -360,7 +360,7 @@ function PaymentsPageContent() {
         </div>
 
         {/* Tabs */}
-        <div className="bg-[var(--bg-secondary)] rounded-t-lg shadow-[var(--shadow-card)]">
+        <div className="card-aura !rounded-b-none !border-b-0">
           <div className="flex border-b">
             <button
               onClick={() => setActiveTab('all')}
@@ -406,7 +406,7 @@ function PaymentsPageContent() {
         </div>
 
         {/* Content Area */}
-        <div className="bg-[var(--bg-secondary)] rounded-b-lg shadow-[var(--shadow-card)] p-6">
+        <div className="card-aura !rounded-t-none p-6">
           {paymentsLoading ? (
             <div className="flex justify-center items-center h-64">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-500"/>
@@ -422,7 +422,7 @@ function PaymentsPageContent() {
               {filteredPayments.map((payment) => (
                 <div
                   key={payment.id}
-                  className="border border-[var(--border-main)] rounded-lg p-4 hover:shadow-[var(--shadow-elevated)] transition-shadow"
+                  className="panel-inset p-4 hover:shadow-[var(--shadow-elevated)] transition-shadow"
                 >
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex items-start gap-4">

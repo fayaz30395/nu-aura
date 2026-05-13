@@ -58,8 +58,8 @@ export const CandidateStats = memo(function CandidateStats({
                 <Users className={`h-6 w-6 ${card.text}`}/>
               </div>
               <div>
-                <p className="text-body-muted skeuo-deboss">{card.label}</p>
-                <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{card.value}</p>
+                <p className="text-body-muted">{card.label}</p>
+                <p className="text-xl font-bold text-[var(--text-primary)]">{card.value}</p>
               </div>
             </div>
           </CardContent>

@@ -252,7 +252,7 @@ export function ScorecardForm({
                           value={field.value ?? ''}
                           type="text"
                           placeholder="Add notes..."
-                          className="mt-1 w-full bg-transparent text-xs text-[var(--text-secondary)] placeholder:text-[var(--text-muted)] outline-none border-none p-0"
+                          className="mt-1 w-full bg-transparent text-xs text-[var(--text-secondary)] placeholder:text-[var(--text-muted)] border-none p-0"
                         />
                       )}
                     />

@@ -210,10 +210,10 @@ export default function AgenciesPage() {
           {/* Header */}
           <motion.div variants={itemVariants} className="flex items-center justify-between">
             <div>
-              <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
+              <h1 className="text-xl font-bold text-[var(--text-primary)]">
                 Recruitment Agencies
               </h1>
-              <p className="text-xs text-[var(--text-muted)] mt-1 skeuo-deboss">
+              <p className="text-xs text-[var(--text-muted)] mt-1">
                 Manage external recruitment partners and track submissions
               </p>
             </div>

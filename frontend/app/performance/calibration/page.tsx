@@ -334,7 +334,7 @@ export default function CalibrationPage() {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
               <div>
-                <h1 className="text-xl font-bold skeuo-emboss">
+                <h1 className="text-xl font-bold">
                   Calibration & Distribution
                 </h1>
                 <p className="text-[var(--text-muted)] mt-1">
@@ -363,7 +363,7 @@ export default function CalibrationPage() {
             </div>
 
             {/* Cycle Selector */}
-            <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-4">
+            <div className="card-aura p-4">
               <div className="flex flex-col md:flex-row md:items-center gap-4">
                 <div className="flex-1">
                   <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
@@ -410,7 +410,7 @@ export default function CalibrationPage() {
                 {/* Distribution Overview */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   {/* Current vs Target */}
-                  <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-6 space-y-4">
+                  <div className="card-aura p-6 space-y-4">
                     <div>
                       <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-4">
                         Current Distribution
@@ -427,7 +427,7 @@ export default function CalibrationPage() {
 
                   {/* Stats */}
                   <div className="space-y-4">
-                    <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-4">
+                    <div className="card-aura p-4">
                       <div className="flex items-center gap-4">
                         <div
                           className="w-10 h-10 rounded-lg bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center">
@@ -435,14 +435,14 @@ export default function CalibrationPage() {
                         </div>
                         <div className="flex-1">
                           <p className="text-caption">Total Employees</p>
-                          <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
+                          <p className="text-xl font-bold text-[var(--text-primary)]">
                             {filteredAndSorted.length}
                           </p>
                         </div>
                       </div>
                     </div>
 
-                    <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-4">
+                    <div className="card-aura p-4">
                       <div className="flex items-center gap-4">
                         <div
                           className="w-10 h-10 rounded-lg bg-success-100 dark:bg-success-900/30 flex items-center justify-center">
@@ -450,14 +450,14 @@ export default function CalibrationPage() {
                         </div>
                         <div className="flex-1">
                           <p className="text-caption">Rated</p>
-                          <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
+                          <p className="text-xl font-bold text-[var(--text-primary)]">
                             {totalRated} ({Math.round((totalRated / Math.max(1, filteredAndSorted.length)) * 100)}%)
                           </p>
                         </div>
                       </div>
                     </div>
 
-                    <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-4">
+                    <div className="card-aura p-4">
                       <div className="flex items-center gap-4">
                         <div
                           className="w-10 h-10 rounded-lg bg-accent-300 dark:bg-accent-900/30 flex items-center justify-center">
@@ -465,7 +465,7 @@ export default function CalibrationPage() {
                         </div>
                         <div className="flex-1">
                           <p className="text-caption">Avg Rating</p>
-                          <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
+                          <p className="text-xl font-bold text-[var(--text-primary)]">
                             {totalRated > 0
                               ? (
                                 Object.entries(ratingCounts).reduce(
@@ -545,7 +545,7 @@ export default function CalibrationPage() {
                   </div>
                 ) : filteredAndSorted.length === 0 ? (
                   <div
-                    className="flex flex-col items-center justify-center py-20 text-center bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)]">
+                    className="card-aura flex flex-col items-center justify-center py-20 text-center">
                     <Info size={32} className="text-[var(--text-muted)] mb-4"/>
                     <p className="text-[var(--text-secondary)] font-medium">
                       No reviews found
@@ -555,7 +555,7 @@ export default function CalibrationPage() {
                     </p>
                   </div>
                 ) : (
-                  <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg overflow-hidden">
+                  <div className="card-aura overflow-hidden">
                     <div className="overflow-x-auto">
                       <table className="w-full text-sm">
                         <thead>
@@ -627,8 +627,8 @@ export default function CalibrationPage() {
                             <tr
                               key={row.employeeId}
                               className={`hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors ${
-                                isDirty ? 'bg-warning-50 dark:bg-warning-900/10' : ''
-                              } ${differsFromManager ? 'border-l-2 border-warning-400' : ''}`}
+                                isDirty || differsFromManager ? 'bg-warning-50 dark:bg-warning-900/10' : ''
+                              }`}
                             >
                               <td className="px-4 py-4 font-medium text-[var(--text-primary)]">
                                 {row.employeeName}
@@ -680,7 +680,7 @@ export default function CalibrationPage() {
               </>
             ) : !selectedCycleId && !cyclesLoading ? (
               <div
-                className="flex flex-col items-center justify-center py-20 text-center bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)]">
+                className="card-aura flex flex-col items-center justify-center py-20 text-center">
                 <Info size={32} className="text-[var(--text-muted)] mb-4"/>
                 <p className="text-[var(--text-secondary)] font-medium">
                   No review cycle selected

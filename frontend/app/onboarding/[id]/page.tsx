@@ -177,7 +177,7 @@ export default function OnboardingDetailPage() {
                   {process.employeeName?.charAt(0)}
                 </div>
                 <div>
-                  <h1 className="text-2xl font-black tracking-tight text-[var(--text-primary)] skeuo-emboss">
+                  <h1 className="text-2xl font-black tracking-tight text-[var(--text-primary)]">
                     {process.employeeName}
                   </h1>
                   <div className="flex flex-wrap items-center gap-4 mt-2 font-bold text-[var(--text-muted)]">
@@ -295,7 +295,7 @@ export default function OnboardingDetailPage() {
                                   <select
                                     value={task.status}
                                     onChange={(e) => handleTaskStatusUpdate(task.id, e.target.value)}
-                                    className="bg-transparent border-0 text-xs font-black uppercase tracking-widest text-[var(--text-muted)] outline-none cursor-pointer hover:text-accent-500"
+                                    className="bg-transparent border-0 text-xs font-black uppercase tracking-widest text-[var(--text-muted)] cursor-pointer hover:text-accent-500"
                                   >
                                     <option value="PENDING">Pending</option>
                                     <option value="IN_PROGRESS">In Progress</option>

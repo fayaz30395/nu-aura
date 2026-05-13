@@ -318,7 +318,7 @@ export default function EditEmployeePage() {
                             d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                     </svg>
                   </button>
-                  <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">Edit Employee</h1>
+                  <h1 className="text-xl font-bold text-[var(--text-primary)]">Edit Employee</h1>
                 </div>
               </div>
             </div>
@@ -351,7 +351,7 @@ export default function EditEmployeePage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                   </svg>
                 </button>
-                <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">Edit Employee</h1>
+                <h1 className="text-xl font-bold text-[var(--text-primary)]">Edit Employee</h1>
               </div>
             </div>
           </div>
@@ -403,7 +403,7 @@ export default function EditEmployeePage() {
           )}
 
           {/* Employee Header */}
-          <div className="skeuo-card p-6 mb-6">
+          <div className="card-aura p-6 mb-6">
             <div className="flex items-center space-x-4">
               <div
                 className="flex-shrink-0 h-16 w-16 bg-accent-100 dark:bg-accent-900/30 rounded-full flex items-center justify-center">
@@ -419,7 +419,7 @@ export default function EditEmployeePage() {
           </div>
 
           {/* Form */}
-          <div className="skeuo-card">
+          <div className="card-aura">
             {/* Tabs */}
             <div className="border-b border-[var(--border-main)]">
               <nav className="-mb-px flex space-x-8 px-6">

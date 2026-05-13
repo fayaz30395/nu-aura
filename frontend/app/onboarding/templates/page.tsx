@@ -40,7 +40,7 @@ export default function TemplatesPage() {
               <div className="p-2 bg-accent-500/10 rounded-xl">
                 <Layout className="h-6 w-6 text-accent-700"/>
               </div>
-              <h1 className="text-2xl font-black tracking-tight text-[var(--text-primary)] skeuo-emboss">
+              <h1 className="text-2xl font-black tracking-tight text-[var(--text-primary)]">
                 Checklist <span className="text-accent-700">Templates</span>
               </h1>
             </div>

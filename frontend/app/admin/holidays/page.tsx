@@ -219,8 +219,8 @@ export default function HolidayCalendarManagementPage() {
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <div>
-            <h1 className="text-xl font-bold skeuo-emboss">Holiday Calendar Management</h1>
-            <p className="mt-1 text-body-secondary skeuo-deboss">
+            <h1 className="text-xl font-bold">Holiday Calendar Management</h1>
+            <p className="mt-1 text-body-secondary">
               Manage organizational holidays and events
             </p>
           </div>

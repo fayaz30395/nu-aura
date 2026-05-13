@@ -129,9 +129,9 @@ export default function PayrollPage() {
               <div className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700">
                 <TrendingUp className="h-6 w-6 text-white"/>
               </div>
-              <h1 className="text-xl font-bold skeuo-emboss">Payroll Management</h1>
+              <h1 className="text-xl font-bold">Payroll Management</h1>
             </div>
-            <p className="text-[var(--text-secondary)] mt-2 ml-1 skeuo-deboss">
+            <p className="text-[var(--text-secondary)] mt-2 ml-1">
               Manage payroll runs, payslips, and salary structures for your organisation
             </p>
           </div>
@@ -153,7 +153,7 @@ export default function PayrollPage() {
                   <ChevronRight
                     className={`h-4 w-4 text-[var(--text-muted)] ${hoverText} group-hover:translate-x-1 transition-all duration-200`}/>
                 </div>
-                <h3 className="text-base font-semibold text-[var(--text-primary)] mb-0.5 skeuo-emboss">{label}</h3>
+                <h3 className="text-base font-semibold text-[var(--text-primary)] mb-0.5">{label}</h3>
                 <p className="text-xs text-[var(--text-secondary)]">{description}</p>
               </button>
             ))}

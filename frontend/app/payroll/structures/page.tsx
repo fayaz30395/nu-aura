@@ -169,8 +169,8 @@ export default function SalaryStructuresPage() {
           <div className="max-w-7xl mx-auto">
             {/* Header */}
             <div className="mb-8">
-              <h1 className="text-xl font-bold skeuo-emboss">Salary Structures</h1>
-              <p className="text-[var(--text-secondary)] mt-2 skeuo-deboss">Define and manage employee salary structures
+              <h1 className="text-xl font-bold">Salary Structures</h1>
+              <p className="text-[var(--text-secondary)] mt-2">Define and manage employee salary structures
                 with allowances and deductions</p>
             </div>
 

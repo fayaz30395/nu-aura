@@ -6,6 +6,7 @@ import {useQuery} from '@tanstack/react-query';
 import {Building2, Download, RefreshCw, TrendingDown, TrendingUp, Users,} from 'lucide-react';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
+import {Stat} from '@/components/ui/Stat';
 
 interface EmployeeMetrics {
   totalEmployees: number;
@@ -91,7 +92,7 @@ export default function HeadcountReportPage() {
         {/* Header */}
         <div className="row-between mb-6">
           <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">Headcount Report</h1>
+            <h1 className="text-xl font-bold text-[var(--text-primary)]">Headcount Report</h1>
             <p className="text-body-muted mt-1">Organization headcount by department, type, and trend</p>
           </div>
           <div className="flex items-center gap-2">
@@ -130,38 +131,38 @@ export default function HeadcountReportPage() {
             {/* KPI Cards */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
               <div className="skeuo-card p-4">
-                <p className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide">Total Employees</p>
-                <p className="text-3xl font-bold text-[var(--text-primary)] mt-1">{metrics?.totalEmployees ?? '—'}</p>
-                {orgHealth?.healthScore && (
-                  <span
-                    className={`inline-block mt-2 text-xs font-medium px-2 py-0.5 rounded-full ${STATUS_COLOR[orgHealth.healthScore.status] ?? 'bg-[var(--bg-surface)] text-[var(--text-secondary)]'}`}>
-                    Org Health: {orgHealth.healthScore.score}/100
-                  </span>
-                )}
+                <Stat
+                  label="Total Employees"
+                  value={metrics?.totalEmployees ?? '—'}
+                  caption={orgHealth?.healthScore ? (
+                    <span
+                      className={`inline-block text-xs font-medium px-2 py-0.5 rounded-full ${STATUS_COLOR[orgHealth.healthScore.status] ?? 'bg-[var(--bg-surface)] text-[var(--text-secondary)]'}`}>
+                      Org Health: {orgHealth.healthScore.score}/100
+                    </span>
+                  ) : undefined}
+                />
               </div>
               <div className="skeuo-card p-4">
-                <p className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide">Active Employees</p>
-                <p className="text-3xl font-bold text-[var(--text-primary)] mt-1">{metrics?.activeEmployees ?? '—'}</p>
+                <Stat label="Active Employees" value={metrics?.activeEmployees ?? '—'}/>
               </div>
               <div className="skeuo-card p-4">
-                <div className="flex items-center gap-1 mb-1">
-                  <TrendingUp className="h-3.5 w-3.5 text-success-500"/>
-                  <p className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide">New Hires
-                    (Month)</p>
-                </div>
-                <p
-                  className="text-3xl font-bold text-success-600 mt-1">{metrics?.newHiresThisMonth ?? orgHealth?.turnover?.monthlyJoiners ?? '—'}</p>
+                <Stat
+                  label="New Hires (Month)"
+                  value={metrics?.newHiresThisMonth ?? orgHealth?.turnover?.monthlyJoiners ?? '—'}
+                  tone="success"
+                  icon={<TrendingUp className="h-3.5 w-3.5 text-success-500"/>}
+                />
               </div>
               <div className="skeuo-card p-4">
-                <div className="flex items-center gap-1 mb-1">
-                  <TrendingDown className="h-3.5 w-3.5 text-danger-500"/>
-                  <p className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide">Exits (Month)</p>
-                </div>
-                <p
-                  className="text-3xl font-bold text-danger-600 mt-1">{metrics?.exitedThisMonth ?? orgHealth?.turnover?.monthlyExits ?? '—'}</p>
-                {orgHealth?.turnover?.annualTurnoverRate != null && (
-                  <p className="text-caption mt-1">Annual rate: {orgHealth.turnover.annualTurnoverRate.toFixed(1)}%</p>
-                )}
+                <Stat
+                  label="Exits (Month)"
+                  value={metrics?.exitedThisMonth ?? orgHealth?.turnover?.monthlyExits ?? '—'}
+                  tone="danger"
+                  icon={<TrendingDown className="h-3.5 w-3.5 text-danger-500"/>}
+                  caption={orgHealth?.turnover?.annualTurnoverRate != null ? (
+                    <span>Annual rate: {orgHealth.turnover.annualTurnoverRate.toFixed(1)}%</span>
+                  ) : undefined}
+                />
               </div>
             </div>
 

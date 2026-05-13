@@ -17,6 +17,7 @@ import {AppLayout} from '@/components/layout/AppLayout';
 import {Button, Card, CardContent} from '@/components/ui';
 import {TaskListItem} from '@/lib/types/core/task';
 import {CalendarEvent, GanttTask, PRIORITY_COLORS, STATUS_COLORS} from '@/lib/types/hrms/project-calendar';
+import {CATEGORICAL_DEFAULT, STATUS_FALLBACK_COLORS} from '@/lib/utils/categoricalPalette';
 import {CalendarGridView} from '@/components/projects/CalendarGridView';
 import {TaskDetailsModal} from '@/components/projects/TaskDetailsModal';
 import {useAuth} from '@/lib/hooks/useAuth';
@@ -120,7 +121,7 @@ export default function ProjectCalendarPage() {
           endDate: p.expectedEndDate ? new Date(p.expectedEndDate) : new Date(p.startDate),
           status: p.status,
           priority: toPriority(p.priority),
-          color: STATUS_COLORS[p.status] || '#3b82f6',
+          color: STATUS_COLORS[p.status] || CATEGORICAL_DEFAULT,
           description: p.description,
         });
       });
@@ -141,7 +142,7 @@ export default function ProjectCalendarPage() {
             endDate: new Date(t.dueDate),
             status: t.status,
             priority: toPriority(t.priority),
-            color: t.type === 'MILESTONE' ? '#f59e0b' : (STATUS_COLORS[t.status] || '#64748b'),
+            color: t.type === 'MILESTONE' ? STATUS_FALLBACK_COLORS.MILESTONE : (STATUS_COLORS[t.status] || STATUS_FALLBACK_COLORS.TASK_FALLBACK),
             projectId: t.projectId,
             projectName: t.projectName,
           });
@@ -170,7 +171,7 @@ export default function ProjectCalendarPage() {
           progress: project.status === 'COMPLETED' ? 100 : project.status === 'IN_PROGRESS' ? 50 : 0,
           status: project.status,
           priority: project.priority,
-          color: STATUS_COLORS[project.status] || '#3b82f6',
+          color: STATUS_COLORS[project.status] || CATEGORICAL_DEFAULT,
           dependencies: [],
         });
 
@@ -192,7 +193,7 @@ export default function ProjectCalendarPage() {
                 progress: task.progressPercentage || 0,
                 status: task.status,
                 priority: task.priority,
-                color: STATUS_COLORS[task.status] || '#64748b',
+                color: STATUS_COLORS[task.status] || STATUS_FALLBACK_COLORS.TASK_FALLBACK,
                 projectId: project.id,
                 dependencies: [],
               });
@@ -212,7 +213,7 @@ export default function ProjectCalendarPage() {
                 endDate: milestoneDate,
                 progress: milestone.progressPercentage || 0,
                 status: milestone.status,
-                color: '#fbbf24',
+                color: STATUS_FALLBACK_COLORS.MILESTONE,
                 projectId: project.id,
                 dependencies: [],
               });
@@ -427,7 +428,7 @@ export default function ProjectCalendarPage() {
               <ArrowLeft className="h-5 w-5 text-[var(--text-secondary)]"/>
             </button>
             <div>
-              <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
+              <h1 className="text-xl font-bold text-[var(--text-primary)]">
                 Project Calendar
               </h1>
               <p className="text-[var(--text-secondary)]">

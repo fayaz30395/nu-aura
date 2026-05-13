@@ -345,10 +345,10 @@ export default function RecruitmentDashboard() {
           <motion.div variants={itemVariants}
                       className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <h1 className="text-xl sm:text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
+              <h1 className="text-xl sm:text-xl font-bold text-[var(--text-primary)]">
                 Recruitment Dashboard
               </h1>
-              <p className="text-xs sm:text-sm text-[var(--text-muted)] mt-1 sm:mt-2 skeuo-deboss">
+              <p className="text-xs sm:text-sm text-[var(--text-muted)] mt-1 sm:mt-2">
                 Track job openings, candidates, and interviews
               </p>
             </div>

@@ -13,6 +13,7 @@ import {
 import {ShiftDefinition, ShiftDefinitionRequest} from '@/lib/types/hrms/shift';
 import {SkeletonCard} from '@/components/ui/Skeleton';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {CATEGORICAL_DEFAULT, CATEGORICAL_PALETTE, CATEGORICAL_UNSET} from '@/lib/utils/categoricalPalette';
 import {Controller, useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
@@ -35,7 +36,7 @@ const shiftSchema = z.object({
   workingDays: z.string().min(1, 'Working days required').default('MON,TUE,WED,THU,FRI'),
   isActive: z.boolean().default(true),
   shiftType: z.string().default('FIXED'),
-  colorCode: z.string().default('#3B82F6'),
+  colorCode: z.string().default(CATEGORICAL_DEFAULT),
   isFlexible: z.boolean().default(false),
   flexibleWindowMinutes: z.coerce.number().min(0).default(0),
   minGapBetweenShiftsHours: z.coerce.number().min(0).default(11),
@@ -54,10 +55,7 @@ const SHIFT_TYPES = [
 
 const WEEKDAYS = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
 
-const COLOR_PRESETS = [
-  '#3B82F6', '#F59E0B', '#8B5CF6', '#EF4444', '#10B981',
-  '#EC4899', '#F97316', '#06B6D4', '#6366F1', '#84CC16',
-];
+const COLOR_PRESETS = CATEGORICAL_PALETTE;
 
 function formatTime(time: string | undefined): string {
   if (!time) return '';
@@ -96,7 +94,7 @@ export default function ShiftDefinitionsPage() {
       workingDays: 'MON,TUE,WED,THU,FRI',
       isActive: true,
       shiftType: 'FIXED',
-      colorCode: '#3B82F6',
+      colorCode: CATEGORICAL_DEFAULT,
       isFlexible: false,
       flexibleWindowMinutes: 0,
       minGapBetweenShiftsHours: 11,
@@ -121,7 +119,7 @@ export default function ShiftDefinitionsPage() {
       workingDays: 'MON,TUE,WED,THU,FRI',
       isActive: true,
       shiftType: 'FIXED',
-      colorCode: '#3B82F6',
+      colorCode: CATEGORICAL_DEFAULT,
       isFlexible: false,
       flexibleWindowMinutes: 0,
       minGapBetweenShiftsHours: 11,
@@ -149,7 +147,7 @@ export default function ShiftDefinitionsPage() {
         workingDays: shift.workingDays,
         isActive: shift.isActive,
         shiftType: shift.shiftType ?? 'FIXED',
-        colorCode: shift.colorCode ?? '#3B82F6',
+        colorCode: shift.colorCode ?? CATEGORICAL_DEFAULT,
         isFlexible: shift.isFlexible,
         flexibleWindowMinutes: shift.flexibleWindowMinutes,
         minGapBetweenShiftsHours: shift.minGapBetweenShiftsHours,
@@ -241,7 +239,7 @@ export default function ShiftDefinitionsPage() {
                     <div className="flex items-center gap-2">
                       <div
                         className="w-4 h-4 rounded-full flex-shrink-0"
-                        style={{backgroundColor: shift.colorCode || '#6B7280'}}
+                        style={{backgroundColor: shift.colorCode || CATEGORICAL_UNSET}}
                       />
                       <div>
                         <h3 className="font-semibold text-surface-900 dark:text-white text-sm">

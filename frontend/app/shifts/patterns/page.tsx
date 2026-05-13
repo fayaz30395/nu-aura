@@ -18,6 +18,7 @@ import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {AnimatePresence, motion} from 'framer-motion';
+import {CATEGORICAL_OFF, CATEGORICAL_UNSET} from '@/lib/utils/categoricalPalette';
 import {ChevronLeft, Edit2, Plus, RotateCcw, Trash2, X,} from 'lucide-react';
 import {useRouter} from 'next/navigation';
 
@@ -96,7 +97,7 @@ function PatternPreview({
               : pd.shift?.colorCode
                 ? pd.shift.colorCode + '30'
                 : 'var(--border-main)',
-            color: pd.isOff ? '#9CA3AF' : pd.shift?.colorCode || '#6B7280',
+            color: pd.isOff ? CATEGORICAL_OFF : pd.shift?.colorCode || CATEGORICAL_UNSET,
           }}
         >
           {pd.isOff ? 'OFF' : pd.shift?.shiftCode || '?'}

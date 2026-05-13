@@ -132,7 +132,7 @@ export default function AgencyDetailPage() {
             <div className="flex items-center justify-between">
               <div>
                 <div className="flex items-center gap-2">
-                  <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
+                  <h1 className="text-xl font-bold text-[var(--text-primary)]">
                     {agency.name}
                   </h1>
                   <Badge variant={getStatusVariant(agency.status)} size="sm">

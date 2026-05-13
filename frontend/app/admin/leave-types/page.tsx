@@ -17,6 +17,7 @@ import {
   useLeaveTypes,
   useUpdateLeaveType,
 } from '@/lib/hooks/queries/useLeaves';
+import {CATEGORICAL_DEFAULT} from '@/lib/utils/categoricalPalette';
 
 const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
 
@@ -25,7 +26,7 @@ const leaveTypeFormSchema = z.object({
   leaveName: z.string().min(1, 'Leave name required'),
   description: z.string().optional().or(z.literal('')),
   isPaid: z.boolean().default(true),
-  colorCode: z.string().default('#3B82F6'),
+  colorCode: z.string().default(CATEGORICAL_DEFAULT),
   annualQuota: z.number({coerce: true}).min(0).default(0),
   maxConsecutiveDays: z.number({coerce: true}).optional(),
   minDaysNotice: z.number({coerce: true}).min(0).default(0),
@@ -71,7 +72,7 @@ export default function LeaveTypesManagementPage() {
       leaveName: '',
       description: '',
       isPaid: true,
-      colorCode: '#3B82F6',
+      colorCode: CATEGORICAL_DEFAULT,
       annualQuota: 0,
       maxConsecutiveDays: undefined,
       minDaysNotice: 0,
@@ -162,7 +163,7 @@ export default function LeaveTypesManagementPage() {
       leaveName: '',
       description: '',
       isPaid: true,
-      colorCode: '#3B82F6',
+      colorCode: CATEGORICAL_DEFAULT,
       annualQuota: 0,
       maxConsecutiveDays: undefined,
       minDaysNotice: 0,
@@ -185,7 +186,7 @@ export default function LeaveTypesManagementPage() {
       leaveName: leaveType.leaveName,
       description: leaveType.description || '',
       isPaid: leaveType.isPaid,
-      colorCode: leaveType.colorCode || '#3B82F6',
+      colorCode: leaveType.colorCode || CATEGORICAL_DEFAULT,
       annualQuota: leaveType.annualQuota || 0,
       maxConsecutiveDays: leaveType.maxConsecutiveDays,
       minDaysNotice: leaveType.minDaysNotice || 0,
@@ -257,8 +258,8 @@ export default function LeaveTypesManagementPage() {
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <div>
-            <h1 className="text-xl font-bold skeuo-emboss">Leave Types Management</h1>
-            <p className="mt-1 text-body-secondary skeuo-deboss">
+            <h1 className="text-xl font-bold">Leave Types Management</h1>
+            <p className="mt-1 text-body-secondary">
               Configure and manage leave types for your organization
             </p>
           </div>
@@ -343,7 +344,7 @@ export default function LeaveTypesManagementPage() {
                     <div className="flex items-center">
                       <div
                         className="h-8 w-8 rounded-full mr-4"
-                        style={{backgroundColor: leaveType.colorCode || '#3B82F6'}}
+                        style={{backgroundColor: leaveType.colorCode || CATEGORICAL_DEFAULT}}
                       />
                       <div>
                         <div className="text-sm font-medium text-[var(--text-primary)]">{leaveType.leaveName}</div>

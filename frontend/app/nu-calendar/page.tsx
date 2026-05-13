@@ -454,11 +454,11 @@ function CalendarContent() {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex items-center gap-4">
             <div
-              className="w-12 h-12 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 flex items-center justify-center">
-              <CalendarIcon className="h-6 w-6 text-white"/>
+              className="w-12 h-12 rounded-xl bg-accent-100 dark:bg-accent-500/10 text-accent-600 dark:text-accent-400 flex items-center justify-center">
+              <CalendarIcon className="h-6 w-6"/>
             </div>
             <div>
-              <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">NU-Calendar</h1>
+              <h1 className="text-xl font-bold text-[var(--text-primary)]">NU-Calendar</h1>
               <p className="text-body-muted">Your Google Calendar events</p>
             </div>
           </div>
