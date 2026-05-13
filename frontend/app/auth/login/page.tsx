@@ -766,7 +766,7 @@ function LoginPage() {
             {/* Platform badge */}
             <div
               className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-100/60 dark:bg-accent-900/20 border border-accent-200 dark:border-accent-800/40 mb-8">
-              <div className="w-2 h-2 rounded-full bg-success-600 dark:bg-success-400 animate-pulse"/>
+              <div aria-hidden="true" className="w-2 h-2 rounded-full bg-success-600 dark:bg-success-400 animate-pulse"/>
               <span className="text-accent-700 dark:text-accent-300 text-xs font-medium tracking-wider uppercase"
                     style={{letterSpacing: '3px'}}>
                 Infinite Innovation

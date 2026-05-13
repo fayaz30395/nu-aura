@@ -11,6 +11,7 @@ import {AppLayout} from '@/components/layout';
 import {Card, CardContent} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {Modal, ModalBody, ModalHeader} from '@/components/ui/Modal';
 import {
   CreateInterviewRequest,
   Interview,
@@ -56,8 +57,7 @@ import {
   Star,
   Trash2,
   User,
-  Video,
-  X
+  Video
 } from 'lucide-react';
 import {getGoogleToken, hasValidGoogleToken} from '@/lib/utils/googleToken';
 
@@ -881,24 +881,19 @@ function InterviewsPage() {
 
         {/* Add/Edit Modal */}
         {showAddModal && (
-          <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
-            <div
-              className="card-elevated max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-              <div className="p-6">
-                <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-xl font-bold text-[var(--text-primary)]">
-                    {editingInterview ? 'Edit Interview' : 'Schedule Interview'}
-                  </h2>
-                  <button onClick={() => {
-                    setShowAddModal(false);
-                    resetCreate();
-                    setEditingInterview(null);
-                  }} aria-label="Close modal"
-                          className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
-                    <X className="h-6 w-6"/>
-                  </button>
-                </div>
-
+          <Modal isOpen={showAddModal} onClose={() => {
+            setShowAddModal(false);
+            resetCreate();
+            setEditingInterview(null);
+          }} size="lg">
+            <ModalHeader onClose={() => {
+              setShowAddModal(false);
+              resetCreate();
+              setEditingInterview(null);
+            }}>
+              {editingInterview ? 'Edit Interview' : 'Schedule Interview'}
+            </ModalHeader>
+            <ModalBody>
                 <form onSubmit={handleSubmitCreate(onSubmitCreate)} className="space-y-6">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
@@ -1146,29 +1141,25 @@ function InterviewsPage() {
                     </Button>
                   </div>
                 </form>
-              </div>
-            </div>
-          </div>
+            </ModalBody>
+          </Modal>
         )}
 
         {/* Feedback Modal */}
         {showFeedbackModal && selectedInterview && (
-          <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
-            <div
-              className="card-elevated max-w-lg w-full max-h-[90vh] overflow-y-auto">
-              <div className="p-6">
-                <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-xl font-bold text-[var(--text-primary)]">Interview Feedback</h2>
-                  <button onClick={() => {
-                    setShowFeedbackModal(false);
-                    setSelectedInterview(null);
-                    resetFeedback();
-                  }} aria-label="Close modal"
-                          className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
-                    <X className="h-6 w-6"/>
-                  </button>
-                </div>
-
+          <Modal isOpen={showFeedbackModal} onClose={() => {
+            setShowFeedbackModal(false);
+            setSelectedInterview(null);
+            resetFeedback();
+          }} size="md">
+            <ModalHeader onClose={() => {
+              setShowFeedbackModal(false);
+              setSelectedInterview(null);
+              resetFeedback();
+            }}>
+              Interview Feedback
+            </ModalHeader>
+            <ModalBody>
                 <div className="mb-4 p-4 bg-[var(--bg-secondary)] rounded-xl">
                   <p className="text-body-muted">Candidate</p>
                   <p className="font-medium text-[var(--text-primary)]">{selectedInterview.candidateName}</p>
@@ -1236,16 +1227,17 @@ function InterviewsPage() {
                     </Button>
                   </div>
                 </form>
-              </div>
-            </div>
-          </div>
+            </ModalBody>
+          </Modal>
         )}
 
         {/* Delete Modal */}
         {showDeleteModal && interviewToDelete && (
-          <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
-            <div
-              className="card-elevated max-w-md w-full p-6">
+          <Modal isOpen={showDeleteModal} onClose={() => {
+            setShowDeleteModal(false);
+            setInterviewToDelete(null);
+          }} size="md">
+            <ModalBody>
               <div className="flex items-center mb-4">
                 <div className="flex-shrink-0 h-12 w-12 rounded-xl bg-danger-100 flex items-center justify-center">
                   <Trash2 className="h-6 w-6 text-danger-600"/>
@@ -1269,31 +1261,24 @@ function InterviewsPage() {
                   Delete
                 </Button>
               </div>
-            </div>
-          </div>
+            </ModalBody>
+          </Modal>
         )}
 
         {/* AI Interview Questions Modal */}
         {showQuestionsModal && generatedQuestions && (
-          <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
-            <div
-              className="card-elevated max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-              <div className="p-6">
-                <div className="flex justify-between items-center mb-6">
-                  <div className="flex items-center gap-2">
-                    <Sparkles className="h-5 w-5 text-accent-500"/>
-                    <h2 className="text-xl font-bold text-[var(--text-primary)]">AI Interview Questions</h2>
-                  </div>
-                  <button onClick={() => {
-                    setShowQuestionsModal(false);
-                    setGeneratedQuestions(null);
-                  }} aria-label="Close modal"
-                          className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
-                    <X className="h-6 w-6"/>
-                  </button>
-                </div>
-
-                <div className="space-y-6 max-h-[calc(90vh-200px)] overflow-y-auto">
+          <Modal isOpen={showQuestionsModal} onClose={() => {
+            setShowQuestionsModal(false);
+            setGeneratedQuestions(null);
+          }} size="lg">
+            <ModalHeader onClose={() => {
+              setShowQuestionsModal(false);
+              setGeneratedQuestions(null);
+            }}>
+              AI Interview Questions
+            </ModalHeader>
+            <ModalBody>
+                <div className="space-y-6">
                   {/* Technical Questions */}
                   {generatedQuestions.technicalQuestions && generatedQuestions.technicalQuestions.length > 0 && (
                     <div>
@@ -1397,9 +1382,8 @@ function InterviewsPage() {
                     Save to Notes
                   </Button>
                 </div>
-              </div>
-            </div>
-          </div>
+            </ModalBody>
+          </Modal>
         )}
       </div>
     </AppLayout>

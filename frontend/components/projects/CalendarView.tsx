@@ -319,7 +319,8 @@ export function CalendarView({
                     top: `${(getHours(new Date()) + getMinutes(new Date()) / 60) * HOUR_HEIGHT}px`,
                   }}
                 >
-                  <div className="absolute -left-1 -top-1 w-2 h-2 bg-danger-500 rounded-full"/>
+                  <div aria-hidden="true" className="absolute -left-1 -top-1 w-2 h-2 bg-danger-500 rounded-full"/>
+                  <span className="sr-only">Current time</span>
                 </div>
               )}
             </div>
@@ -411,7 +412,8 @@ export function CalendarView({
                   top: `${(getHours(new Date()) + getMinutes(new Date()) / 60) * HOUR_HEIGHT}px`,
                 }}
               >
-                <div className="absolute -left-1 -top-1 w-2 h-2 bg-danger-500 rounded-full"/>
+                <div aria-hidden="true" className="absolute -left-1 -top-1 w-2 h-2 bg-danger-500 rounded-full"/>
+                <span className="sr-only">Current time</span>
               </div>
             )}
           </div>
@@ -428,12 +430,14 @@ export function CalendarView({
         <div className="flex items-center gap-2">
           <button
             onClick={handlePrevious}
+            aria-label="Previous"
             className="p-2 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
           >
             <ChevronLeft className="w-5 h-5 text-surface-600 dark:text-surface-400"/>
           </button>
           <button
             onClick={handleNext}
+            aria-label="Next"
             className="p-2 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
           >
             <ChevronRight className="w-5 h-5 text-surface-600 dark:text-surface-400"/>

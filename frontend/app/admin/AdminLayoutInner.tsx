@@ -331,6 +331,10 @@ export default function AdminLayoutInner({
             <div
               className="absolute inset-0 bg-[var(--bg-overlay)]"
               onClick={() => setIsMobileSidebarOpen(false)}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ' || e.key === 'Escape') { e.preventDefault(); setIsMobileSidebarOpen(false); } }}
+              role="button"
+              tabIndex={0}
+              aria-label="Close mobile navigation menu"
             />
             <div className="absolute left-0 top-0 bottom-0 w-72">
               <Sidebar

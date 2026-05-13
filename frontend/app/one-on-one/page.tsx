@@ -976,11 +976,12 @@ export default function OneOnOnePage() {
                   {detailTab === 'notes' && (
                     <div className="space-y-6">
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
+                        <label htmlFor="one-on-one-shared-notes" className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                           Shared Notes
                         </label>
                         <p className="text-caption mb-2">Visible to both participants</p>
                         <textarea
+                          id="one-on-one-shared-notes"
                           value={sharedNotes}
                           onChange={(e) => setSharedNotes(e.target.value)}
                           rows={5}
@@ -989,11 +990,12 @@ export default function OneOnOnePage() {
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
+                        <label htmlFor="one-on-one-private-notes" className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                           Private Notes
                         </label>
                         <p className="text-caption mb-2">Only visible to you</p>
                         <textarea
+                          id="one-on-one-private-notes"
                           value={privateNotes}
                           onChange={(e) => setPrivateNotes(e.target.value)}
                           rows={4}
@@ -1069,8 +1071,10 @@ export default function OneOnOnePage() {
                               </div>
                               <div>
                                 <label
+                                  htmlFor="one-on-one-feedback-text"
                                   className="block text-sm font-medium text-[var(--text-primary)] mb-1">Feedback</label>
                                 <textarea
+                                  id="one-on-one-feedback-text"
                                   {...feedbackForm.register('feedback')}
                                   rows={3}
                                   placeholder="How was this meeting?"
@@ -1157,8 +1161,9 @@ export default function OneOnOnePage() {
                     <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-4">Reschedule Meeting</h3>
                     <div className="space-y-4 mb-4">
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">New Date</label>
+                        <label htmlFor="one-on-one-reschedule-date" className="block text-sm font-medium text-[var(--text-primary)] mb-1">New Date</label>
                         <input
+                          id="one-on-one-reschedule-date"
                           type="date"
                           value={rescheduleDate}
                           onChange={(e) => setRescheduleDate(e.target.value)}
@@ -1166,8 +1171,9 @@ export default function OneOnOnePage() {
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">New Time</label>
+                        <label htmlFor="one-on-one-reschedule-time" className="block text-sm font-medium text-[var(--text-primary)] mb-1">New Time</label>
                         <input
+                          id="one-on-one-reschedule-time"
                           type="time"
                           value={rescheduleTime}
                           onChange={(e) => setRescheduleTime(e.target.value)}
@@ -1281,8 +1287,9 @@ export default function OneOnOnePage() {
             <form onSubmit={scheduleForm.handleSubmit(handleSchedule)} className="space-y-6">
               {/* Title */}
               <div>
-                <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Title *</label>
+                <label htmlFor="one-on-one-title" className="block text-sm font-medium text-[var(--text-primary)] mb-1">Title *</label>
                 <input
+                  id="one-on-one-title"
                   {...scheduleForm.register('title')}
                   placeholder="Weekly 1-on-1 check-in"
                   className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
@@ -1294,9 +1301,10 @@ export default function OneOnOnePage() {
 
               {/* Participant */}
               <div>
-                <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Participant (Employee ID)
+                <label htmlFor="one-on-one-employee-id" className="block text-sm font-medium text-[var(--text-primary)] mb-1">Participant (Employee ID)
                   *</label>
                 <input
+                  id="one-on-one-employee-id"
                   {...scheduleForm.register('employeeId')}
                   placeholder="Enter employee ID"
                   className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
@@ -1308,8 +1316,9 @@ export default function OneOnOnePage() {
 
               {/* Description */}
               <div>
-                <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Description</label>
+                <label htmlFor="one-on-one-description" className="block text-sm font-medium text-[var(--text-primary)] mb-1">Description</label>
                 <textarea
+                  id="one-on-one-description"
                   {...scheduleForm.register('description')}
                   placeholder="Meeting agenda or description..."
                   rows={3}
@@ -1320,8 +1329,9 @@ export default function OneOnOnePage() {
               {/* Date & Time */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Date *</label>
+                  <label htmlFor="one-on-one-meeting-date" className="block text-sm font-medium text-[var(--text-primary)] mb-1">Date *</label>
                   <input
+                    id="one-on-one-meeting-date"
                     type="date"
                     {...scheduleForm.register('meetingDate')}
                     className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
@@ -1331,8 +1341,9 @@ export default function OneOnOnePage() {
                   )}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Start Time *</label>
+                  <label htmlFor="one-on-one-start-time" className="block text-sm font-medium text-[var(--text-primary)] mb-1">Start Time *</label>
                   <input
+                    id="one-on-one-start-time"
                     type="time"
                     {...scheduleForm.register('startTime')}
                     className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
@@ -1342,8 +1353,9 @@ export default function OneOnOnePage() {
                   )}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Duration (min)</label>
+                  <label htmlFor="one-on-one-duration" className="block text-sm font-medium text-[var(--text-primary)] mb-1">Duration (min)</label>
                   <input
+                    id="one-on-one-duration"
                     type="number"
                     {...scheduleForm.register('durationMinutes')}
                     min={15}
@@ -1356,8 +1368,9 @@ export default function OneOnOnePage() {
               {/* Meeting Type & Location */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Meeting Type</label>
+                  <label htmlFor="one-on-one-meeting-type" className="block text-sm font-medium text-[var(--text-primary)] mb-1">Meeting Type</label>
                   <select
+                    id="one-on-one-meeting-type"
                     {...scheduleForm.register('meetingType')}
                     className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
                   >
@@ -1372,8 +1385,9 @@ export default function OneOnOnePage() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Location</label>
+                  <label htmlFor="one-on-one-location" className="block text-sm font-medium text-[var(--text-primary)] mb-1">Location</label>
                   <input
+                    id="one-on-one-location"
                     {...scheduleForm.register('location')}
                     placeholder="Office / Virtual"
                     className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
@@ -1383,8 +1397,9 @@ export default function OneOnOnePage() {
 
               {/* Meeting Link */}
               <div>
-                <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Meeting Link</label>
+                <label htmlFor="one-on-one-meeting-link" className="block text-sm font-medium text-[var(--text-primary)] mb-1">Meeting Link</label>
                 <input
+                  id="one-on-one-meeting-link"
                   {...scheduleForm.register('meetingLink')}
                   placeholder="https://meet.google.com/..."
                   className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
@@ -1404,8 +1419,9 @@ export default function OneOnOnePage() {
                 {isRecurring && (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Frequency</label>
+                      <label htmlFor="one-on-one-recurrence-pattern" className="block text-sm font-medium text-[var(--text-primary)] mb-1">Frequency</label>
                       <select
+                        id="one-on-one-recurrence-pattern"
                         {...scheduleForm.register('recurrencePattern')}
                         className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
                       >
@@ -1416,8 +1432,9 @@ export default function OneOnOnePage() {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">End Date</label>
+                      <label htmlFor="one-on-one-recurrence-end-date" className="block text-sm font-medium text-[var(--text-primary)] mb-1">End Date</label>
                       <input
+                        id="one-on-one-recurrence-end-date"
                         type="date"
                         {...scheduleForm.register('recurrenceEndDate')}
                         className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"

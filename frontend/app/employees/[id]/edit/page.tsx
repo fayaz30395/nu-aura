@@ -488,10 +488,11 @@ export default function EditEmployeePage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="employee-edit-code" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Employee Code *
                     </label>
                     <input
+                      id="employee-edit-code"
                       type="text"
                       required
                       {...register('employeeCode')}
@@ -507,10 +508,11 @@ export default function EditEmployeePage() {
 
                   <div className="grid grid-cols-3 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                      <label htmlFor="employee-edit-first-name" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                         First Name *
                       </label>
                       <input
+                        id="employee-edit-first-name"
                         type="text"
                         required
                         {...register('firstName')}
@@ -519,10 +521,11 @@ export default function EditEmployeePage() {
                       {errors.firstName && <p className="text-danger-500 text-sm mt-1">{errors.firstName.message}</p>}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                      <label htmlFor="employee-edit-middle-name" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                         Middle Name
                       </label>
                       <input
+                        id="employee-edit-middle-name"
                         type="text"
                         {...register('middleName')}
                         className="input-aura"
@@ -530,10 +533,11 @@ export default function EditEmployeePage() {
                       {errors.middleName && <p className="text-danger-500 text-sm mt-1">{errors.middleName.message}</p>}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                      <label htmlFor="employee-edit-last-name" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                         Last Name
                       </label>
                       <input
+                        id="employee-edit-last-name"
                         type="text"
                         {...register('lastName')}
                         className="input-aura"
@@ -543,7 +547,7 @@ export default function EditEmployeePage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="employee-edit-status" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Status *
                     </label>
                     <Controller
@@ -551,6 +555,7 @@ export default function EditEmployeePage() {
                       control={control}
                       render={({field}) => (
                         <select
+                          id="employee-edit-status"
                           required
                           {...field}
                           value={field.value || ''}
@@ -576,10 +581,11 @@ export default function EditEmployeePage() {
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                      <label htmlFor="employee-edit-personal-email" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                         Personal Email
                       </label>
                       <input
+                        id="employee-edit-personal-email"
                         type="email"
                         {...register('personalEmail')}
                         className="input-aura"
@@ -589,10 +595,11 @@ export default function EditEmployeePage() {
                         <p className="text-danger-500 text-sm mt-1">{errors.personalEmail.message}</p>}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                      <label htmlFor="employee-edit-phone-number" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                         Phone Number
                       </label>
                       <input
+                        id="employee-edit-phone-number"
                         type="tel"
                         {...register('phoneNumber')}
                         className="input-aura"
@@ -605,10 +612,11 @@ export default function EditEmployeePage() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                      <label htmlFor="employee-edit-emergency-contact" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                         Emergency Contact
                       </label>
                       <input
+                        id="employee-edit-emergency-contact"
                         type="tel"
                         {...register('emergencyContactNumber')}
                         className="input-aura"
@@ -618,10 +626,11 @@ export default function EditEmployeePage() {
                         <p className="text-danger-500 text-sm mt-1">{errors.emergencyContactNumber.message}</p>}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                      <label htmlFor="employee-edit-date-of-birth" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                         Date of Birth
                       </label>
                       <input
+                        id="employee-edit-date-of-birth"
                         type="date"
                         {...register('dateOfBirth')}
                         className="input-aura"
@@ -632,7 +641,7 @@ export default function EditEmployeePage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="employee-edit-gender" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Gender
                     </label>
                     <Controller
@@ -640,6 +649,7 @@ export default function EditEmployeePage() {
                       control={control}
                       render={({field}) => (
                         <select
+                          id="employee-edit-gender"
                           {...field}
                           value={field.value || ''}
                           onChange={(e) => field.onChange(toGender(e.target.value) || undefined)}
@@ -657,10 +667,11 @@ export default function EditEmployeePage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="employee-edit-address" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Address
                     </label>
                     <textarea
+                      id="employee-edit-address"
                       rows={2}
                       {...register('address')}
                       className="input-aura"
@@ -671,10 +682,11 @@ export default function EditEmployeePage() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                      <label htmlFor="employee-edit-city" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                         City
                       </label>
                       <input
+                        id="employee-edit-city"
                         type="text"
                         {...register('city')}
                         className="input-aura"
@@ -682,10 +694,11 @@ export default function EditEmployeePage() {
                       {errors.city && <p className="text-danger-500 text-sm mt-1">{errors.city.message}</p>}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                      <label htmlFor="employee-edit-state" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                         State/Province
                       </label>
                       <input
+                        id="employee-edit-state"
                         type="text"
                         {...register('state')}
                         className="input-aura"
@@ -696,10 +709,11 @@ export default function EditEmployeePage() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                      <label htmlFor="employee-edit-postal-code" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                         Postal Code
                       </label>
                       <input
+                        id="employee-edit-postal-code"
                         type="text"
                         {...register('postalCode')}
                         className="input-aura"
@@ -707,10 +721,11 @@ export default function EditEmployeePage() {
                       {errors.postalCode && <p className="text-danger-500 text-sm mt-1">{errors.postalCode.message}</p>}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                      <label htmlFor="employee-edit-country" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                         Country
                       </label>
                       <input
+                        id="employee-edit-country"
                         type="text"
                         {...register('country')}
                         className="input-aura"
@@ -743,10 +758,11 @@ export default function EditEmployeePage() {
 
                   {/* Change Reason */}
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="employee-edit-change-reason" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Reason for Changes
                     </label>
                     <textarea
+                      id="employee-edit-change-reason"
                       {...register('changeRequestReason')}
                       rows={2}
                       className="input-aura"
@@ -758,10 +774,11 @@ export default function EditEmployeePage() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                      <label htmlFor="employee-edit-designation" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                         Designation *
                       </label>
                       <input
+                        id="employee-edit-designation"
                         type="text"
                         required
                         {...register('designation')}
@@ -772,7 +789,7 @@ export default function EditEmployeePage() {
                         <p className="text-danger-500 text-sm mt-1">{errors.designation.message}</p>}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                      <label htmlFor="employee-edit-employment-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                         Employment Type *
                       </label>
                       <Controller
@@ -780,6 +797,7 @@ export default function EditEmployeePage() {
                         control={control}
                         render={({field}) => (
                           <select
+                            id="employee-edit-employment-type"
                             required
                             {...field}
                             value={field.value || ''}
@@ -801,7 +819,7 @@ export default function EditEmployeePage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="employee-edit-department" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Department
                     </label>
                     <Controller
@@ -809,6 +827,7 @@ export default function EditEmployeePage() {
                       control={control}
                       render={({field}) => (
                         <select
+                          id="employee-edit-department"
                           {...field}
                           value={field.value || ''}
                           className="input-aura"
@@ -828,7 +847,7 @@ export default function EditEmployeePage() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                      <label htmlFor="employee-edit-level" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                         Employee Level
                       </label>
                       <Controller
@@ -836,6 +855,7 @@ export default function EditEmployeePage() {
                         control={control}
                         render={({field}) => (
                           <select
+                            id="employee-edit-level"
                             {...field}
                             value={field.value || ''}
                             onChange={(e) => field.onChange(toEmployeeLevel(e.target.value) || undefined)}
@@ -858,7 +878,7 @@ export default function EditEmployeePage() {
                       {errors.level && <p className="text-danger-500 text-sm mt-1">{errors.level.message}</p>}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                      <label htmlFor="employee-edit-job-role" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                         Job Role
                       </label>
                       <Controller
@@ -866,6 +886,7 @@ export default function EditEmployeePage() {
                         control={control}
                         render={({field}) => (
                           <select
+                            id="employee-edit-job-role"
                             {...field}
                             value={field.value || ''}
                             onChange={(e) => field.onChange(toJobRole(e.target.value) || undefined)}
@@ -955,10 +976,11 @@ export default function EditEmployeePage() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                      <label htmlFor="employee-edit-confirmation-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                         Confirmation Date
                       </label>
                       <input
+                        id="employee-edit-confirmation-date"
                         type="date"
                         {...register('confirmationDate')}
                         className="input-aura"
@@ -967,7 +989,7 @@ export default function EditEmployeePage() {
                         <p className="text-danger-500 text-sm mt-1">{errors.confirmationDate.message}</p>}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                      <label htmlFor="employee-edit-manager" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                         Reporting Manager *
                       </label>
                       <Controller
@@ -975,6 +997,7 @@ export default function EditEmployeePage() {
                         control={control}
                         render={({field}) => (
                           <select
+                            id="employee-edit-manager"
                             required
                             {...field}
                             className="input-aura"
@@ -999,7 +1022,7 @@ export default function EditEmployeePage() {
                   {/* Dotted-Line Managers (Optional, Matrix Reporting) */}
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                      <label htmlFor="employee-edit-dotted-manager-1" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                         Dotted-Line Manager 1 <span className="text-[var(--text-muted)]">(Optional)</span>
                       </label>
                       <Controller
@@ -1007,6 +1030,7 @@ export default function EditEmployeePage() {
                         control={control}
                         render={({field}) => (
                           <select
+                            id="employee-edit-dotted-manager-1"
                             {...field}
                             className="input-aura"
                           >
@@ -1021,7 +1045,7 @@ export default function EditEmployeePage() {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                      <label htmlFor="employee-edit-dotted-manager-2" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                         Dotted-Line Manager 2 <span className="text-[var(--text-muted)]">(Optional)</span>
                       </label>
                       <Controller
@@ -1029,6 +1053,7 @@ export default function EditEmployeePage() {
                         control={control}
                         render={({field}) => (
                           <select
+                            id="employee-edit-dotted-manager-2"
                             {...field}
                             className="input-aura"
                           >
@@ -1055,10 +1080,11 @@ export default function EditEmployeePage() {
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                      <label htmlFor="employee-edit-bank-account" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                         Bank Account Number
                       </label>
                       <input
+                        id="employee-edit-bank-account"
                         type="text"
                         {...register('bankAccountNumber')}
                         className="input-aura"
@@ -1072,10 +1098,11 @@ export default function EditEmployeePage() {
                         <p className="text-danger-500 text-sm mt-1">{errors.bankAccountNumber.message}</p>}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                      <label htmlFor="employee-edit-bank-name" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                         Bank Name
                       </label>
                       <input
+                        id="employee-edit-bank-name"
                         type="text"
                         {...register('bankName')}
                         className="input-aura"
@@ -1087,10 +1114,11 @@ export default function EditEmployeePage() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                      <label htmlFor="employee-edit-bank-ifsc" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                         IFSC Code / Routing Number
                       </label>
                       <input
+                        id="employee-edit-bank-ifsc"
                         type="text"
                         {...register('bankIfscCode')}
                         className="input-aura"
@@ -1100,10 +1128,11 @@ export default function EditEmployeePage() {
                         <p className="text-danger-500 text-sm mt-1">{errors.bankIfscCode.message}</p>}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                      <label htmlFor="employee-edit-tax-id" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                         Tax ID / SSN
                       </label>
                       <input
+                        id="employee-edit-tax-id"
                         type="text"
                         {...register('taxId')}
                         className="input-aura"

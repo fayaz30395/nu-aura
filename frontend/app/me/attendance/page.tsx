@@ -478,6 +478,7 @@ export default function MyAttendancePage() {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={previousMonth}
+                    aria-label="Previous month"
                     className="p-2 hover:bg-[var(--bg-card-hover)] rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                   >
                     <ChevronLeft className="h-5 w-5"/>
@@ -490,6 +491,7 @@ export default function MyAttendancePage() {
                   </span>
                   <button
                     onClick={nextMonth}
+                    aria-label="Next month"
                     className="p-2 hover:bg-[var(--bg-card-hover)] rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                   >
                     <ChevronRight className="h-5 w-5"/>

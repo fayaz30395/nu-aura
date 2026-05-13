@@ -522,7 +522,14 @@ export default function RolesPage() {
                     />
                     {showPermissionDropdown && permissions.length > 0 && (
                       <>
-                        <div className="fixed inset-0 z-10" onClick={() => setShowPermissionDropdown(false)}/>
+                        <div
+                          className="fixed inset-0 z-10"
+                          onClick={() => setShowPermissionDropdown(false)}
+                          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ' || e.key === 'Escape') { e.preventDefault(); setShowPermissionDropdown(false); } }}
+                          role="button"
+                          tabIndex={0}
+                          aria-label="Close permissions dropdown"
+                        />
                         <div
                           className="absolute z-20 w-full mt-1 bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg shadow-[var(--shadow-dropdown)] max-h-64 overflow-y-auto">
                           {permissions
@@ -534,13 +541,14 @@ export default function RolesPage() {
                               // Permissions are managed separately from form
                               const isSelected = false;
                               return (
-                                <div
+                                <button
+                                  type="button"
                                   key={permission.code}
                                   onClick={() => {
                                     // Permissions are managed separately via the Permissions modal
                                     // Not part of the create form
                                   }}
-                                  className={`px-4 py-2 cursor-pointer hover:bg-[var(--bg-surface)] ${
+                                  className={`w-full text-left px-4 py-2 cursor-pointer hover:bg-[var(--bg-surface)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-inset ${
                                     isSelected ? 'bg-accent-50' : ''
                                   }`}
                                 >
@@ -563,7 +571,7 @@ export default function RolesPage() {
                                       </svg>
                                     )}
                                   </div>
-                                </div>
+                                </button>
                               );
                             })}
                           {permissions.filter(permission =>

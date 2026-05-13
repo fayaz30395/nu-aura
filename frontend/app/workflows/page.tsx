@@ -415,6 +415,7 @@ export default function WorkflowListPage() {
                           </button>
                           {menuOpenId === wf.id && (
                             <div
+                              role="menu"
                               className="absolute right-0 top-full z-50 mt-1 w-44 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] py-1 shadow-[var(--shadow-dropdown)]"
                               onClick={(e) => e.stopPropagation()}
                             >
@@ -497,7 +498,14 @@ export default function WorkflowListPage() {
 
       {/* Click outside to close menu */}
       {menuOpenId && (
-        <div className="fixed inset-0 z-40 cursor-pointer" onClick={() => setMenuOpenId(null)}/>
+        <div
+          className="fixed inset-0 z-40 cursor-pointer"
+          onClick={() => setMenuOpenId(null)}
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ' || e.key === 'Escape') { e.preventDefault(); setMenuOpenId(null); } }}
+          role="button"
+          tabIndex={0}
+          aria-label="Close actions menu"
+        />
       )}
 
       {/* Deactivate Confirmation Modal */}

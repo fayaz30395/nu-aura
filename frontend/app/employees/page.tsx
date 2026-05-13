@@ -679,10 +679,11 @@ export default function EmployeesPage() {
                   <div className={currentTab === 'personal' ? 'space-y-4' : 'hidden'}>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                        <label htmlFor="emp-personal-email" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Personal Email
                         </label>
                         <input
+                          id="emp-personal-email"
                           type="email"
                           {...register('personalEmail')}
                           className="input-aura"
@@ -692,10 +693,11 @@ export default function EmployeesPage() {
                           className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.personalEmail.message}</p>}
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                        <label htmlFor="emp-phone-number" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Phone Number
                         </label>
                         <input
+                          id="emp-phone-number"
                           type="tel"
                           {...register('phoneNumber')}
                           className="input-aura"
@@ -708,10 +710,11 @@ export default function EmployeesPage() {
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                        <label htmlFor="emp-emergency-contact" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Emergency Contact
                         </label>
                         <input
+                          id="emp-emergency-contact"
                           type="tel"
                           {...register('emergencyContactNumber')}
                           className="input-aura"
@@ -721,10 +724,11 @@ export default function EmployeesPage() {
                           className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.emergencyContactNumber.message}</p>}
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                        <label htmlFor="emp-date-of-birth" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Date of Birth
                         </label>
                         <input
+                          id="emp-date-of-birth"
                           type="date"
                           {...register('dateOfBirth')}
                           className="input-aura"
@@ -735,7 +739,7 @@ export default function EmployeesPage() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                      <label htmlFor="emp-gender" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                         Gender
                       </label>
                       <Controller
@@ -743,6 +747,7 @@ export default function EmployeesPage() {
                         control={control}
                         render={({field}) => (
                           <select
+                            id="emp-gender"
                             {...field}
                             value={field.value || ''}
                             className="input-aura"
@@ -760,10 +765,11 @@ export default function EmployeesPage() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                      <label htmlFor="emp-address" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                         Address
                       </label>
                       <textarea
+                        id="emp-address"
                         rows={2}
                         {...register('address')}
                         className="input-aura min-h-[80px] py-2"
@@ -775,10 +781,11 @@ export default function EmployeesPage() {
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                        <label htmlFor="emp-city" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           City
                         </label>
                         <input
+                          id="emp-city"
                           type="text"
                           {...register('city')}
                           className="input-aura"
@@ -787,10 +794,11 @@ export default function EmployeesPage() {
                           <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.city.message}</p>}
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                        <label htmlFor="emp-state" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           State/Province
                         </label>
                         <input
+                          id="emp-state"
                           type="text"
                           {...register('state')}
                           className="input-aura"
@@ -802,10 +810,11 @@ export default function EmployeesPage() {
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                        <label htmlFor="emp-postal-code" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Postal Code
                         </label>
                         <input
+                          id="emp-postal-code"
                           type="text"
                           {...register('postalCode')}
                           className="input-aura"
@@ -814,10 +823,11 @@ export default function EmployeesPage() {
                           className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.postalCode.message}</p>}
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                        <label htmlFor="emp-country" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Country
                         </label>
                         <input
+                          id="emp-country"
                           type="text"
                           {...register('country')}
                           className="input-aura"
@@ -832,10 +842,11 @@ export default function EmployeesPage() {
                   <div className={currentTab === 'employment' ? 'space-y-4' : 'hidden'}>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                        <label htmlFor="emp-designation" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Designation *
                         </label>
                         <input
+                          id="emp-designation"
                           type="text"
                           {...register('designation')}
                           className="input-aura"
@@ -845,7 +856,7 @@ export default function EmployeesPage() {
                           className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.designation.message}</p>}
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                        <label htmlFor="emp-employment-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Employment Type *
                         </label>
                         <Controller
@@ -853,6 +864,7 @@ export default function EmployeesPage() {
                           control={control}
                           render={({field}) => (
                             <select
+                              id="emp-employment-type"
                               {...field}
                               className="input-aura"
                             >
@@ -869,7 +881,7 @@ export default function EmployeesPage() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                      <label htmlFor="emp-department" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                         Department *
                       </label>
                       <Controller
@@ -877,6 +889,7 @@ export default function EmployeesPage() {
                         control={control}
                         render={({field}) => (
                           <select
+                            id="emp-department"
                             {...field}
                             className="input-aura"
                           >
@@ -895,7 +908,7 @@ export default function EmployeesPage() {
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                        <label htmlFor="emp-level" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Employee Level
                         </label>
                         <Controller
@@ -903,6 +916,7 @@ export default function EmployeesPage() {
                           control={control}
                           render={({field}) => (
                             <select
+                              id="emp-level"
                               {...field}
                               value={field.value || ''}
                               className="input-aura"
@@ -925,7 +939,7 @@ export default function EmployeesPage() {
                           <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.level.message}</p>}
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                        <label htmlFor="emp-job-role" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Job Role
                         </label>
                         <Controller
@@ -933,6 +947,7 @@ export default function EmployeesPage() {
                           control={control}
                           render={({field}) => (
                             <select
+                              id="emp-job-role"
                               {...field}
                               value={field.value || ''}
                               className="input-aura"
@@ -959,10 +974,11 @@ export default function EmployeesPage() {
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                        <label htmlFor="emp-joining-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Joining Date *
                         </label>
                         <input
+                          id="emp-joining-date"
                           type="date"
                           {...register('joiningDate')}
                           className="input-aura"
@@ -971,10 +987,11 @@ export default function EmployeesPage() {
                           className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.joiningDate.message}</p>}
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                        <label htmlFor="emp-confirmation-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Confirmation Date
                         </label>
                         <input
+                          id="emp-confirmation-date"
                           type="date"
                           {...register('confirmationDate')}
                           className="input-aura"
@@ -985,7 +1002,7 @@ export default function EmployeesPage() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                      <label htmlFor="emp-manager" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                         Reporting Manager
                       </label>
                       <Controller
@@ -993,6 +1010,7 @@ export default function EmployeesPage() {
                         control={control}
                         render={({field}) => (
                           <select
+                            id="emp-manager"
                             {...field}
                             className="input-aura"
                           >
@@ -1016,7 +1034,7 @@ export default function EmployeesPage() {
                     {/* Dotted-Line Managers (Optional, Matrix Reporting) */}
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                        <label htmlFor="emp-dotted-manager-1" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Dotted-Line Manager 1 <span className="text-[var(--text-muted)]">(Optional)</span>
                         </label>
                         <Controller
@@ -1024,6 +1042,7 @@ export default function EmployeesPage() {
                           control={control}
                           render={({field}) => (
                             <select
+                              id="emp-dotted-manager-1"
                               {...field}
                               className="input-aura"
                             >
@@ -1038,7 +1057,7 @@ export default function EmployeesPage() {
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                        <label htmlFor="emp-dotted-manager-2" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Dotted-Line Manager 2 <span className="text-[var(--text-muted)]">(Optional)</span>
                         </label>
                         <Controller
@@ -1046,6 +1065,7 @@ export default function EmployeesPage() {
                           control={control}
                           render={({field}) => (
                             <select
+                              id="emp-dotted-manager-2"
                               {...field}
                               className="input-aura"
                             >
@@ -1070,10 +1090,11 @@ export default function EmployeesPage() {
                   <div className={currentTab === 'bank' ? 'space-y-4' : 'hidden'}>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                        <label htmlFor="emp-bank-account" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Bank Account Number
                         </label>
                         <input
+                          id="emp-bank-account"
                           type="text"
                           {...register('bankAccountNumber')}
                           className="input-aura"
@@ -1083,10 +1104,11 @@ export default function EmployeesPage() {
                           className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.bankAccountNumber.message}</p>}
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                        <label htmlFor="emp-bank-name" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Bank Name
                         </label>
                         <input
+                          id="emp-bank-name"
                           type="text"
                           {...register('bankName')}
                           className="input-aura"
@@ -1099,10 +1121,11 @@ export default function EmployeesPage() {
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                        <label htmlFor="emp-bank-ifsc" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           IFSC Code / Routing Number
                         </label>
                         <input
+                          id="emp-bank-ifsc"
                           type="text"
                           {...register('bankIfscCode')}
                           className="input-aura"
@@ -1112,10 +1135,11 @@ export default function EmployeesPage() {
                           className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.bankIfscCode.message}</p>}
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                        <label htmlFor="emp-tax-id" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Tax ID / SSN
                         </label>
                         <input
+                          id="emp-tax-id"
                           type="text"
                           {...register('taxId')}
                           className="input-aura"

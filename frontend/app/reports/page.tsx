@@ -169,6 +169,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({report, onClose, onDownloa
           </div>
           <button
             onClick={onClose}
+            aria-label="Close dialog"
             className="p-2 hover:bg-[var(--bg-card-hover)] rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
             <X className="h-5 w-5 text-[var(--text-muted)]"/>

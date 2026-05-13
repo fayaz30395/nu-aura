@@ -207,7 +207,8 @@ export default function LeaveCalendarPage() {
               </div>
             ))}
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-danger-500"/>
+              <div aria-hidden="true" className="w-3 h-3 rounded-full bg-danger-500"/>
+              <span className="sr-only">Holiday status</span>
               <span className="text-sm text-[var(--text-primary)]">Holiday</span>
             </div>
           </div>

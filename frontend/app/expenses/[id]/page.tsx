@@ -330,7 +330,8 @@ export default function ExpenseDetailPage() {
             <div className="space-y-4">
               {claim.submittedAt && (
                 <div className="flex items-center gap-4">
-                  <div className="w-2 h-2 rounded-full bg-accent-500"/>
+                  <div aria-hidden="true" className="w-2 h-2 rounded-full bg-accent-500"/>
+                  <span className="sr-only">Submitted</span>
                   <span className="text-sm text-surface-600 dark:text-surface-400">
                     Submitted on {format(new Date(claim.submittedAt), 'dd MMM yyyy HH:mm')}
                   </span>
@@ -338,7 +339,8 @@ export default function ExpenseDetailPage() {
               )}
               {claim.approvedAt && (
                 <div className="flex items-center gap-4">
-                  <div className="w-2 h-2 rounded-full bg-success-500"/>
+                  <div aria-hidden="true" className="w-2 h-2 rounded-full bg-success-500"/>
+                  <span className="sr-only">Approved</span>
                   <span className="text-sm text-surface-600 dark:text-surface-400">
                     Approved by {claim.approvedByName} on {format(new Date(claim.approvedAt), 'dd MMM yyyy HH:mm')}
                   </span>
@@ -346,7 +348,8 @@ export default function ExpenseDetailPage() {
               )}
               {claim.rejectedAt && (
                 <div className="flex items-center gap-4">
-                  <div className="w-2 h-2 rounded-full bg-danger-500"/>
+                  <div aria-hidden="true" className="w-2 h-2 rounded-full bg-danger-500"/>
+                  <span className="sr-only">Rejected</span>
                   <span className="text-sm text-surface-600 dark:text-surface-400">
                     Rejected by {claim.rejectedByName} on {format(new Date(claim.rejectedAt), 'dd MMM yyyy HH:mm')}
                     {claim.rejectionReason && ` — "${claim.rejectionReason}"`}
@@ -355,7 +358,8 @@ export default function ExpenseDetailPage() {
               )}
               {claim.reimbursedAt && (
                 <div className="flex items-center gap-4">
-                  <div className="w-2 h-2 rounded-full bg-success-500"/>
+                  <div aria-hidden="true" className="w-2 h-2 rounded-full bg-success-500"/>
+                  <span className="sr-only">Reimbursed</span>
                   <span className="text-sm text-surface-600 dark:text-surface-400">
                     Reimbursed on {format(new Date(claim.reimbursedAt), 'dd MMM yyyy HH:mm')}
                     {claim.reimbursementRef && ` (Ref: ${claim.reimbursementRef})`}

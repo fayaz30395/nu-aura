@@ -35,10 +35,10 @@ import {
   Search,
   Sparkles,
   Trash2,
-  Users,
-  X
+  Users
 } from 'lucide-react';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {Modal, ModalBody, ModalHeader} from '@/components/ui/Modal';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {formatDate} from '@/lib/utils/format/date';
@@ -529,24 +529,19 @@ export default function JobOpeningsPage() {
 
         {/* Add/Edit Modal */}
         {showAddModal && (
-          <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
-            <div
-              className="card-elevated max-w-3xl w-full max-h-[90vh] overflow-y-auto">
-              <div className="p-6">
-                <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-xl font-bold text-[var(--text-primary)]">
-                    {editingJob ? 'Edit Job Opening' : 'Create Job Opening'}
-                  </h2>
-                  <button onClick={() => {
-                    setShowAddModal(false);
-                    reset();
-                    setEditingJob(null);
-                  }} aria-label="Close modal"
-                          className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
-                    <X className="h-6 w-6"/>
-                  </button>
-                </div>
-
+          <Modal isOpen={showAddModal} onClose={() => {
+            setShowAddModal(false);
+            reset();
+            setEditingJob(null);
+          }} size="xl">
+            <ModalHeader onClose={() => {
+              setShowAddModal(false);
+              reset();
+              setEditingJob(null);
+            }}>
+              {editingJob ? 'Edit Job Opening' : 'Create Job Opening'}
+            </ModalHeader>
+            <ModalBody>
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
@@ -790,16 +785,17 @@ export default function JobOpeningsPage() {
                     </Button>
                   </div>
                 </form>
-              </div>
-            </div>
-          </div>
+            </ModalBody>
+          </Modal>
         )}
 
         {/* Delete Modal */}
         {showDeleteModal && jobToDelete && (
-          <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
-            <div
-              className="card-elevated max-w-md w-full p-6">
+          <Modal isOpen={showDeleteModal} onClose={() => {
+            setShowDeleteModal(false);
+            setJobToDelete(null);
+          }} size="md">
+            <ModalBody>
               <div className="flex items-center mb-4">
                 <div className="flex-shrink-0 h-12 w-12 rounded-xl bg-danger-100 flex items-center justify-center">
                   <Trash2 className="h-6 w-6 text-danger-600"/>
@@ -831,33 +827,23 @@ export default function JobOpeningsPage() {
                   Delete
                 </Button>
               </div>
-            </div>
-          </div>
+            </ModalBody>
+          </Modal>
         )}
 
         {/* AI Generated Job Description Modal */}
         {showAiModal && (
-          <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
-            <div
-              className="card-elevated max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-              <div className="p-6">
-                <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-xl font-bold text-[var(--text-primary)] flex items-center gap-2">
-                    <Sparkles className="h-6 w-6 text-accent-700"/>
-                    Generated Job Description
-                  </h2>
-                  <button
-                    onClick={() => {
-                      setShowAiModal(false);
-                      setAiGeneratedJD(null);
-                    }}
-                    aria-label="Close modal"
-                    className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                  >
-                    <X className="h-6 w-6"/>
-                  </button>
-                </div>
-
+          <Modal isOpen={showAiModal} onClose={() => {
+            setShowAiModal(false);
+            setAiGeneratedJD(null);
+          }} size="lg">
+            <ModalHeader onClose={() => {
+              setShowAiModal(false);
+              setAiGeneratedJD(null);
+            }}>
+              Generated Job Description
+            </ModalHeader>
+            <ModalBody>
                 {generateJDMutation.isPending ? (
                   <div className="py-12 text-center">
                     <div
@@ -936,9 +922,8 @@ export default function JobOpeningsPage() {
                     </div>
                   </div>
                 ) : null}
-              </div>
-            </div>
-          </div>
+            </ModalBody>
+          </Modal>
         )}
       </motion.div>
     </AppLayout>

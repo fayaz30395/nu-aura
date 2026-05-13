@@ -17,13 +17,13 @@ import {
   Trash2,
   Users,
   Video,
-  X,
 } from 'lucide-react';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {AppLayout} from '@/components/layout';
 import {Card, CardContent} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {Input} from '@/components/ui/Input';
+import {Modal, ModalBody, ModalHeader} from '@/components/ui/Modal';
 import {DateInput} from '@mantine/dates';
 import {useGoogleLogin} from '@react-oauth/google';
 import {clearGoogleToken, getGoogleToken, GOOGLE_SSO_SCOPES, saveGoogleToken} from '@/lib/utils/googleToken';
@@ -618,7 +618,11 @@ function CalendarContent() {
                         <div
                           key={index}
                           onClick={() => openCreateModal(day)}
-                          className={`min-h-[120px] p-2 border-b border-r border-[var(--border-main)] cursor-pointer hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors ${
+                          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openCreateModal(day); } }}
+                          role="button"
+                          tabIndex={0}
+                          aria-label={`Create event on ${day.toDateString()}`}
+                          className={`min-h-[120px] p-2 border-b border-r border-[var(--border-main)] cursor-pointer hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-inset ${
                             !isCurrentMonth ? 'bg-[var(--bg-secondary)]/50' : ''
                           }`}
                         >
@@ -642,7 +646,18 @@ function CalendarContent() {
                                   setSelectedEvent(event);
                                   setShowEventModal(true);
                                 }}
-                                className={`px-1.5 py-0.5 rounded text-xs text-white truncate cursor-pointer hover:opacity-80 ${getEventColor(event)}`}
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter' || e.key === ' ') {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    setSelectedEvent(event);
+                                    setShowEventModal(true);
+                                  }
+                                }}
+                                role="button"
+                                tabIndex={0}
+                                aria-label={`View event ${event.summary}`}
+                                className={`px-1.5 py-0.5 rounded text-xs text-white truncate cursor-pointer hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-1 ${getEventColor(event)}`}
                               >
                                 {event.start.dateTime && (
                                   <span className="mr-1">{formatTime(event.start.dateTime)}</span>
@@ -680,7 +695,17 @@ function CalendarContent() {
                           setSelectedEvent(event);
                           setShowEventModal(true);
                         }}
-                        className="p-4 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 cursor-pointer transition-colors"
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            setSelectedEvent(event);
+                            setShowEventModal(true);
+                          }
+                        }}
+                        role="button"
+                        tabIndex={0}
+                        aria-label={`View event ${event.summary}`}
+                        className="p-4 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-inset"
                       >
                         <div className="flex items-start gap-4">
                           <div className={`w-1 h-full min-h-[60px] rounded-full ${getEventColor(event)}`}/>
@@ -751,13 +776,14 @@ function CalendarContent() {
                 </h3>
                 <div className="space-y-4">
                   {events.slice(0, 5).map((event) => (
-                    <div
+                    <button
+                      type="button"
                       key={event.id}
                       onClick={() => {
                         setSelectedEvent(event);
                         setShowEventModal(true);
                       }}
-                      className="flex items-center gap-4 p-4 rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] cursor-pointer transition-colors"
+                      className="w-full text-left flex items-center gap-4 p-4 rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                     >
                       <div className={`w-2 h-10 rounded-full ${getEventColor(event)}`}/>
                       <div className="flex-1 min-w-0">
@@ -771,7 +797,7 @@ function CalendarContent() {
                       {event.hangoutLink && (
                         <Video className="h-4 w-4 text-accent-500"/>
                       )}
-                    </div>
+                    </button>
                   ))}
                 </div>
               </CardContent>
@@ -782,22 +808,17 @@ function CalendarContent() {
 
       {/* Event Details Modal */}
       {showEventModal && selectedEvent && (
-        <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
-          <Card className="w-full max-w-lg">
-            <div className="row-between p-4 border-b border-[var(--border-main)]">
-              <h3 className="font-semibold text-[var(--text-primary)]">Event Details</h3>
-              <button
-                onClick={() => {
-                  setShowEventModal(false);
-                  setSelectedEvent(null);
-                }}
-                className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                aria-label="Close event modal"
-              >
-                <X className="h-5 w-5"/>
-              </button>
-            </div>
-            <div className="p-4 space-y-4">
+        <Modal isOpen={showEventModal} onClose={() => {
+          setShowEventModal(false);
+          setSelectedEvent(null);
+        }} size="md">
+          <ModalHeader onClose={() => {
+            setShowEventModal(false);
+            setSelectedEvent(null);
+          }}>
+            Event Details
+          </ModalHeader>
+          <ModalBody className="space-y-4">
               <div>
                 <h4 className="text-xl font-semibold text-[var(--text-primary)]">
                   {selectedEvent.summary}
@@ -892,26 +913,17 @@ function CalendarContent() {
                   Delete
                 </Button>
               </div>
-            </div>
-          </Card>
-        </div>
+          </ModalBody>
+        </Modal>
       )}
 
       {/* Create Event Modal */}
       {showCreateModal && (
-        <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
-          <Card className="w-full max-w-lg">
-            <div className="row-between p-4 border-b border-[var(--border-main)]">
-              <h3 className="font-semibold text-[var(--text-primary)]">Create Event</h3>
-              <button
-                onClick={() => setShowCreateModal(false)}
-                className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                aria-label="Close create modal"
-              >
-                <X className="h-5 w-5"/>
-              </button>
-            </div>
-            <div className="p-4 space-y-4">
+        <Modal isOpen={showCreateModal} onClose={() => setShowCreateModal(false)} size="md">
+          <ModalHeader onClose={() => setShowCreateModal(false)}>
+            Create Event
+          </ModalHeader>
+          <ModalBody className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Title *
@@ -1039,9 +1051,8 @@ function CalendarContent() {
                   {creating ? 'Creating...' : 'Create Event'}
                 </Button>
               </div>
-            </div>
-          </Card>
-        </div>
+          </ModalBody>
+        </Modal>
       )}
 
       <ConfirmDialog

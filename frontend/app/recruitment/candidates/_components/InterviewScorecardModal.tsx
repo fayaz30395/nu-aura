@@ -5,6 +5,7 @@ import {Button} from '@/components/ui/Button';
 import {Badge} from '@/components/ui/Badge';
 import {Card, CardContent} from '@/components/ui/Card';
 import {Skeleton} from '@/components/ui/Skeleton';
+import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
 import {
   AlertCircle,
   CheckCircle,
@@ -14,7 +15,6 @@ import {
   Star,
   TrendingUp,
   Users,
-  X,
   XCircle,
 } from 'lucide-react';
 import {useInterviewsByCandidate} from '@/lib/hooks/queries/useRecruitment';
@@ -135,37 +135,17 @@ export function InterviewScorecardModal({
                                         }: InterviewScorecardModalProps) {
   const {data, isLoading, isError} = useInterviewsByCandidate(candidateId, open);
 
-  if (!open) return null;
-
   const interviews: Interview[] = (data as unknown as {
     content?: Interview[]
   })?.content ?? (Array.isArray(data) ? (data as Interview[]) : []);
   const stats = computeAggregateStats(interviews);
 
   return (
-    <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
-      <div
-        className="bg-[var(--bg-card)] rounded-xl w-full max-w-3xl max-h-[90vh] flex flex-col border border-[var(--border-main)] shadow-[var(--shadow-elevated)]">
-        {/* Header */}
-        <div className="flex justify-between items-center p-6 border-b border-[var(--border-main)]">
-          <div>
-            <h2 className="text-xl font-bold text-[var(--text-primary)] flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-accent-500"/>
-              Interview Scorecards
-            </h2>
-            <p className="text-body-muted mt-0.5">{candidateName}</p>
-          </div>
-          <button
-            onClick={onClose}
-            aria-label="Close modal"
-            className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded-md"
-          >
-            <X className="h-5 w-5"/>
-          </button>
-        </div>
-
-        {/* Body */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-6">
+    <Modal isOpen={open} onClose={onClose} size="xl">
+      <ModalHeader onClose={onClose}>
+        Interview Scorecards — {candidateName}
+      </ModalHeader>
+      <ModalBody className="space-y-6">
           {isLoading && (
             <div className="space-y-4">
               {[1, 2, 3].map((n) => (
@@ -319,24 +299,21 @@ export function InterviewScorecardModal({
               </div>
             </>
           )}
-        </div>
-
-        {/* Footer */}
-        <div className="row-between gap-4 p-6 border-t border-[var(--border-main)]">
-          <Button
-            type="button"
-            onClick={onSynthesizeFeedback}
-            disabled={interviews.length === 0}
-            className="flex items-center gap-2"
-          >
-            <Sparkles className="h-4 w-4"/>
-            AI Feedback Synthesis
-          </Button>
-          <Button type="button" variant="outline" onClick={onClose}>
-            Close
-          </Button>
-        </div>
-      </div>
-    </div>
+      </ModalBody>
+      <ModalFooter className="row-between gap-4">
+        <Button
+          type="button"
+          onClick={onSynthesizeFeedback}
+          disabled={interviews.length === 0}
+          className="flex items-center gap-2"
+        >
+          <Sparkles className="h-4 w-4"/>
+          AI Feedback Synthesis
+        </Button>
+        <Button type="button" variant="outline" onClick={onClose}>
+          Close
+        </Button>
+      </ModalFooter>
+    </Modal>
   );
 }

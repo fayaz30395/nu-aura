@@ -295,8 +295,13 @@ export default function PermissionsPage() {
                     >
                       {/* Role Header */}
                       <div
-                        className="row-between p-4 cursor-pointer hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50"
+                        className="row-between p-4 cursor-pointer hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-inset"
                         onClick={() => toggleRoleExpanded(role.id)}
+                        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleRoleExpanded(role.id); } }}
+                        role="button"
+                        tabIndex={0}
+                        aria-label={`Toggle ${role.name} role details`}
+                        aria-expanded={expandedRoles.has(role.id)}
                       >
                         <div className="flex items-center gap-4">
                           <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${role.isSystemRole
@@ -626,6 +631,7 @@ function EditRoleModal({
             </p>
           </div>
           <button onClick={handleClose}
+                  aria-label="Close dialog"
                   className="p-2 text-[var(--text-muted)] hover:text-[var(--text-primary)] rounded-lg hover:bg-[var(--bg-surface)]">
             <X className="w-5 h-5"/>
           </button>
@@ -774,6 +780,7 @@ function CreateRoleModal({
             <p className="text-body-muted">Create a custom role with specific permissions</p>
           </div>
           <button onClick={handleClose}
+                  aria-label="Close dialog"
                   className="p-2 text-[var(--text-muted)] hover:text-[var(--text-primary)] rounded-lg hover:bg-[var(--bg-surface)]">
             <X className="w-5 h-5"/>
           </button>
@@ -942,6 +949,7 @@ function EditUserModal({
             </p>
           </div>
           <button onClick={handleClose}
+                  aria-label="Close dialog"
                   className="p-2 text-[var(--text-muted)] hover:text-[var(--text-primary)] rounded-lg hover:bg-[var(--bg-surface)]">
             <X className="w-5 h-5"/>
           </button>

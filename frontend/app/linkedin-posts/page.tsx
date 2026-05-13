@@ -476,6 +476,7 @@ function CreateLinkedInPostModal({post, onClose, onSuccess}: CreateLinkedInPostM
           </h2>
           <button
             onClick={onClose}
+            aria-label="Close dialog"
             className="p-2 hover:bg-[var(--bg-surface)] rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
             <X className="w-5 h-5 text-[var(--text-muted)]"/>

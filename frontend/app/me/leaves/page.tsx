@@ -635,6 +635,7 @@ export default function MyLeavesPage() {
                 </h2>
                 <button
                   onClick={handleCloseModal}
+                  aria-label="Close dialog"
                   className="p-2 hover:bg-[var(--bg-card-hover)] rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
                   <X className="h-5 w-5"/>
@@ -772,6 +773,7 @@ export default function MyLeavesPage() {
                 </h2>
                 <button
                   onClick={handleCloseCancelModal}
+                  aria-label="Close dialog"
                   className="p-2 hover:bg-[var(--bg-card-hover)] rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
                   <X className="h-5 w-5"/>

@@ -21,6 +21,7 @@ import {AppLayout} from '@/components/layout';
 import {Card, CardContent} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {Modal, ModalBody, ModalHeader} from '@/components/ui/Modal';
 import {PageDeniedFallback, PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {useForm} from 'react-hook-form';
@@ -431,16 +432,11 @@ function RegisterDeviceModal({onClose}: { onClose: () => void }) {
   );
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <motion.div
-        initial={{opacity: 0, scale: 0.95}}
-        animate={{opacity: 1, scale: 1}}
-        className="w-full max-w-lg rounded-xl bg-[var(--bg-surface)] p-6 shadow-[var(--shadow-dropdown)]"
-      >
-        <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-4">
-          Register Biometric Device
-        </h2>
-
+    <Modal isOpen={true} onClose={onClose} size="md">
+      <ModalHeader onClose={onClose}>
+        Register Biometric Device
+      </ModalHeader>
+      <ModalBody>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {/* Device Name */}
           <div>
@@ -567,8 +563,8 @@ function RegisterDeviceModal({onClose}: { onClose: () => void }) {
             </Button>
           </div>
         </form>
-      </motion.div>
-    </div>
+      </ModalBody>
+    </Modal>
   );
 }
 
@@ -934,16 +930,11 @@ function GenerateApiKeyModal({
   );
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <motion.div
-        initial={{opacity: 0, scale: 0.95}}
-        animate={{opacity: 1, scale: 1}}
-        className="w-full max-w-md rounded-xl bg-[var(--bg-surface)] p-6 shadow-[var(--shadow-dropdown)]"
-      >
-        <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-4">
-          Generate API Key
-        </h2>
-
+    <Modal isOpen={true} onClose={onClose} size="md">
+      <ModalHeader onClose={onClose}>
+        Generate API Key
+      </ModalHeader>
+      <ModalBody>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
@@ -977,7 +968,7 @@ function GenerateApiKeyModal({
             </Button>
           </div>
         </form>
-      </motion.div>
-    </div>
+      </ModalBody>
+    </Modal>
   );
 }

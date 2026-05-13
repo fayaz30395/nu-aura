@@ -35,10 +35,11 @@ export const PayrollRunModal = React.memo(function PayrollRunModal({
           <form onSubmit={formHook.handleSubmit(onSubmit)}>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                <label htmlFor="payroll-run-name" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Run Name *
                 </label>
                 <input
+                  id="payroll-run-name"
                   type="text"
                   {...formHook.register('runName')}
                   className="input-aura w-full px-4 py-2 rounded-lg"
@@ -51,8 +52,9 @@ export const PayrollRunModal = React.memo(function PayrollRunModal({
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Period Start *</label>
+                  <label htmlFor="payroll-run-period-start" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Period Start *</label>
                   <input
+                    id="payroll-run-period-start"
                     type="date"
                     {...formHook.register('payrollPeriodStart')}
                     className="input-aura w-full px-4 py-2 rounded-lg"
@@ -63,8 +65,9 @@ export const PayrollRunModal = React.memo(function PayrollRunModal({
                   )}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Period End *</label>
+                  <label htmlFor="payroll-run-period-end" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Period End *</label>
                   <input
+                    id="payroll-run-period-end"
                     type="date"
                     {...formHook.register('payrollPeriodEnd')}
                     className="input-aura w-full px-4 py-2 rounded-lg"
@@ -76,8 +79,9 @@ export const PayrollRunModal = React.memo(function PayrollRunModal({
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Payment Date *</label>
+                <label htmlFor="payroll-run-payment-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Payment Date *</label>
                 <input
+                  id="payroll-run-payment-date"
                   type="date"
                   {...formHook.register('paymentDate')}
                   className="input-aura w-full px-4 py-2 rounded-lg"
@@ -88,8 +92,9 @@ export const PayrollRunModal = React.memo(function PayrollRunModal({
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Notes</label>
+                <label htmlFor="payroll-run-notes" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Notes</label>
                 <textarea
+                  id="payroll-run-notes"
                   {...formHook.register('notes')}
                   rows={3}
                   className="input-aura w-full px-4 py-2 rounded-lg"
@@ -153,8 +158,9 @@ export const PayslipModal = React.memo(function PayslipModal({
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Employee ID *</label>
+                  <label htmlFor="payslip-employee-id" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Employee ID *</label>
                   <input
+                    id="payslip-employee-id"
                     type="text"
                     {...formHook.register('employeeId')}
                     className="input-aura w-full px-4 py-2 rounded-lg"
@@ -164,9 +170,10 @@ export const PayslipModal = React.memo(function PayslipModal({
                   )}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Payroll Run ID
+                  <label htmlFor="payslip-payroll-run-id" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Payroll Run ID
                     *</label>
                   <input
+                    id="payslip-payroll-run-id"
                     type="text"
                     {...formHook.register('payrollRunId')}
                     className="input-aura w-full px-4 py-2 rounded-lg"
@@ -179,8 +186,9 @@ export const PayslipModal = React.memo(function PayslipModal({
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Period Start *</label>
+                  <label htmlFor="payslip-period-start" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Period Start *</label>
                   <input
+                    id="payslip-period-start"
                     type="date"
                     {...formHook.register('payrollPeriodStart')}
                     className="input-aura w-full px-4 py-2 rounded-lg"
@@ -191,8 +199,9 @@ export const PayslipModal = React.memo(function PayslipModal({
                   )}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Period End *</label>
+                  <label htmlFor="payslip-period-end" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Period End *</label>
                   <input
+                    id="payslip-period-end"
                     type="date"
                     {...formHook.register('payrollPeriodEnd')}
                     className="input-aura w-full px-4 py-2 rounded-lg"
@@ -204,8 +213,9 @@ export const PayslipModal = React.memo(function PayslipModal({
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Payment Date *</label>
+                <label htmlFor="payslip-payment-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Payment Date *</label>
                 <input
+                  id="payslip-payment-date"
                   type="date"
                   {...formHook.register('paymentDate')}
                   className="input-aura w-full px-4 py-2 rounded-lg"
@@ -217,8 +227,9 @@ export const PayslipModal = React.memo(function PayslipModal({
 
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Base Salary *</label>
+                  <label htmlFor="payslip-base-salary" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Base Salary *</label>
                   <input
+                    id="payslip-base-salary"
                     type="number"
                     step="0.01"
                     {...formHook.register('baseSalary', {valueAsNumber: true})}
@@ -229,8 +240,9 @@ export const PayslipModal = React.memo(function PayslipModal({
                   )}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Allowances</label>
+                  <label htmlFor="payslip-allowances" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Allowances</label>
                   <input
+                    id="payslip-allowances"
                     type="number"
                     step="0.01"
                     {...formHook.register('allowances', {valueAsNumber: true})}
@@ -238,8 +250,9 @@ export const PayslipModal = React.memo(function PayslipModal({
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Deductions</label>
+                  <label htmlFor="payslip-deductions" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Deductions</label>
                   <input
+                    id="payslip-deductions"
                     type="number"
                     step="0.01"
                     {...formHook.register('deductions', {valueAsNumber: true})}
@@ -316,8 +329,9 @@ export const SalaryStructureModal = React.memo(function SalaryStructureModal({
             <div className="space-y-6">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Employee ID *</label>
+                  <label htmlFor="salary-structure-employee-id" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Employee ID *</label>
                   <input
+                    id="salary-structure-employee-id"
                     type="text"
                     {...formHook.register('employeeId')}
                     className="input-aura w-full px-4 py-2 rounded-lg"
@@ -327,9 +341,10 @@ export const SalaryStructureModal = React.memo(function SalaryStructureModal({
                   )}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Effective Date
+                  <label htmlFor="salary-structure-effective-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Effective Date
                     *</label>
                   <input
+                    id="salary-structure-effective-date"
                     type="date"
                     {...formHook.register('effectiveDate')}
                     className="input-aura w-full px-4 py-2 rounded-lg"
@@ -341,8 +356,9 @@ export const SalaryStructureModal = React.memo(function SalaryStructureModal({
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Base Salary *</label>
+                <label htmlFor="salary-structure-base-salary" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Base Salary *</label>
                 <input
+                  id="salary-structure-base-salary"
                   type="number"
                   step="0.01"
                   {...formHook.register('baseSalary', {valueAsNumber: true})}

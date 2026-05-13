@@ -11,6 +11,7 @@ import {Holiday, HolidayRequest, HolidayType} from '@/lib/types/hrms/attendance'
 import {useAuth} from '@/lib/hooks/useAuth';
 import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
 import {ConfirmDialog} from '@/components/ui';
+import {Modal, ModalBody, ModalHeader} from '@/components/ui/Modal';
 import {AppLayout} from '@/components/layout';
 import {
   useCreateHoliday,
@@ -496,27 +497,19 @@ export default function HolidaysPage() {
 
         {/* Add/Edit Holiday Modal (Admin only) */}
         {showModal && isAdmin && (
-          <div className="fixed inset-0 bg-black/50 dark:bg-black/70 flex items-center justify-center p-4 z-50">
-            <div
-              className="bg-[var(--bg-card)] rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-[var(--shadow-dropdown)]">
-              <div className="p-6">
-                <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-xl font-bold text-[var(--text-primary)]">
-                    {editingHoliday ? 'Edit Holiday' : 'Add New Holiday'}
-                  </h2>
-                  <button
-                    onClick={() => {
-                      setShowModal(false);
-                      setEditingHoliday(null);
-                      resetForm();
-                    }}
-                    className="p-2 rounded-md text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                    aria-label="Close modal"
-                  >
-                    <span className="text-xl">&times;</span>
-                  </button>
-                </div>
-
+          <Modal isOpen={showModal} onClose={() => {
+            setShowModal(false);
+            setEditingHoliday(null);
+            resetForm();
+          }} size="lg">
+            <ModalHeader onClose={() => {
+              setShowModal(false);
+              setEditingHoliday(null);
+              resetForm();
+            }}>
+              {editingHoliday ? 'Edit Holiday' : 'Add New Holiday'}
+            </ModalHeader>
+            <ModalBody>
                 <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
                   {/* Basic Information */}
                   <div className="space-y-4">
@@ -667,9 +660,8 @@ export default function HolidaysPage() {
                     </button>
                   </div>
                 </form>
-              </div>
-            </div>
-          </div>
+            </ModalBody>
+          </Modal>
         )}
       </div>
     </AppLayout>

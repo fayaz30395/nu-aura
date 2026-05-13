@@ -832,6 +832,7 @@ function CreateAnnouncementModal({announcement, onClose, onSuccess}: CreateAnnou
             {isEditing ? 'Edit Announcement' : 'Create Announcement'}
           </h2>
           <button onClick={handleClose}
+                  aria-label="Close dialog"
                   className="p-2 hover:bg-[var(--bg-surface)] dark:hover:bg-[var(--bg-surface)] rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
             <X className="w-5 h-5 text-[var(--text-muted)]"/>

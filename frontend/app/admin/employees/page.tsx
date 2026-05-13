@@ -269,6 +269,7 @@ function InlineRoleEditor({employee, onClose}: { employee: Employee; onClose: ()
           <p className="text-caption">{employee.workEmail}</p>
         </div>
         <button onClick={onClose}
+                aria-label="Close dialog"
                 className="cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 p-1 hover:bg-[var(--bg-surface)] rounded">
           <X className="h-4 w-4 text-[var(--text-muted)]"/>
         </button>

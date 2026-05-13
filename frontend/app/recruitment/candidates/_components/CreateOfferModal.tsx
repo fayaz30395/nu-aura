@@ -3,7 +3,8 @@
 import React from 'react';
 import {UseFormReturn} from 'react-hook-form';
 import {Button} from '@/components/ui/Button';
-import {Loader2, X} from 'lucide-react';
+import {Modal, ModalBody, ModalHeader} from '@/components/ui/Modal';
+import {Loader2} from 'lucide-react';
 import {Candidate} from '@/lib/types/hire/recruitment';
 import {CreateOfferFormData} from '@/lib/validations/recruitment';
 
@@ -24,25 +25,16 @@ export function CreateOfferModal({
                                    onSubmit,
                                    onClose,
                                  }: CreateOfferModalProps) {
-  if (!open || !candidate) return null;
+  if (!candidate) return null;
 
   const inputCls = 'w-full px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500';
 
   return (
-    <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
-      <div
-        className="bg-[var(--bg-card)] rounded-lg max-w-lg w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
-        <div className="p-6">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-bold text-[var(--text-primary)]">
-              Generate Offer Letter
-            </h2>
-            <button onClick={onClose} aria-label="Close modal"
-                    className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
-              <X className="h-6 w-6"/>
-            </button>
-          </div>
-
+    <Modal isOpen={open} onClose={onClose} size="md">
+      <ModalHeader onClose={onClose}>
+        Generate Offer Letter
+      </ModalHeader>
+      <ModalBody>
           <div className="mb-4 p-4 bg-success-50 dark:bg-success-900/20 rounded-xl">
             <p className="text-sm text-success-700 dark:text-success-300">
               Creating offer letter for <strong>{candidate.fullName}</strong>
@@ -110,8 +102,7 @@ export function CreateOfferModal({
               </Button>
             </div>
           </form>
-        </div>
-      </div>
-    </div>
+      </ModalBody>
+    </Modal>
   );
 }

@@ -8,6 +8,8 @@ export interface SpinnerProps {
   size?: 'sm' | 'md' | 'lg' | 'xl';
   variant?: 'primary' | 'secondary' | 'white';
   className?: string;
+  /** Screen-reader-only loading label. Defaults to "Loading". Set to "" to suppress (e.g., when a sibling already announces). */
+  label?: string;
 }
 
 const sizeConfig = {
@@ -32,12 +34,16 @@ const variantConfig = {
   },
 };
 
-export function Spinner({size = 'md', variant = 'primary', className}: SpinnerProps) {
+export function Spinner({size = 'md', variant = 'primary', className, label = 'Loading'}: SpinnerProps) {
   const config = sizeConfig[size];
   const colors = variantConfig[variant];
 
   return (
-    <div className={cn('inline-flex items-center justify-center', className)}>
+    <div
+      className={cn('inline-flex items-center justify-center', className)}
+      role="status"
+      aria-live="polite"
+    >
       <svg
         width={config.outer}
         height={config.outer}
@@ -75,6 +81,7 @@ export function Spinner({size = 'md', variant = 'primary', className}: SpinnerPr
           style={{transformOrigin: 'center'}}
         />
       </svg>
+      {label ? <span className="sr-only">{label}</span> : null}
     </div>
   );
 }
@@ -82,7 +89,7 @@ export function Spinner({size = 'md', variant = 'primary', className}: SpinnerPr
 /**
  * Elegant pulsing dots loader
  */
-export function DotsSpinner({variant = 'primary', className}: Omit<SpinnerProps, 'size'>) {
+export function DotsSpinner({variant = 'primary', className, label = 'Loading'}: Omit<SpinnerProps, 'size'>) {
   const dotColors = {
     primary: 'bg-accent-700 dark:bg-accent-400',
     secondary: 'bg-[var(--text-secondary)]',
@@ -92,7 +99,11 @@ export function DotsSpinner({variant = 'primary', className}: Omit<SpinnerProps,
   const dotColor = dotColors[variant];
 
   return (
-    <div className={cn('inline-flex items-center gap-1.5', className)}>
+    <div
+      className={cn('inline-flex items-center gap-1.5', className)}
+      role="status"
+      aria-live="polite"
+    >
       {[0, 1, 2].map((i) => (
         <motion.div
           key={i}
@@ -110,6 +121,7 @@ export function DotsSpinner({variant = 'primary', className}: Omit<SpinnerProps,
           }}
         />
       ))}
+      {label ? <span className="sr-only">{label}</span> : null}
     </div>
   );
 }
@@ -117,7 +129,7 @@ export function DotsSpinner({variant = 'primary', className}: Omit<SpinnerProps,
 /**
  * Elegant wave loader
  */
-export function WaveSpinner({variant = 'primary', className}: Omit<SpinnerProps, 'size'>) {
+export function WaveSpinner({variant = 'primary', className, label = 'Loading'}: Omit<SpinnerProps, 'size'>) {
   const barColors = {
     primary: 'bg-accent-700 dark:bg-accent-400',
     secondary: 'bg-[var(--text-secondary)]',
@@ -127,7 +139,11 @@ export function WaveSpinner({variant = 'primary', className}: Omit<SpinnerProps,
   const barColor = barColors[variant];
 
   return (
-    <div className={cn('inline-flex items-center gap-1', className)}>
+    <div
+      className={cn('inline-flex items-center gap-1', className)}
+      role="status"
+      aria-live="polite"
+    >
       {[0, 1, 2, 3, 4].map((i) => (
         <motion.div
           key={i}
@@ -144,6 +160,7 @@ export function WaveSpinner({variant = 'primary', className}: Omit<SpinnerProps,
           }}
         />
       ))}
+      {label ? <span className="sr-only">{label}</span> : null}
     </div>
   );
 }
@@ -151,7 +168,7 @@ export function WaveSpinner({variant = 'primary', className}: Omit<SpinnerProps,
 /**
  * Elegant pulse ring loader
  */
-export function PulseRing({size = 'md', variant = 'primary', className}: SpinnerProps) {
+export function PulseRing({size = 'md', variant = 'primary', className, label = 'Loading'}: SpinnerProps) {
   const sizeMap = {
     sm: 'w-12 h-12',
     md: 'w-16 h-16',
@@ -166,7 +183,11 @@ export function PulseRing({size = 'md', variant = 'primary', className}: Spinner
   };
 
   return (
-    <div className={cn('relative', sizeMap[size], className)}>
+    <div
+      className={cn('relative', sizeMap[size], className)}
+      role="status"
+      aria-live="polite"
+    >
       {[0, 1].map((i) => (
         <motion.div
           key={i}
@@ -187,6 +208,7 @@ export function PulseRing({size = 'md', variant = 'primary', className}: Spinner
           }}
         />
       ))}
+      {label ? <span className="sr-only">{label}</span> : null}
     </div>
   );
 }

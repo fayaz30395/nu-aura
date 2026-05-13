@@ -205,11 +205,12 @@ export const NotificationBell: React.FC = () => {
             <div className="flex items-center gap-2">
               {unreadCount > 0 && (
                 <button onClick={handleMarkAllAsRead}
+                        aria-label="Mark all as read"
                         className="text-sm text-accent-600 hover:text-accent-800 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded">
                   <CheckCheck className="h-4 w-4"/>
                 </button>
               )}
-              <button onClick={() => setIsOpen(false)}>
+              <button onClick={() => setIsOpen(false)} aria-label="Close notifications">
                 <X className="h-5 w-5"/>
               </button>
             </div>

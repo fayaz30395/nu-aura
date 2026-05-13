@@ -172,6 +172,7 @@ export function EmployeeSearchAutocomplete({
               <button
                 type="button"
                 onClick={handleClear}
+                aria-label="Clear search"
                 className="p-1 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-full cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
               >
                 <X className="h-4 w-4 text-surface-500"/>

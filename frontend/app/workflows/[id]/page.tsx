@@ -555,10 +555,11 @@ export default function WorkflowDetailPage() {
                 <div className="grid gap-4 sm:grid-cols-2">
                   {/* Name */}
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="workflow-name" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Workflow Name <span className="text-danger-500">*</span>
                     </label>
                     <input
+                      id="workflow-name"
                       {...form.register('name')}
                       placeholder="e.g., Leave Approval - Standard"
                       className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
@@ -570,10 +571,11 @@ export default function WorkflowDetailPage() {
 
                   {/* Entity Type */}
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="workflow-entity-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Entity Type <span className="text-danger-500">*</span>
                     </label>
                     <select
+                      id="workflow-entity-type"
                       {...form.register('entityType')}
                       className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
                     >
@@ -588,10 +590,11 @@ export default function WorkflowDetailPage() {
 
                   {/* Workflow Type */}
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="workflow-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Workflow Type <span className="text-danger-500">*</span>
                     </label>
                     <select
+                      id="workflow-type"
                       {...form.register('workflowType')}
                       className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
                     >
@@ -603,10 +606,11 @@ export default function WorkflowDetailPage() {
 
                   {/* Description */}
                   <div className="sm:col-span-2">
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="workflow-description" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Description
                     </label>
                     <textarea
+                      id="workflow-description"
                       {...form.register('description')}
                       placeholder="Describe what this workflow is used for..."
                       rows={2}
@@ -625,10 +629,11 @@ export default function WorkflowDetailPage() {
               <CardContent>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="workflow-min-amount" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Min Amount Threshold
                     </label>
                     <input
+                      id="workflow-min-amount"
                       type="number"
                       {...form.register('minAmount')}
                       placeholder="0"
@@ -636,10 +641,11 @@ export default function WorkflowDetailPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="workflow-max-amount" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Max Amount Threshold
                     </label>
                     <input
+                      id="workflow-max-amount"
                       type="number"
                       {...form.register('maxAmount')}
                       placeholder="No limit"
@@ -755,10 +761,11 @@ export default function WorkflowDetailPage() {
                     <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                       {/* Step Name */}
                       <div>
-                        <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
+                        <label htmlFor={`workflow-step-${idx}-name`} className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
                           Step Name <span className="text-danger-500">*</span>
                         </label>
                         <input
+                          id={`workflow-step-${idx}-name`}
                           {...form.register(`steps.${idx}.stepName`)}
                           placeholder="e.g., Manager Approval"
                           className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-1.5 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
@@ -772,10 +779,11 @@ export default function WorkflowDetailPage() {
 
                       {/* Approver Type */}
                       <div>
-                        <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
+                        <label htmlFor={`workflow-step-${idx}-approver-type`} className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
                           Approver Type <span className="text-danger-500">*</span>
                         </label>
                         <select
+                          id={`workflow-step-${idx}-approver-type`}
                           {...form.register(`steps.${idx}.approverType`)}
                           className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-1.5 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
                         >
@@ -789,10 +797,11 @@ export default function WorkflowDetailPage() {
                       {(form.watch(`steps.${idx}.approverType`) === 'ROLE' ||
                         form.watch(`steps.${idx}.approverType`) === 'ANY_OF_ROLE') && (
                         <div>
-                          <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
+                          <label htmlFor={`workflow-step-${idx}-role-name`} className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
                             Role Name
                           </label>
                           <input
+                            id={`workflow-step-${idx}-role-name`}
                             {...form.register(`steps.${idx}.roleName`)}
                             placeholder="e.g., Finance Manager"
                             className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-1.5 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
@@ -802,10 +811,11 @@ export default function WorkflowDetailPage() {
 
                       {/* SLA Hours */}
                       <div>
-                        <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
+                        <label htmlFor={`workflow-step-${idx}-sla-hours`} className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
                           SLA (hours)
                         </label>
                         <input
+                          id={`workflow-step-${idx}-sla-hours`}
                           type="number"
                           {...form.register(`steps.${idx}.slaHours`)}
                           placeholder="48"
@@ -815,10 +825,11 @@ export default function WorkflowDetailPage() {
 
                       {/* Description */}
                       <div className="sm:col-span-2 lg:col-span-2">
-                        <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
+                        <label htmlFor={`workflow-step-${idx}-description`} className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
                           Description
                         </label>
                         <input
+                          id={`workflow-step-${idx}-description`}
                           {...form.register(`steps.${idx}.description`)}
                           placeholder="Optional step description"
                           className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-1.5 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
@@ -865,10 +876,11 @@ export default function WorkflowDetailPage() {
                     {/* Escalation hours (conditional) */}
                     {form.watch(`steps.${idx}.escalationEnabled`) && (
                       <div className="mt-4 max-w-[200px]">
-                        <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
+                        <label htmlFor={`workflow-step-${idx}-escalate-after-hours`} className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
                           Escalate After (hours)
                         </label>
                         <input
+                          id={`workflow-step-${idx}-escalate-after-hours`}
                           type="number"
                           {...form.register(`steps.${idx}.escalateAfterHours`)}
                           placeholder="72"
@@ -889,20 +901,22 @@ export default function WorkflowDetailPage() {
               <CardContent>
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="workflow-default-sla-hours" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Default SLA (hours)
                     </label>
                     <input
+                      id="workflow-default-sla-hours"
                       type="number"
                       {...form.register('defaultSlaHours')}
                       className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="workflow-escalation-after-hours" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Escalation After (hours)
                     </label>
                     <input
+                      id="workflow-escalation-after-hours"
                       type="number"
                       {...form.register('escalationAfterHours')}
                       className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"

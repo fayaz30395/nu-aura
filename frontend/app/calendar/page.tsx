@@ -180,12 +180,14 @@ export default function CalendarPage() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => navigateDate('prev')}
+              aria-label="Previous"
               className="p-2 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] rounded-lg transition-colors"
             >
               <ChevronLeft className="h-5 w-5 text-[var(--text-secondary)]"/>
             </button>
             <button
               onClick={() => navigateDate('next')}
+              aria-label="Next"
               className="p-2 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] rounded-lg transition-colors"
             >
               <ChevronRight className="h-5 w-5 text-[var(--text-secondary)]"/>
@@ -204,6 +206,7 @@ export default function CalendarPage() {
           <div className="flex items-center gap-2">
             <button
               disabled={isLoading}
+              aria-label="Refresh"
               className="p-2 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] rounded-lg transition-colors disabled:opacity-50"
             >
               <RefreshCw className={`h-5 w-5 text-[var(--text-secondary)] ${isLoading ? 'animate-spin' : ''}`}/>
@@ -245,10 +248,11 @@ export default function CalendarPage() {
             </div>
             <div className="space-y-2">
               {todayEvents.slice(0, 3).map((event) => (
-                <div
+                <button
+                  type="button"
                   key={event.id}
                   onClick={() => router.push(`/calendar/${event.id}`)}
-                  className="flex items-center gap-4 p-4 rounded-xl cursor-pointer bg-[var(--bg-surface)] hover:bg-[var(--bg-card-hover)] transition-colors border border-[var(--border-subtle)]"
+                  className="w-full text-left flex items-center gap-4 p-4 rounded-xl cursor-pointer bg-[var(--bg-surface)] hover:bg-[var(--bg-card-hover)] transition-colors border border-[var(--border-subtle)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
                   <div className="text-center min-w-[50px]">
                     <p className="text-sm font-medium text-[var(--text-secondary)] tabular-nums">
@@ -265,7 +269,7 @@ export default function CalendarPage() {
                     )}
                   </div>
                   <ChevronRight className="h-4 w-4 text-[var(--text-muted)]"/>
-                </div>
+                </button>
               ))}
             </div>
           </div>
@@ -313,10 +317,11 @@ export default function CalendarPage() {
                     const StatusIcon = statusConfig.icon;
 
                     return (
-                      <div
+                      <button
+                        type="button"
                         key={event.id}
                         onClick={() => router.push(`/calendar/${event.id}`)}
-                        className="flex items-center gap-4 px-6 py-4 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors cursor-pointer"
+                        className="w-full text-left flex items-center gap-4 px-6 py-4 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-inset"
                       >
                         <div
                           className={`w-1 h-12 rounded-full ${calendarService.getEventColor(
@@ -371,7 +376,7 @@ export default function CalendarPage() {
                           {event.status}
                         </span>
                         <ChevronRight className="h-5 w-5 text-[var(--text-muted)]"/>
-                      </div>
+                      </button>
                     );
                   })}
                 </div>
