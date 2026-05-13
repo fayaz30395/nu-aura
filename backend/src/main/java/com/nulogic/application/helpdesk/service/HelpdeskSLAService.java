@@ -217,7 +217,7 @@ public class HelpdeskSLAService {
     public void recordResolution(UUID tenantId, UUID ticketId, LocalDateTime createdAt) {
         metricsRepository.findByTicketIdAndTenantId(ticketId, tenantId)
                 .ifPresent(metrics -> {
-                    LocalDateTime now = LocalDateTime.now();
+                    LocalDateTime now = tenantTimeService.now(tenantId);
                     metrics.setResolutionAt(now);
                     long minutes = ChronoUnit.MINUTES.between(createdAt, now);
                     metrics.setResolutionMinutes((int) minutes);
@@ -238,7 +238,7 @@ public class HelpdeskSLAService {
                         metrics.setFirstContactResolution(true);
                     }
 
-                    metrics.setUpdatedAt(LocalDateTime.now());
+                    metrics.setUpdatedAt(tenantTimeService.now(tenantId));
                     metricsRepository.save(metrics);
                 });
     }
@@ -247,10 +247,11 @@ public class HelpdeskSLAService {
     public void recordCSAT(UUID tenantId, UUID ticketId, Integer rating, String feedback) {
         metricsRepository.findByTicketIdAndTenantId(ticketId, tenantId)
                 .ifPresent(metrics -> {
+                    LocalDateTime now = tenantTimeService.now(tenantId);
                     metrics.setCsatRating(rating);
                     metrics.setCsatFeedback(feedback);
-                    metrics.setCsatSubmittedAt(LocalDateTime.now());
-                    metrics.setUpdatedAt(LocalDateTime.now());
+                    metrics.setCsatSubmittedAt(now);
+                    metrics.setUpdatedAt(now);
                     metricsRepository.save(metrics);
                 });
     }
@@ -260,7 +261,7 @@ public class HelpdeskSLAService {
         metricsRepository.findByTicketIdAndTenantId(ticketId, tenantId)
                 .ifPresent(metrics -> {
                     metrics.setReassignmentCount(metrics.getReassignmentCount() + 1);
-                    metrics.setUpdatedAt(LocalDateTime.now());
+                    metrics.setUpdatedAt(tenantTimeService.now(tenantId));
                     metricsRepository.save(metrics);
                 });
     }
@@ -270,7 +271,7 @@ public class HelpdeskSLAService {
         metricsRepository.findByTicketIdAndTenantId(ticketId, tenantId)
                 .ifPresent(metrics -> {
                     metrics.setReopenCount(metrics.getReopenCount() + 1);
-                    metrics.setUpdatedAt(LocalDateTime.now());
+                    metrics.setUpdatedAt(tenantTimeService.now(tenantId));
                     metricsRepository.save(metrics);
                 });
     }

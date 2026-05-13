@@ -258,6 +258,7 @@ export default function SignupPage() {
                     <input
                       {...register('adminFirstName')}
                       type="text"
+                      autoComplete="given-name"
                       placeholder="John"
                       className={`input-aura block w-full px-4 py-2 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all ${
                         errors.adminFirstName
@@ -276,6 +277,7 @@ export default function SignupPage() {
                     <input
                       {...register('adminLastName')}
                       type="text"
+                      autoComplete="family-name"
                       placeholder="Doe"
                       className={`input-aura block w-full px-4 py-2 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all ${
                         errors.adminLastName

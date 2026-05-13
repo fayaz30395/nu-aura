@@ -209,16 +209,17 @@ public class Feedback360Service {
     public Feedback360Response submitResponse(UUID tenantId, UUID responseId) {
         return responseRepository.findByIdAndTenantId(responseId, tenantId)
                 .map(response -> {
+                    LocalDateTime now = tenantNow(tenantId);
                     response.setIsDraft(false);
-                    response.setSubmittedAt(LocalDateTime.now());
-                    response.setUpdatedAt(LocalDateTime.now());
+                    response.setSubmittedAt(now);
+                    response.setUpdatedAt(now);
                     Feedback360Response saved = responseRepository.save(response);
 
                     // Update request status
                     requestRepository.findByIdAndTenantId(response.getRequestId(), tenantId)
                             .ifPresent(request -> {
                                 request.setStatus(RequestStatus.SUBMITTED);
-                                request.setUpdatedAt(LocalDateTime.now());
+                                request.setUpdatedAt(now);
                                 requestRepository.save(request);
                             });
 
@@ -250,13 +251,14 @@ public class Feedback360Service {
         Optional<Feedback360Summary> existing = summaryRepository
                 .findByCycleIdAndSubjectEmployeeIdAndTenantId(cycleId, subjectEmployeeId, tenantId);
 
+        LocalDateTime now = tenantNow(tenantId);
         Feedback360Summary summary = existing.orElseGet(() -> {
             Feedback360Summary newSummary = new Feedback360Summary();
             newSummary.setId(UUID.randomUUID());
             newSummary.setTenantId(tenantId);
             newSummary.setCycleId(cycleId);
             newSummary.setSubjectEmployeeId(subjectEmployeeId);
-            newSummary.setCreatedAt(LocalDateTime.now());
+            newSummary.setCreatedAt(now);
             return newSummary;
         });
 
@@ -364,8 +366,8 @@ public class Feedback360Service {
         summary.setConsolidatedStrengths(strengthsBuilder.toString());
         summary.setConsolidatedImprovements(improvementsBuilder.toString());
 
-        summary.setGeneratedAt(LocalDateTime.now());
-        summary.setUpdatedAt(LocalDateTime.now());
+        summary.setGeneratedAt(now);
+        summary.setUpdatedAt(now);
 
         log.info("Generated 360 feedback summary for subject: {} in cycle: {}", subjectEmployeeId, cycleId);
         return summaryRepository.save(summary);
@@ -409,9 +411,10 @@ public class Feedback360Service {
     public void shareWithEmployee(UUID tenantId, UUID summaryId) {
         summaryRepository.findByIdAndTenantId(summaryId, tenantId)
                 .ifPresent(summary -> {
+                    LocalDateTime now = tenantNow(tenantId);
                     summary.setSharedWithEmployee(true);
-                    summary.setSharedAt(LocalDateTime.now());
-                    summary.setUpdatedAt(LocalDateTime.now());
+                    summary.setSharedAt(now);
+                    summary.setUpdatedAt(now);
                     summaryRepository.save(summary);
                 });
     }

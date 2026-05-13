@@ -193,7 +193,10 @@ public class OkrService {
 
     @Transactional
     public KeyResult updateKeyResult(KeyResult keyResult) {
-        keyResult.setUpdatedAt(LocalDateTime.now());
+        UUID tenantId = keyResult.getTenantId() != null
+                ? keyResult.getTenantId()
+                : TenantContext.requireCurrentTenant();
+        keyResult.setUpdatedAt(tenantTimeService.now(tenantId));
         KeyResult saved = keyResultRepository.save(keyResult);
 
         // Update objective progress
@@ -235,10 +238,11 @@ public class OkrService {
         BigDecimal previousValue = keyResult.getCurrentValue();
         BigDecimal previousProgress = keyResult.getProgressPercentage();
 
+        LocalDateTime tenantNow = tenantTimeService.now(tenantId);
         keyResult.setCurrentValue(newValue);
         keyResult.updateProgress();
         keyResult.setLastUpdatedNotes(notes);
-        keyResult.setUpdatedAt(LocalDateTime.now());
+        keyResult.setUpdatedAt(tenantNow);
 
         KeyResult saved = keyResultRepository.save(keyResult);
 
@@ -247,7 +251,7 @@ public class OkrService {
                 .objectiveId(keyResult.getObjectiveId())
                 .keyResultId(id)
                 .employeeId(keyResult.getOwnerId())
-                .checkInDate(LocalDateTime.now())
+                .checkInDate(tenantNow)
                 .previousValue(previousValue)
                 .newValue(newValue)
                 .previousProgress(previousProgress)
@@ -271,7 +275,7 @@ public class OkrService {
             List<KeyResult> keyResults = keyResultRepository.findAllByObjectiveId(objectiveId);
             objective.setKeyResults(keyResults);
             objective.calculateProgress();
-            objective.setUpdatedAt(LocalDateTime.now());
+            objective.setUpdatedAt(tenantTimeService.now(tenantId));
             objectiveRepository.save(objective);
         });
     }
@@ -280,11 +284,14 @@ public class OkrService {
 
     @Transactional
     public OkrCheckIn createCheckIn(OkrCheckIn checkIn) {
+        UUID tenantId = checkIn.getTenantId() != null
+                ? checkIn.getTenantId()
+                : TenantContext.requireCurrentTenant();
         if (checkIn.getId() == null) {
             checkIn.setId(UUID.randomUUID());
         }
         if (checkIn.getCreatedAt() == null) {
-            checkIn.setCreatedAt(LocalDateTime.now());
+            checkIn.setCreatedAt(tenantTimeService.now(tenantId));
         }
         return checkInRepository.save(checkIn);
     }

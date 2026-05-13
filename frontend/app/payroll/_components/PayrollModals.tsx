@@ -437,12 +437,12 @@ export const SalaryStructureModal = React.memo(function SalaryStructureModal({
                     </div>
                   ))}
                 </div>
-              </div>
+              </section>
 
               {/* Deductions */}
-              <div className="border-t pt-4">
+              <section aria-labelledby="salary-structure-deductions-heading" className="border-t pt-4">
                 <div className="flex justify-between items-center mb-4">
-                  <h3 className="font-semibold text-danger-700">Deductions</h3>
+                  <h3 id="salary-structure-deductions-heading" className="font-semibold text-danger-700">Deductions</h3>
                   <button
                     type="button"
                     onClick={() => appendDeduction({name: '', amount: 0, type: 'FIXED', description: ''})}
@@ -481,7 +481,7 @@ export const SalaryStructureModal = React.memo(function SalaryStructureModal({
                     </div>
                   ))}
                 </div>
-              </div>
+              </section>
             </div>
 
             <div className="flex gap-4 mt-6">

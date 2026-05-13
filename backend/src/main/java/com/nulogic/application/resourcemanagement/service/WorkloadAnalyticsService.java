@@ -1,7 +1,6 @@
 package com.nulogic.application.resourcemanagement.service;
 
 import com.nulogic.api.resourcemanagement.dto.AvailabilityDTOs;
-import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.employee.Employee;
@@ -72,7 +71,7 @@ public class WorkloadAnalyticsService {
 
     @Transactional(readOnly = true)
     public WorkloadDashboardData getWorkloadDashboard(WorkloadFilterOptions filters) {
-        UUID tenantId = SecurityContext.getCurrentTenantId();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         List<Employee> allEmployees = employeeRepository.findByTenantId(tenantId).stream()
                 .filter(e -> e.getStatus() == Employee.EmployeeStatus.ACTIVE)
                 .collect(Collectors.toList());
@@ -128,7 +127,7 @@ public class WorkloadAnalyticsService {
         // and caused >120s timeouts on tenants with many employees. The /workload/departments
         // endpoint only needs lightweight per-department aggregates, so compute them
         // directly from one bulk fetch of active project assignments.
-        UUID tenantId = SecurityContext.getCurrentTenantId();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         List<Employee> activeEmployees = employeeRepository.findByTenantId(tenantId).stream()
                 .filter(e -> e.getStatus() == Employee.EmployeeStatus.ACTIVE)
@@ -191,7 +190,7 @@ public class WorkloadAnalyticsService {
     @Transactional(readOnly = true)
     public List<WorkloadHeatmapRow> getWorkloadHeatmap(LocalDate startDate, LocalDate endDate,
                                                        UUID departmentId, Integer limit) {
-        UUID tenantId = SecurityContext.getCurrentTenantId();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         List<Employee> employees = departmentId != null
                 ? employeeRepository.findByTenantId(tenantId).stream()
                   .filter(e -> departmentId.equals(e.getDepartmentId()))
@@ -233,7 +232,7 @@ public class WorkloadAnalyticsService {
     }
 
     public List<AvailabilityDTOs.Holiday> getHolidays(LocalDate startDate, LocalDate endDate) {
-        UUID tenantId = SecurityContext.getCurrentTenantId();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         return holidayRepository.findAllByTenantIdAndHolidayDateBetween(tenantId, startDate, endDate).stream()
                 .map(h -> AvailabilityDTOs.Holiday.builder()
                         .id(h.getId().toString())
@@ -351,11 +350,13 @@ public class WorkloadAnalyticsService {
     }
 
     private List<WorkloadHeatmapRow> calculateHeatmapData(List<Employee> employees,
-                                                          WorkloadFilterOptions filters) {
+                                                          WorkloadFilterOptions filters,
+                                                          UUID tenantId) {
+        LocalDate today = tenantTimeService.today(tenantId);
         LocalDate startDate = filters != null && filters.getStartDate() != null
-                ? filters.getStartDate() : LocalDate.now();
+                ? filters.getStartDate() : today;
         LocalDate endDate = filters != null && filters.getEndDate() != null
-                ? filters.getEndDate() : LocalDate.now().plusWeeks(4);
+                ? filters.getEndDate() : today.plusWeeks(4);
 
         List<Employee> limitedEmployees = employees.stream().limit(20).collect(Collectors.toList());
 
@@ -389,9 +390,9 @@ public class WorkloadAnalyticsService {
         }).collect(Collectors.toList());
     }
 
-    private List<WorkloadTrend> calculateWorkloadTrends(List<Employee> employees) {
+    private List<WorkloadTrend> calculateWorkloadTrends(List<Employee> employees, UUID tenantId) {
         List<WorkloadTrend> trends = new ArrayList<>();
-        LocalDate today = LocalDate.now();
+        LocalDate today = tenantTimeService.today(tenantId);
 
         for (int i = 5; i >= 0; i--) {
             LocalDate monthStart = today.minusMonths(i).withDayOfMonth(1);

@@ -1,4 +1,5 @@
 import {apiClient} from '@/lib/api/client';
+import {formatDate as formatDateUtil} from '@/lib/utils/format/date';
 import {logger} from '@/lib/utils/logger';
 import {CreateTimeEntryRequest, CreateTimesheetRequest, TimeEntry, Timesheet,} from '@/lib/types/hrms/timesheet';
 
@@ -100,11 +101,7 @@ export const timesheetService = {
   },
 
   formatDate(dateString: string): string {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
+    return formatDateUtil(dateString);
   },
 
   getStatusColor(status: string): string {

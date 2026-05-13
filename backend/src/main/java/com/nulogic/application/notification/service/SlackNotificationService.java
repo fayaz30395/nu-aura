@@ -403,12 +403,20 @@ public class SlackNotificationService {
 
     /**
      * Notify about daily attendance summary.
+     *
+     * @param tenantId tenant identifier used to resolve "today" in the tenant's local zone.
+     *                 Must not be {@code null} — both the ISO date in the summary line and the
+     *                 long-form date in the block body are derived from it.
      */
-    public void notifyDailyAttendanceSummary(int totalEmployees, int present, int absent,
+    public void notifyDailyAttendanceSummary(UUID tenantId, int totalEmployees, int present, int absent,
                                              int onLeave, int late) {
+        // S11-M: resolve "today" once in the tenant's local zone and reuse for both renderings.
+        // Resolving twice via separate calls would also be correct, but a single read guarantees
+        // both lines render the same date even if the call crosses local midnight.
+        LocalDate today = tenantTimeService.today(tenantId);
         String message = String.format(":chart_with_upwards_trend: *Daily Attendance Summary*\n" +
                         "*Date:* %s\n*Total:* %d | *Present:* %d | *Absent:* %d | *On Leave:* %d | *Late:* %d",
-                LocalDate.now().format(DateTimeFormatter.ISO_DATE),
+                today.format(DateTimeFormatter.ISO_DATE),
                 totalEmployees, present, absent, onLeave, late);
 
         double attendanceRate = totalEmployees > 0 ? (present * 100.0 / totalEmployees) : 0;
@@ -419,7 +427,7 @@ public class SlackNotificationService {
         blocks.add(SlackBlock.header(":chart_with_upwards_trend: Daily Attendance Summary"));
         blocks.add(SlackBlock.section(String.format(
                 "*Date:* %s\n%s *Attendance Rate:* %.1f%%",
-                LocalDate.now().format(DateTimeFormatter.ofPattern("MMMM dd, yyyy")),
+                today.format(DateTimeFormatter.ofPattern("MMMM dd, yyyy")),
                 rateEmoji, attendanceRate)));
         blocks.add(SlackBlock.divider());
         blocks.add(SlackBlock.section(String.format(

@@ -343,31 +343,31 @@ public class MultiChannelNotificationService {
     private void sendPushNotification(MultiChannelNotification notification) {
         log.info("Sending push to {}: {}", notification.getRecipientId(), notification.getTitle());
         notification.setStatus(NotificationStatus.SENT);
-        notification.setSentAt(LocalDateTime.now());
+        notification.setSentAt(tenantTimeService.now(notification.getTenantId()));
     }
 
     private void sendSlackNotification(MultiChannelNotification notification) {
         log.info("Sending Slack message: {}", notification.getBody());
         notification.setStatus(NotificationStatus.SENT);
-        notification.setSentAt(LocalDateTime.now());
+        notification.setSentAt(tenantTimeService.now(notification.getTenantId()));
     }
 
     private void sendTeamsNotification(MultiChannelNotification notification) {
         log.info("Sending Teams message: {}", notification.getBody());
         notification.setStatus(NotificationStatus.SENT);
-        notification.setSentAt(LocalDateTime.now());
+        notification.setSentAt(tenantTimeService.now(notification.getTenantId()));
     }
 
     private void sendWhatsAppNotification(MultiChannelNotification notification) {
         log.info("Sending WhatsApp to {}: {}", notification.getRecipientPhone(), notification.getBody());
         notification.setStatus(NotificationStatus.SENT);
-        notification.setSentAt(LocalDateTime.now());
+        notification.setSentAt(tenantTimeService.now(notification.getTenantId()));
     }
 
     private void sendWebhookNotification(MultiChannelNotification notification) {
         log.info("Sending webhook: {}", notification.getBody());
         notification.setStatus(NotificationStatus.SENT);
-        notification.setSentAt(LocalDateTime.now());
+        notification.setSentAt(tenantTimeService.now(notification.getTenantId()));
     }
 
     // ==================== USER NOTIFICATIONS ====================
@@ -397,7 +397,7 @@ public class MultiChannelNotificationService {
                 .orElseThrow(() -> new IllegalArgumentException("Notification not found"));
 
         notification.setStatus(NotificationStatus.READ);
-        notification.setReadAt(LocalDateTime.now());
+        notification.setReadAt(tenantTimeService.now(tenantId));
         notificationRepository.save(notification);
     }
 
@@ -405,7 +405,7 @@ public class MultiChannelNotificationService {
     public void markAllAsRead() {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID userId = SecurityContext.getCurrentUserId();
-        notificationRepository.markAllAsRead(userId, tenantId, LocalDateTime.now());
+        notificationRepository.markAllAsRead(userId, tenantId, tenantTimeService.now(tenantId));
     }
 
     // ==================== USER PREFERENCES ====================
@@ -503,7 +503,7 @@ public class MultiChannelNotificationService {
     @Transactional(readOnly = true)
     public NotificationDashboard getDashboard() {
         UUID tenantId = TenantContext.getCurrentTenant();
-        LocalDateTime startDate = LocalDateTime.now().minusDays(30);
+        LocalDateTime startDate = tenantTimeService.now(tenantId).minusDays(30);
 
         List<Object[]> channelCounts = notificationRepository.countByChannelSince(tenantId, startDate);
         List<Object[]> statusCounts = notificationRepository.countByStatusSince(tenantId, startDate);

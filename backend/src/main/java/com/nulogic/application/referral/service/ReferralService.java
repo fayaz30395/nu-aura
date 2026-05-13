@@ -102,7 +102,7 @@ public class ReferralService {
 
     @Transactional(readOnly = true)
     public ReferralResponse getReferral(UUID referralId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         EmployeeReferral referral = referralRepository.findByIdAndTenantId(referralId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Referral not found"));
         return mapToResponse(referral);
@@ -110,7 +110,7 @@ public class ReferralService {
 
     @Transactional(readOnly = true)
     public List<ReferralResponse> getMyReferrals(UUID referrerId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         return referralRepository.findByReferrerIdAndTenantId(referrerId, tenantId).stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
@@ -118,14 +118,14 @@ public class ReferralService {
 
     @Transactional(readOnly = true)
     public Page<ReferralResponse> getAllReferrals(Pageable pageable) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         return referralRepository.findByTenantId(tenantId, pageable)
                 .map(this::mapToResponse);
     }
 
     @Transactional(readOnly = true)
     public List<ReferralResponse> getReferralsByStatus(ReferralStatus status) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         return referralRepository.findByTenantIdAndStatus(tenantId, status).stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
@@ -234,7 +234,7 @@ public class ReferralService {
 
     @Transactional(readOnly = true)
     public List<ReferralResponse> getBonusEligibleReferrals() {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         return referralRepository.findEligibleForBonus(tenantId).stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
@@ -261,7 +261,7 @@ public class ReferralService {
 
     @Transactional
     public ReferralPolicyResponse createPolicy(ReferralPolicyRequest request) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         log.info("Creating referral policy {} for tenant {}", request.getName(), tenantId);
 
         ReferralPolicy policy = new ReferralPolicy();
@@ -307,7 +307,7 @@ public class ReferralService {
 
     @Transactional
     public ReferralPolicyResponse updatePolicy(UUID policyId, ReferralPolicyRequest request) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         ReferralPolicy policy = policyRepository.findByIdAndTenantId(policyId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Policy not found"));
 
@@ -333,7 +333,7 @@ public class ReferralService {
 
     @Transactional(readOnly = true)
     public ReferralPolicyResponse getPolicy(UUID policyId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         ReferralPolicy policy = policyRepository.findByIdAndTenantId(policyId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Policy not found"));
         return mapToPolicyResponse(policy);
@@ -341,14 +341,14 @@ public class ReferralService {
 
     @Transactional(readOnly = true)
     public List<ReferralPolicyResponse> getActivePolicies() {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         return policyRepository.findByTenantIdAndIsActiveTrue(tenantId).stream()
                 .map(this::mapToPolicyResponse)
                 .collect(Collectors.toList());
     }
 
     public ReferralPolicyResponse togglePolicyStatus(UUID policyId, boolean isActive) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         ReferralPolicy policy = policyRepository.findByIdAndTenantId(policyId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Policy not found"));
 
@@ -360,7 +360,7 @@ public class ReferralService {
 
     @Transactional(readOnly = true)
     public ReferralDashboard getDashboard() {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         ReferralDashboard dashboard = new ReferralDashboard();
 

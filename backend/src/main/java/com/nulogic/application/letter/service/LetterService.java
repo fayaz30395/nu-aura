@@ -415,7 +415,7 @@ public class LetterService {
      * This is used for offer letters that require candidate signature.
      */
     public GeneratedLetterResponse issueOfferLetterWithESign(UUID letterId, UUID issuerId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         GeneratedLetter entity = letterRepository.findByIdAndTenantId(letterId, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException(LETTER_NOT_FOUND_PREFIX + letterId));
 
@@ -437,7 +437,7 @@ public class LetterService {
 
         // Update candidate status to OFFER_EXTENDED now that letter is issued
         candidate.setStatus(Candidate.CandidateStatus.OFFER_EXTENDED);
-        candidate.setOfferExtendedDate(LocalDate.now());
+        candidate.setOfferExtendedDate(tenantTimeService.today(tenantId));
         candidateRepository.save(candidate);
 
         // Create e-signature request for candidate
@@ -535,7 +535,7 @@ public class LetterService {
 
     // ==================== Helper Methods ====================
 
-    private String processTemplate(String template, Employee employee, Map<String, String> customValues) {
+    private String processTemplate(String template, Employee employee, Map<String, String> customValues, UUID tenantId) {
         String result = template;
 
         // Replace standard placeholders
@@ -549,7 +549,6 @@ public class LetterService {
         // Resolve department name from departmentId
         String departmentName = "";
         if (employee.getDepartmentId() != null) {
-            UUID tenantId = TenantContext.getCurrentTenant();
             departmentName = departmentRepository.findByIdAndTenantId(employee.getDepartmentId(), tenantId)
                     .map(Department::getName)
                     .orElse("");
@@ -557,7 +556,7 @@ public class LetterService {
         result = result.replace("{{employee.department}}", departmentName);
         result = result.replace("{{employee.dateOfJoining}}",
                 employee.getJoiningDate() != null ? employee.getJoiningDate().format(DATE_FORMATTER) : "");
-        result = result.replace("{{currentDate}}", LocalDate.now().format(DATE_FORMATTER));
+        result = result.replace("{{currentDate}}", tenantTimeService.today(tenantId).format(DATE_FORMATTER));
 
         // Replace custom placeholders
         if (customValues != null) {
@@ -573,7 +572,7 @@ public class LetterService {
      * Process template for candidate offer letters with candidate/offer specific placeholders.
      */
     private String processCandidateTemplate(String template, Candidate candidate, JobOpening jobOpening,
-                                            GenerateOfferLetterRequest request) {
+                                            GenerateOfferLetterRequest request, UUID tenantId) {
         String result = template;
 
         // Candidate placeholders
@@ -606,8 +605,9 @@ public class LetterService {
                 jobOpening.getEmploymentType() != null ? formatEmploymentType(jobOpening.getEmploymentType()) : "");
 
         // Common placeholders
-        result = result.replace("{{currentDate}}", LocalDate.now().format(DATE_FORMATTER));
-        result = result.replace("{{offerDate}}", LocalDate.now().format(DATE_FORMATTER));
+        LocalDate today = tenantTimeService.today(tenantId);
+        result = result.replace("{{currentDate}}", today.format(DATE_FORMATTER));
+        result = result.replace("{{offerDate}}", today.format(DATE_FORMATTER));
 
         // Replace custom placeholders
         if (request.getCustomPlaceholderValues() != null) {
