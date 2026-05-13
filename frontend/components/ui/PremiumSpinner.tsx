@@ -28,7 +28,7 @@ export function OrbitSpinner({size = 'md', className}: Omit<PremiumSpinnerProps,
     <div className={cn('relative', className)} style={{width: dimension, height: dimension}}>
       {/* Center core - pulsing */}
       <motion.div
-        className="absolute inset-0 m-auto w-3 h-3 rounded-full bg-gradient-to-br from-accent-500 to-accent-700"
+        className="absolute inset-0 m-auto w-3 h-3 rounded-full bg-accent-50 dark:bg-accent-900/30"
         animate={{
           scale: [1, 1.3, 1],
           opacity: [0.8, 1, 0.8],

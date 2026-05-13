@@ -360,8 +360,8 @@ public class ProbationService {
 
     @Transactional(readOnly = true)
     public List<ProbationPeriodResponse> getProbationsEndingSoon(int daysAhead) {
-        UUID tenantId = TenantContext.getCurrentTenant();
-        LocalDate today = LocalDate.now();
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        LocalDate today = tenantTimeService.today(tenantId);
         return probationPeriodRepository.findProbationsEndingSoon(tenantId, today, today.plusDays(daysAhead))
                 .stream()
                 .map(this::enrichResponse)
@@ -370,8 +370,8 @@ public class ProbationService {
 
     @Transactional(readOnly = true)
     public List<ProbationPeriodResponse> getProbationsWithEvaluationsDue() {
-        UUID tenantId = TenantContext.getCurrentTenant();
-        return probationPeriodRepository.findProbationsWithEvaluationsDue(tenantId, LocalDate.now())
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        return probationPeriodRepository.findProbationsWithEvaluationsDue(tenantId, tenantTimeService.today(tenantId))
                 .stream()
                 .map(this::enrichResponse)
                 .collect(Collectors.toList());

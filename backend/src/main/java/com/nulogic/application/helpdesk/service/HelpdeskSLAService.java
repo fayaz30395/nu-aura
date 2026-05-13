@@ -35,11 +35,12 @@ public class HelpdeskSLAService {
 
     @Transactional
     public TicketSLA createSLA(TicketSLA sla) {
+        UUID tenantId = TenantContext.requireCurrentTenant();
         if (sla.getId() == null) {
             sla.setId(UUID.randomUUID());
         }
         if (sla.getCreatedAt() == null) {
-            sla.setCreatedAt(LocalDateTime.now());
+            sla.setCreatedAt(tenantTimeService.now(tenantId));
         }
 
         log.info("Creating SLA: {}", sla.getName());
@@ -48,7 +49,8 @@ public class HelpdeskSLAService {
 
     @Transactional
     public TicketSLA updateSLA(TicketSLA sla) {
-        sla.setUpdatedAt(LocalDateTime.now());
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        sla.setUpdatedAt(tenantTimeService.now(tenantId));
         return slaRepository.save(sla);
     }
 

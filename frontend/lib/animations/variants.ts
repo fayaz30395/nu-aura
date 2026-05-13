@@ -291,12 +291,12 @@ export const shadowPresets = {
 // ==================== Gradient Presets ====================
 
 export const gradientPresets = {
-  /** Primary blue gradient */
-  primary: 'bg-gradient-to-br from-accent-500 to-accent-700',
-  /** Success green gradient */
-  success: 'bg-gradient-to-br from-success-500 to-success-700',
-  /** Danger red gradient */
-  danger: 'bg-gradient-to-br from-danger-500 to-danger-700',
+  /** Primary blue icon tile (flat per DESIGN.md) */
+  primary: 'bg-accent-100 dark:bg-accent-500/10 text-accent-600',
+  /** Success green icon tile (flat per DESIGN.md) */
+  success: 'bg-success-100 dark:bg-success-500/10 text-success-600',
+  /** Danger red icon tile (flat per DESIGN.md) */
+  danger: 'bg-danger-100 dark:bg-danger-500/10 text-danger-600',
   /** Warning amber gradient */
   warning: 'bg-gradient-to-br from-warning-400 to-warning-600',
   /** Info cyan gradient */

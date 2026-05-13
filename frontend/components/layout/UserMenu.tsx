@@ -60,7 +60,7 @@ export const UserMenu = React.memo(function UserMenu({
           />
         ) : (
           <div
-            className="h-9 w-9 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 flex items-center justify-center text-white text-sm font-semibold ring-2 ring-accent-200 dark:ring-accent-800">
+            className="h-9 w-9 rounded-xl bg-accent-600 flex items-center justify-center text-white text-sm font-semibold ring-2 ring-accent-200 dark:ring-accent-800">
             {initials}
           </div>
         )}

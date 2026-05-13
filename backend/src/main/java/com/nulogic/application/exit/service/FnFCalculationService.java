@@ -128,15 +128,18 @@ public class FnFCalculationService {
                 .build();
         settlement.setTenantId(tenantId);
 
+        // P0 Wave 3: tenant-local "today" for active-salary lookup — resolved via TenantTimeService.
+        LocalDate today = tenantTimeService.today(tenantId);
         BigDecimal baseSalary = salaryStructureRepository
-                .findActiveByEmployeeIdAndDate(tenantId, employee.getId(), LocalDate.now())
+                .findActiveByEmployeeIdAndDate(tenantId, employee.getId(), today)
                 .map(SalaryStructure::getBasicSalary)
                 .orElse(BigDecimal.ZERO);
 
         // Years of service
         LocalDate joiningDate = employee.getJoiningDate();
+        // P0 Wave 3: fall back to tenant-local "today" when last-working-date is absent.
         LocalDate lastWorkingDate = exitProcess.getLastWorkingDate() != null
-                ? exitProcess.getLastWorkingDate() : LocalDate.now();
+                ? exitProcess.getLastWorkingDate() : today;
 
         if (joiningDate != null) {
             // F1.3: Use Period for leap-year-correct YMD breakdown instead of days/365,

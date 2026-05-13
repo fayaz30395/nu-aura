@@ -525,6 +525,8 @@ export default function CustomFieldsPage() {
                         <select
                           id="custom-field-type"
                           {...field}
+                          aria-invalid={errors.fieldType ? 'true' : 'false'}
+                          aria-describedby={errors.fieldType ? 'custom-field-type-error' : undefined}
                           className="input-aura"
                           disabled={showEditModal}
                         >
@@ -536,7 +538,7 @@ export default function CustomFieldsPage() {
                         </select>
                       )}
                     />
-                    {errors.fieldType && <p className="text-danger-500 text-sm mt-1">{errors.fieldType.message}</p>}
+                    {errors.fieldType && <p id="custom-field-type-error" className="text-danger-500 text-sm mt-1">{errors.fieldType.message}</p>}
                   </div>
                 </div>
 
@@ -549,10 +551,12 @@ export default function CustomFieldsPage() {
                       id="custom-field-group"
                       type="text"
                       {...register('fieldGroup')}
+                      aria-invalid={errors.fieldGroup ? 'true' : 'false'}
+                      aria-describedby={errors.fieldGroup ? 'custom-field-group-error' : undefined}
                       className="input-aura"
                       placeholder="e.g., Personal, Emergency Contact"
                     />
-                    {errors.fieldGroup && <p className="text-danger-500 text-sm mt-1">{errors.fieldGroup.message}</p>}
+                    {errors.fieldGroup && <p id="custom-field-group-error" className="text-danger-500 text-sm mt-1">{errors.fieldGroup.message}</p>}
                   </div>
                   <div>
                     <label htmlFor="custom-field-display-order" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">

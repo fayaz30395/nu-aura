@@ -141,14 +141,14 @@ public class ComplianceService {
 
     @Transactional(readOnly = true)
     public List<CompliancePolicy> getActivePolicies() {
-        UUID tenantId = TenantContext.getCurrentTenant();
-        return policyRepository.findActivePolicies(tenantId, LocalDate.now());
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        return policyRepository.findActivePolicies(tenantId, tenantTimeService.today(tenantId));
     }
 
     @Transactional(readOnly = true)
     public Page<CompliancePolicy> getActivePolicies(Pageable pageable) {
-        UUID tenantId = TenantContext.getCurrentTenant();
-        return policyRepository.findActivePolicies(tenantId, LocalDate.now(), pageable);
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        return policyRepository.findActivePolicies(tenantId, tenantTimeService.today(tenantId), pageable);
     }
 
     @Transactional(readOnly = true)
@@ -166,7 +166,7 @@ public class ComplianceService {
     // ==================== Policy Acknowledgment ====================
 
     public PolicyAcknowledgment acknowledgePolicy(UUID policyId, String signature, String ipAddress) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         UUID employeeId = SecurityContext.getCurrentEmployeeId();
 
         CompliancePolicy policy = policyRepository.findByIdAndTenantId(policyId, tenantId)
@@ -182,7 +182,7 @@ public class ComplianceService {
         acknowledgment.setPolicyId(policyId);
         acknowledgment.setEmployeeId(employeeId);
         acknowledgment.setPolicyVersion(policy.getPolicyVersion());
-        acknowledgment.setAcknowledgedAt(LocalDateTime.now());
+        acknowledgment.setAcknowledgedAt(tenantTimeService.now(tenantId));
         acknowledgment.setDigitalSignature(signature);
         acknowledgment.setIpAddress(ipAddress);
 

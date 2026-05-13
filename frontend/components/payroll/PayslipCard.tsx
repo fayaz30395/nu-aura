@@ -40,7 +40,7 @@ export const PayslipCard: React.FC<PayslipCardProps> = ({
     <Card variant="elevated" hover className="overflow-hidden">
       <CardContent className="p-0">
         {/* Header */}
-        <div className="bg-gradient-to-r from-accent-500 to-accent-700 p-4 text-white">
+        <div className="bg-accent-600 p-4 text-white">
           <div className="flex items-start justify-between">
             <div className="flex-1">
               <h3 className="text-xl font-semibold truncate">{payslip.employeeName}</h3>

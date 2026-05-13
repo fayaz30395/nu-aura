@@ -87,7 +87,7 @@ public class ReferralService {
         referral.setKnownSince(request.getKnownSince());
         referral.setReferrerNotes(request.getReferrerNotes());
         referral.setStatus(ReferralStatus.SUBMITTED);
-        referral.setSubmittedDate(LocalDate.now());
+        referral.setSubmittedDate(tenantTimeService.today(tenantId));
         referral.setBonusStatus(BonusStatus.NOT_ELIGIBLE);
 
         // Calculate bonus amount based on policy

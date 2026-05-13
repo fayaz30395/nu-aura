@@ -4,6 +4,7 @@ import {useEffect, useState} from 'react';
 import {ChevronLeft, ChevronRight} from 'lucide-react';
 import {UpcomingHolidayResponse} from '@/lib/services/core/home.service';
 import {useUpcomingHolidays} from '@/lib/hooks/queries/useHome';
+import {formatDate} from '@/lib/utils/format/date';
 
 interface Holiday {
   id: string;
@@ -78,7 +79,7 @@ export function HolidayCarousel({
   if (isLoading) {
     return (
       <div
-        className="relative overflow-hidden rounded-lg bg-gradient-to-br from-accent-600 to-accent-800 p-4 text-white">
+        className="relative overflow-hidden rounded-lg bg-accent-50 dark:bg-accent-900/30 p-4 text-accent-900 dark:text-accent-100">
         <div className="row-between mb-2">
           <span className="text-xs font-semibold uppercase tracking-wider opacity-80">Holidays</span>
           <span className="text-xs opacity-60">View All</span>
@@ -95,7 +96,7 @@ export function HolidayCarousel({
   if (displayedHolidays.length === 0) {
     return (
       <div
-        className="relative overflow-hidden rounded-lg bg-gradient-to-br from-accent-600 to-accent-800 p-4 text-white">
+        className="relative overflow-hidden rounded-lg bg-accent-50 dark:bg-accent-900/30 p-4 text-accent-900 dark:text-accent-100">
         <div className="row-between mb-2">
           <span className="text-xs font-semibold uppercase tracking-wider opacity-80">Holidays</span>
           <a href="/holidays" className="text-xs opacity-60 hover:opacity-100 transition-opacity">View All</a>
@@ -117,7 +118,7 @@ export function HolidayCarousel({
 
   return (
     <div
-      className="relative overflow-hidden rounded-lg bg-gradient-to-br from-accent-600 to-accent-800 p-4 text-white"
+      className="relative overflow-hidden rounded-lg bg-accent-50 dark:bg-accent-900/30 p-4 text-accent-900 dark:text-accent-100"
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
     >

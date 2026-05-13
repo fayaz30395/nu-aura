@@ -93,13 +93,14 @@ public class EmailSchedulerService {
     public void sendAnniversaryEmails() {
         log.info("Starting work anniversary email job");
 
-        LocalDate today = LocalDate.now();
-        LocalDate tomorrow = today.plusDays(1);
         List<Tenant> activeTenants = tenantRepository.findByStatus(Tenant.TenantStatus.ACTIVE);
 
         for (Tenant tenant : activeTenants) {
             TenantContext.setCurrentTenant(tenant.getId());
             try {
+                // S11-M Wave-3 P0: resolve "today" in the tenant's own zone, not the JVM zone.
+                LocalDate today = tenantTimeService.today(tenant.getId());
+                LocalDate tomorrow = today.plusDays(1);
                 List<Employee> anniversaryEmployees = employeeRepository.findUpcomingAnniversaries(
                         tenant.getId(), today, tomorrow);
                 log.debug("Tenant {}: found {} employees with work anniversaries today",

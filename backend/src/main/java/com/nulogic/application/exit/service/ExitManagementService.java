@@ -588,11 +588,12 @@ public class ExitManagementService {
     }
 
     public ExitInterviewResponse conductExitInterview(UUID id, ExitInterviewRequest request) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         ExitInterview interview = exitInterviewRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException(EXIT_INTERVIEW_NOT_FOUND));
 
-        interview.setActualDate(LocalDate.now());
+        // S12-B: tenant-local "today" for interview actual date — resolved via TenantTimeService.
+        interview.setActualDate(tenantTimeService.today(tenantId));
         interview.setStatus(ExitInterview.InterviewStatus.COMPLETED);
 
         // Ratings
@@ -710,13 +711,14 @@ public class ExitManagementService {
     }
 
     public AssetRecoveryResponse recordAssetReturn(UUID id, AssetRecoveryRequest request) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         UUID currentUserId = SecurityContext.getCurrentUserId();
 
         AssetRecovery asset = assetRecoveryRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException(ASSET_RECOVERY_NOT_FOUND));
 
-        asset.setActualReturnDate(LocalDate.now());
+        // S12-B: tenant-local "today" for asset return date — resolved via TenantTimeService.
+        asset.setActualReturnDate(tenantTimeService.today(tenantId));
         asset.setConditionOnReturn(request.getConditionOnReturn());
         asset.setRecoveredBy(currentUserId);
 

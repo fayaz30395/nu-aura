@@ -39,9 +39,9 @@ public class HelpdeskSLAController {
     @PostMapping
     @RequiresPermission(Permission.HELPDESK_SLA_MANAGE)
     public ResponseEntity<TicketSLA> createSLA(@Valid @RequestBody TicketSLA request) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         request.setTenantId(tenantId);
-        request.setCreatedAt(LocalDateTime.now());
+        request.setCreatedAt(tenantTimeService.now(tenantId));
 
         TicketSLA saved = slaService.createSLA(request);
         return ResponseEntity.ok(saved);
@@ -77,7 +77,7 @@ public class HelpdeskSLAController {
     public ResponseEntity<TicketSLA> updateSLA(
             @PathVariable UUID id,
             @Valid @RequestBody TicketSLA request) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         return slaService.getSLAById(tenantId, id)
                 .map(existing -> {
@@ -97,7 +97,7 @@ public class HelpdeskSLAController {
                     existing.setWorkingDays(request.getWorkingDays());
                     existing.setIsActive(request.getIsActive());
                     existing.setApplyToAllCategories(request.getApplyToAllCategories());
-                    existing.setUpdatedAt(LocalDateTime.now());
+                    existing.setUpdatedAt(tenantTimeService.now(tenantId));
 
                     TicketSLA updated = slaService.updateSLA(existing);
                     return ResponseEntity.ok(updated);
