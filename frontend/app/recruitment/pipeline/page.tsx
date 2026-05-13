@@ -780,7 +780,7 @@ export default function ApplicantPipelinePage() {
               <div className="w-16 h-16 rounded-full bg-[var(--bg-secondary)] flex items-center justify-center mb-4">
                 <User size={28} className="text-[var(--text-muted)]"/>
               </div>
-              <h3 className="text-[var(--text-secondary)] font-semibold mb-1">No Job Selected</h3>
+              <h2 className="text-[var(--text-secondary)] font-semibold mb-1">No Job Selected</h2>
               <p className="text-[var(--text-muted)] text-sm">
                 Select a job opening above to view its applicant pipeline.
               </p>
@@ -975,12 +975,21 @@ export default function ApplicantPipelinePage() {
                                           <div
                                             ref={dragProvided.innerRef}
                                             {...dragProvided.draggableProps}
-                                            className={`card-interactive p-4 group ${
+                                            className={`card-interactive p-4 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded-lg ${
                                               dragSnapshot.isDragging
                                                 ? 'shadow-[var(--shadow-dropdown)] border-accent-300 ring-2 ring-accent-200 rotate-1'
                                                 : ''
                                             } ${isMoving ? 'opacity-50' : ''}`}
                                             onClick={() => !dragSnapshot.isDragging && openDetailModal(applicant)}
+                                            onKeyDown={(e) => {
+                                              if ((e.key === 'Enter' || e.key === ' ') && !dragSnapshot.isDragging) {
+                                                e.preventDefault();
+                                                openDetailModal(applicant);
+                                              }
+                                            }}
+                                            role="button"
+                                            tabIndex={0}
+                                            aria-label={`View details for ${applicant.candidateName || `Candidate ${applicant.candidateId.slice(0, 8)}`}`}
                                           >
                                             {/* Card Top Row */}
                                             <div className="flex items-start justify-between gap-1 mb-1.5">

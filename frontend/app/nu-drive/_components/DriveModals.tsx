@@ -5,8 +5,8 @@ import NextImage from 'next/image';
 import {Check, Copy, Download, Edit3, ExternalLink, FolderPlus, Loader2, Share2, X,} from 'lucide-react';
 import {Button} from '@/components/ui/Button';
 import {Input} from '@/components/ui/Input';
-import {Card} from '@/components/ui/Card';
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
+import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
 import {DriveFile} from './types';
 import {getFileIcon, getPreviewUrl} from './fileUtils';
 import {safeWindowOpen} from '@/lib/utils/url';
@@ -30,50 +30,37 @@ export const NewFolderModal = React.memo(function NewFolderModal({
                                                                    onNameChange,
                                                                    onCreate,
                                                                  }: NewFolderModalProps) {
-  if (!opened) return null;
-
   return (
-    <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
-      <Card className="w-full max-w-md">
-        <div className="row-between p-4 border-b border-[var(--border-main)]">
-          <h3 className="font-semibold text-[var(--text-primary)]">Create New Folder</h3>
-          <button
-            onClick={onClose}
-            aria-label="Close dialog"
-            className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-          >
-            <X className="h-5 w-5"/>
-          </button>
+    <Modal isOpen={opened} onClose={onClose} size="sm">
+      <ModalHeader onClose={onClose}>Create New Folder</ModalHeader>
+      <ModalBody>
+        <div>
+          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+            Folder Name
+          </label>
+          <Input
+            value={newFolderName}
+            onChange={(e) => onNameChange(e.target.value)}
+            placeholder="Enter folder name"
+            autoFocus
+          />
         </div>
-        <div className="p-4 space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-              Folder Name
-            </label>
-            <Input
-              value={newFolderName}
-              onChange={(e) => onNameChange(e.target.value)}
-              placeholder="Enter folder name"
-              autoFocus
-            />
-          </div>
-          <div className="flex justify-end gap-2">
-            <Button variant="ghost" onClick={onClose}>
-              Cancel
-            </Button>
-            <Button
-              variant="primary"
-              onClick={onCreate}
-              disabled={creatingFolder || !newFolderName.trim()}
-              leftIcon={creatingFolder ? <Loader2 className="h-4 w-4 animate-spin"/> :
-                <FolderPlus className="h-4 w-4"/>}
-            >
-              {creatingFolder ? 'Creating...' : 'Create'}
-            </Button>
-          </div>
-        </div>
-      </Card>
-    </div>
+      </ModalBody>
+      <ModalFooter>
+        <Button variant="ghost" onClick={onClose}>
+          Cancel
+        </Button>
+        <Button
+          variant="primary"
+          onClick={onCreate}
+          disabled={creatingFolder || !newFolderName.trim()}
+          leftIcon={creatingFolder ? <Loader2 className="h-4 w-4 animate-spin"/> :
+            <FolderPlus className="h-4 w-4"/>}
+        >
+          {creatingFolder ? 'Creating...' : 'Create'}
+        </Button>
+      </ModalFooter>
+    </Modal>
   );
 });
 
@@ -111,94 +98,83 @@ export const ShareModal = React.memo(function ShareModal({
                                                            onGetShareableLink,
                                                            onCopyLink,
                                                          }: ShareModalProps) {
-  if (!opened || !file) return null;
+  if (!file) return null;
 
   return (
-    <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
-      <Card className="w-full max-w-md">
-        <div className="row-between p-4 border-b border-[var(--border-main)]">
-          <h3 className="font-semibold text-[var(--text-primary)]">Share &quot;{file.name}&quot;</h3>
-          <button
-            onClick={onClose}
-            aria-label="Close dialog"
-            className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-          >
-            <X className="h-5 w-5"/>
-          </button>
+    <Modal isOpen={opened} onClose={onClose} size="sm">
+      <ModalHeader onClose={onClose}>Share &quot;{file.name}&quot;</ModalHeader>
+      <ModalBody className="space-y-4">
+        {shareSuccess && (
+          <div
+            className="flex items-center gap-2 p-4 bg-success-50 dark:bg-success-950/30 text-success-600 dark:text-success-400 rounded-lg">
+            <Check className="h-4 w-4"/>
+            <span className="text-sm">Shared successfully!</span>
+          </div>
+        )}
+
+        <div>
+          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+            Share with
+          </label>
+          <Input
+            value={shareEmail}
+            onChange={(e) => onEmailChange(e.target.value)}
+            placeholder="Enter email address"
+            type="email"
+          />
         </div>
-        <div className="p-4 space-y-4">
-          {shareSuccess && (
-            <div
-              className="flex items-center gap-2 p-4 bg-success-50 dark:bg-success-950/30 text-success-600 dark:text-success-400 rounded-lg">
-              <Check className="h-4 w-4"/>
-              <span className="text-sm">Shared successfully!</span>
-            </div>
-          )}
 
-          <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-              Share with
-            </label>
-            <Input
-              value={shareEmail}
-              onChange={(e) => onEmailChange(e.target.value)}
-              placeholder="Enter email address"
-              type="email"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-              Permission
-            </label>
-            <select
-              value={shareRole}
-              onChange={(e) => onRoleChange(e.target.value as 'reader' | 'writer' | 'commenter')}
-              className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
-            >
-              <option value="reader">Viewer</option>
-              <option value="commenter">Commenter</option>
-              <option value="writer">Editor</option>
-            </select>
-          </div>
-
-          <Button
-            variant="primary"
-            onClick={onShare}
-            disabled={sharing || !shareEmail.trim()}
-            leftIcon={sharing ? <Loader2 className="h-4 w-4 animate-spin"/> : <Share2 className="h-4 w-4"/>}
-            className="w-full"
+        <div>
+          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+            Permission
+          </label>
+          <select
+            value={shareRole}
+            onChange={(e) => onRoleChange(e.target.value as 'reader' | 'writer' | 'commenter')}
+            className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
           >
-            {sharing ? 'Sharing...' : 'Share'}
-          </Button>
+            <option value="reader">Viewer</option>
+            <option value="commenter">Commenter</option>
+            <option value="writer">Editor</option>
+          </select>
+        </div>
 
-          <div className="border-t border-[var(--border-main)] pt-4">
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-              Get shareable link
-            </label>
-            {shareLink ? (
-              <div className="flex items-center gap-2">
-                <Input value={shareLink} readOnly className="flex-1"/>
-                <Button
-                  variant="outline"
-                  onClick={onCopyLink}
-                  leftIcon={linkCopied ? <Check className="h-4 w-4"/> : <Copy className="h-4 w-4"/>}
-                >
-                  {linkCopied ? 'Copied!' : 'Copy'}
-                </Button>
-              </div>
-            ) : (
-              <Button variant="outline" onClick={onGetShareableLink} className="w-full">
-                Generate Link
+        <Button
+          variant="primary"
+          onClick={onShare}
+          disabled={sharing || !shareEmail.trim()}
+          leftIcon={sharing ? <Loader2 className="h-4 w-4 animate-spin"/> : <Share2 className="h-4 w-4"/>}
+          className="w-full"
+        >
+          {sharing ? 'Sharing...' : 'Share'}
+        </Button>
+
+        <div className="border-t border-[var(--border-main)] pt-4">
+          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+            Get shareable link
+          </label>
+          {shareLink ? (
+            <div className="flex items-center gap-2">
+              <Input value={shareLink} readOnly className="flex-1"/>
+              <Button
+                variant="outline"
+                onClick={onCopyLink}
+                leftIcon={linkCopied ? <Check className="h-4 w-4"/> : <Copy className="h-4 w-4"/>}
+              >
+                {linkCopied ? 'Copied!' : 'Copy'}
               </Button>
-            )}
-            <p className="text-caption mt-2">
-              Anyone with this link can view the file.
-            </p>
-          </div>
+            </div>
+          ) : (
+            <Button variant="outline" onClick={onGetShareableLink} className="w-full">
+              Generate Link
+            </Button>
+          )}
+          <p className="text-caption mt-2">
+            Anyone with this link can view the file.
+          </p>
         </div>
-      </Card>
-    </div>
+      </ModalBody>
+    </Modal>
   );
 });
 
@@ -222,49 +198,38 @@ export const RenameModal = React.memo(function RenameModal({
                                                              onRenameChange,
                                                              onRename,
                                                            }: RenameModalProps) {
-  if (!opened || !file) return null;
+  if (!file) return null;
 
   return (
-    <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
-      <Card className="w-full max-w-md">
-        <div className="row-between p-4 border-b border-[var(--border-main)]">
-          <h3 className="font-semibold text-[var(--text-primary)]">Rename</h3>
-          <button
-            onClick={onClose}
-            aria-label="Close dialog"
-            className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-          >
-            <X className="h-5 w-5"/>
-          </button>
+    <Modal isOpen={opened} onClose={onClose} size="sm">
+      <ModalHeader onClose={onClose}>Rename</ModalHeader>
+      <ModalBody>
+        <div>
+          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+            New name
+          </label>
+          <Input
+            value={renameValue}
+            onChange={(e) => onRenameChange(e.target.value)}
+            placeholder="Enter new name"
+            autoFocus
+          />
         </div>
-        <div className="p-4 space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-              New name
-            </label>
-            <Input
-              value={renameValue}
-              onChange={(e) => onRenameChange(e.target.value)}
-              placeholder="Enter new name"
-              autoFocus
-            />
-          </div>
-          <div className="flex justify-end gap-2">
-            <Button variant="ghost" onClick={onClose}>
-              Cancel
-            </Button>
-            <Button
-              variant="primary"
-              onClick={onRename}
-              disabled={renaming || !renameValue.trim()}
-              leftIcon={renaming ? <Loader2 className="h-4 w-4 animate-spin"/> : <Edit3 className="h-4 w-4"/>}
-            >
-              {renaming ? 'Renaming...' : 'Rename'}
-            </Button>
-          </div>
-        </div>
-      </Card>
-    </div>
+      </ModalBody>
+      <ModalFooter>
+        <Button variant="ghost" onClick={onClose}>
+          Cancel
+        </Button>
+        <Button
+          variant="primary"
+          onClick={onRename}
+          disabled={renaming || !renameValue.trim()}
+          leftIcon={renaming ? <Loader2 className="h-4 w-4 animate-spin"/> : <Edit3 className="h-4 w-4"/>}
+        >
+          {renaming ? 'Renaming...' : 'Rename'}
+        </Button>
+      </ModalFooter>
+    </Modal>
   );
 });
 

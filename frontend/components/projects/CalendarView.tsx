@@ -132,7 +132,17 @@ export function CalendarView({
           e.stopPropagation();
           onEventClick?.(event);
         }}
-        className={`cursor-pointer rounded px-1.5 py-0.5 text-xs text-white truncate hover:opacity-80 transition-opacity ${
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            e.stopPropagation();
+            onEventClick?.(event);
+          }
+        }}
+        role="button"
+        tabIndex={0}
+        aria-label={`Event: ${event.title}`}
+        className={`cursor-pointer rounded px-1.5 py-0.5 text-xs text-white truncate hover:opacity-80 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-1 ${
           compact ? 'mb-0.5' : 'mb-1'
         }`}
         style={{backgroundColor}}
@@ -173,7 +183,18 @@ export function CalendarView({
               setCurrentDate(day);
               setViewType('day');
             }}
-            className={`min-h-[100px] p-1 border-r border-b border-surface-200 dark:border-surface-700 cursor-pointer transition-colors ${
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                onDateClick?.(day);
+                setCurrentDate(day);
+                setViewType('day');
+              }
+            }}
+            role="button"
+            tabIndex={0}
+            aria-label={`View ${format(day, 'EEEE, MMMM d, yyyy')}${dayEvents.length > 0 ? `, ${dayEvents.length} event${dayEvents.length === 1 ? '' : 's'}` : ''}`}
+            className={`min-h-[100px] p-1 border-r border-b border-surface-200 dark:border-surface-700 cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-inset ${
               isCurrentMonth
                 ? 'bg-[var(--bg-card)]'
                 : 'bg-surface-50 dark:bg-surface-800/50'
@@ -218,7 +239,18 @@ export function CalendarView({
               setCurrentDate(day);
               setViewType('day');
             }}
-            className="flex-1 py-2 text-center border-r border-surface-200 dark:border-surface-700 cursor-pointer hover:bg-surface-50 dark:hover:bg-surface-800"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                onDateClick?.(day);
+                setCurrentDate(day);
+                setViewType('day');
+              }
+            }}
+            role="button"
+            tabIndex={0}
+            aria-label={`View ${format(day, 'EEEE, MMMM d, yyyy')}`}
+            className="flex-1 py-2 text-center border-r border-surface-200 dark:border-surface-700 cursor-pointer hover:bg-surface-50 dark:hover:bg-surface-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-inset"
           >
             <div className="text-xs text-surface-500 uppercase">{format(day, 'EEE')}</div>
             <div
@@ -296,7 +328,17 @@ export function CalendarView({
                       e.stopPropagation();
                       onEventClick?.(event);
                     }}
-                    className="absolute left-1 right-1 rounded px-1 py-0.5 text-xs text-white cursor-pointer hover:opacity-80 overflow-hidden"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        onEventClick?.(event);
+                      }
+                    }}
+                    role="button"
+                    tabIndex={0}
+                    aria-label={`Event: ${event.title}, ${format(event.startDate, 'h:mm a')} to ${format(event.endDate, 'h:mm a')}`}
+                    className="absolute left-1 right-1 rounded px-1 py-0.5 text-xs text-white cursor-pointer hover:opacity-80 overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-1"
                     style={{
                       top: `${startHour * HOUR_HEIGHT}px`,
                       height: `${Math.max(duration * HOUR_HEIGHT - 2, 20)}px`,
@@ -386,7 +428,17 @@ export function CalendarView({
                     e.stopPropagation();
                     onEventClick?.(event);
                   }}
-                  className="absolute left-2 right-2 rounded p-2 text-white cursor-pointer hover:opacity-80 overflow-hidden"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      onEventClick?.(event);
+                    }
+                  }}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Event: ${event.title}, ${format(event.startDate, 'h:mm a')} to ${format(event.endDate, 'h:mm a')}`}
+                  className="absolute left-2 right-2 rounded p-2 text-white cursor-pointer hover:opacity-80 overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-1"
                   style={{
                     top: `${startHour * HOUR_HEIGHT}px`,
                     height: `${Math.max(duration * HOUR_HEIGHT - 4, 30)}px`,

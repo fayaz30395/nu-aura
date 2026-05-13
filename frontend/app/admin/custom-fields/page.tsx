@@ -19,6 +19,7 @@ import {useAuth} from '@/lib/hooks/useAuth';
 import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
 import {ConfirmDialog} from '@/components/ui';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
 import {SkeletonTable} from '@/components/ui/Skeleton';
 import {Sliders} from 'lucide-react';
 import {
@@ -414,19 +415,35 @@ export default function CustomFieldsPage() {
         />
 
         {/* Create/Edit Modal */}
-        {(showCreateModal || showEditModal) && (
-          <div className="fixed inset-0 glass-aura !rounded-none flex items-center justify-center z-50 p-4">
-            <div className="skeuo-card p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-              <h2 className="text-xl font-bold mb-4 text-[var(--text-primary)]">
-                {showCreateModal ? 'Create Custom Field' : 'Edit Custom Field'}
-              </h2>
-              <form onSubmit={handleSubmit(onSubmit)}>
+        <Modal
+          isOpen={showCreateModal || showEditModal}
+          onClose={() => {
+            reset();
+            setShowCreateModal(false);
+            setShowEditModal(false);
+            setSelectedDefinition(null);
+          }}
+          size="lg"
+        >
+          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col flex-1 min-h-0 overflow-hidden">
+            <ModalHeader
+              onClose={() => {
+                reset();
+                setShowCreateModal(false);
+                setShowEditModal(false);
+                setSelectedDefinition(null);
+              }}
+            >
+              {showCreateModal ? 'Create Custom Field' : 'Edit Custom Field'}
+            </ModalHeader>
+            <ModalBody>
                 <div className="grid grid-cols-2 gap-4 mb-4">
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                    <label htmlFor="custom-field-code" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                       Field Code *
                     </label>
                     <input
+                      id="custom-field-code"
                       type="text"
                       {...register('fieldCode')}
                       className="input-aura"
@@ -436,10 +453,11 @@ export default function CustomFieldsPage() {
                     {errors.fieldCode && <p className="text-danger-500 text-sm mt-1">{errors.fieldCode.message}</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                    <label htmlFor="custom-field-name" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                       Display Name *
                     </label>
                     <input
+                      id="custom-field-name"
                       type="text"
                       {...register('fieldName')}
                       className="input-aura"
@@ -450,10 +468,11 @@ export default function CustomFieldsPage() {
                 </div>
 
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                  <label htmlFor="custom-field-description" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Description
                   </label>
                   <textarea
+                    id="custom-field-description"
                     {...register('description')}
                     className="input-aura"
                     rows={2}
@@ -464,7 +483,7 @@ export default function CustomFieldsPage() {
 
                 <div className="grid grid-cols-2 gap-4 mb-4">
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                    <label htmlFor="custom-field-entity-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                       Entity Type *
                     </label>
                     <Controller
@@ -472,6 +491,7 @@ export default function CustomFieldsPage() {
                       control={control}
                       render={({field}) => (
                         <select
+                          id="custom-field-entity-type"
                           {...field}
                           className="input-aura"
                           disabled={showEditModal}
@@ -487,7 +507,7 @@ export default function CustomFieldsPage() {
                     {errors.entityType && <p className="text-danger-500 text-sm mt-1">{errors.entityType.message}</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                    <label htmlFor="custom-field-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                       Field Type *
                     </label>
                     <Controller
@@ -495,6 +515,7 @@ export default function CustomFieldsPage() {
                       control={control}
                       render={({field}) => (
                         <select
+                          id="custom-field-type"
                           {...field}
                           className="input-aura"
                           disabled={showEditModal}
@@ -513,10 +534,11 @@ export default function CustomFieldsPage() {
 
                 <div className="grid grid-cols-2 gap-4 mb-4">
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                    <label htmlFor="custom-field-group" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                       Field Group
                     </label>
                     <input
+                      id="custom-field-group"
                       type="text"
                       {...register('fieldGroup')}
                       className="input-aura"
@@ -525,10 +547,11 @@ export default function CustomFieldsPage() {
                     {errors.fieldGroup && <p className="text-danger-500 text-sm mt-1">{errors.fieldGroup.message}</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                    <label htmlFor="custom-field-display-order" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                       Display Order
                     </label>
                     <input
+                      id="custom-field-display-order"
                       type="number"
                       {...register('displayOrder')}
                       className="input-aura"
@@ -540,10 +563,11 @@ export default function CustomFieldsPage() {
 
                 {showOptionsField && (
                   <div className="mb-4">
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                    <label htmlFor="custom-field-options" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                       Options (one per line)
                     </label>
                     <textarea
+                      id="custom-field-options"
                       {...register('optionsText')}
                       className="input-aura"
                       rows={4}
@@ -555,10 +579,11 @@ export default function CustomFieldsPage() {
 
                 <div className="grid grid-cols-2 gap-4 mb-4">
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                    <label htmlFor="custom-field-placeholder" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                       Placeholder
                     </label>
                     <input
+                      id="custom-field-placeholder"
                       type="text"
                       {...register('placeholder')}
                       className="input-aura"
@@ -567,10 +592,11 @@ export default function CustomFieldsPage() {
                     {errors.placeholder && <p className="text-danger-500 text-sm mt-1">{errors.placeholder.message}</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                    <label htmlFor="custom-field-default-value" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                       Default Value
                     </label>
                     <input
+                      id="custom-field-default-value"
                       type="text"
                       {...register('defaultValue')}
                       className="input-aura"
@@ -582,7 +608,7 @@ export default function CustomFieldsPage() {
 
                 <div className="grid grid-cols-2 gap-4 mb-4">
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                    <label htmlFor="custom-field-view-visibility" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                       View Visibility
                     </label>
                     <Controller
@@ -590,6 +616,7 @@ export default function CustomFieldsPage() {
                       control={control}
                       render={({field}) => (
                         <select
+                          id="custom-field-view-visibility"
                           {...field}
                           className="input-aura"
                         >
@@ -605,7 +632,7 @@ export default function CustomFieldsPage() {
                       <p className="text-danger-500 text-sm mt-1">{errors.viewVisibility.message}</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                    <label htmlFor="custom-field-edit-visibility" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                       Edit Visibility
                     </label>
                     <Controller
@@ -613,6 +640,7 @@ export default function CustomFieldsPage() {
                       control={control}
                       render={({field}) => (
                         <select
+                          id="custom-field-edit-visibility"
                           {...field}
                           className="input-aura"
                         >
@@ -677,7 +705,8 @@ export default function CustomFieldsPage() {
                   />
                 </div>
 
-                <div className="flex justify-end gap-4">
+            </ModalBody>
+            <ModalFooter>
                   <button
                     type="button"
                     onClick={() => {
@@ -697,11 +726,9 @@ export default function CustomFieldsPage() {
                   >
                     {isSubmitting || createMutation.isPending ? 'Saving...' : (showCreateModal ? 'Create Field' : 'Update Field')}
                   </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        )}
+            </ModalFooter>
+          </form>
+        </Modal>
       </div>
     </>
   );

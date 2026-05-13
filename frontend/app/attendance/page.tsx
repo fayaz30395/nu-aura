@@ -360,7 +360,7 @@ const AttendanceClockWidget = memo(function AttendanceClockWidget({
                 </div>
               </ProgressRing>
               <div className="flex-1 space-y-2 relative z-10">
-                <h3 className="text-card-title text-[var(--text-primary)]">Work Progress</h3>
+                <h2 className="text-card-title text-[var(--text-primary)]">Work Progress</h2>
                 <div className={`text-sm font-medium ${
                   dayComplete ? 'text-success-600 dark:text-success-400' :
                     isOvertime ? 'text-warning-600 dark:text-warning-400' :

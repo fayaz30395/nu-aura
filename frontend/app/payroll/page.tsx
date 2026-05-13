@@ -153,7 +153,7 @@ export default function PayrollPage() {
                   <ChevronRight
                     className={`h-4 w-4 text-[var(--text-muted)] ${hoverText} group-hover:translate-x-1 transition-all duration-200`}/>
                 </div>
-                <h3 className="text-base font-semibold text-[var(--text-primary)] mb-0.5">{label}</h3>
+                <h2 className="text-base font-semibold text-[var(--text-primary)] mb-0.5">{label}</h2>
                 <p className="text-xs text-[var(--text-secondary)]">{description}</p>
               </button>
             ))}

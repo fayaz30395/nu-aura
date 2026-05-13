@@ -129,7 +129,7 @@ export function CourseCatalogTab({
                     <div className="flex items-start justify-between">
                       <div>
                         <p className="text-sm opacity-80">{program.programCode}</p>
-                        <h3 className="text-xl font-semibold">{program.programName}</h3>
+                        <h2 className="text-xl font-semibold">{program.programName}</h2>
                       </div>
                       {enrolled && (
                         <Badge variant="success" className="bg-white/20 text-white">

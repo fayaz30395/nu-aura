@@ -390,10 +390,10 @@ export default function PerformancePage() {
                       <module.icon className={`h-5 w-5 ${module.textColor}`}/>
                     </div>
                     <div className="flex-1">
-                      <h3
+                      <h2
                         className="text-base font-semibold text-[var(--text-primary)] dark:text-[var(--text-secondary)] group-hover:text-accent-600 dark:group-hover:text-accent-400 transition-colors">
                         {module.title}
-                      </h3>
+                      </h2>
                       <p className="text-caption mt-0.5">{module.description}</p>
                     </div>
                   </div>

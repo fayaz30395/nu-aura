@@ -16,9 +16,9 @@ import {
   Loader2,
   TrendingUp,
   Users,
-  X,
 } from 'lucide-react';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
+import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
 import {DateInput} from '@mantine/dates';
 import {ReportRequest, ReportType} from '@/lib/services/core/report.service';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
@@ -142,42 +142,19 @@ const DownloadModal: React.FC<DownloadModalProps> = ({report, onClose, onDownloa
   };
 
   return (
-    <motion.div
-      initial={{opacity: 0}}
-      animate={{opacity: 1}}
-      exit={{opacity: 0}}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--bg-overlay)] p-4"
-      onClick={onClose}
-    >
-      <motion.div
-        initial={{scale: 0.95, opacity: 0}}
-        animate={{scale: 1, opacity: 1}}
-        exit={{scale: 0.95, opacity: 0}}
-        className="bg-[var(--bg-card)] rounded-xl shadow-[var(--shadow-elevated)] max-w-md w-full overflow-hidden"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Header */}
-        <div className="px-6 py-4 border-b border-[var(--border-main)] row-between">
-          <div className="flex items-center gap-4">
-            <div className={`p-2 rounded-lg ${report.bgColor}`}>
-              <report.icon className={`h-5 w-5 ${report.color}`}/>
-            </div>
-            <div>
-              <h3 className="font-semibold text-[var(--text-primary)]">{report.title}</h3>
-              <p className="text-body-muted">{report.category}</p>
-            </div>
+    <Modal isOpen={true} onClose={onClose} size="sm">
+      <ModalHeader onClose={onClose}>
+        <div className="flex items-center gap-4">
+          <div className={`p-2 rounded-lg ${report.bgColor}`}>
+            <report.icon className={`h-5 w-5 ${report.color}`}/>
           </div>
-          <button
-            onClick={onClose}
-            aria-label="Close dialog"
-            className="p-2 hover:bg-[var(--bg-card-hover)] rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-          >
-            <X className="h-5 w-5 text-[var(--text-muted)]"/>
-          </button>
+          <div>
+            <h3 className="font-semibold text-[var(--text-primary)]">{report.title}</h3>
+            <p className="text-body-muted">{report.category}</p>
+          </div>
         </div>
-
-        {/* Content */}
-        <div className="p-6 space-y-6">
+      </ModalHeader>
+      <ModalBody className="space-y-6">
           {/* Format Selection */}
           <div>
             <label className="block text-sm font-medium text-[var(--text-secondary)] mb-4">
@@ -287,36 +264,33 @@ const DownloadModal: React.FC<DownloadModalProps> = ({report, onClose, onDownloa
               {error}
             </div>
           )}
-        </div>
-
-        {/* Footer */}
-        <div className="px-6 py-4 border-t border-[var(--border-main)] flex gap-4">
-          <button
-            onClick={onClose}
-            className="flex-1 px-4 py-2 border border-[var(--border-main)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleDownload}
-            disabled={isPending}
-            className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-[var(--bg-sidebar)] text-white rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-          >
-            {isPending ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin"/>
-                Generating...
-              </>
-            ) : (
-              <>
-                <Download className="h-4 w-4"/>
-                Download
-              </>
-            )}
-          </button>
-        </div>
-      </motion.div>
-    </motion.div>
+      </ModalBody>
+      <ModalFooter className="gap-4">
+        <button
+          onClick={onClose}
+          className="flex-1 px-4 py-2 border border-[var(--border-main)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={handleDownload}
+          disabled={isPending}
+          className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-[var(--bg-sidebar)] text-white rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+        >
+          {isPending ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin"/>
+              Generating...
+            </>
+          ) : (
+            <>
+              <Download className="h-4 w-4"/>
+              Download
+            </>
+          )}
+        </button>
+      </ModalFooter>
+    </Modal>
   );
 };
 

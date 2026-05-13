@@ -11,6 +11,7 @@ import {useAuth} from '@/lib/hooks/useAuth';
 import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
 import {ConfirmDialog} from '@/components/ui';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
 import {useCreateNewShift, useRemoveShift, useShiftsList, useUpdateShiftDetails,} from '@/lib/hooks/queries/useShifts';
 import {createLogger} from '@/lib/utils/logger';
 import {CATEGORICAL_DEFAULT} from '@/lib/utils/categoricalPalette';
@@ -394,37 +395,36 @@ export default function ShiftsManagementPage() {
         />
 
         {/* Add/Edit Shift Modal */}
-        {showModal && (
-          <div className="fixed inset-0 glass-aura !rounded-none flex items-center justify-center p-4 z-50">
-            <div
-              className="skeuo-card max-w-4xl w-full max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-200">
-              <div className="p-6">
-                <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-xl font-bold text-[var(--text-primary)]">
-                    {editingShift ? 'Edit Shift' : 'Add New Shift'}
-                  </h2>
-                  <button
-                    onClick={() => {
-                      setShowModal(false);
-                      setEditingShift(null);
-                      resetForm();
-                    }}
-                    className="text-[var(--text-muted)] hover:text-[var(--text-muted)]"
-                  >
-                    <span className="text-2xl">&times;</span>
-                  </button>
-                </div>
-
-                <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+        <Modal
+          isOpen={showModal}
+          onClose={() => {
+            setShowModal(false);
+            setEditingShift(null);
+            resetForm();
+          }}
+          size="xl"
+        >
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="flex flex-col flex-1 min-h-0 overflow-hidden">
+            <ModalHeader
+              onClose={() => {
+                setShowModal(false);
+                setEditingShift(null);
+                resetForm();
+              }}
+            >
+              {editingShift ? 'Edit Shift' : 'Add New Shift'}
+            </ModalHeader>
+            <ModalBody className="space-y-6">
                   {/* Basic Information */}
                   <div className="border-b border-[var(--border-main)] pb-4">
                     <h3 className="text-lg font-medium text-[var(--text-primary)] mb-4">Basic Information</h3>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                        <label htmlFor="shift-code" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                           Shift Code *
                         </label>
                         <input
+                          id="shift-code"
                           type="text"
                           {...form.register('shiftCode')}
                           className="input-aura"
@@ -435,10 +435,11 @@ export default function ShiftsManagementPage() {
                         )}
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                        <label htmlFor="shift-name" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                           Shift Name *
                         </label>
                         <input
+                          id="shift-name"
                           type="text"
                           {...form.register('shiftName')}
                           className="input-aura"
@@ -452,10 +453,11 @@ export default function ShiftsManagementPage() {
 
                     <div className="mt-4 grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                        <label htmlFor="shift-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                           Shift Type
                         </label>
                         <select
+                          id="shift-type"
                           {...form.register('shiftType')}
                           className="input-aura"
                         >
@@ -465,10 +467,11 @@ export default function ShiftsManagementPage() {
                         </select>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                        <label htmlFor="shift-color-code" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                           Color Code
                         </label>
                         <input
+                          id="shift-color-code"
                           type="color"
                           {...form.register('colorCode')}
                           className="input-aura h-10"
@@ -477,10 +480,11 @@ export default function ShiftsManagementPage() {
                     </div>
 
                     <div className="mt-4">
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                      <label htmlFor="shift-description" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                         Description
                       </label>
                       <textarea
+                        id="shift-description"
                         {...form.register('description')}
                         rows={2}
                         className="w-full px-4 py-2 border border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-accent-500 bg-[var(--bg-card)] text-[var(--text-primary)]"
@@ -494,30 +498,33 @@ export default function ShiftsManagementPage() {
                     <h3 className="text-lg font-medium text-[var(--text-primary)] mb-4">Shift Timing</h3>
                     <div className="grid grid-cols-3 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                        <label htmlFor="shift-start-time" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                           Start Time *
                         </label>
                         <input
+                          id="shift-start-time"
                           type="time"
                           {...form.register('startTime')}
                           className="input-aura"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                        <label htmlFor="shift-end-time" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                           End Time *
                         </label>
                         <input
+                          id="shift-end-time"
                           type="time"
                           {...form.register('endTime')}
                           className="input-aura"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                        <label htmlFor="shift-break-duration" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                           Break (minutes)
                         </label>
                         <input
+                          id="shift-break-duration"
                           type="number"
                           min="0"
                           {...form.register('breakDurationMinutes')}
@@ -528,10 +535,11 @@ export default function ShiftsManagementPage() {
 
                     <div className="grid grid-cols-2 gap-4 mt-4">
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                        <label htmlFor="shift-full-day-hours" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                           Full Day Hours
                         </label>
                         <input
+                          id="shift-full-day-hours"
                           type="number"
                           step="0.5"
                           min="0"
@@ -540,10 +548,11 @@ export default function ShiftsManagementPage() {
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                        <label htmlFor="shift-working-days" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                           Working Days
                         </label>
                         <input
+                          id="shift-working-days"
                           type="text"
                           {...form.register('workingDays')}
                           className="input-aura"
@@ -558,10 +567,11 @@ export default function ShiftsManagementPage() {
                     <h3 className="text-lg font-medium text-[var(--text-primary)] mb-4">Attendance Rules</h3>
                     <div className="grid grid-cols-3 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                        <label htmlFor="shift-grace-period" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                           Grace Period (min)
                         </label>
                         <input
+                          id="shift-grace-period"
                           type="number"
                           min="0"
                           {...form.register('gracePeriodInMinutes')}
@@ -569,10 +579,11 @@ export default function ShiftsManagementPage() {
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                        <label htmlFor="shift-late-mark-after" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                           Late Mark After (min)
                         </label>
                         <input
+                          id="shift-late-mark-after"
                           type="number"
                           min="0"
                           {...form.register('lateMarkAfterMinutes')}
@@ -580,10 +591,11 @@ export default function ShiftsManagementPage() {
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                        <label htmlFor="shift-half-day-after" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                           Half Day After (min)
                         </label>
                         <input
+                          id="shift-half-day-after"
                           type="number"
                           min="0"
                           {...form.register('halfDayAfterMinutes')}
@@ -627,10 +639,11 @@ export default function ShiftsManagementPage() {
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                        <label htmlFor="shift-overtime-multiplier" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                           Overtime Multiplier
                         </label>
                         <input
+                          id="shift-overtime-multiplier"
                           type="number"
                           step="0.1"
                           min="1"
@@ -642,8 +655,8 @@ export default function ShiftsManagementPage() {
                     </div>
                   </div>
 
-                  {/* Form Actions */}
-                  <div className="flex justify-end space-x-4">
+            </ModalBody>
+            <ModalFooter>
                     <button
                       type="button"
                       onClick={() => {
@@ -662,12 +675,9 @@ export default function ShiftsManagementPage() {
                     >
                       {(form.formState.isSubmitting || createShiftMutation.isPending || updateShiftMutation.isPending) ? 'Saving...' : editingShift ? 'Update' : 'Create'} Shift
                     </button>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-        )}
+            </ModalFooter>
+          </form>
+        </Modal>
       </div>
     </>
   );

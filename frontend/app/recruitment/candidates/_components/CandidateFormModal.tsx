@@ -49,8 +49,9 @@ export function CandidateFormModal({
           <form onSubmit={candidateForm.handleSubmit(onSubmit)} className="space-y-6">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Candidate Code *</label>
+                <label htmlFor="candidate-code" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Candidate Code *</label>
                 <input
+                  id="candidate-code"
                   type="text"
                   {...candidateForm.register('candidateCode')}
                   className={inputCls}
@@ -61,8 +62,9 @@ export function CandidateFormModal({
                 )}
               </div>
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Job Opening *</label>
+                <label htmlFor="candidate-job-opening" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Job Opening *</label>
                 <select
+                  id="candidate-job-opening"
                   {...candidateForm.register('jobOpeningId')}
                   className={inputCls}
                 >
@@ -79,8 +81,9 @@ export function CandidateFormModal({
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">First Name *</label>
+                <label htmlFor="candidate-first-name" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">First Name *</label>
                 <input
+                  id="candidate-first-name"
                   type="text"
                   {...candidateForm.register('firstName')}
                   className={inputCls}
@@ -90,8 +93,9 @@ export function CandidateFormModal({
                 )}
               </div>
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Last Name *</label>
+                <label htmlFor="candidate-last-name" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Last Name *</label>
                 <input
+                  id="candidate-last-name"
                   type="text"
                   {...candidateForm.register('lastName')}
                   className={inputCls}
@@ -104,8 +108,9 @@ export function CandidateFormModal({
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Email *</label>
+                <label htmlFor="candidate-email" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Email *</label>
                 <input
+                  id="candidate-email"
                   type="email"
                   {...candidateForm.register('email')}
                   className={inputCls}
@@ -115,8 +120,9 @@ export function CandidateFormModal({
                 )}
               </div>
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Phone</label>
+                <label htmlFor="candidate-phone" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Phone</label>
                 <input
+                  id="candidate-phone"
                   type="tel"
                   {...candidateForm.register('phone')}
                   className={inputCls}
@@ -129,25 +135,26 @@ export function CandidateFormModal({
 
             <div className="grid grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Current Company</label>
-                <input type="text" {...candidateForm.register('currentCompany')} className={inputCls}/>
+                <label htmlFor="candidate-current-company" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Current Company</label>
+                <input id="candidate-current-company" type="text" {...candidateForm.register('currentCompany')} className={inputCls}/>
               </div>
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Current
+                <label htmlFor="candidate-current-designation" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Current
                   Designation</label>
-                <input type="text" {...candidateForm.register('currentDesignation')} className={inputCls}/>
+                <input id="candidate-current-designation" type="text" {...candidateForm.register('currentDesignation')} className={inputCls}/>
               </div>
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Location</label>
-                <input type="text" {...candidateForm.register('currentLocation')} className={inputCls}/>
+                <label htmlFor="candidate-current-location" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Location</label>
+                <input id="candidate-current-location" type="text" {...candidateForm.register('currentLocation')} className={inputCls}/>
               </div>
             </div>
 
             <div className="grid grid-cols-4 gap-4">
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Experience
+                <label htmlFor="candidate-total-experience" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Experience
                   (years)</label>
                 <input
+                  id="candidate-total-experience"
                   type="number"
                   step="0.5"
                   {...candidateForm.register('totalExperience', {valueAsNumber: true})}
@@ -155,24 +162,27 @@ export function CandidateFormModal({
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Current CTC</label>
+                <label htmlFor="candidate-current-ctc" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Current CTC</label>
                 <input
+                  id="candidate-current-ctc"
                   type="number"
                   {...candidateForm.register('currentCtc', {valueAsNumber: true})}
                   className={inputCls}
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Expected CTC</label>
+                <label htmlFor="candidate-expected-ctc" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Expected CTC</label>
                 <input
+                  id="candidate-expected-ctc"
                   type="number"
                   {...candidateForm.register('expectedCtc', {valueAsNumber: true})}
                   className={inputCls}
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Notice (days)</label>
+                <label htmlFor="candidate-notice-period" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Notice (days)</label>
                 <input
+                  id="candidate-notice-period"
                   type="number"
                   {...candidateForm.register('noticePeriodDays', {valueAsNumber: true})}
                   className={inputCls}
@@ -182,8 +192,8 @@ export function CandidateFormModal({
 
             <div className="grid grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Source</label>
-                <select {...candidateForm.register('source')} className={inputCls}>
+                <label htmlFor="candidate-source" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Source</label>
+                <select id="candidate-source" {...candidateForm.register('source')} className={inputCls}>
                   <option value="JOB_PORTAL">Job Portal</option>
                   <option value="REFERRAL">Referral</option>
                   <option value="LINKEDIN">LinkedIn</option>
@@ -195,8 +205,8 @@ export function CandidateFormModal({
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Status</label>
-                <select {...candidateForm.register('status')} className={inputCls}>
+                <label htmlFor="candidate-status" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Status</label>
+                <select id="candidate-status" {...candidateForm.register('status')} className={inputCls}>
                   <option value="NEW">New</option>
                   <option value="SCREENING">Screening</option>
                   <option value="INTERVIEW">Interview</option>
@@ -209,8 +219,8 @@ export function CandidateFormModal({
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Current Stage</label>
-                <select {...candidateForm.register('currentStage')} className={inputCls}>
+                <label htmlFor="candidate-current-stage" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Current Stage</label>
+                <select id="candidate-current-stage" {...candidateForm.register('currentStage')} className={inputCls}>
                   <option value="RECRUITERS_PHONE_CALL">Phone Call</option>
                   <option value="PANEL_REVIEW">Panel Review</option>
                   <option value="PANEL_SHORTLISTED">Shortlisted</option>
@@ -230,9 +240,9 @@ export function CandidateFormModal({
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Assigned
+                <label htmlFor="candidate-assigned-recruiter" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Assigned
                   Recruiter</label>
-                <select {...candidateForm.register('assignedRecruiterId')} className={inputCls}>
+                <select id="candidate-assigned-recruiter" {...candidateForm.register('assignedRecruiterId')} className={inputCls}>
                   <option value="">Select Recruiter</option>
                   {recruiters.map((recruiter) => (
                     <option key={recruiter.id} value={recruiter.id}>{recruiter.fullName}</option>
@@ -240,8 +250,9 @@ export function CandidateFormModal({
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Resume URL</label>
+                <label htmlFor="candidate-resume-url" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Resume URL</label>
                 <input
+                  id="candidate-resume-url"
                   type="url"
                   {...candidateForm.register('resumeUrl')}
                   className={inputCls}
@@ -254,8 +265,9 @@ export function CandidateFormModal({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Notes</label>
+              <label htmlFor="candidate-notes" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Notes</label>
               <textarea
+                id="candidate-notes"
                 rows={3}
                 {...candidateForm.register('notes')}
                 className={inputCls}

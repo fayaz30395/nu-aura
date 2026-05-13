@@ -26,6 +26,7 @@ import {
 import {AppLayout} from '@/components/layout';
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {formatDate} from '@/lib/utils/format/date';
@@ -440,7 +441,7 @@ export default function OKRPage() {
                       <div className="text-[var(--text-muted)]">{getLevelIcon(objective.objectiveLevel)}</div>
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
-                          <h3 className="text-lg font-medium text-[var(--text-primary)]">{objective.title}</h3>
+                          <h2 className="text-lg font-medium text-[var(--text-primary)]">{objective.title}</h2>
                           {objective.isStretchGoal && (
                             <span
                               className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-accent-300 text-accent-900">
@@ -504,9 +505,9 @@ export default function OKRPage() {
                 {expandedObjectives.has(objective.id) && (
                   <div className="border-t border-[var(--border-main)] bg-[var(--bg-surface)] px-4 py-4">
                     <div className="flex justify-between items-center mb-4">
-                      <h4 className="text-sm font-medium text-[var(--text-primary)]">
+                      <h3 className="text-sm font-medium text-[var(--text-primary)]">
                         Key Results ({objective.keyResults?.length || 0})
-                      </h4>
+                      </h3>
                       {activeTab === 'my' && (
                         <PermissionGate permission={Permissions.OKR_UPDATE}>
                           <button
@@ -605,261 +606,291 @@ export default function OKRPage() {
         </div>
 
         {/* Objective Modal */}
-        {showObjectiveModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div
-              className="bg-[var(--bg-elevated)] rounded-lg shadow-[var(--shadow-dropdown)] max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto">
-              <div className="px-6 py-4 border-b border-[var(--border-main)]">
-                <h2 className="text-xl font-semibold text-[var(--text-primary)]">
-                  {editingObjective ? 'Edit Objective' : 'Create Objective'}
-                </h2>
+        <Modal
+          isOpen={showObjectiveModal}
+          onClose={() => {
+            setShowObjectiveModal(false);
+            setEditingObjective(null);
+            resetObjectiveForm();
+          }}
+          size="md"
+        >
+          <ModalHeader
+            onClose={() => {
+              setShowObjectiveModal(false);
+              setEditingObjective(null);
+              resetObjectiveForm();
+            }}
+          >
+            {editingObjective ? 'Edit Objective' : 'Create Objective'}
+          </ModalHeader>
+          <ModalBody className="space-y-4">
+            <div>
+              <label htmlFor="objective-title" className="block text-sm font-medium text-[var(--text-primary)] mb-1">
+                Title *
+              </label>
+              <input
+                id="objective-title"
+                type="text"
+                {...objectiveForm.register('title')}
+                className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
+                placeholder="What do you want to achieve?"
+              />
+              {objectiveForm.formState.errors.title && (
+                <p className="text-danger-500 text-xs mt-1">{objectiveForm.formState.errors.title.message}</p>
+              )}
+            </div>
+            <div>
+              <label htmlFor="objective-description" className="block text-sm font-medium text-[var(--text-primary)] mb-1">
+                Description
+              </label>
+              <textarea
+                id="objective-description"
+                {...objectiveForm.register('description')}
+                className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
+                rows={3}
+                placeholder="Why is this important?"
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="objective-start-date" className="block text-sm font-medium text-[var(--text-primary)] mb-1">
+                  Start Date *
+                </label>
+                <input
+                  id="objective-start-date"
+                  type="date"
+                  {...objectiveForm.register('startDate')}
+                  className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
+                />
               </div>
-              <div className="px-6 py-4 space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
-                    Title *
-                  </label>
-                  <input
-                    type="text"
-                    {...objectiveForm.register('title')}
-                    className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
-                    placeholder="What do you want to achieve?"
-                  />
-                  {objectiveForm.formState.errors.title && (
-                    <p className="text-danger-500 text-xs mt-1">{objectiveForm.formState.errors.title.message}</p>
-                  )}
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
-                    Description
-                  </label>
-                  <textarea
-                    {...objectiveForm.register('description')}
-                    className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
-                    rows={3}
-                    placeholder="Why is this important?"
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
-                      Start Date *
-                    </label>
-                    <input
-                      type="date"
-                      {...objectiveForm.register('startDate')}
-                      className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
-                      End Date *
-                    </label>
-                    <input
-                      type="date"
-                      {...objectiveForm.register('endDate')}
-                      className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
-                    />
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
-                      Level
-                    </label>
-                    <select
-                      {...objectiveForm.register('objectiveLevel')}
-                      className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
-                    >
-                      {OBJECTIVE_LEVELS.map((level) => (
-                        <option key={level} value={level}>
-                          {level.replace('_', ' ')}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
-                      Weight
-                    </label>
-                    <input
-                      type="number"
-                      min={0}
-                      max={10}
-                      step={0.1}
-                      {...objectiveForm.register('weight', {valueAsNumber: true})}
-                      className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
-                    />
-                  </div>
-                </div>
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    id="isStretchGoal"
-                    {...objectiveForm.register('isStretchGoal')}
-                    className="h-4 w-4 text-accent-600 border-[var(--border-strong)] rounded"
-                  />
-                  <label htmlFor="isStretchGoal" className="ml-2 text-sm text-[var(--text-primary)]">
-                    This is a stretch goal (ambitious target)
-                  </label>
-                </div>
-              </div>
-              <div className="px-6 py-4 border-t border-[var(--border-main)] flex justify-end gap-4">
-                <button
-                  onClick={() => {
-                    setShowObjectiveModal(false);
-                    setEditingObjective(null);
-                    resetObjectiveForm();
-                  }}
-                  className="px-4 py-2 text-sm font-medium text-[var(--text-primary)] bg-[var(--bg-card)] border border-[var(--border-strong)] rounded-md hover:bg-[var(--bg-surface)]"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={objectiveForm.handleSubmit(editingObjective ? handleUpdateObjective : handleCreateObjective)}
-                  disabled={!objectiveForm.formState.isValid && objectiveForm.formState.isSubmitted}
-                  className="px-4 py-2 text-sm font-medium text-white bg-accent-600 rounded-md hover:bg-accent-700 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                >
-                  {editingObjective ? 'Update' : 'Create'}
-                </button>
+              <div>
+                <label htmlFor="objective-end-date" className="block text-sm font-medium text-[var(--text-primary)] mb-1">
+                  End Date *
+                </label>
+                <input
+                  id="objective-end-date"
+                  type="date"
+                  {...objectiveForm.register('endDate')}
+                  className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
+                />
               </div>
             </div>
-          </div>
-        )}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="objective-level" className="block text-sm font-medium text-[var(--text-primary)] mb-1">
+                  Level
+                </label>
+                <select
+                  id="objective-level"
+                  {...objectiveForm.register('objectiveLevel')}
+                  className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
+                >
+                  {OBJECTIVE_LEVELS.map((level) => (
+                    <option key={level} value={level}>
+                      {level.replace('_', ' ')}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label htmlFor="objective-weight" className="block text-sm font-medium text-[var(--text-primary)] mb-1">
+                  Weight
+                </label>
+                <input
+                  id="objective-weight"
+                  type="number"
+                  min={0}
+                  max={10}
+                  step={0.1}
+                  {...objectiveForm.register('weight', {valueAsNumber: true})}
+                  className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
+                />
+              </div>
+            </div>
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                id="isStretchGoal"
+                {...objectiveForm.register('isStretchGoal')}
+                className="h-4 w-4 text-accent-600 border-[var(--border-strong)] rounded"
+              />
+              <label htmlFor="isStretchGoal" className="ml-2 text-sm text-[var(--text-primary)]">
+                This is a stretch goal (ambitious target)
+              </label>
+            </div>
+          </ModalBody>
+          <ModalFooter>
+            <button
+              onClick={() => {
+                setShowObjectiveModal(false);
+                setEditingObjective(null);
+                resetObjectiveForm();
+              }}
+              className="px-4 py-2 text-sm font-medium text-[var(--text-primary)] bg-[var(--bg-card)] border border-[var(--border-strong)] rounded-md hover:bg-[var(--bg-surface)]"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={objectiveForm.handleSubmit(editingObjective ? handleUpdateObjective : handleCreateObjective)}
+              disabled={!objectiveForm.formState.isValid && objectiveForm.formState.isSubmitted}
+              className="px-4 py-2 text-sm font-medium text-white bg-accent-600 rounded-md hover:bg-accent-700 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+            >
+              {editingObjective ? 'Update' : 'Create'}
+            </button>
+          </ModalFooter>
+        </Modal>
 
         {/* Key Result Modal */}
-        {showKeyResultModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div
-              className="bg-[var(--bg-elevated)] rounded-lg shadow-[var(--shadow-dropdown)] max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto">
-              <div className="px-6 py-4 border-b border-[var(--border-main)]">
-                <h2 className="text-xl font-semibold text-[var(--text-primary)]">Add Key Result</h2>
-              </div>
-              <div className="px-6 py-4 space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
-                    Title *
-                  </label>
-                  <input
-                    type="text"
-                    {...keyResultForm.register('title')}
-                    className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
-                    placeholder="What measurable outcome will you achieve?"
-                  />
-                  {keyResultForm.formState.errors.title && (
-                    <p className="text-danger-500 text-xs mt-1">{keyResultForm.formState.errors.title.message}</p>
-                  )}
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
-                    Description
-                  </label>
-                  <textarea
-                    {...keyResultForm.register('description')}
-                    className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
-                    rows={2}
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
-                      Measurement Type
-                    </label>
-                    <select
-                      {...keyResultForm.register('measurementType')}
-                      className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
-                    >
-                      {MEASUREMENT_TYPES.map((type) => (
-                        <option key={type} value={type}>
-                          {type}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
-                      Unit
-                    </label>
-                    <input
-                      type="text"
-                      {...keyResultForm.register('measurementUnit')}
-                      className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
-                      placeholder="%"
-                    />
-                  </div>
-                </div>
-                <div className="grid grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
-                      Start Value
-                    </label>
-                    <input
-                      type="number"
-                      {...keyResultForm.register('startValue', {valueAsNumber: true})}
-                      className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
-                      Target Value *
-                    </label>
-                    <input
-                      type="number"
-                      {...keyResultForm.register('targetValue', {valueAsNumber: true})}
-                      className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
-                    />
-                    {keyResultForm.formState.errors.targetValue && (
-                      <p
-                        className="text-danger-500 text-xs mt-1">{keyResultForm.formState.errors.targetValue.message}</p>
-                    )}
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
-                      Weight
-                    </label>
-                    <input
-                      type="number"
-                      min={0}
-                      max={10}
-                      step={0.1}
-                      {...keyResultForm.register('weight', {valueAsNumber: true})}
-                      className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
-                    Due Date
-                  </label>
-                  <input
-                    type="date"
-                    {...keyResultForm.register('dueDate')}
-                    className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
-                  />
-                </div>
-              </div>
-              <div className="px-6 py-4 border-t border-[var(--border-main)] flex justify-end gap-4">
-                <button
-                  onClick={() => {
-                    setShowKeyResultModal(false);
-                    setSelectedObjectiveId(null);
-                    resetKeyResultForm();
-                  }}
-                  className="px-4 py-2 text-sm font-medium text-[var(--text-primary)] bg-[var(--bg-card)] border border-[var(--border-strong)] rounded-md hover:bg-[var(--bg-surface)]"
+        <Modal
+          isOpen={showKeyResultModal}
+          onClose={() => {
+            setShowKeyResultModal(false);
+            setSelectedObjectiveId(null);
+            resetKeyResultForm();
+          }}
+          size="md"
+        >
+          <ModalHeader
+            onClose={() => {
+              setShowKeyResultModal(false);
+              setSelectedObjectiveId(null);
+              resetKeyResultForm();
+            }}
+          >
+            Add Key Result
+          </ModalHeader>
+          <ModalBody className="space-y-4">
+            <div>
+              <label htmlFor="key-result-title" className="block text-sm font-medium text-[var(--text-primary)] mb-1">
+                Title *
+              </label>
+              <input
+                id="key-result-title"
+                type="text"
+                {...keyResultForm.register('title')}
+                className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
+                placeholder="What measurable outcome will you achieve?"
+              />
+              {keyResultForm.formState.errors.title && (
+                <p className="text-danger-500 text-xs mt-1">{keyResultForm.formState.errors.title.message}</p>
+              )}
+            </div>
+            <div>
+              <label htmlFor="key-result-description" className="block text-sm font-medium text-[var(--text-primary)] mb-1">
+                Description
+              </label>
+              <textarea
+                id="key-result-description"
+                {...keyResultForm.register('description')}
+                className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
+                rows={2}
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="key-result-measurement-type" className="block text-sm font-medium text-[var(--text-primary)] mb-1">
+                  Measurement Type
+                </label>
+                <select
+                  id="key-result-measurement-type"
+                  {...keyResultForm.register('measurementType')}
+                  className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
                 >
-                  Cancel
-                </button>
-                <button
-                  onClick={keyResultForm.handleSubmit(handleAddKeyResult)}
-                  disabled={!keyResultForm.formState.isValid && keyResultForm.formState.isSubmitted}
-                  className="px-4 py-2 text-sm font-medium text-white bg-accent-600 rounded-md hover:bg-accent-700 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                >
-                  Add Key Result
-                </button>
+                  {MEASUREMENT_TYPES.map((type) => (
+                    <option key={type} value={type}>
+                      {type}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label htmlFor="key-result-unit" className="block text-sm font-medium text-[var(--text-primary)] mb-1">
+                  Unit
+                </label>
+                <input
+                  id="key-result-unit"
+                  type="text"
+                  {...keyResultForm.register('measurementUnit')}
+                  className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
+                  placeholder="%"
+                />
               </div>
             </div>
-          </div>
-        )}
+            <div className="grid grid-cols-3 gap-4">
+              <div>
+                <label htmlFor="key-result-start-value" className="block text-sm font-medium text-[var(--text-primary)] mb-1">
+                  Start Value
+                </label>
+                <input
+                  id="key-result-start-value"
+                  type="number"
+                  {...keyResultForm.register('startValue', {valueAsNumber: true})}
+                  className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
+                />
+              </div>
+              <div>
+                <label htmlFor="key-result-target-value" className="block text-sm font-medium text-[var(--text-primary)] mb-1">
+                  Target Value *
+                </label>
+                <input
+                  id="key-result-target-value"
+                  type="number"
+                  {...keyResultForm.register('targetValue', {valueAsNumber: true})}
+                  className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
+                />
+                {keyResultForm.formState.errors.targetValue && (
+                  <p
+                    className="text-danger-500 text-xs mt-1">{keyResultForm.formState.errors.targetValue.message}</p>
+                )}
+              </div>
+              <div>
+                <label htmlFor="key-result-weight" className="block text-sm font-medium text-[var(--text-primary)] mb-1">
+                  Weight
+                </label>
+                <input
+                  id="key-result-weight"
+                  type="number"
+                  min={0}
+                  max={10}
+                  step={0.1}
+                  {...keyResultForm.register('weight', {valueAsNumber: true})}
+                  className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
+                />
+              </div>
+            </div>
+            <div>
+              <label htmlFor="key-result-due-date" className="block text-sm font-medium text-[var(--text-primary)] mb-1">
+                Due Date
+              </label>
+              <input
+                id="key-result-due-date"
+                type="date"
+                {...keyResultForm.register('dueDate')}
+                className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
+              />
+            </div>
+          </ModalBody>
+          <ModalFooter>
+            <button
+              onClick={() => {
+                setShowKeyResultModal(false);
+                setSelectedObjectiveId(null);
+                resetKeyResultForm();
+              }}
+              className="px-4 py-2 text-sm font-medium text-[var(--text-primary)] bg-[var(--bg-card)] border border-[var(--border-strong)] rounded-md hover:bg-[var(--bg-surface)]"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={keyResultForm.handleSubmit(handleAddKeyResult)}
+              disabled={!keyResultForm.formState.isValid && keyResultForm.formState.isSubmitted}
+              className="px-4 py-2 text-sm font-medium text-white bg-accent-600 rounded-md hover:bg-accent-700 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+            >
+              Add Key Result
+            </button>
+          </ModalFooter>
+        </Modal>
       </div>
 
       {/* Delete Objective Confirmation */}

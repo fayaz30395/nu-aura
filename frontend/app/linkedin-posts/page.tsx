@@ -20,7 +20,6 @@ import {
   Tag,
   Trash2,
   User,
-  X,
   Zap,
 } from 'lucide-react';
 import {useAuth} from '@/lib/hooks/useAuth';
@@ -36,6 +35,7 @@ import {CreateLinkedInPostRequest, LinkedInPost, UpdateLinkedInPostRequest} from
 import {useToast} from '@/components/notifications/ToastProvider';
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
 import {createLogger} from '@/lib/utils/logger';
 import {useDebounce} from '@/lib/hooks/useDebounce';
 import {formatDate as formatDateCanonical} from '@/lib/utils/format/date';
@@ -455,37 +455,12 @@ function CreateLinkedInPostModal({post, onClose, onSuccess}: CreateLinkedInPostM
   }, [post, reset]);
 
   return (
-    <motion.div
-      initial={{opacity: 0}}
-      animate={{opacity: 1}}
-      exit={{opacity: 0}}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--bg-overlay)] p-4"
-      onClick={onClose}
-    >
-      <motion.div
-        initial={{scale: 0.95, opacity: 0}}
-        animate={{scale: 1, opacity: 1}}
-        exit={{scale: 0.95, opacity: 0}}
-        className="bg-[var(--bg-card)] rounded-lg shadow-[var(--shadow-elevated)] max-w-2xl w-full max-h-[90vh] overflow-hidden"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Header */}
-        <div className="px-6 py-4 border-b border-[var(--border-main)] row-between">
-          <h2 className="text-xl font-bold text-[var(--text-primary)]">
-            {isEditing ? 'Edit LinkedIn Post' : 'Add LinkedIn Post'}
-          </h2>
-          <button
-            onClick={onClose}
-            aria-label="Close dialog"
-            className="p-2 hover:bg-[var(--bg-surface)] rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-          >
-            <X className="w-5 h-5 text-[var(--text-muted)]"/>
-          </button>
-        </div>
-
-        {/* Content */}
-        <form id="linkedin-form" onSubmit={handleSubmit(onSubmit)}
-              className="p-6 overflow-y-auto max-h-[60vh] space-y-4">
+    <Modal isOpen={true} onClose={onClose} size="lg">
+      <ModalHeader onClose={onClose}>
+        {isEditing ? 'Edit LinkedIn Post' : 'Add LinkedIn Post'}
+      </ModalHeader>
+      <ModalBody className="space-y-4">
+        <form id="linkedin-form" onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {/* Post URL */}
           <div>
             <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
@@ -710,36 +685,34 @@ function CreateLinkedInPostModal({post, onClose, onSuccess}: CreateLinkedInPostM
             </span>
           </div>
         </form>
-
-        {/* Footer */}
-        <div className="px-6 py-4 border-t border-[var(--border-main)] flex gap-4">
-          <button
-            type="button"
-            onClick={onClose}
-            className="flex-1 px-4 py-2.5 border border-[var(--border-main)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-surface)] transition-colors font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            form="linkedin-form"
-            disabled={createPostMutation.isPending || updatePostMutation.isPending}
-            className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-accent-600 text-white rounded-lg hover:bg-accent-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-          >
-            {createPostMutation.isPending || updatePostMutation.isPending ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin"/>
-                {isEditing ? 'Updating...' : 'Adding...'}
-              </>
-            ) : (
-              <>
-                <Linkedin className="w-4 h-4"/>
-                {isEditing ? 'Update' : 'Add Post'}
-              </>
-            )}
-          </button>
-        </div>
-      </motion.div>
-    </motion.div>
+      </ModalBody>
+      <ModalFooter className="gap-4">
+        <button
+          type="button"
+          onClick={onClose}
+          className="flex-1 px-4 py-2.5 border border-[var(--border-main)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-surface)] transition-colors font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          form="linkedin-form"
+          disabled={createPostMutation.isPending || updatePostMutation.isPending}
+          className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-accent-600 text-white rounded-lg hover:bg-accent-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+        >
+          {createPostMutation.isPending || updatePostMutation.isPending ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin"/>
+              {isEditing ? 'Updating...' : 'Adding...'}
+            </>
+          ) : (
+            <>
+              <Linkedin className="w-4 h-4"/>
+              {isEditing ? 'Update' : 'Add Post'}
+            </>
+          )}
+        </button>
+      </ModalFooter>
+    </Modal>
   );
 }

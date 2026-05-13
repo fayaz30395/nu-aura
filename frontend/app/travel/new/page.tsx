@@ -263,10 +263,11 @@ export default function NewTravelRequestPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                <label htmlFor="travel-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Travel Type <span className="text-danger-500">*</span>
                 </label>
                 <select
+                  id="travel-type"
                   {...register('travelType')}
                   className={inputClass(!!errors.travelType)}
                 >
@@ -283,10 +284,11 @@ export default function NewTravelRequestPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                <label htmlFor="travel-client-name" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Client Name
                 </label>
                 <input
+                  id="travel-client-name"
                   type="text"
                   {...register('clientName')}
                   placeholder="Enter client name"
@@ -296,10 +298,11 @@ export default function NewTravelRequestPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+              <label htmlFor="travel-purpose" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 Purpose <span className="text-danger-500">*</span>
               </label>
               <textarea
+                id="travel-purpose"
                 {...register('purpose')}
                 placeholder="Describe the purpose of your travel"
                 rows={3}
@@ -322,10 +325,11 @@ export default function NewTravelRequestPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                <label htmlFor="travel-origin-city" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Origin City <span className="text-danger-500">*</span>
                 </label>
                 <input
+                  id="travel-origin-city"
                   type="text"
                   {...register('originCity')}
                   placeholder="e.g., Mumbai"
@@ -337,10 +341,11 @@ export default function NewTravelRequestPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                <label htmlFor="travel-destination-city" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Destination City <span className="text-danger-500">*</span>
                 </label>
                 <input
+                  id="travel-destination-city"
                   type="text"
                   {...register('destinationCity')}
                   placeholder="e.g., Delhi"
@@ -352,10 +357,11 @@ export default function NewTravelRequestPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                <label htmlFor="travel-departure-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Departure Date <span className="text-danger-500">*</span>
                 </label>
                 <input
+                  id="travel-departure-date"
                   type="date"
                   {...register('departureDate')}
                   className={cardInputClass(!!errors.departureDate)}
@@ -366,10 +372,11 @@ export default function NewTravelRequestPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                <label htmlFor="travel-return-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Return Date <span className="text-danger-500">*</span>
                 </label>
                 <input
+                  id="travel-return-date"
                   type="date"
                   {...register('returnDate')}
                   min={watchedDepartureDate}
@@ -415,10 +422,11 @@ export default function NewTravelRequestPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                <label htmlFor="travel-transport-mode" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Transport Mode <span className="text-danger-500">*</span>
                 </label>
                 <select
+                  id="travel-transport-mode"
                   {...register('transportMode')}
                   className={inputClass(!!errors.transportMode)}
                 >
@@ -434,10 +442,11 @@ export default function NewTravelRequestPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                <label htmlFor="travel-transport-class" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Class/Type
                 </label>
                 <input
+                  id="travel-transport-class"
                   type="text"
                   {...register('transportClass')}
                   placeholder="e.g., Economy, Business"
@@ -477,10 +486,11 @@ export default function NewTravelRequestPage() {
             {watchedAccommodation && (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="md:col-span-3">
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                  <label htmlFor="travel-hotel-preference" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Hotel Preference
                   </label>
                   <input
+                    id="travel-hotel-preference"
                     type="text"
                     {...register('hotelPreference')}
                     placeholder="Enter preferred hotel or area"
@@ -489,10 +499,11 @@ export default function NewTravelRequestPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                  <label htmlFor="travel-check-in-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Check-in Date <span className="text-danger-500">*</span>
                   </label>
                   <input
+                    id="travel-check-in-date"
                     type="date"
                     {...register('checkInDate')}
                     min={watchedDepartureDate}
@@ -504,10 +515,11 @@ export default function NewTravelRequestPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                  <label htmlFor="travel-check-out-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Check-out Date <span className="text-danger-500">*</span>
                   </label>
                   <input
+                    id="travel-check-out-date"
                     type="date"
                     {...register('checkOutDate')}
                     className={cardInputClass(!!errors.checkOutDate)}
@@ -531,10 +543,11 @@ export default function NewTravelRequestPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                <label htmlFor="travel-estimated-cost" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Estimated Cost (INR) <span className="text-danger-500">*</span>
                 </label>
                 <input
+                  id="travel-estimated-cost"
                   type="number"
                   step="0.01"
                   min="0"
@@ -548,10 +561,11 @@ export default function NewTravelRequestPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                <label htmlFor="travel-advance-required" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Advance Required (INR)
                 </label>
                 <input
+                  id="travel-advance-required"
                   type="number"
                   step="0.01"
                   min="0"
@@ -563,10 +577,11 @@ export default function NewTravelRequestPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+              <label htmlFor="travel-special-instructions" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 Special Instructions
               </label>
               <textarea
+                id="travel-special-instructions"
                 {...register('specialInstructions')}
                 placeholder="Any special requirements or instructions"
                 rows={3}

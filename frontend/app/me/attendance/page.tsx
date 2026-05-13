@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import {AppLayout} from '@/components/layout';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
+import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {
   useAttendanceByDateRange,
@@ -697,54 +698,65 @@ export default function MyAttendancePage() {
       </div>
 
       {/* Regularization Modal — DEF-42: React Hook Form + Zod */}
-      {showRegularizationModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-[var(--bg-elevated)] rounded-lg p-6 w-full max-w-md card-aura">
-            <h3
-              className="text-xl font-semibold text-[var(--text-primary)] dark:text-[var(--text-primary)] mb-4">
-              Request Regularization
-            </h3>
-            <form onSubmit={handleRegularizationSubmit(handleRequestRegularization)}>
-              <div className="mb-4">
-                <label htmlFor="regularization-reason"
-                       className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                  Reason
-                </label>
-                <textarea
-                  id="regularization-reason"
-                  {...registerRegularization('reason')}
-                  className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
-                  rows={4}
-                  placeholder="Please explain why you need regularization..."
-                />
-                {regularizationErrors.reason && (
-                  <p className="mt-1 text-sm text-danger-600">{regularizationErrors.reason.message}</p>
-                )}
-              </div>
-              <div className="flex justify-end gap-4">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowRegularizationModal(false);
-                    resetRegularization();
-                    setRegularizingRecord(null);
-                  }}
-                  className="px-4 py-2 border border-[var(--border-main)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-surface)] transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={!watchRegularization('reason')?.trim()}
-                  className="px-4 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                >
-                  Submit Request
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      <Modal
+        isOpen={showRegularizationModal}
+        onClose={() => {
+          setShowRegularizationModal(false);
+          resetRegularization();
+          setRegularizingRecord(null);
+        }}
+        size="sm"
+      >
+        <ModalHeader
+          onClose={() => {
+            setShowRegularizationModal(false);
+            resetRegularization();
+            setRegularizingRecord(null);
+          }}
+        >
+          Request Regularization
+        </ModalHeader>
+        <form onSubmit={handleRegularizationSubmit(handleRequestRegularization)}>
+          <ModalBody>
+            <div>
+              <label htmlFor="regularization-reason"
+                     className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                Reason
+              </label>
+              <textarea
+                id="regularization-reason"
+                {...registerRegularization('reason')}
+                className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
+                rows={4}
+                placeholder="Please explain why you need regularization..."
+              />
+              {regularizationErrors.reason && (
+                <p className="mt-1 text-sm text-danger-600">{regularizationErrors.reason.message}</p>
+              )}
+            </div>
+          </ModalBody>
+          <ModalFooter className="gap-4">
+            <button
+              type="button"
+              onClick={() => {
+                setShowRegularizationModal(false);
+                resetRegularization();
+                setRegularizingRecord(null);
+              }}
+              className="px-4 py-2 border border-[var(--border-main)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-surface)] transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={!watchRegularization('reason')?.trim()}
+              className="px-4 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+            >
+              Submit Request
+            </button>
+          </ModalFooter>
+        </form>
+      </Modal>
     </AppLayout>
   );
 }

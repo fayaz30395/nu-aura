@@ -396,10 +396,11 @@ export default function SurveyDetailPage() {
             <ModalBody>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                  <label htmlFor="survey-question-text" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Question Text *
                   </label>
                   <Textarea
+                    id="survey-question-text"
                     {...register('questionText')}
                     placeholder="Enter your question..."
                     rows={3}
@@ -412,10 +413,10 @@ export default function SurveyDetailPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                  <label htmlFor="survey-question-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Question Type *
                   </label>
-                  <Select {...register('questionType')} className="input-aura">
+                  <Select id="survey-question-type" {...register('questionType')} className="input-aura">
                     {questionTypeOptions.map((option) => (
                       <option key={option.value} value={option.value}>
                         {option.label}
@@ -431,10 +432,11 @@ export default function SurveyDetailPage() {
 
                 {needsOptions(watchedType) && (
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="survey-question-options" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Options (comma-separated) *
                     </label>
                     <Input
+                      id="survey-question-options"
                       {...register('options')}
                       placeholder="Option A, Option B, Option C"
                       className="input-aura"

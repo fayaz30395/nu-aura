@@ -317,7 +317,7 @@ export default function HolidaysPage() {
         {/* Upcoming Holidays Banner */}
         {upcomingHolidays.length > 0 && (
           <div className="card-aura p-4 mb-6 border-l-4 border-l-accent-500">
-            <h3 className="text-card-title text-[var(--text-primary)] mb-2">Coming Up</h3>
+            <h2 className="text-card-title text-[var(--text-primary)] mb-2">Coming Up</h2>
             <div className="flex flex-wrap gap-4">
               {upcomingHolidays.slice(0, 3).map((h) => (
                 <div key={h.id} className="flex items-center gap-2">
@@ -390,7 +390,7 @@ export default function HolidaysPage() {
             <div className="divide-y divide-[var(--border-subtle)]">
               {months.map((month) => (
                 <div key={month} className="p-6">
-                  <h3 className="text-section-title text-[var(--text-primary)] mb-4">{month}</h3>
+                  <h2 className="text-section-title text-[var(--text-primary)] mb-4">{month}</h2>
                   <div className="space-y-2">
                     {(holidaysByMonth[month] ?? []).map((holiday) => (
                       <div

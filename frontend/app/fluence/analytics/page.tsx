@@ -244,7 +244,7 @@ function FluenceAnalyticsPageContent() {
               <CardHeader className="pb-4 border-b border-[var(--border-main)]">
                 <div className="flex items-center gap-2">
                   <TrendingUp className={`${iconSize.cardInline} text-accent-600`}/>
-                  <CardTitle className={typography.cardTitle}>Activity Trend</CardTitle>
+                  <h2 className={typography.cardTitle}>Activity Trend</h2>
                 </div>
               </CardHeader>
               <CardContent className="pt-6">
@@ -263,7 +263,7 @@ function FluenceAnalyticsPageContent() {
               <CardHeader className="pb-4 border-b border-[var(--border-main)]">
                 <div className="flex items-center gap-2">
                   <FileText className={`${iconSize.cardInline} text-success-600`}/>
-                  <CardTitle className={typography.cardTitle}>Distribution</CardTitle>
+                  <h2 className={typography.cardTitle}>Distribution</h2>
                 </div>
               </CardHeader>
               <CardContent className="pt-6">
@@ -287,7 +287,7 @@ function FluenceAnalyticsPageContent() {
             <CardHeader className="pb-4 border-b border-[var(--border-main)]">
               <div className="flex items-center gap-2">
                 <BookOpen className={`${iconSize.cardInline} text-accent-600`}/>
-                <CardTitle className={typography.cardTitle}>Top Content</CardTitle>
+                <h2 className={typography.cardTitle}>Top Content</h2>
               </div>
             </CardHeader>
             <CardContent className="pt-4">
@@ -385,7 +385,7 @@ function FluenceAnalyticsPageContent() {
             <CardHeader className="pb-4 border-b border-[var(--border-main)]">
               <div className="flex items-center gap-2">
                 <TrendingUp className={`${iconSize.cardInline} text-info-600`}/>
-                <CardTitle className={typography.cardTitle}>Recent Activity</CardTitle>
+                <h2 className={typography.cardTitle}>Recent Activity</h2>
               </div>
             </CardHeader>
             <CardContent className="pt-4">

@@ -286,10 +286,11 @@ export default function PerformanceReviewsPage() {
         <div className="card-aura p-4 mb-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+              <label htmlFor="review-filter-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 Filter by Type
               </label>
               <select
+                id="review-filter-type"
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value as ReviewType | 'ALL')}
                 className="w-full input-aura"
@@ -303,10 +304,11 @@ export default function PerformanceReviewsPage() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+              <label htmlFor="review-filter-status" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 Filter by Status
               </label>
               <select
+                id="review-filter-status"
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value as ReviewStatus | 'ALL')}
                 className="w-full input-aura"
@@ -418,10 +420,11 @@ export default function PerformanceReviewsPage() {
                   <div className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                        <label htmlFor="review-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Review Type *
                         </label>
                         <select
+                          id="review-type"
                           {...register('reviewType')}
                           className="w-full input-aura px-4 py-2 rounded-lg"
                         >
@@ -437,10 +440,11 @@ export default function PerformanceReviewsPage() {
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                        <label htmlFor="review-status" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Status *
                         </label>
                         <select
+                          id="review-status"
                           {...register('status')}
                           className="w-full input-aura px-4 py-2 rounded-lg"
                         >
@@ -459,10 +463,11 @@ export default function PerformanceReviewsPage() {
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                        <label htmlFor="review-period-start" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Review Period Start *
                         </label>
                         <input
+                          id="review-period-start"
                           type="date"
                           {...register('reviewPeriodStart')}
                           className="w-full input-aura px-4 py-2 rounded-lg"
@@ -473,10 +478,11 @@ export default function PerformanceReviewsPage() {
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                        <label htmlFor="review-period-end" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Review Period End *
                         </label>
                         <input
+                          id="review-period-end"
                           type="date"
                           {...register('reviewPeriodEnd')}
                           className="w-full input-aura px-4 py-2 rounded-lg"
@@ -488,10 +494,11 @@ export default function PerformanceReviewsPage() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                      <label htmlFor="review-rating" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                         Overall Rating (1-5) *
                       </label>
                       <input
+                        id="review-rating"
                         type="number"
                         min="1"
                         max="5"
@@ -505,10 +512,11 @@ export default function PerformanceReviewsPage() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                      <label htmlFor="review-strengths" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                         Strengths
                       </label>
                       <textarea
+                        id="review-strengths"
                         rows={3}
                         {...register('strengths')}
                         className="w-full input-aura px-4 py-2 rounded-lg"
@@ -519,10 +527,11 @@ export default function PerformanceReviewsPage() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                      <label htmlFor="review-areas-improvement" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                         Areas for Improvement
                       </label>
                       <textarea
+                        id="review-areas-improvement"
                         rows={3}
                         {...register('areasForImprovement')}
                         className="w-full input-aura px-4 py-2 rounded-lg"
@@ -533,10 +542,11 @@ export default function PerformanceReviewsPage() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                      <label htmlFor="review-goals" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                         Goals
                       </label>
                       <textarea
+                        id="review-goals"
                         rows={3}
                         {...register('goals')}
                         className="w-full input-aura px-4 py-2 rounded-lg"
@@ -547,10 +557,11 @@ export default function PerformanceReviewsPage() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                      <label htmlFor="review-reviewer-comments" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                         Reviewer Comments
                       </label>
                       <textarea
+                        id="review-reviewer-comments"
                         rows={3}
                         {...register('reviewerComments')}
                         className="w-full input-aura px-4 py-2 rounded-lg"
@@ -561,10 +572,11 @@ export default function PerformanceReviewsPage() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                      <label htmlFor="review-employee-comments" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                         Employee Comments
                       </label>
                       <textarea
+                        id="review-employee-comments"
                         rows={3}
                         {...register('employeeComments')}
                         className="w-full input-aura px-4 py-2 rounded-lg"

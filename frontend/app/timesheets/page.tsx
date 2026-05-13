@@ -361,9 +361,9 @@ export default function TimesheetsPage() {
                   <ChevronLeft className="h-4 w-4"/>
                 </Button>
                 <div className="text-center">
-                  <h3 className="font-semibold text-[var(--text-primary)]">
+                  <h2 className="font-semibold text-[var(--text-primary)]">
                     Week of {formatDate(currentWeekStart.toISOString())}
-                  </h3>
+                  </h2>
                   <p className="text-body-muted">
                     {formatDate(weekDates[0].toISOString())} - {formatDate(weekDates[6].toISOString())}
                   </p>

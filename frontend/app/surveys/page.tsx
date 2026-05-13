@@ -497,10 +497,11 @@ export default function SurveysPage() {
             <ModalBody>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                  <label htmlFor="survey-code" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Survey Code *
                   </label>
                   <Input
+                    id="survey-code"
                     {...register('surveyCode')}
                     placeholder="e.g., SRV-2024-001"
                     className="input-aura"
@@ -510,10 +511,11 @@ export default function SurveysPage() {
                   )}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                  <label htmlFor="survey-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Survey Type *
                   </label>
                   <Select
+                    id="survey-type"
                     {...register('surveyType')}
                   >
                     {surveyTypeOptions.map((option) => (
@@ -527,10 +529,11 @@ export default function SurveysPage() {
                   )}
                 </div>
                 <div className="sm:col-span-2">
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                  <label htmlFor="survey-title" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Title *
                   </label>
                   <Input
+                    id="survey-title"
                     {...register('title')}
                     placeholder="Enter survey title"
                     className="input-aura"
@@ -540,10 +543,11 @@ export default function SurveysPage() {
                   )}
                 </div>
                 <div className="sm:col-span-2">
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                  <label htmlFor="survey-description" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Description
                   </label>
                   <Textarea
+                    id="survey-description"
                     {...register('description')}
                     placeholder="Enter survey description"
                     rows={3}
@@ -553,10 +557,11 @@ export default function SurveysPage() {
                   )}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                  <label htmlFor="survey-start-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Start Date
                   </label>
                   <Input
+                    id="survey-start-date"
                     type="date"
                     {...register('startDate')}
                   />
@@ -565,10 +570,11 @@ export default function SurveysPage() {
                   )}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                  <label htmlFor="survey-end-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     End Date
                   </label>
                   <Input
+                    id="survey-end-date"
                     type="date"
                     {...register('endDate')}
                   />
@@ -577,10 +583,11 @@ export default function SurveysPage() {
                   )}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                  <label htmlFor="survey-target-audience" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Target Audience
                   </label>
                   <Select
+                    id="survey-target-audience"
                     {...register('targetAudience')}
                   >
                     <option value="ALL">All Employees</option>
@@ -593,10 +600,11 @@ export default function SurveysPage() {
                   )}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                  <label htmlFor="survey-status" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Status
                   </label>
                   <Select
+                    id="survey-status"
                     {...register('status')}
                   >
                     {statusOptions.map((option) => (

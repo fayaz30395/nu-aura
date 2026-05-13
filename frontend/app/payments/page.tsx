@@ -423,7 +423,7 @@ function PaymentsPageContent() {
                       {getStatusIcon(payment.status)}
                       <div>
                         <div className="flex items-center gap-4 mb-2">
-                          <h3 className="font-semibold text-lg">{payment.transactionReference}</h3>
+                          <h2 className="font-semibold text-lg">{payment.transactionReference}</h2>
                           <span
                             className={`px-4 py-1 rounded-full text-xs font-medium ${paymentService.getStatusColor(payment.status)}`}
                           >

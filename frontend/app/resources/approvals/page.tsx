@@ -223,9 +223,9 @@ export default function ApprovalsPage() {
 
                   {/* Request info */}
                   <div className="space-y-4 border-t border-[var(--border-main)] pt-4 dark:border-[var(--border-main)]">
-                    <h4 className="font-medium text-[var(--text-primary)]">
+                    <h2 className="font-medium text-[var(--text-primary)]">
                       Requested Assignment
-                    </h4>
+                    </h2>
                     <div className="rounded-lg bg-[var(--bg-secondary)] p-4 dark:bg-[var(--bg-secondary)]">
                       <div className="flex items-center gap-4">
                         <Briefcase className="h-5 w-5 text-[var(--text-muted)]"/>

@@ -39,6 +39,7 @@ import {
   useSubmitFeedback360Response,
 } from '@/lib/hooks/queries/usePerformance';
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
+import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
 import {createLogger} from '@/lib/utils/logger';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
@@ -401,7 +402,7 @@ export default function Feedback360Page() {
                 {cycles.map((cycle) => (
                   <div key={cycle.id} className="card-aura p-6">
                     <div className="flex justify-between items-start mb-4">
-                      <h3 className="text-lg font-medium text-[var(--text-primary)]">{cycle.name}</h3>
+                      <h2 className="text-lg font-medium text-[var(--text-primary)]">{cycle.name}</h2>
                       <span className={getStatusColor(cycle.status)}>
                         {getStatusIcon(cycle.status)}
                         {cycle.status}
@@ -589,9 +590,9 @@ export default function Feedback360Page() {
                   <div key={summary.id} className="card-aura p-6">
                     <div className="flex justify-between items-start mb-4">
                       <div>
-                        <h3 className="text-lg font-medium text-[var(--text-primary)]">
+                        <h2 className="text-lg font-medium text-[var(--text-primary)]">
                           Feedback Summary
-                        </h3>
+                        </h2>
                         <p className="text-body-muted">
                           Cycle: {summary.cycleId.slice(0, 8)}
                         </p>
@@ -642,9 +643,9 @@ export default function Feedback360Page() {
                     {/* Competency Ratings */}
                     {(summary.avgCommunication || summary.avgTeamwork || summary.avgLeadership) && (
                       <div className="space-y-2 border-t border-[var(--border-subtle)] pt-4 mb-4">
-                        <h4 className="text-xs font-medium text-[var(--text-muted)] uppercase">
+                        <h3 className="text-xs font-medium text-[var(--text-muted)] uppercase">
                           Competency Ratings
-                        </h4>
+                        </h3>
                         {summary.avgCommunication && (
                           <div className="flex justify-between items-center">
                             <span className="text-body-secondary">Communication</span>
@@ -701,7 +702,7 @@ export default function Feedback360Page() {
                       <div className="space-y-4 border-t border-[var(--border-subtle)] pt-4">
                         {summary.consolidatedStrengths && (
                           <div>
-                            <h4 className="text-xs font-medium text-success-600 mb-1">Strengths</h4>
+                            <h3 className="text-xs font-medium text-success-600 mb-1">Strengths</h3>
                             <p className="text-body-secondary line-clamp-2">
                               {summary.consolidatedStrengths}
                             </p>
@@ -709,9 +710,9 @@ export default function Feedback360Page() {
                         )}
                         {summary.consolidatedImprovements && (
                           <div>
-                            <h4 className="text-xs font-medium text-warning-600 mb-1">
+                            <h3 className="text-xs font-medium text-warning-600 mb-1">
                               Areas for Improvement
-                            </h4>
+                            </h3>
                             <p className="text-body-secondary line-clamp-2">
                               {summary.consolidatedImprovements}
                             </p>
@@ -747,21 +748,29 @@ export default function Feedback360Page() {
         )}
 
         {/* Create Cycle Modal */}
-        {showCycleModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div
-              className="bg-[var(--bg-elevated)] rounded-lg shadow-[var(--shadow-dropdown)] max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-              <div className="px-6 py-4 border-b border-[var(--border-main)]">
-                <h2 className="text-xl font-semibold text-[var(--text-primary)]">
-                  Create 360 Feedback Cycle
-                </h2>
-              </div>
-              <div className="px-6 py-4 space-y-4">
+        <Modal
+          isOpen={showCycleModal}
+          onClose={() => {
+            setShowCycleModal(false);
+            resetCycleForm();
+          }}
+          size="lg"
+        >
+          <ModalHeader
+            onClose={() => {
+              setShowCycleModal(false);
+              resetCycleForm();
+            }}
+          >
+            Create 360 Feedback Cycle
+          </ModalHeader>
+          <ModalBody className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
+                  <label htmlFor="cycle-name" className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                     Cycle Name *
                   </label>
                   <input
+                    id="cycle-name"
                     type="text"
                     value={cycleForm.name}
                     onChange={(e) => setCycleForm({...cycleForm, name: e.target.value})}
@@ -770,10 +779,11 @@ export default function Feedback360Page() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
+                  <label htmlFor="cycle-description" className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                     Description
                   </label>
                   <textarea
+                    id="cycle-description"
                     value={cycleForm.description}
                     onChange={(e) => setCycleForm({...cycleForm, description: e.target.value})}
                     className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
@@ -782,10 +792,11 @@ export default function Feedback360Page() {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
+                    <label htmlFor="cycle-start-date" className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                       Start Date *
                     </label>
                     <input
+                      id="cycle-start-date"
                       type="date"
                       value={cycleForm.startDate}
                       onChange={(e) => setCycleForm({...cycleForm, startDate: e.target.value})}
@@ -793,10 +804,11 @@ export default function Feedback360Page() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
+                    <label htmlFor="cycle-end-date" className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                       End Date *
                     </label>
                     <input
+                      id="cycle-end-date"
                       type="date"
                       value={cycleForm.endDate}
                       onChange={(e) => setCycleForm({...cycleForm, endDate: e.target.value})}
@@ -806,10 +818,11 @@ export default function Feedback360Page() {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
+                    <label htmlFor="cycle-nomination-deadline" className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                       Nomination Deadline
                     </label>
                     <input
+                      id="cycle-nomination-deadline"
                       type="date"
                       value={cycleForm.nominationDeadline || ''}
                       onChange={(e) =>
@@ -819,10 +832,11 @@ export default function Feedback360Page() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
+                    <label htmlFor="cycle-self-review-deadline" className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                       Self Review Deadline
                     </label>
                     <input
+                      id="cycle-self-review-deadline"
                       type="date"
                       value={cycleForm.selfReviewDeadline || ''}
                       onChange={(e) =>
@@ -834,10 +848,11 @@ export default function Feedback360Page() {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
+                    <label htmlFor="cycle-peer-review-deadline" className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                       Peer Review Deadline
                     </label>
                     <input
+                      id="cycle-peer-review-deadline"
                       type="date"
                       value={cycleForm.peerReviewDeadline || ''}
                       onChange={(e) =>
@@ -847,10 +862,11 @@ export default function Feedback360Page() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
+                    <label htmlFor="cycle-manager-review-deadline" className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                       Manager Review Deadline
                     </label>
                     <input
+                      id="cycle-manager-review-deadline"
                       type="date"
                       value={cycleForm.managerReviewDeadline || ''}
                       onChange={(e) =>
@@ -862,10 +878,11 @@ export default function Feedback360Page() {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
+                    <label htmlFor="cycle-min-peer-reviewers" className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                       Min Peer Reviewers
                     </label>
                     <input
+                      id="cycle-min-peer-reviewers"
                       type="number"
                       min={1}
                       max={10}
@@ -877,10 +894,11 @@ export default function Feedback360Page() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
+                    <label htmlFor="cycle-max-peer-reviewers" className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                       Max Peer Reviewers
                     </label>
                     <input
+                      id="cycle-max-peer-reviewers"
                       type="number"
                       min={1}
                       max={10}
@@ -893,7 +911,7 @@ export default function Feedback360Page() {
                   </div>
                 </div>
                 <div className="space-y-4 border-t border-[var(--border-main)] pt-4">
-                  <h4 className="text-sm font-medium text-[var(--text-primary)]">Review Types</h4>
+                  <h3 className="text-sm font-medium text-[var(--text-primary)]">Review Types</h3>
                   <div className="grid grid-cols-2 gap-4">
                     <label className="flex items-center">
                       <input
@@ -954,44 +972,57 @@ export default function Feedback360Page() {
                   </span>
                   </label>
                 </div>
-              </div>
-              <div className="px-6 py-4 border-t border-[var(--border-main)] flex justify-end gap-4">
-                <button
-                  onClick={() => {
-                    setShowCycleModal(false);
-                    resetCycleForm();
-                  }}
-                  className="px-4 py-2 text-sm font-medium text-[var(--text-primary)] bg-[var(--bg-card)] border border-[var(--border-strong)] rounded-md hover:bg-[var(--bg-surface)]"
-                >
-                  Cancel
-                </button>
-                <PermissionGate permission={Permissions.FEEDBACK_360_CREATE}>
-                  <button
-                    onClick={handleCreateCycle}
-                    disabled={!cycleForm.name || !cycleForm.startDate || !cycleForm.endDate}
-                    className="px-4 py-2 text-sm font-medium text-white bg-accent-600 rounded-md hover:bg-accent-700 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                  >
-                    Create Cycle
-                  </button>
-                </PermissionGate>
-              </div>
-            </div>
-          </div>
-        )}
+          </ModalBody>
+          <ModalFooter>
+            <button
+              onClick={() => {
+                setShowCycleModal(false);
+                resetCycleForm();
+              }}
+              className="px-4 py-2 text-sm font-medium text-[var(--text-primary)] bg-[var(--bg-card)] border border-[var(--border-strong)] rounded-md hover:bg-[var(--bg-surface)]"
+            >
+              Cancel
+            </button>
+            <PermissionGate permission={Permissions.FEEDBACK_360_CREATE}>
+              <button
+                onClick={handleCreateCycle}
+                disabled={!cycleForm.name || !cycleForm.startDate || !cycleForm.endDate}
+                className="px-4 py-2 text-sm font-medium text-white bg-accent-600 rounded-md hover:bg-accent-700 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+              >
+                Create Cycle
+              </button>
+            </PermissionGate>
+          </ModalFooter>
+        </Modal>
 
         {/* Submit Response Modal */}
-        {showResponseModal && selectedRequest && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div
-              className="bg-[var(--bg-elevated)] rounded-lg shadow-[var(--shadow-dropdown)] max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-              <div className="px-6 py-4 border-b border-[var(--border-main)]">
-                <h2 className="text-xl font-semibold text-[var(--text-primary)]">Provide Feedback</h2>
-                <p className="text-body-muted mt-1">
-                  {selectedRequest.reviewerType} review for Employee #
-                  {selectedRequest.subjectEmployeeId.slice(0, 8)}
-                </p>
-              </div>
-              <div className="px-6 py-4 space-y-6">
+        <Modal
+          isOpen={showResponseModal && !!selectedRequest}
+          onClose={() => {
+            setShowResponseModal(false);
+            setSelectedRequest(null);
+            resetResponseForm();
+          }}
+          size="lg"
+        >
+          {selectedRequest && (
+            <>
+              <ModalHeader
+                onClose={() => {
+                  setShowResponseModal(false);
+                  setSelectedRequest(null);
+                  resetResponseForm();
+                }}
+              >
+                <div>
+                  <h2 className="text-xl font-semibold text-[var(--text-primary)]">Provide Feedback</h2>
+                  <p className="text-body-muted mt-1">
+                    {selectedRequest.reviewerType} review for Employee #
+                    {selectedRequest.subjectEmployeeId.slice(0, 8)}
+                  </p>
+                </div>
+              </ModalHeader>
+              <ModalBody className="space-y-6">
                 {/* Rating Categories */}
                 <div className="space-y-4">
                   <h3 className="text-sm font-medium text-[var(--text-primary)]">Competency Ratings</h3>
@@ -1051,10 +1082,11 @@ export default function Feedback360Page() {
 
                 {/* Text Feedback */}
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
+                  <label htmlFor="response-strengths" className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                     Strengths
                   </label>
                   <textarea
+                    id="response-strengths"
                     value={responseForm.strengths}
                     onChange={(e) =>
                       setResponseForm({...responseForm, strengths: e.target.value})
@@ -1065,10 +1097,11 @@ export default function Feedback360Page() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
+                  <label htmlFor="response-areas-for-improvement" className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                     Areas for Improvement
                   </label>
                   <textarea
+                    id="response-areas-for-improvement"
                     value={responseForm.areasForImprovement}
                     onChange={(e) =>
                       setResponseForm({...responseForm, areasForImprovement: e.target.value})
@@ -1079,10 +1112,11 @@ export default function Feedback360Page() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
+                  <label htmlFor="response-additional-comments" className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                     Additional Comments
                   </label>
                   <textarea
+                    id="response-additional-comments"
                     value={responseForm.additionalComments}
                     onChange={(e) =>
                       setResponseForm({...responseForm, additionalComments: e.target.value})

@@ -272,7 +272,7 @@ export default function WellnessPage() {
         {/* Quick Log Section */}
         <Card>
           <CardContent className="p-4">
-            <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-4">Quick Log</h3>
+            <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-4">Quick Log</h2>
             <div className="flex flex-wrap gap-4">
               {metricOptions.map((metric) => {
                 const Icon = metric.icon;
@@ -349,9 +349,9 @@ export default function WellnessPage() {
                           </div>
                           <div className="flex-1">
                             <div className="flex items-start justify-between">
-                              <h3 className="font-semibold text-[var(--text-primary)]">
+                              <h2 className="font-semibold text-[var(--text-primary)]">
                                 {program.name}
-                              </h3>
+                              </h2>
                               {program.isFeatured && (
                                 <StatusBadge status="FEATURED" domain={WELLNESS_FLAG} compact/>
                               )}
@@ -400,9 +400,9 @@ export default function WellnessPage() {
                       <CardContent className="p-4">
                         <div className="flex items-start justify-between">
                           <div>
-                            <h3 className="font-semibold text-[var(--text-primary)]">
+                            <h2 className="font-semibold text-[var(--text-primary)]">
                               {challenge.name}
-                            </h3>
+                            </h2>
                             <p className="text-body-secondary mt-1">
                               {challenge.description || 'Join this challenge and compete!'}
                             </p>
@@ -452,10 +452,10 @@ export default function WellnessPage() {
           <div className="space-y-4">
             <Card>
               <CardContent className="p-4">
-                <h3 className="flex items-center gap-2 text-xl font-semibold text-[var(--text-primary)] mb-4">
+                <h2 className="flex items-center gap-2 text-xl font-semibold text-[var(--text-primary)] mb-4">
                   <Crown className="h-5 w-5 text-warning-500"/>
                   Wellness Leaderboard
-                </h3>
+                </h2>
                 {leaderboard.length === 0 ? (
                   <p className="text-body-muted">No data yet</p>
                 ) : (

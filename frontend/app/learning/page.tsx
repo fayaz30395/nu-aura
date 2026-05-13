@@ -171,7 +171,7 @@ export default function LearningPage() {
                       )}
                       <div className="p-4">
                         <div className="flex justify-between items-start mb-2">
-                          <h3 className="font-semibold text-lg text-[var(--text-primary)]">{course.title}</h3>
+                          <h2 className="font-semibold text-lg text-[var(--text-primary)]">{course.title}</h2>
                           {course.isMandatory && (
                             <span
                               className="px-2 py-1 bg-danger-100 text-danger-800 dark:bg-danger-900/50 dark:text-danger-300 text-xs rounded-full">Mandatory</span>
@@ -237,8 +237,8 @@ export default function LearningPage() {
                          className="bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] p-6 hover:shadow-[var(--shadow-dropdown)] transition-shadow">
                       <div className="flex justify-between items-start mb-4">
                         <div>
-                          <h3 className="text-xl font-semibold text-[var(--text-primary)]">Course
-                            #{enrollment.courseId.slice(0, 8)}</h3>
+                          <h2 className="text-xl font-semibold text-[var(--text-primary)]">Course
+                            #{enrollment.courseId.slice(0, 8)}</h2>
                           <div className="flex gap-2 mt-2">
                             <StatusBadge status={enrollment.status} domain={LEARNING_STATUS}/>
                           </div>
@@ -306,7 +306,7 @@ export default function LearningPage() {
                       <div className="flex justify-between items-start">
                         <div>
                           <div className="text-2xl mb-2" aria-label="Certificate">🏆</div>
-                          <h3 className="font-semibold text-lg text-[var(--text-primary)]">{cert.courseTitle}</h3>
+                          <h2 className="font-semibold text-lg text-[var(--text-primary)]">{cert.courseTitle}</h2>
                           <div className="text-body-secondary mt-1">
                             Certificate: {cert.certificateNumber}
                           </div>

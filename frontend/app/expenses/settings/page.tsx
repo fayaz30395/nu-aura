@@ -370,40 +370,40 @@ export default function ExpenseSettingsPage() {
               <ModalBody>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Name
+                    <label htmlFor="expense-category-name" className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Name
                       *</label>
-                    <input {...categoryForm.register('name')} className={inputClass}/>
+                    <input id="expense-category-name" {...categoryForm.register('name')} className={inputClass}/>
                     {categoryForm.formState.errors.name &&
                       <p className="text-danger-500 text-sm mt-1">{categoryForm.formState.errors.name.message}</p>}
                   </div>
                   <div>
-                    <label
+                    <label htmlFor="expense-category-description"
                       className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Description</label>
-                    <textarea {...categoryForm.register('description')} rows={2} className={inputClass}/>
+                    <textarea id="expense-category-description" {...categoryForm.register('description')} rows={2} className={inputClass}/>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Max
+                      <label htmlFor="expense-category-max-amount" className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Max
                         Amount</label>
-                      <input type="number" step="0.01" {...categoryForm.register('maxAmount')} className={inputClass}/>
+                      <input id="expense-category-max-amount" type="number" step="0.01" {...categoryForm.register('maxAmount')} className={inputClass}/>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">GL
+                      <label htmlFor="expense-category-gl-code" className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">GL
                         Code</label>
-                      <input {...categoryForm.register('glCode')} className={inputClass}/>
+                      <input id="expense-category-gl-code" {...categoryForm.register('glCode')} className={inputClass}/>
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Icon
+                      <label htmlFor="expense-category-icon-name" className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Icon
                         Name</label>
-                      <input {...categoryForm.register('iconName')} placeholder="e.g., Plane, Hotel"
+                      <input id="expense-category-icon-name" {...categoryForm.register('iconName')} placeholder="e.g., Plane, Hotel"
                              className={inputClass}/>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Sort
+                      <label htmlFor="expense-category-sort-order" className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Sort
                         Order</label>
-                      <input type="number" {...categoryForm.register('sortOrder')} className={inputClass}/>
+                      <input id="expense-category-sort-order" type="number" {...categoryForm.register('sortOrder')} className={inputClass}/>
                     </div>
                   </div>
                   <label className="flex items-center gap-2">
@@ -432,53 +432,53 @@ export default function ExpenseSettingsPage() {
               <ModalBody>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Policy Name
+                    <label htmlFor="expense-policy-name" className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Policy Name
                       *</label>
-                    <input {...policyForm.register('name')} className={inputClass}/>
+                    <input id="expense-policy-name" {...policyForm.register('name')} className={inputClass}/>
                     {policyForm.formState.errors.name &&
                       <p className="text-danger-500 text-sm mt-1">{policyForm.formState.errors.name.message}</p>}
                   </div>
                   <div>
-                    <label
+                    <label htmlFor="expense-policy-description"
                       className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Description</label>
-                    <textarea {...policyForm.register('description')} rows={2} className={inputClass}/>
+                    <textarea id="expense-policy-description" {...policyForm.register('description')} rows={2} className={inputClass}/>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Daily
+                      <label htmlFor="expense-policy-daily-limit" className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Daily
                         Limit</label>
-                      <input type="number" step="0.01" {...policyForm.register('dailyLimit')} className={inputClass}/>
+                      <input id="expense-policy-daily-limit" type="number" step="0.01" {...policyForm.register('dailyLimit')} className={inputClass}/>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Monthly
+                      <label htmlFor="expense-policy-monthly-limit" className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Monthly
                         Limit</label>
-                      <input type="number" step="0.01" {...policyForm.register('monthlyLimit')} className={inputClass}/>
+                      <input id="expense-policy-monthly-limit" type="number" step="0.01" {...policyForm.register('monthlyLimit')} className={inputClass}/>
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Yearly
+                      <label htmlFor="expense-policy-yearly-limit" className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Yearly
                         Limit</label>
-                      <input type="number" step="0.01" {...policyForm.register('yearlyLimit')} className={inputClass}/>
+                      <input id="expense-policy-yearly-limit" type="number" step="0.01" {...policyForm.register('yearlyLimit')} className={inputClass}/>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Per Claim
+                      <label htmlFor="expense-policy-single-claim-limit" className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Per Claim
                         Limit</label>
-                      <input type="number" step="0.01" {...policyForm.register('singleClaimLimit')}
+                      <input id="expense-policy-single-claim-limit" type="number" step="0.01" {...policyForm.register('singleClaimLimit')}
                              className={inputClass}/>
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Receipt
+                      <label htmlFor="expense-policy-receipt-required-above" className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Receipt
                         Required Above</label>
-                      <input type="number" step="0.01" {...policyForm.register('receiptRequiredAbove')}
+                      <input id="expense-policy-receipt-required-above" type="number" step="0.01" {...policyForm.register('receiptRequiredAbove')}
                              className={inputClass}/>
                     </div>
                     <div>
-                      <label
+                      <label htmlFor="expense-policy-currency"
                         className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Currency</label>
-                      <select {...policyForm.register('currency')} className={inputClass}>
+                      <select id="expense-policy-currency" {...policyForm.register('currency')} className={inputClass}>
                         <option value="INR">INR</option>
                         <option value="USD">USD</option>
                         <option value="EUR">EUR</option>
@@ -493,9 +493,9 @@ export default function ExpenseSettingsPage() {
                   </label>
                   {policyForm.watch('requiresPreApproval') && (
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Pre-Approval
+                      <label htmlFor="expense-policy-pre-approval-threshold" className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Pre-Approval
                         Threshold</label>
-                      <input type="number" step="0.01" {...policyForm.register('preApprovalThreshold')}
+                      <input id="expense-policy-pre-approval-threshold" type="number" step="0.01" {...policyForm.register('preApprovalThreshold')}
                              className={inputClass}/>
                     </div>
                   )}

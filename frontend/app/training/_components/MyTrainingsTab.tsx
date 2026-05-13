@@ -47,7 +47,7 @@ export function MyTrainingsTab({enrollments, loading, onNavigateToCatalog}: MyTr
             <div className="flex justify-between items-start">
               <div className="flex-1">
                 <div className="flex items-center gap-4 mb-2">
-                  <h3 className="font-semibold text-lg">{enrollment.programName || 'Training Program'}</h3>
+                  <h2 className="font-semibold text-lg">{enrollment.programName || 'Training Program'}</h2>
                   <Badge variant={toBadgeVariant(enrollment.status)}>
                     {enrollment.status ? enrollment.status.replace('_', ' ') : '-'}
                   </Badge>

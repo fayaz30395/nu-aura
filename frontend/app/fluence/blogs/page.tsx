@@ -236,9 +236,9 @@ export default function BlogsPage() {
                     <Pen className="w-8 h-8 text-warning-600 dark:text-warning-400"/>
                   </div>
                 </motion.div>
-                <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
+                <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                   No posts yet
-                </h3>
+                </h2>
                 <p className="text-[var(--text-secondary)] mb-6 max-w-sm mx-auto">
                   Start building your knowledge base by creating your first blog post
                 </p>

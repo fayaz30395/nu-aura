@@ -929,7 +929,7 @@ export default function WikiPageDetailPage() {
               className={card.base}
             >
               <div className={card.paddingLarge}>
-                <h3 className={`${typography.cardTitle} mb-4`}>Page Stats</h3>
+                <h2 className={`${typography.cardTitle} mb-4`}>Page Stats</h2>
                 <div className="space-y-4">
                   <div className="row-between pb-4 border-b border-[var(--border-main)]">
                     <span className={typography.bodySecondary}>Views</span>
@@ -984,7 +984,7 @@ export default function WikiPageDetailPage() {
               className={card.base}
             >
               <div className={card.paddingLarge}>
-                <h3 className={`${typography.cardTitle} mb-4`}>Actions</h3>
+                <h2 className={`${typography.cardTitle} mb-4`}>Actions</h2>
                 <div className="space-y-2">
                   <motion.button
                     whileHover={{scale: 1.02}}
@@ -1024,7 +1024,7 @@ export default function WikiPageDetailPage() {
                 className={card.base}
               >
                 <div className={card.paddingLarge}>
-                  <h3 className={`${typography.cardTitle} mb-4`}>Visibility</h3>
+                  <h2 className={`${typography.cardTitle} mb-4`}>Visibility</h2>
                   <div className="space-y-4">
                     <div className="flex items-center gap-2">
                       <VisibilityIcon

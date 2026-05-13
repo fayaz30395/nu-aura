@@ -535,12 +535,12 @@ export default function AgenciesPage() {
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1">
-                            <h3
+                            <h2
                               className="font-semibold text-sm text-[var(--text-primary)] truncate cursor-pointer"
                               onClick={() => router.push(`/recruitment/agencies/${agency.id}`)}
                             >
                               {agency.name}
-                            </h3>
+                            </h2>
                             <StatusBadge status={agency.status} domain={AGENCY_STATUS} compact />
                           </div>
                           <RatingStars rating={agency.rating}/>

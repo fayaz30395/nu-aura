@@ -438,7 +438,7 @@ export default function JobOpeningsPage() {
                   <CardContent className="p-6">
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex-1">
-                        <h3 className="font-semibold text-[var(--text-primary)] text-lg">{job.jobTitle}</h3>
+                        <h2 className="font-semibold text-[var(--text-primary)] text-lg">{job.jobTitle}</h2>
                         <p className="text-body-muted">{job.jobCode}</p>
                       </div>
                       <StatusBadge status={job.status} domain={JOB_STATUS} />
@@ -545,8 +545,9 @@ export default function JobOpeningsPage() {
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Job Code *</label>
+                      <label htmlFor="job-form-code" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Job Code *</label>
                       <input
+                        id="job-form-code"
                         type="text"
                         {...register('jobCode')}
                         className="input-aura"
@@ -555,8 +556,9 @@ export default function JobOpeningsPage() {
                       {errors.jobCode && <p className="text-xs text-danger-600 mt-1">{errors.jobCode.message}</p>}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Job Title *</label>
+                      <label htmlFor="job-form-title" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Job Title *</label>
                       <input
+                        id="job-form-title"
                         type="text"
                         {...register('jobTitle')}
                         className="input-aura"
@@ -568,8 +570,9 @@ export default function JobOpeningsPage() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Department</label>
+                      <label htmlFor="job-form-department" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Department</label>
                       <select
+                        id="job-form-department"
                         {...register('departmentId')}
                         className="input-aura"
                       >
@@ -582,9 +585,10 @@ export default function JobOpeningsPage() {
                         <p className="text-xs text-danger-600 mt-1">{errors.departmentId.message}</p>}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Hiring
+                      <label htmlFor="job-form-hiring-manager" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Hiring
                         Manager</label>
                       <select
+                        id="job-form-hiring-manager"
                         {...register('hiringManagerId')}
                         className="input-aura"
                       >
@@ -600,8 +604,9 @@ export default function JobOpeningsPage() {
 
                   <div className="grid grid-cols-3 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Location</label>
+                      <label htmlFor="job-form-location" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Location</label>
                       <input
+                        id="job-form-location"
                         type="text"
                         {...register('location')}
                         className="input-aura"
@@ -610,9 +615,10 @@ export default function JobOpeningsPage() {
                       {errors.location && <p className="text-xs text-danger-600 mt-1">{errors.location.message}</p>}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Employment
+                      <label htmlFor="job-form-employment-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Employment
                         Type</label>
                       <select
+                        id="job-form-employment-type"
                         {...register('employmentType')}
                         className="input-aura"
                       >
@@ -626,9 +632,10 @@ export default function JobOpeningsPage() {
                         <p className="text-xs text-danger-600 mt-1">{errors.employmentType.message}</p>}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">No. of
+                      <label htmlFor="job-form-number-of-openings" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">No. of
                         Openings</label>
                       <input
+                        id="job-form-number-of-openings"
                         type="number"
                         min="1"
                         {...register('numberOfOpenings')}
@@ -641,8 +648,9 @@ export default function JobOpeningsPage() {
 
                   <div className="grid grid-cols-3 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Min Salary</label>
+                      <label htmlFor="job-form-min-salary" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Min Salary</label>
                       <input
+                        id="job-form-min-salary"
                         type="number"
                         {...register('minSalary')}
                         className="input-aura"
@@ -651,8 +659,9 @@ export default function JobOpeningsPage() {
                       {errors.minSalary && <p className="text-xs text-danger-600 mt-1">{errors.minSalary.message}</p>}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Max Salary</label>
+                      <label htmlFor="job-form-max-salary" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Max Salary</label>
                       <input
+                        id="job-form-max-salary"
                         type="number"
                         {...register('maxSalary')}
                         className="input-aura"
@@ -661,9 +670,10 @@ export default function JobOpeningsPage() {
                       {errors.maxSalary && <p className="text-xs text-danger-600 mt-1">{errors.maxSalary.message}</p>}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Experience
+                      <label htmlFor="job-form-experience-required" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Experience
                         Required</label>
                       <input
+                        id="job-form-experience-required"
                         type="text"
                         {...register('experienceRequired')}
                         className="input-aura"
@@ -676,8 +686,9 @@ export default function JobOpeningsPage() {
 
                   <div className="grid grid-cols-3 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Status</label>
+                      <label htmlFor="job-form-status" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Status</label>
                       <select
+                        id="job-form-status"
                         {...register('status')}
                         className="input-aura"
                       >
@@ -690,8 +701,9 @@ export default function JobOpeningsPage() {
                       {errors.status && <p className="text-xs text-danger-600 mt-1">{errors.status.message}</p>}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Priority</label>
+                      <label htmlFor="job-form-priority" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Priority</label>
                       <select
+                        id="job-form-priority"
                         {...register('priority')}
                         className="input-aura"
                       >
@@ -703,9 +715,10 @@ export default function JobOpeningsPage() {
                       {errors.priority && <p className="text-xs text-danger-600 mt-1">{errors.priority.message}</p>}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Closing
+                      <label htmlFor="job-form-closing-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Closing
                         Date</label>
                       <input
+                        id="job-form-closing-date"
                         type="date"
                         {...register('closingDate')}
                         className="input-aura"
@@ -717,7 +730,7 @@ export default function JobOpeningsPage() {
 
                   <div>
                     <div className="row-between mb-1">
-                      <label className="block text-sm font-medium text-[var(--text-secondary)]">Job Description</label>
+                      <label htmlFor="job-form-description" className="block text-sm font-medium text-[var(--text-secondary)]">Job Description</label>
                       <button
                         type="button"
                         onClick={handleGenerateJobDescription}
@@ -729,6 +742,7 @@ export default function JobOpeningsPage() {
                       </button>
                     </div>
                     <textarea
+                      id="job-form-description"
                       rows={4}
                       {...register('jobDescription')}
                       className="w-full px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
@@ -739,8 +753,9 @@ export default function JobOpeningsPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Requirements</label>
+                    <label htmlFor="job-form-requirements" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Requirements</label>
                     <textarea
+                      id="job-form-requirements"
                       rows={3}
                       {...register('requirements')}
                       className="w-full px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
@@ -751,9 +766,10 @@ export default function JobOpeningsPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Skills
+                    <label htmlFor="job-form-skills-required" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Skills
                       Required</label>
                     <textarea
+                      id="job-form-skills-required"
                       rows={2}
                       {...register('skillsRequired')}
                       className="w-full px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
@@ -800,7 +816,7 @@ export default function JobOpeningsPage() {
                 <div className="flex-shrink-0 h-12 w-12 rounded-xl bg-danger-100 flex items-center justify-center">
                   <Trash2 className="h-6 w-6 text-danger-600"/>
                 </div>
-                <h3 className="ml-4 text-lg font-medium text-[var(--text-primary)]">Delete Job Opening</h3>
+                <h2 className="ml-4 text-lg font-medium text-[var(--text-primary)]">Delete Job Opening</h2>
               </div>
               <p className="text-body-muted mb-6">
                 Are you sure you want to delete <strong

@@ -219,7 +219,7 @@ export default function RecruitmentDashboard() {
       <AppLayout>
         <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
           <Briefcase className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4"/>
-          <h2 className="text-xl font-bold text-[var(--text-primary)] mb-2">Access Restricted</h2>
+          <h1 className="text-xl font-bold text-[var(--text-primary)] mb-2">Access Restricted</h1>
           <p className="text-[var(--text-muted)] max-w-md mb-6">
             You don&apos;t have permission to access the Recruitment dashboard.
             Use the Referrals page to submit employee referrals.
@@ -294,9 +294,9 @@ export default function RecruitmentDashboard() {
             className="h-16 w-16 rounded-lg bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center mb-6">
             <Briefcase className="h-8 w-8 text-accent-700 dark:text-accent-400"/>
           </div>
-          <h2 className="text-xl font-bold text-[var(--text-primary)] mb-2">
+          <h1 className="text-xl font-bold text-[var(--text-primary)] mb-2">
             Welcome to Recruitment
-          </h2>
+          </h1>
           <p className="text-[var(--text-muted)] max-w-md mb-8">
             Get started by posting your first job opening. You can then track candidates,
             schedule interviews, and manage the entire hiring pipeline from here.

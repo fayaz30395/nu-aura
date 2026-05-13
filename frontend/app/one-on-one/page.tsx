@@ -649,7 +649,7 @@ export default function OneOnOnePage() {
                   {detailTab === 'agenda' && (
                     <div>
                       <div className="row-between mb-4">
-                        <h3 className="text-base font-semibold text-[var(--text-primary)]">Talking Points</h3>
+                        <h2 className="text-base font-semibold text-[var(--text-primary)]">Talking Points</h2>
                         {isActive && (
                           <button
                             onClick={() => setShowAgendaForm(!showAgendaForm)}
@@ -810,7 +810,7 @@ export default function OneOnOnePage() {
                   {detailTab === 'actions' && (
                     <div>
                       <div className="row-between mb-4">
-                        <h3 className="text-base font-semibold text-[var(--text-primary)]">Action Items</h3>
+                        <h2 className="text-base font-semibold text-[var(--text-primary)]">Action Items</h2>
                         {isActive && (
                           <PermissionGate permission={Permissions.MEETING_CREATE}>
                             <button
@@ -1013,7 +1013,7 @@ export default function OneOnOnePage() {
                       </button>
                       {meeting.meetingSummary && (
                         <div className="p-4 bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-main)]">
-                          <h4 className="text-sm font-medium text-[var(--text-primary)] mb-1">Meeting Summary</h4>
+                          <h3 className="text-sm font-medium text-[var(--text-primary)] mb-1">Meeting Summary</h3>
                           <p className="text-body-muted">{meeting.meetingSummary}</p>
                         </div>
                       )}
@@ -1025,7 +1025,7 @@ export default function OneOnOnePage() {
                     <div>
                       {meeting.employeeRating ? (
                         <div className="p-4 bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-main)]">
-                          <h4 className="text-sm font-medium text-[var(--text-primary)] mb-2">Meeting Feedback</h4>
+                          <h3 className="text-sm font-medium text-[var(--text-primary)] mb-2">Meeting Feedback</h3>
                           <div className="flex items-center gap-1 mb-2">
                             {[1, 2, 3, 4, 5].map((s) => (
                               <Star

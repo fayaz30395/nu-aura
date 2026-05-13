@@ -14,7 +14,6 @@ import {
   ShieldCheck,
   Trash2,
   Users,
-  X,
 } from 'lucide-react';
 import {Controller, useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
@@ -25,6 +24,7 @@ import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
 import {ConfirmDialog} from '@/components/ui';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {Button} from '@/components/ui/Button';
+import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
 import {
   useAssignPermissions,
   useAssignRolesToUser,
@@ -315,9 +315,9 @@ export default function PermissionsPage() {
                           </div>
                           <div>
                             <div className="flex items-center gap-2">
-                              <h3 className="font-semibold text-[var(--text-primary)]">
+                              <h2 className="font-semibold text-[var(--text-primary)]">
                                 {role.name}
-                              </h3>
+                              </h2>
                               {role.isSystemRole && (
                                 <span
                                   className="px-2 py-0.5 text-xs bg-accent-300 text-accent-900 dark:bg-accent-900/30 dark:text-accent-600 rounded-full cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
@@ -372,9 +372,9 @@ export default function PermissionsPage() {
                             className="border-t border-[var(--border-main)]"
                           >
                             <div className="p-4 bg-[var(--bg-surface)] dark:bg-[var(--bg-secondary)]/50">
-                              <h4 className="text-sm font-medium text-[var(--text-secondary)] mb-4">
+                              <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-4">
                                 Assigned Permissions
-                              </h4>
+                              </h3>
                               {role.permissions.length === 0 ? (
                                 <p className="text-body-muted">No permissions assigned</p>
                               ) : (
@@ -607,38 +607,19 @@ function EditRoleModal({
   const selectedCount = selectedPermissions.length;
 
   return (
-    <motion.div
-      initial={{opacity: 0}}
-      animate={{opacity: 1}}
-      exit={{opacity: 0}}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--bg-overlay)]"
-      onClick={handleClose}
-    >
-      <motion.div
-        initial={{scale: 0.95, opacity: 0}}
-        animate={{scale: 1, opacity: 1}}
-        exit={{scale: 0.95, opacity: 0}}
-        className="bg-[var(--bg-card)] rounded-xl shadow-[var(--shadow-dropdown)] w-full max-w-3xl max-h-[80vh] overflow-hidden flex flex-col"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="row-between p-4 border-b border-[var(--border-main)] shrink-0">
-          <div>
-            <h2 className="text-xl font-semibold text-[var(--text-primary)]">
-              Edit Role: {role.code}
-            </h2>
-            <p className="text-body-muted">
-              {selectedCount} permissions selected
-            </p>
-          </div>
-          <button onClick={handleClose}
-                  aria-label="Close dialog"
-                  className="p-2 text-[var(--text-muted)] hover:text-[var(--text-primary)] rounded-lg hover:bg-[var(--bg-surface)]">
-            <X className="w-5 h-5"/>
-          </button>
+    <Modal isOpen={true} onClose={handleClose} size="xl">
+      <ModalHeader onClose={handleClose}>
+        <div>
+          <h2 className="text-xl font-semibold text-[var(--text-primary)]">
+            Edit Role: {role.code}
+          </h2>
+          <p className="text-body-muted">
+            {selectedCount} permissions selected
+          </p>
         </div>
-
-        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col overflow-hidden flex-1">
-          <div className="p-4 overflow-y-auto max-h-[60vh] space-y-6">
+      </ModalHeader>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col overflow-hidden flex-1">
+        <ModalBody className="space-y-6">
             <div className="grid grid-cols-1 gap-4">
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Role Name *</label>
@@ -704,19 +685,17 @@ function EditRoleModal({
                   ))}
                 </>
               )}
-            />
-          </div>
-
-          <div className="flex items-center justify-end gap-4 p-4 border-t border-[var(--border-main)] shrink-0">
-            <Button type="button" onClick={handleClose} variant="ghost" size="md">Cancel</Button>
-            <Button type="submit" disabled={isSaving} variant="primary" size="md" isLoading={isSaving}
-                    loadingText="Saving...">
-              Save Changes
-            </Button>
-          </div>
-        </form>
-      </motion.div>
-    </motion.div>
+          />
+        </ModalBody>
+        <ModalFooter className="gap-4">
+          <Button type="button" onClick={handleClose} variant="ghost" size="md">Cancel</Button>
+          <Button type="submit" disabled={isSaving} variant="primary" size="md" isLoading={isSaving}
+                  loadingText="Saving...">
+            Save Changes
+          </Button>
+        </ModalFooter>
+      </form>
+    </Modal>
   );
 }
 
@@ -760,34 +739,15 @@ function CreateRoleModal({
   const selectedPermissions = form.watch('permissions');
 
   return (
-    <motion.div
-      initial={{opacity: 0}}
-      animate={{opacity: 1}}
-      exit={{opacity: 0}}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--bg-overlay)]"
-      onClick={handleClose}
-    >
-      <motion.div
-        initial={{scale: 0.95, opacity: 0}}
-        animate={{scale: 1, opacity: 1}}
-        exit={{scale: 0.95, opacity: 0}}
-        className="bg-[var(--bg-card)] rounded-xl shadow-[var(--shadow-dropdown)] w-full max-w-3xl max-h-[80vh] overflow-hidden flex flex-col"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="row-between p-4 border-b border-[var(--border-main)] shrink-0">
-          <div>
-            <h2 className="text-xl font-semibold text-[var(--text-primary)]">Create New Role</h2>
-            <p className="text-body-muted">Create a custom role with specific permissions</p>
-          </div>
-          <button onClick={handleClose}
-                  aria-label="Close dialog"
-                  className="p-2 text-[var(--text-muted)] hover:text-[var(--text-primary)] rounded-lg hover:bg-[var(--bg-surface)]">
-            <X className="w-5 h-5"/>
-          </button>
+    <Modal isOpen={true} onClose={handleClose} size="xl">
+      <ModalHeader onClose={handleClose}>
+        <div>
+          <h2 className="text-xl font-semibold text-[var(--text-primary)]">Create New Role</h2>
+          <p className="text-body-muted">Create a custom role with specific permissions</p>
         </div>
-
-        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col overflow-hidden flex-1">
-          <div className="p-4 overflow-y-auto max-h-[60vh] space-y-6">
+      </ModalHeader>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col overflow-hidden flex-1">
+        <ModalBody className="space-y-6">
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Role Code *</label>
@@ -873,18 +833,16 @@ function CreateRoleModal({
                 )}
               />
             </div>
-          </div>
-
-          <div className="flex items-center justify-end gap-4 p-4 border-t border-[var(--border-main)] shrink-0">
-            <Button type="button" onClick={handleClose} variant="ghost" size="md">Cancel</Button>
-            <Button type="submit" disabled={isSaving} variant="primary" size="md" isLoading={isSaving}
-                    loadingText="Creating...">
-              Create Role
-            </Button>
-          </div>
-        </form>
-      </motion.div>
-    </motion.div>
+        </ModalBody>
+        <ModalFooter className="gap-4">
+          <Button type="button" onClick={handleClose} variant="ghost" size="md">Cancel</Button>
+          <Button type="submit" disabled={isSaving} variant="primary" size="md" isLoading={isSaving}
+                  loadingText="Creating...">
+            Create Role
+          </Button>
+        </ModalFooter>
+      </form>
+    </Modal>
   );
 }
 
@@ -925,38 +883,19 @@ function EditUserModal({
   };
 
   return (
-    <motion.div
-      initial={{opacity: 0}}
-      animate={{opacity: 1}}
-      exit={{opacity: 0}}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--bg-overlay)]"
-      onClick={handleClose}
-    >
-      <motion.div
-        initial={{scale: 0.95, opacity: 0}}
-        animate={{scale: 1, opacity: 1}}
-        exit={{scale: 0.95, opacity: 0}}
-        className="bg-[var(--bg-card)] rounded-xl shadow-[var(--shadow-dropdown)] w-full max-w-lg overflow-hidden flex flex-col"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="row-between p-4 border-b border-[var(--border-main)] shrink-0">
-          <div>
-            <h2 className="text-xl font-semibold text-[var(--text-primary)]">
-              Edit User Roles
-            </h2>
-            <p className="text-body-muted">
-              Assign roles to {user.fullName}
-            </p>
-          </div>
-          <button onClick={handleClose}
-                  aria-label="Close dialog"
-                  className="p-2 text-[var(--text-muted)] hover:text-[var(--text-primary)] rounded-lg hover:bg-[var(--bg-surface)]">
-            <X className="w-5 h-5"/>
-          </button>
+    <Modal isOpen={true} onClose={handleClose} size="md">
+      <ModalHeader onClose={handleClose}>
+        <div>
+          <h2 className="text-xl font-semibold text-[var(--text-primary)]">
+            Edit User Roles
+          </h2>
+          <p className="text-body-muted">
+            Assign roles to {user.fullName}
+          </p>
         </div>
-
-        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col overflow-hidden flex-1">
-          <div className="p-4 overflow-y-auto max-h-[60vh] space-y-4">
+      </ModalHeader>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col overflow-hidden flex-1">
+        <ModalBody className="space-y-4">
             <Controller
               name="roleCodes"
               control={form.control}
@@ -1000,17 +939,15 @@ function EditUserModal({
                 </div>
               )}
             />
-          </div>
-
-          <div className="flex items-center justify-end gap-4 p-4 border-t border-[var(--border-main)] shrink-0">
-            <Button type="button" onClick={handleClose} variant="ghost" size="md">Cancel</Button>
-            <Button type="submit" disabled={isSaving} variant="primary" size="md" isLoading={isSaving}
-                    loadingText="Saving...">
-              Save Changes
-            </Button>
-          </div>
-        </form>
-      </motion.div>
-    </motion.div>
+        </ModalBody>
+        <ModalFooter className="gap-4">
+          <Button type="button" onClick={handleClose} variant="ghost" size="md">Cancel</Button>
+          <Button type="submit" disabled={isSaving} variant="primary" size="md" isLoading={isSaving}
+                  loadingText="Saving...">
+            Save Changes
+          </Button>
+        </ModalFooter>
+      </form>
+    </Modal>
   );
 }

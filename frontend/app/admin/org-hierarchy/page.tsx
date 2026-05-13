@@ -167,9 +167,20 @@ export default function OrgHierarchyPage() {
               ${colors.bg} ${colors.border} ${colors.text}
               border-2 rounded-xl shadow-[var(--shadow-dropdown)] hover:shadow-[var(--shadow-dropdown)] transition-all
               w-80 overflow-hidden cursor-pointer
+              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2
               ${hasSubordinates ? 'mb-12' : 'mb-6'}
             `}
             onClick={() => hasSubordinates && toggleNode(employee.id)}
+            onKeyDown={(e) => {
+              if ((e.key === 'Enter' || e.key === ' ') && hasSubordinates) {
+                e.preventDefault();
+                toggleNode(employee.id);
+              }
+            }}
+            role={hasSubordinates ? 'button' : undefined}
+            tabIndex={hasSubordinates ? 0 : undefined}
+            aria-expanded={hasSubordinates ? isExpanded : undefined}
+            aria-label={hasSubordinates ? `${isExpanded ? 'Collapse' : 'Expand'} ${employee.fullName}'s team` : undefined}
           >
             {/* Header with Employee Photo */}
             <div className="bg-white/60 dark:bg-white/10 border-b border-current border-opacity-20 p-4">

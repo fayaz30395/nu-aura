@@ -450,10 +450,10 @@ export default function WorkloadDashboardPage() {
                   {/* Over-allocated */}
                   <div>
                     <div className="mb-4 row-between">
-                      <h3 className="text-sm font-medium text-danger-600 dark:text-danger-400">
+                      <h2 className="text-sm font-medium text-danger-600 dark:text-danger-400">
                         Over-Allocated
                         ({filteredEmployees.filter((e) => calculateDynamicStatus(calculateActiveAllocation(e)) === 'OVER_ALLOCATED').length})
-                      </h3>
+                      </h2>
                     </div>
                     <div
                       className="divide-y divide-surface-100 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] dark:divide-surface-800 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]">
@@ -480,10 +480,10 @@ export default function WorkloadDashboardPage() {
                   {/* Under-utilized */}
                   <div>
                     <div className="mb-4 row-between">
-                      <h3 className="text-sm font-medium text-warning-600 dark:text-warning-400">
+                      <h2 className="text-sm font-medium text-warning-600 dark:text-warning-400">
                         Under-Utilized
                         ({filteredEmployees.filter((e) => calculateDynamicStatus(calculateActiveAllocation(e)) === 'UNDER_UTILIZED').length})
-                      </h3>
+                      </h2>
                     </div>
                     <div
                       className="divide-y divide-surface-100 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] dark:divide-surface-800 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]">
@@ -510,10 +510,10 @@ export default function WorkloadDashboardPage() {
                   {/* Unassigned */}
                   <div>
                     <div className="mb-4 row-between">
-                      <h3 className="text-sm font-medium text-[var(--text-muted)]">
+                      <h2 className="text-sm font-medium text-[var(--text-muted)]">
                         Unassigned
                         ({filteredEmployees.filter((e) => calculateDynamicStatus(calculateActiveAllocation(e)) === 'UNASSIGNED').length})
-                      </h3>
+                      </h2>
                     </div>
                     <div
                       className="divide-y divide-surface-100 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] dark:divide-surface-800 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]">
@@ -540,10 +540,10 @@ export default function WorkloadDashboardPage() {
                   {/* Optimal */}
                   <div>
                     <div className="mb-4 row-between">
-                      <h3 className="text-sm font-medium text-success-600 dark:text-success-400">
+                      <h2 className="text-sm font-medium text-success-600 dark:text-success-400">
                         Optimal
                         ({filteredEmployees.filter((e) => calculateDynamicStatus(calculateActiveAllocation(e)) === 'OPTIMAL').length})
-                      </h3>
+                      </h2>
                     </div>
                     <div
                       className="divide-y divide-surface-100 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] dark:divide-surface-800 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]">
@@ -569,9 +569,9 @@ export default function WorkloadDashboardPage() {
 
                   {/* Departments */}
                   <div className="lg:col-span-2">
-                    <h3 className="mb-4 text-sm font-medium text-[var(--text-primary)]">
+                    <h2 className="mb-4 text-sm font-medium text-[var(--text-primary)]">
                       By Department
-                    </h3>
+                    </h2>
                     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                       {(dashboardData.departmentWorkloads || []).map((dept) => (
                         <DepartmentCard key={dept.departmentId} department={dept}/>

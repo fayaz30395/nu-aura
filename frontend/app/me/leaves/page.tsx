@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import {AppLayout} from '@/components/layout';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
+import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
 import {StatusBadge} from '@/components/ui/StatusBadge';
 import {LEAVE_STATUS} from '@/lib/status/vocabulary';
 import {CATEGORICAL_UNSET} from '@/lib/utils/categoricalPalette';
@@ -625,24 +626,12 @@ export default function MyLeavesPage() {
         </Card>
 
         {/* Apply/Edit Leave Modal */}
-        {showApplyModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--bg-overlay)]">
-            <div
-              className="w-full max-w-2xl bg-[var(--bg-card)] rounded-xl shadow-[var(--shadow-elevated)] animate-in fade-in zoom-in-95 duration-200 skeuo-card">
-              <div className="row-between p-6 border-b border-[var(--border-main)]">
-                <h2 className="text-xl font-bold text-[var(--text-primary)]">
-                  {editingRequest ? 'Edit Leave Request' : 'Apply for Leave'}
-                </h2>
-                <button
-                  onClick={handleCloseModal}
-                  aria-label="Close dialog"
-                  className="p-2 hover:bg-[var(--bg-card-hover)] rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                >
-                  <X className="h-5 w-5"/>
-                </button>
-              </div>
-
-              <form onSubmit={handleLeaveSubmit(onLeaveSubmit)} className="p-6 space-y-4">
+        <Modal isOpen={showApplyModal} onClose={handleCloseModal} size="lg">
+          <ModalHeader onClose={handleCloseModal}>
+            {editingRequest ? 'Edit Leave Request' : 'Apply for Leave'}
+          </ModalHeader>
+          <form onSubmit={handleLeaveSubmit(onLeaveSubmit)}>
+            <ModalBody className="space-y-4">
                 {/* Leave Type */}
                 <div>
                   <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
@@ -728,59 +717,43 @@ export default function MyLeavesPage() {
                   />
                   {leaveErrors.reason && <p className="text-danger-500 text-sm mt-1">{leaveErrors.reason.message}</p>}
                 </div>
-
-                {/* Actions */}
-                <div className="flex items-center justify-end gap-4 pt-4">
-                  <button
-                    type="button"
-                    onClick={handleCloseModal}
-                    disabled={createLeaveRequest.isPending || updateLeaveRequest.isPending || leaveSubmitting}
-                    className="px-6 py-2 border border-[var(--border-main)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={createLeaveRequest.isPending || updateLeaveRequest.isPending || leaveSubmitting}
-                    className="flex items-center gap-2 px-6 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-700 transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                  >
-                    {createLeaveRequest.isPending || updateLeaveRequest.isPending || leaveSubmitting ? (
-                      <>
-                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"/>
-                        {editingRequest ? 'Updating...' : 'Submitting...'}
-                      </>
-                    ) : (
-                      <>
-                        <Send className="h-4 w-4"/>
-                        {editingRequest ? 'Update Request' : 'Submit Request'}
-                      </>
-                    )}
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        )}
+            </ModalBody>
+            <ModalFooter className="gap-4">
+              <button
+                type="button"
+                onClick={handleCloseModal}
+                disabled={createLeaveRequest.isPending || updateLeaveRequest.isPending || leaveSubmitting}
+                className="px-6 py-2 border border-[var(--border-main)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={createLeaveRequest.isPending || updateLeaveRequest.isPending || leaveSubmitting}
+                className="flex items-center gap-2 px-6 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-700 transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+              >
+                {createLeaveRequest.isPending || updateLeaveRequest.isPending || leaveSubmitting ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"/>
+                    {editingRequest ? 'Updating...' : 'Submitting...'}
+                  </>
+                ) : (
+                  <>
+                    <Send className="h-4 w-4"/>
+                    {editingRequest ? 'Update Request' : 'Submit Request'}
+                  </>
+                )}
+              </button>
+            </ModalFooter>
+          </form>
+        </Modal>
 
         {/* Cancel Leave Modal */}
         {showCancelModal && cancellingRequest && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--bg-overlay)]">
-            <div
-              className="w-full max-w-md bg-[var(--bg-card)] rounded-xl shadow-[var(--shadow-elevated)] animate-in fade-in zoom-in-95 duration-200 skeuo-card">
-              <div className="row-between p-6 border-b border-[var(--border-main)]">
-                <h2 className="text-xl font-bold text-[var(--text-primary)]">
-                  Cancel Leave Request
-                </h2>
-                <button
-                  onClick={handleCloseCancelModal}
-                  aria-label="Close dialog"
-                  className="p-2 hover:bg-[var(--bg-card-hover)] rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                >
-                  <X className="h-5 w-5"/>
-                </button>
-              </div>
-
-              <form onSubmit={handleCancelSubmit(onCancelSubmit)} className="p-6 space-y-4">
+          <Modal isOpen={true} onClose={handleCloseCancelModal} size="sm">
+            <ModalHeader onClose={handleCloseCancelModal}>Cancel Leave Request</ModalHeader>
+            <form onSubmit={handleCancelSubmit(onCancelSubmit)}>
+              <ModalBody className="space-y-4">
                 <div
                   className="p-4 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-lg">
                   <p className="text-sm text-danger-800 dark:text-danger-200">
@@ -806,37 +779,36 @@ export default function MyLeavesPage() {
                   />
                   {cancelErrors.reason && <p className="text-danger-500 text-sm mt-1">{cancelErrors.reason.message}</p>}
                 </div>
-
-                <div className="flex items-center justify-end gap-4 pt-4">
-                  <button
-                    type="button"
-                    onClick={handleCloseCancelModal}
-                    disabled={cancelLeaveRequest.isPending || cancelSubmitting}
-                    className="px-6 py-2 border border-[var(--border-main)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                  >
-                    Keep Request
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={cancelLeaveRequest.isPending || cancelSubmitting}
-                    className="flex items-center gap-2 px-6 py-2 bg-danger-600 text-white rounded-lg hover:bg-danger-700 transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                  >
-                    {cancelLeaveRequest.isPending || cancelSubmitting ? (
-                      <>
-                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"/>
-                        Cancelling...
-                      </>
-                    ) : (
-                      <>
-                        <Ban className="h-4 w-4"/>
-                        Cancel Request
-                      </>
-                    )}
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
+              </ModalBody>
+              <ModalFooter className="gap-4">
+                <button
+                  type="button"
+                  onClick={handleCloseCancelModal}
+                  disabled={cancelLeaveRequest.isPending || cancelSubmitting}
+                  className="px-6 py-2 border border-[var(--border-main)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                >
+                  Keep Request
+                </button>
+                <button
+                  type="submit"
+                  disabled={cancelLeaveRequest.isPending || cancelSubmitting}
+                  className="flex items-center gap-2 px-6 py-2 bg-danger-600 text-white rounded-lg hover:bg-danger-700 transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                >
+                  {cancelLeaveRequest.isPending || cancelSubmitting ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"/>
+                      Cancelling...
+                    </>
+                  ) : (
+                    <>
+                      <Ban className="h-4 w-4"/>
+                      Cancel Request
+                    </>
+                  )}
+                </button>
+              </ModalFooter>
+            </form>
+          </Modal>
         )}
 
         {/* Leave Encashment Modal */}

@@ -10,6 +10,7 @@ import {useAuth} from '@/lib/hooks/useAuth';
 import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
 import {ConfirmDialog} from '@/components/ui';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
 import {FileText} from 'lucide-react';
 import {
   useActivateLeaveType,
@@ -424,36 +425,36 @@ export default function LeaveTypesManagementPage() {
         />
 
         {/* Add/Edit Leave Type Modal */}
-        {showModal && (
-          <div className="fixed inset-0 glass-aura !rounded-none flex items-center justify-center p-4 z-50">
-            <div className="skeuo-card max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-              <div className="p-6">
-                <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-xl font-bold text-[var(--text-primary)]">
-                    {editingLeaveType ? 'Edit Leave Type' : 'Add New Leave Type'}
-                  </h2>
-                  <button
-                    onClick={() => {
-                      setShowModal(false);
-                      setEditingLeaveType(null);
-                      resetForm();
-                    }}
-                    className="text-[var(--text-muted)] hover:text-[var(--text-muted)]"
-                  >
-                    <span className="text-2xl">&times;</span>
-                  </button>
-                </div>
-
-                <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+        <Modal
+          isOpen={showModal}
+          onClose={() => {
+            setShowModal(false);
+            setEditingLeaveType(null);
+            resetForm();
+          }}
+          size="xl"
+        >
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="flex flex-col flex-1 min-h-0 overflow-hidden">
+            <ModalHeader
+              onClose={() => {
+                setShowModal(false);
+                setEditingLeaveType(null);
+                resetForm();
+              }}
+            >
+              {editingLeaveType ? 'Edit Leave Type' : 'Add New Leave Type'}
+            </ModalHeader>
+            <ModalBody className="space-y-6">
                   {/* Basic Information */}
                   <div className="border-b pb-4">
                     <h3 className="text-lg font-medium text-[var(--text-primary)] mb-4">Basic Information</h3>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                        <label htmlFor="leave-type-code" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                           Leave Code *
                         </label>
                         <input
+                          id="leave-type-code"
                           type="text"
                           {...form.register('leaveCode')}
                           className="input-aura"
@@ -464,10 +465,11 @@ export default function LeaveTypesManagementPage() {
                         )}
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                        <label htmlFor="leave-type-name" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                           Leave Name *
                         </label>
                         <input
+                          id="leave-type-name"
                           type="text"
                           {...form.register('leaveName')}
                           className="input-aura"
@@ -480,10 +482,11 @@ export default function LeaveTypesManagementPage() {
                     </div>
 
                     <div className="mt-4">
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                      <label htmlFor="leave-type-description" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                         Description
                       </label>
                       <textarea
+                        id="leave-type-description"
                         {...form.register('description')}
                         rows={2}
                         className="input-aura"
@@ -493,10 +496,11 @@ export default function LeaveTypesManagementPage() {
 
                     <div className="grid grid-cols-3 gap-4 mt-4">
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                        <label htmlFor="leave-type-color-code" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                           Color Code
                         </label>
                         <input
+                          id="leave-type-color-code"
                           type="color"
                           {...form.register('colorCode')}
                           className="w-full h-10 px-1 py-1 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md"
@@ -513,10 +517,11 @@ export default function LeaveTypesManagementPage() {
                         </label>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                        <label htmlFor="leave-type-gender-specific" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                           Gender Specific
                         </label>
                         <select
+                          id="leave-type-gender-specific"
                           {...form.register('genderSpecific')}
                           className="input-aura"
                         >
@@ -533,10 +538,11 @@ export default function LeaveTypesManagementPage() {
                     <h3 className="text-lg font-medium text-[var(--text-primary)] mb-4">Quota & Limits</h3>
                     <div className="grid grid-cols-3 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                        <label htmlFor="leave-type-annual-quota" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                           Annual Quota (days)
                         </label>
                         <input
+                          id="leave-type-annual-quota"
                           type="number"
                           step="0.5"
                           min="0"
@@ -545,10 +551,11 @@ export default function LeaveTypesManagementPage() {
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                        <label htmlFor="leave-type-max-consecutive-days" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                           Max Consecutive Days
                         </label>
                         <input
+                          id="leave-type-max-consecutive-days"
                           type="number"
                           min="1"
                           {...form.register('maxConsecutiveDays')}
@@ -556,10 +563,11 @@ export default function LeaveTypesManagementPage() {
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                        <label htmlFor="leave-type-max-days-per-request" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                           Max Days Per Request
                         </label>
                         <input
+                          id="leave-type-max-days-per-request"
                           type="number"
                           min="1"
                           {...form.register('maxDaysPerRequest')}
@@ -570,10 +578,11 @@ export default function LeaveTypesManagementPage() {
 
                     <div className="grid grid-cols-2 gap-4 mt-4">
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                        <label htmlFor="leave-type-min-days-notice" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                           Min Days Notice
                         </label>
                         <input
+                          id="leave-type-min-days-notice"
                           type="number"
                           min="0"
                           {...form.register('minDaysNotice')}
@@ -581,10 +590,11 @@ export default function LeaveTypesManagementPage() {
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                        <label htmlFor="leave-type-applicable-after-days" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                           Applicable After (days)
                         </label>
                         <input
+                          id="leave-type-applicable-after-days"
                           type="number"
                           min="0"
                           {...form.register('applicableAfterDays')}
@@ -599,10 +609,11 @@ export default function LeaveTypesManagementPage() {
                     <h3 className="text-lg font-medium text-[var(--text-primary)] mb-4">Accrual Settings</h3>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                        <label htmlFor="leave-type-accrual-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                           Accrual Type
                         </label>
                         <select
+                          id="leave-type-accrual-type"
                           {...form.register('accrualType')}
                           className="input-aura"
                         >
@@ -613,10 +624,11 @@ export default function LeaveTypesManagementPage() {
                         </select>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                        <label htmlFor="leave-type-accrual-rate" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                           Accrual Rate (days/period)
                         </label>
                         <input
+                          id="leave-type-accrual-rate"
                           type="number"
                           step="0.1"
                           min="0"
@@ -642,10 +654,11 @@ export default function LeaveTypesManagementPage() {
 
                       {form.watch('isCarryForwardAllowed') && (
                         <div>
-                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                          <label htmlFor="leave-type-max-carry-forward-days" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                             Max Carry Forward Days
                           </label>
                           <input
+                            id="leave-type-max-carry-forward-days"
                             type="number"
                             step="0.5"
                             min="0"
@@ -675,8 +688,8 @@ export default function LeaveTypesManagementPage() {
                     </div>
                   </div>
 
-                  {/* Form Actions */}
-                  <div className="flex justify-end space-x-4">
+            </ModalBody>
+            <ModalFooter>
                     <button
                       type="button"
                       onClick={() => {
@@ -696,12 +709,9 @@ export default function LeaveTypesManagementPage() {
                       {form.formState.isSubmitting || createMutation.isPending || updateMutation.isPending ? 'Saving...' : (editingLeaveType ? 'Update' : 'Create')} Leave
                       Type
                     </button>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-        )}
+            </ModalFooter>
+          </form>
+        </Modal>
       </div>
     </>
   );

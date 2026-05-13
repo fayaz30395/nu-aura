@@ -1,10 +1,10 @@
 'use client';
 
 import React, {useRef} from 'react';
-import {AlertCircle, Loader2, Send, User, Users, X,} from 'lucide-react';
+import {AlertCircle, Loader2, Send, User, Users,} from 'lucide-react';
 import {Button} from '@/components/ui/Button';
 import {Input} from '@/components/ui/Input';
-import {Card} from '@/components/ui/Card';
+import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
 import {sanitizeEmailHtml} from '@/lib/utils/sanitize';
 import {ComposeEmail, EmailContact} from './types';
 
@@ -49,30 +49,15 @@ export const ComposeModal = React.memo(function ComposeModal({
   const ccInputRef = useRef<HTMLInputElement>(null);
   const suggestionsRef = useRef<HTMLDivElement>(null);
 
-  if (!opened) return null;
-
   const modalTitle =
     composeMode === 'new' ? 'New Message' :
       composeMode === 'reply' ? 'Reply' :
         composeMode === 'replyAll' ? 'Reply All' : 'Forward';
 
   return (
-    <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
-      <Card className="w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
-        <div className="row-between p-4 border-b border-[var(--border-main)]">
-          <h3 className="font-semibold text-[var(--text-primary)]">
-            {modalTitle}
-          </h3>
-          <button
-            onClick={onClose}
-            aria-label="Close dialog"
-            className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-          >
-            <X className="h-5 w-5"/>
-          </button>
-        </div>
-
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+    <Modal isOpen={opened} onClose={onClose} size="lg">
+      <ModalHeader onClose={onClose}>{modalTitle}</ModalHeader>
+      <ModalBody className="space-y-4">
           {sendError && (
             <div className="flex items-center gap-2 p-4 bg-danger-50 text-danger-600 rounded-lg">
               <AlertCircle className="h-4 w-4"/>
@@ -223,25 +208,23 @@ export const ComposeModal = React.memo(function ComposeModal({
               </p>
             )}
           </div>
-        </div>
-
-        <div className="row-between p-4 border-t border-[var(--border-main)] bg-[var(--bg-secondary)]">
-          <Button
-            variant="ghost"
-            onClick={onClose}
-          >
-            Discard
-          </Button>
-          <Button
-            variant="primary"
-            onClick={onSend}
-            disabled={isSending || !composeEmail.to || sendSuccess}
-            leftIcon={isSending ? <Loader2 className="h-4 w-4 animate-spin"/> : <Send className="h-4 w-4"/>}
-          >
-            {isSending ? 'Sending...' : 'Send'}
-          </Button>
-        </div>
-      </Card>
-    </div>
+      </ModalBody>
+      <ModalFooter className="justify-between">
+        <Button
+          variant="ghost"
+          onClick={onClose}
+        >
+          Discard
+        </Button>
+        <Button
+          variant="primary"
+          onClick={onSend}
+          disabled={isSending || !composeEmail.to || sendSuccess}
+          leftIcon={isSending ? <Loader2 className="h-4 w-4 animate-spin"/> : <Send className="h-4 w-4"/>}
+        >
+          {isSending ? 'Sending...' : 'Send'}
+        </Button>
+      </ModalFooter>
+    </Modal>
   );
 });

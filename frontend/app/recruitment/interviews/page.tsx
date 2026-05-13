@@ -1242,7 +1242,7 @@ function InterviewsPage() {
                 <div className="flex-shrink-0 h-12 w-12 rounded-xl bg-danger-100 flex items-center justify-center">
                   <Trash2 className="h-6 w-6 text-danger-600"/>
                 </div>
-                <h3 className="ml-4 text-lg font-medium text-[var(--text-primary)]">Delete Interview</h3>
+                <h2 className="ml-4 text-lg font-medium text-[var(--text-primary)]">Delete Interview</h2>
               </div>
               <p className="text-body-muted mb-6">
                 Are you sure you want to delete this interview for <strong
@@ -1282,7 +1282,7 @@ function InterviewsPage() {
                   {/* Technical Questions */}
                   {generatedQuestions.technicalQuestions && generatedQuestions.technicalQuestions.length > 0 && (
                     <div>
-                      <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-4">Technical Questions</h3>
+                      <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-4">Technical Questions</h2>
                       <div className="space-y-4">
                         {generatedQuestions.technicalQuestions.map((q: TechnicalQuestion, idx: number) => (
                           <div key={idx} className="p-4 bg-[var(--bg-secondary)] rounded-xl">
@@ -1306,7 +1306,7 @@ function InterviewsPage() {
                   {/* Behavioral Questions */}
                   {generatedQuestions.behavioralQuestions && generatedQuestions.behavioralQuestions.length > 0 && (
                     <div>
-                      <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-4">Behavioral Questions</h3>
+                      <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-4">Behavioral Questions</h2>
                       <div className="space-y-4">
                         {generatedQuestions.behavioralQuestions.map((q: BehavioralQuestion, idx: number) => (
                           <div key={idx} className="p-4 bg-[var(--bg-secondary)] rounded-xl">
@@ -1321,7 +1321,7 @@ function InterviewsPage() {
                   {/* Situational Questions */}
                   {generatedQuestions.situationalQuestions && generatedQuestions.situationalQuestions.length > 0 && (
                     <div>
-                      <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-4">Situational Questions</h3>
+                      <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-4">Situational Questions</h2>
                       <div className="space-y-4">
                         {generatedQuestions.situationalQuestions.map((q: SituationalQuestion, idx: number) => (
                           <div key={idx} className="p-4 bg-[var(--bg-secondary)] rounded-xl">
@@ -1336,7 +1336,7 @@ function InterviewsPage() {
                   {/* Cultural Fit Questions */}
                   {generatedQuestions.culturalFitQuestions && generatedQuestions.culturalFitQuestions.length > 0 && (
                     <div>
-                      <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-4">Cultural Fit Questions</h3>
+                      <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-4">Cultural Fit Questions</h2>
                       <div className="space-y-4">
                         {generatedQuestions.culturalFitQuestions.map((q: CulturalFitQuestion, idx: number) => (
                           <div key={idx} className="p-4 bg-[var(--bg-secondary)] rounded-xl">
@@ -1351,7 +1351,7 @@ function InterviewsPage() {
                   {/* Role-Specific Questions */}
                   {generatedQuestions.roleSpecificQuestions && generatedQuestions.roleSpecificQuestions.length > 0 && (
                     <div>
-                      <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-4">Role-Specific Questions</h3>
+                      <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-4">Role-Specific Questions</h2>
                       <div className="space-y-4">
                         {generatedQuestions.roleSpecificQuestions.map((q: RoleSpecificQuestion, idx: number) => (
                           <div key={idx} className="p-4 bg-[var(--bg-secondary)] rounded-xl">

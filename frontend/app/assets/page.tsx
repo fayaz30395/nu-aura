@@ -674,10 +674,11 @@ export default function AssetManagementPage() {
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="asset-code" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Asset Code *
                     </label>
                     <input
+                      id="asset-code"
                       type="text"
                       className="input-aura"
                       placeholder="AST001"
@@ -686,10 +687,11 @@ export default function AssetManagementPage() {
                     {errors.assetCode && <span className="text-danger-500 text-sm">{errors.assetCode.message}</span>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="asset-name" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Asset Name *
                     </label>
                     <input
+                      id="asset-name"
                       type="text"
                       className="input-aura"
                       placeholder="MacBook Pro 16"
@@ -701,10 +703,11 @@ export default function AssetManagementPage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="asset-category" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Category *
                     </label>
                     <select
+                      id="asset-category"
                       className="input-aura"
                       {...register('category')}
                     >
@@ -721,10 +724,11 @@ export default function AssetManagementPage() {
                     {errors.category && <span className="text-danger-500 text-sm">{errors.category.message}</span>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="asset-status" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Status
                     </label>
                     <select
+                      id="asset-status"
                       className="input-aura"
                       {...register('status')}
                     >
@@ -740,10 +744,11 @@ export default function AssetManagementPage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="asset-brand" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Brand
                     </label>
                     <input
+                      id="asset-brand"
                       type="text"
                       className="input-aura"
                       placeholder="Apple"
@@ -751,10 +756,11 @@ export default function AssetManagementPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="asset-model" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Model
                     </label>
                     <input
+                      id="asset-model"
                       type="text"
                       className="input-aura"
                       placeholder="MacBook Pro 16 M3"
@@ -764,10 +770,11 @@ export default function AssetManagementPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                  <label htmlFor="asset-serial-number" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Serial Number
                   </label>
                   <input
+                    id="asset-serial-number"
                     type="text"
                     className="input-aura"
                     placeholder="C02XG2JHH7JY"
@@ -777,20 +784,22 @@ export default function AssetManagementPage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="asset-purchase-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Purchase Date
                     </label>
                     <input
+                      id="asset-purchase-date"
                       type="date"
                       className="input-aura"
                       {...register('purchaseDate')}
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="asset-warranty-expiry" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Warranty Expiry
                     </label>
                     <input
+                      id="asset-warranty-expiry"
                       type="date"
                       className="input-aura"
                       {...register('warrantyExpiry')}
@@ -800,10 +809,11 @@ export default function AssetManagementPage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="asset-purchase-cost" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Purchase Cost
                     </label>
                     <input
+                      id="asset-purchase-cost"
                       type="number"
                       step="0.01"
                       className="input-aura"
@@ -812,10 +822,11 @@ export default function AssetManagementPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="asset-current-value" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Current Value
                     </label>
                     <input
+                      id="asset-current-value"
                       type="number"
                       step="0.01"
                       className="input-aura"
@@ -826,10 +837,11 @@ export default function AssetManagementPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                  <label htmlFor="asset-location" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Location
                   </label>
                   <input
+                    id="asset-location"
                     type="text"
                     className="input-aura"
                     placeholder="Main Office - Floor 3"
@@ -838,10 +850,11 @@ export default function AssetManagementPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                  <label htmlFor="asset-notes" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Notes
                   </label>
                   <textarea
+                    id="asset-notes"
                     rows={3}
                     className="input-aura"
                     placeholder="Additional notes..."
@@ -1055,10 +1068,11 @@ export default function AssetManagementPage() {
                 Assign <strong>{selectedAsset?.assetName}</strong> to an employee.
               </p>
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                <label htmlFor="assign-employee-id" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Employee ID
                 </label>
                 <input
+                  id="assign-employee-id"
                   type="text"
                   className="input-aura"
                   placeholder="Enter employee ID"
