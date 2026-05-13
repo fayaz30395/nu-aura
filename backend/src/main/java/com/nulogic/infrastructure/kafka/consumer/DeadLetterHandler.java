@@ -1,7 +1,7 @@
 package com.nulogic.infrastructure.kafka.consumer;
 
-import com.nulogic.domain.kafka.FailedKafkaEvent;
-import com.nulogic.domain.kafka.FailedKafkaEvent.FailedEventStatus;
+import com.nulogic.infrastructure.kafka.FailedKafkaEvent;
+import com.nulogic.infrastructure.kafka.FailedKafkaEvent.FailedEventStatus;
 import com.nulogic.infrastructure.kafka.IdempotencyService;
 import com.nulogic.infrastructure.kafka.KafkaTopics;
 import com.nulogic.infrastructure.kafka.repository.FailedKafkaEventRepository;

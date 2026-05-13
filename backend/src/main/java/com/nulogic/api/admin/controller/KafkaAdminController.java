@@ -2,8 +2,8 @@ package com.nulogic.api.admin.controller;
 
 import com.nulogic.common.security.RequiresPermission;
 import com.nulogic.common.security.SecurityContext;
-import com.nulogic.domain.kafka.FailedKafkaEvent;
-import com.nulogic.domain.kafka.FailedKafkaEvent.FailedEventStatus;
+import com.nulogic.infrastructure.kafka.FailedKafkaEvent;
+import com.nulogic.infrastructure.kafka.FailedKafkaEvent.FailedEventStatus;
 import com.nulogic.infrastructure.kafka.consumer.DeadLetterHandler;
 import com.nulogic.infrastructure.kafka.repository.FailedKafkaEventRepository;
 import io.swagger.v3.oas.annotations.Operation;

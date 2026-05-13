@@ -1,4 +1,4 @@
-package com.nulogic.domain.file;
+package com.nulogic.infrastructure.storage;
 
 import com.nulogic.common.entity.TenantAware;
 import jakarta.persistence.*;

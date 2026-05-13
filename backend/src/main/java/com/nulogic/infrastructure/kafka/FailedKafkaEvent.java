@@ -1,4 +1,4 @@
-package com.nulogic.domain.kafka;
+package com.nulogic.infrastructure.kafka;
 
 import com.nulogic.common.entity.BaseEntity;
 import jakarta.persistence.*;

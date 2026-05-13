@@ -1,7 +1,7 @@
 package com.nulogic.infrastructure.kafka.repository;
 
-import com.nulogic.domain.kafka.FailedKafkaEvent;
-import com.nulogic.domain.kafka.FailedKafkaEvent.FailedEventStatus;
+import com.nulogic.infrastructure.kafka.FailedKafkaEvent;
+import com.nulogic.infrastructure.kafka.FailedKafkaEvent.FailedEventStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
