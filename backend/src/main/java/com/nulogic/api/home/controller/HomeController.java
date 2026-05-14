@@ -4,6 +4,8 @@ import com.nulogic.api.home.dto.*;
 import com.nulogic.application.home.service.HomeService;
 import com.nulogic.common.security.RequiresPermission;
 import com.nulogic.common.security.SecurityContext;
+import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -32,6 +34,7 @@ import static com.nulogic.common.security.Permission.EMPLOYEE_VIEW_SELF;
 public class HomeController {
 
     private final HomeService homeService;
+    private final TenantTimeService tenantTimeService;
 
     @GetMapping("/birthdays")
     @Operation(summary = "Get upcoming birthdays", description = "Returns employees with birthdays in the next N days")
@@ -89,7 +92,7 @@ public class HomeController {
         if (employeeId == null) {
             log.warn("Attendance requested by user without linked employee record (SuperAdmin?)");
             return ResponseEntity.ok(AttendanceTodayResponse.builder()
-                    .date(java.time.LocalDate.now())
+                    .date(tenantTimeService.today(TenantContext.requireCurrentTenant()))
                     .status("NOT_APPLICABLE")
                     .isCheckedIn(false)
                     .canCheckIn(false)

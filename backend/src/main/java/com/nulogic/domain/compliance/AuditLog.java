@@ -1,6 +1,8 @@
 package com.nulogic.domain.compliance;
 
 import com.nulogic.common.entity.TenantAware;
+import com.nulogic.common.util.TenantTimestamp;
+import com.nulogic.common.util.TimeAuditingEntityListener;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,12 +13,19 @@ import lombok.experimental.SuperBuilder;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/**
+ * Compliance audit log row. {@code timestamp} is stamped by
+ * {@link TimeAuditingEntityListener} via {@link TenantTimestamp} so the value
+ * is resolved in the tenant's IANA zone — closing row 2 of
+ * {@code backend/docs/audit/prepersist-now-audit.md}.
+ */
 @Entity(name = "ComplianceAuditLog")
 @Table(name = "compliance_audit_logs", indexes = {
         @Index(name = "idx_compliance_audit_entity", columnList = "entity_type, entity_id"),
         @Index(name = "idx_compliance_audit_user", columnList = "performed_by"),
         @Index(name = "idx_compliance_audit_timestamp", columnList = "timestamp")
 })
+@EntityListeners(TimeAuditingEntityListener.class)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -44,6 +53,7 @@ public class AuditLog extends TenantAware {
 
     private String performedByName;
 
+    @TenantTimestamp
     @Column(nullable = false)
     private LocalDateTime timestamp;
 
@@ -65,13 +75,6 @@ public class AuditLog extends TenantAware {
 
     @Enumerated(EnumType.STRING)
     private AuditSeverity severity;
-
-    @PrePersist
-    public void prePersist() {
-        if (timestamp == null) {
-            timestamp = LocalDateTime.now();
-        }
-    }
 
     public enum AuditAction {
         CREATE,

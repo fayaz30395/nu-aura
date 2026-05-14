@@ -9,6 +9,7 @@ import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.RequiresPermission;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.performance.Feedback360Cycle;
 import com.nulogic.domain.performance.Feedback360Request;
 import com.nulogic.domain.performance.Feedback360Request.ReviewerType;
@@ -22,7 +23,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -34,6 +34,7 @@ import java.util.stream.Collectors;
 public class Feedback360Controller {
 
     private final Feedback360Service feedback360Service;
+    private final TenantTimeService tenantTimeService;
 
     // ========== Cycles ==========
 
@@ -119,7 +120,7 @@ public class Feedback360Controller {
                     if (request.getIsAnonymous() != null) {
                         existing.setIsAnonymous(request.getIsAnonymous());
                     }
-                    existing.setUpdatedAt(LocalDateTime.now());
+                    existing.setUpdatedAt(tenantTimeService.now(tenantId));
 
                     Feedback360Cycle updated = feedback360Service.updateCycle(existing);
                     return ResponseEntity.ok(Feedback360CycleResponse.fromEntity(updated));
@@ -240,7 +241,7 @@ public class Feedback360Controller {
         response.setTenantId(tenantId);
 
         if (!response.getIsDraft()) {
-            response.setSubmittedAt(LocalDateTime.now());
+            response.setSubmittedAt(tenantTimeService.now(tenantId));
         }
 
         feedback360Service.createOrUpdateResponse(response);

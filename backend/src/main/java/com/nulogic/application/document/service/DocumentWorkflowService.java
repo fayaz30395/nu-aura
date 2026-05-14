@@ -3,6 +3,7 @@ package com.nulogic.application.document.service;
 import com.nulogic.common.exception.BusinessException;
 import com.nulogic.common.exception.ResourceNotFoundException;
 import com.nulogic.common.security.SecurityContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.document.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,6 +30,7 @@ public class DocumentWorkflowService {
     private final DocumentApprovalTaskRepository approvalTaskRepository;
     private final DocumentAccessRepository documentAccessRepository;
     private final DocumentExpiryTrackingRepository expiryTrackingRepository;
+    private final TenantTimeService tenantTimeService;
 
     /**
      * Initiate document approval workflow
@@ -51,7 +52,7 @@ public class DocumentWorkflowService {
                 .requestedBy(userId)
                 .approvalLevel(1)
                 .totalApprovalLevels(totalApprovalLevels)
-                .initiatedAt(LocalDateTime.now())
+                .initiatedAt(tenantTimeService.now(tenantId))
                 .createdBy(userId)
                 .build();
 
@@ -119,13 +120,13 @@ public class DocumentWorkflowService {
         // Mark task as approved
         currentTask.setStatus(DocumentApprovalTask.TaskStatus.APPROVED);
         currentTask.setComments(comments);
-        currentTask.setApprovedAt(LocalDateTime.now());
+        currentTask.setApprovedAt(tenantTimeService.now(tenantId));
         approvalTaskRepository.save(currentTask);
 
         // Check if all approvals are complete
         if (workflow.getApprovalLevel() >= workflow.getTotalApprovalLevels()) {
             workflow.setStatus(DocumentApprovalWorkflow.WorkflowStatus.APPROVED);
-            workflow.setCompletedAt(LocalDateTime.now());
+            workflow.setCompletedAt(tenantTimeService.now(tenantId));
             log.info("Document approved: {}", workflow.getDocumentId());
         } else {
             // Move to next approval level
@@ -164,13 +165,13 @@ public class DocumentWorkflowService {
         // Mark task as rejected
         currentTask.setStatus(DocumentApprovalTask.TaskStatus.REJECTED);
         currentTask.setComments(rejectionReason);
-        currentTask.setApprovedAt(LocalDateTime.now());
+        currentTask.setApprovedAt(tenantTimeService.now(tenantId));
         approvalTaskRepository.save(currentTask);
 
         // Mark workflow as rejected
         workflow.setStatus(DocumentApprovalWorkflow.WorkflowStatus.REJECTED);
         workflow.setRejectionReason(rejectionReason);
-        workflow.setCompletedAt(LocalDateTime.now());
+        workflow.setCompletedAt(tenantTimeService.now(tenantId));
 
         log.info("Document rejected: {}", workflow.getDocumentId());
         return approvalWorkflowRepository.save(workflow);
@@ -196,7 +197,7 @@ public class DocumentWorkflowService {
                 .departmentId(departmentId)
                 .accessLevel(accessLevel)
                 .grantedBy(grantedBy)
-                .grantedAt(LocalDateTime.now())
+                .grantedAt(tenantTimeService.now(tenantId))
                 .isActive(true)
                 .createdBy(grantedBy)
                 .build();
@@ -233,7 +234,7 @@ public class DocumentWorkflowService {
         UUID tenantId = SecurityContext.getCurrentTenantId();
         UUID userId = SecurityContext.getCurrentUserId();
 
-        if (expiryDate.isBefore(LocalDate.now())) {
+        if (expiryDate.isBefore(tenantTimeService.today(tenantId))) {
             throw new BusinessException("Expiry date must be in the future");
         }
 
@@ -286,7 +287,7 @@ public class DocumentWorkflowService {
         }
 
         tracking.setIsNotified(true);
-        tracking.setNotifiedAt(LocalDateTime.now());
+        tracking.setNotifiedAt(tenantTimeService.now(tenantId));
         expiryTrackingRepository.save(tracking);
     }
 

@@ -10,6 +10,7 @@ import com.nulogic.common.exception.BusinessException;
 import com.nulogic.common.exception.ResourceNotFoundException;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.recognition.*;
 import com.nulogic.domain.wall.model.WallPost;
 import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
@@ -47,11 +48,12 @@ public class RecognitionService {
     private final EmployeeRepository employeeRepository;
     private final WallService wallService;
     private final PostReactionRepository postReactionRepository;
+    private final TenantTimeService tenantTimeService;
 
     // ==================== Recognition Operations ====================
 
     public RecognitionResponse giveRecognition(UUID giverId, RecognitionRequest request) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         if (giverId.equals(request.getReceiverId())) {
             throw new BusinessException("You cannot recognize yourself");
@@ -68,7 +70,7 @@ public class RecognitionService {
                 .isPublic(request.getIsPublic() != null ? request.getIsPublic() : true)
                 .isAnonymous(request.getIsAnonymous() != null ? request.getIsAnonymous() : false)
                 .badgeId(request.getBadgeId())
-                .recognizedAt(LocalDateTime.now())
+                .recognizedAt(tenantTimeService.now(tenantId))
                 .isApproved(true)
                 .build();
         entity.setTenantId(tenantId);
@@ -220,9 +222,10 @@ public class RecognitionService {
 
     @Transactional(readOnly = true)
     public EngagementDashboardResponse getDashboard() {
-        UUID tenantId = TenantContext.getCurrentTenant();
-        LocalDateTime startOfMonth = LocalDate.now().withDayOfMonth(1).atStartOfDay();
-        LocalDateTime startOfYear = LocalDate.now().withDayOfYear(1).atStartOfDay();
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        LocalDate tenantToday = tenantTimeService.today(tenantId);
+        LocalDateTime startOfMonth = tenantToday.withDayOfMonth(1).atStartOfDay();
+        LocalDateTime startOfYear = tenantToday.withDayOfYear(1).atStartOfDay();
 
         // Recognition counts
         List<Recognition> monthlyRecognitions = recognitionRepository.findRecentPublicRecognitions(tenantId,
@@ -254,7 +257,7 @@ public class RecognitionService {
         // surveyRepository.findActiveSurveys(tenantId, LocalDate.now());
 
         // Upcoming milestones
-        LocalDate today = LocalDate.now();
+        LocalDate today = tenantToday;
         LocalDate nextWeek = today.plusDays(7);
         List<Milestone> upcomingMilestones = milestoneRepository.findUpcoming(tenantId, today, nextWeek);
 
@@ -272,8 +275,8 @@ public class RecognitionService {
 
     @Transactional(readOnly = true)
     public List<Milestone> getUpcomingMilestones(int days) {
-        UUID tenantId = TenantContext.getCurrentTenant();
-        LocalDate today = LocalDate.now();
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        LocalDate today = tenantTimeService.today(tenantId);
         return milestoneRepository.findUpcoming(tenantId, today, today.plusDays(days));
     }
 

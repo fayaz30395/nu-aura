@@ -6,6 +6,7 @@ import com.nulogic.api.analytics.dto.ScheduledReportRequest;
 import com.nulogic.api.analytics.dto.ScheduledReportResponse;
 import com.nulogic.common.exception.ResourceNotFoundException;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.analytics.ReportDefinition;
 import com.nulogic.domain.analytics.ScheduledReport;
 import com.nulogic.domain.analytics.ScheduledReport.Frequency;
@@ -42,6 +43,7 @@ public class ScheduledReportService {
     private final EmployeeRepository employeeRepository;
     private final DepartmentRepository departmentRepository;
     private final ObjectMapper objectMapper;
+    private final TenantTimeService tenantTimeService;
 
     @Transactional
     public ScheduledReportResponse createScheduledReport(ScheduledReportRequest request, UUID createdBy) {
@@ -60,7 +62,7 @@ public class ScheduledReportService {
                 .recipients(serializeList(request.getRecipients()))
                 .parameters(serializeParameters(request))
                 .isActive(request.getIsActive() != null ? request.getIsActive() : true)
-                .nextRunAt(calculateNextRunTime(request.getFrequency(), request.getDayOfWeek(),
+                .nextRunAt(calculateNextRunTime(tenantId, request.getFrequency(), request.getDayOfWeek(),
                         request.getDayOfMonth(), request.getTimeOfDay()))
                 .createdBy(createdBy)
                 .build();
@@ -91,7 +93,7 @@ public class ScheduledReportService {
         report.setRecipients(serializeList(request.getRecipients()));
         report.setParameters(serializeParameters(request));
         report.setIsActive(request.getIsActive());
-        report.setNextRunAt(calculateNextRunTime(request.getFrequency(), request.getDayOfWeek(),
+        report.setNextRunAt(calculateNextRunTime(tenantId, request.getFrequency(), request.getDayOfWeek(),
                 request.getDayOfMonth(), request.getTimeOfDay()));
         report.setUpdatedBy(updatedBy);
 
@@ -149,7 +151,7 @@ public class ScheduledReportService {
 
         if (report.getIsActive()) {
             // Recalculate next run time when re-activating
-            report.setNextRunAt(calculateNextRunTime(report.getFrequency(), report.getDayOfWeek(),
+            report.setNextRunAt(calculateNextRunTime(tenantId, report.getFrequency(), report.getDayOfWeek(),
                     report.getDayOfMonth(), report.getTimeOfDay()));
         }
 
@@ -162,10 +164,18 @@ public class ScheduledReportService {
     /**
      * Get reports that are due for execution.
      * Called by the scheduler job.
+     *
+     * <p>S12-B / wave-5 follow-up: this is a cross-tenant sweep with no
+     * {@link TenantContext} set, so we pass {@code null} to
+     * {@link TenantTimeService#now(UUID)} and let it resolve to the platform
+     * default zone. {@code nextRunAt} values were persisted in their owning
+     * tenant's local time; comparing them against the default zone is
+     * acceptable in the current single-region (IST) deployment and stays
+     * consistent with the rest of the per-tenant time policy.</p>
      */
     @Transactional(readOnly = true)
     public List<ScheduledReport> getReportsDueForExecution() {
-        return scheduledReportRepository.findDueForExecution(LocalDateTime.now());
+        return scheduledReportRepository.findDueForExecution(tenantTimeService.now(null));
     }
 
     /**
@@ -176,8 +186,12 @@ public class ScheduledReportService {
         ScheduledReport report = scheduledReportRepository.findById(reportId)
                 .orElseThrow(() -> new ResourceNotFoundException("Scheduled report not found: " + reportId));
 
-        report.setLastRunAt(LocalDateTime.now());
-        report.setNextRunAt(calculateNextRunTime(report.getFrequency(), report.getDayOfWeek(),
+        // S12-B / wave-5 follow-up: resolve "now" in the owning tenant's zone.
+        // Caller (ScheduledReportExecutionJob) sets TenantContext before invoking, but we
+        // prefer the report's tenantId directly so this method is safe regardless of caller.
+        UUID tenantId = report.getTenantId();
+        report.setLastRunAt(tenantTimeService.now(tenantId));
+        report.setNextRunAt(calculateNextRunTime(tenantId, report.getFrequency(), report.getDayOfWeek(),
                 report.getDayOfMonth(), report.getTimeOfDay()));
 
         scheduledReportRepository.save(report);
@@ -227,15 +241,24 @@ public class ScheduledReportService {
         throw new IllegalArgumentException("Either reportDefinitionId or reportType must be provided");
     }
 
-    private LocalDateTime calculateNextRunTime(Frequency frequency, Integer dayOfWeek,
+    /**
+     * Compute the next run timestamp for a scheduled report in the tenant's local zone.
+     *
+     * <p>S12-B / wave-5 follow-up: every "now" reference here resolves through
+     * {@link TenantTimeService} so the cadence respects the tenant's IANA timezone
+     * rather than the JVM default. Zero-arg {@code now()} would have silently
+     * drifted by hours the first time a tenant is hosted outside the server zone.</p>
+     */
+    private LocalDateTime calculateNextRunTime(UUID tenantId, Frequency frequency, Integer dayOfWeek,
                                                Integer dayOfMonth, LocalTime timeOfDay) {
-        LocalDate today = LocalDate.now();
+        LocalDate today = tenantTimeService.today(tenantId);
+        LocalDateTime nowLocal = tenantTimeService.now(tenantId);
         LocalTime time = timeOfDay != null ? timeOfDay : LocalTime.of(6, 0); // Default 6 AM
 
         return switch (frequency) {
             case DAILY -> {
                 LocalDateTime next = today.atTime(time);
-                if (next.isBefore(LocalDateTime.now())) {
+                if (next.isBefore(nowLocal)) {
                     next = next.plusDays(1);
                 }
                 yield next;
@@ -244,7 +267,7 @@ public class ScheduledReportService {
                 DayOfWeek targetDay = DayOfWeek.of(dayOfWeek != null ? dayOfWeek : 1); // Default Monday
                 LocalDate nextDate = today.with(TemporalAdjusters.nextOrSame(targetDay));
                 LocalDateTime next = nextDate.atTime(time);
-                if (next.isBefore(LocalDateTime.now())) {
+                if (next.isBefore(nowLocal)) {
                     next = next.plusWeeks(1);
                 }
                 yield next;
@@ -252,7 +275,7 @@ public class ScheduledReportService {
             case MONTHLY -> {
                 int day = dayOfMonth != null ? Math.min(dayOfMonth, today.lengthOfMonth()) : 1;
                 LocalDate nextDate = today.withDayOfMonth(day);
-                if (nextDate.isBefore(today) || (nextDate.equals(today) && time.isBefore(LocalTime.now()))) {
+                if (nextDate.isBefore(today) || (nextDate.equals(today) && time.isBefore(nowLocal.toLocalTime()))) {
                     nextDate = nextDate.plusMonths(1);
                     day = Math.min(dayOfMonth != null ? dayOfMonth : 1, nextDate.lengthOfMonth());
                     nextDate = nextDate.withDayOfMonth(day);

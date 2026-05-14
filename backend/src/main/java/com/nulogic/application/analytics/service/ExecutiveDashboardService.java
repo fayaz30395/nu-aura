@@ -3,6 +3,7 @@ package com.nulogic.application.analytics.service;
 import com.nulogic.api.analytics.dto.ExecutiveDashboardResponse;
 import com.nulogic.api.analytics.dto.ExecutiveDashboardResponse.*;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.analytics.AttritionPrediction;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.infrastructure.analytics.repository.AttritionPredictionRepository;
@@ -36,13 +37,14 @@ public class ExecutiveDashboardService {
     private final PayslipRepository payslipRepository;
     private final AttritionPredictionRepository attritionRepository;
     private final WorkforceTrendRepository trendRepository;
+    private final TenantTimeService tenantTimeService;
 
     /**
      * Get comprehensive executive dashboard
      */
     public ExecutiveDashboardResponse getExecutiveDashboard() {
-        UUID tenantId = TenantContext.getCurrentTenant();
-        LocalDate today = LocalDate.now();
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        LocalDate today = tenantTimeService.today(tenantId);
         int currentYear = today.getYear();
         int currentMonth = today.getMonthValue();
 
@@ -476,6 +478,7 @@ public class ExecutiveDashboardService {
             }
         }
 
+        LocalDate today = tenantTimeService.today(tenantId);
         if (criticalRisk > 5) {
             alerts.add(StrategicAlert.builder()
                     .id(UUID.randomUUID().toString())
@@ -486,7 +489,7 @@ public class ExecutiveDashboardService {
                     .recommendation("Review compensation and engagement programs for at-risk employees")
                     .impact("HIGH")
                     .trend("WORSENING")
-                    .createdAt(LocalDate.now().toString())
+                    .createdAt(today.toString())
                     .build());
         }
 
@@ -500,7 +503,7 @@ public class ExecutiveDashboardService {
                 .recommendation("Ensure all managers have scheduled review meetings")
                 .impact("MEDIUM")
                 .trend("STABLE")
-                .createdAt(LocalDate.now().toString())
+                .createdAt(today.toString())
                 .build());
 
         return alerts;
@@ -571,7 +574,7 @@ public class ExecutiveDashboardService {
         Long activeEmployees = employeeRepository.countByTenantIdAndStatus(tenantId, Employee.EmployeeStatus.ACTIVE);
         Long terminations = employeeRepository.countByTenantIdAndStatusAndExitDateBetween(
                 tenantId, Employee.EmployeeStatus.TERMINATED,
-                LocalDate.of(year, 1, 1), LocalDate.now());
+                LocalDate.of(year, 1, 1), tenantTimeService.today(tenantId));
         if (activeEmployees == 0) return BigDecimal.ZERO;
         return BigDecimal.valueOf(terminations * 100.0 / activeEmployees);
     }

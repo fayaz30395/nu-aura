@@ -13,10 +13,15 @@ function Skeleton({
   }
   return (
     <div
+      role="status"
+      aria-live="polite"
+      aria-label="Loading content"
       className={cn("skeleton-aura", className)}
       style={style}
       {...props}
-    />
+    >
+      <span className="sr-only">Loading...</span>
+    </div>
   )
 }
 
@@ -27,7 +32,13 @@ function SkeletonText({
                         ...props
                       }: React.HTMLAttributes<HTMLDivElement> & { lines?: number }) {
   return (
-    <div className={cn("space-y-2", className)} {...props}>
+    <div
+      role="status"
+      aria-live="polite"
+      aria-label="Loading content"
+      className={cn("space-y-2", className)}
+      {...props}
+    >
       {Array.from({length: lines}).map((_, i) => (
         <Skeleton
           key={i}
@@ -37,6 +48,7 @@ function SkeletonText({
           )}
         />
       ))}
+      <span className="sr-only">Loading...</span>
     </div>
   )
 }
@@ -71,6 +83,9 @@ function SkeletonCard({
                       }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
+      role="status"
+      aria-live="polite"
+      aria-label="Loading content"
       className={cn(
         "rounded-lg border p-4 space-y-4",
         className
@@ -89,6 +104,7 @@ function SkeletonCard({
         </div>
       </div>
       <SkeletonText lines={3}/>
+      <span className="sr-only">Loading...</span>
     </div>
   )
 }
@@ -100,7 +116,7 @@ function SkeletonTableRow({
                             ...props
                           }: React.HTMLAttributes<HTMLTableRowElement> & { columns?: number }) {
   return (
-    <tr className={cn(className)} {...props}>
+    <tr className={cn(className)} aria-hidden="true" {...props}>
       {Array.from({length: columns}).map((_, i) => (
         <td key={i} className="px-4 py-4">
           <Skeleton height={16} width={i === 0 ? 96 : "100%"}/>
@@ -119,6 +135,9 @@ function SkeletonTable({
                        }: React.HTMLAttributes<HTMLDivElement> & { rows?: number; columns?: number }) {
   return (
     <div
+      role="status"
+      aria-live="polite"
+      aria-label="Loading content"
       className={cn("overflow-hidden rounded-lg border", className)}
       style={{
         backgroundColor: 'var(--bg-card)',
@@ -126,6 +145,7 @@ function SkeletonTable({
       }}
       {...props}
     >
+      <span className="sr-only">Loading...</span>
       <table className="w-full">
         <thead style={{backgroundColor: 'var(--bg-surface)'}}>
         <tr style={{borderBottom: '1px solid var(--border-main)'}}>
@@ -153,6 +173,9 @@ function SkeletonStatCard({
                           }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
+      role="status"
+      aria-live="polite"
+      aria-label="Loading content"
       className={cn("rounded-lg border p-4", className)}
       style={{
         backgroundColor: 'var(--bg-card)',
@@ -166,6 +189,7 @@ function SkeletonStatCard({
       </div>
       <Skeleton height={32} width={80} className="mt-2"/>
       <Skeleton height={12} width={128} className="mt-2"/>
+      <span className="sr-only">Loading...</span>
     </div>
   )
 }
@@ -178,6 +202,9 @@ function SkeletonListItem({
                           }: React.HTMLAttributes<HTMLDivElement> & { hasAvatar?: boolean }) {
   return (
     <div
+      role="status"
+      aria-live="polite"
+      aria-label="Loading content"
       className={cn("flex items-center space-x-4 py-4", className)}
       {...props}
     >
@@ -187,6 +214,7 @@ function SkeletonListItem({
         <Skeleton height={12} width="33%"/>
       </div>
       <Skeleton height={32} width={80} className="rounded-md"/>
+      <span className="sr-only">Loading...</span>
     </div>
   )
 }
@@ -198,7 +226,13 @@ function SkeletonForm({
                         ...props
                       }: React.HTMLAttributes<HTMLDivElement> & { fields?: number }) {
   return (
-    <div className={cn("space-y-6", className)} {...props}>
+    <div
+      role="status"
+      aria-live="polite"
+      aria-label="Loading content"
+      className={cn("space-y-6", className)}
+      {...props}
+    >
       {Array.from({length: fields}).map((_, i) => (
         <div key={i} className="space-y-2">
           <Skeleton height={16} width={96}/>
@@ -209,6 +243,7 @@ function SkeletonForm({
         <Skeleton height={40} width={96} className="rounded-md"/>
         <Skeleton height={40} width={96} className="rounded-md"/>
       </div>
+      <span className="sr-only">Loading...</span>
     </div>
   )
 }
@@ -220,6 +255,9 @@ function SkeletonEmployeeCard({
                               }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
+      role="status"
+      aria-live="polite"
+      aria-label="Loading content"
       className={cn("rounded-lg border p-4", className)}
       style={{
         backgroundColor: 'var(--bg-card)',
@@ -244,6 +282,7 @@ function SkeletonEmployeeCard({
           <Skeleton height={12} width={144}/>
         </div>
       </div>
+      <span className="sr-only">Loading...</span>
     </div>
   )
 }
@@ -254,7 +293,14 @@ function SkeletonDashboard({
                              ...props
                            }: React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <div className={cn("space-y-4", className)} {...props}>
+    <div
+      role="status"
+      aria-live="polite"
+      aria-label="Loading content"
+      className={cn("space-y-4", className)}
+      {...props}
+    >
+      <span className="sr-only">Loading...</span>
       {/* Stats row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {Array.from({length: 4}).map((_, i) => (

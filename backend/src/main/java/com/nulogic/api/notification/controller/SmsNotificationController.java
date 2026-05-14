@@ -7,6 +7,8 @@ import com.nulogic.application.notification.service.SmsNotificationService;
 import com.nulogic.application.notification.service.SmsNotificationService.SmsResult;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.RequiresPermission;
+import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.infrastructure.sms.TwilioConfig;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -16,9 +18,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * REST controller for SMS notifications via Twilio.
@@ -38,6 +42,7 @@ public class SmsNotificationController {
 
     private final SmsNotificationService smsNotificationService;
     private final TwilioConfig twilioConfig;
+    private final TenantTimeService tenantTimeService;
 
     @PostMapping("/send")
     @RequiresPermission(Permission.NOTIFICATION_CREATE)
@@ -62,17 +67,21 @@ public class SmsNotificationController {
                 request.getFromNumber()
         );
 
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        LocalDateTime sentAt = tenantTimeService.now(tenantId);
+
         if (result.success()) {
             return ResponseEntity.ok(SmsNotificationResponse.success(
                     result.messageSid(),
                     result.status(),
                     request.getPhoneNumber(),
                     request.getFromNumber() != null ? request.getFromNumber() : twilioConfig.getFromNumber(),
-                    smsNotificationService.isMockMode()
+                    smsNotificationService.isMockMode(),
+                    sentAt
             ));
         } else {
             return ResponseEntity.badRequest().body(
-                    SmsNotificationResponse.failure(result.errorMessage(), request.getPhoneNumber())
+                    SmsNotificationResponse.failure(result.errorMessage(), request.getPhoneNumber(), sentAt)
             );
         }
     }
@@ -96,6 +105,9 @@ public class SmsNotificationController {
 
         Map<String, SmsResult> results = smsNotificationService.sendBulkSms(request.getPhoneNumbers(), message);
 
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        LocalDateTime sentAt = tenantTimeService.now(tenantId);
+
         List<SmsNotificationResponse> responses = new ArrayList<>();
         for (Map.Entry<String, SmsResult> entry : results.entrySet()) {
             SmsResult result = entry.getValue();
@@ -105,10 +117,11 @@ public class SmsNotificationController {
                         result.status(),
                         entry.getKey(),
                         twilioConfig.getFromNumber(),
-                        smsNotificationService.isMockMode()
+                        smsNotificationService.isMockMode(),
+                        sentAt
                 ));
             } else {
-                responses.add(SmsNotificationResponse.failure(result.errorMessage(), entry.getKey()));
+                responses.add(SmsNotificationResponse.failure(result.errorMessage(), entry.getKey(), sentAt));
             }
         }
 

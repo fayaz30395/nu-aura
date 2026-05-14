@@ -23,6 +23,36 @@ export function formatDateShort(d: DateInput): string {
   return format(toDate(d), 'MMM d');
 }
 
+/** "May 2026" — month + year for calendar headers, monthly groupings. */
+export function formatMonthYear(d: DateInput): string {
+  return format(toDate(d), 'MMMM yyyy');
+}
+
+/** "MON" — three-letter weekday for date badges, day-of-week headers. */
+export function formatWeekday(d: DateInput): string {
+  return format(toDate(d), 'EEE').toUpperCase();
+}
+
+/** "Monday" — full weekday for greetings, calendar legends. */
+export function formatWeekdayLong(d: DateInput): string {
+  return format(toDate(d), 'EEEE');
+}
+
+/** "May 15" — month + day (same as formatDateShort; aliased for naming clarity). */
+export function formatDayMonth(d: DateInput): string {
+  return format(toDate(d), 'MMM d');
+}
+
+/** "Monday, May 15, 2026" — long form with weekday for page titles, headers. */
+export function formatLongDate(d: DateInput): string {
+  return format(toDate(d), 'EEEE, MMMM d, yyyy');
+}
+
+/** "Mon, May 15" — short weekday + month + day for compact lists, tables. */
+export function formatWeekdayDate(d: DateInput): string {
+  return format(toDate(d), 'EEE, MMM d');
+}
+
 /** "3:45 PM" — 12-hour, canonical across NU-AURA. */
 export function formatTime(d: DateInput): string {
   return format(toDate(d), 'h:mm a');

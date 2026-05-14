@@ -280,6 +280,9 @@ export default function SsoSettingsPage() {
       </div>
       <button
         type="button"
+        role="switch"
+        aria-checked={checked}
+        aria-label={label}
         onClick={() => onChange(!checked)}
         className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
           checked ? 'bg-accent-700' : 'bg-[var(--bg-secondary)]'
@@ -435,8 +438,9 @@ export default function SsoSettingsPage() {
                     {...register('metadataUrl')}
                     placeholder="https://your-idp.example.com/metadata.xml"
                     className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
+                    aria-describedby="settings-sso-metadata-url-help"
                   />
-                  <p className="text-caption mt-1">
+                  <p id="settings-sso-metadata-url-help" className="text-caption mt-1">
                     If provided, the IdP metadata will be auto-fetched to configure the SSO connection.
                   </p>
                   {errors.metadataUrl && (
@@ -498,8 +502,9 @@ export default function SsoSettingsPage() {
                     rows={6}
                     placeholder={`-----BEGIN CERTIFICATE-----\nMIID...\n-----END CERTIFICATE-----`}
                     className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 font-mono text-sm"
+                    aria-describedby="settings-sso-certificate-help"
                   />
-                  <p className="text-caption mt-1">
+                  <p id="settings-sso-certificate-help" className="text-caption mt-1">
                     {isExistingConfig
                       ? 'Leave blank to keep the existing certificate. Paste a new one to replace it.'
                       : 'Paste the PEM-encoded X.509 certificate from your IdP.'}
@@ -609,9 +614,10 @@ export default function SsoSettingsPage() {
                     {...register('defaultRoleId')}
                     placeholder="Role UUID (leave blank for no default role)"
                     className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 text-sm"
+                    aria-describedby={samlConfig?.defaultRoleName ? 'settings-sso-default-role-id-help' : undefined}
                   />
                   {samlConfig?.defaultRoleName && (
-                    <p className="text-xs text-[var(--text-secondary)] mt-1">
+                    <p id="settings-sso-default-role-id-help" className="text-xs text-[var(--text-secondary)] mt-1">
                       Current: {samlConfig.defaultRoleName}
                     </p>
                   )}

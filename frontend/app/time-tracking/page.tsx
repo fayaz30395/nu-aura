@@ -147,7 +147,7 @@ export default function TimeTrackingPage() {
           <PermissionGate permission={Permissions.TIME_TRACKING_CREATE} fallback={<div/>}>
             <button
               onClick={() => router.push('/time-tracking/new')}
-              className="flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl font-medium shadow-[var(--shadow-dropdown)] shadow-accent-500/25 transition-all duration-200 hover:shadow-[var(--shadow-dropdown)] hover:shadow-accent-500/30"
+              className="flex items-center justify-center gap-2 px-4 py-2 bg-accent-600 hover:bg-accent-700 text-white rounded-xl font-medium transition-colors duration-200"
             >
               <Plus className="h-5 w-5"/>
               Log Time
@@ -376,8 +376,8 @@ export default function TimeTrackingPage() {
             >
               <div className="row-between mb-4">
                 <div
-                  className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 group-hover:scale-110 transition-transform">
-                  <Plus className="h-5 w-5 text-white"/>
+                  className="p-4 rounded-xl bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-400 group-hover:scale-110 transition-transform">
+                  <Plus className="h-5 w-5"/>
                 </div>
                 <ChevronRight
                   className="h-5 w-5 text-[var(--text-muted)] group-hover:text-accent-500 group-hover:translate-x-1 transition-all"/>
@@ -397,8 +397,8 @@ export default function TimeTrackingPage() {
           >
             <div className="row-between mb-4">
               <div
-                className="p-4 rounded-xl bg-gradient-to-br from-success-500 to-success-600 group-hover:scale-110 transition-transform">
-                <CalendarDays className="h-5 w-5 text-white"/>
+                className="p-4 rounded-xl bg-success-50 dark:bg-success-900/30 text-success-700 dark:text-success-400 group-hover:scale-110 transition-transform">
+                <CalendarDays className="h-5 w-5"/>
               </div>
               <ChevronRight
                 className="h-5 w-5 text-[var(--text-muted)] group-hover:text-success-500 group-hover:translate-x-1 transition-all"/>

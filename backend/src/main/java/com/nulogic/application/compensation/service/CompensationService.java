@@ -6,6 +6,7 @@ import com.nulogic.common.exception.BusinessException;
 import com.nulogic.common.exception.ResourceNotFoundException;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.audit.AuditLog.AuditAction;
 import com.nulogic.domain.compensation.CompensationReviewCycle;
 import com.nulogic.domain.compensation.CompensationReviewCycle.CycleStatus;
@@ -24,7 +25,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -41,6 +41,7 @@ public class CompensationService {
     private final EmployeeRepository employeeRepository;
     private final SalaryStructureRepository salaryStructureRepository;
     private final AuditLogService auditLogService;
+    private final TenantTimeService tenantTimeService;
 
     // ==================== Review Cycle Management ====================
 
@@ -146,7 +147,7 @@ public class CompensationService {
 
         // Get current salary from salary structure
         BigDecimal currentSalary = salaryStructureRepository
-                .findActiveByEmployeeIdAndDate(tenantId, request.getEmployeeId(), LocalDate.now())
+                .findActiveByEmployeeIdAndDate(tenantId, request.getEmployeeId(), tenantTimeService.today(tenantId))
                 .map(ss -> ss.getGrossSalary())
                 .orElse(BigDecimal.ZERO);
 
@@ -339,7 +340,7 @@ public class CompensationService {
             throw new BusinessException("Can only apply approved revisions");
         }
 
-        if (revision.getEffectiveDate().isAfter(LocalDate.now())) {
+        if (revision.getEffectiveDate().isAfter(tenantTimeService.today(tenantId))) {
             throw new BusinessException("Cannot apply revision before effective date");
         }
 

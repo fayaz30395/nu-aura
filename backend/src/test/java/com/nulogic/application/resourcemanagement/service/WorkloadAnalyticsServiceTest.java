@@ -3,7 +3,8 @@ package com.nulogic.application.resourcemanagement.service;
 import com.nulogic.api.resourcemanagement.dto.AllocationDTOs.AllocationStatus;
 import com.nulogic.api.resourcemanagement.dto.AllocationDTOs.EmployeeCapacity;
 import com.nulogic.api.resourcemanagement.dto.WorkloadDTOs.*;
-import com.nulogic.common.security.SecurityContext;
+import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.project.Project;
 import com.nulogic.infrastructure.attendance.repository.HolidayRepository;
@@ -11,13 +12,13 @@ import com.nulogic.infrastructure.employee.repository.DepartmentRepository;
 import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import com.nulogic.infrastructure.project.repository.HrmsProjectRepository;
 import com.nulogic.infrastructure.project.repository.ProjectEmployeeRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -32,7 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -57,6 +58,9 @@ class WorkloadAnalyticsServiceTest {
     @Mock
     private ResourceManagementService resourceManagementService;
 
+    @Mock
+    private TenantTimeService tenantTimeService;
+
     private WorkloadAnalyticsService workloadAnalyticsService;
 
     private UUID tenantId;
@@ -76,7 +80,8 @@ class WorkloadAnalyticsServiceTest {
                 projectRepository,
                 projectEmployeeRepository,
                 departmentRepository,
-                holidayRepository);
+                holidayRepository,
+                tenantTimeService);
         workloadAnalyticsService.setResourceManagementService(resourceManagementService);
 
         employee = Employee.builder()
@@ -96,6 +101,14 @@ class WorkloadAnalyticsServiceTest {
                 .build();
         project.setId(projectId);
         project.setTenantId(tenantId);
+
+        TenantContext.setCurrentTenant(tenantId);
+        lenient().when(tenantTimeService.today(any())).thenReturn(LocalDate.now());
+    }
+
+    @AfterEach
+    void tearDown() {
+        TenantContext.clear();
     }
 
     // ============================================
@@ -154,27 +167,24 @@ class WorkloadAnalyticsServiceTest {
         void shouldReturnFullDashboard() {
             EmployeeWorkload workload = buildWorkload(AllocationStatus.UNASSIGNED, 0);
 
-            try (MockedStatic<SecurityContext> sc = mockStatic(SecurityContext.class)) {
-                sc.when(SecurityContext::getCurrentTenantId).thenReturn(tenantId);
-                when(employeeRepository.findByTenantId(tenantId)).thenReturn(List.of(employee));
-                when(projectRepository.findAllByTenantId(eq(tenantId), any(Pageable.class)))
-                        .thenReturn(new PageImpl<>(List.of(project)));
-                when(departmentRepository.findByTenantId(tenantId)).thenReturn(Collections.emptyList());
-                when(projectEmployeeRepository.findAllByProjectIdAndTenantIdAndIsActive(
-                        eq(projectId), eq(tenantId), eq(true))).thenReturn(Collections.emptyList());
-                when(resourceManagementService.getEmployeeWorkload(employeeId)).thenReturn(workload);
-                when(resourceManagementService.getEmployeeCapacity(eq(employeeId), any()))
-                        .thenReturn(buildCapacity(0));
+            when(employeeRepository.findByTenantId(tenantId)).thenReturn(List.of(employee));
+            when(projectRepository.findAllByTenantId(eq(tenantId), any(Pageable.class)))
+                    .thenReturn(new PageImpl<>(List.of(project)));
+            when(departmentRepository.findByTenantId(tenantId)).thenReturn(Collections.emptyList());
+            when(projectEmployeeRepository.findAllByProjectIdAndTenantIdAndIsActive(
+                    eq(projectId), eq(tenantId), eq(true))).thenReturn(Collections.emptyList());
+            when(resourceManagementService.getEmployeeWorkload(employeeId)).thenReturn(workload);
+            when(resourceManagementService.getEmployeeCapacity(eq(employeeId), any()))
+                    .thenReturn(buildCapacity(0));
 
-                WorkloadDashboardData result = workloadAnalyticsService.getWorkloadDashboard(null);
+            WorkloadDashboardData result = workloadAnalyticsService.getWorkloadDashboard(null);
 
-                assertThat(result).isNotNull();
-                assertThat(result.getSummary()).isNotNull();
-                assertThat(result.getEmployeeWorkloads()).hasSize(1);
-                assertThat(result.getProjectWorkloads()).hasSize(1);
-                assertThat(result.getTrends()).hasSize(6);
-                assertThat(result.getHeatmapData()).isNotNull();
-            }
+            assertThat(result).isNotNull();
+            assertThat(result.getSummary()).isNotNull();
+            assertThat(result.getEmployeeWorkloads()).hasSize(1);
+            assertThat(result.getProjectWorkloads()).hasSize(1);
+            assertThat(result.getTrends()).hasSize(6);
+            assertThat(result.getHeatmapData()).isNotNull();
         }
 
         @Test
@@ -184,21 +194,18 @@ class WorkloadAnalyticsServiceTest {
             WorkloadFilterOptions filter = new WorkloadFilterOptions();
             filter.setAllocationStatus(List.of(AllocationStatus.OPTIMAL));
 
-            try (MockedStatic<SecurityContext> sc = mockStatic(SecurityContext.class)) {
-                sc.when(SecurityContext::getCurrentTenantId).thenReturn(tenantId);
-                when(employeeRepository.findByTenantId(tenantId)).thenReturn(List.of(employee));
-                when(projectRepository.findAllByTenantId(eq(tenantId), any(Pageable.class)))
-                        .thenReturn(Page.empty());
-                when(departmentRepository.findByTenantId(tenantId)).thenReturn(Collections.emptyList());
-                when(resourceManagementService.getEmployeeWorkload(employeeId)).thenReturn(overAllocated);
-                when(resourceManagementService.getEmployeeCapacity(eq(employeeId), any()))
-                        .thenReturn(buildCapacity(120));
+            when(employeeRepository.findByTenantId(tenantId)).thenReturn(List.of(employee));
+            when(projectRepository.findAllByTenantId(eq(tenantId), any(Pageable.class)))
+                    .thenReturn(Page.empty());
+            when(departmentRepository.findByTenantId(tenantId)).thenReturn(Collections.emptyList());
+            when(resourceManagementService.getEmployeeWorkload(employeeId)).thenReturn(overAllocated);
+            when(resourceManagementService.getEmployeeCapacity(eq(employeeId), any()))
+                    .thenReturn(buildCapacity(120));
 
-                WorkloadDashboardData result = workloadAnalyticsService.getWorkloadDashboard(filter);
+            WorkloadDashboardData result = workloadAnalyticsService.getWorkloadDashboard(filter);
 
-                // Over-allocated employee should be filtered out from OPTIMAL filter
-                assertThat(result.getEmployeeWorkloads()).isEmpty();
-            }
+            // Over-allocated employee should be filtered out from OPTIMAL filter
+            assertThat(result.getEmployeeWorkloads()).isEmpty();
         }
     }
 
@@ -213,18 +220,13 @@ class WorkloadAnalyticsServiceTest {
         @Test
         @DisplayName("Should return empty list when no departments exist")
         void shouldReturnEmptyWhenNoDepartments() {
-            try (MockedStatic<SecurityContext> sc = mockStatic(SecurityContext.class)) {
-                sc.when(SecurityContext::getCurrentTenantId).thenReturn(tenantId);
-                when(employeeRepository.findByTenantId(tenantId)).thenReturn(Collections.emptyList());
-                when(projectRepository.findAllByTenantId(eq(tenantId), any(Pageable.class)))
-                        .thenReturn(Page.empty());
-                when(departmentRepository.findByTenantId(tenantId)).thenReturn(Collections.emptyList());
+            when(employeeRepository.findByTenantId(tenantId)).thenReturn(Collections.emptyList());
+            when(departmentRepository.findByTenantId(tenantId)).thenReturn(Collections.emptyList());
 
-                List<DepartmentWorkload> result = workloadAnalyticsService
-                        .getDepartmentWorkloads(LocalDate.now(), LocalDate.now().plusMonths(1));
+            List<DepartmentWorkload> result = workloadAnalyticsService
+                    .getDepartmentWorkloads(LocalDate.now(), LocalDate.now().plusMonths(1));
 
-                assertThat(result).isEmpty();
-            }
+            assertThat(result).isEmpty();
         }
     }
 
@@ -239,55 +241,46 @@ class WorkloadAnalyticsServiceTest {
         @Test
         @DisplayName("Should export CSV with header row")
         void shouldExportCsvWithHeader() {
-            try (MockedStatic<SecurityContext> sc = mockStatic(SecurityContext.class)) {
-                sc.when(SecurityContext::getCurrentTenantId).thenReturn(tenantId);
-                when(employeeRepository.findByTenantId(tenantId)).thenReturn(Collections.emptyList());
-                when(projectRepository.findAllByTenantId(eq(tenantId), any(Pageable.class)))
-                        .thenReturn(Page.empty());
-                when(departmentRepository.findByTenantId(tenantId)).thenReturn(Collections.emptyList());
+            when(employeeRepository.findByTenantId(tenantId)).thenReturn(Collections.emptyList());
+            when(projectRepository.findAllByTenantId(eq(tenantId), any(Pageable.class)))
+                    .thenReturn(Page.empty());
+            when(departmentRepository.findByTenantId(tenantId)).thenReturn(Collections.emptyList());
 
-                byte[] result = workloadAnalyticsService.exportWorkloadReport("csv", null);
+            byte[] result = workloadAnalyticsService.exportWorkloadReport("csv", null);
 
-                assertThat(result).isNotNull();
-                String csv = new String(result);
-                assertThat(csv).contains("Employee");
-                assertThat(csv).contains("Total Allocation");
-                assertThat(csv).contains("--- Summary ---");
-            }
+            assertThat(result).isNotNull();
+            String csv = new String(result);
+            assertThat(csv).contains("Employee");
+            assertThat(csv).contains("Total Allocation");
+            assertThat(csv).contains("--- Summary ---");
         }
 
         @Test
         @DisplayName("Should fall back to CSV for xlsx format")
         void shouldFallbackForXlsx() {
-            try (MockedStatic<SecurityContext> sc = mockStatic(SecurityContext.class)) {
-                sc.when(SecurityContext::getCurrentTenantId).thenReturn(tenantId);
-                when(employeeRepository.findByTenantId(tenantId)).thenReturn(Collections.emptyList());
-                when(projectRepository.findAllByTenantId(eq(tenantId), any(Pageable.class)))
-                        .thenReturn(Page.empty());
-                when(departmentRepository.findByTenantId(tenantId)).thenReturn(Collections.emptyList());
+            when(employeeRepository.findByTenantId(tenantId)).thenReturn(Collections.emptyList());
+            when(projectRepository.findAllByTenantId(eq(tenantId), any(Pageable.class)))
+                    .thenReturn(Page.empty());
+            when(departmentRepository.findByTenantId(tenantId)).thenReturn(Collections.emptyList());
 
-                byte[] result = workloadAnalyticsService.exportWorkloadReport("xlsx", null);
+            byte[] result = workloadAnalyticsService.exportWorkloadReport("xlsx", null);
 
-                assertThat(result).isNotNull();
-                assertThat(new String(result)).contains("Employee");
-            }
+            assertThat(result).isNotNull();
+            assertThat(new String(result)).contains("Employee");
         }
 
         @Test
         @DisplayName("Should throw for unknown format")
         void shouldThrowForUnknownFormat() {
-            try (MockedStatic<SecurityContext> sc = mockStatic(SecurityContext.class)) {
-                sc.when(SecurityContext::getCurrentTenantId).thenReturn(tenantId);
-                when(employeeRepository.findByTenantId(tenantId)).thenReturn(Collections.emptyList());
-                when(projectRepository.findAllByTenantId(eq(tenantId), any(Pageable.class)))
-                        .thenReturn(Page.empty());
-                when(departmentRepository.findByTenantId(tenantId)).thenReturn(Collections.emptyList());
+            when(employeeRepository.findByTenantId(tenantId)).thenReturn(Collections.emptyList());
+            when(projectRepository.findAllByTenantId(eq(tenantId), any(Pageable.class)))
+                    .thenReturn(Page.empty());
+            when(departmentRepository.findByTenantId(tenantId)).thenReturn(Collections.emptyList());
 
-                assertThatThrownBy(() ->
-                        workloadAnalyticsService.exportWorkloadReport("docx", null))
-                        .isInstanceOf(IllegalArgumentException.class)
-                        .hasMessageContaining("Unsupported export format");
-            }
+            assertThatThrownBy(() ->
+                    workloadAnalyticsService.exportWorkloadReport("docx", null))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("Unsupported export format");
         }
     }
 
@@ -301,19 +294,16 @@ class WorkloadAnalyticsServiceTest {
             LocalDate start = LocalDate.now();
             LocalDate end = start.plusWeeks(1);
 
-            try (MockedStatic<SecurityContext> sc = mockStatic(SecurityContext.class)) {
-                sc.when(SecurityContext::getCurrentTenantId).thenReturn(tenantId);
-                when(employeeRepository.findByTenantId(tenantId)).thenReturn(List.of(employee));
-                when(resourceManagementService.getEmployeeCapacity(eq(employeeId), any()))
-                        .thenReturn(buildCapacity(50));
+            when(employeeRepository.findByTenantId(tenantId)).thenReturn(List.of(employee));
+            when(resourceManagementService.getEmployeeCapacity(eq(employeeId), any()))
+                    .thenReturn(buildCapacity(50));
 
-                List<WorkloadHeatmapRow> rows = workloadAnalyticsService
-                        .getWorkloadHeatmap(start, end, null, 10);
+            List<WorkloadHeatmapRow> rows = workloadAnalyticsService
+                    .getWorkloadHeatmap(start, end, null, 10);
 
-                assertThat(rows).hasSize(1);
-                assertThat(rows.get(0).getEmployeeId()).isEqualTo(employeeId);
-                assertThat(rows.get(0).getCells()).isNotEmpty();
-            }
+            assertThat(rows).hasSize(1);
+            assertThat(rows.get(0).getEmployeeId()).isEqualTo(employeeId);
+            assertThat(rows.get(0).getCells()).isNotEmpty();
         }
 
         @Test
@@ -322,16 +312,13 @@ class WorkloadAnalyticsServiceTest {
             UUID deptId = UUID.randomUUID();
             employee.setDepartmentId(UUID.randomUUID()); // different dept
 
-            try (MockedStatic<SecurityContext> sc = mockStatic(SecurityContext.class)) {
-                sc.when(SecurityContext::getCurrentTenantId).thenReturn(tenantId);
-                when(employeeRepository.findByTenantId(tenantId)).thenReturn(List.of(employee));
+            when(employeeRepository.findByTenantId(tenantId)).thenReturn(List.of(employee));
 
-                List<WorkloadHeatmapRow> rows = workloadAnalyticsService
-                        .getWorkloadHeatmap(LocalDate.now(), LocalDate.now().plusWeeks(1),
-                                deptId, null);
+            List<WorkloadHeatmapRow> rows = workloadAnalyticsService
+                    .getWorkloadHeatmap(LocalDate.now(), LocalDate.now().plusWeeks(1),
+                            deptId, null);
 
-                assertThat(rows).isEmpty();
-            }
+            assertThat(rows).isEmpty();
         }
     }
 }

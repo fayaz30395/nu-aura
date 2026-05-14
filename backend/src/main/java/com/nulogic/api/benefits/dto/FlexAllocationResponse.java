@@ -59,7 +59,19 @@ public class FlexAllocationResponse {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public static FlexAllocationResponse from(FlexBenefitAllocation allocation) {
+    /**
+     * Build a response from the entity using a caller-supplied "today" reference.
+     *
+     * <p>DTOs cannot inject Spring beans, so the caller (a service) must resolve the
+     * tenant-aware date via {@link com.nulogic.common.util.TenantTimeService#today(java.util.UUID)}
+     * and pass it in. This keeps {@code daysUntilExpiry} aligned with the tenant's
+     * timezone instead of the JVM default, per the Wave-10 zero-arg {@code now()} sweep.</p>
+     *
+     * @param allocation source entity
+     * @param today      caller-resolved tenant-local "today"; must not be {@code null}
+     * @return populated response
+     */
+    public static FlexAllocationResponse from(FlexBenefitAllocation allocation, LocalDate today) {
         BigDecimal total = allocation.getTotalCredits() != null ? allocation.getTotalCredits() : BigDecimal.ONE;
         BigDecimal used = allocation.getUsedCredits() != null ? allocation.getUsedCredits() : BigDecimal.ZERO;
 
@@ -69,7 +81,7 @@ public class FlexAllocationResponse {
 
         int daysUntilExpiry = 0;
         if (allocation.getExpiryDate() != null) {
-            daysUntilExpiry = (int) java.time.temporal.ChronoUnit.DAYS.between(LocalDate.now(),
+            daysUntilExpiry = (int) java.time.temporal.ChronoUnit.DAYS.between(today,
                     allocation.getExpiryDate());
         }
 

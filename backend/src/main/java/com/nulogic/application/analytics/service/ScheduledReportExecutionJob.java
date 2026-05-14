@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nulogic.application.report.service.ReportGenerationService;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.analytics.ReportExecution;
 import com.nulogic.domain.analytics.ScheduledReport;
 import com.nulogic.infrastructure.analytics.repository.ReportExecutionRepository;
@@ -21,7 +22,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
@@ -42,6 +42,7 @@ public class ScheduledReportExecutionJob {
     private final ReportExecutionRepository reportExecutionRepository;
     private final JavaMailSender mailSender;
     private final ObjectMapper objectMapper;
+    private final TenantTimeService tenantTimeService;
 
     @Value("${spring.mail.from:noreply@hrms.com}")
     private String fromEmail;
@@ -106,7 +107,7 @@ public class ScheduledReportExecutionJob {
                 .executionType(ReportExecution.ExecutionType.SCHEDULED)
                 .parameters(scheduledReport.getParameters())
                 .status(ReportExecution.ExecutionStatus.RUNNING)
-                .startedAt(LocalDateTime.now())
+                .startedAt(tenantTimeService.now(scheduledReport.getTenantId()))
                 .build();
 
         reportExecutionRepository.save(execution);
@@ -131,7 +132,7 @@ public class ScheduledReportExecutionJob {
             execution.setFilePath(reportResult.getObjectName());
             execution.setFileSize(reportResult.getSize());
             execution.setExecutionTimeMs(executionTimeMs);
-            execution.setCompletedAt(LocalDateTime.now());
+            execution.setCompletedAt(tenantTimeService.now(scheduledReport.getTenantId()));
             reportExecutionRepository.save(execution);
 
             // Mark the scheduled report as executed (updates lastRunAt and nextRunAt)
@@ -148,7 +149,7 @@ public class ScheduledReportExecutionJob {
             execution.setStatus(ReportExecution.ExecutionStatus.FAILED);
             execution.setErrorMessage(e.getMessage());
             execution.setExecutionTimeMs(System.currentTimeMillis() - startTime);
-            execution.setCompletedAt(LocalDateTime.now());
+            execution.setCompletedAt(tenantTimeService.now(scheduledReport.getTenantId()));
             reportExecutionRepository.save(execution);
 
             // Still mark as executed to prevent repeated failures
@@ -169,13 +170,13 @@ public class ScheduledReportExecutionJob {
     private ReportGenerationService.ReportResult generateReport(
             ScheduledReport scheduledReport, String reportType, Map<String, Object> params) {
 
-        LocalDate today = LocalDate.now();
+        LocalDate today = tenantTimeService.today(scheduledReport.getTenantId());
         String period = today.format(DateTimeFormatter.ofPattern("yyyy-MM"));
 
         // Build report data based on type
         Map<String, Object> reportData = new HashMap<>(params);
         reportData.put("scheduleName", scheduledReport.getScheduleName());
-        reportData.put("generatedAt", LocalDateTime.now().toString());
+        reportData.put("generatedAt", tenantTimeService.now(scheduledReport.getTenantId()).toString());
         reportData.put("tenantId", scheduledReport.getTenantId().toString());
 
         // Generate appropriate report based on type
@@ -225,7 +226,8 @@ public class ScheduledReportExecutionJob {
         String subject = String.format("[%s] Scheduled Report: %s - %s",
                 companyName,
                 scheduledReport.getScheduleName(),
-                LocalDate.now().format(DateTimeFormatter.ofPattern("MMM dd, yyyy")));
+                tenantTimeService.today(scheduledReport.getTenantId())
+                        .format(DateTimeFormatter.ofPattern("MMM dd, yyyy")));
 
         String body = buildEmailBody(scheduledReport, reportResult);
 
@@ -311,7 +313,7 @@ public class ScheduledReportExecutionJob {
                 reportResult.getGeneratedAt().format(DateTimeFormatter.ofPattern("MMM dd, yyyy HH:mm")),
                 reportResult.getSize() / 1024,
                 reportResult.getDownloadUrl() != null ? reportResult.getDownloadUrl() : "#",
-                LocalDate.now().getYear(),
+                tenantTimeService.today(scheduledReport.getTenantId()).getYear(),
                 companyName
         );
     }

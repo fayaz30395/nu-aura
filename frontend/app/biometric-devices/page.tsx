@@ -628,7 +628,7 @@ function DeviceLogsDrawer({
             <EmptyState
               icon={<Activity className="w-8 h-8"/>}
               title="No punch logs"
-              description="No punch logs found for this device."
+              description="Once employees check in or out on this device, their punches will appear here."
             />
           ) : (
             <>

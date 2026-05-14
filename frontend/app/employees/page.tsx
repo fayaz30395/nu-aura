@@ -355,7 +355,7 @@ export default function EmployeesPage() {
               icon={<Users className="h-12 w-12"/>}
               title={searchQuery.trim() ? 'No employees match your search' : 'No Employees Found'}
               description={searchQuery.trim() ? 'Try adjusting your search terms' : 'Add your first employee to get started'}
-              action={canCreate ? {label: 'Add Employee', onClick: () => setShowAddModal(true)} : undefined}
+              action={canCreate ? {label: 'Add employee', onClick: () => setShowAddModal(true)} : undefined}
             />
           ) : (
             <>
@@ -1213,14 +1213,13 @@ export default function EmployeesPage() {
                         d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
                 </svg>
               </div>
-              <h2 className="text-xl font-semibold text-[var(--text-primary)]">Delete Employee</h2>
+              <h2 className="text-xl font-semibold text-[var(--text-primary)]">Delete Employee?</h2>
             </div>
           </ModalHeader>
           <ModalBody>
             <p className="text-body-secondary mb-6">
-              Are you sure you want to delete <strong
-              className="text-[var(--text-primary)]">{employeeToDelete?.fullName}</strong>? This action cannot be
-              undone.
+              This action cannot be undone. <strong
+              className="text-[var(--text-primary)]">{employeeToDelete?.fullName}</strong> will be permanently deleted.
             </p>
             <div className="flex gap-4">
               <Button

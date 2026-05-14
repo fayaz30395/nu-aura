@@ -4,6 +4,7 @@ import com.nulogic.api.budget.dto.*;
 import com.nulogic.common.exception.ResourceNotFoundException;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.budget.BudgetScenario;
 import com.nulogic.domain.budget.HeadcountBudget;
 import com.nulogic.domain.budget.HeadcountPosition;
@@ -19,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -34,6 +34,7 @@ public class BudgetPlanningService {
     private final HeadcountBudgetRepository budgetRepository;
     private final HeadcountPositionRepository positionRepository;
     private final BudgetScenarioRepository scenarioRepository;
+    private final TenantTimeService tenantTimeService;
 
     // ==================== BUDGET OPERATIONS ====================
 
@@ -201,7 +202,7 @@ public class BudgetPlanningService {
 
     @Transactional
     public HeadcountBudgetResponse approveBudget(UUID budgetId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         UUID currentUserId = SecurityContext.getCurrentUserId();
 
         HeadcountBudget budget = budgetRepository.findByIdAndTenantId(budgetId, tenantId)
@@ -213,7 +214,7 @@ public class BudgetPlanningService {
 
         budget.setStatus(HeadcountBudget.BudgetStatus.APPROVED);
         budget.setApprovedBy(currentUserId);
-        budget.setApprovedAt(LocalDateTime.now());
+        budget.setApprovedAt(tenantTimeService.now(tenantId));
         budget = budgetRepository.save(budget);
 
         log.info("Budget {} approved by {}", budgetId, currentUserId);
@@ -326,7 +327,7 @@ public class BudgetPlanningService {
         position.setStatus(newStatus);
 
         if (newStatus == HeadcountPosition.PositionStatus.FILLED) {
-            position.setActualFillDate(java.time.LocalDate.now());
+            position.setActualFillDate(tenantTimeService.today(tenantId));
         }
 
         position = positionRepository.save(position);

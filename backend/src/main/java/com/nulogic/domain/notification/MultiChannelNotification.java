@@ -1,6 +1,8 @@
 package com.nulogic.domain.notification;
 
 import com.nulogic.common.entity.TenantAware;
+import com.nulogic.common.util.TenantTimestamp;
+import com.nulogic.common.util.TimeAuditingEntityListener;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,6 +14,13 @@ import org.hibernate.annotations.Where;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/**
+ * Migrated to the {@link TimeAuditingEntityListener} seam — see
+ * {@code backend/docs/audit/prepersist-now-audit.md} row 9 and the pilot at
+ * {@link com.nulogic.domain.recognition.RecognitionReaction}. {@code createdAt} is now
+ * stamped from the tenant's zone via {@link TenantTimestamp} rather than the JVM default
+ * zone {@code LocalDateTime.now()}.
+ */
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "multi_channel_notifications", indexes = {
@@ -20,6 +29,7 @@ import java.util.UUID;
         @Index(name = "idx_mcn_created", columnList = "createdAt"),
         @Index(name = "idx_mcn_channel", columnList = "channel")
 })
+@EntityListeners(TimeAuditingEntityListener.class)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -99,13 +109,18 @@ public class MultiChannelNotification extends TenantAware {
 
     private Boolean isGroupSummary;
 
+    @TenantTimestamp
     private LocalDateTime createdAt;
 
     private UUID createdBy;
 
+    /**
+     * Defaults remain in-entity because the {@link TimeAuditingEntityListener} seam only
+     * handles timestamp fields; the audit explicitly preserves non-temporal defaults during
+     * the rollout (see {@code prepersist-now-audit.md} §"Patterns observed").
+     */
     @PrePersist
     protected void onCreate() {
-        createdAt = LocalDateTime.now();
         if (status == null) status = NotificationStatus.PENDING;
         if (priority == null) priority = NotificationPriority.NORMAL;
         if (retryCount == null) retryCount = 0;

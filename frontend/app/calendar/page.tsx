@@ -6,6 +6,8 @@ import {AppLayout} from '@/components/layout/AppLayout';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {Skeleton, SkeletonCard} from '@/components/ui/Skeleton';
+import {formatMonthYear} from '@/lib/utils/format/date';
+import {format} from 'date-fns';
 import {calendarService} from '@/lib/services/hrms/calendar.service';
 import {CalendarEvent, EventStatus} from '@/lib/types/hrms/calendar';
 import {useAuth} from '@/lib/hooks/useAuth';
@@ -103,7 +105,7 @@ export default function CalendarPage() {
       const {start, end} = calendarService.getWeekRange(currentDate);
       return `${calendarService.formatDate(start)} - ${calendarService.formatDate(end)}`;
     }
-    return currentDate.toLocaleDateString('en-IN', {month: 'long', year: 'numeric'});
+    return formatMonthYear(currentDate);
   };
 
   const groupEventsByDate = () => {
@@ -168,7 +170,7 @@ export default function CalendarPage() {
           <PermissionGate permission={Permissions.CALENDAR_CREATE}>
             <button
               onClick={() => router.push('/calendar/new')}
-              className="flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl font-medium shadow-[var(--shadow-dropdown)] shadow-accent-500/25 transition-all duration-200 hover:shadow-[var(--shadow-dropdown)] hover:shadow-accent-500/30"
+              className="flex items-center justify-center gap-2 px-4 py-2 bg-accent-600 hover:bg-accent-700 text-white rounded-xl font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
               <Plus className="h-5 w-5"/>
               New Event
@@ -182,14 +184,14 @@ export default function CalendarPage() {
             <button
               onClick={() => navigateDate('prev')}
               aria-label="Previous"
-              className="p-2 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] rounded-lg transition-colors"
+              className="p-2 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
               <ChevronLeft className="h-5 w-5 text-[var(--text-secondary)]"/>
             </button>
             <button
               onClick={() => navigateDate('next')}
               aria-label="Next"
-              className="p-2 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] rounded-lg transition-colors"
+              className="p-2 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
               <ChevronRight className="h-5 w-5 text-[var(--text-secondary)]"/>
             </button>
@@ -208,14 +210,14 @@ export default function CalendarPage() {
             <button
               disabled={isLoading}
               aria-label="Refresh"
-              className="p-2 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] rounded-lg transition-colors disabled:opacity-50"
+              className="p-2 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] rounded-lg transition-colors disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
               <RefreshCw className={`h-5 w-5 text-[var(--text-secondary)] ${isLoading ? 'animate-spin' : ''}`}/>
             </button>
             <div className="flex bg-[var(--bg-secondary)] rounded-lg p-1">
               <button
                 onClick={() => setView('week')}
-                className={`px-4 py-1.5 text-sm font-medium rounded-md transition-colors ${
+                className={`px-4 py-1.5 text-sm font-medium rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                   view === 'week'
                     ? 'bg-[var(--bg-surface)] text-[var(--text-primary)] shadow-[var(--shadow-card)]'
                     : 'text-[var(--text-secondary)]'
@@ -225,7 +227,7 @@ export default function CalendarPage() {
               </button>
               <button
                 onClick={() => setView('month')}
-                className={`px-4 py-1.5 text-sm font-medium rounded-md transition-colors ${
+                className={`px-4 py-1.5 text-sm font-medium rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                   view === 'month'
                     ? 'bg-[var(--bg-surface)] text-[var(--text-primary)] shadow-[var(--shadow-card)]'
                     : 'text-[var(--text-secondary)]'
@@ -306,11 +308,7 @@ export default function CalendarPage() {
                 <div key={date}>
                   <div className="px-6 py-4 bg-[var(--bg-secondary)]/50">
                     <p className="text-sm font-medium text-[var(--text-secondary)]">
-                      {new Date(date).toLocaleDateString('en-IN', {
-                        weekday: 'long',
-                        day: '2-digit',
-                        month: 'short',
-                      })}
+                      {format(new Date(date), 'EEEE, dd MMM')}
                     </p>
                   </div>
                   {dateEvents.map((event) => {

@@ -27,6 +27,7 @@ import {
   getMonthStartString
 } from '@/lib/utils/dateUtils';
 import {motion} from 'framer-motion';
+import {format as formatDateFns} from 'date-fns';
 import {useAttendanceByDateRange, useCheckIn, useCheckOut, useHolidaysByYear,} from '@/lib/hooks/queries/useAttendance';
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
 import {useToast} from '@/components/ui/Toast';
@@ -176,12 +177,7 @@ const AttendanceClockWidget = memo(function AttendanceClockWidget({
           <p className="text-sm ml-10">
             <span className="font-medium text-[var(--text-primary)]">{greeting}, {userName || 'there'}</span>
             <span className="text-[var(--text-muted)]"> · </span>
-            <span className="text-[var(--text-secondary)]">{currentTime.toLocaleDateString('en-US', {
-              weekday: 'long',
-              month: 'long',
-              day: 'numeric',
-              year: 'numeric'
-            })}</span>
+            <span className="text-[var(--text-secondary)]">{formatDateFns(currentTime, 'EEEE, MMMM d, yyyy')}</span>
           </p>
         </div>
         <div className="flex items-center gap-4">
@@ -238,7 +234,7 @@ const AttendanceClockWidget = memo(function AttendanceClockWidget({
                     {dayComplete ? 'Day Complete' : isCheckedIn ? 'Currently Working' : 'Not Started'}
                   </div>
                   <div className="text-2xl lg:text-3xl font-bold text-white tracking-tight">
-                    {currentTime.toLocaleDateString('en-US', {weekday: 'long', month: 'short', day: 'numeric'})}
+                    {formatDateFns(currentTime, 'EEEE, MMM d')}
                   </div>
                   {isLateToday && (
                     <div
@@ -539,7 +535,7 @@ export default function AttendancePage() {
       const d = new Date(today);
       d.setDate(today.getDate() - i);
       const dateStr = getLocalDateString(d);
-      const dayName = d.toLocaleDateString('en-US', {weekday: 'short'});
+      const dayName = formatDateFns(d, 'EEE');
       const record = weeklyRecords.find(r => r.attendanceDate === dateStr);
       const hours = record ? calculateHours(record.checkInTime, record.checkOutTime) : 0;
       const isWeeklyOff = d.getDay() === 0 || d.getDay() === 6;

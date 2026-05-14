@@ -454,10 +454,11 @@ export default function OffboardingPage() {
 
         {/* Search and Filters */}
         <div className="flex flex-col sm:flex-row gap-4">
-          <div className="relative flex-1">
+          <div className="relative flex-1" role="search">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]"/>
             <input
-              type="text"
+              type="search"
+              aria-label="Search by employee name or company"
               placeholder="Search by employee name, company..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}

@@ -21,6 +21,7 @@ import {Button} from '@/components/ui/Button';
 import {useQuery} from '@tanstack/react-query';
 import {projectService} from '@/lib/services/hrms/project.service';
 import {projectCalendarService} from '@/lib/services/hrms/project-calendar.service';
+import {format} from 'date-fns';
 import {
   calculateTaskDuration,
   GanttFilterOptions,
@@ -133,7 +134,7 @@ export default function GanttChartPage() {
       if (zoomLevel === 'day') {
         columns.push({
           date: new Date(current),
-          label: current.toLocaleDateString('en-US', {day: 'numeric', month: 'short'}),
+          label: format(current, 'd MMM'),
           isToday,
         });
         current.setDate(current.getDate() + 1);
@@ -147,7 +148,7 @@ export default function GanttChartPage() {
       } else if (zoomLevel === 'month') {
         columns.push({
           date: new Date(current),
-          label: current.toLocaleDateString('en-US', {month: 'short', year: 'numeric'}),
+          label: format(current, 'MMM yyyy'),
           isToday,
         });
         current.setMonth(current.getMonth() + 1);
@@ -216,8 +217,8 @@ export default function GanttChartPage() {
         <div className="row-between">
           <div className="flex items-center gap-4">
             <div
-              className="p-4 rounded-xl bg-gradient-to-br from-accent-700 to-accent-800 shadow-[var(--shadow-dropdown)]">
-              <Calendar className="h-6 w-6 text-white"/>
+              className="p-4 rounded-xl bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-400">
+              <Calendar className="h-6 w-6"/>
             </div>
             <div>
               <h1 className="text-xl font-bold">

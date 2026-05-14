@@ -181,7 +181,7 @@ public class WorkflowEscalationScheduler {
                 step.setStatus(StepExecution.StepStatus.APPROVED);
                 step.setAction(StepExecution.ApprovalAction.APPROVE);
                 step.setComments("Auto-approved due to SLA timeout");
-                step.setExecutedAt(LocalDateTime.now());
+                step.setExecutedAt(tenantTimeService.now(tenantId));
                 stepExecutionRepository.save(step);
 
                 sendAutoActionNotification(step, "approved");
@@ -194,7 +194,7 @@ public class WorkflowEscalationScheduler {
                 step.setStatus(StepExecution.StepStatus.REJECTED);
                 step.setAction(StepExecution.ApprovalAction.REJECT);
                 step.setComments("Auto-rejected due to SLA timeout - no action taken within deadline");
-                step.setExecutedAt(LocalDateTime.now());
+                step.setExecutedAt(tenantTimeService.now(tenantId));
                 stepExecutionRepository.save(step);
 
                 sendAutoActionNotification(step, "rejected");

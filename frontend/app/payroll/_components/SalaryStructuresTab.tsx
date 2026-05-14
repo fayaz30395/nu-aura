@@ -68,7 +68,7 @@ export function SalaryStructuresTab({
           icon={<Layers className="h-8 w-8"/>}
           title="No Salary Structures Yet"
           description="Define salary structures with allowances and deductions for your employees"
-          action={{label: 'Create Structure', onClick: onCreateStructure}}
+          action={{label: 'Create structure', onClick: onCreateStructure}}
           iconColor="grape"
         />
       ) : (

@@ -4,6 +4,7 @@ import com.nulogic.api.publicapi.dto.PublicOfferAcceptRequest;
 import com.nulogic.api.publicapi.dto.PublicOfferDeclineRequest;
 import com.nulogic.api.publicapi.dto.PublicOfferResponse;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.esignature.SignatureApproval;
 import com.nulogic.domain.letter.GeneratedLetter;
 import com.nulogic.domain.recruitment.Candidate;
@@ -18,8 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
@@ -36,6 +35,7 @@ public class PublicOfferService {
     private final GeneratedLetterRepository letterRepository;
     private final SignatureApprovalRepository signatureApprovalRepository;
     private final TenantRepository tenantRepository;
+    private final TenantTimeService tenantTimeService;
 
     /**
      * Get offer details by token.
@@ -56,8 +56,11 @@ public class PublicOfferService {
                     .build();
         }
 
+        // Resolve tenant from approval (public endpoint — no TenantContext yet)
+        UUID tenantId = approval.getTenantId();
+
         // Check token expiry
-        if (approval.getTokenExpiresAt() != null && approval.getTokenExpiresAt().isBefore(LocalDateTime.now())) {
+        if (approval.getTokenExpiresAt() != null && approval.getTokenExpiresAt().isBefore(tenantTimeService.now(tenantId))) {
             return PublicOfferResponse.builder()
                     .tokenValid(false)
                     .errorMessage("This offer link has expired. Please contact HR for a new link.")
@@ -65,7 +68,6 @@ public class PublicOfferService {
         }
 
         // Set tenant context from the approval
-        UUID tenantId = approval.getTenantId();
         TenantContext.setCurrentTenant(tenantId);
 
         try {
@@ -141,8 +143,11 @@ public class PublicOfferService {
         SignatureApproval approval = signatureApprovalRepository.findByAuthenticationToken(token)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid or expired offer link"));
 
+        // Resolve tenant from approval (public endpoint — no TenantContext yet)
+        UUID tenantId = approval.getTenantId();
+
         // Validate token expiry
-        if (approval.getTokenExpiresAt() != null && approval.getTokenExpiresAt().isBefore(LocalDateTime.now())) {
+        if (approval.getTokenExpiresAt() != null && approval.getTokenExpiresAt().isBefore(tenantTimeService.now(tenantId))) {
             throw new IllegalStateException("This offer link has expired. Please contact HR for a new link.");
         }
 
@@ -151,7 +156,6 @@ public class PublicOfferService {
             throw new IllegalArgumentException("Email does not match the offer recipient");
         }
 
-        UUID tenantId = approval.getTenantId();
         TenantContext.setCurrentTenant(tenantId);
 
         try {
@@ -171,7 +175,7 @@ public class PublicOfferService {
 
             // Update candidate
             candidate.setStatus(Candidate.CandidateStatus.OFFER_ACCEPTED);
-            candidate.setOfferAcceptedDate(LocalDate.now());
+            candidate.setOfferAcceptedDate(tenantTimeService.today(tenantId));
             if (request.getConfirmedJoiningDate() != null) {
                 candidate.setProposedJoiningDate(request.getConfirmedJoiningDate());
             }
@@ -179,7 +183,7 @@ public class PublicOfferService {
 
             // Update signature approval
             approval.setStatus(SignatureApproval.ApprovalStatus.SIGNED);
-            approval.setSignedAt(LocalDateTime.now());
+            approval.setSignedAt(tenantTimeService.now(tenantId));
             approval.setSignatureData(request.getSignatureData());
             approval.setSignatureMethod(SignatureApproval.SignatureMethod.TYPED);
             approval.setAuthenticationToken(null); // Invalidate token
@@ -209,8 +213,11 @@ public class PublicOfferService {
         SignatureApproval approval = signatureApprovalRepository.findByAuthenticationToken(token)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid or expired offer link"));
 
+        // Resolve tenant from approval (public endpoint — no TenantContext yet)
+        UUID tenantId = approval.getTenantId();
+
         // Validate token expiry
-        if (approval.getTokenExpiresAt() != null && approval.getTokenExpiresAt().isBefore(LocalDateTime.now())) {
+        if (approval.getTokenExpiresAt() != null && approval.getTokenExpiresAt().isBefore(tenantTimeService.now(tenantId))) {
             throw new IllegalStateException("This offer link has expired");
         }
 
@@ -219,7 +226,6 @@ public class PublicOfferService {
             throw new IllegalArgumentException("Email does not match the offer recipient");
         }
 
-        UUID tenantId = approval.getTenantId();
         TenantContext.setCurrentTenant(tenantId);
 
         try {
@@ -239,13 +245,13 @@ public class PublicOfferService {
 
             // Update candidate
             candidate.setStatus(Candidate.CandidateStatus.OFFER_DECLINED);
-            candidate.setOfferDeclinedDate(LocalDate.now());
+            candidate.setOfferDeclinedDate(tenantTimeService.today(tenantId));
             candidate.setOfferDeclineReason(request.getDeclineReason());
             candidateRepository.save(candidate);
 
             // Update signature approval
             approval.setStatus(SignatureApproval.ApprovalStatus.DECLINED);
-            approval.setDeclinedAt(LocalDateTime.now());
+            approval.setDeclinedAt(tenantTimeService.now(tenantId));
             approval.setDeclineReason(request.getDeclineReason());
             approval.setAuthenticationToken(null); // Invalidate token
             signatureApprovalRepository.save(approval);

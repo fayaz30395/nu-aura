@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -64,7 +63,7 @@ public class QuizAssessmentService {
                 .enrollmentId(enrollment.getId())
                 .employeeId(employeeId)
                 .status(QuizAttempt.AttemptStatus.IN_PROGRESS)
-                .startedAt(LocalDateTime.now())
+                .startedAt(tenantTimeService.now(tenantId))
                 .attemptNumber((int) (attemptCount + 1))
                 .attemptedBy(employeeId)
                 .tenantId(tenantId)
@@ -129,7 +128,7 @@ public class QuizAssessmentService {
 
         // Set completion info
         attempt.setScore(score);
-        attempt.setCompletedAt(LocalDateTime.now());
+        attempt.setCompletedAt(tenantTimeService.now(tenantId));
         attempt.setStatus(QuizAttempt.AttemptStatus.COMPLETED);
 
         if (attempt.getStartedAt() != null) {
@@ -386,7 +385,7 @@ public class QuizAssessmentService {
                 .courseId(enrollment.getCourseId())
                 .employeeId(employeeId)
                 .enrollmentId(enrollmentId)
-                .issuedAt(LocalDateTime.now())
+                .issuedAt(tenantTimeService.now(tenantId))
                 // S12-B: tenant-local completion date for certificate — date-only field; resolved via TenantTimeService.
                 .completionDate(tenantTimeService.today(tenantId))
                 .isActive(true)
@@ -398,7 +397,7 @@ public class QuizAssessmentService {
 
         // Update enrollment with certificate
         enrollment.setCertificateId(certificate.getId());
-        enrollment.setCertificateIssuedAt(LocalDateTime.now());
+        enrollment.setCertificateIssuedAt(tenantTimeService.now(tenantId));
         enrollmentRepository.save(enrollment);
 
         return certificate;
@@ -418,10 +417,10 @@ public class QuizAssessmentService {
 
         if (passed && enrollment.getStatus() != CourseEnrollment.EnrollmentStatus.COMPLETED) {
             enrollment.setStatus(CourseEnrollment.EnrollmentStatus.COMPLETED);
-            enrollment.setCompletedAt(LocalDateTime.now());
+            enrollment.setCompletedAt(tenantTimeService.now(tenantId));
         }
 
-        enrollment.setUpdatedAt(LocalDateTime.now());
+        enrollment.setUpdatedAt(tenantTimeService.now(tenantId));
         enrollmentRepository.save(enrollment);
     }
 

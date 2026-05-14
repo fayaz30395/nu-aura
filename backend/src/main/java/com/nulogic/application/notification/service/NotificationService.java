@@ -2,6 +2,7 @@ package com.nulogic.application.notification.service;
 
 import com.nulogic.common.exception.ResourceNotFoundException;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.notification.Notification;
 import com.nulogic.infrastructure.notification.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,7 @@ import java.util.UUID;
 public class NotificationService {
 
     private final NotificationRepository notificationRepository;
+    private final TenantTimeService tenantTimeService;
 
     @Transactional
     public Notification createNotification(
@@ -94,7 +96,7 @@ public class NotificationService {
     @Transactional(readOnly = true)
     public List<Notification> getRecentNotifications(UUID userId, int hours) {
         UUID tenantId = TenantContext.requireCurrentTenant();
-        LocalDateTime since = LocalDateTime.now().minusHours(hours);
+        LocalDateTime since = tenantTimeService.now(tenantId).minusHours(hours);
         return notificationRepository.findRecentNotifications(tenantId, userId, since);
     }
 
@@ -107,7 +109,7 @@ public class NotificationService {
     @CacheEvict(value = "unreadCountByUser", allEntries = true)
     public void markAsRead(UUID notificationId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
-        notificationRepository.markAsRead(tenantId, notificationId, LocalDateTime.now());
+        notificationRepository.markAsRead(tenantId, notificationId, tenantTimeService.now(tenantId));
     }
 
     @Transactional
@@ -117,7 +119,7 @@ public class NotificationService {
     )
     public void markAllAsRead(UUID userId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
-        notificationRepository.markAllAsReadForUser(tenantId, userId, LocalDateTime.now());
+        notificationRepository.markAllAsReadForUser(tenantId, userId, tenantTimeService.now(tenantId));
     }
 
     @Transactional
@@ -129,7 +131,7 @@ public class NotificationService {
     @Transactional
     public void deleteOldNotifications(UUID userId, int daysOld) {
         UUID tenantId = TenantContext.requireCurrentTenant();
-        LocalDateTime before = LocalDateTime.now().minusDays(daysOld);
+        LocalDateTime before = tenantTimeService.now(tenantId).minusDays(daysOld);
         notificationRepository.deleteOldNotifications(tenantId, userId, before);
     }
 

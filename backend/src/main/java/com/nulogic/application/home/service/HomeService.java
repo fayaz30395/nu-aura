@@ -3,6 +3,7 @@ package com.nulogic.application.home.service;
 import com.nulogic.api.home.dto.*;
 import com.nulogic.common.config.CacheConfig;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.attendance.AttendanceRecord;
 import com.nulogic.domain.attendance.Holiday;
 import com.nulogic.domain.employee.Department;
@@ -42,6 +43,7 @@ public class HomeService {
     private final HolidayRepository holidayRepository;
     private final DepartmentRepository departmentRepository;
     private final LeaveTypeRepository leaveTypeRepository;
+    private final TenantTimeService tenantTimeService;
 
     /**
      * Get upcoming birthdays for the next N days (default 7 days).
@@ -61,8 +63,8 @@ public class HomeService {
             key = "T(com.nulogic.common.security.TenantContext).getCurrentTenant() + ':' + #days")
     @Transactional(readOnly = true)
     public List<BirthdayResponse> getUpcomingBirthdays(int days) {
-        UUID tenantId = TenantContext.getCurrentTenant();
-        LocalDate today = LocalDate.now();
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        LocalDate today = tenantTimeService.today(tenantId);
         LocalDate endDate = today.plusDays(days);
 
         List<Employee> employees = employeeRepository.findUpcomingBirthdays(tenantId, today, endDate);
@@ -120,8 +122,8 @@ public class HomeService {
             key = "T(com.nulogic.common.security.TenantContext).getCurrentTenant() + ':' + #days")
     @Transactional(readOnly = true)
     public List<WorkAnniversaryResponse> getUpcomingWorkAnniversaries(int days) {
-        UUID tenantId = TenantContext.getCurrentTenant();
-        LocalDate today = LocalDate.now();
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        LocalDate today = tenantTimeService.today(tenantId);
         LocalDate endDate = today.plusDays(days);
 
         List<Employee> employees = employeeRepository.findUpcomingAnniversaries(tenantId, today, endDate);
@@ -176,8 +178,8 @@ public class HomeService {
      */
     @Transactional(readOnly = true)
     public List<NewJoineeResponse> getNewJoinees(int days) {
-        UUID tenantId = TenantContext.getCurrentTenant();
-        LocalDate today = LocalDate.now();
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        LocalDate today = tenantTimeService.today(tenantId);
         LocalDate startDate = today.minusDays(days);
 
         // Use date-filtered query instead of loading all employees (fixes NEW-011 O(n) memory issue)
@@ -221,8 +223,8 @@ public class HomeService {
      */
     @Transactional(readOnly = true)
     public List<OnLeaveEmployeeResponse> getEmployeesOnLeaveToday() {
-        UUID tenantId = TenantContext.getCurrentTenant();
-        LocalDate today = LocalDate.now();
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        LocalDate today = tenantTimeService.today(tenantId);
 
         // Get leave requests where today falls between start and end date
         List<LeaveRequest> leaves = leaveRequestRepository.findByTenantIdAndStartDateBetween(tenantId, today.minusMonths(1), today);
@@ -296,8 +298,8 @@ public class HomeService {
      */
     @Transactional(readOnly = true)
     public List<RemoteWorkerResponse> getRemoteWorkersToday() {
-        UUID tenantId = TenantContext.getCurrentTenant();
-        LocalDate today = LocalDate.now();
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        LocalDate today = tenantTimeService.today(tenantId);
 
         List<AttendanceRecord> todayRecords = attendanceRecordRepository.findByTenantIdAndAttendanceDate(tenantId, today);
 
@@ -357,20 +359,20 @@ public class HomeService {
      */
     @Transactional(readOnly = true)
     public AttendanceTodayResponse getAttendanceToday(UUID employeeId) {
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        LocalDate today = tenantTimeService.today(tenantId);
+
         // Handle null employeeId (SuperAdmin or users without employee record)
         if (employeeId == null) {
             log.warn("getAttendanceToday called with null employeeId");
             return AttendanceTodayResponse.builder()
-                    .date(LocalDate.now())
+                    .date(today)
                     .status("NOT_APPLICABLE")
                     .isCheckedIn(false)
                     .canCheckIn(false)
                     .canCheckOut(false)
                     .build();
         }
-
-        UUID tenantId = TenantContext.getCurrentTenant();
-        LocalDate today = LocalDate.now();
 
         // Check if today is a holiday
         Optional<Holiday> holidayOpt = holidayRepository.findByTenantIdAndDate(tenantId, today);
@@ -469,8 +471,8 @@ public class HomeService {
      */
     @Transactional(readOnly = true)
     public List<UpcomingHolidayResponse> getUpcomingHolidays(int days) {
-        UUID tenantId = TenantContext.getCurrentTenant();
-        LocalDate today = LocalDate.now();
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        LocalDate today = tenantTimeService.today(tenantId);
         LocalDate endDate = today.plusDays(days);
 
         List<Holiday> holidays = holidayRepository.findAllByTenantIdAndHolidayDateBetween(tenantId, today, endDate);

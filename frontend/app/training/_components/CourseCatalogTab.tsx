@@ -125,7 +125,7 @@ export function CourseCatalogTab({
             return (
               <Card key={program.id} className="card-interactive overflow-hidden">
                 <CardContent className="p-0">
-                  <div className="bg-gradient-to-r from-accent-500 to-accent-700 p-4 text-white">
+                  <div className="bg-accent-600 p-4 text-white">
                     <div className="flex items-start justify-between">
                       <div>
                         <p className="text-sm opacity-80">{program.programCode}</p>

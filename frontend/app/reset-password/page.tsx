@@ -60,8 +60,8 @@ function ResetPasswordForm() {
         <div className="max-w-md w-full">
           <div className="text-center mb-8">
             <div
-              className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-accent-500 to-accent-700 rounded-lg mb-4 shadow-[var(--shadow-dropdown)] shadow-accent-500/25">
-              <Building2 className="w-8 h-8 text-white"/>
+              className="inline-flex items-center justify-center w-16 h-16 bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-400 rounded-lg mb-4">
+              <Building2 className="w-8 h-8"/>
             </div>
             <h1 className="text-xl font-bold">NU-AURA</h1>
           </div>
@@ -103,8 +103,8 @@ function ResetPasswordForm() {
         <div className="max-w-md w-full">
           <div className="text-center mb-8">
             <div
-              className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-accent-500 to-accent-700 rounded-lg mb-4 shadow-[var(--shadow-dropdown)] shadow-accent-500/25">
-              <Building2 className="w-8 h-8 text-white"/>
+              className="inline-flex items-center justify-center w-16 h-16 bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-400 rounded-lg mb-4">
+              <Building2 className="w-8 h-8"/>
             </div>
             <h1 className="text-xl font-bold">NU-AURA</h1>
           </div>
@@ -164,8 +164,8 @@ function ResetPasswordForm() {
         {/* Logo and Title */}
         <div className="text-center mb-8">
           <div
-            className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-accent-500 to-accent-700 rounded-lg mb-4 shadow-[var(--shadow-dropdown)] shadow-accent-500/25">
-            <Building2 className="w-8 h-8 text-white"/>
+            className="inline-flex items-center justify-center w-16 h-16 bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-400 rounded-lg mb-4">
+            <Building2 className="w-8 h-8"/>
           </div>
           <h1 className="text-xl font-bold">NU-AURA</h1>
           <p className="mt-2 text-body-secondary">

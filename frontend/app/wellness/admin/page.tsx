@@ -354,7 +354,7 @@ function CreateProgramModal({
 
             <div>
               <label htmlFor="wellness-program-external-link" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                External Link (Optional)
+                External Link
               </label>
               <Input id="wellness-program-external-link" {...register('externalLink')} type="url" placeholder="https://…"/>
               {errors.externalLink && (
@@ -364,7 +364,7 @@ function CreateProgramModal({
 
             <div>
               <label htmlFor="wellness-program-instructions" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                Instructions (Optional)
+                Instructions
               </label>
               <Textarea id="wellness-program-instructions" {...register('instructions')} placeholder="Step-by-step instructions…" rows={2}/>
             </div>
@@ -541,7 +541,7 @@ function CreateChallengeModal({
             {programs.length > 0 && (
               <div>
                 <label htmlFor="wellness-challenge-program-id" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                  Link to Program (Optional)
+                  Link to Program
                 </label>
                 <Select id="wellness-challenge-program-id" {...register('programId')}>
                   <option value="">Standalone challenge</option>
@@ -722,8 +722,8 @@ export default function WellnessAdminPage() {
                 <CardContent className="p-0">
                   <EmptyState
                     icon={<Info className="h-8 w-8"/>}
-                    title="No programs yet"
-                    description="Create your first wellness program to get started"
+                    title="No wellness programs yet"
+                    description="Launch programs like fitness challenges, mental health workshops, or nutrition coaching to support your team."
                     actionLabel="Create Program"
                     onAction={() => setShowProgramModal(true)}
                   />
@@ -742,8 +742,8 @@ export default function WellnessAdminPage() {
                 <CardContent className="p-0">
                   <EmptyState
                     icon={<Info className="h-8 w-8"/>}
-                    title="No challenges yet"
-                    description="Create your first wellness challenge"
+                    title="No wellness challenges yet"
+                    description="Run a step count, hydration, or meditation challenge to engage employees and track participation."
                     actionLabel="Create Challenge"
                     onAction={() => setShowChallengeModal(true)}
                   />

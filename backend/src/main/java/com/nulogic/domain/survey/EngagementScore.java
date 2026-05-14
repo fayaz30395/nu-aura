@@ -1,5 +1,7 @@
 package com.nulogic.domain.survey;
 
+import com.nulogic.common.util.TenantTimestamp;
+import com.nulogic.common.util.TimeAuditingEntityListener;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -9,9 +11,15 @@ import java.util.UUID;
 
 /**
  * Aggregated engagement scores for analytics and trending.
+ *
+ * <p>{@code calculatedAt} is stamped by {@link TimeAuditingEntityListener} via
+ * {@link TenantTimestamp}, resolving the tenant's IANA zone through
+ * {@code TenantTimeService}. Closes audit row 14 in
+ * {@code backend/docs/audit/prepersist-now-audit.md}.</p>
  */
 @Entity
 @Table(name = "engagement_scores")
+@EntityListeners(TimeAuditingEntityListener.class)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -86,12 +94,8 @@ public class EngagementScore {
     private Double industryBenchmark;
     private Double companyBenchmark;
 
+    @TenantTimestamp
     private LocalDateTime calculatedAt;
-
-    @PrePersist
-    protected void onCreate() {
-        calculatedAt = LocalDateTime.now();
-    }
 
     public String getEngagementLevel() {
         if (overallScore >= 80) return "Highly Engaged";

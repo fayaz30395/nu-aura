@@ -253,8 +253,8 @@ export default function WikiPage() {
             <div className="flex-1">
               <div className="flex items-center gap-4 mb-2">
                 <div
-                  className="flex items-center justify-center rounded-lg bg-gradient-to-br from-accent-500 to-accent-700 p-2">
-                  <BookOpen className={`${iconSize.pageHeader} text-white`}/>
+                  className="flex items-center justify-center rounded-lg bg-accent-100 dark:bg-accent-900/30 p-2">
+                  <BookOpen className={`${iconSize.pageHeader} text-accent-700 dark:text-accent-400`}/>
                 </div>
                 <h1 className={typography.pageTitle}>Wiki Pages</h1>
               </div>
@@ -578,7 +578,7 @@ export default function WikiPage() {
                                 />
                               ) : null}
                               <div
-                                className={`flex items-center justify-center w-6 h-6 rounded-full bg-gradient-to-br from-accent-500 to-accent-700 text-white text-xs font-medium ${page.authorAvatarUrl ? 'hidden' : ''}`}>
+                                className={`flex items-center justify-center w-6 h-6 rounded-full bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-400 text-xs font-medium ${page.authorAvatarUrl ? 'hidden' : ''}`}>
                                 {authorInitials}
                               </div>
                               <span

@@ -11,6 +11,7 @@ import {useEmployee} from '@/lib/hooks/queries/useEmployees';
 import {useEmployeeRevisionHistory} from '@/lib/hooks/queries/useCompensation';
 import type {SalaryRevision} from '@/lib/types/hrms/compensation';
 import {RevisionStatus, RevisionType} from '@/lib/types/hrms/compensation';
+import {format} from 'date-fns';
 
 // ─── Animation variants ─────────────────────────────────────────────
 const pageEnter = {
@@ -41,11 +42,7 @@ function formatCurrency(amount: number | undefined | null, currency = 'USD'): st
 
 function formatDate(date: string | undefined | null): string {
   if (!date) return '-';
-  return new Date(date).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
+  return format(new Date(date), 'MMMM d, yyyy');
 }
 
 function formatPercentage(value: number | undefined | null): string {

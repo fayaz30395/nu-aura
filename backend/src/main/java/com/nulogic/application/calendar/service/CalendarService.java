@@ -4,6 +4,7 @@ import com.nulogic.api.calendar.dto.CalendarEventDto;
 import com.nulogic.api.calendar.dto.CreateCalendarEventRequest;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.calendar.CalendarEvent;
 import com.nulogic.domain.calendar.CalendarEvent.*;
 import com.nulogic.infrastructure.calendar.repository.CalendarEventRepository;
@@ -29,6 +30,7 @@ import java.util.stream.Collectors;
 public class CalendarService {
 
     private final CalendarEventRepository calendarEventRepository;
+    private final TenantTimeService tenantTimeService;
 
     @Value("${calendar.sync.mock-mode:true}")
     private boolean mockMode;
@@ -345,12 +347,14 @@ public class CalendarService {
     private Map<String, Object> performMockSync(CalendarEvent event, SyncProvider provider) {
         log.info("[MOCK] Syncing event {} to {}", event.getId(), provider);
 
+        UUID tenantId = TenantContext.requireCurrentTenant();
+
         // Simulate external event ID generation
         String externalId = "mock-" + provider.name().toLowerCase() + "-" + UUID.randomUUID().toString().substring(0, 8);
 
         event.setSyncProvider(provider);
         event.setExternalEventId(externalId);
-        event.setLastSyncedAt(LocalDateTime.now());
+        event.setLastSyncedAt(tenantTimeService.now(tenantId));
         event.setSyncStatus(SyncStatus.SYNCED);
 
         calendarEventRepository.save(event);
@@ -371,8 +375,10 @@ public class CalendarService {
     private Map<String, Object> createMockImportResponse(SyncProvider provider, String externalEventId) {
         log.info("[MOCK] Importing event {} from {}", externalEventId, provider);
 
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         UUID employeeId = SecurityContext.getCurrentEmployeeId();
+
+        LocalDateTime tenantNow = tenantTimeService.now(tenantId);
 
         // Create a mock imported event
         CalendarEvent event = CalendarEvent.builder()
@@ -380,14 +386,14 @@ public class CalendarService {
                 .employeeId(employeeId)
                 .title("Imported Event from " + provider.name())
                 .description("This event was imported from " + provider.name() + " Calendar")
-                .startTime(LocalDateTime.now().plusDays(1))
-                .endTime(LocalDateTime.now().plusDays(1).plusHours(1))
+                .startTime(tenantNow.plusDays(1))
+                .endTime(tenantNow.plusDays(1).plusHours(1))
                 .allDay(false)
                 .eventType(EventType.MEETING)
                 .status(EventStatus.SCHEDULED)
                 .syncProvider(provider)
                 .externalEventId(externalEventId)
-                .lastSyncedAt(LocalDateTime.now())
+                .lastSyncedAt(tenantNow)
                 .syncStatus(SyncStatus.SYNCED)
                 .organizerId(employeeId)
                 .visibility(EventVisibility.PUBLIC)

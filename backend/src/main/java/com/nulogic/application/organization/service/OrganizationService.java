@@ -6,6 +6,7 @@ import com.nulogic.common.exception.BusinessException;
 import com.nulogic.common.exception.ResourceNotFoundException;
 import com.nulogic.common.logging.Audited;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.audit.AuditLog.AuditAction;
 import com.nulogic.domain.organization.*;
 import com.nulogic.infrastructure.organization.repository.*;
@@ -32,6 +33,7 @@ public class OrganizationService {
     private final SuccessionCandidateRepository candidateRepository;
     private final TalentPoolRepository poolRepository;
     private final TalentPoolMemberRepository memberRepository;
+    private final TenantTimeService tenantTimeService;
 
     // ==================== Organization Unit Operations ====================
 
@@ -236,7 +238,7 @@ public class OrganizationService {
 
     @Transactional
     public TalentPoolMember addToPool(UUID poolId, UUID employeeId, UUID addedBy) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         TalentPool pool = poolRepository.findByIdAndTenantId(poolId, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Talent pool not found: " + poolId));
@@ -249,7 +251,7 @@ public class OrganizationService {
                 .talentPoolId(poolId)
                 .employeeId(employeeId)
                 .addedBy(addedBy)
-                .addedDate(LocalDate.now())
+                .addedDate(tenantTimeService.today(tenantId))
                 .status(TalentPoolMember.MemberStatus.ACTIVE)
                 .build();
         member.setTenantId(tenantId);

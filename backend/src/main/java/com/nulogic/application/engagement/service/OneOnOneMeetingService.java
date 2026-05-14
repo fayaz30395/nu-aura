@@ -2,6 +2,7 @@ package com.nulogic.application.engagement.service;
 
 import com.nulogic.api.engagement.dto.OneOnOneMeetingRequest;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.engagement.MeetingActionItem;
 import com.nulogic.domain.engagement.MeetingActionItem.ActionStatus;
 import com.nulogic.domain.engagement.MeetingAgendaItem;
@@ -32,6 +33,7 @@ public class OneOnOneMeetingService {
     private final OneOnOneMeetingRepository meetingRepository;
     private final MeetingAgendaItemRepository agendaRepository;
     private final MeetingActionItemRepository actionRepository;
+    private final TenantTimeService tenantTimeService;
 
     // ==================== Meeting CRUD ====================
 
@@ -118,7 +120,8 @@ public class OneOnOneMeetingService {
 
     @Transactional(readOnly = true)
     public List<OneOnOneMeeting> getUpcomingMeetings(UUID userId) {
-        return meetingRepository.findUpcomingMeetings(userId, TenantContext.getCurrentTenant(), LocalDate.now());
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        return meetingRepository.findUpcomingMeetings(userId, tenantId, tenantTimeService.today(tenantId));
     }
 
     @Transactional(readOnly = true)
@@ -145,7 +148,7 @@ public class OneOnOneMeetingService {
                 .orElseThrow(() -> new RuntimeException("Meeting not found"));
 
         meeting.setStatus(MeetingStatus.IN_PROGRESS);
-        meeting.setActualStartTime(LocalDateTime.now());
+        meeting.setActualStartTime(tenantTimeService.now(tenantId));
 
         log.info("Started meeting: {}", meetingId);
         return meetingRepository.save(meeting);
@@ -158,7 +161,7 @@ public class OneOnOneMeetingService {
                 .orElseThrow(() -> new RuntimeException("Meeting not found"));
 
         meeting.setStatus(MeetingStatus.COMPLETED);
-        meeting.setActualEndTime(LocalDateTime.now());
+        meeting.setActualEndTime(tenantTimeService.now(tenantId));
         meeting.setMeetingSummary(summary);
 
         log.info("Completed meeting: {}", meetingId);
@@ -172,7 +175,7 @@ public class OneOnOneMeetingService {
                 .orElseThrow(() -> new RuntimeException("Meeting not found"));
 
         meeting.setStatus(MeetingStatus.CANCELLED);
-        meeting.setCancelledAt(LocalDateTime.now());
+        meeting.setCancelledAt(tenantTimeService.now(tenantId));
         meeting.setCancelledBy(cancelledBy);
         meeting.setCancellationReason(reason);
 
@@ -349,7 +352,8 @@ public class OneOnOneMeetingService {
 
     @Transactional(readOnly = true)
     public List<MeetingActionItem> getOverdueActionItems(UUID userId) {
-        return actionRepository.findOverdueByAssignee(TenantContext.getCurrentTenant(), userId, LocalDate.now());
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        return actionRepository.findOverdueByAssignee(tenantId, userId, tenantTimeService.today(tenantId));
     }
 
     @Transactional
@@ -360,7 +364,7 @@ public class OneOnOneMeetingService {
 
         action.setStatus(status);
         if (status == ActionStatus.COMPLETED) {
-            action.setCompletedAt(LocalDateTime.now());
+            action.setCompletedAt(tenantTimeService.now(tenantId));
             action.setCompletionNotes(notes);
         }
 

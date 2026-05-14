@@ -34,18 +34,19 @@ public class AnnouncementResponse {
     private UUID wallPostId; // Reference to wall post for reactions/comments
     private Boolean hasReacted; // Whether current user has reacted
 
-    // Helper methods
-    public boolean isExpired() {
-        return expiresAt != null && expiresAt.isBefore(LocalDateTime.now());
+    // Helper methods — callers must supply tenant-aware "now"
+    // (e.g. tenantTimeService.now(tenantId)) because DTOs cannot inject Spring beans.
+    public boolean isExpired(LocalDateTime now) {
+        return expiresAt != null && expiresAt.isBefore(now);
     }
 
-    public boolean isActive() {
+    public boolean isActive(LocalDateTime now) {
         return status == Announcement.AnnouncementStatus.PUBLISHED &&
-                (expiresAt == null || expiresAt.isAfter(LocalDateTime.now()));
+                (expiresAt == null || expiresAt.isAfter(now));
     }
 
-    public boolean isScheduled() {
+    public boolean isScheduled(LocalDateTime now) {
         return status == Announcement.AnnouncementStatus.SCHEDULED &&
-                publishedAt != null && publishedAt.isAfter(LocalDateTime.now());
+                publishedAt != null && publishedAt.isAfter(now);
     }
 }

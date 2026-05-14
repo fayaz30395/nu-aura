@@ -457,10 +457,11 @@ export default function ExpenseClaims() {
         <div className="skeuo-card p-4 mb-6">
           <div className="flex flex-wrap items-center gap-4">
             {/* Search */}
-            <div className="relative flex-1 min-w-[200px]">
+            <div className="relative flex-1 min-w-[200px]" role="search">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]"/>
               <input
-                type="text"
+                type="search"
+                aria-label="Search claims"
                 placeholder="Search claims..."
                 value={filters.search}
                 onChange={(e) => setFilters({...filters, search: e.target.value})}
@@ -634,8 +635,7 @@ export default function ExpenseClaims() {
               </div>
 
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Receipt URL
-                  (Optional)</label>
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Receipt URL</label>
                 <input
                   type="url"
                   className="input-aura"
@@ -646,7 +646,7 @@ export default function ExpenseClaims() {
               </div>
 
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Notes (Optional)</label>
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Notes</label>
                 <textarea
                   className="input-aura"
                   rows={2}

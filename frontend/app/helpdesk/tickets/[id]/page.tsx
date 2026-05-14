@@ -230,8 +230,8 @@ export default function TicketDetailPage() {
         isOpen={showDeleteConfirm}
         onClose={() => setShowDeleteConfirm(false)}
         onConfirm={handleDeleteTicket}
-        title="Delete Ticket"
-        message={`Are you sure you want to delete ticket ${ticket.ticketNumber}? This action cannot be undone.`}
+        title="Delete Ticket?"
+        message={`This action cannot be undone. Ticket ${ticket.ticketNumber} will be permanently deleted.`}
         confirmText="Delete"
         cancelText="Cancel"
         type="danger"

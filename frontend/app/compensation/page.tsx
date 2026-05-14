@@ -374,10 +374,10 @@ export default function CompensationPage() {
           <div className="space-y-4">
             {/* Active Cycle Banner */}
             {activeCycle && (
-              <Card className="bg-gradient-to-r from-accent-500 to-accent-700">
+              <Card className="bg-accent-100 dark:bg-accent-900/30 border-accent-200 dark:border-accent-800">
                 <CardContent className="p-6">
                   <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                    <div className="text-white">
+                    <div className="text-accent-900 dark:text-accent-100">
                       <div className="flex items-center gap-2 mb-1">
                         <Badge variant="secondary" className="bg-white/20">Active</Badge>
                         <span className="text-sm opacity-80">{cycleTypeLabels[activeCycle.cycleType]}</span>

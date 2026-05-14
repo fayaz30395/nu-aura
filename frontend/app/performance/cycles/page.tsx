@@ -611,9 +611,9 @@ export default function ReviewCyclesPage() {
         {showDeleteConfirm && selectedCycle && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
             <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg max-w-md w-full p-6">
-              <h2 className="text-xl font-bold mb-4">Delete Review Cycle</h2>
+              <h2 className="text-xl font-bold mb-4">Delete Review Cycle?</h2>
               <p className="text-[var(--text-secondary)] mb-6">
-                Are you sure you want to delete &quot;{selectedCycle.name}&quot;? This action cannot be undone.
+                This action cannot be undone. &quot;{selectedCycle.name}&quot; will be permanently deleted.
               </p>
               <div className="flex gap-4">
                 <button

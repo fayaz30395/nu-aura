@@ -310,7 +310,7 @@ export default function PaymentConfigPage() {
             {/* Webhook Secret */}
             <div>
               <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                Webhook Secret (Optional)
+                Webhook Secret
               </label>
               <input
                 type="password"
@@ -326,7 +326,7 @@ export default function PaymentConfigPage() {
             {/* Webhook URL */}
             <div>
               <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                Webhook URL (Optional)
+                Webhook URL
               </label>
               <input
                 type="url"

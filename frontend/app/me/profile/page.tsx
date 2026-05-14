@@ -298,7 +298,7 @@ export default function MyProfilePage() {
 
         {/* Profile Header Card */}
         <Card className="card-aura overflow-hidden">
-          <div className="h-32 bg-gradient-to-r from-accent-500 to-accent-700"/>
+          <div className="h-32 bg-accent-100 dark:bg-accent-900/30"/>
           <CardContent className="relative pt-0">
             <div className="flex flex-col md:flex-row items-start md:items-end gap-6 -mt-16">
               <div className="relative">
@@ -406,6 +406,7 @@ export default function MyProfilePage() {
                   <input
                     id="profile-personal-email"
                     type="email"
+                    autoComplete="email"
                     {...profileForm.register('personalEmail')}
                     className="input-aura w-full mt-1 px-4 py-2 rounded-lg"
                   />
@@ -423,6 +424,7 @@ export default function MyProfilePage() {
                   <input
                     id="profile-phone-number"
                     type="tel"
+                    autoComplete="tel"
                     {...profileForm.register('phoneNumber')}
                     className="input-aura w-full mt-1 px-4 py-2 rounded-lg"
                   />
@@ -469,6 +471,7 @@ export default function MyProfilePage() {
                 {isEditing ? (
                   <textarea
                     id="profile-address"
+                    autoComplete="street-address"
                     {...profileForm.register('address')}
                     rows={2}
                     className="input-aura w-full mt-1 px-4 py-2 rounded-lg"
@@ -488,6 +491,7 @@ export default function MyProfilePage() {
                     <input
                       id="profile-city"
                       type="text"
+                      autoComplete="address-level2"
                       {...profileForm.register('city')}
                       className="input-aura w-full mt-1 px-4 py-2 rounded-lg"
                     />
@@ -505,6 +509,7 @@ export default function MyProfilePage() {
                     <input
                       id="profile-state"
                       type="text"
+                      autoComplete="address-level1"
                       {...profileForm.register('state')}
                       className="input-aura w-full mt-1 px-4 py-2 rounded-lg"
                     />
@@ -524,6 +529,7 @@ export default function MyProfilePage() {
                     <input
                       id="profile-postal-code"
                       type="text"
+                      autoComplete="postal-code"
                       {...profileForm.register('postalCode')}
                       className="input-aura w-full mt-1 px-4 py-2 rounded-lg"
                     />
@@ -541,6 +547,7 @@ export default function MyProfilePage() {
                     <input
                       id="profile-country"
                       type="text"
+                      autoComplete="country-name"
                       {...profileForm.register('country')}
                       className="input-aura w-full mt-1 px-4 py-2 rounded-lg"
                     />

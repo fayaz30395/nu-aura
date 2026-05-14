@@ -153,6 +153,10 @@ export default function SettingsPage() {
         </div>
       </div>
       <button
+        type="button"
+        role="switch"
+        aria-checked={enabled}
+        aria-label={label}
         onClick={() => onChange(!enabled)}
         className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
           enabled ? 'bg-accent-700' : 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]600'
@@ -246,6 +250,10 @@ export default function SettingsPage() {
                   </p>
                 </div>
                 <button
+                  type="button"
+                  role="switch"
+                  aria-checked={isDark}
+                  aria-label="Dark mode"
                   onClick={toggleDarkMode}
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                     isDark ? 'bg-accent-700' : 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]600'

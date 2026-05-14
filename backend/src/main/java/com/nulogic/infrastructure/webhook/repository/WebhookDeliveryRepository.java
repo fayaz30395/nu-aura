@@ -26,6 +26,23 @@ public interface WebhookDeliveryRepository extends JpaRepository<WebhookDelivery
     List<WebhookDelivery> findReadyForRetry(@Param("now") LocalDateTime now);
 
     /**
+     * Per-tenant variant of {@link #findReadyForRetry(LocalDateTime)} — the retry scheduler
+     * iterates tenants and resolves "now" through {@code TenantTimeService} so the retry
+     * cutoff respects the tenant's local zone instead of an implicit UTC.
+     */
+    @Query("SELECT d FROM WebhookDelivery d WHERE d.tenantId = :tenantId " +
+            "AND d.status = 'RETRYING' AND d.nextRetryAt <= :now")
+    List<WebhookDelivery> findReadyForRetry(@Param("tenantId") UUID tenantId,
+                                            @Param("now") LocalDateTime now);
+
+    /**
+     * Tenant pivot for cross-tenant sweep jobs. Returns the set of tenant ids that own at
+     * least one delivery row — keeps the per-tenant retry loop bounded.
+     */
+    @Query("SELECT DISTINCT d.tenantId FROM WebhookDelivery d WHERE d.tenantId IS NOT NULL")
+    List<UUID> findDistinctTenantIds();
+
+    /**
      * Find pending deliveries.
      */
     List<WebhookDelivery> findByStatusOrderByCreatedAtAsc(DeliveryStatus status);

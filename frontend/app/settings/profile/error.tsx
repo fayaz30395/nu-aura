@@ -26,7 +26,7 @@ export default function ProfileError({error, reset}: ErrorProps) {
       <motion.div
         initial={{opacity: 0, y: 20}}
         animate={{opacity: 1, y: 0}}
-        transition={{duration: 0.25, ease: 'easeOut'}}
+        transition={{duration: 0.2, ease: 'easeOut'}}
       >
         <Card className="w-full max-w-md bg-[var(--bg-card)]">
           <CardHeader className="text-center">

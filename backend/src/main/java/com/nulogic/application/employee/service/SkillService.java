@@ -1,5 +1,6 @@
 package com.nulogic.application.employee.service;
 
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.employee.EmployeeSkill;
 import com.nulogic.infrastructure.employee.repository.EmployeeSkillRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import java.util.UUID;
 public class SkillService {
 
     private final EmployeeSkillRepository skillRepository;
+    private final TenantTimeService tenantTimeService;
 
     @Transactional(readOnly = true)
     public List<EmployeeSkill> getEmployeeSkills(UUID tenantId, UUID employeeId) {
@@ -55,7 +57,7 @@ public class SkillService {
             if (skill.getTenantId().equals(tenantId)) {
                 skill.setIsVerified(true);
                 skill.setVerifiedBy(verifiedBy);
-                skill.setVerifiedAt(java.time.LocalDateTime.now());
+                skill.setVerifiedAt(tenantTimeService.now(tenantId));
                 skillRepository.save(skill);
             }
         });

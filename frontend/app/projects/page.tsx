@@ -1122,7 +1122,7 @@ export default function ProjectsPage() {
 
             <div>
               <label className="mb-1.5 block text-sm font-medium text-[var(--text-secondary)]">
-                Description (optional)
+                Description
               </label>
               <Textarea placeholder="Add a short description or scope notes" {...register('description')} />
               {errors.description && <p className="text-sm text-danger-500 mt-1">{errors.description.message}</p>}
@@ -1234,7 +1234,7 @@ export default function ProjectsPage() {
 
             <div>
               <label className="mb-1.5 block text-sm font-medium text-[var(--text-secondary)]">
-                Description (optional)
+                Description
               </label>
               <Textarea placeholder="Add a short description or scope notes" {...editRegister('description')} />
               {editErrors.description &&

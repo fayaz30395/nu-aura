@@ -1,6 +1,8 @@
 package com.nulogic.domain.workflow;
 
 import com.nulogic.common.entity.TenantAware;
+import com.nulogic.common.util.TenantTimestamp;
+import com.nulogic.common.util.TimeAuditingEntityListener;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -15,10 +17,16 @@ import java.util.UUID;
 /**
  * Workflow Execution - Tracks the execution of a workflow instance.
  * Links to the source entity (leave request, expense claim, etc.)
+ *
+ * <p>{@code submittedAt} is stamped by {@link TimeAuditingEntityListener} via
+ * {@link TenantTimestamp} (tenant-zone aware). Status defaulting and reference
+ * number generation are preserved in {@link #onCreate()} — see
+ * {@code backend/docs/audit/prepersist-now-audit.md} row 22.</p>
  */
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "workflow_executions")
+@EntityListeners(TimeAuditingEntityListener.class)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -79,6 +87,7 @@ public class WorkflowExecution extends TenantAware {
     private UUID departmentId;
     private UUID locationId;
 
+    @TenantTimestamp
     private LocalDateTime submittedAt;
     private LocalDateTime completedAt;
     private LocalDateTime cancelledAt;
@@ -93,7 +102,7 @@ public class WorkflowExecution extends TenantAware {
 
     @PrePersist
     protected void onCreate() {
-        submittedAt = LocalDateTime.now();
+        // submittedAt stamped by TimeAuditingEntityListener via @TenantTimestamp
         if (status == null) status = ExecutionStatus.PENDING;
         if (referenceNumber == null) {
             referenceNumber = generateReferenceNumber();

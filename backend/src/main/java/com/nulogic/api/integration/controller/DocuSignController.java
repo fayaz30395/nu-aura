@@ -10,6 +10,7 @@ import com.nulogic.application.integration.service.IntegrationConnectorConfigSer
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.RequiresPermission;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.integration.ConnectorConfig;
 import com.nulogic.domain.integration.docusign.DocuSignEnvelope;
 import com.nulogic.domain.integration.docusign.DocuSignTemplateMapping;
@@ -63,6 +64,7 @@ public class DocuSignController {
     private final DocuSignApiClient apiClient;
     private final ObjectMapper objectMapper;
     private final FileStorageService fileStorageService;
+    private final TenantTimeService tenantTimeService;
 
     // ===================== Webhook Endpoint =====================
 
@@ -354,7 +356,7 @@ public class DocuSignController {
             // Update existing mapping
             mapping.setDocusignTemplateId(request.getDocusignTemplateId());
             mapping.setDescription(request.getDescription());
-            mapping.setUpdatedAt(java.time.LocalDateTime.now());
+            mapping.setUpdatedAt(tenantTimeService.now(tenantId));
         }
 
         DocuSignTemplateMapping saved = templateMappingRepository.save(mapping);

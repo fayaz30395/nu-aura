@@ -309,6 +309,7 @@ export default function WellnessPage() {
                 variant={activeTab === 'programs' ? 'primary' : 'outline'}
                 size="sm"
                 onClick={() => setActiveTab('programs')}
+                aria-current={activeTab === 'programs' ? 'page' : undefined}
               >
                 Programs
               </Button>
@@ -316,6 +317,7 @@ export default function WellnessPage() {
                 variant={activeTab === 'challenges' ? 'primary' : 'outline'}
                 size="sm"
                 onClick={() => setActiveTab('challenges')}
+                aria-current={activeTab === 'challenges' ? 'page' : undefined}
               >
                 Challenges
               </Button>
@@ -335,7 +337,7 @@ export default function WellnessPage() {
                     <EmptyState
                       icon={<Heart className="h-8 w-8"/>}
                       title="No wellness programs available"
-                      description="Check back later for new programs"
+                      description="New programs will appear here when HR launches fitness, mental health, or nutrition initiatives."
                     />
                   </CardContent>
                 </Card>
@@ -390,7 +392,7 @@ export default function WellnessPage() {
                     <EmptyState
                       icon={<Target className="h-8 w-8"/>}
                       title="No active challenges"
-                      description="Check back later for new challenges"
+                      description="Step count, hydration, and mindfulness challenges will appear here when HR launches them."
                     />
                   </CardContent>
                 </Card>
@@ -567,7 +569,7 @@ export default function WellnessPage() {
                 </div>
                 <div>
                   <label htmlFor="wellness-log-notes" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                    Notes (Optional)
+                    Notes
                   </label>
                   <Textarea
                     id="wellness-log-notes"

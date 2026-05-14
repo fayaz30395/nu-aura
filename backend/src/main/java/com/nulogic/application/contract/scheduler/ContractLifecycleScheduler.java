@@ -21,7 +21,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -318,7 +317,8 @@ public class ContractLifecycleScheduler {
                 if (recipientId == null) {
                     log.warn("No recipient found for contract {} reminder {}", contract.getId(), reminder.getId());
                     // Still mark as notified to avoid infinite retries
-                    reminder.setNotifiedAt(LocalDateTime.now());
+                    // S12-B: tenant-local "now" for notifiedAt timestamp — resolved via TenantTimeService.
+                    reminder.setNotifiedAt(tenantTimeService.now(tenantId));
                     reminderRepository.save(reminder);
                     continue;
                 }
@@ -340,7 +340,8 @@ public class ContractLifecycleScheduler {
                 );
 
                 // Mark as notified (not completed — user may still need to take action)
-                reminder.setNotifiedAt(LocalDateTime.now());
+                // S12-B: tenant-local "now" for notifiedAt timestamp — resolved via TenantTimeService.
+                reminder.setNotifiedAt(tenantTimeService.now(tenantId));
                 reminderRepository.save(reminder);
 
                 notificationsSent++;

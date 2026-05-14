@@ -283,7 +283,8 @@ export default function ImplicitRolesPage() {
         <div className="mb-6 flex justify-between items-center gap-4">
           <div className="flex-1">
             <input
-              type="text"
+              type="search"
+              aria-label="Search rules"
               placeholder="Search rules..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}

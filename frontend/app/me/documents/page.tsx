@@ -427,7 +427,7 @@ export default function MyDocumentsPage() {
               {/* Addressed To */}
               <div>
                 <label htmlFor="me-documents-addressed-to" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                  Addressed To (Optional)
+                  Addressed To
                 </label>
                 <input
                   id="me-documents-addressed-to"

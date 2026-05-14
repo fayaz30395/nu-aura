@@ -4,6 +4,7 @@ import com.nulogic.api.expense.dto.ExpenseAdvanceRequest;
 import com.nulogic.api.expense.dto.ExpenseAdvanceResponse;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.expense.ExpenseAdvance;
 import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import com.nulogic.infrastructure.expense.repository.ExpenseAdvanceRepository;
@@ -15,7 +16,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -25,6 +25,7 @@ public class ExpenseAdvanceService {
 
     private final ExpenseAdvanceRepository advanceRepository;
     private final EmployeeRepository employeeRepository;
+    private final TenantTimeService tenantTimeService;
 
     @Transactional
     public ExpenseAdvanceResponse createAdvance(UUID employeeId, ExpenseAdvanceRequest request) {
@@ -40,7 +41,7 @@ public class ExpenseAdvanceService {
                 .currency(request.getCurrency() != null ? request.getCurrency() : "INR")
                 .purpose(request.getPurpose())
                 .status(ExpenseAdvance.AdvanceStatus.REQUESTED)
-                .requestedAt(LocalDateTime.now())
+                .requestedAt(tenantTimeService.now(tenantId))
                 .notes(request.getNotes())
                 .build();
         advance.setTenantId(tenantId);

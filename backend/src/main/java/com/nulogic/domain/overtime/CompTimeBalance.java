@@ -1,6 +1,8 @@
 package com.nulogic.domain.overtime;
 
 import com.nulogic.common.entity.TenantAware;
+import com.nulogic.common.util.TenantTimestamp;
+import com.nulogic.common.util.TimeAuditingEntityListener;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -14,10 +16,18 @@ import java.util.UUID;
 
 /**
  * Compensatory Time Balance for employees who opt for comp time instead of OT pay.
+ *
+ * <p>{@code createdAt} and {@code updatedAt} are stamped by
+ * {@link TimeAuditingEntityListener} via {@link TenantTimestamp} (with
+ * {@code updateOnChange=true} on the latter) to close the unzoned-{@code LocalDateTime.now()}
+ * gap from {@code backend/docs/audit/prepersist-now-audit.md} rows 30–31. The
+ * {@code TenantEntityListener} on the {@link TenantAware} mapped superclass runs first
+ * (JPA §3.5.4), so {@code tenantId} is populated when the timestamp listener reads it.</p>
  */
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "comp_time_balances")
+@EntityListeners(TimeAuditingEntityListener.class)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -56,22 +66,19 @@ public class CompTimeBalance extends TenantAware {
     @Builder.Default
     private List<CompTimeTransaction> transactions = new ArrayList<>();
 
+    @TenantTimestamp
     private LocalDateTime createdAt;
+
+    @TenantTimestamp(updateOnChange = true)
     private LocalDateTime updatedAt;
 
     @PrePersist
     protected void onCreate() {
-        createdAt = LocalDateTime.now();
         if (totalAccrued == null) totalAccrued = BigDecimal.ZERO;
         if (totalUsed == null) totalUsed = BigDecimal.ZERO;
         if (totalExpired == null) totalExpired = BigDecimal.ZERO;
         if (totalForfeited == null) totalForfeited = BigDecimal.ZERO;
         if (currentBalance == null) currentBalance = BigDecimal.ZERO;
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
     }
 
     public void accrue(BigDecimal hours) {

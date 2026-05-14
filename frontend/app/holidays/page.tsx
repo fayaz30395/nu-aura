@@ -20,7 +20,8 @@ import {
   useUpdateHoliday,
 } from '@/lib/hooks/queries/useAttendance';
 import {Skeleton} from '@/components/ui/Skeleton';
-import {formatDateShort} from '@/lib/utils/format/date';
+import {formatDateShort, formatWeekday} from '@/lib/utils/format/date';
+import {format} from 'date-fns';
 
 const ADMIN_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
 
@@ -107,7 +108,7 @@ export default function HolidaysPage() {
 
   // Group by month
   const holidaysByMonth = filteredHolidays.reduce((acc, holiday) => {
-    const month = new Date(holiday.holidayDate).toLocaleDateString('en-US', {month: 'long'});
+    const month = format(new Date(holiday.holidayDate), 'MMMM');
     if (!acc[month]) acc[month] = [];
     acc[month].push(holiday);
     return acc;
@@ -435,7 +436,7 @@ export default function HolidaysPage() {
                               {new Date(holiday.holidayDate).getDate()}
                             </div>
                             <div className="text-2xs text-[var(--text-muted)] uppercase font-medium">
-                              {new Date(holiday.holidayDate).toLocaleDateString('en-US', {weekday: 'short'})}
+                              {formatWeekday(holiday.holidayDate)}
                             </div>
                           </div>
 

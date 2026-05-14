@@ -65,4 +65,27 @@ public interface WebhookRepository extends JpaRepository<Webhook, UUID> {
     @Query("UPDATE Webhook w SET w.previousSecret = NULL, w.previousSecretExpiresAt = NULL " +
             "WHERE w.previousSecretExpiresAt IS NOT NULL AND w.previousSecretExpiresAt < :now")
     int clearExpiredPreviousSecrets(@Param("now") LocalDateTime now);
+
+    /**
+     * Per-tenant variant of {@link #clearExpiredPreviousSecrets(LocalDateTime)}. Used by the
+     * hourly sweep so the cutoff can be resolved in the tenant's local zone via
+     * {@code TenantTimeService} rather than a single UTC "now".
+     *
+     * @param tenantId tenant whose webhooks should be considered
+     * @param now      cutoff timestamp in the tenant's local zone
+     * @return number of rows cleared for this tenant
+     */
+    @Modifying
+    @Query("UPDATE Webhook w SET w.previousSecret = NULL, w.previousSecretExpiresAt = NULL " +
+            "WHERE w.tenantId = :tenantId " +
+            "AND w.previousSecretExpiresAt IS NOT NULL AND w.previousSecretExpiresAt < :now")
+    int clearExpiredPreviousSecrets(@Param("tenantId") UUID tenantId, @Param("now") LocalDateTime now);
+
+    /**
+     * Tenant pivot for cross-tenant sweep jobs. Returns the set of tenant ids that own at
+     * least one webhook — keeps the per-tenant loop bounded by webhook-owning tenants rather
+     * than every tenant in the platform.
+     */
+    @Query("SELECT DISTINCT w.tenantId FROM Webhook w WHERE w.tenantId IS NOT NULL")
+    List<UUID> findDistinctTenantIds();
 }

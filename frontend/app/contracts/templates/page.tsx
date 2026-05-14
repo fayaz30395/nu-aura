@@ -183,8 +183,8 @@ export default function ContractTemplatesPage() {
           setTemplateToDelete(null);
         }}
         onConfirm={confirmDelete}
-        title="Delete Template"
-        message="Are you sure you want to delete this template? This action cannot be undone."
+        title="Delete Template?"
+        message="This action cannot be undone. The template will be permanently deleted."
         confirmText="Delete"
         cancelText="Cancel"
         type="danger"

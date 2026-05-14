@@ -118,18 +118,21 @@ export default function LearningPage() {
           <button
             className={`px-6 py-4 font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${activeTab === 'catalog' ? 'border-b-2 border-accent-500 text-accent-700 dark:text-accent-400' : 'text-[var(--text-secondary)]'}`}
             onClick={() => setActiveTab('catalog')}
+            aria-current={activeTab === 'catalog' ? 'page' : undefined}
           >
             Course Catalog
           </button>
           <button
             className={`px-6 py-4 font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${activeTab === 'my-courses' ? 'border-b-2 border-accent-500 text-accent-700 dark:text-accent-400' : 'text-[var(--text-secondary)]'}`}
             onClick={() => setActiveTab('my-courses')}
+            aria-current={activeTab === 'my-courses' ? 'page' : undefined}
           >
             My Courses
           </button>
           <button
             className={`px-6 py-4 font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${activeTab === 'certificates' ? 'border-b-2 border-accent-500 text-accent-700 dark:text-accent-400' : 'text-[var(--text-secondary)]'}`}
             onClick={() => setActiveTab('certificates')}
+            aria-current={activeTab === 'certificates' ? 'page' : undefined}
           >
             Certificates
           </button>
@@ -166,8 +169,8 @@ export default function LearningPage() {
                         </div>
                       ) : (
                         <div
-                          className="w-full h-40 bg-gradient-to-r from-accent-500 to-accent-800 dark:from-accent-600 dark:to-accent-900 flex items-center justify-center">
-                          <span className="text-4xl text-white">📚</span>
+                          className="w-full h-40 bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center">
+                          <span className="text-4xl text-accent-700 dark:text-accent-400">📚</span>
                         </div>
                       )}
                       <div className="p-4">

@@ -82,7 +82,7 @@ export function PayslipsTab({
           icon={<FileText className="h-8 w-8"/>}
           title="No Payslips Found"
           description="Generate payslips for your employees to view their salary details and deductions"
-          action={{label: 'Create Payslip', onClick: onCreatePayslip}}
+          action={{label: 'Create payslip', onClick: onCreatePayslip}}
           iconColor="cyan"
         />
       ) : (

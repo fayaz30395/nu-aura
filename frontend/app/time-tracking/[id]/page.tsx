@@ -23,6 +23,7 @@ import {
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
 import {createLogger} from '@/lib/utils/logger';
 import {formatDate} from '@/lib/utils/format/date';
+import {format} from 'date-fns';
 
 const log = createLogger('TimeTrackingPage');
 
@@ -155,12 +156,7 @@ export default function TimeEntryDetailPage() {
               </span>
             </div>
             <p className="text-[var(--text-muted)] mt-1">
-              {new Date(entry.entryDate).toLocaleDateString('en-IN', {
-                weekday: 'long',
-                day: '2-digit',
-                month: 'long',
-                year: 'numeric',
-              })}
+              {format(new Date(entry.entryDate), 'EEEE, dd MMMM yyyy')}
             </p>
           </div>
         </div>
@@ -341,7 +337,7 @@ export default function TimeEntryDetailPage() {
               <button
                 onClick={handleSubmit}
                 disabled={submitMutation.isPending}
-                className="flex-1 flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl font-medium shadow-[var(--shadow-dropdown)] shadow-accent-500/25 transition-all duration-200 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                className="flex-1 flex items-center justify-center gap-2 px-6 py-4 bg-accent-600 hover:bg-accent-700 text-white rounded-xl font-medium transition-colors duration-200 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 {submitMutation.isPending ? (
                   <>

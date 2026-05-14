@@ -31,11 +31,11 @@ export function DeleteCandidateModal({
             className="flex-shrink-0 h-12 w-12 rounded-xl bg-danger-100 dark:bg-danger-900/30 flex items-center justify-center">
             <Trash2 className="h-6 w-6 text-danger-600 dark:text-danger-400"/>
           </div>
-          <h3 className="ml-4 text-lg font-medium text-[var(--text-primary)]">Delete Candidate</h3>
+          <h3 className="ml-4 text-lg font-medium text-[var(--text-primary)]">Delete Candidate?</h3>
         </div>
         <p className="text-body-muted mb-6">
-          Are you sure you want to delete <strong className="text-[var(--text-secondary)]">{candidate.fullName}</strong>?
-          This action cannot be undone.
+          This action cannot be undone. <strong className="text-[var(--text-secondary)]">{candidate.fullName}</strong> will
+          be permanently deleted.
         </p>
         <div className="flex gap-4">
           <Button variant="outline" onClick={onClose} className="flex-1">

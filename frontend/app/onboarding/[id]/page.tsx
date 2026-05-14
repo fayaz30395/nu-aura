@@ -320,23 +320,23 @@ export default function OnboardingDetailPage() {
             {/* Sidebar Area */}
             <div className="space-y-8">
               <Card
-                className="border-0 shadow-[var(--shadow-dropdown)] bg-gradient-to-br from-accent-600 to-accent-700 text-white p-1">
+                className="border border-accent-200 dark:border-accent-800 bg-accent-100 dark:bg-accent-900/30 text-accent-900 dark:text-accent-100 p-1">
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-white flex items-center gap-2">
+                  <CardTitle className="text-accent-900 dark:text-accent-100 flex items-center gap-2">
                     <Zap className="h-5 w-5"/>
                     <span>Stakeholders</span>
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6 pt-2">
-                  <div className="bg-white/10 rounded-lg p-4">
+                  <div className="bg-white/40 dark:bg-white/5 rounded-lg p-4">
                     <p className="text-xs font-black uppercase tracking-widest opacity-60">Onboarding Buddy</p>
                     <p className="font-bold text-lg mt-1">{process.assignedBuddyName || 'Not Assigned'}</p>
                     <Button variant="ghost" size="sm"
-                            className="w-full mt-4 bg-white/10 hover:bg-white/20 border-0 text-white text-xs">
+                            className="w-full mt-4 bg-white/40 hover:bg-white/60 dark:bg-white/5 dark:hover:bg-white/10 border-0 text-accent-900 dark:text-accent-100 text-xs">
                       Send Message
                     </Button>
                   </div>
-                  <div className="bg-white/10 rounded-lg p-4">
+                  <div className="bg-white/40 dark:bg-white/5 rounded-lg p-4">
                     <p className="text-xs font-black uppercase tracking-widest opacity-60">Primary Goal</p>
                     <p className="font-bold text-sm mt-1">Successfully integrate into the Engineering team by end of
                       Month 1.</p>

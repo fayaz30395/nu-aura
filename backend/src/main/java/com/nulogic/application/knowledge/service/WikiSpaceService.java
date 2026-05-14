@@ -2,6 +2,7 @@ package com.nulogic.application.knowledge.service;
 
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.knowledge.WikiSpace;
 import com.nulogic.infrastructure.knowledge.repository.WikiPageRepository;
 import com.nulogic.infrastructure.knowledge.repository.WikiSpaceRepository;
@@ -12,7 +13,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,6 +24,7 @@ public class WikiSpaceService {
 
     private final WikiSpaceRepository wikiSpaceRepository;
     private final WikiPageRepository wikiPageRepository;
+    private final TenantTimeService tenantTimeService;
 
     @Transactional
     public WikiSpace createSpace(WikiSpace space) {
@@ -95,7 +96,7 @@ public class WikiSpaceService {
                 .orElseThrow(() -> new IllegalArgumentException("Wiki space not found"));
 
         space.setIsArchived(true);
-        space.setArchivedAt(LocalDateTime.now());
+        space.setArchivedAt(tenantTimeService.now(TenantContext.requireCurrentTenant()));
         space.setArchivedBy(userId);
 
         WikiSpace updated = wikiSpaceRepository.save(space);

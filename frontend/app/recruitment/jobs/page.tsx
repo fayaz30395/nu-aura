@@ -410,7 +410,7 @@ export default function JobOpeningsPage() {
             title="No job openings found"
             description={searchQuery || statusFilter ? "Try adjusting your search filters or create a new job opening" : "Get started by creating your first job opening"}
             action={{
-              label: 'Create Job Opening',
+              label: 'Create job opening',
               onClick: () => {
                 reset();
                 setEditingJob(null);
@@ -901,55 +901,55 @@ export default function JobOpeningsPage() {
                 ) : aiGeneratedJD ? (
                   <div className="space-y-6">
                     {aiGeneratedJD.summary && (
-                      <div>
-                        <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-2">Summary</h3>
+                      <section aria-labelledby="ai-jd-summary-heading">
+                        <h3 id="ai-jd-summary-heading" className="text-sm font-medium text-[var(--text-secondary)] mb-2">Summary</h3>
                         <p className="text-body-secondary">{aiGeneratedJD.summary}</p>
-                      </div>
+                      </section>
                     )}
 
                     {aiGeneratedJD.responsibilities && aiGeneratedJD.responsibilities.length > 0 && (
-                      <div>
-                        <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-2">Responsibilities</h3>
+                      <section aria-labelledby="ai-jd-responsibilities-heading">
+                        <h3 id="ai-jd-responsibilities-heading" className="text-sm font-medium text-[var(--text-secondary)] mb-2">Responsibilities</h3>
                         <ul className="list-disc list-inside space-y-1 text-body-secondary">
                           {aiGeneratedJD.responsibilities.map((r, i) => (
                             <li key={i}>{r}</li>
                           ))}
                         </ul>
-                      </div>
+                      </section>
                     )}
 
                     {aiGeneratedJD.requirements && aiGeneratedJD.requirements.length > 0 && (
-                      <div>
-                        <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-2">Requirements</h3>
+                      <section aria-labelledby="ai-jd-requirements-heading">
+                        <h3 id="ai-jd-requirements-heading" className="text-sm font-medium text-[var(--text-secondary)] mb-2">Requirements</h3>
                         <ul className="list-disc list-inside space-y-1 text-body-secondary">
                           {aiGeneratedJD.requirements.map((r, i) => (
                             <li key={i}>{r}</li>
                           ))}
                         </ul>
-                      </div>
+                      </section>
                     )}
 
                     {aiGeneratedJD.preferredQualifications && aiGeneratedJD.preferredQualifications.length > 0 && (
-                      <div>
-                        <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-2">Preferred
+                      <section aria-labelledby="ai-jd-preferred-quals-heading">
+                        <h3 id="ai-jd-preferred-quals-heading" className="text-sm font-medium text-[var(--text-secondary)] mb-2">Preferred
                           Qualifications</h3>
                         <ul className="list-disc list-inside space-y-1 text-body-secondary">
                           {aiGeneratedJD.preferredQualifications.map((q, i) => (
                             <li key={i}>{q}</li>
                           ))}
                         </ul>
-                      </div>
+                      </section>
                     )}
 
                     {aiGeneratedJD.benefits && aiGeneratedJD.benefits.length > 0 && (
-                      <div>
-                        <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-2">Benefits</h3>
+                      <section aria-labelledby="ai-jd-benefits-heading">
+                        <h3 id="ai-jd-benefits-heading" className="text-sm font-medium text-[var(--text-secondary)] mb-2">Benefits</h3>
                         <ul className="list-disc list-inside space-y-1 text-body-secondary">
                           {aiGeneratedJD.benefits.map((b, i) => (
                             <li key={i}>{b}</li>
                           ))}
                         </ul>
-                      </div>
+                      </section>
                     )}
 
                     <div className="flex gap-4 pt-4 border-t border-[var(--border-main)]">

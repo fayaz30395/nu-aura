@@ -632,11 +632,11 @@ export default function PerformanceReviewsPage() {
               setSelectedReview(null);
             }}
           >
-            Delete Review
+            Delete Review?
           </ModalHeader>
           <ModalBody>
             <p className="text-[var(--text-secondary)]">
-              Are you sure you want to delete this review? This action cannot be undone.
+              This action cannot be undone. The review will be permanently deleted.
             </p>
           </ModalBody>
           <ModalFooter>

@@ -22,6 +22,7 @@ import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Callout} from '@/components/ui/Callout';
+import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
 import {Button} from '@/components/ui/Button';
 import {Input} from '@/components/ui/Input';
 import {Badge} from '@/components/ui/Badge';
@@ -368,33 +369,12 @@ export default function TemplateEditorPage() {
         </div>
 
         {/* Task Edit Modal/Sheet */}
-        {editingTask && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-6 sm:p-10">
-            <motion.div
-              initial={{opacity: 0}}
-              animate={{opacity: 1}}
-              className="absolute inset-0 bg-[var(--bg-overlay)]"
-              onClick={() => setEditingTask(null)}
-            />
-            <motion.div
-              initial={{opacity: 0, scale: 0.95, y: 20}}
-              animate={{opacity: 1, scale: 1, y: 0}}
-              className="relative w-full max-w-2xl bg-[var(--bg-card)] rounded-[40px] shadow-[var(--shadow-elevated)] overflow-hidden border-t-8 border-accent-700"
-            >
-              <div className="p-12 space-y-10">
-                <div className="row-between">
-                  <h2 className="text-3xl font-black tracking-tight text-[var(--text-primary)]">
-                    {editingTask === 'new' ? 'New Task' : 'Edit Task'}
-                  </h2>
-                  <Button
-                    variant="outline"
-                    className="h-12 w-12 rounded-full p-0"
-                    onClick={() => setEditingTask(null)}
-                  >
-                    <Trash2 className="h-5 w-5"/>
-                  </Button>
-                </div>
-
+        <Modal isOpen={!!editingTask} onClose={() => setEditingTask(null)} size="lg">
+          <ModalHeader onClose={() => setEditingTask(null)}>
+            {editingTask === 'new' ? 'New Task' : 'Edit Task'}
+          </ModalHeader>
+          <ModalBody>
+            <div className="space-y-10">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div className="col-span-full space-y-4">
                     <label htmlFor="onboarding-task-name"
@@ -496,27 +476,26 @@ export default function TemplateEditorPage() {
                   </div>
                 </div>
 
-                <div className="pt-10 flex gap-4">
-                  <Button
-                    className="btn-primary flex-1 font-black tracking-widest uppercase text-xs bg-gradient-to-r from-accent-700 to-accent-600 border-0 shadow-[var(--shadow-dropdown)] shadow-accent-500/20 rounded-lg py-6"
-                    leftIcon={<Save className="h-4 w-4"/>}
-                    isLoading={addTaskMutation.isPending || updateTaskMutation.isPending}
-                    onClick={handleSaveTask}
-                  >
-                    Confirm Task
-                  </Button>
-                  <Button
-                    variant="outline"
-                    className="font-black tracking-widest uppercase text-xs border-[var(--border-subtle)] rounded-lg px-8"
-                    onClick={() => setEditingTask(null)}
-                  >
-                    Cancel
-                  </Button>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        )}
+            </div>
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              variant="outline"
+              className="font-black tracking-widest uppercase text-xs border-[var(--border-subtle)] rounded-lg px-8"
+              onClick={() => setEditingTask(null)}
+            >
+              Cancel
+            </Button>
+            <Button
+              className="btn-primary font-black tracking-widest uppercase text-xs bg-gradient-to-r from-accent-700 to-accent-600 border-0 shadow-[var(--shadow-dropdown)] shadow-accent-500/20 rounded-lg"
+              leftIcon={<Save className="h-4 w-4"/>}
+              isLoading={addTaskMutation.isPending || updateTaskMutation.isPending}
+              onClick={handleSaveTask}
+            >
+              Confirm Task
+            </Button>
+          </ModalFooter>
+        </Modal>
 
         <ConfirmDialog
           isOpen={deleteConfirmOpen}

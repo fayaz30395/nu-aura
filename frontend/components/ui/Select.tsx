@@ -39,7 +39,7 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
             ref={ref}
             className={cn(
               // Base styles
-              'w-full appearance-none rounded-lg border bg-[var(--bg-card)] transition-all duration-150',
+              'w-full appearance-none rounded-lg border bg-[var(--bg-card)] transition-all duration-100',
               'text-[var(--text-primary)]',
               // Size
               sizeStyles[selectSize],

@@ -1,6 +1,8 @@
 package com.nulogic.domain.notification;
 
 import com.nulogic.common.entity.TenantAware;
+import com.nulogic.common.util.TenantTimestamp;
+import com.nulogic.common.util.TimeAuditingEntityListener;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -12,11 +14,19 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+/**
+ * Migrated to the {@link TimeAuditingEntityListener} seam — see
+ * {@code backend/docs/audit/prepersist-now-audit.md} rows 7–8 and the pilot at
+ * {@link com.nulogic.domain.recognition.RecognitionReaction}. {@code createdAt} and
+ * {@code updatedAt} are now stamped from the tenant's zone via {@link TenantTimestamp}
+ * rather than the JVM default zone {@code LocalDateTime.now()}.
+ */
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "user_notification_preferences", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"userId", "category"})
 })
+@EntityListeners(TimeAuditingEntityListener.class)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -70,13 +80,19 @@ public class UserNotificationPreference extends TenantAware {
     @Enumerated(EnumType.STRING)
     private NotificationPriority minimumPriority; // Only send notifications >= this priority
 
+    @TenantTimestamp
     private LocalDateTime createdAt;
 
+    @TenantTimestamp(updateOnChange = true)
     private LocalDateTime updatedAt;
 
+    /**
+     * Defaults remain in-entity because the {@link TimeAuditingEntityListener} seam only
+     * handles timestamp fields; the audit explicitly preserves non-temporal defaults during
+     * the rollout (see {@code prepersist-now-audit.md} §"Patterns observed").
+     */
     @PrePersist
     protected void onCreate() {
-        createdAt = LocalDateTime.now();
         if (emailEnabled == null) emailEnabled = true;
         if (smsEnabled == null) smsEnabled = false;
         if (pushEnabled == null) pushEnabled = true;
@@ -87,11 +103,6 @@ public class UserNotificationPreference extends TenantAware {
         if (quietHoursEnabled == null) quietHoursEnabled = false;
         if (digestFrequency == null) digestFrequency = "IMMEDIATE";
         if (minimumPriority == null) minimumPriority = NotificationPriority.LOW;
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
     }
 
     public boolean isChannelEnabled(NotificationChannel channel) {

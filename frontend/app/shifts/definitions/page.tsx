@@ -17,7 +17,7 @@ import {CATEGORICAL_DEFAULT, CATEGORICAL_PALETTE, CATEGORICAL_UNSET} from '@/lib
 import {Controller, useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
-import {AnimatePresence, motion} from 'framer-motion';
+import {motion} from 'framer-motion';
 import {Check, ChevronLeft, Clock, Edit2, Moon, Plus, Sun, Trash2, Zap,} from 'lucide-react';
 import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
 import {useRouter} from 'next/navigation';

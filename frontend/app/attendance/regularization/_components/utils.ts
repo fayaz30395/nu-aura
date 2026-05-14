@@ -7,6 +7,8 @@ export function calculateResolutionTime(requestedOn: string, approvedOn: string 
   return `${hours}h`;
 }
 
+import {formatDate} from '@/lib/utils/format/date';
+
 export function formatRelativeTime(date: string): string {
   const now = new Date();
   const requestDate = new Date(date);
@@ -19,7 +21,7 @@ export function formatRelativeTime(date: string): string {
   if (diffMins < 60) return `${diffMins}m ago`;
   if (diffHours < 24) return `${diffHours}h ago`;
   if (diffDays < 7) return `${diffDays}d ago`;
-  return requestDate.toLocaleDateString();
+  return formatDate(requestDate);
 }
 
 export function formatTime(dateString: string): string {

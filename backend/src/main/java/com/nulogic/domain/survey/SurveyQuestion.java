@@ -1,5 +1,7 @@
 package com.nulogic.domain.survey;
 
+import com.nulogic.common.util.TenantTimestamp;
+import com.nulogic.common.util.TimeAuditingEntityListener;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -8,9 +10,15 @@ import java.util.UUID;
 
 /**
  * Survey question with various types and engagement measurement support.
+ *
+ * <p>{@code createdAt} is stamped by {@link TimeAuditingEntityListener} via
+ * {@link TenantTimestamp}, resolving the tenant's IANA zone through
+ * {@code TenantTimeService}. Closes audit row 5 in
+ * {@code backend/docs/audit/prepersist-now-audit.md}.</p>
  */
 @Entity
 @Table(name = "survey_questions")
+@EntityListeners(TimeAuditingEntityListener.class)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -62,11 +70,11 @@ public class SurveyQuestion {
     private UUID dependsOnQuestionId;
     private String dependsOnAnswer;
 
+    @TenantTimestamp
     private LocalDateTime createdAt;
 
     @PrePersist
     protected void onCreate() {
-        createdAt = LocalDateTime.now();
         if (weight == null) weight = 1.0;
     }
 

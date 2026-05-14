@@ -7,6 +7,7 @@ import com.nulogic.common.exception.BusinessException;
 import com.nulogic.common.exception.ResourceNotFoundException;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.employee.EmploymentChangeRequest;
 import com.nulogic.infrastructure.employee.repository.DepartmentRepository;
@@ -17,7 +18,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,13 +27,16 @@ public class EmploymentChangeRequestService {
     private final EmploymentChangeRequestRepository changeRequestRepository;
     private final EmployeeRepository employeeRepository;
     private final DepartmentRepository departmentRepository;
+    private final TenantTimeService tenantTimeService;
 
     public EmploymentChangeRequestService(EmploymentChangeRequestRepository changeRequestRepository,
                                           EmployeeRepository employeeRepository,
-                                          DepartmentRepository departmentRepository) {
+                                          DepartmentRepository departmentRepository,
+                                          TenantTimeService tenantTimeService) {
         this.changeRequestRepository = changeRequestRepository;
         this.employeeRepository = employeeRepository;
         this.departmentRepository = departmentRepository;
+        this.tenantTimeService = tenantTimeService;
     }
 
     /**
@@ -197,7 +200,7 @@ public class EmploymentChangeRequestService {
         // Update the change request
         changeRequest.setStatus(EmploymentChangeRequest.ChangeRequestStatus.APPROVED);
         changeRequest.setApproverId(approverId);
-        changeRequest.setApprovedAt(LocalDateTime.now());
+        changeRequest.setApprovedAt(tenantTimeService.now(tenantId));
         changeRequest = changeRequestRepository.save(changeRequest);
 
         return enrichDto(EmploymentChangeRequestDto.fromEntity(changeRequest));
@@ -226,7 +229,7 @@ public class EmploymentChangeRequestService {
         changeRequest.setStatus(EmploymentChangeRequest.ChangeRequestStatus.REJECTED);
         changeRequest.setApproverId(approverId);
         changeRequest.setRejectionReason(rejectRequest.getRejectionReason());
-        changeRequest.setRejectedAt(LocalDateTime.now());
+        changeRequest.setRejectedAt(tenantTimeService.now(tenantId));
         changeRequest = changeRequestRepository.save(changeRequest);
 
         return enrichDto(EmploymentChangeRequestDto.fromEntity(changeRequest));

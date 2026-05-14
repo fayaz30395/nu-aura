@@ -4,6 +4,7 @@ import com.nulogic.api.timetracking.dto.CreateTimeEntryRequest;
 import com.nulogic.api.timetracking.dto.TimeEntryDto;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.timetracking.TimeEntry;
 import com.nulogic.domain.timetracking.TimeEntry.TimeEntryStatus;
 import com.nulogic.infrastructure.timetracking.repository.TimeEntryRepository;
@@ -28,6 +29,7 @@ import java.util.stream.Collectors;
 public class TimeTrackingService {
 
     private final TimeEntryRepository timeEntryRepository;
+    private final TenantTimeService tenantTimeService;
 
     @Transactional
     public TimeEntryDto createEntry(CreateTimeEntryRequest request) {
@@ -108,7 +110,7 @@ public class TimeTrackingService {
         }
 
         entry.setStatus(TimeEntryStatus.SUBMITTED);
-        entry.setSubmittedDate(LocalDate.now());
+        entry.setSubmittedDate(tenantTimeService.today(tenantId));
 
         TimeEntry saved = timeEntryRepository.save(entry);
         log.info("Time entry submitted: {}", saved.getId());
@@ -136,7 +138,7 @@ public class TimeTrackingService {
 
         entry.setStatus(TimeEntryStatus.APPROVED);
         entry.setApprovedBy(approverId);
-        entry.setApprovedDate(LocalDate.now());
+        entry.setApprovedDate(tenantTimeService.today(tenantId));
 
         TimeEntry saved = timeEntryRepository.save(entry);
         log.info("Time entry approved: {} by {}", saved.getId(), approverId);
@@ -164,7 +166,7 @@ public class TimeTrackingService {
 
         entry.setStatus(TimeEntryStatus.REJECTED);
         entry.setApprovedBy(approverId);
-        entry.setApprovedDate(LocalDate.now());
+        entry.setApprovedDate(tenantTimeService.today(tenantId));
         entry.setRejectionReason(reason);
 
         TimeEntry saved = timeEntryRepository.save(entry);

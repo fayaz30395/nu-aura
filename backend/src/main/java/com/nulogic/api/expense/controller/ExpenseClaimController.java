@@ -5,6 +5,8 @@ import com.nulogic.api.expense.dto.ExpenseClaimResponse;
 import com.nulogic.application.expense.service.ExpenseClaimService;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.RequiresPermission;
+import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.expense.ExpenseClaim;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -39,6 +41,7 @@ import java.util.UUID;
 public class ExpenseClaimController {
 
     private final ExpenseClaimService expenseClaimService;
+    private final TenantTimeService tenantTimeService;
 
     @PostMapping("/employees/{employeeId}")
     @RequiresPermission(Permission.EXPENSE_CREATE)
@@ -160,7 +163,8 @@ public class ExpenseClaimController {
             @Parameter(description = "Expense claim UUID") @PathVariable @NotNull UUID claimId,
             @Parameter(description = "Payment date (defaults to today if omitted)") @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate paymentDate,
             @Parameter(description = "Payment reference number (max 255 chars)") @NotBlank @Size(max = 255) @RequestParam String paymentReference) {
-        LocalDate effectiveDate = paymentDate != null ? paymentDate : LocalDate.now();
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        LocalDate effectiveDate = paymentDate != null ? paymentDate : tenantTimeService.today(tenantId);
         log.info("Marking expense claim as paid: {}", claimId);
         return ResponseEntity.ok(expenseClaimService.markAsPaid(claimId, effectiveDate, paymentReference));
     }

@@ -9,6 +9,7 @@ import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.RequiresPermission;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -32,6 +33,7 @@ public class AnalyticsController {
 
     private final DashboardAnalyticsService dashboardAnalyticsService;
     private final AnalyticsService analyticsService;
+    private final TenantTimeService tenantTimeService;
 
     /**
      * Lightweight summary for the main dashboard KPI widget.
@@ -144,8 +146,8 @@ public class AnalyticsController {
             @ApiResponse(responseCode = "403", description = "Forbidden — requires ANALYTICS:VIEW permission")
     })
     public ResponseEntity<LeaveMetrics> getLeaveMetrics() {
-        UUID tenantId = TenantContext.getCurrentTenant();
-        java.time.LocalDate today = java.time.LocalDate.now();
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        java.time.LocalDate today = tenantTimeService.today(tenantId);
         LeaveMetrics metrics = analyticsService.getLeaveMetrics(
                 tenantId, today.withDayOfMonth(1), today.withDayOfMonth(today.lengthOfMonth()));
         return ResponseEntity.ok(metrics);
@@ -163,8 +165,8 @@ public class AnalyticsController {
             @ApiResponse(responseCode = "403", description = "Forbidden — requires ANALYTICS:VIEW permission")
     })
     public ResponseEntity<PayrollMetrics> getPayrollMetrics() {
-        UUID tenantId = TenantContext.getCurrentTenant();
-        java.time.LocalDate today = java.time.LocalDate.now();
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        java.time.LocalDate today = tenantTimeService.today(tenantId);
         PayrollMetrics metrics = analyticsService.getPayrollMetrics(
                 tenantId, today.getYear(), today.getMonthValue());
         return ResponseEntity.ok(metrics);

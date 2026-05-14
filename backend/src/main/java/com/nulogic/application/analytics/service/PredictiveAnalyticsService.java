@@ -3,6 +3,7 @@ package com.nulogic.application.analytics.service;
 import com.nulogic.api.analytics.dto.*;
 import com.nulogic.common.exception.ResourceNotFoundException;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.analytics.AnalyticsInsight;
 import com.nulogic.domain.analytics.AttritionPrediction;
 import com.nulogic.domain.analytics.SkillGap;
@@ -26,7 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.Year;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -47,6 +47,7 @@ public class PredictiveAnalyticsService {
     private final SkillGapRepository skillGapRepository;
     private final EmployeeRepository employeeRepository;
     private final SalaryStructureRepository salaryStructureRepository;
+    private final TenantTimeService tenantTimeService;
 
     // ==================== DASHBOARD ====================
 
@@ -54,7 +55,7 @@ public class PredictiveAnalyticsService {
     public PredictiveAnalyticsDashboard getDashboard() {
         UUID tenantId = TenantContext.getCurrentTenant();
         int currentYear = Year.now().getValue();
-        LocalDate thirtyDaysAgo = LocalDate.now().minusDays(30);
+        LocalDate thirtyDaysAgo = tenantTimeService.today(tenantId).minusDays(30);
 
         // Attrition Summary
         PredictiveAnalyticsDashboard.AttritionSummary attritionSummary = buildAttritionSummary(tenantId, thirtyDaysAgo);
@@ -222,7 +223,7 @@ public class PredictiveAnalyticsService {
     public List<AnalyticsInsightDto> getInsightsByCategory(String category) {
         UUID tenantId = TenantContext.getCurrentTenant();
         AnalyticsInsight.InsightCategory cat = AnalyticsInsight.InsightCategory.valueOf(category);
-        return insightRepository.findByCategory(tenantId, cat, LocalDate.now())
+        return insightRepository.findByCategory(tenantId, cat, tenantTimeService.today(tenantId))
                 .stream()
                 .map(AnalyticsInsightDto::fromEntity)
                 .collect(Collectors.toList());
@@ -249,7 +250,7 @@ public class PredictiveAnalyticsService {
         insight.setStatus(newStatus);
 
         if (newStatus == AnalyticsInsight.InsightStatus.RESOLVED) {
-            insight.setResolvedAt(LocalDateTime.now());
+            insight.setResolvedAt(tenantTimeService.now(tenantId));
             insight.setResolutionNotes(notes);
         }
 
@@ -287,8 +288,8 @@ public class PredictiveAnalyticsService {
                 .severity(AnalyticsInsight.InsightSeverity.valueOf(severity))
                 .recommendation(recommendation)
                 .status(AnalyticsInsight.InsightStatus.NEW)
-                .generatedAt(LocalDateTime.now())
-                .validUntil(LocalDate.now().plusMonths(3))
+                .generatedAt(tenantTimeService.now(tenantId))
+                .validUntil(tenantTimeService.today(tenantId).plusMonths(3))
                 .dataSource("MANUAL")
                 .build();
 
@@ -313,7 +314,7 @@ public class PredictiveAnalyticsService {
     public List<SkillGapDto> getSkillGapsByPriority(String priority) {
         UUID tenantId = TenantContext.getCurrentTenant();
         SkillGap.Priority p = SkillGap.Priority.valueOf(priority);
-        return skillGapRepository.findByPriority(tenantId, p, LocalDate.now().minusDays(90))
+        return skillGapRepository.findByPriority(tenantId, p, tenantTimeService.today(tenantId).minusDays(90))
                 .stream()
                 .map(SkillGapDto::fromEntity)
                 .collect(Collectors.toList());
@@ -322,7 +323,7 @@ public class PredictiveAnalyticsService {
     @Transactional(readOnly = true)
     public List<SkillGapDto> getSkillGapsByDepartment(UUID departmentId) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return skillGapRepository.findByDepartment(tenantId, departmentId, LocalDate.now().minusDays(90))
+        return skillGapRepository.findByDepartment(tenantId, departmentId, tenantTimeService.today(tenantId).minusDays(90))
                 .stream()
                 .map(SkillGapDto::fromEntity)
                 .collect(Collectors.toList());
@@ -473,7 +474,7 @@ public class PredictiveAnalyticsService {
                 .description("Total new hires this year")
                 .build());
 
-        BigDecimal avgRisk = attritionRepository.getAverageRiskScore(tenantId, LocalDate.now().minusDays(30));
+        BigDecimal avgRisk = attritionRepository.getAverageRiskScore(tenantId, tenantTimeService.today(tenantId).minusDays(30));
         metrics.add(PredictiveAnalyticsDashboard.KeyMetric.builder()
                 .name("Avg Risk Score")
                 .value(avgRisk != null ? avgRisk.setScale(0, RoundingMode.HALF_UP).toString() : "N/A")
@@ -507,7 +508,7 @@ public class PredictiveAnalyticsService {
             level = emp.getLevel();
 
             if (joiningDate != null) {
-                tenureMonths = (int) ChronoUnit.MONTHS.between(joiningDate, LocalDate.now());
+                tenureMonths = (int) ChronoUnit.MONTHS.between(joiningDate, tenantTimeService.today(tenantId));
             }
         }
 
@@ -628,7 +629,7 @@ public class PredictiveAnalyticsService {
 
         AttritionPrediction prediction = AttritionPrediction.builder()
                 .employeeId(employeeId)
-                .predictionDate(LocalDate.now())
+                .predictionDate(tenantTimeService.today(tenantId))
                 .riskScore(riskScore)
                 .riskLevel(riskLevel)
                 .confidenceScore(BigDecimal.valueOf(Math.min(confidenceBase, 95)))
@@ -651,7 +652,7 @@ public class PredictiveAnalyticsService {
         if (riskLevel == AttritionPrediction.RiskLevel.HIGH || riskLevel == AttritionPrediction.RiskLevel.CRITICAL) {
             // Predict departure in 3-9 months, inversely proportional to risk
             int monthsToLeave = riskScore.compareTo(BigDecimal.valueOf(70)) >= 0 ? 3 : 6;
-            prediction.setPredictedLeaveDate(LocalDate.now().plusMonths(monthsToLeave));
+            prediction.setPredictedLeaveDate(tenantTimeService.today(tenantId).plusMonths(monthsToLeave));
         }
 
         return prediction;

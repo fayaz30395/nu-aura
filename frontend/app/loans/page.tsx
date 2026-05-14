@@ -194,8 +194,8 @@ export default function LoansPage() {
           {loans.length === 0 ? (
             <EmptyState
               icon={<Wallet className="h-12 w-12"/>}
-              title="No Loan Requests"
-              description="Apply for a loan to get started"
+              title="No loan requests yet"
+              description="Apply for a loan to request an advance against your salary. Your requests and repayment schedule will appear here."
               action={{label: 'Apply for Loan', onClick: () => router.push('/loans/new')}}
             />
           ) : (

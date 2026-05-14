@@ -5,6 +5,7 @@ import {AppLayout} from '@/components/layout';
 import {apiClient} from '@/lib/api/client';
 import {useQuery, useQueryClient} from '@tanstack/react-query';
 import {AlertTriangle, Download, RefreshCw, Shield, TrendingDown, Zap} from 'lucide-react';
+import {format} from 'date-fns';
 import {Button} from '@/components/ui/Button';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
@@ -237,10 +238,7 @@ export default function AttritionReportPage() {
                         <div className="shrink-0 text-right hidden md:block">
                           <p className="text-caption">Predicted leave</p>
                           <p className="text-sm font-medium text-[var(--text-primary)]">
-                            {new Date(pred.predictedLeaveDate).toLocaleDateString('en-IN', {
-                              month: 'short',
-                              year: 'numeric'
-                            })}
+                            {format(new Date(pred.predictedLeaveDate), 'MMM yyyy')}
                           </p>
                         </div>
                       )}

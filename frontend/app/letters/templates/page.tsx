@@ -486,7 +486,8 @@ export default function LetterTemplatesPage() {
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]"/>
             <input
-              type="text"
+              type="search"
+              aria-label="Search templates by name or code"
               placeholder="Search templates by name or code..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -641,16 +642,17 @@ export default function LetterTemplatesPage() {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="flex items-center justify-center gap-2">
+          <nav aria-label="Pagination" className="flex items-center justify-center gap-2">
             <Button
               size="sm"
               variant="outline"
               disabled={currentPage === 0}
               onClick={() => setCurrentPage((p) => Math.max(0, p - 1))}
+              aria-label="Previous page"
             >
               Previous
             </Button>
-            <span className="text-body-secondary">
+            <span className="text-body-secondary" aria-current="page">
               Page {currentPage + 1} of {totalPages}
             </span>
             <Button
@@ -658,10 +660,11 @@ export default function LetterTemplatesPage() {
               variant="outline"
               disabled={currentPage >= totalPages - 1}
               onClick={() => setCurrentPage((p) => p + 1)}
+              aria-label="Next page"
             >
               Next
             </Button>
-          </div>
+          </nav>
         )}
 
         {/* ── Template Editor Modal ─────────────────────────────────────── */}

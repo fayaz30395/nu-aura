@@ -216,7 +216,7 @@ export default function LoanDetailPage() {
             </div>
             <div className="h-3 bg-[var(--bg-secondary)] rounded-full overflow-hidden">
               <div
-                className="h-full bg-gradient-to-r from-accent-500 to-accent-700 rounded-full transition-all duration-500"
+                className="h-full bg-accent-600 dark:bg-accent-500 rounded-full transition-all duration-500"
                 style={{width: `${Math.min(progress, 100)}%`}}
               />
             </div>

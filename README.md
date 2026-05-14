@@ -209,6 +209,10 @@ cd frontend && npm run lint && npx tsc --noEmit
 - **Migrations:** Flyway only (V0–V171, 162+ files). Legacy Liquibase deprecated.
 - **Security hardening (Sprints 1–3, May 2026):** 79 wave-1 findings, ~50 wave-2 findings, and wave-3 regression follow-ups closed across auth, IDOR, injection, SSRF, Drive tenant isolation, dependencies, mass-assignment, and field-level AES-GCM encryption for PII. See `CHANGELOG.md` and `SECURITY.md`.
 
+### Accessibility (WCAG 2.1 AA, 2026-05-13/14)
+
+Comprehensive a11y polish across the frontend (Phase 7, waves 1–6 + 11 rolling agent batches): 56 ad-hoc modals → canonical `<Modal>` (focus trap, Escape, aria-modal), ~400 form inputs gained `htmlFor`/`id` linkage, 87 heading-level swaps for proper hierarchy, 38 form fields with `aria-invalid`/`aria-describedby` for inline errors, 24 icon-only button aria-labels, skip-to-main-content nav, `<main>`/`<nav>`/`<aside>` landmarks, prefers-reduced-motion CSS, print stylesheet, live regions, and dozens more fixes (lint warnings 270 → 79). See `CHANGELOG.md` for full breakdown.
+
 ## Services (Development)
 
 | Service       | URL                                     | Purpose            |

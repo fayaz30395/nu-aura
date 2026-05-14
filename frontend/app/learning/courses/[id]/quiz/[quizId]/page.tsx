@@ -259,10 +259,10 @@ export default function QuizPage() {
 
             <div className="skeuo-card overflow-hidden">
               {/* Header */}
-              <div className="bg-gradient-to-r from-accent-600 to-accent-700 text-white p-8">
+              <div className="bg-accent-100 dark:bg-accent-900/30 border-b border-accent-200 dark:border-accent-800 text-accent-900 dark:text-accent-100 p-8">
                 <h1 className="text-xl font-bold mb-2">{quiz.title}</h1>
                 {quiz.description && (
-                  <p className="text-accent-100">{quiz.description}</p>
+                  <p className="text-accent-800 dark:text-accent-200">{quiz.description}</p>
                 )}
               </div>
 
@@ -541,7 +541,7 @@ export default function QuizPage() {
                     </>
                   ) : (
                     <>
-                      <CheckCircle2 className="h-4 w-4"/> Submit Quiz
+                      <CheckCircle2 className="h-4 w-4"/> Submit quiz
                     </>
                   )}
                 </button>

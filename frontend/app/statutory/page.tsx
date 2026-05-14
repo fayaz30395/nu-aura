@@ -247,7 +247,7 @@ export default function StatutoryPage() {
             <Card withBorder className="skeuo-card" radius="md">
               <Group justify="space-between" mb="md">
                 <Title order={4}>Professional Tax Slabs (Maharashtra)</Title>
-                <Button variant="light" size="xs">Add Slab</Button>
+                <Button variant="light" size="xs">Add slab</Button>
               </Group>
               <Table>
                 <Table.Thead>

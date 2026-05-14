@@ -635,7 +635,7 @@ public class LetterService {
     }
 
     private String generateReferenceNumber(LetterCategory category, UUID tenantId) {
-        String prefix = category.name().substring(0, 3).toUpperCase() + "/" + LocalDate.now().getYear();
+        String prefix = category.name().substring(0, 3).toUpperCase() + "/" + tenantTimeService.today(tenantId).getYear();
         Integer maxSequence = letterRepository.findMaxSequenceByPrefix(tenantId, prefix);
         int nextSequence = (maxSequence != null ? maxSequence : 0) + 1;
         return GeneratedLetter.generateReferenceNumber(prefix, nextSequence);
@@ -807,7 +807,7 @@ public class LetterService {
 
     @Transactional
     public List<GeneratedLetterResponse> bulkGenerate(UUID templateId, List<UUID> employeeIds, UUID generatedBy) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         LetterTemplate template = templateRepository.findByIdAndTenantId(templateId, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException(TEMPLATE_NOT_FOUND_PREFIX + templateId));
@@ -824,7 +824,7 @@ public class LetterService {
                         .orElseThrow(() -> new ResourceNotFoundException("Employee not found: " + employeeId));
 
                 String referenceNumber = generateReferenceNumber(template.getCategory(), tenantId);
-                String content = processTemplate(template.getTemplateContent(), employee, null);
+                String content = processTemplate(template.getTemplateContent(), employee, null, tenantId);
 
                 GeneratedLetter entity = GeneratedLetter.builder()
                         .referenceNumber(referenceNumber)
@@ -833,7 +833,7 @@ public class LetterService {
                         .category(template.getCategory())
                         .letterTitle(template.getName())
                         .generatedContent(content)
-                        .letterDate(LocalDate.now())
+                        .letterDate(tenantTimeService.today(tenantId))
                         .status(LetterStatus.DRAFT)
                         .generatedBy(generatedBy)
                         .build();
@@ -857,19 +857,19 @@ public class LetterService {
      */
     @Transactional(readOnly = true)
     public String previewTemplate(UUID templateId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         LetterTemplate template = templateRepository.findByIdAndTenantId(templateId, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException(TEMPLATE_NOT_FOUND_PREFIX + templateId));
 
-        Map<String, String> sampleData = buildSamplePlaceholderData();
+        Map<String, String> sampleData = buildSamplePlaceholderData(tenantId);
         return replacePlaceholders(template.getTemplateContent(), sampleData);
     }
 
     /**
      * Builds sample placeholder values used for template preview.
      */
-    private Map<String, String> buildSamplePlaceholderData() {
+    private Map<String, String> buildSamplePlaceholderData(UUID tenantId) {
         Map<String, String> data = new LinkedHashMap<>();
         data.put("employee.name", "John Doe");
         data.put("employee.firstName", "John");
@@ -885,10 +885,11 @@ public class LetterService {
         data.put("company.phone", "+91 80 1234 5678");
         data.put("company.email", "hr@acmecorp.com");
         data.put("company.website", "www.acmecorp.com");
-        data.put("currentDate", LocalDate.now().format(DATE_FORMATTER));
+        LocalDate today = tenantTimeService.today(tenantId);
+        data.put("currentDate", today.format(DATE_FORMATTER));
         data.put("letter.referenceNumber", "REF/2026/SAMPLE");
-        data.put("letter.effectiveDate", LocalDate.now().format(DATE_FORMATTER));
-        data.put("letter.expiryDate", LocalDate.now().plusMonths(1).format(DATE_FORMATTER));
+        data.put("letter.effectiveDate", today.format(DATE_FORMATTER));
+        data.put("letter.expiryDate", today.plusMonths(1).format(DATE_FORMATTER));
         data.put("candidate.name", "Jane Smith");
         data.put("candidate.firstName", "Jane");
         data.put("candidate.lastName", "Smith");

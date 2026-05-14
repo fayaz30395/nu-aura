@@ -3,6 +3,7 @@ package com.nulogic.application.report.service;
 import com.nulogic.application.document.service.FileStorageService;
 import com.nulogic.common.exception.BusinessException;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.lowagie.text.*;
 import com.lowagie.text.Font;
 import com.lowagie.text.Rectangle;
@@ -42,6 +43,7 @@ public class ReportGenerationService {
     private static final Color PRIMARY_COLOR = new Color(41, 128, 185);
     private static final Color LIGHT_GRAY = new Color(245, 245, 245);
     private final FileStorageService fileStorageService;
+    private final TenantTimeService tenantTimeService;
 
     /**
      * Generate a payslip PDF for an employee.
@@ -49,6 +51,7 @@ public class ReportGenerationService {
     @Transactional(readOnly = true)
     public ReportResult generatePayslip(UUID employeeId, int year, int month,
                                         Map<String, Object> payslipData) {
+        UUID tenantId = TenantContext.requireCurrentTenant();
         String filename = String.format("payslip_%s_%d_%02d.pdf", employeeId, year, month);
         String monthName = LocalDate.of(year, month, 1).getMonth().toString();
 
@@ -84,7 +87,7 @@ public class ReportGenerationService {
             addNetPaySection(document, payslipData);
 
             // Footer
-            addFooter(document);
+            addFooter(document, tenantId);
 
             document.close();
 
@@ -107,7 +110,7 @@ public class ReportGenerationService {
                     .objectName(uploadResult.getObjectName())
                     .downloadUrl(fileStorageService.getDownloadUrl(uploadResult.getObjectName()))
                     .size(pdfBytes.length)
-                    .generatedAt(LocalDateTime.now())
+                    .generatedAt(tenantTimeService.now(tenantId))
                     .build();
 
         } catch (DocumentException e) {
@@ -124,6 +127,7 @@ public class ReportGenerationService {
     @Transactional(readOnly = true)
     public ReportResult generateAttendanceReport(UUID entityId, LocalDate startDate, LocalDate endDate,
                                                  Map<String, Object> attendanceData, String reportType) {
+        UUID tenantId = TenantContext.requireCurrentTenant();
         String filename = String.format("attendance_report_%s_%s_to_%s.pdf",
                 entityId,
                 startDate.format(DateTimeFormatter.ISO_DATE),
@@ -151,7 +155,7 @@ public class ReportGenerationService {
             document.add(attendanceTable);
 
             // Footer
-            addFooter(document);
+            addFooter(document, tenantId);
 
             document.close();
 
@@ -175,7 +179,7 @@ public class ReportGenerationService {
                     .objectName(uploadResult.getObjectName())
                     .downloadUrl(fileStorageService.getDownloadUrl(uploadResult.getObjectName()))
                     .size(pdfBytes.length)
-                    .generatedAt(LocalDateTime.now())
+                    .generatedAt(tenantTimeService.now(tenantId))
                     .build();
 
         } catch (DocumentException e) {
@@ -191,6 +195,7 @@ public class ReportGenerationService {
      */
     @Transactional(readOnly = true)
     public ReportResult generateLeaveReport(UUID entityId, int year, Map<String, Object> leaveData) {
+        UUID tenantId = TenantContext.requireCurrentTenant();
         String filename = String.format("leave_report_%s_%d.pdf", entityId, year);
 
         Document document = new Document(PageSize.A4, 50, 50, 50, 50);
@@ -215,7 +220,7 @@ public class ReportGenerationService {
             document.add(historyTable);
 
             // Footer
-            addFooter(document);
+            addFooter(document, tenantId);
 
             document.close();
 
@@ -238,7 +243,7 @@ public class ReportGenerationService {
                     .objectName(uploadResult.getObjectName())
                     .downloadUrl(fileStorageService.getDownloadUrl(uploadResult.getObjectName()))
                     .size(pdfBytes.length)
-                    .generatedAt(LocalDateTime.now())
+                    .generatedAt(tenantTimeService.now(tenantId))
                     .build();
 
         } catch (DocumentException e) {
@@ -254,10 +259,12 @@ public class ReportGenerationService {
      */
     @Transactional(readOnly = true)
     public ReportResult generateLetter(UUID employeeId, String letterType, Map<String, Object> letterData) {
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        LocalDate today = tenantTimeService.today(tenantId);
         String filename = String.format("%s_letter_%s_%s.pdf",
                 letterType.toLowerCase(),
                 employeeId,
-                LocalDate.now().format(DateTimeFormatter.ISO_DATE));
+                today.format(DateTimeFormatter.ISO_DATE));
 
         Document document = new Document(PageSize.A4, 72, 72, 72, 72);
         try {
@@ -270,7 +277,7 @@ public class ReportGenerationService {
 
             // Date
             Paragraph datePara = new Paragraph(
-                    LocalDate.now().format(DateTimeFormatter.ofPattern("MMMM dd, yyyy")),
+                    today.format(DateTimeFormatter.ofPattern("MMMM dd, yyyy")),
                     NORMAL_FONT
             );
             datePara.setAlignment(Element.ALIGN_RIGHT);
@@ -289,7 +296,7 @@ public class ReportGenerationService {
             document.add(Chunk.NEWLINE);
 
             // Body
-            String letterBody = getLetterBody(letterType, letterData);
+            String letterBody = getLetterBody(letterType, letterData, today);
             Paragraph bodyPara = new Paragraph(letterBody, NORMAL_FONT);
             bodyPara.setAlignment(Element.ALIGN_JUSTIFIED);
             bodyPara.setLeading(18f);
@@ -322,7 +329,7 @@ public class ReportGenerationService {
                     .objectName(uploadResult.getObjectName())
                     .downloadUrl(fileStorageService.getDownloadUrl(uploadResult.getObjectName()))
                     .size(pdfBytes.length)
-                    .generatedAt(LocalDateTime.now())
+                    .generatedAt(tenantTimeService.now(tenantId))
                     .build();
 
         } catch (DocumentException e) {
@@ -338,10 +345,10 @@ public class ReportGenerationService {
      */
     @Transactional(readOnly = true)
     public ReportResult generateAnalyticsReport(Map<String, Object> analyticsData, String reportPeriod) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         String filename = String.format("hr_analytics_%s_%s.pdf",
                 reportPeriod,
-                LocalDate.now().format(DateTimeFormatter.ISO_DATE));
+                tenantTimeService.today(tenantId).format(DateTimeFormatter.ISO_DATE));
 
         Document document = new Document(PageSize.A4, 50, 50, 50, 50);
         try {
@@ -378,7 +385,7 @@ public class ReportGenerationService {
             document.add(leaveMetricsTable);
 
             // Footer
-            addFooter(document);
+            addFooter(document, tenantId);
 
             document.close();
 
@@ -401,7 +408,7 @@ public class ReportGenerationService {
                     .objectName(uploadResult.getObjectName())
                     .downloadUrl(fileStorageService.getDownloadUrl(uploadResult.getObjectName()))
                     .size(pdfBytes.length)
-                    .generatedAt(LocalDateTime.now())
+                    .generatedAt(tenantTimeService.now(tenantId))
                     .build();
 
         } catch (DocumentException e) {
@@ -709,7 +716,7 @@ public class ReportGenerationService {
         document.add(new Paragraph(signatoryTitle, NORMAL_FONT));
     }
 
-    private String getLetterBody(String letterType, Map<String, Object> data) {
+    private String getLetterBody(String letterType, Map<String, Object> data, LocalDate today) {
         String employeeName = getStringValue(data, "employeeName", "Employee");
         String designation = getStringValue(data, "designation", "");
         String department = getStringValue(data, "department", "");
@@ -742,7 +749,7 @@ public class ReportGenerationService {
                             "During their tenure, they demonstrated professionalism, dedication, and excellent work ethics. " +
                             "We wish them the very best in their future endeavors.",
                     employeeName, designation, department, joiningDate,
-                    getStringValue(data, "lastWorkingDate", LocalDate.now().format(DateTimeFormatter.ISO_DATE))
+                    getStringValue(data, "lastWorkingDate", today.format(DateTimeFormatter.ISO_DATE))
             );
             case "RELIEVING" -> String.format(
                     "Dear %s,\n\n" +
@@ -751,7 +758,7 @@ public class ReportGenerationService {
                             "All dues have been settled and you have completed the handover process. " +
                             "We thank you for your contributions and wish you success in your future endeavors.",
                     employeeName, designation, department,
-                    getStringValue(data, "lastWorkingDate", LocalDate.now().format(DateTimeFormatter.ISO_DATE))
+                    getStringValue(data, "lastWorkingDate", today.format(DateTimeFormatter.ISO_DATE))
             );
             default -> getStringValue(data, "letterBody", "");
         };
@@ -800,10 +807,10 @@ public class ReportGenerationService {
         return formatted.substring(0, 1).toUpperCase() + formatted.substring(1);
     }
 
-    private void addFooter(Document document) throws DocumentException {
+    private void addFooter(Document document, UUID tenantId) throws DocumentException {
         document.add(Chunk.NEWLINE);
         Paragraph footer = new Paragraph(
-                "Generated on " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("MMM dd, yyyy HH:mm")),
+                "Generated on " + tenantTimeService.now(tenantId).format(DateTimeFormatter.ofPattern("MMM dd, yyyy HH:mm")),
                 SMALL_FONT
         );
         footer.setAlignment(Element.ALIGN_CENTER);

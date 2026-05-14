@@ -4,6 +4,7 @@ import com.nulogic.api.expense.dto.MileagePolicyRequest;
 import com.nulogic.api.expense.dto.MileagePolicyResponse;
 import com.nulogic.common.exception.ValidationException;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.expense.MileagePolicy;
 import com.nulogic.infrastructure.expense.repository.MileagePolicyRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 public class MileagePolicyService {
 
     private final MileagePolicyRepository mileagePolicyRepository;
+    private final TenantTimeService tenantTimeService;
 
     @Transactional
     public MileagePolicyResponse createPolicy(MileagePolicyRequest request) {
@@ -121,7 +123,7 @@ public class MileagePolicyService {
             return null;
         }
 
-        LocalDate today = LocalDate.now();
+        LocalDate today = tenantTimeService.today(tenantId);
         return activePolicies.stream()
                 .filter(p -> !today.isBefore(p.getEffectiveFrom()))
                 .filter(p -> p.getEffectiveTo() == null || !today.isAfter(p.getEffectiveTo()))

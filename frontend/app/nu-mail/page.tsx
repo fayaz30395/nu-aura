@@ -13,7 +13,7 @@ import {clearGoogleToken, getGoogleToken, saveGoogleToken} from '@/lib/utils/goo
 import {employeeService} from '@/lib/services/hrms/employee.service';
 import {Employee} from '@/lib/types/hrms/employee';
 import {createLogger} from '@/lib/utils/logger';
-import {formatDateShort} from '@/lib/utils/format/date';
+import {formatDateShort, formatWeekday} from '@/lib/utils/format/date';
 
 import {
   ComposeEmail,
@@ -779,7 +779,7 @@ function MailContent() {
     } else if (days === 1) {
       return 'Yesterday';
     } else if (days < 7) {
-      return date.toLocaleDateString('en-US', {weekday: 'short'});
+      return formatWeekday(date);
     } else {
       return formatDateShort(date);
     }

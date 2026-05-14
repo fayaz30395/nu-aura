@@ -3,6 +3,7 @@ package com.nulogic.application.analytics.service;
 import com.nulogic.application.analytics.dto.*;
 import com.nulogic.common.config.CacheConfig;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.leave.LeaveRequest;
 import com.nulogic.domain.recruitment.JobOpening;
 import com.nulogic.domain.workflow.StepExecution;
@@ -40,6 +41,7 @@ public class AnalyticsService {
     private final PayslipRepository payslipRepository;
     private final JobOpeningRepository jobOpeningRepository;
     private final StepExecutionRepository stepExecutionRepository;
+    private final TenantTimeService tenantTimeService;
 
     /**
      * Lightweight summary for the main dashboard KPI widget.
@@ -48,8 +50,8 @@ public class AnalyticsService {
     @Cacheable(value = CacheConfig.ANALYTICS_SUMMARY, key = "#root.target.getCurrentTenantKey()")
     @Transactional(readOnly = true)
     public AnalyticsSummary getAnalyticsSummary() {
-        UUID tenantId = TenantContext.getCurrentTenant();
-        LocalDate today = LocalDate.now();
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        LocalDate today = tenantTimeService.today(tenantId);
 
         long totalEmployees = employeeRepository.countByTenantIdAndStatus(
                 tenantId, com.nulogic.domain.employee.Employee.EmployeeStatus.ACTIVE);
@@ -81,8 +83,8 @@ public class AnalyticsService {
     @Cacheable(value = CacheConfig.DASHBOARD_METRICS, key = "#root.target.getCurrentTenantKey()")
     @Transactional(readOnly = true)
     public DashboardMetrics getDashboardMetrics() {
-        UUID tenantId = TenantContext.getCurrentTenant();
-        LocalDate today = LocalDate.now();
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        LocalDate today = tenantTimeService.today(tenantId);
         LocalDate monthStart = today.withDayOfMonth(1);
         LocalDate monthEnd = today.withDayOfMonth(today.lengthOfMonth());
 
@@ -109,14 +111,15 @@ public class AnalyticsService {
             departmentCounts.put(deptName != null ? deptName : "Unassigned", count);
         }
 
-        LocalDate yearStart = LocalDate.now().withDayOfYear(1);
+        LocalDate today = tenantTimeService.today(tenantId);
+        LocalDate yearStart = today.withDayOfYear(1);
         long leftThisYear = employeeRepository.countTerminatedAfterDate(tenantId, yearStart);
         double attritionRate = totalEmployees > 0 ?
                 (double) leftThisYear / totalEmployees * 100 : 0;
 
         // On leave today = employees with an APPROVED leave covering today
         long onLeaveToday = leaveRequestRepository.countByTenantIdAndDateAndStatus(
-                tenantId, LocalDate.now(), LeaveRequest.LeaveRequestStatus.APPROVED);
+                tenantId, today, LeaveRequest.LeaveRequestStatus.APPROVED);
 
         return EmployeeMetrics.builder()
                 .totalEmployees(totalEmployees)
@@ -125,7 +128,7 @@ public class AnalyticsService {
                 .departmentDistribution(departmentCounts)
                 .attritionRate(Math.round(attritionRate * 100.0) / 100.0)
                 .newHiresThisMonth(employeeRepository.countNewHiresAfterDate(tenantId,
-                        LocalDate.now().withDayOfMonth(1)))
+                        today.withDayOfMonth(1)))
                 .build();
     }
 
@@ -189,7 +192,7 @@ public class AnalyticsService {
 
         // Employees currently on leave today
         long onLeaveToday = leaveRequestRepository.countByTenantIdAndDateAndStatus(
-                tenantId, LocalDate.now(), LeaveRequest.LeaveRequestStatus.APPROVED);
+                tenantId, tenantTimeService.today(tenantId), LeaveRequest.LeaveRequestStatus.APPROVED);
 
         return LeaveMetrics.builder()
                 .pendingRequests(pending)
@@ -231,10 +234,10 @@ public class AnalyticsService {
 
     @Transactional(readOnly = true)
     public List<HeadcountTrend> getHeadcountTrend(int months) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         List<HeadcountTrend> trend = new ArrayList<>();
         long currentCount = employeeRepository.countByTenantId(tenantId);
-        LocalDate today = LocalDate.now();
+        LocalDate today = tenantTimeService.today(tenantId);
 
         for (int i = months - 1; i >= 0; i--) {
             LocalDate point = today.minusMonths(i);

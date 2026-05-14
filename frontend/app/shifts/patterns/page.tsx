@@ -17,7 +17,7 @@ import {EmptyState} from '@/components/ui/EmptyState';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
-import {AnimatePresence, motion} from 'framer-motion';
+import {motion} from 'framer-motion';
 import {CATEGORICAL_OFF, CATEGORICAL_UNSET} from '@/lib/utils/categoricalPalette';
 import {ChevronLeft, Edit2, Plus, RotateCcw, Trash2,} from 'lucide-react';
 import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';

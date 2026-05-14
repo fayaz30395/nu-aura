@@ -154,7 +154,14 @@ function ActionMenu({showMenu, setShowMenu, onEdit, onDelete, isDeleting}: Actio
       </button>
       {showMenu && (
         <>
-          <div className="fixed inset-0 z-10 cursor-pointer" onClick={() => setShowMenu(false)}/>
+          <div
+            className="fixed inset-0 z-10 cursor-pointer"
+            onClick={() => setShowMenu(false)}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ' || e.key === 'Escape') { e.preventDefault(); setShowMenu(false); } }}
+            role="button"
+            tabIndex={0}
+            aria-label="Close menu"
+          />
           <div
             className="absolute right-0 top-full mt-1 z-20 min-w-[120px] rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] shadow-[var(--shadow-dropdown)] py-1">
             {onEdit && (
@@ -660,7 +667,14 @@ export function FeedCard({item, onDeleted, onUpdated}: FeedCardProps) {
                   {/* Reactors popover */}
                   {showReactorsPopover && (
                     <>
-                      <div className="fixed inset-0 z-40 cursor-pointer" onClick={() => setShowReactorsPopover(false)}/>
+                      <div
+                        className="fixed inset-0 z-40 cursor-pointer"
+                        onClick={() => setShowReactorsPopover(false)}
+                        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ' || e.key === 'Escape') { e.preventDefault(); setShowReactorsPopover(false); } }}
+                        role="button"
+                        tabIndex={0}
+                        aria-label="Close reactions list"
+                      />
                       <div
                         className="absolute right-0 bottom-full mb-2 z-50 w-64 bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl shadow-[var(--shadow-dropdown)] overflow-hidden">
                         <div className="row-between px-4 py-2 divider-b">

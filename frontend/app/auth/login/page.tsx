@@ -42,8 +42,8 @@ function supportsColorMix(): boolean {
 }
 
 const emailPasswordSchema = z.object({
-  email: z.string().email('Enter a valid email address'),
-  password: z.string().min(1, 'Password is required'),
+  email: z.string().email('Please enter a valid work email (e.g., name@nulogic.com)'),
+  password: z.string().min(1, 'Please enter your password to sign in'),
 });
 type EmailPasswordForm = z.infer<typeof emailPasswordSchema>;
 

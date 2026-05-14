@@ -337,9 +337,10 @@ export default function RolesPage() {
           <p className="text-[var(--text-secondary)] mt-1">Manage user roles and permissions</p>
         </div>
 
-        <div className="mb-6 flex justify-between items-center">
+        <div className="mb-6 flex justify-between items-center" role="search">
           <input
-            type="text"
+            type="search"
+            aria-label="Search roles"
             placeholder="Search roles..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}

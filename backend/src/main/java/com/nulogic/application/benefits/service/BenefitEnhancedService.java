@@ -4,6 +4,7 @@ import com.nulogic.api.benefits.dto.*;
 import com.nulogic.application.audit.service.AuditLogService;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.audit.AuditLog.AuditAction;
 import com.nulogic.domain.benefits.*;
 import com.nulogic.infrastructure.benefits.repository.*;
@@ -37,6 +38,7 @@ public class BenefitEnhancedService {
     private final FlexBenefitAllocationRepository flexAllocationRepository;
     private final EventPublisher eventPublisher;
     private final AuditLogService auditLogService;
+    private final TenantTimeService tenantTimeService;
 
     // ==================== BENEFIT PLANS ====================
 
@@ -216,8 +218,8 @@ public class BenefitEnhancedService {
                 .employeeId(request.getEmployeeId())
                 .status(BenefitEnrollment.EnrollmentStatus.PENDING)
                 .coverageLevel(request.getCoverageLevel())
-                .enrollmentDate(LocalDate.now())
-                .effectiveDate(request.getEffectiveDate() != null ? request.getEffectiveDate() : LocalDate.now())
+                .enrollmentDate(tenantTimeService.today(tenantId))
+                .effectiveDate(request.getEffectiveDate() != null ? request.getEffectiveDate() : tenantTimeService.today(tenantId))
                 .employeeContribution(employeeContrib)
                 .employerContribution(employerContrib)
                 .totalPremium(totalPremium)
@@ -230,7 +232,7 @@ public class BenefitEnhancedService {
                 .remainingCoverage(plan.getSumInsured())
                 .waived(request.isWaived())
                 .waiverReason(request.getWaiverReason())
-                .waiverDate(request.isWaived() ? LocalDate.now() : null)
+                .waiverDate(request.isWaived() ? tenantTimeService.today(tenantId) : null)
                 // createdBy is handled by JPA auditing via @CreatedBy in BaseEntity
                 .build();
 
@@ -307,7 +309,7 @@ public class BenefitEnhancedService {
 
         enrollment.setStatus(BenefitEnrollment.EnrollmentStatus.APPROVED);
         enrollment.setApprovedBy(currentUser);
-        enrollment.setApprovedAt(LocalDateTime.now());
+        enrollment.setApprovedAt(tenantTimeService.now(tenantId));
         enrollment.setApprovalComments(comments);
 
         enrollment = enrollmentRepository.save(enrollment);
@@ -359,7 +361,7 @@ public class BenefitEnhancedService {
 
         enrollment.startCobra();
         enrollment.setCobraPremium(cobraPremium);
-        enrollment.setCobraEndDate(LocalDate.now().plusMonths(months));
+        enrollment.setCobraEndDate(tenantTimeService.today(tenantId).plusMonths(months));
 
         enrollment = enrollmentRepository.save(enrollment);
         return EnrollmentResponse.from(enrollment);
@@ -563,7 +565,7 @@ public class BenefitEnhancedService {
 
         claim.setAppealed(true);
         claim.setAppealReason(reason);
-        claim.setAppealDate(LocalDate.now());
+        claim.setAppealDate(tenantTimeService.today(tenantId));
         claim.setStatus(BenefitClaim.ClaimStatus.APPEALED);
 
         claim = claimRepository.save(claim);
@@ -624,7 +626,7 @@ public class BenefitEnhancedService {
                 .educationUsed(BigDecimal.ZERO)
                 .transportAllocation(request.getTransportAllocation())
                 .transportUsed(BigDecimal.ZERO)
-                .allocationDate(request.getAllocationDate() != null ? request.getAllocationDate() : LocalDate.now())
+                .allocationDate(request.getAllocationDate() != null ? request.getAllocationDate() : tenantTimeService.today(tenantId))
                 .expiryDate(request.getExpiryDate())
                 .carryoverAmount(request.getCarryoverAmount())
                 .carryoverFromYear(request.getCarryoverFromYear() != null ? request.getCarryoverFromYear() : 0)
@@ -642,7 +644,7 @@ public class BenefitEnhancedService {
         allocation = flexAllocationRepository.save(allocation);
 
         log.info("Created flex allocation: {} for employee: {}", allocation.getId(), request.getEmployeeId());
-        return FlexAllocationResponse.from(allocation);
+        return FlexAllocationResponse.from(allocation, tenantTimeService.today(tenantId));
     }
 
     @Transactional(readOnly = true)
@@ -650,14 +652,15 @@ public class BenefitEnhancedService {
         UUID tenantId = TenantContext.getCurrentTenant();
         FlexBenefitAllocation allocation = flexAllocationRepository.findActiveAllocation(tenantId, employeeId)
                 .orElseThrow(() -> new EntityNotFoundException("No active flex allocation found"));
-        return FlexAllocationResponse.from(allocation);
+        return FlexAllocationResponse.from(allocation, tenantTimeService.today(tenantId));
     }
 
     @Transactional(readOnly = true)
     public List<FlexAllocationResponse> getFlexAllocationHistory(UUID employeeId) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        LocalDate today = tenantTimeService.today(tenantId);
         return flexAllocationRepository.findByTenantIdAndEmployeeId(tenantId, employeeId).stream()
-                .map(FlexAllocationResponse::from)
+                .map(a -> FlexAllocationResponse.from(a, today))
                 .collect(Collectors.toList());
     }
 
@@ -708,7 +711,7 @@ public class BenefitEnhancedService {
         // Claims statistics
         dashboard.put("claimsByStatus", claimRepository.countClaimsByStatus(tenantId));
         dashboard.put("claimsSummaryByType", claimRepository.getClaimsSummaryByType(tenantId));
-        dashboard.put("monthlyClaimsTrend", claimRepository.getMonthlyClaimsTrend(tenantId, LocalDate.now().getYear()));
+        dashboard.put("monthlyClaimsTrend", claimRepository.getMonthlyClaimsTrend(tenantId, tenantTimeService.today(tenantId).getYear()));
 
         // Pending items
         dashboard.put("pendingEnrollments", enrollmentRepository.findPendingEnrollments(tenantId).size());
@@ -736,15 +739,16 @@ public class BenefitEnhancedService {
         summary.put("totalEmployerContribution", employerTotal);
 
         // Flex credits
+        LocalDate today = tenantTimeService.today(tenantId);
         flexAllocationRepository.findActiveAllocation(tenantId, employeeId)
-                .ifPresent(fa -> summary.put("flexAllocation", FlexAllocationResponse.from(fa)));
+                .ifPresent(fa -> summary.put("flexAllocation", FlexAllocationResponse.from(fa, today)));
 
         // Dependents
         List<BenefitDependent> dependents = dependentRepository.findCoveredDependentsForEmployee(tenantId, employeeId);
         summary.put("coveredDependents", dependents.size());
 
         // Claims summary
-        int currentYear = LocalDate.now().getYear();
+        int currentYear = tenantTimeService.today(tenantId).getYear();
         List<BenefitClaim> claims = claimRepository.findByTenantIdAndEmployeeId(tenantId, employeeId);
         long pendingClaims = claims.stream()
                 .filter(c -> c.getStatus() == BenefitClaim.ClaimStatus.SUBMITTED ||

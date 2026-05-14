@@ -656,7 +656,7 @@ export default function OneOnOnePage() {
                             onClick={() => setShowAgendaForm(!showAgendaForm)}
                             className="flex items-center gap-1 text-sm text-accent-700 dark:text-accent-400 hover:underline"
                           >
-                            <Plus className="h-4 w-4"/> Add Point
+                            <Plus className="h-4 w-4"/> Add point
                           </button>
                         )}
                       </div>
@@ -822,7 +822,7 @@ export default function OneOnOnePage() {
                               onClick={() => setShowActionForm(!showActionForm)}
                               className="flex items-center gap-1 text-sm text-accent-700 dark:text-accent-400 hover:underline"
                             >
-                              <Plus className="h-4 w-4"/> Add Action
+                              <Plus className="h-4 w-4"/> Add action
                             </button>
                           </PermissionGate>
                         )}

@@ -334,7 +334,7 @@ export default function OvertimePage() {
           </div>
           <button
             onClick={() => setActiveTab('request')}
-            className="flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl text-sm font-medium shadow-[var(--shadow-dropdown)] shadow-accent-500/25 transition-all duration-200 hover:shadow-[var(--shadow-dropdown)] hover:shadow-accent-500/30 skeuo-button"
+            className="flex items-center justify-center gap-2 px-4 py-2 bg-accent-600 hover:bg-accent-700 text-white rounded-xl text-sm font-medium transition-all duration-200 skeuo-button"
           >
             <Plus className="h-5 w-5"/>
             Request Overtime

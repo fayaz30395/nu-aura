@@ -1,6 +1,8 @@
 package com.nulogic.domain.letter;
 
 import com.nulogic.common.entity.TenantAware;
+import com.nulogic.common.util.TenantTimestamp;
+import com.nulogic.common.util.TimeAuditingEntityListener;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -13,6 +15,7 @@ import java.util.UUID;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "generated_letters")
+@EntityListeners(TimeAuditingEntityListener.class)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -56,6 +59,8 @@ public class GeneratedLetter extends TenantAware {
     private LetterStatus status = LetterStatus.DRAFT;
 
     private UUID generatedBy;
+
+    @TenantTimestamp
     private LocalDateTime generatedAt;
 
     private UUID approvedBy;

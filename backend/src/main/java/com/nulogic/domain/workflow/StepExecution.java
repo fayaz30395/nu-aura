@@ -1,6 +1,8 @@
 package com.nulogic.domain.workflow;
 
 import com.nulogic.common.entity.TenantAware;
+import com.nulogic.common.util.TenantTimestamp;
+import com.nulogic.common.util.TimeAuditingEntityListener;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,10 +17,16 @@ import java.util.UUID;
 /**
  * Step Execution - Tracks the execution of a single approval step.
  * Records who approved/rejected and when.
+ *
+ * <p>{@code assignedAt} is stamped by {@link TimeAuditingEntityListener} via
+ * {@link TenantTimestamp} (tenant-zone aware). Status defaulting is preserved
+ * in {@link #onCreate()} — see {@code backend/docs/audit/prepersist-now-audit.md}
+ * row 13.</p>
  */
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "step_executions")
+@EntityListeners(TimeAuditingEntityListener.class)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -81,6 +89,7 @@ public class StepExecution extends TenantAware {
     private LocalDateTime lastReminderSentAt;
 
     // Timing
+    @TenantTimestamp
     private LocalDateTime assignedAt;
     private LocalDateTime executedAt;
 
@@ -93,7 +102,7 @@ public class StepExecution extends TenantAware {
 
     @PrePersist
     protected void onCreate() {
-        assignedAt = LocalDateTime.now();
+        // assignedAt stamped by TimeAuditingEntityListener via @TenantTimestamp
         if (status == null) status = StepStatus.PENDING;
     }
 

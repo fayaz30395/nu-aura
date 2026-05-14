@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nulogic.api.report.dto.ReportTemplateDto;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.report.ReportTemplate;
 import com.nulogic.infrastructure.attendance.repository.AttendanceRecordRepository;
 import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
@@ -18,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -42,10 +42,11 @@ public class CustomReportService {
     private final PayslipRepository payslipRepository;
     private final PerformanceReviewRepository performanceReviewRepository;
     private final ObjectMapper objectMapper;
+    private final TenantTimeService tenantTimeService;
 
     @Transactional
     public ReportTemplateDto saveTemplate(ReportTemplateDto dto) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         try {
             String columnsJson = objectMapper.writeValueAsString(dto.getSelectedColumns());
             String filtersJson = dto.getFilters() != null
@@ -68,7 +69,7 @@ public class CustomReportService {
                         .orElseThrow(() -> new EntityNotFoundException("Template not found"));
                 entity.setId(existing.getId());
                 entity.setCreatedAt(existing.getCreatedAt());
-                entity.setUpdatedAt(LocalDateTime.now());
+                entity.setUpdatedAt(tenantTimeService.now(tenantId));
             }
 
             return toDto(templateRepository.save(entity));

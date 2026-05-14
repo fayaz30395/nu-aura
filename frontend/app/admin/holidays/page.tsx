@@ -11,6 +11,8 @@ import {useAuth} from '@/lib/hooks/useAuth';
 import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
 import {ConfirmDialog} from '@/components/ui';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {formatWeekday} from '@/lib/utils/format/date';
+import {format} from 'date-fns';
 import {
   useCreateHoliday,
   useDeleteHoliday,
@@ -195,7 +197,7 @@ export default function HolidayCalendarManagementPage() {
   };
 
   const getMonthName = (date: string) => {
-    return new Date(date).toLocaleDateString('en-US', {month: 'long'});
+    return format(new Date(date), 'MMMM');
   };
 
   // Group holidays by month
@@ -324,7 +326,7 @@ export default function HolidayCalendarManagementPage() {
                                 {new Date(holiday.holidayDate).getDate()}
                               </div>
                               <div className="text-caption uppercase">
-                                {new Date(holiday.holidayDate).toLocaleDateString('en-US', {weekday: 'short'})}
+                                {formatWeekday(holiday.holidayDate)}
                               </div>
                             </div>
                             <div className="flex-1">

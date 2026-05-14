@@ -6,6 +6,7 @@ import com.nulogic.api.engagement.dto.PulseSurveyRequest;
 import com.nulogic.api.engagement.dto.SurveySubmissionRequest;
 import com.nulogic.common.exception.BusinessException;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.engagement.PulseSurvey;
 import com.nulogic.domain.engagement.PulseSurvey.SurveyStatus;
 import com.nulogic.domain.engagement.PulseSurveyAnswer;
@@ -39,6 +40,7 @@ public class PulseSurveyService {
     private final PulseSurveyResponseRepository responseRepository;
     private final PulseSurveyAnswerRepository answerRepository;
     private final ObjectMapper objectMapper;
+    private final TenantTimeService tenantTimeService;
 
     // ==================== Survey CRUD ====================
 
@@ -131,7 +133,8 @@ public class PulseSurveyService {
 
     @Transactional(readOnly = true)
     public List<PulseSurvey> getActiveSurveys() {
-        return surveyRepository.findActiveSurveys(TenantContext.getCurrentTenant(), LocalDate.now());
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        return surveyRepository.findActiveSurveys(tenantId, tenantTimeService.today(tenantId));
     }
 
     @Transactional
@@ -167,14 +170,14 @@ public class PulseSurveyService {
             throw new IllegalStateException("Survey must have at least one question");
         }
 
-        LocalDate today = LocalDate.now();
+        LocalDate today = tenantTimeService.today(tenantId);
         if (survey.getStartDate().isEqual(today) || survey.getStartDate().isBefore(today)) {
             survey.setStatus(SurveyStatus.ACTIVE);
         } else {
             survey.setStatus(SurveyStatus.SCHEDULED);
         }
 
-        survey.setPublishedAt(LocalDateTime.now());
+        survey.setPublishedAt(tenantTimeService.now(tenantId));
         survey.setPublishedBy(publishedBy);
         survey.setTotalQuestions(questionCount);
 
@@ -189,7 +192,7 @@ public class PulseSurveyService {
                 .orElseThrow(() -> new RuntimeException("Survey not found: " + surveyId));
 
         survey.setStatus(SurveyStatus.COMPLETED);
-        survey.setClosedAt(LocalDateTime.now());
+        survey.setClosedAt(tenantTimeService.now(tenantId));
         survey.setClosedBy(closedBy);
 
         // Calculate final average score
@@ -300,7 +303,7 @@ public class PulseSurveyService {
                         .surveyId(surveyId)
                         .employeeId(survey.getIsAnonymous() ? null : employeeId)
                         .status(com.nulogic.domain.engagement.PulseSurveyResponse.ResponseStatus.IN_PROGRESS)
-                        .startedAt(LocalDateTime.now())
+                        .startedAt(tenantTimeService.now(tenantId))
                         .build();
 
         response.setId(UUID.randomUUID());
@@ -354,7 +357,7 @@ public class PulseSurveyService {
 
         // Update response
         response.setStatus(com.nulogic.domain.engagement.PulseSurveyResponse.ResponseStatus.SUBMITTED);
-        response.setSubmittedAt(LocalDateTime.now());
+        response.setSubmittedAt(tenantTimeService.now(tenantId));
         response.setTimeSpentSeconds(request.getTimeSpentSeconds());
         response.setDeviceType(request.getDeviceType());
         response.setIpAddress(ipAddress);
@@ -550,7 +553,7 @@ public class PulseSurveyService {
         dashboard.put("averageEngagementScore", avgEngagement);
 
         // Recent active surveys
-        List<PulseSurvey> activeSurveys = surveyRepository.findActiveSurveys(tenantId, LocalDate.now());
+        List<PulseSurvey> activeSurveys = surveyRepository.findActiveSurveys(tenantId, tenantTimeService.today(tenantId));
         dashboard.put("activeSurveysList", activeSurveys.stream()
                 .map(s -> Map.of(
                         "id", s.getId(),

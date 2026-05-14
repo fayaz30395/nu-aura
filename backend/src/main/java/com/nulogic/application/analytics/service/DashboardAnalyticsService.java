@@ -3,6 +3,7 @@ package com.nulogic.application.analytics.service;
 import com.nulogic.api.analytics.dto.DashboardAnalyticsResponse;
 import com.nulogic.api.analytics.dto.DashboardAnalyticsResponse.*;
 import com.nulogic.api.analytics.dto.DashboardContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.leave.LeaveRequest;
 import com.nulogic.infrastructure.attendance.repository.AttendanceRecordRepository;
@@ -36,6 +37,7 @@ public class DashboardAnalyticsService {
     private final LeaveRequestRepository leaveRequestRepository;
     private final PayslipRepository payslipRepository;
     private final HolidayRepository holidayRepository;
+    private final TenantTimeService tenantTimeService;
 
     /**
      * Legacy method for backward compatibility - returns admin view
@@ -56,8 +58,9 @@ public class DashboardAnalyticsService {
      * - EMPLOYEE: See only personal data
      */
     public DashboardAnalyticsResponse getDashboardAnalytics(DashboardContext context) {
-        LocalDate today = LocalDate.now();
         UUID tenantId = context.getTenantId();
+        // Tenant-local "today" for dashboard period boundaries — resolved via TenantTimeService.
+        LocalDate today = tenantTimeService.today(tenantId);
 
         String viewLabel = switch (context.getViewType()) {
             case ADMIN -> "Organization View";
@@ -241,7 +244,8 @@ public class DashboardAnalyticsService {
         // Get last 6 months trend (for admin and manager only)
         List<TrendData> trend = new ArrayList<>();
         if (context.isAdmin()) {
-            LocalDate today = LocalDate.now();
+            // Tenant-local "today" for leave trend month window — resolved via TenantTimeService.
+            LocalDate today = tenantTimeService.today(tenantId);
             for (int i = 5; i >= 0; i--) {
                 YearMonth month = YearMonth.from(today.minusMonths(i));
                 LocalDate startDate = month.atDay(1);
@@ -281,7 +285,9 @@ public class DashboardAnalyticsService {
     }
 
     private PayrollAnalytics getPayrollAnalytics(UUID tenantId) {
-        YearMonth currentMonth = YearMonth.now();
+        // Tenant-local "today" for payroll current-month boundary — resolved via TenantTimeService.
+        LocalDate today = tenantTimeService.today(tenantId);
+        YearMonth currentMonth = YearMonth.from(today);
 
         // Get current month payroll stats
         Long totalEmployees = employeeRepository.countByTenantIdAndStatus(tenantId, Employee.EmployeeStatus.ACTIVE);
@@ -306,7 +312,7 @@ public class DashboardAnalyticsService {
         // Get last 6 months cost trend
         List<PayrollTrendData> costTrend = new ArrayList<>();
         for (int i = 5; i >= 0; i--) {
-            YearMonth month = YearMonth.now().minusMonths(i);
+            YearMonth month = currentMonth.minusMonths(i);
             BigDecimal monthTotal = payslipRepository.sumNetSalaryByTenantIdAndYearAndMonth(
                     tenantId, month.getYear(), month.getMonthValue());
 
@@ -335,7 +341,8 @@ public class DashboardAnalyticsService {
     private HeadcountAnalytics getHeadcountAnalytics(DashboardContext context) {
         UUID tenantId = context.getTenantId();
         List<UUID> employeeIds = context.getTargetEmployeeIds();
-        LocalDate today = LocalDate.now();
+        // Tenant-local "today" for headcount month-window boundaries — resolved via TenantTimeService.
+        LocalDate today = tenantTimeService.today(tenantId);
         LocalDate monthStart = today.withDayOfMonth(1);
 
         Long total;
@@ -351,9 +358,10 @@ public class DashboardAnalyticsService {
             exits = employeeRepository.countByTenantIdAndStatusAndExitDateBetween(
                     tenantId, Employee.EmployeeStatus.TERMINATED, monthStart, today);
 
-            // Get last 6 months headcount trend
+            // Get last 6 months headcount trend — anchor on tenant-local today (already resolved above).
+            YearMonth currentMonth = YearMonth.from(today);
             for (int i = 5; i >= 0; i--) {
-                YearMonth month = YearMonth.now().minusMonths(i);
+                YearMonth month = currentMonth.minusMonths(i);
                 LocalDate endOfMonth = month.atEndOfMonth();
 
                 Long monthCount = employeeRepository.countByTenantIdAndStatusAndJoiningDateBefore(
@@ -415,7 +423,8 @@ public class DashboardAnalyticsService {
 
     private UpcomingEvents getUpcomingEvents(DashboardContext context) {
         UUID tenantId = context.getTenantId();
-        LocalDate today = LocalDate.now();
+        // Tenant-local "today" for upcoming-events 30-day window — resolved via TenantTimeService.
+        LocalDate today = tenantTimeService.today(tenantId);
         LocalDate next30Days = today.plusDays(30);
 
         // Upcoming events are shown for admins and managers only (they care about team events)

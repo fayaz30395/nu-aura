@@ -4,6 +4,7 @@ import com.nulogic.api.knowledge.dto.CreateInlineCommentRequest;
 import com.nulogic.api.knowledge.dto.ReplyToInlineCommentRequest;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.knowledge.WikiInlineComment;
 import com.nulogic.domain.knowledge.WikiInlineComment.InlineCommentStatus;
 import com.nulogic.infrastructure.knowledge.repository.WikiInlineCommentRepository;
@@ -12,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,6 +23,7 @@ import java.util.UUID;
 public class WikiInlineCommentService {
 
     private final WikiInlineCommentRepository wikiInlineCommentRepository;
+    private final TenantTimeService tenantTimeService;
 
     @Transactional(readOnly = true)
     public List<WikiInlineComment> getInlineComments(UUID pageId) {
@@ -78,7 +79,7 @@ public class WikiInlineCommentService {
     }
 
     public WikiInlineComment resolveInlineComment(UUID commentId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         UUID userId = SecurityContext.getCurrentUserId();
 
         WikiInlineComment comment = wikiInlineCommentRepository.findById(commentId)
@@ -86,7 +87,7 @@ public class WikiInlineCommentService {
                 .orElseThrow(() -> new IllegalArgumentException("Inline comment not found"));
 
         comment.setStatus(InlineCommentStatus.RESOLVED);
-        comment.setResolvedAt(LocalDateTime.now());
+        comment.setResolvedAt(tenantTimeService.now(tenantId));
         comment.setResolvedBy(userId);
 
         WikiInlineComment saved = wikiInlineCommentRepository.save(comment);

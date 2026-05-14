@@ -24,11 +24,11 @@ const log = createLogger('EmployeeEditPage');
 
 // Zod schema for employee form validation
 const updateEmployeeFormSchema = z.object({
-  employeeCode: z.string().min(1, 'Employee code required'),
-  firstName: z.string().min(1, 'First name required'),
+  employeeCode: z.string().min(1, 'Please enter the employee code (e.g., EMP-001)'),
+  firstName: z.string().min(1, 'Please enter the employee’s first name'),
   middleName: z.string().optional().or(z.literal('')),
-  lastName: z.string().min(1, 'Last name required'),
-  personalEmail: z.string().email('Invalid email').optional().or(z.literal('')),
+  lastName: z.string().min(1, 'Please enter the employee’s last name'),
+  personalEmail: z.string().email('Please enter a valid email address (e.g., name@example.com)').optional().or(z.literal('')),
   phoneNumber: z.string().optional().or(z.literal('')),
   emergencyContactNumber: z.string().optional().or(z.literal('')),
   dateOfBirth: z.string().optional().or(z.literal('')),
@@ -38,7 +38,7 @@ const updateEmployeeFormSchema = z.object({
   state: z.string().optional().or(z.literal('')),
   postalCode: z.string().optional().or(z.literal('')),
   country: z.string().optional().or(z.literal('')),
-  designation: z.string().min(1, 'Designation required'),
+  designation: z.string().min(1, 'Please enter a designation (e.g., Senior Engineer)'),
   level: z.enum(['ENTRY', 'MID', 'SENIOR', 'LEAD', 'MANAGER', 'SENIOR_MANAGER', 'DIRECTOR', 'VP', 'SVP', 'CXO']).optional(),
   jobRole: z.enum([
     'SOFTWARE_ENGINEER', 'FRONTEND_DEVELOPER', 'BACKEND_DEVELOPER', 'FULLSTACK_DEVELOPER', 'DEVOPS_ENGINEER',
@@ -372,7 +372,7 @@ export default function EditEmployeePage() {
             <div
               className="mb-4 p-4 bg-success-50 dark:bg-success-900/20 border border-success-200 dark:border-success-800 rounded-md">
               <div className="flex items-start gap-4">
-                <Clock className="h-5 w-5 text-success-600 dark:text-success-400 mt-0.5"/>
+                <Clock aria-hidden="true" className="h-5 w-5 text-success-600 dark:text-success-400 mt-0.5"/>
                 <div>
                   <p className="text-sm font-medium text-success-800 dark:text-success-200">
                     Employment Change Request Submitted
@@ -499,11 +499,11 @@ export default function EditEmployeePage() {
                       className="input-aura"
                       placeholder="EMP001"
                       aria-invalid={errors.employeeCode ? 'true' : 'false'}
-                      aria-describedby={errors.employeeCode ? 'employee-edit-code-error' : undefined}
+                      aria-describedby={errors.employeeCode ? 'employee-edit-code-error' : 'employee-edit-code-help'}
                     />
                     {errors.employeeCode &&
                       <p id="employee-edit-code-error" className="text-danger-500 text-sm mt-1">{errors.employeeCode.message}</p>}
-                    <p className="mt-1 text-caption">
+                    <p id="employee-edit-code-help" className="mt-1 text-caption">
                       Unique identifier for this employee. Changing this may affect integrations.
                     </p>
                   </div>
@@ -517,6 +517,7 @@ export default function EditEmployeePage() {
                         id="employee-edit-first-name"
                         type="text"
                         required
+                        autoComplete="given-name"
                         {...register('firstName')}
                         className="input-aura"
                         aria-invalid={errors.firstName ? 'true' : 'false'}
@@ -545,6 +546,7 @@ export default function EditEmployeePage() {
                       <input
                         id="employee-edit-last-name"
                         type="text"
+                        autoComplete="family-name"
                         {...register('lastName')}
                         className="input-aura"
                         aria-invalid={errors.lastName ? 'true' : 'false'}
@@ -597,6 +599,7 @@ export default function EditEmployeePage() {
                       <input
                         id="employee-edit-personal-email"
                         type="email"
+                        autoComplete="email"
                         {...register('personalEmail')}
                         className="input-aura"
                         placeholder="personal@email.com"
@@ -613,6 +616,7 @@ export default function EditEmployeePage() {
                       <input
                         id="employee-edit-phone-number"
                         type="tel"
+                        autoComplete="tel"
                         {...register('phoneNumber')}
                         className="input-aura"
                         placeholder="+1 234 567 8900"
@@ -692,6 +696,7 @@ export default function EditEmployeePage() {
                     </label>
                     <textarea
                       id="employee-edit-address"
+                      autoComplete="street-address"
                       rows={2}
                       {...register('address')}
                       className="input-aura"
@@ -741,6 +746,7 @@ export default function EditEmployeePage() {
                       <input
                         id="employee-edit-postal-code"
                         type="text"
+                        autoComplete="postal-code"
                         {...register('postalCode')}
                         className="input-aura"
                         aria-invalid={errors.postalCode ? 'true' : 'false'}
@@ -773,7 +779,7 @@ export default function EditEmployeePage() {
                   <div
                     className="bg-warning-50 dark:bg-warning-950/30 border border-warning-300 dark:border-warning-700 rounded-md p-4">
                     <div className="flex items-start gap-4">
-                      <AlertCircle className="h-5 w-5 text-warning-600 dark:text-warning-400 mt-0.5"/>
+                      <AlertCircle aria-hidden="true" className="h-5 w-5 text-warning-600 dark:text-warning-400 mt-0.5"/>
                       <div>
                         <p className="text-sm font-medium text-warning-800 dark:text-warning-200">
                           HR Manager Approval Required
@@ -1046,7 +1052,7 @@ export default function EditEmployeePage() {
                             {...field}
                             className="input-aura"
                             aria-invalid={errors.managerId ? 'true' : 'false'}
-                            aria-describedby={errors.managerId ? 'employee-edit-manager-error' : undefined}
+                            aria-describedby={errors.managerId ? 'employee-edit-manager-error' : 'employee-edit-manager-help'}
                           >
                             <option value="">Select Manager</option>
                             <option value={employeeId}>Self (No Reporting Manager)</option>
@@ -1059,7 +1065,7 @@ export default function EditEmployeePage() {
                         )}
                       />
                       {errors.managerId && <p id="employee-edit-manager-error" className="text-danger-500 text-sm mt-1">{errors.managerId.message}</p>}
-                      <p className="mt-1 text-caption">
+                      <p id="employee-edit-manager-help" className="mt-1 text-caption">
                         Select &quot;Self&quot; for top-level employees who don&apos;t report to anyone.
                       </p>
                     </div>
@@ -1136,10 +1142,10 @@ export default function EditEmployeePage() {
                         className="input-aura"
                         placeholder={employee?.bankAccountNumber ? `Currently: ${employee.bankAccountNumber}` : 'Enter account number'}
                         aria-invalid={errors.bankAccountNumber ? 'true' : 'false'}
-                        aria-describedby={errors.bankAccountNumber ? 'employee-edit-bank-account-error' : undefined}
+                        aria-describedby={errors.bankAccountNumber ? 'employee-edit-bank-account-error' : (employee?.bankAccountNumber ? 'employee-edit-bank-account-help' : undefined)}
                       />
                       {employee?.bankAccountNumber && (
-                        <p className="text-xs text-[var(--text-muted)] mt-1">Leave blank to keep current account
+                        <p id="employee-edit-bank-account-help" className="text-xs text-[var(--text-muted)] mt-1">Leave blank to keep current account
                           ({employee.bankAccountNumber})</p>
                       )}
                       {errors.bankAccountNumber &&

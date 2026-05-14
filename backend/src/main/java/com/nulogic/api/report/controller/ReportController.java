@@ -4,6 +4,8 @@ import com.nulogic.api.report.dto.ReportRequest;
 import com.nulogic.application.report.service.ReportService;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.RequiresPermission;
+import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.lowagie.text.DocumentException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +19,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/reports")
@@ -28,6 +30,7 @@ public class ReportController {
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private final ReportService reportService;
+    private final TenantTimeService tenantTimeService;
 
     @PostMapping("/employee-directory")
     @RequiresPermission(Permission.REPORT_CREATE)
@@ -102,7 +105,8 @@ public class ReportController {
             format = ReportRequest.ExportFormat.EXCEL;
         }
 
-        String timestamp = LocalDate.now().format(DATE_FORMATTER);
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        String timestamp = tenantTimeService.today(tenantId).format(DATE_FORMATTER);
         String filename;
         MediaType contentType;
 

@@ -36,10 +36,11 @@ public class EmployeeImportResult {
     @Builder.Default
     private List<FailedImport> failedImports = new ArrayList<>();
 
-    public static EmployeeImportResult success(int count, List<ImportedEmployee> employees) {
+    public static EmployeeImportResult success(int count, List<ImportedEmployee> employees,
+                                               LocalDateTime importedAt) {
         return EmployeeImportResult.builder()
                 .importId(UUID.randomUUID())
-                .importedAt(LocalDateTime.now())
+                .importedAt(importedAt)
                 .totalProcessed(count)
                 .successCount(count)
                 .failedCount(0)
@@ -51,10 +52,11 @@ public class EmployeeImportResult {
 
     public static EmployeeImportResult partial(int success, int failed,
                                                List<ImportedEmployee> employees,
-                                               List<FailedImport> failures) {
+                                               List<FailedImport> failures,
+                                               LocalDateTime importedAt) {
         return EmployeeImportResult.builder()
                 .importId(UUID.randomUUID())
-                .importedAt(LocalDateTime.now())
+                .importedAt(importedAt)
                 .totalProcessed(success + failed)
                 .successCount(success)
                 .failedCount(failed)
@@ -65,10 +67,10 @@ public class EmployeeImportResult {
                 .build();
     }
 
-    public static EmployeeImportResult failed(String reason) {
+    public static EmployeeImportResult failed(String reason, LocalDateTime importedAt) {
         return EmployeeImportResult.builder()
                 .importId(UUID.randomUUID())
-                .importedAt(LocalDateTime.now())
+                .importedAt(importedAt)
                 .totalProcessed(0)
                 .successCount(0)
                 .failedCount(0)

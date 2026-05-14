@@ -425,7 +425,7 @@ export default function MyLeavesPage() {
                   <div className="mt-4">
                     <div className="h-2 bg-[var(--border-main)] rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-gradient-to-r from-accent-500 to-accent-700 rounded-full transition-all"
+                        className="h-full bg-accent-600 dark:bg-accent-500 rounded-full transition-all"
                         style={{
                           width: `${Math.min((balance.used / (balance.used + balance.available)) * 100, 100)}%`,
                         }}
@@ -872,7 +872,7 @@ export default function MyLeavesPage() {
 
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
-                  Reason (optional)
+                  Reason
                 </label>
                 <textarea
                   value={encashReason}

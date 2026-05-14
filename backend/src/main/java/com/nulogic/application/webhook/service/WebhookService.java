@@ -5,6 +5,7 @@ import com.nulogic.common.config.CacheConfig;
 import com.nulogic.common.exception.BusinessException;
 import com.nulogic.common.exception.ResourceNotFoundException;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.common.validation.SsrfProtectionUtils;
 import com.nulogic.domain.audit.AuditLog.AuditAction;
 import com.nulogic.domain.webhook.Webhook;
@@ -59,6 +60,8 @@ public class WebhookService {
     private final WebhookRepository webhookRepository;
 
     private final AuditLogService auditLogService;
+
+    private final TenantTimeService tenantTimeService;
 
     /**
      * Find all active webhooks for a tenant.
@@ -303,7 +306,7 @@ public class WebhookService {
                 .orElseThrow(() -> new ResourceNotFoundException("Webhook", "id", webhookId));
 
         String newSecret = generateSecret();
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = tenantTimeService.now(tenantId);
         LocalDateTime expiresAt = now.plusHours(ROTATION_WINDOW_HOURS);
 
         // Preserve the existing secret for the rotation window so in-flight retries

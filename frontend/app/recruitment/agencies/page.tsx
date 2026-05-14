@@ -258,7 +258,8 @@ export default function AgenciesPage() {
             <div className="relative flex-1 max-w-sm">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]"/>
               <input
-                type="text"
+                type="search"
+                aria-label="Search agencies"
                 placeholder="Search agencies..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
@@ -496,7 +497,7 @@ export default function AgenciesPage() {
               }
               action={
                 !search && !statusFilter
-                  ? {label: 'Add Agency', onClick: openCreateForm}
+                  ? {label: 'Add agency', onClick: openCreateForm}
                   : undefined
               }
             />

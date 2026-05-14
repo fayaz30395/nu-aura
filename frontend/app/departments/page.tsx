@@ -716,7 +716,7 @@ export default function DepartmentsPage() {
           }}
           onConfirm={handleDeleteConfirm}
           title="Delete Department?"
-          message="Are you sure you want to delete this department? This action cannot be undone."
+          message="This action cannot be undone. The department will be permanently deleted."
           confirmText="Delete"
           cancelText="Cancel"
           type="danger"

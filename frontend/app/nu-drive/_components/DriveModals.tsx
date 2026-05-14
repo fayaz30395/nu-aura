@@ -328,7 +328,12 @@ export const FilePreviewModal = React.memo(function FilePreviewModal({
             <p className="text-white">Loading preview...</p>
           </div>
         ) : previewContent ? (
-          <div className="w-full h-full overflow-auto p-4">
+          <div
+            className="w-full h-full overflow-auto p-4"
+            tabIndex={0}
+            role="region"
+            aria-label="File text preview"
+          >
             <pre
               className="bg-[var(--bg-secondary)] text-[var(--text-primary)] p-4 rounded-lg text-sm font-mono whitespace-pre-wrap overflow-auto max-h-full">
               {previewContent}

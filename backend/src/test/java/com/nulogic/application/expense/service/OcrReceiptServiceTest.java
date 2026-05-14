@@ -2,6 +2,7 @@ package com.nulogic.application.expense.service;
 
 import com.nulogic.application.document.service.FileStorageService;
 import com.nulogic.common.exception.BusinessException;
+import com.nulogic.common.util.TenantTimeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,6 +19,8 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.lenient;
 
 @ExtendWith(MockitoExtension.class)
 class OcrReceiptServiceTest {
@@ -25,6 +28,8 @@ class OcrReceiptServiceTest {
     private static final UUID TENANT_ID = UUID.randomUUID();
     @Mock
     private FileStorageService fileStorageService;
+    @Mock
+    private TenantTimeService tenantTimeService;
     @InjectMocks
     private OcrReceiptService ocrReceiptService;
 
@@ -32,6 +37,9 @@ class OcrReceiptServiceTest {
     void setUp() {
         ReflectionTestUtils.setField(ocrReceiptService, "tessdataPath", "/usr/share/tesseract-ocr/5/tessdata");
         ReflectionTestUtils.setField(ocrReceiptService, "ocrLanguage", "eng");
+        // extractDate uses today() for the upper-bound sanity check. Stub a fixed date well
+        // past any test fixture so the upper bound never trips a valid date.
+        lenient().when(tenantTimeService.today(any())).thenReturn(LocalDate.of(2099, 12, 31));
     }
 
     // ─── Validation Tests ────────────────────────────────────────────────────
@@ -131,34 +139,34 @@ class OcrReceiptServiceTest {
     @Test
     @DisplayName("Should extract date in dd/MM/yyyy format")
     void extractDate_slashFormat() {
-        LocalDate date = ocrReceiptService.extractDate("Date: 15/03/2026");
+        LocalDate date = ocrReceiptService.extractDate("Date: 15/03/2026", TENANT_ID);
         assertThat(date).isEqualTo(LocalDate.of(2026, 3, 15));
     }
 
     @Test
     @DisplayName("Should extract date in yyyy-MM-dd format")
     void extractDate_isoFormat() {
-        LocalDate date = ocrReceiptService.extractDate("Invoice date 2026-01-20");
+        LocalDate date = ocrReceiptService.extractDate("Invoice date 2026-01-20", TENANT_ID);
         assertThat(date).isEqualTo(LocalDate.of(2026, 1, 20));
     }
 
     @Test
     @DisplayName("Should extract date in dd-MM-yyyy format")
     void extractDate_dashFormat() {
-        LocalDate date = ocrReceiptService.extractDate("Date: 28-02-2025");
+        LocalDate date = ocrReceiptService.extractDate("Date: 28-02-2025", TENANT_ID);
         assertThat(date).isEqualTo(LocalDate.of(2025, 2, 28));
     }
 
     @Test
     @DisplayName("Should return null for no date")
     void extractDate_noDate() {
-        assertThat(ocrReceiptService.extractDate("No date here")).isNull();
+        assertThat(ocrReceiptService.extractDate("No date here", TENANT_ID)).isNull();
     }
 
     @Test
     @DisplayName("Should return null for null text")
     void extractDate_null() {
-        assertThat(ocrReceiptService.extractDate(null)).isNull();
+        assertThat(ocrReceiptService.extractDate(null, TENANT_ID)).isNull();
     }
 
     // ─── Merchant Name Extraction Tests ──────────────────────────────────────

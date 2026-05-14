@@ -4,6 +4,7 @@ import com.nulogic.application.exit.dto.FnFAdjustmentRequest;
 import com.nulogic.application.exit.dto.FnFCalculationResponse;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.exit.ExitProcess;
 import com.nulogic.domain.exit.FullAndFinalSettlement;
@@ -24,6 +25,7 @@ import org.mockito.quality.Strictness;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -47,6 +49,8 @@ class FnFCalculationServiceTest {
     private EmployeeRepository employeeRepository;
     @Mock
     private SalaryStructureRepository salaryStructureRepository;
+    @Mock
+    private TenantTimeService tenantTimeService;
     @InjectMocks
     private FnFCalculationService fnfCalculationService;
     private UUID tenantId;
@@ -74,7 +78,10 @@ class FnFCalculationServiceTest {
         employeeId = UUID.randomUUID();
 
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
+        tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
         securityContextMock.when(SecurityContext::getCurrentUserId).thenReturn(UUID.randomUUID());
+        when(tenantTimeService.now(any())).thenReturn(LocalDateTime.now());
+        when(tenantTimeService.today(any())).thenReturn(LocalDate.now());
 
         exitProcess = new ExitProcess();
         exitProcess.setId(exitProcessId);

@@ -9,6 +9,7 @@ import com.nulogic.application.wall.service.WallService;
 import com.nulogic.common.exception.ResourceNotFoundException;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.announcement.Announcement;
 import com.nulogic.domain.announcement.Announcement.AnnouncementCategory;
 import com.nulogic.domain.announcement.Announcement.AnnouncementPriority;
@@ -47,6 +48,7 @@ public class AnnouncementService {
     private final ContentViewService contentViewService;
     private final WallService wallService;
     private final PostReactionRepository postReactionRepository;
+    private final TenantTimeService tenantTimeService;
 
     @Transactional
     public AnnouncementDto createAnnouncement(CreateAnnouncementRequest request) {
@@ -133,9 +135,9 @@ public class AnnouncementService {
 
     @Transactional(readOnly = true)
     public Page<AnnouncementDto> getAllAnnouncements(Pageable pageable) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         UUID currentUserId = SecurityContext.getCurrentEmployeeId();
-        return announcementRepository.findActiveAnnouncements(tenantId, LocalDateTime.now(), pageable)
+        return announcementRepository.findActiveAnnouncements(tenantId, tenantTimeService.now(tenantId), pageable)
                 .map(a -> enrichAnnouncementDto(AnnouncementDto.fromEntity(a), currentUserId));
     }
 
@@ -149,7 +151,8 @@ public class AnnouncementService {
                     "Cannot view another employee's announcements");
         }
 
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        LocalDateTime now = tenantTimeService.now(tenantId);
 
         // Get employee's department for filtering
         UUID employeeDepartmentId = null;
@@ -179,10 +182,10 @@ public class AnnouncementService {
         final boolean finalIsManager = isManager;
         final LocalDateTime finalJoinDate = joinDate;
 
-        Page<Announcement> announcements = announcementRepository.findActiveAnnouncements(tenantId, LocalDateTime.now(), pageable);
+        Page<Announcement> announcements = announcementRepository.findActiveAnnouncements(tenantId, now, pageable);
 
         List<AnnouncementDto> filteredDtos = announcements.getContent().stream()
-                .filter(a -> isAnnouncementVisibleToEmployee(a, employeeId, finalDepartmentId, finalIsManager, finalJoinDate))
+                .filter(a -> isAnnouncementVisibleToEmployee(a, employeeId, finalDepartmentId, finalIsManager, finalJoinDate, now))
                 .map(a -> {
                     AnnouncementDto dto = AnnouncementDto.fromEntity(a);
                     dto.setIsRead(readAnnouncementIds.contains(a.getId()));
@@ -204,7 +207,7 @@ public class AnnouncementService {
      */
     private boolean isAnnouncementVisibleToEmployee(Announcement announcement, UUID employeeId,
                                                     UUID employeeDepartmentId, boolean isManager,
-                                                    LocalDateTime joinDate) {
+                                                    LocalDateTime joinDate, LocalDateTime now) {
         if (announcement.getTargetAudience() == null) {
             return true; // Default to visible
         }
@@ -234,7 +237,7 @@ public class AnnouncementService {
                 if (joinDate == null) {
                     return false;
                 }
-                LocalDateTime ninetyDaysAgo = LocalDateTime.now().minusDays(90);
+                LocalDateTime ninetyDaysAgo = now.minusDays(90);
                 return joinDate.isAfter(ninetyDaysAgo);
 
             default:
@@ -244,8 +247,8 @@ public class AnnouncementService {
 
     @Transactional(readOnly = true)
     public List<AnnouncementDto> getPinnedAnnouncements() {
-        UUID tenantId = TenantContext.getCurrentTenant();
-        return announcementRepository.findPinnedAnnouncements(tenantId, LocalDateTime.now())
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        return announcementRepository.findPinnedAnnouncements(tenantId, tenantTimeService.now(tenantId))
                 .stream()
                 .map(AnnouncementDto::fromEntity)
                 .toList();
@@ -275,7 +278,7 @@ public class AnnouncementService {
 
     @Transactional
     public void markAsRead(UUID announcementId, UUID employeeId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         // Check if already read
         if (announcementReadRepository.existsByAnnouncementIdAndEmployeeIdAndTenantId(
@@ -296,7 +299,7 @@ public class AnnouncementService {
         AnnouncementRead read = AnnouncementRead.builder()
                 .announcementId(announcementId)
                 .employeeId(employeeId)
-                .readAt(LocalDateTime.now())
+                .readAt(tenantTimeService.now(tenantId))
                 .build();
         read.setTenantId(tenantId);
         announcementReadRepository.save(read);
@@ -308,7 +311,8 @@ public class AnnouncementService {
     }
 
     public void acceptAnnouncement(UUID announcementId, UUID employeeId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        LocalDateTime now = tenantTimeService.now(tenantId);
 
         // Get announcement
         Announcement announcement = announcementRepository.findByIdAndTenantId(announcementId, tenantId)
@@ -327,7 +331,7 @@ public class AnnouncementService {
                     AnnouncementRead newRead = AnnouncementRead.builder()
                             .announcementId(announcementId)
                             .employeeId(employeeId)
-                            .readAt(LocalDateTime.now())
+                            .readAt(now)
                             .build();
                     newRead.setTenantId(tenantId);
                     announcement.incrementReadCount();

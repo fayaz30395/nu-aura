@@ -235,8 +235,8 @@ export default function ExpenseSettingsPage() {
                 {categories.length === 0 ? (
                   <EmptyState
                     icon={<Tag className="w-8 h-8"/>}
-                    title="No categories"
-                    description="No categories configured yet."
+                    title="No expense categories"
+                    description="Add categories so employees can classify their claims by type."
                   />
                 ) : (
                   categories.map((cat) => (
@@ -313,8 +313,8 @@ export default function ExpenseSettingsPage() {
                 {policies.length === 0 ? (
                   <EmptyState
                     icon={<Shield className="w-8 h-8"/>}
-                    title="No policies"
-                    description="No policies configured yet."
+                    title="No expense policies"
+                    description="Define spending limits and approval rules to govern expense claims."
                   />
                 ) : (
                   policies.map((pol) => (

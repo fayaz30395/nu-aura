@@ -2,6 +2,7 @@ package com.nulogic.application.lms.service;
 
 import com.nulogic.api.lms.dto.CompletionStatsResponse;
 import com.nulogic.common.exception.ResourceNotFoundException;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.lms.CourseEnrollment;
 import com.nulogic.domain.lms.CourseEnrollment.EnrollmentStatus;
 import com.nulogic.infrastructure.lms.repository.CourseEnrollmentRepository;
@@ -15,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -30,6 +30,7 @@ public class CourseEnrollmentService {
 
     private final CourseEnrollmentRepository enrollmentRepository;
     private final CourseRepository courseRepository;
+    private final TenantTimeService tenantTimeService;
 
     /**
      * Enroll an employee in a course. If an enrollment already exists, returns
@@ -46,7 +47,7 @@ public class CourseEnrollmentService {
                 .courseId(courseId)
                 .employeeId(employeeId)
                 .status(EnrollmentStatus.ENROLLED)
-                .enrolledAt(LocalDateTime.now())
+                .enrolledAt(tenantTimeService.now(tenantId))
                 .progressPercentage(BigDecimal.ZERO)
                 .enrolledBy(enrolledBy)
                 .build();
@@ -78,11 +79,11 @@ public class CourseEnrollmentService {
                 .orElseThrow(() -> new ResourceNotFoundException("Enrollment not found: " + enrollmentId));
 
         enrollment.setProgressPercentage(BigDecimal.valueOf(progressPercent));
-        enrollment.setLastAccessedAt(LocalDateTime.now());
+        enrollment.setLastAccessedAt(tenantTimeService.now(tenantId));
 
         if (progressPercent >= 100) {
             enrollment.setStatus(EnrollmentStatus.COMPLETED);
-            enrollment.setCompletedAt(LocalDateTime.now());
+            enrollment.setCompletedAt(tenantTimeService.now(tenantId));
         } else if (progressPercent > 0 && enrollment.getStatus() == EnrollmentStatus.ENROLLED) {
             enrollment.setStatus(EnrollmentStatus.IN_PROGRESS);
         }

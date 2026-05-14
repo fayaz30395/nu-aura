@@ -6,6 +6,7 @@ import com.nulogic.common.exception.BusinessException;
 import com.nulogic.common.metrics.MetricsService;
 import com.nulogic.common.resilience.CircuitBreaker;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.common.validation.SsrfProtectionUtils;
 import com.nulogic.domain.webhook.Webhook;
 import com.nulogic.domain.webhook.WebhookDelivery;
@@ -80,6 +81,7 @@ public class WebhookDeliveryService {
     private final ObjectMapper objectMapper;
     private final MeterRegistry meterRegistry;
     private final MetricsService metricsService;
+    private final TenantTimeService tenantTimeService;
     // NOTE: injected RestTemplate is the shared singleton from AIConfig. We do NOT use it
     // for outbound webhook delivery — instead deliveryRestTemplate (built in @PostConstruct)
     // has redirect-following disabled to close an SSRF-via-redirect bypass.
@@ -146,7 +148,7 @@ public class WebhookDeliveryService {
         String eventId = UUID.randomUUID().toString();
         String payloadJson;
         try {
-            payloadJson = objectMapper.writeValueAsString(buildEventPayload(eventType, eventId, payload));
+            payloadJson = objectMapper.writeValueAsString(buildEventPayload(tenantId, eventType, eventId, payload));
         } catch (JsonProcessingException e) {
             log.error("Failed to serialize webhook payload for event {}: {}", eventType, e.getMessage());
             return;
@@ -187,7 +189,10 @@ public class WebhookDeliveryService {
         if (!circuitBreaker.allowRequest()) {
             log.debug("Circuit breaker open for webhook {}, scheduling retry", webhook.getId());
             delivery.setStatus(DeliveryStatus.RETRYING);
-            delivery.setNextRetryAt(LocalDateTime.now().plusMinutes(5));
+            // Resolve "now" in the webhook owner's local zone — the delivery row was created
+            // by tenant-scoped code and downstream sweeps query nextRetryAt against the same
+            // tenant zone, so they must agree.
+            delivery.setNextRetryAt(tenantTimeService.now(webhook.getTenantId()).plusMinutes(5));
             deliveryRepository.save(delivery);
             return;
         }
@@ -378,8 +383,11 @@ public class WebhookDeliveryService {
         // Then try the previous secret iff the rotation window is still open. A NULL
         // previousSecret or an expired previousSecretExpiresAt collapses this to false
         // without invoking HMAC — important to avoid acting on stale grace-period state.
+        // "Now" must be the webhook owner's local zone — previousSecretExpiresAt was stamped
+        // in that zone at rotation time (see WebhookService#rotateSecret).
         LocalDateTime previousExpiresAt = webhook.getPreviousSecretExpiresAt();
-        if (previousExpiresAt != null && previousExpiresAt.isAfter(LocalDateTime.now())) {
+        if (previousExpiresAt != null
+                && previousExpiresAt.isAfter(tenantTimeService.now(webhook.getTenantId()))) {
             return matchesSignature(payload, webhook.getPreviousSecret(), providedSignatureHex);
         }
         return false;
@@ -416,9 +424,16 @@ public class WebhookDeliveryService {
             lockAtLeastFor = "PT5M", lockAtMostFor = "PT55M")
     @Transactional
     public void clearExpiredPreviousSecrets() {
-        int cleared = webhookRepository.clearExpiredPreviousSecrets(LocalDateTime.now());
-        if (cleared > 0) {
-            log.info("Cleared {} expired previous_secret(s) on webhooks", cleared);
+        // Iterate per tenant so the cutoff timestamp is resolved in each tenant's local zone
+        // via TenantTimeService — matches how rotateSecret stamps previousSecretExpiresAt.
+        int totalCleared = 0;
+        for (UUID tenantId : webhookRepository.findDistinctTenantIds()) {
+            int cleared = webhookRepository.clearExpiredPreviousSecrets(
+                    tenantId, tenantTimeService.now(tenantId));
+            totalCleared += cleared;
+        }
+        if (totalCleared > 0) {
+            log.info("Cleared {} expired previous_secret(s) on webhooks", totalCleared);
         }
     }
 
@@ -457,13 +472,15 @@ public class WebhookDeliveryService {
     }
 
     /**
-     * Build the event payload wrapper.
+     * Build the event payload wrapper. The {@code timestamp} field is rendered in the
+     * tenant's local zone so consumers see times that match the rest of the platform's
+     * outbound contract surface.
      */
-    private Map<String, Object> buildEventPayload(WebhookEventType eventType, String eventId, Object data) {
+    private Map<String, Object> buildEventPayload(UUID tenantId, WebhookEventType eventType, String eventId, Object data) {
         Map<String, Object> payload = new LinkedHashMap<>();
         payload.put("id", eventId);
         payload.put("type", eventType.name());
-        payload.put("timestamp", LocalDateTime.now().toString());
+        payload.put("timestamp", tenantTimeService.now(tenantId).toString());
         payload.put("data", data);
         return payload;
     }
@@ -476,31 +493,32 @@ public class WebhookDeliveryService {
     @SchedulerLock(name = "webhookProcessRetries", lockAtLeastFor = "PT2M", lockAtMostFor = "PT15M")
     @Transactional
     public void processRetries() {
-        List<WebhookDelivery> readyForRetry = deliveryRepository.findReadyForRetry(LocalDateTime.now());
+        // Iterate per tenant so the "ready for retry" cutoff is the tenant's local now,
+        // matching the zone in which nextRetryAt was originally stamped (see deliverWebhook).
+        for (UUID tenantId : deliveryRepository.findDistinctTenantIds()) {
+            List<WebhookDelivery> readyForRetry = deliveryRepository.findReadyForRetry(
+                    tenantId, tenantTimeService.now(tenantId));
 
-        for (WebhookDelivery delivery : readyForRetry) {
-            UUID tenantId = delivery.getTenantId();
-            if (tenantId != null) {
+            for (WebhookDelivery delivery : readyForRetry) {
                 TenantContext.setCurrentTenant(tenantId);
-            }
-            try {
-                webhookRepository.findById(delivery.getWebhookId()).ifPresent(webhook -> {
-                    if (webhook.getStatus() == WebhookStatus.ACTIVE) {
-                        log.info("Retrying webhook delivery {} (attempt {})", delivery.getId(), delivery.getAttempts() + 1);
+                try {
+                    webhookRepository.findById(delivery.getWebhookId()).ifPresent(webhook -> {
+                        if (webhook.getStatus() == WebhookStatus.ACTIVE) {
+                            log.info("Retrying webhook delivery {} (attempt {})",
+                                    delivery.getId(), delivery.getAttempts() + 1);
 
-                        // Record retry metrics
-                        if (tenantId != null) {
+                            // Record retry metrics
                             metricsService.recordWebhookRetry(
                                     tenantId,
                                     delivery.getEventType().name(),
                                     delivery.getAttempts() + 1);
-                        }
 
-                        deliverWebhook(webhook, delivery);
-                    }
-                });
-            } finally {
-                TenantContext.clear();
+                            deliverWebhook(webhook, delivery);
+                        }
+                    });
+                } finally {
+                    TenantContext.clear();
+                }
             }
         }
     }

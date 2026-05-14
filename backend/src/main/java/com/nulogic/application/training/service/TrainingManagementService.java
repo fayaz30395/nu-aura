@@ -7,6 +7,7 @@ import com.nulogic.api.training.dto.TrainingProgramResponse;
 import com.nulogic.application.audit.service.AuditLogService;
 import com.nulogic.application.event.DomainEventPublisher;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.audit.AuditLog.AuditAction;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.event.training.TrainingCompletedEvent;
@@ -22,8 +23,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -39,6 +38,7 @@ public class TrainingManagementService {
     private final EmployeeRepository employeeRepository;
     private final DomainEventPublisher domainEventPublisher;
     private final AuditLogService auditLogService;
+    private final TenantTimeService tenantTimeService;
 
     // ==================== Training Program Operations ====================
 
@@ -174,7 +174,7 @@ public class TrainingManagementService {
         enrollment.setTenantId(tenantId);
         enrollment.setProgramId(request.getProgramId());
         enrollment.setEmployeeId(request.getEmployeeId());
-        enrollment.setEnrollmentDate(request.getEnrollmentDate() != null ? request.getEnrollmentDate() : LocalDate.now());
+        enrollment.setEnrollmentDate(request.getEnrollmentDate() != null ? request.getEnrollmentDate() : tenantTimeService.today(tenantId));
         enrollment.setStatus(TrainingEnrollment.EnrollmentStatus.ENROLLED);
         enrollment.setNotes(request.getNotes());
 
@@ -197,7 +197,7 @@ public class TrainingManagementService {
 
         enrollment.setStatus(status);
         if (status == TrainingEnrollment.EnrollmentStatus.COMPLETED) {
-            enrollment.setCompletionDate(LocalDate.now());
+            enrollment.setCompletionDate(tenantTimeService.today(tenantId));
         }
 
         TrainingEnrollment updatedEnrollment = enrollmentRepository.save(enrollment);
@@ -239,8 +239,8 @@ public class TrainingManagementService {
         }
 
         enrollment.setStatus(TrainingEnrollment.EnrollmentStatus.COMPLETED);
-        enrollment.setCompletionDate(LocalDate.now());
-        enrollment.setCompletedAt(LocalDateTime.now());
+        enrollment.setCompletionDate(tenantTimeService.today(tenantId));
+        enrollment.setCompletedAt(tenantTimeService.now(tenantId));
 
         TrainingEnrollment savedEnrollment = enrollmentRepository.save(enrollment);
 

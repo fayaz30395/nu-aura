@@ -70,7 +70,7 @@ public class KekaMigrationService {
     @Transactional
     public ImportResult importEmployees(MultipartFile file) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        ImportResult result = initResult("EMPLOYEES");
+        ImportResult result = initResult("EMPLOYEES", tenantId);
 
         try {
             List<Map<String, String>> data = parseFile(file);
@@ -95,7 +95,7 @@ public class KekaMigrationService {
             log.error("Error parsing employee file: {}", e.getMessage());
         }
 
-        return finalizeResult(result);
+        return finalizeResult(result, tenantId);
     }
 
     private void importEmployeeRow(Map<String, String> row, int rowNum, UUID tenantId,
@@ -184,7 +184,7 @@ public class KekaMigrationService {
     @Transactional
     public ImportResult importAttendance(MultipartFile file) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        ImportResult result = initResult("ATTENDANCE");
+        ImportResult result = initResult("ATTENDANCE", tenantId);
 
         try {
             List<Map<String, String>> data = parseFile(file);
@@ -207,7 +207,7 @@ public class KekaMigrationService {
             result.addError(0, "file", file.getOriginalFilename(), "Failed to parse file: " + e.getMessage());
         }
 
-        return finalizeResult(result);
+        return finalizeResult(result, tenantId);
     }
 
     private void importAttendanceRow(Map<String, String> row, int rowNum, UUID tenantId,
@@ -262,7 +262,7 @@ public class KekaMigrationService {
     @Transactional
     public ImportResult importLeaveBalances(MultipartFile file) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        ImportResult result = initResult("LEAVE_BALANCES");
+        ImportResult result = initResult("LEAVE_BALANCES", tenantId);
 
         try {
             List<Map<String, String>> data = parseFile(file);
@@ -286,7 +286,7 @@ public class KekaMigrationService {
             result.addError(0, "file", file.getOriginalFilename(), "Failed to parse file: " + e.getMessage());
         }
 
-        return finalizeResult(result);
+        return finalizeResult(result, tenantId);
     }
 
     private void importLeaveBalanceRow(Map<String, String> row, int rowNum, UUID tenantId,
@@ -336,7 +336,7 @@ public class KekaMigrationService {
     @Transactional
     public ImportResult importSalaryStructures(MultipartFile file) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        ImportResult result = initResult("SALARY_STRUCTURES");
+        ImportResult result = initResult("SALARY_STRUCTURES", tenantId);
 
         try {
             List<Map<String, String>> data = parseFile(file);
@@ -359,7 +359,7 @@ public class KekaMigrationService {
             result.addError(0, "file", file.getOriginalFilename(), "Failed to parse file: " + e.getMessage());
         }
 
-        return finalizeResult(result);
+        return finalizeResult(result, tenantId);
     }
 
     private void importSalaryRow(Map<String, String> row, int rowNum, UUID tenantId,
@@ -405,7 +405,7 @@ public class KekaMigrationService {
     @Transactional
     public ImportResult importDepartments(MultipartFile file) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        ImportResult result = initResult("DEPARTMENTS");
+        ImportResult result = initResult("DEPARTMENTS", tenantId);
 
         try {
             List<Map<String, String>> data = parseFile(file);
@@ -448,7 +448,7 @@ public class KekaMigrationService {
             result.addError(0, "file", file.getOriginalFilename(), "Failed to parse file: " + e.getMessage());
         }
 
-        return finalizeResult(result);
+        return finalizeResult(result, tenantId);
     }
 
     // ==================== File Parsing Utilities ====================
@@ -584,16 +584,16 @@ public class KekaMigrationService {
 
     // ==================== Helper Utilities ====================
 
-    private ImportResult initResult(String dataType) {
+    private ImportResult initResult(String dataType, UUID tenantId) {
         return ImportResult.builder()
                 .importId(UUID.randomUUID())
                 .dataType(dataType)
-                .startTime(LocalDateTime.now())
+                .startTime(tenantTimeService.now(tenantId))
                 .build();
     }
 
-    private ImportResult finalizeResult(ImportResult result) {
-        result.setEndTime(LocalDateTime.now());
+    private ImportResult finalizeResult(ImportResult result, UUID tenantId) {
+        result.setEndTime(tenantTimeService.now(tenantId));
         result.setDurationMs(java.time.Duration.between(result.getStartTime(), result.getEndTime()).toMillis());
         log.info("Import {} completed: {} success, {} errors, {} skipped out of {} total",
                 result.getDataType(), result.getSuccessCount(), result.getErrorCount(),

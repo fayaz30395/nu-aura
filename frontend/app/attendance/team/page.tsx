@@ -34,7 +34,7 @@ import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {useAuth} from '@/lib/hooks/useAuth';
 import dynamic from 'next/dynamic';
 import {ChartLoadingFallback} from '@/lib/utils/lazy-components';
-import {formatDate} from '@/lib/utils/format/date';
+import {formatDate, formatLongDate, formatWeekday, formatWeekdayDate} from '@/lib/utils/format/date';
 
 const TeamStatusChart = dynamic(
   () => import('./TeamStatusChart'),
@@ -229,12 +229,7 @@ export default function TeamAttendancePage() {
           <div>
             <h1 className="text-page-title text-[var(--text-primary)]">Team Attendance</h1>
             <p className="text-[var(--text-muted)] text-sm mt-2">
-              Monitor your team&apos;s attendance records for {new Date(selectedDate).toLocaleDateString('en-US', {
-              weekday: 'long',
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric'
-            })}
+              Monitor your team&apos;s attendance records for {formatLongDate(selectedDate)}
             </p>
           </div>
         </div>
@@ -266,6 +261,7 @@ export default function TeamAttendancePage() {
               onClick={goToPreviousDate}
               className="cursor-pointer p-2 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               aria-label="Previous day"
+              title="Previous day"
             >
               <ChevronLeft className="h-4 w-4 text-[var(--text-secondary)]"/>
             </button>
@@ -274,13 +270,14 @@ export default function TeamAttendancePage() {
                 {formatDate(selectedDate)}
               </p>
               <p className="text-caption">
-                {new Date(selectedDate).toLocaleDateString('en-US', {weekday: 'short'})}
+                {formatWeekday(selectedDate)}
               </p>
             </div>
             <button
               onClick={goToNextDate}
               className="cursor-pointer p-2 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               aria-label="Next day"
+              title="Next day"
             >
               <ChevronRight className="h-4 w-4 text-[var(--text-secondary)]"/>
             </button>
@@ -724,11 +721,7 @@ export default function TeamAttendancePage() {
                             {record.employeeId.substring(0, 16)}
                           </p>
                           <p className="text-caption">
-                            {new Date(record.attendanceDate).toLocaleDateString('en-US', {
-                              weekday: 'short',
-                              month: 'short',
-                              day: 'numeric'
-                            })}
+                            {formatWeekdayDate(record.attendanceDate)}
                           </p>
                         </div>
 

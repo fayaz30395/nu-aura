@@ -69,7 +69,7 @@ export const AttendanceMonthlyStats = memo(function AttendanceMonthlyStats({
           transition={{duration: 0.25, ease: 'easeOut', delay: idx * 0.06}}
         >
           <Card
-            className="skeuo-card card-interactive border border-[var(--border-main)] hover:shadow-[var(--shadow-dropdown)] transition-all">
+            className="skeuo-card card-interactive border border-[var(--border-main)]">
             <CardContent className="p-4">
               <div className="row-between mb-2">
                 <div

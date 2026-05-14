@@ -494,7 +494,12 @@ function ImportSection() {
             </h4>
           </div>
           {preview.rows.length > 0 && (
-            <div className="overflow-x-auto">
+            <div
+              className="overflow-x-auto"
+              tabIndex={0}
+              role="region"
+              aria-label="Import preview rows"
+            >
               <table className="min-w-full text-xs">
                 <thead>
                 <tr className="bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]">
@@ -586,7 +591,12 @@ function ImportSection() {
           {importResult.errors.length > 0 && (
             <div className="mt-4 rounded-lg bg-danger-50 dark:bg-danger-900/10 p-4">
               <h5 className="text-xs font-medium text-danger-700 dark:text-danger-400 mb-2">Errors</h5>
-              <ul className="space-y-1 text-xs text-danger-600 dark:text-danger-400 max-h-40 overflow-y-auto">
+              <ul
+                className="space-y-1 text-xs text-danger-600 dark:text-danger-400 max-h-40 overflow-y-auto"
+                tabIndex={0}
+                role="region"
+                aria-label="Import errors list"
+              >
                 {importResult.errors.map((err, i) => (
                   <li key={i}>Row {err.rowNumber}: {err.field} = &quot;{err.value}&quot; - {err.errorMessage}</li>
                 ))}
@@ -968,7 +978,12 @@ function KekaMigrationSection() {
           </div>
 
           {previewData.preview.length > 0 && (
-            <div className="overflow-x-auto rounded-lg border border-[var(--border-main)]">
+            <div
+              className="overflow-x-auto rounded-lg border border-[var(--border-main)]"
+              tabIndex={0}
+              role="region"
+              aria-label="Employee data preview"
+            >
               <table className="min-w-full text-xs">
                 <thead>
                 <tr className="bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]">
@@ -1002,7 +1017,12 @@ function KekaMigrationSection() {
               <h5 className="text-xs font-medium text-danger-700 dark:text-danger-400 mb-2">
                 Validation Errors ({previewData.errors.length})
               </h5>
-              <ul className="space-y-1 text-xs text-danger-600 dark:text-danger-400 max-h-32 overflow-y-auto">
+              <ul
+                className="space-y-1 text-xs text-danger-600 dark:text-danger-400 max-h-32 overflow-y-auto"
+                tabIndex={0}
+                role="region"
+                aria-label="Validation errors list"
+              >
                 {previewData.errors.slice(0, 10).map((err, i) => (
                   <li key={i}>Row {err.row}: {err.field} - {err.message}</li>
                 ))}

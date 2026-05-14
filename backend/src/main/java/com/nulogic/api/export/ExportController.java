@@ -4,6 +4,8 @@ import com.nulogic.common.export.ExportFormat;
 import com.nulogic.common.export.ExportService;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.RequiresPermission;
+import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -12,10 +14,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Generic export controller for data exports.
@@ -29,6 +31,7 @@ import java.util.Map;
 public class ExportController {
 
     private final ExportService exportService;
+    private final TenantTimeService tenantTimeService;
 
     @PostMapping("/employees")
     @RequiresPermission(Permission.EMPLOYEE_READ)
@@ -139,7 +142,8 @@ public class ExportController {
     }
 
     private ResponseEntity<byte[]> buildResponse(byte[] data, ExportFormat format, String prefix) {
-        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        String timestamp = tenantTimeService.now(tenantId).format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
         String filename = prefix + "_" + timestamp + format.getExtension();
 
         return ResponseEntity.ok()

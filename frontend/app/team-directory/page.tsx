@@ -243,10 +243,11 @@ export default function TeamDirectoryPage() {
         </div>
 
         {/* Search Bar */}
-        <div className="relative">
+        <div className="relative" role="search">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]"/>
           <input
-            type="text"
+            type="search"
+            aria-label="Search by name or email"
             placeholder="Search by name or email..."
             value={search}
             onChange={(e) => {

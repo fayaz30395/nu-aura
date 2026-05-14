@@ -55,7 +55,7 @@ export const CandidateFilters = memo(function CandidateFilters({
             <label htmlFor="candidate-search" className="sr-only">Search candidates</label>
             <input
               id="candidate-search"
-              type="text"
+              type="search"
               placeholder="Search candidates..."
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}

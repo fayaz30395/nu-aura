@@ -2,7 +2,8 @@ package com.nulogic.application.user.service;
 
 import com.nulogic.api.user.dto.NotificationPreferencesResponse;
 import com.nulogic.api.user.dto.UpdateNotificationPreferencesRequest;
-import com.nulogic.common.security.SecurityContext;
+import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.user.model.UserNotificationPreferences;
 import com.nulogic.infrastructure.user.repository.UserNotificationPreferencesRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,10 +18,11 @@ import java.util.UUID;
 public class NotificationPreferencesService {
 
     private final UserNotificationPreferencesRepository preferencesRepository;
+    private final TenantTimeService tenantTimeService;
 
     @Transactional(readOnly = true)
     public NotificationPreferencesResponse getPreferences(UUID userId) {
-        UUID tenantId = SecurityContext.getCurrentTenantId();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         UserNotificationPreferences preferences = preferencesRepository
                 .findByUserIdAndTenantId(userId, tenantId)
@@ -31,7 +33,7 @@ public class NotificationPreferencesService {
 
     @Transactional
     public NotificationPreferencesResponse updatePreferences(UUID userId, UpdateNotificationPreferencesRequest request) {
-        UUID tenantId = SecurityContext.getCurrentTenantId();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         UserNotificationPreferences preferences = preferencesRepository
                 .findByUserIdAndTenantId(userId, tenantId)
@@ -42,7 +44,7 @@ public class NotificationPreferencesService {
         preferences.setPushNotifications(request.getPushNotifications());
         preferences.setSmsNotifications(request.getSmsNotifications());
         preferences.setSecurityAlerts(request.getSecurityAlerts());
-        preferences.setUpdatedAt(LocalDateTime.now());
+        preferences.setUpdatedAt(tenantTimeService.now(tenantId));
 
         UserNotificationPreferences savedPreferences = preferencesRepository.save(preferences);
         return mapToResponse(savedPreferences);
@@ -59,8 +61,9 @@ public class NotificationPreferencesService {
         preferences.setPushNotifications(true);
         preferences.setSmsNotifications(false);
         preferences.setSecurityAlerts(true);
-        preferences.setCreatedAt(LocalDateTime.now());
-        preferences.setUpdatedAt(LocalDateTime.now());
+        LocalDateTime nowTenant = tenantTimeService.now(tenantId);
+        preferences.setCreatedAt(nowTenant);
+        preferences.setUpdatedAt(nowTenant);
         return preferencesRepository.save(preferences);
     }
 

@@ -20,6 +20,7 @@ import com.nulogic.common.metrics.MetricsService;
 import com.nulogic.common.security.AccountLockoutService;
 import com.nulogic.common.security.JwtTokenProvider;
 import com.nulogic.common.security.UserPrincipal;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.platform.UserAppAccess;
 import com.nulogic.domain.user.PasswordHistory;
@@ -49,8 +50,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -81,6 +80,7 @@ public class AuthService {
     private final PasswordPolicyConfig passwordPolicyConfig;
     private final CaptchaService captchaService;
     private final StringRedisTemplate stringRedisTemplate;
+    private final TenantTimeService tenantTimeService;
     @Value("${app.jwt.expiration}")
     private long jwtExpiration;
     @Value("${app.security.captcha.threshold-attempts:3}")
@@ -117,7 +117,8 @@ public class AuthService {
                        PasswordHistoryRepository passwordHistoryRepository,
                        PasswordPolicyConfig passwordPolicyConfig,
                        CaptchaService captchaService,
-                       StringRedisTemplate stringRedisTemplate) {
+                       StringRedisTemplate stringRedisTemplate,
+                       TenantTimeService tenantTimeService) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.employeeRepository = employeeRepository;
@@ -133,6 +134,7 @@ public class AuthService {
         this.passwordPolicyConfig = passwordPolicyConfig;
         this.captchaService = captchaService;
         this.stringRedisTemplate = stringRedisTemplate;
+        this.tenantTimeService = tenantTimeService;
     }
 
     @Transactional(readOnly = true)
@@ -150,6 +152,7 @@ public class AuthService {
                 .email(user.getEmail())
                 .fullName(user.getFullName())
                 .profilePictureUrl(user.getProfilePictureUrl())
+                .tenantTimezone(resolveTenantTimezone(tenantId))
                 .roles(new ArrayList<>(ctx.appRoles()))
                 .permissions(new ArrayList<>(ctx.appPermissions().keySet()))
                 .build();
@@ -236,7 +239,7 @@ public class AuthService {
             // Check password expiry (90-day policy)
             if (user.getPasswordChangedAt() != null && passwordPolicyConfig.getMaxAgeDays() > 0) {
                 long daysSinceChange = java.time.temporal.ChronoUnit.DAYS.between(
-                        user.getPasswordChangedAt().toLocalDate(), LocalDate.now());
+                        user.getPasswordChangedAt().toLocalDate(), tenantTimeService.today(tenantId));
                 if (daysSinceChange > passwordPolicyConfig.getMaxAgeDays()) {
                     throw new BusinessException("Your password has expired. Please reset your password.");
                 }
@@ -547,7 +550,7 @@ public class AuthService {
 
         // Hash and update new password
         user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
-        user.setPasswordChangedAt(LocalDateTime.now());
+        user.setPasswordChangedAt(tenantTimeService.now(user.getTenantId()));
 
         userRepository.save(user);
 
@@ -759,7 +762,7 @@ public class AuthService {
             user.setPasswordResetTokenHash(resetTokenHash);
             // Keep legacy plaintext column null so old lookups never succeed.
             user.setPasswordResetToken(null);
-            user.setPasswordResetTokenExpiry(LocalDateTime.now().plusHours(1));
+            user.setPasswordResetTokenExpiry(tenantTimeService.now(user.getTenantId()).plusHours(1));
             userRepository.save(user);
 
             log.info("Password reset requested for user ID: {}", user.getId());
@@ -794,7 +797,10 @@ public class AuthService {
             throw new AuthenticationException("Invalid or expired reset token");
         }
 
-        List<User> candidates = userRepository.findActivePasswordResetCandidates(LocalDateTime.now());
+        // Cross-tenant candidate scan happens BEFORE we know the user — no tenant
+        // context exists yet, so fall back to Asia/Kolkata via null. Once the
+        // matching user is resolved, subsequent timestamps use the user's tenant.
+        List<User> candidates = userRepository.findActivePasswordResetCandidates(tenantTimeService.now(null));
         User user = candidates.stream()
                 .filter(u -> u.getPasswordResetTokenHash() != null
                         && passwordEncoder.matches(submittedToken, u.getPasswordResetTokenHash()))
@@ -803,7 +809,7 @@ public class AuthService {
 
         // Check if token is expired (defence-in-depth — query already filters)
         if (user.getPasswordResetTokenExpiry() == null ||
-                user.getPasswordResetTokenExpiry().isBefore(LocalDateTime.now())) {
+                user.getPasswordResetTokenExpiry().isBefore(tenantTimeService.now(user.getTenantId()))) {
             throw new AuthenticationException("Password reset token has expired");
         }
 
@@ -830,7 +836,7 @@ public class AuthService {
 
         // Update password and clear reset token (both legacy plaintext and hashed columns)
         user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
-        user.setPasswordChangedAt(LocalDateTime.now());
+        user.setPasswordChangedAt(tenantTimeService.now(user.getTenantId()));
         user.setPasswordResetToken(null);
         user.setPasswordResetTokenHash(null);
         user.setPasswordResetTokenExpiry(null);
@@ -929,9 +935,22 @@ public class AuthService {
                 .email(user.getEmail())
                 .fullName(user.getFullName())
                 .profilePictureUrl(user.getProfilePictureUrl())
+                .tenantTimezone(resolveTenantTimezone(tenantId))
                 .roles(new ArrayList<>(ctx.appRoles()))
                 .permissions(new ArrayList<>(ctx.appPermissions().keySet()))
                 .build();
+    }
+
+    /**
+     * Resolve the IANA timezone identifier for the tenant via the cached
+     * {@link TenantTimeService}. Falls back to {@code Asia/Kolkata} when the tenant id
+     * is null or the lookup fails (matching the resolver's own fallback contract) so
+     * a downstream lookup miss never blocks login. Exposed on AuthResponse so the
+     * frontend can hydrate tenant-local time formatting from a single source of truth
+     * (see docs/architecture/frontend-tenant-zone-propagation-design.md).
+     */
+    private String resolveTenantTimezone(UUID tenantId) {
+        return tenantTimeService.zoneFor(tenantId).getId();
     }
 
     /**
@@ -987,7 +1006,7 @@ public class AuthService {
                     .user(user)
                     .firstName(firstName)
                     .lastName(lastName)
-                    .joiningDate(LocalDate.now())
+                    .joiningDate(tenantTimeService.today(tenantId))
                     .employmentType(Employee.EmploymentType.FULL_TIME)
                     .status(Employee.EmployeeStatus.ACTIVE)
                     .tenantId(tenantId)

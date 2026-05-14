@@ -6,6 +6,7 @@ import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.RequiresPermission;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.performance.KeyResult;
 import com.nulogic.domain.performance.Objective;
 import com.nulogic.domain.performance.Objective.ObjectiveLevel;
@@ -36,6 +37,7 @@ import java.util.stream.Collectors;
 public class OkrController {
 
     private final OkrService okrService;
+    private final TenantTimeService tenantTimeService;
 
     // ========== Objectives ==========
 
@@ -181,7 +183,7 @@ public class OkrController {
     public ResponseEntity<ObjectiveResponse> updateObjective(
             @Parameter(description = "Objective UUID") @PathVariable UUID id,
             @Valid @RequestBody ObjectiveRequest request) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         return okrService.getObjectiveById(tenantId, id)
                 .map(existing -> {
@@ -199,7 +201,7 @@ public class OkrController {
                         existing.setIsStretchGoal(request.getIsStretchGoal());
                     }
                     existing.setAlignedToCompanyObjective(request.getAlignedToCompanyObjective());
-                    existing.setUpdatedAt(LocalDateTime.now());
+                    existing.setUpdatedAt(tenantTimeService.now(tenantId));
 
                     Objective updated = okrService.updateObjective(existing);
                     return ResponseEntity.ok(ObjectiveResponse.fromEntity(updated));
@@ -219,12 +221,12 @@ public class OkrController {
     public ResponseEntity<ObjectiveResponse> updateObjectiveStatus(
             @Parameter(description = "Objective UUID") @PathVariable UUID id,
             @Parameter(description = "New status value") @RequestParam ObjectiveStatus status) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         return okrService.getObjectiveById(tenantId, id)
                 .map(existing -> {
                     existing.setStatus(status);
-                    existing.setUpdatedAt(LocalDateTime.now());
+                    existing.setUpdatedAt(tenantTimeService.now(tenantId));
                     Objective updated = okrService.updateObjective(existing);
                     return ResponseEntity.ok(ObjectiveResponse.fromEntity(updated));
                 })
@@ -242,14 +244,14 @@ public class OkrController {
     })
     public ResponseEntity<ObjectiveResponse> approveObjective(
             @Parameter(description = "Objective UUID") @PathVariable UUID id) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         UUID approverId = SecurityContext.getCurrentEmployeeId();
 
         return okrService.getObjectiveById(tenantId, id)
                 .map(existing -> {
                     existing.setStatus(ObjectiveStatus.ACTIVE);
                     existing.setApprovedBy(approverId);
-                    existing.setUpdatedAt(LocalDateTime.now());
+                    existing.setUpdatedAt(tenantTimeService.now(tenantId));
                     Objective updated = okrService.updateObjective(existing);
                     return ResponseEntity.ok(ObjectiveResponse.fromEntity(updated));
                 })
@@ -341,7 +343,7 @@ public class OkrController {
     public ResponseEntity<KeyResultResponse> updateKeyResult(
             @Parameter(description = "Key result UUID") @PathVariable UUID id,
             @Valid @RequestBody KeyResultRequest request) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         return okrService.getKeyResultById(tenantId, id)
                 .map(existing -> {
@@ -356,7 +358,7 @@ public class OkrController {
                         existing.setWeight(request.getWeight());
                     }
                     existing.setDueDate(request.getDueDate());
-                    existing.setUpdatedAt(LocalDateTime.now());
+                    existing.setUpdatedAt(tenantTimeService.now(tenantId));
 
                     KeyResult updated = okrService.updateKeyResult(existing);
                     return ResponseEntity.ok(KeyResultResponse.fromEntity(updated));
@@ -376,7 +378,7 @@ public class OkrController {
     public ResponseEntity<KeyResultResponse> updateKeyResultProgress(
             @Parameter(description = "Key result UUID") @PathVariable UUID id,
             @Parameter(description = "New current value") @RequestParam BigDecimal value) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         UUID employeeId = SecurityContext.getCurrentEmployeeId();
 
         return okrService.getKeyResultById(tenantId, id)
@@ -384,9 +386,10 @@ public class OkrController {
                     BigDecimal previousValue = existing.getCurrentValue();
                     BigDecimal previousProgress = existing.getProgressPercentage();
 
+                    LocalDateTime now = tenantTimeService.now(tenantId);
                     existing.setCurrentValue(value);
                     existing.updateProgress();
-                    existing.setUpdatedAt(LocalDateTime.now());
+                    existing.setUpdatedAt(now);
 
                     KeyResult updated = okrService.updateKeyResult(existing);
 
@@ -395,7 +398,7 @@ public class OkrController {
                             .keyResultId(id)
                             .objectiveId(existing.getObjectiveId())
                             .employeeId(employeeId)
-                            .checkInDate(LocalDateTime.now())
+                            .checkInDate(now)
                             .previousValue(previousValue)
                             .newValue(value)
                             .previousProgress(previousProgress)
@@ -441,14 +444,14 @@ public class OkrController {
             @ApiResponse(responseCode = "403", description = "Forbidden — requires OKR:UPDATE permission")
     })
     public ResponseEntity<CheckInResponse> createCheckIn(@Valid @RequestBody CheckInRequest request) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         UUID employeeId = SecurityContext.getCurrentEmployeeId();
 
         OkrCheckIn checkIn = OkrCheckIn.builder()
                 .objectiveId(request.getObjectiveId())
                 .keyResultId(request.getKeyResultId())
                 .employeeId(employeeId)
-                .checkInDate(LocalDateTime.now())
+                .checkInDate(tenantTimeService.now(tenantId))
                 .newValue(request.getNewValue())
                 .newProgress(request.getNewProgress())
                 .confidenceLevel(request.getConfidenceLevel())

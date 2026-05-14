@@ -5,6 +5,7 @@ import com.nulogic.application.esignature.event.SignatureCompletedEvent;
 import com.nulogic.common.security.DataScopeService;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.esignature.SignatureApproval;
 import com.nulogic.domain.esignature.SignatureRequest;
@@ -40,6 +41,7 @@ public class ESignatureService {
     private final EmployeeRepository employeeRepository;
     private final DataScopeService dataScopeService;
     private final ApplicationEventPublisher eventPublisher;
+    private final TenantTimeService tenantTimeService;
 
     // ==================== Signature Request Operations ====================
 
@@ -142,7 +144,7 @@ public class ESignatureService {
         signatureRequest.setStatus(SignatureRequest.SignatureStatus.PENDING);
 
         // Update approval statuses to SENT
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = tenantTimeService.now(tenantId);
         for (SignatureApproval approval : approvals) {
             approval.setStatus(SignatureApproval.ApprovalStatus.SENT);
             approval.setSentAt(now);
@@ -167,7 +169,7 @@ public class ESignatureService {
         }
 
         signatureRequest.setStatus(SignatureRequest.SignatureStatus.CANCELLED);
-        signatureRequest.setCancelledAt(LocalDateTime.now());
+        signatureRequest.setCancelledAt(tenantTimeService.now(tenantId));
         signatureRequest.setCancelledBy(cancelledBy);
         signatureRequest.setCancellationReason(reason);
 
@@ -270,7 +272,7 @@ public class ESignatureService {
         // Generate authentication token for external signers
         if (request.getSignerRole() == SignatureApproval.SignerRole.EXTERNAL) {
             approval.setAuthenticationToken(UUID.randomUUID().toString());
-            approval.setTokenExpiresAt(LocalDateTime.now().plusDays(7)); // Token valid for 7 days
+            approval.setTokenExpiresAt(tenantTimeService.now(tenantId).plusDays(7)); // Token valid for 7 days
         }
 
         return signatureApprovalRepository.save(approval);
@@ -336,7 +338,7 @@ public class ESignatureService {
 
         // Update approval
         approval.setStatus(SignatureApproval.ApprovalStatus.SIGNED);
-        approval.setSignedAt(LocalDateTime.now());
+        approval.setSignedAt(tenantTimeService.now(tenantId));
         approval.setSignatureMethod(request.getSignatureMethod());
         approval.setSignatureData(request.getSignatureData());
         approval.setSignatureIp(request.getSignatureIp());
@@ -365,7 +367,7 @@ public class ESignatureService {
         }
 
         approval.setStatus(SignatureApproval.ApprovalStatus.DECLINED);
-        approval.setDeclinedAt(LocalDateTime.now());
+        approval.setDeclinedAt(tenantTimeService.now(tenantId));
         approval.setDeclineReason(reason);
 
         SignatureApproval updatedApproval = signatureApprovalRepository.save(approval);
@@ -443,7 +445,7 @@ public class ESignatureService {
         // Check if all required signatures are received
         if (signedCount >= signatureRequest.getRequiredSignatures()) {
             signatureRequest.setStatus(SignatureRequest.SignatureStatus.COMPLETED);
-            signatureRequest.setCompletedAt(LocalDateTime.now());
+            signatureRequest.setCompletedAt(tenantTimeService.now(tenantId));
         } else if (signedCount > 0) {
             signatureRequest.setStatus(SignatureRequest.SignatureStatus.IN_PROGRESS);
         }
@@ -549,8 +551,10 @@ public class ESignatureService {
                     .build();
         }
 
+        UUID tenantId = approval.getTenantId();
+
         // Check token expiry
-        if (approval.getTokenExpiresAt() != null && approval.getTokenExpiresAt().isBefore(LocalDateTime.now())) {
+        if (approval.getTokenExpiresAt() != null && approval.getTokenExpiresAt().isBefore(tenantTimeService.now(tenantId))) {
             return ExternalSignatureInfoResponse.builder()
                     .tokenValid(false)
                     .errorMessage("This signing link has expired. Please contact HR for a new link.")
@@ -590,7 +594,7 @@ public class ESignatureService {
 
         // Mark as viewed
         if (approval.getViewedAt() == null) {
-            approval.setViewedAt(LocalDateTime.now());
+            approval.setViewedAt(tenantTimeService.now(tenantId));
             approval.setStatus(SignatureApproval.ApprovalStatus.VIEWED);
             signatureApprovalRepository.save(approval);
         }
@@ -619,8 +623,10 @@ public class ESignatureService {
         SignatureApproval approval = signatureApprovalRepository.findByAuthenticationToken(token)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid or expired signing link"));
 
+        UUID tenantId = approval.getTenantId();
+
         // Validate token expiry
-        if (approval.getTokenExpiresAt() != null && approval.getTokenExpiresAt().isBefore(LocalDateTime.now())) {
+        if (approval.getTokenExpiresAt() != null && approval.getTokenExpiresAt().isBefore(tenantTimeService.now(tenantId))) {
             throw new IllegalStateException("This signing link has expired. Please contact HR for a new link.");
         }
 
@@ -640,7 +646,7 @@ public class ESignatureService {
 
         // Update approval with signature
         approval.setStatus(SignatureApproval.ApprovalStatus.SIGNED);
-        approval.setSignedAt(LocalDateTime.now());
+        approval.setSignedAt(tenantTimeService.now(tenantId));
         approval.setSignatureMethod(request.getSignatureMethod() != null ?
                 request.getSignatureMethod() : SignatureApproval.SignatureMethod.TYPED);
         approval.setSignatureData(request.getSignatureData());
@@ -670,8 +676,10 @@ public class ESignatureService {
         SignatureApproval approval = signatureApprovalRepository.findByAuthenticationToken(token)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid or expired signing link"));
 
+        UUID tenantId = approval.getTenantId();
+
         // Validate token expiry
-        if (approval.getTokenExpiresAt() != null && approval.getTokenExpiresAt().isBefore(LocalDateTime.now())) {
+        if (approval.getTokenExpiresAt() != null && approval.getTokenExpiresAt().isBefore(tenantTimeService.now(tenantId))) {
             throw new IllegalStateException("This signing link has expired");
         }
 
@@ -686,7 +694,7 @@ public class ESignatureService {
 
         // Update approval
         approval.setStatus(SignatureApproval.ApprovalStatus.DECLINED);
-        approval.setDeclinedAt(LocalDateTime.now());
+        approval.setDeclinedAt(tenantTimeService.now(tenantId));
         approval.setDeclineReason(reason);
 
         // Invalidate token

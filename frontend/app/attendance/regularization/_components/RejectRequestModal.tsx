@@ -59,6 +59,7 @@ export function RejectRequestModal({
                   <motion.button
                     onClick={onClose}
                     aria-label="Close modal"
+                    title="Close modal"
                     className="text-[var(--text-muted)] hover:text-[var(--text-primary)] text-2xl leading-none transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                     whileHover={{scale: 1.1}}
                     whileTap={{scale: 0.95}}

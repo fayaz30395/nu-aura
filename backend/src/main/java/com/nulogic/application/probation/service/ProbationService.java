@@ -167,7 +167,8 @@ public class ProbationService {
             throw new BusinessException("Can only confirm employees with active probation");
         }
 
-        probation.confirm(confirmedBy, request.getFinalRating(), request.getNotes());
+        probation.confirm(confirmedBy, request.getFinalRating(), request.getNotes(),
+                tenantTimeService.today(tenantId));
         probation = probationPeriodRepository.save(probation);
 
         log.info("Confirmed employee {} after probation period {}",
@@ -192,7 +193,7 @@ public class ProbationService {
             throw new BusinessException("Can only fail employees with active probation");
         }
 
-        probation.fail(decidedBy, request.getReason());
+        probation.fail(decidedBy, request.getReason(), tenantTimeService.today(tenantId));
         probation = probationPeriodRepository.save(probation);
 
         log.info("Failed probation for employee {} - Reason: {}",
@@ -217,7 +218,7 @@ public class ProbationService {
             throw new BusinessException("Cannot terminate already completed probation");
         }
 
-        probation.terminate(terminatedBy, request.getReason());
+        probation.terminate(terminatedBy, request.getReason(), tenantTimeService.today(tenantId));
         probation = probationPeriodRepository.save(probation);
 
         log.info("Terminated probation for employee {} - Reason: {}",
@@ -308,7 +309,7 @@ public class ProbationService {
         evaluation.setTenantId(tenantId);
         evaluation.calculateOverallRating();
 
-        probation.addEvaluation(evaluation);
+        probation.addEvaluation(evaluation, tenantTimeService.today(tenantId));
         probationPeriodRepository.save(probation);
 
         log.info("Added {} evaluation for probation {}",
@@ -426,6 +427,14 @@ public class ProbationService {
         ProbationPeriodResponse response = ProbationPeriodResponse.fromEntity(entity);
         UUID tenantId = TenantContext.getCurrentTenant();
 
+        // Time-derived fields — computed here so they use the tenant-zoned
+        // calendar rather than the JVM zone (was previously LocalDate.now() on
+        // the entity).
+        LocalDate today = tenantTimeService.today(tenantId);
+        response.setDaysRemaining(computeDaysRemaining(entity, today));
+        response.setOverdue(computeIsOverdue(entity, today));
+        response.setEvaluationDue(computeIsEvaluationDue(entity, today));
+
         // Enrich with employee info
         employeeRepository.findByIdAndTenantId(entity.getEmployeeId(), tenantId)
                 .ifPresent(emp -> {
@@ -455,6 +464,37 @@ public class ProbationService {
                 .ifPresent(response::setAverageRating);
 
         return response;
+    }
+
+    /**
+     * Tenant-zoned replacement for {@code ProbationPeriod.isOverdue()}.
+     */
+    private boolean computeIsOverdue(ProbationPeriod entity, LocalDate today) {
+        return entity.getStatus() == ProbationStatus.ACTIVE
+                && entity.getEndDate() != null
+                && today.isAfter(entity.getEndDate());
+    }
+
+    /**
+     * Tenant-zoned replacement for {@code ProbationPeriod.isEvaluationDue()}.
+     */
+    private boolean computeIsEvaluationDue(ProbationPeriod entity, LocalDate today) {
+        if (entity.getNextEvaluationDate() == null) return false;
+        return (entity.getStatus() == ProbationStatus.ACTIVE
+                || entity.getStatus() == ProbationStatus.EXTENDED)
+                && !today.isBefore(entity.getNextEvaluationDate());
+    }
+
+    /**
+     * Tenant-zoned replacement for {@code ProbationPeriod.getDaysRemaining()}.
+     */
+    private long computeDaysRemaining(ProbationPeriod entity, LocalDate today) {
+        if (entity.getEndDate() == null
+                || (entity.getStatus() != ProbationStatus.ACTIVE
+                        && entity.getStatus() != ProbationStatus.EXTENDED)) {
+            return 0;
+        }
+        return java.time.temporal.ChronoUnit.DAYS.between(today, entity.getEndDate());
     }
 
     private ProbationEvaluationResponse enrichEvaluationResponse(ProbationEvaluation entity) {

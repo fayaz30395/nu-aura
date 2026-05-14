@@ -6,6 +6,7 @@ import com.nulogic.api.employee.dto.EmployeeImportRow;
 import com.nulogic.api.employee.dto.ImportValidationError;
 import com.nulogic.application.notification.service.EmailNotificationService;
 import com.nulogic.common.security.SecurityContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.customfield.CustomFieldDefinition;
 import com.nulogic.domain.customfield.CustomFieldValue;
 import com.nulogic.domain.employee.Department;
@@ -55,6 +56,7 @@ public class EmployeeImportService {
     private final CustomFieldDefinitionRepository customFieldDefinitionRepository;
     private final CustomFieldValueRepository customFieldValueRepository;
     private final EmailNotificationService emailNotificationService;
+    private final TenantTimeService tenantTimeService;
 
     /**
      * Parse and validate an import file, returning a preview of what will be imported.
@@ -94,7 +96,7 @@ public class EmployeeImportService {
             log.warn("Import aborted due to validation errors");
             return EmployeeImportResult.builder()
                     .importId(UUID.randomUUID())
-                    .importedAt(LocalDateTime.now())
+                    .importedAt(tenantTimeService.now(tenantId))
                     .importedBy(currentUserId.toString())
                     .totalProcessed(0)
                     .successCount(0)
@@ -183,7 +185,7 @@ public class EmployeeImportService {
 
         EmployeeImportResult result = EmployeeImportResult.builder()
                 .importId(UUID.randomUUID())
-                .importedAt(LocalDateTime.now())
+                .importedAt(tenantTimeService.now(tenantId))
                 .importedBy(currentUserId.toString())
                 .totalProcessed(imported.size() + failed.size())
                 .successCount(imported.size())

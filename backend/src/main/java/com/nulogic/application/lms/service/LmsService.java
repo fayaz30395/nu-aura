@@ -3,6 +3,8 @@ package com.nulogic.application.lms.service;
 import com.nulogic.api.lms.dto.CourseCatalogResponse;
 import com.nulogic.api.lms.dto.CourseCatalogResponse.CourseSummaryDto;
 import com.nulogic.common.exception.ResourceNotFoundException;
+import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.lms.*;
 import com.nulogic.domain.lms.ContentProgress.ProgressStatus;
 import com.nulogic.domain.lms.Course.CourseStatus;
@@ -16,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -31,13 +32,15 @@ public class LmsService {
     private final CourseEnrollmentRepository enrollmentRepository;
     private final ContentProgressRepository progressRepository;
     private final CertificateRepository certificateRepository;
+    private final TenantTimeService tenantTimeService;
 
     // ================== Course Management ==================
 
     @Transactional
     public Course createCourse(Course course) {
+        UUID tenantId = TenantContext.requireCurrentTenant();
         course.setStatus(CourseStatus.DRAFT);
-        course.setCreatedAt(LocalDateTime.now());
+        course.setCreatedAt(tenantTimeService.now(tenantId));
         course.setTotalEnrollments(0);
         course.setTotalRatings(0);
         return courseRepository.save(course);
@@ -45,7 +48,8 @@ public class LmsService {
 
     @Transactional
     public Course updateCourse(Course course) {
-        course.setUpdatedAt(LocalDateTime.now());
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        course.setUpdatedAt(tenantTimeService.now(tenantId));
         return courseRepository.save(course);
     }
 
@@ -100,13 +104,15 @@ public class LmsService {
 
     @Transactional
     public CourseModule createModule(CourseModule module) {
-        module.setCreatedAt(LocalDateTime.now());
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        module.setCreatedAt(tenantTimeService.now(tenantId));
         return moduleRepository.save(module);
     }
 
     @Transactional
     public CourseModule updateModule(CourseModule module) {
-        module.setUpdatedAt(LocalDateTime.now());
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        module.setUpdatedAt(tenantTimeService.now(tenantId));
         return moduleRepository.save(module);
     }
 
@@ -132,13 +138,15 @@ public class LmsService {
 
     @Transactional
     public ModuleContent createContent(ModuleContent content) {
-        content.setCreatedAt(LocalDateTime.now());
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        content.setCreatedAt(tenantTimeService.now(tenantId));
         return contentRepository.save(content);
     }
 
     @Transactional
     public ModuleContent updateContent(ModuleContent content) {
-        content.setUpdatedAt(LocalDateTime.now());
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        content.setUpdatedAt(tenantTimeService.now(tenantId));
         return contentRepository.save(content);
     }
 
@@ -170,7 +178,7 @@ public class LmsService {
                 .courseId(courseId)
                 .employeeId(employeeId)
                 .status(EnrollmentStatus.ENROLLED)
-                .enrolledAt(LocalDateTime.now())
+                .enrolledAt(tenantTimeService.now(tenantId))
                 .progressPercentage(BigDecimal.ZERO)
                 .enrolledBy(enrolledBy)
                 .build();
@@ -216,10 +224,10 @@ public class LmsService {
             enrollment.setProgressPercentage(BigDecimal.valueOf(percentage));
             if (percentage >= 100) {
                 enrollment.setStatus(EnrollmentStatus.COMPLETED);
-                enrollment.setCompletedAt(LocalDateTime.now());
+                enrollment.setCompletedAt(tenantTimeService.now(tenantId));
             } else if (percentage > 0 && enrollment.getStatus() == EnrollmentStatus.ENROLLED) {
                 enrollment.setStatus(EnrollmentStatus.IN_PROGRESS);
-                enrollment.setStartedAt(LocalDateTime.now());
+                enrollment.setStartedAt(tenantTimeService.now(tenantId));
             }
         }
 
@@ -264,11 +272,11 @@ public class LmsService {
         progress.setTimeSpentSeconds(progress.getTimeSpentSeconds() + timeSpentSeconds);
 
         if (status == ProgressStatus.IN_PROGRESS && progress.getStartedAt() == null) {
-            progress.setStartedAt(LocalDateTime.now());
+            progress.setStartedAt(tenantTimeService.now(tenantId));
         }
 
         if (status == ProgressStatus.COMPLETED) {
-            progress.setCompletedAt(LocalDateTime.now());
+            progress.setCompletedAt(tenantTimeService.now(tenantId));
             progress.setProgressPercentage(BigDecimal.valueOf(100));
         }
 
@@ -302,7 +310,7 @@ public class LmsService {
                 .courseTitle(course.getTitle())
                 .employeeId(enrollment.getEmployeeId())
                 .enrollmentId(enrollmentId)
-                .issuedAt(LocalDateTime.now())
+                .issuedAt(tenantTimeService.now(tenantId))
                 .issuedBy(issuedBy)
                 .isActive(true)
                 .scoreAchieved(enrollment.getQuizScore() != null ? enrollment.getQuizScore().intValue() : null)
@@ -312,7 +320,7 @@ public class LmsService {
         Certificate saved = certificateRepository.save(certificate);
 
         enrollment.setCertificateId(saved.getId());
-        enrollment.setCertificateIssuedAt(LocalDateTime.now());
+        enrollment.setCertificateIssuedAt(tenantTimeService.now(tenantId));
         enrollmentRepository.save(enrollment);
 
         return saved;

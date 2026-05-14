@@ -2,6 +2,8 @@ package com.nulogic.domain.benefits;
 
 import com.nulogic.common.converter.EncryptedStringConverter;
 import com.nulogic.common.entity.TenantAware;
+import com.nulogic.common.util.TenantTimestamp;
+import com.nulogic.common.util.TimeAuditingEntityListener;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -16,6 +18,7 @@ import java.time.LocalDateTime;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "benefit_dependents")
+@EntityListeners(TimeAuditingEntityListener.class)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -98,18 +101,13 @@ public class BenefitDependent extends TenantAware {
     @Builder.Default
     private DependentStatus status = DependentStatus.ACTIVE;
 
+    // createdAt / updatedAt are stamped by TimeAuditingEntityListener via @TenantTimestamp —
+    // see backend/docs/audit/prepersist-now-audit.md rows 23 & 24.
+    @TenantTimestamp
     private LocalDateTime createdAt;
+
+    @TenantTimestamp(updateOnChange = true)
     private LocalDateTime updatedAt;
-
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
 
     public int getAge() {
         return java.time.Period.between(dateOfBirth, LocalDate.now()).getYears();

@@ -74,7 +74,7 @@ export function PayrollRunsTab({
           icon={<Banknote className="h-8 w-8"/>}
           title="No Payroll Runs Yet"
           description="Create your first payroll run to manage employee salaries and payments"
-          action={{label: 'Create Payroll Run', onClick: onCreateRun}}
+          action={{label: 'Create payroll run', onClick: onCreateRun}}
           iconColor="blue"
         />
       ) : (

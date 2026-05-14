@@ -563,9 +563,9 @@ export default function GoalsPage() {
         {showDeleteConfirm && selectedGoal && (
           <div className="fixed inset-0 glass-aura !rounded-none flex items-center justify-center p-4 z-50">
             <div className="card-elevated max-w-md w-full p-6">
-              <h2 className="text-xl font-bold mb-4">Delete Goal</h2>
+              <h2 className="text-xl font-bold mb-4">Delete Goal?</h2>
               <p className="text-[var(--text-secondary)] mb-6">
-                Are you sure you want to delete &quot;{selectedGoal.title}&quot;? This action cannot be undone.
+                This action cannot be undone. &quot;{selectedGoal.title}&quot; will be permanently deleted.
               </p>
               <div className="flex gap-4">
                 <button

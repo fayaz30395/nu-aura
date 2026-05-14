@@ -2,6 +2,7 @@ package com.nulogic.application.wellness.service;
 
 import com.nulogic.api.wellness.dto.*;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.user.User;
 import com.nulogic.domain.wellness.*;
 import com.nulogic.infrastructure.user.repository.UserRepository;
@@ -32,6 +33,7 @@ public class WellnessService {
     private final WellnessPointsRepository pointsRepository;
     private final PointsTransactionRepository transactionRepository;
     private final UserRepository userRepository;
+    private final TenantTimeService tenantTimeService;
 
     // ==================== Program Management ====================
 
@@ -62,8 +64,8 @@ public class WellnessService {
 
     @Transactional(readOnly = true)
     public List<WellnessProgramDto> getActivePrograms() {
-        UUID tenantId = TenantContext.getCurrentTenant();
-        return programRepository.findActivePrograms(tenantId, LocalDate.now()).stream()
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        return programRepository.findActivePrograms(tenantId, tenantTimeService.today(tenantId)).stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
     }
@@ -116,16 +118,16 @@ public class WellnessService {
 
     @Transactional(readOnly = true)
     public List<WellnessChallengeDto> getActiveChallenges() {
-        UUID tenantId = TenantContext.getCurrentTenant();
-        return challengeRepository.findActiveChallenges(tenantId, LocalDate.now()).stream()
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        return challengeRepository.findActiveChallenges(tenantId, tenantTimeService.today(tenantId)).stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
     public List<WellnessChallengeDto> getUpcomingChallenges() {
-        UUID tenantId = TenantContext.getCurrentTenant();
-        return challengeRepository.findUpcomingChallenges(tenantId, LocalDate.now()).stream()
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        return challengeRepository.findUpcomingChallenges(tenantId, tenantTimeService.today(tenantId)).stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
     }
@@ -178,13 +180,13 @@ public class WellnessService {
     // ==================== Health Logging ====================
 
     public HealthLogDto logHealth(UUID employeeId, HealthLogDto request) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         log.info("Employee {} logging {} for date {}", employeeId, request.getMetricType(), request.getLogDate());
 
         HealthLog log = new HealthLog();
         log.setTenantId(tenantId);
         log.setEmployeeId(employeeId);
-        log.setLogDate(request.getLogDate() != null ? request.getLogDate() : LocalDate.now());
+        log.setLogDate(request.getLogDate() != null ? request.getLogDate() : tenantTimeService.today(tenantId));
         log.setMetricType(request.getMetricType());
         log.setValue(request.getValue());
         log.setUnit(request.getUnit());
@@ -282,7 +284,8 @@ public class WellnessService {
 
     @Transactional(readOnly = true)
     public WellnessDashboard getDashboard(UUID employeeId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        LocalDate today = tenantTimeService.today(tenantId);
 
         WellnessDashboard dashboard = new WellnessDashboard();
 
@@ -298,7 +301,7 @@ public class WellnessService {
                         .progress(p.getTotalProgress())
                         .target(p.getChallenge().getTargetValue())
                         .completionPercentage(p.getCompletionPercentage())
-                        .daysRemaining((int) ChronoUnit.DAYS.between(LocalDate.now(), p.getChallenge().getEndDate()))
+                        .daysRemaining((int) ChronoUnit.DAYS.between(today, p.getChallenge().getEndDate()))
                         .currentStreak(p.getCurrentStreak())
                         .pointsEarned(p.getPointsEarned())
                         .rank(p.getRankPosition())
@@ -334,13 +337,13 @@ public class WellnessService {
     }
 
     private void awardPoints(UUID employeeId, int points, String description, String refType, UUID refId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         WellnessPoints wp = getOrCreateWellnessPoints(employeeId, tenantId);
 
         wp.setTotalPoints(wp.getTotalPoints() + points);
         wp.setRedeemablePoints(wp.getRedeemablePoints() + points);
         wp.setLifetimePoints(wp.getLifetimePoints() + points);
-        wp.setLastActivityAt(LocalDateTime.now());
+        wp.setLastActivityAt(tenantTimeService.now(tenantId));
 
         // Level up logic
         while (wp.getTotalPoints() >= wp.getCurrentLevel() * 100) {
@@ -364,8 +367,10 @@ public class WellnessService {
     }
 
     private void updateParticipantProgress(ChallengeParticipant participant, Double addedValue) {
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        LocalDate today = tenantTimeService.today(tenantId);
         participant.setTotalProgress(participant.getTotalProgress() + addedValue);
-        participant.setLastActivityDate(LocalDate.now());
+        participant.setLastActivityDate(today);
 
         WellnessChallenge challenge = participant.getChallenge();
         if (challenge.getTargetValue() != null && challenge.getTargetValue() > 0) {
@@ -374,7 +379,7 @@ public class WellnessService {
 
             if (!participant.getGoalAchieved() && participant.getTotalProgress() >= challenge.getTargetValue()) {
                 participant.setGoalAchieved(true);
-                participant.setGoalAchievedDate(LocalDate.now());
+                participant.setGoalAchievedDate(today);
 
                 // Award bonus points
                 if (challenge.getBonusPointsForGoal() != null) {
@@ -416,9 +421,11 @@ public class WellnessService {
     }
 
     private WellnessChallengeDto mapToDto(WellnessChallenge challenge) {
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        LocalDate today = tenantTimeService.today(tenantId);
         int daysRemaining = 0;
-        if (challenge.getEndDate() != null && challenge.getEndDate().isAfter(LocalDate.now())) {
-            daysRemaining = (int) ChronoUnit.DAYS.between(LocalDate.now(), challenge.getEndDate());
+        if (challenge.getEndDate() != null && challenge.getEndDate().isAfter(today)) {
+            daysRemaining = (int) ChronoUnit.DAYS.between(today, challenge.getEndDate());
         }
 
         return WellnessChallengeDto.builder()

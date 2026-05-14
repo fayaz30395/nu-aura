@@ -2,6 +2,7 @@ package com.nulogic.application.integration.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.leave.LeaveBalance;
 import com.nulogic.domain.leave.LeaveType;
@@ -48,6 +49,7 @@ public class SlackCommandService {
     private final LeaveTypeRepository leaveTypeRepository;
     private final NotificationChannelConfigRepository channelConfigRepository;
     private final ObjectMapper objectMapper;
+    private final TenantTimeService tenantTimeService;
     // Wave-3 W5-D #14: ensure dev-bypass WARN log fires only once per process.
     private final AtomicBoolean devBypassWarned = new AtomicBoolean(false);
     @Value("${app.slack.signing-secret:}")
@@ -235,7 +237,8 @@ public class SlackCommandService {
         String leaveType = parts[1].toLowerCase();
         String reason = parts.length > 2 ? parts[2] : "Submitted via Slack";
 
-        LocalDate startDate = LocalDate.now().plusDays(1); // Tomorrow
+        // Tenant-local "tomorrow" — resolved via TenantTimeService (no UTC/hardcoded zone).
+        LocalDate startDate = tenantTimeService.today(tenantId).plusDays(1);
         LocalDate endDate = startDate.plusDays(days - 1);
 
         // Build confirmation message with action buttons

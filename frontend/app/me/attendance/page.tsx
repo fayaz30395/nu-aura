@@ -39,6 +39,8 @@ import {
   getMonthStartString
 } from '@/lib/utils/dateUtils';
 import {createLogger} from '@/lib/utils/logger';
+import {formatMonthYear} from '@/lib/utils/format/date';
+import {format} from 'date-fns';
 
 const log = createLogger('AttendancePage');
 
@@ -489,10 +491,7 @@ export default function MyAttendancePage() {
                     <ChevronLeft className="h-5 w-5"/>
                   </button>
                   <span className="font-semibold text-lg min-w-[150px] text-center">
-                    {currentDate.toLocaleDateString('en-US', {
-                      month: 'long',
-                      year: 'numeric',
-                    })}
+                    {formatMonthYear(currentDate)}
                   </span>
                   <button
                     onClick={nextMonth}
@@ -566,11 +565,7 @@ export default function MyAttendancePage() {
                   <div>
                     <p className="text-body-secondary">Date</p>
                     <p className="text-lg font-semibold text-[var(--text-primary)]">
-                      {selectedDate?.toLocaleDateString('en-US', {
-                        weekday: 'long',
-                        month: 'long',
-                        day: 'numeric',
-                      })}
+                      {selectedDate ? format(selectedDate, 'EEEE, MMMM d') : ''}
                     </p>
                   </div>
 

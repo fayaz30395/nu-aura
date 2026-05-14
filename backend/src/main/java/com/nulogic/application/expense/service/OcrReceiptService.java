@@ -3,6 +3,7 @@ package com.nulogic.application.expense.service;
 import com.nulogic.api.expense.dto.OcrResult;
 import com.nulogic.application.document.service.FileStorageService;
 import com.nulogic.common.exception.BusinessException;
+import com.nulogic.common.util.TenantTimeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.sourceforge.tess4j.Tesseract;
@@ -69,6 +70,7 @@ public class OcrReceiptService {
             Pattern.CASE_INSENSITIVE
     );
     private final FileStorageService fileStorageService;
+    private final TenantTimeService tenantTimeService;
     @Value("${app.ocr.tessdata-path:/usr/share/tesseract-ocr/5/tessdata}")
     private String tessdataPath;
     @Value("${app.ocr.language:eng}")
@@ -114,7 +116,7 @@ public class OcrReceiptService {
         // Extract structured data from raw text
         String merchantName = extractMerchantName(rawText);
         BigDecimal amount = extractAmount(rawText);
-        LocalDate receiptDate = extractDate(rawText);
+        LocalDate receiptDate = extractDate(rawText, tenantId);
         String currency = extractCurrency(rawText);
 
         log.info("OCR scan completed for tenant {}. Merchant: {}, Amount: {}, Date: {}, Confidence: {}",
@@ -337,10 +339,15 @@ public class OcrReceiptService {
 
     /**
      * Extract date from OCR text.
+     *
+     * @param rawText  the OCR-extracted text to scan for dates
+     * @param tenantId tenant context for resolving "today" in the tenant's timezone; may be
+     *                 {@code null}, in which case the default zone is used
      */
-    LocalDate extractDate(String rawText) {
+    LocalDate extractDate(String rawText, UUID tenantId) {
         if (rawText == null || rawText.isBlank()) return null;
 
+        LocalDate todayInTenantZone = tenantTimeService.today(tenantId);
         Matcher matcher = DATE_PATTERN.matcher(rawText);
         while (matcher.find()) {
             String dateStr = matcher.group(1);
@@ -351,7 +358,7 @@ public class OcrReceiptService {
                     LocalDate parsed = LocalDate.parse(dateStr, formatter);
                     // Sanity check: date should be within reasonable range
                     if (parsed.isAfter(LocalDate.of(2000, 1, 1))
-                            && !parsed.isAfter(LocalDate.now().plusDays(1))) {
+                            && !parsed.isAfter(todayInTenantZone.plusDays(1))) {
                         return parsed;
                     }
                 } catch (DateTimeParseException e) {

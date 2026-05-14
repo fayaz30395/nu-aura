@@ -2,6 +2,7 @@ package com.nulogic.application.analytics.service;
 
 import com.nulogic.api.analytics.dto.*;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.attendance.AttendanceRecord;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.leave.LeaveRequest;
@@ -43,11 +44,13 @@ public class AdvancedAnalyticsService {
     private final LeaveRequestRepository leaveRequestRepository;
     private final JobOpeningRepository jobOpeningRepository;
     private final ApplicantRepository applicantRepository;
+    private final TenantTimeService tenantTimeService;
 
     // ==================== Workforce Analytics ====================
 
     public WorkforceAnalyticsResponse getWorkforceAnalytics() {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        LocalDate today = tenantTimeService.today(tenantId);
         List<Employee> employees = employeeRepository.findByTenantId(tenantId);
         List<Employee> activeEmployees = employees.stream()
                 .filter(e -> e.getStatus() == Employee.EmployeeStatus.ACTIVE)
@@ -72,10 +75,10 @@ public class AdvancedAnalyticsService {
                 .otherPercentage(calculatePercentage(genderCounts.getOrDefault("OTHER", 0), activeCount))
                 .build();
 
-        Map<String, Integer> ageDistribution = calculateAgeDistribution(activeEmployees);
-        double averageAge = calculateAverageAge(activeEmployees);
-        Map<String, Integer> tenureDistribution = calculateTenureDistribution(activeEmployees);
-        double averageTenure = calculateAverageTenure(activeEmployees);
+        Map<String, Integer> ageDistribution = calculateAgeDistribution(activeEmployees, today);
+        double averageAge = calculateAverageAge(activeEmployees, today);
+        Map<String, Integer> tenureDistribution = calculateTenureDistribution(activeEmployees, today);
+        double averageTenure = calculateAverageTenure(activeEmployees, today);
 
         Map<String, Integer> departmentDistribution = activeEmployees.stream()
                 .filter(e -> e.getDepartmentId() != null)
@@ -89,10 +92,10 @@ public class AdvancedAnalyticsService {
                         e -> e.getEmploymentType().toString(),
                         Collectors.collectingAndThen(Collectors.counting(), Long::intValue)));
 
-        LocalDate startOfMonth = LocalDate.now().withDayOfMonth(1);
-        LocalDate startOfYear = LocalDate.now().withDayOfYear(1);
-        LocalDate startOfQuarter = LocalDate.now()
-                .withMonth(((LocalDate.now().getMonthValue() - 1) / 3) * 3 + 1).withDayOfMonth(1);
+        LocalDate startOfMonth = today.withDayOfMonth(1);
+        LocalDate startOfYear = today.withDayOfYear(1);
+        LocalDate startOfQuarter = today
+                .withMonth(((today.getMonthValue() - 1) / 3) * 3 + 1).withDayOfMonth(1);
 
         int newJoineesThisMonth = (int) activeEmployees.stream()
                 .filter(e -> e.getJoiningDate() != null && !e.getJoiningDate().isBefore(startOfMonth))
@@ -105,7 +108,7 @@ public class AdvancedAnalyticsService {
                 .count();
 
         return WorkforceAnalyticsResponse.builder()
-                .asOfDate(LocalDate.now())
+                .asOfDate(today)
                 .totalHeadcount(totalHeadcount)
                 .activeEmployees(activeCount)
                 .newJoineesThisMonth(newJoineesThisMonth)
@@ -124,7 +127,7 @@ public class AdvancedAnalyticsService {
     // ==================== Hiring Analytics ====================
 
     public HiringAnalyticsResponse getHiringAnalytics() {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         List<JobOpening> openJobs = jobOpeningRepository.findByTenantIdAndStatus(tenantId, JobOpening.JobStatus.OPEN);
         int openPositions = openJobs.size();
@@ -204,7 +207,7 @@ public class AdvancedAnalyticsService {
     // ==================== Performance Analytics ====================
 
     public PerformanceAnalyticsResponse getPerformanceAnalytics() {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         List<PerformanceReview> allReviews = performanceReviewRepository.findByTenantId(tenantId);
 
@@ -283,8 +286,8 @@ public class AdvancedAnalyticsService {
     // ==================== Compensation Analytics ====================
 
     public CompensationAnalyticsResponse getCompensationAnalytics() {
-        UUID tenantId = TenantContext.getCurrentTenant();
-        LocalDate today = LocalDate.now();
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        LocalDate today = tenantTimeService.today(tenantId);
         LocalDate startOfMonth = today.withDayOfMonth(1);
         LocalDate endOfMonth = today.withDayOfMonth(today.lengthOfMonth());
 
@@ -377,8 +380,8 @@ public class AdvancedAnalyticsService {
     // ==================== Attendance Analytics ====================
 
     public AttendanceAnalyticsResponse getAttendanceAnalytics() {
-        UUID tenantId = TenantContext.getCurrentTenant();
-        LocalDate today = LocalDate.now();
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        LocalDate today = tenantTimeService.today(tenantId);
         LocalDate startOfMonth = today.withDayOfMonth(1);
 
         // Today's snapshot
@@ -480,7 +483,7 @@ public class AdvancedAnalyticsService {
         return Math.round((count * 100.0 / total) * 100.0) / 100.0;
     }
 
-    private Map<String, Integer> calculateAgeDistribution(List<Employee> employees) {
+    private Map<String, Integer> calculateAgeDistribution(List<Employee> employees, LocalDate today) {
         Map<String, Integer> distribution = new LinkedHashMap<>();
         distribution.put("18-25", 0);
         distribution.put("26-35", 0);
@@ -488,7 +491,6 @@ public class AdvancedAnalyticsService {
         distribution.put("46-55", 0);
         distribution.put("55+", 0);
 
-        LocalDate today = LocalDate.now();
         for (Employee emp : employees) {
             if (emp.getDateOfBirth() != null) {
                 int age = Period.between(emp.getDateOfBirth(), today).getYears();
@@ -507,8 +509,7 @@ public class AdvancedAnalyticsService {
         return distribution;
     }
 
-    private double calculateAverageAge(List<Employee> employees) {
-        LocalDate today = LocalDate.now();
+    private double calculateAverageAge(List<Employee> employees, LocalDate today) {
         List<Integer> ages = employees.stream()
                 .filter(e -> e.getDateOfBirth() != null)
                 .map(e -> Period.between(e.getDateOfBirth(), today).getYears())
@@ -519,7 +520,7 @@ public class AdvancedAnalyticsService {
         return Math.round((ages.stream().mapToInt(Integer::intValue).average().orElse(0)) * 10.0) / 10.0;
     }
 
-    private Map<String, Integer> calculateTenureDistribution(List<Employee> employees) {
+    private Map<String, Integer> calculateTenureDistribution(List<Employee> employees, LocalDate today) {
         Map<String, Integer> distribution = new LinkedHashMap<>();
         distribution.put("0-1 years", 0);
         distribution.put("1-3 years", 0);
@@ -527,7 +528,6 @@ public class AdvancedAnalyticsService {
         distribution.put("5-10 years", 0);
         distribution.put("10+ years", 0);
 
-        LocalDate today = LocalDate.now();
         for (Employee emp : employees) {
             if (emp.getJoiningDate() != null) {
                 long months = ChronoUnit.MONTHS.between(emp.getJoiningDate(), today);
@@ -548,8 +548,7 @@ public class AdvancedAnalyticsService {
         return distribution;
     }
 
-    private double calculateAverageTenure(List<Employee> employees) {
-        LocalDate today = LocalDate.now();
+    private double calculateAverageTenure(List<Employee> employees, LocalDate today) {
         List<Double> tenures = employees.stream()
                 .filter(e -> e.getJoiningDate() != null)
                 .map(e -> ChronoUnit.MONTHS.between(e.getJoiningDate(), today) / 12.0)

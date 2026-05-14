@@ -133,8 +133,8 @@ export default function AdminSettingsPage() {
       {/* Header */}
       <div className="flex items-center gap-4">
         <div
-          className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 shadow-[var(--shadow-dropdown)] shadow-accent-500/25">
-          <Settings className="h-6 w-6 text-white"/>
+          className="p-4 rounded-xl bg-accent-100 dark:bg-accent-900/30">
+          <Settings className="h-6 w-6 text-accent-700 dark:text-accent-400"/>
         </div>
         <div>
           <h1 className="text-xl font-bold">

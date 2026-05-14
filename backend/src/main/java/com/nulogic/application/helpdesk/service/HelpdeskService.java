@@ -18,7 +18,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
@@ -62,7 +61,7 @@ public class HelpdeskService {
         Ticket ticket = new Ticket();
         ticket.setId(UUID.randomUUID());
         ticket.setTenantId(tenantId);
-        ticket.setTicketNumber(generateTicketNumber());
+        ticket.setTicketNumber(generateTicketNumber(tenantId));
         ticket.setEmployeeId(request.getEmployeeId());
         ticket.setCategoryId(request.getCategoryId());
         ticket.setSubject(request.getSubject());
@@ -131,9 +130,9 @@ public class HelpdeskService {
 
         // Auto-set timestamps based on status
         if (status == Ticket.TicketStatus.RESOLVED && ticket.getResolvedAt() == null) {
-            ticket.setResolvedAt(LocalDateTime.now());
+            ticket.setResolvedAt(tenantTimeService.now(tenantId));
         } else if (status == Ticket.TicketStatus.CLOSED && ticket.getClosedAt() == null) {
-            ticket.setClosedAt(LocalDateTime.now());
+            ticket.setClosedAt(tenantTimeService.now(tenantId));
         }
 
         Ticket updatedTicket = ticketRepository.save(ticket);
@@ -164,7 +163,7 @@ public class HelpdeskService {
         }
 
         ticket.setAssignedTo(assigneeId);
-        ticket.setAssignedAt(LocalDateTime.now());
+        ticket.setAssignedAt(tenantTimeService.now(tenantId));
 
         // Update status to IN_PROGRESS if currently OPEN
         if (ticket.getStatus() == Ticket.TicketStatus.OPEN) {
@@ -376,8 +375,8 @@ public class HelpdeskService {
 
     // ==================== Helper Methods ====================
 
-    private String generateTicketNumber() {
-        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+    private String generateTicketNumber(UUID tenantId) {
+        String timestamp = tenantTimeService.now(tenantId).format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
         String randomPart = UUID.randomUUID().toString().substring(0, 4).toUpperCase();
         return "TKT-" + timestamp + "-" + randomPart;
     }

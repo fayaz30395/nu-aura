@@ -1,6 +1,8 @@
 package com.nulogic.domain.wellness;
 
 import com.nulogic.common.entity.TenantAware;
+import com.nulogic.common.util.TenantTimestamp;
+import com.nulogic.common.util.TimeAuditingEntityListener;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -13,6 +15,7 @@ import java.util.UUID;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "health_logs")
+@EntityListeners(TimeAuditingEntityListener.class)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -28,6 +31,7 @@ public class HealthLog extends TenantAware {
     @JoinColumn(name = "participant_id")
     private ChallengeParticipant participant;
 
+    @TenantTimestamp
     @Column(name = "log_date", nullable = false)
     private LocalDate logDate;
 
@@ -61,14 +65,9 @@ public class HealthLog extends TenantAware {
     @Builder.Default
     private Integer pointsAwarded = 0;
 
+    @TenantTimestamp
     @Column(name = "logged_at")
     private LocalDateTime loggedAt;
-
-    @PrePersist
-    protected void onCreate() {
-        loggedAt = LocalDateTime.now();
-        if (logDate == null) logDate = LocalDate.now();
-    }
 
     public enum MetricType {
         STEPS,

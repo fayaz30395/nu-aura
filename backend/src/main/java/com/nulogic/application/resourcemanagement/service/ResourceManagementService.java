@@ -3,6 +3,7 @@ package com.nulogic.application.resourcemanagement.service;
 import com.nulogic.api.resourcemanagement.dto.AvailabilityDTOs;
 import com.nulogic.common.exception.ResourceNotFoundException;
 import com.nulogic.common.security.SecurityContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.attendance.Holiday;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.leave.LeaveRequest;
@@ -53,6 +54,7 @@ public class ResourceManagementService {
     private final DepartmentRepository departmentRepository;
     private final HolidayRepository holidayRepository;
     private final LeaveRequestRepository leaveRequestRepository;
+    private final TenantTimeService tenantTimeService;
 
     // Sub-services
     private final AllocationApprovalService allocationApprovalService;
@@ -187,7 +189,7 @@ public class ResourceManagementService {
                 : employeeRepository.findByTenantId(tenantId);
 
         return employees.stream()
-                .map(e -> getEmployeeCapacity(e.getId(), LocalDate.now()))
+                .map(e -> getEmployeeCapacity(e.getId(), tenantTimeService.today(tenantId)))
                 .filter(EmployeeCapacity::getIsOverAllocated)
                 .collect(Collectors.toList());
     }
@@ -203,7 +205,7 @@ public class ResourceManagementService {
                 : employeeRepository.findByTenantId(tenantId);
 
         return employees.stream()
-                .map(e -> getEmployeeCapacity(e.getId(), LocalDate.now()))
+                .map(e -> getEmployeeCapacity(e.getId(), tenantTimeService.today(tenantId)))
                 .filter(e -> e.getAvailableCapacity() >= (minCapacity != null ? minCapacity : 20))
                 .collect(Collectors.toList());
     }
@@ -295,7 +297,8 @@ public class ResourceManagementService {
 
     @Transactional(readOnly = true)
     public EmployeeWorkload getEmployeeWorkload(UUID employeeId) {
-        EmployeeCapacity capacity = getEmployeeCapacity(employeeId, LocalDate.now());
+        UUID tenantId = SecurityContext.getCurrentTenantId();
+        EmployeeCapacity capacity = getEmployeeCapacity(employeeId, tenantTimeService.today(tenantId));
         return EmployeeWorkload.builder()
                 .employeeId(employeeId)
                 .employeeName(capacity.getEmployeeName())
@@ -467,13 +470,15 @@ public class ResourceManagementService {
 
     @Transactional(readOnly = true)
     public TeamAvailabilityView getTeamAvailability(ResourceCalendarFilter filter) {
+        UUID tenantId = SecurityContext.getCurrentTenantId();
+        LocalDate today = tenantTimeService.today(tenantId);
         if (filter == null) {
-            return getTeamAvailability(null, LocalDate.now(), LocalDate.now().plusMonths(1));
+            return getTeamAvailability(null, today, today.plusMonths(1));
         }
         return getTeamAvailability(filter.getDepartmentIds(),
-                filter.getStartDate() != null ? filter.getStartDate() : LocalDate.now(),
+                filter.getStartDate() != null ? filter.getStartDate() : today,
                 filter.getEndDate() != null ? filter.getEndDate()
-                        : LocalDate.now().plusMonths(1));
+                        : today.plusMonths(1));
     }
 
     @Transactional(readOnly = true)

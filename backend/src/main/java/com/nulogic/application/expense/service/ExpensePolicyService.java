@@ -6,6 +6,7 @@ import com.nulogic.api.expense.dto.ExpensePolicyRequest;
 import com.nulogic.api.expense.dto.ExpensePolicyResponse;
 import com.nulogic.common.exception.ValidationException;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.expense.ExpenseClaim;
 import com.nulogic.domain.expense.ExpensePolicy;
 import com.nulogic.infrastructure.expense.repository.ExpenseClaimRepository;
@@ -32,6 +33,7 @@ public class ExpensePolicyService {
     private final ExpensePolicyRepository policyRepository;
     private final ExpenseClaimRepository claimRepository;
     private final ObjectMapper objectMapper;
+    private final TenantTimeService tenantTimeService;
 
     @Transactional
     public ExpensePolicyResponse createPolicy(ExpensePolicyRequest request) {
@@ -157,7 +159,7 @@ public class ExpensePolicyService {
 
             // Check monthly limit
             if (policy.getMonthlyLimit() != null) {
-                LocalDate monthStart = LocalDate.now().withDayOfMonth(1);
+                LocalDate monthStart = tenantTimeService.today(tenantId).withDayOfMonth(1);
                 LocalDate monthEnd = monthStart.plusMonths(1).minusDays(1);
                 BigDecimal monthTotal = claimRepository.sumByEmployeeAndStatusAndDateRange(
                         tenantId, employeeId, ExpenseClaim.ExpenseStatus.APPROVED, monthStart, monthEnd);
@@ -171,7 +173,7 @@ public class ExpensePolicyService {
 
             // Check yearly limit
             if (policy.getYearlyLimit() != null) {
-                LocalDate yearStart = LocalDate.now().withDayOfYear(1);
+                LocalDate yearStart = tenantTimeService.today(tenantId).withDayOfYear(1);
                 LocalDate yearEnd = yearStart.plusYears(1).minusDays(1);
                 BigDecimal yearTotal = claimRepository.sumByEmployeeAndStatusAndDateRange(
                         tenantId, employeeId, ExpenseClaim.ExpenseStatus.APPROVED, yearStart, yearEnd);

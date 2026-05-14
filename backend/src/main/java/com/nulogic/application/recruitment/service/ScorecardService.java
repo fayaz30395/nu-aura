@@ -6,6 +6,7 @@ import com.nulogic.api.recruitment.dto.ScorecardTemplateRequest;
 import com.nulogic.api.recruitment.dto.ScorecardTemplateResponse;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.recruitment.InterviewScorecard;
 import com.nulogic.domain.recruitment.ScorecardCriterion;
 import com.nulogic.domain.recruitment.ScorecardTemplate;
@@ -18,7 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -36,6 +36,7 @@ public class ScorecardService {
     private final ScorecardTemplateRepository templateRepository;
     private final ScorecardTemplateCriterionRepository criterionRepository;
     private final InterviewScorecardRepository scorecardRepository;
+    private final TenantTimeService tenantTimeService;
 
     // ==================== Template CRUD ====================
 
@@ -136,7 +137,7 @@ public class ScorecardService {
     // ==================== Scorecard Submission ====================
 
     public ScorecardSubmissionResponse submitScorecard(UUID templateId, ScorecardSubmissionRequest request) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         UUID interviewerId = SecurityContext.getCurrentEmployeeId();
         log.info("Submitting scorecard for interview {} by interviewer {} in tenant {}",
                 request.getInterviewId(), interviewerId, tenantId);
@@ -158,7 +159,7 @@ public class ScorecardService {
                 .recommendation(request.getRecommendation())
                 .overallNotes(request.getOverallNotes())
                 .status(InterviewScorecard.ScorecardStatus.SUBMITTED)
-                .submittedAt(LocalDateTime.now())
+                .submittedAt(tenantTimeService.now(tenantId))
                 .build();
 
         InterviewScorecard saved = scorecardRepository.save(scorecard);

@@ -3,6 +3,8 @@ package com.nulogic.api.integration.controller;
 import com.nulogic.api.integration.dto.*;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.RequiresPermission;
+import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.infrastructure.payment.PaymentGatewayService;
 import com.nulogic.infrastructure.payment.PaymentRequest;
 import com.nulogic.infrastructure.payment.PaymentResponse;
@@ -14,10 +16,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Controller for managing third-party integrations
@@ -31,12 +33,14 @@ public class IntegrationController {
     private final SmsService smsService;
     private final SmsTemplate smsTemplate;
     private final PaymentGatewayService paymentGatewayService;
+    private final TenantTimeService tenantTimeService;
 
     // ===================== SMS Integration Endpoints =====================
 
     @GetMapping("/sms/status")
     @RequiresPermission(Permission.SYSTEM_ADMIN)
     public ResponseEntity<IntegrationStatusResponse> getSmsStatus() {
+        UUID tenantId = TenantContext.requireCurrentTenant();
         boolean configured = smsService.isConfigured();
 
         return ResponseEntity.ok(IntegrationStatusResponse.builder()
@@ -44,7 +48,7 @@ public class IntegrationController {
                 .provider("Twilio")
                 .configured(configured)
                 .enabled(configured)
-                .lastChecked(LocalDateTime.now())
+                .lastChecked(tenantTimeService.now(tenantId))
                 .message(configured ? "SMS service is operational" : "SMS service is not configured")
                 .build());
     }
@@ -52,20 +56,21 @@ public class IntegrationController {
     @PostMapping("/sms/test")
     @RequiresPermission(Permission.SYSTEM_ADMIN)
     public ResponseEntity<IntegrationTestResponse> testSms(@Valid @RequestBody SmsTestRequest request) {
+        UUID tenantId = TenantContext.requireCurrentTenant();
         try {
             boolean success = smsService.testConnection(request.getPhoneNumber());
 
             return ResponseEntity.ok(IntegrationTestResponse.builder()
                     .success(success)
                     .message(success ? "Test SMS sent successfully" : "Failed to send test SMS")
-                    .timestamp(LocalDateTime.now())
+                    .timestamp(tenantTimeService.now(tenantId))
                     .build());
         } catch (Exception e) { // Intentional broad catch — controller error boundary
             log.error("SMS test failed", e);
             return ResponseEntity.ok(IntegrationTestResponse.builder()
                     .success(false)
                     .message("Error: " + e.getMessage())
-                    .timestamp(LocalDateTime.now())
+                    .timestamp(tenantTimeService.now(tenantId))
                     .build());
         }
     }
@@ -73,6 +78,7 @@ public class IntegrationController {
     @PostMapping("/sms/send")
     @RequiresPermission(Permission.SYSTEM_ADMIN)
     public ResponseEntity<SmsSendResponse> sendSms(@Valid @RequestBody SmsSendRequest request) {
+        UUID tenantId = TenantContext.requireCurrentTenant();
         try {
             String messageId;
 
@@ -90,7 +96,7 @@ public class IntegrationController {
                     .messageId(messageId)
                     .success(true)
                     .phoneNumber(request.getPhoneNumber())
-                    .timestamp(LocalDateTime.now())
+                    .timestamp(tenantTimeService.now(tenantId))
                     .build());
         } catch (Exception e) { // Intentional broad catch — controller error boundary
             log.error("Failed to send SMS", e);
@@ -98,7 +104,7 @@ public class IntegrationController {
                     .success(false)
                     .errorMessage(e.getMessage())
                     .phoneNumber(request.getPhoneNumber())
-                    .timestamp(LocalDateTime.now())
+                    .timestamp(tenantTimeService.now(tenantId))
                     .build());
         }
     }
@@ -114,6 +120,7 @@ public class IntegrationController {
     @GetMapping("/payment/status")
     @RequiresPermission(Permission.SYSTEM_ADMIN)
     public ResponseEntity<IntegrationStatusResponse> getPaymentStatus() {
+        UUID tenantId = TenantContext.requireCurrentTenant();
         boolean configured = paymentGatewayService.isConfigured();
 
         return ResponseEntity.ok(IntegrationStatusResponse.builder()
@@ -121,7 +128,7 @@ public class IntegrationController {
                 .provider("Stripe")
                 .configured(configured)
                 .enabled(configured)
-                .lastChecked(LocalDateTime.now())
+                .lastChecked(tenantTimeService.now(tenantId))
                 .message(configured ? "Payment gateway is operational" : "Payment gateway is not configured")
                 .supportedMethods(configured ?
                         Arrays.asList(paymentGatewayService.getSupportedPaymentMethods()) : null)
@@ -131,20 +138,21 @@ public class IntegrationController {
     @PostMapping("/payment/test")
     @RequiresPermission(Permission.SYSTEM_ADMIN)
     public ResponseEntity<IntegrationTestResponse> testPaymentGateway() {
+        UUID tenantId = TenantContext.requireCurrentTenant();
         try {
             boolean success = paymentGatewayService.testConnection();
 
             return ResponseEntity.ok(IntegrationTestResponse.builder()
                     .success(success)
                     .message(success ? "Payment gateway connection successful" : "Payment gateway connection failed")
-                    .timestamp(LocalDateTime.now())
+                    .timestamp(tenantTimeService.now(tenantId))
                     .build());
         } catch (Exception e) { // Intentional broad catch — controller error boundary
             log.error("Payment gateway test failed", e);
             return ResponseEntity.ok(IntegrationTestResponse.builder()
                     .success(false)
                     .message("Error: " + e.getMessage())
-                    .timestamp(LocalDateTime.now())
+                    .timestamp(tenantTimeService.now(tenantId))
                     .build());
         }
     }
@@ -167,6 +175,7 @@ public class IntegrationController {
     @GetMapping("/status")
     @RequiresPermission(Permission.SYSTEM_ADMIN)
     public ResponseEntity<Map<String, IntegrationStatusResponse>> getAllIntegrationsStatus() {
+        UUID tenantId = TenantContext.requireCurrentTenant();
         Map<String, IntegrationStatusResponse> statusMap = new HashMap<>();
 
         // SMS Status
@@ -176,7 +185,7 @@ public class IntegrationController {
                 .provider("Twilio")
                 .configured(smsConfigured)
                 .enabled(smsConfigured)
-                .lastChecked(LocalDateTime.now())
+                .lastChecked(tenantTimeService.now(tenantId))
                 .build());
 
         // Payment Gateway Status
@@ -186,7 +195,7 @@ public class IntegrationController {
                 .provider("Stripe")
                 .configured(paymentConfigured)
                 .enabled(paymentConfigured)
-                .lastChecked(LocalDateTime.now())
+                .lastChecked(tenantTimeService.now(tenantId))
                 .build());
 
         return ResponseEntity.ok(statusMap);

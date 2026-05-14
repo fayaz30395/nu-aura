@@ -686,7 +686,12 @@ export default function KekaImportPage() {
                   <Eye className="w-5 h-5 mr-2"/>
                   Data Preview (First 10 rows)
                 </h3>
-                <div className="overflow-x-auto border border-[var(--border-main)] rounded-lg">
+                <div
+                  className="overflow-x-auto border border-[var(--border-main)] rounded-lg"
+                  tabIndex={0}
+                  role="region"
+                  aria-label="Keka data preview"
+                >
                   <Table striped>
                     <Table.Thead>
                       <Table.Tr>

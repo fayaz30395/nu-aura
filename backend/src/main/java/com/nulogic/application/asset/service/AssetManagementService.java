@@ -12,6 +12,7 @@ import com.nulogic.application.workflow.service.WorkflowService;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.asset.Asset;
 import com.nulogic.domain.asset.AssetMaintenanceRequest;
 import com.nulogic.domain.employee.Employee;
@@ -27,7 +28,6 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -44,6 +44,7 @@ public class AssetManagementService implements ApprovalCallbackHandler {
     private final AuditLogService auditLogService;
     private final WebSocketNotificationService webSocketNotificationService;
     private final NotificationService notificationService;
+    private final TenantTimeService tenantTimeService;
 
     @org.springframework.beans.factory.annotation.Autowired
     public AssetManagementService(
@@ -54,7 +55,8 @@ public class AssetManagementService implements ApprovalCallbackHandler {
             EventPublisher eventPublisher,
             AuditLogService auditLogService,
             WebSocketNotificationService webSocketNotificationService,
-            NotificationService notificationService) {
+            NotificationService notificationService,
+            TenantTimeService tenantTimeService) {
         this.assetRepository = assetRepository;
         this.maintenanceRequestRepository = maintenanceRequestRepository;
         this.employeeRepository = employeeRepository;
@@ -63,6 +65,7 @@ public class AssetManagementService implements ApprovalCallbackHandler {
         this.auditLogService = auditLogService;
         this.webSocketNotificationService = webSocketNotificationService;
         this.notificationService = notificationService;
+        this.tenantTimeService = tenantTimeService;
     }
 
     @Transactional
@@ -437,7 +440,7 @@ public class AssetManagementService implements ApprovalCallbackHandler {
         }
 
         if (status == AssetMaintenanceRequest.MaintenanceStatus.COMPLETED) {
-            request.setCompletedDate(LocalDate.now());
+            request.setCompletedDate(tenantTimeService.today(tenantId));
 
             Asset asset = assetRepository.findByIdAndTenantId(request.getAssetId(), tenantId)
                     .orElse(null);

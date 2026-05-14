@@ -2,6 +2,7 @@
 
 import React, {useEffect, useMemo, useState} from 'react';
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
+import {formatLongDate, formatMonthYear} from '@/lib/utils/format/date';
 import {useRouter} from 'next/navigation';
 import {
   AlertCircle,
@@ -382,14 +383,8 @@ function CalendarContent() {
     if (!startDate) return '';
 
     const start = new Date(startDate);
-    const options: Intl.DateTimeFormatOptions = {
-      weekday: 'long',
-      month: 'long',
-      day: 'numeric',
-      year: 'numeric'
-    };
 
-    let result = start.toLocaleDateString('en-US', options);
+    let result = formatLongDate(start);
 
     if (event.start.dateTime) {
       result += ` at ${formatTime(event.start.dateTime)}`;
@@ -569,7 +564,7 @@ function CalendarContent() {
                       </button>
                     </div>
                     <h2 className="text-xl font-semibold text-[var(--text-primary)]">
-                      {currentDate.toLocaleDateString('en-US', {month: 'long', year: 'numeric'})}
+                      {formatMonthYear(currentDate)}
                     </h2>
                   </div>
                   <div className="flex items-center border border-[var(--border-main)] rounded-lg overflow-hidden">

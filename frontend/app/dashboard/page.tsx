@@ -1,6 +1,7 @@
 'use client';
 
 import React, {useEffect, useState} from 'react';
+import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import {useRouter} from 'next/navigation';
 import {
@@ -36,7 +37,11 @@ import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal'
 import {Button} from '@/components/ui/Button';
 import {PremiumMetricCard} from '@/components/ui/PremiumMetricCard';
 import type {DashboardWidget} from '@/components/ui/DashboardGrid';
-import {DashboardGrid} from '@/components/ui/DashboardGrid';
+// Code-split @hello-pangea/dnd (~30-40 KB gz) — only loaded on dashboard
+const DashboardGrid = dynamic(
+  () => import('@/components/ui/DashboardGrid').then(m => m.DashboardGrid),
+  {ssr: false, loading: () => <SkeletonChart/>}
+);
 import {Skeleton, SkeletonStatCard} from '@/components/ui/Skeleton';
 import {SkeletonChart} from '@/components/ui/Loading';
 import {EmptyState} from '@/components/ui/EmptyState';
@@ -50,6 +55,7 @@ import {createLogger} from '@/lib/utils/logger';
 import {formatCurrency} from '@/lib/utils';
 import {safeWindowOpen} from '@/lib/utils/url';
 import {formatDateShort} from '@/lib/utils/format/date';
+import {format} from 'date-fns';
 
 const log = createLogger('DashboardPage');
 
@@ -952,7 +958,7 @@ export default function DashboardPage() {
                   <span className={`badge-status ${viewBadgeClass}`}>{safeAnalytics.viewLabel}</span>
                 </div>
                 <p className="text-body-secondary">
-                  {currentTime?.toLocaleDateString('en-US', {weekday: 'long', month: 'short', day: 'numeric'}) ?? ''}
+                  {currentTime ? format(currentTime, 'EEEE, MMM d') : ''}
                   {safeAnalytics.viewType !== 'EMPLOYEE' && (
                     <span
                       className="ml-2 text-caption">• {safeAnalytics.teamSize} {safeAnalytics.viewType === 'ADMIN' ? 'employees' : 'team members'}</span>
@@ -1118,16 +1124,8 @@ export default function DashboardPage() {
                 <div>
                   <p className="font-medium">
                     {selectedEvent.calendarEvent.start.dateTime
-                      ? new Date(selectedEvent.calendarEvent.start.dateTime).toLocaleDateString('en-US', {
-                        weekday: 'long',
-                        month: 'long',
-                        day: 'numeric',
-                      })
-                      : new Date(selectedEvent.calendarEvent.start.date!).toLocaleDateString('en-US', {
-                        weekday: 'long',
-                        month: 'long',
-                        day: 'numeric',
-                      })}
+                      ? format(new Date(selectedEvent.calendarEvent.start.dateTime), 'EEEE, MMMM d')
+                      : format(new Date(selectedEvent.calendarEvent.start.date!), 'EEEE, MMMM d')}
                   </p>
                   {selectedEvent.calendarEvent.start.dateTime && (
                     <p className="text-sm">

@@ -8,7 +8,7 @@ import {Permissions} from '@/lib/hooks/usePermissions';
 import {PageDeniedFallback, PermissionGate} from '@/components/auth/PermissionGate';
 import {BookOpen, Eye, FileText, Heart, MessageCircle, TrendingUp,} from 'lucide-react';
 import {AppLayout} from '@/components/layout';
-import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
+import {Card, CardContent, CardHeader} from '@/components/ui/Card';
 import {useActivityFeed, useBlogPosts, useFluenceTemplates, useWikiPages,} from '@/lib/hooks/queries/useFluence';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {card, chartColors, iconSize, layout, motion as dsMotion, typography,} from '@/lib/theme/design-system';

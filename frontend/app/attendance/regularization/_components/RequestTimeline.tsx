@@ -2,6 +2,7 @@
 
 import React from 'react';
 import {motion} from 'framer-motion';
+import {format} from 'date-fns';
 import {CheckCircle, Clock, Send, XCircle} from 'lucide-react';
 import {RegularizationRequest} from './types';
 import {calculateResolutionTime, formatTime} from './utils';
@@ -102,12 +103,7 @@ export function RequestTimeline({request}: RequestTimelineProps) {
                   <div className="row-between gap-4">
                     <h4 className="text-card-title">{step.label}</h4>
                     <span className="text-caption whitespace-nowrap font-medium">
-                      {new Date(step.date).toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                      })}
+                      {format(new Date(step.date), 'MMM d, hh:mm a')}
                     </span>
                   </div>
 
@@ -138,11 +134,7 @@ export function RequestTimeline({request}: RequestTimelineProps) {
                   {index === 0 && (
                     <p className="text-body-secondary mt-1">
                       For{' '}
-                      {new Date(request.attendanceDate).toLocaleDateString('en-US', {
-                        weekday: 'long',
-                        month: 'short',
-                        day: 'numeric',
-                      })}
+                      {format(new Date(request.attendanceDate), 'EEEE, MMM d')}
                     </p>
                   )}
                 </div>

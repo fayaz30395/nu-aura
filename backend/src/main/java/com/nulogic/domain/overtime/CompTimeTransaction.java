@@ -1,5 +1,7 @@
 package com.nulogic.domain.overtime;
 
+import com.nulogic.common.util.TenantTimestamp;
+import com.nulogic.common.util.TimeAuditingEntityListener;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,9 +12,17 @@ import java.util.UUID;
 
 /**
  * Individual comp time transactions (accrual, usage, expiry).
+ *
+ * <p>{@code transactionDate} and {@code processedAt} are stamped by
+ * {@link TimeAuditingEntityListener} via {@link TenantTimestamp} to close the
+ * unzoned-{@code LocalDate(Time).now()} gap from
+ * {@code backend/docs/audit/prepersist-now-audit.md} rows 10–11. This entity is not
+ * {@code TenantAware}; the listener resolves {@code tenantId = null} via
+ * {@code TenantTimeService}'s default-zone fallback.</p>
  */
 @Entity
 @Table(name = "comp_time_transactions")
+@EntityListeners(TimeAuditingEntityListener.class)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -37,6 +47,7 @@ public class CompTimeTransaction {
 
     private BigDecimal balanceAfter;
 
+    @TenantTimestamp
     @Column(nullable = false)
     private LocalDate transactionDate;
 
@@ -54,15 +65,9 @@ public class CompTimeTransaction {
 
     private String description;
     private UUID processedBy;
-    private LocalDateTime processedAt;
 
-    @PrePersist
-    protected void onCreate() {
-        if (transactionDate == null) {
-            transactionDate = LocalDate.now();
-        }
-        processedAt = LocalDateTime.now();
-    }
+    @TenantTimestamp
+    private LocalDateTime processedAt;
 
     public enum TransactionType {
         ACCRUAL,

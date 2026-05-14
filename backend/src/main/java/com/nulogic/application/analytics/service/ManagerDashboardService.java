@@ -8,6 +8,7 @@ import com.nulogic.api.analytics.dto.TeamProjectsResponse.TeamMemberProjectsDto;
 import com.nulogic.api.analytics.dto.TeamProjectsResponse.TeamProjectsSummary;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.leave.LeaveRequest;
 import com.nulogic.domain.project.Project;
@@ -46,6 +47,7 @@ public class ManagerDashboardService {
     private final LeaveRequestRepository leaveRequestRepository;
     private final HrmsProjectMemberRepository projectMemberRepository;
     private final HrmsProjectRepository projectRepository;
+    private final TenantTimeService tenantTimeService;
 
     /**
      * Get manager dashboard for the currently logged-in manager
@@ -67,8 +69,8 @@ public class ManagerDashboardService {
      */
     @Transactional(readOnly = true)
     public ManagerDashboardResponse getManagerDashboard(UUID managerId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
-        LocalDate today = LocalDate.now();
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        LocalDate today = tenantTimeService.today(tenantId);
 
         // Get manager details
         Employee manager = employeeRepository.findByIdAndTenantId(managerId, tenantId)
@@ -431,7 +433,7 @@ public class ManagerDashboardService {
                     .description(pendingLeave + " leave request(s) pending your approval")
                     .employeeId(null)
                     .employeeName(null)
-                    .createdAt(LocalDate.now().toString())
+                    .createdAt(tenantTimeService.today(tenantId).toString())
                     .actionRequired("Review and approve/reject pending leave requests")
                     .build());
         }

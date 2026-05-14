@@ -739,10 +739,23 @@ export function NotificationDropdown({isOpen, onClose}: NotificationDropdownProp
       {/* Email Preview Modal */}
       {selectedEmail && selectedEmail.emailData && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-[var(--bg-overlay)] cursor-pointer" onClick={() => {
-            setSelectedEmail(null);
-            setEmailContent('');
-          }}/>
+          <div
+            className="absolute inset-0 bg-[var(--bg-overlay)] cursor-pointer"
+            onClick={() => {
+              setSelectedEmail(null);
+              setEmailContent('');
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ' || e.key === 'Escape') {
+                e.preventDefault();
+                setSelectedEmail(null);
+                setEmailContent('');
+              }
+            }}
+            role="button"
+            tabIndex={0}
+            aria-label="Close email preview"
+          />
           <div
             className="relative bg-[var(--bg-elevated)] rounded-lg shadow-[var(--shadow-elevated)] max-w-2xl w-full max-h-[80vh] overflow-hidden animate-fade-in-down">
             <div className="bg-gradient-to-r from-danger-500 to-danger-600 px-6 py-4">

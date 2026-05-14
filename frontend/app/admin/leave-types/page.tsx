@@ -446,8 +446,8 @@ export default function LeaveTypesManagementPage() {
             </ModalHeader>
             <ModalBody className="space-y-6">
                   {/* Basic Information */}
-                  <div className="border-b pb-4">
-                    <h3 className="text-lg font-medium text-[var(--text-primary)] mb-4">Basic Information</h3>
+                  <section aria-labelledby="leave-type-basic-info-heading" className="border-b pb-4">
+                    <h3 id="leave-type-basic-info-heading" className="text-lg font-medium text-[var(--text-primary)] mb-4">Basic Information</h3>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label htmlFor="leave-type-code" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
@@ -535,11 +535,11 @@ export default function LeaveTypesManagementPage() {
                         </select>
                       </div>
                     </div>
-                  </div>
+                  </section>
 
                   {/* Quota & Limits */}
-                  <div className="border-b pb-4">
-                    <h3 className="text-lg font-medium text-[var(--text-primary)] mb-4">Quota & Limits</h3>
+                  <section aria-labelledby="leave-type-quota-heading" className="border-b pb-4">
+                    <h3 id="leave-type-quota-heading" className="text-lg font-medium text-[var(--text-primary)] mb-4">Quota & Limits</h3>
                     <div className="grid grid-cols-3 gap-4">
                       <div>
                         <label htmlFor="leave-type-annual-quota" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
@@ -606,11 +606,11 @@ export default function LeaveTypesManagementPage() {
                         />
                       </div>
                     </div>
-                  </div>
+                  </section>
 
                   {/* Accrual Settings */}
-                  <div className="border-b pb-4">
-                    <h3 className="text-lg font-medium text-[var(--text-primary)] mb-4">Accrual Settings</h3>
+                  <section aria-labelledby="leave-type-accrual-heading" className="border-b pb-4">
+                    <h3 id="leave-type-accrual-heading" className="text-lg font-medium text-[var(--text-primary)] mb-4">Accrual Settings</h3>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label htmlFor="leave-type-accrual-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
@@ -641,7 +641,7 @@ export default function LeaveTypesManagementPage() {
                         />
                       </div>
                     </div>
-                  </div>
+                  </section>
 
                   {/* Carry Forward & Encashment */}
                   <fieldset className="border-b pb-4">

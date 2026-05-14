@@ -194,25 +194,27 @@ export default function ContractsPage() {
 
         {/* Pagination */}
         {contractsData && contractsData.totalPages > 1 && (
-          <div className="flex justify-center gap-2">
+          <nav aria-label="Pagination" className="flex justify-center gap-2">
             <Button
               disabled={page === 0}
               onClick={() => setPage(page - 1)}
               variant="light"
+              aria-label="Previous page"
             >
               Previous
             </Button>
-            <div className="flex items-center px-4">
+            <div className="flex items-center px-4" aria-current="page">
               Page {page + 1} of {contractsData.totalPages}
             </div>
             <Button
               disabled={page >= contractsData.totalPages - 1}
               onClick={() => setPage(page + 1)}
               variant="light"
+              aria-label="Next page"
             >
               Next
             </Button>
-          </div>
+          </nav>
         )}
       </div>
     </AppLayout>

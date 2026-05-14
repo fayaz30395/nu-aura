@@ -101,9 +101,15 @@ public class ProbationPeriod extends TenantAware {
                 extensionCount, additionalDays, reason);
     }
 
-    public void confirm(UUID confirmedBy, Double rating, String notes) {
+    /**
+     * Stamps the probation as CONFIRMED using the tenant-zoned "today" supplied
+     * by the caller. The {@code today} parameter must come from
+     * {@code TenantTimeService.today(tenantId)} so the confirmation date
+     * reflects the tenant's calendar, not the JVM zone.
+     */
+    public void confirm(UUID confirmedBy, Double rating, String notes, LocalDate today) {
         this.status = ProbationStatus.CONFIRMED;
-        this.confirmationDate = LocalDate.now();
+        this.confirmationDate = today;
         this.hrId = confirmedBy;
         this.finalRating = rating;
         if (notes != null) {
@@ -111,42 +117,37 @@ public class ProbationPeriod extends TenantAware {
         }
     }
 
-    public void fail(UUID decidedBy, String reason) {
+    /**
+     * Marks the probation FAILED. {@code today} must be tenant-zoned —
+     * see {@link #confirm(UUID, Double, String, LocalDate)}.
+     */
+    public void fail(UUID decidedBy, String reason, LocalDate today) {
         this.status = ProbationStatus.FAILED;
-        this.terminationDate = LocalDate.now();
+        this.terminationDate = today;
         this.hrId = decidedBy;
         this.terminationReason = reason;
     }
 
-    public void terminate(UUID terminatedBy, String reason) {
+    /**
+     * Marks the probation TERMINATED. {@code today} must be tenant-zoned —
+     * see {@link #confirm(UUID, Double, String, LocalDate)}.
+     */
+    public void terminate(UUID terminatedBy, String reason, LocalDate today) {
         this.status = ProbationStatus.TERMINATED;
-        this.terminationDate = LocalDate.now();
+        this.terminationDate = today;
         this.hrId = terminatedBy;
         this.terminationReason = reason;
     }
 
-    public boolean isOverdue() {
-        return status == ProbationStatus.ACTIVE && endDate != null && LocalDate.now().isAfter(endDate);
-    }
-
-    public boolean isEvaluationDue() {
-        if (nextEvaluationDate == null) return false;
-        return (status == ProbationStatus.ACTIVE || status == ProbationStatus.EXTENDED)
-                && !LocalDate.now().isBefore(nextEvaluationDate);
-    }
-
-    public long getDaysRemaining() {
-        if (endDate == null || (status != ProbationStatus.ACTIVE && status != ProbationStatus.EXTENDED)) {
-            return 0;
-        }
-        return java.time.temporal.ChronoUnit.DAYS.between(LocalDate.now(), endDate);
-    }
-
-    public void addEvaluation(ProbationEvaluation evaluation) {
+    /**
+     * Attaches an evaluation and bumps {@code nextEvaluationDate} relative to the
+     * supplied tenant-zoned {@code today}.
+     */
+    public void addEvaluation(ProbationEvaluation evaluation, LocalDate today) {
         evaluations.add(evaluation);
         evaluation.setProbationPeriod(this);
         // Update next evaluation date
-        this.nextEvaluationDate = LocalDate.now().plusDays(evaluationFrequencyDays);
+        this.nextEvaluationDate = today.plusDays(evaluationFrequencyDays);
     }
 
     public enum ProbationStatus {

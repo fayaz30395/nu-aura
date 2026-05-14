@@ -3,6 +3,7 @@ package com.nulogic.application.survey.service;
 import com.nulogic.api.survey.dto.SurveyDto;
 import com.nulogic.api.survey.dto.SurveyRequest;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.survey.Survey;
 import com.nulogic.domain.user.User;
 import com.nulogic.infrastructure.survey.repository.SurveyRepository;
@@ -27,6 +28,7 @@ public class SurveyManagementService {
 
     private final SurveyRepository surveyRepository;
     private final UserRepository userRepository;
+    private final TenantTimeService tenantTimeService;
 
     @Transactional
     public SurveyDto createSurvey(SurveyRequest request, UUID createdBy) {
@@ -92,7 +94,7 @@ public class SurveyManagementService {
     }
 
     public SurveyDto launchSurvey(UUID surveyId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         log.info("Launching survey {} for tenant {}", surveyId, tenantId);
 
         Survey survey = surveyRepository.findByIdAndTenantId(surveyId, tenantId)
@@ -104,7 +106,8 @@ public class SurveyManagementService {
 
         survey.setStatus(Survey.SurveyStatus.ACTIVE);
         if (survey.getStartDate() == null) {
-            survey.setStartDate(LocalDateTime.now());
+            // S11-M: tenant-local launch timestamp — resolved via TenantTimeService.
+            survey.setStartDate(tenantTimeService.now(tenantId));
         }
 
         Survey updatedSurvey = surveyRepository.save(survey);
@@ -112,7 +115,7 @@ public class SurveyManagementService {
     }
 
     public SurveyDto completeSurvey(UUID surveyId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         log.info("Completing survey {} for tenant {}", surveyId, tenantId);
 
         Survey survey = surveyRepository.findByIdAndTenantId(surveyId, tenantId)
@@ -120,7 +123,8 @@ public class SurveyManagementService {
 
         survey.setStatus(Survey.SurveyStatus.COMPLETED);
         if (survey.getEndDate() == null) {
-            survey.setEndDate(LocalDateTime.now());
+            // S11-M: tenant-local completion timestamp — resolved via TenantTimeService.
+            survey.setEndDate(tenantTimeService.now(tenantId));
         }
 
         Survey updatedSurvey = surveyRepository.save(survey);
@@ -154,13 +158,14 @@ public class SurveyManagementService {
 
     @Transactional(readOnly = true)
     public List<SurveyDto> getActiveSurveys() {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        // S11-M: tenant-local "now" for active-window check — resolved via TenantTimeService and
+        // hoisted out of the stream filter so we do a single zone resolution per call.
+        LocalDateTime now = tenantTimeService.now(tenantId);
         return surveyRepository.findByTenantIdAndStatus(tenantId, Survey.SurveyStatus.ACTIVE).stream()
-                .filter(survey -> {
-                    LocalDateTime now = LocalDateTime.now();
-                    return (survey.getStartDate() == null || survey.getStartDate().isBefore(now)) &&
-                            (survey.getEndDate() == null || survey.getEndDate().isAfter(now));
-                })
+                .filter(survey ->
+                        (survey.getStartDate() == null || survey.getStartDate().isBefore(now)) &&
+                                (survey.getEndDate() == null || survey.getEndDate().isAfter(now)))
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }

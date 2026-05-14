@@ -220,7 +220,7 @@ export default function PreboardingPortalPage() {
             </div>
             <div className="w-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full h-3">
               <div
-                className="bg-gradient-to-r from-accent-500 to-accent-700 h-3 rounded-full transition-all duration-500"
+                className="bg-accent-600 dark:bg-accent-500 h-3 rounded-full transition-all duration-500"
                 style={{width: `${data.completionPercentage}%`}}
               />
             </div>

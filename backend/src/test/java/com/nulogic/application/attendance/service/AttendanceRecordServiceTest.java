@@ -691,8 +691,10 @@ class AttendanceRecordServiceTest {
         @Test
         @DisplayName("Should get attendance by date range")
         void shouldGetAttendanceByDateRange() {
-            LocalDate startDate = LocalDate.now().minusDays(7);
-            LocalDate endDate = LocalDate.now();
+            // IST-leak hardening: derive bounds from FIXED_TODAY so the date range
+            // is deterministic regardless of the JVM's default zone or wall clock.
+            LocalDate startDate = FIXED_TODAY.minusDays(7);
+            LocalDate endDate = FIXED_TODAY;
             when(attendanceRecordRepository.findAllByTenantIdAndEmployeeIdAndAttendanceDateBetween(
                     tenantId, employeeId, startDate, endDate))
                     .thenReturn(List.of(attendanceRecord));
@@ -720,7 +722,9 @@ class AttendanceRecordServiceTest {
         @Test
         @DisplayName("Should get time entries for date")
         void shouldGetTimeEntriesForDate() {
-            LocalDate today = LocalDate.now();
+            // IST-leak hardening: pin to FIXED_TODAY (TenantTimeService stub) so the
+            // date passed to the service matches the production tenant-local "today".
+            LocalDate today = FIXED_TODAY;
             when(attendanceRecordRepository.findByEmployeeIdAndAttendanceDateAndTenantId(
                     employeeId, today, tenantId))
                     .thenReturn(Optional.of(attendanceRecord));
@@ -739,7 +743,8 @@ class AttendanceRecordServiceTest {
         @Test
         @DisplayName("Should return empty list when no record exists for date")
         void shouldReturnEmptyListWhenNoRecordExists() {
-            LocalDate today = LocalDate.now();
+            // IST-leak hardening: pin to FIXED_TODAY for deterministic lookup.
+            LocalDate today = FIXED_TODAY;
             when(attendanceRecordRepository.findByEmployeeIdAndAttendanceDateAndTenantId(
                     employeeId, today, tenantId))
                     .thenReturn(Optional.empty());
@@ -753,7 +758,8 @@ class AttendanceRecordServiceTest {
         @Test
         @DisplayName("Should get attendance for specific date")
         void shouldGetAttendanceForDate() {
-            LocalDate today = LocalDate.now();
+            // IST-leak hardening: pin to FIXED_TODAY for deterministic lookup.
+            LocalDate today = FIXED_TODAY;
             when(attendanceRecordRepository.findByEmployeeIdAndAttendanceDateAndTenantId(
                     employeeId, today, tenantId))
                     .thenReturn(Optional.of(attendanceRecord));
@@ -767,7 +773,9 @@ class AttendanceRecordServiceTest {
         @Test
         @DisplayName("Should check if employee is checked in")
         void shouldCheckIfEmployeeIsCheckedIn() {
-            LocalDate today = LocalDate.now();
+            // IST-leak hardening: production isEmployeeCheckedIn() resolves "today"
+            // via TenantTimeService.today() (stubbed to FIXED_TODAY in setUp).
+            LocalDate today = FIXED_TODAY;
             attendanceRecord.setAttendanceDate(today);
             attendanceRecord.checkIn(checkInTime, "WEB", "Office", "192.168.1.1");
 
@@ -783,7 +791,9 @@ class AttendanceRecordServiceTest {
         @Test
         @DisplayName("Should return false when employee is not checked in")
         void shouldReturnFalseWhenEmployeeNotCheckedIn() {
-            LocalDate today = LocalDate.now();
+            // IST-leak hardening: production isEmployeeCheckedIn() resolves "today"
+            // via TenantTimeService.today() (stubbed to FIXED_TODAY in setUp).
+            LocalDate today = FIXED_TODAY;
             when(attendanceRecordRepository.findByEmployeeIdAndAttendanceDateAndTenantId(
                     employeeId, today, tenantId))
                     .thenReturn(Optional.empty());
@@ -796,7 +806,9 @@ class AttendanceRecordServiceTest {
         @Test
         @DisplayName("Should return false when employee already checked out")
         void shouldReturnFalseWhenEmployeeCheckedOut() {
-            LocalDate today = LocalDate.now();
+            // IST-leak hardening: production isEmployeeCheckedIn() resolves "today"
+            // via TenantTimeService.today() (stubbed to FIXED_TODAY in setUp).
+            LocalDate today = FIXED_TODAY;
             attendanceRecord.setAttendanceDate(today);
             attendanceRecord.checkIn(checkInTime, "WEB", "Office", "192.168.1.1");
             attendanceRecord.checkOut(checkOutTime, "WEB", "Office", "192.168.1.1");

@@ -1,6 +1,8 @@
 package com.nulogic.domain.leave;
 
 import com.nulogic.common.entity.TenantAware;
+import com.nulogic.common.util.TenantTimestamp;
+import com.nulogic.common.util.TimeAuditingEntityListener;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.AssertTrue;
 import lombok.*;
@@ -23,6 +25,7 @@ import java.util.UUID;
         @Index(name = "idx_leave_requests_leave_type", columnList = "leave_type_id"),
         @Index(name = "idx_leave_requests_tenant_employee", columnList = "tenantId,employeeId")
 })
+@EntityListeners(TimeAuditingEntityListener.class)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -67,9 +70,9 @@ public class LeaveRequest extends TenantAware {
     @Column(name = "document_path", columnDefinition = "TEXT")
     private String documentPath;
 
+    @TenantTimestamp
     @Column(name = "applied_on", nullable = false)
-    @Builder.Default
-    private LocalDateTime appliedOn = LocalDateTime.now();
+    private LocalDateTime appliedOn;
 
     @Column(name = "approved_by")
     private UUID approvedBy;

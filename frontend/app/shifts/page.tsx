@@ -13,7 +13,7 @@ import {ScheduleEntry} from '@/lib/types/hrms/shift';
 import {CATEGORICAL_UNSET} from '@/lib/utils/categoricalPalette';
 import {ArrowLeftRight, Calendar, CalendarDays, ChevronLeft, ChevronRight, List, Settings, Users,} from 'lucide-react';
 import {motion} from 'framer-motion';
-import {formatDateRange} from '@/lib/utils/format/date';
+import {formatDateRange, formatWeekday} from '@/lib/utils/format/date';
 
 function getWeekDates(baseDate: Date): { start: string; end: string; dates: Date[] } {
   const d = new Date(baseDate);
@@ -220,7 +220,7 @@ export default function ShiftDashboardPage() {
                             : 'text-surface-500 dark:text-surface-400'
                         }`}
                       >
-                        <div>{d.toLocaleDateString('en-US', {weekday: 'short'})}</div>
+                        <div>{formatWeekday(d)}</div>
                         <div className="text-xs">{d.getDate()}</div>
                       </th>
                     );

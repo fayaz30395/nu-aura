@@ -2,12 +2,12 @@ package com.nulogic.application.knowledge.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nulogic.common.util.TenantTimeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.UUID;
@@ -27,6 +27,7 @@ public class FluenceEditLockService {
     private static final String KEY_PREFIX = "fluence:edit-lock:";
     private final StringRedisTemplate redisTemplate;
     private final ObjectMapper objectMapper;
+    private final TenantTimeService tenantTimeService;
 
     /**
      * Attempt to acquire an edit lock on a piece of content.
@@ -55,7 +56,7 @@ public class FluenceEditLockService {
         EditLockInfo lockInfo = new EditLockInfo(
                 userId.toString(),
                 userName,
-                LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+                tenantTimeService.now(tenantId).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
         );
         redisTemplate.opsForValue().set(key, serialize(lockInfo), LOCK_TTL_MINUTES, TimeUnit.MINUTES);
 

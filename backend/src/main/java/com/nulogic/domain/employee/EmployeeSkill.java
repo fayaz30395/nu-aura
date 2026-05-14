@@ -1,6 +1,8 @@
 package com.nulogic.domain.employee;
 
 import com.nulogic.common.entity.TenantAware;
+import com.nulogic.common.util.TenantTimestamp;
+import com.nulogic.common.util.TimeAuditingEntityListener;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -9,6 +11,16 @@ import org.hibernate.annotations.Where;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/**
+ * Audit rows 27–29 of {@code backend/docs/audit/prepersist-now-audit.md} flagged
+ * {@code createdAt} / {@code updatedAt} as defaulted from a server-default-zone
+ * {@code LocalDateTime.now()} inside in-entity {@code @PrePersist} / {@code @PreUpdate}
+ * callbacks. Both fields are now stamped by {@link TimeAuditingEntityListener} via
+ * {@link TenantTimestamp}, which resolves the tenant's IANA zone through
+ * {@code TenantTimeService}. {@code TenantEntityListener} runs first via the
+ * {@link TenantAware} mapped superclass (JPA spec §3.5.4), so {@code tenantId} is
+ * populated when the time-auditing listener reads it.
+ */
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "employee_skills", indexes = {
@@ -16,6 +28,7 @@ import java.util.UUID;
         @Index(name = "idx_emp_skill_employee", columnList = "employeeId"),
         @Index(name = "idx_emp_skill_name", columnList = "skillName")
 })
+@EntityListeners(TimeAuditingEntityListener.class)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -54,20 +67,11 @@ public class EmployeeSkill extends TenantAware {
     @Column(name = "source")
     private String source; // e.g., "SELF", "MANAGER", "COURSE_COMPLETION"
 
+    @TenantTimestamp
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    @TenantTimestamp(updateOnChange = true)
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
 }

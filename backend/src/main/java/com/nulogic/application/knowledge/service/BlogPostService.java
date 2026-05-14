@@ -3,6 +3,7 @@ package com.nulogic.application.knowledge.service;
 import com.nulogic.application.knowledge.util.TipTapTextExtractor;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.knowledge.BlogPost;
 import com.nulogic.infrastructure.kafka.events.FluenceContentEvent;
 import com.nulogic.infrastructure.kafka.producer.EventPublisher;
@@ -29,6 +30,7 @@ public class BlogPostService {
     private final BlogPostRepository blogPostRepository;
     private final FluenceActivityService fluenceActivityService;
     private final TipTapTextExtractor tipTapTextExtractor;
+    private final TenantTimeService tenantTimeService;
 
     @Autowired(required = false)
     private EventPublisher eventPublisher;
@@ -89,14 +91,14 @@ public class BlogPostService {
 
     @Transactional
     public BlogPost getPostById(UUID postId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         BlogPost post = blogPostRepository.findById(postId)
                 .filter(p -> p.getTenantId().equals(tenantId))
                 .orElseThrow(() -> new IllegalArgumentException("Blog post not found"));
 
         // Track view
         post.setViewCount(post.getViewCount() + 1);
-        post.setLastViewedAt(LocalDateTime.now());
+        post.setLastViewedAt(tenantTimeService.now(tenantId));
         post.setLastViewedBy(SecurityContext.getCurrentUserId());
         blogPostRepository.save(post);
 
@@ -105,13 +107,13 @@ public class BlogPostService {
 
     @Transactional
     public BlogPost getPostBySlug(String slug) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         BlogPost post = blogPostRepository.findByTenantIdAndSlug(tenantId, slug)
                 .orElseThrow(() -> new IllegalArgumentException("Blog post not found"));
 
         // Track view
         post.setViewCount(post.getViewCount() + 1);
-        post.setLastViewedAt(LocalDateTime.now());
+        post.setLastViewedAt(tenantTimeService.now(tenantId));
         post.setLastViewedBy(SecurityContext.getCurrentUserId());
         blogPostRepository.save(post);
 
@@ -161,7 +163,7 @@ public class BlogPostService {
     }
 
     public BlogPost publishPost(UUID postId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         UUID userId = SecurityContext.getCurrentUserId();
 
         BlogPost post = blogPostRepository.findById(postId)
@@ -169,7 +171,7 @@ public class BlogPostService {
                 .orElseThrow(() -> new IllegalArgumentException("Blog post not found"));
 
         post.setStatus(BlogPost.BlogPostStatus.PUBLISHED);
-        post.setPublishedAt(LocalDateTime.now());
+        post.setPublishedAt(tenantTimeService.now(tenantId));
         post.setPublishedBy(userId);
 
         BlogPost updated = blogPostRepository.save(post);

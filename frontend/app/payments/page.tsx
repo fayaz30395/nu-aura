@@ -197,10 +197,11 @@ function PaymentsPageContent() {
         <div className="card-aura p-4 mb-6">
           <div className="flex flex-wrap items-center gap-4">
             {/* Search */}
-            <div className="relative flex-1 min-w-[200px]">
+            <div className="relative flex-1 min-w-[200px]" role="search">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]"/>
               <input
-                type="text"
+                type="search"
+                aria-label="Search transactions"
                 placeholder="Search transactions..."
                 value={filters.search}
                 onChange={(e) => setFilters({...filters, search: e.target.value})}
@@ -408,8 +409,8 @@ function PaymentsPageContent() {
           ) : filteredPayments.length === 0 ? (
             <EmptyState
               icon={<CreditCard className="h-12 w-12"/>}
-              title="No Transactions"
-              description="No payment transactions found matching your filters"
+              title="No payment transactions match"
+              description="Try widening your date range or clearing filters. Processed payouts and reimbursements will appear here."
             />
           ) : (
             <div className="space-y-4">

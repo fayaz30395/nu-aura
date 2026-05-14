@@ -7,6 +7,7 @@ import com.nulogic.application.performance.dto.CompetencyResponse;
 import com.nulogic.application.performance.dto.ReviewRequest;
 import com.nulogic.application.performance.dto.ReviewResponse;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.audit.AuditLog.AuditAction;
 import com.nulogic.domain.event.performance.PerformanceReviewCompletedEvent;
 import com.nulogic.domain.performance.PerformanceReview;
@@ -15,19 +16,20 @@ import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import com.nulogic.infrastructure.performance.repository.PerformanceReviewRepository;
 import com.nulogic.infrastructure.performance.repository.ReviewCompetencyRepository;
 import com.nulogic.infrastructure.performance.repository.ReviewCycleRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class PerformanceReviewService {
 
     private static final String REVIEW_NOT_FOUND = "Review not found";
@@ -38,20 +40,7 @@ public class PerformanceReviewService {
     private final ReviewCycleRepository reviewCycleRepository;
     private final DomainEventPublisher domainEventPublisher;
     private final AuditLogService auditLogService;
-
-    public PerformanceReviewService(PerformanceReviewRepository reviewRepository,
-                                    ReviewCompetencyRepository competencyRepository,
-                                    EmployeeRepository employeeRepository,
-                                    ReviewCycleRepository reviewCycleRepository,
-                                    DomainEventPublisher domainEventPublisher,
-                                    AuditLogService auditLogService) {
-        this.reviewRepository = reviewRepository;
-        this.competencyRepository = competencyRepository;
-        this.employeeRepository = employeeRepository;
-        this.reviewCycleRepository = reviewCycleRepository;
-        this.domainEventPublisher = domainEventPublisher;
-        this.auditLogService = auditLogService;
-    }
+    private final TenantTimeService tenantTimeService;
 
     @Transactional
     public ReviewResponse createReview(ReviewRequest request) {
@@ -181,13 +170,13 @@ public class PerformanceReviewService {
 
     @Transactional
     public ReviewResponse submitReview(UUID reviewId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         PerformanceReview review = reviewRepository.findByIdAndTenantId(reviewId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException(REVIEW_NOT_FOUND));
 
         review.setStatus(PerformanceReview.ReviewStatus.SUBMITTED);
-        review.setSubmittedAt(LocalDateTime.now());
+        review.setSubmittedAt(tenantTimeService.now(tenantId));
 
         review = reviewRepository.save(review);
 
@@ -202,13 +191,13 @@ public class PerformanceReviewService {
 
     @Transactional
     public ReviewResponse completeReview(UUID reviewId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         PerformanceReview review = reviewRepository.findByIdAndTenantId(reviewId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException(REVIEW_NOT_FOUND));
 
         review.setStatus(PerformanceReview.ReviewStatus.COMPLETED);
-        review.setCompletedAt(LocalDateTime.now());
+        review.setCompletedAt(tenantTimeService.now(tenantId));
 
         review = reviewRepository.save(review);
 

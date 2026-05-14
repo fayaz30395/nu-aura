@@ -6,6 +6,7 @@ import com.nulogic.application.workflow.callback.ApprovalCallbackHandler;
 import com.nulogic.application.workflow.service.WorkflowService;
 import com.nulogic.common.logging.Audited;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.audit.AuditLog.AuditAction;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.onboarding.OnboardingChecklistTemplate;
@@ -44,6 +45,7 @@ public class OnboardingManagementService implements ApprovalCallbackHandler {
     private final OnboardingTaskRepository taskRepository;
     private final com.nulogic.infrastructure.onboarding.OnboardingTaskTemplateRepository roleTemplateRepository;
     private final WorkflowService workflowService;
+    private final TenantTimeService tenantTimeService;
 
     public OnboardingManagementService(OnboardingProcessRepository onboardingRepository,
                                        EmployeeRepository employeeRepository,
@@ -51,7 +53,8 @@ public class OnboardingManagementService implements ApprovalCallbackHandler {
                                        OnboardingTemplateTaskRepository templateTaskRepository,
                                        OnboardingTaskRepository taskRepository,
                                        com.nulogic.infrastructure.onboarding.OnboardingTaskTemplateRepository roleTemplateRepository,
-                                       @org.springframework.context.annotation.Lazy WorkflowService workflowService) {
+                                       @org.springframework.context.annotation.Lazy WorkflowService workflowService,
+                                       TenantTimeService tenantTimeService) {
         this.onboardingRepository = onboardingRepository;
         this.employeeRepository = employeeRepository;
         this.templateRepository = templateRepository;
@@ -59,6 +62,7 @@ public class OnboardingManagementService implements ApprovalCallbackHandler {
         this.taskRepository = taskRepository;
         this.roleTemplateRepository = roleTemplateRepository;
         this.workflowService = workflowService;
+        this.tenantTimeService = tenantTimeService;
     }
 
     @Transactional
@@ -81,7 +85,7 @@ public class OnboardingManagementService implements ApprovalCallbackHandler {
         process.setTenantId(tenantId);
         process.setEmployeeId(request.getEmployeeId());
         process.setProcessType(request.getProcessType());
-        process.setStartDate(request.getStartDate() != null ? request.getStartDate() : LocalDate.now());
+        process.setStartDate(request.getStartDate() != null ? request.getStartDate() : tenantTimeService.today(tenantId));
         process.setExpectedCompletionDate(request.getExpectedCompletionDate());
         process.setStatus(OnboardingProcess.ProcessStatus.NOT_STARTED);
         process.setAssignedBuddyId(request.getAssignedBuddyId());
@@ -128,7 +132,7 @@ public class OnboardingManagementService implements ApprovalCallbackHandler {
                 .map(Employee::getDesignation)
                 .orElse(null);
 
-        LocalDate joinDate = process.getStartDate() != null ? process.getStartDate() : LocalDate.now();
+        LocalDate joinDate = process.getStartDate() != null ? process.getStartDate() : tenantTimeService.today(tenantId);
         int created = 0;
         for (com.nulogic.domain.onboarding.OnboardingTaskTemplate tpl : templates) {
             if (tpl.getRoleFilter() != null
@@ -340,7 +344,7 @@ public class OnboardingManagementService implements ApprovalCallbackHandler {
         task.setStatus(status);
         task.setRemarks(remarks);
         if (status == OnboardingTask.TaskStatus.COMPLETED) {
-            task.setCompletedDate(LocalDate.now());
+            task.setCompletedDate(tenantTimeService.today(tenantId));
         }
 
         return mapToTaskResponse(taskRepository.save(task));
@@ -373,7 +377,7 @@ public class OnboardingManagementService implements ApprovalCallbackHandler {
 
         process.setStatus(status);
         if (status == OnboardingProcess.ProcessStatus.COMPLETED) {
-            process.setActualCompletionDate(LocalDate.now());
+            process.setActualCompletionDate(tenantTimeService.today(tenantId));
             process.setCompletionPercentage(100);
         }
 
@@ -396,7 +400,7 @@ public class OnboardingManagementService implements ApprovalCallbackHandler {
         }
         if (completionPercentage >= 100) {
             process.setStatus(OnboardingProcess.ProcessStatus.COMPLETED);
-            process.setActualCompletionDate(LocalDate.now());
+            process.setActualCompletionDate(tenantTimeService.today(tenantId));
         }
 
         OnboardingProcess updatedProcess = onboardingRepository.save(process);

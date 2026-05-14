@@ -11,6 +11,7 @@ import {Permissions} from '@/lib/hooks/usePermissions';
 import {PageDeniedFallback, PermissionGate} from '@/components/auth/PermissionGate';
 import {usePayslips} from '@/lib/hooks/queries/usePayroll';
 import {payrollService} from '@/lib/services/hrms/payroll.service';
+import {formatMonthYear} from '@/lib/utils/format/date';
 
 type PayslipStatus = 'ALL' | 'DRAFT' | 'FINALIZED' | 'PAID' | 'PENDING';
 
@@ -94,7 +95,7 @@ function PayslipsPageContent() {
     for (let i = 0; i < 12; i++) {
       const date = new Date(today.getFullYear(), today.getMonth() - i, 1);
       const value = date.toISOString().substring(0, 7);
-      const label = date.toLocaleDateString('en-US', {month: 'long', year: 'numeric'});
+      const label = formatMonthYear(date);
       options.push({value, label});
     }
     return options;

@@ -276,7 +276,7 @@ export default function AdminLeaveRequestsPage() {
             </p>
             <div className="mb-4">
               <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                Comments (Optional)
+                Comments
               </label>
               <textarea
                 value={approvalComments}

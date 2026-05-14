@@ -9,6 +9,7 @@ import com.nulogic.application.project.validation.TimeEntryValidator;
 import com.nulogic.application.workflow.callback.ApprovalCallbackHandler;
 import com.nulogic.application.workflow.service.WorkflowService;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.project.ProjectMember;
 import com.nulogic.domain.project.TimeEntry;
@@ -24,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -39,17 +39,20 @@ public class ProjectTimesheetService implements ApprovalCallbackHandler {
     private final EmployeeRepository employeeRepository;
     private final TimeEntryValidator timeEntryValidator;
     private final WorkflowService workflowService;
+    private final TenantTimeService tenantTimeService;
 
     public ProjectTimesheetService(ProjectTimeEntryRepository timeEntryRepository,
                                    HrmsProjectMemberRepository projectMemberRepository,
                                    EmployeeRepository employeeRepository,
                                    TimeEntryValidator timeEntryValidator,
-                                   @org.springframework.context.annotation.Lazy WorkflowService workflowService) {
+                                   @org.springframework.context.annotation.Lazy WorkflowService workflowService,
+                                   TenantTimeService tenantTimeService) {
         this.timeEntryRepository = timeEntryRepository;
         this.projectMemberRepository = projectMemberRepository;
         this.employeeRepository = employeeRepository;
         this.timeEntryValidator = timeEntryValidator;
         this.workflowService = workflowService;
+        this.tenantTimeService = tenantTimeService;
     }
 
     // ==================== Time Entry Operations ====================
@@ -173,7 +176,7 @@ public class ProjectTimesheetService implements ApprovalCallbackHandler {
         }
 
         timeEntry.setStatus(TimeEntry.TimeEntryStatus.SUBMITTED);
-        timeEntry.setSubmittedAt(LocalDateTime.now());
+        timeEntry.setSubmittedAt(tenantTimeService.now(tenantId));
 
         TimeEntry updatedEntry = timeEntryRepository.save(timeEntry);
 
@@ -197,7 +200,7 @@ public class ProjectTimesheetService implements ApprovalCallbackHandler {
 
         timeEntry.setStatus(TimeEntry.TimeEntryStatus.APPROVED);
         timeEntry.setApprovedBy(approverId);
-        timeEntry.setApprovedAt(LocalDateTime.now());
+        timeEntry.setApprovedAt(tenantTimeService.now(tenantId));
 
         TimeEntry updatedEntry = timeEntryRepository.save(timeEntry);
         return mapToTimeEntryResponse(updatedEntry);
@@ -217,7 +220,7 @@ public class ProjectTimesheetService implements ApprovalCallbackHandler {
 
         timeEntry.setStatus(TimeEntry.TimeEntryStatus.REJECTED);
         timeEntry.setApprovedBy(approverId);
-        timeEntry.setApprovedAt(LocalDateTime.now());
+        timeEntry.setApprovedAt(tenantTimeService.now(tenantId));
         timeEntry.setRejectedReason(reason);
 
         TimeEntry updatedEntry = timeEntryRepository.save(timeEntry);
@@ -324,7 +327,7 @@ public class ProjectTimesheetService implements ApprovalCallbackHandler {
         member.setAllocationPercentage(request.getAllocationPercentage());
         member.setBillingRate(request.getBillingRate());
         member.setCostRate(request.getCostRate());
-        member.setStartDate(request.getStartDate() != null ? request.getStartDate() : LocalDate.now());
+        member.setStartDate(request.getStartDate() != null ? request.getStartDate() : tenantTimeService.today(tenantId));
         member.setEndDate(request.getEndDate());
         member.setIsActive(request.getIsActive() != null ? request.getIsActive() : true);
         member.setCanApproveTime(request.getCanApproveTime() != null ? request.getCanApproveTime() : false);
@@ -421,7 +424,7 @@ public class ProjectTimesheetService implements ApprovalCallbackHandler {
 
         timeEntry.setStatus(TimeEntry.TimeEntryStatus.APPROVED);
         timeEntry.setApprovedBy(approvedBy);
-        timeEntry.setApprovedAt(LocalDateTime.now());
+        timeEntry.setApprovedAt(tenantTimeService.now(tenantId));
         timeEntryRepository.save(timeEntry);
     }
 
@@ -443,7 +446,7 @@ public class ProjectTimesheetService implements ApprovalCallbackHandler {
 
         timeEntry.setStatus(TimeEntry.TimeEntryStatus.REJECTED);
         timeEntry.setApprovedBy(rejectedBy);
-        timeEntry.setApprovedAt(LocalDateTime.now());
+        timeEntry.setApprovedAt(tenantTimeService.now(tenantId));
         timeEntry.setRejectedReason(reason);
         timeEntryRepository.save(timeEntry);
     }

@@ -507,7 +507,8 @@ class DsrServiceIntegrationTest extends AbstractPostgresIntegrationTest {
                 leaveRequestRepository,
                 applicationContext.getBean(com.nulogic.infrastructure.payroll.repository.SalaryStructureRepository.class),
                 auditLogRepository,
-                objectMapper);
+                objectMapper,
+                applicationContext.getBean(com.nulogic.common.util.TenantTimeService.class));
         return real;
     }
 }

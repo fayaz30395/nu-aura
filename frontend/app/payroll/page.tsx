@@ -130,8 +130,8 @@ export default function PayrollPage() {
           {/* Header */}
           <div className="mb-8">
             <div className="flex items-center gap-4 mb-2">
-              <div className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700">
-                <TrendingUp className="h-6 w-6 text-white"/>
+              <div className="p-4 rounded-xl bg-accent-100 dark:bg-accent-900/30">
+                <TrendingUp className="h-6 w-6 text-accent-700 dark:text-accent-400"/>
               </div>
               <h1 className="text-xl font-bold">Payroll Management</h1>
             </div>

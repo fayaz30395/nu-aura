@@ -2,6 +2,7 @@ package com.nulogic.application.knowledge.service;
 
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.knowledge.SpaceMember;
 import com.nulogic.domain.knowledge.WikiSpace;
 import com.nulogic.infrastructure.knowledge.repository.SpaceMemberRepository;
@@ -11,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -23,6 +23,7 @@ public class SpacePermissionService {
 
     private final SpaceMemberRepository spaceMemberRepository;
     private final WikiSpaceRepository wikiSpaceRepository;
+    private final TenantTimeService tenantTimeService;
 
     @Transactional(readOnly = true)
     public boolean canAccessSpace(UUID userId, UUID spaceId) {
@@ -63,7 +64,7 @@ public class SpacePermissionService {
 
     @Transactional
     public SpaceMember addMember(UUID spaceId, UUID userId, SpaceMember.Role role) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         Optional<SpaceMember> existing = spaceMemberRepository
                 .findByTenantIdAndSpaceIdAndUserId(tenantId, spaceId, userId);
         if (existing.isPresent()) {
@@ -77,7 +78,7 @@ public class SpacePermissionService {
                 .userId(userId)
                 .role(role)
                 .addedBy(SecurityContext.getCurrentUserId())
-                .addedAt(LocalDateTime.now())
+                .addedAt(tenantTimeService.now(tenantId))
                 .build();
         log.info("Added member {} to space {} with role {}", userId, spaceId, role);
         return spaceMemberRepository.save(member);

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nulogic.api.survey.dto.*;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.survey.*;
 import com.nulogic.domain.survey.SurveyResponse.ResponseStatus;
 import com.nulogic.domain.survey.SurveyResponse.SentimentLevel;
@@ -36,6 +37,7 @@ public class SurveyAnalyticsService {
     private final SurveyInsightRepository insightRepository;
     private final UserRepository userRepository;
     private final ObjectMapper objectMapper;
+    private final TenantTimeService tenantTimeService;
 
     // ==================== Question Management ====================
 
@@ -87,7 +89,7 @@ public class SurveyAnalyticsService {
 
     @Transactional
     public SurveyResponseDetailDto submitResponse(SubmitResponseRequest request) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         log.info("Submitting response for survey {} tenant {}", request.getSurveyId(), tenantId);
 
         Survey survey = surveyRepository.findByIdAndTenantId(request.getSurveyId(), tenantId)
@@ -102,14 +104,19 @@ public class SurveyAnalyticsService {
             }
         }
 
+        // S11-M: tenant-local submission timestamp — resolved via TenantTimeService and reused for
+        // the response builder and every per-answer "answeredAt" so the whole submission shares one
+        // consistent instant in the tenant's zone.
+        LocalDateTime submittedAt = tenantTimeService.now(tenantId);
+
         SurveyResponse response = SurveyResponse.builder()
                 .survey(survey)
                 .tenantId(tenantId)
                 .employeeId(request.getEmployeeId())
                 .anonymousId(survey.getIsAnonymous() ? generateAnonymousId() : null)
                 .status(ResponseStatus.COMPLETED)
-                .startedAt(LocalDateTime.now())
-                .submittedAt(LocalDateTime.now())
+                .startedAt(submittedAt)
+                .submittedAt(submittedAt)
                 .department(request.getDepartment())
                 .location(request.getLocation())
                 .grade(request.getGrade())
@@ -136,7 +143,7 @@ public class SurveyAnalyticsService {
             answer.setRatingAnswer(answerReq.getRatingAnswer());
             answer.setNpsScore(answerReq.getNpsScore());
             answer.setNumericAnswer(answerReq.getNumericAnswer());
-            answer.setAnsweredAt(LocalDateTime.now());
+            answer.setAnsweredAt(submittedAt);
 
             if (answerReq.getSelectedOptions() != null) {
                 try {
@@ -209,7 +216,7 @@ public class SurveyAnalyticsService {
 
     @Transactional(readOnly = true)
     public EngagementScoreDto calculateEngagementScore(UUID surveyId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         log.info("Calculating engagement score for survey {} tenant {}", surveyId, tenantId);
 
         Survey survey = surveyRepository.findByIdAndTenantId(surveyId, tenantId)
@@ -223,7 +230,8 @@ public class SurveyAnalyticsService {
         EngagementScore score = new EngagementScore();
         score.setTenantId(tenantId);
         score.setSurvey(survey);
-        score.setScoreDate(LocalDate.now());
+        // S11-M: tenant-local "today" for engagement-score stamp — resolved via TenantTimeService.
+        score.setScoreDate(tenantTimeService.today(tenantId));
         score.setScoreLevel(EngagementScore.ScoreLevel.ORGANIZATION);
         score.setScoreType(mapSurveyType(survey.getSurveyType()));
 
@@ -462,13 +470,14 @@ public class SurveyAnalyticsService {
     }
 
     public SurveyInsightDto acknowledgeInsight(UUID insightId, UUID userId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         SurveyInsight insight = insightRepository.findByIdAndTenantId(insightId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Insight not found"));
 
         insight.setAcknowledged(true);
         insight.setAcknowledgedBy(userId);
-        insight.setAcknowledgedAt(LocalDateTime.now());
+        // S11-M: tenant-local acknowledgement timestamp — resolved via TenantTimeService.
+        insight.setAcknowledgedAt(tenantTimeService.now(tenantId));
         insight.setActionStatus(SurveyInsight.ActionStatus.ACKNOWLEDGED);
 
         return mapToInsightDto(insightRepository.save(insight));

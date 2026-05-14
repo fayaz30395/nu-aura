@@ -169,7 +169,8 @@ export default function CertificateGalleryPage() {
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]"/>
               <input
-                type="text"
+                type="search"
+                aria-label="Search by course name or certificate number"
                 placeholder="Search by course name or certificate number..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}

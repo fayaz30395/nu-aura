@@ -21,9 +21,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -49,13 +47,10 @@ class CalendarControllerTest extends AbstractPostgresIntegrationTest {
     private static final UUID TENANT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
     private static final UUID USER_ID = UUID.fromString("660e8400-e29b-41d4-a716-446655440000");
     private static final UUID EMPLOYEE_ID = UUID.fromString("111e8400-e29b-41d4-a716-446655440099");
-    // Fixed, zone-explicit fixture date — anchored to Asia/Kolkata (tenant DEFAULT_ZONE) so the
-    // test does not pick up the JVM default zone via LocalDateTime.now(). This mirrors the
-    // TenantTimeService contract (DEFAULT_ZONE = Asia/Kolkata) without booting Spring's bean.
-    private static final ZoneId TENANT_ZONE = ZoneId.of("Asia/Kolkata");
-    private static final LocalDate FIXTURE_DAY = LocalDate.now(TENANT_ZONE).plusDays(1);
-    private static final LocalDateTime FIXTURE_START = FIXTURE_DAY.atTime(10, 0);
-    private static final LocalDateTime FIXTURE_END = FIXTURE_DAY.atTime(11, 0);
+    // Pinned fixture constants — zone-independent. Tests don't need a zone for these literals;
+    // the request payload is deterministic regardless of JVM default zone or tenant zone.
+    private static final LocalDateTime FIXTURE_START = LocalDateTime.of(2026, 5, 14, 10, 0);
+    private static final LocalDateTime FIXTURE_END = LocalDateTime.of(2026, 5, 14, 11, 0);
 
     @Autowired
     MockMvc mockMvc;
@@ -149,8 +144,7 @@ class CalendarControllerTest extends AbstractPostgresIntegrationTest {
         return CreateCalendarEventRequest.builder()
                 .title(title)
                 .description("Integration test event")
-                // Zone-explicit fixtures: anchor on tenant DEFAULT_ZONE (Asia/Kolkata) so the
-                // request payload does not vary with the JVM default zone.
+                // Pinned fixture times — deterministic across JVM default zones.
                 .startTime(FIXTURE_START)
                 .endTime(FIXTURE_END)
                 .allDay(false)

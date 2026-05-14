@@ -10,6 +10,7 @@ import {ArrowLeftRight, ChevronLeft, ChevronRight, Clock, Moon, Sun,} from 'luci
 import {motion} from 'framer-motion';
 import {useRouter} from 'next/navigation';
 import {CATEGORICAL_UNSET} from '@/lib/utils/categoricalPalette';
+import {formatMonthYear, formatWeekdayDate} from '@/lib/utils/format/date';
 
 function getMonthDates(year: number, month: number) {
   const firstDay = new Date(year, month, 1);
@@ -72,10 +73,7 @@ export default function MySchedulePage() {
       .slice(0, 7);
   }, [schedule, todayStr]);
 
-  const monthName = new Date(year, month).toLocaleDateString('en-US', {
-    month: 'long',
-    year: 'numeric',
-  });
+  const monthName = formatMonthYear(new Date(year, month));
 
   return (
     <AppLayout>
@@ -243,7 +241,7 @@ export default function MySchedulePage() {
                             )}
                           </p>
                           <p className="text-xs text-surface-500 dark:text-surface-400">
-                            {d.toLocaleDateString('en-US', {weekday: 'short', month: 'short', day: 'numeric'})}
+                            {formatWeekdayDate(d)}
                             {' '}
                             {formatTime(entry.startTime)} - {formatTime(entry.endTime)}
                           </p>

@@ -239,7 +239,8 @@ export default function ResourcePoolPage() {
           <div className="relative">
             <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]"/>
             <input
-              type="text"
+              type="search"
+              aria-label="Search by name, code, role"
               placeholder="Search by name, code, role..."
               value={search}
               onChange={e => setSearch(e.target.value)}

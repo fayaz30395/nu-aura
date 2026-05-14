@@ -22,6 +22,7 @@ export function TrainingTabs({activeTab, onTabChange}: TrainingTabsProps) {
         <button
           onClick={() => onTabChange('my-trainings')}
           className={`px-6 py-4 font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded ${activeTab === 'my-trainings' ? activeClass : inactiveClass}`}
+          aria-current={activeTab === 'my-trainings' ? 'page' : undefined}
         >
           <BookOpen className="h-4 w-4 inline-block mr-2"/>
           My Trainings
@@ -29,6 +30,7 @@ export function TrainingTabs({activeTab, onTabChange}: TrainingTabsProps) {
         <button
           onClick={() => onTabChange('catalog')}
           className={`px-6 py-4 font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded ${activeTab === 'catalog' ? activeClass : inactiveClass}`}
+          aria-current={activeTab === 'catalog' ? 'page' : undefined}
         >
           <GraduationCap className="h-4 w-4 inline-block mr-2"/>
           Course Catalog
@@ -36,6 +38,7 @@ export function TrainingTabs({activeTab, onTabChange}: TrainingTabsProps) {
         <button
           onClick={() => onTabChange('manage')}
           className={`px-6 py-4 font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded ${activeTab === 'manage' ? activeClass : inactiveClass}`}
+          aria-current={activeTab === 'manage' ? 'page' : undefined}
         >
           <Edit className="h-4 w-4 inline-block mr-2"/>
           Manage Programs
@@ -43,6 +46,7 @@ export function TrainingTabs({activeTab, onTabChange}: TrainingTabsProps) {
         <button
           onClick={() => onTabChange('growth-roadmap')}
           className={`px-6 py-4 font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded ${activeTab === 'growth-roadmap' ? activeClass : inactiveClass}`}
+          aria-current={activeTab === 'growth-roadmap' ? 'page' : undefined}
         >
           <Target className="h-4 w-4 inline-block mr-2"/>
           Growth Roadmap

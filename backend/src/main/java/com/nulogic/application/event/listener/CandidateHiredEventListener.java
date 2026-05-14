@@ -5,6 +5,7 @@ import com.nulogic.api.onboarding.dto.OnboardingProcessRequest;
 import com.nulogic.application.employee.service.EmployeeService;
 import com.nulogic.application.onboarding.service.OnboardingManagementService;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.compensation.SalaryRevision;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.event.recruitment.CandidateHiredEvent;
@@ -48,6 +49,7 @@ public class CandidateHiredEventListener {
     private final OnboardingManagementService onboardingService;
     private final SalaryStructureRepository salaryStructureRepository;
     private final SalaryRevisionRepository salaryRevisionRepository;
+    private final TenantTimeService tenantTimeService;
 
     /**
      * Handles the candidate hired event by:
@@ -77,7 +79,7 @@ public class CandidateHiredEventListener {
                 OnboardingProcessRequest onboardingRequest = new OnboardingProcessRequest();
                 onboardingRequest.setEmployeeId(employeeId);
                 onboardingRequest.setProcessType(OnboardingProcess.ProcessType.ONBOARDING);
-                onboardingRequest.setStartDate(event.getProposedJoiningDate() != null ? event.getProposedJoiningDate() : LocalDate.now());
+                onboardingRequest.setStartDate(event.getProposedJoiningDate() != null ? event.getProposedJoiningDate() : tenantTimeService.today(tenantId));
                 // Expected completion is 30 days from start
                 if (event.getProposedJoiningDate() != null) {
                     onboardingRequest.setExpectedCompletionDate(event.getProposedJoiningDate().plusDays(30));
@@ -100,7 +102,7 @@ public class CandidateHiredEventListener {
             if (event.getOfferedCtc() != null && event.getOfferedCtc().compareTo(BigDecimal.ZERO) > 0) {
                 try {
                     LocalDate effectiveDate = event.getProposedJoiningDate() != null
-                            ? event.getProposedJoiningDate() : LocalDate.now();
+                            ? event.getProposedJoiningDate() : tenantTimeService.today(tenantId);
 
                     BigDecimal totalCtc = event.getOfferedCtc();
                     BigDecimal basic = totalCtc.multiply(new BigDecimal("0.40"))
@@ -179,7 +181,7 @@ public class CandidateHiredEventListener {
         request.setDesignation(event.getOfferedDesignation());
         request.setDepartmentId(event.getDepartmentId());
         request.setEmploymentType(mapEmploymentType(event.getEmploymentType()));
-        request.setJoiningDate(event.getProposedJoiningDate() != null ? event.getProposedJoiningDate() : LocalDate.now());
+        request.setJoiningDate(event.getProposedJoiningDate() != null ? event.getProposedJoiningDate() : tenantTimeService.today(event.getTenantId()));
 
         // Generate a temporary password - in production this should use secure generation or SSO
         String temporaryPassword = generateTemporaryPassword();

@@ -6,6 +6,8 @@ import com.nulogic.api.preboarding.dto.UpdateBankDetailsRequest;
 import com.nulogic.api.preboarding.dto.UpdatePersonalInfoRequest;
 import com.nulogic.application.preboarding.service.PreboardingService;
 import com.nulogic.common.security.RequiresPermission;
+import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.preboarding.PreboardingCandidate;
 import com.nulogic.domain.preboarding.PreboardingCandidate.PreboardingStatus;
 import jakarta.validation.Valid;
@@ -28,6 +30,7 @@ import static com.nulogic.common.security.Permission.*;
 public class PreboardingController {
 
     private final PreboardingService preboardingService;
+    private final TenantTimeService tenantTimeService;
 
     // ============ ADMIN ENDPOINTS ============
 
@@ -70,7 +73,8 @@ public class PreboardingController {
     @RequiresPermission(PREBOARDING_VIEW)
     public ResponseEntity<List<PreboardingCandidateResponse>> getUpcomingJoiners(
             @RequestParam(defaultValue = "7") int days) {
-        LocalDate startDate = LocalDate.now();
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        LocalDate startDate = tenantTimeService.today(tenantId);
         LocalDate endDate = startDate.plusDays(days);
         List<PreboardingCandidateResponse> candidates = preboardingService
                 .getUpcomingJoiners(startDate, endDate)

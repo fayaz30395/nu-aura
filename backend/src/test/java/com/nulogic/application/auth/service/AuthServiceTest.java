@@ -12,6 +12,7 @@ import com.nulogic.common.exception.ResourceNotFoundException;
 import com.nulogic.common.exception.ValidationException;
 import com.nulogic.common.security.AccountLockoutService;
 import com.nulogic.common.security.JwtTokenProvider;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.user.User;
 import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
@@ -35,6 +36,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.*;
@@ -85,6 +87,9 @@ class AuthServiceTest {
     @Mock
     private PasswordPolicyConfig passwordPolicyConfig;
 
+    @Mock
+    private TenantTimeService tenantTimeService;
+
     @InjectMocks
     private AuthService authService;
 
@@ -119,6 +124,10 @@ class AuthServiceTest {
         ReflectionTestUtils.setField(authService, "allowedDomain", "nulogic.io");
         when(implicitRoleService.getImplicitRoles(any(UUID.class), any(UUID.class))).thenReturn(Set.of());
         when(implicitRoleService.getImplicitPermissions(any(UUID.class), any(UUID.class))).thenReturn(Set.of());
+        // Default tenant-zone stub for tests that don't care about timezone propagation.
+        // Specific timezone scenarios (see TenantTimezoneOnLoginTests) override this with
+        // their own when(...).thenReturn(...) — Mockito LENIENT mode lets these coexist.
+        when(tenantTimeService.zoneFor(any())).thenReturn(ZoneId.of("Asia/Kolkata"));
     }
 
     @Nested
@@ -435,6 +444,111 @@ class AuthServiceTest {
         void shouldLogoutSuccessfully() {
             assertThatCode(() -> authService.logout("any-token"))
                     .doesNotThrowAnyException();
+        }
+    }
+
+    /**
+     * Verifies that {@link AuthService#login(LoginRequest)} propagates the tenant's
+     * IANA timezone identifier into {@link AuthResponse#getTenantTimezone()} by
+     * delegating to {@link TenantTimeService#zoneFor(UUID)}. This is the server-side
+     * half of the frontend tenant-zone propagation design — the frontend hydrates a
+     * single source of truth for tenant-local time formatting from this field
+     * (see docs/architecture/frontend-tenant-zone-propagation-design.md).
+     *
+     * <p>Coverage matrix:
+     * <ul>
+     *   <li>Standard tenant with a non-IST zone (America/New_York) flows through unchanged.</li>
+     *   <li>Missing tenant falls back to the resolver's default ("Asia/Kolkata"). The
+     *       service-level resolver swallows the lookup miss; AuthResponse must surface
+     *       the default rather than null.</li>
+     *   <li>Mid-flight timezone update: invalidate() forces re-load, and the next login
+     *       reflects the new zone — proving the response is never served from a stale
+     *       cache after an admin tenant-settings change.</li>
+     * </ul>
+     */
+    @Nested
+    @DisplayName("Tenant Timezone Propagation on Login")
+    class TenantTimezoneOnLoginTests {
+
+        private LoginRequest buildLoginRequest() {
+            LoginRequest request = new LoginRequest();
+            request.setEmail("test@example.com");
+            request.setPassword("password123");
+            request.setTenantId(tenantId);
+            return request;
+        }
+
+        private void stubLoginCollaborators() {
+            Authentication authentication = mock(Authentication.class);
+            when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+                    .thenReturn(authentication);
+            when(userRepository.findByEmailAndTenantId("test@example.com", tenantId))
+                    .thenReturn(Optional.of(user));
+            when(userRepository.save(any(User.class)))
+                    .thenAnswer(invocation -> invocation.getArgument(0));
+            when(userAppAccessRepository.findByUserIdAndAppCodeWithPermissions(any(), any()))
+                    .thenReturn(Optional.empty());
+            when(userAppAccessRepository.findUserApplications(any()))
+                    .thenReturn(Collections.emptyList());
+            when(tokenProvider.generateTokenWithAppPermissions(any(), any(), any(), any(), any(), any(),
+                    any(), any(), any(), any()))
+                    .thenReturn("access-token");
+            when(tokenProvider.generateRefreshToken(any(), any()))
+                    .thenReturn("refresh-token");
+            when(employeeRepository.findByUserIdAndTenantId(userId, tenantId))
+                    .thenReturn(Optional.of(employee));
+        }
+
+        @Test
+        @DisplayName("Standard tenant with America/New_York zone → response.tenantTimezone = America/New_York")
+        void shouldPropagateNonDefaultTenantZone() {
+            stubLoginCollaborators();
+            when(tenantTimeService.zoneFor(tenantId)).thenReturn(ZoneId.of("America/New_York"));
+
+            AuthResponse response = authService.login(buildLoginRequest());
+
+            assertThat(response).isNotNull();
+            assertThat(response.getTenantTimezone()).isEqualTo("America/New_York");
+            verify(tenantTimeService).zoneFor(tenantId);
+        }
+
+        @Test
+        @DisplayName("Missing tenant zone → response.tenantTimezone falls back to DEFAULT_ZONE (Asia/Kolkata)")
+        void shouldFallBackToDefaultZoneWhenTenantMissing() {
+            stubLoginCollaborators();
+            // TenantTimeService#zoneFor swallows a missing/unknown tenant and returns
+            // its own DEFAULT_ZONE ("Asia/Kolkata"); AuthService must surface that
+            // value verbatim rather than null.
+            when(tenantTimeService.zoneFor(tenantId)).thenReturn(ZoneId.of("Asia/Kolkata"));
+
+            AuthResponse response = authService.login(buildLoginRequest());
+
+            assertThat(response).isNotNull();
+            assertThat(response.getTenantTimezone()).isEqualTo("Asia/Kolkata");
+            verify(tenantTimeService).zoneFor(tenantId);
+        }
+
+        @Test
+        @DisplayName("Tenant timezone updated mid-flight → next login reflects new zone after invalidate()")
+        void shouldReflectUpdatedTenantZoneAfterInvalidate() {
+            stubLoginCollaborators();
+            // First login: tenant configured to Asia/Kolkata.
+            when(tenantTimeService.zoneFor(tenantId)).thenReturn(ZoneId.of("Asia/Kolkata"));
+            AuthResponse first = authService.login(buildLoginRequest());
+            assertThat(first.getTenantTimezone()).isEqualTo("Asia/Kolkata");
+
+            // Admin updates tenant.timezone → Europe/London; settings flow invalidates
+            // the cached entry so the next resolver call re-reads from DB and returns
+            // the new zone.
+            tenantTimeService.invalidate(tenantId);
+            when(tenantTimeService.zoneFor(tenantId)).thenReturn(ZoneId.of("Europe/London"));
+
+            AuthResponse second = authService.login(buildLoginRequest());
+
+            assertThat(second).isNotNull();
+            assertThat(second.getTenantTimezone()).isEqualTo("Europe/London");
+            verify(tenantTimeService).invalidate(tenantId);
+            verify(tenantTimeService, times(2)).zoneFor(tenantId);
         }
     }
 }

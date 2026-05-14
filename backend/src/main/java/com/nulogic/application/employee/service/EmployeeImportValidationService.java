@@ -4,6 +4,7 @@ import com.nulogic.api.employee.dto.EmployeeImportPreview;
 import com.nulogic.api.employee.dto.EmployeeImportRow;
 import com.nulogic.api.employee.dto.ImportValidationError;
 import com.nulogic.common.security.SecurityContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.customfield.CustomFieldDefinition;
 import com.nulogic.domain.employee.Department;
 import com.nulogic.domain.employee.Employee;
@@ -43,12 +44,14 @@ public class EmployeeImportValidationService {
     private final EmployeeRepository employeeRepository;
     private final DepartmentRepository departmentRepository;
     private final CustomFieldDefinitionRepository customFieldDefinitionRepository;
+    private final TenantTimeService tenantTimeService;
 
     /**
      * Validate all import rows and return a preview with validation results.
      */
     public EmployeeImportPreview validateAndPreview(List<EmployeeImportRow> rows) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
+        LocalDate today = tenantTimeService.today(tenantId);
         List<ImportValidationError> errors = new ArrayList<>();
         List<EmployeeImportPreview.EmployeeImportRowPreview> rowPreviews = new ArrayList<>();
 
@@ -77,7 +80,8 @@ public class EmployeeImportValidationService {
                     existingWorkEmails,
                     departmentCodeToId,
                     employeeCodeToId,
-                    customFieldDefinitions
+                    customFieldDefinitions,
+                    today
             );
 
             boolean isValid = rowErrors.isEmpty();
@@ -137,7 +141,8 @@ public class EmployeeImportValidationService {
             Set<String> existingWorkEmails,
             Map<String, UUID> departmentCodeToId,
             Map<String, UUID> employeeCodeToId,
-            Map<String, CustomFieldDefinition> customFieldDefinitions
+            Map<String, CustomFieldDefinition> customFieldDefinitions,
+            LocalDate today
     ) {
         List<ImportValidationError> errors = new ArrayList<>();
         int rowNum = row.getRowNumber();
@@ -235,7 +240,7 @@ public class EmployeeImportValidationService {
         // Business rule validations
         if (isValidDate(row.getJoiningDate())) {
             LocalDate joiningDate = LocalDate.parse(row.getJoiningDate());
-            if (joiningDate.isAfter(LocalDate.now().plusYears(1))) {
+            if (joiningDate.isAfter(today.plusYears(1))) {
                 errors.add(ImportValidationError.builder()
                         .rowNumber(rowNum)
                         .field("joiningDate")
@@ -248,7 +253,7 @@ public class EmployeeImportValidationService {
 
         if (!isBlank(row.getDateOfBirth()) && isValidDate(row.getDateOfBirth())) {
             LocalDate dob = LocalDate.parse(row.getDateOfBirth());
-            int age = java.time.Period.between(dob, LocalDate.now()).getYears();
+            int age = java.time.Period.between(dob, today).getYears();
             if (age < 18) {
                 errors.add(ImportValidationError.builder()
                         .rowNumber(rowNum)

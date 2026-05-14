@@ -416,8 +416,8 @@ export default function ShiftsManagementPage() {
             </ModalHeader>
             <ModalBody className="space-y-6">
                   {/* Basic Information */}
-                  <div className="border-b border-[var(--border-main)] pb-4">
-                    <h3 className="text-lg font-medium text-[var(--text-primary)] mb-4">Basic Information</h3>
+                  <section aria-labelledby="shift-basic-info-heading" className="border-b border-[var(--border-main)] pb-4">
+                    <h3 id="shift-basic-info-heading" className="text-lg font-medium text-[var(--text-primary)] mb-4">Basic Information</h3>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label htmlFor="shift-code" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
@@ -491,11 +491,11 @@ export default function ShiftsManagementPage() {
                         placeholder="Brief description of this shift..."
                       />
                     </div>
-                  </div>
+                  </section>
 
                   {/* Shift Timing */}
-                  <div className="border-b border-[var(--border-main)] pb-4">
-                    <h3 className="text-lg font-medium text-[var(--text-primary)] mb-4">Shift Timing</h3>
+                  <section aria-labelledby="shift-timing-heading" className="border-b border-[var(--border-main)] pb-4">
+                    <h3 id="shift-timing-heading" className="text-lg font-medium text-[var(--text-primary)] mb-4">Shift Timing</h3>
                     <div className="grid grid-cols-3 gap-4">
                       <div>
                         <label htmlFor="shift-start-time" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
@@ -560,11 +560,11 @@ export default function ShiftsManagementPage() {
                         />
                       </div>
                     </div>
-                  </div>
+                  </section>
 
                   {/* Attendance Rules */}
-                  <div className="border-b border-[var(--border-main)] pb-4">
-                    <h3 className="text-lg font-medium text-[var(--text-primary)] mb-4">Attendance Rules</h3>
+                  <section aria-labelledby="shift-attendance-rules-heading" className="border-b border-[var(--border-main)] pb-4">
+                    <h3 id="shift-attendance-rules-heading" className="text-lg font-medium text-[var(--text-primary)] mb-4">Attendance Rules</h3>
                     <div className="grid grid-cols-3 gap-4">
                       <div>
                         <label htmlFor="shift-grace-period" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
@@ -603,11 +603,11 @@ export default function ShiftsManagementPage() {
                         />
                       </div>
                     </div>
-                  </div>
+                  </section>
 
                   {/* Shift Properties */}
-                  <div className="border-b border-[var(--border-main)] pb-4">
-                    <h3 className="text-lg font-medium text-[var(--text-primary)] mb-4">Shift Properties</h3>
+                  <section aria-labelledby="shift-properties-heading" className="border-b border-[var(--border-main)] pb-4">
+                    <h3 id="shift-properties-heading" className="text-lg font-medium text-[var(--text-primary)] mb-4">Shift Properties</h3>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-4">
                         <label className="flex items-center cursor-pointer">
@@ -653,7 +653,7 @@ export default function ShiftsManagementPage() {
                         />
                       </div>
                     </div>
-                  </div>
+                  </section>
 
             </ModalBody>
             <ModalFooter>

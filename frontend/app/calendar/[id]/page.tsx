@@ -136,7 +136,7 @@ export default function EventDetailPage() {
         </div>
 
         {/* Time Card */}
-        <div className="bg-gradient-to-br from-accent-500 to-accent-700 rounded-lg p-6 text-white">
+        <div className="bg-accent-100 dark:bg-accent-900/30 border border-accent-200 dark:border-accent-800 rounded-lg p-6 text-accent-900 dark:text-accent-100">
           <div className="flex items-center gap-4 mb-4">
             <Calendar className="h-6 w-6"/>
             <h2 className="text-xl font-semibold">Event Time</h2>

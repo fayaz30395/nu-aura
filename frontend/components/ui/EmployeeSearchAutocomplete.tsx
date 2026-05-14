@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useId, useRef, useState} from 'react';
 import {Loader2, Search, X} from 'lucide-react';
 import {Employee} from '@/lib/types/hrms/employee';
 import {employeeService} from '@/lib/services/hrms/employee.service';
@@ -46,6 +46,9 @@ export function EmployeeSearchAutocomplete({
   const inputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const debounceRef = useRef<NodeJS.Timeout>();
+  const reactId = useId();
+  const inputId = `${reactId}-employee-search-input`;
+  const resultsId = `${reactId}-employee-search-results`;
 
   const searchEmployees = useCallback(async (searchQuery: string) => {
     if (!searchQuery.trim()) {
@@ -199,8 +202,8 @@ export function EmployeeSearchAutocomplete({
               disabled={disabled}
               role="combobox"
               aria-expanded={isOpen}
-              aria-controls="employee-search-results"
-              id="employee-search-input"
+              aria-controls={resultsId}
+              id={inputId}
               className="w-full pl-10 pr-4 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 disabled:opacity-50 disabled:cursor-not-allowed"
             />
           </>
@@ -209,7 +212,7 @@ export function EmployeeSearchAutocomplete({
         {isOpen && results.length > 0 && !value && (
           <div
             ref={dropdownRef}
-            id="employee-search-results"
+            id={resultsId}
             role="listbox"
             className="absolute z-50 w-full mt-1 bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg shadow-[var(--shadow-dropdown)] max-h-60 overflow-auto"
           >

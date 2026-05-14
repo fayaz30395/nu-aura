@@ -3,6 +3,7 @@
 import React, {memo} from 'react';
 import Link from 'next/link';
 import {motion} from 'framer-motion';
+import {format} from 'date-fns';
 import {ArrowRight, CalendarDays, ClipboardCheck, Coffee, History, Users} from 'lucide-react';
 import {Card, CardContent} from '@/components/ui/Card';
 import {AttendanceRecord, Holiday} from '@/lib/types/hrms/attendance';
@@ -52,7 +53,7 @@ export const AttendanceQuickActions = memo(function AttendanceQuickActions() {
         >
           <Link href={action.href} className="block group">
             <Card
-              className="skeuo-card card-interactive border border-[var(--border-main)] hover:shadow-[var(--shadow-dropdown)] transition-all cursor-pointer hover:-translate-y-0.5">
+              className="skeuo-card card-interactive border border-[var(--border-main)]">
               <CardContent className="p-4">
                 <div className="flex items-center gap-4">
                   <div
@@ -108,7 +109,7 @@ export const AttendanceUpcomingHolidays = memo(function AttendanceUpcomingHolida
                 <div>
                   <div className="text-xs font-semibold text-[var(--text-primary)]">{h.holidayName}</div>
                   <div className="text-caption">
-                    {hDate.toLocaleDateString('en-US', {weekday: 'short', month: 'short', day: 'numeric'})}
+                    {format(hDate, 'EEE, MMM d')}
                   </div>
                 </div>
                 <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${

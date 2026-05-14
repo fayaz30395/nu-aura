@@ -577,7 +577,7 @@ export default function AdminEmployeesPage() {
                           {isEditingRoles && (
                             <tr className="bg-[var(--bg-surface)]">
                               <td colSpan={7} className="p-0">
-                                <div className="border-l-2 border-accent-500 bg-[var(--bg-surface)] px-4 py-4">
+                                <div className="border border-accent-200 dark:border-accent-700 bg-accent-50 dark:bg-accent-900/20 rounded-lg px-4 py-4">
                                   <div className="flex items-center gap-2 mb-3 text-sm font-semibold text-[var(--text-primary)]">
                                     <Shield className="h-4 w-4 text-accent-500"/>
                                     <span>Edit Roles</span>

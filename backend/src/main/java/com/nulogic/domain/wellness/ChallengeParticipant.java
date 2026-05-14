@@ -1,6 +1,8 @@
 package com.nulogic.domain.wellness;
 
 import com.nulogic.common.entity.TenantAware;
+import com.nulogic.common.util.TenantTimestamp;
+import com.nulogic.common.util.TimeAuditingEntityListener;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -15,6 +17,7 @@ import java.util.UUID;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "challenge_participants")
+@EntityListeners(TimeAuditingEntityListener.class)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -36,6 +39,7 @@ public class ChallengeParticipant extends TenantAware {
     @Column(name = "team_name")
     private String teamName;
 
+    @TenantTimestamp
     @Column(name = "joined_at")
     private LocalDateTime joinedAt;
 
@@ -80,11 +84,6 @@ public class ChallengeParticipant extends TenantAware {
     @OneToMany(mappedBy = "participant", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<HealthLog> healthLogs = new ArrayList<>();
-
-    @PrePersist
-    protected void onCreate() {
-        joinedAt = LocalDateTime.now();
-    }
 
     public enum ParticipationStatus {
         ACTIVE,

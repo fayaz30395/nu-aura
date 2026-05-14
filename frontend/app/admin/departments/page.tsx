@@ -336,8 +336,8 @@ export default function DepartmentsPage() {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="flex items-center justify-between mt-4">
-            <span className="text-xs text-[var(--text-muted)]">
+          <nav aria-label="Pagination" className="flex items-center justify-between mt-4">
+            <span className="text-xs text-[var(--text-muted)]" aria-current="page">
               Page {page + 1} of {totalPages}
             </span>
             <div className="flex items-center gap-2">
@@ -358,7 +358,7 @@ export default function DepartmentsPage() {
                 <ChevronRight className="h-4 w-4"/>
               </button>
             </div>
-          </div>
+          </nav>
         )}
 
         {/* Create / Edit Modal */}
@@ -422,15 +422,15 @@ export default function DepartmentsPage() {
 
         {/* Delete Confirmation */}
         <Modal isOpen={!!deleteTarget} onClose={() => setDeleteTarget(null)} size="sm">
-          <ModalHeader onClose={() => setDeleteTarget(null)}>Delete Department</ModalHeader>
+          <ModalHeader onClose={() => setDeleteTarget(null)}>Delete Department?</ModalHeader>
           <ModalBody>
             <div className="flex items-start gap-2">
               <div className="p-2 rounded-lg bg-danger-100 dark:bg-danger-900/30">
                 <Trash2 className="h-5 w-5 text-danger-600"/>
               </div>
               <p className="text-sm text-[var(--text-secondary)] mt-1">
-                Delete <strong>{deleteTarget?.name}</strong>? This cannot be undone. Departments with active
-                employees cannot be deleted.
+                This action cannot be undone. <strong>{deleteTarget?.name}</strong> will be permanently deleted.
+                Departments with active employees cannot be deleted.
               </p>
             </div>
           </ModalBody>

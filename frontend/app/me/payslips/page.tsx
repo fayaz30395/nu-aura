@@ -13,7 +13,7 @@ import {createLogger} from '@/lib/utils/logger';
 import {formatCurrency} from '@/lib/utils';
 import {Stat} from '@/components/ui/Stat';
 import {SkeletonStatCard, SkeletonTable} from '@/components/ui/Skeleton';
-import {formatDate as formatDateCanonical} from '@/lib/utils/format/date';
+import {formatDate as formatDateCanonical, formatMonthYear as formatMonthYearCanonical} from '@/lib/utils/format/date';
 
 const log = createLogger('PayslipsPage');
 
@@ -68,12 +68,7 @@ export default function MyPayslipsPage() {
 
   const formatDate = (date: string) => formatDateCanonical(date);
 
-  const formatMonthYear = (date: string) => {
-    return new Date(date).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-    });
-  };
+  const formatMonthYear = (date: string) => formatMonthYearCanonical(date);
 
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
 

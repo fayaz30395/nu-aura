@@ -132,7 +132,8 @@ export default function LinkedInPostsPage() {
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[var(--text-muted)] w-5 h-5"/>
               <input
-                type="text"
+                type="search"
+                aria-label="Search by content or author"
                 placeholder="Search by content or author..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}

@@ -796,10 +796,10 @@ export default function BenefitsPage() {
         )}
 
         {/* Open Enrollment Banner */}
-        <Card className="bg-gradient-to-r from-accent-500 to-accent-700">
+        <Card className="bg-accent-100 dark:bg-accent-900/30 border-accent-200 dark:border-accent-800">
           <CardContent className="p-4">
             <div className="row-between">
-              <div className="text-white">
+              <div className="text-accent-900 dark:text-accent-100">
                 <h3 className="text-base font-semibold">Open Enrollment Period</h3>
                 <p className="mt-1 opacity-90">
                   March 1 - March

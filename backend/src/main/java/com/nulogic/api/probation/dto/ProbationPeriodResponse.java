@@ -63,6 +63,13 @@ public class ProbationPeriodResponse {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
+    /**
+     * Maps the entity to its response shape. The three time-derived fields —
+     * {@code daysRemaining}, {@code isOverdue}, {@code isEvaluationDue} — depend
+     * on the tenant-zoned "today" and are populated by the service layer (see
+     * {@code ProbationService.enrichResponse}), which holds the
+     * {@code TenantTimeService}. They default to {@code 0}/{@code false} here.
+     */
     public static ProbationPeriodResponse fromEntity(ProbationPeriod entity) {
         return ProbationPeriodResponse.builder()
                 .id(entity.getId())
@@ -84,9 +91,6 @@ public class ProbationPeriodResponse {
                 .terminationReason(entity.getTerminationReason())
                 .nextEvaluationDate(entity.getNextEvaluationDate())
                 .evaluationFrequencyDays(entity.getEvaluationFrequencyDays())
-                .daysRemaining(entity.getDaysRemaining())
-                .isOverdue(entity.isOverdue())
-                .isEvaluationDue(entity.isEvaluationDue())
                 .createdAt(entity.getCreatedAt())
                 .updatedAt(entity.getUpdatedAt())
                 .build();

@@ -8,6 +8,7 @@ import com.nulogic.application.workflow.service.WorkflowService;
 import com.nulogic.common.exception.ValidationException;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.travel.TravelRequest;
 import com.nulogic.domain.travel.TravelRequest.TravelStatus;
 import com.nulogic.domain.workflow.WorkflowDefinition;
@@ -33,18 +34,21 @@ public class TravelService implements ApprovalCallbackHandler {
     private final TravelRequestRepository travelRequestRepository;
     private final EmployeeRepository employeeRepository;
     private final WorkflowService workflowService;
+    private final TenantTimeService tenantTimeService;
 
     public TravelService(TravelRequestRepository travelRequestRepository,
                          EmployeeRepository employeeRepository,
-                         @org.springframework.context.annotation.Lazy WorkflowService workflowService) {
+                         @org.springframework.context.annotation.Lazy WorkflowService workflowService,
+                         TenantTimeService tenantTimeService) {
         this.travelRequestRepository = travelRequestRepository;
         this.employeeRepository = employeeRepository;
         this.workflowService = workflowService;
+        this.tenantTimeService = tenantTimeService;
     }
 
     @Transactional
     public TravelRequestDto createRequest(CreateTravelRequest request) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         UUID employeeId = SecurityContext.getCurrentEmployeeId();
         if (employeeId == null) {
             throw new IllegalStateException("Employee profile not found for current user — cannot submit travel request");
@@ -86,7 +90,7 @@ public class TravelService implements ApprovalCallbackHandler {
 
     @Transactional
     public TravelRequestDto updateRequest(UUID requestId, CreateTravelRequest request) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         TravelRequest travelRequest = travelRequestRepository.findByIdAndTenantId(requestId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Travel request not found"));
@@ -125,7 +129,7 @@ public class TravelService implements ApprovalCallbackHandler {
 
     @Transactional
     public TravelRequestDto submitRequest(UUID requestId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         TravelRequest travelRequest = travelRequestRepository.findByIdAndTenantId(requestId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Travel request not found"));
@@ -135,7 +139,7 @@ public class TravelService implements ApprovalCallbackHandler {
         }
 
         travelRequest.setStatus(TravelStatus.SUBMITTED);
-        travelRequest.setSubmittedDate(LocalDate.now());
+        travelRequest.setSubmittedDate(tenantTimeService.today(tenantId));
 
         TravelRequest saved = travelRequestRepository.save(travelRequest);
         log.info("Travel request submitted: {}", saved.getRequestNumber());
@@ -148,7 +152,7 @@ public class TravelService implements ApprovalCallbackHandler {
 
     @Transactional
     public TravelRequestDto approveRequest(UUID requestId, String comments) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         UUID approverId = SecurityContext.getCurrentUserId();
 
         TravelRequest travelRequest = travelRequestRepository.findByIdAndTenantId(requestId, tenantId)
@@ -160,7 +164,7 @@ public class TravelService implements ApprovalCallbackHandler {
 
         travelRequest.setStatus(TravelStatus.APPROVED);
         travelRequest.setApprovedBy(approverId);
-        travelRequest.setApprovedDate(LocalDate.now());
+        travelRequest.setApprovedDate(tenantTimeService.today(tenantId));
         travelRequest.setAdvanceApproved(travelRequest.getAdvanceRequired());
 
         TravelRequest saved = travelRequestRepository.save(travelRequest);
@@ -170,7 +174,7 @@ public class TravelService implements ApprovalCallbackHandler {
 
     @Transactional
     public TravelRequestDto rejectRequest(UUID requestId, String reason) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         UUID approverId = SecurityContext.getCurrentUserId();
 
         TravelRequest travelRequest = travelRequestRepository.findByIdAndTenantId(requestId, tenantId)
@@ -182,7 +186,7 @@ public class TravelService implements ApprovalCallbackHandler {
 
         travelRequest.setStatus(TravelStatus.REJECTED);
         travelRequest.setApprovedBy(approverId);
-        travelRequest.setApprovedDate(LocalDate.now());
+        travelRequest.setApprovedDate(tenantTimeService.today(tenantId));
         travelRequest.setRejectionReason(reason);
 
         TravelRequest saved = travelRequestRepository.save(travelRequest);
@@ -192,7 +196,7 @@ public class TravelService implements ApprovalCallbackHandler {
 
     @Transactional
     public TravelRequestDto cancelRequest(UUID requestId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         TravelRequest travelRequest = travelRequestRepository.findByIdAndTenantId(requestId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Travel request not found"));
@@ -210,7 +214,7 @@ public class TravelService implements ApprovalCallbackHandler {
 
     @Transactional
     public void deleteRequest(UUID requestId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         TravelRequest travelRequest = travelRequestRepository.findByIdAndTenantId(requestId, tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("Travel request not found: " + requestId));
@@ -225,7 +229,7 @@ public class TravelService implements ApprovalCallbackHandler {
 
     @Transactional(readOnly = true)
     public TravelRequestDto getById(UUID requestId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         TravelRequest travelRequest = travelRequestRepository.findByIdAndTenantId(requestId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Travel request not found"));
         return TravelRequestDto.fromEntity(travelRequest, getEmployeeFullName(travelRequest.getEmployeeId(), tenantId));
@@ -233,7 +237,7 @@ public class TravelService implements ApprovalCallbackHandler {
 
     @Transactional(readOnly = true)
     public Page<TravelRequestDto> getMyRequests(Pageable pageable) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         UUID employeeId = SecurityContext.getCurrentEmployeeId();
         return travelRequestRepository.findByEmployeeIdAndTenantId(employeeId, tenantId, pageable)
                 .map(req -> TravelRequestDto.fromEntity(req, getEmployeeFullName(req.getEmployeeId(), tenantId)));
@@ -241,7 +245,7 @@ public class TravelService implements ApprovalCallbackHandler {
 
     @Transactional(readOnly = true)
     public Page<TravelRequestDto> getPendingApprovals(Pageable pageable) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         return travelRequestRepository.findByTenantIdAndStatusIn(
                 tenantId,
                 List.of(TravelStatus.SUBMITTED, TravelStatus.PENDING_APPROVAL),
@@ -251,7 +255,7 @@ public class TravelService implements ApprovalCallbackHandler {
 
     @Transactional(readOnly = true)
     public Page<TravelRequestDto> getAllRequests(TravelStatus status, Pageable pageable) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         if (status != null) {
             return travelRequestRepository.findByTenantIdAndStatus(tenantId, status, pageable)
                     .map(req -> TravelRequestDto.fromEntity(req, getEmployeeFullName(req.getEmployeeId(), tenantId)));
@@ -262,8 +266,8 @@ public class TravelService implements ApprovalCallbackHandler {
 
     @Transactional(readOnly = true)
     public List<TravelRequestDto> getUpcomingTravel() {
-        UUID tenantId = TenantContext.getCurrentTenant();
-        LocalDate today = LocalDate.now();
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        LocalDate today = tenantTimeService.today(tenantId);
         LocalDate nextMonth = today.plusMonths(1);
         return travelRequestRepository.findByTenantIdAndDepartureDateBetweenAndStatus(
                         tenantId, today, nextMonth, TravelStatus.APPROVED
@@ -296,7 +300,7 @@ public class TravelService implements ApprovalCallbackHandler {
 
         travelRequest.setStatus(TravelStatus.APPROVED);
         travelRequest.setApprovedBy(approvedBy);
-        travelRequest.setApprovedDate(LocalDate.now());
+        travelRequest.setApprovedDate(tenantTimeService.today(tenantId));
         travelRequest.setAdvanceApproved(travelRequest.getAdvanceRequired());
         travelRequestRepository.save(travelRequest);
     }
@@ -319,7 +323,7 @@ public class TravelService implements ApprovalCallbackHandler {
 
         travelRequest.setStatus(TravelStatus.REJECTED);
         travelRequest.setApprovedBy(rejectedBy);
-        travelRequest.setApprovedDate(LocalDate.now());
+        travelRequest.setApprovedDate(tenantTimeService.today(tenantId));
         travelRequest.setRejectionReason(reason);
         travelRequestRepository.save(travelRequest);
     }

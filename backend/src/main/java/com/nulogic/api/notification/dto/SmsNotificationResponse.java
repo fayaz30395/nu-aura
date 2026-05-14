@@ -56,25 +56,34 @@ public class SmsNotificationResponse {
      */
     private boolean mockMode;
 
-    public static SmsNotificationResponse success(String messageSid, String status, String toPhone, String fromPhone, boolean mockMode) {
+    /**
+     * Build a success response. {@code sentAt} must be supplied by the caller using a
+     * tenant-aware clock (e.g. {@code TenantTimeService.now(tenantId)}). DTOs cannot
+     * inject beans, so the timestamp is passed in rather than resolved here.
+     */
+    public static SmsNotificationResponse success(String messageSid, String status, String toPhone, String fromPhone, boolean mockMode, LocalDateTime sentAt) {
         return SmsNotificationResponse.builder()
                 .success(true)
                 .messageSid(messageSid)
                 .status(status)
                 .toPhoneNumber(toPhone)
                 .fromPhoneNumber(fromPhone)
-                .sentAt(LocalDateTime.now())
+                .sentAt(sentAt)
                 .mockMode(mockMode)
                 .build();
     }
 
-    public static SmsNotificationResponse failure(String errorMessage, String toPhone) {
+    /**
+     * Build a failure response. {@code sentAt} must be supplied by the caller using a
+     * tenant-aware clock (e.g. {@code TenantTimeService.now(tenantId)}).
+     */
+    public static SmsNotificationResponse failure(String errorMessage, String toPhone, LocalDateTime sentAt) {
         return SmsNotificationResponse.builder()
                 .success(false)
                 .status("FAILED")
                 .toPhoneNumber(toPhone)
                 .errorMessage(errorMessage)
-                .sentAt(LocalDateTime.now())
+                .sentAt(sentAt)
                 .build();
     }
 }

@@ -5,6 +5,7 @@ import com.nulogic.application.webhook.service.WebhookDeliveryService;
 import com.nulogic.application.webhook.service.WebhookService;
 import com.nulogic.common.metrics.MetricsService;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.webhook.Webhook;
 import com.nulogic.domain.webhook.WebhookDelivery;
 import com.nulogic.domain.webhook.WebhookEventType;
@@ -22,8 +23,10 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -49,6 +52,8 @@ class WebhookDeliveryServiceTest {
     private MetricsService metricsService;
     @Mock
     private RestTemplate restTemplate;
+    @Mock
+    private TenantTimeService tenantTimeService;
     private WebhookDeliveryService webhookDeliveryService;
     private ObjectMapper objectMapper;
     private MeterRegistry meterRegistry;
@@ -57,6 +62,7 @@ class WebhookDeliveryServiceTest {
     void setUp() {
         objectMapper = new ObjectMapper();
         meterRegistry = new SimpleMeterRegistry();
+        lenient().when(tenantTimeService.now(any())).thenReturn(LocalDateTime.now());
         webhookDeliveryService = new WebhookDeliveryService(
                 webhookRepository,
                 deliveryRepository,
@@ -64,8 +70,12 @@ class WebhookDeliveryServiceTest {
                 objectMapper,
                 meterRegistry,
                 metricsService,
+                tenantTimeService,
                 restTemplate
         );
+        // The production service builds deliveryRestTemplate in @PostConstruct (not run in unit tests);
+        // inject the mock RestTemplate into that field so dispatchEvent() can issue HTTP calls.
+        ReflectionTestUtils.setField(webhookDeliveryService, "deliveryRestTemplate", restTemplate);
         TenantContext.setCurrentTenant(TENANT_ID);
     }
 

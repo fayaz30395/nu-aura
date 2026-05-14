@@ -26,6 +26,7 @@ import {AttendanceRecord} from '@/lib/types/hrms/attendance';
 import {getDateOffsetString, getLocalDateString, getMonthEndString, getMonthStartString} from '@/lib/utils/dateUtils';
 import {useAttendanceByDateRange, useHolidaysByYear, useMyTimeEntries} from '@/lib/hooks/queries/useAttendance';
 import {formatTime as canonicalFormatTime} from '@/lib/utils/format/date';
+import {format as formatDateFns} from 'date-fns';
 
 type TabView = 'log' | 'calendar' | 'requests';
 type PeriodFilter = '30days' | string; // string for month names
@@ -69,7 +70,7 @@ function formatTime(isoString: string | undefined): string {
 function formatDateLabel(dateStr: string): string {
   try {
     const d = new Date(dateStr + 'T00:00:00');
-    return d.toLocaleDateString('en-US', {weekday: 'short', day: 'numeric', month: 'short'});
+    return formatDateFns(d, 'EEE, MMM d');
   } catch {
     return dateStr;
   }
@@ -249,7 +250,7 @@ export default function MyAttendancePage() {
     for (let i = 0; i < 7; i++) {
       const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
       months.push({
-        label: d.toLocaleDateString('en-US', {month: 'short'}).toUpperCase(),
+        label: formatDateFns(d, 'MMM').toUpperCase(),
         month: d.getMonth(),
         year: d.getFullYear(),
       });
@@ -524,12 +525,7 @@ export default function MyAttendancePage() {
                   })}
                 </p>
                 <p className="text-caption mt-1">
-                  {liveTime.toLocaleDateString('en-US', {
-                    weekday: 'short',
-                    day: 'numeric',
-                    month: 'short',
-                    year: 'numeric'
-                  })}
+                  {formatDateFns(liveTime, 'EEE, MMM d, yyyy')}
                 </p>
               </div>
               {/* Action links */}
@@ -804,10 +800,7 @@ export default function MyAttendancePage() {
                       <ChevronLeft className="h-4 w-4 text-[var(--text-secondary)]"/>
                     </button>
                     <h3 className="text-sm font-semibold text-[var(--text-primary)]">
-                      {new Date(selectedYear, selectedMonth).toLocaleDateString('en-US', {
-                        month: 'long',
-                        year: 'numeric'
-                      })}
+                      {formatDateFns(new Date(selectedYear, selectedMonth), 'MMMM yyyy')}
                     </h3>
                     <button
                       onClick={() => {

@@ -432,7 +432,7 @@ export default function CourseDetailPage() {
                         </>
                       ) : (
                         <>
-                          <Download className="h-4 w-4"/> Download Certificate
+                          <Download className="h-4 w-4"/> Download certificate
                         </>
                       )}
                     </button>

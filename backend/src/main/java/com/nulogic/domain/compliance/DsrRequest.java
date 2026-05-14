@@ -1,6 +1,8 @@
 package com.nulogic.domain.compliance;
 
 import com.nulogic.common.entity.TenantAware;
+import com.nulogic.common.util.TenantTimestamp;
+import com.nulogic.common.util.TimeAuditingEntityListener;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -32,6 +34,7 @@ import java.util.UUID;
         @Index(name = "idx_dsr_requests_tenant_status", columnList = "tenant_id, status"),
         @Index(name = "idx_dsr_requests_requester", columnList = "requester_user_id")
 })
+@EntityListeners(TimeAuditingEntityListener.class)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -68,6 +71,7 @@ public class DsrRequest extends TenantAware {
     @Column(name = "admin_notes", columnDefinition = "TEXT")
     private String adminNotes;
 
+    @TenantTimestamp
     @Column(name = "requested_at", nullable = false)
     private LocalDateTime requestedAt;
 
@@ -97,16 +101,6 @@ public class DsrRequest extends TenantAware {
      */
     @Column(name = "artifact_size")
     private Long artifactSize;
-
-    @PrePersist
-    public void prePersist() {
-        if (requestedAt == null) {
-            requestedAt = LocalDateTime.now();
-        }
-        if (status == null) {
-            status = Status.PENDING;
-        }
-    }
 
     /**
      * Marks the request as terminal and records the handler + timestamp.

@@ -1,11 +1,25 @@
 package com.nulogic.domain.payment;
 
+import com.nulogic.common.util.TenantTimestamp;
+import com.nulogic.common.util.TimeAuditingEntityListener;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/**
+ * Payment webhook event log. Migrated to {@link TimeAuditingEntityListener} per the
+ * {@code backend/docs/audit/prepersist-now-audit.md} rollout (rows 18-20) so the
+ * {@code createdAt} / {@code updatedAt} stamps respect the tenant's IANA zone instead
+ * of the JVM default zone.
+ *
+ * <p>Note: this entity is not {@code TenantAware} — it owns its own {@code tenantId}
+ * column. {@link TimeAuditingEntityListener#tenantIdOf(Object)} returns {@code null}
+ * for non-{@code TenantAware} entities and {@code TenantTimeService} then falls back to
+ * its configured default zone ({@code Asia/Kolkata}). If per-tenant webhook timestamping
+ * becomes a hard requirement, switch this entity to extend {@code TenantAware}.</p>
+ */
 @Entity
 @Table(name = "payment_webhooks", indexes = {
         @Index(name = "idx_payment_webhook_tenant", columnList = "tenantId"),
@@ -14,6 +28,7 @@ import java.util.UUID;
         @Index(name = "idx_payment_webhook_processed", columnList = "tenantId,processed"),
         @Index(name = "idx_payment_webhook_external_event_id", columnList = "externalEventId")
 })
+@EntityListeners(TimeAuditingEntityListener.class)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -54,20 +69,11 @@ public class PaymentWebhook {
     @Column(columnDefinition = "TEXT")
     private String errorMessage;
 
+    @TenantTimestamp
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
+    @TenantTimestamp(updateOnChange = true)
     @Column(nullable = false)
     private LocalDateTime updatedAt;
-
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
 }

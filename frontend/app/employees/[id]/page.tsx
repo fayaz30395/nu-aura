@@ -513,6 +513,7 @@ export default function EmployeeDetailPage() {
                   key={tab.key}
                   onClick={() => handleMainTab(tab.key)}
                   className={tabClass(currentTab === tab.key)}
+                  aria-current={currentTab === tab.key ? 'page' : undefined}
                 >
                   {tab.label}
                 </button>
@@ -542,6 +543,7 @@ export default function EmployeeDetailPage() {
                     key={sub.key}
                     onClick={() => handleAboutSubTab(sub.key)}
                     className={tabClass(aboutSubTab === sub.key)}
+                    aria-current={aboutSubTab === sub.key ? 'page' : undefined}
                   >
                     {sub.label}
                   </button>
@@ -991,6 +993,7 @@ export default function EmployeeDetailPage() {
                     key={sub.key}
                     onClick={() => handleAssetSubTab(sub.key)}
                     className={tabClass(assetSubTab === sub.key)}
+                    aria-current={assetSubTab === sub.key ? 'page' : undefined}
                   >
                     {sub.label}
                   </button>

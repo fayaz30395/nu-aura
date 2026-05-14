@@ -1,5 +1,6 @@
 package com.nulogic.application.lms.service;
 
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.lms.Quiz;
 import com.nulogic.domain.lms.QuizQuestion;
 import com.nulogic.infrastructure.lms.repository.QuizQuestionRepository;
@@ -10,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,6 +21,7 @@ public class QuizManagementService {
 
     private final QuizRepository quizRepository;
     private final QuizQuestionRepository questionRepository;
+    private final TenantTimeService tenantTimeService;
 
     /**
      * Create a new quiz for a course
@@ -30,7 +31,7 @@ public class QuizManagementService {
         quiz.setId(null);
         quiz.setCourseId(courseId);
         quiz.setTenantId(tenantId);
-        quiz.setCreatedAt(LocalDateTime.now());
+        quiz.setCreatedAt(tenantTimeService.now(tenantId));
         quiz.setIsActive(true);
         return quizRepository.save(quiz);
     }
@@ -77,7 +78,7 @@ public class QuizManagementService {
             quiz.setIsActive(quizUpdates.getIsActive());
         }
 
-        quiz.setUpdatedAt(LocalDateTime.now());
+        quiz.setUpdatedAt(tenantTimeService.now(tenantId));
         return quizRepository.save(quiz);
     }
 
@@ -107,7 +108,7 @@ public class QuizManagementService {
         question.setId(null);
         question.setQuizId(quizId);
         question.setTenantId(tenantId);
-        question.setCreatedAt(LocalDateTime.now());
+        question.setCreatedAt(tenantTimeService.now(tenantId));
 
         // Set order index to next available if not provided
         if (question.getOrderIndex() == null || question.getOrderIndex() == 0) {
@@ -160,7 +161,7 @@ public class QuizManagementService {
             question.setIsMandatory(updates.getIsMandatory());
         }
 
-        question.setUpdatedAt(LocalDateTime.now());
+        question.setUpdatedAt(tenantTimeService.now(tenantId));
         return questionRepository.save(question);
     }
 

@@ -2,6 +2,8 @@ package com.nulogic.domain.benefits;
 
 import com.nulogic.common.converter.EncryptedStringConverter;
 import com.nulogic.common.entity.TenantAware;
+import com.nulogic.common.util.TenantTimestamp;
+import com.nulogic.common.util.TimeAuditingEntityListener;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -20,6 +22,7 @@ import java.util.UUID;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "benefit_claims")
+@EntityListeners(TimeAuditingEntityListener.class)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -50,6 +53,8 @@ public class BenefitClaim extends TenantAware {
     // Claim details
     private String description;
     private LocalDate serviceDate;
+
+    @TenantTimestamp
     private LocalDate claimDate;
 
     // For medical claims
@@ -125,7 +130,8 @@ public class BenefitClaim extends TenantAware {
 
     @PrePersist
     protected void onCreate() {
-        if (claimDate == null) claimDate = LocalDate.now();
+        // claimDate is stamped by TimeAuditingEntityListener via @TenantTimestamp — see
+        // backend/docs/audit/prepersist-now-audit.md row 3.
         if (status == null) status = ClaimStatus.DRAFT;
         if (claimNumber == null) {
             claimNumber = "CLM-" + System.currentTimeMillis();

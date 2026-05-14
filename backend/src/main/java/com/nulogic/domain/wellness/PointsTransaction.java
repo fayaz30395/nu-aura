@@ -1,6 +1,8 @@
 package com.nulogic.domain.wellness;
 
 import com.nulogic.common.entity.TenantAware;
+import com.nulogic.common.util.TenantTimestamp;
+import com.nulogic.common.util.TimeAuditingEntityListener;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,6 +15,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "wellness_points_transactions")
+@EntityListeners(TimeAuditingEntityListener.class)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -43,13 +46,9 @@ public class PointsTransaction extends TenantAware {
     @Column(name = "reference_id")
     private UUID referenceId;
 
+    @TenantTimestamp
     @Column(name = "transaction_at")
     private LocalDateTime transactionAt;
-
-    @PrePersist
-    protected void onCreate() {
-        transactionAt = LocalDateTime.now();
-    }
 
     public enum TransactionType {
         EARNED,

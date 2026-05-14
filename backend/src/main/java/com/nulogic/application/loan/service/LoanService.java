@@ -7,11 +7,13 @@ import com.nulogic.application.workflow.callback.ApprovalCallbackHandler;
 import com.nulogic.application.workflow.service.WorkflowService;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.loan.EmployeeLoan;
 import com.nulogic.domain.loan.EmployeeLoan.LoanStatus;
 import com.nulogic.domain.workflow.WorkflowDefinition;
 import com.nulogic.infrastructure.loan.repository.EmployeeLoanRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -30,16 +32,19 @@ public class LoanService implements ApprovalCallbackHandler {
 
     private final EmployeeLoanRepository loanRepository;
     private final WorkflowService workflowService;
+    private final TenantTimeService tenantTimeService;
 
     public LoanService(EmployeeLoanRepository loanRepository,
-                       @org.springframework.context.annotation.Lazy WorkflowService workflowService) {
+                       @Lazy WorkflowService workflowService,
+                       TenantTimeService tenantTimeService) {
         this.loanRepository = loanRepository;
         this.workflowService = workflowService;
+        this.tenantTimeService = tenantTimeService;
     }
 
     @Transactional
     public EmployeeLoanDto applyForLoan(CreateLoanRequest request) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         UUID employeeId = SecurityContext.getCurrentEmployeeId();
         if (employeeId == null) {
             throw new IllegalStateException("Employee profile not found for current user — cannot submit loan request");
@@ -53,7 +58,7 @@ public class LoanService implements ApprovalCallbackHandler {
                 .interestRate(request.getInterestRate() != null ? request.getInterestRate() : BigDecimal.ZERO)
                 .tenureMonths(request.getTenureMonths())
                 .purpose(request.getPurpose())
-                .requestedDate(LocalDate.now())
+                .requestedDate(tenantTimeService.today(tenantId))
                 .isSalaryDeduction(request.getIsSalaryDeduction() != null ? request.getIsSalaryDeduction() : true)
                 .guarantorName(request.getGuarantorName())
                 .guarantorEmployeeId(request.getGuarantorEmployeeId())
@@ -75,7 +80,7 @@ public class LoanService implements ApprovalCallbackHandler {
 
     @Transactional
     public EmployeeLoanDto approveLoan(UUID loanId, BigDecimal approvedAmount) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         UUID approverId = SecurityContext.getCurrentUserId();
 
         EmployeeLoan loan = loanRepository.findByIdAndTenantId(loanId, tenantId)
@@ -92,7 +97,7 @@ public class LoanService implements ApprovalCallbackHandler {
 
         loan.setStatus(LoanStatus.APPROVED);
         loan.setApprovedBy(approverId);
-        loan.setApprovedDate(LocalDate.now());
+        loan.setApprovedDate(tenantTimeService.today(tenantId));
 
         EmployeeLoan saved = loanRepository.save(loan);
         log.info("Loan approved: {} by {}", saved.getLoanNumber(), approverId);
@@ -101,7 +106,7 @@ public class LoanService implements ApprovalCallbackHandler {
 
     @Transactional
     public EmployeeLoanDto rejectLoan(UUID loanId, String reason) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         UUID approverId = SecurityContext.getCurrentUserId();
 
         EmployeeLoan loan = loanRepository.findByIdAndTenantId(loanId, tenantId)
@@ -113,7 +118,7 @@ public class LoanService implements ApprovalCallbackHandler {
 
         loan.setStatus(LoanStatus.REJECTED);
         loan.setApprovedBy(approverId);
-        loan.setApprovedDate(LocalDate.now());
+        loan.setApprovedDate(tenantTimeService.today(tenantId));
         loan.setRejectedReason(reason);
 
         EmployeeLoan saved = loanRepository.save(loan);
@@ -122,7 +127,7 @@ public class LoanService implements ApprovalCallbackHandler {
     }
 
     public EmployeeLoanDto disburseLoan(UUID loanId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         EmployeeLoan loan = loanRepository.findByIdAndTenantId(loanId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Loan not found"));
@@ -131,9 +136,10 @@ public class LoanService implements ApprovalCallbackHandler {
             throw new IllegalStateException("Cannot disburse loan in status: " + loan.getStatus());
         }
 
+        LocalDate today = tenantTimeService.today(tenantId);
         loan.setStatus(LoanStatus.DISBURSED);
-        loan.setDisbursementDate(LocalDate.now());
-        loan.setFirstEmiDate(LocalDate.now().plusMonths(1).withDayOfMonth(1));
+        loan.setDisbursementDate(today);
+        loan.setFirstEmiDate(today.plusMonths(1).withDayOfMonth(1));
         loan.setLastEmiDate(loan.getFirstEmiDate().plusMonths(loan.getTenureMonths() - 1));
 
         EmployeeLoan saved = loanRepository.save(loan);
@@ -142,7 +148,7 @@ public class LoanService implements ApprovalCallbackHandler {
     }
 
     public EmployeeLoanDto activateLoan(UUID loanId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         EmployeeLoan loan = loanRepository.findByIdAndTenantId(loanId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Loan not found"));
@@ -159,7 +165,7 @@ public class LoanService implements ApprovalCallbackHandler {
     }
 
     public EmployeeLoanDto recordRepayment(UUID loanId, BigDecimal amount) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         EmployeeLoan loan = loanRepository.findByIdAndTenantId(loanId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Loan not found"));
@@ -188,7 +194,7 @@ public class LoanService implements ApprovalCallbackHandler {
 
     @Transactional
     public EmployeeLoanDto cancelLoan(UUID loanId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         EmployeeLoan loan = loanRepository.findByIdAndTenantId(loanId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Loan not found"));
@@ -208,7 +214,7 @@ public class LoanService implements ApprovalCallbackHandler {
 
     @Transactional(readOnly = true)
     public EmployeeLoanDto getById(UUID loanId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         EmployeeLoan loan = loanRepository.findByIdAndTenantId(loanId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Loan not found"));
         enforceLoanAccess(loan, com.nulogic.common.security.Permission.LOAN_VIEW_ALL);
@@ -231,7 +237,7 @@ public class LoanService implements ApprovalCallbackHandler {
 
     @Transactional(readOnly = true)
     public Page<EmployeeLoanDto> getMyLoans(Pageable pageable) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         UUID employeeId = SecurityContext.getCurrentEmployeeId();
         return loanRepository.findByEmployeeIdAndTenantId(employeeId, tenantId, pageable)
                 .map(EmployeeLoanDto::fromEntity);
@@ -239,14 +245,14 @@ public class LoanService implements ApprovalCallbackHandler {
 
     @Transactional(readOnly = true)
     public Page<EmployeeLoanDto> getPendingApprovals(Pageable pageable) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         return loanRepository.findByTenantIdAndStatus(tenantId, LoanStatus.PENDING, pageable)
                 .map(EmployeeLoanDto::fromEntity);
     }
 
     @Transactional(readOnly = true)
     public Page<EmployeeLoanDto> getAllLoans(LoanStatus status, Pageable pageable) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         if (status != null) {
             return loanRepository.findByTenantIdAndStatus(tenantId, status, pageable)
                     .map(EmployeeLoanDto::fromEntity);
@@ -257,7 +263,7 @@ public class LoanService implements ApprovalCallbackHandler {
 
     @Transactional(readOnly = true)
     public List<EmployeeLoanDto> getActiveLoans() {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         return loanRepository.findByTenantIdAndStatusIn(
                 tenantId,
                 List.of(LoanStatus.ACTIVE, LoanStatus.DISBURSED)
@@ -289,7 +295,7 @@ public class LoanService implements ApprovalCallbackHandler {
 
         loan.setStatus(LoanStatus.APPROVED);
         loan.setApprovedBy(approvedBy);
-        loan.setApprovedDate(LocalDate.now());
+        loan.setApprovedDate(tenantTimeService.today(tenantId));
         loanRepository.save(loan);
     }
 
@@ -311,7 +317,7 @@ public class LoanService implements ApprovalCallbackHandler {
 
         loan.setStatus(LoanStatus.REJECTED);
         loan.setApprovedBy(rejectedBy);
-        loan.setApprovedDate(LocalDate.now());
+        loan.setApprovedDate(tenantTimeService.today(tenantId));
         loan.setRejectedReason(reason);
         loanRepository.save(loan);
     }

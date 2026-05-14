@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import {AppLayout} from '@/components/layout';
 import {Card, CardContent} from '@/components/ui/Card';
+import {Modal} from '@/components/ui/Modal';
 import {apiClient} from '@/lib/api/client';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
@@ -727,46 +728,37 @@ export default function TeamDirectory() {
         )}
 
         {/* Employee Detail Modal */}
-        <AnimatePresence>
+        <Modal
+          isOpen={!!selectedEmployee}
+          onClose={() => setSelectedEmployee(null)}
+          size="md"
+        >
           {selectedEmployee && (
-            <motion.div
-              initial={{opacity: 0}}
-              animate={{opacity: 1}}
-              exit={{opacity: 0}}
-              className="fixed inset-0 z-50 flex items-center justify-center glass-aura !rounded-none p-4"
-              onClick={() => setSelectedEmployee(null)}
-            >
-              <motion.div
-                initial={{scale: 0.95, opacity: 0}}
-                animate={{scale: 1, opacity: 1}}
-                exit={{scale: 0.95, opacity: 0}}
-                className="skeuo-card rounded-lg max-w-lg w-full overflow-hidden"
-                onClick={(e) => e.stopPropagation()}
-              >
-                {/* Modal Header */}
-                <div className={`h-24 ${getRandomColor(selectedEmployee.fullName)} relative`}>
-                  <button
-                    onClick={() => setSelectedEmployee(null)}
-                    aria-label="Close employee details"
-                    className="absolute top-4 right-4 p-2 bg-white/20 hover:bg-white/30 rounded-full transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2"
-                  >
-                    <X className="w-5 h-5 text-white"/>
-                  </button>
-                  <div className="absolute -bottom-12 left-1/2 transform -translate-x-1/2">
-                    <div className="w-24 h-24 rounded-full bg-[var(--bg-card)] p-1 shadow-[var(--shadow-dropdown)]">
-                      <div
-                        className={`w-full h-full rounded-full ${getRandomColor(
-                          selectedEmployee.fullName
-                        )} flex items-center justify-center text-white text-xl font-bold`}
-                      >
-                        {getInitials(selectedEmployee.fullName)}
-                      </div>
+            <>
+              {/* Banner header with overlapping avatar */}
+              <div className={`h-24 ${getRandomColor(selectedEmployee.fullName)} relative flex-shrink-0`}>
+                <button
+                  onClick={() => setSelectedEmployee(null)}
+                  aria-label="Close employee details"
+                  className="absolute top-4 right-4 p-2 bg-white/20 hover:bg-white/30 rounded-full transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2"
+                >
+                  <X className="w-5 h-5 text-white"/>
+                </button>
+                <div className="absolute -bottom-12 left-1/2 transform -translate-x-1/2">
+                  <div className="w-24 h-24 rounded-full bg-[var(--bg-card)] p-1 shadow-[var(--shadow-dropdown)]">
+                    <div
+                      className={`w-full h-full rounded-full ${getRandomColor(
+                        selectedEmployee.fullName
+                      )} flex items-center justify-center text-white text-xl font-bold`}
+                    >
+                      {getInitials(selectedEmployee.fullName)}
                     </div>
                   </div>
                 </div>
+              </div>
 
-                {/* Modal Content */}
-                <div className="pt-16 pb-6 px-6">
+              {/* Modal Content */}
+              <div className="flex-1 overflow-y-auto pt-16 pb-6 px-6">
                   <div className="text-center mb-6">
                     <h2 className="text-xl font-bold text-[var(--text-primary)]">
                       {selectedEmployee.fullName}
@@ -874,10 +866,9 @@ export default function TeamDirectory() {
                     </a>
                   </div>
                 </div>
-              </motion.div>
-            </motion.div>
+            </>
           )}
-        </AnimatePresence>
+        </Modal>
       </div>
     </AppLayout>
   );

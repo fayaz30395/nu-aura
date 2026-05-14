@@ -1,6 +1,7 @@
 package com.nulogic.application.psa.service;
 
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.psa.PSAInvoice;
 import com.nulogic.domain.psa.PSAProject;
 import com.nulogic.domain.psa.PSATimeEntry;
@@ -16,7 +17,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -41,6 +41,7 @@ public class PSAService {
     private final PSATimesheetRepository timesheetRepository;
     private final PSATimeEntryRepository timeEntryRepository;
     private final PSAInvoiceRepository invoiceRepository;
+    private final TenantTimeService tenantTimeService;
 
     // ==================== Project Operations ====================
 
@@ -239,7 +240,7 @@ public class PSAService {
                 .filter(ts -> tenantId.equals(ts.getTenantId()))
                 .map(ts -> {
                     ts.setStatus(PSATimesheet.TimesheetStatus.SUBMITTED);
-                    ts.setSubmittedAt(LocalDateTime.now());
+                    ts.setSubmittedAt(tenantTimeService.now(tenantId));
                     return timesheetRepository.save(ts);
                 });
     }
@@ -260,7 +261,7 @@ public class PSAService {
                 .filter(ts -> tenantId.equals(ts.getTenantId()))
                 .map(ts -> {
                     ts.setStatus(PSATimesheet.TimesheetStatus.APPROVED);
-                    ts.setApprovedAt(LocalDateTime.now());
+                    ts.setApprovedAt(tenantTimeService.now(tenantId));
                     ts.setApprovedBy(approverId);
                     return timesheetRepository.save(ts);
                 });

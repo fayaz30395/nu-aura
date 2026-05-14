@@ -42,7 +42,7 @@ import {useProjects} from '@/lib/hooks/queries/useProjects';
 import {ActivityType, CreateTimeEntryRequest, Timesheet} from '@/lib/types/hrms/timesheet';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
-import {formatDateShort, formatDate as formatDateCanonical} from '@/lib/utils/format/date';
+import {formatDateShort, formatDate as formatDateCanonical, formatWeekday} from '@/lib/utils/format/date';
 
 const formatDate = (dateString: string) => formatDateShort(dateString);
 
@@ -280,8 +280,8 @@ export default function TimesheetsPage() {
       <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="timesheets">
         <EmptyState
           icon={<FileSpreadsheet className="h-12 w-12"/>}
-          title="Timesheets"
-          description="As an administrator, you don't have personal timesheets. Select an employee to view their timesheets."
+          title="No personal timesheets"
+          description="Administrators don't log their own hours. Select an employee from the directory to view their timesheets."
         />
       </AppLayout>
     );
@@ -409,7 +409,7 @@ export default function TimesheetsPage() {
                         ? 'text-[var(--text-muted)] bg-[var(--bg-secondary)]'
                         : 'text-[var(--text-secondary)]'
                     }`}>
-                      <div className="text-xs uppercase">{date.toLocaleDateString('en-US', {weekday: 'short'})}</div>
+                      <div className="text-xs uppercase">{formatWeekday(date)}</div>
                       <div className="text-sm">{date.getDate()}</div>
                     </th>
                   ))}
@@ -577,9 +577,9 @@ export default function TimesheetsPage() {
             ) : (
               <EmptyState
                 icon={<FileSpreadsheet className="h-12 w-12"/>}
-                title="No Timesheets"
-                description="Fill in your timesheet for the current period"
-                action={{label: 'Create Timesheet', onClick: () => setShowCreateModal(true)}}
+                title="No timesheets for this period"
+                description="Log your hours to start tracking work. Submitted timesheets will appear here for review and approval."
+                action={{label: 'Create timesheet', onClick: () => setShowCreateModal(true)}}
               />
             )}
           </div>

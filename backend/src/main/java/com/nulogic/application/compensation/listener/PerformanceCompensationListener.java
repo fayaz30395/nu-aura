@@ -1,6 +1,7 @@
 package com.nulogic.application.compensation.listener;
 
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.compensation.CompensationReviewCycle;
 import com.nulogic.domain.compensation.CompensationRevisionConfig;
 import com.nulogic.domain.compensation.SalaryRevision;
@@ -19,7 +20,6 @@ import org.springframework.transaction.event.TransactionalEventListener;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -70,6 +70,7 @@ public class PerformanceCompensationListener {
     private final SalaryRevisionRepository revisionRepository;
     private final SalaryStructureRepository salaryStructureRepository;
     private final CompensationRevisionConfigRepository configRepository;
+    private final TenantTimeService tenantTimeService;
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -143,7 +144,7 @@ public class PerformanceCompensationListener {
 
         // Get current salary
         BigDecimal currentSalary = salaryStructureRepository
-                .findActiveByEmployeeIdAndDate(tenantId, employeeId, LocalDate.now())
+                .findActiveByEmployeeIdAndDate(tenantId, employeeId, tenantTimeService.today(tenantId))
                 .map(ss -> ss.getGrossSalary())
                 .orElse(BigDecimal.ZERO);
 

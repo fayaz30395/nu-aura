@@ -321,7 +321,7 @@ export default function ApprovalsPage() {
           </p>
           <div className="mt-4">
             <label htmlFor="allocation-approve-comment" className="block text-sm font-medium text-[var(--text-secondary)]">
-              Comment (optional)
+              Comment
             </label>
             <textarea
               id="allocation-approve-comment"

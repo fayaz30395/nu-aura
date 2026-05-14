@@ -136,7 +136,8 @@ export default function LearningPathsPage() {
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]"/>
               <input
-                type="text"
+                type="search"
+                aria-label="Search learning paths"
                 placeholder="Search learning paths..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -188,8 +189,8 @@ export default function LearningPathsPage() {
                   </div>
                 ) : (
                   <div
-                    className="w-full h-40 bg-gradient-to-r from-accent-500 to-accent-800 flex items-center justify-center">
-                    <Zap className="h-12 w-12 text-white opacity-50"/>
+                    className="w-full h-40 bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center">
+                    <Zap className="h-12 w-12 text-accent-700 dark:text-accent-400 opacity-70"/>
                   </div>
                 )}
 

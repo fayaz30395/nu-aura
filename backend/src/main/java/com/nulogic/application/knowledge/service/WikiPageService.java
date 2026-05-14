@@ -6,6 +6,7 @@ import com.nulogic.application.knowledge.dto.WikiPageTreeProjection;
 import com.nulogic.application.knowledge.util.TipTapTextExtractor;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.knowledge.WikiPage;
 import com.nulogic.domain.knowledge.WikiPageVersion;
 import com.nulogic.infrastructure.kafka.events.FluenceContentEvent;
@@ -24,7 +25,6 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -39,6 +39,7 @@ public class WikiPageService {
     private final FluenceNotificationService fluenceNotificationService;
     private final FluenceActivityService fluenceActivityService;
     private final TipTapTextExtractor tipTapTextExtractor;
+    private final TenantTimeService tenantTimeService;
 
     @Autowired(required = false)
     private EventPublisher eventPublisher;
@@ -103,14 +104,14 @@ public class WikiPageService {
 
     @Transactional
     public WikiPage getPageById(UUID pageId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         WikiPage page = wikiPageRepository.findById(pageId)
                 .filter(p -> p.getTenantId().equals(tenantId))
                 .orElseThrow(() -> new IllegalArgumentException("Wiki page not found"));
 
-        // Track view
+        // Track view (tenant-local timestamp via TenantTimeService — see ContractService pattern).
         page.setViewCount(page.getViewCount() + 1);
-        page.setLastViewedAt(LocalDateTime.now());
+        page.setLastViewedAt(tenantTimeService.now(tenantId));
         page.setLastViewedBy(SecurityContext.getCurrentUserId());
         wikiPageRepository.save(page);
 
@@ -119,13 +120,13 @@ public class WikiPageService {
 
     @Transactional
     public WikiPage getPageBySlug(UUID spaceId, String slug) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         WikiPage page = wikiPageRepository.findByTenantIdAndSpaceIdAndSlug(tenantId, spaceId, slug)
                 .orElseThrow(() -> new IllegalArgumentException("Wiki page not found"));
 
-        // Track view
+        // Track view (tenant-local timestamp via TenantTimeService — see ContractService pattern).
         page.setViewCount(page.getViewCount() + 1);
-        page.setLastViewedAt(LocalDateTime.now());
+        page.setLastViewedAt(tenantTimeService.now(tenantId));
         page.setLastViewedBy(SecurityContext.getCurrentUserId());
         wikiPageRepository.save(page);
 
@@ -170,7 +171,7 @@ public class WikiPageService {
     }
 
     public WikiPage publishPage(UUID pageId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         UUID userId = SecurityContext.getCurrentUserId();
 
         WikiPage page = wikiPageRepository.findById(pageId)
@@ -178,7 +179,8 @@ public class WikiPageService {
                 .orElseThrow(() -> new IllegalArgumentException("Wiki page not found"));
 
         page.setStatus(WikiPage.PageStatus.PUBLISHED);
-        page.setPublishedAt(LocalDateTime.now());
+        // Tenant-local publish timestamp — see ContractService pattern.
+        page.setPublishedAt(tenantTimeService.now(tenantId));
         page.setPublishedBy(userId);
 
         WikiPage updated = wikiPageRepository.save(page);
@@ -207,7 +209,7 @@ public class WikiPageService {
     }
 
     public WikiPage togglePin(UUID pageId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         UUID userId = SecurityContext.getCurrentUserId();
 
         WikiPage page = wikiPageRepository.findById(pageId)
@@ -216,7 +218,8 @@ public class WikiPageService {
 
         page.setIsPinned(!page.getIsPinned());
         if (page.getIsPinned()) {
-            page.setPinnedAt(LocalDateTime.now());
+            // Tenant-local pin timestamp — see ContractService pattern.
+            page.setPinnedAt(tenantTimeService.now(tenantId));
             page.setPinnedBy(userId);
         } else {
             page.setPinnedAt(null);
