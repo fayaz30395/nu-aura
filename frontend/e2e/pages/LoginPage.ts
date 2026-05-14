@@ -35,17 +35,47 @@ export class LoginPage extends BasePage {
   }
 
   /**
-   * Navigate to login page
+   * Navigate to login page.
+   *
+   * Under NEXT_PUBLIC_DEMO_MODE the email/password form sits behind a
+   * "Sign in with Email" toggle (login/page.tsx :930): the page-load state
+   * shows demo-account buttons only. Most E2E specs assert email/password
+   * input visibility directly on the page-load state, so we eagerly expand
+   * the form here. Specs that need the demo-button-first state can read
+   * the page before this expansion through `goto()` directly.
    */
   async navigate() {
     await this.goto('/auth/login');
     await this.waitForPageLoad();
+
+    const emailVisible = await this.emailInput.isVisible().catch(() => false);
+    if (!emailVisible) {
+      const toggle = this.page.locator('button:has-text("Sign in with Email")');
+      if (await toggle.isVisible().catch(() => false)) {
+        await toggle.click();
+        await this.emailInput.waitFor({state: 'visible', timeout: 5000}).catch(() => {});
+      }
+    }
   }
 
   /**
-   * Login with email and password
+   * Login with email and password.
+   *
+   * The login page is button-first under NEXT_PUBLIC_DEMO_MODE: the
+   * email/password form sits behind a "Sign in with Email" toggle button
+   * (login/page.tsx :930). If the email input isn't visible yet, click the
+   * toggle to expand the form, then fill.
    */
   async login(email: string, password: string, rememberMe: boolean = false) {
+    const emailVisible = await this.emailInput.isVisible().catch(() => false);
+    if (!emailVisible) {
+      const toggle = this.page.locator('button:has-text("Sign in with Email")');
+      if (await toggle.isVisible().catch(() => false)) {
+        await toggle.click();
+        await this.emailInput.waitFor({state: 'visible', timeout: 5000});
+      }
+    }
+
     await this.emailInput.fill(email);
     await this.passwordInput.fill(password);
 
@@ -58,12 +88,23 @@ export class LoginPage extends BasePage {
   }
 
   /**
-   * Quick login with demo credentials
+   * Quick login with demo credentials.
+   *
+   * The demo panel renders one button per demo account, keyed by the person's
+   * display name (login/page.tsx DEMO_ACCOUNTS, panel rendered at :347). A
+   * single click on the account button posts the login automatically: there
+   * is no separate "Demo Credentials" toggle, and no follow-up submit.
+   * Map the legacy role keys to a representative demo account name.
    */
   async loginWithDemoCredentials(role: 'Admin' | 'HR Manager' | 'Manager' | 'Employee') {
-    await this.demoCredentialsToggle.click();
-    await this.page.locator(`button:has-text("${role}")`).click();
-    await this.loginButton.click();
+    const accountByRole: Record<typeof role, string> = {
+      'Admin': 'Fayaz M',
+      'HR Manager': 'Jagadeesh N',
+      'Manager': 'Sumit Kumar',
+      'Employee': 'Saran V',
+    };
+    const name = accountByRole[role];
+    await this.page.locator('button').filter({hasText: name}).click();
     await this.waitForNavigation();
   }
 

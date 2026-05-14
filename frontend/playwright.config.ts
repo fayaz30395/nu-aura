@@ -15,8 +15,14 @@ export default defineConfig({
   // Test directory
   testDir: './e2e',
 
-  // Maximum time one test can run
-  timeout: 60 * 1000,
+  // Maximum time one test can run.
+  // Bumped 60s → 120s: Next.js `next dev` first-compile of a fresh route on a
+  // cold server takes 30-60s under the Studio Slate v2 token graph. A 60s
+  // budget made `page.goto('/attendance')` etc. flake on every spec until
+  // routes warmed up. Production-build runs (PLAYWRIGHT_USE_BUILD=1) can
+  // shorten this back to 60s once we wire `next build && next start` into
+  // the test webServer.
+  timeout: 120 * 1000,
 
   // Maximum time to wait for each assertion
   expect: {

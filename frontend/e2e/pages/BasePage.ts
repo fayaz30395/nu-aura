@@ -69,10 +69,15 @@ export class BasePage {
   }
 
   /**
-   * Wait for navigation
+   * Wait for navigation.
+   *
+   * Bumped to 90s: under `next dev` first-compile of routes downstream of
+   * login (the dashboard graph specifically) can take 30-60s, and the
+   * login API itself spends ~10s on bcrypt + audit + Neon round-trip.
+   * The default 30s networkidle wait was flaking on every login spec.
    */
   async waitForNavigation() {
-    await this.page.waitForLoadState('networkidle');
+    await this.page.waitForLoadState('networkidle', {timeout: 90000});
   }
 
   /**
