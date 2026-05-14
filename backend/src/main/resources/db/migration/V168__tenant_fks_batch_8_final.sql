@@ -162,7 +162,8 @@ $$
 BEGIN
     IF
 NOT EXISTS (SELECT 1 FROM information_schema.table_constraints WHERE table_name = 'comp_time_transactions' AND constraint_name = 'fk_comp_time_transactions_tenant')
-       AND EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'comp_time_transactions') THEN
+       AND EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'comp_time_transactions')
+       AND EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'comp_time_transactions' AND column_name = 'tenant_id') THEN
 ALTER TABLE comp_time_transactions
   ADD CONSTRAINT fk_comp_time_transactions_tenant FOREIGN KEY (tenant_id) REFERENCES tenants (id) ON DELETE CASCADE;
 END IF;
@@ -182,7 +183,8 @@ $$
 BEGIN
     IF
 NOT EXISTS (SELECT 1 FROM information_schema.table_constraints WHERE table_name = 'overtime_rate_tiers' AND constraint_name = 'fk_overtime_rate_tiers_tenant')
-       AND EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'overtime_rate_tiers') THEN
+       AND EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'overtime_rate_tiers')
+       AND EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'overtime_rate_tiers' AND column_name = 'tenant_id') THEN
 ALTER TABLE overtime_rate_tiers
   ADD CONSTRAINT fk_overtime_rate_tiers_tenant FOREIGN KEY (tenant_id) REFERENCES tenants (id) ON DELETE CASCADE;
 END IF;

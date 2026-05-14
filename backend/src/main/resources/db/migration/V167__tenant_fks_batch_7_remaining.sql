@@ -26,7 +26,8 @@ $$
 BEGIN
     IF
 NOT EXISTS (SELECT 1 FROM information_schema.table_constraints WHERE table_name = 'contract_versions' AND constraint_name = 'fk_contract_versions_tenant')
-       AND EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'contract_versions') THEN
+       AND EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'contract_versions')
+       AND EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'contract_versions' AND column_name = 'tenant_id') THEN
 ALTER TABLE contract_versions
   ADD CONSTRAINT fk_contract_versions_tenant FOREIGN KEY (tenant_id) REFERENCES tenants (id) ON DELETE CASCADE;
 END IF;
@@ -36,7 +37,8 @@ $$
 BEGIN
     IF
 NOT EXISTS (SELECT 1 FROM information_schema.table_constraints WHERE table_name = 'contract_signatures' AND constraint_name = 'fk_contract_signatures_tenant')
-       AND EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'contract_signatures') THEN
+       AND EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'contract_signatures')
+       AND EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'contract_signatures' AND column_name = 'tenant_id') THEN
 ALTER TABLE contract_signatures
   ADD CONSTRAINT fk_contract_signatures_tenant FOREIGN KEY (tenant_id) REFERENCES tenants (id) ON DELETE CASCADE;
 END IF;
@@ -204,7 +206,7 @@ $$
 BEGIN
     IF
 NOT EXISTS (SELECT 1 FROM information_schema.table_constraints WHERE table_name = 'project_employees' AND constraint_name = 'fk_project_employees_tenant')
-       AND EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'project_employees') THEN
+       AND EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'project_employees' AND table_type = 'BASE TABLE') THEN
 ALTER TABLE project_employees
   ADD CONSTRAINT fk_project_employees_tenant FOREIGN KEY (tenant_id) REFERENCES tenants (id) ON DELETE CASCADE;
 END IF;

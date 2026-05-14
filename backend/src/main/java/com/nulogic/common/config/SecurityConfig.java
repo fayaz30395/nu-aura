@@ -245,7 +245,10 @@ public class SecurityConfig {
                 // requests are authenticated via X-API-Key without consuming the JWT path.
                 .addFilterBefore(rateLimitingFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(tenantFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(apiKeyAuthenticationFilter, JwtAuthenticationFilter.class)
+                // ApiKey runs before JWT: stacking two addFilterBefore() against the same
+                // anchor (UsernamePasswordAuthenticationFilter) inserts ApiKey first, then
+                // pushes JWT closer to the anchor — net runtime order: ApiKey → JWT.
+                .addFilterBefore(apiKeyAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterAfter(csrfDoubleSubmitFilter, UsernamePasswordAuthenticationFilter.class);
 

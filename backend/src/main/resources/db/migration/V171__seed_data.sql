@@ -16,7 +16,7 @@ VALUES ('660e8400-e29b-41d4-a716-446655440001',
         'admin@nulogic.io',
         '+91-9876543210',
         '{}',
-        NOW(), NOW(), 0, false) ON CONFLICT (id) DO NOTHING;
+        NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
 
 -- ============================================================================
 -- 2. USER (extends TenantAware — has tenant_id)
@@ -32,7 +32,7 @@ VALUES ('550e8400-e29b-41d4-a716-446655440030',
         'ACTIVE',
         0,
         false,
-        NOW(), NOW(), 0, false) ON CONFLICT (id) DO NOTHING;
+        NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
 
 -- ============================================================================
 -- 3. ROLE — SUPER_ADMIN (extends TenantAware)
@@ -44,7 +44,7 @@ VALUES ('550e8400-e29b-41d4-a716-446655440020',
         'Super Administrator',
         'Full system access - bypasses all RBAC checks',
         true,
-        NOW(), NOW(), 0, false) ON CONFLICT (id) DO NOTHING;
+        NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
 
 -- ============================================================================
 -- 4. USER-ROLE JUNCTION (ManyToMany join table)
@@ -72,7 +72,7 @@ VALUES ('550e8400-e29b-41d4-a716-446655440040',
         'EXECUTIVE',
         'FULL_TIME',
         'ACTIVE',
-        NOW(), NOW(), 0, false) ON CONFLICT (id) DO NOTHING;
+        NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
 
 -- ============================================================================
 -- 6. NU-HRMS APPLICATION (extends BaseEntity — NO tenant_id)
@@ -88,7 +88,7 @@ VALUES ('550e8400-e29b-41d4-a716-446655440010',
         '/api/v1',
         'ACTIVE',
         1, true, '1.0.0',
-        NOW(), NOW(), 0, false) ON CONFLICT (id) DO NOTHING;
+        NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
 
 -- ============================================================================
 -- 7. CORE PERMISSIONS (permissions table, extends BaseEntity — NO tenant_id)
@@ -173,7 +173,7 @@ VALUES
  'announcement', 'manage', NOW(), NOW(), 0, false),
 -- System admin
 ('660e8401-0001-0001-0001-000000000999', 'system.admin', 'System Admin', 'Full system admin', 'system', 'admin', NOW(),
- NOW(), 0, false) ON CONFLICT (id) DO NOTHING;
+ NOW(), 0, false) ON CONFLICT DO NOTHING;
 
 -- ============================================================================
 -- 8. ROLE_PERMISSIONS (extends TenantAware — has tenant_id, role_id FK, permission_id FK)

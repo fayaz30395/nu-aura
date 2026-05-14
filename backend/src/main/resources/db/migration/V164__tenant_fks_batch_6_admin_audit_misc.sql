@@ -63,7 +63,8 @@ $$
 BEGIN
     IF
 NOT EXISTS (SELECT 1 FROM information_schema.table_constraints WHERE table_name = 'permissions' AND constraint_name = 'fk_permissions_tenant')
-       AND EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'permissions') THEN
+       AND EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'permissions')
+       AND EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'permissions' AND column_name = 'tenant_id') THEN
 ALTER TABLE permissions
   ADD CONSTRAINT fk_permissions_tenant FOREIGN KEY (tenant_id) REFERENCES tenants (id) ON DELETE CASCADE;
 END IF;
@@ -85,7 +86,8 @@ $$
 BEGIN
     IF
 NOT EXISTS (SELECT 1 FROM information_schema.table_constraints WHERE table_name = 'app_permissions' AND constraint_name = 'fk_app_permissions_tenant')
-       AND EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'app_permissions') THEN
+       AND EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'app_permissions')
+       AND EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'app_permissions' AND column_name = 'tenant_id') THEN
 ALTER TABLE app_permissions
   ADD CONSTRAINT fk_app_permissions_tenant FOREIGN KEY (tenant_id) REFERENCES tenants (id) ON DELETE CASCADE;
 END IF;
