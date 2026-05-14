@@ -22,8 +22,15 @@ deleted.
 | [ADR-007](ADR-007-payroll-saga-pattern.md)            | Payroll Saga Pattern                            | Accepted | 2026-03 |
 | [ADR-008](ADR-008-recruitment-ats-gap-analysis.md)    | Recruitment ATS Gap Analysis                    | Accepted | 2026-03 |
 | [ADR-009](ADR-009-database-connection-pool-sizing.md) | Database Connection Pool Sizing                 | Accepted | 2026-03 |
+| [ADR-010](ADR-010-row-level-security-tenancy.md)      | Row-Level Security for Tenant Isolation         | Accepted | 2026-05 |
+| [ADR-011](ADR-011-kafka-idempotent-consumers.md)      | Kafka Idempotent Consumer Pattern               | Accepted | 2026-05 |
+| [ADR-012](ADR-012-timezone-handling.md)               | Tenant-Aware Timezone Handling                  | Proposed | 2026-05 |
 
 ADRs 005–009 were merged in from the legacy `docs/build-kit/` tree during Phase 2 of the repo layout cleanup (2026-05-13). The original numbering inside build-kit (001–005) was renumbered to 005–009 to avoid collision with the foundational ADRs above. Original index preserved as `build-kit-adr-index.md`.
+
+ADRs 010–012 were added 2026-05-14 to close documentation gaps for decisions already in code:
+RLS tenancy (V36 migration), Kafka idempotency (audit-closed), and timezone handling
+(wave-10 P0 fix). See `docs/patterns/` for the runtime patterns these ADRs realize.
 
 ## ADR Status Lifecycle
 

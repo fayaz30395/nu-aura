@@ -11,6 +11,31 @@
 - Keep files under 500 lines
 - Validate input at system boundaries
 
+## Knowledge Base — read before acting
+
+Project knowledge is indexed in three places. **Consult them at task start**, not after
+mistakes:
+
+| Need                                              | Source of truth                                       |
+|---------------------------------------------------|-------------------------------------------------------|
+| Architectural decisions (12 ADRs)                 | `docs/adr/README.md` → index                          |
+| Reusable code patterns (Redis, RLS, Kafka, etc.)  | `docs/patterns/README.md`                             |
+| Security baseline, threat model, scan cadence     | `docs/security/baseline.md`                           |
+| Swarm pipelines (feature, bug, security, refactor, perf) | `docs/runbooks/swarm-pipelines.md` (copy-paste templates) |
+| Active hardening backlog                          | `docs/audit/wave-10-deep-audit-report.md`             |
+| DDD bounded contexts                              | `docs/swarm/domains.yaml`                             |
+| Artifact registry (RuFlo machine-readable)        | `docs/swarm/registry.yaml`                            |
+| Operational runbooks (incident, DR, rollback)     | `docs/runbooks/`                                      |
+| Architecture deep dives                           | `docs/architecture/` (system, modules, RBAC, payroll, etc.) |
+| Evolving project state                            | `MEMORY.md`                                           |
+
+**Routing rule:** before designing anything, search `docs/adr/` for prior decisions on the
+topic. Before implementing anything, search `docs/patterns/` for an existing pattern.
+Before touching a security-sensitive path, read `docs/security/baseline.md`.
+
+**Sync RuFlo runtime configs:** the swarm YAMLs in `.claude-flow/` are gitignored. Run
+`./scripts/ruflo-sync.sh` after pulling new commits to refresh them from `docs/swarm/`.
+
 ## Agent Comms (SendMessage-First Coordination)
 
 Named agents coordinate via `SendMessage`, not polling or shared state.
