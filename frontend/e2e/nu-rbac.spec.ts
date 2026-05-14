@@ -37,6 +37,13 @@ fs.mkdirSync(OUT_DIR, {recursive: true});
 const RESULTS = path.join(OUT_DIR, 'results.jsonl');
 
 function parseCatalog(): UC[] {
+  // Fail-soft: the upstream RBAC catalog lives in an optional `nu-chrome-e2e`
+  // skill that isn't on disk in every checkout. If it's missing, return [] so
+  // this file becomes a no-op suite instead of crashing test discovery for
+  // every other spec in the project.
+  if (!fs.existsSync(CATALOG)) {
+    return [];
+  }
   const raw = fs.readFileSync(CATALOG, 'utf8');
   const out: UC[] = [];
   let cur: Partial<UC> = {};
