@@ -352,13 +352,13 @@ export default function ExitInterviewPage() {
                         {label: 'Compensation', value: interview.compensationRating},
                         {label: 'Team Culture', value: interview.teamCultureRating},
                       ].map((item) => (
-                        <Paper key={item.label} p="sm" className="bg-[var(--bg-card)]">
+                        <div key={item.label} className="panel-inset p-3">
                           <Text size="xs" c="dimmed" mb={4}>{item.label}</Text>
                           <Group gap="xs">
                             <Rating value={item.value ?? 0} readOnly size="sm"/>
                             <Text size="sm" fw={500}>{item.value ?? '-'}/5</Text>
                           </Group>
-                        </Paper>
+                        </div>
                       ))}
                     </SimpleGrid>
                     {interview.averageRating != null && (
@@ -448,9 +448,9 @@ export default function ExitInterviewPage() {
                           <Divider/>
                           <div>
                             <Text size="xs" c="dimmed" mb={4}>Interviewer Notes</Text>
-                            <Paper p="sm" bg="gray.0" radius="sm">
+                            <div className="panel-inset p-3">
                               <Text size="sm">{interview.interviewerNotes}</Text>
-                            </Paper>
+                            </div>
                           </div>
                         </>
                       )}

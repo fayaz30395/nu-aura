@@ -528,7 +528,7 @@ export default function MyLeavesPage() {
                   <div
                     key={request.id}
                     role="listitem"
-                    className="card-aura p-6 rounded-lg hover:shadow-[var(--shadow-elevated)] transition-shadow"
+                    className="panel-inset p-6 hover:bg-[var(--bg-card-hover)] transition-colors"
                   >
                     <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                       <div className="flex-1">

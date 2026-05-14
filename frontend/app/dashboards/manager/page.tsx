@@ -170,9 +170,9 @@ export default function ManagerDashboardPage() {
             {['Team Size', 'Present Today', 'On Leave', 'Pending Actions'].map((label) => (
               <Card key={label}>
                 <CardContent className="p-6">
-                  <p className="text-sm font-medium text-[var(--text-muted)]">{label}</p>
-                  <p className="text-3xl font-bold text-[var(--text-primary)] mt-1">--</p>
-                  <p className="text-caption mt-1">No data</p>
+                  <p className="text-micro">{label}</p>
+                  <p className="mt-2 text-stat-large">—</p>
+                  <p className="stat-label">No data</p>
                 </CardContent>
               </Card>
             ))}
@@ -424,30 +424,26 @@ export default function ManagerDashboardPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
                   <div className="space-y-4">
                     <div>
-                      <p className="text-2xs font-bold uppercase tracking-widest text-[var(--text-muted)] mb-0.5">Avg
-                        Rating</p>
-                      <div className="flex items-baseline gap-2">
-                        <span
-                          className="text-3xl font-black text-[var(--text-primary)]">{teamPerformance.avgPerformanceRating?.toFixed(1)}</span>
-                        <span className="text-sm font-bold text-[var(--text-muted)]">/ 5.0</span>
+                      <p className="text-micro">Avg Rating</p>
+                      <div className="mt-1 flex items-baseline gap-1.5">
+                        <span className="text-stat-medium">{teamPerformance.avgPerformanceRating?.toFixed(1)}</span>
+                        <span className="text-xs text-[var(--text-muted)] tabular-nums">/ 5.0</span>
                       </div>
                     </div>
                     <div>
-                      <p className="text-2xs font-bold uppercase tracking-widest text-[var(--text-muted)] mb-0.5">Goal
-                        Execution</p>
+                      <p className="text-micro">Goal Execution</p>
                       <div
-                        className="relative h-3 w-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full overflow-hidden">
+                        className="mt-1 relative h-1.5 w-full bg-[var(--bg-secondary)] rounded-full overflow-hidden">
                         <motion.div
                           initial={{width: 0}}
                           animate={{width: `${teamPerformance.goalCompletionRate}%`}}
                           transition={{duration: 1.5, ease: "easeOut"}}
-                          className="absolute h-full bg-gradient-to-r from-warning-400 to-warning-500 rounded-full"
+                          className="absolute h-full rounded-full bg-[var(--accent-primary)]"
                         />
                       </div>
-                      <div
-                        className="flex justify-between mt-1 font-bold text-xs text-warning-600 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
-                        <span>{teamPerformance.goalCompletionRate?.toFixed(0)}% Completed</span>
-                        <span>On Track</span>
+                      <div className="flex justify-between mt-1 text-xs text-[var(--text-secondary)] tabular-nums">
+                        <span>{teamPerformance.goalCompletionRate?.toFixed(0)}% completed</span>
+                        <span className="text-[var(--text-muted)]">on track</span>
                       </div>
                     </div>
                   </div>

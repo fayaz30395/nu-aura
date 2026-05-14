@@ -444,7 +444,7 @@ export default function ShiftSwapPage() {
               <option value="">Select your shift assignment</option>
               {activeAssignments.map((a: ShiftAssignment) => (
                 <option key={a.id} value={a.id}>
-                  {a.shiftName} ({a.shiftCode}) — {a.assignmentDate} ({a.shiftStartTime}–{a.shiftEndTime})
+                  {a.shiftName} ({a.shiftCode}), {a.assignmentDate} ({a.shiftStartTime}–{a.shiftEndTime})
                 </option>
               ))}
             </select>

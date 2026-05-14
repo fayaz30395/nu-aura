@@ -141,15 +141,15 @@ export default function SecurityPage() {
   const complianceFeatures = [
     {
       title: 'Data Subject Rights',
-      description: 'Coming Soon — Data Subject Rights endpoints (Article 15/17/20) are on the platform roadmap. Tenants can submit manual DSR requests via support@nulogic.io.',
+      description: 'Coming Soon. Data Subject Rights endpoints (Article 15/17/20) are on the platform roadmap. Tenants can submit manual DSR requests via support@nulogic.io.',
     },
     {
       title: 'Data Portability',
-      description: 'Coming Soon — Data Subject Rights endpoints (Article 15/17/20) are on the platform roadmap. Tenants can submit manual DSR requests via support@nulogic.io.',
+      description: 'Coming Soon. Data Subject Rights endpoints (Article 15/17/20) are on the platform roadmap. Tenants can submit manual DSR requests via support@nulogic.io.',
     },
     {
       title: 'Right to Erasure',
-      description: 'Coming Soon — Data Subject Rights endpoints (Article 15/17/20) are on the platform roadmap. Tenants can submit manual DSR requests via support@nulogic.io.',
+      description: 'Coming Soon. Data Subject Rights endpoints (Article 15/17/20) are on the platform roadmap. Tenants can submit manual DSR requests via support@nulogic.io.',
     },
     {
       title: 'Data Processing Agreements',
@@ -201,32 +201,33 @@ export default function SecurityPage() {
         </div>
       </section>
 
-      {/* Certifications */}
+      {/* Certifications — list form. Each is a status item, not a marketing tile. */}
       <section className="py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="max-w-5xl mx-auto">
+          <Card padding="none" className="divide-y divide-[var(--border-subtle)]">
             {certifications.map((cert, index) => (
               <motion.div
                 key={index}
-                initial={{opacity: 0, y: 20}}
+                initial={{opacity: 0, y: 10}}
                 whileInView={{opacity: 1, y: 0}}
                 viewport={{once: true}}
-                transition={{delay: index * 0.1}}
+                transition={{delay: index * 0.05}}
+                className="flex items-start gap-4 p-4 sm:p-6"
               >
-                <Card hover padding="lg" className="text-center h-full">
-                  <div
-                    className={`w-16 h-16 rounded-lg bg-gradient-to-br ${cert.color} flex items-center justify-center mx-auto mb-4`}
-                  >
-                    <cert.icon className="h-8 w-8 text-white"/>
-                  </div>
-                  <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
+                <div
+                  className={`w-12 h-12 rounded-lg bg-gradient-to-br ${cert.color} flex items-center justify-center flex-shrink-0`}
+                >
+                  <cert.icon className="h-6 w-6 text-white"/>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-base font-semibold text-[var(--text-primary)]">
                     {cert.name}
                   </h3>
-                  <p className="text-body-secondary">{cert.description}</p>
-                </Card>
+                  <p className="text-body-secondary mt-1 leading-relaxed">{cert.description}</p>
+                </div>
               </motion.div>
             ))}
-          </div>
+          </Card>
         </div>
       </section>
 
@@ -292,21 +293,20 @@ export default function SecurityPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Compliance — list form. Each row is a discrete capability, not a marketing tile. */}
+          <Card padding="none" className="divide-y divide-[var(--border-subtle)]">
             {complianceFeatures.map((feature, index) => (
-              <Card key={index} padding="lg">
-                <div className="flex items-start gap-4">
-                  <Check className="h-6 w-6 text-success-500 flex-shrink-0 mt-1"/>
-                  <div>
-                    <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-1">
-                      {feature.title}
-                    </h3>
-                    <p className="text-body-secondary">{feature.description}</p>
-                  </div>
+              <div key={index} className="flex items-start gap-4 p-4 sm:p-6">
+                <Check className="h-5 w-5 text-success-500 flex-shrink-0 mt-1"/>
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-base font-semibold text-[var(--text-primary)]">
+                    {feature.title}
+                  </h3>
+                  <p className="text-body-secondary mt-1 leading-relaxed">{feature.description}</p>
                 </div>
-              </Card>
+              </div>
             ))}
-          </div>
+          </Card>
         </div>
       </section>
 

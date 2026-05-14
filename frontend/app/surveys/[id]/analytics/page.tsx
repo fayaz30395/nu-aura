@@ -89,7 +89,7 @@ export default function SurveyAnalyticsPage() {
               <div>
                 <h1 className={typography.pageTitle}>
                   {surveyLoading ?
-                    <span className="skeleton-aura inline-block h-6 w-48 rounded"/> : `${survey?.title} — Analytics`}
+                    <span className="skeleton-aura inline-block h-6 w-48 rounded"/> : `${survey?.title}: Analytics`}
                 </h1>
                 <p className={typography.bodySecondary}>
                   Response data and question-level insights

@@ -6,8 +6,8 @@ import {
   Badge,
   Button,
   Card,
+  Drawer,
   Group,
-  Modal,
   Select,
   Stack,
   Switch,
@@ -210,11 +210,12 @@ export default function FeatureFlagsPage() {
         )}
       </Stack>
 
-      {/* Create Modal */}
-      <Modal
+      {/* Create Drawer (preserves list context behind it) */}
+      <Drawer
         opened={createOpen}
         onClose={() => setCreateOpen(false)}
         title="Add Feature Flag"
+        position="right"
         size="md"
       >
         <Stack gap="md">
@@ -263,7 +264,7 @@ export default function FeatureFlagsPage() {
             </Button>
           </Group>
         </Stack>
-      </Modal>
+      </Drawer>
     </div>
   );
 }

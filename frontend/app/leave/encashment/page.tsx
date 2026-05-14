@@ -121,7 +121,7 @@ export default function LeaveEncashmentPage() {
                     .filter((b) => b.available > 0)
                     .map((b) => (
                       <option key={b.id} value={b.id}>
-                        {b.leaveTypeName ?? b.leaveTypeId} — {b.available} days available
+                        {b.leaveTypeName ?? b.leaveTypeId}: {b.available} days available
                       </option>
                     ))}
                 </select>

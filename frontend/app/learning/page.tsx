@@ -228,7 +228,7 @@ export default function LearningPage() {
                     <EmptyState
                       icon={<BookOpen className="w-full h-full"/>}
                       title="No courses available"
-                      description="Check back soon — new courses are published regularly."
+                      description="Check back soon. New courses are published regularly."
                     />
                   </div>
                 )}

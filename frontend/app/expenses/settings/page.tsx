@@ -8,7 +8,8 @@ import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
-import {ConfirmDialog, Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui';
+import {Drawer} from '@mantine/core';
+import {ConfirmDialog} from '@/components/ui';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {
   useAllExpenseCategories,
@@ -363,11 +364,16 @@ export default function ExpenseSettingsPage() {
             </div>
           )}
 
-          {/* Category Modal */}
-          <Modal isOpen={showCategoryModal} onClose={() => setShowCategoryModal(false)} size="lg">
-            <ModalHeader>{editingCategory ? 'Edit Category' : 'New Category'}</ModalHeader>
+          {/* Category Drawer (list stays visible behind) */}
+          <Drawer
+            opened={showCategoryModal}
+            onClose={() => setShowCategoryModal(false)}
+            position="right"
+            size="lg"
+            title={editingCategory ? 'Edit Category' : 'New Category'}
+          >
             <form onSubmit={categoryForm.handleSubmit(onCategorySubmit)}>
-              <ModalBody>
+              <div>
                 <div className="space-y-4">
                   <div>
                     <label htmlFor="expense-category-name" className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Name
@@ -412,8 +418,8 @@ export default function ExpenseSettingsPage() {
                     <span className="text-sm text-surface-700 dark:text-surface-300">Requires receipt upload</span>
                   </label>
                 </div>
-              </ModalBody>
-              <ModalFooter>
+              </div>
+              <div className="flex items-center justify-end gap-2 pt-4 mt-4 border-t border-surface-200 dark:border-surface-700">
                 <button type="button" onClick={() => setShowCategoryModal(false)}
                         className="px-4 py-2 text-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">Cancel
                 </button>
@@ -421,15 +427,20 @@ export default function ExpenseSettingsPage() {
                         className="px-4 py-2 bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                   {editingCategory ? 'Update' : 'Create'}
                 </button>
-              </ModalFooter>
+              </div>
             </form>
-          </Modal>
+          </Drawer>
 
-          {/* Policy Modal */}
-          <Modal isOpen={showPolicyModal} onClose={() => setShowPolicyModal(false)} size="lg">
-            <ModalHeader>{editingPolicy ? 'Edit Policy' : 'New Policy'}</ModalHeader>
+          {/* Policy Drawer (list stays visible behind) */}
+          <Drawer
+            opened={showPolicyModal}
+            onClose={() => setShowPolicyModal(false)}
+            position="right"
+            size="lg"
+            title={editingPolicy ? 'Edit Policy' : 'New Policy'}
+          >
             <form onSubmit={policyForm.handleSubmit(onPolicySubmit)}>
-              <ModalBody>
+              <div>
                 <div className="space-y-4">
                   <div>
                     <label htmlFor="expense-policy-name" className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Policy Name
@@ -500,8 +511,8 @@ export default function ExpenseSettingsPage() {
                     </div>
                   )}
                 </div>
-              </ModalBody>
-              <ModalFooter>
+              </div>
+              <div className="flex items-center justify-end gap-2 pt-4 mt-4 border-t border-surface-200 dark:border-surface-700">
                 <button type="button" onClick={() => setShowPolicyModal(false)}
                         className="px-4 py-2 text-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">Cancel
                 </button>
@@ -509,9 +520,9 @@ export default function ExpenseSettingsPage() {
                         className="px-4 py-2 bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                   {editingPolicy ? 'Update' : 'Create'}
                 </button>
-              </ModalFooter>
+              </div>
             </form>
-          </Modal>
+          </Drawer>
 
           {/* Delete Category Confirm */}
           <ConfirmDialog

@@ -5,6 +5,7 @@ import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {useMutation, useQueryClient} from '@tanstack/react-query';
+import {Drawer} from '@mantine/core';
 import {
   AlertCircle,
   Building2,
@@ -52,7 +53,7 @@ export default function DepartmentsPage() {
 
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState('');
-  const [showModal, setShowModal] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const [editTarget, setEditTarget] = useState<Department | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Department | null>(null);
 
@@ -78,7 +79,7 @@ export default function DepartmentsPage() {
     onSuccess: () => {
       toast.success('Department created');
       invalidate();
-      closeModal();
+      closeDrawer();
     },
     onError: (err: unknown) => toast.error((err as {
       response?: { data?: { message?: string } }
@@ -90,7 +91,7 @@ export default function DepartmentsPage() {
     onSuccess: () => {
       toast.success('Department updated');
       invalidate();
-      closeModal();
+      closeDrawer();
     },
     onError: (err: unknown) => toast.error((err as {
       response?: { data?: { message?: string } }
@@ -124,7 +125,7 @@ export default function DepartmentsPage() {
   const openCreate = () => {
     setEditTarget(null);
     reset({code: '', name: '', description: '', location: '', costCenter: ''});
-    setShowModal(true);
+    setDrawerOpen(true);
   };
 
   const openEdit = (dept: Department) => {
@@ -137,27 +138,27 @@ export default function DepartmentsPage() {
       location: dept.location ?? '',
       costCenter: dept.costCenter ?? '',
     });
-    setShowModal(true);
+    setDrawerOpen(true);
   };
 
-  const closeModal = () => {
-    setShowModal(false);
+  const closeDrawer = () => {
+    setDrawerOpen(false);
     setEditTarget(null);
   };
 
-  // Escape key closes any open modal
+  // Escape closes delete-confirm modal (drawer handles its own escape)
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      if (e.key !== 'Escape') return;
-      if (deleteTarget) {
-        setDeleteTarget(null);
+      if (e.key !== 'Escape' && deleteTarget) {
         return;
       }
-      if (showModal) closeModal();
+      if (e.key === 'Escape' && deleteTarget) {
+        setDeleteTarget(null);
+      }
     };
     document.addEventListener('keydown', handler);
     return () => document.removeEventListener('keydown', handler);
-  }, [showModal, deleteTarget]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [deleteTarget]);
 
   const onSubmit = (data: DeptFormData) => {
     const payload: DepartmentRequest = {
@@ -361,64 +362,73 @@ export default function DepartmentsPage() {
           </nav>
         )}
 
-        {/* Create / Edit Modal */}
-        <Modal isOpen={showModal} onClose={closeModal} size="md">
-          <ModalHeader onClose={closeModal}>
-            {editTarget ? 'Edit Department' : 'New Department'}
-          </ModalHeader>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <ModalBody className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label htmlFor="admin-dept-code" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
-                      Code <span aria-hidden="true" className="text-danger-500">*</span>
-                    </label>
-                    <input id="admin-dept-code" {...register('code')} aria-required="true" placeholder="ENG" className="input-aura w-full uppercase"/>
-                    {errors.code && <p className="text-danger-500 text-xs mt-1">{errors.code.message}</p>}
-                  </div>
-                  <div>
-                    <label htmlFor="admin-dept-name" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
-                      Name <span aria-hidden="true" className="text-danger-500">*</span>
-                    </label>
-                    <input id="admin-dept-name" {...register('name')} aria-required="true" placeholder="Engineering" className="input-aura w-full"/>
-                    {errors.name && <p className="text-danger-500 text-xs mt-1">{errors.name.message}</p>}
-                  </div>
-                </div>
+        {/* Create / Edit Drawer (table context stays visible) */}
+        <Drawer
+          opened={drawerOpen}
+          onClose={closeDrawer}
+          position="right"
+          size="md"
+          title={
+            <span className="text-base font-semibold text-[var(--text-primary)]">
+              {editTarget ? 'Edit Department' : 'New Department'}
+            </span>
+          }
+          styles={{
+            title: {width: '100%'},
+            body: {padding: '0 24px 24px'},
+          }}
+        >
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="admin-dept-code" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
+                  Code <span aria-hidden="true" className="text-danger-500">*</span>
+                </label>
+                <input id="admin-dept-code" {...register('code')} aria-required="true" placeholder="ENG" className="input-aura w-full uppercase"/>
+                {errors.code && <p className="text-danger-500 text-xs mt-1">{errors.code.message}</p>}
+              </div>
+              <div>
+                <label htmlFor="admin-dept-name" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
+                  Name <span aria-hidden="true" className="text-danger-500">*</span>
+                </label>
+                <input id="admin-dept-name" {...register('name')} aria-required="true" placeholder="Engineering" className="input-aura w-full"/>
+                {errors.name && <p className="text-danger-500 text-xs mt-1">{errors.name.message}</p>}
+              </div>
+            </div>
 
-                <div>
-                  <label htmlFor="admin-dept-type" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Type</label>
-                  <select id="admin-dept-type" {...register('type')} className="input-aura w-full">
-                    <option value="">Select type…</option>
-                    {DEPT_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
-                  </select>
-                </div>
+            <div>
+              <label htmlFor="admin-dept-type" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Type</label>
+              <select id="admin-dept-type" {...register('type')} className="input-aura w-full">
+                <option value="">Select type…</option>
+                {DEPT_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+              </select>
+            </div>
 
-                <div>
-                  <label htmlFor="admin-dept-description" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Description</label>
-                  <textarea id="admin-dept-description" {...register('description')} rows={2} placeholder="Optional description…"
-                            className="input-aura w-full resize-none"/>
-                </div>
+            <div>
+              <label htmlFor="admin-dept-description" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Description</label>
+              <textarea id="admin-dept-description" {...register('description')} rows={2} placeholder="Optional description…"
+                        className="input-aura w-full resize-none"/>
+            </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label htmlFor="admin-dept-location" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Location</label>
-                    <input id="admin-dept-location" {...register('location')} placeholder="e.g. Chennai" className="input-aura w-full"/>
-                  </div>
-                  <div>
-                    <label htmlFor="admin-dept-cost-center" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Cost Center</label>
-                    <input id="admin-dept-cost-center" {...register('costCenter')} placeholder="e.g. CC-001" className="input-aura w-full"/>
-                  </div>
-                </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="admin-dept-location" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Location</label>
+                <input id="admin-dept-location" {...register('location')} placeholder="e.g. Chennai" className="input-aura w-full"/>
+              </div>
+              <div>
+                <label htmlFor="admin-dept-cost-center" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Cost Center</label>
+                <input id="admin-dept-cost-center" {...register('costCenter')} placeholder="e.g. CC-001" className="input-aura w-full"/>
+              </div>
+            </div>
 
-            </ModalBody>
-            <ModalFooter>
-              <Button type="button" variant="ghost" onClick={closeModal}>Cancel</Button>
+            <div className="flex items-center justify-end gap-2 pt-4 border-t border-[var(--border-subtle)]">
+              <Button type="button" variant="ghost" onClick={closeDrawer}>Cancel</Button>
               <Button type="submit" variant="primary" disabled={isPending}>
                 {isPending ? 'Saving…' : editTarget ? 'Save Changes' : 'Create Department'}
               </Button>
-            </ModalFooter>
+            </div>
           </form>
-        </Modal>
+        </Drawer>
 
         {/* Delete Confirmation */}
         <Modal isOpen={!!deleteTarget} onClose={() => setDeleteTarget(null)} size="sm">

@@ -88,7 +88,7 @@ export default function NineBoxPage() {
           <Group justify="space-between">
             <div>
               <Title order={2} className="">9-Box Grid</Title>
-              <Text c="dimmed" size="sm">{data.cycleName} — Performance vs Potential</Text>
+              <Text c="dimmed" size="sm">{data.cycleName}: Performance vs Potential</Text>
             </div>
           </Group>
 

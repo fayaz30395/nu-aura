@@ -11,11 +11,8 @@ import {
   Download,
   PieChart as PieChartIcon,
   RefreshCw,
-  ShieldCheck,
-  TrendingDown,
   TrendingUp,
   Users,
-  Zap,
 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import {ChartLoadingFallback} from '@/lib/utils/lazy-components';
@@ -115,22 +112,21 @@ export default function OrganizationHealthPage() {
             initial={{opacity: 0, scale: 0.95}}
             animate={{opacity: 1, scale: 1}}
           >
-            <Card
-              className="h-full bg-gradient-to-br from-accent-700 to-accent-800 text-white overflow-hidden relative">
-              <div className="absolute top-0 right-0 p-8 opacity-10">
-                <ShieldCheck className="h-48 w-48"/>
-              </div>
-              <CardContent className="p-8 flex flex-col items-center justify-center text-center h-full relative z-10">
-                <span
-                  className="text-accent-100 text-sm font-medium tracking-wider uppercase mb-2">Organization Pulse</span>
-                <div className="text-8xl font-black mb-4">{healthScore.score}</div>
-                <div className="flex items-center gap-2 px-4 py-2 bg-[var(--bg-elevated)] rounded-full mb-6">
-                  <Zap className="h-5 w-5 text-warning-300"/>
-                  <span className="font-bold text-lg">{healthScore.status}</span>
-                </div>
-                <div className="flex items-center gap-2 text-accent-100 italic">
-                  {healthScore.trend >= 0 ? <TrendingUp className="h-4 w-4"/> : <TrendingDown className="h-4 w-4"/>}
-                  <span>{Math.abs(healthScore.trend)}% Improvement since last quarter</span>
+            <Card className="h-full bg-[var(--bg-card)]">
+              <CardContent className="p-8 flex flex-col h-full">
+                <span className="text-micro">Organization Pulse</span>
+                <div className="mt-4 text-stat-large">{healthScore.score}</div>
+                <div className="mt-1 text-sm text-[var(--text-secondary)]">{healthScore.status}</div>
+                <div
+                  className={`mt-6 text-xs font-medium tabular-nums ${
+                    healthScore.trend >= 0
+                      ? 'text-success-700 dark:text-success-400'
+                      : 'text-danger-700 dark:text-danger-400'
+                  }`}
+                >
+                  <span aria-hidden="true">{healthScore.trend >= 0 ? '+ ' : '− '}</span>
+                  <span className="sr-only">{healthScore.trend >= 0 ? 'up ' : 'down '}</span>
+                  {Math.abs(healthScore.trend)}% vs last quarter
                 </div>
               </CardContent>
             </Card>

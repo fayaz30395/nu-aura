@@ -323,40 +323,43 @@ export default function PricingPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Add-ons — list with right-aligned price. More scannable than a 3-column grid
+              of nearly-identical name+desc+price tiles. */}
+          <Card padding="none" className="divide-y divide-[var(--border-subtle)]">
             {addons.map((addon, index) => (
               <motion.div
                 key={addon.name}
-                initial={{opacity: 0, y: 20}}
+                initial={{opacity: 0, y: 10}}
                 whileInView={{opacity: 1, y: 0}}
                 viewport={{once: true}}
-                transition={{delay: index * 0.1}}
+                transition={{delay: index * 0.05}}
+                className="flex flex-col sm:flex-row sm:items-center gap-4 p-4 sm:p-6"
               >
-                <Card hover padding="lg">
-                  <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-base font-semibold text-[var(--text-primary)]">
                     {addon.name}
                   </h3>
-                  <p className="text-body-secondary mb-4">
+                  <p className="text-body-secondary mt-1">
                     {addon.description}
                   </p>
-                  <div className="flex items-baseline gap-1">
-                    {typeof addon.price === 'number' ? (
-                      <>
-                        <span className="text-xl font-bold text-[var(--text-primary)]">
-                          ${addon.price}
-                        </span>
-                        <span className="text-body-muted">/user/month</span>
-                      </>
-                    ) : (
-                      <span className="text-xl font-semibold text-[var(--text-primary)]">
-                        {addon.price}
+                </div>
+                <div className="flex items-baseline gap-1 sm:text-right shrink-0">
+                  {typeof addon.price === 'number' ? (
+                    <>
+                      <span className="text-lg font-semibold text-[var(--text-primary)]">
+                        ${addon.price}
                       </span>
-                    )}
-                  </div>
-                </Card>
+                      <span className="text-body-muted">/user/month</span>
+                    </>
+                  ) : (
+                    <span className="text-lg font-semibold text-[var(--text-primary)]">
+                      {addon.price}
+                    </span>
+                  )}
+                </div>
               </motion.div>
             ))}
-          </div>
+          </Card>
         </div>
       </section>
 

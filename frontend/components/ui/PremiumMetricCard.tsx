@@ -10,11 +10,11 @@ interface PremiumMetricCardProps {
 }
 
 /**
- * PremiumMetricCard - Civic Canvas metric card.
- * Features:
- * - Warm surfaces and clear hierarchy
- * - Subtle depth with card-interactive
- * - Tone badge for quick trend scanning
+ * PremiumMetricCard - flat metric tile.
+ *
+ * Replaces the banned "hero-metric template" (big-number + tiny-label + gradient bar).
+ * Renders: number (text-stat-large, tabular-nums), label (text-micro), and an optional
+ * plain-text delta with sign indicator. No gradient bar, no glow, no decorative width.
  */
 export const PremiumMetricCard: React.FC<PremiumMetricCardProps> = ({
                                                                       title,
@@ -24,8 +24,10 @@ export const PremiumMetricCard: React.FC<PremiumMetricCardProps> = ({
                                                                       icon,
                                                                       delay = 0,
                                                                     }) => {
-  const trendTone = isPositive ? 'status-success' : 'status-warning';
-  const trendLabel = isPositive ? '↑' : '↓';
+  const deltaTone = isPositive
+    ? 'text-success-700 dark:text-success-400'
+    : 'text-danger-700 dark:text-danger-400';
+  const sign = isPositive ? '+' : '−';
 
   return (
     <div
@@ -36,28 +38,23 @@ export const PremiumMetricCard: React.FC<PremiumMetricCardProps> = ({
         <span className="text-micro">{title}</span>
         {icon && (
           <div
-            className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--accent-primary-subtle)] border border-[var(--border-subtle)] text-[var(--accent-primary)]">
+            className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--accent-primary-subtle)] border border-[var(--border-subtle)] text-[var(--accent-primary)]"
+            aria-hidden="true"
+          >
             {icon}
           </div>
         )}
       </div>
 
-      <div className="mt-4 flex items-end justify-between gap-4">
-        <div className="text-stat-large">{value}</div>
-        <span className={`badge-status ${trendTone}`}>
-          {trendLabel} {change}
-        </span>
-      </div>
+      <div className="mt-4 text-stat-large">{value}</div>
 
-      <div className="mt-4 h-1.5 w-full overflow-hidden rounded-full bg-[var(--bg-card-hover)]">
-        <div
-          className="h-full rounded-full"
-          style={{
-            width: isPositive ? '70%' : '45%',
-            backgroundColor: isPositive ? 'var(--accent-primary)' : 'var(--status-warning-text)',
-          }}
-        />
-      </div>
+      {change ? (
+        <div className={`mt-2 text-xs font-medium tabular-nums ${deltaTone}`}>
+          <span aria-hidden="true">{sign} </span>
+          <span className="sr-only">{isPositive ? 'up ' : 'down '}</span>
+          {change}
+        </div>
+      ) : null}
     </div>
   );
 };

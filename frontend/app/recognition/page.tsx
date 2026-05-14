@@ -572,7 +572,7 @@ export default function RecognitionPage() {
                     {leaderboard.map((employee, index) => (
                       <div
                         key={employee.id}
-                        className="flex items-center gap-4 p-2 rounded-lg card-aura transition-colors"
+                        className="flex items-center gap-4 p-2 rounded-lg panel-inset transition-colors"
                       >
                         <div
                           className={`flex items-center justify-center w-8 h-8 rounded-full flex-shrink-0 ${index === 0 ? 'bg-warning-500 text-white' :

@@ -82,7 +82,7 @@ export function OfferModal({opened, onClose, candidate, jobId}: OfferModalProps)
       onClose={handleClose}
       title={
         <Text fw={600} size="lg">
-          Generate Offer Letter — {candidate.fullName}
+          Generate Offer Letter: {candidate.fullName}
         </Text>
       }
       size="md"

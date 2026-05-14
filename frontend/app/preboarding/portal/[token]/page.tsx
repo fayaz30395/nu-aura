@@ -379,8 +379,8 @@ export default function PreboardingPortalPage() {
               <div className="space-y-4">
                 <h2 className="text-xl font-semibold mb-4">Document Upload</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Card
-                    className={`p-4 border-2 ${data.photoUploaded ? 'border-success-500' : 'border-dashed border-[var(--border-main)]'}`}>
+                  <div
+                    className={`rounded-lg p-4 border-2 ${data.photoUploaded ? 'border-success-500 bg-[var(--bg-main)]' : 'border-dashed border-[var(--border-main)] bg-[var(--bg-main)]'}`}>
                     <div className="flex items-center gap-4">
                       {data.photoUploaded ? <CheckCircle2 className="h-6 w-6 text-success-500"/> :
                         <Upload className="h-6 w-6 text-[var(--text-muted)]"/>}
@@ -389,9 +389,9 @@ export default function PreboardingPortalPage() {
                         <p className="text-caption">{data.photoUploaded ? 'Uploaded' : 'Required'}</p>
                       </div>
                     </div>
-                  </Card>
-                  <Card
-                    className={`p-4 border-2 ${data.idProofUploaded ? 'border-success-500' : 'border-dashed border-[var(--border-main)]'}`}>
+                  </div>
+                  <div
+                    className={`rounded-lg p-4 border-2 ${data.idProofUploaded ? 'border-success-500 bg-[var(--bg-main)]' : 'border-dashed border-[var(--border-main)] bg-[var(--bg-main)]'}`}>
                     <div className="flex items-center gap-4">
                       {data.idProofUploaded ? <CheckCircle2 className="h-6 w-6 text-success-500"/> :
                         <Upload className="h-6 w-6 text-[var(--text-muted)]"/>}
@@ -400,9 +400,9 @@ export default function PreboardingPortalPage() {
                         <p className="text-caption">{data.idProofUploaded ? 'Uploaded' : 'Aadhar/Passport'}</p>
                       </div>
                     </div>
-                  </Card>
-                  <Card
-                    className={`p-4 border-2 ${data.addressProofUploaded ? 'border-success-500' : 'border-dashed border-[var(--border-main)]'}`}>
+                  </div>
+                  <div
+                    className={`rounded-lg p-4 border-2 ${data.addressProofUploaded ? 'border-success-500 bg-[var(--bg-main)]' : 'border-dashed border-[var(--border-main)] bg-[var(--bg-main)]'}`}>
                     <div className="flex items-center gap-4">
                       {data.addressProofUploaded ? <CheckCircle2 className="h-6 w-6 text-success-500"/> :
                         <Upload className="h-6 w-6 text-[var(--text-muted)]"/>}
@@ -411,9 +411,9 @@ export default function PreboardingPortalPage() {
                         <p className="text-caption">{data.addressProofUploaded ? 'Uploaded' : 'Optional'}</p>
                       </div>
                     </div>
-                  </Card>
-                  <Card
-                    className={`p-4 border-2 ${data.educationDocsUploaded ? 'border-success-500' : 'border-dashed border-[var(--border-main)]'}`}>
+                  </div>
+                  <div
+                    className={`rounded-lg p-4 border-2 ${data.educationDocsUploaded ? 'border-success-500 bg-[var(--bg-main)]' : 'border-dashed border-[var(--border-main)] bg-[var(--bg-main)]'}`}>
                     <div className="flex items-center gap-4">
                       {data.educationDocsUploaded ? <CheckCircle2 className="h-6 w-6 text-success-500"/> :
                         <Upload className="h-6 w-6 text-[var(--text-muted)]"/>}
@@ -423,7 +423,7 @@ export default function PreboardingPortalPage() {
                           className="text-caption">{data.educationDocsUploaded ? 'Uploaded' : 'Degrees/Certificates'}</p>
                       </div>
                     </div>
-                  </Card>
+                  </div>
                 </div>
                 <p className="text-body-muted">Note: Document upload functionality will be integrated with file
                   storage.</p>
@@ -449,7 +449,7 @@ export default function PreboardingPortalPage() {
                   </div>
                 ) : (
                   <>
-                    <Card className="p-4 bg-[var(--bg-secondary)]/50">
+                    <div className="panel-inset p-4">
                       <div className="flex items-start gap-4">
                         <FileText className="h-6 w-6 text-accent-500 mt-1"/>
                         <div>
@@ -460,7 +460,7 @@ export default function PreboardingPortalPage() {
                           </p>
                         </div>
                       </div>
-                    </Card>
+                    </div>
                     <div className="flex justify-between pt-4">
                       <Button type="button" variant="ghost" onClick={() => setActiveStep(2)}>Back</Button>
                       <Button variant="primary" onClick={signOfferLetter} disabled={saving}>

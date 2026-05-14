@@ -92,7 +92,7 @@ export default function CalibrationPage() {
         <Group justify="space-between">
           <div>
             <Title order={2} className="">Calibration</Title>
-            <Text c="dimmed" size="sm">{data.cycleName} — {totalEmployees} employees</Text>
+            <Text c="dimmed" size="sm">{data.cycleName} ({totalEmployees} employees)</Text>
           </div>
         </Group>
 

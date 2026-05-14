@@ -142,7 +142,7 @@ export function InterviewScorecardModal({
   return (
     <Modal isOpen={open} onClose={onClose} size="xl">
       <ModalHeader onClose={onClose}>
-        Interview Scorecards — {candidateName}
+        Interview Scorecards: {candidateName}
       </ModalHeader>
       <ModalBody className="space-y-6">
           {isLoading && (

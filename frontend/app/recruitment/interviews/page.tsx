@@ -1068,7 +1068,7 @@ function InterviewsPage() {
                         dateStyle: 'medium',
                         timeStyle: 'short'
                       })}
-                        {' — '}
+                        {' – '}
                         {watchCreate('durationMinutes')
                           ? new Date(new Date(watchCreate('scheduledAt')).getTime() + (watchCreate('durationMinutes') as number) * 60000).toLocaleTimeString('en-IN', {timeStyle: 'short'})
                           : '(set duration)'}

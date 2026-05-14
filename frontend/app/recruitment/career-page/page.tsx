@@ -443,7 +443,7 @@ export default function CareerPageCMS() {
               Career Page CMS
             </h1>
             <p className="text-body-muted mt-1">
-              Manage your public career page — job visibility and company content.
+              Manage your public career page: job visibility and company content.
             </p>
           </div>
           <div className="flex items-center gap-2">

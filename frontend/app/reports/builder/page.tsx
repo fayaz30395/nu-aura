@@ -415,7 +415,7 @@ export default function ReportBuilderPage() {
           <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg overflow-hidden">
             <div className="px-4 py-4 border-b border-[var(--border-main)] row-between">
               <h2 className="text-sm font-semibold text-[var(--text-primary)]">
-                Preview — {previewRows.length} row{previewRows.length !== 1 ? 's' : ''}
+                Preview ({previewRows.length} row{previewRows.length !== 1 ? 's' : ''})
               </h2>
               <span className="text-caption">Showing up to 100 rows</span>
             </div>

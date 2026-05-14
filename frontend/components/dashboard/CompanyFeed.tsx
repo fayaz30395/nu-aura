@@ -255,7 +255,7 @@ function getDemoFeed(): FeedItem[] {
   return [
     {
       id: 'demo-ann-1', type: 'ANNOUNCEMENT', timestamp: today,
-      title: 'Q1 2026 All-Hands Meeting — March 20th',
+      title: 'Q1 2026 All-Hands Meeting: March 20th',
       description: 'Join us for the quarterly all-hands meeting. We will discuss company performance, upcoming product launches, and open Q&A with leadership.',
       category: 'EVENT', priority: 'HIGH', isPinned: true, publishedByName: 'HR Team', readCount: 45,
     },
@@ -287,7 +287,7 @@ function getDemoFeed(): FeedItem[] {
     },
     {
       id: 'demo-ann-2', type: 'ANNOUNCEMENT', timestamp: threeDaysAgo,
-      title: 'Updated Remote Work Policy — Effective April 1',
+      title: 'Updated Remote Work Policy: Effective April 1',
       description: 'We are updating our hybrid work policy. Employees can now work remotely up to 3 days per week.',
       category: 'POLICY_UPDATE', priority: 'MEDIUM', isPinned: false, publishedByName: 'Deepa Kumar', readCount: 128,
     },

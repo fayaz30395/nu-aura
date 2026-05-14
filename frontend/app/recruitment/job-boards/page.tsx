@@ -291,10 +291,10 @@ export default function JobBoardsPage() {
                     {...register('jobId')}
                     className="input-aura"
                   >
-                    <option value="">— Select a job —</option>
+                    <option value="">Select a job</option>
                     {openJobs?.content?.map((job: JobOpening) => (
                       <option key={job.id} value={job.id}>
-                        {job.jobTitle} ({job.jobCode}) — {job.location}
+                        {job.jobTitle} ({job.jobCode}), {job.location}
                       </option>
                     ))}
                   </select>

@@ -179,7 +179,7 @@ function NineBoxGrid({
                             <span
                               key={p.employeeId}
                               className={`text-xs px-1.5 py-0.5 rounded-full font-semibold border ${meta.bg} ${meta.border} ${meta.text} whitespace-nowrap`}
-                              title={`${p.employeeName} — Perf: ${p.performance.toFixed(1)}, Pot: ${p.potential.toFixed(1)}`}
+                              title={`${p.employeeName}: Perf ${p.performance.toFixed(1)}, Pot ${p.potential.toFixed(1)}`}
                             >
                               {initials}
                             </span>

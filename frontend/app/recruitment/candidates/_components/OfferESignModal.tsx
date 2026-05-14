@@ -277,7 +277,7 @@ export function OfferESignModal({
 
     try {
       const result = await createMutation.mutateAsync({
-        title: `Offer Letter — ${candidate.fullName}`,
+        title: `Offer Letter: ${candidate.fullName}`,
         description: `Offer letter for ${candidate.jobTitle ?? 'the position'} to be signed by ${candidate.fullName}`,
         documentType: 'OFFER_LETTER',
         documentUrl: data.documentUrl || undefined,
@@ -357,7 +357,7 @@ export function OfferESignModal({
                 <label htmlFor="esign-document-url" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Document URL
                   <span
-                    className="text-[var(--text-muted)] ml-1 font-normal">(optional — PDF link to offer letter)</span>
+                    className="text-[var(--text-muted)] ml-1 font-normal">(optional: PDF link to offer letter)</span>
                 </label>
                 <input
                   id="esign-document-url"

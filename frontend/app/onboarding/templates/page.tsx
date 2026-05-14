@@ -5,7 +5,7 @@ import {useRouter} from 'next/navigation';
 import {AnimatePresence, motion} from 'framer-motion';
 import {ClipboardList, Edit3, Layout, Plus, Search, Trash2,} from 'lucide-react';
 import {AppLayout} from '@/components/layout';
-import {Card, CardContent} from '@/components/ui/Card';
+import {Card} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {Input} from '@/components/ui/Input';
 import {Badge} from '@/components/ui/Badge';
@@ -102,57 +102,55 @@ export default function TemplatesPage() {
                       transition={{delay: idx * 0.05}}
                       className="group"
                     >
-                      <Card
-                        className="h-full border border-[var(--border-main)] bg-[var(--bg-card)] hover:shadow-[var(--shadow-dropdown)] transition-all cursor-pointer rounded-3xl group overflow-hidden"
+                      <div
+                        className="h-full panel-inset hover:border-[var(--border-strong)] transition-all cursor-pointer rounded-3xl group overflow-hidden p-6 flex flex-col"
                         onClick={() => router.push(`/onboarding/templates/${template.id}`)}
                       >
-                        <CardContent className="p-6 h-full flex flex-col">
-                          <div className="flex justify-between items-start mb-4">
-                            <div className="p-4 bg-accent-500/10 rounded-lg">
-                              <ClipboardList className="h-6 w-6 text-accent-600"/>
-                            </div>
-                            <Badge variant="outline"
-                                   className="rounded-xl px-4 py-1 font-black text-xs uppercase tracking-widest border-accent-500/20 text-accent-600">
-                              Blueprint
-                            </Badge>
+                        <div className="flex justify-between items-start mb-4">
+                          <div className="p-4 bg-accent-500/10 rounded-lg">
+                            <ClipboardList className="h-6 w-6 text-accent-600"/>
                           </div>
+                          <Badge variant="outline"
+                                 className="rounded-xl px-4 py-1 font-black text-xs uppercase tracking-widest border-accent-500/20 text-accent-600">
+                            Blueprint
+                          </Badge>
+                        </div>
 
-                          <h3
-                            className="text-xl font-black text-[var(--text-primary)] mb-2 group-hover:text-accent-700 transition-colors">
-                            {template.name}
-                          </h3>
-                          <p className="text-body-muted font-bold mb-6 flex-grow line-clamp-2">
-                            {template.description || 'No description provided for this template.'}
-                          </p>
+                        <h3
+                          className="text-xl font-black text-[var(--text-primary)] mb-2 group-hover:text-accent-700 transition-colors">
+                          {template.name}
+                        </h3>
+                        <p className="text-body-muted font-bold mb-6 flex-grow line-clamp-2">
+                          {template.description || 'No description provided for this template.'}
+                        </p>
 
-                          <div className="row-between mt-auto pt-6 border-t border-white/20">
-                            <div className="flex items-center gap-2">
-                              <div className="flex -space-x-2">
-                                {[1, 2, 3].map(i => (
-                                  <div key={i}
-                                       className="h-6 w-6 rounded-full bg-[var(--bg-secondary)] border-2 border-white/50"/>
-                                ))}
-                              </div>
-                              <span
-                                className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)]">Reusable</span>
+                        <div className="row-between mt-auto pt-6 border-t border-white/20">
+                          <div className="flex items-center gap-2">
+                            <div className="flex -space-x-2">
+                              {[1, 2, 3].map(i => (
+                                <div key={i}
+                                     className="h-6 w-6 rounded-full bg-[var(--bg-secondary)] border-2 border-white/50"/>
+                              ))}
                             </div>
-                            <div className="flex gap-2">
-                              <PermissionGate permission={Permissions.ONBOARDING_MANAGE}>
-                                <Button size="sm" variant="outline"
-                                        className="h-8 w-8 p-0 rounded-xl opacity-0 group-hover:opacity-100 transition-all">
-                                  <Edit3 className="h-3.5 w-3.5"/>
-                                </Button>
-                              </PermissionGate>
-                              <PermissionGate permission={Permissions.ONBOARDING_MANAGE}>
-                                <Button size="sm" variant="outline"
-                                        className="h-8 w-8 p-0 rounded-xl text-danger-500 border-danger-500/20 opacity-0 group-hover:opacity-100 transition-all">
-                                  <Trash2 className="h-3.5 w-3.5"/>
-                                </Button>
-                              </PermissionGate>
-                            </div>
+                            <span
+                              className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)]">Reusable</span>
                           </div>
-                        </CardContent>
-                      </Card>
+                          <div className="flex gap-2">
+                            <PermissionGate permission={Permissions.ONBOARDING_MANAGE}>
+                              <Button size="sm" variant="outline"
+                                      className="h-8 w-8 p-0 rounded-xl opacity-0 group-hover:opacity-100 transition-all">
+                                <Edit3 className="h-3.5 w-3.5"/>
+                              </Button>
+                            </PermissionGate>
+                            <PermissionGate permission={Permissions.ONBOARDING_MANAGE}>
+                              <Button size="sm" variant="outline"
+                                      className="h-8 w-8 p-0 rounded-xl text-danger-500 border-danger-500/20 opacity-0 group-hover:opacity-100 transition-all">
+                                <Trash2 className="h-3.5 w-3.5"/>
+                              </Button>
+                            </PermissionGate>
+                          </div>
+                        </div>
+                      </div>
                     </motion.div>
                   ))}
                 </AnimatePresence>

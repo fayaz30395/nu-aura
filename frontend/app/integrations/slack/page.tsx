@@ -265,7 +265,7 @@ export default function SlackIntegrationPage() {
           </div>
           <div className="mt-4 p-2 bg-accent-50 dark:bg-accent-950/30 rounded-lg">
             <p className="text-xs text-accent-800 dark:text-accent-400">
-              <strong>Slash Commands to configure:</strong> <code>/leave</code> and <code>/balance</code> — both
+              <strong>Slash Commands to configure:</strong> <code>/leave</code> and <code>/balance</code>, both
               pointing to the Slash Commands URL above.
             </p>
           </div>

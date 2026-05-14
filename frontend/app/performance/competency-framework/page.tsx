@@ -572,8 +572,8 @@ export default function CompetencyFrameworkPage() {
             ) : (
               <div className="space-y-4">
                 <p className="text-caption font-medium uppercase tracking-wide">
-                  {filteredReviews.length} Review{filteredReviews.length !== 1 ? 's' : ''} — click to expand & manage
-                  competencies
+                  {filteredReviews.length} Review{filteredReviews.length !== 1 ? 's' : ''}. Click to expand & manage
+                  competencies.
                 </p>
                 {filteredReviews.map((review) => (
                   <ReviewCompetencyPanel

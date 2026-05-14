@@ -352,7 +352,7 @@ export default function ExpenseDetailPage() {
                   <span className="sr-only">Rejected</span>
                   <span className="text-sm text-surface-600 dark:text-surface-400">
                     Rejected by {claim.rejectedByName} on {format(new Date(claim.rejectedAt), 'dd MMM yyyy HH:mm')}
-                    {claim.rejectionReason && ` — "${claim.rejectionReason}"`}
+                    {claim.rejectionReason && `: "${claim.rejectionReason}"`}
                   </span>
                 </div>
               )}

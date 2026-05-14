@@ -110,7 +110,6 @@ export default function UtilizationReportsPage() {
                       icon: Icon,
                       trend,
                       trendDirection,
-                      color,
                     }: {
     title: string;
     value: string | number;
@@ -118,40 +117,37 @@ export default function UtilizationReportsPage() {
     icon: React.ElementType;
     trend?: string;
     trendDirection?: 'up' | 'down';
-    color: string;
-  }) => (
-    <Card className="hover:shadow-[var(--shadow-elevated)] transition-shadow">
-      <CardContent className="pt-6">
-        <div className="flex items-start justify-between">
-          <div className="space-y-2">
-            <p className="text-sm font-medium text-[var(--text-muted)]">{title}</p>
-            <p className="text-xl font-bold">{value}</p>
-            {subValue && (
-              <p className="text-body-muted">{subValue}</p>
-            )}
-            {trend && (
-              <div className="flex items-center gap-1">
-                {trendDirection === 'up' ? (
-                  <ArrowUpRight className="h-4 w-4 text-success-500"/>
-                ) : (
-                  <ArrowDownRight className="h-4 w-4 text-danger-500"/>
-                )}
-                <span
-                  className={`text-sm font-medium ${trendDirection === 'up' ? 'text-success-500' : 'text-danger-500'
-                  }`}
-                >
+    /** Retained for back-compat with existing call sites; no longer rendered. */
+    color?: string;
+  }) => {
+    const deltaTone = trendDirection === 'up'
+      ? 'text-success-700 dark:text-success-400'
+      : 'text-danger-700 dark:text-danger-400';
+    const sign = trendDirection === 'up' ? '+' : '−';
+    return (
+      <Card>
+        <CardContent className="pt-6">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <p className="text-micro">{title}</p>
+              <p className="mt-2 text-stat-large">{value}</p>
+              {subValue && (
+                <p className="stat-label">{subValue}</p>
+              )}
+              {trend && trendDirection && (
+                <p className={`mt-2 text-xs font-medium tabular-nums ${deltaTone}`}>
+                  <span aria-hidden="true">{sign} </span>
+                  <span className="sr-only">{trendDirection === 'up' ? 'up ' : 'down '}</span>
                   {trend}
-                </span>
-              </div>
-            )}
+                </p>
+              )}
+            </div>
+            <Icon className="h-5 w-5 text-[var(--text-muted)] shrink-0" aria-hidden="true"/>
           </div>
-          <div className={`p-4 rounded-xl ${color}`}>
-            <Icon className="h-6 w-6 text-white"/>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
+        </CardContent>
+      </Card>
+    );
+  };
 
 
   const UtilizationBar = ({rate}: { rate: number }) => (
@@ -336,31 +332,27 @@ export default function UtilizationReportsPage() {
             title="Average Utilization"
             value={formatPercentage(dashboardData.summary.averageUtilization)}
             icon={TrendingUp}
-            trend="+5.2% vs last period"
+            trend="5.2% vs last period"
             trendDirection="up"
-            color="bg-gradient-to-br from-accent-500 to-accent-600"
           />
           <StatCard
             title="Billable Hours"
             value={formatHours(dashboardData.summary.totalBillableHours)}
             subValue={`of ${formatHours(dashboardData.summary.totalBillableHours + dashboardData.summary.totalNonBillableHours)} total`}
             icon={Clock}
-            color="bg-gradient-to-br from-success-500 to-success-600"
           />
           <StatCard
             title="Active Resources"
             value={dashboardData.summary.totalEmployees}
             subValue="employees tracked"
             icon={Users}
-            color="bg-gradient-to-br from-accent-700 to-accent-800"
           />
           <StatCard
             title="Revenue Generated"
             value={formatCurrency(dashboardData.summary.billedAmount)}
             icon={DollarSign}
-            trend="+12.3% vs last period"
+            trend="12.3% vs last period"
             trendDirection="up"
-            color="bg-gradient-to-br from-warning-500 to-warning-600"
           />
         </motion.div>
 

@@ -158,7 +158,7 @@ function PlaceholderToolbar({placeholders, onInsert}: PlaceholderToolbarProps) {
                     key={item.key}
                     type="button"
                     onClick={() => onInsert(`{{${item.key}}}`)}
-                    title={`${item.label} — e.g. ${item.example}`}
+                    title={`${item.label}, e.g. ${item.example}`}
                     className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-accent-50 text-accent-700 border border-accent-200 rounded-md hover:bg-accent-100 dark:bg-accent-900/30 dark:text-accent-300 dark:border-accent-800 dark:hover:bg-accent-900/50 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                   >
                     <Tag className="h-3 w-3"/>

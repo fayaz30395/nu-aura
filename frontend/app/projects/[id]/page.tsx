@@ -431,7 +431,7 @@ export default function ProjectDetailPage() {
                   {...editRegister('isBillable')}
                 />
                 <span className="text-sm font-medium text-[var(--text-primary)]">Billable project</span>
-                <span className="text-caption">— enables invoicing</span>
+                <span className="text-caption">(enables invoicing)</span>
               </label>
 
               {editWatch('isBillable') && (

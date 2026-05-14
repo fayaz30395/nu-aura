@@ -174,7 +174,7 @@ export function ParseResumeModal({
                             {dragOver ? 'Drop file here' : 'Drag & drop or click to browse'}
                           </p>
                           <p className="text-caption mt-1">
-                            PDF, DOCX, DOC, TXT — max 10 MB
+                            PDF, DOCX, DOC, TXT (max 10 MB)
                           </p>
                         </div>
                       </>
@@ -355,7 +355,7 @@ export function ParseResumeModal({
                           <p className="text-sm font-medium text-[var(--text-primary)]">{exp.designation}</p>
                           <p className="text-caption">
                             {exp.company}
-                            {(exp.startDate || exp.endDate) && ` · ${exp.startDate ?? ''}${exp.endDate ? ` — ${exp.endDate}` : ''}`}
+                            {(exp.startDate || exp.endDate) && ` · ${exp.startDate ?? ''}${exp.endDate ? ` – ${exp.endDate}` : ''}`}
                           </p>
                           {exp.description && (
                             <p className="text-xs text-[var(--text-secondary)] mt-1 line-clamp-2">{exp.description}</p>

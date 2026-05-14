@@ -171,7 +171,7 @@ export default function SignupPage() {
           className="skeuo-card bg-[var(--bg-card)] border-[var(--border-main)]/80 dark:border-[var(--border-main)]/80 shadow-soft-lg">
           <CardHeader className="pb-4">
             <CardTitle className="text-xl">Create your account</CardTitle>
-            <CardDescription>Start your free trial — no credit card required</CardDescription>
+            <CardDescription>Start your free trial. No credit card required.</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">

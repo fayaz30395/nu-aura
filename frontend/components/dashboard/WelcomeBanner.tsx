@@ -117,7 +117,7 @@ export function QuickAccessWidget({
             className="flex items-center gap-2.5 rounded-xl bg-[var(--status-success-bg)] border border-[var(--status-success-border)] p-4">
             <CheckCircle2 className="h-4 w-4 flex-shrink-0 text-[var(--status-success-text)]"/>
             <p className="text-sm font-medium text-[var(--status-success-text)]">
-              All caught up — no pending actions
+              All caught up. No pending actions.
             </p>
           </div>
         ) : (

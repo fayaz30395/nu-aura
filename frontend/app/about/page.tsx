@@ -98,7 +98,7 @@ export default function AboutPage() {
           </h1>
           <p className="text-xl text-[var(--text-secondary)] mb-8">
             We&apos;re on a mission to make HR management effortless, empowering companies to focus on what matters
-            most—their people.
+            most: their people.
           </p>
         </div>
       </section>
@@ -156,29 +156,57 @@ export default function AboutPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {values.map((value, index) => (
-              <motion.div
-                key={index}
-                initial={{opacity: 0, y: 20}}
-                whileInView={{opacity: 1, y: 0}}
-                viewport={{once: true}}
-                transition={{delay: index * 0.1}}
-              >
-                <Card padding="lg" className="text-center h-full">
-                  <div
-                    className="w-14 h-14 rounded-lg bg-accent-100 dark:bg-accent-500/10 text-accent-600 dark:text-accent-400 flex items-center justify-center mx-auto mb-4">
-                    <value.icon className="h-7 w-7"/>
-                  </div>
-                  <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
-                    {value.title}
-                  </h3>
-                  <p className="text-body-secondary leading-relaxed">
-                    {value.description}
-                  </p>
-                </Card>
-              </motion.div>
-            ))}
+          {/* Featured value spans 2 cols on lg; supporting values are smaller. Avoids the
+              identical-card-grid pattern by varying weight: one statement card + 3 satellites. */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {values.map((value, index) => {
+              const isFeatured = index === 0;
+              return (
+                <motion.div
+                  key={index}
+                  initial={{opacity: 0, y: 20}}
+                  whileInView={{opacity: 1, y: 0}}
+                  viewport={{once: true}}
+                  transition={{delay: index * 0.1}}
+                  className={isFeatured ? 'md:col-span-2 lg:col-span-3 lg:row-span-1' : ''}
+                >
+                  {isFeatured ? (
+                    <Card padding="lg" className="h-full bg-accent-50 dark:bg-accent-950/20 border border-accent-200 dark:border-accent-800">
+                      <div className="flex flex-col md:flex-row items-start gap-6">
+                        <div className="w-16 h-16 rounded-xl bg-accent-100 dark:bg-accent-500/10 text-accent-600 dark:text-accent-400 flex items-center justify-center flex-shrink-0">
+                          <value.icon className="h-8 w-8"/>
+                        </div>
+                        <div>
+                          <h3 className="text-2xl font-bold text-[var(--text-primary)] mb-2">
+                            {value.title}
+                          </h3>
+                          <p className="text-lg text-[var(--text-secondary)] leading-relaxed">
+                            {value.description}. It&apos;s the lens we apply to every product decision and every
+                            line of code.
+                          </p>
+                        </div>
+                      </div>
+                    </Card>
+                  ) : (
+                    <Card padding="lg" className="h-full">
+                      <div className="flex items-start gap-4">
+                        <div className="w-10 h-10 rounded-lg bg-accent-100 dark:bg-accent-500/10 text-accent-600 dark:text-accent-400 flex items-center justify-center flex-shrink-0">
+                          <value.icon className="h-5 w-5"/>
+                        </div>
+                        <div>
+                          <h3 className="text-base font-semibold text-[var(--text-primary)] mb-1">
+                            {value.title}
+                          </h3>
+                          <p className="text-body-secondary leading-relaxed">
+                            {value.description}
+                          </p>
+                        </div>
+                      </div>
+                    </Card>
+                  )}
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </section>

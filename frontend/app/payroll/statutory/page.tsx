@@ -155,7 +155,7 @@ export default function StatutoryPage() {
               </Text>
             </div>
             <Badge variant="light" color="blue" size="lg">
-              New Regime — FY 2024-25
+              New Regime, FY 2024-25
             </Badge>
           </Group>
 

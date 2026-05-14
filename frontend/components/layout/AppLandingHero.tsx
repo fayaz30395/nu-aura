@@ -68,7 +68,7 @@ export const AppLandingHero: React.FC<AppLandingHeroProps> = ({
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent-50 dark:bg-accent-900/20 text-accent-600 dark:text-accent-400 text-sm font-medium"
           >
             <Clock className="w-4 h-4"/>
-            Coming Soon — Phase 2
+            Coming Soon (Phase 2)
           </div>
         )}
       </div>

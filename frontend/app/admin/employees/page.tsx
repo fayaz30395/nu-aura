@@ -140,7 +140,7 @@ const ROLE_META: RoleMeta[] = [
     description: 'Bypasses ALL permission checks. Unrestricted access to every tenant, module, and data point in the system.',
     color: 'bg-danger-500',
     badgeClass: 'status-danger',
-    permissions: ['EVERYTHING — bypasses all RBAC']
+    permissions: ['EVERYTHING (bypasses all RBAC)']
   },
 ];
 
@@ -176,7 +176,7 @@ function PermissionPreview({roleCodes}: { roleCodes: string[] }) {
         <div className="flex items-center gap-2">
           <Eye className="h-4 w-4 text-accent-500"/>
           <span className="text-sm font-medium text-[var(--text-primary)]">
-            Permission Summary — {allPerms.size} capability areas
+            Permission Summary: {allPerms.size} capability areas
           </span>
         </div>
         {expanded ? <ChevronUp className="h-4 w-4 text-[var(--text-muted)]"/> :

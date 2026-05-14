@@ -219,7 +219,7 @@ export default function CreateOfferPage() {
                       ))}
                       {offerTemplates.length === 0 && (
                         <option value="" disabled>
-                          No offer templates found — create one in Letters settings
+                          No offer templates found. Create one in Letters settings.
                         </option>
                       )}
                     </Select>

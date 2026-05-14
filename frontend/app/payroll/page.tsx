@@ -57,7 +57,7 @@ const SUB_PAGES = [
   {
     href: '/payroll/statutory',
     label: 'Statutory',
-    description: 'Configure statutory compliance — PF, ESI, PT, TDS, and LWF',
+    description: 'Configure statutory compliance: PF, ESI, PT, TDS, and LWF',
     icon: Scale,
     gradient: 'from-success-500 to-success-600',
     hoverBorder: 'hover:border-success-300 dark:hover:border-success-700',

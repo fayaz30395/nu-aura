@@ -72,7 +72,7 @@ export default function ResourcesPage() {
     },
     {
       title: 'Resource Pool',
-      description: 'All employees with allocation bars — filter by department or status',
+      description: 'All employees with allocation bars; filter by department or status',
       icon: Users,
       href: '/resources/pool',
       color: 'bg-info-100 text-info-600 dark:bg-info-900/30 dark:text-info-400',

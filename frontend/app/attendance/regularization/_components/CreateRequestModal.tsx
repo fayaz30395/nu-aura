@@ -5,7 +5,6 @@ import {AnimatePresence, motion} from 'framer-motion';
 import {Check, Info, Send} from 'lucide-react';
 import {Control, Controller, FieldErrors, UseFormHandleSubmit, UseFormRegister} from 'react-hook-form';
 import {DateInput} from '@mantine/dates';
-import {Card, CardContent} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 
 export interface RegularizationFormData {
@@ -254,7 +253,7 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
                             )}
                           </div>
                         </div>
-                        <div className="card-aura tint-info border-[var(--status-info-border)] p-4">
+                        <div className="panel-inset tint-info border-[var(--status-info-border)] p-4">
                           <p className="text-xs text-[var(--status-info-text)]">
                             <span className="font-semibold">Tip:</span> Provide the times you were actually present.
                             Leave blank if only the status needs correction.
@@ -274,23 +273,21 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
                         className="space-y-4"
                       >
                         {/* Manager Info */}
-                        <Card className="card-aura tint-info border-[var(--status-info-border)]">
-                          <CardContent className="p-4">
-                            <div className="flex gap-4">
-                              <Info className="h-5 w-5 flex-shrink-0 mt-0.5 text-[var(--status-info-text)]"/>
-                              <div className="text-sm text-[var(--status-info-text)]">
-                                <p className="font-semibold mb-1">Approval Routing</p>
-                                <p>
-                                  This request will be sent to{' '}
-                                  <span className="font-medium">
-                                    {managerName || 'your reporting manager'}
-                                  </span>{' '}
-                                  for approval. HR Managers and Admins can also approve requests.
-                                </p>
-                              </div>
+                        <div className="panel-inset tint-info border-[var(--status-info-border)] p-4">
+                          <div className="flex gap-4">
+                            <Info className="h-5 w-5 flex-shrink-0 mt-0.5 text-[var(--status-info-text)]"/>
+                            <div className="text-sm text-[var(--status-info-text)]">
+                              <p className="font-semibold mb-1">Approval Routing</p>
+                              <p>
+                                This request will be sent to{' '}
+                                <span className="font-medium">
+                                  {managerName || 'your reporting manager'}
+                                </span>{' '}
+                                for approval. HR Managers and Admins can also approve requests.
+                              </p>
                             </div>
-                          </CardContent>
-                        </Card>
+                          </div>
+                        </div>
 
                         <div>
                           <label className="block text-sm font-semibold text-[var(--text-primary)] mb-4">

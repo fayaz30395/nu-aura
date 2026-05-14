@@ -253,43 +253,74 @@ export default function IntegrationsPage() {
             ))}
           </div>
 
-          {/* Integration Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Integration Cards — popular ones span 2 cols so the grid has visual rhythm
+              instead of being 10 identical tiles. Auto-rows-fr keeps the masonry tidy. */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 auto-rows-fr gap-6">
             {filteredIntegrations.map((integration, index) => (
               <motion.div
                 key={integration.name}
                 initial={{opacity: 0, y: 20}}
                 animate={{opacity: 1, y: 0}}
                 transition={{delay: index * 0.05}}
+                className={integration.popular ? 'md:col-span-2' : ''}
               >
                 <Card hover padding="lg" className="h-full">
-                  {integration.popular && (
-                    <Badge variant="success" size="sm" className="mb-4">
-                      Popular
-                    </Badge>
-                  )}
-                  <div
-                    className={`w-14 h-14 rounded-xl bg-gradient-to-br ${integration.color} flex items-center justify-center mb-4`}
-                  >
-                    <integration.icon className="h-7 w-7 text-white"/>
-                  </div>
-                  <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
-                    {integration.name}
-                  </h2>
-                  <p className="text-body-secondary mb-4 leading-relaxed">
-                    {integration.description}
-                  </p>
-                  <ul className="space-y-2">
-                    {integration.features.map((feature, i) => (
-                      <li
-                        key={i}
-                        className="flex items-center gap-2 text-body-secondary"
+                  {integration.popular ? (
+                    <div className="flex flex-col sm:flex-row items-start gap-6 h-full">
+                      <div
+                        className={`w-14 h-14 rounded-xl bg-gradient-to-br ${integration.color} flex items-center justify-center flex-shrink-0`}
                       >
-                        <Check className="h-4 w-4 text-success-500 flex-shrink-0"/>
-                        {feature}
-                      </li>
-                    ))}
-                  </ul>
+                        <integration.icon className="h-7 w-7 text-white"/>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-2">
+                          <h2 className="text-xl font-semibold text-[var(--text-primary)]">
+                            {integration.name}
+                          </h2>
+                          <Badge variant="success" size="sm">Popular</Badge>
+                        </div>
+                        <p className="text-body-secondary mb-4 leading-relaxed">
+                          {integration.description}
+                        </p>
+                        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
+                          {integration.features.map((feature, i) => (
+                            <li
+                              key={i}
+                              className="flex items-center gap-2 text-body-secondary"
+                            >
+                              <Check className="h-4 w-4 text-success-500 flex-shrink-0"/>
+                              {feature}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <div
+                        className={`w-12 h-12 rounded-xl bg-gradient-to-br ${integration.color} flex items-center justify-center mb-4`}
+                      >
+                        <integration.icon className="h-6 w-6 text-white"/>
+                      </div>
+                      <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
+                        {integration.name}
+                      </h2>
+                      <p className="text-body-secondary mb-4 leading-relaxed">
+                        {integration.description}
+                      </p>
+                      <ul className="space-y-2">
+                        {integration.features.map((feature, i) => (
+                          <li
+                            key={i}
+                            className="flex items-center gap-2 text-body-secondary"
+                          >
+                            <Check className="h-4 w-4 text-success-500 flex-shrink-0"/>
+                            {feature}
+                          </li>
+                        ))}
+                      </ul>
+                    </>
+                  )}
                 </Card>
               </motion.div>
             ))}
@@ -312,7 +343,9 @@ export default function IntegrationsPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* API features — list form. Three short factual claims read better as scannable
+              rows than as three identical icon-headline-text tiles. */}
+          <Card padding="none" className="divide-y divide-[var(--border-subtle)]">
             {[
               {
                 icon: Code,
@@ -330,15 +363,17 @@ export default function IntegrationsPage() {
                 description: 'Real-time event notifications for automation',
               },
             ].map((feature, index) => (
-              <Card key={index} padding="lg">
-                <feature.icon className="h-8 w-8 text-accent-700 dark:text-accent-400 mb-4"/>
-                <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
-                  {feature.title}
-                </h3>
-                <p className="text-body-secondary">{feature.description}</p>
-              </Card>
+              <div key={index} className="flex items-start gap-4 p-4 sm:p-6">
+                <feature.icon className="h-6 w-6 text-accent-700 dark:text-accent-400 flex-shrink-0 mt-0.5"/>
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-base font-semibold text-[var(--text-primary)]">
+                    {feature.title}
+                  </h3>
+                  <p className="text-body-secondary mt-1">{feature.description}</p>
+                </div>
+              </div>
             ))}
-          </div>
+          </Card>
 
           <div className="mt-10 text-center">
             <Button variant="outline" size="lg" className="gap-2">

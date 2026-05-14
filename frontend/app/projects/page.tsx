@@ -1094,7 +1094,7 @@ export default function ProjectsPage() {
                   {...register('isBillable')}
                 />
                 <span className="text-sm font-medium text-[var(--text-primary)]">Billable project</span>
-                <span className="text-caption">— enables invoicing for this project</span>
+                <span className="text-caption">(enables invoicing for this project)</span>
               </label>
 
               {watch('isBillable') && (

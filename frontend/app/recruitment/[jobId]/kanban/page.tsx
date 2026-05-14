@@ -573,7 +573,7 @@ export default function KanbanPage() {
               </Group>
               <Group gap="sm" wrap="wrap">
                 {rejectedCandidates.map((c) => (
-                  <Paper key={c.id} withBorder p="xs" radius="sm" style={{minWidth: 160}}>
+                  <div key={c.id} className="panel-inset p-2" style={{minWidth: 160}}>
                     <Text size="sm" fw={500} lineClamp={1}>
                       {c.fullName}
                     </Text>
@@ -585,7 +585,7 @@ export default function KanbanPage() {
                         {formatDate(c.appliedDate)}
                       </Text>
                     )}
-                  </Paper>
+                  </div>
                 ))}
               </Group>
             </Paper>
