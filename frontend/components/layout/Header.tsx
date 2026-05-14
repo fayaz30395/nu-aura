@@ -93,7 +93,7 @@ const Header: React.FC<HeaderProps> = ({
           {/* Mobile hamburger */}
           {showMenuButton && (
             <button onClick={onMenuClick}
-                    className="p-2 rounded-lg text-[var(--header-text-muted)] hover:text-[var(--header-text)] hover:bg-[var(--header-hover-bg)] transition-colors duration-150 md:hidden flex items-center justify-center cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                    className="h-8 w-8 rounded-lg text-[var(--header-text-muted)] hover:text-[var(--header-text)] hover:bg-[var(--header-hover-bg)] transition-colors duration-150 md:hidden inline-flex items-center justify-center cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 active:translate-y-px"
                     aria-label="Toggle menu"
             >
               <Menu className="h-5 w-5"/>
@@ -133,7 +133,7 @@ const Header: React.FC<HeaderProps> = ({
           {/* Mobile Search Button */}
           <button
             onClick={() => setIsMobileSearchOpen(true)}
-            className="lg:hidden p-2 rounded-lg text-[var(--header-text-muted)] hover:text-[var(--header-text)] hover:bg-[var(--header-hover-bg)] transition-colors duration-150 flex items-center justify-center cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+            className="lg:hidden h-8 w-8 rounded-lg text-[var(--header-text-muted)] hover:text-[var(--header-text)] hover:bg-[var(--header-hover-bg)] transition-colors duration-150 inline-flex items-center justify-center cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 active:translate-y-px"
             aria-label="Search"
           >
             <Search className="h-4 w-4 sm:h-5 sm:w-5"/>
@@ -144,7 +144,7 @@ const Header: React.FC<HeaderProps> = ({
         <div className="flex items-center gap-1 sm:gap-2">
           {/* Help */}
           <button
-            className="hidden sm:flex p-2 rounded-lg text-[var(--header-text-muted)] hover:text-[var(--header-text)] hover:bg-[var(--header-hover-bg)] transition-colors duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
+            className="hidden sm:inline-flex h-8 w-8 items-center justify-center rounded-lg text-[var(--header-text-muted)] hover:text-[var(--header-text)] hover:bg-[var(--header-hover-bg)] transition-colors duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 active:translate-y-px"
             aria-label="Help">
             <HelpCircle className="h-5 w-5"/>
           </button>
@@ -157,16 +157,16 @@ const Header: React.FC<HeaderProps> = ({
           <div className="relative">
             <button
               onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
-              className="notification-btn relative p-2 rounded-lg text-[var(--header-text-muted)] hover:text-[var(--header-text)] hover:bg-[var(--header-hover-bg)] transition-colors duration-150"
+              className="notification-btn relative inline-flex h-8 w-8 items-center justify-center rounded-lg text-[var(--header-text-muted)] hover:text-[var(--header-text)] hover:bg-[var(--header-hover-bg)] transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 active:translate-y-px"
               aria-label="Notifications"
               aria-expanded={isNotificationsOpen}
               aria-haspopup="true"
             >
               <Bell className="h-5 w-5"/>
               {totalUnreadCount > 0 && (
-                <span className="absolute top-1 right-1 flex h-5 w-5 items-center justify-center">
+                <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center">
                   <span
-                    className="relative inline-flex h-4 w-4 items-center justify-center rounded-full bg-accent text-2xs font-semibold text-white">
+                    className="relative inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-accent px-1 text-2xs font-semibold text-white">
                     {totalUnreadCount > 9 ? '9+' : totalUnreadCount}
                   </span>
                 </span>

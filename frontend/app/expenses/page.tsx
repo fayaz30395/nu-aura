@@ -1,27 +1,39 @@
 'use client';
 
-import {useEffect, useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
+import Link from 'next/link';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
-import {AppLayout} from '@/components/layout';
+import {motion} from 'framer-motion';
 import {
   AlertCircle,
+  AlertTriangle,
+  ArrowRight,
   CheckCircle,
   ChevronDown,
+  Clock,
   DollarSign,
   FileText,
   Filter,
+  PieChart,
   Plus,
   Receipt,
   Search,
-  XCircle
+  ShieldAlert,
+  Tag,
+  TrendingUp,
+  Wallet,
+  XCircle,
 } from 'lucide-react';
+
+import {AppLayout} from '@/components/layout';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {CreateExpenseClaimRequest, CurrencyCode, ExpenseCategory} from '@/lib/types/hrms/expense';
-import {ConfirmDialog, EmptyState, Stat} from '@/components/ui';
+import {ConfirmDialog, EmptyState} from '@/components/ui';
+import {Button} from '@/components/ui/Button';
 import {StatusBadge} from '@/components/ui/StatusBadge';
 import {EXPENSE_STATUS} from '@/lib/status/vocabulary';
 import {ExpenseAnalytics} from '@/components/expenses';
@@ -40,6 +52,9 @@ import {
   useSubmitExpenseClaim,
 } from '@/lib/hooks/queries';
 import {createLogger} from '@/lib/utils/logger';
+
+// Single ease curve for every transition on this page.
+const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
 const expenseClaimSchema = z.object({
   claimDate: z.string().min(1, 'Claim date required'),
@@ -76,7 +91,6 @@ export default function ExpenseClaims() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
-  // Initialize React Query hooks
   const myClaimsQuery = useMyExpenseClaims(user?.employeeId, 0, 50);
   const pendingClaimsQuery = usePendingExpenseClaims(0, 50);
   const allClaimsQuery = useAllExpenseClaims(0, 20);
@@ -86,18 +100,15 @@ export default function ExpenseClaims() {
   const rejectMutation = useRejectExpenseClaim();
   const deleteMutation = useDeleteExpenseClaim();
 
-  // Bulk selection
   const [selectedClaims, setSelectedClaims] = useState<Set<string>>(new Set());
   const [bulkProcessing, setBulkProcessing] = useState(false);
   const [showBulkRejectModal, setShowBulkRejectModal] = useState(false);
   const [bulkRejectReason, setBulkRejectReason] = useState('');
 
-  // Confirm dialogs
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showRejectConfirm, setShowRejectConfirm] = useState(false);
   const [selectedClaimForAction, setSelectedClaimForAction] = useState<string | null>(null);
 
-  // Filters
   const [showFilters, setShowFilters] = useState(false);
   const [filters, setFilters] = useState<Filters>({
     category: 'ALL',
@@ -108,7 +119,6 @@ export default function ExpenseClaims() {
     search: '',
   });
 
-  // Form setup
   const {
     register,
     handleSubmit,
@@ -141,7 +151,6 @@ export default function ExpenseClaims() {
     }, 5000);
   };
 
-  // Get current claims based on active tab
   const currentClaimsData = useMemo(() => {
     if (activeTab === 'my-claims') return myClaimsQuery.data?.content || [];
     if (activeTab === 'pending') return pendingClaimsQuery.data?.content || [];
@@ -149,22 +158,14 @@ export default function ExpenseClaims() {
     return [];
   }, [activeTab, myClaimsQuery.data, pendingClaimsQuery.data, allClaimsQuery.data]);
 
-  // Filter claims
   const filteredClaims = useMemo(() => {
     return currentClaimsData.filter((claim) => {
-      // Category filter
       if (filters.category !== 'ALL' && claim.category !== filters.category) return false;
-
-      // Date range filter
       const claimDate = new Date(claim.claimDate);
       if (filters.dateFrom && claimDate < new Date(filters.dateFrom)) return false;
       if (filters.dateTo && claimDate > new Date(filters.dateTo)) return false;
-
-      // Amount range filter
       if (filters.amountMin && claim.amount < parseFloat(filters.amountMin)) return false;
       if (filters.amountMax && claim.amount > parseFloat(filters.amountMax)) return false;
-
-      // Search filter
       if (filters.search) {
         const searchLower = filters.search.toLowerCase();
         const matchesSearch =
@@ -173,29 +174,35 @@ export default function ExpenseClaims() {
           claim.employeeName?.toLowerCase().includes(searchLower);
         if (!matchesSearch) return false;
       }
-
       return true;
     });
   }, [currentClaimsData, filters]);
 
-  // Statistics
+  // Statistics — fed by *all* my-claims so the dashboard summary is stable across tabs.
+  const myClaims = myClaimsQuery.data?.content ?? [];
+  const pendingForApproval = pendingClaimsQuery.data?.content ?? [];
+
   const statistics = useMemo(() => {
-    const allClaims = currentClaimsData;
-    const pending = allClaims.filter((c) => c.status === 'SUBMITTED');
-    const approved = allClaims.filter((c) => c.status === 'APPROVED');
-    const totalPendingAmount = pending.reduce((sum, c) => sum + c.amount, 0);
-    const totalApprovedAmount = approved.reduce((sum, c) => sum + c.amount, 0);
+    const monthStart = startOfMonth(new Date());
+    const pending = myClaims.filter((c) => c.status === 'SUBMITTED');
+    const approvedThisMonth = myClaims.filter(
+      (c) => c.status === 'APPROVED' && c.approvedAt && new Date(c.approvedAt) >= monthStart
+    );
+    const awaitingReimbursement = myClaims.filter((c) => c.status === 'APPROVED');
+    const overPolicy = myClaims.filter((c) => c.amount > 50000);
 
     return {
       pendingCount: pending.length,
-      approvedCount: approved.length,
-      totalPendingAmount,
-      totalApprovedAmount,
-      totalClaims: allClaims.length,
+      pendingAmount: pending.reduce((sum, c) => sum + c.amount, 0),
+      approvedThisMonthCount: approvedThisMonth.length,
+      approvedThisMonthAmount: approvedThisMonth.reduce((sum, c) => sum + c.amount, 0),
+      awaitingReimbursementCount: awaitingReimbursement.length,
+      awaitingReimbursementAmount: awaitingReimbursement.reduce((sum, c) => sum + c.amount, 0),
+      overPolicyCount: overPolicy.length,
+      approvalsWaitingCount: pendingForApproval.length,
     };
-  }, [currentClaimsData]);
+  }, [myClaims, pendingForApproval]);
 
-  // Bulk selection handlers
   const handleSelectAll = () => {
     const selectableClaims = filteredClaims.filter((c) => c.status === 'SUBMITTED');
     if (selectedClaims.size === selectableClaims.length) {
@@ -207,17 +214,13 @@ export default function ExpenseClaims() {
 
   const handleSelectClaim = (claimId: string) => {
     const newSelection = new Set(selectedClaims);
-    if (newSelection.has(claimId)) {
-      newSelection.delete(claimId);
-    } else {
-      newSelection.add(claimId);
-    }
+    if (newSelection.has(claimId)) newSelection.delete(claimId);
+    else newSelection.add(claimId);
     setSelectedClaims(newSelection);
   };
 
   const handleBulkApprove = async () => {
     if (!user?.employeeId || selectedClaims.size === 0) return;
-
     setBulkProcessing(true);
     try {
       const promises = Array.from(selectedClaims).map((claimId) =>
@@ -237,7 +240,6 @@ export default function ExpenseClaims() {
   const handleBulkReject = async (reason?: string) => {
     const trimmed = (reason ?? bulkRejectReason).trim();
     if (!user?.employeeId || selectedClaims.size === 0 || !trimmed) return;
-
     setBulkProcessing(true);
     try {
       const promises = Array.from(selectedClaims).map((claimId) =>
@@ -267,13 +269,11 @@ export default function ExpenseClaims() {
     });
   };
 
-
   const onSubmit = async (data: ExpenseClaimFormData) => {
     if (!user?.employeeId) {
       showNotification('You must be logged in to create an expense claim', 'error');
       return;
     }
-
     try {
       const request: CreateExpenseClaimRequest = {
         claimDate: data.claimDate,
@@ -284,9 +284,7 @@ export default function ExpenseClaims() {
         receiptUrl: data.receiptUrl || undefined,
         notes: data.notes || undefined,
       };
-
       await createMutation.mutateAsync({employeeId: user.employeeId, data: request});
-
       resetForm();
       setShowForm(false);
       showNotification('Expense claim created successfully!', 'success');
@@ -308,7 +306,6 @@ export default function ExpenseClaims() {
 
   const handleApprove = async (claimId: string) => {
     if (!user?.employeeId) return;
-
     try {
       await approveMutation.mutateAsync(claimId);
       showNotification('Expense claim approved successfully!', 'success');
@@ -326,7 +323,6 @@ export default function ExpenseClaims() {
   const handleRejectConfirm = async (reason?: string) => {
     const trimmed = (reason ?? '').trim();
     if (!user?.employeeId || !selectedClaimForAction || !trimmed) return;
-
     try {
       await rejectMutation.mutateAsync({claimId: selectedClaimForAction, reason: trimmed});
       showNotification('Expense claim rejected', 'success');
@@ -345,7 +341,6 @@ export default function ExpenseClaims() {
 
   const handleDeleteConfirm = async () => {
     if (!selectedClaimForAction) return;
-
     try {
       await deleteMutation.mutateAsync(selectedClaimForAction);
       showNotification('Expense claim deleted', 'success');
@@ -357,12 +352,11 @@ export default function ExpenseClaims() {
     }
   };
 
-  // Show loading state while hydrating
   if (!hasHydrated) {
     return (
       <AppLayout activeMenuItem="expenses">
         <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-500"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-500" />
         </div>
       </AppLayout>
     );
@@ -372,7 +366,7 @@ export default function ExpenseClaims() {
     return (
       <AppLayout activeMenuItem="expenses">
         <EmptyState
-          icon={<DollarSign className="h-12 w-12"/>}
+          icon={<DollarSign className="h-12 w-12" />}
           title="No Employee Profile Linked"
           description="Expense management requires an employee profile. Use the admin panels to manage employee expenses."
         />
@@ -380,595 +374,137 @@ export default function ExpenseClaims() {
     );
   }
 
+  const tabLoading =
+    (activeTab === 'my-claims' && myClaimsQuery.isLoading) ||
+    (activeTab === 'pending' && pendingClaimsQuery.isLoading) ||
+    (activeTab === 'all' && allClaimsQuery.isLoading);
+  const tabError = myClaimsQuery.error || pendingClaimsQuery.error || allClaimsQuery.error;
+
   return (
     <AppLayout activeMenuItem="expenses">
-      <div className="max-w-7xl mx-auto">
-        {/* Notifications */}
-        {error && (
-          <div
-            className="mb-4 p-4 bg-danger-100 dark:bg-danger-900/30 border border-danger-300 dark:border-danger-700 rounded-lg flex items-center gap-2 text-danger-800 dark:text-danger-300">
-            <AlertCircle className="w-5 h-5"/>
-            {error}
-          </div>
+      <div className="mx-auto w-full max-w-7xl px-6 py-8 space-y-10">
+        <PageHeader onCreate={() => setShowForm(true)} />
+
+        {error && <InlineAlert tone="danger" icon={AlertCircle} message={error} />}
+        {success && <InlineAlert tone="success" icon={CheckCircle} message={success} />}
+
+        <StatsRow
+          pendingCount={statistics.pendingCount}
+          pendingAmount={statistics.pendingAmount}
+          approvedThisMonthAmount={statistics.approvedThisMonthAmount}
+          awaitingReimbursementAmount={statistics.awaitingReimbursementAmount}
+          overPolicyCount={statistics.overPolicyCount}
+        />
+
+        <BentoNavigation
+          approvalsWaiting={statistics.approvalsWaitingCount}
+          onSubmit={() => setShowForm(true)}
+          onApprovals={() => {
+            setActiveTab('pending');
+            setSelectedClaims(new Set());
+          }}
+        />
+
+        {statistics.overPolicyCount > 0 && (
+          <AttentionStrip count={statistics.overPolicyCount} />
         )}
-        {success && (
-          <div
-            className="mb-4 p-4 bg-success-100 dark:bg-success-900/30 border border-success-300 dark:border-success-700 rounded-lg flex items-center gap-2 text-success-800 dark:text-success-300">
-            <CheckCircle className="w-5 h-5"/>
-            {success}
-          </div>
-        )}
 
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-          <div>
-            <h1
-              className="text-xl sm:text-xl font-bold text-[var(--text-primary)] flex items-center gap-2">
-              <DollarSign className="w-7 h-7 sm:w-8 sm:h-8"/>
-              Expense Claims
-            </h1>
-            <p className="text-[var(--text-secondary)] mt-1">Submit and manage your expense claims</p>
-          </div>
-          <button
-            onClick={() => setShowForm(!showForm)}
-            className="px-4 sm:px-4 py-2 sm:py-4 bg-accent-500 text-white rounded-lg hover:bg-accent-700 transition-colors flex items-center gap-2 skeuo-button"
-          >
-            <Plus className="w-5 h-5"/>
-            New Claim
-          </button>
-        </div>
-
-        {/* Statistics */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-          <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-[var(--border-main)] skeuo-card">
-            <Stat
-              label="Pending"
-              value={statistics.pendingCount}
-              tone="warning"
-              icon={<AlertCircle className="w-3.5 h-3.5"/>}
-            />
-          </div>
-          <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-[var(--border-main)] skeuo-card">
-            <Stat
-              label="Approved"
-              value={statistics.approvedCount}
-              tone="success"
-              icon={<CheckCircle className="w-3.5 h-3.5"/>}
-            />
-          </div>
-          <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-[var(--border-main)] skeuo-card">
-            <Stat
-              label="Pending Amount"
-              value={formatCurrency(statistics.totalPendingAmount)}
-              tone="accent"
-              icon={<DollarSign className="w-3.5 h-3.5"/>}
-            />
-          </div>
-          <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-[var(--border-main)] skeuo-card">
-            <Stat
-              label="Total Claims"
-              value={statistics.totalClaims}
-              icon={<FileText className="w-3.5 h-3.5"/>}
-            />
-          </div>
-        </div>
-
-        {/* Filters Bar */}
-        <div className="skeuo-card p-4 mb-6">
-          <div className="flex flex-wrap items-center gap-4">
-            {/* Search */}
-            <div className="relative flex-1 min-w-[200px]" role="search">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]"/>
-              <input
-                type="search"
-                aria-label="Search claims"
-                placeholder="Search claims..."
-                value={filters.search}
-                onChange={(e) => setFilters({...filters, search: e.target.value})}
-                className="input-aura pl-10"
-              />
-            </div>
-
-            {/* Filter Toggle */}
-            <button
-              onClick={() => setShowFilters(!showFilters)}
-              className={`px-4 py-2 border rounded-lg flex items-center gap-2 transition-colors ${
-                showFilters
-                  ? 'border-accent-500 text-accent-700 bg-accent-50 dark:bg-accent-900/20'
-                  : 'border-[var(--border-main)] dark:border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
-              }`}
-            >
-              <Filter className="w-4 h-4"/>
-              Filters
-              <ChevronDown className={`w-4 h-4 transition-transform ${showFilters ? 'rotate-180' : ''}`}/>
-            </button>
-
-            {/* Clear Filters */}
-            {(filters.category !== 'ALL' || filters.amountMin || filters.amountMax) && (
-              <button
-                onClick={clearFilters}
-                className="px-4 py-2 text-body-secondary hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-              >
-                Clear filters
-              </button>
-            )}
-          </div>
-
-          {/* Expanded Filters */}
-          {showFilters && (
-            <div
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4 pt-4 border-t border-[var(--border-main)]">
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Category</label>
-                <select
-                  value={filters.category}
-                  onChange={(e) => setFilters({...filters, category: e.target.value as ExpenseCategory | 'ALL'})}
-                  className="input-aura"
-                >
-                  <option value="ALL">All Categories</option>
-                  <option value="TRAVEL">Travel</option>
-                  <option value="ACCOMMODATION">Accommodation</option>
-                  <option value="MEALS">Meals</option>
-                  <option value="TRANSPORT">Transportation</option>
-                  <option value="OFFICE_SUPPLIES">Office Supplies</option>
-                  <option value="EQUIPMENT">Equipment</option>
-                  <option value="TRAINING">Training</option>
-                  <option value="OTHER">Other</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Date From</label>
-                <input
-                  type="date"
-                  value={filters.dateFrom}
-                  onChange={(e) => setFilters({...filters, dateFrom: e.target.value})}
-                  className="input-aura"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Date To</label>
-                <input
-                  type="date"
-                  value={filters.dateTo}
-                  onChange={(e) => setFilters({...filters, dateTo: e.target.value})}
-                  className="input-aura"
-                />
-              </div>
-              <div className="flex gap-2">
-                <div className="flex-1">
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Min ₹</label>
-                  <input
-                    type="number"
-                    placeholder="0"
-                    value={filters.amountMin}
-                    onChange={(e) => setFilters({...filters, amountMin: e.target.value})}
-                    className="input-aura"
-                  />
-                </div>
-                <div className="flex-1">
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Max ₹</label>
-                  <input
-                    type="number"
-                    placeholder="0"
-                    value={filters.amountMax}
-                    onChange={(e) => setFilters({...filters, amountMax: e.target.value})}
-                    className="input-aura"
-                  />
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* New Claim Form */}
+        {/* New claim form — unchanged structure, lighter chrome */}
         {showForm && (
-          <div className="skeuo-card p-4 mb-4">
-            <h2 className="text-base font-semibold mb-4">Create New Expense Claim</h2>
-            <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Claim Date</label>
-                <input
-                  type="date"
-                  className="input-aura"
-                  {...register('claimDate')}
-                />
-                {errors.claimDate && <span className="text-danger-500 text-sm">{errors.claimDate.message}</span>}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Category</label>
-                <select
-                  className="input-aura"
-                  {...register('category')}
-                >
-                  <option value="">Select category</option>
-                  <option value="TRAVEL">Travel</option>
-                  <option value="ACCOMMODATION">Accommodation</option>
-                  <option value="MEALS">Meals</option>
-                  <option value="TRANSPORT">Transportation</option>
-                  <option value="OFFICE_SUPPLIES">Office Supplies</option>
-                  <option value="EQUIPMENT">Equipment</option>
-                  <option value="TRAINING">Training</option>
-                  <option value="COMMUNICATION">Communication</option>
-                  <option value="ENTERTAINMENT">Entertainment</option>
-                  <option value="MEDICAL">Medical</option>
-                  <option value="OTHER">Other</option>
-                </select>
-                {errors.category && <span className="text-danger-500 text-sm">{errors.category.message}</span>}
-              </div>
-
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Description</label>
-                <textarea
-                  className="input-aura"
-                  rows={3}
-                  placeholder="Describe your expense..."
-                  {...register('description')}
-                />
-                {errors.description && <span className="text-danger-500 text-sm">{errors.description.message}</span>}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Amount</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  className="input-aura"
-                  placeholder="0.00"
-                  {...register('amount')}
-                />
-                {errors.amount && <span className="text-danger-500 text-sm">{errors.amount.message}</span>}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Currency</label>
-                <select
-                  className="input-aura"
-                  {...register('currency')}
-                >
-                  <option value="USD">USD</option>
-                  <option value="EUR">EUR</option>
-                  <option value="GBP">GBP</option>
-                  <option value="INR">INR</option>
-                </select>
-              </div>
-
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Receipt URL</label>
-                <input
-                  type="url"
-                  className="input-aura"
-                  placeholder="https://..."
-                  {...register('receiptUrl')}
-                />
-                {errors.receiptUrl && <span className="text-danger-500 text-sm">{errors.receiptUrl.message}</span>}
-              </div>
-
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Notes</label>
-                <textarea
-                  className="input-aura"
-                  rows={2}
-                  placeholder="Additional notes..."
-                  {...register('notes')}
-                />
-              </div>
-
-              <div className="md:col-span-2 flex gap-4">
-                <PermissionGate permission={Permissions.EXPENSE_CREATE}>
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="flex-1 btn-primary disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                  >
-                    {isSubmitting ? 'Creating...' : 'Create Claim'}
-                  </button>
-                </PermissionGate>
-                <button
-                  type="button"
-                  onClick={() => setShowForm(false)}
-                  className="btn-secondary"
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </div>
+          <NewClaimForm
+            register={register}
+            errors={errors}
+            isSubmitting={isSubmitting}
+            onCancel={() => setShowForm(false)}
+            onSubmit={handleSubmit(onSubmit)}
+          />
         )}
 
-        {/* Bulk Action Toolbar */}
+        {/* Filters bar */}
+        <FiltersBar
+          filters={filters}
+          showFilters={showFilters}
+          onToggle={() => setShowFilters(!showFilters)}
+          onChange={setFilters}
+          onClear={clearFilters}
+        />
+
+        {/* Bulk action toolbar */}
         {selectedClaims.size > 0 && activeTab === 'pending' && (
-          <div
-            className="bg-accent-50 dark:bg-accent-900/30 border border-accent-200 dark:border-accent-800 rounded-lg p-4 mb-4 flex flex-wrap items-center justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <input
-                type="checkbox"
-                checked={selectedClaims.size === filteredClaims.filter(c => c.status === 'SUBMITTED').length}
-                onChange={handleSelectAll}
-                className="w-5 h-5 rounded border-[var(--border-main)] text-accent-700 focus:ring-accent-500"
-              />
-              <span className="font-medium text-accent-900 dark:text-accent-100">
-                {selectedClaims.size} claim{selectedClaims.size !== 1 ? 's' : ''} selected
-              </span>
+          <BulkActionBar
+            count={selectedClaims.size}
+            total={filteredClaims.filter((c) => c.status === 'SUBMITTED').length}
+            processing={bulkProcessing}
+            onSelectAll={handleSelectAll}
+            onApprove={handleBulkApprove}
+            onReject={() => setShowBulkRejectModal(true)}
+            onCancel={() => setSelectedClaims(new Set())}
+          />
+        )}
+
+        {/* Tabs + list */}
+        <section aria-label="Expense claims" className="space-y-4">
+          <Tabs
+            activeTab={activeTab}
+            onChange={(t) => {
+              setActiveTab(t);
+              setSelectedClaims(new Set());
+            }}
+            pendingCount={statistics.pendingCount}
+            approvalsCount={statistics.approvalsWaitingCount}
+          />
+
+          {activeTab === 'analytics' ? (
+            <div className="rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-5 sm:p-6">
+              <ExpenseAnalytics claims={currentClaimsData} />
             </div>
-            <div className="flex gap-2">
-              <PermissionGate permission={Permissions.EXPENSE_APPROVE}>
-                <button
-                  onClick={handleBulkApprove}
-                  disabled={bulkProcessing}
-                  className="px-4 py-2 bg-success-600 text-white rounded-lg hover:bg-success-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                >
-                  <CheckCircle className="w-4 h-4"/>
-                  {bulkProcessing ? 'Processing...' : `Approve ${selectedClaims.size}`}
-                </button>
-              </PermissionGate>
-              <PermissionGate permission={Permissions.EXPENSE_APPROVE}>
-                <button
-                  onClick={() => setShowBulkRejectModal(true)}
-                  disabled={bulkProcessing}
-                  className="px-4 py-2 bg-danger-600 text-white rounded-lg hover:bg-danger-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm flex items-center gap-2"
-                >
-                  <XCircle className="w-4 h-4"/>
-                  Reject {selectedClaims.size}
-                </button>
-              </PermissionGate>
-              <button
-                onClick={() => setSelectedClaims(new Set())}
-                className="px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] text-sm"
+          ) : tabLoading ? (
+            <div className="flex justify-center items-center h-64">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-500" />
+            </div>
+          ) : tabError ? (
+            <div className="flex flex-col items-center justify-center h-64 gap-4">
+              <AlertCircle className="h-10 w-10 text-danger-500" aria-hidden="true" />
+              <p className="text-center text-[var(--text-secondary)] max-w-md">
+                {myClaimsQuery.error?.message ||
+                  pendingClaimsQuery.error?.message ||
+                  allClaimsQuery.error?.message ||
+                  'Failed to load expense claims. Please try again.'}
+              </p>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  if (activeTab === 'my-claims') myClaimsQuery.refetch();
+                  else if (activeTab === 'pending') pendingClaimsQuery.refetch();
+                  else if (activeTab === 'all') allClaimsQuery.refetch();
+                }}
               >
-                Cancel
-              </button>
+                Retry
+              </Button>
             </div>
-          </div>
-        )}
+          ) : filteredClaims.length === 0 ? (
+            <EmptyState
+              icon={<Receipt className="h-12 w-12" />}
+              title="No Expense Claims"
+              description="Submit your first expense claim"
+              action={{label: 'New Claim', onClick: () => setShowForm(true)}}
+            />
+          ) : (
+            <RecentClaimsList
+              activeTab={activeTab}
+              claims={filteredClaims}
+              selectedClaims={selectedClaims}
+              onSelectClaim={handleSelectClaim}
+              onSelectAll={handleSelectAll}
+              onSubmit={handleSubmitClaim}
+              onDelete={handleDeleteStart}
+              onApprove={handleApprove}
+              onReject={handleRejectStart}
+            />
+          )}
+        </section>
 
-        {/* Tabs */}
-        <div className="skeuo-card !rounded-b-none">
-          <div className="flex border-b border-[var(--border-main)]">
-            <button
-              onClick={() => {
-                setActiveTab('my-claims');
-                setSelectedClaims(new Set());
-              }}
-              className={`px-6 py-4 font-medium transition-colors ${
-                activeTab === 'my-claims'
-                  ? 'text-accent-700 dark:text-accent-400 border-b-2 border-accent-500'
-                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
-              }`}
-            >
-              My Claims
-            </button>
-            <button
-              onClick={() => {
-                setActiveTab('pending');
-                setSelectedClaims(new Set());
-              }}
-              className={`px-6 py-4 font-medium transition-colors relative ${
-                activeTab === 'pending'
-                  ? 'text-accent-700 dark:text-accent-400 border-b-2 border-accent-500'
-                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
-              }`}
-            >
-              Pending Approval
-              {statistics.pendingCount > 0 && (
-                <span
-                  className="ml-2 px-2 py-0.5 text-xs rounded-full bg-warning-100 text-warning-700 dark:bg-warning-900/50 dark:text-warning-300">
-                  {statistics.pendingCount}
-                </span>
-              )}
-            </button>
-            <button
-              onClick={() => {
-                setActiveTab('all');
-                setSelectedClaims(new Set());
-              }}
-              className={`px-6 py-4 font-medium transition-colors ${
-                activeTab === 'all'
-                  ? 'text-accent-700 dark:text-accent-400 border-b-2 border-accent-500'
-                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
-              }`}
-            >
-              All Claims
-            </button>
-            <button
-              onClick={() => {
-                setActiveTab('analytics');
-                setSelectedClaims(new Set());
-              }}
-              className={`px-6 py-4 font-medium transition-colors ${
-                activeTab === 'analytics'
-                  ? 'text-accent-700 dark:text-accent-400 border-b-2 border-accent-500'
-                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
-              }`}
-            >
-              Analytics
-            </button>
-          </div>
-        </div>
-
-        {/* Content Area */}
-        {activeTab === 'analytics' ? (
-          <div className="skeuo-card !rounded-t-none p-4">
-            <ExpenseAnalytics claims={currentClaimsData}/>
-          </div>
-        ) : (
-          <div className="skeuo-card !rounded-t-none p-4">
-            {/* Select All Header for Pending Tab */}
-            {activeTab === 'pending' && filteredClaims.filter(c => c.status === 'SUBMITTED').length > 0 && (
-              <div className="flex items-center gap-4 mb-4 pb-4 border-b border-[var(--border-main)]">
-                <input
-                  type="checkbox"
-                  checked={selectedClaims.size === filteredClaims.filter(c => c.status === 'SUBMITTED').length && selectedClaims.size > 0}
-                  onChange={handleSelectAll}
-                  className="w-5 h-5 rounded border-[var(--border-main)] text-accent-700 focus:ring-accent-500"
-                />
-                <span className="text-body-secondary">
-                Select all ({filteredClaims.filter(c => c.status === 'SUBMITTED').length} claims)
-              </span>
-              </div>
-            )}
-
-            {((activeTab === 'my-claims' && myClaimsQuery.isLoading) || (activeTab === 'pending' && pendingClaimsQuery.isLoading) || (activeTab === 'all' && allClaimsQuery.isLoading)) ? (
-              <div className="flex justify-center items-center h-64">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-500"></div>
-              </div>
-            ) : myClaimsQuery.error || pendingClaimsQuery.error || allClaimsQuery.error ? (
-              <div className="flex flex-col items-center justify-center h-64">
-                <AlertCircle className="h-12 w-12 text-danger-500 mb-4"/>
-                <p className="text-center text-[var(--text-secondary)] max-w-md">
-                  {myClaimsQuery.error?.message || pendingClaimsQuery.error?.message || allClaimsQuery.error?.message || 'Failed to load expense claims. Please try again.'}
-                </p>
-                <button
-                  onClick={() => {
-                    if (activeTab === 'my-claims') myClaimsQuery.refetch();
-                    else if (activeTab === 'pending') pendingClaimsQuery.refetch();
-                    else if (activeTab === 'all') allClaimsQuery.refetch();
-                  }}
-                  className="mt-4 px-4 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-700 transition-colors"
-                >
-                  Retry
-                </button>
-              </div>
-            ) : filteredClaims.length === 0 ? (
-              <EmptyState
-                icon={<Receipt className="h-12 w-12"/>}
-                title="No Expense Claims"
-                description="Submit your first expense claim"
-                action={{label: 'New Claim', onClick: () => setShowForm(true)}}
-              />
-            ) : (
-              <div className="space-y-4">
-                {filteredClaims.map((claim) => (
-                  <div
-                    key={claim.id}
-                    className={`panel-inset p-4 hover:shadow-[var(--shadow-elevated)] transition-shadow ${
-                      selectedClaims.has(claim.id)
-                        ? '!border-accent-400 bg-accent-50/50 dark:bg-accent-900/20'
-                        : ''
-                    }`}
-                  >
-                    <div className="flex justify-between items-start mb-4">
-                      <div className="flex items-start gap-4">
-                        {/* Checkbox for pending claims */}
-                        {activeTab === 'pending' && claim.status === 'SUBMITTED' && (
-                          <input
-                            type="checkbox"
-                            checked={selectedClaims.has(claim.id)}
-                            onChange={() => handleSelectClaim(claim.id)}
-                            className="w-5 h-5 mt-1 rounded border-[var(--border-main)] text-accent-700 focus:ring-accent-500"
-                          />
-                        )}
-                        <div>
-                          <div className="flex items-center gap-4 mb-2">
-                            <h3 className="font-semibold text-lg">{claim.claimNumber}</h3>
-                            <StatusBadge status={claim.status} domain={EXPENSE_STATUS}/>
-                          </div>
-                          <p className="text-[var(--text-secondary)]">{claim.description}</p>
-                          {claim.employeeName && (
-                            <p className="text-body-secondary mt-1">
-                              By: {claim.employeeName} ({claim.employeeCode})
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-xl font-bold text-[var(--text-primary)] tabular-nums">
-                          {formatCurrency(claim.amount, claim.currency)}
-                        </div>
-                        <div
-                          className="text-body-secondary">{claim.category ? claim.category.replace('_', ' ') : '-'}</div>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mb-4">
-                      <div>
-                        <span className="text-[var(--text-secondary)]">Claim Date:</span>
-                        <p className="font-medium tabular-nums">{formatDate(claim.claimDate)}</p>
-                      </div>
-                      {claim.submittedAt && (
-                        <div>
-                          <span className="text-[var(--text-secondary)]">Submitted:</span>
-                          <p className="font-medium tabular-nums">{formatDate(claim.submittedAt)}</p>
-                        </div>
-                      )}
-                      {claim.approvedAt && (
-                        <div>
-                          <span className="text-[var(--text-secondary)]">Approved By:</span>
-                          <p className="font-medium">{claim.approvedByName}</p>
-                        </div>
-                      )}
-                      {claim.rejectionReason && (
-                        <div className="col-span-2">
-                          <span className="text-[var(--text-secondary)]">Rejection Reason:</span>
-                          <p className="font-medium text-danger-600">{claim.rejectionReason}</p>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Actions */}
-                    <div className="flex flex-wrap gap-2 pt-4 border-t border-[var(--border-main)]">
-                      {claim.status === 'DRAFT' && activeTab === 'my-claims' && (
-                        <>
-                          <PermissionGate permission={Permissions.EXPENSE_CREATE}>
-                            <button
-                              onClick={() => handleSubmitClaim(claim.id)}
-                              className="px-4 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-700 text-sm transition-colors"
-                            >
-                              Submit for Approval
-                            </button>
-                          </PermissionGate>
-                          <PermissionGate permission={Permissions.EXPENSE_CREATE}>
-                            <button
-                              onClick={() => handleDeleteStart(claim.id)}
-                              className="px-4 py-2 bg-danger-600 text-white rounded-lg hover:bg-danger-700 text-sm transition-colors flex items-center gap-2"
-                            >
-                              <XCircle className="w-4 h-4"/>
-                              Delete
-                            </button>
-                          </PermissionGate>
-                        </>
-                      )}
-                      {claim.status === 'SUBMITTED' && activeTab === 'pending' && (
-                        <>
-                          <PermissionGate permission={Permissions.EXPENSE_APPROVE}>
-                            <button
-                              onClick={() => handleApprove(claim.id)}
-                              className="px-4 py-2 bg-success-600 text-white rounded-lg hover:bg-success-700 text-sm transition-colors flex items-center gap-2"
-                            >
-                              <CheckCircle className="w-4 h-4"/>
-                              Approve
-                            </button>
-                          </PermissionGate>
-                          <PermissionGate permission={Permissions.EXPENSE_APPROVE}>
-                            <button
-                              onClick={() => handleRejectStart(claim.id)}
-                              className="px-4 py-2 bg-danger-600 text-white rounded-lg hover:bg-danger-700 text-sm transition-colors flex items-center gap-2"
-                            >
-                              <XCircle className="w-4 h-4"/>
-                              Reject
-                            </button>
-                          </PermissionGate>
-                        </>
-                      )}
-                      {claim.receiptUrl && (
-                        <button
-                          onClick={() => safeWindowOpen(claim.receiptUrl, '_blank')}
-                          className="px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 text-sm transition-colors flex items-center gap-2"
-                        >
-                          <Receipt className="w-4 h-4"/>
-                          View Receipt
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Bulk Reject Dialog */}
         <ConfirmDialog
           isOpen={showBulkRejectModal}
           onClose={() => setShowBulkRejectModal(false)}
@@ -986,7 +522,6 @@ export default function ExpenseClaims() {
           }}
         />
 
-        {/* Delete Confirmation Dialog */}
         <ConfirmDialog
           isOpen={showDeleteConfirm}
           onClose={() => {
@@ -1002,7 +537,6 @@ export default function ExpenseClaims() {
           loading={deleteMutation.isPending}
         />
 
-        {/* Reject Confirmation Dialog */}
         <ConfirmDialog
           isOpen={showRejectConfirm}
           onClose={() => {
@@ -1024,5 +558,885 @@ export default function ExpenseClaims() {
         />
       </div>
     </AppLayout>
+  );
+}
+
+// ── Header ───────────────────────────────────────────────────────────────────
+function PageHeader({onCreate}: {onCreate: () => void}) {
+  return (
+    <motion.header
+      initial={{opacity: 0, y: 4}}
+      animate={{opacity: 1, y: 0}}
+      transition={{duration: 0.4, ease: EASE}}
+      className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-end"
+    >
+      <div className="space-y-2 max-w-2xl">
+        <p className="text-2xs font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">
+          Expenses
+        </p>
+        <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-[var(--text-heading)] leading-[1.05]">
+          Claims, approvals, and reimbursements — without the spreadsheet shuffle.
+        </h1>
+        <p className="text-body-secondary max-w-[55ch]">
+          Submit receipts in seconds, approve in batches, and keep reimbursements predictable.
+        </p>
+      </div>
+      <PermissionGate permission={Permissions.EXPENSE_CREATE}>
+        <Button variant="primary" onClick={onCreate} className="self-start sm:self-end">
+          <Plus className="mr-2 h-4 w-4" aria-hidden="true" />
+          Submit expense
+        </Button>
+      </PermissionGate>
+    </motion.header>
+  );
+}
+
+// ── Stats row ────────────────────────────────────────────────────────────────
+function StatsRow({
+  pendingCount,
+  pendingAmount,
+  approvedThisMonthAmount,
+  awaitingReimbursementAmount,
+  overPolicyCount,
+}: {
+  pendingCount: number;
+  pendingAmount: number;
+  approvedThisMonthAmount: number;
+  awaitingReimbursementAmount: number;
+  overPolicyCount: number;
+}) {
+  const items = [
+    {
+      label: 'Pending claims',
+      value: pendingCount,
+      sub: formatCurrency(pendingAmount),
+      icon: Clock,
+      tone: pendingCount > 0 ? ('warning' as const) : ('neutral' as const),
+    },
+    {
+      label: 'Approved this month',
+      value: formatCurrency(approvedThisMonthAmount),
+      icon: CheckCircle,
+      tone: 'neutral' as const,
+    },
+    {
+      label: 'Awaiting reimbursement',
+      value: formatCurrency(awaitingReimbursementAmount),
+      icon: Wallet,
+      tone: 'neutral' as const,
+    },
+    {
+      label: 'Over-policy',
+      value: overPolicyCount,
+      icon: ShieldAlert,
+      tone: overPolicyCount > 0 ? ('danger' as const) : ('neutral' as const),
+    },
+  ];
+
+  return (
+    <motion.section
+      initial="hidden"
+      animate="visible"
+      variants={{visible: {transition: {staggerChildren: 0.06, delayChildren: 0.08}}}}
+      aria-label="Expense summary"
+      className="grid grid-cols-2 sm:grid-cols-4 border-y border-[var(--border-subtle)] divide-x divide-[var(--border-subtle)]"
+    >
+      {items.map((item) => (
+        <motion.div
+          key={item.label}
+          variants={{
+            hidden: {opacity: 0, y: 6},
+            visible: {opacity: 1, y: 0, transition: {duration: 0.4, ease: EASE}},
+          }}
+          className="px-5 py-6 sm:px-7 sm:py-8 first:pl-0 last:pr-0"
+        >
+          <div className="flex items-center gap-2 text-[var(--text-muted)]">
+            <item.icon className="h-3.5 w-3.5" aria-hidden="true" />
+            <span className="text-2xs font-medium uppercase tracking-wider">{item.label}</span>
+          </div>
+          <p
+            className={`mt-3 font-mono text-2xl sm:text-3xl tabular-nums tracking-tight ${
+              item.tone === 'danger'
+                ? 'text-danger-700 dark:text-danger-300'
+                : item.tone === 'warning'
+                  ? 'text-warning-700 dark:text-warning-300'
+                  : 'text-[var(--text-heading)]'
+            }`}
+          >
+            {item.value}
+          </p>
+          {item.sub && (
+            <p className="mt-1 font-mono text-xs tabular-nums text-[var(--text-muted)]">{item.sub}</p>
+          )}
+        </motion.div>
+      ))}
+    </motion.section>
+  );
+}
+
+// ── Bento navigation ─────────────────────────────────────────────────────────
+function BentoNavigation({
+  approvalsWaiting,
+  onSubmit,
+  onApprovals,
+}: {
+  approvalsWaiting: number;
+  onSubmit: () => void;
+  onApprovals: () => void;
+}) {
+  const tiles: Array<{
+    title: string;
+    description: string;
+    icon: React.ElementType;
+    href?: string;
+    onClick?: () => void;
+    badge?: number;
+  }> = [
+    {
+      title: 'My claims',
+      description: 'Drafts, submissions, and history of every receipt you have filed.',
+      icon: Receipt,
+      onClick: () => undefined,
+      href: '#my-claims',
+    },
+    {
+      title: 'Categories & policies',
+      description: 'Per-category limits, mileage rates, and policy guardrails.',
+      icon: Tag,
+      href: '/expenses/policies',
+    },
+    {
+      title: 'Reports',
+      description: 'Spend by category, employee, and period. Export to CSV or PDF.',
+      icon: PieChart,
+      href: '/expenses/reports',
+    },
+    {
+      title: 'Advances',
+      description: 'Track outstanding travel advances and settlement against claims.',
+      icon: TrendingUp,
+      href: '/expenses/advances',
+    },
+  ];
+
+  return (
+    <motion.section
+      initial="hidden"
+      animate="visible"
+      variants={{visible: {transition: {staggerChildren: 0.07, delayChildren: 0.18}}}}
+      className="grid gap-4 grid-cols-1 lg:grid-cols-12"
+      aria-label="Quick actions"
+    >
+      <BentoHero approvalsWaiting={approvalsWaiting} onSubmit={onSubmit} onApprovals={onApprovals} />
+      {tiles.map((tile) => (
+        <BentoTile key={tile.title} {...tile} />
+      ))}
+    </motion.section>
+  );
+}
+
+function BentoHero({
+  approvalsWaiting,
+  onSubmit,
+  onApprovals,
+}: {
+  approvalsWaiting: number;
+  onSubmit: () => void;
+  onApprovals: () => void;
+}) {
+  // If there are approvals waiting, lead with them; otherwise lead with submit.
+  const leadWithApprovals = approvalsWaiting > 0;
+  const Icon = leadWithApprovals ? Clock : Plus;
+  const title = leadWithApprovals
+    ? `${approvalsWaiting} approval${approvalsWaiting === 1 ? '' : 's'} waiting on you`
+    : 'Submit an expense';
+  const description = leadWithApprovals
+    ? 'Review and clear pending claims in batches. Bulk approve receipts that match policy.'
+    : 'Snap a receipt, pick a category, and file in under a minute. Reimbursements settle on the next payroll cycle.';
+  const cta = leadWithApprovals ? 'Review approvals' : 'New claim';
+
+  return (
+    <motion.div
+      variants={{hidden: {opacity: 0, y: 8}, visible: {opacity: 1, y: 0, transition: {duration: 0.5, ease: EASE}}}}
+      className="lg:col-span-7 lg:row-span-2"
+    >
+      <button
+        type="button"
+        onClick={leadWithApprovals ? onApprovals : onSubmit}
+        className="group block h-full w-full text-left rounded-2xl bg-[var(--bg-card)] border border-[var(--border-subtle)] p-7 sm:p-9 transition-all hover:border-[var(--border-main)] hover:shadow-[0_20px_40px_-15px_rgba(15,23,42,0.08)] active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
+      >
+        <div className="flex items-start justify-between">
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-accent-50 text-accent-700 dark:bg-accent-900/30 dark:text-accent-300">
+            <Icon className="h-5 w-5" aria-hidden="true" />
+          </div>
+          <ArrowRight
+            className="h-4 w-4 text-[var(--text-muted)] transition-transform group-hover:translate-x-0.5"
+            aria-hidden="true"
+          />
+        </div>
+        <h2 className="mt-8 text-2xl sm:text-3xl font-semibold tracking-tight text-[var(--text-heading)]">
+          {title}
+        </h2>
+        <p className="mt-3 text-body-secondary max-w-[48ch]">{description}</p>
+        <div className="mt-10 flex items-end justify-between gap-6">
+          <BentoHeroBars />
+          <p className="text-2xs font-medium uppercase tracking-[0.18em] text-[var(--text-muted)]">{cta}</p>
+        </div>
+      </button>
+    </motion.div>
+  );
+}
+
+function BentoHeroBars() {
+  const widths = [38, 64, 52, 81, 47, 69, 33, 76];
+  return (
+    <div className="flex items-end gap-1.5 h-16 flex-1" aria-hidden="true">
+      {widths.map((w, i) => (
+        <motion.span
+          key={i}
+          initial={{height: '0%'}}
+          animate={{height: `${w}%`}}
+          transition={{duration: 0.7, ease: EASE, delay: 0.35 + i * 0.04}}
+          className="flex-1 max-w-3 rounded-sm bg-gradient-to-t from-accent-100 to-accent-300 dark:from-accent-900/60 dark:to-accent-700/80"
+        />
+      ))}
+    </div>
+  );
+}
+
+function BentoTile({
+  title,
+  description,
+  icon: Icon,
+  href,
+  onClick,
+  badge,
+}: {
+  title: string;
+  description: string;
+  icon: React.ElementType;
+  href?: string;
+  onClick?: () => void;
+  badge?: number;
+}) {
+  const inner = (
+    <>
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[var(--bg-surface)] border border-[var(--border-subtle)] text-[var(--text-secondary)]">
+        <Icon className="h-4 w-4" aria-hidden="true" />
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center justify-between gap-3">
+          <h3 className="text-base font-semibold text-[var(--text-heading)]">{title}</h3>
+          {badge !== undefined && (
+            <span className="inline-flex items-center justify-center min-w-6 px-2 h-5 text-2xs font-semibold rounded-full bg-danger-100 text-danger-700 dark:bg-danger-900/40 dark:text-danger-300">
+              {badge}
+            </span>
+          )}
+        </div>
+        <p className="mt-1 text-sm text-[var(--text-secondary)] leading-relaxed">{description}</p>
+      </div>
+      <ArrowRight
+        className="h-4 w-4 self-center text-[var(--text-muted)] transition-transform group-hover:translate-x-0.5"
+        aria-hidden="true"
+      />
+    </>
+  );
+
+  const className =
+    'group flex h-full items-start gap-4 rounded-2xl bg-[var(--bg-card)] border border-[var(--border-subtle)] p-5 sm:p-6 transition-all hover:border-[var(--border-main)] hover:shadow-[0_12px_30px_-12px_rgba(15,23,42,0.07)] active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 text-left w-full';
+
+  return (
+    <motion.div
+      variants={{hidden: {opacity: 0, y: 8}, visible: {opacity: 1, y: 0, transition: {duration: 0.4, ease: EASE}}}}
+      className="lg:col-span-5"
+    >
+      {href && !onClick ? (
+        <Link href={href} className={className}>
+          {inner}
+        </Link>
+      ) : (
+        <button type="button" onClick={onClick} className={className}>
+          {inner}
+        </button>
+      )}
+    </motion.div>
+  );
+}
+
+// ── Filters bar ──────────────────────────────────────────────────────────────
+function FiltersBar({
+  filters,
+  showFilters,
+  onToggle,
+  onChange,
+  onClear,
+}: {
+  filters: Filters;
+  showFilters: boolean;
+  onToggle: () => void;
+  onChange: (f: Filters) => void;
+  onClear: () => void;
+}) {
+  const hasCustom = filters.category !== 'ALL' || filters.amountMin || filters.amountMax;
+
+  return (
+    <div className="rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-4">
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="relative flex-1 min-w-[200px]" role="search">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]" />
+          <input
+            type="search"
+            aria-label="Search claims"
+            placeholder="Search claims, employees, claim numbers..."
+            value={filters.search}
+            onChange={(e) => onChange({...filters, search: e.target.value})}
+            className="input-aura pl-10"
+          />
+        </div>
+
+        <button
+          onClick={onToggle}
+          className={`px-4 py-2 border rounded-lg flex items-center gap-2 transition-colors text-sm ${
+            showFilters
+              ? 'border-accent-500 text-accent-700 bg-accent-50 dark:bg-accent-900/20'
+              : 'border-[var(--border-main)] hover:bg-[var(--bg-secondary)]'
+          }`}
+          aria-expanded={showFilters}
+        >
+          <Filter className="w-4 h-4" aria-hidden="true" />
+          Filters
+          <ChevronDown
+            className={`w-4 h-4 transition-transform ${showFilters ? 'rotate-180' : ''}`}
+            aria-hidden="true"
+          />
+        </button>
+
+        {hasCustom && (
+          <button
+            onClick={onClear}
+            className="px-3 py-2 text-sm text-body-secondary hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
+          >
+            Clear filters
+          </button>
+        )}
+      </div>
+
+      {showFilters && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4 pt-4 border-t border-[var(--border-subtle)]">
+          <div>
+            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Category</label>
+            <select
+              value={filters.category}
+              onChange={(e) => onChange({...filters, category: e.target.value as ExpenseCategory | 'ALL'})}
+              className="input-aura"
+            >
+              <option value="ALL">All Categories</option>
+              <option value="TRAVEL">Travel</option>
+              <option value="ACCOMMODATION">Accommodation</option>
+              <option value="MEALS">Meals</option>
+              <option value="TRANSPORT">Transportation</option>
+              <option value="OFFICE_SUPPLIES">Office Supplies</option>
+              <option value="EQUIPMENT">Equipment</option>
+              <option value="TRAINING">Training</option>
+              <option value="OTHER">Other</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Date from</label>
+            <input
+              type="date"
+              value={filters.dateFrom}
+              onChange={(e) => onChange({...filters, dateFrom: e.target.value})}
+              className="input-aura"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Date to</label>
+            <input
+              type="date"
+              value={filters.dateTo}
+              onChange={(e) => onChange({...filters, dateTo: e.target.value})}
+              className="input-aura"
+            />
+          </div>
+          <div className="flex gap-2">
+            <div className="flex-1">
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Min</label>
+              <input
+                type="number"
+                placeholder="0"
+                value={filters.amountMin}
+                onChange={(e) => onChange({...filters, amountMin: e.target.value})}
+                className="input-aura font-mono tabular-nums"
+              />
+            </div>
+            <div className="flex-1">
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Max</label>
+              <input
+                type="number"
+                placeholder="0"
+                value={filters.amountMax}
+                onChange={(e) => onChange({...filters, amountMax: e.target.value})}
+                className="input-aura font-mono tabular-nums"
+              />
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Tabs ─────────────────────────────────────────────────────────────────────
+function Tabs({
+  activeTab,
+  onChange,
+  pendingCount,
+  approvalsCount,
+}: {
+  activeTab: TabType;
+  onChange: (t: TabType) => void;
+  pendingCount: number;
+  approvalsCount: number;
+}) {
+  const tabs: Array<{key: TabType; label: string; badge?: number}> = [
+    {key: 'my-claims', label: 'My claims', badge: pendingCount > 0 ? pendingCount : undefined},
+    {key: 'pending', label: 'Pending approval', badge: approvalsCount > 0 ? approvalsCount : undefined},
+    {key: 'all', label: 'All claims'},
+    {key: 'analytics', label: 'Analytics'},
+  ];
+
+  return (
+    <div role="tablist" aria-label="Claim views" className="flex flex-wrap gap-1 border-b border-[var(--border-subtle)]">
+      {tabs.map((t) => {
+        const active = activeTab === t.key;
+        return (
+          <button
+            key={t.key}
+            role="tab"
+            aria-selected={active}
+            onClick={() => onChange(t.key)}
+            className={`relative px-4 sm:px-5 py-3 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 ${
+              active
+                ? 'text-[var(--text-heading)]'
+                : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+            }`}
+          >
+            <span className="inline-flex items-center gap-2">
+              {t.label}
+              {t.badge !== undefined && (
+                <span className="inline-flex items-center justify-center min-w-5 px-1.5 h-5 text-2xs font-semibold rounded-full bg-warning-100 text-warning-700 dark:bg-warning-900/40 dark:text-warning-300">
+                  {t.badge}
+                </span>
+              )}
+            </span>
+            {active && (
+              <span className="absolute inset-x-3 -bottom-px h-0.5 bg-accent-600 dark:bg-accent-400" aria-hidden="true" />
+            )}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+// ── Bulk action bar ──────────────────────────────────────────────────────────
+function BulkActionBar({
+  count,
+  total,
+  processing,
+  onSelectAll,
+  onApprove,
+  onReject,
+  onCancel,
+}: {
+  count: number;
+  total: number;
+  processing: boolean;
+  onSelectAll: () => void;
+  onApprove: () => void;
+  onReject: () => void;
+  onCancel: () => void;
+}) {
+  return (
+    <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-accent-200 bg-accent-50/40 dark:border-accent-700/40 dark:bg-accent-900/20 px-5 py-4">
+      <div className="flex items-center gap-3">
+        <input
+          type="checkbox"
+          checked={count === total && count > 0}
+          onChange={onSelectAll}
+          className="w-5 h-5 rounded border-[var(--border-main)] text-accent-700 focus:ring-accent-500"
+          aria-label="Select all pending claims"
+        />
+        <span className="text-sm font-medium text-accent-900 dark:text-accent-100 font-mono tabular-nums">
+          {count} claim{count !== 1 ? 's' : ''} selected
+        </span>
+      </div>
+      <div className="flex flex-wrap gap-2">
+        <PermissionGate permission={Permissions.EXPENSE_APPROVE}>
+          <Button variant="primary" size="sm" onClick={onApprove} disabled={processing}>
+            <CheckCircle className="mr-1.5 h-4 w-4" aria-hidden="true" />
+            {processing ? 'Processing...' : `Approve ${count}`}
+          </Button>
+        </PermissionGate>
+        <PermissionGate permission={Permissions.EXPENSE_APPROVE}>
+          <Button variant="danger" size="sm" onClick={onReject} disabled={processing}>
+            <XCircle className="mr-1.5 h-4 w-4" aria-hidden="true" />
+            Reject {count}
+          </Button>
+        </PermissionGate>
+        <Button variant="outline" size="sm" onClick={onCancel}>
+          Cancel
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+// ── New claim form ───────────────────────────────────────────────────────────
+function NewClaimForm({
+  register,
+  errors,
+  isSubmitting,
+  onCancel,
+  onSubmit,
+}: {
+  register: ReturnType<typeof useForm<ExpenseClaimFormData>>['register'];
+  errors: ReturnType<typeof useForm<ExpenseClaimFormData>>['formState']['errors'];
+  isSubmitting: boolean;
+  onCancel: () => void;
+  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+}) {
+  return (
+    <motion.section
+      initial={{opacity: 0, y: 4}}
+      animate={{opacity: 1, y: 0}}
+      transition={{duration: 0.3, ease: EASE}}
+      className="rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-5 sm:p-6"
+      aria-label="Create new claim"
+    >
+      <div className="flex items-center justify-between gap-4 mb-5">
+        <div>
+          <h2 className="text-lg font-semibold tracking-tight text-[var(--text-heading)]">New expense claim</h2>
+          <p className="text-sm text-[var(--text-secondary)] mt-0.5">Receipts, description, amount — that's all you need.</p>
+        </div>
+        <FileText className="h-5 w-5 text-[var(--text-muted)]" aria-hidden="true" />
+      </div>
+      <form onSubmit={onSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Claim date</label>
+          <input type="date" className="input-aura" {...register('claimDate')} />
+          {errors.claimDate && <span className="text-danger-500 text-sm">{errors.claimDate.message}</span>}
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Category</label>
+          <select className="input-aura" {...register('category')}>
+            <option value="">Select category</option>
+            <option value="TRAVEL">Travel</option>
+            <option value="ACCOMMODATION">Accommodation</option>
+            <option value="MEALS">Meals</option>
+            <option value="TRANSPORT">Transportation</option>
+            <option value="OFFICE_SUPPLIES">Office Supplies</option>
+            <option value="EQUIPMENT">Equipment</option>
+            <option value="TRAINING">Training</option>
+            <option value="COMMUNICATION">Communication</option>
+            <option value="ENTERTAINMENT">Entertainment</option>
+            <option value="MEDICAL">Medical</option>
+            <option value="OTHER">Other</option>
+          </select>
+          {errors.category && <span className="text-danger-500 text-sm">{errors.category.message}</span>}
+        </div>
+        <div className="md:col-span-2">
+          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Description</label>
+          <textarea className="input-aura" rows={3} placeholder="Describe your expense..." {...register('description')} />
+          {errors.description && <span className="text-danger-500 text-sm">{errors.description.message}</span>}
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Amount</label>
+          <input
+            type="number"
+            step="0.01"
+            min="0"
+            className="input-aura font-mono tabular-nums"
+            placeholder="0.00"
+            {...register('amount')}
+          />
+          {errors.amount && <span className="text-danger-500 text-sm">{errors.amount.message}</span>}
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Currency</label>
+          <select className="input-aura" {...register('currency')}>
+            <option value="USD">USD</option>
+            <option value="EUR">EUR</option>
+            <option value="GBP">GBP</option>
+            <option value="INR">INR</option>
+          </select>
+        </div>
+        <div className="md:col-span-2">
+          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Receipt URL</label>
+          <input type="url" className="input-aura" placeholder="https://..." {...register('receiptUrl')} />
+          {errors.receiptUrl && <span className="text-danger-500 text-sm">{errors.receiptUrl.message}</span>}
+        </div>
+        <div className="md:col-span-2">
+          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Notes</label>
+          <textarea className="input-aura" rows={2} placeholder="Additional notes..." {...register('notes')} />
+        </div>
+        <div className="md:col-span-2 flex flex-wrap gap-3 pt-2">
+          <PermissionGate permission={Permissions.EXPENSE_CREATE}>
+            <Button type="submit" variant="primary" disabled={isSubmitting}>
+              {isSubmitting ? 'Creating...' : 'Create claim'}
+            </Button>
+          </PermissionGate>
+          <Button type="button" variant="outline" onClick={onCancel}>
+            Cancel
+          </Button>
+        </div>
+      </form>
+    </motion.section>
+  );
+}
+
+// ── Recent claims list (divide-y, not nested cards) ──────────────────────────
+type ClaimItem = {
+  id: string;
+  claimNumber?: string;
+  description?: string;
+  status: string;
+  amount: number;
+  currency: string;
+  category?: string;
+  claimDate: string;
+  submittedAt?: string;
+  approvedAt?: string;
+  approvedByName?: string;
+  rejectionReason?: string;
+  receiptUrl?: string;
+  employeeName?: string;
+  employeeCode?: string;
+};
+
+function RecentClaimsList({
+  activeTab,
+  claims,
+  selectedClaims,
+  onSelectClaim,
+  onSelectAll,
+  onSubmit,
+  onDelete,
+  onApprove,
+  onReject,
+}: {
+  activeTab: TabType;
+  claims: ClaimItem[];
+  selectedClaims: Set<string>;
+  onSelectClaim: (id: string) => void;
+  onSelectAll: () => void;
+  onSubmit: (id: string) => void;
+  onDelete: (id: string) => void;
+  onApprove: (id: string) => void;
+  onReject: (id: string) => void;
+}) {
+  const selectableTotal = claims.filter((c) => c.status === 'SUBMITTED').length;
+  const allSelected = selectableTotal > 0 && selectedClaims.size === selectableTotal;
+
+  return (
+    <motion.section
+      initial={{opacity: 0, y: 6}}
+      animate={{opacity: 1, y: 0}}
+      transition={{duration: 0.4, ease: EASE}}
+      aria-label="Recent claims"
+    >
+      {activeTab === 'pending' && selectableTotal > 0 && (
+        <div className="flex items-center gap-3 py-3 px-1 border-b border-[var(--border-subtle)]">
+          <input
+            type="checkbox"
+            checked={allSelected}
+            onChange={onSelectAll}
+            className="w-4 h-4 rounded border-[var(--border-main)] text-accent-700 focus:ring-accent-500"
+            aria-label="Select all submitted claims"
+          />
+          <span className="text-sm text-[var(--text-secondary)] font-mono tabular-nums">
+            Select all ({selectableTotal})
+          </span>
+        </div>
+      )}
+
+      <ul className="divide-y divide-[var(--border-subtle)] border-b border-[var(--border-subtle)]">
+        {claims.map((claim) => (
+          <ClaimRow
+            key={claim.id}
+            claim={claim}
+            activeTab={activeTab}
+            selected={selectedClaims.has(claim.id)}
+            onSelect={() => onSelectClaim(claim.id)}
+            onSubmit={() => onSubmit(claim.id)}
+            onDelete={() => onDelete(claim.id)}
+            onApprove={() => onApprove(claim.id)}
+            onReject={() => onReject(claim.id)}
+          />
+        ))}
+      </ul>
+    </motion.section>
+  );
+}
+
+function ClaimRow({
+  claim,
+  activeTab,
+  selected,
+  onSelect,
+  onSubmit,
+  onDelete,
+  onApprove,
+  onReject,
+}: {
+  claim: ClaimItem;
+  activeTab: TabType;
+  selected: boolean;
+  onSelect: () => void;
+  onSubmit: () => void;
+  onDelete: () => void;
+  onApprove: () => void;
+  onReject: () => void;
+}) {
+  return (
+    <li className={`py-5 grid grid-cols-[auto_1fr_auto] gap-4 sm:gap-6 items-start ${selected ? 'bg-accent-50/40 dark:bg-accent-900/10' : ''}`}>
+      <div className="flex items-start gap-3 pt-1">
+        {activeTab === 'pending' && claim.status === 'SUBMITTED' ? (
+          <input
+            type="checkbox"
+            checked={selected}
+            onChange={onSelect}
+            className="w-4 h-4 rounded border-[var(--border-main)] text-accent-700 focus:ring-accent-500"
+            aria-label={`Select claim ${claim.claimNumber}`}
+          />
+        ) : (
+          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--bg-surface)] border border-[var(--border-subtle)] text-[var(--text-secondary)]">
+            <Receipt className="h-4 w-4" aria-hidden="true" />
+          </div>
+        )}
+      </div>
+
+      <div className="min-w-0">
+        <div className="flex flex-wrap items-center gap-3">
+          <h3 className="text-sm font-semibold text-[var(--text-heading)] truncate">{claim.claimNumber}</h3>
+          <StatusBadge status={claim.status} domain={EXPENSE_STATUS} />
+          {claim.category && (
+            <span className="text-2xs uppercase tracking-wider text-[var(--text-muted)]">
+              {claim.category.replace(/_/g, ' ')}
+            </span>
+          )}
+        </div>
+        <p className="mt-1 text-sm text-[var(--text-secondary)] line-clamp-2">{claim.description}</p>
+        <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-xs text-[var(--text-muted)] font-mono tabular-nums">
+          <span>Claim {formatDate(claim.claimDate)}</span>
+          {claim.submittedAt && <span>Submitted {formatDate(claim.submittedAt)}</span>}
+          {claim.approvedAt && claim.approvedByName && (
+            <span className="font-sans">Approved by {claim.approvedByName}</span>
+          )}
+          {claim.employeeName && (
+            <span className="font-sans">
+              {claim.employeeName}
+              {claim.employeeCode ? ` (${claim.employeeCode})` : ''}
+            </span>
+          )}
+        </div>
+        {claim.rejectionReason && (
+          <p className="mt-2 text-xs text-danger-600 dark:text-danger-300">
+            <span className="font-medium">Rejected:</span> {claim.rejectionReason}
+          </p>
+        )}
+
+        <div className="mt-3 flex flex-wrap gap-2">
+          {claim.status === 'DRAFT' && activeTab === 'my-claims' && (
+            <>
+              <PermissionGate permission={Permissions.EXPENSE_CREATE}>
+                <Button variant="primary" size="sm" onClick={onSubmit}>
+                  Submit for approval
+                </Button>
+              </PermissionGate>
+              <PermissionGate permission={Permissions.EXPENSE_CREATE}>
+                <Button variant="danger" size="sm" onClick={onDelete}>
+                  <XCircle className="mr-1.5 h-3.5 w-3.5" aria-hidden="true" />
+                  Delete
+                </Button>
+              </PermissionGate>
+            </>
+          )}
+          {claim.status === 'SUBMITTED' && activeTab === 'pending' && (
+            <>
+              <PermissionGate permission={Permissions.EXPENSE_APPROVE}>
+                <Button variant="primary" size="sm" onClick={onApprove}>
+                  <CheckCircle className="mr-1.5 h-3.5 w-3.5" aria-hidden="true" />
+                  Approve
+                </Button>
+              </PermissionGate>
+              <PermissionGate permission={Permissions.EXPENSE_APPROVE}>
+                <Button variant="danger" size="sm" onClick={onReject}>
+                  <XCircle className="mr-1.5 h-3.5 w-3.5" aria-hidden="true" />
+                  Reject
+                </Button>
+              </PermissionGate>
+            </>
+          )}
+          {claim.receiptUrl && (
+            <Button variant="outline" size="sm" onClick={() => safeWindowOpen(claim.receiptUrl, '_blank')}>
+              <Receipt className="mr-1.5 h-3.5 w-3.5" aria-hidden="true" />
+              View receipt
+            </Button>
+          )}
+        </div>
+      </div>
+
+      <div className="text-right shrink-0">
+        <p className="font-mono text-lg sm:text-xl font-semibold tabular-nums tracking-tight text-[var(--text-heading)]">
+          {formatCurrency(claim.amount, claim.currency)}
+        </p>
+      </div>
+    </li>
+  );
+}
+
+// ── Attention strip ──────────────────────────────────────────────────────────
+function AttentionStrip({count}: {count: number}) {
+  return (
+    <motion.aside
+      initial={{opacity: 0, y: 6}}
+      animate={{opacity: 1, y: 0}}
+      transition={{duration: 0.45, ease: EASE, delay: 0.42}}
+      role="status"
+      aria-live="polite"
+      className="flex items-center justify-between gap-4 rounded-xl border border-danger-200 bg-danger-50/40 dark:border-danger-700/40 dark:bg-danger-950/30 px-5 py-4"
+    >
+      <div className="flex items-center gap-3 text-sm">
+        <AlertTriangle className="h-4 w-4 shrink-0 text-danger-600 dark:text-danger-400" aria-hidden="true" />
+        <p className="text-[var(--text-primary)]">
+          <span className="font-mono font-semibold tabular-nums">{count}</span>{' '}
+          {count === 1 ? 'claim is' : 'claims are'} above the per-claim policy cap. Review before approval.
+        </p>
+      </div>
+    </motion.aside>
+  );
+}
+
+// ── Inline alert (one-line, no card stack) ───────────────────────────────────
+function InlineAlert({
+  tone,
+  icon: Icon,
+  message,
+}: {
+  tone: 'success' | 'danger';
+  icon: React.ElementType;
+  message: string;
+}) {
+  const styles =
+    tone === 'success'
+      ? 'border-success-200 bg-success-50/40 dark:border-success-700/40 dark:bg-success-950/30 text-success-700 dark:text-success-300'
+      : 'border-danger-200 bg-danger-50/40 dark:border-danger-700/40 dark:bg-danger-950/30 text-danger-700 dark:text-danger-300';
+  return (
+    <div role="alert" className={`flex items-center gap-3 rounded-xl border px-4 py-3 text-sm ${styles}`}>
+      <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />
+      <span className="text-[var(--text-primary)]">{message}</span>
+    </div>
   );
 }

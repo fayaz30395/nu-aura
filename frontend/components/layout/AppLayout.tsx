@@ -371,13 +371,11 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         {/* Breadcrumbs */}
         {showBreadcrumbs && breadcrumbs.length > 0 && (
           <div
-            className="flex-shrink-0 px-4 py-2 sm:px-6"
-            style={{
-              backgroundColor: 'var(--bg-surface)',
-              borderBottom: '1px solid var(--border-subtle)',
-            }}
+            className="flex-shrink-0 border-b border-[var(--border-subtle)] bg-[var(--bg-surface)]"
           >
-            <Breadcrumbs items={breadcrumbs}/>
+            <div className="mx-auto w-full max-w-7xl px-6 py-2.5">
+              <Breadcrumbs items={breadcrumbs}/>
+            </div>
           </div>
         )}
 
@@ -391,11 +389,10 @@ const AppLayout: React.FC<AppLayoutProps> = ({
             <ErrorBoundary resetKeys={[pathname]}>
               <div
                 className={cn(
-                  'px-4 pt-4 sm:px-6 sm:pt-6 lg:px-8 lg:pt-8',
-                  'stagger-children',
-                  'max-w-full overflow-x-hidden',
+                  'mx-auto w-full max-w-7xl px-6 py-8',
+                  'stagger-children overflow-x-hidden',
                   // Bottom padding: mobile needs space for fixed bottom nav
-                  'pb-24 md:pb-6 lg:pb-8'
+                  'pb-24 md:pb-8'
                 )}
               >
                 {children}

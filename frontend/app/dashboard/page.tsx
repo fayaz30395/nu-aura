@@ -4,8 +4,10 @@ import React, {useEffect, useState} from 'react';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import {useRouter} from 'next/navigation';
+import {motion} from 'framer-motion';
 import {
   AlertCircle,
+  ArrowRight,
   Bell,
   Briefcase,
   Calendar,
@@ -23,6 +25,7 @@ import {
   LogOut,
   Mail,
   MapPin,
+  RefreshCw,
   UserCheck,
   Users,
   Users as UsersIcon,
@@ -32,17 +35,15 @@ import {
 import {useAuth} from '@/lib/hooks/useAuth';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {AppLayout} from '@/components/layout';
-import {Card, CardContent} from '@/components/ui/Card';
 import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
 import {Button} from '@/components/ui/Button';
-import {PremiumMetricCard} from '@/components/ui/PremiumMetricCard';
 import type {DashboardWidget} from '@/components/ui/DashboardGrid';
 // Code-split @hello-pangea/dnd (~30-40 KB gz) — only loaded on dashboard
 const DashboardGrid = dynamic(
   () => import('@/components/ui/DashboardGrid').then(m => m.DashboardGrid),
   {ssr: false, loading: () => <SkeletonChart/>}
 );
-import {Skeleton, SkeletonStatCard} from '@/components/ui/Skeleton';
+import {Skeleton} from '@/components/ui/Skeleton';
 import {SkeletonChart} from '@/components/ui/Loading';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {getGoogleToken} from '@/lib/utils/googleToken';
@@ -58,6 +59,10 @@ import {formatDateShort} from '@/lib/utils/format/date';
 import {format} from 'date-fns';
 
 const log = createLogger('DashboardPage');
+
+// Single ease curve for every transition on this page. Avoids cubic-bezier
+// drift that compounds when each motion spec picks its own easing.
+const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
 interface EmailHeader {
   name: string;
@@ -402,16 +407,17 @@ export default function DashboardPage() {
     }
   };
 
-  const getNotificationTone = (type: 'email' | 'drive' | 'calendar') => {
+  // Subtle tone-tinted avatars per channel — no card boxes, just soft fills.
+  const getNotificationToneClasses = (type: 'email' | 'drive' | 'calendar') => {
     switch (type) {
       case 'email':
-        return 'status-danger';
+        return 'bg-danger-50 text-danger-700 dark:bg-danger-900/30 dark:text-danger-300';
       case 'drive':
-        return 'status-warning';
+        return 'bg-warning-50 text-warning-700 dark:bg-warning-900/30 dark:text-warning-300';
       case 'calendar':
-        return 'status-info';
+        return 'bg-accent-50 text-accent-700 dark:bg-accent-900/30 dark:text-accent-300';
       default:
-        return 'status-neutral';
+        return 'bg-[var(--bg-surface)] text-[var(--text-secondary)]';
     }
   };
 
@@ -489,55 +495,28 @@ export default function DashboardPage() {
   if (!hasHydrated || isLoading) {
     return (
       <AppLayout activeMenuItem="dashboard" showBreadcrumbs={false}>
-        <div className="space-y-8">
+        <div className="mx-auto w-full max-w-7xl px-6 py-8 space-y-10">
           {/* Header skeleton */}
-          <div className="card-aura p-6 sm:p-8">
-            <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-              <div className="space-y-2 flex-1">
-                <Skeleton className="h-8 w-64 rounded"/>
-                <Skeleton className="h-4 w-48 rounded"/>
-              </div>
-              <div className="flex flex-wrap items-center gap-4">
-                <Skeleton className="h-16 w-32 rounded-lg"/>
-                <Skeleton className="h-16 w-32 rounded-lg hidden sm:block"/>
-              </div>
+          <div className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-end">
+            <div className="space-y-2 max-w-2xl">
+              <Skeleton className="h-3 w-32 rounded"/>
+              <Skeleton className="h-9 w-3/4 rounded"/>
+              <Skeleton className="h-4 w-1/2 rounded"/>
             </div>
+            <Skeleton className="h-10 w-32 rounded self-start sm:self-end"/>
           </div>
 
-          {/* Attendance card skeleton */}
-          <div className="card-aura p-6 pl-7 sm:p-8 sm:pl-9">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
-              <div className="flex items-center gap-4 flex-1">
-                <Skeleton className="h-14 w-14 rounded-xl flex-shrink-0"/>
-                <div className="space-y-2 flex-1">
-                  <Skeleton className="h-6 w-40 rounded"/>
-                  <Skeleton className="h-4 w-32 rounded"/>
-                </div>
-              </div>
-              <div className="flex gap-4 flex-wrap sm:flex-nowrap">
-                <Skeleton className="h-10 w-24 rounded-lg"/>
-                <Skeleton className="h-10 w-24 rounded-lg"/>
-              </div>
-            </div>
-          </div>
-
-          {/* Stats grid skeleton */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Stats skeleton — borderly, no cards */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 border-y border-[var(--border-subtle)] divide-x divide-[var(--border-subtle)]">
             {Array.from({length: 4}).map((_, i) => (
-              <SkeletonStatCard key={i}/>
+              <div key={i} className="px-5 py-6 sm:px-7 sm:py-8 first:pl-0 last:pr-0">
+                <Skeleton className="h-3 w-24 rounded"/>
+                <Skeleton className="mt-3 h-9 w-20 rounded"/>
+              </div>
             ))}
           </div>
 
-          {/* Charts skeleton */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <SkeletonChart height="h-80"/>
-            <SkeletonChart height="h-80"/>
-          </div>
-
-          {/* Additional sections skeleton */}
-          <div className="space-y-6">
-            <SkeletonChart height="h-64"/>
-          </div>
+          <SkeletonChart height="h-80"/>
         </div>
       </AppLayout>
     );
@@ -556,118 +535,54 @@ export default function DashboardPage() {
     upcomingEvents: {birthdays: [], anniversaries: [], holidays: []},
   };
 
-  const viewBadgeClass = safeAnalytics.viewType === 'ADMIN'
-    ? 'status-info'
+  const viewToneClasses = safeAnalytics.viewType === 'ADMIN'
+    ? 'bg-accent-50 text-accent-700 dark:bg-accent-900/30 dark:text-accent-300'
     : safeAnalytics.viewType === 'MANAGER'
-      ? 'status-warning'
-      : 'status-success';
+      ? 'bg-warning-50 text-warning-700 dark:bg-warning-900/30 dark:text-warning-300'
+      : 'bg-success-50 text-success-700 dark:bg-success-900/30 dark:text-success-300';
+
+  const firstName = user?.firstName || user?.fullName?.split(' ')[0] || 'there';
 
   // Build dashboard widgets
   const dashboardWidgets: DashboardWidget[] = [];
 
-  // Widget 1: Stats Grid
-  dashboardWidgets.push({
-    id: 'stats-grid',
-    title: 'Key Metrics',
-    defaultVisible: true,
-    component: (
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <PremiumMetricCard
-          title={safeAnalytics.viewType === 'ADMIN' ? 'Total Employees' : safeAnalytics.viewType === 'MANAGER' ? 'Team Members' : 'Your Status'}
-          value={safeAnalytics.headcount.total.toString()}
-          change={safeAnalytics.viewType === 'ADMIN' && safeAnalytics.headcount.growthPercentage !== 0
-            ? `${Math.abs(safeAnalytics.headcount.growthPercentage)}%`
-            : safeAnalytics.viewType === 'MANAGER' ? 'Direct & Indirect' : 'Active'}
-          isPositive={safeAnalytics.headcount.growthPercentage >= 0}
-          icon={<Users className="h-6 w-6"/>}
-          delay={0}
-        />
-        <PremiumMetricCard
-          title="Present Today"
-          value={safeAnalytics.attendance.present.toString()}
-          change={`${safeAnalytics.attendance.attendancePercentage}% attendance`}
-          isPositive={true}
-          icon={<UserCheck className="h-6 w-6"/>}
-          delay={0.1}
-        />
-        <PremiumMetricCard
-          title="On Leave"
-          value={safeAnalytics.attendance.onLeave.toString()}
-          change="Approved today"
-          isPositive={false}
-          icon={<Calendar className="h-6 w-6"/>}
-          delay={0.2}
-        />
-        <PremiumMetricCard
-          title="Pending Approvals"
-          value={safeAnalytics.leave.pending.toString()}
-          change="Awaiting action"
-          isPositive={false}
-          icon={<Bell className="h-6 w-6"/>}
-          delay={0.3}
-        />
-      </div>
-    ),
-  });
-
-  // Widget 2: Quick Actions
-  dashboardWidgets.push({
-    id: 'quick-actions',
-    title: 'Quick Actions',
-    defaultVisible: true,
-    component: (
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        {[
-          {label: 'Apply Leave', icon: Calendar, tone: 'status-info', href: '/leave/apply'},
-          {label: 'View Payslip', icon: FileText, tone: 'status-success', href: '/payroll'},
-          {label: 'Expenses', icon: CreditCard, tone: 'status-warning', href: '/expenses'},
-          {label: 'Directory', icon: Users, tone: 'status-neutral', href: '/employees'},
-        ].map((action, idx) => (
-          <button
-            key={idx}
-            onClick={() => router.push(action.href)}
-            className="group flex flex-col items-center gap-4 p-4 sm:p-6 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-card)] hover:border-[var(--border-strong)] hover:shadow-card-hover transition-all min-h-[96px] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-          >
-            <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center ${action.tone}`}>
-              <action.icon className="h-5 w-5 sm:h-6 sm:w-6"/>
-            </div>
-            <span className="text-xs sm:text-sm font-medium text-[var(--text-secondary)] text-center">
-              {action.label}
-            </span>
-          </button>
-        ))}
-      </div>
-    ),
-  });
-
-  // Widget 3: Attendance Overview
+  // Widget 1: Attendance Overview (was: stats grid)
   dashboardWidgets.push({
     id: 'attendance-overview',
-    title: 'Attendance Overview',
+    title: 'Attendance breakdown',
     defaultVisible: true,
     component: (
       <div>
-        <div className="row-between mb-4">
-          <div/>
+        <div className="flex items-center justify-between mb-5">
+          <p className="text-2xs font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">
+            Today
+          </p>
           <Button variant="ghost" size="sm" onClick={() => router.push('/attendance')}
                   rightIcon={<ChevronRight className="h-4 w-4"/>} className="text-xs sm:text-sm">
-            View All
+            View all
           </Button>
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-4 border-y border-[var(--border-subtle)] divide-x divide-[var(--border-subtle)]">
           {[
-            {label: 'On Time', value: safeAnalytics.attendance.onTime, icon: UserCheck, tone: 'status-success'},
-            {label: 'Late', value: safeAnalytics.attendance.late, icon: Clock, tone: 'status-warning'},
-            {label: 'On Leave', value: safeAnalytics.attendance.onLeave, icon: Coffee, tone: 'status-info'},
-            {label: 'Absent', value: safeAnalytics.attendance.absent, icon: UserX, tone: 'status-danger'},
+            {label: 'On time', value: safeAnalytics.attendance.onTime, icon: UserCheck, tone: 'neutral' as const},
+            {label: 'Late', value: safeAnalytics.attendance.late, icon: Clock, tone: safeAnalytics.attendance.late > 0 ? 'warning' as const : 'neutral' as const},
+            {label: 'On leave', value: safeAnalytics.attendance.onLeave, icon: Coffee, tone: 'neutral' as const},
+            {label: 'Absent', value: safeAnalytics.attendance.absent, icon: UserX, tone: safeAnalytics.attendance.absent > 0 ? 'danger' as const : 'neutral' as const},
           ].map((item) => (
-            <div key={item.label}
-                 className="text-center p-4 sm:p-6 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elevated)]">
-              <div className={`mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-xl ${item.tone}`}>
-                <item.icon className="h-5 w-5"/>
+            <div key={item.label} className="px-5 py-6 sm:px-6 sm:py-7 first:pl-0 last:pr-0">
+              <div className="flex items-center gap-2 text-[var(--text-muted)]">
+                <item.icon className="h-3.5 w-3.5" aria-hidden="true"/>
+                <span className="text-2xs font-medium uppercase tracking-wider">{item.label}</span>
               </div>
-              <p className="text-stat-medium">{item.value}</p>
-              <p className="text-caption mt-1">{item.label}</p>
+              <p
+                className={`mt-3 font-mono text-3xl sm:text-4xl tabular-nums tracking-tight ${
+                  item.tone === 'danger' ? 'text-danger-700 dark:text-danger-300'
+                    : item.tone === 'warning' ? 'text-warning-700 dark:text-warning-300'
+                      : 'text-[var(--text-heading)]'
+                }`}
+              >
+                {item.value}
+              </p>
             </div>
           ))}
         </div>
@@ -675,119 +590,158 @@ export default function DashboardPage() {
     ),
   });
 
-  // Widget 4: Department Distribution (conditional)
+  // Widget 2: Quick Actions — flattened bento-style tiles
+  dashboardWidgets.push({
+    id: 'quick-actions',
+    title: 'Jump in',
+    defaultVisible: true,
+    component: (
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {[
+          {label: 'Apply leave', icon: Calendar, href: '/leave/apply'},
+          {label: 'View payslip', icon: FileText, href: '/payroll'},
+          {label: 'Expenses', icon: CreditCard, href: '/expenses'},
+          {label: 'Directory', icon: Users, href: '/employees'},
+        ].map((action) => (
+          <button
+            key={action.href}
+            onClick={() => router.push(action.href)}
+            className="group flex items-center gap-3 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-4 transition-all hover:border-[var(--border-main)] hover:shadow-[0_12px_30px_-12px_rgba(15,23,42,0.07)] active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 text-left"
+          >
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[var(--bg-surface)] border border-[var(--border-subtle)] text-[var(--text-secondary)]">
+              <action.icon className="h-4 w-4" aria-hidden="true"/>
+            </div>
+            <span className="text-sm font-medium text-[var(--text-heading)] flex-1 min-w-0">
+              {action.label}
+            </span>
+            <ArrowRight className="h-3.5 w-3.5 text-[var(--text-muted)] transition-transform group-hover:translate-x-0.5" aria-hidden="true"/>
+          </button>
+        ))}
+      </div>
+    ),
+  });
+
+  // Widget 3: Department Distribution (conditional) — divide-y list, no nested cards
   if (safeAnalytics.headcount.departmentDistribution && safeAnalytics.headcount.departmentDistribution.length > 0) {
     dashboardWidgets.push({
       id: 'department-distribution',
-      title: safeAnalytics.viewType === 'ADMIN' ? 'Department Headcount' : 'Team Distribution',
+      title: safeAnalytics.viewType === 'ADMIN' ? 'Department headcount' : 'Team distribution',
       defaultVisible: true,
       component: (
-        <div className="space-y-4">
+        <ul className="divide-y divide-[var(--border-subtle)] border-y border-[var(--border-subtle)]">
           {safeAnalytics.headcount.departmentDistribution.slice(0, 5).map((dept, idx) => {
-            const percentage = safeAnalytics.headcount.total > 0 ? Math.round((dept.count / safeAnalytics.headcount.total) * 100) : 0;
-            const colors = [
-              'var(--accent-primary)',
-              'var(--chart-secondary)',
-              'var(--chart-success)',
-              'var(--chart-warning)',
-              'var(--chart-danger)',
-            ];
+            const percentage = safeAnalytics.headcount.total > 0
+              ? Math.round((dept.count / safeAnalytics.headcount.total) * 100)
+              : 0;
             return (
-              <div key={idx}>
-                <div className="row-between mb-2">
-                  <span className="text-sm font-medium text-[var(--text-secondary)]">{dept.department}</span>
-                  <span className="text-body-secondary tabular-nums">{dept.count} ({percentage}%)</span>
+              <li key={idx} className="grid grid-cols-[1fr_auto] items-center gap-4 py-4">
+                <div className="min-w-0">
+                  <p className="text-sm font-medium text-[var(--text-heading)] truncate">{dept.department}</p>
+                  <div className="mt-2 h-1 w-full max-w-[260px] rounded-full bg-[var(--bg-surface)] overflow-hidden">
+                    <div
+                      className="h-full rounded-full bg-accent-500 dark:bg-accent-400 transition-all"
+                      style={{width: `${percentage}%`}}
+                    />
+                  </div>
                 </div>
-                <div className="w-full h-2 bg-[var(--bg-card-hover)] rounded-full overflow-hidden">
-                  <div
-                    className="h-full rounded-full transition-all duration-500"
-                    style={{width: `${percentage}%`, backgroundColor: colors[idx % colors.length]}}
-                  />
-                </div>
-              </div>
+                <p className="font-mono text-sm tabular-nums text-[var(--text-secondary)]">
+                  {dept.count} <span className="text-[var(--text-muted)]">· {percentage}%</span>
+                </p>
+              </li>
             );
           })}
-        </div>
+        </ul>
       ),
     });
   }
 
-  // Widget 5: Payroll Summary (admin only)
+  // Widget 4: Payroll Summary (admin only) — flat numerals, no centered hero metric
   if (safeAnalytics.viewType === 'ADMIN' && safeAnalytics.payroll) {
     dashboardWidgets.push({
       id: 'payroll-summary',
-      title: 'Payroll Summary',
+      title: 'Payroll summary',
       defaultVisible: true,
       component: (
-        <div>
-          <div className="text-center py-4">
-            <div
-              className="mx-auto flex h-12 w-12 items-center justify-center rounded-lg bg-[var(--accent-primary-subtle)] border border-[var(--border-subtle)]">
-              <Briefcase className="h-6 w-6 text-[var(--accent-primary)]"/>
+        <div className="space-y-5">
+          <div>
+            <div className="flex items-center gap-2 text-[var(--text-muted)]">
+              <Briefcase className="h-3.5 w-3.5" aria-hidden="true"/>
+              <span className="text-2xs font-medium uppercase tracking-wider">Current month</span>
             </div>
-            <p className="text-stat-large mt-4">{formatCurrency(safeAnalytics.payroll.currentMonth.total)}</p>
-            <p className="text-body-secondary mt-1">Current Month</p>
+            <p className="mt-3 font-mono text-3xl sm:text-4xl tabular-nums tracking-tight text-[var(--text-heading)]">
+              {formatCurrency(safeAnalytics.payroll.currentMonth.total)}
+            </p>
           </div>
-          <div className="border-t border-[var(--border-main)] pt-4 mt-4">
-            <div className="row-between mb-4">
-              <span className="text-body-secondary">Processed</span>
-              <span
-                className="text-sm font-medium text-[var(--text-primary)] tabular-nums">{safeAnalytics.payroll.currentMonth.processed}</span>
-            </div>
-            <div className="row-between">
-              <span className="text-body-secondary">Pending</span>
-              <span
-                className="text-sm font-medium text-[var(--text-primary)] tabular-nums">{safeAnalytics.headcount.total - safeAnalytics.payroll.currentMonth.processed}</span>
-            </div>
-          </div>
+          <ul className="divide-y divide-[var(--border-subtle)] border-y border-[var(--border-subtle)]">
+            <li className="grid grid-cols-[1fr_auto] items-center gap-4 py-3">
+              <span className="text-sm text-[var(--text-secondary)]">Processed</span>
+              <span className="font-mono text-sm font-medium tabular-nums text-[var(--text-heading)]">
+                {safeAnalytics.payroll.currentMonth.processed}
+              </span>
+            </li>
+            <li className="grid grid-cols-[1fr_auto] items-center gap-4 py-3">
+              <span className="text-sm text-[var(--text-secondary)]">Pending</span>
+              <span className="font-mono text-sm font-medium tabular-nums text-[var(--text-heading)]">
+                {safeAnalytics.headcount.total - safeAnalytics.payroll.currentMonth.processed}
+              </span>
+            </li>
+          </ul>
         </div>
       ),
     });
   }
 
-  // Widget 6: Upcoming Events
+  // Widget 5: Upcoming Events — divide-y list of strips
   dashboardWidgets.push({
     id: 'upcoming-events',
     title: 'Upcoming',
     defaultVisible: true,
-    component: (
-      <div className="space-y-4">
-        {safeAnalytics.upcomingEvents?.birthdays?.slice(0, 3).map((event, idx) => (
-          <div key={idx}
-               className="flex items-center gap-4 p-4 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-elevated)]">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center status-warning flex-shrink-0">
-              <Gift className="h-5 w-5"/>
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-[var(--text-primary)] truncate">{event.employeeName}</p>
-              <p className="text-xs text-[var(--text-secondary)]">{formatDateShort(event.date)}</p>
-            </div>
-          </div>
-        ))}
-        {safeAnalytics.upcomingEvents?.holidays?.slice(0, 2).map((event, idx) => (
-          <div key={idx}
-               className="flex items-center gap-4 p-4 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-elevated)]">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center status-info flex-shrink-0">
-              <Calendar className="h-5 w-5"/>
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-[var(--text-primary)] truncate">{event.name}</p>
-              <p className="text-xs text-[var(--text-secondary)]">{formatDateShort(event.date)}</p>
-            </div>
-          </div>
-        ))}
-        {(!safeAnalytics.upcomingEvents?.birthdays?.length && !safeAnalytics.upcomingEvents?.holidays?.length) && (
+    component: (() => {
+      const birthdays = (safeAnalytics.upcomingEvents?.birthdays ?? []).slice(0, 3);
+      const holidays = (safeAnalytics.upcomingEvents?.holidays ?? []).slice(0, 2);
+
+      if (birthdays.length === 0 && holidays.length === 0) {
+        return (
           <EmptyState
             icon={<Calendar className="h-8 w-8"/>}
             title="No upcoming events"
             description="Birthdays and holidays will appear here as they approach."
           />
-        )}
-      </div>
-    ),
+        );
+      }
+
+      return (
+        <ul className="divide-y divide-[var(--border-subtle)] border-y border-[var(--border-subtle)]">
+          {birthdays.map((event, idx) => (
+            <li key={`b-${idx}`} className="grid grid-cols-[auto_1fr_auto] items-center gap-4 py-4">
+              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-warning-50 text-warning-700 dark:bg-warning-900/30 dark:text-warning-300">
+                <Gift className="h-4 w-4" aria-hidden="true"/>
+              </div>
+              <div className="min-w-0">
+                <p className="text-sm font-medium text-[var(--text-heading)] truncate">{event.employeeName}</p>
+                <p className="text-xs text-[var(--text-secondary)] truncate">Birthday</p>
+              </div>
+              <p className="font-mono text-xs tabular-nums text-[var(--text-muted)]">{formatDateShort(event.date)}</p>
+            </li>
+          ))}
+          {holidays.map((event, idx) => (
+            <li key={`h-${idx}`} className="grid grid-cols-[auto_1fr_auto] items-center gap-4 py-4">
+              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-accent-50 text-accent-700 dark:bg-accent-900/30 dark:text-accent-300">
+                <Calendar className="h-4 w-4" aria-hidden="true"/>
+              </div>
+              <div className="min-w-0">
+                <p className="text-sm font-medium text-[var(--text-heading)] truncate">{event.name}</p>
+                <p className="text-xs text-[var(--text-secondary)] truncate">Holiday</p>
+              </div>
+              <p className="font-mono text-xs tabular-nums text-[var(--text-muted)]">{formatDateShort(event.date)}</p>
+            </li>
+          ))}
+        </ul>
+      );
+    })(),
   });
 
-  // Widget 7: Google Notifications
+  // Widget 6: Google Notifications — divide-y row list, tone-tinted avatars
   dashboardWidgets.push({
     id: 'notifications',
     title: 'Notifications',
@@ -795,133 +749,117 @@ export default function DashboardPage() {
     component: (
       <div>
         {!hasGoogleToken ? (
-          <div className="text-center py-6">
-            <div
-              className="w-12 h-12 rounded-full bg-[var(--bg-card-hover)] border border-[var(--border-subtle)] flex items-center justify-center mx-auto mb-4">
-              <Bell className="h-6 w-6 text-[var(--text-muted)]"/>
+          <div className="text-center py-6 space-y-4">
+            <div className="mx-auto inline-flex h-11 w-11 items-center justify-center rounded-xl bg-[var(--bg-surface)] border border-[var(--border-subtle)] text-[var(--text-muted)]">
+              <Bell className="h-5 w-5"/>
             </div>
-            <p className="text-body-secondary mb-4">Connect Google to see notifications</p>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => router.push('/nu-mail')}
-            >
+            <p className="text-body-secondary max-w-[40ch] mx-auto">
+              Connect Google to see emails, calendar invites, and shared files in one place.
+            </p>
+            <Button variant="outline" size="sm" onClick={() => router.push('/nu-mail')}>
               Connect Google
             </Button>
           </div>
         ) : notificationsLoading ? (
           <div className="flex items-center justify-center py-8">
-            <Loader2 className="h-6 w-6 animate-spin text-[var(--accent-primary)]"/>
+            <Loader2 className="h-5 w-5 animate-spin text-[var(--accent-primary)]"/>
           </div>
         ) : notifications.length === 0 ? (
           <EmptyState
             icon={<CheckCircle className="h-8 w-8"/>}
-            title="All caught up!"
+            title="All caught up"
             description="No new notifications right now. New activity will appear here."
           />
         ) : (
-          <div className="space-y-4">
-            {notifications.map((notification) => (
-              <button
-                type="button"
-                key={notification.id}
-                onClick={() => handleNotificationClick(notification)}
-                aria-label={`Open ${notification.type} notification: ${notification.title}`}
-                className="w-full text-left flex items-start gap-4 p-4 rounded-xl cursor-pointer border border-[var(--border-subtle)] bg-[var(--bg-elevated)] hover:border-[var(--border-strong)] hover:shadow-card-hover transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-              >
-                <div
-                  className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${getNotificationTone(notification.type)}`}>
-                  {getNotificationIcon(notification.type)}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-[var(--text-primary)] truncate">
-                    {notification.title}
-                  </p>
-                  <div className="flex items-center gap-2 mt-0.5">
-                    <p className="text-xs text-[var(--text-secondary)] truncate">
-                      {notification.subtitle}
-                    </p>
-                    {notification.hasVideo && (
-                      <Video className="h-3 w-3 text-[var(--status-info-text)] flex-shrink-0"
-                             aria-label="Has video call"/>
-                    )}
-                  </div>
-                </div>
-                <span className="text-caption flex-shrink-0">
-                  {notification.type === 'calendar'
-                    ? notification.subtitle
-                    : formatRelativeTime(notification.timestamp)}
-                </span>
-              </button>
-            ))}
-            <div className="flex gap-2 pt-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="flex-1 text-xs"
-                onClick={() => router.push('/nu-mail')}
-                leftIcon={<Mail className="h-3 w-3"/>}
-              >
+          <>
+            <ul className="divide-y divide-[var(--border-subtle)] border-y border-[var(--border-subtle)]">
+              {notifications.map((notification) => (
+                <li key={notification.id}>
+                  <button
+                    type="button"
+                    onClick={() => handleNotificationClick(notification)}
+                    aria-label={`Open ${notification.type} notification: ${notification.title}`}
+                    className="w-full grid grid-cols-[auto_1fr_auto] items-center gap-4 py-4 text-left transition-colors hover:bg-[var(--bg-surface)]/40 active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded"
+                  >
+                    <div className={`flex h-9 w-9 items-center justify-center rounded-full ${getNotificationToneClasses(notification.type)}`}>
+                      {getNotificationIcon(notification.type)}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium text-[var(--text-heading)] truncate">
+                        {notification.title}
+                      </p>
+                      <div className="flex items-center gap-2 mt-0.5 min-w-0">
+                        <p className="text-xs text-[var(--text-secondary)] truncate">
+                          {notification.subtitle}
+                        </p>
+                        {notification.hasVideo && (
+                          <Video className="h-3 w-3 shrink-0 text-accent-600 dark:text-accent-400"
+                                 aria-label="Has video call"/>
+                        )}
+                      </div>
+                    </div>
+                    <span className="font-mono text-2xs tabular-nums text-[var(--text-muted)]">
+                      {notification.type === 'calendar'
+                        ? notification.subtitle
+                        : formatRelativeTime(notification.timestamp)}
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+            <div className="flex gap-2 pt-4">
+              <Button variant="ghost" size="sm" className="flex-1 text-xs"
+                      onClick={() => router.push('/nu-mail')}
+                      leftIcon={<Mail className="h-3 w-3"/>}>
                 Mail
               </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="flex-1 text-xs"
-                onClick={() => router.push('/nu-drive')}
-                leftIcon={<HardDrive className="h-3 w-3"/>}
-              >
+              <Button variant="ghost" size="sm" className="flex-1 text-xs"
+                      onClick={() => router.push('/nu-drive')}
+                      leftIcon={<HardDrive className="h-3 w-3"/>}>
                 Drive
               </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="flex-1 text-xs"
-                onClick={() => router.push('/nu-calendar')}
-                leftIcon={<Calendar className="h-3 w-3"/>}
-              >
+              <Button variant="ghost" size="sm" className="flex-1 text-xs"
+                      onClick={() => router.push('/nu-calendar')}
+                      leftIcon={<Calendar className="h-3 w-3"/>}>
                 Calendar
               </Button>
             </div>
-          </div>
+          </>
         )}
       </div>
     ),
   });
 
-  // Widget 8: New Joiners (conditional)
+  // Widget 7: New Joiners (conditional)
   if (safeAnalytics.viewType !== 'EMPLOYEE') {
     dashboardWidgets.push({
       id: 'new-joiners',
-      title: safeAnalytics.viewType === 'ADMIN' ? 'New Joiners' : 'New Team Members',
+      title: safeAnalytics.viewType === 'ADMIN' ? 'New joiners' : 'New team members',
       defaultVisible: true,
       component: (
-        <div>
-          <div className="text-center py-4">
-            <div
-              className="w-16 h-16 rounded-lg bg-[var(--bg-card-hover)] border border-[var(--border-subtle)] flex items-center justify-center mx-auto">
-              <Users className="h-8 w-8 text-[var(--accent-primary)]"/>
+        <div className="space-y-5">
+          <div>
+            <div className="flex items-center gap-2 text-[var(--text-muted)]">
+              <Users className="h-3.5 w-3.5" aria-hidden="true"/>
+              <span className="text-2xs font-medium uppercase tracking-wider">This month</span>
             </div>
-            <p className="text-stat-large mt-4">{safeAnalytics.headcount.newJoinees}</p>
-            <p className="text-body-secondary mt-1">This Month</p>
+            <p className="mt-3 font-mono text-3xl sm:text-4xl tabular-nums tracking-tight text-[var(--text-heading)]">
+              {safeAnalytics.headcount.newJoinees}
+            </p>
           </div>
           {safeAnalytics.viewType === 'ADMIN' && (
-            <div className="space-y-2 mt-4">
+            <div className="flex flex-col gap-2 pt-1">
               <Button variant="outline" className="w-full" onClick={() => router.push('/employees?filter=new')}>
-                View All Joiners
+                View all joiners
               </Button>
-              <Button variant="ghost"
-                      className="w-full text-[var(--accent-primary)] hover:bg-[var(--accent-primary-subtle)]"
+              <Button variant="ghost" className="w-full justify-between"
                       onClick={() => router.push('/onboarding')}>
-                <span className="flex items-center gap-2">
-                  Manage Onboarding
-                  {activeOnboardingCount > 0 && (
-                    <span
-                      className="text-xs px-2 py-0.5 rounded-full border border-[var(--border-subtle)] bg-[var(--accent-primary-subtle)] text-[var(--accent-primary)]">
-                      {activeOnboardingCount} Active
-                    </span>
-                  )}
-                </span>
+                <span>Manage onboarding</span>
+                {activeOnboardingCount > 0 && (
+                  <span className="inline-flex items-center justify-center min-w-6 px-2 h-5 text-2xs font-semibold rounded-full bg-accent-100 text-accent-700 dark:bg-accent-900/40 dark:text-accent-300 font-mono tabular-nums">
+                    {activeOnboardingCount}
+                  </span>
+                )}
               </Button>
             </div>
           )}
@@ -932,169 +870,209 @@ export default function DashboardPage() {
 
   return (
     <AppLayout activeMenuItem="dashboard" showBreadcrumbs={false}>
-      <div className="space-y-8">
-        {/* Inline analytics error banner — dashboard still usable */}
+      <div className="mx-auto w-full max-w-7xl px-6 py-8 space-y-10">
+        {/* Inline analytics error banner — flat strip, not a card */}
         {analyticsUnavailable && (
-          <div
-            className="flex items-center gap-4 p-4 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elevated)]">
-            <AlertCircle className="h-5 w-5 text-[var(--status-warning-text)] flex-shrink-0"/>
-            <p className="text-sm text-[var(--text-secondary)] flex-1">
+          <div role="alert" className="flex items-center gap-4 rounded-xl border border-warning-200 bg-warning-50/40 dark:border-warning-700/40 dark:bg-warning-950/30 px-5 py-4">
+            <AlertCircle className="h-4 w-4 shrink-0 text-warning-700 dark:text-warning-300" aria-hidden="true"/>
+            <p className="text-sm text-[var(--text-primary)] flex-1">
               {error ? `Analytics temporarily unavailable: ${error}` : 'Analytics data could not be loaded.'}
               {' '}Some metrics may show default values.
             </p>
-            <Button variant="outline" size="sm" onClick={() => refetchAnalytics()}>Retry</Button>
+            <Button variant="outline" size="sm" onClick={() => refetchAnalytics()}>
+              <RefreshCw className="mr-1.5 h-3.5 w-3.5" aria-hidden="true"/>
+              Retry
+            </Button>
           </div>
         )}
 
-        {/* Header with greeting and time */}
-        <Card className="overflow-hidden skeuo-card">
-          <CardContent className="p-6 sm:p-8">
-            <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-              <div className="space-y-2">
-                <div className="flex flex-wrap items-center gap-4">
-                  <h1 className="text-page-title">
-                    Welcome back, {user?.firstName || user?.fullName?.split(' ')[0] || 'User'}!
-                  </h1>
-                  <span className={`badge-status ${viewBadgeClass}`}>{safeAnalytics.viewLabel}</span>
-                </div>
-                <p className="text-body-secondary">
-                  {currentTime ? format(currentTime, 'EEEE, MMM d') : ''}
-                  {safeAnalytics.viewType !== 'EMPLOYEE' && (
-                    <span
-                      className="ml-2 text-caption">• {safeAnalytics.teamSize} {safeAnalytics.viewType === 'ADMIN' ? 'employees' : 'team members'}</span>
-                  )}
-                </p>
-              </div>
-              <div className="flex flex-wrap items-center gap-4">
-                <div
-                  className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elevated)] px-4 py-4 min-w-[140px]">
-                  <p className="text-stat-medium" suppressHydrationWarning>
-                    {currentTime?.toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit'}) ?? '--:--'}
-                  </p>
-                  <p className="text-caption">Current time</p>
-                </div>
-                {safeAnalytics.viewType !== 'EMPLOYEE' && (
-                  <div
-                    className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elevated)] px-4 py-4 min-w-[140px]">
-                    <p className="text-caption">Team size</p>
-                    <p className="text-stat-medium">{safeAnalytics.teamSize}</p>
-                  </div>
-                )}
-              </div>
+        {/* Asymmetric page header */}
+        <motion.header
+          initial={{opacity: 0, y: 4}}
+          animate={{opacity: 1, y: 0}}
+          transition={{duration: 0.4, ease: EASE}}
+          className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-end"
+        >
+          <div className="space-y-2 max-w-2xl">
+            <p className="text-2xs font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">
+              {safeAnalytics.viewLabel}
+            </p>
+            <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-[var(--text-heading)] leading-[1.05]">
+              Welcome back, {firstName}.
+            </h1>
+            <p className="text-body-secondary max-w-[55ch]">
+              {currentTime ? format(currentTime, 'EEEE, MMMM d') : ''}
+              {safeAnalytics.viewType !== 'EMPLOYEE' && (
+                <> · {safeAnalytics.teamSize} {safeAnalytics.viewType === 'ADMIN' ? 'employees' : 'team members'} in your view.</>
+              )}
+            </p>
+          </div>
+          <div className="flex items-center gap-3 self-start sm:self-end">
+            <span className={`inline-flex items-center px-2.5 h-7 text-2xs font-semibold uppercase tracking-wider rounded-full ${viewToneClasses}`}>
+              {safeAnalytics.viewType}
+            </span>
+            <div className="hidden sm:flex items-baseline gap-2 px-4 h-10 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-card)]">
+              <p className="font-mono text-base font-semibold tabular-nums text-[var(--text-heading)]" suppressHydrationWarning>
+                {currentTime?.toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit'}) ?? '--:--'}
+              </p>
+              <p className="text-2xs uppercase tracking-wider text-[var(--text-muted)]">local</p>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </motion.header>
 
-        {/* Attendance Widget */}
-        <Card className="relative overflow-hidden skeuo-card">
-          <div className="absolute left-0 top-0 h-full w-1.5 bg-[var(--accent-primary)]"/>
-          <CardContent className="p-6 pl-7 sm:p-8 sm:pl-9">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
-              <div className="flex items-center gap-4">
-                <div
-                  className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[var(--accent-primary-subtle)] border border-[var(--border-subtle)] flex items-center justify-center flex-shrink-0">
-                  <Clock className="h-6 w-6 sm:h-7 sm:w-7 text-[var(--accent-primary)]"/>
-                </div>
-                <div>
-                  <h2 className="text-base sm:text-xl font-semibold text-[var(--text-primary)]">Today&apos;s
-                    Attendance</h2>
-                  {timeEntries.length > 0 ? (
-                    <div className="flex flex-wrap items-center gap-4 mt-1">
-                      {/* Show first check-in time */}
-                      <div className="flex items-center gap-1.5 text-sm">
-                        <LogIn className="h-4 w-4 text-[var(--status-success-text)]"/>
-                        <span className="text-[var(--text-secondary)]">First In:</span>
-                        <span className="font-medium text-[var(--text-primary)] tabular-nums">
-                          {new Date(timeEntries[0].checkInTime).toLocaleTimeString('en-US', {
-                            hour: '2-digit',
-                            minute: '2-digit'
-                          })}
-                        </span>
-                      </div>
-                      {/* Show last check-out time if available */}
-                      {timeEntries.filter(e => e.checkOutTime).length > 0 && (
-                        <div className="flex items-center gap-1.5 text-sm">
-                          <LogOut className="h-4 w-4 text-[var(--status-info-text)]"/>
-                          <span className="text-[var(--text-secondary)]">Last Out:</span>
-                          <span className="font-medium text-[var(--text-primary)] tabular-nums">
-                            {new Date(timeEntries.filter(e => e.checkOutTime).slice(-1)[0].checkOutTime!).toLocaleTimeString('en-US', {
-                              hour: '2-digit',
-                              minute: '2-digit'
-                            })}
-                          </span>
-                        </div>
-                      )}
-                      {/* Show session count if more than 1 */}
-                      {timeEntries.length > 1 && (
-                        <span
-                          className="text-xs px-2 py-0.5 rounded-full border border-[var(--border-subtle)] bg-[var(--bg-card-hover)] text-[var(--text-secondary)]">
-                          {timeEntries.length} sessions
-                        </span>
-                      )}
-                      {/* Show current status */}
-                      {hasOpenSession && (
-                        <span className="badge-status status-success">
-                          Working
-                        </span>
-                      )}
-                    </div>
-                  ) : todayAttendance ? (
-                    <div className="flex items-center gap-4 mt-1">
-                      {todayAttendance.checkInTime && (
-                        <div className="flex items-center gap-1.5 text-sm">
-                          <LogIn className="h-4 w-4 text-[var(--status-success-text)]"/>
-                          <span className="text-[var(--text-secondary)]">In:</span>
-                          <span className="font-medium text-[var(--text-primary)] tabular-nums">
-                            {new Date(todayAttendance.checkInTime).toLocaleTimeString('en-US', {
-                              hour: '2-digit',
-                              minute: '2-digit'
-                            })}
-                          </span>
-                        </div>
-                      )}
-                      {todayAttendance.checkOutTime && (
-                        <div className="flex items-center gap-1.5 text-sm">
-                          <LogOut className="h-4 w-4 text-[var(--status-info-text)]"/>
-                          <span className="text-[var(--text-secondary)]">Out:</span>
-                          <span className="font-medium text-[var(--text-primary)] tabular-nums">
-                            {new Date(todayAttendance.checkOutTime).toLocaleTimeString('en-US', {
-                              hour: '2-digit',
-                              minute: '2-digit'
-                            })}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  ) : (
-                    <p className="text-[var(--text-secondary)] text-sm mt-1">You haven&apos;t checked in yet</p>
+        {/* Headline stats row — borders, not card boxes */}
+        <motion.section
+          initial="hidden"
+          animate="visible"
+          variants={{visible: {transition: {staggerChildren: 0.06, delayChildren: 0.08}}}}
+          aria-label="Today at a glance"
+          className="grid grid-cols-2 sm:grid-cols-4 border-y border-[var(--border-subtle)] divide-x divide-[var(--border-subtle)]"
+        >
+          {[
+            {
+              label: safeAnalytics.viewType === 'ADMIN' ? 'Headcount' : safeAnalytics.viewType === 'MANAGER' ? 'Team' : 'Status',
+              value: safeAnalytics.viewType === 'EMPLOYEE' ? 'Active' : safeAnalytics.headcount.total,
+              icon: Users,
+              tone: 'neutral' as const,
+            },
+            {
+              label: 'Present today',
+              value: safeAnalytics.attendance.present,
+              suffix: `${safeAnalytics.attendance.attendancePercentage}%`,
+              icon: UserCheck,
+              tone: 'neutral' as const,
+            },
+            {
+              label: 'On leave',
+              value: safeAnalytics.attendance.onLeave,
+              icon: Calendar,
+              tone: 'neutral' as const,
+            },
+            {
+              label: 'Pending approvals',
+              value: safeAnalytics.leave.pending,
+              icon: Bell,
+              tone: safeAnalytics.leave.pending > 0 ? 'warning' as const : 'neutral' as const,
+            },
+          ].map((item, idx) => (
+            <motion.div
+              key={idx}
+              variants={{hidden: {opacity: 0, y: 6}, visible: {opacity: 1, y: 0, transition: {duration: 0.4, ease: EASE}}}}
+              className="px-5 py-6 sm:px-7 sm:py-8 first:pl-0 last:pr-0"
+            >
+              <div className="flex items-center gap-2 text-[var(--text-muted)]">
+                <item.icon className="h-3.5 w-3.5" aria-hidden="true"/>
+                <span className="text-2xs font-medium uppercase tracking-wider">{item.label}</span>
+              </div>
+              <p
+                className={`mt-3 font-mono text-3xl sm:text-4xl tabular-nums tracking-tight ${
+                  item.tone === 'warning' ? 'text-warning-700 dark:text-warning-300'
+                    : 'text-[var(--text-heading)]'
+                }`}
+              >
+                {item.value}
+              </p>
+              {item.suffix && (
+                <p className="mt-1 font-mono text-2xs tabular-nums text-[var(--text-muted)]">{item.suffix}</p>
+              )}
+            </motion.div>
+          ))}
+        </motion.section>
+
+        {/* Attendance strip — flattened from a card with side-stripe to a quiet row */}
+        <motion.section
+          initial={{opacity: 0, y: 6}}
+          animate={{opacity: 1, y: 0}}
+          transition={{duration: 0.45, ease: EASE, delay: 0.2}}
+          aria-label="Today's attendance"
+          className="grid gap-4 lg:grid-cols-[1fr_auto] lg:items-center rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-card)] px-5 py-5 sm:px-7 sm:py-6"
+        >
+          <div className="flex items-start gap-4 min-w-0">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent-50 text-accent-700 dark:bg-accent-900/30 dark:text-accent-300">
+              <Clock className="h-5 w-5" aria-hidden="true"/>
+            </div>
+            <div className="min-w-0 flex-1">
+              <h2 className="text-base sm:text-lg font-semibold text-[var(--text-heading)]">
+                Today&apos;s attendance
+              </h2>
+              {timeEntries.length > 0 ? (
+                <div className="mt-1.5 flex flex-wrap items-center gap-x-5 gap-y-1">
+                  <span className="inline-flex items-center gap-1.5 text-sm">
+                    <LogIn className="h-3.5 w-3.5 text-success-600 dark:text-success-400" aria-hidden="true"/>
+                    <span className="text-[var(--text-secondary)]">First in</span>
+                    <span className="font-mono font-medium tabular-nums text-[var(--text-heading)]">
+                      {new Date(timeEntries[0].checkInTime).toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit'})}
+                    </span>
+                  </span>
+                  {timeEntries.filter(e => e.checkOutTime).length > 0 && (
+                    <span className="inline-flex items-center gap-1.5 text-sm">
+                      <LogOut className="h-3.5 w-3.5 text-accent-600 dark:text-accent-400" aria-hidden="true"/>
+                      <span className="text-[var(--text-secondary)]">Last out</span>
+                      <span className="font-mono font-medium tabular-nums text-[var(--text-heading)]">
+                        {new Date(timeEntries.filter(e => e.checkOutTime).slice(-1)[0].checkOutTime!).toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit'})}
+                      </span>
+                    </span>
+                  )}
+                  {timeEntries.length > 1 && (
+                    <span className="text-2xs font-medium uppercase tracking-wider text-[var(--text-muted)]">
+                      {timeEntries.length} sessions
+                    </span>
+                  )}
+                  {hasOpenSession && (
+                    <span className="inline-flex items-center px-2 h-5 text-2xs font-semibold uppercase tracking-wider rounded-full bg-success-50 text-success-700 dark:bg-success-900/30 dark:text-success-300">
+                      Working
+                    </span>
                   )}
                 </div>
-              </div>
-              <div className="flex items-center gap-4">
-                {clockError && <span className="text-sm text-danger-600 dark:text-danger-400">{clockError}</span>}
-                {canCheckIn && (
-                  <Button variant="success" onClick={handleCheckIn} isLoading={checkInMutation.isPending}
-                          leftIcon={<LogIn className="h-4 w-4"/>}>
-                    Check In
-                  </Button>
-                )}
-                {canCheckOut && (
-                  <Button variant="danger" onClick={handleCheckOut} isLoading={checkOutMutation.isPending}
-                          leftIcon={<LogOut className="h-4 w-4"/>}>
-                    Check Out
-                  </Button>
-                )}
-                {attendanceComplete && (
-                  <Button variant="outline" disabled>
-                    Checked Out
-                  </Button>
-                )}
-              </div>
+              ) : todayAttendance ? (
+                <div className="mt-1.5 flex flex-wrap items-center gap-x-5 gap-y-1">
+                  {todayAttendance.checkInTime && (
+                    <span className="inline-flex items-center gap-1.5 text-sm">
+                      <LogIn className="h-3.5 w-3.5 text-success-600 dark:text-success-400" aria-hidden="true"/>
+                      <span className="text-[var(--text-secondary)]">In</span>
+                      <span className="font-mono font-medium tabular-nums text-[var(--text-heading)]">
+                        {new Date(todayAttendance.checkInTime).toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit'})}
+                      </span>
+                    </span>
+                  )}
+                  {todayAttendance.checkOutTime && (
+                    <span className="inline-flex items-center gap-1.5 text-sm">
+                      <LogOut className="h-3.5 w-3.5 text-accent-600 dark:text-accent-400" aria-hidden="true"/>
+                      <span className="text-[var(--text-secondary)]">Out</span>
+                      <span className="font-mono font-medium tabular-nums text-[var(--text-heading)]">
+                        {new Date(todayAttendance.checkOutTime).toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit'})}
+                      </span>
+                    </span>
+                  )}
+                </div>
+              ) : (
+                <p className="mt-1.5 text-sm text-[var(--text-secondary)]">You haven&apos;t checked in yet.</p>
+              )}
             </div>
-          </CardContent>
-        </Card>
+          </div>
+          <div className="flex items-center gap-3 justify-end">
+            {clockError && <span className="text-sm text-danger-700 dark:text-danger-300">{clockError}</span>}
+            {canCheckIn && (
+              <Button variant="primary" onClick={handleCheckIn} isLoading={checkInMutation.isPending}
+                      leftIcon={<LogIn className="h-4 w-4"/>}>
+                Check in
+              </Button>
+            )}
+            {canCheckOut && (
+              <Button variant="danger" onClick={handleCheckOut} isLoading={checkOutMutation.isPending}
+                      leftIcon={<LogOut className="h-4 w-4"/>}>
+                Check out
+              </Button>
+            )}
+            {attendanceComplete && (
+              <Button variant="outline" disabled>
+                Checked out
+              </Button>
+            )}
+          </div>
+        </motion.section>
 
-        {/* Dashboard Widgets - Drag and Drop Layout */}
+        {/* Widget grid - draggable, preserved */}
         <DashboardGrid
           widgets={dashboardWidgets}
           dashboardId="main-dashboard"
@@ -1249,7 +1227,7 @@ export default function DashboardPage() {
           </ModalHeader>
           <ModalBody className="space-y-4">
             <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center status-danger">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-danger-50 text-danger-700 dark:bg-danger-900/30 dark:text-danger-300">
                 <Mail className="h-5 w-5"/>
               </div>
               <div>
@@ -1293,7 +1271,7 @@ export default function DashboardPage() {
         <Modal isOpen={!!(selectedFile && selectedFile.driveFile)} onClose={() => setSelectedFile(null)} size="xl">
           <ModalHeader onClose={() => setSelectedFile(null)}>
             <div className="flex items-center gap-4 min-w-0">
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 status-warning">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 bg-warning-50 text-warning-700 dark:bg-warning-900/30 dark:text-warning-300">
                 <HardDrive className="h-5 w-5"/>
               </div>
               <div className="min-w-0">

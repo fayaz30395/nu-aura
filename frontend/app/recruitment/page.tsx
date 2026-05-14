@@ -1,15 +1,27 @@
 'use client';
 
-import {useEffect, useMemo, useRef, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {useRouter} from 'next/navigation';
+import Link from 'next/link';
 import {motion} from 'framer-motion';
+import {
+  AlertTriangle,
+  ArrowRight,
+  Award,
+  Briefcase,
+  Building2,
+  Calendar,
+  ClipboardList,
+  Clock,
+  FileText,
+  Globe,
+  Plus,
+  Users,
+} from 'lucide-react';
+
 import {AppLayout} from '@/components/layout';
-import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
-import {StatCard} from '@/components/ui/StatCard';
-import {Badge} from '@/components/ui/Badge';
-import {EmptyState} from '@/components/ui/EmptyState';
-import {SkeletonCard, SkeletonStatCard} from '@/components/ui/Skeleton';
+import {Skeleton} from '@/components/ui/Skeleton';
 import {PageErrorFallback} from '@/components/errors/PageErrorFallback';
 import {
   useAllInterviews,
@@ -17,36 +29,18 @@ import {
   useJobOpenings,
   useJobOpeningsByStatus,
 } from '@/lib/hooks/queries/useRecruitment';
-import {Briefcase, Calendar, Clock, FileText, Loader2, MapPin, Plus, User, Users,} from 'lucide-react';
-import {Candidate, CandidateStatus, Interview, JobOpening} from '@/lib/types/hire/recruitment';
+import {Candidate, CandidateStatus, Interview} from '@/lib/types/hire/recruitment';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {formatDate as canonicalFormatDate, formatTime as canonicalFormatTime} from '@/lib/utils/format/date';
 
-const containerVariants = {
-  hidden: {opacity: 0},
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.2,
-    },
-  },
-};
+const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
-const itemVariants = {
-  hidden: {opacity: 0, y: 20},
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.4,
-    },
-  },
-};
+const RECRUITMENT_ALLOWED_ROLES = ['SUPER_ADMIN', 'TENANT_ADMIN', 'HR_ADMIN', 'HR_MANAGER', 'RECRUITMENT_ADMIN'];
 
-function getCandidateStatusColor(status: CandidateStatus): 'success' | 'warning' | 'danger' | 'info' | 'default' {
-  const statusColorMap: Record<CandidateStatus, 'success' | 'warning' | 'danger' | 'info' | 'default'> = {
+function statusTone(status?: CandidateStatus): 'success' | 'warning' | 'danger' | 'info' | 'neutral' {
+  if (!status) return 'neutral';
+  const map: Record<CandidateStatus, 'success' | 'warning' | 'danger' | 'info' | 'neutral'> = {
     NEW: 'info',
     SCREENING: 'warning',
     INTERVIEW: 'warning',
@@ -57,179 +51,96 @@ function getCandidateStatusColor(status: CandidateStatus): 'success' | 'warning'
     REJECTED: 'danger',
     WITHDRAWN: 'danger',
   };
-  return statusColorMap[status] || 'default';
-}
-
-function formatDate(dateString?: string): string {
-  if (!dateString) return 'N/A';
-  return canonicalFormatDate(dateString);
-}
-
-function formatTime(dateString?: string): string {
-  if (!dateString) return 'N/A';
-  return canonicalFormatTime(dateString);
-}
-
-function isToday(dateString?: string): boolean {
-  if (!dateString) return false;
-  const date = new Date(dateString);
-  const today = new Date();
-  return (
-    date.getDate() === today.getDate() &&
-    date.getMonth() === today.getMonth() &&
-    date.getFullYear() === today.getFullYear()
-  );
+  return map[status] ?? 'neutral';
 }
 
 function isThisWeek(dateString?: string): boolean {
   if (!dateString) return false;
   const date = new Date(dateString);
   const today = new Date();
-
-  // Get the start of this week (Sunday)
   const startOfWeek = new Date(today);
   startOfWeek.setDate(today.getDate() - today.getDay());
   startOfWeek.setHours(0, 0, 0, 0);
-
-  // Get the end of this week (Saturday)
   const endOfWeek = new Date(startOfWeek);
   endOfWeek.setDate(startOfWeek.getDate() + 6);
   endOfWeek.setHours(23, 59, 59, 999);
-
   return date >= startOfWeek && date <= endOfWeek;
 }
-
-const RECRUITMENT_ALLOWED_ROLES = ['SUPER_ADMIN', 'TENANT_ADMIN', 'HR_ADMIN', 'HR_MANAGER', 'RECRUITMENT_ADMIN'];
 
 export default function RecruitmentDashboard() {
   const router = useRouter();
   const {hasAnyRole, isReady} = usePermissions();
-
-  // P0-001: Block non-recruitment roles from accessing admin hub
   const hasAccess = hasAnyRole(...RECRUITMENT_ALLOWED_ROLES);
 
-  // All hooks MUST be called before any early return (React rules of hooks)
   const jobOpeningsQuery = useJobOpenings(0, 100);
   const candidatesQuery = useCandidates(0, 100);
   const openJobsQuery = useJobOpeningsByStatus('OPEN');
   const interviewsQuery = useAllInterviews(0, 100);
 
-  // Derived statistics
+  useEffect(() => {
+    document.title = 'Recruitment | NU-AURA';
+  }, []);
+
   const stats = useMemo(() => {
     const candidates = candidatesQuery.data?.content || [];
     const openJobs = openJobsQuery.data || [];
     const interviews = interviewsQuery.data?.content || [];
 
-    const activeJobs = openJobs.length;
-    const totalCandidates = candidates.length;
-
-    // Calculate interviews this week using actual interview schedule data
     const interviewsThisWeek = interviews.filter(
-      (interview) =>
-        isThisWeek(interview.scheduledAt) &&
-        (interview.status === 'SCHEDULED' || interview.status === 'RESCHEDULED')
+      (i) => isThisWeek(i.scheduledAt) && (i.status === 'SCHEDULED' || i.status === 'RESCHEDULED'),
+    ).length;
+    const pendingOffers = candidates.filter((c) => c.status === 'OFFER_EXTENDED').length;
+    const inPipeline = candidates.filter(
+      (c) => c.status === 'NEW' || c.status === 'SCREENING' || c.status === 'INTERVIEW' || c.status === 'SELECTED',
     ).length;
 
-    // Calculate pending offers
-    const pendingOffers = candidates.filter((c) => c.status === 'OFFER_EXTENDED').length;
-
     return {
-      activeJobs,
-      totalCandidates,
-      interviewsThisWeek,
+      openRequisitions: openJobs.length,
+      inPipeline,
       pendingOffers,
+      interviewsThisWeek,
     };
   }, [candidatesQuery.data, openJobsQuery.data, interviewsQuery.data]);
 
-  // Get recent openings
-  const recentOpenings: JobOpening[] = useMemo(() => {
-    const jobs = jobOpeningsQuery.data?.content || [];
-    return jobs
-      .filter((job) => job.status === 'OPEN')
-      .sort(
-        (a, b) =>
-          new Date(b.postedDate || b.createdAt).getTime() -
-          new Date(a.postedDate || a.createdAt).getTime()
-      )
-      .slice(0, 5);
-  }, [jobOpeningsQuery.data]);
-
-  // Get recent applications (all sorted, no slice — lazy-rendered in UI)
-  const recentApplications: Candidate[] = useMemo(() => {
+  const candidatesNeedingAttention: Candidate[] = useMemo(() => {
     const candidates = candidatesQuery.data?.content || [];
-    return candidates.sort(
-      (a, b) =>
-        new Date(b.appliedDate || b.createdAt).getTime() -
-        new Date(a.appliedDate || a.createdAt).getTime()
-    );
+    return candidates
+      .filter((c) => c.status === 'OFFER_EXTENDED' || c.status === 'INTERVIEW' || c.status === 'SCREENING')
+      .sort((a, b) => new Date(b.appliedDate || b.createdAt).getTime() - new Date(a.appliedDate || a.createdAt).getTime())
+      .slice(0, 5);
   }, [candidatesQuery.data]);
 
-  // Lazy-load: show 10 initially, load 10 more when scrolled to bottom
-  const BATCH_SIZE = 10;
-  const [visibleCount, setVisibleCount] = useState(BATCH_SIZE);
-  const loadMoreRef = useRef<HTMLDivElement>(null);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-
-  const visibleApplications = useMemo(
-    () => recentApplications.slice(0, visibleCount),
-    [recentApplications, visibleCount]
-  );
-
-  const hasMore = visibleCount < recentApplications.length;
-
-  useEffect(() => {
-    const sentinel = loadMoreRef.current;
-    const container = scrollContainerRef.current;
-    if (!sentinel || !container) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && hasMore) {
-          setVisibleCount((prev) => Math.min(prev + BATCH_SIZE, recentApplications.length));
-        }
-      },
-      {root: container, rootMargin: '100px'}
-    );
-
-    observer.observe(sentinel);
-    return () => observer.disconnect();
-  }, [hasMore, recentApplications.length]);
-
-  // Get today's interviews from actual interview data
-  const todaysInterviews: Interview[] = useMemo(() => {
+  const interviewsThisWeekList: Interview[] = useMemo(() => {
     const interviews = interviewsQuery.data?.content || [];
-    return interviews.filter(
-      (interview) =>
-        isToday(interview.scheduledAt) &&
-        (interview.status === 'SCHEDULED' || interview.status === 'RESCHEDULED')
-    );
+    return interviews
+      .filter((i) => isThisWeek(i.scheduledAt) && (i.status === 'SCHEDULED' || i.status === 'RESCHEDULED'))
+      .sort((a, b) => new Date(a.scheduledAt || '').getTime() - new Date(b.scheduledAt || '').getTime())
+      .slice(0, 5);
   }, [interviewsQuery.data]);
 
-  // Safety-net: if loading takes longer than 15 seconds, stop showing skeletons
-  // and render whatever data (or empty states) we have so the page is not stuck.
   const [loadingTimedOut, setLoadingTimedOut] = useState(false);
   useEffect(() => {
     const timer = setTimeout(() => setLoadingTimedOut(true), 15000);
     return () => clearTimeout(timer);
   }, []);
 
-  useEffect(() => {
-    document.title = 'Recruitment | NU-AURA';
-  }, []);
-
-  // P0-001: Block non-recruitment roles AFTER all hooks (React rules of hooks)
   if (isReady && !hasAccess) {
     return (
       <AppLayout>
-        <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
-          <Briefcase className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4"/>
-          <h1 className="text-xl font-bold text-[var(--text-primary)] mb-2">Access Restricted</h1>
-          <p className="text-[var(--text-muted)] max-w-md mb-6">
-            You don&apos;t have permission to access the Recruitment dashboard.
-            Use the Referrals page to submit employee referrals.
-          </p>
-          <Button onClick={() => router.push('/me/dashboard')} className="skeuo-button">
-            Go to My Dashboard
+        <div className="mx-auto w-full max-w-3xl px-6 py-16 text-center space-y-6">
+          <div className="mx-auto inline-flex h-12 w-12 items-center justify-center rounded-xl bg-[var(--bg-surface)] border border-[var(--border-subtle)] text-[var(--text-secondary)]">
+            <Briefcase className="h-5 w-5" aria-hidden="true"/>
+          </div>
+          <div className="space-y-2">
+            <h1 className="text-2xl font-semibold tracking-tight text-[var(--text-heading)]">
+              Access Restricted
+            </h1>
+            <p className="text-body-secondary max-w-[60ch] mx-auto">
+              You don&apos;t have permission to access the Recruitment dashboard. Use the Referrals page to submit employee referrals.
+            </p>
+          </div>
+          <Button variant="primary" onClick={() => router.push('/me/dashboard')}>
+            Go to my dashboard
           </Button>
         </div>
       </AppLayout>
@@ -239,7 +150,6 @@ export default function RecruitmentDashboard() {
   const allQueriesErrored =
     jobOpeningsQuery.isError && candidatesQuery.isError && openJobsQuery.isError && interviewsQuery.isError;
 
-  // Show full-page error only if ALL queries failed (partial failures render available data)
   if (allQueriesErrored) {
     return (
       <AppLayout>
@@ -252,9 +162,6 @@ export default function RecruitmentDashboard() {
     );
   }
 
-  // Show page skeleton on initial page load while ANY critical query is still loading for the first time.
-  // Uses isLoading (isPending + isFetching) which is true only before the first successful fetch.
-  // Falls through after 15 seconds to prevent perpetual skeleton if the backend is slow/unreachable.
   const isInitialLoad =
     !loadingTimedOut &&
     (jobOpeningsQuery.isLoading ||
@@ -262,66 +169,8 @@ export default function RecruitmentDashboard() {
       openJobsQuery.isLoading ||
       interviewsQuery.isLoading);
 
-  if (isInitialLoad) {
-    return (
-      <AppLayout>
-        <div className="space-y-6">
-          <div className="h-32 bg-[var(--bg-secondary)] rounded-lg"/>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <SkeletonStatCard/>
-            <SkeletonStatCard/>
-            <SkeletonStatCard/>
-            <SkeletonStatCard/>
-          </div>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <SkeletonCard/>
-            <SkeletonCard/>
-          </div>
-        </div>
-      </AppLayout>
-    );
-  }
-
-  // Show a full-page empty state when all queries resolved but there is zero data
-  const hasNoData =
-    !jobOpeningsQuery.isLoading &&
-    !candidatesQuery.isLoading &&
-    (jobOpeningsQuery.data?.content?.length ?? 0) === 0 &&
-    (candidatesQuery.data?.content?.length ?? 0) === 0 &&
-    (openJobsQuery.data?.length ?? 0) === 0;
-
-  if (hasNoData) {
-    return (
-      <AppLayout>
-        <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
-          <div
-            className="h-16 w-16 rounded-lg bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center mb-6">
-            <Briefcase className="h-8 w-8 text-accent-700 dark:text-accent-400"/>
-          </div>
-          <h1 className="text-xl font-bold text-[var(--text-primary)] mb-2">
-            Welcome to Recruitment
-          </h1>
-          <p className="text-[var(--text-muted)] max-w-md mb-8">
-            Get started by posting your first job opening. You can then track candidates,
-            schedule interviews, and manage the entire hiring pipeline from here.
-          </p>
-          <PermissionGate permission={Permissions.RECRUITMENT_CREATE}>
-            <Button
-              onClick={() => router.push('/recruitment/jobs')}
-              className="flex items-center gap-2"
-            >
-              <Plus className="h-4 w-4"/>
-              Create First Job Opening
-            </Button>
-          </PermissionGate>
-        </div>
-      </AppLayout>
-    );
-  }
-
   return (
     <AppLayout>
-      {/* DEF-49: Gate entire recruitment dashboard on RECRUITMENT_VIEW */}
       <PermissionGate
         anyOf={[Permissions.RECRUITMENT_VIEW, Permissions.RECRUITMENT_VIEW_ALL]}
         fallback={
@@ -330,285 +179,440 @@ export default function RecruitmentDashboard() {
           </div>
         }
       >
-        <motion.div
-          className="space-y-6"
-          initial="hidden"
-          animate="visible"
-          variants={containerVariants}
-        >
-          {/* Page Header */}
-          <motion.div variants={itemVariants}
-                      className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-              <h1 className="text-xl sm:text-xl font-bold text-[var(--text-primary)]">
-                Recruitment Dashboard
-              </h1>
-              <p className="text-xs sm:text-sm text-[var(--text-muted)] mt-1 sm:mt-2">
-                Track job openings, candidates, and interviews
-              </p>
-            </div>
-            <div className="flex gap-2 sm:gap-4">
-              <PermissionGate permission={Permissions.RECRUITMENT_CREATE}>
-                <Button
-                  onClick={() => router.push('/recruitment/jobs')}
-                  className="flex items-center gap-2 text-xs sm:text-sm"
-                >
-                  <Plus className="h-4 w-4"/>
-                  <span className="hidden sm:inline">Post New Job</span>
-                  <span className="sm:hidden">New Job</span>
-                </Button>
-              </PermissionGate>
-              <PermissionGate permission={Permissions.CANDIDATE_VIEW}>
-                <Button
-                  onClick={() => router.push('/recruitment/candidates')}
-                  variant="outline"
-                  className="flex items-center gap-2 text-xs sm:text-sm"
-                >
-                  <Users className="h-4 w-4"/>
-                  <span className="hidden sm:inline">Add Candidate</span>
-                  <span className="sm:hidden">Candidate</span>
-                </Button>
-              </PermissionGate>
-            </div>
-          </motion.div>
+        <div className="mx-auto w-full max-w-7xl px-6 py-8 space-y-10">
+          <PageHeader
+            onPostJob={() => router.push('/recruitment/jobs')}
+            onAddCandidate={() => router.push('/recruitment/candidates')}
+          />
 
-          {/* Summary Stats Row */}
-          <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <StatCard
-              icon={<Briefcase className="h-5 w-5"/>}
-              title="Active Job Openings"
-              value={stats.activeJobs}
-              variant="primary"
-              onAction={() => router.push('/recruitment/jobs')}
-              actionLabel="View Jobs"
+          {isInitialLoad ? (
+            <StatsSkeleton/>
+          ) : (
+            <StatsRow
+              openRequisitions={stats.openRequisitions}
+              inPipeline={stats.inPipeline}
+              pendingOffers={stats.pendingOffers}
+              interviewsThisWeek={stats.interviewsThisWeek}
             />
-            <StatCard
-              icon={<Users className="h-5 w-5"/>}
-              title="Total Candidates"
-              value={stats.totalCandidates}
-              variant="success"
-              onAction={() => router.push('/recruitment/candidates')}
-              actionLabel="View All"
-            />
-            <StatCard
-              icon={<Calendar className="h-5 w-5"/>}
-              title="Interviews This Week"
-              value={stats.interviewsThisWeek}
-              variant="blue"
-              onAction={() => router.push('/recruitment/interviews')}
-              actionLabel="Schedule"
-            />
-            <StatCard
-              icon={<FileText className="h-5 w-5"/>}
-              title="Pending Offers"
-              value={stats.pendingOffers}
-              variant="orange"
-              onAction={() => router.push('/recruitment/candidates')}
-              actionLabel="Review"
-            />
-          </motion.div>
+          )}
 
-          {/* Interviews Today Card */}
-          <motion.div variants={itemVariants}>
-            <Card>
-              <CardHeader className="pb-4">
-                <CardTitle className="flex items-center gap-2">
-                  <Calendar className="h-5 w-5 text-accent-600 dark:text-accent-400"/>
-                  Interviews Today
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {todaysInterviews.length === 0 ? (
-                  <EmptyState
-                    icon={<Calendar className="h-12 w-12"/>}
-                    title="No Interviews Today"
-                    description="Schedule interviews or check back later"
-                    action={{
-                      label: 'Schedule Interview',
-                      onClick: () => router.push('/recruitment/interviews'),
-                    }}
-                  />
-                ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {todaysInterviews.map((interview, index) => (
-                      <motion.div
-                        key={interview.id}
-                        className="p-4 border border-[var(--border-main)] rounded-lg bg-[var(--bg-secondary)]/50"
-                        initial={{opacity: 0, y: 8}}
-                        animate={{opacity: 1, y: 0}}
-                        transition={{delay: index * 0.1}}
-                      >
-                        <div className="flex items-start gap-4">
-                          <div
-                            className="h-10 w-10 rounded-full bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center">
-                            <User className="h-5 w-5 text-accent-700 dark:text-accent-400"/>
-                          </div>
-                          <div className="flex-1">
-                            <h4 className="font-semibold text-[var(--text-primary)]">
-                              {interview.candidateName || 'Candidate'}
-                            </h4>
-                            <p className="text-body-muted">
-                              {interview.jobTitle || 'Position'}
-                            </p>
-                            <div className="flex items-center gap-2 mt-2 text-caption">
-                              <Clock className="h-3.5 w-3.5"/>
-                              {formatTime(interview.scheduledAt)}
-                              {interview.interviewRound && (
-                                <Badge variant="info" size="sm">
-                                  {interview.interviewRound.replace(/_/g, ' ')}
-                                </Badge>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      </motion.div>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </motion.div>
+          <BentoNavigation
+            pipelineCount={stats.inPipeline}
+            interviewsCount={stats.interviewsThisWeek}
+            pendingOffers={stats.pendingOffers}
+          />
 
-          {/* Main Content Grid */}
-          <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {/* Active Openings Card */}
-            <Card className="h-fit">
-              <CardHeader className="pb-4">
-                <CardTitle className="flex items-center gap-2">
-                  <Briefcase className="h-5 w-5 text-accent-700 dark:text-accent-400"/>
-                  Active Job Openings
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {recentOpenings.length === 0 ? (
-                  <EmptyState
-                    icon={<Briefcase className="h-12 w-12"/>}
-                    title="No Active Openings"
-                    description="Start by posting a new job opening"
-                    action={{
-                      label: 'Post Job',
-                      onClick: () => router.push('/recruitment/jobs'),
-                    }}
-                  />
-                ) : (
-                  <div className="space-y-4 max-h-[460px] overflow-y-auto pr-1">
-                    {recentOpenings.map((job, index) => (
-                      <motion.div
-                        key={job.id}
-                        className="p-4 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 cursor-pointer transition-colors"
-                        onClick={() => router.push(`/recruitment/jobs?id=${job.id}`)}
-                        initial={{opacity: 0, x: -20}}
-                        animate={{opacity: 1, x: 0}}
-                        transition={{delay: index * 0.1}}
-                      >
-                        <div className="flex items-start justify-between gap-4">
-                          <div className="flex-1">
-                            <h3 className="font-semibold text-[var(--text-primary)]">
-                              {job.jobTitle}
-                            </h3>
-                            <div className="flex gap-4 mt-2 text-body-muted">
-                              {job.departmentName && (
-                                <span className="flex items-center gap-1">
-                                <Users className="h-3.5 w-3.5"/>
-                                  {job.departmentName}
-                              </span>
-                              )}
-                              {job.location && (
-                                <span className="flex items-center gap-1">
-                                <MapPin className="h-3.5 w-3.5"/>
-                                  {job.location}
-                              </span>
-                              )}
-                            </div>
-                          </div>
-                          <Badge variant="success" size="sm">
-                            {job.candidateCount || 0} Applications
-                          </Badge>
-                        </div>
-                      </motion.div>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+          {candidatesNeedingAttention.length > 0 && (
+            <CandidatesNeedingAttention items={candidatesNeedingAttention} router={router}/>
+          )}
 
-            {/* Recent Applications Card */}
-            <Card className="h-fit">
-              <CardHeader className="pb-4">
-                <div className="row-between">
-                  <CardTitle className="flex items-center gap-2">
-                    <Users className="h-5 w-5 text-success-600 dark:text-success-400"/>
-                    Recent Applications
-                  </CardTitle>
-                  {recentApplications.length > 0 && (
-                    <span className="text-caption">
-                    {visibleApplications.length} of {recentApplications.length}
-                  </span>
-                  )}
-                </div>
-              </CardHeader>
-              <CardContent>
-                {recentApplications.length === 0 ? (
-                  <EmptyState
-                    icon={<Users className="h-12 w-12"/>}
-                    title="No Applications Yet"
-                    description="Applications will appear here as they arrive"
-                  />
-                ) : (
-                  <div
-                    ref={scrollContainerRef}
-                    className="space-y-4 max-h-[460px] overflow-y-auto pr-1"
-                  >
-                    {visibleApplications.map((candidate, index) => (
-                      <motion.div
-                        key={candidate.id}
-                        className="p-4 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 cursor-pointer transition-colors"
-                        onClick={() =>
-                          router.push(`/recruitment/candidates?id=${candidate.id}`)
-                        }
-                        initial={{opacity: 0, x: -20}}
-                        animate={{opacity: 1, x: 0}}
-                        transition={{delay: Math.min(index, 5) * 0.05}}
-                      >
-                        <div className="flex items-start justify-between gap-4">
-                          <div className="flex-1 min-w-0">
-                            <h3
-                              className="font-semibold text-[var(--text-primary)] truncate"
-                              title={candidate.fullName}
-                            >
-                              {candidate.fullName}
-                            </h3>
-                            <p className="text-body-muted truncate"
-                               title={candidate.jobTitle || 'Position not specified'}>
-                              {candidate.jobTitle || 'Position not specified'}
-                            </p>
-                            <p className="text-caption mt-1">
-                              Applied {formatDate(candidate.appliedDate)}
-                            </p>
-                          </div>
-                          <Badge variant={getCandidateStatusColor(candidate.status)} size="sm">
-                            {candidate.status?.replace(/_/g, ' ') ?? '-'}
-                          </Badge>
-                        </div>
-                      </motion.div>
-                    ))}
-                    {/* Lazy-load sentinel with spinner */}
-                    {hasMore && (
-                      <div ref={loadMoreRef} className="flex justify-center items-center py-4">
-                        <Loader2 className="h-4 w-4 animate-spin text-accent-700 dark:text-accent-400 mr-2"/>
-                        <span className="text-caption">
-                        Loading more candidates...
-                      </span>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </motion.div>
+          {interviewsThisWeekList.length > 0 && (
+            <InterviewsThisWeek items={interviewsThisWeekList}/>
+          )}
 
-        </motion.div>
+          {stats.pendingOffers > 0 && (
+            <OffersAlert count={stats.pendingOffers}/>
+          )}
+        </div>
       </PermissionGate>
     </AppLayout>
+  );
+}
+
+function PageHeader({onPostJob, onAddCandidate}: {onPostJob: () => void; onAddCandidate: () => void}) {
+  return (
+    <motion.header
+      initial={{opacity: 0, y: 4}}
+      animate={{opacity: 1, y: 0}}
+      transition={{duration: 0.4, ease: EASE}}
+      className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-end"
+    >
+      <div className="space-y-2 max-w-2xl">
+        <p className="text-2xs font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">
+          NU-Hire
+        </p>
+        <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-[var(--text-heading)] leading-[1.05]">
+          From requisition to offer, one pipeline you can actually trust.
+        </h1>
+        <p className="text-body-secondary max-w-[55ch]">
+          Track open roles, move candidates through stages, and keep interviews and offers on time.
+        </p>
+      </div>
+      <div className="flex flex-wrap items-center gap-2 self-start sm:self-end">
+        <PermissionGate permission={Permissions.CANDIDATE_VIEW}>
+          <Button variant="outline" onClick={onAddCandidate}>
+            <Users className="mr-2 h-4 w-4" aria-hidden="true"/>
+            Add candidate
+          </Button>
+        </PermissionGate>
+        <PermissionGate permission={Permissions.RECRUITMENT_CREATE}>
+          <Button variant="primary" onClick={onPostJob}>
+            <Plus className="mr-2 h-4 w-4" aria-hidden="true"/>
+            Post new job
+          </Button>
+        </PermissionGate>
+      </div>
+    </motion.header>
+  );
+}
+
+function StatsRow({openRequisitions, inPipeline, pendingOffers, interviewsThisWeek}: {
+  openRequisitions: number;
+  inPipeline: number;
+  pendingOffers: number;
+  interviewsThisWeek: number;
+}) {
+  const items = [
+    {label: 'Open requisitions', value: openRequisitions, icon: Briefcase, tone: 'neutral' as const},
+    {label: 'Candidates in pipeline', value: inPipeline, icon: Users, tone: 'neutral' as const},
+    {label: 'Offers pending', value: pendingOffers, icon: FileText, tone: pendingOffers > 0 ? 'warning' as const : 'neutral' as const},
+    {label: 'Interviews this week', value: interviewsThisWeek, icon: Calendar, tone: 'neutral' as const},
+  ];
+
+  return (
+    <motion.section
+      initial="hidden"
+      animate="visible"
+      variants={{visible: {transition: {staggerChildren: 0.06, delayChildren: 0.08}}}}
+      aria-label="Recruitment at a glance"
+      className="grid grid-cols-2 sm:grid-cols-4 border-y border-[var(--border-subtle)] divide-x divide-[var(--border-subtle)]"
+    >
+      {items.map((item) => (
+        <motion.div
+          key={item.label}
+          variants={{hidden: {opacity: 0, y: 6}, visible: {opacity: 1, y: 0, transition: {duration: 0.4, ease: EASE}}}}
+          className="px-5 py-6 sm:px-7 sm:py-8 first:pl-0 last:pr-0"
+        >
+          <div className="flex items-center gap-2 text-[var(--text-muted)]">
+            <item.icon className="h-3.5 w-3.5" aria-hidden="true"/>
+            <span className="text-2xs font-medium uppercase tracking-wider">{item.label}</span>
+          </div>
+          <p
+            className={`mt-3 font-mono text-3xl sm:text-4xl tabular-nums tracking-tight ${
+              item.tone === 'warning' ? 'text-warning-700 dark:text-warning-300' : 'text-[var(--text-heading)]'
+            }`}
+          >
+            {item.value}
+          </p>
+        </motion.div>
+      ))}
+    </motion.section>
+  );
+}
+
+function StatsSkeleton() {
+  return (
+    <div className="grid grid-cols-2 sm:grid-cols-4 border-y border-[var(--border-subtle)] divide-x divide-[var(--border-subtle)]">
+      {Array.from({length: 4}).map((_, i) => (
+        <div key={i} className="px-5 py-6 sm:px-7 sm:py-8 first:pl-0 last:pr-0">
+          <Skeleton className="h-3 w-24 rounded"/>
+          <Skeleton className="mt-3 h-9 w-20 rounded"/>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function BentoNavigation({pipelineCount, interviewsCount, pendingOffers}: {
+  pipelineCount: number;
+  interviewsCount: number;
+  pendingOffers: number;
+}) {
+  const hero = {
+    title: 'Active pipeline',
+    description: 'Drag candidates through stages, watch bottlenecks emerge, and act before great people cool off.',
+    icon: Users,
+    href: '/recruitment/candidates',
+    badge: pipelineCount > 0 ? pipelineCount : undefined,
+  };
+
+  const tiles = [
+    {
+      title: 'Job openings',
+      description: 'Manage requisitions, statuses, and applicant counts per role.',
+      icon: Briefcase,
+      href: '/recruitment/jobs',
+    },
+    {
+      title: 'Interviews',
+      description: 'Schedule, reschedule, and review feedback across rounds.',
+      icon: Calendar,
+      href: '/recruitment/interviews',
+      badge: interviewsCount > 0 ? interviewsCount : undefined,
+    },
+    {
+      title: 'Scorecards',
+      description: 'Structured evaluation rubrics for consistent hiring decisions.',
+      icon: Award,
+      href: '/recruitment/scorecards',
+    },
+    {
+      title: 'Agencies',
+      description: 'Partner agencies, submissions, and commission tracking.',
+      icon: Building2,
+      href: '/recruitment/agencies',
+    },
+    {
+      title: 'Job boards',
+      description: 'Syndicate roles to external boards and aggregators.',
+      icon: Globe,
+      href: '/recruitment/job-boards',
+    },
+    {
+      title: 'Career page',
+      description: 'Public-facing site for direct applicants and employer branding.',
+      icon: ClipboardList,
+      href: '/recruitment/career-page',
+      badge: pendingOffers > 0 ? pendingOffers : undefined,
+    },
+  ];
+
+  return (
+    <motion.section
+      initial="hidden"
+      animate="visible"
+      variants={{visible: {transition: {staggerChildren: 0.07, delayChildren: 0.18}}}}
+      className="grid gap-4 grid-cols-1 lg:grid-cols-12"
+      aria-label="Explore recruitment"
+    >
+      <BentoHero {...hero} />
+      {tiles.map((tile) => (
+        <BentoTile key={tile.href} {...tile} />
+      ))}
+    </motion.section>
+  );
+}
+
+function BentoHero({title, description, icon: Icon, href, badge}: {
+  title: string;
+  description: string;
+  icon: React.ElementType;
+  href: string;
+  badge?: number;
+}) {
+  return (
+    <motion.div
+      variants={{hidden: {opacity: 0, y: 8}, visible: {opacity: 1, y: 0, transition: {duration: 0.5, ease: EASE}}}}
+      className="lg:col-span-7 lg:row-span-2"
+    >
+      <Link
+        href={href}
+        className="group block h-full rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] p-7 sm:p-9 transition-all hover:border-[var(--border-main)] hover:shadow-[0_20px_40px_-15px_rgba(15,23,42,0.08)] active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
+      >
+        <div className="flex items-start justify-between">
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-accent-50 text-accent-700 dark:bg-accent-900/30 dark:text-accent-300">
+            <Icon className="h-5 w-5" aria-hidden="true"/>
+          </div>
+          <ArrowRight className="h-4 w-4 text-[var(--text-muted)] transition-transform group-hover:translate-x-0.5" aria-hidden="true"/>
+        </div>
+        <h2 className="mt-8 text-2xl sm:text-3xl font-semibold tracking-tight text-[var(--text-heading)]">
+          {title}
+        </h2>
+        <p className="mt-3 text-body-secondary max-w-[48ch]">
+          {description}
+        </p>
+        <div className="mt-10 flex items-end justify-between gap-6">
+          <PipelineBars/>
+          <div className="flex flex-col items-end gap-2">
+            {badge !== undefined && (
+              <span className="inline-flex items-center justify-center min-w-6 px-2 h-5 text-2xs font-semibold rounded-full bg-accent-100 text-accent-700 dark:bg-accent-900/40 dark:text-accent-300">
+                {badge}
+              </span>
+            )}
+            <p className="text-2xs font-medium uppercase tracking-[0.18em] text-[var(--text-muted)]">
+              Live data
+            </p>
+          </div>
+        </div>
+      </Link>
+    </motion.div>
+  );
+}
+
+function PipelineBars() {
+  const widths = [88, 64, 50, 36, 22];
+  return (
+    <div className="flex items-end gap-1.5 h-16 flex-1" aria-hidden="true">
+      {widths.map((w, i) => (
+        <motion.span
+          key={i}
+          initial={{height: '0%'}}
+          animate={{height: `${w}%`}}
+          transition={{duration: 0.7, ease: EASE, delay: 0.35 + i * 0.06}}
+          className="flex-1 max-w-3 rounded-sm bg-gradient-to-t from-accent-100 to-accent-300 dark:from-accent-900/60 dark:to-accent-700/80"
+        />
+      ))}
+    </div>
+  );
+}
+
+function BentoTile({title, description, icon: Icon, href, badge}: {
+  title: string;
+  description: string;
+  icon: React.ElementType;
+  href: string;
+  badge?: number;
+}) {
+  return (
+    <motion.div
+      variants={{hidden: {opacity: 0, y: 8}, visible: {opacity: 1, y: 0, transition: {duration: 0.4, ease: EASE}}}}
+      className="lg:col-span-5"
+    >
+      <Link
+        href={href}
+        className="group flex h-full items-start gap-4 rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] p-5 sm:p-6 transition-all hover:border-[var(--border-main)] hover:shadow-[0_12px_30px_-12px_rgba(15,23,42,0.07)] active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
+      >
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[var(--bg-surface)] border border-[var(--border-subtle)] text-[var(--text-secondary)]">
+          <Icon className="h-4 w-4" aria-hidden="true"/>
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center justify-between gap-3">
+            <h3 className="text-base font-semibold text-[var(--text-heading)]">{title}</h3>
+            {badge !== undefined && (
+              <span className="inline-flex items-center justify-center min-w-6 px-2 h-5 text-2xs font-semibold rounded-full bg-warning-100 text-warning-700 dark:bg-warning-900/40 dark:text-warning-300">
+                {badge}
+              </span>
+            )}
+          </div>
+          <p className="mt-1 text-sm text-[var(--text-secondary)] leading-relaxed">{description}</p>
+        </div>
+        <ArrowRight className="h-4 w-4 self-center text-[var(--text-muted)] transition-transform group-hover:translate-x-0.5" aria-hidden="true"/>
+      </Link>
+    </motion.div>
+  );
+}
+
+function CandidatesNeedingAttention({items, router}: {
+  items: Candidate[];
+  router: ReturnType<typeof useRouter>;
+}) {
+  return (
+    <motion.section
+      initial={{opacity: 0, y: 6}}
+      animate={{opacity: 1, y: 0}}
+      transition={{duration: 0.45, ease: EASE, delay: 0.32}}
+      className="space-y-4"
+    >
+      <div className="flex items-end justify-between gap-4">
+        <h2 className="text-xl font-semibold tracking-tight text-[var(--text-heading)]">
+          Candidates needing attention
+        </h2>
+        <Link
+          href="/recruitment/candidates"
+          className="inline-flex items-center gap-1 text-sm font-medium text-accent-700 dark:text-accent-300 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded"
+        >
+          View all
+          <ArrowRight className="h-3.5 w-3.5" aria-hidden="true"/>
+        </Link>
+      </div>
+      <ul className="divide-y divide-[var(--border-subtle)] border-y border-[var(--border-subtle)]">
+        {items.map((c) => {
+          const tone = statusTone(c.status);
+          return (
+            <li key={c.id}>
+              <button
+                type="button"
+                onClick={() => router.push(`/recruitment/candidates?id=${c.id}`)}
+                className="w-full grid grid-cols-[auto_1fr_auto] items-center gap-4 py-4 sm:gap-6 text-left hover:bg-[var(--bg-surface)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] rounded"
+              >
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--bg-surface)] text-[var(--text-secondary)] border border-[var(--border-subtle)]">
+                  <Users className="h-4 w-4" aria-hidden="true"/>
+                </div>
+                <div className="min-w-0">
+                  <p className="text-sm font-medium text-[var(--text-heading)] truncate">{c.fullName}</p>
+                  <p className="text-xs text-[var(--text-secondary)] truncate">
+                    {c.jobTitle || 'Position not specified'} · applied {c.appliedDate ? canonicalFormatDate(c.appliedDate) : 'N/A'}
+                  </p>
+                </div>
+                <p
+                  className={`font-mono text-xs font-semibold uppercase tabular-nums tracking-wider ${
+                    tone === 'success' ? 'text-success-700 dark:text-success-300'
+                      : tone === 'warning' ? 'text-warning-700 dark:text-warning-300'
+                        : tone === 'danger' ? 'text-danger-700 dark:text-danger-300'
+                          : tone === 'info' ? 'text-accent-700 dark:text-accent-300'
+                            : 'text-[var(--text-secondary)]'
+                  }`}
+                >
+                  {c.status?.replace(/_/g, ' ') ?? '—'}
+                </p>
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+    </motion.section>
+  );
+}
+
+function InterviewsThisWeek({items}: {items: Interview[]}) {
+  return (
+    <motion.section
+      initial={{opacity: 0, y: 6}}
+      animate={{opacity: 1, y: 0}}
+      transition={{duration: 0.45, ease: EASE, delay: 0.36}}
+      className="space-y-4"
+    >
+      <div className="flex items-end justify-between gap-4">
+        <h2 className="text-xl font-semibold tracking-tight text-[var(--text-heading)]">
+          Interviews this week
+        </h2>
+        <Link
+          href="/recruitment/interviews"
+          className="inline-flex items-center gap-1 text-sm font-medium text-accent-700 dark:text-accent-300 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded"
+        >
+          View schedule
+          <ArrowRight className="h-3.5 w-3.5" aria-hidden="true"/>
+        </Link>
+      </div>
+      <ul className="divide-y divide-[var(--border-subtle)] border-y border-[var(--border-subtle)]">
+        {items.map((i) => (
+          <li key={i.id} className="grid grid-cols-[auto_1fr_auto] items-center gap-4 py-4 sm:gap-6">
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--bg-surface)] text-[var(--text-secondary)] border border-[var(--border-subtle)]">
+              <Calendar className="h-4 w-4" aria-hidden="true"/>
+            </div>
+            <div className="min-w-0">
+              <p className="text-sm font-medium text-[var(--text-heading)] truncate">
+                {i.candidateName || 'Candidate'}
+              </p>
+              <p className="text-xs text-[var(--text-secondary)] truncate">
+                {i.jobTitle || 'Position'}
+                {i.interviewRound ? ` · ${i.interviewRound.replace(/_/g, ' ')}` : ''}
+              </p>
+            </div>
+            <p className="flex items-center gap-1.5 font-mono text-sm tabular-nums text-[var(--text-secondary)]">
+              <Clock className="h-3.5 w-3.5" aria-hidden="true"/>
+              {i.scheduledAt ? `${canonicalFormatDate(i.scheduledAt)} · ${canonicalFormatTime(i.scheduledAt)}` : 'N/A'}
+            </p>
+          </li>
+        ))}
+      </ul>
+    </motion.section>
+  );
+}
+
+function OffersAlert({count}: {count: number}) {
+  return (
+    <motion.aside
+      initial={{opacity: 0, y: 6}}
+      animate={{opacity: 1, y: 0}}
+      transition={{duration: 0.45, ease: EASE, delay: 0.42}}
+      role="status"
+      aria-live="polite"
+      className="flex items-center justify-between gap-4 rounded-xl border border-warning-200 bg-warning-50/40 dark:border-warning-700/40 dark:bg-warning-950/30 px-5 py-4"
+    >
+      <div className="flex items-center gap-3 text-sm">
+        <AlertTriangle className="h-4 w-4 shrink-0 text-warning-600 dark:text-warning-400" aria-hidden="true"/>
+        <p className="text-[var(--text-primary)]">
+          <span className="font-semibold">{count}</span>{' '}
+          {count === 1 ? 'offer is' : 'offers are'} extended and awaiting candidate response. Follow up before they go cold.
+        </p>
+      </div>
+      <Link href="/recruitment/candidates?status=OFFER_EXTENDED">
+        <Button variant="outline" size="sm">
+          Review
+          <ArrowRight className="ml-1.5 h-3.5 w-3.5" aria-hidden="true"/>
+        </Button>
+      </Link>
+    </motion.aside>
   );
 }

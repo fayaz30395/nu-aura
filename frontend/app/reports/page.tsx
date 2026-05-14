@@ -3,8 +3,8 @@
 import React, {useEffect, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {AnimatePresence, motion} from 'framer-motion';
-import {AppLayout} from '@/components/layout';
 import {
+  ArrowRight,
   BarChart3,
   Calendar,
   Check,
@@ -17,20 +17,24 @@ import {
   TrendingUp,
   Users,
 } from 'lucide-react';
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
-import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
 import {DateInput} from '@mantine/dates';
+
+import {AppLayout} from '@/components/layout';
+import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
+import {Button} from '@/components/ui/Button';
 import {ReportRequest, ReportType} from '@/lib/services/core/report.service';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {useReportDownload} from '@/lib/hooks/queries/useReportDownload';
+
+// Single ease curve for every transition on this page. Avoids the cubic-bezier
+// drift that compounds when each motion spec picks its own easing.
+const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
 interface ReportConfig {
   id: string;
   title: string;
   description: string;
   icon: React.ElementType;
-  color: string;
-  bgColor: string;
   category: string;
   endpoint: string;
   requiresDateRange: boolean;
@@ -43,8 +47,6 @@ const reports: ReportConfig[] = [
     title: 'Employee Directory Report',
     description: 'Complete employee details with contact information, department, and employment status',
     icon: Users,
-    color: 'text-accent-600',
-    bgColor: 'bg-accent-50 dark:bg-accent-950/20',
     category: 'HR',
     endpoint: 'employee-directory',
     requiresDateRange: false,
@@ -55,8 +57,6 @@ const reports: ReportConfig[] = [
     title: 'Attendance Report',
     description: 'Daily attendance records with check-in/check-out times and work hours',
     icon: Calendar,
-    color: 'text-success-600',
-    bgColor: 'bg-success-50 dark:bg-success-950/20',
     category: 'Attendance',
     endpoint: 'attendance',
     requiresDateRange: true,
@@ -67,8 +67,6 @@ const reports: ReportConfig[] = [
     title: 'Department Headcount Report',
     description: 'Department-wise employee distribution, active/inactive counts, and headcount analysis',
     icon: BarChart3,
-    color: 'text-accent-800',
-    bgColor: 'bg-accent-250 dark:bg-accent-950/20',
     category: 'Analytics',
     endpoint: 'department-headcount',
     requiresDateRange: false,
@@ -78,8 +76,6 @@ const reports: ReportConfig[] = [
     title: 'Leave Report',
     description: 'Leave requests, balances, and utilization by employee and department',
     icon: FileText,
-    color: 'text-warning-600',
-    bgColor: 'bg-warning-50 dark:bg-warning-950/20',
     category: 'Leave',
     endpoint: 'leave',
     requiresDateRange: true,
@@ -90,8 +86,6 @@ const reports: ReportConfig[] = [
     title: 'Payroll Report',
     description: 'Monthly payroll summary with earnings, deductions, and net salary',
     icon: DollarSign,
-    color: 'text-accent-800',
-    bgColor: 'bg-accent-250 dark:bg-accent-900/20',
     category: 'Payroll',
     endpoint: 'payroll',
     requiresDateRange: true,
@@ -102,8 +96,6 @@ const reports: ReportConfig[] = [
     title: 'Performance Report',
     description: 'Employee performance reviews, ratings, and goal achievements',
     icon: TrendingUp,
-    color: 'text-accent-600',
-    bgColor: 'bg-accent-50 dark:bg-accent-950/20',
     category: 'Performance',
     endpoint: 'performance',
     requiresDateRange: false,
@@ -111,191 +103,7 @@ const reports: ReportConfig[] = [
   },
 ];
 
-interface DownloadModalProps {
-  report: ReportConfig;
-  onClose: () => void;
-  onDownload: (type: ReportType, request: ReportRequest) => void;
-  isPending: boolean;
-}
-
-const DownloadModal: React.FC<DownloadModalProps> = ({report, onClose, onDownload, isPending}) => {
-  const [format, setFormat] = useState<'EXCEL' | 'PDF' | 'CSV'>('EXCEL');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const [error, setError] = useState('');
-
-  const handleDownload = () => {
-    if (report.requiresDateRange && (!startDate || !endDate)) {
-      setError('Please select both start and end dates');
-      return;
-    }
-
-    setError('');
-
-    const request: ReportRequest = {
-      format,
-      startDate: startDate || undefined,
-      endDate: endDate || undefined,
-    };
-
-    onDownload(report.endpoint as ReportType, request);
-  };
-
-  return (
-    <Modal isOpen={true} onClose={onClose} size="sm">
-      <ModalHeader onClose={onClose}>
-        <div className="flex items-center gap-4">
-          <div className={`p-2 rounded-lg ${report.bgColor}`}>
-            <report.icon className={`h-5 w-5 ${report.color}`}/>
-          </div>
-          <div>
-            <h2 className="font-semibold text-[var(--text-primary)]">{report.title}</h2>
-            <p className="text-body-muted">{report.category}</p>
-          </div>
-        </div>
-      </ModalHeader>
-      <ModalBody className="space-y-6">
-          {/* Format Selection */}
-          <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-4">
-              Export Format
-            </label>
-            <div className="grid grid-cols-3 gap-4">
-              <button
-                onClick={() => setFormat('EXCEL')}
-                className={`flex flex-col items-center justify-center gap-2 p-4 rounded-lg border-2 transition-all ${
-                  format === 'EXCEL'
-                    ? 'border-success-500 bg-success-50 dark:bg-success-950/20'
-                    : 'border-[var(--border-main)] hover:border-[var(--border-main)]'
-                }`}
-              >
-                <FileSpreadsheet
-                  className={`h-6 w-6 ${format === 'EXCEL' ? 'text-success-600' : 'text-[var(--text-muted)]'}`}
-                />
-                <div className="text-center">
-                  <p
-                    className={`font-medium text-sm ${format === 'EXCEL' ? 'text-success-700' : 'text-[var(--text-secondary)]'}`}>
-                    Excel
-                  </p>
-                  <p className="text-caption">.xlsx</p>
-                </div>
-                {format === 'EXCEL' && <Check className="h-4 w-4 text-success-600 absolute top-2 right-2"/>}
-              </button>
-
-              <button
-                onClick={() => setFormat('PDF')}
-                className={`flex flex-col items-center justify-center gap-2 p-4 rounded-lg border-2 transition-all relative ${
-                  format === 'PDF'
-                    ? 'border-danger-500 bg-danger-50 dark:bg-danger-950/20'
-                    : 'border-[var(--border-main)] hover:border-[var(--border-main)]'
-                }`}
-              >
-                <FileText className={`h-6 w-6 ${format === 'PDF' ? 'text-danger-600' : 'text-[var(--text-muted)]'}`}/>
-                <div className="text-center">
-                  <p
-                    className={`font-medium text-sm ${format === 'PDF' ? 'text-danger-700' : 'text-[var(--text-secondary)]'}`}>
-                    PDF
-                  </p>
-                  <p className="text-caption">.pdf</p>
-                </div>
-                {format === 'PDF' && <Check className="h-4 w-4 text-danger-600 absolute top-2 right-2"/>}
-              </button>
-
-              <button
-                onClick={() => setFormat('CSV')}
-                className={`flex flex-col items-center justify-center gap-2 p-4 rounded-lg border-2 transition-all relative ${
-                  format === 'CSV'
-                    ? 'border-accent-500 bg-accent-50 dark:bg-accent-950/20'
-                    : 'border-[var(--border-main)] hover:border-[var(--border-main)]'
-                }`}
-              >
-                <FileSpreadsheet
-                  className={`h-6 w-6 ${format === 'CSV' ? 'text-accent-600' : 'text-[var(--text-muted)]'}`}
-                />
-                <div className="text-center">
-                  <p
-                    className={`font-medium text-sm ${format === 'CSV' ? 'text-accent-700' : 'text-[var(--text-secondary)]'}`}>
-                    CSV
-                  </p>
-                  <p className="text-caption">.csv</p>
-                </div>
-                {format === 'CSV' && <Check className="h-4 w-4 text-accent-600 absolute top-2 right-2"/>}
-              </button>
-            </div>
-          </div>
-
-          {/* Date Range (if required) */}
-          {report.requiresDateRange && (
-            <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-4">
-                Date Range <span aria-hidden="true" className="text-danger-500">*</span>
-              </label>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-caption mb-1">From</label>
-                  <DateInput
-                    value={startDate || null}
-                    onChange={(d) => setStartDate(d ?? '')}
-                    valueFormat="YYYY-MM-DD"
-                    placeholder="YYYY-MM-DD"
-                    clearable
-                    size="sm"
-                    aria-required="true"
-                  />
-                </div>
-                <div>
-                  <label className="block text-caption mb-1">To</label>
-                  <DateInput
-                    value={endDate || null}
-                    onChange={(d) => setEndDate(d ?? '')}
-                    valueFormat="YYYY-MM-DD"
-                    placeholder="YYYY-MM-DD"
-                    clearable
-                    size="sm"
-                    aria-required="true"
-                  />
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Error */}
-          {error && (
-            <div
-              className="p-4 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-lg text-sm text-danger-600 dark:text-danger-400">
-              {error}
-            </div>
-          )}
-      </ModalBody>
-      <ModalFooter className="gap-4">
-        <button
-          onClick={onClose}
-          className="flex-1 px-4 py-2 border border-[var(--border-main)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-        >
-          Cancel
-        </button>
-        <button
-          onClick={handleDownload}
-          disabled={isPending}
-          className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-[var(--bg-sidebar)] text-white rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-        >
-          {isPending ? (
-            <>
-              <Loader2 className="h-4 w-4 animate-spin"/>
-              Generating...
-            </>
-          ) : (
-            <>
-              <Download className="h-4 w-4"/>
-              Download
-            </>
-          )}
-        </button>
-      </ModalFooter>
-    </Modal>
-  );
-};
-
+// ── Page ─────────────────────────────────────────────────────────────────────
 export default function ReportsPage() {
   const router = useRouter();
   const {hasPermission, isReady: permReady} = usePermissions();
@@ -338,113 +146,33 @@ export default function ReportsPage() {
     );
   };
 
+  const dateRangeCount = reports.filter((r) => r.requiresDateRange).length;
+  const filterableCount = reports.filter((r) => (r.filters?.length ?? 0) > 0).length;
+
   return (
     <AppLayout activeMenuItem="reports">
-      <div className="p-6 space-y-6">
-        {/* Header */}
-        <motion.div
-          initial={{opacity: 0, y: -20}}
-          animate={{opacity: 1, y: 0}}
-          className="row-between"
-        >
-          <div>
-            <h1 className="text-xl font-bold">Reports</h1>
-            <p className="text-[var(--text-secondary)] mt-1">
-              Generate and download various HR reports in Excel or PDF format
-            </p>
-          </div>
-        </motion.div>
+      <div className="mx-auto w-full max-w-7xl px-6 py-8 space-y-10">
+        <PageHeader />
 
-        {/* Success Message */}
         <AnimatePresence>
           {successMessage && (
-            <motion.div
-              initial={{opacity: 0, y: -10}}
-              animate={{opacity: 1, y: 0}}
-              exit={{opacity: 0, y: -10}}
-              className="p-4 bg-success-50 dark:bg-success-950/20 border border-success-200 dark:border-success-800 rounded-lg flex items-center gap-4"
-            >
-              <Check className="h-5 w-5 text-success-600"/>
-              <span className="text-success-700 dark:text-success-400">{successMessage}</span>
-            </motion.div>
+            <SuccessStrip key="success" message={successMessage} />
           )}
         </AnimatePresence>
 
-        {/* Reports Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {reports.map((report, index) => {
-            const IconComponent = report.icon;
-            return (
-              <motion.div
-                key={report.id}
-                initial={{opacity: 0, y: 20}}
-                animate={{opacity: 1, y: 0}}
-                transition={{delay: index * 0.1}}
-              >
-                <Card
-                  className="hover:shadow-[var(--shadow-dropdown)] transition-shadow duration-200 h-full flex flex-col">
-                  <CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div className={`p-4 rounded-lg ${report.bgColor}`}>
-                        <IconComponent className={`h-6 w-6 ${report.color}`}/>
-                      </div>
-                      <span
-                        className="text-xs font-medium px-2 py-1 rounded-full bg-[var(--bg-surface)] text-[var(--text-secondary)]">
-                      {report.category}
-                    </span>
-                    </div>
-                    <CardTitle className="mt-4">{report.title}</CardTitle>
-                    <CardDescription>{report.description}</CardDescription>
-                  </CardHeader>
-                  <CardContent className="mt-auto">
-                    <div className="flex flex-col gap-4">
-                      {report.requiresDateRange && (
-                        <div className="flex items-center gap-1 text-caption">
-                          <Calendar className="h-3 w-3"/>
-                          <span>Requires date range</span>
-                        </div>
-                      )}
-                      {report.filters && report.filters.length > 0 && (
-                        <div className="flex items-center gap-1 text-caption">
-                          <Filter className="h-3 w-3"/>
-                          <span>Filters available</span>
-                        </div>
-                      )}
-                      <button
-                        onClick={() => setSelectedReport(report)}
-                        className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-[var(--bg-sidebar)] text-white rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors duration-200"
-                      >
-                        <Download className="h-4 w-4"/>
-                        <span className="text-sm font-medium">Download Report</span>
-                      </button>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            );
-          })}
-        </div>
+        {/* Stats row — borders, not card boxes, for breathable density */}
+        <StatsRow
+          total={reports.length}
+          dateRangeCount={dateRangeCount}
+          filterableCount={filterableCount}
+          categories={new Set(reports.map((r) => r.category)).size}
+        />
 
-        {/* Info Card */}
-        <motion.div initial={{opacity: 0}} animate={{opacity: 1}} transition={{delay: 0.6}}>
-          <Card className="bg-accent-50 dark:bg-accent-950/20 border-accent-200 dark:border-accent-900">
-            <CardContent className="pt-6">
-              <div className="flex items-start gap-4">
-                <FileText className="h-5 w-5 text-accent-600 dark:text-accent-400 mt-0.5"/>
-                <div>
-                  <h2 className="font-semibold text-accent-900 dark:text-accent-100">Report Generation Tips</h2>
-                  <ul className="text-sm text-accent-700 dark:text-accent-300 mt-2 space-y-1">
-                    <li>• Excel format is recommended for data analysis and further processing</li>
-                    <li>• PDF format is ideal for printing and sharing official documents</li>
-                    <li>• CSV format provides raw data compatible with all spreadsheet applications</li>
-                    <li>• Use date filters to generate reports for specific time periods</li>
-                    <li>• Reports include all active employees unless filtered by department</li>
-                  </ul>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
+        {/* Bento — one wide hero + smaller tiles in 12-col asymmetric grid */}
+        <BentoReports reports={reports} onSelect={setSelectedReport} />
+
+        {/* Tips strip — single inline panel, not a nested card */}
+        <TipsStrip />
 
         {/* Download Modal */}
         <AnimatePresence>
@@ -461,3 +189,415 @@ export default function ReportsPage() {
     </AppLayout>
   );
 }
+
+// ── Header ───────────────────────────────────────────────────────────────────
+function PageHeader() {
+  return (
+    <motion.header
+      initial={{opacity: 0, y: 4}}
+      animate={{opacity: 1, y: 0}}
+      transition={{duration: 0.4, ease: EASE}}
+      className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-end"
+    >
+      <div className="space-y-2 max-w-2xl">
+        <p className="text-2xs font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">
+          Reports
+        </p>
+        <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-[var(--text-heading)] leading-[1.05]">
+          Generate, schedule, and share every HR report.
+        </h1>
+        <p className="text-body-secondary max-w-[55ch]">
+          Export to Excel, PDF, or CSV. Filter by date, department, or status — formatted for analysis or sharing.
+        </p>
+      </div>
+    </motion.header>
+  );
+}
+
+// ── Stats row (borders, not boxes) ───────────────────────────────────────────
+function StatsRow({total, dateRangeCount, filterableCount, categories}: {
+  total: number;
+  dateRangeCount: number;
+  filterableCount: number;
+  categories: number;
+}) {
+  const items = [
+    {label: 'Reports available', value: total, icon: FileText},
+    {label: 'Categories', value: categories, icon: BarChart3},
+    {label: 'Date-ranged', value: dateRangeCount, icon: Calendar},
+    {label: 'Filterable', value: filterableCount, icon: Filter},
+  ];
+
+  return (
+    <motion.section
+      initial="hidden"
+      animate="visible"
+      variants={{visible: {transition: {staggerChildren: 0.06, delayChildren: 0.08}}}}
+      aria-label="Reports at a glance"
+      className="grid grid-cols-2 sm:grid-cols-4 border-y border-[var(--border-subtle)] divide-x divide-[var(--border-subtle)]"
+    >
+      {items.map((item) => (
+        <motion.div
+          key={item.label}
+          variants={{hidden: {opacity: 0, y: 6}, visible: {opacity: 1, y: 0, transition: {duration: 0.4, ease: EASE}}}}
+          className="px-5 py-6 sm:px-7 sm:py-8 first:pl-0 last:pr-0"
+        >
+          <div className="flex items-center gap-2 text-[var(--text-muted)]">
+            <item.icon className="h-3.5 w-3.5" aria-hidden="true" />
+            <span className="text-2xs font-medium uppercase tracking-wider">{item.label}</span>
+          </div>
+          <p className="mt-3 font-mono text-3xl sm:text-4xl tabular-nums tracking-tight text-[var(--text-heading)]">
+            {item.value}
+          </p>
+        </motion.div>
+      ))}
+    </motion.section>
+  );
+}
+
+// ── Bento navigation: hero + tiles in asymmetric 12-col grid ─────────────────
+function BentoReports({reports, onSelect}: {
+  reports: ReportConfig[];
+  onSelect: (r: ReportConfig) => void;
+}) {
+  const [hero, ...tiles] = reports;
+  return (
+    <motion.section
+      initial="hidden"
+      animate="visible"
+      variants={{visible: {transition: {staggerChildren: 0.07, delayChildren: 0.18}}}}
+      className="grid gap-4 grid-cols-1 lg:grid-cols-12"
+      aria-label="Available reports"
+    >
+      <BentoHero report={hero} onSelect={onSelect} />
+      {tiles.map((r) => (
+        <BentoTile key={r.id} report={r} onSelect={onSelect} />
+      ))}
+    </motion.section>
+  );
+}
+
+function BentoHero({report, onSelect}: {
+  report: ReportConfig;
+  onSelect: (r: ReportConfig) => void;
+}) {
+  const Icon = report.icon;
+  return (
+    <motion.div
+      variants={{hidden: {opacity: 0, y: 8}, visible: {opacity: 1, y: 0, transition: {duration: 0.5, ease: EASE}}}}
+      className="lg:col-span-7 lg:row-span-2"
+    >
+      <button
+        type="button"
+        onClick={() => onSelect(report)}
+        className="group block w-full h-full text-left rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] p-7 sm:p-9 transition-all hover:border-[var(--border-main)] hover:shadow-[0_20px_40px_-15px_rgba(15,23,42,0.08)] active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
+      >
+        <div className="flex items-start justify-between">
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-accent-50 text-accent-700 dark:bg-accent-900/30 dark:text-accent-300">
+            <Icon className="h-5 w-5" aria-hidden="true" />
+          </div>
+          <span className="text-2xs font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">
+            {report.category}
+          </span>
+        </div>
+        <h2 className="mt-8 text-2xl sm:text-3xl font-semibold tracking-tight text-[var(--text-heading)]">
+          {report.title}
+        </h2>
+        <p className="mt-3 text-body-secondary max-w-[52ch]">
+          {report.description}
+        </p>
+        <div className="mt-10 flex items-end justify-between gap-6">
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-[var(--text-secondary)]">
+            {report.requiresDateRange && (
+              <span className="inline-flex items-center gap-1.5">
+                <Calendar className="h-3.5 w-3.5" aria-hidden="true" />
+                Date range
+              </span>
+            )}
+            {report.filters && report.filters.length > 0 && (
+              <span className="inline-flex items-center gap-1.5">
+                <Filter className="h-3.5 w-3.5" aria-hidden="true" />
+                {report.filters.length} filters
+              </span>
+            )}
+            <span className="inline-flex items-center gap-1.5">
+              <FileSpreadsheet className="h-3.5 w-3.5" aria-hidden="true" />
+              Excel · PDF · CSV
+            </span>
+          </div>
+          <span className="inline-flex items-center gap-1.5 text-sm font-medium text-accent-700 dark:text-accent-300 transition-transform group-hover:translate-x-0.5">
+            Download
+            <Download className="h-3.5 w-3.5" aria-hidden="true" />
+          </span>
+        </div>
+      </button>
+    </motion.div>
+  );
+}
+
+function BentoTile({report, onSelect}: {
+  report: ReportConfig;
+  onSelect: (r: ReportConfig) => void;
+}) {
+  const Icon = report.icon;
+  return (
+    <motion.div
+      variants={{hidden: {opacity: 0, y: 8}, visible: {opacity: 1, y: 0, transition: {duration: 0.4, ease: EASE}}}}
+      className="lg:col-span-5"
+    >
+      <button
+        type="button"
+        onClick={() => onSelect(report)}
+        className="group flex w-full h-full items-start gap-4 text-left rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] p-5 sm:p-6 transition-all hover:border-[var(--border-main)] hover:shadow-[0_12px_30px_-12px_rgba(15,23,42,0.07)] active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
+      >
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[var(--bg-surface)] border border-[var(--border-subtle)] text-[var(--text-secondary)]">
+          <Icon className="h-4 w-4" aria-hidden="true" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center justify-between gap-3">
+            <h3 className="text-base font-semibold text-[var(--text-heading)] truncate">{report.title}</h3>
+            <span className="text-2xs font-medium uppercase tracking-wider text-[var(--text-muted)] shrink-0">
+              {report.category}
+            </span>
+          </div>
+          <p className="mt-1 text-sm text-[var(--text-secondary)] leading-relaxed line-clamp-2">{report.description}</p>
+          <div className="mt-3 flex items-center gap-x-4 gap-y-1 text-xs text-[var(--text-muted)]">
+            {report.requiresDateRange && (
+              <span className="inline-flex items-center gap-1">
+                <Calendar className="h-3 w-3" aria-hidden="true" />
+                Date range
+              </span>
+            )}
+            {report.filters && report.filters.length > 0 && (
+              <span className="inline-flex items-center gap-1">
+                <Filter className="h-3 w-3" aria-hidden="true" />
+                Filters
+              </span>
+            )}
+          </div>
+        </div>
+        <ArrowRight className="h-4 w-4 self-center text-[var(--text-muted)] transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+      </button>
+    </motion.div>
+  );
+}
+
+// ── Tips strip (replaces former nested info card) ────────────────────────────
+function TipsStrip() {
+  const tips = [
+    'Excel is best for analysis and further processing.',
+    'PDF is ideal for printing and sharing official documents.',
+    'CSV pairs with every spreadsheet tool out there.',
+    'Use date filters to scope reports to a specific period.',
+  ];
+  return (
+    <motion.section
+      initial={{opacity: 0, y: 6}}
+      animate={{opacity: 1, y: 0}}
+      transition={{duration: 0.45, ease: EASE, delay: 0.32}}
+      aria-label="Report generation tips"
+      className="space-y-4"
+    >
+      <div className="flex items-end justify-between gap-4">
+        <h2 className="text-xl font-semibold tracking-tight text-[var(--text-heading)]">
+          Tips for cleaner exports
+        </h2>
+        <span className="text-2xs font-medium uppercase tracking-[0.18em] text-[var(--text-muted)]">
+          Quick reference
+        </span>
+      </div>
+      <ul className="divide-y divide-[var(--border-subtle)] border-y border-[var(--border-subtle)]">
+        {tips.map((tip, i) => (
+          <li key={i} className="grid grid-cols-[auto_1fr] items-center gap-4 py-3 sm:gap-6">
+            <span className="font-mono text-2xs font-semibold tabular-nums text-[var(--text-muted)] w-6">
+              {String(i + 1).padStart(2, '0')}
+            </span>
+            <p className="text-sm text-[var(--text-secondary)]">{tip}</p>
+          </li>
+        ))}
+      </ul>
+    </motion.section>
+  );
+}
+
+// ── Success strip (one-line, not a card) ─────────────────────────────────────
+function SuccessStrip({message}: {message: string}) {
+  return (
+    <motion.aside
+      initial={{opacity: 0, y: 6}}
+      animate={{opacity: 1, y: 0}}
+      exit={{opacity: 0, y: -6}}
+      transition={{duration: 0.35, ease: EASE}}
+      role="status"
+      aria-live="polite"
+      className="flex items-center gap-3 rounded-xl border border-success-200 bg-success-50/40 dark:border-success-700/40 dark:bg-success-950/30 px-5 py-3"
+    >
+      <Check className="h-4 w-4 shrink-0 text-success-600 dark:text-success-400" aria-hidden="true" />
+      <p className="text-sm text-[var(--text-primary)]">{message}</p>
+    </motion.aside>
+  );
+}
+
+// ── Download Modal ───────────────────────────────────────────────────────────
+interface DownloadModalProps {
+  report: ReportConfig;
+  onClose: () => void;
+  onDownload: (type: ReportType, request: ReportRequest) => void;
+  isPending: boolean;
+}
+
+const DownloadModal: React.FC<DownloadModalProps> = ({report, onClose, onDownload, isPending}) => {
+  const [format, setFormat] = useState<'EXCEL' | 'PDF' | 'CSV'>('EXCEL');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [error, setError] = useState('');
+
+  const handleDownload = () => {
+    if (report.requiresDateRange && (!startDate || !endDate)) {
+      setError('Please select both start and end dates');
+      return;
+    }
+
+    setError('');
+
+    const request: ReportRequest = {
+      format,
+      startDate: startDate || undefined,
+      endDate: endDate || undefined,
+    };
+
+    onDownload(report.endpoint as ReportType, request);
+  };
+
+  const formats: Array<{value: 'EXCEL' | 'PDF' | 'CSV'; label: string; ext: string; icon: React.ElementType}> = [
+    {value: 'EXCEL', label: 'Excel', ext: '.xlsx', icon: FileSpreadsheet},
+    {value: 'PDF', label: 'PDF', ext: '.pdf', icon: FileText},
+    {value: 'CSV', label: 'CSV', ext: '.csv', icon: FileSpreadsheet},
+  ];
+
+  const Icon = report.icon;
+
+  return (
+    <Modal isOpen={true} onClose={onClose} size="sm">
+      <ModalHeader onClose={onClose}>
+        <div className="flex items-center gap-4">
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent-50 text-accent-700 dark:bg-accent-900/30 dark:text-accent-300">
+            <Icon className="h-5 w-5" aria-hidden="true" />
+          </div>
+          <div>
+            <h2 className="font-semibold text-[var(--text-primary)]">{report.title}</h2>
+            <p className="text-2xs font-medium uppercase tracking-[0.18em] text-[var(--text-muted)]">
+              {report.category}
+            </p>
+          </div>
+        </div>
+      </ModalHeader>
+      <ModalBody className="space-y-6">
+        <div>
+          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-4">
+            Export Format
+          </label>
+          <div className="grid grid-cols-3 gap-3">
+            {formats.map((f) => {
+              const FIcon = f.icon;
+              const selected = format === f.value;
+              return (
+                <button
+                  key={f.value}
+                  type="button"
+                  onClick={() => setFormat(f.value)}
+                  aria-pressed={selected}
+                  className={`relative flex flex-col items-center justify-center gap-2 p-4 rounded-xl border transition-all active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 ${
+                    selected
+                      ? 'border-accent-500 bg-accent-50/60 dark:bg-accent-950/30'
+                      : 'border-[var(--border-subtle)] hover:border-[var(--border-main)]'
+                  }`}
+                >
+                  <FIcon
+                    className={`h-5 w-5 ${selected ? 'text-accent-700 dark:text-accent-300' : 'text-[var(--text-muted)]'}`}
+                    aria-hidden="true"
+                  />
+                  <div className="text-center">
+                    <p className={`font-medium text-sm ${selected ? 'text-[var(--text-heading)]' : 'text-[var(--text-secondary)]'}`}>
+                      {f.label}
+                    </p>
+                    <p className="text-caption">{f.ext}</p>
+                  </div>
+                  {selected && (
+                    <Check className="h-3.5 w-3.5 text-accent-700 dark:text-accent-300 absolute top-2 right-2" aria-hidden="true" />
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {report.requiresDateRange && (
+          <div>
+            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-4">
+              Date Range <span aria-hidden="true" className="text-danger-500">*</span>
+            </label>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-caption mb-1">From</label>
+                <DateInput
+                  value={startDate || null}
+                  onChange={(d) => setStartDate(d ?? '')}
+                  valueFormat="YYYY-MM-DD"
+                  placeholder="YYYY-MM-DD"
+                  clearable
+                  size="sm"
+                  aria-required="true"
+                />
+              </div>
+              <div>
+                <label className="block text-caption mb-1">To</label>
+                <DateInput
+                  value={endDate || null}
+                  onChange={(d) => setEndDate(d ?? '')}
+                  valueFormat="YYYY-MM-DD"
+                  placeholder="YYYY-MM-DD"
+                  clearable
+                  size="sm"
+                  aria-required="true"
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {error && (
+          <div
+            role="alert"
+            className="flex items-center gap-3 rounded-xl border border-danger-200 bg-danger-50/40 dark:border-danger-700/40 dark:bg-danger-950/30 px-4 py-3 text-sm text-danger-700 dark:text-danger-300"
+          >
+            {error}
+          </div>
+        )}
+      </ModalBody>
+      <ModalFooter className="gap-3">
+        <Button variant="outline" onClick={onClose} className="flex-1">
+          Cancel
+        </Button>
+        <Button
+          variant="primary"
+          onClick={handleDownload}
+          disabled={isPending}
+          className="flex-1"
+        >
+          {isPending ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
+              Generating
+            </>
+          ) : (
+            <>
+              <Download className="mr-2 h-4 w-4" aria-hidden="true" />
+              Download
+            </>
+          )}
+        </Button>
+      </ModalFooter>
+    </Modal>
+  );
+};

@@ -1,15 +1,19 @@
 'use client';
 
-import {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
+import Link from 'next/link';
 import {format, parseISO} from 'date-fns';
+import {motion} from 'framer-motion';
+import {ArrowRight, CalendarDays, CheckCircle2, Clock, Inbox, User} from 'lucide-react';
+
 import {useToast} from '@/components/notifications';
 import {getErrorMessage} from '@/lib/utils/error-handler';
-import {User} from 'lucide-react';
-import {motion} from 'framer-motion';
 import {AppLayout} from '@/components/layout';
 import {SkeletonDashboard} from '@/components/ui/Skeleton';
-// Dashboard widget components
-import {QuickAccessWidget, WelcomeBanner} from '@/components/dashboard/WelcomeBanner';
+import {Button} from '@/components/ui/Button';
+
+// Dashboard widget components (preserved)
+import {QuickAccessWidget} from '@/components/dashboard/WelcomeBanner';
 import {TimeClockWidget} from '@/components/dashboard/TimeClockWidget';
 import {HolidayCarousel} from '@/components/dashboard/HolidayCarousel';
 import {OnLeaveTodayCard, WorkingRemotelyCard} from '@/components/dashboard/TeamPresenceWidget';
@@ -18,6 +22,7 @@ import {PostComposer} from '@/components/dashboard/PostComposer';
 import {BirthdayWishingBoard} from '@/components/dashboard/BirthdayWishingBoard';
 import {CelebrationTabs} from '@/components/dashboard/CelebrationTabs';
 import {CompanyFeed} from '@/components/dashboard/CompanyFeed';
+
 import {useAuth} from '@/lib/hooks/useAuth';
 import {attendanceService} from '@/lib/services/hrms/attendance.service';
 import {useSelfServiceDashboard} from '@/lib/hooks/queries';
@@ -25,6 +30,16 @@ import {useQueryClient} from '@tanstack/react-query';
 import {createLogger} from '@/lib/utils/logger';
 
 const log = createLogger('Dashboard');
+
+// Single ease curve for every transition on this page.
+const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
+
+function getGreeting() {
+  const hour = new Date().getHours();
+  if (hour < 12) return 'Good morning';
+  if (hour < 17) return 'Good afternoon';
+  return 'Good evening';
+}
 
 export default function MyDashboardPage() {
   const {user, hasHydrated} = useAuth();
@@ -37,7 +52,6 @@ export default function MyDashboardPage() {
   const [localCompleted, setLocalCompleted] = useState(false);
   const [localCheckOutTime, setLocalCheckOutTime] = useState<string | null>(null);
 
-  // React Query — single source of truth for dashboard data
   const {data: dashboard, isLoading: queryLoading} = useSelfServiceDashboard(
     user?.employeeId || '',
     hasHydrated && !!user?.employeeId
@@ -45,17 +59,13 @@ export default function MyDashboardPage() {
 
   const isLoading = !hasHydrated || (!!user?.employeeId && queryLoading);
 
-  // Initialize attendance state from dashboard data
   useEffect(() => {
     if (dashboard) {
       const status = dashboard.todayAttendanceStatus;
       if (status === 'PRESENT' || status === 'HALF_DAY' || status === 'INCOMPLETE') {
-        // Has checked in today
         if (dashboard.todayCheckOutTime) {
-          // Already completed for the day
           setIsCheckedIn(false);
         } else {
-          // Checked in but not out yet
           setIsCheckedIn(true);
         }
         if (dashboard.todayCheckInTime) {
@@ -65,14 +75,12 @@ export default function MyDashboardPage() {
     }
   }, [dashboard]);
 
-  // Refresh attendance state after check-in/check-out by invalidating the React Query cache
   const refreshDashboard = useCallback(async () => {
     await queryClient.invalidateQueries({queryKey: ['selfServiceDashboard']});
   }, [queryClient]);
 
   const handleCheckIn = useCallback(async () => {
     if (!user?.employeeId) return;
-
     try {
       setCheckingIn(true);
       const response = await attendanceService.checkIn({
@@ -96,7 +104,6 @@ export default function MyDashboardPage() {
 
   const handleCheckOut = useCallback(async () => {
     if (!user?.employeeId) return;
-
     try {
       setCheckingIn(true);
       await attendanceService.checkOut({
@@ -126,75 +133,78 @@ export default function MyDashboardPage() {
     );
   }
 
-  // Check if user is a SuperAdmin or admin (no employee profile needed for dashboard access)
   const isSuperAdminOrAdmin = user?.roles?.some(
     r => typeof r === 'string'
       ? (r === 'SUPER_ADMIN' || r === 'ADMIN')
       : (r?.code === 'SUPER_ADMIN' || r?.code === 'ADMIN')
   );
 
-  // Non-admin users without employee profile → show fallback
   if (!dashboard && !isSuperAdminOrAdmin) {
     return (
       <AppLayout activeMenuItem="my-dashboard" breadcrumbs={[{label: 'My Dashboard', href: '/me/dashboard'}]}>
-        <div className="text-center py-12" role="status">
-          <User className="h-16 w-16 mx-auto text-[var(--text-muted)] dark:text-[var(--text-secondary)] mb-4"
-                aria-hidden="true"/>
-          <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
-            No Employee Profile Linked
-          </h2>
-          <p className="text-[var(--text-muted)] max-w-md mx-auto">
-            Your account is not linked to an employee profile. Please contact your HR administrator.
+        <div className="mx-auto w-full max-w-3xl px-6 py-16 text-center space-y-4" role="status">
+          <div className="mx-auto inline-flex h-12 w-12 items-center justify-center rounded-xl bg-[var(--bg-surface)] border border-[var(--border-subtle)] text-[var(--text-muted)]">
+            <User className="h-5 w-5" aria-hidden="true"/>
+          </div>
+          <h1 className="text-2xl font-semibold tracking-tight text-[var(--text-heading)]">
+            No employee profile linked
+          </h1>
+          <p className="text-body-secondary max-w-[55ch] mx-auto">
+            Your account is not linked to an employee profile. Please contact your HR administrator
+            to complete the setup.
           </p>
         </div>
       </AppLayout>
     );
   }
 
+  const employeeName = dashboard?.employeeName || user?.fullName || 'Employee';
+  const firstName = employeeName.split(' ')[0];
+  const designation = dashboard?.designation || (isSuperAdminOrAdmin ? 'Super Admin' : undefined);
+  const department = dashboard?.department || (isSuperAdminOrAdmin ? 'Administration' : undefined);
+
+  const pendingApprovals = dashboard?.pendingApprovals ?? 0;
+  const pendingTimesheets = dashboard?.pendingTimesheets ?? 0;
+  const pendingProfileUpdates = dashboard?.pendingProfileUpdates ?? 0;
+  const totalPending = pendingApprovals + pendingTimesheets + pendingProfileUpdates;
+  const attendancePct = dashboard?.attendancePercentage ?? 0;
+  const teamOnLeave = dashboard?.teamMembersOnLeave ?? 0;
+
   return (
     <AppLayout
       activeMenuItem="my-dashboard"
       breadcrumbs={[{label: 'My Dashboard', href: '/me/dashboard'}]}
     >
-      {/* Two independent columns — bento grid with staggered animations */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 items-start">
+      <div className="mx-auto w-full max-w-7xl px-6 py-8 space-y-10">
+        <PageHeader
+          firstName={firstName}
+          designation={designation}
+          department={department}
+          hasInbox={totalPending > 0}
+          inboxCount={totalPending}
+        />
 
-        {/* ─── Left Column (5/12) ─── */}
-        <div className="lg:col-span-5 space-y-4 sm:space-y-6">
-          {/* Welcome Banner — hero card, enters first */}
+        <StatsRow
+          attendancePercentage={attendancePct}
+          presentDays={dashboard?.presentDaysThisMonth ?? 0}
+          pendingActions={totalPending}
+          teamOnLeave={teamOnLeave}
+        />
+
+        {/* Bento — hero (Time clock or Welcome card) col-7, ancillary col-5 */}
+        <motion.section
+          initial="hidden"
+          animate="visible"
+          variants={{visible: {transition: {staggerChildren: 0.07, delayChildren: 0.18}}}}
+          className="grid gap-4 grid-cols-1 lg:grid-cols-12"
+          aria-label="Today"
+        >
+          {/* Hero tile — Time Clock for employees, Quick Access fallback for admins */}
           <motion.div
-            initial={{opacity: 0, y: 16}}
-            animate={{opacity: 1, y: 0}}
-            transition={{duration: 0.45, ease: [0.25, 0.46, 0.45, 0.94]}}
+            variants={{hidden: {opacity: 0, y: 8}, visible: {opacity: 1, y: 0, transition: {duration: 0.5, ease: EASE}}}}
+            className="lg:col-span-7"
           >
-            <WelcomeBanner
-              employeeName={dashboard?.employeeName || user?.fullName || 'Employee'}
-              designation={dashboard?.designation || (isSuperAdminOrAdmin ? 'Super Admin' : undefined)}
-              department={dashboard?.department || (isSuperAdminOrAdmin ? 'Administration' : undefined)}
-            />
-          </motion.div>
-
-          {/* Quick Access — Pending actions & inbox */}
-          <motion.div
-            initial={{opacity: 0, y: 16}}
-            animate={{opacity: 1, y: 0}}
-            transition={{duration: 0.4, delay: 0.08, ease: [0.25, 0.46, 0.45, 0.94]}}
-          >
-            <QuickAccessWidget
-              pendingApprovals={dashboard?.pendingApprovals ?? 0}
-              pendingTimesheets={dashboard?.pendingTimesheets ?? 0}
-              pendingProfileUpdates={dashboard?.pendingProfileUpdates ?? 0}
-              inboxCount={0}
-            />
-          </motion.div>
-
-          {/* Time Clock — Live clock + Check-in/out (only for employees) */}
-          {user?.employeeId && (
-            <motion.div
-              initial={{opacity: 0, y: 16}}
-              animate={{opacity: 1, y: 0}}
-              transition={{duration: 0.4, delay: 0.14, ease: [0.25, 0.46, 0.45, 0.94]}}
-            >
+            {user?.employeeId ? (
               <TimeClockWidget
                 isCheckedIn={isCheckedIn}
                 checkInTime={checkInTime}
@@ -205,53 +215,62 @@ export default function MyDashboardPage() {
                 checkOutTime={localCheckOutTime || (dashboard?.todayCheckOutTime ? new Date(dashboard.todayCheckOutTime).toLocaleTimeString('en-US', {
                   hour: '2-digit',
                   minute: '2-digit',
-                  hour12: true
+                  hour12: true,
                 }) : null)}
                 workDurationMinutes={null}
               />
-            </motion.div>
-          )}
-
-          {/* Holiday Carousel — full-width gradient card */}
-          <motion.div
-            initial={{opacity: 0, y: 16}}
-            animate={{opacity: 1, y: 0}}
-            transition={{duration: 0.4, delay: 0.20, ease: [0.25, 0.46, 0.45, 0.94]}}
-          >
-            <HolidayCarousel/>
+            ) : (
+              <QuickAccessWidget
+                pendingApprovals={pendingApprovals}
+                pendingTimesheets={pendingTimesheets}
+                pendingProfileUpdates={pendingProfileUpdates}
+                inboxCount={0}
+              />
+            )}
           </motion.div>
 
-          {/* On Leave Today */}
+          {/* Sidekick — Quick Access (employees) or Holiday (admins) */}
           <motion.div
-            initial={{opacity: 0, y: 16}}
-            animate={{opacity: 1, y: 0}}
-            transition={{duration: 0.4, delay: 0.24, ease: [0.25, 0.46, 0.45, 0.94]}}
+            variants={{hidden: {opacity: 0, y: 8}, visible: {opacity: 1, y: 0, transition: {duration: 0.45, ease: EASE}}}}
+            className="lg:col-span-5"
           >
-            <OnLeaveTodayCard/>
+            {user?.employeeId ? (
+              <QuickAccessWidget
+                pendingApprovals={pendingApprovals}
+                pendingTimesheets={pendingTimesheets}
+                pendingProfileUpdates={pendingProfileUpdates}
+                inboxCount={0}
+              />
+            ) : (
+              <HolidayCarousel/>
+            )}
           </motion.div>
+        </motion.section>
 
-          {/* Working Remotely */}
-          <motion.div
-            initial={{opacity: 0, y: 16}}
-            animate={{opacity: 1, y: 0}}
-            transition={{duration: 0.4, delay: 0.28, ease: [0.25, 0.46, 0.45, 0.94]}}
-          >
-            <WorkingRemotelyCard/>
-          </motion.div>
+        {/* Attention strip — surface when actions are waiting */}
+        {totalPending > 0 && (
+          <AttentionStrip count={totalPending}/>
+        )}
 
-          {/* Leave Balance — Circular progress ring (only for employees) */}
+        {/* Secondary grid — supplementary widgets stay grouped */}
+        <motion.section
+          initial="hidden"
+          animate="visible"
+          variants={{visible: {transition: {staggerChildren: 0.06, delayChildren: 0.28}}}}
+          className="grid gap-4 grid-cols-1 lg:grid-cols-12"
+          aria-label="Your team and time off"
+        >
           {user?.employeeId && (
             <motion.div
-              initial={{opacity: 0, y: 16}}
-              animate={{opacity: 1, y: 0}}
-              transition={{duration: 0.4, delay: 0.32, ease: [0.25, 0.46, 0.45, 0.94]}}
+              variants={{hidden: {opacity: 0, y: 8}, visible: {opacity: 1, y: 0, transition: {duration: 0.4, ease: EASE}}}}
+              className="lg:col-span-5"
             >
               <LeaveBalanceWidget
                 leaveBalances={
                   dashboard?.leaveBalances
                     ? Object.entries(dashboard.leaveBalances).map(([name, available], idx) => {
                       const avail = available as number;
-                      const total = avail + 2; // estimate; real API will provide totals
+                      const total = avail + 2;
                       return {
                         leaveTypeId: String(idx),
                         leaveName: name,
@@ -265,42 +284,184 @@ export default function MyDashboardPage() {
               />
             </motion.div>
           )}
-        </div>
 
-        {/* ─── Right Column (7/12) ─── */}
-        <div className="lg:col-span-7 space-y-6">
-          {/* Birthday Wishing Board — shows only on the user's birthday */}
-          <BirthdayWishingBoard/>
+          {user?.employeeId && (
+            <motion.div
+              variants={{hidden: {opacity: 0, y: 8}, visible: {opacity: 1, y: 0, transition: {duration: 0.4, ease: EASE}}}}
+              className="lg:col-span-7"
+            >
+              <HolidayCarousel/>
+            </motion.div>
+          )}
 
-          {/* Post Composer — Post / Poll / Praise */}
           <motion.div
-            initial={{opacity: 0, y: 16}}
-            animate={{opacity: 1, y: 0}}
-            transition={{duration: 0.4, delay: 0.06, ease: [0.25, 0.46, 0.45, 0.94]}}
+            variants={{hidden: {opacity: 0, y: 8}, visible: {opacity: 1, y: 0, transition: {duration: 0.4, ease: EASE}}}}
+            className={user?.employeeId ? 'lg:col-span-6' : 'lg:col-span-6'}
+          >
+            <OnLeaveTodayCard/>
+          </motion.div>
+
+          <motion.div
+            variants={{hidden: {opacity: 0, y: 8}, visible: {opacity: 1, y: 0, transition: {duration: 0.4, ease: EASE}}}}
+            className="lg:col-span-6"
+          >
+            <WorkingRemotelyCard/>
+          </motion.div>
+        </motion.section>
+
+        {/* Birthday banner — conditional, only renders on user's birthday */}
+        <BirthdayWishingBoard/>
+
+        {/* Social section */}
+        <motion.section
+          initial="hidden"
+          animate="visible"
+          variants={{visible: {transition: {staggerChildren: 0.06, delayChildren: 0.38}}}}
+          className="space-y-6"
+          aria-label="Company feed"
+        >
+          <motion.div
+            variants={{hidden: {opacity: 0, y: 8}, visible: {opacity: 1, y: 0, transition: {duration: 0.4, ease: EASE}}}}
           >
             <PostComposer onPostCreated={() => setFeedRefreshKey((k) => k + 1)}/>
           </motion.div>
 
-          {/* Celebration Tabs — Birthdays / Anniversaries / New Joiners */}
           <motion.div
             data-section="celebrations"
-            initial={{opacity: 0, y: 16}}
-            animate={{opacity: 1, y: 0}}
-            transition={{duration: 0.4, delay: 0.14, ease: [0.25, 0.46, 0.45, 0.94]}}
+            variants={{hidden: {opacity: 0, y: 8}, visible: {opacity: 1, y: 0, transition: {duration: 0.4, ease: EASE}}}}
           >
             <CelebrationTabs/>
           </motion.div>
 
-          {/* Unified Social Feed — Announcements, Recognitions, LinkedIn, Wall Posts */}
           <motion.div
-            initial={{opacity: 0, y: 16}}
-            animate={{opacity: 1, y: 0}}
-            transition={{duration: 0.4, delay: 0.22, ease: [0.25, 0.46, 0.45, 0.94]}}
+            variants={{hidden: {opacity: 0, y: 8}, visible: {opacity: 1, y: 0, transition: {duration: 0.4, ease: EASE}}}}
           >
             <CompanyFeed employeeId={user?.employeeId} refreshKey={feedRefreshKey}/>
           </motion.div>
-        </div>
+        </motion.section>
       </div>
     </AppLayout>
+  );
+}
+
+// ── Header ───────────────────────────────────────────────────────────────────
+function PageHeader({firstName, designation, department, hasInbox, inboxCount}: {
+  firstName: string;
+  designation?: string;
+  department?: string;
+  hasInbox: boolean;
+  inboxCount: number;
+}) {
+  const today = format(new Date(), 'EEEE, MMMM d');
+  const greeting = getGreeting();
+  const subtitle = [designation, department].filter(Boolean).join(' · ');
+
+  return (
+    <motion.header
+      initial={{opacity: 0, y: 4}}
+      animate={{opacity: 1, y: 0}}
+      transition={{duration: 0.4, ease: EASE}}
+      className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-end"
+    >
+      <div className="space-y-2 max-w-2xl">
+        <p className="text-2xs font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">
+          {today}
+        </p>
+        <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-[var(--text-heading)] leading-[1.05]">
+          {greeting}, {firstName}.
+        </h1>
+        <p className="text-body-secondary max-w-[55ch]">
+          {subtitle
+            ? `${subtitle}. Here's what's on your plate today.`
+            : "Here's what's on your plate today — attendance, approvals, and your team at a glance."}
+        </p>
+      </div>
+      <Link href="/me/inbox" className="self-start sm:self-end">
+        <Button variant={hasInbox ? 'primary' : 'outline'}>
+          <Inbox className="mr-2 h-4 w-4" aria-hidden="true"/>
+          Inbox
+          {hasInbox && (
+            <span className="ml-2 inline-flex items-center justify-center min-w-5 h-5 px-1.5 rounded-full text-2xs font-semibold bg-white/15 text-white">
+              {inboxCount}
+            </span>
+          )}
+        </Button>
+      </Link>
+    </motion.header>
+  );
+}
+
+// ── Stats row (borders, not cards) ───────────────────────────────────────────
+function StatsRow({attendancePercentage, presentDays, pendingActions, teamOnLeave}: {
+  attendancePercentage: number;
+  presentDays: number;
+  pendingActions: number;
+  teamOnLeave: number;
+}) {
+  const items = [
+    {label: 'Attendance this month', value: `${Math.round(attendancePercentage)}%`, icon: CheckCircle2, tone: 'neutral' as const},
+    {label: 'Days present', value: presentDays, icon: CalendarDays, tone: 'neutral' as const},
+    {label: 'Pending actions', value: pendingActions, icon: Clock, tone: pendingActions > 0 ? 'warning' as const : 'neutral' as const},
+    {label: 'Team on leave today', value: teamOnLeave, icon: User, tone: 'neutral' as const},
+  ];
+
+  return (
+    <motion.section
+      initial="hidden"
+      animate="visible"
+      variants={{visible: {transition: {staggerChildren: 0.06, delayChildren: 0.08}}}}
+      aria-label="Your month at a glance"
+      className="grid grid-cols-2 sm:grid-cols-4 border-y border-[var(--border-subtle)] divide-x divide-[var(--border-subtle)]"
+    >
+      {items.map((item) => (
+        <motion.div
+          key={item.label}
+          variants={{hidden: {opacity: 0, y: 6}, visible: {opacity: 1, y: 0, transition: {duration: 0.4, ease: EASE}}}}
+          className="px-5 py-6 sm:px-7 sm:py-8 first:pl-0 last:pr-0"
+        >
+          <div className="flex items-center gap-2 text-[var(--text-muted)]">
+            <item.icon className="h-3.5 w-3.5" aria-hidden="true"/>
+            <span className="text-2xs font-medium uppercase tracking-wider">{item.label}</span>
+          </div>
+          <p
+            className={`mt-3 font-mono text-3xl sm:text-4xl tabular-nums tracking-tight ${
+              item.tone === 'warning'
+                ? 'text-warning-700 dark:text-warning-300'
+                : 'text-[var(--text-heading)]'
+            }`}
+          >
+            {item.value}
+          </p>
+        </motion.div>
+      ))}
+    </motion.section>
+  );
+}
+
+// ── Attention strip (single-line, not a card) ────────────────────────────────
+function AttentionStrip({count}: {count: number}) {
+  return (
+    <motion.aside
+      initial={{opacity: 0, y: 6}}
+      animate={{opacity: 1, y: 0}}
+      transition={{duration: 0.45, ease: EASE, delay: 0.24}}
+      role="status"
+      aria-live="polite"
+      className="flex items-center justify-between gap-4 rounded-xl border border-warning-200 bg-warning-50/40 dark:border-warning-700/40 dark:bg-warning-950/30 px-5 py-4"
+    >
+      <div className="flex items-center gap-3 text-sm">
+        <Clock className="h-4 w-4 shrink-0 text-warning-600 dark:text-warning-400" aria-hidden="true"/>
+        <p className="text-[var(--text-primary)]">
+          <span className="font-semibold">{count}</span>{' '}
+          {count === 1 ? 'item is' : 'items are'} waiting on your action.
+        </p>
+      </div>
+      <Link href="/me/inbox">
+        <Button variant="outline" size="sm">
+          Review
+          <ArrowRight className="ml-1.5 h-3.5 w-3.5" aria-hidden="true"/>
+        </Button>
+      </Link>
+    </motion.aside>
   );
 }

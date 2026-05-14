@@ -20,81 +20,67 @@ interface BreadcrumbsProps {
 const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
                                                    items,
                                                    className,
-                                                   separator = <ChevronRight className="h-4 w-4"/>,
+                                                   separator,
                                                  }) => {
+  const chevron = separator ?? (
+    <ChevronRight
+      className="h-3 w-3 text-[var(--text-muted)]"
+      aria-hidden="true"
+    />
+  );
+
   return (
     <nav
       className={cn(
-        'flex items-center gap-2 text-sm',
-        className
+        'flex items-center gap-1.5 text-2xs font-medium uppercase tracking-[0.12em] text-[var(--text-muted)]',
+        className,
       )}
       aria-label="breadcrumb"
-      style={{color: 'var(--text-secondary)'}}
     >
-      <div className="flex items-center gap-2">
-        {items.length > 0 && (
-          <>
-            <Link
-              href="/"
-              className="flex items-center gap-1 rounded-md px-2 py-1 transition-colors"
-              style={{
-                color: 'var(--text-secondary)',
-              }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLAnchorElement).style.color = 'var(--text-primary)';
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLAnchorElement).style.color = 'var(--text-secondary)';
-              }}
-            >
-              <Home className="h-4 w-4"/>
-              <span className="hidden sm:inline">Home</span>
-            </Link>
-            <span style={{color: 'var(--text-muted)'}}>{separator}</span>
-          </>
-        )}
-      </div>
+      {items.length > 0 && (
+        <>
+          <Link
+            href="/"
+            className="inline-flex items-center gap-1 rounded px-1 py-0.5 text-[var(--text-muted)] transition-colors hover:text-[var(--text-heading)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
+          >
+            <Home className="h-3.5 w-3.5" aria-hidden="true"/>
+            <span className="sr-only sm:not-sr-only">Home</span>
+          </Link>
+          <span className="inline-flex items-center" aria-hidden="true">{chevron}</span>
+        </>
+      )}
 
-      <div className="flex items-center gap-2">
-        {items.map((item, index) => (
+      {items.map((item, index) => {
+        const isLast = index === items.length - 1;
+        return (
           <div
             key={`${item.label}-${index}`}
-            className="flex items-center gap-2"
+            className="inline-flex items-center gap-1.5"
           >
             {index > 0 && (
-              <span style={{color: 'var(--text-muted)'}}>{separator}</span>
+              <span className="inline-flex items-center" aria-hidden="true">{chevron}</span>
             )}
 
-            {item.href ? (
+            {item.href && !isLast ? (
               <Link
                 href={item.href}
-                className="flex items-center gap-1.5 rounded-md px-2 py-1 transition-colors"
-                style={{
-                  color: 'var(--text-secondary)',
-                }}
-                onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLAnchorElement).style.color = 'var(--text-primary)';
-                }}
-                onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLAnchorElement).style.color = 'var(--text-secondary)';
-                }}
+                className="inline-flex items-center gap-1.5 rounded px-1 py-0.5 text-[var(--text-muted)] transition-colors hover:text-[var(--text-heading)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
               >
                 {item.icon && <span className="flex items-center" aria-hidden="true">{item.icon}</span>}
                 <span>{item.label}</span>
               </Link>
             ) : (
               <span
-                className="flex items-center gap-1.5 px-2 py-1 font-medium"
-                style={{color: 'var(--text-primary)'}}
-                aria-current={index === items.length - 1 ? 'page' : undefined}
+                className="inline-flex items-center gap-1.5 px-1 py-0.5 font-semibold text-[var(--text-heading)] normal-case tracking-normal text-xs"
+                aria-current={isLast ? 'page' : undefined}
               >
                 {item.icon && <span className="flex items-center" aria-hidden="true">{item.icon}</span>}
                 {item.label}
               </span>
             )}
           </div>
-        ))}
-      </div>
+        );
+      })}
     </nav>
   );
 };

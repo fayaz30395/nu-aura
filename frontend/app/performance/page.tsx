@@ -1,12 +1,15 @@
 'use client';
 
-import {useMemo} from 'react';
+import React, {useMemo} from 'react';
 import Link from 'next/link';
+import {useRouter} from 'next/navigation';
+import {motion} from 'framer-motion';
 import {
   AlertCircle,
+  AlertTriangle,
+  ArrowRight,
   BarChart3,
   CalendarDays,
-  CheckCircle,
   ClipboardCheck,
   Clock,
   Flag,
@@ -17,177 +20,44 @@ import {
   TrendingUp,
   Users,
 } from 'lucide-react';
+
+import {AppLayout} from '@/components/layout';
+import {PageErrorFallback} from '@/components/errors/PageErrorFallback';
+import {Skeleton} from '@/components/ui/Skeleton';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {Button} from '@/components/ui/Button';
 import {
   useAllGoals,
   useMyPending360Reviews,
   useOkrDashboardSummary,
   usePerformanceActiveCycles,
 } from '@/lib/hooks/queries/usePerformance';
-import {AppLayout} from '@/components/layout';
-import {PageErrorFallback} from '@/components/errors/PageErrorFallback';
-import {SkeletonStatCard} from '@/components/ui/Skeleton';
-import {PermissionGate} from '@/components/auth/PermissionGate';
-import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
-import {Button} from '@/components/ui/Button';
-import {useRouter} from 'next/navigation';
 
-interface DashboardStats {
-  totalGoals: number;
-  activeGoals: number;
-  completedGoals: number;
-  averageProgress: number;
-  activeReviewCycles: number;
-  pendingReviews: number;
-  okrObjectives: number;
-  okrProgress: number;
-  pending360Reviews: number;
-}
-
-const performanceModules = [
-  {
-    id: 'goals',
-    title: 'Goals',
-    description: 'Set and track individual, team, and organizational goals',
-    href: '/performance/goals',
-    icon: Flag,
-    color: 'bg-accent-500',
-    lightColor: 'bg-accent-50',
-    textColor: 'text-accent-600',
-  },
-  {
-    id: 'okr',
-    title: 'OKR Management',
-    description: 'Objectives and Key Results for strategic alignment',
-    href: '/performance/okr',
-    icon: SlidersHorizontal,
-    color: 'bg-accent-700',
-    lightColor: 'bg-accent-50',
-    textColor: 'text-accent-600',
-  },
-  {
-    id: 'reviews',
-    title: 'Performance Reviews',
-    description: 'Conduct and manage employee performance reviews',
-    href: '/performance/reviews',
-    icon: ClipboardCheck,
-    color: 'bg-success-500',
-    lightColor: 'bg-success-50',
-    textColor: 'text-success-600',
-  },
-  {
-    id: '360-feedback',
-    title: '360 Feedback',
-    description: 'Multi-rater feedback from peers, managers, and direct reports',
-    href: '/performance/360-feedback',
-    icon: Users,
-    color: 'bg-warning-500',
-    lightColor: 'bg-warning-50',
-    textColor: 'text-warning-600',
-  },
-  {
-    id: 'feedback',
-    title: 'Continuous Feedback',
-    description: 'Give and receive ongoing feedback throughout the year',
-    href: '/performance/feedback',
-    icon: MessageSquare,
-    color: 'bg-accent-500',
-    lightColor: 'bg-accent-50',
-    textColor: 'text-accent-700',
-  },
-  {
-    id: 'cycles',
-    title: 'Review Cycles',
-    description: 'Manage review periods and deadlines',
-    href: '/performance/cycles',
-    icon: CalendarDays,
-    color: 'bg-accent-500',
-    lightColor: 'bg-accent-50',
-    textColor: 'text-accent-600',
-  },
-  {
-    id: 'pip',
-    title: 'PIPs',
-    description: 'Create and track Performance Improvement Plans with check-ins',
-    href: '/performance/pip',
-    icon: AlertCircle,
-    color: 'bg-danger-500',
-    lightColor: 'bg-danger-50',
-    textColor: 'text-danger-600',
-  },
-  {
-    id: 'calibration',
-    title: 'Calibration',
-    description: 'Finalize ratings with distribution view and bell-curve check',
-    href: '/performance/calibration',
-    icon: Sliders,
-    color: 'bg-accent-500',
-    lightColor: 'bg-accent-50',
-    textColor: 'text-accent-600',
-  },
-  {
-    id: '9box',
-    title: '9-Box Grid',
-    description: 'Talent segmentation by performance and potential',
-    href: '/performance/9box',
-    icon: Grid3X3,
-    color: 'bg-danger-500',
-    lightColor: 'bg-danger-50',
-    textColor: 'text-danger-600',
-  },
-  {
-    id: 'competency-matrix',
-    title: 'Competency Matrix',
-    description: 'Manage competency frameworks, assess skills, and identify gaps',
-    href: '/performance/competency-matrix',
-    icon: BarChart3,
-    color: 'bg-accent-500',
-    lightColor: 'bg-accent-50',
-    textColor: 'text-accent-700',
-  },
-];
-
-const StatCard = ({
-                    title,
-                    value,
-                    subtitle,
-                    icon: Icon,
-                    color,
-                  }: {
-  title: string;
-  value: string | number;
-  subtitle?: string;
-  icon: React.ElementType;
-  color: string;
-}) => (
-  <div
-    className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] dark:border-[var(--border-main)] p-4 shadow-[var(--shadow-card)] skeuo-card">
-    <div className="flex items-start justify-between">
-      <div>
-        <p className="text-sm font-medium text-[var(--text-muted)]">{title}</p>
-        <p
-          className="text-xl font-bold text-[var(--text-primary)] dark:text-[var(--text-secondary)] mt-1">{value}</p>
-        {subtitle && <p className="text-caption mt-1">{subtitle}</p>}
-      </div>
-      <div className={`p-2 rounded-lg ${color}`}>
-        <Icon className="h-5 w-5 text-white"/>
-      </div>
-    </div>
-  </div>
-);
+const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
 const PERFORMANCE_ALLOWED_ROLES = [
   'SUPER_ADMIN', 'TENANT_ADMIN', 'HR_ADMIN', 'HR_MANAGER',
   'MANAGER', 'TEAM_LEAD', 'SKIP_LEVEL_MANAGER', 'REPORTING_MANAGER',
 ];
 
+interface DashboardStats {
+  activeGoals: number;
+  completedGoals: number;
+  averageProgress: number;
+  activeReviewCycles: number;
+  okrObjectives: number;
+  okrProgress: number;
+  pending360Reviews: number;
+}
+
+// ── Page ─────────────────────────────────────────────────────────────────────
 export default function PerformancePage() {
   const router = useRouter();
   const {hasAnyRole, isReady} = usePermissions();
-
-  // P0-002: Block EMPLOYEE/non-management roles from accessing admin performance hub
   const hasAccess = hasAnyRole(...PERFORMANCE_ALLOWED_ROLES);
 
-  // All hooks MUST be called before any early return (React rules of hooks)
+  // All hooks called before any early return
   const goalsQuery = useAllGoals(0, 20);
   const cyclesQuery = usePerformanceActiveCycles();
   const okrQuery = useOkrDashboardSummary();
@@ -206,33 +76,37 @@ export default function PerformancePage() {
       : 0;
 
     return {
-      totalGoals: goals.length,
       activeGoals: activeGoals.length,
       completedGoals: completedGoals.length,
       averageProgress: avgProgress,
       activeReviewCycles: cycles.length,
-      pendingReviews: 0,
       okrObjectives: okrSummary?.totalObjectives || 0,
       okrProgress: Math.round(okrSummary?.averageProgress || 0),
       pending360Reviews: pending360.length,
     };
   }, [goalsQuery.data, cyclesQuery.data, okrQuery.data, pending360Query.data]);
 
-  const loading = goalsQuery.isLoading || cyclesQuery.isLoading || okrQuery.isLoading || pending360Query.isLoading;
-  const hasError = goalsQuery.isError || cyclesQuery.isError || okrQuery.isError || pending360Query.isError;
+  const isLoading =
+    goalsQuery.isLoading || cyclesQuery.isLoading || okrQuery.isLoading || pending360Query.isLoading;
+  const hasError =
+    goalsQuery.isError || cyclesQuery.isError || okrQuery.isError || pending360Query.isError;
 
-  // P0-002: Block EMPLOYEE/non-management roles AFTER all hooks
   if (isReady && !hasAccess) {
     return (
       <AppLayout>
-        <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
-          <TrendingUp className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4"/>
-          <h2 className="text-xl font-bold text-[var(--text-primary)] mb-2">Access Restricted</h2>
-          <p className="text-[var(--text-muted)] max-w-md mb-6">
-            You don&apos;t have permission to access the Performance Management hub.
-            View your goals and reviews from My Dashboard.
-          </p>
-          <Button onClick={() => router.push('/me/dashboard')} className="skeuo-button">
+        <div className="mx-auto w-full max-w-3xl px-6 py-20 text-center space-y-6">
+          <div className="mx-auto inline-flex h-12 w-12 items-center justify-center rounded-xl bg-warning-50 text-warning-700 dark:bg-warning-900/40 dark:text-warning-300">
+            <TrendingUp className="h-5 w-5" aria-hidden="true" />
+          </div>
+          <div className="space-y-2">
+            <h1 className="text-2xl font-semibold tracking-tight text-[var(--text-heading)]">
+              Access restricted
+            </h1>
+            <p className="text-body-secondary max-w-[60ch] mx-auto">
+              You don&apos;t have permission to access the Performance hub. View your goals and reviews from My Dashboard.
+            </p>
+          </div>
+          <Button variant="primary" onClick={() => router.push('/me/dashboard')}>
             Go to My Dashboard
           </Button>
         </div>
@@ -259,193 +133,278 @@ export default function PerformancePage() {
 
   return (
     <AppLayout activeMenuItem="performance">
-      <div className="p-6 max-w-7xl mx-auto">
-        <div className="mb-8">
-          <h1
-            className="text-xl font-bold text-[var(--text-primary)] dark:text-[var(--text-secondary)]">Performance
-            Management</h1>
-          <p className="text-body-muted mt-1">
-            Track goals, conduct reviews, and manage employee performance
-          </p>
-        </div>
+      <div className="mx-auto w-full max-w-7xl px-6 py-8 space-y-10">
+        <PageHeader />
 
-        {/* Stats Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          {loading ? (
-            <>
-              <SkeletonStatCard/>
-              <SkeletonStatCard/>
-              <SkeletonStatCard/>
-              <SkeletonStatCard/>
-            </>
-          ) : (
-            <>
-              <StatCard
-                title="Active Goals"
-                value={stats.activeGoals}
-                subtitle={`${stats.completedGoals} completed`}
-                icon={Flag}
-                color="bg-accent-500"
-              />
-              <StatCard
-                title="Goal Progress"
-                value={`${stats.averageProgress}%`}
-                subtitle="Average across all goals"
-                icon={TrendingUp}
-                color="bg-success-500"
-              />
-              <StatCard
-                title="OKR Objectives"
-                value={stats.okrObjectives}
-                subtitle={`${stats.okrProgress}% progress`}
-                icon={SlidersHorizontal}
-                color="bg-accent-700"
-              />
-              <StatCard
-                title="Pending Reviews"
-                value={stats.pending360Reviews}
-                subtitle="360 feedback requests"
-                icon={Clock}
-                color="bg-warning-500"
-              />
-            </>
-          )}
-        </div>
+        {isLoading ? <StatsSkeleton /> : <StatsRow stats={stats} />}
 
-        {/* Quick Actions */}
-        {stats.pending360Reviews > 0 && (
-          <div className="mb-8 p-4 tint-orange border border-[var(--status-warning-border)] rounded-lg">
-            <div className="row-between">
-              <div className="flex items-center gap-4">
-                <div className="p-2 bg-warning-100 dark:bg-warning-900/40 rounded-lg">
-                  <Clock className="h-5 w-5 text-warning-600 dark:text-warning-400"/>
-                </div>
-                <div>
-                  <p className="font-medium text-warning-800 dark:text-warning-300">
-                    You have {stats.pending360Reviews} pending 360 feedback request(s)
-                  </p>
-                  <p className="text-sm text-warning-600 dark:text-warning-400">
-                    Complete your feedback to help your colleagues grow
-                  </p>
-                </div>
-              </div>
-              <Link
-                href="/performance/360-feedback"
-                className="px-4 py-2 bg-warning-600 hover:bg-warning-700 dark:bg-warning-700 dark:hover:bg-warning-600 text-white rounded-lg text-sm font-medium transition-colors"
-              >
-                Review Now
-              </Link>
-            </div>
-          </div>
-        )}
+        <BentoNavigation pending360={stats.pending360Reviews} activeCycles={stats.activeReviewCycles} />
 
-        {/* Module Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {performanceModules.map((module) => {
-            // Determine permission gate per module
-            let permission: string | null = null;
-            switch (module.id) {
-              case 'goals':
-              case 'okr':
-                // Goals and OKRs are self-service — no permission gate required
-                permission = null;
-                break;
-              case 'reviews':
-                permission = Permissions.REVIEW_VIEW;
-                break;
-              case '360-feedback':
-                permission = Permissions.FEEDBACK_360_VIEW;
-                break;
-              case 'feedback':
-                permission = Permissions.FEEDBACK_CREATE;
-                break;
-              case 'cycles':
-                permission = Permissions.REVIEW_VIEW;
-                break;
-              case 'pip':
-                permission = Permissions.PIP_VIEW;
-                break;
-              case 'calibration':
-                permission = Permissions.CALIBRATION_VIEW;
-                break;
-              case '9box':
-                permission = Permissions.REVIEW_VIEW;
-                break;
-              case 'competency-matrix':
-                permission = Permissions.REVIEW_VIEW;
-                break;
-              default:
-                permission = null;
-            }
-
-            const CardLink = (
-              <Link
-                href={module.href}
-                aria-label={`Go to ${module.title} management`}
-                className="group card-interactive rounded-xl border border-[var(--border-main)] dark:border-[var(--border-main)] shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-elevated)] transition-all duration-200 overflow-hidden skeuo-card"
-              >
-                <div className="p-4">
-                  <div className="flex items-start gap-4">
-                    <div className={`p-2.5 rounded-lg ${module.lightColor}`}>
-                      <module.icon className={`h-5 w-5 ${module.textColor}`}/>
-                    </div>
-                    <div className="flex-1">
-                      <h2
-                        className="text-base font-semibold text-[var(--text-primary)] dark:text-[var(--text-secondary)] group-hover:text-accent-600 dark:group-hover:text-accent-400 transition-colors">
-                        {module.title}
-                      </h2>
-                      <p className="text-caption mt-0.5">{module.description}</p>
-                    </div>
-                  </div>
-                </div>
-                <div
-                  className={`h-1 ${module.color} transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left`}/>
-              </Link>
-            );
-
-            if (permission) {
-              return (
-                <PermissionGate key={module.id} permission={permission} fallback={null}>
-                  {CardLink}
-                </PermissionGate>
-              );
-            }
-
-            return <div key={module.id}>{CardLink}</div>;
-          })}
-        </div>
-
-        {/* Getting Started Section */}
-        <div
-          className="mt-6 skeuo-card rounded-xl border border-[var(--border-main)] dark:border-[var(--border-main)] p-4">
-          <h2
-            className="text-base font-semibold text-[var(--text-primary)] dark:text-[var(--text-secondary)] mb-4">Getting
-            Started</h2>
-          <div className="grid md:grid-cols-3 gap-4">
-            <div className="p-4 tint-info rounded-lg border border-[var(--status-info-border)]">
-              <CheckCircle className="h-6 w-6 text-accent-600 dark:text-accent-400 mb-2"/>
-              <h3 className="font-medium text-[var(--text-primary)]">Set SMART Goals</h3>
-              <p className="text-body-secondary mt-1">
-                Make goals Specific, Measurable, Achievable, Relevant, and Time-bound
-              </p>
-            </div>
-            <div className="p-4 tint-success rounded-lg border border-[var(--status-success-border)]">
-              <MessageSquare className="h-6 w-6 text-success-600 dark:text-success-400 mb-2"/>
-              <h3 className="font-medium text-[var(--text-primary)]">Give Regular Feedback</h3>
-              <p className="text-body-secondary mt-1">
-                Continuous feedback helps improve performance year-round
-              </p>
-            </div>
-            <div className="p-4 tint-info rounded-lg border border-[var(--status-info-border)]">
-              <BarChart3 className="h-6 w-6 text-accent-800 dark:text-accent-600 mb-2"/>
-              <h3 className="font-medium text-[var(--text-primary)]">Track Progress</h3>
-              <p className="text-body-secondary mt-1">
-                Update your goals and OKRs regularly to stay on track
-              </p>
-            </div>
-          </div>
-        </div>
+        {stats.pending360Reviews > 0 && <Pending360Strip count={stats.pending360Reviews} />}
       </div>
     </AppLayout>
+  );
+}
+
+// ── Header ───────────────────────────────────────────────────────────────────
+function PageHeader() {
+  return (
+    <motion.header
+      initial={{opacity: 0, y: 4}}
+      animate={{opacity: 1, y: 0}}
+      transition={{duration: 0.4, ease: EASE}}
+      className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-end"
+    >
+      <div className="space-y-2 max-w-2xl">
+        <p className="text-2xs font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">
+          Performance Management
+        </p>
+        <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-[var(--text-heading)] leading-[1.05]">
+          Goals, reviews, and growth in one steady rhythm.
+        </h1>
+        <p className="text-body-secondary max-w-[55ch]">
+          Track progress, run cycles, and finalise ratings without losing the thread.
+        </p>
+      </div>
+      <Link href="/performance/goals" className="self-start sm:self-end">
+        <Button variant="primary">
+          Set a goal
+          <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
+        </Button>
+      </Link>
+    </motion.header>
+  );
+}
+
+// ── Stats row ────────────────────────────────────────────────────────────────
+function StatsRow({stats}: {stats: DashboardStats}) {
+  const items = [
+    {label: 'Active goals', value: stats.activeGoals, icon: Flag, tone: 'neutral' as const},
+    {label: 'Goal progress', value: `${stats.averageProgress}%`, icon: TrendingUp, tone: 'neutral' as const},
+    {label: 'OKR progress', value: `${stats.okrProgress}%`, icon: SlidersHorizontal, tone: 'neutral' as const},
+    {
+      label: 'Pending reviews',
+      value: stats.pending360Reviews,
+      icon: Clock,
+      tone: stats.pending360Reviews > 0 ? ('warning' as const) : ('neutral' as const),
+    },
+  ];
+
+  return (
+    <motion.section
+      initial="hidden"
+      animate="visible"
+      variants={{visible: {transition: {staggerChildren: 0.06, delayChildren: 0.08}}}}
+      aria-label="Performance at a glance"
+      className="grid grid-cols-2 sm:grid-cols-4 border-y border-[var(--border-subtle)] divide-x divide-[var(--border-subtle)]"
+    >
+      {items.map((item) => (
+        <motion.div
+          key={item.label}
+          variants={{hidden: {opacity: 0, y: 6}, visible: {opacity: 1, y: 0, transition: {duration: 0.4, ease: EASE}}}}
+          className="px-5 py-6 sm:px-7 sm:py-8 first:pl-0 last:pr-0"
+        >
+          <div className="flex items-center gap-2 text-[var(--text-muted)]">
+            <item.icon className="h-3.5 w-3.5" aria-hidden="true" />
+            <span className="text-2xs font-medium uppercase tracking-wider">{item.label}</span>
+          </div>
+          <p
+            className={`mt-3 font-mono text-3xl sm:text-4xl tabular-nums tracking-tight ${
+              item.tone === 'warning'
+                ? 'text-warning-700 dark:text-warning-300'
+                : 'text-[var(--text-heading)]'
+            }`}
+          >
+            {item.value}
+          </p>
+        </motion.div>
+      ))}
+    </motion.section>
+  );
+}
+
+function StatsSkeleton() {
+  return (
+    <div className="grid grid-cols-2 sm:grid-cols-4 border-y border-[var(--border-subtle)] divide-x divide-[var(--border-subtle)]">
+      {Array.from({length: 4}).map((_, i) => (
+        <div key={i} className="px-5 py-6 sm:px-7 sm:py-8 first:pl-0 last:pr-0">
+          <Skeleton className="h-3 w-24 rounded" />
+          <Skeleton className="mt-3 h-9 w-20 rounded" />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ── Bento navigation ─────────────────────────────────────────────────────────
+interface NavTile {
+  title: string;
+  description: string;
+  icon: React.ElementType;
+  href: string;
+  permission: string | null;
+  badge?: number;
+}
+
+function BentoNavigation({pending360, activeCycles}: {pending360: number; activeCycles: number}) {
+  const hero: NavTile & {meta: string} = {
+    title: 'Performance reviews',
+    description: 'Run review cycles end-to-end. Track completion, nudge stragglers, and finalise outcomes.',
+    icon: ClipboardCheck,
+    href: '/performance/reviews',
+    permission: Permissions.REVIEW_VIEW,
+    meta: activeCycles > 0 ? `${activeCycles} active ${activeCycles === 1 ? 'cycle' : 'cycles'}` : 'No active cycles',
+  };
+
+  const tiles: NavTile[] = [
+    {title: 'Goals', description: 'Set and track individual, team, and org goals.', icon: Flag, href: '/performance/goals', permission: null},
+    {title: 'OKR management', description: 'Objectives and key results for strategic alignment.', icon: SlidersHorizontal, href: '/performance/okr', permission: null},
+    {title: '360 feedback', description: 'Multi-rater feedback from peers, managers, reports.', icon: Users, href: '/performance/360-feedback', permission: Permissions.FEEDBACK_360_VIEW, badge: pending360 > 0 ? pending360 : undefined},
+    {title: 'Continuous feedback', description: 'Give and receive ongoing feedback all year.', icon: MessageSquare, href: '/performance/feedback', permission: Permissions.FEEDBACK_CREATE},
+    {title: 'Review cycles', description: 'Manage review periods and deadlines.', icon: CalendarDays, href: '/performance/cycles', permission: Permissions.REVIEW_VIEW},
+    {title: 'PIPs', description: 'Track Performance Improvement Plans with check-ins.', icon: AlertCircle, href: '/performance/pip', permission: Permissions.PIP_VIEW},
+    {title: 'Calibration', description: 'Finalise ratings with distribution and bell-curve view.', icon: Sliders, href: '/performance/calibration', permission: Permissions.CALIBRATION_VIEW},
+    {title: '9-box grid', description: 'Talent segmentation by performance and potential.', icon: Grid3X3, href: '/performance/9box', permission: Permissions.REVIEW_VIEW},
+    {title: 'Competency matrix', description: 'Frameworks, skill assessments, and gap analysis.', icon: BarChart3, href: '/performance/competency-matrix', permission: Permissions.REVIEW_VIEW},
+  ];
+
+  return (
+    <motion.section
+      initial="hidden"
+      animate="visible"
+      variants={{visible: {transition: {staggerChildren: 0.06, delayChildren: 0.18}}}}
+      className="grid gap-4 grid-cols-1 lg:grid-cols-12"
+      aria-label="Explore performance"
+    >
+      <BentoHeroWrap permission={hero.permission}>
+        <BentoHero {...hero} />
+      </BentoHeroWrap>
+      {tiles.map((tile) =>
+        tile.permission ? (
+          <PermissionGate key={tile.href} permission={tile.permission} fallback={null}>
+            <BentoTile {...tile} />
+          </PermissionGate>
+        ) : (
+          <BentoTile key={tile.href} {...tile} />
+        )
+      )}
+    </motion.section>
+  );
+}
+
+function BentoHeroWrap({permission, children}: {permission: string | null; children: React.ReactNode}) {
+  if (!permission) return <>{children}</>;
+  return <PermissionGate permission={permission} fallback={null}>{children}</PermissionGate>;
+}
+
+function BentoHero({title, description, icon: Icon, href, meta}: {
+  title: string;
+  description: string;
+  icon: React.ElementType;
+  href: string;
+  meta: string;
+}) {
+  return (
+    <motion.div
+      variants={{hidden: {opacity: 0, y: 8}, visible: {opacity: 1, y: 0, transition: {duration: 0.5, ease: EASE}}}}
+      className="lg:col-span-7 lg:row-span-2"
+    >
+      <Link
+        href={href}
+        className="group block h-full rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] p-7 sm:p-9 transition-all hover:border-[var(--border-main)] hover:shadow-[0_20px_40px_-15px_rgba(15,23,42,0.08)] active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
+      >
+        <div className="flex items-start justify-between">
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-accent-50 text-accent-700 dark:bg-accent-900/30 dark:text-accent-300">
+            <Icon className="h-5 w-5" aria-hidden="true" />
+          </div>
+          <ArrowRight className="h-4 w-4 text-[var(--text-muted)] transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+        </div>
+        <h2 className="mt-8 text-2xl sm:text-3xl font-semibold tracking-tight text-[var(--text-heading)]">
+          {title}
+        </h2>
+        <p className="mt-3 text-body-secondary max-w-[48ch]">{description}</p>
+        <div className="mt-10 flex items-end justify-between gap-6">
+          <BentoHeroBars />
+          <p className="text-2xs font-medium uppercase tracking-[0.18em] text-[var(--text-muted)]">
+            {meta}
+          </p>
+        </div>
+      </Link>
+    </motion.div>
+  );
+}
+
+function BentoHeroBars() {
+  const widths = [38, 72, 55, 88, 48, 80, 42, 66];
+  return (
+    <div className="flex items-end gap-1.5 h-16 flex-1" aria-hidden="true">
+      {widths.map((w, i) => (
+        <motion.span
+          key={i}
+          initial={{height: '0%'}}
+          animate={{height: `${w}%`}}
+          transition={{duration: 0.7, ease: EASE, delay: 0.35 + i * 0.04}}
+          className="flex-1 max-w-3 rounded-sm bg-accent-200 dark:bg-accent-700/70"
+        />
+      ))}
+    </div>
+  );
+}
+
+function BentoTile({title, description, icon: Icon, href, badge}: NavTile) {
+  return (
+    <motion.div
+      variants={{hidden: {opacity: 0, y: 8}, visible: {opacity: 1, y: 0, transition: {duration: 0.4, ease: EASE}}}}
+      className="lg:col-span-5"
+    >
+      <Link
+        href={href}
+        className="group flex h-full items-start gap-4 rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] p-5 sm:p-6 transition-all hover:border-[var(--border-main)] hover:shadow-[0_12px_30px_-12px_rgba(15,23,42,0.07)] active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
+      >
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[var(--bg-surface)] border border-[var(--border-subtle)] text-[var(--text-secondary)]">
+          <Icon className="h-[18px] w-[18px]" aria-hidden="true" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center justify-between gap-3">
+            <h3 className="text-base font-semibold text-[var(--text-heading)]">{title}</h3>
+            {badge !== undefined && (
+              <span className="inline-flex items-center justify-center min-w-6 px-2 h-5 text-2xs font-semibold rounded-full bg-warning-100 text-warning-700 dark:bg-warning-900/40 dark:text-warning-300">
+                {badge}
+              </span>
+            )}
+          </div>
+          <p className="mt-1 text-sm text-[var(--text-secondary)] leading-relaxed">{description}</p>
+        </div>
+        <ArrowRight className="h-4 w-4 self-center text-[var(--text-muted)] transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+      </Link>
+    </motion.div>
+  );
+}
+
+// ── Pending 360 alert ────────────────────────────────────────────────────────
+function Pending360Strip({count}: {count: number}) {
+  return (
+    <motion.aside
+      initial={{opacity: 0, y: 6}}
+      animate={{opacity: 1, y: 0}}
+      transition={{duration: 0.45, ease: EASE, delay: 0.42}}
+      role="status"
+      aria-live="polite"
+      className="flex items-center justify-between gap-4 rounded-xl border border-warning-200 bg-warning-50/40 dark:border-warning-700/40 dark:bg-warning-950/30 px-5 py-4"
+    >
+      <div className="flex items-center gap-3 text-sm">
+        <AlertTriangle className="h-4 w-4 shrink-0 text-warning-600 dark:text-warning-400" aria-hidden="true" />
+        <p className="text-[var(--text-primary)]">
+          <span className="font-semibold">{count}</span>{' '}
+          {count === 1 ? '360 feedback request is' : '360 feedback requests are'} waiting on you.
+        </p>
+      </div>
+      <Link href="/performance/360-feedback">
+        <Button variant="outline" size="sm">
+          Review now
+          <ArrowRight className="ml-1.5 h-3.5 w-3.5" aria-hidden="true" />
+        </Button>
+      </Link>
+    </motion.aside>
   );
 }

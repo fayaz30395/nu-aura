@@ -1,13 +1,24 @@
 'use client';
 
-import {useState} from 'react';
-import Image from 'next/image';
+import React from 'react';
+import Link from 'next/link';
+import {motion} from 'framer-motion';
+import {
+  AlertTriangle,
+  ArrowRight,
+  Award,
+  BookOpen,
+  CheckCircle2,
+  GraduationCap,
+  Layers,
+  TrendingUp,
+} from 'lucide-react';
+
 import {AppLayout} from '@/components/layout';
-import {Skeleton} from '@/components/ui/Skeleton';
-import {Stat} from '@/components/ui/Stat';
-import {Award, BookOpen, GraduationCap} from 'lucide-react';
 import {Button} from '@/components/ui/Button';
-import {EmptyState} from '@/components/ui/EmptyState';
+import {Skeleton} from '@/components/ui/Skeleton';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
 import {
   useEnrollCourse,
   useLearningDashboard,
@@ -15,365 +26,449 @@ import {
   useMyEnrollments,
   usePublishedCourses,
 } from '@/lib/hooks/queries/useLearning';
-import type {Certificate, Course, CourseEnrollment} from '@/lib/services/grow/lms.service';
-import {PermissionGate} from '@/components/auth/PermissionGate';
-import {Permissions} from '@/lib/hooks/usePermissions';
-import {StatusBadge} from '@/components/ui/StatusBadge';
-import {LEARNING_STATUS} from '@/lib/status/vocabulary';
+import type {Certificate, CourseEnrollment} from '@/lib/services/grow/lms.service';
 import {formatDate} from '@/lib/utils/format/date';
 
-export default function LearningPage() {
-  const [activeTab, setActiveTab] = useState<'catalog' | 'my-courses' | 'certificates'>('catalog');
+// Single ease curve for every transition on this page.
+const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
-  // React Query hooks
+export default function LearningPage() {
   const {data: dashboard, isLoading: dashboardLoading, isError: dashboardError} = useLearningDashboard();
-  const {data: coursesData, isLoading: coursesLoading} = usePublishedCourses(
-    0,
-    20,
-    activeTab === 'catalog'
-  );
-  const {data: enrollmentsData, isLoading: enrollmentsLoading} = useMyEnrollments(
-    0,
-    20,
-    activeTab === 'my-courses'
-  );
-  const {data: certificatesData, isLoading: certificatesLoading} = useMyCertificates(
-    0,
-    20,
-    activeTab === 'certificates'
-  );
+  const {data: enrollmentsData, isLoading: enrollmentsLoading} = useMyEnrollments(0, 5, true);
+  const {data: certificatesData, isLoading: certificatesLoading} = useMyCertificates(0, 5, true);
+  const {data: coursesData} = usePublishedCourses(0, 1, true);
   const enrollMutation = useEnrollCourse();
 
-  const courses: Course[] = coursesData?.content ?? [];
-  const myEnrollments: CourseEnrollment[] = Array.isArray(enrollmentsData) ? enrollmentsData : [];
+  const enrollments: CourseEnrollment[] = Array.isArray(enrollmentsData) ? enrollmentsData : [];
   const certificates: Certificate[] = Array.isArray(certificatesData) ? certificatesData : [];
-  const loading = dashboardLoading || coursesLoading || enrollmentsLoading || certificatesLoading;
 
-  const handleEnroll = async (courseId: string) => {
-    enrollMutation.mutate(courseId);
-  };
+  const inProgress = enrollments
+    .filter((e) => e.status === 'IN_PROGRESS' || e.status === 'ENROLLED')
+    .slice(0, 4);
 
-  const getDifficultyColor = (level: string | undefined): string => {
-    switch (level) {
-      case 'BEGINNER':
-        return 'bg-success-100 text-success-800 dark:bg-success-900/50 dark:text-success-300';
-      case 'INTERMEDIATE':
-        return 'bg-warning-100 text-warning-800 dark:bg-warning-900/50 dark:text-warning-300';
-      case 'ADVANCED':
-        return 'bg-danger-100 text-danger-800 dark:bg-danger-900/50 dark:text-danger-300';
-      default:
-        return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
-    }
-  };
-
-  const getProgressColor = (progress: number) => {
-    if (progress >= 70) return 'bg-success-500';
-    if (progress >= 40) return 'bg-warning-500';
-    return 'bg-accent-500';
-  };
+  const featured = inProgress[0];
+  const featuredCourseTitle = coursesData?.content?.[0]?.title;
 
   return (
     <AppLayout activeMenuItem="learning">
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-xl font-bold">Learning Management</h1>
+      <div className="mx-auto w-full max-w-7xl px-6 py-8 space-y-10">
+        <PageHeader />
 
-        {/* Dashboard Cards */}
+        {dashboardError && (
+          <ErrorBanner message="Failed to load learning dashboard. Please try refreshing the page." />
+        )}
+
+        {/* Stats — borders, not card boxes */}
         {dashboardLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
-            {Array.from({length: 5}).map((_, i) => (
-              <div key={i} className="bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-card)] p-6">
-                <Skeleton className="h-8 w-12 mb-2"/>
-                <Skeleton className="h-4 w-20"/>
-              </div>
-            ))}
-          </div>
-        ) : dashboardError ? (
-          <div
-            className="mb-6 p-4 rounded-lg border border-danger-200 dark:border-danger-800 bg-danger-50 dark:bg-danger-900/20">
-            <p className="text-sm text-danger-600 dark:text-danger-400">Failed to load learning dashboard. Please try
-              refreshing the page.</p>
-          </div>
+          <StatsSkeleton />
         ) : dashboard ? (
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
-            <div className="bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-card)] p-6">
-              <Stat label="Total Enrollments" value={dashboard.totalEnrollments} tone="accent" />
-            </div>
-            <div className="bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-card)] p-6">
-              <Stat label="In Progress" value={dashboard.inProgress} tone="warning" />
-            </div>
-            <div className="bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-card)] p-6">
-              <Stat label="Completed" value={dashboard.completed} tone="success" />
-            </div>
-            <div className="bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-card)] p-6">
-              <Stat label="Avg Progress" value={`${dashboard.averageProgress?.toFixed(0) || 0}%`} tone="accent" />
-            </div>
-            <div className="bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-card)] p-6">
-              <Stat label="Certificates" value={dashboard.certificatesEarned} tone="accent" />
-            </div>
-          </div>
+          <StatsRow
+            totalEnrollments={dashboard.totalEnrollments}
+            averageProgress={Math.round(dashboard.averageProgress ?? 0)}
+            certificatesEarned={dashboard.certificatesEarned}
+            completed={dashboard.completed}
+          />
         ) : null}
 
-        {/* Tabs */}
-        <div className="flex border-b mb-6">
-          <button
-            className={`px-6 py-4 font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${activeTab === 'catalog' ? 'border-b-2 border-accent-500 text-accent-700 dark:text-accent-400' : 'text-[var(--text-secondary)]'}`}
-            onClick={() => setActiveTab('catalog')}
-            aria-current={activeTab === 'catalog' ? 'page' : undefined}
-          >
-            Course Catalog
-          </button>
-          <button
-            className={`px-6 py-4 font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${activeTab === 'my-courses' ? 'border-b-2 border-accent-500 text-accent-700 dark:text-accent-400' : 'text-[var(--text-secondary)]'}`}
-            onClick={() => setActiveTab('my-courses')}
-            aria-current={activeTab === 'my-courses' ? 'page' : undefined}
-          >
-            My Courses
-          </button>
-          <button
-            className={`px-6 py-4 font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${activeTab === 'certificates' ? 'border-b-2 border-accent-500 text-accent-700 dark:text-accent-400' : 'text-[var(--text-secondary)]'}`}
-            onClick={() => setActiveTab('certificates')}
-            aria-current={activeTab === 'certificates' ? 'page' : undefined}
-          >
-            Certificates
-          </button>
-        </div>
+        {/* Bento — one wide hero + four refined tiles */}
+        <BentoNavigation
+          featuredEnrollment={featured}
+          featuredCourseTitle={featuredCourseTitle}
+          certificatesCount={certificates.length}
+        />
 
-        {loading || coursesLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {Array.from({length: 6}).map((_, i) => (
-              <div key={i}
-                   className="bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] overflow-hidden">
-                <Skeleton className="h-40 w-full"/>
-                <div className="p-4 space-y-4">
-                  <Skeleton className="h-5 w-3/4"/>
-                  <Skeleton className="h-4 w-full"/>
-                  <Skeleton className="h-4 w-1/2"/>
-                  <Skeleton className="h-10 w-full"/>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <>
-            {/* Course Catalog Tab */}
-            {activeTab === 'catalog' && (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {courses.length > 0 ? (
-                  courses.map((course) => (
-                    <div key={course.id}
-                         className="bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] overflow-hidden hover:shadow-[var(--shadow-dropdown)] transition-shadow">
-                      {course.thumbnailUrl ? (
-                        <div className="relative w-full h-40">
-                          <Image src={course.thumbnailUrl} alt={course.title} fill className="object-cover"
-                                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"/>
-                        </div>
-                      ) : (
-                        <div
-                          className="w-full h-40 bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center">
-                          <span className="text-4xl text-accent-700 dark:text-accent-400">📚</span>
-                        </div>
-                      )}
-                      <div className="p-4">
-                        <div className="flex justify-between items-start mb-2">
-                          <h2 className="font-semibold text-lg text-[var(--text-primary)]">{course.title}</h2>
-                          {course.isMandatory && (
-                            <span
-                              className="px-2 py-1 bg-danger-100 text-danger-800 dark:bg-danger-900/50 dark:text-danger-300 text-xs rounded-full">Mandatory</span>
-                          )}
-                        </div>
-                        {course.shortDescription && (
-                          <p
-                            className="text-[var(--text-secondary)] text-sm mb-4 line-clamp-2">{course.shortDescription}</p>
-                        )}
-                        <div className="flex flex-wrap gap-2 mb-4">
-                          <span
-                            className={`px-2 py-1 rounded-full text-xs ${getDifficultyColor(course.difficultyLevel)}`}
-                            aria-label={`Difficulty: ${course.difficultyLevel}`}>
-                            {course.difficultyLevel}
-                          </span>
-                          {course.durationHours && (
-                            <span
-                              className="px-2 py-1 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] text-[var(--text-secondary)] text-xs rounded-full">
-                              {course.durationHours}h
-                            </span>
-                          )}
-                        </div>
-                        <div className="flex justify-between items-center text-body-secondary mb-4">
-                          <span>{course.totalEnrollments} enrolled</span>
-                          {course.avgRating && (
-                            <span className="flex items-center"
-                                  aria-label={`Rating: ${course.avgRating.toFixed(1)} out of 5`}>
-                              ⭐ {course.avgRating.toFixed(1)} ({course.totalRatings})
-                            </span>
-                          )}
-                        </div>
-                        <PermissionGate permission={Permissions.LMS_ENROLL}>
-                          <Button
-                            onClick={() => handleEnroll(course.id)}
-                            disabled={enrollMutation.isPending}
-                            variant="primary"
-                            size="md"
-                            className="w-full"
-                            aria-label={`Enroll in ${course.title}`}
-                          >
-                            {enrollMutation.isPending ? 'Enrolling...' : 'Enroll Now'}
-                          </Button>
-                        </PermissionGate>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <div
-                    className="col-span-full bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)]">
-                    <EmptyState
-                      icon={<BookOpen className="w-full h-full"/>}
-                      title="No courses available"
-                      description="Check back soon. New courses are published regularly."
-                    />
-                  </div>
-                )}
-              </div>
-            )}
+        {/* In-progress courses list */}
+        {enrollmentsLoading ? (
+          <InProgressSkeleton />
+        ) : inProgress.length > 0 ? (
+          <InProgressList items={inProgress} />
+        ) : null}
 
-            {/* My Courses Tab */}
-            {activeTab === 'my-courses' && (
-              <div className="space-y-4">
-                {myEnrollments.length > 0 ? (
-                  myEnrollments.map((enrollment) => (
-                    <div key={enrollment.id}
-                         className="bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] p-6 hover:shadow-[var(--shadow-dropdown)] transition-shadow">
-                      <div className="flex justify-between items-start mb-4">
-                        <div>
-                          <h2 className="text-xl font-semibold text-[var(--text-primary)]">Course
-                            #{enrollment.courseId.slice(0, 8)}</h2>
-                          <div className="flex gap-2 mt-2">
-                            <StatusBadge status={enrollment.status} domain={LEARNING_STATUS}/>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <div
-                            className="text-xl font-bold text-accent-700 dark:text-accent-400">{enrollment.progressPercentage?.toFixed(0) || 0}%
-                          </div>
-                          <div className="text-body-secondary">Progress</div>
-                        </div>
-                      </div>
-
-                      {/* Progress Bar */}
-                      <div
-                        className="w-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full h-2 mb-4"
-                        role="progressbar" aria-valuenow={enrollment.progressPercentage || 0} aria-valuemin={0}
-                        aria-valuemax={100}>
-                        <div
-                          className={`h-2 rounded-full ${getProgressColor(enrollment.progressPercentage || 0)}`}
-                          style={{width: `${enrollment.progressPercentage || 0}%`}}
-                        />
-                      </div>
-
-                      <div
-                        className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 text-body-secondary">
-                        <div>
-                          <div>Enrolled: {formatDate(enrollment.enrolledAt)}</div>
-                          {enrollment.lastAccessedAt && (
-                            <div>
-                              Last accessed: {formatDate(enrollment.lastAccessedAt)}
-                            </div>
-                          )}
-                        </div>
-                        <Button
-                          asChild
-                          variant="primary"
-                          size="md"
-                          className="whitespace-nowrap"
-                        >
-                          <a href={`/learning/course/${enrollment.courseId}`}>
-                            {enrollment.status === 'COMPLETED' ? 'Review' : 'Continue'}
-                          </a>
-                        </Button>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <div className="bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)]">
-                    <EmptyState
-                      icon={<GraduationCap className="w-full h-full"/>}
-                      title="No enrollments yet"
-                      description="Browse the catalog to enroll in your first course."
-                      actionLabel="Browse catalog"
-                      onAction={() => setActiveTab('catalog')}
-                    />
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Certificates Tab */}
-            {activeTab === 'certificates' && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {certificates.length > 0 ? (
-                  certificates.map((cert) => (
-                    <div key={cert.id}
-                         className="bg-warning-50/40 dark:bg-warning-950/20 rounded-lg shadow-[var(--shadow-card)] p-6 border border-warning-200 dark:border-warning-800 hover:shadow-[var(--shadow-card-hover)] transition-shadow">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <div className="text-2xl mb-2" aria-label="Certificate">🏆</div>
-                          <h2 className="font-semibold text-lg text-[var(--text-primary)]">{cert.courseTitle}</h2>
-                          <div className="text-body-secondary mt-1">
-                            Certificate: {cert.certificateNumber}
-                          </div>
-                        </div>
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          cert.isActive ? 'bg-success-100 text-success-800 dark:bg-success-900/50 dark:text-success-300' : 'bg-[var(--bg-secondary)] text-[var(--text-primary)]'
-                        }`} aria-label={`Certificate status: ${cert.isActive ? 'Active' : 'Expired'}`}>
-                          {cert.isActive ? 'Active' : 'Expired'}
-                        </span>
-                      </div>
-                      <div className="mt-4 pt-4 border-t border-[var(--border-main)] grid grid-cols-2 gap-4 text-sm">
-                        <div>
-                          <div className="text-[var(--text-secondary)]">Issued</div>
-                          <div
-                            className="font-medium text-[var(--text-primary)]">{formatDate(cert.issuedAt)}</div>
-                        </div>
-                        {cert.expiryDate && (
-                          <div>
-                            <div className="text-[var(--text-secondary)]">Expires</div>
-                            <div
-                              className="font-medium text-[var(--text-primary)]">{formatDate(cert.expiryDate)}</div>
-                          </div>
-                        )}
-                        {cert.scoreAchieved && (
-                          <div>
-                            <div className="text-[var(--text-secondary)]">Score</div>
-                            <div className="font-medium text-[var(--text-primary)]">{cert.scoreAchieved}%</div>
-                          </div>
-                        )}
-                      </div>
-                      <div className="mt-4 flex gap-2">
-                        <Button variant="primary" size="sm">
-                          Download
-                        </Button>
-                        <Button variant="secondary" size="sm">
-                          Share
-                        </Button>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <div
-                    className="col-span-full bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)]">
-                    <EmptyState
-                      icon={<Award className="w-full h-full"/>}
-                      title="No certificates yet"
-                      description="Complete a course to earn your first certificate."
-                      actionLabel="Browse catalog"
-                      onAction={() => setActiveTab('catalog')}
-                    />
-                  </div>
-                )}
-              </div>
-            )}
-          </>
+        {/* Mandatory / overdue alert */}
+        {!certificatesLoading && dashboard && dashboard.inProgress > 0 && dashboard.averageProgress < 40 && (
+          <AttentionStrip count={dashboard.inProgress} />
         )}
+
+        {/* Hidden mount to retain enrollment mutation wiring for catalog tiles */}
+        <PermissionGate permission={Permissions.LMS_ENROLL}>
+          <span className="sr-only" aria-hidden="true">
+            {enrollMutation.isPending ? 'Enrolling…' : ''}
+          </span>
+        </PermissionGate>
       </div>
     </AppLayout>
+  );
+}
+
+// ── Header ───────────────────────────────────────────────────────────────────
+function PageHeader() {
+  return (
+    <motion.header
+      initial={{opacity: 0, y: 4}}
+      animate={{opacity: 1, y: 0}}
+      transition={{duration: 0.4, ease: EASE}}
+      className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-end"
+    >
+      <div className="space-y-2 max-w-2xl">
+        <p className="text-2xs font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">
+          Learning &amp; Development
+        </p>
+        <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-[var(--text-heading)] leading-[1.05]">
+          Build skills at your pace. Earn credit for the work.
+        </h1>
+        <p className="text-body-secondary max-w-[55ch]">
+          Courses, quizzes, certificates, and programs — everything you need to grow on the job.
+        </p>
+      </div>
+      <Link href="/learning/catalog" className="self-start sm:self-end">
+        <Button variant="primary">
+          <BookOpen className="mr-2 h-4 w-4" aria-hidden="true" />
+          Browse catalog
+        </Button>
+      </Link>
+    </motion.header>
+  );
+}
+
+// ── Stats row ────────────────────────────────────────────────────────────────
+function StatsRow({totalEnrollments, averageProgress, certificatesEarned, completed}: {
+  totalEnrollments: number;
+  averageProgress: number;
+  certificatesEarned: number;
+  completed: number;
+}) {
+  const items = [
+    {label: 'Courses enrolled', value: totalEnrollments, icon: BookOpen, tone: 'neutral' as const},
+    {label: 'Completion', value: `${averageProgress}%`, icon: TrendingUp, tone: 'neutral' as const},
+    {label: 'Certificates', value: certificatesEarned, icon: Award, tone: 'neutral' as const},
+    {label: 'Completed', value: completed, icon: CheckCircle2, tone: completed > 0 ? 'success' as const : 'neutral' as const},
+  ];
+
+  return (
+    <motion.section
+      initial="hidden"
+      animate="visible"
+      variants={{visible: {transition: {staggerChildren: 0.06, delayChildren: 0.08}}}}
+      aria-label="Learning at a glance"
+      className="grid grid-cols-2 sm:grid-cols-4 border-y border-[var(--border-subtle)] divide-x divide-[var(--border-subtle)]"
+    >
+      {items.map((item) => (
+        <motion.div
+          key={item.label}
+          variants={{hidden: {opacity: 0, y: 6}, visible: {opacity: 1, y: 0, transition: {duration: 0.4, ease: EASE}}}}
+          className="px-5 py-6 sm:px-7 sm:py-8 first:pl-0 last:pr-0"
+        >
+          <div className="flex items-center gap-2 text-[var(--text-muted)]">
+            <item.icon className="h-3.5 w-3.5" aria-hidden="true" />
+            <span className="text-2xs font-medium uppercase tracking-wider">{item.label}</span>
+          </div>
+          <p
+            className={`mt-3 font-mono text-3xl sm:text-4xl tabular-nums tracking-tight ${
+              item.tone === 'success' ? 'text-success-700 dark:text-success-300'
+                : 'text-[var(--text-heading)]'
+            }`}
+          >
+            {item.value}
+          </p>
+        </motion.div>
+      ))}
+    </motion.section>
+  );
+}
+
+function StatsSkeleton() {
+  return (
+    <div className="grid grid-cols-2 sm:grid-cols-4 border-y border-[var(--border-subtle)] divide-x divide-[var(--border-subtle)]">
+      {Array.from({length: 4}).map((_, i) => (
+        <div key={i} className="px-5 py-6 sm:px-7 sm:py-8 first:pl-0 last:pr-0">
+          <Skeleton className="h-3 w-24 rounded" />
+          <Skeleton className="mt-3 h-9 w-20 rounded" />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ── Bento navigation ─────────────────────────────────────────────────────────
+function BentoNavigation({featuredEnrollment, featuredCourseTitle, certificatesCount}: {
+  featuredEnrollment?: CourseEnrollment;
+  featuredCourseTitle?: string;
+  certificatesCount: number;
+}) {
+  const heroLabel = featuredEnrollment
+    ? `Continue learning: Course #${featuredEnrollment.courseId.slice(0, 8)}`
+    : featuredCourseTitle
+      ? `Start with: ${featuredCourseTitle}`
+      : 'Explore the catalog';
+
+  const heroDescription = featuredEnrollment
+    ? 'Pick up where you left off. Your progress is saved automatically.'
+    : 'Hand-picked courses, quizzes, and programs. Filter by skill, role, or duration.';
+
+  const heroHref = featuredEnrollment
+    ? `/learning/course/${featuredEnrollment.courseId}`
+    : '/learning/catalog';
+
+  const heroProgress = featuredEnrollment?.progressPercentage ?? 0;
+
+  const tiles = [
+    {
+      title: 'Course catalog',
+      description: 'Every published course, filtered by difficulty and duration.',
+      icon: BookOpen,
+      href: '/learning/catalog',
+    },
+    {
+      title: 'My courses',
+      description: 'Track progress across active and completed enrollments.',
+      icon: GraduationCap,
+      href: '/learning/my-courses',
+    },
+    {
+      title: 'Programs',
+      description: 'Structured learning paths that bundle courses by competency.',
+      icon: Layers,
+      href: '/learning/programs',
+    },
+    {
+      title: 'Certificates',
+      description: 'Download, share, and verify the credentials you have earned.',
+      icon: Award,
+      href: '/learning/certificates',
+      badge: certificatesCount > 0 ? certificatesCount : undefined,
+    },
+  ];
+
+  return (
+    <motion.section
+      initial="hidden"
+      animate="visible"
+      variants={{visible: {transition: {staggerChildren: 0.07, delayChildren: 0.18}}}}
+      className="grid gap-4 grid-cols-1 lg:grid-cols-12"
+      aria-label="Explore learning"
+    >
+      <BentoHero
+        title={heroLabel}
+        description={heroDescription}
+        href={heroHref}
+        progress={featuredEnrollment ? heroProgress : undefined}
+      />
+      {tiles.map((tile) => (
+        <BentoTile key={tile.href} {...tile} />
+      ))}
+    </motion.section>
+  );
+}
+
+function BentoHero({title, description, href, progress}: {
+  title: string;
+  description: string;
+  href: string;
+  progress?: number;
+}) {
+  return (
+    <motion.div
+      variants={{hidden: {opacity: 0, y: 8}, visible: {opacity: 1, y: 0, transition: {duration: 0.5, ease: EASE}}}}
+      className="lg:col-span-7 lg:row-span-2"
+    >
+      <Link
+        href={href}
+        className="group block h-full rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] p-7 sm:p-9 transition-all hover:border-[var(--border-main)] hover:shadow-[0_20px_40px_-15px_rgba(15,23,42,0.08)] active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
+      >
+        <div className="flex items-start justify-between">
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-accent-50 text-accent-700 dark:bg-accent-900/30 dark:text-accent-300">
+            <GraduationCap className="h-5 w-5" aria-hidden="true" />
+          </div>
+          <ArrowRight className="h-4 w-4 text-[var(--text-muted)] transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+        </div>
+        <h2 className="mt-8 text-2xl sm:text-3xl font-semibold tracking-tight text-[var(--text-heading)]">
+          {title}
+        </h2>
+        <p className="mt-3 text-body-secondary max-w-[48ch]">
+          {description}
+        </p>
+        <div className="mt-10 flex items-end justify-between gap-6">
+          <BentoHeroBars progress={progress} />
+          <p className="text-2xs font-medium uppercase tracking-[0.18em] text-[var(--text-muted)]">
+            {progress !== undefined ? `${Math.round(progress)}% complete` : 'Live catalog'}
+          </p>
+        </div>
+      </Link>
+    </motion.div>
+  );
+}
+
+function BentoHeroBars({progress}: {progress?: number}) {
+  const widths = progress !== undefined
+    ? Array.from({length: 8}, (_, i) => {
+        const filled = Math.round((progress / 100) * 8);
+        return i < filled ? 78 : 28;
+      })
+    : [42, 78, 63, 91, 55, 70, 38, 84];
+
+  return (
+    <div className="flex items-end gap-1.5 h-16 flex-1" aria-hidden="true">
+      {widths.map((w, i) => (
+        <motion.span
+          key={i}
+          initial={{height: '0%'}}
+          animate={{height: `${w}%`}}
+          transition={{duration: 0.7, ease: EASE, delay: 0.35 + i * 0.04}}
+          className="flex-1 max-w-3 rounded-sm bg-gradient-to-t from-accent-100 to-accent-300 dark:from-accent-900/60 dark:to-accent-700/80"
+        />
+      ))}
+    </div>
+  );
+}
+
+function BentoTile({title, description, icon: Icon, href, badge}: {
+  title: string;
+  description: string;
+  icon: React.ElementType;
+  href: string;
+  badge?: number;
+}) {
+  return (
+    <motion.div
+      variants={{hidden: {opacity: 0, y: 8}, visible: {opacity: 1, y: 0, transition: {duration: 0.4, ease: EASE}}}}
+      className="lg:col-span-5"
+    >
+      <Link
+        href={href}
+        className="group flex h-full items-start gap-4 rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] p-5 sm:p-6 transition-all hover:border-[var(--border-main)] hover:shadow-[0_12px_30px_-12px_rgba(15,23,42,0.07)] active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
+      >
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[var(--bg-surface)] border border-[var(--border-subtle)] text-[var(--text-secondary)]">
+          <Icon className="h-4 w-4" aria-hidden="true" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center justify-between gap-3">
+            <h3 className="text-base font-semibold text-[var(--text-heading)]">{title}</h3>
+            {badge !== undefined && (
+              <span className="inline-flex items-center justify-center min-w-6 px-2 h-5 text-2xs font-semibold rounded-full bg-accent-100 text-accent-700 dark:bg-accent-900/40 dark:text-accent-300">
+                {badge}
+              </span>
+            )}
+          </div>
+          <p className="mt-1 text-sm text-[var(--text-secondary)] leading-relaxed">{description}</p>
+        </div>
+        <ArrowRight className="h-4 w-4 self-center text-[var(--text-muted)] transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+      </Link>
+    </motion.div>
+  );
+}
+
+// ── In-progress courses (divide-y list) ──────────────────────────────────────
+function InProgressList({items}: {items: CourseEnrollment[]}) {
+  return (
+    <motion.section
+      initial={{opacity: 0, y: 6}}
+      animate={{opacity: 1, y: 0}}
+      transition={{duration: 0.45, ease: EASE, delay: 0.32}}
+      className="space-y-4"
+    >
+      <div className="flex items-end justify-between gap-4">
+        <h2 className="text-xl font-semibold tracking-tight text-[var(--text-heading)]">
+          In progress
+        </h2>
+        <Link
+          href="/learning/my-courses"
+          className="inline-flex items-center gap-1 text-sm font-medium text-accent-700 dark:text-accent-300 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded"
+        >
+          View all
+          <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+        </Link>
+      </div>
+      <ul className="divide-y divide-[var(--border-subtle)] border-y border-[var(--border-subtle)]">
+        {items.map((e) => {
+          const pct = Math.round(e.progressPercentage ?? 0);
+          return (
+            <li key={e.id} className="grid grid-cols-[auto_1fr_auto_auto] items-center gap-4 py-4 sm:gap-6">
+              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-accent-50 text-accent-700 dark:bg-accent-900/30 dark:text-accent-300">
+                <BookOpen className="h-4 w-4" aria-hidden="true" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-sm font-medium text-[var(--text-heading)] truncate">
+                  Course #{e.courseId.slice(0, 8)}
+                </p>
+                <p className="text-xs text-[var(--text-secondary)] truncate">
+                  Enrolled {formatDate(e.enrolledAt)}
+                  {e.lastAccessedAt ? ` · last opened ${formatDate(e.lastAccessedAt)}` : ''}
+                </p>
+              </div>
+              <p className="font-mono text-sm font-semibold tabular-nums text-[var(--text-heading)]">
+                {pct}%
+              </p>
+              <Link href={`/learning/course/${e.courseId}`}>
+                <Button variant="outline" size="sm">
+                  {e.status === 'COMPLETED' ? 'Review' : 'Continue'}
+                  <ArrowRight className="ml-1.5 h-3.5 w-3.5" aria-hidden="true" />
+                </Button>
+              </Link>
+            </li>
+          );
+        })}
+      </ul>
+    </motion.section>
+  );
+}
+
+function InProgressSkeleton() {
+  return (
+    <div className="space-y-4">
+      <Skeleton className="h-6 w-32 rounded" />
+      <div className="divide-y divide-[var(--border-subtle)] border-y border-[var(--border-subtle)]">
+        {Array.from({length: 3}).map((_, i) => (
+          <div key={i} className="grid grid-cols-[auto_1fr_auto] items-center gap-4 py-4">
+            <Skeleton className="h-9 w-9 rounded-full" />
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-48 rounded" />
+              <Skeleton className="h-3 w-32 rounded" />
+            </div>
+            <Skeleton className="h-8 w-20 rounded" />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ── Attention strip ──────────────────────────────────────────────────────────
+function AttentionStrip({count}: {count: number}) {
+  return (
+    <motion.aside
+      initial={{opacity: 0, y: 6}}
+      animate={{opacity: 1, y: 0}}
+      transition={{duration: 0.45, ease: EASE, delay: 0.42}}
+      role="status"
+      aria-live="polite"
+      className="flex items-center justify-between gap-4 rounded-xl border border-warning-200 bg-warning-50/40 dark:border-warning-700/40 dark:bg-warning-950/30 px-5 py-4"
+    >
+      <div className="flex items-center gap-3 text-sm">
+        <AlertTriangle className="h-4 w-4 shrink-0 text-warning-600 dark:text-warning-400" aria-hidden="true" />
+        <p className="text-[var(--text-primary)]">
+          <span className="font-semibold">{count}</span>{' '}
+          {count === 1 ? 'course is' : 'courses are'} still in progress with low completion. Spend 15 minutes today to keep momentum.
+        </p>
+      </div>
+      <Link href="/learning/my-courses">
+        <Button variant="outline" size="sm">
+          Resume
+          <ArrowRight className="ml-1.5 h-3.5 w-3.5" aria-hidden="true" />
+        </Button>
+      </Link>
+    </motion.aside>
+  );
+}
+
+// ── Error banner ─────────────────────────────────────────────────────────────
+function ErrorBanner({message}: {message: string}) {
+  return (
+    <div role="alert" className="flex items-center gap-4 rounded-xl border border-danger-200 bg-danger-50/40 dark:border-danger-700/40 dark:bg-danger-950/30 px-5 py-4">
+      <AlertTriangle className="h-4 w-4 shrink-0 text-danger-600 dark:text-danger-400" aria-hidden="true" />
+      <div className="flex-1 text-sm">
+        <p className="font-medium text-danger-700 dark:text-danger-300">Could not load data</p>
+        <p className="text-[var(--text-secondary)]">{message}</p>
+      </div>
+    </div>
   );
 }
