@@ -81,7 +81,7 @@ export function CalloutPanel({
   return (
     <div
       className={`
-        border-l-4 ${config.borderClass} ${config.bgClass}
+        border ${config.borderClass} ${config.bgClass}
         rounded-md p-4 ${className}
       `}
       role="note"

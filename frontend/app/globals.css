@@ -37,14 +37,14 @@
     --nu-gradient-dark: linear-gradient(135deg, #0e1528, #1a2340);
     --nu-gradient-brand: linear-gradient(to right, #ED3027, #7B469B);
 
-    /* ── Surface Hierarchy (Clean whites) ──────────────────────── */
+    /* ── Surface Hierarchy (cool-tinted neutrals, never pure #fff) ─ */
     --bg-main: #F5F7FA;
-    --bg-surface: #ffffff;
-    --bg-elevated: #ffffff;
-    --bg-card: #ffffff;
+    --bg-surface: #fcfdff;
+    --bg-elevated: #fcfdff;
+    --bg-card: #fcfdff;
     --bg-card-hover: #f0f2f7;
     --bg-page: #F5F7FA;
-    --bg-input: #ffffff;
+    --bg-input: #fcfdff;
     --bg-sidebar: #0E111A;
     --bg-overlay: rgba(14, 17, 26, 0.40);
     --surface-2: #f0f2f7;
@@ -132,7 +132,7 @@
     --header-divider: #eceef5;
 
     /* ── Dropdown ────────────────────────────────────────────── */
-    --dropdown-bg: #ffffff;
+    --dropdown-bg: #fcfdff;
     --dropdown-border: #eceef5;
     --dropdown-hover: #f0f2f7;
     --dropdown-text: #1c2033;
@@ -166,7 +166,7 @@
     --chart-accent: #93c5fd;
     --chart-muted: #b8bccf;
     --chart-grid: #eceef5;
-    --chart-tooltip-bg: #ffffff;
+    --chart-tooltip-bg: #fcfdff;
     --chart-tooltip-border: #dfe2ed;
     --chart-tooltip-text: #1c2033;
   }

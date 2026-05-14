@@ -432,10 +432,10 @@ export default function AnnouncementsPage() {
                       animate={{opacity: 1, y: 0}}
                       transition={{delay: index * 0.05}}
                       onClick={() => handleAnnouncementClick(announcement)}
-                      className={`card-interactive p-6 cursor-pointer group border-l-4 ${
+                      className={`card-interactive p-6 cursor-pointer group ${
                         announcement.isRead
-                          ? 'border-l-[var(--border-main)]'
-                          : 'border-l-accent-600'
+                          ? ''
+                          : 'border-accent-200 bg-accent-50/30 dark:border-accent-700/40 dark:bg-accent-950/15'
                       }`}
                     >
                       <div className="flex items-start gap-4">

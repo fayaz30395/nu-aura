@@ -321,7 +321,7 @@ export default function HolidaysPage() {
 
         {/* Upcoming Holidays Banner */}
         {upcomingHolidays.length > 0 && (
-          <div className="card-aura p-4 mb-6 border-l-4 border-l-accent-500">
+          <div className="card-aura p-4 mb-6 border-accent-200 bg-accent-50/30 dark:border-accent-700/40 dark:bg-accent-950/20">
             <h2 className="text-card-title text-[var(--text-primary)] mb-2">Coming Up</h2>
             <div className="flex flex-wrap gap-4">
               {upcomingHolidays.slice(0, 3).map((h) => (

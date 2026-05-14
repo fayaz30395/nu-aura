@@ -475,7 +475,7 @@ export default function CoursePlayerPage() {
                           onClick={() => navigateTo(content.id)}
                           className={`w-full flex items-start gap-4 px-4 py-4 text-left transition-colors border-b border-[var(--border-main)] ${
                             isActive
-                              ? 'bg-accent-50 border-l-2 border-l-accent-600'
+                              ? 'bg-accent-50 dark:bg-accent-950/30'
                               : 'hover:bg-[var(--bg-surface)]'
                           }`}
                         >

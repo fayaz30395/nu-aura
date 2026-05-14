@@ -791,7 +791,7 @@ export function FeedCard({item, onDeleted, onUpdated}: FeedCardProps) {
   // ─── Default card layout (non-WALL_POST types) ─────────────────────
   return (
     <div
-      className={`rounded-lg border-l-2 ${colors.border} ${colors.bg} p-4 transition-colors hover:bg-[var(--bg-surface)] `}>
+      className={`rounded-lg border ${colors.border} ${colors.bg} p-4 transition-colors hover:bg-[var(--bg-surface)] `}>
       <div className="flex items-start gap-2.5">
         {/* Icon */}
         <div

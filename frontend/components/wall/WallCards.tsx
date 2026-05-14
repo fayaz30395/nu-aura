@@ -494,8 +494,8 @@ export function PraiseCard({
       <Card
         variant="default"
         className={cn(
-          'overflow-hidden border-l-4 border-l-warning-500 dark:border-l-warning-400',
-          'bg-gradient-to-br from-warning-50/50 to-warning-50/50 dark:from-warning-950/30 dark:to-warning-950/30'
+          'overflow-hidden border border-warning-200 dark:border-warning-700/50',
+          'bg-warning-50/60 dark:bg-warning-950/30'
         )}
       >
         <CardContent className="space-y-4">

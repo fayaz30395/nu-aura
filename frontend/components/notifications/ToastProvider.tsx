@@ -45,10 +45,10 @@ const toastIcons = {
 };
 
 const toastColors = {
-  success: 'bg-success-50 border-success-500 text-success-800 dark:bg-success-900/30 dark:border-success-400 dark:text-success-200',
-  error: 'bg-danger-50 border-danger-500 text-danger-800 dark:bg-danger-900/30 dark:border-danger-400 dark:text-danger-200',
-  info: 'bg-accent-50 border-accent-500 text-accent-800 dark:bg-accent-900/30 dark:border-accent-400 dark:text-accent-200',
-  warning: 'bg-warning-50 border-warning-500 text-warning-800 dark:bg-warning-900/30 dark:border-warning-400 dark:text-warning-200',
+  success: 'bg-success-50 border border-success-200 text-success-800 dark:bg-success-900/30 dark:border-success-700/50 dark:text-success-200',
+  error: 'bg-danger-50 border border-danger-200 text-danger-800 dark:bg-danger-900/30 dark:border-danger-700/50 dark:text-danger-200',
+  info: 'bg-accent-50 border border-accent-200 text-accent-800 dark:bg-accent-900/30 dark:border-accent-700/50 dark:text-accent-200',
+  warning: 'bg-warning-50 border border-warning-200 text-warning-800 dark:bg-warning-900/30 dark:border-warning-700/50 dark:text-warning-200',
 };
 
 const iconColors = {
@@ -71,7 +71,7 @@ const ToastItem: React.FC<{ toast: Toast; onRemove: () => void }> = ({toast, onR
   return (
     <div
       className={`
-        flex items-start gap-4 p-4 rounded-lg border-l-4 shadow-[var(--shadow-dropdown)]
+        flex items-start gap-4 p-4 rounded-lg shadow-[var(--shadow-dropdown)]
         animate-in slide-in-from-right fade-in duration-300
         ${toastColors[toast.type]}
       `}

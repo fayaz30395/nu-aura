@@ -68,8 +68,9 @@ export const SkillGapAnalysis: React.FC<SkillGapAnalysisProps> = ({employeeId}) 
       <div className="grid gap-4">
         {report.gaps.map((gap, index) => (
           <Card key={index}
-                className={`overflow-hidden border-l-4 ${gap.gapLevel === 'CRITICAL' ? 'border-l-danger-500' :
-                  gap.gapLevel === 'MODERATE' ? 'border-l-warning-500' : 'border-l-accent-500'
+                className={`overflow-hidden border ${gap.gapLevel === 'CRITICAL' ? 'border-danger-200 bg-danger-50/40 dark:border-danger-700/50 dark:bg-danger-950/20' :
+                  gap.gapLevel === 'MODERATE' ? 'border-warning-200 bg-warning-50/40 dark:border-warning-700/50 dark:bg-warning-950/20' :
+                    'border-accent-200 bg-accent-50/40 dark:border-accent-700/50 dark:bg-accent-950/20'
                 }`}>
             <CardContent className="p-6">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
