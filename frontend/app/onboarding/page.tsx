@@ -44,7 +44,10 @@ export default function OnboardingPage() {
   );
 
   const {data, isLoading, isError, error, refetch} = useOnboardingProcesses(0, 100);
-  const processes: OnboardingProcess[] = data?.content ?? [];
+  // Memoised so the derived useMemo hooks below don't churn every render
+  // when `data` is undefined and the fallback `[]` would be a new array each
+  // time. Keeps `processes` referentially stable while data is loading.
+  const processes: OnboardingProcess[] = useMemo(() => data?.content ?? [], [data]);
 
   const stats = useMemo(() => {
     const now = new Date();
