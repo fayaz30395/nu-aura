@@ -24,6 +24,12 @@ spring:
       connection-timeout: 30000
       idle-timeout: 120000
       max-lifetime: 240000
+      # Neon serverless auto-suspends idle compute, closing JDBC connections
+      # under Hikari's feet. A 30s keepalive query keeps connections warm so
+      # Hikari never hands out a dead socket; without this, an idle dev
+      # session bricks the pool until the app restarts.
+      keepalive-time: 30000
+      connection-test-query: SELECT 1
 
   data:
     redis:
