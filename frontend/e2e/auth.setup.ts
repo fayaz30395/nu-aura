@@ -6,21 +6,37 @@ const authFile = 'playwright/.auth/user.json';
 /**
  * Authentication Setup
  *
- * Runs once before all tests and stores authentication state.
- * Uses the demo account button click flow (NEXT_PUBLIC_DEMO_MODE=true required).
- * Authenticates as SUPER_ADMIN (fayaz.m@nulogic.io) for broadest permission coverage.
+ * Runs once before all tests and stores authentication state. Uses the
+ * email + password form path rather than the demo-account button: the
+ * demo panel is only rendered when NEXT_PUBLIC_DEMO_MODE=true is set at
+ * BUILD time (it's a webpack DefinePlugin replacement, not a runtime
+ * env), and CI / production builds drop it from the bundle. The form
+ * path works under every build flavour as long as the user exists with
+ * the demo password seeded on the target tenant.
+ *
+ * Authenticates as SUPER_ADMIN (fayaz.m@nulogic.io) for broadest
+ * permission coverage downstream.
  */
 setup('authenticate', async ({page}) => {
-  setup.setTimeout(240000); // Bumped 120s → 240s for dev-mode first-compile (~30-50s/page)
+  setup.setTimeout(240000); // bumped for dev-mode first-compile + bcrypt + Neon RTT
 
   const defaultUser = demoUsers.superAdmin;
 
   await page.goto('/auth/login');
   await page.waitForLoadState('networkidle', {timeout: 60000});
 
-  const demoButton = page.locator('button').filter({hasText: defaultUser.name});
-  await expect(demoButton).toBeVisible({timeout: 30000});
-  await demoButton.click();
+  // Expand the email form (it sits behind a "Sign in with Email" toggle
+  // under DEMO_MODE; under prod-style builds the form is the default and
+  // the toggle is absent, in which case this is a no-op).
+  const toggle = page.locator('button:has-text("Sign in with Email")');
+  if (await toggle.isVisible().catch(() => false)) {
+    await toggle.click();
+  }
+
+  await page.locator('input[type="email"]').waitFor({state: 'visible', timeout: 30000});
+  await page.locator('input[type="email"]').fill(defaultUser.email);
+  await page.locator('input[type="password"]').fill(defaultUser.password);
+  await page.locator('button[type="submit"]').click();
 
   try {
     await page.waitForURL('**/dashboard', {timeout: 90000});
