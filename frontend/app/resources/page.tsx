@@ -329,7 +329,7 @@ function BentoTile({title, description, icon: Icon, href, badge}: {
           <Icon className="h-4.5 w-4.5" aria-hidden="true" />
         </div>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center justify-between gap-4">
             <h3 className="text-base font-semibold text-[var(--text-heading)]">{title}</h3>
             {badge !== undefined && (
               <span className="inline-flex items-center justify-center min-w-6 px-2 h-5 text-2xs font-semibold rounded-full bg-danger-100 text-danger-700 dark:bg-danger-900/40 dark:text-danger-300">
@@ -408,7 +408,7 @@ function AttentionStrip({count}: {count: number}) {
       aria-live="polite"
       className="flex items-center justify-between gap-4 rounded-xl border border-danger-200 bg-danger-50/40 dark:border-danger-700/40 dark:bg-danger-950/30 px-5 py-4"
     >
-      <div className="flex items-center gap-3 text-sm">
+      <div className="flex items-center gap-4 text-sm">
         <AlertTriangle className="h-4 w-4 shrink-0 text-danger-600 dark:text-danger-400" aria-hidden="true" />
         <p className="text-[var(--text-primary)]">
           <span className="font-semibold">{count}</span>{' '}
@@ -450,14 +450,14 @@ function ApiUnavailable({onRetry}: {onRetry: () => void}) {
       </div>
       <div className="space-y-2">
         <h1 className="text-2xl font-semibold tracking-tight text-[var(--text-heading)]">
-          Resource Management API isn't online yet
+          Resource Management API isn&apos;t online yet
         </h1>
         <p className="text-body-secondary max-w-[60ch] mx-auto">
           The backend endpoints that power workload heatmaps, capacity, and availability are not yet
           deployed. Once they are reachable this page will populate automatically.
         </p>
       </div>
-      <div className="flex items-center justify-center gap-3">
+      <div className="flex items-center justify-center gap-4">
         <Button variant="outline" onClick={onRetry}>
           <RefreshCw className="mr-1.5 h-3.5 w-3.5" aria-hidden="true" />
           Retry connection

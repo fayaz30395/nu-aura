@@ -173,7 +173,7 @@ function PageHeader({canRequest, onApply}: {canRequest: boolean; onApply: () => 
           Your leave, balances, and approvals in one quiet view.
         </h1>
         <p className="text-body-secondary max-w-[55ch]">
-          Plan time off without surprises. Track what you have, what you've used, and what's waiting on a decision.
+          Plan time off without surprises. Track what you have, what you&apos;ve used, and what&apos;s waiting on a decision.
         </p>
       </div>
       {canRequest && (
@@ -472,7 +472,7 @@ function BentoTile({
           <Icon className="h-4 w-4" aria-hidden="true" />
         </div>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center justify-between gap-4">
             <h3 className="text-base font-semibold text-[var(--text-heading)]">{title}</h3>
             {badge !== undefined && (
               <span className="inline-flex items-center justify-center min-w-6 px-2 h-5 text-2xs font-semibold rounded-full bg-warning-100 text-warning-700 dark:bg-warning-900/40 dark:text-warning-300">
@@ -636,7 +636,7 @@ function BalanceByType({
                     </span>
                   )}
                 </div>
-                <div className="mt-2 flex items-center gap-3">
+                <div className="mt-2 flex items-center gap-4">
                   <div
                     className="h-1.5 w-40 sm:w-64 rounded-full bg-[var(--bg-surface)] overflow-hidden"
                     role="progressbar"
@@ -683,7 +683,7 @@ function AttentionStrip({available}: {available: number}) {
       aria-live="polite"
       className="flex items-center justify-between gap-4 rounded-xl border border-warning-200 bg-warning-50/40 dark:border-warning-700/40 dark:bg-warning-950/30 px-5 py-4"
     >
-      <div className="flex items-center gap-3 text-sm">
+      <div className="flex items-center gap-4 text-sm">
         <AlertTriangle
           className="h-4 w-4 shrink-0 text-warning-600 dark:text-warning-400"
           aria-hidden="true"

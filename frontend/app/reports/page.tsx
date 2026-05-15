@@ -354,7 +354,7 @@ function BentoTile({report, onSelect}: {
           <Icon className="h-4 w-4" aria-hidden="true" />
         </div>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center justify-between gap-4">
             <h3 className="text-base font-semibold text-[var(--text-heading)] truncate">{report.title}</h3>
             <span className="text-2xs font-medium uppercase tracking-wider text-[var(--text-muted)] shrink-0">
               {report.category}
@@ -408,7 +408,7 @@ function TipsStrip() {
       </div>
       <ul className="divide-y divide-[var(--border-subtle)] border-y border-[var(--border-subtle)]">
         {tips.map((tip, i) => (
-          <li key={i} className="grid grid-cols-[auto_1fr] items-center gap-4 py-3 sm:gap-6">
+          <li key={i} className="grid grid-cols-[auto_1fr] items-center gap-4 py-4 sm:gap-6">
             <span className="font-mono text-2xs font-semibold tabular-nums text-[var(--text-muted)] w-6">
               {String(i + 1).padStart(2, '0')}
             </span>
@@ -430,7 +430,7 @@ function SuccessStrip({message}: {message: string}) {
       transition={{duration: 0.35, ease: EASE}}
       role="status"
       aria-live="polite"
-      className="flex items-center gap-3 rounded-xl border border-success-200 bg-success-50/40 dark:border-success-700/40 dark:bg-success-950/30 px-5 py-3"
+      className="flex items-center gap-4 rounded-xl border border-success-200 bg-success-50/40 dark:border-success-700/40 dark:bg-success-950/30 px-5 py-4"
     >
       <Check className="h-4 w-4 shrink-0 text-success-600 dark:text-success-400" aria-hidden="true" />
       <p className="text-sm text-[var(--text-primary)]">{message}</p>
@@ -497,7 +497,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({report, onClose, onDownloa
           <label className="block text-sm font-medium text-[var(--text-secondary)] mb-4">
             Export Format
           </label>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-3 gap-4">
             {formats.map((f) => {
               const FIcon = f.icon;
               const selected = format === f.value;
@@ -569,13 +569,13 @@ const DownloadModal: React.FC<DownloadModalProps> = ({report, onClose, onDownloa
         {error && (
           <div
             role="alert"
-            className="flex items-center gap-3 rounded-xl border border-danger-200 bg-danger-50/40 dark:border-danger-700/40 dark:bg-danger-950/30 px-4 py-3 text-sm text-danger-700 dark:text-danger-300"
+            className="flex items-center gap-4 rounded-xl border border-danger-200 bg-danger-50/40 dark:border-danger-700/40 dark:bg-danger-950/30 px-4 py-4 text-sm text-danger-700 dark:text-danger-300"
           >
             {error}
           </div>
         )}
       </ModalBody>
-      <ModalFooter className="gap-3">
+      <ModalFooter className="gap-4">
         <Button variant="outline" onClick={onClose} className="flex-1">
           Cancel
         </Button>

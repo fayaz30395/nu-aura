@@ -466,7 +466,7 @@ function BentoTile({title, description, icon: Icon, href, badge}: {
           <Icon className="h-4 w-4" aria-hidden="true"/>
         </div>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center justify-between gap-4">
             <h3 className="text-base font-semibold text-[var(--text-heading)]">{title}</h3>
             {badge !== undefined && (
               <span className="inline-flex items-center justify-center min-w-6 px-2 h-5 text-2xs font-semibold rounded-full bg-warning-100 text-warning-700 dark:bg-warning-900/40 dark:text-warning-300">
@@ -600,7 +600,7 @@ function OffersAlert({count}: {count: number}) {
       aria-live="polite"
       className="flex items-center justify-between gap-4 rounded-xl border border-warning-200 bg-warning-50/40 dark:border-warning-700/40 dark:bg-warning-950/30 px-5 py-4"
     >
-      <div className="flex items-center gap-3 text-sm">
+      <div className="flex items-center gap-4 text-sm">
         <AlertTriangle className="h-4 w-4 shrink-0 text-warning-600 dark:text-warning-400" aria-hidden="true"/>
         <p className="text-[var(--text-primary)]">
           <span className="font-semibold">{count}</span>{' '}

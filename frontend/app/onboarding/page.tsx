@@ -410,7 +410,7 @@ function AttentionStrip({count}: {count: number}) {
       aria-live="polite"
       className="flex items-center justify-between gap-4 rounded-xl border border-danger-200 bg-danger-50/40 dark:border-danger-700/40 dark:bg-danger-950/30 px-5 py-4"
     >
-      <div className="flex items-center gap-3 text-sm">
+      <div className="flex items-center gap-4 text-sm">
         <Clock className="h-4 w-4 shrink-0 text-danger-600 dark:text-danger-400" aria-hidden="true" />
         <p className="text-[var(--text-primary)]">
           <span className="font-semibold">{count}</span>{' '}

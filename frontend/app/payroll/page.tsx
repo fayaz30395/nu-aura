@@ -485,7 +485,7 @@ function CycleAlert({run}: {run: PayrollRun}) {
       aria-live="polite"
       className="flex items-center justify-between gap-4 rounded-xl border border-warning-200 bg-warning-50/40 dark:border-warning-700/40 dark:bg-warning-950/30 px-5 py-4"
     >
-      <div className="flex items-center gap-3 text-sm">
+      <div className="flex items-center gap-4 text-sm">
         <CheckCircle2 className="h-4 w-4 shrink-0 text-warning-600 dark:text-warning-400" aria-hidden="true" />
         <p className="text-[var(--text-primary)]">
           <span className="font-semibold">{run.runName}</span> is a draft.{' '}

@@ -61,7 +61,7 @@ export const AppLandingHero: React.FC<AppLandingHeroProps> = ({
         </div>
       </div>
 
-      <div className="space-y-3 max-w-2xl">
+      <div className="space-y-4 max-w-2xl">
         {eyebrow && (
           <p className="text-2xs font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">
             {eyebrow}
@@ -77,7 +77,7 @@ export const AppLandingHero: React.FC<AppLandingHeroProps> = ({
 
       {comingSoon && (
         <div
-          className="inline-flex items-center gap-2 rounded-full bg-accent-50 px-3 py-1.5 text-xs font-medium text-accent-700 dark:bg-accent-900/30 dark:text-accent-300"
+          className="inline-flex items-center gap-2 rounded-full bg-accent-50 px-4 py-1.5 text-xs font-medium text-accent-700 dark:bg-accent-900/30 dark:text-accent-300"
         >
           <Clock className="h-3.5 w-3.5" aria-hidden="true"/>
           Coming Soon (Phase 2)
