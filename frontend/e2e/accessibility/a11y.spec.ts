@@ -65,17 +65,23 @@ test.describe('Accessibility Tests', () => {
       await page.goto('/dashboard');
       await page.waitForLoadState('networkidle');
 
-      // Check for main landmark
+      // AuthGuard restores the session asynchronously (calls /auth/me, ~5s
+      // against Neon + bcrypt + dev Next.js HMR overhead). AppLayout only
+      // mounts <main>/<nav>/<header> AFTER restoration succeeds, so the
+      // default 10s assertion timeout is sometimes tight in dev mode.
+      // Pin a generous timeout so the assertion waits for the restored
+      // shell rather than failing on the brief Suspense fallback that
+      // contains no landmarks.
+      const ASSERT_TIMEOUT = 30_000;
+
       const mainLandmark = page.locator('main, [role="main"]');
-      await expect(mainLandmark.first()).toBeVisible();
+      await expect(mainLandmark.first()).toBeVisible({timeout: ASSERT_TIMEOUT});
 
-      // Check for navigation landmark
       const navLandmark = page.locator('nav, [role="navigation"]');
-      await expect(navLandmark.first()).toBeVisible();
+      await expect(navLandmark.first()).toBeVisible({timeout: ASSERT_TIMEOUT});
 
-      // Check for header/banner
       const header = page.locator('header, [role="banner"]');
-      await expect(header.first()).toBeVisible();
+      await expect(header.first()).toBeVisible({timeout: ASSERT_TIMEOUT});
     });
   });
 

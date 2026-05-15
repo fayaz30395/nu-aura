@@ -60,6 +60,14 @@ export function AuthGuard({
   const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
   const [isRestoringSession, setIsRestoringSession] = useState(false);
   const restoreAttemptedRef = useRef(false);
+  // Mirror of isRestoringSession in a ref so the effect can read it
+  // synchronously between StrictMode-driven double-fires in dev. Without
+  // this, the second effect run sees `restoreAttemptedRef.current === true`
+  // (refs persist) but `isRestoringSession === false` (state batch hasn't
+  // applied yet) and falls into the redirect-to-login branch BEFORE the
+  // in-flight restoreSession() resolves, even when the auth cookies and
+  // /auth/me are perfectly valid.
+  const isRestoringRef = useRef(false);
   const redirectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -90,10 +98,18 @@ export function AuthGuard({
     // would deadlock — isReady waits for user, but restoreSession (which sets user)
     // would never be called.
     if (!isAuthenticated || (isAuthenticated && !user)) {
-      if (!restoreAttemptedRef.current && !isRestoringSession) {
+      // Use the ref mirror (isRestoringRef) for the in-flight check rather than
+      // the useState value, because React 18 StrictMode dev re-fires effects
+      // synchronously and useState updates land on the next render — so the
+      // second effect run would see `isRestoringSession === false` even though
+      // the restore promise is still in flight, and fall into the redirect
+      // branch below.
+      if (!restoreAttemptedRef.current && !isRestoringRef.current) {
         restoreAttemptedRef.current = true;
+        isRestoringRef.current = true;
         setIsRestoringSession(true);
         restoreSession().then((restored) => {
+          isRestoringRef.current = false;
           setIsRestoringSession(false);
           if (!restored) {
             // Cookie is truly expired/invalid — redirect to login.
@@ -118,7 +134,7 @@ export function AuthGuard({
           }
           // If restored, the isAuthenticated state change will re-trigger this effect
         });
-      } else if (restoreAttemptedRef.current && !isRestoringSession) {
+      } else if (restoreAttemptedRef.current && !isRestoringRef.current) {
         // Restore was already attempted and failed — redirect to login
         const returnUrl = encodeURIComponent(pathname);
         const loginUrl = `/auth/login?returnUrl=${returnUrl}`;
