@@ -43,8 +43,14 @@ public class TenantStatusCache {
      * empty result is NOT cached so a missing tenant cannot be replayed
      * after deletion.
      */
+    // SpEL note: this project's cache layer (`CacheConfig`) unwraps `Optional`
+    // before SpEL sees `#result`, so the predicate runs against a `Tenant` (or
+    // `null`), NOT an `Optional<Tenant>`. Calling `.isPresent()` here throws
+    // `EL1004E: Method isPresent() cannot be found on type Tenant`, which then
+    // 500s every `/auth/me` call and brings the AuthGuard down with it.
+    // `#result == null` is the right check post-unwrap.
     @Cacheable(value = "tenantStatus", key = "#tenantId",
-            unless = "#result == null or !#result.isPresent()")
+            unless = "#result == null")
     public Optional<Tenant> findById(UUID tenantId) {
         return tenantRepository.findById(tenantId);
     }
