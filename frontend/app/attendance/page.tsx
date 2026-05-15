@@ -257,9 +257,9 @@ function PageHeader({userName, streak, now}: {userName: string | undefined; stre
           Punch in, manage regularizations, swap shifts, and see how the team is tracking — all from one place.
         </p>
       </div>
-      <div className="flex items-center gap-3 self-start sm:self-end">
+      <div className="flex items-center gap-4 self-start sm:self-end">
         {streak > 0 && (
-          <div className="inline-flex items-center gap-2 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-card)] px-3 py-2">
+          <div className="inline-flex items-center gap-2 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-card)] px-4 py-2">
             <Timer className="h-4 w-4 text-warning-500" aria-hidden="true" />
             <span className="font-mono text-sm font-semibold tabular-nums text-[var(--text-heading)]">{streak}</span>
             <span className="text-2xs font-medium uppercase tracking-wider text-[var(--text-muted)]">day streak</span>
@@ -670,7 +670,7 @@ function LateAttentionStrip({todayRecord}: {todayRecord: AttendanceRecord | null
       aria-live="polite"
       className="flex items-center justify-between gap-4 rounded-xl border border-warning-200 bg-warning-50/40 dark:border-warning-700/40 dark:bg-warning-950/30 px-5 py-4"
     >
-      <div className="flex items-center gap-3 text-sm">
+      <div className="flex items-center gap-4 text-sm">
         <AlertTriangle className="h-4 w-4 shrink-0 text-warning-600 dark:text-warning-400" aria-hidden="true" />
         <p className="text-[var(--text-primary)]">
           You checked in <span className="font-semibold">{lateByMinutes}m</span> past the grace window. File a regularization if this was approved.

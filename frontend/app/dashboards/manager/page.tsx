@@ -285,7 +285,7 @@ function PageHeader({departmentName, healthStatus}: {departmentName: string; hea
           Track attendance, goals, approvals, and project allocations across your team.
         </p>
       </div>
-      <div className={`inline-flex items-center gap-2 rounded-xl border px-3 py-1.5 text-xs font-semibold self-start sm:self-end ${healthTone}`}>
+      <div className={`inline-flex items-center gap-2 rounded-xl border px-4 py-1.5 text-xs font-semibold self-start sm:self-end ${healthTone}`}>
         <Activity className="h-3.5 w-3.5" aria-hidden="true"/>
         <span>Health: {healthStatus ? healthStatus.replace(/_/g, ' ') : '—'}</span>
       </div>
@@ -486,7 +486,7 @@ function BentoTile({title, description, icon: Icon, badge, children}: {
             <Icon className="h-4 w-4" aria-hidden="true"/>
           </div>
           <div className="flex-1 min-w-0">
-            <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center justify-between gap-4">
               <h3 className="text-base font-semibold text-[var(--text-heading)]">{title}</h3>
               {badge !== undefined && (
                 <span
@@ -523,7 +523,7 @@ function ActionItemMiniGrid({actionItems}: {
       {items.map((item) => (
         <div
           key={item.label}
-          className="flex items-center justify-between rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)]/50 px-3 py-2"
+          className="flex items-center justify-between rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)]/50 px-4 py-2"
         >
           <div className="flex items-center gap-2">
             <item.icon className="h-3.5 w-3.5 text-[var(--text-muted)]" aria-hidden="true"/>
@@ -671,7 +671,7 @@ function TeamProjectsSection({loading, error, data, onEmployee, onProject}: {
       {!loading && !error && data && data.teamMembers.length > 0 && (
         <ul className="divide-y divide-[var(--border-subtle)] border-y border-[var(--border-subtle)]">
           {data.teamMembers.map((member) => (
-            <li key={member.employeeId} className="py-5 space-y-3">
+            <li key={member.employeeId} className="py-5 space-y-4">
               <div className="grid grid-cols-[auto_1fr_auto] items-center gap-4">
                 <div className="flex h-9 w-9 items-center justify-center rounded-full bg-accent-50 text-accent-700 dark:bg-accent-900/30 dark:text-accent-300 font-semibold text-xs">
                   {member.employeeName?.charAt(0) ?? '?'}
@@ -688,7 +688,7 @@ function TeamProjectsSection({loading, error, data, onEmployee, onProject}: {
                     {member.designation} · {member.employeeCode}
                   </p>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-4">
                   {member.isOverAllocated && (
                     <span className="inline-flex items-center gap-1 rounded-full bg-danger-50 text-danger-700 dark:bg-danger-900/30 dark:text-danger-300 px-2 py-0.5 text-2xs font-semibold">
                       <AlertTriangle className="h-3 w-3"/>
@@ -714,9 +714,9 @@ function TeamProjectsSection({loading, error, data, onEmployee, onProject}: {
                   {member.projects.map((project: TeamMemberProjectAllocation) => (
                     <li
                       key={project.projectId}
-                      className="flex items-center justify-between gap-3 rounded-xl bg-[var(--bg-surface)]/50 hover:bg-[var(--bg-surface)] transition-colors px-3 py-2 group"
+                      className="flex items-center justify-between gap-4 rounded-xl bg-[var(--bg-surface)]/50 hover:bg-[var(--bg-surface)] transition-colors px-4 py-2 group"
                     >
-                      <div className="flex items-center gap-3 min-w-0">
+                      <div className="flex items-center gap-4 min-w-0">
                         <span
                           className={`h-2 w-2 rounded-full shrink-0 ${priorityDotColor[project.projectPriority] || 'bg-surface-400'}`}
                           aria-hidden="true"
@@ -736,7 +736,7 @@ function TeamProjectsSection({loading, error, data, onEmployee, onProject}: {
                           {project.projectStatus?.replace(/_/g, ' ') ?? '-'}
                         </Badge>
                       </div>
-                      <div className="flex items-center gap-3 text-xs text-[var(--text-secondary)] shrink-0">
+                      <div className="flex items-center gap-4 text-xs text-[var(--text-secondary)] shrink-0">
                         <span className="hidden sm:inline">{formatRole(project.role)}</span>
                         <span className="font-mono tabular-nums font-semibold text-[var(--text-heading)]">{project.allocationPercentage}%</span>
                       </div>
@@ -785,13 +785,13 @@ function PerformanceMetrics({
           <Target className="h-4 w-4 text-[var(--text-muted)]" aria-hidden="true"/>
           <h3 className="text-base font-semibold text-[var(--text-heading)]">Team goals</h3>
         </div>
-        <div className="mt-5 grid grid-cols-3 gap-3 border-y border-[var(--border-subtle)] divide-x divide-[var(--border-subtle)]">
+        <div className="mt-5 grid grid-cols-3 gap-4 border-y border-[var(--border-subtle)] divide-x divide-[var(--border-subtle)]">
           {[
             {label: 'On track', value: goalsOnTrack, tone: 'success' as const},
             {label: 'At risk', value: goalsAtRisk, tone: 'warning' as const},
             {label: 'Completed', value: goalsCompleted, tone: 'neutral' as const},
           ].map((g, i) => (
-            <div key={g.label} className={`py-4 ${i === 0 ? 'pl-0 pr-3' : i === 2 ? 'pl-3 pr-0' : 'px-3'}`}>
+            <div key={g.label} className={`py-4 ${i === 0 ? 'pl-0 pr-3' : i === 2 ? 'pl-3 pr-0' : 'px-4'}`}>
               <p className="text-2xs font-medium uppercase tracking-wider text-[var(--text-muted)]">{g.label}</p>
               <p className={`mt-1 font-mono text-2xl tabular-nums tracking-tight ${
                 g.tone === 'success' ? 'text-success-700 dark:text-success-300'
@@ -820,7 +820,7 @@ function PerformanceMetrics({
           <h3 className="text-base font-semibold text-[var(--text-heading)]">Engagement & feedback</h3>
         </div>
         <ul className="mt-5 divide-y divide-[var(--border-subtle)] border-y border-[var(--border-subtle)]">
-          <li className="grid grid-cols-[1fr_auto] items-center gap-3 py-4">
+          <li className="grid grid-cols-[1fr_auto] items-center gap-4 py-4">
             <div>
               <p className="text-sm font-medium text-[var(--text-heading)]">One-on-ones this month</p>
               <p className="text-xs text-[var(--text-secondary)]">
@@ -835,7 +835,7 @@ function PerformanceMetrics({
             </div>
             <p className="font-mono text-lg font-semibold tabular-nums text-[var(--text-heading)]">{oneOnOnesCompletedThisMonth}</p>
           </li>
-          <li className="grid grid-cols-[1fr_auto] items-center gap-3 py-4">
+          <li className="grid grid-cols-[1fr_auto] items-center gap-4 py-4">
             <div>
               <p className="text-sm font-medium text-[var(--text-heading)]">Average feedback score</p>
               {pendingFeedbackRequests > 0 && (
@@ -847,7 +847,7 @@ function PerformanceMetrics({
             </div>
             <p className="font-mono text-lg font-semibold tabular-nums text-[var(--text-heading)]">{avgFeedbackScore?.toFixed(1) ?? '—'}</p>
           </li>
-          <li className="grid grid-cols-[1fr_auto] items-center gap-3 py-4">
+          <li className="grid grid-cols-[1fr_auto] items-center gap-4 py-4">
             <p className="text-sm font-medium text-[var(--text-heading)]">Training completion</p>
             <p className="font-mono text-lg font-semibold tabular-nums text-[var(--text-heading)]">{trainingCompletionRate?.toFixed(0) ?? 0}%</p>
           </li>
@@ -875,7 +875,7 @@ function AlertsStrip({alerts}: {
           key={alert.id}
           className="flex items-center justify-between gap-4 rounded-xl border border-danger-200 bg-danger-50/40 dark:border-danger-700/40 dark:bg-danger-950/30 px-5 py-4"
         >
-          <div className="flex items-center gap-3 text-sm min-w-0">
+          <div className="flex items-center gap-4 text-sm min-w-0">
             <AlertTriangle className="h-4 w-4 shrink-0 text-danger-600 dark:text-danger-400" aria-hidden="true"/>
             <div className="min-w-0">
               <p className="text-[var(--text-primary)] truncate">

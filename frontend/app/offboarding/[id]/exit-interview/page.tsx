@@ -352,7 +352,7 @@ export default function ExitInterviewPage() {
                         {label: 'Compensation', value: interview.compensationRating},
                         {label: 'Team Culture', value: interview.teamCultureRating},
                       ].map((item) => (
-                        <div key={item.label} className="panel-inset p-3">
+                        <div key={item.label} className="panel-inset p-4">
                           <Text size="xs" c="dimmed" mb={4}>{item.label}</Text>
                           <Group gap="xs">
                             <Rating value={item.value ?? 0} readOnly size="sm"/>
@@ -448,7 +448,7 @@ export default function ExitInterviewPage() {
                           <Divider/>
                           <div>
                             <Text size="xs" c="dimmed" mb={4}>Interviewer Notes</Text>
-                            <div className="panel-inset p-3">
+                            <div className="panel-inset p-4">
                               <Text size="sm">{interview.interviewerNotes}</Text>
                             </div>
                           </div>

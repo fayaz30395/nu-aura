@@ -217,14 +217,14 @@ function PageHeader({
           Watch the trends that matter. Catch the drift before it shows up in delivery.
         </p>
       </div>
-      <div className="flex flex-wrap items-center gap-3 self-start sm:self-end">
+      <div className="flex flex-wrap items-center gap-4 self-start sm:self-end">
         <div className="inline-flex items-center rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-1">
           {(['7d', '30d', '90d', 'custom'] as const).map((range) => (
             <button
               key={range}
               type="button"
               onClick={() => onTimeRangeChange(range)}
-              className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 ${
+              className={`px-4 py-1.5 text-xs font-medium rounded-lg transition-colors active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 ${
                 timeRange === range
                   ? 'bg-accent-700 text-white'
                   : 'text-[var(--text-secondary)] hover:bg-[var(--bg-surface)]'
@@ -242,7 +242,7 @@ function PageHeader({
               value={customStart}
               max={customEnd || undefined}
               onChange={(e) => onCustomStartChange(e.target.value)}
-              className="input-aura px-3 py-1.5 text-xs"
+              className="input-aura px-4 py-1.5 text-xs"
               aria-label="Start date"
             />
             <span className="text-xs text-[var(--text-muted)]">to</span>
@@ -251,7 +251,7 @@ function PageHeader({
               value={customEnd}
               min={customStart || undefined}
               onChange={(e) => onCustomEndChange(e.target.value)}
-              className="input-aura px-3 py-1.5 text-xs"
+              className="input-aura px-4 py-1.5 text-xs"
               aria-label="End date"
             />
           </div>
@@ -501,7 +501,7 @@ function BentoTile({
       className={className}
     >
       <div className="h-full rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] p-5 sm:p-6 transition-all hover:border-[var(--border-main)]">
-        <div className="flex items-start gap-3">
+        <div className="flex items-start gap-4">
           <div
             className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${
               accent

@@ -339,7 +339,7 @@ function PinnedSpacesHero({spaces}: {
         ) : (
           <ul className="mt-10 divide-y divide-[var(--border-subtle)] border-t border-[var(--border-subtle)]">
             {spaces.map((s) => (
-              <li key={s.id} className="grid grid-cols-[1fr_auto] items-center gap-4 py-3">
+              <li key={s.id} className="grid grid-cols-[1fr_auto] items-center gap-4 py-4">
                 <div className="min-w-0">
                   <p className="text-sm font-medium text-[var(--text-heading)] truncate">{s.name}</p>
                   {s.description && (
@@ -444,7 +444,7 @@ function QuietWeekStrip() {
       aria-live="polite"
       className="flex items-center justify-between gap-4 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] px-5 py-4"
     >
-      <div className="flex items-center gap-3 text-sm">
+      <div className="flex items-center gap-4 text-sm">
         <Sparkles className="h-4 w-4 shrink-0 text-[var(--text-muted)]" aria-hidden="true" />
         <p className="text-[var(--text-primary)]">
           Quiet week so far. A short post or a fresh wiki page keeps the team in sync.

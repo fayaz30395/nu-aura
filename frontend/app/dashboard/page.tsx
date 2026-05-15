@@ -596,7 +596,7 @@ export default function DashboardPage() {
     title: 'Jump in',
     defaultVisible: true,
     component: (
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {[
           {label: 'Apply leave', icon: Calendar, href: '/leave/apply'},
           {label: 'View payslip', icon: FileText, href: '/payroll'},
@@ -606,7 +606,7 @@ export default function DashboardPage() {
           <button
             key={action.href}
             onClick={() => router.push(action.href)}
-            className="group flex items-center gap-3 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-4 transition-all hover:border-[var(--border-main)] hover:shadow-[0_12px_30px_-12px_rgba(15,23,42,0.07)] active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 text-left"
+            className="group flex items-center gap-4 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-4 transition-all hover:border-[var(--border-main)] hover:shadow-[0_12px_30px_-12px_rgba(15,23,42,0.07)] active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 text-left"
           >
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[var(--bg-surface)] border border-[var(--border-subtle)] text-[var(--text-secondary)]">
               <action.icon className="h-4 w-4" aria-hidden="true"/>
@@ -673,13 +673,13 @@ export default function DashboardPage() {
             </p>
           </div>
           <ul className="divide-y divide-[var(--border-subtle)] border-y border-[var(--border-subtle)]">
-            <li className="grid grid-cols-[1fr_auto] items-center gap-4 py-3">
+            <li className="grid grid-cols-[1fr_auto] items-center gap-4 py-4">
               <span className="text-sm text-[var(--text-secondary)]">Processed</span>
               <span className="font-mono text-sm font-medium tabular-nums text-[var(--text-heading)]">
                 {safeAnalytics.payroll.currentMonth.processed}
               </span>
             </li>
-            <li className="grid grid-cols-[1fr_auto] items-center gap-4 py-3">
+            <li className="grid grid-cols-[1fr_auto] items-center gap-4 py-4">
               <span className="text-sm text-[var(--text-secondary)]">Pending</span>
               <span className="font-mono text-sm font-medium tabular-nums text-[var(--text-heading)]">
                 {safeAnalytics.headcount.total - safeAnalytics.payroll.currentMonth.processed}
@@ -907,7 +907,7 @@ export default function DashboardPage() {
               )}
             </p>
           </div>
-          <div className="flex items-center gap-3 self-start sm:self-end">
+          <div className="flex items-center gap-4 self-start sm:self-end">
             <span className={`inline-flex items-center px-2.5 h-7 text-2xs font-semibold uppercase tracking-wider rounded-full ${viewToneClasses}`}>
               {safeAnalytics.viewType}
             </span>
@@ -1050,7 +1050,7 @@ export default function DashboardPage() {
               )}
             </div>
           </div>
-          <div className="flex items-center gap-3 justify-end">
+          <div className="flex items-center gap-4 justify-end">
             {clockError && <span className="text-sm text-danger-700 dark:text-danger-300">{clockError}</span>}
             {canCheckIn && (
               <Button variant="primary" onClick={handleCheckIn} isLoading={checkInMutation.isPending}

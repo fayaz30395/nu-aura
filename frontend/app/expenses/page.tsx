@@ -825,7 +825,7 @@ function BentoTile({
         <Icon className="h-4 w-4" aria-hidden="true" />
       </div>
       <div className="flex-1 min-w-0">
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center justify-between gap-4">
           <h3 className="text-base font-semibold text-[var(--text-heading)]">{title}</h3>
           {badge !== undefined && (
             <span className="inline-flex items-center justify-center min-w-6 px-2 h-5 text-2xs font-semibold rounded-full bg-danger-100 text-danger-700 dark:bg-danger-900/40 dark:text-danger-300">
@@ -881,7 +881,7 @@ function FiltersBar({
 
   return (
     <div className="rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-4">
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="flex flex-wrap items-center gap-4">
         <div className="relative flex-1 min-w-[200px]" role="search">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]" />
           <input
@@ -914,7 +914,7 @@ function FiltersBar({
         {hasCustom && (
           <button
             onClick={onClear}
-            className="px-3 py-2 text-sm text-body-secondary hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
+            className="px-4 py-2 text-sm text-body-secondary hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
           >
             Clear filters
           </button>
@@ -1016,7 +1016,7 @@ function Tabs({
             role="tab"
             aria-selected={active}
             onClick={() => onChange(t.key)}
-            className={`relative px-4 sm:px-5 py-3 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 ${
+            className={`relative px-4 sm:px-5 py-4 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 ${
               active
                 ? 'text-[var(--text-heading)]'
                 : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
@@ -1060,7 +1060,7 @@ function BulkActionBar({
 }) {
   return (
     <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-accent-200 bg-accent-50/40 dark:border-accent-700/40 dark:bg-accent-900/20 px-5 py-4">
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-4">
         <input
           type="checkbox"
           checked={count === total && count > 0}
@@ -1118,7 +1118,7 @@ function NewClaimForm({
       <div className="flex items-center justify-between gap-4 mb-5">
         <div>
           <h2 className="text-lg font-semibold tracking-tight text-[var(--text-heading)]">New expense claim</h2>
-          <p className="text-sm text-[var(--text-secondary)] mt-0.5">Receipts, description, amount — that's all you need.</p>
+          <p className="text-sm text-[var(--text-secondary)] mt-0.5">Receipts, description, amount, that&apos;s all you need.</p>
         </div>
         <FileText className="h-5 w-5 text-[var(--text-muted)]" aria-hidden="true" />
       </div>
@@ -1181,7 +1181,7 @@ function NewClaimForm({
           <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Notes</label>
           <textarea className="input-aura" rows={2} placeholder="Additional notes..." {...register('notes')} />
         </div>
-        <div className="md:col-span-2 flex flex-wrap gap-3 pt-2">
+        <div className="md:col-span-2 flex flex-wrap gap-4 pt-2">
           <PermissionGate permission={Permissions.EXPENSE_CREATE}>
             <Button type="submit" variant="primary" disabled={isSubmitting}>
               {isSubmitting ? 'Creating...' : 'Create claim'}
@@ -1247,7 +1247,7 @@ function RecentClaimsList({
       aria-label="Recent claims"
     >
       {activeTab === 'pending' && selectableTotal > 0 && (
-        <div className="flex items-center gap-3 py-3 px-1 border-b border-[var(--border-subtle)]">
+        <div className="flex items-center gap-4 py-4 px-1 border-b border-[var(--border-subtle)]">
           <input
             type="checkbox"
             checked={allSelected}
@@ -1301,7 +1301,7 @@ function ClaimRow({
 }) {
   return (
     <li className={`py-5 grid grid-cols-[auto_1fr_auto] gap-4 sm:gap-6 items-start ${selected ? 'bg-accent-50/40 dark:bg-accent-900/10' : ''}`}>
-      <div className="flex items-start gap-3 pt-1">
+      <div className="flex items-start gap-4 pt-1">
         {activeTab === 'pending' && claim.status === 'SUBMITTED' ? (
           <input
             type="checkbox"
@@ -1318,7 +1318,7 @@ function ClaimRow({
       </div>
 
       <div className="min-w-0">
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-4">
           <h3 className="text-sm font-semibold text-[var(--text-heading)] truncate">{claim.claimNumber}</h3>
           <StatusBadge status={claim.status} domain={EXPENSE_STATUS} />
           {claim.category && (
@@ -1408,7 +1408,7 @@ function AttentionStrip({count}: {count: number}) {
       aria-live="polite"
       className="flex items-center justify-between gap-4 rounded-xl border border-danger-200 bg-danger-50/40 dark:border-danger-700/40 dark:bg-danger-950/30 px-5 py-4"
     >
-      <div className="flex items-center gap-3 text-sm">
+      <div className="flex items-center gap-4 text-sm">
         <AlertTriangle className="h-4 w-4 shrink-0 text-danger-600 dark:text-danger-400" aria-hidden="true" />
         <p className="text-[var(--text-primary)]">
           <span className="font-mono font-semibold tabular-nums">{count}</span>{' '}
@@ -1434,7 +1434,7 @@ function InlineAlert({
       ? 'border-success-200 bg-success-50/40 dark:border-success-700/40 dark:bg-success-950/30 text-success-700 dark:text-success-300'
       : 'border-danger-200 bg-danger-50/40 dark:border-danger-700/40 dark:bg-danger-950/30 text-danger-700 dark:text-danger-300';
   return (
-    <div role="alert" className={`flex items-center gap-3 rounded-xl border px-4 py-3 text-sm ${styles}`}>
+    <div role="alert" className={`flex items-center gap-4 rounded-xl border px-4 py-4 text-sm ${styles}`}>
       <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />
       <span className="text-[var(--text-primary)]">{message}</span>
     </div>
