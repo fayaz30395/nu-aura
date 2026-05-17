@@ -140,12 +140,17 @@ public class AuthController {
     public ResponseEntity<AuthResponse> mfaLogin(
             @Valid @RequestBody MfaLoginRequest request,
             HttpServletResponse response) {
-        log.info("MFA login initiated for user: {}", request.getUserId());
+        // Downgraded from INFO with userId to DEBUG: the userId is PII that
+        // didn't need to land in the default log stream on every MFA step.
+        log.debug("MFA login initiated for user: {}", request.getUserId());
 
         try {
             // Verify the MFA code
             if (!mfaService.verifyMfaCode(request.getUserId(), request.getCode())) {
-                log.warn("Invalid MFA code for user: {}", request.getUserId());
+                // WARN preserved (security signal) but userId masked to first 8 chars
+                // — still correlatable in incidents, no full PII in default logs.
+                log.warn("Invalid MFA code for user: {}",
+                        mask(request.getUserId()));
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                         .body(AuthResponse.builder()
                                 .accessToken(null)
@@ -314,5 +319,17 @@ public class AuthController {
         response.addHeader(HttpHeaders.SET_COOKIE, cookieConfig.createClearRefreshTokenCookie().toString());
         addCookieIfPresent(response, cookieConfig.createClearHardenedAccessTokenCookie());
         addCookieIfPresent(response, cookieConfig.createClearHardenedRefreshTokenCookie());
+    }
+
+    /**
+     * Mask a UUID for log output: keeps the first 8 chars (enough to correlate
+     * across log lines / traces) and replaces the rest with asterisks. Avoids
+     * leaking full user IDs into default log streams while preserving incident
+     * forensics.
+     */
+    private static String mask(UUID id) {
+        if (id == null) return "null";
+        String s = id.toString();
+        return s.substring(0, 8) + "-****";
     }
 }

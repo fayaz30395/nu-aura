@@ -20,6 +20,7 @@ const nextConfig = {
     // Enable optimized package imports for common libraries
     optimizePackageImports: [
       'lucide-react',
+      '@tabler/icons-react',
       '@radix-ui/react-dialog',
       '@radix-ui/react-dropdown-menu',
       '@radix-ui/react-select',
@@ -29,6 +30,13 @@ const nextConfig = {
       '@tanstack/react-table',
       'date-fns',
       'recharts',
+      // framer-motion ships a single barrel; tree-shaking benefits a lot from
+      // optimizePackageImports because most callers only need motion + AnimatePresence.
+      'framer-motion',
+      // Mantine barrels are large; optimizePackageImports trims unused exports
+      // per usage site.
+      '@mantine/core',
+      '@mantine/hooks',
     ],
   },
 

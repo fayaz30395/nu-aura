@@ -30,7 +30,21 @@ public interface RoleRepository extends JpaRepository<Role, UUID> {
 
     boolean existsByCodeAndTenantId(String code, UUID tenantId);
 
-    List<Role> findByCodeInAndTenantId(java.util.Collection<String> codes, UUID tenantId);
+    /**
+     * Permission-resolution hot path. SecurityService.getCachedPermissions
+     * iterates {@code role.getPermissions()} and then dereferences
+     * {@code rp.getPermission().getCode()} — left fully lazy, that fired
+     * 1 select per role + 1 select per role-permission row (easily
+     * 30-100 extras per /auth/me on a multi-role admin). Two-level
+     * JOIN FETCH (RolePermission then Permission) collapses the cascade
+     * into a single round-trip; DISTINCT prevents row duplication.
+     */
+    @Query("SELECT DISTINCT r FROM Role r " +
+            "LEFT JOIN FETCH r.permissions rp " +
+            "LEFT JOIN FETCH rp.permission " +
+            "WHERE r.code IN :codes AND r.tenantId = :tenantId")
+    List<Role> findByCodeInAndTenantId(@Param("codes") java.util.Collection<String> codes,
+                                       @Param("tenantId") UUID tenantId);
 
     @Query("SELECT COUNT(u) > 0 FROM User u JOIN u.roles r WHERE r.id = :roleId")
     boolean isRoleAssignedToUsers(@Param("roleId") UUID roleId);

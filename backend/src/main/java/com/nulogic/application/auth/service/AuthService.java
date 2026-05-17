@@ -137,6 +137,17 @@ public class AuthService {
         this.tenantTimeService = tenantTimeService;
     }
 
+    /**
+     * /auth/me hot path. NOTE: a Redis @Cacheable was tried here but the
+     * default GenericJackson2JsonRedisSerializer rejected the AuthResponse
+     * builder-generated class with a silent SerializationException, so the
+     * decoration was a no-op while still adding cache-error log noise.
+     * Reverting to the plain read-only transactional path and relying on
+     * the V172 index improvements + RoleRepository two-level JOIN FETCH
+     * for the perf win. If we later want Redis caching, build it manually
+     * with StringRedisTemplate + a typed Jackson ObjectMapper instead of
+     * fighting the default serializer.
+     */
     @Transactional(readOnly = true)
     public AuthResponse getUserProfile(UUID userId) {
         User user = userRepository.findByIdWithRolesAndPermissions(userId)
@@ -499,7 +510,8 @@ public class AuthService {
                 UUID userId = tokenProvider.getUserIdFromToken(token);
                 if (userId != null) {
                     tokenProvider.revokeAllUserTokens(userId.toString());
-                    log.info("All tokens revoked for user {} on logout", userId);
+                    // Downgraded from INFO to DEBUG: userId is PII and logout is high-volume.
+                    log.debug("All tokens revoked for user {} on logout", userId);
                 }
             } catch (Exception e) {
                 // Token may already be expired/invalid — the individual revoke above is enough

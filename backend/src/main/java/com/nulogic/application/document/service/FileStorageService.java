@@ -83,7 +83,14 @@ public class FileStorageService {
         validateFile(file);
 
         UUID tenantId = TenantContext.getCurrentTenant();
-        String objectName = generateObjectName(tenantId, category, entityId, file.getOriginalFilename());
+        // Sanitize once and reuse — never let the raw client-supplied name reach
+        // storage metadata, DB columns, or response payloads. The objectName
+        // path is independently safe (timestamp + random UUID + allow-listed
+        // extension), but echoing the raw original name back into metadata
+        // and the result object is the IDOR-adjacent path-traversal vector
+        // the audit flagged.
+        String safeOriginalName = sanitizeOriginalFilename(file.getOriginalFilename());
+        String objectName = generateObjectName(tenantId, category, entityId, safeOriginalName);
 
         // AV scan BEFORE we open a write connection to the storage provider — failing
         // the scan should never leave a partial Drive object or a dangling mapping row.
@@ -96,7 +103,7 @@ public class FileStorageService {
             metadata.put("tenant-id", tenantId.toString());
             metadata.put("category", category);
             metadata.put("entity-id", entityId.toString());
-            metadata.put("original-filename", file.getOriginalFilename());
+            metadata.put("original-filename", safeOriginalName);
             metadata.put("uploaded-at", LocalDateTime.now().toString());
 
             String storageId = storageProvider.upload(objectName, file.getInputStream(), file.getSize(),
@@ -116,7 +123,7 @@ public class FileStorageService {
                     .objectName(objectName)
                     .driveFileId(storageId)
                     .bucket("storage")
-                    .originalFilename(file.getOriginalFilename())
+                    .originalFilename(safeOriginalName)
                     .contentType(file.getContentType())
                     .size(file.getSize())
                     .category(category)
@@ -138,7 +145,12 @@ public class FileStorageService {
     public FileUploadResult uploadFile(InputStream inputStream, String filename, String contentType,
                                        long size, String category, UUID entityId) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        String objectName = generateObjectName(tenantId, category, entityId, filename);
+        // Same rationale as MultipartFile overload: sanitize once, reuse everywhere
+        // the original name surfaces (metadata + response). Even though
+        // server-generated reports rarely contain unsafe names, the overload is
+        // public and callers can pass anything.
+        String safeOriginalName = sanitizeOriginalFilename(filename);
+        String objectName = generateObjectName(tenantId, category, entityId, safeOriginalName);
 
         try {
             storageProvider.ensureStorageReady();
@@ -147,7 +159,7 @@ public class FileStorageService {
             metadata.put("tenant-id", tenantId.toString());
             metadata.put("category", category);
             metadata.put("entity-id", entityId.toString());
-            metadata.put("original-filename", filename);
+            metadata.put("original-filename", safeOriginalName);
             metadata.put("uploaded-at", LocalDateTime.now().toString());
 
             String storageId = storageProvider.upload(objectName, inputStream, size, contentType, metadata);
@@ -161,7 +173,7 @@ public class FileStorageService {
                     .objectName(objectName)
                     .driveFileId(storageId)
                     .bucket("storage")
-                    .originalFilename(filename)
+                    .originalFilename(safeOriginalName)
                     .contentType(contentType)
                     .size(size)
                     .category(category)
@@ -474,6 +486,29 @@ public class FileStorageService {
                 timestamp,
                 uniqueId,
                 extension);
+    }
+
+    /**
+     * Sanitize a client-supplied original filename before it lands in
+     * storage metadata, DB columns, response payloads, or
+     * Content-Disposition headers downstream.
+     *
+     * <p>Path components are stripped (so {@code ../../../etc/passwd}
+     * becomes {@code passwd}), control bytes are removed, and a strict
+     * allow-list is applied: letters, digits, dot, dash, underscore,
+     * parentheses, and space survive — everything else collapses to
+     * an underscore. The total length is capped at 200 chars so a
+     * pathological 64 KB name cannot bloat metadata or DB columns.</p>
+     */
+    private String sanitizeOriginalFilename(String filename) {
+        if (filename == null || filename.isBlank()) return "untitled";
+        String normalized = filename.replace('\\', '/')
+                .replaceAll("[\\x00-\\x1F\\x7F]", "");
+        int slash = normalized.lastIndexOf('/');
+        String base = slash >= 0 ? normalized.substring(slash + 1) : normalized;
+        String cleaned = base.replaceAll("[^a-zA-Z0-9._\\-()\\s]", "_");
+        if (cleaned.isBlank() || ".".equals(cleaned) || "..".equals(cleaned)) return "untitled";
+        return cleaned.length() > 200 ? cleaned.substring(0, 200) : cleaned;
     }
 
     /**

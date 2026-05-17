@@ -18,27 +18,24 @@ spring:
     username: ${DEV_DATABASE_USERNAME:hrms}
     password: ${DEV_DATABASE_PASSWORD}
     hikari:
-      # E2E sweep load profile: 4 parallel Playwright workers x ~5 in-flight
-      # requests each = 20 simultaneous JDBC operations at peak. The 20-pool
-      # earlier just covered this, leaving no headroom for the keepalive
-      # connections — the pool would saturate mid-run and Neon would kill
-      # the longest queries. 40 gives the headroom plus a 10-conn buffer.
+      # Sized for sustained E2E load (4 Playwright workers × ~5 in-flight reqs +
+      # scheduler threads + websocket relay) AND Neon serverless resilience.
+      # Earlier 20/2 was too tight: a full E2E sweep saturated the pool mid-run
+      # and the JDBC acquire-timeout cascaded into a wall of HTTP 5xx. Earlier
+      # 40/10 saturated Neon's idle-close and the keepalive missed the window.
+      # 40/3 + 15s keepalive + 5s validation gives both: a high ceiling for
+      # bursts and a tight enough lifecycle that Neon never sees an idle
+      # connection longer than the keepalive interval.
       maximum-pool-size: 40
-      minimum-idle: 10
-      connection-timeout: 30000
-      idle-timeout: 120000
-      max-lifetime: 240000
-      # Neon serverless auto-suspends idle compute, closing JDBC connections
-      # under Hikari's feet. A 30s keepalive query keeps connections warm so
-      # Hikari never hands out a dead socket; without this, an idle dev
-      # session bricks the pool until the app restarts.
-      keepalive-time: 30000
+      minimum-idle: 3
+      connection-timeout: 20000
+      validation-timeout: 5000
+      idle-timeout: 60000
+      max-lifetime: 180000
+      keepalive-time: 15000
       connection-test-query: SELECT 1
-      # Detect connection leaks (a checked-out connection held >60s without
-      # release) and log a stack trace pointing at the offending caller. Set
-      # to 0 to disable. Helps trace the "queries stuck forever" cluster the
-      # E2E sweep exposed on the prior run.
       leak-detection-threshold: 60000
+      initialization-fail-timeout: -1
 
   data:
     redis:
