@@ -90,9 +90,13 @@
     --sidebar-hover-bg: rgba(255, 255, 255, 0.06);
     --sidebar-text: rgba(255, 255, 255, 0.72);
     --sidebar-text-active: #ffffff;
-    --sidebar-text-muted: rgba(255, 255, 255, 0.38);
+    /* a11y: bumped from 0.38 → 0.62 to clear WCAG AA 4.5:1 on #0E111A
+       (axe-core color-contrast was firing on "Pro Plan" / kbd hints) */
+    --sidebar-text-muted: rgba(255, 255, 255, 0.62);
     --sidebar-border: rgba(255, 255, 255, 0.08);
-    --sidebar-section-text: rgba(255, 255, 255, 0.42);
+    /* a11y: bumped from 0.42 → 0.58 to clear WCAG AA 4.5:1 on #0E111A
+       (axe-core color-contrast was firing on section labels Home/My Space/People) */
+    --sidebar-section-text: rgba(255, 255, 255, 0.58);
     --sidebar-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(0, 0, 0, 0.20) 100%);
 
     /* ── Shadows (Clean 3-tier system) ───────────────────────── */
@@ -225,9 +229,11 @@
     --sidebar-hover-bg: rgba(255, 255, 255, 0.05);
     --sidebar-text: rgba(255, 255, 255, 0.68);
     --sidebar-text-active: #ffffff;
-    --sidebar-text-muted: rgba(255, 255, 255, 0.55);
+    /* a11y: bumped 0.55 → 0.65 for WCAG AA 4.5:1 on dark-mode sidebar surfaces */
+    --sidebar-text-muted: rgba(255, 255, 255, 0.65);
     --sidebar-border: rgba(255, 255, 255, 0.06);
-    --sidebar-section-text: rgba(255, 255, 255, 0.38);
+    /* a11y: bumped 0.38 → 0.60 for WCAG AA 4.5:1 on dark-mode sidebar bg */
+    --sidebar-section-text: rgba(255, 255, 255, 0.60);
     --sidebar-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, rgba(0, 0, 0, 0.30) 100%);
 
     /* ── Shadows (Dark — clean 3-tier system) ────────────── */

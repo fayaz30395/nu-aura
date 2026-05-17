@@ -20,9 +20,15 @@ import {testUsers} from './fixtures/testData';
 // ─── /admin/shifts ────────────────────────────────────────────────────────────
 
 test.describe('/admin/shifts — Shift Management', () => {
+  // Cold-compile of /admin/shifts under `next dev` can take 30-60s on the
+  // Studio Slate v2 token graph. Beyond the default 15s actionTimeout, so we
+  // wait once in beforeEach for the heading to render — after that, the
+  // route is warm and per-test assertions resolve fast.
   test.beforeEach(async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/admin/shifts');
+    await expect(page.locator('h1').filter({hasText: /Shift Management/i}))
+      .toBeVisible({timeout: 60000});
   });
 
   test('page loads with Shift Management heading', async ({page}) => {
@@ -31,57 +37,56 @@ test.describe('/admin/shifts — Shift Management', () => {
 
   test('displays Add Shift button', async ({page}) => {
     const addBtn = page.locator('button:has-text("Add Shift")');
-    await expect(addBtn).toBeVisible();
+    await expect(addBtn).toBeVisible({timeout: 30000});
     await expect(addBtn).toBeEnabled();
   });
 
   test('shows shift grid or empty state when no shifts', async ({page}) => {
-    await page.waitForTimeout(1000);
+    await page.waitForLoadState('networkidle').catch(() => {});
     const hasCards = await page.locator('[class*="skeuo-card"]').first().isVisible().catch(() => false);
     const hasEmpty = await page.locator('text=/No shifts configured/i').first().isVisible().catch(() => false);
     expect(hasCards || hasEmpty).toBe(true);
   });
 
   test('clicking Add Shift opens modal with form sections', async ({page}) => {
-    await page.locator('button:has-text("Add Shift")').click();
-    await page.waitForTimeout(400);
+    await page.locator('button:has-text("Add Shift")').click({timeout: 30000});
 
     const modal = page.locator('.fixed.inset-0').filter({hasText: /Add New Shift/i});
-    await expect(modal).toBeVisible();
+    await expect(modal).toBeVisible({timeout: 10000});
     await expect(modal.locator('text=/Basic Information/i')).toBeVisible();
     await expect(modal.locator('text=/Shift Timing/i')).toBeVisible();
     await expect(modal.locator('text=/Attendance Rules/i')).toBeVisible();
   });
 
   test('shift form has required Shift Code and Shift Name fields', async ({page}) => {
-    await page.locator('button:has-text("Add Shift")').click();
-    await page.waitForTimeout(400);
+    await page.locator('button:has-text("Add Shift")').click({timeout: 30000});
 
-    await expect(page.locator('input[placeholder*="DS, NS, GS"]')).toBeVisible();
+    await expect(page.locator('input[placeholder*="DS, NS, GS"]')).toBeVisible({timeout: 10000});
     await expect(page.locator('input[placeholder*="Day Shift, Night Shift"]')).toBeVisible();
   });
 
   test('shift form has start time and end time inputs', async ({page}) => {
-    await page.locator('button:has-text("Add Shift")').click();
-    await page.waitForTimeout(400);
+    await page.locator('button:has-text("Add Shift")').click({timeout: 30000});
 
     const timeInputs = page.locator('input[type="time"]');
-    await expect(timeInputs).toHaveCount(2);
+    await expect(timeInputs).toHaveCount(2, {timeout: 10000});
   });
 
   test('shift type dropdown has Regular, Rotational, Flexible options', async ({page}) => {
-    await page.locator('button:has-text("Add Shift")').click();
-    await page.waitForTimeout(400);
+    await page.locator('button:has-text("Add Shift")').click({timeout: 30000});
 
-    const shiftTypeSelect = page.locator('select').first();
+    // Target the Shift Type select by its accessible label rather than nth(0),
+    // which is brittle once additional <select>s are present.
+    const shiftTypeSelect = page.locator('#shift-type');
+    await expect(shiftTypeSelect).toBeVisible({timeout: 10000});
     await expect(shiftTypeSelect.locator('option:has-text("Regular")')).toHaveCount(1);
     await expect(shiftTypeSelect.locator('option:has-text("Rotational")')).toHaveCount(1);
     await expect(shiftTypeSelect.locator('option:has-text("Flexible")')).toHaveCount(1);
   });
 
   test('submitting empty form shows validation errors', async ({page}) => {
-    await page.locator('button:has-text("Add Shift")').click();
-    await page.waitForTimeout(400);
+    await page.locator('button:has-text("Add Shift")').click({timeout: 30000});
+    await expect(page.locator('input[placeholder*="DS, NS, GS"]')).toBeVisible({timeout: 10000});
 
     // Clear pre-filled Shift Code and Name, then submit
     const codeInput = page.locator('input[placeholder*="DS, NS, GS"]');
@@ -89,25 +94,24 @@ test.describe('/admin/shifts — Shift Management', () => {
     const nameInput = page.locator('input[placeholder*="Day Shift, Night Shift"]');
     await nameInput.fill('');
 
-    await page.locator('button:has-text("Create Shift")').click();
-    await page.waitForTimeout(400);
+    // The submit button reads "Create Shift" when not editing, but trailing
+    // text includes a space (`{...} Shift`). Use a regex to be safe.
+    await page.locator('button[type="submit"]').filter({hasText: /Create Shift|Update Shift|Saving/i}).click();
 
-    const hasError = await page.locator('text=/required/i').first().isVisible().catch(() => false);
-    expect(hasError).toBe(true);
+    await expect(page.locator('text=/required/i').first()).toBeVisible({timeout: 5000});
   });
 
   test('cancel button closes the modal', async ({page}) => {
-    await page.locator('button:has-text("Add Shift")').click();
-    await page.waitForTimeout(400);
-    await page.locator('button:has-text("Cancel")').click();
-    await page.waitForTimeout(300);
-
+    await page.locator('button:has-text("Add Shift")').click({timeout: 30000});
     const modal = page.locator('.fixed.inset-0').filter({hasText: /Add New Shift/i});
-    await expect(modal).not.toBeVisible();
+    await expect(modal).toBeVisible({timeout: 10000});
+
+    await page.locator('button:has-text("Cancel")').click();
+    await expect(modal).not.toBeVisible({timeout: 5000});
   });
 
   test('shift cards show Active/Inactive badge', async ({page}) => {
-    await page.waitForTimeout(1500);
+    await page.waitForLoadState('networkidle').catch(() => {});
     const hasCards = await page.locator('[class*="skeuo-card"]').first().isVisible().catch(() => false);
     if (hasCards) {
       const badge = page.locator('text=/Active|Inactive/').first();
@@ -118,10 +122,10 @@ test.describe('/admin/shifts — Shift Management', () => {
   test('RBAC: employee is redirected away from /admin/shifts', async ({page}) => {
     await loginAs(page, testUsers.employee.email);
     await page.goto('/admin/shifts');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('networkidle').catch(() => {});
 
-    // Employee should be redirected to their dashboard, not see admin content
-    await expect(page.locator('h1:has-text("Shift Management")')).not.toBeVisible({timeout: 5000});
+    // Employee should be redirected away by client-side guard.
+    await expect(page.locator('h1:has-text("Shift Management")')).not.toBeVisible({timeout: 10000});
     const url = page.url();
     expect(url).not.toContain('/admin/shifts');
   });
@@ -130,9 +134,14 @@ test.describe('/admin/shifts — Shift Management', () => {
 // ─── /admin/implicit-roles ────────────────────────────────────────────────────
 
 test.describe('/admin/implicit-roles — Implicit Role Rules', () => {
+  // Page renders a <SkeletonTable> while rules + roles queries are loading;
+  // the h1 only mounts once data resolves. Wait up to 60s for the heading
+  // before per-test assertions probe the DOM.
   test.beforeEach(async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/admin/implicit-roles');
+    await expect(page.locator('h1').filter({hasText: /Implicit Roles/i}))
+      .toBeVisible({timeout: 60000});
   });
 
   test('page loads with Implicit Roles heading', async ({page}) => {
@@ -140,87 +149,93 @@ test.describe('/admin/implicit-roles — Implicit Role Rules', () => {
   });
 
   test('shows table with column headers', async ({page}) => {
-    await page.waitForTimeout(1000);
-    await expect(page.locator('th:has-text("Rule Name")')).toBeVisible();
+    await expect(page.locator('th:has-text("Rule Name")')).toBeVisible({timeout: 15000});
     await expect(page.locator('th:has-text("Condition")')).toBeVisible();
     await expect(page.locator('th:has-text("Target Role")')).toBeVisible();
     await expect(page.locator('th:has-text("Status")')).toBeVisible();
   });
 
   test('has search input and status filter dropdown', async ({page}) => {
-    await expect(page.locator('input[placeholder*="Search rules"]')).toBeVisible();
-    const filterSelect = page.locator('select').filter({hasText: /All Rules/i});
+    await expect(page.locator('input[placeholder*="Search rules"]')).toBeVisible({timeout: 15000});
+    // The status filter is the first <select> on the page — `filter({hasText})`
+    // on a <select> doesn't actually match the option text in Playwright, so
+    // assert visibility directly.
+    const filterSelect = page.locator('select').first();
     await expect(filterSelect).toBeVisible();
+    await expect(filterSelect.locator('option:has-text("All Rules")')).toHaveCount(1);
   });
 
   test('Create Rule and Recompute All buttons are visible', async ({page}) => {
-    await expect(page.locator('button:has-text("Create Rule")')).toBeVisible();
+    await expect(page.locator('button:has-text("Create Rule")')).toBeVisible({timeout: 15000});
     await expect(page.locator('button:has-text("Recompute All")')).toBeVisible();
   });
 
   test('Create Rule modal opens with required fields', async ({page}) => {
-    await page.locator('button:has-text("Create Rule")').click();
-    await page.waitForTimeout(400);
+    await page.locator('button:has-text("Create Rule")').click({timeout: 30000});
 
     const modal = page.locator('.fixed.inset-0').filter({hasText: /Create New Implicit Role Rule/i});
-    await expect(modal).toBeVisible();
+    await expect(modal).toBeVisible({timeout: 10000});
     await expect(modal.locator('input[placeholder*="Manager Auto-Role"]')).toBeVisible();
     await expect(modal.locator('select').first()).toBeVisible();
   });
 
   test('create modal has condition type dropdown with IS_REPORTING_MANAGER option', async ({page}) => {
-    await page.locator('button:has-text("Create Rule")').click();
-    await page.waitForTimeout(400);
+    await page.locator('button:has-text("Create Rule")').click({timeout: 30000});
 
-    const conditionSelect = page.locator('select').filter({hasText: /Is Reporting Manager|IS_REPORTING_MANAGER/i}).first();
-    const hasOption = await page.locator('option:has-text("Is Reporting Manager")').first().isVisible().catch(() => false);
-    expect(hasOption || await conditionSelect.isVisible().catch(() => false)).toBe(true);
+    const modal = page.locator('.fixed.inset-0').filter({hasText: /Create New Implicit Role Rule/i});
+    await expect(modal).toBeVisible({timeout: 10000});
+
+    // CONDITION_LABELS map "IS_REPORTING_MANAGER" → "Is Reporting Manager".
+    // Either label-text or the raw enum should be present in an <option>.
+    const optionByLabel = modal.locator('option:has-text("Is Reporting Manager")');
+    const optionByEnum = modal.locator('option[value="IS_REPORTING_MANAGER"]');
+    const labelCount = await optionByLabel.count();
+    const enumCount = await optionByEnum.count();
+    expect(labelCount + enumCount).toBeGreaterThan(0);
   });
 
   test('submitting create rule with empty name shows validation error', async ({page}) => {
-    await page.locator('button:has-text("Create Rule")').click();
-    await page.waitForTimeout(400);
+    await page.locator('button:has-text("Create Rule")').click({timeout: 30000});
 
-    await page.locator('button:has-text("Create Rule")').last().click();
-    await page.waitForTimeout(400);
+    const modal = page.locator('.fixed.inset-0').filter({hasText: /Create New Implicit Role Rule/i});
+    await expect(modal).toBeVisible({timeout: 10000});
 
-    const hasError = await page.locator('text=/required/i').first().isVisible().catch(() => false);
-    expect(hasError).toBe(true);
+    // The modal's submit button is the only `type="submit"` on the page
+    // when the modal is open. The toolbar "Create Rule" button has no type.
+    await modal.locator('button[type="submit"]').click();
+
+    await expect(page.locator('text=/required/i').first()).toBeVisible({timeout: 5000});
   });
 
   test('cancel closes the create modal', async ({page}) => {
-    await page.locator('button:has-text("Create Rule")').click();
-    await page.waitForTimeout(400);
-    await page.locator('button:has-text("Cancel")').click();
-    await page.waitForTimeout(300);
-
+    await page.locator('button:has-text("Create Rule")').click({timeout: 30000});
     const modal = page.locator('.fixed.inset-0').filter({hasText: /Create New Implicit Role Rule/i});
-    await expect(modal).not.toBeVisible();
+    await expect(modal).toBeVisible({timeout: 10000});
+
+    await modal.locator('button:has-text("Cancel")').click();
+    await expect(modal).not.toBeVisible({timeout: 5000});
   });
 
   test('filter dropdown filters by active/inactive status', async ({page}) => {
-    await page.waitForTimeout(1000);
     const filterSelect = page.locator('select').first();
+    await expect(filterSelect).toBeVisible({timeout: 15000});
     await filterSelect.selectOption('active');
-    await page.waitForTimeout(500);
     await expect(page.locator('body')).not.toContainText('Application error');
   });
 
   test('search input filters rules by name', async ({page}) => {
-    await page.waitForTimeout(1000);
     const searchInput = page.locator('input[placeholder*="Search rules"]');
+    await expect(searchInput).toBeVisible({timeout: 15000});
     await searchInput.fill('nonexistent-xyz-rule-12345');
-    await page.waitForTimeout(500);
-    const noResults = await page.locator('text=/No rules found/i').first().isVisible().catch(() => false);
-    expect(noResults).toBe(true);
+    await expect(page.locator('text=/No rules found/i').first()).toBeVisible({timeout: 5000});
   });
 
   test('RBAC: employee is redirected away from /admin/implicit-roles', async ({page}) => {
     await loginAs(page, testUsers.employee.email);
     await page.goto('/admin/implicit-roles');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('networkidle').catch(() => {});
 
-    await expect(page.locator('h1:has-text("Implicit Roles")')).not.toBeVisible({timeout: 5000});
+    await expect(page.locator('h1:has-text("Implicit Roles")')).not.toBeVisible({timeout: 10000});
     const url = page.url();
     expect(url).not.toContain('/admin/implicit-roles');
   });
@@ -229,9 +244,13 @@ test.describe('/admin/implicit-roles — Implicit Role Rules', () => {
 // ─── /admin/org-hierarchy ─────────────────────────────────────────────────────
 
 test.describe('/admin/org-hierarchy — Organization Chart', () => {
+  // Org-hierarchy fetches up to 1000 employees and builds a tree client-side
+  // — initial render can take >15s on cold compile.
   test.beforeEach(async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/admin/org-hierarchy');
+    await expect(page.locator('h1').filter({hasText: /Organization Chart/i}))
+      .toBeVisible({timeout: 60000});
   });
 
   test('page loads with Organization Chart heading', async ({page}) => {
@@ -239,19 +258,20 @@ test.describe('/admin/org-hierarchy — Organization Chart', () => {
   });
 
   test('shows Expand All and Collapse All buttons', async ({page}) => {
-    await expect(page.locator('button:has-text("Expand All")')).toBeVisible();
+    await expect(page.locator('button:has-text("Expand All")')).toBeVisible({timeout: 15000});
     await expect(page.locator('button:has-text("Collapse All")')).toBeVisible();
   });
 
   test('shows total employees count in controls bar', async ({page}) => {
-    await page.waitForTimeout(1500);
+    await page.waitForLoadState('networkidle').catch(() => {});
     const hasCount = await page.locator('text=/total employees/i').first().isVisible().catch(() => false);
     const hasLoading = await page.locator('text=/Loading organization chart/i').first().isVisible().catch(() => false);
-    expect(hasCount || hasLoading || true).toBe(true);
+    const hasEmpty = await page.locator('text=/No employees found/i').first().isVisible().catch(() => false);
+    expect(hasCount || hasLoading || hasEmpty).toBe(true);
   });
 
   test('employee cards render with name and designation', async ({page}) => {
-    await page.waitForTimeout(2000);
+    await page.waitForLoadState('networkidle').catch(() => {});
     const hasCards = await page.locator('[class*="rounded-xl"]').first().isVisible().catch(() => false);
     const hasLoading = await page.locator('text=/Loading/i').first().isVisible().catch(() => false);
     const hasEmpty = await page.locator('text=/No employees found/i').first().isVisible().catch(() => false);
@@ -259,30 +279,26 @@ test.describe('/admin/org-hierarchy — Organization Chart', () => {
   });
 
   test('Collapse All button collapses expanded nodes', async ({page}) => {
-    await page.waitForTimeout(2000);
-    await page.locator('button:has-text("Collapse All")').click();
-    await page.waitForTimeout(500);
+    await page.locator('button:has-text("Collapse All")').click({timeout: 30000});
     await expect(page.locator('body')).not.toContainText('Application error');
   });
 
   test('Expand All button expands the tree', async ({page}) => {
-    await page.waitForTimeout(2000);
-    await page.locator('button:has-text("Expand All")').click();
-    await page.waitForTimeout(500);
+    await page.locator('button:has-text("Expand All")').click({timeout: 30000});
     await expect(page.locator('body')).not.toContainText('Application error');
   });
 
   test('page does not throw application errors', async ({page}) => {
-    await page.waitForTimeout(2000);
+    await page.waitForLoadState('networkidle').catch(() => {});
     await expect(page.locator('body')).not.toContainText('Application error');
   });
 
   test('RBAC: employee is redirected away from /admin/org-hierarchy', async ({page}) => {
     await loginAs(page, testUsers.employee.email);
     await page.goto('/admin/org-hierarchy');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('networkidle').catch(() => {});
 
-    await expect(page.locator('h1:has-text("Organization Chart")')).not.toBeVisible({timeout: 5000});
+    await expect(page.locator('h1:has-text("Organization Chart")')).not.toBeVisible({timeout: 10000});
     const url = page.url();
     expect(url).not.toContain('/admin/org-hierarchy');
   });

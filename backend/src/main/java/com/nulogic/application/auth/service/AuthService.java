@@ -245,8 +245,11 @@ public class AuthService {
                 }
             }
 
-            user.recordSuccessfulLogin();
-            userRepository.save(user);
+            // Bookkeeping write via a bare UPDATE so parallel logins (E2E
+            // workers, multi-tab navigation) don't collide on the User row's
+            // @Version. See `UserRepository.recordSuccessfulLogin` Javadoc.
+            userRepository.recordSuccessfulLogin(user.getId(),
+                    tenantTimeService.now(tenantId));
 
             // Clear lockout state on successful login
             accountLockoutService.loginSucceeded(request.getEmail());

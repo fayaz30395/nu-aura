@@ -4,6 +4,7 @@ import com.nulogic.domain.user.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -20,6 +21,28 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     Optional<User> findByEmailAndTenantId(String email, UUID tenantId);
 
     boolean existsByEmailAndTenantId(String email, UUID tenantId);
+
+    /**
+     * Record a successful login WITHOUT triggering JPA optimistic locking.
+     *
+     * `User.recordSuccessfulLogin()` followed by `save()` mutates the entity and
+     * relies on the `@Version` column to detect concurrent edits. Under
+     * parallel E2E workers (4+ Playwright workers all logging in as the same
+     * SUPER_ADMIN) the four reads see the same version, the first save wins,
+     * the rest fail with `ObjectOptimisticLockingFailureException` -> HTTP 409.
+     *
+     * Login bookkeeping is idempotent: whoever wins the race, the final state
+     * is identical (lastLoginAt within a few ms, failed_attempts=0, lockout
+     * cleared). A bare UPDATE bypasses the version check and lets all callers
+     * complete cleanly. The version field is intentionally NOT bumped — the
+     * downstream save() of the same entity from any concurrent transaction
+     * still uses the original version (no false conflict).
+     */
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query("UPDATE User u SET u.lastLoginAt = :now, " +
+            "u.failedLoginAttempts = 0, u.lockedUntil = null " +
+            "WHERE u.id = :id")
+    int recordSuccessfulLogin(@Param("id") UUID id, @Param("now") LocalDateTime now);
 
     List<User> findByTenantId(UUID tenantId);
 

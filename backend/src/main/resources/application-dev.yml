@@ -18,9 +18,13 @@ spring:
     username: ${DEV_DATABASE_USERNAME:hrms}
     password: ${DEV_DATABASE_PASSWORD}
     hikari:
-      # Bumped for local dev to handle QA sweep load (was 3 — caused pool exhaustion)
-      maximum-pool-size: 20
-      minimum-idle: 5
+      # E2E sweep load profile: 4 parallel Playwright workers x ~5 in-flight
+      # requests each = 20 simultaneous JDBC operations at peak. The 20-pool
+      # earlier just covered this, leaving no headroom for the keepalive
+      # connections — the pool would saturate mid-run and Neon would kill
+      # the longest queries. 40 gives the headroom plus a 10-conn buffer.
+      maximum-pool-size: 40
+      minimum-idle: 10
       connection-timeout: 30000
       idle-timeout: 120000
       max-lifetime: 240000
@@ -30,6 +34,11 @@ spring:
       # session bricks the pool until the app restarts.
       keepalive-time: 30000
       connection-test-query: SELECT 1
+      # Detect connection leaks (a checked-out connection held >60s without
+      # release) and log a stack trace pointing at the offending caller. Set
+      # to 0 to disable. Helps trace the "queries stuck forever" cluster the
+      # E2E sweep exposed on the prior run.
+      leak-detection-threshold: 60000
 
   data:
     redis:

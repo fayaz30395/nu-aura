@@ -13,8 +13,10 @@ const buttonVariants = cva(
     variants: {
       variant: {
         // Primary - Main CTA (skeuomorphic depth)
+        // a11y: solid bg-color fallback so axe-core can compute contrast against
+        // the underlying color when the gradient (background-image) is ignored.
         primary:
-          'bg-gradient-to-b from-[var(--accent-primary)] to-[var(--accent-primary-hover)] text-white hover:brightness-110 focus-visible:ring-[var(--ring-primary)] skeuo-button active:shadow-[var(--shadow-skeuo-pressed)] active:translate-y-px',
+          'bg-[var(--accent-primary)] bg-gradient-to-b from-[var(--accent-primary)] to-[var(--accent-primary-hover)] text-white hover:brightness-110 focus-visible:ring-[var(--ring-primary)] skeuo-button active:shadow-[var(--shadow-skeuo-pressed)] active:translate-y-px',
         // Secondary - Neutral actions (embossed surface)
         secondary:
           'bg-[var(--bg-card)] text-[var(--text-primary)] hover:bg-[var(--bg-card-hover)] border border-[var(--border-main)] focus-visible:ring-[var(--ring-primary)] skeuo-button active:shadow-[var(--shadow-skeuo-pressed)] active:translate-y-px',
@@ -25,14 +27,15 @@ const buttonVariants = cva(
         ghost:
           'text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)] hover:text-[var(--text-primary)] focus-visible:ring-[var(--ring-primary)]',
         // Danger / Destructive (skeuomorphic depth)
+        // a11y: solid bg-color fallback so axe-core can compute contrast.
         danger:
-          'bg-gradient-to-b from-danger-500 to-danger-600 text-white hover:brightness-110 focus-visible:ring-danger-500/50 skeuo-button active:shadow-[var(--shadow-skeuo-pressed)] active:translate-y-px',
+          'bg-danger-600 bg-gradient-to-b from-danger-500 to-danger-600 text-white hover:brightness-110 focus-visible:ring-danger-500/50 skeuo-button active:shadow-[var(--shadow-skeuo-pressed)] active:translate-y-px',
         // Success - Positive actions (skeuomorphic depth)
         success:
-          'bg-gradient-to-b from-success-500 to-success-600 text-white hover:brightness-110 focus-visible:ring-success-500/50 skeuo-button active:shadow-[var(--shadow-skeuo-pressed)] active:translate-y-px',
+          'bg-success-600 bg-gradient-to-b from-success-500 to-success-600 text-white hover:brightness-110 focus-visible:ring-success-500/50 skeuo-button active:shadow-[var(--shadow-skeuo-pressed)] active:translate-y-px',
         // Warning - Caution actions (skeuomorphic depth)
         warning:
-          'bg-gradient-to-b from-warning-500 to-warning-600 text-white hover:brightness-110 focus-visible:ring-warning-500/50 skeuo-button active:shadow-[var(--shadow-skeuo-pressed)] active:translate-y-px',
+          'bg-warning-600 bg-gradient-to-b from-warning-500 to-warning-600 text-white hover:brightness-110 focus-visible:ring-warning-500/50 skeuo-button active:shadow-[var(--shadow-skeuo-pressed)] active:translate-y-px',
         // Link - Text button
         link:
           'text-[var(--accent-primary)] underline-offset-4 hover:underline focus-visible:ring-[var(--ring-primary)]',
@@ -44,11 +47,12 @@ const buttonVariants = cva(
         'soft-success':
           'bg-success-50 text-success-700 hover:bg-success-100 dark:bg-success-950 dark:text-success-300 dark:hover:bg-success-900 focus-visible:ring-success-500/50',
         // Default - dark button (skeuomorphic depth)
+        // a11y: solid bg-color fallback so axe-core can compute contrast.
         default:
-          'bg-gradient-to-b from-[var(--text-primary)] to-[var(--text-heading)] text-[var(--text-inverse)] hover:brightness-110 focus-visible:ring-[var(--ring-primary)] skeuo-button active:shadow-[var(--shadow-skeuo-pressed)] active:translate-y-px',
+          'bg-[var(--text-primary)] bg-gradient-to-b from-[var(--text-primary)] to-[var(--text-heading)] text-[var(--text-inverse)] hover:brightness-110 focus-visible:ring-[var(--ring-primary)] skeuo-button active:shadow-[var(--shadow-skeuo-pressed)] active:translate-y-px',
         // CTA - Special call-to-action (skeuomorphic depth)
         cta:
-          'bg-gradient-to-b from-[var(--accent-primary)] to-[var(--accent-primary-hover)] text-white hover:brightness-110 focus-visible:ring-[var(--ring-primary)] skeuo-button active:shadow-[var(--shadow-skeuo-pressed)] active:translate-y-px',
+          'bg-[var(--accent-primary)] bg-gradient-to-b from-[var(--accent-primary)] to-[var(--accent-primary-hover)] text-white hover:brightness-110 focus-visible:ring-[var(--ring-primary)] skeuo-button active:shadow-[var(--shadow-skeuo-pressed)] active:translate-y-px',
       },
       size: {
         xs: 'h-7 px-2 text-xs rounded-md',

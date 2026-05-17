@@ -23,17 +23,29 @@ export async function loginAs(page: Page, email: string): Promise<void> {
   const user = allDemoUsers.find((u) => u.email === email);
   const password = user?.password ?? DEMO_PASSWORD;
 
-  // Call the backend login API directly.
-  // 45s timeout — under concurrent worker load the backend may take >15s (default).
-  const response = await page.request.post(`${API_BASE}/auth/login`, {
-    data: {email, password},
-    failOnStatusCode: false,
-    timeout: 45000,
-  });
+  // Call the backend login API directly with a small retry loop.
+  // 45s per-call timeout — under concurrent worker load the backend may
+  // take >15s (default). HTTP 409 CONCURRENT_MODIFICATION on the user's
+  // `lastLoginAt` write is a known optimistic-lock race when the same
+  // demo account is hammered by multiple workers — retry transparently.
+  let response;
+  let lastBody = '';
+  for (let attempt = 1; attempt <= 4; attempt++) {
+    response = await page.request.post(`${API_BASE}/auth/login`, {
+      data: {email, password},
+      failOnStatusCode: false,
+      timeout: 45000,
+    });
+    if (response.ok()) break;
+    lastBody = await response.text().catch(() => 'unknown error');
+    // Retry on optimistic-lock conflict or transient 5xx.
+    if (response.status() !== 409 && response.status() < 500) break;
+    // Linear backoff: 500ms, 1.5s, 3.5s
+    await page.waitForTimeout(500 * attempt * attempt);
+  }
 
-  if (!response.ok()) {
-    const body = await response.text().catch(() => 'unknown error');
-    throw new Error(`loginAs(${email}) failed: HTTP ${response.status()} — ${body}`);
+  if (!response || !response.ok()) {
+    throw new Error(`loginAs(${email}) failed: HTTP ${response?.status()} — ${lastBody}`);
   }
 
   // The backend sets httpOnly cookies via Set-Cookie headers.
