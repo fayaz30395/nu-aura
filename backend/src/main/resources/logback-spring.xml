@@ -130,6 +130,55 @@
             </encoder>
         </appender>
 
+        <!-- Logstash TCP appender (T2-08): ships structured JSON logs to a
+             Logstash / Filebeat / Vector TCP listener that forwards into the
+             Elasticsearch cluster already running in docker-compose. Reuses
+             PiiMaskingLogstashEncoder so MDC fields (requestId, tenantId,
+             userId, ...) are indexed and PII is masked before the wire.
+
+             Destination is env-driven and the appender fails soft: if
+             LOGSTASH_HOST is unset / unreachable, LogstashTcpSocketAppender
+             drops events silently (no app impact). Deploy a Logstash /
+             Filebeat / Vector sidecar to enable ES ingestion. -->
+        <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+            <destination>${LOGSTASH_HOST:-logstash}:${LOGSTASH_PORT:-5044}</destination>
+            <keepAliveDuration>5 minutes</keepAliveDuration>
+            <reconnectionDelay>10 seconds</reconnectionDelay>
+            <writeBufferSize>16384</writeBufferSize>
+            <encoder class="com.nulogic.common.logging.PiiMaskingLogstashEncoder">
+                <includeMdcKeyName>requestId</includeMdcKeyName>
+                <includeMdcKeyName>correlationId</includeMdcKeyName>
+                <includeMdcKeyName>tenantId</includeMdcKeyName>
+                <includeMdcKeyName>userId</includeMdcKeyName>
+                <includeMdcKeyName>requestUri</includeMdcKeyName>
+                <includeMdcKeyName>requestPath</includeMdcKeyName>
+                <includeMdcKeyName>requestMethod</includeMdcKeyName>
+                <includeMdcKeyName>method</includeMdcKeyName>
+                <includeMdcKeyName>clientIp</includeMdcKeyName>
+                <includeMdcKeyName>remoteAddr</includeMdcKeyName>
+                <customFields>{"application":"hrms-backend","environment":"${SPRING_PROFILES_ACTIVE:-production}"}
+                </customFields>
+                <timeZone>UTC</timeZone>
+                <fieldNames>
+                    <timestamp>@timestamp</timestamp>
+                    <message>message</message>
+                    <logger>logger</logger>
+                    <thread>thread</thread>
+                    <level>level</level>
+                    <stackTrace>stack_trace</stackTrace>
+                </fieldNames>
+            </encoder>
+        </appender>
+
+        <!-- Async wrapper so the TCP I/O never blocks the request thread. -->
+        <appender name="ASYNC_LOGSTASH" class="ch.qos.logback.classic.AsyncAppender">
+            <queueSize>512</queueSize>
+            <discardingThreshold>0</discardingThreshold>
+            <includeCallerData>false</includeCallerData>
+            <neverBlock>true</neverBlock>
+            <appender-ref ref="LOGSTASH"/>
+        </appender>
+
         <!-- Async Appender for better performance -->
         <appender name="ASYNC_JSON" class="ch.qos.logback.classic.AsyncAppender">
             <queueSize>512</queueSize>
@@ -140,6 +189,7 @@
 
         <root level="INFO">
             <appender-ref ref="ASYNC_JSON"/>
+            <appender-ref ref="ASYNC_LOGSTASH"/>
         </root>
 
         <!-- Application logging -->

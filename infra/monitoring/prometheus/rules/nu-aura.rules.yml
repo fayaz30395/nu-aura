@@ -1,0 +1,54 @@
+# T2-07 starter alert rules for NU-AURA backend.
+# Metric sources:
+#   - auth_login{status="failure"}   -> MetricsService.recordLoginFailure
+#   - api_request_duration_seconds   -> MetricsConfig.apiRequestDuration (Timer)
+#   - jvm_memory_used_bytes          -> Spring Boot Actuator (Micrometer JVM binder)
+groups:
+  - name: nu-aura-starter-alerts
+    interval: 30s
+    rules:
+
+      - alert: HighAuthFailureRate
+        expr: sum(rate(auth_login_total{status="failure"}[5m])) * 60 > 20
+        for: 5m
+        labels:
+          severity: warning
+          component: auth
+        annotations:
+          summary: 'Auth failure rate above 20/min for 5m'
+          description: |
+            Sustained failed-login rate is {{ $value | printf "%.1f" }} per minute
+            over the last 5 minutes. Possible credential-stuffing or brute force.
+          runbook: 'docs/runbooks/security-incident.md'
+
+      - alert: ApiP99Latency
+        expr: |
+          histogram_quantile(
+            0.99,
+            sum by (le) (rate(api_request_duration_seconds_bucket[5m]))
+          ) > 1
+        for: 10m
+        labels:
+          severity: warning
+          component: api
+        annotations:
+          summary: 'API p99 latency > 1s for 10m'
+          description: |
+            api_request_duration p99 is {{ $value | printf "%.3f" }}s.
+            Investigate slow endpoints via Grafana → NU-AURA API dashboard.
+
+      - alert: PodMemoryHigh
+        expr: |
+          sum by (instance) (jvm_memory_used_bytes{area="heap"})
+          /
+          sum by (instance) (jvm_memory_max_bytes{area="heap"})
+          > 0.85
+        for: 10m
+        labels:
+          severity: warning
+          component: jvm
+        annotations:
+          summary: 'JVM heap > 85% for 10m on {{ $labels.instance }}'
+          description: |
+            Heap utilisation {{ $value | humanizePercentage }}. Check for leak,
+            increase -Xmx, or scale out the pod.

@@ -7,8 +7,8 @@
 #   1. A keyless signature with subject matching our GitHub Actions identity, OR
 #   2. A key-based signature using the `cosign-public-key` Secret in kyverno ns.
 #
-# wave-3 deployment audit #16. Mode = Audit until we have all images signed
-# in CI for at least one release; flip to Enforce in v1.1 of this policy.
+# wave-3 deployment audit #16. Mode = Enforce (T1-03, 2026-05-20): cosign-sign.yml
+# has signed images for several releases; unsigned images now rejected at admission.
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:
@@ -23,7 +23,7 @@ metadata:
       signature. Verified against either keyless OIDC (preferred) or the
       cosign-public-key Secret in the kyverno namespace.
 spec:
-  validationFailureAction: Audit  # TODO flip to Enforce once all images signed (target: v1.1 of this policy)
+  validationFailureAction: Enforce  # T1-03 (2026-05-20): admission-time block for unsigned images.
   webhookTimeoutSeconds: 30
   failurePolicy: Fail
   rules:

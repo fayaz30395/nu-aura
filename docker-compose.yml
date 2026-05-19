@@ -154,12 +154,46 @@ services:
       - "9090:9090"
     volumes:
       - ./infra/monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./infra/monitoring/prometheus/rules:/etc/prometheus/rules:ro
       - prometheus_data:/prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
       - '--web.console.libraries=/etc/prometheus/console_libraries'
       - '--web.console.templates=/etc/prometheus/consoles'
+    networks:
+      - hrms_network
+
+  grafana:
+    image: grafana/grafana-oss:11.2.0
+    container_name: hrms-grafana
+    restart: unless-stopped
+    ports:
+      - "3001:3000"  # 3000 owned by frontend dev server
+    depends_on:
+      - prometheus
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
+      GF_AUTH_ANONYMOUS_ENABLED: "false"
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    volumes:
+      - grafana_storage:/var/lib/grafana
+      - ./infra/monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+    networks:
+      - hrms_network
+
+  alertmanager:
+    image: prom/alertmanager:v0.27.0
+    container_name: hrms-alertmanager
+    restart: unless-stopped
+    ports:
+      - "9093:9093"
+    volumes:
+      - ./infra/monitoring/alertmanager:/etc/alertmanager:ro
+      - alertmanager_data:/alertmanager
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+      - '--storage.path=/alertmanager'
     networks:
       - hrms_network
 
@@ -170,6 +204,8 @@ volumes:
   zookeeper_logs:
   kafka_data:
   elasticsearch_data:
+  grafana_storage:
+  alertmanager_data:
 
 networks:
   hrms_network:

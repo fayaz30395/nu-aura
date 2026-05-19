@@ -79,6 +79,27 @@ jobs:
           cluster_name: nu-aura-staging
           location: ${{ env.GCP_REGION }}
 
+      # T1-03: smoke-test the cosign signature before we hand the image to
+      # Kyverno at admission time. Same identity/issuer as
+      # infra/deployment/kyverno/require-image-signature.yaml — keep in sync.
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3.5.0
+        with:
+          cosign-release: 'v2.2.4'
+
+      - name: Verify image signature
+        env:
+          COSIGN_EXPERIMENTAL: "1"
+        run: |
+          set -euo pipefail
+          for IMAGE in "${{ needs.build.outputs.backend-image }}" "${{ needs.build.outputs.frontend-image }}"; do
+            echo "Verifying signature for ${IMAGE}"
+            cosign verify \
+              --certificate-identity-regexp "https://github.com/${{ github.repository }}/.github/workflows/cosign-sign.yml@.*" \
+              --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
+              "${IMAGE}"
+          done
+
       - name: Helm upgrade staging
         run: |
           helm upgrade --install nu-aura infra/deployment/helm/hrms \
@@ -120,6 +141,27 @@ jobs:
         with:
           cluster_name: nu-aura-prod
           location: ${{ env.GCP_REGION }}
+
+      # T1-03: smoke-test the cosign signature before we hand the image to
+      # Kyverno at admission time. Same identity/issuer as
+      # infra/deployment/kyverno/require-image-signature.yaml — keep in sync.
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3.5.0
+        with:
+          cosign-release: 'v2.2.4'
+
+      - name: Verify image signature
+        env:
+          COSIGN_EXPERIMENTAL: "1"
+        run: |
+          set -euo pipefail
+          for IMAGE in "${{ needs.build.outputs.backend-image }}" "${{ needs.build.outputs.frontend-image }}"; do
+            echo "Verifying signature for ${IMAGE}"
+            cosign verify \
+              --certificate-identity-regexp "https://github.com/${{ github.repository }}/.github/workflows/cosign-sign.yml@.*" \
+              --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
+              "${IMAGE}"
+          done
 
       - name: Helm upgrade production
         run: |

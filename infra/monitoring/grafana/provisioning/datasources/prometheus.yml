@@ -1,8 +1,9 @@
-# Grafana Datasource Configuration
+# T2-07 Grafana datasource — points at the in-compose Prometheus service.
 apiVersion: 1
 
 datasources:
   - name: Prometheus
+    uid: prometheus
     type: prometheus
     access: proxy
     url: http://prometheus:9090

@@ -32,9 +32,11 @@ jobs:
         working-directory: backend
         run: mvn compile -DskipTests -q
 
-      - name: Run backend unit tests
+      - name: Run backend unit tests + JaCoCo coverage check
         working-directory: backend
-        run: mvn test -q
+        # `verify` (not `test`) runs the jacoco:check goal bound to the verify phase.
+        # -DskipITs keeps integration tests out of the PR gate; unit tests still run.
+        run: mvn -B -DskipITs verify -q
 
   frontend-validate:
     name: Frontend (lint + typecheck + build)

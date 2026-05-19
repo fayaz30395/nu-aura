@@ -4,6 +4,17 @@ global:
   external_labels:
     monitor: 'hrms-platform'
 
+# AlertManager wiring — T2-07
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+            - 'alertmanager:9093'
+
+# Alert rule files (mounted via docker-compose at /etc/prometheus/rules)
+rule_files:
+  - '/etc/prometheus/rules/*.yml'
+
 scrape_configs:
   # Prometheus self-monitoring
   - job_name: 'prometheus'

@@ -1,0 +1,14 @@
+# T2-07 dashboard provider — loads JSON from json/ subdir.
+apiVersion: 1
+
+providers:
+  - name: 'NU-AURA'
+    orgId: 1
+    folder: 'NU-AURA'
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 30
+    allowUiUpdates: true
+    options:
+      path: /etc/grafana/provisioning/dashboards/json
+      foldersFromFilesStructure: false
