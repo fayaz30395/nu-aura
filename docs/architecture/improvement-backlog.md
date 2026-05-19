@@ -278,8 +278,8 @@ Code-level work is DONE for these items but they need on-cluster verification.
 
 ### T3-10 · MapStruct is in `pom.xml` but unused
 
-- **Status:** IN PROGRESS — pilot landed 2026-05-20, ~10 controller call sites
-  remaining.
+- **Status:** IN PROGRESS — 2/N controllers migrated (LeaveType pilot +
+  LeaveRequest create). ~9 `BeanUtils.copyProperties` sites remain repo-wide.
 - **Where:** Controllers use `BeanUtils.copyProperties()` with ignore-lists
   (`PayrollController:54`, `LeaveRequestController:69`).
 - **Why it matters:** Ignore-lists drift silently — add a new sensitive field,
@@ -291,8 +291,23 @@ Code-level work is DONE for these items but they need on-cluster verification.
 
 **Pilot landed (2026-05-20)**
 
-- **Controller:** `backend/src/main/java/com/nulogic/api/leave/controller/LeaveTypeController.java`
-- **Mapper:** `backend/src/main/java/com/nulogic/api/leave/mapper/LeaveTypeMapper.java`
+- **Controllers migrated:**
+  - `backend/.../api/leave/controller/LeaveTypeController.java`
+  - `backend/.../api/leave/controller/LeaveRequestController.java` (create endpoint, line 60)
+- **Mappers:**
+  - `backend/.../api/leave/mapper/LeaveTypeMapper.java`
+  - `backend/.../api/leave/mapper/LeaveRequestMapper.java` — also normalizes
+    legacy `FIRST_HALF` / `SECOND_HALF` aliases to the real
+    `HalfDayPeriod.MORNING` / `AFTERNOON` enum values (the prior controller
+    logic had it backwards — mapped to enum constants that don't exist;
+    dormant bug surfaced and fixed during this migration).
+- **Tests:** `LeaveRequestMapperTest` (6 cases) — client-fillable fields copied,
+  every server-controlled field stays at entity default, all 4 enum aliases
+  resolve correctly, null halfDayPeriod stays null.
+- **Convention chosen:** per-mapper `@Mapper(componentModel = "spring",
+  unmappedTargetPolicy = ReportingPolicy.ERROR)` (matches the LeaveTypeMapper
+  pilot). The shared `@MapperConfig` approach was tried in an earlier WIP and
+  pruned — kept this simpler.
 - **Pattern to copy** (verbatim, three pieces):
   1. `@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.ERROR)`
      — strict mode is the whole point. Every entity field must be either mapped
@@ -310,39 +325,72 @@ Code-level work is DONE for these items but they need on-cluster verification.
   3. For update endpoints, add `@BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)`
      on `updateEntity(...)` to keep partial-update semantics (null in the
      request leaves the existing entity value alone).
-- **Remaining `BeanUtils.copyProperties` call sites repo-wide: 11**
-  (5 files under `backend/src/main/java/com/nulogic/api/`: AttendanceController,
-  LeaveBalanceController, LeaveRequestController, LeaveTypeController [done],
-  LeaveTypeController helper [done], + ~3 others under non-`api/` packages.)
-- **Suggested rollout order** (one PR per module, smallest first — module size
-  here = entity surface, not LOC):
+- **Remaining `BeanUtils.copyProperties` call sites repo-wide: ~9.**
+  Sweep with `grep -rln "BeanUtils.copyProperties" backend/src/main/java/com/nulogic/`.
+  Top remaining locations under `api/`:
+  - `leave/LeaveRequestController.java` — 3 sites left (update endpoint
+    line ~272 + 2 response-mapping sites lines 359/382). Create endpoint
+    is done.
+  - `leave/LeaveBalanceController` — 1 site.
+  - `attendance/AttendanceController` — 1 site.
+  - Remaining non-`api/` call sites — internal converters, not
+    security-sensitive but worth migrating for consistency.
+- **Suggested rollout order** (one PR per module, smallest first):
   1. `leave/LeaveBalanceController` — 1 site, balance ↔ response only.
-  2. `attendance/AttendanceController:457` — 1 site, response mapping only.
-  3. `leave/LeaveRequestController` — 4 sites, but ALL mapping to a sibling
-     `LeaveRequestData` shell; pattern is identical to LeaveType. **Caution:**
-     a parallel worker has an untracked `LeaveRequestMapper.java` WIP at
-     `backend/src/main/java/com/nulogic/api/leave/mapper/` — coordinate with
-     them before opening the PR.
-  4. Remaining non-`api/` call sites (mostly internal converters, not security-
-     sensitive but worth migrating for consistency).
-- **Anti-pattern observed during pilot:** a parallel worker introduced
-  `api/common/mapping/ApiMapperConfig.java` that calls
-  `ignoreUnmappedSourceProperties()` (does not exist on `@MapperConfig` in
-  MapStruct 1.6.3). Do NOT use that helper file as a template until it
-  compiles. The pilot uses per-mapper config and works cleanly.
+  2. `attendance/AttendanceController` — 1 site, response mapping only.
+  3. `leave/LeaveRequestController` remaining 3 sites — update + 2 response
+     mappers. The create endpoint is already done as the second pilot.
+  4. Remaining non-`api/` call sites (mostly internal converters).
 - **Last updated:** 2026-05-20
 
 ### T3-11 · No standardized API response envelope
 
-- **Status:** OPEN
+- **Status:** IN PROGRESS — envelope + `@WrapResponse` advice landed; no
+  controllers migrated yet. Migration is the follow-up wave (opt-in, per
+  controller / per slice).
 - **Where:** Controllers return raw entities (`ResponseEntity<PayrollRun>`),
   domain DTOs (`AuthResponse`), or `Map`. Errors are wrapped by
   `GlobalExceptionHandler` but success responses are not.
 - **Why it matters:** Frontend has to write per-endpoint handling. Pagination
   shape varies. Adding fields like `traceId` / `serverTime` requires touching
   every controller.
-- **Fix:** Adopt `ApiResponse<T> { data, meta, traceId }` envelope, single
-  `@RestControllerAdvice` to wrap. One-time refactor, big consistency win.
+- **Landed (wrapper types, opt-in):**
+  - `com.nulogic.common.api.response.ApiResponse<T>` — record
+    `{ data, meta, traceId, serverTime }`; non-null JSON serialization so
+    `meta` / `traceId` collapse when absent.
+  - `com.nulogic.common.api.response.WrapResponse` — `@Target({TYPE, METHOD})`
+    `@Retention(RUNTIME)` opt-in marker. Unannotated controllers stay
+    unchanged.
+  - `com.nulogic.common.api.response.ApiResponseBodyAdvice` —
+    `@RestControllerAdvice` implementing `ResponseBodyAdvice<Object>`. Wraps
+    only when class **or** method carries `@WrapResponse`. Skips:
+    already-wrapped `ApiResponse` (idempotent), `ErrorResponse` (keeps
+    `GlobalExceptionHandler` semantics intact), streaming returns
+    (`ResponseBodyEmitter` / `SseEmitter` / `StreamingResponseBody`), and
+    non-JSON content types. Pulls `traceId` from MDC keys `traceId` →
+    `requestId` → `correlationId` (matches `RequestLoggingFilter` +
+    `CorrelationIdFilter`).
+  - `com.nulogic.common.api.response.PaginationMeta` — `from(Page<?>)`
+    builds the stable `meta` map (`page`, `size`, `totalElements`,
+    `totalPages`). Controllers paging through `Page<T>` should return
+    `data: List<T>` + `meta: PaginationMeta.from(page)`.
+- **Migration play (per controller, follow-up wave):**
+  1. Add `@WrapResponse` to the controller class (or per method).
+  2. Change return type from `ResponseEntity<T>` to `T`.
+  3. Drop the manual `ResponseEntity.ok(...)` — the body advice wraps the
+     bare return value into `ApiResponse<T>` automatically.
+  4. For paged endpoints, return the bare `List<T>` and attach pagination
+     via a thin DTO whose body advice surfaces `meta`, or compose
+     `ApiResponse.of(page.getContent(), PaginationMeta.from(page), MDC.get("requestId"))`
+     directly — the advice is idempotent, so explicit wrapping is safe.
+- **Not migrated in this wave:** `PayrollController` and
+  `LeaveRequestController` (owned by T3-10 MapStruct migration). Pick a
+  low-risk read-only controller as the pilot.
+- **Tests:** `ApiResponseBodyAdviceTest` (9 cases) covers wrap-on-annotation,
+  leave-untouched-without-annotation, idempotency on already-wrapped bodies,
+  pass-through for `ErrorResponse`, MDC `traceId` resolution with fallback to
+  `requestId`, method-level annotation pickup, streaming-type skip, and
+  `PaginationMeta` shape stability.
 - **Last updated:** 2026-05-20
 
 ### T3-12 · No generated TypeScript client from OpenAPI

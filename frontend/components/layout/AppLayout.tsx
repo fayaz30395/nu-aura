@@ -3,8 +3,8 @@
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {usePathname, useRouter} from 'next/navigation';
 import {logger} from '@/lib/utils/logger';
-import {safeStorage} from '@/lib/utils/safeStorage';
 import {AuthGuard} from '@/components/auth/AuthGuard';
+import {useUiStore} from '@/lib/stores/useUiStore';
 // Icons moved to menuSections.tsx — only layout-specific imports remain
 import {cn} from '@/lib/utils';
 import {
@@ -54,8 +54,6 @@ export interface AppLayoutProps {
   activeMenuItem?: string;
   onMenuItemClick?: (item: SidebarItem) => void;
 }
-
-const SIDEBAR_COLLAPSED_KEY = 'sidebar-collapsed';
 
 // Role priority for display — higher-priority roles appear first
 const ROLE_PRIORITY: Record<string, number> = {
@@ -110,20 +108,20 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   const {data: inboxCounts} = useApprovalInboxCount(canReadApprovalInbox);
   const pendingApprovalCount = inboxCounts?.pending ?? 0;
 
-  // Initialize with server-safe default to avoid hydration mismatch.
-  // localStorage is read in useEffect (client-only) to sync the persisted state.
-  const [isCollapsed, setIsCollapsed] = useState(initialCollapsed ?? false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  // Cross-route UI state lives in useUiStore. The store's persist middleware
+  // rehydrates `sidebarCollapsed` from the legacy `sidebar-collapsed` key on
+  // mount, so existing user state survives this migration.
+  const storeSidebarCollapsed = useUiStore((s) => s.sidebarCollapsed);
+  const setStoreSidebarCollapsed = useUiStore((s) => s.setSidebarCollapsed);
+  const isMobileMenuOpen = useUiStore((s) => s.mobileNavOpen);
+  const setIsMobileMenuOpen = useUiStore((s) => s.setMobileNavOpen);
+
+  // If a parent supplies `sidebarCollapsed`, it wins; otherwise use the store.
+  const isCollapsed = initialCollapsed ?? storeSidebarCollapsed;
+
   // Refs for mobile drawer focus management (audit N-6)
   const mobileDrawerRef = useRef<HTMLElement | null>(null);
   const previousMobileFocusRef = useRef<HTMLElement | null>(null);
-  useEffect(() => {
-    // Sync sidebar collapsed state from storage on client hydration
-    const saved = safeStorage.get(SIDEBAR_COLLAPSED_KEY);
-    if (saved !== null) {
-      setIsCollapsed(saved === 'true');
-    }
-  }, []);
 
   // Mobile drawer focus management — focus first link on open, restore on close (audit N-6)
   useEffect(() => {
@@ -147,26 +145,21 @@ const AppLayout: React.FC<AppLayoutProps> = ({
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'b') {
         e.preventDefault();
-        setIsCollapsed(prev => {
-          const newValue = !prev;
-          onSidebarCollapsedChange?.(newValue);
-          // Persist via safeStorage (SSR-safe, quota-safe)
-          safeStorage.set(SIDEBAR_COLLAPSED_KEY, String(newValue));
-          return newValue;
-        });
+        const current = useUiStore.getState().sidebarCollapsed;
+        const newValue = !current;
+        setStoreSidebarCollapsed(newValue);
+        onSidebarCollapsedChange?.(newValue);
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [onSidebarCollapsedChange]);
+  }, [onSidebarCollapsedChange, setStoreSidebarCollapsed]);
 
   const handleSidebarCollapsedChange = useCallback((collapsed: boolean) => {
-    setIsCollapsed(collapsed);
+    setStoreSidebarCollapsed(collapsed);
     onSidebarCollapsedChange?.(collapsed);
-    // Persist via safeStorage (SSR-safe, quota-safe)
-    safeStorage.set(SIDEBAR_COLLAPSED_KEY, String(collapsed));
-  }, [onSidebarCollapsedChange]);
+  }, [onSidebarCollapsedChange, setStoreSidebarCollapsed]);
 
   const handleMenuItemClick = useCallback((item: SidebarItem) => {
     // Link handles navigation, just notify parent
