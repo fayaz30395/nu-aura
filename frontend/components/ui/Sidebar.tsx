@@ -56,7 +56,10 @@ export interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {
   storageKeyPrefix?: string;
 }
 
-const STORAGE_KEY_COLLAPSED = 'sidebar-collapsed';
+// Note: sidebar collapse state is persisted by the parent layout via
+// `useUiStore` (legacy key `sidebar-collapsed` for the user app,
+// `admin-sidebar-collapsed` for the admin shell). This component is
+// presentation-only with respect to collapse persistence.
 
 // Flyover panel for showing children on the right side
 const ChildrenFlyover: React.FC<{
@@ -505,8 +508,13 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
 
     const handleCollapsedChange = useCallback((newCollapsed: boolean) => {
       setIsCollapsed(newCollapsed);
+      // Persistence is owned by the parent layout via `useUiStore`
+      // (`sidebarCollapsed` or `adminSidebarCollapsed`). The store's
+      // persist middleware writes through to the legacy
+      // `sidebar-collapsed` / `admin-sidebar-collapsed` keys. We forward
+      // the change to the parent and let it drive storage — writing here
+      // would cause a double-write race against the store.
       onCollapsedChange?.(newCollapsed);
-      safeStorage.set(STORAGE_KEY_COLLAPSED, String(newCollapsed));
       // Close flyover when collapsing/expanding
       setOpenFlyoverId(null);
       setFlyoverTriggerRect(null);

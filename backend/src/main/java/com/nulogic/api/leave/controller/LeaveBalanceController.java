@@ -3,6 +3,7 @@ package com.nulogic.api.leave.controller;
 import com.nulogic.api.leave.dto.LeaveBalanceResponse;
 import com.nulogic.api.leave.dto.LeaveEncashmentRequest;
 import com.nulogic.api.leave.dto.LeaveEncashmentResponse;
+import com.nulogic.api.leave.mapper.LeaveBalanceMapper;
 import com.nulogic.application.leave.service.LeaveBalanceService;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.RequiresPermission;
@@ -16,7 +17,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,6 +33,7 @@ public class LeaveBalanceController {
 
     private final LeaveBalanceService leaveBalanceService;
     private final LeaveTypeRepository leaveTypeRepository;
+    private final LeaveBalanceMapper leaveBalanceMapper;
 
     @GetMapping("/employee/{employeeId}")
     @RequiresPermission({Permission.LEAVE_VIEW_ALL, Permission.LEAVE_VIEW_TEAM, Permission.LEAVE_VIEW_SELF})
@@ -115,10 +116,10 @@ public class LeaveBalanceController {
     }
 
     private LeaveBalanceResponse toResponse(LeaveBalance balance) {
-        LeaveBalanceResponse response = new LeaveBalanceResponse();
-        // SEC-FIX (F7): Explicitly ignore audit/tenant fields when copying entity to response DTO.
-        BeanUtils.copyProperties(balance, response,
-                "tenantId", "createdAt", "updatedAt", "createdBy", "updatedBy", "version");
+        // T3-10: MapStruct mapper replaces BeanUtils.copyProperties with explicit
+        // field mapping. unmappedTargetPolicy=ERROR catches new sensitive fields on
+        // LeaveBalance at compile time, replacing the legacy string ignore-list.
+        LeaveBalanceResponse response = leaveBalanceMapper.toResponse(balance);
         // Enrich with leave type name so the frontend can display it without a separate request
         if (balance.getLeaveTypeId() != null) {
             leaveTypeRepository.findById(balance.getLeaveTypeId())

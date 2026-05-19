@@ -24,6 +24,10 @@ import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.http.*;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -39,6 +43,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Service for reliable webhook delivery with retries and circuit breaker.
@@ -87,7 +92,8 @@ public class WebhookDeliveryService {
     // has redirect-following disabled to close an SSRF-via-redirect bypass.
     private final RestTemplate restTemplate;
     // Circuit breakers per webhook URL to prevent cascading failures
-    private final Map<UUID, CircuitBreaker> circuitBreakers = new HashMap<>();
+    private final Map<UUID, CircuitBreaker> circuitBreakers = new ConcurrentHashMap<>();
+    private static final int RETRY_BATCH_SIZE = 100;
     // Webhook-scoped RestTemplate with redirect-following disabled.
     private RestTemplate deliveryRestTemplate;
 
@@ -269,7 +275,12 @@ public class WebhookDeliveryService {
         }
 
         long durationMs = System.currentTimeMillis() - startTime;
-        delivery.recordAttempt(statusCode, responseBody, durationMs, errorMessage);
+        delivery.recordAttempt(
+                statusCode,
+                responseBody,
+                durationMs,
+                errorMessage,
+                tenantTimeService.now(delivery.getTenantId()));
         deliveryRepository.save(delivery);
 
         recordDurationMetric(webhook, durationMs);
@@ -496,31 +507,71 @@ public class WebhookDeliveryService {
         // Iterate per tenant so the "ready for retry" cutoff is the tenant's local now,
         // matching the zone in which nextRetryAt was originally stamped (see deliverWebhook).
         for (UUID tenantId : deliveryRepository.findDistinctTenantIds()) {
-            List<WebhookDelivery> readyForRetry = deliveryRepository.findReadyForRetry(
-                    tenantId, tenantTimeService.now(tenantId));
+            Map<UUID, Optional<Webhook>> webhookCache = new HashMap<>();
+            LocalDateTime tenantNow = tenantTimeService.now(tenantId);
+            while (true) {
+                Pageable pageable = PageRequest.of(
+                        0,
+                        RETRY_BATCH_SIZE,
+                        Sort.by(Sort.Direction.ASC, "nextRetryAt").and(Sort.by(Sort.Direction.ASC, "id")));
 
-            for (WebhookDelivery delivery : readyForRetry) {
-                TenantContext.setCurrentTenant(tenantId);
-                try {
-                    webhookRepository.findById(delivery.getWebhookId()).ifPresent(webhook -> {
-                        if (webhook.getStatus() == WebhookStatus.ACTIVE) {
-                            log.info("Retrying webhook delivery {} (attempt {})",
-                                    delivery.getId(), delivery.getAttempts() + 1);
+                Page<WebhookDelivery> readyForRetry = deliveryRepository.findReadyForRetry(
+                        tenantId, tenantNow, pageable);
 
-                            // Record retry metrics
-                            metricsService.recordWebhookRetry(
-                                    tenantId,
-                                    delivery.getEventType().name(),
-                                    delivery.getAttempts() + 1);
+                if (readyForRetry.isEmpty()) {
+                    break;
+                }
 
-                            deliverWebhook(webhook, delivery);
-                        }
-                    });
-                } finally {
-                    TenantContext.clear();
+                for (WebhookDelivery delivery : readyForRetry.getContent()) {
+                    TenantContext.setCurrentTenant(tenantId);
+                    try {
+                        Optional<Webhook> webhook = webhookCache.computeIfAbsent(
+                                delivery.getWebhookId(),
+                                id -> webhookRepository.findByIdAndTenantId(id, tenantId));
+                        webhook.ifPresentOrElse(
+                                activeWebhook -> {
+                                    if (activeWebhook.getStatus() == WebhookStatus.ACTIVE) {
+                                        log.info("Retrying webhook delivery {} (attempt {})",
+                                                delivery.getId(), delivery.getAttempts() + 1);
+
+                                        // Record retry metrics
+                                        metricsService.recordWebhookRetry(
+                                                tenantId,
+                                                delivery.getEventType().name(),
+                                                delivery.getAttempts() + 1);
+
+                                        deliverWebhook(activeWebhook, delivery);
+                                    } else {
+                                        failDeliveryWithoutRetry(
+                                                delivery,
+                                                tenantId,
+                                                "Webhook is not active");
+                                    }
+                                },
+                                () -> failDeliveryWithoutRetry(
+                                        delivery,
+                                        tenantId,
+                                        "Webhook was deleted"));
+                    } finally {
+                        TenantContext.clear();
+                    }
+                }
+
+                if (!readyForRetry.hasNext()) {
+                    break;
                 }
             }
         }
+    }
+
+    private void failDeliveryWithoutRetry(WebhookDelivery delivery, UUID tenantId, String reason) {
+        circuitBreakers.remove(delivery.getWebhookId());
+        delivery.setStatus(WebhookDelivery.DeliveryStatus.FAILED);
+        delivery.setErrorMessage(reason);
+        delivery.setNextRetryAt(null);
+        deliveryRepository.save(delivery);
+        log.warn("Marking webhook delivery {} as failed for tenant {}: {}",
+                delivery.getId(), tenantId, reason);
     }
 
     /**

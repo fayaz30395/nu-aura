@@ -2,6 +2,7 @@ package com.nulogic.api.leave.controller;
 
 import com.nulogic.api.leave.dto.LeaveRequestRequest;
 import com.nulogic.api.leave.dto.LeaveRequestResponse;
+import com.nulogic.api.leave.mapper.LeaveRequestMapper;
 import com.nulogic.application.employee.service.EmployeeService;
 import com.nulogic.application.leave.service.LeaveRequestService;
 import com.nulogic.common.security.Permission;
@@ -21,7 +22,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -47,6 +47,7 @@ public class LeaveRequestController {
     private final EmployeeService employeeService;
     private final EmployeeRepository employeeRepository;
     private final com.nulogic.common.security.DataScopeService dataScopeService;
+    private final LeaveRequestMapper leaveRequestMapper;
 
     @PostMapping
     @RequiresPermission(Permission.LEAVE_REQUEST)
@@ -57,12 +58,12 @@ public class LeaveRequestController {
             @ApiResponse(responseCode = "409", description = "Overlapping leave request exists")
     })
     public ResponseEntity<LeaveRequestResponse> createLeaveRequest(@Valid @RequestBody LeaveRequestRequest request) {
-        LeaveRequest leaveRequest = new LeaveRequest();
-        // SEC-FIX (F7): Explicitly ignore sensitive entity fields to prevent mass-assignment attacks.
-        // Note: employeeId is permitted on create — request DTO carries it and service validates ownership.
-        BeanUtils.copyProperties(request, leaveRequest,
-                "id", "tenantId", "status", "approvedBy", "approvedAt", "rejectedBy", "rejectedAt",
-                "createdAt", "updatedAt", "createdBy", "updatedBy", "version");
+        // T3-10: MapStruct mapper replaces BeanUtils.copyProperties with explicit
+        // ignore-list. unmappedTargetPolicy=ERROR turns a forgotten new field into a
+        // compile error instead of a silent mass-assignment. The mapper's
+        // toHalfDayPeriod() default method handles the MORNING/AFTERNOON ↔
+        // FIRST_HALF/SECOND_HALF alias normalization (BUG-QA2-007).
+        LeaveRequest leaveRequest = leaveRequestMapper.toEntity(request);
 
         // BUG-QA2-001 FIX: totalDays is now optional in the request DTO.
         // If the frontend omits it, compute it from startDate / endDate.
@@ -72,16 +73,6 @@ public class LeaveRequestController {
             leaveRequest.setTotalDays(new java.math.BigDecimal(daysBetween));
         }
 
-        if (request.getHalfDayPeriod() != null) {
-            // BUG-QA2-007 FIX: Normalize frontend aliases MORNING/AFTERNOON to
-            // Java enum values FIRST_HALF/SECOND_HALF before calling valueOf().
-            String normalizedPeriod = switch (request.getHalfDayPeriod().toUpperCase()) {
-                case "MORNING" -> "FIRST_HALF";
-                case "AFTERNOON" -> "SECOND_HALF";
-                default -> request.getHalfDayPeriod().toUpperCase();
-            };
-            leaveRequest.setHalfDayPeriod(LeaveRequest.HalfDayPeriod.valueOf(normalizedPeriod));
-        }
         LeaveRequest created = leaveRequestService.createLeaveRequest(leaveRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(created));
     }
@@ -266,22 +257,16 @@ public class LeaveRequestController {
     public ResponseEntity<LeaveRequestResponse> updateLeaveRequest(
             @Parameter(description = "Leave request UUID") @PathVariable UUID id,
             @Valid @RequestBody LeaveRequestRequest request) {
+        // T3-10: MapStruct mapper replaces BeanUtils.copyProperties with explicit
+        // ignore-list. SEC-FIX (F7) preserved: sensitive entity fields (audit,
+        // tenant, status transitions, requestNumber, employeeId) are all marked
+        // ignore=true on LeaveRequestMapper.updateEntity. unmappedTargetPolicy=ERROR
+        // turns a forgotten new field into a compile error instead of mass-assignment.
+        // The mapper's toHalfDayPeriod() default method also handles the
+        // MORNING/AFTERNOON ↔ FIRST_HALF/SECOND_HALF alias normalization
+        // (BUG-QA2-007), so the inline switch here is no longer needed.
         LeaveRequest leaveRequestData = new LeaveRequest();
-        // SEC-FIX (F7): Explicitly ignore sensitive entity fields on update — also ignore employeeId
-        // so the owner cannot be re-assigned via mass assignment.
-        BeanUtils.copyProperties(request, leaveRequestData,
-                "id", "tenantId", "status", "approvedBy", "approvedAt", "rejectedBy", "rejectedAt",
-                "createdAt", "updatedAt", "createdBy", "updatedBy", "version", "employeeId");
-        if (request.getHalfDayPeriod() != null) {
-            // BUG-QA2-007 FIX: Normalize frontend aliases MORNING/AFTERNOON to
-            // Java enum values FIRST_HALF/SECOND_HALF before calling valueOf().
-            String normalizedPeriod = switch (request.getHalfDayPeriod().toUpperCase()) {
-                case "MORNING" -> "FIRST_HALF";
-                case "AFTERNOON" -> "SECOND_HALF";
-                default -> request.getHalfDayPeriod().toUpperCase();
-            };
-            leaveRequestData.setHalfDayPeriod(LeaveRequest.HalfDayPeriod.valueOf(normalizedPeriod));
-        }
+        leaveRequestMapper.updateEntity(request, leaveRequestData);
         LeaveRequest updated = leaveRequestService.updateLeaveRequest(id, leaveRequestData);
         return ResponseEntity.ok(toResponse(updated));
     }
@@ -353,15 +338,15 @@ public class LeaveRequestController {
 
     /**
      * Basic response mapping without any enrichment (no DB lookups).
+     *
+     * <p>T3-10: MapStruct mapper replaces BeanUtils.copyProperties with explicit
+     * field mapping. status null → "UNKNOWN" and halfDayPeriod enum → name() are
+     * handled by the mapper's default methods (fromStatus / fromHalfDayPeriod).
+     * Enrichment fields (approverId, approverName, pendingApproverName) are
+     * intentionally left null here — toBasicResponse is for the no-lookup path.</p>
      */
     private LeaveRequestResponse toBasicResponse(LeaveRequest request) {
-        LeaveRequestResponse response = new LeaveRequestResponse();
-        BeanUtils.copyProperties(request, response);
-        response.setStatus(request.getStatus() != null ? request.getStatus().name() : "UNKNOWN");
-        if (request.getHalfDayPeriod() != null) {
-            response.setHalfDayPeriod(request.getHalfDayPeriod().name());
-        }
-        return response;
+        return leaveRequestMapper.toResponse(request);
     }
 
     /**
@@ -378,12 +363,13 @@ public class LeaveRequestController {
      * For list endpoints, use {@link #toBatchResponse(Page)} instead.</p>
      */
     private LeaveRequestResponse toResponse(LeaveRequest request) {
-        LeaveRequestResponse response = new LeaveRequestResponse();
-        BeanUtils.copyProperties(request, response);
-        response.setStatus(request.getStatus() != null ? request.getStatus().name() : "UNKNOWN");
-        if (request.getHalfDayPeriod() != null) {
-            response.setHalfDayPeriod(request.getHalfDayPeriod().name());
-        }
+        // T3-10: MapStruct mapper handles the bulk copy. status null → "UNKNOWN"
+        // and halfDayPeriod enum → name() are handled by the mapper's default
+        // methods (fromStatus / fromHalfDayPeriod). approverId / approverName /
+        // pendingApproverName are still enriched below from projection queries
+        // (the mapper intentionally leaves them null because they cannot be
+        // derived from the entity alone).
+        LeaveRequestResponse response = leaveRequestMapper.toResponse(request);
 
         // Use projection queries to avoid loading full Employee entities with encrypted fields
         if (request.getEmployeeId() != null) {

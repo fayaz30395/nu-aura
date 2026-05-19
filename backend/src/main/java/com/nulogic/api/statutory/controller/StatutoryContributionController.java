@@ -1,6 +1,7 @@
 package com.nulogic.api.statutory.controller;
 
 import com.nulogic.application.statutory.service.StatutoryService;
+import com.nulogic.common.api.response.WrapResponse;
 import com.nulogic.common.security.RequiresPermission;
 import com.nulogic.domain.statutory.MonthlyStatutoryContribution;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/statutory/contributions")
 @RequiredArgsConstructor
+@WrapResponse
 public class StatutoryContributionController {
 
     private final StatutoryService statutoryService;

@@ -2,6 +2,7 @@ package com.nulogic.api.workflow.controller;
 
 import com.nulogic.api.workflow.dto.WorkflowExecutionResponse;
 import com.nulogic.application.workflow.service.WorkflowService;
+import com.nulogic.common.api.response.WrapResponse;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.RequiresPermission;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,6 +28,7 @@ import java.util.List;
 @RequestMapping("/api/v1/approvals")
 @RequiredArgsConstructor
 @Tag(name = "Approvals", description = "Manager approval inbox and task management")
+@WrapResponse
 public class ApprovalsController {
 
     private final WorkflowService workflowService;

@@ -278,32 +278,46 @@ Code-level work is DONE for these items but they need on-cluster verification.
 
 ### T3-10 · MapStruct is in `pom.xml` but unused
 
-- **Status:** IN PROGRESS — 2/N controllers migrated (LeaveType pilot +
-  LeaveRequest create). ~9 `BeanUtils.copyProperties` sites remain repo-wide.
-- **Where:** Controllers use `BeanUtils.copyProperties()` with ignore-lists
-  (`PayrollController:54`, `LeaveRequestController:69`).
+- **Status:** DONE — all `api/` controllers migrated; non-`api/` converters
+  listed as follow-up housekeeping.
+- **Where:** Controllers previously used `BeanUtils.copyProperties()` with
+  hand-maintained ignore-lists (mass-assignment risk).
 - **Why it matters:** Ignore-lists drift silently — add a new sensitive field,
   forget to add to the list → mass-assignment. MapStruct generates
   compile-time mappers with explicit fields.
-- **Fix:** Pick one. Either remove the MapStruct dep, or migrate controllers
-  to MapStruct DTO↔Entity converters and delete every `BeanUtils.copyProperties`
-  call.
+- **Fix landed:** every `api/` controller call site now uses a typed MapStruct
+  mapper. `BeanUtils.copyProperties` is gone from `api/` entirely.
 
-**Pilot landed (2026-05-20)**
+**Migration landed (2026-05-20)**
 
 - **Controllers migrated:**
-  - `backend/.../api/leave/controller/LeaveTypeController.java`
-  - `backend/.../api/leave/controller/LeaveRequestController.java` (create endpoint, line 60)
+  - `backend/.../api/leave/controller/LeaveTypeController.java` (pilot)
+  - `backend/.../api/leave/controller/LeaveRequestController.java` —
+    `createLeaveRequest`, `updateLeaveRequest`, `toBasicResponse`,
+    `toResponse` (4 sites; all migrated to `LeaveRequestMapper`).
+  - `backend/.../api/leave/controller/LeaveBalanceController.java` —
+    `toResponse` (1 site → `LeaveBalanceMapper`).
+  - `backend/.../api/attendance/controller/AttendanceController.java` —
+    `toResponse` (1 site → `AttendanceResponseMapper`). Null-safe defaults
+    and the `"UNKNOWN"` status fallback live in the controller post-mapping
+    so legacy/imported attendance records keep their contract.
 - **Mappers:**
   - `backend/.../api/leave/mapper/LeaveTypeMapper.java`
-  - `backend/.../api/leave/mapper/LeaveRequestMapper.java` — also normalizes
-    legacy `FIRST_HALF` / `SECOND_HALF` aliases to the real
-    `HalfDayPeriod.MORNING` / `AFTERNOON` enum values (the prior controller
-    logic had it backwards — mapped to enum constants that don't exist;
-    dormant bug surfaced and fixed during this migration).
-- **Tests:** `LeaveRequestMapperTest` (6 cases) — client-fillable fields copied,
-  every server-controlled field stays at entity default, all 4 enum aliases
-  resolve correctly, null halfDayPeriod stays null.
+  - `backend/.../api/leave/mapper/LeaveRequestMapper.java` — `toEntity`
+    (create), `updateEntity` (in-place, F7 ignores `employeeId`), `toResponse`
+    (entity → DTO with `fromStatus` / `fromHalfDayPeriod` default methods
+    preserving the legacy `"UNKNOWN"` sentinel and null-halfDayPeriod
+    contract). Also normalizes legacy `FIRST_HALF` / `SECOND_HALF` aliases to
+    the real `HalfDayPeriod.MORNING` / `AFTERNOON` enum values — dormant bug
+    from the original controller surfaced and fixed during the pilot.
+  - `backend/.../api/leave/mapper/LeaveBalanceMapper.java`
+  - `backend/.../api/attendance/mapper/AttendanceResponseMapper.java`
+- **Tests:** 20 mapper unit tests across 3 test classes (
+  `LeaveRequestMapperTest` 14, `LeaveBalanceMapperTest` 3,
+  `AttendanceResponseMapperTest` 3). Each asserts: client-fillable fields
+  copied, server-controlled fields stay at entity default (mass-assignment
+  regression guard), enum / status conversions match the legacy controller
+  contract (including the `"UNKNOWN"` fallback for null status).
 - **Convention chosen:** per-mapper `@Mapper(componentModel = "spring",
   unmappedTargetPolicy = ReportingPolicy.ERROR)` (matches the LeaveTypeMapper
   pilot). The shared `@MapperConfig` approach was tried in an earlier WIP and
@@ -317,37 +331,30 @@ Code-level work is DONE for these items but they need on-cluster verification.
      *why* the field isn't settable from the API (audit, JPA, soft-delete,
      framework). The mass-assignment ignore-list is now per-field, version-
      controlled, and verified at compile time.
-     - Ignore list for any `TenantAware` subclass: `id`, `tenantId`, `createdAt`,
-       `updatedAt`, `createdBy`, `lastModifiedBy` (NOT `updatedBy` — that name
-       doesn't exist on the entity), `version`, `isDeleted`, `deletedAt`. Use
-       `isDeleted`, **not** `deleted` — Lombok `@SuperBuilder` keeps the
-       property name.
+     - Ignore list for any `TenantAware` subclass via `@SuperBuilder`
+       (`toEntity` path): `id`, `tenantId`, `createdAt`, `updatedAt`,
+       `createdBy`, `lastModifiedBy` (NOT `updatedBy` — that name doesn't
+       exist on the entity), `version`, `isDeleted`, `deletedAt`.
+     - For `updateEntity(@MappingTarget)` (setter path), the soft-delete
+       property name is `deleted` (Lombok generates `setDeleted` for a
+       `boolean isDeleted` field) — use `deleted`, not `isDeleted`.
   3. For update endpoints, add `@BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)`
      on `updateEntity(...)` to keep partial-update semantics (null in the
      request leaves the existing entity value alone).
-- **Remaining `BeanUtils.copyProperties` call sites repo-wide: ~9.**
+- **Remaining `BeanUtils.copyProperties` call sites repo-wide: 1.**
   Sweep with `grep -rln "BeanUtils.copyProperties" backend/src/main/java/com/nulogic/`.
-  Top remaining locations under `api/`:
-  - `leave/LeaveRequestController.java` — 3 sites left (update endpoint
-    line ~272 + 2 response-mapping sites lines 359/382). Create endpoint
-    is done.
-  - `leave/LeaveBalanceController` — 1 site.
-  - `attendance/AttendanceController` — 1 site.
-  - Remaining non-`api/` call sites — internal converters, not
-    security-sensitive but worth migrating for consistency.
-- **Suggested rollout order** (one PR per module, smallest first):
-  1. `leave/LeaveBalanceController` — 1 site, balance ↔ response only.
-  2. `attendance/AttendanceController` — 1 site, response mapping only.
-  3. `leave/LeaveRequestController` remaining 3 sites — update + 2 response
-     mappers. The create endpoint is already done as the second pilot.
-  4. Remaining non-`api/` call sites (mostly internal converters).
+  - `application/leave/service/LeaveBalanceService.java:147` — internal
+    converter inside the application layer (response shape construction for
+    cached lookups). Not security-sensitive (no untrusted-DTO → entity copy)
+    but worth migrating for consistency. Follow-up housekeeping ticket, not
+    blocking.
 - **Last updated:** 2026-05-20
 
 ### T3-11 · No standardized API response envelope
 
-- **Status:** IN PROGRESS — envelope + `@WrapResponse` advice landed; no
-  controllers migrated yet. Migration is the follow-up wave (opt-in, per
-  controller / per slice).
+- **Status:** IN PROGRESS — envelope + `@WrapResponse` advice landed;
+  3 pilot controllers annotated (2026-05-20). Remaining controller
+  migration continues opt-in, per slice — see migration playbook below.
 - **Where:** Controllers return raw entities (`ResponseEntity<PayrollRun>`),
   domain DTOs (`AuthResponse`), or `Map`. Errors are wrapped by
   `GlobalExceptionHandler` but success responses are not.
@@ -383,36 +390,99 @@ Code-level work is DONE for these items but they need on-cluster verification.
      via a thin DTO whose body advice surfaces `meta`, or compose
      `ApiResponse.of(page.getContent(), PaginationMeta.from(page), MDC.get("requestId"))`
      directly — the advice is idempotent, so explicit wrapping is safe.
-- **Not migrated in this wave:** `PayrollController` and
-  `LeaveRequestController` (owned by T3-10 MapStruct migration). Pick a
-  low-risk read-only controller as the pilot.
-- **Tests:** `ApiResponseBodyAdviceTest` (9 cases) covers wrap-on-annotation,
-  leave-untouched-without-annotation, idempotency on already-wrapped bodies,
-  pass-through for `ErrorResponse`, MDC `traceId` resolution with fallback to
-  `requestId`, method-level annotation pickup, streaming-type skip, and
-  `PaginationMeta` shape stability.
+- **Wave 1 pilots annotated (2026-05-20):**
+  - `com.nulogic.api.dashboard.controller.DashboardController` — 1 GET
+    (`/metrics`).
+  - `com.nulogic.api.user.controller.PermissionController` — 2 GETs
+    (`/`, `/resource/{resource}`); paginated + list responses.
+  - `com.nulogic.api.workflow.controller.ApprovalsController` — 2 GETs
+    (`/tasks`, `/inbox`); list + `Page<WorkflowExecutionResponse>`.
+  - Class-level `@WrapResponse` only — return types stay
+    `ResponseEntity<T>` for this wave. The advice wraps transparently;
+    the type-simplification (drop `ResponseEntity.ok(...)`, return `T`)
+    is deferred to a separate housekeeping pass once the advice has
+    soaked in production.
+- **Migration playbook — next candidates (read-heavy, no streaming, no
+  file/binary responses; pick a slice each PR):**
+  1. `api/home/controller/HomeController` — 7 GETs (slightly above
+     the soft "≤5" rule but pure read-only + already on `Page<T>`).
+  2. `api/knowledge/controller/FluenceActivityController` — 2 GETs,
+     paginated activity feed.
+  3. `api/knowledge/controller/FluenceSearchController` — 1 GET.
+  4. `api/knowledge/controller/KnowledgeSearchController` — 3 GETs.
+  5. `api/workflow/controller/ApprovalsController` ← already done.
+  6. `api/admin/controller/SystemAuditLogController` — 2 GETs.
+  7. `api/statutory/controller/StatutoryContributionController` —
+     3 GETs.
+  8. `api/featureflag/FeatureFlagController` — 5 GETs + 2 POSTs;
+     the GET-block can be annotated per-method first.
+  9. `api/calendar/controller/CalendarController` — mixed CRUD;
+     annotate the read methods (`/events/my`, `/events/range`,
+     `/events`, `/events/type/{type}`, `/events/organized`,
+     `/events/attending`, `/summary`) before the writes.
+  - **Hold:** `PayrollController`, `LeaveRequestController`,
+    `LeaveBalanceController`, `AttendanceController` — owned by
+    T3-10 wave 2 (MapStruct migration).
+  - **Skip:** `AuthController` — custom cookie/body semantics around
+    the JWT refresh flow.
+- **Tests:** `ApiResponseBodyAdviceTest` (12 cases) covers
+  wrap-on-annotation, leave-untouched-without-annotation, idempotency on
+  already-wrapped bodies, pass-through for `ErrorResponse`, MDC
+  `traceId` resolution with fallback to `requestId`, method-level
+  annotation pickup, streaming-type skip, `PaginationMeta` shape
+  stability, **and** three migration smoke tests — one per pilot
+  controller — that resolve a real handler `MethodParameter` and assert
+  `advice.supports(..)` returns `true` plus that
+  `beforeBodyWrite(..)` returns an `ApiResponse` envelope with `data`,
+  `serverTime`, and (when MDC set) `traceId`.
 - **Last updated:** 2026-05-20
 
 ### T3-12 · No generated TypeScript client from OpenAPI
 
-- **Status:** IN PROGRESS — codegen wired (2026-05-20); migration of
-  hand-rolled `frontend/lib/api/*.ts` consumers is the follow-up.
+- **Status:** IN PROGRESS — codegen wired + 1/10 service files migrated
+  (2026-05-20).
 - **Where:** `frontend/lib/api/*.ts` is hand-rolled (~1200 LOC).
 - **Why it matters:** SpringDoc emits OpenAPI for all 177 controllers — but TS
   types are manually maintained. Backend changes break frontend silently
   until runtime.
-- **Fix:** `orval` (v7) generates a React-Query client from `/v3/api-docs`
-  into `frontend/lib/generated/api/` (gitignored — reproducible). Wired via:
+- **Fix:** `orval` (v7) generates a React-Query client from the SpringDoc
+  OpenAPI spec into `frontend/lib/generated/api/` (gitignored —
+  reproducible, regenerated on demand). 185 tag-split modules emitted
+  on first run. Wired via:
   - `frontend/orval.config.ts` — `tags-split` per OpenAPI tag, `client:
     'react-query'`, input override `API_DOCS_URL` for CI snapshots.
   - `frontend/lib/api/orval-mutator.ts` — routes every generated call
     through the existing `apiClient` so httpOnly-cookie auth, 401 refresh
     mutex, CSRF double-submit, and tenant headers stay intact.
-  - `npm run api:generate` script. Backend must be running locally (or
-    `API_DOCS_URL` set to a snapshot) before running.
-- **Follow-up:** Migrate hand-rolled `frontend/lib/api/*.ts` consumers to
-  the generated hooks one slice at a time (auth → users → roles → …),
-  then delete the originals. Keep `client.ts` and `orval-mutator.ts`.
+  - `npm run api:generate` script. The actual SpringDoc path is
+    `http://localhost:8080/api-docs` (not `/v3/api-docs`); the
+    `API_DOCS_URL` default in `orval.config.ts` is stale, and orval
+    cannot fetch HTTP directly, so run with a local snapshot file:
+    `curl -s http://localhost:8080/api-docs -o /tmp/api-docs.json &&
+    API_DOCS_URL=/tmp/api-docs.json npm run api:generate`.
+- **Migrated this wave (2026-05-20):**
+  - `frontend/lib/api/escalation.ts` (23 LOC, 3 functions) → thin facade
+    over generated `escalation-configuration` client. Public
+    `escalationApi.{getConfig, upsertConfig, deleteConfig}` signatures
+    unchanged so `lib/hooks/queries/useEscalation.ts` callers needed no
+    edits. `npx tsc --noEmit` clean.
+- **Remaining service files (smallest first):**
+  - `users.ts` (30 LOC)
+  - `mfa.ts` (59 LOC)
+  - `admin-system.ts` (72 LOC)
+  - `notifications.ts` (74 LOC)
+  - `shifts.ts` (81 LOC)
+  - `roles.ts` (87 LOC)
+  - `implicitRoles.ts` (97 LOC)
+  - `public-client.ts` (103 LOC)
+  - `custom-fields.ts` (229 LOC)
+- **Out of scope (do NOT migrate):**
+  - `auth.ts` — hand-rolled refresh mutex must stay (P0-SESSION-FIX).
+  - `client.ts` — the shared Axios instance itself.
+  - `orval-mutator.ts` — the bridge from generated calls to `apiClient`.
+- **Follow-up:** Keep migrating one file per wave, then delete the
+  originals when the call sites in `lib/hooks/queries/*` switch to the
+  generated React-Query hooks directly.
 - **Last updated:** 2026-05-20
 
 ### T3-13 · Mantine + Tailwind dual styling
@@ -459,18 +529,18 @@ Code-level work is DONE for these items but they need on-cluster verification.
 
 ### T3-14 · Single Zustand store across 261 routes
 
-- **Status:** IN PROGRESS — `useUiStore` slice landed + `AppLayout` migrated;
-  remaining ad-hoc `useState` / `localStorage` cross-route patterns listed as
-  follow-ups
+- **Status:** DONE — all cross-route UI state migrated to Zustand slices.
+  Remaining `safeStorage` callers (`DashboardGrid`, `DataTable`,
+  `AdvancedFilterPanel`) are per-instance feature state, not cross-route,
+  and stay component-local by design.
 - **Where:** `useAuth.ts` was the only store (per MEMORY.md and verified in
   code). New slices live at `frontend/lib/stores/`.
 - **Why it matters:** Server state is in React Query (good), but UI state
   (sidebar collapse, app-shell tabs, draft form state) drifts into ad-hoc
   `useState` chains. As route count grows this leaks.
 - **Fix:** Per-feature Zustand slices for UI state that crosses routes
-  (sidebar, command palette, notification center). Keep React Query for
-  server state.
-- **What landed (2026-05-20):**
+  (sidebar, theme, command palette). Keep React Query for server state.
+- **What landed (2026-05-20, wave 1):**
   - `frontend/lib/stores/README.md` — slice-per-file convention,
     `useXxxStore` naming, persistence rules.
   - `frontend/lib/stores/useUiStore.ts` — `sidebarCollapsed` (persisted),
@@ -484,27 +554,55 @@ Code-level work is DONE for these items but they need on-cluster verification.
   - `frontend/lib/stores/useUiStore.test.ts` — Vitest covering defaults,
     `setSidebarCollapsed` / `toggleSidebar` actions writing through, mobile
     nav + command palette toggles staying ephemeral, and rehydration from
-    the legacy storage key. All 4 tests pass.
+    the legacy storage key.
   - `frontend/components/layout/AppLayout.tsx` — migrated off the ad-hoc
     `safeStorage.get/set('sidebar-collapsed')` pattern; `isCollapsed` and
     `isMobileMenuOpen` now read from `useUiStore`. Cmd/Ctrl+B keyboard
     shortcut and the `onSidebarCollapsedChange` parent callback preserved.
-  - `npx tsc --noEmit` clean.
-- **Remaining (follow-ups, NOT in scope for T3-14):**
-  - `frontend/app/admin/AdminLayoutInner.tsx` — duplicate sidebar-collapse
-    pattern under a different key (`admin-sidebar-collapsed`). Migrate to a
-    second `useUiStore` field or fold the admin shell into `AppLayout`.
-  - `frontend/components/ui/Sidebar.tsx` — owns its own `sidebar-collapsed`
-    and `sidebar-collapsed-sections` storage reads (section-level expand
-    state). Crosses routes but is component-local today.
-  - `frontend/components/layout/DarkModeProvider.tsx` — theme preference in
-    `safeStorage`. Candidate for a `useThemeStore` slice once a second
-    consumer needs it.
+- **Migrated this wave (2026-05-20, wave 2 — 3 surfaces):**
+  - `useUiStore` extended with `adminSidebarCollapsed` (persisted) +
+    `setAdminSidebarCollapsed` / `toggleAdminSidebar` actions. The
+    `PersistStorage` adapter now bridges both sidebar fields onto their
+    respective legacy keys (`sidebar-collapsed` and
+    `admin-sidebar-collapsed`). Independent admin-shell slot keeps the user
+    app and admin shell from clobbering each other's collapse state.
+  - `frontend/app/admin/AdminLayoutInner.tsx` — dropped the ad-hoc
+    `useState` + `safeStorage.get/set('admin-sidebar-collapsed')` pattern;
+    `isCollapsed` and `handleCollapsedChange` now route through
+    `useUiStore`. The `safeStorage` import is gone.
+  - `frontend/components/ui/Sidebar.tsx` — removed the redundant
+    `safeStorage.set('sidebar-collapsed', ...)` write inside
+    `handleCollapsedChange` (was double-writing alongside `useUiStore`).
+    Sidebar stays presentation-only for collapse persistence; parent layout
+    owns the store. Dead `STORAGE_KEY_COLLAPSED` constant removed.
+    (Per-instance section-collapse state under `sidebar-collapsed-sections`
+    / `admin-sidebar-collapsed-sections` is local UI memory, not
+    cross-route, and stays.)
+  - `frontend/lib/stores/useThemeStore.ts` — new slice with
+    `mode: 'light' | 'dark' | 'system'`, persisted under the legacy raw-
+    string key `nu-aura-theme` via a custom `PersistStorage` adapter. The
+    pre-hydration FOUC script in `frontend/lib/theme/theme-script.ts` reads
+    that key directly before React hydrates, so preserving the raw-string
+    shape is load-bearing.
+  - `frontend/components/layout/DarkModeProvider.tsx` — migrated off raw
+    `safeStorage.get/set('nu-aura-theme', ...)`. Reads `mode` / `setMode`
+    from `useThemeStore`. Still owns the `<html class="dark">` DOM
+    side-effect, the `prefers-color-scheme` media-query subscription, and
+    the legacy `useDarkMode` / `useTheme` context API for back-compat with
+    `ThemeToggle`, `MantineThemeProvider`, and the settings page.
+  - `frontend/lib/stores/useUiStore.test.ts` — extended with two new tests
+    covering admin-sidebar persistence and rehydration (6 tests pass).
+  - `frontend/lib/stores/useThemeStore.test.ts` — 4 Vitest tests covering
+    defaults, raw-string write-through to the legacy key, rehydration, and
+    rejection of invalid stored values.
+  - All 10 store tests pass. `npx tsc --noEmit` in `frontend/` clean.
+- **Remaining (deliberately out of scope — per-instance feature state, not
+  cross-route):**
   - `frontend/components/ui/DashboardGrid.tsx`,
     `frontend/components/ui/DataTable.tsx`,
     `frontend/components/ui/AdvancedFilterPanel.tsx` — per-instance layout /
-    filter preferences in `safeStorage`. Stay as-is unless they need to be
-    read from another route (then promote to a slice).
+    filter preferences in `safeStorage`. Promote to a slice only if a
+    second route needs to read the same state.
 - **Last updated:** 2026-05-20
 
 ### T3-15 · JaCoCo target 80% — enforcement wired (ratcheted floor)

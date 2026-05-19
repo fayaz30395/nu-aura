@@ -1,6 +1,7 @@
 package com.nulogic.application.leave.service;
 
 import com.nulogic.api.leave.dto.LeaveBalanceResponse;
+import com.nulogic.api.leave.mapper.LeaveBalanceMapper;
 import com.nulogic.common.config.CacheConfig;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
@@ -10,7 +11,6 @@ import com.nulogic.infrastructure.leave.repository.LeaveBalanceRepository;
 import com.nulogic.infrastructure.leave.repository.LeaveTypeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -32,6 +32,12 @@ public class LeaveBalanceService {
     private final LeaveTypeRepository leaveTypeRepository;
     // S12-B: Tenant-local "now" / "today" for accrual, balance, pending and credit operations.
     private final TenantTimeService tenantTimeService;
+    // T3-10 cleanup wave: reuse the controller's MapStruct mapper so the
+    // response shape stays in lock-step across both call sites. The mapper
+    // is the single source of truth for which LeaveBalance fields are
+    // client-visible — `unmappedTargetPolicy = ERROR` makes any new field
+    // a compile-time decision instead of a silent BeanUtils ignore-list.
+    private final LeaveBalanceMapper leaveBalanceMapper;
 
     /**
      * Get or create a leave balance for the given employee / leave-type / year.
@@ -110,9 +116,9 @@ public class LeaveBalanceService {
      * catalogue. This method collapses that to two queries total: one for
      * balances, one batched for distinct leave-type IDs.</p>
      *
-     * <p>Field-copy semantics match the controller's previous implementation —
-     * audit/tenant fields are deliberately excluded from {@link BeanUtils#copyProperties}
-     * to avoid leaking server-managed metadata into the response DTO.</p>
+     * <p>Field-copy semantics match the controller's implementation — audit /
+     * tenant fields are excluded by the MapStruct mapper (T3-10 cleanup wave)
+     * so server-managed metadata never leaks into the response DTO.</p>
      */
     @Transactional(readOnly = true)
     public List<LeaveBalanceResponse> getEmployeeBalancesEnriched(UUID employeeId) {
@@ -141,11 +147,12 @@ public class LeaveBalanceService {
     }
 
     private LeaveBalanceResponse toResponse(LeaveBalance balance, Map<UUID, String> typeNamesById) {
-        LeaveBalanceResponse response = new LeaveBalanceResponse();
-        // SEC-FIX (F7): mirror the controller — exclude audit/tenant fields from
-        // the response DTO so server-side metadata is never leaked client-side.
-        BeanUtils.copyProperties(balance, response,
-                "tenantId", "createdAt", "updatedAt", "createdBy", "updatedBy", "version");
+        // T3-10 cleanup wave: delegate the entity-to-DTO copy to the shared
+        // MapStruct mapper. Same SEC-FIX (F7) guarantee as before — audit
+        // and tenant fields are excluded — but now enforced at compile time
+        // via `unmappedTargetPolicy = ERROR` instead of a string ignore-list
+        // that silently rotted as the entity gained fields.
+        LeaveBalanceResponse response = leaveBalanceMapper.toResponse(balance);
         if (balance.getLeaveTypeId() != null) {
             String name = typeNamesById.get(balance.getLeaveTypeId());
             if (name != null) {

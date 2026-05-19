@@ -115,8 +115,12 @@ public class WebhookDelivery extends TenantAware {
      * Record a delivery attempt.
      */
     public void recordAttempt(int statusCode, String response, long durationMs, String error) {
+        recordAttempt(statusCode, response, durationMs, error, LocalDateTime.now());
+    }
+
+    public void recordAttempt(int statusCode, String response, long durationMs, String error, LocalDateTime now) {
         this.attempts++;
-        this.lastAttemptAt = LocalDateTime.now();
+        this.lastAttemptAt = now;
         this.responseStatus = statusCode;
         this.responseBody = truncate(response, 2000);
         this.durationMs = durationMs;
@@ -128,7 +132,7 @@ public class WebhookDelivery extends TenantAware {
 
         if (statusCode >= 200 && statusCode < 300) {
             this.status = DeliveryStatus.DELIVERED;
-            this.deliveredAt = LocalDateTime.now();
+            this.deliveredAt = now;
             this.nextRetryAt = null;
         } else if (error != null || statusCode >= 400) {
             if (this.attempts >= 5) {
@@ -144,7 +148,7 @@ public class WebhookDelivery extends TenantAware {
                     case 4 -> 60;
                     default -> 60;
                 };
-                this.nextRetryAt = LocalDateTime.now().plusMinutes(delayMinutes);
+                this.nextRetryAt = now.plusMinutes(delayMinutes);
             }
         }
     }

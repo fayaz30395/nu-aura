@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef} from 'react';
 import {usePathname, useRouter} from 'next/navigation';
 import {logger} from '@/lib/utils/logger';
 import {AuthGuard} from '@/components/auth/AuthGuard';

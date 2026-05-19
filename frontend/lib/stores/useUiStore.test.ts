@@ -34,6 +34,7 @@ vi.mock('@/lib/utils/safeStorage', () => ({
 }));
 
 const LEGACY_SIDEBAR_KEY = 'sidebar-collapsed';
+const LEGACY_ADMIN_SIDEBAR_KEY = 'admin-sidebar-collapsed';
 
 beforeEach(() => {
   memStore.clear();
@@ -45,6 +46,7 @@ describe('useUiStore', () => {
     const {useUiStore} = await import('./useUiStore');
     const s = useUiStore.getState();
     expect(s.sidebarCollapsed).toBe(false);
+    expect(s.adminSidebarCollapsed).toBe(false);
     expect(s.mobileNavOpen).toBe(false);
     expect(s.commandPaletteOpen).toBe(false);
   });
@@ -65,6 +67,24 @@ describe('useUiStore', () => {
     expect(memStore.get(LEGACY_SIDEBAR_KEY)).toBe('false');
   });
 
+  it('setAdminSidebarCollapsed and toggleAdminSidebar update state and persist independently', async () => {
+    const {useUiStore} = await import('./useUiStore');
+    await flush();
+
+    // Admin slice is independent of the user-app slice.
+    useUiStore.getState().setAdminSidebarCollapsed(true);
+    expect(useUiStore.getState().adminSidebarCollapsed).toBe(true);
+    expect(useUiStore.getState().sidebarCollapsed).toBe(false);
+    await flush();
+    // Persists under its own legacy key.
+    expect(memStore.get(LEGACY_ADMIN_SIDEBAR_KEY)).toBe('true');
+
+    useUiStore.getState().toggleAdminSidebar();
+    expect(useUiStore.getState().adminSidebarCollapsed).toBe(false);
+    await flush();
+    expect(memStore.get(LEGACY_ADMIN_SIDEBAR_KEY)).toBe('false');
+  });
+
   it('mobileNavOpen and commandPaletteOpen toggle without persisting', async () => {
     const {useUiStore} = await import('./useUiStore');
     await flush();
@@ -76,12 +96,13 @@ describe('useUiStore', () => {
     expect(useUiStore.getState().commandPaletteOpen).toBe(true);
     await flush();
 
-    // Neither field should have touched the legacy sidebar key. The persist
-    // middleware will write the partialized `{sidebarCollapsed: false}` slice,
-    // which still maps to the legacy key as 'false' — but the legacy key
-    // shouldn't carry any new state from these ephemeral fields.
+    // Neither field should have touched the legacy sidebar keys. The persist
+    // middleware will write the partialized sidebar slice, which still maps
+    // to the legacy keys — but no new state from these ephemeral fields.
     const legacy = memStore.get(LEGACY_SIDEBAR_KEY);
     expect(legacy === undefined || legacy === 'false').toBe(true);
+    const legacyAdmin = memStore.get(LEGACY_ADMIN_SIDEBAR_KEY);
+    expect(legacyAdmin === undefined || legacyAdmin === 'false').toBe(true);
   });
 
   it('rehydrates sidebarCollapsed from the legacy storage key', async () => {
@@ -92,5 +113,15 @@ describe('useUiStore', () => {
     // Persist middleware hydrates on a microtask — wait one tick.
     await flush();
     expect(useUiStore.getState().sidebarCollapsed).toBe(true);
+  });
+
+  it('rehydrates adminSidebarCollapsed from the legacy storage key', async () => {
+    memStore.set(LEGACY_ADMIN_SIDEBAR_KEY, 'true');
+
+    const {useUiStore} = await import('./useUiStore');
+    await flush();
+    expect(useUiStore.getState().adminSidebarCollapsed).toBe(true);
+    // User-app slice unaffected.
+    expect(useUiStore.getState().sidebarCollapsed).toBe(false);
   });
 });

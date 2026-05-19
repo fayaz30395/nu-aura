@@ -1,42 +1,52 @@
-import {apiClient} from './client';
+import {
+  disableMfa as disableMfaGenerated,
+  getMfaStatus as getMfaStatusGenerated,
+  setupMfa as setupMfaGenerated,
+  verifyMfa as verifyMfaGenerated,
+} from '@/lib/generated/api/mfa/mfa';
+import {mfaLogin as mfaLoginGenerated} from '@/lib/generated/api/authentication/authentication';
 
 /**
  * MFA (Multi-Factor Authentication) API service.
+ *
+ * T3-12 migration (wave 2): thin facade over the orval-generated `mfa` and
+ * `authentication` clients (the `mfa-login` endpoint is tagged under
+ * `authentication`). Public `mfaApi` surface preserved so callers
+ * (`useMfa.ts` hooks, `MfaSetup.tsx`, `MfaVerification.tsx`) need no edits.
+ *
+ * Generated calls route through `apiClient` via `orvalMutator`, preserving
+ * cookie auth, CSRF double-submit, refresh mutex, and tenant headers.
  */
 export const mfaApi = {
   /**
    * Get MFA status for the authenticated user.
    */
   getStatus: async (): Promise<{ enabled: boolean; setupAt?: string }> => {
-    const response = await apiClient.get<{ enabled: boolean; setupAt?: string }>('/auth/mfa/status');
-    return response.data;
+    const response = await getMfaStatusGenerated();
+    return response as unknown as { enabled: boolean; setupAt?: string };
   },
 
   /**
    * Get MFA setup data including QR code URL, secret, and backup codes.
    */
   getSetup: async (): Promise<{ qrCodeUrl: string; secret: string; backupCodes: string[] }> => {
-    const response = await apiClient.get<{
-      qrCodeUrl: string;
-      secret: string;
-      backupCodes: string[]
-    }>('/auth/mfa/setup');
-    return response.data;
+    const response = await setupMfaGenerated();
+    return response as unknown as { qrCodeUrl: string; secret: string; backupCodes: string[] };
   },
 
   /**
    * Verify and enable MFA with a 6-digit code.
    */
   verify: async (code: string): Promise<{ backupCodes: string[] }> => {
-    const response = await apiClient.post<{ backupCodes: string[] }>('/auth/mfa/verify', {code});
-    return response.data;
+    const response = await verifyMfaGenerated({code});
+    return response as unknown as { backupCodes: string[] };
   },
 
   /**
    * Disable MFA with a verification code.
    */
   disable: async (code: string): Promise<void> => {
-    await apiClient.delete('/auth/mfa/disable', {data: {code}});
+    await disableMfaGenerated({code});
   },
 
   /**
@@ -48,12 +58,12 @@ export const mfaApi = {
     tokenType: string;
     expiresIn: number
   }> => {
-    const response = await apiClient.post<{
+    const response = await mfaLoginGenerated({userId, code});
+    return response as unknown as {
       accessToken: string;
       refreshToken: string;
       tokenType: string;
-      expiresIn: number
-    }>('/auth/mfa-login', {userId, code});
-    return response.data;
+      expiresIn: number;
+    };
   },
 };

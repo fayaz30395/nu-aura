@@ -1,6 +1,7 @@
 package com.nulogic.api.attendance.controller;
 
 import com.nulogic.api.attendance.dto.*;
+import com.nulogic.api.attendance.mapper.AttendanceResponseMapper;
 import com.nulogic.application.attendance.service.AttendanceImportService;
 import com.nulogic.application.attendance.service.AttendanceRecordService;
 import com.nulogic.application.employee.service.EmployeeService;
@@ -22,7 +23,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -58,6 +58,7 @@ public class AttendanceController {
     private final com.nulogic.common.security.DataScopeService dataScopeService;
     private final EmployeeService employeeService;
     private final TenantTimeService tenantTimeService;
+    private final AttendanceResponseMapper attendanceResponseMapper;
 
     // ===================== Single Check-In/Out =====================
 
@@ -453,8 +454,10 @@ public class AttendanceController {
     // ===================== Response Mappers =====================
 
     private AttendanceResponse toResponse(AttendanceRecord record) {
-        AttendanceResponse response = new AttendanceResponse();
-        BeanUtils.copyProperties(record, response);
+        // T3-10: MapStruct mapper replaces BeanUtils.copyProperties with explicit
+        // field-by-field mapping. unmappedTargetPolicy=ERROR catches new fields
+        // on AttendanceResponse at compile time.
+        AttendanceResponse response = attendanceResponseMapper.toResponse(record);
         response.setStatus(record.getStatus() != null ? record.getStatus().name() : "UNKNOWN");
         // Null-safe defaults for fields that may be null in legacy/imported records
         if (response.getWorkDurationMinutes() == null)

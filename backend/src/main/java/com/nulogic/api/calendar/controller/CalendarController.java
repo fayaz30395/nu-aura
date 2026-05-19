@@ -3,6 +3,7 @@ package com.nulogic.api.calendar.controller;
 import com.nulogic.api.calendar.dto.CalendarEventDto;
 import com.nulogic.api.calendar.dto.CreateCalendarEventRequest;
 import com.nulogic.application.calendar.service.CalendarService;
+import com.nulogic.common.api.response.WrapResponse;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.RequiresPermission;
 import com.nulogic.domain.calendar.CalendarEvent.EventStatus;
@@ -54,6 +55,7 @@ public class CalendarController {
     @GetMapping("/events/{id}")
     @RequiresPermission(Permission.CALENDAR_VIEW)
     @Operation(summary = "Get event", description = "Get calendar event by ID")
+    @WrapResponse
     public ResponseEntity<CalendarEventDto> getEvent(@PathVariable UUID id) {
         return ResponseEntity.ok(calendarService.getById(id));
     }
@@ -81,6 +83,7 @@ public class CalendarController {
     @GetMapping("/events/my")
     @RequiresPermission(Permission.CALENDAR_VIEW)
     @Operation(summary = "Get my events", description = "Get current user's calendar events")
+    @WrapResponse
     public ResponseEntity<Page<CalendarEventDto>> getMyEvents(Pageable pageable) {
         return ResponseEntity.ok(calendarService.getMyEvents(pageable));
     }
@@ -88,6 +91,7 @@ public class CalendarController {
     @GetMapping("/events/my/range")
     @RequiresPermission(Permission.CALENDAR_VIEW)
     @Operation(summary = "Get my events for range", description = "Get current user's events within a date range")
+    @WrapResponse
     public ResponseEntity<List<CalendarEventDto>> getMyEventsForRange(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startTime,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endTime
@@ -98,6 +102,7 @@ public class CalendarController {
     @GetMapping("/events/range")
     @RequiresPermission(Permission.CALENDAR_MANAGE)
     @Operation(summary = "Get events for range", description = "Get all events within a date range (admin)")
+    @WrapResponse
     public ResponseEntity<List<CalendarEventDto>> getEventsForRange(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startTime,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endTime
@@ -108,6 +113,7 @@ public class CalendarController {
     @GetMapping("/events")
     @RequiresPermission(Permission.CALENDAR_MANAGE)
     @Operation(summary = "Get all events", description = "Get all calendar events with pagination")
+    @WrapResponse
     public ResponseEntity<Page<CalendarEventDto>> getAllEvents(Pageable pageable) {
         return ResponseEntity.ok(calendarService.getAllEvents(pageable));
     }
@@ -115,6 +121,7 @@ public class CalendarController {
     @GetMapping("/events/type/{eventType}")
     @RequiresPermission(Permission.CALENDAR_VIEW)
     @Operation(summary = "Get events by type", description = "Get events filtered by type")
+    @WrapResponse
     public ResponseEntity<List<CalendarEventDto>> getEventsByType(@PathVariable EventType eventType) {
         return ResponseEntity.ok(calendarService.getEventsByType(eventType));
     }
@@ -122,6 +129,7 @@ public class CalendarController {
     @GetMapping("/events/organized")
     @RequiresPermission(Permission.CALENDAR_VIEW)
     @Operation(summary = "Get events I organized", description = "Get events where current user is the organizer")
+    @WrapResponse
     public ResponseEntity<Page<CalendarEventDto>> getEventsOrganizedByMe(Pageable pageable) {
         return ResponseEntity.ok(calendarService.getEventsOrganizedByMe(pageable));
     }
@@ -129,6 +137,7 @@ public class CalendarController {
     @GetMapping("/events/attending")
     @RequiresPermission(Permission.CALENDAR_VIEW)
     @Operation(summary = "Get events I'm attending", description = "Get events where current user is an attendee")
+    @WrapResponse
     public ResponseEntity<List<CalendarEventDto>> getEventsAsAttendee() {
         return ResponseEntity.ok(calendarService.getEventsAsAttendee());
     }
@@ -179,6 +188,7 @@ public class CalendarController {
     @GetMapping("/summary")
     @RequiresPermission(Permission.CALENDAR_VIEW)
     @Operation(summary = "Get events summary", description = "Get summary of events for a date range")
+    @WrapResponse
     public ResponseEntity<Map<String, Object>> getEventsSummary(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startTime,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endTime

@@ -1,4 +1,5 @@
 # Generated files
+lib/generated/
 playwright-report/
 playwright/
 test-results/

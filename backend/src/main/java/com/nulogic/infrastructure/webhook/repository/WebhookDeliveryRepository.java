@@ -36,6 +36,16 @@ public interface WebhookDeliveryRepository extends JpaRepository<WebhookDelivery
                                             @Param("now") LocalDateTime now);
 
     /**
+     * Bounded, tenant-scoped ready-for-retry query used by the scheduled retry worker
+     * to avoid loading unbounded rows into memory.
+     */
+    @Query("SELECT d FROM WebhookDelivery d WHERE d.tenantId = :tenantId " +
+            "AND d.status = 'RETRYING' AND d.nextRetryAt <= :now")
+    Page<WebhookDelivery> findReadyForRetry(@Param("tenantId") UUID tenantId,
+                                           @Param("now") LocalDateTime now,
+                                           Pageable pageable);
+
+    /**
      * Tenant pivot for cross-tenant sweep jobs. Returns the set of tenant ids that own at
      * least one delivery row — keeps the per-tenant retry loop bounded.
      */

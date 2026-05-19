@@ -19,6 +19,7 @@ import {getQueryClient} from '../queryClient';
  * user back into the Zustand state, making it immediately available.
  */
 const USER_STORAGE_KEY = 'nu-aura-user';
+let restoreSessionPromise: Promise<boolean> | null = null;
 
 function persistUserToStorage(user: User): void {
   if (typeof window === 'undefined') return;
@@ -193,111 +194,123 @@ export const useAuth = create<AuthState>()(
       },
 
       restoreSession: async () => {
-        try {
-          set({isLoading: true});
+        if (restoreSessionPromise) {
+          return restoreSessionPromise;
+        }
 
-          // P0-SESSION-FIX v3: Try /auth/me FIRST (uses access_token cookie, does
-          // NOT rotate refresh_token). This avoids the cascade where N parallel
-          // page mounts each call /auth/refresh and invalidate each other's tokens
-          // (observed under Playwright with 4 workers, also a real prod risk on
-          // multi-tab navigation). Only fall back to /auth/refresh on 401, meaning
-          // the access_token has actually expired.
+        const executeRestore = async () => {
           try {
-            const meResponse = await authApi.me();
-            apiClient.setTenantId(meResponse.tenantId);
-            apiClient.resetRedirectFlag();
-            if (!meResponse.roles?.length) {
-              throw new Error('Session restore failed: missing roles in /auth/me response.');
-            }
-            const roleStrings = meResponse.roles;
-            const permissionStrings = meResponse.permissions || [];
-            const roles = convertRolesToObjects(roleStrings, permissionStrings);
-            const user: User = {
-              id: meResponse.userId,
-              employeeId: meResponse.employeeId,
-              tenantId: meResponse.tenantId,
-              email: meResponse.email,
-              firstName: meResponse.fullName.split(' ')[0] || '',
-              lastName: meResponse.fullName.split(' ').slice(1).join(' ') || '',
-              fullName: meResponse.fullName,
-              status: 'ACTIVE',
-              roles: roles,
-              profilePictureUrl: meResponse.profilePictureUrl,
-            };
-            set({user, isAuthenticated: true, isLoading: false});
-            persistUserToStorage(user);
-            return true;
-          } catch (err) {
-            // Fall through to refresh on auth/tenant-context failures. Cookie-only
-            // sessions can reach this path with valid httpOnly cookies but missing
-            // client tenant state (for example after API-based login or cleared
-            // storage). /auth/refresh returns the tenant and user payload needed
-            // to rebuild the frontend store. Avoid refresh rotation on 5xx/network
-            // failures where the backend simply hiccupped.
-            const status = (err as { response?: { status?: number } })?.response?.status;
-            if (status === undefined || status >= 500) {
-              set({isLoading: false});
-              return false;
-            }
-            // 401/403/400 — fall through to refresh path below.
-          }
+            set({isLoading: true});
 
-          // P0-SESSION-FIX v2: refresh path (used when access_token has expired).
-          // To prevent concurrent refresh calls (which revoke each other's tokens),
-          // we wait for any in-flight 401 interceptor refresh to finish FIRST, then
-          // issue our own. The interceptor's refresh sets new cookies, so ours will
-          // use the fresh refresh_token.
-          const existingRefresh = getSharedRefreshPromise();
-          if (existingRefresh) {
-            await existingRefresh;
-          }
-
-          // Issue our own refresh, registering it in the shared mutex so the
-          // 401 interceptor won't issue a concurrent one.
-          const refreshPromise = authApi.refresh()
-            .then((response) => {
-              apiClient.setTenantId(response.tenantId);
+            // P0-SESSION-FIX v3: Try /auth/me FIRST (uses access_token cookie, does
+            // NOT rotate refresh_token). This avoids the cascade where N parallel
+            // page mounts each call /auth/refresh and invalidate each other's tokens
+            // (observed under Playwright with 4 workers, also a real prod risk on
+            // multi-tab navigation). Only fall back to /auth/refresh on 401, meaning
+            // the access_token has actually expired.
+            try {
+              const meResponse = await authApi.me();
+              apiClient.setTenantId(meResponse.tenantId);
               apiClient.resetRedirectFlag();
-
-              // CRIT-001: Require roles in auth response — no JWT fallback decode
-              if (!response.roles?.length) {
-                throw new Error('Session restore failed: missing roles in response.');
+              if (!meResponse.roles?.length) {
+                throw new Error('Session restore failed: missing roles in /auth/me response.');
               }
-              const roleStrings = response.roles;
-              const permissionStrings = response.permissions || [];
+              const roleStrings = meResponse.roles;
+              const permissionStrings = meResponse.permissions || [];
               const roles = convertRolesToObjects(roleStrings, permissionStrings);
-
               const user: User = {
-                id: response.userId,
-                employeeId: response.employeeId,
-                tenantId: response.tenantId,
-                email: response.email,
-                firstName: response.fullName.split(' ')[0] || '',
-                lastName: response.fullName.split(' ').slice(1).join(' ') || '',
-                fullName: response.fullName,
+                id: meResponse.userId,
+                employeeId: meResponse.employeeId,
+                tenantId: meResponse.tenantId,
+                email: meResponse.email,
+                firstName: meResponse.fullName.split(' ')[0] || '',
+                lastName: meResponse.fullName.split(' ').slice(1).join(' ') || '',
+                fullName: meResponse.fullName,
                 status: 'ACTIVE',
                 roles: roles,
-                profilePictureUrl: response.profilePictureUrl,
+                profilePictureUrl: meResponse.profilePictureUrl,
               };
-
               set({user, isAuthenticated: true, isLoading: false});
               persistUserToStorage(user);
               return true;
-            })
-            .catch(() => {
-              set({isLoading: false});
-              return false;
-            })
-            .finally(() => {
-              setSharedRefreshPromise(null);
-            });
+            } catch (err) {
+              // Fall through to refresh on auth/tenant-context failures. Cookie-only
+              // sessions can reach this path with valid httpOnly cookies but missing
+              // client tenant state (for example after API-based login or cleared
+              // storage). /auth/refresh returns the tenant and user payload needed
+              // to rebuild the frontend store. Avoid refresh rotation on 5xx/network
+              // failures where the backend simply hiccupped.
+              const status = (err as { response?: { status?: number } })?.response?.status;
+              if (status === undefined || status >= 500) {
+                set({isLoading: false});
+                return false;
+              }
+              // 401/403/400 — fall through to refresh path below.
+            }
 
-          setSharedRefreshPromise(refreshPromise);
-          return await refreshPromise;
-        } catch {
-          set({isLoading: false});
-          return false;
-        }
+            // P0-SESSION-FIX v2: refresh path (used when access_token has expired).
+            // To prevent concurrent refresh calls (which revoke each other's tokens),
+            // we wait for any in-flight 401 interceptor refresh to finish FIRST, then
+            // issue our own. The interceptor's refresh sets new cookies, so ours will
+            // use the fresh refresh_token.
+            const existingRefresh = getSharedRefreshPromise();
+            if (existingRefresh) {
+              await existingRefresh;
+            }
+
+            // Issue our own refresh, registering it in the shared mutex so the
+            // 401 interceptor won't issue a concurrent one.
+            const refreshPromise = authApi.refresh()
+              .then((response) => {
+                apiClient.setTenantId(response.tenantId);
+                apiClient.resetRedirectFlag();
+
+                // CRIT-001: Require roles in auth response — no JWT fallback decode
+                if (!response.roles?.length) {
+                  throw new Error('Session restore failed: missing roles in response.');
+                }
+                const roleStrings = response.roles;
+                const permissionStrings = response.permissions || [];
+                const roles = convertRolesToObjects(roleStrings, permissionStrings);
+
+                const user: User = {
+                  id: response.userId,
+                  employeeId: response.employeeId,
+                  tenantId: response.tenantId,
+                  email: response.email,
+                  firstName: response.fullName.split(' ')[0] || '',
+                  lastName: response.fullName.split(' ').slice(1).join(' ') || '',
+                  fullName: response.fullName,
+                  status: 'ACTIVE',
+                  roles: roles,
+                  profilePictureUrl: response.profilePictureUrl,
+                };
+
+                set({user, isAuthenticated: true, isLoading: false});
+                persistUserToStorage(user);
+                return true;
+              })
+              .catch(() => {
+                set({isLoading: false});
+                return false;
+              })
+              .finally(() => {
+                setSharedRefreshPromise(null);
+              });
+
+            setSharedRefreshPromise(refreshPromise);
+            return await refreshPromise;
+          } catch {
+            set({isLoading: false});
+            return false;
+          }
+        };
+
+        restoreSessionPromise = executeRestore().finally(() => {
+          restoreSessionPromise = null;
+        });
+
+        return restoreSessionPromise;
       },
     }),
     {

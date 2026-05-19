@@ -1,6 +1,7 @@
 package com.nulogic.api.featureflag;
 
 import com.nulogic.application.featureflag.FeatureFlagService;
+import com.nulogic.common.api.response.WrapResponse;
 import com.nulogic.common.security.RequiresPermission;
 import com.nulogic.domain.featureflag.FeatureFlag;
 import io.swagger.v3.oas.annotations.Operation;
@@ -32,6 +33,7 @@ public class FeatureFlagController {
     @GetMapping
     @RequiresPermission(SYSTEM_ADMIN)
     @Operation(summary = "Get all feature flags for current tenant")
+    @WrapResponse
     public ResponseEntity<List<FeatureFlag>> getAllFlags() {
         return ResponseEntity.ok(featureFlagService.getAllFlags());
     }
@@ -39,6 +41,7 @@ public class FeatureFlagController {
     @GetMapping("/map")
     @RequiresPermission(SYSTEM_ADMIN)
     @Operation(summary = "Get feature flags as key-value map")
+    @WrapResponse
     public ResponseEntity<Map<String, Boolean>> getFlagsAsMap() {
         return ResponseEntity.ok(featureFlagService.getFlagsAsMap());
     }
@@ -46,12 +49,14 @@ public class FeatureFlagController {
     @GetMapping("/enabled")
     @RequiresPermission(SYSTEM_ADMIN)
     @Operation(summary = "Get list of enabled feature keys")
+    @WrapResponse
     public ResponseEntity<List<String>> getEnabledFeatures() {
         return ResponseEntity.ok(featureFlagService.getEnabledFeatures());
     }
 
     @GetMapping("/check/{featureKey}")
     @Operation(summary = "Check if a specific feature is enabled")
+    @WrapResponse
     public ResponseEntity<Map<String, Object>> checkFeature(@PathVariable String featureKey) {
         boolean enabled = featureFlagService.isFeatureEnabled(featureKey);
         return ResponseEntity.ok(Map.of(
@@ -63,6 +68,7 @@ public class FeatureFlagController {
     @GetMapping("/category/{category}")
     @RequiresPermission(SYSTEM_ADMIN)
     @Operation(summary = "Get feature flags by category")
+    @WrapResponse
     public ResponseEntity<List<FeatureFlag>> getFlagsByCategory(@PathVariable String category) {
         return ResponseEntity.ok(featureFlagService.getFlagsByCategory(category));
     }

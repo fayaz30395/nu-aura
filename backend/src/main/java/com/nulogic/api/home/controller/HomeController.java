@@ -2,6 +2,7 @@ package com.nulogic.api.home.controller;
 
 import com.nulogic.api.home.dto.*;
 import com.nulogic.application.home.service.HomeService;
+import com.nulogic.common.api.response.WrapResponse;
 import com.nulogic.common.security.RequiresPermission;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
@@ -31,6 +32,7 @@ import static com.nulogic.common.security.Permission.EMPLOYEE_VIEW_SELF;
 @RequiredArgsConstructor
 @Slf4j
 @Tag(name = "Home", description = "Home page APIs for dashboard widgets")
+@WrapResponse
 public class HomeController {
 
     private final HomeService homeService;

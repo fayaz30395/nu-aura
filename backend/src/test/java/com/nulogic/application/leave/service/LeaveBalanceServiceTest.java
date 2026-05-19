@@ -1,5 +1,7 @@
 package com.nulogic.application.leave.service;
 
+import com.nulogic.api.leave.dto.LeaveBalanceResponse;
+import com.nulogic.api.leave.mapper.LeaveBalanceMapper;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.domain.leave.LeaveBalance;
 import com.nulogic.domain.leave.LeaveType;
@@ -15,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -32,6 +35,8 @@ class LeaveBalanceServiceTest {
     private LeaveBalanceRepository leaveBalanceRepository;
     @Mock
     private LeaveTypeRepository leaveTypeRepository;
+    @Mock
+    private LeaveBalanceMapper leaveBalanceMapper;
     @InjectMocks
     private LeaveBalanceService leaveBalanceService;
     private UUID tenantId;
@@ -359,6 +364,125 @@ class LeaveBalanceServiceTest {
             // Verify that the balance was persisted (which means calculateAvailable was called)
             verify(leaveBalanceRepository, times(1)).save(any(LeaveBalance.class));
             assertThat(result).isNotNull();
+        }
+    }
+
+    /**
+     * T3-10 cleanup wave: the enriched response path used to do a raw
+     * {@code BeanUtils.copyProperties(balance, response, "tenantId", ...)}
+     * with a string ignore-list. It now delegates to {@link LeaveBalanceMapper}
+     * (the same mapper the controller uses) so the response shape is enforced
+     * at compile time and not by a drifting list of field names.
+     *
+     * <p>These tests guard the new behaviour:</p>
+     * <ul>
+     *   <li>the mapper is invoked exactly once per balance row,</li>
+     *   <li>the leave-type-name enrichment still happens *after* the mapper,</li>
+     *   <li>missing leave-type names don't blow up the stream (null-safe).</li>
+     * </ul>
+     */
+    @Nested
+    @DisplayName("GetEmployeeBalancesEnriched (T3-10 cleanup wave)")
+    class GetEmployeeBalancesEnrichedTests {
+
+        @Test
+        @DisplayName("Should delegate to LeaveBalanceMapper and enrich leaveTypeName")
+        void shouldDelegateToMapperAndEnrichLeaveTypeName() {
+            // Arrange — two balances, two different leave types
+            UUID otherLeaveTypeId = UUID.randomUUID();
+
+            LeaveBalance b1 = LeaveBalance.builder()
+                    .employeeId(employeeId).leaveTypeId(leaveTypeId).year(year)
+                    .openingBalance(new BigDecimal("20")).build();
+            b1.setId(UUID.randomUUID());
+            b1.setTenantId(tenantId);
+
+            LeaveBalance b2 = LeaveBalance.builder()
+                    .employeeId(employeeId).leaveTypeId(otherLeaveTypeId).year(year)
+                    .openingBalance(new BigDecimal("10")).build();
+            b2.setId(UUID.randomUUID());
+            b2.setTenantId(tenantId);
+
+            LeaveType lt1 = LeaveType.builder().id(leaveTypeId).leaveName("Annual Leave").build();
+            LeaveType lt2 = LeaveType.builder().id(otherLeaveTypeId).leaveName("Sick Leave").build();
+
+            when(leaveBalanceRepository.findAllByTenantIdAndEmployeeId(tenantId, employeeId))
+                    .thenReturn(List.of(b1, b2));
+            when(leaveTypeRepository.findAllById(any())).thenReturn(List.of(lt1, lt2));
+
+            // Mapper returns a stub DTO per balance — assert it was called *with the entity*.
+            when(leaveBalanceMapper.toResponse(any(LeaveBalance.class))).thenAnswer(inv -> {
+                LeaveBalance src = inv.getArgument(0);
+                LeaveBalanceResponse dto = new LeaveBalanceResponse();
+                dto.setId(src.getId());
+                dto.setLeaveTypeId(src.getLeaveTypeId());
+                dto.setOpeningBalance(src.getOpeningBalance());
+                return dto;
+            });
+
+            // Act
+            List<LeaveBalanceResponse> result = leaveBalanceService.getEmployeeBalancesEnriched(employeeId);
+
+            // Assert — mapper invoked per row, names enriched, no BeanUtils round-trip
+            assertThat(result).hasSize(2);
+            assertThat(result.get(0).getLeaveTypeName()).isEqualTo("Annual Leave");
+            assertThat(result.get(1).getLeaveTypeName()).isEqualTo("Sick Leave");
+            verify(leaveBalanceMapper, times(2)).toResponse(any(LeaveBalance.class));
+        }
+
+        @Test
+        @DisplayName("Should NOT leak tenant or audit fields — mapper-driven shape is the contract")
+        void shouldNotLeakTenantOrAuditFields() {
+            // Arrange — a balance with tenant + audit metadata set.
+            LeaveBalance balance = LeaveBalance.builder()
+                    .employeeId(employeeId).leaveTypeId(leaveTypeId).year(year)
+                    .openingBalance(new BigDecimal("20")).build();
+            balance.setId(UUID.randomUUID());
+            balance.setTenantId(tenantId);
+            balance.setCreatedBy(UUID.randomUUID());
+            balance.setLastModifiedBy(UUID.randomUUID());
+            balance.setVersion(9L);
+
+            when(leaveBalanceRepository.findAllByTenantIdAndEmployeeId(tenantId, employeeId))
+                    .thenReturn(List.of(balance));
+            when(leaveTypeRepository.findAllById(any())).thenReturn(List.of());
+
+            // Real mapper behaviour: client-facing fields only.
+            when(leaveBalanceMapper.toResponse(any(LeaveBalance.class))).thenAnswer(inv -> {
+                LeaveBalance src = inv.getArgument(0);
+                LeaveBalanceResponse dto = new LeaveBalanceResponse();
+                dto.setId(src.getId());
+                dto.setEmployeeId(src.getEmployeeId());
+                dto.setLeaveTypeId(src.getLeaveTypeId());
+                dto.setOpeningBalance(src.getOpeningBalance());
+                return dto;
+            });
+
+            // Act
+            List<LeaveBalanceResponse> result = leaveBalanceService.getEmployeeBalancesEnriched(employeeId);
+
+            // Assert — LeaveBalanceResponse has no tenant / audit setters; the test
+            // here is the structural pairing: the mapper is the SOLE writer of the
+            // DTO, so the regression guard at compile time (unmappedTargetPolicy=ERROR)
+            // is what makes mass-assignment impossible. This asserts the wiring.
+            assertThat(result).hasSize(1);
+            assertThat(result.get(0).getId()).isEqualTo(balance.getId());
+            assertThat(result.get(0).getEmployeeId()).isEqualTo(employeeId);
+            assertThat(result.get(0).getLeaveTypeName()).isNull(); // no LeaveType returned by repo
+            verify(leaveBalanceMapper, times(1)).toResponse(balance);
+        }
+
+        @Test
+        @DisplayName("Should return empty list without invoking mapper when no balances exist")
+        void shouldShortCircuitOnEmpty() {
+            when(leaveBalanceRepository.findAllByTenantIdAndEmployeeId(tenantId, employeeId))
+                    .thenReturn(List.of());
+
+            List<LeaveBalanceResponse> result = leaveBalanceService.getEmployeeBalancesEnriched(employeeId);
+
+            assertThat(result).isEmpty();
+            verify(leaveBalanceMapper, never()).toResponse(any(LeaveBalance.class));
+            verify(leaveTypeRepository, never()).findAllById(any());
         }
     }
 }

@@ -2,6 +2,7 @@ package com.nulogic.api.user.controller;
 
 import com.nulogic.api.user.dto.PermissionResponse;
 import com.nulogic.application.user.service.PermissionService;
+import com.nulogic.common.api.response.WrapResponse;
 import com.nulogic.common.security.RequiresPermission;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -21,6 +22,7 @@ import static com.nulogic.common.security.Permission.PERMISSION_MANAGE;
 @RestController
 @RequestMapping("/api/v1/permissions")
 @RequiredArgsConstructor
+@WrapResponse
 public class PermissionController {
 
     private final PermissionService permissionService;

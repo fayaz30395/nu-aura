@@ -21,7 +21,7 @@ import {
   Users,
 } from 'lucide-react';
 import {useUnreadNotificationCount} from '@/lib/hooks/queries/useNotifications';
-import {safeStorage} from '@/lib/utils/safeStorage';
+import {useUiStore} from '@/lib/stores/useUiStore';
 
 // This component is dynamically imported with { ssr: false } from layout.tsx.
 // It is NEVER server-rendered, so there is no hydration to worry about.
@@ -287,19 +287,15 @@ export default function AdminLayoutInner({
     router.push('/auth/login');
   };
 
-  const [isCollapsed, setIsCollapsed] = useState(false);
-
-  // Sync collapsed state from storage after hydration to avoid SSR mismatch
-  useEffect(() => {
-    const saved = safeStorage.get('admin-sidebar-collapsed');
-    if (saved === 'true') {
-      setIsCollapsed(true);
-    }
-  }, []);
+  // Admin shell collapse state lives in useUiStore as a sibling of the
+  // user-app `sidebarCollapsed` field. The persist middleware bridges it
+  // onto the legacy `admin-sidebar-collapsed` localStorage key, so user
+  // state survives this migration.
+  const isCollapsed = useUiStore((s) => s.adminSidebarCollapsed);
+  const setAdminSidebarCollapsed = useUiStore((s) => s.setAdminSidebarCollapsed);
 
   const handleCollapsedChange = (collapsed: boolean) => {
-    setIsCollapsed(collapsed);
-    safeStorage.set('admin-sidebar-collapsed', String(collapsed));
+    setAdminSidebarCollapsed(collapsed);
   };
 
   return (

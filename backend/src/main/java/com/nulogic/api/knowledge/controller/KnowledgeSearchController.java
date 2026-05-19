@@ -4,6 +4,7 @@ import com.nulogic.api.knowledge.dto.BlogPostDto;
 import com.nulogic.api.knowledge.dto.WikiPageDto;
 import com.nulogic.application.knowledge.service.KnowledgeSearchService;
 import com.nulogic.common.api.ApiResponses;
+import com.nulogic.common.api.response.WrapResponse;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.RequiresPermission;
 import com.nulogic.domain.knowledge.BlogPost;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/knowledge/search")
 @RequiredArgsConstructor
 @Tag(name = "Knowledge Search", description = "Unified knowledge search")
+@WrapResponse
 public class KnowledgeSearchController {
 
     private final KnowledgeSearchService knowledgeSearchService;

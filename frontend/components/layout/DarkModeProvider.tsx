@@ -1,10 +1,10 @@
 'use client';
 
 import React, {createContext, useCallback, useContext, useEffect, useMemo, useState} from 'react';
-import {safeStorage} from '@/lib/utils/safeStorage';
+import {type ThemeMode, useThemeStore} from '@/lib/stores/useThemeStore';
 
 // ── Types ────────────────────────────────────────────────────────────
-export type ThemeMode = 'light' | 'dark' | 'system';
+export type {ThemeMode};
 export type ResolvedTheme = 'light' | 'dark';
 
 interface ThemeContextType {
@@ -23,8 +23,6 @@ interface ThemeContextType {
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
-
-const STORAGE_KEY = 'nu-aura-theme';
 
 // ── Helpers ──────────────────────────────────────────────────────────
 
@@ -48,31 +46,37 @@ function applyToDOM(resolved: ResolvedTheme): void {
   }
 }
 
-function getSavedTheme(): ThemeMode {
-  if (typeof window === 'undefined') return 'light';
-  const saved = safeStorage.get(STORAGE_KEY);
-  if (saved === 'dark' || saved === 'light' || saved === 'system') return saved;
-  return 'system'; // default to system if nothing saved
-}
-
 // ── Provider ─────────────────────────────────────────────────────────
 
+/**
+ * Theme preference state lives in `useThemeStore` (Zustand + persist).
+ * This provider remains because:
+ *   1. It owns the DOM side-effect — applying `.dark` to <html>.
+ *   2. It owns the `prefers-color-scheme` media-query subscription when
+ *      `mode === 'system'`.
+ *   3. It exposes the legacy `useDarkMode` / `useTheme` context API used
+ *      across the app (settings page, ThemeToggle, MantineThemeProvider).
+ *
+ * The persisted value still lives under the raw key `nu-aura-theme` (see
+ * `useThemeStore.ts`) so the pre-hydration FOUC script in
+ * `lib/theme/theme-script.ts` keeps working.
+ */
 export const DarkModeProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
-  const [theme, setThemeState] = useState<ThemeMode>('system');
+  const theme = useThemeStore((s) => s.mode);
+  const setMode = useThemeStore((s) => s.setMode);
+
   // Default to 'dark' to match the app's enforced dark theme and prevent
   // a Mantine SSR hydration mismatch (server renders dark CSS vars via
   // ColorSchemeScript defaultColorScheme="dark", client must match on first render).
   const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>('dark');
 
-  // Initialize on mount — read from localStorage
+  // Apply DOM class whenever the chosen theme changes (and on mount, when
+  // the persist middleware finishes rehydrating from localStorage).
   useEffect(() => {
-    const saved = getSavedTheme();
-    const resolved = resolveTheme(saved);
-
-    setThemeState(saved);
+    const resolved = resolveTheme(theme);
     setResolvedTheme(resolved);
     applyToDOM(resolved);
-  }, []);
+  }, [theme]);
 
   // Listen for system theme changes when mode is 'system'
   useEffect(() => {
@@ -93,14 +97,13 @@ export const DarkModeProvider: React.FC<{ children: React.ReactNode }> = ({child
   // ── Public API ───────────────────────────────────────────────────
 
   const setTheme = useCallback((mode: ThemeMode) => {
+    setMode(mode);
+    // Apply immediately so callers see the DOM change synchronously
+    // without waiting for the useEffect tick.
     const resolved = resolveTheme(mode);
-
-    setThemeState(mode);
     setResolvedTheme(resolved);
     applyToDOM(resolved);
-
-    safeStorage.set(STORAGE_KEY, mode);
-  }, []);
+  }, [setMode]);
 
   // Legacy: binary toggle (light ↔ dark). If currently 'system', resolve then toggle.
   const toggleDarkMode = useCallback(() => {

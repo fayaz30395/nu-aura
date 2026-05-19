@@ -2,6 +2,7 @@ package com.nulogic.api.dashboard.controller;
 
 import com.nulogic.api.dashboard.dto.DashboardMetricsResponse;
 import com.nulogic.application.dashboard.service.DashboardService;
+import com.nulogic.common.api.response.WrapResponse;
 import com.nulogic.common.security.RequiresPermission;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,7 @@ import static com.nulogic.common.security.Permission.DASHBOARD_HR_OPS;
 @RequestMapping("/api/v1/dashboard")
 @RequiredArgsConstructor
 @Slf4j
+@WrapResponse
 public class DashboardController {
 
     private final DashboardService dashboardService;
