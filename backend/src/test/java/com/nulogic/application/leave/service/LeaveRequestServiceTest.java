@@ -2,6 +2,8 @@ package com.nulogic.application.leave.service;
 
 import com.nulogic.application.event.DomainEventPublisher;
 import com.nulogic.application.notification.service.WebSocketNotificationService;
+import com.nulogic.application.audit.service.AuditLogService;
+import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.leave.LeaveRequest;
@@ -37,6 +39,7 @@ import static org.mockito.Mockito.*;
 class LeaveRequestServiceTest {
 
     private static MockedStatic<TenantContext> tenantContextMock;
+    private static MockedStatic<SecurityContext> securityContextMock;
     @Mock
     private LeaveRequestRepository leaveRequestRepository;
     @Mock
@@ -49,6 +52,8 @@ class LeaveRequestServiceTest {
     private LeaveTypeRepository leaveTypeRepository;
     @Mock
     private DomainEventPublisher domainEventPublisher;
+    @Mock
+    private AuditLogService auditLogService;
     @InjectMocks
     private LeaveRequestService leaveRequestService;
     private UUID tenantId;
@@ -61,11 +66,13 @@ class LeaveRequestServiceTest {
     @BeforeAll
     static void setUpClass() {
         tenantContextMock = mockStatic(TenantContext.class);
+        securityContextMock = mockStatic(SecurityContext.class);
     }
 
     @AfterAll
     static void tearDownClass() {
         tenantContextMock.close();
+        securityContextMock.close();
     }
 
     @AfterEach
@@ -89,6 +96,8 @@ class LeaveRequestServiceTest {
 
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
         tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
+        securityContextMock.when(SecurityContext::getCurrentEmployeeId).thenReturn(employeeId);
+        securityContextMock.when(() -> SecurityContext.hasPermission(anyString())).thenReturn(false);
 
         // Create employee with manager for L1 approval tests
         employee = new Employee();

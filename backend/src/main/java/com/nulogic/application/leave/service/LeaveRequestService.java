@@ -72,6 +72,16 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
     @Transactional
     public LeaveRequest createLeaveRequest(LeaveRequest leaveRequest) {
         UUID tenantId = TenantContext.requireCurrentTenant();
+        UUID currentEmployeeId = SecurityContext.getCurrentEmployeeId();
+        if (!SecurityContext.hasPermission(com.nulogic.common.security.Permission.LEAVE_MANAGE)) {
+            if (currentEmployeeId == null) {
+                throw new AccessDeniedException("Current user is not linked to an employee");
+            }
+            if (leaveRequest.getEmployeeId() != null && !currentEmployeeId.equals(leaveRequest.getEmployeeId())) {
+                throw new AccessDeniedException("Cannot create leave request for another employee");
+            }
+            leaveRequest.setEmployeeId(currentEmployeeId);
+        }
 
         // Check for overlapping leaves
         Iterable<LeaveRequest> overlapping = leaveRequestRepository.findOverlappingLeaves(
@@ -324,6 +334,11 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
         LeaveRequest request = leaveRequestRepository.findById(id)
                 .filter(lr -> lr.getTenantId().equals(tenantId))
                 .orElseThrow(() -> new IllegalArgumentException(LEAVE_REQUEST_NOT_FOUND));
+        UUID currentEmployeeId = SecurityContext.getCurrentEmployeeId();
+        if (!SecurityContext.hasPermission(com.nulogic.common.security.Permission.LEAVE_MANAGE)
+                && (currentEmployeeId == null || !request.getEmployeeId().equals(currentEmployeeId))) {
+            throw new AccessDeniedException("Cannot update another employee's leave request");
+        }
 
         // Only allow updates if status is PENDING
         if (request.getStatus() != LeaveRequest.LeaveRequestStatus.PENDING) {

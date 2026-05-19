@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 
 import {AppLayout} from '@/components/layout';
+import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {Button} from '@/components/ui/Button';
 import {Skeleton} from '@/components/ui/Skeleton';
@@ -140,12 +141,14 @@ function PageHeader({latest}: {latest?: PayrollRun}) {
         <Link href="/payroll/runs">
           <Button variant="outline">View runs</Button>
         </Link>
-        <Link href="/payroll/runs?action=new">
-          <Button variant="primary">
-            Start new run
-            <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
-          </Button>
-        </Link>
+        <PermissionGate permission={Permissions.PAYROLL_PROCESS}>
+          <Link href="/payroll/runs?action=new">
+            <Button variant="primary">
+              Start new run
+              <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
+            </Button>
+          </Link>
+        </PermissionGate>
       </div>
     </motion.header>
   );

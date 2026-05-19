@@ -9,6 +9,7 @@ import AppSwitcher from '../platform/AppSwitcher';
 import {ThemeToggle} from '@/components/ui/ThemeToggle';
 import {useWebSocket} from '@/lib/contexts/WebSocketContext';
 import {useUnreadNotificationCount} from '@/lib/hooks/queries/useNotifications';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {NotificationDropdown} from './NotificationDropdown';
 import {UserMenu} from './UserMenu';
 
@@ -52,7 +53,9 @@ const Header: React.FC<HeaderProps> = ({
 
   // Unread count: use the larger of WebSocket in-memory count vs REST API persisted count
   const {unreadCount: wsUnreadCount, notifications: _wsNotifications} = useWebSocket();
-  const {data: persistedUnreadCount = 0} = useUnreadNotificationCount();
+  const {hasPermission, isReady} = usePermissions();
+  const canReadNotifications = isReady && hasPermission(Permissions.NOTIFICATION_VIEW);
+  const {data: persistedUnreadCount = 0} = useUnreadNotificationCount(canReadNotifications);
   const systemUnreadCount = Math.max(wsUnreadCount, persistedUnreadCount);
   // Google notification count isn't known until the panel opens — use system count for badge
   const totalUnreadCount = systemUnreadCount;
@@ -158,6 +161,7 @@ const Header: React.FC<HeaderProps> = ({
             <button
               onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
               className="notification-btn relative inline-flex h-8 w-8 items-center justify-center rounded-lg text-[var(--header-text-muted)] hover:text-[var(--header-text)] hover:bg-[var(--header-hover-bg)] transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 active:translate-y-px"
+              data-testid="notification-bell"
               aria-label="Notifications"
               aria-expanded={isNotificationsOpen}
               aria-haspopup="true"
@@ -166,6 +170,7 @@ const Header: React.FC<HeaderProps> = ({
               {totalUnreadCount > 0 && (
                 <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center">
                   <span
+                    data-testid="notification-count"
                     className="relative inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-accent px-1 text-2xs font-semibold text-white">
                     {totalUnreadCount > 9 ? '9+' : totalUnreadCount}
                   </span>

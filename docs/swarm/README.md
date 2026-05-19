@@ -11,16 +11,16 @@ runtime-only `.claude-flow/` directory (which is in `.gitignore` per RuFlo conve
 
 ## How to sync
 
-After editing the canonical version here, copy to the runtime mount:
+After editing the canonical version here, sync to the runtime mount:
 
 ```bash
-cp docs/swarm/domains.yaml      .claude-flow/domains.yaml
-cp docs/swarm/registry.yaml     .claude-flow/registry.yaml
-cp docs/swarm/workflows/*.yaml  .claude-flow/workflows/
+./scripts/ruflo-sync.sh --check
+./scripts/ruflo-sync.sh --no-memory
 ```
 
-This is the manual step until RuFlo supports reading directly from a tracked path. A
-follow-up could add a `make sync-swarm` target.
+The sync script is idempotent and keeps `.claude-flow/` aligned with this tracked
+directory. Use `--check` in CI or before starting a pipeline; use `--no-memory` when
+you only need file sync and do not want AgentDB seeding.
 
 ## Companion documents
 
@@ -42,3 +42,34 @@ A cleaner long-term fix is to either:
 
 Until then, treat `docs/swarm/` as the source of truth and `.claude-flow/` as the runtime
 mount.
+
+## Developer quickstart
+
+Use the repo scripts instead of copying commands by hand:
+
+```bash
+# Verify orchestration prerequisites and config drift
+./scripts/agents/ready.sh
+
+# Fix docs/swarm → .claude-flow runtime drift
+./scripts/agents/ready.sh --fix
+
+# Dry-run a pipeline kickoff
+./scripts/agents/start-work.sh feature "Add employee document expiry reminders"
+
+# Start/check the Ruflo runtime
+./scripts/ruflo-start.sh
+
+# Execute through Ruflo
+./scripts/ruflo-pipeline.sh feature "Add employee document expiry reminders" --execute
+```
+
+Pipeline types:
+
+| Type       | Workflow                                | Use for                                |
+|------------|-----------------------------------------|----------------------------------------|
+| `feature`  | `docs/swarm/workflows/feature-pipeline.yaml`  | New feature touching 3+ files or modules |
+| `bug`      | `docs/swarm/workflows/bug-pipeline.yaml`      | Non-trivial root-cause + fix work      |
+| `security` | `docs/swarm/workflows/security-pipeline.yaml` | Audit findings, CVEs, hardening        |
+| `refactor` | `docs/swarm/workflows/refactor-pipeline.yaml` | Behavior-preserving restructure        |
+| `perf`     | `docs/swarm/workflows/perf-pipeline.yaml`     | Slow endpoints, N+1, batch jobs        |

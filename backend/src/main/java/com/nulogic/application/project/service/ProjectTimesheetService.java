@@ -8,6 +8,8 @@ import com.nulogic.api.workflow.dto.WorkflowExecutionRequest;
 import com.nulogic.application.project.validation.TimeEntryValidator;
 import com.nulogic.application.workflow.callback.ApprovalCallbackHandler;
 import com.nulogic.application.workflow.service.WorkflowService;
+import com.nulogic.common.security.Permission;
+import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.employee.Employee;
@@ -20,6 +22,7 @@ import com.nulogic.infrastructure.project.repository.ProjectTimeEntryRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -60,13 +63,14 @@ public class ProjectTimesheetService implements ApprovalCallbackHandler {
     @Transactional
     public TimeEntryResponse createTimeEntry(TimeEntryRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        UUID employeeId = resolveSelfServiceEmployeeId(request.getEmployeeId());
         log.info("Creating time entry for employee {} on project {} for date {}",
-                request.getEmployeeId(), request.getProjectId(), request.getWorkDate());
+                employeeId, request.getProjectId(), request.getWorkDate());
 
         // Validate time entry
         TimeEntryValidator.TimeEntryValidationRequest validationRequest =
                 new TimeEntryValidator.TimeEntryValidationRequest(
-                        request.getEmployeeId(),
+                        employeeId,
                         request.getProjectId(),
                         request.getWorkDate(),
                         request.getHoursWorked(),
@@ -79,14 +83,14 @@ public class ProjectTimesheetService implements ApprovalCallbackHandler {
         }
 
         // Verify employee exists
-        employeeRepository.findByIdAndTenantId(request.getEmployeeId(), tenantId)
+        employeeRepository.findByIdAndTenantId(employeeId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Employee not found"));
 
         TimeEntry timeEntry = new TimeEntry();
         timeEntry.setId(UUID.randomUUID());
         timeEntry.setTenantId(tenantId);
         timeEntry.setProjectId(request.getProjectId());
-        timeEntry.setEmployeeId(request.getEmployeeId());
+        timeEntry.setEmployeeId(employeeId);
         timeEntry.setWorkDate(request.getWorkDate());
         timeEntry.setHoursWorked(request.getHoursWorked());
         timeEntry.setDescription(request.getDescription());
@@ -100,7 +104,7 @@ public class ProjectTimesheetService implements ApprovalCallbackHandler {
             timeEntry.setBillingRate(request.getBillingRate());
         } else if (timeEntry.getIsBillable()) {
             projectMemberRepository.findByTenantIdAndProjectIdAndEmployeeId(
-                            tenantId, request.getProjectId(), request.getEmployeeId())
+                            tenantId, request.getProjectId(), employeeId)
                     .ifPresent(member -> timeEntry.setBillingRate(member.getBillingRate()));
         }
 
@@ -121,6 +125,7 @@ public class ProjectTimesheetService implements ApprovalCallbackHandler {
 
         TimeEntry timeEntry = timeEntryRepository.findByIdAndTenantId(entryId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Time entry not found"));
+        assertCanAccessEmployee(timeEntry.getEmployeeId());
 
         // Only allow update if in DRAFT or REJECTED status
         if (!timeEntryValidator.canModifyEntry(timeEntry)) {
@@ -130,7 +135,7 @@ public class ProjectTimesheetService implements ApprovalCallbackHandler {
         // Validate updated time entry
         TimeEntryValidator.TimeEntryValidationRequest validationRequest =
                 new TimeEntryValidator.TimeEntryValidationRequest(
-                        request.getEmployeeId(),
+                        timeEntry.getEmployeeId(),
                         request.getProjectId(),
                         request.getWorkDate(),
                         request.getHoursWorked(),
@@ -169,6 +174,7 @@ public class ProjectTimesheetService implements ApprovalCallbackHandler {
 
         TimeEntry timeEntry = timeEntryRepository.findByIdAndTenantId(entryId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Time entry not found"));
+        assertCanAccessEmployee(timeEntry.getEmployeeId());
 
         if (timeEntry.getStatus() != TimeEntry.TimeEntryStatus.DRAFT &&
                 timeEntry.getStatus() != TimeEntry.TimeEntryStatus.REJECTED) {
@@ -232,12 +238,18 @@ public class ProjectTimesheetService implements ApprovalCallbackHandler {
         UUID tenantId = TenantContext.getCurrentTenant();
         TimeEntry timeEntry = timeEntryRepository.findByIdAndTenantId(entryId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Time entry not found"));
+        assertCanAccessEmployee(timeEntry.getEmployeeId());
         return mapToTimeEntryResponse(timeEntry);
     }
 
     @Transactional(readOnly = true)
     public Page<TimeEntryResponse> getAllTimeEntries(Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        if (!canViewAllTimesheets()) {
+            UUID employeeId = requireCurrentEmployeeId();
+            return timeEntryRepository.findByTenantIdAndEmployeeId(tenantId, employeeId, pageable)
+                    .map(this::mapToTimeEntryResponse);
+        }
         return timeEntryRepository.findAll(
                 (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId),
                 pageable
@@ -247,6 +259,7 @@ public class ProjectTimesheetService implements ApprovalCallbackHandler {
     @Transactional(readOnly = true)
     public List<TimeEntryResponse> getTimeEntriesByEmployee(UUID employeeId) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        assertCanAccessEmployee(employeeId);
         return timeEntryRepository.findByTenantIdAndEmployeeId(tenantId, employeeId).stream()
                 .map(this::mapToTimeEntryResponse)
                 .collect(Collectors.toList());
@@ -255,6 +268,12 @@ public class ProjectTimesheetService implements ApprovalCallbackHandler {
     @Transactional(readOnly = true)
     public List<TimeEntryResponse> getTimeEntriesByProject(UUID projectId) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        if (!canViewAllTimesheets()) {
+            UUID employeeId = requireCurrentEmployeeId();
+            return timeEntryRepository.findByTenantIdAndProjectIdAndEmployeeId(tenantId, projectId, employeeId).stream()
+                    .map(this::mapToTimeEntryResponse)
+                    .collect(Collectors.toList());
+        }
         return timeEntryRepository.findByTenantIdAndProjectId(tenantId, projectId).stream()
                 .map(this::mapToTimeEntryResponse)
                 .collect(Collectors.toList());
@@ -263,6 +282,7 @@ public class ProjectTimesheetService implements ApprovalCallbackHandler {
     @Transactional(readOnly = true)
     public List<TimeEntryResponse> getTimeEntriesByDateRange(UUID employeeId, LocalDate startDate, LocalDate endDate) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        assertCanAccessEmployee(employeeId);
         return timeEntryRepository.findByTenantIdAndEmployeeIdAndWorkDateBetween(
                         tenantId, employeeId, startDate, endDate).stream()
                 .map(this::mapToTimeEntryResponse)
@@ -272,6 +292,12 @@ public class ProjectTimesheetService implements ApprovalCallbackHandler {
     @Transactional(readOnly = true)
     public List<TimeEntryResponse> getTimeEntriesByStatus(TimeEntry.TimeEntryStatus status) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        if (!canViewAllTimesheets()) {
+            UUID employeeId = requireCurrentEmployeeId();
+            return timeEntryRepository.findByTenantIdAndEmployeeIdAndStatus(tenantId, employeeId, status).stream()
+                    .map(this::mapToTimeEntryResponse)
+                    .collect(Collectors.toList());
+        }
         return timeEntryRepository.findByTenantIdAndStatus(tenantId, status).stream()
                 .map(this::mapToTimeEntryResponse)
                 .collect(Collectors.toList());
@@ -282,6 +308,7 @@ public class ProjectTimesheetService implements ApprovalCallbackHandler {
         UUID tenantId = TenantContext.getCurrentTenant();
         TimeEntry timeEntry = timeEntryRepository.findByIdAndTenantId(entryId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Time entry not found"));
+        assertCanAccessEmployee(timeEntry.getEmployeeId());
 
         // Only allow deletion if in DRAFT status
         if (!timeEntryValidator.canDeleteEntry(timeEntry)) {
@@ -515,6 +542,45 @@ public class ProjectTimesheetService implements ApprovalCallbackHandler {
                 .createdAt(entry.getCreatedAt())
                 .updatedAt(entry.getUpdatedAt())
                 .build();
+    }
+
+    private UUID resolveSelfServiceEmployeeId(UUID requestedEmployeeId) {
+        if (canManageTimesheets()) {
+            return requestedEmployeeId != null ? requestedEmployeeId : requireCurrentEmployeeId();
+        }
+
+        UUID currentEmployeeId = requireCurrentEmployeeId();
+        if (requestedEmployeeId != null && !currentEmployeeId.equals(requestedEmployeeId)) {
+            throw new AccessDeniedException("Cannot log time for another employee");
+        }
+        return currentEmployeeId;
+    }
+
+    private void assertCanAccessEmployee(UUID employeeId) {
+        if (canViewAllTimesheets()) {
+            return;
+        }
+        UUID currentEmployeeId = requireCurrentEmployeeId();
+        if (!currentEmployeeId.equals(employeeId)) {
+            throw new AccessDeniedException("Cannot access another employee's time entry");
+        }
+    }
+
+    private UUID requireCurrentEmployeeId() {
+        UUID currentEmployeeId = SecurityContext.getCurrentEmployeeId();
+        if (currentEmployeeId == null) {
+            throw new AccessDeniedException("Current user is not linked to an employee");
+        }
+        return currentEmployeeId;
+    }
+
+    private boolean canManageTimesheets() {
+        return SecurityContext.isSuperAdmin()
+                || SecurityContext.hasAnyPermission(Permission.PROJECT_MANAGE, Permission.TIMESHEET_APPROVE);
+    }
+
+    private boolean canViewAllTimesheets() {
+        return canManageTimesheets();
     }
 
     private ProjectMemberResponse mapToProjectMemberResponse(ProjectMember member) {

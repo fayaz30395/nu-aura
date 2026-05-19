@@ -76,8 +76,8 @@ export class EmployeePage extends BasePage {
     this.pageHeading = page.locator('h1:has-text("Employee Management")');
     this.addEmployeeButton = page.locator('button:has-text("Add Employee")');
     this.importButton = page.locator('button:has-text("Import")');
-    this.searchInput = page.locator('input[placeholder*="Search employees"]');
-    this.searchButton = page.locator('button:has-text("Search")');
+    this.searchInput = page.locator('#employee-search');
+    this.searchButton = page.locator('button:has-text("Search")').first();
     this.statusFilter = page.locator('select').filter({hasText: 'All Status'});
     this.employeeTable = page.locator('table');
     this.tableRows = page.locator('tbody tr');
@@ -219,7 +219,14 @@ export class EmployeePage extends BasePage {
 
     await this.designationInput.fill(data.designation);
     if (data.employmentType) await this.employmentTypeSelect.selectOption(data.employmentType);
-    if (data.department) await this.departmentSelect.selectOption(data.department);
+    if (data.department) {
+      await this.departmentSelect.selectOption(data.department);
+    } else {
+      const firstDepartment = await this.departmentSelect.locator('option:not([value=""])').first().getAttribute('value');
+      if (firstDepartment) {
+        await this.departmentSelect.selectOption(firstDepartment);
+      }
+    }
     if (data.level) await this.levelSelect.selectOption(data.level);
     if (data.jobRole) await this.jobRoleSelect.selectOption(data.jobRole);
     if (data.joiningDate) await this.joiningDateInput.fill(data.joiningDate);
@@ -289,7 +296,7 @@ export class EmployeePage extends BasePage {
    */
   async viewEmployee(index: number = 0) {
     await this.tableRows.nth(index).locator('button:has-text("View")').click();
-    await this.waitForNavigation();
+    await this.page.waitForURL(/\/employees\/[^/]+$/, {timeout: 15000});
   }
 
   /**
@@ -313,6 +320,7 @@ export class EmployeePage extends BasePage {
    */
   async cancelDelete() {
     await this.deleteCancelButton.click();
+    await this.deleteModal.waitFor({state: 'hidden', timeout: 5000});
   }
 
   /**

@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {AlertCircle, Calendar, DollarSign, Download, FileText, Filter, Search, TrendingUp, Users,} from 'lucide-react';
 import {AppLayout} from '@/components/layout';
@@ -19,7 +19,7 @@ const log = createLogger('PayslipsPage');
 
 export default function MyPayslipsPage() {
   const router = useRouter();
-  const {user, isAuthenticated, hasHydrated} = useAuth();
+  const {user, hasHydrated} = useAuth();
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [searchQuery, setSearchQuery] = useState('');
   const [isAdminView, setIsAdminView] = useState(false);
@@ -44,20 +44,6 @@ export default function MyPayslipsPage() {
   // Determine which data to use
   const {data: payslipsData, isLoading} = isAdminView ? allPayslipsQuery : employeePayslipsQuery;
   const payslips = payslipsData?.content ?? [];
-
-  useEffect(() => {
-    // Wait for auth store to hydrate before checking authentication
-    if (!hasHydrated) return;
-
-    if (!isAuthenticated) {
-      router.push('/auth/login');
-    } else if (user) {
-      if (!user.employeeId && !isAdmin) {
-        // Regular user without employee profile
-        setError('No employee profile found for your account. Please contact your administrator.');
-      }
-    }
-  }, [hasHydrated, isAuthenticated, user, router, isAdmin]);
 
   const toggleView = () => {
     if (isAdmin && user?.employeeId) {

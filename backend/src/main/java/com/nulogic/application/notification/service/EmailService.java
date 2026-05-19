@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,21 +34,22 @@ public class EmailService {
     private String frontendUrl;
 
     /**
-     * Send an email asynchronously. Returns a result indicating success or failure.
+     * Send an email and return a result indicating success or failure.
      * The email is first persisted as PENDING, then sent. If sending fails,
      * the result will contain the error details for caller handling.
      *
      * @return EmailSendResult with success/failure status and error details if applicable
      */
-    @Async
     @Transactional
     public EmailSendResult sendEmail(String recipientEmail, String recipientName, EmailNotification.EmailType emailType, Map<String, String> variables) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        EmailNotification.EmailType resolvedEmailType = emailType != null ? emailType : EmailNotification.EmailType.GENERAL;
+        Map<String, String> resolvedVariables = variables != null ? variables : Map.of();
 
         try {
             // Generate email content from template
-            String htmlBody = templateService.generateEmail(emailType, variables);
-            String subject = getSubject(emailType, variables);
+            String htmlBody = templateService.generateEmail(resolvedEmailType, resolvedVariables);
+            String subject = getSubject(resolvedEmailType, resolvedVariables);
 
             // Create email notification record
             EmailNotification notification = EmailNotification.builder()
@@ -57,7 +57,7 @@ public class EmailService {
                     .recipientName(recipientName)
                     .subject(subject)
                     .body(htmlBody)
-                    .emailType(emailType)
+                    .emailType(resolvedEmailType)
                     .status(EmailNotification.EmailStatus.PENDING)
                     .retryCount(0)
                     .build();

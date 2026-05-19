@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -70,6 +71,7 @@ public class TimeTrackingService {
 
         TimeEntry entry = timeEntryRepository.findByIdAndTenantId(entryId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Time entry not found"));
+        assertCanAccessOwnEntry(entry);
 
         if (entry.getStatus() != TimeEntryStatus.DRAFT && entry.getStatus() != TimeEntryStatus.REJECTED) {
             throw new IllegalStateException("Cannot update entry in status: " + entry.getStatus());
@@ -104,6 +106,7 @@ public class TimeTrackingService {
 
         TimeEntry entry = timeEntryRepository.findByIdAndTenantId(entryId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Time entry not found"));
+        assertCanAccessOwnEntry(entry);
 
         if (entry.getStatus() != TimeEntryStatus.DRAFT && entry.getStatus() != TimeEntryStatus.REJECTED) {
             throw new IllegalStateException("Cannot submit entry in status: " + entry.getStatus());
@@ -180,6 +183,7 @@ public class TimeTrackingService {
 
         TimeEntry entry = timeEntryRepository.findByIdAndTenantId(entryId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Time entry not found"));
+        assertCanAccessOwnEntry(entry);
 
         if (entry.getStatus() != TimeEntryStatus.DRAFT) {
             throw new IllegalStateException("Cannot delete entry in status: " + entry.getStatus());
@@ -194,6 +198,7 @@ public class TimeTrackingService {
         UUID tenantId = TenantContext.getCurrentTenant();
         TimeEntry entry = timeEntryRepository.findByIdAndTenantId(entryId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Time entry not found"));
+        assertCanAccessOwnEntry(entry);
         return TimeEntryDto.fromEntity(entry);
     }
 
@@ -266,5 +271,19 @@ public class TimeTrackingService {
                 "totalBillableHours", billableHours != null ? billableHours : BigDecimal.ZERO,
                 "totalBillingAmount", billingAmount != null ? billingAmount : BigDecimal.ZERO
         );
+    }
+
+    private void assertCanAccessOwnEntry(TimeEntry entry) {
+        if (SecurityContext.isSuperAdmin()
+                || SecurityContext.hasAnyPermission(
+                com.nulogic.common.security.Permission.TIME_TRACKING_MANAGE,
+                com.nulogic.common.security.Permission.TIME_TRACKING_VIEW_ALL)) {
+            return;
+        }
+
+        UUID currentEmployeeId = SecurityContext.getCurrentEmployeeId();
+        if (currentEmployeeId == null || !currentEmployeeId.equals(entry.getEmployeeId())) {
+            throw new AccessDeniedException("Cannot access another employee's time entry");
+        }
     }
 }

@@ -47,7 +47,7 @@ public class FnFCalculationService {
     public FnFCalculationResponse getOrCalculate(UUID exitProcessId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
 
-        ExitProcess exitProcess = exitProcessRepository.findById(exitProcessId)
+        ExitProcess exitProcess = exitProcessRepository.findByIdAndTenantId(exitProcessId, tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("Exit process not found: " + exitProcessId));
 
         // Return existing settlement if present
@@ -118,7 +118,7 @@ public class FnFCalculationService {
     // -------------------------------------------------------------------------
 
     private FullAndFinalSettlement computeSettlement(ExitProcess exitProcess, UUID tenantId) {
-        Employee employee = employeeRepository.findById(exitProcess.getEmployeeId())
+        Employee employee = employeeRepository.findByIdAndTenantId(exitProcess.getEmployeeId(), tenantId)
                 .orElseThrow(() -> new RuntimeException("Employee not found"));
 
         FullAndFinalSettlement settlement = FullAndFinalSettlement.builder()

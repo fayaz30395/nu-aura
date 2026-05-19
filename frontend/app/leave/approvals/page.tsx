@@ -276,7 +276,7 @@ function LeaveApprovalsPageContent() {
                             {isProcessing && selectedRequestId === request.id ? 'Processing...' : 'Approve'}
                           </button>
                         </PermissionGate>
-                        <PermissionGate permission={Permissions.LEAVE_APPROVE}>
+                        <PermissionGate permission={Permissions.LEAVE_REJECT}>
                           <button
                             onClick={() => handleRejectClick(request.id)}
                             disabled={isProcessing}
@@ -347,7 +347,7 @@ function LeaveApprovalsPageContent() {
 
 export default function LeaveApprovalsPage() {
   return (
-    <PermissionGate permission={Permissions.LEAVE_APPROVE} fallback={<PageDeniedFallback/>}>
+    <PermissionGate anyOf={[Permissions.LEAVE_APPROVE, Permissions.LEAVE_REJECT]} fallback={<PageDeniedFallback/>}>
       <LeaveApprovalsPageContent/>
     </PermissionGate>
   );

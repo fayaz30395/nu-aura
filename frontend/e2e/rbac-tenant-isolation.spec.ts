@@ -20,8 +20,9 @@ import {demoUsers} from './fixtures/testData';
  */
 
 const EMPLOYEE_A = demoUsers.employeeSaran;   // Saran V — Engineering dept
-const EMPLOYEE_B = demoUsers.employeeRaj;     // Raj V — Engineering dept (different chain)
+const EMPLOYEE_B = demoUsers.employeeRaj;     // Raj P — Engineering dept (different chain)
 const HR_MANAGER = demoUsers.hrManager;      // Jagadeesh N — HR_MANAGER
+const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080/api/v1';
 
 test.describe('Tenant Isolation — API Response Scoping @rbac', () => {
   test('Employee API responses contain only their tenant data @rbac @critical', async ({page}) => {
@@ -47,8 +48,9 @@ test.describe('Tenant Isolation — API Response Scoping @rbac', () => {
     await loginAs(page, EMPLOYEE_A.email);
 
     // Attempt a direct API call to an admin endpoint
-    const response = await page.request.get('/api/v1/admin/tenants', {
+    const response = await page.request.get(`${API_BASE}/admin/tenants`, {
       failOnStatusCode: false,
+      timeout: 45000,
     });
 
     // Should be 403 Forbidden or 401 Unauthorized
@@ -96,7 +98,7 @@ test.describe('Tenant Isolation — UI Data Scoping @rbac', () => {
       // Verify that rows don't show another employee's name in the submitter column
       const allText = await page.locator('table tbody').textContent().catch(() => '');
 
-      // Raj V is EMPLOYEE_B — Saran (EMPLOYEE_A) should NOT see Raj's private data
+      // Raj P is EMPLOYEE_B — Saran (EMPLOYEE_A) should NOT see Raj's private data
       // (They may share a department view if manager, but not as a peer employee)
       // This is a soft check — if cross-tenant data shows up the page content would be wrong
       expect(allText).toBeTruthy();
@@ -176,25 +178,32 @@ test.describe('Tenant Isolation — Session Boundaries @rbac', () => {
       // Login as Employee A
       await loginAs(pageA, EMPLOYEE_A.email);
       await navigateTo(pageA, '/me/profile');
-      await pageA.waitForTimeout(500);
+      await pageA.waitForFunction(
+        (name) => document.body.innerText.includes(name),
+        EMPLOYEE_A.name,
+        {timeout: 20000}
+      );
 
       // Login as Employee B in separate context
       await loginAs(pageB, EMPLOYEE_B.email);
       await navigateTo(pageB, '/me/profile');
-      await pageB.waitForTimeout(500);
+      await pageB.waitForFunction(
+        (name) => document.body.innerText.includes(name),
+        EMPLOYEE_B.name,
+        {timeout: 20000}
+      );
 
       // Both should be on their own profile pages without auth error
       expect(pageA.url()).not.toContain('/auth/login');
       expect(pageB.url()).not.toContain('/auth/login');
 
-      // Profile pages should show different user names
-      const nameA = await pageA.locator('h1, h2, [data-testid*="employee-name"], [class*="profile-name"]').first().textContent().catch(() => '');
-      const nameB = await pageB.locator('h1, h2, [data-testid*="employee-name"], [class*="profile-name"]').first().textContent().catch(() => '');
+      const bodyA = await pageA.locator('body').innerText();
+      const bodyB = await pageB.locator('body').innerText();
 
-      // If both have names, they should be different (different users)
-      if (nameA && nameB && nameA !== 'Profile' && nameB !== 'Profile') {
-        expect(nameA).not.toBe(nameB);
-      }
+      expect(bodyA).toContain(EMPLOYEE_A.name);
+      expect(bodyB).toContain(EMPLOYEE_B.name);
+      expect(bodyA).not.toContain(EMPLOYEE_B.email);
+      expect(bodyB).not.toContain(EMPLOYEE_A.email);
     } finally {
       await contextA.close();
       await contextB.close();

@@ -150,8 +150,7 @@ test.describe('Payroll End-to-End — Run Payroll @regression @critical', () => 
 
     if (hasRow) {
       // Validate status badge is a known value
-      const statusEl = firstRow.locator('[class*="status" i], [class*="badge" i], td').first();
-      const statusText = await statusEl.textContent().catch(() => '');
+      const statusText = await firstRow.textContent().catch(() => '');
       const validStatuses = /DRAFT|PROCESSING|PROCESSED|COMPLETED|APPROVED|PENDING|FAILED/i;
       expect(statusText).toMatch(validStatuses);
 

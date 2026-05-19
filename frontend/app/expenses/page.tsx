@@ -179,8 +179,11 @@ export default function ExpenseClaims() {
   }, [currentClaimsData, filters]);
 
   // Statistics — fed by *all* my-claims so the dashboard summary is stable across tabs.
-  const myClaims = myClaimsQuery.data?.content ?? [];
-  const pendingForApproval = pendingClaimsQuery.data?.content ?? [];
+  const myClaims = useMemo(() => myClaimsQuery.data?.content ?? [], [myClaimsQuery.data?.content]);
+  const pendingForApproval = useMemo(
+    () => pendingClaimsQuery.data?.content ?? [],
+    [pendingClaimsQuery.data?.content]
+  );
 
   const statistics = useMemo(() => {
     const monthStart = startOfMonth(new Date());

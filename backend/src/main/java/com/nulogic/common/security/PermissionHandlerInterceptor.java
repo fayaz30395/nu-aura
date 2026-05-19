@@ -67,10 +67,10 @@ public class PermissionHandlerInterceptor implements HandlerInterceptor {
         String[] anyOf = annotation.value();
         String[] allOf = annotation.allOf();
 
-        // SUPER_ADMIN / TENANT_ADMIN bypass (mirrors PermissionAspect and frontend usePermissions.ts).
+        // SUPER_ADMIN bypass (mirrors PermissionAspect and the documented security baseline).
         // SEC-FIX (F7): Audit-log every bypass so privileged access is traceable in production logs.
-        if (SecurityContext.isTenantAdmin()) {
-            log.info("AUDIT: TENANT_ADMIN bypass — user={} tenant={} method={} anyOf={} allOf={}",
+        if (SecurityContext.isSuperAdmin()) {
+            log.info("AUDIT: SUPER_ADMIN bypass — user={} tenant={} method={} anyOf={} allOf={}",
                     SecurityContext.getCurrentUserId(),
                     SecurityContext.getCurrentTenantId(),
                     method.getName(),

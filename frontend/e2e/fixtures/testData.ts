@@ -38,7 +38,7 @@ export interface DemoUser {
  *   CEO: Fayaz M (SUPER_ADMIN)
  *   ├── Sumit Kumar (MANAGER, Engineering) ── reports to Fayaz
  *   │   ├── Mani S (TEAM_LEAD) ── reports to Sumit
- *   │   │   ├── Raj V (EMPLOYEE) ── reports to Mani
+ *   │   │   ├── Raj P (EMPLOYEE) ── reports to Mani
  *   │   │   └── Gokul R (TEAM_LEAD) ── reports to Mani
  *   │   │       └── Anshuman P (EMPLOYEE) ── reports to Gokul
  *   │   └── Saran V (EMPLOYEE) ── reports to Sumit
@@ -107,7 +107,7 @@ export const demoUsers = {
     email: 'raj@nulogic.io',
     password: DEMO_PASSWORD,
     role: 'EMPLOYEE' as DemoRole,
-    name: 'Raj V',
+    name: 'Raj P',
     department: 'Engineering',
     reportsTo: 'mani@nulogic.io',
   },
@@ -218,7 +218,7 @@ export const testEmployee = {
     middleName: 'E2E',
     lastName: 'Employee',
     workEmail: `test.employee.${Date.now()}@company.com`,
-    password: 'Test@123456',
+    password: 'Test@1234567',
   },
   personal: {
     personalEmail: `personal.${Date.now()}@gmail.com`,

@@ -3,9 +3,13 @@ package com.nulogic.application.payroll.service;
 import com.nulogic.application.audit.service.AuditLogService;
 import com.nulogic.common.exception.ResourceNotFoundException;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.payroll.PayrollRun;
 import com.nulogic.domain.payroll.PayrollRun.PayrollStatus;
+import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import com.nulogic.infrastructure.payroll.repository.PayrollRunRepository;
+import com.nulogic.infrastructure.payroll.repository.PayslipRepository;
+import com.nulogic.infrastructure.payroll.repository.SalaryStructureRepository;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -39,6 +43,12 @@ class PayrollRunServiceTest {
     private PayrollRunRepository payrollRunRepository;
     @Mock
     private AuditLogService auditLogService;
+    @Mock
+    private EmployeeRepository employeeRepository;
+    @Mock
+    private SalaryStructureRepository salaryStructureRepository;
+    @Mock
+    private PayslipRepository payslipRepository;
     @InjectMocks
     private PayrollRunService payrollRunService;
     private UUID tenantId;
@@ -62,6 +72,7 @@ class PayrollRunServiceTest {
 
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
         tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
+        when(employeeRepository.findByTenantId(tenantId)).thenReturn(List.of());
 
         payrollRun = PayrollRun.builder()
                 .payPeriodYear(2025)

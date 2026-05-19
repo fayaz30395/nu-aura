@@ -117,14 +117,16 @@ function PayslipsPageContent() {
                 </p>
               </div>
               <div className="flex gap-4">
-                <Button
-                  variant="outline"
-                  leftIcon={<Download className="h-4 w-4"/>}
-                  onClick={handleBulkDownload}
-                  disabled={loading || downloadLoading || filteredPayslips.length === 0}
-                >
-                  Download All
-                </Button>
+                <PermissionGate permission={Permissions.PAYROLL_VIEW_ALL}>
+                  <Button
+                    variant="outline"
+                    leftIcon={<Download className="h-4 w-4"/>}
+                    onClick={handleBulkDownload}
+                    disabled={loading || downloadLoading || filteredPayslips.length === 0}
+                  >
+                    Download All
+                  </Button>
+                </PermissionGate>
               </div>
             </div>
           </div>

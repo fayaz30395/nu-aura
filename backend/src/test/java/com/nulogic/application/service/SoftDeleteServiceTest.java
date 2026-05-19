@@ -104,8 +104,7 @@ class SoftDeleteServiceTest {
             when(employeeRepository.countByDepartmentIdAndTenantId(ENTITY_ID, TENANT_ID)).thenReturn(0L);
             when(departmentRepository.countByTenantIdAndParentDepartmentId(TENANT_ID, ENTITY_ID)).thenReturn(0L);
             when(departmentRepository.save(any(Department.class))).thenAnswer(inv -> inv.getArgument(0));
-            when(auditLogService.logAction(anyString(), any(), any(), any(), any(), anyString()))
-                    .thenReturn(new AuditLog());
+            // logAction returns void — Mockito defaults to no-op for void methods; no stub needed.
 
             departmentService.deleteDepartment(ENTITY_ID);
 
@@ -146,8 +145,7 @@ class SoftDeleteServiceTest {
 
             when(payslipRepository.findById(ENTITY_ID)).thenReturn(Optional.of(payslip));
             when(payslipRepository.save(any(Payslip.class))).thenAnswer(inv -> inv.getArgument(0));
-            when(auditLogService.logAction(anyString(), any(), any(), any(), any(), anyString()))
-                    .thenReturn(new AuditLog());
+            // logAction returns void — Mockito defaults to no-op for void methods; no stub needed.
 
             payslipService.deletePayslip(ENTITY_ID);
 
@@ -188,8 +186,7 @@ class SoftDeleteServiceTest {
 
             when(salaryStructureRepository.findById(ENTITY_ID)).thenReturn(Optional.of(structure));
             when(salaryStructureRepository.save(any(SalaryStructure.class))).thenAnswer(inv -> inv.getArgument(0));
-            when(auditLogService.logAction(anyString(), any(), any(), any(), any(), anyString()))
-                    .thenReturn(new AuditLog());
+            // logAction returns void — Mockito defaults to no-op for void methods; no stub needed.
 
             salaryStructureService.deleteSalaryStructure(ENTITY_ID);
 
@@ -230,8 +227,7 @@ class SoftDeleteServiceTest {
 
             when(payrollRunRepository.findById(ENTITY_ID)).thenReturn(Optional.of(run));
             when(payrollRunRepository.save(any(PayrollRun.class))).thenAnswer(inv -> inv.getArgument(0));
-            when(auditLogService.logAction(anyString(), any(), any(), any(), any(), anyString()))
-                    .thenReturn(new AuditLog());
+            // logAction returns void — Mockito defaults to no-op for void methods; no stub needed.
 
             payrollRunService.deletePayrollRun(ENTITY_ID);
 
@@ -271,8 +267,7 @@ class SoftDeleteServiceTest {
 
             when(leaveTypeRepository.findByIdAndTenantId(ENTITY_ID, TENANT_ID)).thenReturn(Optional.of(leaveType));
             when(leaveTypeRepository.save(any(LeaveType.class))).thenAnswer(inv -> inv.getArgument(0));
-            when(auditLogService.logAction(anyString(), any(), any(), any(), any(), anyString()))
-                    .thenReturn(new AuditLog());
+            // logAction returns void — Mockito defaults to no-op for void methods; no stub needed.
 
             leaveTypeService.deleteLeaveType(ENTITY_ID);
 
@@ -312,8 +307,7 @@ class SoftDeleteServiceTest {
 
             when(holidayRepository.findById(ENTITY_ID)).thenReturn(Optional.of(holiday));
             when(holidayRepository.save(any(Holiday.class))).thenAnswer(inv -> inv.getArgument(0));
-            when(auditLogService.logAction(anyString(), any(), any(), any(), any(), anyString()))
-                    .thenReturn(new AuditLog());
+            // logAction returns void — Mockito defaults to no-op for void methods; no stub needed.
 
             holidayService.deleteHoliday(ENTITY_ID);
 

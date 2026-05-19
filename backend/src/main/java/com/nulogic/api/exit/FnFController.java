@@ -36,7 +36,7 @@ public class FnFController {
     // ---- FnF Settlement endpoints (authenticated) ----
 
     @GetMapping("/{exitProcessId}/fnf")
-    @RequiresPermission(Permission.OFFBOARDING_VIEW)
+    @RequiresPermission(Permission.OFFBOARDING_FNF_CALCULATE)
     public ResponseEntity<FnFCalculationResponse> getOrCalculate(@PathVariable UUID exitProcessId) {
         return ResponseEntity.ok(fnfService.getOrCalculate(exitProcessId));
     }

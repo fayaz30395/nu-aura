@@ -1,10 +1,40 @@
 # Swarm Pipeline Runbook
 
 Copy-paste templates for spawning a RuFlo agent swarm. Each pipeline matches a row in the
-`CLAUDE.md` "Agent Routing" table and a YAML definition under `.claude-flow/workflows/`.
+`CLAUDE.md` "Agent Routing" table and a canonical YAML definition under
+`docs/swarm/workflows/`. Runtime copies are synced to `.claude-flow/workflows/`.
 
 **Rule:** spawn ALL agents in ONE message with `run_in_background: true`, then kick off via a
 single `SendMessage` to the first agent. Don't poll; agents message each other.
+
+---
+
+## Quickstart
+
+From the repo root:
+
+```bash
+# 1) Verify local orchestration prerequisites and config drift
+./scripts/agents/ready.sh
+
+# 2) If drift is reported, sync tracked configs into .claude-flow/
+./scripts/agents/ready.sh --fix
+
+# 3) Dry-run a task-specific pipeline kickoff
+./scripts/agents/start-work.sh feature "Add employee document expiry reminders"
+
+# 4) Start/check Ruflo, then execute when the kickoff context looks right
+./scripts/ruflo-start.sh
+./scripts/ruflo-pipeline.sh feature "Add employee document expiry reminders" --execute
+```
+
+Use `feature`, `bug`, `security`, `refactor`, or `perf` as the first argument. The launcher
+selects the matching YAML under `docs/swarm/workflows/`, injects the mandatory NU-AURA
+rules into the kickoff context, checks swarm config drift, and then either prints or runs
+the `npx ruflo@latest swarm ...` command.
+
+If the MCP/RuFlo daemon is unavailable, `ready.sh` still validates the local repo setup and
+prints the daemon start command.
 
 ---
 
@@ -22,7 +52,7 @@ If unsure, ask: "would I want a code review on this?" If yes → swarm.
 
 ## Pipeline 1: Feature
 
-**Yaml:** `.claude-flow/workflows/feature-pipeline.yaml`
+**Yaml:** `docs/swarm/workflows/feature-pipeline.yaml` (synced to `.claude-flow/workflows/feature-pipeline.yaml`)
 **Flow:** architect → coder → tester → reviewer
 **Use for:** new endpoints, new pages, new modules, anything in `PRD.md` rolling out.
 
@@ -83,7 +113,7 @@ SendMessage({ to: "architect", summary: "Start feature <NAME>",
 
 ## Pipeline 2: Bug
 
-**Yaml:** `.claude-flow/workflows/bug-pipeline.yaml`
+**Yaml:** `docs/swarm/workflows/bug-pipeline.yaml` (synced to `.claude-flow/workflows/bug-pipeline.yaml`)
 **Flow:** researcher → coder → tester
 **Use for:** any bug where root cause is unclear or fix is non-trivial.
 
@@ -124,7 +154,7 @@ SendMessage({ to: "researcher", summary: "Investigate bug <ID>",
 
 ## Pipeline 3: Security
 
-**Yaml:** `.claude-flow/workflows/security-pipeline.yaml`
+**Yaml:** `docs/swarm/workflows/security-pipeline.yaml` (synced to `.claude-flow/workflows/security-pipeline.yaml`)
 **Flow:** security-architect → coder → security-auditor
 **Use for:** closing audit findings, CVEs, hardening surfaces.
 
@@ -169,7 +199,7 @@ SendMessage({ to: "security-architect", summary: "Close <finding ID>",
 
 ## Pipeline 4: Refactor
 
-**Yaml:** `.claude-flow/workflows/refactor-pipeline.yaml`
+**Yaml:** `docs/swarm/workflows/refactor-pipeline.yaml` (synced to `.claude-flow/workflows/refactor-pipeline.yaml`)
 **Flow:** architect → coder → reviewer
 **Use for:** restructuring without behavior change. Hard rule: existing tests must pass
 UNCHANGED.
@@ -215,7 +245,7 @@ SendMessage({ to: "architect", summary: "Refactor <area>",
 
 ## Pipeline 5: Performance
 
-**Yaml:** `.claude-flow/workflows/perf-pipeline.yaml`
+**Yaml:** `docs/swarm/workflows/perf-pipeline.yaml` (synced to `.claude-flow/workflows/perf-pipeline.yaml`)
 **Flow:** perf-engineer → coder
 **Use for:** slow endpoints, N+1, slow batch jobs.
 
@@ -274,8 +304,8 @@ The reviewer's final reply tells you what to do next:
 Lead then runs the post-task hooks:
 
 ```bash
-npx @claude-flow/cli@latest hooks post-task --task-id "<id>" --success true --store-results true
-npx @claude-flow/cli@latest memory store --namespace patterns --key "<name>" --value "<what worked>"
+npx ruflo@latest hooks post-task --task-id "<id>" --success true --store-results true
+npx ruflo@latest memory store --namespace patterns --key "<name>" --value "<what worked>"
 ```
 
 These feed RuFlo's AgentDB so the next session learns from this one.

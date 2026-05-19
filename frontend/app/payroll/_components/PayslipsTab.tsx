@@ -78,13 +78,25 @@ export function PayslipsTab({
       {loading ? (
         <div className="text-center py-12 text-[var(--text-secondary)]">Loading payslips...</div>
       ) : filtered.length === 0 ? (
-        <EmptyState
-          icon={<FileText className="h-8 w-8"/>}
-          title="No Payslips Found"
-          description="Generate payslips for your employees to view their salary details and deductions"
-          action={{label: 'Create payslip', onClick: onCreatePayslip}}
-          iconColor="cyan"
-        />
+        <PermissionGate
+          permission={Permissions.PAYROLL_PROCESS}
+          fallback={
+            <EmptyState
+              icon={<FileText className="h-8 w-8"/>}
+              title="No Payslips Found"
+              description="Generate payslips for your employees to view their salary details and deductions"
+              iconColor="cyan"
+            />
+          }
+        >
+          <EmptyState
+            icon={<FileText className="h-8 w-8"/>}
+            title="No Payslips Found"
+            description="Generate payslips for your employees to view their salary details and deductions"
+            action={{label: 'Create payslip', onClick: onCreatePayslip}}
+            iconColor="cyan"
+          />
+        </PermissionGate>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filtered.map((payslip) => (

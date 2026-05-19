@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nulogic.api.audit.dto.AuditLogResponse;
 import com.nulogic.api.audit.dto.AuditStatisticsResponse;
-import com.nulogic.common.exception.BusinessException;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.domain.audit.AuditLog;
@@ -52,7 +51,7 @@ public class AuditLogService {
      */
     @Async
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public AuditLog logAction(
+    public void logAction(
             String entityType,
             UUID entityId,
             AuditAction action,
@@ -98,23 +97,22 @@ public class AuditLogService {
                 auditLog.setImpersonatorId(impersonatorId);
             }
 
-            return auditLogRepository.save(auditLog);
+            auditLogRepository.save(auditLog);
         } catch (JsonProcessingException e) {
             log.error("Failed to serialize audit log values", e);
-            throw new BusinessException("Failed to create audit log");
         }
     }
 
     @Async
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public AuditLog logAction(String entityType, UUID entityId, AuditAction action) {
-        return logAction(entityType, entityId, action, null, null, null);
+    public void logAction(String entityType, UUID entityId, AuditAction action) {
+        logAction(entityType, entityId, action, null, null, null);
     }
 
     @Async
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public AuditLog logSecurityEvent(AuditAction action, UUID userId, String description) {
-        return logAction("USER", userId, action, null, null, description);
+    public void logSecurityEvent(AuditAction action, UUID userId, String description) {
+        logAction("USER", userId, action, null, null, description);
     }
 
     // ==================== Query Methods (Tenant-Aware) ====================

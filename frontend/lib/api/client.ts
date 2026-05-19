@@ -67,8 +67,9 @@ class ApiClient {
       },
       // CRITICAL: Enable credentials for cookie-based auth
       withCredentials: true,
-      // Prevent infinite waits on slow/unresponsive backend (30 seconds)
-      timeout: 30000,
+      // Prevent infinite waits while allowing slow write paths (password hashing,
+      // audit, and remote Postgres) to complete without client-side abort/retry.
+      timeout: 120000,
     });
 
     this.client.interceptors.request.use(

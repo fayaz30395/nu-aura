@@ -33,11 +33,11 @@ function futureDate(daysOffset: number): string {
 // ── POM helpers ───────────────────────────────────────────────────────────────
 
 async function openCreateJobForm(page: import('@playwright/test').Page) {
-  await page.goto('/recruitment');
+  await page.goto('/recruitment/jobs');
   await page.waitForLoadState('networkidle');
 
   const createBtn = page
-    .locator('button:has-text("Post Job"), button:has-text("New Job"), button:has-text("Create Job"), button:has-text("Add"), button:has-text("Create")')
+    .locator('button:has-text("Create Job Opening"), button:has-text("Post Job"), button:has-text("New Job"), button:has-text("Create Job")')
     .first();
   const hasCreate = await createBtn.isVisible({timeout: 8000}).catch(() => false);
   return hasCreate ? createBtn : null;

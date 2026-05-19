@@ -45,6 +45,8 @@ const ALL_MODULES = [
 ];
 
 test.describe('SuperAdmin — Full Admin Access @rbac @critical', () => {
+  test.setTimeout(240000);
+
   test.beforeEach(async ({page}) => {
     await loginAs(page, SUPER_ADMIN.email);
   });
@@ -58,7 +60,10 @@ test.describe('SuperAdmin — Full Admin Access @rbac @critical', () => {
       expect(page.url()).not.toContain('/auth/login');
 
       // Page should load with content (not access denied)
-      const hasContent = await page.locator('h1, h2, main').first().isVisible({timeout: 10000}).catch(() => false);
+      const hasContent = await page.locator('h1, h2, main').first().waitFor({
+        state: 'visible',
+        timeout: 30000,
+      }).then(() => true).catch(() => false);
       const hasAccessDenied = await page.locator('text=/access denied|unauthorized|forbidden/i').first().isVisible({timeout: 3000}).catch(() => false);
 
       expect(hasContent && !hasAccessDenied).toBe(true);
@@ -67,6 +72,8 @@ test.describe('SuperAdmin — Full Admin Access @rbac @critical', () => {
 });
 
 test.describe('SuperAdmin — Full Module Access @rbac @critical', () => {
+  test.setTimeout(240000);
+
   test.beforeEach(async ({page}) => {
     await loginAs(page, SUPER_ADMIN.email);
   });
@@ -78,7 +85,10 @@ test.describe('SuperAdmin — Full Module Access @rbac @critical', () => {
 
       expect(page.url()).not.toContain('/auth/login');
 
-      const hasContent = await page.locator('h1, h2, main').first().isVisible({timeout: 10000}).catch(() => false);
+      const hasContent = await page.locator('h1, h2, main').first().waitFor({
+        state: 'visible',
+        timeout: 30000,
+      }).then(() => true).catch(() => false);
       expect(hasContent).toBe(true);
 
       await expect(page.locator('text=/something went wrong/i').first()).not.toBeVisible();
@@ -87,6 +97,8 @@ test.describe('SuperAdmin — Full Module Access @rbac @critical', () => {
 });
 
 test.describe('SuperAdmin — Cross-Tenant Data Visibility @rbac', () => {
+  test.setTimeout(240000);
+
   test.beforeEach(async ({page}) => {
     await loginAs(page, SUPER_ADMIN.email);
   });
@@ -96,7 +108,7 @@ test.describe('SuperAdmin — Cross-Tenant Data Visibility @rbac', () => {
     await page.waitForTimeout(1500);
 
     expect(page.url()).not.toContain('/auth/login');
-    await expect(page.locator('h1, h2').first()).toBeVisible({timeout: 10000});
+    await expect(page.locator('h1, h2').first()).toBeVisible({timeout: 30000});
 
     const hasEmployees = await page.locator('table tbody tr, [class*="employee"]').first().isVisible({timeout: 8000}).catch(() => false);
     expect(hasEmployees || true).toBe(true);
@@ -119,7 +131,10 @@ test.describe('SuperAdmin — Cross-Tenant Data Visibility @rbac', () => {
     await page.waitForTimeout(1500);
 
     const isAccessible = !page.url().includes('/auth/login');
-    const hasContent = await page.locator('h1, h2, main').first().isVisible({timeout: 8000}).catch(() => false);
+    const hasContent = await page.locator('h1, h2, main').first().waitFor({
+      state: 'visible',
+      timeout: 30000,
+    }).then(() => true).catch(() => false);
 
     expect(isAccessible || hasContent || true).toBe(true);
   });
@@ -129,11 +144,13 @@ test.describe('SuperAdmin — Cross-Tenant Data Visibility @rbac', () => {
     await page.waitForTimeout(1500);
 
     expect(page.url()).not.toContain('/auth/login');
-    await expect(page.locator('main, [role="main"]').first()).toBeVisible({timeout: 10000});
+    await expect(page.locator('main, [role="main"]').first()).toBeVisible({timeout: 30000});
   });
 });
 
 test.describe('SuperAdmin — Role Management @rbac', () => {
+  test.setTimeout(240000);
+
   test.beforeEach(async ({page}) => {
     await loginAs(page, SUPER_ADMIN.email);
   });
@@ -142,7 +159,7 @@ test.describe('SuperAdmin — Role Management @rbac', () => {
     await navigateTo(page, '/admin/roles');
     await page.waitForTimeout(1000);
 
-    await expect(page.locator('h1, h2').first()).toBeVisible({timeout: 10000});
+    await expect(page.locator('h1, h2').first()).toBeVisible({timeout: 30000});
 
     // Expected RBAC roles visible
     const expectedRoles = ['SUPER_ADMIN', 'EMPLOYEE', 'MANAGER'];
@@ -187,7 +204,7 @@ test.describe('SuperAdmin — Role Management @rbac', () => {
     await navigateTo(page, '/admin/permissions');
     await page.waitForTimeout(1000);
 
-    await expect(page.locator('h1, h2').first()).toBeVisible({timeout: 10000});
+    await expect(page.locator('h1, h2').first()).toBeVisible({timeout: 30000});
 
     const hasPermissionsContent = await page.locator('[class*="permission"], [class*="badge"], table').first().isVisible({timeout: 5000}).catch(() => false);
     expect(hasPermissionsContent || true).toBe(true);
@@ -195,6 +212,8 @@ test.describe('SuperAdmin — Role Management @rbac', () => {
 });
 
 test.describe('SuperAdmin — Sidebar Shows All Sections @rbac', () => {
+  test.setTimeout(240000);
+
   test('SuperAdmin sidebar shows all module sections @rbac @smoke', async ({page}) => {
     await loginAs(page, SUPER_ADMIN.email);
     await navigateTo(page, '/me/dashboard');
@@ -230,13 +249,18 @@ test.describe('SuperAdmin — Sidebar Shows All Sections @rbac', () => {
 });
 
 test.describe('SuperAdmin 2 — Second SuperAdmin Also Has Full Access @rbac', () => {
+  test.setTimeout(240000);
+
   test('Second SuperAdmin has same access as primary @rbac @smoke', async ({page}) => {
     await loginAs(page, SUPER_ADMIN_2.email);
 
     await navigateTo(page, '/admin/roles');
     expect(page.url()).not.toContain('/auth/login');
 
-    const hasContent = await page.locator('h1, h2').first().isVisible({timeout: 10000}).catch(() => false);
+    const hasContent = await page.locator('h1, h2').first().waitFor({
+      state: 'visible',
+      timeout: 30000,
+    }).then(() => true).catch(() => false);
     expect(hasContent).toBe(true);
   });
 

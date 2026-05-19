@@ -237,11 +237,14 @@ function addSecurityHeaders(response: NextResponse): NextResponse {
   // Content Security Policy - restrictive but allows necessary resources including Google OAuth
   // Extract origin from API URL for CSP connect-src
   let apiOrigin: string;
+  let wsOrigin: string;
   try {
     const url = new URL(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api/v1');
     apiOrigin = url.origin;
+    wsOrigin = `${url.protocol === 'https:' ? 'wss:' : 'ws:'}//${url.host}`;
   } catch {
     apiOrigin = 'http://localhost:8080';
+    wsOrigin = 'ws://localhost:8080';
   }
 
   response.headers.set(
@@ -258,7 +261,7 @@ function addSecurityHeaders(response: NextResponse): NextResponse {
         ? "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://accounts.google.com https://apis.google.com"
         : "script-src 'self' 'strict-dynamic' 'unsafe-inline' https://accounts.google.com https://apis.google.com",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://accounts.google.com",
-      `connect-src 'self' ${apiOrigin} wss: https://accounts.google.com https://accounts.googleapis.com https://www.googleapis.com`,
+      `connect-src 'self' ${apiOrigin} ${wsOrigin} wss: https://accounts.google.com https://accounts.googleapis.com https://www.googleapis.com`,
       // SEC: explicit img-src allowlist (was 'https:' wildcard — too permissive, allowed exfil to any HTTPS host)
       "img-src 'self' data: blob: https://lh3.googleusercontent.com https://*.amazonaws.com https://*.cloudfront.net https://storage.googleapis.com https://media.licdn.com https://ui-avatars.com https://drive.google.com",
       "font-src 'self' https://fonts.gstatic.com",
@@ -338,7 +341,6 @@ export function middleware(request: NextRequest) {
     // DEF-27: Deny-by-default — any non-public route without a cookie redirects to login.
     // This covers both known authenticated routes AND unknown/future routes.
     const loginUrl = new URL('/auth/login', request.url);
-    loginUrl.searchParams.set('returnUrl', pathname);
     return NextResponse.redirect(loginUrl);
   }
 
@@ -364,7 +366,6 @@ export function middleware(request: NextRequest) {
     // No refresh token — truly expired session, redirect to login
     if (isAuthenticatedRoute(pathname) || !isPublicRoute(pathname)) {
       const loginUrl = new URL('/auth/login', request.url);
-      loginUrl.searchParams.set('returnUrl', pathname);
       return NextResponse.redirect(loginUrl);
     }
     const response = NextResponse.next();
@@ -404,9 +405,38 @@ export function middleware(request: NextRequest) {
   ]);
 
   const isAdminRoute = ADMIN_ROUTE_PATTERNS.some((re) => re.test(pathname));
+  const allRoles: string[] = [...normalizedRoles];
+  if (normalizedSingleRole) allRoles.push(normalizedSingleRole);
+
+  // Keep NU-Hire-only admins out of NU-Grow direct routes at the edge.
+  // Backend permissions remain authoritative; this prevents the client shell
+  // from rendering a route the user should never work in.
+  if (/^\/performance(\/|$)/.test(pathname)) {
+    const isRecruitmentOnly = allRoles.includes('RECRUITMENT_ADMIN')
+      && !allRoles.some((r) => ['HR_ADMIN', 'HR_MANAGER', 'TENANT_ADMIN', 'MANAGER', 'DEPARTMENT_MANAGER', 'TEAM_LEAD'].includes(r));
+    if (isRecruitmentOnly) {
+      const denyUrl = new URL('/recruitment', request.url);
+      denyUrl.searchParams.set('denied', '1');
+      const response = NextResponse.redirect(denyUrl);
+      return addSecurityHeaders(response);
+    }
+  }
+
+  // Payroll is an HR/finance/admin workspace. Self-service payslips live under
+  // /me/payslips, so blocking /payroll does not affect employee payslip access.
+  if (/^\/payroll(\/|$)/.test(pathname)) {
+    const canAccessPayroll = allRoles.some((r) =>
+      ['SUPER_ADMIN', 'TENANT_ADMIN', 'HR_ADMIN', 'HR_MANAGER', 'FINANCE_ADMIN'].includes(r)
+    );
+    if (!canAccessPayroll) {
+      const denyUrl = new URL('/me/dashboard', request.url);
+      denyUrl.searchParams.set('denied', '1');
+      const response = NextResponse.redirect(denyUrl);
+      return addSecurityHeaders(response);
+    }
+  }
+
   if (isAdminRoute) {
-    const allRoles: string[] = [...normalizedRoles];
-    if (normalizedSingleRole) allRoles.push(normalizedSingleRole);
     const hasAdminRole = allRoles.some((r) => ADMIN_ROLES.has(r));
     if (!hasAdminRole) {
       // Deny by redirecting to /me/dashboard. We deliberately do NOT echo the

@@ -9,13 +9,15 @@ import {ShieldAlert} from 'lucide-react';
 /** NU-Fluence entry page — redirect to wiki */
 export default function FluenceEntryPage() {
   const router = useRouter();
-  const {hasHydrated, isAuthenticated} = useAuth();
+  const {hasHydrated, isAuthenticated, restoreSession} = useAuth();
   const {hasAppAccess} = useActiveApp();
 
   useEffect(() => {
     if (!hasHydrated) return;
     if (!isAuthenticated) {
-      router.replace('/auth/login');
+      restoreSession().then((restored) => {
+        if (!restored) router.replace('/auth/login');
+      });
       return;
     }
     // DEF-40: Check app-level RBAC before redirecting
@@ -23,7 +25,7 @@ export default function FluenceEntryPage() {
     if (hasAppAccess('FLUENCE')) {
       router.replace('/fluence/wiki');
     }
-  }, [hasHydrated, isAuthenticated, router, hasAppAccess]);
+  }, [hasHydrated, isAuthenticated, router, hasAppAccess, restoreSession]);
 
   // Show access denied if authenticated but no access
   if (hasHydrated && isAuthenticated && !hasAppAccess('FLUENCE')) {

@@ -6,6 +6,8 @@ Topic-grouped architecture documentation for NU-AURA. Merged from the former `do
 
 | Doc                                                | Topic                                                            |
 |----------------------------------------------------|------------------------------------------------------------------|
+| [`mental-model.md`](mental-model.md)               | Code-grounded mental model (read this first)                     |
+| [`improvement-backlog.md`](improvement-backlog.md) | Tracked gaps & fixes (status-tagged, paired with mental-model)   |
 | [`master-plan.md`](master-plan.md)                 | Build-kit master plan (00)                                       |
 | [`system-overview.md`](system-overview.md)         | System overview (01)                                             |
 | [`modules.md`](modules.md)                         | Module architecture (02)                                         |

@@ -228,16 +228,18 @@ export const useAuth = create<AuthState>()(
             persistUserToStorage(user);
             return true;
           } catch (err) {
-            // Only fall through on 401 (real "session expired" signal). On 5xx,
-            // network errors, CORS, etc. the session may still be valid — the
-            // API just hiccupped. Triggering a refresh-token rotation in that
-            // case is the exact cascade v3 was designed to prevent.
+            // Fall through to refresh on auth/tenant-context failures. Cookie-only
+            // sessions can reach this path with valid httpOnly cookies but missing
+            // client tenant state (for example after API-based login or cleared
+            // storage). /auth/refresh returns the tenant and user payload needed
+            // to rebuild the frontend store. Avoid refresh rotation on 5xx/network
+            // failures where the backend simply hiccupped.
             const status = (err as { response?: { status?: number } })?.response?.status;
-            if (status !== 401) {
+            if (status === undefined || status >= 500) {
               set({isLoading: false});
               return false;
             }
-            // 401 — fall through to refresh path below.
+            // 401/403/400 — fall through to refresh path below.
           }
 
           // P0-SESSION-FIX v2: refresh path (used when access_token has expired).

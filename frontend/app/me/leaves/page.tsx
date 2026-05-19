@@ -130,18 +130,6 @@ export default function MyLeavesPage() {
   const isLoading = !leaveRequestsData && !isLeaveRequestsError;
 
   useEffect(() => {
-    // Wait for auth store to hydrate before checking authentication
-    if (!hasHydrated) return;
-
-    if (!isAuthenticated) {
-      router.push('/auth/login');
-    } else if (user && !user.employeeId) {
-      // User is authenticated but doesn't have an employee record
-      setError('No employee profile found for your account. Please contact your administrator.');
-    }
-  }, [hasHydrated, isAuthenticated, user, router]);
-
-  useEffect(() => {
     document.title = 'My Leaves | NU-AURA';
   }, []);
 

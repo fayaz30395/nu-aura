@@ -68,14 +68,12 @@ public class PermissionAspect {
         String[] allOfPermissions = requiresPermission.allOf();
         boolean revalidate = requiresPermission.revalidate();
 
-        // Admin bypass: skip all permission evaluation for TENANT_ADMIN and SUPER_ADMIN users.
-        // SecurityContext.isTenantAdmin() returns true for both TENANT_ADMIN and SUPER_ADMIN
-        // roles, matching the frontend usePermissions.ts behavior that treats both as full admin.
+        // SuperAdmin bypass: skip permission evaluation only for the platform break-glass role.
         //
         // SEC-FIX (F7): Emit an audit-level log line on every bypass so privileged access can be
         // reconstructed from logs. Logged at INFO so it lands in production aggregators by default.
-        if (SecurityContext.isTenantAdmin()) {
-            log.info("AUDIT: TENANT_ADMIN bypass — user={} tenant={} method={} anyOf={} allOf={}",
+        if (SecurityContext.isSuperAdmin()) {
+            log.info("AUDIT: SUPER_ADMIN bypass — user={} tenant={} method={} anyOf={} allOf={}",
                     SecurityContext.getCurrentUserId(),
                     SecurityContext.getCurrentTenantId(),
                     method.getName(),

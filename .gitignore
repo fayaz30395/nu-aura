@@ -95,6 +95,10 @@ deployment/kubernetes/secrets.yaml
 
 # Ruflo / claude-flow runtime
 .claude-flow/
+.swarm/
+ruvector.db
+agentdb.rvf
+agentdb.rvf.lock
 .claude/agents/
 .claude/commands/
 .claude/helpers/

@@ -363,7 +363,7 @@ export default function OffboardingPage() {
               Manage employee offboarding and exit processes
             </p>
           </div>
-          <PermissionGate permission={Permissions.EXIT_INITIATE}>
+          <PermissionGate anyOf={[Permissions.EXIT_INITIATE, Permissions.EXIT_MANAGE]}>
             <Button onClick={handleOpenAddModal}>
               <Plus className="h-4 w-4 mr-2"/>
               Initiate Exit
@@ -531,7 +531,18 @@ export default function OffboardingPage() {
                   </thead>
                   <tbody>
                   {filteredProcesses.map((process: ExitProcess) => (
-                    <tr key={process.id}>
+                    <tr
+                      key={process.id}
+                      tabIndex={0}
+                      className="cursor-pointer hover:bg-[var(--bg-secondary)]/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-inset"
+                      onClick={() => handleViewDetails(process)}
+                      onKeyDown={(event) => {
+                        if (event.key === 'Enter' || event.key === ' ') {
+                          event.preventDefault();
+                          handleViewDetails(process);
+                        }
+                      }}
+                    >
                       <td className="px-4 py-4 whitespace-nowrap">
                         <div className="flex items-center gap-4">
                           <div className="rounded-full bg-[var(--bg-secondary)] p-2">
@@ -575,7 +586,7 @@ export default function OffboardingPage() {
                         )}
                       </td>
                       <td className="px-4 py-4 whitespace-nowrap text-right">
-                        <div className="relative group inline-block">
+                        <div className="relative group inline-block" onClick={(event) => event.stopPropagation()}>
                           <button aria-label="Open exit process menu"
                                   className="p-1 rounded hover:bg-[var(--bg-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                             <MoreVertical className="h-4 w-4 text-[var(--text-muted)]"/>
@@ -622,7 +633,7 @@ export default function OffboardingPage() {
                               </PermissionGate>
                             )}
                             {process.status === ExitStatus.CLEARANCE_PENDING && (
-                              <PermissionGate permission={Permissions.EXIT_APPROVE} fallback={<div/>}>
+                              <PermissionGate permission={Permissions.EXIT_MANAGE} fallback={<div/>}>
                                 <button
                                   onClick={() => handleStatusChange(process, ExitStatus.COMPLETED)}
                                   className="w-full px-4 py-2 text-left text-sm text-success-600 hover:bg-success-50 flex items-center gap-2"
@@ -665,10 +676,12 @@ export default function OffboardingPage() {
                     : 'No employees are currently in the offboarding process.'}
                 </p>
                 {!searchQuery && !statusFilter && !typeFilter && (
-                  <Button onClick={handleOpenAddModal}>
-                    <Plus className="h-4 w-4 mr-2"/>
-                    Initiate Exit
-                  </Button>
+                  <PermissionGate anyOf={[Permissions.EXIT_INITIATE, Permissions.EXIT_MANAGE]}>
+                    <Button onClick={handleOpenAddModal}>
+                      <Plus className="h-4 w-4 mr-2"/>
+                      Initiate Exit
+                    </Button>
+                  </PermissionGate>
                 )}
               </CardContent>
             </Card>
@@ -838,18 +851,20 @@ export default function OffboardingPage() {
               <Button variant="outline" type="button" onClick={() => setShowAddModal(false)}>
                 Cancel
               </Button>
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin"/>
-                    Saving...
-                  </>
-                ) : isEditing ? (
-                  'Update'
-                ) : (
-                  'Initiate Exit'
-                )}
-              </Button>
+              <PermissionGate anyOf={isEditing ? [Permissions.EXIT_MANAGE] : [Permissions.EXIT_INITIATE, Permissions.EXIT_MANAGE]}>
+                <Button type="submit" disabled={isSubmitting}>
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin"/>
+                      Saving...
+                    </>
+                  ) : isEditing ? (
+                    'Update'
+                  ) : (
+                    'Initiate Exit'
+                  )}
+                </Button>
+              </PermissionGate>
             </ModalFooter>
           </form>
         </Modal>
@@ -981,13 +996,15 @@ export default function OffboardingPage() {
             <Button variant="outline" onClick={() => setShowDetailModal(false)}>
               Close
             </Button>
-            <Button onClick={() => {
-              setShowDetailModal(false);
-              if (selectedProcess) handleOpenEditModal(selectedProcess);
-            }}>
-              <Edit className="h-4 w-4 mr-2"/>
-              Edit
-            </Button>
+            <PermissionGate permission={Permissions.EXIT_MANAGE}>
+              <Button onClick={() => {
+                setShowDetailModal(false);
+                if (selectedProcess) handleOpenEditModal(selectedProcess);
+              }}>
+                <Edit className="h-4 w-4 mr-2"/>
+                Edit
+              </Button>
+            </PermissionGate>
           </ModalFooter>
         </Modal>
 
@@ -1008,19 +1025,21 @@ export default function OffboardingPage() {
             <Button variant="outline" onClick={() => setShowDeleteModal(false)}>
               Cancel
             </Button>
-            <Button variant="danger" onClick={handleDelete} disabled={deleteMutation.isPending}>
-              {deleteMutation.isPending ? (
-                <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin"/>
-                  Deleting...
-                </>
-              ) : (
-                <>
-                  <Trash2 className="h-4 w-4 mr-2"/>
-                  Delete
-                </>
-              )}
-            </Button>
+            <PermissionGate permission={Permissions.EXIT_MANAGE}>
+              <Button variant="danger" onClick={handleDelete} disabled={deleteMutation.isPending}>
+                {deleteMutation.isPending ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin"/>
+                    Deleting...
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="h-4 w-4 mr-2"/>
+                    Delete
+                  </>
+                )}
+              </Button>
+            </PermissionGate>
           </ModalFooter>
         </Modal>
       </div>

@@ -1,6 +1,8 @@
 package com.nulogic.infrastructure.project.repository;
 
 import com.nulogic.domain.project.TimeEntry;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -21,7 +23,14 @@ public interface ProjectTimeEntryRepository extends JpaRepository<TimeEntry, UUI
 
     List<TimeEntry> findByTenantIdAndEmployeeId(UUID tenantId, UUID employeeId);
 
+    Page<TimeEntry> findByTenantIdAndEmployeeId(UUID tenantId, UUID employeeId, Pageable pageable);
+
     List<TimeEntry> findByTenantIdAndStatus(UUID tenantId, TimeEntry.TimeEntryStatus status);
+
+    List<TimeEntry> findByTenantIdAndEmployeeIdAndStatus(
+            UUID tenantId, UUID employeeId, TimeEntry.TimeEntryStatus status);
+
+    List<TimeEntry> findByTenantIdAndProjectIdAndEmployeeId(UUID tenantId, UUID projectId, UUID employeeId);
 
     List<TimeEntry> findByTenantIdAndEmployeeIdAndWorkDateBetween(
             UUID tenantId, UUID employeeId, LocalDate startDate, LocalDate endDate);

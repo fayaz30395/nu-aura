@@ -311,22 +311,24 @@ export default function FnFManagementPage() {
                               </ActionIcon>
                             </Tooltip>
                             {canApprove && (
-                              <Tooltip label="Approve Settlement">
-                                <ActionIcon
-                                  variant="subtle"
-                                  color="green"
-                                  size="sm"
-                                  aria-label="Approve F&F settlement"
-                                  className="cursor-pointer"
-                                  loading={
-                                    approveMutation.isPending &&
-                                    approveMutation.variables === row.exitProcessId
-                                  }
-                                  onClick={() => handleApprove(row.exitProcessId, row.employeeName)}
-                                >
-                                  <IconCheck size={16}/>
-                                </ActionIcon>
-                              </Tooltip>
+                              <PermissionGate permission={Permissions.EXIT_MANAGE}>
+                                <Tooltip label="Approve Settlement">
+                                  <ActionIcon
+                                    variant="subtle"
+                                    color="green"
+                                    size="sm"
+                                    aria-label="Approve F&F settlement"
+                                    className="cursor-pointer"
+                                    loading={
+                                      approveMutation.isPending &&
+                                      approveMutation.variables === row.exitProcessId
+                                    }
+                                    onClick={() => handleApprove(row.exitProcessId, row.employeeName)}
+                                  >
+                                    <IconCheck size={16}/>
+                                  </ActionIcon>
+                                </Tooltip>
+                              </PermissionGate>
                             )}
                           </Group>
                         </Table.Td>

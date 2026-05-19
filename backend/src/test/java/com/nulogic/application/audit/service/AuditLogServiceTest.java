@@ -2,7 +2,6 @@ package com.nulogic.application.audit.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nulogic.api.audit.dto.AuditLogResponse;
-import com.nulogic.common.exception.BusinessException;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.domain.audit.AuditLog;
@@ -12,6 +11,7 @@ import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -29,7 +29,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -118,12 +117,16 @@ class AuditLogServiceTest {
                     });
 
             // Act
-            AuditLog result = auditLogService.logAction(
+            auditLogService.logAction(
                     "EMPLOYEE", entityId, AuditAction.UPDATE, oldValue, newValue, description
             );
 
             // Assert
-            assertThat(result)
+            ArgumentCaptor<AuditLog> auditCaptor = ArgumentCaptor.forClass(AuditLog.class);
+            verify(auditLogRepository, times(1)).save(auditCaptor.capture());
+            AuditLog savedLog = auditCaptor.getValue();
+
+            assertThat(savedLog)
                     .isNotNull()
                     .extracting(
                             AuditLog::getEntityType,
@@ -134,8 +137,7 @@ class AuditLogServiceTest {
                     )
                     .containsExactly("EMPLOYEE", entityId, AuditAction.UPDATE, userId, description);
 
-            assertThat(result.getTenantId()).isEqualTo(tenantId);
-            verify(auditLogRepository, times(1)).save(any(AuditLog.class));
+            assertThat(savedLog.getTenantId()).isEqualTo(tenantId);
         }
 
         @Test
@@ -150,10 +152,13 @@ class AuditLogServiceTest {
                     });
 
             // Act
-            AuditLog result = auditLogService.logAction("EMPLOYEE", entityId, AuditAction.DELETE);
+            auditLogService.logAction("EMPLOYEE", entityId, AuditAction.DELETE);
 
             // Assert
-            assertThat(result)
+            ArgumentCaptor<AuditLog> auditCaptor = ArgumentCaptor.forClass(AuditLog.class);
+            verify(auditLogRepository, times(1)).save(auditCaptor.capture());
+
+            assertThat(auditCaptor.getValue())
                     .isNotNull()
                     .extracting(
                             AuditLog::getOldValue,
@@ -161,8 +166,6 @@ class AuditLogServiceTest {
                             AuditLog::getChanges
                     )
                     .containsExactly(null, null, null);
-
-            verify(auditLogRepository, times(1)).save(any(AuditLog.class));
         }
 
         @Test
@@ -175,13 +178,12 @@ class AuditLogServiceTest {
                     .thenThrow(new com.fasterxml.jackson.core.JsonProcessingException("Serialization error") {
                     });
 
-            // Act & Assert
-            assertThatThrownBy(() -> auditLogService.logAction(
+            // Act
+            auditLogService.logAction(
                     "EMPLOYEE", entityId, AuditAction.UPDATE, oldValue, null, null
-            ))
-                    .isInstanceOf(BusinessException.class)
-                    .hasMessageContaining("Failed to create audit log");
+            );
 
+            // Assert
             verify(auditLogRepository, never()).save(any());
         }
 
@@ -201,13 +203,14 @@ class AuditLogServiceTest {
             String longUserAgent = "A".repeat(600);
 
             // Act
-            AuditLog result = auditLogService.logAction(
+            auditLogService.logAction(
                     "EMPLOYEE", entityId, AuditAction.CREATE, null, null, null
             );
 
             // Assert
-            assertThat(result).isNotNull();
-            verify(auditLogRepository, times(1)).save(any(AuditLog.class));
+            ArgumentCaptor<AuditLog> auditCaptor = ArgumentCaptor.forClass(AuditLog.class);
+            verify(auditLogRepository, times(1)).save(auditCaptor.capture());
+            assertThat(auditCaptor.getValue()).isNotNull();
         }
 
         @Test
@@ -222,12 +225,15 @@ class AuditLogServiceTest {
                     });
 
             // Act
-            AuditLog result = auditLogService.logSecurityEvent(
+            auditLogService.logSecurityEvent(
                     AuditAction.LOGIN, userId, "User logged in"
             );
 
             // Assert
-            assertThat(result)
+            ArgumentCaptor<AuditLog> auditCaptor = ArgumentCaptor.forClass(AuditLog.class);
+            verify(auditLogRepository, times(1)).save(auditCaptor.capture());
+
+            assertThat(auditCaptor.getValue())
                     .isNotNull()
                     .extracting(
                             AuditLog::getEntityType,
@@ -235,8 +241,6 @@ class AuditLogServiceTest {
                             AuditLog::getAction
                     )
                     .containsExactly("USER", userId, AuditAction.LOGIN);
-
-            verify(auditLogRepository, times(1)).save(any(AuditLog.class));
         }
     }
 

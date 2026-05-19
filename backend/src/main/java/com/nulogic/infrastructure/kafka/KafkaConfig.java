@@ -354,6 +354,9 @@ public class KafkaConfig {
         factory.setConcurrency(1); // Payroll runs must be serialized per partition
         factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL);
 
+        // T1-02: auto-establish TenantContext from event payload before each record.
+        factory.setRecordInterceptor(new TenantContextRecordInterceptor<>());
+
         ExponentialBackOff backOff = new ExponentialBackOff();
         backOff.setInitialInterval(1000L);
         backOff.setMultiplier(5.0);
@@ -481,6 +484,9 @@ public class KafkaConfig {
         factory.setConsumerFactory(consumerFactory);
         factory.setConcurrency(3);
         factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL);
+
+        // T1-02: auto-establish TenantContext from event payload before each record.
+        factory.setRecordInterceptor(new TenantContextRecordInterceptor<>());
 
         // Retry with exponential backoff: 1s, 5s, 30s (3 attempts before DLT)
         ExponentialBackOff backOff = new ExponentialBackOff();

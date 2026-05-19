@@ -5,10 +5,13 @@ import com.nulogic.application.notification.service.EmailService;
 import com.nulogic.application.notification.service.NotificationService;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.domain.integration.IntegrationEvent;
+import com.nulogic.domain.notification.EmailNotification;
 import com.nulogic.domain.notification.Notification;
+import com.nulogic.domain.user.User;
 import com.nulogic.infrastructure.kafka.IdempotencyService;
 import com.nulogic.infrastructure.kafka.KafkaTopics;
 import com.nulogic.infrastructure.kafka.events.NotificationEvent;
+import com.nulogic.infrastructure.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -43,6 +46,7 @@ public class NotificationEventConsumer {
     private final EmailService emailService;
     private final NotificationService notificationService;
     private final IntegrationEventRouter integrationEventRouter;
+    private final UserRepository userRepository;
 
     /**
      * Handle notification events.
@@ -110,28 +114,34 @@ public class NotificationEventConsumer {
         try {
             log.debug("Sending email to {}: subject={}", event.getRecipientId(), subject);
 
-            // recipientId is a UUID; resolve to email string for the email service
-            String recipientIdStr = event.getRecipientId() != null ? event.getRecipientId().toString() : "";
-
-            if (templateName != null && !templateName.isEmpty()) {
-                // Send email with template data via EmailService
-                @SuppressWarnings("unchecked")
-                Map<String, String> stringVars = (Map<String, String>) (Map<?, ?>) templateData;
-                emailService.sendEmail(recipientIdStr, recipientIdStr, null, stringVars);
-                log.info("Email notification sent using template: {}", templateName);
-            } else {
-                // Send plain text email via EmailService
-                Map<String, String> vars = Map.of();
-                emailService.sendEmail(recipientIdStr, recipientIdStr, null, vars);
-                log.info("Email notification sent with plain text");
+            EmailRecipient recipient = resolveEmailRecipient(event.getRecipientId(), event.getTenantId());
+            Map<String, String> variables = toStringVariables(templateData);
+            if (subject != null && !subject.isBlank()) {
+                variables.putIfAbsent("title", subject);
             }
+            if (event.getBody() != null && !event.getBody().isBlank()) {
+                variables.putIfAbsent("message", event.getBody());
+            }
+            variables.putIfAbsent("employeeName", recipient.name());
+
+            EmailService.EmailSendResult result = emailService.sendEmail(
+                    recipient.email(),
+                    recipient.name(),
+                    EmailNotification.EmailType.ANNOUNCEMENT,
+                    variables
+            );
+            if (!result.success()) {
+                throw new IllegalStateException(result.errorMessage());
+            }
+            log.info("Email notification sent to {} using template: {}", recipient.email(), templateName);
 
             // Route to integration connectors
             try {
                 Map<String, Object> integrationMetadata = new HashMap<>();
                 integrationMetadata.put("templateName", templateName);
                 integrationMetadata.put("subject", subject);
-                integrationMetadata.put("recipientId", recipientIdStr);
+                integrationMetadata.put("recipientId", event.getRecipientId() != null ? event.getRecipientId().toString() : "");
+                integrationMetadata.put("recipientEmail", recipient.email());
                 if (templateData != null) {
                     integrationMetadata.putAll(templateData);
                 }
@@ -154,6 +164,40 @@ public class NotificationEventConsumer {
             log.error("Failed to send email to {}: {}", event.getRecipientId(), e.getMessage(), e);
             throw new RuntimeException("Email send failed", e);
         }
+    }
+
+    private EmailRecipient resolveEmailRecipient(UUID recipientUserId, UUID tenantId) {
+        if (recipientUserId == null) {
+            throw new IllegalArgumentException("Email notification recipientId is required");
+        }
+
+        User user = (tenantId != null
+                ? userRepository.findByIdAndTenantId(recipientUserId, tenantId)
+                : userRepository.findById(recipientUserId))
+                .orElseThrow(() -> new IllegalArgumentException("Email notification recipient user not found: " + recipientUserId));
+
+        if (user.getEmail() == null || user.getEmail().isBlank()) {
+            throw new IllegalArgumentException("Email notification recipient has no email: " + recipientUserId);
+        }
+
+        return new EmailRecipient(user.getEmail(), user.getFullName());
+    }
+
+    private Map<String, String> toStringVariables(Map<String, Object> templateData) {
+        Map<String, String> variables = new HashMap<>();
+        if (templateData == null) {
+            return variables;
+        }
+
+        templateData.forEach((key, value) -> {
+            if (key != null && value != null) {
+                variables.put(key, String.valueOf(value));
+            }
+        });
+        return variables;
+    }
+
+    private record EmailRecipient(String email, String name) {
     }
 
     /**

@@ -11,6 +11,162 @@ import {allDemoUsers, DEMO_PASSWORD, DemoUser, demoUsers} from './testData';
  */
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080/api/v1';
+const AUTH_MODE = process.env.E2E_AUTH_MODE ?? 'api';
+const API_LOGIN_TIMEOUT_MS = Number(process.env.E2E_API_LOGIN_TIMEOUT_MS ?? 60000);
+const API_LOGIN_ATTEMPTS = Number(process.env.E2E_API_LOGIN_ATTEMPTS ?? 3);
+
+interface ApiLoginResponse {
+  userId: string;
+  employeeId?: string;
+  tenantId: string;
+  email: string;
+  fullName: string;
+  profilePictureUrl?: string;
+  roles: string[];
+  permissions?: string[];
+}
+
+const NULOGIC_TENANT_ID = '660e8400-e29b-41d4-a716-446655440001';
+
+const ROLE_PERMISSIONS: Record<DemoUser['role'], string[]> = {
+  SUPER_ADMIN: [],
+  HR_MANAGER: [
+    'DASHBOARD:VIEW',
+    'EMPLOYEE:READ',
+    'EMPLOYEE:VIEW_ALL',
+    'LEAVE:VIEW_ALL',
+    'LEAVE:MANAGE',
+    'ATTENDANCE:VIEW_ALL',
+    'ATTENDANCE:MANAGE',
+    'WORKFLOW:VIEW',
+    'NOTIFICATION:VIEW',
+    'DOCUMENT:VIEW',
+    'REPORT:VIEW',
+  ],
+  MANAGER: [
+    'DASHBOARD:VIEW',
+    'DASHBOARD:MANAGER',
+    'EMPLOYEE:VIEW_TEAM',
+    'LEAVE:VIEW_TEAM',
+    'LEAVE:APPROVE',
+    'ATTENDANCE:VIEW_TEAM',
+    'WORKFLOW:VIEW',
+    'NOTIFICATION:VIEW',
+  ],
+  TEAM_LEAD: [
+    'DASHBOARD:VIEW',
+    'DASHBOARD:MANAGER',
+    'EMPLOYEE:VIEW_TEAM',
+    'LEAVE:VIEW_TEAM',
+    'ATTENDANCE:VIEW_TEAM',
+    'NOTIFICATION:VIEW',
+  ],
+  RECRUITMENT_ADMIN: [
+    'DASHBOARD:VIEW',
+    'RECRUITMENT:VIEW',
+    'RECRUITMENT:MANAGE',
+    'CANDIDATE:VIEW',
+    'CANDIDATE:EVALUATE',
+    'WORKFLOW:VIEW',
+    'NOTIFICATION:VIEW',
+  ],
+  EMPLOYEE: [
+    'DASHBOARD:VIEW',
+    'DASHBOARD:EMPLOYEE',
+    'EMPLOYEE:VIEW_SELF',
+    'LEAVE:VIEW_SELF',
+    'LEAVE:REQUEST',
+    'ATTENDANCE:VIEW_SELF',
+    'PAYROLL:VIEW_SELF',
+    'DOCUMENT:VIEW',
+    'NOTIFICATION:VIEW',
+  ],
+};
+
+function base64UrlEncode(value: string): string {
+  return Buffer.from(value)
+    .toString('base64')
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/g, '');
+}
+
+function createUnsignedJwt(user: DemoUser): string {
+  const nowSeconds = Math.floor(Date.now() / 1000);
+  const header = base64UrlEncode(JSON.stringify({alg: 'none', typ: 'JWT'}));
+  const payload = base64UrlEncode(JSON.stringify({
+    sub: user.email,
+    email: user.email,
+    role: user.role,
+    roles: [user.role],
+    tenantId: NULOGIC_TENANT_ID,
+    exp: nowSeconds + 60 * 60,
+    iat: nowSeconds,
+  }));
+  return `${header}.${payload}.e2e`;
+}
+
+function buildFallbackAuth(user: DemoUser): ApiLoginResponse {
+  const slug = user.email.replace(/[^a-z0-9]/gi, '-').toLowerCase();
+  return {
+    userId: `e2e-user-${slug}`,
+    employeeId: `e2e-employee-${slug}`,
+    tenantId: NULOGIC_TENANT_ID,
+    email: user.email,
+    fullName: user.name,
+    roles: [user.role],
+    permissions: ROLE_PERMISSIONS[user.role],
+  };
+}
+
+function buildStoredUser(auth: ApiLoginResponse) {
+  const permissions = auth.permissions ?? [];
+  return {
+    id: auth.userId,
+    employeeId: auth.employeeId,
+    tenantId: auth.tenantId,
+    email: auth.email,
+    firstName: auth.fullName.split(' ')[0] || '',
+    lastName: auth.fullName.split(' ').slice(1).join(' ') || '',
+    fullName: auth.fullName,
+    status: 'ACTIVE',
+    roles: auth.roles.filter(Boolean).map((roleCode) => ({
+      id: roleCode,
+      code: roleCode,
+      name: roleCode.replace(/_/g, ' '),
+      permissions: permissions.filter(Boolean).map((permCode) => ({
+        id: permCode,
+        code: permCode,
+        name: permCode,
+        resource: permCode.split(':')[0] || '',
+        action: permCode.split(':')[1] || '',
+      })),
+    })),
+    profilePictureUrl: auth.profilePictureUrl,
+  };
+}
+
+async function gotoWithRetry(page: Page, path: string): Promise<void> {
+  let lastError: unknown;
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      await page.goto(path, {waitUntil: 'domcontentloaded', timeout: 90000});
+      await page.waitForLoadState('domcontentloaded');
+      return;
+    } catch (error) {
+      lastError = error;
+      const message = error instanceof Error ? error.message : '';
+      const retryable = message.includes('net::ERR_ABORTED')
+        || message.includes('net::ERR_CONNECTION_REFUSED')
+        || message.includes('net::ERR_EMPTY_RESPONSE')
+        || message.includes('net::ERR_NETWORK_IO_SUSPENDED')
+        || message.includes('Timeout');
+      if (!retryable || attempt === 3) break;
+      await page.waitForTimeout(1000 * attempt);
+    }
+  }
+  throw lastError;
+}
 
 /**
  * Authenticate via the backend API and inject auth state into the browser.
@@ -22,37 +178,111 @@ const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080/api/v
 export async function loginAs(page: Page, email: string): Promise<void> {
   const user = allDemoUsers.find((u) => u.email === email);
   const password = user?.password ?? DEMO_PASSWORD;
+  if (!user) {
+    throw new Error(`loginAs: unknown demo user ${email}`);
+  }
 
-  // Call the backend login API directly with a small retry loop.
-  // 45s per-call timeout — under concurrent worker load the backend may
-  // take >15s (default). HTTP 409 CONCURRENT_MODIFICATION on the user's
-  // `lastLoginAt` write is a known optimistic-lock race when the same
-  // demo account is hammered by multiple workers — retry transparently.
+  await page.context().clearCookies();
+  await gotoWithRetry(page, '/auth/login');
+  await page.evaluate(() => {
+    sessionStorage.clear();
+    localStorage.removeItem('tenantId');
+    localStorage.removeItem('loginAttempts');
+    localStorage.removeItem('lockoutUntil');
+  });
+
+  // Call the backend login API directly with a small retry loop. Keep the
+  // probe short: UI/RBAC tests can still run with local auth-state fallback
+  // when the dev backend is pointed at a slow/unavailable cloud database.
   let response;
   let lastBody = '';
-  for (let attempt = 1; attempt <= 4; attempt++) {
-    response = await page.request.post(`${API_BASE}/auth/login`, {
-      data: {email, password},
-      failOnStatusCode: false,
-      timeout: 45000,
-    });
-    if (response.ok()) break;
-    lastBody = await response.text().catch(() => 'unknown error');
+  for (let attempt = 1; AUTH_MODE !== 'local' && attempt <= API_LOGIN_ATTEMPTS; attempt++) {
+    try {
+      response = await page.request.post(`${API_BASE}/auth/login`, {
+        data: {email, password},
+        failOnStatusCode: false,
+        timeout: API_LOGIN_TIMEOUT_MS,
+      });
+    } catch (error) {
+      lastBody = error instanceof Error ? error.message : 'unknown error';
+    }
+    if (response?.ok()) break;
+    if (response) {
+      lastBody = await response.text().catch(() => 'unknown error');
+    }
     // Retry on optimistic-lock conflict or transient 5xx.
-    if (response.status() !== 409 && response.status() < 500) break;
-    // Linear backoff: 500ms, 1.5s, 3.5s
-    await page.waitForTimeout(500 * attempt * attempt);
+    if (response && response.status() !== 409 && response.status() < 500) break;
+    await page.waitForTimeout(1000 * attempt);
   }
 
-  if (!response || !response.ok()) {
-    throw new Error(`loginAs(${email}) failed: HTTP ${response?.status()} — ${lastBody}`);
+  if (AUTH_MODE !== 'local' && response && !response.ok() && response.status() < 500) {
+    throw new Error(`loginAs(${email}) failed: HTTP ${response.status()} — ${lastBody}`);
   }
+
+  if (AUTH_MODE !== 'local' && !response?.ok()) {
+    throw new Error(`loginAs(${email}) failed: API login did not complete after ${API_LOGIN_ATTEMPTS} attempts — ${lastBody}`);
+  }
+
+  const auth = response?.ok()
+    ? await response.json() as ApiLoginResponse
+    : buildFallbackAuth(user);
+
+  if (!response?.ok()) {
+    if (AUTH_MODE !== 'local') {
+      console.warn(`loginAs(${email}) API login failed; using local E2E auth state fallback. HTTP ${response?.status()} — ${lastBody}`);
+    }
+    const appUrl = new URL(page.url());
+    await page.context().addCookies([
+      {
+        name: 'access_token',
+        value: createUnsignedJwt(user),
+        domain: appUrl.hostname,
+        path: '/',
+        httpOnly: true,
+        secure: appUrl.protocol === 'https:',
+        sameSite: 'Lax',
+        expires: Math.floor(Date.now() / 1000) + 60 * 60,
+      },
+      {
+        name: 'refresh_token',
+        value: `e2e-refresh-${Date.now()}`,
+        domain: appUrl.hostname,
+        path: '/',
+        httpOnly: true,
+        secure: appUrl.protocol === 'https:',
+        sameSite: 'Lax',
+        expires: Math.floor(Date.now() / 1000) + 60 * 60,
+      },
+    ]);
+  }
+
+  const storedUser = buildStoredUser(auth);
 
   // The backend sets httpOnly cookies via Set-Cookie headers.
   // Playwright's page.request automatically handles those.
+  // API login bypasses the browser-side Zustand login action, so seed the same
+  // non-sensitive frontend auth state that UI login writes. Without this,
+  // pages can briefly render as "User / Employee" until cookie restore finishes.
+  await page.evaluate(({tenantId, user}) => {
+    localStorage.setItem('tenantId', tenantId);
+    sessionStorage.setItem('nu-aura-user', JSON.stringify(user));
+    sessionStorage.setItem('auth-storage', JSON.stringify({
+      state: {
+        isAuthenticated: true,
+        user,
+      },
+      version: 0,
+    }));
+  }, {tenantId: auth.tenantId, user: storedUser});
+
   // Navigate to dashboard to initialize the frontend Zustand store.
-  await page.goto('/me/dashboard');
+  await gotoWithRetry(page, '/me/dashboard');
   await waitForDashboard(page);
+  await page.waitForFunction(
+    (fullName) => document.body.innerText.includes(fullName),
+    storedUser.fullName,
+    {timeout: 15000}
+  );
 }
 
 /**
@@ -88,7 +318,10 @@ export async function loginViaUI(page: Page, email: string): Promise<void> {
   await demoButton.click();
 
   // Wait for redirect to dashboard
-  await page.waitForURL('**/dashboard', {timeout: 45000});
+  await page.waitForURL(
+    (url) => url.pathname === '/dashboard' || url.pathname === '/me/dashboard',
+    {timeout: 90000}
+  );
   await page.waitForLoadState('domcontentloaded');
 }
 
@@ -101,7 +334,10 @@ export async function loginViaUI(page: Page, email: string): Promise<void> {
 export async function waitForDashboard(page: Page, timeout = 30000): Promise<void> {
   // Wait for URL to settle on a dashboard path
   try {
-    await page.waitForURL('**/dashboard', {timeout});
+    await page.waitForURL(
+      (url) => url.pathname === '/dashboard' || url.pathname === '/me/dashboard',
+      {timeout}
+    );
   } catch {
     const currentUrl = page.url();
     // If redirected to login, auth failed
@@ -214,8 +450,7 @@ export function getDemoUser(email: string): DemoUser | undefined {
  * @param path - Relative path (e.g., '/leave', '/me/dashboard')
  */
 export async function navigateTo(page: Page, path: string): Promise<void> {
-  await page.goto(path);
-  await page.waitForLoadState('domcontentloaded');
+  await gotoWithRetry(page, path);
 }
 
 /**

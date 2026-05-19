@@ -43,6 +43,15 @@ log()  { echo "[$(date +%H:%M:%S)] $*"; }
 ok()   { echo "${GRN}✓${RST} $*"; }
 warn() { echo "${YEL}!${RST} $*"; }
 fail() { echo "${RED}✗${RST} $*"; }
+run_with_timeout() {
+    local seconds="$1"
+    shift
+    if command -v timeout >/dev/null 2>&1; then
+        timeout "$seconds" "$@"
+    else
+        "$@"
+    fi
+}
 
 DRIFT=0
 
@@ -90,7 +99,7 @@ elif command -v npx >/dev/null 2>&1 && [ -d "$PATTERNS_SRC" ]; then
     for pf in "$PATTERNS_SRC"/*.md; do
         name="$(basename "$pf" .md)"
         [ "$name" = "README" ] && continue
-        if timeout 10 npx --no-install @claude-flow/cli memory store \
+        if run_with_timeout 10 npx ruflo@latest memory store \
                 --namespace patterns \
                 --key "$name" \
                 --value "$(cat "$pf")" >/dev/null 2>&1; then
@@ -104,21 +113,21 @@ elif command -v npx >/dev/null 2>&1 && [ -d "$PATTERNS_SRC" ]; then
         ok "AgentDB seeded: $SEEDED pattern(s)"
     fi
     if [ "$SKIPPED" -gt 0 ]; then
-        warn "AgentDB seeding skipped $SKIPPED pattern(s) — claude-flow daemon not running?"
-        echo "${DIM}     start with: npx @claude-flow/cli@latest daemon start${RST}"
+        warn "AgentDB seeding skipped $SKIPPED pattern(s) — Ruflo daemon not running?"
+        echo "${DIM}     start with: npx ruflo@latest daemon start${RST}"
     fi
 else
     warn "npx unavailable — skipping AgentDB seed. Install Node + run again."
 fi
 
 # ─── Step 3: Verify daemon ───────────────────────────────────────────────────
-log "Checking claude-flow daemon"
+log "Checking Ruflo daemon"
 if command -v npx >/dev/null 2>&1; then
-    if timeout 5 npx --no-install @claude-flow/cli swarm status >/dev/null 2>&1; then
+    if run_with_timeout 5 npx ruflo@latest swarm status >/dev/null 2>&1; then
         ok "swarm responsive"
     else
-        warn "swarm not responsive (or claude-flow not installed)"
-        echo "${DIM}     start with: npx @claude-flow/cli@latest daemon start${RST}"
+        warn "swarm not responsive"
+        echo "${DIM}     start with: npx ruflo@latest daemon start${RST}"
     fi
 fi
 
@@ -137,6 +146,6 @@ else
     echo
     echo "Next:"
     echo "  - Verify status bar: ADR count should now be 12, DDD domains 5/5"
-    echo "  - Spawn a feature pipeline (template: .claude-flow/workflows/feature-pipeline.yaml)"
+    echo "  - Spawn a feature pipeline: ./scripts/ruflo-pipeline.sh feature \"<task>\""
     echo "  - Or run: ./scripts/security/baseline-scan.sh"
 fi

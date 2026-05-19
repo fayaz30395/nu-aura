@@ -181,6 +181,9 @@ export function useHoliday(id: string, enabled: boolean = true) {
 export function useCheckIn() {
   const queryClient = useQueryClient();
 
+  const resolveAttendanceDate = (data: Pick<CheckInRequest, 'attendanceDate' | 'checkInTime'>) =>
+    data.attendanceDate || data.checkInTime?.split('T')[0] || new Date().toISOString().split('T')[0];
+
   return useMutation({
     mutationFn: (data: CheckInRequest) => attendanceService.checkIn(data),
     onMutate: async (data) => {
@@ -194,6 +197,20 @@ export function useCheckIn() {
       );
 
       return {previousData, today};
+    },
+    onSuccess: (record, variables) => {
+      const today = resolveAttendanceDate(variables);
+      queryClient.setQueryData<AttendanceRecord[]>(
+        attendanceKeys.dateRange(today, today),
+        (existing) => {
+          if (!existing?.length) {
+            return [record];
+          }
+
+          const next = existing.filter((entry) => entry.id !== record.id);
+          return [record, ...next];
+        }
+      );
     },
     onError: (_err, _data, context) => {
       // Rollback on error
@@ -209,7 +226,7 @@ export function useCheckIn() {
       // Do NOT invalidate attendanceKeys.records() (broad) — that would refetch
       // the weekly and monthly queries too, causing the whole page to re-render
       // multiple times as each query resolves sequentially.
-      const today = variables.attendanceDate || new Date().toISOString().split('T')[0];
+      const today = resolveAttendanceDate(variables);
       queryClient.invalidateQueries({queryKey: attendanceKeys.dateRange(today, today)});
       queryClient.invalidateQueries({queryKey: attendanceKeys.timeEntries(today)});
     },
@@ -219,6 +236,9 @@ export function useCheckIn() {
 // Check out with optimistic update
 export function useCheckOut() {
   const queryClient = useQueryClient();
+
+  const resolveAttendanceDate = (data: Pick<CheckOutRequest, 'attendanceDate' | 'checkOutTime'>) =>
+    data.attendanceDate || data.checkOutTime?.split('T')[0] || new Date().toISOString().split('T')[0];
 
   return useMutation({
     mutationFn: (data: CheckOutRequest) => attendanceService.checkOut(data),
@@ -232,6 +252,20 @@ export function useCheckOut() {
 
       return {previousData, today};
     },
+    onSuccess: (record, variables) => {
+      const today = resolveAttendanceDate(variables);
+      queryClient.setQueryData<AttendanceRecord[]>(
+        attendanceKeys.dateRange(today, today),
+        (existing) => {
+          if (!existing?.length) {
+            return [record];
+          }
+
+          const next = existing.filter((entry) => entry.id !== record.id);
+          return [record, ...next];
+        }
+      );
+    },
     onError: (_err, _data, context) => {
       if (context?.previousData && context?.today) {
         queryClient.setQueryData(
@@ -242,7 +276,7 @@ export function useCheckOut() {
     },
     onSettled: (_data, _error, variables) => {
       // Surgical invalidation: only today's record changes on clock-out.
-      const today = variables.attendanceDate || new Date().toISOString().split('T')[0];
+      const today = resolveAttendanceDate(variables);
       queryClient.invalidateQueries({queryKey: attendanceKeys.dateRange(today, today)});
       queryClient.invalidateQueries({queryKey: attendanceKeys.timeEntries(today)});
     },

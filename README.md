@@ -176,6 +176,13 @@ After seed data (V171 migration) is applied, SuperAdmin accounts are available. 
 # Stop everything
 ./scripts/dev/stop-dev.sh
 
+# Check agent orchestration readiness
+./scripts/agents/ready.sh
+
+# Start/check Ruflo, then dry-run a feature swarm kickoff
+./scripts/ruflo-start.sh
+./scripts/ruflo-pipeline.sh feature "Add employee document expiry reminders"
+
 # Run backend tests
 cd backend && ./mvnw test
 

@@ -44,7 +44,6 @@ import {
   calculateHours,
   computeMonthStats,
   computeStreak,
-  computeWeekStats,
   formatDuration,
   formatTime,
   GRACE_PERIOD_MINS,
@@ -89,7 +88,6 @@ export default function AttendancePage() {
   const streak = useMemo(() => computeStreak(monthlyRecords), [monthlyRecords]);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const monthStats = useMemo(() => computeMonthStats(monthlyRecords, now), [monthlyRecords]);
-  const weekStats = useMemo(() => computeWeekStats(weeklyRecords), [weeklyRecords]);
   const weekHours = useMemo(
     () => weeklyRecords.reduce(
       (acc, r) => acc + calculateHours(r.checkInTime ?? undefined, r.checkOutTime ?? undefined),
@@ -139,6 +137,7 @@ export default function AttendancePage() {
       const location = await getLocation();
       await checkInMutation.mutateAsync({
         employeeId: user.employeeId,
+        attendanceDate: todayStr,
         checkInTime: getLocalDateTimeString(),
         source: 'WEB',
         location,
@@ -147,7 +146,7 @@ export default function AttendancePage() {
       const msg = (err as {response?: {data?: {message?: string}}})?.response?.data?.message;
       setError(msg || 'Failed to check in. Please try again.');
     }
-  }, [user?.employeeId, getLocation, checkInMutation]);
+  }, [user?.employeeId, getLocation, checkInMutation, todayStr]);
 
   const performCheckOut = useCallback(async () => {
     try {
@@ -159,6 +158,7 @@ export default function AttendancePage() {
       const location = await getLocation();
       await checkOutMutation.mutateAsync({
         employeeId: user.employeeId,
+        attendanceDate: todayStr,
         checkOutTime: getLocalDateTimeString(),
         source: 'WEB',
         location,
@@ -168,7 +168,7 @@ export default function AttendancePage() {
       const msg = (err as {response?: {data?: {message?: string}}})?.response?.data?.message;
       setError(msg || 'Failed to check out. Please try again.');
     }
-  }, [user?.employeeId, getLocation, checkOutMutation]);
+  }, [user?.employeeId, getLocation, checkOutMutation, todayStr]);
 
   const dataLoading = todayLoading || weeklyLoading;
 

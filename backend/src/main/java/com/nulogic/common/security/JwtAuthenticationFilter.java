@@ -109,10 +109,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     }
                 }
 
-                // SEC: TenantContext is intentionally NOT set here. It is set ONLY after
-                // userDetails loads successfully (below), so a forged token cannot leak
-                // tenant scope into downstream services if validation later fails.
-                // The finally block clears the context regardless.
+                // Permission hydration below needs TenantContext for tenant-scoped role
+                // lookups and cache keys. At this point the JWT signature is valid and
+                // the tenant has been verified ACTIVE, so it is safe to set the request
+                // tenant before loading DB-backed permissions. The finally block clears
+                // it regardless of later auth failures.
+                if (tenantId != null) {
+                    TenantContext.setCurrentTenant(tenantId);
+                }
 
                 // Try to get NU Platform app-aware claims from token
                 String appCode = tokenProvider.getAppCodeFromToken(jwt);

@@ -45,8 +45,18 @@ export const WebSocketProvider = ({children}: { children: React.ReactNode }) => 
   const lastErrorLogTimeRef = useRef<number>(0);
   const MAX_RECONNECTION_ATTEMPTS = 5;
   const ERROR_LOG_THROTTLE_MS = 5000; // Suppress error logs for 5 seconds
+  const isWebSocketEnabled = process.env.NEXT_PUBLIC_ENABLE_WEBSOCKET === 'true';
 
   useEffect(() => {
+    if (!isWebSocketEnabled) {
+      if (stompClientRef.current?.active) {
+        stompClientRef.current.deactivate();
+      }
+      setIsConnected(false);
+      connectionAttemptsRef.current = 0;
+      return;
+    }
+
     // Only connect if authenticated
     if (!isAuthenticated || !user?.employeeId) {
       if (stompClientRef.current?.active) {
@@ -145,7 +155,7 @@ export const WebSocketProvider = ({children}: { children: React.ReactNode }) => 
         client.deactivate();
       }
     };
-  }, [isAuthenticated, user?.employeeId]);
+  }, [isAuthenticated, isWebSocketEnabled, user?.employeeId]);
 
   const handleIncomingMessage = (message: IMessage): Notification | null => {
     try {

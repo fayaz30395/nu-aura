@@ -493,28 +493,30 @@ export default function SeparationDetailPage() {
                           </Table.Td>
                           <Table.Td>
                             {clearance.status === ClearanceStatus.PENDING && (
-                              <Group gap="xs">
-                                <Tooltip label="Approve">
-                                  <ActionIcon
-                                    size="sm"
-                                    color="green"
-                                    variant="light"
-                                    onClick={() => handleClearanceAction(clearance, ClearanceStatus.APPROVED)}
-                                  >
-                                    <IconCheck size={14}/>
-                                  </ActionIcon>
-                                </Tooltip>
-                                <Tooltip label="Reject">
-                                  <ActionIcon
-                                    size="sm"
-                                    color="red"
-                                    variant="light"
-                                    onClick={() => handleClearanceAction(clearance, ClearanceStatus.REJECTED)}
-                                  >
-                                    <IconTrash size={14}/>
-                                  </ActionIcon>
-                                </Tooltip>
-                              </Group>
+                              <PermissionGate permission={Permissions.EXIT_MANAGE}>
+                                <Group gap="xs">
+                                  <Tooltip label="Approve">
+                                    <ActionIcon
+                                      size="sm"
+                                      color="green"
+                                      variant="light"
+                                      onClick={() => handleClearanceAction(clearance, ClearanceStatus.APPROVED)}
+                                    >
+                                      <IconCheck size={14}/>
+                                    </ActionIcon>
+                                  </Tooltip>
+                                  <Tooltip label="Reject">
+                                    <ActionIcon
+                                      size="sm"
+                                      color="red"
+                                      variant="light"
+                                      onClick={() => handleClearanceAction(clearance, ClearanceStatus.REJECTED)}
+                                    >
+                                      <IconTrash size={14}/>
+                                    </ActionIcon>
+                                  </Tooltip>
+                                </Group>
+                              </PermissionGate>
                             )}
                           </Table.Td>
                         </Table.Tr>
@@ -601,13 +603,15 @@ export default function SeparationDetailPage() {
                       >
                         {formatLabel(settlement.status)}
                       </Badge>
-                      <Button
-                        variant="light"
-                        color="sky.7"
-                        onClick={() => router.push(`/offboarding/${exitProcessId}/fnf`)}
-                      >
-                        View Full Details
-                      </Button>
+                      <PermissionGate permission={Permissions.EXIT_MANAGE}>
+                        <Button
+                          variant="light"
+                          color="sky.7"
+                          onClick={() => router.push(`/offboarding/${exitProcessId}/fnf`)}
+                        >
+                          View Full Details
+                        </Button>
+                      </PermissionGate>
                     </Group>
                   </Group>
 
@@ -654,14 +658,16 @@ export default function SeparationDetailPage() {
                 <Alert icon={<IconCurrencyRupee size={16}/>} color="blue" variant="light">
                   <Group justify="space-between" align="center">
                     <Text size="sm">No FnF settlement has been created for this exit process yet.</Text>
-                    <Button
-                      size="xs"
-                      variant="light"
-                      color="sky.7"
-                      onClick={() => router.push(`/offboarding/${exitProcessId}/fnf`)}
-                    >
-                      Create Settlement
-                    </Button>
+                    <PermissionGate permission={Permissions.EXIT_MANAGE}>
+                      <Button
+                        size="xs"
+                        variant="light"
+                        color="sky.7"
+                        onClick={() => router.push(`/offboarding/${exitProcessId}/fnf`)}
+                      >
+                        Create Settlement
+                      </Button>
+                    </PermissionGate>
                   </Group>
                 </Alert>
               )}

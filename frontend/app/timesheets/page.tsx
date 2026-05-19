@@ -387,7 +387,7 @@ export default function TimesheetsPage() {
                   </Button>
                 </div>
               ) : (
-                <PermissionGate permission={Permissions.TIMESHEET_CREATE}>
+                <PermissionGate permission={Permissions.TIMESHEET_SUBMIT}>
                   <Button onClick={() => setShowCreateModal(true)}>
                     <Plus className="h-4 w-4 mr-2"/>
                     Create Timesheet
@@ -517,7 +517,7 @@ export default function TimesheetsPage() {
                 </div>
                 <div className="flex gap-2">
                   {currentWeekTimesheet.status === 'DRAFT' && (
-                    <PermissionGate permission={Permissions.TIMESHEET_CREATE}>
+                    <PermissionGate permission={Permissions.TIMESHEET_SUBMIT}>
                       <Button size="sm" onClick={handleAddEntry}>
                         <Plus className="h-4 w-4 mr-1"/>
                         Add Entry
@@ -575,12 +575,23 @@ export default function TimesheetsPage() {
                 </Card>
               ))
             ) : (
-              <EmptyState
-                icon={<FileSpreadsheet className="h-12 w-12"/>}
-                title="No timesheets for this period"
-                description="Log your hours to start tracking work. Submitted timesheets will appear here for review and approval."
-                action={{label: 'Create timesheet', onClick: () => setShowCreateModal(true)}}
-              />
+              <PermissionGate
+                permission={Permissions.TIMESHEET_SUBMIT}
+                fallback={
+                  <EmptyState
+                    icon={<FileSpreadsheet className="h-12 w-12"/>}
+                    title="No timesheets for this period"
+                    description="Log your hours to start tracking work. Submitted timesheets will appear here for review and approval."
+                  />
+                }
+              >
+                <EmptyState
+                  icon={<FileSpreadsheet className="h-12 w-12"/>}
+                  title="No timesheets for this period"
+                  description="Log your hours to start tracking work. Submitted timesheets will appear here for review and approval."
+                  action={{label: 'Create timesheet', onClick: () => setShowCreateModal(true)}}
+                />
+              </PermissionGate>
             )}
           </div>
         </div>
@@ -659,10 +670,12 @@ export default function TimesheetsPage() {
                   <div className="row-between mb-4">
                     <h3 className="font-medium text-[var(--text-primary)]">Time Entries</h3>
                     {selectedTimesheet.status === 'DRAFT' && (
-                      <Button size="sm" onClick={handleAddEntry}>
-                        <Plus className="h-4 w-4 mr-2"/>
-                        Add Entry
-                      </Button>
+                      <PermissionGate permission={Permissions.TIMESHEET_SUBMIT}>
+                        <Button size="sm" onClick={handleAddEntry}>
+                          <Plus className="h-4 w-4 mr-2"/>
+                          Add Entry
+                        </Button>
+                      </PermissionGate>
                     )}
                   </div>
 

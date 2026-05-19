@@ -400,7 +400,7 @@ function LoginPage() {
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [isDemoLoading, setIsDemoLoading] = useState(false);
   const [isEmailLoading, setIsEmailLoading] = useState(false);
-  const [showEmailForm, setShowEmailForm] = useState(false);
+  const [showEmailForm, setShowEmailForm] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [didFreshLogin, setDidFreshLogin] = useState(false);
@@ -927,12 +927,13 @@ function LoginPage() {
               <div className="mt-4">
                 <button
                   type="button"
-                  onClick={() => setShowEmailForm(!showEmailForm)}
+                  onClick={() => setShowEmailForm(true)}
+                  aria-expanded={showEmailForm}
                   className="w-full row-between px-4 py-2.5 rounded-xl bg-[var(--bg-elevated)] hover:bg-[var(--bg-card-hover)] border border-[var(--border-main)] text-[var(--text-secondary)] text-sm font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
                   <div className="flex items-center gap-2">
                     <Mail className="w-4 h-4"/>
-                    <span>Sign in with Email</span>
+                    <span>Email and password</span>
                   </div>
                   {showEmailForm ? <ChevronUp className="w-4 h-4"/> : <ChevronDown className="w-4 h-4"/>}
                 </button>
@@ -953,6 +954,7 @@ function LoginPage() {
                           id="login-email"
                           {...register('email')}
                           type="email"
+                          required
                           placeholder="Email address"
                           autoComplete="email"
                           aria-label="Email address"
@@ -976,6 +978,7 @@ function LoginPage() {
                           id="login-password"
                           {...register('password')}
                           type={showPassword ? 'text' : 'password'}
+                          required
                           placeholder="Password"
                           autoComplete="current-password"
                           aria-label="Password"
@@ -1036,6 +1039,11 @@ function LoginPage() {
                       )}
                       {isEmailLoading ? 'Signing in…' : 'Sign In'}
                     </button>
+                    {isEmailLoading && (
+                      <p role="status" className="text-xs text-[var(--text-secondary)] text-center">
+                        Checking credentials...
+                      </p>
+                    )}
                   </form>
                 )}
               </div>

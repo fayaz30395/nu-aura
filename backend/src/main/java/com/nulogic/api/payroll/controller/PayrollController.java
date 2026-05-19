@@ -93,7 +93,7 @@ public class PayrollController {
     }
 
     @GetMapping("/runs")
-    @RequiresPermission(Permission.PAYROLL_PROCESS)
+    @RequiresPermission(Permission.PAYROLL_VIEW_ALL)
     public ResponseEntity<Page<PayrollRun>> getAllPayrollRuns(Pageable pageable) {
         Page<PayrollRun> payrollRuns = payrollRunService.getAllPayrollRuns(pageable);
         return ResponseEntity.ok(payrollRuns);
@@ -601,6 +601,14 @@ public class PayrollController {
         // Super admin (includes system admin and SUPER_ADMIN role) bypasses all checks
         if (SecurityContext.isSuperAdmin()) {
             return;
+        }
+
+        if (Permission.PAYROLL_VIEW_SELF.equals(permission)) {
+            if (targetEmployeeId.equals(currentEmployeeId)) {
+                return;
+            }
+            throw new AccessDeniedException(
+                    "You do not have permission to access this employee's payroll records");
         }
 
         RoleScope scope = SecurityContext.getPermissionScope(permission);

@@ -232,12 +232,14 @@ export default function TimeTrackingPage() {
             <div className="flex flex-col items-center justify-center py-12">
               <Timer className="h-12 w-12 text-[var(--text-muted)] dark:text-[var(--text-secondary)] mb-4"/>
               <p className="text-[var(--text-muted)]">No time entries found</p>
-              <button
-                onClick={() => router.push('/time-tracking/new')}
-                className="mt-4 text-accent-700 dark:text-accent-400 hover:text-accent-700 text-sm font-medium"
-              >
-                Log your first time entry
-              </button>
+              <PermissionGate permission={Permissions.TIME_TRACKING_CREATE}>
+                <button
+                  onClick={() => router.push('/time-tracking/new')}
+                  className="mt-4 text-accent-700 dark:text-accent-400 hover:text-accent-700 text-sm font-medium"
+                >
+                  Log your first time entry
+                </button>
+              </PermissionGate>
             </div>
           ) : (
             <div className="overflow-x-auto">

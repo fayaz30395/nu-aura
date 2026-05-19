@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useEffect} from 'react';
+import React from 'react';
 import {useRouter} from 'next/navigation';
 import Link from 'next/link';
 import {motion} from 'framer-motion';
@@ -38,13 +38,8 @@ const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
 export default function LeavePage() {
   const router = useRouter();
-  const {user, isAuthenticated, hasHydrated} = useAuth();
+  const {user, hasHydrated} = useAuth();
   const {hasAnyPermission, isReady: permissionsReady} = usePermissions();
-
-  useEffect(() => {
-    if (!hasHydrated) return;
-    if (!isAuthenticated) router.push('/auth/login');
-  }, [isAuthenticated, hasHydrated, router]);
 
   const year = new Date().getFullYear();
   const employeeId = user?.employeeId ?? '';
@@ -729,4 +724,3 @@ function ErrorBanner({message, onRetry}: {message: string; onRetry: () => void})
     </div>
   );
 }
-

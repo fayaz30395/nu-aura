@@ -180,8 +180,8 @@ export function NotificationDropdown({isOpen, onClose}: NotificationDropdownProp
     markAllAsRead: wsMarkAllAsRead
   } = useWebSocket();
 
-  const {data: persistedNotifications = [], isLoading: notificationsLoading} = useNotificationInbox(10);
-  const {data: persistedUnreadCount = 0} = useUnreadNotificationCount();
+  const {data: persistedNotifications = [], isLoading: notificationsLoading} = useNotificationInbox(10, isOpen);
+  const {data: persistedUnreadCount = 0} = useUnreadNotificationCount(isOpen);
   const markReadMutation = useMarkNotificationAsRead();
   const markAllReadMutation = useMarkAllNotificationsAsRead();
 

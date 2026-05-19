@@ -19,7 +19,7 @@ import type {HeaderProps} from './Header';
 import {Header} from './Header';
 import {type BreadcrumbItem, Breadcrumbs} from './Breadcrumbs';
 import {useAuth} from '@/lib/hooks/useAuth';
-import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
+import {Permissions, Roles, usePermissions} from '@/lib/hooks/usePermissions';
 import {useApprovalInboxCount} from '@/lib/hooks/queries/useApprovals';
 import {useActiveApp} from '@/lib/hooks/useActiveApp';
 import {APP_SIDEBAR_SECTIONS} from '@/lib/config/apps';
@@ -106,7 +106,8 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   const {appCode} = useActiveApp();
 
   // Approval inbox count for sidebar badge (polls every 30s)
-  const {data: inboxCounts} = useApprovalInboxCount();
+  const canReadApprovalInbox = isReady && hasPermission(Permissions.WORKFLOW_VIEW);
+  const {data: inboxCounts} = useApprovalInboxCount(canReadApprovalInbox);
   const pendingApprovalCount = inboxCounts?.pending ?? 0;
 
   // Initialize with server-safe default to avoid hydration mismatch.

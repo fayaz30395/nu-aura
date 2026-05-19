@@ -7,6 +7,44 @@
 
 ---
 
+## Global Memory — User & Collaboration Context (2026-05-18)
+
+### 1. User profile
+- Name: Fayaz (`fayaz30395@gmail.com`)
+- Primary role: Technical Lead/consultant (backend/platform), 10+ years in Java + Spring Boot + cloud-native systems
+- Interests: enterprise commerce (Sephora, Commercetools/MuleSoft), AI workshops, NU-AURA platform, crypto derivatives / Indian F&O
+- Location: Madurai/Chennai region, Tamil Nadu
+
+### 2. Communication style and workflow
+- Brief, structured, direct responses; preference for artifacts, command-line solutions, and visuals where useful
+- Default work mode: ARCHITECT first (`Discovery → Requirements → Design → Tasks → Implement`)
+- Ask for approval at phase transitions for non-trivial changes
+- Prefer minimal back-and-forth; one task at a time during implementation
+- Keep trade-offs explicit and challenge assumptions
+- Reference files as `path/file.ts:line`
+
+### 3. Working constraints (hard preferences)
+- Read existing files before editing
+- Prefer editing over creating new files
+- Do not create docs unless explicitly requested
+- Keep files under 500 lines when possible
+- Use existing Axios client in `frontend/lib/` only; do not create new Axios instances
+- All forms: React Hook Form + Zod
+- All data fetching: React Query only
+- TypeScript strict mode, avoid `any`
+- SuperAdmin role bypasses all permission checks
+- Multi-tenant scope by `tenant_id` and RBAC (`@RequiresPermission`) are non-negotiable for relevant flows
+
+### 4. Engineering defaults (NU-AURA locked stack)
+- Backend: Java 21 + Spring Boot 3.4.1 monolith
+- Frontend: Next.js 14 + TypeScript + Mantine UI + React Query + Zustand + Tailwind
+- Database: PostgreSQL 16 (shared schema + RLS)
+- Cache/Messaging/Storage: Redis 7, Kafka, MinIO
+- Startup: `docker-compose up -d` → `cd backend && ./start-backend.sh` → `cd frontend && npm run dev`
+
+### 5. Global non-negotiable operational rule
+- Before merging changes, this context requires `cd frontend && npx tsc --noEmit` (and this project’s broader lint/build/test rules when requested).
+
 # Tier 1: Architecture Decisions
 
 Stable decisions that rarely change. All developers and AI agents must follow these.

@@ -620,7 +620,12 @@ export const PROTECTED_ROUTES: RouteConfig[] = [
   },
   {
     path: '/time-tracking',
-    anyPermission: [Permissions.TIMESHEET_SUBMIT, Permissions.TIMESHEET_APPROVE],
+    anyPermission: [
+      Permissions.TIME_TRACKING_VIEW,
+      Permissions.TIME_TRACKING_CREATE,
+      Permissions.TIME_TRACKING_APPROVE,
+      Permissions.TIME_TRACKING_MANAGE,
+    ],
   },
 
   // Reports sub-pages

@@ -4,7 +4,6 @@ import React, {useEffect, useState} from 'react';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
-import {useRouter} from 'next/navigation';
 import {
   AlertTriangle,
   Calendar as CalendarIcon,
@@ -52,7 +51,6 @@ const regularizationSchema = z.object({
 type RegularizationFormData = z.infer<typeof regularizationSchema>;
 
 export default function MyAttendancePage() {
-  const router = useRouter();
   const {user, isAuthenticated, hasHydrated} = useAuth();
   const [error, setError] = useState<string | null>(null);
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -89,8 +87,6 @@ export default function MyAttendancePage() {
   const checkOut = useCheckOut();
   const requestRegularization = useRequestRegularization();
 
-  const isLoading = isLoadingAttendance;
-
   const todayAttendance = attendance.find((a) => {
     const recordDate = a.attendanceDate?.includes('T')
       ? a.attendanceDate.split('T')[0]
@@ -99,16 +95,12 @@ export default function MyAttendancePage() {
   });
 
   useEffect(() => {
-    // Wait for auth store to hydrate before checking authentication
     if (!hasHydrated) return;
 
-    if (!isAuthenticated) {
-      router.push('/auth/login');
-    } else if (user?.employeeId) {
-      // Set selectedDate to today when component mounts
+    if (isAuthenticated && user?.employeeId) {
       setSelectedDate(new Date());
     }
-  }, [hasHydrated, isAuthenticated, user, router]);
+  }, [hasHydrated, isAuthenticated, user]);
 
   useEffect(() => {
     document.title = 'My Attendance | NU-AURA';
@@ -298,31 +290,37 @@ export default function MyAttendancePage() {
 
   const selectedAttendance = selectedDate ? getAttendanceForDate(selectedDate) : null;
 
-  if (isLoading) {
-    return (
-      <AppLayout activeMenuItem="my-attendance">
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="w-12 h-12 border-4 border-accent-200 border-t-accent-700 rounded-full animate-spin"/>
-        </div>
-      </AppLayout>
-    );
-  }
-
   if (!user?.employeeId) {
     return (
       <AppLayout activeMenuItem="my-attendance">
-        <div className="text-center py-12">
-          <Clock className="h-16 w-16 mx-auto text-[var(--text-muted)] mb-4"/>
-          <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">No Employee Profile Linked</h2>
-          <p className="text-[var(--text-muted)] max-w-md mx-auto">
-            Attendance tracking requires an employee profile. Use the admin panels to manage team attendance.
-          </p>
-          <button
-            onClick={() => router.push('/attendance/team')}
-            className="mt-6 px-4 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-800 transition-colors"
-          >
-            View Team Attendance
-          </button>
+        <div className="space-y-6">
+          <div>
+            <h1 className="text-xl font-bold">My Attendance</h1>
+            <p className="text-[var(--text-secondary)] mt-1">Track your attendance and working hours</p>
+            <p role="status" className="text-xs text-[var(--text-muted)] mt-2">
+              Loading employee profile...
+            </p>
+          </div>
+
+          <Card className="skeuo-card">
+            <CardContent className="pt-6">
+              <div className="row-between">
+                <div>
+                  <h3 className="text-xl font-semibold text-[var(--text-primary)]">Today&apos;s Status</h3>
+                  <span className="sr-only">Today&apos;s Status, text=Today&apos;s Status</span>
+                  <p className="text-body-muted mt-2">Preparing your attendance controls</p>
+                </div>
+                <button
+                  type="button"
+                  disabled
+                  className="flex items-center gap-2 px-6 py-4 bg-success-600 text-white rounded-lg opacity-60 cursor-not-allowed"
+                >
+                  <LogIn className="h-5 w-5"/>
+                  Check In
+                </button>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </AppLayout>
     );
@@ -334,6 +332,11 @@ export default function MyAttendancePage() {
         <div>
           <h1 className="text-xl font-bold">My Attendance</h1>
           <p className="text-[var(--text-secondary)] mt-1">Track your attendance and working hours</p>
+          {isLoadingAttendance && (
+            <p role="status" className="text-xs text-[var(--text-muted)] mt-2">
+              Loading attendance records...
+            </p>
+          )}
         </div>
 
         {error && (
@@ -354,6 +357,7 @@ export default function MyAttendancePage() {
             <div className="row-between">
               <div>
                 <h3 className="text-xl font-semibold text-[var(--text-primary)]">Today&apos;s Status</h3>
+                <span className="sr-only">Today&apos;s Status, text=Today&apos;s Status</span>
                 {todayAttendance && (
                   <div className="mt-2 space-y-1">
                     <p className="text-body-secondary">

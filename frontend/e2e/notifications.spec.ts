@@ -1,6 +1,7 @@
 import {expect, test} from '@playwright/test';
 import {LoginPage} from './pages/LoginPage';
 import {demoUsers} from './fixtures/testData';
+import {loginAs} from './fixtures/helpers';
 
 /**
  * Notifications E2E Tests
@@ -14,12 +15,14 @@ import {demoUsers} from './fixtures/testData';
  */
 
 test.describe('Notifications — Bell Icon & Dropdown', () => {
+  test.describe.configure({mode: 'serial'});
+
   test.beforeEach(async ({page}) => {
-    const loginPage = new LoginPage(page);
-    await loginPage.navigate();
-    await loginPage.login(demoUsers.superAdmin.email, demoUsers.superAdmin.password);
-    await page.waitForURL('**/dashboard');
-    await page.waitForLoadState('networkidle');
+    await loginAs(page, demoUsers.superAdmin.email);
+    await page
+      .locator('[data-testid="notification-bell"], button[aria-label="Notifications"]')
+      .first()
+      .waitFor({state: 'visible', timeout: 60000});
   });
 
   test('notification bell icon is visible in the header', async ({page}) => {

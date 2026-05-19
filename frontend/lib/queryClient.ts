@@ -29,7 +29,9 @@ export function getQueryClient(): QueryClient {
           refetchOnWindowFocus: false,
         },
         mutations: {
-          retry: 1,
+          // Writes are not safely repeatable by default. A timed-out POST may
+          // still complete server-side, so retrying can create duplicates.
+          retry: false,
         },
       },
     });

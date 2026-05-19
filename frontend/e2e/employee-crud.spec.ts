@@ -63,6 +63,8 @@ test.describe('Employee CRUD', () => {
     });
 
     test('should create employee with basic info and close modal', async ({page}) => {
+      test.setTimeout(120000);
+
       await employeePage.clickAddEmployee();
 
       await employeePage.fillBasicInfo(testEmployee.basic);
@@ -72,11 +74,7 @@ test.describe('Employee CRUD', () => {
       });
 
       await employeePage.submitForm();
-      await page.waitForTimeout(1500);
-
-      // Modal should close on success
-      const isModalVisible = await employeePage.modal.isVisible().catch(() => false);
-      expect(isModalVisible).toBe(false);
+      await expect(employeePage.modal).not.toBeVisible({timeout: 90000});
     });
 
     test('should validate required fields on empty submit', async ({page}) => {

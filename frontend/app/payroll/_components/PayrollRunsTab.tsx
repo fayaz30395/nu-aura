@@ -70,13 +70,25 @@ export function PayrollRunsTab({
       {loading ? (
         <div className="text-center py-12 text-[var(--text-secondary)]">Loading payroll runs...</div>
       ) : filtered.length === 0 ? (
-        <EmptyState
-          icon={<Banknote className="h-8 w-8"/>}
-          title="No Payroll Runs Yet"
-          description="Create your first payroll run to manage employee salaries and payments"
-          action={{label: 'Create payroll run', onClick: onCreateRun}}
-          iconColor="blue"
-        />
+        <PermissionGate
+          permission={Permissions.PAYROLL_PROCESS}
+          fallback={
+            <EmptyState
+              icon={<Banknote className="h-8 w-8"/>}
+              title="No Payroll Runs Yet"
+              description="Create your first payroll run to manage employee salaries and payments"
+              iconColor="blue"
+            />
+          }
+        >
+          <EmptyState
+            icon={<Banknote className="h-8 w-8"/>}
+            title="No Payroll Runs Yet"
+            description="Create your first payroll run to manage employee salaries and payments"
+            action={{label: 'Create payroll run', onClick: onCreateRun}}
+            iconColor="blue"
+          />
+        </PermissionGate>
       ) : (
         <div className="skeuo-card overflow-x-auto rounded-xl border border-[var(--border-main)]">
           <table className="table-aura w-full">

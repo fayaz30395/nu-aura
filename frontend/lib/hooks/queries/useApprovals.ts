@@ -119,10 +119,11 @@ export function useApprovalInbox(params: InboxFilterParams = {}) {
  * so that the sidebar badge doesn't trigger a blocking refetch on every
  * client-side navigation (the layout component remounts on route change).
  */
-export function useApprovalInboxCount() {
+export function useApprovalInboxCount(enabled: boolean = true) {
   return useQuery({
     queryKey: approvalKeys.inboxCount(),
     queryFn: () => workflowService.getInboxCounts(),
+    enabled,
     staleTime: 60 * 1000,          // data considered fresh for 60s
     gcTime: 5 * 60 * 1000,         // keep cache for 5 min after unmount
     refetchInterval: 60 * 1000,    // poll every 60s (was 30s — halves background requests)

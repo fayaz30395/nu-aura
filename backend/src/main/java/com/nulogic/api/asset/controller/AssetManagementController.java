@@ -122,7 +122,7 @@ public class AssetManagementController {
     }
 
     @GetMapping("/employee/{employeeId}")
-    @RequiresPermission(ASSET_VIEW)
+    @RequiresPermission({ASSET_VIEW, EMPLOYEE_VIEW_SELF})
     @Operation(summary = "List assets assigned to employee",
             description = "Returns assets currently assigned to the specified employee")
     @ApiResponse(responseCode = "200", description = "Assets retrieved successfully")

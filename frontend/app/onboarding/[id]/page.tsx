@@ -266,18 +266,20 @@ export default function OnboardingDetailPage() {
                                 }`}
                               >
                                 <div className="flex items-center gap-4 flex-1">
-                                  <button
-                                    onClick={() => handleTaskStatusUpdate(task.id, task.status === 'COMPLETED' ? 'PENDING' : 'COMPLETED')}
-                                    aria-label={`Mark task ${task.taskName} as ${task.status === 'COMPLETED' ? 'incomplete' : 'complete'}`}
-                                    className={`flex-shrink-0 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${task.status === 'COMPLETED' ? 'text-success-500' : 'text-[var(--text-muted)] group-hover:text-accent-400'
-                                    }`}
-                                  >
-                                    {task.status === 'COMPLETED' ? (
-                                      <CheckCircle2 className="h-6 w-6"/>
-                                    ) : (
-                                      <Circle className="h-6 w-6"/>
-                                    )}
-                                  </button>
+                                  <PermissionGate permission={Permissions.ONBOARDING_MANAGE}>
+                                    <button
+                                      onClick={() => handleTaskStatusUpdate(task.id, task.status === 'COMPLETED' ? 'PENDING' : 'COMPLETED')}
+                                      aria-label={`Mark task ${task.taskName} as ${task.status === 'COMPLETED' ? 'incomplete' : 'complete'}`}
+                                      className={`flex-shrink-0 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${task.status === 'COMPLETED' ? 'text-success-500' : 'text-[var(--text-muted)] group-hover:text-accent-400'
+                                      }`}
+                                    >
+                                      {task.status === 'COMPLETED' ? (
+                                        <CheckCircle2 className="h-6 w-6"/>
+                                      ) : (
+                                        <Circle className="h-6 w-6"/>
+                                      )}
+                                    </button>
+                                  </PermissionGate>
                                   <div>
                                     <p
                                       className={`font-bold transition-all ${task.status === 'COMPLETED' ? 'text-[var(--text-muted)] line-through' : 'text-[var(--text-primary)]'
@@ -293,17 +295,19 @@ export default function OnboardingDetailPage() {
                                 </div>
 
                                 <div className="flex items-center gap-4">
-                                  <select
-                                    value={task.status}
-                                    onChange={(e) => handleTaskStatusUpdate(task.id, e.target.value)}
-                                    className="bg-transparent border-0 text-xs font-black uppercase tracking-widest text-[var(--text-muted)] cursor-pointer hover:text-accent-500"
-                                  >
-                                    <option value="PENDING">Pending</option>
-                                    <option value="IN_PROGRESS">In Progress</option>
-                                    <option value="COMPLETED">Completed</option>
-                                    <option value="SKIPPED">Skipped</option>
-                                    <option value="BLOCKED">Blocked</option>
-                                  </select>
+                                  <PermissionGate permission={Permissions.ONBOARDING_MANAGE}>
+                                    <select
+                                      value={task.status}
+                                      onChange={(e) => handleTaskStatusUpdate(task.id, e.target.value)}
+                                      className="bg-transparent border-0 text-xs font-black uppercase tracking-widest text-[var(--text-muted)] cursor-pointer hover:text-accent-500"
+                                    >
+                                      <option value="PENDING">Pending</option>
+                                      <option value="IN_PROGRESS">In Progress</option>
+                                      <option value="COMPLETED">Completed</option>
+                                      <option value="SKIPPED">Skipped</option>
+                                      <option value="BLOCKED">Blocked</option>
+                                    </select>
+                                  </PermissionGate>
                                   {isUpdating && <Loader2 className="h-4 w-4 animate-spin text-accent-500"/>}
                                 </div>
                               </div>

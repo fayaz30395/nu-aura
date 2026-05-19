@@ -254,6 +254,10 @@ export function AuthGuard({
 
   // Loading state
   if (!hasHydrated || !isReady || isAuthorized === null || isRestoringSession) {
+    if (pathname.startsWith('/me/') && hasHydrated && (isAuthenticated || isRestoringSession)) {
+      return children;
+    }
+
     if (loadingComponent) {
       return loadingComponent;
     }

@@ -1,5 +1,6 @@
 import {expect, test} from '@playwright/test';
-import {loginAs, switchUser} from './fixtures/helpers';
+import {loginAs, navigateTo, switchUser} from './fixtures/helpers';
+import {demoUsers} from './fixtures/testData';
 
 /**
  * Asset Management E2E Tests
@@ -12,8 +13,8 @@ import {loginAs, switchUser} from './fixtures/helpers';
 
 test.describe('Assets Page', () => {
   test.beforeEach(async ({page}) => {
-    await page.goto('/assets');
-    await page.waitForLoadState('networkidle');
+    await loginAs(page, demoUsers.superAdmin.email);
+    await navigateTo(page, '/assets');
   });
 
   test('should display assets page with heading', async ({page}) => {
@@ -106,9 +107,12 @@ test.describe('Assets Page', () => {
 });
 
 test.describe('Assets - Create Request', () => {
+  test.beforeEach(async ({page}) => {
+    await loginAs(page, demoUsers.superAdmin.email);
+  });
+
   test('should open asset request form', async ({page}) => {
-    await page.goto('/assets');
-    await page.waitForLoadState('networkidle');
+    await navigateTo(page, '/assets');
 
     const requestBtn = page.locator(
       'button:has-text("Request"), button:has-text("New"), button:has-text("Create"), button:has-text("Add")'
@@ -133,8 +137,7 @@ test.describe('Assets - Create Request', () => {
   });
 
   test('should display asset request form fields', async ({page}) => {
-    await page.goto('/assets');
-    await page.waitForLoadState('networkidle');
+    await navigateTo(page, '/assets');
 
     const requestBtn = page.locator(
       'button:has-text("Request"), button:has-text("New"), button:has-text("Create"), button:has-text("Add")'
@@ -162,8 +165,7 @@ test.describe('Assets - Create Request', () => {
   });
 
   test('should close form on cancel', async ({page}) => {
-    await page.goto('/assets');
-    await page.waitForLoadState('networkidle');
+    await navigateTo(page, '/assets');
 
     const requestBtn = page.locator(
       'button:has-text("Request"), button:has-text("New"), button:has-text("Create"), button:has-text("Add")'
@@ -192,9 +194,12 @@ test.describe('Assets - Create Request', () => {
 });
 
 test.describe('Assets - View Details', () => {
+  test.beforeEach(async ({page}) => {
+    await loginAs(page, demoUsers.superAdmin.email);
+  });
+
   test('should view asset details if assets exist', async ({page}) => {
-    await page.goto('/assets');
-    await page.waitForLoadState('networkidle');
+    await navigateTo(page, '/assets');
 
     // Look for a view/details button or clickable row
     const viewBtn = page
@@ -212,8 +217,7 @@ test.describe('Assets - View Details', () => {
   });
 
   test('should display asset metadata fields', async ({page}) => {
-    await page.goto('/assets');
-    await page.waitForLoadState('networkidle');
+    await navigateTo(page, '/assets');
 
     // Click first asset row to see details
     const firstRow = page.locator('tbody tr').first();
@@ -241,8 +245,8 @@ test.describe('Assets - View Details', () => {
 
 test.describe('Assets - Filters and Search', () => {
   test.beforeEach(async ({page}) => {
-    await page.goto('/assets');
-    await page.waitForLoadState('networkidle');
+    await loginAs(page, demoUsers.superAdmin.email);
+    await navigateTo(page, '/assets');
   });
 
   test('should display search input', async ({page}) => {

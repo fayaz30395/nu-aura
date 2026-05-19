@@ -652,7 +652,7 @@ export function usePermissions(): UsePermissionsReturn {
   // Extract all role codes
   const roles = useMemo(() => {
     if (!user?.roles) return [];
-    return user.roles.map((r) => r.code);
+    return user.roles.map((r) => r.code.replace(/^ROLE_/, ''));
   }, [user?.roles]);
 
   // Check if user has SYSTEM_ADMIN (bypasses all permission checks, like backend SecurityContext)

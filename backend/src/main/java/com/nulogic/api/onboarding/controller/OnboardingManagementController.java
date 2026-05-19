@@ -34,7 +34,7 @@ public class OnboardingManagementController {
     private final OnboardingManagementService onboardingService;
 
     @PostMapping("/processes")
-    @RequiresPermission(Permission.RECRUITMENT_MANAGE)
+    @RequiresPermission(Permission.ONBOARDING_MANAGE)
     @Operation(summary = "Create onboarding process",
             description = "Start a new onboarding process for an employee, optionally from a checklist template")
     @ApiResponses({
@@ -49,7 +49,7 @@ public class OnboardingManagementController {
     }
 
     @PutMapping("/processes/{processId}")
-    @RequiresPermission(Permission.RECRUITMENT_MANAGE)
+    @RequiresPermission(Permission.ONBOARDING_MANAGE)
     @Operation(summary = "Update onboarding process",
             description = "Mutate process metadata (buddy, target dates, etc.)")
     @ApiResponses({
@@ -64,7 +64,7 @@ public class OnboardingManagementController {
     }
 
     @PatchMapping("/processes/{processId}/status")
-    @RequiresPermission(Permission.RECRUITMENT_VIEW)
+    @RequiresPermission(Permission.ONBOARDING_MANAGE)
     @Operation(summary = "Update process status",
             description = "Transition a process to a new status (IN_PROGRESS, COMPLETED, CANCELLED)")
     @ApiResponses({
@@ -79,7 +79,7 @@ public class OnboardingManagementController {
     }
 
     @PatchMapping("/processes/{processId}/progress")
-    @RequiresPermission(Permission.RECRUITMENT_VIEW)
+    @RequiresPermission(Permission.ONBOARDING_MANAGE)
     @Operation(summary = "Update process progress percentage",
             description = "Set the completion percentage on an in-progress onboarding process")
     @ApiResponses({
@@ -95,7 +95,7 @@ public class OnboardingManagementController {
     }
 
     @GetMapping("/processes/{processId}")
-    @RequiresPermission(Permission.RECRUITMENT_VIEW)
+    @RequiresPermission(Permission.ONBOARDING_VIEW)
     @Operation(summary = "Get process by ID", description = "Returns a single onboarding process by its UUID")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Process found"),
@@ -108,7 +108,7 @@ public class OnboardingManagementController {
     }
 
     @GetMapping("/processes/employee/{employeeId}")
-    @RequiresPermission(Permission.RECRUITMENT_VIEW)
+    @RequiresPermission(Permission.ONBOARDING_VIEW)
     @Operation(summary = "Get process by employee",
             description = "Returns the onboarding process for the specified employee")
     @ApiResponses({
@@ -122,7 +122,7 @@ public class OnboardingManagementController {
     }
 
     @GetMapping("/processes")
-    @RequiresPermission(Permission.RECRUITMENT_VIEW)
+    @RequiresPermission(Permission.ONBOARDING_VIEW)
     @Operation(summary = "List all onboarding processes",
             description = "Returns a paginated list of all onboarding processes in the tenant")
     @ApiResponse(responseCode = "200", description = "Processes retrieved successfully")
@@ -134,7 +134,7 @@ public class OnboardingManagementController {
     // --- Template Endpoints ---
 
     @PostMapping("/templates")
-    @RequiresPermission(Permission.RECRUITMENT_MANAGE)
+    @RequiresPermission(Permission.ONBOARDING_MANAGE)
     @Operation(summary = "Create checklist template",
             description = "Define a reusable onboarding checklist template")
     @ApiResponses({
@@ -147,7 +147,7 @@ public class OnboardingManagementController {
     }
 
     @GetMapping("/templates")
-    @RequiresPermission(Permission.RECRUITMENT_VIEW)
+    @RequiresPermission(Permission.ONBOARDING_VIEW)
     @Operation(summary = "List all checklist templates", description = "Returns all available onboarding templates")
     @ApiResponse(responseCode = "200", description = "Templates retrieved successfully")
     public ResponseEntity<List<OnboardingChecklistTemplateResponse>> getAllTemplates() {
@@ -155,7 +155,7 @@ public class OnboardingManagementController {
     }
 
     @GetMapping("/templates/{templateId}")
-    @RequiresPermission(Permission.RECRUITMENT_VIEW)
+    @RequiresPermission(Permission.ONBOARDING_VIEW)
     @Operation(summary = "Get checklist template by ID", description = "Returns a single template by its UUID")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Template found"),
@@ -167,7 +167,7 @@ public class OnboardingManagementController {
     }
 
     @PutMapping("/templates/{templateId}")
-    @RequiresPermission(Permission.RECRUITMENT_MANAGE)
+    @RequiresPermission(Permission.ONBOARDING_MANAGE)
     @Operation(summary = "Update checklist template", description = "Mutate an existing template's metadata or tasks")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Template updated successfully"),
@@ -180,7 +180,7 @@ public class OnboardingManagementController {
     }
 
     @DeleteMapping("/templates/{templateId}")
-    @RequiresPermission(Permission.RECRUITMENT_MANAGE)
+    @RequiresPermission(Permission.ONBOARDING_MANAGE)
     @Operation(summary = "Delete checklist template", description = "Soft-delete a checklist template (admin only)")
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Template deleted successfully"),
@@ -193,7 +193,7 @@ public class OnboardingManagementController {
     }
 
     @PostMapping("/templates/{templateId}/tasks")
-    @RequiresPermission(Permission.RECRUITMENT_MANAGE)
+    @RequiresPermission(Permission.ONBOARDING_MANAGE)
     @Operation(summary = "Add task to checklist template",
             description = "Append a new task entry to an existing onboarding template")
     @ApiResponses({
@@ -207,7 +207,7 @@ public class OnboardingManagementController {
     }
 
     @GetMapping("/templates/{templateId}/tasks")
-    @RequiresPermission(Permission.RECRUITMENT_VIEW)
+    @RequiresPermission(Permission.ONBOARDING_VIEW)
     @Operation(summary = "List tasks for template",
             description = "Returns all task definitions attached to the specified template")
     @ApiResponse(responseCode = "200", description = "Tasks retrieved successfully")
@@ -217,7 +217,7 @@ public class OnboardingManagementController {
     }
 
     @PutMapping("/templates/{templateId}/tasks/{taskId}")
-    @RequiresPermission(Permission.RECRUITMENT_MANAGE)
+    @RequiresPermission(Permission.ONBOARDING_MANAGE)
     @Operation(summary = "Update template task", description = "Mutate a single task entry in a template")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Task updated successfully"),
@@ -231,7 +231,7 @@ public class OnboardingManagementController {
     }
 
     @DeleteMapping("/templates/{templateId}/tasks/{taskId}")
-    @RequiresPermission(Permission.RECRUITMENT_MANAGE)
+    @RequiresPermission(Permission.ONBOARDING_MANAGE)
     @Operation(summary = "Delete template task", description = "Remove a task entry from a template")
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Task deleted successfully"),
@@ -247,7 +247,7 @@ public class OnboardingManagementController {
     // --- Task Endpoints ---
 
     @GetMapping("/processes/{processId}/tasks")
-    @RequiresPermission(Permission.RECRUITMENT_VIEW)
+    @RequiresPermission(Permission.ONBOARDING_VIEW)
     @Operation(summary = "List tasks for process",
             description = "Returns the active task list for a running onboarding process")
     @ApiResponse(responseCode = "200", description = "Tasks retrieved successfully")
@@ -257,7 +257,7 @@ public class OnboardingManagementController {
     }
 
     @PatchMapping("/tasks/{taskId}/status")
-    @RequiresPermission(Permission.RECRUITMENT_VIEW)
+    @RequiresPermission(Permission.ONBOARDING_MANAGE)
     @Operation(summary = "Update task status",
             description = "Transition a task to a new status with optional remarks (PENDING, IN_PROGRESS, COMPLETED, SKIPPED)")
     @ApiResponses({
@@ -272,7 +272,7 @@ public class OnboardingManagementController {
     }
 
     @GetMapping("/processes/status/{status}")
-    @RequiresPermission(Permission.RECRUITMENT_VIEW)
+    @RequiresPermission(Permission.ONBOARDING_VIEW)
     @Operation(summary = "List processes by status",
             description = "Filter onboarding processes by status (IN_PROGRESS, COMPLETED, CANCELLED)")
     @ApiResponse(responseCode = "200", description = "Processes retrieved successfully")
@@ -283,7 +283,7 @@ public class OnboardingManagementController {
     }
 
     @GetMapping("/processes/buddy/{buddyId}")
-    @RequiresPermission(Permission.RECRUITMENT_VIEW)
+    @RequiresPermission(Permission.ONBOARDING_VIEW)
     @Operation(summary = "List processes by buddy",
             description = "Returns onboarding processes where the specified employee is assigned as buddy")
     @ApiResponse(responseCode = "200", description = "Processes retrieved successfully")
@@ -294,7 +294,7 @@ public class OnboardingManagementController {
     }
 
     @DeleteMapping("/processes/{processId}")
-    @RequiresPermission(Permission.RECRUITMENT_MANAGE)
+    @RequiresPermission(Permission.ONBOARDING_MANAGE)
     @Operation(summary = "Delete process", description = "Soft-delete an onboarding process (admin only)")
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Process deleted successfully"),

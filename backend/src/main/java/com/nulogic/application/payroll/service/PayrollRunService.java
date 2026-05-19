@@ -8,8 +8,10 @@ import com.nulogic.domain.audit.AuditLog.AuditAction;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.payroll.PayrollRun;
 import com.nulogic.domain.payroll.PayrollRun.PayrollStatus;
+import com.nulogic.domain.payroll.Payslip;
 import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import com.nulogic.infrastructure.payroll.repository.PayrollRunRepository;
+import com.nulogic.infrastructure.payroll.repository.PayslipRepository;
 import com.nulogic.infrastructure.payroll.repository.SalaryStructureRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -33,6 +36,7 @@ public class PayrollRunService {
     private final AuditLogService auditLogService;
     private final EmployeeRepository employeeRepository;
     private final SalaryStructureRepository salaryStructureRepository;
+    private final PayslipRepository payslipRepository;
 
     /**
      * Create a new payroll run for a given period.
@@ -165,6 +169,8 @@ public class PayrollRunService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public PayrollRun completeProcessing(UUID id, UUID processedBy) {
         PayrollRun payrollRun = getPayrollRunForUpdate(id);
+        int generatedPayslips = generatePayslipsForRun(payrollRun);
+        payrollRun.setTotalEmployees(generatedPayslips);
         payrollRun.process(processedBy);
         auditLogService.logAction(
                 "PAYROLL_RUN",
@@ -207,6 +213,8 @@ public class PayrollRunService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public PayrollRun processPayrollRun(UUID id, UUID processedBy) {
         PayrollRun payrollRun = getPayrollRunForUpdate(id);
+        int generatedPayslips = generatePayslipsForRun(payrollRun);
+        payrollRun.setTotalEmployees(generatedPayslips);
         payrollRun.process(processedBy);
         return payrollRunRepository.save(payrollRun);
     }
@@ -250,6 +258,65 @@ public class PayrollRunService {
         UUID tenantId = TenantContext.getCurrentTenant();
         return payrollRunRepository.findByIdAndTenantIdForUpdate(id, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Payroll run not found"));
+    }
+
+    private int generatePayslipsForRun(PayrollRun payrollRun) {
+        UUID tenantId = payrollRun.getTenantId();
+        List<Employee> activeEmployees = employeeRepository.findByTenantId(tenantId).stream()
+                .filter(employee -> employee.getStatus() == Employee.EmployeeStatus.ACTIVE)
+                .toList();
+
+        int generated = 0;
+        for (Employee employee : activeEmployees) {
+            if (payslipRepository.existsByTenantIdAndEmployeeIdAndPayPeriodYearAndPayPeriodMonth(
+                    tenantId,
+                    employee.getId(),
+                    payrollRun.getPayPeriodYear(),
+                    payrollRun.getPayPeriodMonth())) {
+                generated++;
+                continue;
+            }
+
+            salaryStructureRepository.findActiveByEmployeeIdAndDate(
+                    tenantId, employee.getId(), payrollRun.getPayrollDate()
+            ).ifPresent(structure -> {
+                Payslip payslip = Payslip.builder()
+                        .payrollRunId(payrollRun.getId())
+                        .employeeId(employee.getId())
+                        .payPeriodMonth(payrollRun.getPayPeriodMonth())
+                        .payPeriodYear(payrollRun.getPayPeriodYear())
+                        .payDate(payrollRun.getPayrollDate())
+                        .basicSalary(defaultAmount(structure.getBasicSalary()))
+                        .hra(defaultAmount(structure.getHra()))
+                        .conveyanceAllowance(defaultAmount(structure.getConveyanceAllowance()))
+                        .medicalAllowance(defaultAmount(structure.getMedicalAllowance()))
+                        .specialAllowance(defaultAmount(structure.getSpecialAllowance()))
+                        .otherAllowances(defaultAmount(structure.getOtherAllowances()))
+                        .providentFund(defaultAmount(structure.getProvidentFund()))
+                        .professionalTax(defaultAmount(structure.getProfessionalTax()))
+                        .incomeTax(defaultAmount(structure.getIncomeTax()))
+                        .otherDeductions(defaultAmount(structure.getOtherDeductions()))
+                        .workingDays(30)
+                        .presentDays(30)
+                        .leaveDays(0)
+                        .build();
+                payslip.setTenantId(tenantId);
+                payslip.calculateTotals();
+                payslipRepository.save(payslip);
+            });
+            if (payslipRepository.existsByTenantIdAndEmployeeIdAndPayPeriodYearAndPayPeriodMonth(
+                    tenantId,
+                    employee.getId(),
+                    payrollRun.getPayPeriodYear(),
+                    payrollRun.getPayPeriodMonth())) {
+                generated++;
+            }
+        }
+        return generated;
+    }
+
+    private BigDecimal defaultAmount(BigDecimal amount) {
+        return amount != null ? amount : BigDecimal.ZERO;
     }
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)

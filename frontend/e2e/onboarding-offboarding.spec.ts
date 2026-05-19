@@ -1,4 +1,4 @@
-import {expect, test} from '@playwright/test';
+import {expect, Page, test} from '@playwright/test';
 import {loginAs} from './fixtures/helpers';
 import {demoUsers} from './fixtures/testData';
 
@@ -11,6 +11,11 @@ import {demoUsers} from './fixtures/testData';
  * HR Admin: jagadeesh@nulogic.io (HR Manager)
  * Department Head: sumit@nulogic.io (Engineering Manager)
  */
+
+async function waitForOffboardingReady(page: Page) {
+  await expect(page.locator('text=/Loading exit processes/i')).not.toBeVisible({timeout: 60000});
+  await expect(page.getByRole('heading').first()).toBeVisible({timeout: 30000});
+}
 
 // ─── ONBOARDING ────────────────────────────────────────────────────────────────
 
@@ -80,17 +85,17 @@ test.describe('Onboarding - HR Admin Initiates', () => {
 
     if (hasBtn) {
       await initiateBtn.click();
-      await page.waitForTimeout(1000);
 
-      // Should open a modal or navigate to new onboarding page
-      const hasModal = await page
-        .locator('[role="dialog"], .modal, [class*="modal"]')
-        .first()
-        .isVisible()
-        .catch(() => false);
-      const navigatedToNew = page.url().includes('/onboarding/new');
-
-      expect(hasModal || navigatedToNew).toBe(true);
+      await expect
+        .poll(async () => {
+          const hasModal = await page
+            .locator('[role="dialog"], .modal, [class*="modal"]')
+            .first()
+            .isVisible()
+            .catch(() => false);
+          return hasModal || page.url().includes('/onboarding/new');
+        }, {timeout: 30000})
+        .toBe(true);
     }
   });
 
@@ -265,8 +270,9 @@ test.describe('Onboarding - Checklist & Tasks', () => {
 
 test.describe('Offboarding Page', () => {
   test.beforeEach(async ({page}) => {
-    await page.goto('/offboarding');
-    await page.waitForLoadState('networkidle');
+    await loginAs(page, demoUsers.hrManager.email);
+    await page.goto('/offboarding', {waitUntil: 'domcontentloaded', timeout: 90000});
+    await waitForOffboardingReady(page);
   });
 
   test('should display offboarding page with heading', async ({page}) => {
@@ -302,9 +308,8 @@ test.describe('Offboarding - HR Initiates', () => {
   test('should initiate offboarding as HR', async ({page}) => {
     await loginAs(page, demoUsers.hrManager.email);
 
-    await page.goto('/offboarding');
-    await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(1000);
+    await page.goto('/offboarding', {waitUntil: 'domcontentloaded', timeout: 90000});
+    await waitForOffboardingReady(page);
 
     const initiateBtn = page
       .locator(
@@ -332,9 +337,8 @@ test.describe('Offboarding - HR Initiates', () => {
   test('should show employee selection for offboarding', async ({page}) => {
     await loginAs(page, demoUsers.hrManager.email);
 
-    await page.goto('/offboarding');
-    await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(1000);
+    await page.goto('/offboarding', {waitUntil: 'domcontentloaded', timeout: 90000});
+    await waitForOffboardingReady(page);
 
     const initiateBtn = page
       .locator(
@@ -365,9 +369,8 @@ test.describe('Offboarding - Checklist Generation', () => {
   test('should display offboarding checklist when viewing exit record', async ({page}) => {
     await loginAs(page, demoUsers.hrManager.email);
 
-    await page.goto('/offboarding');
-    await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(1000);
+    await page.goto('/offboarding', {waitUntil: 'domcontentloaded', timeout: 90000});
+    await waitForOffboardingReady(page);
 
     // Click first offboarding record if exists
     const firstRow = page.locator('table tbody tr, [class*="card"]').first();
@@ -391,9 +394,8 @@ test.describe('Offboarding - Checklist Generation', () => {
   test('should show exit process stages', async ({page}) => {
     await loginAs(page, demoUsers.hrManager.email);
 
-    await page.goto('/offboarding');
-    await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(1000);
+    await page.goto('/offboarding', {waitUntil: 'domcontentloaded', timeout: 90000});
+    await waitForOffboardingReady(page);
 
     // Look for exit process stages/steps
     const hasStages = await page
@@ -408,9 +410,8 @@ test.describe('Offboarding - Checklist Generation', () => {
   test('should navigate to exit process detail page', async ({page}) => {
     await loginAs(page, demoUsers.hrManager.email);
 
-    await page.goto('/offboarding');
-    await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(1000);
+    await page.goto('/offboarding', {waitUntil: 'domcontentloaded', timeout: 90000});
+    await waitForOffboardingReady(page);
 
     // Click on an exit record
     const firstRow = page.locator('table tbody tr, [class*="card"]').first();
@@ -418,7 +419,7 @@ test.describe('Offboarding - Checklist Generation', () => {
 
     if (hasRow) {
       await firstRow.click();
-      await page.waitForTimeout(1000);
+      await page.waitForURL(/\/offboarding\/[^/]+$/, {timeout: 30000}).catch(() => {});
 
       // Should navigate to detail or show detail view
       const urlChanged = page.url() !== 'http://localhost:3000/offboarding';
@@ -437,8 +438,7 @@ test.describe('Offboarding - FnF Settlement Link', () => {
   test('should navigate to FnF settlement from offboarding', async ({page}) => {
     await loginAs(page, demoUsers.hrManager.email);
 
-    await page.goto('/offboarding/exit/fnf');
-    await page.waitForLoadState('networkidle');
+    await page.goto('/offboarding/exit/fnf', {waitUntil: 'domcontentloaded', timeout: 90000});
 
     // Should show FnF page or prompt for exit process selection
     await expect(
@@ -452,8 +452,8 @@ test.describe('Offboarding - FnF Settlement Link', () => {
 
 test.describe('Onboarding/Offboarding - Visual Elements', () => {
   test('should render onboarding page with proper layout', async ({page}) => {
-    await page.goto('/onboarding');
-    await page.waitForLoadState('networkidle');
+    await loginAs(page, demoUsers.hrManager.email);
+    await page.goto('/onboarding', {waitUntil: 'domcontentloaded', timeout: 90000});
 
     const main = page.locator('main, [role="main"]').first();
     await expect(main).toBeVisible();
@@ -464,8 +464,9 @@ test.describe('Onboarding/Offboarding - Visual Elements', () => {
   });
 
   test('should render offboarding page with proper layout', async ({page}) => {
-    await page.goto('/offboarding');
-    await page.waitForLoadState('networkidle');
+    await loginAs(page, demoUsers.hrManager.email);
+    await page.goto('/offboarding', {waitUntil: 'domcontentloaded', timeout: 90000});
+    await waitForOffboardingReady(page);
 
     const main = page.locator('main, [role="main"]').first();
     await expect(main).toBeVisible();
@@ -476,8 +477,8 @@ test.describe('Onboarding/Offboarding - Visual Elements', () => {
   });
 
   test('onboarding page should be responsive', async ({page}) => {
-    await page.goto('/onboarding');
-    await page.waitForLoadState('networkidle');
+    await loginAs(page, demoUsers.hrManager.email);
+    await page.goto('/onboarding', {waitUntil: 'domcontentloaded', timeout: 90000});
 
     await page.setViewportSize({width: 375, height: 667});
     await page.waitForTimeout(500);

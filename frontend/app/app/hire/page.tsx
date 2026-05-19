@@ -9,20 +9,22 @@ import {ShieldAlert} from 'lucide-react';
 /** NU-Hire entry point — redirects to recruitment dashboard */
 export default function HireEntryPage() {
   const router = useRouter();
-  const {hasHydrated, isAuthenticated} = useAuth();
+  const {hasHydrated, isAuthenticated, restoreSession} = useAuth();
   const {hasAppAccess} = useActiveApp();
 
   useEffect(() => {
     if (!hasHydrated) return;
     if (!isAuthenticated) {
-      router.replace('/auth/login');
+      restoreSession().then((restored) => {
+        if (!restored) router.replace('/auth/login');
+      });
       return;
     }
     // DEF-40: Check app-level RBAC before redirecting
     if (hasAppAccess('HIRE')) {
       router.replace('/recruitment');
     }
-  }, [hasHydrated, isAuthenticated, router, hasAppAccess]);
+  }, [hasHydrated, isAuthenticated, router, hasAppAccess, restoreSession]);
 
   // Show access denied if authenticated but no access
   if (hasHydrated && isAuthenticated && !hasAppAccess('HIRE')) {

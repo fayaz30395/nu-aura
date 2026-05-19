@@ -102,7 +102,7 @@ export default function FnFPage() {
   const exitProcessId = searchParams.get('exitProcessId') ?? '';
   const queryClient = useQueryClient();
   const {isAuthenticated, hasHydrated} = useAuth();
-  const {hasAnyPermission, isReady: permissionsReady} = usePermissions();
+  const {hasAnyPermission, hasPermission, isReady: permissionsReady} = usePermissions();
 
   // DEF-56: Gate on EXIT_VIEW or EXIT_MANAGE permission before rendering financial data
   useEffect(() => {
@@ -158,9 +158,17 @@ export default function FnFPage() {
   }
 
   if (!exitProcessId) return (
-    <Alert icon={<IconAlertCircle size={16}/>} color="orange">
-      No exit process selected. Add ?exitProcessId=... to the URL.
-    </Alert>
+    <AppLayout>
+      <Stack gap="lg" p="md">
+        <div>
+          <Title order={2}>Full & Final Settlement</Title>
+          <Text c="dimmed" size="sm">Select an exit process to review or process settlement details.</Text>
+        </div>
+        <Alert icon={<IconAlertCircle size={16}/>} color="orange">
+          No exit process selected. Add ?exitProcessId=... to the URL.
+        </Alert>
+      </Stack>
+    </AppLayout>
   );
 
   if (isLoading) return <Center h={300}><Loader/></Center>;
@@ -168,8 +176,9 @@ export default function FnFPage() {
     <Alert icon={<IconAlertCircle size={16}/>} color="red">Failed to load FnF settlement</Alert>
   );
 
-  const canEdit = data.status === 'DRAFT' || data.status === 'PENDING_APPROVAL';
-  const canApprove = data.status === 'DRAFT' || data.status === 'PENDING_APPROVAL';
+  const canManageFnF = hasPermission(Permissions.EXIT_MANAGE);
+  const canEdit = canManageFnF && (data.status === 'DRAFT' || data.status === 'PENDING_APPROVAL');
+  const canApprove = canManageFnF && (data.status === 'DRAFT' || data.status === 'PENDING_APPROVAL');
 
   return (
     <AppLayout>

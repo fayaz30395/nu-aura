@@ -614,7 +614,7 @@ test.describe('SYS-08: Feature Flags Status', () => {
 
     const flagsResult = await page.evaluate(async () => {
       try {
-        const r = await fetch('/api/v1/admin/features', {
+        const r = await fetch('/api/v1/admin/feature-flags/map', {
           credentials: 'include',
           signal: AbortSignal.timeout(10000),
         });
@@ -660,13 +660,13 @@ test.describe('SYS-08: Feature Flags Status', () => {
       }
     } else if (flagsResult.status === 404) {
       // Feature flags endpoint not implemented — log, do not hard-fail
-      console.warn('SYS-08: /api/v1/admin/features returned 404 — endpoint may not be implemented');
+      console.warn('SYS-08: /api/v1/admin/feature-flags/map returned 404 — endpoint may not be implemented');
     }
   });
 
-  test('/admin/features page loads without error if it exists', async ({page}) => {
+  test('/admin/feature-flags page loads without error if it exists', async ({page}) => {
     await loginAs(page, demoUsers.superAdmin.email);
-    await page.goto('/admin/features', {waitUntil: 'domcontentloaded'});
+    await page.goto('/admin/feature-flags', {waitUntil: 'domcontentloaded'});
     await page.waitForTimeout(1500);
 
     const has500 = await page
@@ -675,8 +675,8 @@ test.describe('SYS-08: Feature Flags Status', () => {
       .isVisible()
       .catch(() => false);
 
-    expect(has500, '/admin/features shows 500 error').toBe(false);
-    console.log('SYS-08: /admin/features loaded without 500');
+    expect(has500, '/admin/feature-flags shows 500 error').toBe(false);
+    console.log('SYS-08: /admin/feature-flags loaded without 500');
   });
 });
 

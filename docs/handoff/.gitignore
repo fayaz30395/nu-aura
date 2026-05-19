@@ -1,0 +1,14 @@
+# Handoff message bus is ephemeral. Never commit message content.
+*
+!.gitignore
+!README.md
+!diffs/
+!followups/
+!.locks/
+
+diffs/*
+followups/*
+.locks/*
+!diffs/.gitkeep
+!followups/.gitkeep
+!.locks/.gitkeep
