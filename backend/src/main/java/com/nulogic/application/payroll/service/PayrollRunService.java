@@ -37,6 +37,7 @@ public class PayrollRunService {
     private final EmployeeRepository employeeRepository;
     private final SalaryStructureRepository salaryStructureRepository;
     private final PayslipRepository payslipRepository;
+    private final PayrollPeriodLock payrollPeriodLock;
 
     /**
      * Create a new payroll run for a given period.
@@ -47,6 +48,14 @@ public class PayrollRunService {
     public PayrollRun createPayrollRun(PayrollRun payrollRun) {
         UUID tenantId = TenantContext.getCurrentTenant();
         payrollRun.setTenantId(tenantId);
+
+        // T1-04: serialize all concurrent work for this (tenant, period) tuple,
+        // regardless of run id. The row-level FOR UPDATE below can't lock a
+        // not-yet-existent row, so two parallel creates would otherwise both
+        // pass the existence check and race the unique-index insert.
+        payrollPeriodLock.lockPeriod(tenantId,
+                payrollRun.getPayPeriodYear(),
+                payrollRun.getPayPeriodMonth());
 
         // Pessimistic lock: if a concurrent run exists, lock it to prevent duplicates.
         // This replaces the non-atomic exists-then-create pattern.
@@ -169,6 +178,13 @@ public class PayrollRunService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public PayrollRun completeProcessing(UUID id, UUID processedBy) {
         PayrollRun payrollRun = getPayrollRunForUpdate(id);
+        // T1-04: period-wide advisory lock so any other code path that might
+        // be computing payslips for (tenant, year, month) — legacy sync call,
+        // ad-hoc replay, retried delivery on a different consumer instance —
+        // serializes here. Released at transaction commit/rollback.
+        payrollPeriodLock.lockPeriod(payrollRun.getTenantId(),
+                payrollRun.getPayPeriodYear(),
+                payrollRun.getPayPeriodMonth());
         int generatedPayslips = generatePayslipsForRun(payrollRun);
         payrollRun.setTotalEmployees(generatedPayslips);
         payrollRun.process(processedBy);
@@ -213,6 +229,11 @@ public class PayrollRunService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public PayrollRun processPayrollRun(UUID id, UUID processedBy) {
         PayrollRun payrollRun = getPayrollRunForUpdate(id);
+        // T1-04: same period-wide lock as completeProcessing — the legacy sync
+        // path must serialize with the async consumer path on the same period.
+        payrollPeriodLock.lockPeriod(payrollRun.getTenantId(),
+                payrollRun.getPayPeriodYear(),
+                payrollRun.getPayPeriodMonth());
         int generatedPayslips = generatePayslipsForRun(payrollRun);
         payrollRun.setTotalEmployees(generatedPayslips);
         payrollRun.process(processedBy);

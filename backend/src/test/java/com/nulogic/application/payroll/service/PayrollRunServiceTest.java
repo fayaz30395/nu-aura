@@ -49,6 +49,8 @@ class PayrollRunServiceTest {
     private SalaryStructureRepository salaryStructureRepository;
     @Mock
     private PayslipRepository payslipRepository;
+    @Mock
+    private PayrollPeriodLock payrollPeriodLock;
     @InjectMocks
     private PayrollRunService payrollRunService;
     private UUID tenantId;
