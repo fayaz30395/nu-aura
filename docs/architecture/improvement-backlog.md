@@ -278,7 +278,8 @@ Code-level work is DONE for these items but they need on-cluster verification.
 
 ### T3-10 · MapStruct is in `pom.xml` but unused
 
-- **Status:** OPEN
+- **Status:** IN PROGRESS — pilot landed 2026-05-20, ~10 controller call sites
+  remaining.
 - **Where:** Controllers use `BeanUtils.copyProperties()` with ignore-lists
   (`PayrollController:54`, `LeaveRequestController:69`).
 - **Why it matters:** Ignore-lists drift silently — add a new sensitive field,
@@ -287,6 +288,48 @@ Code-level work is DONE for these items but they need on-cluster verification.
 - **Fix:** Pick one. Either remove the MapStruct dep, or migrate controllers
   to MapStruct DTO↔Entity converters and delete every `BeanUtils.copyProperties`
   call.
+
+**Pilot landed (2026-05-20)**
+
+- **Controller:** `backend/src/main/java/com/nulogic/api/leave/controller/LeaveTypeController.java`
+- **Mapper:** `backend/src/main/java/com/nulogic/api/leave/mapper/LeaveTypeMapper.java`
+- **Pattern to copy** (verbatim, three pieces):
+  1. `@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.ERROR)`
+     — strict mode is the whole point. Every entity field must be either mapped
+     or marked `ignore = true`, or the build fails. **Do not downgrade to WARN.**
+  2. For every `BaseEntity` / `TenantAware` field, add an explicit
+     `@Mapping(target = "...", ignore = true)` with an inline comment naming
+     *why* the field isn't settable from the API (audit, JPA, soft-delete,
+     framework). The mass-assignment ignore-list is now per-field, version-
+     controlled, and verified at compile time.
+     - Ignore list for any `TenantAware` subclass: `id`, `tenantId`, `createdAt`,
+       `updatedAt`, `createdBy`, `lastModifiedBy` (NOT `updatedBy` — that name
+       doesn't exist on the entity), `version`, `isDeleted`, `deletedAt`. Use
+       `isDeleted`, **not** `deleted` — Lombok `@SuperBuilder` keeps the
+       property name.
+  3. For update endpoints, add `@BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)`
+     on `updateEntity(...)` to keep partial-update semantics (null in the
+     request leaves the existing entity value alone).
+- **Remaining `BeanUtils.copyProperties` call sites repo-wide: 11**
+  (5 files under `backend/src/main/java/com/nulogic/api/`: AttendanceController,
+  LeaveBalanceController, LeaveRequestController, LeaveTypeController [done],
+  LeaveTypeController helper [done], + ~3 others under non-`api/` packages.)
+- **Suggested rollout order** (one PR per module, smallest first — module size
+  here = entity surface, not LOC):
+  1. `leave/LeaveBalanceController` — 1 site, balance ↔ response only.
+  2. `attendance/AttendanceController:457` — 1 site, response mapping only.
+  3. `leave/LeaveRequestController` — 4 sites, but ALL mapping to a sibling
+     `LeaveRequestData` shell; pattern is identical to LeaveType. **Caution:**
+     a parallel worker has an untracked `LeaveRequestMapper.java` WIP at
+     `backend/src/main/java/com/nulogic/api/leave/mapper/` — coordinate with
+     them before opening the PR.
+  4. Remaining non-`api/` call sites (mostly internal converters, not security-
+     sensitive but worth migrating for consistency).
+- **Anti-pattern observed during pilot:** a parallel worker introduced
+  `api/common/mapping/ApiMapperConfig.java` that calls
+  `ignoreUnmappedSourceProperties()` (does not exist on `@MapperConfig` in
+  MapStruct 1.6.3). Do NOT use that helper file as a template until it
+  compiles. The pilot uses per-mapper config and works cleanly.
 - **Last updated:** 2026-05-20
 
 ### T3-11 · No standardized API response envelope
@@ -326,27 +369,94 @@ Code-level work is DONE for these items but they need on-cluster verification.
 
 ### T3-13 · Mantine + Tailwind dual styling
 
-- **Status:** OPEN
+- **Status:** DONE — rule documented in `frontend/components/ui/README.md`
+  + drift checker (`frontend/scripts/check-styling-drift.mjs`); migration
+  of existing drift is a separate housekeeping task.
 - **Where:** `mantine-theme.ts` + `tailwind.config.js` both consume
-  `globals.css` CSS vars.
+  `globals.css` CSS vars. Confirmed both map to the same token set
+  (no misconfiguration found).
 - **Why it matters:** Two layers competing on layout/spacing/buttons.
   Cognitive overhead — "do I use a Mantine Button or a Tailwind-styled
   native?" Bundle ships both.
-- **Fix:** Pick a side per concern. Mantine for inputs/modals/datepickers
-  (where its semantics matter), Tailwind for layouts. Document the rule in
-  `frontend/components/ui/README.md` and code-mod existing drift.
+- **Rule (one-liner):** Mantine owns form inputs + portal-y composites
+  (modal/menu/popover/tooltip/notification); Tailwind owns layout/spacing/
+  typography; `components/ui/*` wrappers own buttons/cards/badges; CSS
+  vars in `app/globals.css` are the only token source — no hex literals
+  in component code.
+- **What landed (2026-05-20):**
+  - `frontend/components/ui/README.md` — the rule, patterns,
+    anti-patterns, decision tree (~75 lines).
+  - `frontend/scripts/check-styling-drift.mjs` — node-only scanner,
+    no deps, exits 0 (report-only, not a CI gate yet). Flags:
+    `raw-input`, `raw-select`, `raw-textarea` outside `components/ui/`;
+    `inline-style` (JSX `style={{…}}`); `hex-in-className` (Tailwind
+    arbitrary values with hex literals).
+  - `package.json` script: `npm run lint:design-system`.
+- **Drift baseline (2026-05-20):**
+  - Total findings: **252**
+  - `inline-style`: 175
+  - `raw-input`: 54
+  - `raw-select`: 17
+  - `raw-textarea`: 6
+  - `hex-in-className`: 0
+  - Top offenders: `app/workflows/[id]/page.tsx` (9),
+    `components/dashboard/TimeClockWidget.tsx` (8),
+    `components/projects/CalendarView.tsx` (7).
+  - Re-run anytime: `cd frontend && npm run lint:design-system`. Trend
+    should monotonically decrease as housekeeping PRs land.
+- **Follow-up:** Housekeeping task to migrate the 252 baseline hits in
+  small batches (start with the top 10 offenders). Promote the checker
+  to a CI gate once findings ≤ 50.
 - **Last updated:** 2026-05-20
 
 ### T3-14 · Single Zustand store across 261 routes
 
-- **Status:** OPEN
-- **Where:** `useAuth.ts` is the only store (per MEMORY.md and verified in code).
+- **Status:** IN PROGRESS — `useUiStore` slice landed + `AppLayout` migrated;
+  remaining ad-hoc `useState` / `localStorage` cross-route patterns listed as
+  follow-ups
+- **Where:** `useAuth.ts` was the only store (per MEMORY.md and verified in
+  code). New slices live at `frontend/lib/stores/`.
 - **Why it matters:** Server state is in React Query (good), but UI state
   (sidebar collapse, app-shell tabs, draft form state) drifts into ad-hoc
   `useState` chains. As route count grows this leaks.
 - **Fix:** Per-feature Zustand slices for UI state that crosses routes
   (sidebar, command palette, notification center). Keep React Query for
   server state.
+- **What landed (2026-05-20):**
+  - `frontend/lib/stores/README.md` — slice-per-file convention,
+    `useXxxStore` naming, persistence rules.
+  - `frontend/lib/stores/useUiStore.ts` — `sidebarCollapsed` (persisted),
+    `mobileNavOpen` (ephemeral), `commandPaletteOpen` (ephemeral) with full
+    TS types and a custom `PersistStorage` adapter that bridges Zustand onto
+    the legacy `sidebar-collapsed` localStorage key (raw `'true'`/`'false'`),
+    so existing user state survives the migration.
+  - `frontend/lib/stores/useNotificationStore.ts` — second slice (panel
+    open/close, badge dismissal) shipped as a forward-looking placeholder
+    since no production component owns this state today.
+  - `frontend/lib/stores/useUiStore.test.ts` — Vitest covering defaults,
+    `setSidebarCollapsed` / `toggleSidebar` actions writing through, mobile
+    nav + command palette toggles staying ephemeral, and rehydration from
+    the legacy storage key. All 4 tests pass.
+  - `frontend/components/layout/AppLayout.tsx` — migrated off the ad-hoc
+    `safeStorage.get/set('sidebar-collapsed')` pattern; `isCollapsed` and
+    `isMobileMenuOpen` now read from `useUiStore`. Cmd/Ctrl+B keyboard
+    shortcut and the `onSidebarCollapsedChange` parent callback preserved.
+  - `npx tsc --noEmit` clean.
+- **Remaining (follow-ups, NOT in scope for T3-14):**
+  - `frontend/app/admin/AdminLayoutInner.tsx` — duplicate sidebar-collapse
+    pattern under a different key (`admin-sidebar-collapsed`). Migrate to a
+    second `useUiStore` field or fold the admin shell into `AppLayout`.
+  - `frontend/components/ui/Sidebar.tsx` — owns its own `sidebar-collapsed`
+    and `sidebar-collapsed-sections` storage reads (section-level expand
+    state). Crosses routes but is component-local today.
+  - `frontend/components/layout/DarkModeProvider.tsx` — theme preference in
+    `safeStorage`. Candidate for a `useThemeStore` slice once a second
+    consumer needs it.
+  - `frontend/components/ui/DashboardGrid.tsx`,
+    `frontend/components/ui/DataTable.tsx`,
+    `frontend/components/ui/AdvancedFilterPanel.tsx` — per-instance layout /
+    filter preferences in `safeStorage`. Stay as-is unless they need to be
+    read from another route (then promote to a slice).
 - **Last updated:** 2026-05-20
 
 ### T3-15 · JaCoCo target 80% — enforcement wired (ratcheted floor)

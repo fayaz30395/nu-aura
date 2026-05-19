@@ -2,6 +2,7 @@ package com.nulogic.api.leave.controller;
 
 import com.nulogic.api.leave.dto.LeaveTypeRequest;
 import com.nulogic.api.leave.dto.LeaveTypeResponse;
+import com.nulogic.api.leave.mapper.LeaveTypeMapper;
 import com.nulogic.application.leave.service.LeaveTypeService;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.RequiresPermission;
@@ -13,7 +14,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 public class LeaveTypeController {
 
     private final LeaveTypeService leaveTypeService;
+    private final LeaveTypeMapper leaveTypeMapper;
 
     @PostMapping
     @RequiresPermission(Permission.LEAVE_APPROVE)
@@ -43,18 +44,11 @@ public class LeaveTypeController {
             @ApiResponse(responseCode = "403", description = "Forbidden — requires LEAVE:APPROVE permission")
     })
     public ResponseEntity<LeaveTypeResponse> createLeaveType(@Valid @RequestBody LeaveTypeRequest request) {
-        LeaveType leaveType = new LeaveType();
-        // SEC-FIX (F7): Explicitly ignore sensitive entity fields to prevent mass-assignment attacks.
-        BeanUtils.copyProperties(request, leaveType,
-                "id", "tenantId", "createdAt", "updatedAt", "createdBy", "updatedBy", "version");
-        if (request.getAccrualType() != null) {
-            leaveType.setAccrualType(LeaveType.AccrualType.valueOf(request.getAccrualType()));
-        }
-        if (request.getGenderSpecific() != null) {
-            leaveType.setGenderSpecific(LeaveType.GenderSpecific.valueOf(request.getGenderSpecific()));
-        }
+        // T3-10: MapStruct mapper enforces the mass-assignment ignore-list at compile time
+        // (see LeaveTypeMapper). String→enum conversion is handled by mapper default methods.
+        LeaveType leaveType = leaveTypeMapper.toEntity(request);
         LeaveType created = leaveTypeService.createLeaveType(leaveType);
-        return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(created));
+        return ResponseEntity.status(HttpStatus.CREATED).body(leaveTypeMapper.toResponse(created));
     }
 
     @PutMapping("/{id}")
@@ -69,17 +63,12 @@ public class LeaveTypeController {
     public ResponseEntity<LeaveTypeResponse> updateLeaveType(
             @Parameter(description = "Leave type UUID") @PathVariable UUID id,
             @Valid @RequestBody LeaveTypeRequest request) {
-        LeaveType leaveTypeData = new LeaveType();
-        BeanUtils.copyProperties(request, leaveTypeData,
-                "id", "tenantId", "createdAt", "updatedAt", "createdBy", "updatedBy", "version");
-        if (request.getAccrualType() != null) {
-            leaveTypeData.setAccrualType(LeaveType.AccrualType.valueOf(request.getAccrualType()));
-        }
-        if (request.getGenderSpecific() != null) {
-            leaveTypeData.setGenderSpecific(LeaveType.GenderSpecific.valueOf(request.getGenderSpecific()));
-        }
+        // T3-10: MapStruct enforces the mass-assignment ignore-list at compile time.
+        // Service still expects a data-shell entity (current contract); a future pass
+        // can switch the service to use mapper.updateEntity() on the loaded entity.
+        LeaveType leaveTypeData = leaveTypeMapper.toEntity(request);
         LeaveType updated = leaveTypeService.updateLeaveType(id, leaveTypeData);
-        return ResponseEntity.ok(toResponse(updated));
+        return ResponseEntity.ok(leaveTypeMapper.toResponse(updated));
     }
 
     @GetMapping("/{id}")
@@ -92,7 +81,7 @@ public class LeaveTypeController {
     public ResponseEntity<LeaveTypeResponse> getLeaveType(
             @Parameter(description = "Leave type UUID") @PathVariable UUID id) {
         LeaveType leaveType = leaveTypeService.getLeaveTypeById(id);
-        return ResponseEntity.ok(toResponse(leaveType));
+        return ResponseEntity.ok(leaveTypeMapper.toResponse(leaveType));
     }
 
     @GetMapping
@@ -101,7 +90,7 @@ public class LeaveTypeController {
     @ApiResponse(responseCode = "200", description = "Leave types retrieved successfully")
     public ResponseEntity<Page<LeaveTypeResponse>> getAllLeaveTypes(Pageable pageable) {
         Page<LeaveType> leaveTypes = leaveTypeService.getAllLeaveTypes(pageable);
-        return ResponseEntity.ok(leaveTypes.map(this::toResponse));
+        return ResponseEntity.ok(leaveTypes.map(leaveTypeMapper::toResponse));
     }
 
     @GetMapping("/active")
@@ -110,7 +99,7 @@ public class LeaveTypeController {
     @ApiResponse(responseCode = "200", description = "Active leave types retrieved successfully")
     public ResponseEntity<List<LeaveTypeResponse>> getActiveLeaveTypes() {
         List<LeaveType> leaveTypes = leaveTypeService.getActiveLeaveTypes();
-        return ResponseEntity.ok(leaveTypes.stream().map(this::toResponse).collect(Collectors.toList()));
+        return ResponseEntity.ok(leaveTypes.stream().map(leaveTypeMapper::toResponse).collect(Collectors.toList()));
     }
 
     @PatchMapping("/{id}/activate")
@@ -124,7 +113,7 @@ public class LeaveTypeController {
             @Parameter(description = "Leave type UUID") @PathVariable UUID id) {
         leaveTypeService.activateLeaveType(id);
         LeaveType leaveType = leaveTypeService.getLeaveTypeById(id);
-        return ResponseEntity.ok(toResponse(leaveType));
+        return ResponseEntity.ok(leaveTypeMapper.toResponse(leaveType));
     }
 
     @PatchMapping("/{id}/deactivate")
@@ -139,7 +128,7 @@ public class LeaveTypeController {
             @Parameter(description = "Leave type UUID") @PathVariable UUID id) {
         leaveTypeService.deactivateLeaveType(id);
         LeaveType leaveType = leaveTypeService.getLeaveTypeById(id);
-        return ResponseEntity.ok(toResponse(leaveType));
+        return ResponseEntity.ok(leaveTypeMapper.toResponse(leaveType));
     }
 
     @DeleteMapping("/{id}")
@@ -156,15 +145,4 @@ public class LeaveTypeController {
         return ResponseEntity.noContent().build();
     }
 
-    private LeaveTypeResponse toResponse(LeaveType leaveType) {
-        LeaveTypeResponse response = new LeaveTypeResponse();
-        BeanUtils.copyProperties(leaveType, response);
-        if (leaveType.getAccrualType() != null) {
-            response.setAccrualType(leaveType.getAccrualType().name());
-        }
-        if (leaveType.getGenderSpecific() != null) {
-            response.setGenderSpecific(leaveType.getGenderSpecific().name());
-        }
-        return response;
-    }
 }
