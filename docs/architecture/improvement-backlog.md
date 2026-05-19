@@ -250,13 +250,26 @@ Code-level work is DONE for these items but they need on-cluster verification.
 
 ### T2-09 · Deploy is `workflow_dispatch` only
 
-- **Status:** OPEN
-- **Where:** `.github/workflows/deploy.yml`.
+- **Status:** DONE
+- **Where:** `.github/workflows/deploy.yml`,
+  `infra/deployment/helm/hrms/templates/rollout.yaml`,
+  `infra/deployment/helm/hrms/values.yaml`.
 - **Why it matters:** Every prod deploy is a button press. No progressive
   delivery, no canary, no auto-rollback. Hard to scale to many releases per
   day.
-- **Fix:** Auto-deploy to staging on main merge, manual gate to prod, Argo
-  Rollouts or Flagger for canary on the GKE side.
+- **Fix:** (a) `push: branches: [main]` auto-runs `build` + `deploy-staging`
+  jobs and a `/actuator/health` smoke gate; (b) `deploy-production` is
+  `workflow_dispatch` only and protected by the `production` GitHub
+  Environment's `required_reviewers` rule (configure in repo settings →
+  Environments → production); (c) an Argo Rollouts canary template
+  (`rollout.yaml`) is gated behind the Helm value `canary.enabled`
+  (default `false`) so the chart still renders on clusters without the
+  argoproj.io CRDs. When enabled it canary-promotes 20 → 50 → 100 with a
+  5min pause and Prometheus analysis (p99 latency < 1s, 5xx rate < 0.5%)
+  between each step, auto-rolling back on regression. The legacy backend
+  Deployment is skipped when `canary.enabled=true` to avoid selector
+  collision. Cluster prereq: install the Argo Rollouts controller in the
+  `argo-rollouts` namespace before flipping the flag.
 - **Last updated:** 2026-05-20
 
 ---
@@ -291,14 +304,24 @@ Code-level work is DONE for these items but they need on-cluster verification.
 
 ### T3-12 · No generated TypeScript client from OpenAPI
 
-- **Status:** OPEN
+- **Status:** IN PROGRESS — codegen wired (2026-05-20); migration of
+  hand-rolled `frontend/lib/api/*.ts` consumers is the follow-up.
 - **Where:** `frontend/lib/api/*.ts` is hand-rolled (~1200 LOC).
 - **Why it matters:** SpringDoc emits OpenAPI for all 177 controllers — but TS
   types are manually maintained. Backend changes break frontend silently
   until runtime.
-- **Fix:** `openapi-typescript-codegen` or `orval` to generate from
-  `/v3/api-docs` into `frontend/lib/generated/`. Keep the thin Axios wrapper
-  for auth/refresh.
+- **Fix:** `orval` (v7) generates a React-Query client from `/v3/api-docs`
+  into `frontend/lib/generated/api/` (gitignored — reproducible). Wired via:
+  - `frontend/orval.config.ts` — `tags-split` per OpenAPI tag, `client:
+    'react-query'`, input override `API_DOCS_URL` for CI snapshots.
+  - `frontend/lib/api/orval-mutator.ts` — routes every generated call
+    through the existing `apiClient` so httpOnly-cookie auth, 401 refresh
+    mutex, CSRF double-submit, and tenant headers stay intact.
+  - `npm run api:generate` script. Backend must be running locally (or
+    `API_DOCS_URL` set to a snapshot) before running.
+- **Follow-up:** Migrate hand-rolled `frontend/lib/api/*.ts` consumers to
+  the generated hooks one slice at a time (auth → users → roles → …),
+  then delete the originals. Keep `client.ts` and `orval-mutator.ts`.
 - **Last updated:** 2026-05-20
 
 ### T3-13 · Mantine + Tailwind dual styling
@@ -354,17 +377,39 @@ Code-level work is DONE for these items but they need on-cluster verification.
 
 ### T4-16 · Neon connection ceiling at ~5 pods
 
-- **Status:** OPEN
-- **Where:** `application-prod.yml:535-536` Hikari max=20/pod × Neon free tier
-  100 connections.
+- **Status:** DONE (config landed; secret rotation pending in prod cluster)
+- **Where:** `application-prod.yml` Hikari block × Neon free tier 100 connections.
 - **Why it matters:** 6th pod = pool exhaustion. Hard wall.
-- **Fix:** PgBouncer in transaction-pooling mode in front of Neon (or Neon's
-  built-in pooler endpoint). Drop per-pod Hikari to 5-10.
+- **Fix landed (2026-05-20):**
+  - Prod Hikari `maximum-pool-size` dropped from 20 → **8** (`DB_POOL_MAX`),
+    `minimum-idle` from 5 → **2** (`DB_POOL_MIN`). Ceiling lifts from ~5 to
+    ~12 pods on the same 100-connection Neon endpoint.
+  - Server-side prepared-statement cache disabled (`prepareThreshold=0`,
+    `preparedStatementCacheQueries=0`, `preparedStatementCacheSizeMiB=0`) and
+    `auto-commit=true` set explicitly so app traffic is safe on PgBouncer
+    transaction-mode (where prepared statements can leak across sessions and
+    connection-level state isn't preserved).
+  - `application-dev.yml` documents the same `DEV_DATABASE_URL` override path
+    for local testing against the pooled endpoint.
+- **Prod rollout steps the operator must take:**
+  1. In Neon console, copy the pooled-endpoint host
+     (`ep-xxx-pooler.<region>.aws.neon.tech`) and rotate the K8s secret so
+     `SPRING_DATASOURCE_URL` resolves to it with `?sslmode=require&pgbouncer=true`.
+  2. Leave `FLYWAY_URL` (and `FLYWAY_USER`/`FLYWAY_PASSWORD`) pointed at the
+     **direct** endpoint — PgBouncer transaction-mode breaks Flyway's session-level
+     advisory locks.
+  3. Roll the backend deployment; first pod should report `HikariCP` max=8 at
+     startup and Neon dashboard should show roughly `pods × 8` active connections.
+- **Not done (intentional):** No `pgbouncer` service added to `docker-compose.yml`
+  because the project removed its local Postgres service and points dev directly
+  at Neon — adding pgbouncer in front of Neon dev is redundant. If a contributor
+  wants to exercise the pooled path locally, set `DEV_DATABASE_URL` to the Neon
+  pooler endpoint.
 - **Last updated:** 2026-05-20
 
 ### T4-17 · ThreadLocal won't survive Java 21 virtual threads
 
-- **Status:** OPEN
+- **Status:** DONE
 - **Where:** `TenantContext.java`, all `@Async` paths,
   `CompletableFuture.supplyAsync()` call sites (if any).
 - **Why it matters:** If/when you adopt virtual threads
@@ -374,16 +419,46 @@ Code-level work is DONE for these items but they need on-cluster verification.
 - **Fix:** Audit `CompletableFuture` / `parallelStream` usages. Adopt
   `io.micrometer.context.ContextRegistry` + `ContextSnapshot` for portable
   propagation.
+- **Resolution:**
+  (a) Audited all `CompletableFuture.runAsync`/`supplyAsync`, `parallelStream`,
+  and `new Thread(...)` usages in `backend/src/main/java`. Only one active
+  raw-executor CF site existed (`FluenceChatService:79`); already fixed in
+  commit `e50d7a70` to pass `taskExecutor` explicitly. The remaining match
+  (`EventPublisher.java:313`) is a javadoc reference, not a call. Zero
+  `parallelStream` and zero `new Thread(...)` usages found — nothing left to
+  list.
+  (b) Added `ContextPropagationConfig` (under `com.nulogic.common.config`) that
+  registers `io.micrometer.context.ContextRegistry` ThreadLocal accessors for
+  `TenantContext` and Spring `SecurityContextHolder`, plus exposes a
+  `ContextSnapshotFactory` bean. `context-propagation:1.1.4` is already
+  resolved transitively via reactor-core (no pom change). `@ConditionalOnClass`
+  keeps it inert if BOM resolution ever skips it.
+  (c) Added a 4-line javadoc note to `TenantAwareTaskDecorator` pointing
+  future maintainers at the harness and the explicit-executor requirement.
+  (d) Virtual threads remain off (`spring.threads.virtual.enabled=false`).
+  The harness is dormant by design — opt-in when the platform is ready.
 - **Last updated:** 2026-05-20
 
 ### T4-18 · WebSocket relay has no degraded-mode metric
 
-- **Status:** OPEN
+- **Status:** DONE
 - **Where:** `RedisWebSocketRelay:114-116` — silent local-fallback if Redis
   down.
 - **Why it matters:** Users on pod A won't see updates from pod B until Redis
   recovers. No metric, no alert.
 - **Fix:** Counter on `ws.relay.local_fallback_total`, page on sustained > 0.
+- **Resolution:**
+  (a) Added `ws_relay_local_fallback_total` counter with `reason` tag
+  (`redis_unavailable` for connection/timeout/pool failures,
+  `redis_publish_error` for everything else) at the fallback site in
+  `RedisWebSocketRelay#publish`.
+  (b) Promoted the fallback log to an explicit WARN with the same `reason`
+  tag and the exception stack, so on-call sees what users are missing.
+  (c) Added `WebSocketRelayDegraded` Prometheus alert in
+  `infra/monitoring/prometheus/rules/nu-aura.rules.yml`
+  (`rate(ws_relay_local_fallback_total[5m]) > 0` sustained for 10m,
+  severity `warning`).
+  Runtime fallback behavior intentionally unchanged — only observability.
 - **Last updated:** 2026-05-20
 
 ---

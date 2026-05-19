@@ -2,6 +2,11 @@
 # deployment/kubernetes/backend-deployment.yaml. Keep that flat manifest in
 # sync (S5-B owns it for backward compat); this template lets new tenants
 # `helm install` with environment-specific overrides.
+#
+# T2-09: when `canary.enabled=true` this Deployment is SKIPPED and the
+# argoproj.io/Rollout in rollout.yaml takes over (same labels/selector). Both
+# objects cannot coexist or they fight over the same pods.
+{{- if not .Values.canary.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -432,3 +437,4 @@ spec:
       # Setting this too low (e.g. the old 30s) causes K8s to SIGKILL mid-flush,
       # leaving STOMP clients to retry storm against the next-ready pod.
       terminationGracePeriodSeconds: 60
+{{- end }}

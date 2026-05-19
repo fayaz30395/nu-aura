@@ -1,5 +1,7 @@
 package com.nulogic.infrastructure.websocket;
 
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
@@ -28,14 +30,24 @@ public class RedisWebSocketRelay {
      */
     public static final String WS_RELAY_CHANNEL = "ws:relay";
 
+    /**
+     * Counter metric name for local-only fallback delivery (Prometheus convention:
+     * snake_case + {@code _total} suffix). Tagged by {@code reason} so alerts can
+     * distinguish Redis outages from publish errors.
+     */
+    static final String FALLBACK_COUNTER_NAME = "ws_relay_local_fallback_total";
+
     private final RedisTemplate<String, Object> redisTemplate;
     private final SimpMessagingTemplate messagingTemplate;
+    private final MeterRegistry meterRegistry;
     private final ChannelTopic topic;
 
     public RedisWebSocketRelay(RedisTemplate<String, Object> redisTemplate,
-                               SimpMessagingTemplate messagingTemplate) {
+                               SimpMessagingTemplate messagingTemplate,
+                               MeterRegistry meterRegistry) {
         this.redisTemplate = redisTemplate;
         this.messagingTemplate = messagingTemplate;
+        this.meterRegistry = meterRegistry;
         this.topic = new ChannelTopic(WS_RELAY_CHANNEL);
     }
 
@@ -111,9 +123,35 @@ public class RedisWebSocketRelay {
             log.debug("Published WebSocket message to Redis: destination={}, sendType={}",
                     message.getDestination(), message.getSendType());
         } catch (Exception e) { // Intentional broad catch — Redis pub/sub error boundary
-            // Fallback: deliver locally if Redis is down (single-pod graceful degradation)
-            log.warn("Redis publish failed, falling back to local delivery: {}", e.getMessage());
+            // Fallback: deliver locally if Redis is down (single-pod graceful degradation).
+            // Behavior intentionally preserved — only observability added (T4-18).
+            String reason = classifyFallbackReason(e);
+            Counter.builder(FALLBACK_COUNTER_NAME)
+                    .description("WebSocket relay falls back to local-only delivery; cross-pod updates are lost")
+                    .tag("reason", reason)
+                    .register(meterRegistry)
+                    .increment();
+            log.warn("WebSocket relay falling back to local-only delivery; cross-pod updates lost. Reason: {}",
+                    reason, e);
             onMessage(message);
         }
+    }
+
+    /**
+     * Classify the publish exception into a low-cardinality {@code reason} tag for
+     * the {@link #FALLBACK_COUNTER_NAME} counter. Spring's
+     * {@code RedisConnectionFailureException} (and other connection-level errors)
+     * signal Redis unavailability; anything else is treated as a publish error
+     * (serialization, codec, etc.).
+     */
+    private String classifyFallbackReason(Throwable e) {
+        for (Throwable cause = e; cause != null; cause = cause.getCause()) {
+            String name = cause.getClass().getSimpleName();
+            if (name.contains("Connection") || name.contains("Timeout")
+                    || name.contains("Unavailable") || name.contains("Pool")) {
+                return "redis_unavailable";
+            }
+        }
+        return "redis_publish_error";
     }
 }

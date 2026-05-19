@@ -14,15 +14,37 @@ spring:
 
   datasource:
     hikari:
-      # Neon cloud PostgreSQL limits: 100 connections per endpoint (free tier).
-      # With N pods, each pod gets max-pool-size connections = N * 20 total.
-      # Safe for up to 5 pods; upgrade Neon plan before scaling beyond 5.
-      # Use PgBouncer for higher pod counts.
-      maximum-pool-size: ${DB_POOL_MAX:20}
-      minimum-idle: ${DB_POOL_MIN:5}
+      # T4-16: Pod-level pool sized for Neon's pooled (PgBouncer transaction-mode)
+      # endpoint. With the pooled endpoint, JDBC connections are leased-and-released
+      # per transaction against PgBouncer (not Postgres) — each pod only needs
+      # enough physical connections to cover in-flight queries, not steady-state
+      # tenant load. 8/pod lets us scale to ~12 pods under Neon's 100-connection
+      # ceiling while keeping headroom for Flyway (which uses the DIRECT endpoint,
+      # see FLYWAY_URL — keep that unchanged).
+      #
+      # PRODUCTION ROLLOUT (see T4-16 in docs/architecture/improvement-backlog.md):
+      #   1. In Neon console, copy the pooled endpoint host:
+      #      ep-xxx-pooler.<region>.aws.neon.tech
+      #   2. Update the K8s secret DB_HOST (or SPRING_DATASOURCE_URL) to point at
+      #      the pooler host. Keep ?sslmode=require and append &pgbouncer=true.
+      #   3. Leave FLYWAY_URL (or FLYWAY_HOST) pointed at the DIRECT endpoint —
+      #      PgBouncer transaction-mode breaks Flyway's session-level advisory locks.
+      maximum-pool-size: ${DB_POOL_MAX:8}
+      minimum-idle: ${DB_POOL_MIN:2}
       connection-timeout: 30000
       idle-timeout: 300000
       max-lifetime: 600000
+      # T4-16: PgBouncer transaction-mode is incompatible with server-side
+      # prepared statements (the prepared statement is bound to a server
+      # connection that PgBouncer may hand to another client mid-transaction).
+      # Disable the PG JDBC driver's server-side prepared-statement cache.
+      # Set auto-commit explicitly so no code path relies on connection-level
+      # state surviving across transactions (PgBouncer wouldn't preserve it).
+      auto-commit: true
+      data-source-properties:
+        prepareThreshold: 0
+        preparedStatementCacheQueries: 0
+        preparedStatementCacheSizeMiB: 0
 
     # Optional read-replica routing (wave-3 H7 / C7).
     # RoutingDataSourceConfig activates ONLY when SPRING_DATASOURCE_REPLICA_URL is set.

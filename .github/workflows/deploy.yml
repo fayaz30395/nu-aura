@@ -1,6 +1,15 @@
 name: Deploy
 
+# T2-09: progressive delivery.
+#   - push to main          → auto-runs build + deploy-staging (canary on cluster
+#                             side if Argo Rollouts controller is installed and
+#                             helm value `canary.enabled=true`)
+#   - workflow_dispatch     → manual trigger for either env; prod requires the
+#                             `production` GitHub Environment to grant approval
+#                             via its required_reviewers protection rule.
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
     inputs:
       target:
@@ -17,6 +26,10 @@ on:
 env:
   GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
   GCP_REGION: us-central1
+  # On push events `inputs.*` is undefined — fall back to the pushed branch /
+  # default 'staging' target so downstream jobs have non-empty strings.
+  DEPLOY_REF: ${{ github.event.inputs.ref || github.ref_name }}
+  DEPLOY_TARGET: ${{ github.event.inputs.target || 'staging' }}
 
 jobs:
   build:
@@ -28,7 +41,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.ref }}
+          ref: ${{ github.event.inputs.ref || github.ref }}
 
       - name: Image tags
         id: images
@@ -58,7 +71,9 @@ jobs:
   deploy-staging:
     name: Deploy → staging
     needs: build
-    if: ${{ inputs.target == 'staging' || inputs.target == 'production' }}
+    # Auto-runs on push-to-main; on workflow_dispatch only when target is
+    # staging or production (production runs staging first as a smoke gate).
+    if: ${{ github.event_name == 'push' || github.event.inputs.target == 'staging' || github.event.inputs.target == 'production' }}
     runs-on: ubuntu-latest
     environment:
       name: staging
@@ -66,7 +81,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.ref }}
+          ref: ${{ github.event.inputs.ref || github.ref }}
 
       - name: Auth GCP
         uses: google-github-actions/auth@v2
@@ -108,20 +123,30 @@ jobs:
             --set backend.image=${{ needs.build.outputs.backend-image }} \
             --set frontend.image=${{ needs.build.outputs.frontend-image }}
 
-      - name: Smoke test
+      # T2-09: green-light gate. Production is a manual workflow_dispatch with
+      # GitHub Environment approval; this smoke confirms staging is healthy
+      # before an operator clicks "Run workflow → production".
+      - name: Smoke test /actuator/health
         run: |
+          set -euo pipefail
           for i in {1..20}; do
-            if curl -sf https://staging.nu-aura.nulogic.com/actuator/health | grep -q UP; then
-              echo "Backend up"; exit 0
+            if curl -sf https://staging.nu-aura.nulogic.com/actuator/health | grep -q '"status":"UP"'; then
+              echo "Backend /actuator/health = UP (attempt ${i})"
+              exit 0
             fi
+            echo "Health check pending (attempt ${i})..."
             sleep 15
           done
-          echo "Smoke test failed"; exit 1
+          echo "Smoke test FAILED — /actuator/health did not return UP within 5min"
+          exit 1
 
   deploy-production:
     name: Deploy → production
     needs: deploy-staging
-    if: ${{ inputs.target == 'production' }}
+    # Prod NEVER auto-runs from push-to-main. Manual workflow_dispatch only,
+    # AND the `production` environment below has required_reviewers configured
+    # in GitHub repo settings as the second manual gate.
+    if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.target == 'production' }}
     runs-on: ubuntu-latest
     environment:
       name: production
@@ -129,7 +154,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.ref }}
+          ref: ${{ github.event.inputs.ref || github.ref }}
 
       - name: Auth GCP
         uses: google-github-actions/auth@v2
@@ -171,12 +196,16 @@ jobs:
             --set backend.image=${{ needs.build.outputs.backend-image }} \
             --set frontend.image=${{ needs.build.outputs.frontend-image }}
 
-      - name: Smoke test
+      - name: Smoke test /actuator/health
         run: |
+          set -euo pipefail
           for i in {1..20}; do
-            if curl -sf https://nu-aura.nulogic.com/actuator/health | grep -q UP; then
-              echo "Backend up"; exit 0
+            if curl -sf https://nu-aura.nulogic.com/actuator/health | grep -q '"status":"UP"'; then
+              echo "Backend /actuator/health = UP (attempt ${i})"
+              exit 0
             fi
+            echo "Health check pending (attempt ${i})..."
             sleep 15
           done
-          echo "Smoke test failed"; exit 1
+          echo "Smoke test FAILED — /actuator/health did not return UP within 5min"
+          exit 1

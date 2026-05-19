@@ -33,6 +33,11 @@ import java.util.UUID;
  * submitting thread) so that the async worker sees the tenant that initiated
  * the operation, not whatever tenant may be set in the pool thread at the
  * time it is reused.</p>
+ *
+ * <p><strong>Virtual-thread note (T4-17):</strong> If {@code spring.threads.virtual.enabled=true},
+ * ALSO ensure all {@code CompletableFuture.*Async(...)} calls pass {@code taskExecutor}
+ * explicitly — the virtual-thread ForkJoinPool does NOT run through this decorator.
+ * See {@link ContextPropagationConfig} for the structured-context propagation harness.</p>
  */
 public class TenantAwareTaskDecorator implements TaskDecorator {
 

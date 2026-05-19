@@ -1,0 +1,190 @@
+# T2-09: Argo Rollouts canary for the backend Spring Boot service.
+#
+# Off by default — gated on `canary.enabled` so the chart still installs on
+# clusters that don't have the argoproj.io CRDs. When enabled the legacy
+# Deployment in backend-deployment.yaml MUST be disabled (Rollout uses the same
+# `app=hrms,component=backend` selector and would otherwise fight it).
+#
+# Cluster prereq (install once per cluster, in argo-rollouts namespace):
+#   kubectl create namespace argo-rollouts
+#   kubectl apply -n argo-rollouts -f \
+#     https://github.com/argoproj/argo-rollouts/releases/latest/download/install.yaml
+#
+# Canary plan: 20% → pause 5m (analysis) → 50% → pause 5m (analysis) → 100%.
+# Analysis pulls Prometheus and aborts the rollout if either:
+#   - api_request_duration_seconds p99 > 1s (latency regression)
+#   - 5xx rate > 0.5% over the pause window (error regression)
+# Aborting auto-rolls back to the stable ReplicaSet — no human action.
+{{- if .Values.canary.enabled }}
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: hrms-backend
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: hrms
+    component: backend
+    version: v1
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+spec:
+  replicas: {{ .Values.backend.replicas }}
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+      app: hrms
+      component: backend
+  strategy:
+    canary:
+      # Reference the existing backend Service (infra/deployment/kubernetes/
+      # backend-service.yaml). Argo Rollouts swings endpoints between stable
+      # and canary ReplicaSets by weight.
+      stableService: hrms-backend
+      canaryService: hrms-backend-canary
+      maxSurge: 1
+      maxUnavailable: 0
+      steps:
+        - setWeight: 20
+        - pause: { duration: 5m }
+        - analysis:
+            templates:
+              - templateName: hrms-backend-canary-health
+        - setWeight: 50
+        - pause: { duration: 5m }
+        - analysis:
+            templates:
+              - templateName: hrms-backend-canary-health
+        - setWeight: 100
+  template:
+    metadata:
+      labels:
+        app: hrms
+        component: backend
+        version: v1
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+        prometheus.io/path: "/actuator/prometheus"
+    spec:
+      {{- if .Values.serviceAccount.enabled }}
+      serviceAccountName: {{ .Values.serviceAccount.backend.name }}
+      {{- else }}
+      serviceAccountName: {{ .Values.backend.serviceAccountName }}
+      {{- end }}
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: backend
+          image: "{{ .Values.imageRegistry }}/{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
+          imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: hrms-config
+            - secretRef:
+                name: hrms-secrets
+          resources:
+            requests:
+              memory: {{ .Values.backend.resources.requests.memory | quote }}
+              cpu: {{ .Values.backend.resources.requests.cpu | quote }}
+            limits:
+              memory: {{ .Values.backend.resources.limits.memory | quote }}
+              cpu: {{ .Values.backend.resources.limits.cpu | quote }}
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+            initialDelaySeconds: {{ .Values.backend.probes.liveness.initialDelaySeconds }}
+            periodSeconds: {{ .Values.backend.probes.liveness.periodSeconds }}
+            timeoutSeconds: {{ .Values.backend.probes.liveness.timeoutSeconds }}
+            failureThreshold: {{ .Values.backend.probes.liveness.failureThreshold }}
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+            initialDelaySeconds: {{ .Values.backend.probes.readiness.initialDelaySeconds }}
+            periodSeconds: {{ .Values.backend.probes.readiness.periodSeconds }}
+            timeoutSeconds: {{ .Values.backend.probes.readiness.timeoutSeconds }}
+            failureThreshold: {{ .Values.backend.probes.readiness.failureThreshold }}
+          startupProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: {{ .Values.backend.probes.startup.initialDelaySeconds }}
+            periodSeconds: {{ .Values.backend.probes.startup.periodSeconds }}
+            timeoutSeconds: {{ .Values.backend.probes.startup.timeoutSeconds }}
+            failureThreshold: {{ .Values.backend.probes.startup.failureThreshold }}
+      terminationGracePeriodSeconds: 60
+---
+# Companion service used by Argo Rollouts as the canary-only endpoint.
+# Stable service (hrms-backend) is defined in
+# infra/deployment/kubernetes/backend-service.yaml.
+apiVersion: v1
+kind: Service
+metadata:
+  name: hrms-backend-canary
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: hrms
+    component: backend
+    role: canary
+spec:
+  type: ClusterIP
+  selector:
+    app: hrms
+    component: backend
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+      protocol: TCP
+---
+# Prometheus-backed analysis. Replace `prometheus.monitoring.svc:9090` with
+# whatever address `values-<env>.yaml` overrides via `canary.prometheusUrl`.
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: hrms-backend-canary-health
+  namespace: {{ .Values.namespace }}
+spec:
+  metrics:
+    - name: p99-latency
+      interval: 1m
+      count: 4
+      successCondition: result[0] < {{ .Values.canary.analysis.p99LatencySeconds }}
+      failureLimit: 1
+      provider:
+        prometheus:
+          address: {{ .Values.canary.prometheusUrl | quote }}
+          query: |
+            histogram_quantile(0.99,
+              sum(rate(api_request_duration_seconds_bucket{app="hrms",component="backend"}[2m]))
+              by (le)
+            )
+    - name: error-rate
+      interval: 1m
+      count: 4
+      successCondition: result[0] < {{ .Values.canary.analysis.errorRatePercent }}
+      failureLimit: 1
+      provider:
+        prometheus:
+          address: {{ .Values.canary.prometheusUrl | quote }}
+          query: |
+            100 *
+            sum(rate(http_server_requests_seconds_count{app="hrms",component="backend",status=~"5.."}[2m]))
+            /
+            sum(rate(http_server_requests_seconds_count{app="hrms",component="backend"}[2m]))
+{{- end }}

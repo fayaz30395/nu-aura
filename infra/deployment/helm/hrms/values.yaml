@@ -147,6 +147,28 @@ ingress:
   sessionAffinityCookieTtlSec: 3600
 
 # -----------------------------------------------------------------------------
+# Canary / progressive delivery (T2-09)
+# -----------------------------------------------------------------------------
+# OFF by default — the chart still works without the Argo Rollouts controller
+# installed. Flip `canary.enabled=true` only on clusters where the controller
+# CRDs exist; that swaps the backend Deployment for an argoproj.io/Rollout
+# with a 20→50→100 step canary gated by Prometheus analysis.
+#
+# Install controller once per cluster:
+#   kubectl create namespace argo-rollouts
+#   kubectl apply -n argo-rollouts -f \
+#     https://github.com/argoproj/argo-rollouts/releases/latest/download/install.yaml
+canary:
+  enabled: false
+  # Prometheus reachable from the cluster. Override per-env if not in `monitoring` ns.
+  prometheusUrl: "http://prometheus-server.monitoring.svc.cluster.local:9090"
+  analysis:
+    # p99 of api_request_duration_seconds, in seconds. Default 1s.
+    p99LatencySeconds: 1
+    # 5xx error rate, in percent. Default 0.5%.
+    errorRatePercent: 0.5
+
+# -----------------------------------------------------------------------------
 # Cosign / image signature verification
 # -----------------------------------------------------------------------------
 # Used by deployment/kyverno/require-image-signature.yaml at admission time.

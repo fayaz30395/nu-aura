@@ -13,3 +13,6 @@ node_modules/
 playwright/.auth/
 playwright-report/
 test-results/
+
+# Orval-generated OpenAPI client (T3-12) — regenerate via `npm run api:generate`
+lib/generated/

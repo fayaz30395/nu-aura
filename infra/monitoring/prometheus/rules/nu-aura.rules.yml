@@ -52,3 +52,22 @@ groups:
           description: |
             Heap utilisation {{ $value | humanizePercentage }}. Check for leak,
             increase -Xmx, or scale out the pod.
+
+      # T4-18: RedisWebSocketRelay silently degrades to local-only delivery when
+      # Redis pub/sub is unreachable. Sustained > 0 means cross-pod WS updates
+      # are being dropped on multi-pod deployments. Counter:
+      # ws_relay_local_fallback_total{reason="redis_unavailable|redis_publish_error"}
+      - alert: WebSocketRelayDegraded
+        expr: sum(rate(ws_relay_local_fallback_total[5m])) > 0
+        for: 10m
+        labels:
+          severity: warning
+          component: websocket
+        annotations:
+          summary: 'WebSocket relay degraded to local-only delivery for 10m'
+          description: |
+            ws_relay_local_fallback_total is incrementing at
+            {{ $value | printf "%.3f" }}/s. Users may not see cross-pod
+            updates (notifications, presence, wiki/wall live edits).
+            Check Redis pub/sub health and pod connectivity.
+          runbook: 'docs/runbooks/swarm-pipelines.md'

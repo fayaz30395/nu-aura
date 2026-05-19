@@ -19,7 +19,8 @@
     "test:e2e:chromium": "playwright test --project=chromium",
     "test:e2e:firefox": "playwright test --project=firefox",
     "test:e2e:report": "playwright show-report",
-    "test:e2e:autonomous": "bash ../scripts/qa/qa-orchestrator/run.sh"
+    "test:e2e:autonomous": "bash ../scripts/qa/qa-orchestrator/run.sh",
+    "api:generate": "orval --config ./orval.config.ts"
   },
   "dependencies": {
     "@hello-pangea/dnd": "^18.0.1",
@@ -105,6 +106,7 @@
     "eslint-config-next": "^14.2.35",
     "jsdom": "^24.0.0",
     "msw": "^2.1.0",
+    "orval": "^7.21.0",
     "typescript": "^5.9.3",
     "vitest": "^3.2.4"
   },

@@ -13,7 +13,12 @@ spring:
     lazy-initialization: true
 
   datasource:
-    # Use environment variables for database credentials
+    # Use environment variables for database credentials.
+    # Default points at localhost:5432 (direct PG). To exercise PgBouncer locally
+    # (T4-16), override DEV_DATABASE_URL with the Neon pooled endpoint:
+    #   jdbc:postgresql://ep-xxx-pooler.<region>.aws.neon.tech:5432/hrms?sslmode=require&pgbouncer=true
+    # or point DB_PORT at 6432 if running a local pgbouncer sidecar.
+    # When running against the pooled endpoint, set DB_POOL_MAX=8 to match prod.
     url: ${DEV_DATABASE_URL:jdbc:postgresql://localhost:5432/hrms}
     username: ${DEV_DATABASE_USERNAME:hrms}
     password: ${DEV_DATABASE_PASSWORD}
