@@ -10,12 +10,14 @@ import com.nulogic.domain.ai.ChatbotConversation;
 import com.nulogic.infrastructure.ai.repository.ChatbotConversationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 
 /**
@@ -65,6 +67,8 @@ public class FluenceChatService {
     private final LlmStreamingService llmStreamingService;
     private final ChatbotConversationRepository conversationRepository;
     private final ObjectMapper objectMapper;
+    @Qualifier("taskExecutor")
+    private final Executor taskExecutor;
 
     /**
      * Handle a chat message: retrieve context, stream LLM response, send sources.
@@ -75,7 +79,10 @@ public class FluenceChatService {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID userId = SecurityContext.getCurrentUserId();
 
-        // Run the pipeline in a background thread (SseEmitter is async)
+        // Run the pipeline on the platform taskExecutor so TenantAwareTaskDecorator
+        // propagates TenantContext + SecurityContext + RequestAttributes to the worker
+        // thread. The default ForkJoinPool used by runAsync(Runnable) bypasses the
+        // decorator and silently loses tenant/user context — see backlog T4-17.
         CompletableFuture.runAsync(() -> {
             try {
                 executePipeline(emitter, request, tenantId, userId);
@@ -83,7 +90,7 @@ public class FluenceChatService {
                 log.error("Chat pipeline error for tenant {}: {}", tenantId, e.getMessage(), e);
                 sendErrorEvent(emitter, "An unexpected error occurred. Please try again.");
             }
-        });
+        }, taskExecutor);
 
         // Cleanup handlers
         emitter.onTimeout(() -> log.debug("SSE emitter timed out"));

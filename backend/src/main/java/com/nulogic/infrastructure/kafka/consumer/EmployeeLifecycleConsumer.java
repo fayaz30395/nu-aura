@@ -66,6 +66,7 @@ public class EmployeeLifecycleConsumer {
         String eventTypeEnum = event.getEventTypeEnum();
         UUID tenantId = event.getTenantId();
 
+        // TODO(T1-02): aspect now sets context — manual call kept for safety; remove in follow-up
         if (tenantId != null) {
             TenantContext.setCurrentTenant(tenantId);
         }

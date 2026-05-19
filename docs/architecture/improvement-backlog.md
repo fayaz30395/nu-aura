@@ -13,7 +13,7 @@
 
 ### T1-01 · RLS graceful-fallback is a footgun
 
-- **Status:** OPEN
+- **Status:** DONE
 - **Where:** `V36__reinstate_tenant_rls_policies.sql:48-59` — policy fragment
   `OR current_setting('app.current_tenant_id', true) IS NULL`
 - **Why it matters:** Any code path that runs without setting the session var
@@ -23,6 +23,18 @@
 - **Fix:** Two policies — strict for app DB role, permissive for a separate
   `migration` role. Drop the `OR NULL` for app traffic. Add a startup self-test
   that confirms a connection without the var set returns 0 rows.
+- **What landed (2026-05-20):**
+  - `V177__strict_tenant_rls_policies.sql` — creates `nu_migration` role with
+    BYPASSRLS and dynamically recreates every `*_tenant_rls` policy with strict
+    `tenant_id = current_setting('app.current_tenant_id', true)::uuid` (no
+    `OR NULL` / `OR ''` escape). Covers V36/V37/V38/V40/V41/V65/V81 policies.
+  - `RlsStartupProbe` (`backend/.../common/security/RlsStartupProbe.java`) —
+    `ApplicationRunner` that opens a connection without the session var, runs
+    `SELECT COUNT(*) FROM employees`, fails boot if > 0 rows visible. Skipped
+    in `test` profile and when `RLS_PROBE_SKIP=true`.
+  - `*_tenant_isolation` policies (V52/V56/V84/V87/V88/V90) left untouched —
+    they were already strict (no OR NULL fallback) and fail-closed when the
+    session var is unset.
 - **Last updated:** 2026-05-20
 
 ### T1-02 · TenantContext is ThreadLocal, not Inheritable; consumers re-establish manually
@@ -47,6 +59,12 @@
     null-payload skip, non-event-payload skip, success-clear, failure-clear.
   - Manual `setCurrentTenant`/`clear` in the 6 consumers retained as
     defense-in-depth; same UUID set twice is a no-op, clear is idempotent.
+  - **Aspect layer added** (`backend/src/main/java/com/nulogic/infrastructure/kafka/TenantContextKafkaAspect.java`):
+    `@Around` on `@KafkaListener` mirrors the interceptor's behaviour and
+    additionally publishes `tenantId` to MDC, catching any future listener
+    that bypasses the standard container factories (new factory beans, batch
+    listeners, direct test invocation). Reflective `getTenantId()` fallback
+    covers non-`BaseKafkaEvent` payloads.
 - **Follow-ups (separate task, not gating closure):**
   - Audit every `CompletableFuture.supplyAsync()` / raw thread spawn to confirm
     they go through an executor that uses `TenantAwareTaskDecorator`.
@@ -78,14 +96,23 @@
 
 ### T1-05 · Hard delete still works
 
-- **Status:** OPEN
+- **Status:** DONE
 - **Where:** `BaseEntity.softDelete()` is a method, not a default.
   `JpaRepository.delete()` does a real DELETE.
 - **Why it matters:** Any developer calling `repository.delete(entity)` skips
   the soft-delete contract. Audit trail vanishes.
-- **Fix:** Add `@SQLDelete("UPDATE … SET is_deleted=true, deleted_at=now()
-  WHERE id=?")` on `BaseEntity` subclasses (or via base mapping). Forces all
-  delete paths through one route.
+- **Fix:** Replaced `SimpleJpaRepository` with
+  `backend/src/main/java/com/nulogic/infrastructure/persistence/SoftDeleteJpaRepository.java`
+  wired via `@EnableJpaRepositories(repositoryBaseClass = …)` in
+  `HrmsApplication`. All `delete*`/`deleteAllInBatch*` paths now route
+  through `BaseEntity.softDelete()` (bulk JPQL UPDATE for batch).
+- **Non-BaseEntity follow-up (2026-05-20):**
+  - `PostComment` — has own `is_deleted` column; added `@SQLDelete("UPDATE
+    post_comments SET is_deleted=true WHERE id=?")` directly on the entity so
+    the fallback `super.delete()` path becomes soft-delete via Hibernate SQL.
+  - `PollVote` / `PollOption` / `LearningPathCourse` — kept hard-deletable by
+    design: votes and join-rows have no audit/recovery requirement. Document
+    explicitly if that ever changes.
 - **Last updated:** 2026-05-20
 
 ---
@@ -94,7 +121,11 @@
 
 ### T2-06 · No distributed tracing
 
-- **Status:** OPEN
+- **Status:** DONE — `micrometer-tracing-bridge-otel` + `opentelemetry-exporter-otlp`
+  added to `backend/pom.xml`; `management.tracing.sampling.probability` defaults
+  to 10% (`OTEL_SAMPLING_RATIO`), OTLP endpoint via `OTEL_EXPORTER_OTLP_ENDPOINT`
+  (empty in dev = spans produced, traceparent propagated, no export). Frontend
+  `@vercel/otel` still pending.
 - **Where:** `MetricsConfig` has Micrometer metrics but no OpenTelemetry /
   Tempo / Jaeger exporter wired.
 - **Why it matters:** When a payroll run hangs across HTTP → Kafka → DB →

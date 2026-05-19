@@ -68,6 +68,7 @@ public class AuditEventConsumer {
 
         String eventId = event.getEventId();
 
+        // TODO(T1-02): aspect now sets context — manual call kept for safety; remove in follow-up
         if (event.getTenantId() != null) {
             TenantContext.setCurrentTenant(event.getTenantId());
         }

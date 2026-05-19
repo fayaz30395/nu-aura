@@ -65,6 +65,7 @@ public class PayrollProcessingConsumer {
                 eventId, runId, event.getPayPeriodYear(), event.getPayPeriodMonth(),
                 tenantId, topic, partition, offset);
 
+        // TODO(T1-02): aspect now sets context — manual call kept for safety; remove in follow-up
         if (tenantId != null) {
             TenantContext.setCurrentTenant(tenantId);
         }

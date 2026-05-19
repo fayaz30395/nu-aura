@@ -2,6 +2,7 @@ package com.nulogic.domain.wall.model;
 
 import com.nulogic.domain.employee.Employee;
 import jakarta.persistence.*;
+import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.TenantId;
 import org.springframework.data.annotation.CreatedBy;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
+@SQLDelete(sql = "UPDATE post_comments SET is_deleted = true WHERE id = ?")
 @SQLRestriction("is_deleted = false")
 @Table(name = "post_comments", indexes = {
         @Index(name = "idx_post_comment_tenant", columnList = "tenant_id"),

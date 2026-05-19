@@ -245,6 +245,21 @@
             <artifactId>micrometer-registry-prometheus</artifactId>
         </dependency>
 
+        <!-- T2-06: Distributed tracing via Micrometer Tracing + OpenTelemetry.
+             Versions are managed by spring-boot-dependencies BOM (3.5.14).
+             Sampling probability and OTLP endpoint configured under
+             management.tracing / management.otlp.tracing in application.yml.
+             W3C traceparent propagates across HTTP, JDBC, Kafka producer/consumer
+             via Micrometer's existing instrumentation. -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-tracing-bridge-otel</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.opentelemetry</groupId>
+            <artifactId>opentelemetry-exporter-otlp</artifactId>
+        </dependency>
+
         <!-- Logstash Encoder for JSON Logging (Production) -->
         <dependency>
             <groupId>net.logstash.logback</groupId>

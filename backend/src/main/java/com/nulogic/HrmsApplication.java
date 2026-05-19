@@ -1,5 +1,6 @@
 package com.nulogic;
 
+import com.nulogic.infrastructure.persistence.SoftDeleteJpaRepository;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -22,6 +23,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EntityScan(basePackages = {"com.nulogic"})
 @EnableJpaRepositories(basePackages = {"com.nulogic"},
         bootstrapMode = BootstrapMode.LAZY,
+        repositoryBaseClass = SoftDeleteJpaRepository.class,
         excludeFilters = @org.springframework.context.annotation.ComponentScan.Filter(
                 type = org.springframework.context.annotation.FilterType.REGEX,
                 pattern = "com\\.hrms\\.infrastructure\\.search\\..*"))

@@ -65,6 +65,7 @@ public class ApprovalEventConsumer {
         String approvalType = event.getApprovalType();
         String status = event.getStatus();
 
+        // TODO(T1-02): aspect now sets context — manual call kept for safety; remove in follow-up
         if (tenantId != null) {
             TenantContext.setCurrentTenant(tenantId);
         }
