@@ -53,12 +53,12 @@ public class Milestone extends TenantAware {
 
     public void markCelebrated() {
         this.isCelebrated = true;
-        this.celebratedAt = LocalDateTime.now();
+        this.celebratedAt = LocalDateTime.now(); // JVM-local: internal celebration tracker
     }
 
     public void markNotificationSent() {
         this.notificationSent = true;
-        this.notificationSentAt = LocalDateTime.now();
+        this.notificationSentAt = LocalDateTime.now(); // JVM-local: server-side send stamp
     }
 
     public void incrementWishes() {

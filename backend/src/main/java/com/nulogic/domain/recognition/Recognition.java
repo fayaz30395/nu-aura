@@ -67,10 +67,10 @@ public class Recognition extends TenantAware {
 
     private LocalDateTime recognizedAt;
 
-    public void approve(UUID approverId) {
+    public void approve(UUID approverId, LocalDateTime now) {
         this.isApproved = true;
         this.approvedBy = approverId;
-        this.approvedAt = LocalDateTime.now();
+        this.approvedAt = now;
     }
 
     public void incrementLikes() {

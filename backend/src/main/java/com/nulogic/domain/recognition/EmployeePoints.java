@@ -47,7 +47,7 @@ public class EmployeePoints extends TenantAware {
     public void addPoints(int points) {
         this.totalPointsEarned += points;
         this.currentBalance += points;
-        this.lastActivityAt = LocalDateTime.now();
+        this.lastActivityAt = LocalDateTime.now(); // JVM-local: internal activity tracker
     }
 
     public void redeemPoints(int points) {
@@ -56,16 +56,16 @@ public class EmployeePoints extends TenantAware {
         }
         this.totalPointsRedeemed += points;
         this.currentBalance -= points;
-        this.lastActivityAt = LocalDateTime.now();
+        this.lastActivityAt = LocalDateTime.now(); // JVM-local: internal activity tracker
     }
 
     public void incrementRecognitionsGiven() {
         this.recognitionsGiven++;
-        this.lastActivityAt = LocalDateTime.now();
+        this.lastActivityAt = LocalDateTime.now(); // JVM-local: internal activity tracker
     }
 
     public void incrementRecognitionsReceived() {
         this.recognitionsReceived++;
-        this.lastActivityAt = LocalDateTime.now();
+        this.lastActivityAt = LocalDateTime.now(); // JVM-local: internal activity tracker
     }
 }
