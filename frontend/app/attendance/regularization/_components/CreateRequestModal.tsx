@@ -215,10 +215,11 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
                       >
                         <div className="grid grid-cols-2 gap-4">
                           <div>
-                            <label className="block text-sm font-semibold text-[var(--text-primary)] mb-4">
+                            <label htmlFor="requestedCheckIn" className="block text-sm font-semibold text-[var(--text-primary)] mb-4">
                               Check In Time
                             </label>
                             <input
+                              id="requestedCheckIn"
                               type="time"
                               {...register('requestedCheckIn')}
                               className="input-aura w-full px-4 py-2.5"
@@ -234,10 +235,11 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
                             )}
                           </div>
                           <div>
-                            <label className="block text-sm font-semibold text-[var(--text-primary)] mb-4">
+                            <label htmlFor="requestedCheckOut" className="block text-sm font-semibold text-[var(--text-primary)] mb-4">
                               Check Out Time
                             </label>
                             <input
+                              id="requestedCheckOut"
                               type="time"
                               {...register('requestedCheckOut')}
                               className="input-aura w-full px-4 py-2.5"
