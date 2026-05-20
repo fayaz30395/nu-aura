@@ -143,7 +143,7 @@ public class ExportService {
         com.lowagie.text.Font timestampFont = FontFactory.getFont(FontFactory.HELVETICA, 10, com.lowagie.text.Font.ITALIC);
         // JVM-local: helper has no tenant context; export entry points take data not tenantId.
         Paragraph timestampParagraph = new Paragraph(
-                "Generated: " + LocalDateTime.now().format(DATETIME_FORMATTER),
+                "Generated: " + LocalDateTime.now().format(DATETIME_FORMATTER), // JVM-local: helper has no tenant context; export entry points pass data not tenantId
                 timestampFont
         );
         timestampParagraph.setAlignment(Element.ALIGN_RIGHT);

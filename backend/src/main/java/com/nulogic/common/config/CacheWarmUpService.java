@@ -68,7 +68,7 @@ public class CacheWarmUpService {
             // 4. Holidays (24hr TTL) — used in attendance, leave calendar
             warmed += warmSafely("holidays", () -> {
                 var svc = ctx.getBean(com.nulogic.application.attendance.service.HolidayService.class);
-                svc.getHolidaysByYear(java.time.LocalDate.now().getYear());
+                svc.getHolidaysByYear(java.time.LocalDate.now().getYear()); // JVM-local: cross-tenant cache warm-up at startup
             });
 
             // 5. Feature flags (24hr TTL) — used on every page for feature gating

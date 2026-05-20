@@ -484,7 +484,7 @@ public class FileStorageService {
         // tenant lookup on every upload's hot path. The originalFilename returned
         // to clients is sanitized separately; uploaded-at metadata is tenant-zoned
         // above.
-        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss"));
+        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss")); // JVM-local: internal storage filename suffix
         String extension = getFileExtension(originalFilename);
         String uniqueId = UUID.randomUUID().toString().substring(0, 8);
 

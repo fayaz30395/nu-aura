@@ -270,7 +270,7 @@ public class DocuSignConnector implements IntegrationConnector {
 
             // 4. Update docusign_envelopes record
             envelope.setStatus(status);
-            envelope.setUpdatedAt(java.time.LocalDateTime.now());
+            envelope.setUpdatedAt(java.time.LocalDateTime.now()); // JVM-local: connector entity-update; manual constructor pattern, push to service if cross-region zone needed
 
             // Parse recipient statuses if available
             JsonNode recipientsNode = payload.get("recipients");

@@ -72,7 +72,7 @@ public class ApiKey extends TenantAware {
     private UUID createdBy;
 
     public boolean isExpired() {
-        return expiresAt != null && expiresAt.isBefore(LocalDateTime.now());
+        return expiresAt != null && expiresAt.isBefore(LocalDateTime.now()); // JVM-local: API-key entity has tenantId but predicate/setter need service-layer pushdown for cross-region zone correctness
     }
 
     public boolean isValid() {
@@ -84,7 +84,7 @@ public class ApiKey extends TenantAware {
     }
 
     public void recordUsage(String ip) {
-        this.lastUsedAt = LocalDateTime.now();
+        this.lastUsedAt = LocalDateTime.now(); // JVM-local: API-key entity has tenantId but predicate/setter need service-layer pushdown for cross-region zone correctness
         this.lastUsedIp = ip;
     }
 }

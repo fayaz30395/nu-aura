@@ -85,7 +85,7 @@ public class GlobalExceptionHandler {
         // tenantId may be null on auth / pre-context exceptions; fall back to JVM zone.
         LocalDateTime now = tenantId != null && tenantTimeService != null
                 ? tenantTimeService.now(tenantId)
-                : LocalDateTime.now();
+                : LocalDateTime.now(); // JVM-local: documented fallback when TenantTimeService isnt available or tenantId is null
 
         return ErrorResponse.builder()
                 .timestamp(now)
