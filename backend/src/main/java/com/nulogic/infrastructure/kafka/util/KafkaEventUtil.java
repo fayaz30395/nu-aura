@@ -27,6 +27,7 @@ import java.util.UUID;
 public class KafkaEventUtil {
 
     private final ObjectMapper objectMapper;
+    private final com.nulogic.common.util.TenantTimeService tenantTimeService;
 
     /**
      * Generate an idempotency key for an event.
@@ -162,7 +163,7 @@ public class KafkaEventUtil {
         }
 
         long ageMinutes = java.time.temporal.ChronoUnit.MINUTES
-                .between(event.getTimestamp(), java.time.LocalDateTime.now());
+                .between(event.getTimestamp(), tenantTimeService.now(event.getTenantId()));
         return ageMinutes > thresholdMinutes;
     }
 

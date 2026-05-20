@@ -245,6 +245,7 @@ public class DeadLetterHandler {
 
         // Update record
         event.setStatus(FailedEventStatus.REPLAYED);
+        // JVM-local: FailedKafkaEvent is platform-level (not tenant-scoped) per the entity contract.
         event.setReplayedAt(LocalDateTime.now());
         event.setReplayedBy(replayedBy);
         event.setReplayCount(event.getReplayCount() + 1);

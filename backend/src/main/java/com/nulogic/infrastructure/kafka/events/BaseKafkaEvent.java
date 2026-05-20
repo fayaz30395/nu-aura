@@ -68,6 +68,7 @@ public abstract class BaseKafkaEvent implements Serializable {
             this.eventId = UUID.randomUUID().toString();
         }
         if (this.timestamp == null) {
+            // JVM-local fallback: base-event default. Producers should override via tenantTimeService.now(tenantId).
             this.timestamp = LocalDateTime.now();
         }
     }

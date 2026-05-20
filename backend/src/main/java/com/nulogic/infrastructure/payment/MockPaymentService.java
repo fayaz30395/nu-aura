@@ -36,7 +36,7 @@ public class MockPaymentService implements PaymentGatewayService {
                 .description(request.getDescription())
                 .customerId(request.getCustomerId())
                 .paymentMethod(request.getPaymentMethod())
-                .createdAt(LocalDateTime.now())
+                .createdAt(/* JVM-local: mock dev/test gateway, no tenant context */ LocalDateTime.now())
                 .clientSecret(paymentId + "_secret_" + UUID.randomUUID().toString().substring(0, 8))
                 .metadata(request.getMetadata() != null ? request.getMetadata() : new HashMap<>())
                 .captured(request.isCaptureImmediately())
@@ -63,7 +63,7 @@ public class MockPaymentService implements PaymentGatewayService {
         payment.setStatus("succeeded");
         payment.setCaptured(true);
         payment.setAmountCaptured(payment.getAmount());
-        payment.setUpdatedAt(LocalDateTime.now());
+        payment.setUpdatedAt(/* JVM-local: mock dev/test gateway, no tenant context */ LocalDateTime.now());
 
         log.info("[MOCK PAYMENT] Captured payment: {}", paymentId);
         return payment;
@@ -84,7 +84,7 @@ public class MockPaymentService implements PaymentGatewayService {
         payment.setAmountRefunded(refundAmount);
         payment.setRefundId("re_" + UUID.randomUUID().toString().substring(0, 16));
         payment.setStatus("refunded");
-        payment.setUpdatedAt(LocalDateTime.now());
+        payment.setUpdatedAt(/* JVM-local: mock dev/test gateway, no tenant context */ LocalDateTime.now());
 
         log.info("[MOCK PAYMENT] Refunded payment: {} amount: {}", paymentId, refundAmount);
         return payment;
@@ -117,7 +117,7 @@ public class MockPaymentService implements PaymentGatewayService {
         }
 
         payment.setStatus("canceled");
-        payment.setUpdatedAt(LocalDateTime.now());
+        payment.setUpdatedAt(/* JVM-local: mock dev/test gateway, no tenant context */ LocalDateTime.now());
 
         log.info("[MOCK PAYMENT] Canceled payment: {}", paymentId);
         return payment;

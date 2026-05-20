@@ -1,5 +1,6 @@
 package com.nulogic.infrastructure.kafka.producer;
 
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.infrastructure.kafka.KafkaTopics;
 import com.nulogic.infrastructure.kafka.events.*;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +12,6 @@ import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -33,6 +33,7 @@ import java.util.concurrent.CompletableFuture;
 public class EventPublisher {
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
+    private final TenantTimeService tenantTimeService;
 
     /**
      * Publish an approval event (APPROVED or REJECTED).
@@ -64,7 +65,7 @@ public class EventPublisher {
                 .eventId(UUID.randomUUID().toString())
                 .eventType("APPROVAL_" + status)
                 .tenantId(tenantId)
-                .timestamp(LocalDateTime.now())
+                .timestamp(tenantTimeService.now(tenantId))
                 .source("approval-service")
                 .approvalId(approvalId)
                 .taskId(taskId)
@@ -112,7 +113,7 @@ public class EventPublisher {
                 .eventId(UUID.randomUUID().toString())
                 .eventType("NOTIFICATION_" + channel)
                 .tenantId(tenantId)
-                .timestamp(LocalDateTime.now())
+                .timestamp(tenantTimeService.now(tenantId))
                 .source("notification-service")
                 .recipientId(recipientId)
                 .channel(channel)
@@ -169,7 +170,7 @@ public class EventPublisher {
                 .eventId(UUID.randomUUID().toString())
                 .eventType("AUDIT_" + action)
                 .tenantId(tenantId)
-                .timestamp(LocalDateTime.now())
+                .timestamp(tenantTimeService.now(tenantId))
                 .source("audit-service")
                 .userId(userId)
                 .action(action)
@@ -223,7 +224,7 @@ public class EventPublisher {
                 .eventId(UUID.randomUUID().toString())
                 .eventType("EMPLOYEE_" + eventTypeEnum)
                 .tenantId(tenantId)
-                .timestamp(LocalDateTime.now())
+                .timestamp(tenantTimeService.now(tenantId))
                 .source("employee-service")
                 .employeeId(employeeId)
                 .eventTypeEnum(eventTypeEnum)
@@ -265,7 +266,7 @@ public class EventPublisher {
                 .eventId(UUID.randomUUID().toString())
                 .eventType("PAYROLL_PROCESSING_REQUESTED")
                 .tenantId(tenantId)
-                .timestamp(LocalDateTime.now())
+                .timestamp(tenantTimeService.now(tenantId))
                 .source("payroll-service")
                 .runId(runId)
                 .triggeredBy(triggeredBy)
@@ -294,7 +295,7 @@ public class EventPublisher {
                 .eventId(UUID.randomUUID().toString())
                 .eventType("FLUENCE_" + action)
                 .tenantId(tenantId)
-                .timestamp(LocalDateTime.now())
+                .timestamp(tenantTimeService.now(tenantId))
                 .source("fluence-service")
                 .contentType(contentType)
                 .contentId(contentId)

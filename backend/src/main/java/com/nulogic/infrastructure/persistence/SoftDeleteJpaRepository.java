@@ -132,7 +132,7 @@ public class SoftDeleteJpaRepository<T, ID> extends SimpleJpaRepository<T, ID> {
         }
         String jpql = String.format(SOFT_DELETE_ALL_JPQL, entityName());
         Query query = em.createQuery(jpql);
-        query.setParameter("deletedAt", LocalDateTime.now());
+        query.setParameter("deletedAt", LocalDateTime.now()); // JVM-local: JPA repository base has no tenant injection point; entity-level @TenantTimestamp owns single-row deletes.
         int updated = query.executeUpdate();
         log.debug("soft-delete all on {} count={}", domainClass.getSimpleName(), updated);
     }
@@ -157,7 +157,7 @@ public class SoftDeleteJpaRepository<T, ID> extends SimpleJpaRepository<T, ID> {
     private int bulkSoftDeleteByIds(Collection<?> ids) {
         String jpql = String.format(SOFT_DELETE_BY_IDS_JPQL, entityName());
         Query query = em.createQuery(jpql);
-        query.setParameter("deletedAt", LocalDateTime.now());
+        query.setParameter("deletedAt", LocalDateTime.now()); // JVM-local: JPA repository base has no tenant injection point; entity-level @TenantTimestamp owns single-row deletes.
         query.setParameter("ids", ids);
         return query.executeUpdate();
     }
