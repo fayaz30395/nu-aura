@@ -1,4 +1,27 @@
-import {apiClient} from './client';
+import {
+  activateFieldDefinition as activateFieldDefinitionGenerated,
+  createFieldDefinition as createFieldDefinitionGenerated,
+  deactivateFieldDefinition as deactivateFieldDefinitionGenerated,
+  deleteAllFieldValues as deleteAllFieldValuesGenerated,
+  deleteFieldDefinition as deleteFieldDefinitionGenerated,
+  deleteFieldValue as deleteFieldValueGenerated,
+  getAllFieldDefinitions as getAllFieldDefinitionsGenerated,
+  getEntityTypes as getEntityTypesGenerated,
+  getFieldDefinition as getFieldDefinitionGenerated,
+  getFieldDefinitionByCode as getFieldDefinitionByCodeGenerated,
+  getFieldDefinitionsByEntityType as getFieldDefinitionsByEntityTypeGenerated,
+  getFieldDefinitionsForListView as getFieldDefinitionsForListViewGenerated,
+  getFieldDefinitionsGrouped as getFieldDefinitionsGroupedGenerated,
+  getFieldGroups as getFieldGroupsGenerated,
+  getFieldValueByCode as getFieldValueByCodeGenerated,
+  getFieldValues as getFieldValuesGenerated,
+  getFieldValuesGrouped as getFieldValuesGroupedGenerated,
+  isFieldCodeAvailable as isFieldCodeAvailableGenerated,
+  searchFieldDefinitions as searchFieldDefinitionsGenerated,
+  setFieldValue as setFieldValueGenerated,
+  setFieldValues as setFieldValuesGenerated,
+  updateFieldDefinition as updateFieldDefinitionGenerated,
+} from '@/lib/generated/api/custom-field-controller/custom-field-controller';
 import {
   BulkCustomFieldValueRequest,
   CustomFieldDefinition,
@@ -9,8 +32,20 @@ import {
   Page,
 } from '../types/core/custom-fields';
 
-const BASE_URL = '/custom-fields';
-
+/**
+ * T3-12 migration (wave 3): this file is now a thin facade over the orval-
+ * generated `custom-field-controller` client. The public `customFieldsApi`
+ * surface and return shapes are preserved so existing callers (custom-field
+ * pages and admin components) do not change.
+ *
+ * Generated calls route through `apiClient` via `orvalMutator`, so cookie
+ * auth, CSRF double-submit, the 401 refresh mutex, and tenant headers all
+ * continue to apply. The mutator unwraps to `.data`, so generated functions
+ * return the response body directly.
+ *
+ * Hand-rolled domain types in `../types/core/custom-fields` remain the public
+ * contract; generated response shapes are cast through `unknown` to match.
+ */
 export const customFieldsApi = {
   // ============================================
   // Field Definition APIs
@@ -19,43 +54,56 @@ export const customFieldsApi = {
   /**
    * Create a new custom field definition
    */
-  createDefinition: async (request: CustomFieldDefinitionRequest): Promise<CustomFieldDefinition> => {
-    const response = await apiClient.post<CustomFieldDefinition>(`${BASE_URL}/definitions`, request);
-    return response.data;
+  createDefinition: async (
+    request: CustomFieldDefinitionRequest
+  ): Promise<CustomFieldDefinition> => {
+    const response = await createFieldDefinitionGenerated(
+      request as unknown as Parameters<typeof createFieldDefinitionGenerated>[0]
+    );
+    return response as unknown as CustomFieldDefinition;
   },
 
   /**
    * Update a custom field definition
    */
-  updateDefinition: async (id: string, request: CustomFieldDefinitionRequest): Promise<CustomFieldDefinition> => {
-    const response = await apiClient.put<CustomFieldDefinition>(`${BASE_URL}/definitions/${id}`, request);
-    return response.data;
+  updateDefinition: async (
+    id: string,
+    request: CustomFieldDefinitionRequest
+  ): Promise<CustomFieldDefinition> => {
+    const response = await updateFieldDefinitionGenerated(
+      id,
+      request as unknown as Parameters<typeof updateFieldDefinitionGenerated>[1]
+    );
+    return response as unknown as CustomFieldDefinition;
   },
 
   /**
    * Get a custom field definition by ID
    */
   getDefinition: async (id: string): Promise<CustomFieldDefinition> => {
-    const response = await apiClient.get<CustomFieldDefinition>(`${BASE_URL}/definitions/${id}`);
-    return response.data;
+    const response = await getFieldDefinitionGenerated(id);
+    return response as unknown as CustomFieldDefinition;
   },
 
   /**
    * Get a custom field definition by field code
    */
   getDefinitionByCode: async (fieldCode: string): Promise<CustomFieldDefinition> => {
-    const response = await apiClient.get<CustomFieldDefinition>(`${BASE_URL}/definitions/code/${fieldCode}`);
-    return response.data;
+    const response = await getFieldDefinitionByCodeGenerated(fieldCode);
+    return response as unknown as CustomFieldDefinition;
   },
 
   /**
    * Get all custom field definitions (paginated)
    */
-  getAllDefinitions: async (page = 0, size = 20): Promise<Page<CustomFieldDefinition>> => {
-    const response = await apiClient.get<Page<CustomFieldDefinition>>(
-      `${BASE_URL}/definitions?page=${page}&size=${size}`
-    );
-    return response.data;
+  getAllDefinitions: async (
+    page = 0,
+    size = 20
+  ): Promise<Page<CustomFieldDefinition>> => {
+    const response = await getAllFieldDefinitionsGenerated({
+      pageable: {page, size},
+    });
+    return response as unknown as Page<CustomFieldDefinition>;
   },
 
   /**
@@ -65,86 +113,93 @@ export const customFieldsApi = {
     entityType: EntityType,
     activeOnly = true
   ): Promise<CustomFieldDefinition[]> => {
-    const response = await apiClient.get<CustomFieldDefinition[]>(
-      `${BASE_URL}/definitions/entity-type/${entityType}?activeOnly=${activeOnly}`
-    );
-    return response.data;
+    const response = await getFieldDefinitionsByEntityTypeGenerated(entityType, {
+      activeOnly,
+    });
+    return response as unknown as CustomFieldDefinition[];
   },
 
   /**
    * Get custom field definitions grouped by field group
    */
-  getDefinitionsGrouped: async (entityType: EntityType): Promise<Record<string, CustomFieldDefinition[]>> => {
-    const response = await apiClient.get<Record<string, CustomFieldDefinition[]>>(
-      `${BASE_URL}/definitions/entity-type/${entityType}/grouped`
-    );
-    return response.data;
+  getDefinitionsGrouped: async (
+    entityType: EntityType
+  ): Promise<Record<string, CustomFieldDefinition[]>> => {
+    const response = await getFieldDefinitionsGroupedGenerated(entityType);
+    return response as unknown as Record<string, CustomFieldDefinition[]>;
   },
 
   /**
    * Get custom field definitions for list view
    */
-  getDefinitionsForListView: async (entityType: EntityType): Promise<CustomFieldDefinition[]> => {
-    const response = await apiClient.get<CustomFieldDefinition[]>(
-      `${BASE_URL}/definitions/entity-type/${entityType}/list-view`
-    );
-    return response.data;
+  getDefinitionsForListView: async (
+    entityType: EntityType
+  ): Promise<CustomFieldDefinition[]> => {
+    const response = await getFieldDefinitionsForListViewGenerated(entityType);
+    return response as unknown as CustomFieldDefinition[];
   },
 
   /**
    * Search custom field definitions
    */
-  searchDefinitions: async (query: string, page = 0, size = 20): Promise<Page<CustomFieldDefinition>> => {
-    const response = await apiClient.get<Page<CustomFieldDefinition>>(
-      `${BASE_URL}/definitions/search?query=${encodeURIComponent(query)}&page=${page}&size=${size}`
-    );
-    return response.data;
+  searchDefinitions: async (
+    query: string,
+    page = 0,
+    size = 20
+  ): Promise<Page<CustomFieldDefinition>> => {
+    const response = await searchFieldDefinitionsGenerated({
+      query,
+      pageable: {page, size},
+    });
+    return response as unknown as Page<CustomFieldDefinition>;
   },
 
   /**
    * Get field groups for an entity type
    */
   getFieldGroups: async (entityType: EntityType): Promise<string[]> => {
-    const response = await apiClient.get<string[]>(`${BASE_URL}/definitions/entity-type/${entityType}/groups`);
-    return response.data;
+    const response = await getFieldGroupsGenerated(entityType);
+    return response as unknown as string[];
   },
 
   /**
    * Deactivate a custom field definition
    */
   deactivateDefinition: async (id: string): Promise<void> => {
-    await apiClient.post(`${BASE_URL}/definitions/${id}/deactivate`);
+    await deactivateFieldDefinitionGenerated(id);
   },
 
   /**
    * Activate a custom field definition
    */
   activateDefinition: async (id: string): Promise<void> => {
-    await apiClient.post(`${BASE_URL}/definitions/${id}/activate`);
+    await activateFieldDefinitionGenerated(id);
   },
 
   /**
    * Delete a custom field definition
    */
   deleteDefinition: async (id: string): Promise<void> => {
-    await apiClient.delete(`${BASE_URL}/definitions/${id}`);
+    await deleteFieldDefinitionGenerated(id);
   },
 
   /**
    * Check if a field code is available
    */
-  isFieldCodeAvailable: async (fieldCode: string, excludeId?: string): Promise<boolean> => {
-    const params = excludeId ? `?fieldCode=${fieldCode}&excludeId=${excludeId}` : `?fieldCode=${fieldCode}`;
-    const response = await apiClient.get<boolean>(`${BASE_URL}/definitions/check-code${params}`);
-    return response.data;
+  isFieldCodeAvailable: async (
+    fieldCode: string,
+    excludeId?: string
+  ): Promise<boolean> => {
+    const response = await isFieldCodeAvailableGenerated({fieldCode, excludeId});
+    return response as unknown as boolean;
   },
 
   /**
    * Get all entity types
    */
   getEntityTypes: async (): Promise<EntityType[]> => {
-    const response = await apiClient.get<EntityType[]>(`${BASE_URL}/entity-types`);
-    return response.data;
+    const response = await getEntityTypesGenerated();
+    return response as unknown as EntityType[];
   },
 
   // ============================================
@@ -159,27 +214,35 @@ export const customFieldsApi = {
     entityId: string,
     request: CustomFieldValueRequest
   ): Promise<CustomFieldValue> => {
-    const response = await apiClient.post<CustomFieldValue>(
-      `${BASE_URL}/values/${entityType}/${entityId}`,
-      request
+    const response = await setFieldValueGenerated(
+      entityType,
+      entityId,
+      request as unknown as Parameters<typeof setFieldValueGenerated>[2]
     );
-    return response.data;
+    return response as unknown as CustomFieldValue;
   },
 
   /**
    * Set multiple custom field values for an entity
    */
-  setFieldValues: async (request: BulkCustomFieldValueRequest): Promise<CustomFieldValue[]> => {
-    const response = await apiClient.post<CustomFieldValue[]>(`${BASE_URL}/values/bulk`, request);
-    return response.data;
+  setFieldValues: async (
+    request: BulkCustomFieldValueRequest
+  ): Promise<CustomFieldValue[]> => {
+    const response = await setFieldValuesGenerated(
+      request as unknown as Parameters<typeof setFieldValuesGenerated>[0]
+    );
+    return response as unknown as CustomFieldValue[];
   },
 
   /**
    * Get all custom field values for an entity
    */
-  getFieldValues: async (entityType: EntityType, entityId: string): Promise<CustomFieldValue[]> => {
-    const response = await apiClient.get<CustomFieldValue[]>(`${BASE_URL}/values/${entityType}/${entityId}`);
-    return response.data;
+  getFieldValues: async (
+    entityType: EntityType,
+    entityId: string
+  ): Promise<CustomFieldValue[]> => {
+    const response = await getFieldValuesGenerated(entityType, entityId);
+    return response as unknown as CustomFieldValue[];
   },
 
   /**
@@ -189,10 +252,8 @@ export const customFieldsApi = {
     entityType: EntityType,
     entityId: string
   ): Promise<Record<string, CustomFieldValue[]>> => {
-    const response = await apiClient.get<Record<string, CustomFieldValue[]>>(
-      `${BASE_URL}/values/${entityType}/${entityId}/grouped`
-    );
-    return response.data;
+    const response = await getFieldValuesGroupedGenerated(entityType, entityId);
+    return response as unknown as Record<string, CustomFieldValue[]>;
   },
 
   /**
@@ -203,10 +264,12 @@ export const customFieldsApi = {
     entityId: string,
     fieldCode: string
   ): Promise<CustomFieldValue> => {
-    const response = await apiClient.get<CustomFieldValue>(
-      `${BASE_URL}/values/${entityType}/${entityId}/field/${fieldCode}`
+    const response = await getFieldValueByCodeGenerated(
+      entityType,
+      entityId,
+      fieldCode
     );
-    return response.data;
+    return response as unknown as CustomFieldValue;
   },
 
   /**
@@ -217,13 +280,16 @@ export const customFieldsApi = {
     entityId: string,
     fieldDefinitionId: string
   ): Promise<void> => {
-    await apiClient.delete(`${BASE_URL}/values/${entityType}/${entityId}/field/${fieldDefinitionId}`);
+    await deleteFieldValueGenerated(entityType, entityId, fieldDefinitionId);
   },
 
   /**
    * Delete all custom field values for an entity
    */
-  deleteAllFieldValues: async (entityType: EntityType, entityId: string): Promise<void> => {
-    await apiClient.delete(`${BASE_URL}/values/${entityType}/${entityId}`);
+  deleteAllFieldValues: async (
+    entityType: EntityType,
+    entityId: string
+  ): Promise<void> => {
+    await deleteAllFieldValuesGenerated(entityType, entityId);
   },
 };
