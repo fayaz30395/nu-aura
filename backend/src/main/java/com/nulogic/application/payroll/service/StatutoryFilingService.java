@@ -37,15 +37,18 @@ public class StatutoryFilingService {
     private final StatutoryFilingRunRepository filingRunRepository;
     private final FileStorageService fileStorageService;
     private final Map<FilingType, FilingFormatGenerator> generators;
+    private final com.nulogic.common.util.TenantTimeService tenantTimeService;
 
     public StatutoryFilingService(
             StatutoryFilingTemplateRepository templateRepository,
             StatutoryFilingRunRepository filingRunRepository,
             FileStorageService fileStorageService,
-            List<FilingFormatGenerator> generatorList) {
+            List<FilingFormatGenerator> generatorList,
+            com.nulogic.common.util.TenantTimeService tenantTimeService) {
         this.templateRepository = templateRepository;
         this.filingRunRepository = filingRunRepository;
         this.fileStorageService = fileStorageService;
+        this.tenantTimeService = tenantTimeService;
 
         // Build lookup map from the injected generators
         this.generators = new EnumMap<>(FilingType.class);
@@ -167,7 +170,8 @@ public class StatutoryFilingService {
                 result.fileName(),
                 result.contentType(),
                 result.fileBytes().length,
-                result.totalRecords()
+                result.totalRecords(),
+                tenantTimeService.now(run.getTenantId())
         );
 
         StatutoryFilingRun saved = filingRunRepository.save(run);
@@ -290,7 +294,7 @@ public class StatutoryFilingService {
     public FilingRunResponse markAsSubmitted(UUID filingRunId, SubmitRequest request) {
         UUID userId = SecurityContext.getCurrentUserId();
         StatutoryFilingRun run = getFilingRun(filingRunId);
-        run.markSubmitted(userId, request.getRemarks());
+        run.markSubmitted(userId, request.getRemarks(), tenantTimeService.now(run.getTenantId()));
         StatutoryFilingRun saved = filingRunRepository.save(run);
         log.info("Filing run {} marked as submitted by user {}", filingRunId, userId);
         return toResponse(saved);

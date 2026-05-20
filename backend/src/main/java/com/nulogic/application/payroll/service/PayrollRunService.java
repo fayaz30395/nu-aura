@@ -38,6 +38,7 @@ public class PayrollRunService {
     private final SalaryStructureRepository salaryStructureRepository;
     private final PayslipRepository payslipRepository;
     private final PayrollPeriodLock payrollPeriodLock;
+    private final com.nulogic.common.util.TenantTimeService tenantTimeService;
 
     /**
      * Create a new payroll run for a given period.
@@ -187,7 +188,7 @@ public class PayrollRunService {
                 payrollRun.getPayPeriodMonth());
         int generatedPayslips = generatePayslipsForRun(payrollRun);
         payrollRun.setTotalEmployees(generatedPayslips);
-        payrollRun.process(processedBy);
+        payrollRun.process(processedBy, tenantTimeService.now(payrollRun.getTenantId()));
         auditLogService.logAction(
                 "PAYROLL_RUN",
                 payrollRun.getId(),
@@ -236,7 +237,7 @@ public class PayrollRunService {
                 payrollRun.getPayPeriodMonth());
         int generatedPayslips = generatePayslipsForRun(payrollRun);
         payrollRun.setTotalEmployees(generatedPayslips);
-        payrollRun.process(processedBy);
+        payrollRun.process(processedBy, tenantTimeService.now(payrollRun.getTenantId()));
         return payrollRunRepository.save(payrollRun);
     }
 
@@ -249,7 +250,7 @@ public class PayrollRunService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public PayrollRun approvePayrollRun(UUID id, UUID approvedBy) {
         PayrollRun payrollRun = getPayrollRunForUpdate(id);
-        payrollRun.approve(approvedBy);
+        payrollRun.approve(approvedBy, tenantTimeService.now(payrollRun.getTenantId()));
         return payrollRunRepository.save(payrollRun);
     }
 

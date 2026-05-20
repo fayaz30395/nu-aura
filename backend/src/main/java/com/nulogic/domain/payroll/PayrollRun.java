@@ -75,13 +75,13 @@ public class PayrollRun extends TenantAware {
      * Transition PROCESSING → PROCESSED.
      * Called by the Kafka consumer after all employees have been computed.
      */
-    public void process(UUID processedBy) {
+    public void process(UUID processedBy, LocalDateTime now) {
         if (this.status != PayrollStatus.PROCESSING && this.status != PayrollStatus.DRAFT) {
             throw new IllegalStateException("Only DRAFT or PROCESSING payroll runs can be transitioned to PROCESSED");
         }
         this.status = PayrollStatus.PROCESSED;
         this.processedBy = processedBy;
-        this.processedAt = LocalDateTime.now();
+        this.processedAt = now;
     }
 
     /**
@@ -98,13 +98,13 @@ public class PayrollRun extends TenantAware {
         this.processedBy = null;
     }
 
-    public void approve(UUID approvedBy) {
+    public void approve(UUID approvedBy, LocalDateTime now) {
         if (this.status != PayrollStatus.PROCESSED) {
             throw new IllegalStateException("Only processed payroll runs can be approved");
         }
         this.status = PayrollStatus.APPROVED;
         this.approvedBy = approvedBy;
-        this.approvedAt = LocalDateTime.now();
+        this.approvedAt = now;
     }
 
     public void lock() {

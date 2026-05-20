@@ -73,10 +73,10 @@ public class PayrollAdjustment extends TenantAware {
     @Column(name = "processed_at")
     private java.time.LocalDateTime processedAt;
 
-    public void markProcessed(UUID payrollRunId) {
+    public void markProcessed(UUID payrollRunId, java.time.LocalDateTime now) {
         this.status = AdjustmentStatus.PROCESSED;
         this.payrollRunId = payrollRunId;
-        this.processedAt = java.time.LocalDateTime.now();
+        this.processedAt = now;
     }
 
     public enum AdjustmentType {

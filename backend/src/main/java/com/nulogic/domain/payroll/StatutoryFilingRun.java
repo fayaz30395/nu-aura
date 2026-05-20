@@ -88,14 +88,14 @@ public class StatutoryFilingRun extends TenantAware {
      * Transition from DRAFT/GENERATED to GENERATED after file generation.
      */
     public void markGenerated(String storagePath, String fileName, String contentType,
-                              long fileSize, int totalRecords) {
+                              long fileSize, int totalRecords, LocalDateTime now) {
         this.status = FilingStatus.GENERATED;
         this.fileStoragePath = storagePath;
         this.fileName = fileName;
         this.contentType = contentType;
         this.fileSize = fileSize;
         this.totalRecords = totalRecords;
-        this.generatedAt = LocalDateTime.now();
+        this.generatedAt = now;
     }
 
     /**
@@ -109,14 +109,14 @@ public class StatutoryFilingRun extends TenantAware {
     /**
      * Transition to SUBMITTED when the filing has been submitted to the government portal.
      */
-    public void markSubmitted(UUID submittedBy, String remarks) {
+    public void markSubmitted(UUID submittedBy, String remarks, LocalDateTime now) {
         if (this.status != FilingStatus.VALIDATED && this.status != FilingStatus.GENERATED) {
             throw new IllegalStateException(
                     "Only validated or generated filings can be marked as submitted");
         }
         this.status = FilingStatus.SUBMITTED;
         this.submittedBy = submittedBy;
-        this.submittedAt = LocalDateTime.now();
+        this.submittedAt = now;
         this.remarks = remarks;
     }
 
