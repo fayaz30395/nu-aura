@@ -23,7 +23,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 @Slf4j
@@ -92,7 +91,8 @@ public class ApplicantService {
         applicant.setExpectedSalary(request.getExpectedSalary());
         // S12-B: tenant-local applied date — resolved via TenantTimeService.
         applicant.setAppliedDate(tenantTimeService.today(tenantId));
-        applicant.setCurrentStageEnteredAt(LocalDateTime.now());
+        // Wave 13: tenant-local stage-entry timestamp — resolved via TenantTimeService.
+        applicant.setCurrentStageEnteredAt(tenantTimeService.now(tenantId));
 
         Applicant savedApplicant = applicantRepository.save(applicant);
         return mapToApplicantResponse(savedApplicant, candidate, jobOpening);
@@ -133,7 +133,8 @@ public class ApplicantService {
 
         if (currentStatus != newStatus) {
             applicant.setStatus(newStatus);
-            applicant.setCurrentStageEnteredAt(LocalDateTime.now());
+            // Wave 13: tenant-local stage-entry timestamp — resolved via TenantTimeService.
+            applicant.setCurrentStageEnteredAt(tenantTimeService.now(applicant.getTenantId()));
         }
 
         if (request.getNotes() != null) {

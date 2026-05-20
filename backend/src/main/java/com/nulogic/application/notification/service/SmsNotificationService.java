@@ -1,5 +1,7 @@
 package com.nulogic.application.notification.service;
 
+import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.infrastructure.sms.TwilioConfig;
 import com.twilio.Twilio;
 import com.twilio.rest.api.v2010.account.Message;
@@ -37,6 +39,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public class SmsNotificationService {
 
     private final TwilioConfig twilioConfig;
+    // S13 Wave-13: mock-mode audit log timestamps follow the sending tenant's zone so a tenant
+    // in PST sees PST sentAt in its dev/test artefacts, not the pod's JVM zone.
+    private final TenantTimeService tenantTimeService;
 
     // Store mock messages for testing/verification
     private final Map<String, MockSmsRecord> mockMessageStore = new ConcurrentHashMap<>();
@@ -117,7 +122,7 @@ public class SmsNotificationService {
                 fromPhoneNumber,
                 toPhoneNumber,
                 message,
-                LocalDateTime.now(),
+                tenantTimeService.now(TenantContext.getCurrentTenant()),
                 "MOCK_SENT"
         );
         mockMessageStore.put(mockSid, record);

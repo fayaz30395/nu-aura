@@ -1,14 +1,22 @@
 package com.nulogic.application.notification.service;
 
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.notification.EmailNotification;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class EmailTemplateService {
+
+    // S13 Wave-13: footer copyright year is rendered in the recipient tenant's zone, not the JVM zone.
+    // A tenant on Jan-1 IST should never see a "2025" footer in a mail composed at 2026-01-01 00:30 IST
+    // just because the pod's JVM is still on 2025-12-31 UTC.
+    private final TenantTimeService tenantTimeService;
 
     private static final String BASE_TEMPLATE = """
             <!DOCTYPE html>
@@ -45,11 +53,26 @@ public class EmailTemplateService {
             </html>
             """;
 
+    /**
+     * Backward-compatible overload — defaults to the tenant resolver's fallback zone (no tenant).
+     * Prefer {@link #generateEmail(EmailNotification.EmailType, Map, UUID)} so the footer year
+     * tracks the recipient's IANA zone instead of the JVM default.
+     */
     @Transactional(readOnly = true)
     public String generateEmail(EmailNotification.EmailType type, Map<String, String> variables) {
+        return generateEmail(type, variables, null);
+    }
+
+    /**
+     * Tenant-zoned email generation. {@code tenantId} may be {@code null} for system / transactional
+     * mails that have no recipient tenant (e.g. signup confirmations); in that case the footer year
+     * falls back to {@link TenantTimeService#DEFAULT_ZONE}.
+     */
+    @Transactional(readOnly = true)
+    public String generateEmail(EmailNotification.EmailType type, Map<String, String> variables, UUID tenantId) {
         String title = getEmailTitle(type);
         String body = getEmailBody(type, variables);
-        return String.format(BASE_TEMPLATE, title, body, LocalDate.now().getYear());
+        return String.format(BASE_TEMPLATE, title, body, tenantTimeService.today(tenantId).getYear());
     }
 
     private String getEmailTitle(EmailNotification.EmailType type) {

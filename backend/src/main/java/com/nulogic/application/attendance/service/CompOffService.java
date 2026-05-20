@@ -26,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -124,7 +123,8 @@ public class CompOffService {
 
         request.setStatus(CompOffRequest.CompOffStatus.CREDITED);
         request.setReviewedBy(approverId);
-        request.setReviewedAt(LocalDateTime.now());
+        // S13 wave-13c: review timestamp must be in tenant zone — resolved via TenantTimeService.
+        request.setReviewedAt(tenantTimeService.now(request.getTenantId()));
         request.setReviewNote(note);
         request.setLeaveBalanceId(balance.getId());
 
@@ -151,7 +151,8 @@ public class CompOffService {
 
         request.setStatus(CompOffRequest.CompOffStatus.REJECTED);
         request.setReviewedBy(approverId);
-        request.setReviewedAt(LocalDateTime.now());
+        // S13 wave-13c: review timestamp must be in tenant zone — resolved via TenantTimeService.
+        request.setReviewedAt(tenantTimeService.now(request.getTenantId()));
         request.setReviewNote(note);
 
         log.info("Comp-off rejected: request={}", requestId);
@@ -204,7 +205,9 @@ public class CompOffService {
             try {
                 LeaveBalance balance = creditLeaveBalance(tenantId, req.getEmployeeId(), req.getCompOffDays());
                 req.setStatus(CompOffRequest.CompOffStatus.CREDITED);
-                req.setReviewedAt(LocalDateTime.now());
+                // S13 wave-13c: auto-approve timestamp must be in tenant zone — tenantId here is
+                // already the tenant being batched; reuse it instead of req.getTenantId() for clarity.
+                req.setReviewedAt(tenantTimeService.now(tenantId));
                 req.setLeaveBalanceId(balance.getId());
                 req.setReviewNote("Auto-approved by system after " + autoApproveAfterDays + " days");
                 compOffRequestRepository.save(req);

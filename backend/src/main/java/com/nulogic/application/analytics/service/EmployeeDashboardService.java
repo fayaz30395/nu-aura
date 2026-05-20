@@ -5,6 +5,7 @@ import com.nulogic.api.analytics.dto.EmployeeDashboardResponse.*;
 import com.nulogic.common.exception.ResourceNotFoundException;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.attendance.AttendanceRecord;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.leave.LeaveRequest;
@@ -48,6 +49,7 @@ public class EmployeeDashboardService {
     private final PayslipRepository payslipRepository;
     private final HolidayRepository holidayRepository;
     private final com.nulogic.application.attendance.service.TenantAttendanceConfigService tenantAttendanceConfigService;
+    private final TenantTimeService tenantTimeService;
 
     /**
      * Get employee dashboard for the currently logged-in employee
@@ -69,7 +71,7 @@ public class EmployeeDashboardService {
     @Transactional(readOnly = true)
     public EmployeeDashboardResponse getEmployeeDashboard(UUID employeeId) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        LocalDate today = LocalDate.now();
+        LocalDate today = tenantTimeService.today(tenantId);
 
         Employee employee = employeeRepository.findByIdAndTenantId(employeeId, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Employee not found: " + employeeId));
@@ -466,7 +468,9 @@ public class EmployeeDashboardService {
                 .feedbackReceived(5)
                 .feedbackGiven(3)
                 .avgFeedbackRating(BigDecimal.valueOf(4.2))
+                // JVM-local: demo data — placeholder until performance module integration (see method header)
                 .lastOneOnOne(LocalDate.now().minusWeeks(2))
+                // JVM-local: demo data — placeholder until performance module integration (see method header)
                 .nextOneOnOne(LocalDate.now().plusWeeks(2))
                 .oneOnOnesThisQuarter(3)
                 .recognitionsReceived(2)
@@ -499,7 +503,7 @@ public class EmployeeDashboardService {
 
     private CareerProgress buildCareerProgress(UUID tenantId, Employee employee) {
         int timeInRole = employee.getJoiningDate() != null ?
-                (int) ChronoUnit.MONTHS.between(employee.getJoiningDate(), LocalDate.now()) : 0;
+                (int) ChronoUnit.MONTHS.between(employee.getJoiningDate(), tenantTimeService.today(tenantId)) : 0;
 
         List<CareerMilestone> milestones = new ArrayList<>();
 
@@ -558,6 +562,7 @@ public class EmployeeDashboardService {
                 .type("TRAINING")
                 .title("Complete Compliance Training")
                 .description("Annual compliance training is due")
+                // JVM-local: demo data — hardcoded placeholder task until task/training module integration
                 .dueDate(LocalDate.now().plusDays(7))
                 .priority("HIGH")
                 .actionUrl("/training")

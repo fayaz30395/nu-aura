@@ -2,13 +2,13 @@ package com.nulogic.application.notification.service;
 
 import com.nulogic.application.notification.dto.NotificationMessage;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.infrastructure.websocket.RedisWebSocketRelay;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
@@ -26,6 +26,10 @@ import java.util.UUID;
 public class WebSocketNotificationService {
 
     private final RedisWebSocketRelay redisWebSocketRelay;
+    // S13 Wave-13: timestamp pushed to the client in the current tenant's zone. WS pushes are
+    // always invoked from a request/scheduler frame that has TenantContext set; if it's missing
+    // the resolver falls back to DEFAULT_ZONE rather than the JVM zone.
+    private final TenantTimeService tenantTimeService;
 
     /**
      * Send notification to a specific user.
@@ -33,7 +37,7 @@ public class WebSocketNotificationService {
     @Transactional
     public void sendToUser(UUID userId, NotificationMessage notification) {
         String destination = "/queue/notifications";
-        notification.setTimestamp(LocalDateTime.now());
+        notification.setTimestamp(tenantTimeService.now(TenantContext.getCurrentTenant()));
         notification.setId(UUID.randomUUID());
 
         redisWebSocketRelay.convertAndSendToUser(
@@ -51,7 +55,8 @@ public class WebSocketNotificationService {
     @Transactional
     public void sendToTenant(UUID tenantId, NotificationMessage notification) {
         String destination = "/topic/tenant/" + tenantId + "/notifications";
-        notification.setTimestamp(LocalDateTime.now());
+        // S13 Wave-13: explicit tenant arg drives the zone — no TenantContext lookup needed.
+        notification.setTimestamp(tenantTimeService.now(tenantId));
         notification.setId(UUID.randomUUID());
 
         redisWebSocketRelay.convertAndSend(destination, notification);
@@ -76,7 +81,10 @@ public class WebSocketNotificationService {
     @Transactional
     public void sendToDepartment(UUID departmentId, NotificationMessage notification) {
         String destination = "/topic/department/" + departmentId + "/notifications";
-        notification.setTimestamp(LocalDateTime.now());
+        // S13 Wave-13: department broadcasts originate from a request frame in the same tenant,
+        // so TenantContext gives us the right zone. (departmentId alone can't resolve a tenant
+        // without an extra DB hop, which would be wasteful for a stamp.)
+        notification.setTimestamp(tenantTimeService.now(TenantContext.getCurrentTenant()));
         notification.setId(UUID.randomUUID());
 
         redisWebSocketRelay.convertAndSend(destination, notification);

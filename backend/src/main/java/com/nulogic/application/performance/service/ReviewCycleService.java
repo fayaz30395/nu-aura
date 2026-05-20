@@ -2,6 +2,7 @@ package com.nulogic.application.performance.service;
 
 import com.nulogic.application.performance.dto.*;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.performance.PerformanceReview;
 import com.nulogic.domain.performance.ReviewCycle;
@@ -15,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -29,13 +29,16 @@ public class ReviewCycleService {
     private final ReviewCycleRepository reviewCycleRepository;
     private final EmployeeRepository employeeRepository;
     private final PerformanceReviewRepository performanceReviewRepository;
+    private final TenantTimeService tenantTimeService;
 
     public ReviewCycleService(ReviewCycleRepository reviewCycleRepository,
                               EmployeeRepository employeeRepository,
-                              PerformanceReviewRepository performanceReviewRepository) {
+                              PerformanceReviewRepository performanceReviewRepository,
+                              TenantTimeService tenantTimeService) {
         this.reviewCycleRepository = reviewCycleRepository;
         this.employeeRepository = employeeRepository;
         this.performanceReviewRepository = performanceReviewRepository;
+        this.tenantTimeService = tenantTimeService;
     }
 
     @Transactional
@@ -102,7 +105,7 @@ public class ReviewCycleService {
     public List<ReviewCycleResponse> getActiveCycles() {
         UUID tenantId = TenantContext.getCurrentTenant();
 
-        LocalDate today = LocalDate.now();
+        LocalDate today = tenantTimeService.today(tenantId);
         List<ReviewCycle> cycles = reviewCycleRepository.findActiveCycles(tenantId, today);
         return cycles.stream()
                 .map(this::mapToResponse)
@@ -269,7 +272,7 @@ public class ReviewCycleService {
         review.setOverallComments(request.getOverallComments());
         review.setGoalAchievementPercent(request.getGoalAchievementPercent());
         review.setStatus(PerformanceReview.ReviewStatus.SUBMITTED);
-        review.setSubmittedAt(LocalDateTime.now());
+        review.setSubmittedAt(tenantTimeService.now(tenantId));
 
         performanceReviewRepository.save(review);
     }

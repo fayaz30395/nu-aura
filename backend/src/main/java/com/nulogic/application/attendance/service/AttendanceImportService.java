@@ -137,7 +137,10 @@ public class AttendanceImportService {
     @Audited(action = AuditAction.IMPORT, entityType = "ATTENDANCE_RECORD", description = "Bulk attendance import")
     public BulkAttendanceImportResponse importFromExcel(MultipartFile file) throws IOException {
         UUID tenantId = TenantContext.getCurrentTenant();
-        String importBatchId = "imp_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+        // S13 wave-13c: importBatchId is surfaced to admins via BulkAttendanceImportResponse and
+        // appears in user-facing import-history listings, so its embedded yyyyMMdd_HHmmss component
+        // must reflect the tenant's civil clock — not the JVM zone. Resolved via TenantTimeService.
+        String importBatchId = "imp_" + tenantTimeService.now(tenantId).format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
 
         BulkAttendanceImportResponse response = BulkAttendanceImportResponse.builder()
                 .errors(new ArrayList<>())

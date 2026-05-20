@@ -4,6 +4,7 @@ import com.nulogic.common.exception.BusinessException;
 import com.nulogic.common.exception.ResourceNotFoundException;
 import com.nulogic.common.security.EncryptionService;
 import com.nulogic.common.security.SecurityContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.payment.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -36,6 +36,7 @@ public class PaymentService {
     private final RazorpayAdapter razorpayAdapter;
     private final StripeAdapter stripeAdapter;
     private final EncryptionService encryptionService;
+    private final TenantTimeService tenantTimeService;
 
     /**
      * Initiate a single payment transaction.
@@ -72,7 +73,7 @@ public class PaymentService {
 
         transaction.setTenantId(tenantId);
         transaction.setCreatedBy(userId);
-        transaction.setInitiatedAt(LocalDateTime.now());
+        transaction.setInitiatedAt(tenantTimeService.now(transaction.getTenantId()));
 
         // Validate payment config exists
         PaymentConfig config = getActivePaymentConfig(tenantId, toConfigProvider(transaction.getProvider()));
@@ -120,7 +121,7 @@ public class PaymentService {
         for (PaymentTransaction txn : transactions) {
             txn.setTenantId(tenantId);
             txn.setCreatedBy(userId);
-            txn.setInitiatedAt(LocalDateTime.now());
+            txn.setInitiatedAt(tenantTimeService.now(txn.getTenantId()));
         }
 
         // Save batch
@@ -182,7 +183,7 @@ public class PaymentService {
             // Update transaction status based on provider response
             if ("COMPLETED".equals(statusResponse.getStatus())) {
                 transaction.setStatus(PaymentTransaction.PaymentStatus.COMPLETED);
-                transaction.setCompletedAt(LocalDateTime.now());
+                transaction.setCompletedAt(tenantTimeService.now(transaction.getTenantId()));
             } else if ("FAILED".equals(statusResponse.getStatus())) {
                 transaction.setStatus(PaymentTransaction.PaymentStatus.FAILED);
             }
@@ -238,7 +239,7 @@ public class PaymentService {
 
         PaymentRefund savedRefund = paymentRefundRepository.save(refund);
         transaction.setStatus(PaymentTransaction.PaymentStatus.REFUNDED);
-        transaction.setRefundedAt(LocalDateTime.now());
+        transaction.setRefundedAt(tenantTimeService.now(transaction.getTenantId()));
         paymentTransactionRepository.save(transaction);
 
         log.info("Refund processed for payment: {}", paymentId);
@@ -291,7 +292,7 @@ public class PaymentService {
             }
 
             webhook.setProcessed(true);
-            webhook.setProcessedAt(LocalDateTime.now());
+            webhook.setProcessedAt(tenantTimeService.now(webhook.getTenantId()));
             webhook.setStatus("PROCESSED");
         } catch (Exception e) { // Intentional broad catch — service error boundary
             log.error("Error processing webhook", e);
@@ -376,7 +377,7 @@ public class PaymentService {
                                               PaymentGatewayAdapter.PaymentWebhookData data) {
         if ("completed".equalsIgnoreCase(data.getStatus()) || "succeeded".equalsIgnoreCase(data.getStatus())) {
             transaction.setStatus(PaymentTransaction.PaymentStatus.COMPLETED);
-            transaction.setCompletedAt(LocalDateTime.now());
+            transaction.setCompletedAt(tenantTimeService.now(transaction.getTenantId()));
         } else if ("failed".equalsIgnoreCase(data.getStatus())) {
             transaction.setStatus(PaymentTransaction.PaymentStatus.FAILED);
         }

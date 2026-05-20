@@ -5,6 +5,7 @@ import com.nulogic.application.notification.service.NotificationService;
 import com.nulogic.application.notification.service.SlackNotificationService;
 import com.nulogic.application.notification.service.WebSocketNotificationService;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.event.workflow.ApprovalDecisionEvent;
 import com.nulogic.domain.event.workflow.ApprovalTaskAssignedEvent;
 import com.nulogic.domain.notification.Notification;
@@ -14,7 +15,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -39,6 +39,7 @@ public class ApprovalNotificationListener {
     private final NotificationService notificationService;
     private final WebSocketNotificationService wsNotificationService;
     private final SlackNotificationService slackNotificationService;
+    private final TenantTimeService tenantTimeService;
 
     /**
      * Handles approval task assignment events.
@@ -92,7 +93,7 @@ public class ApprovalNotificationListener {
             if (event.getRequesterId() != null) {
                 metadata.put("requesterId", event.getRequesterId().toString());
             }
-            metadata.put("assignedAt", LocalDateTime.now().toString());
+            metadata.put("assignedAt", tenantTimeService.now(tenantId).toString());
 
             NotificationMessage wsNotification = NotificationMessage.builder()
                     .type(NotificationMessage.NotificationType.TASK_ASSIGNED)
@@ -183,7 +184,7 @@ public class ApprovalNotificationListener {
             if (event.getComments() != null) {
                 metadata.put("comments", event.getComments());
             }
-            metadata.put("decidedAt", LocalDateTime.now().toString());
+            metadata.put("decidedAt", tenantTimeService.now(tenantId).toString());
 
             NotificationMessage wsNotification = NotificationMessage.builder()
                     .type(approved

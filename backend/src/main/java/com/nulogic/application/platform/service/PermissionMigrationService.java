@@ -1,6 +1,7 @@
 package com.nulogic.application.platform.service;
 
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.platform.AppPermission;
 import com.nulogic.domain.platform.AppRole;
 import com.nulogic.domain.platform.NuApplication;
@@ -20,7 +21,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -48,6 +48,7 @@ public class PermissionMigrationService {
     private final PermissionRepository legacyPermissionRepository;
     private final RoleRepository legacyRoleRepository;
     private final UserRepository userRepository;
+    private final TenantTimeService tenantTimeService;
 
     /**
      * Run the full migration for a specific tenant
@@ -221,7 +222,7 @@ public class PermissionMigrationService {
                     .user(user)
                     .application(app)
                     .status(UserAppAccess.AccessStatus.ACTIVE)
-                    .grantedAt(LocalDateTime.now())
+                    .grantedAt(tenantTimeService.now(tenantId))
                     .build();
             access.setTenantId(tenantId);
 

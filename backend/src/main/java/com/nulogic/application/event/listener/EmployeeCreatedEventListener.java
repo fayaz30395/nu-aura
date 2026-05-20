@@ -3,6 +3,7 @@ package com.nulogic.application.event.listener;
 import com.nulogic.application.payroll.service.SalaryStructureService;
 import com.nulogic.application.statutory.service.StatutoryService;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.event.employee.EmployeeCreatedEvent;
 import com.nulogic.domain.statutory.EmployeeESIRecord;
@@ -14,7 +15,6 @@ import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.UUID;
 
 /**
@@ -46,6 +46,7 @@ public class EmployeeCreatedEventListener {
     private static final BigDecimal ESI_THRESHOLD = new BigDecimal("21000"); // ₹21,000/month
     private final StatutoryService statutoryService;
     private final SalaryStructureService salaryStructureService;
+    private final TenantTimeService tenantTimeService;
 
     /**
      * Handles the employee created event by auto-enrolling in statutory schemes.
@@ -112,7 +113,7 @@ public class EmployeeCreatedEventListener {
                 EmployeePFRecord pfRecord = EmployeePFRecord.builder()
                         .id(UUID.randomUUID())
                         .employeeId(employee.getId())
-                        .enrollmentDate(LocalDate.now())
+                        .enrollmentDate(tenantTimeService.today(employee.getTenantId()))
                         .status(EmployeePFRecord.PFStatus.ACTIVE)
                         .build();
 
@@ -154,7 +155,7 @@ public class EmployeeCreatedEventListener {
                 EmployeeESIRecord esiRecord = EmployeeESIRecord.builder()
                         .id(UUID.randomUUID())
                         .employeeId(employee.getId())
-                        .enrollmentDate(LocalDate.now())
+                        .enrollmentDate(tenantTimeService.today(employee.getTenantId()))
                         .status(EmployeeESIRecord.ESIStatus.ACTIVE)
                         .build();
 

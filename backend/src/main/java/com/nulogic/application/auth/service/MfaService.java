@@ -7,6 +7,7 @@ import com.nulogic.api.auth.dto.MfaStatusResponse;
 import com.nulogic.common.exception.AuthenticationException;
 import com.nulogic.common.exception.BusinessException;
 import com.nulogic.common.exception.ResourceNotFoundException;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.user.User;
 import com.nulogic.infrastructure.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,6 @@ import javax.crypto.spec.SecretKeySpec;
 import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -55,6 +55,7 @@ public class MfaService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final TenantTimeService tenantTimeService;
 
     /**
      * Sets up MFA for a user by generating a TOTP secret, QR code, and backup codes.
@@ -85,7 +86,7 @@ public class MfaService {
             user.setMfaSecret(secret);
             user.setMfaBackupCodes(backupCodesJson);
             // Don't enable yet - wait for verification
-            user.setMfaSetupAt(LocalDateTime.now());
+            user.setMfaSetupAt(tenantTimeService.now(user.getTenantId()));
             userRepository.save(user);
         } catch (JsonProcessingException e) {
             log.error("Failed to serialize backup codes for user: {}", userId, e);

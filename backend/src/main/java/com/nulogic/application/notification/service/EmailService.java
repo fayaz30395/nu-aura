@@ -1,6 +1,7 @@
 package com.nulogic.application.notification.service;
 
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.notification.EmailNotification;
 import com.nulogic.infrastructure.notification.repository.EmailNotificationRepository;
 import jakarta.mail.MessagingException;
@@ -15,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -28,6 +28,9 @@ public class EmailService {
     private final JavaMailSender mailSender;
     private final EmailNotificationRepository emailRepository;
     private final EmailTemplateService templateService;
+    // S13 Wave-13: route email send/queue timestamps through TenantTimeService so the
+    // recipient's tenant zone is the source of truth (matters once tenants live outside IST).
+    private final TenantTimeService tenantTimeService;
     @Value("${spring.mail.from:noreply@hrms.com}")
     private String fromEmail;
     @Value("${app.frontend.url:http://localhost:3000}")
@@ -47,8 +50,8 @@ public class EmailService {
         Map<String, String> resolvedVariables = variables != null ? variables : Map.of();
 
         try {
-            // Generate email content from template
-            String htmlBody = templateService.generateEmail(resolvedEmailType, resolvedVariables);
+            // Generate email content from template (footer year resolved in tenant zone)
+            String htmlBody = templateService.generateEmail(resolvedEmailType, resolvedVariables, tenantId);
             String subject = getSubject(resolvedEmailType, resolvedVariables);
 
             // Create email notification record
@@ -103,9 +106,9 @@ public class EmailService {
 
             mailSender.send(message);
 
-            // Update notification status
+            // Update notification status — sentAt in the recipient tenant's zone (S13 Wave-13)
             notification.setStatus(EmailNotification.EmailStatus.SENT);
-            notification.setSentAt(LocalDateTime.now());
+            notification.setSentAt(tenantTimeService.now(notification.getTenantId()));
             emailRepository.save(notification);
 
             log.info("Email sent successfully to {} - Type: {}", notification.getRecipientEmail(), notification.getEmailType());
@@ -173,11 +176,14 @@ public class EmailService {
      */
     @Transactional
     public void sendScheduledEmails() {
-        // Get all scheduled emails due for sending
+        // Get all scheduled emails due for sending.
+        // S13 Wave-13: "due" is evaluated in the tenant's own zone so a 9am-IST scheduled
+        // mail fires at 9am-IST regardless of where the pod's JVM thinks it is.
+        UUID tenantId = TenantContext.getCurrentTenant();
         List<EmailNotification> scheduledEmails = emailRepository.findScheduledEmailsDue(
-                TenantContext.getCurrentTenant(),
+                tenantId,
                 EmailNotification.EmailStatus.SCHEDULED,
-                LocalDateTime.now()
+                tenantTimeService.now(tenantId)
         );
 
         log.info("Sending {} scheduled emails", scheduledEmails.size());

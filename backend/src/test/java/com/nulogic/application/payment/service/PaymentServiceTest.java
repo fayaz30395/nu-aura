@@ -5,6 +5,7 @@ import com.nulogic.common.exception.ResourceNotFoundException;
 import com.nulogic.common.security.EncryptionService;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.payment.*;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -62,6 +64,9 @@ class PaymentServiceTest {
     @Mock
     private EncryptionService encryptionService;
 
+    @Mock
+    private TenantTimeService tenantTimeService;
+
     @InjectMocks
     private PaymentService paymentService;
 
@@ -75,6 +80,7 @@ class PaymentServiceTest {
         securityContextMock.when(SecurityContext::getCurrentTenantId).thenReturn(TENANT_ID);
         securityContextMock.when(SecurityContext::getCurrentUserId).thenReturn(USER_ID);
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(TENANT_ID);
+        lenient().when(tenantTimeService.now(any(UUID.class))).thenReturn(LocalDateTime.now());
     }
 
     @AfterEach

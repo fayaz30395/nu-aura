@@ -4,6 +4,7 @@ import com.nulogic.infrastructure.security.VirusScanService;
 import com.nulogic.common.exception.BusinessException;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -73,6 +74,7 @@ public class FileStorageService {
     private final StorageProvider storageProvider;
     private final JdbcTemplate jdbcTemplate;
     private final VirusScanService virusScanService;
+    private final TenantTimeService tenantTimeService;
     @Value("${app.storage.url-expiry-hours:24}")
     private int urlExpiryHours;
 
@@ -104,7 +106,7 @@ public class FileStorageService {
             metadata.put("category", category);
             metadata.put("entity-id", entityId.toString());
             metadata.put("original-filename", safeOriginalName);
-            metadata.put("uploaded-at", LocalDateTime.now().toString());
+            metadata.put("uploaded-at", tenantTimeService.now(tenantId).toString());
 
             String storageId = storageProvider.upload(objectName, file.getInputStream(), file.getSize(),
                     file.getContentType(), metadata);
@@ -128,7 +130,7 @@ public class FileStorageService {
                     .size(file.getSize())
                     .category(category)
                     .entityId(entityId)
-                    .uploadedAt(LocalDateTime.now())
+                    .uploadedAt(tenantTimeService.now(tenantId))
                     .build();
 
         } catch (BusinessException e) {
@@ -160,7 +162,7 @@ public class FileStorageService {
             metadata.put("category", category);
             metadata.put("entity-id", entityId.toString());
             metadata.put("original-filename", safeOriginalName);
-            metadata.put("uploaded-at", LocalDateTime.now().toString());
+            metadata.put("uploaded-at", tenantTimeService.now(tenantId).toString());
 
             String storageId = storageProvider.upload(objectName, inputStream, size, contentType, metadata);
 
@@ -178,7 +180,7 @@ public class FileStorageService {
                     .size(size)
                     .category(category)
                     .entityId(entityId)
-                    .uploadedAt(LocalDateTime.now())
+                    .uploadedAt(tenantTimeService.now(tenantId))
                     .build();
 
         } catch (BusinessException e) {
@@ -475,6 +477,13 @@ public class FileStorageService {
     }
 
     private String generateObjectName(UUID tenantId, String category, UUID entityId, String originalFilename) {
+        // Intentionally JVM-local: this timestamp is part of the opaque internal
+        // storage object key (logical path `tenantId/category/entityId/timestamp_uuid.ext`)
+        // and is paired with a random UUID for uniqueness — it is never surfaced
+        // to end users as a display time. Keeping it on the JVM clock avoids a
+        // tenant lookup on every upload's hot path. The originalFilename returned
+        // to clients is sanitized separately; uploaded-at metadata is tenant-zoned
+        // above.
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss"));
         String extension = getFileExtension(originalFilename);
         String uniqueId = UUID.randomUUID().toString().substring(0, 8);

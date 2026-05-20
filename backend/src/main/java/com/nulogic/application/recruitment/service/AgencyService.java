@@ -22,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Slf4j
@@ -148,7 +147,8 @@ public class AgencyService {
                 .agencyId(agencyId)
                 .candidateId(request.getCandidateId())
                 .jobOpeningId(request.getJobOpeningId())
-                .submittedAt(LocalDateTime.now())
+                // Wave 13: tenant-local submission timestamp — resolved via TenantTimeService.
+                .submittedAt(tenantTimeService.now(tenantId))
                 .feeAgreed(request.getFeeAgreed())
                 .feeCurrency(request.getFeeCurrency() != null ? request.getFeeCurrency() : "INR")
                 .status(SubmissionStatus.SUBMITTED)

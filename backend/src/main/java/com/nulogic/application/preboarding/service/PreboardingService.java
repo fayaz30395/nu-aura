@@ -3,6 +3,7 @@ package com.nulogic.application.preboarding.service;
 import com.nulogic.common.exception.BusinessException;
 import com.nulogic.common.exception.ResourceNotFoundException;
 import com.nulogic.common.security.SecurityContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.preboarding.PreboardingCandidate;
 import com.nulogic.domain.preboarding.PreboardingCandidate.PreboardingStatus;
 import com.nulogic.infrastructure.preboarding.repository.PreboardingCandidateRepository;
@@ -14,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,6 +26,7 @@ public class PreboardingService {
     private static final String CANDIDATE_NOT_FOUND = "Candidate not found";
 
     private final PreboardingCandidateRepository candidateRepository;
+    private final TenantTimeService tenantTimeService;
 
     /**
      * Create a new pre-boarding invitation for a candidate.
@@ -52,7 +53,7 @@ public class PreboardingService {
                 .departmentId(departmentId)
                 .reportingManagerId(reportingManagerId)
                 .accessToken(UUID.randomUUID().toString())
-                .tokenExpiresAt(LocalDateTime.now().plusDays(30))
+                .tokenExpiresAt(tenantTimeService.now(tenantId).plusDays(30))
                 .status(PreboardingStatus.INVITED)
                 .completionPercentage(0)
                 .build();
@@ -72,7 +73,7 @@ public class PreboardingService {
                 .orElseThrow(() -> new ResourceNotFoundException("Invalid or expired access link"));
 
         if (candidate.getTokenExpiresAt() != null &&
-                candidate.getTokenExpiresAt().isBefore(LocalDateTime.now())) {
+                candidate.getTokenExpiresAt().isBefore(tenantTimeService.now(candidate.getTenantId()))) {
             throw new BusinessException("Access link has expired");
         }
 
@@ -211,7 +212,7 @@ public class PreboardingService {
                 .orElseThrow(() -> new ResourceNotFoundException(CANDIDATE_NOT_FOUND));
 
         candidate.setAccessToken(UUID.randomUUID().toString());
-        candidate.setTokenExpiresAt(LocalDateTime.now().plusDays(30));
+        candidate.setTokenExpiresAt(tenantTimeService.now(candidate.getTenantId()).plusDays(30));
         candidateRepository.save(candidate);
         log.info("Resent pre-boarding invitation to {}", candidate.getFullName());
     }

@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -101,10 +100,11 @@ public class JobBoardIntegrationService {
                     default -> log.warn("Board {} integration not yet implemented", board);
                 }
                 posting.setStatus(JobBoardPosting.PostingStatus.ACTIVE);
-                posting.setPostedAt(LocalDateTime.now());
+                // Wave 13: tenant-local posted/synced timestamps — resolved via TenantTimeService.
+                posting.setPostedAt(tenantTimeService.now(tenantId));
                 // S12-B: tenant-local 30-day expiry window for job-board posting — resolved via TenantTimeService.
                 posting.setExpiresAt(tenantTimeService.now(tenantId).plusDays(30));
-                posting.setLastSyncedAt(LocalDateTime.now());
+                posting.setLastSyncedAt(tenantTimeService.now(tenantId));
                 posting.setErrorMessage(null);
             } catch (Exception e) { // Intentional broad catch — external job board API integration
                 log.error("Failed to post job {} to {}: {}", jobOpeningId, board, e.getMessage());
@@ -153,8 +153,10 @@ public class JobBoardIntegrationService {
         for (UUID tenantId : tenantIds) {
             TenantContext.setCurrentTenant(tenantId);
             try {
+                // Wave 13: tenant-local sentinel cutoff. plusYears(10) dwarfs any tenant zone delta,
+                // but routing through TenantTimeService keeps the call consistent with the rest of the sweep.
                 List<JobBoardPosting> activePostings = jobBoardPostingRepository
-                        .findAllExpiredPostings(LocalDateTime.now().plusYears(10)); // all active (not expired yet)
+                        .findAllExpiredPostings(tenantTimeService.now(tenantId).plusYears(10)); // all active (not expired yet)
                 for (JobBoardPosting posting : activePostings) {
                     try {
                         syncPostingStats(posting);
@@ -181,8 +183,9 @@ public class JobBoardIntegrationService {
         for (UUID tenantId : tenantIds) {
             TenantContext.setCurrentTenant(tenantId);
             try {
+                // Wave 13: tenant-local expiry cutoff — resolved via TenantTimeService.
                 List<JobBoardPosting> expired = jobBoardPostingRepository
-                        .findAllExpiredPostings(LocalDateTime.now());
+                        .findAllExpiredPostings(tenantTimeService.now(tenantId));
                 expired.forEach(p -> {
                     p.setStatus(JobBoardPosting.PostingStatus.EXPIRED);
                     jobBoardPostingRepository.save(p);
@@ -435,7 +438,8 @@ public class JobBoardIntegrationService {
             default -> {
             }
         }
-        posting.setLastSyncedAt(LocalDateTime.now());
+        // Wave 13: tenant-local last-synced timestamp — resolved via TenantTimeService.
+        posting.setLastSyncedAt(tenantTimeService.now(posting.getTenantId()));
     }
 
     private void syncNaukriStats(JobBoardPosting posting) {

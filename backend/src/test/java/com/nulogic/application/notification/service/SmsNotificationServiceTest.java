@@ -1,5 +1,6 @@
 package com.nulogic.application.notification.service;
 
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.infrastructure.sms.TwilioConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -12,10 +13,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
@@ -26,6 +30,11 @@ class SmsNotificationServiceTest {
     @Mock
     private TwilioConfig twilioConfig;
 
+    // S13 Wave-13: SmsNotificationService now stamps mock audit records via TenantTimeService
+    // instead of LocalDateTime.now(), so the test must provide the dependency.
+    @Mock
+    private TenantTimeService tenantTimeService;
+
     @InjectMocks
     private SmsNotificationService smsNotificationService;
 
@@ -35,6 +44,11 @@ class SmsNotificationServiceTest {
         lenient().when(twilioConfig.isMockMode()).thenReturn(true);
         lenient().when(twilioConfig.getFromNumber()).thenReturn("+15551234567");
         lenient().when(twilioConfig.getMaxMessageLength()).thenReturn(1600);
+        // tenantTimeService is invoked from sendMockSms with whatever the current TenantContext
+        // resolves to (null in unit tests); the resolver fallback returns DEFAULT_ZONE, so the
+        // exact value here doesn't matter — only that it's non-null.
+        lenient().when(tenantTimeService.now(any(UUID.class))).thenReturn(LocalDateTime.now());
+        lenient().when(tenantTimeService.now(null)).thenReturn(LocalDateTime.now());
     }
 
     @Nested

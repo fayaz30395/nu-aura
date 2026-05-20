@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nulogic.application.platform.service.HrmsPermissionInitializer;
 import com.nulogic.common.security.JwtTokenProvider;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.auth.SamlIdentityProvider;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.platform.UserAppAccess;
@@ -22,7 +23,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -49,6 +49,7 @@ public class SamlAuthenticationHandler {
     private final JwtTokenProvider tokenProvider;
     private final PasswordEncoder passwordEncoder;
     private final ObjectMapper objectMapper;
+    private final TenantTimeService tenantTimeService;
 
     public SamlAuthenticationHandler(SamlIdentityProviderRepository samlIdpRepository,
                                      UserRepository userRepository,
@@ -57,7 +58,8 @@ public class SamlAuthenticationHandler {
                                      UserAppAccessRepository userAppAccessRepository,
                                      JwtTokenProvider tokenProvider,
                                      @Lazy PasswordEncoder passwordEncoder,
-                                     ObjectMapper objectMapper) {
+                                     ObjectMapper objectMapper,
+                                     TenantTimeService tenantTimeService) {
         this.samlIdpRepository = samlIdpRepository;
         this.userRepository = userRepository;
         this.employeeRepository = employeeRepository;
@@ -66,6 +68,7 @@ public class SamlAuthenticationHandler {
         this.tokenProvider = tokenProvider;
         this.passwordEncoder = passwordEncoder;
         this.objectMapper = objectMapper;
+        this.tenantTimeService = tenantTimeService;
     }
 
     /**
@@ -158,7 +161,7 @@ public class SamlAuthenticationHandler {
                 .passwordHash(passwordEncoder.encode(UUID.randomUUID().toString())) // Random password (SAML users won't use it)
                 .status(User.UserStatus.ACTIVE)
                 .authProvider(AuthProvider.SAML)
-                .lastLoginAt(LocalDateTime.now())
+                .lastLoginAt(tenantTimeService.now(tenantId))
                 .mfaEnabled(false)
                 .build();
 

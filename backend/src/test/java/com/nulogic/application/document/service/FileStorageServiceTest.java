@@ -1,6 +1,7 @@
 package com.nulogic.application.document.service;
 
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.infrastructure.security.VirusScanService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,6 +15,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.io.InputStream;
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.UUID;
 
@@ -21,6 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -40,12 +43,16 @@ class FileStorageServiceTest {
     @Mock
     private VirusScanService virusScanService;
 
+    @Mock
+    private TenantTimeService tenantTimeService;
+
     private FileStorageService fileStorageService;
 
     @BeforeEach
     void setUp() {
         TenantContext.setCurrentTenant(TENANT_ID);
-        fileStorageService = new FileStorageService(storageProvider, jdbcTemplate, virusScanService);
+        lenient().when(tenantTimeService.now(any())).thenReturn(LocalDateTime.parse("2026-05-20T12:00:00"));
+        fileStorageService = new FileStorageService(storageProvider, jdbcTemplate, virusScanService, tenantTimeService);
     }
 
     @AfterEach

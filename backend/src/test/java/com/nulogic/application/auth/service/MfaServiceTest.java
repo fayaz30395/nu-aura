@@ -4,6 +4,7 @@ import com.nulogic.api.auth.dto.MfaSetupResponse;
 import com.nulogic.api.auth.dto.MfaStatusResponse;
 import com.nulogic.common.exception.AuthenticationException;
 import com.nulogic.common.exception.ResourceNotFoundException;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.user.User;
 import com.nulogic.infrastructure.user.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,6 +39,9 @@ class MfaServiceTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
+    @Mock
+    private TenantTimeService tenantTimeService;
+
     @InjectMocks
     private MfaService mfaService;
 
@@ -54,6 +58,11 @@ class MfaServiceTest {
         user.setMfaSecret(null);
         user.setMfaBackupCodes(null);
         user.setMfaSetupAt(null);
+        // Wave 13: TenantTimeService now drives the MFA setup timestamp. The strictness is
+        // LENIENT (class-level @MockitoSettings) so unstubbed tests stay green; the stub is
+        // declared here once so the `setupMfa` path that records setMfaSetupAt has a
+        // deterministic value across every nested test.
+        when(tenantTimeService.now(any())).thenReturn(LocalDateTime.parse("2026-05-20T10:00:00"));
     }
 
     @Nested

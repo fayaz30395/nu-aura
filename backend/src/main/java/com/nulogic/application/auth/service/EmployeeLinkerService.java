@@ -4,6 +4,7 @@ import com.nulogic.api.employee.dto.EmployeeResponse;
 import com.nulogic.application.audit.service.AuditLogService;
 import com.nulogic.common.exception.ResourceNotFoundException;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.audit.AuditLog.AuditAction;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.user.User;
@@ -14,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -31,6 +31,7 @@ public class EmployeeLinkerService {
     private final UserRepository userRepository;
     private final EmployeeRepository employeeRepository;
     private final AuditLogService auditLogService;
+    private final TenantTimeService tenantTimeService;
 
     /**
      * Link an existing employee to a user or create a new employee record if none exists.
@@ -97,7 +98,7 @@ public class EmployeeLinkerService {
                     .user(user)
                     .firstName(firstName)
                     .lastName(lastName)
-                    .joiningDate(LocalDate.now())
+                    .joiningDate(tenantTimeService.today(tenantId))
                     .employmentType(Employee.EmploymentType.FULL_TIME)
                     .status(Employee.EmployeeStatus.ACTIVE)
                     .tenantId(tenantId)

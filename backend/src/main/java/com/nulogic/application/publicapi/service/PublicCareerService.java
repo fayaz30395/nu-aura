@@ -1,6 +1,7 @@
 package com.nulogic.application.publicapi.service;
 
 import com.nulogic.application.document.service.FileStorageService;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.recruitment.Applicant;
 import com.nulogic.domain.recruitment.ApplicationStatus;
 import com.nulogic.domain.recruitment.Candidate;
@@ -21,8 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -45,6 +44,7 @@ public class PublicCareerService {
     private final CandidateRepository candidateRepository;
     private final ApplicantRepository applicantRepository;
     private final FileStorageService fileStorageService;
+    private final TenantTimeService tenantTimeService;
 
     // ─────────────────────────────────────────────────────────────────────────
     // Public API: Job Listings
@@ -173,8 +173,8 @@ public class PublicCareerService {
         applicant.setCandidateId(candidate.getId());
         applicant.setJobOpeningId(jobId);
         applicant.setStatus(ApplicationStatus.APPLIED);
-        applicant.setAppliedDate(LocalDate.now());
-        applicant.setCurrentStageEnteredAt(LocalDateTime.now());
+        applicant.setAppliedDate(tenantTimeService.today(tenantId));
+        applicant.setCurrentStageEnteredAt(tenantTimeService.now(tenantId));
         applicant.setNotes(coverLetter);
 
         if (expectedSalary != null && !expectedSalary.isBlank()) {
@@ -201,7 +201,7 @@ public class PublicCareerService {
         response.put("jobTitle", job.getJobTitle());
         response.put("message",
                 "Your application has been submitted successfully! We will review it and reach out soon.");
-        response.put("submittedAt", LocalDateTime.now().toString());
+        response.put("submittedAt", tenantTimeService.now(tenantId).toString());
         return response;
     }
 
@@ -320,7 +320,7 @@ public class PublicCareerService {
     private Candidate createPublicCandidate(UUID tenantId, UUID jobOpeningId,
                                             String firstName, String lastName,
                                             String email, String phone) {
-        String dateStr = LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE); // e.g. 20260316
+        String dateStr = tenantTimeService.today(tenantId).format(DateTimeFormatter.BASIC_ISO_DATE); // e.g. 20260316
         String suffix = UUID.randomUUID().toString().substring(0, 6).toUpperCase();
         String code = "CAND-" + dateStr + "-" + suffix;
 
@@ -335,7 +335,7 @@ public class PublicCareerService {
         candidate.setPhone(phone);
         candidate.setSource(Candidate.CandidateSource.JOB_PORTAL);
         candidate.setStatus(Candidate.CandidateStatus.NEW);
-        candidate.setAppliedDate(LocalDate.now());
+        candidate.setAppliedDate(tenantTimeService.today(tenantId));
         return candidate;
     }
 

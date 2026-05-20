@@ -2,6 +2,7 @@ package com.nulogic.application.platform.service;
 
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.platform.*;
 import com.nulogic.domain.user.User;
 import com.nulogic.infrastructure.platform.repository.*;
@@ -12,7 +13,6 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -32,6 +32,7 @@ public class NuPlatformService {
     private final UserAppAccessRepository userAppAccessRepository;
     private final TenantApplicationRepository tenantApplicationRepository;
     private final UserRepository userRepository;
+    private final TenantTimeService tenantTimeService;
 
     // ==================== Application Management ====================
 
@@ -273,7 +274,7 @@ public class NuPlatformService {
                 .user(user)
                 .application(app)
                 .status(UserAppAccess.AccessStatus.ACTIVE)
-                .grantedAt(LocalDateTime.now())
+                .grantedAt(tenantTimeService.now(tenantId))
                 .grantedBy(grantedBy)
                 .build();
         access.setTenantId(tenantId);
@@ -409,7 +410,7 @@ public class NuPlatformService {
         TenantApplication ta = TenantApplication.builder()
                 .application(app)
                 .status(TenantApplication.SubscriptionStatus.ACTIVE)
-                .activatedAt(LocalDateTime.now())
+                .activatedAt(tenantTimeService.now(tenantId))
                 .subscriptionTier(tier)
                 .maxUsers(maxUsers)
                 .build();

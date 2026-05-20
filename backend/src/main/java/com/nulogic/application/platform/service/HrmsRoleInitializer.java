@@ -4,6 +4,7 @@ import com.nulogic.domain.platform.AppPermission;
 import com.nulogic.domain.platform.AppRole;
 import com.nulogic.domain.platform.NuApplication;
 import com.nulogic.domain.platform.TenantApplication;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.infrastructure.platform.repository.AppPermissionRepository;
 import com.nulogic.infrastructure.platform.repository.AppRoleRepository;
 import com.nulogic.infrastructure.platform.repository.NuApplicationRepository;
@@ -15,7 +16,6 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -36,6 +36,7 @@ public class HrmsRoleInitializer {
     private final AppPermissionRepository permissionRepository;
     private final AppRoleRepository roleRepository;
     private final TenantApplicationRepository tenantApplicationRepository;
+    private final TenantTimeService tenantTimeService;
 
     @PostConstruct
     @Transactional
@@ -67,7 +68,7 @@ public class HrmsRoleInitializer {
             TenantApplication ta = TenantApplication.builder()
                     .application(app)
                     .status(TenantApplication.SubscriptionStatus.ACTIVE)
-                    .activatedAt(LocalDateTime.now())
+                    .activatedAt(tenantTimeService.now(tenantId))
                     .subscriptionTier("ENTERPRISE")
                     .maxUsers(1000)
                     .build();

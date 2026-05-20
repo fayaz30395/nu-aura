@@ -2,6 +2,7 @@ package com.nulogic.application.analytics.service;
 
 import com.nulogic.api.analytics.dto.OrganizationHealthResponse;
 import com.nulogic.api.analytics.dto.OrganizationHealthResponse.*;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 public class OrganizationHealthService {
 
     private final EmployeeRepository employeeRepository;
+    private final TenantTimeService tenantTimeService;
 
     @Transactional(readOnly = true)
     public OrganizationHealthResponse getOrganizationHealth(UUID tenantId) {
@@ -29,11 +31,13 @@ public class OrganizationHealthService {
                 .filter(e -> e.getStatus() == Employee.EmployeeStatus.ACTIVE)
                 .collect(Collectors.toList());
 
+        LocalDate today = tenantTimeService.today(tenantId);
+
         return OrganizationHealthResponse.builder()
                 .healthScore(calculateOverallHealth(activeEmployees))
-                .turnover(calculateTurnover(allEmployees))
+                .turnover(calculateTurnover(allEmployees, today))
                 .diversity(calculateDiversity(activeEmployees))
-                .tenure(calculateTenure(activeEmployees))
+                .tenure(calculateTenure(activeEmployees, today))
                 .engagement(mockEngagementData())
                 .training(mockTrainingData())
                 .build();
@@ -49,8 +53,8 @@ public class OrganizationHealthService {
                 .build();
     }
 
-    private TurnoverMetrics calculateTurnover(List<Employee> allEmployees) {
-        LocalDate oneYearAgo = LocalDate.now().minusYears(1);
+    private TurnoverMetrics calculateTurnover(List<Employee> allEmployees, LocalDate today) {
+        LocalDate oneYearAgo = today.minusYears(1);
         long exits = allEmployees.stream()
                 .filter(e -> e.getExitDate() != null && e.getExitDate().isAfter(oneYearAgo))
                 .count();
@@ -92,12 +96,10 @@ public class OrganizationHealthService {
                 .build();
     }
 
-    private TenureMetrics calculateTenure(List<Employee> activeEmployees) {
+    private TenureMetrics calculateTenure(List<Employee> activeEmployees, LocalDate today) {
         if (activeEmployees.isEmpty()) {
             return TenureMetrics.builder().averageTenureYears(0).build();
         }
-
-        LocalDate today = LocalDate.now();
 
         // Pre-compute tenure years once per employee to avoid repeated Period.between() calls
         List<Double> tenureYears = activeEmployees.stream()
