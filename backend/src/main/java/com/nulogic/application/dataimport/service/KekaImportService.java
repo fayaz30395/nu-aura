@@ -6,6 +6,7 @@ import com.nulogic.application.notification.service.EmailNotificationService;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.CellValueSanitizer;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.dataimport.KekaImportHistory;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.user.Role;
@@ -57,6 +58,7 @@ public class KekaImportService {
     private final ObjectMapper objectMapper;
     private final EmailNotificationService emailNotificationService;
     private final CellValueSanitizer cellValueSanitizer;
+    private final TenantTimeService tenantTimeService;
 
     /**
      * QA sweep S2-C K-5: API-driven KEKA import is not implemented — the executor below
@@ -77,7 +79,7 @@ public class KekaImportService {
         List<String> headers = extractHeadersFromCSV(file);
 
         String fileId = UUID.randomUUID().toString();
-        LocalDateTime uploadedAt = LocalDateTime.now();
+        LocalDateTime uploadedAt = tenantTimeService.now(TenantContext.getCurrentTenant());
 
         return KekaFileUploadResponse.builder()
                 .fileId(fileId)
@@ -126,7 +128,7 @@ public class KekaImportService {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID currentUserId = SecurityContext.getCurrentUserId();
 
-        LocalDateTime startTime = LocalDateTime.now();
+        LocalDateTime startTime = tenantTimeService.now(tenantId);
         int totalProcessed = 0;
         int created = 0;
         int updated = 0;
@@ -167,7 +169,7 @@ public class KekaImportService {
                     .build());
         }
 
-        LocalDateTime endTime = LocalDateTime.now();
+        LocalDateTime endTime = tenantTimeService.now(tenantId);
         long duration = java.time.temporal.ChronoUnit.MILLIS.between(startTime, endTime);
 
         // Save import history

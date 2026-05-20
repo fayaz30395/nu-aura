@@ -246,6 +246,7 @@ public class SystemAdminService {
     public GrowthMetricsDTO getGrowthMetrics(int months) {
         log.info("SuperAdmin requesting growth metrics for last {} months", months);
 
+        // JVM-local: SuperAdmin cross-tenant aggregation — no single tenant zone applies.
         LocalDate now = LocalDate.now();
         List<GrowthMetricsDTO.MonthlyGrowth> growthList = new ArrayList<>();
 
@@ -542,7 +543,7 @@ public class SystemAdminService {
 
         String tempPassword = generateSecureTempPassword();
         user.setPasswordHash(passwordEncoder.encode(tempPassword));
-        user.setPasswordChangedAt(LocalDateTime.now());
+        user.setPasswordChangedAt(tenantTimeService.now(currentTenant));
         userRepository.save(user);
 
         // Revoke all outstanding JWTs for this user so the old password can't be used post-reset.
@@ -573,7 +574,7 @@ public class SystemAdminService {
                 tempPassword
         );
 
-        LocalDateTime resetAt = LocalDateTime.now();
+        LocalDateTime resetAt = tenantTimeService.now(currentTenant);
         log.info("Password reset completed for user {} by admin {} at {}",
                 user.getId(), adminUserId, resetAt);
 

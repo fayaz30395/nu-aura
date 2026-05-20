@@ -3,6 +3,7 @@ package com.nulogic.application.mobile.service;
 import com.nulogic.api.mobile.dto.MobileSyncDto;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,8 @@ import java.util.UUID;
 @Transactional(readOnly = true)
 public class MobileSyncService {
 
+    private final TenantTimeService tenantTimeService;
+
     /**
      * Perform delta sync - return all changes since last sync timestamp
      * Supports offline-first mobile patterns
@@ -26,7 +29,7 @@ public class MobileSyncService {
     public MobileSyncDto.SyncResponse deltaSync(MobileSyncDto.SyncRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID userId = SecurityContext.getCurrentUserId();
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = tenantTimeService.now(tenantId);
 
         log.info("Delta sync requested for user={}, lastSyncAt={}", userId, request.getLastSyncAt());
 

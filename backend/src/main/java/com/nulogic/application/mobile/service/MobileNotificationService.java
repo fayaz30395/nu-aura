@@ -54,6 +54,7 @@ public class MobileNotificationService {
                 .title("Leave Request Approved")
                 .message("Your leave request for March 15-17 has been approved")
                 .category("Leave approval")
+                // JVM-local: hardcoded placeholder until notification module integration (see method comment)
                 .createdAt(LocalDateTime.now().minusHours(2))
                 .isRead(false)
                 .priority("HIGH")

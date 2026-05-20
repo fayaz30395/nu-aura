@@ -10,6 +10,7 @@ import com.nulogic.application.leave.service.LeaveRequestService;
 import com.nulogic.application.workflow.service.ApprovalService;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.attendance.Holiday;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.leave.LeaveBalance;
@@ -40,6 +41,7 @@ public class MobileService {
     private final ApprovalService approvalService;
     private final AnnouncementService announcementService;
     private final HolidayService holidayService;
+    private final TenantTimeService tenantTimeService;
 
     /**
      * Get aggregated mobile dashboard data
@@ -148,12 +150,12 @@ public class MobileService {
     private List<MobileDashboardResponse.UpcomingHoliday> getUpcomingHolidays(
             UUID tenantId, int limit) {
         try {
-            LocalDate today = LocalDate.now();
+            LocalDate today = tenantTimeService.today(tenantId);
             LocalDate thirtyDaysFromNow = today.plusDays(30);
 
             List<Holiday> holidays = holidayService.getHolidaysByDateRange(today, thirtyDaysFromNow);
 
-            LocalDate now = LocalDate.now();
+            LocalDate now = today;
             return holidays.stream()
                     .sorted(Comparator.comparing(Holiday::getHolidayDate))
                     .limit(limit)
@@ -221,7 +223,7 @@ public class MobileService {
             UUID tenantId, int daysFromNow) {
         try {
             List<MobileDashboardResponse.EmployeeReminder> reminders = new ArrayList<>();
-            LocalDate today = LocalDate.now();
+            LocalDate today = tenantTimeService.today(tenantId);
             LocalDate endDate = today.plusDays(daysFromNow);
 
             // Get current user's reportees (team members) instead of all employees
