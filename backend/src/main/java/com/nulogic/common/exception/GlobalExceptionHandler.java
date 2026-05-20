@@ -54,6 +54,8 @@ public class GlobalExceptionHandler {
     private static final String URI_PREFIX = "uri=";
 
     private final MeterRegistry meterRegistry;
+    @org.springframework.beans.factory.annotation.Autowired(required = false)
+    private com.nulogic.common.util.TenantTimeService tenantTimeService;
 
     /**
      * Extract the request path from the WebRequest description.
@@ -80,9 +82,13 @@ public class GlobalExceptionHandler {
     private ErrorResponse buildErrorResponse(HttpStatus status, String error, String message, String path) {
         String requestId = MDC.get("requestId");
         UUID tenantId = TenantContext.getCurrentTenant();
+        // tenantId may be null on auth / pre-context exceptions; fall back to JVM zone.
+        LocalDateTime now = tenantId != null && tenantTimeService != null
+                ? tenantTimeService.now(tenantId)
+                : LocalDateTime.now();
 
         return ErrorResponse.builder()
-                .timestamp(LocalDateTime.now())
+                .timestamp(now)
                 .status(status.value())
                 .error(error)
                 .message(message)

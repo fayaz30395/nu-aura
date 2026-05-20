@@ -39,7 +39,7 @@ public class WebhookHealthIndicator implements HealthIndicator {
             long pendingDeliveries = deliveryRepository.countByStatus(DeliveryStatus.PENDING);
             long retryingDeliveries = deliveryRepository.countByStatus(DeliveryStatus.RETRYING);
 
-            // Calculate success rate from last hour
+            // JVM-local: cross-tenant health probe, no single tenant zone applies.
             LocalDateTime oneHourAgo = LocalDateTime.now().minusHours(1);
             long recentDelivered = deliveryRepository.countByStatusAndCreatedAtAfter(
                     DeliveryStatus.DELIVERED, oneHourAgo);

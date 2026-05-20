@@ -176,6 +176,7 @@ public class TimeAuditingEntityListener {
                     + "stamping {}#{} — falling back to JVM default zone. This is only "
                     + "expected during very early application startup.",
                     field.getDeclaringClass().getSimpleName(), field.getName());
+            // JVM-local: documented startup fallback when TenantTimeService isn't yet wired (see WARN above).
             return type == LocalDate.class ? LocalDate.now() : LocalDateTime.now();
         }
         return type == LocalDate.class ? svc.today(tenantId) : svc.now(tenantId);

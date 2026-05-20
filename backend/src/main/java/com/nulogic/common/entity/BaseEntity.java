@@ -64,6 +64,7 @@ public abstract class BaseEntity implements Serializable {
      */
     public void softDelete() {
         this.isDeleted = true;
+        // JVM-local: entity base class has no tenant injection seam; callers using TenantTimeService should set deletedAt before invoking.
         this.deletedAt = LocalDateTime.now();
     }
 
