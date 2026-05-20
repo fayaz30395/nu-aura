@@ -303,7 +303,7 @@ public class ContractLifecycleScheduler {
                 if (contract == null) {
                     log.warn("Contract {} not found for reminder {}, marking as completed",
                             reminder.getContractId(), reminder.getId());
-                    reminder.markAsCompleted();
+                    reminder.markAsCompleted(tenantTimeService.now(tenantId));
                     reminderRepository.save(reminder);
                     continue;
                 }

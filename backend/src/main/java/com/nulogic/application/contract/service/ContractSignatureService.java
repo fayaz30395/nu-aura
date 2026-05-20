@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 public class ContractSignatureService {
 
     private final ContractSignatureRepository signatureRepository;
+    private final com.nulogic.common.util.TenantTimeService tenantTimeService;
 
     /**
      * Send contract for signing

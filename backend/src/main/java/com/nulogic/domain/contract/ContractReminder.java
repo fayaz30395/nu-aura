@@ -47,16 +47,16 @@ public class ContractReminder extends TenantAware {
     @Column
     private LocalDateTime notifiedAt;
 
-    public boolean isOverdue() {
-        return LocalDate.now().isAfter(reminderDate) && !isCompleted;
+    public boolean isOverdue(LocalDate today) {
+        return today.isAfter(reminderDate) && !isCompleted;
     }
 
-    public boolean isDueToday() {
-        return LocalDate.now().isEqual(reminderDate) && !isCompleted;
+    public boolean isDueToday(LocalDate today) {
+        return today.isEqual(reminderDate) && !isCompleted;
     }
 
-    public void markAsCompleted() {
+    public void markAsCompleted(LocalDateTime now) {
         this.isCompleted = true;
-        this.notifiedAt = LocalDateTime.now();
+        this.notifiedAt = now;
     }
 }

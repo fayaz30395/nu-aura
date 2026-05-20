@@ -73,6 +73,7 @@ public class ContractSignature extends BaseEntity {
 
     public void markAsSigned() {
         this.status = SignatureStatus.SIGNED;
+        // JVM-local: ContractSignature has no tenantId field; server reception stamp.
         this.signedAt = LocalDateTime.now();
     }
 

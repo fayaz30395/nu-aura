@@ -543,8 +543,8 @@ public class ContractService {
                 .currency(contract.getCurrency())
                 .pendingSignatureCount(pendingSignatures)
                 .createdAt(contract.getCreatedAt())
-                .isExpiring(contract.isExpiringWithin(30))
-                .isExpired(contract.isExpired())
+                .isExpiring(contract.isExpiringWithin(30, tenantTimeService.today(contract.getTenantId())))
+                .isExpired(contract.isExpired(tenantTimeService.today(contract.getTenantId())))
                 .build();
     }
 

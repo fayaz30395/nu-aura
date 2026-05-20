@@ -85,19 +85,19 @@ public class Contract extends TenantAware {
         return status == ContractStatus.ACTIVE;
     }
 
-    public boolean isExpired() {
+    public boolean isExpired(LocalDate today) {
         if (endDate == null) {
             return false;
         }
-        return LocalDate.now().isAfter(endDate);
+        return today.isAfter(endDate);
     }
 
-    public boolean isExpiringWithin(int days) {
+    public boolean isExpiringWithin(int days, LocalDate today) {
         if (endDate == null) {
             return false;
         }
-        LocalDate expiryThreshold = LocalDate.now().plusDays(days);
-        return LocalDate.now().isBefore(endDate) && endDate.isBefore(expiryThreshold) || endDate.isEqual(expiryThreshold);
+        LocalDate expiryThreshold = today.plusDays(days);
+        return today.isBefore(endDate) && endDate.isBefore(expiryThreshold) || endDate.isEqual(expiryThreshold);
     }
 
     public void markAsActive() {

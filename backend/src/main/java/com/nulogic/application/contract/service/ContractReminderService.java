@@ -26,6 +26,7 @@ public class ContractReminderService {
 
     private final ContractReminderRepository reminderRepository;
     private final ContractRepository contractRepository;
+    private final com.nulogic.common.util.TenantTimeService tenantTimeService;
 
     /**
      * Create or update expiry reminder for contract
@@ -115,7 +116,7 @@ public class ContractReminderService {
     public void markReminderAsCompleted(UUID reminderId) {
         Optional<ContractReminder> reminder = reminderRepository.findById(reminderId);
         reminder.ifPresent(r -> {
-            r.markAsCompleted();
+            r.markAsCompleted(tenantTimeService.now(r.getTenantId()));
             reminderRepository.save(r);
             log.debug("Marked reminder as completed: {}", reminderId);
         });
