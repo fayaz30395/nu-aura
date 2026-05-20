@@ -110,30 +110,30 @@ public class ExpenseClaim extends TenantAware {
     @Column(name = "receipt_scan_status", length = 20)
     private String receiptScanStatus;
 
-    public void submit() {
+    public void submit(LocalDateTime now) {
         if (this.status != ExpenseStatus.DRAFT) {
             throw new IllegalStateException("Can only submit expense claims in DRAFT status");
         }
         this.status = ExpenseStatus.SUBMITTED;
-        this.submittedAt = LocalDateTime.now();
+        this.submittedAt = now;
     }
 
-    public void approve(UUID approverId) {
+    public void approve(UUID approverId, LocalDateTime now) {
         if (this.status != ExpenseStatus.SUBMITTED && this.status != ExpenseStatus.PENDING_APPROVAL) {
             throw new IllegalStateException("Can only approve submitted expense claims");
         }
         this.status = ExpenseStatus.APPROVED;
         this.approvedBy = approverId;
-        this.approvedAt = LocalDateTime.now();
+        this.approvedAt = now;
     }
 
-    public void reject(UUID rejecterId, String reason) {
+    public void reject(UUID rejecterId, String reason, LocalDateTime now) {
         if (this.status != ExpenseStatus.SUBMITTED && this.status != ExpenseStatus.PENDING_APPROVAL) {
             throw new IllegalStateException("Can only reject submitted expense claims");
         }
         this.status = ExpenseStatus.REJECTED;
         this.rejectedBy = rejecterId;
-        this.rejectedAt = LocalDateTime.now();
+        this.rejectedAt = now;
         this.rejectionReason = reason;
     }
 
@@ -146,12 +146,12 @@ public class ExpenseClaim extends TenantAware {
         this.paymentReference = paymentReference;
     }
 
-    public void markAsReimbursed(String reimbursementRef) {
+    public void markAsReimbursed(String reimbursementRef, LocalDateTime now) {
         if (this.status != ExpenseStatus.APPROVED && this.status != ExpenseStatus.PROCESSING) {
             throw new IllegalStateException("Can only reimburse approved or processing expense claims");
         }
         this.status = ExpenseStatus.REIMBURSED;
-        this.reimbursedAt = LocalDateTime.now();
+        this.reimbursedAt = now;
         this.reimbursementRef = reimbursementRef;
     }
 

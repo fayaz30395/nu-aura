@@ -67,30 +67,30 @@ public class ExpenseAdvance extends TenantAware {
     @Column(length = 1000)
     private String notes;
 
-    public void approve(UUID approverId) {
+    public void approve(UUID approverId, LocalDateTime now) {
         if (this.status != AdvanceStatus.REQUESTED) {
             throw new IllegalStateException("Can only approve advances in REQUESTED status");
         }
         this.status = AdvanceStatus.APPROVED;
         this.approvedBy = approverId;
-        this.approvedAt = LocalDateTime.now();
+        this.approvedAt = now;
     }
 
-    public void disburse() {
+    public void disburse(LocalDateTime now) {
         if (this.status != AdvanceStatus.APPROVED) {
             throw new IllegalStateException("Can only disburse approved advances");
         }
         this.status = AdvanceStatus.DISBURSED;
-        this.disbursedAt = LocalDateTime.now();
+        this.disbursedAt = now;
     }
 
-    public void settle(UUID claimId) {
+    public void settle(UUID claimId, LocalDateTime now) {
         if (this.status != AdvanceStatus.DISBURSED) {
             throw new IllegalStateException("Can only settle disbursed advances");
         }
         this.status = AdvanceStatus.SETTLED;
         this.settlementClaimId = claimId;
-        this.settledAt = LocalDateTime.now();
+        this.settledAt = now;
     }
 
     public void cancel() {

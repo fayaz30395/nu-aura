@@ -84,22 +84,22 @@ public class MileageLog extends TenantAware {
         this.status = MileageStatus.SUBMITTED;
     }
 
-    public void approve(UUID approverId) {
+    public void approve(UUID approverId, LocalDateTime now) {
         if (this.status != MileageStatus.SUBMITTED) {
             throw new IllegalStateException("Can only approve submitted mileage logs");
         }
         this.status = MileageStatus.APPROVED;
         this.approvedBy = approverId;
-        this.approvedAt = LocalDateTime.now();
+        this.approvedAt = now;
     }
 
-    public void reject(UUID rejecterId, String reason) {
+    public void reject(UUID rejecterId, String reason, LocalDateTime now) {
         if (this.status != MileageStatus.SUBMITTED) {
             throw new IllegalStateException("Can only reject submitted mileage logs");
         }
         this.status = MileageStatus.REJECTED;
         this.approvedBy = rejecterId;
-        this.approvedAt = LocalDateTime.now();
+        this.approvedAt = now;
         this.rejectionReason = reason;
     }
 

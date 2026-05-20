@@ -64,6 +64,7 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
     private final DomainEventPublisher domainEventPublisher;
     private final AuditLogService auditLogService;
     private final WebSocketNotificationService webSocketNotificationService;
+    private final com.nulogic.common.util.TenantTimeService tenantTimeService;
     private final NotificationService notificationService;
     private final JdbcTemplate jdbcTemplate;
 
@@ -78,7 +79,8 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
             AuditLogService auditLogService,
             WebSocketNotificationService webSocketNotificationService,
             NotificationService notificationService,
-            JdbcTemplate jdbcTemplate) {
+            JdbcTemplate jdbcTemplate,
+            com.nulogic.common.util.TenantTimeService tenantTimeService) {
         this.expenseClaimRepository = expenseClaimRepository;
         this.employeeRepository = employeeRepository;
         this.dataScopeService = dataScopeService;
@@ -89,6 +91,7 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
         this.webSocketNotificationService = webSocketNotificationService;
         this.notificationService = notificationService;
         this.jdbcTemplate = jdbcTemplate;
+        this.tenantTimeService = tenantTimeService;
     }
 
     @Transactional
@@ -165,7 +168,7 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
 
         validateEmployeeAccess(claim.getEmployeeId(), Permission.EXPENSE_VIEW);
 
-        claim.submit();
+        claim.submit(tenantTimeService.now(claim.getTenantId()));
         ExpenseClaim saved = expenseClaimRepository.save(claim);
         log.info("Submitted expense claim: {}", saved.getClaimNumber());
 
@@ -186,7 +189,7 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
         // Validate approver has access to this employee's expense claims
         validateEmployeeAccess(claim.getEmployeeId(), Permission.EXPENSE_APPROVE);
 
-        claim.approve(approverId);
+        claim.approve(approverId, tenantTimeService.now(claim.getTenantId()));
         ExpenseClaim saved = expenseClaimRepository.save(claim);
         log.info("Approved expense claim: {} by {}", saved.getClaimNumber(), approverId);
 
@@ -217,7 +220,7 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
         // Validate rejecter has access to this employee's expense claims
         validateEmployeeAccess(claim.getEmployeeId(), Permission.EXPENSE_APPROVE);
 
-        claim.reject(rejecterId, reason);
+        claim.reject(rejecterId, reason, tenantTimeService.now(claim.getTenantId()));
         ExpenseClaim saved = expenseClaimRepository.save(claim);
         log.info("Rejected expense claim: {} by {}", saved.getClaimNumber(), rejecterId);
 
@@ -505,7 +508,7 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
         ExpenseClaim claim = expenseClaimRepository.findByIdAndTenantId(claimId, tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("Expense claim not found: " + claimId));
 
-        claim.markAsReimbursed(reimbursementRef);
+        claim.markAsReimbursed(reimbursementRef, tenantTimeService.now(claim.getTenantId()));
         ExpenseClaim saved = expenseClaimRepository.save(claim);
         log.info("Marked expense claim as reimbursed: {} ref: {}", saved.getClaimNumber(), reimbursementRef);
 
@@ -552,7 +555,7 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
             return;
         }
 
-        claim.approve(approvedBy);
+        claim.approve(approvedBy, tenantTimeService.now(claim.getTenantId()));
         expenseClaimRepository.save(claim);
 
         // Send notifications to the requesting employee
@@ -578,7 +581,7 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
             return;
         }
 
-        claim.reject(rejectedBy, reason);
+        claim.reject(rejectedBy, reason, tenantTimeService.now(claim.getTenantId()));
         expenseClaimRepository.save(claim);
 
         // Send notifications to the requesting employee

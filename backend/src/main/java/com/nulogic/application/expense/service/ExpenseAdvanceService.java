@@ -59,7 +59,7 @@ public class ExpenseAdvanceService {
         ExpenseAdvance advance = advanceRepository.findByIdAndTenantId(advanceId, tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("Expense advance not found: " + advanceId));
 
-        advance.approve(approverId);
+        advance.approve(approverId, tenantTimeService.now(advance.getTenantId()));
         ExpenseAdvance saved = advanceRepository.save(advance);
         log.info("Approved expense advance: {} by {}", advanceId, approverId);
         return enrichResponse(ExpenseAdvanceResponse.fromEntity(saved));
@@ -72,7 +72,7 @@ public class ExpenseAdvanceService {
         ExpenseAdvance advance = advanceRepository.findByIdAndTenantId(advanceId, tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("Expense advance not found: " + advanceId));
 
-        advance.disburse();
+        advance.disburse(tenantTimeService.now(advance.getTenantId()));
         ExpenseAdvance saved = advanceRepository.save(advance);
         log.info("Disbursed expense advance: {}", advanceId);
         return enrichResponse(ExpenseAdvanceResponse.fromEntity(saved));
@@ -85,7 +85,7 @@ public class ExpenseAdvanceService {
         ExpenseAdvance advance = advanceRepository.findByIdAndTenantId(advanceId, tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("Expense advance not found: " + advanceId));
 
-        advance.settle(claimId);
+        advance.settle(claimId, tenantTimeService.now(advance.getTenantId()));
         ExpenseAdvance saved = advanceRepository.save(advance);
         log.info("Settled expense advance: {} with claim: {}", advanceId, claimId);
         return enrichResponse(ExpenseAdvanceResponse.fromEntity(saved));

@@ -54,6 +54,7 @@ public class MileageService {
     private final EmployeeRepository employeeRepository;
     private final ObjectMapper objectMapper;
     private final JdbcTemplate jdbcTemplate;
+    private final com.nulogic.common.util.TenantTimeService tenantTimeService;
 
     private String generateMileageClaimNumber(UUID tenantId) {
         String ym = LocalDate.now(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("yyyyMM"));
@@ -157,7 +158,7 @@ public class MileageService {
         MileageLog mileageLog = mileageLogRepository.findByIdAndTenantId(logId, tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("Mileage log not found: " + logId));
 
-        mileageLog.approve(approverId);
+        mileageLog.approve(approverId, tenantTimeService.now(mileageLog.getTenantId()));
         MileageLog saved = mileageLogRepository.save(mileageLog);
 
         // Auto-create expense claim on approval
@@ -178,7 +179,7 @@ public class MileageService {
         MileageLog mileageLog = mileageLogRepository.findByIdAndTenantId(logId, tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("Mileage log not found: " + logId));
 
-        mileageLog.reject(rejecterId, reason);
+        mileageLog.reject(rejecterId, reason, tenantTimeService.now(mileageLog.getTenantId()));
         MileageLog saved = mileageLogRepository.save(mileageLog);
         log.info("Rejected mileage log: {} by {}", logId, rejecterId);
 
