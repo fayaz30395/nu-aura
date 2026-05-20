@@ -44,14 +44,18 @@ class StatutoryFilingServiceTest {
     private FileStorageService fileStorageService;
     @Mock
     private FilingFormatGenerator pfEcrGenerator;
+    @Mock
+    private com.nulogic.common.util.TenantTimeService tenantTimeService;
     private StatutoryFilingService service;
 
     @BeforeEach
     void setUp() {
         when(pfEcrGenerator.getFilingType()).thenReturn(FilingType.PF_ECR);
+        org.mockito.Mockito.lenient().when(tenantTimeService.now(org.mockito.ArgumentMatchers.any()))
+                .thenReturn(java.time.LocalDateTime.parse("2026-05-20T12:00:00"));
         service = new StatutoryFilingService(
                 templateRepository, filingRunRepository, fileStorageService,
-                List.of(pfEcrGenerator));
+                List.of(pfEcrGenerator), tenantTimeService);
     }
 
     @AfterEach

@@ -51,6 +51,9 @@ class ExecutiveDashboardServiceTest {
     @Mock
     private WorkforceTrendRepository trendRepository;
 
+    @Mock
+    private com.nulogic.common.util.TenantTimeService tenantTimeService;
+
     @InjectMocks
     private ExecutiveDashboardService executiveDashboardService;
 

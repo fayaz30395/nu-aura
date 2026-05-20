@@ -46,6 +46,8 @@ class HomeControllerTest {
     private UserDetailsService userDetailsService;
     @MockitoBean
     private EmployeeRepository employeeRepository;
+    @MockitoBean
+    private com.nulogic.common.util.TenantTimeService tenantTimeService;
 
     @Test
     @DisplayName("GET /api/v1/home/birthdays - should return upcoming birthdays")
