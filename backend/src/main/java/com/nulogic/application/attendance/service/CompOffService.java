@@ -243,7 +243,7 @@ public class CompOffService {
                         .openingBalance(BigDecimal.ZERO)
                         .build());
 
-        balance.accrueLeave(days);
+        balance.accrueLeave(days, tenantTimeService.today(balance.getTenantId()));
         return leaveBalanceRepository.save(balance);
     }
 

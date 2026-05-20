@@ -50,6 +50,7 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
     private final DomainEventPublisher domainEventPublisher;
     private final WorkflowService workflowService;
     private final AuditLogService auditLogService;
+    private final com.nulogic.common.util.TenantTimeService tenantTimeService;
 
     public LeaveRequestService(LeaveRequestRepository leaveRequestRepository,
                                LeaveBalanceService leaveBalanceService,
@@ -58,10 +59,12 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
                                LeaveTypeRepository leaveTypeRepository,
                                DomainEventPublisher domainEventPublisher,
                                @org.springframework.context.annotation.Lazy WorkflowService workflowService,
-                               AuditLogService auditLogService) {
+                               AuditLogService auditLogService,
+                               com.nulogic.common.util.TenantTimeService tenantTimeService) {
         this.leaveRequestRepository = leaveRequestRepository;
         this.leaveBalanceService = leaveBalanceService;
         this.webSocketNotificationService = webSocketNotificationService;
+        this.tenantTimeService = tenantTimeService;
         this.employeeRepository = employeeRepository;
         this.leaveTypeRepository = leaveTypeRepository;
         this.domainEventPublisher = domainEventPublisher;
@@ -179,7 +182,7 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
                     "Insufficient leave balance. Available: " + availableBalance + " days, Requested: " + daysToDeduct + " days");
         }
 
-        request.approve(approverId);
+        request.approve(approverId, tenantTimeService.now(request.getTenantId()));
         LeaveRequest saved = leaveRequestRepository.save(request);
 
         try {
@@ -219,7 +222,7 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
         // L1 Approval: Validate that approver is the employee's manager
         validateApproverIsManager(request.getEmployeeId(), approverId, tenantId);
 
-        request.reject(approverId, reason);
+        request.reject(approverId, reason, tenantTimeService.now(request.getTenantId()));
         LeaveRequest saved = leaveRequestRepository.save(request);
 
         try {
@@ -292,7 +295,7 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
 
         boolean wasApproved = request.getStatus() == LeaveRequest.LeaveRequestStatus.APPROVED;
         boolean wasPending = request.getStatus() == LeaveRequest.LeaveRequestStatus.PENDING;
-        request.cancel(reason);
+        request.cancel(reason, tenantTimeService.now(request.getTenantId()));
         LeaveRequest saved = leaveRequestRepository.save(request);
 
         try {
@@ -430,7 +433,7 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
             return;
         }
 
-        request.approve(approvedBy);
+        request.approve(approvedBy, tenantTimeService.now(request.getTenantId()));
         LeaveRequest saved = leaveRequestRepository.save(request);
 
         // Deduct leave balance
@@ -463,7 +466,7 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
             return;
         }
 
-        request.reject(rejectedBy, reason);
+        request.reject(rejectedBy, reason, tenantTimeService.now(request.getTenantId()));
         leaveRequestRepository.save(request);
 
         notifyLeaveRejected(request, reason);

@@ -104,17 +104,17 @@ public class OvertimeRequest extends TenantAware {
         if (status == null) status = RequestStatus.DRAFT;
     }
 
-    public void approve(UUID approver, String comments) {
+    public void approve(UUID approver, String comments, LocalDateTime now) {
         this.status = RequestStatus.APPROVED;
         this.approvedBy = approver;
-        this.approvedAt = LocalDateTime.now();
+        this.approvedAt = now;
         this.approvalComments = comments;
     }
 
-    public void reject(UUID rejector, String reason) {
+    public void reject(UUID rejector, String reason, LocalDateTime now) {
         this.status = RequestStatus.REJECTED;
         this.rejectedBy = rejector;
-        this.rejectedAt = LocalDateTime.now();
+        this.rejectedAt = now;
         this.rejectionReason = reason;
     }
 

@@ -116,7 +116,7 @@ public class CompensationService {
             case IN_PROGRESS -> cycle.activate();
             case REVIEW -> cycle.moveToReview();
             case APPROVAL -> cycle.moveToApproval();
-            case APPROVED -> cycle.approve(userId);
+            case APPROVED -> cycle.approve(userId, tenantTimeService.today(cycle.getTenantId()));
             case COMPLETED -> cycle.complete();
             case CANCELLED -> cycle.cancel();
             default -> throw new BusinessException("Invalid status transition");
@@ -227,7 +227,7 @@ public class CompensationService {
             throw new BusinessException("Can only submit draft revisions");
         }
 
-        revision.submit();
+        revision.submit(tenantTimeService.today(revision.getTenantId()));
         revision.setProposedBy(userId);
         revision = revisionRepository.save(revision);
 
@@ -248,7 +248,7 @@ public class CompensationService {
             throw new BusinessException("Can only review pending revisions");
         }
 
-        revision.review(userId, comments);
+        revision.review(userId, comments, tenantTimeService.today(revision.getTenantId()));
         revision.setStatus(RevisionStatus.PENDING_APPROVAL);
         revision = revisionRepository.save(revision);
 
@@ -271,7 +271,7 @@ public class CompensationService {
         }
 
         RevisionStatus oldStatus = revision.getStatus();
-        revision.approve(userId, comments);
+        revision.approve(userId, comments, tenantTimeService.today(revision.getTenantId()));
         revision = revisionRepository.save(revision);
 
         // Audit log: salary revision approved
@@ -310,7 +310,7 @@ public class CompensationService {
         }
 
         RevisionStatus oldStatus = revision.getStatus();
-        revision.reject(userId, reason);
+        revision.reject(userId, reason, tenantTimeService.today(revision.getTenantId()));
         revision = revisionRepository.save(revision);
 
         // Audit log: salary revision rejected

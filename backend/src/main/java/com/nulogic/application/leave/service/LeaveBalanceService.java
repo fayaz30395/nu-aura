@@ -168,7 +168,7 @@ public class LeaveBalanceService {
         UUID tenantId = TenantContext.getCurrentTenant();
         // S12-B: tenant-local year for accrual — resolved via TenantTimeService.
         LeaveBalance balance = getOrCreateBalanceForUpdate(employeeId, leaveTypeId, tenantTimeService.today(tenantId).getYear());
-        balance.accrueLeave(days);
+        balance.accrueLeave(days, tenantTimeService.today(tenantId));
         return leaveBalanceRepository.save(balance);
     }
 

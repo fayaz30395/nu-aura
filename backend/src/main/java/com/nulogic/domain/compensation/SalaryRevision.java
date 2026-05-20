@@ -127,29 +127,29 @@ public class SalaryRevision extends TenantAware {
         }
     }
 
-    public void submit() {
+    public void submit(LocalDate today) {
         this.status = RevisionStatus.PENDING_REVIEW;
-        this.proposedDate = LocalDate.now();
+        this.proposedDate = today;
     }
 
-    public void review(UUID reviewerId, String comments) {
+    public void review(UUID reviewerId, String comments, LocalDate today) {
         this.status = RevisionStatus.REVIEWED;
         this.reviewedBy = reviewerId;
-        this.reviewedDate = LocalDate.now();
+        this.reviewedDate = today;
         this.reviewerComments = comments;
     }
 
-    public void approve(UUID approverId, String comments) {
+    public void approve(UUID approverId, String comments, LocalDate today) {
         this.status = RevisionStatus.APPROVED;
         this.approvedBy = approverId;
-        this.approvedDate = LocalDate.now();
+        this.approvedDate = today;
         this.approverComments = comments;
     }
 
-    public void reject(UUID rejectedBy, String reason) {
+    public void reject(UUID rejectedBy, String reason, LocalDate today) {
         this.status = RevisionStatus.REJECTED;
         this.approvedBy = rejectedBy;
-        this.approvedDate = LocalDate.now();
+        this.approvedDate = today;
         this.rejectionReason = reason;
     }
 

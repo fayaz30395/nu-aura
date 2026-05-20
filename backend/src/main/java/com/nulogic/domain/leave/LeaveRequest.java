@@ -92,36 +92,36 @@ public class LeaveRequest extends TenantAware {
     @Column(columnDefinition = "TEXT")
     private String comments;
 
-    public void approve(UUID approverId) {
-        approve(approverId, null);
+    public void approve(UUID approverId, LocalDateTime now) {
+        approve(approverId, null, now);
     }
 
-    public void approve(UUID approverId, String comments) {
+    public void approve(UUID approverId, String comments, LocalDateTime now) {
         if (this.status != LeaveRequestStatus.PENDING) {
             throw new IllegalStateException("Only pending requests can be approved");
         }
         this.status = LeaveRequestStatus.APPROVED;
         this.approvedBy = approverId;
-        this.approvedOn = LocalDateTime.now();
+        this.approvedOn = now;
         this.comments = comments;
     }
 
-    public void reject(UUID approverId, String reason) {
+    public void reject(UUID approverId, String reason, LocalDateTime now) {
         if (this.status != LeaveRequestStatus.PENDING) {
             throw new IllegalStateException("Only pending requests can be rejected");
         }
         this.status = LeaveRequestStatus.REJECTED;
         this.approvedBy = approverId;
-        this.approvedOn = LocalDateTime.now();
+        this.approvedOn = now;
         this.rejectionReason = reason;
     }
 
-    public void cancel(String reason) {
+    public void cancel(String reason, LocalDateTime now) {
         if (this.status == LeaveRequestStatus.REJECTED || this.status == LeaveRequestStatus.CANCELLED) {
             throw new IllegalStateException("Cannot cancel leave request in status: " + this.status);
         }
         this.status = LeaveRequestStatus.CANCELLED;
-        this.cancelledOn = LocalDateTime.now();
+        this.cancelledOn = now;
         this.cancellationReason = reason;
     }
 

@@ -115,9 +115,9 @@ public class LeaveBalance extends TenantAware {
         calculateAvailable();
     }
 
-    public void accrueLeave(BigDecimal days) {
+    public void accrueLeave(BigDecimal days, LocalDate today) {
         this.accrued = this.accrued.add(days);
-        this.lastAccrualDate = LocalDate.now();
+        this.lastAccrualDate = today;
         calculateAvailable();
     }
 

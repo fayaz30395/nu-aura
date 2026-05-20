@@ -134,10 +134,10 @@ public class CompensationReviewCycle extends TenantAware {
         this.status = CycleStatus.APPROVAL;
     }
 
-    public void approve(UUID approverId) {
+    public void approve(UUID approverId, LocalDate today) {
         this.status = CycleStatus.APPROVED;
         this.approvedBy = approverId;
-        this.approvalDate = LocalDate.now();
+        this.approvalDate = today;
     }
 
     public void complete() {
