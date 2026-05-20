@@ -416,7 +416,7 @@ public class WorkflowService {
     private void createFirstStepExecution(WorkflowExecution execution, WorkflowDefinition workflow) {
         if (workflow.getSteps().isEmpty()) {
             // No steps - auto approve
-            execution.approve();
+            execution.approve(tenantTimeService.now(execution.getTenantId()));
             workflowExecutionRepository.save(execution);
             return;
         }
@@ -670,9 +670,10 @@ public class WorkflowService {
         String userName = getUserName(currentUser, tenantId);
         WorkflowExecution.ExecutionStatus oldStatus = execution.getStatus();
 
+        LocalDateTime actionNow = tenantTimeService.now(tenantId);
         switch (request.getAction()) {
             case APPROVE:
-                currentStep.approve(currentUser, userName, request.getComments());
+                currentStep.approve(currentUser, userName, request.getComments(), actionNow);
                 advanceToNextStep(execution, currentStep);
                 // Audit log: step approved
                 auditLogService.logAction(
@@ -687,8 +688,8 @@ public class WorkflowService {
                 break;
 
             case REJECT:
-                currentStep.reject(currentUser, userName, request.getComments());
-                execution.reject(request.getComments());
+                currentStep.reject(currentUser, userName, request.getComments(), actionNow);
+                execution.reject(request.getComments(), actionNow);
                 // Audit log: workflow rejected
                 auditLogService.logAction(
                         AUDIT_ENTITY_WORKFLOW_EXECUTION,
@@ -702,7 +703,7 @@ public class WorkflowService {
                 break;
 
             case RETURN_FOR_MODIFICATION:
-                currentStep.returnForModification(currentUser, userName, request.getComments());
+                currentStep.returnForModification(currentUser, userName, request.getComments(), actionNow);
                 execution.setStatus(WorkflowExecution.ExecutionStatus.RETURNED);
                 // Audit log: workflow returned
                 auditLogService.logAction(
@@ -723,7 +724,7 @@ public class WorkflowService {
                 if (!currentStep.getApprovalStep().isDelegationAllowed()) {
                     throw new BusinessException("Delegation is not allowed for this step");
                 }
-                currentStep.delegate(currentUser, userName, request.getDelegateToUserId());
+                currentStep.delegate(currentUser, userName, request.getDelegateToUserId(), actionNow);
                 // Audit log: approval delegated
                 String delegateName = getUserName(request.getDelegateToUserId(), tenantId);
                 auditLogService.logAction(
@@ -815,7 +816,7 @@ public class WorkflowService {
         if (nextStep == null || workflow.isLastStep(completedStep.getStepOrder())) {
             // All steps completed
             WorkflowExecution.ExecutionStatus oldStatus = execution.getStatus();
-            execution.approve();
+            execution.approve(tenantTimeService.now(execution.getTenantId()));
 
             // Audit log: workflow completed/approved
             auditLogService.logAction(
@@ -1053,7 +1054,7 @@ public class WorkflowService {
         }
 
         WorkflowExecution.ExecutionStatus oldStatus = execution.getStatus();
-        execution.cancel(reason);
+        execution.cancel(reason, tenantTimeService.now(execution.getTenantId()));
         workflowExecutionRepository.save(execution);
 
         // Audit log: workflow cancelled
@@ -1144,7 +1145,7 @@ public class WorkflowService {
             throw new BusinessException("Only the delegator can revoke this delegation");
         }
 
-        delegate.revoke(currentUser, reason);
+        delegate.revoke(currentUser, reason, tenantTimeService.now(tenantId));
         approvalDelegateRepository.save(delegate);
 
         log.info("Revoked delegation {} by user {}", delegationId, currentUser);

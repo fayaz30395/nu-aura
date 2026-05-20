@@ -107,14 +107,17 @@ public class ApprovalDelegate extends TenantAware {
         return workflowDefinitionId == null || workflowDefinitionId.equals(workflowId);
     }
 
-    public boolean isCurrentlyValid() {
-        return isValidForDate(LocalDate.now());
+    /**
+     * Tenant-zoned validity check; callers should pass `tenantTimeService.today(tenantId)`.
+     */
+    public boolean isCurrentlyValid(LocalDate today) {
+        return isValidForDate(today);
     }
 
-    public void revoke(UUID revokedByUserId, String reason) {
+    public void revoke(UUID revokedByUserId, String reason, LocalDateTime now) {
         this.revoked = true;
         this.isActive = false;
-        this.revokedAt = LocalDateTime.now();
+        this.revokedAt = now;
         this.revokedBy = revokedByUserId;
         this.revocationReason = reason;
     }

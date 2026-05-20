@@ -139,7 +139,7 @@ public class WorkflowEscalationScheduler {
             }
 
             // Perform escalation
-            step.escalate(escalateToUserId);
+            step.escalate(escalateToUserId, tenantTimeService.now(step.getTenantId()));
             step.setAssignedToUserId(escalateToUserId);
             stepExecutionRepository.save(step);
 

@@ -111,9 +111,11 @@ public class WorkflowRule extends TenantAware {
         if (priority == 0) priority = 100;
     }
 
-    public boolean isCurrentlyEffective() {
+    /**
+     * Tenant-zoned effectiveness check; callers should pass `tenantTimeService.now(tenantId)`.
+     */
+    public boolean isCurrentlyEffective(LocalDateTime now) {
         if (!isActive) return false;
-        LocalDateTime now = LocalDateTime.now();
         if (effectiveFrom != null && now.isBefore(effectiveFrom)) return false;
         if (effectiveTo != null && now.isAfter(effectiveTo)) return false;
         return true;

@@ -137,20 +137,20 @@ public class WorkflowExecution extends TenantAware {
         return status == ExecutionStatus.PENDING || status == ExecutionStatus.IN_PROGRESS;
     }
 
-    public void approve() {
+    public void approve(LocalDateTime now) {
         this.status = ExecutionStatus.APPROVED;
-        this.completedAt = LocalDateTime.now();
+        this.completedAt = now;
     }
 
     @SuppressWarnings("unused")
-    public void reject(String reason) {
+    public void reject(String reason, LocalDateTime now) {
         this.status = ExecutionStatus.REJECTED;
-        this.completedAt = LocalDateTime.now();
+        this.completedAt = now;
     }
 
-    public void cancel(String reason) {
+    public void cancel(String reason, LocalDateTime now) {
         this.status = ExecutionStatus.CANCELLED;
-        this.cancelledAt = LocalDateTime.now();
+        this.cancelledAt = now;
         this.cancellationReason = reason;
     }
 

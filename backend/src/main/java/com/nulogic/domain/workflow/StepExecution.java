@@ -106,51 +106,51 @@ public class StepExecution extends TenantAware {
         if (status == null) status = StepStatus.PENDING;
     }
 
-    public void approve(UUID userId, String userName, String comments) {
+    public void approve(UUID userId, String userName, String comments, LocalDateTime now) {
         this.status = StepStatus.APPROVED;
         this.action = ApprovalAction.APPROVE;
         this.actionByUserId = userId;
         this.actionByUserName = userName;
         this.comments = comments;
-        this.executedAt = LocalDateTime.now();
+        this.executedAt = now;
         calculateTimeTaken();
     }
 
-    public void reject(UUID userId, String userName, String comments) {
+    public void reject(UUID userId, String userName, String comments, LocalDateTime now) {
         this.status = StepStatus.REJECTED;
         this.action = ApprovalAction.REJECT;
         this.actionByUserId = userId;
         this.actionByUserName = userName;
         this.comments = comments;
-        this.executedAt = LocalDateTime.now();
+        this.executedAt = now;
         calculateTimeTaken();
     }
 
-    public void returnForModification(UUID userId, String userName, String comments) {
+    public void returnForModification(UUID userId, String userName, String comments, LocalDateTime now) {
         this.status = StepStatus.RETURNED;
         this.action = ApprovalAction.RETURN_FOR_MODIFICATION;
         this.actionByUserId = userId;
         this.actionByUserName = userName;
         this.comments = comments;
-        this.executedAt = LocalDateTime.now();
+        this.executedAt = now;
         calculateTimeTaken();
     }
 
     @SuppressWarnings("unused")
-    public void delegate(UUID userId, String userName, UUID delegateToUserId) {
+    public void delegate(UUID userId, String userName, UUID delegateToUserId, LocalDateTime now) {
         this.status = StepStatus.DELEGATED;
         this.action = ApprovalAction.DELEGATE;
         this.delegated = true;
         this.delegatedFromUserId = userId;
         this.assignedToUserId = delegateToUserId;
-        this.executedAt = LocalDateTime.now();
+        this.executedAt = now;
     }
 
-    public void escalate(UUID escalateToUserId) {
+    public void escalate(UUID escalateToUserId, LocalDateTime now) {
         this.status = StepStatus.ESCALATED;
         this.action = ApprovalAction.ESCALATE;
         this.escalated = true;
-        this.escalatedAt = LocalDateTime.now();
+        this.escalatedAt = now;
         this.escalatedToUserId = escalateToUserId;
     }
 
@@ -161,8 +161,11 @@ public class StepExecution extends TenantAware {
         }
     }
 
-    public boolean isOverdue() {
-        return deadline != null && LocalDateTime.now().isAfter(deadline) && status == StepStatus.PENDING;
+    /**
+     * Overdue check requires a tenant-zoned "now" from the caller, since deadlines are stamped in the tenant's zone.
+     */
+    public boolean isOverdue(LocalDateTime now) {
+        return deadline != null && now.isAfter(deadline) && status == StepStatus.PENDING;
     }
 
     public boolean canBeActedUponBy(UUID userId) {

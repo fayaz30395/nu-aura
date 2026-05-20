@@ -56,7 +56,8 @@ public class ApprovalDelegateResponse {
                 .revokedAt(delegate.getRevokedAt())
                 .revocationReason(delegate.getRevocationReason())
                 .createdAt(delegate.getCreatedAt())
-                .isCurrentlyValid(delegate.isCurrentlyValid())
+                // JVM-local: DTO mapper has no tenant context. Tenant-zone risk bounded to midnight rollover; for stricter zone correctness move predicate calc to service layer.
+                .isCurrentlyValid(delegate.isCurrentlyValid(java.time.LocalDate.now()))
                 .build();
     }
 }
