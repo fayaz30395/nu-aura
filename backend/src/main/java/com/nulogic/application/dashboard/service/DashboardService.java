@@ -4,6 +4,7 @@ import com.nulogic.api.dashboard.dto.DashboardMetricsResponse;
 import com.nulogic.api.dashboard.dto.DashboardMetricsResponse.*;
 import com.nulogic.common.config.CacheConfig;
 import com.nulogic.common.security.SecurityContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.audit.AuditLog;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.infrastructure.audit.repository.AuditLogRepository;
@@ -26,6 +27,7 @@ public class DashboardService {
 
     private final EmployeeRepository employeeRepository;
     private final AuditLogRepository auditLogRepository;
+    private final TenantTimeService tenantTimeService;
 
     @Transactional(readOnly = true)
     @Cacheable(value = CacheConfig.DASHBOARD_METRICS,
@@ -55,7 +57,7 @@ public class DashboardService {
                 tenantId, Employee.EmployeeStatus.ACTIVE);
         long inactiveEmployees = totalEmployees - activeEmployees;
 
-        LocalDate startOfMonth = LocalDate.now().withDayOfMonth(1);
+        LocalDate startOfMonth = tenantTimeService.today(tenantId).withDayOfMonth(1);
         long newEmployeesThisMonth = employeeRepository.countNewHiresAfterDate(tenantId, startOfMonth);
 
         // Group by department: not currently populated by this endpoint (kept
@@ -87,7 +89,7 @@ public class DashboardService {
         // Placeholder implementation - would integrate with actual attendance
         // repository
         List<DailyAttendance> last7Days = new ArrayList<>();
-        LocalDate today = LocalDate.now();
+        LocalDate today = tenantTimeService.today(tenantId);
 
         for (int i = 6; i >= 0; i--) {
             LocalDate date = today.minusDays(i);

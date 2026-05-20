@@ -4,6 +4,7 @@ import com.nulogic.api.travel.dto.CreateTravelExpenseRequest;
 import com.nulogic.api.travel.dto.TravelExpenseDto;
 import com.nulogic.common.exception.ValidationException;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.travel.TravelExpense;
 import com.nulogic.domain.travel.TravelExpense.ExpenseStatus;
 import com.nulogic.infrastructure.travel.repository.TravelExpenseRepository;
@@ -33,6 +34,7 @@ public class TravelExpenseService {
 
     private final TravelExpenseRepository travelExpenseRepository;
     private final TravelRequestRepository travelRequestRepository;
+    private final TenantTimeService tenantTimeService;
 
     @Transactional
     public TravelExpenseDto createExpense(CreateTravelExpenseRequest request) {
@@ -126,7 +128,7 @@ public class TravelExpenseService {
         expense.setStatus(ExpenseStatus.APPROVED);
         expense.setApprovedBy(approverId);
         expense.setApprovedAmount(approvedAmount != null ? approvedAmount : expense.getAmount());
-        expense.setApprovedDate(LocalDate.now());
+        expense.setApprovedDate(tenantTimeService.today(tenantId));
         if (comments != null) {
             expense.setRemarks(comments);
         }
@@ -145,7 +147,7 @@ public class TravelExpenseService {
 
         expense.setStatus(ExpenseStatus.REJECTED);
         expense.setApprovedBy(approverId);
-        expense.setApprovedDate(LocalDate.now());
+        expense.setApprovedDate(tenantTimeService.today(tenantId));
         expense.setRejectionReason(reason);
 
         TravelExpense saved = travelExpenseRepository.save(expense);

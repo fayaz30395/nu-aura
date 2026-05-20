@@ -1,5 +1,6 @@
 package com.nulogic.application.project.validation;
 
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.project.TimeEntry;
 import com.nulogic.infrastructure.project.repository.ProjectTimeEntryRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ public class TimeEntryValidator {
     private static final BigDecimal MIN_HOURS = new BigDecimal("0.01");
     private static final BigDecimal STANDARD_WORK_HOURS = new BigDecimal("8.00");
     private final ProjectTimeEntryRepository timeEntryRepository;
+    private final TenantTimeService tenantTimeService;
 
     /**
      * Validates a time entry request
@@ -60,7 +62,7 @@ public class TimeEntryValidator {
         validateHours(request.getHoursWorked(), errors);
 
         // Validate date
-        validateDate(request.getWorkDate(), errors);
+        validateDate(request.getWorkDate(), tenantId, errors);
 
         // Validate total hours for the day
         validateDailyHours(
@@ -101,8 +103,8 @@ public class TimeEntryValidator {
     /**
      * Validates work date
      */
-    private void validateDate(LocalDate workDate, List<String> errors) {
-        LocalDate today = LocalDate.now();
+    private void validateDate(LocalDate workDate, UUID tenantId, List<String> errors) {
+        LocalDate today = tenantTimeService.today(tenantId);
         LocalDate maxPastDate = today.minusMonths(3); // Cannot log time older than 3 months
 
         if (workDate.isAfter(today)) {

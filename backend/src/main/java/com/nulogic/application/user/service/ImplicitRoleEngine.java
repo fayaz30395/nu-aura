@@ -7,6 +7,7 @@ import com.nulogic.domain.user.ImplicitUserRole;
 import com.nulogic.domain.user.RoleScope;
 import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import com.nulogic.infrastructure.user.repository.ImplicitRoleRuleRepository;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.infrastructure.user.repository.ImplicitUserRoleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,6 +44,7 @@ public class ImplicitRoleEngine {
     private final ImplicitUserRoleRepository implicitUserRoleRepository;
     private final EmployeeRepository employeeRepository;
     private final RedisTemplate<String, Object> redisTemplate;
+    private final TenantTimeService tenantTimeService;
 
     /**
      * Recompute implicit roles for a single user.
@@ -122,7 +124,7 @@ public class ImplicitRoleEngine {
                     .scope(assignment.scope)
                     .derivedFromRuleId(assignment.ruleId)
                     .derivedFromContext("Computed by ImplicitRoleEngine for employee " + employeeId)
-                    .computedAt(LocalDateTime.now())
+                    .computedAt(tenantTimeService.now(tenantId))
                     .isActive(true)
                     .tenantId(tenantId)
                     .build();

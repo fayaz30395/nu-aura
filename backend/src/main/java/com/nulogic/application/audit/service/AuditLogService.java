@@ -6,6 +6,7 @@ import com.nulogic.api.audit.dto.AuditLogResponse;
 import com.nulogic.api.audit.dto.AuditStatisticsResponse;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.audit.AuditLog;
 import com.nulogic.domain.audit.AuditLog.AuditAction;
 import com.nulogic.infrastructure.audit.repository.AuditLogRepository;
@@ -37,6 +38,7 @@ public class AuditLogService {
     private final AuditLogRepository auditLogRepository;
     private final EmployeeRepository employeeRepository;
     private final ObjectMapper objectMapper;
+    private final TenantTimeService tenantTimeService;
 
     // ==================== Logging Methods ====================
 
@@ -315,7 +317,7 @@ public class AuditLogService {
         summary.put("totalEvents", auditLogRepository.countByTenantId(tenantId));
 
         // Last 24 hours
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = tenantTimeService.now(tenantId);
         LocalDateTime yesterday = now.minusDays(1);
         summary.put("eventsLast24Hours", auditLogRepository.countByTenantIdAndDateRange(tenantId, yesterday, now));
 

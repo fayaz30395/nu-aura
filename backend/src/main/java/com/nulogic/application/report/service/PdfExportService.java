@@ -293,6 +293,7 @@ public class PdfExportService {
     }
 
     private void addMetadata(Document document) throws DocumentException {
+        // JVM-local: helper has no tenant context; report generation entry points pass data lists, not tenantId.
         Paragraph metadata = new Paragraph(
                 "Generated on: " + LocalDate.now().format(DATE_FORMATTER),
                 new Font(Font.HELVETICA, 10, Font.NORMAL, Color.GRAY)

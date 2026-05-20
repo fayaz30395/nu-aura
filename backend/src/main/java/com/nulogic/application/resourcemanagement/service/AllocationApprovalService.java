@@ -3,6 +3,7 @@ package com.nulogic.application.resourcemanagement.service;
 import com.nulogic.common.exception.ResourceNotFoundException;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.SecurityContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.project.Project;
 import com.nulogic.domain.project.ProjectEmployee;
@@ -35,6 +36,7 @@ public class AllocationApprovalService {
     private final EmployeeRepository employeeRepository;
     private final HrmsProjectRepository projectRepository;
     private final ProjectEmployeeRepository projectEmployeeRepository;
+    private final TenantTimeService tenantTimeService;
 
     // ============================================
     // ALLOCATION APPROVAL REQUESTS
@@ -130,7 +132,7 @@ public class AllocationApprovalService {
         request.setStatus(AllocationApprovalRequest.ApprovalStatus.APPROVED);
         request.setApproverId(approverId);
         request.setApprovalComment(comment);
-        request.setResolvedAt(LocalDateTime.now());
+        request.setResolvedAt(tenantTimeService.now(tenantId));
         approvalRepository.save(request);
 
         ProjectEmployee assignment = ProjectEmployee.builder()
@@ -168,7 +170,7 @@ public class AllocationApprovalService {
         request.setStatus(AllocationApprovalRequest.ApprovalStatus.REJECTED);
         request.setApproverId(approverId);
         request.setRejectionReason(reason);
-        request.setResolvedAt(LocalDateTime.now());
+        request.setResolvedAt(tenantTimeService.now(tenantId));
         approvalRepository.save(request);
     }
 

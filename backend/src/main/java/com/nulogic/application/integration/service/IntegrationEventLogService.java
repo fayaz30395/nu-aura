@@ -167,6 +167,7 @@ public class IntegrationEventLogService {
     public long cleanupOldEvents(int retentionDays) {
         log.info("Cleaning up integration event logs older than {} days", retentionDays);
 
+        // JVM-local: cross-tenant scheduled retention cleanup, no single tenant zone applies.
         LocalDateTime cutoff = LocalDateTime.now().minusDays(retentionDays);
         long deletedCount = repository.deleteByCreatedAtBefore(cutoff);
 

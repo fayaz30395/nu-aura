@@ -166,6 +166,7 @@ public class LetterPdfService {
     }
 
     private void addLetterDate(Document document, LocalDate date) throws DocumentException {
+        // JVM-local: fallback only fires when caller didn't supply a date; private helper has no tenant context.
         String formattedDate = date != null ? date.format(DATE_FORMATTER) : LocalDate.now().format(DATE_FORMATTER);
         Paragraph datePara = new Paragraph("Date: " + formattedDate, BODY_FONT);
         datePara.setAlignment(Element.ALIGN_RIGHT);
@@ -300,6 +301,7 @@ public class LetterPdfService {
     }
 
     private String generateFilename(GeneratedLetter letter) {
+        // JVM-local: filename suffix is internal storage path, not user-facing.
         String timestamp = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         String refClean = letter.getReferenceNumber()
                 .replace("/", "_")

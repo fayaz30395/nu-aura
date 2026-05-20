@@ -193,7 +193,7 @@ public class ApprovalEscalationJob {
                 .stepName("Escalated: " + step.getStepName())
                 .status(StepExecution.StepStatus.PENDING)
                 .assignedToUserId(targetUserId)
-                .assignedAt(LocalDateTime.now())
+                .assignedAt(tenantTimeService.now(tenantId))
                 .deadline(step.getDeadline())
                 .build();
 

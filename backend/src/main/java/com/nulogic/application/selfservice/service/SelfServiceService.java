@@ -4,6 +4,7 @@ import com.nulogic.api.selfservice.dto.*;
 import com.nulogic.common.exception.BusinessException;
 import com.nulogic.common.exception.ResourceNotFoundException;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.attendance.AttendanceRecord;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.leave.LeaveBalance;
@@ -47,6 +48,7 @@ public class SelfServiceService {
     private final LeaveRequestRepository leaveRequestRepository;
     private final AttendanceRecordRepository attendanceRecordRepository;
     private final StepExecutionRepository stepExecutionRepository;
+    private final TenantTimeService tenantTimeService;
 
     // ==================== Profile Update Request Operations ====================
 
@@ -237,7 +239,7 @@ public class SelfServiceService {
     @Transactional(readOnly = true)
     public List<DocumentRequestResponse> getUrgentDocumentRequests() {
         UUID tenantId = TenantContext.getCurrentTenant();
-        LocalDate urgentDate = LocalDate.now().plusDays(3);
+        LocalDate urgentDate = tenantTimeService.today(tenantId).plusDays(3);
         return documentRequestRepository.findUrgentRequests(tenantId, urgentDate).stream()
                 .map(e -> enrichDocumentRequestResponse(DocumentRequestResponse.fromEntity(e), tenantId))
                 .toList();
@@ -402,7 +404,7 @@ public class SelfServiceService {
     private AttendanceSummary getAttendanceSummaryForMonth(UUID employeeId, UUID tenantId) {
         YearMonth currentMonth = YearMonth.now();
         LocalDate startOfMonth = currentMonth.atDay(1);
-        LocalDate today = LocalDate.now();
+        LocalDate today = tenantTimeService.today(tenantId);
 
         List<AttendanceRecord> records = attendanceRecordRepository
                 .findAllByTenantIdAndEmployeeIdAndAttendanceDateBetween(tenantId, employeeId, startOfMonth, today);
