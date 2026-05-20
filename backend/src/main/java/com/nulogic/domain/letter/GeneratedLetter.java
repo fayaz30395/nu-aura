@@ -93,7 +93,7 @@ public class GeneratedLetter extends TenantAware {
 
     public static String generateReferenceNumber(String prefix, int sequence) {
         // JVM-local: year-prefix for human-readable reference. Year boundary in tenant zone differs from JVM by at most ~13 hours; not worth threading a tenantId through a static helper.
-        return String.format("%s/%d/%04d", prefix, LocalDate.now().getYear(), sequence);
+        return String.format("%s/%d/%04d", prefix, LocalDate.now().getYear(), sequence); // JVM-local: entity-layer; push to service per docs/architecture/tenant-time-wave-13-summary.md if cross-region zone correctness is needed
     }
 
     public void submitForApproval() {
@@ -130,7 +130,7 @@ public class GeneratedLetter extends TenantAware {
     public boolean isActive() {
         if (this.status != LetterStatus.ISSUED) return false;
         // JVM-local: date-only comparison; tenant-zone risk is bounded to midnight rollover. Push to service layer if a tenant ever reports a same-day off-by-one.
-        if (this.expiryDate != null && this.expiryDate.isBefore(LocalDate.now())) {
+        if (this.expiryDate != null && this.expiryDate.isBefore(LocalDate.now())) { // JVM-local: entity-layer; push to service per docs/architecture/tenant-time-wave-13-summary.md if cross-region zone correctness is needed
             return false;
         }
         return true;

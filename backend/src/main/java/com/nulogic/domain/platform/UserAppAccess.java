@@ -63,7 +63,7 @@ public class UserAppAccess extends TenantAware {
      */
     @Column(nullable = false)
     @Builder.Default
-    private LocalDateTime grantedAt = LocalDateTime.now();
+    private LocalDateTime grantedAt = LocalDateTime.now(); // JVM-local: entity-layer; push to service per docs/architecture/tenant-time-wave-13-summary.md if cross-region zone correctness is needed
 
     /**
      * Who granted the access (admin user ID)
@@ -200,7 +200,7 @@ public class UserAppAccess extends TenantAware {
      * Record an access to this application
      */
     public void recordAccess() {
-        this.lastAccessedAt = LocalDateTime.now();
+        this.lastAccessedAt = LocalDateTime.now(); // JVM-local: entity-layer; push to service per docs/architecture/tenant-time-wave-13-summary.md if cross-region zone correctness is needed
     }
 
     /**

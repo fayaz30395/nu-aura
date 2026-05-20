@@ -160,7 +160,7 @@ public class Webhook extends TenantAware {
      */
     public void recordSuccess() {
         this.consecutiveFailures = 0;
-        this.lastSuccessAt = LocalDateTime.now();
+        this.lastSuccessAt = LocalDateTime.now(); // JVM-local: entity-layer; push to service per docs/architecture/tenant-time-wave-13-summary.md if cross-region zone correctness is needed
         this.lastErrorMessage = null;
         if (this.status == WebhookStatus.DISABLED_FAILURES) {
             this.status = WebhookStatus.ACTIVE;
@@ -172,7 +172,7 @@ public class Webhook extends TenantAware {
      */
     public void recordFailure(String errorMessage) {
         this.consecutiveFailures++;
-        this.lastFailureAt = LocalDateTime.now();
+        this.lastFailureAt = LocalDateTime.now(); // JVM-local: entity-layer; push to service per docs/architecture/tenant-time-wave-13-summary.md if cross-region zone correctness is needed
         this.lastErrorMessage = errorMessage;
 
         // Disable after 10 consecutive failures

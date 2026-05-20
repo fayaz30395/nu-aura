@@ -46,6 +46,6 @@ public class PolicyAcknowledgment extends TenantAware {
     private String digitalSignature; // Optional electronic signature
 
     public void acknowledge() {
-        this.acknowledgedAt = LocalDateTime.now();
+        this.acknowledgedAt = LocalDateTime.now(); // JVM-local: entity-layer; push to service per docs/architecture/tenant-time-wave-13-summary.md if cross-region zone correctness is needed
     }
 }

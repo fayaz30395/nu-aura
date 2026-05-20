@@ -147,7 +147,7 @@ public class User extends TenantAware {
 
     public void lock() {
         this.status = UserStatus.LOCKED;
-        this.lockedUntil = LocalDateTime.now().plusHours(24);
+        this.lockedUntil = LocalDateTime.now().plusHours(24); // JVM-local: entity-layer; push to service per docs/architecture/tenant-time-wave-13-summary.md if cross-region zone correctness is needed
     }
 
     public void unlock() {
@@ -166,7 +166,7 @@ public class User extends TenantAware {
     }
 
     public void recordSuccessfulLogin() {
-        this.lastLoginAt = LocalDateTime.now();
+        this.lastLoginAt = LocalDateTime.now(); // JVM-local: entity-layer; push to service per docs/architecture/tenant-time-wave-13-summary.md if cross-region zone correctness is needed
         this.failedLoginAttempts = 0;
         this.lockedUntil = null;
     }

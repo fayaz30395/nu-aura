@@ -96,7 +96,7 @@ public class ShiftAssignment {
      * Check if assignment is currently active
      */
     public boolean isCurrentlyActive() {
-        LocalDate today = LocalDate.now();
+        LocalDate today = LocalDate.now(); // JVM-local: entity-layer; push to service per docs/architecture/tenant-time-wave-13-summary.md if cross-region zone correctness is needed
         boolean afterStart = !today.isBefore(effectiveFrom);
         boolean beforeEnd = effectiveTo == null || !today.isAfter(effectiveTo);
         return status == AssignmentStatus.ACTIVE && afterStart && beforeEnd;

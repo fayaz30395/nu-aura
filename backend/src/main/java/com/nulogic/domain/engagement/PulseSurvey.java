@@ -114,8 +114,8 @@ public class PulseSurvey extends TenantAware {
 
     public boolean isActive() {
         return status == SurveyStatus.ACTIVE &&
-                LocalDate.now().compareTo(startDate) >= 0 &&
-                LocalDate.now().compareTo(endDate) <= 0;
+                LocalDate.now().compareTo(startDate) >= 0 && // JVM-local: entity-layer; push to service per docs/architecture/tenant-time-wave-13-summary.md if cross-region zone correctness is needed
+                LocalDate.now().compareTo(endDate) <= 0; // JVM-local: entity-layer; push to service per docs/architecture/tenant-time-wave-13-summary.md if cross-region zone correctness is needed
     }
 
     public double getResponseRate() {

@@ -59,7 +59,7 @@ public class DocumentAccess extends TenantAware {
     private String metadata;
 
     public boolean isExpired() {
-        return expiresAt != null && LocalDateTime.now().isAfter(expiresAt);
+        return expiresAt != null && LocalDateTime.now().isAfter(expiresAt); // JVM-local: entity-layer; push to service per docs/architecture/tenant-time-wave-13-summary.md if cross-region zone correctness is needed
     }
 
     public enum AccessLevel {

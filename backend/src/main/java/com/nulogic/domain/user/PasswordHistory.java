@@ -23,7 +23,7 @@ public class PasswordHistory {
     private String passwordHash;
 
     @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt = LocalDateTime.now(); // JVM-local: entity-layer; push to service per docs/architecture/tenant-time-wave-13-summary.md if cross-region zone correctness is needed
 
     protected PasswordHistory() {
     }
@@ -32,7 +32,7 @@ public class PasswordHistory {
         this.userId = userId;
         this.tenantId = tenantId;
         this.passwordHash = passwordHash;
-        this.createdAt = LocalDateTime.now();
+        this.createdAt = LocalDateTime.now(); // JVM-local: entity-layer; push to service per docs/architecture/tenant-time-wave-13-summary.md if cross-region zone correctness is needed
     }
 
     public Long getId() {

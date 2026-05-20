@@ -118,7 +118,7 @@ public class ProbationEvaluation extends TenantAware {
 
     public void acknowledge() {
         this.employeeAcknowledged = true;
-        this.acknowledgedDate = LocalDate.now();
+        this.acknowledgedDate = LocalDate.now(); // JVM-local: entity-layer; push to service per docs/architecture/tenant-time-wave-13-summary.md if cross-region zone correctness is needed
     }
 
     public enum EvaluationType {

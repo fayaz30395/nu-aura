@@ -61,7 +61,7 @@ public class ProjectEmployee {
 
     public void deactivate() {
         this.isActive = false;
-        this.endDate = LocalDate.now();
+        this.endDate = LocalDate.now(); // JVM-local: entity-layer; push to service per docs/architecture/tenant-time-wave-13-summary.md if cross-region zone correctness is needed
     }
 
     public void activate() {

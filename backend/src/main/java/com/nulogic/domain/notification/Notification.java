@@ -63,7 +63,7 @@ public class Notification extends TenantAware {
 
     public void markAsRead() {
         this.isRead = true;
-        this.readAt = LocalDateTime.now();
+        this.readAt = LocalDateTime.now(); // JVM-local: entity-layer; push to service per docs/architecture/tenant-time-wave-13-summary.md if cross-region zone correctness is needed
     }
 
     public enum NotificationType {

@@ -156,7 +156,7 @@ public class IntegrationConnectorConfigEntity extends TenantAware {
      * Updates the health check timestamp and clears the error message on success.
      */
     public void recordHealthCheckSuccess() {
-        this.lastHealthCheckAt = LocalDateTime.now();
+        this.lastHealthCheckAt = LocalDateTime.now(); // JVM-local: entity-layer; push to service per docs/architecture/tenant-time-wave-13-summary.md if cross-region zone correctness is needed
         this.lastErrorMessage = null;
     }
 
@@ -164,7 +164,7 @@ public class IntegrationConnectorConfigEntity extends TenantAware {
      * Records a health check failure with an error message and updates status to ERROR.
      */
     public void recordHealthCheckFailure(String errorMessage) {
-        this.lastHealthCheckAt = LocalDateTime.now();
+        this.lastHealthCheckAt = LocalDateTime.now(); // JVM-local: entity-layer; push to service per docs/architecture/tenant-time-wave-13-summary.md if cross-region zone correctness is needed
         this.lastErrorMessage = errorMessage;
         this.status = ConnectorStatus.ERROR;
     }

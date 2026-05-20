@@ -61,7 +61,7 @@ public class BiometricApiKey extends TenantAware {
 
     public boolean isExpired() {
         // JVM-local: API-key expiry; tenant-zone risk bounded to clock-skew, and expiresAt is server-set.
-        return expiresAt != null && expiresAt.isBefore(LocalDateTime.now());
+        return expiresAt != null && expiresAt.isBefore(LocalDateTime.now()); // JVM-local: entity-layer; push to service per docs/architecture/tenant-time-wave-13-summary.md if cross-region zone correctness is needed
     }
 
     public boolean isValid() {

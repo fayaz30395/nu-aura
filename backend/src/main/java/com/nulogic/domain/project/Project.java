@@ -72,7 +72,7 @@ public class Project extends TenantAware {
 
     public void complete() {
         this.status = ProjectStatus.COMPLETED;
-        this.endDate = LocalDate.now();
+        this.endDate = LocalDate.now(); // JVM-local: entity-layer; push to service per docs/architecture/tenant-time-wave-13-summary.md if cross-region zone correctness is needed
     }
 
     public void hold() {
@@ -81,7 +81,7 @@ public class Project extends TenantAware {
 
     public void cancel() {
         this.status = ProjectStatus.CANCELLED;
-        this.endDate = LocalDate.now();
+        this.endDate = LocalDate.now(); // JVM-local: entity-layer; push to service per docs/architecture/tenant-time-wave-13-summary.md if cross-region zone correctness is needed
     }
 
     public enum ProjectStatus {

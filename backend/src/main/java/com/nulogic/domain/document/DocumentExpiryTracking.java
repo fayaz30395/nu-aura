@@ -54,14 +54,14 @@ public class DocumentExpiryTracking extends TenantAware {
             return false;
         }
         LocalDate reminderDate = expiryDate.minusDays(reminderDaysBefore != null ? reminderDaysBefore : 30);
-        return LocalDate.now().isEqual(reminderDate) || LocalDate.now().isAfter(reminderDate);
+        return LocalDate.now().isEqual(reminderDate) || LocalDate.now().isAfter(reminderDate); // JVM-local: entity-layer; push to service per docs/architecture/tenant-time-wave-13-summary.md if cross-region zone correctness is needed
     }
 
     public boolean isExpired() {
-        return LocalDate.now().isAfter(expiryDate);
+        return LocalDate.now().isAfter(expiryDate); // JVM-local: entity-layer; push to service per docs/architecture/tenant-time-wave-13-summary.md if cross-region zone correctness is needed
     }
 
     public long daysUntilExpiry() {
-        return java.time.temporal.ChronoUnit.DAYS.between(LocalDate.now(), expiryDate);
+        return java.time.temporal.ChronoUnit.DAYS.between(LocalDate.now(), expiryDate); // JVM-local: entity-layer; push to service per docs/architecture/tenant-time-wave-13-summary.md if cross-region zone correctness is needed
     }
 }

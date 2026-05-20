@@ -61,7 +61,7 @@ public class ComplianceAlert extends TenantAware {
     public void resolve(UUID resolvedById, String notes) {
         this.status = AlertStatus.RESOLVED;
         this.resolvedBy = resolvedById;
-        this.resolvedAt = LocalDateTime.now();
+        this.resolvedAt = LocalDateTime.now(); // JVM-local: entity-layer; push to service per docs/architecture/tenant-time-wave-13-summary.md if cross-region zone correctness is needed
         this.resolutionNotes = notes;
     }
 

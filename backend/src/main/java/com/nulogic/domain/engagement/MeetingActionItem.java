@@ -73,7 +73,7 @@ public class MeetingActionItem extends TenantAware {
 
     public boolean isOverdue() {
         return dueDate != null &&
-                dueDate.isBefore(LocalDate.now()) &&
+                dueDate.isBefore(LocalDate.now()) && // JVM-local: entity-layer; push to service per docs/architecture/tenant-time-wave-13-summary.md if cross-region zone correctness is needed
                 status != ActionStatus.COMPLETED &&
                 status != ActionStatus.CANCELLED;
     }

@@ -136,7 +136,7 @@ public class Objective extends TenantAware {
             this.status = ObjectiveStatus.AT_RISK;
         } else if (this.status == ObjectiveStatus.ACTIVE) {
             // Check if we're past midpoint
-            LocalDate today = LocalDate.now();
+            LocalDate today = LocalDate.now(); // JVM-local: entity-layer; push to service per docs/architecture/tenant-time-wave-13-summary.md if cross-region zone correctness is needed
             if (today.isAfter(startDate.plusDays(
                     java.time.temporal.ChronoUnit.DAYS.between(startDate, endDate) / 2))) {
                 this.status = ObjectiveStatus.BEHIND;

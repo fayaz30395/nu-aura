@@ -32,7 +32,7 @@ public class AnnouncementRead extends TenantAware {
 
     @Column(name = "read_at", nullable = false)
     @Builder.Default
-    private LocalDateTime readAt = LocalDateTime.now();
+    private LocalDateTime readAt = LocalDateTime.now(); // JVM-local: entity-layer; push to service per docs/architecture/tenant-time-wave-13-summary.md if cross-region zone correctness is needed
 
     @Column(name = "accepted_at")
     private LocalDateTime acceptedAt;
@@ -43,6 +43,6 @@ public class AnnouncementRead extends TenantAware {
 
     public void accept() {
         this.isAccepted = true;
-        this.acceptedAt = LocalDateTime.now();
+        this.acceptedAt = LocalDateTime.now(); // JVM-local: entity-layer; push to service per docs/architecture/tenant-time-wave-13-summary.md if cross-region zone correctness is needed
     }
 }

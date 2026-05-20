@@ -81,7 +81,7 @@ public class TenantApplication extends TenantAware {
         if (status != SubscriptionStatus.ACTIVE && status != SubscriptionStatus.TRIAL) {
             return false;
         }
-        if (expiresAt != null && expiresAt.isBefore(LocalDate.now())) {
+        if (expiresAt != null && expiresAt.isBefore(LocalDate.now())) { // JVM-local: entity-layer; push to service per docs/architecture/tenant-time-wave-13-summary.md if cross-region zone correctness is needed
             return false;
         }
         return true;

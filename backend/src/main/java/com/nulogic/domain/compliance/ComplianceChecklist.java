@@ -62,7 +62,7 @@ public class ComplianceChecklist extends TenantAware {
             completedItems++;
             if (completedItems.equals(totalItems)) {
                 status = ChecklistStatus.COMPLETED;
-                lastCompletedDate = LocalDate.now();
+                lastCompletedDate = LocalDate.now(); // JVM-local: entity-layer; push to service per docs/architecture/tenant-time-wave-13-summary.md if cross-region zone correctness is needed
             } else {
                 status = ChecklistStatus.IN_PROGRESS;
             }

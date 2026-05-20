@@ -60,7 +60,7 @@ public class CompliancePolicy extends TenantAware {
 
     public boolean isActive() {
         if (status != PolicyStatus.PUBLISHED) return false;
-        LocalDate today = LocalDate.now();
+        LocalDate today = LocalDate.now(); // JVM-local: entity-layer; push to service per docs/architecture/tenant-time-wave-13-summary.md if cross-region zone correctness is needed
         if (effectiveDate != null && today.isBefore(effectiveDate)) return false;
         if (expiryDate != null && today.isAfter(expiryDate)) return false;
         return true;

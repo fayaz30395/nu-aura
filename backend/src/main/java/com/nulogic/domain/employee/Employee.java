@@ -167,12 +167,12 @@ public class Employee extends TenantAware {
 
     public void terminate() {
         this.status = EmployeeStatus.TERMINATED;
-        this.exitDate = LocalDate.now();
+        this.exitDate = LocalDate.now(); // JVM-local: entity-layer; push to service per docs/architecture/tenant-time-wave-13-summary.md if cross-region zone correctness is needed
     }
 
     public void resign() {
         this.status = EmployeeStatus.RESIGNED;
-        this.exitDate = LocalDate.now();
+        this.exitDate = LocalDate.now(); // JVM-local: entity-layer; push to service per docs/architecture/tenant-time-wave-13-summary.md if cross-region zone correctness is needed
     }
 
     public enum Gender {

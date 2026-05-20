@@ -115,7 +115,7 @@ public class WebhookDelivery extends TenantAware {
      * Record a delivery attempt.
      */
     public void recordAttempt(int statusCode, String response, long durationMs, String error) {
-        recordAttempt(statusCode, response, durationMs, error, LocalDateTime.now());
+        recordAttempt(statusCode, response, durationMs, error, LocalDateTime.now()); // JVM-local: entity-layer; push to service per docs/architecture/tenant-time-wave-13-summary.md if cross-region zone correctness is needed
     }
 
     public void recordAttempt(int statusCode, String response, long durationMs, String error, LocalDateTime now) {

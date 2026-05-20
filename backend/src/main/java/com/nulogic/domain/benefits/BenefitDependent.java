@@ -110,7 +110,7 @@ public class BenefitDependent extends TenantAware {
     private LocalDateTime updatedAt;
 
     public int getAge() {
-        return java.time.Period.between(dateOfBirth, LocalDate.now()).getYears();
+        return java.time.Period.between(dateOfBirth, LocalDate.now()).getYears(); // JVM-local: entity-layer; push to service per docs/architecture/tenant-time-wave-13-summary.md if cross-region zone correctness is needed
     }
 
     public boolean isMinor() {

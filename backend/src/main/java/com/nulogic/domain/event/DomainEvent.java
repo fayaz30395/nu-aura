@@ -37,7 +37,7 @@ public abstract class DomainEvent extends ApplicationEvent {
         this.tenantId = tenantId;
         this.aggregateId = aggregateId;
         this.aggregateType = aggregateType;
-        this.occurredAt = LocalDateTime.now();
+        this.occurredAt = LocalDateTime.now(); // JVM-local: entity-layer; push to service per docs/architecture/tenant-time-wave-13-summary.md if cross-region zone correctness is needed
     }
 
     /**

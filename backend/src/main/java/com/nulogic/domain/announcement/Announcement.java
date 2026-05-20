@@ -107,7 +107,7 @@ public class Announcement extends TenantAware {
 
     public void publish(UUID publisherId, String publisherName) {
         this.status = AnnouncementStatus.PUBLISHED;
-        this.publishedAt = LocalDateTime.now();
+        this.publishedAt = LocalDateTime.now(); // JVM-local: entity-layer; push to service per docs/architecture/tenant-time-wave-13-summary.md if cross-region zone correctness is needed
         this.publishedBy = publisherId;
         this.publishedByName = publisherName;
     }

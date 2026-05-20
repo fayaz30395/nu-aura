@@ -128,12 +128,12 @@ public class OneOnOneMeeting extends TenantAware {
 
     public boolean isUpcoming() {
         LocalDateTime meetingDateTime = LocalDateTime.of(meetingDate, startTime);
-        return meetingDateTime.isAfter(LocalDateTime.now()) && status == MeetingStatus.SCHEDULED;
+        return meetingDateTime.isAfter(LocalDateTime.now()) && status == MeetingStatus.SCHEDULED; // JVM-local: entity-layer; push to service per docs/architecture/tenant-time-wave-13-summary.md if cross-region zone correctness is needed
     }
 
     public boolean isPast() {
         LocalDateTime meetingDateTime = LocalDateTime.of(meetingDate, startTime);
-        return meetingDateTime.isBefore(LocalDateTime.now());
+        return meetingDateTime.isBefore(LocalDateTime.now()); // JVM-local: entity-layer; push to service per docs/architecture/tenant-time-wave-13-summary.md if cross-region zone correctness is needed
     }
 
     public enum MeetingStatus {

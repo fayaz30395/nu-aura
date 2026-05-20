@@ -82,7 +82,7 @@ public class BiometricDevice extends TenantAware {
             return false;
         }
         // JVM-local: 10-minute heartbeat freshness; relative duration, zone-agnostic.
-        return lastHeartbeatAt.isAfter(LocalDateTime.now().minusMinutes(10));
+        return lastHeartbeatAt.isAfter(LocalDateTime.now().minusMinutes(10)); // JVM-local: entity-layer; push to service per docs/architecture/tenant-time-wave-13-summary.md if cross-region zone correctness is needed
     }
 
     public void recordSync() {

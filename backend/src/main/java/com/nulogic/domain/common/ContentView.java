@@ -93,7 +93,7 @@ public class ContentView {
         this.contentType = contentType;
         this.contentId = contentId;
         this.employeeId = employeeId;
-        this.lastViewedAt = LocalDateTime.now();
+        this.lastViewedAt = LocalDateTime.now(); // JVM-local: entity-layer; push to service per docs/architecture/tenant-time-wave-13-summary.md if cross-region zone correctness is needed
     }
 
     // Static factory methods
@@ -112,7 +112,7 @@ public class ContentView {
     // Increment view count for repeat views
     public void incrementViewCount() {
         this.viewCount++;
-        this.lastViewedAt = LocalDateTime.now();
+        this.lastViewedAt = LocalDateTime.now(); // JVM-local: entity-layer; push to service per docs/architecture/tenant-time-wave-13-summary.md if cross-region zone correctness is needed
     }
 
     // Getters and Setters
