@@ -142,30 +142,30 @@ public class BenefitClaim extends TenantAware {
         this.status = ClaimStatus.SUBMITTED;
     }
 
-    public void approve(BigDecimal amount, UUID approver, String comments) {
+    public void approve(BigDecimal amount, UUID approver, String comments, LocalDateTime now) {
         this.approvedAmount = amount;
         this.approvedBy = approver;
-        this.approvedAt = LocalDateTime.now();
+        this.approvedAt = now;
         this.approvalComments = comments;
         this.status = amount.compareTo(claimedAmount) < 0 ?
                 ClaimStatus.PARTIALLY_APPROVED : ClaimStatus.APPROVED;
     }
 
-    public void reject(String reason, UUID processor) {
+    public void reject(String reason, UUID processor, LocalDateTime now) {
         this.status = ClaimStatus.REJECTED;
         this.rejectionReason = reason;
         this.processedBy = processor;
-        this.processedAt = LocalDateTime.now();
+        this.processedAt = now;
     }
 
     public void initiatePayment() {
         this.status = ClaimStatus.PAYMENT_INITIATED;
     }
 
-    public void completePayment(String reference) {
+    public void completePayment(String reference, LocalDate paymentDate) {
         this.status = ClaimStatus.PAYMENT_COMPLETED;
         this.paymentReference = reference;
-        this.paymentDate = LocalDate.now();
+        this.paymentDate = paymentDate;
     }
 
     public enum ClaimType {

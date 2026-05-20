@@ -101,20 +101,20 @@ public class BenefitEnrollment extends TenantAware {
         dependent.setEnrollment(this);
     }
 
-    public void activate() {
+    public void activate(LocalDate today) {
         this.status = EnrollmentStatus.ACTIVE;
-        this.effectiveDate = LocalDate.now();
+        this.effectiveDate = today;
     }
 
-    public void terminate(String reason) {
+    public void terminate(String reason, LocalDate today) {
         this.status = EnrollmentStatus.TERMINATED;
-        this.terminationDate = LocalDate.now();
+        this.terminationDate = today;
     }
 
-    public void startCobra() {
+    public void startCobra(LocalDate today) {
         this.status = EnrollmentStatus.COBRA_CONTINUATION;
         this.cobraActive = true;
-        this.cobraStartDate = LocalDate.now();
+        this.cobraStartDate = today;
     }
 
     public enum EnrollmentStatus {

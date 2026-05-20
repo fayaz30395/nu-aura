@@ -329,7 +329,7 @@ public class BenefitEnhancedService {
         BenefitEnrollment enrollment = enrollmentRepository.findByIdAndTenantId(enrollmentId, tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("Enrollment not found"));
 
-        enrollment.activate();
+        enrollment.activate(tenantTimeService.today(enrollment.getTenantId()));
 
         // Generate membership ID
         enrollment.setMembershipId("MEM-" + enrollment.getId().toString().substring(0, 8).toUpperCase());
@@ -344,7 +344,7 @@ public class BenefitEnhancedService {
         BenefitEnrollment enrollment = enrollmentRepository.findByIdAndTenantId(enrollmentId, tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("Enrollment not found"));
 
-        enrollment.terminate(reason);
+        enrollment.terminate(reason, tenantTimeService.today(enrollment.getTenantId()));
         enrollment = enrollmentRepository.save(enrollment);
         return EnrollmentResponse.from(enrollment);
     }
@@ -359,7 +359,7 @@ public class BenefitEnhancedService {
             throw new IllegalStateException("This plan is not COBRA eligible");
         }
 
-        enrollment.startCobra();
+        enrollment.startCobra(tenantTimeService.today(enrollment.getTenantId()));
         enrollment.setCobraPremium(cobraPremium);
         enrollment.setCobraEndDate(tenantTimeService.today(tenantId).plusMonths(months));
 
@@ -483,7 +483,7 @@ public class BenefitEnhancedService {
         claim.setDeductibleApplied(deductible);
         claim.setCopayAmount(copayAmount);
 
-        claim.approve(approvedAmount.min(eligibleAmount), currentUser, comments);
+        claim.approve(approvedAmount.min(eligibleAmount), currentUser, comments, tenantTimeService.now(claim.getTenantId()));
 
         if (approvedAmount.compareTo(claim.getClaimedAmount()) < 0) {
             claim.setRejectedAmount(claim.getClaimedAmount().subtract(approvedAmount));
@@ -515,7 +515,7 @@ public class BenefitEnhancedService {
         BenefitClaim claim = claimRepository.findByIdAndTenantId(claimId, tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("Claim not found"));
 
-        claim.reject(reason, currentUser);
+        claim.reject(reason, currentUser, tenantTimeService.now(claim.getTenantId()));
         claim = claimRepository.save(claim);
 
         // Publish audit event for claim rejection (best-effort)
@@ -547,7 +547,7 @@ public class BenefitEnhancedService {
         BenefitClaim claim = claimRepository.findByIdAndTenantId(claimId, tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("Claim not found"));
 
-        claim.completePayment(paymentReference);
+        claim.completePayment(paymentReference, tenantTimeService.today(claim.getTenantId()));
         claim = claimRepository.save(claim);
         return ClaimResponse.from(claim);
     }
