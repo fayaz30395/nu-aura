@@ -81,15 +81,16 @@ public class BiometricDevice extends TenantAware {
         if (lastHeartbeatAt == null) {
             return false;
         }
+        // JVM-local: 10-minute heartbeat freshness; relative duration, zone-agnostic.
         return lastHeartbeatAt.isAfter(LocalDateTime.now().minusMinutes(10));
     }
 
     public void recordSync() {
-        this.lastSyncAt = LocalDateTime.now();
+        this.lastSyncAt = LocalDateTime.now(); // JVM-local: server reception stamp
     }
 
     public void recordHeartbeat() {
-        this.lastHeartbeatAt = LocalDateTime.now();
+        this.lastHeartbeatAt = LocalDateTime.now(); // JVM-local: server reception stamp
     }
 
     public void deactivate() {

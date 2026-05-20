@@ -60,6 +60,7 @@ public class BiometricApiKey extends TenantAware {
     private LocalDateTime lastUsedAt;
 
     public boolean isExpired() {
+        // JVM-local: API-key expiry; tenant-zone risk bounded to clock-skew, and expiresAt is server-set.
         return expiresAt != null && expiresAt.isBefore(LocalDateTime.now());
     }
 
@@ -68,7 +69,7 @@ public class BiometricApiKey extends TenantAware {
     }
 
     public void recordUsage() {
-        this.lastUsedAt = LocalDateTime.now();
+        this.lastUsedAt = LocalDateTime.now(); // JVM-local: server reception stamp
     }
 
     public void revoke() {

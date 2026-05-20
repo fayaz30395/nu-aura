@@ -481,7 +481,7 @@ public class AttendanceRecordService {
                 .filter(a -> a.getTenantId().equals(tenantId))
                 .orElseThrow(() -> new IllegalArgumentException(ATTENDANCE_RECORD_NOT_FOUND));
 
-        record.approveRegularization(approverId);
+        record.approveRegularization(approverId, tenantTimeService.now(record.getTenantId()));
         AttendanceRecord savedRecord = attendanceRecordRepository.save(record);
 
         // Publish audit event for regularization approval (best-effort, truly async via dedicated component)
@@ -707,7 +707,7 @@ public class AttendanceRecordService {
                 .filter(a -> a.getTenantId().equals(tenantId))
                 .orElseThrow(() -> new IllegalArgumentException(ATTENDANCE_RECORD_NOT_FOUND));
 
-        record.rejectRegularization(rejectorId, reason);
+        record.rejectRegularization(rejectorId, reason, tenantTimeService.now(record.getTenantId()));
         log.info("Regularization rejected for record {} by {}", id, rejectorId);
         return attendanceRecordRepository.save(record);
     }

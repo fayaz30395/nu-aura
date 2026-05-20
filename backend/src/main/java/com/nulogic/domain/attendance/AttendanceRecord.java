@@ -265,17 +265,17 @@ public class AttendanceRecord extends TenantAware {
         this.status = AttendanceStatus.PENDING_REGULARIZATION;
     }
 
-    public void approveRegularization(UUID approverId) {
+    public void approveRegularization(UUID approverId, LocalDateTime now) {
         this.regularizationApproved = true;
         this.approvedBy = approverId;
-        this.approvedAt = LocalDateTime.now();
+        this.approvedAt = now;
         this.status = AttendanceStatus.PRESENT;
     }
 
-    public void rejectRegularization(UUID rejectorId, String rejectionReason) {
+    public void rejectRegularization(UUID rejectorId, String rejectionReason, LocalDateTime now) {
         this.regularizationApproved = false;
         this.approvedBy = rejectorId;
-        this.approvedAt = LocalDateTime.now();
+        this.approvedAt = now;
         if (rejectionReason != null && !rejectionReason.isEmpty()) {
             this.regularizationReason = this.regularizationReason + " [REJECTED: " + rejectionReason + "]";
         }

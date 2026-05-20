@@ -68,19 +68,19 @@ public class BiometricPunchLog extends TenantAware {
     public void markProcessed(UUID attendanceRecordId) {
         this.processedStatus = ProcessedStatus.PROCESSED;
         this.attendanceRecordId = attendanceRecordId;
-        this.processedAt = LocalDateTime.now();
+        this.processedAt = LocalDateTime.now(); // JVM-local: server-side processing stamp; not user-visible
         this.errorMessage = null;
     }
 
     public void markFailed(String error) {
         this.processedStatus = ProcessedStatus.FAILED;
         this.errorMessage = error;
-        this.processedAt = LocalDateTime.now();
+        this.processedAt = LocalDateTime.now(); // JVM-local: server-side processing stamp; not user-visible
     }
 
     public void markDuplicate() {
         this.processedStatus = ProcessedStatus.DUPLICATE;
-        this.processedAt = LocalDateTime.now();
+        this.processedAt = LocalDateTime.now(); // JVM-local: server-side processing stamp; not user-visible
         this.errorMessage = "Duplicate punch within deduplication window";
     }
 
