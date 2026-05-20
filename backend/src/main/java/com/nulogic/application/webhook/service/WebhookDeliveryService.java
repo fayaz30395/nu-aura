@@ -506,15 +506,17 @@ public class WebhookDeliveryService {
     public void processRetries() {
         // Iterate per tenant so the "ready for retry" cutoff is the tenant's local now,
         // matching the zone in which nextRetryAt was originally stamped (see deliverWebhook).
-        for (UUID tenantId : deliveryRepository.findDistinctTenantIds()) {
+        // Narrow the sweep to tenants with retryable work only, which reduces scans when
+        // most tenants are inactive or only have delivered history.
+        for (UUID tenantId : deliveryRepository.findDistinctTenantIdsWithRetrying()) {
             Map<UUID, Optional<Webhook>> webhookCache = new HashMap<>();
             LocalDateTime tenantNow = tenantTimeService.now(tenantId);
-            while (true) {
-                Pageable pageable = PageRequest.of(
-                        0,
-                        RETRY_BATCH_SIZE,
-                        Sort.by(Sort.Direction.ASC, "nextRetryAt").and(Sort.by(Sort.Direction.ASC, "id")));
+            Pageable pageable = PageRequest.of(
+                    0,
+                    RETRY_BATCH_SIZE,
+                    Sort.by(Sort.Direction.ASC, "nextRetryAt").and(Sort.by(Sort.Direction.ASC, "id")));
 
+            while (true) {
                 Page<WebhookDelivery> readyForRetry = deliveryRepository.findReadyForRetry(
                         tenantId, tenantNow, pageable);
 
@@ -557,7 +559,7 @@ public class WebhookDeliveryService {
                     }
                 }
 
-                if (!readyForRetry.hasNext()) {
+                if (readyForRetry.getContent().size() < RETRY_BATCH_SIZE) {
                     break;
                 }
             }

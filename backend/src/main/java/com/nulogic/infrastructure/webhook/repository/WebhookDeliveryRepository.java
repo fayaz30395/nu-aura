@@ -53,6 +53,16 @@ public interface WebhookDeliveryRepository extends JpaRepository<WebhookDelivery
     List<UUID> findDistinctTenantIds();
 
     /**
+     * Narrowed tenant pivot for retry sweeps. Returns only tenants with active retry work,
+     * which avoids scanning webhook tenants that have no RETRYING rows.
+     */
+    @Query("SELECT DISTINCT d.tenantId FROM WebhookDelivery d " +
+            "WHERE d.tenantId IS NOT NULL " +
+            "AND d.status = 'RETRYING' " +
+            "AND d.nextRetryAt IS NOT NULL")
+    List<UUID> findDistinctTenantIdsWithRetrying();
+
+    /**
      * Find pending deliveries.
      */
     List<WebhookDelivery> findByStatusOrderByCreatedAtAsc(DeliveryStatus status);

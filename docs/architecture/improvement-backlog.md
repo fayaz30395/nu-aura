@@ -278,8 +278,8 @@ Code-level work is DONE for these items but they need on-cluster verification.
 
 ### T3-10 · MapStruct is in `pom.xml` but unused
 
-- **Status:** DONE — all `api/` controllers migrated; non-`api/` converters
-  listed as follow-up housekeeping.
+- **Status:** DONE — all `api/` controllers migrated + `application/`
+  housekeeping cleaned. `BeanUtils.copyProperties` is gone repo-wide.
 - **Where:** Controllers previously used `BeanUtils.copyProperties()` with
   hand-maintained ignore-lists (mass-assignment risk).
 - **Why it matters:** Ignore-lists drift silently — add a new sensitive field,
@@ -341,20 +341,46 @@ Code-level work is DONE for these items but they need on-cluster verification.
   3. For update endpoints, add `@BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)`
      on `updateEntity(...)` to keep partial-update semantics (null in the
      request leaves the existing entity value alone).
-- **Remaining `BeanUtils.copyProperties` call sites repo-wide: 1.**
-  Sweep with `grep -rln "BeanUtils.copyProperties" backend/src/main/java/com/nulogic/`.
-  - `application/leave/service/LeaveBalanceService.java:147` — internal
-    converter inside the application layer (response shape construction for
-    cached lookups). Not security-sensitive (no untrusted-DTO → entity copy)
-    but worth migrating for consistency. Follow-up housekeeping ticket, not
-    blocking.
+**What landed (cleanup wave — 2026-05-20)**
+
+- **Last `BeanUtils.copyProperties` site closed:**
+  `backend/.../application/leave/service/LeaveBalanceService.java#toResponse`
+  (`getEmployeeBalancesEnriched` batched lookup). Service now injects the
+  existing `api/leave/mapper/LeaveBalanceMapper` instead of doing a raw
+  `BeanUtils.copyProperties(balance, response, "tenantId", "createdAt", ...)`
+  with a stringly-typed ignore-list. No new mapper class — reusing the one
+  the controller already uses keeps the response shape locked to a single
+  source of truth (`unmappedTargetPolicy = ERROR` on the mapper interface).
+- **Why a setter-by-setter approach was rejected:** the call site was the
+  controller's old code lifted into the service for a PERF batching change
+  (H4: collapse N leave-type lookups into one `findAllById`). Reverting to
+  explicit setters would have duplicated the controller's field list and
+  reintroduced exactly the drift problem T3-10 set out to kill. The mapper
+  is the field-list owner; the service is the batching layer.
+- **Tests:** `LeaveBalanceServiceTest$GetEmployeeBalancesEnrichedTests` —
+  3 new tests asserting (a) the mapper is invoked per balance row, (b) the
+  leave-type-name enrichment still runs after the mapper, (c) the empty-list
+  short-circuit skips both mapper and repository round-trips. Combined with
+  the existing `LeaveBalanceMapperTest`, the regression guard against
+  tenant/audit-field leakage is now enforced at both layers.
+- **Repo-wide `BeanUtils.copyProperties` count: 0.** Verified with
+  `grep -rln "BeanUtils.copyProperties" backend/src/main/java/com/nulogic/`.
+- **Locked test set after cleanup:** 85 tests, all green
+  (`*MapperTest,TenantContextRecordInterceptorTest,PayrollPeriodLockTest,
+  PayrollRunServiceTest,SoftDeleteServiceTest,ApiResponseBodyAdviceTest,
+  LeaveBalanceServiceTest`).
 - **Last updated:** 2026-05-20
 
 ### T3-11 · No standardized API response envelope
 
-- **Status:** IN PROGRESS — envelope + `@WrapResponse` advice landed;
-  3 pilot controllers annotated (2026-05-20). Remaining controller
-  migration continues opt-in, per slice — see migration playbook below.
+- **Status:** DONE — 8 controllers annotated; remaining migration is
+  opt-in housekeeping per controller / per slice. Wrapper +
+  `@WrapResponse` advice + `PaginationMeta` landed; pilot + wave-2
+  controllers exercise the full advice flow (one smoke test per
+  newly-annotated handler). New controllers should add `@WrapResponse`
+  on creation; existing ones convert lazily as the slice is touched
+  (see migration playbook below — remaining candidates are queued, not
+  blocking).
 - **Where:** Controllers return raw entities (`ResponseEntity<PayrollRun>`),
   domain DTOs (`AuthResponse`), or `Map`. Errors are wrapped by
   `GlobalExceptionHandler` but success responses are not.
@@ -390,57 +416,70 @@ Code-level work is DONE for these items but they need on-cluster verification.
      via a thin DTO whose body advice surfaces `meta`, or compose
      `ApiResponse.of(page.getContent(), PaginationMeta.from(page), MDC.get("requestId"))`
      directly — the advice is idempotent, so explicit wrapping is safe.
-- **Wave 1 pilots annotated (2026-05-20):**
+- **Wave 1 — pilots annotated (2026-05-20, 3 controllers):**
   - `com.nulogic.api.dashboard.controller.DashboardController` — 1 GET
     (`/metrics`).
   - `com.nulogic.api.user.controller.PermissionController` — 2 GETs
     (`/`, `/resource/{resource}`); paginated + list responses.
   - `com.nulogic.api.workflow.controller.ApprovalsController` — 2 GETs
     (`/tasks`, `/inbox`); list + `Page<WorkflowExecutionResponse>`.
-  - Class-level `@WrapResponse` only — return types stay
-    `ResponseEntity<T>` for this wave. The advice wraps transparently;
-    the type-simplification (drop `ResponseEntity.ok(...)`, return `T`)
-    is deferred to a separate housekeeping pass once the advice has
-    soaked in production.
-- **Migration playbook — next candidates (read-heavy, no streaming, no
-  file/binary responses; pick a slice each PR):**
-  1. `api/home/controller/HomeController` — 7 GETs (slightly above
-     the soft "≤5" rule but pure read-only + already on `Page<T>`).
-  2. `api/knowledge/controller/FluenceActivityController` — 2 GETs,
+- **Wave 2 — read-heavy controllers annotated (2026-05-20, 5 controllers
+  → 8 total):**
+  - `com.nulogic.api.home.controller.HomeController` — 7 GETs;
+    class-level (all reads).
+  - `com.nulogic.api.knowledge.controller.KnowledgeSearchController` —
+    3 GETs; class-level (all reads).
+  - `com.nulogic.api.statutory.controller.StatutoryContributionController`
+    — 3 GETs; class-level (all reads).
+  - `com.nulogic.api.calendar.controller.CalendarController` —
+    9 GETs annotated per-method (`getEvent`, `getMyEvents`,
+    `getMyEventsForRange`, `getEventsForRange`, `getAllEvents`,
+    `getEventsByType`, `getEventsOrganizedByMe`, `getEventsAsAttendee`,
+    `getEventsSummary`); POST/PUT/PATCH/DELETE/sync handlers
+    deliberately left unannotated so writes keep raw `ResponseEntity`
+    semantics until a deeper review.
+  - `com.nulogic.api.featureflag.FeatureFlagController` — 5 GETs
+    annotated per-method (`getAllFlags`, `getFlagsAsMap`,
+    `getEnabledFeatures`, `checkFeature`, `getFlagsByCategory`);
+    `setFeatureFlag` + `toggleFeature` POSTs left unannotated.
+  - All waves use the body-advice approach: return types stay
+    `ResponseEntity<T>`, the advice wraps the body into
+    `ApiResponse<T>` transparently. Type-simplification (drop
+    `ResponseEntity.ok(...)`, return `T`) is deferred to a separate
+    housekeeping pass once the advice has soaked in production.
+- **Migration playbook — remaining candidates (opt-in, not blocking;
+  follow same pattern when a slice is touched):**
+  1. `api/knowledge/controller/FluenceActivityController` — 2 GETs,
      paginated activity feed.
-  3. `api/knowledge/controller/FluenceSearchController` — 1 GET.
-  4. `api/knowledge/controller/KnowledgeSearchController` — 3 GETs.
-  5. `api/workflow/controller/ApprovalsController` ← already done.
-  6. `api/admin/controller/SystemAuditLogController` — 2 GETs.
-  7. `api/statutory/controller/StatutoryContributionController` —
-     3 GETs.
-  8. `api/featureflag/FeatureFlagController` — 5 GETs + 2 POSTs;
-     the GET-block can be annotated per-method first.
-  9. `api/calendar/controller/CalendarController` — mixed CRUD;
-     annotate the read methods (`/events/my`, `/events/range`,
-     `/events`, `/events/type/{type}`, `/events/organized`,
-     `/events/attending`, `/summary`) before the writes.
+  2. `api/knowledge/controller/FluenceSearchController` — 1 GET.
+  3. `api/admin/controller/SystemAuditLogController` — 2 GETs.
+  4. Mixed-CRUD controllers: pick GETs first when the slice is
+     touched (same pattern as `CalendarController` / `FeatureFlagController`).
   - **Hold:** `PayrollController`, `LeaveRequestController`,
     `LeaveBalanceController`, `AttendanceController` — owned by
     T3-10 wave 2 (MapStruct migration).
   - **Skip:** `AuthController` — custom cookie/body semantics around
     the JWT refresh flow.
-- **Tests:** `ApiResponseBodyAdviceTest` (12 cases) covers
+- **Tests:** `ApiResponseBodyAdviceTest` (17 cases) covers
   wrap-on-annotation, leave-untouched-without-annotation, idempotency on
   already-wrapped bodies, pass-through for `ErrorResponse`, MDC
   `traceId` resolution with fallback to `requestId`, method-level
   annotation pickup, streaming-type skip, `PaginationMeta` shape
-  stability, **and** three migration smoke tests — one per pilot
-  controller — that resolve a real handler `MethodParameter` and assert
-  `advice.supports(..)` returns `true` plus that
-  `beforeBodyWrite(..)` returns an `ApiResponse` envelope with `data`,
-  `serverTime`, and (when MDC set) `traceId`.
+  stability, **plus** eight migration smoke tests — one per
+  newly-annotated controller (wave 1: dashboard, permission, approvals;
+  wave 2: home, knowledge-search, statutory-contribution,
+  calendar, feature-flag). The mixed-CRUD tests
+  (`calendarControllerGetHandlerOptsInButWriteDoesNot`,
+  `featureFlagControllerGetHandlerOptsInButWriteDoesNot`) additionally
+  assert the advice **skips** the unannotated write handlers — proving
+  the method-level approach contains the migration to GETs only.
 - **Last updated:** 2026-05-20
 
 ### T3-12 · No generated TypeScript client from OpenAPI
 
-- **Status:** IN PROGRESS — codegen wired + 1/10 service files migrated
-  (2026-05-20).
+- **Status:** DONE — codegen wired + 9 service files migrated across 3 waves
+  (2026-05-20). Remaining hand-rolled files (`auth.ts`, `client.ts`,
+  `orval-mutator.ts`, `public-client.ts`) are out of scope by design.
 - **Where:** `frontend/lib/api/*.ts` is hand-rolled (~1200 LOC).
 - **Why it matters:** SpringDoc emits OpenAPI for all 177 controllers — but TS
   types are manually maintained. Backend changes break frontend silently
@@ -460,29 +499,106 @@ Code-level work is DONE for these items but they need on-cluster verification.
     cannot fetch HTTP directly, so run with a local snapshot file:
     `curl -s http://localhost:8080/api-docs -o /tmp/api-docs.json &&
     API_DOCS_URL=/tmp/api-docs.json npm run api:generate`.
-- **Migrated this wave (2026-05-20):**
+- **Migrated wave 1 (2026-05-20):**
   - `frontend/lib/api/escalation.ts` (23 LOC, 3 functions) → thin facade
     over generated `escalation-configuration` client. Public
     `escalationApi.{getConfig, upsertConfig, deleteConfig}` signatures
     unchanged so `lib/hooks/queries/useEscalation.ts` callers needed no
     edits. `npx tsc --noEmit` clean.
-- **Remaining service files (smallest first):**
-  - `users.ts` (30 LOC)
-  - `mfa.ts` (59 LOC)
-  - `admin-system.ts` (72 LOC)
-  - `notifications.ts` (74 LOC)
-  - `shifts.ts` (81 LOC)
-  - `roles.ts` (87 LOC)
-  - `implicitRoles.ts` (97 LOC)
-  - `public-client.ts` (103 LOC)
-  - `custom-fields.ts` (229 LOC)
+- **Migrated this wave (3) (2026-05-20, wave 2):**
+  - `frontend/lib/api/users.ts` (30 LOC, 2 functions) → facade over
+    generated `user-controller` client (`getAllUsers`, `assignRoles`).
+    Adapter passes `{pageable: {}}` to match the original unparam'd URL;
+    return type kept as `User[]` (the original lied — backend actually
+    returns `Page<UserResponse>`, and `app/admin/permissions/page.tsx`
+    already normalises both shapes). Callers `useRoleAdminUsers`,
+    `app/admin/employees/page.tsx` need no edits.
+  - `frontend/lib/api/mfa.ts` (59 LOC, 5 functions) → facade over
+    generated `mfa` client (status, setup, verify, disable) plus
+    `authentication.mfaLogin` (the `/auth/mfa-login` endpoint is tagged
+    under `authentication`). Public `mfaApi.{getStatus, getSetup, verify,
+    disable, mfaLogin}` preserved. Callers `useMfa.ts`, `MfaSetup.tsx`,
+    `MfaVerification.tsx` need no edits.
+  - `frontend/lib/api/notifications.ts` (74 LOC, 11 functions) → facade
+    over generated `notification-controller` (list / unread / count /
+    recent / by-id / create / mark-all-read / delete) and
+    `multi-channel-notifications.markAsRead` (per-id PUT lives on
+    `MultiChannelNotificationController`). `getPreferences` /
+    `updatePreferences` intentionally still hit `apiClient` against
+    `/notifications/preferences` — the generated
+    `notification-preferences-controller` targets a different route
+    (`/notification-preferences`) with a different response shape, and
+    resolving that contract drift is out of scope for this wave. Callers
+    `useNotifications.ts`, `NotificationBell.tsx`, and the
+    `notification-flow.test.tsx` integration test need no edits.
+- **Migrated this wave (5) (2026-05-20, wave 3 — parallel fan-out):**
+  - `frontend/lib/api/admin-system.ts` (73 → 74 LOC, 5 functions) → facade
+    over generated `system-admin` client. All 5 SuperAdmin endpoints
+    (`getSystemOverview`, `getTenantList`, `getTenantMetrics`,
+    `getGrowthMetrics`, `generateImpersonationToken`) migrated.
+    `getTenantList` wraps the single-string `sort` arg into `Pageable.sort:
+    string[]` when provided. Caller `useSystemAdmin.ts` unchanged.
+  - `frontend/lib/api/shifts.ts` (81 → 102 LOC, 9 functions) → facade over
+    generated `shift-management-controller`. All 9 endpoints migrated 1:1;
+    `shift-swap-controller` was not needed. `getAllShifts`'s
+    `sortDirection: 'ASC' | 'DESC'` union retained on the facade (tighter
+    than the generated `string`). No production callers exist yet; the
+    facade contract is forward-looking but preserved verbatim.
+  - `frontend/lib/api/roles.ts` (87 → 145 LOC, 12 functions across
+    `rolesApi` + `permissionsApi`) → facade over generated
+    `role-controller` and `permission-controller`. All 12 endpoints
+    migrated including the DELETE-with-body `removePermissions` (orval
+    generated it on axios's `data` field). Load-bearing quirks preserved
+    verbatim: `getAllRoles` and `getAllPermissions` pass `{pageable: {size:
+    100}}` / `{pageable: {size: 500}}` and unwrap `page.content ?? []`,
+    with the "Bug #4 FIX" comment block intact. 13 useRoles caller sites
+    unchanged.
+  - `frontend/lib/api/implicitRoles.ts` (97 → 148 LOC, 8 functions) →
+    facade over generated `implicit-role-rules`. 7 of 8 endpoints
+    migrated. `getAffectedUsers(ruleId, page, size)` deliberately KEPT on
+    `apiClient` — the generated `getAffectedUsers(id)` accepts no
+    `page`/`size` and returns a different wrapper shape
+    (`{ ruleId, ruleName, affectedUserCount, affectedUsers: [...] }` vs
+    the hand-rolled `Page<ImplicitUserRole>`). Switching would silently
+    drop pagination args and break the `useAffectedUsers` hook contract.
+    Revisit when the OpenAPI spec adds `Pageable` to that endpoint.
+    Latent bug surfaced and closed: `ListParams.isActive` maps to the
+    backend's `active` query param, but the hand-rolled facade was
+    sending the JS field name `isActive` which the backend silently
+    ignored. The new facade maps it correctly; no behavioural change
+    today because no caller filters by `isActive`.
+  - `frontend/lib/api/custom-fields.ts` (229 → 295 LOC, 22 functions) →
+    facade over generated `custom-field-controller`. All 22 endpoints
+    migrated 1:1 across "Field Definition APIs" and "Field Value APIs".
+    `BASE_URL` constant dropped; `apiClient` import removed entirely.
+    Paginated endpoints (`getAllDefinitions`, `searchDefinitions`) wrap
+    `page`/`size` into `{pageable: {page, size}}`; the wire shape is
+    identical (orval flattens `pageable` to query params). Callers
+    `useCustomFields.ts` (14 sites), `app/employees/[id]/edit/page.tsx`
+    (1 site), `components/custom-fields/CustomFieldsSection.tsx` (5
+    sites) — all unchanged.
 - **Out of scope (do NOT migrate):**
   - `auth.ts` — hand-rolled refresh mutex must stay (P0-SESSION-FIX).
   - `client.ts` — the shared Axios instance itself.
   - `orval-mutator.ts` — the bridge from generated calls to `apiClient`.
-- **Follow-up:** Keep migrating one file per wave, then delete the
-  originals when the call sites in `lib/hooks/queries/*` switch to the
-  generated React-Query hooks directly.
+  - `public-client.ts` — separate `PublicApiClient` Axios instance for
+    unauthenticated public portals (preboarding, offer acceptance).
+    Migrating to `orvalMutator` would route these through the auth/CSRF/
+    refresh-mutex pipeline, which is exactly what the public client is
+    designed to bypass. Stays hand-rolled.
+- **`apiClient` direct call audit (after wave 3):** 1 remaining call site
+  in migrated files — `implicitRoles.ts#getAffectedUsers` (documented
+  above). Verified with
+  `grep -nE "apiClient\.(get|post|put|patch|delete)" frontend/lib/api/{admin-system,shifts,roles,implicitRoles,custom-fields}.ts`.
+- **Follow-up (housekeeping, not blocking):**
+  - When the OpenAPI spec gains `Pageable` on `AffectedUsersResponse`,
+    migrate the last `implicitRoles.ts#getAffectedUsers` call.
+  - Resolve `notifications.getPreferences/updatePreferences` contract
+    drift between `MultiChannelNotificationController` and
+    `NotificationPreferencesController` so the last two methods of
+    `notifications.ts` can drop `apiClient`.
+  - Delete the facades altogether once `lib/hooks/queries/*` call sites
+    switch to the generated React-Query hooks directly.
 - **Last updated:** 2026-05-20
 
 ### T3-13 · Mantine + Tailwind dual styling

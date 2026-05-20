@@ -9,12 +9,12 @@ import {ShieldAlert} from 'lucide-react';
 /** NU-HRMS entry point — redirects to the employee dashboard */
 export default function HrmsEntryPage() {
   const router = useRouter();
-  const {hasHydrated, isAuthenticated, restoreSession} = useAuth();
+  const {hasHydrated, isAuthenticated, user, restoreSession} = useAuth();
   const {hasAppAccess} = useActiveApp();
 
   useEffect(() => {
     if (!hasHydrated) return;
-    if (!isAuthenticated) {
+    if (!isAuthenticated || !user) {
       restoreSession().then((restored) => {
         if (!restored) router.replace('/auth/login');
       });
@@ -24,7 +24,7 @@ export default function HrmsEntryPage() {
     if (hasAppAccess('HRMS')) {
       router.replace('/me/dashboard');
     }
-  }, [hasHydrated, isAuthenticated, router, hasAppAccess, restoreSession]);
+  }, [hasHydrated, isAuthenticated, user, router, hasAppAccess, restoreSession]);
 
   // Show access denied if authenticated but no access
   if (hasHydrated && isAuthenticated && !hasAppAccess('HRMS')) {

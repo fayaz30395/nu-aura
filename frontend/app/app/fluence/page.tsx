@@ -9,12 +9,12 @@ import {ShieldAlert} from 'lucide-react';
 /** NU-Fluence entry page — redirect to wiki */
 export default function FluenceEntryPage() {
   const router = useRouter();
-  const {hasHydrated, isAuthenticated, restoreSession} = useAuth();
+  const {hasHydrated, isAuthenticated, user, restoreSession} = useAuth();
   const {hasAppAccess} = useActiveApp();
 
   useEffect(() => {
     if (!hasHydrated) return;
-    if (!isAuthenticated) {
+    if (!isAuthenticated || !user) {
       restoreSession().then((restored) => {
         if (!restored) router.replace('/auth/login');
       });
@@ -25,7 +25,7 @@ export default function FluenceEntryPage() {
     if (hasAppAccess('FLUENCE')) {
       router.replace('/fluence/wiki');
     }
-  }, [hasHydrated, isAuthenticated, router, hasAppAccess, restoreSession]);
+  }, [hasHydrated, isAuthenticated, user, router, hasAppAccess, restoreSession]);
 
   // Show access denied if authenticated but no access
   if (hasHydrated && isAuthenticated && !hasAppAccess('FLUENCE')) {

@@ -178,6 +178,102 @@ class ApiResponseBodyAdviceTest {
         assertThat(((ApiResponse<?>) wrapped).serverTime()).isNotNull();
     }
 
+    /**
+     * Wave 2 migration smoke tests: 5 additional controllers annotated
+     * with {@link WrapResponse} on 2026-05-20 (T3-11 wave 2).
+     * <p>
+     * {@code HomeController}, {@code KnowledgeSearchController}, and
+     * {@code StatutoryContributionController} carry class-level
+     * {@code @WrapResponse} (all GETs). {@code CalendarController} and
+     * {@code FeatureFlagController} are mixed CRUD; the GET handlers are
+     * annotated per-method, leaving writes opt-out for now.
+     */
+    @Test
+    void homeControllerHandlerOptsIn() throws Exception {
+        MethodParameter param = handler(
+                com.nulogic.api.home.controller.HomeController.class,
+                "getUpcomingBirthdays");
+
+        assertThat(advice.supports(param, jsonConverter())).isTrue();
+
+        Object wrapped = advice.beforeBodyWrite(
+                List.of(), param, MediaType.APPLICATION_JSON, jsonConverter(),
+                mock(ServerHttpRequest.class), mock(ServerHttpResponse.class));
+
+        assertThat(wrapped).isInstanceOf(ApiResponse.class);
+        assertThat(((ApiResponse<?>) wrapped).serverTime()).isNotNull();
+    }
+
+    @Test
+    void knowledgeSearchControllerHandlerOptsIn() throws Exception {
+        MethodParameter param = handler(
+                com.nulogic.api.knowledge.controller.KnowledgeSearchController.class,
+                "searchWiki");
+
+        assertThat(advice.supports(param, jsonConverter())).isTrue();
+
+        Object wrapped = advice.beforeBodyWrite(
+                List.of(), param, MediaType.APPLICATION_JSON, jsonConverter(),
+                mock(ServerHttpRequest.class), mock(ServerHttpResponse.class));
+
+        assertThat(wrapped).isInstanceOf(ApiResponse.class);
+    }
+
+    @Test
+    void statutoryContributionControllerHandlerOptsIn() throws Exception {
+        MethodParameter param = handler(
+                com.nulogic.api.statutory.controller.StatutoryContributionController.class,
+                "getMonthlyContributions");
+
+        assertThat(advice.supports(param, jsonConverter())).isTrue();
+
+        Object wrapped = advice.beforeBodyWrite(
+                List.of(), param, MediaType.APPLICATION_JSON, jsonConverter(),
+                mock(ServerHttpRequest.class), mock(ServerHttpResponse.class));
+
+        assertThat(wrapped).isInstanceOf(ApiResponse.class);
+    }
+
+    @Test
+    void calendarControllerGetHandlerOptsInButWriteDoesNot() throws Exception {
+        // GET — method-level @WrapResponse applied
+        MethodParameter getParam = handler(
+                com.nulogic.api.calendar.controller.CalendarController.class,
+                "getMyEvents");
+        assertThat(advice.supports(getParam, jsonConverter())).isTrue();
+
+        Object wrapped = advice.beforeBodyWrite(
+                List.of(), getParam, MediaType.APPLICATION_JSON, jsonConverter(),
+                mock(ServerHttpRequest.class), mock(ServerHttpResponse.class));
+        assertThat(wrapped).isInstanceOf(ApiResponse.class);
+
+        // POST — unannotated, advice must skip
+        MethodParameter postParam = handler(
+                com.nulogic.api.calendar.controller.CalendarController.class,
+                "createEvent");
+        assertThat(advice.supports(postParam, jsonConverter())).isFalse();
+    }
+
+    @Test
+    void featureFlagControllerGetHandlerOptsInButWriteDoesNot() throws Exception {
+        // GET — method-level @WrapResponse applied
+        MethodParameter getParam = handler(
+                com.nulogic.api.featureflag.FeatureFlagController.class,
+                "getAllFlags");
+        assertThat(advice.supports(getParam, jsonConverter())).isTrue();
+
+        Object wrapped = advice.beforeBodyWrite(
+                List.of(), getParam, MediaType.APPLICATION_JSON, jsonConverter(),
+                mock(ServerHttpRequest.class), mock(ServerHttpResponse.class));
+        assertThat(wrapped).isInstanceOf(ApiResponse.class);
+
+        // POST — unannotated, advice must skip
+        MethodParameter postParam = handler(
+                com.nulogic.api.featureflag.FeatureFlagController.class,
+                "setFeatureFlag");
+        assertThat(advice.supports(postParam, jsonConverter())).isFalse();
+    }
+
     @Test
     void paginationMetaShapesAreStable() throws Exception {
         org.springframework.data.domain.Page<String> page =
