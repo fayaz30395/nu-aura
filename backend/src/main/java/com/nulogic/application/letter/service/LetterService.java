@@ -387,7 +387,7 @@ public class LetterService {
             throw new BusinessException("Letter is not pending approval");
         }
 
-        entity.approve(approverId, comments);
+        entity.approve(approverId, comments, tenantTimeService.now(tenantId));
         GeneratedLetter saved = letterRepository.save(entity);
 
         log.info("Letter approved: {}", letterId);
@@ -403,7 +403,7 @@ public class LetterService {
             throw new BusinessException("Only approved letters can be issued");
         }
 
-        entity.issue(issuerId);
+        entity.issue(issuerId, tenantTimeService.now(tenantId));
         GeneratedLetter saved = letterRepository.save(entity);
 
         log.info("Letter issued: {}", letterId);
@@ -432,7 +432,7 @@ public class LetterService {
                 .orElseThrow(() -> new ResourceNotFoundException("Candidate not found: " + entity.getCandidateId()));
 
         // Issue the letter
-        entity.issue(issuerId);
+        entity.issue(issuerId, tenantTimeService.now(tenantId));
         GeneratedLetter saved = letterRepository.save(entity);
 
         // Update candidate status to OFFER_EXTENDED now that letter is issued
@@ -528,7 +528,7 @@ public class LetterService {
             throw new BusinessException("Letter does not belong to this employee");
         }
 
-        entity.markDownloaded();
+        entity.markDownloaded(tenantTimeService.now(TenantContext.getCurrentTenant()));
         letterRepository.save(entity);
         log.info("Letter marked as downloaded: {}", letterId);
     }

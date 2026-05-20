@@ -92,6 +92,7 @@ public class GeneratedLetter extends TenantAware {
     private UUID previousVersionId;
 
     public static String generateReferenceNumber(String prefix, int sequence) {
+        // JVM-local: year-prefix for human-readable reference. Year boundary in tenant zone differs from JVM by at most ~13 hours; not worth threading a tenantId through a static helper.
         return String.format("%s/%d/%04d", prefix, LocalDate.now().getYear(), sequence);
     }
 
@@ -99,35 +100,36 @@ public class GeneratedLetter extends TenantAware {
         this.status = LetterStatus.PENDING_APPROVAL;
     }
 
-    public void approve(UUID approverId, String comments) {
+    public void approve(UUID approverId, String comments, LocalDateTime now) {
         this.status = LetterStatus.APPROVED;
         this.approvedBy = approverId;
-        this.approvedAt = LocalDateTime.now();
+        this.approvedAt = now;
         this.approvalComments = comments;
     }
 
-    public void issue(UUID issuerId) {
+    public void issue(UUID issuerId, LocalDateTime now) {
         this.status = LetterStatus.ISSUED;
         this.issuedBy = issuerId;
-        this.issuedAt = LocalDateTime.now();
+        this.issuedAt = now;
     }
 
     public void revoke() {
         this.status = LetterStatus.REVOKED;
     }
 
-    public void markSent() {
+    public void markSent(LocalDateTime now) {
         this.sentToEmployee = true;
-        this.sentAt = LocalDateTime.now();
+        this.sentAt = now;
     }
 
-    public void markDownloaded() {
+    public void markDownloaded(LocalDateTime now) {
         this.downloadedByEmployee = true;
-        this.downloadedAt = LocalDateTime.now();
+        this.downloadedAt = now;
     }
 
     public boolean isActive() {
         if (this.status != LetterStatus.ISSUED) return false;
+        // JVM-local: date-only comparison; tenant-zone risk is bounded to midnight rollover. Push to service layer if a tenant ever reports a same-day off-by-one.
         if (this.expiryDate != null && this.expiryDate.isBefore(LocalDate.now())) {
             return false;
         }
