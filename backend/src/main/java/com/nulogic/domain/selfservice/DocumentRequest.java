@@ -66,21 +66,21 @@ public class DocumentRequest extends TenantAware {
         this.processedBy = processedById;
     }
 
-    public void markGenerated(String documentUrl) {
+    public void markGenerated(String documentUrl, LocalDateTime now) {
         this.status = RequestStatus.GENERATED;
         this.generatedDocumentUrl = documentUrl;
-        this.documentGeneratedAt = LocalDateTime.now();
-        this.processedAt = LocalDateTime.now();
+        this.documentGeneratedAt = now;
+        this.processedAt = now;
     }
 
     public void markDelivered() {
         this.status = RequestStatus.DELIVERED;
     }
 
-    public void reject(UUID rejectedBy, String reason) {
+    public void reject(UUID rejectedBy, String reason, LocalDateTime now) {
         this.status = RequestStatus.REJECTED;
         this.processedBy = rejectedBy;
-        this.processedAt = LocalDateTime.now();
+        this.processedAt = now;
         this.rejectionReason = reason;
     }
 

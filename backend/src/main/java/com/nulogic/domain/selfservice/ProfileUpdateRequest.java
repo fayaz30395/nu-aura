@@ -59,17 +59,17 @@ public class ProfileUpdateRequest extends TenantAware {
     @Builder.Default
     private Boolean autoApproved = false;
 
-    public void approve(UUID reviewerId, String comments) {
+    public void approve(UUID reviewerId, String comments, LocalDateTime now) {
         this.status = RequestStatus.APPROVED;
         this.reviewedBy = reviewerId;
-        this.reviewedAt = LocalDateTime.now();
+        this.reviewedAt = now;
         this.reviewComments = comments;
     }
 
-    public void reject(UUID reviewerId, String reason) {
+    public void reject(UUID reviewerId, String reason, LocalDateTime now) {
         this.status = RequestStatus.REJECTED;
         this.reviewedBy = reviewerId;
-        this.reviewedAt = LocalDateTime.now();
+        this.reviewedAt = now;
         this.rejectionReason = reason;
     }
 

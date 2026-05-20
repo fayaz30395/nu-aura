@@ -49,6 +49,7 @@ public class DsrService {
     private final JavaMailSender mailSender;
     private final DsrExportService dsrExportService;
     private final DsrErasureService dsrErasureService;
+    private final com.nulogic.common.util.TenantTimeService tenantTimeService;
     /**
      * Inbox monitored by ops to fulfil DSR requests. Externalised so non-prod
      * environments can redirect to a staging mailbox without code changes.
@@ -188,8 +189,8 @@ public class DsrService {
                     request.setAdminNotes(adminNotes);
                 }
             }
-            case COMPLETED -> request.complete(handlerId, adminNotes);
-            case REJECTED -> request.reject(handlerId, adminNotes);
+            case COMPLETED -> request.complete(handlerId, adminNotes, tenantTimeService.now(request.getTenantId()));
+            case REJECTED -> request.reject(handlerId, adminNotes, tenantTimeService.now(request.getTenantId()));
             case PENDING -> throw new IllegalArgumentException(
                     "Cannot move a DSR request back to PENDING — use IN_PROGRESS to re-open.");
         }
@@ -308,7 +309,7 @@ public class DsrService {
 
         // 4) Transition to COMPLETED via the entity helper so handler +
         //    completedAt stay consistent with manual admin transitions.
-        request.complete(handlerId, request.getAdminNotes());
+        request.complete(handlerId, request.getAdminNotes(), tenantTimeService.now(request.getTenantId()));
         DsrRequest saved = dsrRequestRepository.save(request);
 
         // 5) Audit — EXPORT with digest + size in the newValue JSON.

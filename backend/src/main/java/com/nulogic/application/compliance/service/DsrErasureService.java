@@ -256,7 +256,7 @@ public class DsrErasureService {
         // Step 6: terminal transition. complete() records handler + completedAt;
         // adminNotes carries the per-data-class result summary for the human
         // reviewing the row in the admin UI.
-        request.complete(callerId, buildResultNotes(policies, originalEmail, cascade, tenantId));
+        request.complete(callerId, buildResultNotes(policies, originalEmail, cascade, tenantId), tenantTimeService.now(tenantId));
         return dsrRequestRepository.save(request);
     }
 

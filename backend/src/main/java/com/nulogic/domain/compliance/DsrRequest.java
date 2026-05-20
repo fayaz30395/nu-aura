@@ -105,21 +105,21 @@ public class DsrRequest extends TenantAware {
     /**
      * Marks the request as terminal and records the handler + timestamp.
      */
-    public void complete(UUID handlerId, String notes) {
+    public void complete(UUID handlerId, String notes, LocalDateTime now) {
         this.status = Status.COMPLETED;
         this.handlerUserId = handlerId;
         this.adminNotes = notes;
-        this.completedAt = LocalDateTime.now();
+        this.completedAt = now;
     }
 
     /**
      * Marks the request as rejected (e.g. identity verification failed).
      */
-    public void reject(UUID handlerId, String notes) {
+    public void reject(UUID handlerId, String notes, LocalDateTime now) {
         this.status = Status.REJECTED;
         this.handlerUserId = handlerId;
         this.adminNotes = notes;
-        this.completedAt = LocalDateTime.now();
+        this.completedAt = now;
     }
 
     /**

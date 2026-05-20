@@ -134,7 +134,7 @@ public class SelfServiceService {
             throw new BusinessException("Request is not in pending state");
         }
 
-        entity.approve(reviewerId, comments);
+        entity.approve(reviewerId, comments, tenantTimeService.now(entity.getTenantId()));
         ProfileUpdateRequest saved = profileUpdateRequestRepository.save(entity);
 
         // Apply the update to the employee profile
@@ -154,7 +154,7 @@ public class SelfServiceService {
             throw new BusinessException("Request is not in pending state");
         }
 
-        entity.reject(reviewerId, reason);
+        entity.reject(reviewerId, reason, tenantTimeService.now(entity.getTenantId()));
         ProfileUpdateRequest saved = profileUpdateRequestRepository.save(entity);
 
         log.info("Profile update request rejected: {}", requestId);
@@ -270,7 +270,7 @@ public class SelfServiceService {
             throw new BusinessException("Only in-progress requests can be completed");
         }
 
-        entity.markGenerated(documentUrl);
+        entity.markGenerated(documentUrl, tenantTimeService.now(entity.getTenantId()));
         DocumentRequest saved = documentRequestRepository.save(entity);
 
         log.info("Document request completed: {}", requestId);
@@ -300,7 +300,7 @@ public class SelfServiceService {
         DocumentRequest entity = documentRequestRepository.findByIdAndTenantId(requestId, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Document request not found: " + requestId));
 
-        entity.reject(rejectedBy, reason);
+        entity.reject(rejectedBy, reason, tenantTimeService.now(entity.getTenantId()));
         DocumentRequest saved = documentRequestRepository.save(entity);
 
         log.info("Document request rejected: {}", requestId);
