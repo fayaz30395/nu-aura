@@ -59,7 +59,7 @@ RUN printf '%s\n' \
       'PUBLIC_PORT="${PORT:-10000}"' \
       '' \
       'ready() {' \
-      '  curl --connect-timeout 1 --max-time 2 -fsS "http://127.0.0.1:${APP_PORT}/actuator/health/liveness" >/dev/null 2>&1' \
+      '  curl --connect-timeout 1 --max-time 2 -sS -o /dev/null "http://127.0.0.1:${APP_PORT}/actuator/health/liveness" >/dev/null 2>&1' \
       '}' \
       '' \
       'start_probe_responder() {' \
