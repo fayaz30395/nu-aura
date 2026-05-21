@@ -56,12 +56,24 @@ class ContractLifecycleSchedulerTest {
     private MetricsService metricsService;
     @Mock
     private JdbcTemplate jdbcTemplate;
+    @Mock
+    private com.nulogic.common.util.TenantTimeService tenantTimeService;
     @InjectMocks
     private ContractLifecycleScheduler scheduler;
     @Captor
     private ArgumentCaptor<ContractReminder> reminderCaptor;
     @Captor
     private ArgumentCaptor<Contract> contractCaptor;
+
+    @BeforeEach
+    void setUpTenantTimeServiceDefaults() {
+        org.mockito.Mockito.lenient()
+                .when(tenantTimeService.today(org.mockito.ArgumentMatchers.nullable(java.util.UUID.class)))
+                .thenReturn(java.time.LocalDate.now());
+        org.mockito.Mockito.lenient()
+                .when(tenantTimeService.now(org.mockito.ArgumentMatchers.nullable(java.util.UUID.class)))
+                .thenReturn(java.time.LocalDateTime.now());
+    }
 
     @BeforeEach
     void setUp() {

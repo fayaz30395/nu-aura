@@ -242,15 +242,18 @@ management:
         http.server.requests: 50ms,100ms,200ms,500ms,1s,2s
   # T2-06: Distributed tracing (Micrometer Tracing + OTLP).
   # Default sampling 10% — override via OTEL_SAMPLING_RATIO (0.0 .. 1.0).
-  # OTEL_EXPORTER_OTLP_ENDPOINT empty => spans produced and W3C traceparent
-  # is still propagated across HTTP/Kafka/JDBC, but no export occurs.
-  # Point at Tempo/Jaeger/Grafana-Cloud OTLP collector (e.g.
-  # http://tempo:4318/v1/traces) to enable export.
+  # W3C traceparent propagation remains enabled by management.tracing.enabled.
+  # Export is off by default so local/dev can run without an OTLP collector.
+  # To export, set OTEL_TRACING_EXPORT_ENABLED=true and point
+  # OTEL_EXPORTER_OTLP_ENDPOINT at Tempo/Jaeger/Grafana-Cloud (for example,
+  # http://tempo:4318/v1/traces).
   tracing:
     sampling:
       probability: ${OTEL_SAMPLING_RATIO:0.1}
   otlp:
     tracing:
+      export:
+        enabled: ${OTEL_TRACING_EXPORT_ENABLED:false}
       endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT:}
 
 server:

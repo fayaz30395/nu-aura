@@ -9,7 +9,7 @@ WORKDIR /app
 
 # Step 1: Copy bundled JARs BEFORE any pom.xml so Maven has no project to scan
 # (modules/common and modules/pm source is not in git — bundle pre-built JARs)
-COPY lib/ ./lib/
+COPY infra/mvn-local-deps/ ./lib/
 
 # Step 2: Install internal artifacts into local Maven cache.
 RUN mvn install:install-file \
@@ -44,7 +44,7 @@ FROM maven:3.9-eclipse-temurin-21 AS development
 
 WORKDIR /app
 
-COPY lib/ ./lib/
+COPY infra/mvn-local-deps/ ./lib/
 
 RUN mvn install:install-file \
       -Dfile=/app/lib/nulogic-platform-1.0.0.pom \

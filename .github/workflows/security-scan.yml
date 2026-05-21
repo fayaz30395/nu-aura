@@ -73,15 +73,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Build backend image
-        run: docker build -f infra/deployment/docker/Dockerfile.backend -t nu-aura-backend:scan .
+        run: docker build -f backend/Dockerfile -t nu-aura-backend:scan .
       - name: Build frontend image
-        run: docker build -f infra/deployment/docker/Dockerfile.frontend -t nu-aura-frontend:scan .
+        run: docker build -f frontend/Dockerfile -t nu-aura-frontend:scan ./frontend
       - name: Trivy backend
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: nu-aura-backend:scan
           severity: CRITICAL,HIGH
-          exit-code: '0'
+          exit-code: '1'
           format: sarif
           output: trivy-backend.sarif
       - name: Trivy frontend
@@ -89,7 +89,7 @@ jobs:
         with:
           image-ref: nu-aura-frontend:scan
           severity: CRITICAL,HIGH
-          exit-code: '0'
+          exit-code: '1'
           format: sarif
           output: trivy-frontend.sarif
       - name: Upload SARIF to security tab

@@ -2,9 +2,9 @@ import type {NextRequest} from 'next/server';
 import {NextResponse} from 'next/server';
 
 /**
- * Next.js Edge Middleware for route protection and security hardening.
+ * Next.js Edge Proxy for route protection and security hardening.
  *
- * This middleware runs at the edge before pages are rendered, providing:
+ * This proxy runs at the edge before pages are rendered, providing:
  * 1. Fast authentication checks without client-side JavaScript
  * 2. Immediate redirects for unauthenticated users
  * 3. No flash of protected content before redirect
@@ -133,7 +133,7 @@ const SKIP_PATTERNS = [
  * This runs only in middleware (edge/runtime) and never on the client.
  *
  * SECURITY NOTE (CRIT-007): This performs base64 decode WITHOUT signature
- * verification. Edge Middleware cannot access the JWT secret (which lives in
+ * verification. Edge Proxy cannot access the JWT secret (which lives in
  * the Java backend). This is intentionally a "coarse" auth check — the
  * backend JwtAuthenticationFilter verifies the signature on every API call.
  * The middleware only uses the decoded payload for routing decisions (e.g.,
@@ -234,34 +234,21 @@ function addSecurityHeaders(response: NextResponse): NextResponse {
   // Allow OAuth popups (required for Google sign-in)
   response.headers.set('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
 
-  // Content Security Policy - restrictive but allows necessary resources including Google OAuth
-  // Extract origin from API URL for CSP connect-src
-  let apiOrigin: string;
-  let wsOrigin: string;
-  try {
-    const url = new URL(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api/v1');
-    apiOrigin = url.origin;
-    wsOrigin = `${url.protocol === 'https:' ? 'wss:' : 'ws:'}//${url.host}`;
-  } catch {
-    apiOrigin = 'http://localhost:8080';
-    wsOrigin = 'ws://localhost:8080';
-  }
+  // Content Security Policy - restrictive but allows necessary resources including Google OAuth.
+  const apiConnectSources = getApiConnectSources();
 
   response.headers.set(
     'Content-Security-Policy',
     [
       "default-src 'self'",
-      // SEC: 'strict-dynamic' is present in production — browsers IGNORE 'unsafe-inline'/host
-      // allowlists when 'strict-dynamic' is in script-src, so DOM-injected scripts are blocked.
-      // 'unsafe-inline' is kept as a fallback for browsers that don't understand strict-dynamic.
-      // TODO: Migrate to full nonce-based CSP via Next.js middleware nonces — requires SSR
-      // plumbing to inject the nonce into every <script> tag emitted by hydration. See
-      // https://nextjs.org/docs/app/building-your-application/configuring/content-security-policy
       process.env.NODE_ENV === 'development'
         ? "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://accounts.google.com https://apis.google.com"
-        : "script-src 'self' 'strict-dynamic' 'unsafe-inline' https://accounts.google.com https://apis.google.com",
+        // Do not use strict-dynamic until every Next.js hydration script is emitted
+        // with a nonce. Without nonces, production browsers block the app's own
+        // /_next/static chunks and every client page stays on its loading fallback.
+        : "script-src 'self' 'unsafe-inline' https://accounts.google.com https://apis.google.com https://www.google.com https://www.gstatic.com",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://accounts.google.com",
-      `connect-src 'self' ${apiOrigin} ${wsOrigin} wss: https://accounts.google.com https://accounts.googleapis.com https://www.googleapis.com`,
+      `connect-src 'self'${apiConnectSources} wss: https://accounts.google.com https://accounts.googleapis.com https://www.googleapis.com`,
       // SEC: explicit img-src allowlist (was 'https:' wildcard — too permissive, allowed exfil to any HTTPS host)
       "img-src 'self' data: blob: https://lh3.googleusercontent.com https://*.amazonaws.com https://*.cloudfront.net https://storage.googleapis.com https://media.licdn.com https://ui-avatars.com https://drive.google.com",
       "font-src 'self' https://fonts.gstatic.com",
@@ -291,7 +278,29 @@ function addSecurityHeaders(response: NextResponse): NextResponse {
   return response;
 }
 
-export function middleware(request: NextRequest) {
+function getApiConnectSources(): string {
+  const configuredApiUrl = process.env.NEXT_PUBLIC_API_URL;
+  const fallbackApiUrl = process.env.NODE_ENV === 'production'
+    ? undefined
+    : 'http://localhost:8080/api/v1';
+  const apiUrl = configuredApiUrl || fallbackApiUrl;
+
+  if (!apiUrl) {
+    return '';
+  }
+
+  try {
+    const url = new URL(apiUrl);
+    const wsOrigin = `${url.protocol === 'https:' ? 'wss:' : 'ws:'}//${url.host}`;
+    return ` ${url.origin} ${wsOrigin}`;
+  } catch {
+    return process.env.NODE_ENV === 'production'
+      ? ''
+      : ' http://localhost:8080 ws://localhost:8080';
+  }
+}
+
+export function proxy(request: NextRequest) {
   const {pathname} = request.nextUrl;
 
   // Skip API routes and static assets

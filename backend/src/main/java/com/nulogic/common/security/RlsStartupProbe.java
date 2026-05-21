@@ -3,6 +3,7 @@ package com.nulogic.common.security;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -23,13 +24,19 @@ import java.sql.SQLException;
  * {@code SELECT COUNT(*) FROM employees}. With the strict policies in place
  * the {@code RESTRICTIVE} predicate evaluates to {@code NULL} and zero rows
  * are visible. If the count is non-zero a {@link IllegalStateException} is
- * thrown and the application fails fast — better a boot failure than a
- * silent cross-tenant data leak.</p>
+     * thrown when {@code app.security.rls.probe.fail-on-bypass=true}, causing
+     * the application to fail fast — better a boot failure than a silent
+     * cross-tenant data leak.</p>
  *
- * <p>The probe is skipped under the {@code test} profile (test fixtures
- * often run without RLS) and when the environment variable
- * {@code RLS_PROBE_SKIP=true} is set (escape hatch for local Flyway
- * bootstrap on a fresh database).</p>
+     * <p>The probe is skipped under the {@code test} profile (test fixtures
+     * often run without RLS) and when the environment variable
+     * {@code RLS_PROBE_SKIP=true} is set (escape hatch for local Flyway
+     * bootstrap on a fresh database).</p>
+     *
+     * <p>Development may set {@code app.security.rls.probe.fail-on-bypass=false}
+     * so contributors who point at a permissive local/migration DB account still
+     * get a loud warning without blocking browser E2E startup. Production must
+     * keep the default fail-closed behavior.</p>
  *
  * <p>Backlog reference: T1-01 in
  * {@code docs/architecture/improvement-backlog.md}.</p>
@@ -45,9 +52,13 @@ public class RlsStartupProbe implements ApplicationRunner {
     private static final String PROBE_TABLE = "employees";
 
     private final DataSource dataSource;
+    private final boolean failOnBypass;
 
-    public RlsStartupProbe(DataSource dataSource) {
+    public RlsStartupProbe(
+            DataSource dataSource,
+            @Value("${app.security.rls.probe.fail-on-bypass:true}") boolean failOnBypass) {
         this.dataSource = dataSource;
+        this.failOnBypass = failOnBypass;
     }
 
     @Override
@@ -93,7 +104,12 @@ public class RlsStartupProbe implements ApplicationRunner {
                             + "user does NOT have BYPASSRLS.",
                     visibleRows, PROBE_TABLE);
             log.error(msg);
-            throw new IllegalStateException(msg);
+            if (failOnBypass) {
+                throw new IllegalStateException(msg);
+            }
+            log.warn("RLS startup probe is configured fail-open for this profile; continuing startup. "
+                    + "Do not use this configuration for production.");
+            return;
         }
 
         log.info("RLS startup probe passed: 0 rows visible in {} without tenant context.", PROBE_TABLE);

@@ -47,7 +47,7 @@ class SmsNotificationServiceTest {
         // tenantTimeService is invoked from sendMockSms with whatever the current TenantContext
         // resolves to (null in unit tests); the resolver fallback returns DEFAULT_ZONE, so the
         // exact value here doesn't matter — only that it's non-null.
-        lenient().when(tenantTimeService.now(any(UUID.class))).thenReturn(LocalDateTime.now());
+        lenient().when(tenantTimeService.now(org.mockito.ArgumentMatchers.nullable(UUID.class))).thenReturn(LocalDateTime.now());
         lenient().when(tenantTimeService.now(null)).thenReturn(LocalDateTime.now());
     }
 

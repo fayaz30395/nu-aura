@@ -3,6 +3,7 @@ package com.nulogic.application.survey.service;
 import com.nulogic.api.survey.dto.SurveyDto;
 import com.nulogic.api.survey.dto.SurveyRequest;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.survey.Survey;
 import com.nulogic.domain.survey.Survey.SurveyStatus;
 import com.nulogic.domain.survey.Survey.SurveyType;
@@ -37,11 +38,14 @@ class SurveyManagementServiceTest {
     private SurveyRepository surveyRepository;
     @Mock
     private UserRepository userRepository;
+    @Mock
+    private TenantTimeService tenantTimeService;
     @InjectMocks
     private SurveyManagementService surveyManagementService;
     private UUID tenantId;
     private UUID surveyId;
     private UUID createdBy;
+    private LocalDateTime now;
 
     @BeforeAll
     static void setUpClass() {
@@ -58,8 +62,11 @@ class SurveyManagementServiceTest {
         tenantId = UUID.randomUUID();
         surveyId = UUID.randomUUID();
         createdBy = UUID.randomUUID();
+        now = LocalDateTime.of(2026, 1, 15, 9, 30);
 
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
+        tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
+        when(tenantTimeService.now(tenantId)).thenReturn(now);
     }
 
     private Survey buildSurvey(SurveyStatus status) {
@@ -233,8 +240,8 @@ class SurveyManagementServiceTest {
     @DisplayName("getActiveSurveys - returns active surveys within date range")
     void getActiveSurveys_success() {
         Survey survey = buildSurvey(SurveyStatus.ACTIVE);
-        survey.setStartDate(LocalDateTime.now().minusDays(1));
-        survey.setEndDate(LocalDateTime.now().plusDays(7));
+        survey.setStartDate(now.minusDays(1));
+        survey.setEndDate(now.plusDays(7));
         when(surveyRepository.findByTenantIdAndStatus(tenantId, SurveyStatus.ACTIVE))
                 .thenReturn(List.of(survey));
 
@@ -247,8 +254,8 @@ class SurveyManagementServiceTest {
     @DisplayName("getActiveSurveys - filters out expired surveys")
     void getActiveSurveys_filtersExpired() {
         Survey survey = buildSurvey(SurveyStatus.ACTIVE);
-        survey.setStartDate(LocalDateTime.now().minusDays(30));
-        survey.setEndDate(LocalDateTime.now().minusDays(1));
+        survey.setStartDate(now.minusDays(30));
+        survey.setEndDate(now.minusDays(1));
         when(surveyRepository.findByTenantIdAndStatus(tenantId, SurveyStatus.ACTIVE))
                 .thenReturn(List.of(survey));
 

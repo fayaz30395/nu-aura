@@ -46,6 +46,8 @@ class AuditLogServiceTest {
     private EmployeeRepository employeeRepository;
     @Mock
     private ObjectMapper objectMapper;
+    @Mock
+    private com.nulogic.common.util.TenantTimeService tenantTimeService;
     @InjectMocks
     private AuditLogService auditLogService;
     private UUID tenantId;
@@ -63,6 +65,14 @@ class AuditLogServiceTest {
     static void tearDownClass() {
         tenantContextMock.close();
         securityContextMock.close();
+    }
+
+    @BeforeEach
+    void setUpTenantTimeServiceDefaults() {
+        lenient().when(tenantTimeService.today(org.mockito.ArgumentMatchers.nullable(java.util.UUID.class)))
+                .thenReturn(java.time.LocalDate.now());
+        lenient().when(tenantTimeService.now(org.mockito.ArgumentMatchers.nullable(java.util.UUID.class)))
+                .thenReturn(java.time.LocalDateTime.now());
     }
 
     @BeforeEach

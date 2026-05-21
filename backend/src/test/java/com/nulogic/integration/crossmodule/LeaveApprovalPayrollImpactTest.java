@@ -6,6 +6,7 @@ import com.nulogic.application.leave.service.LeaveRequestService;
 import com.nulogic.application.notification.service.WebSocketNotificationService;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.event.leave.LeaveApprovedEvent;
 import com.nulogic.domain.leave.LeaveRequest;
@@ -21,6 +22,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -56,6 +58,8 @@ class LeaveApprovalPayrollImpactTest {
     private LeaveTypeRepository leaveTypeRepository;
     @Mock
     private DomainEventPublisher domainEventPublisher;
+    @Mock
+    private TenantTimeService tenantTimeService;
     @InjectMocks
     private LeaveRequestService leaveRequestService;
     private UUID tenantId;
@@ -95,6 +99,8 @@ class LeaveApprovalPayrollImpactTest {
 
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
         tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
+        lenient().when(tenantTimeService.now(tenantId)).thenReturn(LocalDateTime.of(2026, 1, 15, 9, 30));
+        lenient().when(tenantTimeService.today(tenantId)).thenReturn(LocalDate.now());
 
         employee = new Employee();
         employee.setId(employeeId);

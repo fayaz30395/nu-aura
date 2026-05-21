@@ -51,6 +51,8 @@ class PayrollRunServiceTest {
     private PayslipRepository payslipRepository;
     @Mock
     private PayrollPeriodLock payrollPeriodLock;
+    @Mock
+    private com.nulogic.common.util.TenantTimeService tenantTimeService;
     @InjectMocks
     private PayrollRunService payrollRunService;
     private UUID tenantId;
@@ -65,6 +67,14 @@ class PayrollRunServiceTest {
     @AfterAll
     static void tearDownClass() {
         tenantContextMock.close();
+    }
+
+    @BeforeEach
+    void setUpTenantTimeServiceDefaults() {
+        lenient().when(tenantTimeService.today(org.mockito.ArgumentMatchers.nullable(java.util.UUID.class)))
+                .thenReturn(java.time.LocalDate.now());
+        lenient().when(tenantTimeService.now(org.mockito.ArgumentMatchers.nullable(java.util.UUID.class)))
+                .thenReturn(java.time.LocalDateTime.now());
     }
 
     @BeforeEach

@@ -6,7 +6,7 @@ WORKDIR /app
 
 # Step 1: Copy bundled JARs BEFORE any pom.xml so Maven has no project to scan
 # (modules/common and modules/pm source is not in git — bundle pre-built JARs)
-COPY lib/ ./lib/
+COPY infra/mvn-local-deps/ ./lib/
 
 # Step 2: Install internal artifacts into local Maven cache.
 # At this point /app has no pom.xml, so Maven won't try to validate the multi-module project.

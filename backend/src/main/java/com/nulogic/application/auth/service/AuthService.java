@@ -102,6 +102,8 @@ public class AuthService {
     private String nulogicTenantId;
     @Value("${app.auth.allowed-domain:nulogic.io}")
     private String allowedDomain;
+    @Value("${app.auth.login-bookkeeping.enabled:true}")
+    private boolean loginBookkeepingEnabled;
 
     public AuthService(AuthenticationManager authenticationManager,
                        UserRepository userRepository,
@@ -256,14 +258,16 @@ public class AuthService {
                 }
             }
 
-            // Bookkeeping write via a bare UPDATE so parallel logins (E2E
-            // workers, multi-tab navigation) don't collide on the User row's
-            // @Version. See `UserRepository.recordSuccessfulLogin` Javadoc.
-            userRepository.recordSuccessfulLogin(user.getId(),
-                    tenantTimeService.now(tenantId));
+            if (loginBookkeepingEnabled) {
+                // Bookkeeping write via a bare UPDATE so parallel logins (E2E
+                // workers, multi-tab navigation) don't collide on the User row's
+                // @Version. See `UserRepository.recordSuccessfulLogin` Javadoc.
+                userRepository.recordSuccessfulLogin(user.getId(),
+                        tenantTimeService.now(tenantId));
 
-            // Clear lockout state on successful login
-            accountLockoutService.loginSucceeded(request.getEmail());
+                // Clear lockout state on successful login
+                accountLockoutService.loginSucceeded(request.getEmail());
+            }
 
             // Record successful login metric
             metricsService.recordLoginSuccess("password");

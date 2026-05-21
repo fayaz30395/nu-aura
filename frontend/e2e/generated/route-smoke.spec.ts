@@ -22,9 +22,14 @@ test.describe.parallel('@smoke route renders', () => {
       // 5xx = real backend/render failure. 401/403/404 are valid product responses.
       expect(res?.status() ?? 0, `HTTP status for ${r.path}`).toBeLessThan(500);
 
-      // Wait for app shell to settle (tolerate slow hydration without full networkidle).
-      await page.waitForLoadState('networkidle', {timeout: 15000}).catch(() => {
-      });
+      // Do not wait for networkidle here: STOMP/WebSocket and background
+      // React Query traffic keep many NU-AURA routes active indefinitely.
+      await expect
+        .poll(async () => (await page.locator('body').innerText().catch(() => '')).length, {
+          message: `body text on ${r.path}`,
+          timeout: 5000,
+        })
+        .toBeGreaterThan(0);
 
       const body = await page.locator('body').innerText().catch(() => '');
       expect(body.length, `body text on ${r.path}`).toBeGreaterThan(0);

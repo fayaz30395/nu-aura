@@ -46,6 +46,8 @@ class TravelServiceTest {
     private TravelRequestRepository travelRequestRepository;
     @Mock
     private WorkflowService workflowService;
+    @Mock
+    private com.nulogic.common.util.TenantTimeService tenantTimeService;
     @InjectMocks
     private TravelService travelService;
     private UUID tenantId;
@@ -66,6 +68,14 @@ class TravelServiceTest {
     }
 
     @BeforeEach
+    void setUpTenantTimeServiceDefaults() {
+        lenient().when(tenantTimeService.today(org.mockito.ArgumentMatchers.nullable(java.util.UUID.class)))
+                .thenReturn(java.time.LocalDate.now());
+        lenient().when(tenantTimeService.now(org.mockito.ArgumentMatchers.nullable(java.util.UUID.class)))
+                .thenReturn(java.time.LocalDateTime.now());
+    }
+
+    @BeforeEach
     void setUp() {
         tenantId = UUID.randomUUID();
         employeeId = UUID.randomUUID();
@@ -73,6 +83,7 @@ class TravelServiceTest {
         requestId = UUID.randomUUID();
 
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
+        tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
         securityContextMock.when(SecurityContext::getCurrentEmployeeId).thenReturn(employeeId);
         securityContextMock.when(SecurityContext::getCurrentUserId).thenReturn(userId);
     }

@@ -36,6 +36,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
@@ -60,6 +61,10 @@ class MileageServiceTest {
     private EmployeeRepository employeeRepository;
     @Mock
     private ObjectMapper objectMapper;
+    @Mock
+    private com.nulogic.common.util.TenantTimeService tenantTimeService;
+    @Mock
+    private org.springframework.jdbc.core.JdbcTemplate jdbcTemplate;
     @InjectMocks
     private MileageService mileageService;
 
@@ -76,9 +81,19 @@ class MileageServiceTest {
     }
 
     @BeforeEach
+    void setUpTenantTimeServiceDefaults() {
+        lenient().when(tenantTimeService.today(org.mockito.ArgumentMatchers.nullable(java.util.UUID.class)))
+                .thenReturn(java.time.LocalDate.now());
+        lenient().when(tenantTimeService.now(org.mockito.ArgumentMatchers.nullable(java.util.UUID.class)))
+                .thenReturn(java.time.LocalDateTime.now());
+    }
+
+    @BeforeEach
     void setUp() {
         tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(TENANT_ID);
         securityContextMock.when(SecurityContext::getCurrentEmployeeId).thenReturn(APPROVER_ID);
+        lenient().when(jdbcTemplate.queryForObject(anyString(), eq(Long.class), any(), any()))
+                .thenReturn(1L);
     }
 
     private MileageLogRequest createValidRequest() {

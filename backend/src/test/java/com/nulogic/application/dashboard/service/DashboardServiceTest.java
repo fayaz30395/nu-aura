@@ -13,6 +13,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -28,6 +30,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class DashboardServiceTest {
 
     @Mock
@@ -36,12 +39,25 @@ class DashboardServiceTest {
     @Mock
     private AuditLogRepository auditLogRepository;
 
+    @Mock
+    private com.nulogic.common.util.TenantTimeService tenantTimeService;
+
     @InjectMocks
     private DashboardService dashboardService;
 
     private UUID tenantId;
     private List<Employee> employees;
     private List<AuditLog> auditLogs;
+
+    @BeforeEach
+    void setUpTenantTimeServiceDefaults() {
+        org.mockito.Mockito.lenient()
+                .when(tenantTimeService.today(org.mockito.ArgumentMatchers.nullable(java.util.UUID.class)))
+                .thenReturn(java.time.LocalDate.now());
+        org.mockito.Mockito.lenient()
+                .when(tenantTimeService.now(org.mockito.ArgumentMatchers.nullable(java.util.UUID.class)))
+                .thenReturn(java.time.LocalDateTime.now());
+    }
 
     @BeforeEach
     void setUp() {
@@ -53,13 +69,11 @@ class DashboardServiceTest {
     @Test
     void getDashboardMetrics_ShouldReturnMetrics_WhenDataExists() {
         // Given
-        Page<Employee> employeePage = new PageImpl<>(employees);
-        Page<AuditLog> auditLogPage = new PageImpl<>(auditLogs);
-
-        when(employeeRepository.findAllByTenantId(eq(tenantId), any(PageRequest.class)))
-                .thenReturn(employeePage);
-        when(auditLogRepository.findAll(any(PageRequest.class)))
-                .thenReturn(auditLogPage);
+        when(employeeRepository.countByTenantId(tenantId)).thenReturn(3L);
+        when(employeeRepository.countByTenantIdAndStatus(tenantId, Employee.EmployeeStatus.ACTIVE))
+                .thenReturn(2L);
+        when(employeeRepository.countNewHiresAfterDate(eq(tenantId), any(LocalDate.class))).thenReturn(0L);
+        when(auditLogRepository.findTop10ByTenantIdOrderByCreatedAtDesc(tenantId)).thenReturn(auditLogs);
 
         try (MockedStatic<SecurityContext> mockedSecurityContext = mockStatic(SecurityContext.class)) {
             mockedSecurityContext.when(SecurityContext::getCurrentTenantId).thenReturn(tenantId);
@@ -80,26 +94,20 @@ class DashboardServiceTest {
             assertThat(response.getRecentActivities()).isNotNull();
             assertThat(response.getRecentActivities()).hasSize(2);
 
-            verify(employeeRepository).findAllByTenantId(eq(tenantId), any(PageRequest.class));
-            verify(auditLogRepository).findAll(any(PageRequest.class));
+            verify(employeeRepository).countByTenantId(tenantId);
+            verify(employeeRepository).countByTenantIdAndStatus(tenantId, Employee.EmployeeStatus.ACTIVE);
+            verify(auditLogRepository).findTop10ByTenantIdOrderByCreatedAtDesc(tenantId);
         }
     }
 
     @Test
     void getDashboardMetrics_ShouldCountNewEmployeesThisMonth() {
         // Given
-        LocalDate firstDayOfMonth = LocalDate.now().withDayOfMonth(1);
-        Employee newEmployee = createEmployee(UUID.randomUUID(), "New", "Employee",
-                Employee.EmployeeStatus.ACTIVE, firstDayOfMonth);
-        employees.add(newEmployee);
-
-        Page<Employee> employeePage = new PageImpl<>(employees);
-        Page<AuditLog> auditLogPage = new PageImpl<>(auditLogs);
-
-        when(employeeRepository.findAllByTenantId(eq(tenantId), any(PageRequest.class)))
-                .thenReturn(employeePage);
-        when(auditLogRepository.findAll(any(PageRequest.class)))
-                .thenReturn(auditLogPage);
+        when(employeeRepository.countByTenantId(tenantId)).thenReturn(4L);
+        when(employeeRepository.countByTenantIdAndStatus(tenantId, Employee.EmployeeStatus.ACTIVE))
+                .thenReturn(3L);
+        when(employeeRepository.countNewHiresAfterDate(eq(tenantId), any(LocalDate.class))).thenReturn(1L);
+        when(auditLogRepository.findTop10ByTenantIdOrderByCreatedAtDesc(tenantId)).thenReturn(auditLogs);
 
         try (MockedStatic<SecurityContext> mockedSecurityContext = mockStatic(SecurityContext.class)) {
             mockedSecurityContext.when(SecurityContext::getCurrentTenantId).thenReturn(tenantId);
@@ -115,13 +123,11 @@ class DashboardServiceTest {
     @Test
     void getDashboardMetrics_ShouldGroupEmployeesByStatus() {
         // Given
-        Page<Employee> employeePage = new PageImpl<>(employees);
-        Page<AuditLog> auditLogPage = new PageImpl<>(auditLogs);
-
-        when(employeeRepository.findAllByTenantId(eq(tenantId), any(PageRequest.class)))
-                .thenReturn(employeePage);
-        when(auditLogRepository.findAll(any(PageRequest.class)))
-                .thenReturn(auditLogPage);
+        when(employeeRepository.countByTenantId(tenantId)).thenReturn(3L);
+        when(employeeRepository.countByTenantIdAndStatus(tenantId, Employee.EmployeeStatus.ACTIVE))
+                .thenReturn(2L);
+        when(employeeRepository.countNewHiresAfterDate(eq(tenantId), any(LocalDate.class))).thenReturn(0L);
+        when(auditLogRepository.findTop10ByTenantIdOrderByCreatedAtDesc(tenantId)).thenReturn(auditLogs);
 
         try (MockedStatic<SecurityContext> mockedSecurityContext = mockStatic(SecurityContext.class)) {
             mockedSecurityContext.when(SecurityContext::getCurrentTenantId).thenReturn(tenantId);
@@ -132,20 +138,18 @@ class DashboardServiceTest {
             // Then
             assertThat(response.getEmployeeMetrics().getEmployeesByStatus())
                     .containsEntry("ACTIVE", 2L)
-                    .containsEntry("TERMINATED", 1L);
+                    .containsEntry("INACTIVE", 1L);
         }
     }
 
     @Test
     void getDashboardMetrics_ShouldHandleEmptyEmployeeList() {
         // Given
-        Page<Employee> emptyPage = new PageImpl<>(new ArrayList<>());
-        Page<AuditLog> auditLogPage = new PageImpl<>(auditLogs);
-
-        when(employeeRepository.findAllByTenantId(eq(tenantId), any(PageRequest.class)))
-                .thenReturn(emptyPage);
-        when(auditLogRepository.findAll(any(PageRequest.class)))
-                .thenReturn(auditLogPage);
+        when(employeeRepository.countByTenantId(tenantId)).thenReturn(0L);
+        when(employeeRepository.countByTenantIdAndStatus(tenantId, Employee.EmployeeStatus.ACTIVE))
+                .thenReturn(0L);
+        when(employeeRepository.countNewHiresAfterDate(eq(tenantId), any(LocalDate.class))).thenReturn(0L);
+        when(auditLogRepository.findTop10ByTenantIdOrderByCreatedAtDesc(tenantId)).thenReturn(auditLogs);
 
         try (MockedStatic<SecurityContext> mockedSecurityContext = mockStatic(SecurityContext.class)) {
             mockedSecurityContext.when(SecurityContext::getCurrentTenantId).thenReturn(tenantId);

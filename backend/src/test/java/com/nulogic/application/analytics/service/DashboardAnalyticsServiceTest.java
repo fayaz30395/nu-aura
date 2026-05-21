@@ -53,6 +53,9 @@ class DashboardAnalyticsServiceTest {
     @Mock
     private HolidayRepository holidayRepository;
 
+    @Mock
+    private com.nulogic.common.util.TenantTimeService tenantTimeService;
+
     @InjectMocks
     private DashboardAnalyticsService dashboardAnalyticsService;
 
@@ -60,6 +63,16 @@ class DashboardAnalyticsServiceTest {
     private UUID userId;
     private UUID employeeId;
     private UUID managerId;
+
+    @BeforeEach
+    void setUpTenantTimeServiceDefaults() {
+        org.mockito.Mockito.lenient()
+                .when(tenantTimeService.today(org.mockito.ArgumentMatchers.nullable(java.util.UUID.class)))
+                .thenReturn(java.time.LocalDate.now());
+        org.mockito.Mockito.lenient()
+                .when(tenantTimeService.now(org.mockito.ArgumentMatchers.nullable(java.util.UUID.class)))
+                .thenReturn(java.time.LocalDateTime.now());
+    }
 
     @BeforeEach
     void setUp() {

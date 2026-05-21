@@ -37,10 +37,23 @@ class UserAnonymizerTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private com.nulogic.common.util.TenantTimeService tenantTimeService;
+
     @InjectMocks
     private UserAnonymizer anonymizer;
 
     private User user;
+
+    @BeforeEach
+    void setUpTenantTimeServiceDefaults() {
+        org.mockito.Mockito.lenient()
+                .when(tenantTimeService.today(org.mockito.ArgumentMatchers.nullable(java.util.UUID.class)))
+                .thenReturn(java.time.LocalDate.now());
+        org.mockito.Mockito.lenient()
+                .when(tenantTimeService.now(org.mockito.ArgumentMatchers.nullable(java.util.UUID.class)))
+                .thenReturn(java.time.LocalDateTime.now());
+    }
 
     @BeforeEach
     void setUp() {

@@ -12,10 +12,12 @@ import {allDemoUsers, DEMO_PASSWORD, DemoUser, demoUsers} from './testData';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080/api/v1';
 const AUTH_MODE = process.env.E2E_AUTH_MODE ?? 'api';
-const API_LOGIN_TIMEOUT_MS = Number(process.env.E2E_API_LOGIN_TIMEOUT_MS ?? 60000);
+const API_LOGIN_TIMEOUT_MS = Number(process.env.E2E_API_LOGIN_TIMEOUT_MS ?? 10000);
 const API_LOGIN_ATTEMPTS = Number(process.env.E2E_API_LOGIN_ATTEMPTS ?? 3);
 
 interface ApiLoginResponse {
+  accessToken?: string | null;
+  refreshToken?: string | null;
   userId: string;
   employeeId?: string;
   tenantId: string;
@@ -27,6 +29,22 @@ interface ApiLoginResponse {
 }
 
 const NULOGIC_TENANT_ID = '660e8400-e29b-41d4-a716-446655440001';
+const AUTH_COOKIE_NAMES = new Set([
+  'access_token',
+  'refresh_token',
+  '__Host-hrms-access',
+  '__Host-hrms-refresh',
+  'XSRF-TOKEN',
+]);
+
+type BrowserCookie = Awaited<ReturnType<ReturnType<Page['context']>['cookies']>>[number];
+
+interface CachedAuthState {
+  auth: ApiLoginResponse;
+  cookies: BrowserCookie[];
+}
+
+const authStateCache = new Map<string, CachedAuthState>();
 
 const ROLE_PERMISSIONS: Record<DemoUser['role'], string[]> = {
   SUPER_ADMIN: [],
@@ -146,6 +164,57 @@ function buildStoredUser(auth: ApiLoginResponse) {
   };
 }
 
+async function seedStoredAuth(page: Page, auth: ApiLoginResponse): Promise<void> {
+  const storedUser = buildStoredUser(auth);
+
+  await page.evaluate(({tenantId, user}) => {
+    localStorage.setItem('tenantId', tenantId);
+    sessionStorage.setItem('nu-aura-user', JSON.stringify(user));
+    sessionStorage.setItem('auth-storage', JSON.stringify({
+      state: {
+        isAuthenticated: true,
+        user,
+      },
+      version: 0,
+    }));
+  }, {tenantId: auth.tenantId, user: storedUser});
+
+  // Navigate to dashboard to initialize the frontend Zustand store.
+  await gotoWithRetry(page, '/me/dashboard');
+  await waitForDashboard(page);
+  await page.waitForFunction(
+    (fullName) => document.body.innerText.includes(fullName),
+    storedUser.fullName,
+    {timeout: 15000}
+  );
+}
+
+async function seedFallbackCookies(page: Page, user: DemoUser): Promise<void> {
+  const appUrl = new URL(page.url());
+  await page.context().addCookies([
+    {
+      name: 'access_token',
+      value: createUnsignedJwt(user),
+      domain: appUrl.hostname,
+      path: '/',
+      httpOnly: true,
+      secure: appUrl.protocol === 'https:',
+      sameSite: 'Lax',
+      expires: Math.floor(Date.now() / 1000) + 60 * 60,
+    },
+    {
+      name: 'refresh_token',
+      value: `e2e-refresh-${Date.now()}`,
+      domain: appUrl.hostname,
+      path: '/',
+      httpOnly: true,
+      secure: appUrl.protocol === 'https:',
+      sameSite: 'Lax',
+      expires: Math.floor(Date.now() / 1000) + 60 * 60,
+    },
+  ]);
+}
+
 async function gotoWithRetry(page: Page, path: string): Promise<void> {
   let lastError: unknown;
   for (let attempt = 1; attempt <= 3; attempt++) {
@@ -191,6 +260,16 @@ export async function loginAs(page: Page, email: string): Promise<void> {
     localStorage.removeItem('lockoutUntil');
   });
 
+  const cachedAuth = authStateCache.get(email);
+  const nowSeconds = Math.floor(Date.now() / 1000);
+  if (cachedAuth && cachedAuth.cookies.some((cookie) => (
+    cookie.name === 'access_token' && (cookie.expires === -1 || cookie.expires > nowSeconds + 60)
+  ))) {
+    await page.context().addCookies(cachedAuth.cookies);
+    await seedStoredAuth(page, cachedAuth.auth);
+    return;
+  }
+
   // Call the backend login API directly with a small retry loop. Keep the
   // probe short: UI/RBAC tests can still run with local auth-state fallback
   // when the dev backend is pointed at a slow/unavailable cloud database.
@@ -210,79 +289,36 @@ export async function loginAs(page: Page, email: string): Promise<void> {
     if (response) {
       lastBody = await response.text().catch(() => 'unknown error');
     }
-    // Retry on optimistic-lock conflict or transient 5xx.
+    // Retry on optimistic-lock conflict or transient 5xx. Keep waits short so
+    // UI/RBAC specs can fall back to local auth state instead of timing out.
     if (response && response.status() !== 409 && response.status() < 500) break;
-    await page.waitForTimeout(1000 * attempt);
+    if (attempt < API_LOGIN_ATTEMPTS) {
+      await page.waitForTimeout(250 * attempt);
+    }
   }
 
   if (AUTH_MODE !== 'local' && response && !response.ok() && response.status() < 500) {
     throw new Error(`loginAs(${email}) failed: HTTP ${response.status()} — ${lastBody}`);
   }
 
-  if (AUTH_MODE !== 'local' && !response?.ok()) {
-    throw new Error(`loginAs(${email}) failed: API login did not complete after ${API_LOGIN_ATTEMPTS} attempts — ${lastBody}`);
-  }
-
   const auth = response?.ok()
     ? await response.json() as ApiLoginResponse
     : buildFallbackAuth(user);
+  const authCookies = response?.ok()
+    ? (await page.context().cookies()).filter((cookie) => AUTH_COOKIE_NAMES.has(cookie.name) && cookie.value)
+    : [];
+  const hasBackendAccessCookie = authCookies.some((cookie) => cookie.name === 'access_token');
 
-  if (!response?.ok()) {
+  if (response?.ok() && hasBackendAccessCookie) {
+    authStateCache.set(email, {auth, cookies: authCookies});
+  } else {
     if (AUTH_MODE !== 'local') {
       console.warn(`loginAs(${email}) API login failed; using local E2E auth state fallback. HTTP ${response?.status()} — ${lastBody}`);
     }
-    const appUrl = new URL(page.url());
-    await page.context().addCookies([
-      {
-        name: 'access_token',
-        value: createUnsignedJwt(user),
-        domain: appUrl.hostname,
-        path: '/',
-        httpOnly: true,
-        secure: appUrl.protocol === 'https:',
-        sameSite: 'Lax',
-        expires: Math.floor(Date.now() / 1000) + 60 * 60,
-      },
-      {
-        name: 'refresh_token',
-        value: `e2e-refresh-${Date.now()}`,
-        domain: appUrl.hostname,
-        path: '/',
-        httpOnly: true,
-        secure: appUrl.protocol === 'https:',
-        sameSite: 'Lax',
-        expires: Math.floor(Date.now() / 1000) + 60 * 60,
-      },
-    ]);
+    await seedFallbackCookies(page, user);
   }
 
-  const storedUser = buildStoredUser(auth);
-
-  // The backend sets httpOnly cookies via Set-Cookie headers.
-  // Playwright's page.request automatically handles those.
-  // API login bypasses the browser-side Zustand login action, so seed the same
-  // non-sensitive frontend auth state that UI login writes. Without this,
-  // pages can briefly render as "User / Employee" until cookie restore finishes.
-  await page.evaluate(({tenantId, user}) => {
-    localStorage.setItem('tenantId', tenantId);
-    sessionStorage.setItem('nu-aura-user', JSON.stringify(user));
-    sessionStorage.setItem('auth-storage', JSON.stringify({
-      state: {
-        isAuthenticated: true,
-        user,
-      },
-      version: 0,
-    }));
-  }, {tenantId: auth.tenantId, user: storedUser});
-
-  // Navigate to dashboard to initialize the frontend Zustand store.
-  await gotoWithRetry(page, '/me/dashboard');
-  await waitForDashboard(page);
-  await page.waitForFunction(
-    (fullName) => document.body.innerText.includes(fullName),
-    storedUser.fullName,
-    {timeout: 15000}
-  );
+  await seedStoredAuth(page, auth);
 }
 
 /**

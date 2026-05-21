@@ -22,7 +22,7 @@ steps:
     args:
       - 'build'
       - '-f'
-      - 'infra/deployment/docker/Dockerfile.backend'
+      - 'backend/Dockerfile'
       - '-t'
       - 'gcr.io/$PROJECT_ID/${_BACKEND_IMAGE_NAME}:$SHORT_SHA'
       - '-t'
@@ -44,7 +44,7 @@ steps:
     args:
       - 'build'
       - '-f'
-      - 'infra/deployment/docker/Dockerfile.frontend'
+      - 'frontend/Dockerfile'
       - '-t'
       - 'gcr.io/$PROJECT_ID/${_FRONTEND_IMAGE_NAME}:$SHORT_SHA'
       - '-t'
@@ -55,7 +55,7 @@ steps:
       - 'gcr.io/$PROJECT_ID/${_FRONTEND_IMAGE_NAME}:latest'
       - '--build-arg'
       - 'BUILDKIT_INLINE_CACHE=1'
-      - '.'
+      - 'frontend'
     timeout: '1800s'
 
   # ============================================================================
@@ -140,41 +140,73 @@ steps:
     waitFor: [ 'create-namespace' ]
 
   # ============================================================================
-  # Step 9: Update Backend Deployment with new image
+  # Step 9: Apply Backend Deployment Manifest
+  # ============================================================================
+  - name: 'gcr.io/cloud-builders/kubectl'
+    id: 'apply-backend-deployment'
+    args:
+      - 'apply'
+      - '-f'
+      - 'infra/deployment/kubernetes/backend-deployment.yaml'
+      - '-n'
+      - '${_NAMESPACE}'
+    env:
+      - 'CLOUDSDK_COMPUTE_ZONE=${_GKE_ZONE}'
+      - 'CLOUDSDK_CONTAINER_CLUSTER=${_GKE_CLUSTER}'
+    waitFor: [ 'apply-configmaps', 'verify-secrets' ]
+
+  # ============================================================================
+  # Step 10: Update Backend Deployment with new image
   # ============================================================================
   - name: 'gcr.io/cloud-builders/kubectl'
     id: 'deploy-backend'
     args:
       - 'set'
       - 'image'
-      - 'infra/deployment/hrms-backend'
+      - 'deployment/hrms-backend'
       - 'backend=gcr.io/$PROJECT_ID/${_BACKEND_IMAGE_NAME}:$SHORT_SHA'
       - '-n'
       - '${_NAMESPACE}'
     env:
       - 'CLOUDSDK_COMPUTE_ZONE=${_GKE_ZONE}'
       - 'CLOUDSDK_CONTAINER_CLUSTER=${_GKE_CLUSTER}'
-    waitFor: [ 'push-backend', 'apply-configmaps', 'verify-secrets' ]
+    waitFor: [ 'push-backend', 'apply-backend-deployment' ]
 
   # ============================================================================
-  # Step 10: Update Frontend Deployment with new image
+  # Step 11: Apply Frontend Deployment Manifest
+  # ============================================================================
+  - name: 'gcr.io/cloud-builders/kubectl'
+    id: 'apply-frontend-deployment'
+    args:
+      - 'apply'
+      - '-f'
+      - 'infra/deployment/kubernetes/frontend-deployment.yaml'
+      - '-n'
+      - '${_NAMESPACE}'
+    env:
+      - 'CLOUDSDK_COMPUTE_ZONE=${_GKE_ZONE}'
+      - 'CLOUDSDK_CONTAINER_CLUSTER=${_GKE_CLUSTER}'
+    waitFor: [ 'apply-configmaps', 'verify-secrets' ]
+
+  # ============================================================================
+  # Step 12: Update Frontend Deployment with new image
   # ============================================================================
   - name: 'gcr.io/cloud-builders/kubectl'
     id: 'deploy-frontend'
     args:
       - 'set'
       - 'image'
-      - 'infra/deployment/hrms-frontend'
+      - 'deployment/hrms-frontend'
       - 'frontend=gcr.io/$PROJECT_ID/${_FRONTEND_IMAGE_NAME}:$SHORT_SHA'
       - '-n'
       - '${_NAMESPACE}'
     env:
       - 'CLOUDSDK_COMPUTE_ZONE=${_GKE_ZONE}'
       - 'CLOUDSDK_CONTAINER_CLUSTER=${_GKE_CLUSTER}'
-    waitFor: [ 'push-frontend', 'apply-configmaps', 'verify-secrets' ]
+    waitFor: [ 'push-frontend', 'apply-frontend-deployment' ]
 
   # ============================================================================
-  # Step 11: Apply Backend Service
+  # Step 13: Apply Backend Service
   # ============================================================================
   - name: 'gcr.io/cloud-builders/kubectl'
     id: 'apply-backend-service'
@@ -188,7 +220,7 @@ steps:
     waitFor: [ 'deploy-backend' ]
 
   # ============================================================================
-  # Step 12: Apply Frontend Service
+  # Step 14: Apply Frontend Service
   # ============================================================================
   - name: 'gcr.io/cloud-builders/kubectl'
     id: 'apply-frontend-service'
@@ -202,7 +234,7 @@ steps:
     waitFor: [ 'deploy-frontend' ]
 
   # ============================================================================
-  # Step 13: Apply Ingress Configuration
+  # Step 15: Apply Ingress Configuration
   # ============================================================================
   - name: 'gcr.io/cloud-builders/kubectl'
     id: 'apply-ingress'
@@ -216,7 +248,7 @@ steps:
     waitFor: [ 'apply-backend-service', 'apply-frontend-service' ]
 
   # ============================================================================
-  # Step 14: Apply HPA Configuration
+  # Step 16: Apply HPA Configuration
   # ============================================================================
   - name: 'gcr.io/cloud-builders/kubectl'
     id: 'apply-hpa'
@@ -230,7 +262,7 @@ steps:
     waitFor: [ 'deploy-backend', 'deploy-frontend' ]
 
   # ============================================================================
-  # Step 15: Apply Network Policies
+  # Step 17: Apply Network Policies
   # ============================================================================
   - name: 'gcr.io/cloud-builders/kubectl'
     id: 'apply-network-policy'
@@ -244,14 +276,14 @@ steps:
     waitFor: [ 'create-namespace' ]
 
   # ============================================================================
-  # Step 16: Wait for Backend Rollout
+  # Step 18: Wait for Backend Rollout
   # ============================================================================
   - name: 'gcr.io/cloud-builders/kubectl'
     id: 'wait-backend-rollout'
     args:
       - 'rollout'
       - 'status'
-      - 'infra/deployment/hrms-backend'
+      - 'deployment/hrms-backend'
       - '-n'
       - '${_NAMESPACE}'
       - '--timeout=10m'
@@ -261,14 +293,14 @@ steps:
     waitFor: [ 'deploy-backend', 'apply-backend-service' ]
 
   # ============================================================================
-  # Step 17: Wait for Frontend Rollout
+  # Step 19: Wait for Frontend Rollout
   # ============================================================================
   - name: 'gcr.io/cloud-builders/kubectl'
     id: 'wait-frontend-rollout'
     args:
       - 'rollout'
       - 'status'
-      - 'infra/deployment/hrms-frontend'
+      - 'deployment/hrms-frontend'
       - '-n'
       - '${_NAMESPACE}'
       - '--timeout=10m'
@@ -278,7 +310,7 @@ steps:
     waitFor: [ 'deploy-frontend', 'apply-frontend-service' ]
 
   # ============================================================================
-  # Step 18: Verify Deployment
+  # Step 20: Verify Deployment
   # ============================================================================
   - name: 'gcr.io/cloud-builders/kubectl'
     id: 'verify-deployment'

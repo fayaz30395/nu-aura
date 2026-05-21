@@ -45,6 +45,8 @@ class LoanServiceTest {
     private EmployeeLoanRepository loanRepository;
     @Mock
     private WorkflowService workflowService;
+    @Mock
+    private com.nulogic.common.util.TenantTimeService tenantTimeService;
     @InjectMocks
     private LoanService loanService;
     private UUID tenantId;
@@ -65,6 +67,14 @@ class LoanServiceTest {
     }
 
     @BeforeEach
+    void setUpTenantTimeServiceDefaults() {
+        lenient().when(tenantTimeService.today(org.mockito.ArgumentMatchers.nullable(java.util.UUID.class)))
+                .thenReturn(java.time.LocalDate.now());
+        lenient().when(tenantTimeService.now(org.mockito.ArgumentMatchers.nullable(java.util.UUID.class)))
+                .thenReturn(java.time.LocalDateTime.now());
+    }
+
+    @BeforeEach
     void setUp() {
         tenantId = UUID.randomUUID();
         employeeId = UUID.randomUUID();
@@ -72,6 +82,7 @@ class LoanServiceTest {
         loanId = UUID.randomUUID();
 
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
+        tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
         securityContextMock.when(SecurityContext::getCurrentEmployeeId).thenReturn(employeeId);
         securityContextMock.when(SecurityContext::getCurrentUserId).thenReturn(userId);
     }

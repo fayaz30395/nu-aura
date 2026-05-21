@@ -23,7 +23,7 @@ setup('authenticate', async ({page}) => {
   const defaultUser = demoUsers.superAdmin;
 
   await page.goto('/auth/login');
-  await page.waitForLoadState('networkidle', {timeout: 60000});
+  await page.waitForLoadState('domcontentloaded', {timeout: 60000});
 
   // Expand the email form (it sits behind a "Sign in with Email" toggle
   // under DEMO_MODE; under prod-style builds the form is the default and
@@ -55,7 +55,7 @@ setup('authenticate', async ({page}) => {
     }
   }
 
-  await page.waitForLoadState('networkidle', {timeout: 60000});
+  await page.waitForLoadState('domcontentloaded', {timeout: 60000});
 
   // Heading bumped 15s → 60s for first-compile latency under Studio Slate v2
   const heading = page.locator('h1, h2, [data-testid="dashboard-heading"]').first();

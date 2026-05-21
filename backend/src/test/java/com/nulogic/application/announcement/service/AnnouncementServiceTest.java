@@ -52,6 +52,8 @@ class AnnouncementServiceTest {
     private WallService wallService;
     @Mock
     private PostReactionRepository postReactionRepository;
+    @Mock
+    private com.nulogic.common.util.TenantTimeService tenantTimeService;
     @InjectMocks
     private AnnouncementService announcementService;
     private UUID tenantId;
@@ -71,11 +73,20 @@ class AnnouncementServiceTest {
     }
 
     @BeforeEach
+    void setUpTenantTimeServiceDefaults() {
+        lenient().when(tenantTimeService.today(org.mockito.ArgumentMatchers.nullable(java.util.UUID.class)))
+                .thenReturn(java.time.LocalDate.now());
+        lenient().when(tenantTimeService.now(org.mockito.ArgumentMatchers.nullable(java.util.UUID.class)))
+                .thenReturn(java.time.LocalDateTime.now());
+    }
+
+    @BeforeEach
     void setUp() {
         tenantId = UUID.randomUUID();
         userId = UUID.randomUUID();
         employeeId = UUID.randomUUID();
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
+        tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
         securityContextMock.when(SecurityContext::getCurrentUserId).thenReturn(userId);
         securityContextMock.when(SecurityContext::getCurrentEmployeeId).thenReturn(employeeId);
     }

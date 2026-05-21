@@ -961,7 +961,7 @@ class AttendanceRecordServiceTest {
             attendanceRecord.requestRegularization("Forgot to check out");
             UUID rejectorId = UUID.randomUUID();
 
-            attendanceRecord.rejectRegularization(rejectorId, "Invalid reason");
+            attendanceRecord.rejectRegularization(rejectorId, "Invalid reason", checkOutTime);
 
             assertThat(attendanceRecord.getRegularizationApproved()).isFalse();
             assertThat(attendanceRecord.getApprovedBy()).isEqualTo(rejectorId);

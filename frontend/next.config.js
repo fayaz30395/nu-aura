@@ -2,18 +2,13 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 })
 
+const backendOrigin = process.env.BACKEND_ORIGIN?.replace(/\/$/, '');
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   distDir: process.env.NEXT_DIST_DIR || '.next',
+  outputFileTracingRoot: __dirname,
   reactStrictMode: true,
-
-  eslint: {
-    ignoreDuringBuilds: false,
-  },
-
-  env: {
-    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api/v1',
-  },
 
   // Performance optimizations
   experimental: {
@@ -149,15 +144,10 @@ const nextConfig = {
         source: '/(.*)',
         headers: securityHeaders,
       },
-      // Static asset caching (cache headers override security headers for assets only where needed)
+      // Static asset caching for public images. Next.js owns immutable cache
+      // headers for /_next/static chunks.
       {
         source: '/:all*(svg|jpg|png|webp|avif)',
-        headers: [
-          {key: 'Cache-Control', value: 'public, max-age=31536000, immutable'},
-        ],
-      },
-      {
-        source: '/_next/static/:path*',
         headers: [
           {key: 'Cache-Control', value: 'public, max-age=31536000, immutable'},
         ],
@@ -165,43 +155,27 @@ const nextConfig = {
     ];
   },
 
-  // Webpack optimizations
-  webpack: (config, {dev, isServer}) => {
-    // Production optimizations only
-    if (!dev && !isServer) {
-      config.optimization = {
-        ...config.optimization,
-        splitChunks: {
-          ...config.optimization.splitChunks,
-          cacheGroups: {
-            ...config.optimization.splitChunks?.cacheGroups,
-            // Separate vendor chunks for better caching
-            vendor: {
-              test: /[\\/]node_modules[\\/]/,
-              name: 'vendors',
-              chunks: 'all',
-              priority: 10,
-            },
-            // Separate React Query chunk
-            reactQuery: {
-              test: /[\\/]node_modules[\\/]@tanstack[\\/]/,
-              name: 'react-query',
-              chunks: 'all',
-              priority: 20,
-            },
-            // Separate chart libraries
-            charts: {
-              test: /[\\/]node_modules[\\/](recharts|d3-.*)[\\/]/,
-              name: 'charts',
-              chunks: 'all',
-              priority: 20,
-            },
-          },
-        },
-      };
+  async rewrites() {
+    if (!backendOrigin) {
+      return [];
     }
-    return config;
+
+    return [
+      {
+        source: '/api/v1/:path*',
+        destination: `${backendOrigin}/api/v1/:path*`,
+      },
+      {
+        source: '/ws/:path*',
+        destination: `${backendOrigin}/ws/:path*`,
+      },
+    ];
   },
+
+  // Keep the App Router chunk graph under Next.js control. Custom splitChunks
+  // cache groups caused CSS assets to land in rootMainFiles under Next 16,
+  // which made production pages emit CSS as <script> tags and fail smoke tests.
+  webpack: (config) => config,
 }
 
 module.exports = withBundleAnalyzer(nextConfig)

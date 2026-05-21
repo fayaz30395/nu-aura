@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -425,7 +426,7 @@ class ExpenseClaimScopeIntegrationTest extends AbstractPostgresIntegrationTest {
             setupTeamScope(CURRENT_EMPLOYEE_ID, Set.of(REPORTEE_EMPLOYEE_ID));
 
             // Submit the expense claim first
-            reporteeExpenseClaim.submit();
+            reporteeExpenseClaim.submit(LocalDateTime.now());
             expenseClaimRepository.save(reporteeExpenseClaim);
 
             mockMvc.perform(post(BASE_URL + "/" + reporteeExpenseClaim.getId() + "/approve"))
@@ -440,7 +441,7 @@ class ExpenseClaimScopeIntegrationTest extends AbstractPostgresIntegrationTest {
             setupTeamScope(CURRENT_EMPLOYEE_ID, Set.of(REPORTEE_EMPLOYEE_ID));
 
             // Submit the expense claim first
-            otherExpenseClaim.submit();
+            otherExpenseClaim.submit(LocalDateTime.now());
             expenseClaimRepository.save(otherExpenseClaim);
 
             mockMvc.perform(post(BASE_URL + "/" + otherExpenseClaim.getId() + "/approve"))
@@ -454,7 +455,7 @@ class ExpenseClaimScopeIntegrationTest extends AbstractPostgresIntegrationTest {
             setupTeamScope(CURRENT_EMPLOYEE_ID, Set.of(REPORTEE_EMPLOYEE_ID));
 
             // Submit the expense claim first
-            reporteeExpenseClaim.submit();
+            reporteeExpenseClaim.submit(LocalDateTime.now());
             expenseClaimRepository.save(reporteeExpenseClaim);
 
             mockMvc.perform(post(BASE_URL + "/" + reporteeExpenseClaim.getId() + "/reject")
@@ -470,7 +471,7 @@ class ExpenseClaimScopeIntegrationTest extends AbstractPostgresIntegrationTest {
             setupTeamScope(CURRENT_EMPLOYEE_ID, Set.of(REPORTEE_EMPLOYEE_ID));
 
             // Submit the expense claim first
-            otherExpenseClaim.submit();
+            otherExpenseClaim.submit(LocalDateTime.now());
             expenseClaimRepository.save(otherExpenseClaim);
 
             mockMvc.perform(post(BASE_URL + "/" + otherExpenseClaim.getId() + "/reject")
@@ -570,7 +571,7 @@ class ExpenseClaimScopeIntegrationTest extends AbstractPostgresIntegrationTest {
             setupAllScope(CURRENT_EMPLOYEE_ID);
 
             // Submit one expense claim
-            ownExpenseClaim.submit();
+            ownExpenseClaim.submit(LocalDateTime.now());
             expenseClaimRepository.save(ownExpenseClaim);
 
             mockMvc.perform(get(BASE_URL + "/pending-approvals")
@@ -849,7 +850,7 @@ class ExpenseClaimScopeIntegrationTest extends AbstractPostgresIntegrationTest {
             setupCustomScope(CURRENT_EMPLOYEE_ID, Set.of(REPORTEE_EMPLOYEE_ID), null, null);
 
             // Submit the expense claim first
-            reporteeExpenseClaim.submit();
+            reporteeExpenseClaim.submit(LocalDateTime.now());
             expenseClaimRepository.save(reporteeExpenseClaim);
 
             mockMvc.perform(post(BASE_URL + "/" + reporteeExpenseClaim.getId() + "/approve"))
@@ -864,7 +865,7 @@ class ExpenseClaimScopeIntegrationTest extends AbstractPostgresIntegrationTest {
             setupCustomScope(CURRENT_EMPLOYEE_ID, Set.of(REPORTEE_EMPLOYEE_ID), null, null);
 
             // Submit the expense claim first
-            otherExpenseClaim.submit();
+            otherExpenseClaim.submit(LocalDateTime.now());
             expenseClaimRepository.save(otherExpenseClaim);
 
             mockMvc.perform(post(BASE_URL + "/" + otherExpenseClaim.getId() + "/approve"))
@@ -908,7 +909,7 @@ class ExpenseClaimScopeIntegrationTest extends AbstractPostgresIntegrationTest {
             setupSuperAdminByRole(CURRENT_EMPLOYEE_ID);
 
             // Submit the expense claim first
-            otherExpenseClaim.submit();
+            otherExpenseClaim.submit(LocalDateTime.now());
             expenseClaimRepository.save(otherExpenseClaim);
 
             mockMvc.perform(post(BASE_URL + "/" + otherExpenseClaim.getId() + "/approve"))

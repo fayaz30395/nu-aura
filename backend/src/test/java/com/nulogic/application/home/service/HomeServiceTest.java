@@ -2,6 +2,7 @@ package com.nulogic.application.home.service;
 
 import com.nulogic.api.home.dto.*;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.attendance.AttendanceRecord;
 import com.nulogic.domain.attendance.Holiday;
 import com.nulogic.domain.employee.Department;
@@ -58,6 +59,9 @@ class HomeServiceTest {
     @Mock
     private LeaveTypeRepository leaveTypeRepository;
 
+    @Mock
+    private TenantTimeService tenantTimeService;
+
     @InjectMocks
     private HomeService homeService;
 
@@ -75,6 +79,9 @@ class HomeServiceTest {
         tenantContextMock = mockStatic(TenantContext.class);
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
         tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
+        LocalDate today = LocalDate.now();
+        when(tenantTimeService.today(tenantId)).thenReturn(today);
+        when(tenantTimeService.now(tenantId)).thenReturn(today.atTime(9, 30));
     }
 
     @AfterEach

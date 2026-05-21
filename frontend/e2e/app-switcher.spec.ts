@@ -15,21 +15,13 @@ test.describe('App Switcher — Waffle Grid', () => {
     await loginPage.navigate();
     await loginPage.login(testUsers.admin.email, testUsers.admin.password);
     await page.waitForURL('**/dashboard');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
   });
 
   test('waffle grid trigger button is visible in the header', async ({page}) => {
     // The AppSwitcher renders a button with aria-label="Switch application"
     const switcher = page.getByRole('button', {name: /switch application/i});
-    const hasSwitcher = await switcher.isVisible().catch(() => false);
-
-    if (!hasSwitcher) {
-      // Fallback — look for the LayoutGrid icon wrapper in the header
-      const headerBtn = page.locator('header button').filter({has: page.locator('svg')}).first();
-      await expect(headerBtn).toBeVisible();
-    } else {
-      await expect(switcher).toBeVisible();
-    }
+    await expect(switcher).toBeVisible({timeout: 15000});
   });
 
   test('clicking switcher opens the waffle grid dropdown', async ({page}) => {
@@ -72,7 +64,7 @@ test.describe('App Switcher — Waffle Grid', () => {
   test('current active app is visually indicated in the switcher', async ({page}) => {
     // Navigate to an HRMS route so HRMS is the active app
     await page.goto('/employees');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const switcherBtn = page.getByRole('button', {name: /switch application/i});
     const hasSwitcher = await switcherBtn.isVisible().catch(() => false);
@@ -207,13 +199,13 @@ test.describe('App Switcher — Cross-App Navigation Flow', () => {
     await loginPage.navigate();
     await loginPage.login(testUsers.admin.email, testUsers.admin.password);
     await page.waitForURL('**/dashboard');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
   });
 
   test('HRMS to Hire: sidebar updates to show recruitment items', async ({page}) => {
     // Start on HRMS route
     await page.goto('/employees');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Verify HRMS sidebar items are present
     const hasEmployeesLink = await page.locator('nav a[href*="/employees"]').isVisible().catch(() => false);
@@ -254,7 +246,7 @@ test.describe('App Switcher — Cross-App Navigation Flow', () => {
   test('Hire to Grow: sidebar updates to show performance items', async ({page}) => {
     // Navigate to a Hire route first
     await page.goto('/recruitment');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Switch to NU-Grow
     const switcherBtn = page.getByRole('button', {name: /switch application/i});
@@ -290,7 +282,7 @@ test.describe('App Switcher — Cross-App Navigation Flow', () => {
   test('Grow back to HRMS: sidebar reverts to HR management items', async ({page}) => {
     // Start on Grow route
     await page.goto('/performance');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Switch back to NU-HRMS
     const switcherBtn = page.getByRole('button', {name: /switch application/i});

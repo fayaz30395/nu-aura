@@ -55,6 +55,8 @@ class PerformanceReviewServiceTest {
     private DomainEventPublisher domainEventPublisher;
     @Mock
     private AuditLogService auditLogService;
+    @Mock
+    private com.nulogic.common.util.TenantTimeService tenantTimeService;
     @InjectMocks
     private PerformanceReviewService performanceReviewService;
     private UUID tenantId;
@@ -75,6 +77,16 @@ class PerformanceReviewServiceTest {
     @AfterAll
     static void tearDownClass() {
         tenantContextMock.close();
+    }
+
+    @BeforeEach
+    void setUpTenantTimeServiceDefaults() {
+        org.mockito.Mockito.lenient()
+                .when(tenantTimeService.today(org.mockito.ArgumentMatchers.nullable(java.util.UUID.class)))
+                .thenReturn(java.time.LocalDate.now());
+        org.mockito.Mockito.lenient()
+                .when(tenantTimeService.now(org.mockito.ArgumentMatchers.nullable(java.util.UUID.class)))
+                .thenReturn(java.time.LocalDateTime.now());
     }
 
     @BeforeEach

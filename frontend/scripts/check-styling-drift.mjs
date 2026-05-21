@@ -34,8 +34,6 @@ const IGNORE_DIRS = new Set([
 // Files exempt from each rule (the primitives themselves OWN the raw HTML).
 const PRIMITIVES_DIR = 'components/ui';
 
-// Tokens / patterns we accept and should NOT flag as hex.
-const HEX_RE = /#[0-9a-fA-F]{3,8}\b/g;
 // className= or class= contexts that contain a bracket-arbitrary hex
 const TW_HEX_CLASS_RE = /\b(?:text|bg|border|ring|from|to|via|fill|stroke|shadow|outline|decoration|caret|accent)-\[#[0-9a-fA-F]{3,8}\]/g;
 // JSX inline style: style={{ ... }}

@@ -1,5 +1,6 @@
 import {Client, Message, StompSubscription} from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
+import {apiConfig} from '@/lib/config';
 
 export interface WebSocketNotification {
   type: string;
@@ -81,9 +82,8 @@ class WebSocketService {
     this.setStatus(WebSocketStatus.CONNECTING);
 
     return new Promise((resolve, reject) => {
-      // Remove /api/v1 from the URL if present to get the base WebSocket URL
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api/v1';
-      const baseUrl = apiUrl.replace('/api/v1', '');
+      // Remove /api/v1 from the validated API URL to get the base WebSocket URL.
+      const baseUrl = apiConfig.baseUrl.replace('/api/v1', '');
       const wsUrl = `${baseUrl}/ws`;
 
       this.client = new Client({

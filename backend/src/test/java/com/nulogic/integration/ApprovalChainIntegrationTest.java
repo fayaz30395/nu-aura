@@ -131,7 +131,8 @@ class ApprovalChainIntegrationTest {
         // --- Setup: LeaveRequestService as callback handler ---
         LeaveRequestService leaveService = new LeaveRequestService(
                 leaveRequestRepository, leaveBalanceService, webSocketNotificationService,
-                employeeRepository, leaveTypeRepository, domainEventPublisher, null, auditLogService);
+                employeeRepository, leaveTypeRepository, domainEventPublisher, null, auditLogService,
+                tenantTimeService);
 
         List<ApprovalCallbackHandler> handlers = List.of(leaveService);
 
@@ -248,7 +249,7 @@ class ApprovalChainIntegrationTest {
             public void onApproved(UUID tenantId, UUID entityId, UUID approvedBy) {
                 ExpenseClaim claim = expenseClaimRepository.findByIdAndTenantId(entityId, tenantId).orElse(null);
                 if (claim != null) {
-                    claim.approve(approvedBy);
+                    claim.approve(approvedBy, tenantTimeService.now(tenantId));
                     expenseClaimRepository.save(claim);
                     capturedClaim[0] = claim;
                 }
@@ -258,7 +259,7 @@ class ApprovalChainIntegrationTest {
             public void onRejected(UUID tenantId, UUID entityId, UUID rejectedBy, String reason) {
                 ExpenseClaim claim = expenseClaimRepository.findByIdAndTenantId(entityId, tenantId).orElse(null);
                 if (claim != null) {
-                    claim.reject(rejectedBy, reason);
+                    claim.reject(rejectedBy, reason, tenantTimeService.now(tenantId));
                     expenseClaimRepository.save(claim);
                 }
             }
@@ -440,7 +441,8 @@ class ApprovalChainIntegrationTest {
         // --- Wire service with leave callback handler ---
         LeaveRequestService leaveService = new LeaveRequestService(
                 leaveRequestRepository, leaveBalanceService, webSocketNotificationService,
-                employeeRepository, leaveTypeRepository, domainEventPublisher, null, auditLogService);
+                employeeRepository, leaveTypeRepository, domainEventPublisher, null, auditLogService,
+                tenantTimeService);
 
         workflowService = new WorkflowService(
                 workflowDefinitionRepository, approvalStepRepository,

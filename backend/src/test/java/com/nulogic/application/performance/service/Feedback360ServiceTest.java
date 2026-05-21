@@ -46,6 +46,9 @@ class Feedback360ServiceTest {
     @Mock
     private Feedback360SummaryRepository summaryRepository;
 
+    @Mock
+    private com.nulogic.common.util.TenantTimeService tenantTimeService;
+
     @InjectMocks
     private Feedback360Service feedback360Service;
 
@@ -57,6 +60,16 @@ class Feedback360ServiceTest {
     private Feedback360Cycle testCycle;
     private Feedback360Request testRequest;
     private Feedback360Response testResponse;
+
+    @BeforeEach
+    void setUpTenantTimeServiceDefaults() {
+        org.mockito.Mockito.lenient()
+                .when(tenantTimeService.today(org.mockito.ArgumentMatchers.nullable(java.util.UUID.class)))
+                .thenReturn(java.time.LocalDate.now());
+        org.mockito.Mockito.lenient()
+                .when(tenantTimeService.now(org.mockito.ArgumentMatchers.nullable(java.util.UUID.class)))
+                .thenReturn(java.time.LocalDateTime.now());
+    }
 
     @BeforeEach
     void setUp() {

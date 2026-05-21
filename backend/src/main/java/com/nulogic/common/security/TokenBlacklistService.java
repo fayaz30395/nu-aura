@@ -57,23 +57,11 @@ public class TokenBlacklistService {
      * within a single request is not relied upon: each public method re-reads
      * the field at most once.
      */
-    private volatile boolean redisAvailable = true;
+    private volatile boolean redisAvailable = false;
 
     public TokenBlacklistService(StringRedisTemplate redisTemplate) {
         this.redisTemplate = redisTemplate;
-        testRedisConnection();
-    }
-
-    private void testRedisConnection() {
-        try {
-            redisTemplate.opsForValue().get("test");
-            redisAvailable = true;
-            log.info("Token blacklist service initialized with Redis backend");
-        } catch (RuntimeException e) {
-            redisAvailable = false;
-            log.warn("Redis unavailable for token blacklist, using in-memory fallback. " +
-                    "This is acceptable for single-instance deployments but not recommended for production clusters.");
-        }
+        log.info("Token blacklist service initialized in in-memory fallback mode; Redis probe will run after startup");
     }
 
     /**
@@ -84,7 +72,7 @@ public class TokenBlacklistService {
      *
      * <p>Only logs on transitions to avoid log flooding.</p>
      */
-    @Scheduled(fixedDelay = 30_000)
+    @Scheduled(fixedDelay = 30_000, initialDelay = 5_000)
     public void redisHealthProbe() {
         boolean previous = redisAvailable;
         try {

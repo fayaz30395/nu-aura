@@ -6,6 +6,7 @@ import com.nulogic.api.wall.dto.WallPostResponse;
 import com.nulogic.application.wall.service.WallService;
 import com.nulogic.common.exception.BusinessException;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.recognition.EmployeePoints;
 import com.nulogic.domain.recognition.Recognition;
@@ -21,6 +22,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -51,6 +53,8 @@ class RecognitionServiceTest {
     private WallService wallService;
     @Mock
     private PostReactionRepository postReactionRepository;
+    @Mock
+    private TenantTimeService tenantTimeService;
     @InjectMocks
     private RecognitionService recognitionService;
     private UUID tenantId;
@@ -76,6 +80,8 @@ class RecognitionServiceTest {
         recognitionId = UUID.randomUUID();
 
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
+        tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
+        when(tenantTimeService.now(tenantId)).thenReturn(LocalDateTime.of(2026, 1, 15, 9, 30));
 
         // Default: mock giver points so all tests that call giveRecognition don't NPE
         EmployeePoints giverPoints = new EmployeePoints();

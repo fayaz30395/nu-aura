@@ -52,6 +52,29 @@ const intelligence = safeRequire(path.join(helpersDir, 'intelligence.cjs'));
 // ── Intelligence timeout protection (fixes #1530, #1531) ───────────────────
 const INTELLIGENCE_TIMEOUT_MS = 3000;
 
+function emitPreToolUseDecision(permissionDecision, details = {}) {
+  const hookSpecificOutput = {
+    hookEventName: 'PreToolUse',
+    permissionDecision,
+  };
+
+  if (details.reason) {
+    hookSpecificOutput.permissionDecisionReason = details.reason;
+  }
+  process.stdout.write(`${JSON.stringify({ hookSpecificOutput })}\n`);
+}
+
+function readToolCommand(hookInput, toolInput, args) {
+  const command =
+    hookInput.command ||
+    (toolInput && typeof toolInput === 'object' ? toolInput.command : undefined) ||
+    (typeof hookInput.prompt === 'string' ? hookInput.prompt : undefined) ||
+    process.env.TOOL_INPUT_command ||
+    args.join(' ');
+
+  return typeof command === 'string' ? command : JSON.stringify(command || '');
+}
+
 function runWithTimeout(fn, label) {
   // For synchronous blocking calls, we use a global safety timer.
   // The readJSON file-size guard prevents loading huge files, but this
@@ -163,15 +186,21 @@ async function main() {
 
     'pre-bash': () => {
       // Basic command safety check — prefer stdin command data from Claude Code
-      const cmd = (hookInput.command || prompt).toLowerCase();
+      const cmd = readToolCommand(hookInput, toolInput, args).toLowerCase();
       const dangerous = ['rm -rf /', 'format c:', 'del /s /q c:\\', ':(){:|:&};:'];
       for (const d of dangerous) {
         if (cmd.includes(d)) {
-          console.error(`[BLOCKED] Dangerous command detected: ${d}`);
-          process.exit(1);
+          emitPreToolUseDecision('deny', {
+            reason: `Dangerous command detected: ${d}`,
+          });
+          return;
         }
       }
-      console.log('[OK] Command validated');
+      emitPreToolUseDecision('allow');
+    },
+
+    'pre-edit': () => {
+      emitPreToolUseDecision('allow');
     },
 
     'post-edit': () => {

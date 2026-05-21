@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -50,8 +51,10 @@ class TokenBlacklistServiceTest {
     void setUp() {
         lenient().when(redisTemplate.opsForValue()).thenReturn(valueOperations);
         // Simulate successful Redis connection
-        when(valueOperations.get("test")).thenReturn(null);
+        lenient().when(valueOperations.get("__health_probe__")).thenReturn(null);
         tokenBlacklistService = new TokenBlacklistService(redisTemplate);
+        tokenBlacklistService.redisHealthProbe();
+        ReflectionTestUtils.setField(tokenBlacklistService, "refreshExpirationMs", Duration.ofHours(24).toMillis());
     }
 
     @Nested
@@ -329,19 +332,16 @@ class TokenBlacklistServiceTest {
         @Test
         @DisplayName("Should use in-memory fallback when Redis unavailable at startup")
         void shouldUseInMemoryFallbackWhenRedisUnavailable() {
-            // Given - Redis throws on connection test
-            when(valueOperations.get("test"))
-                    .thenThrow(new RuntimeException("Connection refused"));
-
-            // When - Create new service instance
+            // Given - new instances start in fallback until the delayed Redis probe succeeds
             TokenBlacklistService fallbackService = new TokenBlacklistService(redisTemplate);
             Date expiration = new Date(System.currentTimeMillis() + 3600000);
+
+            // When
             fallbackService.blacklistToken(TEST_JTI, expiration);
 
-            // Then - Should be blacklisted via in-memory
+            // Then
             boolean isBlacklisted = fallbackService.isBlacklisted(TEST_JTI);
-            // Note: In this mock setup, it tries Redis first which fails
-            // The implementation falls back to in-memory
+            assertThat(isBlacklisted).isTrue();
         }
     }
 

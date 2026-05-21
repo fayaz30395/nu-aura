@@ -30,9 +30,9 @@ public class PiiMaskingLogstashEncoder extends LogstashEncoder {
     private static final Pattern EMAIL_PATTERN = Pattern.compile(
             "([a-zA-Z0-9._%+-]+)@([a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})");
 
-    // Phone (E.164 + Indian +91 patterns)
+    // Phone (E.164 + Indian +91 patterns, including 5-5 mobile grouping)
     private static final Pattern PHONE_PATTERN = Pattern.compile(
-            "(\\+?\\d{1,3}[-.\\s]?)?\\(?\\d{3,4}\\)?[-.\\s]?\\d{3,4}[-.\\s]?\\d{4,6}");
+            "(?<!\\d)(\\+?\\d{1,3}[-.\\s]?)?(?:\\(?\\d{3,5}\\)?[-.\\s]?\\d{3,5}[-.\\s]?\\d{4,6}|\\d{5}[-.\\s]?\\d{5})(?!\\d)");
 
     // Indian PAN: 5 letters + 4 digits + 1 letter
     private static final Pattern PAN_PATTERN = Pattern.compile(

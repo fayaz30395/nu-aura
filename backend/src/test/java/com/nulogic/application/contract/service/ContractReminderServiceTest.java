@@ -36,6 +36,9 @@ class ContractReminderServiceTest {
     @Mock
     private ContractRepository contractRepository;
 
+    @Mock
+    private com.nulogic.common.util.TenantTimeService tenantTimeService;
+
     @InjectMocks
     private ContractReminderService reminderService;
 
@@ -43,6 +46,16 @@ class ContractReminderServiceTest {
     private ArgumentCaptor<ContractReminder> reminderCaptor;
 
     private MockedStatic<TenantContext> tenantContextMock;
+
+    @BeforeEach
+    void setUpTenantTimeServiceDefaults() {
+        org.mockito.Mockito.lenient()
+                .when(tenantTimeService.today(org.mockito.ArgumentMatchers.nullable(java.util.UUID.class)))
+                .thenReturn(java.time.LocalDate.now());
+        org.mockito.Mockito.lenient()
+                .when(tenantTimeService.now(org.mockito.ArgumentMatchers.nullable(java.util.UUID.class)))
+                .thenReturn(java.time.LocalDateTime.now());
+    }
 
     @BeforeEach
     void setUp() {

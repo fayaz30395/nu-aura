@@ -54,6 +54,8 @@ class ScheduledReportServiceTest {
     private DepartmentRepository departmentRepository;
     @Mock
     private ObjectMapper objectMapper;
+    @Mock
+    private com.nulogic.common.util.TenantTimeService tenantTimeService;
     @InjectMocks
     private ScheduledReportService scheduledReportService;
     private UUID tenantId;
@@ -67,6 +69,14 @@ class ScheduledReportServiceTest {
     @AfterAll
     static void tearDownClass() {
         tenantContextMock.close();
+    }
+
+    @BeforeEach
+    void setUpTenantTimeServiceDefaults() {
+        lenient().when(tenantTimeService.today(org.mockito.ArgumentMatchers.nullable(java.util.UUID.class)))
+                .thenReturn(java.time.LocalDate.now());
+        lenient().when(tenantTimeService.now(org.mockito.ArgumentMatchers.nullable(java.util.UUID.class)))
+                .thenReturn(java.time.LocalDateTime.now());
     }
 
     @BeforeEach

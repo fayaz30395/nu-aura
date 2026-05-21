@@ -53,6 +53,10 @@ class ExpenseClaimServiceTest {
     private DataScopeService dataScopeService;
     @Mock
     private com.nulogic.application.event.DomainEventPublisher domainEventPublisher;
+    @Mock
+    private com.nulogic.common.util.TenantTimeService tenantTimeService;
+    @Mock
+    private org.springframework.jdbc.core.JdbcTemplate jdbcTemplate;
     @InjectMocks
     private ExpenseClaimService expenseClaimService;
     private UUID tenantId;
@@ -75,6 +79,14 @@ class ExpenseClaimServiceTest {
     }
 
     @BeforeEach
+    void setUpTenantTimeServiceDefaults() {
+        lenient().when(tenantTimeService.today(org.mockito.ArgumentMatchers.nullable(java.util.UUID.class)))
+                .thenReturn(java.time.LocalDate.now());
+        lenient().when(tenantTimeService.now(org.mockito.ArgumentMatchers.nullable(java.util.UUID.class)))
+                .thenReturn(java.time.LocalDateTime.now());
+    }
+
+    @BeforeEach
     void setUp() {
         tenantId = UUID.randomUUID();
         employeeId = UUID.randomUUID();
@@ -83,6 +95,8 @@ class ExpenseClaimServiceTest {
 
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
         tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
+        lenient().when(jdbcTemplate.queryForObject(anyString(), eq(Long.class), any(), any()))
+                .thenReturn(1L);
         securityContextMock.when(SecurityContext::isSuperAdmin).thenReturn(false);
         securityContextMock.when(SecurityContext::getCurrentEmployeeId).thenReturn(approverId);
         securityContextMock.when(() -> SecurityContext.getPermissionScope(Permission.EXPENSE_VIEW_ALL))

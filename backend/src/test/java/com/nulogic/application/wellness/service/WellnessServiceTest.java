@@ -3,6 +3,7 @@ package com.nulogic.application.wellness.service;
 import com.nulogic.api.wellness.dto.WellnessChallengeDto;
 import com.nulogic.api.wellness.dto.WellnessProgramDto;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.wellness.ChallengeParticipant;
 import com.nulogic.domain.wellness.WellnessChallenge;
 import com.nulogic.domain.wellness.WellnessProgram;
@@ -18,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -47,9 +49,12 @@ class WellnessServiceTest {
     private PointsTransactionRepository transactionRepository;
     @Mock
     private UserRepository userRepository;
+    @Mock
+    private TenantTimeService tenantTimeService;
     @InjectMocks
     private WellnessService wellnessService;
     private UUID tenantId;
+    private LocalDate today;
 
     @BeforeAll
     static void setUpClass() {
@@ -64,7 +69,11 @@ class WellnessServiceTest {
     @BeforeEach
     void setUp() {
         tenantId = UUID.randomUUID();
+        today = LocalDate.now();
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
+        tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
+        lenient().when(tenantTimeService.today(tenantId)).thenReturn(today);
+        lenient().when(tenantTimeService.now(tenantId)).thenReturn(LocalDateTime.of(today, java.time.LocalTime.NOON));
     }
 
     // ==================== Program Management Tests ====================

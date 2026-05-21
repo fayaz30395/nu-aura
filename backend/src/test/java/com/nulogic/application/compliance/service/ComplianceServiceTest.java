@@ -45,6 +45,8 @@ class ComplianceServiceTest {
     private ComplianceAuditLogRepository auditLogRepository;
     @Mock
     private ComplianceAlertRepository alertRepository;
+    @Mock
+    private com.nulogic.common.util.TenantTimeService tenantTimeService;
     @InjectMocks
     private ComplianceService complianceService;
     private UUID tenantId;
@@ -64,11 +66,20 @@ class ComplianceServiceTest {
     }
 
     @BeforeEach
+    void setUpTenantTimeServiceDefaults() {
+        lenient().when(tenantTimeService.today(org.mockito.ArgumentMatchers.nullable(java.util.UUID.class)))
+                .thenReturn(java.time.LocalDate.now());
+        lenient().when(tenantTimeService.now(org.mockito.ArgumentMatchers.nullable(java.util.UUID.class)))
+                .thenReturn(java.time.LocalDateTime.now());
+    }
+
+    @BeforeEach
     void setUp() {
         tenantId = UUID.randomUUID();
         userId = UUID.randomUUID();
         employeeId = UUID.randomUUID();
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
+        tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
         securityContextMock.when(SecurityContext::getCurrentUserId).thenReturn(userId);
         securityContextMock.when(SecurityContext::getCurrentEmployeeId).thenReturn(employeeId);
     }

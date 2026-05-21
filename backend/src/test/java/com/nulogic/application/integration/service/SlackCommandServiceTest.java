@@ -43,10 +43,22 @@ class SlackCommandServiceTest {
     private LeaveTypeRepository leaveTypeRepository;
     @Mock
     private NotificationChannelConfigRepository channelConfigRepository;
+    @Mock
+    private com.nulogic.common.util.TenantTimeService tenantTimeService;
     @InjectMocks
     private SlackCommandService slackCommandService;
     private NotificationChannelConfig slackConfig;
     private Employee employee;
+
+    @BeforeEach
+    void setUpTenantTimeServiceDefaults() {
+        org.mockito.Mockito.lenient()
+                .when(tenantTimeService.today(org.mockito.ArgumentMatchers.nullable(java.util.UUID.class)))
+                .thenReturn(java.time.LocalDate.now());
+        org.mockito.Mockito.lenient()
+                .when(tenantTimeService.now(org.mockito.ArgumentMatchers.nullable(java.util.UUID.class)))
+                .thenReturn(java.time.LocalDateTime.now());
+    }
 
     @BeforeEach
     void setUp() {

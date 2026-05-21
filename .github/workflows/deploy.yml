@@ -60,12 +60,12 @@ jobs:
 
       - name: Build + push backend
         run: |
-          docker build -f infra/deployment/docker/Dockerfile.backend -t ${{ steps.images.outputs.backend }} .
+          docker build -f backend/Dockerfile -t ${{ steps.images.outputs.backend }} .
           docker push ${{ steps.images.outputs.backend }}
 
       - name: Build + push frontend
         run: |
-          docker build -f infra/deployment/docker/Dockerfile.frontend -t ${{ steps.images.outputs.frontend }} .
+          docker build -f frontend/Dockerfile -t ${{ steps.images.outputs.frontend }} ./frontend
           docker push ${{ steps.images.outputs.frontend }}
 
   deploy-staging:

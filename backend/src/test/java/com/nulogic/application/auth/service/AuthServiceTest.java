@@ -17,6 +17,7 @@ import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.user.User;
 import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import com.nulogic.infrastructure.platform.repository.UserAppAccessRepository;
+import com.nulogic.infrastructure.security.CaptchaService;
 import com.nulogic.infrastructure.user.repository.PasswordHistoryRepository;
 import com.nulogic.infrastructure.user.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,6 +30,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -88,7 +91,16 @@ class AuthServiceTest {
     private PasswordPolicyConfig passwordPolicyConfig;
 
     @Mock
+    private CaptchaService captchaService;
+
+    @Mock
     private TenantTimeService tenantTimeService;
+
+    @Mock
+    private StringRedisTemplate stringRedisTemplate;
+
+    @Mock
+    private ValueOperations<String, String> valueOperations;
 
     @InjectMocks
     private AuthService authService;
@@ -121,6 +133,7 @@ class AuthServiceTest {
         ReflectionTestUtils.setField(employee, "id", UUID.randomUUID());
 
         ReflectionTestUtils.setField(authService, "jwtExpiration", 3600000L);
+        ReflectionTestUtils.setField(authService, "captchaThresholdAttempts", 3);
         ReflectionTestUtils.setField(authService, "allowedDomain", "nulogic.io");
         when(implicitRoleService.getImplicitRoles(any(UUID.class), any(UUID.class))).thenReturn(Set.of());
         when(implicitRoleService.getImplicitPermissions(any(UUID.class), any(UUID.class))).thenReturn(Set.of());
@@ -128,6 +141,10 @@ class AuthServiceTest {
         // Specific timezone scenarios (see TenantTimezoneOnLoginTests) override this with
         // their own when(...).thenReturn(...) — Mockito LENIENT mode lets these coexist.
         when(tenantTimeService.zoneFor(any())).thenReturn(ZoneId.of("Asia/Kolkata"));
+        lenient().when(tenantTimeService.today(org.mockito.ArgumentMatchers.nullable(UUID.class))).thenReturn(java.time.LocalDate.now());
+        lenient().when(tenantTimeService.now(org.mockito.ArgumentMatchers.nullable(UUID.class))).thenReturn(java.time.LocalDateTime.now());
+        when(stringRedisTemplate.opsForValue()).thenReturn(valueOperations);
+        lenient().when(valueOperations.get(anyString())).thenReturn(null);
     }
 
     @Nested
@@ -332,12 +349,14 @@ class AuthServiceTest {
         void shouldRequestPasswordResetForExistingUser() {
             when(userRepository.findByEmail("test@example.com"))
                     .thenReturn(Optional.of(user));
+            when(passwordEncoder.encode(anyString())).thenReturn("hashed-reset-token");
             when(userRepository.save(any(User.class)))
                     .thenAnswer(invocation -> invocation.getArgument(0));
 
             authService.requestPasswordReset("test@example.com");
 
-            verify(userRepository).save(argThat(savedUser -> savedUser.getPasswordResetToken() != null &&
+            verify(userRepository).save(argThat(savedUser -> savedUser.getPasswordResetToken() == null &&
+                    savedUser.getPasswordResetTokenHash() != null &&
                     savedUser.getPasswordResetTokenExpiry() != null));
             verify(emailNotificationService).sendPasswordResetEmail(eq("test@example.com"), anyString(),
                     anyString());

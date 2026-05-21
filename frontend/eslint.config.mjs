@@ -1,0 +1,186 @@
+import nextCoreWebVitals from 'eslint-config-next/core-web-vitals';
+import nextTypescript from 'eslint-config-next/typescript';
+
+const restrictedSyntaxRules = [
+  {
+    selector: String.raw`Literal[value=/\bp-3\b/]`,
+    message: 'Design system: p-3 (12px) is off the 8px grid. Use p-4 (16px) or p-2 (8px).',
+  },
+  {
+    selector: String.raw`Literal[value=/\bgap-3\b/]`,
+    message: 'Design system: gap-3 (12px) is off the 8px grid. Use gap-4 (16px) or gap-2 (8px).',
+  },
+  {
+    selector: String.raw`Literal[value=/\bspace-y-3\b/]`,
+    message: 'Design system: space-y-3 (12px) is off the 8px grid. Use space-y-4 (16px) or space-y-2 (8px).',
+  },
+  {
+    selector: String.raw`Literal[value=/\bm-3\b/]`,
+    message: 'Design system: m-3 (12px) is off the 8px grid. Use m-4 (16px) or m-2 (8px).',
+  },
+  {
+    selector: String.raw`CallExpression[callee.type='MemberExpression'][callee.property.name='toLocaleDateString']`,
+    message: 'Use formatDate / formatDateTime from @/lib/utils/format/date instead of bare .toLocaleDateString(). Bare calls bypass the canonical 12-hour, MMM d, yyyy format.',
+  },
+  {
+    selector: String.raw`Literal[value=/bg-clip-text[^"']*text-transparent|text-transparent[^"']*bg-clip-text/]`,
+    message: 'Design system: gradient text (bg-clip-text + text-transparent) is banned per DESIGN.md. Use solid text-accent-600 + font-weight emphasis instead.',
+  },
+  {
+    selector: String.raw`TemplateElement[value.raw=/bg-clip-text[^` + '`' + String.raw`]*text-transparent|text-transparent[^` + '`' + String.raw`]*bg-clip-text/]`,
+    message: 'Design system: gradient text (bg-clip-text + text-transparent) is banned per DESIGN.md. Use solid text-accent-600 + font-weight emphasis instead.',
+  },
+  {
+    selector: String.raw`Literal[value=/\bborder-l-(2|4|8)\s+border-[a-z]+-[0-9]+/]`,
+    message: 'Design system: side-stripe border-l-N + border-color is banned per DESIGN.md. Use full border + tinted bg, or wrap in <Callout>.',
+  },
+  {
+    selector: String.raw`TemplateElement[value.raw=/\bborder-l-(2|4|8)\s+border-[a-z]+-[0-9]+/]`,
+    message: 'Design system: side-stripe border-l-N + border-color is banned per DESIGN.md. Use full border + tinted bg, or wrap in <Callout>.',
+  },
+  {
+    selector: String.raw`Literal[value=/bg-gradient-to-(br|r|b|tr|tl|bl|t|l)\s+from-(accent|success|warning|danger|info)-(500|600)\s+to-(accent|success|warning|danger|info)-(700|800)/]`,
+    message: 'Design system: decorative icon-tile gradients are banned per DESIGN.md. Use flat bg-X-100 dark:bg-X-500/10 + text-X-600.',
+  },
+  {
+    selector: String.raw`TemplateElement[value.raw=/bg-gradient-to-(br|r|b|tr|tl|bl|t|l)\s+from-(accent|success|warning|danger|info)-(500|600)\s+to-(accent|success|warning|danger|info)-(700|800)/]`,
+    message: 'Design system: decorative icon-tile gradients are banned per DESIGN.md. Use flat bg-X-100 dark:bg-X-500/10 + text-X-600.',
+  },
+  {
+    selector: String.raw`Literal[value=/\bstatus-(purple|orange|pink|brown|gray|black|white)\b/]`,
+    message: 'Design system: undefined .status-* class. Use one of status-success / status-danger / status-warning / status-info / status-neutral.',
+  },
+  {
+    selector: String.raw`TemplateElement[value.raw=/\bstatus-(purple|orange|pink|brown|gray|black|white)\b/]`,
+    message: 'Design system: undefined .status-* class. Use one of status-success / status-danger / status-warning / status-info / status-neutral.',
+  },
+];
+
+const baseRules = {
+  '@typescript-eslint/no-explicit-any': 'error',
+  '@typescript-eslint/no-unused-vars': [
+    'warn',
+    {
+      argsIgnorePattern: '^_',
+      varsIgnorePattern: '^_',
+      caughtErrorsIgnorePattern: '^_',
+    },
+  ],
+  '@typescript-eslint/no-restricted-imports': [
+    'error',
+    {
+      paths: [
+        {
+          name: 'axios',
+          message: 'Import axios only from lib/api/. Use the typed client at @/lib/api/client instead; see docs/architecture/frontend/api-layer.md for the boundary rules.',
+          allowTypeImports: true,
+        },
+      ],
+    },
+  ],
+  'no-restricted-syntax': ['warn', ...restrictedSyntaxRules],
+  'no-console': [
+    'warn',
+    {
+      allow: ['warn', 'error'],
+    },
+  ],
+  'react-hooks/component-hook-factories': 'off',
+  'react-hooks/config': 'off',
+  'react-hooks/error-boundaries': 'off',
+  'react-hooks/gating': 'off',
+  'react-hooks/globals': 'off',
+  'react-hooks/immutability': 'off',
+  'react-hooks/incompatible-library': 'off',
+  'react-hooks/preserve-manual-memoization': 'off',
+  'react-hooks/purity': 'off',
+  'react-hooks/refs': 'off',
+  'react-hooks/set-state-in-effect': 'off',
+  'react-hooks/set-state-in-render': 'off',
+  'react-hooks/static-components': 'off',
+  'react-hooks/unsupported-syntax': 'off',
+  'react-hooks/use-memo': 'off',
+};
+
+const config = [
+  {
+    linterOptions: {
+      reportUnusedDisableDirectives: false,
+    },
+  },
+  ...nextCoreWebVitals,
+  ...nextTypescript,
+  {
+    ignores: [
+      'lib/generated/**',
+      'playwright-report/**',
+      'playwright/**',
+      'test-results/**',
+      '.next/**',
+      'node_modules/**',
+      'coverage/**',
+      'out/**',
+      'dist/**',
+      '**/*.test.ts',
+      '**/*.test.tsx',
+      '**/*.spec.ts',
+      '**/*.spec.tsx',
+    ],
+  },
+  {
+    rules: baseRules,
+  },
+  {
+    files: ['*.config.js', '*.config.cjs', '*.config.mjs'],
+    rules: {
+      '@typescript-eslint/no-require-imports': 'off',
+      '@typescript-eslint/no-unused-vars': 'off',
+      'import/no-anonymous-default-export': 'off',
+      'no-restricted-syntax': 'off',
+    },
+  },
+  {
+    files: ['e2e/**/*', 'e2e/**/*.spec.ts'],
+    rules: {
+      'react-hooks/rules-of-hooks': 'off',
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        {
+          argsIgnorePattern: '^_|^page$|^request$|^context$|^browser$',
+          varsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
+        },
+      ],
+    },
+  },
+  {
+    files: ['lib/api/**/*', 'lib/services/**/*'],
+    rules: {
+      '@typescript-eslint/no-restricted-imports': 'off',
+    },
+  },
+  {
+    files: ['lib/utils/logger.ts', 'lib/services/websocket.ts'],
+    rules: {
+      'no-console': 'off',
+    },
+  },
+  {
+    files: [
+      'e2e/**/*',
+      '**/*.test.ts',
+      '**/*.test.tsx',
+      '**/*.spec.ts',
+      '**/*.spec.tsx',
+      '*.config.js',
+      '*.config.cjs',
+      '*.config.mjs',
+      'scripts/**/*',
+    ],
+    rules: {
+      'no-console': 'off',
+    },
+  },
+];
+
+export default config;

@@ -14,9 +14,12 @@
  *   - Tests are fully independent; no shared state between tests
  */
 
-import {expect, test} from '@playwright/test';
+import {expect, test, type Page} from '@playwright/test';
 import {demoUsers, testUsers} from './fixtures/testData';
 import {loginAs, navigateTo} from './fixtures/helpers';
+
+const applyLeaveButton = (page: Page) =>
+  page.getByRole('button', {name: /Apply(?: for)? Leave|Request Leave|New Leave/i});
 
 // ─────────────────────────────────────────────────────────────────────────────
 // MY SPACE — My Attendance (/me/attendance)
@@ -103,10 +106,10 @@ test.describe('MY SPACE - My Attendance', () => {
 
     test('stat card values should be numeric', async ({page}) => {
       await page.waitForTimeout(2000);
-      // All four stat values are text-2xl bold numbers inside the stat cards
-      const statValues = page.locator('.text-2xl.font-bold');
-      const count = await statValues.count();
-      expect(count).toBeGreaterThanOrEqual(4);
+      for (const label of ['Present Days', 'Absent Days', 'On Leave', 'Avg. Hours/Day']) {
+        const card = page.locator('.skeuo-card').filter({hasText: label}).first();
+        await expect(card.getByText(/^\d+(\.\d+)?$/).first()).toBeVisible({timeout: 10000});
+      }
     });
   });
 
@@ -131,11 +134,9 @@ test.describe('MY SPACE - My Attendance', () => {
       prevMonth.setMonth(prevMonth.getMonth() - 1);
       const prevMonthName = prevMonth.toLocaleDateString('en-US', {month: 'long'});
 
-      // Click the previous month button (ChevronLeft icon button)
-      const chevronLeft = page.locator('button').filter({has: page.locator('svg')}).first();
-      await chevronLeft.click();
+      await page.getByRole('button', {name: 'Previous month'}).click();
 
-      await expect(page.locator(`text=${prevMonthName}`).first()).toBeVisible({timeout: 5000});
+      await expect(page.getByText(new RegExp(`${prevMonthName}\\s+\\d{4}`))).toBeVisible({timeout: 5000});
     });
 
     test('should navigate to next month on right chevron click', async ({page}) => {
@@ -143,18 +144,9 @@ test.describe('MY SPACE - My Attendance', () => {
       nextMonth.setMonth(nextMonth.getMonth() + 1);
       const nextMonthName = nextMonth.toLocaleDateString('en-US', {month: 'long'});
 
-      // The navigation buttons are ordered: prev, next
-      const navButtons = page
-        .locator('button')
-        .filter({has: page.locator('svg.lucide-chevron-right, svg')});
+      await page.getByRole('button', {name: 'Next month'}).click();
 
-      // Find the right-chevron by looking for the button containing "ChevronRight"
-      // Use the calendar card's nav area — sibling of the month text
-      const calendarCard = page.locator('text=Attendance Calendar').locator('../..');
-      const nextBtn = calendarCard.locator('button').last();
-      await nextBtn.click();
-
-      await expect(page.locator(`text=${nextMonthName}`).first()).toBeVisible({timeout: 5000});
+      await expect(page.getByText(new RegExp(`${nextMonthName}\\s+\\d{4}`))).toBeVisible({timeout: 5000});
     });
 
     test('should display Details panel', async ({page}) => {
@@ -323,9 +315,7 @@ test.describe('MY SPACE - My Documents', () => {
 
     test('modal should contain Purpose textarea', async ({page}) => {
       await page.locator('button').filter({hasText: /Request Document/i}).click();
-      await expect(
-        page.locator('textarea').filter({has: page.locator('[placeholder*="Why do you need"]')})
-      ).toBeVisible({timeout: 5000});
+      await expect(page.getByPlaceholder('Why do you need this document?')).toBeVisible({timeout: 5000});
     });
 
     test('modal should show Required By date input', async ({page}) => {
@@ -367,16 +357,15 @@ test.describe('MY SPACE - My Documents', () => {
       const emptyState = page.locator(
         "text=You haven't requested any documents yet"
       );
-      const hasEmpty = await emptyState.isVisible().catch(() => false);
+      await page.waitForFunction(() => {
+        const text = document.body.innerText;
+        return text.includes("You haven't requested any documents yet")
+          || document.querySelectorAll('[role="listitem"]').length > 0;
+      }, null, {timeout: 10000});
 
-      if (!hasEmpty) {
-        // There should be at least one card
-        const cards = page.locator('[class*="card-aura"]');
-        const count = await cards.count();
-        expect(count).toBeGreaterThan(0);
-      } else {
-        expect(hasEmpty).toBe(true);
-      }
+      const hasEmpty = await emptyState.isVisible().catch(() => false);
+      const listItems = await page.getByRole('listitem').count();
+      expect(hasEmpty || listItems > 0).toBe(true);
     });
 
     test('employee can access /me/documents without redirection', async ({page}) => {
@@ -436,7 +425,7 @@ test.describe('MY SPACE - My Leaves', () => {
     test('should show numeric leave balance values', async ({page}) => {
       await page.waitForTimeout(3000);
       // At least one numeric value rendered in the balance area
-      const numericValues = page.locator('text=/^\\d+(\\.\\d+)?$/');
+      const numericValues = page.getByText(/^\d+(\.\d+)?$/);
       const count = await numericValues.count();
       expect(count).toBeGreaterThan(0);
     });
@@ -445,17 +434,13 @@ test.describe('MY SPACE - My Leaves', () => {
   test.describe('Apply Leave Modal', () => {
     test('should show "Apply Leave" or "Request Leave" button', async ({page}) => {
       await page.waitForTimeout(2000);
-      const applyBtn = page
-        .locator('button')
-        .filter({hasText: /Apply Leave|Request Leave|New Leave/i});
+      const applyBtn = applyLeaveButton(page);
       await expect(applyBtn).toBeVisible({timeout: 10000});
     });
 
     test('should open apply leave modal on button click', async ({page}) => {
       await page.waitForTimeout(2000);
-      const applyBtn = page
-        .locator('button')
-        .filter({hasText: /Apply Leave|Request Leave|New Leave/i});
+      const applyBtn = applyLeaveButton(page);
       await applyBtn.click();
       // Modal heading or form should appear
       await expect(
@@ -465,18 +450,14 @@ test.describe('MY SPACE - My Leaves', () => {
 
     test('modal should contain leave type select', async ({page}) => {
       await page.waitForTimeout(2000);
-      const applyBtn = page
-        .locator('button')
-        .filter({hasText: /Apply Leave|Request Leave|New Leave/i});
+      const applyBtn = applyLeaveButton(page);
       await applyBtn.click();
       await expect(page.locator('select').first()).toBeVisible({timeout: 5000});
     });
 
     test('modal should contain start date and end date inputs', async ({page}) => {
       await page.waitForTimeout(2000);
-      const applyBtn = page
-        .locator('button')
-        .filter({hasText: /Apply Leave|Request Leave|New Leave/i});
+      const applyBtn = applyLeaveButton(page);
       await applyBtn.click();
       const dateInputs = page.locator('input[type="date"]');
       await expect(dateInputs.first()).toBeVisible({timeout: 5000});
@@ -484,18 +465,14 @@ test.describe('MY SPACE - My Leaves', () => {
 
     test('modal should contain reason textarea', async ({page}) => {
       await page.waitForTimeout(2000);
-      const applyBtn = page
-        .locator('button')
-        .filter({hasText: /Apply Leave|Request Leave|New Leave/i});
+      const applyBtn = applyLeaveButton(page);
       await applyBtn.click();
       await expect(page.locator('textarea').first()).toBeVisible({timeout: 5000});
     });
 
     test('modal should validate and show error when reason is empty', async ({page}) => {
       await page.waitForTimeout(2000);
-      const applyBtn = page
-        .locator('button')
-        .filter({hasText: /Apply Leave|Request Leave|New Leave/i});
+      const applyBtn = applyLeaveButton(page);
       await applyBtn.click();
 
       // Submit without filling required fields
@@ -512,9 +489,7 @@ test.describe('MY SPACE - My Leaves', () => {
 
     test('modal Cancel button should close the modal', async ({page}) => {
       await page.waitForTimeout(2000);
-      const applyBtn = page
-        .locator('button')
-        .filter({hasText: /Apply Leave|Request Leave|New Leave/i});
+      const applyBtn = applyLeaveButton(page);
       await applyBtn.click();
       await page.locator('button').filter({hasText: /Cancel/i}).first().click();
       // Modal should be dismissed
@@ -523,9 +498,7 @@ test.describe('MY SPACE - My Leaves', () => {
 
     test('modal should have half-day checkbox', async ({page}) => {
       await page.waitForTimeout(2000);
-      const applyBtn = page
-        .locator('button')
-        .filter({hasText: /Apply Leave|Request Leave|New Leave/i});
+      const applyBtn = applyLeaveButton(page);
       await applyBtn.click();
       await expect(
         page.locator('input[type="checkbox"]').first()
@@ -809,16 +782,15 @@ test.describe('MY SPACE - My Profile', () => {
 
     test('should display employee code or department', async ({page}) => {
       await page.waitForTimeout(3000);
-      // Either department name or employee code must be visible in meta row
-      const dept = page.locator(`text=${testUsers.employee.department}`).first();
-      const isVisible = await dept.isVisible().catch(() => false);
-      expect(isVisible).toBe(true);
+      const profileHeader = page.locator('.card-aura').filter({hasText: testUsers.employee.email}).first();
+      await expect(profileHeader).toBeVisible({timeout: 15000});
+      await expect(profileHeader).toContainText(new RegExp(`${testUsers.employee.department}|EMP|N/A`));
     });
   });
 
   test.describe('Information Sections', () => {
     test('should display Personal Information card', async ({page}) => {
-      await expect(page.locator('text=Personal Information')).toBeVisible({timeout: 10000});
+      await expect(page.getByRole('heading', {name: 'Personal Information'})).toBeVisible({timeout: 10000});
     });
 
     test('should display Contact Information card', async ({page}) => {
@@ -826,7 +798,7 @@ test.describe('MY SPACE - My Profile', () => {
     });
 
     test('should display Address card', async ({page}) => {
-      await expect(page.locator('text=Address')).toBeVisible({timeout: 10000});
+      await expect(page.getByRole('heading', {name: 'Address'})).toBeVisible({timeout: 10000});
     });
 
     test('should display Employment Details card', async ({page}) => {

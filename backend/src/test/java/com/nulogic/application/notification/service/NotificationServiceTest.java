@@ -32,6 +32,8 @@ class NotificationServiceTest {
     private static MockedStatic<TenantContext> tenantContextMock;
     @Mock
     private NotificationRepository notificationRepository;
+    @Mock
+    private com.nulogic.common.util.TenantTimeService tenantTimeService;
     @InjectMocks
     private NotificationService notificationService;
     private UUID tenantId;
@@ -48,6 +50,16 @@ class NotificationServiceTest {
     static void tearDownClass() {
         securityContextMock.close();
         tenantContextMock.close();
+    }
+
+    @BeforeEach
+    void setUpTenantTimeServiceDefaults() {
+        org.mockito.Mockito.lenient()
+                .when(tenantTimeService.today(org.mockito.ArgumentMatchers.nullable(java.util.UUID.class)))
+                .thenReturn(java.time.LocalDate.now());
+        org.mockito.Mockito.lenient()
+                .when(tenantTimeService.now(org.mockito.ArgumentMatchers.nullable(java.util.UUID.class)))
+                .thenReturn(java.time.LocalDateTime.now());
     }
 
     @BeforeEach

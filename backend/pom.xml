@@ -423,9 +423,12 @@
                     <reuseForks>true</reuseForks>
                     <perCoreThreadCount>false</perCoreThreadCount>
 
-                    <!-- Memory Configuration (JaCoCo argLine is automatically prepended) -->
+                    <!-- Memory Configuration (JaCoCo argLine is automatically prepended).
+                         Mockito is loaded as a javaagent so tests do not rely on JDK self-attach,
+                         which fails on newer local JDKs such as Java 23. -->
                     <!-- add-opens required for EncryptedStringConverterTest which mutates ProcessEnvironment via reflection (JDK 17 module encapsulation) -->
-                    <argLine>@{argLine} -Xmx2048m -XX:MaxMetaspaceSize=512m -XX:+UseG1GC -XX:+ExitOnOutOfMemoryError
+                    <argLine>@{argLine} -javaagent:${settings.localRepository}/org/mockito/mockito-core/${mockito.version}/mockito-core-${mockito.version}.jar
+                        -Xmx2048m -XX:MaxMetaspaceSize=512m -XX:+UseG1GC -XX:+ExitOnOutOfMemoryError
                         --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED
                     </argLine>
 

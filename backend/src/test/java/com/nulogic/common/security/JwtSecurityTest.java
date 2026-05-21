@@ -9,6 +9,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.Duration;
 import java.util.Date;
@@ -43,6 +44,7 @@ class JwtSecurityTest {
         void setUp() {
             when(redisTemplate.opsForValue()).thenReturn(valueOperations);
             blacklistService = new TokenBlacklistService(redisTemplate);
+            ReflectionTestUtils.setField(blacklistService, "refreshExpirationMs", Duration.ofHours(24).toMillis());
         }
 
         @Test

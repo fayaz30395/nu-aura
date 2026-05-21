@@ -61,6 +61,8 @@ class CompensationServiceTest {
     private SalaryStructureRepository salaryStructureRepository;
     @Mock
     private AuditLogService auditLogService;
+    @Mock
+    private com.nulogic.common.util.TenantTimeService tenantTimeService;
     @InjectMocks
     private CompensationService compensationService;
     private UUID tenantId;
@@ -79,6 +81,14 @@ class CompensationServiceTest {
     static void tearDownClass() {
         tenantContextMock.close();
         securityContextMock.close();
+    }
+
+    @BeforeEach
+    void setUpTenantTimeServiceDefaults() {
+        lenient().when(tenantTimeService.today(org.mockito.ArgumentMatchers.nullable(java.util.UUID.class)))
+                .thenReturn(java.time.LocalDate.now());
+        lenient().when(tenantTimeService.now(org.mockito.ArgumentMatchers.nullable(java.util.UUID.class)))
+                .thenReturn(java.time.LocalDateTime.now());
     }
 
     @BeforeEach

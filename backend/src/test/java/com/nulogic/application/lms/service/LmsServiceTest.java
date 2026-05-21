@@ -5,8 +5,11 @@ import com.nulogic.domain.lms.ContentProgress.ProgressStatus;
 import com.nulogic.domain.lms.Course.CourseStatus;
 import com.nulogic.domain.lms.Course.DifficultyLevel;
 import com.nulogic.domain.lms.CourseEnrollment.EnrollmentStatus;
+import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.lms.ModuleContent.ContentType;
 import com.nulogic.infrastructure.lms.repository.*;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -47,6 +50,9 @@ class LmsServiceTest {
     @Mock
     private CertificateRepository certificateRepository;
 
+    @Mock
+    private TenantTimeService tenantTimeService;
+
     @InjectMocks
     private LmsService lmsService;
 
@@ -56,6 +62,7 @@ class LmsServiceTest {
     private UUID contentId;
     private UUID employeeId;
     private UUID enrollmentId;
+    private LocalDateTime now;
     private Course testCourse;
     private CourseModule testModule;
     private ModuleContent testContent;
@@ -69,11 +76,19 @@ class LmsServiceTest {
         contentId = UUID.randomUUID();
         employeeId = UUID.randomUUID();
         enrollmentId = UUID.randomUUID();
+        now = LocalDateTime.of(2026, 1, 15, 9, 30);
+        TenantContext.setCurrentTenant(tenantId);
+        lenient().when(tenantTimeService.now(tenantId)).thenReturn(now);
 
         testCourse = createTestCourse();
         testModule = createTestModule();
         testContent = createTestContent();
         testEnrollment = createTestEnrollment();
+    }
+
+    @AfterEach
+    void tearDown() {
+        TenantContext.clear();
     }
 
     private Course createTestCourse() {

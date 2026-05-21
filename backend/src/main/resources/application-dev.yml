@@ -91,12 +91,34 @@ app:
     expiration: 5400000
     refresh-expiration: 86400000
 
+  auth:
+    # Local E2E repeatedly logs into the same seeded users across workers.
+    # Skip non-critical last-login bookkeeping in dev so login stays read-mostly
+    # and cannot exhaust the DB pool behind row-lock queues.
+    login-bookkeeping:
+      enabled: ${LOGIN_BOOKKEEPING_ENABLED:false}
+
   # Dev profile: disable secure cookies (localhost doesn't have HTTPS)
   cookie:
     secure: false
   security:
     csrf:
       enabled: true
+    rls:
+      probe:
+        # Local/dev databases are often accessed with owner or migration users
+        # that can bypass RLS. Keep the canary visible, but do not block browser
+        # E2E startup unless explicitly requested.
+        fail-on-bypass: ${RLS_PROBE_FAIL_ON_BYPASS:false}
+
+  # Dev/E2E should not mutate approval workflow state on server startup.
+  approval:
+    escalation:
+      enabled: ${APPROVAL_ESCALATION_ENABLED:false}
+
+  workflow:
+    escalation:
+      enabled: ${WORKFLOW_ESCALATION_ENABLED:false}
 
   # CORS — enumerate all frontend dev origins; never use "*" (CSWSH risk)
   cors:

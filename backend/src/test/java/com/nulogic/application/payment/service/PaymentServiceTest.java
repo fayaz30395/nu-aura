@@ -80,7 +80,7 @@ class PaymentServiceTest {
         securityContextMock.when(SecurityContext::getCurrentTenantId).thenReturn(TENANT_ID);
         securityContextMock.when(SecurityContext::getCurrentUserId).thenReturn(USER_ID);
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(TENANT_ID);
-        lenient().when(tenantTimeService.now(any(UUID.class))).thenReturn(LocalDateTime.now());
+        lenient().when(tenantTimeService.now(org.mockito.ArgumentMatchers.nullable(UUID.class))).thenReturn(LocalDateTime.now());
     }
 
     @AfterEach

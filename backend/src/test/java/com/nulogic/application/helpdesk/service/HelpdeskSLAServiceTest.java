@@ -1,5 +1,6 @@
 package com.nulogic.application.helpdesk.service;
 
+import com.nulogic.common.security.TenantContext;
 import com.nulogic.domain.helpdesk.Ticket.TicketPriority;
 import com.nulogic.domain.helpdesk.TicketEscalation;
 import com.nulogic.domain.helpdesk.TicketEscalation.EscalationLevel;
@@ -9,6 +10,7 @@ import com.nulogic.domain.helpdesk.TicketSLA;
 import com.nulogic.infrastructure.helpdesk.repository.TicketEscalationRepository;
 import com.nulogic.infrastructure.helpdesk.repository.TicketMetricsRepository;
 import com.nulogic.infrastructure.helpdesk.repository.TicketSLARepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,6 +41,9 @@ class HelpdeskSLAServiceTest {
     @Mock
     private TicketMetricsRepository metricsRepository;
 
+    @Mock
+    private com.nulogic.common.util.TenantTimeService tenantTimeService;
+
     @InjectMocks
     private HelpdeskSLAService helpdeskSLAService;
 
@@ -52,8 +57,19 @@ class HelpdeskSLAServiceTest {
     private TicketMetrics testMetrics;
 
     @BeforeEach
+    void setUpTenantTimeServiceDefaults() {
+        org.mockito.Mockito.lenient()
+                .when(tenantTimeService.today(org.mockito.ArgumentMatchers.nullable(java.util.UUID.class)))
+                .thenReturn(java.time.LocalDate.now());
+        org.mockito.Mockito.lenient()
+                .when(tenantTimeService.now(org.mockito.ArgumentMatchers.nullable(java.util.UUID.class)))
+                .thenReturn(java.time.LocalDateTime.now());
+    }
+
+    @BeforeEach
     void setUp() {
         tenantId = UUID.randomUUID();
+        TenantContext.setCurrentTenant(tenantId);
         slaId = UUID.randomUUID();
         ticketId = UUID.randomUUID();
         escalationId = UUID.randomUUID();
@@ -62,6 +78,11 @@ class HelpdeskSLAServiceTest {
         testSLA = createTestSLA();
         testEscalation = createTestEscalation();
         testMetrics = createTestMetrics();
+    }
+
+    @AfterEach
+    void tearDown() {
+        TenantContext.clear();
     }
 
     private TicketSLA createTestSLA() {

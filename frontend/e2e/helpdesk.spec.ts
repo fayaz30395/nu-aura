@@ -38,10 +38,10 @@ test.describe('Helpdesk Hub (/helpdesk)', () => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/helpdesk');
 
-    await expect(page.locator('text=Tickets')).toBeVisible();
-    await expect(page.locator('text=SLA Policies')).toBeVisible();
-    await expect(page.locator('text=Knowledge Base')).toBeVisible();
-    await expect(page.locator('text=Escalations')).toBeVisible();
+    await expect(page.getByRole('button', {name: /Tickets\s+View and manage support tickets/i})).toBeVisible();
+    await expect(page.getByRole('button', {name: /SLA Policies\s+\d+ active policies/i})).toBeVisible();
+    await expect(page.getByRole('button', {name: /Knowledge Base\s+Find answers to common questions/i})).toBeVisible();
+    await expect(page.getByRole('button', {name: /Escalations\s+\d+ pending/i})).toBeVisible();
   });
 
   test('clicking Tickets nav button navigates to /helpdesk/tickets', async ({page}) => {
@@ -552,10 +552,10 @@ test.describe('SLA Management (/helpdesk/sla)', () => {
     await navigateTo(page, '/helpdesk/sla');
 
     await page.waitForTimeout(2000);
-    await expect(page.locator('text=SLA Compliance')).toBeVisible();
-    await expect(page.locator('text=Avg First Response')).toBeVisible();
-    await expect(page.locator('text=Avg Resolution Time')).toBeVisible();
-    await expect(page.locator('text=Avg CSAT Score')).toBeVisible();
+    await expect(page.getByText('SLA Compliance', {exact: true})).toBeVisible();
+    await expect(page.getByText('Avg First Response', {exact: true})).toBeVisible();
+    await expect(page.getByText('Avg Resolution Time', {exact: true})).toBeVisible();
+    await expect(page.getByText('Avg CSAT Score', {exact: true})).toBeVisible();
   });
 
   test('three tabs are rendered (Dashboard, SLA Policies, Pending Escalations)', async ({page}) => {
@@ -654,17 +654,27 @@ test.describe('SLA Management (/helpdesk/sla)', () => {
     expect(pageText).toMatch(/escalation|No pending escalations/i);
   });
 
-  test('employee cannot access SLA settings page — page still loads but RBAC hides actions', async ({page}) => {
-    // The SLA page itself does not have a top-level RBAC redirect —
-    // it uses PermissionGate on create/edit/delete/acknowledge buttons.
-    // Verify it loads and does NOT show the Create SLA Policy button for an employee.
+  test('employee cannot access SLA settings actions', async ({page}) => {
     await loginAs(page, testUsers.employee.email);
     await navigateTo(page, '/helpdesk/sla');
+
+    const createBtn = page.locator('button:has-text("Create SLA Policy")');
+    await page.waitForFunction(() => {
+      const text = document.body.innerText;
+      const hasPoliciesTab = Array.from(document.querySelectorAll('button'))
+        .some((button) => button.textContent?.includes('SLA Policies'));
+      return text.includes('Access Denied') || hasPoliciesTab;
+    }, null, {timeout: 15000});
+
+    const pageText = await page.textContent('body');
+    if (pageText?.includes('Access Denied')) {
+      await expect(createBtn).not.toBeVisible();
+      return;
+    }
 
     await page.locator('button:has-text("SLA Policies")').click();
     await page.waitForTimeout(300);
 
-    const createBtn = page.locator('button:has-text("Create SLA Policy")');
     await expect(createBtn).not.toBeVisible();
   });
 
