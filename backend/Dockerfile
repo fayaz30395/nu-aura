@@ -82,7 +82,7 @@ WORKDIR /app
 RUN addgroup -g 1001 -S hrms && \
     adduser -u 1001 -S hrms -G hrms
 
-RUN apk add --no-cache curl
+RUN apk add --no-cache curl socat
 
 COPY --from=build /app/backend/target/*.jar app.jar
 
@@ -97,4 +97,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
 
 ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -XX:+UseG1GC -Djava.security.egd=file:/dev/./urandom"
 
-ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
+ENTRYPOINT ["sh", "-c", "socat TCP-LISTEN:${PORT:-10000},fork,reuseaddr TCP:127.0.0.1:${APP_PORT:-8080} & SERVER_PORT=${APP_PORT:-8080} java $JAVA_OPTS -jar app.jar"]
