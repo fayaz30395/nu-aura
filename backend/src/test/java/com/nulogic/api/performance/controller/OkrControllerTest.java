@@ -8,6 +8,7 @@ import com.nulogic.application.performance.service.OkrService;
 import com.nulogic.common.config.TestMeterRegistryConfig;
 import com.nulogic.common.exception.GlobalExceptionHandler;
 import com.nulogic.common.security.*;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.performance.KeyResult;
 import com.nulogic.domain.performance.Objective;
 import com.nulogic.domain.performance.Objective.ObjectiveLevel;
@@ -66,6 +67,9 @@ class OkrControllerTest {
     private OkrService okrService;
 
     @MockitoBean
+    private TenantTimeService tenantTimeService;
+
+    @MockitoBean
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @MockitoBean
@@ -89,6 +93,8 @@ class OkrControllerTest {
         // Set up SecurityContext and TenantContext for endpoints that use them
         SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("HR_MANAGER"), Map.of());
         TenantContext.setCurrentTenant(tenantId);
+        lenient().when(tenantTimeService.now(any(UUID.class))).thenReturn(LocalDateTime.now());
+        lenient().when(tenantTimeService.today(any(UUID.class))).thenReturn(LocalDate.now());
 
         objective = Objective.builder()
                 .id(objectiveId)

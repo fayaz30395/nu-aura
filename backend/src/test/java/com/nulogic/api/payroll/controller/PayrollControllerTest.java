@@ -7,7 +7,9 @@ import com.nulogic.application.payroll.service.PayslipService;
 import com.nulogic.application.payroll.service.SalaryStructureService;
 import com.nulogic.common.security.JwtAuthenticationFilter;
 import com.nulogic.common.security.SecurityContext;
+import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.security.TenantFilter;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.payroll.PayrollRun;
 import com.nulogic.domain.payroll.Payslip;
 import com.nulogic.domain.payroll.SalaryStructure;
@@ -85,6 +87,9 @@ class PayrollControllerTest {
     private EventPublisher eventPublisher;
 
     @MockitoBean
+    private TenantTimeService tenantTimeService;
+
+    @MockitoBean
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @MockitoBean
@@ -101,11 +106,15 @@ class PayrollControllerTest {
         payrollRunId = UUID.randomUUID();
         payslipId = UUID.randomUUID();
         employeeId = UUID.randomUUID();
+        TenantContext.setCurrentTenant(UUID.randomUUID());
+        lenient().when(tenantTimeService.now(any(UUID.class))).thenReturn(java.time.LocalDateTime.now());
+        lenient().when(tenantTimeService.today(any(UUID.class))).thenReturn(LocalDate.now());
 
         payrollRun = new PayrollRun();
         payrollRun.setId(payrollRunId);
         payrollRun.setPayPeriodYear(2024);
         payrollRun.setPayPeriodMonth(3);
+        payrollRun.setPayrollDate(LocalDate.of(2024, 3, 31));
         payrollRun.setStatus(PayrollRun.PayrollStatus.DRAFT);
 
         payslip = new Payslip();
@@ -114,6 +123,14 @@ class PayrollControllerTest {
         payslip.setEmployeeId(employeeId);
         payslip.setPayPeriodYear(2024);
         payslip.setPayPeriodMonth(3);
+        payslip.setPayDate(LocalDate.of(2024, 3, 31));
+        payslip.setBasicSalary(new BigDecimal("50000.00"));
+    }
+
+    @AfterEach
+    void tearDown() {
+        TenantContext.clear();
+        SecurityContext.clear();
     }
 
     @Nested
@@ -139,19 +156,16 @@ class PayrollControllerTest {
         }
 
         @Test
-        @DisplayName("Should return 201 even with empty fields when no validation triggers")
-        void shouldReturn201WhenServiceAcceptsInput() throws Exception {
+        @DisplayName("Should return 400 when required fields are missing")
+        void shouldReturn400WhenRequiredFieldsMissing() throws Exception {
             PayrollRun invalidRun = new PayrollRun();
-            PayrollRun savedRun = new PayrollRun();
-            savedRun.setId(UUID.randomUUID());
-
-            when(payrollRunService.createPayrollRun(any(PayrollRun.class)))
-                    .thenReturn(savedRun);
 
             mockMvc.perform(post("/api/v1/payroll/runs")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(invalidRun)))
-                    .andExpect(status().isCreated());
+                    .andExpect(status().isBadRequest());
+
+            verifyNoInteractions(payrollRunService);
         }
 
         @Test
@@ -178,6 +192,7 @@ class PayrollControllerTest {
             updatedRun.setId(payrollRunId);
             updatedRun.setPayPeriodYear(2024);
             updatedRun.setPayPeriodMonth(3);
+            updatedRun.setPayrollDate(LocalDate.of(2024, 3, 31));
             updatedRun.setStatus(PayrollRun.PayrollStatus.DRAFT);
 
             when(payrollRunService.updatePayrollRun(eq(payrollRunId), any(PayrollRun.class)))

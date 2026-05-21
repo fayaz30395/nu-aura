@@ -2,12 +2,14 @@ package com.nulogic.api.attendance.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nulogic.api.attendance.dto.*;
+import com.nulogic.api.attendance.mapper.AttendanceResponseMapper;
 import com.nulogic.application.attendance.service.AttendanceImportService;
 import com.nulogic.application.attendance.service.AttendanceRecordService;
 import com.nulogic.application.employee.service.EmployeeService;
 import com.nulogic.common.config.TestMeterRegistryConfig;
 import com.nulogic.common.exception.GlobalExceptionHandler;
 import com.nulogic.common.security.*;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.attendance.AttendanceRecord;
 import com.nulogic.domain.attendance.AttendanceTimeEntry;
 import com.nulogic.domain.user.RoleScope;
@@ -71,6 +73,12 @@ class AttendanceControllerTest {
     private EmployeeService employeeService;
 
     @MockitoBean
+    private TenantTimeService tenantTimeService;
+
+    @MockitoBean
+    private AttendanceResponseMapper attendanceResponseMapper;
+
+    @MockitoBean
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @MockitoBean
@@ -117,6 +125,19 @@ class AttendanceControllerTest {
         attendanceResponse.setCheckInTime(attendanceRecord.getCheckInTime());
         attendanceResponse.setCheckOutTime(attendanceRecord.getCheckOutTime());
         attendanceResponse.setStatus("PRESENT");
+
+        org.mockito.Mockito.lenient().when(tenantTimeService.now(any(UUID.class))).thenReturn(LocalDateTime.now());
+        org.mockito.Mockito.lenient().when(tenantTimeService.today(any(UUID.class))).thenReturn(LocalDate.now());
+        org.mockito.Mockito.lenient().when(attendanceResponseMapper.toResponse(any(AttendanceRecord.class))).thenAnswer(invocation -> {
+            AttendanceRecord record = invocation.getArgument(0);
+            AttendanceResponse response = new AttendanceResponse();
+            response.setId(record.getId());
+            response.setEmployeeId(record.getEmployeeId());
+            response.setAttendanceDate(record.getAttendanceDate());
+            response.setCheckInTime(record.getCheckInTime());
+            response.setCheckOutTime(record.getCheckOutTime());
+            return response;
+        });
     }
 
     @AfterEach

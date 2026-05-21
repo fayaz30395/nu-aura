@@ -19,7 +19,8 @@ const mockedApiClient = apiClient as { get: ReturnType<typeof vi.fn> };
 describe('HomeService', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.stubGlobal('process', {env: {NODE_ENV: 'test', NEXT_PUBLIC_API_URL: 'http://localhost:8080'}});
+    vi.stubEnv('NODE_ENV', 'test');
+    vi.stubEnv('NEXT_PUBLIC_API_URL', 'http://localhost:8080');
   });
 
   describe('getUpcomingBirthdays', () => {

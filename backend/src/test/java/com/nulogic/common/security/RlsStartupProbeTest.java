@@ -33,7 +33,7 @@ class RlsStartupProbeTest {
         resultSet = mock(ResultSet.class);
 
         when(dataSource.getConnection()).thenReturn(connection);
-        when(connection.prepareStatement(contains("set_config"))).thenReturn(resetStatement);
+        when(connection.prepareStatement(contains("RESET"))).thenReturn(resetStatement);
         when(connection.prepareStatement(contains("COUNT(*)"))).thenReturn(countStatement);
         when(countStatement.executeQuery()).thenReturn(resultSet);
         when(resultSet.next()).thenReturn(true);

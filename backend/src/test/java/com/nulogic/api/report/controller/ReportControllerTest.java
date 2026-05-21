@@ -8,7 +8,9 @@ import com.nulogic.common.exception.GlobalExceptionHandler;
 import com.nulogic.common.security.JwtAuthenticationFilter;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.RequiresPermission;
+import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.security.TenantFilter;
+import com.nulogic.common.util.TenantTimeService;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -57,6 +59,9 @@ class ReportControllerTest {
     private ReportService reportService;
 
     @MockitoBean
+    private TenantTimeService tenantTimeService;
+
+    @MockitoBean
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @MockitoBean
@@ -69,6 +74,10 @@ class ReportControllerTest {
 
     @BeforeEach
     void setUp() {
+        TenantContext.setCurrentTenant(UUID.randomUUID());
+        org.mockito.Mockito.lenient().when(tenantTimeService.now(any(UUID.class))).thenReturn(java.time.LocalDateTime.now());
+        org.mockito.Mockito.lenient().when(tenantTimeService.today(any(UUID.class))).thenReturn(LocalDate.now());
+
         baseRequest = ReportRequest.builder()
                 .startDate(LocalDate.of(2026, 10, 1))
                 .endDate(LocalDate.of(2026, 10, 31))
@@ -78,6 +87,11 @@ class ReportControllerTest {
         excelBytes = "Excel report content".getBytes();
         pdfBytes = "PDF report content".getBytes();
         csvBytes = "id,name,status\n1,John,PRESENT".getBytes();
+    }
+
+    @AfterEach
+    void tearDown() {
+        TenantContext.clear();
     }
 
     @Nested

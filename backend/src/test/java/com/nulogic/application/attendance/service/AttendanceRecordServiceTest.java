@@ -53,6 +53,8 @@ class AttendanceRecordServiceTest {
     @Mock
     private AttendanceConfigProperties config;
     @Mock
+    private AttendanceAuditPublisher attendanceAuditPublisher;
+    @Mock
     private EventPublisher eventPublisher;
     @Mock
     private ShiftAttendanceService shiftAttendanceService;

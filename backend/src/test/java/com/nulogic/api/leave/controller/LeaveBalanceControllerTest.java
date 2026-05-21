@@ -1,7 +1,9 @@
 package com.nulogic.api.leave.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nulogic.api.leave.dto.LeaveBalanceResponse;
 import com.nulogic.api.leave.dto.LeaveEncashmentRequest;
+import com.nulogic.api.leave.mapper.LeaveBalanceMapperImpl;
 import com.nulogic.application.leave.service.LeaveBalanceService;
 import com.nulogic.common.security.JwtAuthenticationFilter;
 import com.nulogic.common.security.TenantFilter;
@@ -35,7 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(LeaveBalanceController.class)
-@ContextConfiguration(classes = {LeaveBalanceController.class})
+@ContextConfiguration(classes = {LeaveBalanceController.class, LeaveBalanceMapperImpl.class})
 @AutoConfigureMockMvc(addFilters = false)
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
@@ -88,21 +90,28 @@ class LeaveBalanceControllerTest {
         @Test
         @DisplayName("Should get leave balances for employee")
         void shouldGetLeaveBalancesForEmployee() throws Exception {
-            when(leaveBalanceService.getEmployeeBalances(employeeId))
-                    .thenReturn(List.of(leaveBalance));
+            LeaveBalanceResponse response = new LeaveBalanceResponse();
+            response.setId(leaveBalanceId);
+            response.setEmployeeId(employeeId);
+            response.setAccrued(BigDecimal.valueOf(21));
+            response.setUsed(BigDecimal.valueOf(5));
+            response.setAvailable(BigDecimal.valueOf(16));
+            response.setYear(2024);
+            when(leaveBalanceService.getEmployeeBalancesEnriched(employeeId))
+                    .thenReturn(List.of(response));
 
             mockMvc.perform(get("/api/v1/leave-balances/employee/{employeeId}", employeeId))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.length()").value(1))
                     .andExpect(jsonPath("$[0].employeeId").value(employeeId.toString()));
 
-            verify(leaveBalanceService).getEmployeeBalances(employeeId);
+            verify(leaveBalanceService).getEmployeeBalancesEnriched(employeeId);
         }
 
         @Test
         @DisplayName("Should return empty list when no balances found")
         void shouldReturnEmptyListWhenNoBalances() throws Exception {
-            when(leaveBalanceService.getEmployeeBalances(employeeId))
+            when(leaveBalanceService.getEmployeeBalancesEnriched(employeeId))
                     .thenReturn(List.of());
 
             mockMvc.perform(get("/api/v1/leave-balances/employee/{employeeId}", employeeId))

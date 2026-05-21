@@ -66,6 +66,7 @@ class RbacAnnotationCoverageTest {
             "PreboardingController",        // /preboarding/portal/{token}/*
             // Monitoring — health check endpoints
             "MonitoringController",
+            "RootProbeController",
             // Device integration — API-key or device-cert auth
             "BiometricDeviceController"     // biometric punch from devices
     );
@@ -91,7 +92,15 @@ class RbacAnnotationCoverageTest {
             "FnFController#submitPublicInterview",
             // /feature-flags/check/{featureKey} — any authenticated user can check
             // whether a feature is enabled; the frontend needs this to toggle UI.
-            "FeatureFlagController#checkFeature"
+            "FeatureFlagController#checkFeature",
+            // /me/dsr/* — self-service GDPR intake/status routes. Authentication
+            // is required, and the controller scopes all reads/writes to the
+            // SecurityContext user instead of granting tenant-wide compliance access.
+            "DsrController#createAccessRequest",
+            "DsrController#createErasureRequest",
+            "DsrController#createPortabilityRequest",
+            "DsrController#getMyRequest",
+            "DsrController#getMyRequests"
     );
 
     /**

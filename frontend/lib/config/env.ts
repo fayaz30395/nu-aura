@@ -140,8 +140,10 @@ function getEnv(): Env {
     });
   }
 
-  // Log errors as warnings in development (don't crash)
-  if (!validation.success && typeof window === 'undefined') {
+  // Log errors as warnings in non-production environments and fall back to
+  // local defaults. Vitest exercises browser-facing imports under jsdom, so
+  // this cannot be server-only.
+  if (!validation.success) {
     validation.errors.forEach((error) => {
       console.error(`[env] Error: ${error}`);
     });

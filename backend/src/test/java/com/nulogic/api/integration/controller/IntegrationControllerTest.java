@@ -8,7 +8,9 @@ import com.nulogic.common.exception.GlobalExceptionHandler;
 import com.nulogic.common.security.JwtAuthenticationFilter;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.RequiresPermission;
+import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.security.TenantFilter;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.infrastructure.payment.PaymentGatewayService;
 import com.nulogic.infrastructure.payment.PaymentRequest;
 import com.nulogic.infrastructure.payment.PaymentResponse;
@@ -33,6 +35,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.*;
@@ -66,9 +69,23 @@ class IntegrationControllerTest {
     @MockitoBean
     private PaymentGatewayService paymentGatewayService;
     @MockitoBean
+    private TenantTimeService tenantTimeService;
+    @MockitoBean
     private JwtAuthenticationFilter jwtAuthenticationFilter;
     @MockitoBean
     private TenantFilter tenantFilter;
+
+    @org.junit.jupiter.api.BeforeEach
+    void setUp() {
+        TenantContext.setCurrentTenant(UUID.randomUUID());
+        org.mockito.Mockito.lenient().when(tenantTimeService.now(any(UUID.class))).thenReturn(java.time.LocalDateTime.now());
+        org.mockito.Mockito.lenient().when(tenantTimeService.today(any(UUID.class))).thenReturn(java.time.LocalDate.now());
+    }
+
+    @org.junit.jupiter.api.AfterEach
+    void tearDown() {
+        TenantContext.clear();
+    }
 
     // ===================== SMS Tests =====================
 

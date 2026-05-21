@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nulogic.api.leave.dto.LeaveRequestRequest;
 import com.nulogic.application.employee.service.EmployeeService;
 import com.nulogic.application.leave.service.LeaveRequestService;
+import com.nulogic.api.leave.mapper.LeaveRequestMapperImpl;
 import com.nulogic.common.security.*;
 import com.nulogic.domain.leave.LeaveRequest;
 import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
@@ -40,7 +41,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(LeaveRequestController.class)
-@ContextConfiguration(classes = {LeaveRequestController.class})
+@ContextConfiguration(classes = {LeaveRequestController.class, LeaveRequestMapperImpl.class})
 @AutoConfigureMockMvc(addFilters = false)
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")

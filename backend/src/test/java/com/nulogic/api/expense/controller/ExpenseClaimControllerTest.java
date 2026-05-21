@@ -5,6 +5,7 @@ import com.nulogic.api.expense.dto.ExpenseClaimRequest;
 import com.nulogic.api.expense.dto.ExpenseClaimResponse;
 import com.nulogic.application.expense.service.ExpenseClaimService;
 import com.nulogic.common.security.*;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.expense.ExpenseClaim;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -69,6 +70,8 @@ class ExpenseClaimControllerTest {
     private RateLimitingFilter rateLimitingFilter;
     @MockitoBean
     private TenantFilter tenantFilter;
+    @MockitoBean
+    private TenantTimeService tenantTimeService;
     private UUID claimId;
     private UUID employeeId;
     private ExpenseClaimResponse claimResponse;
@@ -77,6 +80,9 @@ class ExpenseClaimControllerTest {
     void setUp() {
         claimId = UUID.randomUUID();
         employeeId = UUID.randomUUID();
+        TenantContext.setCurrentTenant(UUID.randomUUID());
+        lenient().when(tenantTimeService.now(any(UUID.class))).thenReturn(LocalDateTime.now());
+        lenient().when(tenantTimeService.today(any(UUID.class))).thenReturn(LocalDate.now());
 
         claimResponse = ExpenseClaimResponse.builder()
                 .id(claimId)
@@ -89,6 +95,11 @@ class ExpenseClaimControllerTest {
                 .claimDate(LocalDate.now())
                 .createdAt(LocalDateTime.now())
                 .build();
+    }
+
+    @AfterEach
+    void tearDown() {
+        TenantContext.clear();
     }
 
     @Configuration

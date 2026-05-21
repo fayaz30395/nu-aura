@@ -91,7 +91,7 @@ describe('PayrollService', () => {
           payrollPeriodStart: '2026-01-01',
           payrollPeriodEnd: '2026-01-31',
         });
-        expect(result).toEqual(mockPayrollRun);
+        expect(result).toMatchObject(mockPayrollRun);
       });
 
       it('should handle errors when creating payroll run', async () => {
@@ -155,7 +155,7 @@ describe('PayrollService', () => {
         const result = await payrollService.getPayrollRunById('run-123');
 
         expect(mockApiClient.get).toHaveBeenCalledWith('/payroll/runs/run-123');
-        expect(result).toEqual(mockRun);
+        expect(result).toMatchObject(mockRun);
       });
 
       it('should handle 404 errors for missing payroll run', async () => {

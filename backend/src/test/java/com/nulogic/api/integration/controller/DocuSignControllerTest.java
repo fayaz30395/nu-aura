@@ -3,10 +3,12 @@ package com.nulogic.api.integration.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nulogic.api.integration.dto.DocuSignEnvelopeResponse;
 import com.nulogic.api.integration.dto.DocuSignTemplateMappingRequest;
+import com.nulogic.application.document.service.FileStorageService;
 import com.nulogic.application.integration.service.IntegrationConnectorConfigService;
 import com.nulogic.common.config.TestMeterRegistryConfig;
 import com.nulogic.common.exception.GlobalExceptionHandler;
 import com.nulogic.common.security.*;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.integration.ConnectorConfig;
 import com.nulogic.domain.integration.docusign.DocuSignEnvelope;
 import com.nulogic.domain.integration.docusign.DocuSignTemplateMapping;
@@ -72,6 +74,10 @@ class DocuSignControllerTest {
     @MockitoBean
     private DocuSignApiClient apiClient;
     @MockitoBean
+    private FileStorageService fileStorageService;
+    @MockitoBean
+    private TenantTimeService tenantTimeService;
+    @MockitoBean
     private JwtTokenProvider jwtTokenProvider;
     @MockitoBean
     private JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -119,6 +125,8 @@ class DocuSignControllerTest {
         tenantContextMock = mockStatic(TenantContext.class);
         tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(TENANT_ID);
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(TENANT_ID);
+        lenient().when(tenantTimeService.now(any(UUID.class))).thenReturn(LocalDateTime.now());
+        lenient().when(tenantTimeService.today(any(UUID.class))).thenReturn(java.time.LocalDate.now());
 
         sampleEnvelope = new DocuSignEnvelope();
         sampleEnvelope.setId(ENVELOPE_DB_ID);
@@ -422,15 +430,15 @@ class DocuSignControllerTest {
         }
 
         @Test
-        @DisplayName("GET /templates — returns 500 when DocuSign API call fails")
-        void listDocuSignTemplates_ApiFailure_ReturnsInternalServerError() throws Exception {
+        @DisplayName("GET /templates — returns 503 when DocuSign API call fails")
+        void listDocuSignTemplates_ApiFailure_ReturnsServiceUnavailable() throws Exception {
             ConnectorConfig config = new ConnectorConfig(
                     TENANT_ID, "docusign", Map.of("apiKey", "test-key"), Set.of());
             when(configService.getConfig(TENANT_ID, "docusign")).thenReturn(config);
             when(apiClient.listTemplates(config)).thenThrow(new RuntimeException("DocuSign API timeout"));
 
             mockMvc.perform(get("/api/v1/integrations/docusign/templates"))
-                    .andExpect(status().isInternalServerError());
+                    .andExpect(status().isServiceUnavailable());
         }
     }
 

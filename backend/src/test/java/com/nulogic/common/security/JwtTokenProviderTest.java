@@ -150,7 +150,7 @@ class JwtTokenProviderTest {
      * Build an already-expired token.
      */
     private String buildExpiredToken(UUID userId, UUID tenantId) {
-        Date past = new Date(System.currentTimeMillis() - 10_000);
+        Date past = new Date(System.currentTimeMillis() - 60_000);
         return Jwts.builder()
                 .id(UUID.randomUUID().toString())
                 .issuer(ISSUER)

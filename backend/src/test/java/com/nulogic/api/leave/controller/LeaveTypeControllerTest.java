@@ -2,6 +2,7 @@ package com.nulogic.api.leave.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nulogic.api.leave.dto.LeaveTypeRequest;
+import com.nulogic.api.leave.mapper.LeaveTypeMapperImpl;
 import com.nulogic.application.leave.service.LeaveTypeService;
 import com.nulogic.common.security.JwtAuthenticationFilter;
 import com.nulogic.common.security.TenantFilter;
@@ -37,7 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(LeaveTypeController.class)
-@ContextConfiguration(classes = {LeaveTypeController.class})
+@ContextConfiguration(classes = {LeaveTypeController.class, LeaveTypeMapperImpl.class})
 @AutoConfigureMockMvc(addFilters = false)
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")

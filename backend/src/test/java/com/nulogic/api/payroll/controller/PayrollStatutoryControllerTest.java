@@ -4,10 +4,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nulogic.application.payroll.dto.StatutoryDeductions;
 import com.nulogic.application.payroll.service.PayslipService;
 import com.nulogic.application.payroll.service.StatutoryDeductionService;
+import com.nulogic.application.payroll.strategy.StatutoryCalculator;
+import com.nulogic.application.payroll.strategy.StatutoryCalculatorFactory;
+import com.nulogic.application.payroll.strategy.StatutoryResult;
 import com.nulogic.common.security.JwtAuthenticationFilter;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.RequiresPermission;
+import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.security.TenantFilter;
+import com.nulogic.common.util.TenantTimeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -26,6 +31,8 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -59,11 +66,16 @@ class PayrollStatutoryControllerTest {
     @MockitoBean
     private StatutoryDeductionService statutoryDeductionService;
     @MockitoBean
+    private StatutoryCalculatorFactory statutoryCalculatorFactory;
+    @MockitoBean
     private PayslipService payslipService;
+    @MockitoBean
+    private TenantTimeService tenantTimeService;
     @MockitoBean
     private JwtAuthenticationFilter jwtAuthenticationFilter;
     @MockitoBean
     private TenantFilter tenantFilter;
+    private StatutoryCalculator statutoryCalculator;
     private UUID employeeId;
     private UUID payslipId;
     private StatutoryDeductions deductions;
@@ -72,6 +84,8 @@ class PayrollStatutoryControllerTest {
     void setUp() {
         employeeId = UUID.randomUUID();
         payslipId = UUID.randomUUID();
+        TenantContext.setCurrentTenant(UUID.randomUUID());
+        statutoryCalculator = mock(StatutoryCalculator.class);
 
         deductions = StatutoryDeductions.builder()
                 .employeeId(employeeId)
@@ -86,6 +100,31 @@ class PayrollStatutoryControllerTest {
                 .totalEmployeeDeductions(new BigDecimal("4110.00"))
                 .totalEmployerContributions(new BigDecimal("1820.00"))
                 .build();
+
+        lenient().when(tenantTimeService.today(any(UUID.class))).thenReturn(LocalDate.of(2026, 1, 31));
+        lenient().when(statutoryCalculatorFactory.forTenant(any(UUID.class))).thenReturn(statutoryCalculator);
+        lenient().when(statutoryCalculator.calculate(any())).thenReturn(StatutoryResult.builder()
+                .employeeId(employeeId)
+                .countryCode("IN")
+                .currencyCode("INR")
+                .deductions(Map.of(
+                        "PF_EMPLOYEE", new BigDecimal("2400.00"),
+                        "ESI_EMPLOYEE", BigDecimal.ZERO,
+                        "PT", new BigDecimal("200.00"),
+                        "TDS", new BigDecimal("1500.00"),
+                        "LWF_EMPLOYEE", new BigDecimal("10.00")))
+                .contributions(Map.of(
+                        "PF_EMPLOYER", new BigDecimal("1800.00"),
+                        "ESI_EMPLOYER", BigDecimal.ZERO,
+                        "LWF_EMPLOYER", new BigDecimal("20.00")))
+                .totalEmployeeDeductions(new BigDecimal("4110.00"))
+                .totalEmployerContributions(new BigDecimal("1820.00"))
+                .build());
+    }
+
+    @org.junit.jupiter.api.AfterEach
+    void tearDown() {
+        TenantContext.clear();
     }
 
     // ──────────────────────────────────────────────────────────────────────
@@ -99,13 +138,6 @@ class PayrollStatutoryControllerTest {
         @Test
         @DisplayName("Should return 200 with deductions DTO on valid params")
         void shouldReturn200WithDeductionsOnValidParams() throws Exception {
-            when(statutoryDeductionService.calculate(
-                    eq(employeeId),
-                    eq(new BigDecimal("20000")),
-                    eq(new BigDecimal("25000")),
-                    eq("KA")))
-                    .thenReturn(deductions);
-
             mockMvc.perform(get(BASE_URL + "/preview")
                             .param("employeeId", employeeId.toString())
                             .param("basicSalary", "20000")
@@ -121,16 +153,17 @@ class PayrollStatutoryControllerTest {
                     .andExpect(jsonPath("$.totalEmployeeDeductions").value(4110.00))
                     .andExpect(jsonPath("$.totalEmployerContributions").value(1820.00));
 
-            verify(statutoryDeductionService).calculate(eq(employeeId),
-                    eq(new BigDecimal("20000")), eq(new BigDecimal("25000")), eq("KA"));
+            verify(statutoryCalculatorFactory).forTenant(any(UUID.class));
+            verify(statutoryCalculator).calculate(argThat(input ->
+                    employeeId.equals(input.employeeId())
+                            && new BigDecimal("20000").compareTo(input.basicSalary()) == 0
+                            && new BigDecimal("25000").compareTo(input.grossSalary()) == 0
+                            && "KA".equals(input.state())));
         }
 
         @Test
         @DisplayName("Should use empty string as default state when state param omitted")
         void shouldUseDefaultEmptyStateWhenOmitted() throws Exception {
-            when(statutoryDeductionService.calculate(any(), any(), any(), eq("")))
-                    .thenReturn(deductions);
-
             mockMvc.perform(get(BASE_URL + "/preview")
                             .param("employeeId", employeeId.toString())
                             .param("basicSalary", "15000")
@@ -138,7 +171,7 @@ class PayrollStatutoryControllerTest {
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk());
 
-            verify(statutoryDeductionService).calculate(any(), any(), any(), eq(""));
+            verify(statutoryCalculator).calculate(argThat(input -> "".equals(input.state())));
         }
 
         @Test
@@ -181,18 +214,16 @@ class PayrollStatutoryControllerTest {
         }
 
         @Test
-        @DisplayName("Should delegate to StatutoryDeductionService exactly once")
-        void shouldDelegateToStatutoryDeductionServiceOnce() throws Exception {
-            when(statutoryDeductionService.calculate(any(), any(), any(), any()))
-                    .thenReturn(deductions);
-
+        @DisplayName("Should delegate to statutory calculator exactly once")
+        void shouldDelegateToStatutoryCalculatorOnce() throws Exception {
             mockMvc.perform(get(BASE_URL + "/preview")
                             .param("employeeId", employeeId.toString())
                             .param("basicSalary", "20000")
                             .param("grossSalary", "25000"))
                     .andExpect(status().isOk());
 
-            verify(statutoryDeductionService, times(1)).calculate(any(), any(), any(), any());
+            verify(statutoryCalculatorFactory, times(1)).forTenant(any(UUID.class));
+            verify(statutoryCalculator, times(1)).calculate(any());
             verifyNoInteractions(payslipService);
         }
     }

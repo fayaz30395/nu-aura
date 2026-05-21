@@ -3,6 +3,7 @@ package com.nulogic.application.organization.service;
 import com.nulogic.common.exception.BusinessException;
 import com.nulogic.common.exception.ResourceNotFoundException;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.organization.*;
 import com.nulogic.infrastructure.organization.repository.*;
 import org.junit.jupiter.api.*;
@@ -17,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -45,6 +47,8 @@ class OrganizationServiceTest {
     private TalentPoolRepository poolRepository;
     @Mock
     private TalentPoolMemberRepository memberRepository;
+    @Mock
+    private TenantTimeService tenantTimeService;
     @InjectMocks
     private OrganizationService organizationService;
     private UUID tenantId;
@@ -63,6 +67,8 @@ class OrganizationServiceTest {
     void setUp() {
         tenantId = UUID.randomUUID();
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
+        tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
+        lenient().when(tenantTimeService.today(any(UUID.class))).thenReturn(LocalDate.of(2026, 5, 22));
     }
 
     // ==================== Organization Unit Tests ====================

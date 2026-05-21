@@ -501,9 +501,9 @@ class GlobalPayrollServiceTest {
 
             when(payrollRunRepository.findByIdAndTenantId(runId, tenantId)).thenReturn(Optional.of(run));
             when(payrollRunRepository.save(any(GlobalPayrollRun.class))).thenAnswer(i -> i.getArgument(0));
-            when(recordRepository.findByPayrollRun(runId)).thenReturn(List.of(record));
-            when(recordRepository.save(any(EmployeePayrollRecord.class))).thenAnswer(i -> i.getArgument(0));
-            when(recordRepository.countDistinctLocationsByPayrollRun(runId)).thenReturn(1);
+            when(recordRepository.findByTenantIdAndPayrollRun(tenantId, runId)).thenReturn(List.of(record));
+            when(recordRepository.saveAll(any())).thenAnswer(i -> i.getArgument(0));
+            when(recordRepository.countDistinctLocationsByTenantIdAndPayrollRun(tenantId, runId)).thenReturn(1);
             when(exchangeRateRepository.findValidRates(any(), any(), any(), any()))
                     .thenReturn(List.of(createTestExchangeRate("USD", "USD", BigDecimal.ONE)));
 

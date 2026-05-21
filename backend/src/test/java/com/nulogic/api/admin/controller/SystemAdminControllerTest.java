@@ -177,15 +177,17 @@ class SystemAdminControllerTest {
         }
 
         @Test
-        @DisplayName("Non-impersonation endpoints should NOT have revalidate=true")
-        void nonImpersonationEndpoints_shouldNotHaveRevalidation() throws NoSuchMethodException {
+        @DisplayName("Read-only endpoints skip revalidation; tenant state mutations revalidate")
+        void readOnlyEndpointsSkipRevalidation_tenantMutationsRevalidate() throws NoSuchMethodException {
             Method overview = SystemAdminController.class.getMethod("getSystemOverview");
             Method tenants = SystemAdminController.class.getMethod("getTenantList", Pageable.class);
             Method suspend = SystemAdminController.class.getMethod("suspendTenant", UUID.class);
+            Method activate = SystemAdminController.class.getMethod("activateTenant", UUID.class);
 
             assertThat(overview.getAnnotation(RequiresPermission.class).revalidate()).isFalse();
             assertThat(tenants.getAnnotation(RequiresPermission.class).revalidate()).isFalse();
-            assertThat(suspend.getAnnotation(RequiresPermission.class).revalidate()).isFalse();
+            assertThat(suspend.getAnnotation(RequiresPermission.class).revalidate()).isTrue();
+            assertThat(activate.getAnnotation(RequiresPermission.class).revalidate()).isTrue();
         }
     }
 

@@ -42,9 +42,10 @@ class JwtSecurityTest {
 
         @BeforeEach
         void setUp() {
-            when(redisTemplate.opsForValue()).thenReturn(valueOperations);
+            lenient().when(redisTemplate.opsForValue()).thenReturn(valueOperations);
             blacklistService = new TokenBlacklistService(redisTemplate);
             ReflectionTestUtils.setField(blacklistService, "refreshExpirationMs", Duration.ofHours(24).toMillis());
+            ReflectionTestUtils.setField(blacklistService, "redisAvailable", true);
         }
 
         @Test

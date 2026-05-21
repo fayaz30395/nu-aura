@@ -121,8 +121,6 @@ class FileUploadControllerTest {
 
             when(fileStorageService.uploadFile(any(), eq("documents"), eq(ENTITY_ID)))
                     .thenReturn(result);
-            when(fileStorageService.getDownloadUrl(objectName))
-                    .thenReturn("https://storage.example.com/download/" + objectName);
 
             mockMvc.perform(multipart("/api/v1/files/upload")
                             .file(file)
@@ -136,7 +134,7 @@ class FileUploadControllerTest {
                     .andExpect(jsonPath("$.downloadUrl").exists());
 
             verify(fileStorageService).uploadFile(any(), eq("documents"), eq(ENTITY_ID));
-            verify(fileStorageService).getDownloadUrl(objectName);
+            verify(fileStorageService, never()).getDownloadUrl(anyString());
         }
 
         @Test
@@ -199,15 +197,14 @@ class FileUploadControllerTest {
         @DisplayName("GET /download — returns pre-signed download URL for tenant-owned file")
         void getDownloadUrl_OwnedByTenant_ReturnsUrl() throws Exception {
             String objectName = TENANT_ID + "/documents/resume.pdf";
-            String url = "https://storage.example.com/presigned/" + objectName;
-            when(fileStorageService.getDownloadUrl(objectName)).thenReturn(url);
+            String url = "/api/v1/files/download/direct?objectName=" + objectName;
 
             mockMvc.perform(get("/api/v1/files/download")
                             .param("objectName", objectName))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.url").value(url));
 
-            verify(fileStorageService).getDownloadUrl(objectName);
+            verifyNoInteractions(fileStorageService);
         }
 
         @Test
