@@ -2,11 +2,15 @@ package com.nulogic.common.security;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Distributed account lockout service backed by Redis.
@@ -44,11 +48,29 @@ public class AccountLockoutService {
 
     private final StringRedisTemplate redis;
 
+    private final Map<String, LocalLockoutState> localLockouts = new ConcurrentHashMap<>();
+
+    @Value("${app.account-lockout.use-redis:true}")
+    private boolean useRedis = true;
+
     /**
      * Records a failed login attempt. Locks the account if {@code MAX_ATTEMPTS}
      * consecutive failures occur within the sliding window.
      */
     public void loginFailed(String username) {
+        if (useRedis) {
+            try {
+                loginFailedRedis(username);
+                return;
+            } catch (DataAccessException redisDown) {
+                log.warn("Redis unavailable for account lockout; using local fallback for {}: {}",
+                        username, redisDown.getMessage());
+            }
+        }
+        loginFailedLocal(username);
+    }
+
+    private void loginFailedRedis(String username) {
         String attemptsKey = ATTEMPTS_KEY_PREFIX + username;
         String lockedKey = LOCKED_KEY_PREFIX + username;
 
@@ -70,8 +92,16 @@ public class AccountLockoutService {
      * Clears all lockout state on successful authentication.
      */
     public void loginSucceeded(String username) {
-        redis.delete(ATTEMPTS_KEY_PREFIX + username);
-        redis.delete(LOCKED_KEY_PREFIX + username);
+        if (useRedis) {
+            try {
+                redis.delete(ATTEMPTS_KEY_PREFIX + username);
+                redis.delete(LOCKED_KEY_PREFIX + username);
+            } catch (DataAccessException redisDown) {
+                log.warn("Redis unavailable while clearing lockout state for {}: {}",
+                        username, redisDown.getMessage());
+            }
+        }
+        localLockouts.remove(username);
         log.debug("Lockout state cleared for user: {}", username);
     }
 
@@ -80,8 +110,16 @@ public class AccountLockoutService {
      * Redis TTL handles automatic expiry — no manual time comparison needed.
      */
     public boolean isAccountLocked(String username) {
-        Boolean locked = redis.hasKey(LOCKED_KEY_PREFIX + username);
-        return Boolean.TRUE.equals(locked);
+        if (useRedis) {
+            try {
+                Boolean locked = redis.hasKey(LOCKED_KEY_PREFIX + username);
+                return Boolean.TRUE.equals(locked);
+            } catch (DataAccessException redisDown) {
+                log.warn("Redis unavailable for account lockout check; using local fallback for {}: {}",
+                        username, redisDown.getMessage());
+            }
+        }
+        return isAccountLockedLocal(username);
     }
 
     /**
@@ -99,5 +137,50 @@ public class AccountLockoutService {
             // Unreachable: dummy hash never matches the dummy password.
             log.trace("equalizeTiming() matched (unexpected — DUMMY_HASH may have been corrupted)");
         }
+    }
+
+    private void loginFailedLocal(String username) {
+        long now = System.currentTimeMillis();
+        LocalLockoutState state = localLockouts.compute(username, (key, current) -> {
+            LocalLockoutState next = current;
+            if (next == null || next.attemptsExpireAtMs <= now) {
+                next = new LocalLockoutState();
+                next.attemptsExpireAtMs = now + ATTEMPTS_WINDOW.toMillis();
+            }
+
+            next.attempts++;
+            if (next.attempts >= MAX_ATTEMPTS) {
+                next.lockedUntilMs = now + LOCK_DURATION.toMillis();
+            }
+            return next;
+        });
+
+        if (state != null && state.lockedUntilMs > now) {
+            log.warn("Account locally locked after {} failed attempts: {}", state.attempts, username);
+        } else if (state != null) {
+            log.debug("Local failed login attempt {}/{} for user: {}", state.attempts, MAX_ATTEMPTS, username);
+        }
+    }
+
+    private boolean isAccountLockedLocal(String username) {
+        LocalLockoutState state = localLockouts.get(username);
+        if (state == null) {
+            return false;
+        }
+
+        long now = System.currentTimeMillis();
+        if (state.lockedUntilMs > now) {
+            return true;
+        }
+        if (state.attemptsExpireAtMs <= now) {
+            localLockouts.remove(username);
+        }
+        return false;
+    }
+
+    private static final class LocalLockoutState {
+        private int attempts;
+        private long attemptsExpireAtMs;
+        private long lockedUntilMs;
     }
 }

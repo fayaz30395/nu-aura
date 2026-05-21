@@ -10,8 +10,10 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.Duration;
 
@@ -237,6 +239,45 @@ class AccountLockoutServiceTest {
             // Then - state cleared
             verify(redis).delete(ATTEMPTS_KEY);
             verify(redis).delete(LOCKED_KEY);
+        }
+    }
+
+    @Nested
+    @DisplayName("Local fallback")
+    class LocalFallback {
+
+        @Test
+        @DisplayName("Should lock account locally when Redis is disabled")
+        void shouldLockAccountLocallyWhenRedisDisabled() {
+            // Given
+            ReflectionTestUtils.setField(accountLockoutService, "useRedis", false);
+
+            // When
+            for (int i = 0; i < 5; i++) {
+                accountLockoutService.loginFailed(TEST_USERNAME);
+            }
+
+            // Then
+            assertThat(accountLockoutService.isAccountLocked(TEST_USERNAME)).isTrue();
+            verifyNoInteractions(valueOperations);
+        }
+
+        @Test
+        @DisplayName("Should fall back locally when Redis is unavailable")
+        void shouldFallBackLocallyWhenRedisUnavailable() {
+            // Given
+            when(redis.hasKey(LOCKED_KEY)).thenThrow(new RedisConnectionFailureException("down"));
+            when(valueOperations.increment(ATTEMPTS_KEY)).thenThrow(new RedisConnectionFailureException("down"));
+
+            // When
+            boolean lockedBeforeFailures = accountLockoutService.isAccountLocked(TEST_USERNAME);
+            for (int i = 0; i < 5; i++) {
+                accountLockoutService.loginFailed(TEST_USERNAME);
+            }
+
+            // Then
+            assertThat(lockedBeforeFailures).isFalse();
+            assertThat(accountLockoutService.isAccountLocked(TEST_USERNAME)).isTrue();
         }
     }
 }

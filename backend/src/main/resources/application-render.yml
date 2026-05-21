@@ -185,6 +185,11 @@ app:
     use-redis: ${RATE_LIMIT_USE_REDIS:false}
     requests-per-minute: 60
 
+  account-lockout:
+    # Render first release runs one instance without Redis. Keep brute-force
+    # lockout active with the local fallback instead of failing password login.
+    use-redis: ${ACCOUNT_LOCKOUT_USE_REDIS:false}
+
   frontend:
     url: ${FRONTEND_URL:https://hrms-frontend-vert.vercel.app}
 
