@@ -72,8 +72,7 @@ public class RlsStartupProbe implements ApplicationRunner {
         long visibleRows;
         try (Connection conn = dataSource.getConnection()) {
             // Make absolutely sure no inherited session var is in play.
-            try (PreparedStatement reset = conn.prepareStatement(
-                    "SELECT set_config('app.current_tenant_id', '', false)")) {
+            try (PreparedStatement reset = conn.prepareStatement("RESET app.current_tenant_id")) {
                 reset.execute();
             }
 

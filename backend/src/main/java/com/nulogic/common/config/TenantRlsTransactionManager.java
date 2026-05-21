@@ -73,7 +73,7 @@ public class TenantRlsTransactionManager extends JpaTransactionManager {
     // Use set_config() with bind parameter to prevent SQL injection (CRIT-002).
     // Third param 'true' = SET LOCAL (transaction-scoped).
     private static final String SET_TENANT_SQL = "SELECT set_config('app.current_tenant_id', ?, true)";
-    private static final String RESET_TENANT_SQL = "SELECT set_config('app.current_tenant_id', '', false)";
+    private static final String RESET_TENANT_SQL = "RESET app.current_tenant_id";
 
     @Override
     protected void doBegin(Object transaction, TransactionDefinition definition) {
@@ -138,8 +138,8 @@ public class TenantRlsTransactionManager extends JpaTransactionManager {
 
     /**
      * Resets the session variable on the connection before it is returned to the pool.
-     * Uses {@code RESET} which reverts the variable to its session default (empty string,
-     * as set by HikariCP's {@code connectionInitSql}).
+     * Uses {@code RESET} so the next checkout starts without a tenant unless the
+     * request context explicitly sets one.
      */
     private void resetTenantOnConnection() {
         DataSource ds = getDataSource();
