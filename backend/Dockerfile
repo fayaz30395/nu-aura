@@ -106,7 +106,7 @@ RUN printf '%s\n' \
     printf '%s\n' \
       '#!/bin/sh' \
       'set -eu' \
-      'APP_PORT="${APP_PORT:-8080}"' \
+      'APP_PORT="${APP_PORT:-18080}"' \
       'PUBLIC_PORT="${PORT:-10000}"' \
       '' \
       'ready() {' \
@@ -129,7 +129,7 @@ RUN printf '%s\n' \
       '}' \
       '' \
       'start_public_proxy &' \
-      'SERVER_PORT="${APP_PORT}" exec java ${JAVA_OPTS:-} -jar app.jar' \
+      'SERVER_ADDRESS=127.0.0.1 SERVER_PORT="${APP_PORT}" exec java ${JAVA_OPTS:-} -jar app.jar' \
       > /usr/local/bin/render-entrypoint && \
     chmod +x /usr/local/bin/render-starting-response /usr/local/bin/render-entrypoint
 
