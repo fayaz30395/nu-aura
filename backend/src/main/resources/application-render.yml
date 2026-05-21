@@ -132,6 +132,13 @@ management:
 server:
   # Render injects PORT env var (default 10000); Spring Boot must bind to that port
   port: ${PORT:8080}
+  tomcat:
+    threads:
+      max: 24
+      min-spare: 2
+    accept-count: 16
+    max-connections: 64
+    connection-timeout: 5s
   error:
     include-stacktrace: never
     include-message: never
@@ -139,6 +146,12 @@ server:
     include-exception: false
 
 app:
+  kafka:
+    admin:
+      # Kafka is not provisioned for the Render first-release deployment. Keep
+      # producer/listener beans available, but skip startup topic creation calls.
+      auto-create: false
+
   jwt:
     secret: ${JWT_SECRET}
     expiration: 3600000

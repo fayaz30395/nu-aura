@@ -73,6 +73,9 @@ public class KafkaConfig {
     @Value("${spring.kafka.producer.linger-ms:10}")
     private Integer lingerMs;
 
+    @Value("${app.kafka.admin.auto-create:true}")
+    private boolean kafkaAdminAutoCreate;
+
     // ============ PRODUCER CONFIGURATION ============
 
     /**
@@ -523,7 +526,9 @@ public class KafkaConfig {
         KafkaAdmin admin = new KafkaAdmin(configs);
         // Don't block application startup if Kafka broker is unavailable
         admin.setFatalIfBrokerNotAvailable(false);
-        log.info("KafkaAdmin configured — fatalIfBrokerNotAvailable=false, bootstrap={}", bootstrapServers);
+        admin.setAutoCreate(kafkaAdminAutoCreate);
+        log.info("KafkaAdmin configured — fatalIfBrokerNotAvailable=false, autoCreate={}, bootstrap={}",
+                kafkaAdminAutoCreate, bootstrapServers);
         return admin;
     }
 }
