@@ -179,6 +179,10 @@ app:
 
   rate-limit:
     enabled: true
+    # Render first release runs a single instance without Redis. Use the local
+    # Bucket4j limiter by default so auth stays available; set
+    # RATE_LIMIT_USE_REDIS=true after provisioning managed Redis/Key Value.
+    use-redis: ${RATE_LIMIT_USE_REDIS:false}
     requests-per-minute: 60
 
   frontend:
