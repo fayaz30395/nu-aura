@@ -50,7 +50,22 @@ RUN apk add --no-cache curl socat
 
 RUN printf '%s\n' \
       '#!/bin/sh' \
-      "printf 'HTTP/1.1 503 Service Unavailable\r\nConnection: close\r\nContent-Type: text/plain\r\nContent-Length: 17\r\n\r\nService starting\n'" \
+      'read -r request_line || request_line=""' \
+      'set -- ${request_line}' \
+      'method="${1:-GET}"' \
+      'path="${2:-/}"' \
+      'case "${path}" in' \
+      '  "/"|"/actuator/health"|"/actuator/health/liveness"|"/actuator/health/readiness")' \
+      '    if [ "${method}" = "HEAD" ]; then' \
+      "      printf 'HTTP/1.1 204 No Content\r\nConnection: close\r\nContent-Length: 0\r\n\r\n'" \
+      '    else' \
+      "      printf 'HTTP/1.1 200 OK\r\nConnection: close\r\nContent-Type: text/plain\r\nContent-Length: 9\r\n\r\nstarting\n'" \
+      '    fi' \
+      '    ;;' \
+      '  *)' \
+      "    printf 'HTTP/1.1 503 Service Unavailable\r\nConnection: close\r\nContent-Type: text/plain\r\nContent-Length: 17\r\n\r\nService starting\n'" \
+      '    ;;' \
+      'esac' \
       > /usr/local/bin/render-starting-response && \
     printf '%s\n' \
       '#!/bin/sh' \
