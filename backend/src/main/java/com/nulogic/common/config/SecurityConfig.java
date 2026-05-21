@@ -176,6 +176,7 @@ public class SecurityConfig {
                         }))
                 .authorizeHttpRequests(auth -> auth
                         // Error endpoint must be public
+                        .requestMatchers("/").permitAll()
                         .requestMatchers("/error").permitAll()
                         // SEC: explicit auth endpoint allow-list — replaces the previous
                         // /api/v1/auth/** wildcard, which let any new (potentially sensitive)
