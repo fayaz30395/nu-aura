@@ -97,4 +97,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
 
 ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -XX:+UseG1GC -Djava.security.egd=file:/dev/./urandom"
 
-ENTRYPOINT ["sh", "-c", "socat TCP-LISTEN:${PORT:-10000},fork,reuseaddr TCP:127.0.0.1:${APP_PORT:-8080} & SERVER_PORT=${APP_PORT:-8080} java $JAVA_OPTS -jar app.jar"]
+ENTRYPOINT ["sh", "-c", "(while ! curl -fsS http://127.0.0.1:${APP_PORT:-8080}/actuator/health >/dev/null 2>&1; do socat -T 2 TCP-LISTEN:${PORT:-10000},reuseaddr SYSTEM:'printf \"HTTP/1.1 503 Service Unavailable\\r\\nConnection: close\\r\\n\\r\\nService starting\\n\"' || true; done; exec socat TCP-LISTEN:${PORT:-10000},fork,reuseaddr TCP:127.0.0.1:${APP_PORT:-8080}) & SERVER_PORT=${APP_PORT:-8080} java $JAVA_OPTS -jar app.jar"]
