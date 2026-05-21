@@ -64,7 +64,7 @@ test.describe('Attendance Flow — Check-In', () => {
 
     // Refresh and verify state persists
     await page.reload();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
 
     const hasCheckOut = await attendancePage.isCheckOutButtonVisible();

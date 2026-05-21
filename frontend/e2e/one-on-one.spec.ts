@@ -31,7 +31,7 @@ test.describe('1-on-1 — Page Load & Dashboard', () => {
 
   test('dashboard stat cards are rendered', async ({page}) => {
     await navigateTo(page, '/one-on-one');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Stats can include: Total Meetings, Upcoming, Pending Actions, Overdue
     const hasStat = await page
@@ -49,7 +49,7 @@ test.describe('1-on-1 — Page Load & Dashboard', () => {
 
   test('page shows correct heading area', async ({page}) => {
     await navigateTo(page, '/one-on-one');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     // The page uses AppLayout — verify main content is visible
     const hasContent = await page
       .locator('main, [role="main"], [class*="max-w"]')
@@ -61,7 +61,7 @@ test.describe('1-on-1 — Page Load & Dashboard', () => {
 
   test('tab navigation — Upcoming, All Meetings, and Manager tabs are visible', async ({page}) => {
     await navigateTo(page, '/one-on-one');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const hasUpcoming = await page
       .getByRole('button', {name: /upcoming/i})
@@ -76,7 +76,7 @@ test.describe('1-on-1 — Page Load & Dashboard', () => {
 
   test('status filter dropdown is rendered', async ({page}) => {
     await navigateTo(page, '/one-on-one');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const hasFilter = await page
       .locator('select')
@@ -88,7 +88,7 @@ test.describe('1-on-1 — Page Load & Dashboard', () => {
 
   test('page shows meetings list or empty state', async ({page}) => {
     await navigateTo(page, '/one-on-one');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const hasMeetings = await page
       .getByText(/scheduled|in progress|completed|cancelled/i)
@@ -104,7 +104,7 @@ test.describe('1-on-1 — Page Load & Dashboard', () => {
 
   test('page does not show crash error', async ({page}) => {
     await navigateTo(page, '/one-on-one');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await expect(page.getByText(/something went wrong/i)).not.toBeVisible({timeout: 5000}).catch(() => undefined);
   });
 
@@ -116,7 +116,7 @@ test.describe('1-on-1 — Page Load & Dashboard', () => {
       .first()
       .isVisible({timeout: 3000})
       .catch(() => false);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     const hasContent = await page
       .locator('[class*="skeuo-card"], [class*="bg-card"]')
       .first()
@@ -135,7 +135,7 @@ test.describe('1-on-1 — Meetings List: Filtering & Tabs', () => {
 
   test('switching to All Meetings tab fetches all meetings', async ({page}) => {
     await navigateTo(page, '/one-on-one');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const allTab = page.getByRole('button', {name: /all/i}).first();
     const hasAll = await allTab.isVisible({timeout: 8000}).catch(() => false);
@@ -150,7 +150,7 @@ test.describe('1-on-1 — Meetings List: Filtering & Tabs', () => {
 
   test('filtering by SCHEDULED status shows only scheduled meetings', async ({page}) => {
     await navigateTo(page, '/one-on-one');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const filterSelect = page.locator('select').first();
     const hasSelect = await filterSelect.isVisible({timeout: 8000}).catch(() => false);
@@ -169,7 +169,7 @@ test.describe('1-on-1 — Meetings List: Filtering & Tabs', () => {
 
   test('filtering by COMPLETED shows only completed meetings', async ({page}) => {
     await navigateTo(page, '/one-on-one');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const filterSelect = page.locator('select').first();
     const hasSelect = await filterSelect.isVisible({timeout: 8000}).catch(() => false);
@@ -184,7 +184,7 @@ test.describe('1-on-1 — Meetings List: Filtering & Tabs', () => {
 
   test('meeting card shows title, date, time, and participants', async ({page}) => {
     await navigateTo(page, '/one-on-one');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Meeting card typically shows meeting title and status badge
     const hasMeetingCard = await page
@@ -197,7 +197,7 @@ test.describe('1-on-1 — Meetings List: Filtering & Tabs', () => {
 
   test('clicking a meeting card enters detail view', async ({page}) => {
     await navigateTo(page, '/one-on-one');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Look for clickable meeting rows
     const meetingRow = page
@@ -220,7 +220,7 @@ test.describe('1-on-1 — Meetings List: Filtering & Tabs', () => {
 
   test('status badges display correct color classes', async ({page}) => {
     await navigateTo(page, '/one-on-one');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const hasStatus = await page
       .getByText(/scheduled|completed|cancelled|in progress|rescheduled/i)
@@ -232,7 +232,7 @@ test.describe('1-on-1 — Meetings List: Filtering & Tabs', () => {
 
   test('Upcoming tab only shows future meetings', async ({page}) => {
     await navigateTo(page, '/one-on-one');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const upcomingTab = page.getByRole('button', {name: /upcoming/i}).first();
     const hasTab = await upcomingTab.isVisible({timeout: 8000}).catch(() => false);
@@ -256,7 +256,7 @@ test.describe('1-on-1 — Schedule Meeting (Manager)', () => {
 
   test('Schedule 1-on-1 button is visible for manager', async ({page}) => {
     await navigateTo(page, '/one-on-one');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const hasScheduleBtn = await page
       .getByRole('button', {name: /schedule.*1-on-1|schedule meeting|new meeting/i})
@@ -269,7 +269,7 @@ test.describe('1-on-1 — Schedule Meeting (Manager)', () => {
 
   test('clicking Schedule opens the schedule view with a form', async ({page}) => {
     await navigateTo(page, '/one-on-one');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const scheduleBtn = page
       .getByRole('button', {name: /schedule/i})
@@ -293,7 +293,7 @@ test.describe('1-on-1 — Schedule Meeting (Manager)', () => {
 
   test('schedule form has required fields: participant, title, date, time', async ({page}) => {
     await navigateTo(page, '/one-on-one');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const scheduleBtn = page.getByRole('button', {name: /schedule/i}).first();
     const hasBtn = await scheduleBtn.isVisible({timeout: 8000}).catch(() => false);
@@ -319,7 +319,7 @@ test.describe('1-on-1 — Schedule Meeting (Manager)', () => {
 
   test('submitting empty schedule form shows validation errors', async ({page}) => {
     await navigateTo(page, '/one-on-one');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const scheduleBtn = page.getByRole('button', {name: /schedule/i}).first();
     const hasBtn = await scheduleBtn.isVisible({timeout: 8000}).catch(() => false);
@@ -350,7 +350,7 @@ test.describe('1-on-1 — Schedule Meeting (Manager)', () => {
 
   test('recurring meeting toggle reveals recurrence options', async ({page}) => {
     await navigateTo(page, '/one-on-one');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const scheduleBtn = page.getByRole('button', {name: /schedule/i}).first();
     const hasBtn = await scheduleBtn.isVisible({timeout: 8000}).catch(() => false);
@@ -381,7 +381,7 @@ test.describe('1-on-1 — Schedule Meeting (Manager)', () => {
 
   test('cancel button on schedule form returns to list view', async ({page}) => {
     await navigateTo(page, '/one-on-one');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const scheduleBtn = page.getByRole('button', {name: /schedule/i}).first();
     const hasBtn = await scheduleBtn.isVisible({timeout: 8000}).catch(() => false);
@@ -420,7 +420,7 @@ test.describe('1-on-1 — Meeting Detail View', () => {
 
   test('detail view shows meeting title and status badge', async ({page}) => {
     await navigateTo(page, '/one-on-one');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Click first meeting row to enter detail
     const meetingCard = page
@@ -444,7 +444,7 @@ test.describe('1-on-1 — Meeting Detail View', () => {
 
   test('Back to meetings button navigates back to list', async ({page}) => {
     await navigateTo(page, '/one-on-one');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const meetingCard = page
       .locator('[class*="cursor-pointer"]')
@@ -470,7 +470,7 @@ test.describe('1-on-1 — Meeting Detail View', () => {
 
   test('detail view has tabs: Agenda, Actions, Notes, Feedback', async ({page}) => {
     await navigateTo(page, '/one-on-one');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const meetingCard = page
       .locator('[class*="cursor-pointer"]')
@@ -496,7 +496,7 @@ test.describe('1-on-1 — Meeting Detail View', () => {
 
   test('Agenda tab shows Add Agenda Item form', async ({page}) => {
     await navigateTo(page, '/one-on-one');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const meetingCard = page.locator('[class*="cursor-pointer"]').first();
     const hasMeeting = await meetingCard.isVisible({timeout: 8000}).catch(() => false);
@@ -523,7 +523,7 @@ test.describe('1-on-1 — Meeting Detail View', () => {
 
   test('Actions tab shows action items list or empty state', async ({page}) => {
     await navigateTo(page, '/one-on-one');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const meetingCard = page.locator('[class*="cursor-pointer"]').first();
     const hasMeeting = await meetingCard.isVisible({timeout: 8000}).catch(() => false);
@@ -546,7 +546,7 @@ test.describe('1-on-1 — Meeting Detail View', () => {
 
   test('Notes tab has shared and private notes text areas', async ({page}) => {
     await navigateTo(page, '/one-on-one');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const meetingCard = page.locator('[class*="cursor-pointer"]').first();
     const hasMeeting = await meetingCard.isVisible({timeout: 8000}).catch(() => false);
@@ -574,7 +574,7 @@ test.describe('1-on-1 — Meeting Detail View', () => {
 
   test('Feedback tab shows rating input', async ({page}) => {
     await navigateTo(page, '/one-on-one');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const meetingCard = page.locator('[class*="cursor-pointer"]').first();
     const hasMeeting = await meetingCard.isVisible({timeout: 8000}).catch(() => false);
@@ -602,7 +602,7 @@ test.describe('1-on-1 — Meeting Detail View', () => {
 
   test('Start Meeting button triggers status change for SCHEDULED meeting', async ({page}) => {
     await navigateTo(page, '/one-on-one');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const meetingCard = page.locator('[class*="cursor-pointer"]').first();
     const hasMeeting = await meetingCard.isVisible({timeout: 8000}).catch(() => false);
@@ -631,7 +631,7 @@ test.describe('1-on-1 — RBAC Boundaries', () => {
   test('employee can view their own 1-on-1 meetings', async ({page}) => {
     await loginAs(page, testUsers.employee.email);
     await navigateTo(page, '/one-on-one');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await expect(page).not.toHaveURL(/auth\/login/, {timeout: 5000});
     await expect(page.getByText(/something went wrong/i)).not.toBeVisible({timeout: 5000}).catch(() => undefined);
   });
@@ -639,28 +639,28 @@ test.describe('1-on-1 — RBAC Boundaries', () => {
   test('manager can view and schedule 1-on-1 meetings', async ({page}) => {
     await loginAs(page, testUsers.manager.email);
     await navigateTo(page, '/one-on-one');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await expect(page).not.toHaveURL(/auth\/login/, {timeout: 5000});
   });
 
   test('admin can access 1-on-1 page', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/one-on-one');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await expect(page).not.toHaveURL(/auth\/login/, {timeout: 5000});
   });
 
   test('team lead (mani) sees their own meetings', async ({page}) => {
     await loginAs(page, demoUsers.teamLeadEng.email);
     await navigateTo(page, '/one-on-one');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await expect(page).not.toHaveURL(/auth\/login/, {timeout: 5000});
   });
 
   test('employee (raj) can view meetings but not schedule for others', async ({page}) => {
     await loginAs(page, demoUsers.employeeRaj.email);
     await navigateTo(page, '/one-on-one');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Schedule button should either be absent or behind PermissionGate
     const hasSchedule = await page
@@ -676,20 +676,20 @@ test.describe('1-on-1 — RBAC Boundaries', () => {
     // Employee context
     await loginAs(page, testUsers.employee.email);
     await navigateTo(page, '/one-on-one');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await expect(page).not.toHaveURL(/auth\/login/);
 
     // Switch to manager
     await switchUser(page, testUsers.employee.email, testUsers.manager.email);
     await navigateTo(page, '/one-on-one');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await expect(page).not.toHaveURL(/auth\/login/);
   });
 
   test('pending action items section is visible to the meeting participant', async ({page}) => {
     await loginAs(page, testUsers.employee.email);
     await navigateTo(page, '/one-on-one');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const hasPending = await page
       .getByText(/pending|action items|overdue/i)
@@ -702,7 +702,7 @@ test.describe('1-on-1 — RBAC Boundaries', () => {
   test('overdue action items section appears on dashboard', async ({page}) => {
     await loginAs(page, testUsers.manager.email);
     await navigateTo(page, '/one-on-one');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const hasOverdue = await page
       .getByText(/overdue/i)
@@ -722,7 +722,7 @@ test.describe('1-on-1 — Meeting Action Modals', () => {
 
   test('Cancel Meeting modal requires a reason before confirming', async ({page}) => {
     await navigateTo(page, '/one-on-one');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const meetingCard = page.locator('[class*="cursor-pointer"]').first();
     const hasMeeting = await meetingCard.isVisible({timeout: 8000}).catch(() => false);
@@ -751,7 +751,7 @@ test.describe('1-on-1 — Meeting Action Modals', () => {
 
   test('Reschedule Meeting modal shows date and time inputs', async ({page}) => {
     await navigateTo(page, '/one-on-one');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const meetingCard = page.locator('[class*="cursor-pointer"]').first();
     const hasMeeting = await meetingCard.isVisible({timeout: 8000}).catch(() => false);
@@ -779,7 +779,7 @@ test.describe('1-on-1 — Meeting Action Modals', () => {
 
   test('Complete Meeting modal accepts an optional summary', async ({page}) => {
     await navigateTo(page, '/one-on-one');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const meetingCard = page.locator('[class*="cursor-pointer"]').first();
     const hasMeeting = await meetingCard.isVisible({timeout: 8000}).catch(() => false);
@@ -807,7 +807,7 @@ test.describe('1-on-1 — Meeting Action Modals', () => {
 
   test('adding agenda item with empty title shows validation error', async ({page}) => {
     await navigateTo(page, '/one-on-one');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const meetingCard = page.locator('[class*="cursor-pointer"]').first();
     const hasMeeting = await meetingCard.isVisible({timeout: 8000}).catch(() => false);
@@ -852,7 +852,7 @@ test.describe('1-on-1 — Meeting Action Modals', () => {
 
   test('action item can be created with title and assignee', async ({page}) => {
     await navigateTo(page, '/one-on-one');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const meetingCard = page.locator('[class*="cursor-pointer"]').first();
     const hasMeeting = await meetingCard.isVisible({timeout: 8000}).catch(() => false);
@@ -889,7 +889,7 @@ test.describe('1-on-1 — Meeting Action Modals', () => {
 
   test('meeting type label is displayed correctly in detail header', async ({page}) => {
     await navigateTo(page, '/one-on-one');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const meetingCard = page.locator('[class*="cursor-pointer"]').first();
     const hasMeeting = await meetingCard.isVisible({timeout: 8000}).catch(() => false);
@@ -910,7 +910,7 @@ test.describe('1-on-1 — Meeting Action Modals', () => {
 
   test('save notes button persists shared and private notes', async ({page}) => {
     await navigateTo(page, '/one-on-one');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const meetingCard = page.locator('[class*="cursor-pointer"]').first();
     const hasMeeting = await meetingCard.isVisible({timeout: 8000}).catch(() => false);

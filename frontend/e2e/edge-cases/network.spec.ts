@@ -129,7 +129,7 @@ test.describe('Network Error Handling', () => {
 
   test('should handle network disconnect gracefully', async ({page}) => {
     await page.goto('/dashboard');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Simulate offline mode
     await page.context().setOffline(true);
@@ -154,7 +154,7 @@ test.describe('Network Error Handling', () => {
 test.describe('Session Expiration', () => {
   test('should redirect to login when session expires', async ({page}) => {
     await page.goto('/dashboard');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Simulate 401 response (session expired)
     await page.route('**/api/v1/**', (route) => {
@@ -270,7 +270,7 @@ test.describe('Empty States', () => {
 test.describe('Concurrent Operations', () => {
   test('should handle rapid navigation correctly', async ({page}) => {
     await page.goto('/dashboard');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Rapidly click multiple navigation links
     await page.getByRole('link', {name: /employees|team/i}).first().click();
@@ -278,7 +278,7 @@ test.describe('Concurrent Operations', () => {
     await page.getByRole('link', {name: /dashboard|home/i}).first().click();
 
     // Wait for navigation to settle
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Should end up on dashboard without errors
     expect(page.url()).toContain('/dashboard');

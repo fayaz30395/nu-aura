@@ -579,7 +579,7 @@ test.describe('Navigation — App-Aware Sidebar', () => {
 
   test('HRMS routes show HR-specific sidebar items', async ({page}) => {
     await page.goto('/employees');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // HRMS sidebar should show HR modules
     const hrmsItems = [
@@ -599,7 +599,7 @@ test.describe('Navigation — App-Aware Sidebar', () => {
 
   test('Hire routes show recruitment-specific sidebar items', async ({page}) => {
     await page.goto('/recruitment');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Sidebar should show recruitment items
     const hireItems = [
@@ -620,7 +620,7 @@ test.describe('Navigation — App-Aware Sidebar', () => {
 
   test('Grow routes show performance-specific sidebar items', async ({page}) => {
     await page.goto('/performance');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Sidebar should show performance/training items
     const growItems = [
@@ -641,13 +641,13 @@ test.describe('Navigation — App-Aware Sidebar', () => {
   test('sidebar switches context when navigating between app routes', async ({page}) => {
     // Start on HRMS
     await page.goto('/employees');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const hasEmployeesInSidebar = await page.locator('nav a[href*="/employees"]').isVisible().catch(() => false);
 
     // Navigate to a Grow route
     await page.goto('/performance');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const hasPerformanceInSidebar = await page.locator('nav a[href*="/performance"]').isVisible().catch(() => false);
 
@@ -659,7 +659,7 @@ test.describe('Navigation — App-Aware Sidebar', () => {
   test('sidebar maintains scroll position within same app', async ({page}) => {
     // Navigate to a page within HRMS
     await page.goto('/employees');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Navigate to another HRMS page
     const leaveLink = page.locator('nav a[href*="/leave"]').first();

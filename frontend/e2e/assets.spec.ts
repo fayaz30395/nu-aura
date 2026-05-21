@@ -96,7 +96,7 @@ test.describe('Assets Page', () => {
 
   test('should be responsive at mobile viewport', async ({page}) => {
     await page.setViewportSize({width: 375, height: 667});
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const heading = page.locator('h1, h2').first();
     await expect(heading).toBeVisible({timeout: 10000});
@@ -120,7 +120,7 @@ test.describe('Assets - Create Request', () => {
 
     if (await requestBtn.isVisible({timeout: 10000}).catch(() => false)) {
       await requestBtn.click();
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
 
       // Check for modal or form
       const formVisible = await page
@@ -145,7 +145,7 @@ test.describe('Assets - Create Request', () => {
 
     if (await requestBtn.isVisible({timeout: 10000}).catch(() => false)) {
       await requestBtn.click();
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
 
       // Check for form fields
       const hasCategory = await page
@@ -173,7 +173,7 @@ test.describe('Assets - Create Request', () => {
 
     if (await requestBtn.isVisible({timeout: 10000}).catch(() => false)) {
       await requestBtn.click();
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
 
       // Cancel
       const cancelBtn = page.locator('button:has-text("Cancel")').first();
@@ -183,7 +183,7 @@ test.describe('Assets - Create Request', () => {
         await page.keyboard.press('Escape');
       }
 
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
 
       // Modal should be closed
       const modal = page.locator('[role="dialog"]').first();
@@ -208,7 +208,7 @@ test.describe('Assets - View Details', () => {
 
     if (await viewBtn.isVisible({timeout: 5000}).catch(() => false)) {
       await viewBtn.click();
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
 
       // Should show detail content
       const detailContent = page.locator('h1, h2, h3, [class*="detail"], [class*="Detail"]').first();
@@ -225,7 +225,7 @@ test.describe('Assets - View Details', () => {
       const viewBtn = firstRow.locator('button:has-text("View"), a').first();
       if (await viewBtn.isVisible({timeout: 3000}).catch(() => false)) {
         await viewBtn.click();
-        await page.waitForLoadState('networkidle');
+        await page.waitForLoadState('domcontentloaded');
 
         // Check for typical asset detail fields
         const fields = ['Serial', 'Type', 'Category', 'Status', 'Assigned', 'Brand', 'Model'];
@@ -287,7 +287,7 @@ test.describe('Asset Approval Chain', () => {
   test('should submit asset request and verify PENDING status', async ({page}) => {
     await loginAs(page, 'saran@nulogic.io');
     await page.goto('/assets');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Open asset request form
     const requestBtn = page.locator(
@@ -296,7 +296,7 @@ test.describe('Asset Approval Chain', () => {
 
     if (await requestBtn.isVisible({timeout: 10000}).catch(() => false)) {
       await requestBtn.click();
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
 
       // Fill asset request form
       // Asset type / category
@@ -330,7 +330,7 @@ test.describe('Asset Approval Chain', () => {
       const submitBtn = page.locator('button:has-text("Submit"), button:has-text("Request"), button:has-text("Save"), button:has-text("Create")').first();
       if (await submitBtn.isVisible({timeout: 3000}).catch(() => false)) {
         await submitBtn.click();
-        await page.waitForLoadState('networkidle');
+        await page.waitForLoadState('domcontentloaded');
       }
     }
 
@@ -351,7 +351,7 @@ test.describe('Asset Approval Chain', () => {
     // ── Step 1: Saran submits asset request ──
     await loginAs(page, 'saran@nulogic.io');
     await page.goto('/assets');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const requestBtn = page.locator(
       'button:has-text("Request"), button:has-text("New"), button:has-text("Create"), button:has-text("Add")'
@@ -359,7 +359,7 @@ test.describe('Asset Approval Chain', () => {
 
     if (await requestBtn.isVisible({timeout: 10000}).catch(() => false)) {
       await requestBtn.click();
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
 
       const categorySelect = page.locator('select, [role="combobox"]').first();
       if (await categorySelect.isVisible({timeout: 5000}).catch(() => false)) {
@@ -382,20 +382,20 @@ test.describe('Asset Approval Chain', () => {
       const submitBtn = page.locator('button:has-text("Submit"), button:has-text("Request"), button:has-text("Save"), button:has-text("Create")').first();
       if (await submitBtn.isVisible({timeout: 3000}).catch(() => false)) {
         await submitBtn.click();
-        await page.waitForLoadState('networkidle');
+        await page.waitForLoadState('domcontentloaded');
       }
     }
 
     // ── Step 2: Switch to Sumit (Manager) and approve ──
     await switchUser(page, 'saran@nulogic.io', 'sumit@nulogic.io');
     await page.goto('/assets');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Navigate to approvals/pending tab
     const pendingTab = page.locator('button:has-text("Pending"), button:has-text("Approvals"), button:has-text("Requests")').first();
     if (await pendingTab.isVisible({timeout: 5000}).catch(() => false)) {
       await pendingTab.click();
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
     }
 
     const saranRow = page.locator('tbody tr', {hasText: /Saran/i}).first();
@@ -407,7 +407,7 @@ test.describe('Asset Approval Chain', () => {
         const viewBtn = saranRow.locator('button:has-text("View"), a:has-text("View")').first();
         if (await viewBtn.isVisible({timeout: 3000}).catch(() => false)) {
           await viewBtn.click();
-          await page.waitForLoadState('networkidle');
+          await page.waitForLoadState('domcontentloaded');
           const detailApproveBtn = page.locator('button:has-text("Approve")').first();
           if (await detailApproveBtn.isVisible({timeout: 5000}).catch(() => false)) {
             await detailApproveBtn.click();
@@ -422,18 +422,18 @@ test.describe('Asset Approval Chain', () => {
         await confirmBtn.click();
       }
 
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
     }
 
     // ── Step 3: Switch to Fayaz (SuperAdmin / IT Admin) for final approval + assignment ──
     await switchUser(page, 'sumit@nulogic.io', 'fayaz.m@nulogic.io');
     await page.goto('/assets');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const adminTab = page.locator('button:has-text("Pending"), button:has-text("All"), button:has-text("Requests")').first();
     if (await adminTab.isVisible({timeout: 5000}).catch(() => false)) {
       await adminTab.click();
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
     }
 
     const requestRow = page.locator('tbody tr', {hasText: /Saran/i}).first();
@@ -445,7 +445,7 @@ test.describe('Asset Approval Chain', () => {
         const viewBtn = requestRow.locator('button:has-text("View"), a:has-text("View")').first();
         if (await viewBtn.isVisible({timeout: 3000}).catch(() => false)) {
           await viewBtn.click();
-          await page.waitForLoadState('networkidle');
+          await page.waitForLoadState('domcontentloaded');
           const detailBtn = page.locator('button:has-text("Approve"), button:has-text("Assign")').first();
           if (await detailBtn.isVisible({timeout: 5000}).catch(() => false)) {
             await detailBtn.click();
@@ -460,19 +460,19 @@ test.describe('Asset Approval Chain', () => {
         await confirmBtn.click();
       }
 
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
     }
 
     // ── Step 4: Switch back to Saran and verify asset is ASSIGNED or APPROVED ──
     await switchUser(page, 'fayaz.m@nulogic.io', 'saran@nulogic.io');
     await page.goto('/assets');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Check for my assets tab
     const myAssetsTab = page.locator('button:has-text("My Assets"), text=My Assets').first();
     if (await myAssetsTab.isVisible({timeout: 5000}).catch(() => false)) {
       await myAssetsTab.click();
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
     }
 
     const statusBadge = page.locator('tbody tr').first().locator('[class*="badge"]').first();
@@ -488,7 +488,7 @@ test.describe('Asset Approval Chain', () => {
     // ── Step 1: Saran submits asset request ──
     await loginAs(page, 'saran@nulogic.io');
     await page.goto('/assets');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const requestBtn = page.locator(
       'button:has-text("Request"), button:has-text("New"), button:has-text("Create"), button:has-text("Add")'
@@ -496,7 +496,7 @@ test.describe('Asset Approval Chain', () => {
 
     if (await requestBtn.isVisible({timeout: 10000}).catch(() => false)) {
       await requestBtn.click();
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
 
       const titleInput = page.locator('input[name*="title"], input[name*="name"], input[placeholder*="title" i]').first();
       if (await titleInput.isVisible({timeout: 3000}).catch(() => false)) {
@@ -511,19 +511,19 @@ test.describe('Asset Approval Chain', () => {
       const submitBtn = page.locator('button:has-text("Submit"), button:has-text("Request"), button:has-text("Save"), button:has-text("Create")').first();
       if (await submitBtn.isVisible({timeout: 3000}).catch(() => false)) {
         await submitBtn.click();
-        await page.waitForLoadState('networkidle');
+        await page.waitForLoadState('domcontentloaded');
       }
     }
 
     // ── Step 2: Switch to Sumit (Manager) and REJECT ──
     await switchUser(page, 'saran@nulogic.io', 'sumit@nulogic.io');
     await page.goto('/assets');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const pendingTab = page.locator('button:has-text("Pending"), button:has-text("Approvals"), button:has-text("Requests")').first();
     if (await pendingTab.isVisible({timeout: 5000}).catch(() => false)) {
       await pendingTab.click();
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
     }
 
     const saranRow = page.locator('tbody tr', {hasText: /Saran/i}).first();
@@ -535,7 +535,7 @@ test.describe('Asset Approval Chain', () => {
         const viewBtn = saranRow.locator('button:has-text("View"), a:has-text("View")').first();
         if (await viewBtn.isVisible({timeout: 3000}).catch(() => false)) {
           await viewBtn.click();
-          await page.waitForLoadState('networkidle');
+          await page.waitForLoadState('domcontentloaded');
           const detailRejectBtn = page.locator('button:has-text("Reject")').first();
           if (await detailRejectBtn.isVisible({timeout: 5000}).catch(() => false)) {
             await detailRejectBtn.click();
@@ -550,13 +550,13 @@ test.describe('Asset Approval Chain', () => {
         await confirmBtn.click();
       }
 
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
     }
 
     // ── Step 3: Switch back to Saran and verify REJECTED ──
     await switchUser(page, 'sumit@nulogic.io', 'saran@nulogic.io');
     await page.goto('/assets');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const statusBadge = page.locator('tbody tr').first().locator('[class*="badge"]').first();
     const statusText = await statusBadge.textContent({timeout: 10000}).catch(() => '');

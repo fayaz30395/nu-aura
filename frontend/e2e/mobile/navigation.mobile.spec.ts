@@ -9,7 +9,7 @@ test.describe('Mobile Navigation', () => {
   test.beforeEach(async ({page}) => {
     // Navigate to dashboard
     await page.goto('/dashboard');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
   });
 
   test('should display mobile bottom navigation', async ({page}) => {
@@ -133,7 +133,7 @@ test.describe('Mobile Navigation', () => {
 test.describe('Mobile Responsive Layout', () => {
   test('should display content in single column on mobile', async ({page}) => {
     await page.goto('/dashboard');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Get viewport width
     const viewportSize = page.viewportSize();
@@ -154,7 +154,7 @@ test.describe('Mobile Responsive Layout', () => {
 
   test('should scroll content horizontally for wide tables', async ({page}) => {
     await page.goto('/employees');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Find table container
     const tableContainer = page.locator('.overflow-x-auto').first();
@@ -177,7 +177,7 @@ test.describe('Mobile Responsive Layout', () => {
 
   test('should show mobile card view for employee list', async ({page}) => {
     await page.goto('/employees');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const viewportSize = page.viewportSize();
     const isMobile = viewportSize && viewportSize.width < 768;
@@ -200,7 +200,7 @@ test.describe('Mobile Responsive Layout', () => {
 test.describe('Mobile Forms', () => {
   test('should display form fields stacked vertically', async ({page}) => {
     await page.goto('/leave');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Try to open new leave form
     const newButton = page.getByRole('button', {name: /new|request|create/i}).first();
@@ -229,7 +229,7 @@ test.describe('Mobile Forms', () => {
 
   test('should have large touch-friendly input fields', async ({page}) => {
     await page.goto('/auth/login');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Check login form inputs
     const emailInput = page.locator('input[type="email"]');
@@ -253,7 +253,7 @@ test.describe('Mobile Forms', () => {
 test.describe('Mobile Header', () => {
   test('should show compact header on mobile', async ({page}) => {
     await page.goto('/dashboard');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const header = page.locator('header').first();
     await expect(header).toBeVisible();
@@ -265,7 +265,7 @@ test.describe('Mobile Header', () => {
 
   test('should show search when available', async ({page}) => {
     await page.goto('/dashboard');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const header = page.locator('header').first();
 
@@ -282,7 +282,7 @@ test.describe('Mobile Header', () => {
 
   test('should show user menu/profile button', async ({page}) => {
     await page.goto('/dashboard');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const header = page.locator('header').first();
 

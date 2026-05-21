@@ -95,10 +95,17 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   const router = useRouter();
   const pathname = usePathname();
   const {logout, user} = useAuth();
-  const {permissions, roles, hasPermission, isReady} = usePermissions();
+  const {roles, hasPermission, isReady} = usePermissions();
   const isSuperAdmin = useMemo(
     () => roles.includes(Roles.SUPER_ADMIN),
     [roles]
+  );
+  const canSeeAdminSection = useMemo(
+    () =>
+      isSuperAdmin ||
+      roles.includes(Roles.TENANT_ADMIN) ||
+      roles.includes(Roles.HR_MANAGER),
+    [isSuperAdmin, roles]
   );
 
   const {appCode} = useActiveApp();
@@ -203,13 +210,6 @@ const AppLayout: React.FC<AppLayoutProps> = ({
       return items;
     }
 
-    // Safety net: if user is authenticated but permissions are empty (JWT/migration issue),
-    // show all items rather than hiding everything except Home.
-    // SuperAdmin always sees everything regardless.
-    if (!isSuperAdmin && permissions.length === 0 && user) {
-      return items;
-    }
-
     const filterItem = (item: SidebarItem): SidebarItem | null => {
       if (!isSuperAdmin) {
         if (item.requiredPermission && !hasPermission(item.requiredPermission)) {
@@ -235,7 +235,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
     return items
       .map((item) => filterItem(item))
       .filter((item): item is SidebarItem => item !== null);
-  }, [isReady, isSuperAdmin, permissions, user, hasPermission]);
+  }, [isReady, isSuperAdmin, hasPermission]);
 
   // Filter sections by active app, then by RBAC permissions, then drop empty sections.
   // allowedSectionIds is derived inside useMemo so it doesn't create a new array
@@ -245,12 +245,13 @@ const AppLayout: React.FC<AppLayoutProps> = ({
     return menuSections
       // Show only sections that belong to the active app
       .filter((section) => allowedSectionIds.includes(section.id))
+      .filter((section) => section.id !== 'admin' || canSeeAdminSection)
       .map((section) => ({
         ...section,
         items: filterSidebarItems(section.items),
       }))
       .filter((section) => section.items.length > 0);
-  }, [menuSections, appCode, filterSidebarItems]);
+  }, [menuSections, appCode, canSeeAdminSection, filterSidebarItems]);
 
   // Flatten sections to items for backward compatibility (memoized)
   const menuItems: SidebarItem[] = useMemo(() =>
@@ -376,7 +377,8 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         {/* Content Area — scrollable, fills remaining vertical space */}
         <main
           id="main-content"
-          tabIndex={-1}
+          tabIndex={0}
+          aria-label="Main content"
           className="flex-1 overflow-y-auto overflow-x-hidden transition-colors duration-300 bg-transparent"
         >
           <AuthGuard>

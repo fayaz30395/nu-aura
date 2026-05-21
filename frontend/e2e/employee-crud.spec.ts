@@ -47,7 +47,7 @@ test.describe('Employee CRUD', () => {
 
     test('should search employees by name', async ({page}) => {
       await employeePage.searchEmployee('Fayaz');
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
 
       const searchValue = await employeePage.searchInput.inputValue();
       expect(searchValue).toBe('Fayaz');

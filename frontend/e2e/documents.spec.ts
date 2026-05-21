@@ -14,13 +14,13 @@ test.describe('Document Management', () => {
     await loginPage.navigate();
     await loginPage.login(testUsers.admin.email, testUsers.admin.password);
     await page.waitForURL('**/dashboard');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
   });
 
   test.describe('Letters & Documents', () => {
     test.beforeEach(async ({page}) => {
       await page.goto('/letters');
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
     });
 
     test('letters page loads with a heading', async ({page}) => {
@@ -67,7 +67,7 @@ test.describe('Document Management', () => {
   test.describe('NU-Drive', () => {
     test.beforeEach(async ({page}) => {
       await page.goto('/nu-drive');
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
     });
 
     test('nu-drive page loads', async ({page}) => {
@@ -104,7 +104,7 @@ test.describe('Document Management', () => {
       await page.waitForURL('**/dashboard');
 
       await page.goto('/letters');
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
 
       // Should render — not redirect to login
       expect(page.url()).toContain('/letters');
@@ -115,7 +115,7 @@ test.describe('Document Management', () => {
   test.describe('Sign Module', () => {
     test('sign/esign page is accessible to admin', async ({page}) => {
       await page.goto('/sign');
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
 
       expect(page.url()).toContain('/sign');
       // Page either loads content or shows coming-soon; should not crash

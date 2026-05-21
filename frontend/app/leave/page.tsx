@@ -468,7 +468,7 @@ function BentoTile({
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-4">
-            <h3 className="text-base font-semibold text-[var(--text-heading)]">{title}</h3>
+            <h3 className="text-base font-semibold text-[var(--text-primary)]">{title}</h3>
             {badge !== undefined && (
               <span className="inline-flex items-center justify-center min-w-6 px-2 h-5 text-2xs font-semibold rounded-full bg-warning-100 text-warning-700 dark:bg-warning-900/40 dark:text-warning-300">
                 {badge}

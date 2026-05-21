@@ -17,7 +17,7 @@ test.describe('Resource Management', () => {
 
   test('resources page loads', async ({page}) => {
     await page.goto('/resources');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await expect(page).not.toHaveURL(/auth\/login/);
     const heading = page.getByRole('heading').first();
     await expect(heading).toBeVisible({timeout: 10000});
@@ -25,14 +25,14 @@ test.describe('Resource Management', () => {
 
   test('resource approvals page is accessible', async ({page}) => {
     await page.goto('/resources/approvals');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await expect(page).not.toHaveURL(/auth\/login/);
     await expect(page.locator('text=Something went wrong')).not.toBeVisible();
   });
 
   test('allocation summary loads without error', async ({page}) => {
     await page.goto('/resources');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await expect(page.locator('text=Something went wrong')).not.toBeVisible();
     const main = page.locator('main, [role="main"]').first();
     await expect(main).toBeVisible();
@@ -40,14 +40,14 @@ test.describe('Resource Management', () => {
 
   test('resource pool shows employees or empty state', async ({page}) => {
     await page.goto('/resources');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     // Should not crash even if no data
     await expect(page.locator('text=Something went wrong')).not.toBeVisible();
   });
 
   test('allocation summary widget is visible', async ({page}) => {
     await page.goto('/resources');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     // Look for summary cards or percentage indicators
     const summaryEl = page.locator('[data-testid*="allocation"], [class*="allocation"], [class*="summary"]').first();
     if (await summaryEl.isVisible({timeout: 3000}).catch(() => false)) {
@@ -59,7 +59,7 @@ test.describe('Resource Management', () => {
 
   test('allocations summary page loads', async ({page}) => {
     await page.goto('/allocations/summary');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await expect(page).not.toHaveURL(/auth\/login/);
     await expect(page.locator('text=Something went wrong')).not.toBeVisible();
   });

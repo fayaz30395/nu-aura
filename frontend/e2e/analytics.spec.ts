@@ -1,31 +1,62 @@
-import {expect, test} from '@playwright/test';
+import {expect, Page, test} from '@playwright/test';
+import {seedLocalStoredAuth} from './fixtures/helpers';
+import {testUsers} from './fixtures/testData';
 
 /**
  * Analytics Dashboard E2E Tests
  * Tests the analytics page with charts and KPIs
  */
 
+test.describe.configure({mode: 'serial', timeout: 300000});
+
+async function gotoAnalytics(page: Page) {
+  const heading = page.getByText(/People, attendance, and payroll signals/i).first();
+  await page.goto('/analytics', {waitUntil: 'domcontentloaded', timeout: 90000});
+  if (await heading.isVisible({timeout: 120000}).catch(() => false)) {
+    return;
+  }
+
+  await seedLocalStoredAuth(page, testUsers.admin.email);
+  await page.goto('/analytics', {waitUntil: 'domcontentloaded', timeout: 90000});
+  await expect(heading).toBeVisible({timeout: 120000});
+}
+
+async function waitForAnalyticsData(page: Page) {
+  const metrics = page.locator('section[aria-label="Key metrics"]');
+  const analyticsError = page.getByText('Could not load analytics');
+
+  await expect.poll(async () => {
+    if (await metrics.isVisible().catch(() => false)) return 'ready';
+    if (await analyticsError.isVisible().catch(() => false)) return 'error';
+    return 'loading';
+  }, {
+    message: 'analytics data should finish loading',
+    timeout: 90000,
+  }).not.toBe('loading');
+
+  if (await analyticsError.isVisible().catch(() => false)) {
+    throw new Error(`Analytics page showed error: ${await analyticsError.locator('..').textContent()}`);
+  }
+}
+
 test.describe('Analytics Dashboard', () => {
   test.beforeEach(async ({page}) => {
-    // Navigate to analytics page - auth handled by setup
-    await page.goto('/analytics');
-    await page.waitForLoadState('networkidle');
+    await gotoAnalytics(page);
   });
 
   test('should display analytics page with header', async ({page}) => {
     // Verify page heading
-    await expect(page.locator('h1')).toContainText('Analytics Dashboard');
+    await expect(page.locator('h1')).toContainText('People, attendance, and payroll signals');
 
     // Verify subtitle
-    await expect(page.locator('text=Comprehensive HR metrics')).toBeVisible();
+    await expect(page.getByText(/Watch the trends that matter/i)).toBeVisible();
   });
 
   test('should display KPI cards', async ({page}) => {
-    // Wait for data to load
-    await page.waitForTimeout(2000);
+    await waitForAnalyticsData(page);
 
     // Check for KPI cards
-    const kpiTexts = ['Total Employees', 'Attendance Rate', 'Leave Utilization'];
+    const kpiTexts = ['Headcount', 'Attendance', 'Leave utilization'];
 
     for (const text of kpiTexts) {
       const card = page.locator(`text=${text}`).first();
@@ -35,19 +66,19 @@ test.describe('Analytics Dashboard', () => {
 
   test('should display time range selector', async ({page}) => {
     // Check for time range buttons
-    await expect(page.locator('button:has-text("7 Days")')).toBeVisible();
-    await expect(page.locator('button:has-text("30 Days")')).toBeVisible();
-    await expect(page.locator('button:has-text("90 Days")')).toBeVisible();
+    await expect(page.getByRole('button', {name: '7 days'})).toBeVisible();
+    await expect(page.getByRole('button', {name: '30 days'})).toBeVisible();
+    await expect(page.getByRole('button', {name: '90 days'})).toBeVisible();
   });
 
   test('should switch time range', async ({page}) => {
     // Click on 7 Days
-    await page.click('button:has-text("7 Days")');
+    await page.getByRole('button', {name: '7 days'}).click();
     await page.waitForTimeout(500);
 
     // Verify button is active (has primary color)
-    const sevenDaysBtn = page.locator('button:has-text("7 Days")');
-    await expect(sevenDaysBtn).toHaveClass(/bg-primary/);
+    const sevenDaysBtn = page.getByRole('button', {name: '7 days'});
+    await expect(sevenDaysBtn).toHaveAttribute('aria-pressed', 'true');
   });
 
   test('should display refresh button', async ({page}) => {
@@ -60,41 +91,41 @@ test.describe('Analytics Dashboard', () => {
     await page.click('button:has-text("Refresh")');
 
     // Should not show error
-    await page.waitForTimeout(2000);
+    await waitForAnalyticsData(page);
     await expect(page.locator('text=Error Loading Analytics')).not.toBeVisible();
   });
 
   test('should display attendance section', async ({page}) => {
-    await page.waitForTimeout(2000);
+    await waitForAnalyticsData(page);
 
     // Check for attendance trend card
-    await expect(page.locator('text=Attendance Trend')).toBeVisible();
+    await expect(page.getByText('Attendance trend')).toBeVisible();
 
     // Check for today's attendance card
-    await expect(page.locator("text=Today's Attendance")).toBeVisible();
+    await expect(page.getByText('Today', {exact: true})).toBeVisible();
   });
 
   test('should display leave section', async ({page}) => {
-    await page.waitForTimeout(2000);
+    await waitForAnalyticsData(page);
 
     // Check for leave by type card
-    await expect(page.locator('text=Leave by Type')).toBeVisible();
+    await expect(page.getByText('Leave by type')).toBeVisible();
 
     // Check for leave request summary
-    await expect(page.locator('text=Leave Request Summary')).toBeVisible();
+    await expect(page.getByText('Leave requests')).toBeVisible();
   });
 
   test('should display department distribution', async ({page}) => {
-    await page.waitForTimeout(2000);
+    await waitForAnalyticsData(page);
 
-    await expect(page.locator('text=Department Distribution')).toBeVisible();
+    await expect(page.getByText('Department distribution')).toBeVisible();
   });
 
   test('should display quick stats grid', async ({page}) => {
-    await page.waitForTimeout(2000);
+    await waitForAnalyticsData(page);
 
     // Check for quick stat items
-    const statTexts = ['On Time Today', 'Late Today', 'New Joiners', 'Exits This Month'];
+    const statTexts = ['On time today', 'Late today', 'New joiners', 'Exits this month'];
 
     for (const text of statTexts) {
       const stat = page.locator(`text=${text}`).first();
@@ -104,13 +135,17 @@ test.describe('Analytics Dashboard', () => {
 
   test('should handle loading state', async ({page}) => {
     // Navigate fresh to catch loading state
-    await page.goto('/analytics');
+    await page.goto('/analytics', {waitUntil: 'domcontentloaded', timeout: 90000});
 
-    // Either loading spinner or content should be visible
-    const hasSpinner = await page.locator('.animate-spin').isVisible().catch(() => false);
-    const hasContent = await page.locator('h1:has-text("Analytics")').isVisible().catch(() => false);
-
-    expect(hasSpinner || hasContent).toBe(true);
+    await expect.poll(async () => {
+      const hasStatus = await page.getByRole('status').first().isVisible().catch(() => false);
+      const hasSpinner = await page.locator('.animate-spin').isVisible().catch(() => false);
+      const hasContent = await page.getByText(/People, attendance, and payroll signals/i).first().isVisible().catch(() => false);
+      return hasStatus || hasSpinner || hasContent;
+    }, {
+      message: 'analytics should show loading status or page content',
+      timeout: 120000,
+    }).toBe(true);
   });
 });
 
@@ -119,26 +154,22 @@ test.describe('Analytics - Error Handling', () => {
     // Block API to simulate error
     await page.route('**/api/v1/analytics/**', route => route.abort());
 
-    await page.goto('/analytics');
-    await page.waitForTimeout(3000);
+    await page.goto('/analytics', {waitUntil: 'domcontentloaded', timeout: 90000});
 
     // Should show error or handle gracefully
-    const hasError = await page.locator('text=Error').isVisible().catch(() => false);
-    const hasRetry = await page.locator('button:has-text("Try Again")').isVisible().catch(() => false);
-
-    // Either shows error with retry or handles gracefully
-    expect(hasError || hasRetry || true).toBe(true);
+    await expect(page.getByRole('alert').filter({hasText: /Could not load analytics|Error/i}))
+      .toBeVisible({timeout: 60000});
+    await expect(page.getByRole('button', {name: /Retry/i})).toBeVisible();
   });
 });
 
 test.describe('Analytics - Data-Driven Validation', () => {
   test.beforeEach(async ({page}) => {
-    await page.goto('/analytics');
-    await page.waitForLoadState('networkidle');
+    await gotoAnalytics(page);
   });
 
   test('KPI values are numeric and not placeholders', async ({page}) => {
-    await page.waitForTimeout(2000);
+    await waitForAnalyticsData(page);
 
     // Locate KPI value elements
     const kpiCards = page.locator('[class*="stat"], [class*="kpi"], [class*="metric"]');
@@ -154,22 +185,22 @@ test.describe('Analytics - Data-Driven Validation', () => {
   });
 
   test('time range change updates chart data', async ({page}) => {
-    await page.waitForTimeout(2000);
+    await waitForAnalyticsData(page);
 
     // Capture initial state
     const initialContent = await page.locator('main').textContent().catch(() => '');
 
     // Switch time range
-    const sevenDaysBtn = page.locator('button:has-text("7 Days")');
+    const sevenDaysBtn = page.getByRole('button', {name: '7 days'});
     const hasBtn = await sevenDaysBtn.isVisible().catch(() => false);
 
     if (hasBtn) {
       await sevenDaysBtn.click();
-      await page.waitForTimeout(1500);
+      await waitForAnalyticsData(page);
 
       // Page should still render without error
       await expect(page.locator('text=Error Loading Analytics')).not.toBeVisible();
-      const hasContent = await page.locator('h1:has-text("Analytics")').isVisible().catch(() => false);
+      const hasContent = await page.getByRole('heading', {name: /People, attendance, and payroll signals/i}).isVisible().catch(() => false);
       expect(hasContent).toBe(true);
     }
 
@@ -177,9 +208,9 @@ test.describe('Analytics - Data-Driven Validation', () => {
   });
 
   test('department distribution chart renders data', async ({page}) => {
-    await page.waitForTimeout(2000);
+    await waitForAnalyticsData(page);
 
-    const deptSection = page.locator('text=Department Distribution');
+    const deptSection = page.getByText('Department distribution');
     const hasDept = await deptSection.isVisible().catch(() => false);
 
     if (hasDept) {
@@ -195,9 +226,9 @@ test.describe('Analytics - Data-Driven Validation', () => {
   });
 
   test('attendance trend chart renders with data points', async ({page}) => {
-    await page.waitForTimeout(2000);
+    await waitForAnalyticsData(page);
 
-    const trendSection = page.locator('text=Attendance Trend');
+    const trendSection = page.getByText('Attendance trend');
     const hasTrend = await trendSection.isVisible().catch(() => false);
 
     if (hasTrend) {

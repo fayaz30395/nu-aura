@@ -243,7 +243,7 @@ test.describe.serial('S1 — Hire-to-Retire @lifecycle', () => {
     await page.waitForTimeout(3000);
 
     // Retry loginAs up to 3 times — the STOMP WebSocket keeps the page
-    // network-busy, so waitForLoadState('networkidle') inside loginAs may
+    // network-busy, so waitForLoadState('domcontentloaded') inside loginAs may
     // time out on the first attempt.
     let loginOk = false;
     for (let attempt = 0; attempt < 3 && !loginOk; attempt++) {

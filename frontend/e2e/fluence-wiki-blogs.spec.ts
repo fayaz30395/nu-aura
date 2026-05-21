@@ -401,7 +401,7 @@ test.describe('Wiki Article View — /fluence/wiki/[slug]', () => {
     if (hasCard) {
       await articleCard.click();
       await page.waitForTimeout(1500);
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
 
       await expect(page.locator('main, [role="main"]').first()).toBeVisible({timeout: 10000});
       await expect(page.locator('text=/something went wrong/i').first()).not.toBeVisible();

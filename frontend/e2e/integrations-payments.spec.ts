@@ -76,7 +76,7 @@ test.describe('/integrations — Integration Marketplace', () => {
   test('RBAC: employee without INTEGRATION_MANAGE is redirected', async ({page}) => {
     await loginAs(page, testUsers.employee.email);
     await page.goto('/integrations');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
     // Employee should be redirected to /me/dashboard
     const url = page.url();
@@ -150,14 +150,14 @@ test.describe('/integrations/slack — Slack Integration Config', () => {
   test('back arrow button navigates to /integrations', async ({page}) => {
     const backBtn = page.locator('button').first();
     await backBtn.click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     expect(page.url()).toContain('/integrations');
   });
 
   test('RBAC: employee without INTEGRATION_MANAGE is redirected', async ({page}) => {
     await loginAs(page, testUsers.employee.email);
     await page.goto('/integrations/slack');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
     const url = page.url();
     expect(url).toContain('/me/dashboard');
@@ -247,7 +247,7 @@ test.describe('/payments — Payment Gateway', () => {
   test('RBAC: employee without PAYMENT_VIEW is redirected to /dashboard', async ({page}) => {
     await loginAs(page, testUsers.employee.email);
     await page.goto('/payments');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
     const url = page.url();
     expect(url).toContain('/dashboard');
@@ -335,7 +335,7 @@ test.describe('/payments/config — Payment Configuration', () => {
   test('RBAC: employee without PAYMENT_CONFIG is redirected', async ({page}) => {
     await loginAs(page, testUsers.employee.email);
     await page.goto('/payments/config');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
     const url = page.url();
     expect(url).toContain('/dashboard');
@@ -425,7 +425,7 @@ test.describe('/compliance — Compliance Dashboard', () => {
   test('RBAC: employee without COMPLIANCE_VIEW sees permission fallback', async ({page}) => {
     await loginAs(page, testUsers.employee.email);
     await page.goto('/compliance');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
     // PermissionGate renders a lock fallback with "Go to Dashboard" button for unauthorized users
     const hasFallback = await page.locator('text=/don.*t have permission|Go to Dashboard/i').first().isVisible().catch(() => false);
@@ -542,7 +542,7 @@ test.describe('/statutory-filings — Statutory Filing Reports', () => {
   test('RBAC: employee without STATUTORY_VIEW is redirected', async ({page}) => {
     await loginAs(page, testUsers.employee.email);
     await page.goto('/statutory-filings');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
 
     // Employee should be redirected to /me/dashboard

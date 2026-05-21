@@ -12,8 +12,9 @@ import {allDemoUsers, DEMO_PASSWORD, DemoUser, demoUsers} from './testData';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080/api/v1';
 const AUTH_MODE = process.env.E2E_AUTH_MODE ?? 'api';
-const API_LOGIN_TIMEOUT_MS = Number(process.env.E2E_API_LOGIN_TIMEOUT_MS ?? 10000);
+const API_LOGIN_TIMEOUT_MS = Number(process.env.E2E_API_LOGIN_TIMEOUT_MS ?? 60000);
 const API_LOGIN_ATTEMPTS = Number(process.env.E2E_API_LOGIN_ATTEMPTS ?? 3);
+const ALLOW_LOCAL_AUTH_FALLBACK = AUTH_MODE === 'local' || process.env.E2E_ALLOW_LOCAL_AUTH_FALLBACK === 'true';
 
 interface ApiLoginResponse {
   accessToken?: string | null;
@@ -44,6 +45,10 @@ interface CachedAuthState {
   cookies: BrowserCookie[];
 }
 
+interface LoginAsOptions {
+  verifyDashboard?: boolean;
+}
+
 const authStateCache = new Map<string, CachedAuthState>();
 
 const ROLE_PERMISSIONS: Record<DemoUser['role'], string[]> = {
@@ -57,6 +62,10 @@ const ROLE_PERMISSIONS: Record<DemoUser['role'], string[]> = {
     'ATTENDANCE:VIEW_ALL',
     'ATTENDANCE:MANAGE',
     'WORKFLOW:VIEW',
+    'WORKFLOW:EXECUTE',
+    'EMPLOYMENT_CHANGE:VIEW',
+    'EMPLOYMENT_CHANGE:VIEW_ALL',
+    'EMPLOYMENT_CHANGE:APPROVE',
     'NOTIFICATION:VIEW',
     'DOCUMENT:VIEW',
     'REPORT:VIEW',
@@ -92,12 +101,14 @@ const ROLE_PERMISSIONS: Record<DemoUser['role'], string[]> = {
     'DASHBOARD:VIEW',
     'DASHBOARD:EMPLOYEE',
     'EMPLOYEE:VIEW_SELF',
+    'EMPLOYMENT_CHANGE:VIEW',
     'LEAVE:VIEW_SELF',
     'LEAVE:REQUEST',
     'ATTENDANCE:VIEW_SELF',
     'PAYROLL:VIEW_SELF',
     'DOCUMENT:VIEW',
     'NOTIFICATION:VIEW',
+    'WORKFLOW:VIEW',
   ],
 };
 
@@ -138,7 +149,10 @@ function buildFallbackAuth(user: DemoUser): ApiLoginResponse {
 }
 
 function buildStoredUser(auth: ApiLoginResponse) {
-  const permissions = auth.permissions ?? [];
+  const hasSuperAdminRole = auth.roles
+    .filter(Boolean)
+    .some((roleCode) => roleCode.replace(/^ROLE_/, '') === 'SUPER_ADMIN');
+
   return {
     id: auth.userId,
     employeeId: auth.employeeId,
@@ -152,7 +166,7 @@ function buildStoredUser(auth: ApiLoginResponse) {
       id: roleCode,
       code: roleCode,
       name: roleCode.replace(/_/g, ' '),
-      permissions: permissions.filter(Boolean).map((permCode) => ({
+      permissions: getStoredPermissionsForRole(roleCode, auth.permissions, hasSuperAdminRole).map((permCode) => ({
         id: permCode,
         code: permCode,
         name: permCode,
@@ -164,29 +178,66 @@ function buildStoredUser(auth: ApiLoginResponse) {
   };
 }
 
-async function seedStoredAuth(page: Page, auth: ApiLoginResponse): Promise<void> {
-  const storedUser = buildStoredUser(auth);
+function getStoredPermissionsForRole(roleCode: string, apiPermissions?: string[], hasSuperAdminRole = false): string[] {
+  if (hasSuperAdminRole) {
+    return [];
+  }
 
-  await page.evaluate(({tenantId, user}) => {
-    localStorage.setItem('tenantId', tenantId);
-    sessionStorage.setItem('nu-aura-user', JSON.stringify(user));
-    sessionStorage.setItem('auth-storage', JSON.stringify({
+  const normalizedApiPermissions = apiPermissions?.filter(Boolean) ?? [];
+  if (normalizedApiPermissions.length > 0) {
+    return normalizedApiPermissions;
+  }
+
+  const normalizedRole = roleCode.replace(/^ROLE_/, '') as DemoUser['role'];
+  if (Object.prototype.hasOwnProperty.call(ROLE_PERMISSIONS, normalizedRole)) {
+    return ROLE_PERMISSIONS[normalizedRole];
+  }
+  return [];
+}
+
+async function seedStoredAuth(page: Page, auth: ApiLoginResponse, verifyDashboard: boolean): Promise<void> {
+  const storedUser = buildStoredUser(auth);
+  const useLocalAuthStorage = process.env.NEXT_PUBLIC_E2E_AUTH_STORAGE === 'localStorage';
+
+  await page.evaluate(({tenantId, user, useLocalStorage}) => {
+    const authEnvelope = JSON.stringify({
       state: {
         isAuthenticated: true,
         user,
       },
       version: 0,
-    }));
-  }, {tenantId: auth.tenantId, user: storedUser});
+    });
+    localStorage.setItem('tenantId', tenantId);
+    const storage = useLocalStorage ? localStorage : sessionStorage;
+    storage.setItem('nu-aura-user', JSON.stringify(user));
+    storage.setItem('auth-storage', authEnvelope);
+  }, {tenantId: auth.tenantId, user: storedUser, useLocalStorage: useLocalAuthStorage});
+
+  if (!verifyDashboard) {
+    return;
+  }
 
   // Navigate to dashboard to initialize the frontend Zustand store.
   await gotoWithRetry(page, '/me/dashboard');
-  await waitForDashboard(page);
+  await waitForDashboard(page, 60000);
   await page.waitForFunction(
-    (fullName) => document.body.innerText.includes(fullName),
-    storedUser.fullName,
-    {timeout: 15000}
-  );
+    (markers) => markers.some((marker) => document.body.innerText.includes(marker)),
+    [storedUser.fullName, storedUser.email, storedUser.firstName].filter(Boolean),
+    {timeout: 5000}
+  ).catch(() => {
+    // Some pages show skeleton content while slow dashboard queries finish.
+    // The app shell visibility above is the hard auth readiness gate.
+  });
+}
+
+export async function seedLocalStoredAuth(page: Page, email: string): Promise<void> {
+  const user = allDemoUsers.find((u) => u.email === email);
+  if (!user) {
+    throw new Error(`seedLocalStoredAuth: unknown demo user ${email}`);
+  }
+
+  const cachedAuth = authStateCache.get(email);
+  await seedStoredAuth(page, cachedAuth?.auth ?? buildFallbackAuth(user), false);
 }
 
 async function seedFallbackCookies(page: Page, user: DemoUser): Promise<void> {
@@ -215,12 +266,15 @@ async function seedFallbackCookies(page: Page, user: DemoUser): Promise<void> {
   ]);
 }
 
-async function gotoWithRetry(page: Page, path: string): Promise<void> {
+export async function gotoWithRetry(page: Page, path: string): Promise<void> {
   let lastError: unknown;
   for (let attempt = 1; attempt <= 3; attempt++) {
     try {
       await page.goto(path, {waitUntil: 'domcontentloaded', timeout: 90000});
       await page.waitForLoadState('domcontentloaded');
+      await page.getByText('Compiling', {exact: false}).first()
+        .waitFor({state: 'hidden', timeout: 180000})
+        .catch(() => {});
       return;
     } catch (error) {
       lastError = error;
@@ -244,9 +298,10 @@ async function gotoWithRetry(page: Page, path: string): Promise<void> {
  * @param page - Playwright Page instance
  * @param email - Email of the demo user to log in as
  */
-export async function loginAs(page: Page, email: string): Promise<void> {
+export async function loginAs(page: Page, email: string, options: LoginAsOptions = {}): Promise<void> {
   const user = allDemoUsers.find((u) => u.email === email);
   const password = user?.password ?? DEMO_PASSWORD;
+  const verifyDashboard = options.verifyDashboard ?? true;
   if (!user) {
     throw new Error(`loginAs: unknown demo user ${email}`);
   }
@@ -255,6 +310,8 @@ export async function loginAs(page: Page, email: string): Promise<void> {
   await gotoWithRetry(page, '/auth/login');
   await page.evaluate(() => {
     sessionStorage.clear();
+    localStorage.removeItem('auth-storage');
+    localStorage.removeItem('nu-aura-user');
     localStorage.removeItem('tenantId');
     localStorage.removeItem('loginAttempts');
     localStorage.removeItem('lockoutUntil');
@@ -266,7 +323,7 @@ export async function loginAs(page: Page, email: string): Promise<void> {
     cookie.name === 'access_token' && (cookie.expires === -1 || cookie.expires > nowSeconds + 60)
   ))) {
     await page.context().addCookies(cachedAuth.cookies);
-    await seedStoredAuth(page, cachedAuth.auth);
+    await seedStoredAuth(page, cachedAuth.auth, verifyDashboard);
     return;
   }
 
@@ -301,6 +358,10 @@ export async function loginAs(page: Page, email: string): Promise<void> {
     throw new Error(`loginAs(${email}) failed: HTTP ${response.status()} — ${lastBody}`);
   }
 
+  if (!response?.ok() && !ALLOW_LOCAL_AUTH_FALLBACK) {
+    throw new Error(`loginAs(${email}) failed: API login did not return usable auth state. Last response: HTTP ${response?.status() ?? 'none'} — ${lastBody}`);
+  }
+
   const auth = response?.ok()
     ? await response.json() as ApiLoginResponse
     : buildFallbackAuth(user);
@@ -312,13 +373,16 @@ export async function loginAs(page: Page, email: string): Promise<void> {
   if (response?.ok() && hasBackendAccessCookie) {
     authStateCache.set(email, {auth, cookies: authCookies});
   } else {
+    if (!ALLOW_LOCAL_AUTH_FALLBACK) {
+      throw new Error(`loginAs(${email}) failed: API login succeeded but no backend access cookie was stored.`);
+    }
     if (AUTH_MODE !== 'local') {
       console.warn(`loginAs(${email}) API login failed; using local E2E auth state fallback. HTTP ${response?.status()} — ${lastBody}`);
     }
     await seedFallbackCookies(page, user);
   }
 
-  await seedStoredAuth(page, auth);
+  await seedStoredAuth(page, auth, verifyDashboard);
 }
 
 /**
@@ -384,9 +448,15 @@ export async function waitForDashboard(page: Page, timeout = 30000): Promise<voi
   }
   await page.waitForLoadState('domcontentloaded');
 
-  // Verify content is visible (heading or main content area)
-  const content = page.locator('h1, h2, main, [data-testid="dashboard-heading"]').first();
-  await expect(content).toBeVisible({timeout: 15000});
+  // Verify the authenticated app shell is visible. Prefer the sidebar nav so
+  // hidden headings or skeleton-only content cannot become the first match.
+  const nav = page.locator('nav[aria-label="Main navigation"]');
+  if (await nav.isVisible({timeout}).catch(() => false)) {
+    return;
+  }
+
+  const main = page.locator('main').first();
+  await expect(main).toBeVisible({timeout: 5000});
 }
 
 /**

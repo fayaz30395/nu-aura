@@ -19,7 +19,7 @@ test.describe('Custom Fields — Admin', () => {
   test.describe('Page Load & Layout', () => {
     test.beforeEach(async ({page}) => {
       await page.goto('/admin/custom-fields');
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
     });
 
     test('custom fields page loads with a heading', async ({page}) => {
@@ -66,7 +66,7 @@ test.describe('Custom Fields — Admin', () => {
   test.describe('Create Custom Field', () => {
     test.beforeEach(async ({page}) => {
       await page.goto('/admin/custom-fields');
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
       await page.waitForTimeout(500);
     });
 
@@ -137,7 +137,7 @@ test.describe('Custom Fields — Admin', () => {
   test.describe('Existing Fields — Actions', () => {
     test.beforeEach(async ({page}) => {
       await page.goto('/admin/custom-fields');
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
       await page.waitForTimeout(1000);
     });
 
@@ -182,7 +182,7 @@ test.describe('Custom Fields — Admin', () => {
       await page.waitForURL('**/dashboard');
 
       await page.goto('/admin/custom-fields');
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
       await page.waitForTimeout(1000);
 
       // Should either redirect or show access denied

@@ -14,7 +14,7 @@ import {demoUsers} from './fixtures/testData';
 test.describe('Timesheets Page', () => {
   test.beforeEach(async ({page}) => {
     await page.goto('/timesheets');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
   });
 
   test('should display timesheets page with heading', async ({page}) => {
@@ -75,7 +75,7 @@ test.describe('Timesheets - Log Daily Hours', () => {
     await loginAs(page, demoUsers.employeeSaran.email);
 
     await page.goto('/timesheets');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
 
     // Look for hour input fields (typically one per day per project)
@@ -111,7 +111,7 @@ test.describe('Timesheets - Log Daily Hours', () => {
     await loginAs(page, demoUsers.employeeSaran.email);
 
     await page.goto('/timesheets');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
 
     // Look for project selector or project rows
@@ -133,7 +133,7 @@ test.describe('Timesheets - Log Daily Hours', () => {
     await loginAs(page, demoUsers.employeeSaran.email);
 
     await page.goto('/timesheets');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
 
     // Look for "Add Row" or "Add Project" button
@@ -160,7 +160,7 @@ test.describe('Timesheets - Submit Weekly Timesheet', () => {
     await loginAs(page, demoUsers.employeeSaran.email);
 
     await page.goto('/timesheets');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
 
     // Look for submit button
@@ -192,7 +192,7 @@ test.describe('Timesheets - Submit Weekly Timesheet', () => {
     await loginAs(page, demoUsers.employeeSaran.email);
 
     await page.goto('/timesheets');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
 
     // Look for total hours display
@@ -217,7 +217,7 @@ test.describe('Timesheets - PM Approval', () => {
     await loginAs(page, demoUsers.managerEng.email);
 
     await page.goto('/timesheets');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
 
     // Look for approval tab or team timesheets section
@@ -240,7 +240,7 @@ test.describe('Timesheets - PM Approval', () => {
     await loginAs(page, demoUsers.managerEng.email);
 
     await page.goto('/timesheets');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
 
     // Navigate to approval view
@@ -266,7 +266,7 @@ test.describe('Timesheets - PM Approval', () => {
     await loginAs(page, demoUsers.managerEng.email);
 
     await page.goto('/timesheets');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
 
     const approvalTab = page
@@ -295,7 +295,7 @@ test.describe('Timesheets - PM Approval', () => {
     // Step 2: Verify in employee dashboard
     await switchUser(page, demoUsers.managerEng.email, demoUsers.employeeSaran.email);
     await page.goto('/me/dashboard');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
 
     // Dashboard should show approved hours or timesheet status
@@ -308,7 +308,7 @@ test.describe('Timesheets - PM Approval', () => {
 test.describe('Timesheets - Status Tracking', () => {
   test.beforeEach(async ({page}) => {
     await page.goto('/timesheets');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
   });
 
   test('should display timesheet status badges', async ({page}) => {
@@ -343,7 +343,7 @@ test.describe('Timesheets - Status Tracking', () => {
 test.describe('Timesheets - Visual Elements', () => {
   test.beforeEach(async ({page}) => {
     await page.goto('/timesheets');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
   });
 
   test('should have proper layout with main content area', async ({page}) => {

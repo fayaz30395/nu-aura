@@ -27,7 +27,12 @@ export default function AppSwitcher() {
   const {appCode, app, hasAppAccess, getAppEntryRoute} = useActiveApp();
   const [isOpen, setIsOpen] = useState(false);
   const [isNavigating, setIsNavigating] = useState(false);
+  const [isHydrated, setIsHydrated] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
 
   // Close on click outside
   useEffect(() => {
@@ -97,7 +102,9 @@ export default function AppSwitcher() {
       <button
         onClick={() => setIsOpen(!isOpen)}
         aria-label="Switch application"
+        aria-haspopup="menu"
         aria-expanded={isOpen}
+        data-hydrated={isHydrated ? 'true' : 'false'}
         className="flex items-center gap-4 px-4 py-2 rounded-lg bg-[var(--bg-card)] hover:bg-[var(--bg-card-hover)] border border-[var(--border-main)] transition-colors duration-150 shadow-card"
       >
         <div className="w-9 h-9 rounded-lg bg-accent flex items-center justify-center">
@@ -124,6 +131,9 @@ export default function AppSwitcher() {
             exit={{opacity: 0, y: -4}}
             transition={{duration: 0.15, ease: [0.4, 0, 0.2, 1]}}
             className="absolute top-full left-0 mt-2 w-[320px] bg-dropdown border border-dropdown-border rounded-lg overflow-hidden shadow-dropdown z-50"
+            role="menu"
+            aria-label="App switcher menu"
+            data-testid="app-switcher-menu"
           >
             {/* Header */}
             <div className="px-6 py-4 bg-[var(--bg-surface)] border-b border-[var(--dropdown-divider)]">
@@ -164,6 +174,8 @@ export default function AppSwitcher() {
                       <button
                         onClick={() => handleAppClick(targetApp)}
                         disabled={isLocked}
+                        role="menuitem"
+                        aria-label={targetApp.name}
                         className={`
                           relative flex flex-col items-center gap-4 p-4 rounded-lg
                           transition-all duration-150 group w-full h-full

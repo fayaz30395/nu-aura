@@ -166,7 +166,7 @@ for (const [role, ucs] of byRole.entries()) {
         let reason = '';
         try {
           await page.goto(uc.route, {waitUntil: 'domcontentloaded', timeout: 20000});
-          await page.waitForLoadState('networkidle', {timeout: 8000}).catch(() => {
+          await page.waitForLoadState('domcontentloaded', {timeout: 8000}).catch(() => {
           });
           observedUrl = new URL(page.url()).pathname;
           if (uc.expect === 'render') {

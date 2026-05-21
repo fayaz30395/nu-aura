@@ -49,7 +49,7 @@ test.describe('Learning Dashboard (/learning)', () => {
   test('Course Catalog tab shows courses or empty state', async ({page}) => {
     await navigateTo(page, '/learning');
     await page.getByRole('button', {name: /course catalog/i}).click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const hasCards = await page
       .locator('[class*="rounded-lg"][class*="shadow"]')
@@ -66,7 +66,7 @@ test.describe('Learning Dashboard (/learning)', () => {
   test('My Courses tab shows enrollments or empty state', async ({page}) => {
     await navigateTo(page, '/learning');
     await page.getByRole('button', {name: /my courses/i}).click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const hasEnrollments = await page
       .getByText(/enrolled|in progress|continue|review/i)
@@ -83,7 +83,7 @@ test.describe('Learning Dashboard (/learning)', () => {
   test('Certificates tab shows certificates or empty state', async ({page}) => {
     await navigateTo(page, '/learning');
     await page.getByRole('button', {name: /certificates/i}).click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const hasCerts = await page
       .getByText(/certificate number|active|earned/i)
@@ -100,7 +100,7 @@ test.describe('Learning Dashboard (/learning)', () => {
   test('progress bar renders for enrolled courses in My Courses tab', async ({page}) => {
     await navigateTo(page, '/learning');
     await page.getByRole('button', {name: /my courses/i}).click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const hasProgressBar = await page
       .locator('[role="progressbar"]')
@@ -114,7 +114,7 @@ test.describe('Learning Dashboard (/learning)', () => {
   test('Enroll Now button is visible on course cards in Catalog tab', async ({page}) => {
     await navigateTo(page, '/learning');
     await page.getByRole('button', {name: /course catalog/i}).click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const hasEnrollBtn = await page
       .getByRole('button', {name: /enroll now/i})
@@ -128,7 +128,7 @@ test.describe('Learning Dashboard (/learning)', () => {
   test('difficulty badges show correct labels on course cards', async ({page}) => {
     await navigateTo(page, '/learning');
     await page.getByRole('button', {name: /course catalog/i}).click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const hasDifficultyBadge = await page
       .getByText(/beginner|intermediate|advanced/i)
@@ -140,7 +140,7 @@ test.describe('Learning Dashboard (/learning)', () => {
 
   test('page does not crash with error state visible', async ({page}) => {
     await navigateTo(page, '/learning');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await expect(page.getByText(/something went wrong/i)).not.toBeVisible({timeout: 5000}).catch(() => undefined);
   });
 
@@ -176,7 +176,7 @@ test.describe('Course Detail (/learning/courses/[id])', () => {
 
   test('navigating to a non-existent course ID shows error or not-found', async ({page}) => {
     await page.goto('/learning/courses/non-existent-course-id-xyz');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     // Should show either a 404/not-found or course not found message — never crash silently
     const hasError = await page
       .getByText(/not found|course not found|back to learning/i)
@@ -190,7 +190,7 @@ test.describe('Course Detail (/learning/courses/[id])', () => {
     // First get a valid course from the catalog
     await navigateTo(page, '/learning');
     await page.getByRole('button', {name: /course catalog/i}).click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // If a course exists, check its detail page
     const courseCard = page.locator('[class*="rounded-lg"][class*="shadow-"]').nth(5);
@@ -199,7 +199,7 @@ test.describe('Course Detail (/learning/courses/[id])', () => {
     if (hasCourseCard) {
       // Navigate directly to a known-format course URL
       await page.goto('/learning/courses/test-id-placeholder');
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
 
       const backLink = page.getByRole('link', {name: /back to learning/i});
       const hasBackLink = await backLink.isVisible({timeout: 5000}).catch(() => false);
@@ -214,7 +214,7 @@ test.describe('Course Detail (/learning/courses/[id])', () => {
   test('course detail page shows hero section with title', async ({page}) => {
     await navigateTo(page, '/learning');
     await page.getByRole('button', {name: /my courses/i}).click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Try to find a Continue link to a real course
     const continueLink = page.getByRole('link', {name: /continue|review/i}).first();
@@ -222,7 +222,7 @@ test.describe('Course Detail (/learning/courses/[id])', () => {
 
     if (hasContinueLink) {
       await continueLink.click();
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
       // Should show heading with course title
       const heading = page.getByRole('heading').first();
       await expect(heading).toBeVisible({timeout: 10000});
@@ -233,7 +233,7 @@ test.describe('Course Detail (/learning/courses/[id])', () => {
   test('course detail shows curriculum section when modules exist', async ({page}) => {
     await navigateTo(page, '/learning');
     await page.getByRole('button', {name: /my courses/i}).click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const continueLink = page.getByRole('link', {name: /continue|review/i}).first();
     const hasContinueLink = await continueLink.isVisible({timeout: 5000}).catch(() => false);
@@ -242,7 +242,7 @@ test.describe('Course Detail (/learning/courses/[id])', () => {
       const href = await continueLink.getAttribute('href');
       if (href) {
         await page.goto(href);
-        await page.waitForLoadState('networkidle');
+        await page.waitForLoadState('domcontentloaded');
         const curriculumHeading = await page
           .getByText(/course curriculum/i)
           .isVisible({timeout: 8000})
@@ -256,7 +256,7 @@ test.describe('Course Detail (/learning/courses/[id])', () => {
   test('Enroll & Start button is visible for non-enrolled user with permission', async ({page}) => {
     await navigateTo(page, '/learning');
     await page.getByRole('button', {name: /course catalog/i}).click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // The enroll button on the catalog tab uses aria-label
     const hasEnrollBtn = await page
@@ -270,7 +270,7 @@ test.describe('Course Detail (/learning/courses/[id])', () => {
   test('progress section shows for enrolled course', async ({page}) => {
     await navigateTo(page, '/learning');
     await page.getByRole('button', {name: /my courses/i}).click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Check if any enrollment shows a progress percentage
     const hasProgress = await page
@@ -284,7 +284,7 @@ test.describe('Course Detail (/learning/courses/[id])', () => {
   test('module accordion can be toggled in curriculum', async ({page}) => {
     await navigateTo(page, '/learning');
     await page.getByRole('button', {name: /my courses/i}).click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const continueLink = page.getByRole('link', {name: /continue|review/i}).first();
     const hasContinueLink = await continueLink.isVisible({timeout: 5000}).catch(() => false);
@@ -293,7 +293,7 @@ test.describe('Course Detail (/learning/courses/[id])', () => {
       const href = await continueLink.getAttribute('href');
       if (href) {
         await page.goto(href);
-        await page.waitForLoadState('networkidle');
+        await page.waitForLoadState('domcontentloaded');
         // Find the first module toggle button in curriculum
         const moduleToggle = page.locator('[class*="w-full"][class*="row-between"], button:has(svg)').first();
         const hasToggle = await moduleToggle.isVisible({timeout: 5000}).catch(() => false);
@@ -311,7 +311,7 @@ test.describe('Course Detail (/learning/courses/[id])', () => {
   test('Download Certificate button is shown for completed course with certificate', async ({page}) => {
     await navigateTo(page, '/learning');
     await page.getByRole('button', {name: /my courses/i}).click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const completedCourse = page.getByText(/review/i).first();
     const hasCompleted = await completedCourse.isVisible({timeout: 5000}).catch(() => false);
@@ -322,7 +322,7 @@ test.describe('Course Detail (/learning/courses/[id])', () => {
       const href = await reviewLink.getAttribute('href').catch(() => null);
       if (href) {
         await page.goto(href);
-        await page.waitForLoadState('networkidle');
+        await page.waitForLoadState('domcontentloaded');
         const downloadBtn = await page
           .getByRole('button', {name: /download certificate/i})
           .isVisible({timeout: 5000})
@@ -345,7 +345,7 @@ test.describe('Course Player (/learning/courses/[id]/play)', () => {
     // An employee without TRAINING_VIEW / LMS_COURSE_VIEW should be redirected
     await loginAs(page, demoUsers.employeeRaj.email);
     await page.goto('/learning/courses/some-course-id/play');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     // Should redirect or show access denied — not crash
     expect(true).toBe(true);
   });
@@ -353,7 +353,7 @@ test.describe('Course Player (/learning/courses/[id]/play)', () => {
   test('player page loads with sidebar and content area for enrolled course', async ({page}) => {
     await navigateTo(page, '/learning');
     await page.getByRole('button', {name: /my courses/i}).click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const continueLink = page.getByRole('link', {name: /continue/i}).first();
     const hasContinueLink = await continueLink.isVisible({timeout: 5000}).catch(() => false);
@@ -364,7 +364,7 @@ test.describe('Course Player (/learning/courses/[id]/play)', () => {
         // Navigate to the play route
         const playUrl = href.replace('/learning/course/', '/learning/courses/') + '/play';
         await page.goto(playUrl);
-        await page.waitForLoadState('networkidle');
+        await page.waitForLoadState('domcontentloaded');
         // Either loads the player or redirects — should not throw
         await expect(page.getByText(/something went wrong/i)).not.toBeVisible({timeout: 5000}).catch(() => undefined);
       }
@@ -374,7 +374,7 @@ test.describe('Course Player (/learning/courses/[id]/play)', () => {
 
   test('player top bar shows close (X) and menu toggle buttons', async ({page}) => {
     await page.goto('/learning/courses/test-course-id/play');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // If player loads (user has permission), check for navigation controls
     const hasClose = await page.locator('a[href="/learning"], button:has(svg)').first().isVisible({timeout: 5000}).catch(() => false);
@@ -384,7 +384,7 @@ test.describe('Course Player (/learning/courses/[id]/play)', () => {
   test('course sidebar shows content list grouped by module', async ({page}) => {
     await navigateTo(page, '/learning');
     await page.getByRole('button', {name: /my courses/i}).click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const continueLink = page.getByRole('link', {name: /continue/i}).first();
     const hasContinueLink = await continueLink.isVisible({timeout: 5000}).catch(() => false);
@@ -395,7 +395,7 @@ test.describe('Course Player (/learning/courses/[id]/play)', () => {
         const courseId = href.split('/').pop();
         if (courseId) {
           await page.goto(`/learning/courses/${courseId}/play`);
-          await page.waitForLoadState('networkidle');
+          await page.waitForLoadState('domcontentloaded');
 
           const hasCourseSidebar = await page
             .getByText(/course content/i)
@@ -411,7 +411,7 @@ test.describe('Course Player (/learning/courses/[id]/play)', () => {
   test('Mark as Complete button appears for TEXT/DOCUMENT content', async ({page}) => {
     await navigateTo(page, '/learning');
     await page.getByRole('button', {name: /my courses/i}).click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const continueLink = page.getByRole('link', {name: /continue/i}).first();
     const hasContinueLink = await continueLink.isVisible({timeout: 5000}).catch(() => false);
@@ -422,7 +422,7 @@ test.describe('Course Player (/learning/courses/[id]/play)', () => {
         const courseId = href.split('/').pop();
         if (courseId) {
           await page.goto(`/learning/courses/${courseId}/play`);
-          await page.waitForLoadState('networkidle');
+          await page.waitForLoadState('domcontentloaded');
           const hasMarkComplete = await page
             .getByRole('button', {name: /mark as complete/i})
             .first()
@@ -437,7 +437,7 @@ test.describe('Course Player (/learning/courses/[id]/play)', () => {
 
   test('progress percentage updates in player top bar', async ({page}) => {
     await page.goto('/learning/courses/test-course/play');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const hasProgressBar = await page
       .locator('[class*="bg-accent-600"][class*="rounded-full"]')
@@ -450,7 +450,7 @@ test.describe('Course Player (/learning/courses/[id]/play)', () => {
   test('previous and next navigation buttons are rendered', async ({page}) => {
     await navigateTo(page, '/learning');
     await page.getByRole('button', {name: /my courses/i}).click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const continueLink = page.getByRole('link', {name: /continue/i}).first();
     const hasContinueLink = await continueLink.isVisible({timeout: 5000}).catch(() => false);
@@ -461,7 +461,7 @@ test.describe('Course Player (/learning/courses/[id]/play)', () => {
         const courseId = href.split('/').pop();
         if (courseId) {
           await page.goto(`/learning/courses/${courseId}/play`);
-          await page.waitForLoadState('networkidle');
+          await page.waitForLoadState('domcontentloaded');
           const hasPrev = await page
             .getByRole('button', {name: /previous/i})
             .first()
@@ -482,7 +482,7 @@ test.describe('Course Player (/learning/courses/[id]/play)', () => {
   test('completion overlay appears when all content is completed', async ({page}) => {
     // This test verifies the overlay DOM exists and is hidden by default
     await page.goto('/learning/courses/test/play');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     // The overlay is controlled by showCompletion state — it's hidden by default
     const hasCompletionOverlay = await page
       .getByText(/course complete/i)
@@ -495,7 +495,7 @@ test.describe('Course Player (/learning/courses/[id]/play)', () => {
   test('admin can access course player', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await page.goto('/learning/courses/test/play');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await expect(page).not.toHaveURL(/auth\/login/, {timeout: 5000});
   });
 });
@@ -511,7 +511,7 @@ test.describe('Quiz Page (/learning/courses/[id]/quiz/[quizId])', () => {
     // Navigate to a course detail page that has quizzes
     await navigateTo(page, '/learning');
     await page.getByRole('button', {name: /my courses/i}).click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Find Take Quiz button if any quiz is listed on course detail
     const continueLink = page.getByRole('link', {name: /continue/i}).first();
@@ -523,14 +523,14 @@ test.describe('Quiz Page (/learning/courses/[id]/quiz/[quizId])', () => {
         const courseId = href.split('/').pop();
         if (courseId) {
           await page.goto(`/learning/courses/${courseId}`);
-          await page.waitForLoadState('networkidle');
+          await page.waitForLoadState('domcontentloaded');
 
           const takeQuizBtn = page.getByRole('button', {name: /take quiz|retry/i}).first();
           const hasQuiz = await takeQuizBtn.isVisible({timeout: 5000}).catch(() => false);
 
           if (hasQuiz) {
             await takeQuizBtn.click();
-            await page.waitForLoadState('networkidle');
+            await page.waitForLoadState('domcontentloaded');
             // Should show intro state with instructions
             const hasInstructions = await page
               .getByText(/instructions|total questions|passing score|start quiz/i)
@@ -547,7 +547,7 @@ test.describe('Quiz Page (/learning/courses/[id]/quiz/[quizId])', () => {
 
   test('non-existent quiz shows error state', async ({page}) => {
     await page.goto('/learning/courses/test-course-id/quiz/non-existent-quiz-id');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     const hasError = await page
       .getByText(/not found|failed|quiz not found|back to course/i)
       .first()
@@ -558,7 +558,7 @@ test.describe('Quiz Page (/learning/courses/[id]/quiz/[quizId])', () => {
 
   test('Start Quiz button triggers quiz state transition', async ({page}) => {
     await page.goto('/learning/courses/test-course/quiz/test-quiz-id');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const startBtn = page.getByRole('button', {name: /start quiz/i});
     const hasStart = await startBtn.isVisible({timeout: 5000}).catch(() => false);
@@ -579,7 +579,7 @@ test.describe('Quiz Page (/learning/courses/[id]/quiz/[quizId])', () => {
 
   test('quiz question navigator shows numbered buttons', async ({page}) => {
     await page.goto('/learning/courses/test-course/quiz/test-quiz');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const startBtn = page.getByRole('button', {name: /start quiz/i});
     const hasStart = await startBtn.isVisible({timeout: 5000}).catch(() => false);
@@ -599,7 +599,7 @@ test.describe('Quiz Page (/learning/courses/[id]/quiz/[quizId])', () => {
 
   test('quiz shows timer when time limit is set', async ({page}) => {
     await page.goto('/learning/courses/test-course/quiz/test-quiz');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const startBtn = page.getByRole('button', {name: /start quiz/i});
     const hasStart = await startBtn.isVisible({timeout: 5000}).catch(() => false);
@@ -621,7 +621,7 @@ test.describe('Quiz Page (/learning/courses/[id]/quiz/[quizId])', () => {
 
   test('Submit Quiz button is disabled until all questions are answered', async ({page}) => {
     await page.goto('/learning/courses/test-course/quiz/test-quiz');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const startBtn = page.getByRole('button', {name: /start quiz/i});
     const hasStart = await startBtn.isVisible({timeout: 5000}).catch(() => false);
@@ -644,7 +644,7 @@ test.describe('Quiz Page (/learning/courses/[id]/quiz/[quizId])', () => {
 
   test('quiz result screen shows pass/fail and score after submission', async ({page}) => {
     await page.goto('/learning/courses/test-course/quiz/test-quiz');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // In a real scenario with data, we'd walk through questions
     // Verify result state elements exist in the DOM structure
@@ -658,7 +658,7 @@ test.describe('Quiz Page (/learning/courses/[id]/quiz/[quizId])', () => {
 
   test('Back to Course link navigates to course detail', async ({page}) => {
     await page.goto('/learning/courses/test-course-abc/quiz/test-quiz-xyz');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const backLink = page.getByRole('link', {name: /back to course/i});
     const hasBack = await backLink.isVisible({timeout: 5000}).catch(() => false);
@@ -674,7 +674,7 @@ test.describe('Quiz Page (/learning/courses/[id]/quiz/[quizId])', () => {
     // Employees with proper permissions can access quizzes
     // Just verify no crash and no auth redirect loop
     await page.goto('/learning/courses/abc/quiz/xyz');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await expect(page).not.toHaveURL(/auth\/login\/auth\/login/, {timeout: 5000});
   });
 });
@@ -770,7 +770,7 @@ test.describe('Learning Paths (/learning/paths)', () => {
 
   test('learning path cards show course count and enrollment stats', async ({page}) => {
     await navigateTo(page, '/learning/paths');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const hasCards = await page
       .getByText(/course|enrolled/i)
@@ -786,7 +786,7 @@ test.describe('Learning Paths (/learning/paths)', () => {
 
   test('Enroll Now button triggers enrollment mutation', async ({page}) => {
     await navigateTo(page, '/learning/paths');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const enrollBtn = page.getByRole('button', {name: /enroll now/i}).first();
     const hasEnroll = await enrollBtn.isVisible({timeout: 8000}).catch(() => false);
@@ -802,7 +802,7 @@ test.describe('Learning Paths (/learning/paths)', () => {
 
   test('enrolled path shows Continue button and progress bar', async ({page}) => {
     await navigateTo(page, '/learning/paths');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const hasProgress = await page
       .getByText(/continue|in progress/i)
@@ -843,7 +843,7 @@ test.describe('Certificates (/learning/certificates)', () => {
 
   test('summary stat cards render when certificates exist', async ({page}) => {
     await navigateTo(page, '/learning/certificates');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const hasSummary = await page
       .getByText(/total certificates|active credentials|average score/i)
@@ -889,7 +889,7 @@ test.describe('Certificates (/learning/certificates)', () => {
 
   test('certificate card shows Active or Expired status badge', async ({page}) => {
     await navigateTo(page, '/learning/certificates');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const hasBadge = await page
       .getByText(/active|expired/i)
@@ -905,7 +905,7 @@ test.describe('Certificates (/learning/certificates)', () => {
 
   test('Download, Print, and Share buttons are visible on certificate cards', async ({page}) => {
     await navigateTo(page, '/learning/certificates');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const hasDownload = await page
       .getByRole('button', {name: /download certificate/i})
@@ -921,7 +921,7 @@ test.describe('Certificates (/learning/certificates)', () => {
 
   test('copy certificate number button copies to clipboard', async ({page}) => {
     await navigateTo(page, '/learning/certificates');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const copyBtn = page.getByRole('button', {name: /copy certificate number/i}).first();
     const hasCopy = await copyBtn.isVisible({timeout: 8000}).catch(() => false);
@@ -959,7 +959,7 @@ test.describe('Certificates (/learning/certificates)', () => {
 
   test('Start Learning link appears on empty state', async ({page}) => {
     await navigateTo(page, '/learning/certificates');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const hasEmpty = await page
       .getByText(/no certificates earned/i)

@@ -481,12 +481,12 @@ export default function MyAttendancePage() {
           {/* Calendar */}
           <Card className="lg:col-span-2 card-aura">
             <CardHeader>
-              <div className="row-between">
-                <CardTitle className="flex items-center gap-2">
+              <div className="row-between gap-4">
+                <CardTitle className="flex min-w-0 items-center gap-2">
                   <CalendarIcon className="h-5 w-5"/>
                   Attendance Calendar
                 </CardTitle>
-                <div className="flex items-center gap-2">
+                <div className="relative z-10 flex shrink-0 items-center gap-2">
                   <button
                     onClick={previousMonth}
                     aria-label="Previous month"

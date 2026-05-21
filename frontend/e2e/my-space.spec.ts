@@ -21,6 +21,17 @@ import {loginAs, navigateTo} from './fixtures/helpers';
 const applyLeaveButton = (page: Page) =>
   page.getByRole('button', {name: /Apply(?: for)? Leave|Request Leave|New Leave/i});
 
+const monthFormatter = new Intl.DateTimeFormat('en-US', {month: 'long'});
+
+const waitForLeaveBalances = async (page: Page) => {
+  await expect(page.getByRole('heading', {name: 'My Leaves'})).toBeVisible({timeout: 15000});
+  await expect(applyLeaveButton(page)).toBeVisible({timeout: 15000});
+  await expect.poll(
+    async () => page.getByText(/^\d+(\.\d+)?$/).count(),
+    {timeout: 15000}
+  ).toBeGreaterThan(0);
+};
+
 // ─────────────────────────────────────────────────────────────────────────────
 // MY SPACE — My Attendance (/me/attendance)
 // ─────────────────────────────────────────────────────────────────────────────
@@ -119,7 +130,7 @@ test.describe('MY SPACE - My Attendance', () => {
     });
 
     test('should show the current month name', async ({page}) => {
-      const monthName = new Date().toLocaleDateString('en-US', {month: 'long'});
+      const monthName = monthFormatter.format(new Date());
       await expect(page.locator(`text=${monthName}`).first()).toBeVisible({timeout: 10000});
     });
 
@@ -132,7 +143,7 @@ test.describe('MY SPACE - My Attendance', () => {
     test('should navigate to previous month on left chevron click', async ({page}) => {
       const prevMonth = new Date();
       prevMonth.setMonth(prevMonth.getMonth() - 1);
-      const prevMonthName = prevMonth.toLocaleDateString('en-US', {month: 'long'});
+      const prevMonthName = monthFormatter.format(prevMonth);
 
       await page.getByRole('button', {name: 'Previous month'}).click();
 
@@ -142,7 +153,7 @@ test.describe('MY SPACE - My Attendance', () => {
     test('should navigate to next month on right chevron click', async ({page}) => {
       const nextMonth = new Date();
       nextMonth.setMonth(nextMonth.getMonth() + 1);
-      const nextMonthName = nextMonth.toLocaleDateString('en-US', {month: 'long'});
+      const nextMonthName = monthFormatter.format(nextMonth);
 
       await page.getByRole('button', {name: 'Next month'}).click();
 
@@ -423,11 +434,7 @@ test.describe('MY SPACE - My Leaves', () => {
     });
 
     test('should show numeric leave balance values', async ({page}) => {
-      await page.waitForTimeout(3000);
-      // At least one numeric value rendered in the balance area
-      const numericValues = page.getByText(/^\d+(\.\d+)?$/);
-      const count = await numericValues.count();
-      expect(count).toBeGreaterThan(0);
+      await waitForLeaveBalances(page);
     });
   });
 
@@ -491,7 +498,7 @@ test.describe('MY SPACE - My Leaves', () => {
       await page.waitForTimeout(2000);
       const applyBtn = applyLeaveButton(page);
       await applyBtn.click();
-      await page.locator('button').filter({hasText: /Cancel/i}).first().click();
+      await page.getByRole('dialog').getByRole('button', {name: /^Cancel$/}).click();
       // Modal should be dismissed
       await expect(applyBtn).toBeVisible({timeout: 5000});
     });

@@ -23,7 +23,7 @@ test.describe('Training — Enrollment Flow', () => {
   test.describe('Page Structure', () => {
     test.beforeEach(async ({page}) => {
       await page.goto('/training');
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
     });
 
     test('training page displays all primary tabs', async ({page}) => {
@@ -55,7 +55,7 @@ test.describe('Training — Enrollment Flow', () => {
   test.describe('Course Catalog — Enrollment Action', () => {
     test.beforeEach(async ({page}) => {
       await page.goto('/training');
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
       await page.locator('text=Course Catalog').first().click();
       await page.waitForTimeout(500);
     });
@@ -122,7 +122,7 @@ test.describe('Training — Enrollment Flow', () => {
   test.describe('My Trainings — In Progress', () => {
     test.beforeEach(async ({page}) => {
       await page.goto('/training');
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
       await page.locator('text=My Trainings').first().click();
       await page.waitForTimeout(500);
     });
@@ -161,7 +161,7 @@ test.describe('Training — Enrollment Flow', () => {
   test.describe('Manage Programs — Admin', () => {
     test.beforeEach(async ({page}) => {
       await page.goto('/training');
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
       await page.waitForTimeout(500);
     });
 
@@ -224,7 +224,7 @@ test.describe('Training — Enrollment Flow', () => {
   test.describe('Learning Module', () => {
     test('learning page is accessible', async ({page}) => {
       await page.goto('/learning');
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
 
       expect(page.url()).toContain('/learning');
       await expect(page.locator('body')).not.toContainText('Application error');
@@ -232,7 +232,7 @@ test.describe('Training — Enrollment Flow', () => {
 
     test('learning page shows heading', async ({page}) => {
       await page.goto('/learning');
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
 
       await expect(page.locator('h1, h2').first()).toBeVisible();
     });
@@ -246,7 +246,7 @@ test.describe('Training — Enrollment Flow', () => {
       await page.waitForURL('**/dashboard');
 
       await page.goto('/training');
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
 
       // Should load, not redirect to login
       expect(page.url()).not.toContain('/auth/login');
@@ -260,7 +260,7 @@ test.describe('Training — Enrollment Flow', () => {
       await page.waitForURL('**/dashboard');
 
       await page.goto('/training');
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
       await page.locator('text=My Trainings').first().click();
       await page.waitForTimeout(1000);
 

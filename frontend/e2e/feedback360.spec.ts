@@ -8,7 +8,7 @@ import {expect, test} from '@playwright/test';
 test.describe('360 Feedback Page', () => {
   test.beforeEach(async ({page}) => {
     await page.goto('/performance/360-feedback');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
   });
 
   test('should display 360 feedback page with heading', async ({page}) => {
@@ -39,7 +39,7 @@ test.describe('360 Feedback Page', () => {
 
   test('/feedback360 redirect works', async ({page}) => {
     await page.goto('/feedback360');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
 
     expect(page.url()).toContain('/performance/360-feedback');

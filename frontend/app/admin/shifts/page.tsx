@@ -273,8 +273,13 @@ export default function ShiftsManagementPage() {
         {/* Shifts Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {isLoading ? (
-            <div className="col-span-full flex justify-center items-center py-12">
+            <div
+              className="col-span-full flex flex-col justify-center items-center gap-4 py-12 text-body-secondary"
+              role="status"
+              aria-live="polite"
+            >
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-700"></div>
+              <span>Loading shifts...</span>
             </div>
           ) : shifts.length === 0 ? (
             <div className="col-span-full">
@@ -288,6 +293,7 @@ export default function ShiftsManagementPage() {
             shifts.map((shift) => (
               <div
                 key={shift.id}
+                data-testid="shift-card"
                 className="skeuo-card overflow-hidden"
                 style={{boxShadow: `inset 0 3px 0 0 ${shift.colorCode || '#2563EB'}`}}
               >

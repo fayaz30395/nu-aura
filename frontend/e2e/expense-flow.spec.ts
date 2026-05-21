@@ -10,7 +10,7 @@ import {expect, test} from '@playwright/test';
 test.describe('Expense Flow — Page Load', () => {
   test.beforeEach(async ({page}) => {
     await page.goto('/expenses');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
   });
 
   test('should display expenses page with heading', async ({page}) => {
@@ -39,7 +39,7 @@ test.describe('Expense Flow — Page Load', () => {
 test.describe('Expense Flow — Create Claim', () => {
   test.beforeEach(async ({page}) => {
     await page.goto('/expenses');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
   });
 
   test('should display create claim button', async ({page}) => {
@@ -98,7 +98,7 @@ test.describe('Expense Flow — Create Claim', () => {
 test.describe('Expense Flow — Claims List', () => {
   test.beforeEach(async ({page}) => {
     await page.goto('/expenses');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     const myClaimsTab = page.locator('text=My Claims').first();
     if (await myClaimsTab.isVisible().catch(() => false)) {
       await myClaimsTab.click();

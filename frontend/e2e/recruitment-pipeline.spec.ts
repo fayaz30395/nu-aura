@@ -12,7 +12,7 @@ test.describe('Recruitment — Jobs List', () => {
   test.beforeEach(async ({page}) => {
     await loginAs(page, 'fayaz.m@nulogic.io');
     await page.goto('/recruitment');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
   });
 
   test('should display recruitment page with heading', async ({page}) => {
@@ -52,7 +52,7 @@ test.describe('Recruitment — Candidates', () => {
 
   test('should navigate to candidates section', async ({page}) => {
     await page.goto('/recruitment');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Look for candidates tab or link
     const candidatesTab = page.locator(
@@ -62,11 +62,11 @@ test.describe('Recruitment — Candidates', () => {
 
     if (hasTab) {
       await candidatesTab.click();
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
     } else {
       // Try direct navigation
       await page.goto('/recruitment/candidates');
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
     }
 
     // Page should load without errors
@@ -79,7 +79,7 @@ test.describe('Recruitment — Create Job Posting', () => {
   test.beforeEach(async ({page}) => {
     await loginAs(page, 'fayaz.m@nulogic.io');
     await page.goto('/recruitment');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
   });
 
   test('should open create job form when clicking create button', async ({page}) => {

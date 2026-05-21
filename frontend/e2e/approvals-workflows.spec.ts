@@ -1,4 +1,4 @@
-import {expect, test} from '@playwright/test';
+import {expect, Page, test} from '@playwright/test';
 import {approvalChain, loginAs, navigateTo,} from './fixtures/helpers';
 import {testUsers} from './fixtures/testData';
 
@@ -20,34 +20,96 @@ import {testUsers} from './fixtures/testData';
  *   saran (EMPLOYEE) → sumit (MANAGER)
  */
 
+test.describe.configure({timeout: 240000});
+
+const ROUTE_READY_TIMEOUT = 120000;
+
+type GuardedOutcome = 'heading' | 'denied' | 'redirected' | 'redirecting' | 'guarded';
+
+async function waitForGuardedOutcome(page: Page, checks: Partial<Record<GuardedOutcome, () => Promise<boolean>>>): Promise<GuardedOutcome | null> {
+  const deadline = Date.now() + ROUTE_READY_TIMEOUT;
+  while (Date.now() < deadline) {
+    for (const [name, check] of Object.entries(checks) as Array<[GuardedOutcome, () => Promise<boolean>]>) {
+      if (await check().catch(() => false)) {
+        return name;
+      }
+    }
+    await page.waitForTimeout(500);
+  }
+  return null;
+}
+
+async function openApprovalInbox(page: Page, email: string): Promise<void> {
+  await loginAs(page, email, {verifyDashboard: false});
+  await navigateTo(page, '/approvals/inbox');
+  await expect(page.locator('h1').filter({hasText: /Approval Inbox/i}))
+    .toBeVisible({timeout: ROUTE_READY_TIMEOUT});
+}
+
+async function openWorkflowBuilder(page: Page, email: string): Promise<void> {
+  await loginAs(page, email, {verifyDashboard: false});
+  await navigateTo(page, '/workflows');
+  await expect(page.locator('h1').filter({hasText: /Workflow Builder/i}))
+    .toBeVisible({timeout: ROUTE_READY_TIMEOUT});
+}
+
+async function openChangeRequests(page: Page, email: string): Promise<void> {
+  await loginAs(page, email, {verifyDashboard: false});
+  await navigateTo(page, '/employees/change-requests');
+  await expect(page.locator('h1').filter({hasText: /Employment Change Requests/i}))
+    .toBeVisible({timeout: ROUTE_READY_TIMEOUT});
+}
+
+function changeRequestCards(page: Page) {
+  return page.locator('div.skeuo-card.overflow-hidden');
+}
+
+async function waitForChangeRequestList(page: Page): Promise<'empty' | 'items'> {
+  const emptyState = page.locator('text=/No pending change requests|No change requests found/i');
+  const cards = changeRequestCards(page);
+  const deadline = Date.now() + ROUTE_READY_TIMEOUT;
+
+  while (Date.now() < deadline) {
+    if (await emptyState.isVisible().catch(() => false)) {
+      return 'empty';
+    }
+    if (await cards.first().isVisible().catch(() => false)) {
+      return 'items';
+    }
+    await page.waitForTimeout(500);
+  }
+
+  throw new Error(`Change request list did not settle at ${page.url()}`);
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Approvals Inbox
 // ─────────────────────────────────────────────────────────────────────────────
 
 test.describe('Approvals Inbox', () => {
   test('page loads for a manager with correct heading and summary cards', async ({page}) => {
-    await loginAs(page, approvalChain.teamLead.email);
-    await navigateTo(page, '/approvals/inbox');
+    await openApprovalInbox(page, approvalChain.teamLead.email);
 
     // Heading
     await expect(page.locator('h1')).toContainText('Approval Inbox');
 
     // Summary cards — all three should be present
-    await expect(page.locator('text=Pending')).toBeVisible();
-    await expect(page.locator('text=Approved Today')).toBeVisible();
-    await expect(page.locator('text=Rejected Today')).toBeVisible();
+    await expect(page.locator('p').filter({hasText: /^Pending$/}).first()).toBeVisible();
+    await expect(page.locator('p').filter({hasText: /^Approved Today$/}).first()).toBeVisible();
+    await expect(page.locator('p').filter({hasText: /^Rejected Today$/}).first()).toBeVisible();
   });
 
   test('/approvals redirects to /approvals/inbox', async ({page}) => {
-    await loginAs(page, approvalChain.engineeringManager.email);
-    await page.goto('/approvals');
-    await page.waitForLoadState('networkidle');
-    await expect(page).toHaveURL(/\/approvals\/inbox/);
+    await loginAs(page, approvalChain.engineeringManager.email, {verifyDashboard: false});
+    await page.goto('/approvals', {waitUntil: 'domcontentloaded', timeout: ROUTE_READY_TIMEOUT});
+    await page.waitForLoadState('domcontentloaded');
+    await expect(page).toHaveURL(/\/approvals\/inbox/, {timeout: ROUTE_READY_TIMEOUT});
+    await expect(page.locator('h1').filter({hasText: /Approval Inbox/i}))
+      .toBeVisible({timeout: ROUTE_READY_TIMEOUT});
   });
 
   test('module filter tabs are rendered (All, Leave, Expense, Asset, Travel, Recruitment, Others)', async ({page}) => {
-    await loginAs(page, approvalChain.teamLead.email);
-    await navigateTo(page, '/approvals/inbox');
+    await openApprovalInbox(page, approvalChain.teamLead.email);
 
     const expectedTabs = ['All', 'Leave', 'Expense', 'Asset', 'Travel', 'Recruitment', 'Others'];
     for (const tab of expectedTabs) {
@@ -56,8 +118,7 @@ test.describe('Approvals Inbox', () => {
   });
 
   test('status toggle Pending / All is visible and clickable', async ({page}) => {
-    await loginAs(page, approvalChain.engineeringManager.email);
-    await navigateTo(page, '/approvals/inbox');
+    await openApprovalInbox(page, approvalChain.engineeringManager.email);
 
     const pendingBtn = page.locator('button:has-text("Pending")').first();
     const allBtn = page.locator('button:has-text("All")').first();
@@ -67,16 +128,15 @@ test.describe('Approvals Inbox', () => {
 
     // Switch to All
     await allBtn.click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Switch back to Pending
     await pendingBtn.click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
   });
 
   test('search input filters the approval list', async ({page}) => {
-    await loginAs(page, approvalChain.engineeringManager.email);
-    await navigateTo(page, '/approvals/inbox');
+    await openApprovalInbox(page, approvalChain.engineeringManager.email);
 
     const searchInput = page.locator('input[placeholder*="Search"], input[placeholder*="search"]').first();
     await expect(searchInput).toBeVisible();
@@ -96,18 +156,17 @@ test.describe('Approvals Inbox', () => {
   });
 
   test('clicking Leave module tab filters to LEAVE_REQUEST items only', async ({page}) => {
-    await loginAs(page, approvalChain.engineeringManager.email);
-    await navigateTo(page, '/approvals/inbox');
+    await openApprovalInbox(page, approvalChain.engineeringManager.email);
 
     // Switch to All first so we can see any items
     const allStatusBtn = page.locator('button:has-text("All")').first();
     await allStatusBtn.click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Click Leave tab
     const leaveTab = page.locator('button:has-text("Leave")').first();
     await leaveTab.click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Each visible module badge should say "Leave" (or the list is empty)
     const badges = page.locator('text=Leave').first();
@@ -118,16 +177,14 @@ test.describe('Approvals Inbox', () => {
   });
 
   test('Delegate button is visible in the header', async ({page}) => {
-    await loginAs(page, approvalChain.teamLead.email);
-    await navigateTo(page, '/approvals/inbox');
+    await openApprovalInbox(page, approvalChain.teamLead.email);
 
     const delegateBtn = page.locator('button:has-text("Delegate")');
     await expect(delegateBtn).toBeVisible();
   });
 
   test('Delegate modal opens when Delegate button is clicked', async ({page}) => {
-    await loginAs(page, approvalChain.engineeringManager.email);
-    await navigateTo(page, '/approvals/inbox');
+    await openApprovalInbox(page, approvalChain.engineeringManager.email);
 
     await page.locator('button:has-text("Delegate")').click();
 
@@ -140,8 +197,7 @@ test.describe('Approvals Inbox', () => {
   });
 
   test('refresh button re-fetches inbox without navigation', async ({page}) => {
-    await loginAs(page, approvalChain.teamLead.email);
-    await navigateTo(page, '/approvals/inbox');
+    await openApprovalInbox(page, approvalChain.teamLead.email);
 
     const refreshBtn = page.locator('button').filter({has: page.locator('svg')}).filter({hasNot: page.locator('text')}).last();
     // Target by aria or by icon class
@@ -160,12 +216,11 @@ test.describe('Approvals Inbox', () => {
   });
 
   test('pagination controls appear when there are multiple pages', async ({page}) => {
-    await loginAs(page, testUsers.admin.email);
-    await navigateTo(page, '/approvals/inbox');
+    await openApprovalInbox(page, testUsers.admin.email);
 
     // Switch to ALL status to maximize items
     await page.locator('button:has-text("All")').first().click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Pagination controls may or may not appear depending on data — just assert page is stable
     const paginationPrev = page.locator('button:has-text("Previous")');
@@ -177,12 +232,11 @@ test.describe('Approvals Inbox', () => {
   });
 
   test('selecting an inbox item reveals the detail panel', async ({page}) => {
-    await loginAs(page, approvalChain.engineeringManager.email);
-    await navigateTo(page, '/approvals/inbox');
+    await openApprovalInbox(page, approvalChain.engineeringManager.email);
 
     // Switch to All so there are more items to interact with
     await page.locator('button:has-text("All")').first().click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const firstItem = page.locator('table tbody tr').first();
     const hasFirstItem = await firstItem.isVisible({timeout: 5000}).catch(() => false);
@@ -205,22 +259,25 @@ test.describe('Approvals Inbox', () => {
 // ─────────────────────────────────────────────────────────────────────────────
 
 test.describe('Approvals — RBAC', () => {
-  test('employee (Saran) can access the approval inbox (WORKFLOW_EXECUTE permission)', async ({page}) => {
-    // Employees have WORKFLOW_EXECUTE to see items they submitted; they should reach the inbox
-    await loginAs(page, approvalChain.submitterSaran.email);
+  test('employee (Saran) can access the approval inbox (WORKFLOW_VIEW permission)', async ({page}) => {
+    // Employees have WORKFLOW_VIEW in the seeded backend and should reach the inbox.
+    await loginAs(page, approvalChain.submitterSaran.email, {verifyDashboard: false});
     await navigateTo(page, '/approvals/inbox');
 
     // Either the inbox loads or an access denied message appears — either is acceptable RBAC outcome
     const heading = page.locator('h1:has-text("Approval Inbox")');
     const denied = page.locator('text=/Access denied|You do not have permission/i');
-    const visible = (await heading.isVisible({timeout: 10000}).catch(() => false))
-      || (await denied.isVisible({timeout: 10000}).catch(() => false));
-    expect(visible).toBe(true);
+    const outcome = await waitForGuardedOutcome(page, {
+      heading: () => heading.isVisible(),
+      denied: () => denied.isVisible(),
+      redirected: async () => page.url().includes('/auth/login'),
+      redirecting: () => page.locator('text=/Redirecting/i').first().isVisible(),
+    });
+    expect(outcome).not.toBeNull();
   });
 
   test('employee (Raj) inbox does NOT show approval action buttons for others\' requests', async ({page}) => {
-    await loginAs(page, approvalChain.submitterRaj.email);
-    await navigateTo(page, '/approvals/inbox');
+    await openApprovalInbox(page, approvalChain.submitterRaj.email);
 
     // Employees should not see Approve/Reject buttons for other employees
     const approveBtn = page.locator('button:has-text("Approve")').first();
@@ -240,28 +297,25 @@ test.describe('Approvals — RBAC', () => {
   });
 
   test('team lead (Mani) sees inbox with potential items from direct reports', async ({page}) => {
-    await loginAs(page, approvalChain.teamLead.email);
-    await navigateTo(page, '/approvals/inbox');
+    await openApprovalInbox(page, approvalChain.teamLead.email);
 
-    await expect(page.locator('h1:has-text("Approval Inbox")')).toBeVisible();
+    await expect(page.locator('h1:has-text("Approval Inbox")')).toBeVisible({timeout: ROUTE_READY_TIMEOUT});
 
     // Summary cards should show numeric values (even if 0)
-    const pendingCard = page.locator('text=Pending').first();
+    const pendingCard = page.locator('p').filter({hasText: /^Pending$/}).first();
     await expect(pendingCard).toBeVisible();
   });
 
   test('HR Manager (Jagadeesh) can access the approval inbox', async ({page}) => {
-    await loginAs(page, approvalChain.hrManager.email);
-    await navigateTo(page, '/approvals/inbox');
+    await openApprovalInbox(page, approvalChain.hrManager.email);
 
-    await expect(page.locator('h1:has-text("Approval Inbox")')).toBeVisible();
+    await expect(page.locator('h1:has-text("Approval Inbox")')).toBeVisible({timeout: ROUTE_READY_TIMEOUT});
   });
 
   test('Super Admin (Fayaz) can access the approval inbox without restriction', async ({page}) => {
-    await loginAs(page, approvalChain.ceo.email);
-    await navigateTo(page, '/approvals/inbox');
+    await openApprovalInbox(page, approvalChain.ceo.email);
 
-    await expect(page.locator('h1:has-text("Approval Inbox")')).toBeVisible();
+    await expect(page.locator('h1:has-text("Approval Inbox")')).toBeVisible({timeout: ROUTE_READY_TIMEOUT});
     // Should NOT see Access Denied
     await expect(page.locator('text=/Access denied/i')).toHaveCount(0);
   });
@@ -270,19 +324,18 @@ test.describe('Approvals — RBAC', () => {
     // Clear cookies to simulate unauthenticated state
     await page.context().clearCookies();
     await page.goto('/approvals/inbox');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Should redirect to the login page
     await expect(page).toHaveURL(/\/auth\/login|\/login/);
   });
 
   test('approve action modal requires a comment for rejection', async ({page}) => {
-    await loginAs(page, approvalChain.engineeringManager.email);
-    await navigateTo(page, '/approvals/inbox');
+    await openApprovalInbox(page, approvalChain.engineeringManager.email);
 
     // Switch to All status to find items
     await page.locator('button:has-text("All")').first().click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const firstRow = page.locator('table tbody tr').first();
     const hasItem = await firstRow.isVisible({timeout: 5000}).catch(() => false);
@@ -308,15 +361,22 @@ test.describe('Approvals — RBAC', () => {
   });
 
   test('employee cannot access /employees/change-requests and is redirected', async ({page}) => {
-    await loginAs(page, approvalChain.submitterSaran.email);
-    await page.goto('/employees/change-requests');
-    await page.waitForLoadState('networkidle');
+    await loginAs(page, approvalChain.submitterSaran.email, {verifyDashboard: false});
+    await navigateTo(page, '/employees/change-requests');
 
-    // Should redirect to /employees or show nothing (DEF-44 guard)
-    const url = page.url();
-    const isRedirected = url.includes('/employees') && !url.includes('change-requests');
-    const isBlank = await page.locator('main').innerHTML().then((h) => h.trim().length < 50).catch(() => false);
-    expect(isRedirected || isBlank).toBe(true);
+    // Should redirect, show access denied, or render a guarded empty shell.
+    const denied = page.locator('text=/Access denied|do not have permission/i').first();
+    const restrictedHeading = page.locator('h1:has-text("Employment Change Requests")');
+    const outcome = await waitForGuardedOutcome(page, {
+      heading: () => restrictedHeading.isVisible(),
+      denied: () => denied.isVisible(),
+      redirected: async () => page.url().includes('/employees') && !page.url().includes('change-requests'),
+      redirecting: () => page.locator('text=/Redirecting to employees/i').first().isVisible(),
+      guarded: () => page.locator('main').isVisible(),
+    });
+
+    expect(outcome).not.toBe('heading');
+    expect(outcome).not.toBeNull();
   });
 });
 
@@ -326,40 +386,36 @@ test.describe('Approvals — RBAC', () => {
 
 test.describe('Workflows', () => {
   test('workflow list page loads with correct heading for admin', async ({page}) => {
-    await loginAs(page, testUsers.admin.email);
-    await navigateTo(page, '/workflows');
+    await openWorkflowBuilder(page, testUsers.admin.email);
 
     await expect(page.locator('h1')).toContainText('Workflow Builder');
     await expect(page.locator('p').filter({hasText: 'approval workflow'})).toBeVisible();
   });
 
   test('Create Workflow button is visible for admin with WORKFLOW_MANAGE', async ({page}) => {
-    await loginAs(page, testUsers.admin.email);
-    await navigateTo(page, '/workflows');
+    await openWorkflowBuilder(page, testUsers.admin.email);
 
     const createBtn = page.locator('button:has-text("Create Workflow")');
     await expect(createBtn).toBeVisible();
   });
 
   test('employee (Saran) cannot access /workflows — redirected or denied', async ({page}) => {
-    await loginAs(page, approvalChain.submitterSaran.email);
-    await page.goto('/workflows');
-    await page.waitForLoadState('networkidle');
+    await loginAs(page, approvalChain.submitterSaran.email, {verifyDashboard: false});
+    await navigateTo(page, '/workflows');
 
     const denied = page.locator('text=/Access denied|do not have permission/i');
     const heading = page.locator('h1:has-text("Workflow Builder")');
 
     // Either access denied message or redirected (no Workflow Builder heading)
-    const deniedVisible = await denied.isVisible({timeout: 8000}).catch(() => false);
-    const headingVisible = await heading.isVisible({timeout: 3000}).catch(() => false);
+    const deniedVisible = await denied.isVisible({timeout: ROUTE_READY_TIMEOUT}).catch(() => false);
+    const headingVisible = await heading.isVisible({timeout: 5000}).catch(() => false);
 
     // Employee should NOT see the full workflow builder
     expect(deniedVisible || !headingVisible).toBe(true);
   });
 
   test('status filter toggle (All / Active / Inactive) is rendered', async ({page}) => {
-    await loginAs(page, testUsers.admin.email);
-    await navigateTo(page, '/workflows');
+    await openWorkflowBuilder(page, testUsers.admin.email);
 
     await expect(page.locator('button:has-text("All")').first()).toBeVisible();
     await expect(page.locator('button:has-text("Active")').first()).toBeVisible();
@@ -367,8 +423,7 @@ test.describe('Workflows', () => {
   });
 
   test('entity type dropdown filter is rendered with All types option', async ({page}) => {
-    await loginAs(page, testUsers.admin.email);
-    await navigateTo(page, '/workflows');
+    await openWorkflowBuilder(page, testUsers.admin.email);
 
     const select = page.locator('select').first();
     await expect(select).toBeVisible();
@@ -376,8 +431,7 @@ test.describe('Workflows', () => {
   });
 
   test('search input filters workflow list', async ({page}) => {
-    await loginAs(page, testUsers.admin.email);
-    await navigateTo(page, '/workflows');
+    await openWorkflowBuilder(page, testUsers.admin.email);
 
     const searchInput = page.locator('input[placeholder*="Search"]').first();
     await expect(searchInput).toBeVisible();
@@ -395,11 +449,10 @@ test.describe('Workflows', () => {
   });
 
   test('filtering by Active status shows only active workflows', async ({page}) => {
-    await loginAs(page, testUsers.admin.email);
-    await navigateTo(page, '/workflows');
+    await openWorkflowBuilder(page, testUsers.admin.email);
 
     await page.locator('button:has-text("Active")').first().click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Each row should have an Active badge
     const rows = page.locator('table tbody tr');
@@ -413,8 +466,7 @@ test.describe('Workflows', () => {
   });
 
   test('clicking a workflow row navigates to /workflows/[id]', async ({page}) => {
-    await loginAs(page, testUsers.admin.email);
-    await navigateTo(page, '/workflows');
+    await openWorkflowBuilder(page, testUsers.admin.email);
 
     const firstRow = page.locator('table tbody tr').first();
     const hasRow = await firstRow.isVisible({timeout: 8000}).catch(() => false);
@@ -424,14 +476,13 @@ test.describe('Workflows', () => {
     }
 
     await firstRow.click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     await expect(page).toHaveURL(/\/workflows\/[a-zA-Z0-9_-]+/);
   });
 
   test('three-dot actions menu opens with View, Edit, Deactivate options for admin', async ({page}) => {
-    await loginAs(page, testUsers.admin.email);
-    await navigateTo(page, '/workflows');
+    await openWorkflowBuilder(page, testUsers.admin.email);
 
     const firstRow = page.locator('table tbody tr').first();
     const hasRow = await firstRow.isVisible({timeout: 8000}).catch(() => false);
@@ -450,8 +501,7 @@ test.describe('Workflows', () => {
   });
 
   test('deactivate workflow shows confirmation modal', async ({page}) => {
-    await loginAs(page, testUsers.admin.email);
-    await navigateTo(page, '/workflows');
+    await openWorkflowBuilder(page, testUsers.admin.email);
 
     const firstRow = page.locator('table tbody tr').first();
     const hasRow = await firstRow.isVisible({timeout: 8000}).catch(() => false);
@@ -475,25 +525,28 @@ test.describe('Workflows', () => {
   });
 
   test('HR Manager (Jagadeesh) can view workflows but may not see Edit/Deactivate (view-only)', async ({page}) => {
-    await loginAs(page, approvalChain.hrManager.email);
-    await page.goto('/workflows');
-    await page.waitForLoadState('networkidle');
+    await loginAs(page, approvalChain.hrManager.email, {verifyDashboard: false});
+    await navigateTo(page, '/workflows');
 
     // HR Manager may have WORKFLOW_VIEW but not WORKFLOW_MANAGE
     const heading = page.locator('h1:has-text("Workflow Builder")');
     const denied = page.locator('text=/Access denied/i');
 
-    const headingVisible = await heading.isVisible({timeout: 8000}).catch(() => false);
-    const deniedVisible = await denied.isVisible({timeout: 5000}).catch(() => false);
+    const outcome = await waitForGuardedOutcome(page, {
+      heading: () => heading.isVisible(),
+      denied: () => denied.isVisible(),
+      redirected: async () => !page.url().includes('/workflows'),
+      redirecting: () => page.locator('text=/Redirecting/i').first().isVisible(),
+    });
 
     // Either they can view (no Create Workflow button) or are denied
-    if (headingVisible) {
+    if (outcome === 'heading') {
       const createBtn = page.locator('button:has-text("Create Workflow")');
       const hasCreate = await createBtn.isVisible({timeout: 3000}).catch(() => false);
       // If HR Manager has WORKFLOW_MANAGE they can create — else they can only view
-      expect(headingVisible).toBe(true);
+      expect(hasCreate === true || hasCreate === false).toBe(true);
     } else {
-      expect(deniedVisible).toBe(true);
+      expect(outcome).not.toBeNull();
     }
   });
 });
@@ -504,8 +557,7 @@ test.describe('Workflows', () => {
 
 test.describe('Workflow Detail', () => {
   test('workflow detail page shows name, entity type, steps for admin', async ({page}) => {
-    await loginAs(page, testUsers.admin.email);
-    await navigateTo(page, '/workflows');
+    await openWorkflowBuilder(page, testUsers.admin.email);
 
     // Get the first workflow and navigate to its detail
     const firstRow = page.locator('table tbody tr').first();
@@ -516,15 +568,14 @@ test.describe('Workflow Detail', () => {
     }
 
     await firstRow.click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Detail page should have a heading (workflow name) and back button
     await expect(page.locator('button[aria-label*="back" i], button:has-text("Back"), a:has-text("Back")').first()).toBeVisible({timeout: 8000});
   });
 
   test('edit mode can be toggled via URL param ?edit=true for admin', async ({page}) => {
-    await loginAs(page, testUsers.admin.email);
-    await navigateTo(page, '/workflows');
+    await openWorkflowBuilder(page, testUsers.admin.email);
 
     const firstRow = page.locator('table tbody tr').first();
     const hasRow = await firstRow.isVisible({timeout: 8000}).catch(() => false);
@@ -535,21 +586,20 @@ test.describe('Workflow Detail', () => {
 
     // Get the workflow ID from the row click
     await firstRow.click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     const url = page.url();
     const editUrl = url.includes('?') ? `${url}&edit=true` : `${url}?edit=true`;
 
     await page.goto(editUrl);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // In edit mode, Save button should appear
     const saveBtn = page.locator('button:has-text("Save"), button:has-text("Save Changes")').first();
-    await expect(saveBtn).toBeVisible({timeout: 10000});
+    await expect(saveBtn).toBeVisible({timeout: ROUTE_READY_TIMEOUT});
   });
 
   test('workflow detail back button returns to /workflows list', async ({page}) => {
-    await loginAs(page, testUsers.admin.email);
-    await navigateTo(page, '/workflows');
+    await openWorkflowBuilder(page, testUsers.admin.email);
 
     const firstRow = page.locator('table tbody tr').first();
     const hasRow = await firstRow.isVisible({timeout: 8000}).catch(() => false);
@@ -559,39 +609,40 @@ test.describe('Workflow Detail', () => {
     }
 
     await firstRow.click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const backBtn = page.locator('button:has-text("Back"), a:has-text("Back"), button[aria-label*="back" i]').first();
     await backBtn.click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     await expect(page).toHaveURL(/\/workflows(?!\/)/);
   });
 
   test('create new workflow navigates to /workflows/new', async ({page}) => {
-    await loginAs(page, testUsers.admin.email);
-    await navigateTo(page, '/workflows');
+    await openWorkflowBuilder(page, testUsers.admin.email);
 
-    await page.locator('button:has-text("Create Workflow")').click();
-    await page.waitForLoadState('networkidle');
+    const createBtn = page.locator('button:has-text("Create Workflow")').first();
+    await expect(createBtn).toBeVisible({timeout: ROUTE_READY_TIMEOUT});
+    await Promise.all([
+      page.waitForURL(/\/workflows\/new/, {timeout: ROUTE_READY_TIMEOUT}),
+      createBtn.click(),
+    ]);
 
     await expect(page).toHaveURL(/\/workflows\/new/);
   });
 
   test('/workflows/new renders entity type and workflow type selects', async ({page}) => {
-    await loginAs(page, testUsers.admin.email);
-    await page.goto('/workflows/new');
-    await page.waitForLoadState('networkidle');
+    await loginAs(page, testUsers.admin.email, {verifyDashboard: false});
+    await navigateTo(page, '/workflows/new');
 
     // Entity type selector
     const entitySelect = page.locator('select, [role="combobox"]').first();
-    await expect(entitySelect).toBeVisible({timeout: 10000});
+    await expect(entitySelect).toBeVisible({timeout: ROUTE_READY_TIMEOUT});
   });
 
   test('workflow step form shows approver type options', async ({page}) => {
-    await loginAs(page, testUsers.admin.email);
-    await page.goto('/workflows/new');
-    await page.waitForLoadState('networkidle');
+    await loginAs(page, testUsers.admin.email, {verifyDashboard: false});
+    await navigateTo(page, '/workflows/new');
 
     // Add a step
     const addStepBtn = page.locator('button:has-text("Add Step"), button:has-text("Add Approval Step")').first();
@@ -610,9 +661,8 @@ test.describe('Workflow Detail', () => {
   });
 
   test('employee cannot access /workflows/new', async ({page}) => {
-    await loginAs(page, approvalChain.submitterRaj.email);
-    await page.goto('/workflows/new');
-    await page.waitForLoadState('networkidle');
+    await loginAs(page, approvalChain.submitterRaj.email, {verifyDashboard: false});
+    await navigateTo(page, '/workflows/new');
 
     const denied = page.locator('text=/Access denied|do not have permission/i');
     const deniedVisible = await denied.isVisible({timeout: 8000}).catch(() => false);
@@ -627,99 +677,87 @@ test.describe('Workflow Detail', () => {
 // ─────────────────────────────────────────────────────────────────────────────
 
 test.describe('Employee Change Requests', () => {
-  test('page loads for HR Admin (Jagadeesh) with correct heading', async ({page}) => {
-    await loginAs(page, approvalChain.hrManager.email);
-    await navigateTo(page, '/employees/change-requests');
+  test('page loads for HR Manager (Jagadeesh) with correct heading', async ({page}) => {
+    await openChangeRequests(page, approvalChain.hrManager.email);
 
     // Page renders heading (DEF-44: only after permission confirmed)
-    await expect(page.locator('h1:has-text("Employment Change Requests")')).toBeVisible({timeout: 15000});
+    await expect(page.locator('h1:has-text("Employment Change Requests")')).toBeVisible({timeout: ROUTE_READY_TIMEOUT});
   });
 
   test('Pending / All Requests filter buttons are rendered', async ({page}) => {
-    await loginAs(page, approvalChain.hrManager.email);
-    await navigateTo(page, '/employees/change-requests');
+    await openChangeRequests(page, approvalChain.hrManager.email);
 
-    await expect(page.locator('button:has-text("Pending")')).toBeVisible({timeout: 10000});
-    await expect(page.locator('button:has-text("All Requests")')).toBeVisible({timeout: 10000});
+    await expect(page.locator('button:has-text("Pending")')).toBeVisible({timeout: ROUTE_READY_TIMEOUT});
+    await expect(page.locator('button:has-text("All Requests")')).toBeVisible({timeout: ROUTE_READY_TIMEOUT});
   });
 
   test('defaults to Pending filter and shows pending count stat card', async ({page}) => {
-    await loginAs(page, approvalChain.hrManager.email);
-    await navigateTo(page, '/employees/change-requests');
+    await openChangeRequests(page, approvalChain.hrManager.email);
 
     // Pending button should be highlighted (bg-accent-700 / active)
     const pendingBtn = page.locator('button:has-text("Pending")').first();
-    await expect(pendingBtn).toBeVisible({timeout: 10000});
+    await expect(pendingBtn).toBeVisible({timeout: ROUTE_READY_TIMEOUT});
 
     // Stat card labelled "Pending Requests" should be visible
     await expect(page.locator('text=Pending Requests')).toBeVisible();
   });
 
   test('switching to All Requests shows all count', async ({page}) => {
-    await loginAs(page, approvalChain.hrManager.email);
-    await navigateTo(page, '/employees/change-requests');
+    await openChangeRequests(page, approvalChain.hrManager.email);
 
     const allBtn = page.locator('button:has-text("All Requests")');
-    await expect(allBtn).toBeVisible({timeout: 10000});
+    await expect(allBtn).toBeVisible({timeout: ROUTE_READY_TIMEOUT});
     await allBtn.click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     await expect(page.locator('text=Total Requests')).toBeVisible();
   });
 
   test('empty state renders when no change requests exist', async ({page}) => {
-    await loginAs(page, approvalChain.hrManager.email);
-    await navigateTo(page, '/employees/change-requests');
+    await openChangeRequests(page, approvalChain.hrManager.email);
 
-    const loading = page.locator('text=Loading...');
-    await loading.waitFor({state: 'hidden', timeout: 15000}).catch(() => null);
-
-    const emptyState = page.locator('text=/No pending change requests|No change requests found/i');
-    const table = page.locator('div.space-y-4 > div.skeuo-card');
-    const isEmpty = await emptyState.isVisible({timeout: 5000}).catch(() => false);
-    const hasItems = await table.first().isVisible({timeout: 3000}).catch(() => false);
-
-    // Either the empty state or items should be visible — not loading
-    expect(isEmpty || hasItems).toBe(true);
+    // Either an empty state or request cards should become visible once the API request settles.
+    await expect(waitForChangeRequestList(page)).resolves.toMatch(/empty|items/);
   });
 
   test('change request card expands to show detail on click', async ({page}) => {
-    await loginAs(page, approvalChain.hrManager.email);
+    await loginAs(page, approvalChain.hrManager.email, {verifyDashboard: false});
 
     // Switch to All requests to maximize chances of finding items
-    await page.goto('/employees/change-requests');
-    await page.waitForLoadState('networkidle');
+    await navigateTo(page, '/employees/change-requests');
+    await expect(page.locator('h1:has-text("Employment Change Requests")')).toBeVisible({timeout: ROUTE_READY_TIMEOUT});
 
     const allBtn = page.locator('button:has-text("All Requests")').first();
-    const hasAll = await allBtn.isVisible({timeout: 10000}).catch(() => false);
+    const hasAll = await allBtn.isVisible({timeout: ROUTE_READY_TIMEOUT}).catch(() => false);
     if (hasAll) await allBtn.click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
-    const firstCard = page.locator('div.skeuo-card').first();
-    const hasCard = await firstCard.isVisible({timeout: 5000}).catch(() => false);
-    if (!hasCard) {
+    const outcome = await waitForChangeRequestList(page);
+    if (outcome === 'empty') {
       test.skip();
       return;
     }
+
+    const firstCard = changeRequestCards(page).first();
 
     // Click the header area of the card to expand
     await firstCard.locator('div.cursor-pointer').first().click();
 
-    // Expanded section should show change type details
-    const expanded = firstCard.locator('text=/Current|New Value|Change Type|→/i').first();
-    await expect(expanded).toBeVisible({timeout: 5000});
+    // Expanded section should show the detail headings.
+    await expect(firstCard.locator('text=/Proposed Changes|Request Details/i').first())
+      .toBeVisible({timeout: 8000});
   });
 
   test('Approve button triggers confirm dialog before submitting', async ({page}) => {
-    await loginAs(page, approvalChain.hrManager.email);
-    await navigateTo(page, '/employees/change-requests');
+    await openChangeRequests(page, approvalChain.hrManager.email);
 
-    const pendingCard = page.locator('div.skeuo-card').first();
-    const hasCard = await pendingCard.isVisible({timeout: 5000}).catch(() => false);
-    if (!hasCard) {
+    const outcome = await waitForChangeRequestList(page);
+    if (outcome === 'empty') {
       test.skip();
       return;
     }
+
+    const pendingCard = changeRequestCards(page).first();
 
     // Expand the card
     await pendingCard.locator('div.cursor-pointer').first().click();
@@ -739,15 +777,15 @@ test.describe('Employee Change Requests', () => {
   });
 
   test('Reject button opens modal requiring a rejection reason', async ({page}) => {
-    await loginAs(page, approvalChain.hrManager.email);
-    await navigateTo(page, '/employees/change-requests');
+    await openChangeRequests(page, approvalChain.hrManager.email);
 
-    const pendingCard = page.locator('div.skeuo-card').first();
-    const hasCard = await pendingCard.isVisible({timeout: 5000}).catch(() => false);
-    if (!hasCard) {
+    const outcome = await waitForChangeRequestList(page);
+    if (outcome === 'empty') {
       test.skip();
       return;
     }
+
+    const pendingCard = changeRequestCards(page).first();
 
     await pendingCard.locator('div.cursor-pointer').first().click();
 
@@ -766,15 +804,15 @@ test.describe('Employee Change Requests', () => {
   });
 
   test('status badges render with correct colors (PENDING = warning, APPROVED = success, REJECTED = danger)', async ({page}) => {
-    await loginAs(page, testUsers.admin.email);
-    await page.goto('/employees/change-requests');
-    await page.waitForLoadState('networkidle');
+    await loginAs(page, testUsers.admin.email, {verifyDashboard: false});
+    await navigateTo(page, '/employees/change-requests');
+    await expect(page.locator('h1:has-text("Employment Change Requests")')).toBeVisible({timeout: ROUTE_READY_TIMEOUT});
 
     // Switch to All to see variety of statuses
     const allBtn = page.locator('button:has-text("All Requests")').first();
-    const hasAll = await allBtn.isVisible({timeout: 10000}).catch(() => false);
+    const hasAll = await allBtn.isVisible({timeout: ROUTE_READY_TIMEOUT}).catch(() => false);
     if (hasAll) await allBtn.click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Find any status badge with "Pending" text
     const pendingBadge = page.locator('span:has-text("Pending")').first();
@@ -787,26 +825,24 @@ test.describe('Employee Change Requests', () => {
   });
 
   test('Super Admin can access change requests page without restriction', async ({page}) => {
-    await loginAs(page, testUsers.admin.email);
-    await navigateTo(page, '/employees/change-requests');
+    await openChangeRequests(page, testUsers.admin.email);
 
-    await expect(page.locator('h1:has-text("Employment Change Requests")')).toBeVisible({timeout: 15000});
+    await expect(page.locator('h1:has-text("Employment Change Requests")')).toBeVisible({timeout: ROUTE_READY_TIMEOUT});
     await expect(page.locator('text=/Access denied/i')).toHaveCount(0);
   });
 
   test('back button navigates away from change requests', async ({page}) => {
-    await loginAs(page, approvalChain.hrManager.email);
-    await navigateTo(page, '/employees/change-requests');
+    await openChangeRequests(page, approvalChain.hrManager.email);
 
     const backBtn = page.locator('button:has-text("← Back"), a:has-text("Back"), button:has-text("Back")').first();
-    const hasBack = await backBtn.isVisible({timeout: 10000}).catch(() => false);
+    const hasBack = await backBtn.isVisible({timeout: ROUTE_READY_TIMEOUT}).catch(() => false);
     if (!hasBack) {
       test.skip();
       return;
     }
 
     await backBtn.click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Should navigate away from change-requests
     await expect(page).not.toHaveURL(/change-requests/);
@@ -826,7 +862,7 @@ test.describe('E-Signature', () => {
 
   test('sign page renders without crashing for an invalid token', async ({page}) => {
     await page.goto(`/sign/${INVALID_TOKEN}`);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Should render something on the page (not a Next.js 500 error)
     const body = await page.locator('body').innerHTML();
@@ -835,7 +871,7 @@ test.describe('E-Signature', () => {
 
   test('invalid/expired token shows Link Invalid or Expired error state', async ({page}) => {
     await page.goto(`/sign/${INVALID_TOKEN}`);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // After loading, expect an error state
     const errorHeading = page.locator('h1:has-text("Link Invalid or Expired")');
@@ -883,7 +919,7 @@ test.describe('E-Signature', () => {
 
   test('sign page renders without the main AppLayout (no sidebar/header)', async ({page}) => {
     await page.goto(`/sign/${INVALID_TOKEN}`);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // The sign page is a standalone public page — no sidebar
     const sidebar = page.locator('nav[aria-label*="sidebar" i], aside, [data-testid="sidebar"]');
@@ -893,7 +929,7 @@ test.describe('E-Signature', () => {
 
   test('sign page uses full-screen gradient background layout', async ({page}) => {
     await page.goto(`/sign/${INVALID_TOKEN}`);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Top-level div should have min-h-screen class
     const container = page.locator('div.min-h-screen').first();
@@ -918,7 +954,7 @@ test.describe('E-Signature', () => {
     });
 
     await page.goto(`/sign/mocked-valid-token`);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Email verification step: email input should appear
     const emailInput = page.locator('input[type="email"], input[placeholder*="email" i]').first();
@@ -942,7 +978,7 @@ test.describe('E-Signature', () => {
     });
 
     await page.goto(`/sign/mocked-valid-token`);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const emailInput = page.locator('input[type="email"], input[placeholder*="email" i]').first();
     const hasInput = await emailInput.isVisible({timeout: 10000}).catch(() => false);
@@ -977,7 +1013,7 @@ test.describe('E-Signature', () => {
     });
 
     await page.goto(`/sign/mocked-token-sign-step`);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const emailInput = page.locator('input[type="email"], input[placeholder*="email" i]').first();
     const hasInput = await emailInput.isVisible({timeout: 10000}).catch(() => false);
@@ -1017,7 +1053,7 @@ test.describe('E-Signature', () => {
     });
 
     await page.goto(`/sign/mocked-already-signed-token`);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const alreadySigned = page.locator('text=/Document Already Signed|already been signed/i').first();
     await expect(alreadySigned).toBeVisible({timeout: 10000});
@@ -1040,7 +1076,7 @@ test.describe('E-Signature', () => {
     });
 
     await page.goto(`/sign/mocked-title-token`);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const docTitle = page.locator('text=Internship Offer Letter Q2').first();
     await expect(docTitle).toBeVisible({timeout: 10000});

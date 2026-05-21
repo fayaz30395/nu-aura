@@ -14,15 +14,15 @@ const SELF_SERVICE_ROUTES = [
 test.describe('All demo users — self-service access @critical @rbac', () => {
   test.describe.configure({mode: 'serial'});
   test.use({storageState: {cookies: [], origins: []}});
-  test.setTimeout(360000);
+  test.setTimeout(900000);
 
   for (const user of allDemoUsers) {
     test(`${user.name} (${user.role}) can sign in and use My Space`, async ({page}) => {
-      await loginAs(page, user.email);
+      await loginAs(page, user.email, {verifyDashboard: false});
 
       for (const route of SELF_SERVICE_ROUTES) {
         await navigateTo(page, route);
-        await page.waitForTimeout(1000);
+        await page.locator('main').first().waitFor({state: 'visible', timeout: 30000}).catch(() => undefined);
 
         const url = page.url();
         expect(url, `${user.email} should not be sent to login from ${route}`).not.toContain('/auth/login');

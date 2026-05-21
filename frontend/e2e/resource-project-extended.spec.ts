@@ -30,7 +30,7 @@ test.describe('Allocations', () => {
 
   test('should redirect /allocations to /allocations/summary for authorised user', async ({page}) => {
     await page.goto('/allocations');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     // The page either redirects directly or shows a loading spinner before redirect
     await page.waitForURL('**/allocations/summary', {timeout: 15000});
     expect(page.url()).toContain('/allocations/summary');
@@ -45,7 +45,7 @@ test.describe('Allocations', () => {
 
   test('should not display a JS crash banner on /allocations', async ({page}) => {
     await page.goto('/allocations');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await expect(
       page.locator('text=/something went wrong|unhandled error/i')
     ).not.toBeVisible();
@@ -55,7 +55,7 @@ test.describe('Allocations', () => {
     // Employees lack ALLOCATION_VIEW — expect redirect to /me/dashboard
     await loginAs(page, testUsers.employee.email);
     await page.goto('/allocations');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     // May redirect to dashboard; ensure no crash
     await expect(
       page.locator('text=/something went wrong|unhandled error/i')
@@ -66,7 +66,7 @@ test.describe('Allocations', () => {
     await loginAs(page, testUsers.manager.email);
     await page.goto('/allocations');
     // Manager has resource view permissions; should reach summary, not dashboard
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await expect(
       page.locator('text=/something went wrong|unhandled error/i')
     ).not.toBeVisible();
@@ -98,7 +98,7 @@ test.describe('Allocations Summary', () => {
     const selfBtn = page.getByRole('button', {name: 'SELF'});
     await expect(selfBtn).toBeVisible({timeout: 10000});
     await selfBtn.click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await expect(
       page.locator('text=/something went wrong|unhandled error/i')
     ).not.toBeVisible();
@@ -121,7 +121,7 @@ test.describe('Allocations Summary', () => {
     await startInput.fill('2025-01-01');
     const endInput = page.locator('input[type="date"]').nth(1);
     await endInput.fill('2025-03-31');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await expect(
       page.locator('text=/something went wrong|unhandled error/i')
     ).not.toBeVisible();
@@ -199,7 +199,7 @@ test.describe('Time Tracking', () => {
   });
 
   test('should display four summary stat cards', async ({page}) => {
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     const statLabels = ['This Week', 'Billable Hours', 'Pending Approval', 'Draft Entries'];
     for (const label of statLabels) {
       const card = page.locator(`text=${label}`).first();
@@ -221,7 +221,7 @@ test.describe('Time Tracking', () => {
   });
 
   test('should display Recent Time Entries section', async ({page}) => {
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     const section = page.locator('text=/Recent Time Entries/i');
     await expect(section).toBeVisible({timeout: 10000});
   });
@@ -366,7 +366,7 @@ test.describe('Time Tracking - Create Entry', () => {
     const cancelBtn = page.getByRole('button', {name: /Cancel/i});
     await expect(cancelBtn).toBeVisible({timeout: 10000});
     await cancelBtn.click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     // Should return to /time-tracking
     expect(page.url()).toContain('/time-tracking');
   });
@@ -415,7 +415,7 @@ test.describe('Time Tracking - Create Entry', () => {
     const backBtn = page.locator('[aria-label="Go back to previous page"]');
     await expect(backBtn).toBeVisible({timeout: 10000});
     await backBtn.click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     expect(page.url()).toContain('/time-tracking');
   });
 });
@@ -429,7 +429,7 @@ test.describe('Time Tracking - Entry Detail', () => {
 
   test('should load /time-tracking/:id gracefully when id does not exist', async ({page}) => {
     await page.goto('/time-tracking/nonexistent-id-xyz');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     // Should show "Time entry not found" or "Back to Time Tracking" button
     const hasNotFound = await page
       .locator('text=/Time entry not found|Back to Time Tracking/i')
@@ -441,7 +441,7 @@ test.describe('Time Tracking - Entry Detail', () => {
 
   test('should show Back to Time Tracking button on error state', async ({page}) => {
     await page.goto('/time-tracking/bad-id-000');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     const backBtn = page.getByRole('button', {name: /Back to Time Tracking/i});
     await expect(backBtn).toBeVisible({timeout: 10000});
     await backBtn.click();
@@ -459,7 +459,7 @@ test.describe('Time Tracking - Entry Detail', () => {
 
     if (hasViewLink) {
       await viewLink.click();
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
       // Should now be on /time-tracking/:id
       expect(page.url()).toMatch(/\/time-tracking\/[^/]+$/);
       await expect(
@@ -468,7 +468,7 @@ test.describe('Time Tracking - Entry Detail', () => {
     } else {
       // No entries — skip silently by visiting a stub URL
       await page.goto('/time-tracking/stub-none');
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
       await expect(
         page.locator('text=/something went wrong|unhandled error/i')
       ).not.toBeVisible();
@@ -483,7 +483,7 @@ test.describe('Time Tracking - Entry Detail', () => {
 
     if (hasViewLink) {
       await viewLink.click();
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
       await expect(page.locator('text=/Hours Worked/i').first()).toBeVisible({timeout: 8000});
       await expect(page.locator('text=/Billable Hours/i').first()).toBeVisible({timeout: 8000});
     }
@@ -497,7 +497,7 @@ test.describe('Time Tracking - Entry Detail', () => {
 
     if (hasViewLink) {
       await viewLink.click();
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
       // Only DRAFT entries show Submit/Delete
       const isDraft = await page.locator('text=DRAFT').isVisible().catch(() => false);
       if (isDraft) {
@@ -519,7 +519,7 @@ test.describe('Time Tracking - Entry Detail', () => {
 
     if (hasViewLink) {
       await viewLink.click();
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
       const isDraft = await page.locator('text=DRAFT').isVisible().catch(() => false);
       if (isDraft) {
         const deleteBtn = page.getByRole('button', {name: /Delete/i});
@@ -540,7 +540,7 @@ test.describe('Time Tracking - Entry Detail', () => {
 
     if (hasViewLink) {
       await viewLink.click();
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
       await expect(page.locator('text=/Entry Details/i').first()).toBeVisible({timeout: 8000});
       await expect(page.locator('text=/Entry Type/i').first()).toBeVisible({timeout: 8000});
     }
@@ -550,7 +550,7 @@ test.describe('Time Tracking - Entry Detail', () => {
     await loginAs(page, testUsers.manager.email);
     // Stub id — expect not-found state, not auth redirect
     await page.goto('/time-tracking/stub-mgr-view');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await expect(
       page.locator('text=/something went wrong|unhandled error/i')
     ).not.toBeVisible();
@@ -562,7 +562,7 @@ test.describe('Time Tracking - Entry Detail', () => {
     const viewLink = page.locator('text=View').first();
     if (await viewLink.isVisible().catch(() => false)) {
       await viewLink.click();
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
       const statusBadge = page.locator('text=/DRAFT|SUBMITTED|APPROVED|REJECTED/i').first();
       await expect(statusBadge).toBeVisible({timeout: 8000});
     }
@@ -697,7 +697,7 @@ test.describe('Resources - Workload', () => {
   test('should redirect EMPLOYEE to dashboard (no RESOURCE_VIEW permission)', async ({page}) => {
     await loginAs(page, testUsers.employee.email);
     await page.goto('/resources/workload');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     // Employee lacks RESOURCE_VIEW — should redirect to /me/dashboard
     const currentUrl = page.url();
     const isRedirected =
@@ -738,14 +738,14 @@ test.describe('Resources - Availability', () => {
     const weekBtn = page.getByRole('button', {name: /Week/i});
     await expect(weekBtn).toBeVisible({timeout: 10000});
     await weekBtn.click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await expect(
       page.locator('text=/something went wrong|unhandled error/i')
     ).not.toBeVisible();
 
     const monthBtn = page.getByRole('button', {name: /Month/i});
     await monthBtn.click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await expect(
       page.locator('text=/something went wrong|unhandled error/i')
     ).not.toBeVisible();
@@ -773,7 +773,7 @@ test.describe('Resources - Availability', () => {
     const leavesCheckbox = page.locator('input[type="checkbox"]').first();
     await expect(leavesCheckbox).toBeVisible({timeout: 8000});
     await leavesCheckbox.uncheck();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await expect(
       page.locator('text=/something went wrong|unhandled error/i')
     ).not.toBeVisible();
@@ -791,7 +791,7 @@ test.describe('Resources - Availability', () => {
   });
 
   test('should navigate to previous month and update the displayed month label', async ({page}) => {
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     // Grab current month label
     const now = new Date();
     const currentMonthLabel = now.toLocaleString('en-US', {month: 'long', year: 'numeric'});
@@ -803,7 +803,7 @@ test.describe('Resources - Availability', () => {
     const firstGhostBtn = allGhostBtns.first();
     await expect(firstGhostBtn).toBeVisible({timeout: 10000});
     await firstGhostBtn.click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await expect(
       page.locator('text=/something went wrong|unhandled error/i')
     ).not.toBeVisible();
@@ -828,7 +828,7 @@ test.describe('Resources - Availability', () => {
   test('should redirect EMPLOYEE to dashboard (no RESOURCE_VIEW permission)', async ({page}) => {
     await loginAs(page, testUsers.employee.email);
     await page.goto('/resources/availability');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     const currentUrl = page.url();
     const isRedirected =
       currentUrl.includes('/me/dashboard') || !currentUrl.includes('/resources/availability');
@@ -1023,7 +1023,7 @@ test.describe('Resources - Pool', () => {
   test('should redirect EMPLOYEE to dashboard (no RESOURCE_VIEW permission)', async ({page}) => {
     await loginAs(page, testUsers.employee.email);
     await page.goto('/resources/pool');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     const currentUrl = page.url();
     const isRedirected =
       currentUrl.includes('/me/dashboard') || !currentUrl.includes('/resources/pool');
@@ -1033,7 +1033,7 @@ test.describe('Resources - Pool', () => {
   test('should allow MANAGER to access resource pool (has RESOURCE_VIEW)', async ({page}) => {
     await loginAs(page, testUsers.manager.email);
     await page.goto('/resources/pool');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await expect(
       page.locator('text=/something went wrong|unhandled error/i')
     ).not.toBeVisible();

@@ -8,7 +8,7 @@ import {expect, test} from '@playwright/test';
 test.describe('Calendar Page', () => {
   test.beforeEach(async ({page}) => {
     await page.goto('/calendar');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
   });
 
   test('should display calendar page without errors', async ({page}) => {

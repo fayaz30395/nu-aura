@@ -41,7 +41,7 @@ async function submitLeaveViaUI(
   reason: string
 ): Promise<boolean> {
   await page.goto('/leave');
-  await page.waitForLoadState('networkidle');
+  await page.waitForLoadState('domcontentloaded');
 
   const applyBtn = page.locator('button:has-text("Apply Leave")');
   const hasApply = await applyBtn.isVisible({timeout: 10000}).catch(() => false);
@@ -144,7 +144,7 @@ test.describe('Leave Approval Chain @regression @critical', () => {
     if (!submitted) {
       // Accept: the page rendered correctly but form may not be present in this env
       await page.goto('/leave');
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
       const heading = page.locator('h1, h2').first();
       await expect(heading).toBeVisible({timeout: 10000});
     }
@@ -158,7 +158,7 @@ test.describe('Leave Approval Chain @regression @critical', () => {
   test('LA-02: submitted leave appears as PENDING in employee leave list', async ({page}) => {
     await loginAs(page, approvalChain.submitterRaj.email);
     await page.goto('/leave');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const table = page.locator('table');
     const hasTable = await table.isVisible({timeout: 8000}).catch(() => false);
@@ -196,7 +196,7 @@ test.describe('Leave Approval Chain @regression @critical', () => {
     // Log in as Team Lead
     await loginAs(page, approvalChain.teamLead.email);
     await page.goto('/leave/team');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const heading = page.locator('h1, h2').first();
     await expect(heading).toBeVisible({timeout: 10000});
@@ -218,7 +218,7 @@ test.describe('Leave Approval Chain @regression @critical', () => {
       const hasApprove = await approveBtn.isVisible({timeout: 5000}).catch(() => false);
       if (hasApprove) {
         await approveBtn.click();
-        await page.waitForLoadState('networkidle');
+        await page.waitForLoadState('domcontentloaded');
 
         // Confirm approval — look for success toast or status change
         const successIndicator = page.locator(
@@ -231,7 +231,7 @@ test.describe('Leave Approval Chain @regression @critical', () => {
       // API seeding succeeded but the row isn't visible (pagination/filter state)
       // Navigate directly to the approvals page as fallback
       await page.goto('/leave/approvals');
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
       await expect(page.locator('h1, h2').first()).toBeVisible({timeout: 10000});
     }
 
@@ -243,7 +243,7 @@ test.describe('Leave Approval Chain @regression @critical', () => {
   test('LA-04: manager can access the approvals queue and approve requests', async ({page}) => {
     await loginAs(page, approvalChain.engineeringManager.email);
     await page.goto('/leave/approvals');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const heading = page.locator('h1, h2').first();
     await expect(heading).toBeVisible({timeout: 10000});
@@ -257,7 +257,7 @@ test.describe('Leave Approval Chain @regression @critical', () => {
 
     if (count > 0) {
       await approveButtons.first().click();
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
       await expect(page.locator('text=/Something went wrong/i')).not.toBeVisible();
     }
 
@@ -269,7 +269,7 @@ test.describe('Leave Approval Chain @regression @critical', () => {
   test('LA-05: employee leave balance reflects approved deductions', async ({page}) => {
     await loginAs(page, approvalChain.submitterRaj.email);
     await page.goto('/leave');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Balance cards should be visible
     const balanceSection = page.locator(
@@ -286,7 +286,7 @@ test.describe('Leave Approval Chain @regression @critical', () => {
   test('LA-06: employee can view leave status notifications', async ({page}) => {
     await loginAs(page, approvalChain.submitterRaj.email);
     await page.goto('/me/dashboard');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Look for notification bell / count
     const notifBell = page.locator(
@@ -306,7 +306,7 @@ test.describe('Leave Approval Chain @regression @critical', () => {
 
     // Alternatively navigate to dedicated notifications page
     await page.goto('/notifications');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await expect(page.locator('h1, h2').first()).toBeVisible({timeout: 10000});
     await expect(page.locator('text=/Something went wrong/i')).not.toBeVisible();
   });
@@ -327,7 +327,7 @@ test.describe('Leave Approval Chain @regression @critical', () => {
     // Log in as Team Lead's manager (Engineering Manager can reject directly)
     await loginAs(page, approvalChain.engineeringManager.email);
     await page.goto('/leave/approvals');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const rejectBtn = page.locator('button:has-text("Reject")').first();
     const hasReject = await rejectBtn.isVisible({timeout: 8000}).catch(() => false);
@@ -349,14 +349,14 @@ test.describe('Leave Approval Chain @regression @critical', () => {
         }
       }
 
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
       await expect(page.locator('text=/Something went wrong/i')).not.toBeVisible();
     }
 
     // Verify from employee's perspective
     await switchUser(page, approvalChain.engineeringManager.email, approvalChain.submitterSaran.email);
     await page.goto('/leave');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     if (leaveId) {
       // If seeding succeeded, we can look for the rejected badge
@@ -373,7 +373,7 @@ test.describe('Leave Approval Chain @regression @critical', () => {
   test('LA-08: HR manager can view team leave calendar and approve', async ({page}) => {
     await loginAs(page, approvalChain.hrManager.email);
     await page.goto('/leave/team');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const heading = page.locator('h1, h2').first();
     await expect(heading).toBeVisible({timeout: 10000});

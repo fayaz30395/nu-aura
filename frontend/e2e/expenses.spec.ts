@@ -9,7 +9,7 @@ import {loginAs, switchUser} from './fixtures/helpers';
 test.describe('Expenses Page', () => {
   test.beforeEach(async ({page}) => {
     await page.goto('/expenses');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
   });
 
   test('should display expenses page with header', async ({page}) => {
@@ -41,7 +41,7 @@ test.describe('Expenses Page', () => {
 test.describe('Expenses - My Claims Tab', () => {
   test.beforeEach(async ({page}) => {
     await page.goto('/expenses');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.click('text=My Claims');
     await page.waitForTimeout(500);
   });
@@ -94,7 +94,7 @@ test.describe('Expenses - My Claims Tab', () => {
 test.describe('Expenses - Pending Approval Tab', () => {
   test.beforeEach(async ({page}) => {
     await page.goto('/expenses');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
   });
 
   test('should display Pending Approval tab if available', async ({page}) => {
@@ -134,7 +134,7 @@ test.describe('Expenses - Pending Approval Tab', () => {
 test.describe('Expenses - All Claims Tab (Admin)', () => {
   test.beforeEach(async ({page}) => {
     await page.goto('/expenses');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
   });
 
   test('should display All Claims tab if admin', async ({page}) => {
@@ -163,7 +163,7 @@ test.describe('Expenses - All Claims Tab (Admin)', () => {
 test.describe('Expenses - Create Claim', () => {
   test.beforeEach(async ({page}) => {
     await page.goto('/expenses');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
   });
 
   test('should open create claim modal', async ({page}) => {
@@ -252,7 +252,7 @@ test.describe('Expenses - Create Claim', () => {
 test.describe('Expenses - Claim Actions', () => {
   test.beforeEach(async ({page}) => {
     await page.goto('/expenses');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.click('text=My Claims');
     await page.waitForTimeout(500);
   });
@@ -294,7 +294,7 @@ test.describe('Expenses - Claim Actions', () => {
 test.describe('Expenses - Filters and Search', () => {
   test.beforeEach(async ({page}) => {
     await page.goto('/expenses');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
   });
 
   test('should display status filter', async ({page}) => {
@@ -331,7 +331,7 @@ test.describe('Expenses - Filters and Search', () => {
 test.describe('Expenses - Notifications', () => {
   test.beforeEach(async ({page}) => {
     await page.goto('/expenses');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
   });
 
   test('should show success notification on action', async ({page}) => {
@@ -358,7 +358,7 @@ test.describe('Expenses - Notifications', () => {
 test.describe('Expenses - Receipt Upload', () => {
   test.beforeEach(async ({page}) => {
     await page.goto('/expenses');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
   });
 
   test('should show receipt upload option in claim form', async ({page}) => {
@@ -384,7 +384,7 @@ test.describe('Expenses - Receipt Upload', () => {
 test.describe('Expenses - Visual Elements', () => {
   test.beforeEach(async ({page}) => {
     await page.goto('/expenses');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
   });
 
   test('should have proper table or card layout', async ({page}) => {
@@ -432,7 +432,7 @@ test.describe('Expense Multi-Level Approval Chain', () => {
     // Login as Saran (Employee)
     await loginAs(page, 'saran@nulogic.io');
     await page.goto('/expenses');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Click create/new claim button
     const createBtn = page.locator('button:has-text("Create"), button:has-text("New Claim"), button:has-text("New"), button:has-text("Add")').first();
@@ -440,7 +440,7 @@ test.describe('Expense Multi-Level Approval Chain', () => {
 
     if (hasCreate) {
       await createBtn.click();
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
 
       // Wait for modal or form to appear
       const formVisible = await page.locator('[role="dialog"], form, [class*="modal"]').first().isVisible({timeout: 5000}).catch(() => false);
@@ -485,7 +485,7 @@ test.describe('Expense Multi-Level Approval Chain', () => {
         const submitBtn = page.locator('button:has-text("Submit"), button:has-text("Save"), button:has-text("Create")').first();
         if (await submitBtn.isVisible({timeout: 3000}).catch(() => false)) {
           await submitBtn.click();
-          await page.waitForLoadState('networkidle');
+          await page.waitForLoadState('domcontentloaded');
         }
       }
     }
@@ -500,12 +500,12 @@ test.describe('Expense Multi-Level Approval Chain', () => {
     // ── Step 1: Saran creates and submits expense claim ──
     await loginAs(page, 'saran@nulogic.io');
     await page.goto('/expenses');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const createBtn = page.locator('button:has-text("Create"), button:has-text("New Claim"), button:has-text("New"), button:has-text("Add")').first();
     if (await createBtn.isVisible({timeout: 10000}).catch(() => false)) {
       await createBtn.click();
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
 
       // Fill form
       const titleInput = page.locator('input[name*="title"], input[name*="name"], input[placeholder*="title" i]').first();
@@ -539,20 +539,20 @@ test.describe('Expense Multi-Level Approval Chain', () => {
       const submitBtn = page.locator('button:has-text("Submit"), button:has-text("Save"), button:has-text("Create")').first();
       if (await submitBtn.isVisible({timeout: 3000}).catch(() => false)) {
         await submitBtn.click();
-        await page.waitForLoadState('networkidle');
+        await page.waitForLoadState('domcontentloaded');
       }
     }
 
     // ── Step 2: Switch to Sumit (Manager) and approve ──
     await switchUser(page, 'saran@nulogic.io', 'sumit@nulogic.io');
     await page.goto('/expenses');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Navigate to pending approvals tab
     const pendingTab = page.locator('button:has-text("Pending"), text=Pending Approval, button:has-text("Approvals")').first();
     if (await pendingTab.isVisible({timeout: 5000}).catch(() => false)) {
       await pendingTab.click();
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
     }
 
     // Find and approve Saran's claim
@@ -565,7 +565,7 @@ test.describe('Expense Multi-Level Approval Chain', () => {
         const viewBtn = saranRow.locator('button:has-text("View"), a:has-text("View")').first();
         if (await viewBtn.isVisible({timeout: 3000}).catch(() => false)) {
           await viewBtn.click();
-          await page.waitForLoadState('networkidle');
+          await page.waitForLoadState('domcontentloaded');
           const detailApproveBtn = page.locator('button:has-text("Approve")').first();
           if (await detailApproveBtn.isVisible({timeout: 5000}).catch(() => false)) {
             await detailApproveBtn.click();
@@ -581,18 +581,18 @@ test.describe('Expense Multi-Level Approval Chain', () => {
         await confirmBtn.click();
       }
 
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
     }
 
     // ── Step 3: Switch to Fayaz (SuperAdmin / Finance) for final approval ──
     await switchUser(page, 'sumit@nulogic.io', 'fayaz.m@nulogic.io');
     await page.goto('/expenses');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const adminPendingTab = page.locator('button:has-text("Pending"), button:has-text("Approvals"), text=All Claims').first();
     if (await adminPendingTab.isVisible({timeout: 5000}).catch(() => false)) {
       await adminPendingTab.click();
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
     }
 
     const claimRow = page.locator('tbody tr', {hasText: /Saran/i}).first();
@@ -604,7 +604,7 @@ test.describe('Expense Multi-Level Approval Chain', () => {
         const viewBtn = claimRow.locator('button:has-text("View"), a:has-text("View")').first();
         if (await viewBtn.isVisible({timeout: 3000}).catch(() => false)) {
           await viewBtn.click();
-          await page.waitForLoadState('networkidle');
+          await page.waitForLoadState('domcontentloaded');
           const detailApproveBtn = page.locator('button:has-text("Approve")').first();
           if (await detailApproveBtn.isVisible({timeout: 5000}).catch(() => false)) {
             await detailApproveBtn.click();
@@ -619,19 +619,19 @@ test.describe('Expense Multi-Level Approval Chain', () => {
         await confirmBtn.click();
       }
 
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
     }
 
     // ── Step 4: Switch back to Saran and verify APPROVED ──
     await switchUser(page, 'fayaz.m@nulogic.io', 'saran@nulogic.io');
     await page.goto('/expenses');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Click My Claims tab
     const myClaimsTab = page.locator('text=My Claims').first();
     if (await myClaimsTab.isVisible({timeout: 5000}).catch(() => false)) {
       await myClaimsTab.click();
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
     }
 
     // Check status of the latest claim
@@ -647,12 +647,12 @@ test.describe('Expense Multi-Level Approval Chain', () => {
     // ── Step 1: Saran submits expense claim ──
     await loginAs(page, 'saran@nulogic.io');
     await page.goto('/expenses');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const createBtn = page.locator('button:has-text("Create"), button:has-text("New Claim"), button:has-text("New"), button:has-text("Add")').first();
     if (await createBtn.isVisible({timeout: 10000}).catch(() => false)) {
       await createBtn.click();
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
 
       const titleInput = page.locator('input[name*="title"], input[name*="name"], input[placeholder*="title" i]').first();
       if (await titleInput.isVisible({timeout: 3000}).catch(() => false)) {
@@ -672,19 +672,19 @@ test.describe('Expense Multi-Level Approval Chain', () => {
       const submitBtn = page.locator('button:has-text("Submit"), button:has-text("Save"), button:has-text("Create")').first();
       if (await submitBtn.isVisible({timeout: 3000}).catch(() => false)) {
         await submitBtn.click();
-        await page.waitForLoadState('networkidle');
+        await page.waitForLoadState('domcontentloaded');
       }
     }
 
     // ── Step 2: Switch to Sumit (Manager) and REJECT ──
     await switchUser(page, 'saran@nulogic.io', 'sumit@nulogic.io');
     await page.goto('/expenses');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const pendingTab = page.locator('button:has-text("Pending"), text=Pending Approval, button:has-text("Approvals")').first();
     if (await pendingTab.isVisible({timeout: 5000}).catch(() => false)) {
       await pendingTab.click();
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
     }
 
     const saranRow = page.locator('tbody tr', {hasText: /Saran/i}).first();
@@ -696,7 +696,7 @@ test.describe('Expense Multi-Level Approval Chain', () => {
         const viewBtn = saranRow.locator('button:has-text("View"), a:has-text("View")').first();
         if (await viewBtn.isVisible({timeout: 3000}).catch(() => false)) {
           await viewBtn.click();
-          await page.waitForLoadState('networkidle');
+          await page.waitForLoadState('domcontentloaded');
           const detailRejectBtn = page.locator('button:has-text("Reject")').first();
           if (await detailRejectBtn.isVisible({timeout: 5000}).catch(() => false)) {
             await detailRejectBtn.click();
@@ -711,18 +711,18 @@ test.describe('Expense Multi-Level Approval Chain', () => {
         await confirmBtn.click();
       }
 
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
     }
 
     // ── Step 3: Switch back to Saran and verify REJECTED ──
     await switchUser(page, 'sumit@nulogic.io', 'saran@nulogic.io');
     await page.goto('/expenses');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const myClaimsTab = page.locator('text=My Claims').first();
     if (await myClaimsTab.isVisible({timeout: 5000}).catch(() => false)) {
       await myClaimsTab.click();
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
     }
 
     const statusBadge = page.locator('tbody tr').first().locator('[class*="badge"]').first();

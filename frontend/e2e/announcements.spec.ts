@@ -1,4 +1,6 @@
 import {expect, test} from '@playwright/test';
+import {seedLocalStoredAuth} from './fixtures/helpers';
+import {testUsers} from './fixtures/testData';
 
 /**
  * Announcements Page Smoke Tests
@@ -6,13 +8,22 @@ import {expect, test} from '@playwright/test';
  */
 
 test.describe('Announcements Page', () => {
+  test.describe.configure({mode: 'serial', timeout: 300000});
+
   test.beforeEach(async ({page}) => {
-    await page.goto('/announcements');
-    await page.waitForLoadState('networkidle');
+    const heading = page.getByRole('heading', {name: 'Announcements', exact: true});
+    await page.goto('/announcements', {waitUntil: 'domcontentloaded', timeout: 90000});
+    if (await heading.isVisible({timeout: 120000}).catch(() => false)) {
+      return;
+    }
+
+    await seedLocalStoredAuth(page, testUsers.admin.email);
+    await page.goto('/announcements', {waitUntil: 'domcontentloaded', timeout: 90000});
+    await expect(heading).toBeVisible({timeout: 120000});
   });
 
   test('should display announcements page with heading', async ({page}) => {
-    await expect(page.locator('h1').first()).toBeVisible();
+    await expect(page.getByRole('heading', {name: 'Announcements', exact: true})).toBeVisible();
   });
 
   test('should not show application error', async ({page}) => {

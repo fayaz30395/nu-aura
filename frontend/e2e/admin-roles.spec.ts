@@ -1,6 +1,6 @@
 import {expect, test} from '@playwright/test';
-import {LoginPage} from './pages/LoginPage';
 import {demoUsers, testUsers} from './fixtures/testData';
+import {gotoWithRetry, loginAs} from './fixtures/helpers';
 
 /**
  * Admin Role Management E2E Tests
@@ -8,18 +8,23 @@ import {demoUsers, testUsers} from './fixtures/testData';
  * at /admin/roles and /admin/permissions
  */
 
-test.describe('Admin Role Management', () => {
-  test.beforeEach(async ({page}) => {
-    const loginPage = new LoginPage(page);
-    await loginPage.navigate();
-    await loginPage.login(testUsers.admin.email, testUsers.admin.password);
-    await page.waitForURL('**/dashboard');
-  });
+test.describe.configure({mode: 'serial', timeout: 300000});
 
+async function gotoAdminPage(page: Parameters<typeof loginAs>[0], path: string) {
+  await gotoWithRetry(page, path);
+
+  if (page.url().includes('/auth/login')) {
+    await loginAs(page, demoUsers.superAdmin.email);
+    await gotoWithRetry(page, path);
+  }
+
+  await expect(page.locator('h1, h2').first()).toBeVisible({timeout: 180000});
+}
+
+test.describe('Admin Role Management', () => {
   test.describe('Roles Page', () => {
     test.beforeEach(async ({page}) => {
-      await page.goto('/admin/roles');
-      await page.waitForLoadState('networkidle');
+      await gotoAdminPage(page, '/admin/roles');
     });
 
     test('should load roles page and display a heading', async ({page}) => {
@@ -93,8 +98,7 @@ test.describe('Admin Role Management', () => {
 
   test.describe('Permissions Page', () => {
     test.beforeEach(async ({page}) => {
-      await page.goto('/admin/permissions');
-      await page.waitForLoadState('networkidle');
+      await gotoAdminPage(page, '/admin/permissions');
     });
 
     test('should load permissions page', async ({page}) => {
@@ -155,8 +159,7 @@ test.describe('Admin Role Management', () => {
 
   test.describe('Admin Settings Page', () => {
     test('admin settings page is accessible', async ({page}) => {
-      await page.goto('/admin/settings');
-      await page.waitForLoadState('networkidle');
+      await gotoAdminPage(page, '/admin/settings');
 
       expect(page.url()).toContain('/admin');
       await expect(page.locator('h1, h2').first()).toBeVisible();
@@ -166,11 +169,7 @@ test.describe('Admin Role Management', () => {
 
 test.describe('Role-Based Access — Employee vs SuperAdmin', () => {
   test('employee login hides admin menu items', async ({page}) => {
-    const loginPage = new LoginPage(page);
-    await loginPage.navigate();
-    await loginPage.login(testUsers.employee.email, testUsers.employee.password);
-    await page.waitForURL('**/dashboard');
-    await page.waitForLoadState('networkidle');
+    await loginAs(page, testUsers.employee.email);
 
     // Admin menu links should NOT be visible to an employee
     const adminLink = page.locator('a[href*="/admin"], button:has-text("Admin")').first();
@@ -185,14 +184,11 @@ test.describe('Role-Based Access — Employee vs SuperAdmin', () => {
   });
 
   test('employee cannot access admin routes directly', async ({page}) => {
-    const loginPage = new LoginPage(page);
-    await loginPage.navigate();
-    await loginPage.login(testUsers.employee.email, testUsers.employee.password);
-    await page.waitForURL('**/dashboard');
+    await loginAs(page, testUsers.employee.email);
 
     // Try to access admin roles page directly
-    await page.goto('/admin/roles');
-    await page.waitForLoadState('networkidle');
+    await page.goto('/admin/roles', {waitUntil: 'domcontentloaded', timeout: 30000}).catch(() => undefined);
+    await page.waitForLoadState('domcontentloaded').catch(() => undefined);
     await page.waitForTimeout(1500);
 
     // Should redirect away or show access denied
@@ -204,13 +200,9 @@ test.describe('Role-Based Access — Employee vs SuperAdmin', () => {
   });
 
   test('SuperAdmin has full access to admin panel', async ({page}) => {
-    const loginPage = new LoginPage(page);
-    await loginPage.navigate();
-    await loginPage.login(demoUsers.superAdmin.email, demoUsers.superAdmin.password);
-    await page.waitForURL('**/dashboard');
+    await loginAs(page, demoUsers.superAdmin.email);
 
-    await page.goto('/admin/roles');
-    await page.waitForLoadState('networkidle');
+    await gotoAdminPage(page, '/admin/roles');
 
     // SuperAdmin should see the roles page
     expect(page.url()).toContain('/admin/roles');
@@ -225,13 +217,9 @@ test.describe('Role-Based Access — Employee vs SuperAdmin', () => {
   });
 
   test('SuperAdmin can access permissions page', async ({page}) => {
-    const loginPage = new LoginPage(page);
-    await loginPage.navigate();
-    await loginPage.login(demoUsers.superAdmin.email, demoUsers.superAdmin.password);
-    await page.waitForURL('**/dashboard');
+    await loginAs(page, demoUsers.superAdmin.email);
 
-    await page.goto('/admin/permissions');
-    await page.waitForLoadState('networkidle');
+    await gotoAdminPage(page, '/admin/permissions');
 
     expect(page.url()).toContain('/admin/permissions');
     await expect(page.locator('h1, h2').first()).toBeVisible();
@@ -240,13 +228,9 @@ test.describe('Role-Based Access — Employee vs SuperAdmin', () => {
 
 test.describe('Permission Change — SuperAdmin updates role, Employee sees updated UI', () => {
   test('SuperAdmin can open role edit and toggle permissions', async ({page}) => {
-    const loginPage = new LoginPage(page);
-    await loginPage.navigate();
-    await loginPage.login(demoUsers.superAdmin.email, demoUsers.superAdmin.password);
-    await page.waitForURL('**/dashboard');
+    await loginAs(page, demoUsers.superAdmin.email);
 
-    await page.goto('/admin/roles');
-    await page.waitForLoadState('networkidle');
+    await gotoAdminPage(page, '/admin/roles');
 
     // Find an existing role to edit
     const editBtn = page.locator('button:has-text("Edit"), button[aria-label*="edit"], [data-testid*="edit"]').first();
@@ -269,13 +253,9 @@ test.describe('Permission Change — SuperAdmin updates role, Employee sees upda
   });
 
   test('SuperAdmin can view all roles with permission counts', async ({page}) => {
-    const loginPage = new LoginPage(page);
-    await loginPage.navigate();
-    await loginPage.login(demoUsers.superAdmin.email, demoUsers.superAdmin.password);
-    await page.waitForURL('**/dashboard');
+    await loginAs(page, demoUsers.superAdmin.email);
 
-    await page.goto('/admin/permissions');
-    await page.waitForLoadState('networkidle');
+    await gotoAdminPage(page, '/admin/permissions');
     await page.waitForTimeout(1000);
 
     // Look for role names in the permissions view
@@ -296,11 +276,7 @@ test.describe('Permission Change — SuperAdmin updates role, Employee sees upda
 
   test('employee sidebar updates when navigating after permission change', async ({page}) => {
     // This test verifies that the employee UI reflects role-appropriate content
-    const loginPage = new LoginPage(page);
-    await loginPage.navigate();
-    await loginPage.login(testUsers.employee.email, testUsers.employee.password);
-    await page.waitForURL('**/dashboard');
-    await page.waitForLoadState('networkidle');
+    await loginAs(page, testUsers.employee.email);
 
     // Employee should see limited sidebar items
     const sidebarLinks = page.locator('nav a, nav button').filter({has: page.locator('span, text')});

@@ -15,7 +15,7 @@ import {demoUsers} from './fixtures/testData';
 test.describe('Resource Allocation Page', () => {
   test.beforeEach(async ({page}) => {
     await page.goto('/allocations/summary');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
   });
 
   test('should display allocation summary page', async ({page}) => {
@@ -58,7 +58,7 @@ test.describe('Resource Allocation - Allocate Employee to Project', () => {
     await loginAs(page, demoUsers.managerEng.email);
 
     await page.goto('/resources');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
 
     // Look for allocate button
@@ -141,7 +141,7 @@ test.describe('Resource Allocation - View Allocation Summary', () => {
     await loginAs(page, demoUsers.managerEng.email);
 
     await page.goto('/allocations/summary');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
 
     // Look for percentage indicators
@@ -164,7 +164,7 @@ test.describe('Resource Allocation - View Allocation Summary', () => {
     await loginAs(page, demoUsers.managerEng.email);
 
     await page.goto('/allocations/summary');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
 
     // Look for employee names in allocation view
@@ -181,7 +181,7 @@ test.describe('Resource Allocation - View Allocation Summary', () => {
     await loginAs(page, demoUsers.managerEng.email);
 
     await page.goto('/allocations/summary');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
 
     // Look for project names
@@ -198,7 +198,7 @@ test.describe('Resource Allocation - View Allocation Summary', () => {
     await loginAs(page, demoUsers.managerEng.email);
 
     await page.goto('/resources/capacity');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
 
     // Look for chart elements
@@ -219,7 +219,7 @@ test.describe('Resource Allocation - Over-Allocation Detection', () => {
     await loginAs(page, demoUsers.managerEng.email);
 
     await page.goto('/resources');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
 
     // Try to allocate at 110%
@@ -282,7 +282,7 @@ test.describe('Resource Allocation - Over-Allocation Detection', () => {
     await loginAs(page, demoUsers.managerEng.email);
 
     await page.goto('/allocations/summary');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
 
     // Look for over-allocation indicators (red text, warning icons, etc.)
@@ -307,7 +307,7 @@ test.describe('Resource Allocation - Manager Approval for Over-Allocation', () =
     await loginAs(page, demoUsers.managerEng.email);
 
     await page.goto('/resources/approvals');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
 
     // Should load without crashing
@@ -334,7 +334,7 @@ test.describe('Resource Allocation - Manager Approval for Over-Allocation', () =
     await loginAs(page, demoUsers.managerEng.email);
 
     await page.goto('/resources/approvals');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
 
     const approveBtn = page.locator('button:has-text("Approve")').first();
@@ -350,7 +350,7 @@ test.describe('Resource Allocation - Manager Approval for Over-Allocation', () =
     await loginAs(page, demoUsers.managerEng.email);
 
     await page.goto('/resources/approvals');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
 
     const approveBtn = page.locator('button:has-text("Approve")').first();
@@ -379,7 +379,7 @@ test.describe('Resource Allocation - Manager Approval for Over-Allocation', () =
 
     // Verify updated summary
     await page.goto('/allocations/summary');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
 
     await expect(
@@ -392,7 +392,7 @@ test.describe('Resource Allocation - Filters', () => {
   test.beforeEach(async ({page}) => {
     await loginAs(page, demoUsers.managerEng.email);
     await page.goto('/resources');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
   });
 
   test('should show search or filter controls', async ({page}) => {
@@ -440,7 +440,7 @@ test.describe('Resource Allocation - Filters', () => {
 test.describe('Resource Allocation - Resource Pool', () => {
   test('should display resource pool page', async ({page}) => {
     await page.goto('/resources/pool');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const heading = page.getByRole('heading').first();
     await expect(heading).toBeVisible({timeout: 10000});
@@ -448,7 +448,7 @@ test.describe('Resource Allocation - Resource Pool', () => {
 
   test('should show available resources with capacity info', async ({page}) => {
     await page.goto('/resources/pool');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
 
     // Look for capacity or availability info
@@ -468,7 +468,7 @@ test.describe('Resource Allocation - Resource Pool', () => {
 
   test('should load capacity timeline page', async ({page}) => {
     await page.goto('/resources/capacity');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const heading = page.getByRole('heading').first();
     await expect(heading).toBeVisible({timeout: 10000});
@@ -482,7 +482,7 @@ test.describe('Resource Allocation - Resource Pool', () => {
 test.describe('Resource Allocation - Visual Elements', () => {
   test('should render allocation page with proper layout', async ({page}) => {
     await page.goto('/resources');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const main = page.locator('main, [role="main"]').first();
     await expect(main).toBeVisible();
@@ -490,7 +490,7 @@ test.describe('Resource Allocation - Visual Elements', () => {
 
   test('should display icons', async ({page}) => {
     await page.goto('/resources');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const icons = page.locator('svg');
     const count = await icons.count();
@@ -499,7 +499,7 @@ test.describe('Resource Allocation - Visual Elements', () => {
 
   test('should be responsive', async ({page}) => {
     await page.goto('/allocations/summary');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     await page.setViewportSize({width: 375, height: 667});
     await page.waitForTimeout(500);

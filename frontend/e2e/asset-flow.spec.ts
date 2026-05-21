@@ -10,7 +10,7 @@ import {expect, test} from '@playwright/test';
 test.describe('Asset Flow — Page Load', () => {
   test.beforeEach(async ({page}) => {
     await page.goto('/assets');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
   });
 
   test('should display assets page with heading', async ({page}) => {
@@ -57,7 +57,7 @@ test.describe('Asset Flow — Page Load', () => {
 test.describe('Asset Flow — Asset Details', () => {
   test.beforeEach(async ({page}) => {
     await page.goto('/assets');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
   });
 
   test('should display asset details when clicking an asset', async ({page}) => {
@@ -74,7 +74,7 @@ test.describe('Asset Flow — Asset Details', () => {
 
       if (hasViewBtn) {
         await viewBtn.click();
-        await page.waitForLoadState('networkidle');
+        await page.waitForLoadState('domcontentloaded');
 
         // Should navigate to detail page or open modal
         const hasDetail = await page.locator('h1, h2, [role="dialog"]').first().isVisible().catch(() => false);
@@ -87,7 +87,7 @@ test.describe('Asset Flow — Asset Details', () => {
 test.describe('Asset Flow — Maintenance Request', () => {
   test.beforeEach(async ({page}) => {
     await page.goto('/assets');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
   });
 
   test('should display maintenance or request button', async ({page}) => {

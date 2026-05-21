@@ -13,12 +13,8 @@ export const analyticsService = {
     startDate?: string;
     endDate?: string
   }): Promise<DashboardAnalytics | null> => {
-    try {
-      const response = await apiClient.getPermissive<DashboardAnalytics>('/analytics/dashboard', {params});
-      return response.status === 403 ? null : response.data;
-    } catch {
-      return null;
-    }
+    const response = await apiClient.getPermissive<DashboardAnalytics>('/analytics/dashboard', {params});
+    return response.status === 403 ? null : response.data;
   },
 
   // Get organization health analytics

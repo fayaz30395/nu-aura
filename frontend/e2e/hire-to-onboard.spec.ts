@@ -34,7 +34,7 @@ function futureDate(daysOffset: number): string {
 
 async function openCreateJobForm(page: import('@playwright/test').Page) {
   await page.goto('/recruitment/jobs');
-  await page.waitForLoadState('networkidle');
+  await page.waitForLoadState('domcontentloaded');
 
   const createBtn = page
     .locator('button:has-text("Create Job Opening"), button:has-text("Post Job"), button:has-text("New Job"), button:has-text("Create Job")')
@@ -104,7 +104,7 @@ test.describe('Hire-to-Onboard — Full Lifecycle @regression @critical', () => 
       .last();
     if (await submitBtn.isVisible({timeout: 3000}).catch(() => false)) {
       await submitBtn.click();
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
     }
 
     // Confirm no crash
@@ -117,7 +117,7 @@ test.describe('Hire-to-Onboard — Full Lifecycle @regression @critical', () => 
   test('HIRE-02: recruitment admin can view candidate pipeline / kanban', async ({page}) => {
     await loginAs(page, demoUsers.recruitmentAdmin.email);
     await page.goto('/recruitment');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Navigate to pipeline or candidates view
     const pipelineLink = page.locator(
@@ -126,10 +126,10 @@ test.describe('Hire-to-Onboard — Full Lifecycle @regression @critical', () => 
     const hasPipeline = await pipelineLink.isVisible({timeout: 5000}).catch(() => false);
     if (hasPipeline) {
       await pipelineLink.click();
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
     } else {
       await page.goto('/recruitment/pipeline');
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
     }
 
     // Page must not error
@@ -146,7 +146,7 @@ test.describe('Hire-to-Onboard — Full Lifecycle @regression @critical', () => 
   test('HIRE-03: can navigate to interviews and schedule section', async ({page}) => {
     await loginAs(page, demoUsers.recruitmentAdmin.email);
     await page.goto('/recruitment');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Look for interviews tab/link
     const interviewLink = page.locator(
@@ -156,10 +156,10 @@ test.describe('Hire-to-Onboard — Full Lifecycle @regression @critical', () => 
 
     if (hasLink) {
       await interviewLink.click();
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
     } else {
       await page.goto('/recruitment/interviews');
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
     }
 
     // Page heading visible
@@ -184,13 +184,13 @@ test.describe('Hire-to-Onboard — Full Lifecycle @regression @critical', () => 
 
     // Navigate directly to offers
     await page.goto('/recruitment/offers');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // If page does not exist, fall back to general recruitment page
     const is404 = page.url().includes('not-found') || (await page.locator('text=404').isVisible({timeout: 2000}).catch(() => false));
     if (is404) {
       await page.goto('/recruitment');
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
     }
 
     const heading = page.locator('h1, h2').first();
@@ -203,7 +203,7 @@ test.describe('Hire-to-Onboard — Full Lifecycle @regression @critical', () => 
   test('HIRE-05: onboarding page shows new hires or onboarding tasks', async ({page}) => {
     await loginAs(page, demoUsers.recruitmentAdmin.email);
     await page.goto('/onboarding');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const heading = page.locator('h1, h2').first();
     await expect(heading).toBeVisible({timeout: 10000});
@@ -221,7 +221,7 @@ test.describe('Hire-to-Onboard — Full Lifecycle @regression @critical', () => 
   test('HIRE-06: SUPER_ADMIN can verify new hire exists in employee directory', async ({page}) => {
     await loginAs(page, demoUsers.superAdmin.email);
     await page.goto('/employees');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Employees page should render
     const heading = page.locator('h1').filter({hasText: /employee/i});
@@ -241,7 +241,7 @@ test.describe('Hire-to-Onboard — Full Lifecycle @regression @critical', () => 
   test('HIRE-07: offboarding page is accessible to recruitment admin', async ({page}) => {
     await loginAs(page, demoUsers.recruitmentAdmin.email);
     await page.goto('/offboarding');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const heading = page.locator('h1, h2').first();
     await expect(heading).toBeVisible({timeout: 10000});
@@ -255,12 +255,12 @@ test.describe('Hire-to-Onboard — Full Lifecycle @regression @critical', () => 
 
     // Start on recruitment
     await page.goto('/recruitment');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     expect(page.url()).not.toContain('/auth/login');
 
     // Switch to employees (HRMS)
     await page.goto('/employees');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Should still be authenticated
     expect(page.url()).not.toContain('/auth/login');
@@ -275,7 +275,7 @@ test.describe('Hire-to-Onboard — Multi-User Approval @regression', () => {
     // Employee navigates to their profile (My Space is always accessible)
     await loginAs(page, demoUsers.employeeSaran.email);
     await page.goto('/me/dashboard');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Dashboard should load for the employee
     const heading = page.locator('h1, h2').first();
@@ -285,7 +285,7 @@ test.describe('Hire-to-Onboard — Multi-User Approval @regression', () => {
     // Switch to HR Manager to view offboarding
     await switchUser(page, demoUsers.employeeSaran.email, demoUsers.hrManager.email);
     await page.goto('/offboarding');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     await expect(page.locator('h1, h2').first()).toBeVisible({timeout: 10000});
     await expect(page.locator('text=/Something went wrong/i')).not.toBeVisible();

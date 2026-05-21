@@ -19,12 +19,14 @@ import {getQueryClient} from '../queryClient';
  * user back into the Zustand state, making it immediately available.
  */
 const USER_STORAGE_KEY = 'nu-aura-user';
+const useE2ELocalAuthStorage = process.env.NEXT_PUBLIC_E2E_AUTH_STORAGE === 'localStorage';
 let restoreSessionPromise: Promise<boolean> | null = null;
 
 function persistUserToStorage(user: User): void {
   if (typeof window === 'undefined') return;
   try {
-    sessionStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user));
+    const storage = useE2ELocalAuthStorage ? localStorage : sessionStorage;
+    storage.setItem(USER_STORAGE_KEY, JSON.stringify(user));
   } catch { /* ignore */
   }
 }
@@ -32,7 +34,8 @@ function persistUserToStorage(user: User): void {
 function readUserFromStorage(): User | null {
   if (typeof window === 'undefined') return null;
   try {
-    const raw = sessionStorage.getItem(USER_STORAGE_KEY);
+    const storage = useE2ELocalAuthStorage ? localStorage : sessionStorage;
+    const raw = storage.getItem(USER_STORAGE_KEY);
     return raw ? JSON.parse(raw) : null;
   } catch {
     return null;
@@ -43,6 +46,7 @@ function clearUserFromStorage(): void {
   if (typeof window === 'undefined') return;
   try {
     sessionStorage.removeItem(USER_STORAGE_KEY);
+    localStorage.removeItem(USER_STORAGE_KEY);
   } catch { /* ignore */
   }
 }
@@ -315,7 +319,9 @@ export const useAuth = create<AuthState>()(
     }),
     {
       name: 'auth-storage',
-      storage: createJSONStorage(() => sessionStorage),
+      storage: createJSONStorage(() => (
+        useE2ELocalAuthStorage ? localStorage : sessionStorage
+      )),
       // Persist both auth flag AND user object in sessionStorage. This eliminates
       // the fragile restoreSession() dance on page loads — the user object is
       // immediately available after Zustand hydrates, preventing the deadlock where

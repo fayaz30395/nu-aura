@@ -28,7 +28,7 @@ test.describe.serial('Expense End-to-End — happy path @regression @critical', 
   test('EXP-E2E-01: employee submits expense claim', async ({page}) => {
     await loginAs(page, demoUsers.employeeSaran.email);
     await navigateTo(page, '/expenses');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const createBtn = page.locator(
       'button:has-text("New"), button:has-text("Create"), button:has-text("Add"), button:has-text("Submit Expense")'
@@ -59,7 +59,7 @@ test.describe.serial('Expense End-to-End — happy path @regression @critical', 
     const submitBtn = page.locator('button:has-text("Submit"), button:has-text("Save"), button[type="submit"]').last();
     if (await submitBtn.isVisible({timeout: 3000}).catch(() => false)) {
       await submitBtn.click();
-      await page.waitForLoadState('networkidle').catch(() => {
+      await page.waitForLoadState('domcontentloaded').catch(() => {
       });
     }
 
@@ -69,7 +69,7 @@ test.describe.serial('Expense End-to-End — happy path @regression @critical', 
   test('EXP-E2E-02: manager sees claim in approvals queue and approves', async ({page}) => {
     await loginAs(page, demoUsers.managerEng.email);
     await navigateTo(page, '/expenses/approvals');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // If the dedicated approvals page 404s, fall back to /approvals
     const is404 = await page.locator('text=/404|not found/i').isVisible({timeout: 2000}).catch(() => false);
@@ -89,7 +89,7 @@ test.describe.serial('Expense End-to-End — happy path @regression @critical', 
       if (await confirmBtn.isVisible({timeout: 2000}).catch(() => false)) {
         await confirmBtn.click();
       }
-      await page.waitForLoadState('networkidle').catch(() => {
+      await page.waitForLoadState('domcontentloaded').catch(() => {
       });
     }
 
@@ -100,7 +100,7 @@ test.describe.serial('Expense End-to-End — happy path @regression @critical', 
     // jagadeesh maps to FINANCE_ADMIN per nu-rbac role mapping
     await loginAs(page, demoUsers.hrManager.email);
     await navigateTo(page, '/expenses');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Look for an APPROVED status row + disburse/pay action
     const disburseBtn = page.locator(
@@ -113,7 +113,7 @@ test.describe.serial('Expense End-to-End — happy path @regression @critical', 
       if (await confirmBtn.isVisible({timeout: 2000}).catch(() => false)) {
         await confirmBtn.click();
       }
-      await page.waitForLoadState('networkidle').catch(() => {
+      await page.waitForLoadState('domcontentloaded').catch(() => {
       });
     }
 
@@ -123,7 +123,7 @@ test.describe.serial('Expense End-to-End — happy path @regression @critical', 
   test('EXP-E2E-04: final state surfaces REIMBURSED for the employee', async ({page}) => {
     await loginAs(page, demoUsers.employeeSaran.email);
     await navigateTo(page, '/expenses');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Click My Claims tab if present
     const myTab = page.locator('text=My Claims').first();
@@ -147,7 +147,7 @@ test.describe('Expense End-to-End — negative path @regression', () => {
   test('EXP-E2E-05: manager rejects claim with reason', async ({page}) => {
     await loginAs(page, demoUsers.managerEng.email);
     await navigateTo(page, '/expenses/approvals');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const rejectBtn = page.locator('button:has-text("Reject"), button:has-text("Decline")').first();
     if (await rejectBtn.isVisible({timeout: 5000}).catch(() => false)) {
@@ -162,7 +162,7 @@ test.describe('Expense End-to-End — negative path @regression', () => {
       const confirmBtn = page.locator('button:has-text("Confirm"), button:has-text("Reject"), button:has-text("Submit")').last();
       if (await confirmBtn.isVisible({timeout: 2000}).catch(() => false)) {
         await confirmBtn.click();
-        await page.waitForLoadState('networkidle').catch(() => {
+        await page.waitForLoadState('domcontentloaded').catch(() => {
         });
       }
     }

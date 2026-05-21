@@ -8,7 +8,7 @@ import {expect, test} from '@playwright/test';
 test.describe('Training Page', () => {
   test.beforeEach(async ({page}) => {
     await page.goto('/training');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
   });
 
   test('should display training page with header', async ({page}) => {
@@ -37,7 +37,7 @@ test.describe('Training Page', () => {
 test.describe('Training - My Trainings Tab', () => {
   test.beforeEach(async ({page}) => {
     await page.goto('/training');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.click('text=My Trainings');
     await page.waitForTimeout(500);
   });
@@ -87,7 +87,7 @@ test.describe('Training - My Trainings Tab', () => {
 test.describe('Training - Course Catalog Tab', () => {
   test.beforeEach(async ({page}) => {
     await page.goto('/training');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.click('text=Course Catalog');
     await page.waitForTimeout(500);
   });
@@ -148,7 +148,7 @@ test.describe('Training - Course Catalog Tab', () => {
 test.describe('Training - Enrollment Flow', () => {
   test.beforeEach(async ({page}) => {
     await page.goto('/training');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.click('text=Course Catalog');
     await page.waitForTimeout(500);
   });
@@ -186,7 +186,7 @@ test.describe('Training - Enrollment Flow', () => {
 test.describe('Training - Manage Programs Tab (Admin)', () => {
   test.beforeEach(async ({page}) => {
     await page.goto('/training');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
   });
 
   test('should display Manage Programs tab for admin', async ({page}) => {
@@ -241,7 +241,7 @@ test.describe('Training - Manage Programs Tab (Admin)', () => {
 test.describe('Training - Progress Tracking', () => {
   test.beforeEach(async ({page}) => {
     await page.goto('/training');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.click('text=My Trainings');
     await page.waitForTimeout(500);
   });
@@ -283,7 +283,7 @@ test.describe('Training - Progress Tracking', () => {
 test.describe('Training - Visual Elements', () => {
   test.beforeEach(async ({page}) => {
     await page.goto('/training');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
   });
 
   test('should have consistent card styling', async ({page}) => {
@@ -322,7 +322,7 @@ test.describe('Training - Visual Elements', () => {
 test.describe('Training - Full Enrollment + Completion Flow', () => {
   test.beforeEach(async ({page}) => {
     await page.goto('/training');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
   });
 
   test('enroll in course from catalog, then verify it appears in My Trainings', async ({page}) => {
@@ -384,7 +384,7 @@ test.describe('Training - Full Enrollment + Completion Flow', () => {
 
       // Navigate back to training page
       await page.goto('/training');
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
       await page.click('text=My Trainings');
       await page.waitForTimeout(1000);
 

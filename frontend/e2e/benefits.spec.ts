@@ -8,7 +8,7 @@ import {expect, test} from '@playwright/test';
 test.describe('Benefits Page', () => {
   test.beforeEach(async ({page}) => {
     await page.goto('/benefits');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
   });
 
   test('should display benefits page with header', async ({page}) => {
@@ -38,7 +38,7 @@ test.describe('Benefits Page', () => {
 test.describe('Benefits - Benefit Plans Tab', () => {
   test.beforeEach(async ({page}) => {
     await page.goto('/benefits');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     // Ensure on Benefit Plans tab
     await page.click('text=Benefit Plans');
     await page.waitForTimeout(500);
@@ -99,7 +99,7 @@ test.describe('Benefits - Benefit Plans Tab', () => {
 test.describe('Benefits - My Enrollments Tab', () => {
   test.beforeEach(async ({page}) => {
     await page.goto('/benefits');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.click('text=My Enrollments');
     await page.waitForTimeout(500);
   });
@@ -135,7 +135,7 @@ test.describe('Benefits - My Enrollments Tab', () => {
 test.describe('Benefits - Claims Tab', () => {
   test.beforeEach(async ({page}) => {
     await page.goto('/benefits');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.click('text=Claims');
     await page.waitForTimeout(500);
   });
@@ -183,7 +183,7 @@ test.describe('Benefits - Claims Tab', () => {
 test.describe('Benefits - Enrollment Flow', () => {
   test.beforeEach(async ({page}) => {
     await page.goto('/benefits');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
   });
 
   test('should complete enrollment flow', async ({page}) => {
@@ -255,7 +255,7 @@ test.describe('Benefits - Enrollment Flow', () => {
 test.describe('Benefits - Flex Credits', () => {
   test.beforeEach(async ({page}) => {
     await page.goto('/benefits');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
   });
 
   test('should display flex credits balance', async ({page}) => {

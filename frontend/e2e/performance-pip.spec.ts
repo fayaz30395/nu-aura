@@ -56,7 +56,7 @@ test.describe('Review Cycle Flow — HR creates cycle, Manager submits review, E
     await page.waitForURL('**/dashboard');
 
     await page.goto('/performance/cycles');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Verify the page loaded
     const heading = page.getByRole('heading').first();
@@ -110,7 +110,7 @@ test.describe('Review Cycle Flow — HR creates cycle, Manager submits review, E
     await page.waitForURL('**/dashboard');
 
     await page.goto('/performance');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Page should load without error
     await expect(page.locator('body')).not.toContainText('Application error');
@@ -141,7 +141,7 @@ test.describe('Review Cycle Flow — HR creates cycle, Manager submits review, E
     await page.waitForURL('**/dashboard');
 
     await page.goto('/performance');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Look for a "Submit Review" or "Start Review" button
     const reviewBtn = page.locator('button:has-text("Submit Review"), button:has-text("Start Review"), button:has-text("Write Review")').first();
@@ -172,7 +172,7 @@ test.describe('Review Cycle Flow — HR creates cycle, Manager submits review, E
     await page.waitForURL('**/dashboard');
 
     await page.goto('/performance');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Page should load
     await expect(page.locator('body')).not.toContainText('Application error');

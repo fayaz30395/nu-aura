@@ -108,7 +108,7 @@ test.describe('Notifications — Leave Approval Workflow', () => {
     await page.waitForURL('**/dashboard');
 
     await page.goto('/leave');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Click apply leave button
     const applyBtn = page.locator('button:has-text("Apply"), button:has-text("New Leave"), button:has-text("Request Leave")').first();
@@ -162,7 +162,7 @@ test.describe('Notifications — Leave Approval Workflow', () => {
     await loginPage.navigate();
     await loginPage.login(demoUsers.managerEng.email, demoUsers.managerEng.password);
     await page.waitForURL('**/dashboard');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Check for notification bell
     const bellIcon = page.locator(
@@ -190,7 +190,7 @@ test.describe('Notifications — Leave Approval Workflow', () => {
     await loginPage.navigate();
     await loginPage.login(demoUsers.managerEng.email, demoUsers.managerEng.password);
     await page.waitForURL('**/dashboard');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const bellIcon = page.locator(
       'button[aria-label*="notification" i], button[aria-label*="bell" i], [data-testid="notification-bell"]'
@@ -243,7 +243,7 @@ test.describe('Notifications — Leave Approval Workflow', () => {
     await page.waitForURL('**/dashboard');
 
     await page.goto('/leave/team');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
 
     // Look for pending leave requests with approve button
@@ -271,7 +271,7 @@ test.describe('Notifications — Leave Approval Workflow', () => {
     await loginPage.navigate();
     await loginPage.login(demoUsers.employeeSaran.email, demoUsers.employeeSaran.password);
     await page.waitForURL('**/dashboard');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const bellIcon = page.locator(
       'button[aria-label*="notification" i], button[aria-label*="bell" i], [data-testid="notification-bell"]'
@@ -300,7 +300,7 @@ test.describe('Notifications — Mark as Read', () => {
     await loginPage.navigate();
     await loginPage.login(demoUsers.superAdmin.email, demoUsers.superAdmin.password);
     await page.waitForURL('**/dashboard');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
   });
 
   test('can mark all notifications as read', async ({page}) => {

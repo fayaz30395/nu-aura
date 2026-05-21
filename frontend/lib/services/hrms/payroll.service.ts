@@ -13,28 +13,121 @@ import {
   SalaryStructureRequest,
 } from '../../types/hrms/payroll';
 
+type NumericApiValue = number | string | null | undefined;
+
+interface PayrollRunApiResponse
+  extends Partial<Omit<PayrollRun, 'totalEmployees' | 'totalGrossAmount' | 'totalDeductions' | 'totalNetAmount'>> {
+  payPeriodMonth?: number | null;
+  payPeriodYear?: number | null;
+  payrollDate?: string | null;
+  remarks?: string | null;
+  totalEmployees?: NumericApiValue;
+  totalGrossAmount?: NumericApiValue;
+  totalDeductions?: NumericApiValue;
+  totalNetAmount?: NumericApiValue;
+}
+
+const MONTH_NAMES = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
+];
+
+function toNumber(value: NumericApiValue): number {
+  if (typeof value === 'number') return Number.isFinite(value) ? value : 0;
+  if (typeof value === 'string') {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : 0;
+  }
+  return 0;
+}
+
+function safePeriodYear(value: number | null | undefined): number {
+  return value && value > 0 ? value : new Date().getFullYear();
+}
+
+function safePeriodMonth(value: number | null | undefined): number {
+  return value && value >= 1 && value <= 12 ? value : 1;
+}
+
+function isoDate(year: number, month: number, day: number): string {
+  return new Date(Date.UTC(year, month - 1, day)).toISOString().slice(0, 10);
+}
+
+function isoMonthEnd(year: number, month: number): string {
+  return new Date(Date.UTC(year, month, 0)).toISOString().slice(0, 10);
+}
+
+function normalizePayrollRun(run: PayrollRunApiResponse): PayrollRun {
+  const payPeriodYear = safePeriodYear(run.payPeriodYear);
+  const payPeriodMonth = safePeriodMonth(run.payPeriodMonth);
+  const payrollPeriodStart = run.payrollPeriodStart ?? isoDate(payPeriodYear, payPeriodMonth, 1);
+  const payrollPeriodEnd = run.payrollPeriodEnd ?? isoMonthEnd(payPeriodYear, payPeriodMonth);
+  const paymentDate = run.paymentDate ?? run.payrollDate?.slice(0, 10) ?? payrollPeriodEnd;
+  const runName = run.runName ?? `Payroll ${MONTH_NAMES[payPeriodMonth - 1]} ${payPeriodYear}`;
+
+  return {
+    id: run.id ?? '',
+    runName,
+    payrollPeriodStart,
+    payrollPeriodEnd,
+    paymentDate,
+    status: run.status ?? 'DRAFT',
+    totalEmployees: toNumber(run.totalEmployees),
+    totalGrossAmount: toNumber(run.totalGrossAmount),
+    totalDeductions: toNumber(run.totalDeductions),
+    totalNetAmount: toNumber(run.totalNetAmount),
+    processedBy: run.processedBy,
+    processedAt: run.processedAt,
+    approvedBy: run.approvedBy,
+    approvedAt: run.approvedAt,
+    lockedBy: run.lockedBy,
+    lockedAt: run.lockedAt,
+    notes: run.notes ?? run.remarks,
+    createdBy: run.createdBy,
+    createdAt: run.createdAt,
+    updatedAt: run.updatedAt,
+  };
+}
+
+function normalizePayrollRunPage(page: Page<PayrollRunApiResponse>): Page<PayrollRun> {
+  return {
+    ...page,
+    content: page.content.map(normalizePayrollRun),
+  };
+}
+
 class PayrollService {
   // Payroll Runs Management
   async createPayrollRun(data: PayrollRunRequest): Promise<PayrollRun> {
-    const response = await apiClient.post<PayrollRun>('/payroll/runs', data);
-    return response.data;
+    const response = await apiClient.post<PayrollRunApiResponse>('/payroll/runs', data);
+    return normalizePayrollRun(response.data);
   }
 
   async updatePayrollRun(id: string, data: PayrollRunRequest): Promise<PayrollRun> {
-    const response = await apiClient.put<PayrollRun>(`/payroll/runs/${id}`, data);
-    return response.data;
+    const response = await apiClient.put<PayrollRunApiResponse>(`/payroll/runs/${id}`, data);
+    return normalizePayrollRun(response.data);
   }
 
   async getPayrollRunById(id: string): Promise<PayrollRun> {
-    const response = await apiClient.get<PayrollRun>(`/payroll/runs/${id}`);
-    return response.data;
+    const response = await apiClient.get<PayrollRunApiResponse>(`/payroll/runs/${id}`);
+    return normalizePayrollRun(response.data);
   }
 
   async getAllPayrollRuns(page: number = 0, size: number = 20): Promise<Page<PayrollRun>> {
-    const response = await apiClient.get<Page<PayrollRun>>('/payroll/runs', {
+    const response = await apiClient.get<Page<PayrollRunApiResponse>>('/payroll/runs', {
       params: {page, size},
     });
-    return response.data;
+    return normalizePayrollRunPage(response.data);
   }
 
   async getPayrollRunsByStatus(
@@ -42,25 +135,25 @@ class PayrollService {
     page: number = 0,
     size: number = 20
   ): Promise<Page<PayrollRun>> {
-    const response = await apiClient.get<Page<PayrollRun>>(`/payroll/runs/status/${status}`, {
+    const response = await apiClient.get<Page<PayrollRunApiResponse>>(`/payroll/runs/status/${status}`, {
       params: {page, size},
     });
-    return response.data;
+    return normalizePayrollRunPage(response.data);
   }
 
   async processPayrollRun(id: string): Promise<PayrollRun> {
-    const response = await apiClient.post<PayrollRun>(`/payroll/runs/${id}/process`);
-    return response.data;
+    const response = await apiClient.post<PayrollRunApiResponse>(`/payroll/runs/${id}/process`);
+    return normalizePayrollRun(response.data);
   }
 
   async approvePayrollRun(id: string): Promise<PayrollRun> {
-    const response = await apiClient.post<PayrollRun>(`/payroll/runs/${id}/approve`);
-    return response.data;
+    const response = await apiClient.post<PayrollRunApiResponse>(`/payroll/runs/${id}/approve`);
+    return normalizePayrollRun(response.data);
   }
 
   async lockPayrollRun(id: string): Promise<PayrollRun> {
-    const response = await apiClient.post<PayrollRun>(`/payroll/runs/${id}/lock`);
-    return response.data;
+    const response = await apiClient.post<PayrollRunApiResponse>(`/payroll/runs/${id}/lock`);
+    return normalizePayrollRun(response.data);
   }
 
   async deletePayrollRun(id: string): Promise<void> {

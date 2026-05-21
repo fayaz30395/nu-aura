@@ -11,7 +11,7 @@ test.describe('@journey critical user flows', () => {
     // can invalidate the saved cookie. The test is meaningful as long as the
     // dashboard OR a recognizable auth-aware page renders.
     const res = await page.goto('/me/dashboard', {waitUntil: 'domcontentloaded', timeout: 30000});
-    await page.waitForLoadState('networkidle', {timeout: 15000}).catch(() => {
+    await page.waitForLoadState('domcontentloaded', {timeout: 15000}).catch(() => {
     });
 
     expect(res?.status() ?? 0, 'dashboard route did not return a valid response').toBeLessThan(500);
@@ -35,7 +35,7 @@ test.describe('@journey critical user flows', () => {
 
   test('navigate employees list and open detail', async ({page}) => {
     const res = await page.goto('/employees');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // The page must render successfully (no 5xx, no error page).
     const status = res?.status() ?? 0;
@@ -58,7 +58,7 @@ test.describe('@journey critical user flows', () => {
       const link = firstRow.locator('a').first();
       if (await link.isVisible().catch(() => false)) {
         await link.click();
-        await page.waitForLoadState('networkidle');
+        await page.waitForLoadState('domcontentloaded');
         await expect(page.locator('body')).not.toContainText(/404|not found|page not found/i);
       }
     }
@@ -66,7 +66,7 @@ test.describe('@journey critical user flows', () => {
 
   test('attendance page renders today widget', async ({page}) => {
     const res = await page.goto('/attendance');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Page must render (no 5xx, no Next.js error overlay).
     const status = res?.status() ?? 0;
@@ -84,7 +84,7 @@ test.describe('@journey critical user flows', () => {
 
   test('leave page shows balance or apply CTA', async ({page}) => {
     const res = await page.goto('/leave');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Page must render (no 5xx, no error overlay).
     const status = res?.status() ?? 0;
@@ -103,7 +103,7 @@ test.describe('@journey critical user flows', () => {
 
   test('approvals inbox loads', async ({page}) => {
     await page.goto('/approvals/inbox');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await expect(page.locator('body')).toContainText(/approval|inbox|pending|no .* (yet|pending)/i);
   });
 });

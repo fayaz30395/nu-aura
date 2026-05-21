@@ -15,7 +15,7 @@ test.describe('Payroll Dashboard', () => {
 
   test('should display payroll page with heading', async ({page}) => {
     await page.goto('/payroll');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const heading = page.locator('h1, h2').first();
     await expect(heading).toBeVisible({timeout: 10000});
@@ -26,7 +26,7 @@ test.describe('Payroll Dashboard', () => {
 
   test('should display payroll dashboard cards or stats', async ({page}) => {
     await page.goto('/payroll');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
 
     const hasCards = await page.locator('[class*="card"], [class*="Card"]').first().isVisible().catch(() => false);
@@ -38,7 +38,7 @@ test.describe('Payroll Dashboard', () => {
 
   test('should not show error on payroll page load', async ({page}) => {
     await page.goto('/payroll');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const errorMsg = page.locator('text=/Something went wrong|Error loading|Internal Server/i');
     await expect(errorMsg).not.toBeVisible({timeout: 5000});
@@ -52,7 +52,7 @@ test.describe('Payroll Runs', () => {
 
   test('should display payroll runs list page', async ({page}) => {
     await page.goto('/payroll/runs');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const mainContent = page.locator('main, [role="main"]').first();
     await expect(mainContent).toBeVisible();
@@ -64,7 +64,7 @@ test.describe('Payroll Runs', () => {
 
   test('should display create payroll run button', async ({page}) => {
     await page.goto('/payroll/runs');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const createBtn = page.getByRole('button', {name: /create|new|add|generate/i}).first();
     const hasCreate = await createBtn.isVisible({timeout: 5000}).catch(() => false);
@@ -81,7 +81,7 @@ test.describe('Salary Structures', () => {
 
   test('should display salary structures page', async ({page}) => {
     await page.goto('/compensation');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const heading = page.locator('h1, h2').first();
     await expect(heading).toBeVisible({timeout: 10000});
@@ -89,7 +89,7 @@ test.describe('Salary Structures', () => {
 
   test('should display salary structure list or empty state', async ({page}) => {
     await page.goto('/compensation');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
 
     const hasTable = await page.locator('table').first().isVisible().catch(() => false);

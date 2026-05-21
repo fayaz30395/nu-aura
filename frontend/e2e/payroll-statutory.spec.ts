@@ -24,7 +24,7 @@ test.describe('Payroll Statutory', () => {
 
   test('displays PF section', async ({page}) => {
     await page.goto('/payroll/statutory');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     // Page should show statutory content (PF, ESI, or contribution sections)
     const content = page.locator('main, [role="main"], .content');
     await expect(content.first()).toBeVisible();
@@ -32,7 +32,7 @@ test.describe('Payroll Statutory', () => {
 
   test('statutory page handles no-data state gracefully', async ({page}) => {
     await page.goto('/payroll/statutory');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     // Should not show an uncaught error boundary
     await expect(page.locator('text=Something went wrong')).not.toBeVisible();
     await expect(page.locator('text=Error')).not.toBeVisible({timeout: 3000}).catch(() => {
@@ -41,7 +41,7 @@ test.describe('Payroll Statutory', () => {
 
   test('PF contributions tab is accessible', async ({page}) => {
     await page.goto('/payroll/statutory');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     // Try to find a tab or section for PF
     const pfTab = page.getByRole('tab', {name: /PF|Provident/i})
       .or(page.getByText(/Provident Fund/i).first());
@@ -53,7 +53,7 @@ test.describe('Payroll Statutory', () => {
 
   test('ESI section is accessible', async ({page}) => {
     await page.goto('/payroll/statutory');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     const esiSection = page.getByRole('tab', {name: /ESI/i})
       .or(page.getByText(/ESI|Employee State Insurance/i).first());
     if (await esiSection.isVisible({timeout: 3000}).catch(() => false)) {
@@ -64,7 +64,7 @@ test.describe('Payroll Statutory', () => {
 
   test('payslips show statutory columns', async ({page}) => {
     await page.goto('/payroll/payslips');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await expect(page.locator('main, [role="main"]').first()).toBeVisible();
     await expect(page.locator('text=Something went wrong')).not.toBeVisible();
   });

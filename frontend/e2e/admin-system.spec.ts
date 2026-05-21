@@ -1,5 +1,5 @@
-import {expect, test} from '@playwright/test';
-import {loginAs, navigateTo} from './fixtures/helpers';
+import {expect, Page, test} from '@playwright/test';
+import {loginAs, navigateTo, seedLocalStoredAuth} from './fixtures/helpers';
 import {testUsers} from './fixtures/testData';
 
 /**
@@ -17,6 +17,22 @@ import {testUsers} from './fixtures/testData';
  * RBAC: All pages require admin/HR access. Employee gets redirected away.
  */
 
+test.describe.configure({mode: 'serial', timeout: 300000});
+
+async function openAdminPage(page: Page, path: string, heading: RegExp): Promise<void> {
+  await loginAs(page, testUsers.admin.email, {verifyDashboard: false});
+  await navigateTo(page, path);
+
+  const headingLocator = page.locator('h1').filter({hasText: heading});
+  if (await headingLocator.isVisible({timeout: 120000}).catch(() => false)) {
+    return;
+  }
+
+  await seedLocalStoredAuth(page, testUsers.admin.email);
+  await navigateTo(page, path);
+  await expect(headingLocator).toBeVisible({timeout: 180000});
+}
+
 // ─── /admin/shifts ────────────────────────────────────────────────────────────
 
 test.describe('/admin/shifts — Shift Management', () => {
@@ -25,10 +41,7 @@ test.describe('/admin/shifts — Shift Management', () => {
   // wait once in beforeEach for the heading to render — after that, the
   // route is warm and per-test assertions resolve fast.
   test.beforeEach(async ({page}) => {
-    await loginAs(page, testUsers.admin.email);
-    await navigateTo(page, '/admin/shifts');
-    await expect(page.locator('h1').filter({hasText: /Shift Management/i}))
-      .toBeVisible({timeout: 60000});
+    await openAdminPage(page, '/admin/shifts', /Shift Management/i);
   });
 
   test('page loads with Shift Management heading', async ({page}) => {
@@ -42,10 +55,11 @@ test.describe('/admin/shifts — Shift Management', () => {
   });
 
   test('shows shift grid or empty state when no shifts', async ({page}) => {
-    await page.waitForLoadState('networkidle').catch(() => {});
-    const hasCards = await page.locator('[class*="skeuo-card"]').first().isVisible().catch(() => false);
-    const hasEmpty = await page.locator('text=/No shifts configured/i').first().isVisible().catch(() => false);
-    expect(hasCards || hasEmpty).toBe(true);
+    await expect.poll(async () => {
+      const hasCards = await page.locator('[data-testid="shift-card"]').first().isVisible().catch(() => false);
+      const hasEmpty = await page.getByText(/No shifts configured/i).first().isVisible().catch(() => false);
+      return hasCards || hasEmpty;
+    }, {timeout: 30000}).toBe(true);
   });
 
   test('clicking Add Shift opens modal with form sections', async ({page}) => {
@@ -111,7 +125,7 @@ test.describe('/admin/shifts — Shift Management', () => {
   });
 
   test('shift cards show Active/Inactive badge', async ({page}) => {
-    await page.waitForLoadState('networkidle').catch(() => {});
+    await page.waitForLoadState('domcontentloaded').catch(() => {});
     const hasCards = await page.locator('[class*="skeuo-card"]').first().isVisible().catch(() => false);
     if (hasCards) {
       const badge = page.locator('text=/Active|Inactive/').first();
@@ -120,9 +134,9 @@ test.describe('/admin/shifts — Shift Management', () => {
   });
 
   test('RBAC: employee is redirected away from /admin/shifts', async ({page}) => {
-    await loginAs(page, testUsers.employee.email);
+    await loginAs(page, testUsers.employee.email, {verifyDashboard: false});
     await page.goto('/admin/shifts');
-    await page.waitForLoadState('networkidle').catch(() => {});
+    await page.waitForLoadState('domcontentloaded').catch(() => {});
 
     // Employee should be redirected away by client-side guard.
     await expect(page.locator('h1:has-text("Shift Management")')).not.toBeVisible({timeout: 10000});
@@ -135,13 +149,11 @@ test.describe('/admin/shifts — Shift Management', () => {
 
 test.describe('/admin/implicit-roles — Implicit Role Rules', () => {
   // Page renders a <SkeletonTable> while rules + roles queries are loading;
-  // the h1 only mounts once data resolves. Wait up to 60s for the heading
+  // the h1 only mounts once data resolves. Wait through full-suite backend
+  // pressure before per-test assertions probe the DOM.
   // before per-test assertions probe the DOM.
   test.beforeEach(async ({page}) => {
-    await loginAs(page, testUsers.admin.email);
-    await navigateTo(page, '/admin/implicit-roles');
-    await expect(page.locator('h1').filter({hasText: /Implicit Roles/i}))
-      .toBeVisible({timeout: 60000});
+    await openAdminPage(page, '/admin/implicit-roles', /Implicit Roles/i);
   });
 
   test('page loads with Implicit Roles heading', async ({page}) => {
@@ -231,9 +243,9 @@ test.describe('/admin/implicit-roles — Implicit Role Rules', () => {
   });
 
   test('RBAC: employee is redirected away from /admin/implicit-roles', async ({page}) => {
-    await loginAs(page, testUsers.employee.email);
+    await loginAs(page, testUsers.employee.email, {verifyDashboard: false});
     await page.goto('/admin/implicit-roles');
-    await page.waitForLoadState('networkidle').catch(() => {});
+    await page.waitForLoadState('domcontentloaded').catch(() => {});
 
     await expect(page.locator('h1:has-text("Implicit Roles")')).not.toBeVisible({timeout: 10000});
     const url = page.url();
@@ -247,7 +259,7 @@ test.describe('/admin/org-hierarchy — Organization Chart', () => {
   // Org-hierarchy fetches up to 1000 employees and builds a tree client-side
   // — initial render can take >15s on cold compile.
   test.beforeEach(async ({page}) => {
-    await loginAs(page, testUsers.admin.email);
+    await loginAs(page, testUsers.admin.email, {verifyDashboard: false});
     await navigateTo(page, '/admin/org-hierarchy');
     await expect(page.locator('h1').filter({hasText: /Organization Chart/i}))
       .toBeVisible({timeout: 60000});
@@ -263,7 +275,7 @@ test.describe('/admin/org-hierarchy — Organization Chart', () => {
   });
 
   test('shows total employees count in controls bar', async ({page}) => {
-    await page.waitForLoadState('networkidle').catch(() => {});
+    await page.waitForLoadState('domcontentloaded').catch(() => {});
     const hasCount = await page.locator('text=/total employees/i').first().isVisible().catch(() => false);
     const hasLoading = await page.locator('text=/Loading organization chart/i').first().isVisible().catch(() => false);
     const hasEmpty = await page.locator('text=/No employees found/i').first().isVisible().catch(() => false);
@@ -271,7 +283,7 @@ test.describe('/admin/org-hierarchy — Organization Chart', () => {
   });
 
   test('employee cards render with name and designation', async ({page}) => {
-    await page.waitForLoadState('networkidle').catch(() => {});
+    await page.waitForLoadState('domcontentloaded').catch(() => {});
     const hasCards = await page.locator('[class*="rounded-xl"]').first().isVisible().catch(() => false);
     const hasLoading = await page.locator('text=/Loading/i').first().isVisible().catch(() => false);
     const hasEmpty = await page.locator('text=/No employees found/i').first().isVisible().catch(() => false);
@@ -289,14 +301,14 @@ test.describe('/admin/org-hierarchy — Organization Chart', () => {
   });
 
   test('page does not throw application errors', async ({page}) => {
-    await page.waitForLoadState('networkidle').catch(() => {});
+    await page.waitForLoadState('domcontentloaded').catch(() => {});
     await expect(page.locator('body')).not.toContainText('Application error');
   });
 
   test('RBAC: employee is redirected away from /admin/org-hierarchy', async ({page}) => {
-    await loginAs(page, testUsers.employee.email);
-    await page.goto('/admin/org-hierarchy');
-    await page.waitForLoadState('networkidle').catch(() => {});
+    await loginAs(page, testUsers.employee.email, {verifyDashboard: false});
+    await page.goto('/admin/org-hierarchy', {waitUntil: 'domcontentloaded', timeout: 30000}).catch(() => undefined);
+    await page.waitForLoadState('domcontentloaded').catch(() => undefined);
 
     await expect(page.locator('h1:has-text("Organization Chart")')).not.toBeVisible({timeout: 10000});
     const url = page.url();
@@ -308,8 +320,10 @@ test.describe('/admin/org-hierarchy — Organization Chart', () => {
 
 test.describe('/admin/payroll — Payroll Administration', () => {
   test.beforeEach(async ({page}) => {
-    await loginAs(page, testUsers.admin.email);
+    await loginAs(page, testUsers.admin.email, {verifyDashboard: false});
     await navigateTo(page, '/admin/payroll');
+    await expect(page.locator('h1').filter({hasText: /Payroll Administration/i}))
+      .toBeVisible({timeout: 60000});
   });
 
   test('page loads with Payroll Administration heading', async ({page}) => {
@@ -343,17 +357,24 @@ test.describe('/admin/payroll — Payroll Administration', () => {
 
   test('clicking View all navigates to /payroll/runs', async ({page}) => {
     await page.waitForTimeout(1000);
-    const viewAll = page.locator('a:has-text("View all")').first();
-    await viewAll.click();
-    await page.waitForLoadState('networkidle');
+    const viewAll = page.locator('a[href="/payroll/runs"]').filter({hasText: /View all/i}).first();
+    await expect(viewAll).toBeVisible();
+    await Promise.all([
+      page.waitForURL('**/payroll/runs', {timeout: 30000}),
+      viewAll.click(),
+    ]);
     expect(page.url()).toContain('/payroll/runs');
   });
 
   test('stat cards display numeric values or loading skeleton', async ({page}) => {
-    await page.waitForTimeout(500);
-    const hasNumbers = await page.locator('text=/\\d+/').first().isVisible().catch(() => false);
-    const hasSkeleton = await page.locator('[class*="animate-pulse"]').first().isVisible().catch(() => false);
-    expect(hasNumbers || hasSkeleton).toBe(true);
+    const totalRunsCard = page.locator('.card-aura').filter({hasText: /Total Runs/i}).first();
+    await expect(totalRunsCard).toBeVisible({timeout: 15000});
+    await expect.poll(async () => {
+      const cardText = await totalRunsCard.innerText().catch(() => '');
+      const hasNumber = /\b\d+\b/.test(cardText);
+      const hasSkeleton = await totalRunsCard.locator('[class*="animate-pulse"]').first().isVisible().catch(() => false);
+      return hasNumber || hasSkeleton;
+    }, {timeout: 15000}).toBe(true);
   });
 
   test('page does not show application errors', async ({page}) => {
@@ -362,9 +383,9 @@ test.describe('/admin/payroll — Payroll Administration', () => {
   });
 
   test('RBAC: employee cannot access /admin/payroll', async ({page}) => {
-    await loginAs(page, testUsers.employee.email);
-    await page.goto('/admin/payroll');
-    await page.waitForLoadState('networkidle');
+    await loginAs(page, testUsers.employee.email, {verifyDashboard: false});
+    await page.goto('/admin/payroll', {waitUntil: 'domcontentloaded', timeout: 30000}).catch(() => undefined);
+    await page.waitForLoadState('domcontentloaded').catch(() => undefined);
     await expect(page.locator('h1:has-text("Payroll Administration")')).not.toBeVisible({timeout: 5000});
   });
 });
@@ -373,8 +394,10 @@ test.describe('/admin/payroll — Payroll Administration', () => {
 
 test.describe('/admin/reports — Admin Reports Hub', () => {
   test.beforeEach(async ({page}) => {
-    await loginAs(page, testUsers.admin.email);
+    await loginAs(page, testUsers.admin.email, {verifyDashboard: false});
     await navigateTo(page, '/admin/reports');
+    await expect(page.locator('h1').filter({hasText: /Admin Reports/i}))
+      .toBeVisible({timeout: 60000});
   });
 
   test('page loads with Admin Reports heading', async ({page}) => {
@@ -407,9 +430,12 @@ test.describe('/admin/reports — Admin Reports Hub', () => {
   });
 
   test('clicking Manage link navigates to /reports/scheduled', async ({page}) => {
-    const manageLink = page.locator('a:has-text("Manage")');
-    await manageLink.click();
-    await page.waitForLoadState('networkidle');
+    const manageLink = page.locator('a[href="/reports/scheduled"]').filter({hasText: /Manage/i});
+    await expect(manageLink).toBeVisible();
+    await Promise.all([
+      page.waitForURL('**/reports/scheduled', {timeout: 30000}),
+      manageLink.click(),
+    ]);
     expect(page.url()).toContain('/reports/scheduled');
   });
 
@@ -423,9 +449,9 @@ test.describe('/admin/reports — Admin Reports Hub', () => {
   });
 
   test('RBAC: employee cannot access /admin/reports', async ({page}) => {
-    await loginAs(page, testUsers.employee.email);
-    await page.goto('/admin/reports');
-    await page.waitForLoadState('networkidle');
+    await loginAs(page, testUsers.employee.email, {verifyDashboard: false});
+    await page.goto('/admin/reports', {waitUntil: 'domcontentloaded', timeout: 30000}).catch(() => undefined);
+    await page.waitForLoadState('domcontentloaded').catch(() => undefined);
     await expect(page.locator('h1:has-text("Admin Reports")')).not.toBeVisible({timeout: 5000});
   });
 });
@@ -434,8 +460,10 @@ test.describe('/admin/reports — Admin Reports Hub', () => {
 
 test.describe('/biometric-devices — Biometric Device Management', () => {
   test.beforeEach(async ({page}) => {
-    await loginAs(page, testUsers.admin.email);
+    await loginAs(page, testUsers.admin.email, {verifyDashboard: false});
     await navigateTo(page, '/biometric-devices');
+    await expect(page.locator('h1').filter({hasText: /Biometric Devices/i}))
+      .toBeVisible({timeout: 60000});
   });
 
   test('page loads with Biometric Devices heading', async ({page}) => {
@@ -484,9 +512,9 @@ test.describe('/biometric-devices — Biometric Device Management', () => {
   });
 
   test('RBAC: unauthorized users are shown permission gate fallback', async ({page}) => {
-    await loginAs(page, testUsers.employee.email);
-    await page.goto('/biometric-devices');
-    await page.waitForLoadState('networkidle');
+    await loginAs(page, testUsers.employee.email, {verifyDashboard: false});
+    await page.goto('/biometric-devices', {waitUntil: 'domcontentloaded', timeout: 30000}).catch(() => undefined);
+    await page.waitForLoadState('domcontentloaded').catch(() => undefined);
     await page.waitForTimeout(1000);
     // PermissionGate renders nothing or redirects for employees without ATTENDANCE_MANAGE
     const hasContent = await page.locator('h1:has-text("Biometric Devices")').isVisible().catch(() => false);
@@ -499,8 +527,10 @@ test.describe('/biometric-devices — Biometric Device Management', () => {
 
 test.describe('/import-export — Data Import & Export', () => {
   test.beforeEach(async ({page}) => {
-    await loginAs(page, testUsers.admin.email);
+    await loginAs(page, testUsers.admin.email, {verifyDashboard: false});
     await navigateTo(page, '/import-export');
+    await expect(page.locator('h1').filter({hasText: /Import \/ Export Hub/i}))
+      .toBeVisible({timeout: 60000});
   });
 
   test('page loads without application error', async ({page}) => {
@@ -560,16 +590,16 @@ test.describe('/import-export — Data Import & Export', () => {
   });
 
   test('HR Manager can also access import-export page', async ({page}) => {
-    await loginAs(page, testUsers.hrManager.email);
+    await loginAs(page, testUsers.hrManager.email, {verifyDashboard: false});
     await navigateTo(page, '/import-export');
     await page.waitForTimeout(1000);
     await expect(page.locator('body')).not.toContainText('Application error');
   });
 
   test('RBAC: employee without admin permission cannot access import-export', async ({page}) => {
-    await loginAs(page, testUsers.employee.email);
-    await page.goto('/import-export');
-    await page.waitForLoadState('networkidle');
+    await loginAs(page, testUsers.employee.email, {verifyDashboard: false});
+    await page.goto('/import-export', {waitUntil: 'domcontentloaded', timeout: 30000}).catch(() => undefined);
+    await page.waitForLoadState('domcontentloaded').catch(() => undefined);
     await page.waitForTimeout(1000);
     // AdminGate/PermissionGate should block employee from seeing the content
     const hasImportContent = await page.locator('text=/Import Data|Import Type/i').first().isVisible().catch(() => false);

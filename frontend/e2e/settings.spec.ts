@@ -8,7 +8,7 @@ import {expect, test} from '@playwright/test';
 test.describe('Settings Page', () => {
   test.beforeEach(async ({page}) => {
     await page.goto('/settings');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
   });
 
   test('should display settings page', async ({page}) => {
@@ -118,7 +118,7 @@ test.describe('Settings Page', () => {
 test.describe('Settings - Password Change', () => {
   test.beforeEach(async ({page}) => {
     await page.goto('/settings');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
   });
 
   test('should display password fields', async ({page}) => {

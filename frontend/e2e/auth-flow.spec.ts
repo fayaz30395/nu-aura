@@ -16,7 +16,7 @@ test.describe('Auth Flow — Login', () => {
     // Clear auth state so we land on login
     await page.context().clearCookies();
     await page.goto('/auth/login');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Verify core login elements
     const heading = page.locator('h1, h2').first();
@@ -90,7 +90,7 @@ test.describe('Auth Flow — Session Redirect', () => {
 
     // Try to access a protected route
     await page.goto('/employees');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Should redirect to login
     await page.waitForURL('**/auth/login**', {timeout: 15000});

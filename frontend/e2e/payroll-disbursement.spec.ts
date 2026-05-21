@@ -37,7 +37,7 @@ test.describe.serial('Payroll Disbursement — create + process + view payslip @
   test('DISB-01: HR_ADMIN creates a payroll run for previous month', async ({page}) => {
     await loginAs(page, demoUsers.hrManager.email);
     await navigateTo(page, '/payroll/runs');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const heading = page.locator('h1, h2').first();
     await expect(heading).toBeVisible({timeout: 10000});
@@ -59,7 +59,7 @@ test.describe.serial('Payroll Disbursement — create + process + view payslip @
       ).last();
       if (await submitBtn.isVisible({timeout: 3000}).catch(() => false)) {
         await submitBtn.click();
-        await page.waitForLoadState('networkidle').catch(() => {
+        await page.waitForLoadState('domcontentloaded').catch(() => {
         });
       }
     }
@@ -70,7 +70,7 @@ test.describe.serial('Payroll Disbursement — create + process + view payslip @
   test('DISB-02: HR_ADMIN processes the run and it transitions out of DRAFT', async ({page}) => {
     await loginAs(page, demoUsers.hrManager.email);
     await navigateTo(page, '/payroll/runs');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const firstRow = page.locator('tbody tr').first();
     if (await firstRow.isVisible({timeout: 8000}).catch(() => false)) {
@@ -89,7 +89,7 @@ test.describe.serial('Payroll Disbursement — create + process + view payslip @
         if (await confirm.isVisible({timeout: 2000}).catch(() => false)) {
           await confirm.click();
         }
-        await page.waitForLoadState('networkidle').catch(() => {
+        await page.waitForLoadState('domcontentloaded').catch(() => {
         });
       }
 
@@ -97,7 +97,7 @@ test.describe.serial('Payroll Disbursement — create + process + view payslip @
       const approveBtn = page.locator('button:has-text("Approve")').first();
       if (await approveBtn.isVisible({timeout: 3000}).catch(() => false)) {
         await approveBtn.click();
-        await page.waitForLoadState('networkidle').catch(() => {
+        await page.waitForLoadState('domcontentloaded').catch(() => {
         });
       }
     }
@@ -108,7 +108,7 @@ test.describe.serial('Payroll Disbursement — create + process + view payslip @
   test('DISB-03: payslip list is non-empty after process (catches missing-payslip gap)', async ({page}) => {
     await loginAs(page, demoUsers.hrManager.email);
     await navigateTo(page, '/payroll/payslips');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const heading = page.locator('h1, h2').first();
     await expect(heading).toBeVisible({timeout: 10000});

@@ -69,7 +69,7 @@ test.describe('Recruitment — Offer Approval Flow', () => {
 
   test('recruitment admin can create a new job posting', async ({page}) => {
     await page.goto('/recruitment');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const createBtn = page.getByRole('button', {name: /new job|create job|post job/i});
     const hasCreate = await createBtn.isVisible().catch(() => false);
@@ -99,7 +99,7 @@ test.describe('Recruitment — Offer Approval Flow', () => {
 
   test('recruitment admin can add a candidate to a job', async ({page}) => {
     await page.goto('/recruitment');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Look for an existing job to add a candidate
     const jobRow = page.locator('table tbody tr, [class*="card"]').first();
@@ -133,7 +133,7 @@ test.describe('Recruitment — Offer Approval Flow', () => {
 
   test('kanban board shows offer stage column', async ({page}) => {
     await page.goto('/recruitment');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Navigate to a job's kanban board
     const jobRow = page.locator('table tbody tr, [class*="card"]').first();
@@ -160,7 +160,7 @@ test.describe('Recruitment — Offer Approval Flow', () => {
 
   test('moving candidate to offer stage triggers approval workflow', async ({page}) => {
     await page.goto('/recruitment');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Navigate to a job kanban
     const jobRow = page.locator('table tbody tr, [class*="card"]').first();
@@ -210,7 +210,7 @@ test.describe('Recruitment — Offer Approval Flow', () => {
     await page.waitForURL('**/dashboard');
 
     await page.goto('/recruitment');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Look for approvals tab or section
     const approvalsSection = page.locator('text=/approval|pending.*offer/i').first();

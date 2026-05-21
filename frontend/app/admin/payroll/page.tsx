@@ -265,30 +265,35 @@ export default function AdminPayrollPage() {
               />
             ) : (
               <div className="divide-y divide-[var(--border-subtle)]">
-                {structures.map((s) => (
-                  <div key={s.id} className="flex items-center gap-2 px-4 py-2">
-                    <Layers className="h-4 w-4 text-accent-500 shrink-0"/>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-[var(--text-primary)] truncate">
-                        {s.employeeName ?? `Employee ${s.employeeId.substring(0, 8)}`}
-                      </p>
-                      <p className="text-caption">
-                        Effective {s.effectiveDate} · CTC ₹{s.totalCTC.toLocaleString()}
-                      </p>
+                {structures.map((s) => {
+                  const employeeLabel = s.employeeName ?? (s.employeeId ? `Employee ${s.employeeId.substring(0, 8)}` : 'Employee');
+                  const totalCTC = Number(s.totalCTC ?? 0);
+
+                  return (
+                    <div key={s.id} className="flex items-center gap-2 px-4 py-2">
+                      <Layers className="h-4 w-4 text-accent-500 shrink-0"/>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-[var(--text-primary)] truncate">
+                          {employeeLabel}
+                        </p>
+                        <p className="text-caption">
+                          Effective {s.effectiveDate ?? '—'} · CTC ₹{totalCTC.toLocaleString('en-IN')}
+                        </p>
+                      </div>
+                      <span
+                        className={`shrink-0 px-2 py-0.5 rounded-full text-xs font-medium ${
+                          s.status === 'ACTIVE'
+                            ? 'badge-success'
+                            : s.status === 'PENDING'
+                              ? 'badge-warning'
+                              : 'bg-[var(--surface-2)] text-[var(--text-muted)]'
+                        }`}
+                      >
+                        {s.status}
+                      </span>
                     </div>
-                    <span
-                      className={`shrink-0 px-2 py-0.5 rounded-full text-xs font-medium ${
-                        s.status === 'ACTIVE'
-                          ? 'badge-success'
-                          : s.status === 'PENDING'
-                            ? 'badge-warning'
-                            : 'bg-[var(--surface-2)] text-[var(--text-muted)]'
-                      }`}
-                    >
-                      {s.status}
-                    </span>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>

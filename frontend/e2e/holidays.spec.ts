@@ -8,7 +8,7 @@ import {expect, test} from '@playwright/test';
 test.describe('Holidays Page', () => {
   test.beforeEach(async ({page}) => {
     await page.goto('/holidays');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
   });
 
   test('should display holidays page with heading', async ({page}) => {

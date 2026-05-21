@@ -8,7 +8,7 @@ import {expect, test} from '@playwright/test';
 test.describe('Org Chart Page', () => {
   test.beforeEach(async ({page}) => {
     await page.goto('/org-chart');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
   });
 
   test('should display org chart page with heading', async ({page}) => {
@@ -77,7 +77,7 @@ test.describe('Org Chart Page', () => {
 test.describe('Org Chart - Employee Node Interaction', () => {
   test.beforeEach(async ({page}) => {
     await page.goto('/org-chart');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(2000);
   });
 
@@ -178,7 +178,7 @@ test.describe('Org Chart - Employee Node Interaction', () => {
 test.describe('Org Chart - Search', () => {
   test.beforeEach(async ({page}) => {
     await page.goto('/org-chart');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
   });
 
@@ -254,7 +254,7 @@ test.describe('Org Chart - Search', () => {
 test.describe('Org Chart - View Controls', () => {
   test.beforeEach(async ({page}) => {
     await page.goto('/org-chart');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
   });
 
@@ -297,7 +297,7 @@ test.describe('Org Chart - View Controls', () => {
 test.describe('Org Chart - Visual Elements', () => {
   test.beforeEach(async ({page}) => {
     await page.goto('/org-chart');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
   });
 

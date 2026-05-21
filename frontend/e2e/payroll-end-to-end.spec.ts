@@ -45,7 +45,7 @@ async function gotoPayrollRoute(
   subRoute: string
 ): Promise<void> {
   await page.goto(`/payroll${subRoute}`);
-  await page.waitForLoadState('networkidle');
+  await page.waitForLoadState('domcontentloaded');
 }
 
 // ── suite ─────────────────────────────────────────────────────────────────────
@@ -130,7 +130,7 @@ test.describe('Payroll End-to-End — Run Payroll @regression @critical', () => 
       const hasSubmit = await submitBtn.isVisible({timeout: 3000}).catch(() => false);
       if (hasSubmit) {
         await submitBtn.click();
-        await page.waitForLoadState('networkidle');
+        await page.waitForLoadState('domcontentloaded');
       }
 
       await expect(page.locator('text=/Something went wrong/i')).not.toBeVisible();
@@ -168,7 +168,7 @@ test.describe('Payroll End-to-End — Run Payroll @regression @critical', () => 
           if (await confirmBtn.isVisible({timeout: 3000}).catch(() => false)) {
             await confirmBtn.click();
           }
-          await page.waitForLoadState('networkidle');
+          await page.waitForLoadState('domcontentloaded');
           await expect(page.locator('text=/Something went wrong/i')).not.toBeVisible();
         }
       }
@@ -216,7 +216,7 @@ test.describe('Payroll End-to-End — Payslip Generation and Viewing @regression
     if (hasSearch) {
       await searchInput.fill('Saran');
       await page.waitForTimeout(800);
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
 
       // Results should update
       await expect(page.locator('text=/Something went wrong/i')).not.toBeVisible();
@@ -230,13 +230,13 @@ test.describe('Payroll End-to-End — Payslip Generation and Viewing @regression
 
     // Navigate to employee self-service payslip route
     await page.goto('/me/payslips');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // If route doesn't exist, try /payroll/my-payslips
     const is404 = await page.locator('text=404').isVisible({timeout: 2000}).catch(() => false);
     if (is404) {
       await page.goto('/me/dashboard');
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
     }
 
     const heading = page.locator('h1, h2').first();
@@ -252,7 +252,7 @@ test.describe('Payroll End-to-End — Payslip Generation and Viewing @regression
   test('PAY-11: employee can download a payslip (PDF link visible)', async ({page}) => {
     await loginAs(page, demoUsers.employeeSaran.email);
     await page.goto('/me/payslips');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const is404 = await page.locator('text=404').isVisible({timeout: 2000}).catch(() => false);
     if (is404) return; // Payslip route not yet active in this env — skip
@@ -282,7 +282,7 @@ test.describe('Payroll End-to-End — Payslip Generation and Viewing @regression
 
     for (const route of routes) {
       await page.goto(route);
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
 
       // No fatal crash error
       const hasError = await page

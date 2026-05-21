@@ -8,7 +8,7 @@ import {expect, test} from '@playwright/test';
 test.describe('OKR Page', () => {
   test.beforeEach(async ({page}) => {
     await page.goto('/performance/okr');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
   });
 
   test('should display OKR page with heading', async ({page}) => {
@@ -39,7 +39,7 @@ test.describe('OKR Page', () => {
 
   test('/okr redirect works', async ({page}) => {
     await page.goto('/okr');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
 
     expect(page.url()).toContain('/performance/okr');

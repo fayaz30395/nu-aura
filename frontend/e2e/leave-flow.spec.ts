@@ -75,7 +75,7 @@ test.describe('Leave Flow — Manager Approval', () => {
     // Step 1: Employee submits leave
     await loginAs(page, 'raj@nulogic.io');
     await page.goto('/leave');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const applyBtn = page.locator('button:has-text("Apply Leave")');
     await expect(applyBtn).toBeVisible({timeout: 10000});
@@ -100,7 +100,7 @@ test.describe('Leave Flow — Manager Approval', () => {
     // Step 2: Manager views team leaves
     await switchUser(page, 'raj@nulogic.io', 'mani@nulogic.io');
     await page.goto('/leave/team');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Verify team leaves page loaded
     expect(page.url()).toContain('/leave/team');

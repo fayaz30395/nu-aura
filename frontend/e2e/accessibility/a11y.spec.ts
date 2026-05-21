@@ -1,4 +1,4 @@
-import {expect, test} from '@playwright/test';
+import {expect, test, type Page} from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 
 /**
@@ -6,11 +6,20 @@ import AxeBuilder from '@axe-core/playwright';
  * Uses axe-core to test WCAG 2.1 compliance
  */
 
+async function gotoAppPage(page: Page, path: string): Promise<void> {
+  await page.goto(path, {waitUntil: 'domcontentloaded'});
+  await expect(page.locator('main, [role="main"]').first()).toBeVisible({timeout: 30000});
+}
+
+async function gotoLoginPage(page: Page): Promise<void> {
+  await page.goto('/auth/login', {waitUntil: 'domcontentloaded'});
+  await expect(page.locator('input[type="email"], input[type="password"]').first()).toBeVisible({timeout: 15000});
+}
+
 test.describe('Accessibility Tests', () => {
   test.describe('Dashboard Accessibility', () => {
     test('should not have any automatically detectable accessibility issues', async ({page}) => {
-      await page.goto('/dashboard');
-      await page.waitForLoadState('networkidle');
+      await gotoAppPage(page, '/me/dashboard');
 
       const accessibilityScanResults = await new AxeBuilder({page})
         .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
@@ -36,8 +45,8 @@ test.describe('Accessibility Tests', () => {
     });
 
     test('should have proper heading hierarchy', async ({page}) => {
-      await page.goto('/dashboard');
-      await page.waitForLoadState('networkidle');
+      await gotoAppPage(page, '/me/dashboard');
+      await expect(page.locator('h1').first()).toBeVisible({timeout: 30000});
 
       // Check heading structure
       const headings = await page.$$eval('h1, h2, h3, h4, h5, h6', (elements) => {
@@ -62,8 +71,7 @@ test.describe('Accessibility Tests', () => {
     });
 
     test('should have proper ARIA landmarks', async ({page}) => {
-      await page.goto('/dashboard');
-      await page.waitForLoadState('networkidle');
+      await gotoAppPage(page, '/me/dashboard');
 
       // AuthGuard restores the session asynchronously (calls /auth/me, ~5s
       // against Neon + bcrypt + dev Next.js HMR overhead). AppLayout only
@@ -87,8 +95,7 @@ test.describe('Accessibility Tests', () => {
 
   test.describe('Navigation Accessibility', () => {
     test('should support keyboard navigation', async ({page}) => {
-      await page.goto('/dashboard');
-      await page.waitForLoadState('networkidle');
+      await gotoAppPage(page, '/me/dashboard');
 
       // Press Tab to start navigation
       await page.keyboard.press('Tab');
@@ -114,8 +121,7 @@ test.describe('Accessibility Tests', () => {
     });
 
     test('should have visible focus indicators', async ({page}) => {
-      await page.goto('/dashboard');
-      await page.waitForLoadState('networkidle');
+      await gotoAppPage(page, '/me/dashboard');
 
       // Find a focusable element
       const link = page.getByRole('link').first();
@@ -143,8 +149,7 @@ test.describe('Accessibility Tests', () => {
     });
 
     test('should allow Escape key to close modals', async ({page}) => {
-      await page.goto('/employees');
-      await page.waitForLoadState('networkidle');
+      await gotoAppPage(page, '/employees');
 
       // Try to open a modal
       const addButton = page.getByRole('button', {name: /add|new|create/i}).first();
@@ -170,8 +175,7 @@ test.describe('Accessibility Tests', () => {
     });
 
     test('should trap focus within modals', async ({page}) => {
-      await page.goto('/employees');
-      await page.waitForLoadState('networkidle');
+      await gotoAppPage(page, '/employees');
 
       const addButton = page.getByRole('button', {name: /add|new|create/i}).first();
       if (await addButton.isVisible()) {
@@ -207,8 +211,7 @@ test.describe('Accessibility Tests', () => {
 
   test.describe('Form Accessibility', () => {
     test('should have labels for all form inputs', async ({page}) => {
-      await page.goto('/auth/login');
-      await page.waitForLoadState('networkidle');
+      await gotoLoginPage(page);
 
       const accessibilityScanResults = await new AxeBuilder({page})
         .withTags(['wcag2a'])
@@ -233,8 +236,7 @@ test.describe('Accessibility Tests', () => {
     });
 
     test('should announce form errors to screen readers', async ({page}) => {
-      await page.goto('/auth/login');
-      await page.waitForLoadState('networkidle');
+      await gotoLoginPage(page);
 
       // Submit empty form
       const submitButton = page.getByRole('button', {name: /sign in|log in|submit/i});
@@ -255,8 +257,7 @@ test.describe('Accessibility Tests', () => {
     });
 
     test('should have proper autocomplete attributes', async ({page}) => {
-      await page.goto('/auth/login');
-      await page.waitForLoadState('networkidle');
+      await gotoLoginPage(page);
 
       const emailInput = page.locator('input[type="email"]');
       const passwordInput = page.locator('input[type="password"]');
@@ -275,8 +276,7 @@ test.describe('Accessibility Tests', () => {
 
   test.describe('Color Contrast', () => {
     test('should meet color contrast requirements', async ({page}) => {
-      await page.goto('/dashboard');
-      await page.waitForLoadState('networkidle');
+      await gotoAppPage(page, '/me/dashboard');
 
       const accessibilityScanResults = await new AxeBuilder({page})
         .options({
@@ -310,8 +310,7 @@ test.describe('Accessibility Tests', () => {
 
   test.describe('Images and Media', () => {
     test('should have alt text for all images', async ({page}) => {
-      await page.goto('/dashboard');
-      await page.waitForLoadState('networkidle');
+      await gotoAppPage(page, '/me/dashboard');
 
       const images = await page.locator('img').all();
 
@@ -328,8 +327,7 @@ test.describe('Accessibility Tests', () => {
     });
 
     test('should have accessible icons', async ({page}) => {
-      await page.goto('/dashboard');
-      await page.waitForLoadState('networkidle');
+      await gotoAppPage(page, '/me/dashboard');
 
       // Check SVG icons
       const svgIcons = page.locator('svg');
@@ -358,8 +356,7 @@ test.describe('Accessibility Tests', () => {
 
   test.describe('Interactive Elements', () => {
     test('should have accessible names for all buttons', async ({page}) => {
-      await page.goto('/dashboard');
-      await page.waitForLoadState('networkidle');
+      await gotoAppPage(page, '/me/dashboard');
 
       const buttons = await page.getByRole('button').all();
 
@@ -375,8 +372,7 @@ test.describe('Accessibility Tests', () => {
     });
 
     test('should have accessible names for all links', async ({page}) => {
-      await page.goto('/dashboard');
-      await page.waitForLoadState('networkidle');
+      await gotoAppPage(page, '/me/dashboard');
 
       const links = await page.getByRole('link').all();
 
@@ -394,7 +390,7 @@ test.describe('Accessibility Tests', () => {
 
   test.describe('Page-specific Accessibility', () => {
     const pagesToTest = [
-      {path: '/dashboard', name: 'Dashboard'},
+      {path: '/me/dashboard', name: 'Dashboard'},
       {path: '/employees', name: 'Employees'},
       {path: '/leave', name: 'Leave'},
       {path: '/me/profile', name: 'Profile'},
@@ -403,8 +399,7 @@ test.describe('Accessibility Tests', () => {
 
     for (const pageConfig of pagesToTest) {
       test(`${pageConfig.name} page should pass accessibility checks`, async ({page}) => {
-        await page.goto(pageConfig.path);
-        await page.waitForLoadState('networkidle');
+        await gotoAppPage(page, pageConfig.path);
 
         const accessibilityScanResults = await new AxeBuilder({page})
           .withTags(['wcag2a', 'wcag2aa'])
@@ -418,6 +413,9 @@ test.describe('Accessibility Tests', () => {
           console.log(`Accessibility issues on ${pageConfig.name}:`);
           violations.forEach((v) => {
             console.log(`  [${v.impact}] ${v.id}: ${v.description}`);
+            v.nodes.slice(0, 3).forEach((node) => {
+              console.log(`    - ${node.html.substring(0, 160)}...`);
+            });
           });
         }
 

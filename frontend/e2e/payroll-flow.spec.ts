@@ -20,7 +20,7 @@ test.describe('Payroll Flow', () => {
     await page.goto('/payroll/runs');
 
     // Wait for page to load
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Verify page loaded successfully
     const mainContent = page.locator('main, [role="main"]').first();
@@ -33,7 +33,7 @@ test.describe('Payroll Flow', () => {
 
   test('should create new payroll run', async ({page}) => {
     await page.goto('/payroll/runs');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Look for create button
     const createBtn = page.getByRole('button', {
@@ -45,7 +45,7 @@ test.describe('Payroll Flow', () => {
       await createBtn.click();
 
       // Wait for modal/form to appear
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
 
       // Try to fill form if it appears
       const formInputs = page.locator('input[type="text"], input[type="date"]');
@@ -64,7 +64,7 @@ test.describe('Payroll Flow', () => {
           await submitBtn.click();
 
           // Wait for success state
-          await page.waitForLoadState('networkidle');
+          await page.waitForLoadState('domcontentloaded');
 
           // Verify no error occurred
           await expect(page.locator('text=Something went wrong')).not.toBeVisible();
@@ -75,7 +75,7 @@ test.describe('Payroll Flow', () => {
 
   test('should process payroll run', async ({page}) => {
     await page.goto('/payroll/runs');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Look for a run in the list
     const firstRunRow = page.locator('tr').nth(1); // Skip header
@@ -88,7 +88,7 @@ test.describe('Payroll Flow', () => {
 
       if (await actionBtn.isVisible({timeout: 2000}).catch(() => false)) {
         await actionBtn.click();
-        await page.waitForLoadState('networkidle');
+        await page.waitForLoadState('domcontentloaded');
 
         // If a confirmation dialog appears, confirm
         const confirmBtn = page.getByRole('button', {
@@ -97,7 +97,7 @@ test.describe('Payroll Flow', () => {
 
         if (await confirmBtn.isVisible({timeout: 2000}).catch(() => false)) {
           await confirmBtn.click();
-          await page.waitForLoadState('networkidle');
+          await page.waitForLoadState('domcontentloaded');
 
           // Verify status change or success message
           const _successMsg = page.locator('text=/success|processed|completed/i');
@@ -110,7 +110,7 @@ test.describe('Payroll Flow', () => {
 
   test('should navigate to payslips tab', async ({page}) => {
     await page.goto('/payroll');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Look for Payslips tab/link
     const payslipsTab = page.getByRole('tab', {name: /payslips/i})
@@ -119,7 +119,7 @@ test.describe('Payroll Flow', () => {
 
     if (await payslipsTab.isVisible({timeout: 3000}).catch(() => false)) {
       await payslipsTab.click();
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
 
       // Verify payslips page loaded
       const mainContent = page.locator('main, [role="main"]').first();
@@ -130,7 +130,7 @@ test.describe('Payroll Flow', () => {
     } else {
       // Navigate directly to payslips
       await page.goto('/payroll/payslips');
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
 
       const mainContent = page.locator('main, [role="main"]').first();
       await expect(mainContent).toBeVisible();
@@ -139,7 +139,7 @@ test.describe('Payroll Flow', () => {
 
   test('should filter payslips by employee', async ({page}) => {
     await page.goto('/payroll/payslips');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Look for search/filter input
     const searchInput = page.locator(
@@ -155,7 +155,7 @@ test.describe('Payroll Flow', () => {
 
       // Wait for filter to apply
       await page.waitForTimeout(500);
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
 
       // Verify table updated (if exists)
       const table = page.locator('table');
@@ -182,7 +182,7 @@ test.describe('Payroll Flow', () => {
 
     for (const route of pages) {
       await page.goto(route);
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
 
       // Verify no fatal errors
       const errorBoundary = page.locator('text=Something went wrong|Error');
@@ -202,7 +202,7 @@ test.describe('Payroll Flow', () => {
 
   test('should handle payroll run status transitions', async ({page}) => {
     await page.goto('/payroll/runs');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Look for status badge or column
     const statusElements = page.locator('[class*="status" i]');

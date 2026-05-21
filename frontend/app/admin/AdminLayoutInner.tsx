@@ -36,7 +36,6 @@ export default function AdminLayoutInner({
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const {permissions, roles, hasPermission, isReady} = usePermissions();
   const {user} = useAuth();
-  const {data: unreadCount} = useUnreadNotificationCount();
   const isSuperAdmin = useMemo(
     () => roles.includes(Roles.SUPER_ADMIN),
     [roles]
@@ -52,6 +51,7 @@ export default function AdminLayoutInner({
       roles.includes(Roles.HR_MANAGER),
     [isSuperAdmin, roles]
   );
+  const {data: unreadCount} = useUnreadNotificationCount(isReady && hasAdminAccess);
 
   // Redirect unauthorized users after hydration
   useEffect(() => {

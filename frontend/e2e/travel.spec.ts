@@ -20,7 +20,7 @@ function getDateString(daysOffset: number): string {
 test.describe('Travel Page', () => {
   test.beforeEach(async ({page}) => {
     await page.goto('/travel');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
   });
 
   test('should display travel page with heading', async ({page}) => {
@@ -88,7 +88,7 @@ test.describe('Travel Page', () => {
 
   test('should be responsive at mobile viewport', async ({page}) => {
     await page.setViewportSize({width: 375, height: 667});
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const heading = page.locator('h1, h2').first();
     await expect(heading).toBeVisible({timeout: 10000});
@@ -100,7 +100,7 @@ test.describe('Travel Page', () => {
 test.describe('Travel - Create Request', () => {
   test('should open travel request form', async ({page}) => {
     await page.goto('/travel');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const createBtn = page.locator(
       'button:has-text("New"), button:has-text("Create"), button:has-text("Request"), button:has-text("Add")'
@@ -108,7 +108,7 @@ test.describe('Travel - Create Request', () => {
 
     if (await createBtn.isVisible({timeout: 10000}).catch(() => false)) {
       await createBtn.click();
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
 
       const formVisible = await page
         .locator('[role="dialog"], form, [class*="modal"]')
@@ -124,7 +124,7 @@ test.describe('Travel - Create Request', () => {
 
   test('should display travel form fields', async ({page}) => {
     await page.goto('/travel');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const createBtn = page.locator(
       'button:has-text("New"), button:has-text("Create"), button:has-text("Request"), button:has-text("Add")'
@@ -132,7 +132,7 @@ test.describe('Travel - Create Request', () => {
 
     if (await createBtn.isVisible({timeout: 10000}).catch(() => false)) {
       await createBtn.click();
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
 
       // Check for travel-specific form fields
       const fieldChecks = [
@@ -156,7 +156,7 @@ test.describe('Travel - Create Request', () => {
 
   test('should close form on cancel', async ({page}) => {
     await page.goto('/travel');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const createBtn = page.locator(
       'button:has-text("New"), button:has-text("Create"), button:has-text("Request"), button:has-text("Add")'
@@ -164,7 +164,7 @@ test.describe('Travel - Create Request', () => {
 
     if (await createBtn.isVisible({timeout: 10000}).catch(() => false)) {
       await createBtn.click();
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
 
       const cancelBtn = page.locator('button:has-text("Cancel")').first();
       if (await cancelBtn.isVisible({timeout: 3000}).catch(() => false)) {
@@ -173,7 +173,7 @@ test.describe('Travel - Create Request', () => {
         await page.keyboard.press('Escape');
       }
 
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
 
       const modal = page.locator('[role="dialog"]').first();
       const stillVisible = await modal.isVisible({timeout: 2000}).catch(() => false);
@@ -185,7 +185,7 @@ test.describe('Travel - Create Request', () => {
 test.describe('Travel - Filters and Search', () => {
   test.beforeEach(async ({page}) => {
     await page.goto('/travel');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
   });
 
   test('should display search input', async ({page}) => {
@@ -233,7 +233,7 @@ test.describe('Travel Approval Chain', () => {
     if (!onNewPage) {
       // Fallback: go to travel list and click create
       await page.goto('/travel');
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
 
       const createBtn = page.locator(
         'button:has-text("New"), button:has-text("Create"), button:has-text("Request"), button:has-text("Add")'
@@ -241,10 +241,10 @@ test.describe('Travel Approval Chain', () => {
 
       if (await createBtn.isVisible({timeout: 10000}).catch(() => false)) {
         await createBtn.click();
-        await page.waitForLoadState('networkidle');
+        await page.waitForLoadState('domcontentloaded');
       }
     } else {
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
     }
 
     // Fill travel request form
@@ -295,7 +295,7 @@ test.describe('Travel Approval Chain', () => {
     const submitBtn = page.locator('button:has-text("Submit"), button:has-text("Save"), button:has-text("Create"), button:has-text("Request")').first();
     if (await submitBtn.isVisible({timeout: 5000}).catch(() => false)) {
       await submitBtn.click();
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
     }
 
     // Verify redirected back to travel list or success message shown
@@ -306,13 +306,13 @@ test.describe('Travel Approval Chain', () => {
   test('should verify PENDING status after submission', async ({page}) => {
     await loginAs(page, 'raj@nulogic.io');
     await page.goto('/travel');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Check for my requests tab
     const myTab = page.locator('button:has-text("My"), text=My Requests, text=My Travel').first();
     if (await myTab.isVisible({timeout: 5000}).catch(() => false)) {
       await myTab.click();
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
     }
 
     // Look for status badge on first request
@@ -336,16 +336,16 @@ test.describe('Travel Approval Chain', () => {
 
     if (!onNewPage) {
       await page.goto('/travel');
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
       const createBtn = page.locator(
         'button:has-text("New"), button:has-text("Create"), button:has-text("Request"), button:has-text("Add")'
       ).first();
       if (await createBtn.isVisible({timeout: 10000}).catch(() => false)) {
         await createBtn.click();
-        await page.waitForLoadState('networkidle');
+        await page.waitForLoadState('domcontentloaded');
       }
     } else {
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
     }
 
     // Fill form
@@ -381,19 +381,19 @@ test.describe('Travel Approval Chain', () => {
     const submitBtn = page.locator('button:has-text("Submit"), button:has-text("Save"), button:has-text("Create")').first();
     if (await submitBtn.isVisible({timeout: 5000}).catch(() => false)) {
       await submitBtn.click();
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
     }
 
     // ── Step 2: Switch to Mani (Team Lead) and approve ──
     await switchUser(page, 'raj@nulogic.io', 'mani@nulogic.io');
     await page.goto('/travel');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Navigate to pending/approvals tab
     const pendingTab = page.locator('button:has-text("Pending"), button:has-text("Approvals"), button:has-text("Team")').first();
     if (await pendingTab.isVisible({timeout: 5000}).catch(() => false)) {
       await pendingTab.click();
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
     }
 
     // Find Raj's request
@@ -406,7 +406,7 @@ test.describe('Travel Approval Chain', () => {
         const viewBtn = rajRow.locator('button:has-text("View"), a:has-text("View")').first();
         if (await viewBtn.isVisible({timeout: 3000}).catch(() => false)) {
           await viewBtn.click();
-          await page.waitForLoadState('networkidle');
+          await page.waitForLoadState('domcontentloaded');
           const detailApproveBtn = page.locator('button:has-text("Approve")').first();
           if (await detailApproveBtn.isVisible({timeout: 5000}).catch(() => false)) {
             await detailApproveBtn.click();
@@ -422,18 +422,18 @@ test.describe('Travel Approval Chain', () => {
         await confirmBtn.click();
       }
 
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
     }
 
     // ── Step 3: Switch back to Raj and verify status ──
     await switchUser(page, 'mani@nulogic.io', 'raj@nulogic.io');
     await page.goto('/travel');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const myTab = page.locator('button:has-text("My"), text=My Requests, text=My Travel').first();
     if (await myTab.isVisible({timeout: 5000}).catch(() => false)) {
       await myTab.click();
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
     }
 
     // Verify the latest request status
@@ -456,16 +456,16 @@ test.describe('Travel Approval Chain', () => {
 
     if (!onNewPage) {
       await page.goto('/travel');
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
       const createBtn = page.locator(
         'button:has-text("New"), button:has-text("Create"), button:has-text("Request"), button:has-text("Add")'
       ).first();
       if (await createBtn.isVisible({timeout: 10000}).catch(() => false)) {
         await createBtn.click();
-        await page.waitForLoadState('networkidle');
+        await page.waitForLoadState('domcontentloaded');
       }
     } else {
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
     }
 
     const destInput = page.locator('input[name*="destination"], input[placeholder*="destination" i]').first();
@@ -500,18 +500,18 @@ test.describe('Travel Approval Chain', () => {
     const submitBtn = page.locator('button:has-text("Submit"), button:has-text("Save"), button:has-text("Create")').first();
     if (await submitBtn.isVisible({timeout: 5000}).catch(() => false)) {
       await submitBtn.click();
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
     }
 
     // ── Step 2: Switch to Mani (Team Lead) and REJECT ──
     await switchUser(page, 'raj@nulogic.io', 'mani@nulogic.io');
     await page.goto('/travel');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const pendingTab = page.locator('button:has-text("Pending"), button:has-text("Approvals"), button:has-text("Team")').first();
     if (await pendingTab.isVisible({timeout: 5000}).catch(() => false)) {
       await pendingTab.click();
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
     }
 
     const rajRow = page.locator('tbody tr', {hasText: /Raj/i}).first();
@@ -523,7 +523,7 @@ test.describe('Travel Approval Chain', () => {
         const viewBtn = rajRow.locator('button:has-text("View"), a:has-text("View")').first();
         if (await viewBtn.isVisible({timeout: 3000}).catch(() => false)) {
           await viewBtn.click();
-          await page.waitForLoadState('networkidle');
+          await page.waitForLoadState('domcontentloaded');
           const detailRejectBtn = page.locator('button:has-text("Reject")').first();
           if (await detailRejectBtn.isVisible({timeout: 5000}).catch(() => false)) {
             await detailRejectBtn.click();
@@ -538,18 +538,18 @@ test.describe('Travel Approval Chain', () => {
         await confirmBtn.click();
       }
 
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
     }
 
     // ── Step 3: Switch back to Raj and verify REJECTED ──
     await switchUser(page, 'mani@nulogic.io', 'raj@nulogic.io');
     await page.goto('/travel');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const myTab = page.locator('button:has-text("My"), text=My Requests, text=My Travel').first();
     if (await myTab.isVisible({timeout: 5000}).catch(() => false)) {
       await myTab.click();
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
     }
 
     const statusBadge = page.locator('tbody tr').first().locator('[class*="badge"]').first();

@@ -41,9 +41,14 @@ describe('AnalyticsService', () => {
       expect(mockedGetPermissive).toHaveBeenCalledWith('/analytics/dashboard', {params: undefined});
     });
 
-    it('should return null on error', async () => {
-      mockedGetPermissive.mockRejectedValueOnce(new Error('Unauthorized'));
+    it('should return null on forbidden response', async () => {
+      mockedGetPermissive.mockResolvedValueOnce({data: null, status: 403});
       await expect(analyticsService.getDashboardAnalytics()).resolves.toBeNull();
+    });
+
+    it('should throw on request error', async () => {
+      mockedGetPermissive.mockRejectedValueOnce(new Error('Server error'));
+      await expect(analyticsService.getDashboardAnalytics()).rejects.toThrow('Server error');
     });
   });
 

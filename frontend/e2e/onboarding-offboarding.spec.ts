@@ -22,7 +22,7 @@ async function waitForOffboardingReady(page: Page) {
 test.describe('Onboarding Page', () => {
   test.beforeEach(async ({page}) => {
     await page.goto('/onboarding');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
   });
 
   test('should display onboarding page with heading', async ({page}) => {
@@ -72,7 +72,7 @@ test.describe('Onboarding - HR Admin Initiates', () => {
     await loginAs(page, demoUsers.hrManager.email);
 
     await page.goto('/onboarding');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
 
     // Look for initiate button
@@ -103,7 +103,7 @@ test.describe('Onboarding - HR Admin Initiates', () => {
     await loginAs(page, demoUsers.hrManager.email);
 
     await page.goto('/onboarding/new');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
 
     // Check for typical onboarding form fields
@@ -130,7 +130,7 @@ test.describe('Onboarding - HR Admin Initiates', () => {
     await loginAs(page, demoUsers.hrManager.email);
 
     await page.goto('/onboarding/new');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(500);
 
     // Try to submit empty form
@@ -155,7 +155,7 @@ test.describe('Onboarding - Department Head Approval', () => {
     await loginAs(page, demoUsers.managerEng.email);
 
     await page.goto('/onboarding');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
 
     // Look for pending/approval tab
@@ -177,7 +177,7 @@ test.describe('Onboarding - Department Head Approval', () => {
     await loginAs(page, demoUsers.managerEng.email);
 
     await page.goto('/onboarding');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
 
     const pendingTab = page
@@ -203,7 +203,7 @@ test.describe('Onboarding - Checklist & Tasks', () => {
     await loginAs(page, demoUsers.hrManager.email);
 
     await page.goto('/onboarding');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
 
     // Click first onboarding record
@@ -230,7 +230,7 @@ test.describe('Onboarding - Checklist & Tasks', () => {
 
     // Check templates page
     await page.goto('/onboarding/templates');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
 
     const hasTemplates = await page
@@ -248,7 +248,7 @@ test.describe('Onboarding - Checklist & Tasks', () => {
     await loginAs(page, demoUsers.hrManager.email);
 
     await page.goto('/onboarding');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
 
     // Look for status indicators

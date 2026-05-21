@@ -127,6 +127,7 @@ export default function MyDashboardPage() {
     return (
       <AppLayout activeMenuItem="my-dashboard" breadcrumbs={[{label: 'My Dashboard', href: '/me/dashboard'}]}>
         <div className="p-6">
+          <h1 className="sr-only">My Dashboard</h1>
           <SkeletonDashboard/>
         </div>
       </AppLayout>

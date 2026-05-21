@@ -1,7 +1,4 @@
-'use client';
-
-import {useEffect} from 'react';
-import {useRouter} from 'next/navigation';
+import {redirect} from 'next/navigation';
 
 /**
  * Redirect /approvals -> /approvals/inbox (DEF-42 + DEF-47).
@@ -11,12 +8,6 @@ import {useRouter} from 'next/navigation';
  * summary counts, detail panel). Consolidating to a single implementation
  * eliminates the maintenance burden and the permission gap.
  */
-export default function ApprovalsRedirectPage(): React.ReactNode {
-  const router = useRouter();
-
-  useEffect(() => {
-    router.replace('/approvals/inbox');
-  }, [router]);
-
-  return null;
+export default function ApprovalsRedirectPage() {
+  redirect('/approvals/inbox');
 }

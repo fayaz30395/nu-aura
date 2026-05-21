@@ -25,14 +25,14 @@ test.describe('LMS - Learning Management', () => {
   test('course catalog page loads', async ({page}) => {
     await page.goto('/learning/catalog');
     await expect(page).not.toHaveURL(/auth\/login/);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     const heading = page.getByRole('heading').first();
     await expect(heading).toBeVisible({timeout: 10000});
   });
 
   test('catalog shows course cards or empty state', async ({page}) => {
     await page.goto('/learning/catalog');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await expect(page.locator('text=Something went wrong')).not.toBeVisible();
     // Either shows courses or an empty state message
     const hasContent = await page.locator('[data-testid="course-card"], .course-card, [class*="card"]')
@@ -46,20 +46,20 @@ test.describe('LMS - Learning Management', () => {
   test('my learning page loads', async ({page}) => {
     await page.goto('/learning/my-learning');
     await expect(page).not.toHaveURL(/auth\/login/);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await expect(page.locator('text=Something went wrong')).not.toBeVisible();
   });
 
   test('my learning shows enrolled courses or empty state', async ({page}) => {
     await page.goto('/learning/my-learning');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     const main = page.locator('main, [role="main"]').first();
     await expect(main).toBeVisible();
   });
 
   test('course catalog has search or filter', async ({page}) => {
     await page.goto('/learning/catalog');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     const searchInput = page.getByRole('searchbox')
       .or(page.getByPlaceholder(/search/i))
       .or(page.getByRole('textbox').first());
@@ -79,7 +79,7 @@ test.describe('LMS - Learning Management', () => {
     await page.waitForURL('**/dashboard', {timeout: 15000});
 
     await page.goto('/learning');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await expect(page).not.toHaveURL(/auth\/login/);
     await expect(page.locator('text=Something went wrong')).not.toBeVisible();
   });
@@ -96,7 +96,7 @@ test.describe('LMS — Enrollment + Completion Flow', () => {
 
   test('employee can enroll in a course from the catalog', async ({page}) => {
     await page.goto('/learning/catalog');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const enrollBtn = page.locator('button:has-text("Enroll"), button:has-text("Start"), button:has-text("Join")').first();
     const hasEnroll = await enrollBtn.isVisible({timeout: 5000}).catch(() => false);
@@ -123,7 +123,7 @@ test.describe('LMS — Enrollment + Completion Flow', () => {
 
   test('enrolled course appears in my learning page', async ({page}) => {
     await page.goto('/learning/my-learning');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Should show enrolled courses or empty state
     const hasCards = await page.locator('[class*="card"], [data-testid="course-card"]').first().isVisible({timeout: 5000}).catch(() => false);
@@ -135,7 +135,7 @@ test.describe('LMS — Enrollment + Completion Flow', () => {
 
   test('course progress tracking shows percentage', async ({page}) => {
     await page.goto('/learning/my-learning');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
 
     // Look for progress indicators
@@ -147,7 +147,7 @@ test.describe('LMS — Enrollment + Completion Flow', () => {
 
   test('completed courses show completion badge or certificate', async ({page}) => {
     await page.goto('/learning/my-learning');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
 
     const hasCompleted = await page.locator('text=/completed|100%|certificate/i').first().isVisible().catch(() => false);

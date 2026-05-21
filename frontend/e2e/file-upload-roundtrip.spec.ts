@@ -32,7 +32,7 @@ test.describe('File Upload Roundtrip — Drive @regression @critical', () => {
   test('UPL-01: profile photo upload (small JPEG) is accepted by the backend', async ({page}) => {
     await loginAs(page, demoUsers.employeeSaran.email);
     await navigateTo(page, '/me/profile');
-    await page.waitForLoadState('networkidle').catch(() => {
+    await page.waitForLoadState('domcontentloaded').catch(() => {
     });
 
     // Look for a file input — could be inside a "Change Photo" action or directly visible.
@@ -63,7 +63,7 @@ test.describe('File Upload Roundtrip — Drive @regression @critical', () => {
   test('UPL-02: document upload (small PDF) appears in the documents list', async ({page}) => {
     await loginAs(page, demoUsers.employeeSaran.email);
     await navigateTo(page, '/me/documents');
-    await page.waitForLoadState('networkidle').catch(() => {
+    await page.waitForLoadState('domcontentloaded').catch(() => {
     });
 
     // Find an upload trigger — button that opens the file chooser
@@ -88,7 +88,7 @@ test.describe('File Upload Roundtrip — Drive @regression @critical', () => {
     const saveBtn = page.locator('button:has-text("Save"), button:has-text("Upload"), button[type="submit"]').last();
     if (await saveBtn.isVisible({timeout: 2000}).catch(() => false)) {
       await saveBtn.click();
-      await page.waitForLoadState('networkidle').catch(() => {
+      await page.waitForLoadState('domcontentloaded').catch(() => {
       });
     }
 
@@ -101,7 +101,7 @@ test.describe('File Upload Roundtrip — Drive @regression @critical', () => {
   test('UPL-03: expense receipt upload attaches to the new claim form', async ({page}) => {
     await loginAs(page, demoUsers.employeeSaran.email);
     await navigateTo(page, '/expenses');
-    await page.waitForLoadState('networkidle').catch(() => {
+    await page.waitForLoadState('domcontentloaded').catch(() => {
     });
 
     const newBtn = page.locator(

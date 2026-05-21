@@ -8,7 +8,7 @@ import {expect, Page, test} from '@playwright/test';
 // Helper to wait for Gantt page to load completely
 async function waitForGanttPageLoad(page: Page) {
   await page.goto('/projects/gantt');
-  await page.waitForLoadState('networkidle');
+  await page.waitForLoadState('domcontentloaded');
 
   // Wait for either the header or loading spinner to disappear
   try {

@@ -35,12 +35,12 @@ async function loginAndWaitForDashboard(
   password: string
 ) {
   await page.goto('/auth/login');
-  await page.waitForLoadState('networkidle');
+  await page.waitForLoadState('domcontentloaded');
   await page.locator('input[type="email"]').fill(email);
   await page.locator('input[type="password"]').fill(password);
   await page.locator('button[type="submit"]').click();
   await page.waitForURL('**/dashboard', {timeout: 45_000});
-  await page.waitForLoadState('networkidle');
+  await page.waitForLoadState('domcontentloaded');
 }
 
 // ─── suite ───────────────────────────────────────────────────────────────────
@@ -77,7 +77,7 @@ test.describe('Smoke Tests — Critical Path', () => {
     );
 
     await page.goto('/employees');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Page heading
     await expect(
@@ -107,7 +107,7 @@ test.describe('Smoke Tests — Critical Path', () => {
     );
 
     await page.goto('/leave');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // "Apply Leave" button must be visible
     const applyBtn = page.locator('button:has-text("Apply Leave")');
@@ -152,7 +152,7 @@ test.describe('Smoke Tests — Critical Path', () => {
     await expect(modal).not.toBeVisible({timeout: 15_000});
 
     // Leave list / table should reload and show at least one row
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     const table = page.locator('table');
     if (await table.isVisible()) {
       const rows = page.locator('tbody tr');
@@ -169,7 +169,7 @@ test.describe('Smoke Tests — Critical Path', () => {
     );
 
     await page.goto('/leave/approvals');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Page must render a heading — either pending requests list or empty state
     const heading = page.locator('h1, h2').first();
@@ -237,7 +237,7 @@ test.describe('Smoke Tests — Critical Path', () => {
     );
 
     await page.goto('/leave/approvals');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const heading = page.locator('h1, h2').first();
     await expect(heading).toBeVisible({timeout: 15_000});
@@ -248,7 +248,7 @@ test.describe('Smoke Tests — Critical Path', () => {
 
     if (count > 0) {
       await approveButtons.first().click();
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
 
       // Step 4 — verify an APPROVED badge appears somewhere on the page
       // (row may have moved to a different tab; check broadly)
@@ -311,7 +311,7 @@ test.describe('Smoke Tests — Critical Path', () => {
 
     for (const route of routes) {
       await page.goto(route);
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
 
       // No generic error indicators
       const errorLocator = page.locator(
@@ -331,7 +331,7 @@ test.describe('Smoke Tests — Critical Path', () => {
     // Clear all cookies to simulate a fresh/unauthenticated browser
     await page.context().clearCookies();
 
-    await page.goto('/employees', {waitUntil: 'networkidle'});
+    await page.goto('/employees', {waitUntil: 'domcontentloaded'});
 
     // Middleware must redirect to login (may include ?returnUrl query param)
     await page.waitForURL('**/auth/login**', {timeout: 15_000});

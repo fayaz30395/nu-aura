@@ -54,7 +54,7 @@ test.describe('Employee Management', () => {
       await employeePage.searchEmployee('john');
 
       // Wait for results
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
 
       // Verify search was performed
       const searchValue = await employeePage.searchInput.inputValue();
@@ -66,7 +66,7 @@ test.describe('Employee Management', () => {
       await employeePage.filterByStatus('ACTIVE');
 
       // Wait for results
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
 
       // Verify filter was applied
       const selectedValue = await employeePage.statusFilter.inputValue();

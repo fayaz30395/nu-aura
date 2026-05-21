@@ -15,6 +15,18 @@ CLAUDE_FLOW_MODE = "v3"
 CLAUDE_FLOW_TOPOLOGY = "hierarchical-mesh"
 npm_config_update_notifier = "false"
 
+[mcp_servers.ruflo.tools.memory_search]
+approval_mode = "approve"
+
+[mcp_servers.ruflo.tools.hooks_route]
+approval_mode = "approve"
+
+[mcp_servers.ruflo.tools.mcp_status]
+approval_mode = "approve"
+
+[mcp_servers.ruflo.tools.hooks_pre-task]
+approval_mode = "approve"
+
 [shell_environment_policy]
 inherit = "core"
 

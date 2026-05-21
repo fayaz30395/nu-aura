@@ -396,7 +396,7 @@ test.describe('Leave Approval Chain', () => {
 
     // Navigate to leave page
     await page.goto('/leave');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Click Apply Leave
     const applyBtn = page.locator('button:has-text("Apply Leave")');
@@ -430,7 +430,7 @@ test.describe('Leave Approval Chain', () => {
 
     // Reload and verify the request appears with PENDING status
     await page.reload();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Look for our request in the table
     const pendingBadge = page.locator('tbody tr', {hasText: testRunId}).locator('text=/PENDING/i');
@@ -451,7 +451,7 @@ test.describe('Leave Approval Chain', () => {
     // ── Step 1: Raj submits a casual leave request ──
     await loginAs(page, 'raj@nulogic.io');
     await page.goto('/leave');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const applyBtn = page.locator('button:has-text("Apply Leave")');
     await expect(applyBtn).toBeVisible({timeout: 10000});
@@ -473,7 +473,7 @@ test.describe('Leave Approval Chain', () => {
 
     // Navigate to approvals or team leaves
     await page.goto('/leave/team');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Look for pending approval from Raj
     const pendingRow = page.locator('tbody tr', {hasText: /Raj/i}).first();
@@ -491,7 +491,7 @@ test.describe('Leave Approval Chain', () => {
         const viewBtn = pendingRow.locator('button:has-text("View"), a:has-text("View")').first();
         if (await viewBtn.isVisible({timeout: 3000}).catch(() => false)) {
           await viewBtn.click();
-          await page.waitForLoadState('networkidle');
+          await page.waitForLoadState('domcontentloaded');
 
           // Now look for approve button on details page
           const detailApproveBtn = page.locator('button:has-text("Approve")').first();
@@ -508,13 +508,13 @@ test.describe('Leave Approval Chain', () => {
         await confirmBtn.click();
       }
 
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
     }
 
     // ── Step 3: Switch back to Raj and verify APPROVED ──
     await switchUser(page, 'mani@nulogic.io', 'raj@nulogic.io');
     await page.goto('/leave');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Check for approved status on latest request
     const approvedBadge = page.locator('tbody tr').first().locator('text=/APPROVED/i');
@@ -536,7 +536,7 @@ test.describe('Leave Approval Chain', () => {
     // ── Step 1: Raj submits a casual leave request ──
     await loginAs(page, 'raj@nulogic.io');
     await page.goto('/leave');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const applyBtn = page.locator('button:has-text("Apply Leave")');
     await expect(applyBtn).toBeVisible({timeout: 10000});
@@ -557,7 +557,7 @@ test.describe('Leave Approval Chain', () => {
     await switchUser(page, 'raj@nulogic.io', 'mani@nulogic.io');
 
     await page.goto('/leave/team');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const pendingRow = page.locator('tbody tr', {hasText: /Raj/i}).first();
     const hasPendingRow = await pendingRow.isVisible({timeout: 10000}).catch(() => false);
@@ -572,7 +572,7 @@ test.describe('Leave Approval Chain', () => {
         const viewBtn = pendingRow.locator('button:has-text("View"), a:has-text("View")').first();
         if (await viewBtn.isVisible({timeout: 3000}).catch(() => false)) {
           await viewBtn.click();
-          await page.waitForLoadState('networkidle');
+          await page.waitForLoadState('domcontentloaded');
 
           const detailRejectBtn = page.locator('button:has-text("Reject")').first();
           await expect(detailRejectBtn).toBeVisible({timeout: 10000});
@@ -588,13 +588,13 @@ test.describe('Leave Approval Chain', () => {
         await confirmBtn.click();
       }
 
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
     }
 
     // ── Step 3: Switch back to Raj and verify REJECTED ──
     await switchUser(page, 'mani@nulogic.io', 'raj@nulogic.io');
     await page.goto('/leave');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const rejectedBadge = page.locator('tbody tr').first().locator('text=/REJECTED/i');
     const isRejected = await rejectedBadge.isVisible({timeout: 10000}).catch(() => false);
@@ -610,7 +610,7 @@ test.describe('Leave Approval Chain', () => {
     // Login as Raj and capture current casual leave balance
     await loginAs(page, 'raj@nulogic.io');
     await page.goto('/leave');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Capture initial balance text
     const casualBalanceCard = page.locator('text=/Casual Leave/i').locator('..');

@@ -49,7 +49,7 @@ test.describe.parallel('@rbac low-priv denied on admin scope', () => {
       test.setTimeout(120000);
       // Demo-mode one-click login (same flow as auth.setup.ts).
       await page.goto('/auth/login');
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
       const btn = page.locator('button').filter({hasText: user.name});
       await expect(btn, `demo button for ${user.name}`).toBeVisible({timeout: 15000});
 
@@ -82,7 +82,7 @@ test.describe.parallel('@rbac low-priv denied on admin scope', () => {
       try {
         await page.waitForURL(/\/dashboard|\/me\//, {timeout: 90000});
       } catch {
-        await page.waitForLoadState('networkidle').catch(() => {
+        await page.waitForLoadState('domcontentloaded').catch(() => {
         });
       }
       // Cookie check with short retries — Set-Cookie can lag the navigation

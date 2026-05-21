@@ -68,7 +68,7 @@ test.describe('Careers Page', () => {
 
     const searchInput = page.locator('input[placeholder*="Search"]').first();
     await searchInput.fill('Engineer');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Should not show a generic error after filtering
     const errorMsg = page.locator('text=/Something went wrong|Error loading|Internal Server/i');

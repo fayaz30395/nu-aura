@@ -8,7 +8,7 @@ import {expect, test} from '@playwright/test';
 test.describe('Wellness Page', () => {
   test.beforeEach(async ({page}) => {
     await page.goto('/wellness');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
   });
 
   test('should display wellness page with heading', async ({page}) => {

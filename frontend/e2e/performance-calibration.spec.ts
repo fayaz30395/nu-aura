@@ -24,7 +24,7 @@ test.describe('Performance Calibration', () => {
 
   test('calibration page loads without error', async ({page}) => {
     await page.goto('/performance/calibration');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await expect(page).not.toHaveURL(/auth\/login/);
     await expect(page.locator('text=Something went wrong')).not.toBeVisible();
     const heading = page.getByRole('heading').first();
@@ -33,7 +33,7 @@ test.describe('Performance Calibration', () => {
 
   test('nine-box grid page loads', async ({page}) => {
     await page.goto('/performance/nine-box');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await expect(page).not.toHaveURL(/auth\/login/);
     await expect(page.locator('text=Something went wrong')).not.toBeVisible();
     const heading = page.getByRole('heading').first();
@@ -42,34 +42,34 @@ test.describe('Performance Calibration', () => {
 
   test('nine-box grid renders cells or empty state', async ({page}) => {
     await page.goto('/performance/nine-box');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     const main = page.locator('main, [role="main"]').first();
     await expect(main).toBeVisible();
   });
 
   test('calibration shows review cycles or empty state', async ({page}) => {
     await page.goto('/performance/calibration');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await expect(page.locator('text=Something went wrong')).not.toBeVisible();
   });
 
   test('performance reviews page loads', async ({page}) => {
     await page.goto('/performance/reviews');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await expect(page).not.toHaveURL(/auth\/login/);
     await expect(page.locator('text=Something went wrong')).not.toBeVisible();
   });
 
   test('PIP (performance improvement plans) page loads', async ({page}) => {
     await page.goto('/performance/pip');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await expect(page).not.toHaveURL(/auth\/login/);
     await expect(page.locator('text=Something went wrong')).not.toBeVisible();
   });
 
   test('OKR goals page loads', async ({page}) => {
     await page.goto('/performance/goals');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await expect(page).not.toHaveURL(/auth\/login/);
     await expect(page.locator('text=Something went wrong')).not.toBeVisible();
   });

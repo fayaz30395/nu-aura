@@ -1,5 +1,5 @@
-import {expect, test} from '@playwright/test';
-import {LoginPage} from './pages/LoginPage';
+import {expect, Page, test} from '@playwright/test';
+import {loginAs} from './fixtures/helpers';
 import {testUsers} from './fixtures/testData';
 
 /**
@@ -9,13 +9,28 @@ import {testUsers} from './fixtures/testData';
  * and the active app is highlighted.
  */
 
+async function openAppSwitcher(page: Page) {
+  await waitForSwitcherHydrated(page);
+  const switcherBtn = page.getByRole('button', {name: /switch application/i});
+  await switcherBtn.click();
+
+  const menu = page.getByTestId('app-switcher-menu');
+  await expect(menu).toBeVisible({timeout: 15000});
+  return menu;
+}
+
+async function waitForSwitcherHydrated(page: Page) {
+  const switcherBtn = page.getByRole('button', {name: /switch application/i});
+  await expect(switcherBtn).toBeVisible({timeout: 120000});
+  await expect(switcherBtn).toHaveAttribute('data-hydrated', 'true', {timeout: 120000});
+}
+
 test.describe('App Switcher — Waffle Grid', () => {
+  test.describe.configure({mode: 'serial', timeout: 300000});
+
   test.beforeEach(async ({page}) => {
-    const loginPage = new LoginPage(page);
-    await loginPage.navigate();
-    await loginPage.login(testUsers.admin.email, testUsers.admin.password);
-    await page.waitForURL('**/dashboard');
-    await page.waitForLoadState('domcontentloaded');
+    await page.goto('/me/dashboard', {waitUntil: 'domcontentloaded', timeout: 90000});
+    await waitForSwitcherHydrated(page);
   });
 
   test('waffle grid trigger button is visible in the header', async ({page}) => {
@@ -25,64 +40,30 @@ test.describe('App Switcher — Waffle Grid', () => {
   });
 
   test('clicking switcher opens the waffle grid dropdown', async ({page}) => {
-    const switcherBtn = page.getByRole('button', {name: /switch application/i});
-    const hasSwitcher = await switcherBtn.isVisible().catch(() => false);
-
-    if (hasSwitcher) {
-      await switcherBtn.click();
-      await page.waitForTimeout(300);
-
-      // A dropdown/popover should appear
-      const dropdown = page.locator('[class*="glass"], [class*="dropdown"], [class*="popover"]').first();
-      const isVisible = await dropdown.isVisible().catch(() => false);
-      expect(isVisible).toBe(true);
-    }
-
-    expect(hasSwitcher || true).toBe(true);
+    await openAppSwitcher(page);
   });
 
   test('waffle grid shows all four NU-AURA apps', async ({page}) => {
-    const switcherBtn = page.getByRole('button', {name: /switch application/i});
-    const hasSwitcher = await switcherBtn.isVisible().catch(() => false);
+    const menu = await openAppSwitcher(page);
 
-    if (hasSwitcher) {
-      await switcherBtn.click();
-      await page.waitForTimeout(400);
-
-      // All 4 apps should be labelled in the dropdown
-      const appNames = ['NU-HRMS', 'NU-Hire', 'NU-Grow', 'NU-Fluence'];
-      for (const name of appNames) {
-        const appItem = page.locator(`text=${name}`).first();
-        const isVisible = await appItem.isVisible().catch(() => false);
-        expect(isVisible).toBe(true);
-      }
+    // All 4 apps should be labelled in the dropdown
+    const appNames = ['NU-HRMS', 'NU-Hire', 'NU-Grow', 'NU-Fluence'];
+    for (const name of appNames) {
+      await expect(menu.getByRole('menuitem', {name})).toBeVisible();
     }
-
-    expect(hasSwitcher || true).toBe(true);
   });
 
   test('current active app is visually indicated in the switcher', async ({page}) => {
     // Navigate to an HRMS route so HRMS is the active app
-    await page.goto('/employees');
+    await page.goto('/employees', {waitUntil: 'domcontentloaded', timeout: 90000});
     await page.waitForLoadState('domcontentloaded');
 
-    const switcherBtn = page.getByRole('button', {name: /switch application/i});
-    const hasSwitcher = await switcherBtn.isVisible().catch(() => false);
+    const menu = await openAppSwitcher(page);
+    const activeIndicator = menu.locator('[class*="active"], [class*="current"], svg[class*="check"], [aria-current]').first();
+    const hasActive = await activeIndicator.isVisible().catch(() => false);
+    const hasDropdown = await menu.isVisible().catch(() => false);
 
-    if (hasSwitcher) {
-      await switcherBtn.click();
-      await page.waitForTimeout(400);
-
-      // The active app should have a checkmark or highlighted style
-      const activeIndicator = page.locator('[class*="active"], [class*="current"], svg[class*="check"], [aria-current]').first();
-      const hasActive = await activeIndicator.isVisible().catch(() => false);
-
-      // Accept either an active indicator or any rendered dropdown (UI may vary)
-      const hasDropdown = await page.locator('[class*="glass"], [class*="dropdown"]').first().isVisible().catch(() => false);
-      expect(hasActive || hasDropdown).toBe(true);
-    }
-
-    expect(hasSwitcher || true).toBe(true);
+    expect(hasActive || hasDropdown).toBe(true);
   });
 
   test('can navigate to NU-Hire via app switcher', async ({page}) => {
@@ -90,11 +71,10 @@ test.describe('App Switcher — Waffle Grid', () => {
     const hasSwitcher = await switcherBtn.isVisible().catch(() => false);
 
     if (hasSwitcher) {
-      await switcherBtn.click();
-      await page.waitForTimeout(400);
+      const menu = await openAppSwitcher(page);
 
       // Click on NU-Hire
-      const hireApp = page.locator('text=NU-Hire').first();
+      const hireApp = menu.getByRole('menuitem', {name: 'NU-Hire'});
       const hasHire = await hireApp.isVisible().catch(() => false);
 
       if (hasHire) {
@@ -118,10 +98,9 @@ test.describe('App Switcher — Waffle Grid', () => {
     const hasSwitcher = await switcherBtn.isVisible().catch(() => false);
 
     if (hasSwitcher) {
-      await switcherBtn.click();
-      await page.waitForTimeout(400);
+      const menu = await openAppSwitcher(page);
 
-      const growApp = page.locator('text=NU-Grow').first();
+      const growApp = menu.getByRole('menuitem', {name: 'NU-Grow'});
       const hasGrow = await growApp.isVisible().catch(() => false);
 
       if (hasGrow) {
@@ -140,50 +119,31 @@ test.describe('App Switcher — Waffle Grid', () => {
   });
 
   test('pressing Escape closes the app switcher dropdown', async ({page}) => {
-    const switcherBtn = page.getByRole('button', {name: /switch application/i});
-    const hasSwitcher = await switcherBtn.isVisible().catch(() => false);
-
-    if (hasSwitcher) {
-      await switcherBtn.click();
-      await page.waitForTimeout(300);
-
-      // Verify it opened
-      const dropdown = page.locator('[class*="glass"], [class*="dropdown"]').first();
-      const isOpen = await dropdown.isVisible().catch(() => false);
-
-      if (isOpen) {
-        await page.keyboard.press('Escape');
-        await page.waitForTimeout(300);
-
-        const isClosed = !(await dropdown.isVisible().catch(() => false));
-        expect(isClosed).toBe(true);
-      }
-    }
-
-    expect(hasSwitcher || true).toBe(true);
+    const menu = await openAppSwitcher(page);
+    await page.keyboard.press('Escape');
+    await expect(menu).toBeHidden({timeout: 15000});
   });
 
   test('NU-Fluence shows locked or coming-soon indicator for limited users', async ({page}) => {
     // Log in as a regular employee (limited permissions)
-    const loginPage = new LoginPage(page);
-    await loginPage.navigate();
-    await loginPage.login(testUsers.employee.email, testUsers.employee.password);
-    await page.waitForURL('**/dashboard');
+    await loginAs(page, testUsers.employee.email, {verifyDashboard: false});
+    await page.goto('/me/dashboard', {waitUntil: 'domcontentloaded', timeout: 90000});
+    await expect(page.getByRole('button', {name: /switch application/i}))
+      .toBeVisible({timeout: 60000});
 
     const switcherBtn = page.getByRole('button', {name: /switch application/i});
     const hasSwitcher = await switcherBtn.isVisible().catch(() => false);
 
     if (hasSwitcher) {
-      await switcherBtn.click();
-      await page.waitForTimeout(400);
+      const menu = await openAppSwitcher(page);
 
       // Look for a lock icon or "coming soon" near Fluence
-      const lockIcon = page.locator('[class*="lock"], svg[data-testid*="lock"]').first();
-      const comingSoon = page.locator('text=/coming soon|phase 2|locked/i').first();
+      const lockIcon = menu.locator('[class*="lock"], svg[data-testid*="lock"]').first();
+      const comingSoon = menu.locator('text=/coming soon|phase 2|locked|no access/i').first();
 
       const hasLock = await lockIcon.isVisible().catch(() => false);
       const hasComingSoon = await comingSoon.isVisible().catch(() => false);
-      const dropdownVisible = await page.locator('[class*="glass"], [class*="dropdown"]').first().isVisible().catch(() => false);
+      const dropdownVisible = await menu.isVisible().catch(() => false);
 
       // Either shows a lock/coming-soon or just shows the dropdown (access varies by seed data)
       expect(hasLock || hasComingSoon || dropdownVisible || true).toBe(true);
@@ -194,17 +154,16 @@ test.describe('App Switcher — Waffle Grid', () => {
 });
 
 test.describe('App Switcher — Cross-App Navigation Flow', () => {
+  test.describe.configure({mode: 'serial', timeout: 300000});
+
   test.beforeEach(async ({page}) => {
-    const loginPage = new LoginPage(page);
-    await loginPage.navigate();
-    await loginPage.login(testUsers.admin.email, testUsers.admin.password);
-    await page.waitForURL('**/dashboard');
-    await page.waitForLoadState('domcontentloaded');
+    await page.goto('/me/dashboard', {waitUntil: 'domcontentloaded', timeout: 90000});
+    await waitForSwitcherHydrated(page);
   });
 
   test('HRMS to Hire: sidebar updates to show recruitment items', async ({page}) => {
     // Start on HRMS route
-    await page.goto('/employees');
+    await page.goto('/employees', {waitUntil: 'domcontentloaded', timeout: 90000});
     await page.waitForLoadState('domcontentloaded');
 
     // Verify HRMS sidebar items are present
@@ -216,10 +175,9 @@ test.describe('App Switcher — Cross-App Navigation Flow', () => {
     const hasSwitcher = await switcherBtn.isVisible().catch(() => false);
 
     if (hasSwitcher) {
-      await switcherBtn.click();
-      await page.waitForTimeout(400);
+      const menu = await openAppSwitcher(page);
 
-      const hireApp = page.locator('text=NU-Hire').first();
+      const hireApp = menu.getByRole('menuitem', {name: 'NU-Hire'});
       const hasHire = await hireApp.isVisible().catch(() => false);
 
       if (hasHire) {
@@ -245,7 +203,7 @@ test.describe('App Switcher — Cross-App Navigation Flow', () => {
 
   test('Hire to Grow: sidebar updates to show performance items', async ({page}) => {
     // Navigate to a Hire route first
-    await page.goto('/recruitment');
+    await page.goto('/recruitment', {waitUntil: 'domcontentloaded', timeout: 90000});
     await page.waitForLoadState('domcontentloaded');
 
     // Switch to NU-Grow
@@ -253,10 +211,9 @@ test.describe('App Switcher — Cross-App Navigation Flow', () => {
     const hasSwitcher = await switcherBtn.isVisible().catch(() => false);
 
     if (hasSwitcher) {
-      await switcherBtn.click();
-      await page.waitForTimeout(400);
+      const menu = await openAppSwitcher(page);
 
-      const growApp = page.locator('text=NU-Grow').first();
+      const growApp = menu.getByRole('menuitem', {name: 'NU-Grow'});
       const hasGrow = await growApp.isVisible().catch(() => false);
 
       if (hasGrow) {
@@ -281,7 +238,7 @@ test.describe('App Switcher — Cross-App Navigation Flow', () => {
 
   test('Grow back to HRMS: sidebar reverts to HR management items', async ({page}) => {
     // Start on Grow route
-    await page.goto('/performance');
+    await page.goto('/performance', {waitUntil: 'domcontentloaded', timeout: 90000});
     await page.waitForLoadState('domcontentloaded');
 
     // Switch back to NU-HRMS
@@ -289,10 +246,9 @@ test.describe('App Switcher — Cross-App Navigation Flow', () => {
     const hasSwitcher = await switcherBtn.isVisible().catch(() => false);
 
     if (hasSwitcher) {
-      await switcherBtn.click();
-      await page.waitForTimeout(400);
+      const menu = await openAppSwitcher(page);
 
-      const hrmsApp = page.locator('text=NU-HRMS').first();
+      const hrmsApp = menu.getByRole('menuitem', {name: 'NU-HRMS'});
       const hasHrms = await hrmsApp.isVisible().catch(() => false);
 
       if (hasHrms) {
@@ -317,9 +273,8 @@ test.describe('App Switcher — Cross-App Navigation Flow', () => {
 
     if (hasSwitcher) {
       // HRMS -> Hire
-      await switcherBtn.click();
-      await page.waitForTimeout(400);
-      const hireApp = page.locator('text=NU-Hire').first();
+      let menu = await openAppSwitcher(page);
+      const hireApp = menu.getByRole('menuitem', {name: 'NU-Hire'});
       if (await hireApp.isVisible().catch(() => false)) {
         await hireApp.click();
         await page.waitForTimeout(1500);
@@ -331,9 +286,8 @@ test.describe('App Switcher — Cross-App Navigation Flow', () => {
       // Hire -> Grow
       const switcherBtn2 = page.getByRole('button', {name: /switch application/i});
       if (await switcherBtn2.isVisible().catch(() => false)) {
-        await switcherBtn2.click();
-        await page.waitForTimeout(400);
-        const growApp = page.locator('text=NU-Grow').first();
+        menu = await openAppSwitcher(page);
+        const growApp = menu.getByRole('menuitem', {name: 'NU-Grow'});
         if (await growApp.isVisible().catch(() => false)) {
           await growApp.click();
           await page.waitForTimeout(1500);
@@ -345,9 +299,8 @@ test.describe('App Switcher — Cross-App Navigation Flow', () => {
       // Grow -> HRMS
       const switcherBtn3 = page.getByRole('button', {name: /switch application/i});
       if (await switcherBtn3.isVisible().catch(() => false)) {
-        await switcherBtn3.click();
-        await page.waitForTimeout(400);
-        const hrmsApp = page.locator('text=NU-HRMS').first();
+        menu = await openAppSwitcher(page);
+        const hrmsApp = menu.getByRole('menuitem', {name: 'NU-HRMS'});
         if (await hrmsApp.isVisible().catch(() => false)) {
           await hrmsApp.click();
           await page.waitForTimeout(1500);

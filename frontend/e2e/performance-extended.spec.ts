@@ -129,7 +129,7 @@ test.describe('Performance - 9Box Grid', () => {
       await select.selectOption({label: realOption});
       // The search field and All Employees section may render if reviews exist
       // We just verify the page does not crash
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
       await expect(page.locator('h1')).toBeVisible();
     }
   });
@@ -144,7 +144,7 @@ test.describe('Performance - 9Box Grid', () => {
     const realOption = options.find((o) => o !== 'Select a cycle');
     if (realOption) {
       await select.selectOption({label: realOption});
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
       // If there are reviewed employees, grid boxes should be visible
       const starBox = page.getByText('Star');
       const deadwood = page.getByText('Deadwood');
@@ -219,7 +219,7 @@ test.describe('Performance - Competency Framework', () => {
     const realOption = options.find((o) => !o.includes('Select'));
     if (realOption) {
       await select.selectOption({label: realOption});
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
       // Either reviews or "No reviews found" appears
       const reviewOrEmpty = page.locator(
         '[class*=border]:not([class*=hidden]), text=No reviews found'
@@ -272,7 +272,7 @@ test.describe('Performance - Competency Framework', () => {
     const realOption = options.find((o) => !o.includes('Select'));
     if (realOption) {
       await select.selectOption({label: realOption});
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
 
       // Click the top-level header Add Competency button
       const addBtn = page.getByRole('button', {name: /Add Competency/i}).first();
@@ -298,7 +298,7 @@ test.describe('Performance - Competency Framework', () => {
     const realOption = options.find((o) => !o.includes('Select'));
     if (realOption) {
       await select.selectOption({label: realOption});
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
 
       const addBtn = page.getByRole('button', {name: /Add Competency/i}).first();
       if (await addBtn.isEnabled()) {
@@ -340,7 +340,7 @@ test.describe('Performance - Competency Matrix', () => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/performance/competency-matrix');
 
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     // Expect at least one category filter — Technical is always shown
     const technical = page.getByText(/Technical/i);
     if (await technical.isVisible({timeout: LOAD_TIMEOUT}).catch(() => false)) {
@@ -357,7 +357,7 @@ test.describe('Performance - Competency Matrix', () => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/performance/competency-matrix');
 
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     const addSkillBtn = page.getByRole('button', {name: /Add Skill/i});
     if (await addSkillBtn.isVisible({timeout: LOAD_TIMEOUT}).catch(() => false)) {
       await expect(addSkillBtn).toBeVisible();
@@ -371,7 +371,7 @@ test.describe('Performance - Competency Matrix', () => {
     await loginAs(page, testUsers.employee.email);
     await navigateTo(page, '/performance/competency-matrix');
 
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await expect(page.locator('body')).not.toContainText('Application error');
     // No Access Denied — employee can see their own skills
     await expect(page.getByText('Access Denied')).not.toBeVisible();
@@ -381,7 +381,7 @@ test.describe('Performance - Competency Matrix', () => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/performance/competency-matrix');
 
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     // PROFICIENCY_LEVEL_LABELS includes Novice / Beginner etc.
     // We check any one known text appears OR page renders without crash
     const novice = page.getByText(/Novice|Beginner|Intermediate|Advanced|Expert/i).first();
@@ -396,7 +396,7 @@ test.describe('Performance - Competency Matrix', () => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/performance/competency-matrix');
 
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     // The page uses tabs: Skills Matrix and Gap Analysis
     const gapTab = page.getByRole('tab', {name: /Gap Analysis/i});
     if (await gapTab.isVisible({timeout: LOAD_TIMEOUT}).catch(() => false)) {
@@ -410,7 +410,7 @@ test.describe('Performance - Competency Matrix', () => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/performance/competency-matrix');
 
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     const frameworkTab = page.getByRole('tab', {name: /Framework/i});
     if (await frameworkTab.isVisible({timeout: LOAD_TIMEOUT}).catch(() => false)) {
       await frameworkTab.click();
@@ -426,7 +426,7 @@ test.describe('Performance - Competency Matrix', () => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/performance/competency-matrix');
 
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     const addBtn = page.getByRole('button', {name: /Add Skill/i});
     if (await addBtn.isVisible({timeout: LOAD_TIMEOUT}).catch(() => false)) {
       await addBtn.click();
@@ -570,7 +570,7 @@ test.describe('Performance - Goals', () => {
 
     const createBtn = page.getByRole('button', {name: /Create Goal/i});
     // May or may not be visible depending on permission — page should not crash
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await expect(page.locator('body')).not.toContainText('Application error');
     if (await createBtn.isVisible({timeout: 5_000}).catch(() => false)) {
       await expect(createBtn).toBeEnabled();
@@ -615,7 +615,7 @@ test.describe('Performance - Goals', () => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/performance/goals');
 
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     // Find the Type filter select and change to OKR
     const selects = page.locator('select');
     const typeSelect = selects.first();
@@ -628,7 +628,7 @@ test.describe('Performance - Goals', () => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/performance/goals');
 
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     const selects = page.locator('select');
     const statusSelect = selects.nth(1);
     await statusSelect.selectOption('ACTIVE');
@@ -639,7 +639,7 @@ test.describe('Performance - Goals', () => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/performance/goals');
 
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     // Set an unlikely combination to force empty state
     const selects = page.locator('select');
     await selects.first().selectOption('ORGANIZATION');
@@ -657,7 +657,7 @@ test.describe('Performance - Goals', () => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/performance/goals');
 
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     const goalCards = page.locator('.skeuo-card').filter({hasText: 'Progress'});
     const count = await goalCards.count();
     if (count > 0) {
@@ -757,7 +757,7 @@ test.describe('Performance - Feedback', () => {
     await loginAs(page, testUsers.employee.email);
     await navigateTo(page, '/performance/feedback');
 
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     const typeSelect = page.locator('select').filter({
       has: page.locator('option[value="PRAISE"]'),
     });
@@ -773,7 +773,7 @@ test.describe('Performance - Feedback', () => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/performance/feedback');
 
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     const typeSelect = page.locator('select').filter({
       has: page.locator('option[value="PRAISE"]'),
     });
@@ -793,7 +793,7 @@ test.describe('Performance - Feedback', () => {
       .getByRole('button', {name: /Given Feedback/i})
       .waitFor({state: 'visible', timeout: LOAD_TIMEOUT});
     await page.getByRole('button', {name: /Given Feedback/i}).click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // If no feedback has been given, the empty state message is shown
     const givenFeedbackItems = page.locator('[class*=rounded-lg]').filter({

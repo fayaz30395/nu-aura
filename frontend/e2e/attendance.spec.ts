@@ -462,7 +462,7 @@ test.describe('Attendance - Cross-Page Consistency', () => {
 
     // Navigate to dashboard
     await page.goto('/dashboard');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(2000);
 
     // If we were able to check in, verify the state on dashboard

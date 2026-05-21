@@ -12,7 +12,7 @@ import {demoUsers} from './fixtures/testData';
 test.describe('Loans Page', () => {
   test.beforeEach(async ({page}) => {
     await page.goto('/loans');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
   });
 
   test('should display loans page with heading', async ({page}) => {
@@ -52,7 +52,7 @@ test.describe('Loans Page', () => {
 test.describe('Loans - My Loans Tab', () => {
   test.beforeEach(async ({page}) => {
     await page.goto('/loans');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
   });
 
   test('should display my loans list or empty state', async ({page}) => {
@@ -88,7 +88,7 @@ test.describe('Loans - My Loans Tab', () => {
 test.describe('Loans - Create Loan Request', () => {
   test.beforeEach(async ({page}) => {
     await page.goto('/loans');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
   });
 
   test('should open create loan modal or navigate to new loan page', async ({page}) => {
@@ -118,7 +118,7 @@ test.describe('Loans - Create Loan Request', () => {
   test('should display loan form fields', async ({page}) => {
     // Navigate to new loan page directly
     await page.goto('/loans/new');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
 
     // Check for typical loan form fields
@@ -143,7 +143,7 @@ test.describe('Loans - Create Loan Request', () => {
 
   test('should validate required fields on submit', async ({page}) => {
     await page.goto('/loans/new');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(500);
 
     // Try to submit empty form
@@ -168,7 +168,7 @@ test.describe('Loans - Submit for Approval', () => {
     await loginAs(page, demoUsers.employeeSaran.email);
 
     await page.goto('/loans/new');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
 
     // Fill loan form fields
@@ -228,7 +228,7 @@ test.describe('Loans - Manager Approval', () => {
     await loginAs(page, demoUsers.managerEng.email);
 
     await page.goto('/loans');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
 
     // Look for approval tab or pending requests section
@@ -252,7 +252,7 @@ test.describe('Loans - Manager Approval', () => {
     await loginAs(page, demoUsers.managerEng.email);
 
     await page.goto('/loans');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
 
     // Navigate to pending tab if it exists
@@ -279,7 +279,7 @@ test.describe('Loans - Multi-Step Approval Chain', () => {
     // Step 1: Employee submits loan request
     await loginAs(page, demoUsers.employeeSaran.email);
     await page.goto('/loans');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
 
     // Check if there is a pending loan to work with
@@ -289,7 +289,7 @@ test.describe('Loans - Multi-Step Approval Chain', () => {
       // Step 2: Manager approves
       await switchUser(page, demoUsers.employeeSaran.email, demoUsers.managerEng.email);
       await page.goto('/loans');
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
       await page.waitForTimeout(1000);
 
       // Navigate to pending approvals
@@ -317,7 +317,7 @@ test.describe('Loans - Multi-Step Approval Chain', () => {
       // Step 3: Finance Head (HR Manager) approves
       await switchUser(page, demoUsers.managerEng.email, demoUsers.hrManager.email);
       await page.goto('/loans');
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
       await page.waitForTimeout(1000);
 
       const finPendingTab = page
@@ -351,7 +351,7 @@ test.describe('Loans - Multi-Step Approval Chain', () => {
 test.describe('Loans - Status Transitions', () => {
   test.beforeEach(async ({page}) => {
     await page.goto('/loans');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
   });
 
   test('should display correct status for approved loans', async ({page}) => {
@@ -397,7 +397,7 @@ test.describe('Loans - Status Transitions', () => {
 test.describe('Loans - Filters and Search', () => {
   test.beforeEach(async ({page}) => {
     await page.goto('/loans');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
   });
 
   test('should display search or filter controls', async ({page}) => {

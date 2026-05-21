@@ -30,7 +30,7 @@ export class AuthHelper {
 
     // Navigate to dashboard to bootstrap the frontend Zustand store
     await page.goto('/me/dashboard');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
   }
 
   /**
@@ -44,14 +44,14 @@ export class AuthHelper {
     }
 
     await page.goto('/auth/login');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const demoButton = page.locator('button').filter({hasText: user.name});
     await expect(demoButton).toBeVisible({timeout: 10000});
     await demoButton.click();
 
     await page.waitForURL('**/dashboard', {timeout: 45000});
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
   }
 
   /**
@@ -97,7 +97,7 @@ export class AuthHelper {
       }
     });
     await page.goto('/auth/login');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
   }
 
   /**
@@ -222,7 +222,7 @@ export class WaitHelper {
    * Wait for navigation to complete
    */
   static async waitForNavigation(page: Page) {
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
   }
 
   /**
@@ -385,6 +385,6 @@ export class TableHelper {
   static async searchTable(page: Page, query: string) {
     await page.locator('input[placeholder*="Search"]').fill(query);
     await page.locator('button:has-text("Search")').click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
   }
 }

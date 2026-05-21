@@ -61,11 +61,11 @@ async function expectSafeActionOpens(
   expectedSurface: RegExp,
 ): Promise<void> {
   const control = button(page, controlName);
-  await page.waitForLoadState('networkidle', {timeout: 30000}).catch(() => {
+  await page.waitForLoadState('domcontentloaded', {timeout: 30000}).catch(() => {
   });
   if (!(await isVisible(control, 30000))) {
     await page.reload({waitUntil: 'domcontentloaded'});
-    await page.waitForLoadState('networkidle', {timeout: 30000}).catch(() => {
+    await page.waitForLoadState('domcontentloaded', {timeout: 30000}).catch(() => {
     });
   }
   await expect(control).toBeVisible({timeout: 30000});

@@ -1,5 +1,7 @@
 import {defineConfig, devices} from '@playwright/test';
 
+process.env.NEXT_PUBLIC_E2E_AUTH_STORAGE ??= 'localStorage';
+
 /**
  * Playwright E2E Test Configuration for HRMS Frontend
  *
@@ -146,6 +148,9 @@ export default defineConfig({
   // Run your local dev server before starting the tests
   webServer: {
     command: 'npm run dev',
+    env: {
+      NEXT_PUBLIC_E2E_AUTH_STORAGE: 'localStorage',
+    },
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000,
