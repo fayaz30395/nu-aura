@@ -84,6 +84,40 @@ RUN addgroup -g 1001 -S hrms && \
 
 RUN apk add --no-cache curl socat
 
+RUN printf '%s\n' \
+      '#!/bin/sh' \
+      "printf 'HTTP/1.1 503 Service Unavailable\r\nConnection: close\r\nContent-Type: text/plain\r\nContent-Length: 17\r\n\r\nService starting\n'" \
+      > /usr/local/bin/render-starting-response && \
+    printf '%s\n' \
+      '#!/bin/sh' \
+      'set -eu' \
+      'APP_PORT="${APP_PORT:-8080}"' \
+      'PUBLIC_PORT="${PORT:-10000}"' \
+      '' \
+      'ready() {' \
+      '  curl -fsS "http://127.0.0.1:${APP_PORT}/actuator/health" >/dev/null 2>&1' \
+      '}' \
+      '' \
+      'start_probe_responder() {' \
+      '  socat -T 2 "TCP-LISTEN:${PUBLIC_PORT},fork,reuseaddr" EXEC:/usr/local/bin/render-starting-response &' \
+      '  PROBE_PID=$!' \
+      '}' \
+      '' \
+      'start_public_proxy() {' \
+      '  start_probe_responder' \
+      '  until ready; do' \
+      '    sleep 2' \
+      '  done' \
+      '  kill "${PROBE_PID}" 2>/dev/null || true' \
+      '  wait "${PROBE_PID}" 2>/dev/null || true' \
+      '  exec socat "TCP-LISTEN:${PUBLIC_PORT},fork,reuseaddr" "TCP:127.0.0.1:${APP_PORT}"' \
+      '}' \
+      '' \
+      'start_public_proxy &' \
+      'SERVER_PORT="${APP_PORT}" exec java ${JAVA_OPTS:-} -jar app.jar' \
+      > /usr/local/bin/render-entrypoint && \
+    chmod +x /usr/local/bin/render-starting-response /usr/local/bin/render-entrypoint
+
 COPY --from=build /app/backend/target/*.jar app.jar
 
 RUN chown -R hrms:hrms /app
@@ -97,4 +131,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
 
 ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -XX:+UseG1GC -Djava.security.egd=file:/dev/./urandom"
 
-ENTRYPOINT ["sh", "-c", "(while ! curl -fsS http://127.0.0.1:${APP_PORT:-8080}/actuator/health >/dev/null 2>&1; do socat -T 2 TCP-LISTEN:${PORT:-10000},reuseaddr SYSTEM:'printf \"HTTP/1.1 503 Service Unavailable\\r\\nConnection: close\\r\\n\\r\\nService starting\\n\"' || true; done; exec socat TCP-LISTEN:${PORT:-10000},fork,reuseaddr TCP:127.0.0.1:${APP_PORT:-8080}) & SERVER_PORT=${APP_PORT:-8080} java $JAVA_OPTS -jar app.jar"]
+ENTRYPOINT ["/usr/local/bin/render-entrypoint"]
