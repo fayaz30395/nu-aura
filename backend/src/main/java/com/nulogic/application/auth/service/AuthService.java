@@ -19,6 +19,7 @@ import com.nulogic.common.exception.ValidationException;
 import com.nulogic.common.metrics.MetricsService;
 import com.nulogic.common.security.AccountLockoutService;
 import com.nulogic.common.security.JwtTokenProvider;
+import com.nulogic.common.security.TenantRlsSessionSync;
 import com.nulogic.common.security.UserPrincipal;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.employee.Employee;
@@ -81,6 +82,7 @@ public class AuthService {
     private final CaptchaService captchaService;
     private final StringRedisTemplate stringRedisTemplate;
     private final TenantTimeService tenantTimeService;
+    private final TenantRlsSessionSync tenantRlsSessionSync;
     @Value("${app.jwt.expiration}")
     private long jwtExpiration;
     @Value("${app.security.captcha.threshold-attempts:3}")
@@ -104,6 +106,8 @@ public class AuthService {
     private String allowedDomain;
     @Value("${app.auth.login-bookkeeping.enabled:true}")
     private boolean loginBookkeepingEnabled;
+    @Value("${app.account-lockout.use-redis:true}")
+    private boolean accountLockoutUseRedis;
 
     public AuthService(AuthenticationManager authenticationManager,
                        UserRepository userRepository,
@@ -120,7 +124,8 @@ public class AuthService {
                        PasswordPolicyConfig passwordPolicyConfig,
                        CaptchaService captchaService,
                        StringRedisTemplate stringRedisTemplate,
-                       TenantTimeService tenantTimeService) {
+                       TenantTimeService tenantTimeService,
+                       TenantRlsSessionSync tenantRlsSessionSync) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.employeeRepository = employeeRepository;
@@ -137,6 +142,7 @@ public class AuthService {
         this.captchaService = captchaService;
         this.stringRedisTemplate = stringRedisTemplate;
         this.tenantTimeService = tenantTimeService;
+        this.tenantRlsSessionSync = tenantRlsSessionSync;
     }
 
     /**
@@ -194,6 +200,7 @@ public class AuthService {
 
         // Set tenant context for authentication
         com.nulogic.common.security.TenantContext.setCurrentTenant(tenantId);
+        tenantRlsSessionSync.syncCurrentTenant(tenantId);
 
         // Check account lockout before attempting authentication.
         // SEC: Burn the same wall-clock time a real BCrypt compare would take so the
@@ -351,6 +358,7 @@ public class AuthService {
 
             // Set tenant context
             com.nulogic.common.security.TenantContext.setCurrentTenant(tenantId);
+            tenantRlsSessionSync.syncCurrentTenant(tenantId);
 
             // Find user by email - first try specified tenant, then search across tenants
             User user = userRepository.findByEmailAndTenantId(email, tenantId)
@@ -364,6 +372,7 @@ public class AuthService {
             // Update tenantId to user's actual tenant
             tenantId = user.getTenantId();
             com.nulogic.common.security.TenantContext.setCurrentTenant(tenantId);
+            tenantRlsSessionSync.syncCurrentTenant(tenantId);
 
             // Update profile picture from Google if available
             if (profilePictureUrl != null && !profilePictureUrl.isEmpty()) {
@@ -485,6 +494,7 @@ public class AuthService {
 
             // Set tenant context so RLS and implicit role queries work correctly
             com.nulogic.common.security.TenantContext.setCurrentTenant(tenantId);
+            tenantRlsSessionSync.syncCurrentTenant(tenantId);
 
             User user = userRepository.findByEmailAndTenantId(email, tenantId)
                     .orElseThrow(() -> new ResourceNotFoundException("User", "email", email));
@@ -1072,6 +1082,7 @@ public class AuthService {
 
         UUID tenantId = user.getTenantId();
         com.nulogic.common.security.TenantContext.setCurrentTenant(tenantId);
+        tenantRlsSessionSync.syncCurrentTenant(tenantId);
 
         user.recordSuccessfulLogin();
         userRepository.save(user);
@@ -1099,6 +1110,9 @@ public class AuthService {
      */
     private int readFailedLoginAttempts(String username) {
         if (username == null || username.isBlank()) {
+            return 0;
+        }
+        if (!accountLockoutUseRedis) {
             return 0;
         }
         try {

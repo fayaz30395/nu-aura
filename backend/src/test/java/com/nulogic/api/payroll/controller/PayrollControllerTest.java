@@ -16,6 +16,7 @@ import com.nulogic.domain.payroll.SalaryStructure;
 import com.nulogic.domain.user.RoleScope;
 import com.nulogic.infrastructure.kafka.producer.EventPublisher;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

@@ -12,6 +12,7 @@ import com.nulogic.common.exception.ResourceNotFoundException;
 import com.nulogic.common.exception.ValidationException;
 import com.nulogic.common.security.AccountLockoutService;
 import com.nulogic.common.security.JwtTokenProvider;
+import com.nulogic.common.security.TenantRlsSessionSync;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.user.User;
@@ -97,6 +98,9 @@ class AuthServiceTest {
     private TenantTimeService tenantTimeService;
 
     @Mock
+    private TenantRlsSessionSync tenantRlsSessionSync;
+
+    @Mock
     private StringRedisTemplate stringRedisTemplate;
 
     @Mock
@@ -135,6 +139,7 @@ class AuthServiceTest {
         ReflectionTestUtils.setField(authService, "jwtExpiration", 3600000L);
         ReflectionTestUtils.setField(authService, "captchaThresholdAttempts", 3);
         ReflectionTestUtils.setField(authService, "allowedDomain", "nulogic.io");
+        ReflectionTestUtils.setField(authService, "accountLockoutUseRedis", true);
         when(implicitRoleService.getImplicitRoles(any(UUID.class), any(UUID.class))).thenReturn(Set.of());
         when(implicitRoleService.getImplicitPermissions(any(UUID.class), any(UUID.class))).thenReturn(Set.of());
         // Default tenant-zone stub for tests that don't care about timezone propagation.
@@ -158,6 +163,7 @@ class AuthServiceTest {
             request.setEmail("test@example.com");
             request.setPassword("password123");
             request.setTenantId(tenantId);
+            ReflectionTestUtils.setField(authService, "accountLockoutUseRedis", false);
 
             Authentication authentication = mock(Authentication.class);
             when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
@@ -184,6 +190,8 @@ class AuthServiceTest {
             assertThat(response.getAccessToken()).isEqualTo("access-token");
             assertThat(response.getRefreshToken()).isEqualTo("refresh-token");
             assertThat(response.getEmail()).isEqualTo("test@example.com");
+            verify(tenantRlsSessionSync).syncCurrentTenant(tenantId);
+            verify(valueOperations, never()).get(anyString());
             verify(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken.class));
         }
 
