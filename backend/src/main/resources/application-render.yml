@@ -146,6 +146,11 @@ server:
     include-exception: false
 
 app:
+  scheduling:
+    # Render free-tier first release prioritizes interactive app stability.
+    # Background schedulers are disabled until a paid worker/cron surface exists.
+    enabled: ${APP_SCHEDULING_ENABLED:false}
+
   kafka:
     admin:
       # Kafka is not provisioned for the Render first-release deployment. Keep

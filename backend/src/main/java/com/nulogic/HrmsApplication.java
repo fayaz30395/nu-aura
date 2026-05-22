@@ -9,7 +9,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.repository.config.BootstrapMode;
 import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication(scanBasePackages = {"com.nulogic"},
         exclude = {org.springframework.boot.autoconfigure.elasticsearch.ElasticsearchRestClientAutoConfiguration.class,
@@ -18,7 +17,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
                 org.springframework.boot.autoconfigure.data.elasticsearch.ReactiveElasticsearchRepositoriesAutoConfiguration.class})
 @EnableCaching
 @EnableJpaAuditing
-@EnableScheduling
 @EnableAsync
 @EntityScan(basePackages = {"com.nulogic"})
 @EnableJpaRepositories(basePackages = {"com.nulogic"},
