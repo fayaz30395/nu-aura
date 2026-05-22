@@ -27,7 +27,7 @@ spring:
 
   datasource:
     hikari:
-      maximum-pool-size: 5
+      maximum-pool-size: 3
       minimum-idle: 1
       connection-timeout: 30000
       idle-timeout: 300000
@@ -134,10 +134,10 @@ server:
   port: ${PORT:8080}
   tomcat:
     threads:
-      max: 24
-      min-spare: 2
-    accept-count: 16
-    max-connections: 64
+      max: 8
+      min-spare: 1
+    accept-count: 8
+    max-connections: 16
     connection-timeout: 5s
   error:
     include-stacktrace: never
