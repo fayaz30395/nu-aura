@@ -219,6 +219,40 @@ Filter chain order: `TenantFilter` → `RateLimitingFilter` → `JwtAuthenticati
 - **Google OAuth:** Supported via `@react-oauth/google` (frontend) + backend OAuth2 client.
 - **MFA:** Supported (`/api/v1/auth/mfa-login` is public/pre-auth).
 
+---
+
+## Global Memory Update — Release Retrench Plan (2026-05-26)
+
+### Real-world release posture (current)
+
+- **Release readiness score: 72/100** (pilot-ready, not broad enterprise GA-ready yet).
+- Capability maturity is strong across HRMS/Hire/Grow, but release-hardening is constrained by open
+  operational P0s from wave-10.
+
+### Why retrench is required now
+
+The highest-impact production risks are correctness and operability, not feature breadth:
+
+1. **Timezone ambiguity at scale** (`LocalDate/LocalDateTime/Instant.now()` callsites) can cause day-boundary errors in payroll/attendance.
+2. **Missing `tenants.timezone`** blocks tenant-accurate temporal behavior for non-uniform regions.
+3. **Leave accrual scheduler cross-pod race** can duplicate balance credits in multi-replica environments.
+4. **Webhook key rotation gap** lacks dual-secret overlap for in-flight retry safety.
+5. **Frontend hooks deps lint not enforced** allows stale-closure auth/tenant context bugs.
+
+### 2-week retrench execution objective
+
+- **Week 1:** close all P0 engineering items (timezone path, scheduler lock, webhook dual-secret,
+  frontend exhaustive-deps CI rule).
+- **Week 2:** production-like validation (deploy rehearsal, rollback rehearsal, migration dry-run,
+  focused regression on payroll/leave/attendance/webhooks).
+
+### Exit criteria for broad GA recommendation
+
+- All wave-10 P0s closed with staging evidence.
+- Deployment runbook preflight passes with no blockers.
+- Multi-replica deterministic behavior verified for scheduled jobs.
+- Recomputed release score target: **85+ / 100** before broad enterprise rollout.
+
 ### Password Policy
 
 - Min 12, max 128 characters. Requires uppercase, lowercase, digit, special character.
