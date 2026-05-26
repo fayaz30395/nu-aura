@@ -106,10 +106,11 @@ USER hrms
 EXPOSE 8080
 
 # Render free tier: 512MB RAM total. Keep the first-release instance single-node
-# and bounded: modest heap headroom, capped metaspace/code/direct memory, and
-# small thread stacks. Tomcat concurrency is capped in application-render.yml.
+# and bounded, but avoid hard metaspace/code-cache/thread-stack caps; those can
+# break Spring Boot nested-jar class loading and hide the real startup error.
+# Tomcat concurrency is capped in application-render.yml.
 ENV SPRING_PROFILES_ACTIVE=render
 ENV RLS_PROBE_FAIL_ON_BYPASS=true
-ENV JAVA_OPTS="-XX:+UseContainerSupport -Xms64m -Xmx224m -XX:MaxMetaspaceSize=160m -XX:ReservedCodeCacheSize=32m -XX:MaxDirectMemorySize=16m -Xss384k -XX:+UseSerialGC -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Djava.security.egd=file:/dev/./urandom"
+ENV JAVA_OPTS="-XX:+UseContainerSupport -Xms96m -Xmx320m -XX:MaxDirectMemorySize=32m -XX:+UseSerialGC -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Djava.security.egd=file:/dev/./urandom"
 
 ENTRYPOINT ["/usr/local/bin/render-entrypoint"]
