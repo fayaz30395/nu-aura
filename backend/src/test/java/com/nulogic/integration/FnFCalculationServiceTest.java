@@ -127,9 +127,9 @@ class FnFCalculationServiceTest {
         ExitProcess exitProcess = buildExitProcess(exitId, lastWorkingDate);
         Employee employee = buildEmployee(joiningDate);
 
-        when(exitProcessRepository.findById(exitId)).thenReturn(Optional.of(exitProcess));
+        when(exitProcessRepository.findByIdAndTenantId(exitId, TENANT_ID)).thenReturn(Optional.of(exitProcess));
         when(fnfRepository.findByExitProcessIdAndTenantId(exitId, TENANT_ID)).thenReturn(Optional.empty());
-        when(employeeRepository.findById(EMPLOYEE_ID)).thenReturn(Optional.of(employee));
+        when(employeeRepository.findByIdAndTenantId(EMPLOYEE_ID, TENANT_ID)).thenReturn(Optional.of(employee));
 
         // Basic salary: 60,000 / month
         SalaryStructure structure = mock(SalaryStructure.class);
@@ -164,12 +164,12 @@ class FnFCalculationServiceTest {
 
         ExitProcess exitProcess = buildExitProcess(exitId, LocalDate.of(2026, 4, 15));
 
-        when(exitProcessRepository.findById(exitId)).thenReturn(Optional.of(exitProcess));
+        when(exitProcessRepository.findByIdAndTenantId(exitId, TENANT_ID)).thenReturn(Optional.of(exitProcess));
         when(fnfRepository.findByExitProcessIdAndTenantId(exitId, TENANT_ID)).thenReturn(Optional.of(existing));
 
         Employee employee = mock(Employee.class);
         when(employee.getFullName()).thenReturn("Test Employee");
-        when(employeeRepository.findById(EMPLOYEE_ID)).thenReturn(Optional.of(employee));
+        when(employeeRepository.findByIdAndTenantId(EMPLOYEE_ID, TENANT_ID)).thenReturn(Optional.of(employee));
 
         FnFCalculationResponse response = fnfService.getOrCalculate(exitId);
 
@@ -200,7 +200,7 @@ class FnFCalculationServiceTest {
 
         Employee employee = mock(Employee.class);
         when(employee.getFullName()).thenReturn("Test Employee");
-        when(employeeRepository.findById(EMPLOYEE_ID)).thenReturn(Optional.of(employee));
+        when(employeeRepository.findByIdAndTenantId(EMPLOYEE_ID, TENANT_ID)).thenReturn(Optional.of(employee));
 
         // Apply adjustment to set leave encashment
         FnFAdjustmentRequest adjustmentRequest = new FnFAdjustmentRequest();
@@ -250,7 +250,7 @@ class FnFCalculationServiceTest {
 
         Employee employee = mock(Employee.class);
         when(employee.getFullName()).thenReturn("Test Employee");
-        when(employeeRepository.findById(EMPLOYEE_ID)).thenReturn(Optional.of(employee));
+        when(employeeRepository.findByIdAndTenantId(EMPLOYEE_ID, TENANT_ID)).thenReturn(Optional.of(employee));
 
         // Pending expense of 8,000 added as reimbursement
         FnFAdjustmentRequest req = new FnFAdjustmentRequest();
@@ -285,7 +285,7 @@ class FnFCalculationServiceTest {
 
         Employee employee = mock(Employee.class);
         when(employee.getFullName()).thenReturn("Test Employee");
-        when(employeeRepository.findById(EMPLOYEE_ID)).thenReturn(Optional.of(employee));
+        when(employeeRepository.findByIdAndTenantId(EMPLOYEE_ID, TENANT_ID)).thenReturn(Optional.of(employee));
 
         // Apply loan recovery of 20,000
         FnFAdjustmentRequest req = new FnFAdjustmentRequest();
@@ -317,7 +317,7 @@ class FnFCalculationServiceTest {
 
         Employee employee = mock(Employee.class);
         when(employee.getFullName()).thenReturn("Test Employee");
-        when(employeeRepository.findById(EMPLOYEE_ID)).thenReturn(Optional.of(employee));
+        when(employeeRepository.findByIdAndTenantId(EMPLOYEE_ID, TENANT_ID)).thenReturn(Optional.of(employee));
 
         FnFAdjustmentRequest req = new FnFAdjustmentRequest();
         req.setLoanRecovery(new BigDecimal("10000"));
@@ -351,7 +351,7 @@ class FnFCalculationServiceTest {
 
         Employee employee = mock(Employee.class);
         when(employee.getFullName()).thenReturn("Test Employee");
-        when(employeeRepository.findById(EMPLOYEE_ID)).thenReturn(Optional.of(employee));
+        when(employeeRepository.findByIdAndTenantId(EMPLOYEE_ID, TENANT_ID)).thenReturn(Optional.of(employee));
 
         FnFCalculationResponse response = fnfService.approve(exitId);
 

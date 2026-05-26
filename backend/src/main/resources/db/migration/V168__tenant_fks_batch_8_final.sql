@@ -87,10 +87,23 @@ DO
 $$
 BEGIN
     IF
-NOT EXISTS (SELECT 1 FROM information_schema.table_constraints WHERE table_name = 'payment_batch_transactions' AND constraint_name = 'fk_payment_batch_transactions_tenant')
-       AND EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'payment_batch_transactions') THEN
+EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'payment_batch_transactions') THEN
+ALTER TABLE payment_batch_transactions
+  ADD COLUMN IF NOT EXISTS tenant_id UUID;
+
+UPDATE payment_batch_transactions pbt
+SET tenant_id = pb.tenant_id
+FROM payment_batches pb
+WHERE pbt.batch_id = pb.id
+  AND pbt.tenant_id IS NULL;
+
+ALTER TABLE payment_batch_transactions
+  ALTER COLUMN tenant_id SET NOT NULL;
+
+IF NOT EXISTS (SELECT 1 FROM information_schema.table_constraints WHERE table_name = 'payment_batch_transactions' AND constraint_name = 'fk_payment_batch_transactions_tenant') THEN
 ALTER TABLE payment_batch_transactions
   ADD CONSTRAINT fk_payment_batch_transactions_tenant FOREIGN KEY (tenant_id) REFERENCES tenants (id) ON DELETE CASCADE;
+END IF;
 END IF;
 END $$;
 DO

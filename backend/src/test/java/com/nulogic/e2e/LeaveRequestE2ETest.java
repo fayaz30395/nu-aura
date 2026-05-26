@@ -14,11 +14,14 @@ import com.nulogic.domain.leave.LeaveRequest;
 import com.nulogic.domain.leave.LeaveType;
 import com.nulogic.domain.user.RoleScope;
 import com.nulogic.domain.user.User;
+import com.nulogic.domain.workflow.ApprovalStep;
+import com.nulogic.domain.workflow.WorkflowDefinition;
 import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import com.nulogic.infrastructure.leave.repository.LeaveBalanceRepository;
 import com.nulogic.infrastructure.leave.repository.LeaveRequestRepository;
 import com.nulogic.infrastructure.leave.repository.LeaveTypeRepository;
 import com.nulogic.infrastructure.user.repository.UserRepository;
+import com.nulogic.infrastructure.workflow.repository.WorkflowDefinitionRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -74,9 +77,13 @@ class LeaveRequestE2ETest extends AbstractPostgresIntegrationTest {
     private EmployeeRepository employeeRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private WorkflowDefinitionRepository workflowDefinitionRepository;
     private UUID testLeaveTypeId;
     private UUID testEmployeeId;
+    private UUID testManagerId;
     private UUID testUserId;
+    private UUID testManagerUserId;
     private UUID createdLeaveRequestId;
 
     @BeforeAll
@@ -110,6 +117,30 @@ class LeaveRequestE2ETest extends AbstractPostgresIntegrationTest {
         User savedUser = userRepository.save(testUser);
         testUserId = savedUser.getId();
 
+        User managerUser = User.builder()
+                .email("test.manager" + uniqueSuffix + "@test.com")
+                .passwordHash("$2a$10$dXJ3SW6G7P50lGmMkkmwe.20cQQubK3.HZWzG3YB1tlRy.fqvM/BG")
+                .firstName("Test")
+                .lastName("Manager")
+                .status(User.UserStatus.ACTIVE)
+                .build();
+        managerUser.setTenantId(TEST_TENANT_ID);
+        User savedManagerUser = userRepository.save(managerUser);
+        testManagerUserId = savedManagerUser.getId();
+
+        Employee manager = Employee.builder()
+                .employeeCode("MGR_TEST_" + uniqueSuffix)
+                .firstName("Test")
+                .lastName("Manager")
+                .personalEmail("test.manager" + uniqueSuffix + "@test.com")
+                .status(Employee.EmployeeStatus.ACTIVE)
+                .employmentType(Employee.EmploymentType.FULL_TIME)
+                .joiningDate(LocalDate.now().minusMonths(12))
+                .user(savedManagerUser)
+                .build();
+        manager.setTenantId(TEST_TENANT_ID);
+        testManagerId = employeeRepository.save(manager).getId();
+
         // Create test employee linked to user
         Employee employee = Employee.builder()
                 .employeeCode("EMP_TEST_" + uniqueSuffix)
@@ -119,12 +150,57 @@ class LeaveRequestE2ETest extends AbstractPostgresIntegrationTest {
                 .status(Employee.EmployeeStatus.ACTIVE)
                 .employmentType(Employee.EmploymentType.FULL_TIME)
                 .joiningDate(LocalDate.now().minusMonths(6))
-                .managerId(TEST_MANAGER_ID)
+                .managerId(testManagerId)
                 .user(savedUser)
                 .build();
         employee.setTenantId(TEST_TENANT_ID);
         Employee savedEmployee = employeeRepository.save(employee);
         testEmployeeId = savedEmployee.getId();
+
+        workflowDefinitionRepository.findDefaultWorkflow(TEST_TENANT_ID, WorkflowDefinition.EntityType.LEAVE_REQUEST)
+                .orElseGet(() -> {
+                    WorkflowDefinition definition = WorkflowDefinition.builder()
+                            .name("Default Leave Approval Test " + uniqueSuffix)
+                            .description("Default leave workflow for E2E test tenant")
+                            .entityType(WorkflowDefinition.EntityType.LEAVE_REQUEST)
+                            .workflowType(WorkflowDefinition.WorkflowType.SEQUENTIAL)
+                            .workflowVersion(1)
+                            .isActive(true)
+                            .isDefault(true)
+                            .defaultSlaHours(48)
+                            .escalationEnabled(false)
+                            .escalationAfterHours(72)
+                            .notifyOnSubmission(true)
+                            .notifyOnApproval(true)
+                            .notifyOnRejection(true)
+                            .notifyOnEscalation(false)
+                            .allowParallelApproval(false)
+                            .autoApproveEnabled(false)
+                            .skipLevelAllowed(false)
+                            .build();
+                    definition.setTenantId(TEST_TENANT_ID);
+
+                    ApprovalStep managerApproval = ApprovalStep.builder()
+                            .stepOrder(1)
+                            .stepName("Manager Approval")
+                            .approverType(ApprovalStep.ApproverType.REPORTING_MANAGER)
+                            .hierarchyLevel(1)
+                            .minApprovals(1)
+                            .isOptional(false)
+                            .slaHours(48)
+                            .escalationEnabled(false)
+                            .escalateAfterHours(72)
+                            .autoApproveOnTimeout(false)
+                            .autoRejectOnTimeout(false)
+                            .delegationAllowed(true)
+                            .commentsRequired(false)
+                            .attachmentsAllowed(false)
+                            .build();
+                    managerApproval.setTenantId(TEST_TENANT_ID);
+                    definition.addStep(managerApproval);
+
+                    return workflowDefinitionRepository.save(definition);
+                });
 
         // Create leave balance for the employee
         LeaveBalance balance = LeaveBalance.builder()
@@ -148,14 +224,18 @@ class LeaveRequestE2ETest extends AbstractPostgresIntegrationTest {
     }
 
     private void setupSecurityContext() {
-        setupSecurityContext(testEmployeeId != null ? testEmployeeId : TEST_EMPLOYEE_ID);
+        setupSecurityContext(
+                testUserId != null ? testUserId : TEST_USER_ID,
+                testEmployeeId != null ? testEmployeeId : TEST_EMPLOYEE_ID);
     }
 
     private void setupManagerSecurityContext() {
-        setupSecurityContext(TEST_MANAGER_ID);
+        setupSecurityContext(
+                testManagerUserId != null ? testManagerUserId : TEST_USER_ID,
+                testManagerId != null ? testManagerId : TEST_MANAGER_ID);
     }
 
-    private void setupSecurityContext(UUID currentEmployeeId) {
+    private void setupSecurityContext(UUID currentUserId, UUID currentEmployeeId) {
         Set<String> roles = new HashSet<>(Arrays.asList("ADMIN", "HR", "EMPLOYEE"));
         Map<String, RoleScope> permissions = new HashMap<>();
         permissions.put(Permission.SYSTEM_ADMIN, RoleScope.ALL);
@@ -164,7 +244,7 @@ class LeaveRequestE2ETest extends AbstractPostgresIntegrationTest {
         permissions.put("HRMS:LEAVE:CANCEL", RoleScope.ALL);
         permissions.put("HRMS:LEAVE:APPROVE", RoleScope.ALL);
 
-        SecurityContext.setCurrentUser(TEST_USER_ID, currentEmployeeId, roles, permissions);
+        SecurityContext.setCurrentUser(currentUserId, currentEmployeeId, roles, permissions);
         SecurityContext.setCurrentTenantId(TEST_TENANT_ID);
         TenantContext.setCurrentTenant(TEST_TENANT_ID);
     }
@@ -358,6 +438,7 @@ class LeaveRequestE2ETest extends AbstractPostgresIntegrationTest {
         );
 
         // Cancel the leave request - uses POST with query param
+        setupSecurityContext();
         mockMvc.perform(post(BASE_URL + "/" + newRequestId + "/cancel")
                         .param("reason", "Plans changed"))
                 .andExpect(status().isOk())
@@ -418,9 +499,10 @@ class LeaveRequestE2ETest extends AbstractPostgresIntegrationTest {
         assertThat(created.getStatus()).isEqualTo(LeaveRequest.LeaveRequestStatus.PENDING);
 
         // Approve via service
-        LeaveRequest approved = leaveRequestService.approveLeaveRequest(created.getId(), TEST_MANAGER_ID);
+        setupManagerSecurityContext();
+        LeaveRequest approved = leaveRequestService.approveLeaveRequest(created.getId(), testManagerId);
         assertThat(approved.getStatus()).isEqualTo(LeaveRequest.LeaveRequestStatus.APPROVED);
-        assertThat(approved.getApprovedBy()).isEqualTo(TEST_MANAGER_ID);
+        assertThat(approved.getApprovedBy()).isEqualTo(testManagerId);
     }
 
     // ==================== Validation Tests ====================

@@ -83,7 +83,7 @@ public class TaxDeclaration {
     @Column(name = "sec_80d_self_family", precision = 15, scale = 2)
     private BigDecimal sec80dSelfFamily;
 
-    @Column(name = "sec d_parents", precision = 15, scale = 2)
+    @Column(name = "sec_80d_parents", precision = 15, scale = 2)
     private BigDecimal sec80dParents;
 
     @Column(name = "sec_80d_preventive_health", precision = 15, scale = 2)

@@ -3,14 +3,6 @@
 import {useEffect, useState} from 'react';
 import {CheckCircle2, Clock, LogIn, LogOut} from 'lucide-react';
 
-// wave-3 N: Safari <=16.1 lacks color-mix() support. Default to the
-// modern value on first paint (matches SSR), swap to rgba() after mount
-// on browsers that don't support it.
-function supportsColorMix(): boolean {
-  if (typeof window === 'undefined' || typeof CSS === 'undefined' || !CSS.supports) return true;
-  return CSS.supports('background', 'color-mix(in srgb, red, blue)');
-}
-
 interface TimeClockWidgetProps {
   isCheckedIn: boolean;
   checkInTime: Date | null;
@@ -52,16 +44,6 @@ export function TimeClockWidget({
   const [currentTime, setCurrentTime] = useState<string>(getInitialTime());
   const [elapsedTime, setElapsedTime] = useState<string>('');
   const [dateDisplay, setDateDisplay] = useState<string>(getInitialDateDisplay());
-  // wave-3 N: fallback to rgba() on Safari <=16.1 (no color-mix support).
-  const [useColorMixFallback, setUseColorMixFallback] = useState(false);
-  useEffect(() => {
-    if (!supportsColorMix()) setUseColorMixFallback(true);
-  }, []);
-
-  // --accent-primary #2563EB ≈ rgb(37, 99, 235); 32% mix ≈ rgba(37, 99, 235, 0.32)
-  const clockInShadow = useColorMixFallback
-    ? '0 4px 14px rgba(37, 99, 235, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.15)' // fallback
-    : '0 4px 14px color-mix(in srgb, var(--accent-primary) 32%, transparent), inset 0 1px 0 rgba(255, 255, 255, 0.15)';
 
   useEffect(() => {
     const updateTime = () => {
@@ -108,9 +90,8 @@ export function TimeClockWidget({
       {/* Header */}
       <div className="row-between mb-4">
         <div className="flex items-center gap-2">
-          <div className="flex items-center justify-center w-6 h-6 rounded-md"
-               style={{background: 'var(--accent-primary-subtle)'}}>
-            <Clock className="h-3.5 w-3.5" style={{color: 'var(--accent-primary)'}}/>
+          <div className="flex items-center justify-center w-6 h-6 rounded-md bg-[var(--accent-primary-subtle)]">
+            <Clock className="h-3.5 w-3.5 text-[var(--accent-primary)]"/>
           </div>
           <span className="text-xs font-medium text-[var(--text-muted)]">
             {dateDisplay}
@@ -131,15 +112,14 @@ export function TimeClockWidget({
             className="text-4xl font-bold text-[var(--text-primary)] tracking-tight font-mono tabular-nums leading-none">
             {timeValue}
           </span>
-          <span className="text-sm font-semibold uppercase tracking-wider" style={{color: 'var(--accent-primary)'}}>
+          <span className="text-sm font-semibold uppercase tracking-wider text-[var(--accent-primary)]">
             {timePeriod}
           </span>
         </div>
         {elapsedTime && (
-          <div className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg"
-               style={{background: 'var(--status-success-bg)', border: '1px solid var(--status-success-border)'}}>
+          <div className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-[var(--status-success-border)] bg-[var(--status-success-bg)]">
             <div className="w-1.5 h-1.5 rounded-full bg-success-500 animate-pulse"/>
-            <span className="text-xs font-medium" style={{color: 'var(--status-success-text)'}}>
+            <span className="text-xs font-medium text-[var(--status-success-text)]">
               Working: {elapsedTime}
             </span>
           </div>
@@ -149,11 +129,10 @@ export function TimeClockWidget({
       {/* Check In/Out Button or Completed State */}
       {isCompleted ? (
         <div
-          className="flex w-full flex-col items-center gap-2 rounded-xl py-4 px-4 border border-[var(--status-success-border)]"
-          style={{background: 'var(--status-success-bg)'}}>
+          className="flex w-full flex-col items-center gap-2 rounded-xl py-4 px-4 border border-[var(--status-success-border)] bg-[var(--status-success-bg)]">
           <div className="flex items-center gap-2">
-            <CheckCircle2 className="h-4 w-4" style={{color: 'var(--status-success-text)'}}/>
-            <span className="text-sm font-semibold" style={{color: 'var(--status-success-text)'}}>
+            <CheckCircle2 className="h-4 w-4 text-[var(--status-success-text)]"/>
+            <span className="text-sm font-semibold text-[var(--status-success-text)]">
               Attendance Completed
             </span>
           </div>
@@ -172,12 +151,8 @@ export function TimeClockWidget({
           className={`relative flex w-full items-center justify-center gap-2.5 rounded-xl py-4 px-4 text-sm font-semibold transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
             isCheckedIn
               ? 'bg-[var(--bg-surface)] text-[var(--text-primary)] border border-[var(--border-main)] hover:bg-[var(--bg-card-hover)] hover:border-[var(--border-strong)]'
-              : 'text-white border-0'
+              : 'text-white border-0 bg-[image:var(--nu-gradient-dark)] shadow-[0_4px_14px_rgba(37,99,235,0.32),inset_0_1px_0_rgba(255,255,255,0.15)]'
           } disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]`}
-          style={!isCheckedIn ? {
-            background: 'var(--nu-gradient-dark)',
-            boxShadow: clockInShadow,
-          } : undefined}
         >
           {isCheckedIn ? (
             <>

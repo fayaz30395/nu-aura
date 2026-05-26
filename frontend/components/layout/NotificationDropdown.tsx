@@ -41,6 +41,7 @@ import {sanitizeEmailHtml} from '@/lib/utils/sanitize';
 import {createLogger} from '@/lib/utils/logger';
 import {safeWindowOpen} from '@/lib/utils/url';
 import {formatDate, formatDateShort} from '@/lib/utils/format/date';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 
 const logger = createLogger('NotificationDropdown');
 
@@ -179,16 +180,18 @@ export function NotificationDropdown({isOpen, onClose}: NotificationDropdownProp
     markAsRead: wsMarkAsRead,
     markAllAsRead: wsMarkAllAsRead
   } = useWebSocket();
+  const {hasPermission, isReady} = usePermissions();
+  const canReadSystemNotifications = isReady && hasPermission(Permissions.NOTIFICATION_VIEW);
 
-  const {data: persistedNotifications = [], isLoading: notificationsLoading} = useNotificationInbox(10, isOpen);
-  const {data: persistedUnreadCount = 0} = useUnreadNotificationCount(isOpen);
+  const {data: persistedNotifications = [], isLoading: notificationsLoading} = useNotificationInbox(10, isOpen && canReadSystemNotifications);
+  const {data: persistedUnreadCount = 0} = useUnreadNotificationCount(isOpen && canReadSystemNotifications);
   const markReadMutation = useMarkNotificationAsRead();
   const markAllReadMutation = useMarkAllNotificationsAsRead();
 
   const [googleNotifications, setGoogleNotifications] = useState<GoogleNotification[]>([]);
   const [googleNotificationsLoading, setGoogleNotificationsLoading] = useState(false);
   const [hasGoogleToken, setHasGoogleToken] = useState(false);
-  const [notificationTab, setNotificationTab] = useState<'system' | 'google'>('google');
+  const [notificationTab, setNotificationTab] = useState<'system' | 'google'>('system');
 
   // Modal states for inline actions
   const [selectedEvent, setSelectedEvent] = useState<GoogleNotification | null>(null);
@@ -388,6 +391,12 @@ export function NotificationDropdown({isOpen, onClose}: NotificationDropdownProp
 
   const systemUnreadCount = Math.max(wsUnreadCount, persistedUnreadCount);
 
+  useEffect(() => {
+    if (isOpen && systemUnreadCount > 0) {
+      setNotificationTab('system');
+    }
+  }, [isOpen, systemUnreadCount]);
+
   if (!isOpen) return null;
 
   return (
@@ -532,7 +541,9 @@ export function NotificationDropdown({isOpen, onClose}: NotificationDropdownProp
                 {systemUnreadCount > 0 && (
                   <button
                     onClick={() => {
-                      markAllReadMutation.mutate();
+                      if (canReadSystemNotifications) {
+                        markAllReadMutation.mutate();
+                      }
                       wsMarkAllAsRead();
                     }}
                     className="text-xs font-medium text-accent-700 hover:text-accent-700 dark:text-accent-400"
@@ -556,6 +567,7 @@ export function NotificationDropdown({isOpen, onClose}: NotificationDropdownProp
                     <div
                       key={`ws-${index}`}
                       role="listitem"
+                      data-testid="realtime-notification-item"
                       onClick={() => {
                         wsMarkAsRead(index);
                         onClose();

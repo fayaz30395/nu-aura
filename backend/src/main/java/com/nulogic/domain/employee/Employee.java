@@ -21,8 +21,8 @@ import java.util.UUID;
         @Index(name = "idx_employee_tenant", columnList = "tenantId"),
         @Index(name = "idx_employee_department", columnList = "departmentId"),
         @Index(name = "idx_employee_manager", columnList = "managerId"),
-        @Index(name = "idx_employee_dotted_mgr1", columnList = "dottedLineManager1Id"),
-        @Index(name = "idx_employee_dotted_mgr2", columnList = "dottedLineManager2Id"),
+        @Index(name = "idx_employee_dotted_mgr1", columnList = "dotted_line_manager1_id"),
+        @Index(name = "idx_employee_dotted_mgr2", columnList = "dotted_line_manager2_id"),
         @Index(name = "idx_employee_status", columnList = "status")
 })
 @Getter
@@ -117,13 +117,13 @@ public class Employee extends TenantAware {
     /**
      * Optional first dotted-line manager (matrix reporting, informational only).
      */
-    @Column
+    @Column(name = "dotted_line_manager1_id")
     private UUID dottedLineManager1Id;
 
     /**
      * Optional second dotted-line manager (matrix reporting, informational only).
      */
-    @Column
+    @Column(name = "dotted_line_manager2_id")
     private UUID dottedLineManager2Id;
 
     @Enumerated(EnumType.STRING)

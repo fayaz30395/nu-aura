@@ -110,7 +110,7 @@ class CalendarControllerTest extends AbstractPostgresIntegrationTest {
 
         mockMvc.perform(get(BASE_URL + "/events/{id}", eventId))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(eventId));
+                .andExpect(jsonPath("$.data.id").value(eventId));
     }
 
     @Test
@@ -119,7 +119,7 @@ class CalendarControllerTest extends AbstractPostgresIntegrationTest {
         mockMvc.perform(get(BASE_URL + "/events/my")
                         .param("page", "0").param("size", "10"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content").isArray());
+                .andExpect(jsonPath("$.data.content").isArray());
     }
 
     @Test

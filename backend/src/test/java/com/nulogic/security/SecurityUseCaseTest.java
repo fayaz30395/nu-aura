@@ -15,7 +15,10 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,6 +28,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -37,6 +41,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
 @ActiveProfiles("test")
+@TestPropertySource(properties = "app.account-lockout.use-redis=false")
 @Import(TestSecurityConfig.class)
 @DisplayName("Security Use-Case Tests (UC-SEC)")
 class SecurityUseCaseTest extends AbstractPostgresIntegrationTest {
@@ -50,6 +55,8 @@ class SecurityUseCaseTest extends AbstractPostgresIntegrationTest {
     ObjectMapper objectMapper;
     @Autowired(required = false)
     AccountLockoutService accountLockoutService;
+    @Autowired
+    WebApplicationContext webApplicationContext;
 
     @BeforeEach
     void setUpSuperAdminContext() {
@@ -89,20 +96,29 @@ class SecurityUseCaseTest extends AbstractPostgresIntegrationTest {
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // UC-SEC-002: OWASP headers present on responses
-    // Note: addFilters=false bypasses security filter chain.
-    // This test validates SecurityConfig bean is loaded (configuration test).
+    // UC-SEC-002: OWASP headers present on responses.
+    // The class-level MockMvc keeps filters disabled for controller use-case tests;
+    // this method builds a dedicated MockMvc instance with Spring Security enabled.
     // ─────────────────────────────────────────────────────────────────────────
 
     @Test
-    @Disabled("UC-SEC-002: OWASP header assertions require addFilters=true (Spring Security filter chain). " +
-            "Headers are configured via SecurityConfig but skipped by addFilters=false in test slice.")
     @DisplayName("UC-SEC-002: OWASP security headers present on all responses")
     void ucSec002_owaspHeaders_presentOnResponses() throws Exception {
-        mockMvc.perform(get("/api/v1/employees/me"))
-                .andExpect(header().exists("X-Content-Type-Options"))
-                .andExpect(header().exists("X-Frame-Options"))
-                .andExpect(header().exists("Content-Security-Policy"));
+        MockMvc securityMockMvc = MockMvcBuilders
+                .webAppContextSetup(webApplicationContext)
+                .apply(springSecurity())
+                .build();
+
+        securityMockMvc.perform(get("/actuator/health").secure(true))
+                .andExpect(header().string("X-Content-Type-Options", "nosniff"))
+                .andExpect(header().string("X-Frame-Options", "DENY"))
+                .andExpect(header().string("Content-Security-Policy",
+                        "default-src 'self'; frame-ancestors 'none'"))
+                .andExpect(header().string("Referrer-Policy", "strict-origin-when-cross-origin"))
+                .andExpect(header().string("Permissions-Policy",
+                        "camera=(), microphone=(), geolocation=(), payment=(), usb=(), display-capture=()"))
+                .andExpect(header().string("Strict-Transport-Security",
+                        containsString("max-age=31536000")));
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -148,18 +164,16 @@ class SecurityUseCaseTest extends AbstractPostgresIntegrationTest {
 
     // ─────────────────────────────────────────────────────────────────────────
     // UC-SEC-005: account lockout after 5 failed attempts
-    // AccountLockoutService is backed exclusively by Redis (no in-memory fallback).
-    // Without a live Redis instance the increment/hasKey calls are no-ops and
-    // isAccountLocked() always returns false. Disabled for the test profile.
+    // Test profile wires Redis as Mockito mocks, so this use-case exercises the
+    // production local fallback path that keeps lockout active when Redis is off.
     // ─────────────────────────────────────────────────────────────────────────
 
     @Test
-    @Disabled("UC-SEC-005: AccountLockoutService requires a live Redis instance. " +
-            "Without Redis, loginFailed() silently no-ops and isAccountLocked() always returns false. " +
-            "Verified manually and in staging with Redis available.")
     @DisplayName("UC-SEC-005: AccountLockoutService locks account after 5 failed attempts")
     void ucSec005_accountLockout_after5FailedAttempts() {
         String username = "lockout.test." + System.currentTimeMillis() + "@nulogic.test";
+
+        assertThat(accountLockoutService).isNotNull();
 
         // Record 5 failed attempts
         for (int i = 0; i < 5; i++) {

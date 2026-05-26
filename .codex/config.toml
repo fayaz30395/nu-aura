@@ -27,6 +27,27 @@ approval_mode = "approve"
 [mcp_servers.ruflo.tools.hooks_pre-task]
 approval_mode = "approve"
 
+[mcp_servers.ruflo.tools.hooks_model-route]
+approval_mode = "approve"
+
+[mcp_servers.ruflo.tools.hooks_intelligence_pattern-search]
+approval_mode = "approve"
+
+[mcp_servers.ruflo.tools.guidance_workflow]
+approval_mode = "approve"
+
+[mcp_servers.ruflo.tools.guidance_recommend]
+approval_mode = "approve"
+
+[mcp_servers.ruflo.tools.browser_open]
+approval_mode = "approve"
+
+[mcp_servers.ruflo.tools.hooks_coverage-route]
+approval_mode = "approve"
+
+[mcp_servers.ruflo.tools.swarm_init]
+approval_mode = "approve"
+
 [shell_environment_policy]
 inherit = "core"
 

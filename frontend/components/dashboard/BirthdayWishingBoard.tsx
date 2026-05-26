@@ -24,19 +24,33 @@ function Balloon({color, className}: { color: string; className?: string }) {
   );
 }
 
-function FloatingBalloons() {
-  const balloonColors = ['var(--accent-300)', 'var(--accent-400)', 'var(--accent-500)', 'var(--accent-600)', 'var(--accent-200)', 'var(--accent-100)'];
+const BALLOONS = [
+  {color: 'var(--accent-300)', positionClass: 'left-[10%]'},
+  {color: 'var(--accent-400)', positionClass: 'left-[24%]'},
+  {color: 'var(--accent-500)', positionClass: 'left-[38%]'},
+  {color: 'var(--accent-600)', positionClass: 'left-[52%]'},
+  {color: 'var(--accent-200)', positionClass: 'left-[66%]'},
+  {color: 'var(--accent-100)', positionClass: 'left-[80%]'},
+] as const;
 
+const CONFETTI_PARTICLES = [
+  {leftClass: 'left-[10%]', colorClass: 'bg-[var(--chart-secondary)]', xOffset: -18},
+  {leftClass: 'left-[20%]', colorClass: 'bg-[var(--chart-warning)]', xOffset: 12},
+  {leftClass: 'left-[30%]', colorClass: 'bg-[var(--chart-accent)]', xOffset: -8},
+  {leftClass: 'left-[40%]', colorClass: 'bg-[var(--chart-success)]', xOffset: 20},
+  {leftClass: 'left-[50%]', colorClass: 'bg-[var(--chart-primary)]', xOffset: -14},
+  {leftClass: 'left-[60%]', colorClass: 'bg-[var(--chart-warning)]', xOffset: 16},
+  {leftClass: 'left-[70%]', colorClass: 'bg-[var(--chart-secondary)]', xOffset: -20},
+  {leftClass: 'left-[80%]', colorClass: 'bg-[var(--chart-accent)]', xOffset: 10},
+] as const;
+
+function FloatingBalloons() {
   return (
     <div className="absolute inset-x-0 top-0 h-24 overflow-hidden pointer-events-none">
-      {balloonColors.map((color, i) => (
+      {BALLOONS.map((balloon, i) => (
         <motion.div
           key={i}
-          className="absolute"
-          style={{
-            left: `${10 + i * 14}%`,
-            top: 0,
-          }}
+          className={`absolute top-0 ${balloon.positionClass}`}
           animate={{
             y: [0, -6, 0, -4, 0],
             rotate: [0, -3, 0, 3, 0],
@@ -48,7 +62,7 @@ function FloatingBalloons() {
             delay: i * 0.3,
           }}
         >
-          <Balloon color={color} className="w-8 h-12"/>
+          <Balloon color={balloon.color} className="w-8 h-12"/>
         </motion.div>
       ))}
     </div>
@@ -57,17 +71,18 @@ function FloatingBalloons() {
 
 /* ─── Confetti Particles ─────────────────────────────────────────────────── */
 
-function ConfettiParticle({delay, left}: { delay: number; left: string }) {
-  const colors = ['var(--chart-secondary)', 'var(--chart-warning)', 'var(--chart-accent)', 'var(--chart-success)', 'var(--chart-primary)', 'var(--chart-warning)'];
-  const color = colors[Math.floor(Math.random() * colors.length)];
-
+function ConfettiParticle({delay, leftClass, colorClass, xOffset}: {
+  delay: number;
+  leftClass: string;
+  colorClass: string;
+  xOffset: number;
+}) {
   return (
     <motion.div
-      className="absolute w-1.5 h-1.5 rounded-full pointer-events-none"
-      style={{backgroundColor: color, left, top: '20%'}}
+      className={`absolute top-[20%] w-1.5 h-1.5 rounded-full pointer-events-none ${leftClass} ${colorClass}`}
       animate={{
         y: [0, 120],
-        x: [0, (Math.random() - 0.5) * 40],
+        x: [0, xOffset],
         opacity: [1, 0],
         rotate: [0, 360],
       }}
@@ -194,8 +209,14 @@ export function BirthdayWishingBoard({forceShow}: BirthdayWishingBoardProps) {
       <FloatingBalloons/>
 
       {/* Confetti particles */}
-      {Array.from({length: 8}).map((_, i) => (
-        <ConfettiParticle key={i} delay={i * 0.4} left={`${10 + i * 10}%`}/>
+      {CONFETTI_PARTICLES.map((particle, i) => (
+        <ConfettiParticle
+          key={i}
+          delay={i * 0.4}
+          leftClass={particle.leftClass}
+          colorClass={particle.colorClass}
+          xOffset={particle.xOffset}
+        />
       ))}
 
       {/* Content */}

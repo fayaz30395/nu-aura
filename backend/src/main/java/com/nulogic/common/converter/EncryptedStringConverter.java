@@ -10,6 +10,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.Base64;
+import java.util.function.Supplier;
 
 /**
  * JPA AttributeConverter that transparently encrypts and decrypts String column values
@@ -42,6 +43,8 @@ public class EncryptedStringConverter implements AttributeConverter<String, Stri
      */
     private static final String ENV_KEY_ALT = "APP_SECURITY_ENCRYPTION_KEY";
 
+    private final Supplier<String> configuredKeySupplier;
+
     /**
      * Lazily resolved key — avoids failing at class-load time in test contexts.
      */
@@ -50,6 +53,14 @@ public class EncryptedStringConverter implements AttributeConverter<String, Stri
      * True when no encryption key is available. Avoids repeated log spam.
      */
     private volatile boolean keyMissing = false;
+
+    public EncryptedStringConverter() {
+        this(EncryptedStringConverter::resolveConfiguredKey);
+    }
+
+    EncryptedStringConverter(Supplier<String> configuredKeySupplier) {
+        this.configuredKeySupplier = configuredKeySupplier;
+    }
 
     private SecretKeySpec getKey() {
         if (secretKey != null) {
@@ -62,17 +73,7 @@ public class EncryptedStringConverter implements AttributeConverter<String, Stri
             if (secretKey != null) {
                 return secretKey;
             }
-            // Resolution order: env var, alt env var, then system properties (test override).
-            String keyBase64 = System.getenv(ENV_KEY);
-            if (keyBase64 == null || keyBase64.isBlank()) {
-                keyBase64 = System.getenv(ENV_KEY_ALT);
-            }
-            if (keyBase64 == null || keyBase64.isBlank()) {
-                keyBase64 = System.getProperty(ENV_KEY);
-            }
-            if (keyBase64 == null || keyBase64.isBlank()) {
-                keyBase64 = System.getProperty(ENV_KEY_ALT);
-            }
+            String keyBase64 = configuredKeySupplier.get();
             if (keyBase64 == null || keyBase64.isBlank()) {
                 keyMissing = true;
                 throw new IllegalStateException(
@@ -88,6 +89,21 @@ public class EncryptedStringConverter implements AttributeConverter<String, Stri
             secretKey = new SecretKeySpec(keyBytes, "AES");
             return secretKey;
         }
+    }
+
+    private static String resolveConfiguredKey() {
+        // Resolution order: env var, alt env var, then system properties (local/test override).
+        String keyBase64 = System.getenv(ENV_KEY);
+        if (keyBase64 == null || keyBase64.isBlank()) {
+            keyBase64 = System.getenv(ENV_KEY_ALT);
+        }
+        if (keyBase64 == null || keyBase64.isBlank()) {
+            keyBase64 = System.getProperty(ENV_KEY);
+        }
+        if (keyBase64 == null || keyBase64.isBlank()) {
+            keyBase64 = System.getProperty(ENV_KEY_ALT);
+        }
+        return keyBase64;
     }
 
     /**

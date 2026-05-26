@@ -5,6 +5,7 @@ import {Controller, useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {AnimatePresence, motion} from 'framer-motion';
+import {PasswordInput, Select, TextInput} from '@mantine/core';
 import {notifications} from '@mantine/notifications';
 import {
   AlertCircle,
@@ -153,6 +154,7 @@ const EMPLOYMENT_TYPES = [
 ];
 
 const PAGE_SIZE = 10;
+const TEXT_INPUT_CLASS = 'w-full';
 
 // ──────────────────────────────────────────────
 // Permission Preview Component
@@ -336,6 +338,20 @@ export default function AdminEmployeesPage() {
   const employees = useMemo(() => employeesPage?.content ?? [], [employeesPage?.content]);
   const totalPages = employeesPage?.totalPages ?? 0;
   const totalElements = employeesPage?.totalElements ?? 0;
+  const departmentOptions = useMemo(
+    () => departments?.content?.map((department: { id: string; name: string }) => ({
+      value: department.id,
+      label: department.name,
+    })) ?? [],
+    [departments?.content],
+  );
+  const managerOptions = useMemo(
+    () => managers?.map((manager: Employee) => ({
+      value: manager.id,
+      label: manager.fullName || `${manager.firstName} ${manager.lastName}`,
+    })) ?? [],
+    [managers],
+  );
 
   const filteredEmployees = useMemo(() => {
     if (!searchQuery.trim()) return employees;
@@ -495,9 +511,13 @@ export default function AdminEmployeesPage() {
                 <CardDescription>Click the edit icon to change roles for any employee</CardDescription>
               </div>
               <div className="relative w-full sm:w-72">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]"/>
-                <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
-                       placeholder="Search by name, email, code..." className="input-aura pl-10 w-full"/>
+                <TextInput
+                  value={searchQuery}
+                  onChange={(event) => setSearchQuery(event.currentTarget.value)}
+                  placeholder="Search by name, email, code..."
+                  leftSection={<Search className="h-4 w-4"/>}
+                  className={TEXT_INPUT_CLASS}
+                />
               </div>
             </div>
           </CardHeader>
@@ -649,84 +669,116 @@ export default function AdminEmployeesPage() {
             {formStep === 'details' && (
               <div className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2"><Hash
-                      className="h-3.5 w-3.5 inline mr-1"/>Employee Code *</label>
-                    <input {...register('employeeCode')} className="input-aura w-full" placeholder="EMP-001"/>
-                    {errors.employeeCode &&
-                      <p className="text-xs text-danger-500 mt-1">{errors.employeeCode.message}</p>}
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2"><Mail
-                      className="h-3.5 w-3.5 inline mr-1"/>Work Email *</label>
-                    <input {...register('workEmail')} type="email" className="input-aura w-full"
-                           placeholder="john@company.com"/>
-                    {errors.workEmail && <p className="text-xs text-danger-500 mt-1">{errors.workEmail.message}</p>}
-                  </div>
+                  <TextInput
+                    {...register('employeeCode')}
+                    label="Employee Code"
+                    placeholder="EMP-001"
+                    leftSection={<Hash className="h-3.5 w-3.5"/>}
+                    error={errors.employeeCode?.message}
+                    required
+                  />
+                  <TextInput
+                    {...register('workEmail')}
+                    type="email"
+                    label="Work Email"
+                    placeholder="john@company.com"
+                    leftSection={<Mail className="h-3.5 w-3.5"/>}
+                    error={errors.workEmail?.message}
+                    required
+                  />
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2"><User
-                      className="h-3.5 w-3.5 inline mr-1"/>First Name *</label>
-                    <input {...register('firstName')} className="input-aura w-full" placeholder="John"/>
-                    {errors.firstName && <p className="text-xs text-danger-500 mt-1">{errors.firstName.message}</p>}
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Middle Name</label>
-                    <input {...register('middleName')} className="input-aura w-full"/>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Last Name</label>
-                    <input {...register('lastName')} className="input-aura w-full"/>
-                  </div>
+                  <TextInput
+                    {...register('firstName')}
+                    label="First Name"
+                    placeholder="John"
+                    leftSection={<User className="h-3.5 w-3.5"/>}
+                    error={errors.firstName?.message}
+                    required
+                  />
+                  <TextInput
+                    {...register('middleName')}
+                    label="Middle Name"
+                    error={errors.middleName?.message}
+                  />
+                  <TextInput
+                    {...register('lastName')}
+                    label="Last Name"
+                    error={errors.lastName?.message}
+                  />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2"><Lock
-                    className="h-3.5 w-3.5 inline mr-1"/>Initial Password *</label>
-                  <input {...register('password')} type="password" className="input-aura w-full"
-                         placeholder="Min 8 chars, uppercase + lowercase + number"/>
-                  {errors.password && <p className="text-xs text-danger-500 mt-1">{errors.password.message}</p>}
+                <PasswordInput
+                  {...register('password')}
+                  label="Initial Password"
+                  placeholder="Min 8 chars, uppercase + lowercase + number"
+                  leftSection={<Lock className="h-3.5 w-3.5"/>}
+                  error={errors.password?.message}
+                  required
+                />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Controller
+                    name="employmentType"
+                    control={control}
+                    render={({field}) => (
+                      <Select
+                        label="Employment Type"
+                        data={EMPLOYMENT_TYPES}
+                        value={field.value}
+                        onChange={(value) => field.onChange(value ?? 'FULL_TIME')}
+                        leftSection={<Briefcase className="h-3.5 w-3.5"/>}
+                        error={errors.employmentType?.message}
+                        required
+                      />
+                    )}
+                  />
+                  <TextInput
+                    {...register('joiningDate')}
+                    type="date"
+                    label="Joining Date"
+                    leftSection={<Calendar className="h-3.5 w-3.5"/>}
+                    error={errors.joiningDate?.message}
+                    required
+                  />
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2"><Briefcase
-                      className="h-3.5 w-3.5 inline mr-1"/>Employment Type *</label>
-                    <select {...register('employmentType')} className="input-aura w-full">
-                      {EMPLOYMENT_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2"><Calendar
-                      className="h-3.5 w-3.5 inline mr-1"/>Joining Date *</label>
-                    <input {...register('joiningDate')} type="date" className="input-aura w-full"/>
-                    {errors.joiningDate && <p className="text-xs text-danger-500 mt-1">{errors.joiningDate.message}</p>}
-                  </div>
+                  <Controller
+                    name="departmentId"
+                    control={control}
+                    render={({field}) => (
+                      <Select
+                        label="Department"
+                        placeholder="Select department"
+                        data={departmentOptions}
+                        value={field.value || null}
+                        onChange={(value) => field.onChange(value ?? '')}
+                        leftSection={<Building2 className="h-3.5 w-3.5"/>}
+                        error={errors.departmentId?.message}
+                        clearable
+                      />
+                    )}
+                  />
+                  <TextInput
+                    {...register('designation')}
+                    label="Designation"
+                    placeholder="e.g. Software Engineer"
+                    error={errors.designation?.message}
+                  />
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2"><Building2
-                      className="h-3.5 w-3.5 inline mr-1"/>Department</label>
-                    <select {...register('departmentId')} className="input-aura w-full">
-                      <option value="">Select department</option>
-                      {departments?.content?.map((d: { id: string; name: string }) => <option key={d.id}
-                                                                                              value={d.id}>{d.name}</option>)}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Designation</label>
-                    <input {...register('designation')} className="input-aura w-full"
-                           placeholder="e.g. Software Engineer"/>
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Reporting
-                    Manager</label>
-                  <select {...register('managerId')} className="input-aura w-full">
-                    <option value="">Select manager (optional)</option>
-                    {managers?.map((m: Employee) => <option key={m.id}
-                                                            value={m.id}>{m.fullName || `${m.firstName} ${m.lastName}`}</option>)}
-                  </select>
-                </div>
+                <Controller
+                  name="managerId"
+                  control={control}
+                  render={({field}) => (
+                    <Select
+                      label="Reporting Manager"
+                      placeholder="Select manager (optional)"
+                      data={managerOptions}
+                      value={field.value || null}
+                      onChange={(value) => field.onChange(value ?? '')}
+                      error={errors.managerId?.message}
+                      clearable
+                    />
+                  )}
+                />
               </div>
             )}
 

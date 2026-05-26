@@ -48,15 +48,17 @@ public class TenantTimezoneInvalidateSubscriber implements MessageListener {
 
     private final TenantTimeService tenantTimeService;
     private final RedisMessageListenerContainer listenerContainer;
-    private final GenericJackson2JsonRedisSerializer jsonSerializer = new GenericJackson2JsonRedisSerializer();
+    private final GenericJackson2JsonRedisSerializer jsonSerializer;
 
     /**
      * @param tenantTimeService  cache to evict on receipt
      * @param connectionFactory  shared Spring-managed Redis connection factory
      */
     public TenantTimezoneInvalidateSubscriber(TenantTimeService tenantTimeService,
-                                              RedisConnectionFactory connectionFactory) {
+                                              RedisConnectionFactory connectionFactory,
+                                              GenericJackson2JsonRedisSerializer jsonSerializer) {
         this.tenantTimeService = tenantTimeService;
+        this.jsonSerializer = jsonSerializer;
 
         // Own a dedicated listener container so this subscriber is isolated from
         // ws:relay's lifecycle. Both use the same connection factory under the hood.

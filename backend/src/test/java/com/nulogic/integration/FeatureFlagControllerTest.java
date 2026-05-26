@@ -124,7 +124,7 @@ class FeatureFlagControllerTest extends AbstractPostgresIntegrationTest {
     void ucAdminA4_getAllFlags_returns200WithList() throws Exception {
         mockMvc.perform(get(BASE_URL))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isArray());
+                .andExpect(jsonPath("$.data").isArray());
     }
 
     @Test

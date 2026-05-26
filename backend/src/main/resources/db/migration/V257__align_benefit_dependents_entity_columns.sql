@@ -1,0 +1,15 @@
+-- Align benefit_dependents with BenefitDependent entity fields not covered by V0/V147.
+ALTER TABLE benefit_dependents
+  ADD COLUMN IF NOT EXISTS gender VARCHAR(255),
+  ADD COLUMN IF NOT EXISTS city VARCHAR(255),
+  ADD COLUMN IF NOT EXISTS state VARCHAR(255),
+  ADD COLUMN IF NOT EXISTS postal_code VARCHAR(255),
+  ADD COLUMN IF NOT EXISTS country VARCHAR(255),
+  ADD COLUMN IF NOT EXISTS is_covered BOOLEAN NOT NULL DEFAULT FALSE,
+  ADD COLUMN IF NOT EXISTS coverage_start_date DATE,
+  ADD COLUMN IF NOT EXISTS coverage_end_date DATE,
+  ADD COLUMN IF NOT EXISTS membership_id VARCHAR(255),
+  ADD COLUMN IF NOT EXISTS has_pre_existing_conditions BOOLEAN NOT NULL DEFAULT FALSE,
+  ADD COLUMN IF NOT EXISTS is_disabled BOOLEAN NOT NULL DEFAULT FALSE,
+  ADD COLUMN IF NOT EXISTS relationship_proof_document VARCHAR(255),
+  ADD COLUMN IF NOT EXISTS birth_certificate_document VARCHAR(255);

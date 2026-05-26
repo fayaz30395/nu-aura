@@ -1,9 +1,11 @@
 package com.nulogic.application.workflow.service;
 
 import com.nulogic.api.workflow.dto.ApprovalActionRequest;
+import com.nulogic.api.workflow.dto.WorkflowExecutionRequest;
 import com.nulogic.api.workflow.dto.WorkflowExecutionResponse;
 import com.nulogic.application.audit.service.AuditLogService;
 import com.nulogic.application.event.DomainEventPublisher;
+import com.nulogic.application.workflow.callback.ApprovalCallbackHandler;
 import com.nulogic.common.exception.BusinessException;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
@@ -93,6 +95,14 @@ class WorkflowServiceTest {
 
         when(tenantTimeService.now(any())).thenReturn(LocalDateTime.now());
         when(tenantTimeService.today(any())).thenReturn(LocalDate.now());
+        lenient().when(stepExecutionRepository.saveAndFlush(any(StepExecution.class)))
+                .thenAnswer(invocation -> {
+                    StepExecution stepExecution = invocation.getArgument(0);
+                    if (stepExecution.getId() == null) {
+                        stepExecution.setId(UUID.randomUUID());
+                    }
+                    return stepExecution;
+                });
 
         workflowService = new WorkflowService(
                 workflowDefinitionRepository,
@@ -185,6 +195,29 @@ class WorkflowServiceTest {
         lenient().when(execution.getStepExecutions()).thenReturn(new ArrayList<>());
 
         return execution;
+    }
+
+    @Nested
+    @DisplayName("startWorkflow")
+    class StartWorkflowTests {
+
+        @Test
+        @DisplayName("should fail when no workflow definition exists")
+        void shouldFailWhenNoWorkflowDefinitionExists() {
+            WorkflowExecutionRequest request = new WorkflowExecutionRequest();
+            request.setEntityType(WorkflowDefinition.EntityType.LEAVE_REQUEST);
+            request.setEntityId(UUID.randomUUID());
+            request.setTitle("Leave Request");
+
+            when(workflowDefinitionRepository.findDefaultWorkflow(TENANT_ID, WorkflowDefinition.EntityType.LEAVE_REQUEST))
+                    .thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> workflowService.startWorkflow(request))
+                    .isInstanceOf(BusinessException.class)
+                    .hasMessageContaining("No active workflow definition configured for LEAVE_REQUEST");
+
+            verify(workflowExecutionRepository, never()).save(any(WorkflowExecution.class));
+        }
     }
 
     // ==================== Auto-Delegation Tests ====================
@@ -489,6 +522,54 @@ class WorkflowServiceTest {
         }
 
         @Test
+        @DisplayName("should not persist terminal workflow when callback fails")
+        void shouldNotPersistTerminalWorkflowWhenCallbackFails() {
+            UUID executionId = UUID.randomUUID();
+            UUID entityId = UUID.randomUUID();
+            WorkflowExecution execution = createApprovableExecution(executionId);
+
+            when(execution.getEntityId()).thenReturn(entityId);
+            when(execution.isCompleted()).thenReturn(false, true);
+            when(execution.getStatus())
+                    .thenReturn(WorkflowExecution.ExecutionStatus.PENDING,
+                            WorkflowExecution.ExecutionStatus.APPROVED);
+            when(workflowExecutionRepository.findByIdAndTenantId(executionId, TENANT_ID))
+                    .thenReturn(Optional.of(execution));
+
+            ApprovalCallbackHandler failingHandler = mock(ApprovalCallbackHandler.class);
+            when(failingHandler.getEntityType()).thenReturn(WorkflowDefinition.EntityType.LEAVE_REQUEST);
+            doThrow(new IllegalStateException("domain callback failed"))
+                    .when(failingHandler).onApproved(TENANT_ID, entityId, USER_ID);
+
+            WorkflowService serviceWithFailingHandler = new WorkflowService(
+                    workflowDefinitionRepository,
+                    approvalStepRepository,
+                    workflowExecutionRepository,
+                    stepExecutionRepository,
+                    approvalDelegateRepository,
+                    workflowRuleRepository,
+                    employeeRepository,
+                    departmentRepository,
+                    userRepository,
+                    domainEventPublisher,
+                    auditLogService,
+                    leaveRequestRepository,
+                    tenantTimeService,
+                    List.of(failingHandler));
+
+            ApprovalActionRequest request = new ApprovalActionRequest();
+            request.setAction(StepExecution.ApprovalAction.APPROVE);
+            request.setComments("Looks good");
+
+            assertThatThrownBy(() -> serviceWithFailingHandler.processApprovalAction(executionId, request))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessageContaining("domain callback failed");
+
+            verify(workflowExecutionRepository, never()).save(any(WorkflowExecution.class));
+            verify(domainEventPublisher, never()).publish(any(ApprovalDecisionEvent.class));
+        }
+
+        @Test
         @DisplayName("should throw 409 when workflow is already completed (idempotency)")
         void shouldThrow409WhenWorkflowCompleted() {
             // Given
@@ -565,6 +646,34 @@ class WorkflowServiceTest {
                     .hasMessageContaining("not authorized");
 
             verify(workflowExecutionRepository, never()).save(any());
+        }
+
+        @Test
+        @DisplayName("should allow SuperAdmin to act on any tenant-scoped pending step")
+        void shouldAllowSuperAdminToActOnPendingStep() {
+            UUID executionId = UUID.randomUUID();
+            WorkflowExecution execution = createApprovableExecution(executionId);
+            StepExecution step = execution.getCurrentStepExecution();
+
+            securityContextMock.when(SecurityContext::isSuperAdmin).thenReturn(true);
+            when(step.canBeActedUponBy(USER_ID)).thenReturn(false);
+            when(workflowExecutionRepository.findByIdAndTenantId(executionId, TENANT_ID))
+                    .thenReturn(Optional.of(execution));
+            lenient().when(employeeRepository.findByIdAndTenantId(USER_ID, TENANT_ID))
+                    .thenReturn(Optional.empty());
+            when(workflowExecutionRepository.save(any(WorkflowExecution.class)))
+                    .thenAnswer(inv -> inv.getArgument(0));
+
+            ApprovalActionRequest request = new ApprovalActionRequest();
+            request.setAction(StepExecution.ApprovalAction.APPROVE);
+            request.setComments("Break-glass approval");
+
+            WorkflowExecutionResponse response = workflowService.processApprovalAction(executionId, request);
+
+            assertThat(response).isNotNull();
+            verify(step).approve(eq(USER_ID), anyString(), eq("Break-glass approval"), any(LocalDateTime.class));
+            verify(workflowExecutionRepository).findByIdAndTenantId(executionId, TENANT_ID);
+            verify(workflowExecutionRepository).save(any(WorkflowExecution.class));
         }
 
         @Test

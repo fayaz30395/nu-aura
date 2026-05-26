@@ -45,7 +45,7 @@ public class PayrollComponentService {
      * Matches identifiers that could be component codes (lowercase letters, digits, underscores).
      * Excludes SpEL keywords and numeric literals.
      */
-    private static final Pattern COMPONENT_REF_PATTERN = Pattern.compile("\\b([a-z][a-z0-9_]*)\\b");
+    private static final Pattern COMPONENT_REF_PATTERN = Pattern.compile("\\b([A-Za-z][A-Za-z0-9_]*)\\b");
     /**
      * SpEL keywords and built-in identifiers that should NOT be treated as component references.
      */
@@ -524,7 +524,8 @@ public class PayrollComponentService {
 
         while (matcher.find()) {
             String token = matcher.group(1);
-            if (!SPEL_KEYWORDS.contains(token)) {
+            String normalizedToken = token.toLowerCase(Locale.ROOT);
+            if (!SPEL_KEYWORDS.contains(normalizedToken)) {
                 references.add(token);
             }
         }

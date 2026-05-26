@@ -8,7 +8,7 @@ on:
 
 env:
   JAVA_VERSION: '21'
-  NODE_VERSION: '18'
+  NODE_VERSION: '20'
 
 jobs:
   # Backend Build & Test
@@ -109,7 +109,8 @@ jobs:
         working-directory: ./frontend
         run: npm run build
         env:
-          NEXT_PUBLIC_API_URL: http://localhost:8080
+          NEXT_PUBLIC_API_URL: https://api.ci.nu-aura.local/api/v1
+          NEXT_PUBLIC_ENABLE_WEBSOCKET: 'true'
 
   # Security Scan
   security:
@@ -167,5 +168,8 @@ jobs:
           file: ./frontend/Dockerfile
           push: false
           tags: nulogic/hrms-frontend:${{ github.sha }}
+          build-args: |
+            NEXT_PUBLIC_API_URL=https://api.ci.nu-aura.local/api/v1
+            NEXT_PUBLIC_ENABLE_WEBSOCKET=true
           cache-from: type=gha
           cache-to: type=gha,mode=max

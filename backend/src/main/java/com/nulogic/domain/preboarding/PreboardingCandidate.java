@@ -16,9 +16,9 @@ import java.util.UUID;
  */
 @Entity
 @Table(name = "preboarding_candidates", indexes = {
-        @Index(name = "idx_preboard_token", columnList = "accessToken", unique = true),
-        @Index(name = "idx_preboard_email", columnList = "email,tenantId"),
-        @Index(name = "idx_preboard_tenant", columnList = "tenantId")
+        @Index(name = "idx_preboard_token", columnList = "access_token", unique = true),
+        @Index(name = "idx_preboard_email", columnList = "email,tenant_id"),
+        @Index(name = "idx_preboard_tenant", columnList = "tenant_id")
 })
 @Getter
 @Setter

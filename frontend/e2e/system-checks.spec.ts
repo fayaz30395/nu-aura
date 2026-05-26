@@ -9,7 +9,7 @@ import {demoUsers} from './fixtures/testData';
  * all major module routes are alive and functioning.  They are NOT unit tests
  * — they are integration smoke tests that run against a live stack.
  *
- *   SYS-01  Backend health endpoint
+ *   SYS-01  Backend readiness endpoint
  *   SYS-02  WebSocket / STOMP connection
  *   SYS-03  Elasticsearch search
  *   SYS-04  File upload & storage (Google Drive / MinIO)
@@ -25,42 +25,19 @@ import {demoUsers} from './fixtures/testData';
  *   npx playwright test system-checks.spec.ts --project=chromium
  */
 
-const BACKEND_HEALTH_URL = 'http://localhost:8080/actuator/health';
+const BACKEND_HEALTH_URL = process.env.BACKEND_HEALTH_URL ?? 'http://localhost:8080/actuator/health/readiness';
 
-// ─── SYS-01: Backend Health Endpoint ─────────────────────────────────────────
+// ─── SYS-01: Backend Readiness Endpoint ──────────────────────────────────────
 
-test.describe('SYS-01: Backend Health Endpoint', () => {
-  test('actuator/health returns 200 with status UP', async ({page}) => {
-    let backendUp = false;
+test.describe('SYS-01: Backend Readiness Endpoint', () => {
+  test('actuator/health/readiness returns 200 with status UP', async ({request}) => {
+    const response = await request.get(BACKEND_HEALTH_URL, {timeout: 10000});
+    const body = await response.text();
 
-    try {
-      const response = await page.evaluate(async (url: string) => {
-        try {
-          const r = await fetch(url, {signal: AbortSignal.timeout(10000)});
-          const body = await r.text();
-          return {status: r.status, body};
-        } catch (e) {
-          return {status: 0, body: String(e)};
-        }
-      }, BACKEND_HEALTH_URL);
-
-      if (response.status === 0) {
-        console.warn('SYS-01: Backend not reachable — skipping downstream system tests');
-        test.skip();
-        return;
-      }
-
-      expect(response.status).toBe(200);
-      expect(response.body).toContain('"status"');
-      expect(response.body.toLowerCase()).toContain('up');
-      backendUp = true;
-      console.log(`SYS-01: Backend healthy — status=${response.status}`);
-    } catch (err) {
-      console.warn(`SYS-01: Backend health check failed — ${err}. Downstream tests may be skipped.`);
-      backendUp = false;
-      // Warn but do not hard-fail; CI may run frontend-only
-      expect(backendUp, 'Backend health endpoint unreachable').toBe(false);
-    }
+    expect(response.status(), body).toBe(200);
+    expect(body).toContain('"status"');
+    expect(body.toLowerCase()).toContain('up');
+    console.log(`SYS-01: Backend healthy — status=${response.status()}`);
   });
 });
 
@@ -69,13 +46,25 @@ test.describe('SYS-01: Backend Health Endpoint', () => {
 test.describe('SYS-02: WebSocket / STOMP Connection', () => {
   test('dashboard loads without WebSocket connection error', async ({page}) => {
     const stompMessages: string[] = [];
+    const webSocketLogs: string[] = [];
+    const webSocketRequests: string[] = [];
     const wsErrors: string[] = [];
 
-    // Capture STOMP-related console output before login
+    // Capture realtime-related browser activity before login.
+    page.on('request', (request) => {
+      const url = request.url();
+      if (url.includes('/ws') || url.includes('sockjs') || url.includes('/stomp')) {
+        webSocketRequests.push(url);
+      }
+    });
+
     page.on('console', (msg) => {
       const text = msg.text();
       if (text.includes('STOMP') || text.includes('stomp') || text.includes('SockJS')) {
         stompMessages.push(`[${msg.type()}] ${text}`);
+      }
+      if (text.includes('[WebSocket]') || text.includes('WebSocket connected')) {
+        webSocketLogs.push(`[${msg.type()}] ${text}`);
       }
       if (
         msg.type() === 'error' &&
@@ -90,6 +79,13 @@ test.describe('SYS-02: WebSocket / STOMP Connection', () => {
 
     // Allow 3s for WebSocket handshake
     await page.waitForTimeout(3000);
+
+    await expect
+      .poll(
+        () => webSocketRequests.length + webSocketLogs.filter((message) => message.includes('connected')).length,
+        {timeout: 10000}
+      )
+      .toBeGreaterThan(0);
 
     // Check for active WebSocket/SockJS resource entries
     const wsResources = await page.evaluate(() => {
@@ -122,11 +118,16 @@ test.describe('SYS-02: WebSocket / STOMP Connection', () => {
     await page.waitForTimeout(10000);
 
     console.log(`SYS-02: WebSocket resources found: ${wsResources.length}`);
+    console.log(`SYS-02: WebSocket browser requests found: ${webSocketRequests.length}`);
     console.log(`SYS-02: STOMP global client: ${stompClientExists}`);
     console.log(`SYS-02: STOMP messages: ${stompMessages.length}`);
+    console.log(`SYS-02: WebSocket logs: ${webSocketLogs.length}`);
 
     if (stompMessages.length > 0) {
       console.log('SYS-02 STOMP log:\n' + stompMessages.slice(0, 10).join('\n'));
+    }
+    if (webSocketLogs.length > 0) {
+      console.log('SYS-02 WebSocket log:\n' + webSocketLogs.slice(0, 10).join('\n'));
     }
 
     // Hard assertion: no WebSocket connection-failure errors in console
@@ -134,6 +135,10 @@ test.describe('SYS-02: WebSocket / STOMP Connection', () => {
       (e) => e.toLowerCase().includes('connection failed') || e.toLowerCase().includes('websocket error')
     );
     expect(connectionErrors, `WebSocket connection errors: ${connectionErrors.join(', ')}`).toHaveLength(0);
+    expect(
+      webSocketRequests.length + wsResources.length + webSocketLogs.filter((message) => message.includes('connected')).length,
+      'No browser WebSocket/SockJS activity was observed'
+    ).toBeGreaterThan(0);
 
     // Soft: page must be usable (heading visible, no crash)
     const hasContent = await page.locator('h1, h2, main').first().isVisible().catch(() => false);
@@ -825,16 +830,18 @@ test.describe('SYS-10: API Response Time Audit', () => {
     }
 
     if (slowApis.length > 0) {
-      console.warn(
+      console.error(
         `SYS-10: ${slowApis.length} slow API call(s) detected (>3s):\n` +
         slowApis.map((a) => `  ${a.url} = ${a.ms}ms`).join('\n')
       );
-      // Log as performance concern — do not hard fail (CI may be slow)
-      // Uncomment the line below to enforce in production:
-      // expect(slowApis, `Slow APIs:\n${slowApis.map(a => `${a.url} = ${a.ms}ms`).join('\n')}`).toHaveLength(0);
     } else {
       console.log('SYS-10: All API calls completed within 3000ms');
     }
+
+    expect(
+      slowApis,
+      `Slow APIs:\n${slowApis.map(a => `${a.url} = ${a.ms}ms`).join('\n')}`
+    ).toHaveLength(0);
 
     // Hard assertion: we did navigate and get SOME responses (not a total blackout)
     // This at least confirms the API layer is reachable

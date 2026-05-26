@@ -90,18 +90,16 @@ public class TenantAwareDataSourceConfig implements BeanPostProcessor {
     }
 
     /**
-     * A delegating DataSource that sets the PostgreSQL session variable
-     * {@code app.current_tenant_id} on every connection obtained from the pool.
-     *
-     * <p>This catches all connection acquisition paths — JPA, JdbcTemplate,
-     * native JDBC — ensuring RLS enforcement regardless of how the connection
-     * was obtained.</p>
+     * A delegating DataSource that resets the PostgreSQL session variable on
+     * checkout, then sets {@code app.current_tenant_id} when tenant context is
+     * present.
      */
     static class TenantAwareDataSource extends DelegatingDataSource {
 
         // Use set_config() with bind parameter to prevent SQL injection (CRIT-002).
         // Third param 'false' = session-scoped (not transaction-local).
         private static final String SET_TENANT_SQL = "SELECT set_config('app.current_tenant_id', ?, false)";
+        private static final String RESET_TENANT_SQL = "RESET app.current_tenant_id";
 
         TenantAwareDataSource(DataSource targetDataSource) {
             super(targetDataSource);
@@ -110,31 +108,38 @@ public class TenantAwareDataSourceConfig implements BeanPostProcessor {
         @Override
         public Connection getConnection() throws SQLException {
             Connection conn = super.getConnection();
-            setTenantIfPresent(conn);
+            prepareTenantContext(conn);
             return conn;
         }
 
         @Override
         public Connection getConnection(String username, String password) throws SQLException {
             Connection conn = super.getConnection(username, password);
-            setTenantIfPresent(conn);
+            prepareTenantContext(conn);
             return conn;
         }
 
-        private void setTenantIfPresent(Connection conn) {
+        private void prepareTenantContext(Connection conn) throws SQLException {
+            resetTenant(conn);
+
             UUID tenantId = TenantContext.getCurrentTenant();
             if (tenantId == null) {
                 return;
             }
 
+            setTenant(conn, tenantId);
+        }
+
+        private void resetTenant(Connection conn) throws SQLException {
+            try (PreparedStatement ps = conn.prepareStatement(RESET_TENANT_SQL)) {
+                ps.execute();
+            }
+        }
+
+        private void setTenant(Connection conn, UUID tenantId) throws SQLException {
             try (PreparedStatement ps = conn.prepareStatement(SET_TENANT_SQL)) {
                 ps.setString(1, tenantId.toString());
                 ps.execute();
-            } catch (SQLException e) {
-                // Best-effort: log and continue. Application-layer filtering
-                // (WHERE tenant_id = ?) still provides primary isolation.
-                log.warn("TenantAwareDataSource: Failed to set app.current_tenant_id={}: {}",
-                        tenantId, e.getMessage());
             }
         }
     }

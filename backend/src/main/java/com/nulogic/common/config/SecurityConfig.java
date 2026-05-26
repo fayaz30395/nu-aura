@@ -1,12 +1,14 @@
 package com.nulogic.common.config;
 
 import com.nulogic.common.security.*;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.env.Environment;
+import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -15,16 +17,20 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.saml2.provider.service.registration.RelyingPartyRegistrationRepository;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.util.StringUtils;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.util.Arrays;
 import java.util.List;
 
@@ -52,6 +58,8 @@ public class SecurityConfig {
     private final SamlAuthenticationSuccessHandler samlAuthenticationSuccessHandler;
     @Value("${app.cors.allowed-origins:http://localhost:3000,http://localhost:3001,http://localhost:8080}")
     private String allowedOriginsStr;
+    @Value("${app.monitoring.prometheus-token:}")
+    private String prometheusScrapeToken;
 
     public SecurityConfig(Environment environment,
                           @Lazy JwtAuthenticationFilter jwtAuthenticationFilter,
@@ -199,8 +207,13 @@ public class SecurityConfig {
                         // not Spring Security's auth context.
                         .requestMatchers("/api/v1/external/**").permitAll()
                         .requestMatchers("/api/v1/tenants/register").permitAll()
-                        // Actuator: only health endpoint is public, others require SUPER_ADMIN
+                        // Actuator: health is public. Prometheus uses a dedicated scrape
+                        // bearer token so monitoring can work without opening every
+                        // actuator endpoint or minting an interactive SuperAdmin session.
                         .requestMatchers("/actuator/health", "/actuator/health/**").permitAll()
+                        .requestMatchers("/actuator/prometheus").access((authentication, context) ->
+                                new AuthorizationDecision(isPrometheusScrapeAuthorized(
+                                        authentication.get(), context.getRequest())))
                         .requestMatchers("/actuator/**").hasRole("SUPER_ADMIN")
                         // Swagger UI: require SUPER_ADMIN in production (see SwaggerSecurityConfig for
                         // dev profile)
@@ -264,7 +277,16 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        List<String> allowedOrigins = Arrays.asList(allowedOriginsStr.split(","));
+        List<String> allowedOrigins = Arrays.stream(allowedOriginsStr.split(","))
+                .map(String::trim)
+                .filter(origin -> !origin.isBlank())
+                .toList();
+        if (allowedOrigins.isEmpty()) {
+            throw new IllegalStateException("At least one CORS allowed origin must be configured");
+        }
+        if (allowedOrigins.contains("*")) {
+            throw new IllegalStateException("Wildcard CORS origin is not allowed");
+        }
         // SECURITY FIX (P1.2): Removed wildcard port pattern "http://localhost:*"
         // which allowed ANY localhost port. Use explicit origins only.
         // Configure additional origins via app.cors.allowed-origins property.
@@ -289,6 +311,31 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
+    }
+
+    private boolean isPrometheusScrapeAuthorized(Authentication authentication, HttpServletRequest request) {
+        if (authentication != null
+                && authentication.isAuthenticated()
+                && authentication.getAuthorities().stream()
+                .anyMatch(authority -> "ROLE_SUPER_ADMIN".equals(authority.getAuthority()))) {
+            return true;
+        }
+
+        String expectedToken = prometheusScrapeToken == null ? "" : prometheusScrapeToken.trim();
+        if (!StringUtils.hasText(expectedToken)) {
+            return false;
+        }
+
+        String authorization = request.getHeader("Authorization");
+        if (!StringUtils.hasText(authorization) || !authorization.startsWith("Bearer ")) {
+            return false;
+        }
+
+        String providedToken = authorization.substring(7).trim();
+        return MessageDigest.isEqual(
+                expectedToken.getBytes(StandardCharsets.UTF_8),
+                providedToken.getBytes(StandardCharsets.UTF_8)
+        );
     }
 
     @Bean

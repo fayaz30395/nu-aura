@@ -6,21 +6,21 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: hrms-frontend
-  namespace: { { .Values.namespace } }
+  namespace: {{ .Values.namespace }}
   labels:
     app: hrms
     component: frontend
     version: v1
-    app.kubernetes.io/managed-by: { { .Release.Service } }
-    app.kubernetes.io/instance: { { .Release.Name } }
-    helm.sh/chart: { { .Chart.Name } }-{{ .Chart.Version }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version }}
 spec:
-  replicas: { { .Values.frontend.replicas } }
+  replicas: {{ .Values.frontend.replicas }}
   strategy:
-    type: { { .Values.frontend.strategy.type } }
+    type: {{ .Values.frontend.strategy.type }}
     rollingUpdate:
-      maxSurge: { { .Values.frontend.strategy.maxSurge } }
-      maxUnavailable: { { .Values.frontend.strategy.maxUnavailable } }
+      maxSurge: {{ .Values.frontend.strategy.maxSurge }}
+      maxUnavailable: {{ .Values.frontend.strategy.maxUnavailable }}
   selector:
     matchLabels:
       app: hrms
@@ -32,11 +32,11 @@ spec:
         component: frontend
         version: v1
     spec:
-      serviceAccountName: { { if .Values.serviceAccount.enabled } }{ { .Values.serviceAccount.frontend.name } }{ { else } }default{{ end }}
+      serviceAccountName: {{ if .Values.serviceAccount.enabled }}{{ .Values.serviceAccount.frontend.name }}{{ else }}default{{ end }}
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
-      { { - end } }
+      {{- end }}
       # Pod-level security context — non-root, seccomp RuntimeDefault.
       # Hardened per S8-C Kyverno policy.
       securityContext:
@@ -74,7 +74,7 @@ spec:
           # IMAGE_TAG is replaced by CI/CD (git SHA or semver).
           # :latest is forbidden by deployment/kyverno/disallow-latest-tag.yaml.
           image: "{{ .Values.imageRegistry }}/{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}"
-          imagePullPolicy: { { .Values.frontend.image.pullPolicy } }
+          imagePullPolicy: {{ .Values.frontend.image.pullPolicy }}
 
           # Container-level security context — capability dropping + RO root FS.
           # /tmp and /.next/cache are emptyDir volumes (writable).
@@ -134,6 +134,13 @@ spec:
                   name: hrms-config
                   key: NEXT_PUBLIC_DEMO_MODE
 
+            # ── Realtime notifications ────────────────────────────────────────────────
+            - name: NEXT_PUBLIC_ENABLE_WEBSOCKET
+              valueFrom:
+                configMapKeyRef:
+                  name: hrms-config
+                  key: NEXT_PUBLIC_ENABLE_WEBSOCKET
+
             # ── Analytics ─────────────────────────────────────────────────────────────
             - name: NEXT_PUBLIC_ENABLE_ANALYTICS
               valueFrom:
@@ -143,38 +150,38 @@ spec:
 
           resources:
             requests:
-              memory: { { .Values.frontend.resources.requests.memory | quote } }
-              cpu: { { .Values.frontend.resources.requests.cpu | quote } }
+              memory: {{ .Values.frontend.resources.requests.memory | quote }}
+              cpu: {{ .Values.frontend.resources.requests.cpu | quote }}
             limits:
-              memory: { { .Values.frontend.resources.limits.memory | quote } }
-              cpu: { { .Values.frontend.resources.limits.cpu | quote } }
+              memory: {{ .Values.frontend.resources.limits.memory | quote }}
+              cpu: {{ .Values.frontend.resources.limits.cpu | quote }}
 
           livenessProbe:
             httpGet:
               path: /api/health
               port: 3000
-            initialDelaySeconds: { { .Values.frontend.probes.liveness.initialDelaySeconds } }
-            periodSeconds: { { .Values.frontend.probes.liveness.periodSeconds } }
-            timeoutSeconds: { { .Values.frontend.probes.liveness.timeoutSeconds } }
-            failureThreshold: { { .Values.frontend.probes.liveness.failureThreshold } }
+            initialDelaySeconds: {{ .Values.frontend.probes.liveness.initialDelaySeconds }}
+            periodSeconds: {{ .Values.frontend.probes.liveness.periodSeconds }}
+            timeoutSeconds: {{ .Values.frontend.probes.liveness.timeoutSeconds }}
+            failureThreshold: {{ .Values.frontend.probes.liveness.failureThreshold }}
 
           readinessProbe:
             httpGet:
               path: /api/health
               port: 3000
-            initialDelaySeconds: { { .Values.frontend.probes.readiness.initialDelaySeconds } }
-            periodSeconds: { { .Values.frontend.probes.readiness.periodSeconds } }
-            timeoutSeconds: { { .Values.frontend.probes.readiness.timeoutSeconds } }
-            failureThreshold: { { .Values.frontend.probes.readiness.failureThreshold } }
+            initialDelaySeconds: {{ .Values.frontend.probes.readiness.initialDelaySeconds }}
+            periodSeconds: {{ .Values.frontend.probes.readiness.periodSeconds }}
+            timeoutSeconds: {{ .Values.frontend.probes.readiness.timeoutSeconds }}
+            failureThreshold: {{ .Values.frontend.probes.readiness.failureThreshold }}
 
           startupProbe:
             httpGet:
               path: /api/health
               port: 3000
-            initialDelaySeconds: { { .Values.frontend.probes.startup.initialDelaySeconds } }
-            periodSeconds: { { .Values.frontend.probes.startup.periodSeconds } }
-            timeoutSeconds: { { .Values.frontend.probes.startup.timeoutSeconds } }
-            failureThreshold: { { .Values.frontend.probes.startup.failureThreshold } }
+            initialDelaySeconds: {{ .Values.frontend.probes.startup.initialDelaySeconds }}
+            periodSeconds: {{ .Values.frontend.probes.startup.periodSeconds }}
+            timeoutSeconds: {{ .Values.frontend.probes.startup.timeoutSeconds }}
+            failureThreshold: {{ .Values.frontend.probes.startup.failureThreshold }}
 
           volumeMounts:
             - name: tmp
@@ -190,16 +197,16 @@ spec:
 
       # Pod scheduling — prefer spreading across zones (values-prod adds
       # topologySpreadConstraints + required anti-affinity).
-      { { - with .Values.frontend.topologySpreadConstraints } }
+      {{- with .Values.frontend.topologySpreadConstraints }}
       topologySpreadConstraints:
-        { { - toYaml . | nindent 8 } }
-      { { - end } }
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
 
       affinity:
         podAntiAffinity:
-          { { - with .Values.frontend.podAntiAffinity } }
-            { { - toYaml . | nindent 10 } }
-            { { - else } }
+          {{- with .Values.frontend.podAntiAffinity }}
+            {{- toYaml . | nindent 10 }}
+            {{- else }}
             # Default — prefer (not require) spreading frontend pods across nodes.
             preferredDuringSchedulingIgnoredDuringExecution:
               - weight: 100
@@ -211,6 +218,6 @@ spec:
                         values:
                           - frontend
                   topologyKey: kubernetes.io/hostname
-            { { - end } }
+            {{- end }}
 
       terminationGracePeriodSeconds: 30

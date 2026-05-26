@@ -28,7 +28,7 @@ export default function FluenceEntryPage() {
   }, [hasHydrated, isAuthenticated, user, router, hasAppAccess, restoreSession]);
 
   // Show access denied if authenticated but no access
-  if (hasHydrated && isAuthenticated && !hasAppAccess('FLUENCE')) {
+  if (hasHydrated && isAuthenticated && user && !hasAppAccess('FLUENCE')) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="skeuo-card p-8 text-center max-w-md">

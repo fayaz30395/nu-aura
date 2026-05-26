@@ -3,24 +3,17 @@
 # Pairs with deployment/kyverno/require-image-signature.yaml which verifies
 # the signature at admission time.
 #
-# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-# BLOCKER: .github/workflows/ci.yml currently sets `push: false` on both
-# docker/build-push-action steps (backend + frontend). This workflow will
-# NOT find any pushed images to sign until CI is updated to:
-#   1. log in to the target registry (gcr.io or ghcr.io),
-#   2. set `push: true` on the build-push-action steps,
-#   3. produce a digest output we can consume here (use `id:` on the step
-#      and reference `${{ steps.<id>.outputs.digest }}`).
-# Until then this workflow is wired but inert. See FINAL OUTPUT notes.
-# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# Release images are signed directly by deploy.yml immediately after push.
+# This workflow remains as a manual repair utility for a specific image tag.
 
 name: Cosign sign
 
 on:
-  workflow_run:
-    workflows: [ "CI Pipeline" ]
-    types: [ completed ]
-    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: 'Existing image tag to sign, for example a short deploy SHA'
+        required: true
 
 # Sigstore keyless signing requires id-token: write to mint an OIDC token
 # that Rekor / Fulcio will accept. packages: write is for ghcr.io pushes.
@@ -32,23 +25,18 @@ permissions:
 env:
   # Registry + image references — keep in sync with deployment/kyverno/require-image-signature.yaml.
   # These default to gcr.io; swap to ghcr.io/<org>/... if you migrate registries.
-  BACKEND_IMAGE: gcr.io/PROJECT_ID/hrms-backend
-  FRONTEND_IMAGE: gcr.io/PROJECT_ID/hrms-frontend
-  # Image tag = the CI run's commit SHA. CI must publish under this same tag.
-  IMAGE_TAG: ${{ github.event.workflow_run.head_sha }}
+  BACKEND_IMAGE: gcr.io/${{ secrets.GCP_PROJECT_ID }}/hrms-backend
+  FRONTEND_IMAGE: gcr.io/${{ secrets.GCP_PROJECT_ID }}/hrms-frontend
+  IMAGE_TAG: ${{ github.event.inputs.image_tag }}
 
 jobs:
   sign:
     name: Cosign sign images
     runs-on: ubuntu-latest
-    # Only run if the upstream CI workflow succeeded.
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.workflow_run.head_sha }}
 
       - name: Install Cosign
         uses: sigstore/cosign-installer@v3
@@ -58,24 +46,13 @@ jobs:
       - name: Verify Cosign install
         run: cosign version
 
-      # NOTE: registry auth — uncomment whichever block matches your registry.
-      # Without these, `cosign sign` cannot read the image manifest to sign it.
-      #
-      # - name: Authenticate to GCR (Workload Identity)
-      #   uses: google-github-actions/auth@v2
-      #   with:
-      #     workload_identity_provider: ${{ secrets.GCP_WIF_PROVIDER }}
-      #     service_account: ${{ secrets.GCP_SA_EMAIL }}
-      # - uses: google-github-actions/setup-gcloud@v2
-      # - name: Configure gcloud auth helper
-      #   run: gcloud auth configure-docker gcr.io --quiet
-      #
-      # - name: Authenticate to GHCR
-      #   uses: docker/login-action@v3
-      #   with:
-      #     registry: ghcr.io
-      #     username: ${{ github.actor }}
-      #     password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Auth GCP
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Configure docker for GCR
+        run: gcloud auth configure-docker gcr.io --quiet
 
       - name: Sign backend image (keyless OIDC)
         env:

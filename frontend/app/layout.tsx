@@ -1,30 +1,8 @@
 import type {Metadata, Viewport} from 'next';
-import {Montserrat, Open_Sans, Roboto_Mono} from 'next/font/google';
 import {ColorSchemeScript} from '@mantine/core';
 import {getThemeScript} from '@/lib/theme/theme-script';
 import './globals.css';
 import {Providers} from './providers';
-
-const openSans = Open_Sans({
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700'],
-  variable: '--font-sans',
-  display: 'swap',
-});
-
-const montserrat = Montserrat({
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700', '800'],
-  variable: '--font-display',
-  display: 'swap',
-});
-
-const robotoMono = Roboto_Mono({
-  subsets: ['latin'],
-  weight: ['400', '500', '600'],
-  variable: '--font-mono',
-  display: 'swap',
-});
 
 export const metadata: Metadata = {
   title: 'NU-AURA by NULogic: Infinite Innovation',
@@ -53,7 +31,7 @@ export default function RootLayout({
       <script dangerouslySetInnerHTML={{__html: getThemeScript()}}/>
       <ColorSchemeScript defaultColorScheme="dark"/>
     </head>
-    <body className={`${openSans.variable} ${montserrat.variable} ${robotoMono.variable} font-sans overflow-x-hidden`}>
+    <body className="font-sans overflow-x-hidden">
     <a
       href="#main-content"
       className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:px-3 focus:py-2 focus:bg-accent-600 focus:text-white focus:rounded"

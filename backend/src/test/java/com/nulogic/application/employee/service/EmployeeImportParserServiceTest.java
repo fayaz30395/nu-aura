@@ -3,6 +3,7 @@ package com.nulogic.application.employee.service;
 import com.nulogic.api.employee.dto.EmployeeImportRow;
 import com.nulogic.common.exception.BusinessException;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.CellValueSanitizer;
 import com.nulogic.domain.customfield.CustomFieldDefinition;
 import com.nulogic.domain.customfield.CustomFieldDefinition.EntityType;
 import com.nulogic.domain.customfield.CustomFieldDefinition.FieldType;
@@ -23,6 +24,8 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 
@@ -31,6 +34,8 @@ class EmployeeImportParserServiceTest {
 
     @Mock
     private CustomFieldDefinitionRepository customFieldDefinitionRepository;
+    @Mock
+    private CellValueSanitizer cellValueSanitizer;
 
     @InjectMocks
     private EmployeeImportParserService parserService;
@@ -44,6 +49,8 @@ class EmployeeImportParserServiceTest {
         tenantContextMock = mockStatic(TenantContext.class);
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
         tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
+        lenient().when(cellValueSanitizer.sanitize(any())).thenAnswer(invocation -> invocation.getArgument(0));
+        lenient().when(cellValueSanitizer.sanitizeStrict(any())).thenAnswer(invocation -> invocation.getArgument(0));
     }
 
     @AfterEach

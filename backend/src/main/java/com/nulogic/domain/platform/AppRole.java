@@ -19,11 +19,11 @@ import java.util.Set;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "app_roles", indexes = {
-        @Index(name = "idx_app_role_tenant", columnList = "tenantId"),
+        @Index(name = "idx_app_role_tenant", columnList = "tenant_id"),
         @Index(name = "idx_app_role_app", columnList = "application_id"),
         @Index(name = "idx_app_role_code", columnList = "code")
 }, uniqueConstraints = {
-        @UniqueConstraint(name = "uk_app_role_code_tenant_app", columnNames = {"code", "tenantId", "application_id"})
+        @UniqueConstraint(name = "uk_app_role_code_tenant_app", columnNames = {"code", "tenant_id", "application_id"})
 })
 @Getter
 @Setter

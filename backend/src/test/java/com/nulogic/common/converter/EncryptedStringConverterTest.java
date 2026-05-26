@@ -16,10 +16,9 @@ import static org.assertj.core.api.Assertions.*;
  * <p>Tests cover the full encryption/decryption lifecycle, edge-case inputs,
  * and security failure modes such as a missing ENCRYPTION_KEY or tampered ciphertext.
  *
- * <p>Strategy: each test sets ENCRYPTION_KEY in the process environment via
- * reflection on {@code ProcessEnvironment} (the standard JVM mechanism). Because
- * the converter caches the key lazily in a {@code volatile} field we create a
- * fresh instance per test to avoid inter-test contamination.
+ * <p>Strategy: each test supplies the configured key directly and uses a fresh
+ * converter instance to avoid inter-test contamination from the converter's
+ * lazy key cache.
  */
 @ExtendWith(MockitoExtension.class)
 @DisplayName("EncryptedStringConverter Tests")
@@ -33,35 +32,8 @@ class EncryptedStringConverterTest {
     // Helpers
     // -----------------------------------------------------------------------
 
-    /**
-     * Override the ENCRYPTION_KEY environment variable for the duration of a single
-     * test. Uses reflection on the private {@code ProcessEnvironment.theEnvironment}
-     * map that the JVM exposes — the only portable way to mutate env vars inside a
-     * running JVM.
-     */
-    /**
-     * Sets the key via System property. EncryptedStringConverter falls back to system
-     * properties when env vars are absent, giving tests a portable, JDK-17-safe override
-     * mechanism without requiring fragile ProcessEnvironment reflection.
-     */
-    private static void setEnv(String key, String value) {
-        if (value == null) {
-            System.clearProperty(key);
-        } else {
-            System.setProperty(key, value);
-        }
-    }
-
-    /**
-     * Create a fresh converter instance with a specified encryption key already
-     * seeded into the environment.  Triggers lazy key resolution immediately.
-     */
-    private EncryptedStringConverter converterWithKey(String base64Key) throws Exception {
-        setEnv("ENCRYPTION_KEY", base64Key);
-        EncryptedStringConverter converter = new EncryptedStringConverter();
-        // Trigger lazy init by encrypting a throwaway value
-        converter.convertToDatabaseColumn("init");
-        return converter;
+    private EncryptedStringConverter converterWithKey(String base64Key) {
+        return new EncryptedStringConverter(() -> base64Key);
     }
 
     // -----------------------------------------------------------------------
@@ -75,8 +47,7 @@ class EncryptedStringConverterTest {
         @Test
         @DisplayName("Roundtrip produces the original plaintext")
         void roundtripProducesOriginalValue() throws Exception {
-            setEnv("ENCRYPTION_KEY", VALID_KEY_BASE64);
-            EncryptedStringConverter converter = new EncryptedStringConverter();
+            EncryptedStringConverter converter = converterWithKey(VALID_KEY_BASE64);
 
             String original = "Hello, NU-AURA!";
             String encrypted = converter.convertToDatabaseColumn(original);
@@ -88,8 +59,7 @@ class EncryptedStringConverterTest {
         @Test
         @DisplayName("Empty string survives roundtrip unchanged")
         void emptyStringRoundtrip() throws Exception {
-            setEnv("ENCRYPTION_KEY", VALID_KEY_BASE64);
-            EncryptedStringConverter converter = new EncryptedStringConverter();
+            EncryptedStringConverter converter = converterWithKey(VALID_KEY_BASE64);
 
             String encrypted = converter.convertToDatabaseColumn("");
             String decrypted = converter.convertToEntityAttribute(encrypted);
@@ -100,8 +70,7 @@ class EncryptedStringConverterTest {
         @Test
         @DisplayName("10 KB string survives roundtrip unchanged")
         void largeStringRoundtrip() throws Exception {
-            setEnv("ENCRYPTION_KEY", VALID_KEY_BASE64);
-            EncryptedStringConverter converter = new EncryptedStringConverter();
+            EncryptedStringConverter converter = converterWithKey(VALID_KEY_BASE64);
 
             String large = "A".repeat(10_240); // 10 KB
             String encrypted = converter.convertToDatabaseColumn(large);
@@ -113,8 +82,7 @@ class EncryptedStringConverterTest {
         @Test
         @DisplayName("Unicode / multi-byte characters survive roundtrip")
         void unicodeRoundtrip() throws Exception {
-            setEnv("ENCRYPTION_KEY", VALID_KEY_BASE64);
-            EncryptedStringConverter converter = new EncryptedStringConverter();
+            EncryptedStringConverter converter = converterWithKey(VALID_KEY_BASE64);
 
             String unicode = "日本語テスト 🎉 €£¥ \u0000\u001F";
             String encrypted = converter.convertToDatabaseColumn(unicode);
@@ -135,8 +103,7 @@ class EncryptedStringConverterTest {
         @Test
         @DisplayName("Two encryptions of the same value produce different ciphertexts")
         void differentInputsProduceDifferentCiphertexts() throws Exception {
-            setEnv("ENCRYPTION_KEY", VALID_KEY_BASE64);
-            EncryptedStringConverter converter = new EncryptedStringConverter();
+            EncryptedStringConverter converter = converterWithKey(VALID_KEY_BASE64);
 
             String plaintext = "sensitive-data";
             String cipher1 = converter.convertToDatabaseColumn(plaintext);
@@ -149,8 +116,7 @@ class EncryptedStringConverterTest {
         @Test
         @DisplayName("Ciphertext has the expected IV:ciphertext format")
         void ciphertextHasExpectedFormat() throws Exception {
-            setEnv("ENCRYPTION_KEY", VALID_KEY_BASE64);
-            EncryptedStringConverter converter = new EncryptedStringConverter();
+            EncryptedStringConverter converter = converterWithKey(VALID_KEY_BASE64);
 
             String encrypted = converter.convertToDatabaseColumn("test");
 
@@ -174,8 +140,7 @@ class EncryptedStringConverterTest {
         @Test
         @DisplayName("convertToDatabaseColumn(null) returns null")
         void encryptNullReturnsNull() throws Exception {
-            setEnv("ENCRYPTION_KEY", VALID_KEY_BASE64);
-            EncryptedStringConverter converter = new EncryptedStringConverter();
+            EncryptedStringConverter converter = converterWithKey(VALID_KEY_BASE64);
 
             assertThat(converter.convertToDatabaseColumn(null)).isNull();
         }
@@ -183,8 +148,7 @@ class EncryptedStringConverterTest {
         @Test
         @DisplayName("convertToEntityAttribute(null) returns null")
         void decryptNullReturnsNull() throws Exception {
-            setEnv("ENCRYPTION_KEY", VALID_KEY_BASE64);
-            EncryptedStringConverter converter = new EncryptedStringConverter();
+            EncryptedStringConverter converter = converterWithKey(VALID_KEY_BASE64);
 
             assertThat(converter.convertToEntityAttribute(null)).isNull();
         }
@@ -205,8 +169,7 @@ class EncryptedStringConverterTest {
         @Test
         @DisplayName("Completely invalid ciphertext returns raw value (treated as legacy unencrypted)")
         void invalidCiphertextThrowsException() throws Exception {
-            setEnv("ENCRYPTION_KEY", VALID_KEY_BASE64);
-            EncryptedStringConverter converter = new EncryptedStringConverter();
+            EncryptedStringConverter converter = converterWithKey(VALID_KEY_BASE64);
 
             // Not a valid Base64(IV):Base64(ciphertext) pair — treated as legacy raw value.
             String result = converter.convertToEntityAttribute("not-valid-encrypted-data");
@@ -216,8 +179,7 @@ class EncryptedStringConverterTest {
         @Test
         @DisplayName("Ciphertext missing colon separator returns raw value (legacy data)")
         void missingColonThrowsException() throws Exception {
-            setEnv("ENCRYPTION_KEY", VALID_KEY_BASE64);
-            EncryptedStringConverter converter = new EncryptedStringConverter();
+            EncryptedStringConverter converter = converterWithKey(VALID_KEY_BASE64);
 
             // Valid Base64 but no colon — converter logs warn and returns raw value.
             String noColon = Base64.getEncoder().encodeToString("garbage".getBytes());
@@ -228,8 +190,7 @@ class EncryptedStringConverterTest {
         @Test
         @DisplayName("Tampered ciphertext returns DECRYPTION_FAILED placeholder")
         void tamperedCiphertextThrowsException() throws Exception {
-            setEnv("ENCRYPTION_KEY", VALID_KEY_BASE64);
-            EncryptedStringConverter converter = new EncryptedStringConverter();
+            EncryptedStringConverter converter = converterWithKey(VALID_KEY_BASE64);
 
             String encrypted = converter.convertToDatabaseColumn("sensitive-value");
             // Flip the FIRST character of the ciphertext (not last — last may be Base64 padding,
@@ -247,8 +208,7 @@ class EncryptedStringConverterTest {
         @DisplayName("Ciphertext encrypted with a different key returns DECRYPTION_FAILED placeholder")
         void wrongKeyThrowsException() throws Exception {
             // Encrypt with key 1
-            setEnv("ENCRYPTION_KEY", VALID_KEY_BASE64);
-            EncryptedStringConverter converterA = new EncryptedStringConverter();
+            EncryptedStringConverter converterA = converterWithKey(VALID_KEY_BASE64);
             String encrypted = converterA.convertToDatabaseColumn("secret");
 
             // Try to decrypt with key 2 (all 1s instead of all 0s)
@@ -256,8 +216,7 @@ class EncryptedStringConverterTest {
                     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
                     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
             });
-            setEnv("ENCRYPTION_KEY", differentKey);
-            EncryptedStringConverter converterB = new EncryptedStringConverter();
+            EncryptedStringConverter converterB = converterWithKey(differentKey);
 
             String result = converterB.convertToEntityAttribute(encrypted);
             assertThat(result).isEqualTo("***DECRYPTION_FAILED***");
@@ -275,8 +234,7 @@ class EncryptedStringConverterTest {
         @Test
         @DisplayName("Missing ENCRYPTION_KEY throws IllegalStateException with clear message")
         void missingKeyThrowsIllegalStateException() throws Exception {
-            setEnv("ENCRYPTION_KEY", null);
-            EncryptedStringConverter converter = new EncryptedStringConverter();
+            EncryptedStringConverter converter = converterWithKey(null);
 
             assertThatThrownBy(() -> converter.convertToDatabaseColumn("anything"))
                     .isInstanceOf(IllegalStateException.class)
@@ -286,8 +244,7 @@ class EncryptedStringConverterTest {
         @Test
         @DisplayName("Blank ENCRYPTION_KEY throws IllegalStateException")
         void blankKeyThrowsIllegalStateException() throws Exception {
-            setEnv("ENCRYPTION_KEY", "   ");
-            EncryptedStringConverter converter = new EncryptedStringConverter();
+            EncryptedStringConverter converter = converterWithKey("   ");
 
             assertThatThrownBy(() -> converter.convertToDatabaseColumn("anything"))
                     .isInstanceOf(IllegalStateException.class)
@@ -299,8 +256,7 @@ class EncryptedStringConverterTest {
         void shortKeyThrowsIllegalStateException() throws Exception {
             // Only 16 bytes — not enough for AES-256
             String shortKey = Base64.getEncoder().encodeToString(new byte[16]);
-            setEnv("ENCRYPTION_KEY", shortKey);
-            EncryptedStringConverter converter = new EncryptedStringConverter();
+            EncryptedStringConverter converter = converterWithKey(shortKey);
 
             assertThatThrownBy(() -> converter.convertToDatabaseColumn("anything"))
                     .isInstanceOf(IllegalStateException.class)
@@ -310,8 +266,7 @@ class EncryptedStringConverterTest {
         @Test
         @DisplayName("Valid 32-byte ENCRYPTION_KEY initialises successfully")
         void validKeyInitialisesSuccessfully() throws Exception {
-            setEnv("ENCRYPTION_KEY", VALID_KEY_BASE64);
-            EncryptedStringConverter converter = new EncryptedStringConverter();
+            EncryptedStringConverter converter = converterWithKey(VALID_KEY_BASE64);
 
             // No exception should be thrown
             assertThatCode(() -> converter.convertToDatabaseColumn("hello"))

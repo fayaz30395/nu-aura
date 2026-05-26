@@ -4,6 +4,7 @@ import com.nulogic.api.asset.dto.AssetRequest;
 import com.nulogic.api.asset.dto.AssetResponse;
 import com.nulogic.application.audit.service.AuditLogService;
 import com.nulogic.application.workflow.service.WorkflowService;
+import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.domain.asset.Asset;
 import com.nulogic.domain.asset.Asset.AssetCategory;
@@ -40,6 +41,7 @@ import static org.mockito.Mockito.*;
 class AssetManagementServiceTest {
 
     private static MockedStatic<TenantContext> tenantContextMock;
+    private static MockedStatic<SecurityContext> securityContextMock;
     @Mock
     private AssetRepository assetRepository;
     @Mock
@@ -61,11 +63,13 @@ class AssetManagementServiceTest {
     @BeforeAll
     static void setUpClass() {
         tenantContextMock = mockStatic(TenantContext.class);
+        securityContextMock = mockStatic(SecurityContext.class);
     }
 
     @AfterAll
     static void tearDownClass() {
         tenantContextMock.close();
+        securityContextMock.close();
     }
 
     @BeforeEach
@@ -76,6 +80,11 @@ class AssetManagementServiceTest {
 
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
         tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
+        securityContextMock.when(SecurityContext::isSuperAdmin).thenReturn(false);
+        securityContextMock.when(SecurityContext::isTenantAdmin).thenReturn(false);
+        securityContextMock.when(SecurityContext::isHRManager).thenReturn(true);
+        securityContextMock.when(SecurityContext::getCurrentEmployeeId).thenReturn(employeeId);
+        securityContextMock.when(() -> SecurityContext.hasPermission(any())).thenReturn(false);
     }
 
     private Asset buildAsset(AssetStatus status) {

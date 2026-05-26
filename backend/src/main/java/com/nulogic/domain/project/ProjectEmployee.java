@@ -1,23 +1,25 @@
 package com.nulogic.domain.project;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
- * Entity mapped to the project_employees VIEW.
- * This view is backed by the project_members table (see V55 migration).
- * Does NOT extend BaseEntity/TenantAware because the view lacks
- * created_by, updated_by, version, is_deleted, deleted_at columns.
+ * Backwards-compatible allocation entity backed by the project_members table.
+ * The legacy project_employees name is a view (see V55 migration), but writes
+ * must target project_members because the view contains casted columns.
+ * Does NOT extend BaseEntity/TenantAware to preserve the legacy DTO-facing
+ * shape used by allocation services.
  */
 @Entity(name = "HrmsProjectEmployee")
-@Table(name = "project_employees")
+@Table(name = "project_members")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -26,6 +28,7 @@ import java.util.UUID;
 public class ProjectEmployee {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", nullable = false)
     private UUID id;
 
@@ -38,10 +41,12 @@ public class ProjectEmployee {
     @Column(name = "employee_id", nullable = false)
     private UUID employeeId;
 
-    @Column(name = "role", length = 100)
-    private String role;
+    @Builder.Default
+    @Column(name = "role", nullable = false, length = 30)
+    private String role = "MEMBER";
 
-    @Column(name = "allocation_percentage")
+    @JdbcTypeCode(SqlTypes.NUMERIC)
+    @Column(name = "allocation_percentage", precision = 5, scale = 2)
     private Integer allocationPercentage;
 
     @Column(name = "start_date", nullable = false)
@@ -53,10 +58,12 @@ public class ProjectEmployee {
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
 
-    @Column(name = "created_at", updatable = false)
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_at")
+    @UpdateTimestamp
+    @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
     public void deactivate() {

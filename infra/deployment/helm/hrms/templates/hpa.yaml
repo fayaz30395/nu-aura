@@ -1,4 +1,4 @@
-{ { - if .Values.hpa.enabled } }
+{{- if .Values.hpa.enabled }}
 # HorizontalPodAutoscaler — backend + frontend
 # Gated by .Values.hpa.enabled (off in default values.yaml, on in
 # values-prod.yaml / values-staging.yaml). Uses autoscaling/v2 with CPU
@@ -16,35 +16,35 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: hrms-backend-hpa
-  namespace: { { .Values.namespace } }
+  namespace: {{ .Values.namespace }}
   labels:
     app: hrms
     component: backend
-    app.kubernetes.io/managed-by: { { .Release.Service } }
-    app.kubernetes.io/instance: { { .Release.Name } }
-    helm.sh/chart: { { .Chart.Name } }-{{ .Chart.Version }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version }}
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
     name: hrms-backend
-  minReplicas: { { .Values.hpa.backend.minReplicas } }
-  maxReplicas: { { .Values.hpa.backend.maxReplicas } }
+  minReplicas: {{ .Values.hpa.backend.minReplicas }}
+  maxReplicas: {{ .Values.hpa.backend.maxReplicas }}
   metrics:
     - type: Resource
       resource:
         name: cpu
         target:
           type: Utilization
-          averageUtilization: { { .Values.hpa.backend.targetCPUUtilizationPercentage } }
-    { { - if .Values.hpa.backend.targetMemoryUtilizationPercentage } }
+          averageUtilization: {{ .Values.hpa.backend.targetCPUUtilizationPercentage }}
+    {{- if .Values.hpa.backend.targetMemoryUtilizationPercentage }}
     - type: Resource
       resource:
         name: memory
         target:
           type: Utilization
-          averageUtilization: { { .Values.hpa.backend.targetMemoryUtilizationPercentage } }
-    { { - end } }
+          averageUtilization: {{ .Values.hpa.backend.targetMemoryUtilizationPercentage }}
+    {{- end }}
   behavior:
     # Conservative scale-down — avoid thrashing on bursty workloads.
     scaleDown:
@@ -69,27 +69,27 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: hrms-frontend-hpa
-  namespace: { { .Values.namespace } }
+  namespace: {{ .Values.namespace }}
   labels:
     app: hrms
     component: frontend
-    app.kubernetes.io/managed-by: { { .Release.Service } }
-    app.kubernetes.io/instance: { { .Release.Name } }
-    helm.sh/chart: { { .Chart.Name } }-{{ .Chart.Version }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version }}
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
     name: hrms-frontend
-  minReplicas: { { .Values.hpa.frontend.minReplicas } }
-  maxReplicas: { { .Values.hpa.frontend.maxReplicas } }
+  minReplicas: {{ .Values.hpa.frontend.minReplicas }}
+  maxReplicas: {{ .Values.hpa.frontend.maxReplicas }}
   metrics:
     - type: Resource
       resource:
         name: cpu
         target:
           type: Utilization
-          averageUtilization: { { .Values.hpa.frontend.targetCPUUtilizationPercentage } }
+          averageUtilization: {{ .Values.hpa.frontend.targetCPUUtilizationPercentage }}
   behavior:
     scaleDown:
       stabilizationWindowSeconds: 300
@@ -103,4 +103,4 @@ spec:
         - type: Percent
           value: 100
           periodSeconds: 30
-  { { - end } }
+  {{- end }}

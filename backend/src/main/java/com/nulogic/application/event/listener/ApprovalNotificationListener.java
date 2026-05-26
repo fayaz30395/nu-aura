@@ -62,11 +62,14 @@ public class ApprovalNotificationListener {
 
             String entityType = event.getEntityType();
             String requesterName = event.getRequesterName();
+            String requesterLabel = requesterName == null || requesterName.isBlank()
+                    ? "A requester"
+                    : requesterName;
 
             // Build notification title and message
             String title = "New Approval Task";
-            String message = String.format("%s has submitted a %s request for approval",
-                    requesterName, getEntityTypeLabel(entityType));
+            String message = String.format("%s submitted a %s for approval",
+                    requesterLabel, getEntityTypeLabel(entityType));
 
             String actionUrl = buildActionUrl(entityType);
 
@@ -89,7 +92,7 @@ public class ApprovalNotificationListener {
             Map<String, Object> metadata = new HashMap<>();
             metadata.put("stepExecutionId", stepExecutionId.toString());
             metadata.put("entityType", entityType);
-            metadata.put("requesterName", requesterName);
+            metadata.put("requesterName", requesterLabel);
             if (event.getRequesterId() != null) {
                 metadata.put("requesterId", event.getRequesterId().toString());
             }

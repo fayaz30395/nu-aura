@@ -89,7 +89,7 @@ class WebhookDeliveryServiceTest {
         webhook.setId(WEBHOOK_ID);
         webhook.setTenantId(TENANT_ID);
         webhook.setName("Test Webhook");
-        webhook.setUrl("https://example.com/webhook");
+        webhook.setUrl("https://93.184.216.34/webhook");
         webhook.setSecret("test-secret");
         webhook.setStatus(WebhookStatus.ACTIVE);
         webhook.setEvents(events);
@@ -254,11 +254,11 @@ class WebhookDeliveryServiceTest {
         void shouldHandleMultipleWebhooksForSameEvent() {
             // Arrange
             Webhook webhook1 = createTestWebhook(Set.of(WebhookEventType.EMPLOYEE_CREATED));
-            webhook1.setUrl("https://example1.com/webhook");
+            webhook1.setUrl("https://93.184.216.34/webhook/one");
 
             Webhook webhook2 = createTestWebhook(Set.of(WebhookEventType.EMPLOYEE_CREATED));
             webhook2.setId(UUID.randomUUID());
-            webhook2.setUrl("https://example2.com/webhook");
+            webhook2.setUrl("https://93.184.216.34/webhook/two");
 
             when(webhookService.findActiveWebhooks(TENANT_ID))
                     .thenReturn(List.of(webhook1, webhook2));

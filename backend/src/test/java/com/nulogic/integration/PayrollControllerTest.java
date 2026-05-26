@@ -234,7 +234,7 @@ class PayrollControllerTest extends AbstractPostgresIntegrationTest {
 
         mockMvc.perform(post(BASE_URL + "/components/evaluate")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(inputValues)))
+                        .content(objectMapper.writeValueAsString(Map.of("inputs", inputValues))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.GROSS").value(70000));
     }
@@ -252,7 +252,7 @@ class PayrollControllerTest extends AbstractPostgresIntegrationTest {
 
         mockMvc.perform(post(BASE_URL + "/components/evaluate")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(inputValues)))
+                        .content(objectMapper.writeValueAsString(Map.of("inputs", inputValues))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.BASIC").value(60000));
     }

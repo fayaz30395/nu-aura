@@ -4,10 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nulogic.api.webhook.dto.WebhookRequest;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.SecurityContext;
+import com.nulogic.common.security.TenantContext;
 import com.nulogic.config.AbstractPostgresIntegrationTest;
 import com.nulogic.config.TestSecurityConfig;
 import com.nulogic.domain.user.RoleScope;
 import com.nulogic.domain.webhook.WebhookEventType;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -17,13 +19,16 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultMatcher;
 
 import java.util.*;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * Integration tests for Webhook Controller endpoints.
@@ -54,18 +59,19 @@ class WebhookControllerIntegrationTest extends AbstractPostgresIntegrationTest {
 
         SecurityContext.setCurrentUser(TEST_USER_ID, TEST_EMPLOYEE_ID, roles, permissions);
         SecurityContext.setCurrentTenantId(TEST_TENANT_ID);
+        TenantContext.setCurrentTenant(TEST_TENANT_ID);
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(
+                        TEST_USER_ID.toString(),
+                        "N/A",
+                        List.of(new SimpleGrantedAuthority("HRMS:SYSTEM:ADMIN"))));
     }
 
-    /**
-     * Custom matcher that accepts 200, 201 (success) or 500 (tenant context issues)
-     */
-    private ResultMatcher statusIsSuccessOr500() {
-        return result -> {
-            int status = result.getResponse().getStatus();
-            if (status != 200 && status != 201 && status != 204 && status != 500) {
-                throw new AssertionError("Expected status 200, 201, 204, or 500 but was " + status);
-            }
-        };
+    @AfterEach
+    void tearDown() {
+        SecurityContext.clear();
+        TenantContext.clear();
+        SecurityContextHolder.clearContext();
     }
 
     @Nested
@@ -77,7 +83,7 @@ class WebhookControllerIntegrationTest extends AbstractPostgresIntegrationTest {
         void shouldReturnListOfWebhooks() throws Exception {
             mockMvc.perform(get(BASE_URL)
                             .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(statusIsSuccessOr500());
+                    .andExpect(status().isOk());
         }
 
         @Test
@@ -85,7 +91,7 @@ class WebhookControllerIntegrationTest extends AbstractPostgresIntegrationTest {
         void shouldReturnJsonContentType() throws Exception {
             mockMvc.perform(get(BASE_URL)
                             .accept(MediaType.APPLICATION_JSON))
-                    .andExpect(statusIsSuccessOr500());
+                    .andExpect(status().isOk());
         }
     }
 
@@ -107,7 +113,7 @@ class WebhookControllerIntegrationTest extends AbstractPostgresIntegrationTest {
             mockMvc.perform(post(BASE_URL)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
-                    .andExpect(statusIsSuccessOr500());
+                    .andExpect(status().isCreated());
         }
 
         @Test
@@ -123,13 +129,7 @@ class WebhookControllerIntegrationTest extends AbstractPostgresIntegrationTest {
             mockMvc.perform(post(BASE_URL)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
-                    .andExpect(result -> {
-                        int status = result.getResponse().getStatus();
-                        // Should be 400 Bad Request or 500 if validation is handled differently
-                        if (status != 400 && status != 500) {
-                            throw new AssertionError("Expected status 400 or 500 but was " + status);
-                        }
-                    });
+                    .andExpect(status().isBadRequest());
         }
 
         @Test
@@ -144,12 +144,7 @@ class WebhookControllerIntegrationTest extends AbstractPostgresIntegrationTest {
             mockMvc.perform(post(BASE_URL)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
-                    .andExpect(result -> {
-                        int status = result.getResponse().getStatus();
-                        if (status != 400 && status != 500) {
-                            throw new AssertionError("Expected status 400 or 500 but was " + status);
-                        }
-                    });
+                    .andExpect(status().isBadRequest());
         }
 
         @Test
@@ -165,12 +160,7 @@ class WebhookControllerIntegrationTest extends AbstractPostgresIntegrationTest {
             mockMvc.perform(post(BASE_URL)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
-                    .andExpect(result -> {
-                        int status = result.getResponse().getStatus();
-                        if (status != 400 && status != 500) {
-                            throw new AssertionError("Expected status 400 or 500 but was " + status);
-                        }
-                    });
+                    .andExpect(status().isBadRequest());
         }
     }
 
@@ -185,13 +175,7 @@ class WebhookControllerIntegrationTest extends AbstractPostgresIntegrationTest {
 
             mockMvc.perform(get(BASE_URL + "/" + nonExistentId)
                             .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(result -> {
-                        int status = result.getResponse().getStatus();
-                        // Either 404 (not found) or 500 (tenant context issues)
-                        if (status != 404 && status != 500) {
-                            throw new AssertionError("Expected status 404 or 500 but was " + status);
-                        }
-                    });
+                    .andExpect(status().isNotFound());
         }
     }
 
@@ -206,19 +190,14 @@ class WebhookControllerIntegrationTest extends AbstractPostgresIntegrationTest {
             WebhookRequest request = WebhookRequest.builder()
                     .name("Updated Webhook")
                     .url("https://example.com/webhook/updated")
-                    .secret("new-secret")
+                    .secret("new-secret-key-12345")
                     .events(Set.of(WebhookEventType.ALL))
                     .build();
 
             mockMvc.perform(put(BASE_URL + "/" + nonExistentId)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
-                    .andExpect(result -> {
-                        int status = result.getResponse().getStatus();
-                        if (status != 400 && status != 404 && status != 500) {
-                            throw new AssertionError("Expected status 400, 404, or 500 but was " + status);
-                        }
-                    });
+                    .andExpect(status().isNotFound());
         }
     }
 
@@ -233,7 +212,7 @@ class WebhookControllerIntegrationTest extends AbstractPostgresIntegrationTest {
 
             mockMvc.perform(delete(BASE_URL + "/" + webhookId)
                             .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(statusIsSuccessOr500());
+                    .andExpect(status().isNoContent());
         }
     }
 
@@ -248,12 +227,7 @@ class WebhookControllerIntegrationTest extends AbstractPostgresIntegrationTest {
 
             mockMvc.perform(post(BASE_URL + "/" + nonExistentId + "/activate")
                             .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(result -> {
-                        int status = result.getResponse().getStatus();
-                        if (status != 404 && status != 500) {
-                            throw new AssertionError("Expected status 404 or 500 but was " + status);
-                        }
-                    });
+                    .andExpect(status().isNotFound());
         }
     }
 
@@ -268,12 +242,7 @@ class WebhookControllerIntegrationTest extends AbstractPostgresIntegrationTest {
 
             mockMvc.perform(post(BASE_URL + "/" + nonExistentId + "/deactivate")
                             .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(result -> {
-                        int status = result.getResponse().getStatus();
-                        if (status != 404 && status != 500) {
-                            throw new AssertionError("Expected status 404 or 500 but was " + status);
-                        }
-                    });
+                    .andExpect(status().isNotFound());
         }
     }
 
@@ -288,12 +257,7 @@ class WebhookControllerIntegrationTest extends AbstractPostgresIntegrationTest {
 
             mockMvc.perform(get(BASE_URL + "/" + nonExistentId + "/deliveries")
                             .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(result -> {
-                        int status = result.getResponse().getStatus();
-                        if (status != 404 && status != 500) {
-                            throw new AssertionError("Expected status 404 or 500 but was " + status);
-                        }
-                    });
+                    .andExpect(status().isNotFound());
         }
     }
 
@@ -308,12 +272,7 @@ class WebhookControllerIntegrationTest extends AbstractPostgresIntegrationTest {
 
             mockMvc.perform(post(BASE_URL + "/deliveries/" + nonExistentId + "/retry")
                             .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(result -> {
-                        int status = result.getResponse().getStatus();
-                        if (status != 404 && status != 500) {
-                            throw new AssertionError("Expected status 404 or 500 but was " + status);
-                        }
-                    });
+                    .andExpect(status().isNotFound());
         }
     }
 }

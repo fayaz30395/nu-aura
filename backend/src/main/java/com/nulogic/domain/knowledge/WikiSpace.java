@@ -12,7 +12,7 @@ import java.util.UUID;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "wiki_spaces", indexes = {
-        @Index(name = "idx_wiki_spaces_tenant", columnList = "tenantId"),
+        @Index(name = "idx_wiki_spaces_tenant", columnList = "tenant_id"),
         @Index(name = "idx_wiki_spaces_visibility", columnList = "visibility"),
         @Index(name = "idx_wiki_spaces_is_archived", columnList = "is_archived")
 })

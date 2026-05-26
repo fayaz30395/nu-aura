@@ -110,6 +110,7 @@ class AuthServiceTest {
     private AuthService authService;
 
     private UUID tenantId;
+    private UUID nulogicTenantId;
     private UUID userId;
     private User user;
     private Employee employee;
@@ -117,6 +118,7 @@ class AuthServiceTest {
     @BeforeEach
     void setUp() {
         tenantId = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
+        nulogicTenantId = UUID.fromString("660e8400-e29b-41d4-a716-446655440001");
         userId = UUID.randomUUID();
 
         user = User.builder()
@@ -139,6 +141,8 @@ class AuthServiceTest {
         ReflectionTestUtils.setField(authService, "jwtExpiration", 3600000L);
         ReflectionTestUtils.setField(authService, "captchaThresholdAttempts", 3);
         ReflectionTestUtils.setField(authService, "allowedDomain", "nulogic.io");
+        ReflectionTestUtils.setField(authService, "defaultTenantId", tenantId.toString());
+        ReflectionTestUtils.setField(authService, "nulogicTenantId", nulogicTenantId.toString());
         ReflectionTestUtils.setField(authService, "accountLockoutUseRedis", true);
         when(implicitRoleService.getImplicitRoles(any(UUID.class), any(UUID.class))).thenReturn(Set.of());
         when(implicitRoleService.getImplicitPermissions(any(UUID.class), any(UUID.class))).thenReturn(Set.of());
@@ -247,6 +251,52 @@ class AuthServiceTest {
             AuthResponse response = authService.login(request);
 
             assertThat(response).isNotNull();
+        }
+
+        @Test
+        @DisplayName("Should use NuLogic tenant for corporate login when tenantless lookup is blocked by RLS")
+        void shouldUseNulogicTenantWhenTenantlessLookupBlockedByRls() {
+            LoginRequest request = new LoginRequest();
+            request.setEmail("fayaz.m@nulogic.io");
+            request.setPassword("Welcome@123");
+            request.setTenantId(null);
+            ReflectionTestUtils.setField(authService, "accountLockoutUseRedis", false);
+
+            User nulogicUser = User.builder()
+                    .email("fayaz.m@nulogic.io")
+                    .firstName("Fayaz")
+                    .lastName("M")
+                    .passwordHash("hashedPassword")
+                    .status(User.UserStatus.ACTIVE)
+                    .build();
+            ReflectionTestUtils.setField(nulogicUser, "id", userId);
+            ReflectionTestUtils.setField(nulogicUser, "tenantId", nulogicTenantId);
+
+            when(userRepository.findByEmail("fayaz.m@nulogic.io"))
+                    .thenReturn(Optional.empty());
+            Authentication authentication = mock(Authentication.class);
+            when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+                    .thenReturn(authentication);
+            when(userRepository.findByEmailAndTenantId("fayaz.m@nulogic.io", nulogicTenantId))
+                    .thenReturn(Optional.of(nulogicUser));
+            when(userAppAccessRepository.findByUserIdAndAppCodeWithPermissions(any(), any()))
+                    .thenReturn(Optional.empty());
+            when(userAppAccessRepository.findUserApplications(any()))
+                    .thenReturn(Collections.emptyList());
+            when(tokenProvider.generateTokenWithAppPermissions(any(), any(), any(), any(), any(), any(),
+                    any(), any(), any(), any()))
+                    .thenReturn("access-token");
+            when(tokenProvider.generateRefreshToken(any(), any()))
+                    .thenReturn("refresh-token");
+            when(employeeRepository.findByUserIdWithUser(userId, nulogicTenantId))
+                    .thenReturn(Optional.empty());
+
+            AuthResponse response = authService.login(request);
+
+            assertThat(response).isNotNull();
+            assertThat(response.getTenantId()).isEqualTo(nulogicTenantId);
+            verify(tenantRlsSessionSync).syncCurrentTenant(nulogicTenantId);
+            verify(userRepository).findByEmailAndTenantId("fayaz.m@nulogic.io", nulogicTenantId);
         }
     }
 

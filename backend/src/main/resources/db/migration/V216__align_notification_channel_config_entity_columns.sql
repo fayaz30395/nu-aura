@@ -1,0 +1,27 @@
+-- Align notification channel configs with NotificationChannelConfig entity fields.
+
+ALTER TABLE notification_channel_configs
+  ADD COLUMN IF NOT EXISTS is_enabled BOOLEAN,
+  ADD COLUMN IF NOT EXISTS provider VARCHAR(255),
+  ADD COLUMN IF NOT EXISTS email_from_address VARCHAR(255),
+  ADD COLUMN IF NOT EXISTS email_from_name VARCHAR(255),
+  ADD COLUMN IF NOT EXISTS email_reply_to VARCHAR(255),
+  ADD COLUMN IF NOT EXISTS sms_from_number VARCHAR(255),
+  ADD COLUMN IF NOT EXISTS push_server_key VARCHAR(255),
+  ADD COLUMN IF NOT EXISTS push_sender_id VARCHAR(255),
+  ADD COLUMN IF NOT EXISTS slack_workspace_id VARCHAR(255),
+  ADD COLUMN IF NOT EXISTS slack_bot_token VARCHAR(255),
+  ADD COLUMN IF NOT EXISTS slack_default_channel VARCHAR(255),
+  ADD COLUMN IF NOT EXISTS teams_webhook_url VARCHAR(255),
+  ADD COLUMN IF NOT EXISTS teams_tenant_id VARCHAR(255),
+  ADD COLUMN IF NOT EXISTS whatsapp_business_id VARCHAR(255),
+  ADD COLUMN IF NOT EXISTS whatsapp_phone_number_id VARCHAR(255),
+  ADD COLUMN IF NOT EXISTS webhook_url VARCHAR(255),
+  ADD COLUMN IF NOT EXISTS webhook_secret VARCHAR(255),
+  ADD COLUMN IF NOT EXISTS rate_limit_per_minute INTEGER,
+  ADD COLUMN IF NOT EXISTS rate_limit_per_hour INTEGER,
+  ADD COLUMN IF NOT EXISTS rate_limit_per_day INTEGER,
+  ADD COLUMN IF NOT EXISTS max_retries INTEGER,
+  ADD COLUMN IF NOT EXISTS retry_delay_seconds INTEGER,
+  ADD COLUMN IF NOT EXISTS exponential_backoff BOOLEAN,
+  ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ;

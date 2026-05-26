@@ -23,10 +23,14 @@ data:
   JPA_PROPERTIES_HIBERNATE_FORMAT_SQL: "false"
 
   # Flyway Configuration (Liquibase is NOT used — do not add LIQUIBASE_* entries)
-  FLYWAY_ENABLED: "true"
-  FLYWAY_LOCATIONS: "classpath:db/migration"
-  FLYWAY_DEFAULT_SCHEMA: "public"
-  FLYWAY_BASELINE_ON_MIGRATE: "true"
+  SPRING_FLYWAY_ENABLED: "true"
+  SPRING_FLYWAY_LOCATIONS: "classpath:db/migration"
+  SPRING_FLYWAY_DEFAULT_SCHEMA: "public"
+  SPRING_FLYWAY_VALIDATE_ON_MIGRATE: "true"
+  SPRING_FLYWAY_BASELINE_ON_MIGRATE: "false"
+  SPRING_FLYWAY_OUT_OF_ORDER: "false"
+  SPRING_FLYWAY_REPAIR_ON_MIGRATE: "false"
+  SPRING_FLYWAY_POSTGRESQL_TRANSACTIONAL_LOCK: "false"
 
   # Redis Configuration
   REDIS_TIMEOUT: "2000"
@@ -66,6 +70,11 @@ data:
   # Security
   CSRF_ENABLED: "true"
   COOKIE_SECURE: "true"
+  RLS_PROBE_FAIL_ON_BYPASS: "true"
+
+  # Background schedulers
+  # Keep disabled on web/API pods; run a dedicated worker with this true if needed.
+  APP_SCHEDULING_ENABLED: "false"
 
   # Tenant Resolution
   TENANT_RESOLUTION_STRATEGY: "header"
@@ -82,5 +91,6 @@ data:
   NEXT_PUBLIC_APP_NAME: "NU-AURA HRMS"
   NEXT_PUBLIC_APP_VERSION: "1.0.0"
   NEXT_PUBLIC_ENABLE_ANALYTICS: "true"
+  NEXT_PUBLIC_ENABLE_WEBSOCKET: "true"
   NEXT_PUBLIC_DEMO_MODE: "false"
   NODE_ENV: "production"

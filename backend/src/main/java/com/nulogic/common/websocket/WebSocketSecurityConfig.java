@@ -19,6 +19,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Matcher;
@@ -51,7 +53,8 @@ public class WebSocketSecurityConfig implements WebSocketMessageBrokerConfigurer
     private static final Set<String> PUBLIC_TOPIC_PREFIXES = Set.of(
             "/user/queue/",         // Spring's per-principal queue prefix (intrinsically authenticated)
             "/topic/health",        // ops/observability
-            "/topic/announcements"  // tenant-public announcements
+            "/topic/announcements", // tenant-public announcements
+            "/topic/system.shutdown" // graceful STOMP drain during rolling deploys
     );
 
     private final JwtTokenProvider jwtTokenProvider;
@@ -81,40 +84,54 @@ public class WebSocketSecurityConfig implements WebSocketMessageBrokerConfigurer
     }
 
     /**
-     * Authenticate WebSocket CONNECT frames using JWT from the Authorization header.
+     * Authenticate WebSocket CONNECT frames using either a STOMP Authorization
+     * header or the httpOnly access-token cookie copied from the handshake.
      */
     private void handleConnect(StompHeaderAccessor accessor) {
-        String authHeader = accessor.getFirstNativeHeader("Authorization");
+        String token = resolveAccessToken(accessor);
 
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        if (token == null) {
             // SEC-006 FIX: Reject unauthenticated WebSocket connections
-            log.warn("WebSocket CONNECT rejected: missing or invalid Authorization header");
+            log.warn("WebSocket CONNECT rejected: missing access token");
             throw new org.springframework.messaging.MessageDeliveryException(
                     "Authentication required for WebSocket connections");
         }
 
-        String token = authHeader.substring(7);
-
         try {
             if (jwtTokenProvider.validateToken(token)) {
                 String username = jwtTokenProvider.getUsernameFromToken(token);
+                UUID userId = jwtTokenProvider.getUserIdFromToken(token);
 
                 // Extract tenantId from token and store in session attributes
                 // so SUBSCRIBE validation can access it
                 UUID tenantId = jwtTokenProvider.getTenantIdFromToken(token);
 
+                if (userId == null) {
+                    log.warn("WebSocket CONNECT rejected: token missing userId claim");
+                    throw new org.springframework.messaging.MessageDeliveryException(
+                            "Authentication token missing user identity");
+                }
+
                 UsernamePasswordAuthenticationToken auth =
-                        new UsernamePasswordAuthenticationToken(username, null, Collections.emptyList());
+                        new UsernamePasswordAuthenticationToken(userId.toString(), null, Collections.emptyList());
 
                 SecurityContextHolder.getContext().setAuthentication(auth);
                 accessor.setUser(auth);
 
-                // Store tenantId in session attributes for later SUBSCRIBE validation
-                if (tenantId != null) {
-                    accessor.getSessionAttributes().put("tenantId", tenantId);
+                Map<String, Object> sessionAttributes = accessor.getSessionAttributes();
+                if (sessionAttributes == null) {
+                    sessionAttributes = new HashMap<>();
+                    accessor.setSessionAttributes(sessionAttributes);
                 }
 
-                log.debug("WebSocket connection authenticated for user: {}, tenant: {}", username, tenantId);
+                // Store tenantId in session attributes for later SUBSCRIBE validation
+                if (tenantId != null) {
+                    sessionAttributes.put("tenantId", tenantId);
+                }
+                sessionAttributes.put("username", username);
+
+                log.debug("WebSocket connection authenticated for userId: {}, username: {}, tenant: {}",
+                        userId, username, tenantId);
             } else {
                 // SEC-006 FIX: Reject connections with invalid tokens
                 log.warn("WebSocket CONNECT rejected: token validation failed");
@@ -123,10 +140,28 @@ public class WebSocketSecurityConfig implements WebSocketMessageBrokerConfigurer
             }
         } catch (JwtException | IllegalArgumentException e) {
             // SEC-006 FIX: Reject connections with malformed tokens
-            log.warn("WebSocket authentication failed: {}", e.getMessage());
+            log.warn("WebSocket authentication failed: invalid token ({})", e.getClass().getSimpleName());
             throw new org.springframework.messaging.MessageDeliveryException(
-                    "Authentication failed: " + e.getMessage());
+                    "Authentication failed");
         }
+    }
+
+    private String resolveAccessToken(StompHeaderAccessor accessor) {
+        String authHeader = accessor.getFirstNativeHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            return authHeader.substring(7);
+        }
+
+        Map<String, Object> sessionAttributes = accessor.getSessionAttributes();
+        if (sessionAttributes == null) {
+            return null;
+        }
+
+        Object cookieToken = sessionAttributes.get(WebSocketAuthTokenHandshakeInterceptor.ACCESS_TOKEN_ATTRIBUTE);
+        if (cookieToken instanceof String token && !token.isBlank()) {
+            return token;
+        }
+        return null;
     }
 
     /**
@@ -140,6 +175,12 @@ public class WebSocketSecurityConfig implements WebSocketMessageBrokerConfigurer
         String destination = accessor.getDestination();
         if (destination == null) {
             return;
+        }
+
+        if (accessor.getUser() == null) {
+            log.warn("WebSocket SUBSCRIBE rejected: unauthenticated session for destination {}", destination);
+            throw new org.springframework.messaging.MessageDeliveryException(
+                    "Authentication required for WebSocket subscriptions");
         }
 
         Matcher matcher = TENANT_TOPIC_PATTERN.matcher(destination);
@@ -167,11 +208,11 @@ public class WebSocketSecurityConfig implements WebSocketMessageBrokerConfigurer
         }
 
         // Retrieve the authenticated user's tenantId from session attributes
-        UUID userTenantId = accessor.getSessionAttributes() != null
-                ? (UUID) accessor.getSessionAttributes().get("tenantId")
+        Object userTenantIdAttribute = accessor.getSessionAttributes() != null
+                ? accessor.getSessionAttributes().get("tenantId")
                 : null;
 
-        if (userTenantId == null) {
+        if (!(userTenantIdAttribute instanceof UUID userTenantId)) {
             log.warn("WebSocket SUBSCRIBE rejected: no tenantId in session for destination {}", destination);
             throw new org.springframework.messaging.MessageDeliveryException(
                     "Tenant context not available; re-authenticate");

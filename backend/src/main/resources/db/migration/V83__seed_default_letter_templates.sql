@@ -9,6 +9,17 @@
 -- Using a fixed UUID namespace for system templates
 -- These can be copied by any tenant using the clone endpoint
 
+ALTER TABLE letter_templates
+  ADD COLUMN IF NOT EXISTS include_company_logo BOOLEAN DEFAULT TRUE,
+  ADD COLUMN IF NOT EXISTS include_signature BOOLEAN DEFAULT TRUE,
+  ADD COLUMN IF NOT EXISTS signature_title VARCHAR(255),
+  ADD COLUMN IF NOT EXISTS signatory_name VARCHAR(255),
+  ADD COLUMN IF NOT EXISTS signatory_designation VARCHAR(255),
+  ADD COLUMN IF NOT EXISTS requires_approval BOOLEAN DEFAULT TRUE,
+  ADD COLUMN IF NOT EXISTS is_active BOOLEAN DEFAULT TRUE,
+  ADD COLUMN IF NOT EXISTS is_system_template BOOLEAN DEFAULT FALSE,
+  ADD COLUMN IF NOT EXISTS template_version INTEGER;
+
 -- 1. Offer Letter Template
 INSERT INTO letter_templates (id, tenant_id, name, code, description, category, template_content, header_html,
                               footer_html, css_styles, include_company_logo, include_signature, signature_title,

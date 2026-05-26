@@ -1,6 +1,6 @@
 package com.nulogic.infrastructure.websocket;
 
-import com.nulogic.infrastructure.websocket.RedisWebSocketRelay;
+import com.nulogic.common.websocket.WebSocketAuthTokenHandshakeInterceptor;
 import jakarta.annotation.PreDestroy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.lang.Nullable;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
@@ -17,6 +18,7 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 import org.springframework.web.socket.config.annotation.WebSocketTransportRegistration;
 
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.Map;
 
 @Configuration
@@ -34,17 +36,16 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     private String allowedOriginsStr;
 
     /**
-     * Optional — the Redis-fanout relay used to publish STOMP frames so every
-     * pod (not just the one a client happens to be connected to) sees them.
-     * Wired via setter to keep field injection out of the static config class
-     * and to leave dev/test contexts that don't load the relay (no Redis)
-     * able to skip the drain broadcast cleanly.
+     * Optional local STOMP template for shutdown drain notices. Shutdown is a
+     * local-pod event: only clients connected to this pod need to reconnect.
+     * Avoid Redis here because Redis infrastructure can stop before this
+     * @PreDestroy hook runs.
      */
-    private RedisWebSocketRelay redisWebSocketRelay;
+    private SimpMessagingTemplate messagingTemplate;
 
     @Autowired(required = false)
-    public void setRedisWebSocketRelay(@Lazy @Nullable RedisWebSocketRelay redisWebSocketRelay) {
-        this.redisWebSocketRelay = redisWebSocketRelay;
+    public void setMessagingTemplate(@Lazy @Nullable SimpMessagingTemplate messagingTemplate) {
+        this.messagingTemplate = messagingTemplate;
     }
 
     @Override
@@ -85,9 +86,21 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // Register the "/ws" endpoint with SockJS fallback.
         // Allowed origins are driven by config — no wildcard "*" permitted.
-        String[] allowedOrigins = allowedOriginsStr.split(",");
+        String[] allowedOrigins = Arrays.stream(allowedOriginsStr.split(","))
+                .map(String::trim)
+                .filter(origin -> !origin.isBlank())
+                .toArray(String[]::new);
+        if (allowedOrigins.length == 0) {
+            throw new IllegalStateException("At least one WebSocket allowed origin must be configured");
+        }
+        for (String origin : allowedOrigins) {
+            if ("*".equals(origin)) {
+                throw new IllegalStateException("Wildcard WebSocket origin is not allowed");
+            }
+        }
         registry.addEndpoint("/ws")
                 .setAllowedOriginPatterns(allowedOrigins)
+                .addInterceptors(new WebSocketAuthTokenHandshakeInterceptor())
                 .withSockJS();
     }
 
@@ -102,23 +115,21 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
      * means the client may stampede the next pod while it is still warming up.
      *
      * <p>Instead we publish a {@code SystemNotification} frame on the
-     * {@code /topic/system.shutdown} broadcast channel via the Redis relay,
-     * so every pod (including this one) forwards the notice to every
-     * subscribed client. The frontend SocketProvider already listens on this
-     * topic and treats it as an instruction to disconnect and immediately
-     * reconnect — letting the SockJS load balancer steer the client to a
-     * peer pod that is still in the Ready state.
+     * {@code /topic/system.shutdown} broadcast channel through the local STOMP
+     * broker. The frontend SocketProvider already listens on this topic and
+     * treats it as an instruction to disconnect and immediately reconnect —
+     * letting the SockJS load balancer steer the client to a peer pod that is
+     * still in the Ready state.
      *
-     * <p>If the relay bean is absent (dev/test without Redis), we log and skip
-     * the broadcast — the underlying TCP close is still graceful thanks to
-     * {@code server.shutdown=graceful} in application.yml, just without the
-     * extra hint to the client.
+     * <p>If the local broker template is absent, we log and skip the broadcast.
+     * The underlying TCP close is still graceful thanks to
+     * {@code server.shutdown=graceful} in application.yml.
      */
     @PreDestroy
     public void broadcastShutdownNotice() {
-        if (redisWebSocketRelay == null) {
-            log.info("STOMP shutdown drain skipped — RedisWebSocketRelay bean is not present "
-                    + "(likely a dev/test profile without Redis). Tomcat will still close sockets gracefully.");
+        if (messagingTemplate == null) {
+            log.info("STOMP shutdown drain skipped — local SimpMessagingTemplate is not present. "
+                    + "Tomcat will still close sockets gracefully.");
             return;
         }
         try {
@@ -129,7 +140,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                     "reconnect", true,
                     "timestamp", Instant.now().toString()
             );
-            redisWebSocketRelay.convertAndSend("/topic/system.shutdown", notification);
+            messagingTemplate.convertAndSend("/topic/system.shutdown", notification);
             log.info("STOMP shutdown notice broadcast on /topic/system.shutdown — clients will reconnect to peer pods.");
         } catch (Exception ex) {
             // Never block shutdown on a broadcast failure — log and move on.

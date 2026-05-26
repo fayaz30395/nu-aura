@@ -12,6 +12,7 @@ export {
   isProduction,
   isTest,
   isDemoMode,
+  isWebSocketEnabled,
   isGoogleAuthEnabled,
   apiConfig,
   type Env,

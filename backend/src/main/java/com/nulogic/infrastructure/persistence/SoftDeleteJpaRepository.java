@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.data.util.ProxyUtils;
-import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
@@ -36,7 +35,6 @@ import java.util.List;
  *
  * <p>Backlog reference: T1-05 — single-route delete contract.
  */
-@Repository
 @Transactional(readOnly = true)
 public class SoftDeleteJpaRepository<T, ID> extends SimpleJpaRepository<T, ID> {
 

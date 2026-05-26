@@ -2,6 +2,9 @@ package com.nulogic.application.expense.service;
 
 import com.nulogic.api.expense.dto.ExpenseClaimRequest;
 import com.nulogic.api.expense.dto.ExpenseClaimResponse;
+import com.nulogic.api.workflow.dto.WorkflowExecutionRequest;
+import com.nulogic.application.workflow.service.WorkflowService;
+import com.nulogic.common.exception.BusinessException;
 import com.nulogic.common.security.DataScopeService;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.SecurityContext;
@@ -51,6 +54,8 @@ class ExpenseClaimServiceTest {
     private EmployeeRepository employeeRepository;
     @Mock
     private DataScopeService dataScopeService;
+    @Mock
+    private WorkflowService workflowService;
     @Mock
     private com.nulogic.application.event.DomainEventPublisher domainEventPublisher;
     @Mock
@@ -279,6 +284,30 @@ class ExpenseClaimServiceTest {
 
             assertThat(result).isNotNull();
             verify(expenseClaimRepository).save(any(ExpenseClaim.class));
+            verify(workflowService).startWorkflow(any(WorkflowExecutionRequest.class));
+        }
+
+        @Test
+        @DisplayName("Should fail when approval workflow cannot start")
+        void shouldFailWhenApprovalWorkflowCannotStart() {
+            when(expenseClaimRepository.findByIdAndTenantId(claimId, tenantId))
+                    .thenReturn(Optional.of(expenseClaim));
+            when(expenseClaimRepository.save(any(ExpenseClaim.class)))
+                    .thenAnswer(invocation -> {
+                        ExpenseClaim claim = invocation.getArgument(0);
+                        claim.setStatus(ExpenseClaim.ExpenseStatus.SUBMITTED);
+                        return claim;
+                    });
+            when(employeeRepository.findByIdAndTenantId(employeeId, tenantId))
+                    .thenReturn(Optional.of(employee));
+            when(workflowService.startWorkflow(any(WorkflowExecutionRequest.class)))
+                    .thenThrow(new BusinessException("No active workflow definition configured for EXPENSE_CLAIM"));
+
+            assertThatThrownBy(() -> expenseClaimService.submitExpenseClaim(claimId))
+                    .isInstanceOf(BusinessException.class)
+                    .hasMessageContaining("No active workflow definition configured for EXPENSE_CLAIM");
+
+            verify(workflowService).startWorkflow(any(WorkflowExecutionRequest.class));
         }
 
         @Test
@@ -538,6 +567,25 @@ class ExpenseClaimServiceTest {
             assertThat(result).containsKey("amountByStatus");
             assertThat(result).containsKey("totalAmount");
             assertThat(result).containsKey("totalClaims");
+        }
+    }
+
+    @Nested
+    @DisplayName("Workflow Callback Tests")
+    class WorkflowCallbackTests {
+
+        @Test
+        @DisplayName("Should fail approval callback when expense claim is missing")
+        void shouldFailApprovalCallbackWhenExpenseClaimMissing() {
+            UUID missingClaimId = UUID.randomUUID();
+            when(expenseClaimRepository.findByIdAndTenantId(missingClaimId, tenantId))
+                    .thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> expenseClaimService.onApproved(tenantId, missingClaimId, approverId))
+                    .isInstanceOf(BusinessException.class)
+                    .hasMessageContaining("Expense claim not found for approval callback");
+
+            verify(expenseClaimRepository, never()).save(any(ExpenseClaim.class));
         }
     }
 }

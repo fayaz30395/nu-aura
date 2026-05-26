@@ -48,7 +48,7 @@ log "Report dir: $REPORT_DIR"
 # ─── Secrets scan ────────────────────────────────────────────────────────────
 section "Secrets scan (gitleaks)"
 if command -v gitleaks >/dev/null 2>&1; then
-    if gitleaks detect --source "$REPO_ROOT" --no-banner --report-path "$REPORT_DIR/gitleaks.json" --report-format json; then
+    if gitleaks detect --source "$REPO_ROOT" --no-banner --redact --report-path "$REPORT_DIR/gitleaks.json" --report-format json; then
         ok "gitleaks: clean"
     else
         fail "gitleaks: matches found — see $REPORT_DIR/gitleaks.json"

@@ -19,6 +19,7 @@ PROJECT_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 DEPLOYMENT_TYPE=${DEPLOYMENT_TYPE:-"cloud-run"}
 REGION=${REGION:-"us-central1"}
 ENVIRONMENT=${ENVIRONMENT:-"production"}
+IMAGE_TAG=${IMAGE_TAG:-$(git -C "${PROJECT_ROOT}" rev-parse --short HEAD)}
 
 # Functions
 print_info() {
@@ -93,30 +94,77 @@ enable_apis() {
 }
 
 setup_secrets() {
-    print_header "Setting Up Secrets in Secret Manager"
+    print_header "Verifying Secret Manager Inputs"
 
-    # Check if secrets exist, if not, create placeholders
-    SECRETS=(
-        "DATABASE_URL:jdbc:postgresql://localhost:5432/hrms"
-        "DB_USERNAME:hrms_user"
-        "DB_PASSWORD:CHANGE_ME"
-        "JWT_SECRET:CHANGE_ME_TO_LONG_RANDOM_STRING"
-        "GOOGLE_CLIENT_ID:your-client-id.apps.googleusercontent.com"
-        "GOOGLE_CLIENT_SECRET:CHANGE_ME"
-        "OPENAI_API_KEY:sk-CHANGE_ME"
+    # Production deploys must fail closed. Do not create placeholder secrets here:
+    # a placeholder value can pass Cloud Run's existence check and boot a broken
+    # or unsafe release.
+    REQUIRED_SECRETS=(
+        "DATABASE_URL"
+        "DB_USERNAME"
+        "DB_PASSWORD"
+        "FLYWAY_URL"
+        "FLYWAY_USER"
+        "FLYWAY_PASSWORD"
+        "PROMETHEUS_SCRAPE_TOKEN"
+        "REDIS_HOST"
+        "REDIS_PORT"
+        "REDIS_PASSWORD"
+        "REDIS_SSL_ENABLED"
+        "JWT_SECRET"
+        "APP_SECURITY_ENCRYPTION_KEY"
+        "APP_CORS_ALLOWED_ORIGINS"
+        "FRONTEND_URL"
+        "GOOGLE_CLIENT_ID"
+        "GOOGLE_CLIENT_SECRET"
+        "OPENAI_API_KEY"
     )
 
-    for secret_pair in "${SECRETS[@]}"; do
-        IFS=':' read -r secret_name secret_value <<< "$secret_pair"
-
-        if gcloud secrets describe "$secret_name" &> /dev/null; then
-            print_info "Secret $secret_name already exists"
-        else
-            print_warn "Creating placeholder for secret: $secret_name"
-            echo -n "$secret_value" | gcloud secrets create "$secret_name" --data-file=-
-            print_warn "Please update secret $secret_name with the actual value!"
+    local failures=0
+    local secret_value=""
+    for secret_name in "${REQUIRED_SECRETS[@]}"; do
+        if ! gcloud secrets describe "$secret_name" &> /dev/null; then
+            print_error "Missing required Secret Manager secret: $secret_name"
+            failures=$((failures + 1))
+            continue
         fi
+
+        if ! secret_value="$(gcloud secrets versions access latest --secret="$secret_name" 2> /dev/null)"; then
+            print_error "Required secret has no readable latest version: $secret_name"
+            failures=$((failures + 1))
+            continue
+        fi
+
+        if is_placeholder_secret "$secret_value"; then
+            print_error "Required secret still contains a placeholder or local/example value: $secret_name"
+            failures=$((failures + 1))
+            continue
+        fi
+
+        print_info "Secret $secret_name verified"
     done
+
+    if [ "$failures" -gt 0 ]; then
+        print_error "Secret verification failed. Populate real Secret Manager values before deploying."
+        exit 1
+    fi
+}
+
+is_placeholder_secret() {
+    local value="$1"
+
+    if [ -z "$value" ]; then
+        return 0
+    fi
+
+    case "$value" in
+        CHANGE_ME*|REPLACE_*|your-*|*example.com*|*localhost*|sk-CHANGE_ME*)
+            return 0
+            ;;
+        *)
+            return 1
+            ;;
+    esac
 }
 
 build_images() {
@@ -125,8 +173,8 @@ build_images() {
     # Build backend
     print_info "Building backend image..."
     gcloud builds submit \
-        --config="${SCRIPT_DIR}/gcp/cloudbuild.yaml" \
-        --substitutions="_REGION=${REGION}" \
+        --config="${SCRIPT_DIR}/cloudbuild.yaml" \
+        --substitutions="_REGION=${REGION},SHORT_SHA=${IMAGE_TAG}" \
         "${PROJECT_ROOT}"
 
     print_info "Images built successfully"
@@ -138,7 +186,7 @@ deploy_cloud_run() {
     # Deploy backend
     print_info "Deploying backend service..."
     gcloud run deploy hrms-backend \
-        --image "gcr.io/${PROJECT_ID}/hrms-backend:latest" \
+        --image "gcr.io/${PROJECT_ID}/hrms-backend:${IMAGE_TAG}" \
         --platform managed \
         --region "${REGION}" \
         --allow-unauthenticated \
@@ -148,8 +196,8 @@ deploy_cloud_run() {
         --max-instances 10 \
         --min-instances 1 \
         --port 8080 \
-        --set-env-vars "SPRING_PROFILES_ACTIVE=prod,PORT=8080" \
-        --set-secrets "SPRING_DATASOURCE_URL=DATABASE_URL:latest,SPRING_DATASOURCE_USERNAME=DB_USERNAME:latest,SPRING_DATASOURCE_PASSWORD=DB_PASSWORD:latest,JWT_SECRET=JWT_SECRET:latest,GOOGLE_CLIENT_ID=GOOGLE_CLIENT_ID:latest,GOOGLE_CLIENT_SECRET=GOOGLE_CLIENT_SECRET:latest,OPENAI_API_KEY=OPENAI_API_KEY:latest"
+        --set-env-vars "SPRING_PROFILES_ACTIVE=prod,PORT=8080,RLS_PROBE_FAIL_ON_BYPASS=true,APP_SCHEDULING_ENABLED=false,SPRING_FLYWAY_POSTGRESQL_TRANSACTIONAL_LOCK=false" \
+        --set-secrets "SPRING_DATASOURCE_URL=DATABASE_URL:latest,SPRING_DATASOURCE_USERNAME=DB_USERNAME:latest,SPRING_DATASOURCE_PASSWORD=DB_PASSWORD:latest,FLYWAY_URL=FLYWAY_URL:latest,FLYWAY_USER=FLYWAY_USER:latest,FLYWAY_PASSWORD=FLYWAY_PASSWORD:latest,PROMETHEUS_SCRAPE_TOKEN=PROMETHEUS_SCRAPE_TOKEN:latest,SPRING_REDIS_HOST=REDIS_HOST:latest,SPRING_REDIS_PORT=REDIS_PORT:latest,SPRING_REDIS_PASSWORD=REDIS_PASSWORD:latest,SPRING_REDIS_SSL_ENABLED=REDIS_SSL_ENABLED:latest,JWT_SECRET=JWT_SECRET:latest,APP_SECURITY_ENCRYPTION_KEY=APP_SECURITY_ENCRYPTION_KEY:latest,APP_CORS_ALLOWED_ORIGINS=APP_CORS_ALLOWED_ORIGINS:latest,FRONTEND_URL=FRONTEND_URL:latest,GOOGLE_CLIENT_ID=GOOGLE_CLIENT_ID:latest,GOOGLE_CLIENT_SECRET=GOOGLE_CLIENT_SECRET:latest,OPENAI_API_KEY=OPENAI_API_KEY:latest"
 
     BACKEND_URL=$(gcloud run services describe hrms-backend --region="${REGION}" --format='value(status.url)')
     print_info "Backend deployed at: $BACKEND_URL"
@@ -157,7 +205,7 @@ deploy_cloud_run() {
     # Deploy frontend
     print_info "Deploying frontend service..."
     gcloud run deploy hrms-frontend \
-        --image "gcr.io/${PROJECT_ID}/hrms-frontend:latest" \
+        --image "gcr.io/${PROJECT_ID}/hrms-frontend:${IMAGE_TAG}" \
         --platform managed \
         --region "${REGION}" \
         --allow-unauthenticated \
@@ -167,7 +215,7 @@ deploy_cloud_run() {
         --max-instances 10 \
         --min-instances 0 \
         --port 3000 \
-        --set-env-vars "NEXT_PUBLIC_API_URL=${BACKEND_URL},NODE_ENV=production"
+        --set-env-vars "NEXT_PUBLIC_API_URL=${BACKEND_URL}/api/v1,NEXT_PUBLIC_ENABLE_WEBSOCKET=true,NODE_ENV=production"
 
     FRONTEND_URL=$(gcloud run services describe hrms-frontend --region="${REGION}" --format='value(status.url)')
     print_info "Frontend deployed at: $FRONTEND_URL"
@@ -180,10 +228,9 @@ deploy_cloud_run() {
 deploy_app_engine() {
     print_header "Deploying to App Engine"
 
-    cd "${PROJECT_ROOT}/platform/hrms-backend"
-    gcloud app deploy "${SCRIPT_DIR}/gcp/app.yaml" --quiet
-
-    print_info "App Engine deployment complete"
+    print_error "App Engine deploy is disabled for production: app.yaml cannot inject the required DB/Flyway secrets fail-closed."
+    print_error "Use --type cloud-run or --type gke, or add a Secret Manager-backed App Engine deployment path before enabling this target."
+    exit 1
 }
 
 deploy_gke() {
@@ -195,8 +242,10 @@ deploy_gke() {
     # Apply Kubernetes manifests
     print_info "Applying Kubernetes configurations..."
 
+    kubectl apply -f "${SCRIPT_DIR}/kubernetes/namespace.yaml"
     kubectl apply -f "${SCRIPT_DIR}/kubernetes/configmap.yaml"
-    kubectl apply -f "${SCRIPT_DIR}/kubernetes/secrets.yaml"
+    kubectl get secret hrms-secrets -n hrms
+    kubectl get secret hrms-google-drive-credentials -n hrms
     kubectl apply -f "${SCRIPT_DIR}/kubernetes/deployment.yaml"
     kubectl apply -f "${SCRIPT_DIR}/kubernetes/service.yaml"
     kubectl apply -f "${SCRIPT_DIR}/kubernetes/ingress.yaml"

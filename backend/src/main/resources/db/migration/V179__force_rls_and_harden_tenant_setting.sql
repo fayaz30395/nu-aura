@@ -121,7 +121,7 @@ END $$;
 DO $$
 BEGIN
     IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'nu_app_rls') THEN
-        GRANT CONNECT ON DATABASE neondb TO nu_app_rls;
+        EXECUTE format('GRANT CONNECT ON DATABASE %I TO nu_app_rls', current_database());
         GRANT USAGE ON SCHEMA public TO nu_app_rls;
         GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO nu_app_rls;
         GRANT USAGE, SELECT, UPDATE ON ALL SEQUENCES IN SCHEMA public TO nu_app_rls;

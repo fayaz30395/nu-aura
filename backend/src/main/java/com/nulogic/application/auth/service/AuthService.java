@@ -189,13 +189,7 @@ public class AuthService {
             // Use the user's actual tenant
             tenantId = userByEmail.get().getTenantId();
         } else if (tenantId == null) {
-            // Fallback: use the configurable default tenant when no tenant is specified.
-            // Configure APP_AUTH_DEFAULT_TENANT_ID in production to avoid relying on the demo seed.
-            if (defaultTenantId == null || defaultTenantId.isBlank()) {
-                throw new com.nulogic.common.exception.BusinessException(
-                        "Unable to determine tenant context. Please provide a valid X-Tenant-ID header or tenantId in the request.");
-            }
-            tenantId = UUID.fromString(defaultTenantId);
+            tenantId = resolvePasswordLoginFallbackTenant(request.getEmail());
         }
 
         // Set tenant context for authentication
@@ -980,6 +974,31 @@ public class AuthService {
      */
     private String resolveTenantTimezone(UUID tenantId) {
         return tenantTimeService.zoneFor(tenantId).getId();
+    }
+
+    /**
+     * Resolve a tenant for password login when tenantless email lookup is blocked
+     * by fail-closed RLS. NuLogic corporate accounts belong to the seeded NuLogic
+     * tenant; all other emails fall back to the operator-configured default.
+     */
+    private UUID resolvePasswordLoginFallbackTenant(String email) {
+        String normalizedEmail = email == null ? "" : email.trim().toLowerCase(Locale.ROOT);
+        String normalizedDomain = allowedDomain == null ? "" : allowedDomain.trim().toLowerCase(Locale.ROOT);
+
+        if (!normalizedDomain.isBlank()
+                && normalizedEmail.endsWith("@" + normalizedDomain)
+                && nulogicTenantId != null
+                && !nulogicTenantId.isBlank()) {
+            return UUID.fromString(nulogicTenantId);
+        }
+
+        // Fallback: use the configurable default tenant when no tenant is specified.
+        // Configure APP_AUTH_DEFAULT_TENANT_ID in production to avoid relying on the demo seed.
+        if (defaultTenantId == null || defaultTenantId.isBlank()) {
+            throw new com.nulogic.common.exception.BusinessException(
+                    "Unable to determine tenant context. Please provide a valid X-Tenant-ID header or tenantId in the request.");
+        }
+        return UUID.fromString(defaultTenantId);
     }
 
     /**

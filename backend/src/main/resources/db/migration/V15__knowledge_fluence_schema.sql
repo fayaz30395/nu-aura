@@ -821,6 +821,20 @@ CREATE TABLE IF NOT EXISTS document_templates
 )
   );
 
+-- V0 already creates document_templates for the document module. When V15 runs on a
+-- fresh database, CREATE TABLE IF NOT EXISTS above is skipped, so align the existing
+-- table before creating Fluence-specific indexes/comments.
+ALTER TABLE document_templates
+  ADD COLUMN IF NOT EXISTS name VARCHAR(200),
+  ADD COLUMN IF NOT EXISTS slug VARCHAR(200),
+  ADD COLUMN IF NOT EXISTS content JSONB NOT NULL DEFAULT '{}'::jsonb,
+  ADD COLUMN IF NOT EXISTS template_variables JSONB,
+  ADD COLUMN IF NOT EXISTS sample_data JSONB,
+  ADD COLUMN IF NOT EXISTS thumbnail_url VARCHAR(500),
+  ADD COLUMN IF NOT EXISTS usage_count INT NOT NULL DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS is_featured BOOLEAN NOT NULL DEFAULT FALSE,
+  ADD COLUMN IF NOT EXISTS tags VARCHAR(1000);
+
 CREATE INDEX IF NOT EXISTS idx_document_templates_tenant ON document_templates(tenant_id);
 CREATE INDEX IF NOT EXISTS idx_document_templates_category ON document_templates(category);
 CREATE INDEX IF NOT EXISTS idx_document_templates_is_active ON document_templates(is_active);

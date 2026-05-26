@@ -8,12 +8,20 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 ENV NODE_OPTIONS="--max-old-space-size=4096"
+ARG NEXT_PUBLIC_API_URL=https://api.ci.nu-aura.local/api/v1
+ARG NEXT_PUBLIC_ENABLE_WEBSOCKET=true
+ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+ENV NEXT_PUBLIC_ENABLE_WEBSOCKET=${NEXT_PUBLIC_ENABLE_WEBSOCKET}
 RUN npm run build
 
 FROM node:20-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV production
+ARG NEXT_PUBLIC_API_URL=https://api.ci.nu-aura.local/api/v1
+ARG NEXT_PUBLIC_ENABLE_WEBSOCKET=true
+ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+ENV NEXT_PUBLIC_ENABLE_WEBSOCKET=${NEXT_PUBLIC_ENABLE_WEBSOCKET}
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs

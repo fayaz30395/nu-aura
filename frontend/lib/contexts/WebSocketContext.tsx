@@ -5,7 +5,7 @@ import {Client, IMessage} from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import {useAuth} from '../hooks/useAuth';
 import {createLogger} from '../utils/logger';
-import {apiConfig} from '../config';
+import {apiConfig, isWebSocketEnabled} from '../config';
 
 const log = createLogger('WebSocket');
 
@@ -43,9 +43,9 @@ export const WebSocketProvider = ({children}: { children: React.ReactNode }) => 
   const approvalCallbacksRef = useRef<Set<(notification: Notification) => void>>(new Set());
   const connectionAttemptsRef = useRef(0);
   const lastErrorLogTimeRef = useRef<number>(0);
+  const activeTenantIdRef = useRef<string | null>(null);
   const MAX_RECONNECTION_ATTEMPTS = 5;
   const ERROR_LOG_THROTTLE_MS = 5000; // Suppress error logs for 5 seconds
-  const isWebSocketEnabled = process.env.NEXT_PUBLIC_ENABLE_WEBSOCKET === 'true';
 
   useEffect(() => {
     if (!isWebSocketEnabled) {
@@ -53,18 +53,28 @@ export const WebSocketProvider = ({children}: { children: React.ReactNode }) => 
         stompClientRef.current.deactivate();
       }
       setIsConnected(false);
+      setNotifications([]);
+      activeTenantIdRef.current = null;
       connectionAttemptsRef.current = 0;
       return;
     }
 
-    // Only connect if authenticated
-    if (!isAuthenticated || !user?.employeeId) {
+    // Only connect if authenticated with a tenant context.
+    if (!isAuthenticated || !user?.tenantId) {
       if (stompClientRef.current?.active) {
         stompClientRef.current.deactivate();
       }
+      setIsConnected(false);
+      setNotifications([]);
+      activeTenantIdRef.current = null;
       connectionAttemptsRef.current = 0;
       return;
     }
+
+    if (activeTenantIdRef.current && activeTenantIdRef.current !== user.tenantId) {
+      setNotifications([]);
+    }
+    activeTenantIdRef.current = user.tenantId;
 
     // Skip if too many failed connection attempts
     if (connectionAttemptsRef.current >= MAX_RECONNECTION_ATTEMPTS) {
@@ -92,20 +102,8 @@ export const WebSocketProvider = ({children}: { children: React.ReactNode }) => 
       setIsConnected(true);
       log.info('WebSocket connected successfully');
 
-      // Subscribe to global broadcasts
-      client.subscribe('/topic/broadcast', (message: IMessage) => {
-        handleIncomingMessage(message);
-      });
-
-      // Subscribe to user-specific notifications
-      client.subscribe(`/topic/user/${user.employeeId}`, (message: IMessage) => {
-        handleIncomingMessage(message);
-      });
-
-      // Subscribe to approval-specific notifications
-      client.subscribe(`/topic/user/${user.employeeId}/approvals`, (message: IMessage) => {
+      const handleNotificationMessage = (message: IMessage) => {
         const notification = handleIncomingMessage(message);
-        // Trigger approval-specific callbacks
         if (notification && notification.type === 'TASK_ASSIGNED') {
           approvalCallbacksRef.current.forEach(callback => {
             try {
@@ -115,6 +113,26 @@ export const WebSocketProvider = ({children}: { children: React.ReactNode }) => 
             }
           });
         }
+      };
+
+      // Backend sends user-targeted messages through convertAndSendToUser(..., "/queue/notifications", ...).
+      client.subscribe('/user/queue/notifications', handleNotificationMessage);
+
+      // Backend tenant broadcasts are tenant-scoped to preserve isolation.
+      client.subscribe(`/topic/tenant/${user.tenantId}/notifications`, handleNotificationMessage);
+
+      // Release smoke endpoint /api/ws-notifications/broadcast publishes here.
+      client.subscribe(`/topic/tenant/${user.tenantId}/broadcast`, handleNotificationMessage);
+
+      // Public, allowlisted announcements.
+      client.subscribe('/topic/announcements', handleNotificationMessage);
+
+      // Public graceful-drain signal emitted during rolling deploy shutdown.
+      client.subscribe('/topic/system.shutdown', () => {
+        log.info('WebSocket shutdown notice received; reconnecting through normal STOMP flow');
+        client.deactivate().catch((error: unknown) => {
+          log.warn('Failed to deactivate WebSocket after shutdown notice', error);
+        });
       });
     };
 
@@ -155,7 +173,7 @@ export const WebSocketProvider = ({children}: { children: React.ReactNode }) => 
         client.deactivate();
       }
     };
-  }, [isAuthenticated, isWebSocketEnabled, user?.employeeId]);
+  }, [isAuthenticated, user?.tenantId]);
 
   const handleIncomingMessage = (message: IMessage): Notification | null => {
     try {

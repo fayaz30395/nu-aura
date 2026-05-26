@@ -3,14 +3,14 @@
 import {useState} from 'react';
 import {AppLayout} from '@/components/layout';
 import {Edit2, Plus, Settings, Shield, Tag, ToggleLeft, ToggleRight, Trash2} from 'lucide-react';
-import {useForm} from 'react-hook-form';
+import {Controller, useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
-import {Drawer} from '@mantine/core';
-import {ConfirmDialog} from '@/components/ui';
-import {EmptyState} from '@/components/ui/EmptyState';
+import {Checkbox, Drawer} from '@mantine/core';
+import {Button, ConfirmDialog, EmptyState, Input, Select, Textarea} from '@/components/ui';
+import {Label} from '@/components/ui/Label';
 import {
   useAllExpenseCategories,
   useAllExpensePolicies,
@@ -180,8 +180,6 @@ export default function ExpenseSettingsPage() {
   const categories = categoriesData?.content || [];
   const policies = policiesData?.content || [];
 
-  const inputClass = 'w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2';
-
   return (
     <AppLayout>
       <PermissionGate
@@ -223,13 +221,14 @@ export default function ExpenseSettingsPage() {
                   <Tag className="w-5 h-5"/>
                   Expense Categories
                 </h2>
-                <button
+                <Button
+                  type="button"
+                  size="sm"
+                  leftIcon={<Plus className="w-4 h-4"/>}
                   onClick={openCategoryCreate}
-                  className="flex items-center gap-1.5 px-4 py-1.5 bg-accent-700 hover:bg-accent-800 text-white rounded-lg text-sm transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
-                  <Plus className="w-4 h-4"/>
                   Add Category
-                </button>
+                </Button>
               </div>
               <div
                 className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg divide-y divide-surface-200 dark:divide-surface-700">
@@ -301,13 +300,14 @@ export default function ExpenseSettingsPage() {
                   <Shield className="w-5 h-5"/>
                   Expense Policies
                 </h2>
-                <button
+                <Button
+                  type="button"
+                  size="sm"
+                  leftIcon={<Plus className="w-4 h-4"/>}
                   onClick={openPolicyCreate}
-                  className="flex items-center gap-1.5 px-4 py-1.5 bg-accent-700 hover:bg-accent-800 text-white rounded-lg text-sm transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
-                  <Plus className="w-4 h-4"/>
                   Add Policy
-                </button>
+                </Button>
               </div>
               <div
                 className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg divide-y divide-surface-200 dark:divide-surface-700">
@@ -376,57 +376,62 @@ export default function ExpenseSettingsPage() {
               <div>
                 <div className="space-y-4">
                   <div>
-                    <label htmlFor="expense-category-name" className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Name
-                      *</label>
-                    <input id="expense-category-name" {...categoryForm.register('name')} className={inputClass}/>
-                    {categoryForm.formState.errors.name &&
-                      <p className="text-danger-500 text-sm mt-1">{categoryForm.formState.errors.name.message}</p>}
+                    <Label htmlFor="expense-category-name" required className="mb-1">Name</Label>
+                    <Input
+                      id="expense-category-name"
+                      {...categoryForm.register('name')}
+                      error={categoryForm.formState.errors.name?.message}
+                    />
                   </div>
                   <div>
-                    <label htmlFor="expense-category-description"
-                      className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Description</label>
-                    <textarea id="expense-category-description" {...categoryForm.register('description')} rows={2} className={inputClass}/>
+                    <Label htmlFor="expense-category-description" className="mb-1">Description</Label>
+                    <Textarea id="expense-category-description" {...categoryForm.register('description')} rows={2}/>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label htmlFor="expense-category-max-amount" className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Max
-                        Amount</label>
-                      <input id="expense-category-max-amount" type="number" step="0.01" {...categoryForm.register('maxAmount')} className={inputClass}/>
+                      <Label htmlFor="expense-category-max-amount" className="mb-1">Max Amount</Label>
+                      <Input id="expense-category-max-amount" type="number" step="0.01" {...categoryForm.register('maxAmount')}/>
                     </div>
                     <div>
-                      <label htmlFor="expense-category-gl-code" className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">GL
-                        Code</label>
-                      <input id="expense-category-gl-code" {...categoryForm.register('glCode')} className={inputClass}/>
+                      <Label htmlFor="expense-category-gl-code" className="mb-1">GL Code</Label>
+                      <Input id="expense-category-gl-code" {...categoryForm.register('glCode')}/>
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label htmlFor="expense-category-icon-name" className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Icon
-                        Name</label>
-                      <input id="expense-category-icon-name" {...categoryForm.register('iconName')} placeholder="e.g., Plane, Hotel"
-                             className={inputClass}/>
+                      <Label htmlFor="expense-category-icon-name" className="mb-1">Icon Name</Label>
+                      <Input
+                        id="expense-category-icon-name"
+                        {...categoryForm.register('iconName')}
+                        placeholder="e.g., Plane, Hotel"
+                      />
                     </div>
                     <div>
-                      <label htmlFor="expense-category-sort-order" className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Sort
-                        Order</label>
-                      <input id="expense-category-sort-order" type="number" {...categoryForm.register('sortOrder')} className={inputClass}/>
+                      <Label htmlFor="expense-category-sort-order" className="mb-1">Sort Order</Label>
+                      <Input id="expense-category-sort-order" type="number" {...categoryForm.register('sortOrder')}/>
                     </div>
                   </div>
-                  <label className="flex items-center gap-2">
-                    <input type="checkbox" {...categoryForm.register('requiresReceipt')}
-                           className="rounded border-surface-300"/>
-                    <span className="text-sm text-surface-700 dark:text-surface-300">Requires receipt upload</span>
-                  </label>
+                  <Controller
+                    name="requiresReceipt"
+                    control={categoryForm.control}
+                    render={({field}) => (
+                      <Checkbox
+                        id="expense-category-requires-receipt"
+                        label="Requires receipt upload"
+                        checked={field.value}
+                        onChange={(event) => field.onChange(event.currentTarget.checked)}
+                      />
+                    )}
+                  />
                 </div>
               </div>
               <div className="flex items-center justify-end gap-2 pt-4 mt-4 border-t border-surface-200 dark:border-surface-700">
-                <button type="button" onClick={() => setShowCategoryModal(false)}
-                        className="px-4 py-2 text-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">Cancel
-                </button>
-                <button type="submit" disabled={createCategoryMutation.isPending || updateCategoryMutation.isPending}
-                        className="px-4 py-2 bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                <Button type="button" variant="ghost" onClick={() => setShowCategoryModal(false)}>
+                  Cancel
+                </Button>
+                <Button type="submit" isLoading={createCategoryMutation.isPending || updateCategoryMutation.isPending}>
                   {editingCategory ? 'Update' : 'Create'}
-                </button>
+                </Button>
               </div>
             </form>
           </Drawer>
@@ -443,83 +448,94 @@ export default function ExpenseSettingsPage() {
               <div>
                 <div className="space-y-4">
                   <div>
-                    <label htmlFor="expense-policy-name" className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Policy Name
-                      *</label>
-                    <input id="expense-policy-name" {...policyForm.register('name')} className={inputClass}/>
-                    {policyForm.formState.errors.name &&
-                      <p className="text-danger-500 text-sm mt-1">{policyForm.formState.errors.name.message}</p>}
+                    <Label htmlFor="expense-policy-name" required className="mb-1">Policy Name</Label>
+                    <Input
+                      id="expense-policy-name"
+                      {...policyForm.register('name')}
+                      error={policyForm.formState.errors.name?.message}
+                    />
                   </div>
                   <div>
-                    <label htmlFor="expense-policy-description"
-                      className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Description</label>
-                    <textarea id="expense-policy-description" {...policyForm.register('description')} rows={2} className={inputClass}/>
+                    <Label htmlFor="expense-policy-description" className="mb-1">Description</Label>
+                    <Textarea id="expense-policy-description" {...policyForm.register('description')} rows={2}/>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label htmlFor="expense-policy-daily-limit" className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Daily
-                        Limit</label>
-                      <input id="expense-policy-daily-limit" type="number" step="0.01" {...policyForm.register('dailyLimit')} className={inputClass}/>
+                      <Label htmlFor="expense-policy-daily-limit" className="mb-1">Daily Limit</Label>
+                      <Input id="expense-policy-daily-limit" type="number" step="0.01" {...policyForm.register('dailyLimit')}/>
                     </div>
                     <div>
-                      <label htmlFor="expense-policy-monthly-limit" className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Monthly
-                        Limit</label>
-                      <input id="expense-policy-monthly-limit" type="number" step="0.01" {...policyForm.register('monthlyLimit')} className={inputClass}/>
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label htmlFor="expense-policy-yearly-limit" className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Yearly
-                        Limit</label>
-                      <input id="expense-policy-yearly-limit" type="number" step="0.01" {...policyForm.register('yearlyLimit')} className={inputClass}/>
-                    </div>
-                    <div>
-                      <label htmlFor="expense-policy-single-claim-limit" className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Per Claim
-                        Limit</label>
-                      <input id="expense-policy-single-claim-limit" type="number" step="0.01" {...policyForm.register('singleClaimLimit')}
-                             className={inputClass}/>
+                      <Label htmlFor="expense-policy-monthly-limit" className="mb-1">Monthly Limit</Label>
+                      <Input id="expense-policy-monthly-limit" type="number" step="0.01" {...policyForm.register('monthlyLimit')}/>
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label htmlFor="expense-policy-receipt-required-above" className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Receipt
-                        Required Above</label>
-                      <input id="expense-policy-receipt-required-above" type="number" step="0.01" {...policyForm.register('receiptRequiredAbove')}
-                             className={inputClass}/>
+                      <Label htmlFor="expense-policy-yearly-limit" className="mb-1">Yearly Limit</Label>
+                      <Input id="expense-policy-yearly-limit" type="number" step="0.01" {...policyForm.register('yearlyLimit')}/>
                     </div>
                     <div>
-                      <label htmlFor="expense-policy-currency"
-                        className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Currency</label>
-                      <select id="expense-policy-currency" {...policyForm.register('currency')} className={inputClass}>
+                      <Label htmlFor="expense-policy-single-claim-limit" className="mb-1">Per Claim Limit</Label>
+                      <Input
+                        id="expense-policy-single-claim-limit"
+                        type="number"
+                        step="0.01"
+                        {...policyForm.register('singleClaimLimit')}
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="expense-policy-receipt-required-above" className="mb-1">Receipt Required Above</Label>
+                      <Input
+                        id="expense-policy-receipt-required-above"
+                        type="number"
+                        step="0.01"
+                        {...policyForm.register('receiptRequiredAbove')}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="expense-policy-currency" className="mb-1">Currency</Label>
+                      <Select id="expense-policy-currency" {...policyForm.register('currency')}>
                         <option value="INR">INR</option>
                         <option value="USD">USD</option>
                         <option value="EUR">EUR</option>
                         <option value="GBP">GBP</option>
-                      </select>
+                      </Select>
                     </div>
                   </div>
-                  <label className="flex items-center gap-2">
-                    <input type="checkbox" {...policyForm.register('requiresPreApproval')}
-                           className="rounded border-surface-300"/>
-                    <span className="text-sm text-surface-700 dark:text-surface-300">Requires pre-approval for amounts above threshold</span>
-                  </label>
+                  <Controller
+                    name="requiresPreApproval"
+                    control={policyForm.control}
+                    render={({field}) => (
+                      <Checkbox
+                        id="expense-policy-requires-pre-approval"
+                        label="Requires pre-approval for amounts above threshold"
+                        checked={field.value}
+                        onChange={(event) => field.onChange(event.currentTarget.checked)}
+                      />
+                    )}
+                  />
                   {policyForm.watch('requiresPreApproval') && (
                     <div>
-                      <label htmlFor="expense-policy-pre-approval-threshold" className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Pre-Approval
-                        Threshold</label>
-                      <input id="expense-policy-pre-approval-threshold" type="number" step="0.01" {...policyForm.register('preApprovalThreshold')}
-                             className={inputClass}/>
+                      <Label htmlFor="expense-policy-pre-approval-threshold" className="mb-1">Pre-Approval Threshold</Label>
+                      <Input
+                        id="expense-policy-pre-approval-threshold"
+                        type="number"
+                        step="0.01"
+                        {...policyForm.register('preApprovalThreshold')}
+                      />
                     </div>
                   )}
                 </div>
               </div>
               <div className="flex items-center justify-end gap-2 pt-4 mt-4 border-t border-surface-200 dark:border-surface-700">
-                <button type="button" onClick={() => setShowPolicyModal(false)}
-                        className="px-4 py-2 text-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">Cancel
-                </button>
-                <button type="submit" disabled={createPolicyMutation.isPending || updatePolicyMutation.isPending}
-                        className="px-4 py-2 bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                <Button type="button" variant="ghost" onClick={() => setShowPolicyModal(false)}>
+                  Cancel
+                </Button>
+                <Button type="submit" isLoading={createPolicyMutation.isPending || updatePolicyMutation.isPending}>
                   {editingPolicy ? 'Update' : 'Create'}
-                </button>
+                </Button>
               </div>
             </form>
           </Drawer>

@@ -6,16 +6,21 @@ import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.config.AbstractPostgresIntegrationTest;
 import com.nulogic.config.TestSecurityConfig;
+import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.leave.LeaveRequest;
 import com.nulogic.domain.leave.LeaveType;
 import com.nulogic.domain.user.RoleScope;
+import com.nulogic.domain.user.User;
+import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import com.nulogic.infrastructure.leave.repository.LeaveRequestRepository;
 import com.nulogic.infrastructure.leave.repository.LeaveTypeRepository;
+import com.nulogic.infrastructure.user.repository.UserRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -50,9 +55,9 @@ class LeaveRequestScopeIntegrationTest extends AbstractPostgresIntegrationTest {
     private static final String BASE_URL = "/api/v1/leave-requests";
     private static final UUID TENANT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
     // Employee IDs for testing
-    private static final UUID CURRENT_EMPLOYEE_ID = UUID.randomUUID();
-    private static final UUID REPORTEE_EMPLOYEE_ID = UUID.randomUUID();
-    private static final UUID OTHER_EMPLOYEE_ID = UUID.randomUUID();
+    private UUID currentEmployeeId;
+    private UUID reporteeEmployeeId;
+    private UUID otherEmployeeId;
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -61,6 +66,12 @@ class LeaveRequestScopeIntegrationTest extends AbstractPostgresIntegrationTest {
     private LeaveRequestRepository leaveRequestRepository;
     @Autowired
     private LeaveTypeRepository leaveTypeRepository;
+    @Autowired
+    private EmployeeRepository employeeRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
     private LeaveType casualLeave;
     private LeaveRequest ownLeaveRequest;
     private LeaveRequest reporteeLeaveRequest;
@@ -71,13 +82,21 @@ class LeaveRequestScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         SecurityContext.clear();
         TenantContext.setCurrentTenant(TENANT_ID);
 
+        currentEmployeeId = UUID.randomUUID();
+        reporteeEmployeeId = UUID.randomUUID();
+        otherEmployeeId = UUID.randomUUID();
+
+        createEmployee(currentEmployeeId, "CURRENT");
+        createEmployee(reporteeEmployeeId, "REPORTEE");
+        createEmployee(otherEmployeeId, "OTHER");
+
         // Create leave type
         casualLeave = createLeaveType("Casual Leave", "CL");
 
         // Create leave requests for different employees
-        ownLeaveRequest = createLeaveRequest(CURRENT_EMPLOYEE_ID, "My vacation");
-        reporteeLeaveRequest = createLeaveRequest(REPORTEE_EMPLOYEE_ID, "Reportee vacation");
-        otherLeaveRequest = createLeaveRequest(OTHER_EMPLOYEE_ID, "Other's vacation");
+        ownLeaveRequest = createLeaveRequest(currentEmployeeId, "My vacation");
+        reporteeLeaveRequest = createLeaveRequest(reporteeEmployeeId, "Reportee vacation");
+        otherLeaveRequest = createLeaveRequest(otherEmployeeId, "Other's vacation");
     }
 
     @AfterEach
@@ -103,6 +122,50 @@ class LeaveRequestScopeIntegrationTest extends AbstractPostgresIntegrationTest {
     }
 
     // ==================== TEAM Scope Tests ====================
+
+    private Employee createEmployee(UUID employeeId, String employeeCodePrefix) {
+        UUID id = employeeId == null ? UUID.randomUUID() : employeeId;
+        User user = User.builder()
+                .email(employeeCodePrefix.toLowerCase() + "-" + id.toString().substring(0, 8) + "@example.com")
+                .firstName("Test")
+                .lastName("User")
+                .passwordHash("test-hash")
+                .status(User.UserStatus.ACTIVE)
+                .build();
+        user.setTenantId(TENANT_ID);
+        User savedUser = userRepository.saveAndFlush(user);
+
+        Employee employee = Employee.builder()
+                .employeeCode(employeeCodePrefix + "-" + UUID.randomUUID().toString().substring(0, 6))
+                .firstName("Test")
+                .lastName("Employee")
+                .joiningDate(LocalDate.now().minusDays(30))
+                .employmentType(Employee.EmploymentType.FULL_TIME)
+                .status(Employee.EmployeeStatus.ACTIVE)
+                .user(savedUser)
+                .build();
+        employee.setTenantId(TENANT_ID);
+
+        jdbcTemplate.update("""
+                        INSERT INTO employees (
+                            id, tenant_id, employee_code, user_id, first_name, last_name,
+                            joining_date, employment_type, status, created_at, updated_at, version, is_deleted
+                        )
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW(), 0, false)
+                        ON CONFLICT (id) DO NOTHING
+                        """,
+                id,
+                TENANT_ID,
+                employee.getEmployeeCode(),
+                savedUser.getId(),
+                employee.getFirstName(),
+                employee.getLastName(),
+                employee.getJoiningDate(),
+                employee.getEmploymentType().name(),
+                employee.getStatus().name());
+
+        return employeeRepository.findByIdAndTenantId(id, TENANT_ID).orElseThrow();
+    }
 
     private LeaveRequest createLeaveRequest(UUID employeeId, String reason) {
         LeaveRequest leaveRequest = LeaveRequest.builder()
@@ -231,7 +294,7 @@ class LeaveRequestScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @WithMockUser(username = "employee@test.com", roles = {"EMPLOYEE"})
         @DisplayName("SELF scope: Can access own leave request by ID")
         void canAccessOwnLeaveRequestById() throws Exception {
-            setupSelfScope(CURRENT_EMPLOYEE_ID);
+            setupSelfScope(currentEmployeeId);
 
             mockMvc.perform(get(BASE_URL + "/" + ownLeaveRequest.getId()))
                     .andExpect(status().isOk())
@@ -243,7 +306,7 @@ class LeaveRequestScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @WithMockUser(username = "employee@test.com", roles = {"EMPLOYEE"})
         @DisplayName("SELF scope: Cannot access other's leave request by ID - returns 403")
         void cannotAccessOthersLeaveRequestById() throws Exception {
-            setupSelfScope(CURRENT_EMPLOYEE_ID);
+            setupSelfScope(currentEmployeeId);
 
             mockMvc.perform(get(BASE_URL + "/" + otherLeaveRequest.getId()))
                     .andExpect(status().isForbidden());
@@ -253,9 +316,9 @@ class LeaveRequestScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @WithMockUser(username = "employee@test.com", roles = {"EMPLOYEE"})
         @DisplayName("SELF scope: Can access own leave requests by employee ID")
         void canAccessOwnLeaveRequestsByEmployeeId() throws Exception {
-            setupSelfScope(CURRENT_EMPLOYEE_ID);
+            setupSelfScope(currentEmployeeId);
 
-            mockMvc.perform(get(BASE_URL + "/employee/" + CURRENT_EMPLOYEE_ID)
+            mockMvc.perform(get(BASE_URL + "/employee/" + currentEmployeeId)
                             .param("page", "0")
                             .param("size", "10"))
                     .andExpect(status().isOk())
@@ -266,9 +329,9 @@ class LeaveRequestScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @WithMockUser(username = "employee@test.com", roles = {"EMPLOYEE"})
         @DisplayName("SELF scope: Cannot access other's leave requests by employee ID - returns 403")
         void cannotAccessOthersLeaveRequestsByEmployeeId() throws Exception {
-            setupSelfScope(CURRENT_EMPLOYEE_ID);
+            setupSelfScope(currentEmployeeId);
 
-            mockMvc.perform(get(BASE_URL + "/employee/" + OTHER_EMPLOYEE_ID)
+            mockMvc.perform(get(BASE_URL + "/employee/" + otherEmployeeId)
                             .param("page", "0")
                             .param("size", "10"))
                     .andExpect(status().isForbidden());
@@ -283,7 +346,7 @@ class LeaveRequestScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @WithMockUser(username = "manager@test.com", roles = {"MANAGER"})
         @DisplayName("TEAM scope: Can access own leave request by ID")
         void canAccessOwnLeaveRequestById() throws Exception {
-            setupTeamScope(CURRENT_EMPLOYEE_ID, Set.of(REPORTEE_EMPLOYEE_ID));
+            setupTeamScope(currentEmployeeId, Set.of(reporteeEmployeeId));
 
             mockMvc.perform(get(BASE_URL + "/" + ownLeaveRequest.getId()))
                     .andExpect(status().isOk())
@@ -294,7 +357,7 @@ class LeaveRequestScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @WithMockUser(username = "manager@test.com", roles = {"MANAGER"})
         @DisplayName("TEAM scope: Can access reportee's leave request by ID")
         void canAccessReporteeLeaveRequestById() throws Exception {
-            setupTeamScope(CURRENT_EMPLOYEE_ID, Set.of(REPORTEE_EMPLOYEE_ID));
+            setupTeamScope(currentEmployeeId, Set.of(reporteeEmployeeId));
 
             mockMvc.perform(get(BASE_URL + "/" + reporteeLeaveRequest.getId()))
                     .andExpect(status().isOk())
@@ -306,7 +369,7 @@ class LeaveRequestScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @WithMockUser(username = "manager@test.com", roles = {"MANAGER"})
         @DisplayName("TEAM scope: Cannot access non-reportee's leave request by ID - returns 403")
         void cannotAccessNonReporteeLeaveRequestById() throws Exception {
-            setupTeamScope(CURRENT_EMPLOYEE_ID, Set.of(REPORTEE_EMPLOYEE_ID));
+            setupTeamScope(currentEmployeeId, Set.of(reporteeEmployeeId));
 
             mockMvc.perform(get(BASE_URL + "/" + otherLeaveRequest.getId()))
                     .andExpect(status().isForbidden());
@@ -316,9 +379,9 @@ class LeaveRequestScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @WithMockUser(username = "manager@test.com", roles = {"MANAGER"})
         @DisplayName("TEAM scope: Can access reportee's leave requests by employee ID")
         void canAccessReporteeLeaveRequestsByEmployeeId() throws Exception {
-            setupTeamScope(CURRENT_EMPLOYEE_ID, Set.of(REPORTEE_EMPLOYEE_ID));
+            setupTeamScope(currentEmployeeId, Set.of(reporteeEmployeeId));
 
-            mockMvc.perform(get(BASE_URL + "/employee/" + REPORTEE_EMPLOYEE_ID)
+            mockMvc.perform(get(BASE_URL + "/employee/" + reporteeEmployeeId)
                             .param("page", "0")
                             .param("size", "10"))
                     .andExpect(status().isOk())
@@ -329,9 +392,9 @@ class LeaveRequestScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @WithMockUser(username = "manager@test.com", roles = {"MANAGER"})
         @DisplayName("TEAM scope: Cannot access non-reportee's leave requests by employee ID - returns 403")
         void cannotAccessNonReporteeLeaveRequestsByEmployeeId() throws Exception {
-            setupTeamScope(CURRENT_EMPLOYEE_ID, Set.of(REPORTEE_EMPLOYEE_ID));
+            setupTeamScope(currentEmployeeId, Set.of(reporteeEmployeeId));
 
-            mockMvc.perform(get(BASE_URL + "/employee/" + OTHER_EMPLOYEE_ID)
+            mockMvc.perform(get(BASE_URL + "/employee/" + otherEmployeeId)
                             .param("page", "0")
                             .param("size", "10"))
                     .andExpect(status().isForbidden());
@@ -346,7 +409,7 @@ class LeaveRequestScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @WithMockUser(username = "admin@test.com", roles = {"ADMIN"})
         @DisplayName("ALL scope: Can access any leave request by ID")
         void canAccessAnyLeaveRequestById() throws Exception {
-            setupAllScope(CURRENT_EMPLOYEE_ID);
+            setupAllScope(currentEmployeeId);
 
             // Can access own
             mockMvc.perform(get(BASE_URL + "/" + ownLeaveRequest.getId()))
@@ -368,9 +431,9 @@ class LeaveRequestScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @WithMockUser(username = "admin@test.com", roles = {"ADMIN"})
         @DisplayName("ALL scope: Can access any employee's leave requests by employee ID")
         void canAccessAnyEmployeesLeaveRequestsByEmployeeId() throws Exception {
-            setupAllScope(CURRENT_EMPLOYEE_ID);
+            setupAllScope(currentEmployeeId);
 
-            mockMvc.perform(get(BASE_URL + "/employee/" + OTHER_EMPLOYEE_ID)
+            mockMvc.perform(get(BASE_URL + "/employee/" + otherEmployeeId)
                             .param("page", "0")
                             .param("size", "10"))
                     .andExpect(status().isOk())
@@ -381,7 +444,7 @@ class LeaveRequestScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @WithMockUser(username = "admin@test.com", roles = {"ADMIN"})
         @DisplayName("ALL scope: Can list all leave requests")
         void canListAllLeaveRequests() throws Exception {
-            setupAllScope(CURRENT_EMPLOYEE_ID);
+            setupAllScope(currentEmployeeId);
 
             mockMvc.perform(get(BASE_URL)
                             .param("page", "0")
@@ -400,7 +463,7 @@ class LeaveRequestScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @WithMockUser(username = "sysadmin@test.com", roles = {"ADMIN"})
         @DisplayName("System admin: Bypasses scope checks and can access any leave request")
         void systemAdminBypassesScopeChecks() throws Exception {
-            setupSystemAdmin(CURRENT_EMPLOYEE_ID);
+            setupSystemAdmin(currentEmployeeId);
 
             // Even with SELF scope, system admin can access others
             mockMvc.perform(get(BASE_URL + "/" + otherLeaveRequest.getId()))
@@ -430,7 +493,7 @@ class LeaveRequestScopeIntegrationTest extends AbstractPostgresIntegrationTest {
             // LOCATION scope requires looking up the employee to check their location.
             // Since test employee IDs don't exist in DB, location check fails.
             // This tests the strict enforcement: no employee record = no access.
-            setupLocationScope(CURRENT_EMPLOYEE_ID, Set.of(SHARED_LOCATION_ID));
+            setupLocationScope(currentEmployeeId, Set.of(SHARED_LOCATION_ID));
 
             mockMvc.perform(get(BASE_URL + "/" + ownLeaveRequest.getId()))
                     .andExpect(status().isForbidden());
@@ -442,7 +505,7 @@ class LeaveRequestScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         void cannotAccessOtherLocationLeaveRequest() throws Exception {
             // User has access to SHARED_LOCATION_ID, but other employee doesn't exist in DB.
             // Since employee lookup returns empty, location check returns false.
-            setupLocationScope(CURRENT_EMPLOYEE_ID, Set.of(SHARED_LOCATION_ID));
+            setupLocationScope(currentEmployeeId, Set.of(SHARED_LOCATION_ID));
 
             mockMvc.perform(get(BASE_URL + "/" + otherLeaveRequest.getId()))
                     .andExpect(status().isForbidden());
@@ -453,9 +516,9 @@ class LeaveRequestScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @DisplayName("LOCATION scope: Cannot access by employee ID when employee not in DB")
         void cannotAccessByEmployeeIdWhenNotInDb() throws Exception {
             // LOCATION scope validation requires employee to exist in DB.
-            setupLocationScope(CURRENT_EMPLOYEE_ID, Set.of(SHARED_LOCATION_ID));
+            setupLocationScope(currentEmployeeId, Set.of(SHARED_LOCATION_ID));
 
-            mockMvc.perform(get(BASE_URL + "/employee/" + CURRENT_EMPLOYEE_ID)
+            mockMvc.perform(get(BASE_URL + "/employee/" + currentEmployeeId)
                             .param("page", "0")
                             .param("size", "10"))
                     .andExpect(status().isForbidden());
@@ -465,10 +528,10 @@ class LeaveRequestScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @WithMockUser(username = "locationadmin@test.com", roles = {"LOCATION_ADMIN"})
         @DisplayName("LOCATION scope: Cannot access other employee's leave requests by employee ID")
         void cannotAccessOtherEmployeeLeaveRequestsByEmployeeId() throws Exception {
-            // User has LOCATION scope but OTHER_EMPLOYEE_ID is not in user's locations (and not in DB)
-            setupLocationScope(CURRENT_EMPLOYEE_ID, Set.of(SHARED_LOCATION_ID));
+            // User has LOCATION scope but otherEmployeeId is not in user's locations (and not in DB)
+            setupLocationScope(currentEmployeeId, Set.of(SHARED_LOCATION_ID));
 
-            mockMvc.perform(get(BASE_URL + "/employee/" + OTHER_EMPLOYEE_ID)
+            mockMvc.perform(get(BASE_URL + "/employee/" + otherEmployeeId)
                             .param("page", "0")
                             .param("size", "10"))
                     .andExpect(status().isForbidden());
@@ -483,7 +546,7 @@ class LeaveRequestScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @WithMockUser(username = "customuser@test.com", roles = {"CUSTOM_ROLE"})
         @DisplayName("CUSTOM scope: Can access own leave request")
         void canAccessOwnLeaveRequest() throws Exception {
-            setupCustomScope(CURRENT_EMPLOYEE_ID, Set.of(REPORTEE_EMPLOYEE_ID), null, null);
+            setupCustomScope(currentEmployeeId, Set.of(reporteeEmployeeId), null, null);
 
             mockMvc.perform(get(BASE_URL + "/" + ownLeaveRequest.getId()))
                     .andExpect(status().isOk())
@@ -494,8 +557,8 @@ class LeaveRequestScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @WithMockUser(username = "customuser@test.com", roles = {"CUSTOM_ROLE"})
         @DisplayName("CUSTOM scope: Can access leave request of custom target employee")
         void canAccessCustomTargetEmployeeLeaveRequest() throws Exception {
-            // User has CUSTOM scope with REPORTEE_EMPLOYEE_ID in their custom targets
-            setupCustomScope(CURRENT_EMPLOYEE_ID, Set.of(REPORTEE_EMPLOYEE_ID), null, null);
+            // User has CUSTOM scope with reporteeEmployeeId in their custom targets
+            setupCustomScope(currentEmployeeId, Set.of(reporteeEmployeeId), null, null);
 
             mockMvc.perform(get(BASE_URL + "/" + reporteeLeaveRequest.getId()))
                     .andExpect(status().isOk())
@@ -507,8 +570,8 @@ class LeaveRequestScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @WithMockUser(username = "customuser@test.com", roles = {"CUSTOM_ROLE"})
         @DisplayName("CUSTOM scope: Cannot access leave request of non-target employee")
         void cannotAccessNonTargetEmployeeLeaveRequest() throws Exception {
-            // User has CUSTOM scope with REPORTEE_EMPLOYEE_ID, but not OTHER_EMPLOYEE_ID
-            setupCustomScope(CURRENT_EMPLOYEE_ID, Set.of(REPORTEE_EMPLOYEE_ID), null, null);
+            // User has CUSTOM scope with reporteeEmployeeId, but not otherEmployeeId
+            setupCustomScope(currentEmployeeId, Set.of(reporteeEmployeeId), null, null);
 
             mockMvc.perform(get(BASE_URL + "/" + otherLeaveRequest.getId()))
                     .andExpect(status().isForbidden());
@@ -518,9 +581,9 @@ class LeaveRequestScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @WithMockUser(username = "customuser@test.com", roles = {"CUSTOM_ROLE"})
         @DisplayName("CUSTOM scope: Can access custom target employee's leave requests by employee ID")
         void canAccessCustomTargetLeaveRequestsByEmployeeId() throws Exception {
-            setupCustomScope(CURRENT_EMPLOYEE_ID, Set.of(REPORTEE_EMPLOYEE_ID), null, null);
+            setupCustomScope(currentEmployeeId, Set.of(reporteeEmployeeId), null, null);
 
-            mockMvc.perform(get(BASE_URL + "/employee/" + REPORTEE_EMPLOYEE_ID)
+            mockMvc.perform(get(BASE_URL + "/employee/" + reporteeEmployeeId)
                             .param("page", "0")
                             .param("size", "10"))
                     .andExpect(status().isOk())
@@ -531,9 +594,9 @@ class LeaveRequestScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @WithMockUser(username = "customuser@test.com", roles = {"CUSTOM_ROLE"})
         @DisplayName("CUSTOM scope: Cannot access non-target employee's leave requests by employee ID")
         void cannotAccessNonTargetLeaveRequestsByEmployeeId() throws Exception {
-            setupCustomScope(CURRENT_EMPLOYEE_ID, Set.of(REPORTEE_EMPLOYEE_ID), null, null);
+            setupCustomScope(currentEmployeeId, Set.of(reporteeEmployeeId), null, null);
 
-            mockMvc.perform(get(BASE_URL + "/employee/" + OTHER_EMPLOYEE_ID)
+            mockMvc.perform(get(BASE_URL + "/employee/" + otherEmployeeId)
                             .param("page", "0")
                             .param("size", "10"))
                     .andExpect(status().isForbidden());
@@ -544,7 +607,7 @@ class LeaveRequestScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @DisplayName("CUSTOM scope with empty targets: Can only access own")
         void customScopeWithEmptyTargetsCanOnlyAccessOwn() throws Exception {
             // CUSTOM scope with no targets set - should only be able to access own data
-            setupCustomScope(CURRENT_EMPLOYEE_ID, Collections.emptySet(), null, null);
+            setupCustomScope(currentEmployeeId, Collections.emptySet(), null, null);
 
             // Can access own
             mockMvc.perform(get(BASE_URL + "/" + ownLeaveRequest.getId()))
@@ -560,8 +623,8 @@ class LeaveRequestScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @DisplayName("CUSTOM scope: Multiple custom employee targets work correctly")
         void customScopeWithMultipleEmployeeTargets() throws Exception {
             // User has CUSTOM scope with both REPORTEE and OTHER employee as targets
-            setupCustomScope(CURRENT_EMPLOYEE_ID,
-                    Set.of(REPORTEE_EMPLOYEE_ID, OTHER_EMPLOYEE_ID), null, null);
+            setupCustomScope(currentEmployeeId,
+                    Set.of(reporteeEmployeeId, otherEmployeeId), null, null);
 
             // Can access first target
             mockMvc.perform(get(BASE_URL + "/" + reporteeLeaveRequest.getId()))
@@ -587,7 +650,7 @@ class LeaveRequestScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @WithMockUser(username = "superadmin@test.com", roles = {"SUPER_ADMIN"})
         @DisplayName("Super admin role: Bypasses scope checks and can access any leave request")
         void superAdminRoleBypassesScopeChecks() throws Exception {
-            setupSuperAdminByRole(CURRENT_EMPLOYEE_ID);
+            setupSuperAdminByRole(currentEmployeeId);
 
             // Even with SELF scope in permissions, SUPER_ADMIN role bypasses
             mockMvc.perform(get(BASE_URL + "/" + otherLeaveRequest.getId()))
@@ -599,9 +662,9 @@ class LeaveRequestScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @WithMockUser(username = "superadmin@test.com", roles = {"SUPER_ADMIN"})
         @DisplayName("Super admin role: Can access any employee's leave requests")
         void superAdminCanAccessAnyEmployeeLeaveRequests() throws Exception {
-            setupSuperAdminByRole(CURRENT_EMPLOYEE_ID);
+            setupSuperAdminByRole(currentEmployeeId);
 
-            mockMvc.perform(get(BASE_URL + "/employee/" + OTHER_EMPLOYEE_ID)
+            mockMvc.perform(get(BASE_URL + "/employee/" + otherEmployeeId)
                             .param("page", "0")
                             .param("size", "10"))
                     .andExpect(status().isOk())
@@ -617,7 +680,7 @@ class LeaveRequestScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @WithMockUser(username = "employee@test.com", roles = {"EMPLOYEE"})
         @DisplayName("Non-existent leave request returns 404")
         void nonExistentLeaveRequestReturnsNotFound() throws Exception {
-            setupSelfScope(CURRENT_EMPLOYEE_ID);
+            setupSelfScope(currentEmployeeId);
             UUID nonExistentId = UUID.randomUUID();
 
             mockMvc.perform(get(BASE_URL + "/" + nonExistentId))
@@ -629,7 +692,7 @@ class LeaveRequestScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @DisplayName("TEAM scope with no reportees - can only access own")
         void teamScopeWithNoReporteesCanOnlyAccessOwn() throws Exception {
             // Setup TEAM scope with empty reportee set
-            setupTeamScope(CURRENT_EMPLOYEE_ID, Collections.emptySet());
+            setupTeamScope(currentEmployeeId, Collections.emptySet());
 
             // Can access own
             mockMvc.perform(get(BASE_URL + "/" + ownLeaveRequest.getId()))

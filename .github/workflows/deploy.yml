@@ -30,6 +30,12 @@ env:
   # default 'staging' target so downstream jobs have non-empty strings.
   DEPLOY_REF: ${{ github.event.inputs.ref || github.ref_name }}
   DEPLOY_TARGET: ${{ github.event.inputs.target || 'staging' }}
+  FRONTEND_STAGING_API_URL: https://api.hrms-staging.nulogic.com/api/v1
+  FRONTEND_PRODUCTION_API_URL: https://api.hrms.nulogic.com/api/v1
+
+permissions:
+  contents: read
+  id-token: write
 
 jobs:
   build:
@@ -38,6 +44,8 @@ jobs:
     outputs:
       backend-image: ${{ steps.images.outputs.backend }}
       frontend-image: ${{ steps.images.outputs.frontend }}
+      image-registry: ${{ steps.images.outputs.registry }}
+      image-tag: ${{ steps.images.outputs.tag }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -47,8 +55,11 @@ jobs:
         id: images
         run: |
           SHA=$(git rev-parse --short HEAD)
-          echo "backend=gcr.io/${GCP_PROJECT_ID}/nu-aura-backend:${SHA}" >> $GITHUB_OUTPUT
-          echo "frontend=gcr.io/${GCP_PROJECT_ID}/nu-aura-frontend:${SHA}" >> $GITHUB_OUTPUT
+          REGISTRY="gcr.io/${GCP_PROJECT_ID}"
+          echo "registry=${REGISTRY}" >> $GITHUB_OUTPUT
+          echo "tag=${SHA}" >> $GITHUB_OUTPUT
+          echo "backend=${REGISTRY}/hrms-backend:${SHA}" >> $GITHUB_OUTPUT
+          echo "frontend=${REGISTRY}/hrms-frontend:${SHA}" >> $GITHUB_OUTPUT
 
       - name: Auth GCP
         uses: google-github-actions/auth@v2
@@ -65,8 +76,30 @@ jobs:
 
       - name: Build + push frontend
         run: |
-          docker build -f frontend/Dockerfile -t ${{ steps.images.outputs.frontend }} ./frontend
+          FRONTEND_API_URL="${FRONTEND_STAGING_API_URL}"
+          if [ "${DEPLOY_TARGET}" = "production" ]; then
+            FRONTEND_API_URL="${FRONTEND_PRODUCTION_API_URL}"
+          fi
+          docker build \
+            --build-arg NEXT_PUBLIC_API_URL="${FRONTEND_API_URL}" \
+            --build-arg NEXT_PUBLIC_ENABLE_WEBSOCKET=true \
+            -f frontend/Dockerfile \
+            -t ${{ steps.images.outputs.frontend }} \
+            ./frontend
           docker push ${{ steps.images.outputs.frontend }}
+
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3.5.0
+        with:
+          cosign-release: 'v2.2.4'
+
+      - name: Sign images
+        env:
+          COSIGN_EXPERIMENTAL: "1"
+        run: |
+          set -euo pipefail
+          cosign sign --yes "${{ steps.images.outputs.backend }}"
+          cosign sign --yes "${{ steps.images.outputs.frontend }}"
 
   deploy-staging:
     name: Deploy → staging
@@ -110,18 +143,29 @@ jobs:
           for IMAGE in "${{ needs.build.outputs.backend-image }}" "${{ needs.build.outputs.frontend-image }}"; do
             echo "Verifying signature for ${IMAGE}"
             cosign verify \
-              --certificate-identity-regexp "https://github.com/${{ github.repository }}/.github/workflows/cosign-sign.yml@.*" \
+              --certificate-identity-regexp "https://github.com/${{ github.repository }}/.github/workflows/deploy.yml@.*" \
               --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
               "${IMAGE}"
           done
 
+      - name: Prepare Helm prerequisites
+        run: |
+          set -euo pipefail
+          kubectl create namespace hrms --dry-run=client -o yaml | kubectl apply -f -
+          kubectl -n hrms get secret hrms-secrets
+          kubectl -n hrms get secret hrms-google-drive-credentials
+          kubectl apply -f infra/deployment/kubernetes/configmap.yaml
+
       - name: Helm upgrade staging
         run: |
           helm upgrade --install nu-aura infra/deployment/helm/hrms \
-            --namespace nu-aura --create-namespace \
+            --namespace hrms \
             --values infra/deployment/helm/hrms/values-staging.yaml \
-            --set backend.image=${{ needs.build.outputs.backend-image }} \
-            --set frontend.image=${{ needs.build.outputs.frontend-image }}
+            --set imageRegistry=${{ needs.build.outputs.image-registry }} \
+            --set backend.image.repository=hrms-backend \
+            --set backend.image.tag=${{ needs.build.outputs.image-tag }} \
+            --set frontend.image.repository=hrms-frontend \
+            --set frontend.image.tag=${{ needs.build.outputs.image-tag }}
 
       # T2-09: green-light gate. Production is a manual workflow_dispatch with
       # GitHub Environment approval; this smoke confirms staging is healthy
@@ -142,7 +186,7 @@ jobs:
 
   deploy-production:
     name: Deploy → production
-    needs: deploy-staging
+    needs: [build, deploy-staging]
     # Prod NEVER auto-runs from push-to-main. Manual workflow_dispatch only,
     # AND the `production` environment below has required_reviewers configured
     # in GitHub repo settings as the second manual gate.
@@ -183,18 +227,29 @@ jobs:
           for IMAGE in "${{ needs.build.outputs.backend-image }}" "${{ needs.build.outputs.frontend-image }}"; do
             echo "Verifying signature for ${IMAGE}"
             cosign verify \
-              --certificate-identity-regexp "https://github.com/${{ github.repository }}/.github/workflows/cosign-sign.yml@.*" \
+              --certificate-identity-regexp "https://github.com/${{ github.repository }}/.github/workflows/deploy.yml@.*" \
               --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
               "${IMAGE}"
           done
 
+      - name: Prepare Helm prerequisites
+        run: |
+          set -euo pipefail
+          kubectl create namespace hrms --dry-run=client -o yaml | kubectl apply -f -
+          kubectl -n hrms get secret hrms-secrets
+          kubectl -n hrms get secret hrms-google-drive-credentials
+          kubectl apply -f infra/deployment/kubernetes/configmap.yaml
+
       - name: Helm upgrade production
         run: |
           helm upgrade --install nu-aura infra/deployment/helm/hrms \
-            --namespace nu-aura --create-namespace \
+            --namespace hrms \
             --values infra/deployment/helm/hrms/values-prod.yaml \
-            --set backend.image=${{ needs.build.outputs.backend-image }} \
-            --set frontend.image=${{ needs.build.outputs.frontend-image }}
+            --set imageRegistry=${{ needs.build.outputs.image-registry }} \
+            --set backend.image.repository=hrms-backend \
+            --set backend.image.tag=${{ needs.build.outputs.image-tag }} \
+            --set frontend.image.repository=hrms-frontend \
+            --set frontend.image.tag=${{ needs.build.outputs.image-tag }}
 
       - name: Smoke test /actuator/health
         run: |

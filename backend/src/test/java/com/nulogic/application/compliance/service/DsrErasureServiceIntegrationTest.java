@@ -9,6 +9,7 @@ import com.nulogic.domain.attendance.AttendanceRecord;
 import com.nulogic.domain.compliance.DsrRequest;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.leave.LeaveRequest;
+import com.nulogic.domain.leave.LeaveType;
 import com.nulogic.domain.payroll.EmployeePayrollRecord;
 import com.nulogic.domain.payroll.GlobalPayrollRun;
 import com.nulogic.domain.payroll.SalaryStructure;
@@ -19,6 +20,7 @@ import com.nulogic.infrastructure.attendance.repository.AttendanceRecordReposito
 import com.nulogic.infrastructure.compliance.DsrRequestRepository;
 import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import com.nulogic.infrastructure.leave.repository.LeaveRequestRepository;
+import com.nulogic.infrastructure.leave.repository.LeaveTypeRepository;
 import com.nulogic.infrastructure.payroll.repository.EmployeePayrollRecordRepository;
 import com.nulogic.infrastructure.payroll.repository.GlobalPayrollRunRepository;
 import com.nulogic.infrastructure.payroll.repository.SalaryStructureRepository;
@@ -99,6 +101,9 @@ class DsrErasureServiceIntegrationTest extends AbstractPostgresIntegrationTest {
     private LeaveRequestRepository leaveRequestRepository;
 
     @Autowired
+    private LeaveTypeRepository leaveTypeRepository;
+
+    @Autowired
     private AttendanceRecordRepository attendanceRecordRepository;
 
     @Autowired
@@ -110,6 +115,7 @@ class DsrErasureServiceIntegrationTest extends AbstractPostgresIntegrationTest {
     private UUID dataSubjectUserId;
     private UUID dataSubjectEmployeeId;
     private UUID dsrRequestId;
+    private UUID seededLeaveTypeId;
     private UUID seededLeaveId;
     private UUID seededAttendanceId;
     private UUID seededSalaryId;
@@ -170,10 +176,13 @@ class DsrErasureServiceIntegrationTest extends AbstractPostgresIntegrationTest {
         salary.setTenantId(TENANT_ID);
         seededSalaryId = salaryStructureRepository.save(salary).getId();
 
+        LeaveType leaveType = createLeaveType();
+        seededLeaveTypeId = leaveType.getId();
+
         // 4) Leave request — should be soft-deleted by the cascade.
         LeaveRequest leave = LeaveRequest.builder()
                 .employeeId(dataSubjectEmployeeId)
-                .leaveTypeId(UUID.randomUUID())
+                .leaveTypeId(seededLeaveTypeId)
                 .requestNumber("LR-" + UUID.randomUUID().toString().substring(0, 8))
                 .startDate(LocalDate.now().minusDays(10))
                 .endDate(LocalDate.now().minusDays(9))
@@ -215,6 +224,9 @@ class DsrErasureServiceIntegrationTest extends AbstractPostgresIntegrationTest {
             if (seededLeaveId != null) {
                 leaveRequestRepository.findById(seededLeaveId).ifPresent(leaveRequestRepository::delete);
             }
+            if (seededLeaveTypeId != null) {
+                leaveTypeRepository.findById(seededLeaveTypeId).ifPresent(leaveTypeRepository::delete);
+            }
             if (seededPayrollRecordId != null) {
                 payrollRecordRepository.findById(seededPayrollRecordId).ifPresent(payrollRecordRepository::delete);
             }
@@ -240,6 +252,19 @@ class DsrErasureServiceIntegrationTest extends AbstractPostgresIntegrationTest {
         }
         TenantContext.clear();
         SecurityContext.clear();
+    }
+
+    private LeaveType createLeaveType() {
+        LeaveType leaveType = LeaveType.builder()
+                .leaveName("DSR Erasure Leave")
+                .leaveCode("DSR_ERASE-" + UUID.randomUUID().toString().substring(0, 8))
+                .annualQuota(new BigDecimal("20.00"))
+                .isPaid(true)
+                .isActive(true)
+                .accrualType(LeaveType.AccrualType.YEARLY)
+                .build();
+        leaveType.setTenantId(TENANT_ID);
+        return leaveTypeRepository.save(leaveType);
     }
 
     @Test

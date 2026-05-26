@@ -4,6 +4,7 @@ import com.nulogic.api.project.dto.TimeEntryRequest;
 import com.nulogic.api.project.dto.TimeEntryResponse;
 import com.nulogic.application.project.validation.TimeEntryValidator;
 import com.nulogic.application.workflow.service.WorkflowService;
+import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.project.ProjectMember;
@@ -11,6 +12,7 @@ import com.nulogic.domain.project.TimeEntry;
 import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import com.nulogic.infrastructure.project.repository.HrmsProjectMemberRepository;
 import com.nulogic.infrastructure.project.repository.ProjectTimeEntryRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -64,6 +66,7 @@ class ProjectTimesheetBillingTest {
     private UUID projectId;
     private UUID employeeId;
     private Employee employee;
+    private MockedStatic<SecurityContext> securityContext;
 
     @BeforeEach
     void setUp() {
@@ -78,6 +81,18 @@ class ProjectTimesheetBillingTest {
                 .build();
         employee.setId(employeeId);
         employee.setTenantId(tenantId);
+
+        securityContext = mockStatic(SecurityContext.class);
+        securityContext.when(SecurityContext::getCurrentEmployeeId).thenReturn(employeeId);
+        securityContext.when(SecurityContext::isSuperAdmin).thenReturn(false);
+        securityContext.when(() -> SecurityContext.hasAnyPermission(any())).thenReturn(false);
+    }
+
+    @AfterEach
+    void tearDown() {
+        if (securityContext != null) {
+            securityContext.close();
+        }
     }
 
     @Test

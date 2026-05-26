@@ -9,6 +9,7 @@ import com.nulogic.application.notification.service.NotificationService;
 import com.nulogic.application.notification.service.WebSocketNotificationService;
 import com.nulogic.application.workflow.callback.ApprovalCallbackHandler;
 import com.nulogic.application.workflow.service.WorkflowService;
+import com.nulogic.common.exception.BusinessException;
 import com.nulogic.common.exception.ValidationException;
 import com.nulogic.common.security.DataScopeService;
 import com.nulogic.common.security.Permission;
@@ -545,14 +546,13 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
                 .orElse(null);
 
         if (claim == null) {
-            log.warn("Expense claim {} not found for approval callback", entityId);
-            return;
+            throw new BusinessException("Expense claim not found for approval callback: " + entityId);
         }
 
         if (claim.getStatus() != ExpenseClaim.ExpenseStatus.SUBMITTED &&
                 claim.getStatus() != ExpenseClaim.ExpenseStatus.PENDING_APPROVAL) {
-            log.warn("Expense claim {} already in status {}, skipping approval", entityId, claim.getStatus());
-            return;
+            throw new BusinessException("Expense claim " + entityId
+                    + " is not pending approval. Current status: " + claim.getStatus());
         }
 
         claim.approve(approvedBy, tenantTimeService.now(claim.getTenantId()));
@@ -571,14 +571,13 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
                 .orElse(null);
 
         if (claim == null) {
-            log.warn("Expense claim {} not found for rejection callback", entityId);
-            return;
+            throw new BusinessException("Expense claim not found for rejection callback: " + entityId);
         }
 
         if (claim.getStatus() != ExpenseClaim.ExpenseStatus.SUBMITTED &&
                 claim.getStatus() != ExpenseClaim.ExpenseStatus.PENDING_APPROVAL) {
-            log.warn("Expense claim {} already in status {}, skipping rejection", entityId, claim.getStatus());
-            return;
+            throw new BusinessException("Expense claim " + entityId
+                    + " is not pending rejection. Current status: " + claim.getStatus());
         }
 
         claim.reject(rejectedBy, reason, tenantTimeService.now(claim.getTenantId()));
@@ -591,23 +590,18 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
     // ======================== Claim Number Generation ========================
 
     private void startExpenseApprovalWorkflow(ExpenseClaim claim, UUID tenantId) {
-        try {
-            String employeeName = employeeRepository.findByIdAndTenantId(claim.getEmployeeId(), tenantId)
-                    .map(emp -> emp.getFirstName() + " " + emp.getLastName())
-                    .orElse("Employee");
+        String employeeName = employeeRepository.findByIdAndTenantId(claim.getEmployeeId(), tenantId)
+                .map(emp -> emp.getFirstName() + " " + emp.getLastName())
+                .orElse("Employee");
 
-            WorkflowExecutionRequest workflowRequest = new WorkflowExecutionRequest();
-            workflowRequest.setEntityType(WorkflowDefinition.EntityType.EXPENSE_CLAIM);
-            workflowRequest.setEntityId(claim.getId());
-            workflowRequest.setTitle("Expense Approval: " + employeeName + " - " + claim.getClaimNumber());
-            workflowRequest.setAmount(claim.getAmount());
+        WorkflowExecutionRequest workflowRequest = new WorkflowExecutionRequest();
+        workflowRequest.setEntityType(WorkflowDefinition.EntityType.EXPENSE_CLAIM);
+        workflowRequest.setEntityId(claim.getId());
+        workflowRequest.setTitle("Expense Approval: " + employeeName + " - " + claim.getClaimNumber());
+        workflowRequest.setAmount(claim.getAmount());
 
-            workflowService.startWorkflow(workflowRequest);
-            log.info("Workflow started for expense claim: {}", claim.getClaimNumber());
-        } catch (Exception e) { // Intentional broad catch — service error boundary
-            log.warn("Could not start approval workflow for expense claim {}: {}",
-                    claim.getClaimNumber(), e.getMessage());
-        }
+        workflowService.startWorkflow(workflowRequest);
+        log.info("Workflow started for expense claim: {}", claim.getClaimNumber());
     }
 
     private String generateClaimNumber(UUID tenantId) {

@@ -46,6 +46,7 @@ spring:
     redis:
       host: ${DEV_REDIS_HOST:localhost}
       port: ${DEV_REDIS_PORT:6379}
+      password: ${DEV_REDIS_PASSWORD:${SPRING_REDIS_PASSWORD:}}
 
   mail:
     host: smtp.gmail.com
@@ -110,6 +111,7 @@ app:
         # that can bypass RLS. Keep the canary visible, but do not block browser
         # E2E startup unless explicitly requested.
         fail-on-bypass: ${RLS_PROBE_FAIL_ON_BYPASS:false}
+        allow-bootstrap-skip: ${RLS_PROBE_ALLOW_BOOTSTRAP_SKIP:true}
 
   # Dev/E2E should not mutate approval workflow state on server startup.
   approval:

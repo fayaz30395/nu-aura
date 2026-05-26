@@ -188,7 +188,7 @@ CREATE TABLE IF NOT EXISTS permissions
   gen_random_uuid
 (
 ),
-  tenant_id UUID NOT NULL,
+  tenant_id UUID,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW
 (
 ),

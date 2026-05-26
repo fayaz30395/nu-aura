@@ -201,15 +201,10 @@ const AppLayout: React.FC<AppLayoutProps> = ({
 
   // ── Permission-based sidebar filtering ──────────────────────────────
   // SuperAdmin users see every item; other users only see items whose
-  // requiredPermission they possess. Items without a requiredPermission
-  // are always visible (e.g. Home).
+  // requiredPermission they possess. During partial auth hydration, permission
+  // checks stay false, so only ungated self-service items are visible.
   // Wrapped in useCallback to keep referential stability for the useMemo below.
   const filterSidebarItems = useCallback((items: SidebarItem[]): SidebarItem[] => {
-    if (!isReady) {
-      // During hydration, show the raw menu to avoid flicker
-      return items;
-    }
-
     const filterItem = (item: SidebarItem): SidebarItem | null => {
       if (!isSuperAdmin) {
         if (item.requiredPermission && !hasPermission(item.requiredPermission)) {
@@ -235,7 +230,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
     return items
       .map((item) => filterItem(item))
       .filter((item): item is SidebarItem => item !== null);
-  }, [isReady, isSuperAdmin, hasPermission]);
+  }, [isSuperAdmin, hasPermission]);
 
   // Filter sections by active app, then by RBAC permissions, then drop empty sections.
   // allowedSectionIds is derived inside useMemo so it doesn't create a new array

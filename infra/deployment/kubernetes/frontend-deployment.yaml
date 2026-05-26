@@ -79,6 +79,13 @@ spec:
                   name: hrms-config
                   key: NEXT_PUBLIC_DEMO_MODE
 
+            # ── Realtime notifications ────────────────────────────────────────────────
+            - name: NEXT_PUBLIC_ENABLE_WEBSOCKET
+              valueFrom:
+                configMapKeyRef:
+                  name: hrms-config
+                  key: NEXT_PUBLIC_ENABLE_WEBSOCKET
+
             # ── Analytics ─────────────────────────────────────────────────────────────
             - name: NEXT_PUBLIC_ENABLE_ANALYTICS
               valueFrom:

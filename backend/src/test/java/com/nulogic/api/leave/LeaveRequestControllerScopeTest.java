@@ -1,6 +1,8 @@
 package com.nulogic.api.leave;
 
 import com.nulogic.api.leave.controller.LeaveRequestController;
+import com.nulogic.api.leave.dto.LeaveRequestResponse;
+import com.nulogic.api.leave.mapper.LeaveRequestMapper;
 import com.nulogic.application.employee.service.EmployeeService;
 import com.nulogic.application.leave.service.LeaveRequestService;
 import com.nulogic.common.security.DataScopeService;
@@ -10,6 +12,7 @@ import com.nulogic.common.security.TenantContext;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.leave.LeaveRequest;
 import com.nulogic.domain.user.RoleScope;
+import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -44,7 +47,11 @@ class LeaveRequestControllerScopeTest {
     @Mock
     private EmployeeService employeeService;
     @Mock
+    private EmployeeRepository employeeRepository;
+    @Mock
     private DataScopeService dataScopeService;
+    @Mock
+    private LeaveRequestMapper leaveRequestMapper;
     @InjectMocks
     private LeaveRequestController leaveRequestController;
     private UUID tenantId;
@@ -101,6 +108,20 @@ class LeaveRequestControllerScopeTest {
                 .build();
         otherLeaveRequest.setId(UUID.randomUUID());
         otherLeaveRequest.setTenantId(tenantId);
+
+        when(leaveRequestMapper.toResponse(any(LeaveRequest.class))).thenAnswer(invocation -> {
+            LeaveRequest leaveRequest = invocation.getArgument(0);
+            LeaveRequestResponse response = new LeaveRequestResponse();
+            response.setId(leaveRequest.getId());
+            response.setEmployeeId(leaveRequest.getEmployeeId());
+            response.setLeaveTypeId(leaveRequest.getLeaveTypeId());
+            response.setStartDate(leaveRequest.getStartDate());
+            response.setEndDate(leaveRequest.getEndDate());
+            response.setTotalDays(leaveRequest.getTotalDays());
+            response.setReason(leaveRequest.getReason());
+            response.setStatus(leaveRequest.getStatus() == null ? "UNKNOWN" : leaveRequest.getStatus().name());
+            return response;
+        });
     }
 
     private void setupSecurityContext(UUID employeeId, RoleScope scope, boolean isAdmin) {

@@ -63,6 +63,8 @@ class ExecutiveDashboardServiceTest {
     void setUp() {
         tenantContextMock = mockStatic(TenantContext.class);
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(TENANT_ID);
+        tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(TENANT_ID);
+        when(tenantTimeService.today(TENANT_ID)).thenReturn(LocalDate.of(2026, 5, 24));
 
         // Default stubs for all repository calls used across multiple tests
         when(employeeRepository.countByTenantIdAndStatus(eq(TENANT_ID), eq(Employee.EmployeeStatus.ACTIVE)))

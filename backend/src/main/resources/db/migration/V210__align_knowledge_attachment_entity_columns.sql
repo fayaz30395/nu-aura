@@ -1,0 +1,11 @@
+-- Align knowledge_attachments with KnowledgeAttachment/BaseEntity mappings.
+
+ALTER TABLE knowledge_attachments
+  ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  ADD COLUMN IF NOT EXISTS created_by UUID,
+  ADD COLUMN IF NOT EXISTS updated_by UUID,
+  ADD COLUMN IF NOT EXISTS version BIGINT NOT NULL DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
+  ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ,
+  ADD COLUMN IF NOT EXISTS object_name VARCHAR(1000),
+  ADD COLUMN IF NOT EXISTS content_type_enum VARCHAR(20);

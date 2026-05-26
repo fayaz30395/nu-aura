@@ -88,6 +88,7 @@ const baseRules = {
   'react-hooks/component-hook-factories': 'off',
   'react-hooks/config': 'off',
   'react-hooks/error-boundaries': 'off',
+  'react-hooks/exhaustive-deps': 'warn',
   'react-hooks/gating': 'off',
   'react-hooks/globals': 'off',
   'react-hooks/immutability': 'off',

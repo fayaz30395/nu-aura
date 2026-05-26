@@ -6,7 +6,7 @@ on:
 
 env:
   JAVA_VERSION: '21'
-  NODE_VERSION: '18'
+  NODE_VERSION: '20'
 
 jobs:
   backend-validate:
@@ -67,7 +67,8 @@ jobs:
         working-directory: frontend
         run: npm run build
         env:
-          NEXT_PUBLIC_API_URL: http://localhost:8080/api/v1
+          NEXT_PUBLIC_API_URL: https://api.ci.nu-aura.local/api/v1
+          NEXT_PUBLIC_ENABLE_WEBSOCKET: 'true'
 
   compose-validate:
     name: docker-compose config
@@ -77,9 +78,19 @@ jobs:
       - name: Validate compose files
         env:
           REDIS_PASSWORD: stub
+          SPRING_REDIS_PASSWORD: stub
           POSTGRES_PASSWORD: stub
           POSTGRES_USER: stub
           POSTGRES_DB: stub
+          FLYWAY_USER: stub
+          FLYWAY_PASSWORD: stub
+          SPRING_DATASOURCE_PASSWORD: stub
+          PROMETHEUS_SCRAPE_TOKEN: stub
+          GOOGLE_DRIVE_ROOT_FOLDER_ID: stub
+          GOOGLE_DRIVE_CREDENTIALS_FILE: /tmp/google-drive-credentials.json
+          NEXT_PUBLIC_API_URL: https://api.ci.nu-aura.local/api/v1
+          APP_SECURITY_ENCRYPTION_KEY: stub
+          ELASTIC_PASSWORD: stub
           JWT_SECRET: stub
         run: |
           docker compose config > /dev/null

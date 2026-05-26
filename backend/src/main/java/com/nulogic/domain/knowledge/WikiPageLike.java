@@ -14,7 +14,7 @@ import java.util.UUID;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "wiki_page_likes", indexes = {
-        @Index(name = "idx_wiki_page_likes_tenant_page", columnList = "tenantId,wikiPageId")
+        @Index(name = "idx_wiki_page_likes_tenant_page", columnList = "tenant_id,wiki_page_id")
 })
 @Getter
 @Setter

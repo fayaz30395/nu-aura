@@ -8,10 +8,13 @@ import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.config.AbstractPostgresIntegrationTest;
 import com.nulogic.config.TestSecurityConfig;
+import com.nulogic.domain.employee.Department;
+import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.recruitment.Candidate;
 import com.nulogic.domain.recruitment.Interview;
 import com.nulogic.domain.recruitment.JobOpening;
 import com.nulogic.domain.user.RoleScope;
+import com.nulogic.infrastructure.employee.repository.DepartmentRepository;
 import com.nulogic.infrastructure.recruitment.repository.CandidateRepository;
 import com.nulogic.infrastructure.recruitment.repository.InterviewRepository;
 import com.nulogic.infrastructure.recruitment.repository.JobOpeningRepository;
@@ -23,6 +26,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,9 +69,15 @@ class RecruitmentControllerTest extends AbstractPostgresIntegrationTest {
     CandidateRepository candidateRepository;
     @Autowired
     InterviewRepository interviewRepository;
+    @Autowired
+    DepartmentRepository departmentRepository;
+    @Autowired
+    JdbcTemplate jdbcTemplate;
 
     @BeforeEach
     void setUpSuperAdminContext() {
+        seedAuthenticatedPrincipal();
+
         Map<String, RoleScope> permissions = new HashMap<>();
         permissions.put(Permission.SYSTEM_ADMIN, RoleScope.ALL);
         SecurityContext.setCurrentUser(USER_ID, EMPLOYEE_ID, Set.of("SUPER_ADMIN"), permissions);
@@ -122,7 +132,7 @@ class RecruitmentControllerTest extends AbstractPostgresIntegrationTest {
     @Test
     @DisplayName("UC-HIRE-002 happy: move candidate stage returns 200 with updated stage")
     void ucHire002_moveCandidateStage_returns200() throws Exception {
-        Candidate c = saveCandidate("CAND-" + uuid6(), Candidate.RecruitmentStage.SCREENING);
+        Candidate c = saveCandidate("CAND-" + uuid6(), Candidate.RecruitmentStage.PANEL_REVIEW);
 
         MoveStageRequest req = MoveStageRequest.builder()
                 .stage(Candidate.RecruitmentStage.INTERVIEW)
@@ -139,7 +149,7 @@ class RecruitmentControllerTest extends AbstractPostgresIntegrationTest {
     @Test
     @DisplayName("UC-HIRE-002 negative: move to null stage returns 400")
     void ucHire002_invalidStage_returns400() throws Exception {
-        Candidate c = saveCandidate("CAND-" + uuid6(), Candidate.RecruitmentStage.SCREENING);
+        Candidate c = saveCandidate("CAND-" + uuid6(), Candidate.RecruitmentStage.PANEL_REVIEW);
 
         mockMvc.perform(put(BASE + "/candidates/{id}/stage", c.getId())
                         .contentType(MediaType.APPLICATION_JSON)
@@ -268,8 +278,8 @@ class RecruitmentControllerTest extends AbstractPostgresIntegrationTest {
         saveJobOpening("PUB-JOB-" + uuid6());
         SecurityContext.clear();
 
-        // /api/public/careers/jobs is the public career portal endpoint (permitAll in SecurityConfig)
-        mockMvc.perform(get("/api/public/careers/jobs"))
+        // /api/v1/public/careers/jobs is the public career portal endpoint (permitAll in SecurityConfig)
+        mockMvc.perform(get("/api/v1/public/careers/jobs"))
                 .andExpect(status().isOk());
     }
 
@@ -335,7 +345,7 @@ class RecruitmentControllerTest extends AbstractPostgresIntegrationTest {
         JobOpeningRequest r = new JobOpeningRequest();
         r.setJobCode(code);
         r.setJobTitle("Software Engineer");
-        r.setDepartmentId(UUID.randomUUID());
+        r.setDepartmentId(createDepartment().getId());
         r.setLocation("Bangalore");
         r.setEmploymentType(JobOpening.EmploymentType.FULL_TIME);
         r.setStatus(JobOpening.JobStatus.OPEN);
@@ -350,6 +360,7 @@ class RecruitmentControllerTest extends AbstractPostgresIntegrationTest {
         jo.setTenantId(TENANT_ID);
         jo.setJobCode(code);
         jo.setJobTitle("Software Engineer");
+        jo.setDepartmentId(createDepartment().getId());
         jo.setLocation("Bangalore");
         jo.setEmploymentType(JobOpening.EmploymentType.FULL_TIME);
         jo.setStatus(JobOpening.JobStatus.OPEN);
@@ -365,7 +376,7 @@ class RecruitmentControllerTest extends AbstractPostgresIntegrationTest {
     }
 
     private Candidate saveCandidateForJob(String code, UUID jobId) {
-        return saveCandidateForJobWithStage(code, jobId, Candidate.RecruitmentStage.SCREENING);
+        return saveCandidateForJobWithStage(code, jobId, Candidate.RecruitmentStage.PANEL_REVIEW);
     }
 
     private Candidate saveCandidateForJobWithStage(String code, UUID jobId, Candidate.RecruitmentStage stage) {
@@ -413,5 +424,53 @@ class RecruitmentControllerTest extends AbstractPostgresIntegrationTest {
         iv.setInterviewerId(EMPLOYEE_ID);
         iv.setStatus(Interview.InterviewStatus.SCHEDULED);
         return interviewRepository.save(iv);
+    }
+
+    private void seedAuthenticatedPrincipal() {
+        jdbcTemplate.update("""
+                        INSERT INTO users (
+                            id, tenant_id, email, first_name, last_name, password_hash, status,
+                            auth_provider, mfa_enabled, created_at, updated_at, version, is_deleted
+                        )
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, false, NOW(), NOW(), 0, false)
+                        ON CONFLICT (id) DO NOTHING
+                        """,
+                USER_ID,
+                TENANT_ID,
+                "recruitment-admin@example.com",
+                "Recruitment",
+                "Admin",
+                "test-hash",
+                "ACTIVE",
+                "LOCAL");
+
+        jdbcTemplate.update("""
+                        INSERT INTO employees (
+                            id, tenant_id, employee_code, user_id, first_name, last_name,
+                            joining_date, employment_type, status, created_at, updated_at, version, is_deleted
+                        )
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW(), 0, false)
+                        ON CONFLICT (id) DO NOTHING
+                        """,
+                EMPLOYEE_ID,
+                TENANT_ID,
+                "REC-ADMIN",
+                USER_ID,
+                "Recruitment",
+                "Admin",
+                LocalDate.now().minusYears(1),
+                Employee.EmploymentType.FULL_TIME.name(),
+                Employee.EmployeeStatus.ACTIVE.name());
+    }
+
+    private Department createDepartment() {
+        Department department = Department.builder()
+                .code("REC-DEPT-" + uuid6())
+                .name("Recruitment Department")
+                .type(Department.DepartmentType.HR)
+                .isActive(true)
+                .build();
+        department.setTenantId(TENANT_ID);
+        return departmentRepository.save(department);
     }
 }

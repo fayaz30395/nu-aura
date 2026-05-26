@@ -15,10 +15,13 @@ import org.testcontainers.utility.DockerImageName;
  */
 public abstract class AbstractPostgresIntegrationTest {
 
+    private static final String TEST_ENCRYPTED_STRING_CONVERTER_KEY =
+            "MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=";
+
     private static final DockerImageName POSTGRES_IMAGE =
             DockerImageName.parse("postgres:16-alpine");
 
-    @SuppressWarnings("resource") // singleton container; lifecycle owned by Testcontainers Ryuk
+    @SuppressWarnings("resource") // singleton container; lifecycle owned by the forked test JVM
     protected static final PostgreSQLContainer<?> POSTGRES = new PostgreSQLContainer<>(POSTGRES_IMAGE)
             .withDatabaseName("nuaura_test")
             .withUsername("test")
@@ -26,18 +29,26 @@ public abstract class AbstractPostgresIntegrationTest {
             .withReuse(true);
 
     static {
-        POSTGRES.start();
+        System.setProperty("ENCRYPTION_KEY", TEST_ENCRYPTED_STRING_CONVERTER_KEY);
+        System.setProperty("APP_SECURITY_ENCRYPTION_KEY", TEST_ENCRYPTED_STRING_CONVERTER_KEY);
     }
 
     @DynamicPropertySource
     static void registerDatasource(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", POSTGRES::getJdbcUrl);
-        registry.add("spring.datasource.username", POSTGRES::getUsername);
-        registry.add("spring.datasource.password", POSTGRES::getPassword);
+        registry.add("spring.datasource.url", () -> postgres().getJdbcUrl());
+        registry.add("spring.datasource.username", () -> postgres().getUsername());
+        registry.add("spring.datasource.password", () -> postgres().getPassword());
         registry.add("spring.datasource.driver-class-name", () -> "org.postgresql.Driver");
         registry.add("spring.datasource.replica.url", () -> "");
-        registry.add("spring.flyway.url", POSTGRES::getJdbcUrl);
-        registry.add("spring.flyway.user", POSTGRES::getUsername);
-        registry.add("spring.flyway.password", POSTGRES::getPassword);
+        registry.add("spring.flyway.url", () -> postgres().getJdbcUrl());
+        registry.add("spring.flyway.user", () -> postgres().getUsername());
+        registry.add("spring.flyway.password", () -> postgres().getPassword());
+    }
+
+    private static synchronized PostgreSQLContainer<?> postgres() {
+        if (!POSTGRES.isRunning()) {
+            POSTGRES.start();
+        }
+        return POSTGRES;
     }
 }

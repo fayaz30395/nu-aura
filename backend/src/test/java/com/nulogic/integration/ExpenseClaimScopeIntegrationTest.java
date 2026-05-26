@@ -6,10 +6,14 @@ import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.config.AbstractPostgresIntegrationTest;
 import com.nulogic.config.TestSecurityConfig;
+import com.nulogic.domain.attendance.OfficeLocation;
+import com.nulogic.domain.employee.Department;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.expense.ExpenseClaim;
 import com.nulogic.domain.user.RoleScope;
 import com.nulogic.domain.user.User;
+import com.nulogic.infrastructure.attendance.repository.OfficeLocationRepository;
+import com.nulogic.infrastructure.employee.repository.DepartmentRepository;
 import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import com.nulogic.infrastructure.expense.repository.ExpenseClaimRepository;
 import com.nulogic.infrastructure.user.repository.UserRepository;
@@ -18,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -59,9 +64,9 @@ class ExpenseClaimScopeIntegrationTest extends AbstractPostgresIntegrationTest {
     private static final String BASE_URL = "/api/v1/expenses";
     private static final UUID TENANT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
     // Employee IDs for testing
-    private static final UUID CURRENT_EMPLOYEE_ID = UUID.randomUUID();
-    private static final UUID REPORTEE_EMPLOYEE_ID = UUID.randomUUID();
-    private static final UUID OTHER_EMPLOYEE_ID = UUID.randomUUID();
+    private UUID currentEmployeeId;
+    private UUID reporteeEmployeeId;
+    private UUID otherEmployeeId;
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -71,7 +76,13 @@ class ExpenseClaimScopeIntegrationTest extends AbstractPostgresIntegrationTest {
     @Autowired
     private EmployeeRepository employeeRepository;
     @Autowired
+    private DepartmentRepository departmentRepository;
+    @Autowired
+    private OfficeLocationRepository officeLocationRepository;
+    @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
     private ExpenseClaim ownExpenseClaim;
     private ExpenseClaim reporteeExpenseClaim;
     private ExpenseClaim otherExpenseClaim;
@@ -81,10 +92,18 @@ class ExpenseClaimScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         SecurityContext.clear();
         TenantContext.setCurrentTenant(TENANT_ID);
 
+        currentEmployeeId = UUID.randomUUID();
+        reporteeEmployeeId = UUID.randomUUID();
+        otherEmployeeId = UUID.randomUUID();
+
+        createEmployee(currentEmployeeId, "CURRENT", null, null);
+        createEmployee(reporteeEmployeeId, "REPORTEE", null, null);
+        createEmployee(otherEmployeeId, "OTHER", null, null);
+
         // Create expense claims for different employees
-        ownExpenseClaim = createExpenseClaim(CURRENT_EMPLOYEE_ID, "My travel expense");
-        reporteeExpenseClaim = createExpenseClaim(REPORTEE_EMPLOYEE_ID, "Reportee meal expense");
-        otherExpenseClaim = createExpenseClaim(OTHER_EMPLOYEE_ID, "Other's accommodation");
+        ownExpenseClaim = createExpenseClaim(currentEmployeeId, "My travel expense");
+        reporteeExpenseClaim = createExpenseClaim(reporteeEmployeeId, "Reportee meal expense");
+        otherExpenseClaim = createExpenseClaim(otherEmployeeId, "Other's accommodation");
     }
 
     @AfterEach
@@ -113,15 +132,23 @@ class ExpenseClaimScopeIntegrationTest extends AbstractPostgresIntegrationTest {
     // ==================== TEAM Scope Tests ====================
 
     private Employee createEmployee(String employeeCodePrefix, UUID locationId, UUID departmentId) {
+        return createEmployee(UUID.randomUUID(), employeeCodePrefix, locationId, departmentId);
+    }
+
+    private Employee createEmployee(UUID employeeId, String employeeCodePrefix, UUID locationId, UUID departmentId) {
+        UUID id = employeeId == null ? UUID.randomUUID() : employeeId;
+        ensureOfficeLocation(locationId);
+        ensureDepartment(departmentId);
+
         User user = User.builder()
-                .email(employeeCodePrefix.toLowerCase() + "@example.com")
+                .email(employeeCodePrefix.toLowerCase() + "-" + id.toString().substring(0, 8) + "@example.com")
                 .firstName("Test")
                 .lastName("User")
                 .passwordHash("test-hash")
                 .status(User.UserStatus.ACTIVE)
                 .build();
         user.setTenantId(TENANT_ID);
-        User savedUser = userRepository.save(user);
+        User savedUser = userRepository.saveAndFlush(user);
 
         Employee employee = Employee.builder()
                 .employeeCode(employeeCodePrefix + "-" + UUID.randomUUID().toString().substring(0, 6))
@@ -135,7 +162,82 @@ class ExpenseClaimScopeIntegrationTest extends AbstractPostgresIntegrationTest {
                 .user(savedUser)
                 .build();
         employee.setTenantId(TENANT_ID);
-        return employeeRepository.save(employee);
+
+        jdbcTemplate.update("""
+                        INSERT INTO employees (
+                            id, tenant_id, employee_code, user_id, first_name, last_name,
+                            joining_date, department_id, office_location_id, employment_type,
+                            status, created_at, updated_at, version, is_deleted
+                        )
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW(), 0, false)
+                        ON CONFLICT (id) DO NOTHING
+                        """,
+                id,
+                TENANT_ID,
+                employee.getEmployeeCode(),
+                savedUser.getId(),
+                employee.getFirstName(),
+                employee.getLastName(),
+                employee.getJoiningDate(),
+                departmentId,
+                locationId,
+                employee.getEmploymentType().name(),
+                employee.getStatus().name());
+
+        return employeeRepository.findByIdAndTenantId(id, TENANT_ID).orElseThrow();
+    }
+
+    private void ensureDepartment(UUID departmentId) {
+        if (departmentId == null || departmentRepository.existsById(departmentId)) {
+            return;
+        }
+
+        Department department = Department.builder()
+                .code("DEPT-" + departmentId.toString().substring(0, 8))
+                .name("Department " + departmentId.toString().substring(0, 8))
+                .isActive(true)
+                .build();
+        jdbcTemplate.update("""
+                        INSERT INTO departments (
+                            id, tenant_id, code, name, is_active, created_at, updated_at, version, is_deleted
+                        )
+                        VALUES (?, ?, ?, ?, true, NOW(), NOW(), 0, false)
+                        ON CONFLICT (id) DO NOTHING
+                        """,
+                departmentId,
+                TENANT_ID,
+                department.getCode(),
+                department.getName());
+    }
+
+    private void ensureOfficeLocation(UUID locationId) {
+        if (locationId == null || officeLocationRepository.existsById(locationId)) {
+            return;
+        }
+
+        OfficeLocation location = OfficeLocation.builder()
+                .locationCode("LOC-" + locationId.toString().substring(0, 8))
+                .locationName("Location " + locationId.toString().substring(0, 8))
+                .latitude(BigDecimal.ZERO)
+                .longitude(BigDecimal.ZERO)
+                .geofenceRadiusMeters(100)
+                .isActive(true)
+                .build();
+        jdbcTemplate.update("""
+                        INSERT INTO office_locations (
+                            id, tenant_id, location_code, location_name, latitude, longitude,
+                            geofence_radius_meters, is_active, created_at, updated_at, version, is_deleted
+                        )
+                        VALUES (?, ?, ?, ?, ?, ?, ?, true, NOW(), NOW(), 0, false)
+                        ON CONFLICT (id) DO NOTHING
+                        """,
+                locationId,
+                TENANT_ID,
+                location.getLocationCode(),
+                location.getLocationName(),
+                location.getLatitude(),
+                location.getLongitude(),
+                location.getGeofenceRadiusMeters());
     }
 
     // ==================== ALL Scope Tests ====================
@@ -269,7 +371,7 @@ class ExpenseClaimScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @WithMockUser(username = "employee@test.com", roles = {"EMPLOYEE"})
         @DisplayName("SELF scope: Can access own expense claim by ID")
         void canAccessOwnExpenseClaimById() throws Exception {
-            setupSelfScope(CURRENT_EMPLOYEE_ID);
+            setupSelfScope(currentEmployeeId);
 
             mockMvc.perform(get(BASE_URL + "/" + ownExpenseClaim.getId()))
                     .andExpect(status().isOk())
@@ -281,7 +383,7 @@ class ExpenseClaimScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @WithMockUser(username = "employee@test.com", roles = {"EMPLOYEE"})
         @DisplayName("SELF scope: Cannot access other's expense claim by ID - returns 403")
         void cannotAccessOthersExpenseClaimById() throws Exception {
-            setupSelfScope(CURRENT_EMPLOYEE_ID);
+            setupSelfScope(currentEmployeeId);
 
             mockMvc.perform(get(BASE_URL + "/" + otherExpenseClaim.getId()))
                     .andExpect(status().isForbidden());
@@ -291,9 +393,9 @@ class ExpenseClaimScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @WithMockUser(username = "employee@test.com", roles = {"EMPLOYEE"})
         @DisplayName("SELF scope: Can access own expense claims by employee ID")
         void canAccessOwnExpenseClaimsByEmployeeId() throws Exception {
-            setupSelfScope(CURRENT_EMPLOYEE_ID);
+            setupSelfScope(currentEmployeeId);
 
-            mockMvc.perform(get(BASE_URL + "/employees/" + CURRENT_EMPLOYEE_ID)
+            mockMvc.perform(get(BASE_URL + "/employees/" + currentEmployeeId)
                             .param("page", "0")
                             .param("size", "10"))
                     .andExpect(status().isOk())
@@ -304,9 +406,9 @@ class ExpenseClaimScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @WithMockUser(username = "employee@test.com", roles = {"EMPLOYEE"})
         @DisplayName("SELF scope: Cannot access other's expense claims by employee ID - returns 403")
         void cannotAccessOthersExpenseClaimsByEmployeeId() throws Exception {
-            setupSelfScope(CURRENT_EMPLOYEE_ID);
+            setupSelfScope(currentEmployeeId);
 
-            mockMvc.perform(get(BASE_URL + "/employees/" + OTHER_EMPLOYEE_ID)
+            mockMvc.perform(get(BASE_URL + "/employees/" + otherEmployeeId)
                             .param("page", "0")
                             .param("size", "10"))
                     .andExpect(status().isForbidden());
@@ -320,7 +422,7 @@ class ExpenseClaimScopeIntegrationTest extends AbstractPostgresIntegrationTest {
             Map<String, RoleScope> permissions = new HashMap<>();
             permissions.put(Permission.EXPENSE_VIEW, RoleScope.SELF);
             permissions.put(Permission.EXPENSE_CREATE, RoleScope.SELF);
-            SecurityContext.setCurrentUser(UUID.randomUUID(), CURRENT_EMPLOYEE_ID, Set.of("EMPLOYEE"), permissions);
+            SecurityContext.setCurrentUser(UUID.randomUUID(), currentEmployeeId, Set.of("EMPLOYEE"), permissions);
             SecurityContext.setCurrentTenantId(TENANT_ID);
 
             // Test getAllExpenseClaims - should return only own expenses
@@ -329,7 +431,7 @@ class ExpenseClaimScopeIntegrationTest extends AbstractPostgresIntegrationTest {
                             .param("size", "10"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.content").isArray())
-                    .andExpect(jsonPath("$.content[?(@.employeeId == '" + CURRENT_EMPLOYEE_ID + "')]").exists());
+                    .andExpect(jsonPath("$.content[?(@.employeeId == '" + currentEmployeeId + "')]").exists());
 
             // Test getExpenseClaimsByStatus - should return only own expenses with that status
             mockMvc.perform(get(BASE_URL + "/status/DRAFT")
@@ -365,7 +467,7 @@ class ExpenseClaimScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @WithMockUser(username = "manager@test.com", roles = {"MANAGER"})
         @DisplayName("TEAM scope: Can access own expense claim by ID")
         void canAccessOwnExpenseClaimById() throws Exception {
-            setupTeamScope(CURRENT_EMPLOYEE_ID, Set.of(REPORTEE_EMPLOYEE_ID));
+            setupTeamScope(currentEmployeeId, Set.of(reporteeEmployeeId));
 
             mockMvc.perform(get(BASE_URL + "/" + ownExpenseClaim.getId()))
                     .andExpect(status().isOk())
@@ -376,7 +478,7 @@ class ExpenseClaimScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @WithMockUser(username = "manager@test.com", roles = {"MANAGER"})
         @DisplayName("TEAM scope: Can access reportee's expense claim by ID")
         void canAccessReporteeExpenseClaimById() throws Exception {
-            setupTeamScope(CURRENT_EMPLOYEE_ID, Set.of(REPORTEE_EMPLOYEE_ID));
+            setupTeamScope(currentEmployeeId, Set.of(reporteeEmployeeId));
 
             mockMvc.perform(get(BASE_URL + "/" + reporteeExpenseClaim.getId()))
                     .andExpect(status().isOk())
@@ -388,7 +490,7 @@ class ExpenseClaimScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @WithMockUser(username = "manager@test.com", roles = {"MANAGER"})
         @DisplayName("TEAM scope: Cannot access non-reportee's expense claim by ID - returns 403")
         void cannotAccessNonReporteeExpenseClaimById() throws Exception {
-            setupTeamScope(CURRENT_EMPLOYEE_ID, Set.of(REPORTEE_EMPLOYEE_ID));
+            setupTeamScope(currentEmployeeId, Set.of(reporteeEmployeeId));
 
             mockMvc.perform(get(BASE_URL + "/" + otherExpenseClaim.getId()))
                     .andExpect(status().isForbidden());
@@ -398,9 +500,9 @@ class ExpenseClaimScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @WithMockUser(username = "manager@test.com", roles = {"MANAGER"})
         @DisplayName("TEAM scope: Can access reportee's expense claims by employee ID")
         void canAccessReporteeExpenseClaimsByEmployeeId() throws Exception {
-            setupTeamScope(CURRENT_EMPLOYEE_ID, Set.of(REPORTEE_EMPLOYEE_ID));
+            setupTeamScope(currentEmployeeId, Set.of(reporteeEmployeeId));
 
-            mockMvc.perform(get(BASE_URL + "/employees/" + REPORTEE_EMPLOYEE_ID)
+            mockMvc.perform(get(BASE_URL + "/employees/" + reporteeEmployeeId)
                             .param("page", "0")
                             .param("size", "10"))
                     .andExpect(status().isOk())
@@ -411,9 +513,9 @@ class ExpenseClaimScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @WithMockUser(username = "manager@test.com", roles = {"MANAGER"})
         @DisplayName("TEAM scope: Cannot access non-reportee's expense claims by employee ID - returns 403")
         void cannotAccessNonReporteeExpenseClaimsByEmployeeId() throws Exception {
-            setupTeamScope(CURRENT_EMPLOYEE_ID, Set.of(REPORTEE_EMPLOYEE_ID));
+            setupTeamScope(currentEmployeeId, Set.of(reporteeEmployeeId));
 
-            mockMvc.perform(get(BASE_URL + "/employees/" + OTHER_EMPLOYEE_ID)
+            mockMvc.perform(get(BASE_URL + "/employees/" + otherEmployeeId)
                             .param("page", "0")
                             .param("size", "10"))
                     .andExpect(status().isForbidden());
@@ -423,7 +525,7 @@ class ExpenseClaimScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @WithMockUser(username = "manager@test.com", roles = {"MANAGER"})
         @DisplayName("TEAM scope: Can approve reportee's expense claim")
         void canApproveReporteeExpenseClaim() throws Exception {
-            setupTeamScope(CURRENT_EMPLOYEE_ID, Set.of(REPORTEE_EMPLOYEE_ID));
+            setupTeamScope(currentEmployeeId, Set.of(reporteeEmployeeId));
 
             // Submit the expense claim first
             reporteeExpenseClaim.submit(LocalDateTime.now());
@@ -438,7 +540,7 @@ class ExpenseClaimScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @WithMockUser(username = "manager@test.com", roles = {"MANAGER"})
         @DisplayName("TEAM scope: Cannot approve non-reportee's expense claim - returns 403")
         void cannotApproveNonReporteeExpenseClaim() throws Exception {
-            setupTeamScope(CURRENT_EMPLOYEE_ID, Set.of(REPORTEE_EMPLOYEE_ID));
+            setupTeamScope(currentEmployeeId, Set.of(reporteeEmployeeId));
 
             // Submit the expense claim first
             otherExpenseClaim.submit(LocalDateTime.now());
@@ -452,7 +554,7 @@ class ExpenseClaimScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @WithMockUser(username = "manager@test.com", roles = {"MANAGER"})
         @DisplayName("TEAM scope: Can reject reportee's expense claim")
         void canRejectReporteeExpenseClaim() throws Exception {
-            setupTeamScope(CURRENT_EMPLOYEE_ID, Set.of(REPORTEE_EMPLOYEE_ID));
+            setupTeamScope(currentEmployeeId, Set.of(reporteeEmployeeId));
 
             // Submit the expense claim first
             reporteeExpenseClaim.submit(LocalDateTime.now());
@@ -468,7 +570,7 @@ class ExpenseClaimScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @WithMockUser(username = "manager@test.com", roles = {"MANAGER"})
         @DisplayName("TEAM scope: Cannot reject non-reportee's expense claim - returns 403")
         void cannotRejectNonReporteeExpenseClaim() throws Exception {
-            setupTeamScope(CURRENT_EMPLOYEE_ID, Set.of(REPORTEE_EMPLOYEE_ID));
+            setupTeamScope(currentEmployeeId, Set.of(reporteeEmployeeId));
 
             // Submit the expense claim first
             otherExpenseClaim.submit(LocalDateTime.now());
@@ -488,7 +590,7 @@ class ExpenseClaimScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @WithMockUser(username = "admin@test.com", roles = {"ADMIN"})
         @DisplayName("ALL scope: Can access any expense claim by ID")
         void canAccessAnyExpenseClaimById() throws Exception {
-            setupAllScope(CURRENT_EMPLOYEE_ID);
+            setupAllScope(currentEmployeeId);
 
             // Can access own
             mockMvc.perform(get(BASE_URL + "/" + ownExpenseClaim.getId()))
@@ -510,9 +612,9 @@ class ExpenseClaimScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @WithMockUser(username = "admin@test.com", roles = {"ADMIN"})
         @DisplayName("ALL scope: Can access any employee's expense claims by employee ID")
         void canAccessAnyEmployeesExpenseClaimsByEmployeeId() throws Exception {
-            setupAllScope(CURRENT_EMPLOYEE_ID);
+            setupAllScope(currentEmployeeId);
 
-            mockMvc.perform(get(BASE_URL + "/employees/" + OTHER_EMPLOYEE_ID)
+            mockMvc.perform(get(BASE_URL + "/employees/" + otherEmployeeId)
                             .param("page", "0")
                             .param("size", "10"))
                     .andExpect(status().isOk())
@@ -523,7 +625,7 @@ class ExpenseClaimScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @WithMockUser(username = "admin@test.com", roles = {"ADMIN"})
         @DisplayName("ALL scope: Can list all expense claims")
         void canListAllExpenseClaims() throws Exception {
-            setupAllScope(CURRENT_EMPLOYEE_ID);
+            setupAllScope(currentEmployeeId);
 
             mockMvc.perform(get(BASE_URL)
                             .param("page", "0")
@@ -537,7 +639,7 @@ class ExpenseClaimScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @WithMockUser(username = "admin@test.com", roles = {"ADMIN"})
         @DisplayName("ALL scope: Can get expense claims by status")
         void canGetExpenseClaimsByStatus() throws Exception {
-            setupAllScope(CURRENT_EMPLOYEE_ID);
+            setupAllScope(currentEmployeeId);
 
             mockMvc.perform(get(BASE_URL + "/status/DRAFT")
                             .param("page", "0")
@@ -550,7 +652,7 @@ class ExpenseClaimScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @WithMockUser(username = "admin@test.com", roles = {"ADMIN"})
         @DisplayName("ALL scope: Can get expense claims by date range")
         void canGetExpenseClaimsByDateRange() throws Exception {
-            setupAllScope(CURRENT_EMPLOYEE_ID);
+            setupAllScope(currentEmployeeId);
 
             LocalDate startDate = LocalDate.now().minusDays(30);
             LocalDate endDate = LocalDate.now().plusDays(30);
@@ -568,7 +670,7 @@ class ExpenseClaimScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @WithMockUser(username = "admin@test.com", roles = {"ADMIN"})
         @DisplayName("ALL scope: Can get pending approvals")
         void canGetPendingApprovals() throws Exception {
-            setupAllScope(CURRENT_EMPLOYEE_ID);
+            setupAllScope(currentEmployeeId);
 
             // Submit one expense claim
             ownExpenseClaim.submit(LocalDateTime.now());
@@ -590,7 +692,7 @@ class ExpenseClaimScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @WithMockUser(username = "sysadmin@test.com", roles = {"ADMIN"})
         @DisplayName("System admin: Bypasses scope checks and can access any expense claim")
         void systemAdminBypassesScopeChecks() throws Exception {
-            setupSystemAdmin(CURRENT_EMPLOYEE_ID);
+            setupSystemAdmin(currentEmployeeId);
 
             // Even with SELF scope, system admin can access others
             mockMvc.perform(get(BASE_URL + "/" + otherExpenseClaim.getId()))
@@ -617,7 +719,7 @@ class ExpenseClaimScopeIntegrationTest extends AbstractPostgresIntegrationTest {
             // LOCATION scope requires looking up the employee to check their location.
             // Since test employee IDs don't exist in DB, location check fails.
             // This tests the strict enforcement: no employee record = no access.
-            setupLocationScope(CURRENT_EMPLOYEE_ID, Set.of(SHARED_LOCATION_ID));
+            setupLocationScope(currentEmployeeId, Set.of(SHARED_LOCATION_ID));
 
             mockMvc.perform(get(BASE_URL + "/" + ownExpenseClaim.getId()))
                     .andExpect(status().isForbidden());
@@ -629,7 +731,7 @@ class ExpenseClaimScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         void cannotAccessOtherLocationExpenseClaim() throws Exception {
             // User has access to SHARED_LOCATION_ID, but other employee doesn't exist in DB.
             // Since employee lookup returns empty, location check returns false.
-            setupLocationScope(CURRENT_EMPLOYEE_ID, Set.of(SHARED_LOCATION_ID));
+            setupLocationScope(currentEmployeeId, Set.of(SHARED_LOCATION_ID));
 
             mockMvc.perform(get(BASE_URL + "/" + otherExpenseClaim.getId()))
                     .andExpect(status().isForbidden());
@@ -640,9 +742,9 @@ class ExpenseClaimScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @DisplayName("LOCATION scope: Cannot access by employee ID when employee not in DB")
         void cannotAccessByEmployeeIdWhenNotInDb() throws Exception {
             // LOCATION scope validation requires employee to exist in DB.
-            setupLocationScope(CURRENT_EMPLOYEE_ID, Set.of(SHARED_LOCATION_ID));
+            setupLocationScope(currentEmployeeId, Set.of(SHARED_LOCATION_ID));
 
-            mockMvc.perform(get(BASE_URL + "/employees/" + CURRENT_EMPLOYEE_ID)
+            mockMvc.perform(get(BASE_URL + "/employees/" + currentEmployeeId)
                             .param("page", "0")
                             .param("size", "10"))
                     .andExpect(status().isForbidden());
@@ -652,10 +754,10 @@ class ExpenseClaimScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @WithMockUser(username = "locationadmin@test.com", roles = {"LOCATION_ADMIN"})
         @DisplayName("LOCATION scope: Cannot access other employee's expense claims by employee ID")
         void cannotAccessOtherEmployeeExpenseClaimsByEmployeeId() throws Exception {
-            // User has LOCATION scope but OTHER_EMPLOYEE_ID is not in user's locations (and not in DB)
-            setupLocationScope(CURRENT_EMPLOYEE_ID, Set.of(SHARED_LOCATION_ID));
+            // User has LOCATION scope but otherEmployeeId is not in user's locations (and not in DB)
+            setupLocationScope(currentEmployeeId, Set.of(SHARED_LOCATION_ID));
 
-            mockMvc.perform(get(BASE_URL + "/employees/" + OTHER_EMPLOYEE_ID)
+            mockMvc.perform(get(BASE_URL + "/employees/" + otherEmployeeId)
                             .param("page", "0")
                             .param("size", "10"))
                     .andExpect(status().isForbidden());
@@ -670,7 +772,7 @@ class ExpenseClaimScopeIntegrationTest extends AbstractPostgresIntegrationTest {
             ExpenseClaim locationClaim = createExpenseClaim(locationEmployee.getId(), "Location claim");
             ExpenseClaim otherClaim = createExpenseClaim(otherLocationEmployee.getId(), "Other location claim");
 
-            setupLocationScope(CURRENT_EMPLOYEE_ID, Set.of(SHARED_LOCATION_ID));
+            setupLocationScope(currentEmployeeId, Set.of(SHARED_LOCATION_ID));
 
             mockMvc.perform(get(BASE_URL + "/" + locationClaim.getId()))
                     .andExpect(status().isOk())
@@ -687,7 +789,7 @@ class ExpenseClaimScopeIntegrationTest extends AbstractPostgresIntegrationTest {
             Employee locationEmployee = createEmployee("LOC-EMP-3", SHARED_LOCATION_ID, null);
             createExpenseClaim(locationEmployee.getId(), "Location list claim");
 
-            setupLocationScope(CURRENT_EMPLOYEE_ID, Set.of(SHARED_LOCATION_ID));
+            setupLocationScope(currentEmployeeId, Set.of(SHARED_LOCATION_ID));
 
             mockMvc.perform(get(BASE_URL + "/employees/" + locationEmployee.getId())
                             .param("page", "0")
@@ -713,7 +815,7 @@ class ExpenseClaimScopeIntegrationTest extends AbstractPostgresIntegrationTest {
             ExpenseClaim deptClaim = createExpenseClaim(deptEmployee.getId(), "Department claim");
             ExpenseClaim otherClaim = createExpenseClaim(otherDeptEmployee.getId(), "Other department claim");
 
-            setupDepartmentScope(CURRENT_EMPLOYEE_ID, SHARED_DEPARTMENT_ID);
+            setupDepartmentScope(currentEmployeeId, SHARED_DEPARTMENT_ID);
 
             mockMvc.perform(get(BASE_URL + "/" + deptClaim.getId()))
                     .andExpect(status().isOk())
@@ -730,7 +832,7 @@ class ExpenseClaimScopeIntegrationTest extends AbstractPostgresIntegrationTest {
             Employee deptEmployee = createEmployee("DEPT-EMP-3", null, SHARED_DEPARTMENT_ID);
             createExpenseClaim(deptEmployee.getId(), "Department list claim");
 
-            setupDepartmentScope(CURRENT_EMPLOYEE_ID, SHARED_DEPARTMENT_ID);
+            setupDepartmentScope(currentEmployeeId, SHARED_DEPARTMENT_ID);
 
             mockMvc.perform(get(BASE_URL + "/employees/" + deptEmployee.getId())
                             .param("page", "0")
@@ -748,7 +850,7 @@ class ExpenseClaimScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @WithMockUser(username = "customuser@test.com", roles = {"CUSTOM_ROLE"})
         @DisplayName("CUSTOM scope: Can access own expense claim")
         void canAccessOwnExpenseClaim() throws Exception {
-            setupCustomScope(CURRENT_EMPLOYEE_ID, Set.of(REPORTEE_EMPLOYEE_ID), null, null);
+            setupCustomScope(currentEmployeeId, Set.of(reporteeEmployeeId), null, null);
 
             mockMvc.perform(get(BASE_URL + "/" + ownExpenseClaim.getId()))
                     .andExpect(status().isOk())
@@ -759,8 +861,8 @@ class ExpenseClaimScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @WithMockUser(username = "customuser@test.com", roles = {"CUSTOM_ROLE"})
         @DisplayName("CUSTOM scope: Can access expense claim of custom target employee")
         void canAccessCustomTargetEmployeeExpenseClaim() throws Exception {
-            // User has CUSTOM scope with REPORTEE_EMPLOYEE_ID in their custom targets
-            setupCustomScope(CURRENT_EMPLOYEE_ID, Set.of(REPORTEE_EMPLOYEE_ID), null, null);
+            // User has CUSTOM scope with reporteeEmployeeId in their custom targets
+            setupCustomScope(currentEmployeeId, Set.of(reporteeEmployeeId), null, null);
 
             mockMvc.perform(get(BASE_URL + "/" + reporteeExpenseClaim.getId()))
                     .andExpect(status().isOk())
@@ -772,8 +874,8 @@ class ExpenseClaimScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @WithMockUser(username = "customuser@test.com", roles = {"CUSTOM_ROLE"})
         @DisplayName("CUSTOM scope: Cannot access expense claim of non-target employee")
         void cannotAccessNonTargetEmployeeExpenseClaim() throws Exception {
-            // User has CUSTOM scope with REPORTEE_EMPLOYEE_ID, but not OTHER_EMPLOYEE_ID
-            setupCustomScope(CURRENT_EMPLOYEE_ID, Set.of(REPORTEE_EMPLOYEE_ID), null, null);
+            // User has CUSTOM scope with reporteeEmployeeId, but not otherEmployeeId
+            setupCustomScope(currentEmployeeId, Set.of(reporteeEmployeeId), null, null);
 
             mockMvc.perform(get(BASE_URL + "/" + otherExpenseClaim.getId()))
                     .andExpect(status().isForbidden());
@@ -783,9 +885,9 @@ class ExpenseClaimScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @WithMockUser(username = "customuser@test.com", roles = {"CUSTOM_ROLE"})
         @DisplayName("CUSTOM scope: Can access custom target employee's expense claims by employee ID")
         void canAccessCustomTargetExpenseClaimsByEmployeeId() throws Exception {
-            setupCustomScope(CURRENT_EMPLOYEE_ID, Set.of(REPORTEE_EMPLOYEE_ID), null, null);
+            setupCustomScope(currentEmployeeId, Set.of(reporteeEmployeeId), null, null);
 
-            mockMvc.perform(get(BASE_URL + "/employees/" + REPORTEE_EMPLOYEE_ID)
+            mockMvc.perform(get(BASE_URL + "/employees/" + reporteeEmployeeId)
                             .param("page", "0")
                             .param("size", "10"))
                     .andExpect(status().isOk())
@@ -796,9 +898,9 @@ class ExpenseClaimScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @WithMockUser(username = "customuser@test.com", roles = {"CUSTOM_ROLE"})
         @DisplayName("CUSTOM scope: Cannot access non-target employee's expense claims by employee ID")
         void cannotAccessNonTargetExpenseClaimsByEmployeeId() throws Exception {
-            setupCustomScope(CURRENT_EMPLOYEE_ID, Set.of(REPORTEE_EMPLOYEE_ID), null, null);
+            setupCustomScope(currentEmployeeId, Set.of(reporteeEmployeeId), null, null);
 
-            mockMvc.perform(get(BASE_URL + "/employees/" + OTHER_EMPLOYEE_ID)
+            mockMvc.perform(get(BASE_URL + "/employees/" + otherEmployeeId)
                             .param("page", "0")
                             .param("size", "10"))
                     .andExpect(status().isForbidden());
@@ -809,7 +911,7 @@ class ExpenseClaimScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @DisplayName("CUSTOM scope with empty targets: Can only access own")
         void customScopeWithEmptyTargetsCanOnlyAccessOwn() throws Exception {
             // CUSTOM scope with no targets set - should only be able to access own data
-            setupCustomScope(CURRENT_EMPLOYEE_ID, Collections.emptySet(), null, null);
+            setupCustomScope(currentEmployeeId, Collections.emptySet(), null, null);
 
             // Can access own
             mockMvc.perform(get(BASE_URL + "/" + ownExpenseClaim.getId()))
@@ -825,8 +927,8 @@ class ExpenseClaimScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @DisplayName("CUSTOM scope: Multiple custom employee targets work correctly")
         void customScopeWithMultipleEmployeeTargets() throws Exception {
             // User has CUSTOM scope with both REPORTEE and OTHER employee as targets
-            setupCustomScope(CURRENT_EMPLOYEE_ID,
-                    Set.of(REPORTEE_EMPLOYEE_ID, OTHER_EMPLOYEE_ID), null, null);
+            setupCustomScope(currentEmployeeId,
+                    Set.of(reporteeEmployeeId, otherEmployeeId), null, null);
 
             // Can access first target
             mockMvc.perform(get(BASE_URL + "/" + reporteeExpenseClaim.getId()))
@@ -847,7 +949,7 @@ class ExpenseClaimScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @WithMockUser(username = "customuser@test.com", roles = {"CUSTOM_ROLE"})
         @DisplayName("CUSTOM scope: Can approve custom target employee's expense claim")
         void canApproveCustomTargetExpenseClaim() throws Exception {
-            setupCustomScope(CURRENT_EMPLOYEE_ID, Set.of(REPORTEE_EMPLOYEE_ID), null, null);
+            setupCustomScope(currentEmployeeId, Set.of(reporteeEmployeeId), null, null);
 
             // Submit the expense claim first
             reporteeExpenseClaim.submit(LocalDateTime.now());
@@ -862,7 +964,7 @@ class ExpenseClaimScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @WithMockUser(username = "customuser@test.com", roles = {"CUSTOM_ROLE"})
         @DisplayName("CUSTOM scope: Cannot approve non-target employee's expense claim")
         void cannotApproveNonTargetExpenseClaim() throws Exception {
-            setupCustomScope(CURRENT_EMPLOYEE_ID, Set.of(REPORTEE_EMPLOYEE_ID), null, null);
+            setupCustomScope(currentEmployeeId, Set.of(reporteeEmployeeId), null, null);
 
             // Submit the expense claim first
             otherExpenseClaim.submit(LocalDateTime.now());
@@ -881,7 +983,7 @@ class ExpenseClaimScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @WithMockUser(username = "superadmin@test.com", roles = {"SUPER_ADMIN"})
         @DisplayName("Super admin role: Bypasses scope checks and can access any expense claim")
         void superAdminRoleBypassesScopeChecks() throws Exception {
-            setupSuperAdminByRole(CURRENT_EMPLOYEE_ID);
+            setupSuperAdminByRole(currentEmployeeId);
 
             // Even with SELF scope in permissions, SUPER_ADMIN role bypasses
             mockMvc.perform(get(BASE_URL + "/" + otherExpenseClaim.getId()))
@@ -893,9 +995,9 @@ class ExpenseClaimScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @WithMockUser(username = "superadmin@test.com", roles = {"SUPER_ADMIN"})
         @DisplayName("Super admin role: Can access any employee's expense claims")
         void superAdminCanAccessAnyEmployeeExpenseClaims() throws Exception {
-            setupSuperAdminByRole(CURRENT_EMPLOYEE_ID);
+            setupSuperAdminByRole(currentEmployeeId);
 
-            mockMvc.perform(get(BASE_URL + "/employees/" + OTHER_EMPLOYEE_ID)
+            mockMvc.perform(get(BASE_URL + "/employees/" + otherEmployeeId)
                             .param("page", "0")
                             .param("size", "10"))
                     .andExpect(status().isOk())
@@ -906,7 +1008,7 @@ class ExpenseClaimScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @WithMockUser(username = "superadmin@test.com", roles = {"SUPER_ADMIN"})
         @DisplayName("Super admin role: Can approve any employee's expense claim")
         void superAdminCanApproveAnyExpenseClaim() throws Exception {
-            setupSuperAdminByRole(CURRENT_EMPLOYEE_ID);
+            setupSuperAdminByRole(currentEmployeeId);
 
             // Submit the expense claim first
             otherExpenseClaim.submit(LocalDateTime.now());
@@ -926,7 +1028,7 @@ class ExpenseClaimScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @WithMockUser(username = "employee@test.com", roles = {"EMPLOYEE"})
         @DisplayName("Non-existent expense claim with SELF scope returns error")
         void nonExistentExpenseClaimReturnsError() throws Exception {
-            setupSelfScope(CURRENT_EMPLOYEE_ID);
+            setupSelfScope(currentEmployeeId);
             UUID nonExistentId = UUID.randomUUID();
 
             // Non-existent resource correctly returns 404 (EntityNotFoundException -> 404 in GlobalExceptionHandler)
@@ -939,7 +1041,7 @@ class ExpenseClaimScopeIntegrationTest extends AbstractPostgresIntegrationTest {
         @DisplayName("TEAM scope with no reportees - can only access own")
         void teamScopeWithNoReporteesCanOnlyAccessOwn() throws Exception {
             // Setup TEAM scope with empty reportee set
-            setupTeamScope(CURRENT_EMPLOYEE_ID, Collections.emptySet());
+            setupTeamScope(currentEmployeeId, Collections.emptySet());
 
             // Can access own
             mockMvc.perform(get(BASE_URL + "/" + ownExpenseClaim.getId()))

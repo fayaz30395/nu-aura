@@ -21,7 +21,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -324,7 +323,7 @@ public class WorkflowService {
 
     // ==================== Workflow Execution ====================
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional
     public WorkflowExecutionResponse startWorkflow(WorkflowExecutionRequest request) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         UUID currentUser = SecurityContext.getCurrentUserId();
@@ -333,9 +332,7 @@ public class WorkflowService {
         WorkflowDefinition workflow = findApplicableWorkflow(tenantId, request);
 
         if (workflow == null) {
-            log.warn("No applicable workflow found for entity type: {} (tenant: {}). "
-                    + "Submission will proceed without approval workflow.", request.getEntityType(), tenantId);
-            return null;
+            throw new BusinessException("No active workflow definition configured for " + request.getEntityType());
         }
 
         // Check for existing execution
@@ -446,14 +443,18 @@ public class WorkflowService {
 
         execution.addStepExecution(stepExecution);
         execution.setCurrentStepId(firstStep.getId());
-        workflowExecutionRepository.save(execution);
+        StepExecution savedStepExecution = stepExecutionRepository.saveAndFlush(stepExecution);
+        workflowExecutionRepository.saveAndFlush(execution);
+        UUID stepExecutionId = Objects.requireNonNull(
+                savedStepExecution.getId(),
+                "Step execution ID must be available before publishing assignment event");
 
         // Publish event to notify the assigned approver
         domainEventPublisher.publish(
                 ApprovalTaskAssignedEvent.of(
                         this,
                         execution.getTenantId(),
-                        stepExecution.getId(),
+                        stepExecutionId,
                         assigneeId,
                         execution.getEntityType().name(),
                         execution.getRequesterName(),
@@ -663,7 +664,7 @@ public class WorkflowService {
                     "This step has already been acted upon. Current status: " + currentStep.getStatus());
         }
 
-        if (!currentStep.canBeActedUponBy(currentUser)) {
+        if (!SecurityContext.isSuperAdmin() && !currentStep.canBeActedUponBy(currentUser)) {
             throw new BusinessException("You are not authorized to act on this step");
         }
 
@@ -754,6 +755,10 @@ public class WorkflowService {
                 throw new BusinessException("Unsupported action: " + request.getAction());
         }
 
+        if (execution.isCompleted()) {
+            invokeCallback(execution, currentUser, request.getComments());
+        }
+
         WorkflowExecution saved = workflowExecutionRepository.save(execution);
         log.info("Processed action {} on execution {} by user {}", request.getAction(), executionId, currentUser);
 
@@ -775,18 +780,14 @@ public class WorkflowService {
                             currentUser, actorName, request.getComments(), requesterEmail));
         }
 
-        // Invoke module callback when workflow reaches terminal state
-        if (saved.isCompleted()) {
-            invokeCallback(saved, currentUser, request.getComments());
-        }
-
         return WorkflowExecutionResponse.from(saved);
     }
 
     /**
      * Invokes the registered {@link ApprovalCallbackHandler} for the entity type
      * of the completed workflow execution, if one exists.
-     * Wrapped in try-catch to prevent callback failures from breaking the approval flow.
+     * Callback failures are allowed to propagate so terminal workflow state is not
+     * persisted when the domain mutation fails.
      */
     private void invokeCallback(WorkflowExecution execution, UUID actingUser, String comments) {
         ApprovalCallbackHandler handler = getCallbackHandlerMap().get(execution.getEntityType());
@@ -795,17 +796,12 @@ public class WorkflowService {
             return;
         }
 
-        try {
-            if (execution.getStatus() == WorkflowExecution.ExecutionStatus.APPROVED) {
-                handler.onApproved(execution.getTenantId(), execution.getEntityId(), actingUser);
-                log.info("Callback onApproved invoked for {} entity {}", execution.getEntityType(), execution.getEntityId());
-            } else if (execution.getStatus() == WorkflowExecution.ExecutionStatus.REJECTED) {
-                handler.onRejected(execution.getTenantId(), execution.getEntityId(), actingUser, comments);
-                log.info("Callback onRejected invoked for {} entity {}", execution.getEntityType(), execution.getEntityId());
-            }
-        } catch (Exception e) { // Intentional broad catch — workflow processing error boundary
-            log.error("Approval callback failed for {} entity {}: {}",
-                    execution.getEntityType(), execution.getEntityId(), e.getMessage(), e);
+        if (execution.getStatus() == WorkflowExecution.ExecutionStatus.APPROVED) {
+            handler.onApproved(execution.getTenantId(), execution.getEntityId(), actingUser);
+            log.info("Callback onApproved invoked for {} entity {}", execution.getEntityType(), execution.getEntityId());
+        } else if (execution.getStatus() == WorkflowExecution.ExecutionStatus.REJECTED) {
+            handler.onRejected(execution.getTenantId(), execution.getEntityId(), actingUser, comments);
+            log.info("Callback onRejected invoked for {} entity {}", execution.getEntityType(), execution.getEntityId());
         }
     }
 
@@ -851,6 +847,11 @@ public class WorkflowService {
             execution.setCurrentStepOrder(nextStep.getStepOrder());
             execution.setCurrentStepId(nextStep.getId());
             execution.setStatus(WorkflowExecution.ExecutionStatus.IN_PROGRESS);
+            StepExecution savedNextStepExecution = stepExecutionRepository.saveAndFlush(nextStepExecution);
+            workflowExecutionRepository.saveAndFlush(execution);
+            UUID nextStepExecutionId = Objects.requireNonNull(
+                    savedNextStepExecution.getId(),
+                    "Next step execution ID must be available before publishing assignment event");
 
             // Audit log: workflow moved to next step
             auditLogService.logAction(
@@ -867,7 +868,7 @@ public class WorkflowService {
                     ApprovalTaskAssignedEvent.of(
                             this,
                             execution.getTenantId(),
-                            nextStepExecution.getId(),
+                            nextStepExecutionId,
                             assigneeId,
                             execution.getEntityType().name(),
                             execution.getRequesterName(),

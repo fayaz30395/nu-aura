@@ -13,20 +13,14 @@ export default function NotFound() {
     <div className="min-h-screen flex items-center justify-center bg-[var(--bg-main)] px-4">
       {/* Subtle brand atmosphere */}
       <div
-        className="fixed inset-0 pointer-events-none"
-        style={{background: 'var(--bg-pattern)', backgroundSize: 'var(--bg-pattern-size)'}}
+        className="fixed inset-0 pointer-events-none bg-[image:var(--bg-pattern)] bg-[length:var(--bg-pattern-size)]"
         aria-hidden="true"
       />
 
       <div className="relative z-10 w-full max-w-md text-center">
         {/* 404 number — large, muted, brand tonal */}
         <p
-          className="font-display text-[120px] sm:text-[160px] font-extrabold leading-none tracking-tight select-none"
-          style={{
-            background: 'linear-gradient(180deg, var(--accent-200), var(--accent-50))',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-          }}
+          className="font-display text-[120px] sm:text-[160px] font-extrabold leading-none tracking-tight select-none text-accent-100 dark:text-accent-900/40"
           aria-hidden="true"
         >
           404
@@ -52,8 +46,7 @@ export default function NotFound() {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <Link
             href="/me/dashboard"
-            className="inline-flex items-center justify-center gap-2 h-11 px-6 rounded-xl font-medium text-sm text-white transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-            style={{background: 'linear-gradient(135deg, var(--accent-primary), var(--accent-primary-hover))'}}
+            className="inline-flex items-center justify-center gap-2 h-11 px-6 rounded-xl font-medium text-sm text-white bg-[var(--accent-primary)] hover:bg-[var(--accent-primary-hover)] transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
             <IconHome size={18}/>
             Go to Dashboard

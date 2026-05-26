@@ -20,6 +20,14 @@
 
 -- benefit_dependents: identification, contact, address, health
 ALTER TABLE benefit_dependents
+  ADD COLUMN IF NOT EXISTS national_id VARCHAR(512),
+  ADD COLUMN IF NOT EXISTS passport_number VARCHAR(512),
+  ADD COLUMN IF NOT EXISTS phone VARCHAR(512),
+  ADD COLUMN IF NOT EXISTS email VARCHAR(512),
+  ADD COLUMN IF NOT EXISTS address VARCHAR(2048),
+  ADD COLUMN IF NOT EXISTS pre_existing_conditions TEXT;
+
+ALTER TABLE benefit_dependents
 ALTER
 COLUMN national_id              TYPE VARCHAR(512),
     ALTER

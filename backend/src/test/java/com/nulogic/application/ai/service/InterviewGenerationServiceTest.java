@@ -27,7 +27,9 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -129,7 +131,7 @@ class InterviewGenerationServiceTest {
                     .thenReturn(Optional.of(jobOpening));
             when(candidateRepository.findByIdAndTenantId(candidateId, tenantId))
                     .thenReturn(Optional.of(candidate));
-            when(aiHelper.callOpenAI(anyString())).thenReturn(VALID_AI_RESPONSE);
+            when(aiHelper.callOpenAI(anyString(), eq(0.5d))).thenReturn(aiResult(VALID_AI_RESPONSE));
             when(aiHelper.extractJson(anyString())).thenReturn(VALID_AI_RESPONSE);
 
             InterviewQuestionsResponse result = interviewGenerationService.generateInterviewQuestions(jobOpeningId, candidateId);
@@ -148,7 +150,7 @@ class InterviewGenerationServiceTest {
         void shouldGenerateQuestionsForJobWithoutCandidate() {
             when(jobOpeningRepository.findByIdAndTenantId(jobOpeningId, tenantId))
                     .thenReturn(Optional.of(jobOpening));
-            when(aiHelper.callOpenAI(anyString())).thenReturn(VALID_AI_RESPONSE);
+            when(aiHelper.callOpenAI(anyString(), eq(0.5d))).thenReturn(aiResult(VALID_AI_RESPONSE));
             when(aiHelper.extractJson(anyString())).thenReturn(VALID_AI_RESPONSE);
 
             InterviewQuestionsResponse result = interviewGenerationService.generateInterviewQuestions(jobOpeningId);
@@ -176,7 +178,7 @@ class InterviewGenerationServiceTest {
                     .thenReturn(Optional.of(jobOpening));
             when(candidateRepository.findByIdAndTenantId(candidateId, tenantId))
                     .thenReturn(Optional.empty());
-            when(aiHelper.callOpenAI(anyString())).thenReturn(VALID_AI_RESPONSE);
+            when(aiHelper.callOpenAI(anyString(), eq(0.5d))).thenReturn(aiResult(VALID_AI_RESPONSE));
             when(aiHelper.extractJson(anyString())).thenReturn(VALID_AI_RESPONSE);
 
             InterviewQuestionsResponse result = interviewGenerationService.generateInterviewQuestions(jobOpeningId, candidateId);
@@ -190,7 +192,7 @@ class InterviewGenerationServiceTest {
         void shouldReturnFailureWhenAIReturnsInvalidJson() {
             when(jobOpeningRepository.findByIdAndTenantId(jobOpeningId, tenantId))
                     .thenReturn(Optional.of(jobOpening));
-            when(aiHelper.callOpenAI(anyString())).thenReturn("not valid json");
+            when(aiHelper.callOpenAI(anyString(), eq(0.5d))).thenReturn(aiResult("not valid json"));
             when(aiHelper.extractJson(anyString())).thenReturn("not valid json");
 
             InterviewQuestionsResponse result = interviewGenerationService.generateInterviewQuestions(jobOpeningId, candidateId);
@@ -222,7 +224,7 @@ class InterviewGenerationServiceTest {
             assertThat(result.getRecommendedNextStep()).isEqualTo("Schedule initial interviews");
             assertThat(result.getCandidateId()).isEqualTo(candidateId);
             assertThat(result.getJobOpeningId()).isEqualTo(jobOpeningId);
-            verify(aiHelper, never()).callOpenAI(anyString());
+            verify(aiHelper, never()).callOpenAI(anyString(), anyDouble());
         }
 
         @Test
@@ -246,7 +248,7 @@ class InterviewGenerationServiceTest {
             FeedbackSynthesisResponse result = interviewGenerationService.synthesizeInterviewFeedback(candidateId, jobOpeningId);
 
             assertThat(result.getCandidateNarrative()).contains("No completed interview feedback");
-            verify(aiHelper, never()).callOpenAI(anyString());
+            verify(aiHelper, never()).callOpenAI(anyString(), anyDouble());
         }
 
         @Test
@@ -329,7 +331,7 @@ class InterviewGenerationServiceTest {
                     .thenReturn(Optional.of(jobOpening));
             when(interviewRepository.findByTenantIdAndCandidateId(tenantId, candidateId))
                     .thenReturn(List.of(completedInterview));
-            when(aiHelper.callOpenAI(anyString())).thenReturn(aiResponse);
+            when(aiHelper.callOpenAI(anyString(), eq(0.5d))).thenReturn(aiResult(aiResponse));
             when(aiHelper.extractJson(anyString())).thenReturn(aiResponse);
 
             FeedbackSynthesisResponse result = interviewGenerationService.synthesizeInterviewFeedback(candidateId, jobOpeningId);
@@ -387,7 +389,7 @@ class InterviewGenerationServiceTest {
                     .thenReturn(Optional.of(jobOpening));
             when(interviewRepository.findByTenantIdAndCandidateId(tenantId, candidateId))
                     .thenReturn(List.of(completedInterview));
-            when(aiHelper.callOpenAI(anyString())).thenReturn("invalid json");
+            when(aiHelper.callOpenAI(anyString(), eq(0.5d))).thenReturn(aiResult("invalid json"));
             when(aiHelper.extractJson(anyString())).thenReturn("invalid json");
 
             FeedbackSynthesisResponse result = interviewGenerationService.synthesizeInterviewFeedback(candidateId, jobOpeningId);
@@ -398,5 +400,9 @@ class InterviewGenerationServiceTest {
             assertThat(result.getCandidateId()).isEqualTo(candidateId);
             assertThat(result.getJobTitle()).isEqualTo("Senior Java Developer");
         }
+    }
+
+    private static AIRecruitmentHelper.ChatCompletionResult aiResult(String content) {
+        return new AIRecruitmentHelper.ChatCompletionResult(content, 10, 20, 30);
     }
 }

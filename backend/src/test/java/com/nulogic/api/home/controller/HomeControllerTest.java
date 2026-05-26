@@ -3,7 +3,10 @@ package com.nulogic.api.home.controller;
 import com.nulogic.api.home.dto.*;
 import com.nulogic.application.home.service.HomeService;
 import com.nulogic.common.security.JwtTokenProvider;
+import com.nulogic.common.security.TenantContext;
 import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +39,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(classes = {HomeController.class, HomeControllerTest.TestConfig.class})
 class HomeControllerTest {
 
+    private static final UUID TENANT_ID = UUID.randomUUID();
+
     @Autowired
     private MockMvc mockMvc;
     @MockitoBean
@@ -48,6 +53,17 @@ class HomeControllerTest {
     private EmployeeRepository employeeRepository;
     @MockitoBean
     private com.nulogic.common.util.TenantTimeService tenantTimeService;
+
+    @BeforeEach
+    void setUpTenantContext() {
+        TenantContext.setCurrentTenant(TENANT_ID);
+        when(tenantTimeService.today(TENANT_ID)).thenReturn(LocalDate.now());
+    }
+
+    @AfterEach
+    void clearTenantContext() {
+        TenantContext.clear();
+    }
 
     @Test
     @DisplayName("GET /api/v1/home/birthdays - should return upcoming birthdays")

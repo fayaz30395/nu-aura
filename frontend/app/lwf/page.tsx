@@ -322,8 +322,8 @@ export default function LWFPage() {
                     <Table.Tr>
                       <Table.Th>State</Table.Th>
                       <Table.Th>Code</Table.Th>
-                      <Table.Th style={{textAlign: 'right'}}>Employee</Table.Th>
-                      <Table.Th style={{textAlign: 'right'}}>Employer</Table.Th>
+                      <Table.Th className="text-right">Employee</Table.Th>
+                      <Table.Th className="text-right">Employer</Table.Th>
                       <Table.Th>Frequency</Table.Th>
                       <Table.Th>Applicable Months</Table.Th>
                       <Table.Th>Threshold</Table.Th>
@@ -338,8 +338,8 @@ export default function LWFPage() {
                         <Table.Td>
                           <Badge variant="light" color="gray" size="sm">{config.stateCode}</Badge>
                         </Table.Td>
-                        <Table.Td style={{textAlign: 'right'}}>{fmt(config.employeeContribution)}</Table.Td>
-                        <Table.Td style={{textAlign: 'right'}}>{fmt(config.employerContribution)}</Table.Td>
+                        <Table.Td className="text-right">{fmt(config.employeeContribution)}</Table.Td>
+                        <Table.Td className="text-right">{fmt(config.employerContribution)}</Table.Td>
                         <Table.Td>
                           <Badge variant="light" color="sky" size="sm">
                             {FREQUENCY_LABELS[config.frequency]}
@@ -445,11 +445,11 @@ export default function LWFPage() {
                     <Table.Tr>
                       <Table.Th>Employee ID</Table.Th>
                       <Table.Th>State</Table.Th>
-                      <Table.Th style={{textAlign: 'right'}}>Employee</Table.Th>
-                      <Table.Th style={{textAlign: 'right'}}>Employer</Table.Th>
+                      <Table.Th className="text-right">Employee</Table.Th>
+                      <Table.Th className="text-right">Employer</Table.Th>
                       <Table.Th>Frequency</Table.Th>
                       <Table.Th>Status</Table.Th>
-                      <Table.Th style={{textAlign: 'right'}}>Gross Salary</Table.Th>
+                      <Table.Th className="text-right">Gross Salary</Table.Th>
                     </Table.Tr>
                   </Table.Thead>
                   <Table.Tbody>
@@ -459,15 +459,15 @@ export default function LWFPage() {
                           <Text size="xs" ff="monospace">{ded.employeeId.substring(0, 8)}...</Text>
                         </Table.Td>
                         <Table.Td><Badge variant="light" color="gray" size="sm">{ded.stateCode}</Badge></Table.Td>
-                        <Table.Td style={{textAlign: 'right'}}>{fmt(ded.employeeAmount)}</Table.Td>
-                        <Table.Td style={{textAlign: 'right'}}>{fmt(ded.employerAmount)}</Table.Td>
+                        <Table.Td className="text-right">{fmt(ded.employeeAmount)}</Table.Td>
+                        <Table.Td className="text-right">{fmt(ded.employerAmount)}</Table.Td>
                         <Table.Td>{FREQUENCY_LABELS[ded.frequency]}</Table.Td>
                         <Table.Td>
                           <Badge color={STATUS_CONFIG[ded.status].color} variant="light" size="sm">
                             {STATUS_CONFIG[ded.status].label}
                           </Badge>
                         </Table.Td>
-                        <Table.Td style={{textAlign: 'right'}}>{fmt(ded.grossSalary)}</Table.Td>
+                        <Table.Td className="text-right">{fmt(ded.grossSalary)}</Table.Td>
                       </Table.Tr>
                     ))}
                   </Table.Tbody>
@@ -560,10 +560,10 @@ export default function LWFPage() {
                         <Table.Tr>
                           <Table.Th>State</Table.Th>
                           <Table.Th>Code</Table.Th>
-                          <Table.Th style={{textAlign: 'right'}}>Employees</Table.Th>
-                          <Table.Th style={{textAlign: 'right'}}>Employee Total</Table.Th>
-                          <Table.Th style={{textAlign: 'right'}}>Employer Total</Table.Th>
-                          <Table.Th style={{textAlign: 'right'}}>Total</Table.Th>
+                          <Table.Th className="text-right">Employees</Table.Th>
+                          <Table.Th className="text-right">Employee Total</Table.Th>
+                          <Table.Th className="text-right">Employer Total</Table.Th>
+                          <Table.Th className="text-right">Total</Table.Th>
                         </Table.Tr>
                       </Table.Thead>
                       <Table.Tbody>
@@ -571,10 +571,10 @@ export default function LWFPage() {
                           <Table.Tr key={s.stateCode}>
                             <Table.Td fw={500}>{s.stateName}</Table.Td>
                             <Table.Td><Badge variant="light" color="gray" size="sm">{s.stateCode}</Badge></Table.Td>
-                            <Table.Td style={{textAlign: 'right'}}>{s.employeeCount}</Table.Td>
-                            <Table.Td style={{textAlign: 'right'}}>{fmt(s.employeeTotal)}</Table.Td>
-                            <Table.Td style={{textAlign: 'right'}}>{fmt(s.employerTotal)}</Table.Td>
-                            <Table.Td style={{textAlign: 'right'}} fw={600}>{fmt(s.total)}</Table.Td>
+                            <Table.Td className="text-right">{s.employeeCount}</Table.Td>
+                            <Table.Td className="text-right">{fmt(s.employeeTotal)}</Table.Td>
+                            <Table.Td className="text-right">{fmt(s.employerTotal)}</Table.Td>
+                            <Table.Td className="text-right" fw={600}>{fmt(s.total)}</Table.Td>
                           </Table.Tr>
                         ))}
                       </Table.Tbody>

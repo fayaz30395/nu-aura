@@ -26,9 +26,16 @@ export SPRING_DATASOURCE_USERNAME
 export SPRING_DATASOURCE_PASSWORD
 export SPRING_PROFILES_ACTIVE="${SPRING_PROFILES_ACTIVE:-dev}"
 # Flyway uses direct (non-pooler) endpoint for migrations
-export SPRING_FLYWAY_URL="${SPRING_FLYWAY_URL:-${SPRING_DATASOURCE_URL}}"
-export SPRING_FLYWAY_USER="${SPRING_FLYWAY_USER:-${SPRING_DATASOURCE_USERNAME}}"
-export SPRING_FLYWAY_PASSWORD="${SPRING_FLYWAY_PASSWORD:-${SPRING_DATASOURCE_PASSWORD}}"
+export SPRING_FLYWAY_URL="${SPRING_FLYWAY_URL:-${FLYWAY_URL:-${SPRING_DATASOURCE_URL}}}"
+export SPRING_FLYWAY_USER="${SPRING_FLYWAY_USER:-${FLYWAY_USER:-${SPRING_DATASOURCE_USERNAME}}}"
+export SPRING_FLYWAY_PASSWORD="${SPRING_FLYWAY_PASSWORD:-${FLYWAY_PASSWORD:-${SPRING_DATASOURCE_PASSWORD}}}"
+export FLYWAY_URL="${FLYWAY_URL:-${SPRING_FLYWAY_URL}}"
+export FLYWAY_USER="${FLYWAY_USER:-${SPRING_FLYWAY_USER}}"
+export FLYWAY_PASSWORD="${FLYWAY_PASSWORD:-${SPRING_FLYWAY_PASSWORD}}"
+if [[ "$SPRING_DATASOURCE_URL" == *"neon.tech"* && "$SPRING_FLYWAY_USER" == "$SPRING_DATASOURCE_USERNAME" ]]; then
+  echo "WARNING: Neon startup is using the same role for runtime and Flyway."
+  echo "Set FLYWAY_URL/FLYWAY_USER/FLYWAY_PASSWORD to a direct endpoint with a migration-owner role."
+fi
 export SPRING_REDIS_HOST="${SPRING_REDIS_HOST:-localhost}"
 export SPRING_REDIS_PORT="${SPRING_REDIS_PORT:-6379}"
 export FRONTEND_URL="${FRONTEND_URL:-http://localhost:3000}"
@@ -94,8 +101,11 @@ JVM_OPTS=(
   -Dspring.devtools.restart.enabled=false
 )
 
-# Auto-restart loop: if macOS OOM-kills the JVM (exit 137), restart after 5s
+# Auto-restart loop: if macOS OOM-kills the JVM (exit 137), restart after 5s.
+# Other startup failures usually mean configuration, Flyway, or credentials are
+# wrong; fail fast so the real error stays visible instead of looping forever.
 RESTART_COUNT=0
+MAX_RESTARTS="${BACKEND_WATCHDOG_MAX_RESTARTS:-3}"
 while true; do
   if [ $RESTART_COUNT -gt 0 ]; then
     echo "[watchdog] Backend crashed (attempt $RESTART_COUNT). Restarting in 5s..."
@@ -107,5 +117,13 @@ while true; do
     echo "[watchdog] Backend exited cleanly."
     break
   fi
+  if [ "${BACKEND_WATCHDOG_RESTART_ALL:-false}" != "true" ] && [ $EXIT_CODE -ne 137 ]; then
+    echo "[watchdog] Backend exited with code $EXIT_CODE; not restarting. Set BACKEND_WATCHDOG_RESTART_ALL=true to override."
+    exit "$EXIT_CODE"
+  fi
   RESTART_COUNT=$((RESTART_COUNT + 1))
+  if [ "$RESTART_COUNT" -gt "$MAX_RESTARTS" ]; then
+    echo "[watchdog] Backend crashed $MAX_RESTARTS times; giving up."
+    exit "$EXIT_CODE"
+  fi
 done

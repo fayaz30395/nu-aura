@@ -48,7 +48,7 @@ class WebhookServiceTest {
         webhook.setId(WEBHOOK_ID);
         webhook.setTenantId(TENANT_ID);
         webhook.setName(name);
-        webhook.setUrl("https://example.com/webhook/" + name.toLowerCase().replace(" ", "-"));
+        webhook.setUrl("https://93.184.216.34/webhook/" + name.toLowerCase().replace(" ", "-"));
         webhook.setSecret("test-secret-" + UUID.randomUUID());
         webhook.setStatus(status);
         webhook.setEvents(Set.of(WebhookEventType.EMPLOYEE_CREATED));

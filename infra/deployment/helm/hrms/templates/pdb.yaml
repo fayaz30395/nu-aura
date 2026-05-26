@@ -3,42 +3,42 @@
 # Guarantees ≥ minAvailable pods stay Ready during voluntary disruptions
 # (node drains, cluster upgrades, autoscaler evictions).
 # Added per wave-3 deployment audit #1 (P0).
-{ { - if .Values.backend.pdb.enabled } }
+{{- if .Values.backend.pdb.enabled }}
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
   name: hrms-backend-pdb
-  namespace: { { .Values.namespace } }
+  namespace: {{ .Values.namespace }}
   labels:
     app: hrms
     component: backend
-    app.kubernetes.io/managed-by: { { .Release.Service } }
-    app.kubernetes.io/instance: { { .Release.Name } }
-    helm.sh/chart: { { .Chart.Name } }-{{ .Chart.Version }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version }}
 spec:
-  minAvailable: { { .Values.backend.pdb.minAvailable } }
+  minAvailable: {{ .Values.backend.pdb.minAvailable }}
   selector:
     matchLabels:
       app: hrms
       component: backend
-  { { - end } }
+  {{- end }}
 ---
-  { { - if .Values.frontend.pdb.enabled } }
+  {{- if .Values.frontend.pdb.enabled }}
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
   name: hrms-frontend-pdb
-  namespace: { { .Values.namespace } }
+  namespace: {{ .Values.namespace }}
   labels:
     app: hrms
     component: frontend
-    app.kubernetes.io/managed-by: { { .Release.Service } }
-    app.kubernetes.io/instance: { { .Release.Name } }
-    helm.sh/chart: { { .Chart.Name } }-{{ .Chart.Version }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version }}
 spec:
-  minAvailable: { { .Values.frontend.pdb.minAvailable } }
+  minAvailable: {{ .Values.frontend.pdb.minAvailable }}
   selector:
     matchLabels:
       app: hrms
       component: frontend
-  { { - end } }
+  {{- end }}

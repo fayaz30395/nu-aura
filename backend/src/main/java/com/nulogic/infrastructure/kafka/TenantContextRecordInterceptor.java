@@ -31,6 +31,7 @@ public class TenantContextRecordInterceptor<K, V> implements RecordInterceptor<K
 
     @Override
     public ConsumerRecord<K, V> intercept(ConsumerRecord<K, V> record, Consumer<K, V> consumer) {
+        TenantContext.clear();
         V value = record.value();
         if (value instanceof BaseKafkaEvent event) {
             UUID tenantId = event.getTenantId();

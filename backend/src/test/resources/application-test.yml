@@ -51,6 +51,7 @@ spring:
       - attendanceMetrics
       - leaveMetrics
       - payrollMetrics
+      - unreadCountByUser
 
   kafka:
     bootstrap-servers: localhost:9092
@@ -80,6 +81,9 @@ management:
         enabled: false
 
 app:
+  scheduling:
+    enabled: false
+
   # RLS disabled in tests — existing tests don't set tenant context.
   # Flip these on once tests set X-Tenant-ID / SET LOCAL app.current_tenant_id.
   rls:
@@ -101,6 +105,9 @@ app:
 
   frontend:
     url: http://localhost:3000
+
+  features:
+    lwf: true
 
   google-drive:
     credentials-path: ${GOOGLE_DRIVE_CREDENTIALS_PATH:config/test-credentials.json}

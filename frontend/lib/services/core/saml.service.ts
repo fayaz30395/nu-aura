@@ -1,4 +1,5 @@
 import {apiClient} from '../../api/client';
+import {apiConfig} from '../../config/env';
 
 export interface SamlConfigResponse {
   id: string;
@@ -87,8 +88,8 @@ class SamlService {
    * Redirecting the browser to this URL starts the SAML flow.
    */
   getSsoInitiationUrl(tenantId: string): string {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL?.replace('/api/v1', '') || 'http://localhost:8080';
-    return `${baseUrl}/saml2/authenticate/${tenantId}`;
+    const baseUrl = apiConfig.baseUrl.replace('/api/v1', '');
+    return `${baseUrl}/saml2/authenticate/${encodeURIComponent(tenantId)}`;
   }
 }
 

@@ -145,17 +145,18 @@ BEGIN;
 -- Reverse the schema change
 ALTER TABLE employees DROP COLUMN IF EXISTS ssn_last4;
 
--- Mark the Flyway entry as "manually reverted" so a re-deploy doesn't replay it
-UPDATE flyway_schema_history
-SET description = description || ' [MANUALLY REVERTED ' || NOW()::text || ']'
-WHERE version = '129';
-
 COMMIT;
 ```
 
-After this, you **must** also write a placeholder migration with the same version number for
-checksum stability, or delete the row entirely if it is safe (the next deploy will re-run it
-otherwise). Coordinate with the team.
+Do **not** update, delete, or insert rows in `flyway_schema_history` by hand. That table is
+Flyway-owned release evidence; manual edits can hide the real deployed schema and make the
+next deploy unrecoverable.
+
+After emergency SQL, immediately write the next forward-only compensating migration
+(`V<N+1>__...sql`) that makes the desired schema state explicit for every future environment.
+If Flyway left a `FAILED` row before the transaction was applied, preserve the failing logs and
+run `flyway repair` from the controlled deploy job using the migration/owner role. Never repair
+or rewrite schema history with ad hoc SQL.
 
 ### Strategy 3: Neon Point-in-Time Recovery (Last Resort)
 

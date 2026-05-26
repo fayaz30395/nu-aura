@@ -1,6 +1,6 @@
 package com.nulogic.application.integration.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nulogic.domain.integration.IntegrationConnector;
 import com.nulogic.domain.integration.IntegrationConnectorConfigEntity;
@@ -149,8 +149,8 @@ class IntegrationEventRouterTest {
             IntegrationEvent event = buildEvent(EVENT_TYPE);
             Exception connectorException = new RuntimeException("Connector error");
             when(objectMapper.writeValueAsString(any()))
-                    .thenThrow(new JsonProcessingException("Serialization failed") {
-                    });
+                    .thenThrow(JsonMappingException.fromUnexpectedIOE(
+                            new java.io.IOException("Serialization failed")));
 
             // When — must not throw
             integrationEventRouter.publishToDlt(event, CONNECTOR_ID, connectorException);

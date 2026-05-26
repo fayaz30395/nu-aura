@@ -1,7 +1,28 @@
 -- Document Workflow Enhancement Schema
 -- V18 migration: Document versions, approvals, access control, categories, tags, and expiry tracking
 
--- Alter documents table to add workflow columns (assuming documents table already exists)
+-- Fresh V0 databases do not create documents, but the rest of this migration
+-- assumes it exists. Create the base table before adding workflow columns.
+CREATE TABLE IF NOT EXISTS documents
+(
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  tenant_id UUID NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  created_by UUID,
+  updated_by UUID,
+  version BIGINT DEFAULT 0,
+  is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
+  title VARCHAR(255),
+  file_name VARCHAR(255),
+  file_path VARCHAR(500),
+  file_size BIGINT,
+  mime_type VARCHAR(100),
+  uploaded_by UUID,
+  metadata JSONB
+);
+
+-- Alter documents table to add workflow columns
 -- First, add new columns
 ALTER TABLE documents
   ADD COLUMN IF NOT EXISTS status VARCHAR (50) DEFAULT 'DRAFT',
@@ -59,6 +80,14 @@ CREATE TABLE IF NOT EXISTS document_versions
   id
 ) ON DELETE CASCADE
   );
+
+-- V0 already creates document_versions without the V18 uploaded_by column.
+ALTER TABLE document_versions
+  ADD COLUMN IF NOT EXISTS uploaded_by UUID,
+  ADD COLUMN IF NOT EXISTS file_name VARCHAR(255),
+  ADD COLUMN IF NOT EXISTS mime_type VARCHAR(100),
+  ADD COLUMN IF NOT EXISTS change_notes TEXT,
+  ADD COLUMN IF NOT EXISTS metadata JSONB;
 
 CREATE INDEX idx_document_version_tenant ON document_versions (tenant_id);
 CREATE INDEX idx_document_version_document ON document_versions (document_id);
@@ -210,6 +239,13 @@ CREATE TABLE IF NOT EXISTS document_categories
   id
 ) ON DELETE SET NULL
   );
+
+-- V0 already creates document_categories with parent_category_id/category_name.
+ALTER TABLE document_categories
+  ADD COLUMN IF NOT EXISTS name VARCHAR(255),
+  ADD COLUMN IF NOT EXISTS parent_id UUID,
+  ADD COLUMN IF NOT EXISTS icon VARCHAR(100),
+  ADD COLUMN IF NOT EXISTS display_order INTEGER DEFAULT 0;
 
 CREATE INDEX idx_document_category_tenant ON document_categories (tenant_id);
 CREATE INDEX idx_document_category_parent ON document_categories (parent_id);

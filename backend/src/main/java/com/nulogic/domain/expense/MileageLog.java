@@ -14,10 +14,10 @@ import java.util.UUID;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "mileage_logs", indexes = {
-        @Index(name = "idx_mileage_log_tenant", columnList = "tenantId"),
-        @Index(name = "idx_mileage_log_tenant_employee", columnList = "tenantId,employee_id"),
+        @Index(name = "idx_mileage_log_tenant", columnList = "tenant_id"),
+        @Index(name = "idx_mileage_log_tenant_employee", columnList = "tenant_id,employee_id"),
         @Index(name = "idx_mileage_log_status", columnList = "status"),
-        @Index(name = "idx_mileage_log_tenant_status", columnList = "tenantId,status"),
+        @Index(name = "idx_mileage_log_tenant_status", columnList = "tenant_id,status"),
         @Index(name = "idx_mileage_log_travel_date", columnList = "travel_date"),
         @Index(name = "idx_mileage_log_expense_claim", columnList = "expense_claim_id")
 })

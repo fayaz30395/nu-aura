@@ -1,0 +1,17 @@
+-- Align workflow_executions with WorkflowExecution runtime fields.
+
+ALTER TABLE workflow_executions
+  ADD COLUMN IF NOT EXISTS requester_name VARCHAR(255),
+  ADD COLUMN IF NOT EXISTS current_step_order INTEGER NOT NULL DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS current_step_id UUID,
+  ADD COLUMN IF NOT EXISTS deadline TIMESTAMPTZ,
+  ADD COLUMN IF NOT EXISTS escalation_due_at TIMESTAMPTZ,
+  ADD COLUMN IF NOT EXISTS title VARCHAR(255),
+  ADD COLUMN IF NOT EXISTS amount NUMERIC(19, 2),
+  ADD COLUMN IF NOT EXISTS department_id UUID,
+  ADD COLUMN IF NOT EXISTS location_id UUID,
+  ADD COLUMN IF NOT EXISTS submitted_at TIMESTAMPTZ,
+  ADD COLUMN IF NOT EXISTS completed_at TIMESTAMPTZ,
+  ADD COLUMN IF NOT EXISTS cancelled_at TIMESTAMPTZ,
+  ADD COLUMN IF NOT EXISTS cancellation_reason VARCHAR(255),
+  ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ;

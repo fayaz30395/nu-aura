@@ -80,10 +80,21 @@ spring:
 
   flyway:
     enabled: true
+    url: ${FLYWAY_URL}
+    user: ${FLYWAY_USER}
+    password: ${FLYWAY_PASSWORD}
     # CRITICAL: Prevent accidental schema destruction in production
     clean-disabled: true
     # Validate migrations on startup
     validate-on-migrate: true
+    # Production must not inherit permissive local migration behavior.
+    # Baselining and out-of-order repair are explicit operator actions only.
+    baseline-on-migrate: false
+    out-of-order: false
+    repair-on-migrate: false
+    postgresql:
+      # Required for migrations that use CREATE INDEX CONCURRENTLY.
+      transactional-lock: false
 
   # Redis is required in production for distributed caching and idempotency
   # SPRING_REDIS_HOST defaults to localhost so the app can start without Redis configured;
@@ -185,6 +196,15 @@ springdoc:
 
 # Production security settings
 app:
+  monitoring:
+    prometheus-token: ${PROMETHEUS_SCRAPE_TOKEN:}
+
+  scheduling:
+    # Web/API pods should not run background schedulers by default. Enable this
+    # only for a dedicated worker/cron process or an explicitly accepted single
+    # scheduler deployment.
+    enabled: ${APP_SCHEDULING_ENABLED:false}
+
   cookie:
     # CRITICAL: Always use secure cookies (HTTPS only) in production
     secure: true
@@ -198,6 +218,10 @@ app:
     csrf:
       # Enable CSRF protection in production
       enabled: true
+    rls:
+      probe:
+        fail-on-bypass: true
+        allow-bootstrap-skip: false
     # ClamAV virus scanning ON in production. Host/port must point at the clamd
     # sidecar/service; defaults assume a co-located daemon. Timeout chosen to be
     # well below the upload controller request timeout so a slow clamd surfaces
@@ -207,6 +231,13 @@ app:
       host: ${VIRUSSCAN_HOST:clamav}
       port: ${VIRUSSCAN_PORT:3310}
       timeout-ms: ${VIRUSSCAN_TIMEOUT_MS:10000}
+
+  rls:
+    datasource-wrapper:
+      # Prod uses transaction-mode PgBouncer; session-scoped SET is not a safe
+      # tenant carrier there. Tenant DB work must run inside transactions so
+      # TenantRlsTransactionManager can issue SET LOCAL and fail closed.
+      enabled: ${RLS_DATASOURCE_WRAPPER_ENABLED:false}
 
   # Google Drive file storage (production service account)
   google-drive:

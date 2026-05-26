@@ -33,6 +33,10 @@ const IGNORE_DIRS = new Set([
 
 // Files exempt from each rule (the primitives themselves OWN the raw HTML).
 const PRIMITIVES_DIR = 'components/ui';
+const EXEMPT_FILES = new Set([
+  // Root error fallback cannot depend on app CSS/providers; see app/global-error.tsx.
+  'app/global-error.tsx',
+]);
 
 // className= or class= contexts that contain a bracket-arbitrary hex
 const TW_HEX_CLASS_RE = /\b(?:text|bg|border|ring|from|to|via|fill|stroke|shadow|outline|decoration|caret|accent)-\[#[0-9a-fA-F]{3,8}\]/g;
@@ -65,6 +69,8 @@ async function walk(dir) {
 }
 
 async function scanFile(absPath, rel) {
+  if (EXEMPT_FILES.has(rel)) return;
+
   const src = await readFile(absPath, 'utf8');
   const lines = src.split('\n');
   const isPrimitive = rel.startsWith(PRIMITIVES_DIR);

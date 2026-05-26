@@ -12,6 +12,7 @@ import com.nulogic.domain.audit.AuditLog;
 import com.nulogic.domain.compliance.DsrRequest;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.leave.LeaveRequest;
+import com.nulogic.domain.leave.LeaveType;
 import com.nulogic.domain.user.AuthProvider;
 import com.nulogic.domain.user.RoleScope;
 import com.nulogic.domain.user.User;
@@ -20,6 +21,7 @@ import com.nulogic.infrastructure.audit.repository.AuditLogRepository;
 import com.nulogic.infrastructure.compliance.DsrRequestRepository;
 import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import com.nulogic.infrastructure.leave.repository.LeaveRequestRepository;
+import com.nulogic.infrastructure.leave.repository.LeaveTypeRepository;
 import com.nulogic.infrastructure.user.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -103,6 +105,9 @@ class DsrServiceIntegrationTest extends AbstractPostgresIntegrationTest {
     private LeaveRequestRepository leaveRequestRepository;
 
     @Autowired
+    private LeaveTypeRepository leaveTypeRepository;
+
+    @Autowired
     private AttendanceRecordRepository attendanceRecordRepository;
 
     @Autowired
@@ -174,10 +179,12 @@ class DsrServiceIntegrationTest extends AbstractPostgresIntegrationTest {
         employee = employeeRepository.save(employee);
         dataSubjectEmployeeId = employee.getId();
 
+        LeaveType leaveType = createLeaveType("DSR Export Leave", "DSR_EXP");
+
         // 3) Leave request — gives the aggregator a row to project.
         LeaveRequest leave = LeaveRequest.builder()
                 .employeeId(dataSubjectEmployeeId)
-                .leaveTypeId(UUID.randomUUID())
+                .leaveTypeId(leaveType.getId())
                 .requestNumber("LR-" + UUID.randomUUID().toString().substring(0, 8))
                 .startDate(LocalDate.now().minusDays(10))
                 .endDate(LocalDate.now().minusDays(8))
@@ -510,5 +517,18 @@ class DsrServiceIntegrationTest extends AbstractPostgresIntegrationTest {
                 objectMapper,
                 applicationContext.getBean(com.nulogic.common.util.TenantTimeService.class));
         return real;
+    }
+
+    private LeaveType createLeaveType(String name, String codePrefix) {
+        LeaveType leaveType = LeaveType.builder()
+                .leaveName(name)
+                .leaveCode(codePrefix + "-" + UUID.randomUUID().toString().substring(0, 8))
+                .annualQuota(new BigDecimal("20.00"))
+                .isPaid(true)
+                .isActive(true)
+                .accrualType(LeaveType.AccrualType.YEARLY)
+                .build();
+        leaveType.setTenantId(TENANT_ID);
+        return leaveTypeRepository.save(leaveType);
     }
 }

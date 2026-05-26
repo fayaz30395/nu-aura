@@ -10,6 +10,7 @@ import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.config.AbstractPostgresIntegrationTest;
 import com.nulogic.config.TestSecurityConfig;
+import com.nulogic.domain.employee.Department;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.esignature.SignatureApproval;
 import com.nulogic.domain.esignature.SignatureRequest;
@@ -24,6 +25,7 @@ import com.nulogic.infrastructure.esignature.repository.SignatureApprovalReposit
 import com.nulogic.infrastructure.esignature.repository.SignatureRequestRepository;
 import com.nulogic.infrastructure.letter.repository.GeneratedLetterRepository;
 import com.nulogic.infrastructure.letter.repository.LetterTemplateRepository;
+import com.nulogic.infrastructure.employee.repository.DepartmentRepository;
 import com.nulogic.infrastructure.recruitment.repository.CandidateRepository;
 import com.nulogic.infrastructure.recruitment.repository.JobOpeningRepository;
 import com.nulogic.infrastructure.user.repository.UserRepository;
@@ -60,6 +62,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class OfferLetterWorkflowIntegrationTest extends AbstractPostgresIntegrationTest {
 
     private static final UUID TENANT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
+    private UUID currentUserId;
     private UUID currentEmployeeId; // Set dynamically from created employee
 
     @Autowired
@@ -90,6 +93,9 @@ class OfferLetterWorkflowIntegrationTest extends AbstractPostgresIntegrationTest
     private EmployeeRepository employeeRepository;
 
     @Autowired
+    private DepartmentRepository departmentRepository;
+
+    @Autowired
     private UserRepository userRepository;
 
     @Autowired
@@ -108,6 +114,7 @@ class OfferLetterWorkflowIntegrationTest extends AbstractPostgresIntegrationTest
         // Create HR employee first to get the ID
         hrEmployee = createEmployee("HR-001");
         currentEmployeeId = hrEmployee.getId();
+        currentUserId = hrEmployee.getUser().getId();
 
         // Now setup security context with the correct employee ID
         setupAdminScope();
@@ -142,7 +149,7 @@ class OfferLetterWorkflowIntegrationTest extends AbstractPostgresIntegrationTest
         permissions.put(Permission.ESIGNATURE_VIEW, RoleScope.ALL);
         permissions.put(Permission.ESIGNATURE_MANAGE, RoleScope.ALL);
 
-        SecurityContext.setCurrentUser(UUID.randomUUID(), currentEmployeeId, Set.of("ADMIN"), permissions);
+        SecurityContext.setCurrentUser(currentUserId, currentEmployeeId, Set.of("ADMIN"), permissions);
         SecurityContext.setCurrentTenantId(TENANT_ID);
     }
 
@@ -180,7 +187,7 @@ class OfferLetterWorkflowIntegrationTest extends AbstractPostgresIntegrationTest
         jo.setTenantId(TENANT_ID);
         jo.setJobCode("JOB-TEST-" + UUID.randomUUID().toString().substring(0, 6));
         jo.setJobTitle("Software Engineer");
-        jo.setDepartmentId(UUID.randomUUID());
+        jo.setDepartmentId(createDepartment().getId());
         jo.setLocation("Bangalore");
         jo.setEmploymentType(JobOpening.EmploymentType.FULL_TIME);
         jo.setStatus(JobOpening.JobStatus.OPEN);
@@ -207,7 +214,7 @@ class OfferLetterWorkflowIntegrationTest extends AbstractPostgresIntegrationTest
         c.setCurrentCtc(new BigDecimal("1000000"));
         c.setExpectedCtc(new BigDecimal("1500000"));
         c.setStatus(Candidate.CandidateStatus.NEW);
-        c.setCurrentStage(Candidate.RecruitmentStage.SCREENING);
+        c.setCurrentStage(Candidate.RecruitmentStage.PANEL_REVIEW);
         c.setAppliedDate(LocalDate.now());
         return candidateRepository.save(c);
     }
@@ -240,6 +247,17 @@ class OfferLetterWorkflowIntegrationTest extends AbstractPostgresIntegrationTest
                 .build();
         template.setTenantId(TENANT_ID);
         return letterTemplateRepository.save(template);
+    }
+
+    private Department createDepartment() {
+        Department department = Department.builder()
+                .code("OFF-DEPT-" + UUID.randomUUID().toString().substring(0, 6))
+                .name("Offer Workflow Department")
+                .type(Department.DepartmentType.HR)
+                .isActive(true)
+                .build();
+        department.setTenantId(TENANT_ID);
+        return departmentRepository.save(department);
     }
 
     private LetterTemplate createNonOfferTemplate() {
@@ -413,13 +431,13 @@ class OfferLetterWorkflowIntegrationTest extends AbstractPostgresIntegrationTest
 
         @Test
         @WithMockUser(username = "hr@test.com", roles = {"HR"})
-        @DisplayName("Should accept offer and keep stage at OFFER (not JOINED)")
+        @DisplayName("Should accept offer and keep stage at offer release (not JOINED)")
         void shouldAcceptOfferWithCorrectStage() throws Exception {
             setupAdminScope();
 
             // Set candidate to OFFER_EXTENDED status
             candidate.setStatus(Candidate.CandidateStatus.OFFER_EXTENDED);
-            candidate.setCurrentStage(Candidate.RecruitmentStage.OFFER);
+            candidate.setCurrentStage(Candidate.RecruitmentStage.OFFER_NDA_TO_BE_RELEASED);
             candidateRepository.save(candidate);
 
             OfferResponseRequest request = OfferResponseRequest.builder()
@@ -437,7 +455,7 @@ class OfferLetterWorkflowIntegrationTest extends AbstractPostgresIntegrationTest
             // Verify stage is NOT set to JOINED
             Candidate updatedCandidate = candidateRepository.findById(candidate.getId()).orElseThrow();
             assertThat(updatedCandidate.getStatus()).isEqualTo(Candidate.CandidateStatus.OFFER_ACCEPTED);
-            assertThat(updatedCandidate.getCurrentStage()).isEqualTo(Candidate.RecruitmentStage.OFFER);
+            assertThat(updatedCandidate.getCurrentStage()).isEqualTo(Candidate.RecruitmentStage.OFFER_NDA_TO_BE_RELEASED);
             assertThat(updatedCandidate.getOfferAcceptedDate()).isNotNull();
         }
 
@@ -449,7 +467,7 @@ class OfferLetterWorkflowIntegrationTest extends AbstractPostgresIntegrationTest
 
             // Set candidate to OFFER_EXTENDED status
             candidate.setStatus(Candidate.CandidateStatus.OFFER_EXTENDED);
-            candidate.setCurrentStage(Candidate.RecruitmentStage.OFFER);
+            candidate.setCurrentStage(Candidate.RecruitmentStage.OFFER_NDA_TO_BE_RELEASED);
             candidateRepository.save(candidate);
 
             OfferResponseRequest request = OfferResponseRequest.builder()
@@ -503,7 +521,7 @@ class OfferLetterWorkflowIntegrationTest extends AbstractPostgresIntegrationTest
         void shouldUpdateCandidateOnSignatureCompletion() {
             // Set candidate to OFFER_EXTENDED
             candidate.setStatus(Candidate.CandidateStatus.OFFER_EXTENDED);
-            candidate.setCurrentStage(Candidate.RecruitmentStage.OFFER);
+            candidate.setCurrentStage(Candidate.RecruitmentStage.OFFER_NDA_TO_BE_RELEASED);
             candidateRepository.save(candidate);
 
             // Simulate signature completed event
@@ -530,7 +548,7 @@ class OfferLetterWorkflowIntegrationTest extends AbstractPostgresIntegrationTest
         void shouldUpdateCandidateOnSignatureDecline() {
             // Set candidate to OFFER_EXTENDED
             candidate.setStatus(Candidate.CandidateStatus.OFFER_EXTENDED);
-            candidate.setCurrentStage(Candidate.RecruitmentStage.OFFER);
+            candidate.setCurrentStage(Candidate.RecruitmentStage.OFFER_NDA_TO_BE_RELEASED);
             candidateRepository.save(candidate);
 
             // Simulate signature declined event

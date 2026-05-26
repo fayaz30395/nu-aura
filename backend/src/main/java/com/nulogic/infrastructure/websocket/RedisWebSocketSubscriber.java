@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
 public class RedisWebSocketSubscriber implements MessageListener {
 
     private final RedisWebSocketRelay relay;
-    private final GenericJackson2JsonRedisSerializer serializer = new GenericJackson2JsonRedisSerializer();
+    private final GenericJackson2JsonRedisSerializer serializer;
 
     @Override
     public void onMessage(Message message, byte[] pattern) {

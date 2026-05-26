@@ -1,0 +1,10 @@
+ALTER TABLE workflow_rules
+  ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ,
+  ADD COLUMN IF NOT EXISTS description VARCHAR(255),
+  ADD COLUMN IF NOT EXISTS target_workflow_id UUID,
+  ADD COLUMN IF NOT EXISTS additional_approver_id UUID,
+  ADD COLUMN IF NOT EXISTS additional_approver_role_id UUID,
+  ADD COLUMN IF NOT EXISTS skip_step_order INTEGER NOT NULL DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS notification_template VARCHAR(255),
+  ADD COLUMN IF NOT EXISTS effective_from TIMESTAMPTZ,
+  ADD COLUMN IF NOT EXISTS effective_to TIMESTAMPTZ;

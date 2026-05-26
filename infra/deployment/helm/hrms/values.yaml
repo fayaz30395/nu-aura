@@ -206,6 +206,7 @@ hpa:
 networkPolicy:
   enabled: false
   ingressNamespaceLabel: "ingress-nginx"
+  monitoringNamespaceLabel: "monitoring"
 
 # -----------------------------------------------------------------------------
 # ServiceAccount + Workload Identity (S9-J)

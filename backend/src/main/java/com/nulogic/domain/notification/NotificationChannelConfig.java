@@ -12,7 +12,7 @@ import org.hibernate.annotations.Where;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "notification_channel_configs", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"tenantId", "channel"})
+        @UniqueConstraint(columnNames = {"tenant_id", "channel"})
 })
 @Getter
 @Setter

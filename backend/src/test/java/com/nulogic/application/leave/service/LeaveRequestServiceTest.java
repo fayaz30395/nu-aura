@@ -1,8 +1,11 @@
 package com.nulogic.application.leave.service;
 
+import com.nulogic.api.workflow.dto.WorkflowExecutionRequest;
 import com.nulogic.application.event.DomainEventPublisher;
 import com.nulogic.application.notification.service.WebSocketNotificationService;
 import com.nulogic.application.audit.service.AuditLogService;
+import com.nulogic.application.workflow.service.WorkflowService;
+import com.nulogic.common.exception.BusinessException;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.domain.employee.Employee;
@@ -54,6 +57,8 @@ class LeaveRequestServiceTest {
     private DomainEventPublisher domainEventPublisher;
     @Mock
     private AuditLogService auditLogService;
+    @Mock
+    private WorkflowService workflowService;
     @Mock
     private com.nulogic.common.util.TenantTimeService tenantTimeService;
     @InjectMocks
@@ -150,6 +155,24 @@ class LeaveRequestServiceTest {
             assertThat(result.getRequestNumber()).startsWith("LR-");
             assertThat(result.getTenantId()).isEqualTo(tenantId);
             verify(leaveRequestRepository).save(any(LeaveRequest.class));
+            verify(workflowService).startWorkflow(any(WorkflowExecutionRequest.class));
+        }
+
+        @Test
+        @DisplayName("Should fail when approval workflow cannot start")
+        void shouldFailWhenApprovalWorkflowCannotStart() {
+            when(leaveRequestRepository.findOverlappingLeaves(any(), any(), any(), any()))
+                    .thenReturn(Collections.emptyList());
+            when(leaveRequestRepository.save(any(LeaveRequest.class)))
+                    .thenAnswer(invocation -> invocation.getArgument(0));
+            when(workflowService.startWorkflow(any(WorkflowExecutionRequest.class)))
+                    .thenThrow(new BusinessException("No active workflow definition configured for LEAVE_REQUEST"));
+
+            assertThatThrownBy(() -> leaveRequestService.createLeaveRequest(leaveRequest))
+                    .isInstanceOf(BusinessException.class)
+                    .hasMessageContaining("No active workflow definition configured for LEAVE_REQUEST");
+
+            verify(workflowService).startWorkflow(any(WorkflowExecutionRequest.class));
         }
 
         @Test
@@ -551,6 +574,24 @@ class LeaveRequestServiceTest {
 
             assertThat(result).isNotNull();
             assertThat(result.getContent()).hasSize(1);
+        }
+    }
+
+    @Nested
+    @DisplayName("Workflow Callback")
+    class WorkflowCallbackTests {
+
+        @Test
+        @DisplayName("Should fail approval callback when leave request is missing")
+        void shouldFailApprovalCallbackWhenLeaveRequestMissing() {
+            UUID requestId = UUID.randomUUID();
+            when(leaveRequestRepository.findById(requestId)).thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> leaveRequestService.onApproved(tenantId, requestId, managerId))
+                    .isInstanceOf(BusinessException.class)
+                    .hasMessageContaining("Leave request not found for approval callback");
+
+            verify(leaveRequestRepository, never()).save(any(LeaveRequest.class));
         }
     }
 }

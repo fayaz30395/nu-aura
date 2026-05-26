@@ -1,6 +1,6 @@
 # T2-07 minimal AlertManager routing for NU-AURA.
-# TODO: replace <SLACK_WEBHOOK_PLACEHOLDER> with the real Slack incoming-webhook URL
-# (sourced from secret manager; do NOT commit the real value).
+# SLACK_WEBHOOK_URL is expanded by Alertmanager at startup via --config.expand-env.
+# Do not commit the real webhook URL.
 global:
   resolve_timeout: 5m
 
@@ -14,8 +14,7 @@ route:
 receivers:
   - name: slack-default
     slack_configs:
-      # TODO: swap placeholder for real webhook (e.g. via env templating or secret mount)
-      - api_url: '<SLACK_WEBHOOK_PLACEHOLDER>'
+      - api_url: '${SLACK_WEBHOOK_URL}'
         channel: '#nu-aura-alerts'
         send_resolved: true
         title: '[{{ .Status | toUpper }}] {{ .CommonLabels.alertname }}'

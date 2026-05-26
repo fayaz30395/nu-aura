@@ -1,0 +1,74 @@
+ALTER TABLE contracts
+  ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMP;
+
+DROP INDEX IF EXISTS idx_contracts_tenant_status_enddate;
+
+ALTER TABLE contracts
+  ALTER COLUMN type DROP DEFAULT,
+  ALTER COLUMN status DROP DEFAULT;
+
+ALTER TABLE contracts
+  ALTER COLUMN type TYPE VARCHAR(50) USING type::text,
+  ALTER COLUMN status TYPE VARCHAR(50) USING status::text;
+
+ALTER TABLE contracts
+  ALTER COLUMN type SET DEFAULT 'OTHER',
+  ALTER COLUMN status SET DEFAULT 'DRAFT';
+
+CREATE INDEX IF NOT EXISTS idx_contracts_tenant_status_enddate
+  ON contracts (tenant_id, status, end_date)
+  WHERE status = 'ACTIVE' AND end_date IS NOT NULL AND is_deleted = false;
+
+ALTER TABLE contract_versions
+  ADD COLUMN IF NOT EXISTS updated_by UUID,
+  ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  ADD COLUMN IF NOT EXISTS version BIGINT DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
+  ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMP;
+
+ALTER TABLE contract_signatures
+  ADD COLUMN IF NOT EXISTS created_by UUID,
+  ADD COLUMN IF NOT EXISTS updated_by UUID,
+  ADD COLUMN IF NOT EXISTS version BIGINT DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
+  ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMP;
+
+ALTER TABLE contract_signatures
+  ALTER COLUMN signer_role DROP DEFAULT,
+  ALTER COLUMN status DROP DEFAULT;
+
+ALTER TABLE contract_signatures
+  ALTER COLUMN signer_role TYPE VARCHAR(50) USING signer_role::text,
+  ALTER COLUMN status TYPE VARCHAR(50) USING status::text;
+
+ALTER TABLE contract_signatures
+  ALTER COLUMN signer_role SET DEFAULT 'EMPLOYEE',
+  ALTER COLUMN status SET DEFAULT 'PENDING';
+
+ALTER TABLE contract_templates
+  ADD COLUMN IF NOT EXISTS updated_by UUID,
+  ADD COLUMN IF NOT EXISTS version BIGINT DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
+  ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMP;
+
+ALTER TABLE contract_templates
+  ALTER COLUMN type DROP DEFAULT;
+
+ALTER TABLE contract_templates
+  ALTER COLUMN type TYPE VARCHAR(50) USING type::text;
+
+ALTER TABLE contract_templates
+  ALTER COLUMN type SET DEFAULT 'OTHER';
+
+ALTER TABLE contract_reminders
+  ADD COLUMN IF NOT EXISTS created_by UUID,
+  ADD COLUMN IF NOT EXISTS updated_by UUID,
+  ADD COLUMN IF NOT EXISTS version BIGINT DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
+  ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMP;
+
+ALTER TABLE contract_reminders
+  ALTER COLUMN reminder_type DROP DEFAULT;
+
+ALTER TABLE contract_reminders
+  ALTER COLUMN reminder_type TYPE VARCHAR(50) USING reminder_type::text;

@@ -24,9 +24,9 @@ import java.util.UUID;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "multi_channel_notifications", indexes = {
-        @Index(name = "idx_mcn_recipient", columnList = "recipientId"),
+        @Index(name = "idx_mcn_recipient", columnList = "recipient_id"),
         @Index(name = "idx_mcn_status", columnList = "status"),
-        @Index(name = "idx_mcn_created", columnList = "createdAt"),
+        @Index(name = "idx_mcn_created", columnList = "created_at"),
         @Index(name = "idx_mcn_channel", columnList = "channel")
 })
 @EntityListeners(TimeAuditingEntityListener.class)

@@ -12,14 +12,13 @@ import {useAuth} from '@/lib/hooks/useAuth';
 import {GOOGLE_SSO_SCOPES, saveGoogleToken} from '@/lib/utils/googleToken';
 import {MfaVerification} from '@/components/auth/MfaVerification';
 import {GoogleGLogo} from '@/components/ui/GoogleGLogo';
+import {Button, Input} from '@/components/ui';
 import {safeSessionStorage, safeStorage} from '@/lib/utils/safeStorage';
 import {
   AlertCircle,
   ArrowRight,
   ChevronDown,
   ChevronUp,
-  Eye,
-  EyeOff,
   Globe,
   Lightbulb,
   Lock,
@@ -213,7 +212,7 @@ function AnimatedBackground() {
   const bg = (rgba: string, colorMix: string): string => (useFallback ? rgba : colorMix);
 
   return (
-    <div className="fixed inset-0" style={{zIndex: 0}} suppressHydrationWarning>
+    <div className="fixed inset-0 z-0" suppressHydrationWarning>
       {/* Base */}
       <div className="absolute inset-0 bg-[var(--bg-main)]"/>
       {/* Light-mode: NULogic Lapis Blue + Purple gradient mesh */}
@@ -230,7 +229,7 @@ function AnimatedBackground() {
       </div>
       {/* Dark-mode: deep NULogic navy mesh with subtle grid lines */}
       <div className="absolute inset-0 opacity-0 dark:opacity-100 transition-opacity duration-500">
-        <div className="absolute inset-0" style={{background: 'var(--bg-main)'}} suppressHydrationWarning/>
+        <div className="absolute inset-0 bg-[var(--bg-main)]" suppressHydrationWarning/>
         <div className="absolute top-[-12%] left-[-8%] w-[700px] h-[700px] rounded-full blur-[140px]"
              style={{background: bg('rgba(5, 7, 102, 0.14)', 'color-mix(in srgb, var(--nu-lapis-blue) 14%, transparent)')}}
              suppressHydrationWarning/>
@@ -401,7 +400,6 @@ function LoginPage() {
   const [isDemoLoading, setIsDemoLoading] = useState(false);
   const [isEmailLoading, setIsEmailLoading] = useState(false);
   const [showEmailForm, setShowEmailForm] = useState(true);
-  const [showPassword, setShowPassword] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [didFreshLogin, setDidFreshLogin] = useState(false);
 
@@ -767,8 +765,7 @@ function LoginPage() {
             <div
               className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-100/60 dark:bg-accent-900/20 border border-accent-200 dark:border-accent-800/40 mb-8">
               <div aria-hidden="true" className="w-2 h-2 rounded-full bg-success-600 dark:bg-success-400 animate-pulse"/>
-              <span className="text-accent-700 dark:text-accent-300 text-xs font-medium tracking-wider uppercase"
-                    style={{letterSpacing: '3px'}}>
+              <span className="text-accent-700 dark:text-accent-300 text-xs font-medium tracking-wider uppercase">
                 Infinite Innovation
               </span>
             </div>
@@ -866,8 +863,7 @@ function LoginPage() {
             </div>
 
             {/* Card */}
-            <div className="rounded-lg bg-[var(--bg-card)] border border-[var(--border-main)] p-8"
-                 style={{boxShadow: 'var(--shadow-elevated), 0 0 0 1px var(--border-subtle)'}}>
+            <div className="rounded-lg bg-[var(--bg-card)] border border-[var(--border-main)] p-8 shadow-[var(--shadow-elevated)]">
               <div className="text-center mb-7">
                 <h3 className="text-xl font-bold text-[var(--text-primary)] tracking-tight mb-2">
                   Sign In
@@ -945,61 +941,32 @@ function LoginPage() {
                     style={{animation: 'fadeSlideUp 0.2s ease-out'}}
                     aria-label="Email and password sign-in"
                   >
-                    <div>
-                      <label htmlFor="login-email" className="sr-only">Email address</label>
-                      <div className="relative">
-                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]"
-                              aria-hidden="true"/>
-                        <input
-                          id="login-email"
-                          {...register('email')}
-                          type="email"
-                          required
-                          placeholder="Email address"
-                          autoComplete="email"
-                          aria-label="Email address"
-                          aria-invalid={!!emailErrors.email}
-                          aria-describedby={emailErrors.email ? 'login-email-error' : undefined}
-                          className="input-aura pl-10 w-full"
-                        />
-                      </div>
-                      {emailErrors.email && (
-                        <p id="login-email-error"
-                           className="text-danger-500 text-xs mt-1">{emailErrors.email.message}</p>
-                      )}
-                    </div>
+                    <Input
+                      id="login-email"
+                      {...register('email')}
+                      type="email"
+                      required
+                      placeholder="Email address"
+                      autoComplete="email"
+                      aria-label="Email address"
+                      aria-invalid={!!emailErrors.email}
+                      icon={<Mail className="w-4 h-4" aria-hidden="true"/>}
+                      error={emailErrors.email?.message}
+                    />
 
                     <div>
-                      <label htmlFor="login-password" className="sr-only">Password</label>
-                      <div className="relative">
-                        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]"
-                              aria-hidden="true"/>
-                        <input
-                          id="login-password"
-                          {...register('password')}
-                          type={showPassword ? 'text' : 'password'}
-                          required
-                          placeholder="Password"
-                          autoComplete="current-password"
-                          aria-label="Password"
-                          aria-invalid={!!emailErrors.password}
-                          aria-describedby={emailErrors.password ? 'login-password-error' : undefined}
-                          className="input-aura pl-10 pr-10 w-full"
-                        />
-                        <button
-                          type="button"
-                          aria-label={showPassword ? 'Hide password' : 'Show password'}
-                          aria-pressed={showPassword}
-                          onClick={() => setShowPassword(!showPassword)}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-[var(--text-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] rounded"
-                        >
-                          {showPassword ? <EyeOff className="w-4 h-4"/> : <Eye className="w-4 h-4"/>}
-                        </button>
-                      </div>
-                      {emailErrors.password && (
-                        <p id="login-password-error"
-                           className="text-danger-500 text-xs mt-1">{emailErrors.password.message}</p>
-                      )}
+                      <Input
+                        id="login-password"
+                        {...register('password')}
+                        type="password"
+                        required
+                        placeholder="Password"
+                        autoComplete="current-password"
+                        aria-label="Password"
+                        aria-invalid={!!emailErrors.password}
+                        icon={<Lock className="w-4 h-4" aria-hidden="true"/>}
+                        error={emailErrors.password?.message}
+                      />
                       <div className="flex justify-end mt-1">
                         <Link
                           href="/auth/forgot-password"
@@ -1026,19 +993,17 @@ function LoginPage() {
                       </p>
                     )}
 
-                    <button
+                    <Button
                       type="submit"
                       disabled={isEmailLoading || (captchaRequired && !captchaToken)}
+                      isLoading={isEmailLoading}
+                      loadingText="Signing in..."
                       aria-busy={isEmailLoading}
-                      className="skeuo-button w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-accent-600 hover:bg-accent-700 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                      className="w-full"
+                      leftIcon={<LogIn className="w-4 h-4"/>}
                     >
-                      {isEmailLoading ? (
-                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"/>
-                      ) : (
-                        <LogIn className="w-4 h-4"/>
-                      )}
-                      {isEmailLoading ? 'Signing in…' : 'Sign In'}
-                    </button>
+                      Sign In
+                    </Button>
                     {isEmailLoading && (
                       <p role="status" className="text-xs text-[var(--text-secondary)] text-center">
                         Checking credentials...

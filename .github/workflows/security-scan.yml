@@ -75,7 +75,13 @@ jobs:
       - name: Build backend image
         run: docker build -f backend/Dockerfile -t nu-aura-backend:scan .
       - name: Build frontend image
-        run: docker build -f frontend/Dockerfile -t nu-aura-frontend:scan ./frontend
+        run: |
+          docker build \
+            --build-arg NEXT_PUBLIC_API_URL=https://api.ci.nu-aura.local/api/v1 \
+            --build-arg NEXT_PUBLIC_ENABLE_WEBSOCKET=true \
+            -f frontend/Dockerfile \
+            -t nu-aura-frontend:scan \
+            ./frontend
       - name: Trivy backend
         uses: aquasecurity/trivy-action@master
         with:

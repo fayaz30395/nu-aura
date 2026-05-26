@@ -12,13 +12,13 @@ import java.util.UUID;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "wiki_pages", indexes = {
-        @Index(name = "idx_wiki_pages_tenant", columnList = "tenantId"),
-        @Index(name = "idx_wiki_pages_space", columnList = "spaceId"),
-        @Index(name = "idx_wiki_pages_parent", columnList = "parentPageId"),
+        @Index(name = "idx_wiki_pages_tenant", columnList = "tenant_id"),
+        @Index(name = "idx_wiki_pages_space", columnList = "space_id"),
+        @Index(name = "idx_wiki_pages_parent", columnList = "parent_page_id"),
         @Index(name = "idx_wiki_pages_status", columnList = "status"),
         @Index(name = "idx_wiki_pages_visibility", columnList = "visibility"),
         @Index(name = "idx_wiki_pages_slug", columnList = "slug"),
-        @Index(name = "idx_wiki_pages_is_pinned", columnList = "isPinned")
+        @Index(name = "idx_wiki_pages_is_pinned", columnList = "is_pinned")
 })
 @Getter
 @Setter

@@ -155,10 +155,8 @@ export function CompanyFeed({employeeId, refreshKey = 0}: CompanyFeedProps) {
                 className="absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent via-white/10 to-transparent"/>
               <div className="w-8 h-8 rounded-full bg-[var(--bg-surface)] animate-pulse"/>
               <div className="flex-1 space-y-1.5">
-                <div className="h-3.5 bg-[var(--bg-surface)] rounded w-1/3 animate-pulse"
-                     style={{animationDelay: '0.1s'}}/>
-                <div className="h-3 bg-[var(--bg-surface)] rounded w-2/3 animate-pulse"
-                     style={{animationDelay: '0.2s'}}/>
+                <div className="h-3.5 bg-[var(--bg-surface)] rounded w-1/3 animate-pulse [animation-delay:100ms]"/>
+                <div className="h-3 bg-[var(--bg-surface)] rounded w-2/3 animate-pulse [animation-delay:200ms]"/>
               </div>
             </div>
           ))}

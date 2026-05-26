@@ -10,6 +10,7 @@ import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.workflow.ApprovalDelegate;
 import com.nulogic.domain.workflow.ApprovalStep;
+import com.nulogic.domain.workflow.StepExecution;
 import com.nulogic.domain.workflow.WorkflowDefinition;
 import com.nulogic.domain.workflow.WorkflowExecution;
 import com.nulogic.infrastructure.employee.repository.DepartmentRepository;
@@ -93,6 +94,14 @@ class WorkflowServiceAutoDelegationTest {
 
         lenient().when(tenantTimeService.now(any())).thenReturn(LocalDateTime.now());
         lenient().when(tenantTimeService.today(any())).thenReturn(LocalDate.now());
+        lenient().when(stepExecutionRepository.saveAndFlush(any(StepExecution.class)))
+                .thenAnswer(invocation -> {
+                    StepExecution stepExecution = invocation.getArgument(0);
+                    if (stepExecution.getId() == null) {
+                        stepExecution.setId(UUID.randomUUID());
+                    }
+                    return stepExecution;
+                });
 
         workflowService = new WorkflowService(
                 workflowDefinitionRepository, approvalStepRepository,

@@ -185,8 +185,8 @@ class AuditLogServiceTest {
             Map<String, String> oldValue = Map.of("key", "value");
 
             when(objectMapper.writeValueAsString(oldValue))
-                    .thenThrow(new com.fasterxml.jackson.core.JsonProcessingException("Serialization error") {
-                    });
+                    .thenThrow(com.fasterxml.jackson.databind.JsonMappingException.fromUnexpectedIOE(
+                            new java.io.IOException("Serialization error")));
 
             // Act
             auditLogService.logAction(

@@ -49,7 +49,8 @@ public class TestCacheConfig {
                 "tenantAttendanceConfig",
                 "upcomingBirthdays",
                 "upcomingAnniversaries",
-                "analytics"
+                "analytics",
+                "unreadCountByUser"
         );
     }
 

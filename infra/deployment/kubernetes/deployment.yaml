@@ -76,6 +76,8 @@ spec:
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: "prod"
+            - name: RLS_PROBE_FAIL_ON_BYPASS
+              value: "true"
             - name: PORT
               value: "8080"
             - name: SERVER_ADDRESS

@@ -5,12 +5,13 @@ import lombok.Getter;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
  * Event raised when the workflow engine assigns an approval task to a user.
- * Consumed by NotificationEventListener to create an in-app notification
- * for the assigned approver.
+ * Consumed by ApprovalNotificationListener to create an in-app notification
+ * and realtime push for the assigned approver.
  */
 @Getter
 public class ApprovalTaskAssignedEvent extends DomainEvent {
@@ -23,8 +24,10 @@ public class ApprovalTaskAssignedEvent extends DomainEvent {
     public ApprovalTaskAssignedEvent(Object source, UUID tenantId, UUID stepExecutionId,
                                      UUID assignedToUserId, String entityType,
                                      String requesterName, UUID requesterId) {
-        super(source, tenantId, stepExecutionId, "StepExecution");
-        this.assignedToUserId = assignedToUserId;
+        super(source, Objects.requireNonNull(tenantId, "tenantId must not be null"),
+                Objects.requireNonNull(stepExecutionId, "stepExecutionId must not be null"),
+                "StepExecution");
+        this.assignedToUserId = Objects.requireNonNull(assignedToUserId, "assignedToUserId must not be null");
         this.entityType = entityType;
         this.requesterName = requesterName;
         this.requesterId = requesterId;

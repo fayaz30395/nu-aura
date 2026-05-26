@@ -15,6 +15,21 @@ import {z} from 'zod';
  * Environment variable schema with validation rules.
  * All NEXT_PUBLIC_ variables are available client-side.
  */
+function isLoopbackApiUrl(value: string): boolean {
+  try {
+    const {hostname} = new URL(value);
+    const normalizedHostname = hostname.toLowerCase();
+
+    return normalizedHostname === 'localhost'
+      || normalizedHostname === '::1'
+      || normalizedHostname === '[::1]'
+      || normalizedHostname === '0.0.0.0'
+      || normalizedHostname.startsWith('127.');
+  } catch {
+    return false;
+  }
+}
+
 const envSchema = z.object({
   // Required in all environments
   NEXT_PUBLIC_API_URL: z
@@ -35,11 +50,26 @@ const envSchema = z.object({
     .default('false')
     .describe('Enable demo mode with sample credentials'),
 
+  // Optional - realtime notifications are enabled by default
+  NEXT_PUBLIC_ENABLE_WEBSOCKET: z
+    .enum(['true', 'false'])
+    .optional()
+    .default('true')
+    .describe('Enable realtime WebSocket notifications'),
+
   // Runtime environment
   NODE_ENV: z
     .enum(['development', 'production', 'test'])
     .default('development')
     .describe('Node.js environment'),
+}).superRefine((env, ctx) => {
+  if (env.NODE_ENV === 'production' && isLoopbackApiUrl(env.NEXT_PUBLIC_API_URL)) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ['NEXT_PUBLIC_API_URL'],
+      message: 'NEXT_PUBLIC_API_URL must not point to localhost or loopback when NODE_ENV=production. Set it to the deployed API URL, for example https://api.your-domain.com/api/v1.',
+    });
+  }
 });
 
 /**
@@ -70,6 +100,7 @@ export function validateEnv(): EnvValidationResult {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
     NEXT_PUBLIC_GOOGLE_CLIENT_ID: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
     NEXT_PUBLIC_DEMO_MODE: process.env.NEXT_PUBLIC_DEMO_MODE,
+    NEXT_PUBLIC_ENABLE_WEBSOCKET: process.env.NEXT_PUBLIC_ENABLE_WEBSOCKET,
     NODE_ENV: process.env.NODE_ENV,
   };
 
@@ -77,16 +108,6 @@ export function validateEnv(): EnvValidationResult {
   if (!rawEnv.NEXT_PUBLIC_GOOGLE_CLIENT_ID) {
     warnings.push(
       'NEXT_PUBLIC_GOOGLE_CLIENT_ID is not set. Google OAuth login will be disabled.'
-    );
-  }
-
-  // In production, warn about localhost URLs
-  if (
-    rawEnv.NODE_ENV === 'production' &&
-    rawEnv.NEXT_PUBLIC_API_URL?.includes('localhost')
-  ) {
-    warnings.push(
-      'NEXT_PUBLIC_API_URL contains localhost in production environment.'
     );
   }
 
@@ -153,6 +174,7 @@ function getEnv(): Env {
       NEXT_PUBLIC_API_URL: 'http://localhost:8080/api/v1',
       NEXT_PUBLIC_GOOGLE_CLIENT_ID: undefined,
       NEXT_PUBLIC_DEMO_MODE: 'false',
+      NEXT_PUBLIC_ENABLE_WEBSOCKET: 'true',
       NODE_ENV: 'development',
     };
   }
@@ -185,6 +207,11 @@ export const isTest = env.NODE_ENV === 'test';
  * Check if demo mode is enabled
  */
 export const isDemoMode = isDevelopment || env.NEXT_PUBLIC_DEMO_MODE === 'true';
+
+/**
+ * Check if realtime WebSocket notifications are enabled
+ */
+export const isWebSocketEnabled = env.NEXT_PUBLIC_ENABLE_WEBSOCKET === 'true';
 
 /**
  * Check if Google OAuth is configured

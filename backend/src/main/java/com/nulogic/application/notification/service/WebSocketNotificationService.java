@@ -80,16 +80,15 @@ public class WebSocketNotificationService {
      */
     @Transactional
     public void sendToDepartment(UUID departmentId, NotificationMessage notification) {
-        String destination = "/topic/department/" + departmentId + "/notifications";
-        // S13 Wave-13: department broadcasts originate from a request frame in the same tenant,
-        // so TenantContext gives us the right zone. (departmentId alone can't resolve a tenant
-        // without an extra DB hop, which would be wasteful for a stamp.)
-        notification.setTimestamp(tenantTimeService.now(TenantContext.getCurrentTenant()));
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        String destination = "/topic/tenant/" + tenantId + "/department/" + departmentId + "/notifications";
+        notification.setTimestamp(tenantTimeService.now(tenantId));
         notification.setId(UUID.randomUUID());
 
         redisWebSocketRelay.convertAndSend(destination, notification);
 
-        log.debug("Sent department notification to {}: {}", departmentId, notification.getTitle());
+        log.debug("Sent department notification to tenant {} department {}: {}",
+                tenantId, departmentId, notification.getTitle());
     }
 
     /**

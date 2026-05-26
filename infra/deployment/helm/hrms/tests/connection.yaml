@@ -1,4 +1,4 @@
-# Helm test — smoke check the backend /actuator/health endpoint after install.
+# Helm test — smoke check the backend readiness endpoint after install.
 # Run with:
 #   helm test hrms -n hrms
 #
@@ -13,13 +13,13 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "{{ .Release.Name }}-connection-test"
-  namespace: { { .Values.namespace } }
+  namespace: {{ .Values.namespace }}
   labels:
     app: hrms
     component: helm-test
-    app.kubernetes.io/managed-by: { { .Release.Service } }
-    app.kubernetes.io/instance: { { .Release.Name } }
-    helm.sh/chart: { { .Chart.Name } }-{{ .Chart.Version }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version }}
   annotations:
     "helm.sh/hook": test
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
@@ -43,18 +43,18 @@ spec:
         - -c
         - |
           set -eu
-          echo "=== Smoke test: backend /actuator/health ==="
+          echo "=== Smoke test: backend /actuator/health/readiness ==="
           # Retry for up to 60s — backend may still be warming up.
           for i in $(seq 1 12); do
             if wget --spider --quiet --timeout=5 \
-                "http://hrms-backend.{{ .Values.namespace }}.svc.cluster.local:8080/actuator/health"; then
-              echo "PASS: backend /actuator/health responded 2xx (attempt $i)"
+                "http://hrms-backend.{{ .Values.namespace }}.svc.cluster.local:8080/actuator/health/readiness"; then
+              echo "PASS: backend /actuator/health/readiness responded 2xx (attempt $i)"
               exit 0
             fi
             echo "attempt $i failed, retrying in 5s..."
             sleep 5
           done
-          echo "FAIL: backend /actuator/health never returned 2xx after 60s"
+          echo "FAIL: backend /actuator/health/readiness never returned 2xx after 60s"
           exit 1
       resources:
         requests:

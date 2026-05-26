@@ -39,7 +39,19 @@ spec:
       initContainers:
         - name: wait-for-db
           image: postgres:16-alpine
-          command: [ 'sh', '-c', 'until pg_isready -h ${DB_HOST} -p ${DB_PORT} -U ${DB_USER}; do echo "Waiting for PostgreSQL..."; sleep 2; done;' ]
+          command:
+            - sh
+            - -c
+            - |
+              DB_HOST_PORT="${SPRING_DATASOURCE_URL#jdbc:postgresql://}"
+              DB_HOST_PORT="${DB_HOST_PORT%%/*}"
+              DB_HOST="${DB_HOST_PORT%%:*}"
+              DB_PORT="${DB_HOST_PORT##*:}"
+              if [ "${DB_PORT}" = "${DB_HOST_PORT}" ]; then DB_PORT="5432"; fi
+              until pg_isready -h "${DB_HOST}" -p "${DB_PORT}" -U "${SPRING_DATASOURCE_USERNAME}"; do
+                echo "Waiting for PostgreSQL..."
+                sleep 2
+              done
           resources:
             requests:
               cpu: 50m
@@ -48,18 +60,16 @@ spec:
               cpu: 100m
               memory: 64Mi
           env:
-            - name: DB_HOST
-              valueFrom:
-                configMapKeyRef:
-                  name: hrms-config
-                  key: DB_HOST
-            - name: DB_PORT
-              value: "5432"
-            - name: DB_USER
+            - name: SPRING_DATASOURCE_URL
               valueFrom:
                 secretKeyRef:
                   name: hrms-secrets
-                  key: DB_USERNAME
+                  key: SPRING_DATASOURCE_URL
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: hrms-secrets
+                  key: SPRING_DATASOURCE_USERNAME
 
       containers:
         - name: backend
@@ -87,6 +97,18 @@ spec:
                   name: hrms-config
                   key: SERVER_PORT
 
+            - name: RLS_PROBE_FAIL_ON_BYPASS
+              valueFrom:
+                configMapKeyRef:
+                  name: hrms-config
+                  key: RLS_PROBE_FAIL_ON_BYPASS
+
+            - name: APP_SCHEDULING_ENABLED
+              valueFrom:
+                configMapKeyRef:
+                  name: hrms-config
+                  key: APP_SCHEDULING_ENABLED
+
             # ── Database ───────────────────────────────────────────────────────────────
             - name: SPRING_DATASOURCE_URL
               valueFrom:
@@ -105,6 +127,24 @@ spec:
                 secretKeyRef:
                   name: hrms-secrets
                   key: SPRING_DATASOURCE_PASSWORD
+
+            - name: FLYWAY_URL
+              valueFrom:
+                secretKeyRef:
+                  name: hrms-secrets
+                  key: FLYWAY_URL
+
+            - name: FLYWAY_USER
+              valueFrom:
+                secretKeyRef:
+                  name: hrms-secrets
+                  key: FLYWAY_USER
+
+            - name: FLYWAY_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: hrms-secrets
+                  key: FLYWAY_PASSWORD
 
             # ── Redis ──────────────────────────────────────────────────────────────────
             - name: SPRING_REDIS_HOST
@@ -232,6 +272,12 @@ spec:
                 configMapKeyRef:
                   name: hrms-config
                   key: CSRF_ENABLED
+
+            - name: PROMETHEUS_SCRAPE_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: hrms-secrets
+                  key: PROMETHEUS_SCRAPE_TOKEN
 
             # ── Frontend / CORS ────────────────────────────────────────────────────────
             - name: FRONTEND_URL
@@ -361,7 +407,7 @@ spec:
 
           startupProbe:
             httpGet:
-              path: /actuator/health
+              path: /actuator/health/readiness
               port: 8080
             initialDelaySeconds: 0
             periodSeconds: 10
@@ -399,7 +445,9 @@ spec:
                         - backend
                 topologyKey: kubernetes.io/hostname
 
-      terminationGracePeriodSeconds: 30
+      # 60s exceeds spring.lifecycle.timeout-per-shutdown-phase in prod (45s),
+      # allowing Tomcat/STOMP/Hikari/Lettuce/Kafka to drain before SIGKILL.
+      terminationGracePeriodSeconds: 60
 
 ---
 # PodDisruptionBudget — guarantees ≥1 backend pod stays Ready during

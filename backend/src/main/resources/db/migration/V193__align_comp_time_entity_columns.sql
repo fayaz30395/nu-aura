@@ -1,0 +1,27 @@
+ALTER TABLE comp_time_balances
+  ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ,
+  ADD COLUMN IF NOT EXISTS max_balance NUMERIC(38,2),
+  ADD COLUMN IF NOT EXISTS at_max_balance BOOLEAN NOT NULL DEFAULT FALSE;
+
+ALTER TABLE comp_time_balances
+  ALTER COLUMN total_accrued TYPE NUMERIC(38,2),
+  ALTER COLUMN total_used TYPE NUMERIC(38,2),
+  ALTER COLUMN total_expired TYPE NUMERIC(38,2),
+  ALTER COLUMN total_forfeited TYPE NUMERIC(38,2),
+  ALTER COLUMN current_balance TYPE NUMERIC(38,2);
+
+ALTER TABLE comp_time_transactions
+  ADD COLUMN IF NOT EXISTS balance_after NUMERIC(38,2),
+  ADD COLUMN IF NOT EXISTS overtime_request_id UUID,
+  ADD COLUMN IF NOT EXISTS overtime_date DATE,
+  ADD COLUMN IF NOT EXISTS leave_request_id UUID,
+  ADD COLUMN IF NOT EXISTS usage_date DATE,
+  ADD COLUMN IF NOT EXISTS original_accrual_date DATE,
+  ADD COLUMN IF NOT EXISTS expiry_date DATE,
+  ADD COLUMN IF NOT EXISTS description VARCHAR(255),
+  ADD COLUMN IF NOT EXISTS processed_by UUID,
+  ADD COLUMN IF NOT EXISTS processed_at TIMESTAMPTZ;
+
+ALTER TABLE comp_time_transactions
+  ALTER COLUMN hours TYPE NUMERIC(38,2),
+  ALTER COLUMN balance_after TYPE NUMERIC(38,2);

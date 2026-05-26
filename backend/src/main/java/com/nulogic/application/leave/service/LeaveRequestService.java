@@ -6,6 +6,7 @@ import com.nulogic.application.event.DomainEventPublisher;
 import com.nulogic.application.notification.service.WebSocketNotificationService;
 import com.nulogic.application.workflow.callback.ApprovalCallbackHandler;
 import com.nulogic.application.workflow.service.WorkflowService;
+import com.nulogic.common.exception.BusinessException;
 import com.nulogic.common.exception.ResourceNotFoundException;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
@@ -136,12 +137,12 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
             log.warn("Audit log failed for leave request create: {}", e.getMessage());
         }
 
+        startLeaveApprovalWorkflow(saved, tenantId);
+
         // FIX: Defer non-critical operations to AFTER_COMMIT to prevent
         // "Transaction silently rolled back because it has been marked as rollback-only".
-        // WorkflowService.startWorkflow() and WebSocketNotificationService methods are
-        // @Transactional — if they throw, they mark the shared transaction as rollback-only
-        // BEFORE our catch blocks can swallow the exception. Deferring to afterCommit
-        // ensures the leave request is persisted regardless of notification/workflow failures.
+        // WebSocketNotificationService methods are @Transactional; deferring them to
+        // afterCommit keeps notification failures from rolling back the saved request.
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
             @Override
             public void afterCommit() {
@@ -150,9 +151,6 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
 
                 // Publish domain event for downstream consumers (notifications, analytics, audit)
                 publishLeaveRequestedEvent(saved, tenantId);
-
-                // Start approval workflow
-                startLeaveApprovalWorkflow(saved, tenantId);
             }
         });
 
@@ -424,13 +422,12 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
                 .orElse(null);
 
         if (request == null) {
-            log.warn("Leave request {} not found for approval callback", entityId);
-            return;
+            throw new BusinessException("Leave request not found for approval callback: " + entityId);
         }
 
         if (request.getStatus() != LeaveRequest.LeaveRequestStatus.PENDING) {
-            log.warn("Leave request {} already in status {}, skipping approval", entityId, request.getStatus());
-            return;
+            throw new BusinessException("Leave request " + entityId
+                    + " is not pending approval. Current status: " + request.getStatus());
         }
 
         request.approve(approvedBy, tenantTimeService.now(request.getTenantId()));
@@ -457,13 +454,12 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
                 .orElse(null);
 
         if (request == null) {
-            log.warn("Leave request {} not found for rejection callback", entityId);
-            return;
+            throw new BusinessException("Leave request not found for rejection callback: " + entityId);
         }
 
         if (request.getStatus() != LeaveRequest.LeaveRequestStatus.PENDING) {
-            log.warn("Leave request {} already in status {}, skipping rejection", entityId, request.getStatus());
-            return;
+            throw new BusinessException("Leave request " + entityId
+                    + " is not pending rejection. Current status: " + request.getStatus());
         }
 
         request.reject(rejectedBy, reason, tenantTimeService.now(request.getTenantId()));
@@ -476,27 +472,22 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
     // ======================== Workflow Start Helper ========================
 
     private void startLeaveApprovalWorkflow(LeaveRequest leaveRequest, UUID tenantId) {
-        try {
-            Employee employee = employeeRepository.findByIdAndTenantId(leaveRequest.getEmployeeId(), tenantId).orElse(null);
-            LeaveType leaveType = leaveTypeRepository.findByIdAndTenantId(leaveRequest.getLeaveTypeId(), tenantId).orElse(null);
+        Employee employee = employeeRepository.findByIdAndTenantId(leaveRequest.getEmployeeId(), tenantId).orElse(null);
+        LeaveType leaveType = leaveTypeRepository.findByIdAndTenantId(leaveRequest.getLeaveTypeId(), tenantId).orElse(null);
 
-            String employeeName = employee != null ? employee.getFirstName() + " " + employee.getLastName() : "Employee";
-            String leaveTypeName = leaveType != null ? leaveType.getLeaveName() : "Leave";
+        String employeeName = employee != null ? employee.getFirstName() + " " + employee.getLastName() : "Employee";
+        String leaveTypeName = leaveType != null ? leaveType.getLeaveName() : "Leave";
 
-            WorkflowExecutionRequest workflowRequest = new WorkflowExecutionRequest();
-            workflowRequest.setEntityType(WorkflowDefinition.EntityType.LEAVE_REQUEST);
-            workflowRequest.setEntityId(leaveRequest.getId());
-            workflowRequest.setTitle("Leave Approval: " + employeeName + " - " + leaveTypeName);
-            if (employee != null && employee.getDepartmentId() != null) {
-                workflowRequest.setDepartmentId(employee.getDepartmentId());
-            }
-
-            workflowService.startWorkflow(workflowRequest);
-            log.info("Workflow started for leave request: {}", leaveRequest.getId());
-        } catch (Exception e) { // Intentional broad catch — leave processing error boundary
-            log.warn("Could not start approval workflow for leave request {}: {}",
-                    leaveRequest.getId(), e.getMessage());
+        WorkflowExecutionRequest workflowRequest = new WorkflowExecutionRequest();
+        workflowRequest.setEntityType(WorkflowDefinition.EntityType.LEAVE_REQUEST);
+        workflowRequest.setEntityId(leaveRequest.getId());
+        workflowRequest.setTitle("Leave Approval: " + employeeName + " - " + leaveTypeName);
+        if (employee != null && employee.getDepartmentId() != null) {
+            workflowRequest.setDepartmentId(employee.getDepartmentId());
         }
+
+        workflowService.startWorkflow(workflowRequest);
+        log.info("Workflow started for leave request: {}", leaveRequest.getId());
     }
 
     // ======================== Domain Event Publishing Helpers ========================

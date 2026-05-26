@@ -7,7 +7,11 @@ import com.nulogic.common.security.SecurityContext;
 import com.nulogic.config.AbstractPostgresIntegrationTest;
 import com.nulogic.config.TestSecurityConfig;
 import com.nulogic.domain.contract.ContractType;
+import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.user.RoleScope;
+import com.nulogic.domain.user.User;
+import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
+import com.nulogic.infrastructure.user.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -46,18 +50,23 @@ class ContractControllerTest extends AbstractPostgresIntegrationTest {
     private static final String BASE_URL = "/api/v1/contracts";
     private static final UUID TENANT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
     private static final UUID USER_ID = UUID.fromString("660e8400-e29b-41d4-a716-446655440000");
-    private static final UUID EMPLOYEE_ID = UUID.fromString("111e8400-e29b-41d4-a716-446655440099");
+    private UUID employeeId;
 
     @Autowired
     MockMvc mockMvc;
     @Autowired
     ObjectMapper objectMapper;
+    @Autowired
+    UserRepository userRepository;
+    @Autowired
+    EmployeeRepository employeeRepository;
 
     @BeforeEach
     void setUpSuperAdminContext() {
+        employeeId = createEmployee();
         Map<String, RoleScope> permissions = new HashMap<>();
         permissions.put(Permission.SYSTEM_ADMIN, RoleScope.ALL);
-        SecurityContext.setCurrentUser(USER_ID, EMPLOYEE_ID, Set.of("SUPER_ADMIN"), permissions);
+        SecurityContext.setCurrentUser(USER_ID, employeeId, Set.of("SUPER_ADMIN"), permissions);
         SecurityContext.setCurrentTenantId(TENANT_ID);
     }
 
@@ -166,12 +175,38 @@ class ContractControllerTest extends AbstractPostgresIntegrationTest {
         CreateContractRequest request = new CreateContractRequest();
         request.setTitle(title);
         request.setType(type);
-        request.setEmployeeId(EMPLOYEE_ID);
+        request.setEmployeeId(employeeId);
         request.setStartDate(LocalDate.now());
         request.setEndDate(LocalDate.now().plusYears(1));
         request.setValue(new BigDecimal("100000.00"));
         request.setCurrency("INR");
         request.setDescription("Standard " + type.name() + " contract");
         return request;
+    }
+
+    private UUID createEmployee() {
+        String suffix = UUID.randomUUID().toString().substring(0, 8);
+        User user = User.builder()
+                .email("contract-" + suffix + "@example.com")
+                .firstName("Contract")
+                .lastName("Employee")
+                .passwordHash("test-hash")
+                .status(User.UserStatus.ACTIVE)
+                .build();
+        user.setTenantId(TENANT_ID);
+        User savedUser = userRepository.save(user);
+
+        Employee employee = Employee.builder()
+                .employeeCode("CONTRACT-" + suffix)
+                .firstName("Contract")
+                .lastName("Employee")
+                .personalEmail(savedUser.getEmail())
+                .joiningDate(LocalDate.now().minusMonths(1))
+                .employmentType(Employee.EmploymentType.FULL_TIME)
+                .status(Employee.EmployeeStatus.ACTIVE)
+                .user(savedUser)
+                .build();
+        employee.setTenantId(TENANT_ID);
+        return employeeRepository.save(employee).getId();
     }
 }

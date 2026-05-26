@@ -20,8 +20,8 @@ import java.util.UUID;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "payroll_adjustments", indexes = {
-        @Index(name = "idx_pa_tenant_employee", columnList = "tenantId, employee_id"),
-        @Index(name = "idx_pa_tenant_status", columnList = "tenantId, status"),
+        @Index(name = "idx_pa_tenant_employee", columnList = "tenant_id, employee_id"),
+        @Index(name = "idx_pa_tenant_status", columnList = "tenant_id, status"),
         @Index(name = "idx_pa_effective_date", columnList = "effective_date")
 })
 @Getter

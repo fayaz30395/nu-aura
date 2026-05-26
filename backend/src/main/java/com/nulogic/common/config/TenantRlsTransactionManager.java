@@ -39,7 +39,8 @@ import java.util.UUID;
  *       so the value never leaks between requests on the same connection.
  *   </li>
  *   <li>If no tenant is present in the ThreadLocal (e.g., public-facing
- *       endpoints, background jobs) we skip the SET statement entirely.
+ *       endpoints, background jobs), we explicitly reset the setting so the
+ *       transaction cannot inherit stale session-level tenant context.
  *   </li>
  * </ol>
  *
@@ -82,7 +83,7 @@ public class TenantRlsTransactionManager extends JpaTransactionManager {
 
         UUID tenantId = TenantContext.getCurrentTenant();
         if (tenantId == null) {
-            // Public endpoint or background job — nothing to set
+            resetTenantOnConnection(true);
             return;
         }
 
@@ -103,7 +104,7 @@ public class TenantRlsTransactionManager extends JpaTransactionManager {
      */
     @Override
     protected void doCleanupAfterCompletion(Object transaction) {
-        resetTenantOnConnection();
+        resetTenantOnConnection(false);
         super.doCleanupAfterCompletion(transaction);
     }
 
@@ -113,8 +114,8 @@ public class TenantRlsTransactionManager extends JpaTransactionManager {
     private void setTenantOnConnection(UUID tenantId) {
         DataSource ds = getDataSource();
         if (ds == null) {
-            log.warn("TenantRlsTransactionManager: DataSource is null, cannot set app.current_tenant_id");
-            return;
+            throw new IllegalStateException(
+                    "TenantRlsTransactionManager: DataSource is null, cannot set app.current_tenant_id");
         }
 
         try {
@@ -125,14 +126,9 @@ public class TenantRlsTransactionManager extends JpaTransactionManager {
                 log.trace("RLS: SET LOCAL app.current_tenant_id = {}", tenantId);
             }
         } catch (SQLException e) {
-            // Log and continue rather than failing the transaction.  The
-            // application-layer tenant filtering (WHERE tenant_id = :tenantId)
-            // still enforces isolation; RLS is a defence-in-depth layer here.
-            log.warn(
-                    "TenantRlsTransactionManager: Failed to set app.current_tenant_id={} — " +
-                            "RLS enforcement degraded to application layer only. Error: {}",
-                    tenantId, e.getMessage()
-            );
+            throw new IllegalStateException(
+                    "TenantRlsTransactionManager: Failed to set app.current_tenant_id=" + tenantId,
+                    e);
         }
     }
 
@@ -141,9 +137,13 @@ public class TenantRlsTransactionManager extends JpaTransactionManager {
      * Uses {@code RESET} so the next checkout starts without a tenant unless the
      * request context explicitly sets one.
      */
-    private void resetTenantOnConnection() {
+    private void resetTenantOnConnection(boolean failOnError) {
         DataSource ds = getDataSource();
         if (ds == null) {
+            if (failOnError) {
+                throw new IllegalStateException(
+                        "TenantRlsTransactionManager: DataSource is null, cannot reset app.current_tenant_id");
+            }
             return;
         }
 
@@ -157,7 +157,11 @@ public class TenantRlsTransactionManager extends JpaTransactionManager {
                 }
             }
         } catch (SQLException e) {
-            // Best-effort cleanup — don't fail the transaction for this
+            if (failOnError) {
+                throw new IllegalStateException(
+                        "TenantRlsTransactionManager: Failed to reset app.current_tenant_id before null-tenant transaction",
+                        e);
+            }
             log.debug("TenantRlsTransactionManager: Failed to reset app.current_tenant_id on cleanup: {}",
                     e.getMessage());
         }

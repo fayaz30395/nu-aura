@@ -103,6 +103,9 @@ spring:
     repair-on-migrate: false  # Reverted after V113/V115 checksums repaired
     clean-disabled: true
     mixed: true
+    postgresql:
+      # Required for migrations that use CREATE INDEX CONCURRENTLY.
+      transactional-lock: false
     # Flyway uses direct (non-pooler) Neon endpoint to avoid PgBouncer transaction-mode issues
     # SECURITY: Credentials must be provided via environment variables
     url: ${FLYWAY_URL:${SPRING_DATASOURCE_URL}}
@@ -113,6 +116,7 @@ spring:
     redis:
       host: ${SPRING_REDIS_HOST:localhost}
       port: ${SPRING_REDIS_PORT:6379}
+      password: ${SPRING_REDIS_PASSWORD:}
       timeout: 2000
       lettuce:
         pool:

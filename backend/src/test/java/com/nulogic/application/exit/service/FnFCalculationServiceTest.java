@@ -106,10 +106,10 @@ class FnFCalculationServiceTest {
             BigDecimal baseSalary = new BigDecimal("60000.00");
             SalaryStructure salaryStructure = SalaryStructure.builder().basicSalary(baseSalary).build();
 
-            when(exitProcessRepository.findById(exitProcessId)).thenReturn(Optional.of(exitProcess));
+            when(exitProcessRepository.findByIdAndTenantId(exitProcessId, tenantId)).thenReturn(Optional.of(exitProcess));
             when(fnfRepository.findByExitProcessIdAndTenantId(exitProcessId, tenantId))
                     .thenReturn(Optional.empty());
-            when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
+            when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.of(employee));
             when(salaryStructureRepository.findActiveByEmployeeIdAndDate(eq(tenantId), eq(employeeId), any()))
                     .thenReturn(Optional.of(salaryStructure));
             when(fnfRepository.save(any(FullAndFinalSettlement.class)))
@@ -134,10 +134,10 @@ class FnFCalculationServiceTest {
             BigDecimal baseSalary = new BigDecimal("60000.00");
             SalaryStructure salaryStructure = SalaryStructure.builder().basicSalary(baseSalary).build();
 
-            when(exitProcessRepository.findById(exitProcessId)).thenReturn(Optional.of(exitProcess));
+            when(exitProcessRepository.findByIdAndTenantId(exitProcessId, tenantId)).thenReturn(Optional.of(exitProcess));
             when(fnfRepository.findByExitProcessIdAndTenantId(exitProcessId, tenantId))
                     .thenReturn(Optional.empty());
-            when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
+            when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.of(employee));
             when(salaryStructureRepository.findActiveByEmployeeIdAndDate(eq(tenantId), eq(employeeId), any()))
                     .thenReturn(Optional.of(salaryStructure));
             when(fnfRepository.save(any(FullAndFinalSettlement.class)))
@@ -161,10 +161,10 @@ class FnFCalculationServiceTest {
             BigDecimal baseSalary = new BigDecimal("60000.00");
             SalaryStructure salaryStructure = SalaryStructure.builder().basicSalary(baseSalary).build();
 
-            when(exitProcessRepository.findById(exitProcessId)).thenReturn(Optional.of(exitProcess));
+            when(exitProcessRepository.findByIdAndTenantId(exitProcessId, tenantId)).thenReturn(Optional.of(exitProcess));
             when(fnfRepository.findByExitProcessIdAndTenantId(exitProcessId, tenantId))
                     .thenReturn(Optional.empty());
-            when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
+            when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.of(employee));
             when(salaryStructureRepository.findActiveByEmployeeIdAndDate(eq(tenantId), eq(employeeId), any()))
                     .thenReturn(Optional.of(salaryStructure));
             when(fnfRepository.save(any(FullAndFinalSettlement.class)))
@@ -182,10 +182,10 @@ class FnFCalculationServiceTest {
         @DisplayName("Should handle zero salary gracefully")
         void shouldHandleZeroSalary() {
             // Given
-            when(exitProcessRepository.findById(exitProcessId)).thenReturn(Optional.of(exitProcess));
+            when(exitProcessRepository.findByIdAndTenantId(exitProcessId, tenantId)).thenReturn(Optional.of(exitProcess));
             when(fnfRepository.findByExitProcessIdAndTenantId(exitProcessId, tenantId))
                     .thenReturn(Optional.empty());
-            when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
+            when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.of(employee));
             when(salaryStructureRepository.findActiveByEmployeeIdAndDate(eq(tenantId), eq(employeeId), any()))
                     .thenReturn(Optional.empty()); // No salary structure
 
@@ -203,7 +203,7 @@ class FnFCalculationServiceTest {
         @DisplayName("Should throw RuntimeException when exit process not found")
         void shouldThrowWhenExitProcessNotFound() {
             // Given
-            when(exitProcessRepository.findById(exitProcessId)).thenReturn(Optional.empty());
+            when(exitProcessRepository.findByIdAndTenantId(exitProcessId, tenantId)).thenReturn(Optional.empty());
 
             // When/Then
             assertThatThrownBy(() -> fnfCalculationService.getOrCalculate(exitProcessId))
@@ -229,10 +229,10 @@ class FnFCalculationServiceTest {
             existing.setId(UUID.randomUUID());
             existing.setTenantId(tenantId);
 
-            when(exitProcessRepository.findById(exitProcessId)).thenReturn(Optional.of(exitProcess));
+            when(exitProcessRepository.findByIdAndTenantId(exitProcessId, tenantId)).thenReturn(Optional.of(exitProcess));
             when(fnfRepository.findByExitProcessIdAndTenantId(exitProcessId, tenantId))
                     .thenReturn(Optional.of(existing));
-            when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
+            when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.of(employee));
 
             // When
             FnFCalculationResponse result = fnfCalculationService.getOrCalculate(exitProcessId);
@@ -265,7 +265,7 @@ class FnFCalculationServiceTest {
                     .thenReturn(Optional.of(settlement));
             when(fnfRepository.save(any(FullAndFinalSettlement.class)))
                     .thenAnswer(inv -> inv.getArgument(0));
-            when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
+            when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.of(employee));
 
             FnFAdjustmentRequest req = new FnFAdjustmentRequest();
             req.setLoanRecovery(new BigDecimal("10000.00"));
@@ -322,7 +322,7 @@ class FnFCalculationServiceTest {
                     .thenReturn(Optional.of(settlement));
             when(fnfRepository.save(any(FullAndFinalSettlement.class)))
                     .thenAnswer(inv -> inv.getArgument(0));
-            when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
+            when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.of(employee));
 
             // When
             FnFCalculationResponse result = fnfCalculationService.approve(exitProcessId);
@@ -349,7 +349,7 @@ class FnFCalculationServiceTest {
                     .thenReturn(Optional.of(settlement));
             when(fnfRepository.save(any(FullAndFinalSettlement.class)))
                     .thenAnswer(inv -> inv.getArgument(0));
-            when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
+            when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.of(employee));
 
             // When
             FnFCalculationResponse result = fnfCalculationService.approve(exitProcessId);
@@ -419,7 +419,7 @@ class FnFCalculationServiceTest {
                     .thenReturn(Optional.of(settlement));
             when(fnfRepository.save(any(FullAndFinalSettlement.class)))
                     .thenAnswer(inv -> inv.getArgument(0));
-            when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
+            when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.of(employee));
 
             FnFAdjustmentRequest req = new FnFAdjustmentRequest();
             req.setRemarks("Final review");

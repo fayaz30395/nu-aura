@@ -1,7 +1,7 @@
 # Google App Engine Configuration for HRMS Backend
 # Alternative to Cloud Run for App Engine Standard/Flexible Environment
 
-runtime: java17
+runtime: java21
 env: flex
 
 # Instance configuration
@@ -54,6 +54,8 @@ network:
 # Environment variables
 env_variables:
   SPRING_PROFILES_ACTIVE: "prod"
+  RLS_PROBE_FAIL_ON_BYPASS: "true"
+  APP_SCHEDULING_ENABLED: "false"
   PORT: "8080"
   SERVER_ADDRESS: "0.0.0.0"
   JAVA_OPTS: "-Xmx2048m -Xms512m -XX:+UseG1GC -XX:MaxGCPauseMillis=200"

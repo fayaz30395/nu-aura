@@ -88,6 +88,9 @@ class WebSocketService {
 
       this.client = new Client({
         webSocketFactory: () => new SockJS(wsUrl),
+        // In production the backend authenticates WebSocket sessions from the
+        // httpOnly access-token cookie copied during the SockJS handshake. The
+        // optional bearer header remains for tests and non-browser API clients.
         connectHeaders: token ? {Authorization: `Bearer ${token}`} : {},
         debug: (str) => {
           if (process.env.NODE_ENV === 'development') {
@@ -341,24 +344,27 @@ class WebSocketService {
   private subscribeToNotifications(): void {
     if (!this.client?.connected) return;
 
-    // Subscribe to broadcast channel (all users)
-    this.subscribe('/topic/broadcast', (message: Message) => {
+    // User-targeted queue delivered by convertAndSendToUser(..., "/queue/notifications", ...).
+    this.subscribe('/user/queue/notifications', (message: Message) => {
       this.handleMessage(message);
     });
 
-    // Subscribe to user-specific channel
-    if (this.userId) {
-      this.subscribe(`/topic/user/${this.userId}`, (message: Message) => {
+    // Tenant-scoped notifications are authorized by backend tenant-topic checks.
+    if (this.tenantId) {
+      this.subscribe(`/topic/tenant/${this.tenantId}/notifications`, (message: Message) => {
+        this.handleMessage(message);
+      });
+
+      // Release smoke endpoint /api/ws-notifications/broadcast publishes here.
+      this.subscribe(`/topic/tenant/${this.tenantId}/broadcast`, (message: Message) => {
         this.handleMessage(message);
       });
     }
 
-    // Subscribe to tenant-specific channel
-    if (this.tenantId) {
-      this.subscribe(`/topic/tenant/${this.tenantId}`, (message: Message) => {
-        this.handleMessage(message);
-      });
-    }
+    // Public, explicitly allowlisted announcements.
+    this.subscribe('/topic/announcements', (message: Message) => {
+      this.handleMessage(message);
+    });
   }
 
   /**

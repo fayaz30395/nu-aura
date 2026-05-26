@@ -205,6 +205,13 @@ class PayrollComponentServiceTest {
     }
 
     @Test
+    @DisplayName("extractFormulaReferences: should handle uppercase component codes")
+    void extractFormulaReferences_handlesUppercaseComponentCodes() {
+        Set<String> refs = payrollComponentService.extractFormulaReferences("BASIC * 0.4 + HRA");
+        assertThat(refs).containsExactlyInAnyOrder("BASIC", "HRA");
+    }
+
+    @Test
     @DisplayName("extractFormulaReferences: should handle null/blank formula")
     void extractFormulaReferences_nullFormula() {
         assertThat(payrollComponentService.extractFormulaReferences(null)).isEmpty();
@@ -234,6 +241,28 @@ class PayrollComponentServiceTest {
         assertThat(result.get("basic")).isEqualByComparingTo("50000");
         assertThat(result.get("hra")).isEqualByComparingTo("20000.00");
         assertThat(result.get("pf")).isEqualByComparingTo("6000.00");
+    }
+
+    @Test
+    @DisplayName("evaluateComponents: should compute uppercase formula-based components in correct order")
+    void evaluateComponents_formulaEvaluation_withUppercaseCodes() {
+        List<PayrollComponent> components = List.of(
+                buildComponentWithOrder("BASIC", null, BigDecimal.ZERO, 0),
+                buildComponentWithOrder("HRA", "BASIC * 0.4", null, 1),
+                buildComponentWithOrder("PF", "BASIC * 0.12", null, 2)
+        );
+
+        when(payrollComponentRepository.findAllByTenantIdAndIsActiveTrueOrderByEvaluationOrderAsc(tenantId))
+                .thenReturn(components);
+
+        Map<String, BigDecimal> inputs = new HashMap<>();
+        inputs.put("BASIC", new BigDecimal("50000"));
+
+        Map<String, BigDecimal> result = payrollComponentService.evaluateComponents(inputs);
+
+        assertThat(result.get("BASIC")).isEqualByComparingTo("50000");
+        assertThat(result.get("HRA")).isEqualByComparingTo("20000.00");
+        assertThat(result.get("PF")).isEqualByComparingTo("6000.00");
     }
 
     // ===== Create Component with Cycle Detection Tests =====

@@ -144,6 +144,8 @@ EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
   CMD curl -f http://localhost:8080/actuator/health || exit 1
 
+ENV SPRING_PROFILES_ACTIVE=render
+ENV RLS_PROBE_FAIL_ON_BYPASS=true
 ENV JAVA_OPTS="-XX:+UseContainerSupport -Xms64m -Xmx224m -XX:MaxMetaspaceSize=160m -XX:ReservedCodeCacheSize=32m -XX:MaxDirectMemorySize=16m -Xss384k -XX:+UseSerialGC -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Djava.security.egd=file:/dev/./urandom"
 
 ENTRYPOINT ["/usr/local/bin/render-entrypoint"]

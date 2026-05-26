@@ -85,6 +85,8 @@ class ContractServiceTest {
         securityContextMock = mockStatic(SecurityContext.class);
         securityContextMock.when(SecurityContext::getCurrentTenantId).thenReturn(TENANT_ID);
         securityContextMock.when(SecurityContext::getCurrentUserId).thenReturn(USER_ID);
+        securityContextMock.when(SecurityContext::isHRManager).thenReturn(true);
+        securityContextMock.when(SecurityContext::getCurrentEmployeeId).thenReturn(EMPLOYEE_ID);
 
         // Default stub: employeeService.getByIdAndTenant returns a test employee
         Employee testEmployee = Employee.builder()

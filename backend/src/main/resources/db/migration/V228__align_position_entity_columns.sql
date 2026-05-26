@@ -1,0 +1,27 @@
+-- Align positions with Position mapping.
+ALTER TABLE positions
+  ADD COLUMN IF NOT EXISTS department_id UUID;
+
+ALTER TABLE positions
+  ADD COLUMN IF NOT EXISTS reports_to_position_id UUID;
+
+ALTER TABLE positions
+  ADD COLUMN IF NOT EXISTS headcount INTEGER DEFAULT 1;
+
+ALTER TABLE positions
+  ADD COLUMN IF NOT EXISTS filled_count INTEGER DEFAULT 0;
+
+ALTER TABLE positions
+  ADD COLUMN IF NOT EXISTS grade_min VARCHAR(255);
+
+ALTER TABLE positions
+  ADD COLUMN IF NOT EXISTS grade_max VARCHAR(255);
+
+ALTER TABLE positions
+  ADD COLUMN IF NOT EXISTS is_critical BOOLEAN DEFAULT FALSE;
+
+ALTER TABLE positions
+  ADD COLUMN IF NOT EXISTS is_active BOOLEAN DEFAULT TRUE;
+
+ALTER TABLE positions
+  ADD COLUMN IF NOT EXISTS location VARCHAR(255);

@@ -1,4 +1,4 @@
-{ { - if .Values.networkPolicy.enabled } }
+{{- if .Values.networkPolicy.enabled }}
 # NetworkPolicy — zero-trust east-west networking
 # Gated by .Values.networkPolicy.enabled (off in default values.yaml,
 # on in values-prod.yaml / values-staging.yaml).
@@ -7,7 +7,8 @@
 #   1. Default deny ALL ingress to the namespace.
 #   2. Explicit allow: ingress controller namespace -> frontend/backend.
 #   3. Explicit allow: frontend pods -> backend pods on port 8080.
-#   4. Explicit allow: DNS egress to kube-system for service discovery.
+#   4. Explicit allow: monitoring namespace -> backend metrics port.
+#   5. Explicit allow: DNS egress to kube-system for service discovery.
 #
 # Requires a CNI that enforces NetworkPolicy (Calico / Cilium / GKE Dataplane V2).
 # GKE Standard with default CNI does NOT enforce — verify with:
@@ -18,12 +19,12 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: hrms-default-deny-ingress
-  namespace: { { .Values.namespace } }
+  namespace: {{ .Values.namespace }}
   labels:
     app: hrms
-    app.kubernetes.io/managed-by: { { .Release.Service } }
-    app.kubernetes.io/instance: { { .Release.Name } }
-    helm.sh/chart: { { .Chart.Name } }-{{ .Chart.Version }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version }}
 spec:
   podSelector: { }
   policyTypes:
@@ -35,7 +36,7 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: hrms-allow-ingress-to-frontend
-  namespace: { { .Values.namespace } }
+  namespace: {{ .Values.namespace }}
   labels:
     app: hrms
     component: frontend
@@ -50,7 +51,7 @@ spec:
     - from:
         - namespaceSelector:
             matchLabels:
-              kubernetes.io/metadata.name: { { .Values.networkPolicy.ingressNamespaceLabel | quote } }
+              kubernetes.io/metadata.name: {{ .Values.networkPolicy.ingressNamespaceLabel | quote }}
         - namespaceSelector:
             matchLabels:
               kubernetes.io/metadata.name: kube-system
@@ -63,7 +64,7 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: hrms-allow-ingress-to-backend
-  namespace: { { .Values.namespace } }
+  namespace: {{ .Values.namespace }}
   labels:
     app: hrms
     component: backend
@@ -78,7 +79,7 @@ spec:
     - from:
         - namespaceSelector:
             matchLabels:
-              kubernetes.io/metadata.name: { { .Values.networkPolicy.ingressNamespaceLabel | quote } }
+              kubernetes.io/metadata.name: {{ .Values.networkPolicy.ingressNamespaceLabel | quote }}
         - namespaceSelector:
             matchLabels:
               kubernetes.io/metadata.name: kube-system
@@ -91,7 +92,7 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: hrms-allow-frontend-to-backend
-  namespace: { { .Values.namespace } }
+  namespace: {{ .Values.namespace }}
   labels:
     app: hrms
 spec:
@@ -111,13 +112,38 @@ spec:
         - protocol: TCP
           port: 8080
 ---
-# 5) Allow DNS egress to kube-system (CoreDNS) — without this, in-cluster
+# 5) Allow monitoring namespace -> backend (Prometheus scrape).
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: hrms-allow-monitoring-to-backend
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: hrms
+    component: backend
+spec:
+  podSelector:
+    matchLabels:
+      app: hrms
+      component: backend
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ .Values.networkPolicy.monitoringNamespaceLabel | quote }}
+      ports:
+        - protocol: TCP
+          port: 8080
+---
+# 6) Allow DNS egress to kube-system (CoreDNS) — without this, in-cluster
 #    service discovery breaks and probes/CronJobs hang on DNS resolution.
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: hrms-allow-dns-egress
-  namespace: { { .Values.namespace } }
+  namespace: {{ .Values.namespace }}
   labels:
     app: hrms
 spec:
@@ -134,4 +160,4 @@ spec:
           port: 53
         - protocol: TCP
           port: 53
-  { { - end } }
+  {{- end }}

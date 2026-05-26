@@ -17,10 +17,10 @@ import java.time.LocalDateTime;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "keka_import_history", indexes = {
-        @Index(name = "idx_keka_import_tenant", columnList = "tenantId"),
+        @Index(name = "idx_keka_import_tenant", columnList = "tenant_id"),
         @Index(name = "idx_keka_import_status", columnList = "status"),
-        @Index(name = "idx_keka_import_uploaded_by", columnList = "uploadedBy"),
-        @Index(name = "idx_keka_import_uploaded_at", columnList = "uploadedAt")
+        @Index(name = "idx_keka_import_uploaded_by", columnList = "uploaded_by"),
+        @Index(name = "idx_keka_import_uploaded_at", columnList = "uploaded_at")
 })
 @Getter
 @Setter

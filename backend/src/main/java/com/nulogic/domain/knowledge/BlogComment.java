@@ -15,10 +15,10 @@ import java.util.UUID;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "blog_comments", indexes = {
-        @Index(name = "idx_blog_comments_tenant", columnList = "tenantId"),
-        @Index(name = "idx_blog_comments_post", columnList = "postId"),
-        @Index(name = "idx_blog_comments_parent", columnList = "parentCommentId"),
-        @Index(name = "idx_blog_comments_is_approved", columnList = "isApproved")
+        @Index(name = "idx_blog_comments_tenant", columnList = "tenant_id"),
+        @Index(name = "idx_blog_comments_post", columnList = "post_id"),
+        @Index(name = "idx_blog_comments_parent", columnList = "parent_comment_id"),
+        @Index(name = "idx_blog_comments_is_approved", columnList = "is_approved")
 })
 @Getter
 @Setter

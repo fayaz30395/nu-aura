@@ -12,10 +12,10 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "knowledge_views", indexes = {
-        @Index(name = "idx_knowledge_views_tenant", columnList = "tenantId"),
-        @Index(name = "idx_knowledge_views_content", columnList = "contentType,contentId"),
-        @Index(name = "idx_knowledge_views_user", columnList = "userId"),
-        @Index(name = "idx_knowledge_views_created_at", columnList = "createdAt")
+        @Index(name = "idx_knowledge_views_tenant", columnList = "tenant_id"),
+        @Index(name = "idx_knowledge_views_content", columnList = "content_type,content_id"),
+        @Index(name = "idx_knowledge_views_user", columnList = "user_id"),
+        @Index(name = "idx_knowledge_views_created_at", columnList = "created_at")
 })
 @Getter
 @Setter

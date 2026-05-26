@@ -6,7 +6,6 @@ import com.nulogic.application.notification.service.WebSocketNotificationService
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.domain.event.expense.ExpenseSubmittedEvent;
 import com.nulogic.domain.event.leave.LeaveRequestedEvent;
-import com.nulogic.domain.event.workflow.ApprovalTaskAssignedEvent;
 import com.nulogic.domain.notification.Notification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,12 +22,15 @@ import java.util.UUID;
  * <p>Uses @TransactionalEventListener with AFTER_COMMIT to ensure notifications
  * are only created after the originating transaction commits successfully.</p>
  *
- * <p>Handles three event types as specified by the Agent D task:</p>
+ * <p>Handles leave and expense submission events:</p>
  * <ul>
  *   <li>leave.requested → notify manager about the leave application</li>
  *   <li>expense.submitted → notify approver about the expense claim</li>
- *   <li>approval.task.assigned → notify the assigned user about a pending approval</li>
  * </ul>
+ *
+ * <p>Approval workflow assignment/decision notifications are handled by
+ * {@code ApprovalNotificationListener}, which owns approval-specific metadata and
+ * avoids duplicate notification rows for the same assignment event.</p>
  */
 @Slf4j
 @Component
@@ -99,31 +101,6 @@ public class NotificationEventListener {
                 "ExpenseClaim",
                 "/expenses/approvals",
                 Notification.Priority.NORMAL
-        );
-    }
-
-    // ==================== Workflow / Approval Events ====================
-
-    @Async
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    public void onApprovalTaskAssigned(ApprovalTaskAssignedEvent event) {
-        log.info("Handling ApprovalTaskAssignedEvent: {} approval from {} assigned to user {}",
-                event.getEntityType(), event.getRequesterName(), event.getAssignedToUserId());
-
-        String title = "Pending Approval";
-        String message = String.format("You have a pending %s approval request from %s",
-                event.getEntityType(), event.getRequesterName());
-
-        createAndPushNotification(
-                event.getTenantId(),
-                event.getAssignedToUserId(),
-                Notification.NotificationType.GENERAL,
-                title,
-                message,
-                event.getAggregateId(),
-                event.getEntityType(),
-                "/approvals",
-                Notification.Priority.HIGH
         );
     }
 

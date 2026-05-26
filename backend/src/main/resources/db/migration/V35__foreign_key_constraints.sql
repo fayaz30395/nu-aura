@@ -368,21 +368,21 @@ END $$;
 ALTER TABLE app_role_permissions VALIDATE CONSTRAINT fk_app_role_perms_role;
 
 -- ---------------------------------------------------------------------------
--- workflow_step_executions → workflow_executions (CASCADE)
+-- step_executions → workflow_executions (CASCADE)
 -- ---------------------------------------------------------------------------
 DELETE
-FROM workflow_step_executions
+FROM step_executions
 WHERE workflow_execution_id NOT IN (SELECT id FROM workflow_executions);
 DO
 $$
 BEGIN
   IF
 NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_step_executions_workflow') THEN
-ALTER TABLE workflow_step_executions
+ALTER TABLE step_executions
   ADD CONSTRAINT fk_step_executions_workflow
     FOREIGN KEY (workflow_execution_id) REFERENCES workflow_executions (id)
       ON DELETE CASCADE
   NOT VALID;
 END IF;
 END $$;
-ALTER TABLE workflow_step_executions VALIDATE CONSTRAINT fk_step_executions_workflow;
+ALTER TABLE step_executions VALIDATE CONSTRAINT fk_step_executions_workflow;

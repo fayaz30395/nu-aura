@@ -168,11 +168,19 @@ app:
   security:
     csrf:
       enabled: true
+    rls:
+      probe:
+        fail-on-bypass: true
+        allow-bootstrap-skip: false
     # AES-256 key for EncryptionService (used by SAML IdP config).
     # SAML is not active on Render — this default keeps the bean from failing.
     # Override via APP_SECURITY_ENCRYPTION_KEY env var if SAML is ever enabled.
     encryption:
       key: ${APP_SECURITY_ENCRYPTION_KEY:?APP_SECURITY_ENCRYPTION_KEY must be set}
+
+  rls:
+    datasource-wrapper:
+      enabled: ${RLS_DATASOURCE_WRAPPER_ENABLED:false}
 
   cors:
     allowed-origins: ${APP_CORS_ALLOWED_ORIGINS:https://hrms-frontend-vert.vercel.app}
