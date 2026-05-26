@@ -71,7 +71,7 @@ RUN printf '%s\n' \
       '#!/bin/sh' \
       'set -eu' \
       'APP_PORT="${APP_PORT:-18080}"' \
-      'PUBLIC_PORT="${PORT:-10000}"' \
+      'PUBLIC_PORT="${PORT:-8080}"' \
       '' \
       'ready() {' \
       '  curl --connect-timeout 1 --max-time 2 -sS -o /dev/null "http://127.0.0.1:${APP_PORT}/actuator/health/liveness" >/dev/null 2>&1' \

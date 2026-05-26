@@ -107,7 +107,7 @@ RUN printf '%s\n' \
       '#!/bin/sh' \
       'set -eu' \
       'APP_PORT="${APP_PORT:-18080}"' \
-      'PUBLIC_PORT="${PORT:-10000}"' \
+      'PUBLIC_PORT="${PORT:-8080}"' \
       '' \
       'ready() {' \
       '  curl --connect-timeout 1 --max-time 2 -sS -o /dev/null "http://127.0.0.1:${APP_PORT}/actuator/health/liveness" >/dev/null 2>&1' \
@@ -142,7 +142,7 @@ USER hrms
 EXPOSE 8080
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-  CMD curl -f http://localhost:8080/actuator/health || exit 1
+  CMD curl -f "http://localhost:${PORT:-8080}/actuator/health/liveness" || exit 1
 
 ENV SPRING_PROFILES_ACTIVE=render
 ENV RLS_PROBE_FAIL_ON_BYPASS=true
