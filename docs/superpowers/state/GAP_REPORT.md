@@ -1,6 +1,7 @@
 # NU-AURA Gap Report
 
 Generated: 2026-05-24
+Updated: 2026-05-26
 Phase 1 status: blocked for formal build-kit audit; pragmatic P0 execution started from `docs/audit/release-readiness-100-note-2026-05-24.md`.
 
 ## Formal Audit Blocker
@@ -16,6 +17,28 @@ Phase 1 status: blocked for formal build-kit audit; pragmatic P0 execution start
 - [P0] [frontend-release-env] Frontend mechanical gates pass, but production frontend build must not depend on localhost API configuration and design-system drift must be resolved or explicitly accepted.
 - [P0] [e2e] Full role/lifecycle E2E evidence is missing for the current checkout.
 - [P0] [security-hardening] Security, tenant isolation, RBAC, WebSocket tenant authorization, performance, and observability need current release evidence.
+
+## 2026-05-26 Audit Intake
+
+### Backend Gaps
+
+(populated by Auditor-Backend)
+
+### Frontend Gaps
+
+(populated by Auditor-Frontend)
+
+### DB Gaps
+
+(populated by Auditor-DB)
+
+### Test Gaps
+
+(populated by Auditor-Tests)
+
+### Hardening Gaps
+
+(populated by Auditor-Hardening)
 
 ## Next Reconciliation
 
