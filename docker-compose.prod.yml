@@ -142,6 +142,9 @@ services:
       SPRING_FLYWAY_POSTGRESQL_TRANSACTIONAL_LOCK: "false"
       PROMETHEUS_SCRAPE_TOKEN: ${PROMETHEUS_SCRAPE_TOKEN:?PROMETHEUS_SCRAPE_TOKEN must be set in .env}
       SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+      SPRING_REDIS_PASSWORD: ${SPRING_REDIS_PASSWORD:?SPRING_REDIS_PASSWORD must be set in .env}
+      SPRING_REDIS_SSL_ENABLED: "false"
       # Google Drive storage configuration
       STORAGE_PROVIDER: google-drive
       GOOGLE_DRIVE_CREDENTIALS_PATH: /etc/secrets/google-drive/credentials.json
