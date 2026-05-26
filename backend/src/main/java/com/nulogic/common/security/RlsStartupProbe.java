@@ -23,13 +23,13 @@ import java.util.List;
  * <p>The probe acquires a fresh JDBC connection from the primary
  * {@link DataSource}, deliberately does <em>not</em> set
  * {@code app.current_tenant_id}, and runs
- * {@code SELECT COUNT(*)} against every public table and view with a UUID
- * {@code tenant_id}. With the strict policies in place the {@code RESTRICTIVE}
- * predicate evaluates to {@code NULL} and zero rows are visible. If any tenant
- * relation is visible without tenant context a {@link IllegalStateException} is
- * thrown when {@code app.security.rls.probe.fail-on-bypass=true}, causing the
- * application to fail fast — better a boot failure than a silent cross-tenant
- * data leak.</p>
+ * {@code SELECT COUNT(*)} against tenant-owned rows in every public table and
+ * view with a UUID {@code tenant_id}. Global catalog rows with
+ * {@code tenant_id IS NULL} are intentionally ignored; the canary only proves
+ * tenant-owned rows are hidden without tenant context. If any tenant relation is
+ * visible without tenant context a {@link IllegalStateException} is thrown when
+ * {@code app.security.rls.probe.fail-on-bypass=true}, causing the application to
+ * fail fast — better a boot failure than a silent cross-tenant data leak.</p>
  *
  * <p>The probe is skipped under the {@code test} profile (test fixtures
  * often run without RLS) and when the environment variable
@@ -162,7 +162,7 @@ public class RlsStartupProbe implements ApplicationRunner {
                 return;
             }
 
-            log.info("RLS startup probe passed: 0 rows visible across {} tenant tables and {} tenant views "
+            log.info("RLS startup probe passed: 0 tenant-owned rows visible across {} tenant tables and {} tenant views "
                             + "without tenant context.",
                     tenantTables.size(), tenantViews.size());
         } catch (SQLException ex) {
@@ -315,7 +315,7 @@ public class RlsStartupProbe implements ApplicationRunner {
     private long countVisibleRowsWithoutTenant(Connection conn, String schemaName, String relationName)
             throws SQLException {
         String sql = "SELECT COUNT(*) FROM " + quoteIdentifier(schemaName)
-                + "." + quoteIdentifier(relationName);
+                + "." + quoteIdentifier(relationName) + " WHERE tenant_id IS NOT NULL";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             try (ResultSet rs = ps.executeQuery()) {
                 if (!rs.next()) {

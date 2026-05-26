@@ -24,7 +24,7 @@ setup('authenticate', async ({page}) => {
   // Warm high-traffic protected routes before worker fan-out. In next dev,
   // first compile + hydration of these route chunks can exceed a normal test
   // assertion budget when three or four workers hit cold routes at once.
-  const warmRoutes = [
+  const warmRoutes = process.env.E2E_SKIP_ROUTE_WARMUP === 'true' ? [] : [
     {path: '/me/dashboard', marker: /Dashboard|My Dashboard|Home/i},
     {path: '/analytics', marker: /Analytics/i},
     {path: '/announcements', marker: /Announcements/i},

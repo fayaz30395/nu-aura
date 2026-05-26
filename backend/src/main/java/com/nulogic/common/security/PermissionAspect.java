@@ -10,6 +10,9 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ClassUtils;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -67,6 +70,10 @@ public class PermissionAspect {
         String[] anyOfPermissions = requiresPermission.value();
         String[] allOfPermissions = requiresPermission.allOf();
         boolean revalidate = requiresPermission.revalidate();
+
+        if (wasCheckedByMvcInterceptor(joinPoint, method)) {
+            return joinPoint.proceed();
+        }
 
         // SuperAdmin bypass: skip permission evaluation only for the platform break-glass role.
         //
@@ -128,6 +135,24 @@ public class PermissionAspect {
 
         // All permission checks passed - proceed with method execution
         return joinPoint.proceed();
+    }
+
+    @SuppressWarnings("unchecked")
+    private boolean wasCheckedByMvcInterceptor(ProceedingJoinPoint joinPoint, Method method) {
+        if (!(RequestContextHolder.getRequestAttributes() instanceof ServletRequestAttributes attributes)) {
+            return false;
+        }
+        Object checked = attributes.getRequest()
+                .getAttribute(PermissionHandlerInterceptor.CHECKED_METHODS_ATTRIBUTE);
+        if (!(checked instanceof Set<?> checkedMethods) || joinPoint.getTarget() == null) {
+            return false;
+        }
+
+        String key = PermissionHandlerInterceptor.permissionCheckKey(
+                ClassUtils.getUserClass(joinPoint.getTarget().getClass()),
+                method
+        );
+        return ((Set<String>) checkedMethods).contains(key);
     }
 
     /**

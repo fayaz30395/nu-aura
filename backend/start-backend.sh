@@ -77,26 +77,12 @@ if [ ! -f "$JAR_FILE" ]; then
   mvn clean package -DskipTests -q
 fi
 
-# JVM flags tuned for low-memory local dev (macOS OOM-kill prevention):
-#   -Xmx768m                      → heap cap (leaves room for metaspace+stacks+native)
-#   -Xms128m                      → start small, grow on demand
-#   -XX:MaxMetaspaceSize=192m      → cap class metadata (default is unlimited)
-#   -XX:ReservedCodeCacheSize=64m  → cap JIT code cache (default 240m, unused at TieredStopAtLevel=1)
-#   -Xss512k                       → reduce per-thread stack (default 1m × many threads)
-#   -XX:TieredStopAtLevel=1        → C1 JIT only, skip C2 compilation
-#   -XX:+UseSerialGC               → lowest GC overhead for single-machine dev
-#   -Dspring.jmx.enabled=false     → skip JMX bean registration
+# Keep the local launcher conservative. Aggressive class metadata, soft-reference,
+# or experimental GC tuning can make Spring Boot nested-jar class loading fail in
+# low-memory shutdown paths, obscuring the real startup error.
 JVM_OPTS=(
-  -Xmx1024m
+  -Xmx1536m
   -Xms256m
-  -XX:MaxMetaspaceSize=256m
-  -XX:ReservedCodeCacheSize=128m
-  -Xss512k
-  -XX:+UseZGC
-  -XX:+ZUncommit
-  -XX:ZUncommitDelay=5
-  -XX:+UseStringDeduplication
-  -XX:SoftRefLRUPolicyMSPerMB=50
   -Dspring.jmx.enabled=false
   -Dspring.devtools.restart.enabled=false
 )

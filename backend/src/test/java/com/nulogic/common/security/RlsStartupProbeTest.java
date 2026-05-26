@@ -15,6 +15,7 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @DisplayName("RlsStartupProbe")
@@ -106,6 +107,17 @@ class RlsStartupProbeTest {
         RlsStartupProbe probe = new RlsStartupProbe(dataSource, true, false);
 
         assertThatCode(() -> probe.run(null)).doesNotThrowAnyException();
+    }
+
+    @Test
+    @DisplayName("counts only tenant-owned rows so global catalog rows do not fail startup")
+    void countsOnlyTenantOwnedRows() throws Exception {
+        when(resultSet.getLong(1)).thenReturn(0L);
+
+        RlsStartupProbe probe = new RlsStartupProbe(dataSource, true, false);
+
+        assertThatCode(() -> probe.run(null)).doesNotThrowAnyException();
+        verify(connection).prepareStatement(contains("WHERE tenant_id IS NOT NULL"));
     }
 
     @Test

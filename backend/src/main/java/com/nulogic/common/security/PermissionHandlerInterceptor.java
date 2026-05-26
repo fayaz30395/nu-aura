@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ClassUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -16,6 +17,7 @@ import java.lang.reflect.Method;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -43,6 +45,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class PermissionHandlerInterceptor implements HandlerInterceptor {
+
+    static final String CHECKED_METHODS_ATTRIBUTE =
+            PermissionHandlerInterceptor.class.getName() + ".checkedMethods";
 
     private final SecurityService securityService;
 
@@ -76,6 +81,7 @@ public class PermissionHandlerInterceptor implements HandlerInterceptor {
                     method.getName(),
                     Arrays.toString(anyOf),
                     Arrays.toString(allOf));
+            markPermissionChecked(request, handlerMethod.getBeanType(), method);
             return true;
         }
 
@@ -94,7 +100,25 @@ public class PermissionHandlerInterceptor implements HandlerInterceptor {
             return false;
         }
 
+        markPermissionChecked(request, handlerMethod.getBeanType(), method);
         return true;
+    }
+
+    static String permissionCheckKey(Class<?> type, Method method) {
+        String parameters = Arrays.stream(method.getParameterTypes())
+                .map(Class::getName)
+                .collect(Collectors.joining(","));
+        return ClassUtils.getUserClass(type).getName() + "#" + method.getName() + "(" + parameters + ")";
+    }
+
+    @SuppressWarnings("unchecked")
+    private void markPermissionChecked(HttpServletRequest request, Class<?> beanType, Method method) {
+        Set<String> checkedMethods = (Set<String>) request.getAttribute(CHECKED_METHODS_ATTRIBUTE);
+        if (checkedMethods == null) {
+            checkedMethods = new HashSet<>();
+            request.setAttribute(CHECKED_METHODS_ATTRIBUTE, checkedMethods);
+        }
+        checkedMethods.add(permissionCheckKey(beanType, method));
     }
 
     private boolean checkFromSecurityContext(Method method, String[] anyOf, String[] allOf) {

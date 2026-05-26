@@ -3,6 +3,7 @@ package com.nulogic.performance;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nulogic.api.selfservice.dto.SelfServiceDashboardResponse;
 import com.nulogic.application.leave.service.LeaveRequestService;
+import com.nulogic.application.notification.service.NotificationService;
 import com.nulogic.application.payroll.service.PayrollRunService;
 import com.nulogic.application.selfservice.service.SelfServiceService;
 import com.nulogic.common.security.Permission;
@@ -10,6 +11,7 @@ import com.nulogic.common.security.SecurityContext;
 import com.nulogic.config.AbstractPostgresIntegrationTest;
 import com.nulogic.config.TestSecurityConfig;
 import com.nulogic.domain.leave.LeaveRequest;
+import com.nulogic.domain.notification.Notification;
 import com.nulogic.domain.payroll.PayrollRun;
 import com.nulogic.domain.user.RoleScope;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,6 +21,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -34,6 +39,7 @@ import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -71,6 +77,8 @@ class PerformanceUseCaseBenchmarkTest extends AbstractPostgresIntegrationTest {
     private LeaveRequestService leaveRequestService;
     @MockitoBean
     private SelfServiceService selfServiceService;
+    @MockitoBean
+    private NotificationService notificationService;
 
     @BeforeEach
     void setUpSuperAdminContext() {
@@ -252,6 +260,19 @@ class PerformanceUseCaseBenchmarkTest extends AbstractPostgresIntegrationTest {
     @Test
     @DisplayName("UC-PERF-007: notification endpoint responds in under 500ms")
     void ucPerf007_notificationEndpoint_respondsUnder500ms() throws Exception {
+        PageImpl<Notification> emptyNotifications = new PageImpl<>(
+                List.of(),
+                PageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "createdAt")),
+                0
+        );
+        when(notificationService.getUserNotifications(any(UUID.class), anyInt(), anyInt()))
+                .thenReturn(emptyNotifications);
+
+        mockMvc.perform(get("/api/v1/notifications")
+                        .param("page", "0")
+                        .param("size", "20"))
+                .andExpect(status().is2xxSuccessful());
+
         long start = System.nanoTime();
 
         mockMvc.perform(get("/api/v1/notifications")

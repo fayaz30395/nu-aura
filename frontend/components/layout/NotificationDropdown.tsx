@@ -402,10 +402,12 @@ export function NotificationDropdown({isOpen, onClose}: NotificationDropdownProp
   return (
     <>
       <div
+        data-testid="notification-dropdown"
         className="notification-dropdown absolute right-0 mt-2 w-80 sm:w-96 rounded-xl glass-midnight animate-fade-in-down overflow-hidden z-50">
         {/* Tabs */}
         <div className="flex border-b border-[var(--dropdown-divider)]">
           <button
+            data-testid="notification-tab-google"
             onClick={() => setNotificationTab('google')}
             className={cn(
               "flex-1 px-4 py-4 text-sm font-medium transition-all duration-200",
@@ -423,6 +425,7 @@ export function NotificationDropdown({isOpen, onClose}: NotificationDropdownProp
             )}
           </button>
           <button
+            data-testid="notification-tab-system"
             onClick={() => setNotificationTab('system')}
             className={cn(
               "flex-1 px-4 py-4 text-sm font-medium transition-all duration-200",
