@@ -40,7 +40,8 @@ test.describe('Realtime notifications — browser delivery', () => {
 
     await loginAs(page, demoUsers.superAdmin.email, {verifyDashboard: false});
     await navigateTo(page, '/me/profile');
-    await expect(page.getByTestId('notification-bell')).toBeVisible({timeout: 60000});
+    const notificationBell = page.getByTestId('notification-bell');
+    await expect(notificationBell).toBeVisible({timeout: 60000});
 
     await page.evaluate((value) => {
       const w = window as typeof window & { __nuAuraRealtimeNoReloadMarker?: string };
@@ -50,6 +51,7 @@ test.describe('Realtime notifications — browser delivery', () => {
     await expect
       .poll(() => realtimeRequests.length, {timeout: 15000})
       .toBeGreaterThan(0);
+    await expect(notificationBell).toHaveAttribute('data-ws-connected', 'true', {timeout: 60000});
 
     const response = await page.evaluate(async ({url, tenantId, data}) => {
       const csrfToken = document.cookie

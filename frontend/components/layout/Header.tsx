@@ -52,7 +52,7 @@ const Header: React.FC<HeaderProps> = ({
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
 
   // Unread count: use the larger of WebSocket in-memory count vs REST API persisted count
-  const {unreadCount: wsUnreadCount, notifications: _wsNotifications} = useWebSocket();
+  const {isConnected: isWebSocketConnected, unreadCount: wsUnreadCount, notifications: _wsNotifications} = useWebSocket();
   const {hasPermission, isReady} = usePermissions();
   const canReadNotifications = isReady && hasPermission(Permissions.NOTIFICATION_VIEW);
   const {data: persistedUnreadCount = 0} = useUnreadNotificationCount(canReadNotifications);
@@ -162,6 +162,7 @@ const Header: React.FC<HeaderProps> = ({
               onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
               className="notification-btn relative inline-flex h-8 w-8 items-center justify-center rounded-lg text-[var(--header-text-muted)] hover:text-[var(--header-text)] hover:bg-[var(--header-hover-bg)] transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 active:translate-y-px"
               data-testid="notification-bell"
+              data-ws-connected={isWebSocketConnected ? 'true' : 'false'}
               aria-label="Notifications"
               aria-expanded={isNotificationsOpen}
               aria-haspopup="true"
