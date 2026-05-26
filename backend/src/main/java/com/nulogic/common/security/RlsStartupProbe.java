@@ -23,8 +23,8 @@ import java.util.List;
  * <p>The probe acquires a fresh JDBC connection from the primary
  * {@link DataSource}, deliberately does <em>not</em> set
  * {@code app.current_tenant_id}, and runs
- * {@code SELECT COUNT(*)} against tenant-owned rows in every public table and
- * view with a UUID {@code tenant_id}. Global catalog rows with
+ * {@code EXISTS (... WHERE tenant_id IS NOT NULL)} canaries against every
+ * public table and view with a UUID {@code tenant_id}. Global catalog rows with
  * {@code tenant_id IS NULL} are intentionally ignored; the canary only proves
  * tenant-owned rows are hidden without tenant context. If any tenant relation is
  * visible without tenant context a {@link IllegalStateException} is thrown when
@@ -282,52 +282,59 @@ public class RlsStartupProbe implements ApplicationRunner {
 
     private List<TableVisibility> findVisibleTenantRows(Connection conn, List<TenantTableInspection> tables)
             throws SQLException {
-        List<TableVisibility> visibleTables = new java.util.ArrayList<>();
-        for (TenantTableInspection table : tables) {
-            long rows = countVisibleRowsWithoutTenant(conn, table);
-            if (rows > 0) {
-                visibleTables.add(new TableVisibility(table.qualifiedName(), rows));
-            }
-        }
-        return visibleTables;
+        return findVisibleRowsWithoutTenant(conn, tables.stream()
+                .map(table -> new TenantRelation(table.schemaName(), table.tableName(), table.qualifiedName()))
+                .toList());
     }
 
     private List<TableVisibility> findVisibleTenantViewRows(Connection conn, List<TenantViewInspection> views)
             throws SQLException {
-        List<TableVisibility> visibleViews = new java.util.ArrayList<>();
-        for (TenantViewInspection view : views) {
-            long rows = countVisibleRowsWithoutTenant(conn, view);
-            if (rows > 0) {
-                visibleViews.add(new TableVisibility(view.qualifiedName(), rows));
-            }
-        }
-        return visibleViews;
+        return findVisibleRowsWithoutTenant(conn, views.stream()
+                .map(view -> new TenantRelation(view.schemaName(), view.viewName(), view.qualifiedName()))
+                .toList());
     }
 
-    private long countVisibleRowsWithoutTenant(Connection conn, TenantTableInspection table) throws SQLException {
-        return countVisibleRowsWithoutTenant(conn, table.schemaName(), table.tableName());
-    }
-
-    private long countVisibleRowsWithoutTenant(Connection conn, TenantViewInspection view) throws SQLException {
-        return countVisibleRowsWithoutTenant(conn, view.schemaName(), view.viewName());
-    }
-
-    private long countVisibleRowsWithoutTenant(Connection conn, String schemaName, String relationName)
+    private List<TableVisibility> findVisibleRowsWithoutTenant(Connection conn, List<TenantRelation> relations)
             throws SQLException {
-        String sql = "SELECT COUNT(*) FROM " + quoteIdentifier(schemaName)
-                + "." + quoteIdentifier(relationName) + " WHERE tenant_id IS NOT NULL";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        List<TableVisibility> visible = new java.util.ArrayList<>();
+        if (relations.isEmpty()) {
+            return visible;
+        }
+
+        StringBuilder sql = new StringBuilder();
+        for (int i = 0; i < relations.size(); i++) {
+            TenantRelation relation = relations.get(i);
+            if (i > 0) {
+                sql.append(" UNION ALL ");
+            }
+            sql.append("SELECT ")
+                    .append(sqlStringLiteral(relation.qualifiedName()))
+                    .append(" AS relation_name, CASE WHEN EXISTS (SELECT 1 FROM ")
+                    .append(quoteIdentifier(relation.schemaName()))
+                    .append(".")
+                    .append(quoteIdentifier(relation.relationName()))
+                    .append(" WHERE tenant_id IS NOT NULL LIMIT 1) THEN 1 ELSE 0 END AS visible_rows");
+        }
+
+        try (PreparedStatement ps = conn.prepareStatement(sql.toString())) {
             try (ResultSet rs = ps.executeQuery()) {
-                if (!rs.next()) {
-                    throw new SQLException("RLS startup probe failed: empty result from " + sql);
+                while (rs.next()) {
+                    long rows = rs.getLong(2);
+                    if (rows > 0) {
+                        visible.add(new TableVisibility(rs.getString(1), rows));
+                    }
                 }
-                return rs.getLong(1);
             }
         }
+        return visible;
     }
 
     private String quoteIdentifier(String identifier) {
         return "\"" + identifier.replace("\"", "\"\"") + "\"";
+    }
+
+    private String sqlStringLiteral(String value) {
+        return "'" + value.replace("'", "''") + "'";
     }
 
     private void handleBypassDetected(String msg) {
@@ -393,6 +400,9 @@ public class RlsStartupProbe implements ApplicationRunner {
         String qualifiedName() {
             return schemaName + "." + viewName;
         }
+    }
+
+    private record TenantRelation(String schemaName, String relationName, String qualifiedName) {
     }
 
     private record TableVisibility(String qualifiedName, long visibleRows) {

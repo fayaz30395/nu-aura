@@ -52,7 +52,7 @@ class RlsStartupProbeTest {
         when(connection.prepareStatement(contains("pg_roles"))).thenReturn(roleStatement);
         when(connection.prepareStatement(contains("c.relkind IN ('r', 'p')"))).thenReturn(tableStatement);
         when(connection.prepareStatement(contains("c.relkind = 'v'"))).thenReturn(viewStatement);
-        when(connection.prepareStatement(contains("COUNT(*)"))).thenReturn(countStatement);
+        when(connection.prepareStatement(contains("visible_rows"))).thenReturn(countStatement);
         when(roleStatement.executeQuery()).thenReturn(roleResultSet);
         when(tableStatement.executeQuery()).thenReturn(tableResultSet);
         when(viewStatement.executeQuery()).thenReturn(viewResultSet);
@@ -69,7 +69,8 @@ class RlsStartupProbeTest {
         when(tableResultSet.getBoolean(5)).thenReturn(false);
         when(tableResultSet.getBoolean(6)).thenReturn(true);
         when(viewResultSet.next()).thenReturn(false);
-        when(resultSet.next()).thenReturn(true);
+        when(resultSet.next()).thenReturn(true, false, true, false);
+        when(resultSet.getString(1)).thenReturn("public.employees");
     }
 
     @AfterEach
@@ -80,7 +81,7 @@ class RlsStartupProbeTest {
     @Test
     @DisplayName("fails closed when rows are visible without tenant context")
     void failsClosedWhenRowsAreVisibleWithoutTenantContext() throws Exception {
-        when(resultSet.getLong(1)).thenReturn(38L);
+        when(resultSet.getLong(2)).thenReturn(38L);
 
         RlsStartupProbe probe = new RlsStartupProbe(dataSource, true, false);
 
@@ -92,7 +93,7 @@ class RlsStartupProbeTest {
     @Test
     @DisplayName("continues in fail-open dev mode when rows are visible")
     void continuesInFailOpenDevModeWhenRowsAreVisible() throws Exception {
-        when(resultSet.getLong(1)).thenReturn(38L);
+        when(resultSet.getLong(2)).thenReturn(38L);
 
         RlsStartupProbe probe = new RlsStartupProbe(dataSource, false, false);
 
@@ -102,7 +103,7 @@ class RlsStartupProbeTest {
     @Test
     @DisplayName("passes when no rows are visible without tenant context")
     void passesWhenNoRowsAreVisibleWithoutTenantContext() throws Exception {
-        when(resultSet.getLong(1)).thenReturn(0L);
+        when(resultSet.getLong(2)).thenReturn(0L);
 
         RlsStartupProbe probe = new RlsStartupProbe(dataSource, true, false);
 
@@ -112,7 +113,7 @@ class RlsStartupProbeTest {
     @Test
     @DisplayName("counts only tenant-owned rows so global catalog rows do not fail startup")
     void countsOnlyTenantOwnedRows() throws Exception {
-        when(resultSet.getLong(1)).thenReturn(0L);
+        when(resultSet.getLong(2)).thenReturn(0L);
 
         RlsStartupProbe probe = new RlsStartupProbe(dataSource, true, false);
 
@@ -124,7 +125,7 @@ class RlsStartupProbeTest {
     @DisplayName("fails closed when runtime role has BYPASSRLS")
     void failsClosedWhenRuntimeRoleHasBypassRls() throws Exception {
         when(roleResultSet.getBoolean(3)).thenReturn(true);
-        when(resultSet.getLong(1)).thenReturn(0L);
+        when(resultSet.getLong(2)).thenReturn(0L);
 
         RlsStartupProbe probe = new RlsStartupProbe(dataSource, true, false);
 
@@ -139,7 +140,7 @@ class RlsStartupProbeTest {
     void failsClosedWhenRuntimeRoleOwnsTableWithoutForceRls() throws Exception {
         when(tableResultSet.getBoolean(4)).thenReturn(false);
         when(tableResultSet.getBoolean(5)).thenReturn(true);
-        when(resultSet.getLong(1)).thenReturn(0L);
+        when(resultSet.getLong(2)).thenReturn(0L);
 
         RlsStartupProbe probe = new RlsStartupProbe(dataSource, true, false);
 
@@ -154,7 +155,7 @@ class RlsStartupProbeTest {
     @DisplayName("fails closed when a tenant table is missing context-required policy")
     void failsClosedWhenTenantTableMissingContextRequiredPolicy() throws Exception {
         when(tableResultSet.getBoolean(6)).thenReturn(false);
-        when(resultSet.getLong(1)).thenReturn(0L);
+        when(resultSet.getLong(2)).thenReturn(0L);
 
         RlsStartupProbe probe = new RlsStartupProbe(dataSource, true, false);
 
@@ -172,7 +173,7 @@ class RlsStartupProbeTest {
         when(viewResultSet.getString(1)).thenReturn("public");
         when(viewResultSet.getString(2)).thenReturn("project_employees");
         when(viewResultSet.getBoolean(3)).thenReturn(false);
-        when(resultSet.getLong(1)).thenReturn(0L);
+        when(resultSet.getLong(2)).thenReturn(0L);
 
         RlsStartupProbe probe = new RlsStartupProbe(dataSource, true, false);
 
@@ -190,7 +191,8 @@ class RlsStartupProbeTest {
         when(viewResultSet.getString(1)).thenReturn("public");
         when(viewResultSet.getString(2)).thenReturn("project_employees");
         when(viewResultSet.getBoolean(3)).thenReturn(true);
-        when(resultSet.getLong(1)).thenReturn(0L, 14L);
+        when(resultSet.getLong(2)).thenReturn(0L, 14L);
+        when(resultSet.getString(1)).thenReturn("public.project_employees");
 
         RlsStartupProbe probe = new RlsStartupProbe(dataSource, true, false);
 
