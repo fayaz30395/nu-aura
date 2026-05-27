@@ -47,10 +47,10 @@ Thumbs.db
 .env.production.local
 
 # Binary documents
-*.docx
-*.doc
-*.xlsx
-*.pptx
+#*.docx
+#*.doc
+#*.xlsx
+#*.pptx
 
 # SSL/TLS certificates
 *.pem
@@ -59,7 +59,7 @@ Thumbs.db
 *.p12
 
 # MCP configuration
-.mcp.json
+#.mcp.json
 
 # Temporary files
 *.tmp
@@ -94,50 +94,50 @@ deployment/kubernetes/secrets.yaml
 .fuse_hidden*
 
 # Ruflo / claude-flow runtime
-.claude-flow/
-.swarm/
+#.claude-flow/
+#.swarm/
 ruvector.db
 agentdb.rvf
 agentdb.rvf.lock
-.claude/agents/
-.claude/commands/
-.claude/helpers/
-.claude/skills/
-.claude/scheduled_tasks.lock
+#.claude/agents/
+#.claude/commands/
+#.claude/helpers/
+#.claude/skills/
+#.claude/scheduled_tasks.lock
 
 # QA sweep artifacts (regenerable; only the dated *report*.md is durable)
-docs/qa/findings/
-docs/qa/queue/
-docs/qa/playwright/runs/
-docs/qa/playwright/fixes/
-docs/qa/LOOP-DONE
-docs/qa/RBAC-DONE
-docs/qa/USECASE-DONE
-docs/qa/PLAYWRIGHT-DONE
-docs/qa/QA-DONE
-docs/qa/fixed.log
-docs/qa/dev-fixes.md
-docs/qa/chrome-qa-findings*.md
-docs/qa/QA-*-BUGS.md
-docs/qa/QA-*-STATUS.md
-docs/qa/autonomous-fix-stuck-*.md
-docs/qa/STUCK-*.md
-
+#docs/qa/findings/
+#docs/qa/queue/
+#docs/qa/playwright/runs/
+#docs/qa/playwright/fixes/
+#docs/qa/LOOP-DONE
+#docs/qa/RBAC-DONE
+#docs/qa/USECASE-DONE
+#docs/qa/PLAYWRIGHT-DONE
+#docs/qa/QA-DONE
+#docs/qa/fixed.log
+#docs/qa/dev-fixes.md
+#docs/qa/chrome-qa-findings*.md
+#docs/qa/QA-*-BUGS.md
+#docs/qa/QA-*-STATUS.md
+#docs/qa/autonomous-fix-stuck-*.md
+#docs/qa/STUCK-*.md
+#
 # Generated Playwright test data (regenerated from use-cases.v2.yaml)
-frontend/e2e/generated/routes.json
-frontend/e2e/generated/rbac-matrix.json
-frontend/e2e/generated/roles.json
-frontend/e2e/.auth/
-frontend/playwright/.auth/
-frontend/test-results/
-frontend/playwright-report/
-frontend/nu-rbac-report.json
-
+#frontend/e2e/generated/routes.json
+#frontend/e2e/generated/rbac-matrix.json
+#frontend/e2e/generated/roles.json
+#frontend/e2e/.auth/
+#frontend/playwright/.auth/
+#frontend/test-results/
+#frontend/playwright-report/
+#frontend/nu-rbac-report.json
+#
 # Skill-emitted reports & runtime
-qa-reports/
-.claude-flow/
-backend/.claude-flow/
-backend/target/surefire-reports/
+#qa-reports/
+#.claude-flow/
+#backend/.claude-flow/
+#backend/target/surefire-reports/
 
 # Local-only runtime logs (live in /tmp on dev boxes)
 /tmp/aura-*
@@ -145,10 +145,10 @@ backend/target/surefire-reports/
 /tmp/frontend.log
 
 
-docs/qa/*
-/docs/qa/*
-!docs/qa/README.md
-!/docs/qa/README.md
+#docs/qa/*
+#/docs/qa/*
+#!docs/qa/README.md
+#!/docs/qa/README.md
 
 # Phase-1 cleanup: build artifacts, runtime logs, ad-hoc dev outputs
 nohup.out
@@ -159,9 +159,9 @@ nohup.out
 **/tsconfig.tsbuildinfo
 
 # Tooling caches (broader globs)
-**/.claude-flow/
-**/.playwright-mcp/
-**/node_modules/
+#**/.claude-flow/
+#**/.playwright-mcp/
+#**/node_modules/
 
 # Ad-hoc dev/test outputs
 backend/*_result*.json
@@ -172,5 +172,5 @@ frontend/sessions/
 .vercel/
 
 # Skill runtime artifacts
-.claude/skills/nu-chrome-e2e/runs/
-.github/java-upgrade/2*/
+#.claude/skills/nu-chrome-e2e/runs/
+#.github/java-upgrade/2*/
