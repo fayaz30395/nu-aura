@@ -30,6 +30,9 @@ const RESET = '\x1b[0m';
 const log = (msg) => console.log(`${CYAN}[AutoMemory] ${msg}${RESET}`);
 const success = (msg) => console.log(`${GREEN}[AutoMemory] ✓ ${msg}${RESET}`);
 const dim = (msg) => console.log(`  ${DIM}${msg}${RESET}`);
+const debug = (msg) => {
+  if (process.env.AUTO_MEMORY_DEBUG === 'true') dim(msg);
+};
 
 // Ensure data dir
 if (!existsSync(DATA_DIR)) mkdirSync(DATA_DIR, {recursive: true});
@@ -261,13 +264,13 @@ function readConfig() {
 // ============================================================================
 
 async function doImport() {
-  log('Importing auto memory files into bridge...');
-
   const memPkg = await loadMemoryPackage();
   if (!memPkg || !memPkg.AutoMemoryBridge) {
-    dim('Memory package not available — skipping auto memory import');
+    debug('Memory package not available; skipping auto memory import');
     return;
   }
+
+  log('Importing auto memory files into bridge...');
 
   const config = readConfig();
   const backend = new JsonFileBackend(STORE_PATH);
@@ -314,13 +317,13 @@ async function doImport() {
 }
 
 async function doSync() {
-  log('Syncing insights to auto memory files...');
-
   const memPkg = await loadMemoryPackage();
   if (!memPkg || !memPkg.AutoMemoryBridge) {
-    dim('Memory package not available — skipping sync');
+    debug('Memory package not available; skipping sync');
     return;
   }
+
+  log('Syncing insights to auto memory files...');
 
   const config = readConfig();
   const backend = new JsonFileBackend(STORE_PATH);

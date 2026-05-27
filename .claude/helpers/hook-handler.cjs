@@ -75,6 +75,43 @@ function readToolCommand(hookInput, toolInput, args) {
   return typeof command === 'string' ? command : JSON.stringify(command || '');
 }
 
+function firstString(...values) {
+  for (const value of values) {
+    if (typeof value === 'string' && value.trim()) return value;
+  }
+  return '';
+}
+
+function readPrompt(hookInput, toolInput, args) {
+  const fromHook = firstString(
+    hookInput.prompt,
+    hookInput.command,
+    hookInput.description,
+    hookInput.message,
+    hookInput.task,
+  );
+  if (fromHook) return fromHook;
+
+  if (toolInput && typeof toolInput === 'object') {
+    const fromTool = firstString(
+      toolInput.prompt,
+      toolInput.command,
+      toolInput.description,
+      toolInput.message,
+      toolInput.task,
+    );
+    if (fromTool) return fromTool;
+  }
+
+  const fromEnv = firstString(process.env.PROMPT, process.env.TOOL_INPUT_command);
+  if (fromEnv) return fromEnv;
+
+  const fromArgs = args.join(' ').trim();
+  if (fromArgs) return fromArgs;
+
+  return '';
+}
+
 function runWithTimeout(fn, label) {
   // For synchronous blocking calls, we use a global safety timer.
   // The readJSON file-size guard prevents loading huge files, but this
@@ -153,11 +190,12 @@ async function main() {
   const toolName = hookInput.toolName || hookInput.tool_name || '';
 
   // Merge stdin data into prompt resolution: prefer stdin fields, then env, then argv
-  const prompt = hookInput.prompt || hookInput.command || toolInput
-    || process.env.PROMPT || process.env.TOOL_INPUT_command || args.join(' ') || '';
+  const prompt = readPrompt(hookInput, toolInput, args);
 
   const handlers = {
     'route': () => {
+      if (!prompt) return;
+
       // Inject ranked intelligence context before routing
       if (intelligence && intelligence.getContext) {
         try {

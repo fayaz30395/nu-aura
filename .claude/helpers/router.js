@@ -30,6 +30,10 @@ const TASK_PATTERNS = {
 };
 
 function routeTask(task) {
+  if (typeof task !== 'string') {
+    task = task == null ? '' : JSON.stringify(task);
+  }
+
   const taskLower = task.toLowerCase();
 
   // Check patterns
