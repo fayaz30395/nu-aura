@@ -1,0 +1,345 @@
+{
+  "agents": {
+    "agent-1779745848744-pru0rd": {
+      "agentId": "agent-1779745848744-pru0rd",
+      "agentType": "researcher",
+      "status": "terminated",
+      "health": 1,
+      "taskCount": 0,
+      "config": {
+        "provider": "anthropic",
+        "model": "opus",
+        "task": "NU-AURA release readiness: audit docs/build-kit against current backend/frontend/db. Read AGENTS.md, tools/PROCESS-RULES.md, tools/CONSTRAINT.md first. Read-only. Output missing/spec-deviation findings with file evidence. Do not edit.",
+        "timeout": 7200
+      },
+      "createdAt": "2026-05-25T21:50:48.744Z",
+      "model": "opus",
+      "modelRoutedBy": "explicit",
+      "currentTask": "task-1779747028025-86nsp7"
+    },
+    "agent-1779746859292-qsiroj": {
+      "agentId": "agent-1779746859292-qsiroj",
+      "agentType": "researcher",
+      "status": "terminated",
+      "health": 1,
+      "taskCount": 0,
+      "config": {
+        "provider": "anthropic",
+        "model": "opus",
+        "task": "NU-AURA backend readiness: inspect pom, Java version assumptions, mvn verify failures, Testcontainers setup, surefire/failsafe config. Read-only. Identify exact blockers and safest fix path. Do not edit.",
+        "timeout": 7200
+      },
+      "createdAt": "2026-05-25T22:07:39.292Z",
+      "model": "opus",
+      "modelRoutedBy": "explicit",
+      "currentTask": "task-1779747072516-pwjzra"
+    },
+    "agent-1779746860883-k2ih79": {
+      "agentId": "agent-1779746860883-k2ih79",
+      "agentType": "researcher",
+      "status": "terminated",
+      "health": 1,
+      "taskCount": 0,
+      "config": {
+        "provider": "anthropic",
+        "model": "opus",
+        "task": "NU-AURA frontend readiness: inspect Next build, env validation, production localhost warning, design-system drift, no-any/no-new-axios/fetch patterns. Read-only. Output P0/P1 list. Do not edit.",
+        "timeout": 7200
+      },
+      "createdAt": "2026-05-25T22:07:40.883Z",
+      "model": "opus",
+      "modelRoutedBy": "explicit",
+      "currentTask": "task-1779747076802-5e4von"
+    },
+    "agent-1779746862389-j59ta8": {
+      "agentId": "agent-1779746862389-j59ta8",
+      "agentType": "researcher",
+      "status": "terminated",
+      "health": 1,
+      "taskCount": 0,
+      "config": {
+        "provider": "anthropic",
+        "model": "opus",
+        "task": "NU-AURA DB release readiness: inspect Flyway migrations including modified old migrations and V180-V254 untracked chain. Read-only. Find gaps, duplicates, immutable migration violations, fresh/upgrade DB risks. Do not edit.",
+        "timeout": 7200
+      },
+      "createdAt": "2026-05-25T22:07:42.389Z",
+      "model": "opus",
+      "modelRoutedBy": "explicit",
+      "currentTask": "task-1779747080596-n7sw9e"
+    },
+    "agent-1779746863779-6guzcl": {
+      "agentId": "agent-1779746863779-6guzcl",
+      "agentType": "researcher",
+      "status": "terminated",
+      "health": 1,
+      "taskCount": 0,
+      "config": {
+        "provider": "anthropic",
+        "model": "opus",
+        "task": "NU-AURA realtime readiness: inspect WebSocket frontend/backend, Redis relay, auth cookie handshake, tenant topic auth, tests, and smoke scripts. Read-only. Mark what is code-green vs missing browser proof. Do not edit.",
+        "timeout": 7200
+      },
+      "createdAt": "2026-05-25T22:07:43.779Z",
+      "model": "opus",
+      "modelRoutedBy": "explicit",
+      "currentTask": "task-1779747085580-mvlo0u"
+    },
+    "agent-1779746865582-w7zp0a": {
+      "agentId": "agent-1779746865582-w7zp0a",
+      "agentType": "tester",
+      "status": "terminated",
+      "health": 1,
+      "taskCount": 0,
+      "config": {
+        "provider": "anthropic",
+        "model": "opus",
+        "task": "NU-AURA E2E readiness: inspect frontend Playwright config/specs/orchestrator and auth setup. Read-only. Plan critical user role sweep and identify brittle blockers like networkidle/session collisions. Do not edit.",
+        "timeout": 7200
+      },
+      "createdAt": "2026-05-25T22:07:45.582Z",
+      "model": "opus",
+      "modelRoutedBy": "explicit",
+      "currentTask": "task-1779747091798-y3r0l4"
+    },
+    "agent-1779746867237-18nj53": {
+      "agentId": "agent-1779746867237-18nj53",
+      "agentType": "security-auditor",
+      "status": "terminated",
+      "health": 1,
+      "taskCount": 0,
+      "config": {
+        "provider": "anthropic",
+        "model": "opus",
+        "task": "NU-AURA security/RBAC readiness: read docs/security/baseline.md, RBAC docs, WebSocket auth, tenant isolation, SuperAdmin bypass paths. Read-only. Report P0/P1 findings with evidence. Do not edit.",
+        "timeout": 7200
+      },
+      "createdAt": "2026-05-25T22:07:47.238Z",
+      "model": "opus",
+      "modelRoutedBy": "explicit",
+      "currentTask": "task-1779747097453-ue4efk"
+    },
+    "agent-1779746869733-vih3xn": {
+      "agentId": "agent-1779746869733-vih3xn",
+      "agentType": "researcher",
+      "status": "terminated",
+      "health": 1,
+      "taskCount": 0,
+      "config": {
+        "provider": "anthropic",
+        "model": "opus",
+        "task": "NU-AURA ops readiness: inspect health/readiness/liveness, logging, metrics, rollback/runbooks, .env.example, deployment configs. Read-only. Report missing production evidence. Do not edit.",
+        "timeout": 7200
+      },
+      "createdAt": "2026-05-25T22:07:49.733Z",
+      "model": "opus",
+      "modelRoutedBy": "explicit",
+      "currentTask": "task-1779747102076-w7nzje"
+    },
+    "agent-1779746871602-u8suj3": {
+      "agentId": "agent-1779746871602-u8suj3",
+      "agentType": "performance-engineer",
+      "status": "terminated",
+      "health": 1,
+      "taskCount": 0,
+      "config": {
+        "provider": "anthropic",
+        "model": "opus",
+        "task": "NU-AURA performance readiness: inspect performance tests, query count tests, hot paths, frontend bundle risks, startup/runtime budgets. Read-only. Report P0/P1 release blockers. Do not edit.",
+        "timeout": 7200
+      },
+      "createdAt": "2026-05-25T22:07:51.602Z",
+      "model": "opus",
+      "modelRoutedBy": "explicit",
+      "currentTask": "task-1779747107313-gjow3n"
+    },
+    "agent-1779746872969-6q96ck": {
+      "agentId": "agent-1779746872969-6q96ck",
+      "agentType": "reviewer",
+      "status": "terminated",
+      "health": 1,
+      "taskCount": 0,
+      "config": {
+        "provider": "anthropic",
+        "model": "opus",
+        "task": "NU-AURA release gate reviewer: synthesize current score blockers from repo evidence only. Read-only. Do not edit. Produce release gate checklist and ordering.",
+        "timeout": 7200
+      },
+      "createdAt": "2026-05-25T22:07:52.969Z",
+      "model": "opus",
+      "modelRoutedBy": "explicit",
+      "currentTask": "task-1779747111416-x1egu1"
+    },
+    "agent-1779746874225-li52s9": {
+      "agentId": "agent-1779746874225-li52s9",
+      "agentType": "coder",
+      "status": "terminated",
+      "health": 1,
+      "taskCount": 0,
+      "config": {
+        "provider": "anthropic",
+        "model": "opus",
+        "task": "NU-AURA fix lane: make backend mvn verify runnable in local Colima/Testcontainers and Java 21-compatible release path. Read files first. Touch only backend test infra/config/scripts if needed. Preserve product semantics. Run focused checks.",
+        "timeout": 7200
+      },
+      "createdAt": "2026-05-25T22:07:54.225Z",
+      "model": "opus",
+      "modelRoutedBy": "explicit",
+      "currentTask": "task-1779747115396-6cm31l"
+    },
+    "agent-1779746875493-qlwy99": {
+      "agentId": "agent-1779746875493-qlwy99",
+      "agentType": "coder",
+      "status": "terminated",
+      "health": 1,
+      "taskCount": 0,
+      "config": {
+        "provider": "anthropic",
+        "model": "opus",
+        "task": "NU-AURA fix lane: make local release smoke startup reproducible with pinned datasource/Flyway env, Colima Postgres/Redis/Kafka assumptions, actuator health. Touch only scripts/config docs under scripts/config as necessary. Do not edit source unless required.",
+        "timeout": 7200
+      },
+      "createdAt": "2026-05-25T22:07:55.493Z",
+      "model": "opus",
+      "modelRoutedBy": "explicit",
+      "currentTask": "task-1779747119713-7tskz9"
+    },
+    "agent-1779746877101-nlcqr2": {
+      "agentId": "agent-1779746877101-nlcqr2",
+      "agentType": "coder",
+      "status": "terminated",
+      "health": 1,
+      "taskCount": 0,
+      "config": {
+        "provider": "anthropic",
+        "model": "opus",
+        "task": "NU-AURA fix lane: remove production localhost API warning safely via env validation/config defaults. Touch frontend config/env only. No new Axios. Run tsc/lint/build if changed.",
+        "timeout": 7200
+      },
+      "createdAt": "2026-05-25T22:07:57.101Z",
+      "model": "opus",
+      "modelRoutedBy": "explicit",
+      "currentTask": "task-1779747124827-f0mv0m"
+    },
+    "agent-1779746878673-a9zbsi": {
+      "agentId": "agent-1779746878673-a9zbsi",
+      "agentType": "coder",
+      "status": "terminated",
+      "health": 1,
+      "taskCount": 0,
+      "config": {
+        "provider": "anthropic",
+        "model": "opus",
+        "task": "NU-AURA fix lane: make realtime notification browser smoke executable for two-user positive and two-tenant negative proof. Touch only websocket tests/smoke scripts/frontend e2e realtime files. Preserve tenant isolation.",
+        "timeout": 7200
+      },
+      "createdAt": "2026-05-25T22:07:58.673Z",
+      "model": "opus",
+      "modelRoutedBy": "explicit",
+      "currentTask": "task-1779747130149-kw8ztk"
+    },
+    "agent-1779746880374-c7m4cn": {
+      "agentId": "agent-1779746880374-c7m4cn",
+      "agentType": "coder",
+      "status": "terminated",
+      "health": 1,
+      "taskCount": 0,
+      "config": {
+        "provider": "anthropic",
+        "model": "opus",
+        "task": "NU-AURA fix lane: repair Playwright/orchestrator readiness for critical chromium role sweep. Touch only frontend/e2e, frontend/playwright config, scripts/qa. Avoid networkidle. Auth setup serial first.",
+        "timeout": 7200
+      },
+      "createdAt": "2026-05-25T22:08:00.374Z",
+      "model": "opus",
+      "modelRoutedBy": "explicit",
+      "currentTask": "task-1779747134485-mmxzu9"
+    },
+    "agent-1779746881805-e7kzsy": {
+      "agentId": "agent-1779746881805-e7kzsy",
+      "agentType": "coder",
+      "status": "terminated",
+      "health": 1,
+      "taskCount": 0,
+      "config": {
+        "provider": "anthropic",
+        "model": "opus",
+        "task": "NU-AURA fix lane: repair migration release hygiene by analyzing dirty old migrations and forward-only replacement strategy. Do not delete/revert user work. Touch only new migration files or reports if absolutely necessary; never silently rewrite old migrations.",
+        "timeout": 7200
+      },
+      "createdAt": "2026-05-25T22:08:01.805Z",
+      "model": "opus",
+      "modelRoutedBy": "explicit",
+      "currentTask": "task-1779747136648-gmuj2w"
+    },
+    "agent-1779746883653-wiik15": {
+      "agentId": "agent-1779746883653-wiik15",
+      "agentType": "coder",
+      "status": "terminated",
+      "health": 1,
+      "taskCount": 0,
+      "config": {
+        "provider": "anthropic",
+        "model": "opus",
+        "task": "NU-AURA fix lane: reduce design-system lint P0 drift in top offenders only. Touch frontend UI/page files listed by scanner. Keep UI behavior unchanged. Run lint:design-system and tsc if changed.",
+        "timeout": 7200
+      },
+      "createdAt": "2026-05-25T22:08:03.653Z",
+      "model": "opus",
+      "modelRoutedBy": "explicit",
+      "currentTask": "task-1779747138978-e6tk0m"
+    },
+    "agent-1779746885151-mcx93x": {
+      "agentId": "agent-1779746885151-mcx93x",
+      "agentType": "coder",
+      "status": "terminated",
+      "health": 1,
+      "taskCount": 0,
+      "config": {
+        "provider": "anthropic",
+        "model": "opus",
+        "task": "NU-AURA fix lane: address concrete P0 security/RBAC/tenant isolation blockers only. Touch security/RBAC scoped files/tests. SuperAdmin bypass must remain intact. Run focused tests.",
+        "timeout": 7200
+      },
+      "createdAt": "2026-05-25T22:08:05.151Z",
+      "model": "opus",
+      "modelRoutedBy": "explicit",
+      "currentTask": "task-1779747143134-xycvmi"
+    },
+    "agent-1779746886917-pmfx23": {
+      "agentId": "agent-1779746886917-pmfx23",
+      "agentType": "coder",
+      "status": "terminated",
+      "health": 1,
+      "taskCount": 0,
+      "config": {
+        "provider": "anthropic",
+        "model": "opus",
+        "task": "NU-AURA fix lane: wire missing ops readiness evidence/scripts for health, rollback, smoke, secrets examples. Touch only deployment/scripts/config docs if needed. No secrets. Run shell lint/checks where available.",
+        "timeout": 7200
+      },
+      "createdAt": "2026-05-25T22:08:06.917Z",
+      "model": "opus",
+      "modelRoutedBy": "explicit",
+      "currentTask": "task-1779747148411-720x8w"
+    },
+    "agent-1779746900635-vv4ewq": {
+      "agentId": "agent-1779746900635-vv4ewq",
+      "agentType": "architect",
+      "status": "terminated",
+      "health": 1,
+      "taskCount": 0,
+      "config": {
+        "provider": "anthropic",
+        "model": "opus",
+        "task": "NU-AURA final integrator: synthesize all release-readiness lanes, propose conflict-free task order to reach 100%, and report exact gate sequence. Read-only unless controller explicitly asks. Focus on sequencing, verification, and residual risk.",
+        "timeout": 7200
+      },
+      "createdAt": "2026-05-25T22:08:20.635Z",
+      "model": "opus",
+      "modelRoutedBy": "explicit",
+      "currentTask": "task-1779747153401-zf4eaf"
+    }
+  },
+  "version": "3.0.0"
+}

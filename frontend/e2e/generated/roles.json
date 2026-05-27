@@ -1,0 +1,47 @@
+[
+  {
+    "code": "SUPER_ADMIN",
+    "level": "100",
+    "email": "fayaz.m@nulogic.io"
+  },
+  {
+    "code": "TENANT_ADMIN",
+    "level": "95",
+    "email": "deepak@nulogic.io"
+  },
+  {
+    "code": "HR_ADMIN",
+    "level": "90",
+    "email": "priya@nulogic.io"
+  },
+  {
+    "code": "HR_MANAGER",
+    "level": "85",
+    "email": "jagadeesh@nulogic.io"
+  },
+  {
+    "code": "RECRUITMENT_ADMIN",
+    "level": "80",
+    "email": "suresh@nulogic.io"
+  },
+  {
+    "code": "FINANCE_ADMIN",
+    "level": "75",
+    "email": "bharath@nulogic.io"
+  },
+  {
+    "code": "MANAGER",
+    "level": "70",
+    "email": "sumit@nulogic.io"
+  },
+  {
+    "code": "TEAM_LEAD",
+    "level": "65",
+    "email": "mani@nulogic.io"
+  },
+  {
+    "code": "EMPLOYEE",
+    "level": "60",
+    "email": "saran@nulogic.io"
+  }
+]

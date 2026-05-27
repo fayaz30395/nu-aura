@@ -1,0 +1,66 @@
+{
+  "swarms": {
+    "swarm-1779053716682-lyu6y3": {
+      "swarmId": "swarm-1779053716682-lyu6y3",
+      "topology": "hierarchical-mesh",
+      "maxAgents": 8,
+      "status": "terminated",
+      "agents": [],
+      "tasks": [],
+      "config": {
+        "topology": "hierarchical-mesh",
+        "maxAgents": 8,
+        "strategy": "specialized",
+        "communicationProtocol": "message-bus",
+        "autoScaling": true,
+        "consensusMechanism": "majority"
+      },
+      "createdAt": "2026-05-17T21:35:16.682Z",
+      "updatedAt": "2026-05-25T21:49:35.834Z",
+      "pid": 21066,
+      "terminationReason": "host process 21066 exited"
+    },
+    "swarm-1779745775833-w2wc7s": {
+      "swarmId": "swarm-1779745775833-w2wc7s",
+      "topology": "hierarchical",
+      "maxAgents": 20,
+      "status": "terminated",
+      "agents": [
+        "agent-1779745848744-pru0rd",
+        "agent-1779746859292-qsiroj",
+        "agent-1779746860883-k2ih79",
+        "agent-1779746862389-j59ta8",
+        "agent-1779746863779-6guzcl",
+        "agent-1779746865582-w7zp0a",
+        "agent-1779746867237-18nj53",
+        "agent-1779746869733-vih3xn",
+        "agent-1779746871602-u8suj3",
+        "agent-1779746872969-6q96ck",
+        "agent-1779746874225-li52s9",
+        "agent-1779746875493-qlwy99",
+        "agent-1779746877101-nlcqr2",
+        "agent-1779746878673-a9zbsi",
+        "agent-1779746880374-c7m4cn",
+        "agent-1779746881805-e7kzsy",
+        "agent-1779746883653-wiik15",
+        "agent-1779746885151-mcx93x",
+        "agent-1779746886917-pmfx23",
+        "agent-1779746900635-vv4ewq"
+      ],
+      "tasks": [],
+      "config": {
+        "topology": "hierarchical",
+        "maxAgents": 20,
+        "strategy": "specialized",
+        "communicationProtocol": "message-bus",
+        "autoScaling": true,
+        "consensusMechanism": "majority"
+      },
+      "createdAt": "2026-05-25T21:49:35.833Z",
+      "updatedAt": "2026-05-25T21:50:48.745Z",
+      "pid": 96073,
+      "terminationReason": "host process 96073 exited"
+    }
+  },
+  "version": "3.0.0"
+}

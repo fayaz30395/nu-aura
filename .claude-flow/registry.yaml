@@ -1,0 +1,163 @@
+# RuFlo Artifact Registry
+# Surfaces existing project artifacts to the RuFlo status bar and the swarm router.
+# Update this file when new ADRs, runbooks, patterns, or audits are added.
+
+version: "1.0.0"
+generated: "2026-05-14"
+
+# ----- ARCHITECTURE DECISION RECORDS -----
+adrs:
+  base_path: docs/adr
+  index: docs/adr/README.md
+  template_in: docs/adr/README.md
+  records:
+    - id: ADR-001
+      file: ADR-001-multi-tenant-architecture.md
+      title: "Multi-Tenant Architecture with Shared Database"
+      status: accepted
+      date: "2025-01"
+    - id: ADR-002
+      file: ADR-002-authentication-strategy.md
+      title: "JWT-based Authentication with HTTP-only Cookies"
+      status: accepted
+      date: "2025-01"
+    - id: ADR-003
+      file: ADR-003-caching-strategy.md
+      title: "Redis Caching with Tenant-Aware Key Generation"
+      status: accepted
+      date: "2025-01"
+    - id: ADR-004
+      file: ADR-004-webhook-delivery-system.md
+      title: "Reliable Webhook Delivery with Circuit Breaker"
+      status: accepted
+      date: "2026-02"
+    - id: ADR-005
+      file: ADR-005-theme-consolidation.md
+      title: "Theme Consolidation"
+      status: accepted
+      date: "2026-03"
+    - id: ADR-006
+      file: ADR-006-jwt-token-optimization.md
+      title: "JWT Token Optimization"
+      status: accepted
+      date: "2026-03"
+    - id: ADR-007
+      file: ADR-007-payroll-saga-pattern.md
+      title: "Payroll Saga Pattern"
+      status: accepted
+      date: "2026-03"
+    - id: ADR-008
+      file: ADR-008-recruitment-ats-gap-analysis.md
+      title: "Recruitment ATS Gap Analysis"
+      status: accepted
+      date: "2026-03"
+    - id: ADR-009
+      file: ADR-009-database-connection-pool-sizing.md
+      title: "Database Connection Pool Sizing"
+      status: proposed
+      date: "2026-03"
+    - id: ADR-010
+      file: ADR-010-row-level-security-tenancy.md
+      title: "Row-Level Security for Tenant Isolation"
+      status: accepted
+      date: "2026-05"
+    - id: ADR-011
+      file: ADR-011-kafka-idempotent-consumers.md
+      title: "Kafka Idempotent Consumer Pattern"
+      status: accepted
+      date: "2026-05"
+    - id: ADR-012
+      file: ADR-012-timezone-handling.md
+      title: "Tenant-Aware Timezone Handling"
+      status: proposed
+      date: "2026-05"
+
+# ----- RUNBOOKS -----
+runbooks:
+  base_path: docs/runbooks
+  records:
+    - file: backend-developer-checklist.md
+      category: development
+    - file: backend-testing-guide.md
+      category: development
+    - file: backup-restore.md
+      category: data
+    - file: ci-workflows.md
+      category: ci-cd
+    - file: data-correction.md
+      category: data
+    - file: deployment.md
+      category: deployment
+    - file: disaster-recovery.md
+      category: incident
+    - file: dr-drill-checklist.md
+      category: incident
+    - file: incident-response.md
+      category: incident
+    - file: kafka-dead-letter.md
+      category: operations
+    - file: key-rotation.md
+      category: security
+    - file: payroll-correction.md
+      category: data
+    - file: qa-skills.md
+      category: testing
+    - file: rollback.md
+      category: deployment
+    - file: tenant-lifecycle.md
+      category: operations
+    - file: swarm-pipelines.md
+      category: development
+      note: "Added 2026-05-14 — copy-paste agent pipeline templates"
+
+# ----- AUDITS -----
+audits:
+  base_path: docs/audit
+  records:
+    - file: wave-10-deep-audit-report.md
+      date: "2026-05-12"
+      severity_p0: 5
+      severity_p1: 8
+      severity_p2: 8
+      status: open
+    - file: kafka-idempotency-audit.md
+      status: closed_by_adr
+      closed_by: ADR-011
+    - file: soft-delete-native-query-audit.md
+      status: open
+    - file: spring-boot-3.4-to-3.5-upgrade-precheck.md
+      status: open
+    - file: frontend-date-handling.md
+      status: tracked_in
+      tracked_in: ADR-012
+
+# ----- PATTERN CATALOG (for AgentDB seeding) -----
+patterns:
+  base_path: docs/patterns
+  records:
+    - file: redis-cache-with-fallback.md
+      tags: [redis, cache, fallback, resilience]
+    - file: rls-tenant-filter.md
+      tags: [postgres, rls, multi-tenant, security]
+    - file: kafka-idempotency.md
+      tags: [kafka, idempotency, dedup]
+    - file: distributed-scheduler-lock.md
+      tags: [scheduler, shedlock, multi-pod]
+    - file: audit-trail-emission.md
+      tags: [audit, compliance, kafka]
+
+# ----- SECURITY ARTIFACTS -----
+security:
+  baseline: docs/security/baseline.md
+  scan_checklist: docs/security/scan-checklist.md
+  scan_script: scripts/security/baseline-scan.sh
+  vuln_policy: SECURITY.md
+  threat_model: docs/security/baseline.md#threat-model
+
+# ----- ACTIVE WORK TRACKERS -----
+wave_tracker:
+  active_wave: wave-10
+  source: docs/audit/wave-10-deep-audit-report.md
+  p0_open: 5
+  p1_open: 8
+  p2_open: 8

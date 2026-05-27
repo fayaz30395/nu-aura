@@ -1,0 +1,882 @@
+[
+  {
+    "path": "/",
+    "module": "root"
+  },
+  {
+    "path": "/about",
+    "module": "about"
+  },
+  {
+    "path": "/admin",
+    "module": "admin"
+  },
+  {
+    "path": "/admin/custom-fields",
+    "module": "admin"
+  },
+  {
+    "path": "/admin/departments",
+    "module": "admin"
+  },
+  {
+    "path": "/admin/employees",
+    "module": "admin"
+  },
+  {
+    "path": "/admin/feature-flags",
+    "module": "admin"
+  },
+  {
+    "path": "/admin/holidays",
+    "module": "admin"
+  },
+  {
+    "path": "/admin/implicit-roles",
+    "module": "admin"
+  },
+  {
+    "path": "/admin/import-keka",
+    "module": "admin"
+  },
+  {
+    "path": "/admin/integrations",
+    "module": "admin"
+  },
+  {
+    "path": "/admin/leave-requests",
+    "module": "admin"
+  },
+  {
+    "path": "/admin/leave-types",
+    "module": "admin"
+  },
+  {
+    "path": "/admin/mobile-api",
+    "module": "admin"
+  },
+  {
+    "path": "/admin/office-locations",
+    "module": "admin"
+  },
+  {
+    "path": "/admin/org-hierarchy",
+    "module": "admin"
+  },
+  {
+    "path": "/admin/payroll",
+    "module": "admin"
+  },
+  {
+    "path": "/admin/permissions",
+    "module": "admin"
+  },
+  {
+    "path": "/admin/profile",
+    "module": "admin"
+  },
+  {
+    "path": "/admin/reports",
+    "module": "admin"
+  },
+  {
+    "path": "/admin/roles",
+    "module": "admin"
+  },
+  {
+    "path": "/admin/settings",
+    "module": "admin"
+  },
+  {
+    "path": "/admin/shifts",
+    "module": "admin"
+  },
+  {
+    "path": "/admin/system",
+    "module": "admin"
+  },
+  {
+    "path": "/allocations",
+    "module": "allocations"
+  },
+  {
+    "path": "/allocations/summary",
+    "module": "allocations"
+  },
+  {
+    "path": "/analytics",
+    "module": "analytics"
+  },
+  {
+    "path": "/analytics/org-health",
+    "module": "analytics"
+  },
+  {
+    "path": "/announcements",
+    "module": "announcements"
+  },
+  {
+    "path": "/app/fluence",
+    "module": "app"
+  },
+  {
+    "path": "/app/grow",
+    "module": "app"
+  },
+  {
+    "path": "/app/hire",
+    "module": "app"
+  },
+  {
+    "path": "/app/hrms",
+    "module": "app"
+  },
+  {
+    "path": "/approvals",
+    "module": "approvals"
+  },
+  {
+    "path": "/approvals/inbox",
+    "module": "approvals"
+  },
+  {
+    "path": "/assets",
+    "module": "assets"
+  },
+  {
+    "path": "/attendance",
+    "module": "attendance"
+  },
+  {
+    "path": "/attendance/comp-off",
+    "module": "attendance"
+  },
+  {
+    "path": "/attendance/my-attendance",
+    "module": "attendance"
+  },
+  {
+    "path": "/attendance/regularization",
+    "module": "attendance"
+  },
+  {
+    "path": "/attendance/shift-swap",
+    "module": "attendance"
+  },
+  {
+    "path": "/attendance/team",
+    "module": "attendance"
+  },
+  {
+    "path": "/benefits",
+    "module": "benefits"
+  },
+  {
+    "path": "/biometric-devices",
+    "module": "biometric-devices"
+  },
+  {
+    "path": "/calendar",
+    "module": "calendar"
+  },
+  {
+    "path": "/calendar/new",
+    "module": "calendar"
+  },
+  {
+    "path": "/careers",
+    "module": "careers"
+  },
+  {
+    "path": "/company-spotlight",
+    "module": "company-spotlight"
+  },
+  {
+    "path": "/compensation",
+    "module": "compensation"
+  },
+  {
+    "path": "/compliance",
+    "module": "compliance"
+  },
+  {
+    "path": "/contact",
+    "module": "contact"
+  },
+  {
+    "path": "/contracts",
+    "module": "contracts"
+  },
+  {
+    "path": "/contracts/new",
+    "module": "contracts"
+  },
+  {
+    "path": "/contracts/templates",
+    "module": "contracts"
+  },
+  {
+    "path": "/dashboard",
+    "module": "dashboard"
+  },
+  {
+    "path": "/dashboards/employee",
+    "module": "dashboards"
+  },
+  {
+    "path": "/dashboards/executive",
+    "module": "dashboards"
+  },
+  {
+    "path": "/dashboards/manager",
+    "module": "dashboards"
+  },
+  {
+    "path": "/departments",
+    "module": "departments"
+  },
+  {
+    "path": "/employees",
+    "module": "employees"
+  },
+  {
+    "path": "/employees/change-requests",
+    "module": "employees"
+  },
+  {
+    "path": "/employees/directory",
+    "module": "employees"
+  },
+  {
+    "path": "/employees/import",
+    "module": "employees"
+  },
+  {
+    "path": "/executive",
+    "module": "executive"
+  },
+  {
+    "path": "/expenses",
+    "module": "expenses"
+  },
+  {
+    "path": "/expenses/approvals",
+    "module": "expenses"
+  },
+  {
+    "path": "/expenses/mileage",
+    "module": "expenses"
+  },
+  {
+    "path": "/expenses/reports",
+    "module": "expenses"
+  },
+  {
+    "path": "/expenses/settings",
+    "module": "expenses"
+  },
+  {
+    "path": "/features",
+    "module": "features"
+  },
+  {
+    "path": "/feedback360",
+    "module": "feedback360"
+  },
+  {
+    "path": "/fluence",
+    "module": "fluence"
+  },
+  {
+    "path": "/fluence/analytics",
+    "module": "fluence"
+  },
+  {
+    "path": "/fluence/blogs",
+    "module": "fluence"
+  },
+  {
+    "path": "/fluence/blogs/new",
+    "module": "fluence"
+  },
+  {
+    "path": "/fluence/dashboard",
+    "module": "fluence"
+  },
+  {
+    "path": "/fluence/drive",
+    "module": "fluence"
+  },
+  {
+    "path": "/fluence/my-content",
+    "module": "fluence"
+  },
+  {
+    "path": "/fluence/search",
+    "module": "fluence"
+  },
+  {
+    "path": "/fluence/templates",
+    "module": "fluence"
+  },
+  {
+    "path": "/fluence/templates/new",
+    "module": "fluence"
+  },
+  {
+    "path": "/fluence/wall",
+    "module": "fluence"
+  },
+  {
+    "path": "/fluence/wiki",
+    "module": "fluence"
+  },
+  {
+    "path": "/fluence/wiki/new",
+    "module": "fluence"
+  },
+  {
+    "path": "/goals",
+    "module": "goals"
+  },
+  {
+    "path": "/helpdesk",
+    "module": "helpdesk"
+  },
+  {
+    "path": "/helpdesk/knowledge-base",
+    "module": "helpdesk"
+  },
+  {
+    "path": "/helpdesk/sla",
+    "module": "helpdesk"
+  },
+  {
+    "path": "/helpdesk/tickets",
+    "module": "helpdesk"
+  },
+  {
+    "path": "/holidays",
+    "module": "holidays"
+  },
+  {
+    "path": "/import-export",
+    "module": "import-export"
+  },
+  {
+    "path": "/integrations",
+    "module": "integrations"
+  },
+  {
+    "path": "/integrations/slack",
+    "module": "integrations"
+  },
+  {
+    "path": "/learning",
+    "module": "learning"
+  },
+  {
+    "path": "/learning/certificates",
+    "module": "learning"
+  },
+  {
+    "path": "/learning/courses",
+    "module": "learning"
+  },
+  {
+    "path": "/learning/paths",
+    "module": "learning"
+  },
+  {
+    "path": "/leave",
+    "module": "leave"
+  },
+  {
+    "path": "/leave/admin/carry-forward",
+    "module": "leave"
+  },
+  {
+    "path": "/leave/apply",
+    "module": "leave"
+  },
+  {
+    "path": "/leave/approvals",
+    "module": "leave"
+  },
+  {
+    "path": "/leave/calendar",
+    "module": "leave"
+  },
+  {
+    "path": "/leave/encashment",
+    "module": "leave"
+  },
+  {
+    "path": "/leave/my-leaves",
+    "module": "leave"
+  },
+  {
+    "path": "/letter-templates",
+    "module": "letter-templates"
+  },
+  {
+    "path": "/letters",
+    "module": "letters"
+  },
+  {
+    "path": "/linkedin-posts",
+    "module": "linkedin-posts"
+  },
+  {
+    "path": "/loans",
+    "module": "loans"
+  },
+  {
+    "path": "/loans/new",
+    "module": "loans"
+  },
+  {
+    "path": "/lwf",
+    "module": "lwf"
+  },
+  {
+    "path": "/me/attendance",
+    "module": "me"
+  },
+  {
+    "path": "/me/dashboard",
+    "module": "me"
+  },
+  {
+    "path": "/me/documents",
+    "module": "me"
+  },
+  {
+    "path": "/me/leaves",
+    "module": "me"
+  },
+  {
+    "path": "/me/payslips",
+    "module": "me"
+  },
+  {
+    "path": "/me/profile",
+    "module": "me"
+  },
+  {
+    "path": "/nu-calendar",
+    "module": "nu-calendar"
+  },
+  {
+    "path": "/nu-drive",
+    "module": "nu-drive"
+  },
+  {
+    "path": "/nu-mail",
+    "module": "nu-mail"
+  },
+  {
+    "path": "/offboarding",
+    "module": "offboarding"
+  },
+  {
+    "path": "/offboarding/exit/fnf",
+    "module": "offboarding"
+  },
+  {
+    "path": "/offboarding/fnf",
+    "module": "offboarding"
+  },
+  {
+    "path": "/offer-portal",
+    "module": "offer-portal"
+  },
+  {
+    "path": "/okr",
+    "module": "okr"
+  },
+  {
+    "path": "/onboarding",
+    "module": "onboarding"
+  },
+  {
+    "path": "/onboarding/new",
+    "module": "onboarding"
+  },
+  {
+    "path": "/onboarding/templates",
+    "module": "onboarding"
+  },
+  {
+    "path": "/onboarding/templates/new",
+    "module": "onboarding"
+  },
+  {
+    "path": "/one-on-one",
+    "module": "one-on-one"
+  },
+  {
+    "path": "/org-chart",
+    "module": "org-chart"
+  },
+  {
+    "path": "/organization-chart",
+    "module": "organization-chart"
+  },
+  {
+    "path": "/overtime",
+    "module": "overtime"
+  },
+  {
+    "path": "/payments",
+    "module": "payments"
+  },
+  {
+    "path": "/payments/config",
+    "module": "payments"
+  },
+  {
+    "path": "/payroll",
+    "module": "payroll"
+  },
+  {
+    "path": "/payroll/bulk-processing",
+    "module": "payroll"
+  },
+  {
+    "path": "/payroll/components",
+    "module": "payroll"
+  },
+  {
+    "path": "/payroll/payslips",
+    "module": "payroll"
+  },
+  {
+    "path": "/payroll/runs",
+    "module": "payroll"
+  },
+  {
+    "path": "/payroll/salary-structures",
+    "module": "payroll"
+  },
+  {
+    "path": "/payroll/salary-structures/create",
+    "module": "payroll"
+  },
+  {
+    "path": "/payroll/statutory",
+    "module": "payroll"
+  },
+  {
+    "path": "/payroll/structures",
+    "module": "payroll"
+  },
+  {
+    "path": "/performance",
+    "module": "performance"
+  },
+  {
+    "path": "/performance/360-feedback",
+    "module": "performance"
+  },
+  {
+    "path": "/performance/9box",
+    "module": "performance"
+  },
+  {
+    "path": "/performance/calibration",
+    "module": "performance"
+  },
+  {
+    "path": "/performance/competency-framework",
+    "module": "performance"
+  },
+  {
+    "path": "/performance/competency-matrix",
+    "module": "performance"
+  },
+  {
+    "path": "/performance/cycles",
+    "module": "performance"
+  },
+  {
+    "path": "/performance/feedback",
+    "module": "performance"
+  },
+  {
+    "path": "/performance/goals",
+    "module": "performance"
+  },
+  {
+    "path": "/performance/okr",
+    "module": "performance"
+  },
+  {
+    "path": "/performance/okrs",
+    "module": "performance"
+  },
+  {
+    "path": "/performance/pip",
+    "module": "performance"
+  },
+  {
+    "path": "/performance/reviews",
+    "module": "performance"
+  },
+  {
+    "path": "/performance/revolution",
+    "module": "performance"
+  },
+  {
+    "path": "/preboarding",
+    "module": "preboarding"
+  },
+  {
+    "path": "/predictive-analytics",
+    "module": "predictive-analytics"
+  },
+  {
+    "path": "/pricing",
+    "module": "pricing"
+  },
+  {
+    "path": "/probation",
+    "module": "probation"
+  },
+  {
+    "path": "/projects",
+    "module": "projects"
+  },
+  {
+    "path": "/projects/calendar",
+    "module": "projects"
+  },
+  {
+    "path": "/projects/gantt",
+    "module": "projects"
+  },
+  {
+    "path": "/projects/resource-conflicts",
+    "module": "projects"
+  },
+  {
+    "path": "/recognition",
+    "module": "recognition"
+  },
+  {
+    "path": "/recruitment",
+    "module": "recruitment"
+  },
+  {
+    "path": "/recruitment/agencies",
+    "module": "recruitment"
+  },
+  {
+    "path": "/recruitment/candidates",
+    "module": "recruitment"
+  },
+  {
+    "path": "/recruitment/career-page",
+    "module": "recruitment"
+  },
+  {
+    "path": "/recruitment/interviews",
+    "module": "recruitment"
+  },
+  {
+    "path": "/recruitment/job-boards",
+    "module": "recruitment"
+  },
+  {
+    "path": "/recruitment/jobs",
+    "module": "recruitment"
+  },
+  {
+    "path": "/recruitment/pipeline",
+    "module": "recruitment"
+  },
+  {
+    "path": "/referrals",
+    "module": "referrals"
+  },
+  {
+    "path": "/reports",
+    "module": "reports"
+  },
+  {
+    "path": "/reports/attrition",
+    "module": "reports"
+  },
+  {
+    "path": "/reports/builder",
+    "module": "reports"
+  },
+  {
+    "path": "/reports/headcount",
+    "module": "reports"
+  },
+  {
+    "path": "/reports/leave",
+    "module": "reports"
+  },
+  {
+    "path": "/reports/payroll",
+    "module": "reports"
+  },
+  {
+    "path": "/reports/performance",
+    "module": "reports"
+  },
+  {
+    "path": "/reports/scheduled",
+    "module": "reports"
+  },
+  {
+    "path": "/reports/utilization",
+    "module": "reports"
+  },
+  {
+    "path": "/reset-password",
+    "module": "reset-password"
+  },
+  {
+    "path": "/resources",
+    "module": "resources"
+  },
+  {
+    "path": "/resources/approvals",
+    "module": "resources"
+  },
+  {
+    "path": "/resources/availability",
+    "module": "resources"
+  },
+  {
+    "path": "/resources/capacity",
+    "module": "resources"
+  },
+  {
+    "path": "/resources/pool",
+    "module": "resources"
+  },
+  {
+    "path": "/resources/workload",
+    "module": "resources"
+  },
+  {
+    "path": "/restricted-holidays",
+    "module": "restricted-holidays"
+  },
+  {
+    "path": "/security",
+    "module": "security"
+  },
+  {
+    "path": "/settings",
+    "module": "settings"
+  },
+  {
+    "path": "/settings/notifications",
+    "module": "settings"
+  },
+  {
+    "path": "/settings/profile",
+    "module": "settings"
+  },
+  {
+    "path": "/settings/security",
+    "module": "settings"
+  },
+  {
+    "path": "/settings/sso",
+    "module": "settings"
+  },
+  {
+    "path": "/shifts",
+    "module": "shifts"
+  },
+  {
+    "path": "/shifts/definitions",
+    "module": "shifts"
+  },
+  {
+    "path": "/shifts/my-schedule",
+    "module": "shifts"
+  },
+  {
+    "path": "/shifts/patterns",
+    "module": "shifts"
+  },
+  {
+    "path": "/shifts/swaps",
+    "module": "shifts"
+  },
+  {
+    "path": "/statutory",
+    "module": "statutory"
+  },
+  {
+    "path": "/statutory-filings",
+    "module": "statutory-filings"
+  },
+  {
+    "path": "/surveys",
+    "module": "surveys"
+  },
+  {
+    "path": "/tax",
+    "module": "tax"
+  },
+  {
+    "path": "/tax/declarations",
+    "module": "tax"
+  },
+  {
+    "path": "/team-directory",
+    "module": "team-directory"
+  },
+  {
+    "path": "/time-tracking",
+    "module": "time-tracking"
+  },
+  {
+    "path": "/time-tracking/new",
+    "module": "time-tracking"
+  },
+  {
+    "path": "/timesheets",
+    "module": "timesheets"
+  },
+  {
+    "path": "/training",
+    "module": "training"
+  },
+  {
+    "path": "/training/catalog",
+    "module": "training"
+  },
+  {
+    "path": "/training/my-learning",
+    "module": "training"
+  },
+  {
+    "path": "/travel",
+    "module": "travel"
+  },
+  {
+    "path": "/travel/new",
+    "module": "travel"
+  },
+  {
+    "path": "/wellness",
+    "module": "wellness"
+  },
+  {
+    "path": "/wellness/admin",
+    "module": "wellness"
+  },
+  {
+    "path": "/workflows",
+    "module": "workflows"
+  }
+]
