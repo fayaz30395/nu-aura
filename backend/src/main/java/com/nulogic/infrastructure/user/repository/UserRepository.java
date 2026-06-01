@@ -77,6 +77,11 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     Optional<User> findByIdAndTenantId(UUID id, UUID tenantId);
 
+    @Query("SELECT u.id, CONCAT(u.firstName, ' ', COALESCE(u.lastName, '')) FROM User u " +
+            "WHERE u.tenantId = :tenantId AND u.id IN :ids")
+    List<Object[]> findFullNamesByIdsAndTenantId(@Param("ids") Collection<UUID> ids,
+                                                 @Param("tenantId") UUID tenantId);
+
     /**
      * @deprecated SEC: plaintext reset tokens are no longer stored. Use
      * {@link #findActivePasswordResetCandidates(LocalDateTime)} and BCrypt-compare

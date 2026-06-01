@@ -19,6 +19,7 @@ import com.nulogic.infrastructure.wall.repository.PostReactionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -26,8 +27,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -128,24 +132,25 @@ public class RecognitionService {
     public Page<RecognitionResponse> getPublicFeed(Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID currentUserId = SecurityContext.getCurrentEmployeeId();
-        return recognitionRepository.findByTenantIdAndIsPublicTrueAndIsApprovedTrue(tenantId, pageable)
-                .map(e -> enrichRecognitionResponse(RecognitionResponse.fromEntity(e), tenantId, currentUserId));
+        Page<Recognition> recognitions = recognitionRepository.findByTenantIdAndIsPublicTrueAndIsApprovedTrue(
+                tenantId, pageable);
+        return enrichRecognitionPage(recognitions, tenantId, currentUserId);
     }
 
     @Transactional(readOnly = true)
     public Page<RecognitionResponse> getMyReceivedRecognitions(UUID employeeId, Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID currentUserId = SecurityContext.getCurrentEmployeeId();
-        return recognitionRepository.findByReceiver(tenantId, employeeId, pageable)
-                .map(e -> enrichRecognitionResponse(RecognitionResponse.fromEntity(e), tenantId, currentUserId));
+        Page<Recognition> recognitions = recognitionRepository.findByReceiver(tenantId, employeeId, pageable);
+        return enrichRecognitionPage(recognitions, tenantId, currentUserId);
     }
 
     @Transactional(readOnly = true)
     public Page<RecognitionResponse> getMyGivenRecognitions(UUID employeeId, Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID currentUserId = SecurityContext.getCurrentEmployeeId();
-        return recognitionRepository.findByGiver(tenantId, employeeId, pageable)
-                .map(e -> enrichRecognitionResponse(RecognitionResponse.fromEntity(e), tenantId, currentUserId));
+        Page<Recognition> recognitions = recognitionRepository.findByGiver(tenantId, employeeId, pageable);
+        return enrichRecognitionPage(recognitions, tenantId, currentUserId);
     }
 
     @Transactional
@@ -325,6 +330,104 @@ public class RecognitionService {
         }
 
         return response;
+    }
+
+    private Page<RecognitionResponse> enrichRecognitionPage(
+            Page<Recognition> recognitions,
+            UUID tenantId,
+            UUID currentUserId) {
+        if (recognitions.isEmpty()) {
+            return recognitions.map(RecognitionResponse::fromEntity);
+        }
+
+        List<RecognitionResponse> responses = recognitions.getContent().stream()
+                .map(RecognitionResponse::fromEntity)
+                .collect(Collectors.toList());
+        enrichRecognitionResponses(responses, tenantId, currentUserId);
+        return new PageImpl<>(responses, recognitions.getPageable(), recognitions.getTotalElements());
+    }
+
+    private void enrichRecognitionResponses(
+            List<RecognitionResponse> responses,
+            UUID tenantId,
+            UUID currentUserId) {
+        Set<UUID> employeeIds = new HashSet<>();
+        Set<UUID> badgeIds = new HashSet<>();
+        Set<UUID> wallPostIds = new HashSet<>();
+
+        for (RecognitionResponse response : responses) {
+            if (!Boolean.TRUE.equals(response.getIsAnonymous()) && response.getGiverId() != null) {
+                employeeIds.add(response.getGiverId());
+            }
+            if (response.getReceiverId() != null) {
+                employeeIds.add(response.getReceiverId());
+            }
+            if (response.getBadgeId() != null) {
+                badgeIds.add(response.getBadgeId());
+            }
+            if (response.getWallPostId() != null) {
+                wallPostIds.add(response.getWallPostId());
+            }
+        }
+
+        Map<UUID, String> employeeNames = loadEmployeeNames(employeeIds, tenantId);
+        Map<UUID, RecognitionBadge> badges = loadBadges(badgeIds, tenantId);
+        Set<UUID> reactedPostIds = loadReactedPostIds(wallPostIds, currentUserId, tenantId);
+
+        for (RecognitionResponse response : responses) {
+            if (Boolean.TRUE.equals(response.getIsAnonymous())) {
+                response.setGiverName("Anonymous");
+            } else {
+                UUID giverId = response.getGiverId();
+                response.setGiverName(giverId != null ? employeeNames.get(giverId) : null);
+            }
+
+            UUID receiverId = response.getReceiverId();
+            response.setReceiverName(receiverId != null ? employeeNames.get(receiverId) : null);
+
+            UUID badgeId = response.getBadgeId();
+            if (badgeId != null) {
+                RecognitionBadge badge = badges.get(badgeId);
+                if (badge != null) {
+                    response.setBadgeName(badge.getBadgeName());
+                    response.setBadgeIconUrl(badge.getIconUrl());
+                }
+            }
+
+            if (response.getWallPostId() != null && currentUserId != null) {
+                response.setHasReacted(reactedPostIds.contains(response.getWallPostId()));
+            }
+        }
+    }
+
+    private Map<UUID, String> loadEmployeeNames(Set<UUID> employeeIds, UUID tenantId) {
+        if (employeeIds.isEmpty()) {
+            return Map.of();
+        }
+
+        Map<UUID, String> employeeNames = new HashMap<>();
+        for (Object[] row : employeeRepository.findFullNamesByIdsAndTenantId(employeeIds, tenantId)) {
+            employeeNames.put((UUID) row[0], (String) row[1]);
+        }
+        return employeeNames;
+    }
+
+    private Map<UUID, RecognitionBadge> loadBadges(Set<UUID> badgeIds, UUID tenantId) {
+        if (badgeIds.isEmpty()) {
+            return Map.of();
+        }
+
+        return badgeRepository.findByTenantIdAndIdIn(tenantId, badgeIds).stream()
+                .collect(Collectors.toMap(RecognitionBadge::getId, badge -> badge));
+    }
+
+    private Set<UUID> loadReactedPostIds(Set<UUID> wallPostIds, UUID currentUserId, UUID tenantId) {
+        if (wallPostIds.isEmpty() || currentUserId == null) {
+            return Set.of();
+        }
+
+        return new HashSet<>(postReactionRepository.findPostIdsWithUserReactionForTenant(
+                List.copyOf(wallPostIds), currentUserId, tenantId));
     }
 
     // Removed enrichSurveyResponse - survey functionality moved to engagement

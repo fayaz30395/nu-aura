@@ -1,14 +1,15 @@
 'use client';
 
+import {FormEvent, useState} from 'react';
 import {useParams, useRouter} from 'next/navigation';
 import {motion} from 'framer-motion';
-import {ArrowRight, Award, Briefcase, Calendar, ChevronLeft, DollarSign, TrendingDown, TrendingUp,} from 'lucide-react';
+import {ArrowRight, Award, Briefcase, Calendar, ChevronLeft, DollarSign, Plus, TrendingDown, TrendingUp,} from 'lucide-react';
 import {Skeleton} from '@mantine/core';
 import {AppLayout} from '@/components/layout';
 import {Card, CardContent} from '@/components/ui/Card';
 import {EmptyState} from '@/components/ui';
 import {useEmployee} from '@/lib/hooks/queries/useEmployees';
-import {useEmployeeRevisionHistory} from '@/lib/hooks/queries/useCompensation';
+import {useCreateRevision, useEmployeeRevisionHistory} from '@/lib/hooks/queries/useCompensation';
 import type {SalaryRevision} from '@/lib/types/hrms/compensation';
 import {RevisionStatus, RevisionType} from '@/lib/types/hrms/compensation';
 import {format} from 'date-fns';
@@ -260,12 +261,18 @@ export default function EmployeeCompensationPage() {
   const params = useParams();
   const router = useRouter();
   const employeeId = params.id as string;
+  const [isRevisionModalOpen, setIsRevisionModalOpen] = useState(false);
+  const [newSalary, setNewSalary] = useState('');
+  const [newDesignation, setNewDesignation] = useState('');
+  const [effectiveDate, setEffectiveDate] = useState('');
+  const [justification, setJustification] = useState('');
 
   const {data: employee, isLoading: employeeLoading} = useEmployee(employeeId);
   const {data: revisions, isLoading: revisionsLoading, isError} = useEmployeeRevisionHistory(
     employeeId,
     !!employeeId
   );
+  const createRevisionMutation = useCreateRevision();
 
   const isLoading = employeeLoading || revisionsLoading;
 
@@ -280,6 +287,27 @@ export default function EmployeeCompensationPage() {
   const appliedRevisions = sortedRevisions.filter(
     (r) => r.status === RevisionStatus.APPLIED
   ).length;
+
+  const closeRevisionModal = () => {
+    setIsRevisionModalOpen(false);
+    setNewSalary('');
+    setNewDesignation('');
+    setEffectiveDate('');
+    setJustification('');
+  };
+
+  const handleCreateRevision = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    await createRevisionMutation.mutateAsync({
+      employeeId,
+      revisionType: RevisionType.ANNUAL_INCREMENT,
+      newSalary: Number(newSalary),
+      newDesignation: newDesignation || undefined,
+      effectiveDate,
+      justification: justification || undefined,
+    });
+    closeRevisionModal();
+  };
 
   return (
     <AppLayout>
@@ -300,15 +328,25 @@ export default function EmployeeCompensationPage() {
         </button>
 
         {/* Page header */}
-        <div className="mb-8">
-          <h1 className="text-page-title text-[var(--text-primary)]">
-            Compensation History
-          </h1>
-          {employee && (
-            <p className="text-body-muted mt-1">
-              {employee.firstName} {employee.lastName} &middot; {employee.employeeCode}
-            </p>
-          )}
+        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <h1 className="text-page-title text-[var(--text-primary)]">
+              Compensation History
+            </h1>
+            {employee && (
+              <p className="text-body-muted mt-1">
+                {employee.firstName} {employee.lastName} &middot; {employee.employeeCode}
+              </p>
+            )}
+          </div>
+          <button
+            type="button"
+            onClick={() => setIsRevisionModalOpen(true)}
+            className="inline-flex items-center justify-center gap-2 rounded-md bg-accent-700 px-4 py-2 text-sm font-medium text-white hover:bg-accent-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-700 focus-visible:ring-offset-2"
+          >
+            <Plus size={16}/>
+            New Revision
+          </button>
         </div>
 
         {isLoading ? (
@@ -392,6 +430,92 @@ export default function EmployeeCompensationPage() {
           </>
         )}
       </motion.div>
+
+      {isRevisionModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <form
+            onSubmit={handleCreateRevision}
+            className="w-full max-w-lg rounded-lg bg-[var(--bg-card)] p-6 shadow-xl dark:bg-[var(--bg-secondary)]"
+          >
+            <div className="mb-5">
+              <h2 className="text-xl font-semibold text-[var(--text-primary)]">New Salary Revision</h2>
+              {employee && (
+                <p className="text-body-muted mt-1">
+                  {employee.firstName} {employee.lastName} &middot; {employee.employeeCode}
+                </p>
+              )}
+            </div>
+
+            <div className="space-y-4">
+              <label className="block">
+                <span className="mb-1 block text-sm font-medium text-[var(--text-secondary)]">New CTC</span>
+                <input
+                  name="newSalary"
+                  type="number"
+                  min="1"
+                  required
+                  placeholder="New CTC"
+                  value={newSalary}
+                  onChange={(event) => setNewSalary(event.target.value)}
+                  className="w-full rounded-md border border-[var(--border-main)] bg-[var(--bg-primary)] px-3 py-2 text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
+                />
+              </label>
+
+              <label className="block">
+                <span className="mb-1 block text-sm font-medium text-[var(--text-secondary)]">Designation</span>
+                <input
+                  name="designation"
+                  type="text"
+                  placeholder="New designation"
+                  value={newDesignation}
+                  onChange={(event) => setNewDesignation(event.target.value)}
+                  className="w-full rounded-md border border-[var(--border-main)] bg-[var(--bg-primary)] px-3 py-2 text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
+                />
+              </label>
+
+              <label className="block">
+                <span className="mb-1 block text-sm font-medium text-[var(--text-secondary)]">Effective Date</span>
+                <input
+                  name="effectiveDate"
+                  type="date"
+                  required
+                  value={effectiveDate}
+                  onChange={(event) => setEffectiveDate(event.target.value)}
+                  className="w-full rounded-md border border-[var(--border-main)] bg-[var(--bg-primary)] px-3 py-2 text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
+                />
+              </label>
+
+              <label className="block">
+                <span className="mb-1 block text-sm font-medium text-[var(--text-secondary)]">Justification</span>
+                <textarea
+                  name="justification"
+                  rows={3}
+                  value={justification}
+                  onChange={(event) => setJustification(event.target.value)}
+                  className="w-full rounded-md border border-[var(--border-main)] bg-[var(--bg-primary)] px-3 py-2 text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
+                />
+              </label>
+            </div>
+
+            <div className="mt-6 flex gap-4">
+              <button
+                type="button"
+                onClick={closeRevisionModal}
+                className="flex-1 rounded-md border border-[var(--border-main)] px-4 py-2 text-sm font-medium text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={createRevisionMutation.isPending}
+                className="flex-1 rounded-md bg-accent-700 px-4 py-2 text-sm font-medium text-white hover:bg-accent-800 disabled:opacity-50"
+              >
+                {createRevisionMutation.isPending ? 'Saving...' : 'Save'}
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
     </AppLayout>
   );
 }

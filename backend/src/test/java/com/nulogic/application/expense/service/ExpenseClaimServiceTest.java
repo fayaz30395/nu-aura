@@ -100,7 +100,7 @@ class ExpenseClaimServiceTest {
 
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
         tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
-        lenient().when(jdbcTemplate.queryForObject(anyString(), eq(Long.class), any(), any()))
+        lenient().when(jdbcTemplate.execute(any(org.springframework.jdbc.core.ConnectionCallback.class)))
                 .thenReturn(1L);
         securityContextMock.when(SecurityContext::isSuperAdmin).thenReturn(false);
         securityContextMock.when(SecurityContext::getCurrentEmployeeId).thenReturn(approverId);

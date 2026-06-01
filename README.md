@@ -114,12 +114,15 @@ JWT_SECRET=<64+ character random string>
 APP_SECURITY_ENCRYPTION_KEY=<AES-256 key>
 ```
 
-**Frontend** (create `frontend/.env.local`):
+**Frontend local development** (create `frontend/.env.development.local`):
 
 ```
 NEXT_PUBLIC_API_URL=http://localhost:8080/api/v1
 NEXT_PUBLIC_GOOGLE_CLIENT_ID=<google-oauth-client-id>
 ```
+
+Do not put localhost values in `frontend/.env.local`; Next.js loads that file
+during production builds and release packaging will fail.
 
 See `.env.example` for the full list.
 

@@ -39,6 +39,17 @@ import {formatDate} from '@/lib/utils/format/date';
 
 const log = createLogger('OnboardingPage');
 
+const DEFAULT_TASK_CATEGORY = 'General';
+
+function getTaskCategory(category: string | null | undefined) {
+  const normalized = category?.trim();
+  return normalized && normalized.toLowerCase() !== 'null' ? normalized : DEFAULT_TASK_CATEGORY;
+}
+
+function formatTaskCategory(category: string) {
+  return category.replace(/_/g, ' ').toLowerCase();
+}
+
 export default function OnboardingDetailPage() {
   const toast = useToast();
   const router = useRouter();
@@ -62,7 +73,7 @@ export default function OnboardingDetailPage() {
 
     // Auto-expand first category
     if (tasks && tasks.length > 0) {
-      const categories = Array.from(new Set(tasks.map(t => t.category)));
+      const categories = Array.from(new Set(tasks.map(t => getTaskCategory(t.category))));
       if (categories.length > 0 && expandedCategories.length === 0) {
         setExpandedCategories([categories[0]]);
       }
@@ -137,8 +148,9 @@ export default function OnboardingDetailPage() {
   if (!process) return null;
 
   const tasksByCategory = tasks.reduce((acc, task) => {
-    if (!acc[task.category]) acc[task.category] = [];
-    acc[task.category].push(task);
+    const category = getTaskCategory(task.category);
+    if (!acc[category]) acc[category] = [];
+    acc[category].push(task);
     return acc;
   }, {} as Record<string, typeof tasks>);
 
@@ -241,7 +253,7 @@ export default function OnboardingDetailPage() {
                           {idx + 1}
                         </div>
                         <div>
-                          <h3 className="text-xl font-black text-[var(--text-primary)] capitalize">{category}</h3>
+                          <h3 className="text-xl font-black text-[var(--text-primary)] capitalize">{formatTaskCategory(category)}</h3>
                           <p className="text-sm font-bold text-[var(--text-muted)]">
                             {catTasks.filter(t => t.status === 'COMPLETED').length} of {catTasks.length} tasks completed
                           </p>

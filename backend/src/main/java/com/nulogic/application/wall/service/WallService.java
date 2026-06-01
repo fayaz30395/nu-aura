@@ -442,11 +442,10 @@ public class WallService {
         }
 
         List<UUID> postIds = posts.stream().map(WallPost::getId).collect(Collectors.toList());
-
-        // 1. Batch-fetch posts with authors and praise recipients (eliminates N lazy loads)
-        Map<UUID, WallPost> hydratedPostMap = new HashMap<>();
-        wallPostRepository.findByIdsWithAuthors(postIds, tenantId)
-                .forEach(p -> hydratedPostMap.put(p.getId(), p));
+        List<UUID> pollPostIds = posts.stream()
+                .filter(p -> p.getType() == WallPost.PostType.POLL)
+                .map(WallPost::getId)
+                .collect(Collectors.toList());
 
         // 2. Batch-fetch reaction counts by type for all posts
         Map<UUID, Map<String, Integer>> reactionCountsMap = new HashMap<>();
@@ -473,8 +472,8 @@ public class WallService {
 
         // 4. Batch-fetch current user's poll votes
         Map<UUID, UUID> userVoteMap = new HashMap<>();
-        if (currentUserId != null) {
-            pollVoteRepository.findUserVotesForPosts(postIds, currentUserId)
+        if (currentUserId != null && !pollPostIds.isEmpty()) {
+            pollVoteRepository.findUserVotesForPosts(pollPostIds, currentUserId)
                     .forEach(row -> {
                         UUID postId = (UUID) row[0];
                         UUID optionId = (UUID) row[1];
@@ -483,18 +482,12 @@ public class WallService {
         }
 
         // 5. Fetch poll options for POLL-type posts
-        // Note: PollOptionRepository does not have a batch-by-postIds method,
-        // so we issue one query per poll post. Polls are typically a small fraction
-        // of the feed, so this is acceptable (usually 0-2 queries).
-        List<UUID> pollPostIds = posts.stream()
-                .filter(p -> p.getType() == WallPost.PostType.POLL)
-                .map(WallPost::getId)
-                .collect(Collectors.toList());
         Map<UUID, List<PollOption>> pollOptionsMap = new HashMap<>();
         if (!pollPostIds.isEmpty()) {
-            for (UUID pollId : pollPostIds) {
-                pollOptionsMap.put(pollId, pollOptionRepository.findByPostIdOrderByDisplayOrder(pollId));
-            }
+            pollOptionRepository.findByPostIdsAndTenantIdOrderByPostAndDisplayOrder(pollPostIds, tenantId)
+                    .forEach(option -> pollOptionsMap
+                            .computeIfAbsent(option.getPost().getId(), ignored -> new ArrayList<>())
+                            .add(option));
         }
 
         // 6. Batch-fetch vote counts per option for poll posts
@@ -519,7 +512,7 @@ public class WallService {
 
         // Now map each post using pre-fetched data (no extra queries)
         return postsPage.map(post -> {
-            WallPost hydrated = hydratedPostMap.getOrDefault(post.getId(), post);
+            WallPost hydrated = post;
 
             WallPostResponse response = new WallPostResponse();
             response.setId(hydrated.getId());

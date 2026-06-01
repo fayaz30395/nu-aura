@@ -92,7 +92,7 @@ class MileageServiceTest {
     void setUp() {
         tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(TENANT_ID);
         securityContextMock.when(SecurityContext::getCurrentEmployeeId).thenReturn(APPROVER_ID);
-        lenient().when(jdbcTemplate.queryForObject(anyString(), eq(Long.class), any(), any()))
+        lenient().when(jdbcTemplate.execute(any(org.springframework.jdbc.core.ConnectionCallback.class)))
                 .thenReturn(1L);
     }
 

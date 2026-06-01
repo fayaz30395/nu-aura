@@ -100,16 +100,21 @@ export default function ReviewCyclesPage() {
   });
 
   const handleFormSubmit = (data: CycleFormData) => {
-    const cycleData = {
-      ...data,
+    const cycleData: ReviewCycleRequest = {
+      cycleName: data.name,
+      cycleType: data.cycleType,
+      status: data.status,
+      startDate: data.startDate,
+      endDate: data.endDate,
+      managerReviewDeadline: data.reviewDeadline,
       description: data.description || '',
       selfReviewDeadline: data.selfReviewDeadline || '',
     };
 
     if (selectedCycle) {
-      updateMutation.mutate({id: selectedCycle.id, data: cycleData as ReviewCycleRequest});
+      updateMutation.mutate({id: selectedCycle.id, data: cycleData});
     } else {
-      createMutation.mutate(cycleData as ReviewCycleRequest);
+      createMutation.mutate(cycleData);
     }
 
     setShowModal(false);
@@ -129,13 +134,13 @@ export default function ReviewCyclesPage() {
   const openEditModal = (cycle: ReviewCycle) => {
     setSelectedCycle(cycle);
     reset({
-      name: cycle.name,
+      name: cycle.name ?? cycle.cycleName,
       description: cycle.description || '',
       cycleType: cycle.cycleType,
       status: cycle.status,
       startDate: cycle.startDate,
       endDate: cycle.endDate,
-      reviewDeadline: cycle.reviewDeadline,
+      reviewDeadline: cycle.reviewDeadline ?? cycle.managerReviewDeadline,
       selfReviewDeadline: cycle.selfReviewDeadline || '',
     });
     setShowModal(true);
@@ -325,7 +330,7 @@ export default function ReviewCyclesPage() {
               <div key={cycle.id} className="card-interactive p-6">
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex-1">
-                    <h3 className="text-xl font-semibold mb-2">{cycle.name}</h3>
+                    <h3 className="text-xl font-semibold mb-2">{cycle.name ?? cycle.cycleName}</h3>
                     <div className="flex gap-2 mb-4 flex-wrap">
                       <span className={'px-2 py-1 rounded text-xs font-medium ' + getTypeColor(cycle.cycleType)}>
                         {cycle.cycleType}
@@ -351,9 +356,9 @@ export default function ReviewCyclesPage() {
                     <span className="text-[var(--text-secondary)]">Review Deadline:</span>
                     <div
                       className={'font-medium ' + (isDeadlinePassed(cycle.reviewDeadline) ? 'text-danger-600' : isDeadlineNear(cycle.reviewDeadline) ? 'text-warning-600' : '')}>
-                      {cycle.reviewDeadline ? formatDate(cycle.reviewDeadline) : 'N/A'}
-                      {isDeadlinePassed(cycle.reviewDeadline) && ' (Passed)'}
-                      {isDeadlineNear(cycle.reviewDeadline) && !isDeadlinePassed(cycle.reviewDeadline) && ' (Soon)'}
+                      {cycle.reviewDeadline || cycle.managerReviewDeadline ? formatDate(cycle.reviewDeadline ?? cycle.managerReviewDeadline) : 'N/A'}
+                      {isDeadlinePassed(cycle.reviewDeadline ?? cycle.managerReviewDeadline) && ' (Passed)'}
+                      {isDeadlineNear(cycle.reviewDeadline ?? cycle.managerReviewDeadline) && !isDeadlinePassed(cycle.reviewDeadline ?? cycle.managerReviewDeadline) && ' (Soon)'}
                     </div>
                   </div>
 
@@ -613,7 +618,7 @@ export default function ReviewCyclesPage() {
             <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg max-w-md w-full p-6">
               <h2 className="text-xl font-bold mb-4">Delete Review Cycle?</h2>
               <p className="text-[var(--text-secondary)] mb-6">
-                This action cannot be undone. &quot;{selectedCycle.name}&quot; will be permanently deleted.
+	                This action cannot be undone. &quot;{selectedCycle.name ?? selectedCycle.cycleName}&quot; will be permanently deleted.
               </p>
               <div className="flex gap-4">
                 <button

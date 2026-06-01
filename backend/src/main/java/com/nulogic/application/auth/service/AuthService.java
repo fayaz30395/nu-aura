@@ -593,7 +593,7 @@ public class AuthService {
      * Falls back to legacy role-based permissions if no UserAppAccess exists.
      */
     private Map<String, com.nulogic.domain.user.RoleScope> loadAppPermissionsFromAccess(
-            UUID userId, String appCode, Optional<UserAppAccess> access, Employee employee) {
+            UUID userId, String appCode, Optional<UserAppAccess> access, User legacyUser, Employee employee) {
 
         Map<String, com.nulogic.domain.user.RoleScope> permissionScopes = new HashMap<>();
 
@@ -631,48 +631,65 @@ public class AuthService {
                 });
             }
 
-            log.debug("Loaded {} permissions from UserAppAccess for user {}", permissionScopes.size(), userId);
+            mergeLegacyRolePermissions(userId, appCode, legacyUser, permissionScopes);
+            log.debug("Loaded {} permissions from UserAppAccess + legacy roles for user {}", permissionScopes.size(), userId);
             mergeImplicitPermissions(employee, appCode, permissionScopes);
             return permissionScopes;
         }
 
         // Fallback: Load from legacy User->Role->RolePermission structure (Matrix RBAC)
         log.debug("No UserAppAccess found for user {}, falling back to legacy role permissions", userId);
-        User user = userRepository.findByIdWithRolesAndPermissions(userId).orElse(null);
-        if (user != null) {
-            log.debug("User {} has {} roles", userId, user.getRoles().size());
-            user.getRoles().forEach(role -> {
-                log.debug("Processing role: {} with {} permissions", role.getCode(), role.getPermissions().size());
-                role.getPermissions().forEach(rp -> {
-                    String code = rp.getPermission().getCode();
-                    if (code.startsWith(appCode + ":")) {
-                        code = code.substring(appCode.length() + 1);
-                    }
-                    log.debug("Permission: {} -> {} (scope: {})", rp.getPermission().getCode(), code, rp.getScope());
-
-                    com.nulogic.domain.user.RoleScope newScope = rp.getScope();
-                    com.nulogic.domain.user.RoleScope existingScope = permissionScopes.get(code);
-
-                    if (existingScope == null || isHigherScope(newScope, existingScope)) {
-                        permissionScopes.put(code, newScope);
-                    }
-                });
-            });
-        }
-
-        // If still empty after legacy fallback, derive permissions from RoleHierarchy defaults.
-        if (permissionScopes.isEmpty() && user != null && !user.getRoles().isEmpty()) {
-            log.warn("No permissions found in role_permission table for user {}. Deriving from RoleHierarchy defaults.", userId);
-            user.getRoles().forEach(role -> {
-                com.nulogic.common.security.RoleHierarchy.getDefaultPermissions(role.getCode()).forEach(perm -> {
-                    permissionScopes.putIfAbsent(perm, com.nulogic.domain.user.RoleScope.ALL);
-                });
-            });
-        }
-
+        mergeLegacyRolePermissions(userId, appCode, legacyUser, permissionScopes);
         log.info("Loaded permissions for user {}: {} permissions", userId, permissionScopes.size());
         mergeImplicitPermissions(employee, appCode, permissionScopes);
         return permissionScopes;
+    }
+
+    private void mergeLegacyRolePermissions(
+            UUID userId,
+            String appCode,
+            User legacyUser,
+            Map<String, com.nulogic.domain.user.RoleScope> permissionScopes) {
+        if (legacyUser == null) {
+            return;
+        }
+
+        Set<com.nulogic.domain.user.Role> roles = legacyUser.getRoles();
+        if (roles == null || roles.isEmpty()) {
+            return;
+        }
+
+        boolean foundRolePermissionRows = false;
+        log.debug("User {} has {} legacy roles", userId, roles.size());
+        for (com.nulogic.domain.user.Role role : roles) {
+            log.debug("Processing legacy role: {} with {} permissions", role.getCode(), role.getPermissions().size());
+            for (com.nulogic.domain.user.RolePermission rp : role.getPermissions()) {
+                foundRolePermissionRows = true;
+                String code = rp.getPermission().getCode();
+                if (code.startsWith(appCode + ":")) {
+                    code = code.substring(appCode.length() + 1);
+                }
+                log.debug("Legacy permission: {} -> {} (scope: {})", rp.getPermission().getCode(), code, rp.getScope());
+
+                com.nulogic.domain.user.RoleScope newScope = rp.getScope();
+                com.nulogic.domain.user.RoleScope existingScope = permissionScopes.get(code);
+
+                if (existingScope == null || isHigherScope(newScope, existingScope)) {
+                    permissionScopes.put(code, newScope);
+                }
+            }
+        }
+
+        // If the legacy role rows exist but their role_permission rows are missing,
+        // preserve the existing fallback to RoleHierarchy defaults.
+        if (!foundRolePermissionRows) {
+            log.warn("No permissions found in role_permission table for user {}. Deriving from RoleHierarchy defaults.", userId);
+            for (com.nulogic.domain.user.Role role : roles) {
+                com.nulogic.common.security.RoleHierarchy.getDefaultPermissions(role.getCode()).forEach(perm -> {
+                    permissionScopes.putIfAbsent(perm, com.nulogic.domain.user.RoleScope.ALL);
+                });
+            }
+        }
     }
 
     private boolean isHigherScope(com.nulogic.domain.user.RoleScope newScope,
@@ -686,26 +703,22 @@ public class AuthService {
      * Falls back to legacy role codes if no UserAppAccess exists.
      */
     private Set<String> loadAppRolesFromAccess(
-            UUID userId, String appCode, Optional<UserAppAccess> access, Employee employee) {
+            UUID userId, String appCode, Optional<UserAppAccess> access, User legacyUser, Employee employee) {
+
+        Set<String> roles = new HashSet<>();
 
         if (access.isPresent()) {
-            Set<String> roles = new HashSet<>(access.get().getRoleCodes());
-            mergeImplicitRoles(employee, roles);
-            return roles;
+            roles.addAll(access.get().getRoleCodes());
         }
 
-        // Fallback: Load from legacy User->Role structure
-        User user = userRepository.findById(userId).orElse(null);
-        if (user != null) {
-            Set<String> roles = user.getRoles().stream()
+        if (legacyUser != null && legacyUser.getRoles() != null) {
+            roles.addAll(legacyUser.getRoles().stream()
                     .map(com.nulogic.domain.user.Role::getCode)
-                    .collect(Collectors.toSet());
-            mergeImplicitRoles(employee, roles);
-            return roles;
+                    .collect(Collectors.toSet()));
         }
-        Set<String> implicitOnlyRoles = new HashSet<>();
-        mergeImplicitRoles(employee, implicitOnlyRoles);
-        return implicitOnlyRoles;
+
+        mergeImplicitRoles(employee, roles);
+        return roles;
     }
 
     /**
@@ -909,11 +922,12 @@ public class AuthService {
 
         Optional<UserAppAccess> appAccess = userAppAccessRepository
                 .findByUserIdAndAppCodeWithPermissions(user.getId(), HrmsPermissionInitializer.APP_CODE);
+        User legacyUser = userRepository.findByIdWithRolesAndPermissions(user.getId()).orElse(user);
 
         Map<String, com.nulogic.domain.user.RoleScope> appPermissions = loadAppPermissionsFromAccess(
-                user.getId(), HrmsPermissionInitializer.APP_CODE, appAccess, empOpt.orElse(null));
+                user.getId(), HrmsPermissionInitializer.APP_CODE, appAccess, legacyUser, empOpt.orElse(null));
         Set<String> appRoles = loadAppRolesFromAccess(
-                user.getId(), HrmsPermissionInitializer.APP_CODE, appAccess, empOpt.orElse(null));
+                user.getId(), HrmsPermissionInitializer.APP_CODE, appAccess, legacyUser, empOpt.orElse(null));
         Set<String> accessibleApps = loadAccessibleApps(user.getId());
 
         UUID employeeId = empOpt.map(Employee::getId).orElse(null);

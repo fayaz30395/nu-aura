@@ -22,6 +22,9 @@ import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -189,6 +192,43 @@ class AnnouncementServiceTest {
 
         assertThatThrownBy(() -> announcementService.deleteAnnouncement(announcementId))
                 .isInstanceOf(ResourceNotFoundException.class);
+    }
+
+    @Test
+    @DisplayName("getActiveAnnouncements should batch enrich reaction status")
+    void shouldBatchEnrichActiveAnnouncementReactions() {
+        UUID firstWallPostId = UUID.randomUUID();
+        UUID secondWallPostId = UUID.randomUUID();
+        Announcement first = buildAnnouncement();
+        first.setWallPostId(firstWallPostId);
+        Announcement second = buildAnnouncement();
+        second.setWallPostId(secondWallPostId);
+
+        Employee employee = new Employee();
+        employee.setId(employeeId);
+        employee.setDepartmentId(UUID.randomUUID());
+        employee.setManagerId(UUID.randomUUID());
+
+        PageRequest pageable = PageRequest.of(0, 10);
+        Page<Announcement> page = new PageImpl<>(List.of(first, second), pageable, 2);
+
+        when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.of(employee));
+        when(employeeRepository.countDirectReportsByManagerId(tenantId, employeeId)).thenReturn(0L);
+        when(announcementReadRepository.findByEmployeeIdAndTenantId(employeeId, tenantId)).thenReturn(List.of());
+        when(announcementRepository.findActiveAnnouncements(eq(tenantId), any(LocalDateTime.class), eq(pageable)))
+                .thenReturn(page);
+        when(postReactionRepository.findPostIdsWithUserReactionForTenant(anyList(), eq(employeeId), eq(tenantId)))
+                .thenReturn(List.of(firstWallPostId));
+
+        Page<AnnouncementDto> result = announcementService.getActiveAnnouncements(employeeId, pageable);
+
+        assertThat(result.getContent()).hasSize(2);
+        assertThat(result.getContent().get(0).getHasReacted()).isTrue();
+        assertThat(result.getContent().get(1).getHasReacted()).isFalse();
+        verify(postReactionRepository, times(1))
+                .findPostIdsWithUserReactionForTenant(anyList(), eq(employeeId), eq(tenantId));
+        verify(postReactionRepository, never()).findByPostIdAndEmployeeId(any(), any());
+        verify(employeeRepository, never()).findDirectReportsByManagerId(any(), any());
     }
 
     @Nested

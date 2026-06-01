@@ -5,6 +5,9 @@ import {expect, test} from '@playwright/test';
  * Tests responsive navigation, mobile menu, and bottom navigation bar
  */
 
+const isMobileViewport = (page: {viewportSize: () => {width: number} | null}) =>
+  (page.viewportSize()?.width ?? 0) < 768;
+
 test.describe('Mobile Navigation', () => {
   test.beforeEach(async ({page}) => {
     // Navigate to dashboard
@@ -13,6 +16,8 @@ test.describe('Mobile Navigation', () => {
   });
 
   test('should display mobile bottom navigation', async ({page}) => {
+    test.skip(!isMobileViewport(page), 'Bottom navigation is hidden at md and wider breakpoints');
+
     // Bottom nav should be visible on mobile
     const bottomNav = page.locator('nav[aria-label="Mobile navigation"]');
     await expect(bottomNav).toBeVisible();
@@ -21,11 +26,13 @@ test.describe('Mobile Navigation', () => {
     await expect(bottomNav.getByRole('link', {name: /home/i})).toBeVisible();
     await expect(bottomNav.getByRole('link', {name: /team/i})).toBeVisible();
     await expect(bottomNav.getByRole('link', {name: /leave/i})).toBeVisible();
-    await expect(bottomNav.getByRole('link', {name: /tasks|projects/i})).toBeVisible();
-    await expect(bottomNav.getByRole('link', {name: /me/i})).toBeVisible();
+    await expect(bottomNav.getByRole('link', {name: /approvals/i})).toBeVisible();
+    await expect(bottomNav.getByRole('link', {name: 'Me', exact: true})).toBeVisible();
   });
 
   test('should navigate using bottom navigation', async ({page}) => {
+    test.skip(!isMobileViewport(page), 'Bottom navigation is hidden at md and wider breakpoints');
+
     const bottomNav = page.locator('nav[aria-label="Mobile navigation"]');
 
     // Click Team link
@@ -39,22 +46,27 @@ test.describe('Mobile Navigation', () => {
     expect(page.url()).toContain('/leave');
 
     // Click Me link
-    await bottomNav.getByRole('link', {name: /me/i}).click();
-    await page.waitForURL(/\/me\/dashboard/);
-    expect(page.url()).toContain('/me/dashboard');
+    await bottomNav.getByRole('link', {name: 'Me', exact: true}).click();
+    await page.waitForURL(/\/me\/profile/);
+    expect(page.url()).toContain('/me/profile');
 
     // Click Home to go back
     await bottomNav.getByRole('link', {name: /home/i}).click();
-    await page.waitForURL(/\/dashboard/);
-    expect(page.url()).toContain('/dashboard');
+    await page.waitForURL(/\/me\/dashboard/);
+    expect(page.url()).toContain('/me/dashboard');
   });
 
   test('should show active state on current page link', async ({page}) => {
+    test.skip(!isMobileViewport(page), 'Bottom navigation is hidden at md and wider breakpoints');
+
+    await page.goto('/me/dashboard');
+    await page.waitForLoadState('domcontentloaded');
+
     const bottomNav = page.locator('nav[aria-label="Mobile navigation"]');
 
     // Dashboard should be active
     const homeLink = bottomNav.getByRole('link', {name: /home/i});
-    await expect(homeLink).toHaveClass(/text-primary/);
+    await expect(homeLink).toHaveAttribute('aria-current', 'page');
 
     // Navigate to employees
     await bottomNav.getByRole('link', {name: /team/i}).click();
@@ -62,7 +74,7 @@ test.describe('Mobile Navigation', () => {
 
     // Team should now be active
     const teamLink = bottomNav.getByRole('link', {name: /team/i});
-    await expect(teamLink).toHaveClass(/text-primary/);
+    await expect(teamLink).toHaveAttribute('aria-current', 'page');
   });
 
   test('should hide desktop sidebar on mobile', async ({page}) => {
@@ -72,9 +84,13 @@ test.describe('Mobile Navigation', () => {
   });
 
   test('should open mobile menu from hamburger button', async ({page}) => {
+    test.skip(!isMobileViewport(page), 'Mobile drawer is hidden at md and wider breakpoints');
+
     // Find and click hamburger menu button
-    const menuButton = page.locator('button[aria-label="Open menu"]').or(
+    const menuButton = page.locator('button[aria-label="Toggle menu"]').or(
+      page.locator('button[aria-label="Open menu"]').or(
       page.locator('header button').filter({has: page.locator('svg')}).first()
+      )
     );
 
     if (await menuButton.isVisible()) {
@@ -85,14 +101,18 @@ test.describe('Mobile Navigation', () => {
       await expect(mobileMenu).toBeVisible();
 
       // Should show navigation items
-      await expect(page.getByRole('link', {name: /dashboard/i})).toBeVisible();
+      await expect(page.getByRole('link', {name: 'Dashboard', exact: true})).toBeVisible();
     }
   });
 
   test('should close mobile menu when clicking outside', async ({page}) => {
+    test.skip(!isMobileViewport(page), 'Mobile drawer is hidden at md and wider breakpoints');
+
     // Open mobile menu
-    const menuButton = page.locator('button[aria-label="Open menu"]').or(
+    const menuButton = page.locator('button[aria-label="Toggle menu"]').or(
+      page.locator('button[aria-label="Open menu"]').or(
       page.locator('header button').filter({has: page.locator('svg')}).first()
+      )
     );
 
     if (await menuButton.isVisible()) {
@@ -112,6 +132,8 @@ test.describe('Mobile Navigation', () => {
   });
 
   test('should have appropriate touch targets (48px minimum)', async ({page}) => {
+    test.skip(!isMobileViewport(page), 'Bottom navigation is hidden at md and wider breakpoints');
+
     const bottomNav = page.locator('nav[aria-label="Mobile navigation"]');
 
     // Get all nav links
@@ -252,6 +274,8 @@ test.describe('Mobile Forms', () => {
 
 test.describe('Mobile Header', () => {
   test('should show compact header on mobile', async ({page}) => {
+    test.skip(!isMobileViewport(page), 'Compact header is a mobile-only assertion');
+
     await page.goto('/dashboard');
     await page.waitForLoadState('domcontentloaded');
 
@@ -259,7 +283,7 @@ test.describe('Mobile Header', () => {
     await expect(header).toBeVisible();
 
     // Header should have menu button
-    const menuButton = header.locator('button').first();
+    const menuButton = header.getByRole('button', {name: /toggle menu|open menu/i});
     await expect(menuButton).toBeVisible();
   });
 
@@ -281,6 +305,8 @@ test.describe('Mobile Header', () => {
   });
 
   test('should show user menu/profile button', async ({page}) => {
+    test.skip(!isMobileViewport(page), 'User avatar placement differs in tablet/desktop layout');
+
     await page.goto('/dashboard');
     await page.waitForLoadState('domcontentloaded');
 
@@ -289,7 +315,9 @@ test.describe('Mobile Header', () => {
     // Should have user dropdown or avatar
     const userButton = header.getByRole('button', {name: /user|profile|account/i}).or(
       header.locator('[data-testid="user-menu"]').or(
-        header.locator('.rounded-full') // Avatar
+        header.getByRole('button', {name: /^[A-Z]{1,3}$/}).or(
+          header.locator('.rounded-full') // Avatar
+        )
       )
     );
 

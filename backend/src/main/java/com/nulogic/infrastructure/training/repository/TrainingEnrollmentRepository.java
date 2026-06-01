@@ -25,4 +25,11 @@ public interface TrainingEnrollmentRepository extends JpaRepository<TrainingEnro
     Optional<TrainingEnrollment> findByTenantIdAndProgramIdAndEmployeeId(UUID tenantId, UUID programId, UUID employeeId);
 
     boolean existsByTenantIdAndProgramIdAndEmployeeId(UUID tenantId, UUID programId, UUID employeeId);
+
+    boolean existsByTenantIdAndProgramIdAndEmployeeIdAndStatus(
+            UUID tenantId,
+            UUID programId,
+            UUID employeeId,
+            TrainingEnrollment.EnrollmentStatus status
+    );
 }

@@ -16,7 +16,6 @@ import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import com.nulogic.infrastructure.project.repository.HrmsProjectRepository;
 import com.nulogic.infrastructure.user.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -128,9 +127,8 @@ class TimesheetControllerTest extends AbstractPostgresIntegrationTest {
     }
 
     @Test
-    @DisplayName("ucTimeA2_createTimeEntryExceedsDailyLimit_returns400OrCreated")
-    @Disabled("Bug: API currently does not enforce 24hr daily limit; service validation may differ")
-    void ucTimeA2_createTimeEntryExceedsDailyLimit_returns400OrCreated() throws Exception {
+    @DisplayName("ucTimeA2_createTimeEntryExceedsDailyLimit_returns400")
+    void ucTimeA2_createTimeEntryExceedsDailyLimit_returns400() throws Exception {
         // Log 25 hours in a single entry — exceeds daily max of 24
         TimeEntryRequest request = buildValidTimeEntryRequest(25.0);
 

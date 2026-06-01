@@ -166,12 +166,10 @@ class SettingsUseCaseIntegrationTest extends AbstractPostgresIntegrationTest {
     // ========================= UC-SETTINGS-004: Revoke active session =========================
 
     @Test
-    @Disabled("UC-SETTINGS-004: Session revocation endpoint not yet mapped to /api/v1/auth/sessions — track as feature gap")
     @DisplayName("ucSettings4_revokeSession_returns200TokenInvalidated")
     void ucSettings4_revokeSession_returns200TokenInvalidated() throws Exception {
         // Session revocation is handled by logout + token blacklisting.
         // The POST /api/v1/auth/logout endpoint blacklists the token via TokenBlacklistService.
-        // A dedicated GET /sessions endpoint may not exist yet.
         mockMvc.perform(post("/api/v1/auth/logout"))
                 .andExpect(status().isOk());
     }

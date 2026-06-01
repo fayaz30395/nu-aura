@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nulogic.api.auth.dto.*;
 import com.nulogic.application.auth.service.AuthService;
 import com.nulogic.application.auth.service.MfaService;
+import com.nulogic.common.security.RateLimitingFilter;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.config.AbstractPostgresIntegrationTest;
@@ -15,6 +16,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockFilterChain;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -22,6 +26,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.*;
 
@@ -400,12 +405,32 @@ class AuthControllerTest extends AbstractPostgresIntegrationTest {
     // ========================= UC-AUTH-007: Rate Limiting =========================
 
     @Test
-    @DisplayName("UC-AUTH-007: 5 rapid login attempts succeed without rate limiting in test profile")
-    @Disabled("UC-AUTH-007: Rate limiting is Redis/Bucket4j-backed — requires running Redis; " +
-            "verified at integration level via RateLimitingFilter. Skipped in unit test suite.")
+    @DisplayName("UC-AUTH-007: auth endpoints return 429 after local fallback rate limit is exhausted")
     void ucAuth007_rateLimiting_returns429AfterLimit() throws Exception {
-        // Rate limiting (429) is enforced by RateLimitingFilter, which requires Redis.
-        // In tests, filters are disabled (addFilters=false). Skipping to avoid false negatives.
+        RateLimitingFilter filter = new RateLimitingFilter();
+        ReflectionTestUtils.setField(filter, "rateLimitEnabled", true);
+        ReflectionTestUtils.setField(filter, "useRedis", false);
+        ReflectionTestUtils.setField(filter, "requestsPerMinute", 2);
+        ReflectionTestUtils.setField(filter, "jwtSecret", "test-secret-with-enough-length-for-hmac");
+
+        MockHttpServletResponse first = performRateLimitedAuthRequest(filter);
+        MockHttpServletResponse second = performRateLimitedAuthRequest(filter);
+        MockHttpServletResponse third = performRateLimitedAuthRequest(filter);
+
+        org.assertj.core.api.Assertions.assertThat(first.getStatus()).isEqualTo(200);
+        org.assertj.core.api.Assertions.assertThat(second.getStatus()).isEqualTo(200);
+        org.assertj.core.api.Assertions.assertThat(third.getStatus()).isEqualTo(429);
+        org.assertj.core.api.Assertions.assertThat(third.getHeader("X-Rate-Limit-Remaining")).isEqualTo("0");
+        org.assertj.core.api.Assertions.assertThat(third.getHeader("X-Rate-Limit-Mode")).isEqualTo("local");
+        org.assertj.core.api.Assertions.assertThat(third.getHeader("Retry-After")).isNotBlank();
+    }
+
+    private MockHttpServletResponse performRateLimitedAuthRequest(RateLimitingFilter filter) throws Exception {
+        MockHttpServletRequest request = new MockHttpServletRequest("POST", BASE_URL + "/login");
+        request.setRemoteAddr("203.0.113.10");
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        filter.doFilter(request, response, new MockFilterChain());
+        return response;
     }
 
     @Test

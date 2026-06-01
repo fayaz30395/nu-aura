@@ -216,7 +216,7 @@ function isAuthenticatedRoute(path: string): boolean {
 /**
  * Add OWASP-compliant security headers to response
  */
-function addSecurityHeaders(response: NextResponse): NextResponse {
+function addSecurityHeaders(response: NextResponse, request: NextRequest): NextResponse {
   // Prevent clickjacking attacks
   response.headers.set('X-Frame-Options', 'DENY');
 
@@ -227,19 +227,19 @@ function addSecurityHeaders(response: NextResponse): NextResponse {
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
 
   // Enable HSTS only in production (SEC-004: HSTS on localhost causes HTTPS redirect loop)
-  if (process.env.NODE_ENV === 'production') {
+  if (process.env.NODE_ENV === 'production' && request.nextUrl.protocol === 'https:') {
     response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
   }
 
   // Allow OAuth popups (required for Google sign-in)
-  response.headers.set('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
+  if (request.nextUrl.protocol === 'https:') {
+    response.headers.set('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
+  }
 
   // Content Security Policy - restrictive but allows necessary resources including Google OAuth.
   const apiConnectSources = getApiConnectSources();
 
-  response.headers.set(
-    'Content-Security-Policy',
-    [
+  const cspDirectives = [
       "default-src 'self'",
       process.env.NODE_ENV === 'development'
         ? "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://accounts.google.com https://apis.google.com"
@@ -257,9 +257,13 @@ function addSecurityHeaders(response: NextResponse): NextResponse {
       "base-uri 'self'",
       "form-action 'self'",
       "frame-ancestors 'none'",
-      "upgrade-insecure-requests",
-    ].join('; ')
-  );
+  ];
+
+  if (request.nextUrl.protocol === 'https:') {
+    cspDirectives.push('upgrade-insecure-requests');
+  }
+
+  response.headers.set('Content-Security-Policy', cspDirectives.join('; '));
 
   // Permissions Policy (formerly Feature Policy) - restrict sensitive features
   response.headers.set(
@@ -339,7 +343,7 @@ export function proxy(request: NextRequest) {
     // middleware redirects back to dashboard → loop forever.
     // The login page handles already-authenticated users client-side instead.
     const response = NextResponse.next();
-    return addSecurityHeaders(response);
+    return addSecurityHeaders(response, request);
   }
 
   // Check for authentication token
@@ -369,7 +373,7 @@ export function proxy(request: NextRequest) {
       // Refresh token exists — let the page load so client-side refresh can work.
       // AuthGuard will call restoreSession() which uses the httpOnly refresh cookie.
       const response = NextResponse.next();
-      return addSecurityHeaders(response);
+      return addSecurityHeaders(response, request);
     }
 
     // No refresh token — truly expired session, redirect to login
@@ -378,7 +382,7 @@ export function proxy(request: NextRequest) {
       return NextResponse.redirect(loginUrl);
     }
     const response = NextResponse.next();
-    return addSecurityHeaders(response);
+    return addSecurityHeaders(response, request);
   }
 
   // Strip Spring's "ROLE_" prefix from JWT-issued role claims so plain comparisons work.
@@ -389,7 +393,7 @@ export function proxy(request: NextRequest) {
   // SUPER_ADMIN bypass: if JWT contains SUPER_ADMIN, skip all further route checks
   if (normalizedSingleRole === 'SUPER_ADMIN' || normalizedRoles.includes('SUPER_ADMIN')) {
     const response = NextResponse.next();
-    return addSecurityHeaders(response);
+    return addSecurityHeaders(response, request);
   }
 
   // RBAC-EDGE-001: Coarse role gate for admin-scoped routes.
@@ -427,7 +431,7 @@ export function proxy(request: NextRequest) {
       const denyUrl = new URL('/recruitment', request.url);
       denyUrl.searchParams.set('denied', '1');
       const response = NextResponse.redirect(denyUrl);
-      return addSecurityHeaders(response);
+      return addSecurityHeaders(response, request);
     }
   }
 
@@ -441,7 +445,7 @@ export function proxy(request: NextRequest) {
       const denyUrl = new URL('/me/dashboard', request.url);
       denyUrl.searchParams.set('denied', '1');
       const response = NextResponse.redirect(denyUrl);
-      return addSecurityHeaders(response);
+      return addSecurityHeaders(response, request);
     }
   }
 
@@ -454,14 +458,14 @@ export function proxy(request: NextRequest) {
       const denyUrl = new URL('/me/dashboard', request.url);
       denyUrl.searchParams.set('denied', '1');
       const response = NextResponse.redirect(denyUrl);
-      return addSecurityHeaders(response);
+      return addSecurityHeaders(response, request);
     }
   }
 
   // Token exists and is not expired - allow the request
   // Fine-grained permission checks happen client-side via AuthGuard
   const response = NextResponse.next();
-  return addSecurityHeaders(response);
+  return addSecurityHeaders(response, request);
 }
 
 /**

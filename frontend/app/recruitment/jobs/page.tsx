@@ -95,7 +95,26 @@ export default function JobOpeningsPage() {
 
   const onSubmit = async (data: CreateJobOpeningFormData) => {
     try {
-      const payload = data as CreateJobOpeningRequest;
+      const payload: CreateJobOpeningRequest = {
+        jobCode: data.jobCode ?? '',
+        jobTitle: data.jobTitle ?? '',
+        departmentId: data.departmentId,
+        location: data.location,
+        employmentType: data.employmentType,
+        experienceRequired: data.experienceRequired,
+        minSalary: data.minSalary,
+        maxSalary: data.maxSalary,
+        numberOfOpenings: data.numberOfOpenings,
+        jobDescription: data.jobDescription,
+        requirements: data.requirements,
+        skillsRequired: data.skillsRequired,
+        status: data.status,
+        priority: data.priority,
+        isActive: data.isActive,
+        hiringManagerId: data.hiringManagerId || undefined,
+        closingDate: data.closingDate || undefined,
+        postedDate: data.postedDate || undefined,
+      };
       if (editingJob) {
         await updateMutation.mutateAsync({id: editingJob.id, data: payload});
         notifications.show({
@@ -574,7 +593,7 @@ export default function JobOpeningsPage() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label htmlFor="job-form-department" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Department</label>
+                      <label htmlFor="job-form-department" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Department *</label>
                       <select
                         id="job-form-department"
                         {...register('departmentId')}

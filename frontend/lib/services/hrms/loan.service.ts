@@ -128,12 +128,13 @@ class LoanService {
 
   getLoanTypeLabel(type: string): string {
     const labels: Record<string, string> = {
-      PERSONAL: 'Personal Loan',
-      HOME: 'Home Loan',
-      VEHICLE: 'Vehicle Loan',
-      EDUCATION: 'Education Loan',
-      MEDICAL: 'Medical Loan',
-      EMERGENCY: 'Emergency Loan',
+      SALARY_ADVANCE: 'Salary Advance',
+      PERSONAL_LOAN: 'Personal Loan',
+      EMERGENCY_LOAN: 'Emergency Loan',
+      EDUCATION_LOAN: 'Education Loan',
+      HOUSING_LOAN: 'Home Loan',
+      VEHICLE_LOAN: 'Vehicle Loan',
+      MEDICAL_LOAN: 'Medical Loan',
       OTHER: 'Other',
     };
     return labels[type] || type;

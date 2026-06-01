@@ -29,7 +29,7 @@ import {
 
 import {AppLayout} from '@/components/layout';
 import {useAuth} from '@/lib/hooks/useAuth';
-import {Permissions} from '@/lib/hooks/usePermissions';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {CreateExpenseClaimRequest, CurrencyCode, ExpenseCategory} from '@/lib/types/hrms/expense';
 import {ConfirmDialog, EmptyState} from '@/components/ui';
@@ -83,6 +83,7 @@ interface Filters {
 
 export default function ExpenseClaims() {
   const {user, hasHydrated} = useAuth();
+  const {hasPermission} = usePermissions();
   useEffect(() => {
     document.title = 'Expenses | NU-AURA';
   }, []);
@@ -91,9 +92,13 @@ export default function ExpenseClaims() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
+  const canApproveExpenses = hasPermission(Permissions.EXPENSE_APPROVE);
+  const canViewAllExpenses =
+    hasPermission(Permissions.EXPENSE_VIEW_ALL) || hasPermission(Permissions.EXPENSE_MANAGE);
+
   const myClaimsQuery = useMyExpenseClaims(user?.employeeId, 0, 50);
-  const pendingClaimsQuery = usePendingExpenseClaims(0, 50);
-  const allClaimsQuery = useAllExpenseClaims(0, 20);
+  const pendingClaimsQuery = usePendingExpenseClaims(0, 50, canApproveExpenses);
+  const allClaimsQuery = useAllExpenseClaims(0, 20, canViewAllExpenses);
   const createMutation = useCreateExpenseClaim();
   const submitMutation = useSubmitExpenseClaim();
   const approveMutation = useApproveExpenseClaim();
@@ -381,7 +386,14 @@ export default function ExpenseClaims() {
     (activeTab === 'my-claims' && myClaimsQuery.isLoading) ||
     (activeTab === 'pending' && pendingClaimsQuery.isLoading) ||
     (activeTab === 'all' && allClaimsQuery.isLoading);
-  const tabError = myClaimsQuery.error || pendingClaimsQuery.error || allClaimsQuery.error;
+  const tabError =
+    activeTab === 'my-claims'
+      ? myClaimsQuery.error
+      : activeTab === 'pending'
+        ? pendingClaimsQuery.error
+        : activeTab === 'all'
+          ? allClaimsQuery.error
+          : null;
 
   return (
     <AppLayout activeMenuItem="expenses">
@@ -455,6 +467,8 @@ export default function ExpenseClaims() {
             }}
             pendingCount={statistics.pendingCount}
             approvalsCount={statistics.approvalsWaitingCount}
+            canApproveExpenses={canApproveExpenses}
+            canViewAllExpenses={canViewAllExpenses}
           />
 
           {activeTab === 'analytics' ? (
@@ -469,10 +483,7 @@ export default function ExpenseClaims() {
             <div className="flex flex-col items-center justify-center h-64 gap-4">
               <AlertCircle className="h-10 w-10 text-danger-500" aria-hidden="true" />
               <p className="text-center text-[var(--text-secondary)] max-w-md">
-                {myClaimsQuery.error?.message ||
-                  pendingClaimsQuery.error?.message ||
-                  allClaimsQuery.error?.message ||
-                  'Failed to load expense claims. Please try again.'}
+                {tabError.message || 'Failed to load expense claims. Please try again.'}
               </p>
               <Button
                 variant="outline"
@@ -996,16 +1007,28 @@ function Tabs({
   onChange,
   pendingCount,
   approvalsCount,
+  canApproveExpenses,
+  canViewAllExpenses,
 }: {
   activeTab: TabType;
   onChange: (t: TabType) => void;
   pendingCount: number;
   approvalsCount: number;
+  canApproveExpenses: boolean;
+  canViewAllExpenses: boolean;
 }) {
   const tabs: Array<{key: TabType; label: string; badge?: number}> = [
     {key: 'my-claims', label: 'My claims', badge: pendingCount > 0 ? pendingCount : undefined},
-    {key: 'pending', label: 'Pending approval', badge: approvalsCount > 0 ? approvalsCount : undefined},
-    {key: 'all', label: 'All claims'},
+    ...(canApproveExpenses
+      ? [
+          {
+            key: 'pending' as const,
+            label: 'Pending approval',
+            badge: approvalsCount > 0 ? approvalsCount : undefined,
+          },
+        ]
+      : []),
+    ...(canViewAllExpenses ? [{key: 'all' as const, label: 'All claims'}] : []),
     {key: 'analytics', label: 'Analytics'},
   ];
 

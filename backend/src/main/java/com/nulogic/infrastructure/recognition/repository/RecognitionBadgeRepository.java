@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -23,4 +24,6 @@ public interface RecognitionBadgeRepository extends JpaRepository<RecognitionBad
     List<RecognitionBadge> findActiveBadges(@Param("tenantId") UUID tenantId);
 
     List<RecognitionBadge> findByTenantId(UUID tenantId);
+
+    List<RecognitionBadge> findByTenantIdAndIdIn(UUID tenantId, Collection<UUID> ids);
 }

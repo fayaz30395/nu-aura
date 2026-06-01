@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.io.File;
@@ -19,6 +20,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +36,8 @@ import java.util.Map;
 @Slf4j
 public class GoogleDriveConfig {
 
+    private final Environment environment;
+
     @Value("${app.google-drive.credentials-path:config/google-drive-dev-credentials.json}")
     private String credentialsPath;
 
@@ -43,10 +47,18 @@ public class GoogleDriveConfig {
     @Value("${app.google-drive.application-name:NU-AURA-HRMS}")
     private String applicationName;
 
+    public GoogleDriveConfig(Environment environment) {
+        this.environment = environment;
+    }
+
     @Bean
     public StorageProvider storageProvider(JdbcTemplate jdbcTemplate) throws GeneralSecurityException, IOException {
         File credFile = new File(credentialsPath);
         if (!credFile.exists()) {
+            if (isProductionProfile()) {
+                throw new IllegalStateException("Google Drive credentials are required in production. "
+                        + "Set GOOGLE_DRIVE_CREDENTIALS_PATH to a readable service-account file.");
+            }
             log.warn("Google Drive credentials not found at '{}' — starting with mock StorageProvider. " +
                     "File upload/download will not work. Set GOOGLE_DRIVE_CREDENTIALS_PATH to enable.", credentialsPath);
             return mockProvider();
@@ -113,5 +125,11 @@ public class GoogleDriveConfig {
                 return List.of();
             }
         };
+    }
+
+    private boolean isProductionProfile() {
+        return Arrays.stream(environment.getActiveProfiles())
+                .anyMatch(profile -> profile.equalsIgnoreCase("prod")
+                        || profile.equalsIgnoreCase("production"));
     }
 }

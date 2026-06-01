@@ -124,7 +124,7 @@ app:
 
   # CORS — enumerate all frontend dev origins; never use "*" (CSWSH risk)
   cors:
-    allowed-origins: http://localhost:3000,http://localhost:3001,http://localhost:8080
+    allowed-origins: ${APP_CORS_ALLOWED_ORIGINS:http://localhost:3000,http://localhost:3001,http://localhost:8080}
 
   # Dev uses Google Drive with dev service account
   google-drive:

@@ -7,7 +7,6 @@ import com.nulogic.config.AbstractPostgresIntegrationTest;
 import com.nulogic.config.TestSecurityConfig;
 import com.nulogic.domain.user.RoleScope;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,13 +62,12 @@ class DocumentControllerTest extends AbstractPostgresIntegrationTest {
 
     @Test
     @DisplayName("ucDocA1_uploadFile_returns200WithObjectName")
-    @Disabled("UC-DOC-001: File upload requires active Google Drive / MinIO storage in test profile — skip in CI")
     void ucDocA1_uploadFile_returns200WithObjectName() throws Exception {
         MockMultipartFile file = new MockMultipartFile(
                 "file",
                 "test-document.pdf",
                 MediaType.APPLICATION_PDF_VALUE,
-                "Test PDF content".getBytes()
+                "%PDF-1.4\n1 0 obj\n<<>>\nendobj\ntrailer\n<<>>\n%%EOF".getBytes()
         );
 
         mockMvc.perform(multipart(BASE_URL + "/upload")
@@ -83,13 +81,21 @@ class DocumentControllerTest extends AbstractPostgresIntegrationTest {
 
     @Test
     @DisplayName("ucDocA2_uploadProfilePhoto_returns200")
-    @Disabled("UC-DOC-002: File upload requires active storage service — skip in CI")
     void ucDocA2_uploadProfilePhoto_returns200() throws Exception {
         MockMultipartFile photo = new MockMultipartFile(
                 "file",
                 "profile.jpg",
                 MediaType.IMAGE_JPEG_VALUE,
-                "fake-image-bytes".getBytes()
+                new byte[]{
+                        (byte) 0xFF, (byte) 0xD8,
+                        (byte) 0xFF, (byte) 0xE0,
+                        0x00, 0x10,
+                        0x4A, 0x46, 0x49, 0x46, 0x00,
+                        0x01, 0x01, 0x00,
+                        0x00, 0x01, 0x00, 0x01,
+                        0x00, 0x00,
+                        (byte) 0xFF, (byte) 0xD9
+                }
         );
 
         mockMvc.perform(multipart(BASE_URL + "/upload/profile-photo/{employeeId}", EMPLOYEE_ID)

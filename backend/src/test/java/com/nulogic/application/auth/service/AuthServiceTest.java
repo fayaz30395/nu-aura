@@ -15,6 +15,10 @@ import com.nulogic.common.security.JwtTokenProvider;
 import com.nulogic.common.security.TenantRlsSessionSync;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.employee.Employee;
+import com.nulogic.domain.platform.UserAppAccess;
+import com.nulogic.domain.user.Permission;
+import com.nulogic.domain.user.Role;
+import com.nulogic.domain.user.RoleScope;
 import com.nulogic.domain.user.User;
 import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import com.nulogic.infrastructure.platform.repository.UserAppAccessRepository;
@@ -197,6 +201,60 @@ class AuthServiceTest {
             verify(tenantRlsSessionSync).syncCurrentTenant(tenantId);
             verify(valueOperations, never()).get(anyString());
             verify(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken.class));
+        }
+
+        @Test
+        @DisplayName("Should merge legacy user roles when app access has no app roles")
+        void shouldMergeLegacyRolesWhenAppAccessHasNoAppRoles() {
+            LoginRequest request = new LoginRequest();
+            request.setEmail("test@example.com");
+            request.setPassword("password123");
+            request.setTenantId(tenantId);
+            ReflectionTestUtils.setField(authService, "accountLockoutUseRedis", false);
+
+            Permission employeeViewSelf = Permission.builder()
+                    .code("EMPLOYEE:VIEW_SELF")
+                    .name("View own employee profile")
+                    .resource("employee")
+                    .action("view_self")
+                    .build();
+            Role employeeRole = Role.builder()
+                    .code("EMPLOYEE")
+                    .name("Employee")
+                    .permissions(new HashSet<>())
+                    .build();
+            employeeRole.addPermission(employeeViewSelf, RoleScope.SELF);
+            user.setRoles(new HashSet<>(Set.of(employeeRole)));
+
+            UserAppAccess emptyHrmsAccess = UserAppAccess.builder()
+                    .roles(new HashSet<>())
+                    .directPermissions(new HashSet<>())
+                    .status(UserAppAccess.AccessStatus.ACTIVE)
+                    .build();
+
+            Authentication authentication = mock(Authentication.class);
+            when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+                    .thenReturn(authentication);
+            when(userRepository.findByEmail("test@example.com"))
+                    .thenReturn(Optional.of(user));
+            when(userRepository.findByEmailAndTenantId("test@example.com", tenantId))
+                    .thenReturn(Optional.of(user));
+            when(userRepository.findByIdWithRolesAndPermissions(userId))
+                    .thenReturn(Optional.of(user));
+            when(userAppAccessRepository.findByUserIdAndAppCodeWithPermissions(any(), any()))
+                    .thenReturn(Optional.of(emptyHrmsAccess));
+            when(employeeRepository.findByUserIdWithUser(userId, tenantId))
+                    .thenReturn(Optional.of(employee));
+            when(tokenProvider.generateTokenWithAppPermissions(any(), any(), any(), any(), any(), any(),
+                    any(), any(), any(), any()))
+                    .thenReturn("access-token");
+            when(tokenProvider.generateRefreshToken(any(), any()))
+                    .thenReturn("refresh-token");
+
+            AuthResponse response = authService.login(request);
+
+            assertThat(response.getRoles()).contains("EMPLOYEE");
+            assertThat(response.getPermissions()).contains("EMPLOYEE:VIEW_SELF");
         }
 
         @Test

@@ -15,6 +15,10 @@ public interface PollOptionRepository extends JpaRepository<PollOption, UUID> {
     @Query("SELECT o FROM PollOption o WHERE o.post.id = :postId ORDER BY o.displayOrder")
     List<PollOption> findByPostIdOrderByDisplayOrder(@Param("postId") UUID postId);
 
+    @Query("SELECT o FROM PollOption o WHERE o.post.id IN :postIds AND o.tenantId = :tenantId ORDER BY o.post.id, o.displayOrder")
+    List<PollOption> findByPostIdsAndTenantIdOrderByPostAndDisplayOrder(@Param("postIds") List<UUID> postIds,
+                                                                         @Param("tenantId") UUID tenantId);
+
     @Query("SELECT o.id, COUNT(v) FROM PollOption o LEFT JOIN o.votes v WHERE o.post.id = :postId GROUP BY o.id")
     List<Object[]> getVoteCountsByPostId(@Param("postId") UUID postId);
 }

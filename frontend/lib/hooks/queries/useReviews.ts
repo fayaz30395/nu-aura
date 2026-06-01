@@ -1,8 +1,8 @@
 'use client';
 
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
-import {reviewService} from '@/lib/services/grow/performance.service';
-import {PerformanceReview, ReviewRequest} from '@/lib/types/grow/performance';
+import {reviewCycleService, reviewService} from '@/lib/services/grow/performance.service';
+import {PerformanceReview, ReviewRequest, SelfAssessmentRequest} from '@/lib/types/grow/performance';
 import {notifications} from '@mantine/notifications';
 import {performanceKeys} from './performanceKeys';
 
@@ -95,6 +95,22 @@ export function useSubmitReview() {
     },
     onError: (error: Error) => {
       notifications.show({title: 'Error', message: error.message || 'Failed to submit review', color: 'red'});
+    },
+  });
+}
+
+export function useSubmitSelfAssessment() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({reviewId, data}: { reviewId: string; data: SelfAssessmentRequest }) =>
+      reviewCycleService.submitSelfAssessment(reviewId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey: performanceKeys.reviews()});
+      notifications.show({title: 'Success', message: 'Self assessment submitted', color: 'green'});
+    },
+    onError: (error: Error) => {
+      notifications.show({title: 'Error', message: error.message || 'Failed to submit self assessment', color: 'red'});
     },
   });
 }

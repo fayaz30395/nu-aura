@@ -662,7 +662,12 @@ export interface CalibrationResponse {
 }
 
 export interface SelfAssessmentRequest {
-  competencyRatings?: Array<{ competencyName: string; rating: number }>;
+  competencyRatings?: Array<{
+    competencyId?: string;
+    competencyName: string;
+    rating: number;
+    comments?: string;
+  }>;
   overallComments?: string;
   goalAchievementPercent?: number;
 }

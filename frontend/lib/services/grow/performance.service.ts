@@ -15,6 +15,7 @@ import {
   ReviewCycle,
   ReviewCycleRequest,
   ReviewRequest,
+  SelfAssessmentRequest,
 } from '../../types/grow/performance';
 
 interface PaginatedResponse<T> {
@@ -334,6 +335,10 @@ export const reviewCycleService = {
   activate: async (id: string, data: ActivateCycleRequest): Promise<ActivateCycleResponse> => {
     const response = await apiClient.post<ActivateCycleResponse>(`/review-cycles/${id}/activate`, data);
     return response.data;
+  },
+
+  submitSelfAssessment: async (reviewId: string, data: SelfAssessmentRequest): Promise<void> => {
+    await apiClient.put(`/review-cycles/reviews/${reviewId}/self-assessment`, data);
   },
 
   // Delete a review cycle

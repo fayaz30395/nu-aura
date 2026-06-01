@@ -148,6 +148,7 @@ export default function AssetManagementPage() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showAssignModal, setShowAssignModal] = useState(false);
   const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
+  const [openActionsAssetId, setOpenActionsAssetId] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [saving] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -227,6 +228,7 @@ export default function AssetManagementPage() {
   };
 
   const handleOpenEditModal = (asset: Asset) => {
+    setOpenActionsAssetId(null);
     setSelectedAsset(asset);
     setIsEditing(true);
     setValue('assetCode', asset.assetCode);
@@ -246,16 +248,19 @@ export default function AssetManagementPage() {
   };
 
   const handleViewDetails = (asset: Asset) => {
+    setOpenActionsAssetId(null);
     setSelectedAsset(asset);
     setShowDetailModal(true);
   };
 
   const handleDeleteClick = (asset: Asset) => {
+    setOpenActionsAssetId(null);
     setSelectedAsset(asset);
     setShowDeleteModal(true);
   };
 
   const handleAssignClick = (asset: Asset) => {
+    setOpenActionsAssetId(null);
     setSelectedAsset(asset);
     resetAssignForm();
     setShowAssignModal(true);
@@ -312,6 +317,7 @@ export default function AssetManagementPage() {
   };
 
   const handleReturn = async (asset: Asset) => {
+    setOpenActionsAssetId(null);
     try {
       await returnMutation.mutateAsync(asset.id);
     } catch (err: unknown) {
@@ -334,6 +340,14 @@ export default function AssetManagementPage() {
     {label: 'Dashboard', href: '/dashboard'},
     {label: 'Asset Management'},
   ];
+
+  const getActionsMenuClassName = (assetId: string) => {
+    const openClass = openActionsAssetId === assetId
+      ? 'opacity-100 visible'
+      : 'opacity-0 invisible group-hover:opacity-100 group-hover:visible';
+
+    return `absolute right-0 top-full mt-1 w-40 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg shadow-[var(--shadow-dropdown)] ${openClass} transition-all z-10`;
+  };
 
   if (assetsQuery.isLoading && !assetsQuery.data) {
     return (
@@ -558,14 +572,24 @@ export default function AssetManagementPage() {
                       <td className="px-4 py-4 whitespace-nowrap text-right">
                         <div className="relative group inline-block">
                           <button
+                            type="button"
                             aria-label="Asset actions menu"
+                            aria-haspopup="menu"
+                            aria-expanded={openActionsAssetId === asset.id}
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              setOpenActionsAssetId((currentAssetId) => currentAssetId === asset.id ? null : asset.id);
+                            }}
                             className="p-1 rounded hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
                           >
                             <MoreVertical className="h-4 w-4 text-[var(--text-muted)]"/>
                           </button>
                           <div
-                            className="absolute right-0 top-full mt-1 w-40 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg shadow-[var(--shadow-dropdown)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
+                            role="menu"
+                            className={getActionsMenuClassName(asset.id)}>
                             <button
+                              type="button"
+                              role="menuitem"
                               onClick={() => handleViewDetails(asset)}
                               className="w-full px-4 py-2 text-left text-body-secondary hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--border-focus)]"
                             >
@@ -574,6 +598,8 @@ export default function AssetManagementPage() {
                             </button>
                             <PermissionGate permission={Permissions.ASSET_MANAGE} fallback={<div/>}>
                               <button
+                                type="button"
+                                role="menuitem"
                                 onClick={() => handleOpenEditModal(asset)}
                                 className="w-full px-4 py-2 text-left text-body-secondary hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2"
                               >
@@ -584,6 +610,8 @@ export default function AssetManagementPage() {
                             {asset.status === AssetStatus.AVAILABLE && (
                               <PermissionGate permission={Permissions.ASSET_ASSIGN} fallback={<div/>}>
                                 <button
+                                  type="button"
+                                  role="menuitem"
                                   onClick={() => handleAssignClick(asset)}
                                   className="w-full px-4 py-2 text-left text-body-secondary hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2"
                                 >
@@ -595,6 +623,8 @@ export default function AssetManagementPage() {
                             {asset.status === AssetStatus.ASSIGNED && (
                               <PermissionGate permission={Permissions.ASSET_ASSIGN} fallback={<div/>}>
                                 <button
+                                  type="button"
+                                  role="menuitem"
                                   onClick={() => handleReturn(asset)}
                                   className="w-full px-4 py-2 text-left text-body-secondary hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2"
                                 >
@@ -605,6 +635,8 @@ export default function AssetManagementPage() {
                             )}
                             <PermissionGate permission={Permissions.ASSET_MANAGE} fallback={<div/>}>
                               <button
+                                type="button"
+                                role="menuitem"
                                 onClick={() => handleDeleteClick(asset)}
                                 className="w-full px-4 py-2 text-left text-sm text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/20 flex items-center gap-2"
                               >

@@ -21,6 +21,7 @@ import {
   useCreateReview,
   useDeleteReview,
   useEmployeeReviews,
+  useSubmitSelfAssessment,
   useUpdateReview,
 } from '@/lib/hooks/queries/usePerformance';
 import {PerformanceReview, ReviewRequest, ReviewStatus, ReviewType} from '@/lib/types/grow/performance';
@@ -60,6 +61,7 @@ export default function PerformanceReviewsPage() {
   const reviewsQuery = useEmployeeReviews(user?.employeeId || '');
   const createReviewMutation = useCreateReview();
   const updateReviewMutation = useUpdateReview();
+  const submitSelfAssessmentMutation = useSubmitSelfAssessment();
   const deleteReviewMutation = useDeleteReview();
 
   const [showModal, setShowModal] = useState(false);
@@ -93,7 +95,7 @@ export default function PerformanceReviewsPage() {
   });
 
   const reviews = reviewsQuery.data || [];
-  const loading = reviewsQuery.isLoading || createReviewMutation.isPending || updateReviewMutation.isPending || deleteReviewMutation.isPending;
+  const loading = reviewsQuery.isLoading || createReviewMutation.isPending || updateReviewMutation.isPending || submitSelfAssessmentMutation.isPending || deleteReviewMutation.isPending;
 
   const handleFormSubmit = async (formData: ReviewFormData) => {
     try {
@@ -109,7 +111,21 @@ export default function PerformanceReviewsPage() {
         employeeComments: formData.employeeComments || '',
       };
 
-      if (selectedReview) {
+      if (selectedReview?.reviewType === 'SELF') {
+        const rating = Math.round(Number(formData.overallRating));
+        await submitSelfAssessmentMutation.mutateAsync({
+          reviewId: selectedReview.id,
+          data: {
+            competencyRatings: [{
+              competencyName: 'Overall performance',
+              rating,
+              comments: formData.employeeComments || formData.strengths || '',
+            }],
+            overallComments: formData.employeeComments || formData.strengths || '',
+            goalAchievementPercent: Math.min(100, Math.max(0, rating * 20)),
+          },
+        });
+      } else if (selectedReview) {
         await updateReviewMutation.mutateAsync({id: selectedReview.id, data: reviewData as ReviewRequest});
       } else {
         await createReviewMutation.mutateAsync(reviewData as ReviewRequest);
@@ -386,6 +402,16 @@ export default function PerformanceReviewsPage() {
                 </div>
 
                 <div className="flex gap-2 mt-4">
+                  {review.reviewType === 'SELF' && review.status === 'DRAFT' && (
+                    <PermissionGate permission={Permissions.REVIEW_SUBMIT}>
+                      <button
+                        onClick={() => openEditModal(review)}
+                        className="flex-1 px-4 py-2 tint-success text-success-700 dark:text-success-400 rounded hover:opacity-80 text-sm font-medium"
+                      >
+                        Start Self Assessment
+                      </button>
+                    </PermissionGate>
+                  )}
                   <PermissionGate permission={Permissions.REVIEW_UPDATE}>
                     <button
                       onClick={() => openEditModal(review)}

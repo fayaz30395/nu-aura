@@ -137,8 +137,13 @@ public class AnnouncementService {
     public Page<AnnouncementDto> getAllAnnouncements(Pageable pageable) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         UUID currentUserId = SecurityContext.getCurrentEmployeeId();
-        return announcementRepository.findActiveAnnouncements(tenantId, tenantTimeService.now(tenantId), pageable)
-                .map(a -> enrichAnnouncementDto(AnnouncementDto.fromEntity(a), currentUserId));
+        Page<Announcement> announcements = announcementRepository.findActiveAnnouncements(
+                tenantId, tenantTimeService.now(tenantId), pageable);
+        List<AnnouncementDto> dtos = announcements.getContent().stream()
+                .map(AnnouncementDto::fromEntity)
+                .collect(Collectors.toList());
+        enrichAnnouncementDtos(dtos, currentUserId, tenantId);
+        return new PageImpl<>(dtos, pageable, announcements.getTotalElements());
     }
 
     @Transactional(readOnly = true)
@@ -164,7 +169,7 @@ public class AnnouncementService {
             var employee = employeeOpt.get();
             employeeDepartmentId = employee.getDepartmentId();
             isManager = employee.getManagerId() == null ||
-                    employeeRepository.findDirectReportsByManagerId(tenantId, employeeId).size() > 0;
+                    employeeRepository.countDirectReportsByManagerId(tenantId, employeeId) > 0;
             joinDate = employee.getJoiningDate() != null ? employee.getJoiningDate().atStartOfDay() : null;
         }
 
@@ -194,10 +199,10 @@ public class AnnouncementService {
                         dto.setIsAccepted(readRecord.getIsAccepted());
                         dto.setAcceptedAt(readRecord.getAcceptedAt());
                     }
-                    // Enrich with reaction status
-                    return enrichAnnouncementDto(dto, employeeId);
+                    return dto;
                 })
                 .collect(Collectors.toList());
+        enrichAnnouncementDtos(filteredDtos, employeeId, tenantId);
 
         return new PageImpl<>(filteredDtos, pageable, filteredDtos.size());
     }
@@ -403,5 +408,29 @@ public class AnnouncementService {
             dto.setHasReacted(hasReacted);
         }
         return dto;
+    }
+
+    private void enrichAnnouncementDtos(List<AnnouncementDto> dtos, UUID currentUserId, UUID tenantId) {
+        if (dtos.isEmpty() || currentUserId == null) {
+            return;
+        }
+
+        List<UUID> wallPostIds = dtos.stream()
+                .map(AnnouncementDto::getWallPostId)
+                .filter(java.util.Objects::nonNull)
+                .distinct()
+                .toList();
+        if (wallPostIds.isEmpty()) {
+            return;
+        }
+
+        Set<UUID> reactedPostIds = Set.copyOf(postReactionRepository.findPostIdsWithUserReactionForTenant(
+                wallPostIds, currentUserId, tenantId));
+        for (AnnouncementDto dto : dtos) {
+            UUID wallPostId = dto.getWallPostId();
+            if (wallPostId != null) {
+                dto.setHasReacted(reactedPostIds.contains(wallPostId));
+            }
+        }
     }
 }

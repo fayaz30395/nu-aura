@@ -14,6 +14,7 @@ const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080/api/v
 const AUTH_MODE = process.env.E2E_AUTH_MODE ?? 'api';
 const API_LOGIN_TIMEOUT_MS = Number(process.env.E2E_API_LOGIN_TIMEOUT_MS ?? 60000);
 const API_LOGIN_ATTEMPTS = Number(process.env.E2E_API_LOGIN_ATTEMPTS ?? 3);
+const API_LOGIN_RATE_LIMIT_DELAY_MS = Number(process.env.E2E_API_LOGIN_RATE_LIMIT_DELAY_MS ?? 15000);
 const ALLOW_LOCAL_AUTH_FALLBACK = AUTH_MODE === 'local' || process.env.E2E_ALLOW_LOCAL_AUTH_FALLBACK === 'true';
 
 interface ApiLoginResponse {
@@ -50,6 +51,7 @@ interface LoginAsOptions {
 }
 
 const authStateCache = new Map<string, CachedAuthState>();
+let lastApiLoginAt = 0;
 
 const ROLE_PERMISSIONS: Record<DemoUser['role'], string[]> = {
   SUPER_ADMIN: [],
@@ -208,9 +210,16 @@ async function seedStoredAuth(page: Page, auth: ApiLoginResponse, verifyDashboar
       version: 0,
     });
     localStorage.setItem('tenantId', tenantId);
-    const storage = useLocalStorage ? localStorage : sessionStorage;
-    storage.setItem('nu-aura-user', JSON.stringify(user));
-    storage.setItem('auth-storage', authEnvelope);
+    sessionStorage.setItem('tenantId', tenantId);
+
+    const storages = useLocalStorage
+      ? [localStorage, sessionStorage]
+      : [sessionStorage];
+
+    for (const storage of storages) {
+      storage.setItem('nu-aura-user', JSON.stringify(user));
+      storage.setItem('auth-storage', authEnvelope);
+    }
   }, {tenantId: auth.tenantId, user: storedUser, useLocalStorage: useLocalAuthStorage});
 
   if (!verifyDashboard) {
@@ -266,6 +275,22 @@ async function seedFallbackCookies(page: Page, user: DemoUser): Promise<void> {
   ]);
 }
 
+async function waitForApiLoginSlot(page: Page): Promise<void> {
+  if (API_LOGIN_RATE_LIMIT_DELAY_MS <= 0) {
+    return;
+  }
+
+  const now = Date.now();
+  const elapsed = now - lastApiLoginAt;
+  const waitMs = Math.max(0, API_LOGIN_RATE_LIMIT_DELAY_MS - elapsed);
+
+  if (waitMs > 0) {
+    await page.waitForTimeout(waitMs);
+  }
+
+  lastApiLoginAt = Date.now();
+}
+
 export async function gotoWithRetry(page: Page, path: string): Promise<void> {
   let lastError: unknown;
   for (let attempt = 1; attempt <= 3; attempt++) {
@@ -291,6 +316,28 @@ export async function gotoWithRetry(page: Page, path: string): Promise<void> {
   throw lastError;
 }
 
+async function openAuthOriginForApiLogin(page: Page): Promise<void> {
+  let lastError: unknown;
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      await page.goto('/auth/login', {waitUntil: 'commit', timeout: 90000});
+      await page.waitForLoadState('domcontentloaded', {timeout: 10000}).catch(() => {});
+      return;
+    } catch (error) {
+      lastError = error;
+      const message = error instanceof Error ? error.message : '';
+      const retryable = message.includes('net::ERR_ABORTED')
+        || message.includes('net::ERR_CONNECTION_REFUSED')
+        || message.includes('net::ERR_EMPTY_RESPONSE')
+        || message.includes('net::ERR_NETWORK_IO_SUSPENDED')
+        || message.includes('Timeout');
+      if (!retryable || attempt === 3) break;
+      await page.waitForTimeout(500 * attempt);
+    }
+  }
+  throw lastError;
+}
+
 /**
  * Authenticate via the backend API and inject auth state into the browser.
  * This is the fastest way to log in for non-auth-focused tests.
@@ -307,7 +354,7 @@ export async function loginAs(page: Page, email: string, options: LoginAsOptions
   }
 
   await page.context().clearCookies();
-  await gotoWithRetry(page, '/auth/login');
+  await openAuthOriginForApiLogin(page);
   await page.evaluate(() => {
     sessionStorage.clear();
     localStorage.removeItem('auth-storage');
@@ -334,6 +381,9 @@ export async function loginAs(page: Page, email: string, options: LoginAsOptions
   let lastBody = '';
   for (let attempt = 1; AUTH_MODE !== 'local' && attempt <= API_LOGIN_ATTEMPTS; attempt++) {
     try {
+      if (attempt === 1) {
+        await waitForApiLoginSlot(page);
+      }
       response = await page.request.post(`${API_BASE}/auth/login`, {
         data: {email, password},
         failOnStatusCode: false,

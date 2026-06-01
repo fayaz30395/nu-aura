@@ -279,12 +279,12 @@ describe('LoanService', () => {
   });
 
   describe('getLoanTypeLabel (pure function)', () => {
-    it('should return label for PERSONAL loan type', () => {
-      expect(loanService.getLoanTypeLabel('PERSONAL')).toBe('Personal Loan');
+    it('should return label for PERSONAL_LOAN loan type', () => {
+      expect(loanService.getLoanTypeLabel('PERSONAL_LOAN')).toBe('Personal Loan');
     });
 
-    it('should return label for EDUCATION loan type', () => {
-      expect(loanService.getLoanTypeLabel('EDUCATION')).toBe('Education Loan');
+    it('should return label for EDUCATION_LOAN loan type', () => {
+      expect(loanService.getLoanTypeLabel('EDUCATION_LOAN')).toBe('Education Loan');
     });
 
     it('should return the type itself for unknown types', () => {

@@ -25,7 +25,7 @@ const optionalUrl = z
 export const createJobOpeningSchema = z.object({
   jobCode: z.string().min(1, 'Job code is required').max(50),
   jobTitle: z.string().min(1, 'Job title is required').max(200),
-  departmentId: optionalUuid,
+  departmentId: z.string().min(1, 'Department is required').uuid('Invalid ID format'),
   location: optionalString,
   employmentType: z
     .enum(['FULL_TIME', 'PART_TIME', 'CONTRACT', 'TEMPORARY', 'INTERNSHIP'])

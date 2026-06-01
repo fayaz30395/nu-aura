@@ -30,6 +30,20 @@ function isLoopbackApiUrl(value: string): boolean {
   }
 }
 
+function isPlaceholderApiUrl(value: string): boolean {
+  try {
+    const {hostname} = new URL(value);
+    const normalizedHostname = hostname.toLowerCase();
+
+    return normalizedHostname.endsWith('.example')
+      || normalizedHostname.includes('example.com')
+      || normalizedHostname.includes('your-domain')
+      || normalizedHostname.includes('yourdomain');
+  } catch {
+    return false;
+  }
+}
+
 const envSchema = z.object({
   // Required in all environments
   NEXT_PUBLIC_API_URL: z
@@ -67,7 +81,14 @@ const envSchema = z.object({
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       path: ['NEXT_PUBLIC_API_URL'],
-      message: 'NEXT_PUBLIC_API_URL must not point to localhost or loopback when NODE_ENV=production. Set it to the deployed API URL, for example https://api.your-domain.com/api/v1.',
+      message: 'NEXT_PUBLIC_API_URL must not point to localhost or loopback when NODE_ENV=production. Set it to the real deployed API URL, for example https://api.company.com/api/v1.',
+    });
+  }
+  if (env.NODE_ENV === 'production' && isPlaceholderApiUrl(env.NEXT_PUBLIC_API_URL)) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ['NEXT_PUBLIC_API_URL'],
+      message: 'NEXT_PUBLIC_API_URL must point to the real deployed API, not an example or placeholder domain.',
     });
   }
 });

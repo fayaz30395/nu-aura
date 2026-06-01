@@ -293,6 +293,9 @@ describe('Compensation Approval Flow Integration Tests', () => {
       await user.click(approveBtn);
 
       expect(approveBtn).toHaveTextContent('Approving...');
+      await waitFor(() => {
+        expect(approveBtn).toHaveTextContent('Approve Revision');
+      });
     });
 
     it('should disable reject button while loading', async () => {
@@ -315,6 +318,9 @@ describe('Compensation Approval Flow Integration Tests', () => {
       // The button should be disabled/show loading state during async operation
       // Due to timing, we verify the service was called
       expect(mockedCompensationService.rejectRevision).toHaveBeenCalled();
+      await waitFor(() => {
+        expect(rejectBtn).toHaveTextContent('Reject Revision');
+      });
     });
   });
 });

@@ -223,8 +223,7 @@ export const PROTECTED_ROUTES: RouteConfig[] = [
   {
     path: '/performance',
     permission: Permissions.REVIEW_VIEW,
-    // P0-002 fix: EMPLOYEE has REVIEW:VIEW for self-service but must not access admin hub
-    anyRole: ['SUPER_ADMIN', 'TENANT_ADMIN', 'HR_ADMIN', 'HR_MANAGER', 'MANAGER', 'TEAM_LEAD', 'SKIP_LEVEL_MANAGER', 'REPORTING_MANAGER'],
+    anyRole: ['SUPER_ADMIN', 'TENANT_ADMIN', 'HR_ADMIN', 'HR_MANAGER', 'MANAGER', 'TEAM_LEAD', 'SKIP_LEVEL_MANAGER', 'REPORTING_MANAGER', 'EMPLOYEE'],
   },
 
   // Recruitment

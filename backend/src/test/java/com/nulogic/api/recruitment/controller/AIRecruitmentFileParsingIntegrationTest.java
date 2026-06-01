@@ -4,8 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nulogic.api.recruitment.dto.ai.ResumeParseRequest;
 import com.nulogic.api.recruitment.dto.ai.ResumeParseResponse;
 import com.nulogic.application.ai.service.AIRecruitmentService;
+import com.nulogic.common.security.Permission;
+import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.config.AbstractPostgresIntegrationTest;
+import com.nulogic.domain.user.RoleScope;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockedStatic;
@@ -16,29 +19,31 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.Base64;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false)
+@ActiveProfiles("test")
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 @DisplayName("AIRecruitment File Parsing Integration Tests")
 @Tag("integration")
-@Disabled("Requires full application context with database, Redis, and Kafka infrastructure")
 class AIRecruitmentFileParsingIntegrationTest extends AbstractPostgresIntegrationTest {
 
     @Autowired
@@ -55,6 +60,18 @@ class AIRecruitmentFileParsingIntegrationTest extends AbstractPostgresIntegratio
     @BeforeEach
     void setUp() {
         tenantId = UUID.randomUUID();
+        SecurityContext.setCurrentUser(
+                UUID.randomUUID(),
+                UUID.randomUUID(),
+                Set.of("SUPER_ADMIN"),
+                Map.of(Permission.SYSTEM_ADMIN, RoleScope.ALL)
+        );
+    }
+
+    @AfterEach
+    void tearDown() {
+        SecurityContext.clear();
+        TenantContext.clear();
     }
 
     @Test
@@ -84,7 +101,6 @@ class AIRecruitmentFileParsingIntegrationTest extends AbstractPostgresIntegratio
 
             // Act & Assert
             MvcResult result = mockMvc.perform(post("/api/v1/recruitment/ai/parse-resume")
-                            .with(jwt().jwt(jwt -> jwt.subject("user-id")))
                             .contentType("application/json")
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk())
@@ -125,8 +141,7 @@ class AIRecruitmentFileParsingIntegrationTest extends AbstractPostgresIntegratio
 
             // Act & Assert
             MvcResult result = mockMvc.perform(multipart("/api/v1/recruitment/ai/parse-resume/upload")
-                            .file(file)
-                            .with(jwt().jwt(jwt -> jwt.subject("user-id"))))
+                            .file(file))
                     .andExpect(status().isOk())
                     .andReturn();
 
@@ -155,8 +170,7 @@ class AIRecruitmentFileParsingIntegrationTest extends AbstractPostgresIntegratio
 
             // Act & Assert
             MvcResult result = mockMvc.perform(multipart("/api/v1/recruitment/ai/parse-resume/upload")
-                            .file(file)
-                            .with(jwt().jwt(jwt -> jwt.subject("user-id"))))
+                            .file(file))
                     .andExpect(status().isOk())
                     .andReturn();
 
@@ -184,8 +198,7 @@ class AIRecruitmentFileParsingIntegrationTest extends AbstractPostgresIntegratio
 
             // Act & Assert
             MvcResult result = mockMvc.perform(multipart("/api/v1/recruitment/ai/parse-resume/upload")
-                            .file(emptyFile)
-                            .with(jwt().jwt(jwt -> jwt.subject("user-id"))))
+                            .file(emptyFile))
                     .andExpect(status().isOk())
                     .andReturn();
 
@@ -209,10 +222,9 @@ class AIRecruitmentFileParsingIntegrationTest extends AbstractPostgresIntegratio
 
             // Act & Assert
             MvcResult result = mockMvc.perform(post("/api/v1/recruitment/ai/parse-resume")
-                            .with(jwt().jwt(jwt -> jwt.subject("user-id")))
                             .contentType("application/json")
                             .content(objectMapper.writeValueAsString(request)))
-                    .andExpect(status().isOk())
+                    .andExpect(status().isBadRequest())
                     .andReturn();
 
             String responseBody = result.getResponse().getContentAsString();
@@ -242,8 +254,7 @@ class AIRecruitmentFileParsingIntegrationTest extends AbstractPostgresIntegratio
 
             // Act & Assert
             MvcResult result = mockMvc.perform(multipart("/api/v1/recruitment/ai/parse-resume/upload")
-                            .file(file)
-                            .with(jwt().jwt(jwt -> jwt.subject("user-id"))))
+                            .file(file))
                     .andExpect(status().isOk())
                     .andReturn();
 

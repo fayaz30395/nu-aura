@@ -46,8 +46,11 @@ export interface SamlTestConnectionResponse {
 }
 
 class SamlService {
-  async getConfig(): Promise<SamlConfigResponse> {
-    const response = await apiClient.get<SamlConfigResponse>('/auth/saml/config');
+  async getConfig(): Promise<SamlConfigResponse | null> {
+    const response = await apiClient.getPermissive<SamlConfigResponse>('/auth/saml/config');
+    if (response.status === 404) {
+      return null;
+    }
     return response.data;
   }
 

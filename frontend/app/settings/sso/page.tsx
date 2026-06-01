@@ -333,7 +333,7 @@ export default function SsoSettingsPage() {
           </div>
         )}
 
-        {(error || fetchError) && (
+        {(error || fetchError || samlConfig === null) && (
           <div
             className="flex items-center gap-2 p-4 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-lg">
             <AlertCircle className="h-5 w-5 text-danger-600 flex-shrink-0"/>

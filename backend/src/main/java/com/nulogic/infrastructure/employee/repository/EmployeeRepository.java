@@ -45,6 +45,11 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID>, JpaSp
     @Query("SELECT e.id, CONCAT(e.firstName, ' ', COALESCE(e.lastName, '')) FROM Employee e WHERE e.id IN :ids")
     List<Object[]> findFullNamesByIds(@Param("ids") Collection<UUID> ids);
 
+    @Query("SELECT e.id, CONCAT(e.firstName, ' ', COALESCE(e.lastName, '')) FROM Employee e " +
+            "WHERE e.tenantId = :tenantId AND e.id IN :ids")
+    List<Object[]> findFullNamesByIdsAndTenantId(@Param("ids") Collection<UUID> ids,
+                                                 @Param("tenantId") UUID tenantId);
+
     /**
      * Batch lookup: get employee ID to manager ID mapping for a collection of IDs.
      * Returns Object[] where [0] = UUID employeeId, [1] = UUID managerId.

@@ -59,6 +59,12 @@ public interface PostReactionRepository extends JpaRepository<PostReaction, UUID
             "WHERE r.post.id IN :postIds AND r.employee.id = :employeeId")
     List<UUID> findPostIdsWithUserReaction(@Param("postIds") List<UUID> postIds, @Param("employeeId") UUID employeeId);
 
+    @Query("SELECT DISTINCT r.post.id FROM PostReaction r " +
+            "WHERE r.tenantId = :tenantId AND r.post.id IN :postIds AND r.employee.id = :employeeId")
+    List<UUID> findPostIdsWithUserReactionForTenant(@Param("postIds") List<UUID> postIds,
+                                                    @Param("employeeId") UUID employeeId,
+                                                    @Param("tenantId") UUID tenantId);
+
     /**
      * Get user's reactions for multiple posts in one query.
      * Returns: [postId, reactionType]

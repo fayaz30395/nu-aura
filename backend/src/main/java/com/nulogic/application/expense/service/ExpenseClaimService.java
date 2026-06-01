@@ -23,6 +23,7 @@ import com.nulogic.domain.user.RoleScope;
 import com.nulogic.domain.workflow.WorkflowDefinition;
 import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import com.nulogic.infrastructure.expense.repository.ExpenseClaimRepository;
+import com.nulogic.infrastructure.user.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -53,12 +54,15 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
      * The year-month bucket is computed in UTC so the sequence roll-over is
      * deterministic regardless of JVM zone.
      */
+    private static final String SET_RLS_TENANT_SQL = "SELECT set_config('app.current_tenant_id', ?, false)";
     private static final String NEXT_EXPENSE_SEQ_SQL =
-            "INSERT INTO expense_claim_sequence(tenant_id, year_month, current_value) VALUES(?, ?, 1) " +
+            "INSERT INTO expense_claim_sequence(tenant_id, year_month, current_value) " +
+                    "VALUES (?::uuid, ?::varchar, 1) " +
                     "ON CONFLICT(tenant_id, year_month) DO UPDATE SET current_value = expense_claim_sequence.current_value + 1 " +
                     "RETURNING current_value";
     private final ExpenseClaimRepository expenseClaimRepository;
     private final EmployeeRepository employeeRepository;
+    private final UserRepository userRepository;
     private final DataScopeService dataScopeService;
     private final WorkflowService workflowService;
     private final ExpensePolicyService expensePolicyService;
@@ -73,6 +77,7 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
     public ExpenseClaimService(
             ExpenseClaimRepository expenseClaimRepository,
             EmployeeRepository employeeRepository,
+            UserRepository userRepository,
             DataScopeService dataScopeService,
             @org.springframework.context.annotation.Lazy WorkflowService workflowService,
             @org.springframework.context.annotation.Lazy ExpensePolicyService expensePolicyService,
@@ -84,6 +89,7 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
             com.nulogic.common.util.TenantTimeService tenantTimeService) {
         this.expenseClaimRepository = expenseClaimRepository;
         this.employeeRepository = employeeRepository;
+        this.userRepository = userRepository;
         this.dataScopeService = dataScopeService;
         this.workflowService = workflowService;
         this.expensePolicyService = expensePolicyService;
@@ -182,7 +188,8 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
     @Transactional
     public ExpenseClaimResponse approveExpenseClaim(UUID claimId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
-        UUID approverId = SecurityContext.getCurrentEmployeeId();
+        UUID approverEmployeeId = SecurityContext.getCurrentEmployeeId();
+        UUID approverUserId = SecurityContext.getCurrentUserId();
 
         ExpenseClaim claim = expenseClaimRepository.findByIdAndTenantId(claimId, tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("Expense claim not found: " + claimId));
@@ -190,9 +197,9 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
         // Validate approver has access to this employee's expense claims
         validateEmployeeAccess(claim.getEmployeeId(), Permission.EXPENSE_APPROVE);
 
-        claim.approve(approverId, tenantTimeService.now(claim.getTenantId()));
+        claim.approve(approverUserId, tenantTimeService.now(claim.getTenantId()));
         ExpenseClaim saved = expenseClaimRepository.save(claim);
-        log.info("Approved expense claim: {} by {}", saved.getClaimNumber(), approverId);
+        log.info("Approved expense claim: {} by {}", saved.getClaimNumber(), approverUserId);
 
         try {
             auditLogService.logAction("EXPENSE_CLAIM", saved.getId(), AuditAction.APPROVE, null, null, "Expense claim approved: " + saved.getClaimNumber());
@@ -203,7 +210,7 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
         // FIX-002: Publish event for payroll to add expense reimbursement earning
         domainEventPublisher.publish(ExpenseApprovedEvent.of(
                 this, tenantId, saved.getId(),
-                saved.getEmployeeId(), approverId,
+                saved.getEmployeeId(), approverEmployeeId,
                 saved.getAmount(), saved.getCurrency(),
                 saved.getClaimNumber(), saved.getCategory().name()));
 
@@ -213,7 +220,7 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
     @Transactional
     public ExpenseClaimResponse rejectExpenseClaim(UUID claimId, String reason) {
         UUID tenantId = TenantContext.requireCurrentTenant();
-        UUID rejecterId = SecurityContext.getCurrentEmployeeId();
+        UUID rejecterUserId = SecurityContext.getCurrentUserId();
 
         ExpenseClaim claim = expenseClaimRepository.findByIdAndTenantId(claimId, tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("Expense claim not found: " + claimId));
@@ -221,9 +228,9 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
         // Validate rejecter has access to this employee's expense claims
         validateEmployeeAccess(claim.getEmployeeId(), Permission.EXPENSE_APPROVE);
 
-        claim.reject(rejecterId, reason, tenantTimeService.now(claim.getTenantId()));
+        claim.reject(rejecterUserId, reason, tenantTimeService.now(claim.getTenantId()));
         ExpenseClaim saved = expenseClaimRepository.save(claim);
-        log.info("Rejected expense claim: {} by {}", saved.getClaimNumber(), rejecterId);
+        log.info("Rejected expense claim: {} by {}", saved.getClaimNumber(), rejecterUserId);
 
         try {
             auditLogService.logAction("EXPENSE_CLAIM", saved.getId(), AuditAction.REJECT, null, null, "Expense claim rejected: " + saved.getClaimNumber() + ", reason: " + reason);
@@ -606,7 +613,19 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
 
     private String generateClaimNumber(UUID tenantId) {
         String ym = LocalDate.now(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("yyyyMM"));
-        Long seq = jdbcTemplate.queryForObject(NEXT_EXPENSE_SEQ_SQL, Long.class, tenantId, ym);
+        Long seq = jdbcTemplate.execute((org.springframework.jdbc.core.ConnectionCallback<Long>) connection -> {
+            try (var setTenant = connection.prepareStatement(SET_RLS_TENANT_SQL)) {
+                setTenant.setString(1, tenantId.toString());
+                setTenant.execute();
+            }
+            try (var nextSeq = connection.prepareStatement(NEXT_EXPENSE_SEQ_SQL)) {
+                nextSeq.setString(1, tenantId.toString());
+                nextSeq.setString(2, ym);
+                try (var rs = nextSeq.executeQuery()) {
+                    return rs.next() ? rs.getLong(1) : null;
+                }
+            }
+        });
         if (seq == null) {
             // Should be unreachable — INSERT ON CONFLICT RETURNING always yields a row.
             throw new IllegalStateException("Failed to allocate expense claim sequence value for tenant " + tenantId);
@@ -629,31 +648,39 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
     private List<ExpenseClaimResponse> enrichResponses(List<ExpenseClaimResponse> responses) {
         if (responses.isEmpty()) return responses;
 
-        // Collect all employee IDs needed for enrichment
+        UUID tenantId = TenantContext.requireCurrentTenant();
+
+        // Collect employee IDs and user IDs needed for enrichment.
         Set<UUID> employeeIds = new HashSet<>();
+        Set<UUID> userIds = new HashSet<>();
         for (ExpenseClaimResponse r : responses) {
             if (r.getEmployeeId() != null) employeeIds.add(r.getEmployeeId());
-            if (r.getApprovedBy() != null) employeeIds.add(r.getApprovedBy());
-            if (r.getRejectedBy() != null) employeeIds.add(r.getRejectedBy());
+            if (r.getApprovedBy() != null) userIds.add(r.getApprovedBy());
+            if (r.getRejectedBy() != null) userIds.add(r.getRejectedBy());
         }
 
-        if (employeeIds.isEmpty()) return responses;
+        Map<UUID, String> employeeNameMap = new HashMap<>();
+        if (!employeeIds.isEmpty()) {
+            employeeRepository.findFullNamesByIdsAndTenantId(employeeIds, tenantId)
+                    .forEach(row -> employeeNameMap.put((UUID) row[0], (String) row[1]));
+        }
 
-        // Single batch query
-        Map<UUID, String> nameMap = new HashMap<>();
-        employeeRepository.findAllById(employeeIds)
-                .forEach(emp -> nameMap.put(emp.getId(), emp.getFirstName() + " " + emp.getLastName()));
+        Map<UUID, String> userNameMap = new HashMap<>();
+        if (!userIds.isEmpty()) {
+            userRepository.findFullNamesByIdsAndTenantId(userIds, tenantId)
+                    .forEach(row -> userNameMap.put((UUID) row[0], (String) row[1]));
+        }
 
         // Enrich all responses from the map
         for (ExpenseClaimResponse r : responses) {
-            if (r.getEmployeeId() != null && nameMap.containsKey(r.getEmployeeId())) {
-                r.setEmployeeName(nameMap.get(r.getEmployeeId()));
+            if (r.getEmployeeId() != null && employeeNameMap.containsKey(r.getEmployeeId())) {
+                r.setEmployeeName(employeeNameMap.get(r.getEmployeeId()));
             }
-            if (r.getApprovedBy() != null && nameMap.containsKey(r.getApprovedBy())) {
-                r.setApprovedByName(nameMap.get(r.getApprovedBy()));
+            if (r.getApprovedBy() != null && userNameMap.containsKey(r.getApprovedBy())) {
+                r.setApprovedByName(userNameMap.get(r.getApprovedBy()));
             }
-            if (r.getRejectedBy() != null && nameMap.containsKey(r.getRejectedBy())) {
-                r.setRejectedByName(nameMap.get(r.getRejectedBy()));
+            if (r.getRejectedBy() != null && userNameMap.containsKey(r.getRejectedBy())) {
+                r.setRejectedByName(userNameMap.get(r.getRejectedBy()));
             }
         }
 

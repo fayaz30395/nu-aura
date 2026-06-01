@@ -225,7 +225,7 @@ class FeedService {
     }
   }
 
-  private async fetchWallPosts(page = 0, size = 20): Promise<FeedItem[]> {
+  private async fetchWallPosts(page = 0, size = 10): Promise<FeedItem[]> {
     try {
       const data = await wallService.getPosts(page, size);
       const posts = Array.isArray(data?.content) ? data.content : (Array.isArray(data) ? data : []);

@@ -44,8 +44,10 @@ public class MileageService {
      * lost ordering and was not gap-free across pods. The {@code RETURNING}
      * clause makes this safe under concurrent inserts.
      */
+    private static final String SET_RLS_TENANT_SQL = "SELECT set_config('app.current_tenant_id', ?, false)";
     private static final String NEXT_MILEAGE_SEQ_SQL =
-            "INSERT INTO mileage_claim_sequence(tenant_id, year_month, current_value) VALUES(?, ?, 1) " +
+            "INSERT INTO mileage_claim_sequence(tenant_id, year_month, current_value) " +
+                    "VALUES (?::uuid, ?::varchar, 1) " +
                     "ON CONFLICT(tenant_id, year_month) DO UPDATE SET current_value = mileage_claim_sequence.current_value + 1 " +
                     "RETURNING current_value";
     private final MileageLogRepository mileageLogRepository;
@@ -58,7 +60,19 @@ public class MileageService {
 
     private String generateMileageClaimNumber(UUID tenantId) {
         String ym = LocalDate.now(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("yyyyMM"));
-        Long seq = jdbcTemplate.queryForObject(NEXT_MILEAGE_SEQ_SQL, Long.class, tenantId, ym);
+        Long seq = jdbcTemplate.execute((org.springframework.jdbc.core.ConnectionCallback<Long>) connection -> {
+            try (var setTenant = connection.prepareStatement(SET_RLS_TENANT_SQL)) {
+                setTenant.setString(1, tenantId.toString());
+                setTenant.execute();
+            }
+            try (var nextSeq = connection.prepareStatement(NEXT_MILEAGE_SEQ_SQL)) {
+                nextSeq.setString(1, tenantId.toString());
+                nextSeq.setString(2, ym);
+                try (var rs = nextSeq.executeQuery()) {
+                    return rs.next() ? rs.getLong(1) : null;
+                }
+            }
+        });
         if (seq == null) {
             throw new IllegalStateException("Failed to allocate mileage claim sequence value for tenant " + tenantId);
         }

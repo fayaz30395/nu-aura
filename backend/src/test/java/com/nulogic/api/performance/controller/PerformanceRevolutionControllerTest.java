@@ -20,9 +20,11 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.UUID;
+import java.util.List;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(PerformanceRevolutionController.class)
@@ -62,10 +64,38 @@ class PerformanceRevolutionControllerTest {
     class OkrGraphTests {
 
         @Test
-        @Disabled("Compile error - needs investigation: OKRGraphResponse API mismatch (no totalObjectives field)")
         @DisplayName("Should return OKR graph for tenant")
         void shouldReturnOkrGraph() throws Exception {
-            // Disabled: OKRGraphResponse fields changed (nodes/links instead of totalObjectives etc.)
+            OKRGraphResponse graphResponse = OKRGraphResponse.builder()
+                    .nodes(List.of(OKRGraphResponse.OKRNode.builder()
+                            .id("okr-1")
+                            .title("Company Objective")
+                            .type("COMPANY")
+                            .progress(72.5)
+                            .ownerName("Leadership")
+                            .build()))
+                    .links(List.of(OKRGraphResponse.OKRLink.builder()
+                            .source("okr-1")
+                            .target("okr-2")
+                            .build()))
+                    .build();
+            when(performanceRevolutionService.getOKRGraph(tenantId)).thenReturn(graphResponse);
+
+            try (MockedStatic<TenantContext> tc = mockStatic(TenantContext.class)) {
+                tc.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
+
+                mockMvc.perform(get("/api/v1/performance/revolution/okr-graph"))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.nodes[0].id").value("okr-1"))
+                        .andExpect(jsonPath("$.nodes[0].title").value("Company Objective"))
+                        .andExpect(jsonPath("$.nodes[0].type").value("COMPANY"))
+                        .andExpect(jsonPath("$.nodes[0].progress").value(72.5))
+                        .andExpect(jsonPath("$.nodes[0].ownerName").value("Leadership"))
+                        .andExpect(jsonPath("$.links[0].source").value("okr-1"))
+                        .andExpect(jsonPath("$.links[0].target").value("okr-2"));
+            }
+
+            verify(performanceRevolutionService).getOKRGraph(tenantId);
         }
 
         @Test
@@ -90,14 +120,36 @@ class PerformanceRevolutionControllerTest {
     class PerformanceSpiderTests {
 
         @Test
-        @Disabled("Compile error - needs investigation: PerformanceSpiderResponse has no employeeId/dimensions/scores fields")
         @DisplayName("Should return performance spider for employee")
         void shouldReturnPerformanceSpider() throws Exception {
-            // Disabled: PerformanceSpiderResponse uses SpiderData (metrics list) not employeeId/dimensions/scores
+            PerformanceSpiderResponse spiderResponse = PerformanceSpiderResponse.builder()
+                    .metrics(List.of(PerformanceSpiderResponse.SpiderData.builder()
+                            .subject("Leadership")
+                            .self(80)
+                            .peer(75)
+                            .manager(85)
+                            .fullMark(100)
+                            .build()))
+                    .build();
+            when(performanceRevolutionService.getPerformanceSpider(employeeId, tenantId))
+                    .thenReturn(spiderResponse);
+
+            try (MockedStatic<TenantContext> tc = mockStatic(TenantContext.class)) {
+                tc.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
+
+                mockMvc.perform(get("/api/v1/performance/revolution/spider/{employeeId}", employeeId))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.metrics[0].subject").value("Leadership"))
+                        .andExpect(jsonPath("$.metrics[0].self").value(80))
+                        .andExpect(jsonPath("$.metrics[0].peer").value(75))
+                        .andExpect(jsonPath("$.metrics[0].manager").value(85))
+                        .andExpect(jsonPath("$.metrics[0].fullMark").value(100));
+            }
+
+            verify(performanceRevolutionService).getPerformanceSpider(employeeId, tenantId);
         }
 
         @Test
-        @Disabled("Compile error - needs investigation: PerformanceSpiderResponse has no employeeId field")
         @DisplayName("Should use tenant context for performance spider")
         void shouldUseTenantContextForSpider() throws Exception {
             PerformanceSpiderResponse spiderResponse = new PerformanceSpiderResponse();

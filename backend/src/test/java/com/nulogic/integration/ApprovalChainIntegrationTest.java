@@ -10,6 +10,7 @@ import com.nulogic.application.leave.service.LeaveRequestService;
 import com.nulogic.application.notification.service.WebSocketNotificationService;
 import com.nulogic.application.workflow.callback.ApprovalCallbackHandler;
 import com.nulogic.application.workflow.service.WorkflowService;
+import com.nulogic.common.exception.BusinessException;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
@@ -39,6 +40,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -627,13 +629,50 @@ class ApprovalChainIntegrationTest {
 
     @Test
     @DisplayName("UC-APPR-004: wrong approver (non-assigned) attempting approval — SecurityContext mismatch detected")
-    @Disabled("UC-APPR-004: Wrong-approver 403 is enforced inside WorkflowService.processApprovalAction " +
-            "when the current user is not in the approver list. This requires the StepExecution.getApproverIds() " +
-            "to be populated — which depends on resolver internals. Marked @Disabled pending mock refinement.")
     void ucAppr004_wrongApprover_returns403() {
-        // The service rejects non-matching approver IDs with an AccessDeniedException.
-        // Test is disabled because reliably seeding approver IDs into StepExecution requires
-        // internal workflow resolver mock that is not exposed in the current test harness.
+        workflowService = new WorkflowService(
+                workflowDefinitionRepository, approvalStepRepository,
+                workflowExecutionRepository, stepExecutionRepository,
+                approvalDelegateRepository, workflowRuleRepository,
+                employeeRepository, departmentRepository, userRepository,
+                domainEventPublisher, auditLogService, leaveRequestRepository,
+                tenantTimeService,
+                Collections.emptyList());
+
+        UUID executionId = UUID.randomUUID();
+        securityContextMock.when(SecurityContext::getCurrentUserId).thenReturn(EMPLOYEE_USER_ID);
+        securityContextMock.when(SecurityContext::isSuperAdmin).thenReturn(false);
+
+        WorkflowExecution execution = WorkflowExecution.builder()
+                .entityId(UUID.randomUUID())
+                .entityType(WorkflowDefinition.EntityType.OVERTIME)
+                .requesterId(EMPLOYEE_USER_ID)
+                .title("Overtime Approval")
+                .status(WorkflowExecution.ExecutionStatus.PENDING)
+                .currentStepOrder(1)
+                .build();
+        execution.setId(executionId);
+        execution.setTenantId(TENANT_ID);
+
+        StepExecution assignedStep = StepExecution.builder()
+                .stepOrder(1)
+                .stepName("Manager approval")
+                .status(StepExecution.StepStatus.PENDING)
+                .assignedToUserId(MANAGER_ID)
+                .build();
+        assignedStep.setId(UUID.randomUUID());
+        assignedStep.setTenantId(TENANT_ID);
+        execution.addStepExecution(assignedStep);
+
+        when(workflowExecutionRepository.findByIdAndTenantId(executionId, TENANT_ID))
+                .thenReturn(Optional.of(execution));
+
+        ApprovalActionRequest approveRequest = new ApprovalActionRequest();
+        approveRequest.setAction(StepExecution.ApprovalAction.APPROVE);
+
+        assertThatThrownBy(() -> workflowService.processApprovalAction(executionId, approveRequest))
+                .isInstanceOf(BusinessException.class)
+                .hasMessageContaining("not authorized to act on this step");
     }
 
     // ==================== UC-APPR-005: Escalation After Timeout ====================

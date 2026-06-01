@@ -19,7 +19,7 @@ export const samlKeys = {
  * Fetch the current tenant's SAML configuration.
  */
 export function useSamlConfig(enabled = true) {
-  return useQuery<SamlConfigResponse, Error>({
+  return useQuery<SamlConfigResponse | null, Error>({
     queryKey: samlKeys.config(),
     queryFn: () => samlService.getConfig(),
     enabled,

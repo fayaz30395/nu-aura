@@ -1,12 +1,13 @@
 // Employee Loan Management Types
 
 export type LoanType =
-  | 'PERSONAL'
-  | 'HOME'
-  | 'VEHICLE'
-  | 'EDUCATION'
-  | 'MEDICAL'
-  | 'EMERGENCY'
+  | 'SALARY_ADVANCE'
+  | 'PERSONAL_LOAN'
+  | 'EMERGENCY_LOAN'
+  | 'EDUCATION_LOAN'
+  | 'HOUSING_LOAN'
+  | 'VEHICLE_LOAN'
+  | 'MEDICAL_LOAN'
   | 'OTHER';
 
 // BUG-FIX: LoanStatus values must match backend EmployeeLoan.LoanStatus enum exactly.

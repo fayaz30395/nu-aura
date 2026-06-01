@@ -11,7 +11,7 @@ afterEach(() => {
 describe('environment validation', () => {
   it('enables realtime WebSocket notifications by default', () => {
     vi.stubEnv('NODE_ENV', 'production');
-    vi.stubEnv('NEXT_PUBLIC_API_URL', 'https://api.nu-aura.example/api/v1');
+    vi.stubEnv('NEXT_PUBLIC_API_URL', 'https://api.nulogic.com/api/v1');
     vi.stubEnv('NEXT_PUBLIC_ENABLE_WEBSOCKET', '');
     delete process.env.NEXT_PUBLIC_ENABLE_WEBSOCKET;
 
@@ -23,7 +23,7 @@ describe('environment validation', () => {
 
   it('allows an explicit emergency WebSocket disable flag', () => {
     vi.stubEnv('NODE_ENV', 'production');
-    vi.stubEnv('NEXT_PUBLIC_API_URL', 'https://api.nu-aura.example/api/v1');
+    vi.stubEnv('NEXT_PUBLIC_API_URL', 'https://api.nulogic.com/api/v1');
     vi.stubEnv('NEXT_PUBLIC_ENABLE_WEBSOCKET', 'false');
 
     const result = validateEnv();
@@ -40,7 +40,19 @@ describe('environment validation', () => {
 
     expect(result.success).toBe(false);
     expect(result.errors).toContain(
-      'NEXT_PUBLIC_API_URL: NEXT_PUBLIC_API_URL must not point to localhost or loopback when NODE_ENV=production. Set it to the deployed API URL, for example https://api.your-domain.com/api/v1.'
+      'NEXT_PUBLIC_API_URL: NEXT_PUBLIC_API_URL must not point to localhost or loopback when NODE_ENV=production. Set it to the real deployed API URL, for example https://api.company.com/api/v1.'
+    );
+  });
+
+  it('rejects placeholder API URLs in production', () => {
+    vi.stubEnv('NODE_ENV', 'production');
+    vi.stubEnv('NEXT_PUBLIC_API_URL', 'https://api.your-domain.com/api/v1');
+
+    const result = validateEnv();
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain(
+      'NEXT_PUBLIC_API_URL: NEXT_PUBLIC_API_URL must point to the real deployed API, not an example or placeholder domain.'
     );
   });
 });

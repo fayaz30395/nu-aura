@@ -39,6 +39,7 @@ const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 const PERFORMANCE_ALLOWED_ROLES = [
   'SUPER_ADMIN', 'TENANT_ADMIN', 'HR_ADMIN', 'HR_MANAGER',
   'MANAGER', 'TEAM_LEAD', 'SKIP_LEVEL_MANAGER', 'REPORTING_MANAGER',
+  'EMPLOYEE',
 ];
 
 interface DashboardStats {

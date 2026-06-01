@@ -155,6 +155,8 @@ public class TrainingManagementService {
             throw new IllegalArgumentException("Employee is already enrolled in this program");
         }
 
+        enforcePrerequisites(tenantId, program, request.getEmployeeId());
+
         // Check max participants
         Long currentEnrollments = enrollmentRepository.count(
                 (root, query, cb) -> cb.and(
@@ -187,6 +189,38 @@ public class TrainingManagementService {
         }
 
         return mapToEnrollmentResponse(savedEnrollment);
+    }
+
+    private void enforcePrerequisites(UUID tenantId, TrainingProgram program, UUID employeeId) {
+        List<UUID> prerequisiteProgramIds = parsePrerequisiteProgramIds(program.getPrerequisites());
+        for (UUID prerequisiteProgramId : prerequisiteProgramIds) {
+            boolean completed = enrollmentRepository.existsByTenantIdAndProgramIdAndEmployeeIdAndStatus(
+                    tenantId,
+                    prerequisiteProgramId,
+                    employeeId,
+                    TrainingEnrollment.EnrollmentStatus.COMPLETED
+            );
+            if (!completed) {
+                throw new IllegalArgumentException("Training prerequisite not completed: " + prerequisiteProgramId);
+            }
+        }
+    }
+
+    private List<UUID> parsePrerequisiteProgramIds(String prerequisites) {
+        if (prerequisites == null || prerequisites.isBlank()) {
+            return List.of();
+        }
+
+        String normalized = prerequisites
+                .replace("[", "")
+                .replace("]", "")
+                .replace("\"", "");
+
+        return java.util.Arrays.stream(normalized.split("[,\\s]+"))
+                .map(String::trim)
+                .filter(token -> !token.isEmpty())
+                .map(UUID::fromString)
+                .toList();
     }
 
     @Transactional

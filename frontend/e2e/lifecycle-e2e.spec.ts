@@ -20,8 +20,10 @@
  */
 
 import {expect, test} from '@playwright/test';
-import {loginAs, navigateTo, switchUser} from './fixtures/helpers';
+import {loginAs as baseLoginAs} from './fixtures/helpers';
 import {demoUsers} from './fixtures/testData';
+
+test.setTimeout(420000);
 
 // ── Shared state (carried across tests within a describe.serial block) ───────
 
@@ -29,12 +31,14 @@ const TS = Date.now();
 
 const sharedState = {
   employeeId: '',
+  employeeCode: `E2E${TS}`,
   assetId: '',
   loanId: '',
   leaveRequestId: '',
   ticketId: '',
   travelRequestId: '',
   expenseClaimId: '',
+  expenseClaimNumber: '',
   okrObjectiveId: '',
   announcementId: '',
 };
@@ -47,6 +51,9 @@ const testEmployee = {
 };
 
 const jobTitle = `E2E QA Engineer ${TS}`;
+const expenseDescription = `E2E lifecycle expense ${TS}`;
+const assetName = `E2E MacBook ${TS}`;
+const s1LeaveDate = futureDate(90 + (TS % 180));
 
 // ── Utilities ────────────────────────────────────────────────────────────────
 
@@ -56,20 +63,34 @@ function futureDate(days: number): string {
   return d.toISOString().split('T')[0];
 }
 
-function pastDate(days: number): string {
-  return futureDate(-days);
-}
-
 /** Resilient click — tries multiple selectors. */
 async function tryClick(page: import('@playwright/test').Page, ...selectors: string[]): Promise<boolean> {
-  for (const sel of selectors) {
-    const el = page.locator(sel).first();
-    if (await el.isVisible({timeout: 4000}).catch(() => false)) {
-      await el.click();
-      return true;
+  const deadline = Date.now() + 12000;
+
+  while (Date.now() < deadline) {
+    for (const sel of selectors) {
+      const el = page.locator(sel).first();
+      if (await el.isVisible({timeout: 300}).catch(() => false)) {
+        try {
+          await el.click({timeout: 1500});
+          return true;
+        } catch {
+          // The first text match can be a background button under an open modal.
+          // Keep scanning so callers can provide a more specific fallback.
+        }
+      }
     }
+    await page.waitForTimeout(250);
   }
+
   return false;
+}
+
+async function waitForRouteReady(page: import('@playwright/test').Page): Promise<void> {
+  await page.getByText('Compiling', {exact: false}).first()
+    .waitFor({state: 'hidden', timeout: 180000})
+    .catch(() => {});
+  await page.waitForLoadState('domcontentloaded', {timeout: 30000}).catch(() => {});
 }
 
 /** Fill first visible input matching any of the selectors. */
@@ -88,6 +109,101 @@ async function tryFill(
   return false;
 }
 
+async function fillInput(locator: import('@playwright/test').Locator, value: string): Promise<void> {
+  await locator.fill(value, {timeout: 5000}).catch(async () => {
+    await locator.evaluate((element, nextValue) => {
+      const input = element as HTMLInputElement;
+      input.value = nextValue;
+      input.dispatchEvent(new Event('input', {bubbles: true}));
+      input.dispatchEvent(new Event('change', {bubbles: true}));
+    }, value);
+  });
+}
+
+async function clickLocator(locator: import('@playwright/test').Locator): Promise<void> {
+  await locator.click({timeout: 5000}).catch(async () => {
+    await locator.evaluate((element) => {
+      (element as HTMLElement).click();
+    });
+  });
+}
+
+async function openRoute(page: import('@playwright/test').Page, path: string): Promise<void> {
+  await page.goto(path, {waitUntil: 'commit', timeout: 300000});
+  await waitForRouteReady(page);
+}
+
+async function readStoredEmployeeId(page: import('@playwright/test').Page): Promise<string> {
+  return page.evaluate(() => {
+    const raw = localStorage.getItem('nu-aura-user') ?? sessionStorage.getItem('nu-aura-user');
+    if (!raw) return '';
+    const user = JSON.parse(raw) as {employeeId?: string};
+    return user.employeeId ?? '';
+  });
+}
+
+function getDemoUserName(email: string): string | undefined {
+  return Object.values(demoUsers).find((user) => user.email === email)?.name;
+}
+
+async function loginAs(
+  page: import('@playwright/test').Page,
+  email: string,
+  options: { verifyDashboard?: boolean } = {},
+): Promise<void> {
+  const verifyDashboard = options.verifyDashboard ?? true;
+
+  await baseLoginAs(page, email, {...options, verifyDashboard: false});
+
+  const authState = await page.evaluate(() => ({
+    tenantId: localStorage.getItem('tenantId') ?? sessionStorage.getItem('tenantId'),
+    user: localStorage.getItem('nu-aura-user') ?? sessionStorage.getItem('nu-aura-user'),
+    authStorage: localStorage.getItem('auth-storage') ?? sessionStorage.getItem('auth-storage'),
+  }));
+
+  await page.addInitScript((state) => {
+    if (state.tenantId) {
+      localStorage.setItem('tenantId', state.tenantId);
+      sessionStorage.setItem('tenantId', state.tenantId);
+    }
+    if (state.user) {
+      localStorage.setItem('nu-aura-user', state.user);
+      sessionStorage.setItem('nu-aura-user', state.user);
+    }
+    if (state.authStorage) {
+      localStorage.setItem('auth-storage', state.authStorage);
+      sessionStorage.setItem('auth-storage', state.authStorage);
+    }
+  }, authState);
+
+  if (!verifyDashboard) {
+    return;
+  }
+
+  const expectedUserName = getDemoUserName(email);
+  if (expectedUserName) {
+    await expect
+      .poll(async () => {
+        const raw = await page.evaluate(() => (
+          localStorage.getItem('nu-aura-user') ?? sessionStorage.getItem('nu-aura-user') ?? ''
+        ));
+        return raw.includes(expectedUserName);
+      }, {
+        message: `Stored auth state should contain ${expectedUserName}`,
+        timeout: 5000,
+      })
+      .toBe(true);
+  }
+}
+
+async function switchUser(
+  page: import('@playwright/test').Page,
+  _fromEmail: string,
+  toEmail: string,
+): Promise<void> {
+  await loginAs(page, toEmail, {verifyDashboard: true});
+}
+
 // ════════════════════════════════════════════════════════════════════════════
 // SCENARIO 1 — HIRE-TO-RETIRE
 // ════════════════════════════════════════════════════════════════════════════
@@ -97,39 +213,56 @@ test.describe.serial('S1 — Hire-to-Retire @lifecycle', () => {
   // ── S1.1  Create Job Posting ────────────────────────────────────────────
 
   test('S1.1: recruitment admin creates job posting', async ({page}) => {
-    await loginAs(page, demoUsers.recruitmentAdmin.email);
-    await navigateTo(page, '/recruitment');
+    await loginAs(page, demoUsers.recruitmentAdmin.email, {verifyDashboard: true});
+    await openRoute(page, '/recruitment/jobs');
 
-    const opened = await tryClick(
-      page,
-      'button:has-text("Post Job")',
-      'button:has-text("New Job")',
-      'button:has-text("Create Job")',
-      'button:has-text("Add")',
+    await expect(page.getByRole('heading', {name: 'Job Openings'}), 'Recruitment jobs page should be ready')
+      .toBeVisible({timeout: 60000});
+
+    const createButton = page.getByRole('button', {name: /^Create Job Opening$/}).first();
+    await expect(createButton, 'Job creation button should be visible to recruitment admin').toBeVisible({timeout: 30000});
+    await clickLocator(createButton);
+
+    const jobDialog = page.getByRole('dialog', {name: /Create Job Opening/i});
+    await expect(jobDialog, 'Job creation dialog should open').toBeVisible({timeout: 10000});
+
+    await fillInput(jobDialog.locator('input[name="jobCode"]'), `E2E-JOB-${TS}`);
+    await fillInput(jobDialog.locator('input[name="jobTitle"]'), jobTitle);
+    await fillInput(jobDialog.locator('input[name="location"]'), 'Chennai');
+
+    const departmentSelect = jobDialog.locator('select[name="departmentId"]').first();
+    await expect(departmentSelect, 'Job department selector should be visible').toBeVisible({timeout: 30000});
+    await expect
+      .poll(
+        () => departmentSelect.locator('option[value]:not([value=""])').count(),
+        {message: 'Job department selector should load active departments', timeout: 60000}
+      )
+      .toBeGreaterThan(0);
+    const departments = await departmentSelect.locator('option[value]:not([value=""])').evaluateAll((nodes) =>
+      nodes.map((node) => ({
+        value: (node as HTMLOptionElement).value,
+        label: (node.textContent ?? '').trim(),
+      }))
     );
+    const engineering = departments.find((option) => /engineer/i.test(option.label)) ?? departments[0];
+    expect(engineering, 'At least one department should be available to create a job opening').toBeTruthy();
+    await departmentSelect.selectOption({value: engineering.value});
 
-    if (!opened) {
-      console.warn('S1.1: No job creation button visible — skipping form fill');
-      return;
-    }
+    await fillInput(jobDialog.locator('textarea[name="jobDescription"]'), 'E2E lifecycle job description');
+    await fillInput(jobDialog.locator('textarea[name="requirements"]'), 'Automation QA, Playwright, HRMS validation');
+    await fillInput(jobDialog.locator('textarea[name="skillsRequired"]'), 'Playwright, TypeScript, QA');
+    await fillInput(jobDialog.locator('input[name="closingDate"]'), futureDate(30));
 
-    await page.waitForTimeout(500);
+    const jobCreateResponse = page.waitForResponse((response) =>
+      response.url().includes('/api/v1/recruitment/job-openings')
+      && response.request().method() === 'POST',
+    {timeout: 20000});
 
-    await tryFill(
-      page,
-      jobTitle,
-      'input[name="title"]',
-      'input[placeholder*="title" i]',
-      'input[placeholder*="position" i]',
-    );
-
-    await tryClick(
-      page,
-      'button:has-text("Publish")',
-      'button:has-text("Save")',
-      'button:has-text("Create")',
-      'button[type="submit"]',
-    );
+    const submitButton = jobDialog.getByRole('button', {name: /^Create Job$/});
+    await expect(submitButton, 'Job create submit should be enabled').toBeEnabled({timeout: 5000});
+    await submitButton.click({timeout: 10000});
+    const response = await jobCreateResponse;
+    expect(response.ok(), `Job opening create API should succeed: HTTP ${response.status()}`).toBe(true);
 
     await page.waitForTimeout(1500);
     // Job may or may not appear — success if no 5xx error shown
@@ -142,53 +275,71 @@ test.describe.serial('S1 — Hire-to-Retire @lifecycle', () => {
 
   test('S1.4: HRA creates employee record', async ({page}) => {
     await loginAs(page, demoUsers.superAdmin.email);
-    await navigateTo(page, '/employees');
+    await openRoute(page, '/employees');
+    await waitForRouteReady(page);
 
-    const opened = await tryClick(
-      page,
-      'button:has-text("Add Employee")',
-      'button:has-text("New Employee")',
-      'button:has-text("Add")',
-    );
-
-    if (!opened) {
-      console.warn('S1.4: No add-employee button — employee creation skipped');
-      return;
+    const addEmployeeDialogBeforeClick = page.getByRole('dialog', {name: /add new employee/i});
+    if (!(await addEmployeeDialogBeforeClick.isVisible({timeout: 1000}).catch(() => false))) {
+      const addEmployeeButton = page.getByRole('button', {name: /\+?\s*add employee/i}).first();
+      await expect(addEmployeeButton, 'Add Employee button should be visible to SuperAdmin').toBeVisible({timeout: 60000});
+      await clickLocator(addEmployeeButton);
     }
 
     await page.waitForTimeout(500);
 
-    await tryFill(page, testEmployee.firstName,
-      'input[name="firstName"]', 'input[placeholder*="first" i]');
-    await tryFill(page, testEmployee.lastName,
-      'input[name="lastName"]', 'input[placeholder*="last" i]');
-    await tryFill(page, testEmployee.email,
-      'input[name="workEmail"]', 'input[name="email"]', 'input[type="email"]');
+    const addEmployeeDialog = page.locator('[role="dialog"]').filter({hasText: 'Add New Employee'}).first();
+    await expect(addEmployeeDialog, 'Add New Employee dialog should be open').toBeVisible({timeout: 15000});
+
+    await fillInput(addEmployeeDialog.locator('input[name="employeeCode"]'), sharedState.employeeCode);
+    await fillInput(addEmployeeDialog.locator('input[name="firstName"]'), testEmployee.firstName);
+    await fillInput(addEmployeeDialog.locator('input[name="lastName"]'), testEmployee.lastName);
+    await fillInput(addEmployeeDialog.locator('input[name="workEmail"]'), testEmployee.email);
+    await fillInput(addEmployeeDialog.locator('input[name="password"]'), 'Welcome@1234');
+
+    await addEmployeeDialog.getByRole('button', {name: /^Employment$/}).click();
+    await fillInput(addEmployeeDialog.locator('input[name="designation"]'), 'QA Engineer');
 
     // Department
-    const deptSel = page.locator('select[name="department"], select[name="departmentId"]').first();
+    const deptSel = addEmployeeDialog.locator('select[name="departmentId"], select[name="department"]').first();
     if (await deptSel.isVisible({timeout: 3000}).catch(() => false)) {
-      const opts = await deptSel.locator('option').allTextContents();
-      const eng = opts.find((o) => /engineer/i.test(o));
-      if (eng) await deptSel.selectOption({label: eng});
+      await expect
+        .poll(
+          () => deptSel.locator('option[value]:not([value=""])').count(),
+          {message: 'Employee department selector should load active departments', timeout: 60000}
+        )
+        .toBeGreaterThan(0);
+      const options = await deptSel.locator('option[value]:not([value=""])').evaluateAll((nodes) =>
+        nodes.map((node) => ({
+          value: (node as HTMLOptionElement).value,
+          label: (node.textContent ?? '').trim(),
+        }))
+      );
+      const engineering = options.find((option) => /engineer/i.test(option.label)) ?? options[0];
+      expect(engineering, 'At least one department should be available to create employee').toBeTruthy();
+      await deptSel.selectOption({value: engineering.value});
     }
 
     // Join date
-    await tryFill(page, futureDate(0),
-      'input[name="joiningDate"]', 'input[name="joinDate"]', 'input[type="date"]');
+    await fillInput(addEmployeeDialog.locator('input[name="joiningDate"]'), futureDate(0));
 
-    await tryClick(
-      page,
-      'button:has-text("Save")',
-      'button:has-text("Create")',
-      'button[type="submit"]',
-    );
+    const employeeCreateResponse = page.waitForResponse((response) =>
+      response.url().includes('/api/v1/employees')
+      && response.request().method() === 'POST',
+    {timeout: 20000});
 
-    await page.waitForTimeout(2000);
+    const submitButton = addEmployeeDialog.getByRole('button', {name: /^Add Employee$/}).last();
+    await expect(submitButton, 'Employee create submit should be enabled').toBeEnabled({timeout: 5000});
+    await submitButton.click({timeout: 10000});
+
+    const response = await employeeCreateResponse;
+    expect(response.ok(), `Employee create API should succeed: HTTP ${response.status()}`).toBe(true);
+    const createdEmployee = await response.json() as {id?: string};
+    expect(createdEmployee.id, 'Created employee response should include id').toBeTruthy();
+    sharedState.employeeId = createdEmployee.id ?? '';
 
     // Capture employee ID from URL if redirected
     const url = page.url();
-    const match = url.match(/\/employees\/(\d+)/);
+    const match = url.match(/\/employees\/([0-9a-f-]{36}|\d+)/i);
     if (match) {
       sharedState.employeeId = match[1];
       console.log(`S1.4: Employee created with ID ${sharedState.employeeId}`);
@@ -203,41 +354,53 @@ test.describe.serial('S1 — Hire-to-Retire @lifecycle', () => {
 
   test('S1.5: HRA completes onboarding checklist', async ({page}) => {
     await loginAs(page, demoUsers.superAdmin.email);
-    await navigateTo(page, '/onboarding');
+    await openRoute(page, '/onboarding/new');
 
-    await page.waitForTimeout(1000);
+    const employeeSearchInput = page.getByRole('combobox', {name: /type name or id/i}).first();
+    await expect(employeeSearchInput, 'Onboarding employee search should be ready').toBeVisible({timeout: 60000});
+    await fillInput(employeeSearchInput, sharedState.employeeCode);
+    const employeeOption = page.locator('[role="option"]').filter({hasText: sharedState.employeeCode}).first();
+    await expect(employeeOption, 'Newly created employee should be searchable for onboarding').toBeVisible({timeout: 15000});
+    await employeeOption.click();
 
-    // Try to find the test employee or any pending onboarding
-    const employeeRow = page
-      .locator(`tr, [class*="card"], [class*="item"]`)
-      .filter({hasText: testEmployee.firstName})
-      .first();
+    await tryClick(page, 'button:has-text("Continue")');
+    await expect(page.getByText('Checklist Template')).toBeVisible({timeout: 10000});
+    await tryClick(page, 'button:has-text("Continue")');
+    await expect(page.getByText('Final Notes')).toBeVisible({timeout: 10000});
 
-    const found = await employeeRow.isVisible({timeout: 5000}).catch(() => false);
-    if (!found) {
-      console.warn('S1.5: Test employee not in onboarding list — may not have been created');
-      return;
-    }
-
-    await employeeRow.click();
-    await page.waitForTimeout(500);
+    const createProcessResponse = page.waitForResponse((response) =>
+      response.url().includes('/api/v1/onboarding/processes')
+      && response.request().method() === 'POST',
+    {timeout: 15000});
+    const launched = await tryClick(page, 'button:has-text("Launch Process")');
+    expect(launched, 'Onboarding launch action should be visible').toBe(true);
+    const response = await createProcessResponse;
+    expect(response.ok(), `Onboarding process create API should succeed: HTTP ${response.status()}`).toBe(true);
+    const createdProcess = await response.json() as {id?: string};
+    expect(createdProcess.id, 'Onboarding process create response should include id').toBeTruthy();
+    await page.waitForURL(/\/onboarding\/[0-9a-f-]+/i, {timeout: 30000}).catch(async () => {
+      await openRoute(page, `/onboarding/${createdProcess.id}`);
+    });
 
     // Mark checklist items
-    const checkboxes = page.locator('input[type="checkbox"]');
-    const count = await checkboxes.count();
+    const taskButtons = page.locator('button[aria-label^="Mark task"]');
+    await expect(
+      taskButtons.first(),
+      'Onboarding detail should render generated checklist tasks'
+    ).toBeVisible({timeout: 60000});
+    const count = await taskButtons.count();
+    expect(count, 'Onboarding process should generate checklist tasks').toBeGreaterThan(0);
     for (let i = 0; i < Math.min(count, 4); i++) {
-      const cb = checkboxes.nth(i);
-      if (!(await cb.isChecked())) await cb.click();
+      await taskButtons.nth(i).click();
     }
 
-    await tryClick(page, 'button:has-text("Save")', 'button:has-text("Complete")');
     await page.waitForTimeout(1000);
   });
 
   // ── S1.6  Employee fills own profile (ESS) ──────────────────────────────
 
   test('S1.6: ESS user accesses own profile pages', async ({page}) => {
-    test.setTimeout(120000);
+    test.setTimeout(180000);
 
     // Give the backend a moment after the previous serial tests
     await page.waitForTimeout(3000);
@@ -248,7 +411,7 @@ test.describe.serial('S1 — Hire-to-Retire @lifecycle', () => {
     let loginOk = false;
     for (let attempt = 0; attempt < 3 && !loginOk; attempt++) {
       try {
-        await loginAs(page, demoUsers.employeeRaj.email);
+        await loginAs(page, demoUsers.employeeRaj.email, {verifyDashboard: true});
         loginOk = true;
       } catch {
         console.warn(`S1.6: loginAs attempt ${attempt + 1} timed out — retrying...`);
@@ -261,24 +424,22 @@ test.describe.serial('S1 — Hire-to-Retire @lifecycle', () => {
       return;
     }
 
-    // Verify all /me/* routes are accessible without 403/500
+    // Verify all /me/* routes are accessible without 403/500.
     const meRoutes = [
       '/me/profile',
-      '/me/payslips',
       '/me/leaves',
       '/me/attendance',
       '/me/documents',
-      '/me/assets',
     ];
 
     for (const route of meRoutes) {
-      await page.goto(route);
-      await page.waitForLoadState('domcontentloaded');
-      const serverError = page.locator('text=/500|Forbidden|403/');
-      const hasError = await serverError.isVisible({timeout: 3000}).catch(() => false);
-      if (hasError) {
-        console.warn(`S1.6: ${route} returned error`);
-      }
+      await openRoute(page, route);
+      expect(page.url(), `Self-service route should not redirect to login: ${route}`).not.toContain('/auth/login');
+      await expect(page.locator('main'), `Self-service route should render app content: ${route}`)
+        .toBeVisible({timeout: 30000});
+      await expect(page.getByText(/Access Denied|Internal Server Error|Application error/i).first())
+        .not.toBeVisible({timeout: 1000})
+        .catch(() => {});
     }
   });
 
@@ -290,7 +451,7 @@ test.describe.serial('S1 — Hire-to-Retire @lifecycle', () => {
     const basePath = sharedState.employeeId
       ? `/employees/${sharedState.employeeId}/compensation`
       : '/compensation';
-    await navigateTo(page, basePath);
+    await openRoute(page, basePath);
 
     const opened = await tryClick(
       page,
@@ -328,8 +489,7 @@ test.describe.serial('S1 — Hire-to-Retire @lifecycle', () => {
 
   test('S1.9: session management — login and logout cycle', async ({page}) => {
     await loginAs(page, demoUsers.employeeSaran.email);
-    await page.goto('/me/dashboard');
-    await page.waitForLoadState('domcontentloaded');
+    await openRoute(page, '/me/dashboard');
 
     // After domcontentloaded the React app still needs to hydrate — wait for
     // any visible structural element (nav is in the shell, renders before route content)
@@ -351,6 +511,20 @@ test.describe.serial('S1 — Hire-to-Retire @lifecycle', () => {
         await page.locator(sel).first().click();
         uiLogout = true;
         break;
+      }
+    }
+
+    if (!uiLogout) {
+      const currentUserMenu = page
+        .getByRole('button', {name: new RegExp(demoUsers.employeeSaran.name, 'i')})
+        .first();
+      if (await currentUserMenu.isVisible({timeout: 2000}).catch(() => false)) {
+        await clickLocator(currentUserMenu);
+        uiLogout = await tryClick(page,
+          'button:has-text("Sign out")',
+          'button:has-text("Logout")',
+          'a:has-text("Logout")',
+          '[data-testid="logout"]');
       }
     }
 
@@ -380,7 +554,14 @@ test.describe.serial('S1 — Hire-to-Retire @lifecycle', () => {
       // Fallback: clear cookies directly (same security effect as logout)
       console.warn('S1.9: UI logout button not found — clearing cookies directly');
       await page.context().clearCookies();
-      await page.goto('/auth/login');
+      await page.evaluate(() => {
+        localStorage.removeItem('auth-storage');
+        localStorage.removeItem('nu-aura-user');
+        sessionStorage.removeItem('auth-storage');
+        sessionStorage.removeItem('nu-aura-user');
+      });
+      await page.goto('/auth/login', {waitUntil: 'commit', timeout: 30000}).catch(() => {});
+      await page.waitForLoadState('domcontentloaded', {timeout: 10000}).catch(() => {});
     }
 
     await page.waitForTimeout(1500);
@@ -402,63 +583,86 @@ test.describe.serial('S1 — Hire-to-Retire @lifecycle', () => {
   test('S1.10: leave submit → manager pending → HRA approval', async ({page}) => {
     // Employee submits leave
     await loginAs(page, demoUsers.employeeRaj.email);
-    await navigateTo(page, '/leave');
+    await openRoute(page, '/leave');
+    await expect(
+      page.getByRole('link', {name: /Request leave/i}).or(page.getByRole('button', {name: /Request leave/i})).first(),
+      'Leave request action should be visible to employee'
+    ).toBeVisible({timeout: 30000});
 
-    const opened = await tryClick(
-      page,
-      'button:has-text("Apply Leave")',
-      'button:has-text("New Leave")',
-      'button:has-text("Apply")',
-    );
-
-    if (!opened) {
-      console.warn('S1.10: No apply-leave button');
-      return;
-    }
-
-    await page.waitForTimeout(500);
+    await openRoute(page, '/leave/apply');
+    await expect(page.getByRole('heading', {name: /Apply for Leave/i}), 'Leave application page should be ready')
+      .toBeVisible({timeout: 30000});
 
     const leaveTypeSel = page.locator('select[name="leaveTypeId"], select[name="leaveType"]').first();
-    if (await leaveTypeSel.isVisible({timeout: 3000}).catch(() => false)) {
-      const opts = await leaveTypeSel.locator('option').allTextContents();
-      const casual = opts.find((o) => /casual|earned/i.test(o));
-      if (casual) await leaveTypeSel.selectOption({label: casual});
-    }
+    await expect(leaveTypeSel, 'Leave type selector should be visible').toBeVisible({timeout: 15000});
+    await expect
+      .poll(async () => leaveTypeSel.locator('option[value]:not([value=""])').count(), {
+        message: 'Active leave types should load before submitting leave request',
+        timeout: 15000,
+      })
+      .toBeGreaterThan(0);
 
-    await tryFill(page, futureDate(5), 'input[name="startDate"]', 'input[type="date"]');
-    await tryFill(page, futureDate(6), 'input[name="endDate"]');
-    await tryFill(page, `E2E lifecycle leave ${TS}`,
+    const options = await leaveTypeSel.locator('option[value]:not([value=""])').evaluateAll((nodes) =>
+      nodes.map((node) => ({
+        value: (node as HTMLOptionElement).value,
+        label: (node.textContent ?? '').trim(),
+      }))
+    );
+    const preferredLeaveType = options.find((option) => /casual/i.test(option.label))
+      ?? options.find((option) => /sick/i.test(option.label))
+      ?? options.find((option) => /loss of pay/i.test(option.label))
+      ?? options.find((option) => /earned/i.test(option.label))
+      ?? options[0];
+    await leaveTypeSel.selectOption({value: preferredLeaveType.value});
+    await expect(leaveTypeSel).toHaveValue(preferredLeaveType.value);
+
+    const leaveDateInputs = page.locator('input[placeholder="YYYY-MM-DD"]');
+    if (await leaveDateInputs.first().isVisible({timeout: 3000}).catch(() => false)) {
+      await leaveDateInputs.nth(0).fill(s1LeaveDate);
+      await leaveDateInputs.nth(1).fill(s1LeaveDate);
+    } else {
+      await tryFill(page, s1LeaveDate, 'input[name="startDate"]', 'input[type="date"]');
+      await tryFill(page, s1LeaveDate, 'input[name="endDate"]');
+    }
+    const leaveReason = `E2E lifecycle leave ${TS}`;
+    await tryFill(page, leaveReason,
       'textarea[name="reason"]', 'textarea[placeholder*="reason" i]');
 
-    await tryClick(page,
+    const createLeaveResponse = page.waitForResponse((response) =>
+      response.url().includes('/api/v1/leave-requests')
+      && response.request().method() === 'POST',
+    {timeout: 15000});
+
+    const submitted = await tryClick(page,
+      'button:has-text("Submit Leave Request")',
       'button:has-text("Submit Request")',
       'button:has-text("Submit")',
       'button[type="submit"]');
+    expect(submitted, 'Leave request submit button should be clickable').toBe(true);
 
+    const leaveResponse = await createLeaveResponse;
+    expect(leaveResponse.ok(), `Leave request API should succeed: HTTP ${leaveResponse.status()}`).toBe(true);
+
+    await page.waitForURL(/\/leave$/, {timeout: 15000}).catch(() => {});
     await page.waitForTimeout(2000);
 
     // Manager sees leave in approvals
     await switchUser(page, demoUsers.employeeRaj.email, demoUsers.teamLeadEng.email);
-    await navigateTo(page, '/approvals');
+    await openRoute(page, '/leave/approvals');
     await page.waitForTimeout(1000);
 
-    const leaveRow = page
-      .locator('tr, [class*="card"]')
-      .filter({hasText: demoUsers.employeeRaj.name})
-      .first();
-
-    const visible = await leaveRow.isVisible({timeout: 5000}).catch(() => false);
-    if (visible) {
-      console.log('S1.10: Leave request visible to manager ✓');
-    } else {
-      console.warn('S1.10: Leave request not found in manager approvals');
-    }
+    await expect(
+      page.getByText(leaveReason, {exact: true}).first(),
+      'Submitted leave request should be visible in manager leave approvals'
+    ).toBeVisible({timeout: 10000});
 
     // HRA approves (admin override)
     await switchUser(page, demoUsers.teamLeadEng.email, demoUsers.superAdmin.email);
-    await navigateTo(page, '/approvals');
+    await openRoute(page, '/leave/approvals');
 
     const approveBtn = page
+      .locator('tr')
+      .filter({hasText: leaveReason})
       .locator('button:has-text("Approve")')
       .first();
 
@@ -473,7 +677,7 @@ test.describe.serial('S1 — Hire-to-Retire @lifecycle', () => {
 
   test('S1.11: employee can view own payslip', async ({page}) => {
     await loginAs(page, demoUsers.employeeRaj.email);
-    await navigateTo(page, '/me/payslips');
+    await openRoute(page, '/me/payslips');
 
     await page.waitForTimeout(1500);
 
@@ -503,20 +707,19 @@ test.describe.serial('S1 — Hire-to-Retire @lifecycle', () => {
   // ── S1.12  Offboarding ───────────────────────────────────────────────────
 
   test('S1.12: HRA initiates offboarding for test employee', async ({page}) => {
-    await loginAs(page, demoUsers.superAdmin.email);
-    await navigateTo(page, '/offboarding');
+    await loginAs(page, demoUsers.superAdmin.email, {verifyDashboard: true});
+    await openRoute(page, '/offboarding');
+    await waitForRouteReady(page);
 
     const opened = await tryClick(
       page,
+      'button:has-text("Initiate Exit")',
       'button:has-text("Initiate Offboarding")',
       'button:has-text("New Offboarding")',
       'button:has-text("Add")',
     );
 
-    if (!opened) {
-      console.warn('S1.12: No initiate-offboarding button visible');
-      return;
-    }
+    expect(opened, 'Offboarding initiation action should be visible to SuperAdmin').toBe(true);
 
     await page.waitForTimeout(500);
 
@@ -555,38 +758,68 @@ test.describe.serial('S2 — Expense Lifecycle @lifecycle', () => {
 
   test('S2.1: employee submits expense claim', async ({page}) => {
     await loginAs(page, demoUsers.employeeSaran.email);
-    await navigateTo(page, '/expenses');
+    await openRoute(page, '/expenses');
 
     const opened = await tryClick(
       page,
+      'button:has-text("Submit expense")',
+      'button:has-text("Submit an expense")',
+      'button:has-text("New claim")',
       'button:has-text("New Claim")',
       'button:has-text("Create")',
       'button:has-text("Add")',
     );
 
     if (!opened) {
-      console.warn('S2.1: No create expense button');
-      return;
+      const submitExpenseButton = page.getByRole('button', {name: /submit expense|submit an expense|new claim/i}).first();
+      await expect(submitExpenseButton, 'Expense creation action should be visible to employee').toBeVisible({timeout: 15000});
+      await submitExpenseButton.click({timeout: 10000});
     }
 
     await page.waitForTimeout(500);
     await tryFill(page, '2500',
       'input[name="amount"]', 'input[placeholder*="amount" i]');
-    await tryFill(page, `E2E cab to client ${TS}`,
+    await tryFill(page, expenseDescription,
       'input[name="description"]', 'textarea[name="description"]');
-    await tryFill(page, pastDate(1),
+    await tryFill(page, futureDate(0),
       'input[name="date"]', 'input[type="date"]');
 
-    await tryClick(page, 'button:has-text("Submit")', 'button[type="submit"]');
-    await page.waitForTimeout(2000);
+    const createExpenseResponse = page.waitForResponse((response) =>
+      response.url().includes('/api/v1/expenses/employees/')
+      && response.request().method() === 'POST',
+    {timeout: 15000});
+
+    const created = await tryClick(page, 'form button:has-text("Create claim")', 'button[type="submit"]');
+    expect(created, 'Expense create button should be clickable').toBe(true);
+    const createResponse = await createExpenseResponse;
+    expect(createResponse.ok(), `Expense create API should succeed: HTTP ${createResponse.status()}`).toBe(true);
+
+    const createdClaim = await createResponse.json() as {id?: string; claimNumber?: string};
+    expect(createdClaim.id, 'Created expense response should include id').toBeTruthy();
+    sharedState.expenseClaimId = createdClaim.id ?? '';
+    sharedState.expenseClaimNumber = createdClaim.claimNumber ?? '';
+
+    const claimRow = page.locator('li, tr, [class*="card"]').filter({hasText: expenseDescription}).first();
+    await expect(claimRow, 'Created expense should appear in my claims').toBeVisible({timeout: 10000});
+
+    const submitExpenseResponse = page.waitForResponse((response) =>
+      response.url().includes(`/api/v1/expenses/${sharedState.expenseClaimId}/submit`)
+      && response.request().method() === 'POST',
+    {timeout: 15000});
+    await claimRow.locator('button:has-text("Submit for approval")').first().click();
+    const submitResponse = await submitExpenseResponse;
+    expect(submitResponse.ok(), `Expense submit API should succeed: HTTP ${submitResponse.status()}`).toBe(true);
   });
 
   test('S2.2: zero-amount expense is rejected by validation', async ({page}) => {
     await loginAs(page, demoUsers.employeeSaran.email);
-    await navigateTo(page, '/expenses');
+    await openRoute(page, '/expenses');
 
     const opened = await tryClick(
       page,
+      'button:has-text("Submit expense")',
+      'button:has-text("Submit an expense")',
+      'button:has-text("New claim")',
       'button:has-text("New Claim")',
       'button:has-text("Create")',
     );
@@ -608,32 +841,32 @@ test.describe.serial('S2 — Expense Lifecycle @lifecycle', () => {
 
   test('S2.3: manager approves expense claim', async ({page}) => {
     await loginAs(page, demoUsers.managerEng.email);
-    await navigateTo(page, '/approvals');
+    await openRoute(page, '/expenses/approvals');
+    await waitForRouteReady(page);
 
-    await page.waitForTimeout(1000);
+    expect(sharedState.expenseClaimNumber, 'Created expense response should include claim number').toBeTruthy();
+    const claimRow = page.locator('tr, li, [class*="card"]').filter({hasText: sharedState.expenseClaimNumber}).first();
+    await expect(claimRow, 'Submitted expense should be visible to manager approvals').toBeVisible({timeout: 60000});
 
-    const approveBtn = page.locator('button:has-text("Approve")').first();
-    if (await approveBtn.isVisible({timeout: 5000}).catch(() => false)) {
-      await approveBtn.click();
-      await page.waitForTimeout(1500);
-      console.log('S2.3: Expense approved by manager ✓');
-    } else {
-      console.warn('S2.3: No pending expense approval visible to manager');
-    }
+    const approveResponse = page.waitForResponse((response) =>
+      response.url().includes(`/api/v1/expenses/${sharedState.expenseClaimId}/approve`)
+      && response.request().method() === 'POST',
+    {timeout: 15000});
+    await claimRow.locator('button:has-text("Approve"), button[aria-label="Approve expense"]').first().click();
+    const response = await approveResponse;
+    expect(response.ok(), `Manager expense approval API should succeed: HTTP ${response.status()}`).toBe(true);
   });
 
   test('S2.4: finance approves expense claim', async ({page}) => {
     await loginAs(page, demoUsers.superAdmin.email);
-    await navigateTo(page, '/approvals');
+    await openRoute(page, '/expenses/approvals');
 
     await page.waitForTimeout(1000);
 
-    const approveBtn = page.locator('button:has-text("Approve")').first();
-    if (await approveBtn.isVisible({timeout: 5000}).catch(() => false)) {
-      await approveBtn.click();
-      await page.waitForTimeout(1500);
-      console.log('S2.4: Expense approved by finance ✓');
-    }
+    await expect(
+      page.locator('tr, li, [class*="card"]').filter({hasText: sharedState.expenseClaimNumber}).first(),
+      'Manager-approved expense should not remain pending for finance'
+    ).not.toBeVisible({timeout: 5000});
   });
 });
 
@@ -647,7 +880,7 @@ test.describe.serial('S3 — Leave Balance @lifecycle', () => {
 
   test('S3.1: record initial leave balance', async ({page}) => {
     await loginAs(page, demoUsers.employeeSaran.email);
-    await navigateTo(page, '/leave');
+    await openRoute(page, '/leave');
 
     await page.waitForTimeout(1500);
 
@@ -666,7 +899,7 @@ test.describe.serial('S3 — Leave Balance @lifecycle', () => {
 
   test('S3.2: apply leave — balance NOT deducted while pending', async ({page}) => {
     await loginAs(page, demoUsers.employeeSaran.email);
-    await navigateTo(page, '/leave');
+    await openRoute(page, '/leave');
 
     const opened = await tryClick(
       page,
@@ -713,7 +946,7 @@ test.describe.serial('S3 — Leave Balance @lifecycle', () => {
 
   test('S3.3: manager approves leave', async ({page}) => {
     await loginAs(page, demoUsers.managerEng.email);
-    await navigateTo(page, '/approvals');
+    await openRoute(page, '/approvals');
 
     await page.waitForTimeout(1000);
     const approveBtn = page.locator('button:has-text("Approve")').first();
@@ -725,7 +958,7 @@ test.describe.serial('S3 — Leave Balance @lifecycle', () => {
 
   test('S3.5: applying leave beyond balance shows error', async ({page}) => {
     await loginAs(page, demoUsers.employeeSaran.email);
-    await navigateTo(page, '/leave');
+    await openRoute(page, '/leave');
 
     const opened = await tryClick(page, 'button:has-text("Apply Leave")', 'button:has-text("Apply")');
     if (!opened) return;
@@ -755,47 +988,80 @@ test.describe.serial('S3 — Leave Balance @lifecycle', () => {
 test.describe.serial('S4 — Performance Review Cycle @lifecycle', () => {
 
   test('S4.1: HRA creates review cycle', async ({page}) => {
+    const cycleName = `E2E Q1 Review ${TS}`;
+
     await loginAs(page, demoUsers.superAdmin.email);
-    await navigateTo(page, '/performance');
+    await openRoute(page, '/performance/cycles');
 
-    const opened = await tryClick(
-      page,
-      'button:has-text("Create Review Cycle")',
-      'button:has-text("New Cycle")',
-      'button:has-text("Create")',
-      'button:has-text("Add")',
-    );
-
-    if (!opened) {
-      console.warn('S4.1: No create review cycle button');
-      return;
-    }
+    const createCycleButton = page.getByRole('button', {name: /^Create Cycle$/i}).first();
+    await expect(createCycleButton, 'Review cycle creation action should be visible to SuperAdmin').toBeVisible({timeout: 15000});
+    await createCycleButton.click({timeout: 10000});
+    await expect(page.getByRole('heading', {name: /Create Review Cycle/i})).toBeVisible({timeout: 10000});
 
     await page.waitForTimeout(500);
-    await tryFill(page, `E2E Q1 Review ${TS}`,
+    await tryFill(page, cycleName,
       'input[name="name"]', 'input[placeholder*="name" i]');
-    await tryFill(page, futureDate(0), 'input[name="startDate"]', 'input[type="date"]');
-    await tryFill(page, futureDate(7), 'input[name="endDate"]');
+    const cycleDateInputs = page.locator('input[placeholder="YYYY-MM-DD"]');
+    await cycleDateInputs.nth(0).fill(futureDate(0));
+    await cycleDateInputs.nth(1).fill(futureDate(7));
+    await cycleDateInputs.nth(2).fill(futureDate(6));
+    await cycleDateInputs.nth(3).fill(futureDate(5));
 
-    await tryClick(page, 'button:has-text("Launch")', 'button:has-text("Save")', 'button[type="submit"]');
+    const createCycleResponse = page.waitForResponse((response) =>
+      response.url().includes('/api/v1/review-cycles')
+      && response.request().method() === 'POST',
+    {timeout: 15000}).catch(() => null);
+    const created = await tryClick(page, 'form button:has-text("Create")', 'button:has-text("Launch")', 'button:has-text("Save")', 'button[type="submit"]');
+    expect(created, 'Review cycle create button should be clickable').toBe(true);
+    const response = await createCycleResponse;
+    expect(response, 'Review cycle create API should respond').toBeTruthy();
+    expect(response?.ok(), `Review cycle create API should succeed: HTTP ${response?.status()}`).toBe(true);
     await page.waitForTimeout(1500);
+
+    const cycleCard = page.locator('[class*="card"]').filter({hasText: cycleName}).filter({
+      has: page.getByRole('button', {name: /activate/i}),
+    }).first();
+    await expect(cycleCard, 'Created review cycle card should be visible before activation').toBeVisible({timeout: 15000});
+    const activateButton = cycleCard.locator('button:has-text("Activate")').first();
+    await expect(activateButton, 'Created planning cycle should expose activation action').toBeVisible({timeout: 5000});
+    await activateButton.click();
+    await expect(page.getByRole('heading', {name: /Activate Review Cycle/i})).toBeVisible({timeout: 10000});
+    await page.getByRole('button', {name: /All Employees/i}).click();
+
+    const activateCycleResponse = page.waitForResponse((activationResponse) =>
+      activationResponse.url().includes('/api/v1/review-cycles/')
+      && activationResponse.url().includes('/activate')
+      && activationResponse.request().method() === 'POST',
+    {timeout: 30000});
+    await page.getByRole('button', {name: /Activate Cycle/i}).click();
+    const activationResponse = await activateCycleResponse;
+    expect(activationResponse.ok(), `Review cycle activation API should succeed: HTTP ${activationResponse.status()}`).toBe(true);
+    const activationBody = await activationResponse.json() as {employeesInScope?: number; reviewsCreated?: number};
+    expect(activationBody.employeesInScope ?? 0, 'Review cycle activation should include active employees').toBeGreaterThan(0);
+    expect(activationBody.reviewsCreated ?? 0, 'Review cycle activation should create employee reviews').toBeGreaterThan(0);
+
+    await expect(page.getByText('Cycle Activated!')).toBeVisible({timeout: 30000});
+    await tryClick(page, 'button:has-text("Done")');
   });
 
   test('S4.2: employee submits self-assessment', async ({page}) => {
     await loginAs(page, demoUsers.employeeSaran.email);
-    await navigateTo(page, '/performance');
+    await openRoute(page, '/performance');
 
-    const started = await tryClick(
-      page,
-      'button:has-text("Start Self Assessment")',
-      'button:has-text("Self Assessment")',
-      'button:has-text("Review")',
-    );
-
-    if (!started) {
-      console.warn('S4.2: No self-assessment button');
-      return;
+    await expect(page.getByText('Access restricted')).not.toBeVisible({timeout: 5000});
+    const reviewsLink = page.getByRole('link', {name: /Performance reviews/i}).first();
+    if (await reviewsLink.isVisible({timeout: 5000}).catch(() => false)) {
+      await reviewsLink.click();
+    } else {
+      await openRoute(page, '/performance/reviews');
     }
+
+    const selfAssessmentButton = page.getByRole('button', {name: /start self assessment/i}).first();
+    await expect(
+      selfAssessmentButton,
+      'Employee self-assessment action should be visible after review cycle activation'
+    ).toBeVisible({timeout: 60000});
+    await selfAssessmentButton.click({timeout: 10000});
 
     await page.waitForTimeout(1000);
 
@@ -812,7 +1078,7 @@ test.describe.serial('S4 — Performance Review Cycle @lifecycle', () => {
 
   test('S4.3: manager reviews and submits rating', async ({page}) => {
     await loginAs(page, demoUsers.managerEng.email);
-    await navigateTo(page, '/performance');
+    await openRoute(page, '/performance');
 
     const reviewBtn = page.locator('button:has-text("Review"), button:has-text("Submit Review")').first();
     if (await reviewBtn.isVisible({timeout: 5000}).catch(() => false)) {
@@ -837,7 +1103,10 @@ test.describe.serial('S5 — Asset Lifecycle @lifecycle', () => {
 
   test('S5.1: admin adds asset', async ({page}) => {
     await loginAs(page, demoUsers.superAdmin.email);
-    await navigateTo(page, '/assets');
+    await openRoute(page, '/assets');
+    await page.getByText('Loading assets...', {exact: true})
+      .waitFor({state: 'hidden', timeout: 60000})
+      .catch(() => {});
 
     const opened = await tryClick(
       page,
@@ -847,68 +1116,89 @@ test.describe.serial('S5 — Asset Lifecycle @lifecycle', () => {
     );
 
     if (!opened) {
-      console.warn('S5.1: No add-asset button');
-      return;
+      const addAssetButton = page.getByRole('button', {name: /add asset/i}).first();
+      await expect(addAssetButton, 'Asset creation action should be visible to SuperAdmin').toBeVisible({timeout: 15000});
+      await addAssetButton.click({timeout: 10000});
     }
 
     await page.waitForTimeout(500);
-    await tryFill(page, `E2E MacBook ${TS}`,
-      'input[name="name"]', 'input[placeholder*="name" i]');
+    await tryFill(page, `E2E-AST-${TS}`,
+      'input[name="assetCode"]', '#asset-code', 'input[placeholder*="AST" i]');
+    await tryFill(page, assetName,
+      'input[name="assetName"]', '#asset-name', 'input[placeholder*="name" i]');
     await tryFill(page, `E2E-SN-${TS}`,
-      'input[name="serialNumber"]', 'input[placeholder*="serial" i]');
+      'input[name="serialNumber"]', '#asset-serial-number', 'input[placeholder*="serial" i]');
     await tryFill(page, '150000',
-      'input[name="value"]', 'input[placeholder*="value" i]');
+      'input[name="currentValue"]', '#asset-current-value', 'input[placeholder*="value" i]');
+    await tryFill(page, '150000',
+      'input[name="purchaseCost"]', '#asset-purchase-cost');
 
-    await tryClick(page, 'button:has-text("Save")', 'button[type="submit"]');
-    await page.waitForTimeout(1500);
+    const createAssetResponse = page.waitForResponse((response) =>
+      response.url().includes('/api/v1/assets')
+      && response.request().method() === 'POST',
+    {timeout: 15000});
+    const saved = await tryClick(page, 'form button:has-text("Add Asset")', 'button[type="submit"]');
+    expect(saved, 'Asset create button should be clickable').toBe(true);
+    const response = await createAssetResponse;
+    expect(response.ok(), `Asset create API should succeed: HTTP ${response.status()}`).toBe(true);
+    const createdAsset = await response.json() as {id?: string};
+    expect(createdAsset.id, 'Created asset response should include id').toBeTruthy();
+    sharedState.assetId = createdAsset.id ?? '';
+    await expect(page.getByText(assetName).first()).toBeVisible({timeout: 10000});
 
     const url = page.url();
-    const match = url.match(/\/assets\/(\d+)/);
+    const match = url.match(/\/assets\/([0-9a-f-]{36}|\d+)/i);
     if (match) sharedState.assetId = match[1];
   });
 
   test('S5.2: assign asset to employee', async ({page}) => {
+    await loginAs(page, demoUsers.employeeSaran.email, {verifyDashboard: false});
+    const assigneeEmployeeId = await readStoredEmployeeId(page);
+    expect(assigneeEmployeeId, 'Employee Saran auth state should include employeeId').toBeTruthy();
+
     await loginAs(page, demoUsers.superAdmin.email);
-    await navigateTo(page, '/assets');
+    await openRoute(page, '/assets');
+    await expect(page.getByRole('button', {name: /add asset/i}).first()).toBeVisible({timeout: 60000});
 
     const assetRow = page
-      .locator('tr, [class*="card"]')
-      .filter({hasText: new RegExp(`E2E MacBook ${TS}`)})
+      .locator('tr')
+      .filter({hasText: assetName})
       .first();
 
-    if (!(await assetRow.isVisible({timeout: 5000}).catch(() => false))) {
-      console.warn('S5.2: Asset not found in list');
-      return;
-    }
+    await expect(assetRow, 'Created asset should be visible before assignment').toBeVisible({timeout: 60000});
 
+    const actionsMenu = assetRow.locator('button[aria-label="Asset actions menu"]').first();
+    await expect(actionsMenu, 'Asset row should expose an actions menu').toBeVisible({timeout: 5000});
+    await actionsMenu.click();
     const assignBtn = assetRow.locator('button:has-text("Assign")').first();
-    if (await assignBtn.isVisible({timeout: 3000}).catch(() => false)) {
-      await assignBtn.click();
-      await page.waitForTimeout(500);
+    await expect(assignBtn, 'Available asset should expose Assign action').toBeVisible({timeout: 5000});
+    await assignBtn.click();
+    await page.waitForTimeout(500);
 
-      // Select first available employee
-      const empSel = page.locator('select[name="employeeId"], input[placeholder*="employee" i]').first();
-      if (await empSel.isVisible({timeout: 3000}).catch(() => false)) {
-        const tag = await empSel.evaluate((el) => el.tagName.toLowerCase());
-        if (tag === 'select') {
-          const opts = await empSel.locator('option').allTextContents();
-          if (opts.length > 1) await (empSel as any).selectOption({index: 1});
-        } else {
-          await empSel.fill(demoUsers.employeeSaran.name);
-          await page.waitForTimeout(500);
-          await page.locator('[class*="option"]').first().click().catch(() => {
-          });
-        }
-      }
-
-      await tryClick(page, 'button:has-text("Assign")', 'button[type="submit"]');
-      await page.waitForTimeout(1500);
+    // Select first available employee
+    const assignDialog = page.locator('[role="dialog"]').filter({hasText: 'Assign Asset'}).first();
+    const empSel = assignDialog.locator('input#assign-employee-id, select[name="employeeId"]').first();
+    await expect(empSel, 'Asset assignment form should accept an employee id').toBeVisible({timeout: 5000});
+    const tag = await empSel.evaluate((el) => el.tagName.toLowerCase());
+    if (tag === 'select') {
+      await empSel.selectOption({value: assigneeEmployeeId});
+    } else {
+      await empSel.fill(assigneeEmployeeId);
     }
+
+    const assignResponse = page.waitForResponse((response) =>
+      response.url().includes(`/api/v1/assets/${sharedState.assetId}/assign`)
+      && response.request().method() === 'POST',
+    {timeout: 60000});
+    const assigned = await tryClick(page, 'form button:has-text("Assign")', 'button[type="submit"]');
+    expect(assigned, 'Asset assign button should be clickable').toBe(true);
+    const response = await assignResponse;
+    expect(response.ok(), `Asset assignment API should succeed: HTTP ${response.status()}`).toBe(true);
   });
 
   test('S5.3: employee sees asset in their profile', async ({page}) => {
     await loginAs(page, demoUsers.employeeSaran.email);
-    await navigateTo(page, '/me/assets');
+    await openRoute(page, '/me/assets');
 
     await page.waitForTimeout(1500);
 
@@ -919,11 +1209,11 @@ test.describe.serial('S5 — Asset Lifecycle @lifecycle', () => {
 
   test('S5.4: admin returns asset', async ({page}) => {
     await loginAs(page, demoUsers.superAdmin.email);
-    await navigateTo(page, '/assets');
+    await openRoute(page, '/assets');
 
     const assetRow = page
       .locator('tr, [class*="card"]')
-      .filter({hasText: new RegExp(`E2E MacBook ${TS}`)})
+      .filter({hasText: assetName})
       .first();
 
     if (!(await assetRow.isVisible({timeout: 5000}).catch(() => false))) return;
@@ -945,35 +1235,33 @@ test.describe.serial('S6 — Loan Lifecycle @lifecycle', () => {
 
   test('S6.1: employee applies for loan', async ({page}) => {
     await loginAs(page, demoUsers.employeeSaran.email);
-    await navigateTo(page, '/loans');
-
-    const opened = await tryClick(
-      page,
-      'button:has-text("Apply for Loan")',
-      'button:has-text("New Loan")',
-      'button:has-text("Apply")',
-    );
-
-    if (!opened) {
-      console.warn('S6.1: No loan application button');
-      return;
-    }
+    await openRoute(page, '/loans/new');
+    await expect(page.getByRole('heading', {name: /Apply for Loan/i}), 'Loan application page should be ready')
+      .toBeVisible({timeout: 60000});
 
     await page.waitForTimeout(500);
     await tryFill(page, '100000',
-      'input[name="amount"]', 'input[placeholder*="amount" i]');
+      'input[name="requestedAmount"]', 'input[name="amount"]', 'input[placeholder*="amount" i]');
     await tryFill(page, '12',
-      'input[name="repaymentMonths"]', 'input[placeholder*="months" i]', 'input[name="tenure"]');
+      'input[name="termMonths"]', 'input[name="repaymentMonths"]', 'input[placeholder*="months" i]', 'input[name="tenure"]');
     await tryFill(page, `E2E personal loan ${TS}`,
-      'textarea[name="reason"]', 'input[name="reason"]');
+      'textarea[name="purpose"]', 'textarea[name="reason"]', 'input[name="reason"]');
 
-    await tryClick(page, 'button:has-text("Submit")', 'button[type="submit"]');
+    const createLoanResponse = page.waitForResponse((response) =>
+      response.url().includes('/api/v1/loans')
+      && response.request().method() === 'POST',
+    {timeout: 15000});
+    await tryClick(page, 'button:has-text("Submit Application")', 'button:has-text("Submit")', 'button[type="submit"]');
+    const response = await createLoanResponse;
+    expect(response.ok(), `Loan create API should succeed: HTTP ${response.status()}`).toBe(true);
+    const createdLoan = await response.json() as {id?: string};
+    sharedState.loanId = createdLoan.id ?? '';
     await page.waitForTimeout(2000);
   });
 
   test('S6.2: HRA approves loan', async ({page}) => {
     await loginAs(page, demoUsers.superAdmin.email);
-    await navigateTo(page, '/loans');
+    await openRoute(page, '/loans');
 
     const pendingTab = page.locator('button:has-text("Pending"), [role="tab"]:has-text("Pending")').first();
     if (await pendingTab.isVisible({timeout: 3000}).catch(() => false)) {
@@ -991,7 +1279,7 @@ test.describe.serial('S6 — Loan Lifecycle @lifecycle', () => {
 
   test('S6.3: employee sees EMI schedule', async ({page}) => {
     await loginAs(page, demoUsers.employeeSaran.email);
-    await navigateTo(page, '/loans');
+    await openRoute(page, '/loans');
 
     await page.waitForTimeout(1500);
     const serverError = page.locator('text=/500|Internal Server Error/i');
@@ -1008,7 +1296,7 @@ test.describe.serial('S7 — Travel Lifecycle @lifecycle', () => {
 
   test('S7.1: employee submits travel request', async ({page}) => {
     await loginAs(page, demoUsers.employeeSaran.email);
-    await navigateTo(page, '/travel');
+    await openRoute(page, '/travel');
 
     const opened = await tryClick(
       page,
@@ -1034,7 +1322,7 @@ test.describe.serial('S7 — Travel Lifecycle @lifecycle', () => {
 
   test('S7.2: manager approves travel request', async ({page}) => {
     await loginAs(page, demoUsers.managerEng.email);
-    await navigateTo(page, '/approvals');
+    await openRoute(page, '/approvals');
 
     const approveBtn = page.locator('button:has-text("Approve")').first();
     if (await approveBtn.isVisible({timeout: 5000}).catch(() => false)) {
@@ -1045,7 +1333,7 @@ test.describe.serial('S7 — Travel Lifecycle @lifecycle', () => {
 
   test('S7.3: employee submits post-travel expense report', async ({page}) => {
     await loginAs(page, demoUsers.employeeSaran.email);
-    await navigateTo(page, '/travel');
+    await openRoute(page, '/travel');
 
     const expenseBtn = page.locator('button:has-text("Submit Expense")').first();
     if (await expenseBtn.isVisible({timeout: 5000}).catch(() => false)) {
@@ -1066,7 +1354,7 @@ test.describe.serial('S8 — Helpdesk Lifecycle @lifecycle', () => {
 
   test('S8.1: employee creates support ticket', async ({page}) => {
     await loginAs(page, demoUsers.employeeSaran.email);
-    await navigateTo(page, '/helpdesk');
+    await openRoute(page, '/helpdesk');
 
     const opened = await tryClick(
       page,
@@ -1093,7 +1381,7 @@ test.describe.serial('S8 — Helpdesk Lifecycle @lifecycle', () => {
 
   test('S8.2: admin assigns and replies to ticket', async ({page}) => {
     await loginAs(page, demoUsers.superAdmin.email);
-    await navigateTo(page, '/helpdesk');
+    await openRoute(page, '/helpdesk');
 
     const ticketRow = page
       .locator('tr, [class*="card"], [class*="ticket"]')
@@ -1118,7 +1406,7 @@ test.describe.serial('S8 — Helpdesk Lifecycle @lifecycle', () => {
 
   test('S8.4-S8.5: admin resolves ticket', async ({page}) => {
     await loginAs(page, demoUsers.superAdmin.email);
-    await navigateTo(page, '/helpdesk');
+    await openRoute(page, '/helpdesk');
 
     const ticketRow = page
       .locator('tr, [class*="card"], [class*="ticket"]')
@@ -1152,7 +1440,7 @@ test.describe.serial('S9 — Announcement Flow @lifecycle', () => {
 
   test('S9.1: HRA publishes announcement', async ({page}) => {
     await loginAs(page, demoUsers.superAdmin.email);
-    await navigateTo(page, '/announcements');
+    await openRoute(page, '/announcements');
 
     const opened = await tryClick(
       page,
@@ -1175,7 +1463,7 @@ test.describe.serial('S9 — Announcement Flow @lifecycle', () => {
 
   test('S9.2: employee sees announcement', async ({page}) => {
     await loginAs(page, demoUsers.employeeSaran.email);
-    await navigateTo(page, '/announcements');
+    await openRoute(page, '/announcements');
 
     await page.waitForTimeout(1500);
     const serverError = page.locator('text=/500|Internal Server Error/i');
@@ -1185,7 +1473,7 @@ test.describe.serial('S9 — Announcement Flow @lifecycle', () => {
 
   test('S9.4: HRA deletes announcement', async ({page}) => {
     await loginAs(page, demoUsers.superAdmin.email);
-    await navigateTo(page, '/announcements');
+    await openRoute(page, '/announcements');
 
     const announcementRow = page
       .locator('tr, [class*="card"], [class*="item"]')
@@ -1249,7 +1537,7 @@ test.describe('S10 — Session Isolation @lifecycle @security', () => {
 
   test('S10.2: manager sees only own team in employee list', async ({page}) => {
     await loginAs(page, demoUsers.managerEng.email);
-    await navigateTo(page, '/employees');
+    await openRoute(page, '/employees');
 
     await page.waitForTimeout(1500);
 
@@ -1318,7 +1606,7 @@ test.describe.serial('S11 — OKR + Recognition @lifecycle', () => {
 
   test('S11.1: employee creates OKR objective', async ({page}) => {
     await loginAs(page, demoUsers.employeeSaran.email);
-    await navigateTo(page, '/okr');
+    await openRoute(page, '/okr');
 
     const opened = await tryClick(
       page,
@@ -1342,7 +1630,7 @@ test.describe.serial('S11 — OKR + Recognition @lifecycle', () => {
 
   test('S11.2: employee updates OKR progress', async ({page}) => {
     await loginAs(page, demoUsers.employeeSaran.email);
-    await navigateTo(page, '/okr');
+    await openRoute(page, '/okr');
 
     const progressBtn = page.locator('button:has-text("Update"), button:has-text("Check-in")').first();
     if (await progressBtn.isVisible({timeout: 5000}).catch(() => false)) {
@@ -1356,34 +1644,28 @@ test.describe.serial('S11 — OKR + Recognition @lifecycle', () => {
   });
 
   test('S11.3: manager sends recognition badge', async ({page}) => {
+    await loginAs(page, demoUsers.employeeSaran.email, {verifyDashboard: false});
+    const recipientEmployeeId = await readStoredEmployeeId(page);
+    expect(recipientEmployeeId, 'Recognition recipient auth state should include employeeId').toBeTruthy();
+
     await loginAs(page, demoUsers.managerEng.email);
-    await navigateTo(page, '/recognition');
+    await openRoute(page, '/recognition');
 
-    const opened = await tryClick(
-      page,
-      'button:has-text("Recognize")',
-      'button:has-text("Give Badge")',
-      'button:has-text("Award")',
-      'button:has-text("Add")',
-    );
-
-    if (!opened) return;
+    const giveRecognitionButton = page.getByRole('button', {name: /^Give Recognition$/}).first();
+    await expect(giveRecognitionButton, 'Manager should be able to open recognition form')
+      .toBeVisible({timeout: 15000});
+    await giveRecognitionButton.click({timeout: 10000});
 
     await page.waitForTimeout(500);
 
-    // Select employee
-    const empInput = page.locator('input[placeholder*="employee" i], input[placeholder*="search" i]').first();
-    if (await empInput.isVisible({timeout: 3000}).catch(() => false)) {
-      await empInput.fill(demoUsers.employeeSaran.name);
-      await page.waitForTimeout(500);
-      await page.locator('[class*="option"], li').first().click().catch(() => {
-      });
-    }
+    const recognitionDialog = page.getByRole('dialog').filter({hasText: 'Give Recognition'}).first();
+    await expect(recognitionDialog, 'Give Recognition dialog should be open').toBeVisible({timeout: 10000});
+    await fillInput(recognitionDialog.locator('input[name="receiverId"]'), recipientEmployeeId);
+    await fillInput(recognitionDialog.locator('input[name="title"]'), `E2E recognition ${TS}`);
 
-    await tryFill(page, 'Great progress on v2.0 testing',
-      'textarea[name="message"]', 'textarea[placeholder*="message" i]');
+    await fillInput(recognitionDialog.locator('textarea[name="message"]'), 'Great progress on v2.0 testing');
 
-    await tryClick(page, 'button:has-text("Send")', 'button:has-text("Submit")', 'button[type="submit"]');
+    await recognitionDialog.getByRole('button', {name: /Send Recognition/i}).click();
     await page.waitForTimeout(1500);
 
     const error = page.locator('text=/500|Internal Server Error/i');

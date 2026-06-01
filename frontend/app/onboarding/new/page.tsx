@@ -1,6 +1,6 @@
 'use client';
 
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {AnimatePresence, motion} from 'framer-motion';
 import {useForm} from 'react-hook-form';
@@ -72,13 +72,19 @@ export default function NewOnboardingPage() {
   const formData = watch();
   const [submitError, setSubmitError] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (!selectedTemplate && templates.length > 0) {
+      setSelectedTemplate(templates.find(t => t.isDefault) || templates[0]);
+    }
+  }, [selectedTemplate, templates]);
+
   const handleNext = () => {
     if (currentStep === 1 && !selectedEmployee) {
       setSubmitError('Please select an employee');
       return;
     }
-    if (currentStep === 2 && (!formData.startDate || !selectedTemplate)) {
-      setSubmitError('Please provide start date and select a template');
+    if (currentStep === 2 && !formData.startDate) {
+      setSubmitError('Please provide start date');
       return;
     }
     setSubmitError(null);
@@ -94,7 +100,7 @@ export default function NewOnboardingPage() {
   };
 
   const handleSubmit = async (data: OnboardingFormData) => {
-    if (!selectedEmployee || !selectedTemplate) {
+    if (!selectedEmployee) {
       setSubmitError('Please fill in all required fields');
       return;
     }
@@ -109,7 +115,7 @@ export default function NewOnboardingPage() {
         expectedCompletionDate: data.expectedCompletionDate || undefined,
         assignedBuddyId: selectedBuddy?.id,
         notes: data.notes || '',
-        templateId: selectedTemplate.id
+        templateId: selectedTemplate?.id
       };
 
       const result = await createProcessMutation.mutateAsync(payload);
@@ -234,6 +240,19 @@ export default function NewOnboardingPage() {
                 </CardHeader>
                 <CardContent className="p-8 space-y-8">
                   <div className="grid grid-cols-1 gap-4">
+                    {templates.length === 0 && (
+                      <div className="p-6 rounded-3xl border-2 border-dashed border-[var(--border-main)] bg-[var(--bg-secondary)]">
+                        <div className="flex items-center gap-4">
+                          <div className="p-4 rounded-lg bg-accent-500/10 text-accent-700">
+                            <Layout className="h-6 w-6"/>
+                          </div>
+                          <div>
+                            <h4 className="font-black text-lg text-[var(--text-primary)]">Role-aware defaults</h4>
+                            <p className="text-sm font-bold text-[var(--text-muted)]">Tasks will be generated from role templates</p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                     {templates.map((temp) => (
                       <div
                         key={temp.id}
@@ -317,7 +336,7 @@ export default function NewOnboardingPage() {
                 <div className="p-8 rounded-3xl bg-accent-500/10 border border-accent-500/20 text-center space-y-2">
                   <Layout className="h-10 w-10 mx-auto text-accent-600 mb-2"/>
                   <p className="text-xs font-black uppercase tracking-widest text-accent-600">Checklist</p>
-                  <p className="text-xl font-black text-[var(--text-primary)]">{selectedTemplate?.name}</p>
+                  <p className="text-xl font-black text-[var(--text-primary)]">{selectedTemplate?.name ?? 'Role-aware defaults'}</p>
                 </div>
                 <div className="p-8 rounded-3xl bg-success-500/10 border border-success-500/20 text-center space-y-2">
                   <Calendar className="h-10 w-10 mx-auto text-success-600 mb-2"/>

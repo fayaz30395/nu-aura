@@ -5,6 +5,7 @@ import com.nulogic.api.recognition.dto.RecognitionResponse;
 import com.nulogic.api.wall.dto.WallPostResponse;
 import com.nulogic.application.wall.service.WallService;
 import com.nulogic.common.exception.BusinessException;
+import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.employee.Employee;
@@ -13,6 +14,9 @@ import com.nulogic.domain.recognition.Recognition;
 import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import com.nulogic.infrastructure.recognition.repository.*;
 import com.nulogic.infrastructure.wall.repository.PostReactionRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -23,7 +27,10 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -93,6 +100,11 @@ class RecognitionServiceTest {
         giverPoints.setRecognitionsReceived(0);
         when(pointsRepository.findByEmployeeIdAndTenantId(giverId, tenantId))
                 .thenReturn(Optional.of(giverPoints));
+    }
+
+    @AfterEach
+    void tearDown() {
+        SecurityContext.clear();
     }
 
     // ==================== giveRecognition ====================
@@ -222,5 +234,68 @@ class RecognitionServiceTest {
         recognitionService.giveRecognition(giverId, request);
 
         verify(wallService, never()).createPost(any(), any());
+    }
+
+    @Test
+    @DisplayName("getPublicFeed - batch enriches names and reactions")
+    void getPublicFeed_batchEnrichesNamesAndReactions() {
+        UUID secondGiverId = UUID.randomUUID();
+        UUID secondReceiverId = UUID.randomUUID();
+        UUID firstWallPostId = UUID.randomUUID();
+        UUID secondWallPostId = UUID.randomUUID();
+        SecurityContext.setCurrentUser(UUID.randomUUID(), giverId, Set.of(), Map.of());
+
+        Recognition first = Recognition.builder()
+                .giverId(giverId)
+                .receiverId(receiverId)
+                .type(Recognition.RecognitionType.KUDOS)
+                .title("Great work")
+                .isPublic(true)
+                .isAnonymous(false)
+                .isApproved(true)
+                .wallPostId(firstWallPostId)
+                .build();
+        first.setId(UUID.randomUUID());
+        first.setTenantId(tenantId);
+
+        Recognition second = Recognition.builder()
+                .giverId(secondGiverId)
+                .receiverId(secondReceiverId)
+                .type(Recognition.RecognitionType.APPRECIATION)
+                .title("Helpful")
+                .isPublic(true)
+                .isAnonymous(false)
+                .isApproved(true)
+                .wallPostId(secondWallPostId)
+                .build();
+        second.setId(UUID.randomUUID());
+        second.setTenantId(tenantId);
+
+        PageRequest pageable = PageRequest.of(0, 10);
+        when(recognitionRepository.findByTenantIdAndIsPublicTrueAndIsApprovedTrue(tenantId, pageable))
+                .thenReturn(new PageImpl<>(List.of(first, second), pageable, 2));
+        when(employeeRepository.findFullNamesByIdsAndTenantId(any(), eq(tenantId)))
+                .thenReturn(List.of(
+                        new Object[]{giverId, "John Doe"},
+                        new Object[]{receiverId, "Jane Smith"},
+                        new Object[]{secondGiverId, "Asha Rao"},
+                        new Object[]{secondReceiverId, "Dev Kumar"}));
+        when(postReactionRepository.findPostIdsWithUserReactionForTenant(anyList(), eq(giverId), eq(tenantId)))
+                .thenReturn(List.of(firstWallPostId));
+
+        Page<RecognitionResponse> result = recognitionService.getPublicFeed(pageable);
+
+        assertThat(result.getContent()).hasSize(2);
+        assertThat(result.getContent().get(0).getGiverName()).isEqualTo("John Doe");
+        assertThat(result.getContent().get(0).getReceiverName()).isEqualTo("Jane Smith");
+        assertThat(result.getContent().get(0).getHasReacted()).isTrue();
+        assertThat(result.getContent().get(1).getGiverName()).isEqualTo("Asha Rao");
+        assertThat(result.getContent().get(1).getReceiverName()).isEqualTo("Dev Kumar");
+        assertThat(result.getContent().get(1).getHasReacted()).isFalse();
+        verify(employeeRepository, times(1)).findFullNamesByIdsAndTenantId(any(), eq(tenantId));
+        verify(employeeRepository, never()).findByIdAndTenantId(any(), any());
+        verify(postReactionRepository, times(1))
+                .findPostIdsWithUserReactionForTenant(anyList(), eq(giverId), eq(tenantId));
+        verify(postReactionRepository, never()).findByPostIdAndEmployeeId(any(), any());
     }
 }

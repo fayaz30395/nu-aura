@@ -10,10 +10,12 @@ import com.twilio.type.PhoneNumber;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -39,6 +41,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class SmsNotificationService {
 
     private final TwilioConfig twilioConfig;
+    private final Environment environment;
     // S13 Wave-13: mock-mode audit log timestamps follow the sending tenant's zone so a tenant
     // in PST sees PST sentAt in its dev/test artefacts, not the pod's JVM zone.
     private final TenantTimeService tenantTimeService;
@@ -56,12 +59,21 @@ public class SmsNotificationService {
                 initialized = true;
                 log.info("Twilio SMS service initialized successfully");
             } catch (Exception e) { // Intentional broad catch — per-SMS error boundary
+                if (isProductionProfile()) {
+                    throw new IllegalStateException("Twilio initialization failed in production", e);
+                }
                 // Intentional broad catch — Twilio.init() can throw checked and unchecked exceptions; fallback to mock
                 log.error("Failed to initialize Twilio: {}. Falling back to mock mode.", e.getMessage());
             }
         } else if (twilioConfig.isMockMode()) {
+            if (isProductionProfile()) {
+                throw new IllegalStateException("Twilio mock mode is not allowed in production");
+            }
             log.info("Twilio SMS service running in MOCK MODE - messages will be logged but not sent");
         } else {
+            if (isProductionProfile()) {
+                throw new IllegalStateException("Twilio credentials are required in production");
+            }
             log.warn("Twilio SMS service not configured - SMS notifications will be logged only");
         }
     }
@@ -241,6 +253,12 @@ public class SmsNotificationService {
      */
     public boolean isMockMode() {
         return twilioConfig.isMockMode() || !initialized;
+    }
+
+    private boolean isProductionProfile() {
+        return Arrays.stream(environment.getActiveProfiles())
+                .anyMatch(profile -> profile.equalsIgnoreCase("prod")
+                        || profile.equalsIgnoreCase("production"));
     }
 
     /**

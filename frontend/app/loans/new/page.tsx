@@ -17,7 +17,16 @@ import {Stat} from '@/components/ui/Stat';
 // ─── Zod Schema ────────────────────────────────────────────────────────────────
 
 const loanFormSchema = z.object({
-  loanType: z.enum(['PERSONAL', 'HOME', 'VEHICLE', 'EDUCATION', 'MEDICAL', 'EMERGENCY', 'OTHER']),
+  loanType: z.enum([
+    'SALARY_ADVANCE',
+    'PERSONAL_LOAN',
+    'EMERGENCY_LOAN',
+    'EDUCATION_LOAN',
+    'HOUSING_LOAN',
+    'VEHICLE_LOAN',
+    'MEDICAL_LOAN',
+    'OTHER',
+  ]),
   requestedAmount: z
     .number({coerce: true, invalid_type_error: 'Please enter a valid loan amount'})
     .positive('Loan amount must be greater than 0'),
@@ -42,12 +51,13 @@ type LoanFormData = z.infer<typeof loanFormSchema>;
 // ─── Constants ─────────────────────────────────────────────────────────────────
 
 const LOAN_TYPES: { value: LoanType; label: string }[] = [
-  {value: 'PERSONAL', label: 'Personal Loan'},
-  {value: 'HOME', label: 'Home Loan'},
-  {value: 'VEHICLE', label: 'Vehicle Loan'},
-  {value: 'EDUCATION', label: 'Education Loan'},
-  {value: 'MEDICAL', label: 'Medical Loan'},
-  {value: 'EMERGENCY', label: 'Emergency Loan'},
+  {value: 'SALARY_ADVANCE', label: 'Salary Advance'},
+  {value: 'PERSONAL_LOAN', label: 'Personal Loan'},
+  {value: 'EMERGENCY_LOAN', label: 'Emergency Loan'},
+  {value: 'EDUCATION_LOAN', label: 'Education Loan'},
+  {value: 'HOUSING_LOAN', label: 'Home Loan'},
+  {value: 'VEHICLE_LOAN', label: 'Vehicle Loan'},
+  {value: 'MEDICAL_LOAN', label: 'Medical Loan'},
   {value: 'OTHER', label: 'Other'},
 ];
 
@@ -71,7 +81,7 @@ export default function NewLoanPage() {
   } = useForm<LoanFormData>({
     resolver: zodResolver(loanFormSchema),
     defaultValues: {
-      loanType: 'PERSONAL',
+      loanType: 'PERSONAL_LOAN',
       requestedAmount: 0,
       interestRate: 8.5,
       termMonths: 12,

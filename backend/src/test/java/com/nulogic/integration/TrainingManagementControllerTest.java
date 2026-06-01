@@ -280,9 +280,7 @@ class TrainingManagementControllerTest extends AbstractPostgresIntegrationTest {
 
     @Test
     @DisplayName("UC-GROW-020 negative: enroll in program with unmet prerequisite returns 400")
-    @org.junit.jupiter.api.Disabled("Bug found: Prerequisite enforcement not yet implemented in enrollment endpoint — returns 201 instead of 400")
     void ucGrow020_enrollWithUnmetPrerequisite_returns400() throws Exception {
-        // This test documents the expected behavior once prerequisite enforcement is implemented
         TrainingProgramRequest prereqReq = buildProgramRequest("PREREQ-UNMET-" + uuid6());
         MvcResult prereqResult = mockMvc.perform(post(BASE + "/programs")
                         .contentType(MediaType.APPLICATION_JSON)

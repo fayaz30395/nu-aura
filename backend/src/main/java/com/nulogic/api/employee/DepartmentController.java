@@ -69,6 +69,7 @@ public class DepartmentController {
 
     @GetMapping("/{id}")
     @RequiresPermission({
+            Permission.DEPARTMENT_VIEW,
             Permission.EMPLOYEE_VIEW_ALL,
             Permission.EMPLOYEE_VIEW_DEPARTMENT,
             Permission.EMPLOYEE_VIEW_TEAM,
@@ -87,6 +88,7 @@ public class DepartmentController {
 
     @GetMapping
     @RequiresPermission({
+            Permission.DEPARTMENT_VIEW,
             Permission.EMPLOYEE_VIEW_ALL,
             Permission.EMPLOYEE_VIEW_DEPARTMENT,
             Permission.EMPLOYEE_VIEW_TEAM,
@@ -104,6 +106,7 @@ public class DepartmentController {
 
     @GetMapping("/active")
     @RequiresPermission({
+            Permission.DEPARTMENT_VIEW,
             Permission.EMPLOYEE_VIEW_ALL,
             Permission.EMPLOYEE_VIEW_DEPARTMENT,
             Permission.EMPLOYEE_VIEW_TEAM,
@@ -118,6 +121,7 @@ public class DepartmentController {
 
     @GetMapping("/hierarchy")
     @RequiresPermission({
+            Permission.DEPARTMENT_VIEW,
             Permission.EMPLOYEE_VIEW_ALL,
             Permission.EMPLOYEE_VIEW_DEPARTMENT,
             Permission.EMPLOYEE_VIEW_TEAM

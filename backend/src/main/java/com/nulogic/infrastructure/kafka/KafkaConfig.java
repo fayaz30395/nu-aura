@@ -73,6 +73,15 @@ public class KafkaConfig {
     @Value("${spring.kafka.producer.linger-ms:10}")
     private Integer lingerMs;
 
+    @Value("${spring.kafka.producer.properties.max.block.ms:5000}")
+    private Integer maxBlockMs;
+
+    @Value("${spring.kafka.producer.properties.delivery.timeout.ms:10000}")
+    private Integer deliveryTimeoutMs;
+
+    @Value("${spring.kafka.producer.properties.request.timeout.ms:5000}")
+    private Integer requestTimeoutMs;
+
     @Value("${app.kafka.admin.auto-create:true}")
     private boolean kafkaAdminAutoCreate;
 
@@ -92,6 +101,9 @@ public class KafkaConfig {
         config.put(ProducerConfig.RETRIES_CONFIG, retries);
         config.put(ProducerConfig.BATCH_SIZE_CONFIG, batchSize);
         config.put(ProducerConfig.LINGER_MS_CONFIG, lingerMs);
+        config.put(ProducerConfig.MAX_BLOCK_MS_CONFIG, maxBlockMs);
+        config.put(ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG, deliveryTimeoutMs);
+        config.put(ProducerConfig.REQUEST_TIMEOUT_MS_CONFIG, requestTimeoutMs);
 
         // Enable idempotent producer for exactly-once delivery
         config.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true);

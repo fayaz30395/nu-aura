@@ -80,20 +80,22 @@ export function useMyExpenseClaims(
   });
 }
 
-export function useAllExpenseClaims(page: number = 0, size: number = 20) {
+export function useAllExpenseClaims(page: number = 0, size: number = 20, enabled: boolean = true) {
   return useQuery({
     queryKey: expenseKeys.allClaimsList(page, size),
     queryFn: () => expenseService.getAllClaims(page, size),
+    enabled,
     staleTime: 60 * 1000,
     retry: 2,
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 }
 
-export function usePendingExpenseClaims(page: number = 0, size: number = 50) {
+export function usePendingExpenseClaims(page: number = 0, size: number = 50, enabled: boolean = true) {
   return useQuery({
     queryKey: expenseKeys.pendingClaimsList(page, size),
     queryFn: () => expenseService.getPendingClaims(page, size),
+    enabled,
     staleTime: 30 * 1000,
     retry: 2,
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),

@@ -218,6 +218,12 @@ app:
     csrf:
       # Enable CSRF protection in production
       enabled: true
+    captcha:
+      enabled: ${CAPTCHA_ENABLED:true}
+      site-key: ${RECAPTCHA_SITE_KEY:}
+      secret-key: ${RECAPTCHA_SECRET_KEY:}
+      min-score: ${RECAPTCHA_MIN_SCORE:0.5}
+      threshold-attempts: ${CAPTCHA_THRESHOLD_ATTEMPTS:3}
     rls:
       probe:
         fail-on-bypass: true
@@ -279,3 +285,6 @@ logging:
     org.hibernate.SQL: WARN
     org.hibernate.type.descriptor.sql.BasicBinder: WARN
     org.hibernate.orm.jdbc.bind: WARN
+
+twilio:
+  mock-mode: ${TWILIO_MOCK_MODE:false}
