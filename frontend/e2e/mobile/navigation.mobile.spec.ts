@@ -1,4 +1,4 @@
-import {expect, test} from '@playwright/test';
+import {expect, type Page, test} from '@playwright/test';
 
 /**
  * Mobile Navigation E2E Tests
@@ -8,11 +8,25 @@ import {expect, test} from '@playwright/test';
 const isMobileViewport = (page: {viewportSize: () => {width: number} | null}) =>
   (page.viewportSize()?.width ?? 0) < 768;
 
+async function suppressNextDevOverlay(page: Page) {
+  await page.addStyleTag({
+    content: `
+      nextjs-portal,
+      [data-nextjs-toast],
+      [data-nextjs-dialog-overlay] {
+        display: none !important;
+        pointer-events: none !important;
+      }
+    `,
+  });
+}
+
 test.describe('Mobile Navigation', () => {
   test.beforeEach(async ({page}) => {
     // Navigate to dashboard
     await page.goto('/dashboard');
     await page.waitForLoadState('domcontentloaded');
+    await suppressNextDevOverlay(page);
   });
 
   test('should display mobile bottom navigation', async ({page}) => {
@@ -209,10 +223,13 @@ test.describe('Mobile Responsive Layout', () => {
       const mobileCards = page.locator('[data-testid="mobile-card-view"]').or(
         page.locator('.space-y-4 > .border.rounded-lg.p-4')
       );
+      const table = page.locator('table').first();
+
+      await mobileCards.first().or(table).waitFor({state: 'visible', timeout: 15000});
 
       // Either mobile cards or a table should be visible
       const hasCards = await mobileCards.first().isVisible().catch(() => false);
-      const hasTable = await page.locator('table').first().isVisible().catch(() => false);
+      const hasTable = await table.isVisible().catch(() => false);
 
       expect(hasCards || hasTable).toBeTruthy();
     }
