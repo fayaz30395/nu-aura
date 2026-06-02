@@ -42,7 +42,7 @@ function ResetPasswordSidePanel({eyebrow, headline, description}: {
 }) {
   return (
     <section className="hidden lg:flex">
-      <div className="auth-side-panel p-10 w-full flex items-center auth-delay-20 float-subtle">
+      <div className="auth-side-panel p-10 w-full flex items-center motion-rise">
         <div className="auth-side-panel-content space-y-6">
           <Image
             src="/images/nulogic-logo.svg"
@@ -87,7 +87,7 @@ function ResetPasswordForm() {
 
   if (!token) {
     return (
-      <div className="auth-shell fade-slide-up">
+      <div className="auth-shell motion-rise">
         <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_440px] lg:items-center">
             <ResetPasswordSidePanel
@@ -97,7 +97,7 @@ function ResetPasswordForm() {
             />
 
             <section className="w-full">
-              <Card className="auth-shell-card fade-slide-up auth-delay-40 float-subtle page-reveal">
+              <Card className="auth-shell-card motion-rise">
                 <CardContent className="pt-8 pb-8 text-center">
                   <div
                     className="inline-flex items-center justify-center w-16 h-16 bg-danger-100 dark:bg-danger-900/30 rounded-full mb-4"
@@ -149,7 +149,7 @@ function ResetPasswordForm() {
 
   if (isSuccess) {
     return (
-      <div className="auth-shell fade-slide-up">
+      <div className="auth-shell motion-rise">
         <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_440px] lg:items-center">
             <ResetPasswordSidePanel
@@ -159,7 +159,7 @@ function ResetPasswordForm() {
             />
 
             <section className="w-full">
-              <Card className="auth-shell-card fade-slide-up auth-delay-40 float-subtle page-reveal">
+              <Card className="auth-shell-card motion-rise">
                 <CardContent className="pt-8 pb-8 text-center">
                   <div
                     className="inline-flex items-center justify-center w-16 h-16 bg-success-100 dark:bg-success-900/30 rounded-full mb-4"
@@ -223,7 +223,7 @@ function ResetPasswordForm() {
   };
 
   return (
-    <div className="auth-shell fade-slide-up">
+    <div className="auth-shell motion-rise">
       <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_520px] lg:items-start">
           <ResetPasswordSidePanel
@@ -233,7 +233,7 @@ function ResetPasswordForm() {
           />
 
           <section className="w-full">
-            <Card className="auth-shell-card fade-slide-up auth-delay-40 float-subtle page-reveal">
+            <Card className="auth-shell-card motion-rise">
               <CardHeader className="pb-4">
                 <CardTitle className="text-lg">Reset Password</CardTitle>
                 <CardDescription>
@@ -345,9 +345,9 @@ export default function ResetPasswordPage() {
   return (
     <Suspense
       fallback={
-        <div className="auth-shell fade-slide-up">
-          <div className="auth-shell-grid auth-shell-narrow fade-slide-up stagger-children">
-            <div className="auth-loading-card w-full max-w-md fade-slide-up auth-delay-20 float-subtle page-reveal">
+        <div className="auth-shell motion-rise">
+          <div className="auth-shell-grid auth-shell-narrow">
+            <div className="auth-loading-card w-full max-w-md motion-rise">
               <div className="skeleton-aura h-10 w-48 rounded mx-auto"/>
               <div className="skeleton-aura h-4 w-64 rounded mx-auto"/>
               <div className="space-y-4">

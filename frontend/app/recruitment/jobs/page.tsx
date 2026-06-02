@@ -5,7 +5,7 @@ import {useRouter} from 'next/navigation';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {notifications} from '@mantine/notifications';
-import {motion} from 'framer-motion';
+import {PageTransition, Stagger, StaggerItem} from '@/components/motion';
 import {AppLayout} from '@/components/layout';
 import {Card, CardContent} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
@@ -271,12 +271,7 @@ export default function JobOpeningsPage() {
 
   return (
     <AppLayout activeMenuItem="recruitment">
-      <motion.div
-        initial={{opacity: 0, y: 20}}
-        animate={{opacity: 1, y: 0}}
-        transition={{duration: 0.25, ease: 'easeOut'}}
-        className="p-6 space-y-6"
-      >
+      <PageTransition className="p-6 space-y-6">
         {/* Header */}
         <div className="row-between">
           <div>
@@ -297,17 +292,8 @@ export default function JobOpeningsPage() {
         </div>
 
         {/* Stats Cards */}
-        <motion.div
-          initial={{opacity: 0}}
-          animate={{opacity: 1}}
-          transition={{duration: 0.3, staggerChildren: 0.05, delayChildren: 0.1}}
-          className="grid grid-cols-1 md:grid-cols-4 gap-4"
-        >
-          <motion.div
-            initial={{opacity: 0, y: 10}}
-            animate={{opacity: 1, y: 0}}
-            transition={{duration: 0.2, ease: 'easeOut'}}
-          >
+        <Stagger className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <StaggerItem>
             <Card className="bg-[var(--bg-card)] skeuo-card">
               <CardContent className="p-6">
                 <div className="flex items-center gap-4">
@@ -321,12 +307,8 @@ export default function JobOpeningsPage() {
                 </div>
               </CardContent>
             </Card>
-          </motion.div>
-          <motion.div
-            initial={{opacity: 0, y: 10}}
-            animate={{opacity: 1, y: 0}}
-            transition={{duration: 0.2, ease: 'easeOut'}}
-          >
+          </StaggerItem>
+          <StaggerItem>
             <Card className="bg-[var(--bg-card)] skeuo-card">
               <CardContent className="p-6">
                 <div className="flex items-center gap-4">
@@ -340,12 +322,8 @@ export default function JobOpeningsPage() {
                 </div>
               </CardContent>
             </Card>
-          </motion.div>
-          <motion.div
-            initial={{opacity: 0, y: 10}}
-            animate={{opacity: 1, y: 0}}
-            transition={{duration: 0.2, ease: 'easeOut'}}
-          >
+          </StaggerItem>
+          <StaggerItem>
             <Card className="bg-[var(--bg-card)] skeuo-card">
               <CardContent className="p-6">
                 <div className="flex items-center gap-4">
@@ -359,12 +337,8 @@ export default function JobOpeningsPage() {
                 </div>
               </CardContent>
             </Card>
-          </motion.div>
-          <motion.div
-            initial={{opacity: 0, y: 10}}
-            animate={{opacity: 1, y: 0}}
-            transition={{duration: 0.2, ease: 'easeOut'}}
-          >
+          </StaggerItem>
+          <StaggerItem>
             <Card className="bg-[var(--bg-card)] skeuo-card">
               <CardContent className="p-6">
                 <div className="flex items-center gap-4">
@@ -378,8 +352,8 @@ export default function JobOpeningsPage() {
                 </div>
               </CardContent>
             </Card>
-          </motion.div>
-        </motion.div>
+          </StaggerItem>
+        </Stagger>
 
         {/* Error */}
         {jobOpeningsQuery.error && (
@@ -440,20 +414,10 @@ export default function JobOpeningsPage() {
             iconSize={64}
           />
         ) : (
-          <motion.div
-            initial={{opacity: 0}}
-            animate={{opacity: 1}}
-            transition={{duration: 0.3, staggerChildren: 0.05, delayChildren: 0.15}}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
-          >
+          <Stagger className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredJobs.map((job, _index) => (
-              <motion.div
-                key={job.id}
-                initial={{opacity: 0, y: 10}}
-                animate={{opacity: 1, y: 0}}
-                transition={{duration: 0.2, ease: 'easeOut'}}
-              >
-                <Card className="bg-[var(--bg-card)] hover:shadow-[var(--shadow-dropdown)] transition-shadow">
+              <StaggerItem key={job.id}>
+                <Card className="hover-lift bg-[var(--bg-card)] hover:shadow-[var(--shadow-dropdown)] transition-shadow">
                   <CardContent className="p-6">
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex-1">
@@ -541,9 +505,9 @@ export default function JobOpeningsPage() {
                     </div>
                   </CardContent>
                 </Card>
-              </motion.div>
+              </StaggerItem>
             ))}
-          </motion.div>
+          </Stagger>
         )}
 
         {/* Add/Edit Modal */}
@@ -992,7 +956,7 @@ export default function JobOpeningsPage() {
             </ModalBody>
           </Modal>
         )}
-      </motion.div>
+      </PageTransition>
     </AppLayout>
   );
 }

@@ -42,6 +42,7 @@ import {
 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import {AppLayout} from '@/components/layout';
+import {PageTransition} from '@/components/motion';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
@@ -928,7 +929,7 @@ export default function CompetencyMatrixPage() {
 
   return (
     <AppLayout activeMenuItem="competency-matrix">
-      <div className="p-6 max-w-7xl mx-auto">
+      <PageTransition className="p-6 max-w-7xl mx-auto">
         {/* Page Header */}
         <div className="mb-6">
           <div className="flex items-center gap-4 mb-1">
@@ -1000,7 +1001,7 @@ export default function CompetencyMatrixPage() {
             <FrameworkAdminTab/>
           </Tabs.Panel>
         </Tabs>
-      </div>
+      </PageTransition>
     </AppLayout>
   );
 }

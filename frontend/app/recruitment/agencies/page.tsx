@@ -2,7 +2,7 @@
 
 import {useMemo, useState} from 'react';
 import {useRouter} from 'next/navigation';
-import {motion} from 'framer-motion';
+import {Stagger, StaggerItem} from '@/components/motion';
 import {AppLayout} from '@/components/layout';
 import {Card, CardContent} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
@@ -58,16 +58,6 @@ const agencySchema = z.object({
 });
 
 type AgencyFormValues = z.infer<typeof agencySchema>;
-
-const containerVariants = {
-  hidden: {opacity: 0},
-  visible: {opacity: 1, transition: {staggerChildren: 0.08, delayChildren: 0.1}},
-};
-
-const itemVariants = {
-  hidden: {opacity: 0, y: 16},
-  visible: {opacity: 1, y: 0, transition: {duration: 0.3}},
-};
 
 function getFeeLabel(feeType?: AgencyFeeType, feeAmount?: number): string {
   if (!feeType || feeAmount === undefined) return 'Not set';
@@ -192,14 +182,9 @@ export default function AgenciesPage() {
           </div>
         }
       >
-        <motion.div
-          className="space-y-6"
-          initial="hidden"
-          animate="visible"
-          variants={containerVariants}
-        >
+        <Stagger className="space-y-6">
           {/* Header */}
-          <motion.div variants={itemVariants} className="flex items-center justify-between">
+          <StaggerItem className="flex items-center justify-between">
             <div>
               <h1 className="text-xl font-bold text-[var(--text-primary)]">
                 Recruitment Agencies
@@ -217,10 +202,10 @@ export default function AgenciesPage() {
                 Add Agency
               </Button>
             </PermissionGate>
-          </motion.div>
+          </StaggerItem>
 
           {/* Stat Cards */}
-          <motion.div variants={itemVariants} className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <StaggerItem className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <Card className="p-4">
               <div className="flex items-center gap-2">
                 <Building2 className="h-4 w-4 text-accent-600 dark:text-accent-400"/>
@@ -251,10 +236,10 @@ export default function AgenciesPage() {
                 {stats.avgRating > 0 ? stats.avgRating.toFixed(1) : '-'}
               </p>
             </Card>
-          </motion.div>
+          </StaggerItem>
 
           {/* Filters */}
-          <motion.div variants={itemVariants} className="flex items-center gap-4">
+          <StaggerItem className="flex items-center gap-4">
             <div className="relative flex-1 max-w-sm">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]"/>
               <input
@@ -280,7 +265,7 @@ export default function AgenciesPage() {
                 <option value="BLACKLISTED">Blacklisted</option>
               </select>
             </div>
-          </motion.div>
+          </StaggerItem>
 
           {/* Agency Form Modal */}
           <Modal isOpen={showForm} onClose={() => setShowForm(false)} size="lg">
@@ -502,13 +487,10 @@ export default function AgenciesPage() {
               }
             />
           ) : (
-            <motion.div
-              variants={containerVariants}
-              className="grid grid-cols-1 md:grid-cols-2 gap-4"
-            >
+            <Stagger className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {agencies.map((agency) => (
-                <motion.div key={agency.id} variants={itemVariants}>
-                  <Card className="hover:shadow-[var(--shadow-elevated)] transition-shadow cursor-pointer">
+                <StaggerItem key={agency.id}>
+                  <Card className="hover-lift hover:shadow-[var(--shadow-elevated)] transition-shadow cursor-pointer">
                     <CardContent className="p-4">
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex-1 min-w-0">
@@ -583,11 +565,11 @@ export default function AgenciesPage() {
                       </div>
                     </CardContent>
                   </Card>
-                </motion.div>
+                </StaggerItem>
               ))}
-            </motion.div>
+            </Stagger>
           )}
-        </motion.div>
+        </Stagger>
       </PermissionGate>
     </AppLayout>
   );

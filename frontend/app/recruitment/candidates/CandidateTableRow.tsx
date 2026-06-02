@@ -64,7 +64,7 @@ export const CandidateTableRow = memo(function CandidateTableRow({
 
   return (
     <tr
-      className="h-11 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors cursor-pointer"
+      className="hover-lift h-11 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors cursor-pointer"
       onClick={() => router.push(`/recruitment/candidates/${candidate.id}`)}
     >
       {/* Candidate Info */}

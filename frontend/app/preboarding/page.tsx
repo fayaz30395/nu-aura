@@ -5,6 +5,7 @@ import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {AlertCircle, Calendar, CheckCircle2, Clock, Mail, RefreshCw, Search, UserPlus, Users} from 'lucide-react';
+import {PageTransition, Reveal, Stagger, StaggerItem} from '@/components/motion';
 import {AppLayout} from '@/components/layout';
 import {Card, CardContent} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
@@ -157,7 +158,7 @@ export default function PreboardingPage() {
 
   return (
     <AppLayout activeMenuItem="recruitment" breadcrumbs={[{label: 'Pre-boarding', href: '/preboarding'}]}>
-      <div className="space-y-6">
+      <PageTransition className="space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
@@ -194,7 +195,8 @@ export default function PreboardingPage() {
         )}
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Stagger className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <StaggerItem>
           <Card>
             <CardContent className="p-4 flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-accent-50 dark:bg-accent-900/20 flex items-center justify-center">
@@ -206,7 +208,9 @@ export default function PreboardingPage() {
               </div>
             </CardContent>
           </Card>
+          </StaggerItem>
 
+          <StaggerItem>
           <Card>
             <CardContent className="p-4 flex items-center gap-4">
               <div
@@ -219,7 +223,9 @@ export default function PreboardingPage() {
               </div>
             </CardContent>
           </Card>
+          </StaggerItem>
 
+          <StaggerItem>
           <Card>
             <CardContent className="p-4 flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-accent-50 dark:bg-accent-900/20 flex items-center justify-center">
@@ -231,7 +237,9 @@ export default function PreboardingPage() {
               </div>
             </CardContent>
           </Card>
+          </StaggerItem>
 
+          <StaggerItem>
           <Card>
             <CardContent className="p-4 flex items-center gap-4">
               <div
@@ -244,7 +252,8 @@ export default function PreboardingPage() {
               </div>
             </CardContent>
           </Card>
-        </div>
+          </StaggerItem>
+        </Stagger>
 
         {/* Filters */}
         <div className="flex flex-col sm:flex-row gap-4">
@@ -272,6 +281,7 @@ export default function PreboardingPage() {
         </div>
 
         {/* Candidates List */}
+        <Reveal inView>
         <Card>
           <CardContent className="p-0">
             {loading ? (
@@ -350,7 +360,8 @@ export default function PreboardingPage() {
             )}
           </CardContent>
         </Card>
-      </div>
+        </Reveal>
+      </PageTransition>
 
       {/* Invite Modal */}
       {showInviteModal &&

@@ -6,6 +6,7 @@ import {AppLayout} from '@/components/layout';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {PageDeniedFallback, PermissionGate} from '@/components/auth/PermissionGate';
 import ActivityFeed from '@/components/fluence/ActivityFeed';
+import {Reveal} from '@/components/motion';
 import {PostComposer} from '@/components/wall';
 import {useCreatePost} from '@/lib/hooks/queries/useWall';
 import {useActivityFeed, useBlogPosts, useWikiPages} from '@/lib/hooks/queries/useFluence';
@@ -65,7 +66,7 @@ function TrendingSidebar() {
   return (
     <div className="space-y-4">
       {/* Trending Content */}
-      <div className="card-aura p-4">
+      <Reveal className="card-aura p-4" inView>
         <div className="flex items-center gap-2 mb-4">
           <IconTrendingUp size={18} className="text-[var(--text-primary)]" aria-hidden="true"/>
           <h2 className="text-sm font-semibold text-[var(--text-primary)]">
@@ -120,10 +121,10 @@ function TrendingSidebar() {
             ))}
           </ul>
         )}
-      </div>
+      </Reveal>
 
       {/* Recent Activity Summary */}
-      <div className="card-aura p-4">
+      <Reveal className="card-aura p-4" inView delay={0.06}>
         <div className="flex items-center gap-2 mb-4">
           <IconActivity size={18} className="text-[var(--text-primary)]"/>
           <span className="text-sm font-semibold text-[var(--text-primary)]">
@@ -163,7 +164,7 @@ function TrendingSidebar() {
             ))}
           </div>
         )}
-      </div>
+      </Reveal>
     </div>
   );
 }
@@ -189,7 +190,7 @@ function WallPageContent() {
   return (
     <AppLayout>
       <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6">
-        <div className="flex items-center gap-4 mb-6">
+        <Reveal className="flex items-center gap-4 mb-6">
           <IconActivity size={28} className="text-[var(--text-primary)]" aria-hidden="true"/>
           <div>
             <h1 className="text-xl font-bold text-[var(--text-primary)]">
@@ -205,7 +206,7 @@ function WallPageContent() {
             <span className="h-1.5 w-1.5 rounded-full bg-accent-600 dark:bg-accent-400" aria-hidden="true"/>
             Live
           </span>
-        </div>
+        </Reveal>
 
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
           <div className="md:col-span-8 space-y-4">

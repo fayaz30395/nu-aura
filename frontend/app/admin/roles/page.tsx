@@ -19,6 +19,7 @@ import {ScopeSelector} from '@/components/admin/ScopeSelector';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
 import {AdminPageContent} from '@/components/layout';
+import {Reveal} from '@/components/motion';
 import {ConfirmDialog} from '@/components/ui';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {SkeletonTable} from '@/components/ui/Skeleton';
@@ -336,10 +337,10 @@ export default function RolesPage() {
       />
 
       <div className="max-w-7xl mx-auto">
-        <div className="mb-6">
+        <Reveal className="mb-6">
           <h1 className="text-xl font-bold">Role Management</h1>
           <p className="text-[var(--text-secondary)] mt-1">Manage user roles and permissions</p>
-        </div>
+        </Reveal>
 
         <div className="mb-6 flex justify-between items-center" role="search">
           <input
@@ -358,7 +359,7 @@ export default function RolesPage() {
           </button>
         </div>
 
-        <div className="skeuo-card rounded-xl overflow-x-auto">
+        <Reveal className="skeuo-card rounded-xl overflow-x-auto">
           <table className="table-aura">
             <thead className="skeuo-table-header">
             <tr>
@@ -396,7 +397,7 @@ export default function RolesPage() {
               </tr>
             )}
             {filteredRoles.map((role) => (
-              <tr key={role.id}>
+              <tr key={role.id} className="hover:bg-[var(--bg-card-hover)] transition-colors">
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[var(--text-primary)]">
                   {role.code}
                 </td>
@@ -448,7 +449,7 @@ export default function RolesPage() {
             ))}
             </tbody>
           </table>
-        </div>
+        </Reveal>
 
         {/* Create Role Modal */}
         {showCreateModal && (

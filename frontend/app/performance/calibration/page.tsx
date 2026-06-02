@@ -6,6 +6,7 @@ import {AlertTriangle, BarChart3, Download, Info, RefreshCw, Search, Target, Tre
 import {useAllReviews, usePerformanceAllCycles, useUpdateReview} from '@/lib/hooks/queries/usePerformance';
 import type {ReviewRequest} from '@/lib/types/grow/performance';
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
+import {PageTransition} from '@/components/motion';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 
@@ -329,7 +330,7 @@ export default function CalibrationPage() {
           <p className="text-[var(--text-muted)] text-sm mt-1">You do not have permission to view calibration data.</p>
         </div>
       }>
-        <div className="page-shell-centered fade-slide-up auth-delay-20">
+        <PageTransition className="page-shell-centered">
           <div className="max-w-7xl mx-auto p-6 space-y-6">
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -691,7 +692,7 @@ export default function CalibrationPage() {
               </div>
             ) : null}
           </div>
-        </div>
+        </PageTransition>
 
         {/* Publish Ratings Confirmation */}
         <ConfirmDialog

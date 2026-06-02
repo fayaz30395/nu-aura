@@ -5,7 +5,7 @@ import {useParams, useRouter} from 'next/navigation';
 import {Controller, useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
-import {motion} from 'framer-motion';
+import {PageTransition, Stagger, StaggerItem} from '@/components/motion';
 import {
   ArrowLeft,
   BarChart3,
@@ -44,7 +44,7 @@ import {useLaunchSurvey, useSurveyDetail} from '@/lib/hooks/queries/useSurveys';
 import {useAddQuestion, useDeleteQuestion, useSurveyQuestions,} from '@/lib/hooks/queries/useSurveyQuestions';
 import {QuestionType, SurveyStatus} from '@/lib/types/grow/survey';
 import {toBadgeVariant} from '@/lib/utils/type-guards';
-import {iconSize, motion as dsMotion, typography,} from '@/lib/theme/design-system';
+import {iconSize, typography,} from '@/lib/theme/design-system';
 import {formatDate} from '@/lib/utils/format/date';
 
 // ─── Question type metadata ────────────────────────────────────────────────
@@ -170,7 +170,7 @@ export default function SurveyDetailPage() {
 
   return (
     <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="surveys">
-      <motion.div className="space-y-6" {...dsMotion.pageEnter}>
+      <PageTransition className="space-y-6">
         {/* Back + Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-4">
@@ -312,15 +312,14 @@ export default function SurveyDetailPage() {
                 description="Add questions to build your survey and start collecting responses."
               />
             ) : (
-              <motion.div className="space-y-2" {...dsMotion.staggerContainer}>
+              <Stagger className="space-y-2">
                 {questions
                   .sort((a, b) => a.orderIndex - b.orderIndex)
                   .map((question, index) => {
                     const Icon = getQuestionTypeIcon(question.questionType);
                     return (
-                      <motion.div
+                      <StaggerItem
                         key={question.id}
-                        variants={dsMotion.staggerItem.variants}
                         className="flex items-center gap-4 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] p-4 transition-colors hover:bg-[var(--bg-card-hover)]"
                       >
                         <span
@@ -359,10 +358,10 @@ export default function SurveyDetailPage() {
                             </Button>
                           )}
                         </PermissionGate>
-                      </motion.div>
+                      </StaggerItem>
                     );
                   })}
-              </motion.div>
+              </Stagger>
             )}
           </CardContent>
         </Card>
@@ -480,7 +479,7 @@ export default function SurveyDetailPage() {
             </ModalFooter>
           </form>
         </Modal>
-      </motion.div>
+      </PageTransition>
     </AppLayout>
   );
 }

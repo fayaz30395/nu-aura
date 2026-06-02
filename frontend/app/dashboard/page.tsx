@@ -57,12 +57,14 @@ import {formatCurrency} from '@/lib/utils';
 import {safeWindowOpen} from '@/lib/utils/url';
 import {formatDateShort} from '@/lib/utils/format/date';
 import {format} from 'date-fns';
+import {MOTION_EASE} from '@/lib/animation';
 
 const log = createLogger('DashboardPage');
 
-// Single ease curve for every transition on this page. Avoids cubic-bezier
-// drift that compounds when each motion spec picks its own easing.
-const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
+// Consolidated onto the shared motion foundation: every transition on this page
+// uses the foundation easing token (MOTION_EASE.outExpo) so motion has a single
+// source of truth across all surfaces — no per-page cubic-bezier drift.
+const EASE = [...MOTION_EASE.outExpo] as [number, number, number, number];
 
 interface EmailHeader {
   name: string;

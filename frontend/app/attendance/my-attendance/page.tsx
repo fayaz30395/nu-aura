@@ -18,6 +18,7 @@ import {
   Users,
 } from 'lucide-react';
 import {AppLayout} from '@/components/layout';
+import {Reveal} from '@/components/motion';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
@@ -383,7 +384,7 @@ export default function MyAttendancePage() {
     <AppLayout>
       <div className="p-4 md:p-6 lg:p-8 space-y-6">
         {/* ── PAGE HEADER ─────────────────────────────────────── */}
-        <div className="row-between">
+        <Reveal className="row-between">
           <div>
             <h1 className="text-page-title text-[var(--text-primary)]">Attendance</h1>
           </div>
@@ -391,10 +392,10 @@ export default function MyAttendancePage() {
             <Download className="h-4 w-4"/>
             Export
           </Button>
-        </div>
+        </Reveal>
 
         {/* ── TOP SECTION: Stats | Timings | Actions ──────────── */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <Reveal className="grid grid-cols-1 lg:grid-cols-3 gap-4" delay={0.08}>
           {/* Attendance Stats */}
           <Card className="card-aura">
             <CardHeader className="pb-2">
@@ -543,7 +544,7 @@ export default function MyAttendancePage() {
               </div>
             </CardContent>
           </Card>
-        </div>
+        </Reveal>
 
         {/* ── LOGS & REQUESTS SECTION ─────────────────────────── */}
         <Card className="card-aura">

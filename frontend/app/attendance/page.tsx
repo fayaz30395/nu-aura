@@ -4,6 +4,7 @@ import React, {memo, useCallback, useEffect, useMemo, useState} from 'react';
 import Link from 'next/link';
 import {motion} from 'framer-motion';
 import {format as formatDateFns} from 'date-fns';
+import {Reveal, Stagger, StaggerItem} from '@/components/motion';
 import {
   AlertTriangle,
   ArrowRight,
@@ -240,12 +241,7 @@ function PageHeader({userName, streak, now}: {userName: string | undefined; stre
   }, [now]);
 
   return (
-    <motion.header
-      initial={{opacity: 0, y: 4}}
-      animate={{opacity: 1, y: 0}}
-      transition={{duration: 0.4, ease: EASE}}
-      className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-end"
-    >
+    <header className="motion-rise grid gap-4 sm:grid-cols-[1fr_auto] sm:items-end">
       <div className="space-y-2 max-w-2xl">
         <p className="text-2xs font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">
           Attendance
@@ -269,7 +265,7 @@ function PageHeader({userName, streak, now}: {userName: string | undefined; stre
           {formatDateFns(now, 'EEEE, MMM d')}
         </p>
       </div>
-    </motion.header>
+    </header>
   );
 }
 
@@ -293,17 +289,13 @@ function StatsRow({
   ];
 
   return (
-    <motion.section
-      initial="hidden"
-      animate="visible"
-      variants={{visible: {transition: {staggerChildren: 0.06, delayChildren: 0.08}}}}
+    <section
       aria-label="Attendance at a glance"
-      className="grid grid-cols-2 sm:grid-cols-4 border-y border-[var(--border-subtle)] divide-x divide-[var(--border-subtle)]"
+      className="motion-rise grid grid-cols-2 sm:grid-cols-4 border-y border-[var(--border-subtle)] divide-x divide-[var(--border-subtle)]"
     >
       {items.map((item) => (
-        <motion.div
+        <div
           key={item.label}
-          variants={{hidden: {opacity: 0, y: 6}, visible: {opacity: 1, y: 0, transition: {duration: 0.4, ease: EASE}}}}
           className="px-5 py-6 sm:px-7 sm:py-8 first:pl-0 last:pr-0"
         >
           <div className="flex items-center gap-2 text-[var(--text-muted)]">
@@ -319,9 +311,9 @@ function StatsRow({
           >
             {item.value}
           </p>
-        </motion.div>
+        </div>
       ))}
-    </motion.section>
+    </section>
   );
 }
 
@@ -382,25 +374,24 @@ const BentoNavigation = memo(function BentoNavigation({
   ];
 
   return (
-    <motion.section
-      initial="hidden"
-      animate="visible"
-      variants={{visible: {transition: {staggerChildren: 0.07, delayChildren: 0.18}}}}
-      className="grid gap-4 grid-cols-1 lg:grid-cols-12"
+    <section
       aria-label="Today and workflows"
+      className="grid gap-4 grid-cols-1 lg:grid-cols-12"
     >
-      <BentoHero
-        todayRecord={todayRecord}
-        now={now}
-        onCheckIn={onCheckIn}
-        onCheckOutRequest={onCheckOutRequest}
-        checkInPending={checkInPending}
-        checkOutPending={checkOutPending}
-      />
-      {tiles.map((tile) => (
-        <BentoTile key={tile.href} {...tile} />
-      ))}
-    </motion.section>
+      <Stagger className="contents" delayChildren={0.18}>
+        <BentoHero
+          todayRecord={todayRecord}
+          now={now}
+          onCheckIn={onCheckIn}
+          onCheckOutRequest={onCheckOutRequest}
+          checkInPending={checkInPending}
+          checkOutPending={checkOutPending}
+        />
+        {tiles.map((tile) => (
+          <BentoTile key={tile.href} {...tile} />
+        ))}
+      </Stagger>
+    </section>
   );
 });
 
@@ -437,10 +428,7 @@ const BentoHero = memo(function BentoHero({
   const status = dayComplete ? 'Day complete' : isCheckedIn ? 'Currently working' : 'Not started';
 
   return (
-    <motion.div
-      variants={{hidden: {opacity: 0, y: 8}, visible: {opacity: 1, y: 0, transition: {duration: 0.5, ease: EASE}}}}
-      className="lg:col-span-7 lg:row-span-2"
-    >
+    <StaggerItem className="lg:col-span-7 lg:row-span-2">
       <div className="flex h-full flex-col rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] p-7 sm:p-9">
         <div className="flex items-start justify-between gap-4">
           <div className="space-y-2">
@@ -550,7 +538,7 @@ const BentoHero = memo(function BentoHero({
           )}
         </div>
       </div>
-    </motion.div>
+    </StaggerItem>
   );
 });
 
@@ -561,10 +549,7 @@ function BentoTile({title, description, icon: Icon, href}: {
   href: string;
 }) {
   return (
-    <motion.div
-      variants={{hidden: {opacity: 0, y: 8}, visible: {opacity: 1, y: 0, transition: {duration: 0.4, ease: EASE}}}}
-      className="lg:col-span-5"
-    >
+    <StaggerItem className="lg:col-span-5">
       <Link
         href={href}
         className="group flex h-full items-start gap-4 rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] p-5 sm:p-6 transition-all hover:border-[var(--border-main)] hover:shadow-[0_12px_30px_-12px_rgba(15,23,42,0.07)] active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
@@ -581,7 +566,7 @@ function BentoTile({title, description, icon: Icon, href}: {
           aria-hidden="true"
         />
       </Link>
-    </motion.div>
+    </StaggerItem>
   );
 }
 
@@ -594,12 +579,7 @@ function TodayPunches({
   workedHours: number;
 }) {
   return (
-    <motion.section
-      initial={{opacity: 0, y: 6}}
-      animate={{opacity: 1, y: 0}}
-      transition={{duration: 0.45, ease: EASE, delay: 0.32}}
-      className="space-y-4"
-    >
+    <Reveal className="space-y-4" delay={0.32}>
       <div className="flex items-end justify-between gap-4">
         <h2 className="text-xl font-semibold tracking-tight text-[var(--text-heading)]">
           Today&apos;s punches
@@ -644,7 +624,7 @@ function TodayPunches({
           </p>
         </li>
       </ul>
-    </motion.section>
+    </Reveal>
   );
 }
 
@@ -662,13 +642,10 @@ function LateAttentionStrip({todayRecord}: {todayRecord: AttendanceRecord | null
   if (lateByMinutes <= 0) return null;
 
   return (
-    <motion.aside
-      initial={{opacity: 0, y: 6}}
-      animate={{opacity: 1, y: 0}}
-      transition={{duration: 0.45, ease: EASE, delay: 0.42}}
+    <aside
       role="status"
       aria-live="polite"
-      className="flex items-center justify-between gap-4 rounded-xl border border-warning-200 bg-warning-50/40 dark:border-warning-700/40 dark:bg-warning-950/30 px-5 py-4"
+      className="motion-rise flex items-center justify-between gap-4 rounded-xl border border-warning-200 bg-warning-50/40 dark:border-warning-700/40 dark:bg-warning-950/30 px-5 py-4"
     >
       <div className="flex items-center gap-4 text-sm">
         <AlertTriangle className="h-4 w-4 shrink-0 text-warning-600 dark:text-warning-400" aria-hidden="true" />
@@ -682,7 +659,7 @@ function LateAttentionStrip({todayRecord}: {todayRecord: AttendanceRecord | null
           <ArrowRight className="ml-1.5 h-3.5 w-3.5" aria-hidden="true" />
         </Button>
       </Link>
-    </motion.aside>
+    </aside>
   );
 }
 

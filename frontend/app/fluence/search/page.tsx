@@ -25,8 +25,9 @@ import {
   Zap,
 } from 'lucide-react';
 import {AppLayout} from '@/components/layout';
+import {PageTransition, Stagger, StaggerItem} from '@/components/motion';
 import {Card, CardContent} from '@/components/ui/Card';
-import {card as dsCard, iconSize, input as dsInput, layout, motion as dsMotion, typography,} from '@/lib/theme/design-system';
+import {card as dsCard, iconSize, input as dsInput, layout, typography,} from '@/lib/theme/design-system';
 import {useFluenceSearch} from '@/lib/hooks/queries/useFluence';
 import type {SavedSearch} from '@/lib/types/platform/fluence';
 import {sanitizeHtml} from '@/lib/utils/sanitize';
@@ -229,7 +230,7 @@ export default function SearchPage() {
 
   return (
     <AppLayout>
-      <motion.div className={layout.sectionGap} {...dsMotion.pageEnter}>
+      <PageTransition className={layout.sectionGap}>
 
         {/* ── Header ─────────────────────────────────────────────────────────── */}
         <div>
@@ -538,7 +539,7 @@ export default function SearchPage() {
             />
           </div>
         ) : (
-          <motion.div className="space-y-4" {...dsMotion.staggerContainer}>
+          <Stagger className="space-y-4" inView>
             {/* Result count + search time */}
             <motion.div
               initial={{opacity: 0, x: -4}}
@@ -584,13 +585,9 @@ export default function SearchPage() {
               };
 
               return (
-                <motion.div
-                  key={result.id}
-                  variants={dsMotion.staggerItem.variants}
-                  {...dsMotion.cardHover}
-                >
+                <StaggerItem key={result.id}>
                   <Card
-                    className={`${dsCard.interactive} cursor-pointer group`}
+                    className={`${dsCard.interactive} hover-lift cursor-pointer group`}
                     role="button"
                     tabIndex={0}
                     onClick={handleNavigate}
@@ -641,12 +638,12 @@ export default function SearchPage() {
                         className={`${iconSize.cardInline} text-[var(--text-muted)] flex-shrink-0 group-hover:text-[var(--accent-700)] transition-colors duration-150`}/>
                     </CardContent>
                   </Card>
-                </motion.div>
+                </StaggerItem>
               );
             })}
-          </motion.div>
+          </Stagger>
         )}
-      </motion.div>
+      </PageTransition>
     </AppLayout>
   );
 }

@@ -30,6 +30,7 @@ import {
   X,
 } from 'lucide-react';
 import {AdminPageContent} from '@/components/layout';
+import {Reveal, Stagger, StaggerItem} from '@/components/motion';
 import {Button} from '@/components/ui/Button';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
@@ -442,8 +443,7 @@ export default function AdminEmployeesPage() {
   return (
     <AdminPageContent className="page-shell p-4 md:p-6 lg:p-8 space-y-6">
       {/* Header */}
-      <motion.div initial={{opacity: 0, y: 8}} animate={{opacity: 1, y: 0}} transition={{duration: 0.25}}
-                  className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <Reveal className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-page-title text-[var(--text-primary)]">Employee Management</h1>
           <p className="text-body-secondary text-[var(--text-secondary)] mt-1">Create employees, assign roles, and
@@ -452,11 +452,10 @@ export default function AdminEmployeesPage() {
         <Button variant="primary" leftIcon={<UserPlus className="h-4 w-4"/>} onClick={() => setShowCreateModal(true)}>
           Create Employee
         </Button>
-      </motion.div>
+      </Reveal>
 
       {/* Stats */}
-      <motion.div initial={{opacity: 0, y: 8}} animate={{opacity: 1, y: 0}} transition={{duration: 0.25, delay: 0.05}}
-                  className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <Stagger className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
           {
             icon: Users,
@@ -487,7 +486,7 @@ export default function AdminEmployeesPage() {
             iconColor: 'text-[var(--text-secondary)]'
           },
         ].map(({icon: Icon, value, label, tint, iconColor}) => (
-          <div key={label} className="card-aura p-4">
+          <StaggerItem key={label} className="card-aura p-4 hover-lift">
             <div className="flex items-center gap-2">
               <div className={`h-8 w-8 rounded-lg ${tint} flex items-center justify-center`}>
                 <Icon className={`h-4 w-4 ${iconColor}`}/>
@@ -497,12 +496,12 @@ export default function AdminEmployeesPage() {
                 <p className="text-caption text-[var(--text-muted)]">{label}</p>
               </div>
             </div>
-          </div>
+          </StaggerItem>
         ))}
-      </motion.div>
+      </Stagger>
 
       {/* Table */}
-      <motion.div initial={{opacity: 0, y: 8}} animate={{opacity: 1, y: 0}} transition={{duration: 0.25, delay: 0.1}}>
+      <Reveal>
         <Card>
           <CardHeader>
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -634,7 +633,7 @@ export default function AdminEmployeesPage() {
             )}
           </CardContent>
         </Card>
-      </motion.div>
+      </Reveal>
 
       {/* ═══ CREATE EMPLOYEE + ROLE MODAL ═══ */}
       <Modal isOpen={showCreateModal} onClose={handleCloseModal} size="lg">

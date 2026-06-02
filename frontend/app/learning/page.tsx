@@ -15,6 +15,13 @@ import {
 } from 'lucide-react';
 
 import {AppLayout} from '@/components/layout';
+import {
+  MOTION_DURATION,
+  MOTION_EASE,
+  MOTION_RISE_DISTANCE,
+  MOTION_STAGGER,
+  useReducedMotionSafe,
+} from '@/lib/animation';
 import {Button} from '@/components/ui/Button';
 import {Skeleton} from '@/components/ui/Skeleton';
 import {PermissionGate} from '@/components/auth/PermissionGate';
@@ -29,8 +36,24 @@ import {
 import type {Certificate, CourseEnrollment} from '@/lib/services/grow/lms.service';
 import {formatDate} from '@/lib/utils/format/date';
 
-// Single ease curve for every transition on this page.
-const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
+// Motion on this page consolidates onto the shared foundation tokens
+// (lib/animation) so it is one system with the rest of Studio Slate v2.
+// Semantic / interactive elements (header, sections with aria-label, the
+// aria-live aside, and tiles wrapping <Link>) keep their motion.{element}
+// wrapper but are retimed to these tokens rather than swapped for the
+// Reveal/Stagger primitives, which render a plain div and cannot carry ARIA.
+const EASE = MOTION_EASE.outExpo;
+const RISE = MOTION_RISE_DISTANCE;
+
+const containerVariants = {
+  hidden: {opacity: 1},
+  visible: {transition: {staggerChildren: MOTION_STAGGER, delayChildren: 0.08}},
+};
+
+const itemVariants = {
+  hidden: {opacity: 0, y: RISE},
+  visible: {opacity: 1, y: 0, transition: {duration: MOTION_DURATION.base, ease: EASE}},
+};
 
 export default function LearningPage() {
   const {data: dashboard, isLoading: dashboardLoading, isError: dashboardError} = useLearningDashboard();
@@ -102,11 +125,12 @@ export default function LearningPage() {
 
 // ── Header ───────────────────────────────────────────────────────────────────
 function PageHeader() {
+  const {pick} = useReducedMotionSafe();
   return (
     <motion.header
-      initial={{opacity: 0, y: 4}}
-      animate={{opacity: 1, y: 0}}
-      transition={{duration: 0.4, ease: EASE}}
+      variants={pick(itemVariants)}
+      initial="hidden"
+      animate="visible"
       className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-end"
     >
       <div className="space-y-2 max-w-2xl">
@@ -137,6 +161,7 @@ function StatsRow({totalEnrollments, averageProgress, certificatesEarned, comple
   certificatesEarned: number;
   completed: number;
 }) {
+  const {pick} = useReducedMotionSafe();
   const items = [
     {label: 'Courses enrolled', value: totalEnrollments, icon: BookOpen, tone: 'neutral' as const},
     {label: 'Completion', value: `${averageProgress}%`, icon: TrendingUp, tone: 'neutral' as const},
@@ -148,14 +173,14 @@ function StatsRow({totalEnrollments, averageProgress, certificatesEarned, comple
     <motion.section
       initial="hidden"
       animate="visible"
-      variants={{visible: {transition: {staggerChildren: 0.06, delayChildren: 0.08}}}}
+      variants={pick(containerVariants)}
       aria-label="Learning at a glance"
       className="grid grid-cols-2 sm:grid-cols-4 border-y border-[var(--border-subtle)] divide-x divide-[var(--border-subtle)]"
     >
       {items.map((item) => (
         <motion.div
           key={item.label}
-          variants={{hidden: {opacity: 0, y: 6}, visible: {opacity: 1, y: 0, transition: {duration: 0.4, ease: EASE}}}}
+          variants={itemVariants}
           className="px-5 py-6 sm:px-7 sm:py-8 first:pl-0 last:pr-0"
         >
           <div className="flex items-center gap-2 text-[var(--text-muted)]">
@@ -195,6 +220,7 @@ function BentoNavigation({featuredEnrollment, featuredCourseTitle, certificatesC
   featuredCourseTitle?: string;
   certificatesCount: number;
 }) {
+  const {pick} = useReducedMotionSafe();
   const heroLabel = featuredEnrollment
     ? `Continue learning: Course #${featuredEnrollment.courseId.slice(0, 8)}`
     : featuredCourseTitle
@@ -243,7 +269,10 @@ function BentoNavigation({featuredEnrollment, featuredCourseTitle, certificatesC
     <motion.section
       initial="hidden"
       animate="visible"
-      variants={{visible: {transition: {staggerChildren: 0.07, delayChildren: 0.18}}}}
+      variants={pick({
+        hidden: {opacity: 1},
+        visible: {transition: {staggerChildren: 0.07, delayChildren: 0.18}},
+      })}
       className="grid gap-4 grid-cols-1 lg:grid-cols-12"
       aria-label="Explore learning"
     >
@@ -266,9 +295,10 @@ function BentoHero({title, description, href, progress}: {
   href: string;
   progress?: number;
 }) {
+  const {pick} = useReducedMotionSafe();
   return (
     <motion.div
-      variants={{hidden: {opacity: 0, y: 8}, visible: {opacity: 1, y: 0, transition: {duration: 0.5, ease: EASE}}}}
+      variants={pick({hidden: {opacity: 0, y: RISE}, visible: {opacity: 1, y: 0, transition: {duration: MOTION_DURATION.slow, ease: EASE}}})}
       className="lg:col-span-7 lg:row-span-2"
     >
       <Link
@@ -306,15 +336,20 @@ function BentoHeroBars({progress}: {progress?: number}) {
       })
     : [42, 78, 63, 91, 55, 70, 38, 84];
 
+  const {prefersReduced} = useReducedMotionSafe();
   return (
     <div className="flex items-end gap-1.5 h-16 flex-1" aria-hidden="true">
       {widths.map((w, i) => (
         <motion.span
           key={i}
-          initial={{height: '0%'}}
-          animate={{height: `${w}%`}}
-          transition={{duration: 0.7, ease: EASE, delay: 0.35 + i * 0.04}}
-          className="flex-1 max-w-3 rounded-sm bg-gradient-to-t from-accent-100 to-accent-300 dark:from-accent-900/60 dark:to-accent-700/80"
+          initial={prefersReduced ? false : {scaleY: 0}}
+          animate={{scaleY: 1, height: `${w}%`}}
+          transition={
+            prefersReduced
+              ? {duration: 0}
+              : {duration: MOTION_DURATION.slow, ease: EASE, delay: 0.35 + i * 0.04}
+          }
+          className="flex-1 max-w-3 origin-bottom rounded-sm bg-gradient-to-t from-accent-100 to-accent-300 dark:from-accent-900/60 dark:to-accent-700/80"
         />
       ))}
     </div>
@@ -328,9 +363,10 @@ function BentoTile({title, description, icon: Icon, href, badge}: {
   href: string;
   badge?: number;
 }) {
+  const {pick} = useReducedMotionSafe();
   return (
     <motion.div
-      variants={{hidden: {opacity: 0, y: 8}, visible: {opacity: 1, y: 0, transition: {duration: 0.4, ease: EASE}}}}
+      variants={pick(itemVariants)}
       className="lg:col-span-5"
     >
       <Link
@@ -359,11 +395,15 @@ function BentoTile({title, description, icon: Icon, href, badge}: {
 
 // ── In-progress courses (divide-y list) ──────────────────────────────────────
 function InProgressList({items}: {items: CourseEnrollment[]}) {
+  const {pick} = useReducedMotionSafe();
   return (
     <motion.section
-      initial={{opacity: 0, y: 6}}
-      animate={{opacity: 1, y: 0}}
-      transition={{duration: 0.45, ease: EASE, delay: 0.32}}
+      variants={pick({
+        hidden: {opacity: 0, y: RISE},
+        visible: {opacity: 1, y: 0, transition: {duration: MOTION_DURATION.slow, ease: EASE, delay: 0.32}},
+      })}
+      initial="hidden"
+      animate="visible"
       className="space-y-4"
     >
       <div className="flex items-end justify-between gap-4">
@@ -434,11 +474,15 @@ function InProgressSkeleton() {
 
 // ── Attention strip ──────────────────────────────────────────────────────────
 function AttentionStrip({count}: {count: number}) {
+  const {pick} = useReducedMotionSafe();
   return (
     <motion.aside
-      initial={{opacity: 0, y: 6}}
-      animate={{opacity: 1, y: 0}}
-      transition={{duration: 0.45, ease: EASE, delay: 0.42}}
+      variants={pick({
+        hidden: {opacity: 0, y: RISE},
+        visible: {opacity: 1, y: 0, transition: {duration: MOTION_DURATION.slow, ease: EASE, delay: 0.42}},
+      })}
+      initial="hidden"
+      animate="visible"
       role="status"
       aria-live="polite"
       className="flex items-center justify-between gap-4 rounded-xl border border-warning-200 bg-warning-50/40 dark:border-warning-700/40 dark:bg-warning-950/30 px-5 py-4"

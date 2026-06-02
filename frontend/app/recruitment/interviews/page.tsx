@@ -7,6 +7,7 @@ import {PageDeniedFallback, PermissionGate} from '@/components/auth/PermissionGa
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {notifications} from '@mantine/notifications';
+import {PageTransition, Stagger, StaggerItem} from '@/components/motion';
 import {AppLayout} from '@/components/layout';
 import {Card, CardContent} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
@@ -612,7 +613,7 @@ function InterviewsPage() {
 
   return (
     <AppLayout activeMenuItem="recruitment">
-      <div className="p-6 space-y-6">
+      <PageTransition className="p-6 space-y-6">
         {/* Header */}
         <div className="row-between">
           <div>
@@ -630,7 +631,8 @@ function InterviewsPage() {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Stagger className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <StaggerItem>
           <Card className="bg-[var(--bg-card)] skeuo-card">
             <CardContent className="p-6">
               <div className="flex items-center gap-4">
@@ -644,6 +646,8 @@ function InterviewsPage() {
               </div>
             </CardContent>
           </Card>
+          </StaggerItem>
+          <StaggerItem>
           <Card className="bg-[var(--bg-card)] skeuo-card">
             <CardContent className="p-6">
               <div className="flex items-center gap-4">
@@ -657,6 +661,8 @@ function InterviewsPage() {
               </div>
             </CardContent>
           </Card>
+          </StaggerItem>
+          <StaggerItem>
           <Card className="bg-[var(--bg-card)] skeuo-card">
             <CardContent className="p-6">
               <div className="flex items-center gap-4">
@@ -670,6 +676,8 @@ function InterviewsPage() {
               </div>
             </CardContent>
           </Card>
+          </StaggerItem>
+          <StaggerItem>
           <Card className="bg-[var(--bg-card)] skeuo-card">
             <CardContent className="p-6">
               <div className="flex items-center gap-4">
@@ -683,7 +691,8 @@ function InterviewsPage() {
               </div>
             </CardContent>
           </Card>
-        </div>
+          </StaggerItem>
+        </Stagger>
 
         {/* Search and Filters */}
         <Card className="bg-[var(--bg-card)]">
@@ -1385,7 +1394,7 @@ function InterviewsPage() {
             </ModalBody>
           </Modal>
         )}
-      </div>
+      </PageTransition>
     </AppLayout>
   );
 }

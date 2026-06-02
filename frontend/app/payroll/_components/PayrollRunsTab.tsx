@@ -2,6 +2,7 @@
 
 import React from 'react';
 import {Banknote} from 'lucide-react';
+import {Reveal} from '@/components/motion';
 import {EmptyState} from '@/components/ui';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
@@ -90,7 +91,7 @@ export function PayrollRunsTab({
           />
         </PermissionGate>
       ) : (
-        <div className="skeuo-card overflow-x-auto rounded-xl border border-[var(--border-main)]">
+        <Reveal className="skeuo-card overflow-x-auto rounded-xl border border-[var(--border-main)]">
           <table className="table-aura w-full">
             <thead>
             <tr>
@@ -119,7 +120,7 @@ export function PayrollRunsTab({
             <tbody>
             {filtered.map((run) => (
               <tr key={run.id}
-                  className="border-b hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50">
+                  className="hover-lift border-b hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50">
                 <td className="px-6 py-4 text-sm font-medium">{run.runName}</td>
                 <td className="px-6 py-4 text-body-secondary tabular-nums">
                   {formatDate(run.payrollPeriodStart)} - {formatDate(run.payrollPeriodEnd)}
@@ -178,7 +179,7 @@ export function PayrollRunsTab({
             ))}
             </tbody>
           </table>
-        </div>
+        </Reveal>
       )}
     </>
   );

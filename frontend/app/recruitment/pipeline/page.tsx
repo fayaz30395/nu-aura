@@ -705,7 +705,7 @@ export default function ApplicantPipelinePage() {
           </div>
         }
       >
-        <div className="page-shell-centered fade-slide-up auth-delay-20 p-6 space-y-6">
+        <div className="page-shell-centered motion-rise p-6 space-y-6">
           {/* ── Header ────────────────────────────────────────────────────── */}
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>

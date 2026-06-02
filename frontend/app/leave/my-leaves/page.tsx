@@ -2,9 +2,9 @@
 
 import {useEffect, useState} from 'react';
 import {useRouter} from 'next/navigation';
-import {motion} from 'framer-motion';
 import {AlertCircle, CalendarOff, RefreshCw} from 'lucide-react';
 import {AppLayout} from '@/components/layout';
+import {PageTransition, Reveal} from '@/components/motion';
 import {
   useActiveLeaveTypes,
   useCancelLeaveRequest,
@@ -100,12 +100,7 @@ export default function MyLeavesPage() {
 
   return (
     <AppLayout activeMenuItem="leave">
-      <motion.div
-        initial={{opacity: 0, y: 12}}
-        animate={{opacity: 1, y: 0}}
-        transition={{duration: 0.25, ease: 'easeOut'}}
-        className="max-w-7xl mx-auto"
-      >
+      <PageTransition className="max-w-7xl mx-auto">
         <div className="mb-6">
           <button
             onClick={() => router.back()}
@@ -165,7 +160,7 @@ export default function MyLeavesPage() {
         )}
 
         {/* Leave Requests Table */}
-        <div className="skeuo-card overflow-hidden">
+        <Reveal className="skeuo-card overflow-hidden">
           {!requestsData ? (
             <div className="px-6 py-12 text-center">
               <div className="flex flex-col items-center gap-4">
@@ -222,7 +217,7 @@ export default function MyLeavesPage() {
                   <tbody className="divide-y divide-surface-200 dark:divide-surface-700">
                   {requests.map((request: LeaveRequest) => (
                     <tr key={request.id}
-                        className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50">
+                        className="hover-lift hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50">
                       <td className="px-6 py-4 text-sm font-medium text-[var(--text-primary)]">
                         {request.requestNumber}
                       </td>
@@ -297,7 +292,7 @@ export default function MyLeavesPage() {
               )}
             </>
           )}
-        </div>
+        </Reveal>
 
         {/* Cancel Leave Confirmation Dialog */}
         <ConfirmDialog
@@ -331,6 +326,6 @@ export default function MyLeavesPage() {
             required: true,
           }}
         />
-      </motion.div>
+      </PageTransition>
     </AppLayout>);
 }

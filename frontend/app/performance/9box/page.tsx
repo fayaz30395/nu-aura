@@ -5,6 +5,7 @@ import {useEffect, useMemo, useState} from 'react';
 import {Download, Grid3x3, Info, RefreshCw, Search, Shield, Target, TrendingUp, Users,} from 'lucide-react';
 import {useAllReviews, usePerformanceAllCycles} from '@/lib/hooks/queries/usePerformance';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {PageTransition} from '@/components/motion';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 
@@ -371,7 +372,7 @@ export default function NineBoxPage() {
           description="You do not have permission to view the 9-Box talent grid."
         />
       }>
-        <div className="page-shell-centered fade-slide-up auth-delay-20">
+        <PageTransition className="page-shell-centered">
           <div className="max-w-7xl mx-auto p-6 space-y-6">
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -696,7 +697,7 @@ export default function NineBoxPage() {
               </div>
             ) : null}
           </div>
-        </div>
+        </PageTransition>
       </PermissionGate>
     </AppLayout>
   );

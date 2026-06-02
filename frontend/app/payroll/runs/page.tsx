@@ -5,7 +5,7 @@ import {useRouter} from 'next/navigation';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {AppLayout} from '@/components/layout';
-import {motion} from 'framer-motion';
+import {PageTransition} from '@/components/motion';
 import {Skeleton} from '@mantine/core';
 import dynamic from 'next/dynamic';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
@@ -167,12 +167,7 @@ export default function PayrollRunsPage() {
       <PermissionGate permission={Permissions.PAYROLL_VIEW}
                       fallback={<div className="p-6"><p className="text-danger-600">You do not have permission to view
                         payroll runs.</p></div>}>
-        <motion.div
-          className="p-6"
-          initial={{opacity: 0, y: 12}}
-          animate={{opacity: 1, y: 0}}
-          transition={{duration: 0.25, ease: 'easeOut'}}
-        >
+        <PageTransition className="p-6">
           <div className="max-w-7xl mx-auto">
             {/* Header */}
             <div className="mb-8">
@@ -231,7 +226,7 @@ export default function PayrollRunsPage() {
             }}
             onConfirm={handleDeletePayrollRun}
           />
-        </motion.div>
+        </PageTransition>
       </PermissionGate>
     </AppLayout>
   );

@@ -1,5 +1,6 @@
 'use client';
 import {AppLayout} from '@/components/layout';
+import {PageTransition} from '@/components/motion';
 import {Button} from '@/components/ui/Button';
 import {notifications} from '@mantine/notifications';
 import {useMemo, useState} from 'react';
@@ -626,7 +627,7 @@ function PIPCard({pip, onView}: { pip: PIPResponse; onView: () => void }) {
   const statusConfig = STATUS_CONFIG[pip.status];
 
   return (
-    <div className="card-interactive p-4">
+    <div className="card-interactive hover-lift p-4">
       <div className="flex items-start justify-between mb-4">
         <div className="flex-1">
           <h3 className="font-semibold text-[var(--text-primary)]">{pip.employeeName}</h3>
@@ -747,7 +748,7 @@ export default function PIPPage() {
 
   return (
     <AppLayout>
-      <div className="page-shell-centered fade-slide-up auth-delay-20">
+      <PageTransition className="page-shell-centered">
         <div className="max-w-7xl mx-auto p-6 space-y-6">
           {/* Header */}
           <div className="row-between">
@@ -878,7 +879,7 @@ export default function PIPPage() {
           onClose={() => setSelectedPIP(null)}
           onUpdated={handlePIPUpdated}
         />
-      </div>
+      </PageTransition>
     </AppLayout>
   );
 }

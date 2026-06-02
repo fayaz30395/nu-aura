@@ -206,10 +206,10 @@ function AnimatedBackground() {
 // ─── Loading Fallback ────────────────────────────────────────────────
 function LoginPageLoading() {
   return (
-    <div className="auth-shell fade-slide-up">
-      <div className="auth-shell-grid auth-shell-narrow fade-slide-up stagger-children">
+    <div className="auth-shell motion-rise">
+      <div className="auth-shell-grid auth-shell-narrow">
         <div
-          className="auth-loading-card w-full flex flex-col items-center gap-4 fade-slide-up auth-delay-20 float-subtle page-reveal"
+          className="auth-loading-card w-full flex flex-col items-center gap-4 motion-rise"
         >
         <div className="w-12 h-12 border-2 border-accent-300/30 border-t-accent-500 rounded-full animate-spin"/>
         <p className="text-[var(--text-muted)] text-sm">Loading NU-AURA...</p>
@@ -264,7 +264,7 @@ function DemoLoginPanel({
 
       {isExpanded && (
         <div
-          className="mt-3 space-y-2 max-h-[300px] overflow-y-auto pr-1 fade-slide-up auth-delay-20"
+          className="mt-3 space-y-2 max-h-[300px] overflow-y-auto pr-1 motion-rise"
         >
           {DEMO_ACCOUNTS.map((account) => (
             <button
@@ -624,10 +624,10 @@ function LoginPage() {
   // MFA screen
   if (mfaRequired && mfaUserId) {
     return (
-      <div className="auth-shell fade-slide-up">
+      <div className="auth-shell motion-rise">
         <AnimatedBackground/>
         <div className="relative z-10 w-full max-w-lg px-4">
-          <div className="auth-shell-grid auth-shell-narrow fade-slide-up stagger-children">
+          <div className="auth-shell-grid auth-shell-narrow motion-rise">
             <MfaVerification
               userId={mfaUserId}
               onSuccess={handleMfaSuccess}
@@ -641,14 +641,14 @@ function LoginPage() {
 
   return (
     <>
-      <div className="auth-shell relative overflow-hidden fade-slide-up">
+      <div className="auth-shell relative overflow-hidden motion-rise">
         <AnimatedBackground/>
         <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_460px] lg:items-center">
             {/* ─── Left Panel: Product Context ──────────────────── */}
             <section className="hidden lg:flex">
               <div
-                className="auth-side-panel auth-delay-20 float-subtle w-full p-10 flex flex-col justify-center page-reveal"
+                className="auth-side-panel motion-rise w-full p-10 flex flex-col justify-center"
               >
                 <div className="auth-side-panel-content space-y-6">
                   <p className="auth-chip">
@@ -681,7 +681,7 @@ function LoginPage() {
             {/* ─── Right Panel: Login Card ───────────────────────── */}
             <section className="w-full flex items-center">
               <div
-                className="w-full max-w-[420px] fade-slide-up auth-delay-40 stagger-children px-1 py-12 mx-auto"
+                className="w-full max-w-[420px] motion-rise px-1 py-12 mx-auto"
               >
               {/* Logo */}
               <div className="flex justify-center mb-7">
@@ -714,7 +714,7 @@ function LoginPage() {
               </div>
 
               {/* Card */}
-              <div className="auth-shell-card fade-slide-up auth-delay-40 float-subtle p-6 page-reveal">
+              <div className="auth-shell-card p-6">
                 <div className="mb-5">
                   <h2 className="text-xl font-bold text-[var(--text-primary)] mb-1">
                     Welcome to NU-AURA
@@ -735,7 +735,7 @@ function LoginPage() {
                 {/* Error Alert */}
                 {error && (
                   <div
-                    className="auth-error-banner flex items-start gap-2 p-4 mb-5 fade-slide-up auth-delay-20"
+                    className="auth-error-banner flex items-start gap-2 p-4 mb-5 motion-rise"
                   >
                     <AlertCircle className="w-5 h-5 text-danger-600 dark:text-danger-400 flex-shrink-0 mt-0.5"/>
                     <div>
@@ -797,7 +797,7 @@ function LoginPage() {
                   {showEmailForm && (
                     <form
                       onSubmit={handleSubmit(handleEmailLogin)}
-                      className="mt-3 space-y-4 fade-slide-up auth-delay-40"
+                      className="mt-3 space-y-4 motion-rise"
                       aria-label="Email and password sign-in"
                     >
                       <Input

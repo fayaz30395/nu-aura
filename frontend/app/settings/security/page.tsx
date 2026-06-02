@@ -7,6 +7,7 @@ import {z} from 'zod';
 import {logger} from '@/lib/utils/logger';
 import {AlertCircle, Check, Clock, Laptop, Lock, Shield,} from 'lucide-react';
 import {AppLayout} from '@/components/layout';
+import {PageTransition, Reveal} from '@/components/motion';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {useAuth} from '@/lib/hooks/useAuth';
@@ -88,14 +89,14 @@ export default function SecuritySettingsPage() {
 
   return (
     <AppLayout activeMenuItem="settings">
-      <div className="space-y-6">
+      <PageTransition className="space-y-6">
         {/* Header */}
-        <div>
+        <Reveal>
           <h1 className="text-xl font-bold text-[var(--text-primary)]">Security Settings</h1>
           <p className="text-[var(--text-secondary)] mt-1">
             Manage your account security and authentication
           </p>
-        </div>
+        </Reveal>
 
         {/* Success Message */}
         {success && (
@@ -117,7 +118,7 @@ export default function SecuritySettingsPage() {
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <Reveal className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Two-Factor Authentication */}
           <Card className="lg:col-span-2">
             <CardHeader>
@@ -292,9 +293,10 @@ export default function SecuritySettingsPage() {
               </div>
             </CardContent>
           </Card>
-        </div>
+        </Reveal>
 
         {/* Login History & Sessions */}
+        <Reveal>
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -308,7 +310,7 @@ export default function SecuritySettingsPage() {
           <CardContent>
             <div className="space-y-4">
               <div
-                className="flex items-start gap-4 panel-inset p-4">
+                className="flex items-start gap-4 panel-inset p-4 hover-lift">
                 <div className="p-2 bg-accent-100 dark:bg-accent-900/30 rounded-lg flex-shrink-0">
                   <Laptop className="h-5 w-5 text-accent-600 dark:text-accent-400"/>
                 </div>
@@ -326,7 +328,8 @@ export default function SecuritySettingsPage() {
             </div>
           </CardContent>
         </Card>
-      </div>
+        </Reveal>
+      </PageTransition>
 
       {/* MFA Setup Modal */}
       <MfaSetup

@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 
 import {AppLayout} from '@/components/layout';
+import {PageTransition} from '@/components/motion';
 import {PageErrorFallback} from '@/components/errors/PageErrorFallback';
 import {Skeleton} from '@/components/ui/Skeleton';
 import {PermissionGate} from '@/components/auth/PermissionGate';
@@ -134,7 +135,7 @@ export default function PerformancePage() {
 
   return (
     <AppLayout activeMenuItem="performance">
-      <div className="mx-auto w-full max-w-7xl px-6 py-8 space-y-10">
+      <PageTransition className="mx-auto w-full max-w-7xl px-6 py-8 space-y-10">
         <PageHeader />
 
         {isLoading ? <StatsSkeleton /> : <StatsRow stats={stats} />}
@@ -142,7 +143,7 @@ export default function PerformancePage() {
         <BentoNavigation pending360={stats.pending360Reviews} activeCycles={stats.activeReviewCycles} />
 
         {stats.pending360Reviews > 0 && <Pending360Strip count={stats.pending360Reviews} />}
-      </div>
+      </PageTransition>
     </AppLayout>
   );
 }
@@ -150,12 +151,7 @@ export default function PerformancePage() {
 // ── Header ───────────────────────────────────────────────────────────────────
 function PageHeader() {
   return (
-    <motion.header
-      initial={{opacity: 0, y: 4}}
-      animate={{opacity: 1, y: 0}}
-      transition={{duration: 0.4, ease: EASE}}
-      className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-end"
-    >
+    <header className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-end">
       <div className="space-y-2 max-w-2xl">
         <p className="text-2xs font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">
           Performance Management
@@ -173,7 +169,7 @@ function PageHeader() {
           <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
         </Button>
       </Link>
-    </motion.header>
+    </header>
   );
 }
 

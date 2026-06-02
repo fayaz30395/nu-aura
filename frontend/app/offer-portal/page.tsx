@@ -34,7 +34,7 @@ type AcceptOfferFormData = z.infer<typeof acceptOfferSchema>;
 function OfferPortalLoading() {
   return (
     <div
-      className="page-shell-centered fade-slide-up auth-delay-20 bg-gradient-to-br from-accent-50 to-surface-100 dark:from-surface-900 dark:to-surface-800">
+      className="page-shell-centered motion-rise bg-gradient-to-br from-accent-50 to-surface-100 dark:from-surface-900 dark:to-surface-800">
       <div className="animate-pulse text-center">
         <Loader2 className="h-12 w-12 text-accent-500 animate-spin mx-auto mb-4"/>
         <p className="text-[var(--text-secondary)]">Loading offer details...</p>
@@ -158,7 +158,7 @@ function OfferPortalPage() {
   if (error && !offer) {
     return (
       <div
-        className="page-shell-centered fade-slide-up auth-delay-20 bg-gradient-to-br from-accent-50 to-surface-100 dark:from-surface-900 dark:to-surface-800 p-4">
+        className="page-shell-centered motion-rise bg-gradient-to-br from-accent-50 to-surface-100 dark:from-surface-900 dark:to-surface-800 p-4">
         <Card className="max-w-md w-full">
           <CardContent className="p-8 text-center">
             <div
@@ -186,7 +186,7 @@ function OfferPortalPage() {
 
   return (
     <div
-      className="page-shell-centered fade-slide-up auth-delay-20 bg-gradient-to-br from-accent-50 to-surface-100 dark:from-surface-900 dark:to-surface-800 py-8 px-4">
+      className="page-shell-centered motion-rise bg-gradient-to-br from-accent-50 to-surface-100 dark:from-surface-900 dark:to-surface-800 py-8 px-4">
       <div className="max-w-3xl mx-auto space-y-6">
         {/* Header */}
         <div className="text-center mb-8">

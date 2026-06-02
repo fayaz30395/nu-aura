@@ -2,7 +2,6 @@
 
 import {useEffect, useMemo, useState} from 'react';
 import {useRouter} from 'next/navigation';
-import {motion} from 'framer-motion';
 import {
   AlertCircle,
   ArrowLeft,
@@ -22,6 +21,7 @@ import {
   XCircle,
 } from 'lucide-react';
 import {AppLayout} from '@/components/layout';
+import {Reveal, Stagger, StaggerItem} from '@/components/motion';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {Input} from '@/components/ui/Input';
@@ -210,22 +210,16 @@ export default function TeamAttendancePage() {
 
   return (
     <AppLayout activeMenuItem="attendance">
-      <motion.div
-        className="space-y-8"
-        initial={{opacity: 0, y: 8}}
-        animate={{opacity: 1, y: 0}}
-        transition={{duration: 0.25, ease: 'easeOut'}}
-      >
+      <Reveal className="space-y-8">
         {/* Header with Breadcrumb */}
         <div className="flex flex-col gap-4">
-          <motion.button
+          <button
             onClick={() => router.push('/attendance')}
-            className="flex items-center gap-2 text-body-secondary hover:text-[var(--text-primary)] transition-colors w-fit"
-            whileHover={{x: -2}}
+            className="press-scale flex items-center gap-2 text-body-secondary hover:text-[var(--text-primary)] transition-colors w-fit"
           >
             <ArrowLeft className="h-4 w-4"/>
             Back to Attendance
-          </motion.button>
+          </button>
           <div>
             <h1 className="text-page-title text-[var(--text-primary)]">Team Attendance</h1>
             <p className="text-[var(--text-muted)] text-sm mt-2">
@@ -236,25 +230,19 @@ export default function TeamAttendancePage() {
 
         {/* Error Alert */}
         {error && (
-          <motion.div
-            className="bg-danger-50 dark:bg-danger-950/30 border border-danger-200 dark:border-danger-800 rounded-lg p-4 flex items-start gap-2"
-            initial={{opacity: 0, y: -8}}
-            animate={{opacity: 1, y: 0}}
-          >
+          <Reveal className="bg-danger-50 dark:bg-danger-950/30 border border-danger-200 dark:border-danger-800 rounded-lg p-4 flex items-start gap-2">
             <AlertCircle className="w-5 h-5 text-danger-600 dark:text-danger-400 mt-0.5 flex-shrink-0"/>
             <div className="flex-1">
               <p
                 className="text-sm text-danger-800 dark:text-danger-300">{error?.message || 'Failed to load team attendance.'}</p>
             </div>
-          </motion.div>
+          </Reveal>
         )}
 
         {/* Date Navigation Bar */}
-        <motion.div
+        <Reveal
           className="card-aura bg-[var(--bg-card)] rounded-lg px-6 py-4 row-between gap-4 flex-wrap"
-          initial={{opacity: 0, y: 8}}
-          animate={{opacity: 1, y: 0}}
-          transition={{delay: 0.1}}
+          delay={0.1}
         >
           <div className="flex items-center gap-4">
             <button
@@ -328,7 +316,7 @@ export default function TeamAttendancePage() {
               <span className="hidden sm:inline">CSV</span>
             </Button>
           </div>
-        </motion.div>
+        </Reveal>
 
         {/* Stats Cards */}
         {loading ? (
@@ -338,17 +326,13 @@ export default function TeamAttendancePage() {
             ))}
           </div>
         ) : (
-          <motion.div
+          <Stagger
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
-            initial={{opacity: 0}}
-            animate={{opacity: 1}}
-            transition={{staggerChildren: 0.05, delayChildren: 0.15}}
+            stagger={0.05}
+            delayChildren={0.15}
           >
             {/* Present Card */}
-            <motion.div
-              initial={{opacity: 0, y: 8}}
-              animate={{opacity: 1, y: 0}}
-            >
+            <StaggerItem>
               <Card className="card-aura h-full">
                 <CardContent className="p-6 flex flex-col gap-4">
                   <div
@@ -367,13 +351,10 @@ export default function TeamAttendancePage() {
                   />
                 </CardContent>
               </Card>
-            </motion.div>
+            </StaggerItem>
 
             {/* Absent Card */}
-            <motion.div
-              initial={{opacity: 0, y: 8}}
-              animate={{opacity: 1, y: 0}}
-            >
+            <StaggerItem>
               <Card className="card-aura h-full">
                 <CardContent className="p-6 flex flex-col gap-4">
                   <div
@@ -392,13 +373,10 @@ export default function TeamAttendancePage() {
                   />
                 </CardContent>
               </Card>
-            </motion.div>
+            </StaggerItem>
 
             {/* Late Card */}
-            <motion.div
-              initial={{opacity: 0, y: 8}}
-              animate={{opacity: 1, y: 0}}
-            >
+            <StaggerItem>
               <Card className="card-aura h-full">
                 <CardContent className="p-6 flex flex-col gap-4">
                   <div
@@ -417,13 +395,10 @@ export default function TeamAttendancePage() {
                   />
                 </CardContent>
               </Card>
-            </motion.div>
+            </StaggerItem>
 
             {/* On Leave Card */}
-            <motion.div
-              initial={{opacity: 0, y: 8}}
-              animate={{opacity: 1, y: 0}}
-            >
+            <StaggerItem>
               <Card className="card-aura h-full">
                 <CardContent className="p-6 flex flex-col gap-4">
                   <div
@@ -442,17 +417,13 @@ export default function TeamAttendancePage() {
                   />
                 </CardContent>
               </Card>
-            </motion.div>
-          </motion.div>
+            </StaggerItem>
+          </Stagger>
         )}
 
         {/* Status Distribution Chart */}
         {!loading && chartData.length > 0 && (
-          <motion.div
-            initial={{opacity: 0, y: 8}}
-            animate={{opacity: 1, y: 0}}
-            transition={{delay: 0.25}}
-          >
+          <Reveal delay={0.25}>
             <Card className="card-aura">
               <CardHeader>
                 <CardTitle className="text-card-title">Status Distribution</CardTitle>
@@ -474,16 +445,14 @@ export default function TeamAttendancePage() {
                 </div>
               </CardContent>
             </Card>
-          </motion.div>
+          </Reveal>
         )}
 
         {/* Search & Filter Controls */}
         {!loading && records.length > 0 && (
-          <motion.div
+          <Reveal
             className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center"
-            initial={{opacity: 0, y: 8}}
-            animate={{opacity: 1, y: 0}}
-            transition={{delay: 0.3}}
+            delay={0.3}
           >
             <div className="flex-1">
               <Input
@@ -505,16 +474,12 @@ export default function TeamAttendancePage() {
               <option value="LEAVE">Leave</option>
               <option value="HALF_DAY">Half Day</option>
             </select>
-          </motion.div>
+          </Reveal>
         )}
 
         {/* Table View */}
         {viewMode === 'table' && (
-          <motion.div
-            initial={{opacity: 0, y: 8}}
-            animate={{opacity: 1, y: 0}}
-            transition={{delay: 0.35}}
-          >
+          <Reveal delay={0.35}>
             <Card className="card-aura">
               <CardHeader>
                 <CardTitle className="text-card-title flex items-center gap-2">
@@ -578,12 +543,9 @@ export default function TeamAttendancePage() {
                       </tr>
                       </thead>
                       <tbody className="divide-y divide-[var(--border-main)]">
-                      {filteredAndSortedRecords.map((record, index) => (
-                        <motion.tr
+                      {filteredAndSortedRecords.map((record) => (
+                        <tr
                           key={record.id}
-                          initial={{opacity: 0}}
-                          animate={{opacity: 1}}
-                          transition={{delay: index * 0.02}}
                           className="h-11 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors"
                         >
                           <td className="px-6 py-4 text-sm font-medium text-[var(--text-primary)]">
@@ -643,7 +605,7 @@ export default function TeamAttendancePage() {
                               </div>
                             )}
                           </td>
-                        </motion.tr>
+                        </tr>
                       ))}
                       </tbody>
                     </table>
@@ -651,16 +613,12 @@ export default function TeamAttendancePage() {
                 )}
               </CardContent>
             </Card>
-          </motion.div>
+          </Reveal>
         )}
 
         {/* Grid View */}
         {viewMode === 'grid' && (
-          <motion.div
-            initial={{opacity: 0, y: 8}}
-            animate={{opacity: 1, y: 0}}
-            transition={{delay: 0.35}}
-          >
+          <Reveal delay={0.35}>
             <h2 className="text-card-title text-[var(--text-primary)] mb-4 flex items-center gap-2">
               <Users className="h-5 w-5"/>
               Team Attendance Grid {filteredAndSortedRecords.length > 0 && `(${filteredAndSortedRecords.length})`}
@@ -681,14 +639,9 @@ export default function TeamAttendancePage() {
                 </p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {filteredAndSortedRecords.map((record, index) => (
-                  <motion.div
-                    key={record.id}
-                    initial={{opacity: 0, y: 8}}
-                    animate={{opacity: 1, y: 0}}
-                    transition={{delay: index * 0.03, duration: 0.25}}
-                  >
+              <Stagger className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" stagger={0.03}>
+                {filteredAndSortedRecords.map((record) => (
+                  <StaggerItem key={record.id}>
                     <Card
                       className={`card-aura h-full hover:shadow-[var(--shadow-dropdown)] transition-all border-t-4 ${
                         record.status === 'PRESENT' ? 'border-t-success-500' :
@@ -773,24 +726,20 @@ export default function TeamAttendancePage() {
                         )}
                       </CardContent>
                     </Card>
-                  </motion.div>
+                  </StaggerItem>
                 ))}
-              </div>
+              </Stagger>
             )}
-          </motion.div>
+          </Reveal>
         )}
 
         {/* Quick Links */}
-        <motion.div
+        <Stagger
           className="grid grid-cols-1 md:grid-cols-3 gap-4"
-          initial={{opacity: 0, y: 8}}
-          animate={{opacity: 1, y: 0}}
-          transition={{delay: 0.45, staggerChildren: 0.05}}
+          stagger={0.05}
+          delayChildren={0.45}
         >
-          <motion.div
-            initial={{opacity: 0, y: 8}}
-            animate={{opacity: 1, y: 0}}
-          >
+          <StaggerItem>
             <Card
               isClickable
               onClick={() => router.push('/attendance')}
@@ -805,12 +754,9 @@ export default function TeamAttendancePage() {
                 <p className="text-caption">View your own records</p>
               </CardContent>
             </Card>
-          </motion.div>
+          </StaggerItem>
 
-          <motion.div
-            initial={{opacity: 0, y: 8}}
-            animate={{opacity: 1, y: 0}}
-          >
+          <StaggerItem>
             <Card
               isClickable
               onClick={() => router.push('/attendance/regularization')}
@@ -825,12 +771,9 @@ export default function TeamAttendancePage() {
                 <p className="text-caption">Review corrections</p>
               </CardContent>
             </Card>
-          </motion.div>
+          </StaggerItem>
 
-          <motion.div
-            initial={{opacity: 0, y: 8}}
-            animate={{opacity: 1, y: 0}}
-          >
+          <StaggerItem>
             <Card
               isClickable
               onClick={() => window.print()}
@@ -845,9 +788,9 @@ export default function TeamAttendancePage() {
                 <p className="text-caption">Generate PDF</p>
               </CardContent>
             </Card>
-          </motion.div>
-        </motion.div>
-      </motion.div>
+          </StaggerItem>
+        </Stagger>
+      </Reveal>
     </AppLayout>
   );
 }

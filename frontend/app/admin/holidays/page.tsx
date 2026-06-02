@@ -10,6 +10,7 @@ import {Calendar} from 'lucide-react';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
 import {ConfirmDialog} from '@/components/ui';
+import {Reveal} from '@/components/motion';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {formatWeekday} from '@/lib/utils/format/date';
 import {format} from 'date-fns';
@@ -218,10 +219,10 @@ export default function HolidayCalendarManagementPage() {
   });
 
   return (
-    <div className="page-shell-centered fade-slide-up auth-delay-20 p-6">
+    <div className="page-shell-centered motion-rise p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="flex justify-between items-center mb-6">
+        <Reveal className="flex justify-between items-center mb-6">
           <div>
             <h1 className="text-xl font-bold">Holiday Calendar Management</h1>
             <p className="mt-1 text-body-secondary">
@@ -253,7 +254,7 @@ export default function HolidayCalendarManagementPage() {
               + Add Holiday
             </button>
           </div>
-        </div>
+        </Reveal>
 
         {/* Error Message */}
         {(uiError || queryError) && (
@@ -271,7 +272,7 @@ export default function HolidayCalendarManagementPage() {
         )}
 
         {/* Statistics */}
-        <div className="grid grid-cols-4 gap-4 mb-6">
+        <Reveal className="grid grid-cols-4 gap-4 mb-6">
           <div className="skeuo-card p-4">
             <div className="text-body-secondary">Total Holidays</div>
             <div className="text-xl font-bold text-[var(--text-primary)]">{holidays.length}</div>
@@ -294,10 +295,10 @@ export default function HolidayCalendarManagementPage() {
               {holidays.filter((h) => h.isRestricted).length}
             </div>
           </div>
-        </div>
+        </Reveal>
 
         {/* Holidays List */}
-        <div className="skeuo-card">
+        <Reveal className="skeuo-card">
           {loading ? (
             <div className="px-6 py-12 text-center text-[var(--text-muted)]">
               Loading holidays for {selectedYear}...
@@ -317,7 +318,7 @@ export default function HolidayCalendarManagementPage() {
                     {(holidaysByMonth[month] ?? []).map((holiday) => (
                       <div
                         key={holiday.id}
-                        className="row-between p-4 bg-[var(--bg-secondary)]/50 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors"
+                        className="row-between p-4 bg-[var(--bg-secondary)]/50 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors hover-lift"
                       >
                         <div className="flex-1">
                           <div className="flex items-center space-x-4">
@@ -382,7 +383,7 @@ export default function HolidayCalendarManagementPage() {
               ))}
             </div>
           )}
-        </div>
+        </Reveal>
 
         {/* Delete Confirmation Dialog */}
         <ConfirmDialog

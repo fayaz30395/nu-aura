@@ -94,12 +94,12 @@ export default function SignupPage() {
 
   if (isSuccess) {
     return (
-      <div className="auth-shell fade-slide-up">
+      <div className="auth-shell motion-rise">
         <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_440px] lg:items-center">
             <section className="hidden lg:flex">
               <div
-                className="auth-side-panel p-10 w-full flex items-center auth-delay-20 float-subtle"
+                className="auth-side-panel p-10 w-full flex items-center motion-rise"
               >
                 <div className="auth-side-panel-content space-y-6">
                   <Image
@@ -132,7 +132,7 @@ export default function SignupPage() {
               </div>
             </section>
             <section className="w-full">
-              <Card className="auth-shell-card fade-slide-up auth-delay-40 float-subtle page-reveal">
+              <Card className="auth-shell-card motion-rise">
                 <CardContent className="pt-8 pb-8 text-center space-y-4">
                   <div className="flex justify-center">
                     <div
@@ -163,11 +163,11 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="auth-shell fade-slide-up">
+    <div className="auth-shell motion-rise">
       <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_560px] lg:items-start">
           <section className="hidden lg:flex">
-            <div className="auth-side-panel p-10 w-full flex items-center auth-delay-20 float-subtle">
+            <div className="auth-side-panel p-10 w-full flex items-center motion-rise">
               <div className="auth-side-panel-content space-y-6">
                 <div className="inline-flex items-center justify-center">
                   <Image
@@ -215,7 +215,7 @@ export default function SignupPage() {
           </section>
 
           <section className="w-full">
-            <Card className="auth-shell-card fade-slide-up auth-delay-40 float-subtle page-reveal">
+            <Card className="auth-shell-card motion-rise">
               <CardHeader className="pb-4">
                 <CardTitle className="text-lg">Create your account</CardTitle>
                 <CardDescription>Start your free trial. No credit card required.</CardDescription>

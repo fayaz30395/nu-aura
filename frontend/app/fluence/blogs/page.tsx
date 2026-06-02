@@ -6,6 +6,7 @@ import {useRouter} from 'next/navigation';
 import {AnimatePresence, motion} from 'framer-motion';
 import {Clock, Eye, Heart, MessageCircle, Pen, Plus, Search, Tag,} from 'lucide-react';
 import {AppLayout} from '@/components/layout';
+import {PageTransition} from '@/components/motion';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {typography} from '@/lib/theme/design-system';
@@ -86,12 +87,7 @@ export default function BlogsPage() {
 
   return (
     <AppLayout>
-      <motion.div
-        className="space-y-8"
-        initial={{opacity: 0, y: 8}}
-        animate={{opacity: 1, y: 0}}
-        transition={{duration: 0.25, ease: 'easeOut'}}
-      >
+      <PageTransition className="space-y-8">
         {/* Page Header */}
         <div className="flex items-start justify-between gap-4">
           <div>
@@ -574,7 +570,7 @@ export default function BlogsPage() {
             )}
           </div>
         )}
-      </motion.div>
+      </PageTransition>
     </AppLayout>
   );
 }

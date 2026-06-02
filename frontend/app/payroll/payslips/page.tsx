@@ -2,6 +2,7 @@
 
 import {useState} from 'react';
 import {AppLayout} from '@/components/layout';
+import {PageTransition, Reveal} from '@/components/motion';
 import {Payslip} from '@/lib/types/hrms/payroll';
 import {PayslipCard} from '@/components/payroll/PayslipCard';
 import {Button} from '@/components/ui/Button';
@@ -103,7 +104,7 @@ function PayslipsPageContent() {
 
   return (
     <AppLayout activeMenuItem="payroll">
-      <div className="p-6">
+      <PageTransition className="p-6">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="mb-8">
@@ -245,7 +246,7 @@ function PayslipsPageContent() {
               />
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <Reveal inView className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredPayslips.map((payslip) => (
                 <PayslipCard
                   key={payslip.id}
@@ -254,7 +255,7 @@ function PayslipsPageContent() {
                   loading={loading}
                 />
               ))}
-            </div>
+            </Reveal>
           )}
 
           {/* Pagination */}
@@ -293,7 +294,7 @@ function PayslipsPageContent() {
             </div>
           )}
         </div>
-      </div>
+      </PageTransition>
     </AppLayout>
   );
 }

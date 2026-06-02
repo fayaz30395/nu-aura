@@ -28,11 +28,14 @@ import {attendanceService} from '@/lib/services/hrms/attendance.service';
 import {useSelfServiceDashboard} from '@/lib/hooks/queries';
 import {useQueryClient} from '@tanstack/react-query';
 import {createLogger} from '@/lib/utils/logger';
+import {MOTION_EASE} from '@/lib/animation';
 
 const log = createLogger('Dashboard');
 
-// Single ease curve for every transition on this page.
-const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
+// Consolidated onto the shared motion foundation: every transition on this page
+// uses the foundation easing token (MOTION_EASE.outExpo) so there is a single
+// source of truth for motion across all surfaces — no per-page cubic-bezier drift.
+const EASE = [...MOTION_EASE.outExpo] as [number, number, number, number];
 
 function getGreeting() {
   const hour = new Date().getHours();

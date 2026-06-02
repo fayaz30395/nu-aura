@@ -6,7 +6,7 @@ import {useRouter, useSearchParams} from 'next/navigation';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {notifications} from '@mantine/notifications';
-import {motion} from 'framer-motion';
+import {PageTransition, Reveal} from '@/components/motion';
 import {AppLayout} from '@/components/layout';
 import {Card, CardContent} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
@@ -635,12 +635,7 @@ function CandidatesPage() {
 
   return (
     <AppLayout activeMenuItem="recruitment">
-      <motion.div
-        initial={{opacity: 0, y: 20}}
-        animate={{opacity: 1, y: 0}}
-        transition={{duration: 0.25, ease: 'easeOut'}}
-        className="p-6 space-y-6"
-      >
+      <PageTransition className="p-6 space-y-6">
         {/* Header */}
         <div className="row-between">
           <div>
@@ -695,6 +690,7 @@ function CandidatesPage() {
         />
 
         {/* Candidates Table */}
+        <Reveal inView>
         <Card className="bg-[var(--bg-card)]">
           <CardContent className="p-0">
             {candidatesLoading ? (
@@ -765,6 +761,7 @@ function CandidatesPage() {
             )}
           </CardContent>
         </Card>
+        </Reveal>
 
         {/* ==================== MODALS ==================== */}
 
@@ -899,7 +896,7 @@ function CandidatesPage() {
             }}
           />
         )}
-      </motion.div>
+      </PageTransition>
     </AppLayout>
   );
 }

@@ -15,6 +15,7 @@ import {
   XCircle,
 } from 'lucide-react';
 import {AppLayout} from '@/components/layout';
+import {PageTransition} from '@/components/motion';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
 import {
@@ -284,7 +285,7 @@ export default function PerformanceReviewsPage() {
 
   return (
     <AppLayout activeMenuItem="performance">
-      <div className="max-w-7xl mx-auto">
+      <PageTransition className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-xl font-bold">Performance Reviews</h1>
           <PermissionGate permission={Permissions.REVIEW_CREATE}>
@@ -362,7 +363,7 @@ export default function PerformanceReviewsPage() {
         ) : (
           <div className="space-y-4">
             {filteredReviews.map((review) => (
-              <div key={review.id} className="card-aura card-interactive p-6">
+              <div key={review.id} className="card-aura card-interactive hover-lift p-6">
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex-1">
                     <div className="flex gap-2 mb-4">
@@ -684,7 +685,7 @@ export default function PerformanceReviewsPage() {
             </button>
           </ModalFooter>
         </Modal>
-      </div>
+      </PageTransition>
     </AppLayout>
   );
 }

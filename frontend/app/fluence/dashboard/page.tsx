@@ -2,6 +2,7 @@
 
 import {motion} from 'framer-motion';
 import {useRouter} from 'next/navigation';
+import {PageTransition, Reveal} from '@/components/motion';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {PageDeniedFallback, PermissionGate} from '@/components/auth/PermissionGate';
 import {BookOpen, Clock, FileText, Pen, Plus, TrendingUp,} from 'lucide-react';
@@ -12,7 +13,7 @@ import {EmptyState} from '@/components/ui/EmptyState';
 import {EmptyStatePresets} from '@/components/ui/empty-state-presets';
 import {useBlogPosts, useFluenceTemplates, useWikiPages,} from '@/lib/hooks/queries/useFluence';
 import {ContentGrid, type ContentItem} from '@/components/fluence/ContentGrid';
-import {card, iconSize, layout, motion as dsMotion, typography} from '@/lib/theme/design-system';
+import {card, iconSize, layout, typography} from '@/lib/theme/design-system';
 
 /**
  * NU-Fluence Dashboard — central hub for knowledge management.
@@ -64,12 +65,9 @@ function FluenceDashboardPageContent() {
 
   return (
     <AppLayout>
-      <motion.div className={layout.sectionGap} {...dsMotion.pageEnter}>
+      <PageTransition className={layout.sectionGap}>
         {/* Hero Section */}
-        <motion.div
-          initial={{opacity: 0, y: 12}}
-          animate={{opacity: 1, y: 0}}
-          transition={{duration: 0.3}}
+        <Reveal
           className="relative overflow-hidden rounded-xl bg-gradient-to-br from-[var(--accent-700)] via-[var(--accent-500)] to-[var(--accent-400)] dark:from-[var(--accent-950)] dark:via-[var(--accent-900)] dark:to-[var(--accent-800)] p-8 md:p-12"
         >
           <div className="relative z-10">
@@ -125,14 +123,12 @@ function FluenceDashboardPageContent() {
             <div
               className="absolute bottom-0 left-0 w-64 h-64 bg-accent-200 dark:bg-accent-400 rounded-full blur-3xl transform -translate-x-1/3 translate-y-1/4"/>
           </div>
-        </motion.div>
+        </Reveal>
 
         {/* Stats Grid */}
-        <motion.div
+        <Reveal
           className="grid grid-cols-1 md:grid-cols-4 gap-4"
-          initial={{opacity: 0, y: 8}}
-          animate={{opacity: 1, y: 0}}
-          transition={{delay: 0.1, duration: 0.3}}
+          delay={0.06}
         >
           <StatCard
             icon={BookOpen}
@@ -158,14 +154,10 @@ function FluenceDashboardPageContent() {
             value={(wikiData?.totalElements || 0) + (blogData?.totalElements || 0) + (templatesData?.totalElements || 0)}
             color="blue"
           />
-        </motion.div>
+        </Reveal>
 
         {/* Recent Content */}
-        <motion.div
-          initial={{opacity: 0, y: 12}}
-          animate={{opacity: 1, y: 0}}
-          transition={{delay: 0.2, duration: 0.3}}
-        >
+        <Reveal delay={0.12}>
           {isLoading ? (
             <div className="space-y-4">
               {[1, 2, 3].map((i) => (
@@ -180,14 +172,12 @@ function FluenceDashboardPageContent() {
               emptyMessage="No content yet. Start by creating a wiki page or blog post!"
             />
           )}
-        </motion.div>
+        </Reveal>
 
         {/* Three Column Layout */}
-        <motion.div
+        <Reveal
           className="grid grid-cols-1 lg:grid-cols-3 gap-6"
-          initial={{opacity: 0, y: 12}}
-          animate={{opacity: 1, y: 0}}
-          transition={{delay: 0.3, duration: 0.3}}
+          delay={0.18}
         >
           {/* Popular Wiki Pages */}
           <motion.div initial={{opacity: 0, x: -8}} animate={{opacity: 1, x: 0}}>
@@ -328,8 +318,8 @@ function FluenceDashboardPageContent() {
               </CardContent>
             </Card>
           </motion.div>
-        </motion.div>
-      </motion.div>
+        </Reveal>
+      </PageTransition>
     </AppLayout>
   );
 }

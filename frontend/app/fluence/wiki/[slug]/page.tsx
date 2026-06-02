@@ -54,7 +54,8 @@ import {
 import {useAuth} from '@/lib/hooks/useAuth';
 import {fluenceService} from '@/lib/services/platform/fluence.service';
 import {MentionInput, type MentionInputHandle} from '@/components/fluence/MentionInput';
-import {card, iconSize, layout, motion as dsMotion, typography} from '@/lib/theme/design-system';
+import {PageTransition} from '@/components/motion';
+import {card, iconSize, layout, typography} from '@/lib/theme/design-system';
 import {TableOfContents} from '@/components/fluence/TableOfContents';
 import {Breadcrumbs} from '@/components/fluence/Breadcrumbs';
 import {WatchButton} from '@/components/fluence/WatchButton';
@@ -645,7 +646,7 @@ export default function WikiPageDetailPage() {
 
   return (
     <AppLayout>
-      <motion.div {...dsMotion.pageEnter} className={layout.sectionGap}>
+      <PageTransition className={layout.sectionGap}>
         {/* Back Button */}
         <motion.div
           initial={{opacity: 0, x: -12}}
@@ -1158,7 +1159,7 @@ export default function WikiPageDetailPage() {
             )}
           </div>
         </motion.div>
-      </motion.div>
+      </PageTransition>
 
       {/* ═══ Viewers Modal ═══ */}
       <Modal

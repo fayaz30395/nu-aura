@@ -11,6 +11,7 @@ import {AlertCircle, CheckCircle, Clock, PlusCircle, XCircle} from 'lucide-react
 import {notifications} from '@mantine/notifications';
 import {Modal} from '@mantine/core';
 import {AppLayout} from '@/components/layout';
+import {Reveal} from '@/components/motion';
 import {Card, CardContent} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {TablePagination} from '@/components/ui';
@@ -154,7 +155,7 @@ export default function CompOffPage() {
     <AppLayout>
       <div className="p-6 max-w-5xl mx-auto space-y-6">
         {/* Header */}
-        <div className="row-between">
+        <Reveal className="row-between">
           <div>
             <h1 className="text-xl font-bold text-[var(--text-primary)]">Compensatory Off</h1>
             <p className="text-[var(--text-muted)] mt-1">Request and manage comp-off credits for overtime
@@ -164,9 +165,10 @@ export default function CompOffPage() {
             <PlusCircle className="w-4 h-4 mr-2"/>
             Request Comp-Off
           </Button>
-        </div>
+        </Reveal>
 
         {/* Info card */}
+        <Reveal delay={0.06}>
         <Card className="border-accent-200 tint-info skeuo-card">
           <CardContent className="pt-4">
             <div className="flex gap-4">
@@ -179,6 +181,7 @@ export default function CompOffPage() {
             </div>
           </CardContent>
         </Card>
+        </Reveal>
 
         {/* Tabs */}
         <div className="flex gap-2 border-b">
@@ -201,6 +204,7 @@ export default function CompOffPage() {
         </div>
 
         {/* Requests table */}
+        <Reveal delay={0.12}>
         <Card className="skeuo-card">
           <CardContent className="p-0">
             {isLoading ? (
@@ -291,6 +295,7 @@ export default function CompOffPage() {
             )}
           </CardContent>
         </Card>
+        </Reveal>
       </div>
 
       {/* Request Modal */}

@@ -20,6 +20,7 @@ import {
   Zap
 } from 'lucide-react';
 import {useAuth} from '@/lib/hooks/useAuth';
+import {Stagger, StaggerItem} from '@/components/motion';
 import {AppLayout} from '@/components/layout';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
@@ -234,14 +235,9 @@ export default function OnboardingDetailPage() {
 
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
             {/* Checklist Main Area */}
-            <div className="lg:col-span-3 space-y-8">
+            <Stagger className="lg:col-span-3 space-y-8">
               {Object.entries(tasksByCategory).map(([category, catTasks], idx) => (
-                <motion.div
-                  key={category}
-                  initial={{opacity: 0, y: 20}}
-                  animate={{opacity: 1, y: 0}}
-                  transition={{delay: idx * 0.1}}
-                >
+                <StaggerItem key={category}>
                   <Card className="border-0 shadow-[var(--shadow-dropdown)] bg-[var(--bg-card)] overflow-hidden">
                     <div
                       onClick={() => toggleCategory(category)}
@@ -329,9 +325,9 @@ export default function OnboardingDetailPage() {
                       )}
                     </AnimatePresence>
                   </Card>
-                </motion.div>
+                </StaggerItem>
               ))}
-            </div>
+            </Stagger>
 
             {/* Sidebar Area */}
             <div className="space-y-8">

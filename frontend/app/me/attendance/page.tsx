@@ -20,6 +20,7 @@ import {
   XCircle,
 } from 'lucide-react';
 import {AppLayout} from '@/components/layout';
+import {PageTransition, Reveal, Stagger, StaggerItem} from '@/components/motion';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
 import {useAuth} from '@/lib/hooks/useAuth';
@@ -328,8 +329,8 @@ export default function MyAttendancePage() {
 
   return (
     <AppLayout activeMenuItem="my-attendance">
-      <div className="space-y-6">
-        <div>
+      <PageTransition className="space-y-6">
+        <Reveal>
           <h1 className="text-xl font-bold">My Attendance</h1>
           <p className="text-[var(--text-secondary)] mt-1">Track your attendance and working hours</p>
           {isLoadingAttendance && (
@@ -337,7 +338,7 @@ export default function MyAttendancePage() {
               Loading attendance records...
             </p>
           )}
-        </div>
+        </Reveal>
 
         {error && (
           <div className="p-4 bg-danger-50 border border-danger-200 rounded-lg">
@@ -352,6 +353,7 @@ export default function MyAttendancePage() {
         )}
 
         {/* Check-in/Check-out Card */}
+        <Reveal>
         <Card className="skeuo-card">
           <CardContent className="pt-6">
             <div className="row-between">
@@ -415,10 +417,12 @@ export default function MyAttendancePage() {
             </div>
           </CardContent>
         </Card>
+        </Reveal>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <Card className="skeuo-card">
+        <Stagger className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <StaggerItem>
+          <Card className="skeuo-card hover-lift">
             <CardContent className="pt-6">
               <div className="row-between">
                 <div>
@@ -431,8 +435,10 @@ export default function MyAttendancePage() {
               </div>
             </CardContent>
           </Card>
+          </StaggerItem>
 
-          <Card className="skeuo-card">
+          <StaggerItem>
+          <Card className="skeuo-card hover-lift">
             <CardContent className="pt-6">
               <div className="row-between">
                 <div>
@@ -445,8 +451,10 @@ export default function MyAttendancePage() {
               </div>
             </CardContent>
           </Card>
+          </StaggerItem>
 
-          <Card className="skeuo-card">
+          <StaggerItem>
+          <Card className="skeuo-card hover-lift">
             <CardContent className="pt-6">
               <div className="row-between">
                 <div>
@@ -459,8 +467,10 @@ export default function MyAttendancePage() {
               </div>
             </CardContent>
           </Card>
+          </StaggerItem>
 
-          <Card className="skeuo-card">
+          <StaggerItem>
+          <Card className="skeuo-card hover-lift">
             <CardContent className="pt-6">
               <div className="row-between">
                 <div>
@@ -475,9 +485,10 @@ export default function MyAttendancePage() {
               </div>
             </CardContent>
           </Card>
-        </div>
+          </StaggerItem>
+        </Stagger>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+        <Reveal inView className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
           {/* Calendar */}
           <Card className="lg:col-span-2 card-aura">
             <CardHeader>
@@ -697,8 +708,8 @@ export default function MyAttendancePage() {
               )}
             </CardContent>
           </Card>
-        </div>
-      </div>
+        </Reveal>
+      </PageTransition>
 
       {/* Regularization Modal — DEF-42: React Hook Form + Zod */}
       <Modal

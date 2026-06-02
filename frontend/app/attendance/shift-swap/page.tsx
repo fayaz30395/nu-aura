@@ -12,6 +12,7 @@ import {ArrowLeftRight, PlusCircle} from 'lucide-react';
 import {notifications} from '@mantine/notifications';
 import {Modal} from '@mantine/core';
 import {AppLayout} from '@/components/layout';
+import {Reveal} from '@/components/motion';
 import {Card, CardContent} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {TablePagination} from '@/components/ui';
@@ -224,7 +225,7 @@ export default function ShiftSwapPage() {
   return (
     <AppLayout>
       <div className="p-6 max-w-5xl mx-auto space-y-6">
-        <div className="row-between">
+        <Reveal className="row-between">
           <div>
             <h1 className="text-xl font-bold text-[var(--text-primary)]">Shift Swap</h1>
             <p className="text-[var(--text-muted)] mt-1">Request shift swaps, give-aways, and pick-ups</p>
@@ -233,7 +234,7 @@ export default function ShiftSwapPage() {
             <PlusCircle className="w-4 h-4 mr-2"/>
             New Request
           </Button>
-        </div>
+        </Reveal>
 
         {/* Tabs */}
         <div className="flex gap-2 border-b">
@@ -255,6 +256,7 @@ export default function ShiftSwapPage() {
           ))}
         </div>
 
+        <Reveal delay={0.08}>
         <Card className="skeuo-card">
           <CardContent className="p-0">
             {isLoading ? (
@@ -374,6 +376,7 @@ export default function ShiftSwapPage() {
             )}
           </CardContent>
         </Card>
+        </Reveal>
       </div>
 
       {/* Create modal */}

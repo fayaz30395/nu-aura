@@ -31,10 +31,12 @@ import {AdminPageContent} from '@/components/layout';
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
 import {Card, CardContent} from '@/components/ui/Card';
 import {Skeleton} from '@/components/ui/Skeleton';
+import {MOTION_EASE} from '@/lib/animation';
 
-// Single ease curve for every transition on this page. Avoids the cubic-bezier
-// drift that compounds when each motion spec picks its own easing.
-const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
+// Consolidated onto the shared motion foundation: every transition on this page
+// uses the foundation easing token (MOTION_EASE.outExpo) so motion has a single
+// source of truth across all surfaces — no per-page cubic-bezier drift.
+const EASE = [...MOTION_EASE.outExpo] as [number, number, number, number];
 
 const PAGE_SIZE = 10;
 
@@ -150,8 +152,8 @@ export default function AdminDashboardPage() {
   if (!authChecked) return null;
   if (!isAdmin) {
     return (
-      <div className="page-shell-centered fade-slide-up auth-delay-20">
-        <Card className="card-aura fade-slide-up auth-delay-40 float-subtle">
+      <div className="page-shell-centered motion-rise">
+        <Card className="card-aura motion-rise">
           <CardContent className="py-10">
             <div className="flex items-start gap-4">
               <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-warning-100 text-warning-700 dark:bg-warning-900/30 dark:text-warning-300">

@@ -24,6 +24,7 @@ import {
   XCircle,
 } from 'lucide-react';
 import {AppLayout} from '@/components/layout';
+import {PageTransition, Reveal} from '@/components/motion';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
@@ -306,9 +307,9 @@ export default function SsoSettingsPage() {
 
   return (
     <AppLayout activeMenuItem="settings">
-      <div className="space-y-6 max-w-4xl mx-auto">
+      <PageTransition className="space-y-6 max-w-4xl mx-auto">
         {/* Header */}
-        <div className="flex items-center gap-4">
+        <Reveal className="flex items-center gap-4">
           <button
             onClick={() => router.push('/settings')}
             className="p-2 rounded-lg hover:bg-[var(--bg-surface)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
@@ -322,7 +323,7 @@ export default function SsoSettingsPage() {
               Configure SAML 2.0 Single Sign-On with your corporate Identity Provider
             </p>
           </div>
-        </div>
+        </Reveal>
 
         {/* Status Messages */}
         {success && (
@@ -350,6 +351,7 @@ export default function SsoSettingsPage() {
         ) : (
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             {/* IdP Configuration */}
+            <Reveal inView>
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -462,8 +464,10 @@ export default function SsoSettingsPage() {
                 </div>
               </CardContent>
             </Card>
+            </Reveal>
 
             {/* Certificate */}
+            <Reveal inView>
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -529,8 +533,10 @@ export default function SsoSettingsPage() {
                 </div>
               </CardContent>
             </Card>
+            </Reveal>
 
             {/* Attribute Mapping */}
+            <Reveal inView>
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -578,8 +584,10 @@ export default function SsoSettingsPage() {
                 </div>
               </CardContent>
             </Card>
+            </Reveal>
 
             {/* Provisioning & Activation */}
+            <Reveal inView>
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -650,6 +658,7 @@ export default function SsoSettingsPage() {
                 )}
               </CardContent>
             </Card>
+            </Reveal>
 
             {/* Test Connection Results */}
             {testMutation.data && (
@@ -793,7 +802,7 @@ export default function SsoSettingsPage() {
             </div>
           </form>
         )}
-      </div>
+      </PageTransition>
     </AppLayout>
   );
 }

@@ -29,6 +29,7 @@ import {AppLayout} from '@/components/layout';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 
+import {Reveal} from '@/components/motion';
 import {card, iconSize, motion as dsMotion} from '@/lib/theme/design-system';
 import {TableOfContents} from '@/components/fluence/TableOfContents';
 import {Breadcrumbs} from '@/components/fluence/Breadcrumbs';
@@ -227,12 +228,7 @@ export default function BlogPostDetailPage() {
 
         {/* Hero Cover Image */}
         {post.coverImageUrl && (
-          <motion.div
-            initial={dsMotion.pageEnter.initial}
-            animate={dsMotion.pageEnter.animate}
-            transition={dsMotion.pageEnter.transition}
-            className="relative rounded-xl overflow-hidden h-96 bg-gradient-to-br from-[var(--accent-300)] to-[var(--accent-500)] group cursor-pointer"
-          >
+          <Reveal className="relative rounded-xl overflow-hidden h-96 bg-gradient-to-br from-[var(--accent-300)] to-[var(--accent-500)] group cursor-pointer">
             <motion.img
               src={post.coverImageUrl}
               alt={post.title}
@@ -240,16 +236,11 @@ export default function BlogPostDetailPage() {
               whileHover={{scale: 1.05}}
               transition={{duration: 0.3}}
             />
-          </motion.div>
+          </Reveal>
         )}
 
         {/* Article Header */}
-        <motion.div
-          initial={dsMotion.pageEnter.initial}
-          animate={dsMotion.pageEnter.animate}
-          transition={dsMotion.pageEnter.transition}
-          className="space-y-4"
-        >
+        <Reveal className="space-y-4">
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1 min-w-0">
               <h1 className="text-2xl md:text-5xl font-bold text-[var(--text-primary)] mb-4 leading-tight">
@@ -335,7 +326,7 @@ export default function BlogPostDetailPage() {
               </motion.button>
             </div>
           </div>
-        </motion.div>
+        </Reveal>
 
         {/* Breadcrumbs */}
         <Breadcrumbs
@@ -354,10 +345,8 @@ export default function BlogPostDetailPage() {
         />
 
         {/* Main Content Grid */}
-        <motion.div
-          initial={dsMotion.pageEnter.initial}
-          animate={dsMotion.pageEnter.animate}
-          transition={{...dsMotion.pageEnter.transition, delay: 0.1}}
+        <Reveal
+          delay={0.06}
           className="grid grid-cols-1 lg:grid-cols-4 gap-6"
           ref={contentRef}
         >
@@ -551,13 +540,11 @@ export default function BlogPostDetailPage() {
               </motion.div>
             )}
           </motion.div>
-        </motion.div>
+        </Reveal>
 
         {/* Comments Section */}
-        <motion.div
-          initial={dsMotion.pageEnter.initial}
-          animate={dsMotion.pageEnter.animate}
-          transition={{...dsMotion.pageEnter.transition, delay: 0.2}}
+        <Reveal
+          delay={0.12}
           className={`${card.base} rounded-xl p-8`}
         >
           <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-6 flex items-center gap-2">
@@ -656,7 +643,7 @@ export default function BlogPostDetailPage() {
               </motion.div>
             )}
           </div>
-        </motion.div>
+        </Reveal>
       </div>
 
       {/* Delete Comment Confirm Dialog */}

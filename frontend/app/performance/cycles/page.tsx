@@ -6,6 +6,7 @@ import {DateInput} from '@mantine/dates';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {AppLayout} from '@/components/layout';
+import {PageTransition} from '@/components/motion';
 import {
   ActivateCycleRequest,
   ActivateCycleResponse,
@@ -249,7 +250,7 @@ export default function ReviewCyclesPage() {
 
   return (
     <AppLayout activeMenuItem="performance">
-      <div className="max-w-7xl mx-auto">
+      <PageTransition className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-xl font-bold">Review Cycles</h1>
           <PermissionGate permission={Permissions.REVIEW_CREATE}>
@@ -327,7 +328,7 @@ export default function ReviewCyclesPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredCycles.map((cycle) => (
-              <div key={cycle.id} className="card-interactive p-6">
+              <div key={cycle.id} className="card-interactive hover-lift p-6">
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex-1">
                     <h3 className="text-xl font-semibold mb-2">{cycle.name ?? cycle.cycleName}</h3>
@@ -914,7 +915,7 @@ export default function ReviewCyclesPage() {
             </div>
           </div>
         )}
-      </div>
+      </PageTransition>
     </AppLayout>
   );
 }

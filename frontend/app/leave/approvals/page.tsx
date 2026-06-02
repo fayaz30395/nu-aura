@@ -2,7 +2,6 @@
 
 import {useEffect, useMemo, useState} from 'react';
 import {useRouter} from 'next/navigation';
-import {motion} from 'framer-motion';
 import Link from 'next/link';
 import {AlertCircle, CheckCircle, RefreshCw, Loader2, ShieldAlert} from 'lucide-react';
 import {AppLayout} from '@/components/layout';
@@ -157,12 +156,7 @@ function LeaveApprovalsPageContent() {
 
   return (
     <AppLayout activeMenuItem="leave">
-      <motion.div
-        initial={{opacity: 0, y: 12}}
-        animate={{opacity: 1, y: 0}}
-        transition={{duration: 0.25, ease: 'easeOut'}}
-        className="max-w-7xl mx-auto"
-      >
+      <div className="motion-rise max-w-7xl mx-auto">
         <div className="mb-6">
           <button
             onClick={() => router.back()}
@@ -375,7 +369,7 @@ function LeaveApprovalsPageContent() {
             required: true,
           }}
         />
-      </motion.div>
+      </div>
     </AppLayout>
   );
 }

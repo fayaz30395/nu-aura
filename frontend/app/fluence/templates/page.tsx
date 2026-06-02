@@ -2,14 +2,14 @@
 
 import {useMemo, useState} from 'react';
 import {useRouter} from 'next/navigation';
-import {motion} from 'framer-motion';
+import {PageTransition, Stagger, StaggerItem} from '@/components/motion';
 import {Copy, Download, FileText, Plus, Search, Zap,} from 'lucide-react';
 import {AppLayout} from '@/components/layout';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {EmptyStatePresets} from '@/components/ui/empty-state-presets';
-import {card as dsCard, iconSize, input as dsInput, layout, motion as dsMotion, typography,} from '@/lib/theme/design-system';
+import {card as dsCard, iconSize, input as dsInput, layout, typography,} from '@/lib/theme/design-system';
 import {useFluenceTemplates} from '@/lib/hooks/queries/useFluence';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
@@ -59,10 +59,7 @@ export default function TemplatesPage() {
 
   return (
     <AppLayout>
-      <motion.div
-        className={layout.sectionGap}
-        {...dsMotion.pageEnter}
-      >
+      <PageTransition className={layout.sectionGap}>
         {/* Header */}
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1">
@@ -143,15 +140,9 @@ export default function TemplatesPage() {
             description="Try adjusting your search query"
           />
         ) : (
-          <motion.div
-            className={layout.grid3}
-            {...dsMotion.staggerContainer}
-          >
+          <Stagger className={layout.grid3} inView>
             {filteredTemplates.map((template) => (
-              <motion.div
-                key={template.id}
-                variants={dsMotion.staggerItem.variants}
-              >
+              <StaggerItem key={template.id}>
                 <Card className={`${dsCard.interactive} h-full flex flex-col group`}>
                   <CardHeader>
                     <div className="flex items-start justify-between gap-2 mb-4">
@@ -221,11 +212,11 @@ export default function TemplatesPage() {
                     </Button>
                   </div>
                 </Card>
-              </motion.div>
+              </StaggerItem>
             ))}
-          </motion.div>
+          </Stagger>
         )}
-      </motion.div>
+      </PageTransition>
     </AppLayout>
   );
 }

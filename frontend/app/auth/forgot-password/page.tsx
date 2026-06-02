@@ -64,12 +64,12 @@ export default function ForgotPasswordPage() {
 
   if (isSubmitted) {
     return (
-      <div className="auth-shell fade-slide-up">
+      <div className="auth-shell motion-rise">
         <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_440px] lg:items-center">
             <section className="hidden lg:flex">
               <div
-                className="auth-side-panel p-10 w-full flex items-center auth-delay-20 float-subtle"
+                className="auth-side-panel p-10 w-full flex items-center motion-rise"
               >
                 <div className="auth-side-panel-content space-y-6">
                   <Image
@@ -99,7 +99,7 @@ export default function ForgotPasswordPage() {
             </section>
 
             <section className="w-full">
-              <Card className="auth-shell-card fade-slide-up auth-delay-40 float-subtle page-reveal">
+              <Card className="auth-shell-card motion-rise">
                 <CardContent className="pt-8 pb-8 text-center">
                 {isSsoUser ? (
                     <>
@@ -181,12 +181,12 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="auth-shell fade-slide-up">
+    <div className="auth-shell motion-rise">
       <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_460px] lg:items-start">
           <section className="hidden lg:flex">
             <div
-              className="auth-side-panel p-10 w-full flex items-center auth-delay-20 float-subtle"
+              className="auth-side-panel p-10 w-full flex items-center motion-rise"
             >
               <div className="auth-side-panel-content space-y-6">
                 <Image
@@ -219,7 +219,7 @@ export default function ForgotPasswordPage() {
 
           {/* Forgot Password Card */}
           <section className="w-full">
-            <Card className="auth-shell-card fade-slide-up auth-delay-40 float-subtle page-reveal">
+            <Card className="auth-shell-card motion-rise">
               <CardHeader className="pb-4">
                 <CardTitle className="text-lg">Forgot Password</CardTitle>
                 <CardDescription>

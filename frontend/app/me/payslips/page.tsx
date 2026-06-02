@@ -4,6 +4,7 @@ import React, {useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {AlertCircle, Calendar, DollarSign, Download, FileText, Filter, Search, TrendingUp, Users,} from 'lucide-react';
 import {AppLayout} from '@/components/layout';
+import {PageTransition, Reveal, Stagger, StaggerItem} from '@/components/motion';
 import {Card, CardContent} from '@/components/ui/Card';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {useAuth} from '@/lib/hooks/useAuth';
@@ -145,9 +146,9 @@ export default function MyPayslipsPage() {
 
   return (
     <AppLayout activeMenuItem="payslips">
-      <div className="space-y-6">
+      <PageTransition className="space-y-6">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <Reveal className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <h1 className="text-xl font-bold">
               {isAdminView ? 'All Employee Payslips' : 'My Payslips'}
@@ -176,10 +177,10 @@ export default function MyPayslipsPage() {
               View My Payslips
             </button>
           )}
-        </div>
+        </Reveal>
 
         {/* Summary Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <Reveal className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <Card className="card-aura">
             <CardContent className="pt-6">
               <div className="row-between">
@@ -240,9 +241,10 @@ export default function MyPayslipsPage() {
               </div>
             </CardContent>
           </Card>
-        </div>
+        </Reveal>
 
         {/* Filters */}
+        <Reveal>
         <Card className="card-aura">
           <CardContent className="pt-6">
             <div className="flex flex-col md:flex-row gap-4">
@@ -274,6 +276,7 @@ export default function MyPayslipsPage() {
             </div>
           </CardContent>
         </Card>
+        </Reveal>
 
         {/* Error Message */}
         {error && (
@@ -298,10 +301,10 @@ export default function MyPayslipsPage() {
             </CardContent>
           </Card>
         ) : (
-          <div className="grid grid-cols-1 gap-4">
+          <Stagger className="grid grid-cols-1 gap-4">
             {filteredPayslips.map((payslip) => (
-              <div key={payslip.id}>
-                <Card className="card-aura card-interactive overflow-hidden">
+              <StaggerItem key={payslip.id}>
+                <Card className="card-aura card-interactive overflow-hidden hover-lift">
                   <CardContent className="p-6">
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                       <div className="flex items-start gap-4">
@@ -428,11 +431,11 @@ export default function MyPayslipsPage() {
                     )}
                   </CardContent>
                 </Card>
-              </div>
+              </StaggerItem>
             ))}
-          </div>
+          </Stagger>
         )}
-      </div>
+      </PageTransition>
     </AppLayout>
   );
 }
