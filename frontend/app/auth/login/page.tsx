@@ -186,11 +186,18 @@ declare global {
 // ─── CSS-only Ambient Background (theme-aware) ─────────────────────
 function AnimatedBackground() {
   return (
-    <div className="fixed inset-0 z-0 overflow-hidden" suppressHydrationWarning>
+    <div className="fixed inset-0 z-0" suppressHydrationWarning>
       <div className="absolute inset-0 bg-[var(--bg-main)]"/>
-      <div className="absolute inset-0 aura-grid"/>
       <div
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(91,140,245,0.10),transparent_58%)]"
+        className="absolute inset-0 opacity-[0.045] dark:opacity-0 transition-opacity duration-500"
+        style={{
+          backgroundImage:
+            'linear-gradient(currentColor 1px, transparent 1px), linear-gradient(90deg, currentColor 1px, transparent 1px)',
+          backgroundSize: '40px 40px',
+        }}
+      />
+      <div
+        className="absolute inset-0 dark:opacity-100 opacity-0 transition-opacity duration-500"
       />
     </div>
   );
@@ -632,54 +639,27 @@ function LoginPage() {
         <AnimatedBackground/>
 
         {/* ─── Left Panel: Product Context ──────────────────── */}
-        <div className="hidden lg:flex lg:w-[52%] relative z-10 flex-col justify-center px-14 xl:px-18">
+        <div className="hidden lg:flex lg:w-[55%] relative z-10 flex-col justify-center items-center px-16">
           <div
-            className="max-w-[580px] float-subtle fade-slide-up auth-delay-20"
+            className="max-w-lg space-y-6"
           >
-            <div
-              className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--bg-elevated)] border border-[var(--border-main)] mb-6"
-            >
-              <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-success-600 dark:bg-success-400"/>
-              <span className="text-accent-700 dark:text-accent-300 text-xs font-semibold tracking-[0.08em] uppercase">
-                NU-AURA Platform
-              </span>
-            </div>
-
-            <h1 className="text-[clamp(2rem,4vw,2.95rem)] font-semibold text-[var(--text-primary)] leading-tight mb-5">
-              People operations without the noise.
-            </h1>
-
-            <p className="text-base text-[var(--text-secondary)] leading-7 mb-7">
-              HR, hiring, growth, and knowledge workflows in one secure workspace.
+            <p className="text-sm text-accent-700 dark:text-accent-300 tracking-[0.08em] uppercase font-semibold">
+              Infinite Innovation
             </p>
-
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              {['NU-HRMS', 'NU-Hire', 'NU-Grow', 'NU-Fluence'].map((app) => (
-                <div
-                  key={app}
-                  className="rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)]/85 px-4 py-3 text-[var(--text-secondary)] shadow-[var(--shadow-card)]"
-                >
-                  <span className="font-medium text-[var(--text-primary)] text-sm">{app}</span>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-9 flex max-w-lg items-start gap-4 shell-panel p-4 fade-slide-up">
-              <span className="icon-chip h-8 w-8 text-[var(--accent-primary)] border-[var(--accent-primary)]/25">
-                <span className="text-xs font-semibold">24/7</span>
-              </span>
-              <div>
-                <p className="text-sm font-semibold text-[var(--text-primary)]">Always on, enterprise-ready, and built for scale.</p>
-                <p className="text-xs text-[var(--text-secondary)] mt-1">
-                  Real-time insights, approvals, and workforce operations from one place.
-                </p>
-              </div>
-            </div>
+            <h2 className="text-xl font-bold text-[var(--text-primary)] mb-2">
+              Welcome to NU-AURA
+            </h2>
+            <h1 className="text-5xl font-extrabold text-[var(--text-primary)] leading-tight mb-6 tracking-tight">
+              Your People.Amplified.
+            </h1>
+            <p className="text-base text-[var(--text-secondary)] leading-7">
+              One platform for HR, Recruitment, Performance, Learning, and Finance.
+            </p>
           </div>
         </div>
 
         {/* ─── Right Panel: Login Card ───────────────────────── */}
-        <div className="w-full lg:w-[48%] relative z-10 flex items-center justify-center px-5 py-8">
+        <div className="w-full lg:w-[45%] relative z-10 flex items-center justify-center px-6 py-12">
           <div
             className="w-full max-w-[420px] fade-slide-up auth-delay-40"
           >
@@ -705,19 +685,22 @@ function LoginPage() {
 
             {/* Mobile-only tagline */}
             <div className="lg:hidden text-center mb-5">
-              <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-1">
-                NU-AURA
+              <h2 className="text-xl font-bold text-[var(--text-primary)] mb-1">
+                Welcome to NU-AURA
               </h2>
               <p className="text-[var(--text-secondary)] text-sm">
-                Unified people workspace
+                Your unified people platform
               </p>
             </div>
 
             {/* Card */}
-            <div className="shell-panel p-6 float-subtle auth-delay-40 fade-slide-up">
+            <div className="rounded-lg bg-[var(--bg-card)] border border-[var(--border-main)] p-8 fade-slide-up auth-delay-40">
               <div className="mb-5">
-                <p className="mb-2 inline-flex items-center gap-2 rounded-full border border-[var(--border-main)] px-3 py-1 text-[0.6875rem] font-semibold uppercase tracking-[0.08em] text-[var(--text-secondary)]">
-                  Secure Access
+                <h2 className="text-xl font-bold text-[var(--text-primary)] mb-1">
+                  Welcome to NU-AURA
+                </h2>
+                <p className="text-sm text-[var(--text-secondary)] mb-4">
+                  Your unified people platform
                 </p>
                 <h3 className="text-lg font-semibold text-[var(--text-primary)] tracking-normal">
                   Sign In
