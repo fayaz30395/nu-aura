@@ -7,6 +7,7 @@ import {usePermissions} from '@/lib/hooks/usePermissions';
 import {findRouteConfig, isPublicRoute, RouteConfig,} from '@/lib/config/routes';
 import {SkeletonDashboard} from '@/components/ui/Skeleton';
 import {logger} from '@/lib/utils/logger';
+import {ArrowLeft, RefreshCw, ShieldAlert} from 'lucide-react';
 
 interface AuthGuardProps {
   children: ReactNode;
@@ -263,8 +264,21 @@ export function AuthGuard({
     }
 
     return (
-      <div className="p-6">
-        <SkeletonDashboard/>
+      <div className="page-shell-centered fade-slide-up">
+        <div
+          className="page-shell-card border-[var(--border-main)] bg-[var(--bg-card)] shadow-[var(--shadow-card)] p-6"
+        >
+          <div
+            className="mb-5 flex items-center justify-between rounded-lg bg-[var(--bg-surface)] border border-[var(--border-subtle)] px-4 py-3"
+          >
+            <div>
+              <p className="text-sm font-medium text-[var(--text-secondary)]">Session restoring</p>
+              <p className="text-xs text-[var(--text-muted)] mt-0.5">Checking your workspace credentials...</p>
+            </div>
+            <RefreshCw className="w-4 h-4 text-accent-600 dark:text-accent-400"/>
+          </div>
+          <SkeletonDashboard/>
+        </div>
       </div>
     );
   }
@@ -277,16 +291,24 @@ export function AuthGuard({
 
     return (
       <div className="page-shell-centered fade-slide-up">
-        <div className="page-shell-card p-8 text-center fade-slide-up">
-          <div className="text-6xl mb-4">🔒</div>
-          <h1 className="text-2xl font-bold text-[var(--text-primary)] mb-2">Access Denied</h1>
-          <p className="text-[var(--text-secondary)] mb-6">
-            You don&apos;t have permission to access this page.
+        <div className="page-shell-card p-8 text-center fade-slide-up max-w-lg">
+          <div
+            className="mx-auto mb-4 h-14 w-14 rounded-full bg-danger-100/80 dark:bg-danger-900/30 border border-danger-300/40 dark:border-danger-500/25 flex items-center justify-center"
+          >
+            <ShieldAlert className="w-7 h-7 text-danger-700 dark:text-danger-300"/>
+          </div>
+          <h1 className="text-2xl font-semibold text-[var(--text-primary)] mb-2">Access Restricted</h1>
+          <p className="text-[var(--text-secondary)] mb-2">
+            You don&apos;t have permission to view this page.
+          </p>
+          <p className="text-sm text-[var(--text-muted)] mb-6">
+            If you believe this is an error, please contact your system administrator.
           </p>
           <button
-            onClick={() => router.push('/me/dashboard')}
-            className="px-4 py-2 bg-accent-600 text-white rounded-lg hover:bg-accent-700 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+            onClick={() => router.replace('/me/dashboard')}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-accent-600 text-white rounded-lg hover:bg-accent-700 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
+            <ArrowLeft className="w-4 h-4"/>
             Go to Home
           </button>
         </div>

@@ -2,6 +2,7 @@
 
 import {useEffect} from 'react';
 import {useRouter} from 'next/navigation';
+import Link from 'next/link';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
@@ -11,7 +12,21 @@ import {useAuth} from '@/lib/hooks/useAuth';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {useCreateTravelRequest, useSubmitTravelRequest} from '@/lib/hooks/queries/useTravel';
 import {isAxiosError} from '@/lib/utils/type-guards';
-import {AlertCircle, ArrowLeft, Briefcase, DollarSign, Hotel, Loader2, MapPin, Plane, Save, Send,} from 'lucide-react';
+import {Card, CardContent} from '@/components/ui/Card';
+import {
+  AlertCircle,
+  ArrowLeft,
+  ArrowRight,
+  Briefcase,
+  DollarSign,
+  Hotel,
+  Loader2,
+  MapPin,
+  Plane,
+  Save,
+  Send,
+  ShieldAlert,
+} from 'lucide-react';
 
 // ─── Zod Schema ────────────────────────────────────────────────────────────────
 
@@ -109,7 +124,7 @@ export default function NewTravelRequestPage() {
   useEffect(() => {
     if (!hasHydrated || !isReady) return;
     if (!isAuthenticated) {
-      router.push('/auth/login');
+      router.replace('/auth/login');
       return;
     }
     if (!hasAccess) {
@@ -117,16 +132,47 @@ export default function NewTravelRequestPage() {
     }
   }, [isAuthenticated, hasHydrated, isReady, hasAccess, router]);
 
+  const authShell = (title: string, description: string) => (
+    <div className="page-shell-centered fade-slide-up auth-delay-20">
+      <Card className="card-aura fade-slide-up auth-delay-40 float-subtle">
+        <CardContent className="py-10">
+          <div className="flex items-start gap-4">
+            <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-warning-100 text-warning-700 dark:bg-warning-900/30 dark:text-warning-300">
+              <ShieldAlert className="h-5 w-5"/>
+            </span>
+            <div className="space-y-1">
+              <p className="text-sm font-semibold text-[var(--text-primary)]">{title}</p>
+              <p className="text-caption">{description}</p>
+            </div>
+          </div>
+          <Link
+            href="/auth/login"
+            className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-accent-700 hover:text-accent-800 transition-colors"
+          >
+            <Loader2 className="h-4 w-4 animate-spin"/>
+            Sign in
+            <ArrowRight className="h-4 w-4"/>
+          </Link>
+        </CardContent>
+      </Card>
+    </div>
+  );
+
   const watchedAccommodation = watch('accommodationRequired');
   const watchedIsInternational = watch('isInternational');
   const watchedDepartureDate = watch('departureDate');
 
   if (!hasHydrated || !isAuthenticated || !isReady || !hasAccess) {
+    if (!hasHydrated || !isReady || !isAuthenticated) {
+      return (
+        <AppLayout activeMenuItem="travel">
+          {authShell('Travel request access', 'Redirecting to sign in.')}
+        </AppLayout>
+      );
+    }
     return (
       <AppLayout activeMenuItem="travel">
-        <div className="flex items-center justify-center h-[calc(100dvh-200px)]">
-          <Loader2 className="h-8 w-8 animate-spin text-accent-500"/>
-        </div>
+        {authShell('Travel request access', 'Checking permissions...')}
       </AppLayout>
     );
   }

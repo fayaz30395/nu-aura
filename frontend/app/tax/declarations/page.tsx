@@ -58,7 +58,7 @@ export default function TaxDeclarationsPage() {
   useEffect(() => {
     if (!hasHydrated || !permissionsReady) return;
     if (!isAuthenticated) {
-      router.push('/auth/login');
+      router.replace('/auth/login');
       return;
     }
     if (!hasPermission(Permissions.TDS_DECLARE) && !hasPermission(Permissions.STATUTORY_VIEW)) {

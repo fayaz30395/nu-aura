@@ -1,9 +1,9 @@
 package com.nulogic.common.export;
 
-import com.lowagie.text.*;
-import com.lowagie.text.pdf.PdfPCell;
-import com.lowagie.text.pdf.PdfPTable;
-import com.lowagie.text.pdf.PdfWriter;
+import org.openpdf.text.*;
+import org.openpdf.text.pdf.PdfPCell;
+import org.openpdf.text.pdf.PdfPTable;
+import org.openpdf.text.pdf.PdfWriter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
@@ -133,14 +133,14 @@ public class ExportService {
         document.open();
 
         // Add title
-        com.lowagie.text.Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 16);
+        org.openpdf.text.Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 16);
         Paragraph titleParagraph = new Paragraph(title, titleFont);
         titleParagraph.setAlignment(Element.ALIGN_CENTER);
         titleParagraph.setSpacingAfter(20);
         document.add(titleParagraph);
 
         // Add timestamp
-        com.lowagie.text.Font timestampFont = FontFactory.getFont(FontFactory.HELVETICA, 10, com.lowagie.text.Font.ITALIC);
+        org.openpdf.text.Font timestampFont = FontFactory.getFont(FontFactory.HELVETICA, 10, org.openpdf.text.Font.ITALIC);
         // JVM-local: helper has no tenant context; export entry points take data not tenantId.
         Paragraph timestampParagraph = new Paragraph(
                 "Generated: " + LocalDateTime.now().format(DATETIME_FORMATTER), // JVM-local: helper has no tenant context; export entry points pass data not tenantId
@@ -155,7 +155,7 @@ public class ExportService {
         table.setWidthPercentage(100);
 
         // Add headers
-        com.lowagie.text.Font pdfHeaderFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10);
+        org.openpdf.text.Font pdfHeaderFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10);
         for (String header : headers) {
             PdfPCell cell = new PdfPCell(new Phrase(header, pdfHeaderFont));
             cell.setBackgroundColor(new java.awt.Color(220, 220, 220));
@@ -165,7 +165,7 @@ public class ExportService {
         }
 
         // Add data rows
-        com.lowagie.text.Font dataFont = FontFactory.getFont(FontFactory.HELVETICA, 9);
+        org.openpdf.text.Font dataFont = FontFactory.getFont(FontFactory.HELVETICA, 9);
         for (List<Object> rowData : data) {
             for (Object value : rowData) {
                 PdfPCell cell = new PdfPCell(new Phrase(formatValue(value), dataFont));

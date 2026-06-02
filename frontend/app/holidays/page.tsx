@@ -22,6 +22,9 @@ import {
 import {Skeleton} from '@/components/ui/Skeleton';
 import {formatDateShort, formatWeekday} from '@/lib/utils/format/date';
 import {format} from 'date-fns';
+import {Card, CardContent} from '@/components/ui/Card';
+import {ArrowRight, Clock3, Loader2} from 'lucide-react';
+import Link from 'next/link';
 
 const ADMIN_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
 
@@ -91,12 +94,29 @@ export default function HolidaysPage() {
 
   // Auth guard — redirect unauthenticated users
   if (hasHydrated && isReady && !isAuthenticated) {
-    router.push('/auth/login');
+    router.replace('/auth/login');
     return (
-      <div className="p-6">
-        <p className="text-sm text-[var(--text-muted)]" role="status">
-          Redirecting to sign in…
-        </p>
+      <div className="page-shell-centered fade-slide-up auth-delay-20">
+        <Card className="card-aura fade-slide-up auth-delay-40 float-subtle">
+          <CardContent className="py-10">
+            <div className="flex items-start gap-4">
+              <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-warning-100 text-warning-700 dark:bg-warning-900/30 dark:text-warning-300">
+                <Clock3 className="h-5 w-5"/>
+              </span>
+              <div className="space-y-1">
+                <p className="text-sm font-semibold text-[var(--text-primary)]">Session check</p>
+                <p className="text-caption">Redirecting to sign in.</p>
+              </div>
+            </div>
+            <Link
+              href="/auth/login"
+              className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-accent-700 hover:text-accent-800 transition-colors">
+              <Loader2 className="h-4 w-4 animate-spin"/>
+              Sign in now
+              <ArrowRight className="h-4 w-4"/>
+            </Link>
+          </CardContent>
+        </Card>
       </div>
     );
   }

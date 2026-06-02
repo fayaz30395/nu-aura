@@ -65,11 +65,14 @@
       "swarmId": "swarm-1780352728156-qy59vz",
       "topology": "hierarchical",
       "maxAgents": 4,
-      "status": "running",
+      "status": "terminated",
       "agents": [
         "agent-1780353177067-0c8880",
         "agent-1780353177183-nnikav",
-        "agent-1780353177198-y6yu0d"
+        "agent-1780353177198-y6yu0d",
+        "ui-auth-reviewer",
+        "agent-1780433259302-extwt3",
+        "agent-1780433265069-c5no1i"
       ],
       "tasks": [],
       "config": {
@@ -81,8 +84,9 @@
         "consensusMechanism": "majority"
       },
       "createdAt": "2026-06-01T22:25:28.156Z",
-      "updatedAt": "2026-06-01T22:25:28.156Z",
-      "pid": 3572
+      "updatedAt": "2026-06-02T20:28:45.074Z",
+      "pid": 3572,
+      "terminationReason": "host process 3572 exited"
     }
   },
   "version": "3.0.0"

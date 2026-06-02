@@ -98,7 +98,7 @@ export default function DepartmentsPage() {
   useEffect(() => {
     if (!hasHydrated) return;
     if (!isAuthenticated) {
-      router.push('/auth/login');
+      router.replace('/auth/login');
     }
   }, [hasHydrated, isAuthenticated, router]);
 

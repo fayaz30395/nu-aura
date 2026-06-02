@@ -9,11 +9,14 @@ import {DarkModeProvider} from '@/components/layout/DarkModeProvider';
 import {Permissions, Roles, usePermissions} from '@/lib/hooks/usePermissions';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {
+  ArrowLeft,
   Briefcase,
   Clock,
+  RefreshCw,
   FileText,
   GitBranch,
   LayoutDashboard,
+  ShieldAlert,
   Server,
   Shield,
   Umbrella,
@@ -284,7 +287,7 @@ export default function AdminLayoutInner({
 
   const handleLogout = () => {
     // Auth tokens are in httpOnly cookies — Zustand auth store handles logout
-    router.push('/auth/login');
+    router.replace('/auth/login');
   };
 
   // Admin shell collapse state lives in useUiStore as a sibling of the
@@ -362,19 +365,44 @@ export default function AdminLayoutInner({
           {/* Scrollable content area */}
           <main className="flex-1 overflow-auto bg-[var(--bg-page)]">
             {!isReady ? (
-              <div className="p-6">
-                <SkeletonDashboard/>
+              <div className="page-shell-centered fade-slide-up">
+                <div
+                  className="page-shell-card w-full max-w-3xl border-[var(--border-main)] bg-[var(--bg-card)] shadow-[var(--shadow-card)] p-6"
+                >
+                  <div
+                    className="mb-5 flex items-center justify-between rounded-lg bg-[var(--bg-surface)] border border-[var(--border-subtle)] px-4 py-3"
+                  >
+                    <div>
+                      <p className="text-sm font-medium text-[var(--text-secondary)]">Preparing admin workspace</p>
+                      <p className="text-xs text-[var(--text-muted)] mt-0.5">Loading secure admin controls...</p>
+                    </div>
+                    <RefreshCw className="w-4 h-4 text-accent-600 dark:text-accent-400"/>
+                  </div>
+                  <SkeletonDashboard/>
+                </div>
               </div>
             ) : !hasAdminAccess ? (
-              <div className="flex h-full items-center justify-center">
-                <div className="space-y-4 text-center">
+              <div className="page-shell-centered fade-slide-up">
+                <div className="page-shell-card p-8 text-center fade-slide-up max-w-lg">
                   <div
-                    className="h-12 w-12 rounded-full bg-danger-100 dark:bg-danger-900/30 flex items-center justify-center mx-auto">
-                    <span className="text-danger-600 dark:text-danger-400 text-lg">✕</span>
+                    className="mx-auto mb-4 h-14 w-14 rounded-full bg-danger-100/80 dark:bg-danger-900/30 border border-danger-300/40 dark:border-danger-500/25 flex items-center justify-center"
+                  >
+                    <ShieldAlert className="w-7 h-7 text-danger-700 dark:text-danger-300"/>
                   </div>
-                  <h1 className="text-xl font-semibold text-[var(--text-primary)]">Access Denied</h1>
-                  <p className="text-[var(--text-secondary)]">You do not have permission to access the admin
-                    dashboard.</p>
+                  <h1 className="text-2xl font-semibold text-[var(--text-primary)] mb-2">Access denied</h1>
+                  <p className="text-[var(--text-secondary)] mb-2">
+                    You do not have permission to access the admin dashboard.
+                  </p>
+                  <p className="text-sm text-[var(--text-muted)] mb-6">
+                    Contact your system administrator if you need elevated permissions.
+                  </p>
+                  <button
+                    onClick={() => router.replace('/me/dashboard')}
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-accent-600 text-white rounded-lg hover:bg-accent-700 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                  >
+                    <ArrowLeft className="w-4 h-4"/>
+                    Go to Home
+                  </button>
                 </div>
               </div>
             ) : (

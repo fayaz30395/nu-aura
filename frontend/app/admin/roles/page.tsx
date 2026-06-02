@@ -110,7 +110,7 @@ export default function RolesPage() {
     if (!hasHydrated || !isReady) return;
 
     if (!isAuthenticated) {
-      router.push('/auth/login');
+      router.replace('/auth/login');
       return;
     }
 
@@ -320,7 +320,7 @@ export default function RolesPage() {
   }
 
   return (
-    <AdminPageContent className="p-4 md:p-6 lg:p-8">
+    <AdminPageContent className="page-shell p-4 md:p-6 lg:p-8">
       <ConfirmDialog
         isOpen={showDeleteConfirm}
         onClose={() => {

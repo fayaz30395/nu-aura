@@ -88,7 +88,7 @@ export default function AnalyticsPage() {
 
   React.useEffect(() => {
     if (!hasHydrated) return;
-    if (!isAuthenticated) router.push('/auth/login');
+    if (!isAuthenticated) router.replace('/auth/login');
   }, [hasHydrated, isAuthenticated, router]);
 
   const canViewAnalytics = hasAnyPermission(Permissions.REPORT_VIEW, Permissions.ANALYTICS_VIEW);

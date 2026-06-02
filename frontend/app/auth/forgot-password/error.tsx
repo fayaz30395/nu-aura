@@ -22,56 +22,56 @@ export default function ForgotPasswordError({error, reset}: ErrorProps) {
 
   return (
     <div className="auth-shell fade-slide-up">
-      <div className="auth-shell-grid auth-shell-narrow fade-slide-up">
-        <Card className="auth-shell-card fade-slide-up auth-delay-20 float-subtle">
-          <CardHeader className="text-center">
-            <div
-              className="mx-auto mb-4 h-12 w-12 rounded-full bg-danger-100/90 dark:bg-danger-900/20 flex items-center justify-center">
-              <Grid className="h-6 w-6 text-danger-600 dark:text-danger-400"/>
-            </div>
-            <CardTitle className="text-lg font-semibold text-[var(--text-primary)]">
-              App Error
-            </CardTitle>
-            <CardDescription className="text-[var(--text-secondary)]">
-              {userMessage}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {isDevelopment && (
-              <div className="rounded-md bg-[var(--bg-elevated)] p-4">
-                <p className="text-sm font-mono text-[var(--text-secondary)] break-all">
-                  {error.message}
+      <div className="auth-shell-grid auth-shell-narrow fade-slide-up stagger-children">
+        <Card className="auth-shell-card fade-slide-up auth-delay-40 float-subtle page-reveal border border-[var(--border-subtle)]">
+        <CardHeader className="text-center">
+          <div
+            className="mx-auto mb-4 h-12 w-12 rounded-full bg-danger-100/80 dark:bg-danger-900/30 flex items-center justify-center">
+            <Grid className="h-6 w-6 text-danger-600 dark:text-danger-400"/>
+          </div>
+          <CardTitle className="text-lg font-semibold text-[var(--text-primary)]">
+            App Error
+          </CardTitle>
+          <CardDescription className="text-[var(--text-secondary)]">
+            {userMessage}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {isDevelopment && (
+            <div className="rounded-md bg-[var(--status-neutral-bg)] border border-[var(--border-subtle)] p-4">
+              <p className="text-sm font-mono text-[var(--text-secondary)] break-all">
+                {error.message}
+              </p>
+              {error.digest && (
+                <p className="text-xs text-[var(--text-muted)] mt-1">
+                  Error ID: {error.digest}
                 </p>
-                {error.digest && (
-                  <p className="text-xs text-[var(--text-muted)] mt-1">
-                    Error ID: {error.digest}
-                  </p>
-                )}
-              </div>
-            )}
-            <div className="flex flex-col gap-2">
-              <Button onClick={reset} className="w-full">
-                <RefreshCw className="mr-2 h-4 w-4"/>
-                Try Again
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => (window.location.href = '/auth')}
-                className="w-full"
-              >
-                <Grid className="mr-2 h-4 w-4"/>
-                Back to App
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => (window.location.href = '/me/dashboard')}
-                className="w-full"
-              >
-                <Home className="mr-2 h-4 w-4"/>
-                Go to Home
-              </Button>
+              )}
             </div>
-          </CardContent>
+          )}
+          <div className="flex flex-col gap-2">
+            <Button onClick={reset} className="w-full">
+              <RefreshCw className="mr-2 h-4 w-4"/>
+              Try Again
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => (window.location.href = '/auth')}
+              className="w-full"
+            >
+              <Grid className="mr-2 h-4 w-4"/>
+              Back to App
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => (window.location.href = '/me/dashboard')}
+              className="w-full"
+            >
+              <Home className="mr-2 h-4 w-4"/>
+              Go to Home
+            </Button>
+          </div>
+        </CardContent>
         </Card>
       </div>
     </div>

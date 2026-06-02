@@ -125,7 +125,7 @@ export default function LWFPage() {
   useEffect(() => {
     if (!hasHydrated || !permissionsReady) return;
     if (!isAuthenticated) {
-      router.push('/auth/login');
+      router.replace('/auth/login');
       return;
     }
     if (!hasPermission(Permissions.STATUTORY_VIEW)) {

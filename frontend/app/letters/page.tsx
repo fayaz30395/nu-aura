@@ -216,7 +216,7 @@ export default function LettersPage() {
     if (!hasHydrated) return;
     if (!isAuthenticated) {
       try {
-        router.push('/auth/login');
+        router.replace('/auth/login');
       } catch (err) {
         log.error('Navigation error:', err);
         window.location.href = '/auth/login';

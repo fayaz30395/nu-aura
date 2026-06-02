@@ -26,66 +26,57 @@ export interface StatCardProps extends React.HTMLAttributes<HTMLDivElement> {
 const variantConfig = {
   default: {
     bg: 'bg-[var(--bg-card)]',
-    border: 'border-surface-200 dark:border-surface-800',
-    iconBg: 'bg-surface-100 dark:bg-surface-800',
-    iconColor: 'text-surface-600 dark:text-surface-400',
-    accent: 'bg-surface-500',
+    border: 'border-[var(--border-subtle)]',
+    iconBg: 'bg-[var(--bg-card-hover)]',
+    iconColor: 'text-[var(--text-secondary)]',
   },
   primary: {
-    bg: 'bg-gradient-to-br from-accent-50 to-accent-100/50 dark:from-accent-950/50 dark:to-accent-900/30',
-    border: 'border-accent-200/50 dark:border-accent-800/50',
+    bg: 'bg-[var(--accent-primary-subtle)]',
+    border: 'border-accent-200/70 dark:border-accent-800/60',
     iconBg: 'bg-accent-500/10 dark:bg-accent-500/20',
     iconColor: 'text-accent-700 dark:text-accent-400',
-    accent: 'bg-accent-500',
   },
   purple: {
-    bg: 'stat-gradient-purple',
+    bg: 'bg-[var(--accent-primary-subtle)]',
     border: 'border-accent-200/50 dark:border-accent-800/50',
     iconBg: 'bg-accent-500/10 dark:bg-accent-500/20',
     iconColor: 'text-accent-700 dark:text-accent-400',
-    accent: 'bg-accent-500',
   },
   success: {
-    bg: 'bg-gradient-to-br from-success-50 to-success-100/50 dark:from-success-950/50 dark:to-success-900/30',
+    bg: 'bg-[var(--status-success-bg)]',
     border: 'border-success-200/50 dark:border-success-800/50',
     iconBg: 'bg-success-500/10 dark:bg-success-500/20',
     iconColor: 'text-success-600 dark:text-success-400',
-    accent: 'bg-success-500',
   },
   teal: {
-    bg: 'stat-gradient-primary',
+    bg: 'bg-[var(--accent-primary-subtle)]',
     border: 'border-accent-200/50 dark:border-accent-800/50',
     iconBg: 'bg-accent-500/10 dark:bg-accent-500/20',
     iconColor: 'text-accent-700 dark:text-accent-400',
-    accent: 'bg-accent-500',
   },
   warning: {
-    bg: 'bg-gradient-to-br from-warning-50 to-warning-100/50 dark:from-warning-950/50 dark:to-warning-900/30',
+    bg: 'bg-[var(--status-warning-bg)]',
     border: 'border-warning-200/50 dark:border-warning-800/50',
     iconBg: 'bg-warning-500/10 dark:bg-warning-500/20',
     iconColor: 'text-warning-600 dark:text-warning-400',
-    accent: 'bg-warning-500',
   },
   orange: {
-    bg: 'stat-gradient-orange',
+    bg: 'bg-[var(--status-warning-bg)]',
     border: 'border-warning-200/50 dark:border-warning-800/50',
     iconBg: 'bg-warning-500/10 dark:bg-warning-500/20',
     iconColor: 'text-warning-600 dark:text-warning-400',
-    accent: 'bg-warning-500',
   },
   destructive: {
-    bg: 'bg-gradient-to-br from-danger-50 to-danger-100/50 dark:from-danger-950/50 dark:to-danger-900/30',
+    bg: 'bg-[var(--status-danger-bg)]',
     border: 'border-danger-200/50 dark:border-danger-800/50',
     iconBg: 'bg-danger-500/10 dark:bg-danger-500/20',
     iconColor: 'text-danger-600 dark:text-danger-400',
-    accent: 'bg-danger-500',
   },
   blue: {
-    bg: 'stat-gradient-blue',
+    bg: 'bg-[var(--accent-primary-subtle)]',
     border: 'border-accent-200/50 dark:border-accent-800/50',
     iconBg: 'bg-accent-500/10 dark:bg-accent-500/20',
     iconColor: 'text-accent-600 dark:text-accent-400',
-    accent: 'bg-accent-500',
   },
 };
 
@@ -118,23 +109,20 @@ const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
           initial={{opacity: 0, y: 10}}
           animate={{opacity: 1, y: 0}}
           transition={{duration: 0.3, ease: 'easeOut'}}
-          whileHover={isClickable ? {y: -2} : undefined}
+          whileHover={isClickable ? {y: -1} : undefined}
         >
           <div
             ref={ref}
             onClick={onAction}
             className={cn(
-              'group relative overflow-hidden rounded-lg border px-4 py-4 transition-all duration-300',
+              'group relative overflow-hidden rounded-lg border px-4 py-4 shadow-[var(--shadow-card)] transition-all duration-200',
               config.bg,
               config.border,
-              isClickable && 'cursor-pointer hover:shadow-[var(--shadow-elevated)]',
+              isClickable && 'cursor-pointer hover:border-[var(--border-main)] hover:shadow-[var(--shadow-card-hover)]',
               className
             )}
             {...props}
           >
-            {/* Decorative accent line */}
-            <div className={cn('absolute top-0 left-0 w-1 h-full rounded-l-lg', config.accent)}/>
-
             <div className="flex items-center gap-2">
               {icon && (
                 <div
@@ -180,36 +168,26 @@ const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
         initial={{opacity: 0, y: 20}}
         animate={{opacity: 1, y: 0}}
         transition={{duration: 0.3, ease: 'easeOut'}}
-        whileHover={isClickable ? {y: -4} : undefined}
+        whileHover={isClickable ? {y: -1} : undefined}
       >
         <div
           ref={ref}
           onClick={onAction}
           className={cn(
-            'group relative overflow-hidden rounded-lg border p-4 transition-all duration-300',
+            'group relative overflow-hidden rounded-lg border p-4 shadow-[var(--shadow-card)] transition-all duration-200',
             config.bg,
             config.border,
-            isClickable && 'cursor-pointer hover:shadow-[var(--shadow-dropdown)]',
+            isClickable && 'cursor-pointer hover:border-[var(--border-main)] hover:shadow-[var(--shadow-card-hover)]',
             className
           )}
           {...props}
         >
-          {/* Decorative accent line */}
-          <div className={cn('absolute top-0 left-0 w-1 h-full rounded-l-lg', config.accent)}/>
-
-          {/* Card shine effect on hover */}
-          <div
-            className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
-            <div
-              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"/>
-          </div>
-
           {/* Header Row */}
           <div className="flex items-start justify-between mb-4">
             {icon && (
               <div
                 className={cn(
-                  'flex h-10 w-10 items-center justify-center rounded-lg transition-transform duration-300 group-hover:scale-110',
+                  'flex h-10 w-10 items-center justify-center rounded-lg transition-colors duration-200',
                   config.iconBg,
                   config.iconColor
                 )}

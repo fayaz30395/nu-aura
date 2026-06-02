@@ -56,7 +56,7 @@ export default function OvertimePage() {
   useEffect(() => {
     if (!hasHydrated || !permissionsReady) return;
     if (!isAuthenticated) {
-      router.push('/auth/login');
+      router.replace('/auth/login');
       return;
     }
     if (!hasAnyPermission(Permissions.OVERTIME_VIEW, Permissions.OVERTIME_REQUEST, Permissions.ATTENDANCE_MARK)) {
@@ -146,7 +146,7 @@ export default function OvertimePage() {
 
   if (!hasHydrated || !permissionsReady) return null;
   if (!isAuthenticated) {
-    router.push('/auth/login');
+    router.replace('/auth/login');
     return null;
   }
   if (!hasAnyPermission(Permissions.OVERTIME_VIEW, Permissions.OVERTIME_REQUEST, Permissions.ATTENDANCE_MARK)) {

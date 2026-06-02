@@ -141,6 +141,7 @@ services:
       FLYWAY_PASSWORD: ${FLYWAY_PASSWORD:?FLYWAY_PASSWORD must be set in .env}
       SPRING_FLYWAY_POSTGRESQL_TRANSACTIONAL_LOCK: "false"
       PROMETHEUS_SCRAPE_TOKEN: ${PROMETHEUS_SCRAPE_TOKEN:?PROMETHEUS_SCRAPE_TOKEN must be set in .env}
+      APP_SLACK_SIGNING_SECRET: ${SLACK_SIGNING_SECRET:?SLACK_SIGNING_SECRET must be set in .env}
       SPRING_REDIS_HOST: redis
       SPRING_REDIS_PORT: 6379
       SPRING_REDIS_PASSWORD: ${SPRING_REDIS_PASSWORD:?SPRING_REDIS_PASSWORD must be set in .env}
@@ -167,6 +168,7 @@ services:
       args:
         NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:?NEXT_PUBLIC_API_URL must be set in .env}
         NEXT_PUBLIC_ENABLE_WEBSOCKET: ${NEXT_PUBLIC_ENABLE_WEBSOCKET:-true}
+        ALLOW_INSECURE_RELEASE_API_URL: ${ALLOW_INSECURE_RELEASE_API_URL:-true}
     container_name: hrms-frontend
     restart: always
     ports:
@@ -179,7 +181,7 @@ services:
       NEXT_PUBLIC_DEMO_MODE: "false"
       NEXT_PUBLIC_ENABLE_WEBSOCKET: ${NEXT_PUBLIC_ENABLE_WEBSOCKET:-true}
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:3000/" ]
+      test: [ "CMD-SHELL", "HOST=$$(hostname -i); wget -q -O /dev/null \"http://$${HOST}:3000/\"" ]
       interval: 30s
       timeout: 10s
       retries: 3

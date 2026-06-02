@@ -151,7 +151,7 @@ export default function AdminReportsPage() {
   }
 
   return (
-    <AdminPageContent className="p-4 md:p-6 lg:p-8">
+    <AdminPageContent className="page-shell p-4 md:p-6 lg:p-8">
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-xl font-bold text-[var(--text-primary)]">

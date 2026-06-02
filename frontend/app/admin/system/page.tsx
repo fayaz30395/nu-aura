@@ -51,7 +51,7 @@ export default function SystemDashboard() {
     if (!hasHydrated || !isReady) return;
 
     if (!isAuthenticated) {
-      router.push('/auth/login');
+      router.replace('/auth/login');
       return;
     }
 

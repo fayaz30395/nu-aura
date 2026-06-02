@@ -20,7 +20,9 @@ import {motion} from 'framer-motion';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
-import {AlertTriangle, Calendar, CheckCircle, ClipboardList, Clock, Star, UserCheck, Users,} from 'lucide-react';
+import {AlertTriangle, ArrowRight, Calendar, CheckCircle, ClipboardList, Clock, Loader2, ShieldAlert, Star, UserCheck, Users,} from 'lucide-react';
+import Link from 'next/link';
+import {Card, CardContent} from '@/components/ui/Card';
 import type {
   EvaluationType,
   ProbationPeriodResponse,
@@ -170,13 +172,31 @@ export default function ProbationPage() {
     );
   }
   if (!isAuthenticated) {
-    router.push('/auth/login');
+    router.replace('/auth/login');
     return (
       <AppLayout>
-        <div className="p-6">
-          <p className="text-sm text-[var(--text-muted)]" role="status">
-            Redirecting to sign in…
-          </p>
+        <div className="page-shell-centered fade-slide-up auth-delay-20">
+          <Card className="card-aura fade-slide-up auth-delay-40 float-subtle">
+            <CardContent className="py-10">
+              <div className="flex items-start gap-4">
+                <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-warning-100 text-warning-700 dark:bg-warning-900/30 dark:text-warning-300">
+                  <ShieldAlert className="h-5 w-5"/>
+                </span>
+                <div className="space-y-1">
+                  <p className="text-sm font-semibold text-[var(--text-primary)]">Probation module</p>
+                  <p className="text-caption">Redirecting to sign in.</p>
+                </div>
+              </div>
+              <Link
+                href="/auth/login"
+                className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-accent-700 hover:text-accent-800 transition-colors"
+              >
+                <Loader2 className="h-4 w-4 animate-spin"/>
+                Sign in
+                <ArrowRight className="h-4 w-4"/>
+              </Link>
+            </CardContent>
+          </Card>
         </div>
       </AppLayout>
     );

@@ -379,7 +379,7 @@ export default function AdminEmployeesPage() {
   // RBAC guard — only SuperAdmin, HR Admin, or users with EMPLOYEE:MANAGE can access
   if (isReady && !isAdmin && !hasPermission(Permissions.EMPLOYEE_MANAGE)) {
     return (
-      <AdminPageContent className="p-8 flex items-center justify-center h-[60vh]">
+      <AdminPageContent className="page-shell p-8 flex items-center justify-center h-[60vh]">
         <div className="text-center space-y-4">
           <div
             className="h-16 w-16 mx-auto rounded-full bg-danger-100 dark:bg-danger-900/20 flex items-center justify-center">
@@ -440,7 +440,7 @@ export default function AdminEmployeesPage() {
   };
 
   return (
-    <AdminPageContent className="p-4 md:p-6 lg:p-8 space-y-6">
+    <AdminPageContent className="page-shell p-4 md:p-6 lg:p-8 space-y-6">
       {/* Header */}
       <motion.div initial={{opacity: 0, y: 8}} animate={{opacity: 1, y: 0}} transition={{duration: 0.25}}
                   className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">

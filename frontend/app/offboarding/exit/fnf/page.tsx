@@ -11,7 +11,6 @@ import {
   Alert,
   Badge,
   Button,
-  Center,
   Divider,
   Group,
   Loader,
@@ -108,13 +107,36 @@ export default function FnFPage() {
   useEffect(() => {
     if (!hasHydrated || !permissionsReady) return;
     if (!isAuthenticated) {
-      router.push('/auth/login');
+      router.replace('/auth/login');
       return;
     }
     if (!hasAnyPermission(Permissions.EXIT_VIEW, Permissions.EXIT_MANAGE)) {
       router.replace('/me/dashboard');
     }
   }, [hasHydrated, permissionsReady, isAuthenticated, router, hasAnyPermission]);
+
+  const authShell = (title: string, detail: string, loading = true) => (
+    <AppLayout>
+      <div className="page-shell-centered fade-slide-up">
+        <Paper withBorder p="md" className="max-w-2xl w-full card-aura">
+          <Stack gap="sm">
+            <Text fw={600}>{title}</Text>
+            <Text size="sm" c="dimmed">
+              {detail}
+            </Text>
+            {loading && (
+              <Group gap="xs" mt="xs">
+                <Loader size="sm"/>
+                <Text size="sm" c="dimmed">
+                  Please wait...
+                </Text>
+              </Group>
+            )}
+          </Stack>
+        </Paper>
+      </div>
+    </AppLayout>
+  );
 
   const [remarks, setRemarks] = useState('');
   const [paymentMode, setPaymentMode] = useState<string | null>(null);
@@ -152,28 +174,37 @@ export default function FnFPage() {
     onError: () => notifications.show({title: 'Error', message: 'Approval failed', color: 'red'}),
   });
 
-  // Block render until permissions are confirmed (prevent financial data flash)
   if (!hasHydrated || !permissionsReady || !hasAnyPermission(Permissions.EXIT_VIEW, Permissions.EXIT_MANAGE)) {
-    return <Center h={300}><Loader/></Center>;
+    return authShell('Session check', 'Checking secure access for settlement data.');
   }
 
   if (!exitProcessId) return (
     <AppLayout>
-      <Stack gap="lg" p="md">
-        <div>
-          <Title order={2}>Full & Final Settlement</Title>
-          <Text c="dimmed" size="sm">Select an exit process to review or process settlement details.</Text>
-        </div>
-        <Alert icon={<IconAlertCircle size={16}/>} color="orange">
-          No exit process selected. Add ?exitProcessId=... to the URL.
-        </Alert>
-      </Stack>
+      <div className="page-shell-centered">
+        <Paper withBorder p="md" className="max-w-2xl w-full card-aura">
+          <Stack gap="lg">
+            <div>
+              <Title order={2}>Full & Final Settlement</Title>
+              <Text c="dimmed" size="sm">Select an exit process to review or process settlement details.</Text>
+            </div>
+            <Alert icon={<IconAlertCircle size={16}/>} color="orange">
+              No exit process selected. Add ?exitProcessId=... to the URL.
+            </Alert>
+          </Stack>
+        </Paper>
+      </div>
     </AppLayout>
   );
 
-  if (isLoading) return <Center h={300}><Loader/></Center>;
+  if (isLoading) return authShell('Loading settlement', 'Fetching settlement details.');
   if (error || !data) return (
-    <Alert icon={<IconAlertCircle size={16}/>} color="red">Failed to load FnF settlement</Alert>
+    <AppLayout>
+      <div className="page-shell-centered">
+        <Paper withBorder p="md" className="max-w-2xl w-full card-aura">
+          <Alert icon={<IconAlertCircle size={16}/>} color="red">Failed to load FnF settlement</Alert>
+        </Paper>
+      </div>
+    </AppLayout>
   );
 
   const canManageFnF = hasPermission(Permissions.EXIT_MANAGE);

@@ -381,6 +381,71 @@
       "domain": "qa",
       "model": "sonnet",
       "modelRoutedBy": "explicit"
+    },
+    "ui-auth-reviewer": {
+      "agentId": "ui-auth-reviewer",
+      "agentType": "reviewer",
+      "status": "idle",
+      "health": 1,
+      "taskCount": 0,
+      "config": {
+        "cwd": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura",
+        "files": [
+          "frontend/app/auth/login/page.tsx",
+          "frontend/app/auth/signup/page.tsx",
+          "frontend/app/auth/forgot-password/page.tsx",
+          "frontend/app/reset-password/page.tsx",
+          "frontend/app/globals.css"
+        ],
+        "model": "sonnet"
+      },
+      "createdAt": "2026-06-02T20:28:45.073Z",
+      "domain": "frontend",
+      "model": "sonnet",
+      "modelRoutedBy": "explicit"
+    },
+    "agent-1780433259302-extwt3": {
+      "agentId": "agent-1780433259302-extwt3",
+      "agentType": "frontend-auditor",
+      "status": "idle",
+      "health": 1,
+      "taskCount": 0,
+      "config": {
+        "coordination": "background-context",
+        "style": "Studio Slate v2 product register",
+        "constraints": [
+          "existing stack only",
+          "no new files unless necessary",
+          "compact professional UI",
+          "reuse shared components"
+        ],
+        "model": "inherit"
+      },
+      "createdAt": "2026-06-02T20:47:39.302Z",
+      "domain": "nu-aura-ui",
+      "model": "inherit",
+      "modelRoutedBy": "explicit"
+    },
+    "agent-1780433265069-c5no1i": {
+      "agentId": "agent-1780433265069-c5no1i",
+      "agentType": "frontend-testgap-reviewer",
+      "status": "idle",
+      "health": 1,
+      "taskCount": 0,
+      "config": {
+        "coordination": "background-context",
+        "expected_checks": [
+          "eslint focused files",
+          "vitest changed component tests",
+          "tsc --noEmit",
+          "render screenshots where possible"
+        ],
+        "model": "inherit"
+      },
+      "createdAt": "2026-06-02T20:47:45.070Z",
+      "domain": "nu-aura-ui",
+      "model": "inherit",
+      "modelRoutedBy": "explicit"
     }
   },
   "version": "3.0.0"

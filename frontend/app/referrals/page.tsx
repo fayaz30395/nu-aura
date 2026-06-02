@@ -8,6 +8,8 @@ import {Permissions} from '@/lib/hooks/usePermissions';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {SkeletonCard, SkeletonTable} from '@/components/ui/Skeleton';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {Card, CardContent} from '@/components/ui/Card';
+import Link from 'next/link';
 import {
   useActivePolicies,
   useAllReferrals,
@@ -20,7 +22,7 @@ import {motion} from 'framer-motion';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
-import {CheckCircle, DollarSign, FileText, Plus, TrendingUp, UserPlus, Users,} from 'lucide-react';
+import {ArrowRight, CheckCircle, DollarSign, FileText, Loader2, Plus, ShieldAlert, TrendingUp, UserPlus, Users,} from 'lucide-react';
 import type {ReferralRelationship, ReferralResponse} from '@/lib/types/hire/referral';
 import {StatusBadge} from '@/components/ui/StatusBadge';
 import {REFERRAL_STATUS} from '@/lib/status/vocabulary';
@@ -122,12 +124,30 @@ export default function ReferralsPage() {
     );
   }
   if (!isAuthenticated) {
-    router.push('/auth/login');
+    router.replace('/auth/login');
     return (
-      <div className="p-6">
-        <p className="text-sm text-[var(--text-muted)]" role="status">
-          Redirecting to sign in…
-        </p>
+      <div className="page-shell-centered fade-slide-up auth-delay-20">
+        <Card className="card-aura fade-slide-up auth-delay-40 float-subtle">
+          <CardContent className="py-10">
+            <div className="flex items-start gap-4">
+              <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-accent-100 text-accent-700 dark:bg-accent-900/30 dark:text-accent-300">
+                <ShieldAlert className="h-5 w-5"/>
+              </span>
+              <div className="space-y-1">
+                <p className="text-sm font-semibold text-[var(--text-primary)]">Referrals module</p>
+                <p className="text-caption">Redirecting to sign in.</p>
+              </div>
+            </div>
+            <Link
+              href="/auth/login"
+              className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-accent-700 hover:text-accent-800 transition-colors"
+            >
+              <Loader2 className="h-4 w-4 animate-spin"/>
+              Continue to sign in
+              <ArrowRight className="h-4 w-4"/>
+            </Link>
+          </CardContent>
+        </Card>
       </div>
     );
   }

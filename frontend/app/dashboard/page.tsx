@@ -141,7 +141,7 @@ export default function DashboardPage() {
   useEffect(() => {
     if (!hasHydrated || !permissionsReady) return;
     if (!isAuthenticated) {
-      router.push('/auth/login');
+      router.replace('/auth/login');
       return;
     }
     // Guard: only users with DASHBOARD_VIEW permission can access this HR overview.
@@ -985,7 +985,7 @@ export default function DashboardPage() {
           animate={{opacity: 1, y: 0}}
           transition={{duration: 0.45, ease: EASE, delay: 0.2}}
           aria-label="Today's attendance"
-          className="grid gap-4 lg:grid-cols-[1fr_auto] lg:items-center rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-card)] px-5 py-5 sm:px-7 sm:py-6"
+          className="grid gap-4 lg:grid-cols-[1fr_auto] lg:items-center rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-card)] px-5 py-5 sm:px-6"
         >
           <div className="flex items-start gap-4 min-w-0">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent-50 text-accent-700 dark:bg-accent-900/30 dark:text-accent-300">

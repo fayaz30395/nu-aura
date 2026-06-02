@@ -21,7 +21,10 @@ import {
 import {AdminPageContent} from '@/components/layout';
 import {Button} from '@/components/ui/Button';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {Input} from '@/components/ui/Input';
 import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
+import {Select} from '@/components/ui/Select';
+import {Textarea} from '@/components/ui/Textarea';
 import {useToast} from '@/components/notifications/ToastProvider';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
@@ -180,10 +183,10 @@ export default function DepartmentsPage() {
 
   if (!permReady) {
     return (
-      <AdminPageContent>
+      <AdminPageContent className="page-shell">
         <div className="space-y-4">
           {[1, 2, 3].map(i => (
-            <div key={i} className="skeuo-card p-4 animate-pulse">
+            <div key={i} className="card-aura p-4 animate-pulse">
               <div className="h-4 bg-[var(--skeleton-base)] rounded w-1/4 mb-2"/>
               <div className="h-3 bg-[var(--skeleton-base)] rounded w-1/2"/>
             </div>
@@ -194,7 +197,7 @@ export default function DepartmentsPage() {
   }
 
   return (
-    <AdminPageContent>
+    <AdminPageContent className="page-shell">
       <PermissionGate
         permission={Permissions.EMPLOYEE_READ}
         fallback={<p className="text-danger-600 p-6">You do not have permission to view departments.</p>}
@@ -202,26 +205,25 @@ export default function DepartmentsPage() {
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-xl font-bold">Department Management</h1>
+            <h1 className="text-xl font-bold">Department management</h1>
             <p className="text-sm text-[var(--text-secondary)] mt-0.5">
               {data?.totalElements ?? 0} departments
             </p>
           </div>
           <Button variant="primary" onClick={openCreate} className="flex items-center gap-2">
             <Plus className="h-4 w-4"/>
-            New Department
+            New department
           </Button>
         </div>
 
         {/* Search */}
-        <div className="relative mb-4">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]"/>
-          <input
+        <div className="mb-4 max-w-sm">
+          <Input
             type="text"
             value={search}
             onChange={e => setSearch(e.target.value)}
-            placeholder="Search by name or code…"
-            className="input-aura pl-10 w-full max-w-sm"
+            placeholder="Search by name or code"
+            icon={<Search className="h-4 w-4"/>}
             aria-label="Search departments"
           />
         </div>
@@ -230,7 +232,7 @@ export default function DepartmentsPage() {
         {isLoading ? (
           <div className="space-y-2">
             {[1, 2, 3, 4, 5].map(i => (
-              <div key={i} className="skeuo-card p-4 animate-pulse flex gap-4">
+              <div key={i} className="card-aura p-4 animate-pulse flex gap-4">
                 <div className="h-4 bg-[var(--skeleton-base)] rounded w-16"/>
                 <div className="h-4 bg-[var(--skeleton-base)] rounded w-40"/>
                 <div className="h-4 bg-[var(--skeleton-base)] rounded w-24 ml-auto"/>
@@ -238,12 +240,12 @@ export default function DepartmentsPage() {
             ))}
           </div>
         ) : isError ? (
-          <div className="flex items-center gap-2 p-6 skeuo-card text-danger-600">
+          <div className="card-aura flex items-center gap-2 p-6 text-danger-600">
             <AlertCircle className="h-5 w-5 flex-shrink-0"/>
             <span className="text-sm">Failed to load departments. Please try again.</span>
           </div>
         ) : filtered.length === 0 ? (
-          <div className="skeuo-card">
+          <div className="card-aura">
             <EmptyState
               icon={<Building2 className="w-full h-full"/>}
               title={search ? 'No departments match your search' : 'No departments yet'}
@@ -253,8 +255,8 @@ export default function DepartmentsPage() {
             />
           </div>
         ) : (
-          <div className="skeuo-card overflow-hidden">
-            <table className="w-full text-sm">
+          <div className="card-aura overflow-hidden">
+            <table className="table-aura w-full text-sm">
               <thead>
               <tr className="border-b border-[var(--border-subtle)]">
                 <th
@@ -380,45 +382,65 @@ export default function DepartmentsPage() {
         >
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="admin-dept-code" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
-                  Code <span aria-hidden="true" className="text-danger-500">*</span>
-                </label>
-                <input id="admin-dept-code" {...register('code')} aria-required="true" placeholder="ENG" className="input-aura w-full uppercase"/>
-                {errors.code && <p className="text-danger-500 text-xs mt-1">{errors.code.message}</p>}
-              </div>
-              <div>
-                <label htmlFor="admin-dept-name" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
-                  Name <span aria-hidden="true" className="text-danger-500">*</span>
-                </label>
-                <input id="admin-dept-name" {...register('name')} aria-required="true" placeholder="Engineering" className="input-aura w-full"/>
-                {errors.name && <p className="text-danger-500 text-xs mt-1">{errors.name.message}</p>}
-              </div>
+              <Input
+                id="admin-dept-code"
+                label="Code"
+                {...register('code')}
+                aria-required="true"
+                placeholder="ENG"
+                error={errors.code?.message}
+                className="uppercase"
+              />
+              <Input
+                id="admin-dept-name"
+                label="Name"
+                {...register('name')}
+                aria-required="true"
+                placeholder="Engineering"
+                error={errors.name?.message}
+              />
             </div>
 
-            <div>
-              <label htmlFor="admin-dept-type" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Type</label>
-              <select id="admin-dept-type" {...register('type')} className="input-aura w-full">
-                <option value="">Select type…</option>
-                {DEPT_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
-              </select>
-            </div>
+            <Select
+              id="admin-dept-type"
+              label="Type"
+              {...register('type')}
+              error={errors.type?.message}
+            >
+              <option value="">Select type</option>
+              {DEPT_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+            </Select>
 
-            <div>
-              <label htmlFor="admin-dept-description" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Description</label>
-              <textarea id="admin-dept-description" {...register('description')} rows={2} placeholder="Optional description…"
-                        className="input-aura w-full resize-none"/>
+            <div className="space-y-1.5">
+              <label htmlFor="admin-dept-description" className="block text-sm font-medium text-[var(--text-secondary)]">
+                Description
+              </label>
+              <Textarea
+                id="admin-dept-description"
+                {...register('description')}
+                rows={2}
+                placeholder="Optional description"
+                error={!!errors.description}
+                className="resize-none"
+              />
+              {errors.description && <p className="text-danger-500 text-xs">{errors.description.message}</p>}
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="admin-dept-location" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Location</label>
-                <input id="admin-dept-location" {...register('location')} placeholder="e.g. Chennai" className="input-aura w-full"/>
-              </div>
-              <div>
-                <label htmlFor="admin-dept-cost-center" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Cost Center</label>
-                <input id="admin-dept-cost-center" {...register('costCenter')} placeholder="e.g. CC-001" className="input-aura w-full"/>
-              </div>
+              <Input
+                id="admin-dept-location"
+                label="Location"
+                {...register('location')}
+                placeholder="Chennai"
+                error={errors.location?.message}
+              />
+              <Input
+                id="admin-dept-cost-center"
+                label="Cost center"
+                {...register('costCenter')}
+                placeholder="CC-001"
+                error={errors.costCenter?.message}
+              />
             </div>
 
             <div className="flex items-center justify-end gap-2 pt-4 border-t border-[var(--border-subtle)]">

@@ -18,6 +18,7 @@ import {AdminPageContent} from '@/components/layout';
 import {ConfirmDialog} from '@/components/ui';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {SkeletonTable} from '@/components/ui/Skeleton';
+import {Card, CardContent} from '@/components/ui/Card';
 import {Shield, Users} from 'lucide-react';
 import {
   useAffectedUsers,
@@ -118,7 +119,7 @@ export default function ImplicitRolesPage() {
     if (!hasHydrated || !isReady) return;
 
     if (!isAuthenticated) {
-      router.push('/auth/login');
+      router.replace('/auth/login');
       return;
     }
 
@@ -127,6 +128,46 @@ export default function ImplicitRolesPage() {
       return;
     }
   }, [hasHydrated, isReady, isAuthenticated, router, hasAnyRole]);
+
+  const authShell = (title: string, message: string) => (
+    <div className="page-shell-centered fade-slide-up auth-delay-20">
+      <Card className="card-aura fade-slide-up auth-delay-40 float-subtle">
+        <CardContent className="py-10">
+          <div className="flex items-start gap-4">
+            <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-warning-100 text-warning-700 dark:bg-warning-900/30 dark:text-warning-300">
+              <Shield className="h-5 w-5"/>
+            </span>
+            <div className="space-y-1">
+              <p className="text-sm font-semibold text-[var(--text-primary)]">{title}</p>
+              <p className="text-caption">{message}</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+
+  if (!hasHydrated || !isReady) {
+    return (
+      <AdminPageContent className="page-shell">
+        {authShell('Implicit roles', 'Checking tenant session.')}
+      </AdminPageContent>
+    );
+  }
+  if (!isAuthenticated) {
+    return (
+      <AdminPageContent className="page-shell">
+        {authShell('Implicit roles', 'Redirecting to sign in.')}
+      </AdminPageContent>
+    );
+  }
+  if (!hasAnyRole(...ADMIN_ACCESS_ROLES)) {
+    return (
+      <AdminPageContent className="page-shell">
+        {authShell('Implicit roles', 'Redirecting to your dashboard.')}
+      </AdminPageContent>
+    );
+  }
 
   const rules = rulesQuery.data?.content || [];
   const roles = rolesQuery.data || [];
@@ -257,7 +298,7 @@ export default function ImplicitRolesPage() {
   }
 
   return (
-    <AdminPageContent className="p-4 md:p-6 lg:p-8">
+    <AdminPageContent className="page-shell p-4 md:p-6 lg:p-8">
       <ConfirmDialog
         isOpen={showDeleteConfirm}
         onClose={() => {

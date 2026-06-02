@@ -16,7 +16,7 @@ import com.nulogic.infrastructure.leave.repository.LeaveRequestRepository;
 import com.nulogic.infrastructure.leave.repository.LeaveTypeRepository;
 import com.nulogic.infrastructure.payroll.repository.EmployeePayrollRecordRepository;
 import com.nulogic.infrastructure.performance.repository.PerformanceReviewRepository;
-import com.lowagie.text.DocumentException;
+import org.openpdf.text.DocumentException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;

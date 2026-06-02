@@ -76,7 +76,7 @@ export default function OrgHierarchyPage() {
   }
 
   if (hasHydrated && isReady && !isAuthenticated) {
-    router.push('/auth/login');
+    router.replace('/auth/login');
     return null;
   }
 

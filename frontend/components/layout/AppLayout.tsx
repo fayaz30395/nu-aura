@@ -187,7 +187,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
     } catch (error) {
       logger.error('Logout error:', error);
     }
-    router.push('/auth/login');
+    router.replace('/auth/login');
   };
 
   // ── Sidebar Navigation ─────────────────────────────────────────────
@@ -373,7 +373,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
           <div
             className="flex-shrink-0 border-b border-[var(--border-subtle)] bg-[var(--bg-surface)]/90 backdrop-blur supports-[backdrop-filter]:bg-[var(--bg-surface)]/75"
           >
-            <div className="mx-auto w-full max-w-6xl xl:max-w-[1180px] px-3 sm:px-4 md:px-5 py-2">
+            <div className="page-shell py-2">
               <Breadcrumbs items={breadcrumbs}/>
             </div>
           </div>
@@ -381,7 +381,6 @@ const AppLayout: React.FC<AppLayoutProps> = ({
 
         {/* Content Area — scrollable, fills remaining vertical space */}
         <main
-          id="main-content"
           tabIndex={0}
           aria-label="Main content"
           className="flex-1 overflow-y-auto overflow-x-hidden transition-colors duration-300 bg-transparent"
@@ -390,7 +389,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
             <ErrorBoundary resetKeys={[pathname]}>
           <div
             className={cn(
-              'mx-auto w-full max-w-6xl xl:max-w-[1180px] px-3 sm:px-4 md:px-5 py-4 md:py-6',
+              'page-shell py-4 md:py-6',
               'stagger-children overflow-x-hidden',
               // Bottom padding: mobile needs space for fixed bottom nav
               'pb-20 md:pb-6'

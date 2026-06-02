@@ -460,52 +460,36 @@
     @apply min-h-[100dvh];
     position: relative;
     isolation: isolate;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
     display: grid;
-    place-items: center;
-    padding: clamp(0.9rem, 1.6vw, 1.4rem);
+    align-items: safe center;
+    justify-items: center;
+    padding: clamp(0.85rem, 1.4vw, 1.2rem);
     background:
-      radial-gradient(360px 160px at 10% 0%, rgba(91, 140, 245, 0.14), transparent 52%),
-      radial-gradient(360px 180px at 90% 100%, rgba(37, 99, 235, 0.08), transparent 52%),
+      linear-gradient(180deg, color-mix(in srgb, var(--accent-primary) 4%, transparent), transparent 52%),
+      linear-gradient(135deg, color-mix(in srgb, var(--bg-main) 82%, var(--bg-card) 18%), var(--bg-main)),
       var(--bg-main);
     color: var(--text-primary);
   }
 
   .auth-shell::before {
-    content: '';
-    position: absolute;
-    inset: -22% -30% auto auto;
-    width: 62%;
-    aspect-ratio: 1;
-    border-radius: 9999px;
-    background: radial-gradient(circle, rgba(91, 140, 245, 0.20), rgba(91, 140, 245, 0));
-    transform: translate3d(0, 0, 0);
-    pointer-events: none;
-    opacity: 0.9;
-    animation: panelFloat 22s linear infinite;
-    z-index: -1;
+    content: none;
   }
 
   .auth-shell::after {
-    content: '';
-    position: absolute;
-    inset: auto -20% -34% auto;
-    width: 46%;
-    aspect-ratio: 1;
-    border-radius: 9999px;
-    background:
-      radial-gradient(circle at 22% 22%, rgba(59, 130, 246, 0.22), rgba(59, 130, 246, 0) 58%),
-      radial-gradient(circle at 78% 78%, rgba(139, 92, 246, 0.12), rgba(139, 92, 246, 0) 54%);
-    transform: translate3d(0, 0, 0);
-    filter: blur(1px);
-    pointer-events: none;
-    opacity: 0.7;
-    animation: authOrbit 28s ease-in-out infinite;
-    z-index: -1;
+    content: none;
   }
 
   .auth-shell-grid {
     width: min(100% - 0.8rem, 32rem);
+    display: grid;
+    justify-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .auth-shell-grid-wide {
+    width: min(100% - 0.8rem, 64rem);
     display: grid;
     justify-items: stretch;
     gap: 0.95rem;
@@ -517,26 +501,53 @@
 
   .auth-shell-card {
     @apply w-full rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-card)] shadow-[var(--shadow-card)];
-    padding: clamp(1rem, 1.8vw, 1.35rem);
+    padding: clamp(0.9rem, 1.4vw, 1.2rem);
     position: relative;
     isolation: isolate;
-    backdrop-filter: blur(8px);
-    background:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0)),
-      var(--bg-card);
-    transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    transition: transform 180ms cubic-bezier(0.22, 1, 0.36, 1),
     box-shadow 220ms ease-out,
     border-color 220ms ease-out;
   }
 
+  .auth-shell-card:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-card-hover);
+    border-color: var(--border-main);
+  }
+
   .auth-shell-card::before {
+    content: none;
+  }
+
+  .auth-side-panel {
+    position: relative;
+    z-index: 1;
+    border-radius: var(--radius-shell);
+    background: linear-gradient(160deg, color-mix(in srgb, var(--bg-card) 88%, var(--bg-main) 12%), var(--bg-card));
+    border: 1px solid var(--border-subtle);
+    box-shadow: var(--shadow-card);
+  }
+
+  .auth-side-panel::before {
     content: '';
     position: absolute;
-    inset: 1px;
-    border-radius: calc(var(--radius-panel) - 1px);
-    border: 1px solid rgba(255, 255, 255, 0.03);
+    inset: 0;
+    border-radius: inherit;
     pointer-events: none;
-    z-index: -1;
+    background: linear-gradient(140deg, rgba(37, 99, 235, 0.10), transparent 45%);
+    opacity: 0.7;
+  }
+
+  .auth-side-panel-content {
+    position: relative;
+    z-index: 1;
+  }
+
+  .auth-chip {
+    @apply inline-flex items-center gap-2 px-3 py-2 text-xs font-medium rounded-full border;
+    border-color: color-mix(in srgb, var(--border-main) 65%, var(--bg-card) 35%);
+    color: var(--text-secondary);
+    background: color-mix(in srgb, var(--bg-main) 92%, var(--bg-card) 8%);
   }
 
   .auth-loading-shell {
@@ -570,6 +581,13 @@
     color: var(--text-primary);
     position: relative;
     isolation: isolate;
+  }
+
+  .page-shell {
+    width: min(100% - 0.9rem, 90rem);
+    margin-inline: auto;
+    padding-left: clamp(0.85rem, 1.4vw, 1.25rem);
+    padding-right: clamp(0.85rem, 1.4vw, 1.25rem);
   }
 
   .page-shell-card {
@@ -1427,18 +1445,6 @@ html, body {
   }
 }
 
-@keyframes authOrbit {
-  0%, 100% {
-    transform: translate3d(0, 0, 0);
-  }
-  33% {
-    transform: translate3d(8%, 6%, 0) scale(1.08) rotate(1.5deg);
-  }
-  66% {
-    transform: translate3d(-4%, 9%, 0) scale(0.98) rotate(-2deg);
-  }
-}
-
 /* ── Shimmer Loading Skeleton ──────────────────────────────────────── */
 .skeleton-shimmer {
   position: relative;
@@ -1469,6 +1475,10 @@ html, body {
 
   .float-subtle {
     animation: panelFloat 6s ease-in-out infinite;
+  }
+
+  .auth-shell .float-subtle {
+    animation: none;
   }
 
 }

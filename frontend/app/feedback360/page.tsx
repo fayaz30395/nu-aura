@@ -1,5 +1,6 @@
+'use client';
+
 // Duplicate route: canonical implementation lives at /performance/360-feedback.
-// Use a server redirect so old links do not depend on client hydration.
 import {useEffect} from 'react';
 import {useRouter} from 'next/navigation';
 import Link from 'next/link';

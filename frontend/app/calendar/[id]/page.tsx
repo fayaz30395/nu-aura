@@ -43,7 +43,7 @@ export default function EventDetailPage() {
   }
 
   if (!isAuthenticated) {
-    router.push('/auth/login');
+    router.replace('/auth/login');
     return null;
   }
 

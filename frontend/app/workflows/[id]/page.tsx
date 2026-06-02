@@ -6,9 +6,11 @@ import {motion} from 'framer-motion';
 import {useFieldArray, useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import {Checkbox as MantineCheckbox} from '@mantine/core';
 import {AppLayout} from '@/components/layout';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
+import {Input, Select, Textarea} from '@/components/ui';
 import {Skeleton} from '@/components/ui/Skeleton';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
@@ -555,73 +557,57 @@ export default function WorkflowDetailPage() {
                 <div className="grid gap-4 sm:grid-cols-2">
                   {/* Name */}
                   <div>
-                    <label htmlFor="workflow-name" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                      Workflow Name <span aria-hidden="true" className="text-danger-500">*</span>
-                    </label>
-                    <input
+                    <Input
                       id="workflow-name"
                       {...form.register('name')}
+                      label="Workflow name"
                       aria-required="true"
-                      placeholder="e.g., Leave Approval - Standard"
+                      placeholder="e.g., Leave approval standard"
                       aria-invalid={form.formState.errors.name ? 'true' : 'false'}
                       aria-describedby={form.formState.errors.name ? 'workflow-name-error' : undefined}
-                      className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+                      error={form.formState.errors.name?.message}
                     />
-                    {form.formState.errors.name && (
-                      <p id="workflow-name-error" className="mt-1 text-xs text-danger-500">{form.formState.errors.name.message}</p>
-                    )}
                   </div>
 
                   {/* Entity Type */}
                   <div>
-                    <label htmlFor="workflow-entity-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                      Entity Type <span aria-hidden="true" className="text-danger-500">*</span>
-                    </label>
-                    <select
+                    <Select
                       id="workflow-entity-type"
                       {...form.register('entityType')}
+                      label="Entity type"
                       aria-required="true"
                       aria-invalid={form.formState.errors.entityType ? 'true' : 'false'}
                       aria-describedby={form.formState.errors.entityType ? 'workflow-entity-type-error' : undefined}
-                      className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+                      error={form.formState.errors.entityType?.message}
                     >
                       {ENTITY_TYPE_OPTIONS.map((o) => (
                         <option key={o.value} value={o.value}>{o.label}</option>
                       ))}
-                    </select>
-                    {form.formState.errors.entityType && (
-                      <p id="workflow-entity-type-error" className="mt-1 text-xs text-danger-500">{form.formState.errors.entityType.message}</p>
-                    )}
+                    </Select>
                   </div>
 
                   {/* Workflow Type */}
                   <div>
-                    <label htmlFor="workflow-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                      Workflow Type <span aria-hidden="true" className="text-danger-500">*</span>
-                    </label>
-                    <select
+                    <Select
                       id="workflow-type"
                       {...form.register('workflowType')}
+                      label="Workflow type"
                       aria-required="true"
-                      className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
                     >
                       {WORKFLOW_TYPE_OPTIONS.map((o) => (
                         <option key={o.value} value={o.value}>{o.label}</option>
                       ))}
-                    </select>
+                    </Select>
                   </div>
 
                   {/* Description */}
                   <div className="sm:col-span-2">
-                    <label htmlFor="workflow-description" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                      Description
-                    </label>
-                    <textarea
+                    <Textarea
                       id="workflow-description"
                       {...form.register('description')}
-                      placeholder="Describe what this workflow is used for..."
+                      aria-label="Description"
+                      placeholder="Describe what this workflow is used for"
                       rows={2}
-                      className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
                     />
                   </div>
                 </div>
@@ -636,27 +622,21 @@ export default function WorkflowDetailPage() {
               <CardContent>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div>
-                    <label htmlFor="workflow-min-amount" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                      Min Amount Threshold
-                    </label>
-                    <input
+                    <Input
                       id="workflow-min-amount"
                       type="number"
                       {...form.register('minAmount')}
+                      label="Minimum amount threshold"
                       placeholder="0"
-                      className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
                     />
                   </div>
                   <div>
-                    <label htmlFor="workflow-max-amount" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                      Max Amount Threshold
-                    </label>
-                    <input
+                    <Input
                       id="workflow-max-amount"
                       type="number"
                       {...form.register('maxAmount')}
+                      label="Maximum amount threshold"
                       placeholder="No limit"
-                      className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
                     />
                   </div>
                 </div>
@@ -768,134 +748,90 @@ export default function WorkflowDetailPage() {
                     <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                       {/* Step Name */}
                       <div>
-                        <label htmlFor={`workflow-step-${idx}-name`} className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
-                          Step Name <span aria-hidden="true" className="text-danger-500">*</span>
-                        </label>
-                        <input
+                        <Input
                           id={`workflow-step-${idx}-name`}
                           {...form.register(`steps.${idx}.stepName`)}
+                          label="Step name"
                           aria-required="true"
-                          placeholder="e.g., Manager Approval"
+                          placeholder="e.g., Manager approval"
                           aria-invalid={form.formState.errors.steps?.[idx]?.stepName ? 'true' : 'false'}
                           aria-describedby={form.formState.errors.steps?.[idx]?.stepName ? `workflow-step-${idx}-name-error` : undefined}
-                          className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-1.5 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+                          inputSize="sm"
+                          error={form.formState.errors.steps?.[idx]?.stepName?.message}
                         />
-                        {form.formState.errors.steps?.[idx]?.stepName && (
-                          <p id={`workflow-step-${idx}-name-error`} className="mt-1 text-xs text-danger-500">
-                            {form.formState.errors.steps[idx]?.stepName?.message}
-                          </p>
-                        )}
                       </div>
 
                       {/* Approver Type */}
                       <div>
-                        <label htmlFor={`workflow-step-${idx}-approver-type`} className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
-                          Approver Type <span aria-hidden="true" className="text-danger-500">*</span>
-                        </label>
-                        <select
+                        <Select
                           id={`workflow-step-${idx}-approver-type`}
                           {...form.register(`steps.${idx}.approverType`)}
+                          label="Approver type"
                           aria-required="true"
-                          className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-1.5 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+                          selectSize="sm"
                         >
                           {APPROVER_TYPE_OPTIONS.map((o) => (
                             <option key={o.value} value={o.value}>{o.label}</option>
                           ))}
-                        </select>
+                        </Select>
                       </div>
 
                       {/* Role Name (shown for ROLE / ANY_OF_ROLE) */}
                       {(form.watch(`steps.${idx}.approverType`) === 'ROLE' ||
                         form.watch(`steps.${idx}.approverType`) === 'ANY_OF_ROLE') && (
                         <div>
-                          <label htmlFor={`workflow-step-${idx}-role-name`} className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
-                            Role Name
-                          </label>
-                          <input
+                          <Input
                             id={`workflow-step-${idx}-role-name`}
                             {...form.register(`steps.${idx}.roleName`)}
-                            placeholder="e.g., Finance Manager"
-                            className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-1.5 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+                            label="Role name"
+                            placeholder="e.g., Finance manager"
+                            inputSize="sm"
                           />
                         </div>
                       )}
 
                       {/* SLA Hours */}
                       <div>
-                        <label htmlFor={`workflow-step-${idx}-sla-hours`} className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
-                          SLA (hours)
-                        </label>
-                        <input
+                        <Input
                           id={`workflow-step-${idx}-sla-hours`}
                           type="number"
                           {...form.register(`steps.${idx}.slaHours`)}
+                          label="SLA hours"
                           placeholder="48"
-                          className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-1.5 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+                          inputSize="sm"
                         />
                       </div>
 
                       {/* Description */}
                       <div className="sm:col-span-2 lg:col-span-2">
-                        <label htmlFor={`workflow-step-${idx}-description`} className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
-                          Description
-                        </label>
-                        <input
+                        <Input
                           id={`workflow-step-${idx}-description`}
                           {...form.register(`steps.${idx}.description`)}
+                          label="Description"
                           placeholder="Optional step description"
-                          className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-1.5 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+                          inputSize="sm"
                         />
                       </div>
                     </div>
 
                     {/* Toggles */}
                     <div className="mt-4 flex flex-wrap gap-4">
-                      <label className="flex items-center gap-2 text-xs text-[var(--text-secondary)]">
-                        <input
-                          type="checkbox"
-                          {...form.register(`steps.${idx}.escalationEnabled`)}
-                          className="h-4 w-4 rounded border-[var(--border-main)] text-accent-600 focus:ring-accent-500"
-                        />
-                        Escalation
-                      </label>
-                      <label className="flex items-center gap-2 text-xs text-[var(--text-secondary)]">
-                        <input
-                          type="checkbox"
-                          {...form.register(`steps.${idx}.commentsRequired`)}
-                          className="h-4 w-4 rounded border-[var(--border-main)] text-accent-600 focus:ring-accent-500"
-                        />
-                        Comments Required
-                      </label>
-                      <label className="flex items-center gap-2 text-xs text-[var(--text-secondary)]">
-                        <input
-                          type="checkbox"
-                          {...form.register(`steps.${idx}.delegationAllowed`)}
-                          className="h-4 w-4 rounded border-[var(--border-main)] text-accent-600 focus:ring-accent-500"
-                        />
-                        Allow Delegation
-                      </label>
-                      <label className="flex items-center gap-2 text-xs text-[var(--text-secondary)]">
-                        <input
-                          type="checkbox"
-                          {...form.register(`steps.${idx}.isOptional`)}
-                          className="h-4 w-4 rounded border-[var(--border-main)] text-accent-600 focus:ring-accent-500"
-                        />
-                        Optional Step
-                      </label>
+                      <MantineCheckbox size="xs" label="Escalation" {...form.register(`steps.${idx}.escalationEnabled`)}/>
+                      <MantineCheckbox size="xs" label="Comments required" {...form.register(`steps.${idx}.commentsRequired`)}/>
+                      <MantineCheckbox size="xs" label="Allow delegation" {...form.register(`steps.${idx}.delegationAllowed`)}/>
+                      <MantineCheckbox size="xs" label="Optional step" {...form.register(`steps.${idx}.isOptional`)}/>
                     </div>
 
                     {/* Escalation hours (conditional) */}
                     {form.watch(`steps.${idx}.escalationEnabled`) && (
                       <div className="mt-4 max-w-[200px]">
-                        <label htmlFor={`workflow-step-${idx}-escalate-after-hours`} className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
-                          Escalate After (hours)
-                        </label>
-                        <input
+                        <Input
                           id={`workflow-step-${idx}-escalate-after-hours`}
                           type="number"
                           {...form.register(`steps.${idx}.escalateAfterHours`)}
+                          label="Escalate after hours"
                           placeholder="72"
-                          className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-1.5 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+                          inputSize="sm"
                         />
                       </div>
                     )}
@@ -912,75 +848,33 @@ export default function WorkflowDetailPage() {
               <CardContent>
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   <div>
-                    <label htmlFor="workflow-default-sla-hours" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                      Default SLA (hours)
-                    </label>
-                    <input
+                    <Input
                       id="workflow-default-sla-hours"
                       type="number"
                       {...form.register('defaultSlaHours')}
-                      className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+                      label="Default SLA hours"
                     />
                   </div>
                   <div>
-                    <label htmlFor="workflow-escalation-after-hours" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                      Escalation After (hours)
-                    </label>
-                    <input
+                    <Input
                       id="workflow-escalation-after-hours"
                       type="number"
                       {...form.register('escalationAfterHours')}
-                      className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+                      label="Escalation after hours"
                     />
                   </div>
                 </div>
 
                 <div className="mt-4 flex flex-wrap gap-6">
-                  <label className="flex items-center gap-2 text-body-secondary">
-                    <input type="checkbox" {...form.register('escalationEnabled')}
-                           className="h-4 w-4 rounded border-[var(--border-main)] text-accent-600 focus:ring-accent-500"/>
-                    Enable Escalation
-                  </label>
-                  <label className="flex items-center gap-2 text-body-secondary">
-                    <input type="checkbox" {...form.register('notifyOnSubmission')}
-                           className="h-4 w-4 rounded border-[var(--border-main)] text-accent-600 focus:ring-accent-500"/>
-                    Notify on Submission
-                  </label>
-                  <label className="flex items-center gap-2 text-body-secondary">
-                    <input type="checkbox" {...form.register('notifyOnApproval')}
-                           className="h-4 w-4 rounded border-[var(--border-main)] text-accent-600 focus:ring-accent-500"/>
-                    Notify on Approval
-                  </label>
-                  <label className="flex items-center gap-2 text-body-secondary">
-                    <input type="checkbox" {...form.register('notifyOnRejection')}
-                           className="h-4 w-4 rounded border-[var(--border-main)] text-accent-600 focus:ring-accent-500"/>
-                    Notify on Rejection
-                  </label>
-                  <label className="flex items-center gap-2 text-body-secondary">
-                    <input type="checkbox" {...form.register('notifyOnEscalation')}
-                           className="h-4 w-4 rounded border-[var(--border-main)] text-accent-600 focus:ring-accent-500"/>
-                    Notify on Escalation
-                  </label>
-                  <label className="flex items-center gap-2 text-body-secondary">
-                    <input type="checkbox" {...form.register('allowParallelApproval')}
-                           className="h-4 w-4 rounded border-[var(--border-main)] text-accent-600 focus:ring-accent-500"/>
-                    Allow Parallel Approval
-                  </label>
-                  <label className="flex items-center gap-2 text-body-secondary">
-                    <input type="checkbox" {...form.register('autoApproveEnabled')}
-                           className="h-4 w-4 rounded border-[var(--border-main)] text-accent-600 focus:ring-accent-500"/>
-                    Auto-Approve Enabled
-                  </label>
-                  <label className="flex items-center gap-2 text-body-secondary">
-                    <input type="checkbox" {...form.register('skipLevelAllowed')}
-                           className="h-4 w-4 rounded border-[var(--border-main)] text-accent-600 focus:ring-accent-500"/>
-                    Skip-Level Allowed
-                  </label>
-                  <label className="flex items-center gap-2 text-body-secondary">
-                    <input type="checkbox" {...form.register('isDefault')}
-                           className="h-4 w-4 rounded border-[var(--border-main)] text-accent-600 focus:ring-accent-500"/>
-                    Set as Default
-                  </label>
+                  <MantineCheckbox label="Enable escalation" {...form.register('escalationEnabled')}/>
+                  <MantineCheckbox label="Notify on submission" {...form.register('notifyOnSubmission')}/>
+                  <MantineCheckbox label="Notify on approval" {...form.register('notifyOnApproval')}/>
+                  <MantineCheckbox label="Notify on rejection" {...form.register('notifyOnRejection')}/>
+                  <MantineCheckbox label="Notify on escalation" {...form.register('notifyOnEscalation')}/>
+                  <MantineCheckbox label="Allow parallel approval" {...form.register('allowParallelApproval')}/>
+                  <MantineCheckbox label="Auto-approve enabled" {...form.register('autoApproveEnabled')}/>
+                  <MantineCheckbox label="Skip-level allowed" {...form.register('skipLevelAllowed')}/>
+                  <MantineCheckbox label="Set as default" {...form.register('isDefault')}/>
                 </div>
               </CardContent>
             </Card>
@@ -999,11 +893,11 @@ export default function WorkflowDetailPage() {
                 <Save className="mr-2 h-4 w-4"/>
                 {isSaving
                   ? isNew
-                    ? 'Creating...'
-                    : 'Saving...'
+                    ? 'Creating'
+                    : 'Saving'
                   : isNew
-                    ? 'Create Workflow'
-                    : 'Save Changes'}
+                    ? 'Create workflow'
+                    : 'Save changes'}
               </Button>
             </div>
           </form>

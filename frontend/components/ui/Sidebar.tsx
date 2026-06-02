@@ -118,7 +118,7 @@ const ChildrenFlyover: React.FC<{
         ref={panelRef}
         className={cn(
           'fixed z-50 w-60 bg-[var(--bg-elevated)]',
-          'rounded-2xl shadow-[var(--shadow-dropdown)] border border-[var(--border-subtle)]',
+          'rounded-xl shadow-[var(--shadow-dropdown)] border border-[var(--border-subtle)]',
           'transform-gpu transition-all duration-150 ease-[cubic-bezier(0.16,1,0.3,1)]',
           isOpen ? 'translate-x-0 opacity-100 scale-100' : 'translate-x-3 opacity-0 scale-95 pointer-events-none'
         )}

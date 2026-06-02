@@ -2,6 +2,7 @@
 
 import React, {useEffect} from 'react';
 import {useRouter} from 'next/navigation';
+import Link from 'next/link';
 import {
   Badge,
   Card,
@@ -57,6 +58,54 @@ export default function MobileApiPage() {
       router.replace('/me/dashboard');
     }
   }, [hasHydrated, isReady, isAuthenticated, router, hasAnyRole]);
+
+  const authShell = (title: string, message: string) => (
+    <Container size="lg" py="xl">
+      <div className="page-shell-centered fade-slide-up auth-delay-20">
+        <Card withBorder className="skeuo-card w-full max-w-lg">
+          <Group justify="space-between" mb="md">
+            <div>
+              <Title order={3}>{title}</Title>
+              <Text size="sm" c="dimmed">{message}</Text>
+            </div>
+            <Link
+              href="/auth/login"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-accent-700 hover:text-accent-800 transition-colors"
+            >
+              <IconShield size={14}/>
+              Sign in
+            </Link>
+          </Group>
+          <Group gap="xs">
+            <IconClock size={14}/>
+            <Text size="sm" c="dimmed">Preparing secure session...</Text>
+          </Group>
+        </Card>
+      </div>
+    </Container>
+  );
+
+  if (!hasHydrated || !isReady) {
+    return (
+      <AdminPageContent className="page-shell">
+        {authShell('Mobile API docs', 'Checking tenant session.')}
+      </AdminPageContent>
+    );
+  }
+  if (!isAuthenticated) {
+    return (
+      <AdminPageContent className="page-shell">
+        {authShell('Mobile API docs', 'Redirecting to sign in.')}
+      </AdminPageContent>
+    );
+  }
+  if (!hasAnyRole(...ADMIN_ACCESS_ROLES)) {
+    return (
+      <AdminPageContent className="page-shell">
+        {authShell('Mobile API docs', 'Redirecting to dashboard.')}
+      </AdminPageContent>
+    );
+  }
   const dashboardEndpoints: MobileEndpoint[] = [
     {
       method: 'GET',
@@ -244,7 +293,7 @@ export default function MobileApiPage() {
   );
 
   return (
-    <AdminPageContent>
+    <AdminPageContent className="page-shell">
       <Container size="lg" py="xl">
         {/* Header */}
         <Group justify="space-between" mb="xl">

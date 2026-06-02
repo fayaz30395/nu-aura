@@ -3,7 +3,8 @@
 import {useEffect, useMemo, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {motion} from 'framer-motion';
-import {AlertCircle, CheckCircle, RefreshCw} from 'lucide-react';
+import Link from 'next/link';
+import {AlertCircle, CheckCircle, RefreshCw, Loader2, ShieldAlert} from 'lucide-react';
 import {AppLayout} from '@/components/layout';
 import {
   useActiveLeaveTypes,
@@ -18,6 +19,7 @@ import {useToast} from '@/components/notifications/ToastProvider';
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
 import {useEmployees} from '@/lib/hooks/queries/useEmployees';
 import {Stat} from '@/components/ui/Stat';
+import {Card, CardContent} from '@/components/ui/Card';
 import {formatDate} from '@/lib/utils/format/date';
 
 function LeaveApprovalsPageContent() {
@@ -30,9 +32,42 @@ function LeaveApprovalsPageContent() {
   useEffect(() => {
     if (!hasHydrated) return;
     if (!isAuthenticated) {
-      router.push('/auth/login');
+      router.replace('/auth/login');
     }
   }, [hasHydrated, isAuthenticated, router]);
+
+  const authShell = (message: string) => (
+    <div className="page-shell-centered fade-slide-up auth-delay-20">
+      <Card className="card-aura fade-slide-up auth-delay-40 float-subtle">
+        <CardContent className="py-10">
+          <div className="flex items-start gap-4">
+            <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-warning-100 text-warning-700 dark:bg-warning-900/30 dark:text-warning-300">
+              <ShieldAlert className="h-5 w-5"/>
+            </span>
+            <div className="space-y-1">
+              <p className="text-sm font-semibold text-[var(--text-primary)]">Leave approvals</p>
+              <p className="text-caption">{message}</p>
+            </div>
+          </div>
+          <Link
+            href="/auth/login"
+            className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-accent-700 hover:text-accent-800 transition-colors"
+          >
+            <Loader2 className="h-4 w-4 animate-spin"/>
+            Sign in
+          </Link>
+        </CardContent>
+      </Card>
+    </div>
+  );
+
+  if (!hasHydrated || !isAuthenticated) {
+    return (
+      <AppLayout activeMenuItem="leave">
+        {authShell('Redirecting to sign in.')}
+      </AppLayout>
+    );
+  }
   const {
     data: pendingData,
     isError: isPendingError,

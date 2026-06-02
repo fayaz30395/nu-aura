@@ -4,8 +4,9 @@ import {Skeleton} from '@mantine/core';
 
 export default function Loading() {
   return (
-    <div className="page-shell-centered auth-loading-shell fade-slide-up">
-      <div className="auth-loading-card w-full max-w-md space-y-6 fade-slide-up auth-delay-20 float-subtle">
+    <div className="auth-shell fade-slide-up">
+      <div className="auth-shell-grid auth-shell-narrow fade-slide-up stagger-children">
+        <div className="auth-loading-card w-full space-y-6 fade-slide-up auth-delay-20 float-subtle page-reveal">
         {/* Logo skeleton */}
         <div className="flex justify-center">
           <Skeleton height={48} width={48} radius="xl"/>
@@ -25,6 +26,7 @@ export default function Loading() {
           ))}
           <Skeleton height={44}/>
           <Skeleton height={16} width="50%" className="mx-auto"/>
+        </div>
         </div>
       </div>
     </div>

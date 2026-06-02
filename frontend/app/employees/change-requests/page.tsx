@@ -9,11 +9,14 @@ import {ChangeRequestStatus, ChangeType,} from '@/lib/types/hrms/employment-chan
 import {useToast} from '@/components/notifications/ToastProvider';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
-import {AlertCircle, ArrowRight, CheckCircle, ChevronDown, ChevronUp, Clock, User, XCircle,} from 'lucide-react';
+import {AlertCircle, CheckCircle, ChevronDown, ChevronUp, Clock, User, XCircle,} from 'lucide-react';
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
 import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
 import {SkeletonTable} from '@/components/ui/Skeleton';
 import {formatDate, formatDateTime} from '@/lib/utils/format/date';
+import Link from 'next/link';
+import {Card, CardContent} from '@/components/ui/Card';
+import {ArrowRight, Loader2, ShieldAlert} from 'lucide-react';
 
 export default function EmploymentChangeRequestsPage() {
   const toast = useToast();
@@ -190,10 +193,28 @@ export default function EmploymentChangeRequestsPage() {
     // Render visible message while useEffect above redirects to /employees.
     return (
       <AppLayout activeMenuItem="employees">
-        <div className="max-w-7xl mx-auto p-6">
-          <p className="text-sm text-[var(--text-muted)]" role="status">
-            Redirecting to employees…
-          </p>
+        <div className="page-shell-centered fade-slide-up auth-delay-20">
+          <Card className="card-aura fade-slide-up auth-delay-40 float-subtle">
+            <CardContent className="py-10">
+              <div className="flex items-start gap-4">
+                <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-accent-100 text-accent-700 dark:bg-accent-900/30 dark:text-accent-300">
+                  <ShieldAlert className="h-5 w-5"/>
+                </span>
+                <div className="space-y-1">
+                  <p className="text-sm font-semibold text-[var(--text-primary)]">Access check</p>
+                  <p className="text-caption">You do not have access. Redirecting to employees.</p>
+                </div>
+              </div>
+              <Link
+                href="/employees"
+                className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-accent-700 hover:text-accent-800 transition-colors"
+              >
+                <Loader2 className="h-4 w-4 animate-spin"/>
+                Open employees
+                <ArrowRight className="h-4 w-4"/>
+              </Link>
+            </CardContent>
+          </Card>
         </div>
       </AppLayout>
     );

@@ -146,7 +146,7 @@ export default function SsoSettingsPage() {
   // Auth redirect
   useEffect(() => {
     if (hasHydrated && !isAuthenticated) {
-      router.push('/auth/login');
+      router.replace('/auth/login');
     }
   }, [isAuthenticated, hasHydrated, router]);
 

@@ -51,7 +51,7 @@ export default function CalendarPage() {
   }
 
   if (!isAuthenticated) {
-    router.push('/auth/login');
+    router.replace('/auth/login');
     return null;
   }
 

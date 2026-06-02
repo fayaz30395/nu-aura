@@ -4,44 +4,46 @@ import {Skeleton} from '@mantine/core';
 
 export default function AuthLoading() {
   return (
-    <div className="page-shell-centered auth-loading-shell fade-slide-up">
-      <div className="auth-loading-card w-full max-w-md space-y-6 fade-slide-up auth-delay-20 float-subtle">
-        {/* Logo/Brand skeleton */}
-        <div className="flex justify-center mb-6">
-          <Skeleton height={40} width={200}/>
-        </div>
+    <div className="auth-shell fade-slide-up">
+      <div className="auth-shell-grid auth-shell-narrow fade-slide-up stagger-children">
+        <div className="auth-loading-card w-full space-y-6 fade-slide-up auth-delay-20 float-subtle page-reveal">
+          {/* Logo/Brand skeleton */}
+          <div className="flex justify-center mb-6">
+            <Skeleton height={40} width={200}/>
+          </div>
 
-        {/* Title skeleton */}
-        <Skeleton height={28} width="70%"/>
-        <Skeleton height={16} width="90%"/>
+          {/* Title skeleton */}
+          <Skeleton height={28} width="70%"/>
+          <Skeleton height={16} width="90%"/>
 
-        {/* Form fields */}
-        <div className="space-y-4 pt-4">
-          <Skeleton height={40}/>
-          <Skeleton height={40}/>
-          <Skeleton height={40}/>
-        </div>
+          {/* Form fields */}
+          <div className="space-y-4 pt-4">
+            <Skeleton height={40}/>
+            <Skeleton height={40}/>
+            <Skeleton height={40}/>
+          </div>
 
-        {/* Button skeleton */}
-        <Skeleton height={44} className="pt-2"/>
+          {/* Button skeleton */}
+          <Skeleton height={44} className="pt-2"/>
 
-        {/* Divider and additional options */}
-        <div className="flex items-center gap-2 py-4">
-          <Skeleton height={1} className="flex-1"/>
-          <Skeleton height={14} width="30%"/>
-          <Skeleton height={1} className="flex-1"/>
-        </div>
+          {/* Divider and additional options */}
+          <div className="flex items-center gap-2 py-4">
+            <Skeleton height={1} className="flex-1"/>
+            <Skeleton height={14} width="30%"/>
+            <Skeleton height={1} className="flex-1"/>
+          </div>
 
-        {/* Social login buttons */}
-        <div className="space-y-2">
-          <Skeleton height={40}/>
-          <Skeleton height={40}/>
-        </div>
+          {/* Social login buttons */}
+          <div className="space-y-2">
+            <Skeleton height={40}/>
+            <Skeleton height={40}/>
+          </div>
 
-        {/* Footer link skeleton */}
-        <div className="flex justify-center gap-2 pt-4">
-          <Skeleton height={14} width="40%"/>
-          <Skeleton height={14} width="20%"/>
+          {/* Footer link skeleton */}
+          <div className="flex justify-center gap-2 pt-4">
+            <Skeleton height={14} width="40%"/>
+            <Skeleton height={14} width="20%"/>
+          </div>
         </div>
       </div>
     </div>

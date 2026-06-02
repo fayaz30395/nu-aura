@@ -24,9 +24,9 @@ const Card = React.forwardRef<
    }, ref) => {
   const isHoverable = hover || isClickable;
   const variantStyles = {
-    default: 'skeuo-card border shadow-card',
-    bordered: 'skeuo-card border-2 shadow-card',
-    elevated: 'skeuo-card border shadow-elevated',
+    default: 'card-aura',
+    bordered: 'card-aura border-[var(--border-main)]',
+    elevated: 'card-elevated',
   };
 
   const paddingStyles = {
@@ -38,8 +38,8 @@ const Card = React.forwardRef<
 
   return (
     <motion.div
-      whileHover={isHoverable ? {y: -3, transition: {type: 'spring', stiffness: 400, damping: 25}} : undefined}
-      transition={{type: 'spring', stiffness: 300, damping: 30}}
+      whileHover={isHoverable ? {y: -1, transition: {duration: 0.16, ease: [0.4, 0, 0.2, 1]}} : undefined}
+      transition={{duration: 0.18, ease: [0.4, 0, 0.2, 1]}}
     >
       <div
         ref={ref}
@@ -51,8 +51,8 @@ const Card = React.forwardRef<
           'rounded-lg transition-all duration-200',
           variantStyles[variant],
           paddingStyles[padding],
-          isHoverable && 'cursor-pointer hover:shadow-card-hover hover:border-[var(--border-strong)]',
-          glow && 'hover:shadow-[0_0_0_1px_rgba(0,87,255,0.15),0_8px_30px_rgba(0,87,255,0.08)]',
+          isHoverable && 'cursor-pointer hover:border-[var(--border-strong)]',
+          glow && 'hover:border-[var(--accent-primary)]',
           className
         )}
         {...props}

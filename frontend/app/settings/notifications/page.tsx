@@ -75,7 +75,7 @@ export default function NotificationSettingsPage() {
   useEffect(() => {
     if (!hasHydrated) return;
     if (!isAuthenticated) {
-      router.push('/auth/login');
+      router.replace('/auth/login');
     }
   }, [isAuthenticated, hasHydrated, router]);
 

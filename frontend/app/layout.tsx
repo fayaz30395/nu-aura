@@ -55,8 +55,10 @@ export default function RootLayout({
       Skip to content
     </a>
     <Providers>
-      <div id="main-content" className="relative">
-        {children}
+      <div id="main-content" className="relative fade-slide-up">
+        <div className="stagger-children">
+          {children}
+        </div>
       </div>
     </Providers>
     </body>

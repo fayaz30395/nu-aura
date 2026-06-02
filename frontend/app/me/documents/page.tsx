@@ -144,7 +144,7 @@ export default function MyDocumentsPage() {
 
   useEffect(() => {
     if (hasHydrated && !user) {
-      router.push('/auth/login');
+      router.replace('/auth/login');
     }
   }, [hasHydrated, user, router]);
 

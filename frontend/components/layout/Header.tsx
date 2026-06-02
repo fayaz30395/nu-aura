@@ -204,7 +204,7 @@ const Header: React.FC<HeaderProps> = ({
           </div>
 
           {/* Divider */}
-          <div className="hidden sm:block w-px h-8 mx-2" style={{backgroundColor: 'var(--header-divider)'}}/>
+          <div className="hidden sm:block w-px h-8 mx-2 bg-[var(--header-divider)]"/>
 
           {/* User Dropdown */}
           <UserMenu

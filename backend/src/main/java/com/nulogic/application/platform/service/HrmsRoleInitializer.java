@@ -1,10 +1,12 @@
 package com.nulogic.application.platform.service;
 
+import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.security.TenantRlsSessionSync;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.platform.AppPermission;
 import com.nulogic.domain.platform.AppRole;
 import com.nulogic.domain.platform.NuApplication;
 import com.nulogic.domain.platform.TenantApplication;
-import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.infrastructure.platform.repository.AppPermissionRepository;
 import com.nulogic.infrastructure.platform.repository.AppRoleRepository;
 import com.nulogic.infrastructure.platform.repository.NuApplicationRepository;
@@ -37,27 +39,35 @@ public class HrmsRoleInitializer {
     private final AppRoleRepository roleRepository;
     private final TenantApplicationRepository tenantApplicationRepository;
     private final TenantTimeService tenantTimeService;
+    private final TenantRlsSessionSync tenantRlsSessionSync;
 
     @PostConstruct
     @Transactional
     public void initialize() {
-        log.info("Initializing default HRMS roles...");
+        TenantContext.setCurrentTenant(DEFAULT_TENANT_ID);
+        tenantRlsSessionSync.syncCurrentTenant(DEFAULT_TENANT_ID);
 
-        NuApplication hrmsApp = applicationRepository.findByCode(HrmsPermissionInitializer.APP_CODE)
-                .orElse(null);
+        try {
+            log.info("Initializing default HRMS roles...");
 
-        if (hrmsApp == null) {
-            log.warn("HRMS application not found. Skipping role initialization.");
-            return;
+            NuApplication hrmsApp = applicationRepository.findByCode(HrmsPermissionInitializer.APP_CODE)
+                    .orElse(null);
+
+            if (hrmsApp == null) {
+                log.warn("HRMS application not found. Skipping role initialization.");
+                return;
+            }
+
+            // Enable HRMS for default tenant if not already
+            enableHrmsForTenant(hrmsApp, DEFAULT_TENANT_ID);
+
+            // Create default roles for the default tenant
+            createDefaultRoles(hrmsApp, DEFAULT_TENANT_ID);
+
+            log.info("Default HRMS roles initialized successfully");
+        } finally {
+            TenantContext.clear();
         }
-
-        // Enable HRMS for default tenant if not already
-        enableHrmsForTenant(hrmsApp, DEFAULT_TENANT_ID);
-
-        // Create default roles for the default tenant
-        createDefaultRoles(hrmsApp, DEFAULT_TENANT_ID);
-
-        log.info("Default HRMS roles initialized successfully");
     }
 
     private void enableHrmsForTenant(NuApplication app, UUID tenantId) {

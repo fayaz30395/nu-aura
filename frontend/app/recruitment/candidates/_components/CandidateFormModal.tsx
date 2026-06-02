@@ -3,6 +3,7 @@
 import React from 'react';
 import {UseFormReturn} from 'react-hook-form';
 import {Button} from '@/components/ui/Button';
+import {Input, Select, Textarea} from '@/components/ui';
 import {Modal, ModalBody, ModalHeader} from '@/components/ui/Modal';
 import {Candidate} from '@/lib/types/hire/recruitment';
 import {CreateCandidateFormData} from '@/lib/validations/recruitment';
@@ -38,254 +39,216 @@ export function CandidateFormModal({
                                      onSubmit,
                                      onClose,
                                    }: CandidateFormModalProps) {
-  const inputCls = 'w-full px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500';
-
   return (
     <Modal isOpen={open} onClose={onClose} size="xl">
       <ModalHeader onClose={onClose}>
-        {editingCandidate ? 'Edit Candidate' : 'Add Candidate'}
+        {editingCandidate ? 'Edit candidate' : 'Add candidate'}
       </ModalHeader>
       <ModalBody>
           <form onSubmit={candidateForm.handleSubmit(onSubmit)} className="space-y-6">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
-                <label htmlFor="candidate-code" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Candidate Code *</label>
-                <input
+                <Input
                   id="candidate-code"
                   type="text"
                   {...candidateForm.register('candidateCode')}
-                  className={inputCls}
+                  label="Candidate code"
                   placeholder="CAN-001"
                   aria-invalid={candidateForm.formState.errors.candidateCode ? 'true' : 'false'}
                   aria-describedby={candidateForm.formState.errors.candidateCode ? 'candidate-code-error' : undefined}
+                  error={candidateForm.formState.errors.candidateCode?.message}
                 />
-                {candidateForm.formState.errors.candidateCode && (
-                  <p id="candidate-code-error" className="text-xs text-danger-500 mt-1">{candidateForm.formState.errors.candidateCode.message}</p>
-                )}
               </div>
               <div>
-                <label htmlFor="candidate-job-opening" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Job Opening *</label>
-                <select
+                <Select
                   id="candidate-job-opening"
                   {...candidateForm.register('jobOpeningId')}
-                  className={inputCls}
+                  label="Job opening"
                   aria-invalid={candidateForm.formState.errors.jobOpeningId ? 'true' : 'false'}
                   aria-describedby={candidateForm.formState.errors.jobOpeningId ? 'candidate-job-opening-error' : undefined}
+                  error={candidateForm.formState.errors.jobOpeningId?.message}
                 >
-                  <option value="">Select Job Opening</option>
+                  <option value="">Select job opening</option>
                   {jobOpenings.map((job) => (
                     <option key={job.id} value={job.id}>{job.jobTitle}</option>
                   ))}
-                </select>
-                {candidateForm.formState.errors.jobOpeningId && (
-                  <p id="candidate-job-opening-error" className="text-xs text-danger-500 mt-1">{candidateForm.formState.errors.jobOpeningId.message}</p>
-                )}
+                </Select>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
-                <label htmlFor="candidate-first-name" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">First Name *</label>
-                <input
+                <Input
                   id="candidate-first-name"
                   type="text"
                   {...candidateForm.register('firstName')}
-                  className={inputCls}
+                  label="First name"
                   aria-invalid={candidateForm.formState.errors.firstName ? 'true' : 'false'}
                   aria-describedby={candidateForm.formState.errors.firstName ? 'candidate-first-name-error' : undefined}
+                  error={candidateForm.formState.errors.firstName?.message}
                 />
-                {candidateForm.formState.errors.firstName && (
-                  <p id="candidate-first-name-error" className="text-xs text-danger-500 mt-1">{candidateForm.formState.errors.firstName.message}</p>
-                )}
               </div>
               <div>
-                <label htmlFor="candidate-last-name" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Last Name *</label>
-                <input
+                <Input
                   id="candidate-last-name"
                   type="text"
                   {...candidateForm.register('lastName')}
-                  className={inputCls}
+                  label="Last name"
                   aria-invalid={candidateForm.formState.errors.lastName ? 'true' : 'false'}
                   aria-describedby={candidateForm.formState.errors.lastName ? 'candidate-last-name-error' : undefined}
+                  error={candidateForm.formState.errors.lastName?.message}
                 />
-                {candidateForm.formState.errors.lastName && (
-                  <p id="candidate-last-name-error" className="text-xs text-danger-500 mt-1">{candidateForm.formState.errors.lastName.message}</p>
-                )}
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
-                <label htmlFor="candidate-email" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Email *</label>
-                <input
+                <Input
                   id="candidate-email"
                   type="email"
                   {...candidateForm.register('email')}
-                  className={inputCls}
+                  label="Email"
                   aria-invalid={candidateForm.formState.errors.email ? 'true' : 'false'}
                   aria-describedby={candidateForm.formState.errors.email ? 'candidate-email-error' : undefined}
+                  error={candidateForm.formState.errors.email?.message}
                 />
-                {candidateForm.formState.errors.email && (
-                  <p id="candidate-email-error" className="text-xs text-danger-500 mt-1">{candidateForm.formState.errors.email.message}</p>
-                )}
               </div>
               <div>
-                <label htmlFor="candidate-phone" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Phone</label>
-                <input
+                <Input
                   id="candidate-phone"
                   type="tel"
                   {...candidateForm.register('phone')}
-                  className={inputCls}
+                  label="Phone"
                   aria-invalid={candidateForm.formState.errors.phone ? 'true' : 'false'}
                   aria-describedby={candidateForm.formState.errors.phone ? 'candidate-phone-error' : undefined}
+                  error={candidateForm.formState.errors.phone?.message}
                 />
-                {candidateForm.formState.errors.phone && (
-                  <p id="candidate-phone-error" className="text-xs text-danger-500 mt-1">{candidateForm.formState.errors.phone.message}</p>
-                )}
               </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
               <div>
-                <label htmlFor="candidate-current-company" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Current Company</label>
-                <input id="candidate-current-company" type="text" {...candidateForm.register('currentCompany')} className={inputCls}/>
+                <Input id="candidate-current-company" type="text" {...candidateForm.register('currentCompany')} label="Current company"/>
               </div>
               <div>
-                <label htmlFor="candidate-current-designation" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Current
-                  Designation</label>
-                <input id="candidate-current-designation" type="text" {...candidateForm.register('currentDesignation')} className={inputCls}/>
+                <Input id="candidate-current-designation" type="text" {...candidateForm.register('currentDesignation')} label="Current designation"/>
               </div>
               <div>
-                <label htmlFor="candidate-current-location" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Location</label>
-                <input id="candidate-current-location" type="text" {...candidateForm.register('currentLocation')} className={inputCls}/>
+                <Input id="candidate-current-location" type="text" {...candidateForm.register('currentLocation')} label="Location"/>
               </div>
             </div>
 
-            <div className="grid grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
               <div>
-                <label htmlFor="candidate-total-experience" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Experience
-                  (years)</label>
-                <input
+                <Input
                   id="candidate-total-experience"
                   type="number"
                   step="0.5"
                   {...candidateForm.register('totalExperience', {valueAsNumber: true})}
-                  className={inputCls}
+                  label="Experience years"
                 />
               </div>
               <div>
-                <label htmlFor="candidate-current-ctc" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Current CTC</label>
-                <input
+                <Input
                   id="candidate-current-ctc"
                   type="number"
                   {...candidateForm.register('currentCtc', {valueAsNumber: true})}
-                  className={inputCls}
+                  label="Current CTC"
                 />
               </div>
               <div>
-                <label htmlFor="candidate-expected-ctc" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Expected CTC</label>
-                <input
+                <Input
                   id="candidate-expected-ctc"
                   type="number"
                   {...candidateForm.register('expectedCtc', {valueAsNumber: true})}
-                  className={inputCls}
+                  label="Expected CTC"
                 />
               </div>
               <div>
-                <label htmlFor="candidate-notice-period" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Notice (days)</label>
-                <input
+                <Input
                   id="candidate-notice-period"
                   type="number"
                   {...candidateForm.register('noticePeriodDays', {valueAsNumber: true})}
-                  className={inputCls}
+                  label="Notice days"
                 />
               </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
               <div>
-                <label htmlFor="candidate-source" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Source</label>
-                <select id="candidate-source" {...candidateForm.register('source')} className={inputCls}>
-                  <option value="JOB_PORTAL">Job Portal</option>
+                <Select id="candidate-source" {...candidateForm.register('source')} label="Source">
+                  <option value="JOB_PORTAL">Job portal</option>
                   <option value="REFERRAL">Referral</option>
                   <option value="LINKEDIN">LinkedIn</option>
-                  <option value="COMPANY_WEBSITE">Company Website</option>
-                  <option value="WALK_IN">Walk In</option>
+                  <option value="COMPANY_WEBSITE">Company website</option>
+                  <option value="WALK_IN">Walk in</option>
                   <option value="CAMPUS">Campus</option>
                   <option value="CONSULTANT">Consultant</option>
                   <option value="OTHER">Other</option>
-                </select>
+                </Select>
               </div>
               <div>
-                <label htmlFor="candidate-status" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Status</label>
-                <select id="candidate-status" {...candidateForm.register('status')} className={inputCls}>
+                <Select id="candidate-status" {...candidateForm.register('status')} label="Status">
                   <option value="NEW">New</option>
                   <option value="SCREENING">Screening</option>
                   <option value="INTERVIEW">Interview</option>
                   <option value="SELECTED">Selected</option>
-                  <option value="OFFER_EXTENDED">Offer Extended</option>
-                  <option value="OFFER_ACCEPTED">Offer Accepted</option>
-                  <option value="OFFER_DECLINED">Offer Declined</option>
+                  <option value="OFFER_EXTENDED">Offer extended</option>
+                  <option value="OFFER_ACCEPTED">Offer accepted</option>
+                  <option value="OFFER_DECLINED">Offer declined</option>
                   <option value="REJECTED">Rejected</option>
                   <option value="WITHDRAWN">Withdrawn</option>
-                </select>
+                </Select>
               </div>
               <div>
-                <label htmlFor="candidate-current-stage" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Current Stage</label>
-                <select id="candidate-current-stage" {...candidateForm.register('currentStage')} className={inputCls}>
-                  <option value="RECRUITERS_PHONE_CALL">Phone Call</option>
-                  <option value="PANEL_REVIEW">Panel Review</option>
+                <Select id="candidate-current-stage" {...candidateForm.register('currentStage')} label="Current stage">
+                  <option value="RECRUITERS_PHONE_CALL">Phone call</option>
+                  <option value="PANEL_REVIEW">Panel review</option>
                   <option value="PANEL_SHORTLISTED">Shortlisted</option>
-                  <option value="TECHNICAL_INTERVIEW_SCHEDULED">Tech Interview Scheduled</option>
-                  <option value="TECHNICAL_INTERVIEW_COMPLETED">Tech Interview Done</option>
-                  <option value="MANAGEMENT_INTERVIEW_SCHEDULED">Mgmt Interview Scheduled</option>
-                  <option value="MANAGEMENT_INTERVIEW_COMPLETED">Mgmt Interview Done</option>
-                  <option value="CLIENT_INTERVIEW_SCHEDULED">Client Interview Scheduled</option>
-                  <option value="CLIENT_INTERVIEW_COMPLETED">Client Interview Done</option>
-                  <option value="HR_FINAL_INTERVIEW_COMPLETED">HR Final Done</option>
+                  <option value="TECHNICAL_INTERVIEW_SCHEDULED">Tech interview scheduled</option>
+                  <option value="TECHNICAL_INTERVIEW_COMPLETED">Tech interview done</option>
+                  <option value="MANAGEMENT_INTERVIEW_SCHEDULED">Mgmt interview scheduled</option>
+                  <option value="MANAGEMENT_INTERVIEW_COMPLETED">Mgmt interview done</option>
+                  <option value="CLIENT_INTERVIEW_SCHEDULED">Client interview scheduled</option>
+                  <option value="CLIENT_INTERVIEW_COMPLETED">Client interview done</option>
+                  <option value="HR_FINAL_INTERVIEW_COMPLETED">HR final done</option>
                   <option value="OFFER_NDA_TO_BE_RELEASED">Offer / NDA</option>
-                  <option value="PANEL_REJECT">Panel Reject</option>
+                  <option value="PANEL_REJECT">Panel reject</option>
                   <option value="CANDIDATE_REJECTED">Rejected</option>
-                </select>
+                </Select>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
-                <label htmlFor="candidate-assigned-recruiter" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Assigned
-                  Recruiter</label>
-                <select id="candidate-assigned-recruiter" {...candidateForm.register('assignedRecruiterId')} className={inputCls}>
-                  <option value="">Select Recruiter</option>
+                <Select id="candidate-assigned-recruiter" {...candidateForm.register('assignedRecruiterId')} label="Assigned recruiter">
+                  <option value="">Select recruiter</option>
                   {recruiters.map((recruiter) => (
                     <option key={recruiter.id} value={recruiter.id}>{recruiter.fullName}</option>
                   ))}
-                </select>
+                </Select>
               </div>
               <div>
-                <label htmlFor="candidate-resume-url" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Resume URL</label>
-                <input
+                <Input
                   id="candidate-resume-url"
                   type="url"
                   {...candidateForm.register('resumeUrl')}
-                  className={inputCls}
+                  label="Resume URL"
                   placeholder="https://..."
                   aria-invalid={candidateForm.formState.errors.resumeUrl ? 'true' : 'false'}
                   aria-describedby={candidateForm.formState.errors.resumeUrl ? 'candidate-resume-url-error' : undefined}
+                  error={candidateForm.formState.errors.resumeUrl?.message}
                 />
-                {candidateForm.formState.errors.resumeUrl && (
-                  <p id="candidate-resume-url-error" className="text-xs text-danger-500 mt-1">{candidateForm.formState.errors.resumeUrl.message}</p>
-                )}
               </div>
             </div>
 
             <div>
-              <label htmlFor="candidate-notes" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Notes</label>
-              <textarea
+              <Textarea
                 id="candidate-notes"
+                aria-label="Notes"
                 rows={3}
                 {...candidateForm.register('notes')}
-                className={inputCls}
-                placeholder="Additional notes..."
+                placeholder="Additional notes"
               />
             </div>
 
@@ -294,7 +257,7 @@ export function CandidateFormModal({
                 Cancel
               </Button>
               <Button type="submit" disabled={isSubmitting} className="flex-1">
-                {editingCandidate ? 'Update Candidate' : 'Add Candidate'}
+                {editingCandidate ? 'Update candidate' : 'Add candidate'}
               </Button>
             </div>
           </form>

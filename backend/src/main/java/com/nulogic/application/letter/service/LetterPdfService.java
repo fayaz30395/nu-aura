@@ -11,9 +11,9 @@ import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import com.nulogic.infrastructure.letter.repository.GeneratedLetterRepository;
 import com.nulogic.infrastructure.letter.repository.LetterTemplateRepository;
 import com.nulogic.infrastructure.recruitment.repository.CandidateRepository;
-import com.lowagie.text.*;
-import com.lowagie.text.Font;
-import com.lowagie.text.pdf.PdfWriter;
+import org.openpdf.text.*;
+import org.openpdf.text.Font;
+import org.openpdf.text.pdf.PdfWriter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -161,7 +161,7 @@ public class LetterPdfService {
 
         // Add a line separator
         document.add(new Paragraph(" "));
-        document.add(new Chunk(new com.lowagie.text.pdf.draw.LineSeparator()));
+        document.add(new Chunk(new org.openpdf.text.pdf.draw.LineSeparator()));
         document.add(new Paragraph(" "));
     }
 

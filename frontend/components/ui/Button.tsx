@@ -8,51 +8,36 @@ import {cn} from '@/lib/utils';
 import {Loader2} from 'lucide-react';
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
+  'inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-all duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 disabled:translate-y-0',
   {
     variants: {
       variant: {
-        // Primary - Main CTA (skeuomorphic depth)
-        // a11y: solid bg-color fallback so axe-core can compute contrast against
-        // the underlying color when the gradient (background-image) is ignored.
         primary:
-          'bg-[var(--accent-primary)] bg-gradient-to-b from-[var(--accent-primary)] to-[var(--accent-primary-hover)] text-white hover:brightness-110 focus-visible:ring-[var(--ring-primary)] skeuo-button active:shadow-[var(--shadow-skeuo-pressed)] active:translate-y-px',
-        // Secondary - Neutral actions (embossed surface)
+          'bg-[var(--accent-primary)] text-white shadow-[0_1px_2px_rgba(37,99,235,0.22)] hover:bg-[var(--accent-primary-hover)] hover:shadow-[0_2px_8px_rgba(37,99,235,0.18)] focus-visible:ring-[var(--ring-primary)] active:translate-y-px active:shadow-none',
         secondary:
-          'bg-[var(--bg-card)] text-[var(--text-primary)] hover:bg-[var(--bg-card-hover)] border border-[var(--border-main)] focus-visible:ring-[var(--ring-primary)] skeuo-button active:shadow-[var(--shadow-skeuo-pressed)] active:translate-y-px',
-        // Outline - Secondary importance
+          'border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] hover:border-[var(--border-strong)] hover:bg-[var(--bg-card-hover)] focus-visible:ring-[var(--ring-primary)] active:translate-y-px',
         outline:
-          'border border-[var(--border-main)] bg-transparent text-[var(--text-primary)] hover:bg-[var(--bg-card-hover)] hover:border-[var(--border-strong)] focus-visible:ring-[var(--ring-primary)]',
-        // Ghost - Minimal emphasis
+          'border border-[var(--border-main)] bg-transparent text-[var(--text-primary)] hover:border-[var(--border-strong)] hover:bg-[var(--bg-card-hover)] focus-visible:ring-[var(--ring-primary)] active:translate-y-px',
         ghost:
-          'text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)] hover:text-[var(--text-primary)] focus-visible:ring-[var(--ring-primary)]',
-        // Danger / Destructive (skeuomorphic depth)
-        // a11y: solid bg-color fallback so axe-core can compute contrast.
+          'text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)] hover:text-[var(--text-primary)] focus-visible:ring-[var(--ring-primary)] active:translate-y-px',
         danger:
-          'bg-danger-600 bg-gradient-to-b from-danger-500 to-danger-600 text-white hover:brightness-110 focus-visible:ring-danger-500/50 skeuo-button active:shadow-[var(--shadow-skeuo-pressed)] active:translate-y-px',
-        // Success - Positive actions (skeuomorphic depth)
+          'bg-danger-600 text-white hover:bg-danger-700 focus-visible:ring-danger-500/50 active:translate-y-px',
         success:
-          'bg-success-600 bg-gradient-to-b from-success-500 to-success-600 text-white hover:brightness-110 focus-visible:ring-success-500/50 skeuo-button active:shadow-[var(--shadow-skeuo-pressed)] active:translate-y-px',
-        // Warning - Caution actions (skeuomorphic depth)
+          'bg-success-600 text-white hover:bg-success-700 focus-visible:ring-success-500/50 active:translate-y-px',
         warning:
-          'bg-warning-600 bg-gradient-to-b from-warning-500 to-warning-600 text-white hover:brightness-110 focus-visible:ring-warning-500/50 skeuo-button active:shadow-[var(--shadow-skeuo-pressed)] active:translate-y-px',
-        // Link - Text button
+          'bg-warning-600 text-white hover:bg-warning-700 focus-visible:ring-warning-500/50 active:translate-y-px',
         link:
           'text-[var(--accent-primary)] underline-offset-4 hover:underline focus-visible:ring-[var(--ring-primary)]',
-        // Soft variants - Subtle colored backgrounds
         soft:
-          'bg-[var(--accent-primary-subtle)] text-[var(--accent-primary)] hover:brightness-95 focus-visible:ring-[var(--ring-primary)]',
+          'bg-[var(--accent-primary-subtle)] text-[var(--accent-primary)] hover:bg-[var(--accent-100)] focus-visible:ring-[var(--ring-primary)] active:translate-y-px',
         'soft-danger':
-          'bg-danger-50 text-danger-700 hover:bg-danger-100 dark:bg-danger-950 dark:text-danger-300 dark:hover:bg-danger-900 focus-visible:ring-danger-500/50',
+          'bg-danger-50 text-danger-700 hover:bg-danger-100 dark:bg-danger-950 dark:text-danger-300 dark:hover:bg-danger-900 focus-visible:ring-danger-500/50 active:translate-y-px',
         'soft-success':
-          'bg-success-50 text-success-700 hover:bg-success-100 dark:bg-success-950 dark:text-success-300 dark:hover:bg-success-900 focus-visible:ring-success-500/50',
-        // Default - dark button (skeuomorphic depth)
-        // a11y: solid bg-color fallback so axe-core can compute contrast.
+          'bg-success-50 text-success-700 hover:bg-success-100 dark:bg-success-950 dark:text-success-300 dark:hover:bg-success-900 focus-visible:ring-success-500/50 active:translate-y-px',
         default:
-          'bg-[var(--text-primary)] bg-gradient-to-b from-[var(--text-primary)] to-[var(--text-heading)] text-[var(--text-inverse)] hover:brightness-110 focus-visible:ring-[var(--ring-primary)] skeuo-button active:shadow-[var(--shadow-skeuo-pressed)] active:translate-y-px',
-        // CTA - Special call-to-action (skeuomorphic depth)
+          'bg-[var(--text-heading)] text-[var(--text-inverse)] hover:brightness-110 focus-visible:ring-[var(--ring-primary)] active:translate-y-px',
         cta:
-          'bg-[var(--accent-primary)] bg-gradient-to-b from-[var(--accent-primary)] to-[var(--accent-primary-hover)] text-white hover:brightness-110 focus-visible:ring-[var(--ring-primary)] skeuo-button active:shadow-[var(--shadow-skeuo-pressed)] active:translate-y-px',
+          'bg-[var(--accent-primary)] text-white shadow-[0_1px_2px_rgba(37,99,235,0.22)] hover:bg-[var(--accent-primary-hover)] hover:shadow-[0_2px_8px_rgba(37,99,235,0.18)] focus-visible:ring-[var(--ring-primary)] active:translate-y-px active:shadow-none',
       },
       size: {
         xs: 'h-7 px-2 text-xs rounded-md',

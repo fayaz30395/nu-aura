@@ -6,6 +6,7 @@ import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {motion} from 'framer-motion';
+import {Checkbox as MantineCheckbox} from '@mantine/core';
 import {
   AlertCircle,
   AlertTriangle,
@@ -32,7 +33,7 @@ import {useAuth} from '@/lib/hooks/useAuth';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {CreateExpenseClaimRequest, CurrencyCode, ExpenseCategory} from '@/lib/types/hrms/expense';
-import {ConfirmDialog, EmptyState} from '@/components/ui';
+import {ConfirmDialog, EmptyState, Input, Select, Textarea} from '@/components/ui';
 import {Button} from '@/components/ui/Button';
 import {StatusBadge} from '@/components/ui/StatusBadge';
 import {EXPENSE_STATUS} from '@/lib/status/vocabulary';
@@ -236,7 +237,7 @@ export default function ExpenseClaims() {
       );
       await Promise.all(promises);
       setSelectedClaims(new Set());
-      showNotification(`${selectedClaims.size} claims approved successfully!`, 'success');
+      showNotification(`${selectedClaims.size} claims approved`, 'success');
     } catch (err) {
       log.error('Bulk approve error:', err);
       showNotification('Failed to approve some claims', 'error');
@@ -295,7 +296,7 @@ export default function ExpenseClaims() {
       await createMutation.mutateAsync({employeeId: user.employeeId, data: request});
       resetForm();
       setShowForm(false);
-      showNotification('Expense claim created successfully!', 'success');
+      showNotification('Expense claim created', 'success');
     } catch (err) {
       log.error('Error creating claim:', err);
       showNotification('Failed to create expense claim', 'error');
@@ -305,7 +306,7 @@ export default function ExpenseClaims() {
   const handleSubmitClaim = async (claimId: string) => {
     try {
       await submitMutation.mutateAsync(claimId);
-      showNotification('Expense claim submitted successfully!', 'success');
+      showNotification('Expense claim submitted', 'success');
     } catch (err) {
       log.error('Error submitting claim:', err);
       showNotification('Failed to submit expense claim', 'error');
@@ -316,7 +317,7 @@ export default function ExpenseClaims() {
     if (!user?.employeeId) return;
     try {
       await approveMutation.mutateAsync(claimId);
-      showNotification('Expense claim approved successfully!', 'success');
+      showNotification('Expense claim approved', 'success');
     } catch (err) {
       log.error('Error approving claim:', err);
       showNotification('Failed to approve expense claim', 'error');
@@ -589,7 +590,7 @@ function PageHeader({onCreate}: {onCreate: () => void}) {
           Expenses
         </p>
         <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-[var(--text-heading)] leading-[1.05]">
-          Claims, approvals, and reimbursements — without the spreadsheet shuffle.
+          Claims, approvals, and reimbursements without the spreadsheet shuffle.
         </h1>
         <p className="text-body-secondary max-w-[55ch]">
           Submit receipts in seconds, approve in batches, and keep reimbursements predictable.
@@ -896,15 +897,14 @@ function FiltersBar({
   return (
     <div className="rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-4">
       <div className="flex flex-wrap items-center gap-4">
-        <div className="relative flex-1 min-w-[200px]" role="search">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]" />
-          <input
+        <div className="flex-1 min-w-[200px]" role="search">
+          <Input
             type="search"
             aria-label="Search claims"
-            placeholder="Search claims, employees, claim numbers..."
+            placeholder="Search claims, employees, claim numbers"
             value={filters.search}
             onChange={(e) => onChange({...filters, search: e.target.value})}
-            className="input-aura pl-10"
+            icon={<Search className="h-4 w-4" />}
           />
         </div>
 
@@ -937,14 +937,12 @@ function FiltersBar({
 
       {showFilters && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4 pt-4 border-t border-[var(--border-subtle)]">
-          <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Category</label>
-            <select
+          <Select
+              label="Category"
               value={filters.category}
               onChange={(e) => onChange({...filters, category: e.target.value as ExpenseCategory | 'ALL'})}
-              className="input-aura"
             >
-              <option value="ALL">All Categories</option>
+              <option value="ALL">All categories</option>
               <option value="TRAVEL">Travel</option>
               <option value="ACCOMMODATION">Accommodation</option>
               <option value="MEALS">Meals</option>
@@ -953,47 +951,36 @@ function FiltersBar({
               <option value="EQUIPMENT">Equipment</option>
               <option value="TRAINING">Training</option>
               <option value="OTHER">Other</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Date from</label>
-            <input
+          </Select>
+          <Input
+              label="Date from"
               type="date"
               value={filters.dateFrom}
               onChange={(e) => onChange({...filters, dateFrom: e.target.value})}
-              className="input-aura"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Date to</label>
-            <input
+          />
+          <Input
+              label="Date to"
               type="date"
               value={filters.dateTo}
               onChange={(e) => onChange({...filters, dateTo: e.target.value})}
-              className="input-aura"
-            />
-          </div>
+          />
           <div className="flex gap-2">
-            <div className="flex-1">
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Min</label>
-              <input
+            <Input
+                label="Min"
                 type="number"
                 placeholder="0"
                 value={filters.amountMin}
                 onChange={(e) => onChange({...filters, amountMin: e.target.value})}
-                className="input-aura font-mono tabular-nums"
+                className="font-mono tabular-nums"
               />
-            </div>
-            <div className="flex-1">
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Max</label>
-              <input
+            <Input
+                label="Max"
                 type="number"
                 placeholder="0"
                 value={filters.amountMax}
                 onChange={(e) => onChange({...filters, amountMax: e.target.value})}
-                className="input-aura font-mono tabular-nums"
+                className="font-mono tabular-nums"
               />
-            </div>
           </div>
         </div>
       )}
@@ -1087,11 +1074,9 @@ function BulkActionBar({
   return (
     <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-accent-200 bg-accent-50/40 dark:border-accent-700/40 dark:bg-accent-900/20 px-5 py-4">
       <div className="flex items-center gap-4">
-        <input
-          type="checkbox"
+        <MantineCheckbox
           checked={count === total && count > 0}
           onChange={onSelectAll}
-          className="w-5 h-5 rounded border-[var(--border-main)] text-accent-700 focus:ring-accent-500"
           aria-label="Select all pending claims"
         />
         <span className="text-sm font-medium text-accent-900 dark:text-accent-100 font-mono tabular-nums">
@@ -1102,7 +1087,7 @@ function BulkActionBar({
         <PermissionGate permission={Permissions.EXPENSE_APPROVE}>
           <Button variant="primary" size="sm" onClick={onApprove} disabled={processing}>
             <CheckCircle className="mr-1.5 h-4 w-4" aria-hidden="true" />
-            {processing ? 'Processing...' : `Approve ${count}`}
+            {processing ? 'Processing' : `Approve ${count}`}
           </Button>
         </PermissionGate>
         <PermissionGate permission={Permissions.EXPENSE_APPROVE}>
@@ -1151,12 +1136,12 @@ function NewClaimForm({
       <form onSubmit={onSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Claim date</label>
-          <input type="date" className="input-aura" {...register('claimDate')} />
+          <Input type="date" {...register('claimDate')} />
           {errors.claimDate && <span className="text-danger-500 text-sm">{errors.claimDate.message}</span>}
         </div>
         <div>
           <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Category</label>
-          <select className="input-aura" {...register('category')}>
+          <Select {...register('category')}>
             <option value="">Select category</option>
             <option value="TRAVEL">Travel</option>
             <option value="ACCOMMODATION">Accommodation</option>
@@ -1169,21 +1154,21 @@ function NewClaimForm({
             <option value="ENTERTAINMENT">Entertainment</option>
             <option value="MEDICAL">Medical</option>
             <option value="OTHER">Other</option>
-          </select>
+          </Select>
           {errors.category && <span className="text-danger-500 text-sm">{errors.category.message}</span>}
         </div>
         <div className="md:col-span-2">
           <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Description</label>
-          <textarea className="input-aura" rows={3} placeholder="Describe your expense..." {...register('description')} />
+          <Textarea rows={3} placeholder="Describe your expense" {...register('description')} error={!!errors.description} />
           {errors.description && <span className="text-danger-500 text-sm">{errors.description.message}</span>}
         </div>
         <div>
           <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Amount</label>
-          <input
+          <Input
             type="number"
             step="0.01"
             min="0"
-            className="input-aura font-mono tabular-nums"
+            className="font-mono tabular-nums"
             placeholder="0.00"
             {...register('amount')}
           />
@@ -1191,26 +1176,26 @@ function NewClaimForm({
         </div>
         <div>
           <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Currency</label>
-          <select className="input-aura" {...register('currency')}>
+          <Select {...register('currency')}>
             <option value="USD">USD</option>
             <option value="EUR">EUR</option>
             <option value="GBP">GBP</option>
             <option value="INR">INR</option>
-          </select>
+          </Select>
         </div>
         <div className="md:col-span-2">
           <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Receipt URL</label>
-          <input type="url" className="input-aura" placeholder="https://..." {...register('receiptUrl')} />
+          <Input type="url" placeholder="https://example.com/receipt" {...register('receiptUrl')} />
           {errors.receiptUrl && <span className="text-danger-500 text-sm">{errors.receiptUrl.message}</span>}
         </div>
         <div className="md:col-span-2">
           <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Notes</label>
-          <textarea className="input-aura" rows={2} placeholder="Additional notes..." {...register('notes')} />
+          <Textarea rows={2} placeholder="Additional notes" {...register('notes')} />
         </div>
         <div className="md:col-span-2 flex flex-wrap gap-4 pt-2">
           <PermissionGate permission={Permissions.EXPENSE_CREATE}>
             <Button type="submit" variant="primary" disabled={isSubmitting}>
-              {isSubmitting ? 'Creating...' : 'Create claim'}
+              {isSubmitting ? 'Creating' : 'Create claim'}
             </Button>
           </PermissionGate>
           <Button type="button" variant="outline" onClick={onCancel}>
@@ -1274,11 +1259,9 @@ function RecentClaimsList({
     >
       {activeTab === 'pending' && selectableTotal > 0 && (
         <div className="flex items-center gap-4 py-4 px-1 border-b border-[var(--border-subtle)]">
-          <input
-            type="checkbox"
+          <MantineCheckbox
             checked={allSelected}
             onChange={onSelectAll}
-            className="w-4 h-4 rounded border-[var(--border-main)] text-accent-700 focus:ring-accent-500"
             aria-label="Select all submitted claims"
           />
           <span className="text-sm text-[var(--text-secondary)] font-mono tabular-nums">
@@ -1329,11 +1312,9 @@ function ClaimRow({
     <li className={`py-5 grid grid-cols-[auto_1fr_auto] gap-4 sm:gap-6 items-start ${selected ? 'bg-accent-50/40 dark:bg-accent-900/10' : ''}`}>
       <div className="flex items-start gap-4 pt-1">
         {activeTab === 'pending' && claim.status === 'SUBMITTED' ? (
-          <input
-            type="checkbox"
+          <MantineCheckbox
             checked={selected}
             onChange={onSelect}
-            className="w-4 h-4 rounded border-[var(--border-main)] text-accent-700 focus:ring-accent-500"
             aria-label={`Select claim ${claim.claimNumber}`}
           />
         ) : (

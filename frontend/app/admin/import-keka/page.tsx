@@ -330,7 +330,7 @@ export default function KekaImportPage() {
   const unmappedColumns = columnMappings.filter((m) => !m.targetField);
 
   return (
-    <AdminPageContent>
+    <AdminPageContent className="page-shell">
       <div className="page-shell-centered fade-slide-up auth-delay-20">
         <div className="max-w-6xl mx-auto px-4 py-8">
           {/* Header */}

@@ -16,7 +16,7 @@ import com.nulogic.domain.payroll.Payslip;
 import com.nulogic.domain.payroll.SalaryStructure;
 import com.nulogic.domain.user.RoleScope;
 import com.nulogic.infrastructure.kafka.producer.EventPublisher;
-import com.lowagie.text.DocumentException;
+import org.openpdf.text.DocumentException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

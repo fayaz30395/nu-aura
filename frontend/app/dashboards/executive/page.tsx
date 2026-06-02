@@ -73,7 +73,7 @@ export default function ExecutiveDashboardPage() {
   useEffect(() => {
     if (!hasHydrated || !permissionsReady) return;
     if (!isAuthenticated) {
-      router.push('/auth/login');
+      router.replace('/auth/login');
       return;
     }
     // DEF-35: Gate on DASHBOARD:EXECUTIVE permission before rendering

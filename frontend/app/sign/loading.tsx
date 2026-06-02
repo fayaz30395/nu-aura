@@ -4,8 +4,9 @@ import {Skeleton} from '@mantine/core';
 
 export default function SignLoading() {
   return (
-    <div className="page-shell-centered auth-loading-shell fade-slide-up">
-      <div className="auth-loading-card w-full max-w-2xl space-y-6 fade-slide-up auth-delay-20 float-subtle">
+    <div className="auth-shell fade-slide-up">
+      <div className="auth-shell-grid-wide fade-slide-up stagger-children">
+        <div className="auth-loading-card w-full space-y-6 fade-slide-up auth-delay-20 float-subtle page-reveal">
         {/* Header skeleton */}
         <div className="text-center space-y-2 mb-8">
           <Skeleton height={28} width="60%" className="mx-auto"/>
@@ -44,6 +45,7 @@ export default function SignLoading() {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }

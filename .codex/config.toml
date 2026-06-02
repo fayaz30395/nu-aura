@@ -51,6 +51,15 @@ approval_mode = "approve"
 [mcp_servers.ruflo.tools.agent_spawn]
 approval_mode = "approve"
 
+[mcp_servers.ruflo.tools.browser_session_record]
+approval_mode = "approve"
+
+[mcp_servers.ruflo.tools.browser_wait]
+approval_mode = "approve"
+
+[mcp_servers.ruflo.tools.browser_close]
+approval_mode = "approve"
+
 [shell_environment_policy]
 inherit = "core"
 

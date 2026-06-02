@@ -206,10 +206,14 @@ function AnimatedBackground() {
 // ─── Loading Fallback ────────────────────────────────────────────────
 function LoginPageLoading() {
   return (
-    <div className="auth-loading-shell fade-slide-up">
-      <div className="auth-loading-card w-full max-w-md flex flex-col items-center gap-4 fade-slide-up auth-delay-20">
+    <div className="auth-shell fade-slide-up">
+      <div className="auth-shell-grid auth-shell-narrow fade-slide-up stagger-children">
+        <div
+          className="auth-loading-card w-full flex flex-col items-center gap-4 fade-slide-up auth-delay-20 float-subtle page-reveal"
+        >
         <div className="w-12 h-12 border-2 border-accent-300/30 border-t-accent-500 rounded-full animate-spin"/>
         <p className="text-[var(--text-muted)] text-sm">Loading NU-AURA...</p>
+      </div>
       </div>
     </div>
   );
@@ -622,12 +626,14 @@ function LoginPage() {
     return (
       <div className="auth-shell fade-slide-up">
         <AnimatedBackground/>
-        <div className="relative z-10 auth-shell-grid auth-shell-narrow fade-slide-up">
-          <MfaVerification
-            userId={mfaUserId}
-            onSuccess={handleMfaSuccess}
-            onCancel={handleMfaCancel}
-          />
+        <div className="relative z-10 w-full max-w-lg px-4">
+          <div className="auth-shell-grid auth-shell-narrow fade-slide-up stagger-children">
+            <MfaVerification
+              userId={mfaUserId}
+              onSuccess={handleMfaSuccess}
+              onCancel={handleMfaCancel}
+            />
+          </div>
         </div>
       </div>
     );
@@ -637,250 +643,266 @@ function LoginPage() {
     <>
       <div className="auth-shell relative overflow-hidden fade-slide-up">
         <AnimatedBackground/>
+        <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_460px] lg:items-center">
+            {/* ─── Left Panel: Product Context ──────────────────── */}
+            <section className="hidden lg:flex">
+              <div
+                className="auth-side-panel auth-delay-20 float-subtle w-full p-10 flex flex-col justify-center page-reveal"
+              >
+                <div className="auth-side-panel-content space-y-6">
+                  <p className="auth-chip">
+                    Infinite Innovation
+                  </p>
+                  <h1 className="text-3xl font-bold text-[var(--text-primary)] leading-tight">
+                    People operations, unified.
+                  </h1>
+                  <p className="text-sm text-[var(--text-secondary)] leading-7 max-w-sm">
+                    One login for HR, recruitment, performance, learning, and finance.
+                  </p>
+                  <ul className="text-sm text-[var(--text-secondary)] space-y-2">
+                    <li className="flex items-center gap-2">
+                      <span className="h-1.5 w-1.5 rounded-full bg-accent-500"/>
+                      Role-aware access from the first screen.
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <span className="h-1.5 w-1.5 rounded-full bg-accent-500"/>
+                      Secure session handling with MFA support.
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <span className="h-1.5 w-1.5 rounded-full bg-accent-500"/>
+                      Built for daily employee and HR workflows.
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </section>
 
-        {/* ─── Left Panel: Product Context ──────────────────── */}
-        <div className="hidden lg:flex lg:w-[55%] relative z-10 flex-col justify-center items-center px-16">
-          <div
-            className="max-w-lg space-y-6"
-          >
-            <p className="text-sm text-accent-700 dark:text-accent-300 tracking-[0.08em] uppercase font-semibold">
-              Infinite Innovation
-            </p>
-            <h2 className="text-xl font-bold text-[var(--text-primary)] mb-2">
-              Welcome to NU-AURA
-            </h2>
-            <h1 className="text-5xl font-extrabold text-[var(--text-primary)] leading-tight mb-6 tracking-tight">
-              Your People.Amplified.
-            </h1>
-            <p className="text-base text-[var(--text-secondary)] leading-7">
-              One platform for HR, Recruitment, Performance, Learning, and Finance.
-            </p>
-          </div>
-        </div>
+            {/* ─── Right Panel: Login Card ───────────────────────── */}
+            <section className="w-full flex items-center">
+              <div
+                className="w-full max-w-[420px] fade-slide-up auth-delay-40 stagger-children px-1 py-12 mx-auto"
+              >
+              {/* Logo */}
+              <div className="flex justify-center mb-7">
+                <Image
+                  src="/images/nulogic-logo.svg"
+                  alt="NULogic"
+                  width={156}
+                  height={46}
+                  className="h-11 w-auto object-contain dark:hidden"
+                  priority
+                />
+                <Image
+                  src="/images/nulogic-logo-white.svg"
+                  alt="NULogic"
+                  width={156}
+                  height={46}
+                  className="h-11 w-auto object-contain hidden dark:block"
+                  priority
+                />
+              </div>
 
-        {/* ─── Right Panel: Login Card ───────────────────────── */}
-        <div className="w-full lg:w-[45%] relative z-10 flex items-center justify-center px-6 py-12">
-          <div
-            className="w-full max-w-[420px] fade-slide-up auth-delay-40"
-          >
-            {/* Logo */}
-            <div className="flex justify-center mb-7">
-              <Image
-                src="/images/nulogic-logo.svg"
-                alt="NULogic"
-                width={156}
-                height={46}
-                className="h-11 w-auto object-contain dark:hidden"
-                priority
-              />
-              <Image
-                src="/images/nulogic-logo-white.svg"
-                alt="NULogic"
-                width={156}
-                height={46}
-                className="h-11 w-auto object-contain hidden dark:block"
-                priority
-              />
-            </div>
-
-            {/* Mobile-only tagline */}
-            <div className="lg:hidden text-center mb-5">
-              <h2 className="text-xl font-bold text-[var(--text-primary)] mb-1">
-                Welcome to NU-AURA
-              </h2>
-              <p className="text-[var(--text-secondary)] text-sm">
-                Your unified people platform
-              </p>
-            </div>
-
-            {/* Card */}
-            <div className="rounded-lg bg-[var(--bg-card)] border border-[var(--border-main)] p-8 fade-slide-up auth-delay-40">
-              <div className="mb-5">
+              {/* Mobile-only tagline */}
+              <div className="lg:hidden text-center mb-5">
                 <h2 className="text-xl font-bold text-[var(--text-primary)] mb-1">
                   Welcome to NU-AURA
                 </h2>
-                <p className="text-sm text-[var(--text-secondary)] mb-4">
+                <p className="text-[var(--text-secondary)] text-sm">
                   Your unified people platform
                 </p>
-                <h3 className="text-lg font-semibold text-[var(--text-primary)] tracking-normal">
-                  Sign In
-                </h3>
-                <p className="text-[var(--text-secondary)] text-sm mt-2">
-                  {isGoogleAuthEnabled
-                    ? 'Access your workspace with Google SSO'
-                    : 'Access your workspace with your email and password'}
+              </div>
+
+              {/* Card */}
+              <div className="auth-shell-card fade-slide-up auth-delay-40 float-subtle p-6 page-reveal">
+                <div className="mb-5">
+                  <h2 className="text-xl font-bold text-[var(--text-primary)] mb-1">
+                    Welcome to NU-AURA
+                  </h2>
+                  <p className="text-sm text-[var(--text-secondary)] mb-4">
+                    Your unified people platform
+                  </p>
+                  <h3 className="text-lg font-semibold text-[var(--text-primary)] tracking-normal">
+                    Sign In
+                  </h3>
+                  <p className="text-[var(--text-secondary)] text-sm mt-2">
+                    {isGoogleAuthEnabled
+                      ? 'Access your workspace with Google SSO'
+                      : 'Access your workspace with your email and password'}
+                  </p>
+                </div>
+
+                {/* Error Alert */}
+                {error && (
+                  <div
+                    className="auth-error-banner flex items-start gap-2 p-4 mb-5 fade-slide-up auth-delay-20"
+                  >
+                    <AlertCircle className="w-5 h-5 text-danger-600 dark:text-danger-400 flex-shrink-0 mt-0.5"/>
+                    <div>
+                      <p className="text-sm font-medium text-danger-700 dark:text-danger-300">
+                        Authentication Failed
+                      </p>
+                      <p className="text-sm text-danger-600 dark:text-danger-400 mt-0.5">
+                        {error}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {isGoogleAuthEnabled && (
+                  <>
+                    {/* Google SSO Button */}
+                    <button
+                      type="button"
+                      className="w-full relative group flex items-center justify-center gap-4 px-6 py-2.5 rounded-xl bg-[var(--bg-elevated)] hover:bg-[var(--bg-card-hover)] text-[var(--text-primary)] border border-[var(--border-main)] font-semibold text-sm transition-all duration-300 hover:shadow-card-hover active:scale-[0.98]"
+                      onClick={() => {
+                        handleGoogleSSO();
+                      }}
+                      disabled={isGoogleLoading}
+                    >
+                      {isGoogleLoading ? (
+                        <div
+                          className="w-5 h-5 border-2 border-[var(--border-main)] border-t-accent-700 rounded-full animate-spin"/>
+                      ) : (
+                        <GoogleGLogo className="w-5 h-5"/>
+                      )}
+                      <span>Continue with Google</span>
+                      <ArrowRight
+                        className="w-4 h-4 ml-auto opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300"/>
+                    </button>
+
+                    {/* Domain notice */}
+                    <p className="text-center text-[var(--text-secondary)] text-xs mt-3 leading-relaxed">
+                      Restricted to <span
+                      className="text-accent-700 dark:text-accent-400 font-semibold">@{ALLOWED_DOMAIN}</span> accounts.
+                    </p>
+                  </>
+                )}
+
+                {/* Email / Password login (Bug #3 FIX) */}
+                <div className="mt-4">
+                  <button
+                    type="button"
+                    onClick={() => setShowEmailForm(true)}
+                    aria-expanded={showEmailForm}
+                    className="w-full row-between px-4 py-2.5 rounded-xl bg-[var(--bg-elevated)] hover:bg-[var(--bg-card-hover)] border border-[var(--border-main)] text-[var(--text-secondary)] text-sm font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Mail className="w-4 h-4"/>
+                      <span>Email and password</span>
+                    </div>
+                    {showEmailForm ? <ChevronUp className="w-4 h-4"/> : <ChevronDown className="w-4 h-4"/>}
+                  </button>
+
+                  {showEmailForm && (
+                    <form
+                      onSubmit={handleSubmit(handleEmailLogin)}
+                      className="mt-3 space-y-4 fade-slide-up auth-delay-40"
+                      aria-label="Email and password sign-in"
+                    >
+                      <Input
+                        id="login-email"
+                        {...register('email')}
+                        type="email"
+                        required
+                        placeholder="Email address"
+                        autoComplete="email"
+                        aria-label="Email address"
+                        aria-invalid={!!emailErrors.email}
+                        icon={<Mail className="w-4 h-4" aria-hidden="true"/>}
+                        error={emailErrors.email?.message}
+                      />
+
+                      <div>
+                        <Input
+                          id="login-password"
+                          {...register('password')}
+                          type="password"
+                          required
+                          placeholder="Password"
+                          autoComplete="current-password"
+                          aria-label="Password"
+                          aria-invalid={!!emailErrors.password}
+                          icon={<Lock className="w-4 h-4" aria-hidden="true"/>}
+                          error={emailErrors.password?.message}
+                        />
+                        <div className="flex justify-end mt-1">
+                          <Link
+                            href="/auth/forgot-password"
+                            className="text-xs text-accent-600 hover:text-accent-700 dark:text-accent-400 dark:hover:text-accent-300 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] rounded"
+                          >
+                            Forgot Password?
+                          </Link>
+                        </div>
+                      </div>
+
+                      {/* Wave-10 P2-3: CAPTCHA placeholder. Stays in the DOM (display:none)
+                          until the backend signals captcha-required so the script-injection
+                          useEffect always has a stable target to call grecaptcha.render()
+                          on without React tearing the node out from under it. */}
+                      <div
+                        id="nu-aura-recaptcha-container"
+                        role={captchaRequired ? 'region' : undefined}
+                        aria-label={captchaRequired ? 'CAPTCHA challenge' : undefined}
+                        className={captchaRequired ? 'flex justify-center pt-1' : 'hidden'}
+                      />
+                      {captchaRequired && !RECAPTCHA_SITE_KEY && (
+                        <p className="text-xs text-danger-500 -mt-2">
+                          CAPTCHA challenge required, but the site key is not configured. Contact your administrator.
+                        </p>
+                      )}
+
+                      <Button
+                        type="submit"
+                        disabled={isEmailLoading || (captchaRequired && !captchaToken)}
+                        variant="primary"
+                        isLoading={isEmailLoading}
+                        loadingText="Signing in..."
+                        aria-busy={isEmailLoading}
+                        className="w-full disabled:pointer-events-none disabled:opacity-50"
+                        leftIcon={<LogIn className="w-4 h-4"/>}
+                      >
+                        Sign In
+                      </Button>
+                      {isEmailLoading && (
+                        <p role="status" className="text-xs text-[var(--text-secondary)] text-center">
+                          Checking credentials...
+                        </p>
+                      )}
+                    </form>
+                  )}
+                </div>
+
+                {/* Demo Login Panel — only shown when NEXT_PUBLIC_DEMO_MODE=true */}
+                {IS_DEMO_MODE && (
+                  <DemoLoginPanel onLogin={handleDemoLogin} isLoading={isDemoLoading}/>
+                )}
+
+                <p className="mt-5 text-center text-xs text-[var(--text-muted)]">
+                  Secure session with httpOnly cookies and CSRF protection.
                 </p>
               </div>
 
-              {/* Error Alert */}
-              {error && (
-                <div
-                  className="auth-error-banner flex items-start gap-2 p-4 mb-5 fade-slide-up auth-delay-20"
-                >
-                  <AlertCircle className="w-5 h-5 text-danger-600 dark:text-danger-400 flex-shrink-0 mt-0.5"/>
-                  <div>
-                    <p className="text-sm font-medium text-danger-700 dark:text-danger-300">
-                      Authentication Failed
-                    </p>
-                    <p className="text-sm text-danger-600 dark:text-danger-400 mt-0.5">
-                      {error}
-                    </p>
-                  </div>
-                </div>
-              )}
-
-              {isGoogleAuthEnabled && (
-                <>
-                  {/* Google SSO Button */}
-                  <button
-                    type="button"
-                    className="w-full relative group flex items-center justify-center gap-4 px-6 py-2.5 rounded-xl bg-[var(--bg-elevated)] hover:bg-[var(--bg-card-hover)] text-[var(--text-primary)] border border-[var(--border-main)] font-semibold text-sm transition-all duration-300 hover:shadow-card-hover active:scale-[0.98]"
-                    onClick={() => {
-                      handleGoogleSSO();
-                    }}
-                    disabled={isGoogleLoading}
-                  >
-                    {isGoogleLoading ? (
-                      <div
-                        className="w-5 h-5 border-2 border-[var(--border-main)] border-t-accent-700 rounded-full animate-spin"/>
-                    ) : (
-                      <GoogleGLogo className="w-5 h-5"/>
-                    )}
-                    <span>Continue with Google</span>
-                    <ArrowRight
-                      className="w-4 h-4 ml-auto opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300"/>
-                  </button>
-
-                  {/* Domain notice */}
-                  <p className="text-center text-[var(--text-secondary)] text-xs mt-3 leading-relaxed">
-                    Restricted to <span
-                    className="text-accent-700 dark:text-accent-400 font-semibold">@{ALLOWED_DOMAIN}</span> accounts.
-                  </p>
-                </>
-              )}
-
-              {/* Email / Password login (Bug #3 FIX) */}
-              <div className="mt-4">
-                <button
-                  type="button"
-                  onClick={() => setShowEmailForm(true)}
-                  aria-expanded={showEmailForm}
-                  className="w-full row-between px-4 py-2.5 rounded-xl bg-[var(--bg-elevated)] hover:bg-[var(--bg-card-hover)] border border-[var(--border-main)] text-[var(--text-secondary)] text-sm font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                >
-                  <div className="flex items-center gap-2">
-                    <Mail className="w-4 h-4"/>
-                    <span>Email and password</span>
-                  </div>
-                  {showEmailForm ? <ChevronUp className="w-4 h-4"/> : <ChevronDown className="w-4 h-4"/>}
-                </button>
-
-                {showEmailForm && (
-                  <form
-                    onSubmit={handleSubmit(handleEmailLogin)}
-                    className="mt-3 space-y-4 fade-slide-up auth-delay-40"
-                    aria-label="Email and password sign-in"
-                  >
-                    <Input
-                      id="login-email"
-                      {...register('email')}
-                      type="email"
-                      required
-                      placeholder="Email address"
-                      autoComplete="email"
-                      aria-label="Email address"
-                      aria-invalid={!!emailErrors.email}
-                      icon={<Mail className="w-4 h-4" aria-hidden="true"/>}
-                      error={emailErrors.email?.message}
-                    />
-
-                    <div>
-                      <Input
-                        id="login-password"
-                        {...register('password')}
-                        type="password"
-                        required
-                        placeholder="Password"
-                        autoComplete="current-password"
-                        aria-label="Password"
-                        aria-invalid={!!emailErrors.password}
-                        icon={<Lock className="w-4 h-4" aria-hidden="true"/>}
-                        error={emailErrors.password?.message}
-                      />
-                      <div className="flex justify-end mt-1">
-                        <Link
-                          href="/auth/forgot-password"
-                          className="text-xs text-accent-600 hover:text-accent-700 dark:text-accent-400 dark:hover:text-accent-300 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] rounded"
-                        >
-                          Forgot Password?
-                        </Link>
-                      </div>
-                    </div>
-
-                    {/* Wave-10 P2-3: CAPTCHA placeholder. Stays in the DOM (display:none)
-                        until the backend signals captcha-required so the script-injection
-                        useEffect always has a stable target to call grecaptcha.render()
-                        on without React tearing the node out from under it. */}
-                    <div
-                      id="nu-aura-recaptcha-container"
-                      role={captchaRequired ? 'region' : undefined}
-                      aria-label={captchaRequired ? 'CAPTCHA challenge' : undefined}
-                      className={captchaRequired ? 'flex justify-center pt-1' : 'hidden'}
-                    />
-                    {captchaRequired && !RECAPTCHA_SITE_KEY && (
-                      <p className="text-xs text-danger-500 -mt-2">
-                        CAPTCHA challenge required, but the site key is not configured. Contact your administrator.
-                      </p>
-                    )}
-
-                    <Button
-                      type="submit"
-                      disabled={isEmailLoading || (captchaRequired && !captchaToken)}
-                      variant="primary"
-                      isLoading={isEmailLoading}
-                      loadingText="Signing in..."
-                      aria-busy={isEmailLoading}
-                      className="w-full skeuo-button bg-gradient-to-b from-[var(--accent-primary)] to-[var(--accent-primary-hover)] text-white hover:brightness-110 disabled:pointer-events-none disabled:opacity-50"
-                      leftIcon={<LogIn className="w-4 h-4"/>}
-                    >
-                      Sign In
-                    </Button>
-                    {isEmailLoading && (
-                      <p role="status" className="text-xs text-[var(--text-secondary)] text-center">
-                        Checking credentials...
-                      </p>
-                    )}
-                  </form>
-                )}
+              {/* Footer */}
+              <div className="text-center mt-8 space-y-2">
+                <p className="text-xs text-[var(--text-secondary)]">
+                  By signing in, you agree to our{' '}
+                  <Link href="/terms"
+                        className="text-accent-700 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 transition-colors font-medium">
+                    Terms
+                  </Link>{' '}
+                  and{' '}
+                  <Link href="/privacy"
+                        className="text-accent-700 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 transition-colors font-medium">
+                    Privacy Policy
+                  </Link>
+                </p>
+                <p className="text-caption">
+                  NULogic &copy; {new Date().getFullYear()} &middot; NU-AURA Platform
+                </p>
               </div>
-
-              {/* Demo Login Panel — only shown when NEXT_PUBLIC_DEMO_MODE=true */}
-              {IS_DEMO_MODE && (
-                <DemoLoginPanel onLogin={handleDemoLogin} isLoading={isDemoLoading}/>
-              )}
-
-              <p className="mt-5 text-center text-xs text-[var(--text-muted)]">
-                Secure session with httpOnly cookies and CSRF protection.
-              </p>
             </div>
-
-            {/* Footer */}
-            <div className="text-center mt-8 space-y-2">
-              <p className="text-xs text-[var(--text-secondary)]">
-                By signing in, you agree to our{' '}
-                <Link href="/terms"
-                      className="text-accent-700 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 transition-colors font-medium">
-                  Terms
-                </Link>{' '}
-                and{' '}
-                <Link href="/privacy"
-                      className="text-accent-700 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 transition-colors font-medium">
-                  Privacy Policy
-                </Link>
-              </p>
-              <p className="text-caption">
-                NULogic &copy; {new Date().getFullYear()} &middot; NU-AURA Platform
-              </p>
-            </div>
+            </section>
           </div>
         </div>
       </div>

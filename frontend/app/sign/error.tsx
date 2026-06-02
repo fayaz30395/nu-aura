@@ -22,27 +22,28 @@ export default function SignError({error, reset}: ErrorProps) {
 
   return (
     <div className="auth-shell fade-slide-up">
-      <Card className="auth-shell-card fade-slide-up auth-delay-20 float-subtle w-full max-w-md">
+      <div className="auth-shell-grid auth-shell-narrow fade-slide-up stagger-children">
+        <Card className="auth-shell-card fade-slide-up auth-delay-40 float-subtle page-reveal border border-[var(--border-subtle)]">
         <CardHeader className="text-center">
           <div
-            className="mx-auto mb-4 h-12 w-12 rounded-full bg-danger-100 dark:bg-danger-900/30 flex items-center justify-center">
+            className="mx-auto mb-4 h-12 w-12 rounded-full bg-danger-100/80 dark:bg-danger-900/30 flex items-center justify-center">
             <Grid className="h-6 w-6 text-danger-600 dark:text-danger-400"/>
           </div>
-          <CardTitle className="text-xl font-semibold text-surface-900 dark:text-surface-50">
+          <CardTitle className="text-xl font-semibold text-[var(--text-primary)]">
             App Error
           </CardTitle>
-          <CardDescription className="text-surface-600 dark:text-surface-400">
+          <CardDescription className="text-[var(--text-secondary)]">
             {userMessage}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {isDevelopment && (
-            <div className="rounded-md bg-surface-100 dark:bg-surface-800 p-4">
-              <p className="text-sm font-mono text-surface-700 dark:text-surface-300 break-all">
+            <div className="rounded-md bg-[var(--status-neutral-bg)] border border-[var(--border-subtle)] p-4">
+              <p className="text-sm font-mono text-[var(--text-secondary)] break-all">
                 {error.message}
               </p>
               {error.digest && (
-                <p className="text-xs text-surface-500 dark:text-surface-400 mt-1">
+                <p className="text-xs text-[var(--text-muted)] mt-1">
                   Error ID: {error.digest}
                 </p>
               )}
@@ -71,7 +72,8 @@ export default function SignError({error, reset}: ErrorProps) {
             </Button>
           </div>
         </CardContent>
-      </Card>
+        </Card>
+      </div>
     </div>
   );
 }

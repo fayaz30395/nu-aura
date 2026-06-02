@@ -234,10 +234,12 @@ export default function SignPage() {
 
   if (isLoading) {
     return (
-      <div className="auth-loading-shell fade-slide-up">
-        <div className="auth-loading-card w-full max-w-md fade-slide-up auth-delay-20 float-subtle text-center">
-          <Loader2 className="h-10 w-10 text-accent-600 animate-spin mx-auto mb-4"/>
-          <p className="text-[var(--text-secondary)] text-sm">Loading document information...</p>
+      <div className="auth-shell fade-slide-up">
+        <div className="auth-shell-grid auth-shell-narrow fade-slide-up stagger-children">
+          <div className="auth-loading-card w-full max-w-md fade-slide-up auth-delay-20 float-subtle text-center page-reveal">
+            <Loader2 className="h-10 w-10 text-accent-600 animate-spin mx-auto mb-4"/>
+            <p className="text-[var(--text-secondary)] text-sm">Loading document information...</p>
+          </div>
         </div>
       </div>
     );
@@ -246,16 +248,18 @@ export default function SignPage() {
   if (error) {
     return (
       <div className="auth-shell fade-slide-up">
-        <div className="w-full max-w-md auth-shell-card fade-slide-up auth-delay-40 float-subtle p-8 text-center">
-          <XCircle className="h-14 w-14 text-danger-500 mx-auto mb-4"/>
-          <h1 className="text-xl font-semibold text-[var(--text-primary)] mb-2">Link Invalid or
-            Expired</h1>
-          <p className="text-[var(--text-muted)] text-sm mb-2">{error}</p>
-          {docInfo?.tokenExpiresAt && (
-            <p className="text-[var(--text-muted)] text-xs mt-4">
-              This link expired on {formatDate(docInfo.tokenExpiresAt)}.
-            </p>
-          )}
+        <div className="auth-shell-grid auth-shell-narrow fade-slide-up stagger-children">
+          <div className="auth-shell-card fade-slide-up auth-delay-40 float-subtle p-8 text-center page-reveal">
+            <XCircle className="h-14 w-14 text-danger-500 mx-auto mb-4"/>
+            <h1 className="text-xl font-semibold text-[var(--text-primary)] mb-2">Link Invalid or
+              Expired</h1>
+            <p className="text-[var(--text-muted)] text-sm mb-2">{error}</p>
+            {docInfo?.tokenExpiresAt && (
+              <p className="text-[var(--text-muted)] text-xs mt-4">
+                This link expired on {formatDate(docInfo.tokenExpiresAt)}.
+              </p>
+            )}
+          </div>
         </div>
       </div>
     );
@@ -266,33 +270,35 @@ export default function SignPage() {
     const isDeclinedStatus = docInfo?.status === 'DECLINED';
     return (
       <div className="auth-shell fade-slide-up">
-        <div className="w-full max-w-md auth-shell-card fade-slide-up auth-delay-40 float-subtle p-8 text-center">
-          {isSignedStatus ? (
-            <CheckCircle className="h-14 w-14 text-success-500 mx-auto mb-4"/>
-          ) : isDeclinedStatus ? (
-            <XCircle className="h-14 w-14 text-danger-500 mx-auto mb-4"/>
-          ) : (
-            <AlertCircle className="h-14 w-14 text-warning-500 mx-auto mb-4"/>
-          )}
-          <h1 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
-            {isSignedStatus
-              ? 'Document Already Signed'
-              : isDeclinedStatus
-                ? 'Document Declined'
-                : 'Signing Link Expired'}
-          </h1>
-          <p className="text-[var(--text-muted)] text-sm">
-            {isSignedStatus
-              ? 'This document has already been signed. No further action is required.'
-              : isDeclinedStatus
-                ? 'This document signing request has been declined.'
-                : 'This signing link is no longer active.'}
-          </p>
-          {docInfo?.documentTitle && (
-            <p className="text-[var(--text-muted)] text-xs mt-4">
-              Document: <span className="font-medium">{docInfo.documentTitle}</span>
+        <div className="auth-shell-grid auth-shell-narrow fade-slide-up stagger-children">
+          <div className="auth-shell-card fade-slide-up auth-delay-40 float-subtle p-8 text-center page-reveal">
+            {isSignedStatus ? (
+              <CheckCircle className="h-14 w-14 text-success-500 mx-auto mb-4"/>
+            ) : isDeclinedStatus ? (
+              <XCircle className="h-14 w-14 text-danger-500 mx-auto mb-4"/>
+            ) : (
+              <AlertCircle className="h-14 w-14 text-warning-500 mx-auto mb-4"/>
+            )}
+            <h1 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
+              {isSignedStatus
+                ? 'Document Already Signed'
+                : isDeclinedStatus
+                  ? 'Document Declined'
+                  : 'Signing Link Expired'}
+            </h1>
+            <p className="text-[var(--text-muted)] text-sm">
+              {isSignedStatus
+                ? 'This document has already been signed. No further action is required.'
+                : isDeclinedStatus
+                  ? 'This document signing request has been declined.'
+                  : 'This signing link is no longer active.'}
             </p>
-          )}
+            {docInfo?.documentTitle && (
+              <p className="text-[var(--text-muted)] text-xs mt-4">
+                Document: <span className="font-medium">{docInfo.documentTitle}</span>
+              </p>
+            )}
+          </div>
         </div>
       </div>
     );
@@ -301,41 +307,43 @@ export default function SignPage() {
   if (step === 'success') {
     return (
       <div className="auth-shell fade-slide-up">
-        <div className="w-full max-w-md auth-shell-card fade-slide-up auth-delay-40 float-subtle p-8 text-center">
-          <CheckCircle className="h-16 w-16 text-success-500 mx-auto mb-4"/>
-          <h1 className="text-2xl font-semibold text-[var(--text-primary)] mb-2">
-            Document Signed Successfully
-          </h1>
-          <p className="text-[var(--text-muted)] text-sm mb-6">
-            Your signature has been recorded. A confirmation will be sent to your email.
-          </p>
-          <div className="bg-[var(--bg-surface)] rounded-lg p-4 text-left text-sm space-y-2">
-            {docInfo?.documentTitle && (
-              <div className="flex justify-between">
-                <span className="text-[var(--text-muted)]">Document</span>
-                <span className="font-medium text-[var(--text-secondary)]">{docInfo.documentTitle}</span>
-              </div>
-            )}
-            {docInfo?.companyName && (
-              <div className="flex justify-between">
-                <span className="text-[var(--text-muted)]">Company</span>
-                <span className="font-medium text-[var(--text-secondary)]">{docInfo.companyName}</span>
-              </div>
-            )}
-            {docInfo?.signerEmail && (
-              <div className="flex justify-between">
-                <span className="text-[var(--text-muted)]">Signer</span>
-                <span className="font-medium text-[var(--text-secondary)]">{docInfo.signerEmail}</span>
-              </div>
-            )}
-            {docInfo?.approvalId && (
-              <div className="flex justify-between">
-                <span className="text-[var(--text-muted)]">Reference</span>
-                <span className="font-medium text-[var(--text-secondary)] text-xs break-all">
-                  {docInfo.approvalId}
-                </span>
-              </div>
-            )}
+        <div className="auth-shell-grid auth-shell-narrow fade-slide-up stagger-children">
+          <div className="auth-shell-card fade-slide-up auth-delay-40 float-subtle p-8 text-center page-reveal">
+            <CheckCircle className="h-16 w-16 text-success-500 mx-auto mb-4"/>
+            <h1 className="text-2xl font-semibold text-[var(--text-primary)] mb-2">
+              Document Signed Successfully
+            </h1>
+            <p className="text-[var(--text-muted)] text-sm mb-6">
+              Your signature has been recorded. A confirmation will be sent to your email.
+            </p>
+            <div className="bg-[var(--bg-surface)] rounded-lg p-4 text-left text-sm space-y-2">
+              {docInfo?.documentTitle && (
+                <div className="flex justify-between">
+                  <span className="text-[var(--text-muted)]">Document</span>
+                  <span className="font-medium text-[var(--text-secondary)]">{docInfo.documentTitle}</span>
+                </div>
+              )}
+              {docInfo?.companyName && (
+                <div className="flex justify-between">
+                  <span className="text-[var(--text-muted)]">Company</span>
+                  <span className="font-medium text-[var(--text-secondary)]">{docInfo.companyName}</span>
+                </div>
+              )}
+              {docInfo?.signerEmail && (
+                <div className="flex justify-between">
+                  <span className="text-[var(--text-muted)]">Signer</span>
+                  <span className="font-medium text-[var(--text-secondary)]">{docInfo.signerEmail}</span>
+                </div>
+              )}
+              {docInfo?.approvalId && (
+                <div className="flex justify-between">
+                  <span className="text-[var(--text-muted)]">Reference</span>
+                  <span className="font-medium text-[var(--text-secondary)] text-xs break-all">
+                    {docInfo.approvalId}
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -345,19 +353,21 @@ export default function SignPage() {
   if (step === 'declined') {
     return (
       <div className="auth-shell fade-slide-up">
-        <div className="w-full max-w-md auth-shell-card fade-slide-up auth-delay-40 float-subtle p-8 text-center">
-          <XCircle className="h-16 w-16 text-danger-400 mx-auto mb-4"/>
-          <h1 className="text-2xl font-semibold text-[var(--text-primary)] mb-2">
-            Signing Request Declined
-          </h1>
-          <p className="text-[var(--text-muted)] text-sm">
-            You have declined to sign this document. The requester will be notified.
-          </p>
-          {docInfo?.documentTitle && (
-            <p className="text-[var(--text-muted)] text-xs mt-4">
-              Document: <span className="font-medium">{docInfo.documentTitle}</span>
+        <div className="auth-shell-grid auth-shell-narrow fade-slide-up stagger-children">
+          <div className="auth-shell-card fade-slide-up auth-delay-40 float-subtle p-8 text-center page-reveal">
+            <XCircle className="h-16 w-16 text-danger-400 mx-auto mb-4"/>
+            <h1 className="text-2xl font-semibold text-[var(--text-primary)] mb-2">
+              Signing Request Declined
+            </h1>
+            <p className="text-[var(--text-muted)] text-sm">
+              You have declined to sign this document. The requester will be notified.
             </p>
-          )}
+            {docInfo?.documentTitle && (
+              <p className="text-[var(--text-muted)] text-xs mt-4">
+                Document: <span className="font-medium">{docInfo.documentTitle}</span>
+              </p>
+            )}
+          </div>
         </div>
       </div>
     );
@@ -366,9 +376,9 @@ export default function SignPage() {
   // Main flow: verify and sign steps
   return (
     <div className="auth-shell fade-slide-up">
-      <div className="w-full max-w-2xl px-4 py-8 space-y-6">
+      <div className="auth-shell-grid-wide fade-slide-up stagger-children px-4 py-8 space-y-6">
       {/* Header */}
-      <div className="rounded-2xl border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-4 shadow-[var(--shadow-card)]">
+      <div className="auth-shell-card px-4 py-4 fade-slide-up auth-delay-20 page-reveal">
         <div className="flex items-center gap-4">
           <div className="h-8 w-8 rounded-lg bg-accent-600 flex items-center justify-center">
             <FileText className="h-4 w-4 text-white"/>
@@ -383,7 +393,7 @@ export default function SignPage() {
       </div>
 
         {/* Document Info Card */}
-        <div className="auth-shell-card fade-slide-up auth-delay-40 float-subtle p-6">
+        <div className="auth-shell-card fade-slide-up auth-delay-40 float-subtle p-6 page-reveal">
           <div className="flex items-start gap-4">
             <div className="h-12 w-12 rounded-lg bg-accent-50 flex items-center justify-center flex-shrink-0">
               <FileText className="h-6 w-6 text-accent-600"/>
@@ -441,7 +451,7 @@ export default function SignPage() {
 
         {/* Step: Email Verification */}
         {step === 'verify' && (
-          <div className="auth-shell-card fade-slide-up auth-delay-40 float-subtle p-6">
+          <div className="auth-shell-card fade-slide-up auth-delay-40 float-subtle p-6 page-reveal">
             <h2 className="text-base font-semibold text-[var(--text-primary)] mb-1">
               Verify Your Identity
             </h2>
@@ -493,7 +503,7 @@ export default function SignPage() {
 
         {/* Step: Signing */}
         {step === 'sign' && (
-          <div className="auth-shell-card fade-slide-up auth-delay-40 float-subtle p-6 space-y-6">
+          <div className="auth-shell-card fade-slide-up auth-delay-40 float-subtle p-6 space-y-6 page-reveal">
             <div>
               <h2 className="text-base font-semibold text-[var(--text-primary)] mb-1">
                 Sign Document
@@ -657,7 +667,7 @@ export default function SignPage() {
       {/* Decline Modal */}
       {showDeclineModal && (
         <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 px-4">
-          <div className="auth-shell-card fade-slide-up auth-delay-40 float-subtle max-w-md w-full p-6">
+          <div className="auth-shell-card fade-slide-up auth-delay-40 float-subtle max-w-md w-full p-6 page-reveal">
             <h3 className="text-base font-semibold text-[var(--text-primary)] mb-1">
               Decline to Sign
             </h3>

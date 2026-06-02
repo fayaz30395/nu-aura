@@ -99,7 +99,7 @@ export default function AdminIntegrationsPage() {
   }
 
   if (hasHydrated && isReady && !isAuthenticated) {
-    router.push('/auth/login');
+    router.replace('/auth/login');
     return null;
   }
 

@@ -566,7 +566,7 @@ export default function PredictiveAnalyticsPage() {
   React.useEffect(() => {
     if (!hasHydrated) return;
     if (!isAuthenticated) {
-      router.push('/auth/login');
+      router.replace('/auth/login');
     }
   }, [hasHydrated, isAuthenticated, router]);
 

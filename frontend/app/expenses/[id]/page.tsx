@@ -19,6 +19,7 @@ import {
   XCircle,
 } from 'lucide-react';
 import {Controller, useForm} from 'react-hook-form';
+import {Checkbox as MantineCheckbox} from '@mantine/core';
 import {DateInput} from '@mantine/dates';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
@@ -35,7 +36,7 @@ import {
   useRejectExpenseClaim,
   useSubmitExpenseClaim,
 } from '@/lib/hooks/queries';
-import {ConfirmDialog, Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui';
+import {ConfirmDialog, Input, Modal, ModalBody, ModalFooter, ModalHeader, Select, Textarea} from '@/components/ui';
 import {CreateExpenseItemRequest, ExpenseStatus} from '@/lib/types/hrms/expense';
 import {ConfirmedOcrData, ReceiptScanner} from '@/components/expenses';
 
@@ -386,7 +387,7 @@ export default function ExpenseDetailPage() {
               disabled={submitMutation.isPending}
               className="px-4 py-2 bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
-              {submitMutation.isPending ? 'Submitting...' : 'Submit for Approval'}
+              {submitMutation.isPending ? 'Submitting' : 'Submit for approval'}
             </button>
           )}
           {canApprove && !isOwner && (
@@ -396,7 +397,7 @@ export default function ExpenseDetailPage() {
                 disabled={approveMutation.isPending}
                 className="px-4 py-2 bg-success-600 hover:bg-success-700 text-white rounded-lg transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
-                {approveMutation.isPending ? 'Approving...' : 'Approve'}
+                {approveMutation.isPending ? 'Approving' : 'Approve'}
               </button>
               <button
                 onClick={() => setShowRejectDialog(true)}
@@ -410,24 +411,28 @@ export default function ExpenseDetailPage() {
 
         {/* Add Item Modal */}
         <Modal isOpen={showAddItem} onClose={() => setShowAddItem(false)} size="lg">
-          <ModalHeader>Add Expense Item</ModalHeader>
+          <ModalHeader>Add expense item</ModalHeader>
           <form onSubmit={handleSubmit(onAddItem)}>
             <ModalBody>
               <div className="space-y-4">
                 <div>
-                  <label htmlFor="expense-item-description" className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Description
-                    *</label>
-                  <input id="expense-item-description" {...register('description')}
-                         className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"/>
-                  {errors.description && <p className="text-danger-500 text-sm mt-1">{errors.description.message}</p>}
+                  <Input
+                    id="expense-item-description"
+                    {...register('description')}
+                    label="Description"
+                    error={errors.description?.message}
+                  />
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div>
-                    <label htmlFor="expense-item-amount" className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Amount
-                      *</label>
-                    <input id="expense-item-amount" type="number" step="0.01" {...register('amount')}
-                           className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"/>
-                    {errors.amount && <p className="text-danger-500 text-sm mt-1">{errors.amount.message}</p>}
+                    <Input
+                      id="expense-item-amount"
+                      type="number"
+                      step="0.01"
+                      {...register('amount')}
+                      label="Amount"
+                      error={errors.amount?.message}
+                    />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Date
@@ -449,34 +454,23 @@ export default function ExpenseDetailPage() {
                     {errors.expenseDate && <p className="text-danger-500 text-sm mt-1">{errors.expenseDate.message}</p>}
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div>
-                    <label htmlFor="expense-item-category"
-                      className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Category</label>
-                    <select id="expense-item-category" {...register('categoryId')}
-                            className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2">
+                    <Select id="expense-item-category" {...register('categoryId')} label="Category">
                       <option value="">Select category</option>
                       {categories.map((cat) => (
                         <option key={cat.id} value={cat.id}>{cat.name}</option>
                       ))}
-                    </select>
+                    </Select>
                   </div>
                   <div>
-                    <label htmlFor="expense-item-merchant"
-                      className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Merchant</label>
-                    <input id="expense-item-merchant" {...register('merchantName')}
-                           className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"/>
+                    <Input id="expense-item-merchant" {...register('merchantName')} label="Merchant"/>
                   </div>
                 </div>
                 <div>
-                  <label htmlFor="expense-item-notes" className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Notes</label>
-                  <textarea id="expense-item-notes" {...register('notes')} rows={2}
-                            className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"/>
+                  <Textarea id="expense-item-notes" {...register('notes')} rows={2} aria-label="Notes" placeholder="Notes"/>
                 </div>
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" {...register('isBillable')} className="rounded border-surface-300"/>
-                  <span className="text-sm text-surface-700 dark:text-surface-300">Billable to client</span>
-                </label>
+                <MantineCheckbox label="Billable to client" {...register('isBillable')}/>
               </div>
             </ModalBody>
             <ModalFooter>
@@ -486,7 +480,7 @@ export default function ExpenseDetailPage() {
               </button>
               <button type="submit" disabled={addItemMutation.isPending}
                       className="px-4 py-2 bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
-                {addItemMutation.isPending ? 'Adding...' : 'Add Item'}
+                {addItemMutation.isPending ? 'Adding' : 'Add item'}
               </button>
             </ModalFooter>
           </form>
@@ -494,18 +488,16 @@ export default function ExpenseDetailPage() {
 
         {/* Reject Dialog */}
         <Modal isOpen={showRejectDialog} onClose={() => setShowRejectDialog(false)} size="md">
-          <ModalHeader>Reject Expense Claim</ModalHeader>
+          <ModalHeader>Reject expense claim</ModalHeader>
           <ModalBody>
             <div>
-              <label htmlFor="expense-claim-reject-reason" className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Reason for
-                Rejection *</label>
-              <textarea
+              <Textarea
                 id="expense-claim-reject-reason"
                 value={rejectReason}
                 onChange={(e) => setRejectReason(e.target.value)}
                 rows={3}
-                className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
-                placeholder="Provide reason..."
+                aria-label="Reason for rejection"
+                placeholder="Provide reason"
               />
             </div>
           </ModalBody>
@@ -519,7 +511,7 @@ export default function ExpenseDetailPage() {
               disabled={!rejectReason.trim() || rejectMutation.isPending}
               className="px-4 py-2 bg-danger-600 hover:bg-danger-700 text-white rounded-lg transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
-              {rejectMutation.isPending ? 'Rejecting...' : 'Reject'}
+              {rejectMutation.isPending ? 'Rejecting' : 'Reject'}
             </button>
           </ModalFooter>
         </Modal>
