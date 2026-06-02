@@ -1,0 +1,122 @@
+# =============================================================================
+# NU-AURA — Render Blueprint (Infrastructure as Code)
+# =============================================================================
+# Codifies the "deploy like Codex did" Render setup so it is reproducible and
+# committed instead of living only in the Render dashboard.
+#
+# Apply:  Render Dashboard → New + → Blueprint → pick this repo → it reads
+#         render.yaml and provisions the services below. Fill the `sync: false`
+#         secrets in the dashboard (values come from .env.production.example).
+#
+# autoDeploy: true on the web services = every push to `branch` triggers a
+# rebuild + deploy (this is the "auto-deploy-on-push" wiring).
+#
+# CAVEATS (free tier; see docs/runbooks/deployment.md "Render fallback"):
+#  - Elasticsearch is NOT provisioned here (no managed ES on Render free tier).
+#    Search features run degraded; point SPRING_ELASTICSEARCH_* at an external
+#    cluster if full search is required.
+#  - Spring Boot in 512 MB is tight — JAVA_TOOL_OPTIONS caps the heap. Schedulers
+#    are disabled (APP_SCHEDULING_ENABLED=false), matching Codex's free-tier tuning.
+#  - RLS dual-role: the app refuses to start if its datasource role can bypass RLS
+#    (RLS_PROBE_FAIL_ON_BYPASS=true). Render Postgres gives ONE owner role — after
+#    first provision, run scripts/db/ to create a separate NOBYPASSRLS runtime role
+#    and point SPRING_DATASOURCE_USERNAME/PASSWORD at it (FLYWAY_* keeps the owner).
+#  - Google Drive credentials.json must be added as a Render Secret File mounted at
+#    GOOGLE_DRIVE_CREDENTIALS_PATH.
+# =============================================================================
+
+databases:
+  - name: nu-aura-postgres
+    plan: free
+    databaseName: hrms
+    postgresMajorVersion: "16"
+
+services:
+  # --- Redis (Render "Key Value") ---------------------------------------------
+  - type: keyvalue
+    name: nu-aura-redis
+    plan: free
+    ipAllowList: []          # internal-only
+    maxmemoryPolicy: noeviction
+
+  # --- Backend (Spring Boot, Java 17) -----------------------------------------
+  - type: web
+    name: nu-aura-backend
+    runtime: docker
+    repo: https://github.com/fayaz30395/nu-aura
+    branch: main
+    autoDeploy: true
+    dockerfilePath: backend/Dockerfile
+    dockerContext: .
+    healthCheckPath: /actuator/health/readiness
+    plan: free
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: APP_SCHEDULING_ENABLED
+        value: "false"
+      - key: RLS_PROBE_FAIL_ON_BYPASS
+        value: "true"
+      - key: JAVA_TOOL_OPTIONS
+        value: "-XX:MaxRAMPercentage=75 -XX:+UseSerialGC -Xss512k"
+      - key: SPRING_FLYWAY_POSTGRESQL_TRANSACTIONAL_LOCK
+        value: "false"
+      # DB — Flyway/owner role from the managed Postgres; runtime RLS role set in dashboard
+      - key: FLYWAY_URL
+        fromDatabase: { name: nu-aura-postgres, property: connectionString }
+      - key: FLYWAY_USER
+        fromDatabase: { name: nu-aura-postgres, property: user }
+      - key: FLYWAY_PASSWORD
+        fromDatabase: { name: nu-aura-postgres, property: password }
+      - key: SPRING_DATASOURCE_URL
+        fromDatabase: { name: nu-aura-postgres, property: connectionString }
+      - key: SPRING_DATASOURCE_USERNAME   # set to the NOBYPASSRLS runtime role after first deploy
+        sync: false
+      - key: SPRING_DATASOURCE_PASSWORD
+        sync: false
+      # Redis
+      - key: SPRING_REDIS_HOST
+        fromService: { type: keyvalue, name: nu-aura-redis, property: host }
+      - key: SPRING_REDIS_PORT
+        fromService: { type: keyvalue, name: nu-aura-redis, property: port }
+      - key: SPRING_REDIS_PASSWORD
+        fromService: { type: keyvalue, name: nu-aura-redis, property: connectionString }
+      - key: SPRING_REDIS_SSL_ENABLED
+        value: "false"
+      # Secrets (fill in dashboard from .env.production.example)
+      - key: PROMETHEUS_SCRAPE_TOKEN
+        sync: false
+      - key: APP_SLACK_SIGNING_SECRET
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      # Storage (Google Drive). Add credentials.json as a Render Secret File.
+      - key: STORAGE_PROVIDER
+        value: google-drive
+      - key: GOOGLE_DRIVE_CREDENTIALS_PATH
+        value: /etc/secrets/google-drive-credentials.json
+      - key: GOOGLE_DRIVE_ROOT_FOLDER_ID
+        sync: false
+
+  # --- Frontend (Next.js standalone) ------------------------------------------
+  - type: web
+    name: nu-aura-frontend
+    runtime: docker
+    repo: https://github.com/fayaz30395/nu-aura
+    branch: main
+    autoDeploy: true
+    dockerfilePath: frontend/Dockerfile
+    dockerContext: ./frontend
+    healthCheckPath: /
+    plan: free
+    envVars:
+      # NEXT_PUBLIC_API_URL is baked at build time — set to the backend's public URL.
+      # After the backend service exists, set this to https://<backend>.onrender.com/api/v1
+      - key: NEXT_PUBLIC_API_URL
+        sync: false
+      - key: NEXT_PUBLIC_ENABLE_WEBSOCKET
+        value: "true"
+      - key: NEXT_PUBLIC_DEMO_MODE
+        value: "false"
+      - key: NEXT_PUBLIC_GOOGLE_CLIENT_ID
+        sync: false
