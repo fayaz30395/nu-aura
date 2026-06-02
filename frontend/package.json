@@ -109,7 +109,7 @@
     "jsdom": "^24.0.0",
     "msw": "^2.1.0",
     "orval": "^7.21.0",
-    "typescript": "^5.9.3",
+    "typescript": "^6.0.3",
     "vitest": "^3.2.4"
   },
   "overrides": {
