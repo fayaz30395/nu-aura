@@ -4,7 +4,8 @@ import {Skeleton} from '@mantine/core';
 
 export default function Loading() {
   return (
-    <div className="p-4 md:p-6 lg:p-6 max-w-[1600px] mx-auto space-y-4">
+    <div className="page-shell-centered fade-slide-up">
+    <div className="page-shell-card w-full max-w-[1600px] p-4 md:p-6 lg:p-6 space-y-4 fade-slide-up auth-delay-20 float-subtle">
       {/* Header skeleton */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="space-y-2">
@@ -40,7 +41,8 @@ export default function Loading() {
           ))}
         </div>
       </div>
+
+    </div>
     </div>
   );
 }
-

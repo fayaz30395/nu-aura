@@ -705,7 +705,7 @@ export default function ApplicantPipelinePage() {
           </div>
         }
       >
-        <div className="p-6 space-y-6 min-h-screen bg-[var(--bg-secondary)]">
+        <div className="page-shell-centered fade-slide-up auth-delay-20 p-6 space-y-6">
           {/* ── Header ────────────────────────────────────────────────────── */}
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
@@ -940,7 +940,7 @@ export default function ApplicantPipelinePage() {
                                   ? 'shadow-[var(--shadow-card-hover)] border-accent-300'
                                   : ''
                               }`}
-                              style={{maxHeight: 'calc(100vh - 380px)'}}
+                              style={{maxHeight: 'calc(100dvh - 380px)'}}
                             >
                               {/* Column Header */}
                               <div className={`px-4 py-2.5 ${colors.header} row-between`}>

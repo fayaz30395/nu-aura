@@ -276,8 +276,8 @@ export function AuthGuard({
     }
 
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-surface-50">
-        <div className="text-center p-8">
+      <div className="page-shell-centered fade-slide-up">
+        <div className="page-shell-card p-8 text-center fade-slide-up">
           <div className="text-6xl mb-4">🔒</div>
           <h1 className="text-2xl font-bold text-[var(--text-primary)] mb-2">Access Denied</h1>
           <p className="text-[var(--text-secondary)] mb-6">

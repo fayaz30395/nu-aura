@@ -440,6 +440,9 @@
     @apply rounded-[var(--radius-panel)] border border-[var(--border-subtle)] shadow-[var(--shadow-card)];
     background-color: var(--bg-card);
     backdrop-filter: blur(6px);
+    transition: transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 180ms ease-out,
+    border-color 180ms ease-out;
   }
 
   .shell-panel:hover {
@@ -451,6 +454,146 @@
     border-radius: var(--radius-shell);
     background: linear-gradient(160deg, var(--shell-gradient-start), transparent 62%), var(--bg-surface);
     border: 1px solid var(--border-main);
+  }
+
+  .auth-shell {
+    @apply min-h-[100dvh];
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+    padding: clamp(0.9rem, 1.6vw, 1.4rem);
+    background:
+      radial-gradient(360px 160px at 10% 0%, rgba(91, 140, 245, 0.14), transparent 52%),
+      radial-gradient(360px 180px at 90% 100%, rgba(37, 99, 235, 0.08), transparent 52%),
+      var(--bg-main);
+    color: var(--text-primary);
+  }
+
+  .auth-shell::before {
+    content: '';
+    position: absolute;
+    inset: -22% -30% auto auto;
+    width: 62%;
+    aspect-ratio: 1;
+    border-radius: 9999px;
+    background: radial-gradient(circle, rgba(91, 140, 245, 0.20), rgba(91, 140, 245, 0));
+    transform: translate3d(0, 0, 0);
+    pointer-events: none;
+    opacity: 0.9;
+    animation: panelFloat 22s linear infinite;
+    z-index: -1;
+  }
+
+  .auth-shell::after {
+    content: '';
+    position: absolute;
+    inset: auto -20% -34% auto;
+    width: 46%;
+    aspect-ratio: 1;
+    border-radius: 9999px;
+    background:
+      radial-gradient(circle at 22% 22%, rgba(59, 130, 246, 0.22), rgba(59, 130, 246, 0) 58%),
+      radial-gradient(circle at 78% 78%, rgba(139, 92, 246, 0.12), rgba(139, 92, 246, 0) 54%);
+    transform: translate3d(0, 0, 0);
+    filter: blur(1px);
+    pointer-events: none;
+    opacity: 0.7;
+    animation: authOrbit 28s ease-in-out infinite;
+    z-index: -1;
+  }
+
+  .auth-shell-grid {
+    width: min(100% - 0.8rem, 32rem);
+    display: grid;
+    justify-items: stretch;
+    gap: 0.95rem;
+  }
+
+  .auth-shell-narrow {
+    width: min(100% - 0.8rem, 27rem);
+  }
+
+  .auth-shell-card {
+    @apply w-full rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-card)] shadow-[var(--shadow-card)];
+    padding: clamp(1rem, 1.8vw, 1.35rem);
+    position: relative;
+    isolation: isolate;
+    backdrop-filter: blur(8px);
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0)),
+      var(--bg-card);
+    transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 220ms ease-out,
+    border-color 220ms ease-out;
+  }
+
+  .auth-shell-card::before {
+    content: '';
+    position: absolute;
+    inset: 1px;
+    border-radius: calc(var(--radius-panel) - 1px);
+    border: 1px solid rgba(255, 255, 255, 0.03);
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  .auth-loading-shell {
+    @apply min-h-[100dvh] flex items-center justify-center p-4;
+    background: var(--bg-main);
+  }
+
+  .auth-loading-card {
+    @apply w-full rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-card)] shadow-[var(--shadow-card)] p-5 sm:p-6;
+    position: relative;
+    isolation: isolate;
+    animation-delay: 0.06s;
+  }
+
+  .auth-shell .shell-panel,
+  .auth-shell .shell-panel:hover {
+    border-color: rgba(91, 140, 245, 0.26);
+    box-shadow: var(--shadow-card), 0 0 0 1px rgba(91, 140, 245, 0.14) inset;
+  }
+
+  .auth-shell .shell-panel:hover {
+    border-color: rgba(91, 140, 245, 0.36);
+    box-shadow:
+      var(--shadow-card-hover),
+      0 0 0 1px rgba(91, 140, 245, 0.2) inset;
+  }
+
+  .page-shell-centered {
+    @apply min-h-[100dvh] grid place-items-center p-4;
+    background: var(--bg-main);
+    color: var(--text-primary);
+    position: relative;
+    isolation: isolate;
+  }
+
+  .page-shell-card {
+    @apply w-full max-w-md rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-card)] shadow-[var(--shadow-card)];
+  }
+
+  .auth-error-banner {
+    @apply rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-surface)] text-[var(--text-secondary)];
+  }
+
+  .auth-delay-20 {
+    animation-delay: 0.2s;
+  }
+
+  .auth-delay-40 {
+    animation-delay: 0.4s;
+  }
+
+  .auth-delay-80 {
+    animation-delay: 0.8s;
+  }
+
+  .auth-delay-120 {
+    animation-delay: 1.2s;
   }
 
   .icon-chip {
@@ -1281,6 +1424,18 @@ html, body {
   }
   50% {
     transform: translate3d(0, -10px, 0);
+  }
+}
+
+@keyframes authOrbit {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  33% {
+    transform: translate3d(8%, 6%, 0) scale(1.08) rotate(1.5deg);
+  }
+  66% {
+    transform: translate3d(-4%, 9%, 0) scale(0.98) rotate(-2deg);
   }
 }
 

@@ -103,10 +103,10 @@ export default function PublicExitInterviewPage() {
     },
   });
 
-  if (isLoading) return <Center h="100vh"><Loader/></Center>;
+  if (isLoading) return <Center h="100dvh"><Loader/></Center>;
 
   if (error) return (
-    <Center h="100vh">
+    <Center h="100dvh">
       <Alert icon={<IconAlertCircle size={16}/>} color="red" title="Invalid Link">
         This exit interview link is invalid or has expired. Please contact HR.
       </Alert>
@@ -114,7 +114,7 @@ export default function PublicExitInterviewPage() {
   );
 
   if (submitted || data?.status === 'COMPLETED') return (
-    <Center h="100vh">
+    <Center h="100dvh">
       <Paper withBorder p="xl" maw={500} ta="center">
         <IconCheck size={48} color="green"/>
         <Title order={3} mt="md">Thank you!</Title>
@@ -136,7 +136,7 @@ export default function PublicExitInterviewPage() {
   );
 
   return (
-    <Center mih="100vh" bg="gray.0" p="md">
+    <Center mih="100dvh" bg="gray.0" p="md">
       <Paper withBorder p="xl" w="100%" maw={640}>
         <Title order={2} mb={4} className="">Exit Interview</Title>
         <Text c="dimmed" size="sm" mb="lg">

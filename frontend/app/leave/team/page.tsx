@@ -11,7 +11,7 @@ export default function TeamLeaveRedirectPage() {
   }, [router]);
 
   return (
-    <main className="min-h-screen bg-[var(--bg-page)] p-6">
+    <main className="page-shell-centered fade-slide-up auth-delay-20 p-6">
       <h1 className="text-xl font-bold text-[var(--text-primary)]">Team Leave</h1>
       <p className="mt-2 text-[var(--text-secondary)]">Opening leave approvals...</p>
     </main>

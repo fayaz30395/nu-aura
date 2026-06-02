@@ -372,7 +372,7 @@ export default function NineBoxPage() {
           description="You do not have permission to view the 9-Box talent grid."
         />
       }>
-        <div className="min-h-screen bg-[var(--bg-secondary)]">
+        <div className="page-shell-centered fade-slide-up auth-delay-20">
           <div className="max-w-7xl mx-auto p-6 space-y-6">
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">

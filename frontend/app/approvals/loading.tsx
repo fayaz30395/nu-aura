@@ -4,7 +4,7 @@ import {Skeleton} from '@mantine/core';
 
 export default function ApprovalsLoading() {
   return (
-    <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
+    <div className="page-shell-centered fade-slide-up auth-delay-20 p-4 sm:p-6 space-y-4 sm:space-y-6">
       {/* Header skeleton */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-4">
         <div className="space-y-2">

@@ -4,8 +4,8 @@ import {Skeleton} from '@mantine/core';
 
 export default function ExitInterviewLoading() {
   return (
-    <div className="flex items-center justify-center min-h-screen bg-surface-50 dark:bg-surface-900 p-4">
-      <div className="w-full max-w-2xl space-y-6">
+    <div className="page-shell-centered fade-slide-up">
+      <div className="page-shell-card fade-slide-up auth-delay-20 float-subtle max-w-2xl p-6 sm:p-8 space-y-6">
         {/* Header skeleton */}
         <div className="text-center space-y-2 mb-8">
           <Skeleton height={28} width="60%" className="mx-auto"/>

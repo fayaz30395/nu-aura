@@ -2,13 +2,14 @@
 
 import {useState} from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {Button} from '@/components/ui/Button';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
 import {GoogleGLogo} from '@/components/ui/GoogleGLogo';
-import {AlertCircle, ArrowLeft, Building2, CheckCircle, ExternalLink, Mail, ShieldCheck,} from 'lucide-react';
+import {AlertCircle, ArrowLeft, CheckCircle, ExternalLink, Mail, ShieldCheck} from 'lucide-react';
 import {apiClient} from '@/lib/api/client';
 
 const forgotPasswordSchema = z.object({
@@ -62,47 +63,63 @@ export default function ForgotPasswordPage() {
 
   if (isSubmitted) {
     return (
-      <div
-        className="min-h-screen flex items-center justify-center bg-[var(--bg-main)] py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-md w-full">
+      <div className="auth-shell fade-slide-up">
+        <div className="auth-shell-grid auth-shell-narrow fade-slide-up">
           {/* Logo */}
-          <div className="text-center mb-8">
+          <div className="text-center mb-6 fade-slide-up auth-delay-20">
             <div
-              className="inline-flex items-center justify-center w-16 h-16 bg-accent-100 dark:bg-accent-500/10 text-accent-600 dark:text-accent-400 rounded-lg mb-4">
-              <Building2 className="w-8 h-8"/>
+              className="inline-flex items-center justify-center w-14 h-14 rounded-lg mb-3"
+            >
+              <Image
+                src="/images/nulogic-logo.svg"
+                alt="NULogic"
+                width={112}
+                height={32}
+                className="h-5 w-auto object-contain dark:hidden"
+                priority
+              />
+              <Image
+                src="/images/nulogic-logo-white.svg"
+                alt="NULogic"
+                width={112}
+                height={32}
+                className="h-5 w-auto object-contain hidden dark:block"
+                priority
+              />
             </div>
-            <h1 className="text-xl font-bold">
-              NU-AURA
-            </h1>
+            <h1 className="text-lg font-semibold">NU-AURA</h1>
+            <p className="mt-1 text-xs text-[var(--text-muted)] uppercase tracking-[0.12em]">
+              Password recovery
+            </p>
           </div>
 
-          <Card className="card-elevated">
+          <Card className="auth-shell-card fade-slide-up auth-delay-40 float-subtle">
             <CardContent className="pt-8 pb-8 text-center">
-              {isSsoUser ? (
+            {isSsoUser ? (
                 <>
                   {/* Google SSO user — redirect to Google account */}
                   <div
-                    className="inline-flex items-center justify-center w-16 h-16 bg-accent-100 dark:bg-accent-500/10 rounded-full mb-4">
-                    <ShieldCheck className="w-8 h-8 text-accent-600 dark:text-accent-400"/>
+                    className="inline-flex items-center justify-center w-12 h-12 bg-accent-100 dark:bg-accent-500/10 rounded-full mb-4">
+                    <ShieldCheck className="w-6 h-6 text-accent-600 dark:text-accent-400"/>
                   </div>
-                  <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
+                  <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
                     Google Sign-In Account
                   </h2>
-                  <p className="text-[var(--text-secondary)] mb-2">
+                  <p className="text-sm text-[var(--text-secondary)] mb-2">
                     The account for{' '}
                     <span className="font-medium text-[var(--text-primary)]">
                       {getValues('email')}
                     </span>{' '}
                     uses Google Sign-In.
                   </p>
-                  <p className="text-body-muted mb-6">
+                  <p className="text-xs text-[var(--text-muted)] mb-6">
                     Please manage your password through your Google account settings.
                   </p>
                   <a
                     href="https://myaccount.google.com/security"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center w-full gap-2 px-4 py-2 mb-4 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-main)] text-[var(--text-primary)] font-medium hover:bg-[var(--bg-card-hover)] transition-colors"
+                    className="inline-flex items-center justify-center w-full gap-2 px-4 py-2 mb-4 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-main)] text-[var(--text-primary)] font-medium hover:bg-[var(--bg-card-hover)] transition-colors"
                   >
                     <GoogleGLogo className="w-5 h-5"/>
                     Go to Google Account Security
@@ -119,21 +136,22 @@ export default function ForgotPasswordPage() {
                 <>
                   {/* Local user — check email */}
                   <div
-                    className="inline-flex items-center justify-center w-16 h-16 bg-success-100 dark:bg-success-900/30 rounded-full mb-4">
-                    <CheckCircle className="w-8 h-8 text-success-600 dark:text-success-400"/>
+                    className="inline-flex items-center justify-center w-12 h-12 bg-success-100 dark:bg-success-900/30 rounded-full mb-4">
+                    <CheckCircle className="w-6 h-6 text-success-600 dark:text-success-400"/>
                   </div>
-                  <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
+                  <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
                     Check Your Email
                   </h2>
-                  <p className="text-[var(--text-secondary)] mb-6">
+                  <p className="text-sm text-[var(--text-secondary)] mb-6">
                     We&apos;ve sent a password reset link to{' '}
                     <span className="font-medium text-[var(--text-primary)]">
                       {getValues('email')}
                     </span>
                   </p>
-                  <p className="text-body-muted mb-6">
+                  <p className="text-xs text-[var(--text-muted)] mb-6">
                     Didn&apos;t receive the email? Check your spam folder or{' '}
                     <button
+                      type="button"
                       onClick={() => {
                         setIsSubmitted(false);
                         setIsSsoUser(false);
@@ -159,27 +177,43 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center bg-[var(--bg-main)] py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full">
+    <div className="auth-shell fade-slide-up">
+      <div className="auth-shell-grid auth-shell-narrow fade-slide-up">
         {/* Logo and Title */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-6 fade-slide-up auth-delay-20">
           <div
-            className="inline-flex items-center justify-center w-16 h-16 bg-accent-100 dark:bg-accent-500/10 text-accent-600 dark:text-accent-400 rounded-lg mb-4">
-            <Building2 className="w-8 h-8"/>
+            className="inline-flex items-center justify-center w-14 h-14 rounded-lg mb-3"
+          >
+            <Image
+              src="/images/nulogic-logo.svg"
+              alt="NULogic"
+              width={112}
+              height={32}
+              className="h-5 w-auto object-contain dark:hidden"
+              priority
+            />
+            <Image
+              src="/images/nulogic-logo-white.svg"
+              alt="NULogic"
+              width={112}
+              height={32}
+              className="h-5 w-auto object-contain hidden dark:block"
+              priority
+            />
           </div>
-          <h1 className="text-xl font-bold">
-            NU-AURA
-          </h1>
-          <p className="mt-2 text-body-secondary">
-            Reset your password
+          <h1 className="text-lg font-semibold">NU-AURA</h1>
+          <p className="mt-1 text-xs text-[var(--text-muted)] uppercase tracking-[0.12em]">
+            Password recovery
+          </p>
+          <p className="mt-1 text-sm text-[var(--text-secondary)]">
+            Account recovery
           </p>
         </div>
 
         {/* Forgot Password Card */}
-        <Card className="card-elevated">
+        <Card className="auth-shell-card fade-slide-up auth-delay-40 float-subtle">
           <CardHeader className="pb-4">
-            <CardTitle className="text-xl">Forgot Password</CardTitle>
+            <CardTitle className="text-lg">Forgot Password</CardTitle>
             <CardDescription>
               Enter your email address and we&apos;ll send you a link to reset your password.
             </CardDescription>
@@ -189,7 +223,7 @@ export default function ForgotPasswordPage() {
               {/* Error Alert */}
               {error && (
                 <div
-                  className="flex items-start gap-4 p-4 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-xl">
+                  className="auth-error-banner flex items-start gap-2 p-4">
                   <AlertCircle className="w-5 h-5 text-danger-600 dark:text-danger-400 flex-shrink-0 mt-0.5"/>
                   <div className="flex-1">
                     <p className="text-sm text-danger-700 dark:text-danger-400">
@@ -200,7 +234,7 @@ export default function ForgotPasswordPage() {
               )}
 
               {/* Email Input */}
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 <label htmlFor="forgot-password-email" className="block text-sm font-medium text-[var(--text-secondary)]">
                   Email Address
                 </label>
@@ -231,7 +265,7 @@ export default function ForgotPasswordPage() {
               <Button
                 type="submit"
                 variant="primary"
-                className="btn-primary w-full py-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                className="w-full"
                 isLoading={isLoading}
                 disabled={isLoading}
               >
@@ -253,7 +287,7 @@ export default function ForgotPasswordPage() {
         </Card>
 
         {/* Footer */}
-        <p className="mt-6 text-center text-caption">
+        <p className="mt-5 text-center text-xs text-[var(--text-muted)]">
           NU-AURA v1.0 &copy; {new Date().getFullYear()}
         </p>
       </div>

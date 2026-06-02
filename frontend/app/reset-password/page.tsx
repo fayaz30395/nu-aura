@@ -55,35 +55,34 @@ function ResetPasswordForm() {
   // No token in URL -- invalid link
   if (!token) {
     return (
-      <div
-        className="min-h-screen flex items-center justify-center bg-gradient-to-br from-accent-50 via-surface-50 to-surface-100 dark:from-surface-950 dark:via-surface-900 dark:to-surface-950 py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-md w-full">
-          <div className="text-center mb-8">
+      <div className="auth-shell fade-slide-up">
+        <div className="auth-shell-grid auth-shell-narrow fade-slide-up">
+          <div className="text-center mb-6">
             <div
-              className="inline-flex items-center justify-center w-16 h-16 bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-400 rounded-lg mb-4">
+              className="inline-flex items-center justify-center w-14 h-14 bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-400 rounded-lg mb-3">
               <Building2 className="w-8 h-8"/>
             </div>
-            <h1 className="text-xl font-bold">NU-AURA</h1>
+            <h1 className="text-lg font-semibold">NU-AURA</h1>
           </div>
-          <Card className="bg-[var(--bg-card)] border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
+          <Card className="auth-shell-card fade-slide-up auth-delay-40 float-subtle">
             <CardContent className="pt-8 pb-8 text-center">
               <div
                 className="inline-flex items-center justify-center w-16 h-16 bg-danger-100 dark:bg-danger-900/30 rounded-full mb-4">
                 <AlertCircle className="w-8 h-8 text-danger-600 dark:text-danger-400"/>
               </div>
-              <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
+              <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
                 Invalid Reset Link
               </h2>
-              <p className="text-[var(--text-secondary)] mb-6">
+              <p className="text-sm text-[var(--text-secondary)] mb-6">
                 This password reset link is invalid or missing a token. Please request a new reset link.
               </p>
               <Link href="/auth/forgot-password">
-                <Button variant="primary" className="w-full mb-4">
+                <Button variant="primary" className="w-full">
                   Request New Reset Link
                 </Button>
               </Link>
               <Link href="/auth/login">
-                <Button variant="outline" className="w-full">
+                <Button variant="outline" className="w-full mt-3">
                   <ArrowLeft className="w-4 h-4 mr-2"/>
                   Back to Sign In
                 </Button>
@@ -98,26 +97,25 @@ function ResetPasswordForm() {
   // Success state
   if (isSuccess) {
     return (
-      <div
-        className="min-h-screen flex items-center justify-center bg-gradient-to-br from-accent-50 via-surface-50 to-surface-100 dark:from-surface-950 dark:via-surface-900 dark:to-surface-950 py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-md w-full">
-          <div className="text-center mb-8">
+      <div className="auth-shell fade-slide-up">
+        <div className="auth-shell-grid auth-shell-narrow fade-slide-up">
+          <div className="text-center mb-6">
             <div
-              className="inline-flex items-center justify-center w-16 h-16 bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-400 rounded-lg mb-4">
+              className="inline-flex items-center justify-center w-14 h-14 bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-400 rounded-lg mb-3">
               <Building2 className="w-8 h-8"/>
             </div>
-            <h1 className="text-xl font-bold">NU-AURA</h1>
+            <h1 className="text-lg font-semibold">NU-AURA</h1>
           </div>
-          <Card className="bg-[var(--bg-card)] border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
+          <Card className="auth-shell-card fade-slide-up auth-delay-40 float-subtle">
             <CardContent className="pt-8 pb-8 text-center">
               <div
                 className="inline-flex items-center justify-center w-16 h-16 bg-success-100 dark:bg-success-900/30 rounded-full mb-4">
                 <CheckCircle className="w-8 h-8 text-success-600 dark:text-success-400"/>
               </div>
-              <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
+              <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
                 Password Reset Successfully
               </h2>
-              <p className="text-[var(--text-secondary)] mb-6">
+              <p className="text-sm text-[var(--text-secondary)] mb-6">
                 Your password has been updated. You can now sign in with your new password.
               </p>
               <Button
@@ -158,36 +156,35 @@ function ResetPasswordForm() {
   };
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center bg-gradient-to-br from-accent-50 via-surface-50 to-surface-100 dark:from-surface-950 dark:via-surface-900 dark:to-surface-950 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full">
+    <div className="auth-shell fade-slide-up">
+      <div className="auth-shell-grid auth-shell-narrow fade-slide-up">
         {/* Logo and Title */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-6">
           <div
-            className="inline-flex items-center justify-center w-16 h-16 bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-400 rounded-lg mb-4">
+            className="inline-flex items-center justify-center w-14 h-14 bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-400 rounded-lg mb-3">
             <Building2 className="w-8 h-8"/>
           </div>
-          <h1 className="text-xl font-bold">NU-AURA</h1>
-          <p className="mt-2 text-body-secondary">
+          <h1 className="text-lg font-semibold">NU-AURA</h1>
+          <p className="mt-1 text-sm text-[var(--text-secondary)]">
             Create your new password
           </p>
         </div>
 
         {/* Reset Password Card */}
-        <Card className="skeuo-card bg-[var(--bg-card)] border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
+          <Card className="auth-shell-card fade-slide-up auth-delay-40 float-subtle">
           <CardHeader className="pb-4">
-            <CardTitle className="text-xl">Reset Password</CardTitle>
+            <CardTitle className="text-lg">Reset Password</CardTitle>
             <CardDescription>
               Enter your new password below. It must be at least 12 characters with uppercase, lowercase, digit, and
               special character.
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               {/* Error Alert */}
               {error && (
                 <div
-                  className="flex items-start gap-4 p-4 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-xl">
+                  className="auth-error-banner flex items-start gap-2 p-4">
                   <AlertCircle className="w-5 h-5 text-danger-600 dark:text-danger-400 flex-shrink-0 mt-0.5"/>
                   <div className="flex-1">
                     <p className="text-sm text-danger-700 dark:text-danger-400">{error}</p>
@@ -210,7 +207,7 @@ function ResetPasswordForm() {
                     autoComplete="new-password"
                     disabled={isLoading}
                     placeholder="Enter new password"
-                    className={`input-aura block w-full pl-10 pr-12 py-2 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all ${
+                    className={`input-aura block w-full pl-10 pr-12 ${
                       errors.newPassword
                         ? 'border-danger-500 dark:border-danger-500'
                         : 'border-[var(--border-main)]'
@@ -252,7 +249,7 @@ function ResetPasswordForm() {
                     autoComplete="new-password"
                     disabled={isLoading}
                     placeholder="Confirm new password"
-                    className={`input-aura block w-full pl-10 pr-12 py-2 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all ${
+                    className={`input-aura block w-full pl-10 pr-12 ${
                       errors.confirmPassword
                         ? 'border-danger-500 dark:border-danger-500'
                         : 'border-[var(--border-main)]'
@@ -280,7 +277,7 @@ function ResetPasswordForm() {
               </div>
 
               {/* Password Requirements */}
-              <div className="text-caption space-y-1 bg-[var(--bg-secondary)] p-4 rounded-lg">
+              <div className="text-caption space-y-1 bg-[var(--bg-surface)] p-4 rounded-lg">
                 <p className="font-medium text-[var(--text-secondary)]">Password requirements:</p>
                 <ul className="list-disc list-inside space-y-0.5">
                   <li>At least 12 characters</li>
@@ -295,7 +292,7 @@ function ResetPasswordForm() {
               <Button
                 type="submit"
                 variant="primary"
-                className="btn-primary w-full py-2"
+                className="w-full"
                 isLoading={isLoading}
                 disabled={isLoading}
               >
@@ -338,9 +335,8 @@ export default function ResetPasswordPage() {
   return (
     <Suspense
       fallback={
-        <div
-          className="min-h-screen flex items-center justify-center bg-gradient-to-br from-accent-50 via-surface-50 to-surface-100 dark:from-surface-950 dark:via-surface-900 dark:to-surface-950">
-          <div className="w-full max-w-md p-8 space-y-6">
+        <div className="auth-loading-shell fade-slide-up">
+          <div className="auth-loading-card w-full max-w-md fade-slide-up auth-delay-20 float-subtle">
             <div className="skeleton-aura h-10 w-48 rounded mx-auto"/>
             <div className="skeleton-aura h-4 w-64 rounded mx-auto"/>
             <div className="space-y-4">

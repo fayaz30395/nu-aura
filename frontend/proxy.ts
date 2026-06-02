@@ -20,6 +20,8 @@ const ACCESS_TOKEN_COOKIE = 'access_token';
 // Public routes that don't require authentication
 const PUBLIC_ROUTES = [
   '/auth/login',
+  '/auth/signup',
+  '/auth/reset-password',
   '/auth/forgot-password',
   '/reset-password',
   '/',

@@ -22,13 +22,13 @@ export default function ManagerError({error, reset}: ErrorProps) {
   const userMessage = getUserMessage(category, error.message);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-surface-50 dark:bg-surface-950 p-4">
+    <div className="page-shell-centered fade-slide-up">
       <motion.div
         initial={{opacity: 0, y: 20}}
         animate={{opacity: 1, y: 0}}
         transition={{duration: 0.25, ease: 'easeOut'}}
       >
-        <Card className="w-full max-w-md bg-[var(--bg-card)]">
+        <Card className="page-shell-card float-subtle fade-slide-up">
           <CardHeader className="text-center">
             <div
               className="mx-auto mb-4 h-12 w-12 rounded-full bg-danger-100 dark:bg-danger-900/30 flex items-center justify-center">

@@ -19,10 +19,10 @@ import dynamic from 'next/dynamic';
 
 const AdminLayoutInner = dynamic(
   () => import('./AdminLayoutInner'),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="flex h-screen items-center justify-center bg-[var(--bg-page)]">
+      {
+        ssr: false,
+        loading: () => (
+      <div className="flex min-h-[100dvh] items-center justify-center bg-[var(--bg-page)]">
         <div
           className="h-12 w-12 rounded-full border-4 border-[var(--border-subtle)] border-t-accent-700 animate-spin"/>
       </div>

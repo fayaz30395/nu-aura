@@ -12,7 +12,7 @@ export function PageErrorFallback({
                                     onReset,
                                   }: PageErrorFallbackProps) {
   return (
-    <div className="flex flex-col items-center justify-center flex-1 p-12 text-center">
+    <div className="page-shell-card float-subtle w-full max-w-xl p-6 sm:p-8 mx-auto flex flex-col items-center justify-center text-center fade-slide-up auth-delay-20">
       <div className="w-16 h-16 rounded-full bg-danger-100 dark:bg-danger-900/20 flex items-center justify-center mb-4">
         <svg className="w-8 h-8 text-danger-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path

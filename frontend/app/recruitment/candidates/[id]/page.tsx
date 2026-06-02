@@ -27,7 +27,7 @@ export default function CandidateDetailPage() {
   if (isLoading) {
     return (
       <AppLayout activeMenuItem="recruitment">
-        <div className="min-h-screen flex items-center justify-center">
+        <div className="page-shell-centered fade-slide-up auth-delay-20">
           <div className="text-center">
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-accent-700"/>
             <p className="mt-4 text-[var(--text-secondary)]">Loading candidate details...</p>

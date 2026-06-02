@@ -294,7 +294,7 @@ function KanbanColumn({
             {...provided.droppableProps}
             style={{
               minHeight: 80,
-              maxHeight: 'calc(100vh - 240px)',
+              maxHeight: 'calc(100dvh - 240px)',
               overflowY: 'auto',
               background: snapshot.isDraggingOver
                 ? 'var(--bg-secondary)'

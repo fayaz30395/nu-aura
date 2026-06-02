@@ -46,14 +46,19 @@ export default function RootLayout({
       <script dangerouslySetInnerHTML={{__html: getThemeScript()}}/>
       <ColorSchemeScript defaultColorScheme="dark"/>
     </head>
-    <body className={`${uiTypeface.variable} ${monoTypeface.variable} font-sans overflow-x-hidden`}>
+    <body
+      className={`${uiTypeface.variable} ${monoTypeface.variable} font-sans overflow-x-hidden antialiased bg-[var(--bg-page)] text-[var(--text-primary)]`}>
     <a
       href="#main-content"
       className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:px-3 focus:py-2 focus:bg-accent-600 focus:text-white focus:rounded"
     >
       Skip to content
     </a>
-    <Providers>{children}</Providers>
+    <Providers>
+      <div id="main-content" className="relative">
+        {children}
+      </div>
+    </Providers>
     </body>
     </html>
   );

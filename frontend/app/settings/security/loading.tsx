@@ -8,7 +8,7 @@ import {Card, Container, Group, Skeleton, Stack} from '@mantine/core';
  */
 export default function SecuritySettingsLoading() {
   return (
-    <Container size="md" py="xl">
+    <Container size="md" py="xl" className="page-shell-centered fade-slide-up auth-delay-20">
       <Stack gap="xl">
         {/* Header */}
         <div>

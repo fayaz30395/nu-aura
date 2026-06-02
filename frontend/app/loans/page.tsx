@@ -82,7 +82,7 @@ export default function LoansPage() {
   if (error) {
     return (
       <AppLayout activeMenuItem="loans">
-        <div className="flex items-center justify-center h-[calc(100vh-200px)]">
+        <div className="flex items-center justify-center h-[calc(100dvh-200px)]">
           <div className="flex flex-col items-center gap-4">
             <AlertCircle className="h-8 w-8 text-danger-500"/>
             <p className="text-[var(--text-secondary)]">{error}</p>

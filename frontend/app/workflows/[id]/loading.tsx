@@ -4,7 +4,7 @@ import {Skeleton} from '@mantine/core';
 
 export default function WorkflowDetailLoading() {
   return (
-    <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
+    <div className="page-shell-centered fade-slide-up auth-delay-20 p-4 sm:p-6 space-y-4 sm:space-y-6">
       {/* Header skeleton */}
       <div className="flex items-center gap-4">
         <Skeleton height={32} width={32} circle/>

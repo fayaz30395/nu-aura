@@ -124,7 +124,7 @@ export default function NewTravelRequestPage() {
   if (!hasHydrated || !isAuthenticated || !isReady || !hasAccess) {
     return (
       <AppLayout activeMenuItem="travel">
-        <div className="flex items-center justify-center h-[calc(100vh-200px)]">
+        <div className="flex items-center justify-center h-[calc(100dvh-200px)]">
           <Loader2 className="h-8 w-8 animate-spin text-accent-500"/>
         </div>
       </AppLayout>

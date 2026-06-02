@@ -95,10 +95,64 @@ export default function SignupPage() {
 
   if (isSuccess) {
     return (
-      <div
-        className="min-h-screen flex items-center justify-center bg-gradient-to-br from-accent-50 via-[var(--bg-surface)] to-accent-50 dark:from-surface-950 dark:via-surface-900 dark:to-accent-950/30 py-12 px-4">
-        <div className="max-w-md w-full">
-          <div className="text-center mb-8">
+      <div className="auth-shell fade-slide-up">
+        <div className="auth-shell-grid auth-shell-narrow fade-slide-up">
+          <div className="text-center mb-8 fade-slide-up auth-delay-20">
+            <Image
+              src="/images/nulogic-logo.svg"
+              alt="NULogic"
+              width={200}
+              height={60}
+              className="h-16 w-auto object-contain mx-auto dark:hidden"
+              priority
+            />
+            <Image
+              src="/images/nulogic-logo-white.svg"
+              alt="NULogic"
+              width={200}
+              height={60}
+              className="h-16 w-auto object-contain mx-auto hidden dark:block"
+              priority
+            />
+            <p className="mt-3 text-xs uppercase tracking-[0.12em] text-[var(--text-muted)]">
+              Tenant onboarding
+            </p>
+          </div>
+          <Card className="auth-shell-card fade-slide-up auth-delay-40 float-subtle">
+            <CardContent className="pt-8 pb-8 text-center space-y-4">
+              <div className="flex justify-center">
+                <div
+                  className="w-12 h-12 rounded-full bg-success-100 dark:bg-success-900/30 flex items-center justify-center"
+                >
+                  <CheckCircle2 className="w-6 h-6 text-success-600 dark:text-success-400"/>
+                </div>
+              </div>
+              <h2 className="text-lg font-semibold text-[var(--text-primary)]">
+                Account Created Successfully
+              </h2>
+              <p className="text-sm text-[var(--text-secondary)]">
+                Your organisation has been set up. Sign in with your admin credentials to get started.
+              </p>
+              <Button
+                variant="primary"
+                className="w-full mt-4"
+                onClick={() => router.push('/auth/login')}
+              >
+                Sign In to Your Account
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="auth-shell fade-slide-up">
+      <div className="auth-shell-grid fade-slide-up">
+        {/* Logo */}
+        <div className="text-center mb-8 fade-slide-up auth-delay-20">
+          <div className="inline-flex items-center justify-center mb-4">
             <Image
               src="/images/nulogic-logo.svg"
               alt="NULogic"
@@ -116,61 +170,19 @@ export default function SignupPage() {
               priority
             />
           </div>
-          <Card
-            className="bg-[var(--bg-card)] border-[var(--border-main)]/80 dark:border-[var(--border-main)]/80 shadow-soft-lg">
-            <CardContent className="pt-8 pb-8 text-center space-y-4">
-              <div className="flex justify-center">
-                <div
-                  className="w-16 h-16 rounded-full bg-success-100 dark:bg-success-900/30 flex items-center justify-center">
-                  <CheckCircle2 className="w-8 h-8 text-success-600 dark:text-success-400"/>
-                </div>
-              </div>
-              <h2 className="text-xl font-semibold text-[var(--text-primary)]">
-                Account Created Successfully
-              </h2>
-              <p className="text-body-secondary">
-                Your organisation has been set up. Sign in with your admin credentials to get started.
-              </p>
-              <Button
-                variant="primary"
-                className="w-full py-2 mt-4"
-                onClick={() => router.push('/auth/login')}
-              >
-                Sign In to Your Account
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div
-      className="min-h-screen flex items-center justify-center bg-gradient-to-br from-accent-50 via-[var(--bg-surface)] to-accent-50 dark:from-surface-950 dark:via-surface-900 dark:to-accent-950/30 py-12 px-4 sm:px-6 lg:px-8 pattern-dots">
-      <div className="max-w-lg w-full">
-        {/* Logo */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center mb-4">
-            <Image
-              src="/images/nulogic-logo.svg"
-              alt="NULogic"
-              width={200}
-              height={60}
-              className="h-16 w-auto object-contain dark:brightness-110"
-              priority
-            />
-          </div>
-          <p className="mt-2 text-body-secondary">
+          <p className="mt-3 text-xs uppercase tracking-[0.12em] text-[var(--text-muted)]">
+            2-minute setup
+          </p>
+          <p className="mt-1 text-sm text-[var(--text-secondary)]">
             Set up your organisation in minutes
           </p>
         </div>
 
         {/* Signup Card */}
         <Card
-          className="skeuo-card bg-[var(--bg-card)] border-[var(--border-main)]/80 dark:border-[var(--border-main)]/80 shadow-soft-lg">
+          className="auth-shell-card fade-slide-up auth-delay-40 float-subtle">
           <CardHeader className="pb-4">
-            <CardTitle className="text-xl">Create your account</CardTitle>
+            <CardTitle className="text-lg">Create your account</CardTitle>
             <CardDescription>Start your free trial. No credit card required.</CardDescription>
           </CardHeader>
           <CardContent>
@@ -178,7 +190,7 @@ export default function SignupPage() {
               {/* Error */}
               {error && (
                 <div
-                  className="flex items-start gap-4 p-4 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-xl">
+                  className="auth-error-banner flex items-start gap-2 p-4">
                   <AlertCircle className="w-5 h-5 text-danger-600 dark:text-danger-400 flex-shrink-0 mt-0.5"/>
                   <p className="text-sm text-danger-700 dark:text-danger-400">{error}</p>
                 </div>
@@ -338,12 +350,13 @@ export default function SignupPage() {
                           : 'border-[var(--border-main)]'
                       }`}
                     />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute inset-y-0 right-0 pr-4 flex items-center text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] transition-colors"
-                      tabIndex={-1}
-                    >
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? 'Hide password text' : 'Show password text'}
+                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] transition-colors"
+                  tabIndex={-1}
+                >
                       {showPassword ? <EyeOff className="h-5 w-5"/> : <Eye className="h-5 w-5"/>}
                     </button>
                   </div>
@@ -357,7 +370,7 @@ export default function SignupPage() {
               <Button
                 type="submit"
                 variant="primary"
-                className="btn-primary w-full py-2 mt-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                className="w-full mt-2"
                 isLoading={isLoading}
                 disabled={isLoading}
               >
@@ -378,7 +391,7 @@ export default function SignupPage() {
           </CardContent>
         </Card>
 
-        <p className="mt-6 text-center text-body-secondary">
+        <p className="mt-5 text-center text-xs text-[var(--text-muted)]">
           Already have an account?{' '}
           <Link
             href="/auth/login"

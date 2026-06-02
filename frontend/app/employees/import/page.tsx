@@ -175,7 +175,7 @@ export default function EmployeeImportPage() {
 
   return (
     <AppLayout activeMenuItem="employees">
-      <div className="min-h-screen bg-[var(--bg-secondary)]">
+      <div className="page-shell-centered fade-slide-up auth-delay-20">
         <div className="max-w-6xl mx-auto px-4 py-8">
           {/* Header */}
           <div className="mb-8">

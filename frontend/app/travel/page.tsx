@@ -88,7 +88,7 @@ export default function TravelPage() {
   if (isLoading && travelRequests.length === 0) {
     return (
       <AppLayout activeMenuItem="travel">
-        <div className="flex items-center justify-center h-[calc(100vh-200px)]">
+        <div className="flex items-center justify-center h-[calc(100dvh-200px)]">
           <div className="flex flex-col items-center gap-4">
             <Loader2 className="h-8 w-8 animate-spin text-accent-500"/>
             <p className="text-[var(--text-secondary)]">Loading travel requests...</p>

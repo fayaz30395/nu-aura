@@ -234,9 +234,8 @@ export default function SignPage() {
 
   if (isLoading) {
     return (
-      <div
-        className="min-h-screen bg-gradient-to-br from-[var(--bg-main)] to-[var(--bg-surface)] flex items-center justify-center">
-        <div className="text-center">
+      <div className="auth-loading-shell fade-slide-up">
+        <div className="auth-loading-card w-full max-w-md fade-slide-up auth-delay-20 float-subtle text-center">
           <Loader2 className="h-10 w-10 text-accent-600 animate-spin mx-auto mb-4"/>
           <p className="text-[var(--text-secondary)] text-sm">Loading document information...</p>
         </div>
@@ -246,9 +245,8 @@ export default function SignPage() {
 
   if (error) {
     return (
-      <div
-        className="min-h-screen bg-gradient-to-br from-[var(--bg-main)] to-[var(--bg-surface)] flex items-center justify-center px-4">
-        <div className="max-w-md w-full skeuo-card p-8 text-center">
+      <div className="auth-shell fade-slide-up">
+        <div className="w-full max-w-md auth-shell-card fade-slide-up auth-delay-40 float-subtle p-8 text-center">
           <XCircle className="h-14 w-14 text-danger-500 mx-auto mb-4"/>
           <h1 className="text-xl font-semibold text-[var(--text-primary)] mb-2">Link Invalid or
             Expired</h1>
@@ -267,9 +265,8 @@ export default function SignPage() {
     const isSignedStatus = docInfo?.status === 'SIGNED';
     const isDeclinedStatus = docInfo?.status === 'DECLINED';
     return (
-      <div
-        className="min-h-screen bg-gradient-to-br from-[var(--bg-main)] to-[var(--bg-surface)] flex items-center justify-center px-4">
-        <div className="max-w-md w-full skeuo-card p-8 text-center">
+      <div className="auth-shell fade-slide-up">
+        <div className="w-full max-w-md auth-shell-card fade-slide-up auth-delay-40 float-subtle p-8 text-center">
           {isSignedStatus ? (
             <CheckCircle className="h-14 w-14 text-success-500 mx-auto mb-4"/>
           ) : isDeclinedStatus ? (
@@ -303,9 +300,8 @@ export default function SignPage() {
 
   if (step === 'success') {
     return (
-      <div
-        className="min-h-screen bg-gradient-to-br from-[var(--bg-main)] to-[var(--bg-surface)] flex items-center justify-center px-4">
-        <div className="max-w-md w-full skeuo-card p-8 text-center">
+      <div className="auth-shell fade-slide-up">
+        <div className="w-full max-w-md auth-shell-card fade-slide-up auth-delay-40 float-subtle p-8 text-center">
           <CheckCircle className="h-16 w-16 text-success-500 mx-auto mb-4"/>
           <h1 className="text-2xl font-semibold text-[var(--text-primary)] mb-2">
             Document Signed Successfully
@@ -348,9 +344,8 @@ export default function SignPage() {
 
   if (step === 'declined') {
     return (
-      <div
-        className="min-h-screen bg-gradient-to-br from-[var(--bg-main)] to-[var(--bg-surface)] flex items-center justify-center px-4">
-        <div className="max-w-md w-full skeuo-card p-8 text-center">
+      <div className="auth-shell fade-slide-up">
+        <div className="w-full max-w-md auth-shell-card fade-slide-up auth-delay-40 float-subtle p-8 text-center">
           <XCircle className="h-16 w-16 text-danger-400 mx-auto mb-4"/>
           <h1 className="text-2xl font-semibold text-[var(--text-primary)] mb-2">
             Signing Request Declined
@@ -370,10 +365,11 @@ export default function SignPage() {
 
   // Main flow: verify and sign steps
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[var(--bg-main)] to-[var(--bg-surface)]">
+    <div className="auth-shell fade-slide-up">
+      <div className="w-full max-w-2xl px-4 py-8 space-y-6">
       {/* Header */}
-      <div className="bg-[var(--bg-card)] divider-b shadow-[var(--shadow-card)]">
-        <div className="max-w-2xl mx-auto px-4 py-4 flex items-center gap-4">
+      <div className="rounded-2xl border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-4 shadow-[var(--shadow-card)]">
+        <div className="flex items-center gap-4">
           <div className="h-8 w-8 rounded-lg bg-accent-600 flex items-center justify-center">
             <FileText className="h-4 w-4 text-white"/>
           </div>
@@ -386,9 +382,8 @@ export default function SignPage() {
         </div>
       </div>
 
-      <div className="max-w-2xl mx-auto px-4 py-8 space-y-6">
         {/* Document Info Card */}
-        <div className="skeuo-card p-6">
+        <div className="auth-shell-card fade-slide-up auth-delay-40 float-subtle p-6">
           <div className="flex items-start gap-4">
             <div className="h-12 w-12 rounded-lg bg-accent-50 flex items-center justify-center flex-shrink-0">
               <FileText className="h-6 w-6 text-accent-600"/>
@@ -446,7 +441,7 @@ export default function SignPage() {
 
         {/* Step: Email Verification */}
         {step === 'verify' && (
-          <div className="skeuo-card p-6">
+          <div className="auth-shell-card fade-slide-up auth-delay-40 float-subtle p-6">
             <h2 className="text-base font-semibold text-[var(--text-primary)] mb-1">
               Verify Your Identity
             </h2>
@@ -498,7 +493,7 @@ export default function SignPage() {
 
         {/* Step: Signing */}
         {step === 'sign' && (
-          <div className="skeuo-card p-6 space-y-6">
+          <div className="auth-shell-card fade-slide-up auth-delay-40 float-subtle p-6 space-y-6">
             <div>
               <h2 className="text-base font-semibold text-[var(--text-primary)] mb-1">
                 Sign Document
@@ -557,8 +552,7 @@ export default function SignPage() {
                     ref={canvasRef}
                     width={560}
                     height={200}
-                    className="w-full rounded-lg border-2 border-dashed border-[var(--border-main)] bg-[var(--bg-card)] cursor-crosshair touch-none"
-                    style={{height: '200px'}}
+                    className="w-full h-[200px] rounded-lg border-2 border-dashed border-[var(--border-main)] bg-[var(--bg-card)] cursor-crosshair touch-none"
                     onMouseDown={handleMouseDown}
                     onMouseMove={handleMouseMove}
                     onMouseUp={handleMouseUp}
@@ -663,7 +657,7 @@ export default function SignPage() {
       {/* Decline Modal */}
       {showDeclineModal && (
         <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 px-4">
-          <div className="skeuo-card max-w-md w-full p-6">
+          <div className="auth-shell-card fade-slide-up auth-delay-40 float-subtle max-w-md w-full p-6">
             <h3 className="text-base font-semibold text-[var(--text-primary)] mb-1">
               Decline to Sign
             </h3>

@@ -340,7 +340,7 @@ export const FilePreviewModal = React.memo(function FilePreviewModal({
             </pre>
           </div>
         ) : file.mimeType.startsWith('image/') ? (
-          <div className="relative flex items-center justify-center w-full h-[calc(100vh-100px)]">
+          <div className="relative flex items-center justify-center w-full h-[calc(100dvh-100px)]">
             {previewImgError || !getPreviewUrl(file) ? (
               <iframe
                 src={`https://drive.google.com/file/d/${file.id}/preview`}

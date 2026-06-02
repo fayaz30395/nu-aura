@@ -89,7 +89,7 @@ export default function LoanDetailPage() {
   if (isLoading) {
     return (
       <AppLayout activeMenuItem="loans">
-        <div className="flex items-center justify-center h-[calc(100vh-200px)]">
+        <div className="flex items-center justify-center h-[calc(100dvh-200px)]">
           <div className="flex flex-col items-center gap-4">
             <Loader2 className="h-8 w-8 animate-spin text-accent-500"/>
             <p className="text-[var(--text-secondary)]">Loading loan details...</p>
@@ -106,7 +106,7 @@ export default function LoanDetailPage() {
   if (error || !loan) {
     return (
       <AppLayout activeMenuItem="loans">
-        <div className="flex items-center justify-center h-[calc(100vh-200px)]">
+        <div className="flex items-center justify-center h-[calc(100dvh-200px)]">
           <div className="flex flex-col items-center gap-4">
             <AlertCircle className="h-12 w-12 text-danger-500"/>
             <p className="text-[var(--text-secondary)]">

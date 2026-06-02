@@ -12,7 +12,9 @@ export default function AgencyDetailError({
 }) {
   return (
     <AppLayout>
-      <PageErrorFallback title="Agency Detail Error" error={error} onReset={reset}/>
+      <div className="page-shell-centered fade-slide-up auth-delay-20">
+        <PageErrorFallback title="Agency Detail Error" error={error} onReset={reset}/>
+      </div>
     </AppLayout>
   );
 }

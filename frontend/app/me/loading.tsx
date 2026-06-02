@@ -4,7 +4,7 @@ import {Skeleton} from '@mantine/core';
 
 export default function MeLoading() {
   return (
-    <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
+    <div className="page-shell-centered fade-slide-up auth-delay-20 p-4 sm:p-6 space-y-4 sm:space-y-6">
       {/* Profile header skeleton */}
       <div className="bg-[var(--bg-card)] rounded-lg border border-surface-200 dark:border-surface-800 p-4 sm:p-6">
         <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">

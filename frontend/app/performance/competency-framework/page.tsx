@@ -433,7 +433,7 @@ export default function CompetencyFrameworkPage() {
           />
         }
       >
-        <div className="min-h-screen bg-[var(--bg-secondary)]">
+        <div className="page-shell-centered fade-slide-up auth-delay-20">
           <div className="max-w-5xl mx-auto p-6 space-y-6">
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">

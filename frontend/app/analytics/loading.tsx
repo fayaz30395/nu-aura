@@ -1,7 +1,7 @@
 // Instant loading skeleton for analytics page (shown while JS chunk loads)
 export default function AnalyticsLoading() {
   return (
-    <div className="p-6 space-y-6 animate-pulse">
+    <div className="page-shell-centered fade-slide-up auth-delay-20 p-6 space-y-6 animate-pulse">
       {/* Header skeleton */}
       <div className="row-between">
         <div className="space-y-2">

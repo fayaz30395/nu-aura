@@ -331,7 +331,7 @@ export default function KekaImportPage() {
 
   return (
     <AdminPageContent>
-      <div className="min-h-screen bg-[var(--bg-secondary)]">
+      <div className="page-shell-centered fade-slide-up auth-delay-20">
         <div className="max-w-6xl mx-auto px-4 py-8">
           {/* Header */}
           <div className="mb-8">

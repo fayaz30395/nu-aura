@@ -120,7 +120,7 @@ export default function CourseDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="page-shell-centered fade-slide-up auth-delay-20">
         <div className="animate-spin h-8 w-8 border-4 border-accent-600 border-t-transparent rounded-full"/>
       </div>
     );
@@ -145,7 +145,7 @@ export default function CourseDetailPage() {
 
   return (
     <AppLayout>
-      <div className="min-h-screen bg-[var(--bg-secondary)] dark:bg-[var(--bg-primary)]">
+      <div className="page-shell-centered fade-slide-up auth-delay-20">
         {/* Hero */}
         <div className="bg-[var(--bg-sidebar)] text-white">
           <div className="max-w-5xl mx-auto px-6 py-8">

@@ -2,7 +2,7 @@ import {SimpleGrid, Skeleton, Stack} from '@mantine/core';
 
 export default function SystemDashboardLoading() {
   return (
-    <div className="p-6 space-y-6">
+    <div className="page-shell-centered fade-slide-up auth-delay-20 p-6 space-y-6">
       {/* Header */}
       <Stack gap="md">
         <Skeleton height={40} width="50%"/>

@@ -4,8 +4,8 @@ import {Skeleton} from '@mantine/core';
 
 export default function Loading() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-surface-50 dark:bg-surface-950 p-4">
-      <div className="w-full max-w-md space-y-6">
+    <div className="page-shell-centered auth-loading-shell fade-slide-up">
+      <div className="auth-loading-card w-full max-w-md space-y-6 fade-slide-up auth-delay-20 float-subtle">
         {/* Logo skeleton */}
         <div className="flex justify-center">
           <Skeleton height={48} width={48} radius="xl"/>
@@ -16,7 +16,7 @@ export default function Loading() {
         </div>
 
         {/* Form card skeleton */}
-        <div className="bg-[var(--bg-card)] rounded-lg border border-surface-200 dark:border-surface-800 p-6 space-y-4">
+        <div className="space-y-4">
           {Array.from({length: 3}).map((_, index) => (
             <div key={index} className="space-y-2">
               <Skeleton height={14} width="25%"/>

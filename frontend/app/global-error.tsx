@@ -37,7 +37,7 @@ export default function GlobalError({error, reset}: GlobalErrorProps) {
 
   const styles = {
     container: {
-      minHeight: '100vh',
+      minHeight: '100dvh',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -48,10 +48,10 @@ export default function GlobalError({error, reset}: GlobalErrorProps) {
     card: {
       maxWidth: '28rem',
       width: '100%',
-      backgroundColor: 'white',
+      backgroundColor: 'var(--bg-card)',
       borderRadius: '0.75rem',
       boxShadow: '0 10px 25px rgba(0, 0, 0, 0.08)',
-      padding: '2.5rem 2rem',
+      padding: '2rem',
       textAlign: 'center' as const,
     },
     iconWrapper: {
@@ -139,8 +139,8 @@ export default function GlobalError({error, reset}: GlobalErrorProps) {
       <title>Application Error</title>
     </head>
     <body style={{margin: 0, padding: 0}}>
-    <div style={styles.container}>
-      <div style={styles.card}>
+    <div className="page-shell-centered fade-slide-up" style={styles.container}>
+      <div className="page-shell-card fade-slide-up float-subtle auth-delay-20" style={styles.card}>
         <div style={styles.iconWrapper}>
           <svg
             style={{width: '1.75rem', height: '1.75rem'}}

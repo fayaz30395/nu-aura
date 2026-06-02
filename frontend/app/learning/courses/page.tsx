@@ -13,7 +13,7 @@ export default function CoursesRedirectPage() {
   }, [router]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[var(--bg-main)]">
+    <div className="page-shell-centered fade-slide-up auth-delay-20">
       <p className="text-[var(--text-muted)]">Redirecting to courses...</p>
     </div>
   );

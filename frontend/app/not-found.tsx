@@ -10,14 +10,14 @@ import {IconArrowLeft, IconHome, IconMapPin, IconSearch} from '@tabler/icons-rea
  */
 export default function NotFound() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[var(--bg-main)] px-4">
+    <div className="page-shell-centered fade-slide-up">
       {/* Subtle brand atmosphere */}
       <div
         className="fixed inset-0 pointer-events-none bg-[image:var(--bg-pattern)] bg-[length:var(--bg-pattern-size)]"
         aria-hidden="true"
       />
 
-      <div className="relative z-10 w-full max-w-md text-center">
+      <div className="page-shell-card relative z-10 p-8 text-center fade-slide-up">
         {/* 404 number — large, muted, brand tonal */}
         <p
           className="font-display text-[120px] sm:text-[160px] font-extrabold leading-none tracking-tight select-none text-accent-100 dark:text-accent-900/40"

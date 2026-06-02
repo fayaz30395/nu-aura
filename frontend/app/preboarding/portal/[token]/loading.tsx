@@ -4,7 +4,7 @@ import {Skeleton} from '@mantine/core';
 
 export default function Loading() {
   return (
-    <div className="p-4 sm:p-6 space-y-4 sm:space-y-6 max-w-4xl mx-auto">
+    <div className="page-shell-centered fade-slide-up auth-delay-20 p-4 sm:p-6 space-y-4 sm:space-y-6 max-w-4xl mx-auto">
       {/* Header skeleton */}
       <div className="space-y-2">
         <Skeleton height={24} width="40%"/>

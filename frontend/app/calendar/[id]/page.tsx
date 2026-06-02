@@ -69,7 +69,7 @@ export default function EventDetailPage() {
   if (isLoading) {
     return (
       <AppLayout activeMenuItem="calendar">
-        <div className="flex items-center justify-center h-[calc(100vh-200px)]">
+        <div className="flex items-center justify-center h-[calc(100dvh-200px)]">
           <div className="flex flex-col items-center gap-4">
             <Loader2
               className="h-8 w-8 animate-spin text-accent-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
@@ -87,7 +87,7 @@ export default function EventDetailPage() {
   if (error || !event) {
     return (
       <AppLayout activeMenuItem="calendar">
-        <div className="flex items-center justify-center h-[calc(100vh-200px)]">
+        <div className="flex items-center justify-center h-[calc(100dvh-200px)]">
           <div className="flex flex-col items-center gap-4">
             <AlertCircle
               className="h-12 w-12 text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>

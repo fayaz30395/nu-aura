@@ -98,7 +98,7 @@ export default function TimeEntryDetailPage() {
   if (isLoading) {
     return (
       <AppLayout activeMenuItem="time-tracking">
-        <div className="flex items-center justify-center h-[calc(100vh-200px)]">
+        <div className="flex items-center justify-center h-[calc(100dvh-200px)]">
           <div className="flex flex-col items-center gap-4">
             <Loader2 className="h-8 w-8 animate-spin text-accent-500"/>
             <p className="text-[var(--text-secondary)]">Loading time entry...</p>
@@ -111,7 +111,7 @@ export default function TimeEntryDetailPage() {
   if (error || !entry) {
     return (
       <AppLayout activeMenuItem="time-tracking">
-        <div className="flex items-center justify-center h-[calc(100vh-200px)]">
+        <div className="flex items-center justify-center h-[calc(100dvh-200px)]">
           <div className="flex flex-col items-center gap-4">
             <AlertCircle className="h-12 w-12 text-danger-500"/>
             <p className="text-[var(--text-secondary)]">

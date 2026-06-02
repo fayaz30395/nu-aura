@@ -376,7 +376,7 @@ export default function FeaturesPage() {
   const selectedModule = modules.find((m) => m.id === activeTab);
 
   return (
-    <div className="min-h-screen bg-[var(--bg-main)]">
+    <div className="page-shell-centered fade-slide-up auth-delay-20">
       {/* Header */}
       <header
         className="border-b border-[var(--border-main)] sticky top-0 z-50 bg-[var(--bg-elevated)] backdrop-blur-lg">

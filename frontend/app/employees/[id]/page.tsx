@@ -269,7 +269,7 @@ export default function EmployeeDetailPage() {
   if (loading) {
     return (
       <AppLayout activeMenuItem="employees">
-        <div className="min-h-screen bg-[var(--bg-secondary)] p-6">
+        <div className="page-shell-centered fade-slide-up auth-delay-20 p-6">
           <div className="max-w-7xl mx-auto">
             {/* Header skeleton */}
             <div className="mb-8 flex items-center space-x-4">
@@ -311,7 +311,7 @@ export default function EmployeeDetailPage() {
   if (error || !employee) {
     return (
       <AppLayout activeMenuItem="employees">
-        <div className="min-h-screen bg-[var(--bg-secondary)]">
+        <div className="page-shell-centered fade-slide-up auth-delay-20">
           <nav
             className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] shadow-[var(--shadow-card)] border-b border-[var(--border-main)]">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -347,7 +347,7 @@ export default function EmployeeDetailPage() {
   // ═══════════════════════════════════════════════════════════════════════
   return (
     <AppLayout activeMenuItem="employees">
-      <div className="min-h-screen bg-[var(--bg-secondary)]">
+      <div className="page-shell-centered fade-slide-up auth-delay-20">
         {/* ── HERO BANNER ──────────────────────────────────────────── */}
         <div
           className="relative bg-gradient-to-r from-surface-900 via-accent-950 to-surface-900 border-b border-[var(--border-main)]">

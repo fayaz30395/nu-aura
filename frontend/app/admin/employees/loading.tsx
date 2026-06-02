@@ -4,7 +4,7 @@ import {SkeletonTable} from '@/components/ui/Skeleton';
 
 export default function Loading() {
   return (
-    <div className="p-4 md:p-6 lg:p-8 space-y-6">
+    <div className="page-shell-centered fade-slide-up auth-delay-20 p-4 md:p-6 lg:p-8 space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="space-y-2">
           <div className="h-6 w-48 bg-surface-200 dark:bg-surface-800 rounded animate-pulse"/>

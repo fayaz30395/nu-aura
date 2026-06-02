@@ -361,7 +361,7 @@ export default function CoursePlayerPage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-[var(--bg-secondary)]">
+      <div className="page-shell-centered fade-slide-up auth-delay-20">
         <div className="text-center">
           <div
             className="animate-spin h-8 w-8 border-4 border-accent-600 border-t-transparent rounded-full mx-auto mb-4"/>
@@ -377,7 +377,7 @@ export default function CoursePlayerPage() {
 
   if (error || !course) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-[var(--bg-secondary)]">
+      <div className="page-shell-centered fade-slide-up auth-delay-20">
         <div className="text-center">
           <p className="text-danger-600 mb-4">{error || 'Course not found'}</p>
           <Link href="/learning" className="text-accent-600 hover:underline text-sm">
@@ -390,7 +390,7 @@ export default function CoursePlayerPage() {
 
   return (
     <AppLayout>
-      <div className="flex flex-col h-screen bg-[var(--bg-surface)] overflow-hidden">
+      <div className="flex flex-col min-h-[100dvh] bg-[var(--bg-surface)] overflow-hidden">
         {/* Top bar */}
         <div className="row-between px-4 py-2 bg-[var(--bg-card)] border-b border-[var(--border-main)] shrink-0 z-10">
           <div className="flex items-center gap-4">

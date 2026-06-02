@@ -168,7 +168,7 @@ export default function PreboardingPortalPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[var(--bg-secondary)] flex items-center justify-center">
+      <div className="page-shell-centered fade-slide-up auth-delay-20">
         <div className="animate-spin rounded-full h-8 w-8 border-2 border-accent-500 border-t-transparent"/>
       </div>
     );
@@ -176,7 +176,7 @@ export default function PreboardingPortalPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-[var(--bg-secondary)] flex items-center justify-center p-4">
+      <div className="page-shell-centered fade-slide-up auth-delay-20 p-4">
         <Card className="max-w-md w-full">
           <CardContent className="p-8 text-center">
             <AlertCircle className="h-12 w-12 text-danger-500 mx-auto mb-4"/>
@@ -199,7 +199,7 @@ export default function PreboardingPortalPage() {
 
   return (
     <div
-      className="min-h-screen bg-gradient-to-br from-accent-50 to-surface-100 dark:from-surface-900 dark:to-surface-800 py-8 px-4">
+      className="page-shell-centered fade-slide-up auth-delay-20 bg-gradient-to-br from-accent-50 to-surface-100 dark:from-surface-900 dark:to-surface-800 py-8 px-4">
       <div className="max-w-3xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">

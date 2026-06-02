@@ -290,7 +290,7 @@ export default function EditEmployeePage() {
   if (loading) {
     return (
       <AppLayout activeMenuItem="employees">
-        <div className="min-h-screen bg-[var(--bg-secondary)] flex items-center justify-center">
+        <div className="page-shell-centered fade-slide-up auth-delay-20">
           <div className="text-center">
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-accent-700"></div>
             <p className="mt-4 text-[var(--text-secondary)]">Loading employee details...</p>
@@ -303,7 +303,7 @@ export default function EditEmployeePage() {
   if (error && !employee) {
     return (
       <AppLayout activeMenuItem="employees">
-        <div className="min-h-screen bg-[var(--bg-secondary)]">
+        <div className="page-shell-centered fade-slide-up auth-delay-20">
           <nav
             className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] shadow-[var(--shadow-card)] border-b border-[var(--border-main)]">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -336,7 +336,7 @@ export default function EditEmployeePage() {
 
   return (
     <AppLayout activeMenuItem="employees">
-      <div className="min-h-screen bg-[var(--bg-secondary)]">
+      <div className="page-shell-centered fade-slide-up auth-delay-20">
         {/* Navigation Bar */}
         <nav
           className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] shadow-[var(--shadow-card)] border-b border-[var(--border-main)]">

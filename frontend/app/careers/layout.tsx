@@ -18,7 +18,7 @@ export default function CareersLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-[var(--bg-card)]">
+    <div className="min-h-[100dvh] bg-[var(--bg-card)]">
       {/* Public Navbar */}
       <header
         className="sticky top-0 z-50 bg-[var(--bg-card)] border-b border-[var(--border-main)] shadow-[var(--shadow-card)]">

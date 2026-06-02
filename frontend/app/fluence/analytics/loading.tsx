@@ -2,7 +2,9 @@ import {card, layout} from '@/lib/theme/design-system';
 
 export default function AnalyticsLoading() {
   return (
-    <div className={`${layout.pagePadding} ${layout.sectionGap}`}>
+    <div
+      className={`page-shell-centered fade-slide-up auth-delay-20 ${layout.pagePadding} ${layout.sectionGap}`}
+    >
       {/* Header skeleton */}
       <div className="mb-6">
         <div className="flex items-start gap-4">

@@ -94,12 +94,12 @@ const Header: React.FC<HeaderProps> = ({
       role="banner"
       className={cn(
         'sticky top-0 z-40 flex-shrink-0 border-b border-header-border',
-        'h-14 md:h-16 transition-all duration-250 page-reveal',
+        'h-14 md:h-14 transition-all duration-250 page-reveal',
         'bg-[var(--bg-surface)]/95 backdrop-blur-sm will-change-transform',
         className
       )}
     >
-      <div className="row-between h-full px-4 sm:px-6 md:px-8">
+      <div className="row-between h-full px-3 sm:px-4 md:px-5">
         {/* Left Side */}
         <div className="flex items-center gap-2 sm:gap-4">
           {/* Mobile hamburger */}
@@ -192,7 +192,7 @@ const Header: React.FC<HeaderProps> = ({
               <span
                 className={cn(
                   'pointer-events-none absolute -bottom-1.5 -right-1.5 h-1.5 w-1.5 rounded-full transition-opacity duration-300',
-                  isWebSocketConnected ? 'bg-[var(--status-success-text)] opacity-90' : 'bg-transparent opacity-0'
+                  isWebSocketConnected ? 'bg-emerald-400 opacity-90' : 'bg-transparent opacity-0'
                 )}
               />
             </button>
@@ -204,7 +204,7 @@ const Header: React.FC<HeaderProps> = ({
           </div>
 
           {/* Divider */}
-          <div className="hidden sm:block w-px h-8 mx-2 bg-[var(--header-divider)]"/>
+          <div className="hidden sm:block w-px h-8 mx-2" style={{backgroundColor: 'var(--header-divider)'}}/>
 
           {/* User Dropdown */}
           <UserMenu
@@ -227,7 +227,7 @@ const Header: React.FC<HeaderProps> = ({
           <div className="absolute inset-0 bg-[var(--bg-overlay)] cursor-pointer"
                onClick={() => setIsMobileSearchOpen(false)}/>
           <div
-            className="absolute inset-x-0 top-0 z-10 animate-slide-in-up border-b border-[var(--border-main)] p-4 bg-[var(--bg-surface)]/95 shadow-[var(--shadow-dropdown)] rounded-b-2xl backdrop-blur-md">
+            className="absolute inset-x-0 top-0 z-10 animate-slide-in-up border-b border-[var(--border-main)] px-4 py-2 bg-[var(--bg-surface)]/95 shadow-[var(--shadow-dropdown)] rounded-b-2xl backdrop-blur-md">
             <GlobalSearch onSelect={() => setIsMobileSearchOpen(false)} autoFocus/>
           </div>
         </div>

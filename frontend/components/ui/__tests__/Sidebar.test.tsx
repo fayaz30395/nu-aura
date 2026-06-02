@@ -54,15 +54,15 @@ describe('Sidebar', () => {
   // ─── Layout constants ───────────────────────────────────────────────────────
   describe('layout constants', () => {
     it('exports correct expanded width', () => {
-      expect(SIDEBAR_WIDTH_EXPANDED).toBe(256);
+      expect(SIDEBAR_WIDTH_EXPANDED).toBe(248);
     });
 
     it('exports correct collapsed width', () => {
-      expect(SIDEBAR_WIDTH_COLLAPSED).toBe(72);
+      expect(SIDEBAR_WIDTH_COLLAPSED).toBe(68);
     });
 
     it('exports correct header height', () => {
-      expect(HEADER_HEIGHT).toBe(64);
+      expect(HEADER_HEIGHT).toBe(56);
     });
   });
 

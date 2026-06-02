@@ -199,8 +199,8 @@ function AnimatedBackground() {
 // ─── Loading Fallback ────────────────────────────────────────────────
 function LoginPageLoading() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[var(--bg-main)]">
-      <div className="flex flex-col items-center gap-4">
+    <div className="auth-loading-shell fade-slide-up">
+      <div className="auth-loading-card w-full max-w-md flex flex-col items-center gap-4 fade-slide-up auth-delay-20">
         <div className="w-12 h-12 border-2 border-accent-300/30 border-t-accent-500 rounded-full animate-spin"/>
         <p className="text-[var(--text-muted)] text-sm">Loading NU-AURA...</p>
       </div>
@@ -253,8 +253,7 @@ function DemoLoginPanel({
 
       {isExpanded && (
         <div
-          className="mt-3 space-y-2 max-h-[300px] overflow-y-auto pr-1"
-          style={{animation: 'fadeSlideUp 0.3s ease-out'}}
+          className="mt-3 space-y-2 max-h-[300px] overflow-y-auto pr-1 fade-slide-up auth-delay-20"
         >
           {DEMO_ACCOUNTS.map((account) => (
             <button
@@ -275,7 +274,7 @@ function DemoLoginPanel({
                     {account.name}
                   </span>
                   <span
-                    className="text-2xs px-1.5 py-0.5 rounded-full bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300 font-medium flex-shrink-0">
+                    className="text-[0.6875rem] px-1.5 py-0.5 rounded-full bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300 font-medium flex-shrink-0">
                     {account.role?.replace(/_/g, ' ') ?? '-'}
                   </span>
                 </div>
@@ -291,7 +290,7 @@ function DemoLoginPanel({
               )}
             </button>
           ))}
-          <p className="text-2xs text-[var(--text-muted)] text-center pt-1">
+          <p className="text-[0.6875rem] text-[var(--text-muted)] text-center pt-1">
             Password for all accounts: <code
             className="px-1 py-0.5 bg-[var(--bg-elevated)] rounded text-[var(--text-secondary)]">Welcome@123</code>
           </p>
@@ -318,7 +317,6 @@ function LoginPage() {
   const [isDemoLoading, setIsDemoLoading] = useState(false);
   const [isEmailLoading, setIsEmailLoading] = useState(false);
   const [showEmailForm, setShowEmailForm] = useState(true);
-  const [mounted, setMounted] = useState(false);
   const [didFreshLogin, setDidFreshLogin] = useState(false);
 
   // Wave-10 P2-3: CAPTCHA gate after 3 failed login attempts. The widget is
@@ -335,10 +333,6 @@ function LoginPage() {
     handleSubmit,
     formState: {errors: emailErrors},
   } = useForm<EmailPasswordForm>({resolver: zodResolver(emailPasswordSchema)});
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   // Restore rate-limit state from localStorage on mount
   useEffect(() => {
@@ -619,9 +613,9 @@ function LoginPage() {
   // MFA screen
   if (mfaRequired && mfaUserId) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[var(--bg-main)] py-12 px-4">
+      <div className="auth-shell fade-slide-up">
         <AnimatedBackground/>
-        <div className="relative z-10 max-w-md w-full">
+        <div className="relative z-10 auth-shell-grid auth-shell-narrow fade-slide-up">
           <MfaVerification
             userId={mfaUserId}
             onSuccess={handleMfaSuccess}
@@ -634,50 +628,13 @@ function LoginPage() {
 
   return (
     <>
-      {/* Global keyframe animations */}
-      <style jsx global>{`
-        @keyframes fadeSlideUp {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        @keyframes shimmer {
-          0% { background-position: -200% 0; }
-          100% { background-position: 200% 0; }
-        }
-        @keyframes pulse-ring {
-          0% { transform: scale(0.9); opacity: 0.6; }
-          50% { transform: scale(1.05); opacity: 0.3; }
-          100% { transform: scale(0.9); opacity: 0.6; }
-        }
-        @keyframes float {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-8px); }
-        }
-        .animate-fade-in {
-          animation: fadeIn 0.8s ease-out;
-        }
-        .animate-slide-up {
-          animation: fadeSlideUp 0.6s ease-out;
-        }
-        .btn-shimmer {
-          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
-          background-size: 200% 100%;
-          animation: shimmer 3s ease-in-out infinite;
-        }
-      `}</style>
-
-      <div className="min-h-[100dvh] flex relative overflow-hidden">
+      <div className="auth-shell relative overflow-hidden fade-slide-up">
         <AnimatedBackground/>
 
         {/* ─── Left Panel: Product Context ──────────────────── */}
         <div className="hidden lg:flex lg:w-[52%] relative z-10 flex-col justify-center px-14 xl:px-18">
           <div
-            className="max-w-[580px] float-subtle"
-            style={{animation: 'fadeSlideUp 0.8s ease-out 0.1s both'}}
+            className="max-w-[580px] float-subtle fade-slide-up auth-delay-20"
           >
             <div
               className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--bg-elevated)] border border-[var(--border-main)] mb-6"
@@ -707,7 +664,7 @@ function LoginPage() {
               ))}
             </div>
 
-            <div className="mt-9 flex max-w-lg items-start gap-4 shell-panel p-4">
+            <div className="mt-9 flex max-w-lg items-start gap-4 shell-panel p-4 fade-slide-up">
               <span className="icon-chip h-8 w-8 text-[var(--accent-primary)] border-[var(--accent-primary)]/25">
                 <span className="text-xs font-semibold">24/7</span>
               </span>
@@ -724,8 +681,7 @@ function LoginPage() {
         {/* ─── Right Panel: Login Card ───────────────────────── */}
         <div className="w-full lg:w-[48%] relative z-10 flex items-center justify-center px-5 py-8">
           <div
-            className="w-full max-w-[420px] fade-slide-up"
-            style={{animation: mounted ? 'fadeSlideUp 0.6s ease-out 0.2s both' : 'none'}}
+            className="w-full max-w-[420px] fade-slide-up auth-delay-40"
           >
             {/* Logo */}
             <div className="flex justify-center mb-7">
@@ -758,12 +714,12 @@ function LoginPage() {
             </div>
 
             {/* Card */}
-            <div className="shell-panel p-6">
+            <div className="shell-panel p-6 float-subtle auth-delay-40 fade-slide-up">
               <div className="mb-5">
-                <p className="mb-2 inline-flex items-center gap-2 rounded-full border border-[var(--border-main)] px-3 py-1 text-2xs font-semibold uppercase tracking-[0.08em] text-[var(--text-secondary)]">
+                <p className="mb-2 inline-flex items-center gap-2 rounded-full border border-[var(--border-main)] px-3 py-1 text-[0.6875rem] font-semibold uppercase tracking-[0.08em] text-[var(--text-secondary)]">
                   Secure Access
                 </p>
-                <h3 className="text-xl font-semibold text-[var(--text-primary)] tracking-normal">
+                <h3 className="text-lg font-semibold text-[var(--text-primary)] tracking-normal">
                   Sign In
                 </h3>
                 <p className="text-[var(--text-secondary)] text-sm mt-2">
@@ -776,8 +732,7 @@ function LoginPage() {
               {/* Error Alert */}
               {error && (
                 <div
-                  className="flex items-start gap-2 p-4 mb-5 rounded-lg bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800"
-                  style={{animation: 'fadeSlideUp 0.3s ease-out'}}
+                  className="auth-error-banner flex items-start gap-2 p-4 mb-5 fade-slide-up auth-delay-20"
                 >
                   <AlertCircle className="w-5 h-5 text-danger-600 dark:text-danger-400 flex-shrink-0 mt-0.5"/>
                   <div>
@@ -839,8 +794,7 @@ function LoginPage() {
                 {showEmailForm && (
                   <form
                     onSubmit={handleSubmit(handleEmailLogin)}
-                    className="mt-3 space-y-4"
-                    style={{animation: 'fadeSlideUp 0.2s ease-out'}}
+                    className="mt-3 space-y-4 fade-slide-up auth-delay-40"
                     aria-label="Email and password sign-in"
                   >
                     <Input
@@ -898,10 +852,11 @@ function LoginPage() {
                     <Button
                       type="submit"
                       disabled={isEmailLoading || (captchaRequired && !captchaToken)}
+                      variant="primary"
                       isLoading={isEmailLoading}
                       loadingText="Signing in..."
                       aria-busy={isEmailLoading}
-                      className="w-full rounded-lg bg-accent-600 text-white hover:bg-accent-700 btn-shimmer"
+                      className="w-full"
                       leftIcon={<LogIn className="w-4 h-4"/>}
                     >
                       Sign In

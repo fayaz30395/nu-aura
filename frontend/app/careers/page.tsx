@@ -530,7 +530,7 @@ export default function CareersPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--bg-main)]">
+    <div className="page-shell-centered fade-slide-up auth-delay-20">
       {/* Hero Section */}
       <div className="bg-gradient-to-br from-accent-700 via-accent-600 to-accent-700 py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto text-center">
