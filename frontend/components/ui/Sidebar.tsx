@@ -130,7 +130,7 @@ const ChildrenFlyover: React.FC<{
       >
         {/* Header */}
         <div
-          className="row-between px-4 py-3.5 border-b border-[var(--border-main)] bg-[var(--bg-surface)]/85"
+          className="row-between px-4 py-4 border-b border-[var(--border-main)] bg-[var(--bg-surface)]/85"
           suppressHydrationWarning
         >
           <div className="flex items-center gap-2">
@@ -164,7 +164,7 @@ const ChildrenFlyover: React.FC<{
             const childClasses = cn(
               'w-full flex items-center gap-2 px-4 py-2.5 text-sm rounded-md transition-all duration-180 ease-[cubic-bezier(0.16,1,0.3,1)]',
               activeId === child.id
-                ? 'font-medium bg-[var(--accent-primary-subtle)] text-[var(--accent-primary)] shadow-[0_10px_20px_-16px_var(--accent-primary)]'
+                ? 'font-medium bg-[var(--accent-primary-subtle)] text-[var(--accent-primary)] shadow-[var(--shadow-card)]'
                 : 'text-[var(--text-secondary)] hover:bg-[var(--sidebar-hover-bg)] hover:text-[var(--text-primary)]'
             );
 
@@ -183,7 +183,7 @@ const ChildrenFlyover: React.FC<{
                 <span className="flex-1 text-left truncate">{child.label}</span>
                 {child.badge && (
                   <span
-                    className="text-xs border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-secondary)] px-1.5 py-0.5 rounded-full shadow-[inset_0_1px_0_rgba(255,255,255,0.15)]">
+                    className="text-xs border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-secondary)] px-1.5 py-0.5 rounded-full">
                     {child.badge}
                   </span>
                 )}
@@ -307,8 +307,8 @@ const SidebarMenuItem: React.FC<{
   };
 
   const commonClasses = cn(
-    'sidebar-menu-item group relative flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium',
-    'transition-all duration-150 ease-out',
+    'sidebar-menu-item group relative flex w-full items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium',
+    'transition-all duration-150 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2',
     isActiveState
       ? 'font-semibold bg-[var(--sidebar-active-bg)] text-[var(--sidebar-text-active)]'
       : 'text-[var(--sidebar-text)] hover:bg-[var(--sidebar-hover-bg)] hover:translate-x-0.5',
@@ -319,7 +319,7 @@ const SidebarMenuItem: React.FC<{
     <>
       {isActiveState && !isCollapsed && (
         <span
-          className="absolute left-2.5 h-1.5 w-1.5 rounded-full bg-[var(--sidebar-active-border)]"
+          className="absolute left-2 h-1.5 w-1.5 rounded-full bg-[var(--sidebar-active-border)]"
           aria-hidden
         />
       )}
@@ -427,7 +427,7 @@ const SectionDivider: React.FC<{
 }> = ({label, sectionId, isCollapsed, isSectionExpanded, onToggleSection}) => {
   if (isCollapsed) {
     return (
-      <div className="px-4 py-3 text-center">
+      <div className="px-4 py-4 text-center">
         <div className="w-full h-px mx-auto border-t border-[var(--sidebar-border)]"/>
       </div>
     );
@@ -437,7 +437,7 @@ const SectionDivider: React.FC<{
     <button
       onClick={() => onToggleSection(sectionId)}
       aria-expanded={isSectionExpanded}
-      className="w-full row-between px-3 py-2 group rounded-md transition-all duration-200"
+      className="w-full row-between px-4 py-2 group rounded-md transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
     >
       <span
         className="text-2xs font-medium uppercase tracking-[0.14em] text-[var(--sidebar-section-text)] transition-colors duration-200"
@@ -636,14 +636,14 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
           {collapsible && (
             <div
               className={cn(
-                'px-3 py-2 border-b border-[var(--sidebar-border)] transition-all duration-300',
+                'px-4 py-2 border-b border-[var(--sidebar-border)] transition-all duration-300',
                 isCollapsed ? 'flex justify-center' : ''
               )}
             >
               <button
                 onClick={() => handleCollapsedChange(!isCollapsed)}
                 className={cn(
-                  'flex items-center gap-2 px-3 py-2 rounded-md text-[var(--sidebar-text)] hover:bg-[var(--sidebar-hover-bg)] hover:text-[var(--sidebar-text-active)] transition-all duration-200 ease-out w-full cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2',
+                  'flex items-center gap-2 px-4 py-2 rounded-md text-[var(--sidebar-text)] hover:bg-[var(--sidebar-hover-bg)] hover:text-[var(--sidebar-text-active)] transition-all duration-200 ease-out w-full cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2',
                   isCollapsed ? 'justify-center' : ''
                 )}
                 aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
@@ -665,7 +665,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
           )}
 
           {/* Navigation */}
-          <nav className="flex-1 overflow-y-auto overflow-x-hidden px-4 py-3 space-y-1 scrollbar-hide"
+          <nav className="flex-1 overflow-y-auto overflow-x-hidden px-4 py-4 space-y-1 scrollbar-hide"
                aria-label="Main navigation">
             {groupedItems.map((section, sectionIndex) => {
               const isSectionExpanded = !collapsedSections.has(section.id);
@@ -685,7 +685,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
                     <button
                       onClick={() => handleToggleSection(section.id)}
                       aria-expanded={isSectionExpanded}
-                      className="w-full row-between px-3 py-2.5 group rounded-md transition-all duration-200"
+                      className="w-full row-between px-4 py-2 group rounded-md transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                       suppressHydrationWarning
                     >
                       <span
@@ -736,7 +736,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
             )}
           >
             {!isCollapsed ? (
-              <div className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg border border-[var(--sidebar-border)] bg-[var(--sidebar-active-bg)] transition-all duration-200">
+              <div className="flex items-center gap-2 px-4 py-2 rounded-lg border border-[var(--sidebar-border)] bg-[var(--sidebar-active-bg)] transition-all duration-200">
                 <div className="flex items-center justify-center w-7 h-7 rounded-md bg-[var(--sidebar-hover-bg)]">
                   <Sparkles className="h-3.5 w-3.5 text-[var(--sidebar-active-border)]"/>
                 </div>

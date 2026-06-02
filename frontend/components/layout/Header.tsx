@@ -99,7 +99,7 @@ const Header: React.FC<HeaderProps> = ({
         className
       )}
     >
-      <div className="row-between h-full px-3 sm:px-5 md:px-7">
+      <div className="row-between h-full px-4 sm:px-6 md:px-8">
         {/* Left Side */}
         <div className="flex items-center gap-2 sm:gap-4">
           {/* Mobile hamburger */}
@@ -192,7 +192,7 @@ const Header: React.FC<HeaderProps> = ({
               <span
                 className={cn(
                   'pointer-events-none absolute -bottom-1.5 -right-1.5 h-1.5 w-1.5 rounded-full transition-opacity duration-300',
-                  isWebSocketConnected ? 'bg-emerald-400 opacity-90' : 'bg-transparent opacity-0'
+                  isWebSocketConnected ? 'bg-[var(--status-success-text)] opacity-90' : 'bg-transparent opacity-0'
                 )}
               />
             </button>
@@ -204,7 +204,7 @@ const Header: React.FC<HeaderProps> = ({
           </div>
 
           {/* Divider */}
-          <div className="hidden sm:block w-px h-8 mx-2" style={{backgroundColor: 'var(--header-divider)'}}/>
+          <div className="hidden sm:block w-px h-8 mx-2 bg-[var(--header-divider)]"/>
 
           {/* User Dropdown */}
           <UserMenu
