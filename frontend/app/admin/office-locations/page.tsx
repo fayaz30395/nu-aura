@@ -183,7 +183,7 @@ export default function OfficeLocationsPage() {
   };
 
   return (
-    <>
+    <div className="page-shell-centered fade-slide-up auth-delay-20 p-6">
       <div className="max-w-7xl mx-auto">
         <ConfirmDialog
           isOpen={showDeleteConfirm}
@@ -419,6 +419,6 @@ export default function OfficeLocationsPage() {
           </div>
         )}
       </div>
-    </>
+    </div>
   );
 }

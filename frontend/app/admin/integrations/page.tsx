@@ -240,7 +240,7 @@ export default function AdminIntegrationsPage() {
 
   if (loading) {
     return (
-      <div className="p-6 space-y-6">
+      <div className="page-shell-centered fade-slide-up auth-delay-20 p-6 space-y-6">
         <div className="flex items-center gap-4">
           <Skeleton height={56} width={56} className="rounded-xl"/>
           <div className="space-y-2 flex-1">
@@ -258,7 +258,7 @@ export default function AdminIntegrationsPage() {
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="page-shell-centered fade-slide-up auth-delay-20 p-6 space-y-6">
       {/* Header */}
       <div className="row-between">
         <div className="flex items-center gap-4">

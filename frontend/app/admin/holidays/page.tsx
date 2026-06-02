@@ -218,7 +218,7 @@ export default function HolidayCalendarManagementPage() {
   });
 
   return (
-    <>
+    <div className="page-shell-centered fade-slide-up auth-delay-20 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
@@ -571,6 +571,6 @@ export default function HolidayCalendarManagementPage() {
           </div>
         )}
       </div>
-    </>
+    </div>
   );
 }

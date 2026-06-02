@@ -97,11 +97,17 @@ export default function FeatureFlagsPage() {
     setNewFlag({featureKey: '', name: '', description: '', category: 'HRMS', enabled: false});
   };
 
-  if (isLoading) return <div className="space-y-4 p-6">{Array.from({length: 4}).map((_, i) => <SkeletonCard
-    key={i}/>)}</div>;
+  if (isLoading) {
+    return (
+      <div className="page-shell-centered fade-slide-up auth-delay-20 p-6 space-y-4">
+        {Array.from({length: 4}).map((_, i) => <SkeletonCard
+          key={i}/>)}
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-6">
+    <div className="page-shell-centered fade-slide-up auth-delay-20 p-6 space-y-6">
       {/* Header */}
       <Group justify="space-between">
         <div>

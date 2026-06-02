@@ -26,11 +26,17 @@ export class LoginPage extends BasePage {
     this.passwordInput = page.locator('input[type="password"]');
     this.rememberMeCheckbox = page.locator('input[type="checkbox"]');
     this.loginButton = page.locator('button[type="submit"]');
-    this.googleLoginButton = page.locator('button:has-text("Sign in with Google")');
-    this.forgotPasswordLink = page.locator('a:has-text("Forgot password?")');
+    this.googleLoginButton = page.locator(
+      'button:has-text("Continue with Google"), button:has-text("Sign in with Google")'
+    );
+    this.forgotPasswordLink = page.locator(
+      'a:has-text("Forgot Password?"), a:has-text("Forgot password?")'
+    );
     this.errorMessage = page.locator('text=Authentication Failed').locator('..');
     this.showPasswordButton = page.locator('button').filter({has: page.locator('svg')}).nth(1);
-    this.demoCredentialsToggle = page.locator('button:has-text("Demo Credentials")');
+    this.demoCredentialsToggle = page.locator(
+      'button:has-text("Demo Accounts"), button:has-text("Demo Credentials")'
+    );
     this.lockoutMessage = page.locator('text=Account Temporarily Locked');
   }
 
@@ -50,7 +56,9 @@ export class LoginPage extends BasePage {
 
     const emailVisible = await this.emailInput.isVisible().catch(() => false);
     if (!emailVisible) {
-      const toggle = this.page.locator('button:has-text("Sign in with Email")');
+      const toggle = this.page.locator(
+        'button:has-text("Email and password"), button:has-text("Sign in with Email")'
+      );
       if (await toggle.isVisible().catch(() => false)) {
         await toggle.click();
         await this.emailInput.waitFor({state: 'visible', timeout: 5000}).catch(() => {});
@@ -69,7 +77,9 @@ export class LoginPage extends BasePage {
   async login(email: string, password: string, rememberMe: boolean = false) {
     const emailVisible = await this.emailInput.isVisible().catch(() => false);
     if (!emailVisible) {
-      const toggle = this.page.locator('button:has-text("Sign in with Email")');
+      const toggle = this.page.locator(
+        'button:has-text("Email and password"), button:has-text("Sign in with Email")'
+      );
       if (await toggle.isVisible().catch(() => false)) {
         await toggle.click();
         await this.emailInput.waitFor({state: 'visible', timeout: 5000});

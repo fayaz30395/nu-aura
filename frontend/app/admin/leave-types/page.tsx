@@ -256,7 +256,7 @@ export default function LeaveTypesManagementPage() {
   const genderOptions: GenderSpecific[] = ['ALL', 'MALE', 'FEMALE'];
 
   return (
-    <>
+    <div className="page-shell-centered fade-slide-up auth-delay-20 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
@@ -717,6 +717,6 @@ export default function LeaveTypesManagementPage() {
           </form>
         </Modal>
       </div>
-    </>
+    </div>
   );
 }

@@ -241,14 +241,14 @@ export default function CustomFieldsPage() {
 
   if (isLoading) {
     return (
-      <div className="p-4 md:p-6 lg:p-8">
+      <div className="page-shell-centered fade-slide-up auth-delay-20 p-4 md:p-6 lg:p-8">
         <SkeletonTable rows={6} columns={5}/>
       </div>
     );
   }
 
   return (
-    <>
+    <div className="page-shell-centered fade-slide-up auth-delay-20 p-4 md:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
         <div className="mb-6">
           <h1 className="text-xl font-bold">Custom Fields</h1>
@@ -755,6 +755,6 @@ export default function CustomFieldsPage() {
           </form>
         </Modal>
       </div>
-    </>
+    </div>
   );
 }

@@ -121,19 +121,19 @@ export default function AdminLeaveRequestsPage() {
 
   if (loading && leaveRequests.length === 0) {
     return (
-      <>
+      <div className="page-shell-centered fade-slide-up auth-delay-20 p-4 sm:p-6">
         <div className="flex items-center justify-center p-8">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-700 mx-auto"></div>
             <p className="mt-4 text-[var(--text-secondary)]">Loading leave requests...</p>
           </div>
         </div>
-      </>
+      </div>
     );
   }
 
   return (
-    <>
+    <div className="page-shell-centered fade-slide-up auth-delay-20 p-4 sm:p-6">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
           <h1 className="text-xl font-bold">Leave Request Management</h1>
@@ -355,6 +355,6 @@ export default function AdminLeaveRequestsPage() {
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 }

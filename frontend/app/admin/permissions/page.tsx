@@ -186,7 +186,7 @@ export default function PermissionsPage() {
   }, {} as Record<string, Permission[]>);
 
   return (
-    <>
+    <div className="page-shell-centered fade-slide-up auth-delay-20 p-6 space-y-6">
       <ConfirmDialog
         isOpen={showDeleteConfirm}
         onClose={() => {
@@ -201,7 +201,7 @@ export default function PermissionsPage() {
         type="danger"
       />
 
-      <div className="p-6 space-y-6">
+      <div className="space-y-6">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
@@ -554,7 +554,7 @@ export default function PermissionsPage() {
           />
         )}
       </AnimatePresence>
-    </>
+    </div>
   );
 }
 

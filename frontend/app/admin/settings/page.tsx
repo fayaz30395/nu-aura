@@ -129,7 +129,7 @@ export default function AdminSettingsPage() {
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="page-shell-centered fade-slide-up auth-delay-20 p-6 space-y-6">
       {/* Header */}
       <div className="flex items-center gap-4">
         <div

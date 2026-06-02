@@ -86,7 +86,7 @@ export default function SystemDashboard() {
 
   if (!isReady || !hasHydrated) {
     return (
-      <div className="p-6 space-y-6">
+      <div className="page-shell-centered fade-slide-up auth-delay-20 p-6 space-y-6">
         <Skeleton height={40}/>
         <SimpleGrid cols={{base: 1, sm: 2, lg: 4}} spacing="lg">
           {[1, 2, 3, 4].map((i) => (
@@ -100,7 +100,7 @@ export default function SystemDashboard() {
   const overview = overviewQuery.data;
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="page-shell-centered fade-slide-up auth-delay-20 p-6 space-y-6">
       {/* Header */}
       <div className="row-between">
         <div className="flex items-center gap-4">

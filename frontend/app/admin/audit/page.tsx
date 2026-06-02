@@ -11,7 +11,7 @@ export default function AdminAuditRedirectPage() {
   }, [router]);
 
   return (
-    <div className="p-6 space-y-2">
+    <div className="page-shell-centered fade-slide-up auth-delay-20 p-6 space-y-2">
       <h1 className="text-xl font-bold text-[var(--text-primary)]">Audit Logs</h1>
       <p className="text-[var(--text-secondary)]">Opening system audit dashboard...</p>
     </div>
