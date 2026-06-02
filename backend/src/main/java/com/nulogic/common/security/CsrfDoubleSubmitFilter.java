@@ -5,6 +5,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -33,6 +34,9 @@ public class CsrfDoubleSubmitFilter extends OncePerRequestFilter {
     private static final String CSRF_HEADER_NAME = "X-XSRF-TOKEN";
     private static final Set<String> SAFE_METHODS = Set.of("GET", "HEAD", "OPTIONS", "TRACE");
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
+
+    @Value("${app.cookie.secure:true}")
+    private boolean secureCookie;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -124,10 +128,9 @@ public class CsrfDoubleSubmitFilter extends OncePerRequestFilter {
         Cookie cookie = new Cookie(CSRF_COOKIE_NAME, token);
         cookie.setPath("/");
         cookie.setHttpOnly(false); // Must be readable by JavaScript
-        // Always Secure: SameSite=Strict requires it on modern browsers, and downgrade
-        // attacks otherwise leak the CSRF token over the cleartext leg. Local dev runs
-        // over HTTPS via mkcert/devcert; tests can mock this filter or use HTTPS.
-        cookie.setSecure(true);
+        // Production keeps this true. Dev/E2E can set app.cookie.secure=false so
+        // browser tests over local HTTP can send the double-submit cookie back.
+        cookie.setSecure(secureCookie);
         cookie.setMaxAge(-1); // Session cookie
         response.addCookie(cookie);
     }

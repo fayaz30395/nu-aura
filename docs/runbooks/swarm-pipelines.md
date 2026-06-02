@@ -22,13 +22,14 @@ From the repo root:
 
 # 3) Dry-run a task-specific pipeline kickoff
 ./scripts/agents/start-work.sh feature "Add employee document expiry reminders"
+./scripts/agents/start-work.sh opus4.8 "Classify mixed requirement and route dynamically"
 
 # 4) Start/check Ruflo, then execute when the kickoff context looks right
 ./scripts/ruflo-start.sh
 ./scripts/ruflo-pipeline.sh feature "Add employee document expiry reminders" --execute
 ```
 
-Use `feature`, `bug`, `security`, `refactor`, or `perf` as the first argument. The launcher
+Use `feature`, `bug`, `security`, `refactor`, `perf`, or `opus4.8` as the first argument. The launcher
 selects the matching YAML under `docs/swarm/workflows/`, injects the mandatory NU-AURA
 rules into the kickoff context, checks swarm config drift, and then either prints or runs
 the `npx ruflo@latest swarm ...` command.
@@ -277,6 +278,32 @@ SendMessage({ to: "perf-engineer", summary: "Perf <endpoint/job>",
 
 ---
 
+## Pipeline 6: Opus4.8 Dynamic
+
+**Yaml:** `docs/swarm/workflows/opus4-8-dynamic-workflow.yaml` (synced to `.claude-flow/workflows/opus4-8-dynamic-workflow.yaml`)
+**Flow:** coordinator → selected dynamic tracks
+**Use for:** mixed-signal requirements, ambiguous scope, or multi-track risk.
+
+```javascript
+Agent({
+  name: "coordinator",
+  subagent_type: "dynamic-coordinator",
+  run_in_background: true,
+  prompt: `Classify the requirement, then route to one or more tracks:
+- feature
+- bug
+- security
+- perf
+If route includes security, require security-auditor reporting.
+SendMessage to architect, tester, and security-auditor based on selected tracks.`
+})
+
+SendMessage({ to: "coordinator", summary: "Start Opus4.8 <task>",
+  message: "Task: <description>\nAcceptance: <bullets>\nRisk: <P0/P1/P2>\nConstraints: <tenant_id, RBAC, @RequiresPermission>" })
+```
+
+---
+
 ## Anti-patterns
 
 - **DON'T** spawn agents one at a time with sequential Agent() calls. They run in
@@ -321,3 +348,4 @@ These feed RuFlo's AgentDB so the next session learns from this one.
 | Security     | security-pipeline.yaml                                   | security-architect → coder → security-auditor  |
 | Refactor     | refactor-pipeline.yaml                                   | architect → coder → reviewer                   |
 | Performance  | perf-pipeline.yaml                                       | perf-engineer → coder                          |
+| Opus4.8      | opus4-8-dynamic-workflow.yaml                            | dynamic-coordinator → dynamic tracks            |

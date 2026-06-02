@@ -339,6 +339,48 @@
       "model": "opus",
       "modelRoutedBy": "explicit",
       "currentTask": "task-1779747153401-zf4eaf"
+    },
+    "agent-1780353177067-0c8880": {
+      "agentId": "agent-1780353177067-0c8880",
+      "agentType": "frontend-auditor",
+      "status": "idle",
+      "health": 1,
+      "taskCount": 0,
+      "config": {
+        "model": "sonnet"
+      },
+      "createdAt": "2026-06-01T22:32:57.067Z",
+      "domain": "ui-ux",
+      "model": "sonnet",
+      "modelRoutedBy": "explicit"
+    },
+    "agent-1780353177183-nnikav": {
+      "agentId": "agent-1780353177183-nnikav",
+      "agentType": "frontend-implementer",
+      "status": "idle",
+      "health": 1,
+      "taskCount": 0,
+      "config": {
+        "model": "sonnet"
+      },
+      "createdAt": "2026-06-01T22:32:57.183Z",
+      "domain": "frontend",
+      "model": "sonnet",
+      "modelRoutedBy": "explicit"
+    },
+    "agent-1780353177198-y6yu0d": {
+      "agentId": "agent-1780353177198-y6yu0d",
+      "agentType": "qa-verifier",
+      "status": "idle",
+      "health": 1,
+      "taskCount": 0,
+      "config": {
+        "model": "sonnet"
+      },
+      "createdAt": "2026-06-01T22:32:57.198Z",
+      "domain": "qa",
+      "model": "sonnet",
+      "modelRoutedBy": "explicit"
     }
   },
   "version": "3.0.0"

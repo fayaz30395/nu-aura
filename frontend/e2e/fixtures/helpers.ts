@@ -320,8 +320,7 @@ async function openAuthOriginForApiLogin(page: Page): Promise<void> {
   let lastError: unknown;
   for (let attempt = 1; attempt <= 3; attempt++) {
     try {
-      await page.goto('/auth/login', {waitUntil: 'commit', timeout: 90000});
-      await page.waitForLoadState('domcontentloaded', {timeout: 10000}).catch(() => {});
+      await page.goto('/auth/login', {waitUntil: 'commit', timeout: 30000});
       return;
     } catch (error) {
       lastError = error;

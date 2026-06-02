@@ -89,8 +89,14 @@ done
 
 echo
 echo "Pipeline definitions"
-for kind in feature bug security refactor perf; do
-    require_file "docs/swarm/workflows/${kind}-pipeline.yaml"
+for workflow in \
+    docs/swarm/workflows/feature-pipeline.yaml \
+    docs/swarm/workflows/bug-pipeline.yaml \
+    docs/swarm/workflows/security-pipeline.yaml \
+    docs/swarm/workflows/refactor-pipeline.yaml \
+    docs/swarm/workflows/perf-pipeline.yaml \
+    docs/swarm/workflows/opus4-8-dynamic-workflow.yaml; do
+    require_file "$workflow"
 done
 
 echo
@@ -166,5 +172,6 @@ echo
 echo "Start examples:"
 echo "  ./scripts/ruflo-start.sh"
 echo "  ./scripts/agents/start-work.sh feature \"Add employee document expiry reminders\""
+echo "  ./scripts/agents/start-work.sh opus4.8 \"Handle mixed feature/regression/security requirement\""
 echo "  ./scripts/agents/start-work.sh bug \"Fix payroll approval 403 for HR_MANAGER\""
 echo "  ./scripts/agents/start-work.sh security \"Close file upload path traversal audit finding\""

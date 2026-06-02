@@ -15,7 +15,7 @@ cd "$REPO_ROOT"
 usage() {
     sed -n '2,10p' "$0" | sed 's/^# \{0,1\}//'
     echo
-    echo "Types: feature, bug, security, refactor, perf"
+    echo "Types: feature, bug, security, refactor, perf, opus4.8"
 }
 
 if [ $# -lt 2 ]; then
@@ -64,6 +64,14 @@ case "$TYPE" in
         MODE_FLAG="hierarchical"
         MAX_AGENTS=3
         REVIEW_FLAGS=(--parallel --monitor --review --testing)
+        ;;
+    opus4.8|opus4-8|opus4_8|opus-dynamic)
+        TYPE="opus4.8"
+        WORKFLOW="docs/swarm/workflows/opus4-8-dynamic-workflow.yaml"
+        STRATEGY="adaptive"
+        MODE_FLAG="hierarchical-mesh"
+        MAX_AGENTS=7
+        REVIEW_FLAGS=(--parallel --monitor --review --testing --verbose)
         ;;
     perf|performance)
         TYPE="perf"

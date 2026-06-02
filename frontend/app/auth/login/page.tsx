@@ -19,26 +19,13 @@ import {
   ArrowRight,
   ChevronDown,
   ChevronUp,
-  Globe,
-  Lightbulb,
   Lock,
   LogIn,
   Mail,
-  Shield,
-  Target,
-  TrendingUp,
   Users,
-  Zap,
 } from 'lucide-react';
 import {createLogger} from '@/lib/utils/logger';
-
-// wave-3 N: Safari <=16.1 lacks color-mix() support. Default to the modern
-// value on first paint (matches SSR), swap to rgba() fallback on mount if
-// the browser doesn't support it.
-function supportsColorMix(): boolean {
-  if (typeof window === 'undefined' || typeof CSS === 'undefined' || !CSS.supports) return true;
-  return CSS.supports('background', 'color-mix(in srgb, red, blue)');
-}
+import {isGoogleAuthEnabled} from '@/lib/config';
 
 const emailPasswordSchema = z.object({
   email: z.string().email('Please enter a valid work email (e.g., name@nulogic.com)'),
@@ -198,82 +185,16 @@ declare global {
 
 // ─── CSS-only Ambient Background (theme-aware) ─────────────────────
 function AnimatedBackground() {
-  // wave-3 N: Safari <=16.1 lacks color-mix(). Swap to rgba() fallback
-  // post-mount on unsupported browsers. CSS variable references for
-  // brand colors resolve as follows:
-  //   --nu-lapis-blue  #050766 → rgb(5, 7, 102)
-  //   --nu-purple      #8939A1 → rgb(137, 57, 161)
-  //   --nu-red-orange  #E62A32 → rgb(230, 42, 50)
-  const [useFallback, setUseFallback] = useState(false);
-  useEffect(() => {
-    if (!supportsColorMix()) setUseFallback(true);
-  }, []);
-
-  const bg = (rgba: string, colorMix: string): string => (useFallback ? rgba : colorMix);
-
   return (
     <div className="fixed inset-0 z-0" suppressHydrationWarning>
-      {/* Base */}
       <div className="absolute inset-0 bg-[var(--bg-main)]"/>
-      {/* Light-mode: NULogic Lapis Blue + Purple gradient mesh */}
-      <div className="absolute inset-0 dark:opacity-0 opacity-100 transition-opacity duration-500">
-        <div className="absolute top-[-15%] left-[-8%] w-[700px] h-[700px] rounded-full blur-[140px]"
-             style={{background: bg('rgba(5, 7, 102, 0.08)', 'color-mix(in srgb, var(--nu-lapis-blue) 8%, transparent)')}}
-             suppressHydrationWarning/>
-        <div className="absolute bottom-[-15%] right-[-10%] w-[550px] h-[550px] rounded-full blur-[120px]"
-             style={{background: bg('rgba(137, 57, 161, 0.06)', 'color-mix(in srgb, var(--nu-purple) 6%, transparent)')}}
-             suppressHydrationWarning/>
-        <div className="absolute top-[35%] right-[15%] w-[350px] h-[350px] rounded-full blur-[90px]"
-             style={{background: bg('rgba(230, 42, 50, 0.04)', 'color-mix(in srgb, var(--nu-red-orange) 4%, transparent)')}}
-             suppressHydrationWarning/>
-      </div>
-      {/* Dark-mode: deep NULogic navy mesh with subtle grid lines */}
-      <div className="absolute inset-0 opacity-0 dark:opacity-100 transition-opacity duration-500">
-        <div className="absolute inset-0 bg-[var(--bg-main)]" suppressHydrationWarning/>
-        <div className="absolute top-[-12%] left-[-8%] w-[700px] h-[700px] rounded-full blur-[140px]"
-             style={{background: bg('rgba(5, 7, 102, 0.14)', 'color-mix(in srgb, var(--nu-lapis-blue) 14%, transparent)')}}
-             suppressHydrationWarning/>
-        <div className="absolute bottom-[-12%] right-[-8%] w-[550px] h-[550px] rounded-full blur-[120px]"
-             style={{background: bg('rgba(137, 57, 161, 0.08)', 'color-mix(in srgb, var(--nu-purple) 8%, transparent)')}}
-             suppressHydrationWarning/>
-        <div className="absolute top-[50%] left-[40%] w-[400px] h-[400px] rounded-full blur-[100px]"
-             style={{background: bg('rgba(230, 42, 50, 0.05)', 'color-mix(in srgb, var(--nu-red-orange) 5%, transparent)')}}
-             suppressHydrationWarning/>
-        {/* Subtle grid overlay */}
-        <div
-          className="absolute inset-0 opacity-[0.04]"
-          style={{
-            backgroundImage: 'linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)',
-            backgroundSize: '48px 48px',
-          }}
-        />
-      </div>
-    </div>
-  );
-}
-
-// ─── Floating Feature Pills ────────────────────────────────────────
-function FeaturePills() {
-  const features = [
-    {icon: Shield, label: 'Enterprise Security', delay: '0s'},
-    {icon: Zap, label: 'Smart Workflows', delay: '0.2s'},
-    {icon: Globe, label: 'Multi-Tenant SaaS', delay: '0.4s'},
-  ];
-
-  return (
-    <div className="flex flex-wrap gap-4 justify-center mt-8">
-      {features.map(({icon: Icon, label, delay}) => (
-        <div
-          key={label}
-          className="flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--bg-surface)] border border-[var(--border-main)] text-[var(--text-primary)] text-xs font-medium"
-          style={{
-            animation: `fadeSlideUp 0.6s ease-out ${delay} both`,
-          }}
-        >
-          <Icon className="w-3.5 h-3.5 text-accent-700 dark:text-accent-400"/>
-          {label}
-        </div>
-      ))}
+      <div
+        className="absolute inset-0 opacity-[0.045]"
+        style={{
+          backgroundImage: 'linear-gradient(currentColor 1px, transparent 1px), linear-gradient(90deg, currentColor 1px, transparent 1px)',
+          backgroundSize: '40px 40px',
+        }}
+      />
     </div>
   );
 }
@@ -320,7 +241,7 @@ function DemoLoginPanel({
       <button
         type="button"
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full row-between px-4 py-2.5 rounded-xl bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800/40 text-warning-700 dark:text-warning-300 text-sm font-medium transition-colors hover:bg-warning-100 dark:hover:bg-warning-900/30 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+        className="w-full row-between px-4 py-2.5 rounded-lg bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800/40 text-warning-700 dark:text-warning-300 text-sm font-medium transition-colors hover:bg-warning-100 dark:hover:bg-warning-900/30 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
       >
         <div className="flex items-center gap-2">
           <Users className="w-4 h-4"/>
@@ -335,7 +256,7 @@ function DemoLoginPanel({
 
       {isExpanded && (
         <div
-          className="mt-4 space-y-2 max-h-[320px] overflow-y-auto pr-1"
+          className="mt-3 space-y-2 max-h-[300px] overflow-y-auto pr-1"
           style={{animation: 'fadeSlideUp 0.3s ease-out'}}
         >
           {DEMO_ACCOUNTS.map((account) => (
@@ -344,7 +265,7 @@ function DemoLoginPanel({
               type="button"
               disabled={isLoading}
               onClick={() => handleClick(account.email)}
-              className="w-full flex items-center gap-4 px-4 py-2.5 rounded-xl bg-[var(--bg-elevated)] hover:bg-[var(--bg-card-hover)] border border-[var(--border-main)] hover:border-[var(--border-strong)] transition-all duration-200 group text-left hover:translate-x-0.5 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+              className="w-full flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[var(--bg-elevated)] hover:bg-[var(--bg-card-hover)] border border-[var(--border-main)] hover:border-[var(--border-strong)] transition-colors group text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
               <div
                 className={`w-9 h-9 rounded-lg bg-gradient-to-br ${account.color} flex items-center justify-center text-white text-xs font-bold flex-shrink-0 shadow-[var(--shadow-card)]`}
@@ -755,128 +676,91 @@ function LoginPage() {
       <div className="min-h-screen flex relative overflow-hidden">
         <AnimatedBackground/>
 
-        {/* ─── Left Panel: Branding ─────────────────────────── */}
-        <div className="hidden lg:flex lg:w-[55%] relative z-10 flex-col justify-center items-center px-16">
+        {/* ─── Left Panel: Product Context ──────────────────── */}
+        <div className="hidden lg:flex lg:w-[52%] relative z-10 flex-col justify-center px-16">
           <div
-            className="max-w-lg"
+            className="max-w-md"
             style={{animation: 'fadeSlideUp 0.8s ease-out 0.1s both'}}
           >
-            {/* Platform badge */}
             <div
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-100/60 dark:bg-accent-900/20 border border-accent-200 dark:border-accent-800/40 mb-8">
-              <div aria-hidden="true" className="w-2 h-2 rounded-full bg-success-600 dark:bg-success-400 animate-pulse"/>
+              className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[var(--bg-elevated)] border border-[var(--border-main)] mb-5">
+              <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-success-600 dark:bg-success-400"/>
               <span className="text-accent-700 dark:text-accent-300 text-xs font-medium tracking-wider uppercase">
-                Infinite Innovation
+                NU-AURA Platform
               </span>
             </div>
 
-            {/* Headline */}
-            <h1 className="text-5xl font-extrabold text-[var(--text-primary)] leading-tight mb-6 tracking-tight">
-              Your People.
-              <br/>
-              <span className="text-accent-600 dark:text-accent-400">
-                Amplified.
-              </span>
+            <h1 className="text-4xl font-semibold text-[var(--text-primary)] leading-tight mb-4 tracking-normal">
+              People operations without the noise.
             </h1>
 
-            <p className="text-lg text-[var(--text-secondary)] leading-relaxed mb-8">
-              One platform for HR, Recruitment, Performance, and Knowledge
-              Management. Built for teams that move fast.
+            <p className="text-base text-[var(--text-secondary)] leading-7 mb-7">
+              HR, hiring, growth, and knowledge workflows in one secure workspace.
             </p>
 
-            {/* App icons row — NULogic brand gradient palette */}
-            <div className="flex gap-4 mb-8">
-              {[
-                {name: 'HRMS', bg: 'var(--nu-gradient-dark)', Icon: Users},
-                {name: 'Hire', bg: 'var(--nu-gradient-primary)', Icon: Target},
-                {name: 'Grow', bg: 'linear-gradient(135deg, var(--nu-purple), #61629D)', Icon: TrendingUp},
-                {name: 'Fluence', bg: 'linear-gradient(135deg, var(--nu-dark-teal), #3E616A)', Icon: Lightbulb},
-              ].map((app, i) => (
-                <div
-                  key={app.name}
-                  className="group flex flex-col items-center gap-2.5"
-                  style={{animation: `fadeSlideUp 0.5s ease-out ${0.3 + i * 0.1}s both`}}
-                >
-                  <div
-                    className="w-14 h-14 rounded-lg flex items-center justify-center group-hover:scale-110 group-hover:shadow-[var(--shadow-dropdown)] transition-all duration-300"
-                    style={{
-                      background: app.bg,
-                      boxShadow: '0 4px 14px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.15)',
-                      animation: `float ${3 + i * 0.5}s ease-in-out infinite`,
-                    }}
-                  >
-                    <app.Icon className="h-6 w-6 text-white"/>
-                  </div>
-                  <span className="text-[var(--text-secondary)] text-xs font-semibold tracking-wide">
-                    NU-{app.name}
-                  </span>
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              {['NU-HRMS', 'NU-Hire', 'NU-Grow', 'NU-Fluence'].map((app) => (
+                <div key={app} className="rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-3 text-[var(--text-secondary)]">
+                  <span className="font-medium text-[var(--text-primary)]">{app}</span>
                 </div>
               ))}
             </div>
-
-            <FeaturePills/>
           </div>
         </div>
 
         {/* ─── Right Panel: Login Card ───────────────────────── */}
-        <div className="w-full lg:w-[45%] relative z-10 flex items-center justify-center px-6 py-12">
+        <div className="w-full lg:w-[48%] relative z-10 flex items-center justify-center px-5 py-8">
           <div
-            className="w-full max-w-[420px]"
+            className="w-full max-w-[390px]"
             style={{animation: mounted ? 'fadeSlideUp 0.6s ease-out 0.2s both' : 'none'}}
           >
             {/* Logo */}
-            <div className="flex justify-center mb-10 lg:mb-8">
-              <div className="relative">
-                <div
-                  className="absolute -inset-4 rounded-full bg-accent-500/10 blur-xl"
-                  style={{animation: 'pulse-ring 4s ease-in-out infinite'}}
-                />
-                {/* Light mode: navy text + gradient "g" */}
-                <Image
-                  src="/images/nulogic-logo.svg"
-                  alt="NULogic"
-                  width={180}
-                  height={54}
-                  className="h-14 w-auto object-contain relative dark:hidden"
-                  priority
-                />
-                {/* Dark mode: white text + gradient "g" (preserves colored symbol) */}
-                <Image
-                  src="/images/nulogic-logo-white.svg"
-                  alt="NULogic"
-                  width={180}
-                  height={54}
-                  className="h-14 w-auto object-contain relative hidden dark:block"
-                  priority
-                />
-              </div>
+            <div className="flex justify-center mb-6">
+              <Image
+                src="/images/nulogic-logo.svg"
+                alt="NULogic"
+                width={156}
+                height={46}
+                className="h-11 w-auto object-contain dark:hidden"
+                priority
+              />
+              <Image
+                src="/images/nulogic-logo-white.svg"
+                alt="NULogic"
+                width={156}
+                height={46}
+                className="h-11 w-auto object-contain hidden dark:block"
+                priority
+              />
             </div>
 
             {/* Mobile-only tagline */}
-            <div className="lg:hidden text-center mb-8">
-              <h2 className="text-xl font-bold text-[var(--text-primary)] mb-2">
-                Welcome to <span className="text-accent-600 dark:text-accent-400 font-extrabold">NU-AURA</span>
+            <div className="lg:hidden text-center mb-5">
+              <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-1">
+                NU-AURA
               </h2>
               <p className="text-[var(--text-secondary)] text-sm">
-                Your unified people platform
+                Unified people workspace
               </p>
             </div>
 
             {/* Card */}
-            <div className="rounded-lg bg-[var(--bg-card)] border border-[var(--border-main)] p-8 shadow-[var(--shadow-elevated)]">
-              <div className="text-center mb-7">
-                <h3 className="text-xl font-bold text-[var(--text-primary)] tracking-tight mb-2">
+            <div className="rounded-lg bg-[var(--bg-card)] border border-[var(--border-main)] p-6 shadow-[var(--shadow-card)]">
+              <div className="text-center mb-5">
+                <h3 className="text-lg font-semibold text-[var(--text-primary)] tracking-normal mb-1">
                   Sign In
                 </h3>
                 <p className="text-[var(--text-secondary)] text-sm">
-                  Access your workspace with Google SSO
+                  {isGoogleAuthEnabled
+                    ? 'Access your workspace with Google SSO'
+                    : 'Access your workspace with your email and password'}
                 </p>
               </div>
 
               {/* Error Alert */}
               {error && (
                 <div
-                  className="flex items-start gap-4 p-4 mb-6 rounded-xl bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800"
+                  className="flex items-start gap-2 p-4 mb-5 rounded-lg bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800"
                   style={{animation: 'fadeSlideUp 0.3s ease-out'}}
                 >
                   <AlertCircle className="w-5 h-5 text-danger-600 dark:text-danger-400 flex-shrink-0 mt-0.5"/>
@@ -891,33 +775,35 @@ function LoginPage() {
                 </div>
               )}
 
-              {/* Google SSO Button */}
-              <button
-                type="button"
-                className="w-full relative group flex items-center justify-center gap-4 px-6 py-2.5 rounded-xl bg-[var(--bg-elevated)] hover:bg-[var(--bg-card-hover)] text-[var(--text-primary)] border border-[var(--border-main)] font-semibold text-sm transition-all duration-300 hover:shadow-card-hover active:scale-[0.98]"
-                onClick={() => {
-                  handleGoogleSSO();
-                }}
-                disabled={isGoogleLoading}
-              >
-                {isGoogleLoading ? (
-                  <div
-                    className="w-5 h-5 border-2 border-[var(--border-main)] border-t-accent-700 rounded-full animate-spin"/>
-                ) : (
-                  <GoogleGLogo className="w-5 h-5"/>
-                )}
-                <span>Continue with Google</span>
-                <ArrowRight
-                  className="w-4 h-4 ml-auto opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300"/>
-              </button>
+              {isGoogleAuthEnabled && (
+                <>
+                  {/* Google SSO Button */}
+                  <button
+                    type="button"
+                    className="w-full relative group flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-[var(--bg-elevated)] hover:bg-[var(--bg-card-hover)] text-[var(--text-primary)] border border-[var(--border-main)] font-semibold text-sm transition-colors active:scale-[0.99]"
+                    onClick={() => {
+                      handleGoogleSSO();
+                    }}
+                    disabled={isGoogleLoading}
+                  >
+                    {isGoogleLoading ? (
+                      <div
+                        className="w-5 h-5 border-2 border-[var(--border-main)] border-t-accent-700 rounded-full animate-spin"/>
+                    ) : (
+                      <GoogleGLogo className="w-5 h-5"/>
+                    )}
+                    <span>Continue with Google</span>
+                    <ArrowRight
+                      className="w-4 h-4 ml-auto opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300"/>
+                  </button>
 
-              {/* Domain notice */}
-              <p className="text-center text-[var(--text-secondary)] text-xs mt-4 leading-relaxed">
-                Restricted to <span
-                className="text-accent-700 dark:text-accent-400 font-semibold">@{ALLOWED_DOMAIN}</span> accounts.
-                <br/>
-                <span className="text-[var(--text-muted)]">Includes NU-Drive and NU-Mail access.</span>
-              </p>
+                  {/* Domain notice */}
+                  <p className="text-center text-[var(--text-secondary)] text-xs mt-3 leading-relaxed">
+                    Restricted to <span
+                    className="text-accent-700 dark:text-accent-400 font-semibold">@{ALLOWED_DOMAIN}</span> accounts.
+                  </p>
+                </>
+              )}
 
               {/* Email / Password login (Bug #3 FIX) */}
               <div className="mt-4">
@@ -925,7 +811,7 @@ function LoginPage() {
                   type="button"
                   onClick={() => setShowEmailForm(true)}
                   aria-expanded={showEmailForm}
-                  className="w-full row-between px-4 py-2.5 rounded-xl bg-[var(--bg-elevated)] hover:bg-[var(--bg-card-hover)] border border-[var(--border-main)] text-[var(--text-secondary)] text-sm font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                  className="w-full row-between px-4 py-2.5 rounded-lg bg-[var(--bg-elevated)] hover:bg-[var(--bg-card-hover)] border border-[var(--border-main)] text-[var(--text-secondary)] text-sm font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
                   <div className="flex items-center gap-2">
                     <Mail className="w-4 h-4"/>
@@ -999,7 +885,7 @@ function LoginPage() {
                       isLoading={isEmailLoading}
                       loadingText="Signing in..."
                       aria-busy={isEmailLoading}
-                      className="w-full"
+                      className="w-full rounded-lg bg-accent-600 text-white hover:bg-accent-700"
                       leftIcon={<LogIn className="w-4 h-4"/>}
                     >
                       Sign In
@@ -1018,39 +904,9 @@ function LoginPage() {
                 <DemoLoginPanel onLogin={handleDemoLogin} isLoading={isDemoLoading}/>
               )}
 
-              {/* Divider */}
-              <div className="relative my-6">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-[var(--border-subtle)]"/>
-                </div>
-                <div className="relative flex justify-center text-xs">
-                  <span
-                    className="px-4 bg-[var(--bg-card)] text-[var(--text-secondary)] font-medium uppercase tracking-wide">
-                    secure enterprise SSO
-                  </span>
-                </div>
-              </div>
-
-              {/* Trust badges */}
-              <div className="flex items-center justify-center gap-6 text-[var(--text-secondary)] text-xs font-medium">
-                <div className="flex items-center gap-1.5">
-                  <Shield className="w-3.5 h-3.5 text-accent-700 dark:text-accent-400"/>
-                  <span>Enterprise Security</span>
-                </div>
-                <div className="w-1 h-1 rounded-full bg-[var(--border-main)]"/>
-                <div className="flex items-center gap-1.5">
-                  <svg className="w-3.5 h-3.5 text-accent-700 dark:text-accent-400" viewBox="0 0 24 24" fill="none"
-                       stroke="currentColor" strokeWidth="2">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                  </svg>
-                  <span>Encrypted</span>
-                </div>
-                <div className="w-1 h-1 rounded-full bg-[var(--border-main)]"/>
-                <div className="flex items-center gap-1.5">
-                  <Globe className="w-3.5 h-3.5 text-accent-700 dark:text-accent-400"/>
-                  <span>Enterprise Security</span>
-                </div>
-              </div>
+              <p className="mt-5 text-center text-xs text-[var(--text-muted)]">
+                Secure session with httpOnly cookies and CSRF protection.
+              </p>
             </div>
 
             {/* Footer */}

@@ -21,7 +21,7 @@ mistakes:
 | Architectural decisions (12 ADRs)                 | `docs/adr/README.md` → index                          |
 | Reusable code patterns (Redis, RLS, Kafka, etc.)  | `docs/patterns/README.md`                             |
 | Security baseline, threat model, scan cadence     | `docs/security/baseline.md`                           |
-| Swarm pipelines (feature, bug, security, refactor, perf) | `docs/runbooks/swarm-pipelines.md` (copy-paste templates) |
+| Swarm pipelines (feature, bug, security, refactor, perf, opus4.8) | `docs/runbooks/swarm-pipelines.md` (copy-paste templates) |
 | Active hardening backlog                          | `docs/audit/wave-10-deep-audit-report.md`             |
 | DDD bounded contexts                              | `docs/swarm/domains.yaml`                             |
 | Artifact registry (RuFlo machine-readable)        | `docs/swarm/registry.yaml`                            |
@@ -103,6 +103,7 @@ npx @claude-flow/cli@latest swarm init --topology hierarchical --max-agents 8 --
 | Refactor    | architect, coder, reviewer         | hierarchical |
 | Performance | perf-engineer, coder               | hierarchical |
 | Security    | security-architect, auditor        | hierarchical |
+| Opus4.8     | dynamic-coordinator, architect, coder, tester, security-auditor, reviewer | hierarchical-mesh |
 
 ### When to Swarm
 

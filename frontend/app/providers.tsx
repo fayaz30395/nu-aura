@@ -22,6 +22,7 @@ import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
 
 const GOOGLE_CLIENT_ID = env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '';
+const GOOGLE_OAUTH_DISABLED_CLIENT_ID = 'nu-aura-google-oauth-disabled';
 
 /**
  * Inner component that uses hooks requiring the Zustand store.
@@ -64,11 +65,13 @@ export function Providers({children}: { children: React.ReactNode }) {
     </QueryClientProvider>
   );
 
-  // Always wrap with GoogleOAuthProvider to avoid "must be used within GoogleOAuthProvider" errors
-  // during static generation. Empty clientId is handled gracefully by the library.
+  // Always wrap with GoogleOAuthProvider to avoid "must be used within GoogleOAuthProvider"
+  // errors on connector pages that call useGoogleLogin. The Google SDK does not handle
+  // an empty client ID gracefully, so local production smokes use a non-empty sentinel
+  // while the UI hides Google actions when OAuth is not configured.
   return (
     <ErrorBoundary>
-      <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+      <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID || GOOGLE_OAUTH_DISABLED_CLIENT_ID}>
         {content}
       </GoogleOAuthProvider>
     </ErrorBoundary>

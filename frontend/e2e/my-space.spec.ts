@@ -184,7 +184,7 @@ test.describe('MY SPACE - My Attendance', () => {
     test('should show Sessions section in the details panel', async ({page}) => {
       await page.waitForTimeout(2000);
       // Sessions header should always render once a date is selected (today is auto-selected)
-      await expect(page.locator('text=Sessions')).toBeVisible({timeout: 10000});
+      await expect(page.getByText('Sessions', {exact: true})).toBeVisible({timeout: 10000});
     });
   });
 

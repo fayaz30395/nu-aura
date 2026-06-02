@@ -149,14 +149,9 @@ test.describe('NU-Hire Smoke Tests @smoke', () => {
     await navigateTo(page, '/recruitment');
     await page.waitForTimeout(500);
 
-    const hireNavPaths = ['/recruitment', '/onboarding'];
-    let found = 0;
-    for (const path of hireNavPaths) {
-      const link = page.locator(`nav a[href*="${path}"]`).first();
-      if (await link.isVisible({timeout: 2000}).catch(() => false)) {
-        found++;
-      }
-    }
+    const found = await page.getByRole('navigation', {name: /main navigation/i})
+      .getByText(/recruitment|onboarding/i)
+      .count();
 
     expect(found).toBeGreaterThan(0);
   });
@@ -296,7 +291,7 @@ test.describe('NU-Fluence Smoke Tests @smoke', () => {
   });
 
   test('Fluence knowledge base page loads @smoke', async ({page}) => {
-    await navigateTo(page, '/knowledge');
+    await navigateTo(page, '/fluence/wiki');
     await expect(page.locator('main, [role="main"]').first()).toBeVisible({timeout: 10000});
     await expect(page.locator('text=/something went wrong/i').first()).not.toBeVisible();
   });

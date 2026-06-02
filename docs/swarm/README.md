@@ -54,6 +54,9 @@ Use the repo scripts instead of copying commands by hand:
 # Fix docs/swarm → .claude-flow runtime drift
 ./scripts/agents/ready.sh --fix
 
+# Dry-run a dynamic, adaptive workflow
+./scripts/agents/start-work.sh opus4.8 "Classify and execute mixed requirement safely"
+
 # Dry-run a pipeline kickoff
 ./scripts/agents/start-work.sh feature "Add employee document expiry reminders"
 
@@ -73,3 +76,4 @@ Pipeline types:
 | `security` | `docs/swarm/workflows/security-pipeline.yaml` | Audit findings, CVEs, hardening        |
 | `refactor` | `docs/swarm/workflows/refactor-pipeline.yaml` | Behavior-preserving restructure        |
 | `perf`     | `docs/swarm/workflows/perf-pipeline.yaml`     | Slow endpoints, N+1, batch jobs        |
+| `opus4.8`  | `docs/swarm/workflows/opus4-8-dynamic-workflow.yaml` | Adaptive routing by requirement risk |

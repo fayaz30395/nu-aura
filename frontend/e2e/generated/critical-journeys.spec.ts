@@ -1,4 +1,6 @@
 import {expect, test} from '@playwright/test';
+import {demoUsers} from '../fixtures/testData';
+import {loginAs} from '../fixtures/helpers';
 
 // Hand-curated multi-step flows. Generator deliberately stops at smoke + matrix;
 // these are the journeys whose value is in the *interaction sequence*, not in
@@ -9,6 +11,10 @@ test.describe('@journey critical user flows', () => {
   // shared storageState. Keep this file serial and run sign-out last so it
   // cannot invalidate the auth state used by the other critical journeys.
   test.describe.configure({mode: 'serial'});
+
+  test.beforeEach(async ({page}) => {
+    await loginAs(page, demoUsers.superAdmin.email, {verifyDashboard: false});
+  });
 
   test('navigate employees list and open detail', async ({page}) => {
     const res = await page.goto('/employees');

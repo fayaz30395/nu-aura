@@ -60,6 +60,29 @@
       "updatedAt": "2026-05-25T21:50:48.745Z",
       "pid": 96073,
       "terminationReason": "host process 96073 exited"
+    },
+    "swarm-1780352728156-qy59vz": {
+      "swarmId": "swarm-1780352728156-qy59vz",
+      "topology": "hierarchical",
+      "maxAgents": 4,
+      "status": "running",
+      "agents": [
+        "agent-1780353177067-0c8880",
+        "agent-1780353177183-nnikav",
+        "agent-1780353177198-y6yu0d"
+      ],
+      "tasks": [],
+      "config": {
+        "topology": "hierarchical",
+        "maxAgents": 4,
+        "strategy": "specialized",
+        "communicationProtocol": "message-bus",
+        "autoScaling": true,
+        "consensusMechanism": "majority"
+      },
+      "createdAt": "2026-06-01T22:25:28.156Z",
+      "updatedAt": "2026-06-01T22:25:28.156Z",
+      "pid": 3572
     }
   },
   "version": "3.0.0"

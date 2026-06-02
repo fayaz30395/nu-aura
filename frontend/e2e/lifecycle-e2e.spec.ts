@@ -216,7 +216,7 @@ test.describe.serial('S1 — Hire-to-Retire @lifecycle', () => {
     await loginAs(page, demoUsers.recruitmentAdmin.email, {verifyDashboard: true});
     await openRoute(page, '/recruitment/jobs');
 
-    await expect(page.getByRole('heading', {name: 'Job Openings'}), 'Recruitment jobs page should be ready')
+    await expect(page.getByRole('heading', {name: 'Job Openings', exact: true}), 'Recruitment jobs page should be ready')
       .toBeVisible({timeout: 60000});
 
     const createButton = page.getByRole('button', {name: /^Create Job Opening$/}).first();
@@ -1586,12 +1586,14 @@ test.describe('S10 — Session Isolation @lifecycle @security', () => {
     await pageEss.waitForLoadState('domcontentloaded');
     await pageMgr.waitForLoadState('domcontentloaded');
 
-    const essContent = await pageEss.textContent('body');
-    const mgrContent = await pageMgr.textContent('body');
+    // Both dashboards should load independently without visible application errors.
+    // Avoid raw HTML/text substring checks here: production chunk IDs can contain
+    // incidental values like "98500" that are unrelated to HTTP 500 failures.
+    await expect(pageEss.getByText(/Good morning|Good afternoon|Good evening/i).first()).toBeVisible({timeout: 30000});
+    await expect(pageMgr.getByText(/Good morning|Good afternoon|Good evening/i).first()).toBeVisible({timeout: 30000});
 
-    // Both dashboards should load without errors
-    expect(essContent).not.toContain('500');
-    expect(mgrContent).not.toContain('500');
+    await expect(pageEss.getByText(/Internal Server Error|Application error/i)).not.toBeVisible({timeout: 3000});
+    await expect(pageMgr.getByText(/Internal Server Error|Application error/i)).not.toBeVisible({timeout: 3000});
 
     await ctxEss.close();
     await ctxMgr.close();
