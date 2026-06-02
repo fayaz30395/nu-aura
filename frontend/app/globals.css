@@ -16,9 +16,9 @@
 @layer base {
   :root {
     /* ── Typography ───────────────────────────────────────────────── */
-    --font-sans: "Open Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    --font-display: "Montserrat", var(--font-sans);
-    --font-mono: "Roboto Mono", "SF Mono", Monaco, "Cascadia Code", Consolas, "Courier New", monospace;
+    --font-sans: "Manrope", "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-display: "Manrope", var(--font-sans);
+    --font-mono: "JetBrains Mono", "SF Mono", Monaco, Consolas, "Courier New", monospace;
     --font-body: var(--font-sans);
     --font-head: var(--font-display);
 
@@ -107,6 +107,11 @@
     --shadow-card-hover: 0 2px 8px rgba(15, 20, 40, 0.10), 0 1px 3px rgba(15, 20, 40, 0.06);
     --shadow-elevated: 0 4px 16px rgba(15, 20, 40, 0.10), 0 1px 4px rgba(15, 20, 40, 0.06);
     --shadow-dropdown: 0 8px 24px rgba(15, 20, 40, 0.14), 0 2px 6px rgba(15, 20, 40, 0.08);
+    --radius-shell: 1.35rem;
+    --radius-panel: 1rem;
+    --radius-pill: 999px;
+    --shell-gradient-start: #f6f8ff;
+    --shell-gradient-end: #f0f2ff;
 
     /* ── Ring / Focus ────────────────────────────────────────── */
     --ring-primary: rgba(37, 99, 235, 0.30);
@@ -313,6 +318,11 @@
     --chart-tooltip-bg: #12151E;
     --chart-tooltip-border: #1e2440;
     --chart-tooltip-text: #e8eaf0;
+    --radius-shell: 1.35rem;
+    --radius-panel: 1rem;
+    --radius-pill: 999px;
+    --shell-gradient-start: rgba(37, 99, 235, 0.07);
+    --shell-gradient-end: rgba(11, 13, 19, 0.95);
   }
 
   /* ── Theme Transition (Crisp, Calm) ──────────────────────────── */
@@ -342,7 +352,9 @@
   body {
     @apply antialiased;
     background-color: var(--bg-main);
-    background-image: var(--bg-pattern);
+    background-image:
+      radial-gradient(1200px 600px at 0% 0%, var(--shell-gradient-start), transparent 55%),
+      var(--bg-pattern);
     background-size: var(--bg-pattern-size);
     background-repeat: no-repeat, no-repeat;
     color: var(--text-primary);
@@ -362,11 +374,12 @@
   }
 
   h1 {
-    @apply text-2xl;
+    font-size: clamp(1.75rem, 2.15vw, 2.85rem);
+    letter-spacing: -0.03em;
   }
 
   h2 {
-    @apply text-2xl;
+    font-size: clamp(1.45rem, 1.8vw, 2rem);
   }
 
   h3 {
@@ -415,11 +428,33 @@
     background-color: var(--bg-card);
     border-color: var(--border-subtle);
     box-shadow: var(--shadow-card);
+    backdrop-filter: blur(6px);
   }
 
   .card-aura:hover {
     border-color: var(--border-main);
     box-shadow: var(--shadow-card-hover);
+  }
+
+  .shell-panel {
+    @apply rounded-[var(--radius-panel)] border border-[var(--border-subtle)] shadow-[var(--shadow-card)];
+    background-color: var(--bg-card);
+    backdrop-filter: blur(6px);
+  }
+
+  .shell-panel:hover {
+    box-shadow: var(--shadow-card-hover);
+    border-color: var(--border-main);
+  }
+
+  .shell-shell {
+    border-radius: var(--radius-shell);
+    background: linear-gradient(160deg, var(--shell-gradient-start), transparent 62%), var(--bg-surface);
+    border: 1px solid var(--border-main);
+  }
+
+  .icon-chip {
+    @apply inline-flex items-center justify-center rounded-full border;
   }
 
   .card-elevated {
@@ -1113,6 +1148,13 @@
     @apply bg-[var(--surface-2)] text-[var(--text-muted)] border border-[var(--border-main)];
   }
 
+  .aura-grid {
+    color: var(--accent-primary);
+    background-image: linear-gradient(currentColor 1px, transparent 1px), linear-gradient(90deg, currentColor 1px, transparent 1px);
+    background-size: 42px 42px;
+    opacity: 0.15;
+  }
+
   /* ── Form Group ─────────────────────────────────────────────── */
   .form-group {
     @apply flex flex-col gap-2;
@@ -1233,6 +1275,15 @@ html, body {
   }
 }
 
+@keyframes panelFloat {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -10px, 0);
+  }
+}
+
 /* ── Shimmer Loading Skeleton ──────────────────────────────────────── */
 .skeleton-shimmer {
   position: relative;
@@ -1254,6 +1305,17 @@ html, body {
   );
   background-size: 200% 100%;
   animation: shimmer 1.8s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .fade-slide-up {
+    animation: fadeInUp 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .float-subtle {
+    animation: panelFloat 6s ease-in-out infinite;
+  }
+
 }
 
 :root .skeleton-shimmer::after {

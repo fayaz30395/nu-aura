@@ -291,7 +291,13 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   }, [appCode, pendingApprovalCount]);
 
   return (
-    <div className={cn('flex h-screen overflow-hidden bg-main text-primary transition-colors duration-300', className)}>
+    <div
+      className={cn(
+        'relative isolate flex min-h-[100dvh] overflow-hidden bg-main text-primary transition-colors duration-300',
+        'page-reveal',
+        className
+      )}
+    >
       {/* Sidebar — fixed width, never flexes, prevents content shift */}
       <aside
         data-print-hide="true"
@@ -318,14 +324,18 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         <>
           <div
             onClick={() => setIsMobileMenuOpen(false)}
-            className="fixed inset-0 z-30 bg-[var(--bg-overlay)] md:hidden transition-opacity duration-300"
+            className="fixed inset-0 z-30 bg-[var(--bg-overlay)] md:hidden animate-fade-in"
           />
           <aside
             ref={mobileDrawerRef}
             role="dialog"
             aria-modal="true"
             aria-label="Sidebar navigation"
-            className="fixed inset-y-0 left-0 z-40 w-72 md:hidden transform transition-transform duration-300 ease-out animate-slide-in-left"
+            className={cn(
+              'fixed inset-y-0 left-0 z-40 w-72 md:hidden transform overflow-hidden border-r border-[var(--sidebar-border)]',
+              'bg-[var(--bg-sidebar)] shadow-[var(--shadow-elevated)]',
+              'animate-slide-in-left'
+            )}
           >
             <Sidebar
               items={menuItems}
@@ -361,9 +371,9 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         {/* Breadcrumbs */}
         {showBreadcrumbs && breadcrumbs.length > 0 && (
           <div
-            className="flex-shrink-0 border-b border-[var(--border-subtle)] bg-[var(--bg-surface)]"
+            className="flex-shrink-0 border-b border-[var(--border-subtle)] bg-[var(--bg-surface)]/90 backdrop-blur supports-[backdrop-filter]:bg-[var(--bg-surface)]/75"
           >
-            <div className="mx-auto w-full max-w-7xl px-6 py-2.5">
+            <div className="mx-auto w-full max-w-7xl xl:max-w-[1320px] px-4 sm:px-6 lg:px-8 py-2.5">
               <Breadcrumbs items={breadcrumbs}/>
             </div>
           </div>
@@ -378,14 +388,14 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         >
           <AuthGuard>
             <ErrorBoundary resetKeys={[pathname]}>
-              <div
-                className={cn(
-                  'mx-auto w-full max-w-7xl px-6 py-8',
-                  'stagger-children overflow-x-hidden',
-                  // Bottom padding: mobile needs space for fixed bottom nav
-                  'pb-24 md:pb-8'
-                )}
-              >
+          <div
+            className={cn(
+              'mx-auto w-full max-w-7xl xl:max-w-[1320px] px-4 sm:px-6 lg:px-8 py-5 md:py-7',
+              'stagger-children overflow-x-hidden',
+              // Bottom padding: mobile needs space for fixed bottom nav
+              'pb-24 md:pb-8'
+            )}
+          >
                 {children}
               </div>
             </ErrorBoundary>

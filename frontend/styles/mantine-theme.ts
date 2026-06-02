@@ -66,12 +66,12 @@ export const mantineTheme = createTheme({
   // ── Typography ──────────────────────────────────────────────────────
   // Map to the same `next/font` CSS vars set in `app/layout.tsx`.
   fontFamily:
-    'var(--font-sans), "Open Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+    'var(--font-sans), "Manrope", "Segoe UI", sans-serif',
   fontFamilyMonospace:
-    'var(--font-mono), "Roboto Mono", ui-monospace, SFMono-Regular, Menlo, monospace',
+    'var(--font-mono), "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace',
   headings: {
     fontFamily:
-      'var(--font-display), "Montserrat", var(--font-sans), system-ui, sans-serif',
+      'var(--font-sans), "Manrope", var(--font-sans), system-ui, sans-serif',
     fontWeight: '600',
   },
 

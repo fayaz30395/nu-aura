@@ -186,14 +186,11 @@ declare global {
 // ─── CSS-only Ambient Background (theme-aware) ─────────────────────
 function AnimatedBackground() {
   return (
-    <div className="fixed inset-0 z-0" suppressHydrationWarning>
+    <div className="fixed inset-0 z-0 overflow-hidden" suppressHydrationWarning>
       <div className="absolute inset-0 bg-[var(--bg-main)]"/>
+      <div className="absolute inset-0 aura-grid"/>
       <div
-        className="absolute inset-0 opacity-[0.045]"
-        style={{
-          backgroundImage: 'linear-gradient(currentColor 1px, transparent 1px), linear-gradient(90deg, currentColor 1px, transparent 1px)',
-          backgroundSize: '40px 40px',
-        }}
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(91,140,245,0.10),transparent_58%)]"
       />
     </div>
   );
@@ -673,24 +670,25 @@ function LoginPage() {
         }
       `}</style>
 
-      <div className="min-h-screen flex relative overflow-hidden">
+      <div className="min-h-[100dvh] flex relative overflow-hidden">
         <AnimatedBackground/>
 
         {/* ─── Left Panel: Product Context ──────────────────── */}
-        <div className="hidden lg:flex lg:w-[52%] relative z-10 flex-col justify-center px-16">
+        <div className="hidden lg:flex lg:w-[52%] relative z-10 flex-col justify-center px-14 xl:px-18">
           <div
-            className="max-w-md"
+            className="max-w-[580px] float-subtle"
             style={{animation: 'fadeSlideUp 0.8s ease-out 0.1s both'}}
           >
             <div
-              className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[var(--bg-elevated)] border border-[var(--border-main)] mb-5">
+              className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--bg-elevated)] border border-[var(--border-main)] mb-6"
+            >
               <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-success-600 dark:bg-success-400"/>
-              <span className="text-accent-700 dark:text-accent-300 text-xs font-medium tracking-wider uppercase">
+              <span className="text-accent-700 dark:text-accent-300 text-xs font-semibold tracking-[0.08em] uppercase">
                 NU-AURA Platform
               </span>
             </div>
 
-            <h1 className="text-4xl font-semibold text-[var(--text-primary)] leading-tight mb-4 tracking-normal">
+            <h1 className="text-[clamp(2rem,4vw,2.95rem)] font-semibold text-[var(--text-primary)] leading-tight mb-5">
               People operations without the noise.
             </h1>
 
@@ -700,10 +698,25 @@ function LoginPage() {
 
             <div className="grid grid-cols-2 gap-4 text-sm">
               {['NU-HRMS', 'NU-Hire', 'NU-Grow', 'NU-Fluence'].map((app) => (
-                <div key={app} className="rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-3 text-[var(--text-secondary)]">
-                  <span className="font-medium text-[var(--text-primary)]">{app}</span>
+                <div
+                  key={app}
+                  className="rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)]/85 px-4 py-3 text-[var(--text-secondary)] shadow-[var(--shadow-card)]"
+                >
+                  <span className="font-medium text-[var(--text-primary)] text-sm">{app}</span>
                 </div>
               ))}
+            </div>
+
+            <div className="mt-9 flex max-w-lg items-start gap-4 shell-panel p-4">
+              <span className="icon-chip h-8 w-8 text-[var(--accent-primary)] border-[var(--accent-primary)]/25">
+                <span className="text-xs font-semibold">24/7</span>
+              </span>
+              <div>
+                <p className="text-sm font-semibold text-[var(--text-primary)]">Always on, enterprise-ready, and built for scale.</p>
+                <p className="text-xs text-[var(--text-secondary)] mt-1">
+                  Real-time insights, approvals, and workforce operations from one place.
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -711,11 +724,11 @@ function LoginPage() {
         {/* ─── Right Panel: Login Card ───────────────────────── */}
         <div className="w-full lg:w-[48%] relative z-10 flex items-center justify-center px-5 py-8">
           <div
-            className="w-full max-w-[390px]"
+            className="w-full max-w-[420px] fade-slide-up"
             style={{animation: mounted ? 'fadeSlideUp 0.6s ease-out 0.2s both' : 'none'}}
           >
             {/* Logo */}
-            <div className="flex justify-center mb-6">
+            <div className="flex justify-center mb-7">
               <Image
                 src="/images/nulogic-logo.svg"
                 alt="NULogic"
@@ -745,12 +758,15 @@ function LoginPage() {
             </div>
 
             {/* Card */}
-            <div className="rounded-lg bg-[var(--bg-card)] border border-[var(--border-main)] p-6 shadow-[var(--shadow-card)]">
-              <div className="text-center mb-5">
-                <h3 className="text-lg font-semibold text-[var(--text-primary)] tracking-normal mb-1">
+            <div className="shell-panel p-6">
+              <div className="mb-5">
+                <p className="mb-2 inline-flex items-center gap-2 rounded-full border border-[var(--border-main)] px-3 py-1 text-2xs font-semibold uppercase tracking-[0.08em] text-[var(--text-secondary)]">
+                  Secure Access
+                </p>
+                <h3 className="text-xl font-semibold text-[var(--text-primary)] tracking-normal">
                   Sign In
                 </h3>
-                <p className="text-[var(--text-secondary)] text-sm">
+                <p className="text-[var(--text-secondary)] text-sm mt-2">
                   {isGoogleAuthEnabled
                     ? 'Access your workspace with Google SSO'
                     : 'Access your workspace with your email and password'}
@@ -885,7 +901,7 @@ function LoginPage() {
                       isLoading={isEmailLoading}
                       loadingText="Signing in..."
                       aria-busy={isEmailLoading}
-                      className="w-full rounded-lg bg-accent-600 text-white hover:bg-accent-700"
+                      className="w-full rounded-lg bg-accent-600 text-white hover:bg-accent-700 btn-shimmer"
                       leftIcon={<LogIn className="w-4 h-4"/>}
                     >
                       Sign In

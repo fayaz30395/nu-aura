@@ -80,23 +80,32 @@ const Header: React.FC<HeaderProps> = ({
     };
   }, [isDropdownOpen, isNotificationsOpen]);
 
+  const iconActionClass =
+    'group relative inline-flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl border border-transparent ' +
+    'text-[var(--header-text-muted)] cursor-pointer transition-all duration-250 ease-[cubic-bezier(0.16,1,0.3,1)] ' +
+    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 ' +
+    'before:absolute before:inset-0 before:rounded-xl before:bg-[var(--header-hover-bg)] before:opacity-0 before:scale-95 ' +
+    'before:transition before:duration-250 before:ease-[cubic-bezier(0.16,1,0.3,1)] ' +
+    'hover:text-[var(--header-text)] hover:before:scale-100 hover:before:opacity-100 ' +
+    'active:scale-[0.98] active:before:opacity-60';
+
   return (
     <header
       role="banner"
       className={cn(
-        'sticky top-0 z-40 flex-shrink-0 border-b transition-all duration-150',
-        'h-16 border-header-border',
-        'glass-bg',
+        'sticky top-0 z-40 flex-shrink-0 border-b border-header-border',
+        'h-14 md:h-16 transition-all duration-250 page-reveal',
+        'bg-[var(--bg-surface)]/95 backdrop-blur-sm will-change-transform',
         className
       )}
     >
-      <div className="row-between h-full px-2 sm:px-4 md:px-6">
+      <div className="row-between h-full px-3 sm:px-5 md:px-7">
         {/* Left Side */}
-        <div className="flex items-center gap-1 sm:gap-2">
+        <div className="flex items-center gap-2 sm:gap-4">
           {/* Mobile hamburger */}
           {showMenuButton && (
             <button onClick={onMenuClick}
-                    className="h-8 w-8 rounded-lg text-[var(--header-text-muted)] hover:text-[var(--header-text)] hover:bg-[var(--header-hover-bg)] transition-colors duration-150 md:hidden inline-flex items-center justify-center cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 active:translate-y-px"
+                    className={`inline-flex ${iconActionClass} md:hidden`}
                     aria-label="Toggle menu"
             >
               <Menu className="h-5 w-5"/>
@@ -124,7 +133,10 @@ const Header: React.FC<HeaderProps> = ({
           </div>
 
           {/* App Switcher */}
-          <nav aria-label="Top navigation" className="flex items-center">
+          <nav
+            aria-label="Top navigation"
+            className="flex items-center rounded-xl border border-[var(--border-subtle)] px-2 py-1 bg-[var(--bg-card)]/60"
+          >
             <AppSwitcher/>
           </nav>
 
@@ -136,18 +148,18 @@ const Header: React.FC<HeaderProps> = ({
           {/* Mobile Search Button */}
           <button
             onClick={() => setIsMobileSearchOpen(true)}
-            className="lg:hidden h-8 w-8 rounded-lg text-[var(--header-text-muted)] hover:text-[var(--header-text)] hover:bg-[var(--header-hover-bg)] transition-colors duration-150 inline-flex items-center justify-center cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 active:translate-y-px"
+            className={`inline-flex ${iconActionClass} lg:hidden`}
             aria-label="Search"
           >
-            <Search className="h-4 w-4 sm:h-5 sm:w-5"/>
+            <Search className="h-5 w-5"/>
           </button>
         </div>
 
         {/* Right Side - Actions */}
-        <div className="flex items-center gap-1 sm:gap-2">
+        <div className="flex items-center gap-1 sm:gap-2.5">
           {/* Help */}
           <button
-            className="hidden sm:inline-flex h-8 w-8 items-center justify-center rounded-lg text-[var(--header-text-muted)] hover:text-[var(--header-text)] hover:bg-[var(--header-hover-bg)] transition-colors duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 active:translate-y-px"
+            className={`hidden sm:inline-flex ${iconActionClass}`}
             aria-label="Help">
             <HelpCircle className="h-5 w-5"/>
           </button>
@@ -160,7 +172,7 @@ const Header: React.FC<HeaderProps> = ({
           <div className="relative">
             <button
               onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
-              className="notification-btn relative inline-flex h-8 w-8 items-center justify-center rounded-lg text-[var(--header-text-muted)] hover:text-[var(--header-text)] hover:bg-[var(--header-hover-bg)] transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 active:translate-y-px"
+              className={`notification-btn relative inline-flex ${iconActionClass}`}
               data-testid="notification-bell"
               data-ws-connected={isWebSocketConnected ? 'true' : 'false'}
               aria-label="Notifications"
@@ -169,14 +181,20 @@ const Header: React.FC<HeaderProps> = ({
             >
               <Bell className="h-5 w-5"/>
               {totalUnreadCount > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center">
+                <span className="absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center">
                   <span
                     data-testid="notification-count"
-                    className="relative inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-accent px-1 text-2xs font-semibold text-white">
+                    className="relative inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-[var(--accent-primary)] px-1 text-2xs font-semibold text-white">
                     {totalUnreadCount > 9 ? '9+' : totalUnreadCount}
                   </span>
                 </span>
               )}
+              <span
+                className={cn(
+                  'pointer-events-none absolute -bottom-1.5 -right-1.5 h-1.5 w-1.5 rounded-full transition-opacity duration-300',
+                  isWebSocketConnected ? 'bg-emerald-400 opacity-90' : 'bg-transparent opacity-0'
+                )}
+              />
             </button>
 
             <NotificationDropdown
@@ -204,12 +222,12 @@ const Header: React.FC<HeaderProps> = ({
       </div>
 
       {/* Mobile Search Overlay — only render after client hydration to avoid SSR mismatch */}
-      {isMounted && isMobileSearchOpen && (
+        {isMounted && isMobileSearchOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-[var(--bg-overlay)] cursor-pointer"
                onClick={() => setIsMobileSearchOpen(false)}/>
           <div
-            className="absolute top-0 left-0 right-0 skeuo-glass border-b border-dropdown-border p-4 shadow-dropdown animate-fade-in-down rounded-b-xl">
+            className="absolute inset-x-0 top-0 z-10 animate-slide-in-up border-b border-[var(--border-main)] p-4 bg-[var(--bg-surface)]/95 shadow-[var(--shadow-dropdown)] rounded-b-2xl backdrop-blur-md">
             <GlobalSearch onSelect={() => setIsMobileSearchOpen(false)} autoFocus/>
           </div>
         </div>
