@@ -19,7 +19,9 @@ import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {motion} from 'framer-motion';
 import {Check, ChevronLeft, Clock, Edit2, Moon, Plus, Sun, Trash2, Zap,} from 'lucide-react';
+import {Input} from '@/components/ui/Input';
 import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
+import {Select} from '@/components/ui/Select';
 import {useRouter} from 'next/navigation';
 
 const shiftSchema = z.object({
@@ -57,6 +59,18 @@ const SHIFT_TYPES = [
 const WEEKDAYS = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
 
 const COLOR_PRESETS = CATEGORICAL_PALETTE;
+const COLOR_PRESET_CLASSES: Record<string, string> = {
+  '#2563EB': 'bg-accent-600',
+  '#16A34A': 'bg-success-600',
+  '#D97706': 'bg-warning-600',
+  '#DC2626': 'bg-danger-600',
+  '#9333EA': 'bg-violet-600',
+  '#0891B2': 'bg-cyan-600',
+  '#DB2777': 'bg-pink-600',
+  '#EA580C': 'bg-orange-600',
+  '#65A30D': 'bg-lime-600',
+  '#475569': 'bg-slate-600',
+};
 
 function formatTime(time: string | undefined): string {
   if (!time) return '';
@@ -353,89 +367,45 @@ export default function ShiftDefinitionsPage() {
               <ModalBody className="space-y-4">
                     {/* Basic Info */}
                     <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
-                          Shift Code *
-                        </label>
-                        <input
-                          {...form.register('shiftCode')}
-                          disabled={!!editingShift}
-                          className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 disabled:opacity-50"
-                          placeholder="e.g., GEN"
-                        />
-                        {form.formState.errors.shiftCode && (
-                          <p className="text-xs text-danger-500 mt-1">
-                            {form.formState.errors.shiftCode.message}
-                          </p>
-                        )}
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
-                          Shift Name *
-                        </label>
-                        <input
-                          {...form.register('shiftName')}
-                          className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
-                          placeholder="e.g., General Shift"
-                        />
-                        {form.formState.errors.shiftName && (
-                          <p className="text-xs text-danger-500 mt-1">
-                            {form.formState.errors.shiftName.message}
-                          </p>
-                        )}
-                      </div>
+                      <Input
+                        label="Shift Code *"
+                        placeholder="e.g., GEN"
+                        disabled={!!editingShift}
+                        error={form.formState.errors.shiftCode?.message}
+                        {...form.register('shiftCode')}
+                      />
+                      <Input
+                        label="Shift Name *"
+                        placeholder="e.g., General Shift"
+                        error={form.formState.errors.shiftName?.message}
+                        {...form.register('shiftName')}
+                      />
                     </div>
 
                     {/* Times */}
                     <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
-                          Start Time *
-                        </label>
-                        <input
-                          type="time"
-                          {...form.register('startTime')}
-                          className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
-                          End Time *
-                        </label>
-                        <input
-                          type="time"
-                          {...form.register('endTime')}
-                          className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
-                        />
-                      </div>
+                      <Input type="time" label="Start Time *" {...form.register('startTime')}/>
+                      <Input type="time" label="End Time *" {...form.register('endTime')}/>
                     </div>
 
                     {/* Type & Color */}
                     <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
-                          Shift Type
-                        </label>
-                        <select
-                          {...form.register('shiftType')}
-                          className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
-                        >
-                          {SHIFT_TYPES.map((t) => (
-                            <option key={t.value} value={t.value}>
-                              {t.label}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
+                      <Select label="Shift Type" {...form.register('shiftType')}>
+                        {SHIFT_TYPES.map((t) => (
+                          <option key={t.value} value={t.value}>
+                            {t.label}
+                          </option>
+                        ))}
+                      </Select>
                       <div>
                         <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
                           Color
                         </label>
                         <div className="flex items-center gap-2">
-                          <input
+                          <Input
                             type="color"
                             {...form.register('colorCode')}
-                            className="w-8 h-8 rounded cursor-pointer border-0"
+                            className="h-8 w-8 cursor-pointer border-0 p-1"
                           />
                           <div className="flex gap-1">
                             {COLOR_PRESETS.map((c) => (
@@ -443,8 +413,7 @@ export default function ShiftDefinitionsPage() {
                                 key={c}
                                 type="button"
                                 onClick={() => form.setValue('colorCode', c)}
-                                className="w-5 h-5 rounded-full border-2 border-transparent hover:border-surface-400"
-                                style={{backgroundColor: c}}
+                                className={`w-5 h-5 rounded-full border-2 border-transparent hover:border-surface-400 ${COLOR_PRESET_CLASSES[c]}`}
                               />
                             ))}
                           </div>
@@ -494,36 +463,9 @@ export default function ShiftDefinitionsPage() {
 
                     {/* Grace & Break */}
                     <div className="grid grid-cols-3 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
-                          Grace Period (min)
-                        </label>
-                        <input
-                          type="number"
-                          {...form.register('gracePeriodInMinutes')}
-                          className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
-                          Break Duration (min)
-                        </label>
-                        <input
-                          type="number"
-                          {...form.register('breakDurationMinutes')}
-                          className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
-                          Min Gap (hours)
-                        </label>
-                        <input
-                          type="number"
-                          {...form.register('minGapBetweenShiftsHours')}
-                          className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
-                        />
-                      </div>
+                      <Input type="number" label="Grace Period (min)" {...form.register('gracePeriodInMinutes')}/>
+                      <Input type="number" label="Break Duration (min)" {...form.register('breakDurationMinutes')}/>
+                      <Input type="number" label="Min Gap (hours)" {...form.register('minGapBetweenShiftsHours')}/>
                     </div>
 
                     {/* Toggles */}
@@ -562,10 +504,9 @@ export default function ShiftDefinitionsPage() {
                         <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
                           Flexible Window (minutes before/after)
                         </label>
-                        <input
+                        <Input
                           type="number"
                           {...form.register('flexibleWindowMinutes')}
-                          className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
                         />
                       </div>
                     )}

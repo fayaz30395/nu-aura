@@ -308,23 +308,31 @@ export function ExpenseAnalytics({claims, className = ''}: ExpenseAnalyticsProps
             <p className="text-surface-500 text-center py-8">No expense data available</p>
           ) : (
             <div className="space-y-4">
-              {categoryData.slice(0, 6).map((data) => (
-                <div key={data.category} className="flex items-center gap-2">
-                  <div
-                    className="w-3 h-3 rounded-full flex-shrink-0"
-                    style={{backgroundColor: data.color}}
-                  />
-                  <span className="text-sm text-surface-600 dark:text-surface-400 flex-1 truncate">
-                    {CATEGORY_LABELS[data.category]}
-                  </span>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs text-surface-500">{data.percentage.toFixed(1)}%</span>
-                    <span className="text-sm font-medium text-surface-900 dark:text-surface-50 w-20 text-right">
-                      ${data.amount.toLocaleString(undefined, {maximumFractionDigits: 0})}
+              {categoryData.slice(0, 6).map((data, index) => {
+                const markerClass = [
+                  'bg-accent-500',
+                  'bg-success-600',
+                  'bg-warning-500',
+                  'bg-danger-500',
+                  'bg-surface-500',
+                  'bg-accent-700',
+                ][index % 6];
+
+                return (
+                  <div key={data.category} className="flex items-center gap-2">
+                    <div className={`w-3 h-3 rounded-full flex-shrink-0 ${markerClass}`}/>
+                    <span className="text-sm text-surface-600 dark:text-surface-400 flex-1 truncate">
+                      {CATEGORY_LABELS[data.category]}
                     </span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-surface-500">{data.percentage.toFixed(1)}%</span>
+                      <span className="text-sm font-medium text-surface-900 dark:text-surface-50 w-20 text-right">
+                        ${data.amount.toLocaleString(undefined, {maximumFractionDigits: 0})}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
           {/* Mini pie chart visualization */}

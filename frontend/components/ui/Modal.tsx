@@ -128,8 +128,7 @@ const Modal: React.FC<ModalProps> = ({
           >
             {/* Backdrop */}
             <motion.div
-              className="absolute inset-0"
-              style={{backgroundColor: 'var(--bg-overlay)'}}
+              className="absolute inset-0 bg-[var(--bg-overlay)]"
               onClick={closeOnBackdrop ? onClose : undefined}
               initial="initial"
               animate="animate"
@@ -141,16 +140,11 @@ const Modal: React.FC<ModalProps> = ({
             <motion.div
               ref={modalRef}
               className={cn(
-                'relative w-full rounded-lg border',
+                'relative w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-elevated)] shadow-[var(--shadow-dropdown)]',
                 'max-h-[90vh] overflow-hidden flex flex-col',
                 sizeClasses[size],
                 className
               )}
-              style={{
-                backgroundColor: 'var(--bg-elevated)',
-                borderColor: 'var(--border-main)',
-                boxShadow: 'var(--shadow-dropdown)',
-              }}
               onClick={(e) => e.stopPropagation()}
               initial="initial"
               animate="animate"
@@ -177,10 +171,9 @@ const ModalHeader: React.FC<ModalHeaderProps> = ({
   return (
     <div
       className={cn(
-        'row-between px-6 py-4',
+        'row-between border-b border-[var(--border-main)] px-6 py-4',
         className
       )}
-      style={{borderBottom: '1px solid var(--border-main)'}}
     >
       <div className="flex-1 min-w-0">
         {typeof children === 'string' ? (
@@ -216,13 +209,9 @@ const ModalFooter: React.FC<ModalFooterProps> = ({children, className}) => {
   return (
     <div
       className={cn(
-        'flex items-center justify-end gap-2 px-6 py-4',
+        'flex items-center justify-end gap-2 border-t border-[var(--border-main)] bg-[var(--bg-surface)] px-6 py-4',
         className
       )}
-      style={{
-        borderTop: '1px solid var(--border-main)',
-        backgroundColor: 'var(--bg-surface)',
-      }}
     >
       {children}
     </div>

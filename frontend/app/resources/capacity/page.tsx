@@ -4,6 +4,8 @@ import {useEffect, useMemo, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {AppLayout} from '@/components/layout';
 import {AlertTriangle, Info, RefreshCw} from 'lucide-react';
+import {Input} from '@/components/ui/Input';
+import {Select} from '@/components/ui/Select';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {ResourceManagementApiError,} from '@/lib/services/hrms/resource-management.service';
 import {EmployeeWorkload} from '@/lib/types/hrms/resource-management';
@@ -16,21 +18,27 @@ interface ProjectBand {
   projectName: string;
   projectId: string;
   allocationPct: number;
-  color: string;
+  colorClass: string;
 }
 
 // Deterministic pastel color from project id string
-const PROJECT_COLORS = [
-  'var(--chart-primary)', 'var(--chart-secondary)', 'var(--chart-accent)',
-  'var(--chart-warning)', 'var(--chart-success)',
-  'var(--chart-info)', 'var(--chart-primary)', 'var(--chart-warning)',
-  'var(--chart-secondary)', 'var(--chart-info)',
+const PROJECT_COLOR_CLASSES = [
+  'bg-accent-600', 'bg-accent-400', 'bg-accent-300',
+  'bg-warning-500', 'bg-success-600',
+  'bg-info-500', 'bg-accent-600', 'bg-warning-500',
+  'bg-accent-400', 'bg-info-500',
 ];
 
-function projectColor(id: string): string {
+function projectColorClass(id: string): string {
   let hash = 0;
-  for (let i = 0; i < id.length; i++) hash = (hash + id.charCodeAt(i)) % PROJECT_COLORS.length;
-  return PROJECT_COLORS[hash];
+  for (let i = 0; i < id.length; i++) hash = (hash + id.charCodeAt(i)) % PROJECT_COLOR_CLASSES.length;
+  return PROJECT_COLOR_CLASSES[hash];
+}
+
+function allocationTextClass(total: number): string {
+  if (total >= 100) return 'text-danger-600 dark:text-danger-300';
+  if (total >= 81) return 'text-warning-600 dark:text-warning-300';
+  return 'text-success-600 dark:text-success-300';
 }
 
 // ─── Row component ────────────────────────────────────────────────────────────
@@ -45,10 +53,8 @@ function CapacityRow({emp}: { emp: EmployeeWorkload }) {
     projectName: p.projectName,
     projectId: p.projectId,
     allocationPct: p.allocationPercentage ?? 0,
-    color: projectColor(p.projectId),
+    colorClass: projectColorClass(p.projectId),
   }));
-
-  const barColor = total >= 100 ? 'var(--chart-danger)' : total >= 81 ? 'var(--chart-warning)' : 'var(--chart-success)';
 
   return (
     <div
@@ -71,11 +77,9 @@ function CapacityRow({emp}: { emp: EmployeeWorkload }) {
               {bands.map((band, _idx) => (
                 <div
                   key={band.projectId}
-                  className="h-full flex items-center justify-center text-white text-xs font-semibold overflow-hidden"
+                  className={`h-full flex items-center justify-center text-white text-xs font-semibold overflow-hidden opacity-85 ${band.colorClass}`}
                   style={{
                     width: `${Math.min(band.allocationPct, 100)}%`,
-                    backgroundColor: band.color,
-                    opacity: 0.85,
                   }}
                   title={`${band.projectName}: ${band.allocationPct}%`}
                 >
@@ -112,10 +116,7 @@ function CapacityRow({emp}: { emp: EmployeeWorkload }) {
 
       {/* % label */}
       <div className="w-16 flex-shrink-0 text-right">
-        <span
-          className="text-sm font-bold"
-          style={{color: barColor}}
-        >
+        <span className={`text-sm font-bold ${allocationTextClass(total)}`}>
           {total}%
         </span>
       </div>
@@ -126,8 +127,7 @@ function CapacityRow({emp}: { emp: EmployeeWorkload }) {
         {bands.slice(0, 3).map(b => (
           <span
             key={b.projectId}
-            className="text-xs px-1.5 py-0.5 rounded-full text-white font-medium truncate max-w-[80px]"
-            style={{backgroundColor: b.color}}
+            className={`text-xs px-1.5 py-0.5 rounded-full text-white font-medium truncate max-w-[80px] ${b.colorClass}`}
             title={b.projectName}
           >
             {b.projectName.length > 10 ? b.projectName.slice(0, 9) + '…' : b.projectName}
@@ -303,21 +303,23 @@ export default function CapacityTimelinePage() {
 
         {/* Filters */}
         <div className="flex flex-wrap gap-4">
-          <input
-            type="text"
-            placeholder="Search employee..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            className="px-4 py-2 border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-card)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500 w-52"
-          />
-          <select
-            value={deptFilter}
-            onChange={e => setDeptFilter(e.target.value)}
-            className="px-4 py-2 border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-card)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
-          >
-            <option value="ALL">All Departments</option>
-            {departments.map(d => <option key={d} value={d}>{d}</option>)}
-          </select>
+          <div className="w-52">
+            <Input
+              type="text"
+              placeholder="Search employee"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+            />
+          </div>
+          <div className="w-52">
+            <Select
+              value={deptFilter}
+              onChange={e => setDeptFilter(e.target.value)}
+            >
+              <option value="ALL">All Departments</option>
+              {departments.map(d => <option key={d} value={d}>{d}</option>)}
+            </Select>
+          </div>
         </div>
 
         {/* Bar chart */}

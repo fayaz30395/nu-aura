@@ -1,11 +1,12 @@
 'use client';
 
-import {useState} from 'react';
+import {type ReactNode, useState} from 'react';
 import {Modal} from '@mantine/core';
 import {AnimatePresence, motion} from 'framer-motion';
 import {AlertTriangle, ArrowRight, CheckCircle2, FileText, Folder, Shield, Trash2,} from 'lucide-react';
 import {Button} from '@/components/ui/Button';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {Input} from '@/components/ui/Input';
 import type {WikiSpace} from '@/lib/types/platform/fluence';
 
 // ─── Props ──────────────────────────────────────────────────────
@@ -22,6 +23,23 @@ interface DeleteSpaceModalProps {
 // ─── Steps ──────────────────────────────────────────────────────
 
 type Step = 'warning' | 'migrate' | 'confirm';
+
+function SpaceGlyph({icon, size = 'md'}: {icon: ReactNode; size?: 'sm' | 'md' | 'lg'}) {
+  const sizeClass = {
+    sm: 'h-8 w-8 text-sm',
+    md: 'h-10 w-10 text-lg',
+    lg: 'h-12 w-12 text-2xl',
+  }[size];
+  const fallbackSize = size === 'lg' ? 'h-6 w-6' : size === 'md' ? 'h-5 w-5' : 'h-4 w-4';
+
+  return (
+    <div
+      className={`flex shrink-0 items-center justify-center rounded-lg border border-[var(--border-subtle)] bg-accent-50 text-accent-700 dark:bg-accent-900/30 dark:text-accent-300 ${sizeClass}`}
+    >
+      {icon || <Folder className={fallbackSize}/>}
+    </div>
+  );
+}
 
 // ─── Component ──────────────────────────────────────────────────
 
@@ -48,6 +66,7 @@ export function DeleteSpaceModal({
   if (!space) return null;
 
   const otherSpaces = allSpaces.filter((s) => s.id !== space.id);
+  const selectedTarget = otherSpaces.find((s) => s.id === selectedTargetId);
   const pageCount = space.pageCount || 0;
   const confirmMatches = confirmText.toLowerCase() === space.name.toLowerCase();
 
@@ -100,12 +119,7 @@ export function DeleteSpaceModal({
             {/* Space summary card */}
             <div className="p-4 rounded-xl border border-[var(--border-main)] bg-[var(--bg-secondary)]">
               <div className="flex items-center gap-4 mb-4">
-                <div
-                  className="flex items-center justify-center w-12 h-12 rounded-xl text-2xl text-white"
-                  style={{backgroundColor: space.color || '#3e63dd'}}
-                >
-                  {space.icon || '📁'}
-                </div>
+                <SpaceGlyph icon={space.icon} size="lg"/>
                 <div>
                   <p className="text-base font-semibold text-[var(--text-primary)]">
                     {space.name}
@@ -212,12 +226,7 @@ export function DeleteSpaceModal({
                         : 'border-[var(--border-main)] bg-[var(--bg-secondary)] hover:bg-[var(--bg-tertiary)]'
                     }`}
                   >
-                    <div
-                      className="flex items-center justify-center w-10 h-10 rounded-lg text-lg text-white flex-shrink-0"
-                      style={{backgroundColor: s.color || '#3e63dd'}}
-                    >
-                      {s.icon || '📁'}
-                    </div>
+                    <SpaceGlyph icon={s.icon}/>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-[var(--text-primary)] truncate">
                         {s.name}
@@ -241,29 +250,16 @@ export function DeleteSpaceModal({
                 animate={{opacity: 1, height: 'auto'}}
                 className="flex items-center gap-4 p-4 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-subtle)]"
               >
-                <div
-                  className="flex items-center justify-center w-8 h-8 rounded-lg text-sm text-white"
-                  style={{backgroundColor: space.color || '#3e63dd'}}
-                >
-                  {space.icon || '📁'}
-                </div>
+                <SpaceGlyph icon={space.icon} size="sm"/>
                 <div className="flex items-center gap-2 text-body-muted">
                   <span className="font-medium text-[var(--text-primary)]">
                     {pageCount} pages
                   </span>
                   <ArrowRight className="h-4 w-4"/>
                 </div>
-                <div
-                  className="flex items-center justify-center w-8 h-8 rounded-lg text-sm text-white"
-                  style={{
-                    backgroundColor:
-                      otherSpaces.find((s) => s.id === selectedTargetId)?.color || '#3e63dd',
-                  }}
-                >
-                  {otherSpaces.find((s) => s.id === selectedTargetId)?.icon || '📁'}
-                </div>
+                <SpaceGlyph icon={selectedTarget?.icon} size="sm"/>
                 <span className="text-sm font-medium text-[var(--text-primary)]">
-                  {otherSpaces.find((s) => s.id === selectedTargetId)?.name}
+                  {selectedTarget?.name}
                 </span>
               </motion.div>
             )}
@@ -316,16 +312,13 @@ export function DeleteSpaceModal({
 
             {/* Type to confirm */}
             <div>
-              <label htmlFor="delete-space-confirm" className="text-sm font-medium text-[var(--text-secondary)] mb-2 block">
-                Type <strong className="text-[var(--text-primary)]">{space.name}</strong> to confirm
-              </label>
-              <input
+              <Input
                 id="delete-space-confirm"
                 type="text"
                 value={confirmText}
                 onChange={(e) => setConfirmText(e.target.value)}
+                label={`Type ${space.name} to confirm`}
                 placeholder={space.name}
-                className="input-aura w-full"
                 autoFocus
               />
             </div>
@@ -362,7 +355,7 @@ export function DeleteSpaceModal({
                 ) : (
                   <Trash2 className="h-4 w-4"/>
                 )}
-                {isDeleting ? 'Deleting...' : 'Delete Space'}
+                {isDeleting ? 'Deleting' : 'Delete space'}
               </Button>
               <Button variant="outline" onClick={() => setStep('migrate')}>
                 Back

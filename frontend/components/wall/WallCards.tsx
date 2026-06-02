@@ -220,7 +220,6 @@ export function PostCard({
                   width={800}
                   height={450}
                   className="h-auto w-full object-cover"
-                  style={{width: '100%', height: 'auto'}}
                   unoptimized
                 />
               </div>

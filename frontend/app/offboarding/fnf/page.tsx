@@ -21,13 +21,14 @@ import {
   Tooltip,
 } from '@mantine/core';
 import {notifications} from '@mantine/notifications';
-import {IconAlertCircle, IconCash, IconCheck, IconEye, IconRefresh, IconSearch,} from '@tabler/icons-react';
+import {IconAlertCircle, IconCash, IconCheck, IconEye, IconLock, IconRefresh, IconSearch,} from '@tabler/icons-react';
 import {AppLayout} from '@/components/layout/AppLayout';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {useFnFApprove, useFnFList} from '@/lib/hooks/queries/useFnF';
 import {SettlementStatus} from '@/lib/types/hrms/exit';
 import {formatCurrency, formatDate} from '@/lib/utils';
+import {cn} from '@/lib/utils';
 import type {FnFCalculationResponse} from '@/lib/services/hrms/fnf.service';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -62,15 +63,15 @@ const fmtLabel = (s: string) => s.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.t
 interface StatCardProps {
   label: string;
   value: string | number;
-  color?: string;
+  valueClassName?: string;
   sub?: string;
 }
 
-function StatCard({label, value, color = 'var(--text-primary)', sub}: StatCardProps) {
+function StatCard({label, value, valueClassName, sub}: StatCardProps) {
   return (
     <Paper withBorder p="md" radius="md" className="shadow-[var(--shadow-card)]">
       <Text size="xs" c="dimmed" mb={4}>{label}</Text>
-      <Text size="xl" fw={700} style={{color}}>{value}</Text>
+      <Text size="xl" fw={700} className={cn('text-[var(--text-primary)]', valueClassName)}>{value}</Text>
       {sub && <Text size="xs" c="dimmed" mt={2}>{sub}</Text>}
     </Paper>
   );
@@ -126,7 +127,7 @@ export default function FnFManagementPage() {
         fallback={
           <Center h={400}>
             <Stack align="center" gap="sm">
-              <Text size="xl">🔒</Text>
+              <IconLock size={28} color="var(--text-muted)"/>
               <Text c="dimmed">You don&apos;t have permission to view F&amp;F settlements.</Text>
             </Stack>
           </Center>
@@ -163,17 +164,17 @@ export default function FnFManagementPage() {
             <StatCard
               label="Pending Approval"
               value={pendingCount}
-              color="var(--mantine-color-yellow-6)"
+              valueClassName="text-warning-600 dark:text-warning-400"
             />
             <StatCard
               label="Paid"
               value={paidCount}
-              color="var(--mantine-color-green-7)"
+              valueClassName="text-success-600 dark:text-success-400"
             />
             <StatCard
               label="Net Payable (page)"
               value={formatCurrency(totalNetPayable)}
-              color="var(--text-accent)"
+              valueClassName="text-[var(--accent-primary)]"
             />
           </SimpleGrid>
 
@@ -185,7 +186,7 @@ export default function FnFManagementPage() {
                 leftSection={<IconSearch size={14}/>}
                 value={search}
                 onChange={(e) => setSearch(e.currentTarget.value)}
-                style={{flex: 1, minWidth: 200}}
+                className="min-w-[200px] flex-1"
               />
               <Select
                 placeholder="Filter by status"
@@ -193,7 +194,7 @@ export default function FnFManagementPage() {
                 value={statusFilter}
                 onChange={(v) => setStatusFilter(v ?? '')}
                 clearable
-                style={{minWidth: 180}}
+                className="min-w-[180px]"
               />
               {(statusFilter || search) && (
                 <Button
@@ -233,7 +234,7 @@ export default function FnFManagementPage() {
               </Stack>
             </Center>
           ) : (
-            <Paper withBorder radius="md" className="shadow-[var(--shadow-card)]" style={{overflow: 'hidden'}}>
+            <Paper withBorder radius="md" className="overflow-hidden shadow-[var(--shadow-card)]">
               <Table striped highlightOnHover withColumnBorders={false}>
                 <Table.Thead className="bg-surface-100 dark:bg-surface-800">
                   <Table.Tr>

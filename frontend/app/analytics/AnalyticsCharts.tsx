@@ -35,6 +35,18 @@ interface CustomTooltipProps {
   label?: string | number;
 }
 
+const TOOLTIP_SERIES_TEXT = [
+  'text-[var(--chart-primary)]',
+  'text-[var(--chart-secondary)]',
+  'text-[var(--chart-success)]',
+  'text-[var(--chart-warning)]',
+  'text-[var(--chart-danger)]',
+  'text-[var(--chart-info)]',
+] as const;
+
+const getTooltipSeriesText = (index: number) =>
+  TOOLTIP_SERIES_TEXT[index % TOOLTIP_SERIES_TEXT.length];
+
 const CustomTooltip = ({active, payload, label}: CustomTooltipProps) => {
   if (active && payload && payload.length) {
     return (
@@ -42,7 +54,7 @@ const CustomTooltip = ({active, payload, label}: CustomTooltipProps) => {
         className="bg-[var(--bg-input)] p-4 rounded-lg shadow-[var(--shadow-dropdown)] border border-[var(--border-main)]">
         <p className="text-sm font-medium text-[var(--text-primary)]">{label}</p>
         {payload.map((entry: TooltipPayloadEntry, index: number) => (
-          <p key={index} className="text-sm" style={{color: entry.color}}>
+          <p key={index} className={`text-sm ${getTooltipSeriesText(index)}`}>
             {entry.name}: {entry.value}
           </p>
         ))}

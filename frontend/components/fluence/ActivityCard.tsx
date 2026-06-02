@@ -93,7 +93,7 @@ export default function ActivityCard({activity}: ActivityCardProps) {
           {actorInitials}
         </Avatar>
 
-        <Stack gap={4} style={{flex: 1, minWidth: 0}}>
+        <Stack gap={4} className="min-w-0 flex-1">
           <Group gap="xs" wrap="wrap">
             <Text size="sm">
               <Text component="span" fw={600}>
@@ -117,7 +117,7 @@ export default function ActivityCard({activity}: ActivityCardProps) {
             size="sm"
             fw={500}
             c="blue"
-            style={{cursor: 'pointer', wordBreak: 'break-word'}}
+            className="cursor-pointer break-words"
             onClick={handleTitleClick}
           >
             {activity.contentTitle}
@@ -134,7 +134,7 @@ export default function ActivityCard({activity}: ActivityCardProps) {
                 {excerptOpen ? <IconChevronUp size={14}/> : <IconChevronDown size={14}/>}
               </ActionIcon>
               <Collapse in={excerptOpen}>
-                <Text size="xs" c="dimmed" lineClamp={3} style={{wordBreak: 'break-word'}}>
+                <Text size="xs" c="dimmed" lineClamp={3} className="break-words">
                   {activity.contentExcerpt}
                 </Text>
               </Collapse>

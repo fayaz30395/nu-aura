@@ -2,6 +2,7 @@
 
 import React, {useMemo, useState} from 'react';
 import {useRouter} from 'next/navigation';
+import {Checkbox as MantineCheckbox} from '@mantine/core';
 import {
   AlertCircle,
   ArrowLeft,
@@ -14,7 +15,7 @@ import {
   Loader2
 } from 'lucide-react';
 import {AppLayout} from '@/components/layout/AppLayout';
-import {Button, Card, CardContent} from '@/components/ui';
+import {Button, Card, CardContent, Select} from '@/components/ui';
 import {TaskListItem} from '@/lib/types/core/task';
 import {CalendarEvent, GanttTask, PRIORITY_COLORS, STATUS_COLORS} from '@/lib/types/hrms/project-calendar';
 import {CATEGORICAL_DEFAULT, STATUS_FALLBACK_COLORS} from '@/lib/utils/categoricalPalette';
@@ -55,6 +56,39 @@ interface GanttItem {
   projectId?: string;
   dependencies?: string[];
 }
+
+const STATUS_BAR_CLASS: Record<string, string> = {
+  PLANNED: 'bg-surface-500',
+  IN_PROGRESS: 'bg-accent-500 dark:bg-accent-400',
+  ON_HOLD: 'bg-warning-500',
+  COMPLETED: 'bg-success-600 dark:bg-success-500',
+  CANCELLED: 'bg-danger-500',
+  BACKLOG: 'bg-surface-600',
+  TODO: 'bg-surface-600',
+  IN_REVIEW: 'bg-accent-700 dark:bg-accent-300',
+  BLOCKED: 'bg-danger-600',
+  DONE: 'bg-success-700 dark:bg-success-400',
+};
+
+const PRIORITY_BADGE_CLASS: Record<string, string> = {
+  LOW: 'bg-success-50 text-success-700 dark:bg-success-900/30 dark:text-success-300',
+  MEDIUM: 'bg-warning-50 text-warning-700 dark:bg-warning-900/30 dark:text-warning-300',
+  HIGH: 'bg-danger-50 text-danger-700 dark:bg-danger-900/30 dark:text-danger-300',
+  URGENT: 'bg-danger-100 text-danger-800 dark:bg-danger-900/40 dark:text-danger-200',
+  CRITICAL: 'bg-danger-100 text-danger-900 dark:bg-danger-900/50 dark:text-danger-100',
+};
+
+const PRIORITY_FLAG_CLASS: Record<string, string> = {
+  LOW: 'text-success-600 dark:text-success-400',
+  MEDIUM: 'text-warning-600 dark:text-warning-400',
+  HIGH: 'text-danger-600 dark:text-danger-400',
+  URGENT: 'text-danger-700 dark:text-danger-300',
+  CRITICAL: 'text-danger-900 dark:text-danger-200',
+};
+
+const getStatusBarClass = (status: string) => STATUS_BAR_CLASS[status] ?? 'bg-surface-600';
+const getPriorityBadgeClass = (priority: string) => PRIORITY_BADGE_CLASS[priority] ?? 'bg-[var(--bg-surface)] text-[var(--text-secondary)]';
+const getPriorityFlagClass = (priority: string) => PRIORITY_FLAG_CLASS[priority] ?? 'text-[var(--text-muted)]';
 
 export default function ProjectCalendarPage() {
   const router = useRouter();
@@ -410,7 +444,7 @@ export default function ProjectCalendarPage() {
       <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="projects">
         <div className="flex items-center justify-center h-64">
           <Loader2 className="h-8 w-8 animate-spin text-accent-500"/>
-          <span className="ml-2 text-[var(--text-secondary)]">Loading calendar...</span>
+          <span className="ml-2 text-[var(--text-secondary)]">Loading calendar</span>
         </div>
       </AppLayout>
     );
@@ -490,48 +524,42 @@ export default function ProjectCalendarPage() {
             <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
               {/* Filters */}
               <div className="flex flex-wrap gap-4">
-                <select
+                <Select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
-                  className="px-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent-500"
+                  aria-label="Status filter"
+                  className="min-w-40"
                 >
-                  <option value="">All Status</option>
+                  <option value="">All status</option>
                   <option value="PLANNED">Planned</option>
-                  <option value="IN_PROGRESS">In Progress</option>
-                  <option value="ON_HOLD">On Hold</option>
+                  <option value="IN_PROGRESS">In progress</option>
+                  <option value="ON_HOLD">On hold</option>
                   <option value="COMPLETED">Completed</option>
                   <option value="CANCELLED">Cancelled</option>
-                </select>
-                <select
+                </Select>
+                <Select
                   value={priorityFilter}
                   onChange={(e) => setPriorityFilter(e.target.value)}
-                  className="px-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent-500"
+                  aria-label="Priority filter"
+                  className="min-w-40"
                 >
-                  <option value="">All Priority</option>
+                  <option value="">All priority</option>
                   <option value="LOW">Low</option>
                   <option value="MEDIUM">Medium</option>
                   <option value="HIGH">High</option>
                   <option value="CRITICAL">Critical</option>
-                </select>
+                </Select>
                 <div className="flex items-center gap-2">
-                  <label className="flex items-center gap-2 text-body-secondary cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={showProjects}
-                      onChange={(e) => setShowProjects(e.target.checked)}
-                      className="rounded border-[var(--border-main)] dark:border-[var(--border-main)]"
-                    />
-                    Projects
-                  </label>
-                  <label className="flex items-center gap-2 text-body-secondary cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={showTasks}
-                      onChange={(e) => setShowTasks(e.target.checked)}
-                      className="rounded border-[var(--border-main)] dark:border-[var(--border-main)]"
-                    />
-                    Tasks
-                  </label>
+                  <MantineCheckbox
+                    label="Projects"
+                    checked={showProjects}
+                    onChange={(e) => setShowProjects(e.currentTarget.checked)}
+                  />
+                  <MantineCheckbox
+                    label="Tasks"
+                    checked={showTasks}
+                    onChange={(e) => setShowTasks(e.currentTarget.checked)}
+                  />
                 </div>
               </div>
 
@@ -643,11 +671,7 @@ export default function ProjectCalendarPage() {
                                 <div className="flex items-center gap-2 mt-1">
                                   {item.priority && (
                                     <span
-                                      className="px-1.5 py-0.5 text-xs rounded"
-                                      style={{
-                                        backgroundColor: PRIORITY_COLORS[item.priority] + '20',
-                                        color: PRIORITY_COLORS[item.priority]
-                                      }}
+                                      className={`rounded px-1.5 py-0.5 text-xs ${getPriorityBadgeClass(item.priority)}`}
                                     >
                                       {item.priority}
                                     </span>
@@ -666,10 +690,11 @@ export default function ProjectCalendarPage() {
                           <div className="flex-1 relative p-2">
                             {isMilestone ? (
                               <div
-                                className="absolute top-1/2 -translate-y-1/2 w-3 h-3 rotate-45 cursor-pointer"
+                                className={`absolute top-1/2 h-3 w-3 -translate-y-1/2 rotate-45 cursor-pointer ${
+                                  item.type === 'milestone' ? 'bg-warning-500' : getStatusBarClass(item.status)
+                                }`}
                                 style={{
                                   left: position.left,
-                                  backgroundColor: item.color,
                                 }}
                                 title={`${item.name} - ${formatDate(item.startDate)}`}
                                 onClick={() => handleEventClick(item)}
@@ -685,11 +710,10 @@ export default function ProjectCalendarPage() {
                               />
                             ) : (
                               <div
-                                className="absolute top-1/2 -translate-y-1/2 h-8 rounded cursor-pointer group transition-all hover:h-10"
+                                className={`group absolute top-1/2 h-8 -translate-y-1/2 cursor-pointer rounded transition-all hover:h-10 ${getStatusBarClass(item.status)}`}
                                 style={{
                                   left: position.left,
                                   width: position.width,
-                                  backgroundColor: item.color + 'E6',
                                 }}
                                 onClick={() => {
                                   if (isProject) {
@@ -798,9 +822,9 @@ export default function ProjectCalendarPage() {
                   Status
                 </h4>
                 <div className="flex flex-wrap gap-2">
-                  {Object.entries(STATUS_COLORS).map(([status, color]) => (
+                  {Object.entries(STATUS_COLORS).map(([status]) => (
                     <div key={status} className="flex items-center gap-2">
-                      <div className="w-4 h-4 rounded" style={{backgroundColor: color}}/>
+                      <div className={`h-4 w-4 rounded ${getStatusBarClass(status)}`}/>
                       <span className="text-xs text-[var(--text-secondary)]">
                         {status.replace('_', ' ')}
                       </span>
@@ -813,9 +837,9 @@ export default function ProjectCalendarPage() {
                   Priority
                 </h4>
                 <div className="flex flex-wrap gap-2">
-                  {Object.entries(PRIORITY_COLORS).map(([priority, color]) => (
+                  {Object.entries(PRIORITY_COLORS).map(([priority]) => (
                     <div key={priority} className="flex items-center gap-2">
-                      <Flag className="h-4 w-4" style={{color}}/>
+                      <Flag className={`h-4 w-4 ${getPriorityFlagClass(priority)}`}/>
                       <span className="text-xs text-[var(--text-secondary)]">
                         {priority}
                       </span>

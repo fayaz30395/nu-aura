@@ -95,8 +95,7 @@ export default function NineBoxPage() {
           <Group gap="xs" align="flex-start">
             {/* Y-axis label */}
             <Stack justify="center" h={360} w={20}>
-              <Text size="xs" c="dimmed"
-                    style={{writingMode: 'vertical-rl', transform: 'rotate(180deg)', whiteSpace: 'nowrap'}}>
+              <Text size="xs" c="dimmed" className="rotate-180 whitespace-nowrap [writing-mode:vertical-rl]">
                 Potential (Manager Rating) →
               </Text>
             </Stack>
@@ -111,7 +110,7 @@ export default function NineBoxPage() {
 
               {potRows.map((pot) => (
                 <Group key={pot} gap={4} align="stretch">
-                  <Text size="xs" c="dimmed" w={56} ta="right" style={{lineHeight: '120px'}}>
+                  <Text size="xs" c="dimmed" w={56} ta="right" className="leading-[120px]">
                     {pot === 'high' ? 'High' : pot === 'med' ? 'Medium' : 'Low'}
                   </Text>
                   {perfCols.map((perf) => {

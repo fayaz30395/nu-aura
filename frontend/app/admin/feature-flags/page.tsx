@@ -146,14 +146,14 @@ export default function FeatureFlagsPage() {
       {/* Feature Flag Cards */}
       <Stack gap="sm">
         {filteredFlags.map((flag: FeatureFlag) => (
-          <Card key={flag.id} withBorder padding="md" radius="md" className="skeuo-card">
+          <Card key={flag.id} withBorder padding="md" radius="md" className="card-aura">
             <Group justify="space-between" wrap="nowrap">
-              <Group gap="md" wrap="nowrap" style={{flex: 1}}>
+              <Group gap="md" wrap="nowrap" className="flex-1 min-w-0">
                 <ToggleLeft
                   size={24}
                   className={flag.enabled ? 'text-success-500' : 'text-[var(--text-muted)]'}
                 />
-                <div style={{flex: 1}}>
+                <div className="flex-1 min-w-0">
                   <Group gap="xs">
                     <Text fw={600} size="sm">
                       {flag.featureName}
@@ -204,7 +204,7 @@ export default function FeatureFlagsPage() {
         ))}
 
         {filteredFlags.length === 0 && (
-          <Card withBorder padding="xl" radius="md" className="skeuo-card">
+          <Card withBorder padding="xl" radius="md" className="card-aura">
             <EmptyState
               icon={<ToggleLeft className="w-8 h-8"/>}
               title={search || categoryFilter ? 'No matches' : 'No feature flags'}

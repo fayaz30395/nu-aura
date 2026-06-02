@@ -2,7 +2,7 @@
 
 import {useMemo, useState} from 'react';
 import {ChevronLeft, ChevronRight,} from 'lucide-react';
-import {CALENDAR_EVENT_COLORS, CalendarEvent, CalendarViewType,} from '@/lib/types/hrms/project-calendar';
+import {CalendarEvent, CalendarViewType,} from '@/lib/types/hrms/project-calendar';
 import {
   addDays,
   addMonths,
@@ -121,10 +121,27 @@ export function CalendarView({
     return eachDayOfInterval({start, end});
   }, [currentDate]);
 
+  const getEventBadgeClass = (event: CalendarEvent) => {
+    const eventType = String(event.type).toLowerCase();
+
+    if (eventType.includes('milestone')) {
+      return 'bg-warning-600 dark:bg-warning-500';
+    }
+    if (eventType.includes('deadline') || eventType.includes('blocked')) {
+      return 'bg-danger-600 dark:bg-danger-500';
+    }
+    if (eventType.includes('task') || eventType.includes('project')) {
+      return 'bg-accent-600 dark:bg-accent-500';
+    }
+    if (eventType.includes('meeting') || eventType.includes('review')) {
+      return 'bg-success-600 dark:bg-success-500';
+    }
+
+    return 'bg-accent-600 dark:bg-accent-500';
+  };
+
   // Render event badge
   const renderEventBadge = (event: CalendarEvent, compact = false) => {
-    const backgroundColor = event.color || CALENDAR_EVENT_COLORS[event.type] || '#3b82f6';
-
     return (
       <div
         key={event.id}
@@ -144,8 +161,7 @@ export function CalendarView({
         aria-label={`Event: ${event.title}`}
         className={`cursor-pointer rounded px-1.5 py-0.5 text-xs text-white truncate hover:opacity-80 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-1 ${
           compact ? 'mb-0.5' : 'mb-1'
-        }`}
-        style={{backgroundColor}}
+        } ${getEventBadgeClass(event)}`}
         title={`${event.title} - ${format(event.startDate, 'h:mm a')} to ${format(event.endDate, 'h:mm a')}`}
       >
         {!event.allDay && !compact && (
@@ -285,7 +301,7 @@ export function CalendarView({
       </div>
 
       {/* Time grid */}
-      <div className="flex overflow-y-auto" style={{height: 'calc(100vh - 400px)'}}>
+      <div className="flex h-[calc(100dvh-400px)] overflow-y-auto">
         {/* Time column */}
         <div className="w-16 flex-shrink-0 border-r border-surface-200 dark:border-surface-700">
           {HOURS.map((hour) => (
@@ -338,11 +354,10 @@ export function CalendarView({
                     role="button"
                     tabIndex={0}
                     aria-label={`Event: ${event.title}, ${format(event.startDate, 'h:mm a')} to ${format(event.endDate, 'h:mm a')}`}
-                    className="absolute left-1 right-1 rounded px-1 py-0.5 text-xs text-white cursor-pointer hover:opacity-80 overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-1"
+                    className={`absolute left-1 right-1 rounded px-1 py-0.5 text-xs text-white cursor-pointer hover:opacity-80 overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-1 ${getEventBadgeClass(event)}`}
                     style={{
                       top: `${startHour * HOUR_HEIGHT}px`,
                       height: `${Math.max(duration * HOUR_HEIGHT - 2, 20)}px`,
-                      backgroundColor: event.color || CALENDAR_EVENT_COLORS[event.type],
                     }}
                   >
                     <div className="font-medium truncate">{event.title}</div>
@@ -392,7 +407,7 @@ export function CalendarView({
         )}
 
         {/* Time grid */}
-        <div className="flex overflow-y-auto" style={{height: 'calc(100vh - 400px)'}}>
+        <div className="flex h-[calc(100dvh-400px)] overflow-y-auto">
           {/* Time column */}
           <div className="w-16 flex-shrink-0 border-r border-surface-200 dark:border-surface-700">
             {HOURS.map((hour) => (
@@ -438,11 +453,10 @@ export function CalendarView({
                   role="button"
                   tabIndex={0}
                   aria-label={`Event: ${event.title}, ${format(event.startDate, 'h:mm a')} to ${format(event.endDate, 'h:mm a')}`}
-                  className="absolute left-2 right-2 rounded p-2 text-white cursor-pointer hover:opacity-80 overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-1"
+                  className={`absolute left-2 right-2 rounded p-2 text-white cursor-pointer hover:opacity-80 overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-1 ${getEventBadgeClass(event)}`}
                   style={{
                     top: `${startHour * HOUR_HEIGHT}px`,
                     height: `${Math.max(duration * HOUR_HEIGHT - 4, 30)}px`,
-                    backgroundColor: event.color || CALENDAR_EVENT_COLORS[event.type],
                   }}
                 >
                   <div className="font-medium">{event.title}</div>
@@ -533,19 +547,19 @@ export function CalendarView({
       {/* Legend */}
       <div className="flex flex-wrap gap-4 p-4 border-t border-surface-200 dark:border-surface-700 text-sm">
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded" style={{backgroundColor: CALENDAR_EVENT_COLORS.project}}/>
+          <div className="h-3 w-3 rounded bg-blue-500"/>
           <span className="text-surface-600 dark:text-surface-400">Project</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded" style={{backgroundColor: CALENDAR_EVENT_COLORS.task}}/>
+          <div className="h-3 w-3 rounded bg-violet-500"/>
           <span className="text-surface-600 dark:text-surface-400">Task</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded" style={{backgroundColor: CALENDAR_EVENT_COLORS.milestone}}/>
+          <div className="h-3 w-3 rounded bg-amber-500"/>
           <span className="text-surface-600 dark:text-surface-400">Milestone</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded" style={{backgroundColor: CALENDAR_EVENT_COLORS.deadline}}/>
+          <div className="h-3 w-3 rounded bg-red-500"/>
           <span className="text-surface-600 dark:text-surface-400">Deadline</span>
         </div>
       </div>

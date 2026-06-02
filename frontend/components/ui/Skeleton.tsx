@@ -87,13 +87,9 @@ function SkeletonCard({
       aria-live="polite"
       aria-label="Loading content"
       className={cn(
-        "rounded-lg border p-4 space-y-4",
+        "rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] p-4 space-y-4",
         className
       )}
-      style={{
-        backgroundColor: 'var(--bg-card)',
-        borderColor: 'var(--border-main)',
-      }}
       {...props}
     >
       <div className="flex items-center space-x-4">
@@ -138,17 +134,13 @@ function SkeletonTable({
       role="status"
       aria-live="polite"
       aria-label="Loading content"
-      className={cn("overflow-hidden rounded-lg border", className)}
-      style={{
-        backgroundColor: 'var(--bg-card)',
-        borderColor: 'var(--border-main)',
-      }}
+      className={cn("overflow-hidden rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)]", className)}
       {...props}
     >
       <span className="sr-only">Loading...</span>
       <table className="w-full">
-        <thead style={{backgroundColor: 'var(--bg-surface)'}}>
-        <tr style={{borderBottom: '1px solid var(--border-main)'}}>
+        <thead className="bg-[var(--bg-surface)]">
+        <tr className="border-b border-[var(--border-main)]">
           {Array.from({length: columns}).map((_, i) => (
             <th key={i} className="px-4 py-2 text-left">
               <Skeleton height={16} width={80}/>
@@ -176,11 +168,7 @@ function SkeletonStatCard({
       role="status"
       aria-live="polite"
       aria-label="Loading content"
-      className={cn("rounded-lg border p-4", className)}
-      style={{
-        backgroundColor: 'var(--bg-card)',
-        borderColor: 'var(--border-main)',
-      }}
+      className={cn("rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] p-4", className)}
       {...props}
     >
       <div className="row-between">

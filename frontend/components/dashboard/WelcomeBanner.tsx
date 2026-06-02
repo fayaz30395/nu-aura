@@ -1,16 +1,7 @@
 'use client';
 
-import {useEffect, useState} from 'react';
 import {format} from 'date-fns';
 import {AlertCircle, Bell, CheckCircle2, ChevronRight, Clock} from 'lucide-react';
-
-// wave-3 N: Safari <=16.1 lacks color-mix() support. We default to the
-// modern value on first paint (matches SSR), then swap to the rgba()
-// fallback after mount on browsers that don't support it.
-function supportsColorMix(): boolean {
-  if (typeof window === 'undefined' || typeof CSS === 'undefined' || !CSS.supports) return true;
-  return CSS.supports('background', 'color-mix(in srgb, red, blue)');
-}
 
 interface WelcomeBannerProps {
   employeeName: string;
@@ -41,45 +32,17 @@ export function WelcomeBanner({
   const today = format(new Date(), 'EEEE, MMMM d, yyyy');
   const greeting = getGreeting();
 
-  // wave-3 N: fallback to rgba() on Safari <=16.1 (no color-mix support).
-  // --accent-primary resolves to #2563EB ≈ rgb(37, 99, 235). 22% mix with
-  // transparent approximates rgba(37, 99, 235, 0.22) — Studio Slate accent shadow.
-  const [useFallback, setUseFallback] = useState(false);
-  useEffect(() => {
-    if (!supportsColorMix()) setUseFallback(true);
-  }, []);
-  const shadowMix = useFallback
-    ? 'rgba(37, 99, 235, 0.22)' // fallback for Safari <=16.1
-    : 'color-mix(in srgb, var(--accent-primary) 22%, transparent)';
-
   return (
-    <div
-      className="relative w-full overflow-hidden rounded-lg px-4 py-4 sm:px-7 sm:py-6 flex flex-col justify-center"
-      style={{
-        background: 'var(--nu-gradient-dark)',
-        boxShadow: `inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 8px 32px ${shadowMix}, 0 2px 8px rgba(0, 0, 0, 0.15)`,
-      }}
-    >
-      {/* Mesh gradient orbs for visual depth — hidden on mobile to prevent overflow */}
-      <div
-        className="absolute top-[-40%] right-[-10%] w-[150px] h-[150px] sm:w-[300px] sm:h-[300px] rounded-full bg-[rgba(77,138,255,0.25)] blur-[60px] pointer-events-none"/>
-      <div
-        className="absolute bottom-[-30%] left-[-5%] w-[100px] h-[100px] sm:w-[200px] sm:h-[200px] rounded-full bg-[rgba(0,62,203,0.30)] blur-[50px] pointer-events-none"/>
-      {/* Subtle noise texture */}
-      <div
-        className="absolute inset-0 opacity-[0.03] pointer-events-none"
-        style={{backgroundImage: 'var(--skeuo-noise)'}}
-      />
-
-      <div className="relative z-10">
-        <p className="text-xs font-medium uppercase tracking-[0.15em] text-accent-200/70 mb-1">
+    <div className="relative flex w-full flex-col justify-center rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-card)] px-4 py-4 shadow-[var(--shadow-card)] sm:px-6">
+      <div>
+        <p className="mb-1 text-xs font-medium uppercase tracking-wider text-[var(--text-muted)]">
           {today}
         </p>
-        <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight leading-tight">
+        <h1 className="text-xl font-semibold tracking-tight text-[var(--text-heading)] sm:text-2xl">
           {greeting}, {firstName}
         </h1>
         {(designation || department) && (
-          <p className="mt-1.5 text-sm text-accent-100/60 font-medium">
+          <p className="mt-1 text-sm font-medium text-[var(--text-secondary)]">
             {designation}{designation && department ? ' \u00B7 ' : ''}{department}
           </p>
         )}
@@ -98,23 +61,23 @@ export function QuickAccessWidget({
   const hasNoPending = totalPending === 0;
 
   return (
-    <div className="skeuo-card rounded-lg border border-[var(--border-main)] p-4 sm:p-6">
+    <div className="card-aura rounded-xl border border-[var(--border-main)] p-4 sm:p-5">
       <div className="row-between mb-4">
         <h2 className="text-sm font-semibold text-[var(--text-primary)] tracking-tight">
           Quick Access
         </h2>
         {totalPending > 0 && (
           <span
-            className="inline-flex items-center justify-center h-5 min-w-5 px-1.5 rounded-full text-xs font-bold text-white bg-gradient-to-br from-warning-500 to-warning-600">
+            className="inline-flex h-5 min-w-5 items-center justify-center rounded-full border border-warning-200 bg-warning-50 px-1.5 text-xs font-semibold text-warning-700 dark:border-warning-800/50 dark:bg-warning-900/30 dark:text-warning-300">
             {totalPending}
           </span>
         )}
       </div>
 
-      <div className="space-y-1.5">
+      <div className="space-y-2">
         {hasNoPending ? (
           <div
-            className="flex items-center gap-2.5 rounded-xl bg-[var(--status-success-bg)] border border-[var(--status-success-border)] p-4">
+            className="flex items-center gap-2 rounded-xl bg-[var(--status-success-bg)] border border-[var(--status-success-border)] p-4">
             <CheckCircle2 className="h-4 w-4 flex-shrink-0 text-[var(--status-success-text)]"/>
             <p className="text-sm font-medium text-[var(--status-success-text)]">
               All caught up. No pending actions.
@@ -127,7 +90,7 @@ export function QuickAccessWidget({
                 href="/approvals"
                 className="row-between rounded-xl bg-[var(--bg-surface)] px-4 py-4 transition-all duration-200 hover:bg-[var(--bg-card-hover)] hover:translate-x-0.5 group"
               >
-                <div className="flex items-center gap-2.5">
+                <div className="flex items-center gap-2">
                   <div
                     className="flex items-center justify-center w-7 h-7 rounded-lg bg-warning-100 dark:bg-warning-900/30">
                     <AlertCircle className="h-3.5 w-3.5 text-warning-600 dark:text-warning-400"/>
@@ -151,7 +114,7 @@ export function QuickAccessWidget({
                 href="/timesheets"
                 className="row-between rounded-xl bg-[var(--bg-surface)] px-4 py-4 transition-all duration-200 hover:bg-[var(--bg-card-hover)] hover:translate-x-0.5 group"
               >
-                <div className="flex items-center gap-2.5">
+                <div className="flex items-center gap-2">
                   <div
                     className="flex items-center justify-center w-7 h-7 rounded-lg bg-accent-100 dark:bg-accent-900/30">
                     <Clock className="h-3.5 w-3.5 text-accent-600 dark:text-accent-400"/>
@@ -175,7 +138,7 @@ export function QuickAccessWidget({
                 href="/profile"
                 className="row-between rounded-xl bg-[var(--bg-surface)] px-4 py-4 transition-all duration-200 hover:bg-[var(--bg-card-hover)] hover:translate-x-0.5 group"
               >
-                <div className="flex items-center gap-2.5">
+                <div className="flex items-center gap-2">
                   <div
                     className="flex items-center justify-center w-7 h-7 rounded-lg bg-accent-100 dark:bg-accent-900/30">
                     <AlertCircle className="h-3.5 w-3.5 text-accent-600 dark:text-accent-400"/>
@@ -201,7 +164,7 @@ export function QuickAccessWidget({
           href="/inbox"
           className="row-between rounded-xl px-4 py-2.5 text-sm transition-all duration-200 hover:bg-[var(--bg-surface)] border-t border-[var(--border-subtle)] mt-2 pt-4 group"
         >
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2">
             <Bell
               className="h-4 w-4 text-[var(--text-muted)] group-hover:text-[var(--text-secondary)] transition-colors"/>
             <span

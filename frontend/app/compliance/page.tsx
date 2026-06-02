@@ -30,6 +30,7 @@ import {
   IconCheckbox,
   IconClipboardList,
   IconFileText,
+  IconLock,
   IconRefresh,
   IconShield,
 } from '@tabler/icons-react';
@@ -153,7 +154,7 @@ function PoliciesTab() {
   );
 
   return (
-    <Paper withBorder radius="md" style={{overflow: 'hidden'}}>
+    <Paper withBorder radius="md" className="overflow-hidden">
       <Table striped highlightOnHover>
         <Table.Thead className="bg-surface-100 dark:bg-surface-800">
           <Table.Tr>
@@ -311,7 +312,7 @@ function ChecklistsTab() {
                 size="sm"
                 radius="xl"
                 color={pct === 100 ? 'green' : isOverdue ? 'red' : 'blue'}
-                style={{flex: 1}}
+                className="flex-1"
               />
               <Text size="xs" c="dimmed" w={36} ta="right">
                 {cl.completedItems ?? 0}/{cl.totalItems ?? 0}
@@ -362,7 +363,7 @@ function AlertsTab() {
   );
 
   return (
-    <Paper withBorder radius="md" style={{overflow: 'hidden'}}>
+    <Paper withBorder radius="md" className="overflow-hidden">
       <Table striped highlightOnHover>
         <Table.Thead className="bg-surface-100 dark:bg-surface-800">
           <Table.Tr>
@@ -466,7 +467,7 @@ export default function CompliancePage() {
         fallback={
           <Center h={400}>
             <Stack align="center" gap="sm">
-              <Text size="xl">🔒</Text>
+              <IconLock size={28} color="var(--text-muted)"/>
               <Text c="dimmed">You don&apos;t have permission to view compliance data.</Text>
               <Button variant="outline" size="sm" onClick={() => router.push('/me/dashboard')}>
                 Go to Dashboard
@@ -496,8 +497,7 @@ export default function CompliancePage() {
 
           {/* Critical Alert Banner */}
           {criticalAlerts.length > 0 && (
-            <Paper withBorder p="sm" radius="md"
-                   style={{borderColor: 'var(--mantine-color-red-5)', background: 'var(--mantine-color-red-0)'}}>
+            <Paper withBorder p="sm" radius="md" className="border-danger-300 bg-danger-50 dark:border-danger-800 dark:bg-danger-950/30">
               <Group gap="sm">
                 <IconAlertTriangle size={20} color="var(--mantine-color-red-6)"/>
                 <Text size="sm" fw={600} c="red.7">
@@ -509,8 +509,7 @@ export default function CompliancePage() {
                   variant="outline"
                   color="red"
                   size="xs"
-                  className="cursor-pointer"
-                  style={{marginLeft: 'auto'}}
+                  className="ml-auto cursor-pointer"
                   onClick={() => setActiveTab('alerts')}
                 >
                   View Alerts

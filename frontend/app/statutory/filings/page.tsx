@@ -272,7 +272,7 @@ export default function StatutoryFilingsPage() {
                       <Divider my="xs"/>
                       <Group justify="space-between">
                         <Text size="xs" c="dimmed">
-                          <IconCalendar size={12} style={{display: 'inline', marginRight: 4}}/>
+                          <IconCalendar size={12} className="mr-1 inline"/>
                           {ft.frequency}
                         </Text>
                         {ft.portalUrl && (

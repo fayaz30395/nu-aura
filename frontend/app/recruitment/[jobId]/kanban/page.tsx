@@ -42,6 +42,7 @@ import {useRankedCandidates} from '@/lib/hooks/queries/useRecruitment';
 import type {Candidate, RecruitmentStage} from '@/lib/types/hire/recruitment';
 import type {CandidateMatchResponse} from '@/lib/types/hire/ai-recruitment';
 import {formatDate} from '@/lib/utils/format/date';
+import {cn} from '@/lib/utils';
 
 // ── 13-stage NU-Hire pipeline ──────────────────────────────────────────
 // Terminal / rejection stages are excluded from the main board columns.
@@ -143,27 +144,23 @@ function CandidateCard({
           withBorder
           p="sm"
           radius="sm"
-          style={{
-            ...provided.draggableProps.style,
-            background: snapshot.isDragging
-              ? 'var(--bg-secondary)'
-              : 'white',
-            boxShadow: snapshot.isDragging
-              ? '0 8px 24px rgba(0,0,0,0.15)'
-              : undefined,
-            opacity: isThisPending ? 0.6 : 1,
-          }}
+          className={cn(
+            'bg-[var(--bg-card)] shadow-none transition-[background-color,box-shadow,opacity] duration-150',
+            snapshot.isDragging && 'bg-[var(--bg-secondary)] shadow-[var(--shadow-elevated)]',
+            isThisPending && 'opacity-60'
+          )}
+          style={provided.draggableProps.style}
         >
           <Stack gap={6}>
             <Group justify="space-between" align="center" gap={4}>
-              <Group gap={4} style={{flex: 1, minWidth: 0}}>
+              <Group gap={4} className="min-w-0 flex-1">
                 <div
                   {...provided.dragHandleProps}
-                  style={{cursor: 'grab', display: 'flex', alignItems: 'center'}}
+                  className="flex cursor-grab items-center"
                 >
                   <IconGripVertical size={14} color="var(--text-muted)"/>
                 </div>
-                <Text fw={600} size="sm" lineClamp={1} style={{flex: 1}}>
+                <Text fw={600} size="sm" lineClamp={1} className="flex-1">
                   {candidate.fullName}
                 </Text>
               </Group>
@@ -270,12 +267,7 @@ function KanbanColumn({
                       }: KanbanColumnProps) {
   return (
     <Stack
-      style={{
-        minWidth: 220,
-        maxWidth: 260,
-        width: 240,
-        flexShrink: 0,
-      }}
+      className="w-60 min-w-[220px] max-w-[260px] shrink-0"
       gap="xs"
     >
       {/* Column header */}
@@ -292,20 +284,10 @@ function KanbanColumn({
           <div
             ref={provided.innerRef}
             {...provided.droppableProps}
-            style={{
-              minHeight: 80,
-              maxHeight: 'calc(100dvh - 240px)',
-              overflowY: 'auto',
-              background: snapshot.isDraggingOver
-                ? 'var(--bg-secondary)'
-                : 'var(--bg-main)',
-              borderRadius: 'var(--mantine-radius-md)',
-              padding: 'var(--mantine-spacing-xs)',
-              border: snapshot.isDraggingOver
-                ? '2px dashed var(--accent-primary)'
-                : '2px solid transparent',
-              transition: 'background 200ms ease, border 200ms ease',
-            }}
+            className={cn(
+              'max-h-[calc(100dvh-240px)] min-h-20 overflow-y-auto rounded-md border-2 border-transparent bg-[var(--bg-main)] p-2 transition-[background-color,border-color] duration-200',
+              snapshot.isDraggingOver && 'border-dashed border-[var(--accent-primary)] bg-[var(--bg-secondary)]'
+            )}
           >
             <Stack gap="xs">
               {candidates.length === 0 && !snapshot.isDraggingOver && (
@@ -462,7 +444,7 @@ export default function KanbanPage() {
   if (isLoading) {
     return (
       <AppLayout activeMenuItem="recruitment">
-        <Center style={{height: '60vh'}}>
+        <Center className="h-[60vh]">
           <Loader size="lg"/>
         </Center>
       </AppLayout>
@@ -487,7 +469,7 @@ export default function KanbanPage() {
       <PermissionGate
         anyOf={[Permissions.RECRUITMENT_VIEW, Permissions.CANDIDATE_VIEW]}
         fallback={
-          <Center style={{height: '60vh'}}>
+          <Center className="h-[60vh]">
             <Alert icon={<IconAlertCircle size={16}/>} color="orange" title="Access Denied">
               You do not have permission to view the recruitment pipeline.
             </Alert>
@@ -540,7 +522,7 @@ export default function KanbanPage() {
                 align="flex-start"
                 gap="md"
                 wrap="nowrap"
-                style={{paddingBottom: 16}}
+                className="pb-4"
               >
                 {PIPELINE_STAGES.map((stage) => (
                   <KanbanColumn
@@ -573,7 +555,7 @@ export default function KanbanPage() {
               </Group>
               <Group gap="sm" wrap="wrap">
                 {rejectedCandidates.map((c) => (
-                  <div key={c.id} className="panel-inset p-2" style={{minWidth: 160}}>
+                  <div key={c.id} className="panel-inset min-w-40 p-2">
                     <Text size="sm" fw={500} lineClamp={1}>
                       {c.fullName}
                     </Text>

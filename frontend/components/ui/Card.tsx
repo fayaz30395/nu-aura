@@ -43,12 +43,8 @@ const Card = React.forwardRef<
     >
       <div
         ref={ref}
-        style={{
-          backgroundColor: 'var(--bg-card)',
-          borderColor: 'var(--border-main)',
-        }}
         className={cn(
-          'rounded-lg transition-all duration-200',
+          'rounded-lg bg-[var(--bg-card)] border-[var(--border-main)] transition-all duration-200',
           variantStyles[variant],
           paddingStyles[padding],
           isHoverable && 'cursor-pointer hover:border-[var(--border-strong)]',
@@ -125,10 +121,9 @@ const CardFooter = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      'flex items-center p-6 pt-4',
+      'flex items-center border-t border-[var(--border-subtle)] p-6 pt-4',
       className
     )}
-    style={{borderTop: '1px solid var(--border-subtle)'}}
     {...props}
   />
 ));

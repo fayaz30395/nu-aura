@@ -44,15 +44,21 @@ function SectionErrorFallback({error, onReset, sectionName}: SectionErrorFallbac
 }
 
 interface SectionLoadingProps {
-  height?: string;
+  height?: 'sm' | 'md' | 'lg';
 }
+
+const sectionLoadingHeight = {
+  sm: 'min-h-20',
+  md: 'min-h-32',
+  lg: 'min-h-48',
+} satisfies Record<NonNullable<SectionLoadingProps['height']>, string>;
 
 /**
  * Lightweight loading indicator for section-level Suspense boundaries.
  */
-function SectionLoading({height = '120px'}: SectionLoadingProps) {
+function SectionLoading({height = 'md'}: SectionLoadingProps) {
   return (
-    <div className="flex items-center justify-center rounded-lg bg-[var(--bg-card)]" style={{minHeight: height}}>
+    <div className={`flex items-center justify-center rounded-lg bg-[var(--bg-card)] ${sectionLoadingHeight[height]}`}>
       <div className="flex items-center gap-2 text-[var(--text-muted)]">
         <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
@@ -74,7 +80,7 @@ interface SectionBoundaryProps {
   /** Custom loading fallback component */
   loadingFallback?: ReactNode;
   /** Minimum height for loading state */
-  loadingHeight?: string;
+  loadingHeight?: SectionLoadingProps['height'];
   /** Whether to wrap in Suspense (default: true) */
   suspense?: boolean;
   /** Keys that trigger error boundary reset when changed */

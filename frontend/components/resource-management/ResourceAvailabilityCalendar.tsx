@@ -4,10 +4,8 @@ import React, {useMemo} from 'react';
 import Image from 'next/image';
 import {cn} from '@/lib/utils';
 import {
-  AVAILABILITY_COLORS,
   AvailabilityStatus,
   EmployeeAvailability,
-  getAvailabilityStatusColor,
   getAvailabilityStatusLabel,
   ResourceAvailabilityDay,
 } from '@/lib/types/hrms/resource-management';
@@ -123,12 +121,9 @@ export function ResourceAvailabilityCalendar({
 
       {/* Legend */}
       <div className="mt-4 flex flex-wrap items-center justify-end gap-4">
-        {Object.entries(AVAILABILITY_COLORS).map(([status, color]) => (
+        {AVAILABILITY_STATUSES.map((status) => (
           <div key={status} className="flex items-center gap-2 text-xs">
-            <div
-              className="h-4 w-4 rounded"
-              style={{backgroundColor: color}}
-            />
+            <div className={cn('h-4 w-4 rounded', availabilityLegendClass(status))}/>
             <span className="text-surface-600 dark:text-surface-400">
               {getAvailabilityStatusLabel(status as AvailabilityStatus)}
             </span>
@@ -235,7 +230,6 @@ function AvailabilityCell({
   onClick?: () => void;
 }) {
   const status = availability?.status || (isWeekend ? 'HOLIDAY' : 'AVAILABLE');
-  const color = getAvailabilityStatusColor(status);
   const capacity = availability?.availableCapacity ?? (isWeekend ? 0 : 100);
 
   // Build tooltip
@@ -273,26 +267,21 @@ function AvailabilityCell({
         className={cn(
           'mx-auto flex h-8 w-8 items-center justify-center rounded text-xs font-medium transition-all',
           'hover:ring-2 hover:ring-accent-500 hover:ring-offset-1',
+          availabilityCellClass(status),
           isWeekend && !availability?.isHoliday && 'opacity-50'
         )}
-        style={{
-          backgroundColor: status === 'AVAILABLE' ? 'transparent' : `${color}30`,
-          borderWidth: 2,
-          borderStyle: 'solid',
-          borderColor: status === 'AVAILABLE' ? 'transparent' : color,
-        }}
         title={tooltip}
       >
         {/* Show capacity % if partially available */}
         {status === 'PARTIAL' && (
-          <span className="text-xs" style={{color}}>
+          <span className="text-xs text-warning-700 dark:text-warning-300">
             {Math.round(capacity)}
           </span>
         )}
 
         {/* Show indicator for leave */}
         {(status === 'ON_LEAVE') && (
-          <span style={{color}}>L</span>
+          <span className="text-violet-700 dark:text-violet-300">L</span>
         )}
 
         {/* Show indicator for holiday */}
@@ -302,6 +291,32 @@ function AvailabilityCell({
       </div>
     </td>
   );
+}
+
+const AVAILABILITY_STATUSES: AvailabilityStatus[] = ['AVAILABLE', 'ALLOCATED', 'ON_LEAVE', 'PARTIAL', 'HOLIDAY'];
+
+function availabilityLegendClass(status: AvailabilityStatus) {
+  const classes: Record<AvailabilityStatus, string> = {
+    AVAILABLE: 'bg-success-500',
+    ALLOCATED: 'bg-accent-500',
+    ON_LEAVE: 'bg-violet-500',
+    PARTIAL: 'bg-warning-500',
+    HOLIDAY: 'bg-surface-500',
+  };
+
+  return classes[status];
+}
+
+function availabilityCellClass(status: AvailabilityStatus) {
+  const classes: Record<AvailabilityStatus, string> = {
+    AVAILABLE: 'border-2 border-transparent bg-transparent',
+    ALLOCATED: 'border-2 border-accent-500 bg-accent-50 text-accent-700 dark:bg-accent-950/30 dark:text-accent-300',
+    ON_LEAVE: 'border-2 border-violet-500 bg-violet-50 text-violet-700 dark:bg-violet-950/30 dark:text-violet-300',
+    PARTIAL: 'border-2 border-warning-500 bg-warning-50 text-warning-700 dark:bg-warning-950/30 dark:text-warning-300',
+    HOLIDAY: 'border-2 border-surface-400 bg-surface-100 text-surface-500 dark:bg-surface-800',
+  };
+
+  return classes[status];
 }
 
 export default ResourceAvailabilityCalendar;

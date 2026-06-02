@@ -10,7 +10,6 @@ import {useActiveShiftDefinitions, useTeamSchedule} from '@/lib/hooks/queries/us
 import {SkeletonTable} from '@/components/ui/Skeleton';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {ScheduleEntry} from '@/lib/types/hrms/shift';
-import {CATEGORICAL_UNSET} from '@/lib/utils/categoricalPalette';
 import {ArrowLeftRight, Calendar, CalendarDays, ChevronLeft, ChevronRight, List, Settings, Users,} from 'lucide-react';
 import {motion} from 'framer-motion';
 import {formatDateRange, formatWeekday} from '@/lib/utils/format/date';
@@ -41,6 +40,18 @@ function formatTime(time: string | undefined): string {
   const ampm = h >= 12 ? 'PM' : 'AM';
   const h12 = h % 12 || 12;
   return `${h12}:${m} ${ampm}`;
+}
+
+function getShiftMarkerClass(index: number): string {
+  const markerClasses = [
+    'bg-accent-500',
+    'bg-success-600',
+    'bg-warning-500',
+    'bg-danger-500',
+    'bg-surface-500',
+  ];
+
+  return markerClasses[Math.max(index, 0) % markerClasses.length];
 }
 
 export default function ShiftDashboardPage() {
@@ -147,12 +158,9 @@ export default function ShiftDashboardPage() {
           {activeShifts.length > 0 && (
             <div className="flex items-center gap-4 flex-wrap">
               <span className="text-xs font-medium text-surface-500 dark:text-surface-400">Shifts:</span>
-              {activeShifts.map((shift) => (
+              {activeShifts.map((shift, index) => (
                 <div key={shift.id} className="flex items-center gap-1.5">
-                  <div
-                    className="w-3 h-3 rounded-full"
-                    style={{backgroundColor: shift.colorCode || CATEGORICAL_UNSET}}
-                  />
+                  <div className={`w-3 h-3 rounded-full ${getShiftMarkerClass(index)}`}/>
                   <span className="text-xs text-surface-600 dark:text-surface-300">
                     {shift.shiftCode} ({formatTime(shift.startTime)}-{formatTime(shift.endTime)})
                   </span>
@@ -249,10 +257,9 @@ export default function ShiftDashboardPage() {
                         >
                           {entry ? (
                             <div
-                              className="inline-flex flex-col items-center px-2 py-1 rounded-lg text-white text-xs font-medium"
-                              style={{
-                                backgroundColor: entry.colorCode || CATEGORICAL_UNSET,
-                              }}
+                              className={`inline-flex flex-col items-center px-2 py-1 rounded-lg text-white text-xs font-medium ${getShiftMarkerClass(
+                                activeShifts.findIndex((shift) => shift.shiftCode === entry.shiftCode)
+                              )}`}
                             >
                               <span>{entry.shiftCode}</span>
                               <span className="opacity-80">

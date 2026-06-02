@@ -847,8 +847,7 @@ export function NotificationDropdown({isOpen, onClose}: NotificationDropdownProp
                     alt={selectedFile.driveFile.name}
                     width={800}
                     height={600}
-                    className="max-w-full max-h-[55vh] object-contain rounded-lg"
-                    style={{width: '100%', height: 'auto'}}
+                    className="h-auto w-full max-w-full max-h-[55vh] object-contain rounded-lg"
                     unoptimized
                   />
                 </div>

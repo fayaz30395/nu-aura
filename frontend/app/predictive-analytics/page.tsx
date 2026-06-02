@@ -122,15 +122,6 @@ const SkillGapsByCategoryChart = dynamic(
   {ssr: false, loading: ChartSkeleton}
 );
 
-// ==================== Constants ====================
-
-const RISK_COLORS = {
-  CRITICAL: 'var(--chart-danger)',
-  HIGH: 'var(--chart-warning)',
-  MEDIUM: 'var(--chart-warning)',
-  LOW: 'var(--chart-success)',
-} as const;
-
 // ==================== Sub-components ====================
 
 function TrendIcon({trend}: { trend: 'UP' | 'DOWN' | 'STABLE' }) {
@@ -449,8 +440,17 @@ function TopAtRiskEmployeesTable({employees}: { employees: AttritionPrediction[]
                   </td>
                   <td className="py-2.5 px-4 text-[var(--text-secondary)]">{emp.department || '-'}</td>
                   <td className="py-2.5 px-4 text-center">
-                      <span className="font-bold"
-                            style={{color: RISK_COLORS[emp.riskLevel as keyof typeof RISK_COLORS] || 'var(--chart-muted)'}}>
+                      <span className={`font-bold ${
+                        emp.riskLevel === 'CRITICAL'
+                          ? 'text-danger-600 dark:text-danger-400'
+                          : emp.riskLevel === 'HIGH'
+                            ? 'text-warning-600 dark:text-warning-400'
+                            : emp.riskLevel === 'MEDIUM'
+                              ? 'text-warning-600 dark:text-warning-400'
+                              : emp.riskLevel === 'LOW'
+                                ? 'text-success-600 dark:text-success-400'
+                                : 'text-[var(--chart-muted)]'
+                      }`}>
                         {emp.riskScore?.toFixed(0)}%
                       </span>
                   </td>

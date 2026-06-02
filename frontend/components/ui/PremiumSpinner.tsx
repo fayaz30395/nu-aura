@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import {motion} from 'framer-motion';
 import {cn} from '@/lib/utils';
 
@@ -10,11 +9,40 @@ export interface PremiumSpinnerProps {
   className?: string;
 }
 
-const sizeMap = {
-  sm: 32,
-  md: 48,
-  lg: 64,
-  xl: 80,
+const spinnerSizeClass = {
+  sm: 'h-8 w-8',
+  md: 'h-12 w-12',
+  lg: 'h-16 w-16',
+  xl: 'h-20 w-20',
+} satisfies Record<NonNullable<PremiumSpinnerProps['size']>, string>;
+
+const dotSizeClass = {
+  sm: 'h-2 w-2',
+  md: 'h-3 w-3',
+  lg: 'h-4 w-4',
+  xl: 'h-5 w-5',
+} satisfies Record<NonNullable<PremiumSpinnerProps['size']>, string>;
+
+const barsSizeClass = {
+  sm: 'h-6',
+  md: 'h-8',
+  lg: 'h-10',
+  xl: 'h-12',
+} satisfies Record<NonNullable<PremiumSpinnerProps['size']>, string>;
+
+const barWidthClass = {
+  sm: 'w-1',
+  md: 'w-1.5',
+  lg: 'w-1.5',
+  xl: 'w-2',
+} satisfies Record<NonNullable<PremiumSpinnerProps['size']>, string>;
+
+const EASE = [0.4, 0, 0.2, 1] as const;
+
+const spinTransition = {
+  duration: 1,
+  repeat: Infinity,
+  ease: 'linear' as const,
 };
 
 /**
@@ -22,77 +50,38 @@ const sizeMap = {
  * Best-in-class animated loader with multiple orbiting elements
  */
 export function OrbitSpinner({size = 'md', className}: Omit<PremiumSpinnerProps, 'variant'>) {
-  const dimension = sizeMap[size];
-
   return (
-    <div className={cn('relative', className)} style={{width: dimension, height: dimension}}>
-      {/* Center core - pulsing */}
+    <div className={cn('relative', spinnerSizeClass[size], className)} role="status" aria-label="Loading">
       <motion.div
-        className="absolute inset-0 m-auto w-3 h-3 rounded-full bg-accent-50 dark:bg-accent-900/30"
+        className="absolute inset-0 m-auto h-2.5 w-2.5 rounded-full bg-[var(--accent-primary)]"
         animate={{
           scale: [1, 1.3, 1],
-          opacity: [0.8, 1, 0.8],
+          opacity: [0.55, 1, 0.55],
         }}
         transition={{
-          duration: 2,
+          duration: 1.2,
           repeat: Infinity,
-          ease: 'easeInOut',
+          ease: EASE,
         }}
       />
 
-      {/* Orbit ring 1 - outer */}
       <motion.div
-        className="absolute inset-0"
+        className="absolute inset-0 rounded-full border border-[var(--border-main)]"
         animate={{rotate: 360}}
-        transition={{duration: 3, repeat: Infinity, ease: 'linear'}}
+        transition={spinTransition}
       >
         <div
-          className="absolute top-0 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-gradient-to-br from-accent-400 to-accent-700 shadow-[var(--shadow-dropdown)] shadow-accent-500/50"/>
+          className="absolute left-1/2 top-0 h-2 w-2 -translate-x-1/2 rounded-full bg-[var(--accent-primary)]"/>
       </motion.div>
 
-      {/* Orbit ring 2 - middle */}
       <motion.div
-        className="absolute inset-[15%]"
+        className="absolute inset-[22%] rounded-full border border-[var(--border-subtle)]"
         animate={{rotate: -360}}
-        transition={{duration: 2, repeat: Infinity, ease: 'linear'}}
+        transition={{...spinTransition, duration: 1.4}}
       >
         <div
-          className="absolute top-0 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-accent-50 dark:bg-accent-900/30 shadow-[var(--shadow-dropdown)] shadow-accent-500/50"/>
+          className="absolute left-1/2 top-0 h-1.5 w-1.5 -translate-x-1/2 rounded-full bg-[var(--accent-400)]"/>
       </motion.div>
-
-      {/* Orbit ring 3 - inner */}
-      <motion.div
-        className="absolute inset-[25%]"
-        animate={{rotate: 360}}
-        transition={{duration: 1.5, repeat: Infinity, ease: 'linear'}}
-      >
-        <div
-          className="absolute top-0 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-gradient-to-br from-accent-400 to-accent-700 shadow-[var(--shadow-dropdown)] shadow-accent-500/50"/>
-      </motion.div>
-
-      {/* Orbiting particles */}
-      {[0, 120, 240].map((angle) => (
-        <motion.div
-          key={angle}
-          className="absolute inset-0"
-          animate={{rotate: 360}}
-          transition={{
-            duration: 4,
-            repeat: Infinity,
-            ease: 'linear',
-            delay: angle / 360,
-          }}
-        >
-          <div
-            className="absolute w-0.5 h-0.5 rounded-full bg-accent-300"
-            style={{
-              top: '10%',
-              left: '50%',
-              transform: 'translateX(-50%)',
-            }}
-          />
-        </motion.div>
-      ))}
     </div>
   );
 }
@@ -101,49 +90,34 @@ export function OrbitSpinner({size = 'md', className}: Omit<PremiumSpinnerProps,
  * Gradient Ring Spinner - Modern gradient ring with trail effect
  */
 export function GradientRingSpinner({size = 'md', className}: Omit<PremiumSpinnerProps, 'variant'>) {
-  const dimension = sizeMap[size];
-  const strokeWidth = dimension / 10;
-
   return (
-    <div className={cn('relative', className)} style={{width: dimension, height: dimension}}>
-      <svg width={dimension} height={dimension} viewBox={`0 0 ${dimension} ${dimension}`}>
-        {/* Background ring */}
+    <div className={cn('relative', spinnerSizeClass[size], className)} role="status" aria-label="Loading">
+      <motion.svg
+        className="h-full w-full text-[var(--accent-primary)]"
+        viewBox="0 0 48 48"
+        animate={{rotate: 360}}
+        transition={{duration: 1.1, repeat: Infinity, ease: 'linear'}}
+      >
         <circle
-          cx={dimension / 2}
-          cy={dimension / 2}
-          r={dimension / 2 - strokeWidth / 2}
+          cx="24"
+          cy="24"
+          r="20"
           fill="none"
           stroke="currentColor"
-          strokeWidth={strokeWidth}
+          strokeWidth="4"
           className="text-[var(--border-main)]"
-          opacity="0.2"
         />
-
-        {/* Animated gradient ring */}
-        <motion.circle
-          cx={dimension / 2}
-          cy={dimension / 2}
-          r={dimension / 2 - strokeWidth / 2}
+        <circle
+          cx="24"
+          cy="24"
+          r="20"
           fill="none"
-          stroke="url(#gradient)"
-          strokeWidth={strokeWidth}
+          stroke="currentColor"
+          strokeWidth="4"
           strokeLinecap="round"
-          strokeDasharray={`${Math.PI * (dimension - strokeWidth) * 0.75} ${Math.PI * (dimension - strokeWidth)}`}
-          initial={{rotate: 0}}
-          animate={{rotate: 360}}
-          transition={{duration: 1.5, repeat: Infinity, ease: 'linear'}}
-          style={{transformOrigin: 'center'}}
+          strokeDasharray="82 126"
         />
-
-        {/* Gradient definition */}
-        <defs>
-          <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="var(--accent-900)"/>
-            <stop offset="50%" stopColor="var(--accent-500)"/>
-            <stop offset="100%" stopColor="var(--accent-300)"/>
-          </linearGradient>
-        </defs>
-      </svg>
+      </motion.svg>
     </div>
   );
 }
@@ -152,24 +126,21 @@ export function GradientRingSpinner({size = 'md', className}: Omit<PremiumSpinne
  * Pulse Dots Spinner - Multiple pulsing dots with wave effect
  */
 export function PulseDotsSpinner({size = 'md', className}: Omit<PremiumSpinnerProps, 'variant'>) {
-  const dotSize = size === 'sm' ? 8 : size === 'md' ? 12 : size === 'lg' ? 16 : 20;
-
   return (
-    <div className={cn('flex items-center gap-2', className)}>
+    <div className={cn('flex items-center gap-2', className)} role="status" aria-label="Loading">
       {[0, 1, 2].map((i) => (
         <motion.div
           key={i}
-          className="rounded-full bg-accent-50 dark:bg-accent-900/30"
-          style={{width: dotSize, height: dotSize}}
+          className={cn('rounded-full bg-[var(--accent-primary)]', dotSizeClass[size])}
           animate={{
             scale: [1, 1.5, 1],
-            opacity: [0.5, 1, 0.5],
+            opacity: [0.45, 1, 0.45],
           }}
           transition={{
             duration: 1.2,
             repeat: Infinity,
             delay: i * 0.2,
-            ease: 'easeInOut',
+            ease: EASE,
           }}
         />
       ))}
@@ -181,24 +152,21 @@ export function PulseDotsSpinner({size = 'md', className}: Omit<PremiumSpinnerPr
  * Wave Bars Spinner - Animated sound wave bars
  */
 export function WaveBarsSpinner({size = 'md', className}: Omit<PremiumSpinnerProps, 'variant'>) {
-  const barWidth = size === 'sm' ? 4 : size === 'md' ? 5 : size === 'lg' ? 6 : 8;
-  const maxHeight = size === 'sm' ? 24 : size === 'md' ? 32 : size === 'lg' ? 40 : 48;
-
   return (
-    <div className={cn('flex items-end gap-1.5', className)} style={{height: maxHeight}}>
+    <div className={cn('flex items-end gap-1.5', barsSizeClass[size], className)} role="status" aria-label="Loading">
       {[0, 1, 2, 3, 4].map((i) => (
         <motion.div
           key={i}
-          className="rounded-full bg-gradient-to-t from-accent-700 to-accent-400"
-          style={{width: barWidth}}
+          className={cn('h-full origin-bottom rounded-full bg-[var(--accent-primary)]', barWidthClass[size])}
           animate={{
-            height: [maxHeight * 0.3, maxHeight, maxHeight * 0.3],
+            scaleY: [0.35, 1, 0.35],
+            opacity: [0.55, 1, 0.55],
           }}
           transition={{
             duration: 1,
             repeat: Infinity,
             delay: i * 0.15,
-            ease: 'easeInOut',
+            ease: EASE,
           }}
         />
       ))}
@@ -210,14 +178,12 @@ export function WaveBarsSpinner({size = 'md', className}: Omit<PremiumSpinnerPro
  * Expanding Ring Spinner - Dual expanding rings with fade
  */
 export function ExpandingRingSpinner({size = 'md', className}: Omit<PremiumSpinnerProps, 'variant'>) {
-  const dimension = sizeMap[size];
-
   return (
-    <div className={cn('relative', className)} style={{width: dimension, height: dimension}}>
+    <div className={cn('relative', spinnerSizeClass[size], className)} role="status" aria-label="Loading">
       {[0, 1].map((i) => (
         <motion.div
           key={i}
-          className="absolute inset-0 rounded-full border-4 border-accent-500"
+          className="absolute inset-0 rounded-full border-2 border-[var(--accent-primary)]"
           initial={{scale: 0.5, opacity: 1}}
           animate={{
             scale: [0.5, 1.5],
@@ -227,7 +193,7 @@ export function ExpandingRingSpinner({size = 'md', className}: Omit<PremiumSpinn
             duration: 2,
             repeat: Infinity,
             delay: i * 1,
-            ease: 'easeOut',
+            ease: EASE,
           }}
         />
       ))}

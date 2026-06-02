@@ -67,8 +67,7 @@ export function WorkloadHeatmap({
             {weeks.map((week) => (
               <th
                 key={week.weekStart}
-                className="px-2 py-4 text-center text-xs font-medium text-surface-500 dark:text-surface-400"
-                style={{minWidth: '60px'}}
+                className="min-w-[60px] px-2 py-4 text-center text-xs font-medium text-surface-500 dark:text-surface-400"
               >
                 {week.label}
               </th>
@@ -186,7 +185,7 @@ function HeatmapCell({
   cell: WorkloadHeatmapCell;
   onClick?: () => void;
 }) {
-  const backgroundColor = getCellColor(cell.allocation);
+  const colorClass = getCellColorClass(cell.allocation);
   const textColor = cell.allocation > 60 ? 'text-white' : 'text-surface-700 dark:text-surface-300';
 
   return (
@@ -201,9 +200,9 @@ function HeatmapCell({
         className={cn(
           'flex h-10 items-center justify-center rounded transition-all',
           'hover:ring-2 hover:ring-accent-500 hover:ring-offset-1',
+          colorClass,
           textColor
         )}
-        style={{backgroundColor}}
         title={`${formatAllocationPercentage(cell.allocation)} - ${cell.projectCount} project(s)`}
       >
         <span className="text-xs font-medium">
@@ -217,27 +216,20 @@ function HeatmapCell({
 /**
  * Get cell background color based on allocation percentage
  */
-function getCellColor(allocation: number): string {
+function getCellColorClass(allocation: number): string {
   if (allocation === 0) {
-    return 'rgb(229, 231, 235)'; // surface-200
+    return 'bg-surface-200 dark:bg-surface-700';
   }
   if (allocation <= 50) {
-    // Blend from surface to amber
-    const intensity = allocation / 50;
-    return `rgba(251, 191, 36, ${0.3 + intensity * 0.4})`; // warning-400
+    return 'bg-warning-100 dark:bg-warning-900/30';
   }
   if (allocation <= 75) {
-    // Blend from amber to green
-    const intensity = (allocation - 50) / 25;
-    return `rgba(34, 197, 94, ${0.5 + intensity * 0.3})`; // success-500
+    return 'bg-success-200 dark:bg-success-900/40';
   }
   if (allocation <= 100) {
-    // Full green
-    return `rgba(34, 197, 94, ${0.8 + ((allocation - 75) / 25) * 0.2})`; // success-500
+    return 'bg-success-600';
   }
-  // Over allocated - red
-  const overIntensity = Math.min((allocation - 100) / 50, 1);
-  return `rgba(239, 68, 68, ${0.7 + overIntensity * 0.3})`; // danger-500
+  return 'bg-danger-600';
 }
 
 export default WorkloadHeatmap;

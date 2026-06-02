@@ -7,6 +7,8 @@ import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {AppLayout} from '@/components/layout';
 import {Button} from '@/components/ui/Button';
+import {Input} from '@/components/ui/Input';
+import {Select} from '@/components/ui/Select';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {useToast} from '@/components/notifications/ToastProvider';
@@ -115,7 +117,7 @@ export default function LeaveEncashmentPage() {
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Leave Balance
                 </label>
-                <select {...register('leaveBalanceId')} className="input-aura">
+                <Select {...register('leaveBalanceId')}>
                   <option value="">Select leave type</option>
                   {balances
                     .filter((b) => b.available > 0)
@@ -124,7 +126,7 @@ export default function LeaveEncashmentPage() {
                         {b.leaveTypeName ?? b.leaveTypeId}: {b.available} days available
                       </option>
                     ))}
-                </select>
+                </Select>
                 {errors.leaveBalanceId && (
                   <p className="text-danger-500 text-xs mt-1">{errors.leaveBalanceId.message}</p>
                 )}
@@ -134,12 +136,11 @@ export default function LeaveEncashmentPage() {
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Days to Encash
                 </label>
-                <input
+                <Input
                   type="number"
                   step="0.5"
                   min="0.5"
                   {...register('daysToEncash', {valueAsNumber: true})}
-                  className="input-aura"
                   placeholder="e.g. 5"
                 />
                 {errors.daysToEncash && (

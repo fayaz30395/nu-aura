@@ -67,18 +67,17 @@ export function Spinner({size = 'md', variant = 'primary', className, label = 'L
           cx={config.outer / 2}
           cy={config.outer / 2}
           r={config.inner / 2}
-          className={colors.inner}
           strokeWidth={config.strokeWidth}
           strokeLinecap="round"
           strokeDasharray={`${Math.PI * config.inner * 0.75} ${Math.PI * config.inner}`}
           initial={{rotate: 0}}
           animate={{rotate: 360}}
+          className={cn(colors.inner, 'origin-center')}
           transition={{
             duration: 1.2,
             repeat: Infinity,
             ease: 'linear',
           }}
-          style={{transformOrigin: 'center'}}
         />
       </svg>
       {label ? <span className="sr-only">{label}</span> : null}

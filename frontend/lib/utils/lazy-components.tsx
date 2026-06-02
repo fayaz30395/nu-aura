@@ -81,8 +81,7 @@ export const LazyPieChart = dynamic(
  */
 export const EditorLoadingFallback = () => (
   <div
-    className="w-full rounded-lg border border-[var(--border-strong)] bg-[var(--bg-card)] dark:border-surface-700 flex items-center justify-center"
-    style={{minHeight: '300px'}}>
+    className="w-full min-h-[300px] rounded-lg border border-[var(--border-strong)] bg-[var(--bg-card)] dark:border-surface-700 flex items-center justify-center">
     <div className="space-y-4 w-full p-6">
       <Skeleton className="h-10 w-full rounded"/>
       <Skeleton className="h-4 w-3/4 rounded"/>
@@ -146,4 +145,3 @@ export const LazyRichTextEditor = dynamic(
   () => import('@/components/fluence/RichTextEditor'),
   {loading: () => <EditorLoadingFallback/>, ssr: false}
 );
-

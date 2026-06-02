@@ -10,9 +10,12 @@ import {Button} from '@/components/ui/Button';
 import {Badge} from '@/components/ui/Badge';
 import {Card} from '@/components/ui/Card';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {Input} from '@/components/ui/Input';
 import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
+import {Select} from '@/components/ui/Select';
 import {Skeleton} from '@/components/ui/Skeleton';
 import {StatusBadge} from '@/components/ui/StatusBadge';
+import {Textarea} from '@/components/ui/Textarea';
 import {TICKET_STATUS} from '@/lib/status/vocabulary';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
@@ -206,14 +209,13 @@ export default function TicketListPage() {
 
         {/* Search & Filters Bar */}
         <div className="flex flex-col sm:flex-row gap-4">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]"/>
-            <input
+          <div className="flex-1">
+            <Input
               type="text"
-              placeholder="Search by subject, ticket number, or requester..."
+              placeholder="Search by subject, ticket number, or requester"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-700"
+              icon={<Search className="h-4 w-4"/>}
             />
           </div>
           <Button
@@ -235,33 +237,33 @@ export default function TicketListPage() {
         {showFilters && (
           <Card className="p-4">
             <div className="flex flex-wrap gap-4 items-end">
-              <div>
-                <label htmlFor="ticket-filter-status" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Status</label>
-                <select
+              <div className="w-40">
+                <Select
                   id="ticket-filter-status"
+                  label="Status"
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value as TicketStatus | '')}
-                  className="input-aura text-sm"
+                  selectSize="sm"
                 >
                   <option value="">All Statuses</option>
                   {ALL_STATUSES.map((s) => (
                     <option key={s} value={s}>{STATUS_LABELS[s]}</option>
                   ))}
-                </select>
+                </Select>
               </div>
-              <div>
-                <label htmlFor="ticket-filter-priority" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Priority</label>
-                <select
+              <div className="w-40">
+                <Select
                   id="ticket-filter-priority"
+                  label="Priority"
                   value={priorityFilter}
                   onChange={(e) => setPriorityFilter(e.target.value as TicketPriority | '')}
-                  className="input-aura text-sm"
+                  selectSize="sm"
                 >
                   <option value="">All Priorities</option>
                   {ALL_PRIORITIES.map((p) => (
                     <option key={p} value={p}>{PRIORITY_CONFIG[p].label}</option>
                   ))}
-                </select>
+                </Select>
               </div>
               {hasActiveFilters && (
                 <Button variant="ghost" size="sm" onClick={clearFilters}>
@@ -408,61 +410,49 @@ export default function TicketListPage() {
         <form onSubmit={handleSubmit(onCreateSubmit)}>
           <ModalBody>
             <div className="space-y-4">
-              <div>
-                <label htmlFor="ticket-subject" className="block text-sm font-medium text-[var(--text-primary)] mb-1.5">Subject *</label>
-                <input
-                  id="ticket-subject"
-                  type="text"
-                  placeholder="Brief description of the issue"
-                  className="input-aura w-full"
-                  {...register('subject')}
-                />
-                {errors.subject && <p className="text-sm text-danger-500 mt-1">{errors.subject.message}</p>}
-              </div>
+              <Input
+                id="ticket-subject"
+                type="text"
+                label="Subject *"
+                placeholder="Brief description of the issue"
+                error={errors.subject?.message}
+                {...register('subject')}
+              />
 
               <div>
                 <label htmlFor="ticket-description" className="block text-sm font-medium text-[var(--text-primary)] mb-1.5">Description *</label>
-                <textarea
+                <Textarea
                   id="ticket-description"
-                  placeholder="Provide details about your issue..."
+                  placeholder="Provide details about your issue"
                   rows={5}
-                  className="w-full px-4 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-700 text-sm"
+                  error={Boolean(errors.description)}
                   {...register('description')}
                 />
                 {errors.description && <p className="text-sm text-danger-500 mt-1">{errors.description.message}</p>}
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label htmlFor="ticket-priority" className="block text-sm font-medium text-[var(--text-primary)] mb-1.5">Priority</label>
-                  <select id="ticket-priority" className="input-aura w-full" {...register('priority')}>
-                    <option value="LOW">Low</option>
-                    <option value="MEDIUM">Medium</option>
-                    <option value="HIGH">High</option>
-                    <option value="URGENT">Urgent</option>
-                  </select>
-                </div>
-                <div>
-                  <label htmlFor="ticket-category" className="block text-sm font-medium text-[var(--text-primary)] mb-1.5">Category</label>
-                  <select id="ticket-category" className="input-aura w-full" {...register('categoryId')}>
-                    <option value="">Select category</option>
-                    {categories.map((cat) => (
-                      <option key={cat.id} value={cat.id}>{cat.name}</option>
-                    ))}
-                  </select>
-                </div>
+                <Select id="ticket-priority" label="Priority" {...register('priority')}>
+                  <option value="LOW">Low</option>
+                  <option value="MEDIUM">Medium</option>
+                  <option value="HIGH">High</option>
+                  <option value="URGENT">Urgent</option>
+                </Select>
+                <Select id="ticket-category" label="Category" {...register('categoryId')}>
+                  <option value="">Select category</option>
+                  {categories.map((cat) => (
+                    <option key={cat.id} value={cat.id}>{cat.name}</option>
+                  ))}
+                </Select>
               </div>
 
-              <div>
-                <label htmlFor="ticket-tags" className="block text-sm font-medium text-[var(--text-primary)] mb-1.5">Tags</label>
-                <input
-                  id="ticket-tags"
-                  type="text"
-                  placeholder="Comma-separated tags (e.g. vpn, network, access)"
-                  className="input-aura w-full"
-                  {...register('tags')}
-                />
-              </div>
+              <Input
+                id="ticket-tags"
+                type="text"
+                label="Tags"
+                placeholder="Comma-separated tags (e.g. vpn, network, access)"
+                {...register('tags')}
+              />
             </div>
           </ModalBody>
           <ModalFooter>
@@ -541,15 +531,16 @@ function TicketRow({ticket, onNavigate, onStatusChange, formatDate}: TicketRowPr
       </td>
       <td className="px-4 py-4 whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
         <PermissionGate permission={Permissions.HELPDESK_TICKET_RESOLVE}>
-          <select
-            className="text-xs bg-transparent border border-[var(--border-main)] rounded px-1.5 py-1 text-[var(--text-secondary)] focus:outline-none focus:ring-1 focus:ring-accent-700"
+          <Select
             value={ticket.status}
             onChange={(e) => onStatusChange(ticket.id, e.target.value as TicketStatus)}
+            selectSize="sm"
+            className="min-w-36 text-xs"
           >
             {ALL_STATUSES.map((s) => (
               <option key={s} value={s}>{STATUS_LABELS[s]}</option>
             ))}
-          </select>
+          </Select>
         </PermissionGate>
       </td>
     </tr>

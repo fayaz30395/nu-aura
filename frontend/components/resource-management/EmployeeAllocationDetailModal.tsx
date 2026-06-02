@@ -25,7 +25,6 @@ import {
   AllocationApprovalRequest,
   EmployeeWorkload,
   formatAllocationPercentage,
-  getAllocationStatusColor,
   ProjectAllocationDetail,
 } from '@/lib/types/hrms/resource-management';
 import {format} from 'date-fns';
@@ -112,7 +111,6 @@ export function EmployeeAllocationDetailModal({
       activeAllocation >= ALLOCATION_THRESHOLDS.OPTIMAL_MIN ? 'OPTIMAL' :
         activeAllocation > 0 ? 'UNDER_UTILIZED' : 'UNASSIGNED';
 
-  const statusColor = getAllocationStatusColor(dynamicStatus);
   const isOverAllocated = activeAllocation > ALLOCATION_THRESHOLDS.OVER_ALLOCATED;
   const availableCapacity = 100 - activeAllocation; // Can be negative when over-allocated
 
@@ -155,10 +153,7 @@ export function EmployeeAllocationDetailModal({
               <Percent className="h-4 w-4 text-surface-400"/>
               <span className="text-xs text-surface-500">Active Allocation</span>
             </div>
-            <p
-              className="mt-1 text-xl font-bold"
-              style={{color: statusColor}}
-            >
+            <p className={`mt-1 text-xl font-bold ${allocationStatusTextClass(dynamicStatus)}`}>
               {formatAllocationPercentage(activeAllocation)}
             </p>
           </div>
@@ -201,7 +196,7 @@ export function EmployeeAllocationDetailModal({
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
             <span className="text-surface-600 dark:text-surface-400">Current Capacity Utilization</span>
-            <span className="font-medium" style={{color: statusColor}}>
+            <span className={`font-medium ${allocationStatusTextClass(dynamicStatus)}`}>
               {formatAllocationPercentage(activeAllocation)} / 100%
             </span>
           </div>
@@ -224,10 +219,7 @@ export function EmployeeAllocationDetailModal({
               />
             )}
             {/* 100% marker */}
-            <div
-              className="absolute top-0 h-full w-0.5 bg-surface-600"
-              style={{left: '66.67%'}}
-            />
+            <div className="absolute left-[66.67%] top-0 h-full w-0.5 bg-surface-600"/>
           </div>
           <div className="row-between text-xs text-surface-500">
             <span>0%</span>
@@ -676,6 +668,17 @@ function HistoryCard({request}: { request: AllocationApprovalRequest }) {
       </div>
     </div>
   );
+}
+
+function allocationStatusTextClass(status: string) {
+  const classes: Record<string, string> = {
+    OVER_ALLOCATED: 'text-danger-600 dark:text-danger-400',
+    OPTIMAL: 'text-success-600 dark:text-success-400',
+    UNDER_UTILIZED: 'text-warning-600 dark:text-warning-400',
+    UNASSIGNED: 'text-surface-600 dark:text-surface-400',
+  };
+
+  return classes[status] ?? 'text-[var(--text-primary)]';
 }
 
 export default EmployeeAllocationDetailModal;

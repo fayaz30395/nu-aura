@@ -360,7 +360,7 @@ export default function StatutoryPage() {
                     <Divider/>
 
                     {/* Summary totals */}
-                    <Box bg="gray.0" p="md" style={{borderRadius: 8}}>
+                    <Box bg="gray.0" p="md" className="rounded-md">
                       <Group justify="space-between" mb={8}>
                         <Text size="sm" fw={600}>
                           Total Employee Deductions

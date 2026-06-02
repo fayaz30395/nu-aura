@@ -22,9 +22,9 @@ export default function GrowthChart({data}: GrowthChartProps) {
         <XAxis
           dataKey="month"
           stroke="var(--chart-muted)"
-          style={{fontSize: '12px'}}
+          tick={{fontSize: 12}}
         />
-        <YAxis stroke="var(--chart-muted)" style={{fontSize: '12px'}}/>
+        <YAxis stroke="var(--chart-muted)" tick={{fontSize: 12}}/>
         <Tooltip
           contentStyle={{
             backgroundColor: 'var(--chart-tooltip-bg)',

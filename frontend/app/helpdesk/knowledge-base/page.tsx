@@ -29,6 +29,8 @@ import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {Input} from '@/components/ui/Input';
 import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
+import {Select} from '@/components/ui/Select';
+import {Textarea} from '@/components/ui/Textarea';
 import {Card} from '@/components/ui/Card';
 import {Badge} from '@/components/ui/Badge';
 import {Skeleton} from '@/components/ui/Skeleton';
@@ -487,17 +489,14 @@ export default function KnowledgeBasePage() {
           <div className="lg:col-span-3">
             {/* Search Bar */}
             <div className="mb-8">
-              <div className="relative">
-                <Search
-                  className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]"/>
-                <input
-                  type="text"
-                  placeholder="Search articles..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-12 pr-4 py-4 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-700"
-                />
-              </div>
+              <Input
+                type="text"
+                placeholder="Search articles"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                icon={<Search className="h-5 w-5"/>}
+                inputSize="lg"
+              />
             </div>
 
             {/* Articles List */}
@@ -604,16 +603,13 @@ export default function KnowledgeBasePage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
-                      Category *
-                    </label>
-                    <select className="input-aura w-full" {...registerArticle('category')}>
+                    <Select label="Category *" {...registerArticle('category')}>
                       {categories.map((cat) => (
                         <option key={cat} value={cat}>
                           {cat}
                         </option>
                       ))}
-                    </select>
+                    </Select>
                     {articleErrors.category && (
                       <p className="text-sm text-danger-500 mt-1">{articleErrors.category.message}</p>
                     )}
@@ -623,10 +619,10 @@ export default function KnowledgeBasePage() {
                     <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
                       Content *
                     </label>
-                    <textarea
-                      placeholder="Write the article content here..."
+                    <Textarea
+                      placeholder="Write the article content here"
                       rows={8}
-                      className="w-full px-4 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
+                      error={Boolean(articleErrors.content)}
                       {...registerArticle('content')}
                     />
                     {articleErrors.content && (
@@ -715,10 +711,10 @@ export default function KnowledgeBasePage() {
                   <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
                     Description *
                   </label>
-                  <textarea
-                    placeholder="Provide more details about your issue..."
+                  <Textarea
+                    placeholder="Provide more details about your issue"
                     rows={6}
-                    className="w-full px-4 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
+                    error={Boolean(ticketErrors.description)}
                     {...registerTicket('description')}
                   />
                   {ticketErrors.description && (
@@ -730,15 +726,12 @@ export default function KnowledgeBasePage() {
                   <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
                     Priority
                   </label>
-                  <select
-                    className="w-full px-4 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg"
-                    {...registerTicket('priority')}
-                  >
+                  <Select {...registerTicket('priority')}>
                     <option value="LOW">Low</option>
                     <option value="MEDIUM">Medium</option>
                     <option value="HIGH">High</option>
                     <option value="URGENT">Urgent</option>
-                  </select>
+                  </Select>
                   {ticketErrors.priority && (
                     <p className="text-sm text-danger-500 mt-1">{ticketErrors.priority.message}</p>
                   )}

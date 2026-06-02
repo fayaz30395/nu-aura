@@ -3,6 +3,7 @@
 import {useEffect, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {Controller, useForm} from 'react-hook-form';
+import {Checkbox as MantineCheckbox} from '@mantine/core';
 import {DateInput} from '@mantine/dates';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
@@ -11,7 +12,10 @@ import {Holiday, HolidayRequest, HolidayType} from '@/lib/types/hrms/attendance'
 import {useAuth} from '@/lib/hooks/useAuth';
 import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
 import {ConfirmDialog} from '@/components/ui';
+import {Input} from '@/components/ui/Input';
 import {Modal, ModalBody, ModalHeader} from '@/components/ui/Modal';
+import {Select} from '@/components/ui/Select';
+import {Textarea} from '@/components/ui/Textarea';
 import {AppLayout} from '@/components/layout';
 import {
   useCreateHoliday,
@@ -560,20 +564,13 @@ export default function HolidaysPage() {
                 <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
                   {/* Basic Information */}
                   <div className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                        Holiday Name *
-                      </label>
-                      <input
-                        type="text"
-                        {...form.register('holidayName')}
-                        className="input-aura w-full"
-                        placeholder="e.g. New Year's Day, Independence Day"
-                      />
-                      {form.formState.errors.holidayName && (
-                        <p className="mt-1 text-xs text-danger-500">{form.formState.errors.holidayName.message}</p>
-                      )}
-                    </div>
+                    <Input
+                      type="text"
+                      label="Holiday Name *"
+                      placeholder="e.g. New Year's Day, Independence Day"
+                      error={form.formState.errors.holidayName?.message}
+                      {...form.register('holidayName')}
+                    />
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
@@ -599,16 +596,13 @@ export default function HolidaysPage() {
                         )}
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                          Holiday Type *
-                        </label>
-                        <select {...form.register('holidayType')} className="input-aura w-full">
+                        <Select label="Holiday Type *" {...form.register('holidayType')}>
                           {HOLIDAY_TYPES.map((type) => (
                             <option key={type} value={type}>
                               {type.replace('_', ' ')}
                             </option>
                           ))}
-                        </select>
+                        </Select>
                       </div>
                     </div>
 
@@ -616,11 +610,10 @@ export default function HolidaysPage() {
                       <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                         Description
                       </label>
-                      <textarea
+                      <Textarea
                         {...form.register('description')}
                         rows={2}
-                        className="input-aura w-full"
-                        placeholder="Brief description of the holiday..."
+                        placeholder="Brief description of the holiday"
                       />
                     </div>
                   </div>
@@ -629,24 +622,16 @@ export default function HolidaysPage() {
                   <div>
                     <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-4">Settings</h3>
                     <div className="space-y-4">
-                      <label className="flex items-center cursor-pointer">
-                        <input
-                          type="checkbox"
-                          {...form.register('isOptional')}
-                          className="h-4 w-4 text-accent-700 focus:ring-accent-500 border-[var(--border-main)] rounded"
-                        />
-                        <span className="ml-2 text-body-secondary">Optional Holiday</span>
-                        <span className="ml-2 text-caption">(Employees can choose to work)</span>
-                      </label>
-                      <label className="flex items-center cursor-pointer">
-                        <input
-                          type="checkbox"
-                          {...form.register('isRestricted')}
-                          className="h-4 w-4 text-accent-700 focus:ring-accent-500 border-[var(--border-main)] rounded"
-                        />
-                        <span className="ml-2 text-body-secondary">Restricted Holiday</span>
-                        <span className="ml-2 text-caption">(Limited to certain employees)</span>
-                      </label>
+                      <MantineCheckbox
+                        label="Optional Holiday"
+                        description="Employees can choose to work"
+                        {...form.register('isOptional')}
+                      />
+                      <MantineCheckbox
+                        label="Restricted Holiday"
+                        description="Limited to certain employees"
+                        {...form.register('isRestricted')}
+                      />
                     </div>
                   </div>
 
@@ -654,30 +639,20 @@ export default function HolidaysPage() {
                   <div>
                     <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-4">Applicability (Optional)</h3>
                     <div className="space-y-4">
-                      <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                          Applicable Locations
-                        </label>
-                        <input
-                          type="text"
-                          {...form.register('applicableLocations')}
-                          className="input-aura w-full"
-                          placeholder="e.g., New York, California (comma-separated)"
-                        />
-                        <p className="text-caption mt-1">Leave empty for all locations</p>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                          Applicable Departments
-                        </label>
-                        <input
-                          type="text"
-                          {...form.register('applicableDepartments')}
-                          className="input-aura w-full"
-                          placeholder="e.g., Engineering, Sales (comma-separated)"
-                        />
-                        <p className="text-caption mt-1">Leave empty for all departments</p>
-                      </div>
+                      <Input
+                        type="text"
+                        label="Applicable Locations"
+                        helper="Leave empty for all locations"
+                        placeholder="e.g., New York, California (comma-separated)"
+                        {...form.register('applicableLocations')}
+                      />
+                      <Input
+                        type="text"
+                        label="Applicable Departments"
+                        helper="Leave empty for all departments"
+                        placeholder="e.g., Engineering, Sales (comma-separated)"
+                        {...form.register('applicableDepartments')}
+                      />
                     </div>
                   </div>
 

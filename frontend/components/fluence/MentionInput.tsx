@@ -233,8 +233,7 @@ export const MentionInput = forwardRef<MentionInputHandle, MentionInputProps>(
           placeholder={placeholder || 'Write a comment... Use @ to mention someone'}
           disabled={disabled}
           rows={1}
-          className="w-full px-4 py-2.5 rounded-xl border border-[var(--border-main)] bg-[var(--bg-secondary)] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-700)]/40 focus:border-[var(--accent-700)] text-sm transition-all duration-200 resize-none leading-relaxed"
-          style={{minHeight: '42px'}}
+          className="w-full min-h-[42px] px-4 py-2.5 rounded-xl border border-[var(--border-main)] bg-[var(--bg-secondary)] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-700)]/40 focus:border-[var(--accent-700)] text-sm transition-all duration-200 resize-none leading-relaxed"
         />
 
         {/* Mention hint */}

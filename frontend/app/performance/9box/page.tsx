@@ -125,8 +125,7 @@ function NineBoxGrid({
       <div className="flex gap-4 min-w-max">
         {/* Y-axis */}
         <div className="flex flex-col items-center justify-start w-6 flex-shrink-0">
-          <span className="text-xs font-semibold text-[var(--text-muted)] mt-2"
-                style={{writingMode: 'vertical-rl', transform: 'rotate(180deg)'}}>
+          <span className="mt-2 rotate-180 [writing-mode:vertical-rl] text-xs font-semibold text-[var(--text-muted)]">
             POTENTIAL ↑
           </span>
         </div>

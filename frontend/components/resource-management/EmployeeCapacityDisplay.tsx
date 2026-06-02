@@ -8,7 +8,6 @@ import {
   EmployeeCapacity,
   formatAllocationPercentage,
   getAllocationStatus,
-  getAllocationStatusColor,
   getAllocationStatusLabel,
 } from '@/lib/types/hrms/resource-management';
 import {AlertTriangle, Briefcase, CheckCircle, Clock, User} from 'lucide-react';
@@ -32,7 +31,6 @@ export function EmployeeCapacityDisplay({
                                           className,
                                         }: EmployeeCapacityDisplayProps) {
   const status = getAllocationStatus(capacity.totalAllocation);
-  const statusColor = getAllocationStatusColor(status);
   const statusLabel = getAllocationStatusLabel(status);
 
   // Calculate the gauge percentage (capped at 150% for display)
@@ -45,7 +43,6 @@ export function EmployeeCapacityDisplay({
       <CompactCapacityDisplay
         capacity={capacity}
         status={status}
-        statusColor={statusColor}
         className={className}
       />
     );
@@ -85,10 +82,7 @@ export function EmployeeCapacityDisplay({
             Total Allocation
           </span>
           <div className="flex items-center gap-2">
-            <span
-              className="font-semibold"
-              style={{color: statusColor}}
-            >
+            <span className={cn('font-semibold', statusTextClass(status))}>
               {formatAllocationPercentage(capacity.totalAllocation)}
             </span>
             <StatusBadge status={status} label={statusLabel}/>
@@ -100,27 +94,23 @@ export function EmployeeCapacityDisplay({
           {/* Background markers at 50%, 75%, 100% */}
           <div className="absolute left-1/2 top-0 h-full w-px bg-surface-300 dark:bg-surface-600"/>
           <div className="absolute left-3/4 top-0 h-full w-px bg-surface-300 dark:bg-surface-600"/>
-          <div className="absolute right-0 top-0 h-full w-px bg-surface-400 dark:bg-surface-500"
-               style={{left: '66.67%'}}/>
+          <div className="absolute left-[66.67%] top-0 h-full w-px bg-surface-400 dark:bg-surface-500"/>
 
           {/* Filled portion */}
           <div
             className={cn(
               'absolute left-0 top-0 h-full rounded-full transition-all duration-500',
               isOverAllocated
-                ? 'bg-gradient-to-r from-danger-400 to-danger-500'
+                ? 'bg-danger-500'
                 : isWarning
-                  ? 'bg-gradient-to-r from-warning-400 to-warning-500'
-                  : 'bg-gradient-to-r from-success-400 to-success-500'
+                  ? 'bg-warning-500'
+                  : 'bg-success-500'
             )}
             style={{width: `${(gaugePercentage / 150) * 100}%`}}
           />
 
           {/* 100% marker line */}
-          <div
-            className="absolute top-0 h-full w-0.5 bg-surface-800 dark:bg-surface-200"
-            style={{left: '66.67%'}}
-          />
+          <div className="absolute left-[66.67%] top-0 h-full w-0.5 bg-surface-800 dark:bg-surface-200"/>
         </div>
 
         {/* Scale labels */}
@@ -194,13 +184,11 @@ export function EmployeeCapacityDisplay({
  */
 function CompactCapacityDisplay({
                                   capacity,
-                                  status: _status,
-                                  statusColor,
+                                  status,
                                   className,
                                 }: {
   capacity: EmployeeCapacity;
   status: string;
-  statusColor: string;
   className?: string;
 }) {
   const isOverAllocated = capacity.totalAllocation > ALLOCATION_THRESHOLDS.OVER_ALLOCATED;
@@ -219,10 +207,7 @@ function CompactCapacityDisplay({
       </div>
 
       {/* Percentage */}
-      <span
-        className="text-sm font-medium"
-        style={{color: statusColor}}
-      >
+      <span className={cn('text-sm font-medium', statusTextClass(status))}>
         {formatAllocationPercentage(capacity.totalAllocation)}
       </span>
 
@@ -265,6 +250,17 @@ function StatusBadge({status, label}: { status: string; label: string }) {
       {label}
     </span>
   );
+}
+
+function statusTextClass(status: string) {
+  const classes: Record<string, string> = {
+    OVER_ALLOCATED: 'text-danger-600 dark:text-danger-400',
+    OPTIMAL: 'text-success-600 dark:text-success-400',
+    UNDER_UTILIZED: 'text-warning-600 dark:text-warning-400',
+    UNASSIGNED: 'text-surface-600 dark:text-surface-400',
+  };
+
+  return classes[status] ?? 'text-[var(--text-primary)]';
 }
 
 /**

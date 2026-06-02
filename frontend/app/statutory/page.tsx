@@ -158,7 +158,7 @@ export default function StatutoryPage() {
           <Tabs.Panel value="pf" py="md">
             <Grid>
               <Grid.Col span={8}>
-                <Card withBorder className="skeuo-card" radius="md">
+                <Card withBorder className="card-aura" radius="md">
                   <Group justify="space-between" mb="md">
                     <Title order={4}>Active PF Configurations</Title>
                     <Button variant="light" size="xs">New Configuration</Button>
@@ -194,7 +194,7 @@ export default function StatutoryPage() {
                 </Card>
               </Grid.Col>
               <Grid.Col span={4}>
-                <Card withBorder className="skeuo-card" radius="md">
+                <Card withBorder className="card-aura" radius="md">
                   <Group mb="xs">
                     <ThemeIcon color="blue" variant="light"><IconSettings size={18}/></ThemeIcon>
                     <Text fw={500}>PF Rules</Text>
@@ -209,7 +209,7 @@ export default function StatutoryPage() {
           </Tabs.Panel>
 
           <Tabs.Panel value="esi" py="md">
-            <Card withBorder className="skeuo-card" radius="md">
+            <Card withBorder className="card-aura" radius="md">
               <Group justify="space-between" mb="md">
                 <Title order={4}>Active ESI Configurations</Title>
                 <Button variant="light" size="xs">New Configuration</Button>
@@ -244,7 +244,7 @@ export default function StatutoryPage() {
           </Tabs.Panel>
 
           <Tabs.Panel value="pt" py="md">
-            <Card withBorder className="skeuo-card" radius="md">
+            <Card withBorder className="card-aura" radius="md">
               <Group justify="space-between" mb="md">
                 <Title order={4}>Professional Tax Slabs (Maharashtra)</Title>
                 <Button variant="light" size="xs">Add slab</Button>
@@ -274,7 +274,7 @@ export default function StatutoryPage() {
             </Card>
           </Tabs.Panel>
           <Tabs.Panel value="report" py="md">
-            <Card withBorder className="skeuo-card" radius="md">
+            <Card withBorder className="card-aura" radius="md">
               <Group justify="space-between" mb="md" align="flex-end">
                 <Title order={4}>Monthly Statutory Contributions</Title>
                 {reportFetched && contributions.length > 0 && (
@@ -360,7 +360,7 @@ export default function StatutoryPage() {
                 }), {gross: 0, pfEmp: 0, pfEr: 0, eps: 0, vpf: 0, esiEmp: 0, esiEr: 0, pt: 0, tds: 0});
 
                 return (
-                  <div style={{overflowX: 'auto'}}>
+                  <div className="overflow-x-auto">
                     <Table striped highlightOnHover withTableBorder withColumnBorders fz="xs">
                       <Table.Thead>
                         <Table.Tr>
@@ -402,7 +402,7 @@ export default function StatutoryPage() {
                         })}
                       </Table.Tbody>
                       <Table.Tfoot>
-                        <Table.Tr style={{backgroundColor: 'var(--bg-surface)'}}>
+                        <Table.Tr className="bg-[var(--bg-surface)]">
                           <Table.Td fw={600}>Totals ({contributions.length})</Table.Td>
                           <Table.Td ta="right" fw={600}>{fmt(totals.gross)}</Table.Td>
                           <Table.Td ta="right" fw={600}>{fmt(totals.pfEmp)}</Table.Td>
