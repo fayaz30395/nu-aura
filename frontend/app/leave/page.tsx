@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 
 import {AppLayout} from '@/components/layout/AppLayout';
+import {PageTransition} from '@/components/motion';
 import {Button} from '@/components/ui/Button';
 import {Skeleton} from '@/components/ui/Skeleton';
 import {StatusBadge} from '@/components/ui/StatusBadge';
@@ -104,7 +105,7 @@ export default function LeavePage() {
 
   return (
     <AppLayout activeMenuItem="leave">
-      <div className="mx-auto w-full max-w-7xl px-6 py-8 space-y-10">
+      <PageTransition className="mx-auto w-full max-w-7xl px-6 py-8 space-y-10">
         <PageHeader canRequest={canRequest} onApply={() => router.push('/leave/apply')} />
 
         {error && (
@@ -146,7 +147,7 @@ export default function LeavePage() {
         {!loading && !error && totalAvailable > 0 && totalAvailable < 3 && (
           <AttentionStrip available={totalAvailable} />
         )}
-      </div>
+      </PageTransition>
     </AppLayout>
   );
 }

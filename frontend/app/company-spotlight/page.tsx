@@ -4,7 +4,6 @@ import {useState} from 'react';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
-import {motion} from 'framer-motion';
 import {AppLayout} from '@/components/layout';
 import {Calendar, Edit2, ExternalLink, Lightbulb, Loader2, Plus, Trash2,} from 'lucide-react';
 import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
@@ -22,6 +21,7 @@ import {
 } from '@/lib/hooks/queries/useSpotlight';
 import {createLogger} from '@/lib/utils/logger';
 import {formatDate as formatDateCanonical} from '@/lib/utils/format/date';
+import {PageTransition, Reveal, Stagger, StaggerItem} from '@/components/motion';
 
 const logger = createLogger('CompanySpotlight');
 
@@ -132,14 +132,10 @@ export default function CompanySpotlightPage() {
 
   return (
     <AppLayout activeMenuItem="company-spotlight">
-      <div className="p-6">
+      <PageTransition className="p-6">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
-          <motion.div
-            initial={{opacity: 0, y: -20}}
-            animate={{opacity: 1, y: 0}}
-            className="mb-8"
-          >
+          <Reveal className="mb-8">
             <div className="row-between">
               <div>
                 <h1 className="text-xl font-bold">
@@ -161,14 +157,10 @@ export default function CompanySpotlightPage() {
                 Add Slide
               </button>
             </div>
-          </motion.div>
+          </Reveal>
 
           {/* Spotlights List */}
-          <motion.div
-            initial={{opacity: 0, y: 20}}
-            animate={{opacity: 1, y: 0}}
-            transition={{delay: 0.1}}
-          >
+          <Reveal inView>
             {loading ? (
               <div className="flex justify-center items-center py-12">
                 <Loader2 className="w-8 h-8 animate-spin text-warning-500"/>
@@ -180,8 +172,8 @@ export default function CompanySpotlightPage() {
                 description="No spotlight slides yet. Create one to get started."
               />
             ) : (
-              <div className="space-y-4">
-                {spotlights.map((spotlight, index) => {
+              <Stagger className="space-y-4">
+                {spotlights.map((spotlight) => {
                   const gradientClass = getGradientClass(spotlight.bgGradient);
                   const isDateRestricted = spotlight.startDate || spotlight.endDate;
                   const now = new Date();
@@ -191,11 +183,8 @@ export default function CompanySpotlightPage() {
                     (!spotlight.endDate || new Date(spotlight.endDate) >= now);
 
                   return (
-                    <motion.div
+                    <StaggerItem
                       key={spotlight.id}
-                      initial={{opacity: 0, y: 20}}
-                      animate={{opacity: 1, y: 0}}
-                      transition={{delay: index * 0.05}}
                       className="bg-[var(--bg-card)] rounded-xl shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-elevated)] transition-all border border-[var(--border-main)] overflow-hidden group"
                     >
                       <div className="flex gap-6 p-6">
@@ -295,14 +284,14 @@ export default function CompanySpotlightPage() {
                           </button>
                         </div>
                       </div>
-                    </motion.div>
+                    </StaggerItem>
                   );
                 })}
-              </div>
+              </Stagger>
             )}
-          </motion.div>
+          </Reveal>
         </div>
-      </div>
+      </PageTransition>
 
       {/* Create/Edit Modal */}
       <CreateSpotlightModal

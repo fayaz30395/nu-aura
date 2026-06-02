@@ -60,6 +60,7 @@ import {
 } from '@/lib/hooks/queries/useAnnouncements';
 import {useActiveDepartments} from '@/lib/hooks/queries/useDepartments';
 import {formatDate as formatDateCanonical} from '@/lib/utils/format/date';
+import {PageTransition, Reveal} from '@/components/motion';
 
 /** Maps each announcement category to a background class for the icon container. */
 const categoryIconBgColors: Record<AnnouncementCategory, string> = {
@@ -247,14 +248,10 @@ export default function AnnouncementsPage() {
 
   return (
     <AppLayout activeMenuItem="announcements">
-      <div className="p-6">
+      <PageTransition className="p-6">
         <div className="max-w-6xl mx-auto">
           {/* Header */}
-          <motion.div
-            initial={{opacity: 0, y: -20}}
-            animate={{opacity: 1, y: 0}}
-            className="mb-8"
-          >
+          <Reveal className="mb-8">
             <div className="row-between">
               <div>
                 <h1 className="text-xl font-bold">
@@ -275,16 +272,11 @@ export default function AnnouncementsPage() {
                 </button>
               </PermissionGate>
             </div>
-          </motion.div>
+          </Reveal>
 
           {/* Pinned Announcements */}
           {pinnedAnnouncements.length > 0 && (
-            <motion.div
-              initial={{opacity: 0, y: 20}}
-              animate={{opacity: 1, y: 0}}
-              transition={{delay: 0.1}}
-              className="mb-8"
-            >
+            <Reveal inView className="mb-8">
               <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
                 <Pin className="w-5 h-5 text-warning-500"/>
                 Pinned
@@ -296,9 +288,9 @@ export default function AnnouncementsPage() {
                     <motion.div
                       key={announcement.id}
                       role="listitem"
-                      initial={{opacity: 0, x: -20}}
-                      animate={{opacity: 1, x: 0}}
-                      transition={{delay: index * 0.1}}
+                      initial={{opacity: 0, y: 8}}
+                      animate={{opacity: 1, y: 0}}
+                      transition={{duration: 0.2, ease: [0.16, 1, 0.3, 1], delay: 0.06 * index}}
                       onClick={() => handleAnnouncementClick(announcement)}
                       className="bg-gradient-to-r from-warning-50 to-warning-50 dark:from-warning-950/20 dark:to-warning-950/20 border border-warning-200 dark:border-warning-800 rounded-xl p-6 cursor-pointer hover:shadow-[var(--shadow-dropdown)] transition-all group"
                     >
@@ -344,16 +336,11 @@ export default function AnnouncementsPage() {
                   );
                 })}
               </div>
-            </motion.div>
+            </Reveal>
           )}
 
           {/* Search and Filters */}
-          <motion.div
-            initial={{opacity: 0, y: 20}}
-            animate={{opacity: 1, y: 0}}
-            transition={{delay: 0.2}}
-            className="card-aura p-4 mb-6"
-          >
+          <Reveal inView className="card-aura p-4 mb-6">
             <div className="space-y-4">
               {/* Line 1: Search */}
               <div className="relative">
@@ -395,14 +382,10 @@ export default function AnnouncementsPage() {
                 </select>
               </div>
             </div>
-          </motion.div>
+          </Reveal>
 
           {/* Announcements List */}
-          <motion.div
-            initial={{opacity: 0, y: 20}}
-            animate={{opacity: 1, y: 0}}
-            transition={{delay: 0.3}}
-          >
+          <Reveal inView>
             <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
               <Bell className="w-5 h-5 text-accent-700"/>
               All Announcements
@@ -428,9 +411,9 @@ export default function AnnouncementsPage() {
                     <motion.div
                       key={announcement.id}
                       role="listitem"
-                      initial={{opacity: 0, y: 20}}
+                      initial={{opacity: 0, y: 8}}
                       animate={{opacity: 1, y: 0}}
-                      transition={{delay: index * 0.05}}
+                      transition={{duration: 0.2, ease: [0.16, 1, 0.3, 1], delay: index * 0.05}}
                       onClick={() => handleAnnouncementClick(announcement)}
                       className={`card-interactive p-6 cursor-pointer group ${
                         announcement.isRead
@@ -547,7 +530,7 @@ export default function AnnouncementsPage() {
                 </button>
               </div>
             )}
-          </motion.div>
+          </Reveal>
 
           {/* Announcement Detail Modal */}
           {selectedAnnouncement && (
@@ -698,7 +681,7 @@ export default function AnnouncementsPage() {
             loading={deleteAnnouncementMutation.isPending}
           />
         </div>
-      </div>
+      </PageTransition>
     </AppLayout>
   );
 }

@@ -3,6 +3,7 @@
 import React, {ReactNode, useCallback, useEffect, useId, useRef} from 'react';
 import {AnimatePresence, motion} from 'framer-motion';
 import {modalVariants, overlayVariants} from '@/lib/animations/variants';
+import {useReducedMotionSafe} from '@/lib/animation';
 import {X} from 'lucide-react';
 import {cn} from '@/lib/utils';
 
@@ -50,6 +51,7 @@ const Modal: React.FC<ModalProps> = ({
   const generatedId = useId();
   const titleId = `modal-title-${generatedId}`;
   const previousFocusRef = useRef<HTMLElement | null>(null);
+  const {pick} = useReducedMotionSafe();
 
   // QA-003: Focus trap — trap Tab/Shift+Tab within modal
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
@@ -133,7 +135,7 @@ const Modal: React.FC<ModalProps> = ({
               initial="initial"
               animate="animate"
               exit="exit"
-              variants={overlayVariants}
+              variants={pick(overlayVariants)}
             />
 
             {/* Modal */}
@@ -149,7 +151,7 @@ const Modal: React.FC<ModalProps> = ({
               initial="initial"
               animate="animate"
               exit="exit"
-              variants={modalVariants}
+              variants={pick(modalVariants)}
             >
               {children}
             </motion.div>
@@ -187,7 +189,7 @@ const ModalHeader: React.FC<ModalHeaderProps> = ({
       {showCloseButton && onClose && (
         <button
           onClick={onClose}
-          className="ml-4 p-2 rounded-lg text-surface-400 hover:text-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 dark:hover:text-surface-200 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+          className="press-scale ml-4 p-2 rounded-lg text-surface-400 hover:text-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 dark:hover:text-surface-200 transition-[color,background-color,transform] duration-[var(--motion-fast)] ease-[var(--ease-standard)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           aria-label="Close modal"
         >
           <X className="h-5 w-5"/>

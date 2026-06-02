@@ -31,7 +31,7 @@ export const PremiumMetricCard: React.FC<PremiumMetricCardProps> = ({
 
   return (
     <div
-      className="card-interactive p-6 page-reveal"
+      className="card-interactive hover-lift motion-rise p-6"
       style={{animationDelay: `${Math.round(delay * 1000)}ms`}}
     >
       <div className="row-between">

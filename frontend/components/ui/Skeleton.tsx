@@ -87,7 +87,7 @@ function SkeletonCard({
       aria-live="polite"
       aria-label="Loading content"
       className={cn(
-        "rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] p-4 space-y-4",
+        "motion-rise rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] p-4 space-y-4",
         className
       )}
       {...props}
@@ -134,7 +134,7 @@ function SkeletonTable({
       role="status"
       aria-live="polite"
       aria-label="Loading content"
-      className={cn("overflow-hidden rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)]", className)}
+      className={cn("motion-rise overflow-hidden rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)]", className)}
       {...props}
     >
       <span className="sr-only">Loading...</span>
@@ -218,7 +218,7 @@ function SkeletonForm({
       role="status"
       aria-live="polite"
       aria-label="Loading content"
-      className={cn("space-y-6", className)}
+      className={cn("motion-rise space-y-6", className)}
       {...props}
     >
       {Array.from({length: fields}).map((_, i) => (
@@ -246,7 +246,7 @@ function SkeletonEmployeeCard({
       role="status"
       aria-live="polite"
       aria-label="Loading content"
-      className={cn("rounded-lg border p-4", className)}
+      className={cn("motion-rise rounded-lg border p-4", className)}
       style={{
         backgroundColor: 'var(--bg-card)',
         borderColor: 'var(--border-main)',
@@ -285,7 +285,7 @@ function SkeletonDashboard({
       role="status"
       aria-live="polite"
       aria-label="Loading content"
-      className={cn("space-y-4", className)}
+      className={cn("motion-rise space-y-4", className)}
       {...props}
     >
       <span className="sr-only">Loading...</span>

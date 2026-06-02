@@ -9,7 +9,13 @@
 import {HTMLMotionProps, motion} from 'framer-motion';
 import {ReactNode} from 'react';
 import {cn} from '@/lib/utils';
-import {fadeInUpVariants, scaleInVariants} from '@/lib/utils/animations';
+import {
+  fadeRise,
+  scaleIn,
+  staggerContainer,
+  staggerItem,
+  useReducedMotionSafe,
+} from '@/lib/animation';
 
 interface AnimatedCardProps extends Omit<HTMLMotionProps<'div'>, 'children' | 'ref'> {
   children: ReactNode;
@@ -26,9 +32,11 @@ const variantClasses = {
   interactive: 'card-interactive',
 };
 
+// Map to the Foundation token-aligned variants (fade + 8px rise / springy scale).
+// fadeRise/scaleIn mirror --motion-* durations and --ease-* easings exactly.
 const animationVariants = {
-  fadeInUp: fadeInUpVariants,
-  scaleIn: scaleInVariants,
+  fadeInUp: fadeRise,
+  scaleIn: scaleIn,
   none: {},
 };
 
@@ -40,15 +48,17 @@ export function AnimatedCard({
                                className,
                                ...props
                              }: AnimatedCardProps) {
-  const variants = animationVariants[animationType];
+  const {pick} = useReducedMotionSafe();
+  const isAnimated = animationType !== 'none';
+  const variants = isAnimated ? pick(animationVariants[animationType]) : {};
 
   return (
     <motion.div
       className={cn(variantClasses[variant], className)}
-      initial={animationType !== 'none' ? 'hidden' : undefined}
-      animate={animationType !== 'none' ? 'visible' : undefined}
+      initial={isAnimated ? 'hidden' : undefined}
+      animate={isAnimated ? 'visible' : undefined}
       variants={variants}
-      transition={{delay}}
+      transition={delay ? {delay} : undefined}
       {...props}
     >
       {children}
@@ -72,21 +82,15 @@ export function AnimatedList({
                                className,
                                ...props
                              }: AnimatedListProps) {
+  const {pick} = useReducedMotionSafe();
+  const variants = pick(staggerContainer(staggerDelay, 0.05));
+
   return (
     <motion.div
       className={className}
       initial="hidden"
       animate="visible"
-      variants={{
-        hidden: {opacity: 0},
-        visible: {
-          opacity: 1,
-          transition: {
-            staggerChildren: staggerDelay,
-            delayChildren: 0.05,
-          },
-        },
-      }}
+      variants={variants}
       {...props}
     >
       {children}
@@ -108,17 +112,13 @@ export function AnimatedListItem({
                                    className,
                                    ...props
                                  }: AnimatedListItemProps) {
+  const {pick} = useReducedMotionSafe();
+  const variants = pick(staggerItem);
+
   return (
     <motion.div
       className={className}
-      variants={{
-        hidden: {opacity: 0, y: 10},
-        visible: {
-          opacity: 1,
-          y: 0,
-          transition: {duration: 0.3, ease: 'easeOut'},
-        },
-      }}
+      variants={variants}
       {...props}
     >
       {children}

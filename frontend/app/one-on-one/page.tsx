@@ -36,6 +36,7 @@ import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
 import {SkeletonStatCard} from '@/components/ui/Skeleton';
+import {PageTransition, Reveal, Stagger, StaggerItem} from '@/components/motion';
 import {PageErrorFallback} from '@/components/errors/PageErrorFallback';
 import {
   useAddAgendaItem,
@@ -1534,9 +1535,9 @@ export default function OneOnOnePage() {
   // ═══════════════════════════════════════════════════════════════════
   return (
     <AppLayout activeMenuItem="one-on-one">
-      <div className="p-6 max-w-7xl mx-auto">
+      <PageTransition className="p-6 max-w-7xl mx-auto">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+        <Reveal className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
           <div>
             <h1
               className="text-xl font-bold text-[var(--text-primary)] dark:text-[var(--text-secondary)]">
@@ -1549,24 +1550,24 @@ export default function OneOnOnePage() {
           <PermissionGate permission={Permissions.MEETING_CREATE}>
             <button
               onClick={() => setView('schedule')}
-              className="flex items-center gap-2 px-4 py-2.5 bg-accent-700 hover:bg-accent-800 text-white text-sm font-medium rounded-lg transition-colors"
+              className="press-scale flex items-center gap-2 px-4 py-2.5 bg-accent-700 hover:bg-accent-800 text-white text-sm font-medium rounded-lg transition-colors"
             >
               <Plus className="h-4 w-4"/> Schedule Meeting
             </button>
           </PermissionGate>
-        </div>
+        </Reveal>
 
         {/* Dashboard Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          {dashboardQuery.isLoading ? (
-            <>
-              <SkeletonStatCard/>
-              <SkeletonStatCard/>
-              <SkeletonStatCard/>
-              <SkeletonStatCard/>
-            </>
-          ) : (
-            <>
+        {dashboardQuery.isLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <SkeletonStatCard/>
+            <SkeletonStatCard/>
+            <SkeletonStatCard/>
+            <SkeletonStatCard/>
+          </div>
+        ) : (
+          <Stagger className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <StaggerItem className="hover-lift">
               <StatCard
                 title="Upcoming"
                 value={dashboard?.upcomingMeetings ?? 0}
@@ -1574,6 +1575,8 @@ export default function OneOnOnePage() {
                 icon={Calendar}
                 color="bg-accent-600"
               />
+            </StaggerItem>
+            <StaggerItem className="hover-lift">
               <StatCard
                 title="Pending Actions"
                 value={pendingActionsQuery.data?.length ?? 0}
@@ -1581,6 +1584,8 @@ export default function OneOnOnePage() {
                 icon={ListChecks}
                 color="bg-warning-500"
               />
+            </StaggerItem>
+            <StaggerItem className="hover-lift">
               <StatCard
                 title="Overdue Actions"
                 value={overdueActionsQuery.data?.length ?? 0}
@@ -1588,6 +1593,8 @@ export default function OneOnOnePage() {
                 icon={AlertCircle}
                 color="bg-danger-500"
               />
+            </StaggerItem>
+            <StaggerItem className="hover-lift">
               <StatCard
                 title="Completion Rate"
                 value={`${Math.round((dashboard?.actionItemCompletionRate as number) || 0)}%`}
@@ -1595,9 +1602,9 @@ export default function OneOnOnePage() {
                 icon={CheckCircle2}
                 color="bg-success-500"
               />
-            </>
-          )}
-        </div>
+            </StaggerItem>
+          </Stagger>
+        )}
 
         {/* Overdue Actions Banner */}
         {(overdueActionsQuery.data?.length || 0) > 0 && (
@@ -1665,25 +1672,25 @@ export default function OneOnOnePage() {
           )}
 
           {/* Meeting List */}
-          <div className="divide-y divide-[var(--border-main)]">
-            {isLoading ? (
-              <div className="p-8 text-center text-[var(--text-muted)]">Loading meetings...</div>
-            ) : displayMeetings.length === 0 ? (
-              <EmptyState
-                icon={<Users className="h-8 w-8"/>}
-                title="No meetings found"
-                description={
-                  activeTab === 'upcoming'
-                    ? 'Schedule a new 1-on-1 to get started.'
-                    : 'Try adjusting your filters to see more meetings.'
-                }
-              />
-            ) : (
-              displayMeetings.map((m) => {
+          {isLoading ? (
+            <div className="p-8 text-center text-[var(--text-muted)]">Loading meetings...</div>
+          ) : displayMeetings.length === 0 ? (
+            <EmptyState
+              icon={<Users className="h-8 w-8"/>}
+              title="No meetings found"
+              description={
+                activeTab === 'upcoming'
+                  ? 'Schedule a new 1-on-1 to get started.'
+                  : 'Try adjusting your filters to see more meetings.'
+              }
+            />
+          ) : (
+            <Stagger className="divide-y divide-[var(--border-main)]">
+              {displayMeetings.map((m) => {
                 const badge = getStatusBadge(m.status);
                 return (
+                  <StaggerItem key={m.id}>
                   <button
-                    key={m.id}
                     onClick={() => {
                       setSelectedMeetingId(m.id);
                       setView('detail');
@@ -1722,10 +1729,11 @@ export default function OneOnOnePage() {
                     </div>
                     <ChevronRight className="h-4 w-4 text-[var(--text-muted)] flex-shrink-0"/>
                   </button>
+                  </StaggerItem>
                 );
-              })
-            )}
-          </div>
+              })}
+            </Stagger>
+          )}
 
           {/* Pagination */}
           {activeTab === 'all' && allMeetingsQuery.data && allMeetingsQuery.data.totalPages > 1 && (
@@ -1752,7 +1760,7 @@ export default function OneOnOnePage() {
             </div>
           )}
         </div>
-      </div>
+      </PageTransition>
     </AppLayout>
   );
 }

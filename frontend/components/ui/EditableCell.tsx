@@ -6,6 +6,7 @@ import {Loader2, Pencil} from 'lucide-react';
 import {NumberInput, Select, TextInput} from '@mantine/core';
 import {cn} from '@/lib/utils';
 import {formatDate} from '@/lib/utils/format/date';
+import {MOTION_DURATION, MOTION_EASE, useReducedMotionSafe} from '@/lib/animation';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -53,6 +54,7 @@ function EditableCell<T = string | number>({
   const inputRef = useRef<
     HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | null
   >(null);
+  const {prefersReduced} = useReducedMotionSafe();
 
   // -----------------------------------------------------------------------
   // Sync display value when initialValue changes (parent update)
@@ -152,7 +154,13 @@ function EditableCell<T = string | number>({
   if (!isEditing) {
     return (
       <div
-        className="group flex items-center gap-2 cursor-pointer px-4 py-2 rounded-md"
+        className={cn(
+          'group flex items-center gap-2 px-4 py-2 rounded-md transition-colors duration-[var(--motion-fast)]',
+          'focus-ring',
+          disabled
+            ? 'cursor-default'
+            : 'cursor-pointer hover:bg-[var(--bg-secondary)]'
+        )}
         onClick={() => !disabled && setIsEditing(true)}
         role="button"
         tabIndex={disabled ? -1 : 0}
@@ -173,9 +181,9 @@ function EditableCell<T = string | number>({
         {/* Pencil icon - subtle, appears on hover */}
         {!disabled && (
           <motion.div
-            initial={{opacity: 0, scale: 0.8}}
-            whileHover={{opacity: 1, scale: 1}}
-            transition={{duration: 0.15}}
+            initial={prefersReduced ? false : {opacity: 0, scale: 0.8}}
+            whileHover={prefersReduced ? undefined : {opacity: 1, scale: 1}}
+            transition={{duration: MOTION_DURATION.fast, ease: MOTION_EASE.standard}}
             className="hidden group-hover:flex items-center justify-center"
           >
             <Pencil
@@ -196,10 +204,10 @@ function EditableCell<T = string | number>({
     <AnimatePresence mode="wait">
       <motion.div
         key="edit-mode"
-        initial={{opacity: 0}}
+        initial={prefersReduced ? false : {opacity: 0}}
         animate={{opacity: 1}}
-        exit={{opacity: 0}}
-        transition={{duration: 0.1}}
+        exit={prefersReduced ? {opacity: 1} : {opacity: 0}}
+        transition={{duration: MOTION_DURATION.fast, ease: MOTION_EASE.standard}}
         className="flex items-center gap-2"
       >
         {/* Input field */}
@@ -314,9 +322,11 @@ function EditableCell<T = string | number>({
           {/* Error message */}
           {error && (
             <motion.div
-              initial={{opacity: 0, y: -4}}
+              initial={prefersReduced ? false : {opacity: 0, y: -4}}
               animate={{opacity: 1, y: 0}}
-              exit={{opacity: 0, y: -4}}
+              exit={prefersReduced ? {opacity: 1} : {opacity: 0, y: -4}}
+              transition={{duration: MOTION_DURATION.fast, ease: MOTION_EASE.standard}}
+              role="alert"
               className="absolute top-full left-0 mt-1 text-xs text-danger-600 whitespace-nowrap"
             >
               {error}
@@ -333,6 +343,7 @@ function EditableCell<T = string | number>({
             disabled={isLoading}
             className={cn(
               'p-1.5 rounded-md transition-colors cursor-pointer',
+              'focus-ring',
               'flex items-center justify-center',
               'min-h-[32px] min-w-[32px]',
               isLoading
@@ -340,11 +351,15 @@ function EditableCell<T = string | number>({
                 : 'text-success-600 hover:bg-success-50 dark:hover:bg-success-900/20'
             )}
             aria-label="Save changes"
-            initial={{scale: 0.8, opacity: 0}}
+            initial={prefersReduced ? false : {scale: 0.8, opacity: 0}}
             animate={{scale: 1, opacity: 1}}
-            transition={{delay: 0.05}}
-            whileHover={{scale: 1.1}}
-            whileTap={{scale: 0.95}}
+            transition={{
+              delay: prefersReduced ? 0 : 0.05,
+              duration: MOTION_DURATION.base,
+              ease: MOTION_EASE.spring,
+            }}
+            whileHover={prefersReduced ? undefined : {scale: 1.1}}
+            whileTap={prefersReduced ? undefined : {scale: 0.95}}
           >
             {isLoading ? (
               <Loader2 className="h-4 w-4 animate-spin"/>
@@ -370,6 +385,7 @@ function EditableCell<T = string | number>({
             disabled={isLoading}
             className={cn(
               'p-1.5 rounded-md transition-colors cursor-pointer',
+              'focus-ring',
               'flex items-center justify-center',
               'min-h-[32px] min-w-[32px]',
               isLoading
@@ -377,11 +393,15 @@ function EditableCell<T = string | number>({
                 : 'text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/20'
             )}
             aria-label="Cancel editing"
-            initial={{scale: 0.8, opacity: 0}}
+            initial={prefersReduced ? false : {scale: 0.8, opacity: 0}}
             animate={{scale: 1, opacity: 1}}
-            transition={{delay: 0.1}}
-            whileHover={{scale: 1.1}}
-            whileTap={{scale: 0.95}}
+            transition={{
+              delay: prefersReduced ? 0 : 0.1,
+              duration: MOTION_DURATION.base,
+              ease: MOTION_EASE.spring,
+            }}
+            whileHover={prefersReduced ? undefined : {scale: 1.1}}
+            whileTap={prefersReduced ? undefined : {scale: 0.95}}
           >
             <svg
               className="h-4 w-4"

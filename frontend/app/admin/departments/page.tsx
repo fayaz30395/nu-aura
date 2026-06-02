@@ -19,6 +19,7 @@ import {
   Trash2,
 } from 'lucide-react';
 import {AdminPageContent} from '@/components/layout';
+import {PageTransition, Reveal} from '@/components/motion';
 import {Button} from '@/components/ui/Button';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {Input} from '@/components/ui/Input';
@@ -202,8 +203,9 @@ export default function DepartmentsPage() {
         permission={Permissions.EMPLOYEE_READ}
         fallback={<p className="text-danger-600 p-6">You do not have permission to view departments.</p>}
       >
+        <PageTransition>
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
+        <Reveal className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-xl font-bold">Department management</h1>
             <p className="text-sm text-[var(--text-secondary)] mt-0.5">
@@ -214,7 +216,7 @@ export default function DepartmentsPage() {
             <Plus className="h-4 w-4"/>
             New department
           </Button>
-        </div>
+        </Reveal>
 
         {/* Search */}
         <div className="mb-4 max-w-sm">
@@ -255,7 +257,7 @@ export default function DepartmentsPage() {
             />
           </div>
         ) : (
-          <div className="card-aura overflow-hidden">
+          <Reveal className="card-aura overflow-hidden">
             <table className="table-aura w-full text-sm">
               <thead>
               <tr className="border-b border-[var(--border-subtle)]">
@@ -334,7 +336,7 @@ export default function DepartmentsPage() {
               ))}
               </tbody>
             </table>
-          </div>
+          </Reveal>
         )}
 
         {/* Pagination */}
@@ -477,6 +479,7 @@ export default function DepartmentsPage() {
             </Button>
           </ModalFooter>
         </Modal>
+        </PageTransition>
       </PermissionGate>
     </AdminPageContent>
   );

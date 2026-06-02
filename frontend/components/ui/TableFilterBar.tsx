@@ -1,9 +1,11 @@
 'use client';
 
 import React, {useCallback, useMemo, useState} from 'react';
-import {ChevronDown, ChevronUp, Filter, X} from 'lucide-react';
+import {AnimatePresence, motion} from 'framer-motion';
+import {ChevronDown, Filter, X} from 'lucide-react';
 import {cn} from '@/lib/utils';
 import {useDebounce} from '@/lib/hooks/useDebounce';
+import {fadeRise, useReducedMotionSafe} from '@/lib/animation';
 
 // ─── Types ──────────────────────────────────────────────────────────────
 export interface FilterField {
@@ -99,6 +101,7 @@ export const TableFilterBar: React.FC<TableFilterBarProps> = ({
                                                                 className,
                                                               }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const {pick} = useReducedMotionSafe();
 
   const activeFilterCount = useMemo(
     () => Object.values(values).filter((v) => v !== '' && v !== undefined).length,
@@ -246,15 +249,16 @@ export const TableFilterBar: React.FC<TableFilterBarProps> = ({
           Filters
           {activeFilterCount > 0 && (
             <span
-              className="inline-flex items-center justify-center h-5 min-w-[20px] px-1.5 text-xs font-semibold rounded-full bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-300">
+              className="inline-flex items-center justify-center h-5 min-w-[20px] px-1.5 text-xs font-semibold rounded-full bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-300 motion-scale-in">
               {activeFilterCount}
             </span>
           )}
-          {isCollapsed ? (
-            <ChevronDown className="h-4 w-4 text-[var(--text-muted)]"/>
-          ) : (
-            <ChevronUp className="h-4 w-4 text-[var(--text-muted)]"/>
-          )}
+          <ChevronDown
+            className={cn(
+              'h-4 w-4 text-[var(--text-muted)] transition-transform duration-[var(--motion-base)] ease-[var(--ease-out-expo)]',
+              !isCollapsed && 'rotate-180'
+            )}
+          />
         </button>
 
         {/* Action buttons — always visible */}
@@ -265,6 +269,7 @@ export const TableFilterBar: React.FC<TableFilterBarProps> = ({
               onClick={onClear}
               className={cn(
                 'flex items-center gap-1.5 px-4 min-h-[44px] text-sm rounded-md',
+                'press-scale',
                 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]',
                 'hover:bg-[var(--bg-secondary)]',
                 'focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2',
@@ -280,6 +285,7 @@ export const TableFilterBar: React.FC<TableFilterBarProps> = ({
             onClick={onApply}
             className={cn(
               'px-4 min-h-[44px] text-sm font-medium rounded-md',
+              'press-scale',
               'bg-accent-700 text-white hover:bg-accent-800',
               'focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2',
               'transition-colors duration-150'
@@ -291,24 +297,31 @@ export const TableFilterBar: React.FC<TableFilterBarProps> = ({
       </div>
 
       {/* ── Filter fields (collapsible) ───────────────────────────── */}
-      {!isCollapsed && (
-        <div
-          id="table-filter-fields"
-          className="grid grid-cols-1 gap-4 px-4 pb-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
-        >
-          {filters.map((filter) => (
-            <div key={filter.key}>
-              <label
-                htmlFor={`filter-${filter.key}`}
-                className="block text-xs font-medium text-[var(--text-secondary)] mb-1"
-              >
-                {filter.label}
-              </label>
-              {renderField(filter)}
-            </div>
-          ))}
-        </div>
-      )}
+      <AnimatePresence initial={false}>
+        {!isCollapsed && (
+          <motion.div
+            key="table-filter-fields"
+            id="table-filter-fields"
+            variants={pick(fadeRise)}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            className="grid grid-cols-1 gap-4 px-4 pb-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+          >
+            {filters.map((filter) => (
+              <div key={filter.key}>
+                <label
+                  htmlFor={`filter-${filter.key}`}
+                  className="block text-xs font-medium text-[var(--text-secondary)] mb-1"
+                >
+                  {filter.label}
+                </label>
+                {renderField(filter)}
+              </div>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

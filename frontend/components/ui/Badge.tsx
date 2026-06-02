@@ -2,10 +2,12 @@
 
 import React from 'react';
 import {cva, type VariantProps} from 'class-variance-authority';
+import {motion} from 'framer-motion';
 import {cn} from '@/lib/utils';
+import {useReducedMotionSafe} from '@/lib/animation';
 
 const badgeVariants = cva(
-  'inline-flex items-center gap-1 font-medium transition-all duration-100',
+  'inline-flex items-center gap-1 font-medium motion-rise transition-[transform,box-shadow,color,background-color,border-color] duration-200 ease-[cubic-bezier(.16,1,.3,1)]',
   {
     variants: {
       variant: {
@@ -61,10 +63,17 @@ export interface BadgeProps
   icon?: React.ReactNode;
   dot?: boolean;
   dotColor?: 'default' | 'success' | 'warning' | 'danger' | 'info';
+  /**
+   * When `dot` is shown, softly pulse it to signal a live/active state.
+   * Opacity-only (compositor-friendly) and automatically disabled when the
+   * user prefers reduced motion.
+   */
+  pulse?: boolean;
 }
 
 const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
-  ({className, variant, size, icon, dot, dotColor = 'default', children, ...props}, ref) => {
+  ({className, variant, size, icon, dot, dotColor = 'default', pulse = false, children, ...props}, ref) => {
+    const {prefersReduced} = useReducedMotionSafe();
     const dotColorClasses = {
       default: 'bg-surface-500',
       success: 'bg-success-500',
@@ -73,6 +82,8 @@ const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
       info: 'bg-info-500',
     };
 
+    const shouldPulse = dot && pulse && !prefersReduced;
+
     return (
       <span
         ref={ref}
@@ -80,7 +91,15 @@ const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
         {...props}
       >
         {dot && (
-          <span className={cn('w-1.5 h-1.5 rounded-full', dotColorClasses[dotColor])}/>
+          shouldPulse ? (
+            <motion.span
+              className={cn('w-1.5 h-1.5 rounded-full shrink-0', dotColorClasses[dotColor])}
+              animate={{opacity: [1, 0.4, 1]}}
+              transition={{duration: 1.6, ease: 'easeInOut', repeat: Infinity}}
+            />
+          ) : (
+            <span className={cn('w-1.5 h-1.5 rounded-full shrink-0', dotColorClasses[dotColor])}/>
+          )
         )}
         {icon && <span className="shrink-0">{icon}</span>}
         {children}

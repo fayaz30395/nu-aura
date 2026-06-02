@@ -88,12 +88,12 @@ function ResponsiveTable<T>({
   const renderSortIcon = (column: Column<T>) => {
     if (!column.sortable) return null;
     if (sortColumn !== column.key) {
-      return <ChevronDown className="h-4 w-4 opacity-30"/>;
+      return <ChevronDown className="h-4 w-4 opacity-30 transition-opacity duration-[var(--motion-fast)]"/>;
     }
     return sortDirection === 'asc' ? (
-      <ChevronUp className="h-4 w-4"/>
+      <ChevronUp key="asc" className="h-4 w-4 motion-scale-in"/>
     ) : (
-      <ChevronDown className="h-4 w-4"/>
+      <ChevronDown key="desc" className="h-4 w-4 motion-scale-in"/>
     );
   };
 
@@ -157,7 +157,7 @@ function ResponsiveTable<T>({
               <th
                 key={column.key}
                 className={cn(
-                  'px-4 py-4 text-left text-sm font-semibold text-surface-700 dark:text-surface-300',
+                  'px-4 py-4 text-left text-sm font-semibold text-surface-700 dark:text-surface-300 transition-colors',
                   column.sortable && 'cursor-pointer select-none hover:bg-surface-100 dark:hover:bg-surface-700/50',
                   column.width
                 )}
@@ -186,7 +186,7 @@ function ResponsiveTable<T>({
               <tr
                 key={key}
                 className={cn(
-                  'border-b border-surface-100 dark:border-surface-800 transition-colors',
+                  'border-b border-surface-100 dark:border-surface-800 transition-colors duration-[var(--motion-fast)]',
                   onRowClick && 'cursor-pointer hover:bg-surface-50 dark:hover:bg-surface-800/50',
                   isSelected && 'bg-accent-50 dark:bg-accent-900/20',
                   computedRowClassName
@@ -256,8 +256,8 @@ function ResponsiveTable<T>({
               key={key}
               className={cn(
                 'bg-[var(--bg-input)] rounded-lg border border-surface-200 dark:border-surface-700 p-4',
-                'transition-all duration-200',
-                onRowClick && 'cursor-pointer active:scale-[0.98]',
+                'transition-colors duration-[var(--motion-base)]',
+                onRowClick && 'cursor-pointer hover-lift press-scale',
                 isSelected && 'ring-2 ring-accent-500 border-accent-500'
               )}
               onClick={() => onRowClick?.(row)}
@@ -375,7 +375,7 @@ export function TablePagination({
           <button
             onClick={() => onPageChange(0)}
             disabled={currentPage === 0}
-            className="p-2 rounded hover:bg-surface-100 dark:hover:bg-surface-700 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+            className="p-2 rounded press-scale hover:bg-surface-100 dark:hover:bg-surface-700 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             aria-label="First page"
           >
             <span className="text-sm">First</span>
@@ -383,7 +383,7 @@ export function TablePagination({
           <button
             onClick={() => onPageChange(currentPage - 1)}
             disabled={currentPage === 0}
-            className="p-2 rounded hover:bg-surface-100 dark:hover:bg-surface-700 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+            className="p-2 rounded press-scale hover:bg-surface-100 dark:hover:bg-surface-700 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             aria-label="Previous page"
           >
             <span className="text-sm">Prev</span>
@@ -396,7 +396,7 @@ export function TablePagination({
           <button
             onClick={() => onPageChange(currentPage + 1)}
             disabled={currentPage >= totalPages - 1}
-            className="p-2 rounded hover:bg-surface-100 dark:hover:bg-surface-700 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+            className="p-2 rounded press-scale hover:bg-surface-100 dark:hover:bg-surface-700 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             aria-label="Next page"
           >
             <span className="text-sm">Next</span>
@@ -404,7 +404,7 @@ export function TablePagination({
           <button
             onClick={() => onPageChange(totalPages - 1)}
             disabled={currentPage >= totalPages - 1}
-            className="p-2 rounded hover:bg-surface-100 dark:hover:bg-surface-700 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+            className="p-2 rounded press-scale hover:bg-surface-100 dark:hover:bg-surface-700 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             aria-label="Last page"
           >
             <span className="text-sm">Last</span>

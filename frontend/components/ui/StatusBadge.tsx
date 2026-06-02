@@ -20,6 +20,12 @@ export interface StatusBadgeProps {
   iconHidden?: boolean;
   /** Compact variant: smaller padding for dense tables. Default false. */
   compact?: boolean;
+  /**
+   * Softly pulse the icon to signal a live/active/in-progress status.
+   * Opacity-only (compositor-friendly) and automatically neutralized for
+   * users who prefer reduced motion. Default false.
+   */
+  pulse?: boolean;
   className?: string;
 }
 
@@ -56,6 +62,7 @@ export function StatusBadge({
   tone: toneOverride,
   iconHidden = false,
   compact = false,
+  pulse = false,
   className,
 }: StatusBadgeProps) {
   const resolved: StatusMeta = meta ?? (domain ? resolveStatus(status, domain) : {label: status ?? 'Unknown', tone: 'neutral', icon: HelpCircle});
@@ -69,12 +76,14 @@ export function StatusBadge({
         'badge-status',
         toneClass[tone],
         compact ? 'text-2xs px-1.5 py-0.5' : 'text-xs',
-        'inline-flex items-center gap-1',
+        'inline-flex items-center gap-1 motion-rise',
         className
       )}
       role="status"
     >
-      {!iconHidden && Icon ? <Icon className="h-3 w-3 flex-shrink-0" aria-hidden /> : null}
+      {!iconHidden && Icon ? (
+        <Icon className={cn('h-3 w-3 flex-shrink-0', pulse && 'animate-pulse')} aria-hidden />
+      ) : null}
       <span>{label}</span>
     </span>
   );

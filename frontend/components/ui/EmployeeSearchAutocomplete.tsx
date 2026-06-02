@@ -1,6 +1,7 @@
 'use client';
 
 import React, {useCallback, useEffect, useId, useRef, useState} from 'react';
+import {AnimatePresence, motion} from 'framer-motion';
 import {Loader2, Search, X} from 'lucide-react';
 import {Employee} from '@/lib/types/hrms/employee';
 import {employeeService} from '@/lib/services/hrms/employee.service';
@@ -8,6 +9,8 @@ import {getInitials} from '@/lib/utils';
 import {logger} from '@/lib/utils/logger';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {EmptyStatePresets} from '@/components/ui/empty-state-presets';
+import {Stagger, StaggerItem} from '@/components/motion';
+import {scaleIn, useReducedMotionSafe} from '@/lib/animation';
 
 interface EmployeeSearchAutocompleteProps {
   value?: { id: string; name: string } | null;
@@ -49,6 +52,7 @@ export function EmployeeSearchAutocomplete({
   const reactId = useId();
   const inputId = `${reactId}-employee-search-input`;
   const resultsId = `${reactId}-employee-search-results`;
+  const {pick} = useReducedMotionSafe();
 
   const searchEmployees = useCallback(async (searchQuery: string) => {
     if (!searchQuery.trim()) {
@@ -163,7 +167,7 @@ export function EmployeeSearchAutocomplete({
       <div className="relative">
         {value ? (
           <div
-            className="flex items-center gap-2 px-4 py-2 bg-[var(--bg-input)] border border-surface-300 dark:border-surface-600 rounded-lg">
+            className="motion-fade flex items-center gap-2 px-4 py-2 bg-[var(--bg-input)] border border-surface-300 dark:border-surface-600 rounded-lg">
             <div
               className="w-7 h-7 rounded-full bg-accent-100 dark:bg-accent-900 flex items-center justify-center text-accent-700 dark:text-accent-300 text-xs font-medium">
               {getInitials(value.name)}
@@ -176,7 +180,7 @@ export function EmployeeSearchAutocomplete({
                 type="button"
                 onClick={handleClear}
                 aria-label="Clear search"
-                className="p-1 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-full cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
+                className="press-scale p-1 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-full cursor-pointer transition-colors duration-[var(--motion-fast)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 <X className="h-4 w-4 text-surface-500"/>
               </button>
@@ -204,63 +208,78 @@ export function EmployeeSearchAutocomplete({
               aria-expanded={isOpen}
               aria-controls={resultsId}
               id={inputId}
-              className="w-full pl-10 pr-4 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full pl-10 pr-4 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg transition-[border-color,box-shadow] duration-[var(--motion-base)] ease-[var(--ease-standard)] focus:outline-none focus:ring-2 focus:ring-accent-500 disabled:opacity-50 disabled:cursor-not-allowed"
             />
           </>
         )}
 
-        {isOpen && results.length > 0 && !value && (
-          <div
-            ref={dropdownRef}
-            id={resultsId}
-            role="listbox"
-            className="absolute z-50 w-full mt-1 bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg shadow-[var(--shadow-dropdown)] max-h-60 overflow-auto"
-          >
-            {results.map((employee, index) => {
-              const name = getEmployeeName(employee);
-              return (
-                <button
-                  key={employee.id}
-                  role="option"
-                  aria-selected={highlightedIndex === index}
-                  type="button"
-                  onClick={() => handleSelect(employee)}
-                  onMouseEnter={() => setHighlightedIndex(index)}
-                  className={`w-full px-4 py-2 flex items-center gap-4 text-left hover:bg-surface-50 dark:hover:bg-surface-700 transition-colors ${highlightedIndex === index
-                    ? 'bg-surface-50 dark:bg-surface-700'
-                    : ''
-                  }`}
-                >
-                  <div
-                    className="w-8 h-8 rounded-full bg-accent-100 dark:bg-accent-900 flex items-center justify-center text-accent-700 dark:text-accent-300 text-sm font-medium flex-shrink-0">
-                    {getInitials(name)}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-surface-900 dark:text-white truncate">
-                      {name}
-                    </p>
-                    <p className="text-xs text-surface-500 truncate">
-                      {employee.employeeCode} • {employee.designation || employee.departmentName || 'No department'}
-                    </p>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        )}
+        <AnimatePresence>
+          {isOpen && results.length > 0 && !value && (
+            <motion.div
+              ref={dropdownRef}
+              id={resultsId}
+              role="listbox"
+              variants={pick(scaleIn)}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              style={{transformOrigin: 'top'}}
+              className="absolute z-50 w-full mt-1 bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg shadow-[var(--shadow-dropdown)] max-h-60 overflow-auto"
+            >
+              <Stagger>
+                {results.map((employee, index) => {
+                  const name = getEmployeeName(employee);
+                  return (
+                    <StaggerItem key={employee.id}>
+                      <button
+                        role="option"
+                        aria-selected={highlightedIndex === index}
+                        type="button"
+                        onClick={() => handleSelect(employee)}
+                        onMouseEnter={() => setHighlightedIndex(index)}
+                        className={`w-full px-4 py-2 flex items-center gap-4 text-left hover:bg-surface-50 dark:hover:bg-surface-700 transition-colors duration-[var(--motion-fast)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-inset ${highlightedIndex === index
+                          ? 'bg-surface-50 dark:bg-surface-700'
+                          : ''
+                        }`}
+                      >
+                        <div
+                          className="w-8 h-8 rounded-full bg-accent-100 dark:bg-accent-900 flex items-center justify-center text-accent-700 dark:text-accent-300 text-sm font-medium flex-shrink-0">
+                          {getInitials(name)}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-surface-900 dark:text-white truncate">
+                            {name}
+                          </p>
+                          <p className="text-xs text-surface-500 truncate">
+                            {employee.employeeCode} • {employee.designation || employee.departmentName || 'No department'}
+                          </p>
+                        </div>
+                      </button>
+                    </StaggerItem>
+                  );
+                })}
+              </Stagger>
+            </motion.div>
+          )}
 
-        {isOpen && query && results.length === 0 && !loading && (
-          <div
-            ref={dropdownRef}
-            className="absolute z-50 w-full mt-1 bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg shadow-[var(--shadow-dropdown)]"
-          >
-            <EmptyState
-              {...EmptyStatePresets.noEmployees}
-              description="Try a different search term"
-              size="compact"
-            />
-          </div>
-        )}
+          {isOpen && query && results.length === 0 && !loading && (
+            <motion.div
+              ref={dropdownRef}
+              variants={pick(scaleIn)}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              style={{transformOrigin: 'top'}}
+              className="absolute z-50 w-full mt-1 bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg shadow-[var(--shadow-dropdown)]"
+            >
+              <EmptyState
+                {...EmptyStatePresets.noEmployees}
+                description="Try a different search term"
+                size="compact"
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );

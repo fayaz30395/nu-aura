@@ -2,6 +2,7 @@
 
 import React from 'react';
 import {cn} from '@/lib/utils';
+import {Reveal} from '@/components/motion';
 import {PremiumSpinner} from './PremiumSpinner';
 
 export interface LoadingProps {
@@ -13,19 +14,19 @@ export interface LoadingProps {
 
 export function Loading({size = 'md', text, fullScreen = false, variant = 'orbit'}: LoadingProps) {
   const spinner = (
-    <div className="flex flex-col items-center justify-center gap-6">
+    <Reveal className="flex flex-col items-center justify-center gap-6">
       <PremiumSpinner size={size} variant={variant}/>
       {text && (
         <p className="text-[var(--text-secondary)] text-sm font-medium animate-pulse duration-1000">
           {text}
         </p>
       )}
-    </div>
+    </Reveal>
   );
 
   if (fullScreen) {
     return (
-      <div className="fixed inset-0 bg-[var(--bg-overlay)] backdrop-blur-md flex items-center justify-center z-50">
+      <div className="motion-fade fixed inset-0 bg-[var(--bg-overlay)] backdrop-blur-md flex items-center justify-center z-50">
         <div className="relative">
           {/* Glow effect behind spinner */}
           <div className="absolute inset-0 blur-3xl bg-accent-500/20 rounded-full scale-150"/>
@@ -220,7 +221,7 @@ export function NuAuraLoader({message = 'Loading your workspace...'}: { message?
           {PARTICLES.map((p, i) => (
             <div
               key={i}
-              className={cn('absolute rounded-full', p.color)}
+              className={cn('nuaura-particle absolute rounded-full', p.color)}
               style={{
                 width: p.size * 2,
                 height: p.size * 2,
@@ -275,7 +276,7 @@ export function NuAuraLoader({message = 'Loading your workspace...'}: { message?
           {[0, 1, 2, 3].map((i) => (
             <div
               key={i}
-              className="w-2 h-2 rounded-full bg-accent-500 dark:bg-accent-400"
+              className="nuaura-dot w-2 h-2 rounded-full bg-accent-500 dark:bg-accent-400"
               style={{animation: `nuaura-dot 1.4s ease-in-out ${i * 0.16}s infinite both`}}
             />
           ))}
@@ -329,6 +330,16 @@ export function NuAuraLoader({message = 'Loading your workspace...'}: { message?
         }
         .nuaura-fade-text {
           animation: nuaura-fade 2.4s ease-in-out infinite;
+        }
+
+        /* Honor reduced-motion: hold the constellation still, keep it legible */
+        @media (prefers-reduced-motion: reduce) {
+          .nuaura-breathe,
+          .nuaura-fade-text,
+          .nuaura-particle,
+          .nuaura-dot {
+            animation: none !important;
+          }
         }
       `}</style>
     </div>

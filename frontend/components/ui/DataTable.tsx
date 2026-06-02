@@ -119,6 +119,7 @@ export function BulkActionBar({
     <div
       className={cn(
         'flex flex-wrap items-center gap-2 rounded-lg px-4 py-2',
+        'motion-rise',
         'bg-accent-50 dark:bg-accent-900/20 border border-accent-200 dark:border-accent-800'
       )}
       role="toolbar"
@@ -137,6 +138,7 @@ export function BulkActionBar({
             className={cn(
               'inline-flex items-center gap-1.5 px-2 py-1.5 rounded-md text-sm font-medium transition-colors',
               'min-h-[36px] min-w-[36px]',
+              'press-scale',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
               variantStyles[action.variant || 'secondary']
             )}
@@ -152,6 +154,7 @@ export function BulkActionBar({
           className={cn(
             'inline-flex items-center gap-1 px-2 py-1.5 rounded-md text-sm transition-colors',
             'min-h-[36px] min-w-[36px]',
+            'press-scale',
             'text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-700 focus-visible:ring-offset-2'
           )}
@@ -205,6 +208,7 @@ function ColumnVisibilityToggle<T>({
         className={cn(
           'inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors',
           'min-h-[44px] min-w-[44px]',
+          'press-scale',
           'border border-[var(--border-main)] bg-[var(--bg-surface)]',
           'text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]',
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-700 focus-visible:ring-offset-2'
@@ -215,15 +219,20 @@ function ColumnVisibilityToggle<T>({
       >
         <Columns3 className="h-4 w-4"/>
         Columns
-        <ChevronDown className={cn('h-3.5 w-3.5 transition-transform', open && 'rotate-180')}/>
+        <ChevronDown
+          className={cn(
+            'h-3.5 w-3.5 transition-transform duration-[var(--motion-base)] ease-[var(--ease-out-expo)]',
+            open && 'rotate-180'
+          )}
+        />
       </button>
 
       {open && (
         <div
           className={cn(
-            'absolute right-0 z-50 mt-2 w-56 rounded-lg border shadow-[var(--shadow-dropdown)]',
+            'absolute right-0 z-50 mt-2 w-56 rounded-lg border shadow-[var(--shadow-dropdown)] origin-top-right',
             'border-[var(--border-main)] bg-[var(--bg-surface)]',
-            'animate-in fade-in-0 zoom-in-95'
+            'motion-scale-in'
           )}
           role="menu"
           aria-label="Column visibility options"
@@ -257,7 +266,7 @@ function ColumnVisibilityToggle<T>({
                         : 'border-[var(--border-main)]'
                     )}
                   >
-                    {isVisible && <Check className="h-3 w-3"/>}
+                    {isVisible && <Check className="h-3 w-3 motion-scale-in"/>}
                   </span>
                   {col.label}
                 </button>
@@ -438,12 +447,14 @@ function DataTable<T>({
   const renderSortIcon = (col: DataTableColumn<T>) => {
     if (!col.sortable) return null;
     if (sortKey !== col.key) {
-      return <ChevronsUpDown className="h-3.5 w-3.5 opacity-40"/>;
+      return (
+        <ChevronsUpDown className="h-3.5 w-3.5 opacity-40 transition-opacity duration-[var(--motion-fast)]"/>
+      );
     }
     return sortDirection === 'asc' ? (
-      <ChevronUp className="h-3.5 w-3.5 text-accent-700"/>
+      <ChevronUp key="asc" className="h-3.5 w-3.5 text-accent-700 motion-scale-in"/>
     ) : (
-      <ChevronDown className="h-3.5 w-3.5 text-accent-700"/>
+      <ChevronDown key="desc" className="h-3.5 w-3.5 text-accent-700 motion-scale-in"/>
     );
   };
 
@@ -535,8 +546,8 @@ function DataTable<T>({
       {/* Table */}
       <div className="overflow-x-auto rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)]">
         <table className="w-full border-collapse">
-          <thead>
-          <tr className="border-b border-[var(--border-main)] bg-[var(--bg-secondary)]">
+          <thead className="sticky top-0 z-20">
+          <tr className="border-b border-[var(--border-main)] bg-[var(--bg-secondary)] shadow-[var(--shadow-sm)]">
             {/* Selection checkbox header */}
             {selectable && (
               <th className="w-12 px-4 py-2 text-left sticky left-0 z-10 bg-[var(--bg-secondary)]">
@@ -559,7 +570,7 @@ function DataTable<T>({
               <th
                 key={col.key}
                 className={cn(
-                  'px-4 py-2 text-xs font-semibold uppercase tracking-wider',
+                  'px-4 py-2 text-xs font-semibold uppercase tracking-wider transition-colors',
                   'text-[var(--text-muted)]',
                   alignClass(col.align),
                   col.sortable && 'cursor-pointer select-none hover:text-[var(--text-primary)]',
@@ -603,7 +614,7 @@ function DataTable<T>({
               <tr
                 key={key}
                 className={cn(
-                  'border-b border-[var(--border-main)] transition-colors',
+                  'group/row border-b border-[var(--border-main)] transition-colors duration-[var(--motion-fast)]',
                   'hover:bg-[var(--bg-secondary)]',
                   isSelected && 'bg-accent-50 dark:bg-accent-900/10'
                 )}
@@ -703,6 +714,7 @@ function DataTable<T>({
                   className={cn(
                     'p-2 rounded-md transition-colors',
                     'min-h-[44px] min-w-[44px] flex items-center justify-center',
+                    'press-scale',
                     'hover:bg-[var(--bg-secondary)] disabled:opacity-40 disabled:cursor-not-allowed',
                     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-700 focus-visible:ring-offset-2'
                   )}
@@ -717,6 +729,7 @@ function DataTable<T>({
                   className={cn(
                     'p-2 rounded-md transition-colors',
                     'min-h-[44px] min-w-[44px] flex items-center justify-center',
+                    'press-scale',
                     'hover:bg-[var(--bg-secondary)] disabled:opacity-40 disabled:cursor-not-allowed',
                     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-700 focus-visible:ring-offset-2'
                   )}
@@ -736,6 +749,7 @@ function DataTable<T>({
                   className={cn(
                     'p-2 rounded-md transition-colors',
                     'min-h-[44px] min-w-[44px] flex items-center justify-center',
+                    'press-scale',
                     'hover:bg-[var(--bg-secondary)] disabled:opacity-40 disabled:cursor-not-allowed',
                     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-700 focus-visible:ring-offset-2'
                   )}
@@ -750,6 +764,7 @@ function DataTable<T>({
                   className={cn(
                     'p-2 rounded-md transition-colors',
                     'min-h-[44px] min-w-[44px] flex items-center justify-center',
+                    'press-scale',
                     'hover:bg-[var(--bg-secondary)] disabled:opacity-40 disabled:cursor-not-allowed',
                     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-700 focus-visible:ring-offset-2'
                   )}

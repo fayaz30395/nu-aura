@@ -3,7 +3,6 @@
 import {useMemo, useState} from 'react';
 import Image from 'next/image';
 import {notFound, useParams, useRouter, useSearchParams} from 'next/navigation';
-import {motion} from 'framer-motion';
 import {
   AlertTriangle,
   Award,
@@ -29,6 +28,7 @@ import {
 import CustomFieldsSection from '@/components/custom-fields/CustomFieldsSection';
 import {EntityType} from '@/lib/types/core/custom-fields';
 import {AppLayout} from '@/components/layout';
+import {PageTransition, Stagger, StaggerItem} from '@/components/motion';
 import {Modal, ModalBody, ModalHeader} from '@/components/ui/Modal';
 import TalentJourneyTab from '@/components/employee/talent-profiles/TalentJourneyTab';
 import {useDeleteEmployee, useDottedLineReports, useEmployee, useSubordinates,} from '@/lib/hooks/queries/useEmployees';
@@ -347,7 +347,7 @@ export default function EmployeeDetailPage() {
   // ═══════════════════════════════════════════════════════════════════════
   return (
     <AppLayout activeMenuItem="employees">
-      <div className="page-shell-centered fade-slide-up auth-delay-20">
+      <PageTransition className="page-shell-centered">
         {/* ── HERO BANNER ──────────────────────────────────────────── */}
         <div
           className="relative bg-gradient-to-r from-surface-900 via-accent-950 to-surface-900 border-b border-[var(--border-main)]">
@@ -946,16 +946,15 @@ export default function EmployeeDetailPage() {
               </div>
 
               {/* Folder grid */}
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              <Stagger
+                inView
+                className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
+              >
                 {filteredDocCategories.map((cat) => {
                   const Icon = cat.icon;
                   return (
-                    <motion.div
-                      key={cat.name}
-                      whileHover={{y: -2}}
-                      transition={{type: 'spring', stiffness: 400, damping: 25}}
-                    >
-                      <Card className="cursor-pointer hover:border-accent-500/30 transition-colors">
+                    <StaggerItem key={cat.name}>
+                      <Card className="cursor-pointer hover-lift hover:border-accent-500/30">
                         <CardContent className="p-6 text-center">
                           <div
                             className="h-12 w-12 mx-auto mb-4 rounded-xl bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center">
@@ -969,10 +968,10 @@ export default function EmployeeDetailPage() {
                           </p>
                         </CardContent>
                       </Card>
-                    </motion.div>
+                    </StaggerItem>
                   );
                 })}
-              </div>
+              </Stagger>
 
               {filteredDocCategories.length === 0 && (
                 <EmptyState
@@ -1155,7 +1154,7 @@ export default function EmployeeDetailPage() {
             </div>
           </ModalBody>
         </Modal>
-      </div>
+      </PageTransition>
     </AppLayout>
   );
 }

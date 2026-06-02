@@ -24,7 +24,7 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
         {label && (
           <label
             className={cn(
-              'block text-sm font-medium mb-1.5',
+              'block text-sm font-medium mb-1.5 transition-colors duration-[var(--motion-fast)] ease-[var(--ease-standard)]',
               error
                 ? 'text-danger-600 dark:text-danger-400'
                 : 'text-[var(--text-secondary)]'
@@ -34,12 +34,12 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
           </label>
         )}
 
-        <div className="relative">
+        <div className="group relative">
           <select
             ref={ref}
             className={cn(
-              // Base styles
-              'w-full appearance-none rounded-lg border bg-[var(--bg-card)] transition-all duration-100',
+              // Base styles — token-driven focus/border transition (compositor-safe)
+              'w-full appearance-none rounded-lg border bg-[var(--bg-card)] transition-[border-color,box-shadow] duration-[var(--motion-base)] ease-[var(--ease-standard)]',
               'text-[var(--text-primary)]',
               // Size
               sizeStyles[selectSize],
@@ -65,6 +65,10 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
           <ChevronDown className={cn(
             'absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 pointer-events-none',
             'text-[var(--text-muted)]',
+            // Animate rotation + accent on focus (transform/color only — compositor-safe)
+            'transition-[transform,color] duration-[var(--motion-base)] ease-[var(--ease-out-expo)]',
+            'group-focus-within:-rotate-180 group-focus-within:text-accent-500 dark:group-focus-within:text-accent-400',
+            error && 'group-focus-within:text-danger-500',
             disabled && 'opacity-60'
           )}/>
         </div>
@@ -72,7 +76,7 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
         {(error || helper) && (
           <p
             className={cn(
-              'text-sm mt-1.5',
+              'motion-fade text-sm mt-1.5',
               error
                 ? 'text-danger-600 dark:text-danger-400'
                 : 'text-[var(--text-muted)]'

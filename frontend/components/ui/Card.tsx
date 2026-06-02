@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import {motion} from 'framer-motion';
 import {cn} from '@/lib/utils';
 
 const Card = React.forwardRef<
@@ -36,24 +35,22 @@ const Card = React.forwardRef<
     lg: 'p-8',
   };
 
+  // Compositor-friendly hover/press handled by the Foundation `.hover-lift` /
+  // `.press-scale` utilities (transform + box-shadow only, reduced-motion aware).
+  // No more JS spring wrapper — keeps a single DOM node and honors the design tokens.
   return (
-    <motion.div
-      whileHover={isHoverable ? {y: -1, transition: {duration: 0.16, ease: [0.4, 0, 0.2, 1]}} : undefined}
-      transition={{duration: 0.18, ease: [0.4, 0, 0.2, 1]}}
-    >
-      <div
-        ref={ref}
-        className={cn(
-          'rounded-lg bg-[var(--bg-card)] border-[var(--border-main)] transition-all duration-200',
-          variantStyles[variant],
-          paddingStyles[padding],
-          isHoverable && 'cursor-pointer hover:border-[var(--border-strong)]',
-          glow && 'hover:border-[var(--accent-primary)]',
-          className
-        )}
-        {...props}
-      />
-    </motion.div>
+    <div
+      ref={ref}
+      className={cn(
+        'rounded-lg bg-[var(--bg-card)] border-[var(--border-main)] transition-all duration-200',
+        variantStyles[variant],
+        paddingStyles[padding],
+        isHoverable && 'hover-lift press-scale focus-ring cursor-pointer hover:border-[var(--border-strong)]',
+        glow && 'hover:border-[var(--accent-primary)]',
+        className
+      )}
+      {...props}
+    />
   );
 });
 

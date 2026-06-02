@@ -17,6 +17,8 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           'border-surface-300 dark:border-surface-600',
           'dark:bg-surface-800 dark:text-white',
           'placeholder:text-surface-400',
+          // Token-driven focus transition (compositor-safe: border-color + box-shadow only)
+          'transition-[border-color,box-shadow] duration-[var(--motion-base)] ease-[var(--ease-standard)]',
           'focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent',
           'disabled:cursor-not-allowed disabled:opacity-50',
           'resize-y',

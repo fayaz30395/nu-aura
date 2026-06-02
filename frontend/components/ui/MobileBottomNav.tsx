@@ -3,7 +3,9 @@
 import React from 'react';
 import Link from 'next/link';
 import {usePathname} from 'next/navigation';
+import {motion} from 'framer-motion';
 import {cn} from '@/lib/utils';
+import {MOTION_DURATION, MOTION_EASE, useReducedMotionSafe} from '@/lib/animation';
 import {Calendar, ClipboardList, Home, LucideIcon, MoreHorizontal, User, Users,} from 'lucide-react';
 
 export interface NavItem {
@@ -33,6 +35,7 @@ export function MobileBottomNav({
                                   onMoreClick,
                                 }: MobileBottomNavProps) {
   const pathname = usePathname();
+  const {prefersReduced} = useReducedMotionSafe();
 
   // Only show 4 items + More button, or all items if 5 or fewer
   const visibleItems = items.length > 5 ? items.slice(0, 4) : items;
@@ -68,23 +71,35 @@ export function MobileBottomNav({
               key={item.href}
               href={item.href}
               className={cn(
-                'relative overflow-hidden flex flex-1 flex-col items-center justify-center gap-0.5 h-10 rounded-xl px-2 py-1.5',
+                'relative flex flex-1 flex-col items-center justify-center gap-0.5 h-10 rounded-xl px-2 py-1.5 isolate',
                 'animate-in fade-in slide-in-from-bottom-1 duration-200',
-                'transition-all duration-250 ease-[cubic-bezier(0.16,1,0.3,1)]',
-                'text-[var(--text-secondary)]',
-                'before:absolute before:inset-0 before:rounded-xl before:bg-[var(--accent-primary-subtle)] before:opacity-0 before:scale-95 before:transition-all before:duration-250 before:ease-[cubic-bezier(0.16,1,0.3,1)]',
+                'transform-gpu transition-[color,transform] duration-[var(--motion-base)] ease-[var(--ease-out-expo)]',
+                'text-[var(--text-secondary)] focus-ring focus-visible:outline-none active:scale-[var(--motion-press-scale)]',
                 'touch-manipulation', // Optimize for touch
                 active
-                  ? 'text-[var(--accent-primary)] shadow-[0_12px_24px_-16px_var(--accent-primary)] before:opacity-100 before:scale-100 scale-[1.015]'
-                  : 'hover:text-[var(--text-primary)] hover:before:scale-100 hover:before:opacity-80'
+                  ? 'text-[var(--accent-primary)]'
+                  : 'hover:text-[var(--text-primary)]'
               )}
                 style={{animationDelay: `${index * 45}ms`}}
               aria-current={active ? 'page' : undefined}
             >
+              {/* Shared sliding indicator — animates between items via layoutId.
+                  Transform/opacity only; honors reduced motion (no layout tween). */}
+              {active && (
+                <motion.span
+                  layoutId={prefersReduced ? undefined : 'mobile-nav-indicator'}
+                  aria-hidden
+                  className="absolute inset-0 -z-10 rounded-xl bg-[var(--accent-primary-subtle)] shadow-[0_12px_24px_-16px_var(--accent-primary)]"
+                  transition={{
+                    duration: MOTION_DURATION.base,
+                    ease: MOTION_EASE.outExpo,
+                  }}
+                />
+              )}
               <div className="relative">
                 <Icon
                   className={cn(
-                    'h-5 w-5 transition-transform',
+                    'h-5 w-5 transform-gpu transition-transform duration-[var(--motion-base)] ease-[var(--ease-spring)]',
                     active && 'scale-110'
                   )}
                   strokeWidth={active ? 2.5 : 2}
@@ -99,7 +114,7 @@ export function MobileBottomNav({
               <span
                 className={cn(
                   'text-2xs leading-none font-medium',
-                  'transition-all duration-200',
+                  'transition-colors duration-[var(--motion-base)] ease-[var(--ease-standard)]',
                   active && 'font-semibold'
                 )}
               >
@@ -114,16 +129,16 @@ export function MobileBottomNav({
           <button
             onClick={onMoreClick}
             className={cn(
-              'relative overflow-hidden flex flex-1 flex-col items-center justify-center gap-0.5 h-10 rounded-xl px-2 py-1.5',
+              'group/more relative overflow-hidden flex flex-1 flex-col items-center justify-center gap-0.5 h-10 rounded-xl px-2 py-1.5',
               'animate-in fade-in slide-in-from-bottom-1 duration-200',
-              'text-[var(--text-secondary)] transition-all duration-250 ease-[cubic-bezier(0.16,1,0.3,1)] touch-manipulation',
-              'before:absolute before:inset-0 before:rounded-xl before:bg-[var(--bg-card)] before:opacity-0 before:scale-95 before:transition-all before:duration-250',
+              'text-[var(--text-secondary)] transform-gpu transition-[color,background-color,transform] duration-[var(--motion-base)] ease-[var(--ease-out-expo)] touch-manipulation',
+              'focus-ring focus-visible:outline-none active:scale-[var(--motion-press-scale)]',
               'hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)]'
             )}
             aria-label="More options"
             aria-haspopup="true"
           >
-            <MoreHorizontal className="h-6 w-6"/>
+            <MoreHorizontal className="h-6 w-6 transform-gpu transition-transform duration-[var(--motion-base)] ease-[var(--ease-spring)] group-hover/more:scale-110"/>
             <span className="text-2xs font-medium leading-none">More</span>
           </button>
         )}

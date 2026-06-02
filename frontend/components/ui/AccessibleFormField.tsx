@@ -67,7 +67,7 @@ export const AccessibleFormField: React.FC<AccessibleFormFieldProps> = ({
       <label
         htmlFor={htmlFor}
         className={cn(
-          'block text-sm font-medium mb-1.5',
+          'block text-sm font-medium mb-1.5 transition-colors duration-[var(--motion-fast)] ease-[var(--ease-standard)]',
           error
             ? 'text-danger-600 dark:text-danger-400'
             : 'text-[var(--text-secondary)]'
@@ -108,7 +108,7 @@ export const AccessibleFormField: React.FC<AccessibleFormFieldProps> = ({
       {helpText && !error && (
         <p
           id={helpId}
-          className="mt-1 text-caption"
+          className="motion-fade mt-1 text-caption"
         >
           {helpText}
         </p>
@@ -120,7 +120,7 @@ export const AccessibleFormField: React.FC<AccessibleFormFieldProps> = ({
           id={errorId}
           role="alert"
           aria-live="polite"
-          className="mt-1 text-xs text-danger-600 dark:text-danger-400"
+          className="motion-fade mt-1 text-xs text-danger-600 dark:text-danger-400"
         >
           {error}
         </p>

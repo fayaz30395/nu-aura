@@ -1,6 +1,9 @@
 'use client';
 
 import {useCallback, useEffect, useRef, useState} from 'react';
+import {AnimatePresence, motion} from 'framer-motion';
+import {modalVariants, overlayVariants} from '@/lib/animations/variants';
+import {useReducedMotionSafe} from '@/lib/animation';
 
 /**
  * Optional textarea slot for "destructive action with reason" pattern
@@ -58,6 +61,7 @@ export function ConfirmDialog({
   const dialogRef = useRef<HTMLDivElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
   const [reasonValue, setReasonValue] = useState('');
+  const {pick} = useReducedMotionSafe();
 
   // Reset the reason textarea each time the dialog is opened so stale values
   // don't leak between separate confirm flows.
@@ -120,8 +124,6 @@ export function ConfirmDialog({
     };
   }, [isOpen, handleKeyDown]);
 
-  if (!isOpen) return null;
-
   const typeStyles = {
     danger: {
       icon: (
@@ -176,19 +178,29 @@ export function ConfirmDialog({
   };
 
   return (
-    <div
-      className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50"
-      onClick={handleBackdropClick}
-    >
-      <div
-        ref={dialogRef}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="confirm-dialog-title"
-        aria-describedby="confirm-dialog-description"
-        className="bg-[var(--bg-card)] rounded-lg shadow-dropdown max-w-md w-full p-6 animate-in fade-in zoom-in-95 duration-200"
-        onClick={(e) => e.stopPropagation()}
-      >
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50"
+          onClick={handleBackdropClick}
+          initial="initial"
+          animate="animate"
+          exit="exit"
+          variants={pick(overlayVariants)}
+        >
+          <motion.div
+            ref={dialogRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="confirm-dialog-title"
+            aria-describedby="confirm-dialog-description"
+            className="bg-[var(--bg-card)] rounded-lg shadow-dropdown max-w-md w-full p-6"
+            onClick={(e) => e.stopPropagation()}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            variants={pick(modalVariants)}
+          >
         <div className="flex gap-4">
           <div className={`flex-shrink-0 w-12 h-12 rounded-full ${style.bgClass} flex items-center justify-center`}>
             {style.icon}
@@ -230,14 +242,14 @@ export function ConfirmDialog({
               <button ref={cancelButtonRef}
                       onClick={onClose}
                       disabled={loading}
-                      className="flex-1 px-4 py-2.5 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-card-hover)] disabled:opacity-50 disabled:cursor-not-allowed font-medium text-[var(--text-secondary)] transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--border-focus)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                      className="press-scale flex-1 px-4 py-2.5 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-card-hover)] disabled:opacity-50 disabled:cursor-not-allowed font-medium text-[var(--text-secondary)] transition-[color,background-color,transform] duration-[var(--motion-fast)] ease-[var(--ease-standard)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--border-focus)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 {cancelText}
               </button>
               <button
                 onClick={handleConfirmClick}
                 disabled={loading || reasonInvalid}
-                className={`flex-1 px-4 py-2.5 ${style.buttonClass} text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 flex items-center justify-center gap-2`}
+                className={`press-scale flex-1 px-4 py-2.5 ${style.buttonClass} text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-[background-color,transform] duration-[var(--motion-fast)] ease-[var(--ease-standard)] focus:outline-none focus:ring-2 focus:ring-offset-2 flex items-center justify-center gap-2`}
               >
                 {loading ? (
                   <>
@@ -255,7 +267,9 @@ export function ConfirmDialog({
             </div>
           </div>
         </div>
-      </div>
-    </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }

@@ -52,6 +52,7 @@ import {
   useRemoveReaction,
 } from '@/lib/hooks/queries/useRecognition';
 import {formatDate} from '@/lib/utils/format/date';
+import {PageTransition, Stagger, StaggerItem} from '@/components/motion';
 
 // Zod schema for recognition form
 const recognitionFormSchema = z.object({
@@ -249,7 +250,7 @@ export default function RecognitionPage() {
 
   return (
     <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="recognition">
-      <div className="space-y-6">
+      <PageTransition className="space-y-6">
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
@@ -269,65 +270,73 @@ export default function RecognitionPage() {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <Card
-            className="skeuo-card bg-gradient-to-br from-warning-50 to-warning-100 dark:from-warning-900/30 dark:to-warning-900/30 border-warning-200 dark:border-warning-800">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-warning-500 p-4">
-                  <Trophy className="h-6 w-6 text-white"/>
+        <Stagger className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <StaggerItem>
+            <Card
+              className="skeuo-card h-full bg-gradient-to-br from-warning-50 to-warning-100 dark:from-warning-900/30 dark:to-warning-900/30 border-warning-200 dark:border-warning-800">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-4">
+                  <div className="rounded-lg bg-warning-500 p-4">
+                    <Trophy className="h-6 w-6 text-white"/>
+                  </div>
+                  <div>
+                    <p className="text-sm text-warning-700 dark:text-warning-300">My Points</p>
+                    <p
+                      className="text-xl font-bold text-warning-900 dark:text-warning-100">{stats.myPoints}</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-sm text-warning-700 dark:text-warning-300">My Points</p>
-                  <p
-                    className="text-xl font-bold text-warning-900 dark:text-warning-100">{stats.myPoints}</p>
+              </CardContent>
+            </Card>
+          </StaggerItem>
+          <StaggerItem>
+            <Card className="skeuo-card h-full">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-4">
+                  <div className="rounded-lg bg-success-100 p-4 dark:bg-success-900">
+                    <Award className="h-6 w-6 text-success-600 dark:text-success-400"/>
+                  </div>
+                  <div>
+                    <p className="text-body-secondary">Received</p>
+                    <p
+                      className="text-xl font-bold text-[var(--text-primary)]">{stats.recognitionsReceived}</p>
+                  </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="skeuo-card">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-success-100 p-4 dark:bg-success-900">
-                  <Award className="h-6 w-6 text-success-600 dark:text-success-400"/>
+              </CardContent>
+            </Card>
+          </StaggerItem>
+          <StaggerItem>
+            <Card className="skeuo-card h-full">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-4">
+                  <div className="rounded-lg bg-accent-100 p-4 dark:bg-accent-900">
+                    <Gift className="h-6 w-6 text-accent-600 dark:text-accent-400"/>
+                  </div>
+                  <div>
+                    <p className="text-body-secondary">Given</p>
+                    <p
+                      className="text-xl font-bold text-[var(--text-primary)]">{stats.recognitionsGiven}</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-body-secondary">Received</p>
-                  <p
-                    className="text-xl font-bold text-[var(--text-primary)]">{stats.recognitionsReceived}</p>
+              </CardContent>
+            </Card>
+          </StaggerItem>
+          <StaggerItem>
+            <Card className="skeuo-card h-full">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-4">
+                  <div className="rounded-lg bg-accent-300 p-4 dark:bg-accent-900">
+                    <TrendingUp className="h-6 w-6 text-accent-800 dark:text-accent-600"/>
+                  </div>
+                  <div>
+                    <p className="text-body-secondary">Total Activity</p>
+                    <p
+                      className="text-xl font-bold text-[var(--text-primary)]">{stats.totalRecognitions}</p>
+                  </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="skeuo-card">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-accent-100 p-4 dark:bg-accent-900">
-                  <Gift className="h-6 w-6 text-accent-600 dark:text-accent-400"/>
-                </div>
-                <div>
-                  <p className="text-body-secondary">Given</p>
-                  <p
-                    className="text-xl font-bold text-[var(--text-primary)]">{stats.recognitionsGiven}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="skeuo-card">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-accent-300 p-4 dark:bg-accent-900">
-                  <TrendingUp className="h-6 w-6 text-accent-800 dark:text-accent-600"/>
-                </div>
-                <div>
-                  <p className="text-body-secondary">Total Activity</p>
-                  <p
-                    className="text-xl font-bold text-[var(--text-primary)]">{stats.totalRecognitions}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+              </CardContent>
+            </Card>
+          </StaggerItem>
+        </Stagger>
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           {/* Main Feed */}
@@ -409,9 +418,10 @@ export default function RecognitionPage() {
                 </CardContent>
               </Card>
             ) : (
-              <div className="space-y-4">
+              <Stagger inView className="space-y-4">
                 {recognitions.map((recognition) => (
-                  <Card key={recognition.id} className="card-aura overflow-hidden">
+                  <StaggerItem key={recognition.id}>
+                  <Card className="card-aura overflow-hidden">
                     <CardContent className="p-4">
                       <div className="flex items-start gap-4">
                         <div className={`rounded-full p-4 flex-shrink-0 ${getTypeColor(recognition.type)}`}
@@ -541,8 +551,9 @@ export default function RecognitionPage() {
                       </div>
                     </CardContent>
                   </Card>
+                  </StaggerItem>
                 ))}
-              </div>
+              </Stagger>
             )}
           </div>
 
@@ -764,7 +775,7 @@ export default function RecognitionPage() {
             </Button>
           </ModalFooter>
         </Modal>
-      </div>
+      </PageTransition>
     </AppLayout>
   );
 }

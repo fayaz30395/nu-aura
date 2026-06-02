@@ -51,8 +51,11 @@ export function Stat({
   const valueClass = size === 'compact' ? 'text-stat-medium' : 'text-stat-large';
   const labelClass = size === 'compact' ? 'text-2xs uppercase tracking-wider' : 'text-xs uppercase tracking-wider';
 
+  // `.motion-rise` is a CSS-only fade+8px-rise entrance (Foundation utility);
+  // it self-neutralizes under prefers-reduced-motion via the globals.css media
+  // block. Root structure is unchanged so the className contract holds.
   return (
-    <div className={cn('flex flex-col gap-1', className)}>
+    <div className={cn('motion-rise flex flex-col gap-1', className)}>
       <div className={cn('flex items-center gap-1.5 text-[var(--text-muted)] font-medium', labelClass)}>
         {icon ? <span className="inline-flex h-3.5 w-3.5">{icon}</span> : null}
         <span>{label}</span>

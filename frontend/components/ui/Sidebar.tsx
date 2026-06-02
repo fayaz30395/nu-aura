@@ -162,10 +162,10 @@ const ChildrenFlyover: React.FC<{
         <div className="py-2 max-h-[400px] overflow-y-auto scrollbar-hide">
           {item.children?.map((child) => {
             const childClasses = cn(
-              'w-full flex items-center gap-2 px-4 py-2 text-sm rounded-md transition-all duration-180 ease-[cubic-bezier(0.16,1,0.3,1)]',
+              'focus-ring group/child w-full flex items-center gap-2 px-4 py-2 text-sm rounded-md transform-gpu transition-[background-color,color,transform] duration-[var(--motion-base)] ease-[var(--ease-out-expo)] focus-visible:outline-none active:scale-[var(--motion-press-scale)]',
               activeId === child.id
                 ? 'font-medium bg-[var(--accent-primary-subtle)] text-[var(--accent-primary)] shadow-[0_10px_20px_-16px_var(--accent-primary)]'
-                : 'text-[var(--text-secondary)] hover:bg-[var(--sidebar-hover-bg)] hover:text-[var(--text-primary)]'
+                : 'text-[var(--text-secondary)] hover:bg-[var(--sidebar-hover-bg)] hover:text-[var(--text-primary)] hover:translate-x-0.5'
             );
 
             const childContent = (
@@ -308,18 +308,25 @@ const SidebarMenuItem: React.FC<{
 
   const commonClasses = cn(
     'sidebar-menu-item group relative flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium',
-    'transition-all duration-150 ease-out',
+    'transform-gpu transition-[background-color,color,transform] duration-[var(--motion-base)] ease-[var(--ease-out-expo)]',
+    'focus-ring focus-visible:outline-none',
     isActiveState
       ? 'font-semibold bg-[var(--sidebar-active-bg)] text-[var(--sidebar-text-active)]'
-      : 'text-[var(--sidebar-text)] hover:bg-[var(--sidebar-hover-bg)] hover:translate-x-0.5',
+      : 'text-[var(--sidebar-text)] hover:bg-[var(--sidebar-hover-bg)] hover:translate-x-0.5 active:scale-[var(--motion-press-scale)]',
     item.disabled && 'cursor-not-allowed opacity-50'
   );
 
   const content = (
     <>
-      {isActiveState && !isCollapsed && (
+      {/* Active indicator — a sliding accent bar that scales in on activation.
+          Animates transform/opacity only (compositor-friendly). */}
+      {!isCollapsed && (
         <span
-          className="absolute left-2.5 h-1.5 w-1.5 rounded-full bg-[var(--sidebar-active-border)]"
+          className={cn(
+            'absolute left-1 top-1/2 h-4 w-[3px] -translate-y-1/2 origin-center rounded-full bg-[var(--sidebar-active-border)]',
+            'transform-gpu transition-[transform,opacity] duration-[var(--motion-base)] ease-[var(--ease-out-expo)]',
+            isActiveState ? 'scale-y-100 opacity-100' : 'scale-y-0 opacity-0'
+          )}
           aria-hidden
         />
       )}
@@ -327,8 +334,11 @@ const SidebarMenuItem: React.FC<{
       {item.icon && (
         <span
           className={cn(
-            'flex items-center justify-center w-6 h-6 flex-shrink-0 transition-colors duration-200',
-            isActiveState ? 'text-[var(--sidebar-text-active)]' : 'text-[var(--sidebar-text)]'
+            'flex items-center justify-center w-6 h-6 flex-shrink-0 transform-gpu',
+            'transition-[color,transform] duration-[var(--motion-base)] ease-[var(--ease-spring)]',
+            isActiveState
+              ? 'text-[var(--sidebar-text-active)] scale-105'
+              : 'text-[var(--sidebar-text)] group-hover:scale-105'
           )}
         >
           {item.icon}
@@ -337,13 +347,13 @@ const SidebarMenuItem: React.FC<{
 
       {!isCollapsed && (
         <div className="flex flex-1 items-center justify-between min-w-0">
-          <span className="truncate group-hover:translate-x-0.5 transition-transform duration-200">{item.label}</span>
+          <span className="truncate transform-gpu transition-transform duration-[var(--motion-base)] ease-[var(--ease-out-expo)] group-hover:translate-x-0.5">{item.label}</span>
           <div className="flex items-center gap-2">
             {item.badge && (
               <span className={cn(
-                'flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-xs font-medium transition-colors duration-200',
+                'flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-xs font-medium transform-gpu transition-[background-color,color,transform] duration-[var(--motion-base)] ease-[var(--ease-spring)]',
                 isActiveState
-                  ? 'bg-[var(--accent-primary)] text-white'
+                  ? 'bg-[var(--accent-primary)] text-white scale-105'
                   : 'bg-[var(--sidebar-hover-bg)] text-[var(--sidebar-text)]'
               )}>
                 {item.badge}
@@ -352,10 +362,10 @@ const SidebarMenuItem: React.FC<{
             {hasChildren && (
               <ChevronRight
                 className={cn(
-                  'h-4 w-4 transition-all duration-200',
+                  'h-4 w-4 transform-gpu transition-[transform,color] duration-[var(--motion-base)] ease-[var(--ease-out-expo)]',
                   isFlyoverOpen
-                    ? 'translate-x-0.5 text-[var(--sidebar-text-active)]'
-                    : 'text-[var(--sidebar-text-muted)]'
+                    ? 'translate-x-0.5 rotate-90 text-[var(--sidebar-text-active)]'
+                    : 'text-[var(--sidebar-text-muted)] group-hover:translate-x-0.5'
                 )}
               />
             )}
@@ -366,7 +376,7 @@ const SidebarMenuItem: React.FC<{
       {/* Tooltip for collapsed state (all items) */}
       {isCollapsed && (
         <div
-          className="absolute left-full ml-2 px-2.5 py-1.5 bg-[var(--bg-elevated)] border border-[var(--border-main)] text-[var(--text-primary)] text-sm rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible whitespace-nowrap z-50 shadow-[var(--shadow-dropdown)] pointer-events-none transition-all duration-150">
+          className="absolute left-full ml-2 px-2.5 py-1.5 bg-[var(--bg-elevated)] border border-[var(--border-main)] text-[var(--text-primary)] text-sm rounded-md opacity-0 invisible -translate-x-1 group-hover:opacity-100 group-hover:visible group-hover:translate-x-0 group-focus-within:opacity-100 group-focus-within:visible group-focus-within:translate-x-0 whitespace-nowrap z-50 shadow-[var(--shadow-dropdown)] pointer-events-none transform-gpu transition-[transform,opacity] duration-[var(--motion-base)] ease-[var(--ease-out-expo)]">
           {item.label}
           {item.badge && (
             <span className="ml-2 px-1.5 py-0.5 bg-[var(--accent-primary)] rounded-full text-xs text-white">
@@ -437,17 +447,17 @@ const SectionDivider: React.FC<{
     <button
       onClick={() => onToggleSection(sectionId)}
       aria-expanded={isSectionExpanded}
-      className="w-full row-between px-3 py-2 group rounded-md transition-all duration-200"
+      className="focus-ring w-full row-between px-3 py-2 group rounded-md transform-gpu transition-[background-color,color] duration-[var(--motion-base)] ease-[var(--ease-standard)] hover:bg-[var(--sidebar-hover-bg)] focus-visible:outline-none"
     >
       <span
-        className="text-2xs font-medium uppercase tracking-[0.14em] text-[var(--sidebar-section-text)] transition-colors duration-200"
+        className="text-2xs font-medium uppercase tracking-[0.14em] text-[var(--sidebar-section-text)] transition-colors duration-[var(--motion-base)] group-hover:text-[var(--sidebar-text)]"
         suppressHydrationWarning
       >
         {label}
       </span>
       <ChevronDown
         className={cn(
-          'h-3 w-3 text-[var(--sidebar-text-muted)] transition-transform duration-300 ease-out',
+          'h-3 w-3 text-[var(--sidebar-text-muted)] transform-gpu transition-transform duration-[var(--motion-slow)] ease-[var(--ease-out-expo)]',
           !isSectionExpanded && '-rotate-90'
         )}
       />
@@ -643,17 +653,17 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
               <button
                 onClick={() => handleCollapsedChange(!isCollapsed)}
                 className={cn(
-                  'flex items-center gap-2 px-3 py-2 rounded-md text-[var(--sidebar-text)] hover:bg-[var(--sidebar-hover-bg)] hover:text-[var(--sidebar-text-active)] transition-all duration-200 ease-out w-full cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2',
+                  'focus-ring group flex items-center gap-2 px-3 py-2 rounded-md text-[var(--sidebar-text)] hover:bg-[var(--sidebar-hover-bg)] hover:text-[var(--sidebar-text-active)] transform-gpu transition-[background-color,color,transform] duration-[var(--motion-base)] ease-[var(--ease-out-expo)] w-full cursor-pointer focus-visible:outline-none active:scale-[var(--motion-press-scale)]',
                   isCollapsed ? 'justify-center' : ''
                 )}
                 aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
                 title={isCollapsed ? 'Expand sidebar (Ctrl+B)' : 'Collapse sidebar (Ctrl+B)'}
               >
                 {isCollapsed ? (
-                  <PanelLeft className="h-5 w-5 transition-transform duration-300"/>
+                  <PanelLeft className="h-5 w-5 transform-gpu transition-transform duration-[var(--motion-slow)] ease-[var(--ease-out-expo)] group-hover:scale-110"/>
                 ) : (
                   <>
-                    <PanelLeftClose className="h-5 w-5 transition-transform duration-300"/>
+                    <PanelLeftClose className="h-5 w-5 transform-gpu transition-transform duration-[var(--motion-slow)] ease-[var(--ease-out-expo)] group-hover:-translate-x-0.5"/>
                     <span className="text-xs font-medium transition-opacity duration-200">Collapse</span>
                     <kbd className="ml-auto text-xs font-mono px-1.5 py-0.5 rounded border border-[var(--sidebar-border)] bg-[var(--sidebar-hover-bg)] text-[var(--sidebar-text-muted)] transition-colors duration-200">
                       ⌘B
@@ -685,18 +695,18 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
                     <button
                       onClick={() => handleToggleSection(section.id)}
                       aria-expanded={isSectionExpanded}
-                      className="w-full row-between px-3 py-2 group rounded-md transition-all duration-200"
+                      className="focus-ring w-full row-between px-3 py-2 group rounded-md transform-gpu transition-[background-color,color] duration-[var(--motion-base)] ease-[var(--ease-standard)] hover:bg-[var(--sidebar-hover-bg)] focus-visible:outline-none"
                       suppressHydrationWarning
                     >
                       <span
-                        className="text-2xs font-medium uppercase tracking-[0.14em] text-[var(--sidebar-section-text)] transition-colors duration-200"
+                        className="text-2xs font-medium uppercase tracking-[0.14em] text-[var(--sidebar-section-text)] transition-colors duration-[var(--motion-base)] group-hover:text-[var(--sidebar-text)]"
                         suppressHydrationWarning
                       >
                         {section.label}
                       </span>
                       <ChevronDown
                         className={cn(
-                          'h-3 w-3 text-[var(--sidebar-text-muted)] transition-transform duration-300 ease-out',
+                          'h-3 w-3 text-[var(--sidebar-text-muted)] transform-gpu transition-transform duration-[var(--motion-slow)] ease-[var(--ease-out-expo)]',
                           !isSectionExpanded && '-rotate-90'
                         )}
                       />
@@ -706,8 +716,10 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
                   {/* Collapsible items container — CSS-only, no Framer Motion overhead */}
                   <div
                     className={cn(
-                      'space-y-0.5 overflow-hidden transition-all duration-150 ease-out',
-                      !isSectionExpanded && 'h-0 opacity-0 pointer-events-none'
+                      'space-y-0.5 overflow-hidden transform-gpu origin-top transition-[transform,opacity] duration-[var(--motion-slow)] ease-[var(--ease-out-expo)]',
+                      !isSectionExpanded
+                        ? 'max-h-0 scale-y-95 opacity-0 pointer-events-none'
+                        : 'max-h-[1200px] scale-y-100 opacity-100'
                     )}
                   >
                     {section.items.map((item) => (
@@ -736,9 +748,9 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
             )}
           >
             {!isCollapsed ? (
-              <div className="flex items-center gap-2.5 px-3 py-2 rounded-lg border border-[var(--sidebar-border)] bg-[var(--sidebar-active-bg)] transition-all duration-200">
+              <div className="group flex items-center gap-2.5 px-3 py-2 rounded-lg border border-[var(--sidebar-border)] bg-[var(--sidebar-active-bg)] transform-gpu transition-[transform,box-shadow] duration-[var(--motion-base)] ease-[var(--ease-out-expo)] hover:-translate-y-0.5 hover:shadow-[var(--shadow-md)]">
                 <div className="flex items-center justify-center w-6 h-6 rounded-md bg-[var(--sidebar-hover-bg)]">
-                  <Sparkles className="h-3.5 w-3.5 text-[var(--sidebar-active-border)]"/>
+                  <Sparkles className="h-3.5 w-3.5 text-[var(--sidebar-active-border)] transform-gpu transition-transform duration-[var(--motion-base)] ease-[var(--ease-spring)] group-hover:scale-110"/>
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-xs font-semibold truncate text-[var(--sidebar-text-active)]">All

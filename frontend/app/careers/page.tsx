@@ -18,6 +18,7 @@ import {
   Send,
   Upload,
 } from 'lucide-react';
+import {PageTransition, Reveal, Stagger, StaggerItem} from '@/components/motion';
 import {Button} from '@/components/ui/Button';
 import {Input} from '@/components/ui/Input';
 import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
@@ -530,7 +531,7 @@ export default function CareersPage() {
   };
 
   return (
-    <div className="page-shell-centered fade-slide-up auth-delay-20">
+    <PageTransition className="page-shell-centered">
       {/* Hero Section */}
       <div className="bg-gradient-to-br from-accent-700 via-accent-600 to-accent-700 py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto text-center">
@@ -667,7 +668,7 @@ export default function CareersPage() {
                 ))}
               </div>
             ) : paginatedJobs.length === 0 ? (
-              <div className="text-center py-20 skeuo-card">
+              <Reveal className="text-center py-20 skeuo-card">
                 <Briefcase className="h-16 w-16 text-[var(--text-muted)] mx-auto mb-4"/>
                 <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                   No jobs found
@@ -686,18 +687,19 @@ export default function CareersPage() {
                 >
                   Clear Filters
                 </Button>
-              </div>
+              </Reveal>
             ) : (
               <>
-                <div className="grid gap-6 mb-8">
+                <Stagger className="grid gap-6 mb-8">
                   {paginatedJobs.map((job) => (
-                    <JobCard
-                      key={job.id}
-                      job={job}
-                      onViewDetails={handleViewDetails}
-                    />
+                    <StaggerItem key={job.id}>
+                      <JobCard
+                        job={job}
+                        onViewDetails={handleViewDetails}
+                      />
+                    </StaggerItem>
                   ))}
-                </div>
+                </Stagger>
 
                 {/* Pagination */}
                 {totalPages > 1 && (
@@ -766,6 +768,6 @@ export default function CareersPage() {
         isOpen={showApplicationModal}
         onClose={handleCloseApplicationModal}
       />
-    </div>
+    </PageTransition>
   );
 }

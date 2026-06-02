@@ -24,6 +24,7 @@ import {
   X,
 } from 'lucide-react';
 import {AppLayout} from '@/components/layout';
+import {PageTransition, Reveal, Stagger, StaggerItem} from '@/components/motion';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {useMyEmployee, useUpdateMyProfile} from '@/lib/hooks/queries';
@@ -228,9 +229,9 @@ export default function MyProfilePage() {
 
   return (
     <AppLayout activeMenuItem="profile">
-      <div className="space-y-6">
+      <PageTransition className="space-y-6">
         {/* Header */}
-        <div className="row-between">
+        <Reveal className="row-between">
           <div>
             <h1 className="text-xl font-bold">My Profile</h1>
             <p className="text-[var(--text-secondary)] mt-1">
@@ -274,7 +275,7 @@ export default function MyProfilePage() {
               </button>
             </div>
           )}
-        </div>
+        </Reveal>
 
         {/* Success Message */}
         {success && (
@@ -297,6 +298,7 @@ export default function MyProfilePage() {
         )}
 
         {/* Profile Header Card */}
+        <Reveal>
         <Card className="card-aura overflow-hidden">
           <div className="h-32 bg-accent-100 dark:bg-accent-900/30"/>
           <CardContent className="relative pt-0">
@@ -345,9 +347,11 @@ export default function MyProfilePage() {
             </div>
           </CardContent>
         </Card>
+        </Reveal>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Stagger inView className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Personal Information */}
+          <StaggerItem>
           <Card className="card-aura">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -381,8 +385,10 @@ export default function MyProfilePage() {
               </div>
             </CardContent>
           </Card>
+          </StaggerItem>
 
           {/* Contact Information */}
+          <StaggerItem>
           <Card className="card-aura">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -453,8 +459,10 @@ export default function MyProfilePage() {
               </div>
             </CardContent>
           </Card>
+          </StaggerItem>
 
           {/* Address */}
+          <StaggerItem>
           <Card className="card-aura">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -560,8 +568,10 @@ export default function MyProfilePage() {
               </div>
             </CardContent>
           </Card>
+          </StaggerItem>
 
           {/* Employment Details */}
+          <StaggerItem>
           <Card className="card-aura">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -618,9 +628,11 @@ export default function MyProfilePage() {
               </div>
             </CardContent>
           </Card>
+          </StaggerItem>
 
           {/* Bank Details */}
-          <Card className="card-aura lg:col-span-2">
+          <StaggerItem className="lg:col-span-2">
+          <Card className="card-aura">
             <CardHeader>
               <div className="row-between">
                 <div>
@@ -676,9 +688,11 @@ export default function MyProfilePage() {
               </div>
             </CardContent>
           </Card>
+          </StaggerItem>
 
           {/* Tax Details */}
-          <Card className="card-aura lg:col-span-2">
+          <StaggerItem className="lg:col-span-2">
+          <Card className="card-aura">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Shield className="h-5 w-5"/>
@@ -697,7 +711,8 @@ export default function MyProfilePage() {
               </div>
             </CardContent>
           </Card>
-        </div>
+          </StaggerItem>
+        </Stagger>
 
         {/* Bank Change Request Modal */}
         {showBankChangeModal && (
@@ -848,7 +863,7 @@ export default function MyProfilePage() {
             </div>
           </div>
         )}
-      </div>
+      </PageTransition>
     </AppLayout>
   );
 }

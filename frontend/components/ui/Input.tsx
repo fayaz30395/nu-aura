@@ -58,7 +58,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <label
             className={cn(
-              'block text-sm font-medium mb-1.5',
+              'block text-sm font-medium mb-1.5 transition-colors duration-[var(--motion-fast)] ease-[var(--ease-standard)]',
               error
                 ? 'text-danger-600 dark:text-danger-400'
                 : success
@@ -75,6 +75,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             <span
               className={cn(
                 'absolute left-3 top-1/2 -translate-y-1/2 text-surface-400',
+                'transition-colors duration-[var(--motion-fast)] ease-[var(--ease-standard)]',
                 isFocused && !error && !success && 'text-accent-500',
                 error && 'text-danger-500',
                 success && 'text-success-500'
@@ -91,8 +92,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               borderColor: error ? undefined : success ? undefined : 'var(--border-main)',
             }}
             className={cn(
-              // Base styles
-              'w-full rounded-lg border transition-all duration-150',
+              // Base styles — token-driven focus/border transition (compositor-safe: color + box-shadow only)
+              'w-full rounded-lg border transition-[border-color,box-shadow,color] duration-[var(--motion-base)] ease-[var(--ease-standard)]',
               'placeholder:text-surface-400 dark:placeholder:text-surface-500',
               // Size
               sizeStyles[inputSize],
@@ -126,7 +127,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               <button
                 type="button"
                 onClick={handleRightIconClick}
-                className="text-surface-400 hover:text-surface-600 dark:hover:text-surface-300 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] rounded"
+                className="press-scale text-surface-400 hover:text-surface-600 dark:hover:text-surface-300 transition-colors duration-[var(--motion-fast)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] rounded disabled:cursor-not-allowed disabled:opacity-60"
                 tabIndex={-1}
                 disabled={disabled}
                 aria-label="Toggle right icon"
@@ -140,7 +141,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
                 type="button"
                 onClick={handleRightIconClick}
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
-                className="text-surface-400 hover:text-surface-600 dark:hover:text-surface-300 p-1 rounded transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                className="press-scale text-surface-400 hover:text-surface-600 dark:hover:text-surface-300 p-1 rounded transition-colors duration-[var(--motion-fast)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
                 disabled={disabled}
               >
                 {showPassword ? (
@@ -152,11 +153,11 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             )}
 
             {error && (
-              <AlertCircle className="h-4 w-4 text-danger-500"/>
+              <AlertCircle className="motion-scale-in h-4 w-4 text-danger-500"/>
             )}
 
             {success && !error && (
-              <CheckCircle className="h-4 w-4 text-success-500"/>
+              <CheckCircle className="motion-scale-in h-4 w-4 text-success-500"/>
             )}
           </div>
         </div>
@@ -164,7 +165,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         {(error || helper) && (
           <p
             className={cn(
-              'text-sm mt-1.5',
+              'motion-fade text-sm mt-1.5',
               error
                 ? 'text-danger-600 dark:text-danger-400'
                 : 'text-surface-500 dark:text-surface-400'

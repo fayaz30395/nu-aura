@@ -2,7 +2,9 @@
 
 import React, {useCallback, useEffect, useMemo, useRef} from 'react';
 import {usePathname, useRouter} from 'next/navigation';
+import {AnimatePresence} from 'framer-motion';
 import {logger} from '@/lib/utils/logger';
+import {PageTransition} from '@/components/motion';
 import {AuthGuard} from '@/components/auth/AuthGuard';
 import {useUiStore} from '@/lib/stores/useUiStore';
 // Icons moved to menuSections.tsx — only layout-specific imports remain
@@ -301,7 +303,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
       {/* Sidebar — fixed width, never flexes, prevents content shift */}
       <aside
         data-print-hide="true"
-        className="hidden md:flex flex-shrink-0 transition-[width] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]"
+        className="hidden md:flex flex-shrink-0 transition-[width] duration-[var(--motion-slow)] ease-[var(--ease-standard)]"
         style={{
           width: isCollapsed ? SIDEBAR_WIDTH_COLLAPSED : SIDEBAR_WIDTH_EXPANDED,
           minWidth: isCollapsed ? SIDEBAR_WIDTH_COLLAPSED : SIDEBAR_WIDTH_EXPANDED,
@@ -387,16 +389,22 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         >
           <AuthGuard>
             <ErrorBoundary resetKeys={[pathname]}>
-          <div
-            className={cn(
-              'page-shell py-4 md:py-6',
-              'stagger-children overflow-x-hidden',
-              // Bottom padding: mobile needs space for fixed bottom nav
-              'pb-20 md:pb-6'
-            )}
-          >
-                {children}
-              </div>
+              {/* Route-level fade+rise. AnimatePresence mode="wait" lets the
+                  outgoing route finish its exit before the new one enters;
+                  keyed on pathname. PageTransition honors reduced motion. */}
+              <AnimatePresence mode="wait" initial={false}>
+                <PageTransition
+                  key={pathname}
+                  className={cn(
+                    'page-shell py-4 md:py-6',
+                    'stagger-children overflow-x-hidden',
+                    // Bottom padding: mobile needs space for fixed bottom nav
+                    'pb-20 md:pb-6'
+                  )}
+                >
+                  {children}
+                </PageTransition>
+              </AnimatePresence>
             </ErrorBoundary>
           </AuthGuard>
         </main>

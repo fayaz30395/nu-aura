@@ -2,7 +2,6 @@
 
 import React, {useState} from 'react';
 import Link from 'next/link';
-import {motion} from 'framer-motion';
 import {
   ArrowRight,
   Award,
@@ -30,6 +29,7 @@ import {
 import {Button} from '@/components/ui/Button';
 import {Card} from '@/components/ui/Card';
 import {Badge} from '@/components/ui/Badge';
+import {PageTransition, Reveal, Stagger, StaggerItem} from '@/components/motion';
 
 export default function FeaturesPage() {
   const [activeTab, setActiveTab] = useState('core');
@@ -376,7 +376,7 @@ export default function FeaturesPage() {
   const selectedModule = modules.find((m) => m.id === activeTab);
 
   return (
-    <div className="page-shell-centered fade-slide-up auth-delay-20">
+    <PageTransition className="page-shell-centered">
       {/* Header */}
       <header
         className="border-b border-[var(--border-main)] sticky top-0 z-50 bg-[var(--bg-elevated)] backdrop-blur-lg">
@@ -401,7 +401,7 @@ export default function FeaturesPage() {
 
       {/* Hero */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 text-center">
-        <div className="max-w-4xl mx-auto">
+        <Reveal className="max-w-4xl mx-auto">
           <Badge size="lg" variant="primary" className="mb-6">
             Platform Features
           </Badge>
@@ -412,7 +412,7 @@ export default function FeaturesPage() {
             From hiring to retirement, NU-AURA streamlines every HR process with
             intelligent automation and powerful analytics
           </p>
-        </div>
+        </Reveal>
       </section>
 
       {/* Module Tabs */}
@@ -437,15 +437,10 @@ export default function FeaturesPage() {
 
           {/* Selected Module Features */}
           {selectedModule && (
-            <motion.div
-              key={selectedModule.id}
-              initial={{opacity: 0, y: 20}}
-              animate={{opacity: 1, y: 0}}
-              transition={{duration: 0.3}}
-            >
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {selectedModule.features.map((feature, index) => (
-                  <Card key={index} hover padding="lg">
+            <Stagger key={selectedModule.id} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {selectedModule.features.map((feature, index) => (
+                <StaggerItem key={index}>
+                  <Card hover padding="lg" className="h-full">
                     <div
                       className={`w-12 h-12 rounded-xl ${selectedModule.color} flex items-center justify-center mb-4`}
                     >
@@ -466,9 +461,9 @@ export default function FeaturesPage() {
                       ))}
                     </ul>
                   </Card>
-                ))}
-              </div>
-            </motion.div>
+                </StaggerItem>
+              ))}
+            </Stagger>
           )}
         </div>
       </section>
@@ -476,19 +471,21 @@ export default function FeaturesPage() {
       {/* Integrations */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-[var(--bg-surface)]">
         <div className="max-w-5xl mx-auto text-center">
-          <Badge size="md" variant="info" className="mb-4">
-            Integrations
-          </Badge>
-          <h2 className="text-2xl  font-bold text-[var(--text-primary)] mb-4">
-            Works with the tools you already use
-          </h2>
-          <p className="text-lg text-[var(--text-secondary)] mb-12">
-            Seamless integrations with 50+ popular business applications
-          </p>
+          <Reveal inView>
+            <Badge size="md" variant="info" className="mb-4">
+              Integrations
+            </Badge>
+            <h2 className="text-2xl  font-bold text-[var(--text-primary)] mb-4">
+              Works with the tools you already use
+            </h2>
+            <p className="text-lg text-[var(--text-secondary)] mb-12">
+              Seamless integrations with 50+ popular business applications
+            </p>
+          </Reveal>
 
-          <div className="flex flex-wrap items-center justify-center gap-8">
+          <Stagger inView className="flex flex-wrap items-center justify-center gap-8">
             {integrations.map((integration, index) => (
-              <div
+              <StaggerItem
                 key={index}
                 className="flex flex-col items-center gap-4 group cursor-pointer"
               >
@@ -500,9 +497,9 @@ export default function FeaturesPage() {
                 <span className="text-sm font-medium text-[var(--text-muted)]">
                   {integration.name}
                 </span>
-              </div>
+              </StaggerItem>
             ))}
-          </div>
+          </Stagger>
 
           <div className="mt-12">
             <Link href="/integrations">
@@ -517,7 +514,7 @@ export default function FeaturesPage() {
 
       {/* CTA */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto text-center">
+        <Reveal inView className="max-w-4xl mx-auto text-center">
           <h2 className="text-2xl  font-bold text-[var(--text-primary)] mb-4">
             Ready to streamline your HR operations?
           </h2>
@@ -537,8 +534,8 @@ export default function FeaturesPage() {
               </Button>
             </Link>
           </div>
-        </div>
+        </Reveal>
       </section>
-    </div>
+    </PageTransition>
   );
 }

@@ -3,7 +3,7 @@
 import React, {useEffect} from 'react';
 import Link from 'next/link';
 import {useRouter} from 'next/navigation';
-import {motion} from 'framer-motion';
+import {PageTransition, Reveal, Stagger, StaggerItem} from '@/components/motion';
 import {
   Check,
   CloudLightning,
@@ -158,7 +158,7 @@ export default function SecurityPage() {
   ];
 
   return (
-    <div className="page-shell-centered fade-slide-up auth-delay-20">
+    <PageTransition className="page-shell-centered">
       {/* Header */}
       <header
         className="border-b border-[var(--border-main)] sticky top-0 z-50 bg-[var(--bg-elevated)] backdrop-blur-lg">
@@ -183,7 +183,7 @@ export default function SecurityPage() {
 
       {/* Hero */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 text-center">
-        <div className="max-w-4xl mx-auto">
+        <Reveal className="max-w-4xl mx-auto">
           <Badge size="lg" variant="success" className="mb-6">
             Security & Compliance
           </Badge>
@@ -198,35 +198,33 @@ export default function SecurityPage() {
             <Download className="h-5 w-5"/>
             Download Security White Paper
           </Button>
-        </div>
+        </Reveal>
       </section>
 
       {/* Certifications — list form. Each is a status item, not a marketing tile. */}
       <section className="py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto">
-          <Card padding="none" className="divide-y divide-[var(--border-subtle)]">
-            {certifications.map((cert, index) => (
-              <motion.div
-                key={index}
-                initial={{opacity: 0, y: 10}}
-                whileInView={{opacity: 1, y: 0}}
-                viewport={{once: true}}
-                transition={{delay: index * 0.05}}
-                className="flex items-start gap-4 p-4 sm:p-6"
-              >
-                <div
-                  className={`w-12 h-12 rounded-lg bg-gradient-to-br ${cert.color} flex items-center justify-center flex-shrink-0`}
+          <Card padding="none">
+            <Stagger inView className="divide-y divide-[var(--border-subtle)]">
+              {certifications.map((cert, index) => (
+                <StaggerItem
+                  key={index}
+                  className="flex items-start gap-4 p-4 sm:p-6"
                 >
-                  <cert.icon className="h-6 w-6 text-white"/>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-base font-semibold text-[var(--text-primary)]">
-                    {cert.name}
-                  </h3>
-                  <p className="text-body-secondary mt-1 leading-relaxed">{cert.description}</p>
-                </div>
-              </motion.div>
-            ))}
+                  <div
+                    className={`w-12 h-12 rounded-lg bg-gradient-to-br ${cert.color} flex items-center justify-center flex-shrink-0`}
+                  >
+                    <cert.icon className="h-6 w-6 text-white"/>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-base font-semibold text-[var(--text-primary)]">
+                      {cert.name}
+                    </h3>
+                    <p className="text-body-secondary mt-1 leading-relaxed">{cert.description}</p>
+                  </div>
+                </StaggerItem>
+              ))}
+            </Stagger>
           </Card>
         </div>
       </section>
@@ -243,16 +241,13 @@ export default function SecurityPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <Stagger inView className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {securityFeatures.map((feature, index) => (
-              <motion.div
+              <StaggerItem
                 key={index}
-                initial={{opacity: 0, y: 20}}
-                whileInView={{opacity: 1, y: 0}}
-                viewport={{once: true}}
-                transition={{delay: index * 0.1}}
+                className="h-full"
               >
-                <Card padding="lg" className="h-full">
+                <Card padding="lg" className="h-full hover-lift">
                   <div
                     className="w-12 h-12 rounded-xl bg-success-50 dark:bg-success-950 flex items-center justify-center mb-4">
                     <feature.icon className="h-6 w-6 text-success-600 dark:text-success-400"/>
@@ -272,9 +267,9 @@ export default function SecurityPage() {
                     ))}
                   </ul>
                 </Card>
-              </motion.div>
+              </StaggerItem>
             ))}
-          </div>
+          </Stagger>
         </div>
       </section>
 
@@ -325,7 +320,7 @@ export default function SecurityPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <Stagger inView className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
               {
                 icon: CloudLightning,
@@ -343,18 +338,20 @@ export default function SecurityPage() {
                 label: 'Security Monitoring',
               },
             ].map((stat, index) => (
-              <Card key={index} padding="lg">
-                <stat.icon className="h-10 w-10 text-accent-700 dark:text-accent-400 mb-4"/>
-                <Stat label={stat.label} value={stat.value} />
-              </Card>
+              <StaggerItem key={index}>
+                <Card padding="lg" className="hover-lift h-full">
+                  <stat.icon className="h-10 w-10 text-accent-700 dark:text-accent-400 mb-4"/>
+                  <Stat label={stat.label} value={stat.value} />
+                </Card>
+              </StaggerItem>
             ))}
-          </div>
+          </Stagger>
         </div>
       </section>
 
       {/* CTA */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto text-center">
+        <Reveal inView className="max-w-4xl mx-auto text-center">
           <h2 className="text-2xl  font-bold text-[var(--text-primary)] mb-4">
             Have security questions?
           </h2>
@@ -370,8 +367,8 @@ export default function SecurityPage() {
               Download Security Docs
             </Button>
           </div>
-        </div>
+        </Reveal>
       </section>
-    </div>
+    </PageTransition>
   );
 }

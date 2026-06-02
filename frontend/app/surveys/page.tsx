@@ -41,6 +41,7 @@ import {
   Textarea,
 } from '@/components/ui';
 import {SkeletonCard} from '@/components/ui/Skeleton';
+import {PageTransition, Reveal, Stagger, StaggerItem} from '@/components/motion';
 import type {Survey, SurveyRequest} from '@/lib/types/grow/survey';
 import {SurveyStatus, SurveyType} from '@/lib/types/grow/survey';
 import {SURVEY_STATUS, SURVEY_TYPE} from '@/lib/status/vocabulary';
@@ -225,9 +226,9 @@ export default function SurveysPage() {
 
   return (
     <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="surveys">
-      <div className="space-y-6">
+      <PageTransition className="space-y-6">
         {/* Header */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <Reveal className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="text-xl font-bold text-[var(--text-primary)]">
               Employee Surveys
@@ -242,60 +243,70 @@ export default function SurveysPage() {
               Create Survey
             </Button>
           </PermissionGate>
-        </div>
+        </Reveal>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
-          <Card className="card-aura">
-            <CardContent className="p-4">
-              <Stat
-                label="Total Surveys"
-                value={stats.total}
-                icon={<ClipboardList className="h-3.5 w-3.5"/>}
-              />
-            </CardContent>
-          </Card>
-          <Card className="card-aura">
-            <CardContent className="p-4">
-              <Stat
-                label="Active"
-                value={stats.active}
-                tone="success"
-                icon={<Play className="h-3.5 w-3.5"/>}
-              />
-            </CardContent>
-          </Card>
-          <Card className="card-aura">
-            <CardContent className="p-4">
-              <Stat
-                label="Drafts"
-                value={stats.draft}
-                tone="muted"
-                icon={<FileText className="h-3.5 w-3.5"/>}
-              />
-            </CardContent>
-          </Card>
-          <Card className="card-aura">
-            <CardContent className="p-4">
-              <Stat
-                label="Completed"
-                value={stats.completed}
-                tone="accent"
-                icon={<CheckCircle className="h-3.5 w-3.5"/>}
-              />
-            </CardContent>
-          </Card>
-          <Card className="card-aura">
-            <CardContent className="p-4">
-              <Stat
-                label="Total Responses"
-                value={stats.totalResponses}
-                tone="warning"
-                icon={<Users className="h-3.5 w-3.5"/>}
-              />
-            </CardContent>
-          </Card>
-        </div>
+        <Stagger className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+          <StaggerItem>
+            <Card className="card-aura hover-lift">
+              <CardContent className="p-4">
+                <Stat
+                  label="Total Surveys"
+                  value={stats.total}
+                  icon={<ClipboardList className="h-3.5 w-3.5"/>}
+                />
+              </CardContent>
+            </Card>
+          </StaggerItem>
+          <StaggerItem>
+            <Card className="card-aura hover-lift">
+              <CardContent className="p-4">
+                <Stat
+                  label="Active"
+                  value={stats.active}
+                  tone="success"
+                  icon={<Play className="h-3.5 w-3.5"/>}
+                />
+              </CardContent>
+            </Card>
+          </StaggerItem>
+          <StaggerItem>
+            <Card className="card-aura hover-lift">
+              <CardContent className="p-4">
+                <Stat
+                  label="Drafts"
+                  value={stats.draft}
+                  tone="muted"
+                  icon={<FileText className="h-3.5 w-3.5"/>}
+                />
+              </CardContent>
+            </Card>
+          </StaggerItem>
+          <StaggerItem>
+            <Card className="card-aura hover-lift">
+              <CardContent className="p-4">
+                <Stat
+                  label="Completed"
+                  value={stats.completed}
+                  tone="accent"
+                  icon={<CheckCircle className="h-3.5 w-3.5"/>}
+                />
+              </CardContent>
+            </Card>
+          </StaggerItem>
+          <StaggerItem>
+            <Card className="card-aura hover-lift">
+              <CardContent className="p-4">
+                <Stat
+                  label="Total Responses"
+                  value={stats.totalResponses}
+                  tone="warning"
+                  icon={<Users className="h-3.5 w-3.5"/>}
+                />
+              </CardContent>
+            </Card>
+          </StaggerItem>
+        </Stagger>
 
         {/* Filters */}
         <Card className="card-aura">
@@ -371,9 +382,10 @@ export default function SurveysPage() {
             </CardContent>
           </Card>
         ) : (
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <Stagger className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {filteredSurveys.map((survey) => (
-              <Card key={survey.id} className="card-interactive overflow-hidden">
+              <StaggerItem key={survey.id}>
+              <Card className="card-interactive overflow-hidden h-full">
                 <CardContent className="p-0">
                   <div className="p-4 border-b border-[var(--border-subtle)] bg-[var(--bg-card-hover)]">
                     <div className="flex items-start justify-between gap-2">
@@ -467,8 +479,9 @@ export default function SurveysPage() {
                   </div>
                 </CardContent>
               </Card>
+              </StaggerItem>
             ))}
-          </div>
+          </Stagger>
         )}
 
         {/* Delete Confirmation Dialog */}
@@ -735,7 +748,7 @@ export default function SurveysPage() {
             )}
           </ModalFooter>
         </Modal>
-      </div>
+      </PageTransition>
     </AppLayout>
   );
 }

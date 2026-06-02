@@ -40,6 +40,7 @@ import {SpacePermissionsDrawer} from '@/components/fluence/SpacePermissionsDrawe
 import type {WikiSpace} from '@/lib/types/platform/fluence';
 import {card, iconSize, layout, motion as dsMotion, typography,} from '@/lib/theme/design-system';
 import {formatDate} from '@/lib/utils/format/date';
+import {PageTransition, Stagger, StaggerItem} from '@/components/motion';
 
 // ─── Roles that can manage spaces ────────────────────────────────
 
@@ -246,7 +247,7 @@ export default function WikiPage() {
 
   return (
     <AppLayout>
-      <motion.div {...dsMotion.pageEnter}>
+      <PageTransition>
         <div className={layout.sectionGap}>
           {/* Page Header */}
           <div className="flex items-start justify-between gap-4">
@@ -443,18 +444,15 @@ export default function WikiPage() {
 
               {/* Pages Grid or Loading/Empty States */}
               {pagesLoading ? (
-                <motion.div
-                  className={layout.grid2}
-                  {...dsMotion.staggerContainer}
-                >
+                <Stagger className={layout.grid2}>
                   {[1, 2, 3, 4].map((i) => (
-                    <motion.div key={i} {...dsMotion.staggerItem}>
+                    <StaggerItem key={i}>
                       <div
                         className={`${card.base} ${card.paddingLarge} h-48 animate-pulse`}
                       />
-                    </motion.div>
+                    </StaggerItem>
                   ))}
-                </motion.div>
+                </Stagger>
               ) : filteredPages.length === 0 ? (
                 <div
                   className={`${card.base} ${card.paddingLarge} border-dashed border-2 border-[var(--border-main)]`}
@@ -487,17 +485,14 @@ export default function WikiPage() {
                   </div>
                 </div>
               ) : (
-                <motion.div
-                  className={layout.grid2}
-                  {...dsMotion.staggerContainer}
-                >
+                <Stagger className={layout.grid2}>
                   {filteredPages.map((page) => {
                     const VisibilityIcon =
                       visibilityIcon[page.visibility] || Globe;
                     const authorInitials = getAuthorInitials(page.authorName);
 
                     return (
-                      <motion.div key={page.id} {...dsMotion.staggerItem}>
+                      <StaggerItem key={page.id}>
                         <motion.div
                           {...dsMotion.cardHover}
                           onClick={() =>
@@ -589,15 +584,15 @@ export default function WikiPage() {
                             </div>
                           )}
                         </motion.div>
-                      </motion.div>
+                      </StaggerItem>
                     );
                   })}
-                </motion.div>
+                </Stagger>
               )}
             </div>
           </div>
         </div>
-      </motion.div>
+      </PageTransition>
 
       {/* ═══ Space Form Drawer ═══ */}
       <SpaceFormDrawer

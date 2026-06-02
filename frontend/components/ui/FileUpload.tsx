@@ -188,11 +188,13 @@ export const FileUpload: React.FC<FileUploadProps> = ({
         onClick={() => !disabled && !uploading && inputRef.current?.click()}
         className={`
           relative border-2 border-dashed rounded-lg p-8
-          flex flex-col items-center justify-center
-          transition-all cursor-pointer
+          flex flex-col items-center justify-center cursor-pointer
+          transition-[border-color,background-color,box-shadow,transform] duration-200 ease-[cubic-bezier(0.4,0,0.2,1)]
+          motion-reduce:transition-none
+          focus-within:outline-none focus-within:ring-2 focus-within:ring-[var(--ring-primary)] focus-within:ring-offset-2
           ${isDragging
-          ? 'border-accent-500 bg-accent-50 dark:bg-accent-900/20'
-          : 'border-[var(--border-main)] dark:border-surface-600 hover:border-accent-400 dark:hover:border-accent-500'
+          ? 'border-accent-500 bg-accent-50 dark:bg-accent-900/20 scale-[1.01] shadow-[var(--shadow-hover)] motion-reduce:scale-100'
+          : 'border-[var(--border-main)] dark:border-surface-600 hover:border-accent-400 dark:hover:border-accent-500 hover:shadow-[var(--shadow-card)]'
         }
           ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
           ${uploading ? 'pointer-events-none' : ''}
@@ -221,7 +223,9 @@ export const FileUpload: React.FC<FileUploadProps> = ({
                   e.stopPropagation();
                   cancelUpload();
                 }}
-                className="p-1 hover:bg-[var(--bg-surface)]  rounded"
+                type="button"
+                aria-label="Cancel upload"
+                className="press-scale focus-ring p-1 hover:bg-[var(--bg-surface)] rounded transition-colors duration-150 motion-reduce:transition-none"
               >
                 <X className="h-4 w-4"/>
               </button>
@@ -239,7 +243,11 @@ export const FileUpload: React.FC<FileUploadProps> = ({
           </div>
         ) : (
           <>
-            <Upload className="h-12 w-12 text-[var(--text-muted)] mb-4"/>
+            <Upload
+              className={`h-12 w-12 mb-4 transition-[color,transform] duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] motion-reduce:transition-none ${
+                isDragging ? 'text-accent-500 -translate-y-0.5 motion-reduce:translate-y-0' : 'text-[var(--text-muted)]'
+              }`}
+            />
             <p className="text-sm font-medium text-[var(--text-secondary)] mb-1">
               {isDragging ? 'Drop files here' : 'Click to upload or drag and drop'}
             </p>

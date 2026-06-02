@@ -77,7 +77,7 @@ export function Callout({
     <div
       role={role}
       className={cn(
-        'flex items-start gap-2 rounded-lg border p-4 text-sm',
+        'flex items-start gap-2 rounded-lg border p-4 text-sm motion-rise',
         toneToSurface[tone],
         toneToTextColor[tone],
         className

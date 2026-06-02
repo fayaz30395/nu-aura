@@ -79,9 +79,10 @@ export function ThemeToggle({compact = false, className}: ThemeToggleProps) {
       <button
         onClick={cycle}
         className={cn(
-          'p-2 rounded-xl transition-all duration-200',
+          'press-scale focus-ring p-2 rounded-xl transition-all duration-200',
           'text-[var(--header-text-muted)] hover:text-[var(--header-text)]',
           'hover:bg-[var(--header-hover-bg)]',
+          'motion-reduce:transition-none',
           className,
         )}
         aria-label={`Theme: ${theme}. Click to cycle.`}
@@ -99,9 +100,10 @@ export function ThemeToggle({compact = false, className}: ThemeToggleProps) {
       <button
         onClick={() => setOpen((v) => !v)}
         className={cn(
-          'flex items-center gap-1.5 px-2.5 py-2 rounded-xl',
+          'press-scale focus-ring flex items-center gap-1.5 px-2.5 py-2 rounded-xl',
           'text-[var(--header-text-muted)] hover:text-[var(--header-text)]',
           'hover:bg-[var(--header-hover-bg)] transition-all duration-200',
+          'motion-reduce:transition-none',
         )}
         aria-label="Toggle theme"
         aria-expanded={open}
@@ -124,7 +126,7 @@ export function ThemeToggle({compact = false, className}: ThemeToggleProps) {
           className={cn(
             'absolute right-0 top-full mt-2 z-50 min-w-[140px]',
             'rounded-xl border p-1',
-            'animate-scale-in origin-top-right',
+            'motion-scale-in origin-top-right',
           )}
           style={{
             backgroundColor: 'var(--bg-elevated)',
@@ -144,8 +146,8 @@ export function ThemeToggle({compact = false, className}: ThemeToggleProps) {
                   setOpen(false);
                 }}
                 className={cn(
-                  'flex items-center gap-2.5 w-full px-4 py-2 rounded-lg text-sm',
-                  'transition-colors duration-150',
+                  'press-scale focus-ring flex items-center gap-2.5 w-full px-4 py-2 rounded-lg text-sm',
+                  'transition-colors duration-150 motion-reduce:transition-none',
                   isActive
                     ? 'bg-accent-500/10 text-accent-700 dark:text-accent-400 font-medium'
                     : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-card-hover)]',

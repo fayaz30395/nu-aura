@@ -20,6 +20,7 @@ import {
 
 import {useAuth} from '@/lib/hooks/useAuth';
 import {AppLayout} from '@/components/layout';
+import {PageTransition} from '@/components/motion';
 import {Button} from '@/components/ui/Button';
 import {Skeleton} from '@/components/ui/Skeleton';
 import {StatusBadge} from '@/components/ui/StatusBadge';
@@ -99,7 +100,7 @@ export default function OnboardingPage() {
 
   return (
     <AppLayout activeMenuItem="recruitment" breadcrumbs={[{label: 'Onboarding', href: '/onboarding'}]}>
-      <div className="mx-auto w-full max-w-7xl px-6 py-8 space-y-10">
+      <PageTransition className="mx-auto w-full max-w-7xl px-6 py-8 space-y-10">
         <PageHeader
           onInitiate={() => router.push('/onboarding/new')}
           onTemplates={() => router.push('/onboarding/templates')}
@@ -130,7 +131,7 @@ export default function OnboardingPage() {
         )}
 
         {stats.overdue > 0 && <AttentionStrip count={stats.overdue} />}
-      </div>
+      </PageTransition>
     </AppLayout>
   );
 }

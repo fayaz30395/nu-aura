@@ -23,7 +23,9 @@ const AdminPageContent: React.FC<AdminPageContentProps> = ({
                                                            }) => {
   return (
     <div className={cn(
-      'w-full h-full min-h-0 px-4 py-4 md:px-5 md:py-5 fade-slide-up',
+      'w-full h-full min-h-0 px-4 py-4 md:px-5 md:py-5',
+      // Foundation entrance: fade + 8px rise (compositor-friendly, reduced-motion aware)
+      'motion-rise',
       'max-w-[86rem] mx-auto',
       className,
     )}>

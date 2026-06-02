@@ -2,6 +2,7 @@
 
 import {notFound, useParams, useRouter} from 'next/navigation';
 import {AppLayout} from '@/components/layout';
+import {PageTransition, Reveal, Stagger, StaggerItem} from '@/components/motion';
 import {Card, CardContent} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {PermissionGate} from '@/components/auth/PermissionGate';
@@ -71,7 +72,7 @@ export default function CandidateDetailPage() {
 
   return (
     <AppLayout activeMenuItem="recruitment">
-      <div className="p-6 space-y-6">
+      <PageTransition className="p-6 space-y-6">
         {/* Back navigation + actions */}
         <div className="row-between">
           <button
@@ -104,6 +105,7 @@ export default function CandidateDetailPage() {
         </div>
 
         {/* Header card */}
+        <Reveal>
         <Card className="bg-[var(--bg-card)]">
           <CardContent className="p-6">
             <div className="flex items-center gap-6">
@@ -138,9 +140,11 @@ export default function CandidateDetailPage() {
             </div>
           </CardContent>
         </Card>
+        </Reveal>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <Stagger className="grid grid-cols-1 lg:grid-cols-3 gap-6" inView>
           {/* Contact info */}
+          <StaggerItem>
           <Card className="bg-[var(--bg-card)]">
             <CardContent className="p-6">
               <h2 className="text-sm font-semibold text-[var(--text-muted)] uppercase tracking-wider mb-4">
@@ -175,8 +179,10 @@ export default function CandidateDetailPage() {
               </div>
             </CardContent>
           </Card>
+          </StaggerItem>
 
           {/* Professional info */}
+          <StaggerItem>
           <Card className="bg-[var(--bg-card)]">
             <CardContent className="p-6">
               <h2 className="text-sm font-semibold text-[var(--text-muted)] uppercase tracking-wider mb-4">
@@ -223,8 +229,10 @@ export default function CandidateDetailPage() {
               </div>
             </CardContent>
           </Card>
+          </StaggerItem>
 
           {/* Key metrics */}
+          <StaggerItem>
           <Card className="bg-[var(--bg-card)]">
             <CardContent className="p-6">
               <h2 className="text-sm font-semibold text-[var(--text-muted)] uppercase tracking-wider mb-4">
@@ -258,10 +266,12 @@ export default function CandidateDetailPage() {
               </div>
             </CardContent>
           </Card>
-        </div>
+          </StaggerItem>
+        </Stagger>
 
         {/* Offer details (when applicable) */}
         {(candidate.offeredCtc || candidate.offeredDesignation || candidate.proposedJoiningDate) && (
+          <Reveal inView>
           <Card className="bg-[var(--bg-card)]">
             <CardContent className="p-6">
               <h2 className="text-sm font-semibold text-[var(--text-muted)] uppercase tracking-wider mb-4">
@@ -326,11 +336,13 @@ export default function CandidateDetailPage() {
               )}
             </CardContent>
           </Card>
+          </Reveal>
         )}
 
         {/* Timeline & additional info */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Stagger className="grid grid-cols-1 lg:grid-cols-2 gap-6" inView>
           {/* Dates */}
+          <StaggerItem>
           <Card className="bg-[var(--bg-card)]">
             <CardContent className="p-6">
               <h2 className="text-sm font-semibold text-[var(--text-muted)] uppercase tracking-wider mb-4">
@@ -360,8 +372,10 @@ export default function CandidateDetailPage() {
               </div>
             </CardContent>
           </Card>
+          </StaggerItem>
 
           {/* Notes & resume */}
+          <StaggerItem>
           <Card className="bg-[var(--bg-card)]">
             <CardContent className="p-6">
               <h2 className="text-sm font-semibold text-[var(--text-muted)] uppercase tracking-wider mb-4">
@@ -393,8 +407,9 @@ export default function CandidateDetailPage() {
               </div>
             </CardContent>
           </Card>
-        </div>
-      </div>
+          </StaggerItem>
+        </Stagger>
+      </PageTransition>
     </AppLayout>
   );
 }

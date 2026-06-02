@@ -195,10 +195,19 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({
                       ref={provided.innerRef}
                       {...provided.draggableProps}
                       className={`overflow-hidden ${
-                        snapshot.isDragging ? 'shadow-[var(--shadow-elevated)]' : 'shadow-[var(--shadow-card)]'
+                        snapshot.isDragging
+                          ? 'shadow-[var(--shadow-elevated)]'
+                          : 'motion-rise shadow-[var(--shadow-card)]'
                       }`}
                       style={{
                         ...provided.draggableProps.style,
+                        // Staggered entrance: each card reveals ~60ms after the
+                        // previous. Only applied while NOT dragging so the dnd
+                        // transform is never fought by the reveal keyframe.
+                        // `.motion-rise` self-neutralizes under reduced motion.
+                        ...(snapshot.isDragging
+                          ? {}
+                          : {animationDelay: `${index * 60}ms`}),
                       }}
                     >
                       {/* Widget Header with Grip Handle */}
@@ -226,7 +235,7 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({
                         {/* Settings Button */}
                         <button
                           onClick={() => setShowSettingsPanel(!showSettingsPanel)}
-                          className="p-1.5 cursor-pointer hover:bg-[var(--bg-subtle)] rounded-md transition-colors flex-shrink-0"
+                          className="focus-ring press-scale p-1.5 cursor-pointer hover:bg-[var(--bg-subtle)] rounded-md transition-colors flex-shrink-0"
                           aria-label="Widget settings"
                         >
                           <IconSettings
@@ -238,7 +247,7 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({
                         {/* Hide Button */}
                         <button
                           onClick={() => toggleWidgetVisibility(widget.id)}
-                          className="p-1.5 cursor-pointer hover:bg-[var(--bg-subtle)] rounded-md transition-colors flex-shrink-0"
+                          className="focus-ring press-scale p-1.5 cursor-pointer hover:bg-[var(--bg-subtle)] rounded-md transition-colors flex-shrink-0"
                           aria-label={`Hide ${widget.title} widget`}
                         >
                           <IconEyeOff
@@ -290,7 +299,7 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({
             </CardTitle>
             <button
               onClick={() => setShowSettingsPanel(false)}
-              className="p-1.5 cursor-pointer hover:bg-[var(--bg-subtle)] rounded-md transition-colors"
+              className="focus-ring press-scale p-1.5 cursor-pointer hover:bg-[var(--bg-subtle)] rounded-md transition-colors"
               aria-label="Close settings panel"
             >
               <IconX className="h-4 w-4 text-[var(--text-secondary)]"/>
@@ -306,7 +315,7 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({
                 >
                   <button
                     onClick={() => toggleWidgetVisibility(widget.id)}
-                    className="cursor-pointer flex-shrink-0 p-1 hover:bg-[var(--bg-card-hover)] rounded transition-colors"
+                    className="focus-ring press-scale cursor-pointer flex-shrink-0 p-1 hover:bg-[var(--bg-card-hover)] rounded transition-colors"
                     aria-label={`Toggle ${widget.title} visibility`}
                   >
                     {widgetVisibility[widget.id] ? (

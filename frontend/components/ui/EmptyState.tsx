@@ -3,6 +3,7 @@
 import React from 'react';
 import {motion} from 'framer-motion';
 import {cn} from '@/lib/utils';
+import {fadeRise, scaleIn, useReducedMotionSafe} from '@/lib/animation';
 
 /** Legacy nested action shape. Prefer the flat `actionLabel`/`onAction` props. */
 interface EmptyStateAction {
@@ -56,11 +57,12 @@ export function EmptyState({
   const finalOnAction = onAction || action?.onClick;
   const finalActionLoading = actionLoading || action?.loading || false;
   const isCompact = size === 'compact';
+  const {pick} = useReducedMotionSafe();
   return (
     <motion.div
-      initial={{opacity: 0, y: 10}}
-      animate={{opacity: 1, y: 0}}
-      transition={{duration: 0.3, ease: 'easeOut'}}
+      variants={pick(fadeRise)}
+      initial="hidden"
+      animate="visible"
       className="w-full"
       role="status"
       aria-live="polite"
@@ -73,7 +75,10 @@ export function EmptyState({
       >
         {/* Icon Container */}
         {icon && (
-          <div
+          <motion.div
+            variants={pick(scaleIn)}
+            initial="hidden"
+            animate="visible"
             className={cn(
               'flex items-center justify-center rounded-lg',
               isCompact ? 'w-10 h-10 mb-3' : 'w-16 h-16 mb-6',
@@ -88,7 +93,7 @@ export function EmptyState({
             >
               {icon}
             </div>
-          </div>
+          </motion.div>
         )}
 
         {/* Title */}
@@ -119,15 +124,16 @@ export function EmptyState({
             onClick={finalOnAction}
             disabled={finalActionLoading}
             className={cn(
-              'px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200',
+              'press-scale px-4 py-2 rounded-lg font-medium text-sm',
+              'transition-[background-color,transform,box-shadow] duration-[var(--motion-base)] ease-[var(--ease-standard)]',
               'bg-accent-700 hover:bg-accent-800 dark:bg-accent-700 dark:hover:bg-accent-800',
-              'text-white disabled:opacity-50 disabled:cursor-not-allowed',
+              'text-white disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-accent-700',
               'cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
             )}
           >
             {finalActionLoading ? (
               <span className="flex items-center gap-2">
-                <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
                   <circle
                     className="opacity-25"
                     cx="12"

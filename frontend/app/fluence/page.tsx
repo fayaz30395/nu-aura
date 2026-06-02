@@ -21,6 +21,7 @@ import {Button} from '@/components/ui/Button';
 import {Skeleton} from '@/components/ui/Skeleton';
 import {useBlogPosts, useWikiPages, useWikiSpaces} from '@/lib/hooks/queries/useFluence';
 import {useInfiniteWallPosts} from '@/lib/hooks/queries/useWall';
+import {PageTransition, Reveal, Stagger, StaggerItem} from '@/components/motion';
 
 // Single ease curve for every transition on this page.
 const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
@@ -71,7 +72,7 @@ export default function FluencePage() {
 
   return (
     <AppLayout>
-      <div className="mx-auto w-full max-w-7xl px-6 py-8 space-y-10">
+      <PageTransition className="mx-auto w-full max-w-7xl px-6 py-8 space-y-10">
         <PageHeader />
 
         {isLoading ? (
@@ -90,7 +91,7 @@ export default function FluencePage() {
         {activity.length > 0 && <RecentActivity items={activity.slice(0, 6)} />}
 
         {contributions === 0 && !isLoading && <QuietWeekStrip />}
-      </div>
+      </PageTransition>
     </AppLayout>
   );
 }
@@ -215,28 +216,26 @@ function StatsRow({activeSpaces, pagesThisWeek, contributions, blogsThisWeek}: {
   ];
 
   return (
-    <motion.section
-      initial="hidden"
-      animate="visible"
-      variants={{visible: {transition: {staggerChildren: 0.06, delayChildren: 0.08}}}}
-      aria-label="Fluence at a glance"
-      className="grid grid-cols-2 sm:grid-cols-4 border-y border-[var(--border-subtle)] divide-x divide-[var(--border-subtle)]"
-    >
-      {items.map((item) => (
-        <motion.div
-          key={item.label}
-          variants={{hidden: {opacity: 0, y: 6}, visible: {opacity: 1, y: 0, transition: {duration: 0.4, ease: EASE}}}}
-          className="px-5 py-6 sm:px-7 sm:py-8 first:pl-0 last:pr-0"
-        >
-          <div className="flex items-center gap-2 text-[var(--text-muted)]">
-            <span className="text-2xs font-medium uppercase tracking-wider">{item.label}</span>
-          </div>
-          <p className="mt-3 font-mono text-3xl sm:text-4xl tabular-nums tracking-tight text-[var(--text-heading)]">
-            {item.value}
-          </p>
-        </motion.div>
-      ))}
-    </motion.section>
+    <section aria-label="Fluence at a glance">
+      <Stagger
+        delayChildren={0.08}
+        className="grid grid-cols-2 sm:grid-cols-4 border-y border-[var(--border-subtle)] divide-x divide-[var(--border-subtle)]"
+      >
+        {items.map((item) => (
+          <StaggerItem
+            key={item.label}
+            className="px-5 py-6 sm:px-7 sm:py-8 first:pl-0 last:pr-0"
+          >
+            <div className="flex items-center gap-2 text-[var(--text-muted)]">
+              <span className="text-2xs font-medium uppercase tracking-wider">{item.label}</span>
+            </div>
+            <p className="mt-3 font-mono text-3xl sm:text-4xl tabular-nums tracking-tight text-[var(--text-heading)]">
+              {item.value}
+            </p>
+          </StaggerItem>
+        ))}
+      </Stagger>
+    </section>
   );
 }
 
@@ -291,18 +290,18 @@ function BentoNavigation({pinnedSpaces}: {
   ];
 
   return (
-    <motion.section
-      initial="hidden"
-      animate="visible"
-      variants={{visible: {transition: {staggerChildren: 0.07, delayChildren: 0.18}}}}
-      className="grid gap-4 grid-cols-1 lg:grid-cols-12"
-      aria-label="Explore Fluence"
-    >
-      <PinnedSpacesHero spaces={pinnedSpaces} />
-      {tiles.map((tile) => (
-        <BentoTile key={tile.href} {...tile} />
-      ))}
-    </motion.section>
+    <section aria-label="Explore Fluence">
+      <Stagger
+        stagger={0.07}
+        delayChildren={0.18}
+        className="grid gap-4 grid-cols-1 lg:grid-cols-12"
+      >
+        <PinnedSpacesHero spaces={pinnedSpaces} />
+        {tiles.map((tile) => (
+          <BentoTile key={tile.href} {...tile} />
+        ))}
+      </Stagger>
+    </section>
   );
 }
 
@@ -311,10 +310,7 @@ function PinnedSpacesHero({spaces}: {
 }) {
   const empty = spaces.length === 0;
   return (
-    <motion.div
-      variants={{hidden: {opacity: 0, y: 8}, visible: {opacity: 1, y: 0, transition: {duration: 0.5, ease: EASE}}}}
-      className="lg:col-span-7 lg:row-span-2"
-    >
+    <StaggerItem className="lg:col-span-7 lg:row-span-2">
       <Link
         href="/fluence/wiki"
         className="group block h-full rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] p-7 sm:p-9 transition-all hover:border-[var(--border-main)] hover:shadow-[0_20px_40px_-15px_rgba(15,23,42,0.08)] active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
@@ -354,7 +350,7 @@ function PinnedSpacesHero({spaces}: {
           </ul>
         )}
       </Link>
-    </motion.div>
+    </StaggerItem>
   );
 }
 
@@ -365,10 +361,7 @@ function BentoTile({title, description, icon: Icon, href}: {
   href: string;
 }) {
   return (
-    <motion.div
-      variants={{hidden: {opacity: 0, y: 8}, visible: {opacity: 1, y: 0, transition: {duration: 0.4, ease: EASE}}}}
-      className="lg:col-span-5"
-    >
+    <StaggerItem className="lg:col-span-5">
       <Link
         href={href}
         className="group flex h-full items-start gap-4 rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] p-5 sm:p-6 transition-all hover:border-[var(--border-main)] hover:shadow-[0_12px_30px_-12px_rgba(15,23,42,0.07)] active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
@@ -382,19 +375,14 @@ function BentoTile({title, description, icon: Icon, href}: {
         </div>
         <ArrowRight className="h-4 w-4 self-center text-[var(--text-muted)] transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
       </Link>
-    </motion.div>
+    </StaggerItem>
   );
 }
 
 // ── Recent activity (divide-y list, no nested cards) ─────────────────────────
 function RecentActivity({items}: {items: ActivityItem[]}) {
   return (
-    <motion.section
-      initial={{opacity: 0, y: 6}}
-      animate={{opacity: 1, y: 0}}
-      transition={{duration: 0.45, ease: EASE, delay: 0.32}}
-      className="space-y-4"
-    >
+    <Reveal inView delay={0.1} className="space-y-4">
       <div className="flex items-end justify-between gap-4">
         <h2 className="text-xl font-semibold tracking-tight text-[var(--text-heading)]">
           Recent activity
@@ -429,7 +417,7 @@ function RecentActivity({items}: {items: ActivityItem[]}) {
           );
         })}
       </ul>
-    </motion.section>
+    </Reveal>
   );
 }
 

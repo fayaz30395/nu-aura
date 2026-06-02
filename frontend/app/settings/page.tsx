@@ -24,6 +24,7 @@ import {
   Sun,
 } from 'lucide-react';
 import {AppLayout} from '@/components/layout';
+import {PageTransition, Reveal, Stagger, StaggerItem} from '@/components/motion';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
 import {GoogleGLogo} from '@/components/ui/GoogleGLogo';
 import {useAuth} from '@/lib/hooks/useAuth';
@@ -173,14 +174,14 @@ export default function SettingsPage() {
 
   return (
     <AppLayout activeMenuItem="settings">
-      <div className="space-y-6">
+      <PageTransition className="space-y-6">
         {/* Header */}
-        <div>
+        <Reveal>
           <h1 className="text-xl font-bold">Settings</h1>
           <p className="text-[var(--text-secondary)] mt-1">
             Manage your account settings and preferences
           </p>
-        </div>
+        </Reveal>
 
         {/* Success Message */}
         {success && (
@@ -202,9 +203,10 @@ export default function SettingsPage() {
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Stagger className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Account Settings */}
-          <Card className="skeuo-card">
+          <StaggerItem>
+            <Card className="skeuo-card">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Mail className="h-5 w-5"/>
@@ -229,8 +231,10 @@ export default function SettingsPage() {
               </div>
             </CardContent>
           </Card>
+          </StaggerItem>
 
           {/* Appearance Settings */}
+          <StaggerItem>
           <Card className="skeuo-card">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -303,9 +307,10 @@ export default function SettingsPage() {
               </div>
             </CardContent>
           </Card>
+          </StaggerItem>
 
           {/* SAML SSO Configuration — admin only */}
-          {isAdmin && <Card className="lg:col-span-2 skeuo-card">
+          {isAdmin && <StaggerItem className="lg:col-span-2"><Card className="skeuo-card">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Shield className="h-5 w-5"/>
@@ -335,10 +340,11 @@ export default function SettingsPage() {
                 </button>
               </div>
             </CardContent>
-          </Card>}
+          </Card></StaggerItem>}
 
           {/* Notification Preferences */}
-          <Card className="lg:col-span-2 skeuo-card">
+          <StaggerItem className="lg:col-span-2">
+          <Card className="skeuo-card">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Bell className="h-5 w-5"/>
@@ -506,9 +512,11 @@ export default function SettingsPage() {
               </div>
             </CardContent>
           </Card>
+          </StaggerItem>
 
           {/* Security Information */}
-          <Card className="lg:col-span-2 skeuo-card">
+          <StaggerItem className="lg:col-span-2">
+          <Card className="skeuo-card">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Shield className="h-5 w-5"/>
@@ -548,8 +556,9 @@ export default function SettingsPage() {
               </div>
             </CardContent>
           </Card>
-        </div>
-      </div>
+          </StaggerItem>
+        </Stagger>
+      </PageTransition>
     </AppLayout>
   );
 }

@@ -2,9 +2,11 @@
 
 import React from 'react';
 import {useRouter} from 'next/navigation';
+import {AnimatePresence, motion} from 'framer-motion';
 import {Bell, Check, CheckCheck} from 'lucide-react';
 import {cn} from '@/lib/utils';
 import {formatDistanceToNow} from 'date-fns';
+import {scaleIn, staggerContainer, staggerItem, useReducedMotionSafe} from '@/lib/animation';
 import type {UnifiedNotification} from '@/lib/hooks/useNotifications';
 import {EmptyState} from './EmptyState';
 
@@ -60,8 +62,7 @@ export const SimpleNotificationDropdown: React.FC<SimpleNotificationDropdownProp
                                                                                         className,
                                                                                       }) => {
   const router = useRouter();
-
-  if (!isOpen) return null;
+  const {pick} = useReducedMotionSafe();
 
   const handleNotificationClick = (notification: UnifiedNotification) => {
     if (!notification.isRead) {
@@ -76,17 +77,22 @@ export const SimpleNotificationDropdown: React.FC<SimpleNotificationDropdownProp
   const displayed = notifications.slice(0, 10);
 
   return (
-    <div
-      className={cn(
-        'absolute right-0 top-full mt-2 w-96 max-w-[calc(100vw-2rem)]',
-        'rounded-lg border shadow-[var(--shadow-dropdown)] z-50',
-        'bg-[var(--bg-surface)] border-[var(--border-main)]',
-        'animate-in fade-in-0 zoom-in-95',
-        className
-      )}
-      role="dialog"
-      aria-label="Notifications"
-    >
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          className={cn(
+            'absolute right-0 top-full mt-2 w-96 max-w-[calc(100vw-2rem)]',
+            'rounded-lg border shadow-[var(--shadow-dropdown)] z-50 origin-top-right',
+            'bg-[var(--bg-surface)] border-[var(--border-main)]',
+            className
+          )}
+          role="dialog"
+          aria-label="Notifications"
+          variants={pick(scaleIn)}
+          initial="hidden"
+          animate="visible"
+          exit="exit"
+        >
       {/* Header */}
       <div className="row-between px-4 py-2 border-b border-[var(--border-main)]">
         <div className="flex items-center gap-2">
@@ -106,10 +112,10 @@ export const SimpleNotificationDropdown: React.FC<SimpleNotificationDropdownProp
             type="button"
             onClick={onMarkAllAsRead}
             className={cn(
-              'flex items-center gap-1 text-xs font-medium min-h-[44px] px-2 rounded-md',
+              'press-scale flex items-center gap-1 text-xs font-medium min-h-[44px] px-2 rounded-md',
               'text-accent-700 dark:text-accent-400 hover:bg-accent-50 dark:hover:bg-accent-950/30',
               'focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2',
-              'transition-colors duration-150'
+              'transition-[color,background-color,transform] duration-[var(--motion-fast)] ease-[var(--ease-standard)]'
             )}
           >
             <CheckCheck className="h-3.5 w-3.5"/>
@@ -130,15 +136,20 @@ export const SimpleNotificationDropdown: React.FC<SimpleNotificationDropdownProp
             title="No notifications"
           />
         ) : (
-          <ul role="list">
+          <motion.ul
+            role="list"
+            variants={pick(staggerContainer())}
+            initial="hidden"
+            animate="visible"
+          >
             {displayed.map((notification) => (
-              <li key={notification.id}>
+              <motion.li key={notification.id} variants={pick(staggerItem)}>
                 <button
                   type="button"
                   onClick={() => handleNotificationClick(notification)}
                   className={cn(
                     'w-full text-left px-4 py-4 flex items-start gap-4 min-h-[44px]',
-                    'hover:bg-[var(--bg-secondary)] transition-colors duration-150',
+                    'hover:bg-[var(--bg-secondary)] transition-colors duration-[var(--motion-base)] ease-[var(--ease-standard)]',
                     'focus:outline-none focus:ring-2 focus:ring-inset focus:ring-accent-700',
                     'border-b border-[var(--border-main)] last:border-b-0',
                     !notification.isRead && 'bg-accent-50/50 dark:bg-accent-950/10'
@@ -174,9 +185,9 @@ export const SimpleNotificationDropdown: React.FC<SimpleNotificationDropdownProp
                     </p>
                   </div>
                 </button>
-              </li>
+              </motion.li>
             ))}
-          </ul>
+          </motion.ul>
         )}
       </div>
 
@@ -189,16 +200,18 @@ export const SimpleNotificationDropdown: React.FC<SimpleNotificationDropdownProp
             onClose();
           }}
           className={cn(
-            'w-full text-center text-sm font-medium py-2 rounded-md min-h-[44px]',
+            'press-scale w-full text-center text-sm font-medium py-2 rounded-md min-h-[44px]',
             'text-accent-700 dark:text-accent-400 hover:bg-accent-50 dark:hover:bg-accent-950/30',
             'focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2',
-            'transition-colors duration-150'
+            'transition-[color,background-color,transform] duration-[var(--motion-fast)] ease-[var(--ease-standard)]'
           )}
         >
           View all
         </button>
       </div>
-    </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 };
 

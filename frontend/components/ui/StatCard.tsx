@@ -1,9 +1,39 @@
 'use client';
 
 import React from 'react';
-import {motion} from 'framer-motion';
+import {animate, motion} from 'framer-motion';
 import {cn} from '@/lib/utils';
 import {ArrowRight, TrendingDown, TrendingUp} from 'lucide-react';
+import {MOTION_DURATION, MOTION_EASE, fadeRise, useReducedMotionSafe} from '@/lib/animation';
+
+/**
+ * Count-up animation for numeric metric values. Respects reduced motion (jumps
+ * straight to the final value) and only animates pure numbers — string values
+ * (e.g. "$10k", "98%") render verbatim with no motion. Compositor-safe: only
+ * the rendered text content changes, never layout.
+ */
+function useCountUp(value: string | number, enabled: boolean): string | number {
+  const {prefersReduced} = useReducedMotionSafe();
+  const target = typeof value === 'number' ? value : null;
+  const [display, setDisplay] = React.useState<number>(target ?? 0);
+
+  React.useEffect(() => {
+    if (target === null) return;
+    if (!enabled || prefersReduced) {
+      setDisplay(target);
+      return;
+    }
+    const controls = animate(0, target, {
+      duration: MOTION_DURATION.slow * 2,
+      ease: MOTION_EASE.outExpo,
+      onUpdate: (latest) => setDisplay(Math.round(latest)),
+    });
+    return () => controls.stop();
+  }, [target, enabled, prefersReduced]);
+
+  if (target === null) return value;
+  return display.toLocaleString();
+}
 
 export interface StatCardProps extends React.HTMLAttributes<HTMLDivElement> {
   icon?: React.ReactNode;
@@ -91,7 +121,7 @@ const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
       trend,
       variant = 'default',
       size = 'default',
-      animated: _animated = true,
+      animated = true,
       href,
       onAction,
       actionLabel,
@@ -102,14 +132,16 @@ const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
     const config = variantConfig[variant];
     const isClickable = !!href || !!onAction;
     const isCompact = size === 'compact';
+    const {pick} = useReducedMotionSafe();
+    const entranceVariants = pick(fadeRise);
+    const displayValue = useCountUp(value, animated);
 
     if (isCompact) {
       return (
         <motion.div
-          initial={{opacity: 0, y: 10}}
-          animate={{opacity: 1, y: 0}}
-          transition={{duration: 0.3, ease: 'easeOut'}}
-          whileHover={isClickable ? {y: -1} : undefined}
+          variants={animated ? entranceVariants : undefined}
+          initial={animated ? 'hidden' : undefined}
+          animate={animated ? 'visible' : undefined}
         >
           <div
             ref={ref}
@@ -118,7 +150,7 @@ const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
               'group relative overflow-hidden rounded-lg border px-4 py-4 shadow-[var(--shadow-card)] transition-all duration-200',
               config.bg,
               config.border,
-              isClickable && 'cursor-pointer hover:border-[var(--border-main)] hover:shadow-[var(--shadow-card-hover)]',
+              isClickable && 'hover-lift press-scale focus-ring cursor-pointer hover:border-[var(--border-main)] hover:shadow-[var(--shadow-card-hover)]',
               className
             )}
             {...props}
@@ -138,8 +170,8 @@ const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
               <span className="flex-1 min-w-0 text-xs font-medium text-[var(--text-secondary)] truncate">
                 {title}
               </span>
-              <span className="text-lg font-bold text-[var(--text-primary)] shrink-0">
-                {value}
+              <span className="text-lg font-bold text-[var(--text-primary)] shrink-0 tabular-nums">
+                {displayValue}
               </span>
               {trend && (
                 <span
@@ -165,10 +197,9 @@ const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
 
     return (
       <motion.div
-        initial={{opacity: 0, y: 20}}
-        animate={{opacity: 1, y: 0}}
-        transition={{duration: 0.3, ease: 'easeOut'}}
-        whileHover={isClickable ? {y: -1} : undefined}
+        variants={animated ? entranceVariants : undefined}
+        initial={animated ? 'hidden' : undefined}
+        animate={animated ? 'visible' : undefined}
       >
         <div
           ref={ref}
@@ -177,7 +208,7 @@ const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
             'group relative overflow-hidden rounded-lg border p-4 shadow-[var(--shadow-card)] transition-all duration-200',
             config.bg,
             config.border,
-            isClickable && 'cursor-pointer hover:border-[var(--border-main)] hover:shadow-[var(--shadow-card-hover)]',
+            isClickable && 'hover-lift press-scale focus-ring cursor-pointer hover:border-[var(--border-main)] hover:shadow-[var(--shadow-card-hover)]',
             className
           )}
           {...props}
@@ -222,8 +253,8 @@ const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
           </p>
 
           {/* Value */}
-          <p className="text-2xl font-bold text-[var(--text-primary)] mb-1 tracking-tight">
-            {value}
+          <p className="text-2xl font-bold text-[var(--text-primary)] mb-1 tracking-tight tabular-nums">
+            {displayValue}
           </p>
 
           {/* Description or Trend Label */}
@@ -240,7 +271,7 @@ const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
                 onClick={onAction}
                 aria-label={actionLabel}
                 className={cn(
-                  'flex items-center gap-1.5 text-sm font-medium transition-colors',
+                  'focus-ring press-scale flex items-center gap-1.5 text-sm font-medium transition-colors',
                   config.iconColor,
                   'hover:opacity-80'
                 )}

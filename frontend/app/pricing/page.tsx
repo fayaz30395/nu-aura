@@ -2,16 +2,11 @@
 
 import React, {useState} from 'react';
 import Link from 'next/link';
-import {motion} from 'framer-motion';
 import {ArrowRight, Building2, Check, ChevronDown, ChevronUp, HelpCircle, Users, X, Zap,} from 'lucide-react';
 import {Button} from '@/components/ui/Button';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Badge} from '@/components/ui/Badge';
-
-const fadeInUp = {
-  hidden: {opacity: 0, y: 20},
-  visible: {opacity: 1, y: 0},
-};
+import {PageTransition, Reveal, Stagger, StaggerItem} from '@/components/motion';
 
 export default function PricingPage() {
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>('monthly');
@@ -140,7 +135,7 @@ export default function PricingPage() {
   ];
 
   return (
-    <div className="page-shell-centered fade-slide-up auth-delay-20">
+    <PageTransition className="page-shell-centered">
       {/* Header */}
       <header
         className="border-b border-[var(--border-main)] sticky top-0 z-50 bg-[var(--bg-elevated)] backdrop-blur-lg">
@@ -166,12 +161,7 @@ export default function PricingPage() {
       {/* Hero */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 text-center">
         <div className="max-w-4xl mx-auto">
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={fadeInUp}
-            transition={{duration: 0.5}}
-          >
+          <Reveal>
             <Badge size="lg" variant="primary" className="mb-6">
               Pricing
             </Badge>
@@ -211,20 +201,17 @@ export default function PricingPage() {
                 </Badge>
               </button>
             </div>
-          </motion.div>
+          </Reveal>
         </div>
       </section>
 
       {/* Pricing Cards */}
       <section className="py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {plans.map((plan, index) => (
-              <motion.div
+          <Stagger className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {plans.map((plan) => (
+              <StaggerItem
                 key={plan.name}
-                initial={{opacity: 0, y: 20}}
-                animate={{opacity: 1, y: 0}}
-                transition={{delay: index * 0.1}}
                 className="relative"
               >
                 {plan.popular && (
@@ -305,34 +292,31 @@ export default function PricingPage() {
                     </div>
                   </CardContent>
                 </Card>
-              </motion.div>
+              </StaggerItem>
             ))}
-          </div>
+          </Stagger>
         </div>
       </section>
 
       {/* Add-ons */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-12">
+          <Reveal inView className="text-center mb-12">
             <h2 className="text-2xl  font-bold text-[var(--text-primary)] mb-4">
               Enhance with add-ons
             </h2>
             <p className="text-lg text-[var(--text-secondary)]">
               Extend your platform capabilities with optional modules
             </p>
-          </div>
+          </Reveal>
 
           {/* Add-ons — list with right-aligned price. More scannable than a 3-column grid
               of nearly-identical name+desc+price tiles. */}
-          <Card padding="none" className="divide-y divide-[var(--border-subtle)]">
-            {addons.map((addon, index) => (
-              <motion.div
+          <Card padding="none">
+            <Stagger inView stagger={0.06} className="divide-y divide-[var(--border-subtle)]">
+            {addons.map((addon) => (
+              <StaggerItem
                 key={addon.name}
-                initial={{opacity: 0, y: 10}}
-                whileInView={{opacity: 1, y: 0}}
-                viewport={{once: true}}
-                transition={{delay: index * 0.05}}
                 className="flex flex-col sm:flex-row sm:items-center gap-4 p-4 sm:p-6"
               >
                 <div className="flex-1 min-w-0">
@@ -357,8 +341,9 @@ export default function PricingPage() {
                     </span>
                   )}
                 </div>
-              </motion.div>
+              </StaggerItem>
             ))}
+            </Stagger>
           </Card>
         </div>
       </section>
@@ -366,18 +351,19 @@ export default function PricingPage() {
       {/* FAQs */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-[var(--bg-surface)]">
         <div className="max-w-3xl mx-auto">
-          <div className="text-center mb-12">
+          <Reveal inView className="text-center mb-12">
             <h2 className="text-2xl  font-bold text-[var(--text-primary)] mb-4">
               Frequently asked questions
             </h2>
             <p className="text-lg text-[var(--text-secondary)]">
               Everything you need to know about pricing and billing
             </p>
-          </div>
+          </Reveal>
 
-          <div className="space-y-4">
+          <Stagger inView stagger={0.06} className="space-y-4">
             {faqs.map((faq, index) => (
-              <Card key={index} padding="none" className="overflow-hidden">
+              <StaggerItem key={index}>
+                <Card padding="none" className="overflow-hidden">
                 <button
                   onClick={() => setOpenFaq(openFaq === index ? null : index)}
                   aria-expanded={openFaq === index}
@@ -402,15 +388,16 @@ export default function PricingPage() {
                     </p>
                   </div>
                 )}
-              </Card>
+                </Card>
+              </StaggerItem>
             ))}
-          </div>
+          </Stagger>
         </div>
       </section>
 
       {/* CTA */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto text-center">
+        <Reveal inView className="max-w-4xl mx-auto text-center">
           <h2 className="text-2xl  font-bold text-[var(--text-primary)] mb-4">
             Still have questions?
           </h2>
@@ -427,8 +414,8 @@ export default function PricingPage() {
               <Button size="lg">Start Free Trial</Button>
             </Link>
           </div>
-        </div>
+        </Reveal>
       </section>
-    </div>
+    </PageTransition>
   );
 }

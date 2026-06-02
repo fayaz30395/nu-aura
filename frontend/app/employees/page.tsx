@@ -9,7 +9,7 @@ import {useCreateEmployee, useDeleteEmployee, useEmployees, useManagers} from '@
 import {useActiveDepartments} from '@/lib/hooks/queries/useDepartments';
 import {CreateEmployeeRequest, Employee} from '@/lib/types/hrms/employee';
 import {AppLayout} from '@/components/layout';
-import {motion} from 'framer-motion';
+import {PageTransition, Reveal} from '@/components/motion';
 import {Users} from 'lucide-react';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {Button} from '@/components/ui/Button';
@@ -260,12 +260,7 @@ export default function EmployeesPage() {
 
   return (
     <AppLayout activeMenuItem="employees">
-      <motion.div
-        className="space-y-6"
-        initial={{opacity: 0, y: 8}}
-        animate={{opacity: 1, y: 0}}
-        transition={{duration: 0.25, ease: 'easeOut'}}
-      >
+      <PageTransition className="space-y-6">
         {/* Page Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
@@ -347,7 +342,7 @@ export default function EmployeesPage() {
         </div>
 
         {/* Employee Table */}
-        <div className="card-aura overflow-hidden">
+        <Reveal inView className="card-aura overflow-hidden">
           {loading ? (
             <SkeletonTable rows={8} columns={7}/>
           ) : employees.length === 0 ? (
@@ -391,7 +386,7 @@ export default function EmployeesPage() {
                   </thead>
                   <tbody>
                   {employees.map((employee) => (
-                    <tr key={employee.id} className="h-11">
+                    <tr key={employee.id} className="h-11 hover-lift">
                       <td className="whitespace-nowrap">
                         <div className="flex items-center gap-4">
                           <div
@@ -508,7 +503,7 @@ export default function EmployeesPage() {
               )}
             </>
           )}
-        </div>
+        </Reveal>
 
         {/* Add Employee Modal */}
         <Modal
@@ -1245,7 +1240,7 @@ export default function EmployeesPage() {
             </div>
           </ModalBody>
         </Modal>
-      </motion.div>
+      </PageTransition>
     </AppLayout>
   );
 }

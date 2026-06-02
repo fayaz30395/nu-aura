@@ -1,6 +1,9 @@
 'use client';
 
 import {createContext, ReactNode, useCallback, useContext, useState} from 'react';
+import {AnimatePresence, motion} from 'framer-motion';
+import {toastVariants} from '@/lib/animations/variants';
+import {useReducedMotionSafe} from '@/lib/animation';
 
 type ToastType = 'success' | 'error' | 'warning' | 'info';
 
@@ -65,9 +68,11 @@ export function ToastProvider({children}: { children: ReactNode }) {
       {children}
       <div role="status" aria-live="polite" aria-atomic="true"
            className="fixed bottom-4 right-4 z-50 flex flex-col gap-2 max-w-sm">
-        {toasts.map((toast) => (
-          <ToastItem key={toast.id} toast={toast} onClose={() => removeToast(toast.id)}/>
-        ))}
+        <AnimatePresence initial={false}>
+          {toasts.map((toast) => (
+            <ToastItem key={toast.id} toast={toast} onClose={() => removeToast(toast.id)}/>
+          ))}
+        </AnimatePresence>
       </div>
     </ToastContext.Provider>
   );
@@ -106,23 +111,30 @@ function ToastItem({toast, onClose}: { toast: Toast; onClose: () => void }) {
     ),
   };
 
+  const {pick} = useReducedMotionSafe();
+
   return (
-    <div
+    <motion.div
+      layout
       role="alert"
-      className={`${styles[toast.type]} border rounded-lg shadow-[var(--shadow-dropdown)] p-4 flex items-start gap-4 animate-slide-in`}
+      className={`${styles[toast.type]} border rounded-lg shadow-[var(--shadow-dropdown)] p-4 flex items-start gap-4`}
+      variants={pick(toastVariants)}
+      initial="initial"
+      animate="animate"
+      exit="exit"
     >
       <div className="flex-shrink-0">{icons[toast.type]}</div>
       <p className="flex-1 text-sm font-medium">{toast.message}</p>
       <button
         onClick={onClose}
         aria-label="Dismiss notification"
-        className="flex-shrink-0 hover:opacity-70 transition-opacity cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] rounded"
+        className="press-scale flex-shrink-0 hover:opacity-70 transition-[opacity,transform] duration-[var(--motion-fast)] ease-[var(--ease-standard)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] rounded"
       >
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"/>
         </svg>
       </button>
-    </div>
+    </motion.div>
   );
 }
 

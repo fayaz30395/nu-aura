@@ -103,12 +103,14 @@ function ExportMenu<T extends Record<string, unknown>>({
         onClick={() => setOpen((prev) => !prev)}
         disabled={isDisabled}
         className={cn(
-          'inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors',
+          'press-scale inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium',
+          'transition-[background-color,border-color,transform,box-shadow] duration-200 ease-[cubic-bezier(0.4,0,0.2,1)]',
           'min-h-[44px] min-w-[44px]',
           'border border-[var(--border-main)] bg-[var(--bg-surface)]',
-          'text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]',
+          'text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] hover:border-[var(--border-strong)]',
           'focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2',
-          'disabled:opacity-50 disabled:cursor-not-allowed'
+          'disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none',
+          'motion-reduce:transition-none'
         )}
         aria-haspopup="true"
         aria-expanded={open}
@@ -136,7 +138,7 @@ function ExportMenu<T extends Record<string, unknown>>({
           className={cn(
             'absolute right-0 z-50 mt-2 w-48 rounded-lg border shadow-[var(--shadow-dropdown)]',
             'border-[var(--border-main)] bg-[var(--bg-surface)]',
-            'animate-in fade-in-0 zoom-in-95'
+            'motion-scale-in origin-top-right'
           )}
           role="menu"
           aria-label="Export options"
@@ -147,10 +149,10 @@ function ExportMenu<T extends Record<string, unknown>>({
               role="menuitem"
               onClick={handleCsv}
               className={cn(
-                'flex w-full items-center gap-2 px-4 py-2.5 text-sm transition-colors',
+                'press-scale flex w-full items-center gap-2 px-4 py-2.5 text-sm transition-colors',
                 'text-[var(--text-primary)] hover:bg-accent-50 dark:hover:bg-accent-900/20',
                 'cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2',
-                'min-h-[44px]'
+                'min-h-[44px] motion-reduce:transition-none'
               )}
             >
               <FileText className="h-4 w-4 text-accent-700"/>
@@ -162,10 +164,10 @@ function ExportMenu<T extends Record<string, unknown>>({
               role="menuitem"
               onClick={handleExcel}
               className={cn(
-                'flex w-full items-center gap-2 px-4 py-2.5 text-sm transition-colors',
+                'press-scale flex w-full items-center gap-2 px-4 py-2.5 text-sm transition-colors',
                 'text-[var(--text-primary)] hover:bg-accent-50 dark:hover:bg-accent-900/20',
                 'cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2',
-                'min-h-[44px]'
+                'min-h-[44px] motion-reduce:transition-none'
               )}
             >
               <FileSpreadsheet className="h-4 w-4 text-success-600"/>
@@ -179,10 +181,10 @@ function ExportMenu<T extends Record<string, unknown>>({
                 onClick={handlePdf}
                 disabled={!onExportPdf}
                 className={cn(
-                  'flex w-full items-center gap-2 px-4 py-2.5 text-sm transition-colors',
+                  'press-scale flex w-full items-center gap-2 px-4 py-2.5 text-sm transition-colors',
                   'text-[var(--text-primary)] hover:bg-accent-50 dark:hover:bg-accent-900/20',
                   'cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2',
-                  'min-h-[44px]',
+                  'min-h-[44px] motion-reduce:transition-none',
                   'disabled:opacity-50 disabled:cursor-not-allowed'
                 )}
               >

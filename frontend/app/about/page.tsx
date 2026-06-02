@@ -2,12 +2,12 @@
 
 import React from 'react';
 import Link from 'next/link';
-import {motion} from 'framer-motion';
 import {ArrowRight, Award, Globe, Heart, Rocket, Shield, Target, TrendingUp, Users, Zap,} from 'lucide-react';
 import {Button} from '@/components/ui/Button';
 import {Card} from '@/components/ui/Card';
 import {Badge} from '@/components/ui/Badge';
 import {Stat} from '@/components/ui/Stat';
+import {PageTransition, Reveal, Stagger, StaggerItem} from '@/components/motion';
 
 export default function AboutPage() {
   const values = [
@@ -64,7 +64,7 @@ export default function AboutPage() {
   ];
 
   return (
-    <div className="page-shell-centered fade-slide-up auth-delay-20">
+    <PageTransition className="page-shell-centered">
       {/* Header */}
       <header
         className="border-b border-[var(--border-main)] sticky top-0 z-50 bg-[var(--bg-elevated)] backdrop-blur-lg">
@@ -89,7 +89,7 @@ export default function AboutPage() {
 
       {/* Hero */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 text-center">
-        <div className="max-w-4xl mx-auto">
+        <Reveal className="max-w-4xl mx-auto">
           <Badge size="lg" variant="primary" className="mb-6">
             About Us
           </Badge>
@@ -100,14 +100,15 @@ export default function AboutPage() {
             We&apos;re on a mission to make HR management effortless, empowering companies to focus on what matters
             most: their people.
           </p>
-        </div>
+        </Reveal>
       </section>
 
       {/* Mission & Vision */}
       <section className="py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <Card padding="lg" className="border border-accent-200 dark:border-accent-800 bg-accent-50 dark:bg-accent-950/20">
+          <Stagger inView className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <StaggerItem>
+              <Card padding="lg" className="h-full border border-accent-200 dark:border-accent-800 bg-accent-50 dark:bg-accent-950/20">
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 rounded-xl bg-accent-100 dark:bg-accent-500/10 flex items-center justify-center">
                   <Target className="h-6 w-6 text-accent-600 dark:text-accent-400"/>
@@ -122,9 +123,11 @@ export default function AboutPage() {
                   </p>
                 </div>
               </div>
-            </Card>
+              </Card>
+            </StaggerItem>
 
-            <Card padding="lg" className="border border-info-200 dark:border-info-800 bg-info-50 dark:bg-info-950/20">
+            <StaggerItem>
+              <Card padding="lg" className="h-full border border-info-200 dark:border-info-800 bg-info-50 dark:bg-info-950/20">
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 rounded-xl bg-info-100 dark:bg-info-500/10 flex items-center justify-center">
                   <Zap className="h-6 w-6 text-info-600 dark:text-info-400"/>
@@ -139,8 +142,9 @@ export default function AboutPage() {
                   </p>
                 </div>
               </div>
-            </Card>
-          </div>
+              </Card>
+            </StaggerItem>
+          </Stagger>
         </div>
       </section>
 
@@ -158,16 +162,12 @@ export default function AboutPage() {
 
           {/* Featured value spans 2 cols on lg; supporting values are smaller. Avoids the
               identical-card-grid pattern by varying weight: one statement card + 3 satellites. */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <Stagger inView className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {values.map((value, index) => {
               const isFeatured = index === 0;
               return (
-                <motion.div
+                <StaggerItem
                   key={index}
-                  initial={{opacity: 0, y: 20}}
-                  whileInView={{opacity: 1, y: 0}}
-                  viewport={{once: true}}
-                  transition={{delay: index * 0.1}}
                   className={isFeatured ? 'md:col-span-2 lg:col-span-3 lg:row-span-1' : ''}
                 >
                   {isFeatured ? (
@@ -204,10 +204,10 @@ export default function AboutPage() {
                       </div>
                     </Card>
                   )}
-                </motion.div>
+                </StaggerItem>
               );
             })}
-          </div>
+          </Stagger>
         </div>
       </section>
 
@@ -223,14 +223,10 @@ export default function AboutPage() {
             </p>
           </div>
 
-          <div className="space-y-8">
+          <Stagger inView className="space-y-8">
             {milestones.map((milestone, index) => (
-              <motion.div
+              <StaggerItem
                 key={index}
-                initial={{opacity: 0, x: -20}}
-                whileInView={{opacity: 1, x: 0}}
-                viewport={{once: true}}
-                transition={{delay: index * 0.1}}
                 className="flex gap-6"
               >
                 <div className="flex-shrink-0">
@@ -245,38 +241,32 @@ export default function AboutPage() {
                   </h3>
                   <p className="text-[var(--text-secondary)]">{milestone.description}</p>
                 </Card>
-              </motion.div>
+              </StaggerItem>
             ))}
-          </div>
+          </Stagger>
         </div>
       </section>
 
       {/* Stats */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-[var(--bg-surface)]">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+          <Stagger inView className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {stats.map((stat, index) => (
-              <motion.div
-                key={index}
-                initial={{opacity: 0, y: 20}}
-                whileInView={{opacity: 1, y: 0}}
-                viewport={{once: true}}
-                transition={{delay: index * 0.1}}
-              >
+              <StaggerItem key={index}>
                 <Stat
                   label={stat.label}
                   value={stat.value}
                   icon={<stat.icon className="h-3.5 w-3.5"/>}
                 />
-              </motion.div>
+              </StaggerItem>
             ))}
-          </div>
+          </Stagger>
         </div>
       </section>
 
       {/* CTA */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto text-center">
+        <Reveal inView className="max-w-4xl mx-auto text-center">
           <h2 className="text-2xl  font-bold text-[var(--text-primary)] mb-4">
             Join our growing team
           </h2>
@@ -296,8 +286,8 @@ export default function AboutPage() {
               </Button>
             </Link>
           </div>
-        </div>
+        </Reveal>
       </section>
-    </div>
+    </PageTransition>
   );
 }

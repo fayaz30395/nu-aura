@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 
 import {AppLayout} from '@/components/layout';
+import {PageTransition} from '@/components/motion';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {Button} from '@/components/ui/Button';
@@ -74,7 +75,7 @@ export default function PayrollPage() {
 
   return (
     <AppLayout activeMenuItem="payroll">
-      <div className="mx-auto w-full max-w-7xl px-6 py-8 space-y-10">
+      <PageTransition className="mx-auto w-full max-w-7xl px-6 py-8 space-y-10">
         <PageHeader latest={latest} />
 
         {error && (
@@ -103,7 +104,7 @@ export default function PayrollPage() {
 
         {/* One-line alert when a draft cycle is sitting unprocessed */}
         {latest && latest.status === 'DRAFT' && <CycleAlert run={latest} />}
-      </div>
+      </PageTransition>
     </AppLayout>
   );
 }

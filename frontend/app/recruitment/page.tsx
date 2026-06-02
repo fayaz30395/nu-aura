@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 
 import {AppLayout} from '@/components/layout';
+import {PageTransition} from '@/components/motion';
 import {Button} from '@/components/ui/Button';
 import {Skeleton} from '@/components/ui/Skeleton';
 import {PageErrorFallback} from '@/components/errors/PageErrorFallback';
@@ -179,7 +180,7 @@ export default function RecruitmentDashboard() {
           </div>
         }
       >
-        <div className="mx-auto w-full max-w-7xl px-6 py-8 space-y-10">
+        <PageTransition className="mx-auto w-full max-w-7xl px-6 py-8 space-y-10">
           <PageHeader
             onPostJob={() => router.push('/recruitment/jobs')}
             onAddCandidate={() => router.push('/recruitment/candidates')}
@@ -213,7 +214,7 @@ export default function RecruitmentDashboard() {
           {stats.pendingOffers > 0 && (
             <OffersAlert count={stats.pendingOffers}/>
           )}
-        </div>
+        </PageTransition>
       </PermissionGate>
     </AppLayout>
   );

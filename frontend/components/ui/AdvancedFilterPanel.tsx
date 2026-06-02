@@ -1,9 +1,11 @@
 'use client';
 
 import React, {useCallback, useMemo, useState} from 'react';
+import {AnimatePresence, motion} from 'framer-motion';
 import {ChevronDown, Filter, MoreVertical, Plus, Save, Trash2, X,} from 'lucide-react';
 import {cn} from '@/lib/utils';
 import {safeStorage} from '@/lib/utils/safeStorage';
+import {fadeRise, staggerContainer, staggerItem, useReducedMotionSafe} from '@/lib/animation';
 
 // ─── Types ──────────────────────────────────────────────────────────────
 
@@ -340,7 +342,7 @@ const FilterRow: React.FC<FilterRowProps> = ({
 
       {/* Operator Select */}
       {condition.field && (
-        <div className="flex-1 min-w-[140px]">
+        <div className="flex-1 min-w-[140px] motion-fade">
           <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
             Operator
           </label>
@@ -367,7 +369,7 @@ const FilterRow: React.FC<FilterRowProps> = ({
 
       {/* Value Input */}
       {condition.field && condition.operator && (
-        <div className="flex-1 min-w-[140px]">
+        <div className="flex-1 min-w-[140px] motion-fade">
           <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
             Value
           </label>
@@ -381,6 +383,7 @@ const FilterRow: React.FC<FilterRowProps> = ({
         onClick={onRemove}
         className={cn(
           'p-2 rounded-md cursor-pointer transition-colors',
+          'press-scale',
           'text-[var(--text-muted)] hover:text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/20',
           'focus:outline-none focus:ring-2 focus:ring-danger-600 focus:ring-offset-2',
           'min-h-[40px] min-w-[40px] flex items-center justify-center'
@@ -417,6 +420,7 @@ export const AdvancedFilterPanel: React.FC<AdvancedFilterPanelProps> = ({
   const [presetName, setPresetName] = useState('');
   const [showPresetMenu, setShowPresetMenu] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(true);
+  const {pick} = useReducedMotionSafe();
 
   // Check if we have valid conditions to apply
   const hasValidConditions = useMemo(
@@ -554,13 +558,13 @@ export const AdvancedFilterPanel: React.FC<AdvancedFilterPanelProps> = ({
           Advanced Filters
           {activeFilterCount > 0 && (
             <span
-              className="inline-flex items-center justify-center h-5 min-w-[20px] px-1.5 text-xs font-semibold rounded-full bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-300">
+              className="inline-flex items-center justify-center h-5 min-w-[20px] px-1.5 text-xs font-semibold rounded-full bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-300 motion-scale-in">
               {activeFilterCount}
             </span>
           )}
           <ChevronDown
             className={cn(
-              'h-4 w-4 text-[var(--text-muted)] transition-transform',
+              'h-4 w-4 text-[var(--text-muted)] transition-transform duration-[var(--motion-base)] ease-[var(--ease-out-expo)]',
               !isCollapsed && 'rotate-180'
             )}
           />
@@ -575,6 +579,7 @@ export const AdvancedFilterPanel: React.FC<AdvancedFilterPanelProps> = ({
               onClick={() => setShowPresetMenu((prev) => !prev)}
               className={cn(
                 'flex items-center gap-1.5 px-4 min-h-[44px] text-sm rounded-md',
+                'press-scale',
                 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]',
                 'hover:bg-[var(--bg-secondary)]',
                 'focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2',
@@ -590,9 +595,9 @@ export const AdvancedFilterPanel: React.FC<AdvancedFilterPanelProps> = ({
             {showPresetMenu && (
               <div
                 className={cn(
-                  'absolute right-0 z-50 mt-2 w-56 rounded-lg border shadow-[var(--shadow-dropdown)]',
+                  'absolute right-0 z-50 mt-2 w-56 rounded-lg border shadow-[var(--shadow-dropdown)] origin-top-right',
                   'border-[var(--border-main)] bg-[var(--bg-surface)]',
-                  'animate-in fade-in-0 zoom-in-95'
+                  'motion-scale-in'
                 )}
                 role="menu"
               >
@@ -646,6 +651,7 @@ export const AdvancedFilterPanel: React.FC<AdvancedFilterPanelProps> = ({
               onClick={handleClearAll}
               className={cn(
                 'flex items-center gap-1.5 px-4 min-h-[44px] text-sm rounded-md',
+                'press-scale',
                 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]',
                 'hover:bg-[var(--bg-secondary)]',
                 'focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2',
@@ -664,6 +670,7 @@ export const AdvancedFilterPanel: React.FC<AdvancedFilterPanelProps> = ({
             disabled={!hasValidConditions}
             className={cn(
               'px-4 min-h-[44px] text-sm font-medium rounded-md',
+              'press-scale',
               'focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2',
               'transition-colors duration-150',
               'cursor-pointer',
@@ -678,9 +685,15 @@ export const AdvancedFilterPanel: React.FC<AdvancedFilterPanelProps> = ({
       </div>
 
       {/* ── Filter conditions (collapsible) ───────────────────────── */}
-      {!isCollapsed && (
-        <div
+      <AnimatePresence initial={false}>
+        {!isCollapsed && (
+        <motion.div
+          key="advanced-filter-fields"
           id="advanced-filter-fields"
+          variants={pick(fadeRise)}
+          initial="hidden"
+          animate="visible"
+          exit="exit"
           className="px-4 pb-4 space-y-4 border-t border-[var(--border-main)]"
         >
           {/* Logic Toggle */}
@@ -707,17 +720,32 @@ export const AdvancedFilterPanel: React.FC<AdvancedFilterPanelProps> = ({
           </div>
 
           {/* Filter Rows */}
-          <div className="space-y-4">
-            {conditions.map((condition) => (
-              <FilterRow
-                key={condition.id}
-                condition={condition}
-                fields={fields}
-                onConditionChange={handleConditionChange}
-                onRemove={() => handleRemoveCondition(condition.id)}
-              />
-            ))}
-          </div>
+          <motion.div
+            className="space-y-4"
+            variants={pick(staggerContainer())}
+            initial="hidden"
+            animate="visible"
+          >
+            <AnimatePresence initial={false}>
+              {conditions.map((condition) => (
+                <motion.div
+                  key={condition.id}
+                  variants={pick(staggerItem)}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                  layout
+                >
+                  <FilterRow
+                    condition={condition}
+                    fields={fields}
+                    onConditionChange={handleConditionChange}
+                    onRemove={() => handleRemoveCondition(condition.id)}
+                  />
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </motion.div>
 
           {/* Add Condition Button */}
           <button
@@ -725,6 +753,7 @@ export const AdvancedFilterPanel: React.FC<AdvancedFilterPanelProps> = ({
             onClick={handleAddCondition}
             className={cn(
               'flex items-center gap-2 px-4 py-2 text-sm rounded-md',
+              'press-scale',
               'text-accent-700 hover:bg-accent-50 dark:hover:bg-accent-900/20',
               'focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2',
               'transition-colors duration-150',
@@ -736,8 +765,15 @@ export const AdvancedFilterPanel: React.FC<AdvancedFilterPanelProps> = ({
           </button>
 
           {/* Save Preset */}
+          <AnimatePresence initial={false}>
           {hasValidConditions && (
-            <div className="flex items-end gap-2 pt-2 border-t border-[var(--border-main)]">
+            <motion.div
+              variants={pick(fadeRise)}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              className="flex items-end gap-2 pt-2 border-t border-[var(--border-main)]"
+            >
               <div className="flex-1">
                 <label htmlFor="preset-name" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
                   Save as preset
@@ -764,6 +800,7 @@ export const AdvancedFilterPanel: React.FC<AdvancedFilterPanelProps> = ({
                 disabled={!presetName.trim()}
                 className={cn(
                   'px-4 py-2 text-sm font-medium rounded-md min-h-[44px]',
+                  'press-scale',
                   'focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2',
                   'transition-colors duration-150',
                   'cursor-pointer',
@@ -775,10 +812,12 @@ export const AdvancedFilterPanel: React.FC<AdvancedFilterPanelProps> = ({
                 <Save className="h-4 w-4 inline-block mr-1.5"/>
                 Save
               </button>
-            </div>
+            </motion.div>
           )}
-        </div>
-      )}
+          </AnimatePresence>
+        </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
