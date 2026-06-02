@@ -734,7 +734,7 @@ function LoginPage() {
                   {/* Google SSO Button */}
                   <button
                     type="button"
-                    className="w-full relative group flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-[var(--bg-elevated)] hover:bg-[var(--bg-card-hover)] text-[var(--text-primary)] border border-[var(--border-main)] font-semibold text-sm transition-colors active:scale-[0.99]"
+                    className="w-full relative group flex items-center justify-center gap-4 px-6 py-2.5 rounded-xl bg-[var(--bg-elevated)] hover:bg-[var(--bg-card-hover)] text-[var(--text-primary)] border border-[var(--border-main)] font-semibold text-sm transition-all duration-300 hover:shadow-card-hover active:scale-[0.98]"
                     onClick={() => {
                       handleGoogleSSO();
                     }}
@@ -765,7 +765,7 @@ function LoginPage() {
                   type="button"
                   onClick={() => setShowEmailForm(true)}
                   aria-expanded={showEmailForm}
-                  className="w-full row-between px-4 py-2.5 rounded-lg bg-[var(--bg-elevated)] hover:bg-[var(--bg-card-hover)] border border-[var(--border-main)] text-[var(--text-secondary)] text-sm font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                  className="w-full row-between px-4 py-2.5 rounded-xl bg-[var(--bg-elevated)] hover:bg-[var(--bg-card-hover)] border border-[var(--border-main)] text-[var(--text-secondary)] text-sm font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
                   <div className="flex items-center gap-2">
                     <Mail className="w-4 h-4"/>
@@ -839,7 +839,7 @@ function LoginPage() {
                       isLoading={isEmailLoading}
                       loadingText="Signing in..."
                       aria-busy={isEmailLoading}
-                      className="w-full"
+                      className="w-full skeuo-button bg-gradient-to-b from-[var(--accent-primary)] to-[var(--accent-primary-hover)] text-white hover:brightness-110 disabled:pointer-events-none disabled:opacity-50"
                       leftIcon={<LogIn className="w-4 h-4"/>}
                     >
                       Sign In

@@ -87,9 +87,9 @@ export default function ForgotPasswordPage() {
                 priority
               />
             </div>
-            <h1 className="text-lg font-semibold">NU-AURA</h1>
-            <p className="mt-1 text-xs text-[var(--text-muted)] uppercase tracking-[0.12em]">
-              Password recovery
+            <h1 className="text-xl font-bold">NU-AURA</h1>
+            <p className="mt-1 text-sm text-[var(--text-secondary)]">
+              Reset your password
             </p>
           </div>
 
@@ -201,12 +201,9 @@ export default function ForgotPasswordPage() {
               priority
             />
           </div>
-          <h1 className="text-lg font-semibold">NU-AURA</h1>
-          <p className="mt-1 text-xs text-[var(--text-muted)] uppercase tracking-[0.12em]">
-            Password recovery
-          </p>
+          <h1 className="text-xl font-bold">NU-AURA</h1>
           <p className="mt-1 text-sm text-[var(--text-secondary)]">
-            Account recovery
+            Reset your password
           </p>
         </div>
 
