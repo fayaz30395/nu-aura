@@ -174,3 +174,6 @@ frontend/sessions/
 # Skill runtime artifacts
 #.claude/skills/nu-chrome-e2e/runs/
 #.github/java-upgrade/2*/
+
+# Render deploy hook secret (never commit)
+scripts/deploy/.env
