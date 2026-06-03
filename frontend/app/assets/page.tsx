@@ -156,11 +156,34 @@ const categoryLabel = (category: AssetCategory): string =>
     .toLowerCase()
     .replace(/\b\w/g, (c) => c.toUpperCase());
 
-/** Page-local assignee avatar — deterministic initials chip (no shared Avatar primitive). */
+/**
+ * Token-driven chart palette used to tint assignee avatars deterministically,
+ * mirroring the prototype's `colorFor(name)` (colored gradient chips, white
+ * initials) rather than a single flat accent chip. Chart vars stay in-system
+ * for light + dark parity.
+ */
+const AVATAR_PALETTE = [
+  'bg-[var(--chart-1)]',
+  'bg-[var(--chart-2)]',
+  'bg-[var(--chart-3)]',
+  'bg-[var(--chart-4)]',
+  'bg-[var(--chart-5)]',
+] as const;
+
+/** Stable hash → palette index so a given name always maps to the same hue. */
+const avatarColorFor = (name: string): string => {
+  let hash = 0;
+  for (let i = 0; i < name.length; i += 1) {
+    hash = (hash * 31 + name.charCodeAt(i)) | 0;
+  }
+  return AVATAR_PALETTE[Math.abs(hash) % AVATAR_PALETTE.length];
+};
+
+/** Page-local assignee avatar — deterministic colored chip with white initials. */
 function AssigneeAvatar({name}: { name: string }) {
   return (
     <span
-      className="grid h-[26px] w-[26px] shrink-0 place-items-center rounded-full bg-[var(--accent-soft)] text-[10px] font-semibold text-[var(--accent-text)]"
+      className={`grid h-[26px] w-[26px] shrink-0 place-items-center rounded-full text-[10px] font-semibold text-white ${avatarColorFor(name)}`}
       aria-hidden
     >
       {getInitials(name)}
@@ -409,7 +432,7 @@ export default function AssetManagementPage() {
     const pct = (n: number) => Math.round((n / denom) * 100);
     return [
       {label: 'Healthy', pct: pct(healthy), barClass: '[&::-webkit-progress-value]:bg-[var(--ok-fg)] [&::-moz-progress-bar]:bg-[var(--ok-fg)]'},
-      {label: 'Aging', pct: pct(aging), barClass: '[&::-webkit-progress-value]:bg-[var(--warn-fg)] [&::-moz-progress-bar]:bg-[var(--warn-fg)]'},
+      {label: 'Aging (3y+)', pct: pct(aging), barClass: '[&::-webkit-progress-value]:bg-[var(--warn-fg)] [&::-moz-progress-bar]:bg-[var(--warn-fg)]'},
       {label: 'End of life', pct: pct(endOfLife), barClass: '[&::-webkit-progress-value]:bg-[var(--err-fg)] [&::-moz-progress-bar]:bg-[var(--err-fg)]'},
     ];
   }, [assetsQuery.data?.content]);
@@ -424,8 +447,8 @@ export default function AssetManagementPage() {
   );
 
   const breadcrumbs = [
-    {label: 'Dashboard', href: '/dashboard'},
-    {label: 'Asset Management'},
+    {label: 'NU-HRMS', href: '/dashboard'},
+    {label: 'Assets'},
   ];
 
   const getActionsMenuClassName = (assetId: string) => {
@@ -454,7 +477,7 @@ export default function AssetManagementPage() {
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <h1 className="text-aura-title text-[var(--text-1)]">
-              Asset Management
+              Assets
             </h1>
             <p className="mt-1 text-sm text-[var(--text-2)]">
               <span className="tnum">{stats.total.toLocaleString()}</span> tracked assets
@@ -519,6 +542,8 @@ export default function AssetManagementPage() {
               iconTone="warning"
               label="Available"
               value={stats.available.toLocaleString()}
+              delta={`${stats.available.toLocaleString()} ready`}
+              deltaDir="flat"
               foot="Ready to deploy"
             />
           </Card>
@@ -528,6 +553,8 @@ export default function AssetManagementPage() {
               iconTone="info"
               label="In repair"
               value={stats.maintenance.toLocaleString()}
+              delta={stats.maintenance > 0 ? `${stats.maintenance.toLocaleString()} open` : 'None'}
+              deltaDir={stats.maintenance > 0 ? 'down' : 'flat'}
               foot="In maintenance"
             />
           </Card>
@@ -581,38 +608,38 @@ export default function AssetManagementPage() {
                   <thead>
                   <tr>
                     <th
-                      className="skeuo-table-header px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                      className="skeuo-table-header text-aura-micro px-4 py-2 text-left">
                       Asset
                     </th>
                     <th
-                      className="skeuo-table-header px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                      className="skeuo-table-header text-aura-micro px-4 py-2 text-left">
                       Serial
                     </th>
                     <th
-                      className="skeuo-table-header px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                      className="skeuo-table-header text-aura-micro px-4 py-2 text-left">
                       Assigned to
                     </th>
                     <th
-                      className="skeuo-table-header px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                      className="skeuo-table-header text-aura-micro px-4 py-2 text-left">
                       Location
                     </th>
                     <th
-                      className="skeuo-table-header px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                      className="skeuo-table-header text-aura-micro px-4 py-2 text-left">
                       Status
                     </th>
                     <th
-                      className="skeuo-table-header px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                      className="skeuo-table-header text-aura-micro px-4 py-2 text-left">
                       Purchased
                     </th>
                     <th
-                      className="skeuo-table-header px-4 py-2 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                      className="skeuo-table-header text-aura-micro px-4 py-2 text-right">
                       <span className="sr-only">Actions</span>
                     </th>
                   </tr>
                   </thead>
                   <tbody>
                   {filteredAssets.map((asset) => (
-                    <tr key={asset.id} className="h-11">
+                    <tr key={asset.id} className="h-[58px]">
                       <td className="px-4 py-3 whitespace-nowrap">
                         <div className="flex items-center gap-2">
                           <div className={ASSET_TILE_CLASS}>
@@ -779,7 +806,7 @@ export default function AssetManagementPage() {
           <Reveal className="self-start">
             <Card padding="lg">
               <div className="mb-3">
-                <h2 className="text-base font-semibold text-[var(--text-1)]">By category</h2>
+                <h2 className="text-[15px] font-bold text-[var(--text-1)]">By category</h2>
                 <p className="text-xs text-[var(--text-3)]">Inventory mix</p>
               </div>
               {categoryBreakdown.length > 0 ? (
@@ -790,7 +817,7 @@ export default function AssetManagementPage() {
 
               <hr className="my-5 border-[var(--border-soft)]"/>
 
-              <h2 className="mb-3 text-base font-semibold text-[var(--text-1)]">Lifecycle</h2>
+              <h2 className="mb-3 text-[15px] font-bold text-[var(--text-1)]">Lifecycle</h2>
               <div className="flex flex-col gap-4">
                 {lifecycle.map((row) => (
                   <div key={row.label}>

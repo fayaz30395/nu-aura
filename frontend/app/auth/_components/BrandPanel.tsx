@@ -12,6 +12,13 @@ interface AuthProduct {
   color: string;
 }
 
+const PRODUCT_TILES: Record<string, string> = {
+  hrms: 'bg-[var(--prod-hrms)]',
+  hire: 'bg-[var(--prod-hire)]',
+  grow: 'bg-[var(--prod-grow)]',
+  fluence: 'bg-[var(--prod-fluence)]',
+};
+
 // Mirrors the four bundle apps from the Aura spec (PRODUCTS in Shell.jsx).
 // Colors come from the frozen product tokens; icons map 1:1 to the prototype's
 // lucide names (users / briefcase / trending-up / book-open).
@@ -59,7 +66,7 @@ export function BrandPanel({headline, lede}: BrandPanelProps) {
           <div className="aura-brand__apps">
             {PRODUCTS.map((product) => (
               <div className="aura-brand__app" key={product.id}>
-                <div className="aura-brand__app-ico" style={{background: product.color}}>
+                <div className={`aura-brand__app-ico ${PRODUCT_TILES[product.id] ?? 'bg-[var(--accent)]'}`}>
                   {product.icon}
                 </div>
                 <div>

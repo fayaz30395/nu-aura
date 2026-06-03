@@ -131,44 +131,28 @@ const getBenefitIcon = (type: string) => {
 };
 
 /**
- * Token-driven icon-tile classes per benefit type (Aura).
- * Mirrors the Stat icon-tile tones — soft background + matching foreground,
- * resolved from CSS vars so light/dark parity comes for free.
+ * Per-benefit accent color, resolved to a chart palette token (Aura).
+ * Mirrors the prototype, which assigns each plan a distinct `--chart-N` hue so
+ * the plan grid reads as a varied program list rather than one flat accent.
+ * Token-driven only — the tile background is derived via `color-mix` at 14%
+ * (matching the prototype's tile recipe), so light/dark parity is automatic.
  */
-const getBenefitColor = (type: string) => {
+const getBenefitChartColor = (type: string): string => {
   switch (type) {
     case 'HEALTH':
+      return 'var(--chart-1)';
     case 'DENTAL':
+      return 'var(--chart-3)';
     case 'VISION':
-      return 'bg-[var(--accent-soft)] text-[var(--accent-text)]';
-    case 'LIFE':
-      return 'bg-[var(--info-bg)] text-[var(--info-fg)]';
+      return 'var(--chart-5)';
     case 'RETIREMENT':
-      return 'bg-[var(--ok-bg)] text-[var(--ok-fg)]';
     case 'FSA':
     case 'HSA':
-      return 'bg-[var(--warn-bg)] text-[var(--warn-fg)]';
-    default:
-      return 'bg-[var(--neutral-bg)] text-[var(--neutral-fg)]';
-  }
-};
-
-/** Progress-bar fill color (CSS var) per benefit type — matches the icon tile. */
-const getBenefitBarColor = (type: string): string => {
-  switch (type) {
-    case 'HEALTH':
-    case 'DENTAL':
-    case 'VISION':
-      return 'var(--accent)';
+      return 'var(--chart-4)';
     case 'LIFE':
-      return 'var(--info-fg)';
-    case 'RETIREMENT':
-      return 'var(--ok-fg)';
-    case 'FSA':
-    case 'HSA':
-      return 'var(--warn-fg)';
+      return 'var(--chart-2)';
     default:
-      return 'var(--text-3)';
+      return 'var(--chart-3)';
   }
 };
 
@@ -394,9 +378,9 @@ export default function BenefitsPage() {
   if (!hasHydrated || (plansQuery.isLoading && user?.employeeId)) {
     return (
       <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="benefits">
-        <div className="flex items-center justify-center h-64">
-          <Loader2 className="h-8 w-8 animate-spin text-accent-500"/>
-          <span className="ml-2 text-[var(--text-secondary)]">Loading benefits...</span>
+        <div className="flex h-64 items-center justify-center" role="status" aria-live="polite">
+          <Loader2 className="h-8 w-8 animate-spin text-[var(--accent)]"/>
+          <span className="ml-2 text-sm text-[var(--text-2)]">Loading benefits…</span>
         </div>
       </AppLayout>
     );
@@ -421,9 +405,10 @@ export default function BenefitsPage() {
         {/* Notifications */}
         {error && (
           <div
-            className="p-4 bg-danger-100 dark:bg-danger-900/30 border border-danger-300 dark:border-danger-700 rounded-lg flex items-center gap-2 text-danger-800 dark:text-danger-300">
-            <AlertCircle className="w-5 h-5"/>
-            {error}
+            role="alert"
+            className="flex items-center gap-2 rounded-aura-lg border border-[var(--err-bd)] bg-[var(--err-bg)] p-4 text-sm text-[var(--err-fg)]">
+            <AlertCircle className="h-5 w-5 shrink-0"/>
+            <span>{error}</span>
             <Button size="sm" variant="outline" onClick={() => plansQuery.refetch()} className="ml-auto">
               Retry
             </Button>
@@ -431,9 +416,10 @@ export default function BenefitsPage() {
         )}
         {success && (
           <div
-            className="p-4 bg-success-100 dark:bg-success-900/30 border border-success-300 dark:border-success-700 rounded-lg flex items-center gap-2 text-success-800 dark:text-success-300">
-            <CheckCircle className="w-5 h-5"/>
-            {success}
+            role="status"
+            className="flex items-center gap-2 rounded-aura-lg border border-[var(--ok-bd)] bg-[var(--ok-bg)] p-4 text-sm text-[var(--ok-fg)]">
+            <CheckCircle className="h-5 w-5 shrink-0"/>
+            <span>{success}</span>
           </div>
         )}
 
@@ -449,7 +435,7 @@ export default function BenefitsPage() {
           </div>
           <PermissionGate permission={Permissions.BENEFIT_CLAIM_SUBMIT}>
             <Button onClick={handleOpenClaimModal} leftIcon={<Plus className="h-4 w-4"/>}>
-              Submit Claim
+              Submit claim
             </Button>
           </PermissionGate>
         </div>
@@ -546,7 +532,8 @@ export default function BenefitsPage() {
             {benefits.length > 0 && (
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {benefits.map((benefit) => {
-                  const barColor = getBenefitBarColor(benefit.type);
+                  const planColor = getBenefitChartColor(benefit.type);
+                  const barColor = planColor;
                   // Real-data adaptation: the prototype shows org-wide "enrolled n/total"
                   // counts, which this route does not fetch. We bind the bar to the real
                   // per-user enrollment signal instead — full when the employee is covered.
@@ -557,9 +544,13 @@ export default function BenefitsPage() {
                   return (
                     <Card key={benefit.id} hover className="flex flex-col p-4">
                       {/* Header: icon tile + name + provider */}
-                      <div className="mb-4 flex items-center gap-4">
+                      <div className="mb-4 flex items-center gap-3">
                         <span
-                          className={`inline-grid h-11 w-11 place-items-center rounded-aura-lg ${getBenefitColor(benefit.type)}`}
+                          className="inline-grid h-11 w-11 place-items-center rounded-aura-lg"
+                          style={{
+                            background: `color-mix(in srgb, ${planColor} 14%, transparent)`,
+                            color: planColor,
+                          }}
                         >
                           {getBenefitIcon(benefit.type)}
                         </span>
@@ -577,10 +568,10 @@ export default function BenefitsPage() {
                       </div>
 
                       {/* Enrolled row + progress bar */}
-                      <div className="mb-1.5 flex items-center justify-between text-xs">
-                        <span className="text-[var(--text-3)]">Enrollment</span>
-                        <span className="tnum font-semibold text-[var(--text-1)]">
-                          {benefit.isEnrolled ? 'Active' : '—'}
+                      <div className="mb-1.5 flex items-center justify-between text-[12.5px]">
+                        <span className="text-[var(--text-3)]">Enrolled</span>
+                        <span className="tnum whitespace-nowrap font-semibold text-[var(--text-1)]">
+                          {benefit.isEnrolled ? 'Active' : <span className="text-[var(--text-3)]">Not enrolled</span>}
                         </span>
                       </div>
                       <div className="h-1.5 w-full overflow-hidden rounded-aura-full bg-[var(--surface-sunken)]">
@@ -593,12 +584,12 @@ export default function BenefitsPage() {
                       {/* Footer: Tier / Cost */}
                       <div className="mt-4 flex items-end justify-between border-t border-[var(--border-soft)] pt-3.5">
                         <div>
-                          <div className="text-aura-micro text-[var(--text-3)]">Tier</div>
-                          <div className="mt-0.5 text-[13px] font-semibold text-[var(--text-1)]">{tier}</div>
+                          <div className="text-aura-micro">Tier</div>
+                          <div className="mt-[3px] text-[12.5px] font-semibold text-[var(--text-1)]">{tier}</div>
                         </div>
                         <div className="text-right">
-                          <div className="text-aura-micro text-[var(--text-3)]">Cost</div>
-                          <div className="tnum mt-0.5 text-[13px] font-semibold text-[var(--text-1)]">
+                          <div className="text-aura-micro">Cost</div>
+                          <div className="tnum mt-[3px] whitespace-nowrap text-[12.5px] font-semibold text-[var(--text-1)]">
                             {formatINR(benefit.monthlyPremium)}/mo
                           </div>
                         </div>
@@ -626,15 +617,11 @@ export default function BenefitsPage() {
 
             {benefits.length === 0 && (
               <Card>
-                <CardContent className="p-8 text-center">
-                  <Gift className="h-12 w-12 mx-auto text-[var(--text-muted)] mb-4"/>
-                  <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
-                    No Benefit Plans Available
-                  </h3>
-                  <p className="text-[var(--text-secondary)]">
-                    There are currently no benefit plans available for enrollment.
-                  </p>
-                </CardContent>
+                <EmptyState
+                  icon={<Gift className="h-12 w-12"/>}
+                  title="No benefit plans available"
+                  description="There are currently no benefit plans open for enrollment. Check back when your open-enrollment window begins."
+                />
               </Card>
             )}
 
@@ -702,72 +689,73 @@ export default function BenefitsPage() {
           <div className="space-y-4">
             {enrollments.length === 0 ? (
               <Card>
-                <CardContent className="p-8 text-center">
-                  <FileText className="h-12 w-12 mx-auto text-[var(--text-muted)] mb-4"/>
-                  <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
-                    No Enrollments Yet
-                  </h3>
-                  <p className="text-[var(--text-secondary)]">
-                    You haven&apos;t enrolled in any benefit plans yet.
-                  </p>
-                  <Button className="mt-4" onClick={() => setActiveTab('plans')}>
-                    Browse Plans
-                  </Button>
-                </CardContent>
+                <EmptyState
+                  icon={<FileText className="h-12 w-12"/>}
+                  title="No enrollments yet"
+                  description="You haven't enrolled in any benefit plans yet. Browse the available plans to get covered."
+                  actionLabel="Browse plans"
+                  onAction={() => setActiveTab('plans')}
+                />
               </Card>
             ) : (
               enrollments.map((enrollment) => (
-                <Card key={enrollment.id} className="card-aura">
-                  <CardContent className="p-4">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <div className="flex items-center gap-4 mb-2">
-                          <h3 className="font-semibold text-lg">{enrollment.benefitPlanName}</h3>
-                          <span
-                            className={`badge-status ${enrollment.status === 'ACTIVE' ? 'status-success' : 'status-neutral'}`}>
-                            {enrollment.status}
-                          </span>
-                        </div>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                          <div>
-                            <span className="text-[var(--text-secondary)]">Coverage Level:</span>
-                            <p className="font-medium">{coverageLevelLabels[enrollment.coverageLevel]}</p>
-                          </div>
-                          <div>
-                            <span className="text-[var(--text-secondary)]">Effective Date:</span>
-                            <p className="font-medium">{formatDate(enrollment.effectiveDate)}</p>
-                          </div>
-                          <div>
-                            <span className="text-[var(--text-secondary)]">Monthly Premium:</span>
-                            <p className="font-medium">{formatINR(enrollment.employeeContribution)}</p>
-                          </div>
-                          <div>
-                            <span className="text-[var(--text-secondary)]">Coverage:</span>
-                            <p className="font-medium">{formatINR(enrollment.currentCoverage)}</p>
-                          </div>
-                        </div>
-                        {enrollment.dependentCount > 0 && (
-                          <div className="mt-2 flex items-center gap-2 text-body-secondary">
-                            <UserPlus className="h-4 w-4"/>
-                            {enrollment.dependentCount} dependent(s) covered
-                          </div>
-                        )}
+                <Card key={enrollment.id} hover className="p-4">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="min-w-0">
+                      <div className="mb-3 flex items-center gap-3">
+                        <h3 className="font-display text-[15px] font-bold text-[var(--text-1)]">
+                          {enrollment.benefitPlanName}
+                        </h3>
+                        <Badge variant={enrollment.status === 'ACTIVE' ? 'success' : 'default'} size="sm">
+                          {enrollment.status === 'ACTIVE' ? 'Active' : enrollment.status}
+                        </Badge>
                       </div>
-                      {enrollment.status === 'ACTIVE' && (
+                      <div className="grid grid-cols-2 gap-x-6 gap-y-3 md:grid-cols-4">
+                        <div>
+                          <div className="text-aura-micro">Coverage level</div>
+                          <p className="mt-0.5 text-[13px] font-semibold text-[var(--text-1)]">
+                            {coverageLevelLabels[enrollment.coverageLevel]}
+                          </p>
+                        </div>
+                        <div>
+                          <div className="text-aura-micro">Effective date</div>
+                          <p className="tnum mt-0.5 text-[13px] font-semibold text-[var(--text-1)]">
+                            {formatDate(enrollment.effectiveDate)}
+                          </p>
+                        </div>
+                        <div>
+                          <div className="text-aura-micro">Monthly premium</div>
+                          <p className="tnum mt-0.5 text-[13px] font-semibold text-[var(--text-1)]">
+                            {formatINR(enrollment.employeeContribution)}
+                          </p>
+                        </div>
+                        <div>
+                          <div className="text-aura-micro">Coverage</div>
+                          <p className="tnum mt-0.5 text-[13px] font-semibold text-[var(--text-1)]">
+                            {formatINR(enrollment.currentCoverage)}
+                          </p>
+                        </div>
+                      </div>
+                      {enrollment.dependentCount > 0 && (
+                        <div className="mt-3 flex items-center gap-2 text-[13px] text-[var(--text-2)]">
+                          <UserPlus className="h-4 w-4 text-[var(--text-3)]"/>
+                          <span className="tnum">{enrollment.dependentCount}</span> dependent(s) covered
+                        </div>
+                      )}
+                    </div>
+                    {enrollment.status === 'ACTIVE' && (
                         <PermissionGate permission={Permissions.BENEFIT_MANAGE}>
                           <Button
                             size="sm"
-                            variant="outline"
-                            className="text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/20"
+                            variant="soft-danger"
+                            leftIcon={<XCircle className="h-4 w-4"/>}
                             onClick={() => handleTerminateStart(enrollment.id)}
                           >
-                            <XCircle className="h-4 w-4 mr-1"/>
                             Terminate
                           </Button>
                         </PermissionGate>
                       )}
-                    </div>
-                  </CardContent>
+                  </div>
                 </Card>
               ))
             )}
@@ -778,69 +766,76 @@ export default function BenefitsPage() {
           <div className="space-y-4">
             {claims.length === 0 ? (
               <Card>
-                <CardContent className="p-8 text-center">
-                  <Receipt className="h-12 w-12 mx-auto text-[var(--text-muted)] mb-4"/>
-                  <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
-                    No Claims Yet
-                  </h3>
-                  <p className="text-[var(--text-secondary)]">
-                    You haven&apos;t submitted any benefit claims yet.
-                  </p>
-                  <Button className="mt-4" onClick={handleOpenClaimModal}>
-                    <Plus className="h-4 w-4 mr-1"/>
-                    Submit Claim
-                  </Button>
-                </CardContent>
+                <EmptyState
+                  icon={<Receipt className="h-12 w-12"/>}
+                  title="No claims yet"
+                  description="You haven't submitted any benefit claims yet. Submit a claim against one of your active enrollments."
+                  actionLabel="Submit claim"
+                  onAction={handleOpenClaimModal}
+                />
               </Card>
             ) : (
-              claims.map((claim) => (
-                <Card key={claim.id} className="card-aura">
-                  <CardContent className="p-4">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <div className="flex items-center gap-4 mb-2">
-                          <h3 className="font-semibold text-lg">{claim.claimNumber}</h3>
-                          <span
-                            className={`badge-status ${claim.status === 'APPROVED' || claim.status === 'PAID' ? 'status-success' : claim.status === 'REJECTED' ? 'status-danger' : claim.status === 'UNDER_REVIEW' || claim.status === 'APPEALED' ? 'status-warning' : 'status-info'}`}>
-                            {claim.status}
-                          </span>
+              claims.map((claim) => {
+                const claimStatusVariant: 'success' | 'danger' | 'warning' | 'info' =
+                  claim.status === 'APPROVED' || claim.status === 'PAID'
+                    ? 'success'
+                    : claim.status === 'REJECTED'
+                      ? 'danger'
+                      : claim.status === 'UNDER_REVIEW' || claim.status === 'APPEALED'
+                        ? 'warning'
+                        : 'info';
+                return (
+                  <Card key={claim.id} hover className="p-4">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="min-w-0">
+                        <div className="mb-2 flex items-center gap-3">
+                          <h3 className="tnum font-display text-[15px] font-bold text-[var(--text-1)]">
+                            {claim.claimNumber}
+                          </h3>
+                          <Badge variant={claimStatusVariant} size="sm">{claim.status}</Badge>
                         </div>
-                        <p className="text-[var(--text-secondary)] mb-2">{claim.description}</p>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                        <p className="mb-3 text-[13px] text-[var(--text-2)]">{claim.description}</p>
+                        <div className="grid grid-cols-2 gap-x-6 gap-y-3 md:grid-cols-4">
                           <div>
-                            <span className="text-[var(--text-secondary)]">Type:</span>
-                            <p className="font-medium">{claim.claimType}</p>
+                            <div className="text-aura-micro">Type</div>
+                            <p className="mt-0.5 text-[13px] font-semibold text-[var(--text-1)]">{claim.claimType}</p>
                           </div>
                           <div>
-                            <span className="text-[var(--text-secondary)]">Service Date:</span>
-                            <p className="font-medium">{formatDate(claim.serviceDate)}</p>
+                            <div className="text-aura-micro">Service date</div>
+                            <p className="tnum mt-0.5 text-[13px] font-semibold text-[var(--text-1)]">
+                              {formatDate(claim.serviceDate)}
+                            </p>
                           </div>
                           <div>
-                            <span className="text-[var(--text-secondary)]">Claim Amount:</span>
-                            <p className="font-medium">{formatINR(claim.claimAmount)}</p>
+                            <div className="text-aura-micro">Claim amount</div>
+                            <p className="tnum mt-0.5 text-[13px] font-semibold text-[var(--text-1)]">
+                              {formatINR(claim.claimAmount)}
+                            </p>
                           </div>
                           {claim.approvedAmount !== undefined && (
                             <div>
-                              <span className="text-[var(--text-secondary)]">Approved Amount:</span>
-                              <p className="font-medium text-success-600">{formatINR(claim.approvedAmount)}</p>
+                              <div className="text-aura-micro">Approved amount</div>
+                              <p className="tnum mt-0.5 text-[13px] font-semibold text-[var(--ok-fg)]">
+                                {formatINR(claim.approvedAmount)}
+                              </p>
                             </div>
                           )}
                         </div>
                         {claim.rejectionReason && (
-                          <div className="mt-2 text-sm text-danger-600">
-                            <span className="font-medium">Rejection Reason:</span> {claim.rejectionReason}
+                          <div className="mt-3 text-[13px] text-[var(--err-fg)]">
+                            <span className="font-semibold">Rejection reason:</span> {claim.rejectionReason}
                           </div>
                         )}
                       </div>
                       <div className="text-right">
-                        <div className="text-xl font-bold text-[var(--text-primary)]">
+                        <div className="text-aura-stat tnum text-[var(--text-1)]">
                           {formatINR(claim.claimAmount)}
                         </div>
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
-              ))
+                  </Card>
+                );
+              })
             )}
           </div>
         )}
@@ -850,7 +845,7 @@ export default function BenefitsPage() {
           <CardContent className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h3 className="font-display text-base font-bold text-[var(--accent-text)]">
-                Open Enrollment Period
+                Open enrollment period
               </h3>
               <p className="mt-1 text-sm text-[var(--text-2)]">
                 March 1 – March 31,{' '}
@@ -861,7 +856,7 @@ export default function BenefitsPage() {
               </p>
             </div>
             <Button variant="secondary" onClick={() => setActiveTab('plans')}>
-              Review Benefits
+              Review benefits
             </Button>
           </CardContent>
         </Card>
@@ -875,14 +870,20 @@ export default function BenefitsPage() {
             <div className="flex items-center gap-4">
               {selectedBenefit && (
                 <>
-                  <div className={`rounded-lg p-2 ${getBenefitColor(selectedBenefit.type)}`}>
+                  <div
+                    className="inline-grid h-11 w-11 place-items-center rounded-aura-lg"
+                    style={{
+                      background: `color-mix(in srgb, ${getBenefitChartColor(selectedBenefit.type)} 14%, transparent)`,
+                      color: getBenefitChartColor(selectedBenefit.type),
+                    }}
+                  >
                     {getBenefitIcon(selectedBenefit.type)}
                   </div>
                   <div>
-                    <h2 className="text-xl font-semibold text-[var(--text-primary)]">
+                    <h2 className="font-display text-lg font-bold text-[var(--text-1)]">
                       Enroll in {selectedBenefit.name}
                     </h2>
-                    <p className="text-body-muted">{selectedBenefit.provider}</p>
+                    <p className="text-sm text-[var(--text-3)]">{selectedBenefit.provider}</p>
                   </div>
                 </>
               )}
@@ -896,15 +897,15 @@ export default function BenefitsPage() {
                 </p>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="p-4 skeuo-card rounded-lg">
-                    <p className="text-body-muted">Monthly Premium</p>
-                    <p className="text-xl font-bold text-[var(--text-primary)]">
+                  <div className="rounded-aura-lg border border-[var(--border)] bg-[var(--surface-sunken)] p-4">
+                    <p className="text-aura-micro">Monthly premium</p>
+                    <p className="tnum mt-1 text-2xl font-bold text-[var(--text-1)]">
                       {formatINR(selectedBenefit.monthlyPremium)}
                     </p>
                   </div>
-                  <div className="p-4 skeuo-card rounded-lg">
-                    <p className="text-body-muted">Coverage Amount</p>
-                    <p className="text-xl font-bold text-[var(--text-primary)]">
+                  <div className="rounded-aura-lg border border-[var(--border)] bg-[var(--surface-sunken)] p-4">
+                    <p className="text-aura-micro">Coverage amount</p>
+                    <p className="tnum mt-1 text-2xl font-bold text-[var(--text-1)]">
                       {formatINR(selectedBenefit.coverage)}
                     </p>
                   </div>
@@ -965,15 +966,8 @@ export default function BenefitsPage() {
                     }}>
                       Cancel
                     </Button>
-                    <Button type="submit" disabled={isEnrollingForm}>
-                      {isEnrollingForm ? (
-                        <>
-                          <Loader2 className="h-4 w-4 mr-1 animate-spin"/>
-                          Enrolling...
-                        </>
-                      ) : (
-                        'Confirm Enrollment'
-                      )}
+                    <Button type="submit" isLoading={isEnrollingForm} loadingText="Enrolling…">
+                      Confirm enrollment
                     </Button>
                   </div>
                 </form>
@@ -1106,15 +1100,8 @@ export default function BenefitsPage() {
                 }}>
                   Cancel
                 </Button>
-                <Button type="submit" disabled={isSubmittingClaim}>
-                  {isSubmittingClaim ? (
-                    <>
-                      <Loader2 className="h-4 w-4 mr-1 animate-spin"/>
-                      Submitting...
-                    </>
-                  ) : (
-                    'Submit Claim'
-                  )}
+                <Button type="submit" isLoading={isSubmittingClaim} loadingText="Submitting…">
+                  Submit claim
                 </Button>
               </div>
             </form>

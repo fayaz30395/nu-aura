@@ -23,8 +23,6 @@ import {
   calculateTaskDuration,
   CalendarEvent,
   GanttTask,
-  getPriorityColor,
-  getStatusColor,
   isTaskAtRisk,
   isTaskDelayed,
 } from '@/lib/types/hrms/project-calendar';
@@ -47,6 +45,47 @@ const STATUS_OPTIONS = [
   {value: 'BLOCKED', label: 'Blocked'},
   {value: 'DONE', label: 'Done'},
 ];
+
+const STATUS_STYLE: Record<string, {chip: string; dot: string; text: string}> = {
+  BACKLOG: {
+    chip: 'bg-[var(--surface-100)] text-[var(--text-secondary)]',
+    dot: 'bg-[var(--text-secondary)]',
+    text: 'text-[var(--text-secondary)]',
+  },
+  TODO: {
+    chip: 'bg-[var(--surface-100)] text-[var(--text-secondary)]',
+    dot: 'bg-[var(--text-secondary)]',
+    text: 'text-[var(--text-secondary)]',
+  },
+  IN_PROGRESS: {
+    chip: 'bg-[var(--accent-soft)] text-[var(--accent-text)]',
+    dot: 'bg-[var(--accent)]',
+    text: 'text-[var(--accent-text)]',
+  },
+  IN_REVIEW: {
+    chip: 'bg-[var(--surface-100)] text-[var(--text-secondary)]',
+    dot: 'bg-[var(--accent)]',
+    text: 'text-[var(--text-secondary)]',
+  },
+  BLOCKED: {
+    chip: 'bg-[var(--danger-soft)] text-[var(--danger-text)]',
+    dot: 'bg-[var(--danger-600)]',
+    text: 'text-[var(--danger-700)]',
+  },
+  DONE: {
+    chip: 'bg-[var(--success-soft)] text-[var(--success-text)]',
+    dot: 'bg-[var(--success-600)]',
+    text: 'text-[var(--success-700)]',
+  },
+};
+
+const PRIORITY_STYLE: Record<string, string> = {
+  LOW: 'bg-[var(--success-soft)] text-[var(--success-700)]',
+  MEDIUM: 'bg-[var(--warning-50)] text-[var(--warning-700)]',
+  HIGH: 'bg-[var(--danger-50)] text-[var(--danger-700)]',
+  URGENT: 'bg-[var(--danger-soft)] text-[var(--danger-700)]',
+  CRITICAL: 'bg-[var(--danger-soft)] text-[var(--danger-800)]',
+};
 
 export function TaskDetailsModal({
                                    isOpen,
@@ -101,6 +140,8 @@ export function TaskDetailsModal({
   const duration = calculateTaskDuration(normalizedTask.startDate, normalizedTask.endDate);
   const isDelayed = 'progress' in (task || {}) && isTaskDelayed(task as GanttTask);
   const isAtRisk = 'progress' in (task || {}) && isTaskAtRisk(task as GanttTask);
+  const statusStyle = STATUS_STYLE[normalizedTask.status] ?? STATUS_STYLE.BACKLOG;
+  const priorityStyle = normalizedTask.priority ? PRIORITY_STYLE[normalizedTask.priority] ?? PRIORITY_STYLE.MEDIUM : '';
 
   const handleStartEditProgress = () => {
     setEditProgress(normalizedTask.progress || 0);
@@ -189,15 +230,10 @@ export function TaskDetailsModal({
               </label>
               {readonly || !onUpdateStatus ? (
                 <span
-                  className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium"
-                  style={{
-                    backgroundColor: `${getStatusColor(normalizedTask.status)}20`,
-                    color: getStatusColor(normalizedTask.status),
-                  }}
+                  className={`inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium ${statusStyle.chip} ${statusStyle.text}`}
                 >
                   <span
-                    className="w-2 h-2 rounded-full"
-                    style={{backgroundColor: getStatusColor(normalizedTask.status)}}
+                    className={`h-2 w-2 rounded-full ${statusStyle.dot}`}
                   />
                   {normalizedTask.status.replace('_', ' ')}
                 </span>
@@ -224,11 +260,7 @@ export function TaskDetailsModal({
                   Priority
                 </label>
                 <span
-                  className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium"
-                  style={{
-                    backgroundColor: `${getPriorityColor(normalizedTask.priority)}20`,
-                    color: getPriorityColor(normalizedTask.priority),
-                  }}
+                  className={`inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium ${priorityStyle}`}
                 >
                   <AlertCircle className="w-4 h-4"/>
                   {normalizedTask.priority}
@@ -347,12 +379,12 @@ export function TaskDetailsModal({
                 </div>
               ) : (
                 <div className="space-y-2">
-                  <div className="h-3 bg-surface-200 dark:bg-surface-700 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-accent-500 rounded-full transition-all duration-300"
-                      style={{width: `${normalizedTask.progress}%`}}
-                    />
-                  </div>
+                  <progress
+                    className="h-3 w-full overflow-hidden rounded-full bg-surface-200 dark:bg-surface-700 [&::-webkit-progress-bar]:bg-surface-200 [&::-webkit-progress-value]:rounded-full [&::-webkit-progress-value]:bg-accent-500 [&::-moz-progress-bar]:rounded-full [&::-moz-progress-bar]:bg-accent-500"
+                    value={normalizedTask.progress}
+                    max={100}
+                    aria-label="Task progress"
+                  />
                   <div className="flex justify-between text-sm text-surface-500">
                     <span>{normalizedTask.progress}% complete</span>
                     {normalizedTask.progress === 100 && (

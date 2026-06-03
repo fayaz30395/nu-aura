@@ -66,10 +66,10 @@ export function ProfileSheet({employee, onClose, onViewFull, onEdit}: ProfileShe
   const joined = joinedDisplay(employee.joiningDate);
 
   const timeline = [
-    {icon: UserPlus, tone: 'var(--ok-fg)', text: `Joined ${employee.departmentName ?? 'the company'}`, when: joined},
-    {icon: TrendingUp, tone: 'var(--accent)', text: `Current role · ${employee.designation ?? '—'}`, when: 'Latest'},
-    {icon: Award, tone: 'var(--ok-fg)', text: 'Peer recognition received', when: '—'},
-    {icon: Palmtree, tone: 'var(--warn-fg)', text: 'Time-off history', when: '—'},
+    {icon: UserPlus, toneClass: 'bg-[var(--ok-fg)]', text: `Joined ${employee.departmentName ?? 'the company'}`, when: joined},
+    {icon: TrendingUp, toneClass: 'bg-[var(--accent)]', text: `Current role · ${employee.designation ?? '—'}`, when: 'Latest'},
+    {icon: Award, toneClass: 'bg-[var(--ok-fg)]', text: 'Peer recognition received', when: '—'},
+    {icon: Palmtree, toneClass: 'bg-[var(--warn-fg)]', text: 'Time-off history', when: '—'},
   ];
 
   const documents = ['Offer letter.pdf', 'ID verification.pdf', 'Tax form.pdf', 'Equipment policy.pdf'];
@@ -198,8 +198,7 @@ export function ProfileSheet({employee, onClose, onViewFull, onEdit}: ProfileShe
                   return (
                     <li key={i} className="relative pb-6 pl-5 last:pb-0">
                       <span
-                        className="absolute -left-[13px] top-0 grid h-[22px] w-[22px] place-items-center rounded-full text-white"
-                        style={{background: e.tone}}
+                        className={`absolute -left-[13px] top-0 grid h-[22px] w-[22px] place-items-center rounded-full text-white ${e.toneClass}`}
                       >
                         <Icon size={10} aria-hidden />
                       </span>

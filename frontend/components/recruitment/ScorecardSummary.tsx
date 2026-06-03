@@ -38,6 +38,15 @@ const RECOMMENDATION_CONFIG: Record<
   },
 };
 
+const CONSENSUS_STYLE: Record<string, string> = {
+  'No recommendations': 'text-[var(--text-muted)]',
+  'Strong consensus: Hire': 'text-[var(--success-600)]',
+  'Leaning: Hire': 'text-[var(--success-400)]',
+  'Strong consensus: Pass': 'text-[var(--danger-600)]',
+  'Leaning: Pass': 'text-[var(--warning-500)]',
+  'Mixed signals': 'text-[var(--warning-400)]',
+};
+
 // ==================== Helpers ====================
 
 function computeWeightedAverage(
@@ -51,23 +60,22 @@ function computeWeightedAverage(
 
 function getConsensusLabel(scorecards: InterviewScorecard[]): {
   label: string;
-  color: string;
 } {
   const recs = scorecards
     .map((s) => s.recommendation)
     .filter((r): r is ScorecardRecommendation => !!r);
 
-  if (recs.length === 0) return {label: 'No recommendations', color: 'var(--text-muted)'};
+  if (recs.length === 0) return {label: 'No recommendations'};
 
   const positive = recs.filter((r) => r === 'STRONG_YES' || r === 'YES').length;
   const negative = recs.filter((r) => r === 'STRONG_NO' || r === 'NO').length;
   const ratio = positive / recs.length;
 
-  if (ratio >= 0.75) return {label: 'Strong consensus: Hire', color: 'var(--success-600)'};
-  if (ratio >= 0.5) return {label: 'Leaning: Hire', color: 'var(--success-400)'};
-  if (negative / recs.length >= 0.75) return {label: 'Strong consensus: Pass', color: 'var(--danger-600)'};
-  if (negative / recs.length >= 0.5) return {label: 'Leaning: Pass', color: 'var(--warning-500)'};
-  return {label: 'Mixed signals', color: 'var(--warning-400)'};
+  if (ratio >= 0.75) return {label: 'Strong consensus: Hire'};
+  if (ratio >= 0.5) return {label: 'Leaning: Hire'};
+  if (negative / recs.length >= 0.75) return {label: 'Strong consensus: Pass'};
+  if (negative / recs.length >= 0.5) return {label: 'Leaning: Pass'};
+  return {label: 'Mixed signals'};
 }
 
 function renderStars(rating: number, size: number = 14) {
@@ -283,8 +291,7 @@ export function ScorecardSummary({scorecards}: ScorecardSummaryProps) {
             Consensus
           </p>
           <p
-            className="text-sm font-semibold mt-1"
-            style={{color: consensus.color}}
+            className={`text-sm font-semibold mt-1 ${CONSENSUS_STYLE[consensus.label] ?? 'text-[var(--text-muted)]'}`}
           >
             {consensus.label}
           </p>

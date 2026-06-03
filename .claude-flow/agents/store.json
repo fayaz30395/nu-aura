@@ -446,6 +446,34 @@
       "domain": "nu-aura-ui",
       "model": "inherit",
       "modelRoutedBy": "explicit"
+    },
+    "ui-editor-review": {
+      "agentId": "ui-editor-review",
+      "agentType": "reviewer",
+      "status": "idle",
+      "health": 1,
+      "taskCount": 0,
+      "config": {
+        "model": "sonnet"
+      },
+      "createdAt": "2026-06-03T00:21:32.357Z",
+      "domain": "frontend-design",
+      "model": "sonnet",
+      "modelRoutedBy": "explicit"
+    },
+    "ui-task-review": {
+      "agentId": "ui-task-review",
+      "agentType": "reviewer",
+      "status": "idle",
+      "health": 1,
+      "taskCount": 0,
+      "config": {
+        "model": "sonnet"
+      },
+      "createdAt": "2026-06-03T00:21:42.698Z",
+      "domain": "frontend-design",
+      "model": "sonnet",
+      "modelRoutedBy": "explicit"
     }
   },
   "version": "3.0.0"

@@ -467,12 +467,12 @@ function WeeklyHeatmap({rows, now}: {rows: HeatRow[]; now: Date}) {
       <Card className="overflow-hidden">
         <div className="flex flex-wrap items-center justify-between gap-4 px-5 pt-5">
           <div>
-            <h2 className="text-base font-semibold text-[var(--text-1)]">Team attendance</h2>
-            <p className="mt-0.5 text-xs text-[var(--text-3)]">{weekLabel}</p>
+            <h2 className="text-[15px] font-bold leading-tight text-[var(--text-1)]">Team attendance</h2>
+            <p className="mt-1 text-xs text-[var(--text-3)]">{weekLabel}</p>
           </div>
-          <div className="flex flex-wrap items-center gap-4">
+          <div className="flex flex-wrap items-center gap-3.5">
             {(['P', 'R', 'L', 'A'] as HeatCode[]).map((k) => (
-              <span key={k} className="inline-flex items-center gap-1.5 text-2xs text-[var(--text-3)]">
+              <span key={k} className="inline-flex items-center gap-1.5 text-[11.5px] text-[var(--text-3)]">
                 <span
                   className={`inline-block h-2 w-2 rounded-full ${HEAT_META[k].cellClass}`}
                 />
@@ -485,29 +485,32 @@ function WeeklyHeatmap({rows, now}: {rows: HeatRow[]; now: Date}) {
         <div className="mt-4 overflow-x-auto px-2 pb-3">
           <table className="w-full border-collapse text-sm">
             <thead>
-              <tr className="text-2xs uppercase tracking-wider text-[var(--text-3)]">
-                <th className="px-3 py-2 text-left font-medium">Employee</th>
+              <tr className="text-aura-micro text-[var(--text-3)]">
+                <th className="px-3 py-2.5 text-left font-bold">Employee</th>
                 {HEAT_DAYS.map((d) => (
-                  <th key={d} className="px-2 py-2 text-center font-medium">{d}</th>
+                  <th key={d} className="px-2 py-2.5 text-center font-bold">{d}</th>
                 ))}
-                <th className="px-2 py-2 text-center font-medium">Check-in</th>
-                <th className="px-2 py-2 text-center font-medium">Avg hrs</th>
+                <th className="px-2 py-2.5 text-center font-bold">Check-in</th>
+                <th className="px-2 py-2.5 text-center font-bold">Avg hrs</th>
               </tr>
             </thead>
             <tbody>
               {rows.map((row) => (
-                <tr key={row.name} className="border-t border-[var(--border-soft)]">
-                  <td className="px-3 py-2.5">
+                <tr
+                  key={row.name}
+                  className="h-[58px] border-t border-[var(--border-soft)] transition-colors hover:bg-[var(--surface-2)]"
+                >
+                  <td className="px-3">
                     <div className="flex items-center gap-2.5">
                       <HeatAvatar name={row.name} />
                       <span className="text-sm font-medium text-[var(--text-1)]">{row.name}</span>
                     </div>
                   </td>
                   {row.week.map((cell, i) => (
-                    <td key={`${row.name}-${i}`} className="px-2 py-2.5 text-center">
+                    <td key={`${row.name}-${i}`} className="px-2 text-center">
                       <span
                         title={HEAT_META[cell.code].label}
-                        className="num inline-grid h-[30px] w-[34px] place-items-center rounded-aura-sm border text-xs font-semibold"
+                        className="num inline-grid h-7 w-9 place-items-center rounded-aura-sm border text-xs font-semibold"
                         style={{
                           background: `color-mix(in srgb, ${HEAT_META[cell.code].color} ${cell.code === 'O' ? 100 : 18}%, transparent)`,
                           color: HEAT_META[cell.code].color,
@@ -518,8 +521,8 @@ function WeeklyHeatmap({rows, now}: {rows: HeatRow[]; now: Date}) {
                       </span>
                     </td>
                   ))}
-                  <td className="num px-2 py-2.5 text-center text-xs text-[var(--text-2)]">{row.checkIn}</td>
-                  <td className="num px-2 py-2.5 text-center text-xs font-semibold text-[var(--text-1)]">{row.avgHrs}</td>
+                  <td className="num px-2 text-center text-[12.5px] text-[var(--text-2)]">{row.checkIn}</td>
+                  <td className="num px-2 text-center text-[12.5px] font-semibold text-[var(--text-1)]">{row.avgHrs}</td>
                 </tr>
               ))}
             </tbody>

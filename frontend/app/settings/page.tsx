@@ -192,7 +192,7 @@ export default function SettingsPage() {
         <Reveal>
           <h1 className="text-aura-title">Settings</h1>
           <p className="mt-1 text-sm text-[var(--text-3)]">
-            Manage your account settings and preferences
+            Workspace configuration and personal preferences
           </p>
         </Reveal>
 
@@ -221,7 +221,7 @@ export default function SettingsPage() {
           {/* Section nav */}
           <Reveal>
             <Card padding="sm" className="lg:sticky lg:top-4">
-              <nav aria-label="Settings sections" className="flex flex-col gap-0.5">
+              <nav aria-label="Settings sections" className="flex flex-col gap-[2px]">
                 {SETTINGS_NAV.map((s) => {
                   const Icon = s.icon;
                   const isActive = section === s.id;
@@ -231,13 +231,13 @@ export default function SettingsPage() {
                       type="button"
                       aria-current={isActive ? 'page' : undefined}
                       onClick={() => setSection(s.id)}
-                      className={`flex items-center gap-2.5 rounded-[var(--r-control)] px-3 py-2 text-sm outline-none transition-colors duration-[var(--t-fast)] ease-[var(--ease)] focus-visible:shadow-[var(--sh-focus)] ${
+                      className={`flex items-center gap-2.5 rounded-[var(--r-control)] px-2.5 py-2.5 text-sm outline-none transition-colors duration-[var(--t-fast)] ease-[var(--ease)] focus-visible:shadow-[var(--sh-focus)] ${
                         isActive
                           ? 'bg-[var(--accent-soft)] font-semibold text-[var(--accent-text)]'
                           : 'font-medium text-[var(--text-2)] hover:bg-[var(--surface-hover)]'
                       }`}
                     >
-                      <span className="grid h-[17px] w-[17px] place-items-center">
+                      <span className="grid h-[17px] w-[17px] shrink-0 place-items-center">
                         <Icon className={`h-[17px] w-[17px] ${isActive ? 'text-[var(--accent-text)]' : 'text-[var(--text-3)]'}`}/>
                       </span>
                       <span className="flex-1 text-left">{s.label}</span>

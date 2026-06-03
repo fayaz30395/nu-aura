@@ -54,6 +54,7 @@ import {
 } from 'lucide-react';
 import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
 import {formatDateShort, formatDateTime, formatRelative} from '@/lib/utils/format/date';
+import {RequesterAvatar} from './_components/RequesterAvatar';
 
 const log = createLogger('ApprovalInbox');
 
@@ -102,16 +103,6 @@ const MODULE_ICON: Record<string, React.ComponentType<{className?: string}>> = {
 
 function getModuleIcon(module: string): React.ComponentType<{className?: string}> {
   return MODULE_ICON[module] ?? Inbox;
-}
-
-function getInitials(name: string | undefined): string {
-  if (!name) return '?';
-  return name
-    .split(' ')
-    .map((n) => n[0])
-    .join('')
-    .toUpperCase()
-    .slice(0, 2);
 }
 
 type StatusFilter = 'PENDING' | 'ALL';
@@ -798,16 +789,16 @@ function InboxListItem({
 
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
-          <span className="min-w-0 truncate text-sm font-bold text-[var(--text-1)]">
+          <span className="min-w-0 truncate text-[13px] font-bold text-[var(--text-1)]">
             {item.requesterName ?? 'Unknown'}
           </span>
           {item.submittedAt && (
-            <span className="num ml-auto flex-shrink-0 text-xs text-[var(--text-3)]">
+            <span className="num ml-auto flex-shrink-0 text-[11px] text-[var(--text-3)]">
               {formatRelative(item.submittedAt)}
             </span>
           )}
         </div>
-        <div className="mt-0.5 truncate text-[13px] text-[var(--text-2)]">
+        <div className="mt-[3px] truncate text-[12.5px] text-[var(--text-2)]">
           {item.title}
         </div>
         <div className="mt-2 flex items-center gap-2">
@@ -867,10 +858,7 @@ function DetailPane({
     <Card className="h-fit overflow-hidden p-0 lg:sticky lg:top-6">
       {/* Requester header */}
       <div className="flex items-center gap-3.5 border-b border-[var(--border)] px-6 py-5">
-        <span
-          className="grid h-12 w-12 flex-shrink-0 place-items-center rounded-full bg-[var(--accent-soft)] text-sm font-bold text-[var(--accent-text)]">
-          {getInitials(item.requesterName)}
-        </span>
+        <RequesterAvatar name={item.requesterName} size={48}/>
         <div className="min-w-0 flex-1">
           <div className="truncate font-display text-base font-bold text-[var(--text-1)]">
             {item.requesterName ?? 'Unknown'}
@@ -890,8 +878,8 @@ function DetailPane({
       {/* Body */}
       <div className="px-6 py-5">
         <div className="mb-3 flex items-center justify-between">
-          <h3 className="text-sm font-bold text-[var(--text-1)]">Request details</h3>
-          <Badge variant={isPending ? 'warning' : 'default'} size="sm">
+          <h3 className="text-[15px] font-bold leading-tight text-[var(--text-1)]">Request details</h3>
+          <Badge variant={isPending ? 'warning' : 'default'} size="sm" dot dotColor={isPending ? 'warning' : 'default'}>
             {isPending ? 'Pending' : item.status}
           </Badge>
         </div>

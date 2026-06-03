@@ -31,6 +31,7 @@ import {Badge} from '@/components/ui/Badge';
 import {StatusBadge} from '@/components/ui/StatusBadge';
 import {Card} from '@/components/ui/Card';
 import {Stat} from '@/components/ui/Stat';
+import type {StatDeltaDir} from '@/components/ui/Stat';
 import {Skeleton} from '@/components/ui/Skeleton';
 import {Donut} from '@/components/charts/aura';
 import {usePayrollRuns} from '@/lib/hooks/queries/usePayroll';
@@ -49,6 +50,23 @@ function formatCompactINR(amount: number): string {
 
 function formatINR0(amount: number): string {
   return formatCurrency(amount, 'INR', {maximumFractionDigits: 0});
+}
+
+function round1(n: number): number {
+  return Math.round(n * 10) / 10;
+}
+
+/** Signed percentage change of `current` vs `prior`; null when no prior basis exists. */
+function computePctDelta(current: number, prior: number): number | null {
+  if (!Number.isFinite(prior) || prior <= 0) return null;
+  return round1(((current - prior) / prior) * 100);
+}
+
+/** Map a signed numeric move to the Stat delta direction. */
+function deltaDirOf(n: number): StatDeltaDir {
+  if (n > 0) return 'up';
+  if (n < 0) return 'down';
+  return 'flat';
 }
 
 const STATUS_LABEL: Record<PayrollRunStatus, string> = {
@@ -99,6 +117,19 @@ export default function PayrollPage() {
     : 0;
   const priorRun = runs[1];
 
+  // Run-over-run deltas — derived strictly from real latest/prior figures, so the
+  // delta pills the design calls for carry truthful trend data (or stay absent).
+  const priorEmployees = priorRun?.totalEmployees ?? 0;
+  const priorAvgCost = priorRun && priorEmployees > 0 ? priorRun.totalGrossAmount / priorEmployees : 0;
+  const priorRate = priorRun && priorRun.totalGrossAmount > 0
+    ? (priorRun.totalDeductions / priorRun.totalGrossAmount) * 100
+    : 0;
+  const grossDelta = computePctDelta(latest?.totalGrossAmount ?? 0, priorRun?.totalGrossAmount ?? 0);
+  const avgCostDelta = computePctDelta(avgCostPerEmployee, priorAvgCost);
+  // Effective-rate move is reported in percentage points (not a % of a %).
+  const rateDelta = priorRun ? round1(effectiveRate - priorRate) : null;
+  const headcountDelta = priorRun ? latestEmployees - priorEmployees : null;
+
   return (
     <AppLayout activeMenuItem="payroll">
       <PageTransition className="mx-auto w-full max-w-7xl px-6 py-8 space-y-4">
@@ -133,6 +164,8 @@ export default function PayrollPage() {
                   iconTone="accent"
                   label="YTD gross"
                   value={formatCompactINR(ytdGross)}
+                  delta={grossDelta != null ? `${Math.abs(grossDelta)}%` : undefined}
+                  deltaDir={grossDelta != null ? deltaDirOf(grossDelta) : undefined}
                   foot={`Across ${runs.length} ${runs.length === 1 ? 'run' : 'runs'}`}
                 />
               </Card>
@@ -144,6 +177,8 @@ export default function PayrollPage() {
                   iconTone="success"
                   label="Avg cost / employee"
                   value={formatCompactINR(avgCostPerEmployee)}
+                  delta={avgCostDelta != null ? `${Math.abs(avgCostDelta)}%` : undefined}
+                  deltaDir={avgCostDelta != null ? deltaDirOf(avgCostDelta) : undefined}
                   foot="Latest run, fully loaded"
                 />
               </Card>
@@ -155,6 +190,8 @@ export default function PayrollPage() {
                   iconTone="warning"
                   label="Effective deduction rate"
                   value={`${effectiveRate.toFixed(1)}%`}
+                  delta={rateDelta != null ? `${rateDelta > 0 ? '+' : ''}${rateDelta}pp` : undefined}
+                  deltaDir={rateDelta != null ? deltaDirOf(rateDelta) : undefined}
                   foot="Statutory + deductions"
                 />
               </Card>
@@ -166,6 +203,12 @@ export default function PayrollPage() {
                   iconTone="info"
                   label="On this run"
                   value={latestEmployees.toLocaleString('en-IN')}
+                  delta={
+                    headcountDelta != null && headcountDelta !== 0
+                      ? `${headcountDelta > 0 ? '+' : ''}${headcountDelta.toLocaleString('en-IN')}`
+                      : undefined
+                  }
+                  deltaDir={headcountDelta != null ? deltaDirOf(headcountDelta) : undefined}
                   foot={
                     priorRun
                       ? `vs. prior ${priorRun.totalEmployees.toLocaleString('en-IN')}`

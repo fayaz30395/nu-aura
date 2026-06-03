@@ -13,7 +13,7 @@
 
 .aura-auth-form {
   width: 100%;
-  max-width: 384px;
+  max-width: 372px;
 }
 
 .aura-auth-form__h {
@@ -102,7 +102,7 @@
   text-align: center;
   font-size: 13px;
   color: var(--text-3);
-  margin: 22px 0 0;
+  margin: 26px 0 0;
 }
 
 .aura-auth-legal {

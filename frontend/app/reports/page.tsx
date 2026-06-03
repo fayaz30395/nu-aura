@@ -433,7 +433,26 @@ function ScheduleTh({children}: {children: React.ReactNode}) {
   );
 }
 
-// Deterministic initials avatar (no shared Avatar primitive in this wave).
+// Deterministic per-name avatar tint (no shared Avatar primitive in this wave).
+// Mirrors the prototype's colorFor() name-hash but stays token-driven: the palette
+// maps onto the chart/product CSS vars so both light + dark stay in parity.
+const AVATAR_TINTS = [
+  'var(--chart-1)',
+  'var(--prod-hire)',
+  'var(--prod-grow)',
+  'var(--prod-fluence)',
+  'var(--chart-2)',
+  'var(--chart-3)',
+] as const;
+
+function tintFor(name: string): string {
+  let h = 0;
+  for (let i = 0; i < name.length; i++) {
+    h = (h * 31 + name.charCodeAt(i)) >>> 0;
+  }
+  return AVATAR_TINTS[h % AVATAR_TINTS.length];
+}
+
 function OwnerAvatar({name}: {name: string}) {
   const initials = name
     .trim()
@@ -441,9 +460,14 @@ function OwnerAvatar({name}: {name: string}) {
     .slice(0, 2)
     .map((p) => p[0]?.toUpperCase() ?? '')
     .join('');
+  const tint = tintFor(name);
   return (
     <span
-      className="grid h-[26px] w-[26px] shrink-0 place-items-center rounded-full bg-[var(--accent-soft)] text-[10px] font-bold text-[var(--accent-text)]"
+      className="grid h-[26px] w-[26px] shrink-0 place-items-center rounded-full text-[10px] font-bold"
+      style={{
+        background: `color-mix(in srgb, ${tint} 16%, transparent)`,
+        color: tint,
+      }}
       aria-hidden="true"
     >
       {initials}

@@ -154,6 +154,13 @@ export default function TeamAttendancePage() {
     {name: 'Leave', value: stats.onLeave, fill: 'var(--chart-info)'},
   ].filter(item => item.value > 0);
 
+  const chartDotClass: Record<string, string> = {
+    'var(--chart-success)': 'bg-[var(--chart-success)]',
+    'var(--chart-danger)': 'bg-[var(--chart-danger)]',
+    'var(--chart-accent)': 'bg-[var(--chart-accent)]',
+    'var(--chart-info)': 'bg-[var(--chart-info)]',
+  };
+
   const exportToCSV = () => {
     const headers = ['Employee ID', 'Check-In', 'Check-Out', 'Work Hours', 'Status', 'Late (min)', 'Source'];
     const rows = filteredAndSortedRecords.map(record => [
@@ -433,10 +440,7 @@ export default function TeamAttendancePage() {
                 <div className="flex flex-wrap gap-4 mt-6 justify-center">
                   {chartData.map((item) => (
                     <div key={item.name} className="flex items-center gap-2">
-                      <div
-                        className="w-3 h-3 rounded-full"
-                        style={{backgroundColor: item.fill}}
-                      />
+                      <div className={`h-3 w-3 rounded-full ${chartDotClass[item.fill] ?? 'bg-[var(--text-3)]'}`}/>
                       <span className="text-xs text-[var(--text-secondary)]">
                         {item.name} ({item.value})
                       </span>

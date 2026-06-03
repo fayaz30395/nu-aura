@@ -54,6 +54,17 @@ const PRESET_COLORS = [
   {value: '#30a46c', label: 'Teal'},
 ];
 
+const COLOR_CLASSES: Record<string, string> = {
+  '#3e63dd': 'bg-[var(--accent)]',
+  '#e5484d': 'bg-[var(--danger-600)]',
+  '#46a758': 'bg-[var(--success-600)]',
+  '#f76b15': 'bg-[var(--warning-600)]',
+  '#6e56cf': 'bg-[var(--chart-4)]',
+  '#0091ff': 'bg-[var(--chart-1)]',
+  '#d6409f': 'bg-[var(--chart-5)]',
+  '#30a46c': 'bg-[var(--success-700)]',
+};
+
 // ─── Preset Icons (emojis) ──────────────────────────────────────
 
 const PRESET_ICONS = [
@@ -148,8 +159,7 @@ export function SpaceFormDrawer({
       title={
         <div className="flex items-center gap-2">
           <div
-            className="flex items-center justify-center w-8 h-8 rounded-lg text-white text-sm"
-            style={{backgroundColor: selectedColor || '#3e63dd'}}
+            className={`flex h-8 w-8 items-center justify-center rounded-lg text-sm text-white ${COLOR_CLASSES[selectedColor || '#3e63dd'] ?? 'bg-[var(--accent)]'}`}
           >
             {selectedIcon || '📁'}
           </div>

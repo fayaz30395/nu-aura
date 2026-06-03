@@ -42,6 +42,14 @@ const TenureBarChart = dynamic(
 );
 
 const COLORS = chartColors.palette();
+const LEGEND_COLORS = [
+  'bg-[var(--chart-1)]',
+  'bg-[var(--chart-2)]',
+  'bg-[var(--chart-3)]',
+  'bg-[var(--chart-4)]',
+  'bg-[var(--chart-5)]',
+  'bg-[var(--chart-6)]',
+];
 
 export default function OrganizationHealthPage() {
   const router = useRouter();
@@ -205,7 +213,7 @@ export default function OrganizationHealthPage() {
               <div className="flex justify-center gap-4 mt-4">
                 {Object.entries(diversity.genderDistribution).map(([name, _], idx) => (
                   <div key={name} className="flex items-center gap-1.5">
-                    <div className="w-3 h-3 rounded-full" style={{backgroundColor: COLORS[idx % COLORS.length]}}/>
+                    <div className={`h-3 w-3 rounded-full ${LEGEND_COLORS[idx % LEGEND_COLORS.length]}`}/>
                     <span className="text-xs text-[var(--text-secondary)]">{name}</span>
                   </div>
                 ))}

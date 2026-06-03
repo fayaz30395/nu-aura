@@ -59,6 +59,19 @@ import {
 
 const lowlight = createLowlight(common);
 
+const HEIGHT_CLASS: Record<string, string> = {
+  '300px': 'min-h-[300px]',
+  '360px': 'min-h-[360px]',
+  '400px': 'min-h-[400px]',
+  '480px': 'min-h-[480px]',
+  '600px': 'max-h-[600px]',
+  '720px': 'max-h-[720px]',
+};
+
+function getHeightClass(value: string, fallback: string): string {
+  return HEIGHT_CLASS[value] ?? fallback;
+}
+
 interface RichTextEditorProps {
   content: Record<string, unknown>;
   onChange: (content: Record<string, unknown>) => void;
@@ -203,8 +216,7 @@ export default function RichTextEditor({
   if (!editor) {
     return (
       <div
-        className="w-full rounded-lg border border-[var(--border-strong)] bg-[var(--bg-card)] dark:border-surface-700 flex items-center justify-center"
-        style={{minHeight}}
+        className={`flex w-full items-center justify-center rounded-lg border border-[var(--border-strong)] bg-[var(--bg-card)] dark:border-surface-700 ${getHeightClass(minHeight, 'min-h-[300px]')}`}
       >
         <div className="text-[var(--text-muted)]">Loading editor...</div>
       </div>
@@ -598,8 +610,7 @@ export default function RichTextEditor({
 
       {/* Editor */}
       <div
-        className="tiptap-editor rounded-b-lg border border-t-0 border-[var(--border-strong)] bg-[var(--bg-card)] dark:border-surface-700"
-        style={{minHeight, maxHeight, overflow: 'auto'}}
+        className={`tiptap-editor overflow-auto rounded-b-lg border border-t-0 border-[var(--border-strong)] bg-[var(--bg-card)] dark:border-surface-700 ${getHeightClass(minHeight, 'min-h-[300px]')} ${getHeightClass(maxHeight, 'max-h-[600px]')}`}
       >
         <EditorContent editor={editor}/>
       </div>

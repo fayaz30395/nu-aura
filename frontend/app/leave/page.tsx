@@ -219,6 +219,9 @@ function LeaveAvatar({name}: {name: string}) {
 // ── My balance (4 Rings from real LeaveBalance data) ─────────────────────────
 const RING_COLORS = ['var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)'];
 
+// Annual balances reset on Jan 1 of the following year — shown in the card sub.
+const RESET_LABEL = `Jan ${new Date().getFullYear() + 1}`;
+
 function BalanceRings({
   loading,
   balances,
@@ -237,8 +240,8 @@ function BalanceRings({
     <Reveal delay={0.12}>
       <Card className="p-5">
         <div className="mb-4">
-          <h2 className="text-base font-semibold text-[var(--text-1)]">My balance</h2>
-          <p className="mt-0.5 text-xs text-[var(--text-3)]">Resets next cycle</p>
+          <h2 className="text-[15px] font-bold leading-tight text-[var(--text-1)]">My balance</h2>
+          <p className="mt-1 text-xs text-[var(--text-3)]">Resets {RESET_LABEL}</p>
         </div>
 
         {loading ? (
@@ -320,7 +323,7 @@ function PendingRequests({
     <Reveal delay={0.18}>
       <Card className="p-5">
         <div className="mb-1 flex items-center justify-between gap-4">
-          <h2 className="text-base font-semibold text-[var(--text-1)]">Pending requests</h2>
+          <h2 className="text-[15px] font-bold leading-tight text-[var(--text-1)]">Pending requests</h2>
           <span className="num inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-[var(--warn-bg)] px-1.5 text-2xs font-bold text-[var(--warn-fg)]">
             {pendingCount}
           </span>
@@ -433,10 +436,10 @@ function LeaveCalendar({
       <Card className="p-5">
         <div className="mb-4 flex items-center justify-between gap-4">
           <div>
-            <h2 className="text-base font-semibold text-[var(--text-1)]">
+            <h2 className="text-[15px] font-bold leading-tight text-[var(--text-1)]">
               {formatDateFns(viewMonth, 'MMMM yyyy')}
             </h2>
-            <p className="mt-0.5 text-xs text-[var(--text-3)]">Your time off this month</p>
+            <p className="mt-1 text-xs text-[var(--text-3)]">Team time off &amp; remote days</p>
           </div>
           <div className="flex items-center gap-1.5">
             <Button
@@ -460,7 +463,7 @@ function LeaveCalendar({
 
         <div className="grid grid-cols-7 gap-1.5">
           {dows.map((d) => (
-            <div key={d} className="text-2xs font-medium uppercase tracking-wider text-[var(--text-3)] pb-1">
+            <div key={d} className="text-aura-micro text-[var(--text-3)] pb-1">
               {d}
             </div>
           ))}

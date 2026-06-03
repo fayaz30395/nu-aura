@@ -1049,8 +1049,10 @@ export default function DashboardPage() {
           <Card padding="md" className="min-w-0">
             <div className="mb-3 flex items-start justify-between gap-4">
               <div className="min-w-0">
-                <h2 className="text-base font-semibold text-[var(--text-1)]">Headcount growth</h2>
-                <p className="text-xs text-[var(--text-3)]">Net employees over the selected window</p>
+                <h2 className="text-[15px] font-bold text-[var(--text-1)]">Headcount growth</h2>
+                <p className="text-xs text-[var(--text-3)]">
+                  Net employees over the last {rangeWindow} months
+                </p>
               </div>
               <Segmented
                 aria-label="Headcount trend range"
@@ -1081,7 +1083,7 @@ export default function DashboardPage() {
           <Card padding="md" className="min-w-0">
             <div className="mb-2 flex items-center justify-between gap-4">
               <div>
-                <h2 className="text-base font-semibold text-[var(--text-1)]">Attendance</h2>
+                <h2 className="text-[15px] font-bold text-[var(--text-1)]">Attendance</h2>
                 <p className="text-xs text-[var(--text-3)]">Today, live</p>
               </div>
               <span className="inline-flex items-center gap-1.5 rounded-aura-full bg-[var(--ok-bg)] px-2 py-0.5 text-xs font-semibold text-[var(--ok-fg)]">

@@ -87,6 +87,28 @@
       "updatedAt": "2026-06-02T20:28:45.074Z",
       "pid": 3572,
       "terminationReason": "host process 3572 exited"
+    },
+    "swarm-1780446079024-hb8jtr": {
+      "swarmId": "swarm-1780446079024-hb8jtr",
+      "topology": "hierarchical-mesh",
+      "maxAgents": 4,
+      "status": "running",
+      "agents": [
+        "ui-editor-review",
+        "ui-task-review"
+      ],
+      "tasks": [],
+      "config": {
+        "topology": "hierarchical-mesh",
+        "maxAgents": 4,
+        "strategy": "specialized",
+        "communicationProtocol": "message-bus",
+        "autoScaling": true,
+        "consensusMechanism": "majority"
+      },
+      "createdAt": "2026-06-03T00:21:19.024Z",
+      "updatedAt": "2026-06-03T00:21:19.024Z",
+      "pid": 35460
     }
   },
   "version": "3.0.0"

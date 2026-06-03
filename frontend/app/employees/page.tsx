@@ -157,6 +157,17 @@ export default function EmployeesPage() {
     return ['All', ...fromData];
   }, [employees]);
 
+  // Distinct locations across the loaded page — drives the "· N locations"
+  // subtitle (visual only; does not alter fetching).
+  const locationCount = useMemo(() => {
+    const locs = new Set<string>();
+    for (const e of employees) {
+      const loc = e.city ?? e.country;
+      if (loc) locs.add(loc);
+    }
+    return locs.size;
+  }, [employees]);
+
   const visibleEmployees = useMemo(
     () => (deptFilter === 'All' ? employees : employees.filter((e) => e.departmentName === deptFilter)),
     [employees, deptFilter],
@@ -367,9 +378,15 @@ export default function EmployeesPage() {
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <h1 className="text-aura-title text-[var(--text-1)]">Employees</h1>
-            <p className="mt-1 text-sm text-[var(--text-3)]">
+            <p className="mt-1.5 text-[13.5px] text-[var(--text-3)]">
               <span className="num">{totalElements.toLocaleString()}</span> people
               {' '}across <span className="num">{deptOptions.length - 1}</span> departments
+              {locationCount > 0 && (
+                <>
+                  {' · '}
+                  <span className="num">{locationCount}</span> location{locationCount === 1 ? '' : 's'}
+                </>
+              )}
             </p>
           </div>
           <div className="flex items-center gap-2">

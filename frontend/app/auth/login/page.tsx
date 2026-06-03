@@ -820,8 +820,9 @@ function LoginPage() {
               {/* or continue with */}
               <div className="aura-auth-or"><span>or continue with</span></div>
 
-              {/* SSO providers */}
+              {/* SSO providers — prototype order: SSO · Google · Microsoft */}
               <div className="aura-auth-sso">
+                <Button type="button" variant="ghost" className="w-full" disabled>SSO</Button>
                 {isGoogleAuthEnabled ? (
                   <Button
                     type="button"
@@ -839,7 +840,6 @@ function LoginPage() {
                     Google
                   </Button>
                 )}
-                <Button type="button" variant="ghost" className="w-full" disabled>SSO</Button>
                 <Button type="button" variant="ghost" className="w-full" disabled>Microsoft</Button>
               </div>
 
