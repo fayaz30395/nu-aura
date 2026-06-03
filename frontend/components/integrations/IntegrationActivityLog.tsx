@@ -34,13 +34,13 @@ export function IntegrationActivityLog({connectorId, pageSize = 20}: Integration
   const getStatusBadgeColor = (status: string) => {
     switch (status) {
       case 'SUCCESS':
-        return 'bg-success-50 dark:bg-success-900/20 text-success-700 dark:text-success-300';
+        return 'bg-[var(--ok-bg)] text-[var(--ok-fg)]';
       case 'FAILED':
-        return 'bg-danger-50 dark:bg-danger-900/20 text-danger-700 dark:text-danger-300';
+        return 'bg-[var(--err-bg)] text-[var(--err-fg)]';
       case 'SKIPPED':
-        return 'bg-warning-50 dark:bg-warning-900/20 text-warning-700 dark:text-warning-300';
+        return 'bg-[var(--warn-bg)] text-[var(--warn-fg)]';
       default:
-        return 'bg-[var(--bg-surface)] text-[var(--text-secondary)]';
+        return 'bg-[var(--surface)] text-[var(--text-2)]';
     }
   };
 
@@ -92,46 +92,46 @@ export function IntegrationActivityLog({connectorId, pageSize = 20}: Integration
       </div>
 
       {/* Events Table */}
-      <div className="rounded-lg border border-[var(--border-main)] overflow-hidden">
+      <div className="rounded-[var(--r-lg)] border border-[var(--border)] overflow-hidden">
         <table className="w-full text-sm">
           <thead>
-          <tr className="bg-[var(--bg-secondary)] border-b border-[var(--border-main)]">
-            <th className="px-4 py-2 text-left font-semibold text-[var(--text-primary)]">Event</th>
-            <th className="px-4 py-2 text-left font-semibold text-[var(--text-primary)]">Entity</th>
-            <th className="px-4 py-2 text-left font-semibold text-[var(--text-primary)]">Status</th>
-            <th className="px-4 py-2 text-left font-semibold text-[var(--text-primary)]">Duration</th>
-            <th className="px-4 py-2 text-left font-semibold text-[var(--text-primary)]">Timestamp</th>
+          <tr className="bg-[var(--surface-aura-2)] border-b border-[var(--border)]">
+            <th className="px-4 py-2 text-left font-semibold text-[var(--text-1)] text-xs uppercase tracking-[0.1em]">Event</th>
+            <th className="px-4 py-2 text-left font-semibold text-[var(--text-1)] text-xs uppercase tracking-[0.1em]">Entity</th>
+            <th className="px-4 py-2 text-left font-semibold text-[var(--text-1)] text-xs uppercase tracking-[0.1em]">Status</th>
+            <th className="px-4 py-2 text-left font-semibold text-[var(--text-1)] text-xs uppercase tracking-[0.1em]">Duration</th>
+            <th className="px-4 py-2 text-left font-semibold text-[var(--text-1)] text-xs uppercase tracking-[0.1em]">Timestamp</th>
           </tr>
           </thead>
-          <tbody className="divide-y divide-[var(--border-main)]">
+          <tbody className="divide-y divide-[var(--border)]">
           {data.content.map((event: IntegrationEventLog) => (
-            <tr key={event.id} className="hover:bg-[var(--bg-secondary)] transition-colors">
+            <tr key={event.id} className="hover:bg-[var(--surface-hover)] transition-colors">
               <td className="px-4 py-4">
-                <code className="text-xs bg-[var(--bg-secondary)] px-2 py-1 rounded text-[var(--text-primary)]">
+                <code className="text-xs bg-[var(--surface-aura-2)] px-2 py-1 rounded-[var(--r-xs)] text-[var(--text-1)] font-mono">
                   {event.eventType}
                 </code>
               </td>
-              <td className="px-4 py-4 text-[var(--text-secondary)]">
+              <td className="px-4 py-4 text-[var(--text-2)]">
                 {event.entityType && event.entityId ? (
-                  <span className="text-xs">
+                  <span className="text-xs num">
                       {event.entityType} ({event.entityId.substring(0, 8)}...)
                     </span>
                 ) : (
-                  <span className="text-xs text-[var(--text-secondary)]">—</span>
+                  <span className="text-xs text-[var(--text-2)]">—</span>
                 )}
               </td>
               <td className="px-4 py-4">
                 <div className="flex items-center gap-2">
                   {getStatusIcon(event.status)}
-                  <span className={`text-xs font-medium px-2 py-1 rounded ${getStatusBadgeColor(event.status)}`}>
+                  <span className={`text-xs font-medium px-2 py-1 rounded-[var(--r-xs)] ${getStatusBadgeColor(event.status)}`}>
                       {event.status}
                     </span>
                 </div>
               </td>
-              <td className="px-4 py-4 text-[var(--text-secondary)]">
+              <td className="px-4 py-4 text-[var(--text-2)] num">
                 {event.durationMs ? `${event.durationMs}ms` : '—'}
               </td>
-              <td className="px-4 py-4 text-[var(--text-secondary)] text-xs">
+              <td className="px-4 py-4 text-[var(--text-2)] text-xs num">
                 {formatDate(event.createdAt)}
               </td>
             </tr>
@@ -143,8 +143,11 @@ export function IntegrationActivityLog({connectorId, pageSize = 20}: Integration
       {/* Error Message */}
       {data.content.some((e: IntegrationEventLog) => e.status === 'FAILED') && (
         <div
-          className="p-4 rounded-lg bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800">
-          <p className="text-sm text-danger-700 dark:text-danger-300">
+          className="p-4 rounded-[var(--r-md)] bg-[var(--err-bg)] border border-[var(--err-bd)]"
+          role="alert"
+          aria-live="assertive"
+        >
+          <p className="text-sm text-[var(--err-fg)]">
             Some events failed. Check error messages above for details.
           </p>
         </div>
@@ -153,7 +156,7 @@ export function IntegrationActivityLog({connectorId, pageSize = 20}: Integration
       {/* Pagination */}
       {data.totalPages > 1 && (
         <div className="row-between pt-4">
-          <p className="text-body-secondary">
+          <p className="text-[var(--text-2)] num">
             Page {page + 1} of {data.totalPages} ({data.totalElements} total)
           </p>
           <div className="flex gap-2">

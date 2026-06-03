@@ -3,6 +3,7 @@
 import {useMemo} from 'react';
 import {useRouter} from 'next/navigation';
 import {AppLayout} from '@/components/layout';
+import {PageTransition, Reveal, Stagger} from '@/components/motion';
 import {useMyPendingEscalations, useSlaConfigs, useSLADashboard} from '@/lib/hooks/queries/useHelpdeskSla';
 import {
   AlertTriangle,
@@ -43,195 +44,162 @@ export default function HelpdeskPage() {
       label: 'SLA Compliance',
       value: getStatValue(() => `${dashboard.slaComplianceRate.toFixed(1)}%`),
       icon: CheckCircle2,
-      color: 'text-success-600',
-      bg: 'bg-success-50 dark:bg-success-950/20',
+      tone: 'ok',
+      bg: 'bg-[--ok-bg]',
     },
     {
       label: 'Avg First Response',
       value: getStatValue(() => `${dashboard.averageFirstResponseMinutes} min`),
       icon: Clock,
-      color: 'text-accent-600',
-      bg: 'bg-accent-50 dark:bg-accent-950/20',
+      tone: 'accent',
+      bg: 'bg-[--accent-soft]',
     },
     {
       label: 'Avg Resolution',
       value: getStatValue(() => `${dashboard.averageResolutionMinutes} min`),
       icon: BarChart3,
-      color: 'text-accent-800',
-      bg: 'bg-accent-250 dark:bg-accent-900/20',
+      tone: 'info',
+      bg: 'bg-[--accent-soft]',
     },
     {
       label: 'Avg CSAT',
       value: getStatValue(() => `${dashboard.averageCSAT.toFixed(1)} / 5`),
       icon: Headphones,
-      color: 'text-warning-600',
-      bg: 'bg-warning-50 dark:bg-warning-950/20',
+      tone: 'warn',
+      bg: 'bg-[--warn-bg]',
     },
   ];
 
   return (
-    <AppLayout>
-      <div className="space-y-6">
-        <div>
-          <h1 className="text-xl font-bold text-[var(--text-primary)]">Helpdesk</h1>
-          <p className="text-body-muted mt-1">Manage SLA policies, escalations, and support metrics</p>
-        </div>
+    <PageTransition>
+      <AppLayout>
+        <div className="space-y-6">
+          <Reveal>
+            <div>
+              <h1 className="text-aura-title text-[--text-1]">Helpdesk</h1>
+              <p className="text-[--text-2] mt-2">Manage SLA policies, escalations, and support metrics</p>
+            </div>
+          </Reveal>
 
-        {/* Stat Cards — admin-only SLA metrics (DEF-56) */}
-        {isHelpdeskAdmin && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {statCards.map((card) => (
+          {/* Stat Cards — admin-only SLA metrics (DEF-56) */}
+          {isHelpdeskAdmin && (
+            <Stagger>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {statCards.map((card) => (
+                  <Reveal key={card.label}>
+                    <div
+                      className="bg-[--surface] border border-[--border-soft] rounded-[--r-lg] p-4 shadow-[--sh-sm] hover:shadow-[--sh-md] hover:translate-y-[-1px] transition-all duration-[--t-base]"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={`p-2 rounded-[--r-md] ${card.bg}`}>
+                          <card.icon className="w-5 h-5 text-[--accent]"/>
+                        </div>
+                        <div>
+                          <p className="text-[--text-3] text-aura-micro">{card.label}</p>
+                          <p className="text-aura-stat text-[--text-1] num">
+                            {card.value}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </Reveal>
+                ))}
+              </div>
+            </Stagger>
+          )}
+
+          {/* Pending Escalations */}
+          {escalations.length > 0 && (
+            <Reveal>
               <div
-                key={card.label}
-                className="card-aura p-4"
-              >
-                <div className="flex items-center gap-4">
-                  <div className={`p-2 rounded-lg ${card.bg}`}>
-                    <card.icon className={`w-5 h-5 ${card.color}`}/>
-                  </div>
-                  <div>
-                    <p className="text-caption">{card.label}</p>
-                    <p className="text-lg font-semibold text-[var(--text-primary)]">
-                      {card.value}
-                    </p>
-                  </div>
+                className="bg-[--warn-bg] border border-[--warn-bd] rounded-[--r-lg] p-4">
+                <div className="flex items-center gap-2 mb-4">
+                  <AlertTriangle className="w-5 h-5 text-[--warn-fg]"/>
+                  <h2 className="text-[--text-1] font-700">
+                    Pending Escalations <span className="num">({escalations.length})</span>
+                  </h2>
+                </div>
+                <div className="space-y-2">
+                  {escalations.filter(Boolean).slice(0, 5).map((esc) => (
+                    <div
+                      key={esc.id}
+                      className="flex items-center justify-between bg-[--surface] rounded-[--r-md] px-3 py-2 hover:bg-[--surface-hover] transition-colors duration-[--t-base]"
+                    >
+                      <div>
+                        <span className="text-sm font-600 text-[--text-1] num">
+                          Ticket #{esc.ticketId?.slice(0, 8) ?? '—'}
+                        </span>
+                        <span className="ml-2 text-aura-micro text-[--text-3]">
+                          {esc.escalationLevel ?? '-'}: {esc.escalationReason ? esc.escalationReason.replace(/_/g, ' ') : '-'}
+                        </span>
+                      </div>
+                      <span className="text-aura-micro text-[--text-3]">
+                        {formatDate(esc.escalatedAt)}
+                      </span>
+                    </div>
+                  ))}
                 </div>
               </div>
-            ))}
-          </div>
-        )}
+            </Reveal>
+          )}
 
-        {/* Pending Escalations */}
-        {escalations.length > 0 && (
-          <div
-            className="bg-warning-50 dark:bg-warning-950/20 border border-warning-200 dark:border-warning-800 rounded-xl p-4">
-            <div className="flex items-center gap-2 mb-4">
-              <AlertTriangle className="w-5 h-5 text-warning-600"/>
-              <h2 className="font-semibold text-warning-800 dark:text-warning-300">
-                Pending Escalations ({escalations.length})
-              </h2>
-            </div>
-            <div className="space-y-2">
-              {escalations.filter(Boolean).slice(0, 5).map((esc) => (
-                <div
-                  key={esc.id}
-                  className="row-between bg-[var(--bg-surface)] rounded-lg px-4 py-2"
-                >
-                  <div>
-                    <span className="text-sm font-medium text-[var(--text-primary)]">
-                      Ticket #{esc.ticketId?.slice(0, 8) ?? '—'}
-                    </span>
-                    <span className="ml-2 text-caption">
-                      {esc.escalationLevel ?? '-'}: {esc.escalationReason ? esc.escalationReason.replace(/_/g, ' ') : '-'}
-                    </span>
-                  </div>
-                  <span className="text-caption">
-                    {formatDate(esc.escalatedAt)}
-                  </span>
-                </div>
+          {/* Quick Actions */}
+          <Stagger>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {[
+                {route: '/helpdesk/tickets', icon: Ticket, label: 'Tickets', desc: 'View and manage support tickets'},
+                {route: '/helpdesk/sla', icon: Settings, label: 'SLA Policies', desc: `${activeSlaCount} active policies`},
+                {route: '/helpdesk/sla', icon: Bell, label: 'Escalations', desc: `${escalations.length} pending`},
+                {route: '/helpdesk/knowledge-base', icon: BookOpen, label: 'Knowledge Base', desc: 'Find answers to common questions'},
+                {route: '/helpdesk/sla', icon: BarChart3, label: 'SLA Dashboard', desc: 'View detailed metrics'},
+              ].map(({route, icon: Icon, label, desc}) => (
+                <Reveal key={label}>
+                  <button
+                    onClick={() => router.push(route)}
+                    className="flex items-center justify-between bg-[--surface] border border-[--border-soft] rounded-[--r-lg] p-4 hover:shadow-[--sh-md] hover:-translate-y-1 transition-all duration-[--t-base] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--accent] focus-visible:ring-offset-2 dark:focus-visible:ring-offset-[--bg-app]"
+                  >
+                    <div className="flex items-center gap-4 text-left">
+                      <Icon className="w-5 h-5 text-[--accent]"/>
+                      <div>
+                        <p className="font-600 text-[--text-1]">{label}</p>
+                        <p className="text-aura-micro text-[--text-3]">{desc}</p>
+                      </div>
+                    </div>
+                    <ArrowRight className="w-4 h-4 text-[--text-3] flex-shrink-0"/>
+                  </button>
+                </Reveal>
               ))}
             </div>
-          </div>
-        )}
+          </Stagger>
 
-        {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <button
-            onClick={() => router.push('/helpdesk/tickets')}
-            className="row-between card-interactive p-4 text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-          >
-            <div className="flex items-center gap-4">
-              <Ticket className="w-5 h-5 text-accent-700 dark:text-accent-400"/>
-              <div>
-                <p className="font-medium text-[var(--text-primary)]">Tickets</p>
-                <p className="text-caption">View and manage support tickets</p>
+          {/* Summary Stats */}
+          {dashboard && (
+            <Reveal>
+              <div className="bg-[--surface] border border-[--border-soft] rounded-[--r-lg] p-4 shadow-[--sh-sm]">
+                <h2 className="text-[--text-1] font-700 mb-6 text-aura-micro">OVERVIEW</h2>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="text-center">
+                    <p className="text-aura-stat text-[--ok-fg] num">{dashboard.slaMetCount}</p>
+                    <p className="text-aura-micro text-[--text-3] mt-2">SLAs Met</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-aura-stat text-[--err-fg] num">{dashboard.slaBreachedCount}</p>
+                    <p className="text-aura-micro text-[--text-3] mt-2">SLAs Breached</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-aura-stat text-[--accent] num">{dashboard.firstContactResolutions}</p>
+                    <p className="text-aura-micro text-[--text-3] mt-2">First Contact Resolutions</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-aura-stat text-[--accent] num">{activeSlaCount}</p>
+                    <p className="text-aura-micro text-[--text-3] mt-2">Active SLA Policies</p>
+                  </div>
+                </div>
               </div>
-            </div>
-            <ArrowRight className="w-4 h-4 text-[var(--text-muted)]"/>
-          </button>
-
-          <button
-            onClick={() => router.push('/helpdesk/sla')}
-            className="row-between card-interactive p-4 text-left"
-          >
-            <div className="flex items-center gap-4">
-              <Settings className="w-5 h-5 text-[var(--text-muted)]"/>
-              <div>
-                <p className="font-medium text-[var(--text-primary)]">SLA Policies</p>
-                <p className="text-caption">{activeSlaCount} active policies</p>
-              </div>
-            </div>
-            <ArrowRight className="w-4 h-4 text-[var(--text-muted)]"/>
-          </button>
-
-          <button
-            onClick={() => router.push('/helpdesk/sla')}
-            className="row-between card-interactive p-4 text-left"
-          >
-            <div className="flex items-center gap-4">
-              <Bell className="w-5 h-5 text-[var(--text-muted)]"/>
-              <div>
-                <p className="font-medium text-[var(--text-primary)]">Escalations</p>
-                <p className="text-caption">{escalations.length} pending</p>
-              </div>
-            </div>
-            <ArrowRight className="w-4 h-4 text-[var(--text-muted)]"/>
-          </button>
-
-          <button
-            onClick={() => router.push('/helpdesk/knowledge-base')}
-            className="row-between card-interactive p-4 text-left"
-          >
-            <div className="flex items-center gap-4">
-              <BookOpen className="w-5 h-5 text-[var(--text-muted)]"/>
-              <div>
-                <p className="font-medium text-[var(--text-primary)]">Knowledge Base</p>
-                <p className="text-caption">Find answers to common questions</p>
-              </div>
-            </div>
-            <ArrowRight className="w-4 h-4 text-[var(--text-muted)]"/>
-          </button>
-
-          <button
-            onClick={() => router.push('/helpdesk/sla')}
-            className="row-between card-interactive p-4 text-left"
-          >
-            <div className="flex items-center gap-4">
-              <BarChart3 className="w-5 h-5 text-[var(--text-muted)]"/>
-              <div>
-                <p className="font-medium text-[var(--text-primary)]">SLA Dashboard</p>
-                <p className="text-caption">View detailed metrics</p>
-              </div>
-            </div>
-            <ArrowRight className="w-4 h-4 text-[var(--text-muted)]"/>
-          </button>
+            </Reveal>
+          )}
         </div>
-
-        {/* Summary Stats */}
-        {dashboard && (
-          <div className="card-aura p-4">
-            <h2 className="font-semibold text-[var(--text-primary)] mb-4">Overview</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-              <div>
-                <p className="text-xl font-bold text-success-600">{dashboard.slaMetCount}</p>
-                <p className="text-caption">SLAs Met</p>
-              </div>
-              <div>
-                <p className="text-xl font-bold text-danger-600">{dashboard.slaBreachedCount}</p>
-                <p className="text-caption">SLAs Breached</p>
-              </div>
-              <div>
-                <p className="text-xl font-bold text-accent-600">{dashboard.firstContactResolutions}</p>
-                <p className="text-caption">First Contact Resolutions</p>
-              </div>
-              <div>
-                <p className="text-xl font-bold text-accent-800">{activeSlaCount}</p>
-                <p className="text-caption">Active SLA Policies</p>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-    </AppLayout>
+      </AppLayout>
+    </PageTransition>
   );
 }

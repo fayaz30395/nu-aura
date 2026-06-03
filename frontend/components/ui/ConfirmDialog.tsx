@@ -225,7 +225,7 @@ export function ConfirmDialog({
                   className="block text-sm font-medium text-[var(--text-secondary)] mb-2"
                 >
                   {reason.label}
-                  {reason.required && <span className="text-danger-500 ml-1">*</span>}
+                  {reason.required && <span className="text-danger-500 ml-1" aria-label="required">*</span>}
                 </label>
                 <textarea
                   id="confirm-dialog-reason"
@@ -234,22 +234,29 @@ export function ConfirmDialog({
                   rows={reason.rows ?? 3}
                   placeholder={reason.placeholder}
                   disabled={loading}
+                  required={reason.required}
+                  aria-invalid={reasonInvalid}
                   className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-input)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 />
               </div>
             )}
             <div className="flex gap-2">
               <button ref={cancelButtonRef}
+                      type="button"
                       onClick={onClose}
                       disabled={loading}
-                      className="press-scale flex-1 px-4 py-2.5 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-card-hover)] disabled:opacity-50 disabled:cursor-not-allowed font-medium text-[var(--text-secondary)] transition-[color,background-color,transform] duration-[var(--motion-fast)] ease-[var(--ease-standard)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--border-focus)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                      aria-label={`${cancelText} button`}
+                      className="press-scale flex-1 px-4 py-2.5 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-card-hover)] disabled:opacity-50 disabled:cursor-not-allowed font-medium text-[var(--text-secondary)] transition-[color,background-color,transform] duration-[var(--motion-fast)] ease-[var(--ease-standard)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--ring-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 {cancelText}
               </button>
               <button
+                type="button"
                 onClick={handleConfirmClick}
                 disabled={loading || reasonInvalid}
-                className={`press-scale flex-1 px-4 py-2.5 ${style.buttonClass} text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-[background-color,transform] duration-[var(--motion-fast)] ease-[var(--ease-standard)] focus:outline-none focus:ring-2 focus:ring-offset-2 flex items-center justify-center gap-2`}
+                aria-label={`${confirmText} button`}
+                aria-busy={loading}
+                className={`press-scale flex-1 px-4 py-2.5 ${style.buttonClass} text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-[background-color,transform] duration-[var(--motion-fast)] ease-[var(--ease-standard)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--ring-primary)] flex items-center justify-center gap-2`}
               >
                 {loading ? (
                   <>

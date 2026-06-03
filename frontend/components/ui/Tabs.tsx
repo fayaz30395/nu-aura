@@ -50,11 +50,28 @@ export function Tabs<T extends string = string>({tabs, value, onChange, classNam
             type="button"
             role="tab"
             aria-selected={isActive}
+            aria-controls={`tabpanel-${t.id}`}
+            id={`tab-${t.id}`}
+            tabIndex={isActive ? 0 : -1}
             onClick={() => onChange(t.id)}
+            onKeyDown={(e) => {
+              // ArrowLeft/ArrowRight for tab navigation
+              if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+                e.preventDefault();
+                const currentIdx = tabs.findIndex(tab => tab.id === value);
+                if (e.key === 'ArrowLeft') {
+                  const prevIdx = (currentIdx - 1 + tabs.length) % tabs.length;
+                  onChange(tabs[prevIdx].id);
+                } else {
+                  const nextIdx = (currentIdx + 1) % tabs.length;
+                  onChange(tabs[nextIdx].id);
+                }
+              }
+            }}
             className={cn(
               '-mb-px inline-flex items-center gap-1.5 border-b-2 px-4 py-2.5 text-sm font-semibold',
               'transition-[color,border-color] duration-[var(--t-fast)] ease-[var(--ease)] outline-none',
-              'focus-visible:shadow-[var(--sh-focus)]',
+              'focus-visible:shadow-[var(--sh-focus)] focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--ring-primary)]',
               isActive
                 ? 'border-[var(--accent)] text-[var(--accent-text)]'
                 : 'border-transparent text-[var(--text-3)] hover:text-[var(--text-1)]'

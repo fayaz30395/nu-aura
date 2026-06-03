@@ -429,11 +429,10 @@ function CalendarContent() {
 
   if (isLoading && !accessToken) {
     return (
-      <div
-        className="page-shell-centered fade-slide-up auth-delay-20">
+      <div className="page-shell-centered fade-slide-up auth-delay-20">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-accent-200 border-t-accent-500 rounded-full animate-spin"/>
-          <p className="text-[var(--text-muted)] font-medium">Loading NU-Calendar...</p>
+          <div className="w-12 h-12 border-4 border-[var(--accent-soft)] border-t-[var(--accent)] rounded-full animate-spin"/>
+          <p className="text-[var(--text-3)] font-medium">Loading NU-Calendar...</p>
         </div>
       </div>
     );
@@ -446,15 +445,14 @@ function CalendarContent() {
     >
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 animate-in fade-in slide-in-from-top-4 duration-500">
           <div className="flex items-center gap-4">
-            <div
-              className="w-12 h-12 rounded-xl bg-accent-100 dark:bg-accent-500/10 text-accent-600 dark:text-accent-400 flex items-center justify-center">
+            <div className="w-12 h-12 rounded-[var(--r-lg)] bg-[var(--accent-soft)] text-[var(--accent)] flex items-center justify-center hover-lift">
               <CalendarIcon className="h-6 w-6"/>
             </div>
             <div>
-              <h1 className="text-xl font-bold text-[var(--text-primary)]">NU-Calendar</h1>
-              <p className="text-body-muted">Your Google Calendar events</p>
+              <h1 className="text-aura-title text-[var(--text-1)]">NU-Calendar</h1>
+              <p className="text-sm text-[var(--text-3)]">Your Google Calendar events</p>
             </div>
           </div>
           {!accessToken ? (
@@ -497,12 +495,12 @@ function CalendarContent() {
 
         {/* Error State */}
         {error && (
-          <Card className="border-danger-200 dark:border-danger-900 bg-danger-50 dark:bg-danger-950/30">
+          <Card className="border-[var(--err-bd)] bg-[var(--err-bg)] animate-in fade-in slide-in-from-top-2 duration-300">
             <CardContent className="py-4">
-              <div className="flex items-center gap-4 text-danger-600 dark:text-danger-400">
-                <AlertCircle className="h-5 w-5"/>
-                <span>{error}</span>
-                <Button variant="ghost" size="sm" onClick={handleConnectClick} className="ml-auto">
+              <div className="flex items-center gap-4 text-[var(--err-fg)]">
+                <AlertCircle className="h-5 w-5 flex-shrink-0"/>
+                <span className="text-sm">{error}</span>
+                <Button variant="ghost" size="sm" onClick={handleConnectClick} className="ml-auto text-[var(--err-fg)] hover:bg-[var(--err-bg)]">
                   Try Again
                 </Button>
               </div>
@@ -512,19 +510,17 @@ function CalendarContent() {
 
         {!accessToken ? (
           /* Connect Card */
-          <Card className="border-2 border-dashed border-[var(--border-main)] dark:border-[var(--border-main)]">
+          <Card className="border-2 border-dashed border-[var(--border-soft)] animate-in fade-in slide-in-from-bottom-4 duration-500">
             <CardContent className="py-16">
               <div className="text-center">
-                <div
-                  className="w-20 h-20 rounded-full bg-accent-250 dark:bg-accent-900/30 flex items-center justify-center mx-auto mb-6">
-                  <CalendarIcon className="h-10 w-10 text-accent-800 dark:text-accent-600"/>
+                <div className="w-20 h-20 rounded-full bg-[var(--accent-soft)] flex items-center justify-center mx-auto mb-6">
+                  <CalendarIcon className="h-10 w-10 text-[var(--accent)]"/>
                 </div>
-                <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
+                <h2 className="text-lg font-semibold text-[var(--text-1)] mb-2">
                   Connect to Google Calendar
                 </h2>
-                <p className="text-[var(--text-muted)] mb-6 max-w-md mx-auto">
-                  View and manage your Google Calendar events directly within NULogic.
-                  Schedule meetings, track appointments, and stay organized.
+                <p className="text-sm text-[var(--text-2)] mb-6 max-w-md mx-auto leading-relaxed">
+                  View and manage your Google Calendar events directly within NULogic. Schedule meetings, track appointments, and stay organized.
                 </p>
                 <Button
                   variant="primary"
@@ -542,40 +538,40 @@ function CalendarContent() {
             {/* Calendar Header */}
             <Card>
               <CardContent className="py-4">
-                <div className="row-between">
+                <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
-                    <Button variant="outline" size="sm" onClick={goToToday}>
+                    <Button variant="outline" size="sm" onClick={goToToday} className="focus-visible:ring-2 focus-visible:ring-[var(--ring)]">
                       Today
                     </Button>
                     <div className="flex items-center gap-1">
                       <button
                         onClick={goToPrevious}
-                        className="p-2 rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                        className="p-2 rounded-[var(--r-control)] hover:bg-[var(--surface-hover)] cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
                         aria-label="Previous month"
                       >
-                        <ChevronLeft className="h-5 w-5"/>
+                        <ChevronLeft className="h-5 w-5 text-[var(--text-2)]"/>
                       </button>
                       <button
                         onClick={goToNext}
-                        className="p-2 rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                        className="p-2 rounded-[var(--r-control)] hover:bg-[var(--surface-hover)] cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
                         aria-label="Next month"
                       >
-                        <ChevronRight className="h-5 w-5"/>
+                        <ChevronRight className="h-5 w-5 text-[var(--text-2)]"/>
                       </button>
                     </div>
-                    <h2 className="text-xl font-semibold text-[var(--text-primary)]">
+                    <h2 className="text-lg font-semibold text-[var(--text-1)]">
                       {formatMonthYear(currentDate)}
                     </h2>
                   </div>
-                  <div className="flex items-center border border-[var(--border-main)] rounded-lg overflow-hidden">
+                  <div className="flex items-center border border-[var(--border)] rounded-[var(--r-control)] overflow-hidden">
                     {(['month', 'week', 'day', 'agenda'] as ViewMode[]).map((mode) => (
                       <button
                         key={mode}
                         onClick={() => setViewMode(mode)}
-                        className={`px-4 py-1.5 text-sm font-medium capitalize transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
+                        className={`px-3 py-1.5 text-xs font-medium uppercase tracking-wide transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 ${
                           viewMode === mode
-                            ? 'bg-accent-50 dark:bg-accent-950 text-accent-700 dark:text-accent-400'
-                            : 'text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
+                            ? 'bg-[var(--accent-soft)] text-[var(--accent)]'
+                            : 'text-[var(--text-3)] hover:bg-[var(--surface-hover)]'
                         }`}
                       >
                         {mode}
@@ -591,11 +587,11 @@ function CalendarContent() {
               <Card>
                 <CardContent className="p-0">
                   {/* Day Headers */}
-                  <div className="grid grid-cols-7 border-b border-[var(--border-main)]">
+                  <div className="grid grid-cols-7 border-b border-[var(--border-soft)]">
                     {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
                       <div
                         key={day}
-                        className="p-4 text-center text-sm font-medium text-[var(--text-muted)]"
+                        className="p-4 text-center text-aura-micro text-[var(--text-3)]"
                       >
                         {day}
                       </div>
@@ -617,17 +613,17 @@ function CalendarContent() {
                           role="button"
                           tabIndex={0}
                           aria-label={`Create event on ${day.toDateString()}`}
-                          className={`min-h-[120px] p-2 border-b border-r border-[var(--border-main)] cursor-pointer hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-inset ${
-                            !isCurrentMonth ? 'bg-[var(--bg-secondary)]/50' : ''
+                          className={`min-h-[120px] p-2 border-b border-r border-[var(--border-soft)] cursor-pointer hover:bg-[var(--surface-hover)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-inset ${
+                            !isCurrentMonth ? 'bg-[var(--surface-sunken)]' : ''
                           }`}
                         >
                           <div
                             className={`w-7 h-7 flex items-center justify-center rounded-full text-sm font-medium mb-1 ${
                               isToday
-                                ? 'bg-accent-500 text-white'
+                                ? 'bg-[var(--accent)] text-white'
                                 : isCurrentMonth
-                                  ? 'text-[var(--text-primary)]'
-                                  : 'text-[var(--text-muted)]'
+                                  ? 'text-[var(--text-1)]'
+                                  : 'text-[var(--text-3)]'
                             }`}
                           >
                             {day.getDate()}
@@ -652,7 +648,7 @@ function CalendarContent() {
                                 role="button"
                                 tabIndex={0}
                                 aria-label={`View event ${event.summary}`}
-                                className={`px-1.5 py-0.5 rounded text-xs text-white truncate cursor-pointer hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-1 ${getEventColor(event)}`}
+                                className={`px-1.5 py-0.5 rounded-sm text-xs text-white truncate cursor-pointer hover-lift focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white ${getEventColor(event)}`}
                               >
                                 {event.start.dateTime && (
                                   <span className="mr-1">{formatTime(event.start.dateTime)}</span>
@@ -677,10 +673,11 @@ function CalendarContent() {
             {/* Agenda View */}
             {viewMode === 'agenda' && (
               <Card>
-                <CardContent className="divide-y divide-surface-100 dark:divide-surface-800">
+                <CardContent className="divide-y divide-[var(--border-soft)]">
                   {events.length === 0 ? (
-                    <div className="py-12 text-center text-[var(--text-muted)]">
-                      No events found for this period
+                    <div className="py-12 text-center text-[var(--text-3)]">
+                      <CalendarIcon className="h-8 w-8 mx-auto mb-2 opacity-40"/>
+                      <p className="text-sm">No events found for this period</p>
                     </div>
                   ) : (
                     events.map((event) => (
@@ -700,15 +697,15 @@ function CalendarContent() {
                         role="button"
                         tabIndex={0}
                         aria-label={`View event ${event.summary}`}
-                        className="p-4 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-inset"
+                        className="p-4 hover:bg-[var(--surface-hover)] hover-lift cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-inset"
                       >
                         <div className="flex items-start gap-4">
                           <div className={`w-1 h-full min-h-[60px] rounded-full ${getEventColor(event)}`}/>
                           <div className="flex-1 min-w-0">
-                            <h3 className="font-medium text-[var(--text-primary)]">
+                            <h3 className="font-semibold text-[var(--text-1)]">
                               {event.summary}
                             </h3>
-                            <div className="flex items-center gap-4 mt-1 text-body-muted">
+                            <div className="flex items-center gap-4 mt-1 text-sm text-[var(--text-2)]">
                               <div className="flex items-center gap-1">
                                 <Clock className="h-4 w-4"/>
                                 {formatEventDate(event)}
@@ -752,11 +749,11 @@ function CalendarContent() {
             {(viewMode === 'week' || viewMode === 'day') && (
               <Card>
                 <CardContent className="py-16 text-center">
-                  <CalendarIcon className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4"/>
-                  <h3 className="text-lg font-medium text-[var(--text-primary)] mb-2">
+                  <CalendarIcon className="h-12 w-12 text-[var(--text-3)] mx-auto mb-4 opacity-40"/>
+                  <h3 className="text-base font-semibold text-[var(--text-1)] mb-2">
                     {viewMode === 'week' ? 'Week View' : 'Day View'}
                   </h3>
-                  <p className="text-[var(--text-muted)]">
+                  <p className="text-sm text-[var(--text-3)]">
                     Coming soon. Use Month or Agenda view for now.
                   </p>
                 </CardContent>
@@ -766,35 +763,39 @@ function CalendarContent() {
             {/* Upcoming Events */}
             <Card>
               <CardContent className="p-4">
-                <h3 className="font-semibold text-[var(--text-primary)] mb-4">
+                <h3 className="font-semibold text-[var(--text-1)] mb-4 text-sm">
                   Upcoming Events
                 </h3>
-                <div className="space-y-4">
-                  {events.slice(0, 5).map((event) => (
-                    <button
-                      type="button"
-                      key={event.id}
-                      onClick={() => {
-                        setSelectedEvent(event);
-                        setShowEventModal(true);
-                      }}
-                      className="w-full text-left flex items-center gap-4 p-4 rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                    >
-                      <div className={`w-2 h-10 rounded-full ${getEventColor(event)}`}/>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-medium text-[var(--text-primary)] truncate">
-                          {event.summary}
-                        </p>
-                        <p className="text-body-muted truncate">
-                          {formatEventDate(event)}
-                        </p>
-                      </div>
-                      {event.hangoutLink && (
-                        <Video className="h-4 w-4 text-accent-500"/>
-                      )}
-                    </button>
-                  ))}
-                </div>
+                {events.length === 0 ? (
+                  <p className="text-sm text-[var(--text-3)] py-4">No upcoming events</p>
+                ) : (
+                  <div className="space-y-2">
+                    {events.slice(0, 5).map((event) => (
+                      <button
+                        type="button"
+                        key={event.id}
+                        onClick={() => {
+                          setSelectedEvent(event);
+                          setShowEventModal(true);
+                        }}
+                        className="w-full text-left flex items-center gap-3 p-3 rounded-[var(--r-md)] hover:bg-[var(--surface-hover)] hover-lift cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
+                      >
+                        <div className={`w-2 h-8 rounded-full flex-shrink-0 ${getEventColor(event)}`}/>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-[var(--text-1)] truncate text-sm">
+                            {event.summary}
+                          </p>
+                          <p className="text-xs text-[var(--text-3)] truncate">
+                            {formatEventDate(event)}
+                          </p>
+                        </div>
+                        {event.hangoutLink && (
+                          <Video className="h-4 w-4 text-[var(--accent)] flex-shrink-0" aria-label="Has video conference"/>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </>

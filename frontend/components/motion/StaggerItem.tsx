@@ -10,22 +10,27 @@
  * parent drives the propagation).
  */
 import {forwardRef, type ReactNode} from 'react';
-import {motion} from 'framer-motion';
+import {motion, type HTMLMotionProps} from 'framer-motion';
 import {cn} from '@/lib/utils';
 import {staggerItem, useReducedMotionSafe} from '@/lib/animation';
 
-interface StaggerItemProps {
+interface StaggerItemProps extends Omit<HTMLMotionProps<'div'>, 'children' | 'ref'> {
   children: ReactNode;
-  className?: string;
 }
 
 export const StaggerItem = forwardRef<HTMLDivElement, StaggerItemProps>(
-  function StaggerItem({children, className}, ref) {
+  function StaggerItem({children, className, variants: customVariants, ...motionProps}, ref) {
     const {pick} = useReducedMotionSafe();
     const variants = pick(staggerItem);
 
     return (
-      <motion.div ref={ref} className={cn(className)} variants={variants}>
+      <motion.div
+        ref={ref}
+        className={cn(className)}
+        variants={customVariants ?? variants}
+        {...motionProps}
+        role={motionProps.role || undefined}
+      >
         {children}
       </motion.div>
     );

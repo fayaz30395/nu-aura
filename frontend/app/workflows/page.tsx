@@ -27,6 +27,7 @@ import {
   XCircle,
 } from 'lucide-react';
 import {useDebounce} from '@/lib/hooks/useDebounce';
+import {PageTransition, Reveal, Stagger} from '@/components/motion';
 
 // ── Entity Type Labels & Colors ──────────────────────────────────────────────
 
@@ -36,68 +37,68 @@ const ENTITY_TYPE_CONFIG: Record<
 > = {
   LEAVE_REQUEST: {
     label: 'Leave',
-    bg: 'bg-accent-100 dark:bg-accent-900/30',
-    text: 'text-accent-700 dark:text-accent-300'
+    bg: 'bg-[var(--accent-soft)]',
+    text: 'text-[var(--accent-text)]'
   },
   EXPENSE_CLAIM: {
     label: 'Expense',
-    bg: 'bg-warning-100 dark:bg-warning-900/30',
-    text: 'text-warning-700 dark:text-warning-300'
+    bg: 'bg-[var(--warn-bg)]',
+    text: 'text-[var(--warn-fg)]'
   },
   TRAVEL_REQUEST: {
     label: 'Travel',
-    bg: 'bg-success-100 dark:bg-success-900/30',
-    text: 'text-success-700 dark:text-success-300'
+    bg: 'bg-[var(--ok-bg)]',
+    text: 'text-[var(--ok-fg)]'
   },
   LOAN_REQUEST: {
     label: 'Loan',
-    bg: 'bg-warning-100 dark:bg-warning-900/30',
-    text: 'text-warning-700 dark:text-warning-300'
+    bg: 'bg-[var(--warn-bg)]',
+    text: 'text-[var(--warn-fg)]'
   },
   ASSET_REQUEST: {
     label: 'Asset',
-    bg: 'bg-surface-100 dark:bg-surface-800/30',
-    text: 'text-surface-700 dark:text-surface-300'
+    bg: 'bg-[var(--surface-hover)]',
+    text: 'text-[var(--text-2)]'
   },
   TIMESHEET: {
     label: 'Timesheet',
-    bg: 'bg-accent-100 dark:bg-accent-900/30',
-    text: 'text-accent-700 dark:text-accent-300'
+    bg: 'bg-[var(--accent-soft)]',
+    text: 'text-[var(--accent-text)]'
   },
   RESIGNATION: {
     label: 'Resignation',
-    bg: 'bg-danger-100 dark:bg-danger-900/30',
-    text: 'text-danger-700 dark:text-danger-300'
+    bg: 'bg-[var(--err-bg)]',
+    text: 'text-[var(--err-fg)]'
   },
   SALARY_REVISION: {
     label: 'Salary Revision',
-    bg: 'bg-accent-100 dark:bg-accent-900/30',
-    text: 'text-accent-700 dark:text-accent-300'
+    bg: 'bg-[var(--accent-soft)]',
+    text: 'text-[var(--accent-text)]'
   },
   PROMOTION: {
     label: 'Promotion',
-    bg: 'bg-success-100 dark:bg-success-900/30',
-    text: 'text-success-700 dark:text-success-300'
+    bg: 'bg-[var(--ok-bg)]',
+    text: 'text-[var(--ok-fg)]'
   },
   TRANSFER: {
     label: 'Transfer',
-    bg: 'bg-accent-100 dark:bg-accent-900/30',
-    text: 'text-accent-700 dark:text-accent-300'
+    bg: 'bg-[var(--accent-soft)]',
+    text: 'text-[var(--accent-text)]'
   },
   ONBOARDING: {
     label: 'Onboarding',
-    bg: 'bg-success-100 dark:bg-success-900/30',
-    text: 'text-success-700 dark:text-success-300'
+    bg: 'bg-[var(--ok-bg)]',
+    text: 'text-[var(--ok-fg)]'
   },
   OFFBOARDING: {
     label: 'Offboarding',
-    bg: 'bg-danger-100 dark:bg-danger-900/30',
-    text: 'text-danger-700 dark:text-danger-300'
+    bg: 'bg-[var(--err-bg)]',
+    text: 'text-[var(--err-fg)]'
   },
   DOCUMENT_REQUEST: {
     label: 'Document',
-    bg: 'bg-accent-100 dark:bg-accent-900/30',
-    text: 'text-accent-700 dark:text-accent-300'
+    bg: 'bg-[var(--accent-soft)]',
+    text: 'text-[var(--accent-text)]'
   },
   POLICY_ACKNOWLEDGMENT: {
     label: 'Policy',
@@ -203,150 +204,153 @@ export default function WorkflowListPage() {
   if (!canView) {
     return (
       <AppLayout activeMenuItem="workflows">
-        <div className="flex h-full items-center justify-center p-8">
-          <EmptyState
-            title="Access denied"
-            description="You do not have permission to view workflow definitions."
-            icon={<XCircle className="h-12 w-12 text-danger-500"/>}
-          />
-        </div>
+        <PageTransition>
+          <div className="flex h-full items-center justify-center p-8">
+            <EmptyState
+              title="Access denied"
+              description="You do not have permission to view workflow definitions."
+              icon={<XCircle className="h-12 w-12 text-[var(--err-fg)]"/>}
+            />
+          </div>
+        </PageTransition>
       </AppLayout>
     );
   }
 
   return (
     <AppLayout activeMenuItem="workflows">
-      <motion.div
-        initial={{opacity: 0, y: 20}}
-        animate={{opacity: 1, y: 0}}
-        transition={{duration: 0.25, ease: 'easeOut'}}
-        className="space-y-6 p-6"
-      >
-        {/* Header */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)]">
-              Workflow Builder
-            </h1>
-            <p className="mt-1 text-body-muted">
-              Create and manage approval workflow definitions.
-            </p>
-          </div>
-          {canManage && (
-            <Button
-              variant="primary"
-              onClick={() => router.push('/workflows/new')}
-            >
-              <Plus className="mr-2 h-4 w-4"/>
-              Create Workflow
-            </Button>
-          )}
-        </div>
+      <PageTransition>
+        <div className="space-y-6 p-4 sm:p-6">
+          {/* Header */}
+          <Reveal>
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h1 className="text-aura-title text-[var(--text-1)]">
+                  Workflow Builder
+                </h1>
+                <p className="mt-1 text-[var(--text-2)]">
+                  Create and manage approval workflow definitions.
+                </p>
+              </div>
+              {canManage && (
+                <Button
+                  variant="primary"
+                  onClick={() => router.push('/workflows/new')}
+                  className="hover-lift focus-visible"
+                >
+                  <Plus className="mr-2 h-4 w-4"/>
+                  Create Workflow
+                </Button>
+              )}
+            </div>
+          </Reveal>
 
         {/* Filters */}
-        <div
-          className="flex flex-col gap-4 rounded-xl border border-[var(--border-main)] bg-[var(--bg-secondary)] p-4 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]/40 md:flex-row md:items-center md:justify-between">
-          <div className="flex flex-wrap items-center gap-4">
-            {/* Status toggle */}
-            <div
-              className="inline-flex rounded-full bg-[var(--bg-secondary)] p-1 text-xs dark:bg-[var(--bg-secondary)]">
-              {(['ALL', 'ACTIVE', 'INACTIVE'] as StatusFilter[]).map((s) => (
-                <button
-                  key={s}
-                  type="button"
-                  onClick={() => {
-                    setStatusFilter(s);
-                    setPage(0);
-                  }}
-                  className={`rounded-full px-4 py-1 font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
-                    statusFilter === s
-                      ? 'bg-accent-700 text-white'
-                      : 'text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] dark:text-[var(--text-muted)]'
-                  }`}
-                >
-                  {s === 'ALL' ? 'All' : s === 'ACTIVE' ? 'Active' : 'Inactive'}
-                </button>
-              ))}
+        <Reveal>
+          <div className="flex flex-col gap-4 rounded-[var(--r-lg)] border border-[var(--border-soft)] bg-[var(--surface)] p-4 md:flex-row md:items-center md:gap-6">
+            <div className="flex flex-wrap items-center gap-3">
+              {/* Status toggle */}
+              <div className="inline-flex rounded-full bg-[var(--surface-hover)] p-1 text-xs">
+                {(['ALL', 'ACTIVE', 'INACTIVE'] as StatusFilter[]).map((s) => (
+                  <button
+                    key={s}
+                    type="button"
+                    onClick={() => {
+                      setStatusFilter(s);
+                      setPage(0);
+                    }}
+                    className={`rounded-full px-3 py-1.5 font-medium transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] ${
+                      statusFilter === s
+                        ? 'bg-[var(--accent)] text-white shadow-[var(--sh-sm)]'
+                        : 'text-[var(--text-2)] hover:bg-[var(--surface-2)]'
+                    }`}
+                  >
+                    {s === 'ALL' ? 'All' : s === 'ACTIVE' ? 'Active' : 'Inactive'}
+                  </button>
+                ))}
+              </div>
+
+              {/* Entity type filter */}
+              <select
+                value={entityTypeFilter}
+                onChange={(e) => {
+                  setEntityTypeFilter(e.target.value as WorkflowEntityType | 'ALL');
+                  setPage(0);
+                }}
+                className="rounded-[var(--r-control)] border border-[var(--border-soft)] bg-[var(--bg-app)] px-3 py-1.5 text-sm text-[var(--text-1)] focus:border-[var(--accent)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:ring-offset-1"
+              >
+                <option value="ALL">All types</option>
+                {Object.entries(ENTITY_TYPE_CONFIG).map(([key, cfg]) => (
+                  <option key={key} value={key}>
+                    {cfg.label}
+                  </option>
+                ))}
+              </select>
             </div>
 
-            {/* Entity type filter */}
-            <select
-              value={entityTypeFilter}
-              onChange={(e) => {
-                setEntityTypeFilter(e.target.value as WorkflowEntityType | 'ALL');
-                setPage(0);
-              }}
-              className="rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-1.5 text-sm text-[var(--text-primary)] focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
-            >
-              <option value="ALL">All types</option>
-              {Object.entries(ENTITY_TYPE_CONFIG).map(([key, cfg]) => (
-                <option key={key} value={key}>
-                  {cfg.label}
-                </option>
-              ))}
-            </select>
+            {/* Search */}
+            <div className="relative flex-1 md:w-64">
+              <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-[var(--text-3)]"/>
+              <input
+                type="text"
+                placeholder="Search workflows..."
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  setPage(0);
+                }}
+                className="w-full rounded-[var(--r-control)] border border-[var(--border-soft)] bg-[var(--bg-app)] py-2 pl-9 pr-4 text-sm text-[var(--text-1)] placeholder:text-[var(--text-3)] focus:border-[var(--accent)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:ring-offset-1 transition-all"
+              />
+            </div>
           </div>
-
-          {/* Search */}
-          <div className="relative w-full md:w-64">
-            <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-[var(--text-muted)]"/>
-            <input
-              type="text"
-              placeholder="Search workflows..."
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setPage(0);
-              }}
-              className="input-aura w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] py-2 pl-9 pr-4 text-sm text-[var(--text-primary)] shadow-[var(--shadow-card)] placeholder:text-[var(--text-muted)] focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
-            />
-          </div>
-        </div>
+        </Reveal>
 
         {/* Content */}
         {isLoading ? (
-          <div className="space-y-4">
-            {[...Array(5)].map((_, i) => (
-              <Skeleton key={i} className="h-20 rounded-xl"/>
-            ))}
-          </div>
+          <Stagger>
+            <div className="space-y-3">
+              {[...Array(5)].map((_, i) => (
+                <motion.div key={i}>
+                  <Skeleton className="h-16 rounded-[var(--r-lg)]"/>
+                </motion.div>
+              ))}
+            </div>
+          </Stagger>
         ) : filteredItems.length === 0 ? (
-          <EmptyState
-            title="No workflows found"
-            description={
-              search || statusFilter !== 'ALL' || entityTypeFilter !== 'ALL'
-                ? 'Try adjusting your filters.'
-                : 'Create your first approval workflow to get started.'
-            }
-            icon={<GitBranch className="h-12 w-12"/>}
-          />
+          <Reveal>
+            <EmptyState
+              title="No workflows found"
+              description={
+                search || statusFilter !== 'ALL' || entityTypeFilter !== 'ALL'
+                  ? 'Try adjusting your filters.'
+                  : 'Create your first approval workflow to get started.'
+              }
+              icon={<GitBranch className="h-12 w-12"/>}
+            />
+          </Reveal>
         ) : (
-          <>
+          <Reveal>
             {/* Table */}
-            <div className="overflow-hidden rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)]">
+            <div className="overflow-hidden rounded-[var(--r-lg)] border border-[var(--border-soft)] bg-[var(--surface)]">
               <table className="w-full text-left text-sm">
                 <thead>
-                <tr className="border-b border-[var(--border-main)] bg-[var(--bg-secondary)]/50">
-                  <th className="px-4 py-2 font-medium text-[var(--text-secondary)]">Name</th>
-                  <th className="hidden px-4 py-2 font-medium text-[var(--text-secondary)] sm:table-cell">Type</th>
-                  <th className="hidden px-4 py-2 font-medium text-[var(--text-secondary)] md:table-cell">Workflow
-                    Type
-                  </th>
-                  <th className="px-4 py-2 text-center font-medium text-[var(--text-secondary)]">Status</th>
-                  <th
-                    className="hidden px-4 py-2 text-right font-medium text-[var(--text-secondary)] lg:table-cell">Steps
-                  </th>
-                  <th className="hidden px-4 py-2 font-medium text-[var(--text-secondary)] lg:table-cell">Created</th>
-                  <th className="px-4 py-2 text-right font-medium text-[var(--text-secondary)]">Actions</th>
+                <tr className="border-b border-[var(--border-soft)] bg-[var(--surface-hover)]">
+                  <th className="px-4 py-3 font-medium text-aura-micro text-[var(--text-2)]">Name</th>
+                  <th className="hidden px-4 py-3 font-medium text-aura-micro text-[var(--text-2)] sm:table-cell">Type</th>
+                  <th className="hidden px-4 py-3 font-medium text-aura-micro text-[var(--text-2)] md:table-cell">Workflow Type</th>
+                  <th className="px-4 py-3 text-center font-medium text-aura-micro text-[var(--text-2)]">Status</th>
+                  <th className="hidden px-4 py-3 text-right font-medium text-aura-micro text-[var(--text-2)] lg:table-cell">Steps</th>
+                  <th className="hidden px-4 py-3 font-medium text-aura-micro text-[var(--text-2)] lg:table-cell">Created</th>
+                  <th className="px-4 py-3 text-right font-medium text-aura-micro text-[var(--text-2)]">Actions</th>
                 </tr>
                 </thead>
-                <tbody className="divide-y divide-[var(--border-main)]">
+                <tbody className="divide-y divide-[var(--border-soft)]">
                 {filteredItems.map((wf) => {
                   const typeConfig = ENTITY_TYPE_CONFIG[wf.entityType] ?? ENTITY_TYPE_CONFIG.CUSTOM;
                   return (
                     <tr
                       key={wf.id}
-                      className="h-11 cursor-pointer transition-colors hover:bg-[var(--bg-secondary)]/30"
+                      className="h-14 transition-colors hover:bg-[var(--surface-hover)] focus-visible:outline-none focus-visible:ring-inset focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
                       onClick={() => router.push(`/workflows/${wf.id}`)}
                     >
                       <td className="px-4 py-4">
@@ -466,9 +470,9 @@ export default function WorkflowListPage() {
 
             {/* Pagination */}
             {totalPages > 1 && (
-              <div className="row-between border-t border-[var(--border-main)] pt-4 dark:border-[var(--border-main)]">
-                <p className="text-body-muted">
-                  Showing {page * PAGE_SIZE + 1}&ndash;{Math.min((page + 1) * PAGE_SIZE, totalElements)} of {totalElements}
+              <div className="flex items-center justify-between border-t border-[var(--border-soft)] pt-4">
+                <p className="text-sm text-[var(--text-3)]">
+                  Showing <span className="num">{page * PAGE_SIZE + 1}</span>–<span className="num">{Math.min((page + 1) * PAGE_SIZE, totalElements)}</span> of <span className="num">{totalElements}</span>
                 </p>
                 <div className="flex gap-2">
                   <Button
@@ -476,6 +480,7 @@ export default function WorkflowListPage() {
                     size="sm"
                     onClick={() => setPage((p) => Math.max(0, p - 1))}
                     disabled={page === 0}
+                    className="focus-visible"
                   >
                     <ChevronLeft className="h-4 w-4"/>
                     Previous
@@ -485,6 +490,7 @@ export default function WorkflowListPage() {
                     size="sm"
                     onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
                     disabled={page >= totalPages - 1}
+                    className="focus-visible"
                   >
                     Next
                     <ChevronRight className="h-4 w-4"/>
@@ -492,9 +498,11 @@ export default function WorkflowListPage() {
                 </div>
               </div>
             )}
+          </Reveal>
           </>
         )}
-      </motion.div>
+      </div>
+    </PageTransition>
 
       {/* Click outside to close menu */}
       {menuOpenId && (
@@ -511,27 +519,27 @@ export default function WorkflowListPage() {
       {/* Deactivate Confirmation Modal */}
       <Modal isOpen={!!deleteTarget} onClose={() => setDeleteTarget(null)} size="md">
         <ModalHeader onClose={() => setDeleteTarget(null)}>
-          <div className="flex items-center gap-2 text-danger-600 dark:text-danger-400">
+          <div className="flex items-center gap-2 text-[var(--err-fg)]">
             <Power className="h-5 w-5"/>
             Deactivate Workflow
           </div>
         </ModalHeader>
         <ModalBody>
-          <p className="text-body-secondary">
+          <p className="text-[var(--text-2)]">
             Are you sure you want to deactivate the workflow{' '}
-            <strong>{deleteTarget?.name}</strong>? Existing approval instances
+            <strong className="text-[var(--text-1)]">{deleteTarget?.name}</strong>? Existing approval instances
             using this workflow will continue, but no new instances can be started.
           </p>
         </ModalBody>
         <ModalFooter>
-          <Button variant="ghost" onClick={() => setDeleteTarget(null)} disabled={deactivateMutation.isPending}>
+          <Button variant="outline" onClick={() => setDeleteTarget(null)} disabled={deactivateMutation.isPending} className="focus-visible">
             Cancel
           </Button>
           <Button
             variant="primary"
-            className="bg-danger-600 hover:bg-danger-700"
             onClick={handleDeactivate}
             disabled={deactivateMutation.isPending}
+            className="bg-[var(--err-fg)] hover:bg-[var(--err-fg)]/90 focus-visible"
           >
             {deactivateMutation.isPending ? 'Deactivating...' : 'Deactivate'}
           </Button>

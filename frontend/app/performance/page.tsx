@@ -346,7 +346,7 @@ function BentoHeroBars() {
           initial={{height: '0%'}}
           animate={{height: `${w}%`}}
           transition={{duration: 0.7, ease: EASE, delay: 0.35 + i * 0.04}}
-          className="flex-1 max-w-3 rounded-sm bg-accent-200 dark:bg-accent-700/70"
+          className="flex-1 max-w-3 rounded-sm bg-[var(--chart-1)] dark:bg-[var(--chart-1)]/60"
         />
       ))}
     </div>

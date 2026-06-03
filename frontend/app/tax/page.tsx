@@ -2,6 +2,7 @@
 
 import {useEffect} from 'react';
 import {useRouter} from 'next/navigation';
+import {motion} from 'framer-motion';
 import {AppLayout} from '@/components/layout';
 import {Badge, Button, Card, Container, Group, SimpleGrid, Table, Text, Title,} from '@mantine/core';
 import {AlertCircle, ChevronRight, Clock, FileCheck, FileSpreadsheet, RefreshCw,} from 'lucide-react';
@@ -9,6 +10,7 @@ import {useTaxDeclarations} from '@/lib/hooks/queries/useTax';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {useAuth} from '@/lib/hooks/useAuth';
+import {StatusBadge} from '@/components/ui/StatusBadge';
 import type {DeclarationStatus, TaxDeclarationResponse} from '@/lib/types/hrms/tax';
 
 export default function TaxOverviewPage() {
@@ -98,11 +100,16 @@ export default function TaxOverviewPage() {
       ]}
     >
       <Container size="xl" py="lg">
-        <Group justify="space-between" mb="xl">
-          <div>
-            <Title order={2} className="">Tax Management</Title>
-            <Text c="dimmed" className="">Overview of tax declarations and compliance</Text>
-          </div>
+        <motion.div
+          initial={{opacity: 0, y: 8}}
+          animate={{opacity: 1, y: 0}}
+          transition={{duration: 0.3}}
+        >
+          <Group justify="space-between" mb="xl">
+            <div>
+              <Title order={2} className="text-aura-title">Tax Management</Title>
+              <Text c="var(--text-3)" className="">Overview of tax declarations and compliance</Text>
+            </div>
           <PermissionGate permission={Permissions.TAX_VIEW}>
             <Button
               onClick={() => router.push('/tax/declarations')}

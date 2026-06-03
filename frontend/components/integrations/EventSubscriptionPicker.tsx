@@ -46,8 +46,11 @@ export function EventSubscriptionPicker({
   if (supportedEvents.length === 0) {
     return (
       <div
-        className="p-4 rounded-lg bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800">
-        <p className="text-sm text-warning-700 dark:text-warning-300">
+        className="p-4 rounded-[var(--r-md)] bg-[var(--warn-bg)] border border-[var(--warn-bd)]"
+        role="status"
+        aria-live="polite"
+      >
+        <p className="text-sm text-[var(--warn-fg)]">
           No events available for this connector.
         </p>
       </div>
@@ -56,7 +59,7 @@ export function EventSubscriptionPicker({
 
   return (
     <div className="space-y-4">
-      <label className="block text-sm font-medium text-[var(--text-primary)]">
+      <label className="block text-sm font-medium text-[var(--text-1)]">
         Subscribe to Events
       </label>
       <MultiSelect
@@ -74,16 +77,16 @@ export function EventSubscriptionPicker({
         maxDropdownHeight={200}
         styles={{
           input: {
-            backgroundColor: 'var(--bg-card)',
-            borderColor: 'var(--border-main)',
-            color: 'var(--text-primary)',
+            backgroundColor: 'var(--surface)',
+            borderColor: 'var(--border)',
+            color: 'var(--text-1)',
           },
           label: {
-            color: 'var(--text-primary)',
+            color: 'var(--text-1)',
           },
         }}
       />
-      <p className="text-xs text-[var(--text-secondary)] mt-2">
+      <p className="text-xs text-[var(--text-3)] mt-2 num">
         {selectedEvents.length} event{selectedEvents.length !== 1 ? 's' : ''} selected
       </p>
     </div>

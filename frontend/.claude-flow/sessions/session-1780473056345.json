@@ -1,0 +1,14 @@
+{
+  "id": "session-1780473056345",
+  "startedAt": "2026-06-03T07:50:56.345Z",
+  "cwd": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend",
+  "context": {},
+  "metrics": {
+    "edits": 14,
+    "commands": 0,
+    "tasks": 0,
+    "errors": 0
+  },
+  "endedAt": "2026-06-03T07:53:32.482Z",
+  "duration": 156148
+}

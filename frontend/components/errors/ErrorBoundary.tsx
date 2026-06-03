@@ -60,9 +60,8 @@ interface DefaultErrorFallbackProps {
 
 function DefaultErrorFallback({error, onReset}: DefaultErrorFallbackProps) {
   return (
-    <div
-      className="flex flex-col items-center justify-center min-h-[200px] p-8 rounded-xl border border-danger-200 dark:border-danger-800 bg-danger-50 dark:bg-danger-950/20">
-      <div className="text-danger-500 dark:text-danger-400 mb-4">
+    <div className="flex flex-col items-center justify-center min-h-[200px] p-8 rounded-[var(--r-lg)] border border-[var(--err-bd)] bg-[var(--err-bg)]">
+      <div className="text-[var(--err-fg)] mb-4">
         <svg className="w-10 h-10 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
             strokeLinecap="round"
@@ -72,15 +71,15 @@ function DefaultErrorFallback({error, onReset}: DefaultErrorFallbackProps) {
           />
         </svg>
       </div>
-      <h3 className="text-sm font-semibold text-danger-700 dark:text-danger-300 mb-1">
+      <h3 className="text-sm font-semibold text-[var(--err-fg)] mb-2">
         Something went wrong
       </h3>
-      <p className="text-xs text-danger-600 dark:text-danger-400 mb-4 text-center max-w-sm">
+      <p className="text-xs text-[var(--err-fg)] opacity-80 mb-6 text-center max-w-sm">
         {error?.message || 'An unexpected error occurred. The team has been notified.'}
       </p>
       <button
         onClick={onReset}
-        className="px-4 py-1.5 text-xs font-medium rounded-lg bg-danger-100 dark:bg-danger-900/40 text-danger-700 dark:text-danger-300 hover:bg-danger-200 dark:hover:bg-danger-900/60 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
+        className="px-4 py-2 text-xs font-medium rounded-[var(--r-control)] bg-[var(--err-bg)] text-[var(--err-fg)] border border-[var(--err-bd)] hover:bg-[var(--err-bg)] hover:opacity-80 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
       >
         Try again
       </button>

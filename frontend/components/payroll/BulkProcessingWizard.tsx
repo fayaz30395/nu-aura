@@ -187,11 +187,11 @@ export const BulkProcessingWizard: React.FC = () => {
         <Card variant="elevated">
           <CardContent className="p-8">
             <div className="flex flex-col items-center justify-center text-center space-y-4">
-              <Construction className="h-16 w-16 text-warning-500"/>
-              <h2 className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+              <Construction className="h-16 w-16 text-[var(--warn-fg)]"/>
+              <h2 className="text-2xl font-bold text-[var(--text-1)]">
                 Coming Soon
               </h2>
-              <p className="text-surface-600 dark:text-surface-400 max-w-md">
+              <p className="text-[var(--text-2)] max-w-md">
                 Bulk payroll processing is currently under development. Use the standard payroll run
                 workflow to process payroll for individual runs.
               </p>
@@ -225,9 +225,9 @@ export const BulkProcessingWizard: React.FC = () => {
                     <div
                       className={cn(
                         'w-12 h-12 rounded-full flex items-center justify-center transition-all',
-                        isCompleted && 'bg-success-500 text-white',
-                        isActive && 'bg-accent-500 text-white ring-4 ring-accent-100 dark:ring-accent-900',
-                        !isActive && !isCompleted && 'bg-surface-200 dark:bg-surface-700 text-surface-600 dark:text-surface-400'
+                        isCompleted && 'bg-[var(--ok-fg)] text-white',
+                        isActive && 'bg-[var(--accent)] text-white ring-4 ring-[var(--accent-soft)]',
+                        !isActive && !isCompleted && 'bg-[var(--surface-aura-2)] text-[var(--text-2)]'
                       )}
                     >
                       {isCompleted ? (
@@ -240,8 +240,8 @@ export const BulkProcessingWizard: React.FC = () => {
                       <p
                         className={cn(
                           'text-sm font-medium',
-                          isActive && 'text-accent-700 dark:text-accent-400',
-                          !isActive && 'text-surface-600 dark:text-surface-400'
+                          isActive && 'text-[var(--accent)]',
+                          !isActive && 'text-[var(--text-2)]'
                         )}
                       >
                         {step.title}
@@ -252,7 +252,7 @@ export const BulkProcessingWizard: React.FC = () => {
                     <div
                       className={cn(
                         'flex-1 h-0.5 mx-2 transition-all',
-                        isCompleted ? 'bg-success-500' : 'bg-surface-200 dark:bg-surface-700'
+                        isCompleted ? 'bg-[var(--ok-fg)]' : 'bg-[var(--surface-aura-2)]'
                       )}
                     />
                   )}
@@ -266,7 +266,9 @@ export const BulkProcessingWizard: React.FC = () => {
       {/* Error Message */}
       {error && (
         <div
-          className="p-4 bg-danger-50 dark:bg-danger-950/30 border border-danger-200 dark:border-danger-800 text-danger-800 dark:text-danger-200 rounded-lg flex items-start gap-2">
+          className="p-4 bg-[var(--err-bg)] border border-[var(--err-bd)] text-[var(--err-fg)] rounded-[var(--r-md)] flex items-start gap-2"
+          role="alert"
+          aria-live="assertive">
           <AlertCircle className="h-5 w-5 mt-0.5 flex-shrink-0"/>
           <div className="flex-1">
             <p className="font-medium">Error</p>
@@ -274,7 +276,8 @@ export const BulkProcessingWizard: React.FC = () => {
           </div>
           <button
             onClick={() => setError(null)}
-            className="text-danger-600 dark:text-danger-400 hover:text-danger-800 dark:hover:text-danger-200"
+            className="text-[var(--err-fg)] hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] rounded-[var(--r-sm)]"
+            aria-label="Dismiss error"
           >
             <X className="h-5 w-5"/>
           </button>
@@ -288,10 +291,10 @@ export const BulkProcessingWizard: React.FC = () => {
           {currentStep === 1 && (
             <div className="space-y-6">
               <div>
-                <h2 className="text-2xl font-bold text-surface-900 dark:text-surface-50 mb-2">
+                <h2 className="text-2xl font-bold text-[var(--text-1)] mb-2">
                   Select Employees
                 </h2>
-                <p className="text-surface-600 dark:text-surface-400">
+                <p className="text-[var(--text-2)]">
                   Choose employees to include in this payroll run
                 </p>
               </div>
@@ -299,13 +302,13 @@ export const BulkProcessingWizard: React.FC = () => {
               {/* Search and Select All */}
               <div className="flex items-center gap-4">
                 <div className="flex-1 relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-surface-400"/>
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-[var(--text-3)]"/>
                   <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search employees..."
-                    className="w-full pl-10 pr-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50"
+                    className="w-full pl-10 pr-4 py-2 border border-[var(--border)] rounded-[var(--r-md)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] bg-[var(--surface)] text-[var(--text-1)]"
                   />
                 </div>
                 <Button
@@ -318,7 +321,7 @@ export const BulkProcessingWizard: React.FC = () => {
               </div>
 
               {/* Selected Count */}
-              <div className="flex items-center gap-2 text-sm text-surface-600 dark:text-surface-400">
+              <div className="flex items-center gap-2 text-sm text-[var(--text-2)] num">
                 <Users className="h-4 w-4"/>
                 <span>
                   {selectedEmployeeIds.size} of {filteredEmployees.length} employees selected
@@ -326,18 +329,18 @@ export const BulkProcessingWizard: React.FC = () => {
               </div>
 
               {/* Employee List */}
-              <div className="border border-surface-200 dark:border-surface-700 rounded-lg overflow-hidden">
+              <div className="border border-[var(--border)] rounded-[var(--r-lg)] overflow-hidden">
                 <div className="max-h-[400px] overflow-y-auto">
                   {loading ? (
                     <div className="flex items-center justify-center py-12">
-                      <Loader2 className="h-8 w-8 animate-spin text-accent-500"/>
+                      <Loader2 className="h-8 w-8 animate-spin text-[var(--accent)]"/>
                     </div>
                   ) : filteredEmployees.length === 0 ? (
-                    <div className="text-center py-12 text-surface-600 dark:text-surface-400">
+                    <div className="text-center py-12 text-[var(--text-2)]">
                       No employees found
                     </div>
                   ) : (
-                    <div className="divide-y divide-surface-200 dark:divide-surface-700">
+                    <div className="divide-y divide-[var(--border)]">
                       {filteredEmployees.map((employee) => {
                         const isSelected = selectedEmployeeIds.has(employee.id);
                         return (
@@ -345,24 +348,24 @@ export const BulkProcessingWizard: React.FC = () => {
                             key={employee.id}
                             onClick={() => handleToggleEmployee(employee.id)}
                             className={cn(
-                              'flex items-center gap-4 p-4 cursor-pointer transition-colors',
-                              'hover:bg-surface-50 dark:hover:bg-surface-800/50',
-                              isSelected && 'bg-accent-50 dark:bg-accent-950/30'
+                              'flex items-center gap-4 p-4 cursor-pointer transition-colors hover-lift',
+                              'hover:bg-[var(--surface-hover)]',
+                              isSelected && 'bg-[var(--accent-soft)]'
                             )}
                           >
                             <div className="flex-shrink-0">
                               {isSelected ? (
-                                <CheckCircle2 className="h-6 w-6 text-accent-500"/>
+                                <CheckCircle2 className="h-6 w-6 text-[var(--accent)]"/>
                               ) : (
-                                <Circle className="h-6 w-6 text-surface-400"/>
+                                <Circle className="h-6 w-6 text-[var(--text-3)]"/>
                               )}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="font-medium text-surface-900 dark:text-surface-50">
+                              <p className="font-medium text-[var(--text-1)]">
                                 {employee.fullName}
                               </p>
                               <div
-                                className="flex items-center gap-2 mt-1 text-sm text-surface-600 dark:text-surface-400">
+                                className="flex items-center gap-2 mt-1 text-sm text-[var(--text-2)]">
                                 <span>{employee.employeeCode}</span>
                                 {employee.departmentName && (
                                   <>
@@ -392,17 +395,17 @@ export const BulkProcessingWizard: React.FC = () => {
           {currentStep === 2 && (
             <div className="space-y-6">
               <div>
-                <h2 className="text-2xl font-bold text-surface-900 dark:text-surface-50 mb-2">
+                <h2 className="text-2xl font-bold text-[var(--text-1)] mb-2">
                   Set Payroll Period
                 </h2>
-                <p className="text-surface-600 dark:text-surface-400">
+                <p className="text-[var(--text-2)]">
                   Define the payroll period and payment details
                 </p>
               </div>
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                  <label className="block text-sm font-medium text-[var(--text-1)] mb-2">
                     Run Name *
                   </label>
                   <input
@@ -410,72 +413,72 @@ export const BulkProcessingWizard: React.FC = () => {
                     value={runName}
                     onChange={(e) => setRunName(e.target.value)}
                     placeholder="e.g., December 2024 Payroll"
-                    className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50"
+                    className="w-full px-4 py-2 border border-[var(--border)] rounded-[var(--r-md)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] bg-[var(--surface)] text-[var(--text-1)]"
                   />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                    <label className="block text-sm font-medium text-[var(--text-1)] mb-2">
                       Period Start Date *
                     </label>
                     <input
                       type="date"
                       value={payrollPeriodStart}
                       onChange={(e) => setPayrollPeriodStart(e.target.value)}
-                      className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50"
+                      className="w-full px-4 py-2 border border-[var(--border)] rounded-[var(--r-md)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] bg-[var(--surface)] text-[var(--text-1)]"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                    <label className="block text-sm font-medium text-[var(--text-1)] mb-2">
                       Period End Date *
                     </label>
                     <input
                       type="date"
                       value={payrollPeriodEnd}
                       onChange={(e) => setPayrollPeriodEnd(e.target.value)}
-                      className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50"
+                      className="w-full px-4 py-2 border border-[var(--border)] rounded-[var(--r-md)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] bg-[var(--surface)] text-[var(--text-1)]"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                  <label className="block text-sm font-medium text-[var(--text-1)] mb-2">
                     Payment Date *
                   </label>
                   <input
                     type="date"
                     value={paymentDate}
                     onChange={(e) => setPaymentDate(e.target.value)}
-                    className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50"
+                    className="w-full px-4 py-2 border border-[var(--border)] rounded-[var(--r-md)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] bg-[var(--surface)] text-[var(--text-1)]"
                   />
                 </div>
 
                 {/* Summary */}
-                <div className="mt-6 p-4 bg-surface-50 dark:bg-surface-800/50 rounded-lg">
-                  <h3 className="font-semibold text-surface-900 dark:text-surface-50 mb-4">
+                <div className="mt-6 p-4 bg-[var(--surface-aura-2)] rounded-[var(--r-md)]">
+                  <h3 className="font-semibold text-[var(--text-1)] mb-4">
                     Summary
                   </h3>
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
-                      <span className="text-surface-600 dark:text-surface-400">Employees:</span>
-                      <span className="font-medium text-surface-900 dark:text-surface-50">
+                      <span className="text-[var(--text-2)]">Employees:</span>
+                      <span className="font-medium text-[var(--text-1)] num">
                         {selectedEmployeeIds.size}
                       </span>
                     </div>
                     {runName && (
                       <div className="flex justify-between">
-                        <span className="text-surface-600 dark:text-surface-400">Run Name:</span>
-                        <span className="font-medium text-surface-900 dark:text-surface-50">
+                        <span className="text-[var(--text-2)]">Run Name:</span>
+                        <span className="font-medium text-[var(--text-1)]">
                           {runName}
                         </span>
                       </div>
                     )}
                     {payrollPeriodStart && payrollPeriodEnd && (
                       <div className="flex justify-between">
-                        <span className="text-surface-600 dark:text-surface-400">Period:</span>
-                        <span className="font-medium text-surface-900 dark:text-surface-50">
+                        <span className="text-[var(--text-2)]">Period:</span>
+                        <span className="font-medium text-[var(--text-1)] num">
                           {formatDate(payrollPeriodStart)} -{' '}
                           {formatDate(payrollPeriodEnd)}
                         </span>
@@ -483,8 +486,8 @@ export const BulkProcessingWizard: React.FC = () => {
                     )}
                     {paymentDate && (
                       <div className="flex justify-between">
-                        <span className="text-surface-600 dark:text-surface-400">Payment Date:</span>
-                        <span className="font-medium text-surface-900 dark:text-surface-50">
+                        <span className="text-[var(--text-2)]">Payment Date:</span>
+                        <span className="font-medium text-[var(--text-1)] num">
                           {formatDate(paymentDate)}
                         </span>
                       </div>
@@ -499,95 +502,95 @@ export const BulkProcessingWizard: React.FC = () => {
           {currentStep === 3 && (
             <div className="space-y-6">
               <div>
-                <h2 className="text-2xl font-bold text-surface-900 dark:text-surface-50 mb-2">
+                <h2 className="text-2xl font-bold text-[var(--text-1)] mb-2">
                   Review Payroll
                 </h2>
-                <p className="text-surface-600 dark:text-surface-400">
+                <p className="text-[var(--text-2)]">
                   Review the payroll calculation before processing
                 </p>
               </div>
 
               {/* Total Summary */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div className="p-4 bg-accent-50 dark:bg-accent-950/30 rounded-lg">
-                  <p className="text-sm text-accent-700 dark:text-accent-400 mb-1">
+                <div className="p-4 bg-[var(--accent-soft)] rounded-[var(--r-md)]">
+                  <p className="text-sm text-[var(--accent)] mb-1">
                     Total Employees
                   </p>
-                  <p className="text-2xl font-bold text-accent-700 dark:text-accent-300">
+                  <p className="text-2xl font-bold text-[var(--accent)] num">
                     {previewData.length}
                   </p>
                 </div>
-                <div className="p-4 bg-success-50 dark:bg-success-950/30 rounded-lg">
-                  <p className="text-sm text-success-600 dark:text-success-400 mb-1">
+                <div className="p-4 bg-[var(--ok-bg)] rounded-[var(--r-md)]">
+                  <p className="text-sm text-[var(--ok-fg)] mb-1">
                     Total Gross
                   </p>
-                  <p className="text-2xl font-bold text-success-700 dark:text-success-300">
+                  <p className="text-2xl font-bold text-[var(--ok-fg)] num">
                     {formatCurrency(previewData.reduce((sum, emp) => sum + emp.grossAmount, 0))}
                   </p>
                 </div>
-                <div className="p-4 bg-danger-50 dark:bg-danger-950/30 rounded-lg">
-                  <p className="text-sm text-danger-600 dark:text-danger-400 mb-1">
+                <div className="p-4 bg-[var(--err-bg)] rounded-[var(--r-md)]">
+                  <p className="text-sm text-[var(--err-fg)] mb-1">
                     Total Deductions
                   </p>
-                  <p className="text-2xl font-bold text-danger-700 dark:text-danger-300">
+                  <p className="text-2xl font-bold text-[var(--err-fg)] num">
                     {formatCurrency(previewData.reduce((sum, emp) => sum + emp.totalDeductions, 0))}
                   </p>
                 </div>
-                <div className="p-4 bg-accent-50 dark:bg-accent-950/30 rounded-lg">
-                  <p className="text-sm text-accent-600 dark:text-accent-400 mb-1">
+                <div className="p-4 bg-[var(--accent-soft)] rounded-[var(--r-md)]">
+                  <p className="text-sm text-[var(--accent)] mb-1">
                     Total Net
                   </p>
-                  <p className="text-2xl font-bold text-accent-700 dark:text-accent-300">
+                  <p className="text-2xl font-bold text-[var(--accent)] num">
                     {formatCurrency(previewData.reduce((sum, emp) => sum + emp.netAmount, 0))}
                   </p>
                 </div>
               </div>
 
               {/* Employee Details Table */}
-              <div className="border border-surface-200 dark:border-surface-700 rounded-lg overflow-hidden">
+              <div className="border border-[var(--border)] rounded-[var(--r-lg)] overflow-hidden">
                 <div className="overflow-x-auto max-h-[400px]">
                   <table className="w-full">
-                    <thead className="bg-surface-50 dark:bg-surface-800/50 sticky top-0">
+                    <thead className="bg-[var(--surface-aura-2)] sticky top-0">
                     <tr>
-                      <th className="px-4 py-2 text-left text-sm font-semibold text-surface-700 dark:text-surface-300">
+                      <th className="px-4 py-2 text-left text-xs font-semibold text-[var(--text-1)] uppercase tracking-[0.1em]">
                         Employee
                       </th>
-                      <th className="px-4 py-2 text-right text-sm font-semibold text-surface-700 dark:text-surface-300">
+                      <th className="px-4 py-2 text-right text-xs font-semibold text-[var(--text-1)] uppercase tracking-[0.1em]">
                         Base Salary
                       </th>
-                      <th className="px-4 py-2 text-right text-sm font-semibold text-surface-700 dark:text-surface-300">
+                      <th className="px-4 py-2 text-right text-xs font-semibold text-[var(--text-1)] uppercase tracking-[0.1em]">
                         Allowances
                       </th>
-                      <th className="px-4 py-2 text-right text-sm font-semibold text-surface-700 dark:text-surface-300">
+                      <th className="px-4 py-2 text-right text-xs font-semibold text-[var(--text-1)] uppercase tracking-[0.1em]">
                         Deductions
                       </th>
-                      <th className="px-4 py-2 text-right text-sm font-semibold text-surface-700 dark:text-surface-300">
+                      <th className="px-4 py-2 text-right text-xs font-semibold text-[var(--text-1)] uppercase tracking-[0.1em]">
                         Gross Amount
                       </th>
-                      <th className="px-4 py-2 text-right text-sm font-semibold text-surface-700 dark:text-surface-300">
+                      <th className="px-4 py-2 text-right text-xs font-semibold text-[var(--text-1)] uppercase tracking-[0.1em]">
                         Net Amount
                       </th>
                     </tr>
                     </thead>
-                    <tbody className="divide-y divide-surface-200 dark:divide-surface-700">
+                    <tbody className="divide-y divide-[var(--border)]">
                     {previewData.map((emp) => (
-                      <tr key={emp.employeeId} className="hover:bg-surface-50 dark:hover:bg-surface-800/50">
-                        <td className="px-4 py-4 text-sm font-medium text-surface-900 dark:text-surface-50">
+                      <tr key={emp.employeeId} className="hover:bg-[var(--surface-hover)]">
+                        <td className="px-4 py-4 text-sm font-medium text-[var(--text-1)]">
                           {emp.employeeName}
                         </td>
-                        <td className="px-4 py-4 text-sm text-right text-surface-900 dark:text-surface-50">
+                        <td className="px-4 py-4 text-sm text-right text-[var(--text-1)] num">
                           {formatCurrency(emp.baseSalary)}
                         </td>
-                        <td className="px-4 py-4 text-sm text-right text-success-600 dark:text-success-400">
+                        <td className="px-4 py-4 text-sm text-right text-[var(--ok-fg)] num">
                           {formatCurrency(emp.totalAllowances)}
                         </td>
-                        <td className="px-4 py-4 text-sm text-right text-danger-600 dark:text-danger-400">
+                        <td className="px-4 py-4 text-sm text-right text-[var(--err-fg)] num">
                           {formatCurrency(emp.totalDeductions)}
                         </td>
-                        <td className="px-4 py-4 text-sm text-right font-medium text-surface-900 dark:text-surface-50">
+                        <td className="px-4 py-4 text-sm text-right font-medium text-[var(--text-1)] num">
                           {formatCurrency(emp.grossAmount)}
                         </td>
-                        <td className="px-4 py-4 text-sm text-right font-semibold text-accent-700 dark:text-accent-400">
+                        <td className="px-4 py-4 text-sm text-right font-semibold text-[var(--accent)] num">
                           {formatCurrency(emp.netAmount)}
                         </td>
                       </tr>
@@ -605,31 +608,31 @@ export const BulkProcessingWizard: React.FC = () => {
               <div className="text-center">
                 {processingStatus === 'processing' ? (
                   <>
-                    <Loader2 className="h-16 w-16 animate-spin text-accent-500 mx-auto mb-4"/>
-                    <h2 className="text-2xl font-bold text-surface-900 dark:text-surface-50 mb-2">
+                    <Loader2 className="h-16 w-16 animate-spin text-[var(--accent)] mx-auto mb-4"/>
+                    <h2 className="text-2xl font-bold text-[var(--text-1)] mb-2">
                       Processing Payroll
                     </h2>
-                    <p className="text-surface-600 dark:text-surface-400">
+                    <p className="text-[var(--text-2)]">
                       Please wait while we process the payroll...
                     </p>
                   </>
                 ) : processingStatus === 'completed' ? (
                   <>
-                    <CheckCircle2 className="h-16 w-16 text-success-500 mx-auto mb-4"/>
-                    <h2 className="text-2xl font-bold text-surface-900 dark:text-surface-50 mb-2">
+                    <CheckCircle2 className="h-16 w-16 text-[var(--ok-fg)] mx-auto mb-4"/>
+                    <h2 className="text-2xl font-bold text-[var(--text-1)] mb-2">
                       Payroll Processed Successfully
                     </h2>
-                    <p className="text-surface-600 dark:text-surface-400">
+                    <p className="text-[var(--text-2)]">
                       The payroll has been processed for all selected employees
                     </p>
                   </>
                 ) : (
                   <>
-                    <AlertCircle className="h-16 w-16 text-danger-500 mx-auto mb-4"/>
-                    <h2 className="text-2xl font-bold text-surface-900 dark:text-surface-50 mb-2">
+                    <AlertCircle className="h-16 w-16 text-[var(--err-fg)] mx-auto mb-4"/>
+                    <h2 className="text-2xl font-bold text-[var(--text-1)] mb-2">
                       Processing Failed
                     </h2>
-                    <p className="text-surface-600 dark:text-surface-400">
+                    <p className="text-[var(--text-2)]">
                       An error occurred while processing the payroll
                     </p>
                   </>
@@ -638,27 +641,27 @@ export const BulkProcessingWizard: React.FC = () => {
 
               {processingResult && (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="p-4 bg-accent-50 dark:bg-accent-950/30 rounded-lg text-center">
-                    <p className="text-sm text-accent-700 dark:text-accent-400 mb-1">
+                  <div className="p-4 bg-[var(--accent-soft)] rounded-[var(--r-md)] text-center">
+                    <p className="text-sm text-[var(--accent)] mb-1">
                       Payroll Run ID
                     </p>
-                    <p className="text-lg font-bold text-accent-700 dark:text-accent-300">
+                    <p className="text-lg font-bold text-[var(--accent)]">
                       {processingResult.payrollRunId}
                     </p>
                   </div>
-                  <div className="p-4 bg-success-50 dark:bg-success-950/30 rounded-lg text-center">
-                    <p className="text-sm text-success-600 dark:text-success-400 mb-1">
+                  <div className="p-4 bg-[var(--ok-bg)] rounded-[var(--r-md)] text-center">
+                    <p className="text-sm text-[var(--ok-fg)] mb-1">
                       Processed
                     </p>
-                    <p className="text-lg font-bold text-success-700 dark:text-success-300">
+                    <p className="text-lg font-bold text-[var(--ok-fg)] num">
                       {processingResult.processedCount}
                     </p>
                   </div>
-                  <div className="p-4 bg-danger-50 dark:bg-danger-950/30 rounded-lg text-center">
-                    <p className="text-sm text-danger-600 dark:text-danger-400 mb-1">
+                  <div className="p-4 bg-[var(--err-bg)] rounded-[var(--r-md)] text-center">
+                    <p className="text-sm text-[var(--err-fg)] mb-1">
                       Failed
                     </p>
-                    <p className="text-lg font-bold text-danger-700 dark:text-danger-300">
+                    <p className="text-lg font-bold text-[var(--err-fg)] num">
                       {processingResult.failedCount}
                     </p>
                   </div>

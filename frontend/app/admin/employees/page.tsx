@@ -44,7 +44,6 @@ import {Permissions, Roles, usePermissions} from '@/lib/hooks/usePermissions';
 import {CreateEmployeeRequest, Employee} from '@/lib/types/hrms/employee';
 import {usersApi} from '@/lib/api/users';
 import {StatusBadge} from '@/components/ui/StatusBadge';
-import {EMPLOYEE_LIFECYCLE_STATUS} from '@/lib/status/vocabulary';
 
 // ──────────────────────────────────────────────
 // Zod schema
@@ -579,7 +578,7 @@ export default function AdminEmployeesPage() {
                               className="badge-status status-info text-xs font-medium">{emp.employmentType?.replace('_', ' ') || 'Full Time'}</span>
                             </td>
                             <td>
-                              <StatusBadge value={emp.status || 'ACTIVE'} />
+                              <StatusBadge status={emp.status || 'ACTIVE'} />
                             </td>
                             <td className="text-right">
                               <Button

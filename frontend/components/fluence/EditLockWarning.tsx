@@ -14,26 +14,26 @@ interface EditLockWarningProps {
  */
 export default function EditLockWarning({lockedByName, onForceEdit}: EditLockWarningProps) {
   return (
-    <Alert
-      icon={<Lock className="w-5 h-5"/>}
-      title="Content is being edited"
-      color="yellow"
-      variant="light"
-      className="mb-4"
+    <div
+      className="flex items-center gap-4 p-4 rounded-[var(--r-md)] border border-[var(--warn-bd)] bg-[var(--warn-bg)] mb-4"
+      role="alert"
+      aria-live="polite"
     >
-      <div className="row-between gap-4">
-        <span className="text-sm">
+      <Lock className="w-5 h-5 text-[var(--warn-fg)] flex-shrink-0"/>
+      <div className="flex-1">
+        <h4 className="font-semibold text-sm text-[var(--warn-fg)] mb-0.5">
+          Content is being edited
+        </h4>
+        <p className="text-sm text-[var(--warn-fg)] opacity-90">
           <strong>{lockedByName}</strong> is currently editing this page. Your changes may conflict.
-        </span>
-        <Button
-          size="xs"
-          variant="subtle"
-          color="yellow"
-          onClick={onForceEdit}
-        >
-          Edit Anyway
-        </Button>
+        </p>
       </div>
-    </Alert>
+      <button
+        onClick={onForceEdit}
+        className="px-3 py-1.5 text-sm font-medium rounded-[var(--r-control)] bg-[var(--warn-bg)] text-[var(--warn-fg)] border border-[var(--warn-bd)] hover:opacity-80 transition-opacity cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 flex-shrink-0"
+      >
+        Edit Anyway
+      </button>
+    </div>
   );
 }

@@ -127,6 +127,7 @@ const Modal: React.FC<ModalProps> = ({
             aria-modal="true"
             role="dialog"
             aria-labelledby={titleId}
+            tabIndex={-1}
           >
             {/* Backdrop */}
             <motion.div
@@ -188,11 +189,12 @@ const ModalHeader: React.FC<ModalHeaderProps> = ({
       </div>
       {showCloseButton && onClose && (
         <button
+          type="button"
           onClick={onClose}
           className="press-scale ml-4 p-2 rounded-lg text-surface-400 hover:text-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 dark:hover:text-surface-200 transition-[color,background-color,transform] duration-[var(--motion-fast)] ease-[var(--ease-standard)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           aria-label="Close modal"
         >
-          <X className="h-5 w-5"/>
+          <X className="h-5 w-5" aria-hidden="true"/>
         </button>
       )}
     </div>

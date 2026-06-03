@@ -60,7 +60,7 @@ import {
 } from '@/lib/hooks/queries/useAnnouncements';
 import {useActiveDepartments} from '@/lib/hooks/queries/useDepartments';
 import {formatDate as formatDateCanonical} from '@/lib/utils/format/date';
-import {PageTransition, Reveal} from '@/components/motion';
+import {PageTransition, Reveal, Stagger, StaggerItem} from '@/components/motion';
 
 /** Maps each announcement category to a background class for the icon container. */
 const categoryIconBgColors: Record<AnnouncementCategory, string> = {
@@ -251,11 +251,11 @@ export default function AnnouncementsPage() {
       <PageTransition className="p-6">
         <div className="max-w-6xl mx-auto">
           {/* Header */}
-          <Reveal className="mb-8">
+          <Reveal className="mb-8" delay={0.01}>
             <div className="row-between">
               <div>
-                <h1 className="text-xl font-bold">
-                  <Megaphone className="w-8 h-8 text-accent-700"/>
+                <h1 className="text-xl font-bold flex items-center gap-2">
+                  <Megaphone className="w-8 h-8 text-accent-700" aria-hidden="true"/>
                   Announcements
                 </h1>
                 <p className="text-[var(--text-secondary)] mt-2">
@@ -276,23 +276,28 @@ export default function AnnouncementsPage() {
 
           {/* Pinned Announcements */}
           {pinnedAnnouncements.length > 0 && (
-            <Reveal inView className="mb-8">
+            <Reveal inView className="mb-8" delay={0.02}>
               <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
-                <Pin className="w-5 h-5 text-warning-500"/>
+                <Pin className="w-5 h-5 text-warning-500" aria-hidden="true"/>
                 Pinned
               </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4" role="list" aria-label="Pinned announcements">
-                {pinnedAnnouncements.map((announcement, index) => {
+              <Stagger className="grid grid-cols-1 md:grid-cols-2 gap-4" delayChildren={0.06} stagger={0.04} role="list" aria-label="Pinned announcements">
+                {pinnedAnnouncements.map((announcement) => {
                   const Icon = getCategoryIcon(announcement.category);
                   return (
-                    <motion.div
+                    <StaggerItem
                       key={announcement.id}
                       role="listitem"
-                      initial={{opacity: 0, y: 8}}
-                      animate={{opacity: 1, y: 0}}
-                      transition={{duration: 0.2, ease: [0.16, 1, 0.3, 1], delay: 0.06 * index}}
+                      className="bg-gradient-to-r from-warning-50 to-warning-50 dark:from-warning-950/20 dark:to-warning-950/20 border border-warning-200 dark:border-warning-800 rounded-xl p-6 cursor-pointer hover:shadow-[var(--sh-md)] transition-all group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2"
                       onClick={() => handleAnnouncementClick(announcement)}
-                      className="bg-gradient-to-r from-warning-50 to-warning-50 dark:from-warning-950/20 dark:to-warning-950/20 border border-warning-200 dark:border-warning-800 rounded-xl p-6 cursor-pointer hover:shadow-[var(--shadow-dropdown)] transition-all group"
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          handleAnnouncementClick(announcement);
+                        }
+                      }}
                     >
                       <div className="flex items-start gap-4">
                         <div className="p-4 bg-warning-100 dark:bg-warning-900/30 rounded-lg">
@@ -330,22 +335,22 @@ export default function AnnouncementsPage() {
                           </div>
                         </div>
                         <ChevronRight
-                          className="w-5 h-5 text-[var(--text-muted)] group-hover:text-warning-600 transition-colors"/>
+                          className="w-5 h-5 text-[var(--text-muted)] group-hover:text-warning-600 transition-colors" aria-hidden="true"/>
                       </div>
-                    </motion.div>
+                    </StaggerItem>
                   );
                 })}
-              </div>
+              </Stagger>
             </Reveal>
           )}
 
           {/* Search and Filters */}
-          <Reveal inView className="card-aura p-4 mb-6">
+          <Reveal inView className="card-aura p-4 mb-6" delay={0.04}>
             <div className="space-y-4">
               {/* Line 1: Search */}
               <div className="relative">
                 <Search
-                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[var(--text-muted)] w-4 h-4"/>
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[var(--text-muted)] w-4 h-4" aria-hidden="true"/>
                 <input
                   type="text"
                   placeholder="Search announcements..."
@@ -385,41 +390,50 @@ export default function AnnouncementsPage() {
           </Reveal>
 
           {/* Announcements List */}
-          <Reveal inView>
+          <Reveal inView delay={0.08}>
             <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
-              <Bell className="w-5 h-5 text-accent-700"/>
+              <Bell className="w-5 h-5 text-accent-700" aria-hidden="true"/>
               All Announcements
             </h2>
 
             {loading ? (
-              <div className="space-y-4">
+              <Stagger className="space-y-4" delayChildren={0.04} stagger={0.03}>
                 {Array.from({length: 4}).map((_, i) => (
-                  <SkeletonCard key={i}/>
+                  <StaggerItem key={i}>
+                    <SkeletonCard/>
+                  </StaggerItem>
                 ))}
-              </div>
+              </Stagger>
             ) : filteredAnnouncements.length === 0 ? (
-              <EmptyState
-                icon={<Megaphone className="h-12 w-12"/>}
-                title="No Announcements"
-                description="No announcements to display"
-              />
+              <Reveal inView delay={0.1}>
+                <EmptyState
+                  icon={<Megaphone className="h-12 w-12"/>}
+                  title="No Announcements"
+                  description="No announcements to display"
+                />
+              </Reveal>
             ) : (
-              <div className="space-y-4" role="list" aria-label="Announcements">
-                {filteredAnnouncements.map((announcement, index) => {
+              <Stagger className="space-y-4" delayChildren={0.06} stagger={0.03} role="list" aria-label="Announcements">
+                {filteredAnnouncements.map((announcement) => {
                   const Icon = getCategoryIcon(announcement.category);
                   return (
-                    <motion.div
+                    <StaggerItem
                       key={announcement.id}
                       role="listitem"
-                      initial={{opacity: 0, y: 8}}
-                      animate={{opacity: 1, y: 0}}
-                      transition={{duration: 0.2, ease: [0.16, 1, 0.3, 1], delay: index * 0.05}}
-                      onClick={() => handleAnnouncementClick(announcement)}
-                      className={`card-interactive p-6 cursor-pointer group ${
+                      className={`card-interactive p-6 cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 ${
                         announcement.isRead
                           ? ''
                           : 'border-accent-200 bg-accent-50/30 dark:border-accent-700/40 dark:bg-accent-950/15'
                       }`}
+                      onClick={() => handleAnnouncementClick(announcement)}
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          handleAnnouncementClick(announcement);
+                        }
+                      }}
                     >
                       <div className="flex items-start gap-4">
                         <div
@@ -453,16 +467,16 @@ export default function AnnouncementsPage() {
                           </p>
                           <div className="flex items-center gap-4 mt-4 text-caption">
                           <span className="flex items-center gap-1">
-                            <Calendar className="w-3.5 h-3.5"/>
+                            <Calendar className="w-3.5 h-3.5" aria-hidden="true"/>
                             {formatDate(announcement.publishedAt)}
                           </span>
                             <span className="flex items-center gap-1">
-                            <Eye className="w-3.5 h-3.5"/>
-                              {announcement.readCount} views
+                            <Eye className="w-3.5 h-3.5" aria-hidden="true"/>
+                              <span className="num">{announcement.readCount}</span> views
                           </span>
                             {announcement.expiresAt && (
                               <span className="flex items-center gap-1">
-                              <Clock className="w-3.5 h-3.5"/>
+                              <Clock className="w-3.5 h-3.5" aria-hidden="true"/>
                               Expires {formatDate(announcement.expiresAt)}
                             </span>
                             )}
@@ -470,7 +484,7 @@ export default function AnnouncementsPage() {
                         </div>
                         <div className="flex items-center gap-2">
                           {announcement.isPinned && (
-                            <Pin className="w-4 h-4 text-warning-500"/>
+                            <Pin className="w-4 h-4 text-warning-500" aria-hidden="true"/>
                           )}
                           {canEditAnnouncement(announcement) && (
                             <div
@@ -499,13 +513,13 @@ export default function AnnouncementsPage() {
                             </div>
                           )}
                           <ChevronRight
-                            className="w-5 h-5 text-[var(--text-muted)] group-hover:text-accent-700 transition-colors"/>
+                            className="w-5 h-5 text-[var(--text-muted)] group-hover:text-accent-700 transition-colors" aria-hidden="true"/>
                         </div>
                       </div>
-                    </motion.div>
+                    </StaggerItem>
                   );
                 })}
-              </div>
+              </Stagger>
             )}
 
             {/* Pagination */}

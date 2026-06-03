@@ -12,51 +12,60 @@ interface CalibrationMatrixProps {
 }
 
 
-const matrixLabels: Record<string, { title: string; description: string; color: string }> = {
+const matrixLabels: Record<string, { title: string; description: string; bgToken: string; fgToken: string }> = {
   '3-3': {
     title: 'Stars / Top Talent',
     description: 'High performers with high potential - future leaders',
-    color: 'bg-success-500',
+    bgToken: 'var(--ok-bg)',
+    fgToken: 'var(--ok-fg)',
   },
   '3-2': {
     title: 'Core Contributors',
     description: 'High performers - backbone of the organization',
-    color: 'bg-success-400',
+    bgToken: 'var(--ok-bg)',
+    fgToken: 'var(--ok-fg)',
   },
   '3-1': {
     title: 'Solid Performers',
     description: 'Consistent performers in current role',
-    color: 'bg-success-300',
+    bgToken: 'var(--ok-bg)',
+    fgToken: 'var(--ok-fg)',
   },
   '2-3': {
     title: 'High Potential',
     description: 'Strong potential - need development',
-    color: 'bg-warning-400',
+    bgToken: 'var(--warn-bg)',
+    fgToken: 'var(--warn-fg)',
   },
   '2-2': {
     title: 'Solid Contributors',
     description: 'Meeting expectations consistently',
-    color: 'bg-warning-300',
+    bgToken: 'var(--warn-bg)',
+    fgToken: 'var(--warn-fg)',
   },
   '2-1': {
     title: 'Underperformers',
     description: 'Need improvement in current role',
-    color: 'bg-warning-200',
+    bgToken: 'var(--warn-bg)',
+    fgToken: 'var(--warn-fg)',
   },
   '1-3': {
     title: 'Enigmas / Rough Diamonds',
     description: 'High potential but underperforming - need support',
-    color: 'bg-danger-400',
+    bgToken: 'var(--err-bg)',
+    fgToken: 'var(--err-fg)',
   },
   '1-2': {
     title: 'Inconsistent Performers',
     description: 'Variable performance - coaching needed',
-    color: 'bg-danger-300',
+    bgToken: 'var(--err-bg)',
+    fgToken: 'var(--err-fg)',
   },
   '1-1': {
     title: 'Low Performers',
     description: 'Significant performance concerns',
-    color: 'bg-danger-500',
+    bgToken: 'var(--err-bg)',
+    fgToken: 'var(--err-fg)',
   },
 };
 
@@ -156,15 +165,19 @@ function MatrixCell({
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
-      className={`border border-[var(--border-strong)] p-2 rounded-lg min-h-[180px] transition-all ${
-        isDragOver ? 'bg-accent-50 border-accent-400 border-2' : 'bg-[var(--bg-surface)]'
-      } ${cellInfo.color} bg-opacity-10`}
+      className={`border p-2 rounded-lg min-h-[180px] transition-all ${
+        isDragOver ? 'bg-[var(--accent-soft)] border-[var(--accent-bd)] border-2' : `border-[var(--border)] bg-[var(--bg-surface)]`
+      }`}
+      style={isDragOver ? {} : {
+        backgroundColor: `${cellInfo.bgToken}`,
+        opacity: 0.1
+      }}
     >
-      <div className="mb-2 pb-2 border-b border-[var(--border-main)]">
-        <h4 className="text-xs font-semibold text-[var(--text-primary)] leading-tight">{cellInfo.title}</h4>
-        <p className="text-xs text-[var(--text-secondary)] mt-0.5 leading-tight">{cellInfo.description}</p>
+      <div className="mb-2 pb-2 border-b border-[var(--border)]">
+        <h4 className="text-xs font-semibold text-[var(--text-1)] leading-tight">{cellInfo.title}</h4>
+        <p className="text-xs text-[var(--text-2)] mt-0.5 leading-tight">{cellInfo.description}</p>
         <div className="row-between mt-1">
-          <span className="inline-flex items-center gap-1 text-caption">
+          <span className="inline-flex items-center gap-1 text-caption tabular-nums">
             <Users className="h-3 w-3"/>
             {employees.length}
           </span>
@@ -231,19 +244,19 @@ export default function CalibrationMatrix({
   return (
     <div className="space-y-4">
       {/* Legend */}
-      <div className="bg-[var(--bg-card)] p-4 rounded-lg border border-[var(--border-main)]">
-        <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-4">9-Box Grid Legend</h3>
+      <div className="bg-[var(--bg-card)] p-4 rounded-lg border border-[var(--border)]">
+        <h3 className="text-sm font-semibold text-[var(--text-1)] mb-4">9-Box Grid Legend</h3>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-xs">
           <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded bg-success-500"></div>
+            <div className="w-4 h-4 rounded" style={{backgroundColor: 'var(--ok-bg)'}}></div>
             <span>Top Talent / Stars</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded bg-warning-400"></div>
+            <div className="w-4 h-4 rounded" style={{backgroundColor: 'var(--warn-bg)'}}></div>
             <span>Development Needed</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded bg-danger-500"></div>
+            <div className="w-4 h-4 rounded" style={{backgroundColor: 'var(--err-bg)'}}></div>
             <span>Performance Concerns</span>
           </div>
         </div>
@@ -402,27 +415,27 @@ export default function CalibrationMatrix({
       </div>
 
       {/* Summary Statistics */}
-      <div className="bg-[var(--bg-card)] p-4 rounded-lg border border-[var(--border-main)]">
-        <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-4">Distribution Summary</h3>
+      <div className="bg-[var(--bg-card)] p-4 rounded-lg border border-[var(--border)]">
+        <h3 className="text-sm font-semibold text-[var(--text-1)] mb-4">Distribution Summary</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div>
-            <div className="text-2xl font-bold text-[var(--text-primary)]">{employees.length}</div>
+            <div className="text-2xl font-bold text-[var(--text-1)] tabular-nums">{employees.length}</div>
             <div className="text-caption">Total Employees</div>
           </div>
           <div>
-            <div className="text-2xl font-bold text-success-600">
+            <div className="text-2xl font-bold tabular-nums" style={{color: 'var(--ok-fg)'}}>
               {(distribution['3-3'] || 0) + (distribution['2-3'] || 0) + (distribution['3-2'] || 0)}
             </div>
             <div className="text-caption">Top Performers</div>
           </div>
           <div>
-            <div className="text-2xl font-bold text-warning-600">
+            <div className="text-2xl font-bold tabular-nums" style={{color: 'var(--warn-fg)'}}>
               {(distribution['2-2'] || 0) + (distribution['2-1'] || 0) + (distribution['3-1'] || 0)}
             </div>
             <div className="text-caption">Solid Contributors</div>
           </div>
           <div>
-            <div className="text-2xl font-bold text-danger-600">
+            <div className="text-2xl font-bold tabular-nums" style={{color: 'var(--err-fg)'}}>
               {(distribution['1-1'] || 0) + (distribution['1-2'] || 0) + (distribution['1-3'] || 0)}
             </div>
             <div className="text-caption">Need Development</div>

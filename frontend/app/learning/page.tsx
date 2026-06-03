@@ -23,6 +23,7 @@ import {
   useReducedMotionSafe,
 } from '@/lib/animation';
 import {Button} from '@/components/ui/Button';
+import {Stagger, StaggerItem} from '@/components/motion';
 import {Skeleton} from '@/components/ui/Skeleton';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
@@ -297,23 +298,23 @@ function BentoHero({title, description, href, progress}: {
     >
       <Link
         href={href}
-        className="group block h-full rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] p-7 sm:p-9 transition-all hover:border-[var(--border-main)] hover:shadow-[0_20px_40px_-15px_rgba(15,23,42,0.08)] active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
+        className="group block h-full rounded-aura-lg bg-[var(--surface)] border border-[var(--border-soft)] p-7 sm:p-9 transition-all hover:border-[var(--border)] hover:shadow-[var(--sh-md)] active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2"
       >
         <div className="flex items-start justify-between">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-accent-50 text-accent-700 dark:bg-accent-900/30 dark:text-accent-300">
+          <div className="flex h-11 w-11 items-center justify-center rounded-aura-md bg-[var(--accent-soft)] text-[var(--accent)]">
             <GraduationCap className="h-5 w-5" aria-hidden="true" />
           </div>
-          <ArrowRight className="h-4 w-4 text-[var(--text-muted)] transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+          <ArrowRight className="h-4 w-4 text-[var(--text-3)] transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
         </div>
-        <h2 className="mt-8 text-2xl sm:text-3xl font-semibold tracking-tight text-[var(--text-heading)]">
+        <h2 className="mt-8 text-2xl sm:text-3xl font-semibold tracking-tight text-[var(--text-1)]">
           {title}
         </h2>
-        <p className="mt-3 text-body-secondary max-w-[48ch]">
+        <p className="mt-3 text-body-secondary max-w-[48ch] text-[var(--text-2)]">
           {description}
         </p>
         <div className="mt-10 flex items-end justify-between gap-6">
           <BentoHeroBars progress={progress} />
-          <p className="text-2xs font-medium uppercase tracking-[0.18em] text-[var(--text-muted)]">
+          <p className="text-aura-micro text-[var(--text-3)]">
             {progress !== undefined ? `${Math.round(progress)}% complete` : 'Live catalog'}
           </p>
         </div>
@@ -343,7 +344,7 @@ function BentoHeroBars({progress}: {progress?: number}) {
               ? {duration: 0}
               : {duration: MOTION_DURATION.slow, ease: EASE, delay: 0.35 + i * 0.04}
           }
-          className="flex-1 max-w-3 origin-bottom rounded-sm bg-gradient-to-t from-accent-100 to-accent-300 dark:from-accent-900/60 dark:to-accent-700/80"
+          className="flex-1 max-w-3 origin-bottom rounded-sm bg-[var(--chart-1)] dark:bg-[var(--chart-1)]/60"
         />
       ))}
     </div>
@@ -365,23 +366,23 @@ function BentoTile({title, description, icon: Icon, href, badge}: {
     >
       <Link
         href={href}
-        className="group flex h-full items-start gap-4 rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] p-5 sm:p-6 transition-all hover:border-[var(--border-main)] hover:shadow-[0_12px_30px_-12px_rgba(15,23,42,0.07)] active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
+        className="group flex h-full items-start gap-4 rounded-aura-lg bg-[var(--surface)] border border-[var(--border-soft)] p-5 sm:p-6 transition-all hover:border-[var(--border)] hover:shadow-[var(--sh-sm)] active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2"
       >
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[var(--bg-surface)] border border-[var(--border-subtle)] text-[var(--text-secondary)]">
-          <Icon className="h-4 w-4" aria-hidden="true" />
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-aura-md bg-[var(--surface-aura-2)] border border-[var(--border-soft)] text-[var(--text-2)]">
+          <Icon className="h-[18px] w-[18px]" aria-hidden="true" />
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-4">
-            <h3 className="text-base font-semibold text-[var(--text-heading)]">{title}</h3>
+            <h3 className="text-base font-semibold text-[var(--text-1)]">{title}</h3>
             {badge !== undefined && (
-              <span className="inline-flex items-center justify-center min-w-6 px-2 h-5 text-2xs font-semibold rounded-full bg-accent-100 text-accent-700 dark:bg-accent-900/40 dark:text-accent-300">
+              <span className="inline-flex items-center justify-center min-w-6 px-2 h-5 text-2xs font-semibold rounded-aura-full bg-[var(--warn-bg)] text-[var(--warn-fg)] num">
                 {badge}
               </span>
             )}
           </div>
-          <p className="mt-1 text-sm text-[var(--text-secondary)] leading-relaxed">{description}</p>
+          <p className="mt-1 text-sm text-[var(--text-2)] leading-relaxed">{description}</p>
         </div>
-        <ArrowRight className="h-4 w-4 self-center text-[var(--text-muted)] transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+        <ArrowRight className="h-4 w-4 self-center text-[var(--text-3)] transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
       </Link>
     </motion.div>
   );

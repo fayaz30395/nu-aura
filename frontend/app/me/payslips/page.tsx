@@ -113,7 +113,7 @@ export default function MyPayslipsPage() {
     return (
       <AppLayout activeMenuItem="payslips" breadcrumbs={[{label: 'My Payslips', href: '/me/payslips'}]}>
         <PageTransition className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {Array.from({length: 3}).map((_, i) => (
               <SkeletonStatCard key={i}/>
             ))}
@@ -129,7 +129,7 @@ export default function MyPayslipsPage() {
       <AppLayout activeMenuItem="payslips" breadcrumbs={[{label: 'My Payslips', href: '/me/payslips'}]}>
         <PageTransition>
           <EmptyState
-            icon={DollarSign}
+            icon={<DollarSign className="h-8 w-8"/>}
             title="No Employee Profile Linked"
             description="Payslip access requires an employee profile. Use the admin panels to manage payroll."
           />
@@ -144,10 +144,10 @@ export default function MyPayslipsPage() {
         {/* Header */}
         <Reveal className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <h1 className="text-xl font-bold">
+            <h1 className="text-aura-title text-[var(--text-1)]">
               {isAdminView ? 'All Employee Payslips' : 'My Payslips'}
             </h1>
-            <p className="text-[var(--text-secondary)] mt-1">
+            <p className="text-sm text-[var(--text-2)] mt-2">
               {isAdminView
                 ? 'View and manage all employee salary statements'
                 : 'View and download your salary statements'}

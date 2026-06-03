@@ -16,26 +16,25 @@ interface SectionErrorFallbackProps {
  */
 function SectionErrorFallback({error, onReset, sectionName}: SectionErrorFallbackProps) {
   return (
-    <div className="flex items-center gap-4 p-4 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)]">
-      <div
-        className="flex-shrink-0 w-10 h-10 rounded-full bg-danger-100 dark:bg-danger-900/20 flex items-center justify-center">
-        <svg className="w-5 h-5 text-danger-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div className="flex items-center gap-4 p-4 rounded-[var(--r-md)] border border-[var(--err-bd)] bg-[var(--err-bg)]">
+      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[var(--err-bg)] flex items-center justify-center">
+        <svg className="w-5 h-5 text-[var(--err-fg)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
                 d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"
           />
         </svg>
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-[var(--text-primary)]">
+        <p className="text-sm font-medium text-[var(--err-fg)]">
           {sectionName ? `Failed to load ${sectionName}` : 'This section encountered an error'}
         </p>
-        <p className="text-caption truncate">
+        <p className="text-xs text-[var(--err-fg)] opacity-75 truncate">
           {error?.message || 'An unexpected error occurred'}
         </p>
       </div>
       <button
         onClick={onReset}
-        className="flex-shrink-0 px-4 py-1.5 text-xs font-medium rounded-lg bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
+        className="flex-shrink-0 px-3 py-1.5 text-xs font-medium rounded-[var(--r-control)] bg-[var(--surface)] text-[var(--text-2)] hover:bg-[var(--surface-2)] border border-[var(--border-soft)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
       >
         Retry
       </button>
@@ -58,8 +57,8 @@ const sectionLoadingHeight = {
  */
 function SectionLoading({height = 'md'}: SectionLoadingProps) {
   return (
-    <div className={`flex items-center justify-center rounded-lg bg-[var(--bg-card)] ${sectionLoadingHeight[height]}`}>
-      <div className="flex items-center gap-2 text-[var(--text-muted)]">
+    <div className={`flex items-center justify-center rounded-[var(--r-md)] bg-[var(--surface)] ${sectionLoadingHeight[height]}`}>
+      <div className="flex items-center gap-2 text-[var(--text-3)]">
         <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
           <path className="opacity-75" fill="currentColor"

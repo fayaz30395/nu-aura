@@ -73,10 +73,10 @@ export function ScopeSelector({
             type="button"
             onClick={() => onChange(scope)}
             disabled={disabled}
-            className={`inline-flex items-center gap-1.5 px-4 py-1.5 text-sm rounded-md border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
+            className={`inline-flex items-center gap-1.5 px-4 py-1.5 text-sm rounded-aura-control border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 ${
               value === scope
-                ? 'bg-accent-600 text-white border-accent-600 dark:bg-accent-500 dark:border-accent-500'
-                : 'bg-[var(--bg-surface)] text-[var(--text-secondary)] border-[var(--border-main)] hover:bg-[var(--bg-card-hover)]'
+                ? 'bg-[var(--accent)] text-white border-[var(--accent)]'
+                : 'bg-[var(--surface)] text-[var(--text-2)] border-[var(--border)] hover:bg-[var(--surface-hover)]'
             } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
             title={SCOPE_DESCRIPTIONS[scope]}
           >
@@ -87,7 +87,7 @@ export function ScopeSelector({
       </div>
 
       {showDescription && (
-        <p className="text-body-muted">
+        <p className="text-sm text-[var(--text-2)]">
           {SCOPE_DESCRIPTIONS[value]}
         </p>
       )}

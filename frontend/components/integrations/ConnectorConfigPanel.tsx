@@ -104,8 +104,8 @@ export function ConnectorConfigPanel({
 
   const renderField = (field: ConnectorConfigField) => {
     const baseClasses =
-      'w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)]';
-    const errorClasses = errors[field.name as keyof FormData] ? 'border-danger-500' : '';
+      'w-full px-4 py-2 rounded-[var(--r-control)] border border-[var(--border)] bg-[var(--surface)] text-[var(--text-1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]';
+    const errorClasses = errors[field.name as keyof FormData] ? 'border-[var(--err-bd)]' : '';
 
     switch (field.type) {
       case 'boolean':
@@ -115,13 +115,13 @@ export function ConnectorConfigPanel({
               type="checkbox"
               id={field.name}
               {...register(field.name as keyof FormData)}
-              className="h-4 w-4 rounded border-[var(--border-main)] text-accent-700"
+              className="h-4 w-4 rounded-[var(--r-xs)] border-[var(--border)] text-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
             />
-            <label htmlFor={field.name} className="text-sm font-medium text-[var(--text-primary)]">
+            <label htmlFor={field.name} className="text-sm font-medium text-[var(--text-1)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] rounded">
               {field.label}
             </label>
             {field.description && (
-              <p className="text-xs text-[var(--text-secondary)]">{field.description}</p>
+              <p className="text-xs text-[var(--text-3)]">{field.description}</p>
             )}
           </div>
         );
@@ -129,9 +129,9 @@ export function ConnectorConfigPanel({
       case 'select':
         return (
           <div key={field.name}>
-            <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+            <label className="block text-sm font-medium text-[var(--text-1)] mb-2">
               {field.label}
-              {field.required && <span className="text-danger-500">*</span>}
+              {field.required && <span className="text-[var(--err-fg)]">*</span>}
             </label>
             <select
               {...register(field.name as keyof FormData)}
@@ -145,10 +145,10 @@ export function ConnectorConfigPanel({
               ))}
             </select>
             {field.description && (
-              <p className="text-xs text-[var(--text-secondary)] mt-1">{field.description}</p>
+              <p className="text-xs text-[var(--text-3)] mt-1">{field.description}</p>
             )}
             {errors[field.name as keyof FormData]?.message && (
-              <p className="text-danger-500 text-sm mt-1">
+              <p className="text-[var(--err-fg)] text-sm mt-1">
                 {String(errors[field.name as keyof FormData]?.message)}
               </p>
             )}
@@ -158,9 +158,9 @@ export function ConnectorConfigPanel({
       case 'textarea':
         return (
           <div key={field.name}>
-            <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+            <label className="block text-sm font-medium text-[var(--text-1)] mb-2">
               {field.label}
-              {field.required && <span className="text-danger-500">*</span>}
+              {field.required && <span className="text-[var(--err-fg)]">*</span>}
             </label>
             <textarea
               {...register(field.name as keyof FormData)}
@@ -169,10 +169,10 @@ export function ConnectorConfigPanel({
               className={`${baseClasses} ${errorClasses}`}
             />
             {field.description && (
-              <p className="text-xs text-[var(--text-secondary)] mt-1">{field.description}</p>
+              <p className="text-xs text-[var(--text-3)] mt-1">{field.description}</p>
             )}
             {errors[field.name as keyof FormData]?.message && (
-              <p className="text-danger-500 text-sm mt-1">
+              <p className="text-[var(--err-fg)] text-sm mt-1">
                 {String(errors[field.name as keyof FormData]?.message)}
               </p>
             )}
@@ -182,9 +182,9 @@ export function ConnectorConfigPanel({
       case 'password':
         return (
           <div key={field.name}>
-            <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+            <label className="block text-sm font-medium text-[var(--text-1)] mb-2">
               {field.label}
-              {field.required && <span className="text-danger-500">*</span>}
+              {field.required && <span className="text-[var(--err-fg)]">*</span>}
             </label>
             <input
               type="password"
@@ -193,10 +193,10 @@ export function ConnectorConfigPanel({
               className={`${baseClasses} ${errorClasses}`}
             />
             {field.description && (
-              <p className="text-xs text-[var(--text-secondary)] mt-1">{field.description}</p>
+              <p className="text-xs text-[var(--text-3)] mt-1">{field.description}</p>
             )}
             {errors[field.name as keyof FormData]?.message && (
-              <p className="text-danger-500 text-sm mt-1">
+              <p className="text-[var(--err-fg)] text-sm mt-1">
                 {String(errors[field.name as keyof FormData]?.message)}
               </p>
             )}
@@ -206,9 +206,9 @@ export function ConnectorConfigPanel({
       case 'url':
         return (
           <div key={field.name}>
-            <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+            <label className="block text-sm font-medium text-[var(--text-1)] mb-2">
               {field.label}
-              {field.required && <span className="text-danger-500">*</span>}
+              {field.required && <span className="text-[var(--err-fg)]">*</span>}
             </label>
             <input
               type="url"
@@ -217,10 +217,10 @@ export function ConnectorConfigPanel({
               className={`${baseClasses} ${errorClasses}`}
             />
             {field.description && (
-              <p className="text-xs text-[var(--text-secondary)] mt-1">{field.description}</p>
+              <p className="text-xs text-[var(--text-3)] mt-1">{field.description}</p>
             )}
             {errors[field.name as keyof FormData]?.message && (
-              <p className="text-danger-500 text-sm mt-1">
+              <p className="text-[var(--err-fg)] text-sm mt-1">
                 {String(errors[field.name as keyof FormData]?.message)}
               </p>
             )}
@@ -231,9 +231,9 @@ export function ConnectorConfigPanel({
       default:
         return (
           <div key={field.name}>
-            <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+            <label className="block text-sm font-medium text-[var(--text-1)] mb-2">
               {field.label}
-              {field.required && <span className="text-danger-500">*</span>}
+              {field.required && <span className="text-[var(--err-fg)]">*</span>}
             </label>
             <input
               type="text"
@@ -242,10 +242,10 @@ export function ConnectorConfigPanel({
               className={`${baseClasses} ${errorClasses}`}
             />
             {field.description && (
-              <p className="text-xs text-[var(--text-secondary)] mt-1">{field.description}</p>
+              <p className="text-xs text-[var(--text-3)] mt-1">{field.description}</p>
             )}
             {errors[field.name as keyof FormData]?.message && (
-              <p className="text-danger-500 text-sm mt-1">
+              <p className="text-[var(--err-fg)] text-sm mt-1">
                 {String(errors[field.name as keyof FormData]?.message)}
               </p>
             )}
@@ -263,27 +263,27 @@ export function ConnectorConfigPanel({
       size="md"
       styles={{
         content: {
-          backgroundColor: 'var(--bg-card)',
+          backgroundColor: 'var(--surface)',
         },
         header: {
-          backgroundColor: 'var(--bg-card)',
-          borderBottom: '1px solid var(--border-main)',
+          backgroundColor: 'var(--surface)',
+          borderBottom: '1px solid var(--border)',
         },
       }}
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div>
-          <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+          <label className="block text-sm font-medium text-[var(--text-1)] mb-2">
             Display Name
           </label>
           <input
             type="text"
             {...register('displayName')}
-            className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)]"
+            className="w-full px-4 py-2 rounded-[var(--r-control)] border border-[var(--border)] bg-[var(--surface)] text-[var(--text-1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
             placeholder="My Connector"
           />
           {errors.displayName?.message && (
-            <p className="text-danger-500 text-sm mt-1">{String(errors.displayName.message)}</p>
+            <p className="text-[var(--err-fg)] text-sm mt-1">{String(errors.displayName.message)}</p>
           )}
         </div>
 
@@ -291,7 +291,7 @@ export function ConnectorConfigPanel({
           {connector.capabilities.configSchema.map((field) => renderField(field))}
         </div>
 
-        <div className="flex gap-4 pt-6 border-t border-[var(--border-main)]">
+        <div className="flex gap-4 pt-6 border-t border-[var(--border)]">
           <Button
             type="submit"
             variant="primary"

@@ -25,6 +25,7 @@ import {
 } from 'lucide-react';
 import {AppLayout} from '@/components/layout';
 import {PageTransition, Reveal, Stagger, StaggerItem} from '@/components/motion';
+import {Button} from '@/components/ui/Button';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {useAuth} from '@/lib/hooks/useAuth';
@@ -193,7 +194,7 @@ export default function MyProfilePage() {
         <PageTransition>
           <div className="mx-auto max-w-2xl">
             <EmptyState
-              icon={AlertCircle}
+              icon={<AlertCircle className="h-8 w-8"/>}
               title="Profile Not Found"
               description={error || 'Unable to load your profile. Please try again or contact your administrator.'}
             />
@@ -230,8 +231,8 @@ export default function MyProfilePage() {
         {/* Header */}
         <Reveal>
           <div>
-            <h1 className="text-xl font-bold">My Profile</h1>
-            <p className="text-[var(--text-secondary)] mt-1">
+            <h1 className="text-aura-title text-[var(--text-1)]">My Profile</h1>
+            <p className="text-sm text-[var(--text-2)] mt-2">
               Manage your personal information
             </p>
           </div>
@@ -246,6 +247,7 @@ export default function MyProfilePage() {
                 variant="secondary"
                 onClick={handleCancel}
                 disabled={updateMutation.isPending}
+              >
               <X className="h-4 w-4"/>
               Cancel
               </Button>
@@ -273,9 +275,9 @@ export default function MyProfilePage() {
         {/* Success Message */}
         {success && (
           <div
-            className="flex items-center gap-2 p-4 bg-success-50 dark:bg-success-950/20 border border-success-200 dark:border-success-800 rounded-lg animate-in fade-in slide-in-from-top-2 duration-200">
-            <Check className="h-5 w-5 text-success-600"/>
-            <p className="text-success-800 dark:text-success-200 font-medium">
+            className="flex items-center gap-2 p-4 bg-[var(--ok-bg)] border border-[var(--ok-bd)] rounded-aura-lg animate-in fade-in slide-in-from-top-2 duration-200">
+            <Check className="h-5 w-5 text-[var(--ok-fg)]"/>
+            <p className="text-[var(--ok-fg)] font-medium">
               Profile updated successfully!
             </p>
           </div>
@@ -284,16 +286,16 @@ export default function MyProfilePage() {
         {/* Error Message */}
         {error && (
           <div
-            className="flex items-center gap-2 p-4 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-lg animate-in fade-in slide-in-from-top-2 duration-200">
-            <AlertCircle className="h-5 w-5 text-danger-600"/>
-            <p className="text-danger-800 dark:text-danger-200 font-medium">{error}</p>
+            className="flex items-center gap-2 p-4 bg-[var(--err-bg)] border border-[var(--err-bd)] rounded-aura-lg animate-in fade-in slide-in-from-top-2 duration-200">
+            <AlertCircle className="h-5 w-5 text-[var(--err-fg)]"/>
+            <p className="text-[var(--err-fg)] font-medium">{error}</p>
           </div>
         )}
 
         {/* Profile Header Card */}
         <Reveal>
-        <Card className="card-aura overflow-hidden">
-          <div className="h-32 bg-accent-100 dark:bg-accent-900/30"/>
+        <Card className="overflow-hidden border border-[var(--border-soft)] bg-[var(--surface)] shadow-sh-sm">
+          <div className="h-32 bg-gradient-to-r from-[var(--accent-soft)] to-[var(--accent)] opacity-30"/>
           <CardContent className="relative pt-0">
             <div className="flex flex-col md:flex-row items-start md:items-end gap-6 -mt-16">
               <div className="relative">
@@ -303,36 +305,36 @@ export default function MyProfilePage() {
                     alt={displayName}
                     width={128}
                     height={128}
-                    className="rounded-full object-cover border-4 border-[var(--bg-card)] dark:border-[var(--bg-main)] shadow-[var(--shadow-dropdown)] bg-[var(--bg-input)]"
+                    className="rounded-full object-cover border-4 border-[var(--surface)] shadow-sh-md bg-[var(--surface)]"
                     onError={() => setPhotoLoadError(true)}
                   />
                 ) : (
                   <div
-                    className="w-32 h-32 rounded-full bg-[var(--bg-input)] border-4 border-[var(--bg-card)] dark:border-[var(--bg-main)] flex items-center justify-center text-4xl font-bold text-accent-700 shadow-[var(--shadow-dropdown)]">
+                    className="w-32 h-32 rounded-full bg-[var(--surface-aura-2)] border-4 border-[var(--surface)] flex items-center justify-center text-4xl font-bold text-[var(--accent)] shadow-sh-md">
                     {getInitials(displayName)}
                   </div>
                 )}
                 <div
-                  className="absolute bottom-2 right-2 w-6 h-6 bg-success-500 border-4 border-[var(--bg-card)] dark:border-[var(--bg-main)] rounded-full"/>
+                  className="absolute bottom-2 right-2 w-6 h-6 bg-[var(--ok-bg)] border-4 border-[var(--surface)] rounded-full"/>
               </div>
               <div className="flex-1 pb-6">
-                <h2 className="text-2xl  font-bold text-[var(--text-primary)]">
+                <h2 className="text-2xl font-semibold text-[var(--text-1)]">
                   {displayName}
                 </h2>
-                <p className="text-lg text-[var(--text-secondary)] mt-1">
+                <p className="text-base text-[var(--text-2)] mt-1">
                   {employee.designation}
                 </p>
-                <div className="meta-row mt-2">
-                  <div className="flex items-center gap-1">
-                    <Mail className="h-4 w-4"/>
+                <div className="flex flex-wrap gap-4 mt-3 text-sm text-[var(--text-2)]">
+                  <div className="flex items-center gap-2">
+                    <Mail className="h-4 w-4 text-[var(--text-3)]"/>
                     {employee.workEmail}
                   </div>
-                  <div className="flex items-center gap-1">
-                    <Briefcase className="h-4 w-4"/>
+                  <div className="flex items-center gap-2">
+                    <Briefcase className="h-4 w-4 text-[var(--text-3)]"/>
                     {employee.employeeCode}
                   </div>
-                  <div className="flex items-center gap-1">
-                    <Building2 className="h-4 w-4"/>
+                  <div className="flex items-center gap-2">
+                    <Building2 className="h-4 w-4 text-[var(--text-3)]"/>
                     {employee.departmentName || 'N/A'}
                   </div>
                 </div>
@@ -345,34 +347,34 @@ export default function MyProfilePage() {
         <Stagger inView className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Personal Information */}
           <StaggerItem>
-          <Card className="card-aura">
+          <Card className="border border-[var(--border-soft)] bg-[var(--surface)] shadow-sh-sm hover-lift">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <User className="h-5 w-5"/>
+              <CardTitle className="flex items-center gap-2 text-[var(--text-1)]">
+                <User className="h-5 w-5 text-[var(--accent)]"/>
                 Personal Information
               </CardTitle>
-              <CardDescription>Your basic personal details</CardDescription>
+              <CardDescription className="text-[var(--text-3)]">Your basic personal details</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <label className="text-sm font-medium text-[var(--text-secondary)]">
+                <label className="text-xs font-medium uppercase tracking-wider text-[var(--text-3)]">
                   Full Name
                 </label>
-                <p className="text-[var(--text-primary)] mt-1">{displayName}</p>
+                <p className="text-[var(--text-1)] mt-2 font-medium">{displayName}</p>
               </div>
               <div>
-                <label className="text-sm font-medium text-[var(--text-secondary)]">
+                <label className="text-xs font-medium uppercase tracking-wider text-[var(--text-3)]">
                   Date of Birth
                 </label>
-                <p className="text-[var(--text-primary)] mt-1">
+                <p className="text-[var(--text-1)] mt-2 font-medium">
                   {employee.dateOfBirth ? formatDate(employee.dateOfBirth) : 'Not provided'}
                 </p>
               </div>
               <div>
-                <label className="text-sm font-medium text-[var(--text-secondary)]">
+                <label className="text-xs font-medium uppercase tracking-wider text-[var(--text-3)]">
                   Gender
                 </label>
-                <p className="text-[var(--text-primary)] mt-1">
+                <p className="text-[var(--text-1)] mt-2 font-medium">
                   {employee.gender || 'Not provided'}
                 </p>
               </div>
@@ -382,7 +384,7 @@ export default function MyProfilePage() {
 
           {/* Contact Information */}
           <StaggerItem>
-          <Card className="card-aura">
+          <Card className="border border-[var(--border-soft)] bg-[var(--surface)] shadow-sh-sm hover-lift">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Phone className="h-5 w-5"/>
@@ -456,7 +458,7 @@ export default function MyProfilePage() {
 
           {/* Address */}
           <StaggerItem>
-          <Card className="card-aura">
+          <Card className="border border-[var(--border-soft)] bg-[var(--surface)] shadow-sh-sm hover-lift">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <MapPin className="h-5 w-5"/>
@@ -565,7 +567,7 @@ export default function MyProfilePage() {
 
           {/* Employment Details */}
           <StaggerItem>
-          <Card className="card-aura">
+          <Card className="border border-[var(--border-soft)] bg-[var(--surface)] shadow-sh-sm hover-lift">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Calendar className="h-5 w-5"/>
@@ -625,7 +627,7 @@ export default function MyProfilePage() {
 
           {/* Bank Details */}
           <StaggerItem className="lg:col-span-2">
-          <Card className="card-aura">
+          <Card className="border border-[var(--border-soft)] bg-[var(--surface)] shadow-sh-sm hover-lift">
             <CardHeader>
               <div className="row-between">
                 <div>
@@ -685,7 +687,7 @@ export default function MyProfilePage() {
 
           {/* Tax Details */}
           <StaggerItem className="lg:col-span-2">
-          <Card className="card-aura">
+          <Card className="border border-[var(--border-soft)] bg-[var(--surface)] shadow-sh-sm hover-lift">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Shield className="h-5 w-5"/>

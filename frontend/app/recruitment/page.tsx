@@ -284,13 +284,13 @@ function StatsRow({openRequisitions, inPipeline, pendingOffers, interviewsThisWe
           variants={{hidden: {opacity: 0, y: 6}, visible: {opacity: 1, y: 0, transition: {duration: 0.4, ease: EASE}}}}
           className="px-5 py-6 sm:px-7 sm:py-8 first:pl-0 last:pr-0"
         >
-          <div className="flex items-center gap-2 text-[var(--text-muted)]">
+          <div className="flex items-center gap-2 text-[var(--text-3)]">
             <item.icon className="h-3.5 w-3.5" aria-hidden="true"/>
-            <span className="text-2xs font-medium uppercase tracking-wider">{item.label}</span>
+            <span className="text-2xs font-bold uppercase tracking-[0.08em]">{item.label}</span>
           </div>
           <p
             className={`mt-3 font-mono text-3xl sm:text-4xl tabular-nums tracking-tight ${
-              item.tone === 'warning' ? 'text-warning-700 dark:text-warning-300' : 'text-[var(--text-heading)]'
+              item.tone === 'warning' ? 'text-warning-700 dark:text-warning-300' : 'text-[var(--text-1)]'
             }`}
           >
             {item.value}
@@ -514,7 +514,7 @@ function CandidatesNeedingAttention({items, router}: {
               <button
                 type="button"
                 onClick={() => router.push(`/recruitment/candidates?id=${c.id}`)}
-                className="w-full grid grid-cols-[auto_1fr_auto] items-center gap-4 py-4 sm:gap-6 text-left hover:bg-[var(--bg-surface)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] rounded"
+                className="w-full grid grid-cols-[auto_1fr_auto] items-center gap-4 py-4 sm:gap-6 text-left hover:bg-[var(--surface-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] rounded transition-colors"
               >
                 <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--bg-surface)] text-[var(--text-secondary)] border border-[var(--border-subtle)]">
                   <Users className="h-4 w-4" aria-hidden="true"/>

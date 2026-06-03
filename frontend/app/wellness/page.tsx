@@ -26,6 +26,7 @@ import {
   Trophy,
   Users,
 } from 'lucide-react';
+import {motion} from 'framer-motion';
 import {AppLayout} from '@/components/layout/AppLayout';
 import {
   Button,
@@ -42,6 +43,7 @@ import {
   StatusBadge,
   Textarea,
 } from '@/components/ui';
+import {PageTransition, Reveal, Stagger} from '@/components/motion';
 import {SkeletonCard} from '@/components/ui/Skeleton';
 import {WELLNESS_FLAG} from '@/lib/status/vocabulary';
 import {
@@ -85,17 +87,17 @@ const getCategoryIcon = (category: ProgramCategory) => {
 const getCategoryColor = (category: ProgramCategory) => {
   switch (category) {
     case ProgramCategory.PHYSICAL_FITNESS:
-      return 'bg-accent-100 dark:bg-accent-500/10 text-accent-600 dark:text-accent-400';
+      return 'bg-[var(--accent-soft)] text-[var(--accent-text)]';
     case ProgramCategory.MENTAL_HEALTH:
-      return 'bg-accent-100 dark:bg-accent-500/10 text-accent-600 dark:text-accent-400';
+      return 'bg-[var(--accent-soft)] text-[var(--accent-text)]';
     case ProgramCategory.NUTRITION:
-      return 'bg-success-100 dark:bg-success-500/10 text-success-600 dark:text-success-400';
+      return 'bg-[var(--ok-bg)] text-[var(--ok-fg)]';
     case ProgramCategory.SLEEP:
-      return 'bg-accent-100 dark:bg-accent-500/10 text-accent-600 dark:text-accent-400';
+      return 'bg-[var(--accent-soft)] text-[var(--accent-text)]';
     case ProgramCategory.STRESS_MANAGEMENT:
-      return 'bg-warning-100 dark:bg-warning-500/10 text-warning-600 dark:text-warning-400';
+      return 'bg-[var(--warn-bg)] text-[var(--warn-fg)]';
     default:
-      return 'bg-[var(--bg-card-hover)] text-[var(--text-secondary)]';
+      return 'bg-[var(--surface-hover)] text-[var(--text-2)]';
   }
 };
 
@@ -186,153 +188,182 @@ export default function WellnessPage() {
 
   return (
     <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="wellness">
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)]">
-              Employee Wellness
-            </h1>
-            <p className="text-[var(--text-secondary)]">
-              Track your health, join challenges, and earn rewards
-            </p>
-          </div>
-          <PermissionGate permission={Permissions.WELLNESS_CREATE}>
-            <Button onClick={() => setIsLogModalOpen(true)}>
-              <Plus className="mr-2 h-4 w-4"/>
-              Log Health Metric
-            </Button>
-          </PermissionGate>
-        </div>
+      <PageTransition>
+        <div className="space-y-6">
+          {/* Header */}
+          <Reveal>
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h1 className="text-aura-title text-[var(--text-1)]">
+                  Employee Wellness
+                </h1>
+                <p className="text-[var(--text-2)] mt-1">
+                  Track your health, join challenges, and earn rewards
+                </p>
+              </div>
+              <PermissionGate permission={Permissions.WELLNESS_CREATE}>
+                <Button onClick={() => setIsLogModalOpen(true)} className="hover-lift">
+                  <Plus className="mr-2 h-4 w-4"/>
+                  Log Health Metric
+                </Button>
+              </PermissionGate>
+            </div>
+          </Reveal>
 
         {/* Error State */}
         {hasError && (
-          <Card className="border-danger-200 dark:border-danger-800 bg-danger-50 dark:bg-danger-950/20">
-            <CardContent className="p-4 row-between">
-              <div className="flex items-center gap-4">
-                <AlertCircle className="h-5 w-5 text-danger-500 flex-shrink-0"/>
-                <p className="text-sm text-danger-600 dark:text-danger-400">
-                  Some wellness data could not be loaded. Showing available information.
-                </p>
-              </div>
-              <Button variant="outline" size="sm" onClick={() => {
-                refetchPrograms();
-                refetchChallenges();
-              }}>
-                <RefreshCw className="h-3.5 w-3.5 mr-1.5"/>
-                Retry
-              </Button>
-            </CardContent>
-          </Card>
+          <Reveal>
+            <Card className="border-[var(--err-bd)] bg-[var(--err-bg)]">
+              <CardContent className="p-4 flex items-center justify-between gap-4">
+                <div className="flex items-center gap-4">
+                  <AlertCircle className="h-5 w-5 text-[var(--err-fg)] flex-shrink-0"/>
+                  <p className="text-sm text-[var(--err-fg)]">
+                    Some wellness data could not be loaded. Showing available information.
+                  </p>
+                </div>
+                <Button variant="outline" size="sm" onClick={() => {
+                  refetchPrograms();
+                  refetchChallenges();
+                }} className="focus-visible">
+                  <RefreshCw className="h-3.5 w-3.5 mr-1.5"/>
+                  Retry
+                </Button>
+              </CardContent>
+            </Card>
+          </Reveal>
         )}
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <Card className="card-aura">
-            <CardContent className="p-4">
-              <Stat
-                label="Total Points"
-                value={stats.totalPoints}
-                tone="success"
-                icon={<Trophy className="h-3.5 w-3.5"/>}
-              />
-            </CardContent>
-          </Card>
-          <Card className="card-aura">
-            <CardContent className="p-4">
-              <Stat
-                label="Current Streak"
-                value={`${stats.currentStreak} days`}
-                tone="warning"
-                icon={<Flame className="h-3.5 w-3.5"/>}
-              />
-            </CardContent>
-          </Card>
-          <Card className="card-aura">
-            <CardContent className="p-4">
-              <Stat
-                label="Level"
-                value={stats.level}
-                tone="accent"
-                icon={<Star className="h-3.5 w-3.5"/>}
-              />
-            </CardContent>
-          </Card>
-          <Card className="card-aura">
-            <CardContent className="p-4">
-              <Stat
-                label="Active Challenges"
-                value={stats.activeChallenges}
-                tone="accent"
-                icon={<Target className="h-3.5 w-3.5"/>}
-              />
-            </CardContent>
-          </Card>
-        </div>
+        <Stagger>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <motion.div>
+              <Card className="hover-lift">
+                <CardContent className="p-4">
+                  <Stat
+                    label="Total Points"
+                    value={stats.totalPoints.toString()}
+                    tone="success"
+                    icon={<Trophy className="h-3.5 w-3.5"/>}
+                  />
+                </CardContent>
+              </Card>
+            </motion.div>
+            <motion.div>
+              <Card className="hover-lift">
+                <CardContent className="p-4">
+                  <Stat
+                    label="Current Streak"
+                    value={`${stats.currentStreak} days`}
+                    tone="warning"
+                    icon={<Flame className="h-3.5 w-3.5"/>}
+                  />
+                </CardContent>
+              </Card>
+            </motion.div>
+            <motion.div>
+              <Card className="hover-lift">
+                <CardContent className="p-4">
+                  <Stat
+                    label="Level"
+                    value={stats.level.toString()}
+                    tone="accent"
+                    icon={<Star className="h-3.5 w-3.5"/>}
+                  />
+                </CardContent>
+              </Card>
+            </motion.div>
+            <motion.div>
+              <Card className="hover-lift">
+                <CardContent className="p-4">
+                  <Stat
+                    label="Active Challenges"
+                    value={stats.activeChallenges.toString()}
+                    tone="accent"
+                    icon={<Target className="h-3.5 w-3.5"/>}
+                  />
+                </CardContent>
+              </Card>
+            </motion.div>
+          </div>
+        </Stagger>
 
         {/* Quick Log Section */}
-        <Card>
-          <CardContent className="p-4">
-            <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-4">Quick Log</h2>
-            <div className="flex flex-wrap gap-4">
-              {metricOptions.map((metric) => {
-                const Icon = metric.icon;
-                return (
-                  <button
-                    key={metric.value}
-                    onClick={() => {
-                      resetLogForm({
-                        metricType: metric.value,
-                        value: 0,
-                        loggedAt: new Date().toISOString().split('T')[0],
-                        notes: '',
-                      });
-                      setIsLogModalOpen(true);
-                    }}
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                  >
-                    <Icon className="h-5 w-5 text-accent-500"/>
-                    <span className="text-sm font-medium text-[var(--text-secondary)]">{metric.label}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </CardContent>
-        </Card>
+        <Reveal>
+          <Card className="hover-lift">
+            <CardContent className="p-4">
+              <h2 className="text-aura-title text-[var(--text-1)] mb-4">Quick Log</h2>
+              <div className="flex flex-wrap gap-3">
+                {metricOptions.map((metric) => {
+                  const Icon = metric.icon;
+                  return (
+                    <button
+                      key={metric.value}
+                      onClick={() => {
+                        resetLogForm({
+                          metricType: metric.value,
+                          value: 0,
+                          loggedAt: new Date().toISOString().split('T')[0],
+                          notes: '',
+                        });
+                        setIsLogModalOpen(true);
+                      }}
+                      className="flex items-center gap-2 px-3 py-2 rounded-[var(--r-control)] bg-[var(--surface)] hover:bg-[var(--surface-hover)] border border-[var(--border-soft)] transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 press-scale"
+                      aria-label={`Log ${metric.label}`}
+                    >
+                      <Icon className="h-4 w-4 text-[var(--accent)]"/>
+                      <span className="text-xs font-medium text-[var(--text-2)]">{metric.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </CardContent>
+          </Card>
+        </Reveal>
 
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-          {/* Main Content */}
-          <div className="lg:col-span-2 space-y-4">
-            {/* Tabs */}
-            <div className="flex gap-2">
-              <Button
-                variant={activeTab === 'programs' ? 'primary' : 'outline'}
-                size="sm"
-                onClick={() => setActiveTab('programs')}
-                aria-current={activeTab === 'programs' ? 'page' : undefined}
-              >
-                Programs
-              </Button>
-              <Button
-                variant={activeTab === 'challenges' ? 'primary' : 'outline'}
-                size="sm"
-                onClick={() => setActiveTab('challenges')}
-                aria-current={activeTab === 'challenges' ? 'page' : undefined}
-              >
-                Challenges
-              </Button>
-            </div>
+        <Reveal>
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+            {/* Main Content */}
+            <div className="lg:col-span-2 space-y-4">
+              {/* Tabs */}
+              <div className="flex gap-2 border-b border-[var(--border-soft)]">
+                <button
+                  onClick={() => setActiveTab('programs')}
+                  aria-current={activeTab === 'programs' ? 'page' : undefined}
+                  className={`px-3 py-2 text-sm font-medium border-b-2 transition-colors ${
+                    activeTab === 'programs'
+                      ? 'border-[var(--accent)] text-[var(--accent)]'
+                      : 'border-transparent text-[var(--text-2)] hover:text-[var(--text-1)]'
+                  } focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]`}
+                >
+                  Programs
+                </button>
+                <button
+                  onClick={() => setActiveTab('challenges')}
+                  aria-current={activeTab === 'challenges' ? 'page' : undefined}
+                  className={`px-3 py-2 text-sm font-medium border-b-2 transition-colors ${
+                    activeTab === 'challenges'
+                      ? 'border-[var(--accent)] text-[var(--accent)]'
+                      : 'border-transparent text-[var(--text-2)] hover:text-[var(--text-1)]'
+                  } focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]`}
+                >
+                  Challenges
+                </button>
+              </div>
 
             {loading ? (
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                {Array.from({length: 4}).map((_, i) => (
-                  <SkeletonCard key={i}/>
-                ))}
-              </div>
+              <Stagger>
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  {Array.from({length: 4}).map((_, i) => (
+                    <motion.div key={i}>
+                      <SkeletonCard />
+                    </motion.div>
+                  ))}
+                </div>
+              </Stagger>
             ) : activeTab === 'programs' ? (
               // Programs Grid
               programs.length === 0 ? (
-                <Card className="card-aura">
+                <Card className="border-[var(--border-soft)]">
                   <CardContent className="p-0">
                     <EmptyState
                       icon={<Heart className="h-8 w-8"/>}
@@ -342,52 +373,56 @@ export default function WellnessPage() {
                   </CardContent>
                 </Card>
               ) : (
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                  {programs.map((program) => (
-                    <Card key={program.id}
-                          className="overflow-hidden hover:shadow-[var(--shadow-dropdown)] transition-shadow">
-                      <CardContent className="p-4">
-                        <div className="flex items-start gap-4">
-                          <div className={`rounded-lg p-4 ${getCategoryColor(program.category)}`}>
-                            {getCategoryIcon(program.category)}
-                          </div>
-                          <div className="flex-1">
-                            <div className="flex items-start justify-between">
-                              <h2 className="font-semibold text-[var(--text-primary)]">
-                                {program.name}
-                              </h2>
-                              {program.isFeatured && (
-                                <StatusBadge status="FEATURED" domain={WELLNESS_FLAG} compact/>
-                              )}
+                <Stagger>
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    {programs.map((program) => (
+                      <motion.div key={program.id}>
+                        <Card className="overflow-hidden hover-lift border-[var(--border-soft)]">
+                          <CardContent className="p-4">
+                            <div className="flex items-start gap-4">
+                              <div className={`rounded-[var(--r-lg)] p-3 flex-shrink-0 ${getCategoryColor(program.category)}`}>
+                                {getCategoryIcon(program.category)}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-start justify-between gap-2">
+                                  <h2 className="font-semibold text-[var(--text-1)] truncate">
+                                    {program.name}
+                                  </h2>
+                                  {program.isFeatured && (
+                                    <StatusBadge status="FEATURED" domain={WELLNESS_FLAG} />
+                                  )}
+                                </div>
+                                <p className="text-[var(--text-3)] mt-1 line-clamp-2 text-sm">
+                                  {program.description || 'Join this wellness program'}
+                                </p>
+                                <div className="flex items-center gap-4 mt-3 text-xs text-[var(--text-3)]">
+                                  {program.pointsReward && (
+                                    <span className="flex items-center gap-1">
+                                      <Trophy className="h-3.5 w-3.5"/>
+                                      <span className="num">{program.pointsReward}</span>
+                                      <span>pts</span>
+                                    </span>
+                                  )}
+                                  {program.participantCount && (
+                                    <span className="flex items-center gap-1">
+                                      <Users className="h-3.5 w-3.5"/>
+                                      <span className="num">{program.participantCount}</span>
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
                             </div>
-                            <p className="text-body-secondary mt-1 line-clamp-2">
-                              {program.description || 'Join this wellness program'}
-                            </p>
-                            <div className="flex items-center gap-4 mt-4 text-caption">
-                              {program.pointsReward && (
-                                <span className="flex items-center gap-1">
-                                  <Trophy className="h-3 w-3"/>
-                                  {program.pointsReward} pts
-                                </span>
-                              )}
-                              {program.participantCount && (
-                                <span className="flex items-center gap-1">
-                                  <Users className="h-3 w-3"/>
-                                  {program.participantCount}
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
+                          </CardContent>
+                        </Card>
+                      </motion.div>
+                    ))}
+                  </div>
+                </Stagger>
               )
             ) : (
               // Challenges Grid
               challenges.length === 0 ? (
-                <Card className="card-aura">
+                <Card className="border-[var(--border-soft)]">
                   <CardContent className="p-0">
                     <EmptyState
                       icon={<Target className="h-8 w-8"/>}
@@ -397,118 +432,127 @@ export default function WellnessPage() {
                   </CardContent>
                 </Card>
               ) : (
-                <div className="space-y-4">
-                  {challenges.map((challenge) => (
-                    <Card key={challenge.id}
-                          className="overflow-hidden hover:shadow-[var(--shadow-dropdown)] transition-shadow">
-                      <CardContent className="p-4">
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <h2 className="font-semibold text-[var(--text-primary)]">
-                              {challenge.name}
-                            </h2>
-                            <p className="text-body-secondary mt-1">
-                              {challenge.description || 'Join this challenge and compete!'}
-                            </p>
-                          </div>
-                          <StatusBadge
-                            status={challenge.isJoined ? 'JOINED' : 'OPEN'}
-                            domain={WELLNESS_FLAG}
-                          />
-                        </div>
-                        <div className="flex items-center gap-4 mt-4 text-body-muted">
-                          <span className="flex items-center gap-1">
-                            <Calendar className="h-4 w-4"/>
-                            {formatDate(challenge.startDate)} - {formatDate(challenge.endDate)}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <Trophy className="h-4 w-4"/>
-                            {challenge.pointsReward} pts
-                          </span>
-                          {challenge.isTeamBased && (
-                            <span className="flex items-center gap-1">
-                              <Users className="h-4 w-4"/>
-                              Team
-                            </span>
-                          )}
-                        </div>
-                        {!challenge.isJoined && (
-                          <PermissionGate permission={Permissions.WELLNESS_CREATE}>
-                            <Button
-                              size="sm"
-                              className="mt-4"
-                              onClick={() => handleJoinChallenge(challenge.id)}
-                              disabled={joinChallengeMutation.isPending}
-                            >
-                              {joinChallengeMutation.isPending ? 'Joining...' : 'Join Challenge'}
-                            </Button>
-                          </PermissionGate>
-                        )}
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
+                <Stagger>
+                  <div className="space-y-3">
+                    {challenges.map((challenge) => (
+                      <motion.div key={challenge.id}>
+                        <Card className="overflow-hidden hover-lift border-[var(--border-soft)]">
+                          <CardContent className="p-4">
+                            <div className="flex items-start justify-between gap-3">
+                              <div className="flex-1 min-w-0">
+                                <h2 className="font-semibold text-[var(--text-1)]">
+                                  {challenge.name}
+                                </h2>
+                                <p className="text-[var(--text-2)] mt-1 text-sm line-clamp-2">
+                                  {challenge.description || 'Join this challenge and compete!'}
+                                </p>
+                              </div>
+                              <StatusBadge
+                                status={challenge.isJoined ? 'JOINED' : 'OPEN'}
+                                domain={WELLNESS_FLAG}
+                              />
+                            </div>
+                            <div className="flex flex-wrap items-center gap-3 mt-3 text-xs text-[var(--text-3)]">
+                              <span className="flex items-center gap-1">
+                                <Calendar className="h-3.5 w-3.5"/>
+                                {formatDate(challenge.startDate)} - {formatDate(challenge.endDate)}
+                              </span>
+                              <span className="flex items-center gap-1">
+                                <Trophy className="h-3.5 w-3.5"/>
+                                <span className="num">{challenge.pointsReward}</span>
+                                <span>pts</span>
+                              </span>
+                              {challenge.isTeamBased && (
+                                <span className="flex items-center gap-1">
+                                  <Users className="h-3.5 w-3.5"/>
+                                  Team
+                                </span>
+                              )}
+                            </div>
+                            {!challenge.isJoined && (
+                              <PermissionGate permission={Permissions.WELLNESS_CREATE}>
+                                <Button
+                                  size="sm"
+                                  className="mt-3 focus-visible"
+                                  onClick={() => handleJoinChallenge(challenge.id)}
+                                  disabled={joinChallengeMutation.isPending}
+                                >
+                                  {joinChallengeMutation.isPending ? 'Joining...' : 'Join Challenge'}
+                                </Button>
+                              </PermissionGate>
+                            )}
+                          </CardContent>
+                        </Card>
+                      </motion.div>
+                    ))}
+                  </div>
+                </Stagger>
               )
             )}
           </div>
 
-          {/* Sidebar - Leaderboard */}
-          <div className="space-y-4">
-            <Card>
-              <CardContent className="p-4">
-                <h2 className="flex items-center gap-2 text-xl font-semibold text-[var(--text-primary)] mb-4">
-                  <Crown className="h-5 w-5 text-warning-500"/>
-                  Wellness Leaderboard
-                </h2>
-                {leaderboard.length === 0 ? (
-                  <EmptyState
-                    size="compact"
-                    icon={<Trophy className="w-full h-full"/>}
-                    title="No leaderboard yet"
-                    description="Join a challenge to start earning points."
-                  />
-                ) : (
-                  <div className="space-y-4">
-                    {leaderboard.map((entry, index) => (
-                      <div
-                        key={entry.employeeId}
-                        className="flex items-center gap-4 p-2 rounded-lg bg-[var(--bg-secondary)]"
-                      >
-                        <div
-                          className={`flex items-center justify-center w-8 h-8 rounded-full ${index === 0 ? 'bg-warning-500 text-white' :
-                            index === 1 ? 'bg-[var(--text-muted)] text-white' :
-                              index === 2 ? 'bg-warning-600 text-white' :
-                                'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] text-[var(--text-secondary)]'
-                          }`}>
-                          {index === 0 ? <Crown className="h-4 w-4"/> :
-                            index === 1 ? <Medal className="h-4 w-4"/> :
-                              index === 2 ? <Medal className="h-4 w-4"/> :
-                                <span className="text-sm font-medium">{entry.rank}</span>}
+            {/* Sidebar - Leaderboard */}
+            <Reveal>
+              <div className="space-y-4">
+                <Card className="border-[var(--border-soft)]">
+                  <CardContent className="p-4">
+                    <h2 className="flex items-center gap-2 text-aura-title text-[var(--text-1)] mb-4">
+                      <Crown className="h-5 w-5 text-[var(--warn-fg)]"/>
+                      Wellness Leaderboard
+                    </h2>
+                    {leaderboard.length === 0 ? (
+                      <EmptyState
+                        size="compact"
+                        icon={<Trophy className="w-full h-full"/>}
+                        title="No leaderboard yet"
+                        description="Join a challenge to start earning points."
+                      />
+                    ) : (
+                      <Stagger>
+                        <div className="space-y-3">
+                          {leaderboard.map((entry, index) => (
+                            <motion.div
+                              key={entry.employeeId}
+                              className="flex items-center gap-3 p-2 rounded-[var(--r-md)] bg-[var(--surface)]"
+                            >
+                              <div
+                                className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold flex-shrink-0 ${index === 0 ? 'bg-[var(--warn-fg)] text-white' :
+                                  index === 1 ? 'bg-[var(--text-2)] text-white' :
+                                    index === 2 ? 'bg-[var(--ok-fg)] text-white' :
+                                      'bg-[var(--surface-hover)] text-[var(--text-2)]'
+                                }`}>
+                                {index === 0 ? <Crown className="h-4 w-4"/> :
+                                  index === 1 ? <Medal className="h-4 w-4"/> :
+                                    index === 2 ? <Medal className="h-4 w-4"/> :
+                                      <span className="num">{entry.rank}</span>}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="font-medium text-[var(--text-1)] text-sm truncate">
+                                  {entry.employeeName}
+                                </p>
+                              </div>
+                              <div className="text-right flex-shrink-0">
+                                <p className="font-bold text-[var(--ok-fg)] num">
+                                  {entry.points}
+                                </p>
+                                <p className="text-[var(--text-3)] text-xs">pts</p>
+                              </div>
+                            </motion.div>
+                          ))}
                         </div>
-                        <div className="flex-1">
-                          <p className="font-medium text-[var(--text-primary)] text-sm">
-                            {entry.employeeName}
-                          </p>
-                        </div>
-                        <div className="text-right">
-                          <p className="font-bold text-success-600 dark:text-success-400">
-                            {entry.points}
-                          </p>
-                          <p className="text-caption">pts</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+                      </Stagger>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
+            </Reveal>
           </div>
-        </div>
+        </Reveal>
 
         {/* Log Health Modal */}
         <Modal isOpen={isLogModalOpen} onClose={() => setIsLogModalOpen(false)}>
           <ModalHeader>
-            <h2 className="text-xl font-semibold text-[var(--text-primary)]">
+            <h2 className="text-aura-title text-[var(--text-1)]">
               Log Health Metric
             </h2>
           </ModalHeader>
@@ -516,7 +560,7 @@ export default function WellnessPage() {
             <ModalBody>
               <div className="space-y-4">
                 <div>
-                  <label htmlFor="wellness-log-metric-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                  <label htmlFor="wellness-log-metric-type" className="block text-xs font-medium text-aura-micro text-[var(--text-2)] mb-2">
                     Metric Type
                   </label>
                   <Controller
@@ -537,11 +581,11 @@ export default function WellnessPage() {
                     )}
                   />
                   {logErrors.metricType && (
-                    <p className="text-xs text-danger-500 mt-1">{logErrors.metricType.message}</p>
+                    <p className="text-xs text-[var(--err-fg)] mt-1">{logErrors.metricType.message}</p>
                   )}
                 </div>
                 <div>
-                  <label htmlFor="wellness-log-value" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                  <label htmlFor="wellness-log-value" className="block text-xs font-medium text-aura-micro text-[var(--text-2)] mb-2">
                     Value
                   </label>
                   <Input
@@ -549,26 +593,28 @@ export default function WellnessPage() {
                     type="number"
                     {...registerLog('value')}
                     placeholder="Enter value"
+                    className="focus-visible"
                   />
                   {logErrors.value && (
-                    <p className="text-xs text-danger-500 mt-1">{logErrors.value.message}</p>
+                    <p className="text-xs text-[var(--err-fg)] mt-1">{logErrors.value.message}</p>
                   )}
                 </div>
                 <div>
-                  <label htmlFor="wellness-log-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                  <label htmlFor="wellness-log-date" className="block text-xs font-medium text-aura-micro text-[var(--text-2)] mb-2">
                     Date
                   </label>
                   <Input
                     id="wellness-log-date"
                     type="date"
                     {...registerLog('loggedAt')}
+                    className="focus-visible"
                   />
                   {logErrors.loggedAt && (
-                    <p className="text-xs text-danger-500 mt-1">{logErrors.loggedAt.message}</p>
+                    <p className="text-xs text-[var(--err-fg)] mt-1">{logErrors.loggedAt.message}</p>
                   )}
                 </div>
                 <div>
-                  <label htmlFor="wellness-log-notes" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                  <label htmlFor="wellness-log-notes" className="block text-xs font-medium text-aura-micro text-[var(--text-2)] mb-2">
                     Notes
                   </label>
                   <Textarea
@@ -581,16 +627,17 @@ export default function WellnessPage() {
               </div>
             </ModalBody>
             <ModalFooter>
-              <Button type="button" variant="outline" onClick={() => setIsLogModalOpen(false)}>
+              <Button type="button" variant="outline" onClick={() => setIsLogModalOpen(false)} className="focus-visible">
                 Cancel
               </Button>
-              <Button type="submit" disabled={logHealthMutation.isPending}>
+              <Button type="submit" disabled={logHealthMutation.isPending} className="focus-visible">
                 {logHealthMutation.isPending ? 'Logging...' : 'Log Metric'}
               </Button>
             </ModalFooter>
           </form>
         </Modal>
       </div>
+    </PageTransition>
     </AppLayout>
   );
 }

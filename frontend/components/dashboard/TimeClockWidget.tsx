@@ -2,6 +2,7 @@
 
 import {useEffect, useState} from 'react';
 import {CheckCircle2, Clock, LogIn, LogOut} from 'lucide-react';
+import {Reveal} from '@/components/motion';
 
 interface TimeClockWidgetProps {
   isCheckedIn: boolean;
@@ -86,87 +87,91 @@ export function TimeClockWidget({
   const timePeriod = timeParts[1] || '';
 
   return (
-    <div className="skeuo-card rounded-lg border border-[var(--border-main)] p-6">
-      {/* Header */}
-      <div className="row-between mb-4">
-        <div className="flex items-center gap-2">
-          <div className="flex items-center justify-center w-6 h-6 rounded-md bg-[var(--accent-primary-subtle)]">
-            <Clock className="h-3.5 w-3.5 text-[var(--accent-primary)]"/>
-          </div>
-          <span className="text-xs font-medium text-[var(--text-muted)]">
-            {dateDisplay}
-          </span>
-        </div>
-        <a
-          href="/attendance"
-          className="text-xs font-medium text-[var(--text-muted)] hover:text-[var(--accent-primary)] transition-colors"
-        >
-          View All
-        </a>
-      </div>
-
-      {/* Time Display — large monospace with accent period */}
-      <div className="mb-6">
-        <div className="flex items-baseline gap-1.5">
-          <span
-            className="text-4xl font-bold text-[var(--text-primary)] tracking-tight font-mono tabular-nums leading-none">
-            {timeValue}
-          </span>
-          <span className="text-sm font-semibold uppercase tracking-wider text-[var(--accent-primary)]">
-            {timePeriod}
-          </span>
-        </div>
-        {elapsedTime && (
-          <div className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-[var(--status-success-border)] bg-[var(--status-success-bg)]">
-            <div className="w-1.5 h-1.5 rounded-full bg-success-500 animate-pulse"/>
-            <span className="text-xs font-medium text-[var(--status-success-text)]">
-              Working: {elapsedTime}
+    <Reveal>
+      <div className="rounded-aura-lg border border-[var(--border)] bg-[var(--surface)] p-6 shadow-sh-sm">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <div className="flex items-center justify-center w-6 h-6 rounded-aura-sm bg-[var(--info-bg)]">
+              <Clock className="h-3.5 w-3.5 text-[var(--info-fg)]"/>
+            </div>
+            <span className="text-aura-micro text-[var(--text-3)]">
+              {dateDisplay}
             </span>
           </div>
+          <a
+            href="/attendance"
+            className="text-aura-micro text-[var(--text-3)] hover:text-[var(--accent)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
+            aria-label="View all attendance"
+          >
+            View All
+          </a>
+        </div>
+
+        {/* Time Display — large monospace with accent period */}
+        <div className="mb-6">
+          <div className="flex items-baseline gap-1.5">
+            <span
+              className="text-aura-stat text-[var(--text-1)] tracking-tight leading-none num">
+              {timeValue}
+            </span>
+            <span className="text-sm font-semibold uppercase tracking-wider text-[var(--accent)]">
+              {timePeriod}
+            </span>
+          </div>
+          {elapsedTime && (
+            <div className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-aura-sm border border-[var(--ok-bd)] bg-[var(--ok-bg)]">
+              <div className="w-1.5 h-1.5 rounded-full bg-[var(--ok-fg)] animate-pulse"/>
+              <span className="text-xs font-medium text-[var(--ok-fg)]">
+                Working: <span className="num">{elapsedTime}</span>
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* Check In/Out Button or Completed State */}
+        {isCompleted ? (
+          <div
+            className="flex w-full flex-col items-center gap-2 rounded-aura-md py-4 px-4 border border-[var(--ok-bd)] bg-[var(--ok-bg)]">
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="h-4 w-4 text-[var(--ok-fg)]"/>
+              <span className="text-sm font-semibold text-[var(--ok-fg)]">
+                Attendance Completed
+              </span>
+            </div>
+            <span className="text-caption text-[var(--ok-fg)]">
+              {workDurationMinutes != null
+                ? `${Math.floor(workDurationMinutes / 60)}h ${(workDurationMinutes % 60).toString().padStart(2, '0')}m worked today`
+                : checkOutTime
+                  ? `Checked out at ${checkOutTime}`
+                  : 'Have a great day!'}
+            </span>
+          </div>
+        ) : (
+          <button
+            onClick={isCheckedIn ? onCheckOut : onCheckIn}
+            disabled={isLoading}
+            className={`relative flex w-full items-center justify-center gap-2.5 rounded-aura-control py-4 px-4 text-sm font-semibold transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] ${
+              isCheckedIn
+                ? 'bg-[var(--surface-aura-2)] text-[var(--text-1)] border border-[var(--border)] hover:bg-[var(--surface-hover)] hover:border-[var(--border-aura-strong)] hover:shadow-sh-md hover:-translate-y-0.5'
+                : 'text-white border-0 bg-[var(--accent)] shadow-sh-md hover:shadow-sh-lg'
+            } disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]`}
+            aria-label={isCheckedIn ? 'Clock out' : 'Clock in'}
+          >
+            {isCheckedIn ? (
+              <>
+                <LogOut className="h-4 w-4"/>
+                Clock Out
+              </>
+            ) : (
+              <>
+                <LogIn className="h-4 w-4"/>
+                Clock In
+              </>
+            )}
+          </button>
         )}
       </div>
-
-      {/* Check In/Out Button or Completed State */}
-      {isCompleted ? (
-        <div
-          className="flex w-full flex-col items-center gap-2 rounded-xl py-4 px-4 border border-[var(--status-success-border)] bg-[var(--status-success-bg)]">
-          <div className="flex items-center gap-2">
-            <CheckCircle2 className="h-4 w-4 text-[var(--status-success-text)]"/>
-            <span className="text-sm font-semibold text-[var(--status-success-text)]">
-              Attendance Completed
-            </span>
-          </div>
-          <span className="text-caption">
-            {workDurationMinutes != null
-              ? `${Math.floor(workDurationMinutes / 60)}h ${workDurationMinutes % 60}m worked today`
-              : checkOutTime
-                ? `Checked out at ${checkOutTime}`
-                : 'Have a great day!'}
-          </span>
-        </div>
-      ) : (
-        <button
-          onClick={isCheckedIn ? onCheckOut : onCheckIn}
-          disabled={isLoading}
-          className={`relative flex w-full items-center justify-center gap-2.5 rounded-xl py-4 px-4 text-sm font-semibold transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
-            isCheckedIn
-              ? 'bg-[var(--bg-surface)] text-[var(--text-primary)] border border-[var(--border-main)] hover:bg-[var(--bg-card-hover)] hover:border-[var(--border-strong)]'
-              : 'text-white border-0 bg-[image:var(--nu-gradient-dark)] shadow-[0_4px_14px_rgba(37,99,235,0.32),inset_0_1px_0_rgba(255,255,255,0.15)]'
-          } disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]`}
-        >
-          {isCheckedIn ? (
-            <>
-              <LogOut className="h-4 w-4"/>
-              Clock Out
-            </>
-          ) : (
-            <>
-              <LogIn className="h-4 w-4"/>
-              Clock In
-            </>
-          )}
-        </button>
-      )}
-    </div>
+    </Reveal>
   );
 }

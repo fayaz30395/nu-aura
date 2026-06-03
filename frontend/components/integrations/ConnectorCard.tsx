@@ -16,19 +16,19 @@ interface ConnectorCardProps {
 export function ConnectorCard({connector, status, onConfigure, isLoading}: ConnectorCardProps) {
   const statusColors = {
     ACTIVE: {
-      bg: 'bg-success-50 dark:bg-success-900/20',
-      text: 'text-success-700 dark:text-success-300',
-      icon: 'text-success-600 dark:text-success-400',
+      bg: 'bg-[var(--ok-bg)]',
+      text: 'text-[var(--ok-fg)]',
+      icon: 'text-[var(--ok-fg)]',
     },
     INACTIVE: {
-      bg: 'bg-[var(--bg-surface)]',
-      text: 'text-[var(--text-secondary)]',
-      icon: 'text-[var(--text-muted)]',
+      bg: 'bg-[var(--surface)]',
+      text: 'text-[var(--text-2)]',
+      icon: 'text-[var(--text-3)]',
     },
     ERROR: {
-      bg: 'bg-danger-50 dark:bg-danger-900/20',
-      text: 'text-danger-700 dark:text-danger-300',
-      icon: 'text-danger-600 dark:text-danger-400',
+      bg: 'bg-[var(--err-bg)]',
+      text: 'text-[var(--err-fg)]',
+      icon: 'text-[var(--err-fg)]',
     },
   };
 
@@ -61,7 +61,7 @@ export function ConnectorCard({connector, status, onConfigure, isLoading}: Conne
         {/* Type Badge */}
         <div className="flex flex-wrap gap-2">
           <span
-            className="badge-status inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[var(--bg-secondary)] text-[var(--text-secondary)]">
+            className="badge-status inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[var(--surface-aura-2)] text-[var(--text-2)]">
             {connector.type}
           </span>
         </div>
@@ -75,22 +75,22 @@ export function ConnectorCard({connector, status, onConfigure, isLoading}: Conne
 
         {/* Capabilities */}
         {connector.capabilities.supportedEvents.length > 0 && (
-          <div className="pt-2 border-t border-[var(--border-subtle)]">
-            <p className="text-xs font-semibold text-[var(--text-secondary)] mb-2 uppercase">
+          <div className="pt-2 border-t border-[var(--border-soft)]">
+            <p className="text-xs font-semibold text-[var(--text-2)] mb-2 uppercase tracking-[0.1em]">
               Supports
             </p>
             <div className="flex flex-wrap gap-1">
               {connector.capabilities.supportedEvents.slice(0, 3).map((event) => (
                 <span
                   key={event}
-                  className="inline-flex text-xs px-2 py-1 rounded bg-[var(--bg-secondary)] text-[var(--text-secondary)]"
+                  className="inline-flex text-xs px-2 py-1 rounded-[var(--r-xs)] bg-[var(--surface-aura-2)] text-[var(--text-2)]"
                 >
                   {event}
                 </span>
               ))}
               {connector.capabilities.supportedEvents.length > 3 && (
                 <span
-                  className="inline-flex text-xs px-2 py-1 rounded bg-[var(--bg-secondary)] text-[var(--text-secondary)]">
+                  className="inline-flex text-xs px-2 py-1 rounded-[var(--r-xs)] bg-[var(--surface-aura-2)] text-[var(--text-2)]">
                   +{connector.capabilities.supportedEvents.length - 3}
                 </span>
               )}

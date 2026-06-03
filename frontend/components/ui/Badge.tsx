@@ -89,6 +89,7 @@ const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
       <span
         ref={ref}
         className={cn(badgeVariants({variant, size}), className)}
+        role={props.role || undefined}
         {...props}
       >
         {dot && (
@@ -97,12 +98,13 @@ const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
               className={cn('w-1.5 h-1.5 rounded-full shrink-0', dotColorClasses[dotColor])}
               animate={{opacity: [1, 0.4, 1]}}
               transition={{duration: 1.6, ease: 'easeInOut', repeat: Infinity}}
+              aria-hidden="true"
             />
           ) : (
-            <span className={cn('w-1.5 h-1.5 rounded-full shrink-0', dotColorClasses[dotColor])}/>
+            <span className={cn('w-1.5 h-1.5 rounded-full shrink-0', dotColorClasses[dotColor])} aria-hidden="true" />
           )
         )}
-        {icon && <span className="shrink-0">{icon}</span>}
+        {icon && <span className="shrink-0" aria-hidden="true">{icon}</span>}
         {children}
       </span>
     );

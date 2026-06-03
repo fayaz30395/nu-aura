@@ -134,6 +134,7 @@ function ToastItem({toast, onClose}: { toast: Toast; onClose: () => void }) {
       <div
         className="flex-shrink-0 grid place-items-center w-[30px] h-[30px] rounded-[9px]"
         style={chipStyles[toast.type]}
+        aria-hidden="true"
       >
         {icons[toast.type]}
       </div>
@@ -142,11 +143,12 @@ function ToastItem({toast, onClose}: { toast: Toast; onClose: () => void }) {
         <p className="mt-0.5 text-xs leading-[1.45] text-[var(--text-3)] break-words">{toast.message}</p>
       </div>
       <button
+        type="button"
         onClick={onClose}
         aria-label="Dismiss notification"
         className="press-scale flex-shrink-0 grid place-items-center w-6 h-6 rounded-[7px] text-[var(--text-3)] hover:bg-[var(--surface-hover)] hover:text-[var(--text-1)] transition-[background-color,color,transform] duration-[var(--motion-fast)] ease-[var(--ease-standard)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)]"
       >
-        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"/>
         </svg>
       </button>

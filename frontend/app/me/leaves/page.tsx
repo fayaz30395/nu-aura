@@ -1,7 +1,6 @@
 'use client';
 
 import React, {useEffect, useState} from 'react';
-import {useRouter} from 'next/navigation';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
@@ -23,7 +22,7 @@ import {AppLayout} from '@/components/layout';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
 import {StatusBadge} from '@/components/ui/StatusBadge';
-import {PageTransition, Reveal, Stagger, StaggerItem} from '@/components/motion';
+import {PageTransition, Reveal} from '@/components/motion';
 import {Button} from '@/components/ui/Button';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {LEAVE_STATUS} from '@/lib/status/vocabulary';
@@ -72,7 +71,6 @@ function getUsageWidthClass(value: number): string {
 }
 
 export default function MyLeavesPage() {
-  const router = useRouter();
   const {user, isAuthenticated, hasHydrated} = useAuth();
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -303,7 +301,7 @@ export default function MyLeavesPage() {
       <AppLayout activeMenuItem="leaves" breadcrumbs={[{label: 'My Leaves', href: '/me/leaves'}]}>
         <PageTransition>
           <EmptyState
-            icon={Calendar}
+            icon={<Calendar className="h-8 w-8"/>}
             title="No Employee Profile Linked"
             description="Leave management requires an employee profile. Use the admin panels to manage employee leaves."
           />
@@ -328,10 +326,6 @@ export default function MyLeavesPage() {
             Apply for Leave
           </Button>
         </Reveal>
-            <Plus className="h-4 w-4"/>
-            Apply for Leave
-          </button>
-        </div>
 
         {/* Success Message */}
         {success && (

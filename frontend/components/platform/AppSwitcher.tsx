@@ -105,21 +105,21 @@ export default function AppSwitcher() {
         aria-haspopup="menu"
         aria-expanded={isOpen}
         data-hydrated={isHydrated ? 'true' : 'false'}
-        className="flex items-center gap-4 px-4 py-2 rounded-lg bg-[var(--bg-card)] hover:bg-[var(--bg-card-hover)] border border-[var(--border-main)] transition-colors duration-150 shadow-card"
+        className="flex items-center gap-4 px-4 py-2 rounded-lg bg-[var(--bg-card)] hover:bg-[var(--bg-card)] border border-[var(--border)] transition-colors duration-150 shadow-[var(--sh-card)] hover-lift focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)]"
       >
-        <div className="w-9 h-9 rounded-lg bg-accent flex items-center justify-center">
+        <div className="w-9 h-9 rounded-lg bg-[var(--accent)] flex items-center justify-center">
           <CurrentIcon className="w-5 h-5 text-white"/>
         </div>
         <div className="hidden sm:flex flex-col items-start">
-          <span className="text-sm font-semibold text-[var(--text-primary)]">
+          <span className="text-sm font-semibold text-[var(--text-1)]">
             {app.name}
           </span>
-          <span className="text-caption">
+          <span className="text-caption text-[var(--text-2)]">
             NU-AURA Platform
           </span>
         </div>
         {/* Waffle grid icon */}
-        <LayoutGrid className="w-4 h-4 text-[var(--text-muted)]"/>
+        <LayoutGrid className="w-4 h-4 text-[var(--text-2)]"/>
       </button>
 
       {/* Waffle Grid Dropdown */}
@@ -130,22 +130,22 @@ export default function AppSwitcher() {
             animate={{opacity: 1, y: 0}}
             exit={{opacity: 0, y: -4}}
             transition={{duration: 0.15, ease: [0.4, 0, 0.2, 1]}}
-            className="absolute top-full left-0 mt-2 w-[320px] bg-dropdown border border-dropdown-border rounded-lg overflow-hidden shadow-dropdown z-50"
+            className="absolute top-full left-0 mt-2 w-[320px] bg-[var(--bg-card)] border border-[var(--border)] rounded-lg overflow-hidden shadow-[var(--sh-dropdown)] z-50"
             role="menu"
             aria-label="App switcher menu"
             data-testid="app-switcher-menu"
           >
             {/* Header */}
-            <div className="px-6 py-4 bg-[var(--bg-surface)] border-b border-[var(--dropdown-divider)]">
+            <div className="px-6 py-4 bg-[var(--bg-surface)] border-b border-[var(--border)]">
               <div className="flex items-center gap-4">
-                <div className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center">
+                <div className="w-8 h-8 rounded-lg bg-[var(--accent)] flex items-center justify-center">
                   <LayoutGrid className="w-4 h-4 text-white"/>
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-[var(--dropdown-text)]">
+                  <p className="text-sm font-semibold text-[var(--text-1)]">
                     NU-AURA Platform
                   </p>
-                  <p className="text-xs text-[var(--dropdown-text-secondary)]">
+                  <p className="text-xs text-[var(--text-2)]">
                     Switch between apps
                   </p>
                 </div>
@@ -178,19 +178,19 @@ export default function AppSwitcher() {
                         aria-label={targetApp.name}
                         className={`
                           relative flex flex-col items-center gap-4 p-4 rounded-lg
-                          transition-all duration-150 group w-full h-full
+                          transition-all duration-150 group w-full h-full hover-lift
                           ${isActive
-                          ? 'bg-accent-subtle border border-accent ring-1 ring-accent/20'
+                          ? 'bg-[var(--accent-soft)] border border-[var(--accent-bd)] ring-1 ring-[var(--accent)]/20'
                           : isLocked
-                            ? 'bg-[var(--bg-surface)] border border-[var(--border-subtle)] opacity-50 cursor-not-allowed'
-                            : 'bg-[var(--bg-surface)] border border-transparent hover:border-[var(--border-main)] hover:bg-[var(--bg-card-hover)] cursor-pointer'
+                            ? 'bg-[var(--bg-surface)] border border-[var(--border)] opacity-50 cursor-not-allowed'
+                            : 'bg-[var(--bg-surface)] border border-transparent hover:border-[var(--border)] cursor-pointer focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)]'
                         }
                         `}
                       >
                         {/* App Icon */}
                         <div
                           className={`
-                            relative w-12 h-12 rounded-lg bg-accent
+                            relative w-12 h-12 rounded-lg bg-[var(--accent)]
                             flex items-center justify-center
                             ${!isLocked && !isActive ? 'group-hover:scale-105' : ''}
                             transition-transform duration-150
@@ -208,7 +208,7 @@ export default function AppSwitcher() {
                           {/* Active check badge */}
                           {isActive && (
                             <div
-                              className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-accent border-2 border-[var(--bg-dropdown)] flex items-center justify-center">
+                              className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[var(--accent)] border-2 border-[var(--bg-card)] flex items-center justify-center">
                               <Check className="w-2.5 h-2.5 text-white"/>
                             </div>
                           )}
@@ -218,17 +218,17 @@ export default function AppSwitcher() {
                         <div className="text-center w-full">
                           <p className={`text-sm font-semibold leading-tight ${
                             isActive
-                              ? 'text-accent'
+                              ? 'text-[var(--accent-text)]'
                               : isLocked
-                                ? 'text-[var(--text-muted)]'
-                                : 'text-[var(--text-primary)]'
+                                ? 'text-[var(--text-2)]'
+                                : 'text-[var(--text-1)]'
                           }`}>
                             {targetApp.name}
                           </p>
                           <p className={`text-xs mt-1 ${
                             isLocked
-                              ? 'text-[var(--text-muted)]'
-                              : 'text-[var(--text-secondary)]'
+                              ? 'text-[var(--text-2)]'
+                              : 'text-[var(--text-2)]'
                           }`}>
                             {isLocked && !targetApp.available
                               ? 'Coming soon'
@@ -245,14 +245,14 @@ export default function AppSwitcher() {
             </div>
 
             {/* Footer */}
-            <div className="px-6 py-4 bg-[var(--bg-surface)] border-t border-[var(--dropdown-divider)]">
+            <div className="px-6 py-4 bg-[var(--bg-surface)] border-t border-[var(--border)]">
               {isNavigating ? (
                 <div className="flex items-center justify-center gap-2">
-                  <Loader2 className="w-3.5 h-3.5 text-accent animate-spin"/>
-                  <p className="text-xs text-accent font-medium">Switching app...</p>
+                  <Loader2 className="w-3.5 h-3.5 text-[var(--accent)] animate-spin"/>
+                  <p className="text-xs text-[var(--accent-text)] font-medium">Switching app...</p>
                 </div>
               ) : (
-                <p className="text-caption text-center">
+                <p className="text-caption text-center text-[var(--text-2)] tabular-nums">
                   {APP_LIST.filter((a) => a.available).length} of {APP_LIST.length} apps available
                 </p>
               )}

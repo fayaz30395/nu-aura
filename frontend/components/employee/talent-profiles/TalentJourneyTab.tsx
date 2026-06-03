@@ -54,8 +54,8 @@ export default function TalentJourneyTab({employeeId}: TalentJourneyTabProps) {
       {/* Skills Radar / Cloud */}
       <section>
         <div className="flex items-center gap-2 mb-4">
-          <Zap className="h-5 w-5 text-warning-500"/>
-          <h3 className="text-xl font-bold">Verified Skills</h3>
+          <Zap className="h-5 w-5 text-[var(--warn-fg)]"/>
+          <h3 className="text-lg font-semibold text-[var(--text-1)]">Verified Skills</h3>
         </div>
         <div className="flex flex-wrap gap-2">
           {profile.skills.map((skill, idx) => (
@@ -64,7 +64,7 @@ export default function TalentJourneyTab({employeeId}: TalentJourneyTabProps) {
               initial={{opacity: 0, scale: 0.9}}
               animate={{opacity: 1, scale: 1}}
               transition={{delay: idx * 0.05}}
-              className={`px-4 py-2 rounded-lg border flex items-center gap-2 shadow-[var(--shadow-card)] ${skill.verified ? 'bg-accent-50 border-accent-100 dark:bg-accent-950/20 dark:border-accent-900/50' : 'bg-surface-50 border-surface-200 dark:bg-surface-800 dark:border-surface-700'
+              className={`px-4 py-2 rounded-[var(--r-md)] border flex items-center gap-2 shadow-[var(--sh-sm)] hover:shadow-[var(--sh-md)] transition-shadow ${skill.verified ? 'bg-[var(--accent-soft)] border-[var(--accent)] text-[var(--accent)]' : 'bg-[var(--surface)] border-[var(--border-soft)] text-[var(--text-1)]'
               }`}
             >
               <span className="font-semibold text-sm">{skill.name}</span>
@@ -72,11 +72,11 @@ export default function TalentJourneyTab({employeeId}: TalentJourneyTabProps) {
                 {[...Array(5)].map((_, i) => (
                   <div
                     key={i}
-                    className={`h-1.5 w-1.5 rounded-full ${i < skill.level ? 'bg-accent-500' : 'bg-surface-200 dark:bg-surface-700'}`}
+                    className={`h-1.5 w-1.5 rounded-full ${i < skill.level ? 'bg-[var(--accent)]' : 'bg-[var(--border-soft)]'}`}
                   />
                 ))}
               </div>
-              {skill.verified && <CheckCircle2 className="h-3 w-3 text-accent-500"/>}
+              {skill.verified && <CheckCircle2 className="h-3 w-3 text-[var(--accent)]"/>}
             </motion.div>
           ))}
         </div>

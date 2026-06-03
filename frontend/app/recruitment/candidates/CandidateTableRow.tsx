@@ -112,7 +112,7 @@ export const CandidateTableRow = memo(function CandidateTableRow({
 
       {/* Status */}
       <td className="px-6 py-4 text-center">
-        <StatusBadge value={candidate.status || ''} />
+        <StatusBadge status={candidate.status || ''} />
       </td>
 
       {/* Source */}

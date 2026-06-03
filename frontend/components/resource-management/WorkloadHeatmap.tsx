@@ -42,8 +42,7 @@ export function WorkloadHeatmap({
 
   if (data.length === 0) {
     return (
-      <div
-        className="rounded-lg border border-dashed border-surface-300 dark:border-surface-600">
+      <div className="rounded-[var(--r-lg)] border border-dashed border-[var(--border-soft)]">
         <EmptyState
           {...EmptyStatePresets.noChartData}
           description="No workload data available."
@@ -61,13 +60,13 @@ export function WorkloadHeatmap({
           <thead>
           <tr>
             <th
-              className="sticky left-0 z-10 min-w-[200px] bg-[var(--bg-card)] px-4 py-2 text-left text-sm font-medium text-surface-700 dark:text-surface-300">
+              className="sticky left-0 z-10 min-w-[200px] bg-[var(--surface)] px-4 py-2 text-left text-aura-micro uppercase text-[var(--text-1)]">
               Employee
             </th>
             {weeks.map((week) => (
               <th
                 key={week.weekStart}
-                className="min-w-[60px] px-2 py-4 text-center text-xs font-medium text-surface-500 dark:text-surface-400"
+                className="min-w-[60px] px-2 py-4 text-center text-aura-micro uppercase text-[var(--text-3)]"
               >
                 {week.label}
               </th>
@@ -90,24 +89,24 @@ export function WorkloadHeatmap({
       </div>
 
       {/* Legend */}
-      <div className="mt-4 flex items-center justify-end gap-6">
-        <div className="flex items-center gap-2 text-xs text-surface-600 dark:text-surface-400">
-          <span>Allocation:</span>
-          <div className="flex items-center gap-1">
-            <div className="h-4 w-4 rounded bg-surface-200 dark:bg-surface-700"/>
+      <div className="mt-6 flex items-center justify-end gap-6">
+        <div className="flex items-center gap-3 text-xs text-[var(--text-2)]">
+          <span className="font-semibold">Allocation:</span>
+          <div className="flex items-center gap-2">
+            <div className="h-3 w-3 rounded-[var(--r-xs)] bg-[var(--surface-sunken)]"/>
             <span>0%</span>
           </div>
-          <div className="flex items-center gap-1">
-            <div className="h-4 w-4 rounded bg-warning-300"/>
+          <div className="flex items-center gap-2">
+            <div className="h-3 w-3 rounded-[var(--r-xs)] bg-[var(--warn-bg)]"/>
             <span>50%</span>
           </div>
-          <div className="flex items-center gap-1">
-            <div className="h-4 w-4 rounded bg-success-500"/>
+          <div className="flex items-center gap-2">
+            <div className="h-3 w-3 rounded-[var(--r-xs)] bg-[var(--ok-bg)]"/>
             <span>75-100%</span>
           </div>
-          <div className="flex items-center gap-1">
-            <div className="h-4 w-4 rounded bg-danger-500"/>
-            <span>&gt;100%</span>
+          <div className="flex items-center gap-2">
+            <div className="h-3 w-3 rounded-[var(--r-xs)] bg-[var(--err-bg)]"/>
+            <span>≥100%</span>
           </div>
         </div>
       </div>
@@ -136,27 +135,26 @@ function HeatmapRow({
       {/* Employee info */}
       <td
         className={cn(
-          'sticky left-0 z-10 bg-[var(--bg-card)] px-4 py-2',
-          'border-b border-surface-100 dark:border-surface-800',
-          onEmployeeClick && 'cursor-pointer hover:bg-surface-50 dark:hover:bg-surface-800'
+          'sticky left-0 z-10 bg-[var(--surface)] px-4 py-3',
+          'border-b border-[var(--border-soft)]',
+          onEmployeeClick && 'cursor-pointer hover:bg-[var(--surface-hover)] hover-lift transition-all'
         )}
         onClick={() => onEmployeeClick?.(row.employeeId)}
       >
-        <div className="flex items-center gap-2">
-          <div
-            className="flex h-8 w-8 items-center justify-center rounded-full bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-400">
+        <div className="flex items-center gap-3">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--accent-soft)] text-[var(--accent-text)]">
             <User className="h-4 w-4"/>
           </div>
           <div className="min-w-0">
             <div className="flex items-center gap-2">
-              <p className="truncate text-sm font-medium text-surface-900 dark:text-surface-50">
+              <p className="truncate text-sm font-semibold text-[var(--text-1)]">
                 {row.employeeName}
               </p>
               {hasOverAllocation && (
-                <AlertTriangle className="h-4 w-4 flex-shrink-0 text-danger-500"/>
+                <AlertTriangle className="h-4 w-4 flex-shrink-0 text-[var(--err-fg)]" aria-label="Over-allocated"/>
               )}
             </div>
-            <p className="truncate text-xs text-surface-500 dark:text-surface-400">
+            <p className="truncate text-xs text-[var(--text-3)]">
               {row.departmentName || row.employeeCode}
             </p>
           </div>
@@ -186,26 +184,29 @@ function HeatmapCell({
   onClick?: () => void;
 }) {
   const colorClass = getCellColorClass(cell.allocation);
-  const textColor = cell.allocation > 60 ? 'text-white' : 'text-surface-700 dark:text-surface-300';
+  const textColor = cell.allocation > 60 ? 'text-white' : 'text-[var(--text-1)]';
 
   return (
     <td
       className={cn(
-        'border-b border-surface-100 px-1 py-2 dark:border-surface-800',
+        'border-b border-[var(--border-soft)] px-1 py-2',
         onClick && 'cursor-pointer'
       )}
       onClick={onClick}
     >
       <div
         className={cn(
-          'flex h-10 items-center justify-center rounded transition-all',
-          'hover:ring-2 hover:ring-accent-500 hover:ring-offset-1',
+          'flex h-10 items-center justify-center rounded-[var(--r-sm)] transition-all',
+          'hover:ring-2 hover:ring-[var(--accent)] hover:ring-offset-1 focus-visible:ring-2 focus-visible:ring-[var(--accent)]',
           colorClass,
           textColor
         )}
         title={`${formatAllocationPercentage(cell.allocation)} - ${cell.projectCount} project(s)`}
+        tabIndex={onClick ? 0 : -1}
+        role={onClick ? 'button' : undefined}
+        aria-label={`Workload ${Math.round(cell.allocation)}%: ${cell.projectCount} project(s)`}
       >
-        <span className="text-xs font-medium">
+        <span className="text-xs font-semibold num">
           {cell.allocation > 0 ? Math.round(cell.allocation) : '-'}
         </span>
       </div>
@@ -218,18 +219,18 @@ function HeatmapCell({
  */
 function getCellColorClass(allocation: number): string {
   if (allocation === 0) {
-    return 'bg-surface-200 dark:bg-surface-700';
+    return 'bg-[var(--surface-sunken)]';
   }
   if (allocation <= 50) {
-    return 'bg-warning-100 dark:bg-warning-900/30';
+    return 'bg-[var(--warn-bg)]';
   }
   if (allocation <= 75) {
-    return 'bg-success-200 dark:bg-success-900/40';
+    return 'bg-[var(--ok-bg)]';
   }
   if (allocation <= 100) {
-    return 'bg-success-600';
+    return 'bg-[var(--ok-fg)]';
   }
-  return 'bg-danger-600';
+  return 'bg-[var(--err-fg)]';
 }
 
 export default WorkloadHeatmap;

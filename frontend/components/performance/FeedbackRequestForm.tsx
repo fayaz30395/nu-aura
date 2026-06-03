@@ -115,33 +115,33 @@ export default function FeedbackRequestForm({
   const canSubmit = selectedPeers.length >= minPeers && selectedPeers.length <= maxPeers;
 
   return (
-    <div className="bg-[var(--bg-elevated)] rounded-lg shadow-[var(--shadow-dropdown)] max-w-3xl w-full mx-4">
-      <div className="px-6 py-4 border-b border-[var(--border-main)]">
-        <h2 className="text-xl font-semibold text-[var(--text-primary)]">Request 360 Feedback</h2>
-        <p className="text-body-muted mt-1">{cycleName}</p>
+    <div className="bg-[var(--bg-card)] rounded-lg shadow-[var(--sh-card)] max-w-3xl w-full mx-4">
+      <div className="px-6 py-4 border-b border-[var(--border)]">
+        <h2 className="text-xl font-semibold text-[var(--text-1)]">Request 360 Feedback</h2>
+        <p className="text-[var(--text-2)] mt-1">{cycleName}</p>
       </div>
 
       <div className="px-6 py-4">
         {/* Subject Employee */}
-        <div className="mb-6 p-4 bg-accent-50 rounded-lg">
+        <div className="mb-6 p-4 bg-[var(--accent-soft)] rounded-lg">
           <div className="flex items-center gap-2">
-            <div className="p-2 bg-accent-100 rounded-lg">
-              <Users className="h-5 w-5 text-accent-600"/>
+            <div className="p-2 bg-[var(--accent-soft)] rounded-lg">
+              <Users className="h-5 w-5 text-[var(--accent-text)]"/>
             </div>
             <div>
-              <p className="text-sm font-medium text-[var(--text-primary)]">Feedback Subject</p>
-              <p className="text-base font-semibold text-[var(--text-primary)]">{subjectEmployeeName}</p>
+              <p className="text-sm font-medium text-[var(--text-1)]">Feedback Subject</p>
+              <p className="text-base font-semibold text-[var(--text-1)]">{subjectEmployeeName}</p>
             </div>
           </div>
         </div>
 
         {/* Instructions */}
         <div className="mb-6">
-          <h3 className="text-sm font-medium text-[var(--text-primary)] mb-2">Instructions</h3>
-          <div className="space-y-2 text-body-secondary">
+          <h3 className="text-sm font-medium text-[var(--text-1)] mb-2">Instructions</h3>
+          <div className="space-y-2 text-[var(--text-2)]">
             {includePeers && (
               <div className="flex items-start gap-2">
-                <CheckCircle className="h-4 w-4 text-success-500 mt-0.5 flex-shrink-0"/>
+                <CheckCircle className="h-4 w-4 text-[var(--ok-fg)] mt-0.5 flex-shrink-0"/>
                 <span>
                   Select {minPeers} to {maxPeers} peer reviewers who work closely with the subject
                 </span>
@@ -149,13 +149,13 @@ export default function FeedbackRequestForm({
             )}
             {includeManager && (
               <div className="flex items-start gap-2">
-                <CheckCircle className="h-4 w-4 text-success-500 mt-0.5 flex-shrink-0"/>
+                <CheckCircle className="h-4 w-4 text-[var(--ok-fg)] mt-0.5 flex-shrink-0"/>
                 <span>Manager feedback will be requested automatically</span>
               </div>
             )}
             {includeDirectReports && (
               <div className="flex items-start gap-2">
-                <CheckCircle className="h-4 w-4 text-success-500 mt-0.5 flex-shrink-0"/>
+                <CheckCircle className="h-4 w-4 text-[var(--ok-fg)] mt-0.5 flex-shrink-0"/>
                 <span>Direct report feedback will be requested automatically</span>
               </div>
             )}
@@ -165,43 +165,43 @@ export default function FeedbackRequestForm({
         {/* Search for Peers */}
         {includePeers && (
           <div className="mb-6">
-            <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+            <label className="block text-sm font-medium text-[var(--text-1)] mb-2">
               Add Peer Reviewers ({selectedPeers.length}/{maxPeers})
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <Search className="h-5 w-5 text-[var(--text-muted)]"/>
+                <Search className="h-5 w-5 text-[var(--text-2)]"/>
               </div>
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => handleSearchChange(e.target.value)}
                 placeholder="Search employees by name or email..."
-                className="w-full pl-10 pr-4 py-2 border border-[var(--border-strong)] rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-transparent"
                 disabled={selectedPeers.length >= maxPeers}
               />
             </div>
 
             {/* Search Results */}
             {searchResults.length > 0 && (
-              <div className="mt-2 border border-[var(--border-main)] rounded-lg max-h-48 overflow-y-auto">
+              <div className="mt-2 border border-[var(--border)] rounded-lg max-h-48 overflow-y-auto">
                 {searchResults.map((employee) => (
                   <button
                     key={employee.id}
                     type="button"
                     onClick={() => addPeer(employee)}
-                    className="w-full px-4 py-4 text-left hover:bg-[var(--bg-surface)] divider-b last:border-b-0"
+                    className="w-full px-4 py-4 text-left hover:bg-[var(--bg-surface)] divider-b last:border-b-0 focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)]"
                     disabled={selectedPeers.some((p) => p.employeeId === employee.id)}
                   >
                     <div className="row-between">
                       <div>
-                        <p className="text-sm font-medium text-[var(--text-primary)]">{employee.fullName}</p>
+                        <p className="text-sm font-medium text-[var(--text-1)]">{employee.fullName}</p>
                         <p className="text-caption">
                           {employee.designation} • {employee.departmentName}
                         </p>
                       </div>
                       {selectedPeers.some((p) => p.employeeId === employee.id) && (
-                        <CheckCircle className="h-5 w-5 text-success-500"/>
+                        <CheckCircle className="h-5 w-5 text-[var(--ok-fg)]"/>
                       )}
                     </div>
                   </button>
@@ -218,21 +218,21 @@ export default function FeedbackRequestForm({
         {/* Selected Peers */}
         {selectedPeers.length > 0 && (
           <div className="mb-6">
-            <h3 className="text-sm font-medium text-[var(--text-primary)] mb-4">Selected Reviewers</h3>
+            <h3 className="text-sm font-medium text-[var(--text-1)] mb-4">Selected Reviewers</h3>
             <div className="space-y-2">
               {selectedPeers.map((peer) => (
                 <div
                   key={peer.employeeId}
-                  className="row-between p-4 bg-[var(--bg-surface)] rounded-lg"
+                  className="row-between p-4 bg-[var(--bg-surface)] rounded-lg hover-lift"
                 >
                   <div className="flex items-center gap-2">
-                    <div className="h-8 w-8 rounded-full bg-accent-100 flex items-center justify-center">
-                      <span className="text-sm font-medium text-accent-700">
+                    <div className="h-8 w-8 rounded-full bg-[var(--accent-soft)] flex items-center justify-center">
+                      <span className="text-sm font-medium text-[var(--accent-text)]">
                         {peer.employeeName.charAt(0)}
                       </span>
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-[var(--text-primary)]">{peer.employeeName}</p>
+                      <p className="text-sm font-medium text-[var(--text-1)]">{peer.employeeName}</p>
                       <p className="text-caption">
                         {peer.designation} • {peer.department}
                       </p>
@@ -241,9 +241,10 @@ export default function FeedbackRequestForm({
                   <button
                     type="button"
                     onClick={() => removePeer(peer.employeeId)}
-                    className="p-1 hover:bg-[var(--bg-card-hover)] rounded"
+                    className="p-1 hover:bg-[var(--bg-card)] rounded focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)]"
+                    aria-label={`Remove ${peer.employeeName}`}
                   >
-                    <X className="h-5 w-5 text-[var(--text-muted)]"/>
+                    <X className="h-5 w-5 text-[var(--text-2)]"/>
                   </button>
                 </div>
               ))}
@@ -253,9 +254,9 @@ export default function FeedbackRequestForm({
 
         {/* Error Message */}
         {error && (
-          <div className="mb-6 p-4 bg-danger-50 border border-danger-200 rounded-lg flex items-start gap-2">
-            <AlertCircle className="h-5 w-5 text-danger-500 flex-shrink-0 mt-0.5"/>
-            <p className="text-sm text-danger-700">{error}</p>
+          <div className="mb-6 p-4 bg-[var(--err-bg)] border border-[var(--err-bd)] rounded-lg flex items-start gap-2" aria-live="polite">
+            <AlertCircle className="h-5 w-5 text-[var(--err-fg)] flex-shrink-0 mt-0.5"/>
+            <p className="text-sm text-[var(--err-fg)]">{error}</p>
           </div>
         )}
 
@@ -265,15 +266,15 @@ export default function FeedbackRequestForm({
             <div className="flex items-center gap-2">
               {canSubmit ? (
                 <>
-                  <CheckCircle className="h-5 w-5 text-success-500"/>
-                  <span className="text-sm text-success-700">
+                  <CheckCircle className="h-5 w-5 text-[var(--ok-fg)]"/>
+                  <span className="text-sm text-[var(--ok-fg)]">
                     Ready to submit ({selectedPeers.length} peers selected)
                   </span>
                 </>
               ) : (
                 <>
-                  <AlertCircle className="h-5 w-5 text-warning-500"/>
-                  <span className="text-body-secondary">
+                  <AlertCircle className="h-5 w-5 text-[var(--warn-fg)]"/>
+                  <span className="text-[var(--text-2)]">
                     Select at least {minPeers} peer reviewer(s) to continue
                   </span>
                 </>
@@ -284,7 +285,7 @@ export default function FeedbackRequestForm({
       </div>
 
       {/* Actions */}
-      <div className="px-6 py-4 border-t border-[var(--border-main)] flex justify-end gap-2">
+      <div className="px-6 py-4 border-t border-[var(--border)] flex justify-end gap-2">
         <Button variant="outline" onClick={onCancel} disabled={isSubmitting}>
           Cancel
         </Button>

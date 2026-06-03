@@ -3,6 +3,7 @@
 import {useEffect, useState} from 'react';
 import Link from 'next/link';
 import {ArrowRight, Calendar} from 'lucide-react';
+import {Reveal} from '@/components/motion';
 
 // wave-3 N: Safari <=16.1 lacks color-mix() support. Default to the
 // modern value on first paint (matches SSR), swap to rgba() after mount
@@ -40,9 +41,9 @@ function CircularProgress({used, total}: { used: number; total: number }) {
 
   // Color based on usage percentage
   const getStrokeColor = () => {
-    if (percentage > 80) return 'var(--chart-danger)';
-    if (percentage > 60) return 'var(--chart-warning)';
-    return 'var(--accent-primary)';
+    if (percentage > 80) return 'var(--err-fg)';
+    if (percentage > 60) return 'var(--warn-fg)';
+    return 'var(--accent)';
   };
 
   return (
@@ -52,7 +53,7 @@ function CircularProgress({used, total}: { used: number; total: number }) {
         <circle
           cx="64" cy="64" r={radius}
           fill="none" strokeWidth="8"
-          className="stroke-[var(--border-main)]"
+          className="stroke-[var(--border)]"
           opacity="0.5"
         />
         {/* Progress arc with gradient color */}
@@ -68,8 +69,8 @@ function CircularProgress({used, total}: { used: number; total: number }) {
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <div className="text-3xl font-bold text-[var(--text-primary)] tabular-nums leading-none">{remaining}</div>
-        <div className="text-2xs text-[var(--text-muted)] uppercase tracking-[0.1em] mt-1 font-medium">Days Left</div>
+        <div className="text-3xl font-bold text-[var(--text-1)] num leading-none">{remaining}</div>
+        <div className="text-aura-micro text-[var(--text-3)] mt-1">Days Left</div>
       </div>
     </div>
   );
@@ -95,70 +96,72 @@ export function LeaveBalanceWidget({leaveBalances = null}: LeaveBalanceWidgetPro
   const current = balances[selectedIndex];
 
   return (
-    <div className="skeuo-card rounded-lg border border-[var(--border-main)] p-6">
-      <div className="row-between mb-4">
-        <div className="flex items-center gap-2">
-          <Calendar className="h-4 w-4 text-[var(--text-muted)]"/>
-          <h3 className="text-sm font-semibold text-[var(--text-primary)]">Leave Balance</h3>
+    <Reveal>
+      <div className="rounded-aura-lg border border-[var(--border)] bg-[var(--surface)] p-6 shadow-sh-sm">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <Calendar className="h-4 w-4 text-[var(--text-3)]"/>
+            <h3 className="text-sm font-semibold text-[var(--text-1)]">Leave Balance</h3>
+          </div>
+          <Link
+            href="/leave"
+            className="inline-flex items-center gap-0.5 text-caption text-[var(--text-3)] hover:text-[var(--text-2)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
+            aria-label="View all leave"
+          >
+            View All <ArrowRight className="h-3 w-3"/>
+          </Link>
         </div>
-        <Link
-          href="/leave"
-          className="inline-flex items-center gap-0.5 text-caption hover:text-[var(--text-secondary)] transition-colors"
-        >
-          View All <ArrowRight className="h-3 w-3"/>
-        </Link>
-      </div>
 
-      {/* Circular Progress */}
-      <div className="flex justify-center mb-4">
-        <CircularProgress used={current.used} total={current.total}/>
-      </div>
-
-      {/* Leave Type Label */}
-      <div className="text-center mb-4">
-        <p className="text-xs font-medium uppercase tracking-wider text-[var(--text-muted)]">
-          {current.leaveName}
-        </p>
-        <p className="mt-0.5 text-caption">
-          {current.used} used · {current.total} total
-        </p>
-      </div>
-
-      {/* Dots navigation */}
-      {balances.length > 1 && (
-        <div className="flex justify-center gap-1.5 mb-4">
-          {balances.map((_, idx) => (
-            <button
-              key={idx}
-              onClick={() => setSelectedIndex(idx)}
-              className={`h-1.5 rounded-full transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
-                idx === selectedIndex ? 'w-4 bg-[var(--text-muted)]' : 'w-1.5 bg-[var(--border-main)]'
-              }`}
-              aria-label={`Leave type ${idx + 1}`}
-            />
-          ))}
+        {/* Circular Progress */}
+        <div className="flex justify-center mb-4">
+          <CircularProgress used={current.used} total={current.total}/>
         </div>
-      )}
 
-      {/* Actions */}
-      <div className="space-y-2 pt-4 border-t border-[var(--border-subtle)]">
-        <Link
-          href="/leave/apply"
-          className="block w-full rounded-xl py-2.5 text-center text-xs font-semibold text-white transition-all duration-200 hover:shadow-[var(--shadow-dropdown)] active:scale-[0.98]"
-          style={{
-            background: 'var(--nu-gradient-dark)',
-            boxShadow: buttonShadow,
-          }}
-        >
-          Request Leave
-        </Link>
-        <Link
-          href="/leave/my-leaves"
-          className="block w-full rounded-xl border border-[var(--border-main)] py-2.5 text-center text-xs font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] hover:border-[var(--border-strong)] transition-all duration-200"
-        >
-          View All Balances
-        </Link>
+        {/* Leave Type Label */}
+        <div className="text-center mb-4">
+          <p className="text-aura-micro text-[var(--text-3)]">
+            {current.leaveName}
+          </p>
+          <p className="mt-0.5 text-caption text-[var(--text-2)]">
+            <span className="num">{current.used}</span> used · <span className="num">{current.total}</span> total
+          </p>
+        </div>
+
+        {/* Dots navigation */}
+        {balances.length > 1 && (
+          <div className="flex justify-center gap-1.5 mb-4">
+            {balances.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => setSelectedIndex(idx)}
+                className={`h-1.5 rounded-full transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] ${
+                  idx === selectedIndex ? 'w-4 bg-[var(--text-2)]' : 'w-1.5 bg-[var(--border-soft)]'
+                }`}
+                aria-label={`Leave type ${idx + 1} of ${balances.length}`}
+              />
+            ))}
+          </div>
+        )}
+
+        {/* Actions */}
+        <div className="space-y-2 pt-4 border-t border-[var(--border-soft)]">
+          <Link
+            href="/leave/apply"
+            className="block w-full rounded-aura-control py-2.5 text-center text-xs font-semibold text-white transition-all duration-200 bg-[var(--accent)] hover:shadow-sh-md hover:-translate-y-0.5 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
+            style={{
+              boxShadow: buttonShadow,
+            }}
+          >
+            Request Leave
+          </Link>
+          <Link
+            href="/leave/my-leaves"
+            className="block w-full rounded-aura-control border border-[var(--border)] py-2.5 text-center text-xs font-medium text-[var(--text-2)] hover:bg-[var(--surface-hover)] hover:border-[var(--border-aura-strong)] transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
+          >
+            View All Balances
+          </Link>
+        </div>
       </div>
-    </div>
+    </Reveal>
   );
 }

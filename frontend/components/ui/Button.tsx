@@ -9,7 +9,8 @@ import {Loader2} from 'lucide-react';
 
 const buttonVariants = cva(
   // Aura: display-font label, tracking-tight, token-driven motion (--t-base / --ease).
-  'press-scale inline-flex items-center justify-center gap-2 whitespace-nowrap font-display font-semibold tracking-[-0.005em] transition-all duration-[var(--t-base)] ease-[var(--ease)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 disabled:translate-y-0 motion-reduce:transition-none',
+  // A11y: focus-visible ring with offset for keyboard nav; disabled state accessible.
+  'press-scale inline-flex items-center justify-center gap-2 whitespace-nowrap font-display font-semibold tracking-[-0.005em] transition-all duration-[var(--t-base)] ease-[var(--ease)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--ring-primary)] disabled:pointer-events-none disabled:opacity-50 disabled:translate-y-0 motion-reduce:transition-none',
   {
     variants: {
       variant: {

@@ -4,33 +4,28 @@ import {Skeleton} from '@mantine/core';
 
 export default function Loading() {
   return (
-    <div className="page-shell-centered fade-slide-up auth-delay-20 p-4 sm:p-6 space-y-4 sm:space-y-6">
+    <div className="mx-auto w-full max-w-7xl px-6 py-8 space-y-8">
       {/* Header skeleton */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-4">
-        <div className="space-y-2">
-          <Skeleton height={24} width="50%"/>
-          <Skeleton height={16} width="40%"/>
-        </div>
-        <div className="flex items-center gap-2 sm:gap-4">
-          <Skeleton height={36} width={130}/>
-          <Skeleton height={36} width={90}/>
-        </div>
+      <div className="space-y-3">
+        <Skeleton height={28} width="35%" style={{backgroundColor: 'var(--surface)'}}/>
+        <Skeleton height={14} width="50%" style={{backgroundColor: 'var(--surface)'}}/>
       </div>
 
-      {/* Search and filters skeleton */}
-      <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
-        <Skeleton height={40} className="flex-1"/>
-        <Skeleton height={40} width={160}/>
+      {/* Stats cards skeleton */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {Array.from({length: 4}).map((_, index) => (
+          <Skeleton key={index} height={120} style={{backgroundColor: 'var(--surface)', borderRadius: '0.5rem'}}/>
+        ))}
       </div>
 
       {/* Table skeleton */}
-      <div className="bg-[var(--bg-card)] rounded-lg border border-surface-200 dark:border-surface-800 overflow-hidden">
-        <div className="border-b border-surface-200 dark:border-surface-800">
-          <Skeleton height={44}/>
+      <div className="rounded-lg border border-[var(--border)] overflow-hidden">
+        <div className="border-b border-[var(--border)] bg-[color-mix(in_srgb,var(--surface)_50%,transparent)]">
+          <Skeleton height={48} style={{backgroundColor: 'var(--surface)', borderRadius: 0}}/>
         </div>
-        <div className="space-y-2 p-4 sm:p-4">
+        <div className="divide-y divide-[var(--border)]">
           {Array.from({length: 5}).map((_, index) => (
-            <Skeleton key={index} height={52}/>
+            <Skeleton key={index} height={48} style={{backgroundColor: 'transparent', borderRadius: 0}}/>
           ))}
         </div>
       </div>

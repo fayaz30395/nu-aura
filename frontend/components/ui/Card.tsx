@@ -45,7 +45,7 @@ const Card = React.forwardRef<
         'rounded-lg bg-[var(--bg-card)] border-[var(--border-main)] transition-all duration-200',
         variantStyles[variant],
         paddingStyles[padding],
-        isHoverable && 'hover-lift press-scale cursor-pointer hover:border-[var(--border-strong)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--border-focus)]',
+        isHoverable && 'hover-lift press-scale cursor-pointer hover:border-[var(--border-strong)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--ring-primary)]',
         glow && 'hover:border-[var(--accent-primary)]',
         className
       )}

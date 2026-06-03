@@ -272,7 +272,7 @@ function OfferPortalPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="flex items-center gap-4 p-4 bg-[var(--surface-sunken)] rounded-lg border border-[var(--border-soft)]">
+              <div className="flex items-center gap-4 p-4 bg-[var(--surface-sunken)] rounded-lg border border-[var(--border-soft)] hover:border-[var(--border)] transition-colors">
                 <Building className="h-5 w-5 shrink-0 text-[var(--text-3)]"/>
                 <div className="min-w-0">
                   <p className="text-2xs font-bold uppercase text-[var(--text-3)] tracking-[0.08em]">Position</p>
@@ -281,29 +281,29 @@ function OfferPortalPage() {
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-4 p-4 bg-[var(--surface-sunken)] rounded-lg border border-[var(--border-soft)]">
+              <div className="flex items-center gap-4 p-4 bg-[var(--surface-sunken)] rounded-lg border border-[var(--border-soft)] hover:border-[var(--border)] transition-colors">
                 <DollarSign className="h-5 w-5 shrink-0 text-[var(--text-3)]"/>
                 <div className="min-w-0">
                   <p className="text-2xs font-bold uppercase text-[var(--text-3)] tracking-[0.08em]">Annual CTC</p>
-                  <p className="font-mono font-semibold text-[var(--text-1)] tabular-nums">
+                  <p className="font-mono font-bold text-[var(--text-1)] tabular-nums">
                     {formatCurrency(offer?.offeredCtc)}
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-4 p-4 bg-[var(--surface-sunken)] rounded-lg border border-[var(--border-soft)]">
+              <div className="flex items-center gap-4 p-4 bg-[var(--surface-sunken)] rounded-lg border border-[var(--border-soft)] hover:border-[var(--border)] transition-colors">
                 <Calendar className="h-5 w-5 shrink-0 text-[var(--text-3)]"/>
                 <div className="min-w-0">
                   <p className="text-2xs font-bold uppercase text-[var(--text-3)] tracking-[0.08em]">Proposed Joining Date</p>
-                  <p className="font-mono font-semibold text-[var(--text-1)] tabular-nums">
+                  <p className="font-mono font-bold text-[var(--text-1)] tabular-nums">
                     {formatDate(offer?.proposedJoiningDate)}
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-4 p-4 bg-[var(--surface-sunken)] rounded-lg border border-[var(--border-soft)]">
+              <div className="flex items-center gap-4 p-4 bg-[var(--surface-sunken)] rounded-lg border border-[var(--border-soft)] hover:border-[var(--border)] transition-colors">
                 <Clock className="h-5 w-5 shrink-0 text-[var(--text-3)]"/>
                 <div className="min-w-0">
                   <p className="text-2xs font-bold uppercase text-[var(--text-3)] tracking-[0.08em]">Offer Extended On</p>
-                  <p className="font-mono font-semibold text-[var(--text-1)] tabular-nums">
+                  <p className="font-mono font-bold text-[var(--text-1)] tabular-nums">
                     {formatDate(offer?.offerExtendedDate)}
                   </p>
                 </div>

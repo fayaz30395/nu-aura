@@ -47,13 +47,13 @@ export function WatchButton({pageId, size = 'md'}: WatchButtonProps) {
       whileTap={{scale: 0.95}}
       aria-label={isWatching ? 'Unwatch this page' : 'Watch this page'}
       className={`
-        flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium
+        flex items-center gap-2 px-4 py-2 rounded-[var(--r-control)] text-sm font-medium
         transition-colors duration-150 cursor-pointer
-        focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:outline-none
+        focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:outline-none
         disabled:opacity-50 disabled:cursor-not-allowed
         ${isWatching
-        ? 'bg-[var(--accent-100)] dark:bg-[var(--accent-900)]/30 text-[var(--accent-700)] dark:text-[var(--accent-300)] border border-[var(--accent-300)] dark:border-[var(--accent-700)]'
-        : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] border border-[var(--border-main)] hover:bg-[var(--bg-card-hover)]'
+        ? 'bg-[var(--accent-soft)] text-[var(--accent)] border border-[var(--accent)]'
+        : 'bg-[var(--surface)] text-[var(--text-2)] border border-[var(--border-soft)] hover:bg-[var(--surface-2)]'
       }
       `}
     >

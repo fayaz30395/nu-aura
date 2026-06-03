@@ -366,24 +366,24 @@ function PageHeader({firstName, designation, department, hasInbox, inboxCount}: 
   return (
     <Reveal className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-end">
       <div className="space-y-2 max-w-2xl">
-        <p className="text-2xs font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">
+        <p className="text-aura-micro text-[var(--text-3)]">
           {today}
         </p>
-        <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-[var(--text-heading)] leading-[1.05]">
+        <h1 className="text-aura-title text-[var(--text-1)]">
           {greeting}, {firstName}.
         </h1>
-        <p className="text-body-secondary max-w-[55ch]">
+        <p className="text-sm text-[var(--text-2)] max-w-[55ch]">
           {subtitle
             ? `${subtitle}. Here's what's on your plate today.`
             : "Here's what's on your plate today — attendance, approvals, and your team at a glance."}
         </p>
       </div>
       <Link href="/me/inbox" className="self-start sm:self-end">
-        <Button variant={hasInbox ? 'primary' : 'outline'}>
+        <Button variant={hasInbox ? 'primary' : 'outline'} size="md">
           <Inbox className="mr-2 h-4 w-4" aria-hidden="true"/>
           Inbox
           {hasInbox && (
-            <span className="ml-2 inline-flex items-center justify-center min-w-5 h-5 px-1.5 rounded-full text-2xs font-semibold bg-white/15 text-white">
+            <span className="ml-2 inline-flex items-center justify-center min-w-5 h-5 px-1.5 rounded-aura-control text-2xs font-semibold bg-[var(--accent)] text-white">
               {inboxCount}
             </span>
           )}
@@ -408,18 +408,18 @@ function StatsRow({attendancePercentage, presentDays, pendingActions, teamOnLeav
   ];
 
   return (
-    <Stagger className="grid grid-cols-2 sm:grid-cols-4 border-y border-[var(--border-subtle)] divide-x divide-[var(--border-subtle)]" aria-label="Your month at a glance">
+    <Stagger className="grid grid-cols-2 sm:grid-cols-4 border-y border-[var(--border-soft)] divide-x divide-[var(--border-soft)]" aria-label="Your month at a glance">
       {items.map((item) => (
-        <StaggerItem key={item.label} className="px-5 py-6 sm:px-7 sm:py-8 first:pl-0 last:pr-0">
-          <div className="flex items-center gap-2 text-[var(--text-muted)]">
+        <StaggerItem key={item.label} className="px-5 py-6 sm:px-7 sm:py-8 first:pl-0 last:pr-0 hover:bg-[var(--surface-sunken)] transition-colors">
+          <div className="flex items-center gap-2 text-[var(--text-3)]">
             <item.icon className="h-3.5 w-3.5" aria-hidden="true"/>
-            <span className="text-2xs font-medium uppercase tracking-wider">{item.label}</span>
+            <span className="text-aura-micro">{item.label}</span>
           </div>
           <p
-            className={`mt-3 font-mono text-3xl sm:text-4xl tabular-nums tracking-tight ${
+            className={`mt-3 text-aura-stat tabular-nums ${
               item.tone === 'warning'
-                ? 'text-warning-700 dark:text-warning-300'
-                : 'text-[var(--text-heading)]'
+                ? 'text-[var(--warn-fg)]'
+                : 'text-[var(--text-1)]'
             }`}
           >
             {item.value}
@@ -439,11 +439,11 @@ function AttentionStrip({count}: {count: number}) {
       transition={{duration: 0.45, ease: EASE, delay: 0.24}}
       role="status"
       aria-live="polite"
-      className="flex items-center justify-between gap-4 rounded-xl border border-warning-200 bg-warning-50/40 dark:border-warning-700/40 dark:bg-warning-950/30 px-5 py-4"
+      className="flex items-center justify-between gap-4 rounded-aura-lg border border-[var(--warn-bd)] bg-[var(--warn-bg)] px-5 py-4 hover-lift"
     >
       <div className="flex items-center gap-4 text-sm">
-        <Clock className="h-4 w-4 shrink-0 text-warning-600 dark:text-warning-400" aria-hidden="true"/>
-        <p className="text-[var(--text-primary)]">
+        <Clock className="h-4 w-4 shrink-0 text-[var(--warn-fg)]" aria-hidden="true"/>
+        <p className="text-[var(--text-1)]">
           <span className="font-semibold">{count}</span>{' '}
           {count === 1 ? 'item is' : 'items are'} waiting on your action.
         </p>

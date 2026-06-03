@@ -31,6 +31,7 @@ export const PageTransition = forwardRef<HTMLDivElement, PageTransitionProps>(
         initial="hidden"
         animate="visible"
         exit="exit"
+        role="main"
       >
         {children}
       </motion.div>

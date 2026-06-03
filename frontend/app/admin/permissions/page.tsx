@@ -557,6 +557,7 @@ export default function PermissionsPage() {
         )}
       </AnimatePresence>
     </div>
+    </PageTransition>
   );
 }
 
@@ -698,7 +699,6 @@ function EditRoleModal({
         </ModalFooter>
       </form>
     </Modal>
-    </PageTransition>
   );
 }
 
@@ -846,7 +846,6 @@ function CreateRoleModal({
         </ModalFooter>
       </form>
     </Modal>
-    </PageTransition>
   );
 }
 
@@ -953,6 +952,5 @@ function EditUserModal({
         </ModalFooter>
       </form>
     </Modal>
-    </PageTransition>
   );
 }

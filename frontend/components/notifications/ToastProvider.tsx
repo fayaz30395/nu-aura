@@ -45,17 +45,17 @@ const toastIcons = {
 };
 
 const toastColors = {
-  success: 'bg-success-50 border border-success-200 text-success-800 dark:bg-success-900/30 dark:border-success-700/50 dark:text-success-200',
-  error: 'bg-danger-50 border border-danger-200 text-danger-800 dark:bg-danger-900/30 dark:border-danger-700/50 dark:text-danger-200',
-  info: 'bg-accent-50 border border-accent-200 text-accent-800 dark:bg-accent-900/30 dark:border-accent-700/50 dark:text-accent-200',
-  warning: 'bg-warning-50 border border-warning-200 text-warning-800 dark:bg-warning-900/30 dark:border-warning-700/50 dark:text-warning-200',
+  success: 'bg-[var(--ok-bg)] border border-[var(--ok-bd)] text-[var(--ok-fg)]',
+  error: 'bg-[var(--err-bg)] border border-[var(--err-bd)] text-[var(--err-fg)]',
+  info: 'bg-[var(--accent-soft)] border border-[var(--accent-bd)] text-[var(--accent)]',
+  warning: 'bg-[var(--warn-bg)] border border-[var(--warn-bd)] text-[var(--warn-fg)]',
 };
 
 const iconColors = {
-  success: 'text-success-500 dark:text-success-400',
-  error: 'text-danger-500 dark:text-danger-400',
-  info: 'text-accent-500 dark:text-accent-400',
-  warning: 'text-warning-500 dark:text-warning-400',
+  success: 'text-[var(--ok-fg)]',
+  error: 'text-[var(--err-fg)]',
+  info: 'text-[var(--accent)]',
+  warning: 'text-[var(--warn-fg)]',
 };
 
 const ToastItem: React.FC<{ toast: Toast; onRemove: () => void }> = ({toast, onRemove}) => {
@@ -71,11 +71,12 @@ const ToastItem: React.FC<{ toast: Toast; onRemove: () => void }> = ({toast, onR
   return (
     <div
       className={`
-        flex items-start gap-4 p-4 rounded-lg shadow-[var(--shadow-dropdown)]
+        flex items-start gap-4 p-4 rounded-[var(--r-md)] shadow-[var(--sh-md)]
         animate-in slide-in-from-right fade-in duration-300
         ${toastColors[toast.type]}
       `}
       role="alert"
+      aria-live="polite"
     >
       <Icon className={`h-5 w-5 flex-shrink-0 mt-0.5 ${iconColors[toast.type]}`}/>
       <div className="flex-1 min-w-0">
@@ -86,7 +87,8 @@ const ToastItem: React.FC<{ toast: Toast; onRemove: () => void }> = ({toast, onR
         {toast.action && (
           <button
             onClick={toast.action.onClick}
-            className="mt-2 text-sm font-medium underline hover:no-underline cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
+            className="mt-2 text-sm font-medium underline hover:no-underline cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 rounded-[var(--r-sm)]"
+            aria-label={toast.action.label}
           >
             {toast.action.label}
           </button>
@@ -95,7 +97,7 @@ const ToastItem: React.FC<{ toast: Toast; onRemove: () => void }> = ({toast, onR
       <button
         onClick={onRemove}
         aria-label="Dismiss notification"
-        className="flex-shrink-0 p-1 rounded-full hover:bg-black/10 dark:hover:bg-white/10 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
+        className="flex-shrink-0 p-1 rounded-[var(--r-md)] hover:bg-black/10 dark:hover:bg-white/10 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2"
       >
         <X className="h-4 w-4"/>
       </button>

@@ -9,13 +9,12 @@
  * no transform/opacity animation).
  */
 import {forwardRef, type ReactNode} from 'react';
-import {motion} from 'framer-motion';
+import {motion, type HTMLMotionProps} from 'framer-motion';
 import {cn} from '@/lib/utils';
 import {fadeRise, useReducedMotionSafe} from '@/lib/animation';
 
-interface RevealProps {
+interface RevealProps extends Omit<HTMLMotionProps<'div'>, 'children' | 'ref'> {
   children: ReactNode;
-  className?: string;
   /** Reveal when scrolled into view instead of on mount. Default false. */
   inView?: boolean;
   /** Re-trigger every time it enters the viewport. Default false (once). */
@@ -25,7 +24,7 @@ interface RevealProps {
 }
 
 export const Reveal = forwardRef<HTMLDivElement, RevealProps>(function Reveal(
-  {children, className, inView = false, repeat = false, delay = 0},
+  {children, className, inView = false, repeat = false, delay = 0, variants: customVariants, transition, ...motionProps},
   ref,
 ) {
   const {pick} = useReducedMotionSafe();
@@ -46,9 +45,11 @@ export const Reveal = forwardRef<HTMLDivElement, RevealProps>(function Reveal(
     <motion.div
       ref={ref}
       className={cn(className)}
-      variants={variants}
-      transition={delay ? {delay} : undefined}
+      variants={customVariants ?? variants}
+      transition={transition ?? (delay ? {delay} : undefined)}
       {...animationProps}
+      {...motionProps}
+      role={motionProps.role || undefined}
     >
       {children}
     </motion.div>

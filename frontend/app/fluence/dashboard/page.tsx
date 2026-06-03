@@ -2,7 +2,7 @@
 
 import {motion} from 'framer-motion';
 import {useRouter} from 'next/navigation';
-import {PageTransition, Reveal} from '@/components/motion';
+import {PageTransition, Reveal, Stagger, StaggerItem} from '@/components/motion';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {PageDeniedFallback, PermissionGate} from '@/components/auth/PermissionGate';
 import {BookOpen, Clock, FileText, Pen, Plus, TrendingUp,} from 'lucide-react';
@@ -69,6 +69,7 @@ function FluenceDashboardPageContent() {
         {/* Hero Section */}
         <Reveal
           className="relative overflow-hidden rounded-[var(--r-xl)] bg-gradient-to-br from-[var(--accent)] via-[var(--accent-hover)] to-[var(--accent-soft)] dark:from-[var(--accent-950)] dark:via-[var(--accent-900)] dark:to-[var(--accent-800)] p-8 md:p-12 shadow-[var(--sh-lg)]"
+          delay={0.04}
         >
           <div className="relative z-10">
             <div className="flex items-start justify-between gap-6 mb-6">
@@ -129,44 +130,53 @@ function FluenceDashboardPageContent() {
         </Reveal>
 
         {/* Stats Grid */}
-        <Reveal
+        <Stagger
           className="grid grid-cols-1 md:grid-cols-4 gap-4"
-          delay={0.06}
+          delayChildren={0.06}
+          stagger={0.05}
         >
-          <StatCard
-            icon={BookOpen}
-            label="Wiki Pages"
-            value={wikiData?.totalElements || 0}
-            color="violet"
-          />
-          <StatCard
-            icon={Pen}
-            label="Blog Posts"
-            value={blogData?.totalElements || 0}
-            color="amber"
-          />
-          <StatCard
-            icon={FileText}
-            label="Templates"
-            value={templatesData?.totalElements || 0}
-            color="emerald"
-          />
-          <StatCard
-            icon={TrendingUp}
-            label="Total Content"
-            value={(wikiData?.totalElements || 0) + (blogData?.totalElements || 0) + (templatesData?.totalElements || 0)}
-            color="blue"
-          />
-        </Reveal>
+          <StaggerItem>
+            <StatCard
+              icon={BookOpen}
+              label="Wiki Pages"
+              value={wikiData?.totalElements || 0}
+              color="violet"
+            />
+          </StaggerItem>
+          <StaggerItem>
+            <StatCard
+              icon={Pen}
+              label="Blog Posts"
+              value={blogData?.totalElements || 0}
+              color="amber"
+            />
+          </StaggerItem>
+          <StaggerItem>
+            <StatCard
+              icon={FileText}
+              label="Templates"
+              value={templatesData?.totalElements || 0}
+              color="emerald"
+            />
+          </StaggerItem>
+          <StaggerItem>
+            <StatCard
+              icon={TrendingUp}
+              label="Total Content"
+              value={(wikiData?.totalElements || 0) + (blogData?.totalElements || 0) + (templatesData?.totalElements || 0)}
+              color="blue"
+            />
+          </StaggerItem>
+        </Stagger>
 
         {/* Recent Content */}
-        <Reveal delay={0.12}>
+        <Reveal delay={0.12} inView>
           {isLoading ? (
-            <div className="space-y-4">
+            <Stagger className="space-y-4">
               {[1, 2, 3].map((i) => (
-                <div key={i} className={`${card.base} ${card.paddingLarge} h-32 animate-pulse`}/>
+                <StaggerItem key={i} className={`${card.base} ${card.paddingLarge} h-32 animate-pulse`}/>
               ))}
-            </div>
+            </Stagger>
           ) : (
             <ContentGrid
               items={allRecent}
@@ -178,12 +188,13 @@ function FluenceDashboardPageContent() {
         </Reveal>
 
         {/* Three Column Layout */}
-        <Reveal
+        <Stagger
           className="grid grid-cols-1 lg:grid-cols-3 gap-6"
-          delay={0.18}
+          delayChildren={0.18}
+          stagger={0.06}
         >
           {/* Popular Wiki Pages */}
-          <motion.div initial={{opacity: 0, x: -8}} animate={{opacity: 1, x: 0}}>
+          <StaggerItem>
             <Card className={card.base}>
               <CardHeader className="pb-4 border-b border-[var(--border-main)]">
                 <div className="flex items-center gap-2">
@@ -227,10 +238,10 @@ function FluenceDashboardPageContent() {
                 </motion.button>
               </CardContent>
             </Card>
-          </motion.div>
+          </StaggerItem>
 
           {/* Recent Blog Posts */}
-          <motion.div initial={{opacity: 0, y: 8}} animate={{opacity: 1, y: 0}}>
+          <StaggerItem>
             <Card className={card.base}>
               <CardHeader className="pb-4 border-b border-[var(--border-main)]">
                 <div className="flex items-center gap-2">
@@ -274,10 +285,10 @@ function FluenceDashboardPageContent() {
                 </motion.button>
               </CardContent>
             </Card>
-          </motion.div>
+          </StaggerItem>
 
           {/* Template Library */}
-          <motion.div initial={{opacity: 0, x: 8}} animate={{opacity: 1, x: 0}}>
+          <StaggerItem>
             <Card className={card.base}>
               <CardHeader className="pb-4 border-b border-[var(--border-main)]">
                 <div className="flex items-center gap-2">
@@ -320,8 +331,8 @@ function FluenceDashboardPageContent() {
                 </motion.button>
               </CardContent>
             </Card>
-          </motion.div>
-        </Reveal>
+          </StaggerItem>
+        </Stagger>
       </PageTransition>
     </AppLayout>
   );
@@ -361,20 +372,18 @@ function StatCard({icon: IconComponent, label, value, color}: StatCardProps) {
   };
 
   return (
-    <motion.div initial={{opacity: 0, scale: 0.9}} animate={{opacity: 1, scale: 1}}>
-      <Card className={card.base}>
-        <CardContent className={`p-6 row-between`}>
-          <div>
-            <p className={typography.caption}>{label}</p>
-            <p className="text-2xl font-bold text-[var(--text-primary)] mt-1">
-              {value}
-            </p>
-          </div>
-          <div className={`p-4 rounded-lg ${colorMap[color]}`}>
-            <IconComponent className={`w-6 h-6 ${textColorMap[color]}`}/>
-          </div>
-        </CardContent>
-      </Card>
-    </motion.div>
+    <Card className={card.base}>
+      <CardContent className={`p-6 row-between`}>
+        <div>
+          <p className={typography.caption}>{label}</p>
+          <p className="num text-2xl font-bold text-[var(--text-primary)] mt-1">
+            {value}
+          </p>
+        </div>
+        <div className={`p-4 rounded-lg ${colorMap[color]}`}>
+          <IconComponent className={`w-6 h-6 ${textColorMap[color]}`} aria-hidden="true"/>
+        </div>
+      </CardContent>
+    </Card>
   );
 }

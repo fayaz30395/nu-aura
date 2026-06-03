@@ -237,6 +237,7 @@ export default function AdminDashboardPage() {
         />
       </div>
     </AdminPageContent>
+    </PageTransition>
   );
 }
 
@@ -547,41 +548,43 @@ function EmployeesSection({
           </p>
         </div>
         <div className="flex w-full gap-2 sm:w-auto">
-          <label className="relative flex-1 sm:flex-none">
+          <label className="relative flex-1 sm:flex-none" htmlFor="admin-search">
             <Search
               className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[var(--text-muted)]"
               aria-hidden="true"
             />
             <input
+              id="admin-search"
               type="text"
               placeholder="Search by name or email"
               value={pendingSearch}
               onChange={(e) => onSearchChange(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && onSearchApply()}
-              className="input-aura w-full sm:w-72 pl-9 pr-4 py-2 text-sm rounded-xl"
-              aria-label="Search employees"
+              className="input-aura w-full sm:w-72 pl-9 pr-4 py-2 text-sm rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
+              aria-label="Search employees by name or email"
             />
           </label>
           <button
             type="button"
             onClick={onSearchApply}
-            className="btn-secondary px-4 py-2 text-sm font-medium rounded-xl cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+            className="btn-secondary px-4 py-2 text-sm font-medium rounded-xl cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
+            title="Search (Enter key also works)"
           >
             Search
           </button>
         </div>
       </div>
 
-      <div className="overflow-x-auto border-y border-[var(--border-subtle)]" suppressHydrationWarning>
-        <table className="table-aura min-w-full" suppressHydrationWarning>
+      <div className="overflow-x-auto border-y border-[var(--border-subtle)]" suppressHydrationWarning role="region" aria-label="Employees table">
+        <table className="table-aura min-w-full" suppressHydrationWarning role="table">
           <thead>
-            <tr>
-              <Th>Name</Th>
-              <Th>Email</Th>
-              <Th>Tenant</Th>
-              <Th>Department</Th>
-              <Th>Status</Th>
-              <Th>Roles</Th>
+            <tr role="row">
+              <Th scope="col">Name</Th>
+              <Th scope="col">Email</Th>
+              <Th scope="col">Tenant</Th>
+              <Th scope="col">Department</Th>
+              <Th scope="col">Status</Th>
+              <Th scope="col">Roles</Th>
             </tr>
           </thead>
           <tbody className="divide-y divide-[var(--border-subtle)]">
@@ -654,7 +657,8 @@ function EmployeesSection({
             type="button"
             disabled={!canPrevious}
             onClick={onPrevious}
-            className="px-4 py-1.5 rounded-lg border border-[var(--border-subtle)] text-[var(--text-secondary)] disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[var(--bg-secondary)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
+            className="px-4 py-1.5 rounded-lg border border-[var(--border-subtle)] text-[var(--text-secondary)] disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[var(--bg-secondary)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
+            aria-label={`Previous page${!canPrevious ? ' (disabled)' : ''}`}
           >
             Previous
           </button>
@@ -662,7 +666,8 @@ function EmployeesSection({
             type="button"
             disabled={!canNext}
             onClick={onNext}
-            className="px-4 py-1.5 rounded-lg border border-[var(--border-subtle)] text-[var(--text-secondary)] disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[var(--bg-secondary)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
+            className="px-4 py-1.5 rounded-lg border border-[var(--border-subtle)] text-[var(--text-secondary)] disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[var(--bg-secondary)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
+            aria-label={`Next page${!canNext ? ' (disabled)' : ''}`}
           >
             Next
           </button>
@@ -706,28 +711,33 @@ function RoleManagementSection({register, onSubmit, errors, options, isPending}:
       <form
         onSubmit={onSubmit}
         className="grid gap-4 border-y border-[var(--border-subtle)] py-4 sm:grid-cols-[1fr_220px_auto] sm:items-end"
+        role="form"
       >
         <div>
-          <label className="block text-2xs font-medium uppercase tracking-wider text-[var(--text-muted)] mb-1.5">
+          <label htmlFor="admin-email" className="block text-2xs font-medium uppercase tracking-wider text-[var(--text-muted)] mb-1.5">
             User email
           </label>
           <input
+            id="admin-email"
             type="email"
             placeholder="user@example.com"
             {...register('email')}
-            className="input-aura w-full px-4 py-2 text-sm rounded-xl"
+            className="input-aura w-full px-4 py-2 text-sm rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
+            aria-describedby={errors.email ? 'admin-email-error' : undefined}
           />
           {errors.email && (
-            <p className="text-xs text-danger-500 mt-1">{errors.email.message}</p>
+            <p id="admin-email-error" className="text-xs text-danger-600 dark:text-danger-400 mt-1" role="alert">{errors.email.message}</p>
           )}
         </div>
         <div>
-          <label className="block text-2xs font-medium uppercase tracking-wider text-[var(--text-muted)] mb-1.5">
+          <label htmlFor="admin-role" className="block text-2xs font-medium uppercase tracking-wider text-[var(--text-muted)] mb-1.5">
             Role
           </label>
           <select
+            id="admin-role"
             {...register('role')}
-            className="input-aura w-full px-4 py-2 text-sm rounded-xl"
+            className="input-aura w-full px-4 py-2 text-sm rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
+            aria-describedby={errors.role ? 'admin-role-error' : undefined}
           >
             {options.map((option) => (
               <option key={option.value} value={option.value}>
@@ -736,13 +746,14 @@ function RoleManagementSection({register, onSubmit, errors, options, isPending}:
             ))}
           </select>
           {errors.role && (
-            <p className="text-xs text-danger-500 mt-1">{errors.role.message}</p>
+            <p id="admin-role-error" className="text-xs text-danger-600 dark:text-danger-400 mt-1" role="alert">{errors.role.message}</p>
           )}
         </div>
         <button
           type="submit"
           disabled={isPending}
-          className="btn-primary px-4 py-2 text-sm font-medium rounded-xl disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
+          className="btn-primary px-4 py-2 text-sm font-medium rounded-xl disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
+          aria-busy={isPending}
         >
           {isPending ? 'Updating…' : 'Assign role'}
         </button>
@@ -774,9 +785,9 @@ function DegradedStrip() {
 }
 
 // ── Table header cell ────────────────────────────────────────────────────────
-function Th({children}: {children: React.ReactNode}) {
+function Th({children, scope = 'col'}: {children: React.ReactNode; scope?: 'col' | 'row'}) {
   return (
-    <th className="px-6 py-4 text-left text-2xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">
+    <th scope={scope} className="px-6 py-4 text-left text-2xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">
       {children}
     </th>
   );

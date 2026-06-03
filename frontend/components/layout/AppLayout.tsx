@@ -355,6 +355,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
           <div
             onClick={() => setIsMobileMenuOpen(false)}
             className="fixed inset-0 z-30 bg-[var(--bg-overlay)] md:hidden animate-fade-in"
+            aria-hidden="true"
           />
           <aside
             ref={mobileDrawerRef}
@@ -383,7 +384,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
       )}
 
       {/* Main Content — fills remaining space, never overflows the shell */}
-      <div className="flex flex-1 flex-col overflow-hidden min-w-0">
+      <div className="flex flex-1 flex-col overflow-hidden min-w-0" role="main">
         {/* Aura sticky top bar (60px) — toggle · breadcrumbs · ⌘K · theme · bell · user */}
         <TopBar
           breadcrumbs={showBreadcrumbs ? breadcrumbs : []}
@@ -400,9 +401,8 @@ const AppLayout: React.FC<AppLayoutProps> = ({
 
         {/* Content Area — scrollable, fills remaining vertical space */}
         <main
-          tabIndex={0}
-          aria-label="Main content"
           className="flex-1 overflow-y-auto overflow-x-hidden transition-colors duration-300 bg-transparent"
+          role="main"
         >
           <AuthGuard>
             <ErrorBoundary resetKeys={[pathname]}>

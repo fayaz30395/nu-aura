@@ -40,11 +40,11 @@ export const PayslipCard: React.FC<PayslipCardProps> = ({
     <Card variant="elevated" hover className="overflow-hidden">
       <CardContent className="p-0">
         {/* Header */}
-        <div className="bg-accent-600 p-4 text-white">
+        <div className="bg-[var(--accent)] p-4 text-white">
           <div className="flex items-start justify-between">
             <div className="flex-1">
               <h3 className="text-xl font-semibold truncate">{payslip.employeeName}</h3>
-              <p className="text-sm text-accent-100 truncate mt-1">
+              <p className="text-sm text-[var(--accent)]/70 truncate mt-1">
                 {payslip.payrollRunName}
               </p>
             </div>
@@ -60,7 +60,7 @@ export const PayslipCard: React.FC<PayslipCardProps> = ({
         {/* Content */}
         <div className="p-6">
           {/* Period */}
-          <div className="flex items-center gap-2 text-sm text-surface-600 dark:text-surface-400 mb-4">
+          <div className="flex items-center gap-2 text-sm text-[var(--text-2)] mb-4 num">
             <Calendar className="h-4 w-4"/>
             <span>
               {formatDate(payslip.payrollPeriodStart)} - {formatDate(payslip.payrollPeriodEnd)}
@@ -70,16 +70,16 @@ export const PayslipCard: React.FC<PayslipCardProps> = ({
           {/* Salary Breakdown */}
           <div className="space-y-4 mb-4">
             <div className="flex justify-between items-center text-sm">
-              <span className="text-surface-600 dark:text-surface-400">Base Salary</span>
-              <span className="font-medium text-surface-900 dark:text-surface-50">
+              <span className="text-[var(--text-2)]">Base Salary</span>
+              <span className="font-medium text-[var(--text-1)] num">
                 {formatCurrency(payslip.baseSalary)}
               </span>
             </div>
 
             {payslip.allowances > 0 && (
               <div className="flex justify-between items-center text-sm">
-                <span className="text-surface-600 dark:text-surface-400">Allowances</span>
-                <span className="font-medium text-success-600 dark:text-success-400">
+                <span className="text-[var(--text-2)]">Allowances</span>
+                <span className="font-medium text-[var(--ok-fg)] num">
                   +{formatCurrency(payslip.allowances)}
                 </span>
               </div>
@@ -87,8 +87,8 @@ export const PayslipCard: React.FC<PayslipCardProps> = ({
 
             {payslip.deductions > 0 && (
               <div className="flex justify-between items-center text-sm">
-                <span className="text-surface-600 dark:text-surface-400">Deductions</span>
-                <span className="font-medium text-danger-600 dark:text-danger-400">
+                <span className="text-[var(--text-2)]">Deductions</span>
+                <span className="font-medium text-[var(--err-fg)] num">
                   -{formatCurrency(payslip.deductions)}
                 </span>
               </div>
@@ -96,33 +96,33 @@ export const PayslipCard: React.FC<PayslipCardProps> = ({
 
             {/* Gross Amount */}
             <div
-              className="flex justify-between items-center text-sm pt-2 border-t border-surface-200 dark:border-surface-700">
-              <span className="text-surface-600 dark:text-surface-400">Gross Amount</span>
-              <span className="font-medium text-surface-900 dark:text-surface-50">
+              className="flex justify-between items-center text-sm pt-2 border-t border-[var(--border)]">
+              <span className="text-[var(--text-2)]">Gross Amount</span>
+              <span className="font-medium text-[var(--text-1)] num">
                 {formatCurrency(payslip.grossAmount)}
               </span>
             </div>
 
             {/* Net Amount */}
             <div
-              className="flex justify-between items-center pt-4 border-t-2 border-surface-300 dark:border-surface-600">
+              className="flex justify-between items-center pt-4 border-t-2 border-[var(--border)]">
               <div className="flex items-center gap-2">
-                <DollarSign className="h-5 w-5 text-accent-500"/>
-                <span className="font-semibold text-surface-900 dark:text-surface-50">
+                <DollarSign className="h-5 w-5 text-[var(--accent)]"/>
+                <span className="font-semibold text-[var(--text-1)]">
                   Net Amount
                 </span>
               </div>
-              <span className="text-xl font-bold text-accent-700 dark:text-accent-400">
+              <span className="text-xl font-bold text-[var(--accent)] num">
                 {formatCurrency(payslip.netAmount)}
               </span>
             </div>
           </div>
 
           {/* Payment Date */}
-          <div className="mb-4 p-4 bg-surface-50 dark:bg-surface-800/50 rounded-lg">
+          <div className="mb-4 p-4 bg-[var(--surface-aura-2)] rounded-[var(--r-md)]">
             <div className="flex justify-between items-center text-sm">
-              <span className="text-surface-600 dark:text-surface-400">Payment Date</span>
-              <span className="font-medium text-surface-900 dark:text-surface-50">
+              <span className="text-[var(--text-2)]">Payment Date</span>
+              <span className="font-medium text-[var(--text-1)] num">
                 {formatDate(payslip.paymentDate)}
               </span>
             </div>

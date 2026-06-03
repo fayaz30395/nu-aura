@@ -83,7 +83,7 @@ const Header: React.FC<HeaderProps> = ({
   const iconActionClass =
     'group relative inline-flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl border border-transparent ' +
     'text-[var(--header-text-muted)] cursor-pointer transition-all duration-250 ease-[cubic-bezier(0.16,1,0.3,1)] ' +
-    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 ' +
+    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 ' +
     'before:absolute before:inset-0 before:rounded-xl before:bg-[var(--header-hover-bg)] before:opacity-0 before:scale-95 ' +
     'before:transition before:duration-250 before:ease-[cubic-bezier(0.16,1,0.3,1)] ' +
     'hover:text-[var(--header-text)] hover:before:scale-100 hover:before:opacity-100 ' +
@@ -135,14 +135,14 @@ const Header: React.FC<HeaderProps> = ({
 
           {/* App Switcher */}
           <nav
-            aria-label="Top navigation"
+            aria-label="Product switcher"
             className="flex items-center rounded-xl border border-[var(--border-subtle)] px-2 py-1 bg-[var(--bg-card)]/60"
           >
             <AppSwitcher/>
           </nav>
 
           {/* Global Search - Desktop */}
-          <div className="hidden lg:flex">
+          <div className="hidden lg:flex shrink-0">
             <GlobalSearch/>
           </div>
 
@@ -163,7 +163,8 @@ const Header: React.FC<HeaderProps> = ({
           <button
             type="button"
             className={`hidden sm:inline-flex ${iconActionClass}`}
-            aria-label="Open help">
+            aria-label="Open help"
+            title="Help">
             <HelpCircle className="h-5 w-5" aria-hidden="true"/>
           </button>
 

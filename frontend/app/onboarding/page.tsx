@@ -202,14 +202,14 @@ function StatsRow({active, joiningThisWeek, overdue, completedYtd}: {
           variants={{hidden: {opacity: 0, y: 6}, visible: {opacity: 1, y: 0, transition: {duration: 0.4, ease: EASE}}}}
           className="px-5 py-6 sm:px-7 sm:py-8 first:pl-0 last:pr-0"
         >
-          <div className="flex items-center gap-2 text-[var(--text-muted)]">
+          <div className="flex items-center gap-2 text-[var(--text-3)]">
             <item.icon className="h-3.5 w-3.5" aria-hidden="true" />
-            <span className="text-2xs font-medium uppercase tracking-wider">{item.label}</span>
+            <span className="text-2xs font-bold uppercase tracking-[0.08em]">{item.label}</span>
           </div>
           <p
-            className={`mt-3 font-mono text-3xl sm:text-4xl tabular-nums tracking-tight ${
+            className={`mt-3 font-mono text-3xl sm:text-4xl font-bold tabular-nums tracking-tight ${
               item.tone === 'danger' ? 'text-danger-700 dark:text-danger-300'
-                : 'text-[var(--text-heading)]'
+                : 'text-[var(--text-1)]'
             }`}
           >
             {item.value}
@@ -376,21 +376,21 @@ function JoiningThisWeek({items, onOpen}: {
               <button
                 type="button"
                 onClick={() => onOpen(p.id)}
-                className="grid w-full grid-cols-[auto_1fr_auto_auto] items-center gap-4 py-4 sm:gap-6 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded"
+                className="grid w-full grid-cols-[auto_1fr_auto_auto] items-center gap-4 py-4 sm:gap-6 text-left hover:bg-[var(--surface-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded transition-colors"
               >
                 <div className="flex h-9 w-9 items-center justify-center rounded-full bg-accent-50 text-accent-700 dark:bg-accent-900/30 dark:text-accent-300 font-semibold text-sm">
                   {initial}
                 </div>
                 <div className="min-w-0">
-                  <p className="text-sm font-medium text-[var(--text-heading)] truncate">
+                  <p className="text-sm font-medium text-[var(--text-1)] truncate">
                     {p.employeeName ?? `Employee ${p.employeeId.substring(0, 8)}`}
                   </p>
-                  <p className="text-xs text-[var(--text-secondary)] truncate">
+                  <p className="text-xs text-[var(--text-2)] truncate">
                     Starts {formatDate(p.startDate)}
                     {p.assignedBuddyName ? ` · Buddy: ${p.assignedBuddyName}` : ''}
                   </p>
                 </div>
-                <p className="hidden sm:block font-mono text-sm tabular-nums text-[var(--text-secondary)]">
+                <p className="hidden sm:block font-mono font-bold text-sm tabular-nums text-[var(--text-2)]">
                   {p.completionPercentage}%
                 </p>
                 <StatusBadge status={p.status} domain={REVIEW_STATUS} />

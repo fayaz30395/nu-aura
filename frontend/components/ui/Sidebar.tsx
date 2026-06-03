@@ -111,6 +111,7 @@ const ChildrenFlyover: React.FC<{
           isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
         )}
         onClick={onClose}
+        aria-hidden="true"
       />
 
       {/* Flyover Panel */}
@@ -152,8 +153,9 @@ const ChildrenFlyover: React.FC<{
           <button
             type="button"
             onClick={onClose}
-            className="p-2.5 rounded-md text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--sidebar-hover-bg)] transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 active:scale-[0.985]"
-            aria-label="Close"
+            className="p-2.5 rounded-md text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--sidebar-hover-bg)] transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 active:scale-[0.985]"
+            aria-label="Close submenu"
+            title="Close (Esc)"
           >
             <X className="h-4 w-4" aria-hidden="true"/>
           </button>
@@ -310,7 +312,7 @@ const SidebarMenuItem: React.FC<{
   const commonClasses = cn(
     'sidebar-menu-item group relative flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium',
     'transform-gpu transition-[background-color,color,transform] duration-[var(--motion-base)] ease-[var(--ease-out-expo)]',
-    'focus-ring focus-visible:outline-none',
+    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2',
     isActiveState
       ? 'font-semibold bg-[var(--sidebar-active-bg)] text-[var(--sidebar-text-active)]'
       : 'text-[var(--sidebar-text)] hover:bg-[var(--sidebar-hover-bg)] hover:translate-x-0.5 active:scale-[var(--motion-press-scale)]',
@@ -449,7 +451,7 @@ const SectionDivider: React.FC<{
     <button
       onClick={() => onToggleSection(sectionId)}
       aria-expanded={isSectionExpanded}
-      className="focus-ring w-full row-between px-3 py-2 group rounded-md transform-gpu transition-[background-color,color] duration-[var(--motion-base)] ease-[var(--ease-standard)] hover:bg-[var(--sidebar-hover-bg)] focus-visible:outline-none"
+      className="w-full row-between px-3 py-2 group rounded-md transform-gpu transition-[background-color,color] duration-[var(--motion-base)] ease-[var(--ease-standard)] hover:bg-[var(--sidebar-hover-bg)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
     >
       <span
         className="text-2xs font-medium uppercase tracking-[0.14em] text-[var(--sidebar-section-text)] transition-colors duration-[var(--motion-base)] group-hover:text-[var(--sidebar-text)]"

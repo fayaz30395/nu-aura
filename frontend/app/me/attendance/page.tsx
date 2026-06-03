@@ -203,19 +203,19 @@ export default function MyAttendancePage() {
   const getStatusColor = (status: AttendanceStatus) => {
     switch (status) {
       case 'PRESENT':
-        return 'badge-status status-success';
+        return 'text-[var(--ok-fg)] bg-[var(--ok-bg)] border border-[var(--ok-bd)]';
       case 'ABSENT':
-        return 'badge-status status-danger';
+        return 'text-[var(--err-fg)] bg-[var(--err-bg)] border border-[var(--err-bd)]';
       case 'HALF_DAY':
-        return 'badge-status status-warning';
+        return 'text-[var(--warn-fg)] bg-[var(--warn-bg)] border border-[var(--warn-bd)]';
       case 'ON_LEAVE':
-        return 'badge-status status-info';
+        return 'text-[var(--info-fg)] bg-[var(--info-bg)] border border-[var(--info-bd)]';
       case 'WEEKLY_OFF':
-        return 'badge-status status-neutral';
+        return 'text-[var(--neutral-fg)] bg-[var(--neutral-bg)] border border-[var(--neutral-bd)]';
       case 'HOLIDAY':
-        return 'badge-status status-info';
+        return 'text-[var(--info-fg)] bg-[var(--info-bg)] border border-[var(--info-bd)]';
       case 'PENDING_REGULARIZATION':
-        return 'badge-status status-warning';
+        return 'text-[var(--warn-fg)] bg-[var(--warn-bg)] border border-[var(--warn-bd)]';
       default:
         return 'badge-status status-neutral';
     }
@@ -298,20 +298,20 @@ export default function MyAttendancePage() {
       <AppLayout activeMenuItem="my-attendance">
         <div className="space-y-6">
           <div>
-            <h1 className="text-xl font-bold">My Attendance</h1>
-            <p className="text-[var(--text-secondary)] mt-1">Track your attendance and working hours</p>
-            <p role="status" className="text-xs text-[var(--text-muted)] mt-2">
+            <h1 className="text-aura-title text-[var(--text-1)]">My Attendance</h1>
+            <p className="text-sm text-[var(--text-2)] mt-2">Track your attendance and working hours</p>
+            <p role="status" className="text-xs text-[var(--text-3)] mt-2">
               Loading employee profile...
             </p>
           </div>
 
-          <Card className="skeuo-card">
+          <Card className="border border-[var(--border-soft)] bg-[var(--surface)] shadow-sh-sm">
             <CardContent className="pt-6">
-              <div className="row-between">
+              <div className="flex items-center justify-between gap-4">
                 <div>
-                  <h3 className="text-xl font-semibold text-[var(--text-primary)]">Today&apos;s Status</h3>
+                  <h3 className="text-lg font-semibold text-[var(--text-1)]">Today&apos;s Status</h3>
                   <span className="sr-only">Today&apos;s Status, text=Today&apos;s Status</span>
-                  <p className="text-body-muted mt-2">Preparing your attendance controls</p>
+                  <p className="text-sm text-[var(--text-2)] mt-2">Preparing your attendance controls</p>
                 </div>
                 <button
                   type="button"
@@ -333,18 +333,18 @@ export default function MyAttendancePage() {
     <AppLayout activeMenuItem="my-attendance" breadcrumbs={[{label: 'My Attendance', href: '/me/attendance'}]}>
       <PageTransition className="space-y-6">
         <Reveal>
-          <h1 className="text-xl font-bold">My Attendance</h1>
-          <p className="text-[var(--text-secondary)] mt-1">Track your attendance and working hours</p>
+          <h1 className="text-aura-title text-[var(--text-1)]">My Attendance</h1>
+          <p className="text-sm text-[var(--text-2)] mt-2">Track your attendance and working hours</p>
           {isLoadingAttendance && (
-            <p role="status" className="text-xs text-[var(--text-muted)] mt-2">
+            <p role="status" className="text-xs text-[var(--text-3)] mt-2">
               Loading attendance records...
             </p>
           )}
         </Reveal>
 
         {error && (
-          <div className="p-4 bg-danger-50 border border-danger-200 rounded-lg">
-            <p className="text-danger-800 font-medium">{error}</p>
+          <div className="p-4 bg-[var(--err-bg)] border border-[var(--err-bd)] rounded-aura-lg">
+            <p className="text-[var(--err-fg)] font-medium">{error}</p>
             <button
               onClick={() => setError(null)}
               className="text-danger-600 text-sm mt-2 underline"

@@ -186,12 +186,14 @@ export const NotificationBell: React.FC = () => {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)]  transition-colors"
+        className="relative p-2 text-[var(--text-2)] hover:text-[var(--text-1)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] rounded-[var(--r-md)]"
+        aria-label="Notifications"
+        aria-expanded={isOpen}
       >
         <Bell className="h-6 w-6"/>
         {unreadCount > 0 && (
           <span
-            className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-semibold leading-none text-white bg-danger-600 rounded-full">
+            className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-semibold leading-none text-white bg-[var(--err-fg)] rounded-full num">
             {unreadCount > 99 ? '99+' : unreadCount}
           </span>
         )}
@@ -199,18 +201,21 @@ export const NotificationBell: React.FC = () => {
 
       {isOpen && (
         <div
-          className="absolute right-0 mt-2 w-96 bg-[var(--bg-input)] rounded-lg shadow-[var(--shadow-elevated)] border border-[var(--border-main)] dark:border-surface-700 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
-          <div className="row-between p-4 border-b">
-            <h3 className="text-xl font-semibold">Notifications</h3>
+          className="absolute right-0 mt-2 w-96 bg-[var(--surface)] rounded-[var(--r-lg)] shadow-[var(--sh-lg)] border border-[var(--border)] z-50 animate-in fade-in slide-in-from-top-2 duration-200"
+          role="dialog"
+          aria-label="Notifications panel"
+        >
+          <div className="row-between p-4 border-b border-[var(--border)]">
+            <h3 className="text-lg font-semibold text-[var(--text-1)]">Notifications</h3>
             <div className="flex items-center gap-2">
               {unreadCount > 0 && (
                 <button onClick={handleMarkAllAsRead}
                         aria-label="Mark all as read"
-                        className="text-sm text-accent-600 hover:text-accent-800 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded">
+                        className="text-sm text-[var(--accent)] hover:text-[var(--accent-hover)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 rounded-[var(--r-md)]">
                   <CheckCheck className="h-4 w-4"/>
                 </button>
               )}
-              <button onClick={() => setIsOpen(false)} aria-label="Close notifications">
+              <button onClick={() => setIsOpen(false)} aria-label="Close notifications" className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] rounded-[var(--r-md)]">
                 <X className="h-5 w-5"/>
               </button>
             </div>
@@ -218,36 +223,39 @@ export const NotificationBell: React.FC = () => {
 
           <div className="max-h-[500px] overflow-y-auto">
             {loading ? (
-              <div className="p-8 text-center">Loading...</div>
+              <div className="p-8 text-center text-[var(--text-2)]">Loading...</div>
             ) : notifications.length === 0 ? (
-              <div className="p-8 text-center">No notifications</div>
+              <div className="p-8 text-center text-[var(--text-2)]">No notifications</div>
             ) : (
               notifications.map((notification) => {
                 const hasRoute = !!getNotificationRoute(notification);
                 return (
                   <div
                     key={notification.id}
-                    className={`p-4 border-b dark:border-surface-700 transition-colors ${
+                    className={`p-4 border-b border-[var(--border)] transition-colors ${
                       !notification.isRead
-                        ? 'bg-accent-50 dark:bg-accent-900/20'
-                        : 'hover:bg-[var(--bg-surface)] '
-                    } ${hasRoute ? 'cursor-pointer' : ''}`}
+                        ? 'bg-[var(--accent-soft)]'
+                        : 'hover:bg-[var(--surface-hover)] '
+                    } ${hasRoute ? 'cursor-pointer hover-lift' : ''}`}
                     onClick={() => hasRoute && handleNotificationClick(notification)}
+                    role={hasRoute ? 'button' : undefined}
+                    tabIndex={hasRoute ? 0 : undefined}
+                    onKeyDown={hasRoute ? (e) => e.key === 'Enter' && handleNotificationClick(notification) : undefined}
                   >
                     <div className="flex items-start gap-2">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                          <p className="text-sm font-medium text-[var(--text-primary)] truncate">
+                          <p className="text-sm font-medium text-[var(--text-1)] truncate">
                             {notification.title}
                           </p>
                           {hasRoute && (
-                            <ExternalLink className="h-3 w-3 text-[var(--text-muted)] flex-shrink-0"/>
+                            <ExternalLink className="h-3 w-3 text-[var(--text-3)] flex-shrink-0"/>
                           )}
                         </div>
-                        <p className="text-body-secondary mt-1 line-clamp-2">
+                        <p className="text-[var(--text-2)] mt-1 line-clamp-2 text-sm">
                           {notification.message}
                         </p>
-                        <p className="text-caption mt-1">
+                        <p className="text-[var(--text-3)] mt-1 text-xs num">
                           {formatDistanceToNow(new Date(notification.createdAt), {addSuffix: true})}
                         </p>
                       </div>
@@ -255,16 +263,18 @@ export const NotificationBell: React.FC = () => {
                         {!notification.isRead && (
                           <button
                             onClick={() => handleMarkAsRead(notification.id)}
-                            className="p-1 text-accent-600 hover:text-accent-800 dark:text-accent-400 dark:hover:text-accent-300"
+                            className="p-1 text-[var(--accent)] hover:text-[var(--accent-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] rounded-[var(--r-sm)]"
                             title="Mark as read"
+                            aria-label="Mark as read"
                           >
                             <Check className="h-4 w-4"/>
                           </button>
                         )}
                         <button
                           onClick={() => handleDelete(notification.id)}
-                          className="p-1 text-danger-600 hover:text-danger-800 dark:text-danger-400 dark:hover:text-danger-300"
+                          className="p-1 text-[var(--err-fg)] hover:text-[var(--err-bg)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] rounded-[var(--r-sm)]"
                           title="Delete"
+                          aria-label="Delete notification"
                         >
                           <Trash2 className="h-4 w-4"/>
                         </button>

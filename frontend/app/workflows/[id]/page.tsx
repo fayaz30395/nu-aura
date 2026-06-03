@@ -13,6 +13,7 @@ import {Button} from '@/components/ui/Button';
 import {Input, Select, Textarea} from '@/components/ui';
 import {Skeleton} from '@/components/ui/Skeleton';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {PageTransition, Reveal, Stagger} from '@/components/motion';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {
   useCreateWorkflowDefinition,
@@ -152,27 +153,27 @@ function StepPipelinePreview({
           {/* Step node */}
           <div className="flex flex-col items-center flex-shrink-0">
             <div
-              className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-accent-500 bg-accent-50 text-sm font-bold text-accent-700 dark:border-accent-400 dark:bg-accent-900/30 dark:text-accent-300">
+              className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-[var(--accent)] bg-[var(--accent-soft)] text-sm font-bold text-[var(--accent)] dark:text-[var(--accent)]">
               {idx + 1}
             </div>
-            <p className="mt-2 max-w-[120px] text-center text-xs font-medium text-[var(--text-primary)] truncate">
+            <p className="mt-2 max-w-[120px] text-center text-xs font-medium text-[var(--text-1)] truncate">
               {step.stepName || `Step ${idx + 1}`}
             </p>
-            <p className="text-2xs text-[var(--text-muted)] truncate max-w-[120px]">
+            <p className="text-2xs text-[var(--text-3)] truncate max-w-[120px]">
               {getApproverTypeLabel(step.approverType)}
             </p>
             {step.slaHours && step.slaHours > 0 ? (
-              <p className="flex items-center gap-0.5 text-2xs text-[var(--text-muted)]">
-                <Clock className="h-3 w-3"/> {step.slaHours}h
+              <p className="flex items-center gap-0.5 text-2xs text-[var(--text-3)]">
+                <Clock className="h-3 w-3"/> <span className="num">{step.slaHours}</span>h
               </p>
             ) : null}
           </div>
           {/* Connector arrow */}
           {idx < steps.length - 1 && (
             <div className="flex items-center flex-shrink-0 px-1">
-              <div className="h-0.5 w-8 bg-accent-300 dark:bg-accent-600"/>
+              <div className="h-0.5 w-8 bg-[var(--border-soft)]"/>
               <div
-                className="h-0 w-0 border-l-[6px] border-y-[4px] border-y-transparent border-l-accent-300 dark:border-l-accent-600"/>
+                className="h-0 w-0 border-l-[6px] border-y-[4px] border-y-transparent border-l-[var(--border-soft)]"/>
             </div>
           )}
         </React.Fragment>
@@ -377,71 +378,76 @@ export default function WorkflowDetailPage() {
 
   return (
     <AppLayout activeMenuItem="workflows">
-      <motion.div
-        initial={{opacity: 0, y: 20}}
-        animate={{opacity: 1, y: 0}}
-        transition={{duration: 0.25, ease: 'easeOut'}}
-        className="space-y-6 p-6"
-      >
-        {/* Header */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => router.push('/workflows')}
-            >
-              <ArrowLeft className="h-4 w-4"/>
-            </Button>
-            <div>
-              <h1 className="text-xl font-bold text-[var(--text-primary)]">
-                {isNew ? 'Create Workflow' : isEditing ? 'Edit Workflow' : workflow?.name}
-              </h1>
-              {!isNew && !isEditing && workflow?.description && (
-                <p className="mt-1 text-body-muted">{workflow.description}</p>
-              )}
+      <PageTransition>
+        <div
+          className="space-y-6 p-6"
+        >
+          {/* Header */}
+          <Reveal>
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-center gap-4">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => router.push('/workflows')}
+                  className="focus-visible"
+                  aria-label="Back to workflows"
+                >
+                  <ArrowLeft className="h-4 w-4"/>
+                </Button>
+                <div>
+                  <h1 className="text-aura-title text-[var(--text-1)]">
+                    {isNew ? 'Create Workflow' : isEditing ? 'Edit Workflow' : workflow?.name}
+                  </h1>
+                  {!isNew && !isEditing && workflow?.description && (
+                    <p className="mt-1 text-[var(--text-2)]">{workflow.description}</p>
+                  )}
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                {!isNew && !isEditing && canManage && (
+                  <Button variant="outline" onClick={() => setIsEditing(true)} className="focus-visible">
+                    <Edit className="mr-2 h-4 w-4"/>
+                    Edit
+                  </Button>
+                )}
+                {isEditing && !isNew && (
+                  <Button variant="ghost" onClick={() => setIsEditing(false)} disabled={isSaving} className="focus-visible">
+                    Cancel
+                  </Button>
+                )}
+              </div>
             </div>
-          </div>
-          <div className="flex items-center gap-2">
-            {!isNew && !isEditing && canManage && (
-              <Button variant="outline" onClick={() => setIsEditing(true)}>
-                <Edit className="mr-2 h-4 w-4"/>
-                Edit
-              </Button>
-            )}
-            {isEditing && !isNew && (
-              <Button variant="ghost" onClick={() => setIsEditing(false)} disabled={isSaving}>
-                Cancel
-              </Button>
-            )}
-          </div>
-        </div>
+          </Reveal>
 
         {/* Read-only View */}
         {!isEditing && workflow && (
           <>
             {/* Info Cards */}
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              <InfoCard label="Entity Type"
-                        value={ENTITY_TYPE_OPTIONS.find((o) => o.value === workflow.entityType)?.label ?? workflow.entityType}/>
-              <InfoCard label="Workflow Type"
-                        value={WORKFLOW_TYPE_OPTIONS.find((o) => o.value === workflow.workflowType)?.label ?? workflow.workflowType}/>
-              <InfoCard
-                label="Status"
-                value={workflow.isActive ? 'Active' : 'Inactive'}
-                valueClassName={workflow.isActive ? 'text-success-600 dark:text-success-400' : 'text-surface-500'}
-              />
-              <InfoCard label="Version" value={`v${workflow.version}`}/>
-            </div>
+            <Stagger>
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <InfoCard label="Entity Type"
+                          value={ENTITY_TYPE_OPTIONS.find((o) => o.value === workflow.entityType)?.label ?? workflow.entityType}/>
+                <InfoCard label="Workflow Type"
+                          value={WORKFLOW_TYPE_OPTIONS.find((o) => o.value === workflow.workflowType)?.label ?? workflow.workflowType}/>
+                <InfoCard
+                  label="Status"
+                  value={workflow.isActive ? 'Active' : 'Inactive'}
+                  valueClassName={workflow.isActive ? 'text-[var(--ok-fg)]' : 'text-[var(--text-3)]'}
+                />
+                <InfoCard label="Version" value={`v${workflow.version}`}/>
+              </div>
+            </Stagger>
 
             {/* Pipeline Preview */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <GitBranch className="h-5 w-5 text-accent-600"/>
-                  Approval Pipeline ({workflow.totalSteps} {workflow.totalSteps === 1 ? 'step' : 'steps'})
-                </CardTitle>
-              </CardHeader>
+            <Reveal>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-[var(--text-1)]">
+                    <GitBranch className="h-5 w-5 text-[var(--accent)]"/>
+                    Approval Pipeline ({workflow.totalSteps} {workflow.totalSteps === 1 ? 'step' : 'steps'})
+                  </CardTitle>
+                </CardHeader>
               <CardContent>
                 {workflow.steps && workflow.steps.length > 0 ? (
                   <StepPipelinePreview
@@ -456,92 +462,100 @@ export default function WorkflowDetailPage() {
                 )}
               </CardContent>
             </Card>
+            </Reveal>
 
             {/* Step Details */}
             {workflow.steps && workflow.steps.length > 0 && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Step Details</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {workflow.steps.map((step, idx) => (
-                    <div
-                      key={step.id}
-                      className="flex gap-4 rounded-lg border border-[var(--border-main)] bg-[var(--bg-secondary)]/30 p-4"
-                    >
-                      <div
-                        className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-accent-100 text-sm font-bold text-accent-700 dark:bg-accent-900/30 dark:text-accent-300">
-                        {idx + 1}
-                      </div>
-                      <div className="flex-1 space-y-1">
-                        <p className="font-medium text-[var(--text-primary)]">{step.stepName}</p>
-                        {step.description && (
-                          <p className="text-caption">{step.description}</p>
-                        )}
-                        <div className="flex flex-wrap gap-2 pt-1">
-                          <span
-                            className="inline-flex items-center rounded-full bg-accent-100 px-2 py-0.5 text-xs font-medium text-accent-700 dark:bg-accent-900/30 dark:text-accent-300">
-                            {getApproverTypeLabel(step.approverType)}
-                          </span>
-                          {step.roleName && (
-                            <span
-                              className="inline-flex items-center rounded-full bg-accent-100 px-2 py-0.5 text-xs font-medium text-accent-700 dark:bg-accent-900/30 dark:text-accent-300">
-                              Role: {step.roleName}
-                            </span>
-                          )}
-                          {step.slaHours && step.slaHours > 0 && (
-                            <span
-                              className="inline-flex items-center gap-1 rounded-full bg-warning-100 px-2 py-0.5 text-xs font-medium text-warning-700 dark:bg-warning-900/30 dark:text-warning-300">
-                              <Clock className="h-3 w-3"/> SLA: {step.slaHours}h
-                            </span>
-                          )}
-                          {step.escalationEnabled && (
-                            <span
-                              className="inline-flex items-center gap-1 rounded-full bg-warning-100 px-2 py-0.5 text-xs font-medium text-warning-700 dark:bg-warning-900/30 dark:text-warning-300">
-                              <AlertTriangle className="h-3 w-3"/> Escalation
-                            </span>
-                          )}
-                          {step.commentsRequired && (
-                            <span
-                              className="inline-flex items-center rounded-full bg-surface-100 px-2 py-0.5 text-xs font-medium text-surface-700 dark:bg-surface-800/30 dark:text-surface-300">
-                              Comments required
-                            </span>
-                          )}
-                          {step.isOptional && (
-                            <span
-                              className="inline-flex items-center rounded-full bg-warning-100 px-2 py-0.5 text-xs font-medium text-warning-700 dark:bg-warning-900/30 dark:text-warning-300">
-                              Optional
-                            </span>
-                          )}
+              <Reveal>
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-[var(--text-1)]">Step Details</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {workflow.steps.map((step, idx) => (
+                      <motion.div
+                        key={step.id}
+                        initial={{opacity: 0, x: -10}}
+                        animate={{opacity: 1, x: 0}}
+                        transition={{delay: idx * 0.05}}
+                        className="flex gap-4 rounded-[var(--r-lg)] border border-[var(--border-soft)] bg-[var(--surface-hover)] p-4 hover-lift"
+                      >
+                        <div
+                          className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-[var(--accent-soft)] text-sm font-bold text-[var(--accent)]">
+                          {idx + 1}
                         </div>
-                      </div>
-                    </div>
-                  ))}
-                </CardContent>
-              </Card>
+                        <div className="flex-1 space-y-1">
+                          <p className="font-medium text-[var(--text-1)]">{step.stepName}</p>
+                          {step.description && (
+                            <p className="text-aura-micro text-[var(--text-2)]">{step.description}</p>
+                          )}
+                          <div className="flex flex-wrap gap-2 pt-1">
+                            <span
+                              className="inline-flex items-center rounded-full bg-[var(--accent-soft)] px-2 py-0.5 text-xs font-medium text-[var(--accent)]">
+                              {getApproverTypeLabel(step.approverType)}
+                            </span>
+                            {step.roleName && (
+                              <span
+                                className="inline-flex items-center rounded-full bg-[var(--accent-soft)] px-2 py-0.5 text-xs font-medium text-[var(--accent)]">
+                                Role: {step.roleName}
+                              </span>
+                            )}
+                            {step.slaHours && step.slaHours > 0 && (
+                              <span
+                                className="inline-flex items-center gap-1 rounded-full bg-[var(--warn-bg)] px-2 py-0.5 text-xs font-medium text-[var(--warn-fg)]">
+                                <Clock className="h-3 w-3"/> SLA: <span className="num">{step.slaHours}</span>h
+                              </span>
+                            )}
+                            {step.escalationEnabled && (
+                              <span
+                                className="inline-flex items-center gap-1 rounded-full bg-[var(--warn-bg)] px-2 py-0.5 text-xs font-medium text-[var(--warn-fg)]">
+                                <AlertTriangle className="h-3 w-3"/> Escalation
+                              </span>
+                            )}
+                            {step.commentsRequired && (
+                              <span
+                                className="inline-flex items-center rounded-full bg-[var(--surface)] px-2 py-0.5 text-xs font-medium text-[var(--text-2)]">
+                                Comments required
+                              </span>
+                            )}
+                            {step.isOptional && (
+                              <span
+                                className="inline-flex items-center rounded-full bg-[var(--warn-bg)] px-2 py-0.5 text-xs font-medium text-[var(--warn-fg)]">
+                                Optional
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </CardContent>
+                </Card>
+              </Reveal>
             )}
 
             {/* Settings */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Settings</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  <SettingItem label="Default SLA" value={`${workflow.defaultSlaHours}h`}/>
-                  <SettingItem label="Escalation Enabled" value={workflow.escalationEnabled ? 'Yes' : 'No'}/>
-                  <SettingItem label="Escalation After" value={`${workflow.escalationAfterHours}h`}/>
-                  <SettingItem label="Notify on Submission" value={workflow.notifyOnSubmission ? 'Yes' : 'No'}/>
-                  <SettingItem label="Notify on Approval" value={workflow.notifyOnApproval ? 'Yes' : 'No'}/>
-                  <SettingItem label="Notify on Rejection" value={workflow.notifyOnRejection ? 'Yes' : 'No'}/>
-                  <SettingItem label="Parallel Approval" value={workflow.allowParallelApproval ? 'Yes' : 'No'}/>
-                  <SettingItem label="Auto-Approve" value={workflow.autoApproveEnabled ? 'Yes' : 'No'}/>
-                  <SettingItem label="Skip-Level Allowed" value={workflow.skipLevelAllowed ? 'Yes' : 'No'}/>
-                  {workflow.minAmount != null && <SettingItem label="Min Amount" value={`${workflow.minAmount}`}/>}
-                  {workflow.maxAmount != null && <SettingItem label="Max Amount" value={`${workflow.maxAmount}`}/>}
-                </div>
-              </CardContent>
-            </Card>
+            <Reveal>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-[var(--text-1)]">Settings</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    <SettingItem label="Default SLA" value={`${workflow.defaultSlaHours}h`}/>
+                    <SettingItem label="Escalation Enabled" value={workflow.escalationEnabled ? 'Yes' : 'No'}/>
+                    <SettingItem label="Escalation After" value={`${workflow.escalationAfterHours}h`}/>
+                    <SettingItem label="Notify on Submission" value={workflow.notifyOnSubmission ? 'Yes' : 'No'}/>
+                    <SettingItem label="Notify on Approval" value={workflow.notifyOnApproval ? 'Yes' : 'No'}/>
+                    <SettingItem label="Notify on Rejection" value={workflow.notifyOnRejection ? 'Yes' : 'No'}/>
+                    <SettingItem label="Parallel Approval" value={workflow.allowParallelApproval ? 'Yes' : 'No'}/>
+                    <SettingItem label="Auto-Approve" value={workflow.autoApproveEnabled ? 'Yes' : 'No'}/>
+                    <SettingItem label="Skip-Level Allowed" value={workflow.skipLevelAllowed ? 'Yes' : 'No'}/>
+                    {workflow.minAmount != null && <SettingItem label="Min Amount" value={`${workflow.minAmount}`}/>}
+                    {workflow.maxAmount != null && <SettingItem label="Max Amount" value={`${workflow.maxAmount}`}/>}
+                  </div>
+                </CardContent>
+              </Card>
+            </Reveal>
           </>
         )}
 
@@ -902,7 +916,8 @@ export default function WorkflowDetailPage() {
             </div>
           </form>
         )}
-      </motion.div>
+      </div>
+    </PageTransition>
     </AppLayout>
   );
 }
@@ -919,20 +934,24 @@ function InfoCard({
   valueClassName?: string;
 }) {
   return (
-    <div className="rounded-xl border border-[var(--border-main)] bg-[var(--bg-secondary)]/30 p-4">
-      <p className="text-xs font-medium uppercase text-[var(--text-muted)]">{label}</p>
-      <p className={`mt-1 text-sm font-semibold ${valueClassName ?? 'text-[var(--text-primary)]'}`}>
+    <motion.div
+      initial={{opacity: 0, y: 10}}
+      animate={{opacity: 1, y: 0}}
+      className="rounded-[var(--r-lg)] border border-[var(--border-soft)] bg-[var(--surface)] p-4 hover-lift"
+    >
+      <p className="text-xs font-medium uppercase text-[var(--text-3)]">{label}</p>
+      <p className={`mt-1 text-sm font-semibold ${valueClassName ?? 'text-[var(--text-1)]'}`}>
         {value}
       </p>
-    </div>
+    </motion.div>
   );
 }
 
 function SettingItem({label, value}: { label: string; value: string }) {
   return (
-    <div className="row-between rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2">
-      <span className="text-caption">{label}</span>
-      <span className="text-sm font-medium text-[var(--text-primary)]">{value}</span>
+    <div className="flex items-center justify-between rounded-[var(--r-lg)] border border-[var(--border-soft)] bg-[var(--surface)] px-4 py-3 hover:bg-[var(--surface-hover)]">
+      <span className="text-aura-micro text-[var(--text-2)]">{label}</span>
+      <span className="text-sm font-medium text-[var(--text-1)]">{value}</span>
     </div>
   );
 }

@@ -80,9 +80,10 @@ export function StatusBadge({
         className
       )}
       role="status"
+      aria-label={label}
     >
       {!iconHidden && Icon ? (
-        <Icon className={cn('h-3 w-3 flex-shrink-0', pulse && 'animate-pulse')} aria-hidden />
+        <Icon className={cn('h-3 w-3 flex-shrink-0', pulse && 'animate-pulse')} aria-hidden="true" />
       ) : null}
       <span>{label}</span>
     </span>

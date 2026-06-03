@@ -2,9 +2,9 @@
 
 import {useEffect} from 'react';
 import {motion} from 'framer-motion';
-import {Grid, Home, RefreshCw} from 'lucide-react';
+import {AlertCircle, Home, RefreshCw} from 'lucide-react';
 import {Button} from '@/components/ui/Button';
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
+import {Card} from '@/components/ui/Card';
 import {categorizeError, getUserMessage, handleError} from '@/lib/utils/error-handler';
 import {isDevelopment} from '@/lib/config';
 
@@ -22,61 +22,69 @@ export default function LeaveError({error, reset}: ErrorProps) {
   const userMessage = getUserMessage(category, error.message);
 
   return (
-    <div className="page-shell-centered fade-slide-up">
+    <div className="flex min-h-screen items-center justify-center px-4 py-8">
       <motion.div
-        initial={{opacity: 0, y: 20}}
+        initial={{opacity: 0, y: 8}}
         animate={{opacity: 1, y: 0}}
-        transition={{duration: 0.25, ease: 'easeOut'}}
+        transition={{duration: 0.4, ease: [0.16, 1, 0.3, 1]}}
+        className="w-full max-w-md"
       >
-        <Card className="page-shell-card float-subtle fade-slide-up">
-          <CardHeader className="text-center">
-            <div
-              className="mx-auto mb-4 h-12 w-12 rounded-full bg-danger-100 dark:bg-danger-900/30 flex items-center justify-center">
-              <Grid className="h-6 w-6 text-danger-600 dark:text-danger-400"/>
+        <Card className="p-6">
+          <div className="text-center space-y-4">
+            <div className="flex justify-center">
+              <div className="p-3 rounded-lg bg-[color-mix(in_srgb,var(--err-fg)_12%,transparent)] text-[var(--err-fg)] flex items-center justify-center">
+                <AlertCircle className="h-6 w-6" aria-hidden="true" />
+              </div>
             </div>
-            <CardTitle className="text-xl font-semibold text-surface-900 dark:text-surface-50">
-              App Error
-            </CardTitle>
-            <CardDescription className="text-surface-600 dark:text-surface-400">
-              {userMessage}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
+            <div className="space-y-1">
+              <h1 className="text-aura-title text-[var(--text-1)]">
+                Oops!
+              </h1>
+              <p className="text-[var(--text-3)] text-sm">
+                {userMessage}
+              </p>
+            </div>
+
             {isDevelopment && (
-              <div className="rounded-md bg-surface-100 dark:bg-surface-800 p-4">
-                <p className="text-sm font-mono text-surface-700 dark:text-surface-300 break-all">
+              <div className="rounded-md bg-[color-mix(in_srgb,var(--surface)_50%,transparent)] p-3 text-left">
+                <p className="text-xs font-mono text-[var(--text-2)] break-all leading-relaxed">
                   {error.message}
                 </p>
                 {error.digest && (
-                  <p className="text-xs text-surface-500 dark:text-surface-400 mt-1">
-                    Error ID: {error.digest}
+                  <p className="text-xs text-[var(--text-3)] mt-2">
+                    ID: <span className="num">{error.digest}</span>
                   </p>
                 )}
               </div>
             )}
-            <div className="flex flex-col gap-2">
-              <Button onClick={reset} className="w-full">
-                <RefreshCw className="mr-2 h-4 w-4"/>
+
+            <div className="flex flex-col gap-2 pt-4">
+              <Button
+                onClick={reset}
+                variant="primary"
+                leftIcon={<RefreshCw className="h-4 w-4" />}
+                className="w-full"
+              >
                 Try Again
               </Button>
               <Button
-                variant="outline"
                 onClick={() => (window.location.href = '/leave')}
+                variant="secondary"
+                leftIcon={<AlertCircle className="h-4 w-4" />}
                 className="w-full"
               >
-                <Grid className="mr-2 h-4 w-4"/>
-                Back to App
+                Back to Leaves
               </Button>
               <Button
-                variant="outline"
                 onClick={() => (window.location.href = '/me/dashboard')}
+                variant="secondary"
+                leftIcon={<Home className="h-4 w-4" />}
                 className="w-full"
               >
-                <Home className="mr-2 h-4 w-4"/>
-                Go to Home
+                Go Home
               </Button>
             </div>
-          </CardContent>
+          </div>
         </Card>
       </motion.div>
     </div>

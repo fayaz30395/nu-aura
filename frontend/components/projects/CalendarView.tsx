@@ -174,12 +174,12 @@ export function CalendarView({
 
   // Month View
   const renderMonthView = () => (
-    <div className="grid grid-cols-7 border-t border-l border-surface-200 dark:border-surface-700">
+    <div className="grid grid-cols-7 border-t border-l border-[var(--border)]">
       {/* Header */}
       {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => (
         <div
           key={day}
-          className="py-2 text-center text-sm font-medium text-surface-600 dark:text-surface-400 border-r border-b border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-800"
+          className="py-2 text-center text-sm font-medium text-[var(--text-2)] border-r border-b border-[var(--border)] bg-[var(--bg-surface)]"
         >
           {day}
         </div>
@@ -210,19 +210,19 @@ export function CalendarView({
             role="button"
             tabIndex={0}
             aria-label={`View ${format(day, 'EEEE, MMMM d, yyyy')}${dayEvents.length > 0 ? `, ${dayEvents.length} event${dayEvents.length === 1 ? '' : 's'}` : ''}`}
-            className={`min-h-[100px] p-1 border-r border-b border-surface-200 dark:border-surface-700 cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-inset ${
+            className={`min-h-[100px] p-1 border-r border-b border-[var(--border)] cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-inset hover-lift ${
               isCurrentMonth
                 ? 'bg-[var(--bg-card)]'
-                : 'bg-surface-50 dark:bg-surface-800/50'
-            } hover:bg-surface-100 dark:hover:bg-surface-800`}
+                : 'bg-[var(--bg-surface)]'
+            } hover:bg-[var(--bg-surface)]`}
           >
             <div
-              className={`text-sm font-medium mb-1 w-7 h-7 flex items-center justify-center rounded-full ${
+              className={`text-sm font-medium mb-1 w-7 h-7 flex items-center justify-center rounded-full tabular-nums ${
                 isSelected
-                  ? 'bg-accent-500 text-white'
+                  ? 'bg-[var(--accent)] text-white'
                   : isCurrentMonth
-                    ? 'text-surface-900 dark:text-surface-100'
-                    : 'text-surface-400 dark:text-surface-600'
+                    ? 'text-[var(--text-1)]'
+                    : 'text-[var(--text-2)]'
               }`}
             >
               {format(day, 'd')}
@@ -489,46 +489,46 @@ export function CalendarView({
   };
 
   return (
-    <div className={`bg-[var(--bg-card)] rounded-lg border border-surface-200 dark:border-surface-700 ${className}`}>
+    <div className={`bg-[var(--bg-card)] rounded-lg border border-[var(--border)] shadow-[var(--sh-card)] ${className}`}>
       {/* Header */}
       <div
-        className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 border-b border-surface-200 dark:border-surface-700">
+        className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 border-b border-[var(--border)]">
         <div className="flex items-center gap-2">
           <button
             onClick={handlePrevious}
             aria-label="Previous"
-            className="p-2 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
+            className="p-2 rounded-lg hover:bg-[var(--bg-surface)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] hover-lift"
           >
-            <ChevronLeft className="w-5 h-5 text-surface-600 dark:text-surface-400"/>
+            <ChevronLeft className="w-5 h-5 text-[var(--text-1)]"/>
           </button>
           <button
             onClick={handleNext}
             aria-label="Next"
-            className="p-2 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
+            className="p-2 rounded-lg hover:bg-[var(--bg-surface)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] hover-lift"
           >
-            <ChevronRight className="w-5 h-5 text-surface-600 dark:text-surface-400"/>
+            <ChevronRight className="w-5 h-5 text-[var(--text-1)]"/>
           </button>
-          <h2 className="text-xl font-semibold text-surface-900 dark:text-surface-50">
+          <h2 className="text-xl font-semibold text-[var(--text-1)]">
             {getTitle()}
           </h2>
           <button
             onClick={handleToday}
-            className="px-4 py-1.5 text-sm border border-surface-300 dark:border-surface-600 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
+            className="px-4 py-1.5 text-sm border border-[var(--border)] rounded-lg hover:bg-[var(--bg-surface)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] hover-lift"
           >
             Today
           </button>
         </div>
 
         {/* View Type Switcher */}
-        <div className="flex items-center gap-1 p-1 bg-surface-100 dark:bg-surface-800 rounded-lg">
+        <div className="flex items-center gap-1 p-1 bg-[var(--bg-surface)] rounded-lg">
           {(['day', 'week', 'month'] as CalendarViewType[]).map((type) => (
             <button
               key={type}
               onClick={() => setViewType(type)}
-              className={`px-4 py-1.5 text-sm rounded-md capitalize transition-colors ${
+              className={`px-4 py-1.5 text-sm rounded-md capitalize transition-colors focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] ${
                 viewType === type
-                  ? 'bg-[var(--bg-surface)] text-accent-700 dark:text-accent-400 shadow-[var(--shadow-card)]'
-                  : 'text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-100'
+                  ? 'bg-[var(--bg-card)] text-[var(--accent-text)] shadow-[var(--sh-card)]'
+                  : 'text-[var(--text-2)] hover:text-[var(--text-1)]'
               }`}
             >
               {type}
@@ -545,22 +545,22 @@ export function CalendarView({
       </div>
 
       {/* Legend */}
-      <div className="flex flex-wrap gap-4 p-4 border-t border-surface-200 dark:border-surface-700 text-sm">
+      <div className="flex flex-wrap gap-4 p-4 border-t border-[var(--border)] text-sm">
         <div className="flex items-center gap-2">
-          <div className="h-3 w-3 rounded bg-blue-500"/>
-          <span className="text-surface-600 dark:text-surface-400">Project</span>
+          <div className="h-3 w-3 rounded" style={{backgroundColor: 'var(--accent)'}}/>
+          <span className="text-[var(--text-2)]">Project</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="h-3 w-3 rounded bg-violet-500"/>
-          <span className="text-surface-600 dark:text-surface-400">Task</span>
+          <div className="h-3 w-3 rounded" style={{backgroundColor: 'var(--accent-text)'}}/>
+          <span className="text-[var(--text-2)]">Task</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="h-3 w-3 rounded bg-amber-500"/>
-          <span className="text-surface-600 dark:text-surface-400">Milestone</span>
+          <div className="h-3 w-3 rounded" style={{backgroundColor: 'var(--warn-fg)'}}/>
+          <span className="text-[var(--text-2)]">Milestone</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="h-3 w-3 rounded bg-red-500"/>
-          <span className="text-surface-600 dark:text-surface-400">Deadline</span>
+          <div className="h-3 w-3 rounded" style={{backgroundColor: 'var(--err-fg)'}}/>
+          <span className="text-[var(--text-2)]">Deadline</span>
         </div>
       </div>
     </div>

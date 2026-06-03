@@ -12,7 +12,7 @@
  *   </Stagger>
  */
 import {forwardRef, type ReactNode} from 'react';
-import {motion} from 'framer-motion';
+import {motion, type HTMLMotionProps} from 'framer-motion';
 import {cn} from '@/lib/utils';
 import {
   MOTION_STAGGER,
@@ -20,9 +20,8 @@ import {
   useReducedMotionSafe,
 } from '@/lib/animation';
 
-interface StaggerProps {
+interface StaggerProps extends Omit<HTMLMotionProps<'div'>, 'children' | 'ref'> {
   children: ReactNode;
-  className?: string;
   /** Gap (seconds) between each child's entrance. Default MOTION_STAGGER. */
   stagger?: number;
   /** Delay (seconds) before the first child reveals. */
@@ -41,6 +40,8 @@ export const Stagger = forwardRef<HTMLDivElement, StaggerProps>(function Stagger
     delayChildren = 0,
     inView = false,
     repeat = false,
+    variants: customVariants,
+    ...motionProps
   },
   ref,
 ) {
@@ -62,8 +63,10 @@ export const Stagger = forwardRef<HTMLDivElement, StaggerProps>(function Stagger
     <motion.div
       ref={ref}
       className={cn(className)}
-      variants={variants}
+      variants={customVariants ?? variants}
       {...animationProps}
+      {...motionProps}
+      role={motionProps.role || undefined}
     >
       {children}
     </motion.div>

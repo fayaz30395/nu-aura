@@ -87,6 +87,7 @@ export function Ring({
         fill="none"
         stroke="var(--surface-sunken)"
         strokeWidth={thickness}
+        aria-hidden="true"
       />
       <circle
         cx={c}
@@ -99,6 +100,7 @@ export function Ring({
         strokeDasharray={`${dash} ${circ}`}
         transform={`rotate(-90 ${c} ${c})`}
         className={prefersReduced ? undefined : 'aura-ring-fill'}
+        aria-hidden="true"
       />
       {label != null && (
         <text

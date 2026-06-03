@@ -770,7 +770,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({className, onSelect, 
   let navItemGlobalIndex = 0;
 
   return (
-    <div ref={containerRef} className={cn('relative', className)}>
+    <div ref={containerRef} className={cn('relative flex-none', className)}>
       {/* Search Trigger */}
       <div
         onClick={() => {
@@ -781,7 +781,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({className, onSelect, 
           'relative flex items-center rounded-xl border transition-all duration-200 cursor-pointer',
           isOpen
             ? 'w-full sm:w-80 lg:w-96 border-[var(--border-focus)] bg-[var(--bg-elevated)] shadow-[var(--shadow-dropdown)] shadow-accent-500/10 dark:shadow-accent-500/5'
-            : 'w-full sm:w-64 lg:w-72 border-[var(--border-main)] bg-[var(--bg-input)] hover:bg-[var(--bg-card-hover)] hover:border-[var(--border-strong)]'
+            : 'w-full min-w-[18rem] sm:w-72 lg:w-80 xl:w-96 border-[var(--border-main)] bg-[var(--bg-input)] hover:bg-[var(--bg-card-hover)] hover:border-[var(--border-strong)]'
         )}
       >
         <Search className={cn(

@@ -42,8 +42,6 @@ import {
 } from '@/components/ui';
 import {SkeletonCard} from '@/components/ui/Skeleton';
 import {PageTransition, Reveal, Stagger, StaggerItem} from '@/components/motion';
-import {useReducedMotionSafe} from '@/hooks/useReducedMotionSafe';
-import {MOTION_DURATION, MOTION_EASE, MOTION_STAGGER, RISE} from '@/lib/constants/motion';
 import type {Survey, SurveyRequest} from '@/lib/types/grow/survey';
 import {SurveyStatus, SurveyType} from '@/lib/types/grow/survey';
 import {SURVEY_STATUS, SURVEY_TYPE} from '@/lib/status/vocabulary';
@@ -231,16 +229,19 @@ export default function SurveysPage() {
       <PageTransition className="space-y-6">
         {/* Header */}
         <Reveal className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="text-aura-title">
+          <div className="space-y-2 max-w-2xl">
+            <p className="text-aura-micro text-[var(--text-3)]">
+              Employee Engagement
+            </p>
+            <h1 className="text-aura-title text-[var(--text-1)]">
               Employee Surveys
             </h1>
-            <p className="text-[var(--text-2)]">
+            <p className="text-body-secondary text-[var(--text-2)] max-w-[55ch]">
               Create and manage employee surveys and feedback collection
             </p>
           </div>
           <PermissionGate permission={Permissions.SURVEY_MANAGE}>
-            <Button onClick={handleCreateSurvey}>
+            <Button variant="primary" onClick={handleCreateSurvey}>
               <Plus className="mr-2 h-4 w-4"/>
               Create Survey
             </Button>
@@ -248,109 +249,83 @@ export default function SurveysPage() {
         </Reveal>
 
         {/* Stats Cards */}
-        <Stagger className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
-          <StaggerItem>
-            <Card className="card-aura hover-lift">
-              <CardContent className="p-4">
-                <Stat
-                  label="Total Surveys"
-                  value={stats.total}
-                  icon={<ClipboardList className="h-3.5 w-3.5"/>}
-                />
-              </CardContent>
-            </Card>
+        <Stagger className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-0 border-y border-[var(--border)] divide-x divide-[var(--border-soft)]">
+          <StaggerItem className="px-5 py-6 sm:px-7 sm:py-8 first:pl-0 last:pr-0">
+            <div className="flex items-center gap-2 text-[var(--text-3)]">
+              <ClipboardList className="h-3.5 w-3.5" aria-hidden="true" />
+              <span className="text-aura-micro">Total Surveys</span>
+            </div>
+            <p className="mt-3 num text-aura-stat text-[var(--text-1)]">{stats.total}</p>
           </StaggerItem>
-          <StaggerItem>
-            <Card className="card-aura hover-lift">
-              <CardContent className="p-4">
-                <Stat
-                  label="Active"
-                  value={stats.active}
-                  tone="success"
-                  icon={<Play className="h-3.5 w-3.5"/>}
-                />
-              </CardContent>
-            </Card>
+          <StaggerItem className="px-5 py-6 sm:px-7 sm:py-8 first:pl-0 last:pr-0">
+            <div className="flex items-center gap-2 text-[var(--text-3)]">
+              <Play className="h-3.5 w-3.5" aria-hidden="true" />
+              <span className="text-aura-micro">Active</span>
+            </div>
+            <p className="mt-3 num text-aura-stat text-[var(--ok-fg)]">{stats.active}</p>
           </StaggerItem>
-          <StaggerItem>
-            <Card className="card-aura hover-lift">
-              <CardContent className="p-4">
-                <Stat
-                  label="Drafts"
-                  value={stats.draft}
-                  tone="muted"
-                  icon={<FileText className="h-3.5 w-3.5"/>}
-                />
-              </CardContent>
-            </Card>
+          <StaggerItem className="px-5 py-6 sm:px-7 sm:py-8 first:pl-0 last:pr-0">
+            <div className="flex items-center gap-2 text-[var(--text-3)]">
+              <FileText className="h-3.5 w-3.5" aria-hidden="true" />
+              <span className="text-aura-micro">Drafts</span>
+            </div>
+            <p className="mt-3 num text-aura-stat text-[var(--text-1)]">{stats.draft}</p>
           </StaggerItem>
-          <StaggerItem>
-            <Card className="card-aura hover-lift">
-              <CardContent className="p-4">
-                <Stat
-                  label="Completed"
-                  value={stats.completed}
-                  tone="accent"
-                  icon={<CheckCircle className="h-3.5 w-3.5"/>}
-                />
-              </CardContent>
-            </Card>
+          <StaggerItem className="px-5 py-6 sm:px-7 sm:py-8 first:pl-0 last:pr-0">
+            <div className="flex items-center gap-2 text-[var(--text-3)]">
+              <CheckCircle className="h-3.5 w-3.5" aria-hidden="true" />
+              <span className="text-aura-micro">Completed</span>
+            </div>
+            <p className="mt-3 num text-aura-stat text-[var(--text-1)]">{stats.completed}</p>
           </StaggerItem>
-          <StaggerItem>
-            <Card className="card-aura hover-lift">
-              <CardContent className="p-4">
-                <Stat
-                  label="Total Responses"
-                  value={stats.totalResponses}
-                  tone="warning"
-                  icon={<Users className="h-3.5 w-3.5"/>}
-                />
-              </CardContent>
-            </Card>
+          <StaggerItem className="px-5 py-6 sm:px-7 sm:py-8 first:pl-0 last:pr-0">
+            <div className="flex items-center gap-2 text-[var(--text-3)]">
+              <Users className="h-3.5 w-3.5" aria-hidden="true" />
+              <span className="text-aura-micro">Responses</span>
+            </div>
+            <p className="mt-3 num text-aura-stat text-[var(--text-1)]">{stats.totalResponses}</p>
           </StaggerItem>
         </Stagger>
 
         {/* Filters */}
-        <Card className="card-aura">
-          <CardContent className="p-4">
-            <div className="flex flex-col gap-4 sm:flex-row">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-muted)]"/>
-                <Input
-                  type="text"
-                  placeholder="Search surveys..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 input-aura"
-                />
-              </div>
-              <Select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="w-full sm:w-40 input-aura"
-              >
-                <option value="">All Status</option>
-                {statusOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </Select>
-              <Select
-                value={typeFilter}
-                onChange={(e) => setTypeFilter(e.target.value)}
-                className="w-full sm:w-40 input-aura"
-              >
-                <option value="">All Types</option>
-                {surveyTypeOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </Select>
+        <div className="border-y border-[var(--border)] py-4 px-0">
+          <div className="flex flex-col gap-4 sm:flex-row">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-3)]"/>
+              <Input
+                type="text"
+                placeholder="Search surveys..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10"
+              />
             </div>
-          </CardContent>
-        </Card>
+            <Select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="w-full sm:w-40"
+            >
+              <option value="">All Status</option>
+              {statusOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </Select>
+            <Select
+              value={typeFilter}
+              onChange={(e) => setTypeFilter(e.target.value)}
+              className="w-full sm:w-40"
+            >
+              <option value="">All Types</option>
+              {surveyTypeOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </Select>
+          </div>
+        </div>
 
         {/* Surveys Grid */}
         {isLoading ? (
@@ -361,76 +336,73 @@ export default function SurveysPage() {
           </div>
         ) : isError ? (
           <div
-            className="p-6 rounded-lg border border-danger-200 dark:border-danger-800 bg-danger-50 dark:bg-danger-900/20 text-center">
-            <AlertCircle className="h-8 w-8 text-danger-500 mx-auto mb-2"/>
-            <p className="text-sm text-danger-600 dark:text-danger-400">Failed to load surveys.</p>
+            className="p-6 rounded-aura-lg border border-[var(--err-bd)] bg-[var(--err-bg)] text-center">
+            <AlertCircle className="h-8 w-8 text-[var(--err-fg)] mx-auto mb-2"/>
+            <p className="text-sm text-[var(--err-fg)]">Failed to load surveys.</p>
             <button
               onClick={() => refetch()}
-              className="mt-2 text-sm text-accent-700 dark:text-accent-400 hover:underline cursor-pointer"
+              className="mt-2 text-sm text-[var(--accent)] hover:underline cursor-pointer"
             >
               Try again
             </button>
           </div>
         ) : filteredSurveys.length === 0 ? (
-          <Card className="card-aura">
-            <CardContent className="p-0">
-              <EmptyState
-                icon={<ClipboardList className="h-8 w-8"/>}
-                title="No surveys found"
-                description="Create your first survey to collect employee feedback"
-                actionLabel="Create Survey"
-                onAction={handleCreateSurvey}
-              />
-            </CardContent>
-          </Card>
+          <div className="rounded-aura-lg border border-[var(--border-soft)] bg-[var(--surface)] p-12 text-center">
+            <ClipboardList className="h-8 w-8 mx-auto mb-4 text-[var(--text-3)]"/>
+            <h3 className="text-base font-semibold text-[var(--text-1)]">No surveys found</h3>
+            <p className="mt-1 text-sm text-[var(--text-2)]">Create your first survey to collect employee feedback</p>
+            <Button onClick={handleCreateSurvey} className="mt-4">
+              <Plus className="mr-2 h-4 w-4"/>
+              Create Survey
+            </Button>
+          </div>
         ) : (
           <Stagger className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {filteredSurveys.map((survey) => (
               <StaggerItem key={survey.id}>
-              <Card className="card-interactive overflow-hidden h-full">
-                <CardContent className="p-0">
-                  <div className="p-4 border-b border-[var(--border-subtle)] bg-[var(--bg-card-hover)]">
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="min-w-0">
-                        <p className="text-caption font-mono">{survey.surveyCode}</p>
-                        <h3 className="text-lg font-semibold text-[var(--text-primary)] truncate">{survey.title}</h3>
+              <div className="rounded-aura-lg border border-[var(--border-soft)] bg-[var(--surface)] overflow-hidden h-full hover:border-[var(--border)] hover:shadow-[var(--sh-sm)] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]">
+                <div className="p-4 border-b border-[var(--border-soft)] bg-[var(--surface-aura-2)]">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <p className="text-caption num text-[var(--text-3)]">{survey.surveyCode}</p>
+                      <h3 className="text-lg font-semibold text-[var(--text-1)] truncate">{survey.title}</h3>
+                    </div>
+                    <StatusBadge status={survey.status} domain={SURVEY_STATUS}/>
+                  </div>
+                </div>
+                <div className="p-4 space-y-4">
+                  <div className="flex flex-wrap gap-2">
+                    <StatusBadge status={survey.surveyType} domain={SURVEY_TYPE}/>
+                    {survey.isAnonymous && (
+                      <StatusBadge label="Anonymous" tone="neutral" iconHidden/>
+                    )}
+                  </div>
+
+                  <p className="text-body-secondary line-clamp-2 text-[var(--text-2)]">
+                    {survey.description || 'No description provided'}
+                  </p>
+
+                  <div className="space-y-2 text-sm">
+                    {survey.startDate && (
+                      <div className="flex items-center gap-2 text-[var(--text-2)]">
+                        <Calendar className="h-4 w-4"/>
+                        <span>
+                          {formatDate(survey.startDate)}
+                          {survey.endDate && ` - ${formatDate(survey.endDate)}`}
+                        </span>
                       </div>
-                      <StatusBadge status={survey.status} domain={SURVEY_STATUS}/>
+                    )}
+                    <div className="flex items-center gap-2 text-[var(--text-2)]">
+                      <Users className="h-4 w-4"/>
+                      <span className="num">{survey.totalResponses || 0} responses</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-[var(--text-2)]">
+                      <BarChart3 className="h-4 w-4"/>
+                      <span>Target: {survey.targetAudience || 'All Employees'}</span>
                     </div>
                   </div>
-                  <div className="p-4 space-y-4">
-                    <div className="flex flex-wrap gap-2">
-                      <StatusBadge status={survey.surveyType} domain={SURVEY_TYPE}/>
-                      {survey.isAnonymous && (
-                        <StatusBadge label="Anonymous" tone="neutral" iconHidden/>
-                      )}
-                    </div>
 
-                    <p className="text-body-secondary line-clamp-2">
-                      {survey.description || 'No description provided'}
-                    </p>
-
-                    <div className="space-y-2 text-sm">
-                      {survey.startDate && (
-                        <div className="flex items-center gap-2 text-[var(--text-secondary)]">
-                          <Calendar className="h-4 w-4"/>
-                          <span>
-                            {formatDate(survey.startDate)}
-                            {survey.endDate && ` - ${formatDate(survey.endDate)}`}
-                          </span>
-                        </div>
-                      )}
-                      <div className="flex items-center gap-2 text-[var(--text-secondary)]">
-                        <Users className="h-4 w-4"/>
-                        <span>{survey.totalResponses || 0} responses</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-[var(--text-secondary)]">
-                        <BarChart3 className="h-4 w-4"/>
-                        <span>Target: {survey.targetAudience || 'All Employees'}</span>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-wrap gap-2 pt-2 border-t border-[var(--border-main)]">
+                  <div className="flex flex-wrap gap-2 pt-2 border-t border-[var(--border)]">
                       <Button size="sm" variant="outline" onClick={() => handleViewSurvey(survey)}>
                         <Eye className="h-4 w-4"/>
                       </Button>
@@ -479,8 +451,8 @@ export default function SurveysPage() {
                       </PermissionGate>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
               </StaggerItem>
             ))}
           </Stagger>

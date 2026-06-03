@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import {cn} from '@/lib/utils';
 import {Input} from '@/components/ui/Input';
 import {Briefcase, Building2, Calendar, DollarSign, Plus, User, Users,} from 'lucide-react';
 import {Employee} from '@/lib/types/hrms/employee';
@@ -51,15 +52,16 @@ export function ProjectStep({
   return (
     <>
       {/* Toggle between new/existing project */}
-      <div className="flex gap-4 p-1 bg-surface-100 dark:bg-surface-800 rounded-lg">
+      <div className="flex gap-2 p-1 bg-[var(--surface-sunken)] rounded-[var(--r-md)]">
         <button
           type="button"
           onClick={() => onUseExistingProjectChange(false)}
-          className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+          className={cn(
+            'flex-1 py-2 px-4 rounded-[var(--r-sm)] text-sm font-semibold transition-all focus-visible:ring-2 focus-visible:ring-[var(--accent)]',
             !useExistingProject
-              ? 'bg-[var(--bg-surface)] shadow text-accent-700'
-              : 'text-surface-600 dark:text-surface-400 hover:text-surface-900'
-          }`}
+              ? 'bg-[var(--surface)] shadow-sm text-[var(--accent)]'
+              : 'text-[var(--text-2)] hover:text-[var(--text-1)]'
+          )}
         >
           <Plus className="inline-block h-4 w-4 mr-2"/>
           Create New Project
@@ -67,11 +69,12 @@ export function ProjectStep({
         <button
           type="button"
           onClick={() => onUseExistingProjectChange(true)}
-          className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+          className={cn(
+            'flex-1 py-2 px-4 rounded-[var(--r-sm)] text-sm font-semibold transition-all focus-visible:ring-2 focus-visible:ring-[var(--accent)]',
             useExistingProject
-              ? 'bg-[var(--bg-surface)] shadow text-accent-700'
-              : 'text-surface-600 dark:text-surface-400 hover:text-surface-900'
-          }`}
+              ? 'bg-[var(--surface)] shadow-sm text-[var(--accent)]'
+              : 'text-[var(--text-2)] hover:text-[var(--text-1)]'
+          )}
         >
           <Briefcase className="inline-block h-4 w-4 mr-2"/>
           Select Existing Project
@@ -82,13 +85,13 @@ export function ProjectStep({
         /* Existing Project Selection */
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+            <label className="block text-aura-micro uppercase text-[var(--text-1)] font-semibold mb-2">
               Select Project
             </label>
             <select
               value={selectedProjectId}
               onChange={(e) => onSelectedProjectIdChange(e.target.value)}
-              className="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-[var(--bg-input)] px-4 py-2.5"
+              className="w-full rounded-[var(--r-md)] border border-[var(--border)] bg-[var(--bg-input)] px-4 py-2.5 text-[var(--text-1)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
             >
               <option value="">Choose a project...</option>
               {projects.map((proj) => (
@@ -100,16 +103,15 @@ export function ProjectStep({
           </div>
 
           {selectedProject && (
-            <div
-              className="bg-surface-50 dark:bg-surface-800 rounded-lg p-4 border border-surface-200 dark:border-surface-700">
-              <h4 className="font-medium text-surface-800 dark:text-surface-200 mb-2">{selectedProject.name}</h4>
-              <div className="grid grid-cols-2 gap-2 text-sm text-surface-600 dark:text-surface-400">
-                <div>Code: {selectedProject.projectCode}</div>
-                <div>Status: {selectedProject.status}</div>
-                <div>Client: {selectedProject.clientName || 'N/A'}</div>
-                <div>Manager: {selectedProject.projectManagerName || 'N/A'}</div>
-                <div>Start: {selectedProject.startDate}</div>
-                <div>End: {selectedProject.expectedEndDate || 'N/A'}</div>
+            <div className="bg-[var(--surface-sunken)] rounded-[var(--r-md)] p-4 border border-[var(--border-soft)]">
+              <h4 className="font-semibold text-[var(--text-1)] mb-3">{selectedProject.name}</h4>
+              <div className="grid grid-cols-2 gap-2 text-xs text-[var(--text-2)]">
+                <div><span className="font-medium">Code:</span> {selectedProject.projectCode}</div>
+                <div><span className="font-medium">Status:</span> {selectedProject.status}</div>
+                <div><span className="font-medium">Client:</span> {selectedProject.clientName || 'N/A'}</div>
+                <div><span className="font-medium">Manager:</span> {selectedProject.projectManagerName || 'N/A'}</div>
+                <div><span className="font-medium">Start:</span> <span className="num">{selectedProject.startDate}</span></div>
+                <div><span className="font-medium">End:</span> <span className="num">{selectedProject.expectedEndDate || 'N/A'}</span></div>
               </div>
             </div>
           )}
@@ -120,7 +122,7 @@ export function ProjectStep({
           {/* Row 1: Name & Code */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+              <label className="block text-aura-micro uppercase text-[var(--text-1)] font-semibold mb-1">
                 Project Name *
               </label>
               <Input
@@ -132,7 +134,7 @@ export function ProjectStep({
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+              <label className="block text-aura-micro uppercase text-[var(--text-1)] font-semibold mb-1">
                 Project ID/Code *
               </label>
               <Input
@@ -141,6 +143,7 @@ export function ProjectStep({
                 value={projectData.projectCode}
                 onChange={(e) => onProjectDataChange({...projectData, projectCode: e.target.value.toUpperCase()})}
                 required
+                className="num"
               />
             </div>
           </div>
@@ -148,8 +151,8 @@ export function ProjectStep({
           {/* Row 2: Start & End Date */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
-                <Calendar className="inline-block h-4 w-4 mr-1"/>
+              <label className="block text-aura-micro uppercase text-[var(--text-1)] font-semibold mb-1">
+                <Calendar className="inline-block h-4 w-4 mr-2" aria-hidden="true"/>
                 Start Date *
               </label>
               <Input
@@ -157,11 +160,12 @@ export function ProjectStep({
                 value={projectData.startDate}
                 onChange={(e) => onProjectDataChange({...projectData, startDate: e.target.value})}
                 required
+                className="num"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
-                <Calendar className="inline-block h-4 w-4 mr-1"/>
+              <label className="block text-aura-micro uppercase text-[var(--text-1)] font-semibold mb-1">
+                <Calendar className="inline-block h-4 w-4 mr-2" aria-hidden="true"/>
                 End Date
               </label>
               <Input
@@ -169,6 +173,7 @@ export function ProjectStep({
                 value={projectData.expectedEndDate}
                 onChange={(e) => onProjectDataChange({...projectData, expectedEndDate: e.target.value})}
                 min={projectData.startDate}
+                className="num"
               />
             </div>
           </div>
@@ -176,8 +181,8 @@ export function ProjectStep({
           {/* Row 3: Resources Needed & Manager */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
-                <Users className="inline-block h-4 w-4 mr-1"/>
+              <label className="block text-aura-micro uppercase text-[var(--text-1)] font-semibold mb-1">
+                <Users className="inline-block h-4 w-4 mr-2" aria-hidden="true"/>
                 Resources Needed *
               </label>
               <Input
@@ -188,20 +193,21 @@ export function ProjectStep({
                 value={resourcesNeeded}
                 onChange={(e) => onResourcesNeededChange(Math.max(1, parseInt(e.target.value) || 1))}
                 required
+                className="num"
               />
-              <p className="text-xs text-surface-500 mt-1">
+              <p className="text-aura-micro text-[var(--text-3)] mt-2">
                 How many employees will be allocated to this project?
               </p>
             </div>
             <div>
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
-                <User className="inline-block h-4 w-4 mr-1"/>
+              <label className="block text-aura-micro uppercase text-[var(--text-1)] font-semibold mb-1">
+                <User className="inline-block h-4 w-4 mr-2" aria-hidden="true"/>
                 Project Manager
               </label>
               <select
                 value={projectData.projectManagerId}
                 onChange={(e) => onProjectDataChange({...projectData, projectManagerId: e.target.value})}
-                className="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-[var(--bg-input)] px-4 py-2.5"
+                className="w-full rounded-[var(--r-md)] border border-[var(--border)] bg-[var(--bg-input)] px-4 py-2.5 text-[var(--text-1)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
               >
                 <option value="">Select Manager</option>
                 {employees.map((emp) => (
@@ -216,8 +222,8 @@ export function ProjectStep({
           {/* Row 4: Budget */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
-                <DollarSign className="inline-block h-4 w-4 mr-1"/>
+              <label className="block text-aura-micro uppercase text-[var(--text-1)] font-semibold mb-1">
+                <DollarSign className="inline-block h-4 w-4 mr-2" aria-hidden="true"/>
                 Budget
               </label>
               <div className="flex gap-2">
@@ -229,12 +235,12 @@ export function ProjectStep({
                     ...projectData,
                     budget: parseFloat(e.target.value) || undefined
                   })}
-                  className="flex-1"
+                  className="flex-1 num"
                 />
                 <select
                   value={projectData.currency}
                   onChange={(e) => onProjectDataChange({...projectData, currency: e.target.value})}
-                  className="w-24 rounded-lg border border-surface-300 dark:border-surface-600 bg-[var(--bg-input)] px-2"
+                  className="w-24 rounded-[var(--r-md)] border border-[var(--border)] bg-[var(--bg-input)] px-2 text-[var(--text-1)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
                 >
                   <option value="USD">USD</option>
                   <option value="INR">INR</option>
@@ -246,14 +252,14 @@ export function ProjectStep({
           </div>
 
           {/* Client Information Section */}
-          <div className="border-t border-surface-200 dark:border-surface-700 pt-4">
-            <h4 className="text-sm font-medium text-surface-800 dark:text-surface-200 mb-4 flex items-center">
-              <Building2 className="h-4 w-4 mr-2"/>
+          <div className="border-t border-[var(--border-soft)] pt-4">
+            <h4 className="text-sm font-semibold text-[var(--text-1)] mb-4 flex items-center">
+              <Building2 className="h-4 w-4 mr-2" aria-hidden="true"/>
               Client Information
             </h4>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                <label className="block text-aura-micro uppercase text-[var(--text-1)] font-semibold mb-1">
                   Client Name
                 </label>
                 <Input
@@ -264,7 +270,7 @@ export function ProjectStep({
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                <label className="block text-aura-micro uppercase text-[var(--text-1)] font-semibold mb-1">
                   Client Contact
                 </label>
                 <Input
@@ -276,14 +282,14 @@ export function ProjectStep({
               </div>
             </div>
             <div className="mt-4">
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+              <label className="block text-aura-micro uppercase text-[var(--text-1)] font-semibold mb-1">
                 Client Notes
               </label>
               <textarea
                 placeholder="Any additional notes about the client or project requirements..."
                 value={projectData.clientNotes}
                 onChange={(e) => onProjectDataChange({...projectData, clientNotes: e.target.value})}
-                className="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-[var(--bg-input)] px-4 py-2 text-sm min-h-[80px]"
+                className="w-full rounded-[var(--r-md)] border border-[var(--border)] bg-[var(--bg-input)] px-4 py-2 text-sm min-h-[80px] text-[var(--text-1)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
               />
             </div>
           </div>

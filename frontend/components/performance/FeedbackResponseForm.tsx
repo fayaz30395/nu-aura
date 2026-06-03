@@ -82,12 +82,13 @@ const RatingStars = ({
           onClick={() => onChange?.(star)}
           disabled={!onChange || disabled}
           className={`${
-            onChange && !disabled ? 'cursor-pointer hover:scale-110' : 'cursor-default'
-          } transition-transform`}
+            onChange && !disabled ? 'cursor-pointer hover:scale-110 focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)]' : 'cursor-default'
+          } transition-transform rounded focus-visible:outline-none`}
+          aria-label={`${star} star rating`}
         >
           <Star
             className={`h-6 w-6 ${
-              star <= rating ? 'fill-warning-400 text-warning-400' : 'text-[var(--text-muted)]'
+              star <= rating ? 'fill-[var(--warn-fg)] text-[var(--warn-fg)]' : 'text-[var(--text-2)]'
             }`}
           />
         </button>
@@ -187,35 +188,40 @@ export default function FeedbackResponseForm({
 
   return (
     <div
-      className="bg-[var(--bg-elevated)] rounded-lg shadow-[var(--shadow-dropdown)] max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+      className="bg-[var(--bg-card)] rounded-lg shadow-[var(--sh-card)] max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
       {/* Header */}
-      <div className="px-6 py-4 border-b border-[var(--border-main)] sticky top-0 bg-[var(--bg-elevated)] z-10">
+      <div className="px-6 py-4 border-b border-[var(--border)] sticky top-0 bg-[var(--bg-card)] z-10">
         <div className="flex items-start justify-between">
           <div>
-            <h2 className="text-xl font-semibold text-[var(--text-primary)]">Provide 360 Feedback</h2>
-            <p className="text-body-muted mt-1">
+            <h2 className="text-xl font-semibold text-[var(--text-1)]">Provide 360 Feedback</h2>
+            <p className="text-[var(--text-2)] mt-1">
               {reviewerType} review for{' '}
               {isAnonymous && reviewerType !== 'SELF' ? 'Team Member' : subjectEmployeeName}
             </p>
           </div>
           <div className="text-right">
-            <div className="text-body-muted">Progress</div>
-            <div className="text-2xl font-bold text-accent-600">{progressPercentage}%</div>
+            <div className="text-[var(--text-2)]">Progress</div>
+            <div className="text-2xl font-bold text-[var(--accent-text)] tabular-nums">{progressPercentage}%</div>
           </div>
         </div>
 
         {/* Progress Bar */}
-        <div className="mt-4 h-2 bg-[var(--border-main)] rounded-full overflow-hidden">
+        <div className="mt-4 h-2 bg-[var(--border)] rounded-full overflow-hidden">
           <div
-            className="h-full bg-accent-500 transition-all duration-300"
+            className="h-full bg-[var(--accent)] transition-all duration-300"
             style={{width: `${progressPercentage}%`}}
+            aria-label={`Progress: ${progressPercentage}%`}
+            aria-valuenow={progressPercentage}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            role="progressbar"
           />
         </div>
 
         {/* Anonymous Notice */}
         {isAnonymous && reviewerType !== 'SELF' && (
-          <div className="mt-4 p-4 bg-accent-250 border border-accent-400 rounded-lg">
-            <p className="text-xs text-accent-900 flex items-center gap-2">
+          <div className="mt-4 p-4 bg-[var(--accent-soft)] border border-[var(--accent-bd)] rounded-lg">
+            <p className="text-xs text-[var(--accent-text)] flex items-center gap-2">
               <AlertCircle className="h-4 w-4"/>
               Your feedback will be anonymous and combined with other responses
             </p>
@@ -224,26 +230,25 @@ export default function FeedbackResponseForm({
       </div>
 
       {/* Tab Navigation */}
-      <div className="border-b border-[var(--border-main)] px-6">
+      <div className="border-b border-[var(--border)] px-6">
         <nav className="-mb-px flex gap-6">
           <button
             onClick={() => setActiveSection('ratings')}
             className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
               activeSection === 'ratings'
-                ? 'border-accent-500 text-accent-600'
-                : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:border-[var(--border-strong)]'
-            }`}
+                ? 'border-[var(--accent)] text-[var(--accent-text)]'
+                : 'border-transparent text-[var(--text-2)] hover:text-[var(--text-1)] hover:border-[var(--border)]'
+            } focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)]`}
           >
-            Ratings ({completedRatings + (formData.overallRating ? 1 : 0)}/
-            {ratingCategories.length + 1})
+            Ratings ({completedRatings + (formData.overallRating ? 1 : 0)} <span className="tabular-nums">/ {ratingCategories.length + 1}</span>)
           </button>
           <button
             onClick={() => setActiveSection('feedback')}
             className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
               activeSection === 'feedback'
-                ? 'border-accent-500 text-accent-600'
-                : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:border-[var(--border-strong)]'
-            }`}
+                ? 'border-[var(--accent)] text-[var(--accent-text)]'
+                : 'border-transparent text-[var(--text-2)] hover:text-[var(--text-1)] hover:border-[var(--border)]'
+            } focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)]`}
           >
             Written Feedback
           </button>
@@ -255,11 +260,11 @@ export default function FeedbackResponseForm({
         {activeSection === 'ratings' && (
           <div className="space-y-6">
             {/* Overall Rating */}
-            <div className="p-4 bg-accent-50 rounded-lg border border-accent-100">
+            <div className="p-4 bg-[var(--accent-soft)] rounded-lg border border-[var(--accent-bd)]">
               <div className="flex items-start justify-between mb-2">
                 <div>
-                  <h3 className="text-base font-semibold text-[var(--text-primary)]">Overall Performance</h3>
-                  <p className="text-body-muted mt-1">
+                  <h3 className="text-base font-semibold text-[var(--text-1)]">Overall Performance</h3>
+                  <p className="text-[var(--text-2)] mt-1">
                     How would you rate this person&apos;s overall performance?
                   </p>
                 </div>
@@ -270,27 +275,27 @@ export default function FeedbackResponseForm({
                   onChange={(r) => updateRating('overallRating', r)}
                 />
                 {formData.overallRating ? (
-                  <span className="text-sm font-medium text-[var(--text-primary)]">
+                  <span className="text-sm font-medium text-[var(--text-1)] tabular-nums">
                     {formData.overallRating}/5
                   </span>
                 ) : (
-                  <span className="text-body-muted">Not rated</span>
+                  <span className="text-[var(--text-2)]">Not rated</span>
                 )}
               </div>
             </div>
 
             {/* Competency Ratings */}
             <div>
-              <h3 className="text-base font-semibold text-[var(--text-primary)] mb-4">Competency Ratings</h3>
+              <h3 className="text-base font-semibold text-[var(--text-1)] mb-4">Competency Ratings</h3>
               <div className="space-y-4">
                 {ratingCategories.map((category) => (
                   <div
                     key={category.key}
-                    className="p-4 border border-[var(--border-main)] rounded-lg hover:border-[var(--border-strong)] transition-colors"
+                    className="p-4 border border-[var(--border)] rounded-lg hover:border-[var(--border)] hover:bg-[var(--bg-surface)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)]"
                   >
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex-1">
-                        <h4 className="text-sm font-medium text-[var(--text-primary)]">{category.label}</h4>
+                        <h4 className="text-sm font-medium text-[var(--text-1)]">{category.label}</h4>
                         <p className="text-caption mt-1">{category.description}</p>
                       </div>
                     </div>
@@ -300,11 +305,11 @@ export default function FeedbackResponseForm({
                         onChange={(r) => updateRating(category.key, r)}
                       />
                       {formData[category.key] !== undefined && typeof formData[category.key] === 'number' ? (
-                        <span className="text-sm font-medium text-[var(--text-primary)]">
+                        <span className="text-sm font-medium text-[var(--text-1)] tabular-nums">
                           {formData[category.key] as number}/5
                         </span>
                       ) : (
-                        <span className="text-body-muted">Optional</span>
+                        <span className="text-[var(--text-2)]">Optional</span>
                       )}
                     </div>
                   </div>
@@ -318,8 +323,8 @@ export default function FeedbackResponseForm({
         {activeSection === 'feedback' && (
           <div className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
-                Key Strengths <span className="text-danger-500">*</span>
+              <label className="block text-sm font-medium text-[var(--text-1)] mb-2">
+                Key Strengths <span className="text-[var(--err-fg)]">*</span>
               </label>
               <p className="text-caption mb-2">
                 What does this person do particularly well? Provide specific examples.
@@ -328,17 +333,17 @@ export default function FeedbackResponseForm({
                 value={formData.strengths}
                 onChange={(e) => updateText('strengths', e.target.value)}
                 rows={4}
-                className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-transparent"
                 placeholder="E.g., Excellent at breaking down complex problems into actionable tasks..."
               />
-              <div className="text-caption mt-1 text-right">
+              <div className="text-caption mt-1 text-right tabular-nums">
                 {formData.strengths?.length || 0} characters
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
-                Areas for Improvement <span className="text-danger-500">*</span>
+              <label className="block text-sm font-medium text-[var(--text-1)] mb-2">
+                Areas for Improvement <span className="text-[var(--err-fg)]">*</span>
               </label>
               <p className="text-caption mb-2">
                 What areas could this person develop or improve?
@@ -347,16 +352,16 @@ export default function FeedbackResponseForm({
                 value={formData.areasForImprovement}
                 onChange={(e) => updateText('areasForImprovement', e.target.value)}
                 rows={4}
-                className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-transparent"
                 placeholder="E.g., Could benefit from more proactive communication with stakeholders..."
               />
-              <div className="text-caption mt-1 text-right">
+              <div className="text-caption mt-1 text-right tabular-nums">
                 {formData.areasForImprovement?.length || 0} characters
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+              <label className="block text-sm font-medium text-[var(--text-1)] mb-2">
                 Development Suggestions
               </label>
               <p className="text-caption mb-2">
@@ -366,13 +371,13 @@ export default function FeedbackResponseForm({
                 value={formData.developmentSuggestions}
                 onChange={(e) => updateText('developmentSuggestions', e.target.value)}
                 rows={3}
-                className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-transparent"
                 placeholder="E.g., Leadership training, mentorship in project management..."
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+              <label className="block text-sm font-medium text-[var(--text-1)] mb-2">
                 Additional Comments
               </label>
               <p className="text-caption mb-2">
@@ -382,7 +387,7 @@ export default function FeedbackResponseForm({
                 value={formData.additionalComments}
                 onChange={(e) => updateText('additionalComments', e.target.value)}
                 rows={3}
-                className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-transparent"
                 placeholder="Optional additional feedback..."
               />
             </div>
@@ -391,16 +396,16 @@ export default function FeedbackResponseForm({
 
         {/* Error Message */}
         {error && (
-          <div className="mt-6 p-4 bg-danger-50 border border-danger-200 rounded-lg flex items-start gap-2">
-            <AlertCircle className="h-5 w-5 text-danger-500 flex-shrink-0 mt-0.5"/>
-            <p className="text-sm text-danger-700">{error}</p>
+          <div className="mt-6 p-4 bg-[var(--err-bg)] border border-[var(--err-bd)] rounded-lg flex items-start gap-2" aria-live="polite">
+            <AlertCircle className="h-5 w-5 text-[var(--err-fg)] flex-shrink-0 mt-0.5"/>
+            <p className="text-sm text-[var(--err-fg)]">{error}</p>
           </div>
         )}
       </div>
 
       {/* Actions */}
       <div
-        className="px-6 py-4 border-t border-[var(--border-main)] bg-[var(--bg-surface)] flex justify-between sticky bottom-0">
+        className="px-6 py-4 border-t border-[var(--border)] bg-[var(--bg-surface)] flex justify-between sticky bottom-0">
         <Button variant="outline" onClick={onCancel} disabled={isSubmitting}>
           Cancel
         </Button>
