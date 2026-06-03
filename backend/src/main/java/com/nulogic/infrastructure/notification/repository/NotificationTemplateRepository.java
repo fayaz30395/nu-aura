@@ -28,12 +28,17 @@ public interface NotificationTemplateRepository extends JpaRepository<Notificati
     // FIX: PostgreSQL cannot infer parameter type for LOWER(:search) when :search is null
     // (raises "function lower(bytea) does not exist"). Use native query with explicit
     // text casts so the binding type is unambiguous.
+    // SEC-FIX (M-6): hardcode ORDER BY so Spring Data does not append a client-controlled
+    // sort column verbatim (ORDER-BY SQL injection on a native query). The caller in
+    // MultiChannelNotificationService strips sort from the Pageable to guarantee no
+    // client sort can leak in after this clause.
     @Query(value = "SELECT * FROM notification_templates t " +
             "WHERE t.is_deleted = false AND t.tenant_id = :tenantId AND t.is_active = true " +
             "AND (CAST(:category AS text) IS NULL OR t.category = CAST(:category AS text)) " +
             "AND (CAST(:search AS text) IS NULL " +
             "     OR LOWER(t.name) LIKE LOWER(CONCAT('%', CAST(:search AS text), '%')) " +
-            "     OR LOWER(t.code) LIKE LOWER(CONCAT('%', CAST(:search AS text), '%')))",
+            "     OR LOWER(t.code) LIKE LOWER(CONCAT('%', CAST(:search AS text), '%'))) " +
+            "ORDER BY t.updated_at DESC",
             countQuery = "SELECT COUNT(*) FROM notification_templates t " +
                     "WHERE t.is_deleted = false AND t.tenant_id = :tenantId AND t.is_active = true " +
                     "AND (CAST(:category AS text) IS NULL OR t.category = CAST(:category AS text)) " +

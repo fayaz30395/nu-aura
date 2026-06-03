@@ -41,10 +41,12 @@ public class AccountLockoutService {
      * wall-clock time as a "wrong password" response, mitigating timing oracles
      * for account-existence and lockout-state enumeration.
      */
+    // M-8: cost-12 dummy hash so the timing-equalization bcrypt computation matches
+    // the cost of real password verification (now cost 12 in SecurityConfig).
     private static final String DUMMY_HASH =
-            "$2a$10$abcdefghijklmnopqrstuO5vK7xQwYJ7bRtL0EqXt0E5rWnZl1y3uK";
+            "$2a$12$oa9M5BRCTMoTHPdIYdn12OyuQVLnInItNTPdTGuVGZEZZY4x9Uh62";
 
-    private final BCryptPasswordEncoder timingEncoder = new BCryptPasswordEncoder();
+    private final BCryptPasswordEncoder timingEncoder = new BCryptPasswordEncoder(12);
 
     private final StringRedisTemplate redis;
 

@@ -201,12 +201,16 @@ public class RateLimitingFilter extends OncePerRequestFilter {
             }
         }
 
-        // Fallback to in-memory Bucket4j
-        Bucket bucket = getOrCreateBucket(clientId);
+        // Fallback to in-memory Bucket4j.
+        // M-14: the fallback must be TYPE-AWARE so a Redis outage does not silently
+        // relax the fail-closed AUTH limit (and the EXPORT limit) to the generic
+        // 60/min. We key the bucket by type + clientId and size AUTH/EXPORT from the
+        // canonical RateLimitType limits instead of the generic per-minute value.
+        Bucket bucket = getOrCreateBucket(type, clientId);
         boolean allowed = bucket.tryConsume(1);
         long remaining = bucket.getAvailableTokens();
 
-        return new RateLimitCheckResult(allowed, remaining, 60, "local");
+        return new RateLimitCheckResult(allowed, remaining, type.getWindowSeconds(), "local");
     }
 
     private void scheduleRedisRetry() {
@@ -242,17 +246,21 @@ public class RateLimitingFilter extends OncePerRequestFilter {
      * Returns an existing bucket for the client or creates a new one.
      * Triggers a size-based eviction sweep if {@link #MAX_BUCKETS} is reached.
      */
-    private Bucket getOrCreateBucket(String clientId) {
-        // Update last-access time unconditionally on every request
-        lastAccess.put(clientId, System.currentTimeMillis());
+    private Bucket getOrCreateBucket(DistributedRateLimiter.RateLimitType type, String clientId) {
+        // M-14: scope the bucket key by rate-limit type so AUTH/EXPORT keep their own
+        // (tighter) limits in the fallback path instead of sharing a generic bucket.
+        String bucketKey = type.name() + ":" + clientId;
 
-        return buckets.computeIfAbsent(clientId, id -> {
+        // Update last-access time unconditionally on every request
+        lastAccess.put(bucketKey, System.currentTimeMillis());
+
+        return buckets.computeIfAbsent(bucketKey, id -> {
             // Evict stale entries if the map is approaching the hard limit
             if (buckets.size() >= MAX_BUCKETS) {
                 log.warn("RateLimitingFilter bucket map reached {} entries — triggering eviction sweep", MAX_BUCKETS);
                 evictStaleBuckets();
             }
-            return createBucket(id);
+            return createBucket(type, clientId);
         });
     }
 
@@ -391,7 +399,19 @@ public class RateLimitingFilter extends OncePerRequestFilter {
         }
     }
 
-    private Bucket createBucket(String clientId) {
+    private Bucket createBucket(DistributedRateLimiter.RateLimitType type, String clientId) {
+        // M-14: AUTH and EXPORT are fail-closed buckets. In the Redis-down fallback they
+        // MUST keep their canonical (tight) limits — 5/min for AUTH, 5/5min for EXPORT —
+        // regardless of the generic per-minute config and the authenticated/apikey
+        // multipliers, otherwise an outage silently relaxes brute-force / DoS protection.
+        if (type == DistributedRateLimiter.RateLimitType.AUTH
+                || type == DistributedRateLimiter.RateLimitType.EXPORT) {
+            int limit = type.getLimit();
+            Duration window = Duration.ofSeconds(type.getWindowSeconds());
+            Bandwidth bandwidth = Bandwidth.classic(limit, Refill.intervally(limit, window));
+            return Bucket.builder().addLimit(bandwidth).build();
+        }
+
         int limit = requestsPerMinute;
 
         if (clientId.startsWith("user:")) {

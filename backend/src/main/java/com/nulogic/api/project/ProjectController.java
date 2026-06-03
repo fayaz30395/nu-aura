@@ -10,12 +10,15 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,6 +27,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/projects")
 @Tag(name = "Projects", description = "Project management and team allocation APIs")
+@Validated
 public class ProjectController {
 
     /**
@@ -65,7 +69,7 @@ public class ProjectController {
             @Parameter(description = "Filter by project status") @RequestParam(required = false) com.nulogic.domain.project.Project.ProjectStatus status,
             @Parameter(description = "Filter by project priority") @RequestParam(required = false) com.nulogic.domain.project.Project.Priority priority,
             @Parameter(description = "Page number (0-indexed)") @RequestParam(defaultValue = "0") int page,
-            @Parameter(description = "Page size") @RequestParam(defaultValue = "20") int size,
+            @Parameter(description = "Page size") @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size,
             @Parameter(description = "Sort by field") @RequestParam(defaultValue = "createdAt") String sortBy,
             @Parameter(description = "Sort direction (ASC/DESC)") @RequestParam(defaultValue = "DESC") String sortDirection) {
         String safeSortBy = ALLOWED_SORT_FIELDS.contains(sortBy) ? sortBy : "createdAt";
@@ -86,7 +90,7 @@ public class ProjectController {
     public ResponseEntity<Page<ProjectResponse>> searchProjects(
             @Parameter(description = "Search query string") @RequestParam String query,
             @Parameter(description = "Page number (0-indexed)") @RequestParam(defaultValue = "0") int page,
-            @Parameter(description = "Page size") @RequestParam(defaultValue = "20") int size) {
+            @Parameter(description = "Page size") @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<ProjectResponse> projects = projectService.searchProjects(query, pageable);
         return ResponseEntity.ok(projects);
@@ -199,7 +203,7 @@ public class ProjectController {
     public ResponseEntity<Page<ProjectEmployeeResponse>> getProjectAllocations(
             @Parameter(description = "Project UUID") @PathVariable UUID id,
             @Parameter(description = "Page number (0-indexed)") @RequestParam(defaultValue = "0") int page,
-            @Parameter(description = "Page size") @RequestParam(defaultValue = "20") int size) {
+            @Parameter(description = "Page size") @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<ProjectEmployeeResponse> allocations = projectService.getProjectAllocations(id, pageable);
         return ResponseEntity.ok(allocations);

@@ -9,6 +9,7 @@ import com.nulogic.common.util.TenantTimeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -153,9 +154,19 @@ public class ExportController {
                 .body(data);
     }
 
+    /**
+     * SEC-FIX (M-15): bound the request payload so an authenticated caller cannot post an
+     * arbitrarily large body and force an unbounded in-memory export. {@code @Size} is
+     * honoured because every endpoint annotates the body with {@code @Valid}; the
+     * {@code MAX_EXPORT_ROWS} guard in {@link ExportService#export} is the defence-in-depth
+     * backstop for non-validated call paths.
+     */
     public record ExportRequest(
+            @Size(max = 200, message = "headers cannot exceed 200 entries")
             List<String> headers,
+            @Size(max = 10000, message = "data cannot exceed 10000 rows")
             List<Map<String, Object>> data,
+            @Size(max = 200, message = "columnKeys cannot exceed 200 entries")
             List<String> columnKeys
     ) {
     }

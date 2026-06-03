@@ -22,6 +22,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessResourceUsageException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
@@ -187,6 +188,11 @@ public class WikiPageService {
     @Transactional(readOnly = true)
     public Page<WikiPage> searchPages(String query, Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        // SEC-FIX (M-6): native search query hardcodes ORDER BY; strip any client sort so
+        // Spring Data cannot append a sort column verbatim onto the native SQL.
+        pageable = pageable == null
+                ? PageRequest.of(0, 20)
+                : PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
         try {
             return wikiPageRepository.searchByTenant(tenantId, query, pageable);
         } catch (InvalidDataAccessResourceUsageException e) {

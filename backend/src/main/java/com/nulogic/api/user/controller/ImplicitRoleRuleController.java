@@ -16,6 +16,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -23,6 +25,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,6 +37,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/v1/implicit-role-rules")
 @RequiredArgsConstructor
 @Tag(name = "Implicit Role Rules", description = "Management of implicit role assignment rules based on org hierarchy")
+@Validated
 public class ImplicitRoleRuleController {
 
     private final ImplicitRoleRuleService implicitRoleRuleService;
@@ -55,7 +59,7 @@ public class ImplicitRoleRuleController {
             @Parameter(description = "Page number (0-indexed)", example = "0")
             @RequestParam(defaultValue = "0") int page,
             @Parameter(description = "Page size", example = "20")
-            @RequestParam(defaultValue = "20") int size) {
+            @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size) {
 
         UUID tenantId = SecurityContext.getCurrentTenantId();
         Pageable pageable = PageRequest.of(page, size);

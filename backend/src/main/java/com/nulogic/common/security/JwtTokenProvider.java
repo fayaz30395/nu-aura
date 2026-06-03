@@ -214,6 +214,16 @@ public class JwtTokenProvider {
                 return false;
             }
 
+            // M-C4 / H-3: for impersonation tokens, also honour the dedicated
+            // impersonationJti revocation key so an operator-triggered revoke takes
+            // effect immediately instead of waiting for the 15-min natural expiry.
+            if (Boolean.TRUE.equals(claims.get("isImpersonation", Boolean.class))) {
+                String impJti = claims.get("impersonationJti", String.class);
+                if (impJti != null && tokenBlacklistService.isBlacklisted(impJti)) {
+                    return false;
+                }
+            }
+
             // Reject refresh tokens used as access tokens (BUG-010)
             String tokenType = claims.get("type", String.class);
             if ("refresh".equals(tokenType)) {
@@ -460,10 +470,10 @@ public class JwtTokenProvider {
      * impersonation token. Returns {@code null} if the token is not an impersonation
      * token or pre-dates the M-C4 claim addition.
      *
-     * <p>TODO: wire this into {@link #validateToken(String)} so that when
-     * {@code isImpersonation=true}, the filter checks the impersonationJti blacklist
-     * instead of (or in addition to) the per-user revocation marker. Out of scope for
-     * this minimum-viable fix — call sites that need it can use this getter today.</p>
+     * <p>H-3: {@link #validateToken(String)} now checks the impersonationJti blacklist
+     * directly when {@code isImpersonation=true}, so a revoked impersonation session is
+     * rejected immediately. This getter remains available for call sites that need the
+     * raw JTI (e.g. the SuperAdmin revoke endpoint).</p>
      */
     public UUID getImpersonationJtiFromToken(String token) {
         try {

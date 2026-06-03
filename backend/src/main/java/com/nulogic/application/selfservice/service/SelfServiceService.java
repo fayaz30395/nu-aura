@@ -3,6 +3,8 @@ package com.nulogic.application.selfservice.service;
 import com.nulogic.api.selfservice.dto.*;
 import com.nulogic.common.exception.BusinessException;
 import com.nulogic.common.exception.ResourceNotFoundException;
+import com.nulogic.common.security.Permission;
+import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.attendance.AttendanceRecord;
@@ -24,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -99,6 +102,7 @@ public class SelfServiceService {
         UUID tenantId = TenantContext.getCurrentTenant();
         ProfileUpdateRequest entity = profileUpdateRequestRepository.findByIdAndTenantId(requestId, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Profile update request not found: " + requestId));
+        assertOwnsRequestOrPrivileged(entity.getEmployeeId(), requestId);
         return enrichProfileUpdateResponse(ProfileUpdateResponse.fromEntity(entity), tenantId);
     }
 
@@ -217,7 +221,29 @@ public class SelfServiceService {
         UUID tenantId = TenantContext.getCurrentTenant();
         DocumentRequest entity = documentRequestRepository.findByIdAndTenantId(requestId, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Document request not found: " + requestId));
+        assertOwnsRequestOrPrivileged(entity.getEmployeeId(), requestId);
         return enrichDocumentRequestResponse(DocumentRequestResponse.fromEntity(entity), tenantId);
+    }
+
+    /**
+     * M-5: Same-tenant IDOR guard for self-service request reads. These endpoints are gated
+     * only by EMPLOYEE_VIEW_SELF and expose unmasked PII (bank account numbers, personal info,
+     * address) via {@code currentValue}/{@code requestedValue}. Tenant isolation does not enforce
+     * per-employee ownership, so a caller may read a request only when they own it
+     * (request.employeeId == caller) — mirroring the existing cancel-path check — or hold the
+     * elevated EMPLOYEE_UPDATE / EMPLOYEE_VIEW_ALL permission used by the approval workflow.
+     */
+    private void assertOwnsRequestOrPrivileged(UUID ownerEmployeeId, UUID requestId) {
+        if (SecurityContext.hasPermission(Permission.EMPLOYEE_UPDATE)
+                || SecurityContext.hasPermission(Permission.EMPLOYEE_VIEW_ALL)) {
+            return;
+        }
+        UUID callerId = SecurityContext.getCurrentEmployeeId();
+        if (callerId == null || !callerId.equals(ownerEmployeeId)) {
+            log.warn("SECURITY: IDOR attempt — employee {} tried to access self-service request {} owned by {}",
+                    callerId, requestId, ownerEmployeeId);
+            throw new AccessDeniedException("Access denied");
+        }
     }
 
     @Transactional(readOnly = true)

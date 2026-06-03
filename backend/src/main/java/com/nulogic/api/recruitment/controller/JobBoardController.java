@@ -10,6 +10,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -19,6 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,6 +32,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Slf4j
 @Tag(name = "Job Boards", description = "External job board posting and management APIs")
+@Validated
 public class JobBoardController {
 
     private final JobBoardIntegrationService jobBoardService;
@@ -97,7 +101,7 @@ public class JobBoardController {
     })
     public ResponseEntity<Page<JobBoardPosting>> getAllPostings(
             @Parameter(description = "Page number (0-indexed)") @RequestParam(defaultValue = "0") int page,
-            @Parameter(description = "Page size") @RequestParam(defaultValue = "20") int size) {
+            @Parameter(description = "Page size") @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size) {
         return ResponseEntity.ok(jobBoardService.getAllPostings(
                 PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"))));
     }
@@ -116,7 +120,7 @@ public class JobBoardController {
     public ResponseEntity<Page<JobBoardPosting>> getByStatus(
             @Parameter(description = "Posting status filter") @PathVariable JobBoardPosting.PostingStatus status,
             @Parameter(description = "Page number (0-indexed)") @RequestParam(defaultValue = "0") int page,
-            @Parameter(description = "Page size") @RequestParam(defaultValue = "20") int size) {
+            @Parameter(description = "Page size") @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size) {
         return ResponseEntity.ok(jobBoardService.getPostingsByStatus(status,
                 PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"))));
     }

@@ -4,6 +4,7 @@ import com.nulogic.application.document.service.FileStorageService;
 import com.nulogic.application.document.service.FileStorageService.FileUploadResult;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.RequiresPermission;
+import com.nulogic.common.security.SecurityContext;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.InputStream;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -71,6 +73,9 @@ public class FileUploadController {
             @PathVariable UUID employeeId,
             @RequestParam("file") MultipartFile file) {
 
+        // M-1: legacy endpoint — enforce caller-vs-employee ownership scope before upload
+        enforceEmployeeUploadScope(employeeId);
+
         FileUploadResult result = fileStorageService.uploadFile(
                 file,
                 FileStorageService.CATEGORY_PROFILE_PHOTO,
@@ -95,6 +100,9 @@ public class FileUploadController {
             @PathVariable UUID employeeId,
             @RequestParam("file") MultipartFile file,
             @RequestParam(value = "documentType", required = false) String documentType) {
+
+        // M-1: legacy endpoint — enforce caller-vs-employee ownership scope before upload
+        enforceEmployeeUploadScope(employeeId);
 
         FileUploadResult result = fileStorageService.uploadFile(
                 file,
@@ -203,6 +211,37 @@ public class FileUploadController {
             throw new org.springframework.security.access.AccessDeniedException(
                     "Access denied: file does not belong to your tenant");
         }
+    }
+
+    /**
+     * M-1: Ownership scope guard for the legacy per-employee upload endpoints.
+     *
+     * <p>Mirrors {@code EmployeeDocumentController.enforceEmployeeUploadScope} (kept inline
+     * per the established per-controller convention). A caller may upload to their own
+     * {@code employeeId}, to a reportee, or when holding the elevated DOCUMENT:VIEW_ALL
+     * permission; admins/HR are always allowed. Otherwise the upload is denied.</p>
+     */
+    private void enforceEmployeeUploadScope(UUID targetEmployeeId) {
+        if (SecurityContext.isSuperAdmin() || SecurityContext.isTenantAdmin() || SecurityContext.isHRManager()) {
+            return;
+        }
+
+        UUID currentEmployeeId = SecurityContext.getCurrentEmployeeId();
+        if (currentEmployeeId != null && currentEmployeeId.equals(targetEmployeeId)) {
+            return;
+        }
+
+        Set<UUID> reporteeIds = SecurityContext.getAllReporteeIds();
+        if (reporteeIds != null && reporteeIds.contains(targetEmployeeId)) {
+            return;
+        }
+
+        if (SecurityContext.hasPermission(Permission.DOCUMENT_VIEW_ALL)) {
+            return;
+        }
+
+        throw new org.springframework.security.access.AccessDeniedException(
+                "You are not authorized to upload documents for this employee");
     }
 
     // Response DTOs

@@ -251,9 +251,12 @@ public class CookieConfig {
      * Domain replicates {@code __Host-} hardening minus the prefix.</p>
      */
     public ResponseCookie createCsrfCookie(String token) {
+        // Secure respects app.cookie.secure so dev/E2E over local HTTP can still
+        // receive the double-submit cookie; prod keeps secure=true. SameSite=Strict
+        // is the attribute the servlet Cookie API could not emit (the gap L-1 fixes).
         return ResponseCookie.from(CSRF_TOKEN_COOKIE, token)
                 .httpOnly(false)
-                .secure(true)
+                .secure(secureCookie)
                 .sameSite("Strict")
                 .path("/")
                 .build();

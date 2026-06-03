@@ -11,11 +11,14 @@ import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.domain.lms.*;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -26,6 +29,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/lms")
 @RequiredArgsConstructor
+@Validated
 public class LmsController {
 
     private final LmsService lmsService;
@@ -38,7 +42,7 @@ public class LmsController {
     @RequiresPermission({Permission.TRAINING_VIEW, Permission.LMS_COURSE_VIEW})
     public CourseCatalogResponse getCatalog(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(defaultValue = "10") @Min(1) @Max(100) int size) {
         UUID tenantId = TenantContext.getCurrentTenant();
         return lmsService.getCourseCatalog(tenantId, page, size);
     }
@@ -49,7 +53,7 @@ public class LmsController {
     @RequiresPermission({Permission.TRAINING_VIEW, Permission.LMS_COURSE_VIEW})
     public Page<Course> getCourses(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size,
             @RequestParam(required = false) String search) {
         UUID tenantId = TenantContext.getCurrentTenant();
         PageRequest pageable = PageRequest.of(page, size);
@@ -62,7 +66,7 @@ public class LmsController {
     @RequiresPermission({Permission.TRAINING_VIEW, Permission.LMS_COURSE_VIEW})
     public Page<Course> getPublishedCourses(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size) {
+            @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size) {
         UUID tenantId = TenantContext.getCurrentTenant();
         return lmsService.getPublishedCourses(tenantId, PageRequest.of(page, size));
     }

@@ -5,7 +5,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Value;
+import com.nulogic.common.config.CookieConfig;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -30,13 +32,16 @@ import java.util.Set;
 @Component
 public class CsrfDoubleSubmitFilter extends OncePerRequestFilter {
 
-    private static final String CSRF_COOKIE_NAME = "XSRF-TOKEN";
+    private static final String CSRF_COOKIE_NAME = CookieConfig.CSRF_TOKEN_COOKIE;
     private static final String CSRF_HEADER_NAME = "X-XSRF-TOKEN";
     private static final Set<String> SAFE_METHODS = Set.of("GET", "HEAD", "OPTIONS", "TRACE");
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
-    @Value("${app.cookie.secure:true}")
-    private boolean secureCookie;
+    private final CookieConfig cookieConfig;
+
+    public CsrfDoubleSubmitFilter(CookieConfig cookieConfig) {
+        this.cookieConfig = cookieConfig;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -125,14 +130,12 @@ public class CsrfDoubleSubmitFilter extends OncePerRequestFilter {
     }
 
     private void setCsrfCookie(HttpServletResponse response, String token) {
-        Cookie cookie = new Cookie(CSRF_COOKIE_NAME, token);
-        cookie.setPath("/");
-        cookie.setHttpOnly(false); // Must be readable by JavaScript
-        // Production keeps this true. Dev/E2E can set app.cookie.secure=false so
-        // browser tests over local HTTP can send the double-submit cookie back.
-        cookie.setSecure(secureCookie);
-        cookie.setMaxAge(-1); // Session cookie
-        response.addCookie(cookie);
+        // Use ResponseCookie via CookieConfig so the cookie carries SameSite=Strict
+        // (the servlet Cookie API cannot emit SameSite). httpOnly=false (JS must read
+        // it) and Secure are owned by CookieConfig#createCsrfCookie (Secure respects
+        // app.cookie.secure, so dev/E2E over local HTTP still works).
+        ResponseCookie cookie = cookieConfig.createCsrfCookie(token);
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
 
     private String getCsrfCookieValue(HttpServletRequest request) {

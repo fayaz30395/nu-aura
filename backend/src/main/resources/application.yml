@@ -103,6 +103,11 @@ spring:
     repair-on-migrate: false  # Reverted after V113/V115 checksums repaired
     clean-disabled: true
     mixed: true
+    placeholders:
+      # H-1: gates V270 demo-credential neutralization. Defaults to true so dev/
+      # demo/test keep the seeded "Welcome@123" logins. Prod sets this to false
+      # (see application-prod.yml) so known-weak demo accounts are locked.
+      demoCredentialsEnabled: ${DEMO_CREDENTIALS_ENABLED:true}
     postgresql:
       # Required for migrations that use CREATE INDEX CONCURRENTLY.
       transactional-lock: false
@@ -293,9 +298,13 @@ app:
     # to __Host-hrms-access / __Host-hrms-refresh. The __Host- prefix forces
     # Secure, Path=/, and absence of Domain at the browser level — making the
     # cookie immune to sibling-subdomain and HTTP-downgrade plant attacks.
-    # Default OFF until all cookie readers (AuthController @CookieValue,
-    # TenantFilter, RateLimitingFilter, CsrfDoubleSubmitFilter) are migrated
-    # to read both names. JwtAuthenticationFilter already accepts either.
+    # Default OFF here (dev runs over plain HTTP, where the browser silently
+    # drops a __Host- cookie because Secure cannot be honoured). All cookie
+    # readers (AuthController @CookieValue, TenantFilter, RateLimitingFilter,
+    # CsrfDoubleSubmitFilter, JwtAuthenticationFilter) accept both names, so this
+    # is safe to enable wherever HTTPS is terminated. PRODUCTION enables it:
+    # application-prod.yml defaults use-host-prefix to true (override with
+    # COOKIE_USE_HOST_PREFIX=false only to roll back a canary).
     use-host-prefix: ${COOKIE_USE_HOST_PREFIX:false}
 
   # Security settings

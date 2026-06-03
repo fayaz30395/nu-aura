@@ -35,4 +35,12 @@ public class AuthResponse {
     // Frontend reads these from the response instead of decoding the JWT.
     private List<String> roles;
     private List<String> permissions;
+
+    // M-2: server-side MFA enforcement. When the user has MFA enabled, /login does NOT
+    // issue full tokens; it returns mfaRequired=true plus an opaque short-lived mfaToken
+    // (a Redis-backed pre-auth handle) that the client must present to /mfa-login. No other
+    // fields are populated in that case.
+    @Builder.Default
+    private boolean mfaRequired = false;
+    private String mfaToken;
 }

@@ -4,6 +4,8 @@ import com.nulogic.api.tax.dto.TaxDeclarationRequest;
 import com.nulogic.api.tax.dto.TaxDeclarationResponse;
 import com.nulogic.api.tax.dto.TaxProofRequest;
 import com.nulogic.api.tax.dto.TaxProofResponse;
+import com.nulogic.common.security.Permission;
+import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.employee.Employee;
@@ -17,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -72,6 +75,7 @@ public class TaxDeclarationService {
 
         TaxDeclaration declaration = taxDeclarationRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Tax declaration not found"));
+        assertOwnsOrStatutoryView(declaration);
 
         if (declaration.getStatus() == TaxDeclaration.DeclarationStatus.LOCKED) {
             throw new IllegalStateException("Cannot update locked tax declaration");
@@ -91,6 +95,7 @@ public class TaxDeclarationService {
 
         TaxDeclaration declaration = taxDeclarationRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Tax declaration not found"));
+        assertOwnsOrStatutoryView(declaration);
 
         if (declaration.getStatus() != TaxDeclaration.DeclarationStatus.DRAFT &&
                 declaration.getStatus() != TaxDeclaration.DeclarationStatus.REJECTED) {
@@ -146,6 +151,7 @@ public class TaxDeclarationService {
         UUID tenantId = TenantContext.getCurrentTenant();
         TaxDeclaration declaration = taxDeclarationRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Tax declaration not found"));
+        assertOwnsOrStatutoryView(declaration);
         return mapToResponse(declaration);
     }
 
@@ -171,12 +177,31 @@ public class TaxDeclarationService {
         UUID tenantId = TenantContext.getCurrentTenant();
         TaxDeclaration declaration = taxDeclarationRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Tax declaration not found"));
+        assertOwnsOrStatutoryView(declaration);
 
         if (declaration.getStatus() != TaxDeclaration.DeclarationStatus.DRAFT) {
             throw new IllegalStateException("Only draft declarations can be deleted");
         }
 
         taxDeclarationRepository.delete(declaration);
+    }
+
+    /**
+     * M-3: Same-tenant IDOR guard. Tenant isolation only scopes the query to the tenant;
+     * it does not prevent one employee from reading another employee's tax PII (income,
+     * 80C/80D/80G investments). A caller may access a declaration only when they own it
+     * (declaration.employeeId == caller) or hold the privileged STATUTORY:VIEW permission.
+     */
+    private void assertOwnsOrStatutoryView(TaxDeclaration declaration) {
+        if (SecurityContext.hasPermission(Permission.STATUTORY_VIEW)) {
+            return;
+        }
+        UUID callerId = SecurityContext.getCurrentEmployeeId();
+        if (callerId == null || !callerId.equals(declaration.getEmployeeId())) {
+            log.warn("SECURITY: IDOR attempt — employee {} tried to access tax declaration {} owned by {}",
+                    callerId, declaration.getId(), declaration.getEmployeeId());
+            throw new AccessDeniedException("Access denied");
+        }
     }
 
     // ==================== Tax Proof Operations ====================

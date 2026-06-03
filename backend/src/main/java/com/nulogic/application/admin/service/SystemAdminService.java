@@ -236,6 +236,30 @@ public class SystemAdminService {
     }
 
     /**
+     * Revoke an outstanding impersonation session (H-3).
+     *
+     * <p>Extracts the dedicated {@code impersonationJti} from the supplied impersonation
+     * token and blacklists it via {@link TokenBlacklistService#revokeImpersonationToken}.
+     * {@link com.nulogic.common.security.JwtTokenProvider#validateToken} consults this
+     * blacklist for impersonation tokens, so the session is rejected immediately rather
+     * than living out its natural 15-minute TTL. The SuperAdmin's own (home) session is
+     * unaffected because revocation keys off the impersonationJti, not the userId.</p>
+     */
+    @Transactional
+    public void revokeImpersonationToken(String impersonationToken) {
+        if (!jwtTokenProvider.isImpersonationToken(impersonationToken)) {
+            throw new IllegalArgumentException("Token is not an impersonation token");
+        }
+        UUID impersonationJti = jwtTokenProvider.getImpersonationJtiFromToken(impersonationToken);
+        if (impersonationJti == null) {
+            throw new IllegalArgumentException("Impersonation token has no revocation key");
+        }
+        Date expiration = jwtTokenProvider.getExpirationFromToken(impersonationToken);
+        tokenBlacklistService.revokeImpersonationToken(impersonationJti, expiration);
+        log.info("SuperAdmin revoked impersonation session {}", impersonationJti);
+    }
+
+    /**
      * Get growth metrics over the last N months.
      *
      * <p>Previously loaded all tenants, employees, and users into heap and filtered in Java —

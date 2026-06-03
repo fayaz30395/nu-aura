@@ -7,10 +7,13 @@ import com.nulogic.common.security.RequiresPermission;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.domain.notification.Notification;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,6 +26,7 @@ import static com.nulogic.common.security.Permission.NOTIFICATIONS_VIEW;
 @RestController
 @RequestMapping("/api/v1/notifications")
 @RequiredArgsConstructor
+@Validated
 public class NotificationController {
 
     private final NotificationService notificationService;
@@ -31,7 +35,7 @@ public class NotificationController {
     @RequiresPermission(NOTIFICATIONS_VIEW)
     public ResponseEntity<Page<NotificationResponse>> getMyNotifications(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size
+            @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size
     ) {
         UUID currentUserId = SecurityContext.getCurrentUserId();
         Page<Notification> notifications = notificationService.getUserNotifications(currentUserId, page, size);

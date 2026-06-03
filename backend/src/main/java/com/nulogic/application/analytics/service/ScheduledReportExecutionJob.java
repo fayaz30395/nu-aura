@@ -13,6 +13,7 @@ import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -44,6 +45,17 @@ public class ScheduledReportExecutionJob {
     private final ObjectMapper objectMapper;
     private final TenantTimeService tenantTimeService;
 
+    /**
+     * Self-reference resolved through the Spring proxy so that the
+     * {@link Propagation#REQUIRES_NEW} boundary on {@link #executeReport} is
+     * honoured. A direct {@code this.executeReport(...)} call bypasses the proxy,
+     * so no new transaction starts and {@code TenantRlsTransactionManager#doBegin}
+     * never re-reads the tenant — leaving {@code app.current_tenant_id} unset and
+     * RLS returning zero rows (empty reports). {@link ObjectProvider} is used
+     * instead of {@code @Lazy} self-injection to avoid eager self-construction.
+     */
+    private final ObjectProvider<ScheduledReportExecutionJob> selfProvider;
+
     @Value("${spring.mail.from:noreply@hrms.com}")
     private String fromEmail;
 
@@ -70,12 +82,18 @@ public class ScheduledReportExecutionJob {
 
         // R2-010 FIX: Wrap each report execution in its own try/catch so a single
         // failing report doesn't abort the entire batch.
+        // L-3 FIX: set TenantContext BEFORE the REQUIRES_NEW boundary opens and
+        // invoke executeReport through the Spring proxy (self), so the new
+        // transaction's doBegin reads the tenant and applies the RLS GUC.
         for (ScheduledReport scheduledReport : dueReports) {
             try {
-                executeReport(scheduledReport);
+                TenantContext.setCurrentTenant(scheduledReport.getTenantId());
+                selfProvider.getObject().executeReport(scheduledReport);
             } catch (Exception e) { // Intentional broad catch — per-report error boundary
                 log.error("Unhandled error executing scheduled report '{}' (id={}): {}",
                         scheduledReport.getScheduleName(), scheduledReport.getId(), e.getMessage(), e);
+            } finally {
+                TenantContext.clear();
             }
         }
     }
@@ -87,6 +105,13 @@ public class ScheduledReportExecutionJob {
      * transaction. Without it, a rollback triggered inside {@code executeReport} would
      * mark the outer transaction (from {@code executeScheduledReports}) as rollback-only,
      * silently preventing all subsequent reports in the same batch from being saved.</p>
+     *
+     * <p>L-3 FIX: This method MUST be invoked through the Spring proxy (see
+     * {@code selfProvider} in {@link #executeScheduledReports()}) so that
+     * {@code REQUIRES_NEW} actually opens a fresh transaction. The caller sets
+     * {@link TenantContext} BEFORE this boundary so {@code TenantRlsTransactionManager#doBegin}
+     * applies {@code app.current_tenant_id}; the caller also owns clearing it in a
+     * {@code finally} (this method no longer clears the ThreadLocal).</p>
      */
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void executeReport(ScheduledReport scheduledReport) {
@@ -95,7 +120,8 @@ public class ScheduledReportExecutionJob {
 
         log.info("Executing scheduled report: {} (id: {})", scheduledReport.getScheduleName(), scheduledReport.getId());
 
-        // Set tenant context for multi-tenant operation
+        // Tenant context is set by the caller before the REQUIRES_NEW boundary (L-3).
+        // Re-affirm defensively in case this method is ever invoked directly.
         TenantContext.setCurrentTenant(scheduledReport.getTenantId());
 
         // Create execution record
@@ -159,9 +185,10 @@ public class ScheduledReportExecutionJob {
             } catch (Exception ex) { // Intentional broad catch — per-report error boundary
                 log.error("Failed to mark report as executed after error: {}", ex.getMessage());
             }
-        } finally {
-            TenantContext.clear();
         }
+        // L-3: TenantContext is cleared by the caller's finally block so it stays
+        // set across the entire REQUIRES_NEW transaction (including its commit-time
+        // cleanup), rather than being wiped before the boundary completes.
     }
 
     /**

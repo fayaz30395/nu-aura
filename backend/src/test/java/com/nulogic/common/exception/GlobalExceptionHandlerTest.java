@@ -41,7 +41,7 @@ class GlobalExceptionHandlerTest {
     @BeforeEach
     void setUp() {
         MeterRegistry meterRegistry = new SimpleMeterRegistry();
-        handler = new GlobalExceptionHandler(meterRegistry);
+        handler = new GlobalExceptionHandler(meterRegistry, null);
         webRequest = mock(WebRequest.class);
         when(webRequest.getDescription(false)).thenReturn("uri=/api/v1/test");
     }

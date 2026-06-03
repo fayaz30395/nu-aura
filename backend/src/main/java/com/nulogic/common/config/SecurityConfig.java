@@ -83,7 +83,9 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        // M-8: cost factor 12 (default is 10). Existing cost-10 hashes still verify
+        // fine because matches() reads the cost from the stored hash prefix.
+        return new BCryptPasswordEncoder(12);
     }
 
     /**

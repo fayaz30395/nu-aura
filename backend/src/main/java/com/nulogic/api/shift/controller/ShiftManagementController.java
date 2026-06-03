@@ -7,6 +7,8 @@ import com.nulogic.application.shift.service.ShiftScheduleService;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.RequiresPermission;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -16,6 +18,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -26,6 +29,7 @@ import java.util.UUID;
 @RequestMapping("/api/v1/shifts")
 @RequiredArgsConstructor
 @Slf4j
+@Validated
 public class ShiftManagementController {
 
     /**
@@ -78,7 +82,7 @@ public class ShiftManagementController {
     @RequiresPermission({Permission.ATTENDANCE_VIEW_ALL, Permission.ATTENDANCE_VIEW_TEAM})
     public ResponseEntity<Page<ShiftResponse>> getAllShifts(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "10") @Min(1) @Max(100) int size,
             @RequestParam(defaultValue = "shiftName") String sortBy,
             @RequestParam(defaultValue = "ASC") String sortDirection) {
         log.info("Fetching all shifts");
@@ -139,7 +143,7 @@ public class ShiftManagementController {
     public ResponseEntity<Page<ShiftAssignmentResponse>> getEmployeeAssignments(
             @PathVariable UUID employeeId,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(defaultValue = "10") @Min(1) @Max(100) int size) {
         log.info("Fetching assignments for employee: {}", employeeId);
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "assignmentDate"));
         Page<ShiftAssignmentResponse> response = shiftManagementService.getEmployeeAssignments(employeeId, pageable);
@@ -196,7 +200,7 @@ public class ShiftManagementController {
     @RequiresPermission(Permission.SHIFT_VIEW)
     public ResponseEntity<Page<ShiftPatternResponse>> getAllPatterns(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "10") @Min(1) @Max(100) int size,
             @RequestParam(defaultValue = "name") String sortBy,
             @RequestParam(defaultValue = "ASC") String sortDirection) {
         String safeSortBy = ALLOWED_PATTERN_SORT_FIELDS.contains(sortBy) ? sortBy : "name";

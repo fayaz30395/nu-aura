@@ -17,6 +17,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -142,15 +143,29 @@ public class AuthController {
             HttpServletResponse response) {
         // Downgraded from INFO with userId to DEBUG: the userId is PII that
         // didn't need to land in the default log stream on every MFA step.
-        log.debug("MFA login initiated for user: {}", request.getUserId());
+        log.debug("MFA login initiated");
 
         try {
+            // M-2: bind the second factor to the first-factor login attempt. When a
+            // pre-auth token is supplied (the new, enforced path), resolve+delete it to
+            // get the userId so a caller cannot submit a code for an arbitrary user.
+            // Fall back to the legacy caller-supplied userId only when no token is present.
+            UUID userId = StringUtils.hasText(request.getMfaToken())
+                    ? authService.consumeMfaPendingToken(request.getMfaToken())
+                    : request.getUserId();
+
+            if (userId == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(AuthResponse.builder()
+                                .accessToken(null)
+                                .build());
+            }
+
             // Verify the MFA code
-            if (!mfaService.verifyMfaCode(request.getUserId(), request.getCode())) {
+            if (!mfaService.verifyMfaCode(userId, request.getCode())) {
                 // WARN preserved (security signal) but userId masked to first 8 chars
                 // — still correlatable in incidents, no full PII in default logs.
-                log.warn("Invalid MFA code for user: {}",
-                        mask(request.getUserId()));
+                log.warn("Invalid MFA code for user: {}", mask(userId));
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                         .body(AuthResponse.builder()
                                 .accessToken(null)
@@ -158,11 +173,11 @@ public class AuthController {
             }
 
             // Get full authentication tokens for the user
-            AuthResponse authResponse = authService.loginAfterMfa(request.getUserId());
+            AuthResponse authResponse = authService.loginAfterMfa(userId);
 
             // Check if backup code was used and consume it
             if (request.getCode().length() > 6) { // Backup codes are longer than TOTP codes
-                mfaService.consumeBackupCode(request.getUserId(), request.getCode());
+                mfaService.consumeBackupCode(userId, request.getCode());
             }
 
             // Set secure httpOnly cookies
@@ -174,7 +189,7 @@ public class AuthController {
 
             return ResponseEntity.ok(authResponse);
         } catch (Exception e) { // Intentional broad catch — authentication error boundary
-            log.error("MFA login failed for user: {}", request.getUserId(), e);
+            log.error("MFA login failed", e);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(AuthResponse.builder()
                             .accessToken(null)

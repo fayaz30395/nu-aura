@@ -95,8 +95,8 @@ public class DistributedRateLimiter {
 
     /**
      * Hard cap on the number of distinct (tenant,resource) fallback buckets
-     * we keep in memory. Beyond this, a clear is forced — same defensive
-     * pattern used by {@link RateLimitConfig#cleanupBuckets()}.
+     * we keep in memory. Beyond this, a clear is forced as a defensive
+     * eviction strategy.
      */
     private static final int MAX_FALLBACK_BUCKETS = 10_000;
 
@@ -306,7 +306,7 @@ public class DistributedRateLimiter {
 
     private Bucket getOrCreateTenantFallbackBucket(String key, int capacity, int refillTokensPerMinute) {
         // Defensive bound on the local fallback map size — clear when we hit
-        // the hard cap, same approach as RateLimitConfig#cleanupBuckets.
+        // the hard cap.
         if (tenantFallbackBuckets.size() > MAX_FALLBACK_BUCKETS) {
             log.warn(
                     "Per-tenant fallback bucket map exceeded {} entries; clearing.",

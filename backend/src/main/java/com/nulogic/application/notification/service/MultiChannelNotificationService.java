@@ -14,6 +14,7 @@ import com.nulogic.infrastructure.notification.repository.UserNotificationPrefer
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -123,7 +124,11 @@ public class MultiChannelNotificationService {
     @Transactional(readOnly = true)
     public Page<NotificationTemplateDto> searchTemplates(String category, String search, Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return templateRepository.searchTemplates(tenantId, category, search, pageable)
+        // SEC-FIX (M-6): the underlying native query hardcodes ORDER BY. Strip any
+        // client-supplied sort so Spring Data cannot append a sort column verbatim
+        // (ORDER-BY SQL injection). Page/size are preserved; ordering is fixed server-side.
+        Pageable unsorted = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
+        return templateRepository.searchTemplates(tenantId, category, search, unsorted)
                 .map(NotificationTemplateDto::fromEntity);
     }
 

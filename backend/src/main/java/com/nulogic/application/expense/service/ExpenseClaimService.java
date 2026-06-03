@@ -38,6 +38,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @Service
@@ -54,6 +55,13 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
      * The year-month bucket is computed in UTC so the sequence roll-over is
      * deterministic regardless of JVM zone.
      */
+    /**
+     * SEC-FIX (M-17): maximum inclusive span (in days) accepted by the expense-summary
+     * aggregation. The current implementation loads every matching claim into memory and
+     * aggregates in Java, so an unbounded range is a heap-exhaustion / DoS vector. One
+     * leap year (366) is the widest a single summary request may cover.
+     */
+    private static final long MAX_SUMMARY_RANGE_DAYS = 366L;
     private static final String SET_RLS_TENANT_SQL = "SELECT set_config('app.current_tenant_id', ?, false)";
     private static final String NEXT_EXPENSE_SEQ_SQL =
             "INSERT INTO expense_claim_sequence(tenant_id, year_month, current_value) " +
@@ -475,6 +483,24 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
     public Map<String, Object> getExpenseSummary(LocalDate startDate, LocalDate endDate,
                                                  Specification<ExpenseClaim> spec) {
         UUID tenantId = TenantContext.requireCurrentTenant();
+
+        // SEC-FIX (M-17): cap the queried span before loading rows. The aggregation below
+        // pulls every matching claim into memory, so an unbounded range is a DoS vector.
+        if (startDate == null || endDate == null) {
+            throw new ValidationException("startDate and endDate are required for expense summary");
+        }
+        if (endDate.isBefore(startDate)) {
+            throw new ValidationException("endDate must not be before startDate");
+        }
+        long spanDays = ChronoUnit.DAYS.between(startDate, endDate);
+        if (spanDays > MAX_SUMMARY_RANGE_DAYS) {
+            throw new ValidationException(
+                    "Expense summary range exceeds the maximum of " + MAX_SUMMARY_RANGE_DAYS + " days");
+        }
+        // TODO (M-17 follow-up): replace this findAll->in-memory aggregation with a
+        // database-side GROUP BY (count + SUM per status) so the range cap is no longer
+        // load-bearing for memory safety.
+
         Specification<ExpenseClaim> tenantSpec = (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId);
         Specification<ExpenseClaim> dateSpec = (root, query, cb) -> cb.between(root.get("claimDate"), startDate, endDate);
 

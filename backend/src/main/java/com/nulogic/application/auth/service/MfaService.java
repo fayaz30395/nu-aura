@@ -18,7 +18,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+import java.net.URLEncoder;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -56,6 +58,7 @@ public class MfaService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final TenantTimeService tenantTimeService;
+    private final org.springframework.data.redis.core.StringRedisTemplate redis;
 
     /**
      * Sets up MFA for a user by generating a TOTP secret, QR code, and backup codes.
@@ -122,7 +125,7 @@ public class MfaService {
         }
 
         // Verify the TOTP code
-        if (!validateTotp(user.getMfaSecret(), code)) {
+        if (!validateTotp(userId, user.getMfaSecret(), code)) {
             log.warn("Invalid MFA verification code for user: {}", userId);
             throw new AuthenticationException("Invalid MFA code");
         }
@@ -162,7 +165,7 @@ public class MfaService {
         }
 
         // Standard TOTP path (6-digit numeric code)
-        return validateTotp(user.getMfaSecret(), code);
+        return validateTotp(userId, user.getMfaSecret(), code);
     }
 
     /**
@@ -183,7 +186,7 @@ public class MfaService {
         }
 
         // Verify the code before disabling
-        if (!validateTotp(user.getMfaSecret(), code)) {
+        if (!validateTotp(userId, user.getMfaSecret(), code)) {
             log.warn("Invalid MFA code provided for disabling MFA for user: {}", userId);
             throw new AuthenticationException("Invalid MFA code");
         }
@@ -220,26 +223,57 @@ public class MfaService {
      * Validates a TOTP code using RFC 6238.
      * Checks current time window and ±1 windows for tolerance.
      *
+     * <p>M-9: once a code matches at a given time-step it is recorded in Redis with a
+     * short TTL so the same code cannot be replayed within its acceptance window
+     * (RFC 6238 §5.2). The replay marker is keyed by userId + time-step; if the marker
+     * already exists the code is rejected. The Redis write is best-effort — if Redis is
+     * unavailable the verification still succeeds (the IP-keyed rate limit and account
+     * lockout remain in place), matching the fail-open posture used elsewhere.</p>
+     *
+     * @param userId the user whose code is being verified (for the replay marker key)
      * @param secret the Base32-encoded TOTP secret
      * @param code   the 6-digit code to verify
-     * @return true if code is valid
+     * @return true if code is valid and not already used
      */
-    private boolean validateTotp(String secret, String code) {
+    private boolean validateTotp(UUID userId, String secret, String code) {
         try {
             byte[] keyBytes = base32Decode(secret);
             long timeStep = System.currentTimeMillis() / 1000L / TIME_WINDOW;
 
             // Check current and ±1 time windows for tolerance
             for (long i = -1; i <= 1; i++) {
-                String expectedCode = generateTotp(keyBytes, timeStep + i);
+                long candidateStep = timeStep + i;
+                String expectedCode = generateTotp(keyBytes, candidateStep);
                 if (expectedCode.equals(code)) {
-                    return true;
+                    return markStepUsed(userId, candidateStep);
                 }
             }
             return false;
         } catch (GeneralSecurityException | IllegalArgumentException e) {
             log.error("Error validating TOTP", e);
             return false;
+        }
+    }
+
+    /**
+     * M-9: atomically claim a (userId, time-step) pair via Redis SETNX so a matched TOTP
+     * code cannot be replayed within its acceptance window. Returns {@code false} if the
+     * step was already used (replay). On a Redis outage we fail open and allow the code.
+     */
+    private boolean markStepUsed(UUID userId, long timeStep) {
+        String key = "totp:used:" + userId + ":" + timeStep;
+        try {
+            Boolean first = redis.opsForValue()
+                    .setIfAbsent(key, "1", java.time.Duration.ofSeconds(90));
+            if (Boolean.FALSE.equals(first)) {
+                log.warn("SEC: rejected replayed TOTP code for user {} at step {}", userId, timeStep);
+                return false;
+            }
+            return true;
+        } catch (RuntimeException e) {
+            // Fail open: rate limiting + account lockout remain the primary defenses.
+            log.debug("TOTP replay check skipped (Redis unavailable) for user {}: {}", userId, e.getMessage());
+            return true;
         }
     }
 
@@ -370,10 +404,13 @@ public class MfaService {
      * @return otpauth URL
      */
     private String generateQrCodeUrl(String email, String secret) {
+        // M-10: previously a broken double-escaped format + double .replace() encoded the
+        // email as the secret, making MFA enrollment non-functional for every user. Use a
+        // single correct String.format with URL-encoded email (secret is already Base32).
         return String.format(
-                "otpauth://totp/NU-AURA:%%s?secret=%%s&issuer=NU-AURA&algorithm=SHA1&digits=6&period=30",
-                email, secret
-        ).replace("%s", email).replace("%s", secret);
+                "otpauth://totp/NU-AURA:%s?secret=%s&issuer=NU-AURA&algorithm=SHA1&digits=6&period=30",
+                URLEncoder.encode(email, StandardCharsets.UTF_8), secret
+        );
     }
 
     /**

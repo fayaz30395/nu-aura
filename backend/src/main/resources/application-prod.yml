@@ -92,6 +92,10 @@ spring:
     baseline-on-migrate: false
     out-of-order: false
     repair-on-migrate: false
+    placeholders:
+      # H-1: production locks the seeded "Welcome@123" demo accounts (V270).
+      # Override with DEMO_CREDENTIALS_ENABLED=true only for a throwaway demo env.
+      demoCredentialsEnabled: ${DEMO_CREDENTIALS_ENABLED:false}
     postgresql:
       # Required for migrations that use CREATE INDEX CONCURRENTLY.
       transactional-lock: false
@@ -213,12 +217,14 @@ app:
   cookie:
     # CRITICAL: Always use secure cookies (HTTPS only) in production
     secure: true
-    # S10-J: prod is the canonical home for the __Host- prefix — it's the only
-    # profile that runs over HTTPS, and the prefix is silently dropped without
-    # Secure. Set COOKIE_USE_HOST_PREFIX=true at the canary stage once all
-    # cookie readers (AuthController @CookieValue, TenantFilter, etc.) have
-    # been migrated to accept both legacy and hardened names.
-    use-host-prefix: ${COOKIE_USE_HOST_PREFIX:false}
+    # S10-J / L-1 remediation: prod is the canonical home for the __Host- prefix —
+    # it's the only profile that runs over HTTPS, and the prefix is silently
+    # dropped without Secure. All cookie readers (AuthController @CookieValue,
+    # TenantFilter, RateLimitingFilter, CsrfDoubleSubmitFilter, JwtAuthenticationFilter)
+    # accept both legacy and hardened names, and CookieConfig dual-emits during
+    # rollover — so prod defaults this ON. COOKIE_USE_HOST_PREFIX=false can still
+    # override (e.g. to roll back during a canary) without code changes.
+    use-host-prefix: ${COOKIE_USE_HOST_PREFIX:true}
   security:
     csrf:
       # Enable CSRF protection in production
@@ -242,6 +248,9 @@ app:
       host: ${VIRUSSCAN_HOST:clamav}
       port: ${VIRUSSCAN_PORT:3310}
       timeout-ms: ${VIRUSSCAN_TIMEOUT_MS:10000}
+      # M-7: fail closed in production. An AV scan error (clamd outage) rejects the
+      # upload instead of letting unscanned content through. Dev/demo default to true.
+      fail-open: ${VIRUSSCAN_FAIL_OPEN:false}
 
   rls:
     datasource-wrapper:

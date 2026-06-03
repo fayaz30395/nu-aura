@@ -35,6 +35,14 @@ public class ExportService {
     private static final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     /**
+     * SEC-FIX (M-15): hard server-side ceiling on export row count. Bean Validation on the
+     * request DTO is the first line of defence; this guard is defensive-in-depth so any
+     * caller path (including internal callers that bypass {@code @Valid}) cannot trigger an
+     * unbounded in-memory export and exhaust heap.
+     */
+    private static final int MAX_EXPORT_ROWS = 10_000;
+
+    /**
      * Detects values that would be interpreted as a formula by spreadsheet
      * applications (Excel, LibreOffice, Google Sheets). Leading {@code = + - @ TAB CR}
      * triggers formula parsing — see CWE-1236.
@@ -187,6 +195,12 @@ public class ExportService {
     public byte[] export(ExportFormat format, String title, List<String> headers,
                          List<Map<String, Object>> data, List<String> columnKeys)
             throws IOException, DocumentException {
+
+        // SEC-FIX (M-15): reject oversized exports before allocating the row buffer.
+        if (data != null && data.size() > MAX_EXPORT_ROWS) {
+            throw new IllegalArgumentException(
+                    "Export exceeds maximum of " + MAX_EXPORT_ROWS + " rows (requested " + data.size() + ")");
+        }
 
         List<List<Object>> rows = data.stream()
                 .map(row -> columnKeys.stream()

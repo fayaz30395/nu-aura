@@ -56,7 +56,8 @@ class CompOffControllerTest {
     void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(controller)
                 .setControllerAdvice(new com.nulogic.common.exception.GlobalExceptionHandler(
-                        new io.micrometer.core.instrument.simple.SimpleMeterRegistry()))
+                        new io.micrometer.core.instrument.simple.SimpleMeterRegistry(),
+                        null))
                 .build();
         objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
     }

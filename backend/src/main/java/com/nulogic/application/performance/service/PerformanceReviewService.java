@@ -6,6 +6,8 @@ import com.nulogic.application.performance.dto.CompetencyRequest;
 import com.nulogic.application.performance.dto.CompetencyResponse;
 import com.nulogic.application.performance.dto.ReviewRequest;
 import com.nulogic.application.performance.dto.ReviewResponse;
+import com.nulogic.common.security.Permission;
+import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.audit.AuditLog.AuditAction;
@@ -20,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -122,8 +125,30 @@ public class PerformanceReviewService {
 
         PerformanceReview review = reviewRepository.findByIdAndTenantId(reviewId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException(REVIEW_NOT_FOUND));
+        assertCanViewReview(review);
 
         return mapToResponse(review);
+    }
+
+    /**
+     * M-4: Same-tenant IDOR guard. The REVIEW:VIEW gate is held by every employee, and
+     * tenant isolation does not enforce per-record ownership. A review (ratings, manager
+     * comments, competency scores) may be read only by the review subject employee, the
+     * assigned reviewer, or a caller holding the elevated REVIEW:APPROVE permission
+     * (managers/HR who run the review cycle).
+     */
+    private void assertCanViewReview(PerformanceReview review) {
+        if (SecurityContext.hasPermission(Permission.REVIEW_APPROVE)) {
+            return;
+        }
+        UUID callerId = SecurityContext.getCurrentEmployeeId();
+        if (callerId != null
+                && (callerId.equals(review.getEmployeeId()) || callerId.equals(review.getReviewerId()))) {
+            return;
+        }
+        log.warn("SECURITY: IDOR attempt — employee {} tried to access review {} (subject={}, reviewer={})",
+                callerId, review.getId(), review.getEmployeeId(), review.getReviewerId());
+        throw new AccessDeniedException("Access denied");
     }
 
     @Transactional(readOnly = true)

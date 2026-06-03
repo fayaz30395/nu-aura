@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
@@ -172,7 +173,12 @@ public class BlogPostService {
     @Transactional(readOnly = true)
     public Page<BlogPost> searchPosts(String query, Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return blogPostRepository.searchByTenant(tenantId, query, pageable);
+        // SEC-FIX (M-6): native search query hardcodes ORDER BY; strip any client sort so
+        // Spring Data cannot append a sort column verbatim onto the native SQL.
+        Pageable unsorted = pageable == null
+                ? PageRequest.of(0, 20)
+                : PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
+        return blogPostRepository.searchByTenant(tenantId, query, unsorted);
     }
 
     public BlogPost publishPost(UUID postId) {

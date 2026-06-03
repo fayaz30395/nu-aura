@@ -11,6 +11,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -35,6 +38,7 @@ import java.util.UUID;
 @RequestMapping("/api/v1/comp-off")
 @RequiredArgsConstructor
 @Slf4j
+@Validated
 @Tag(name = "Compensatory Off", description = "Manage comp-off requests for overtime work compensation")
 public class CompOffController {
 
@@ -71,8 +75,8 @@ public class CompOffController {
     @RequiresPermission({Permission.ATTENDANCE_VIEW_ALL, Permission.ATTENDANCE_VIEW_TEAM})
     public ResponseEntity<Page<CompOffRequest>> getEmployeeHistory(
             @Parameter(description = "Employee UUID") @PathVariable UUID employeeId,
-            @Parameter(description = "Page number (0-indexed)") @RequestParam(defaultValue = "0") int page,
-            @Parameter(description = "Page size") @RequestParam(defaultValue = "20") int size) {
+            @Parameter(description = "Page number (0-indexed)") @RequestParam(defaultValue = "0") @Min(0) int page,
+            @Parameter(description = "Page size") @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size) {
         return ResponseEntity.ok(compOffService.getEmployeeCompOffHistory(
                 employeeId, PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "attendanceDate"))));
     }
@@ -101,8 +105,8 @@ public class CompOffController {
     @GetMapping("/pending")
     @RequiresPermission(Permission.ATTENDANCE_APPROVE)
     public ResponseEntity<Page<CompOffRequest>> getPendingRequests(
-            @Parameter(description = "Page number (0-indexed)") @RequestParam(defaultValue = "0") int page,
-            @Parameter(description = "Page size") @RequestParam(defaultValue = "20") int size) {
+            @Parameter(description = "Page number (0-indexed)") @RequestParam(defaultValue = "0") @Min(0) int page,
+            @Parameter(description = "Page size") @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size) {
         return ResponseEntity.ok(compOffService.getPendingRequests(
                 PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "attendanceDate"))));
     }

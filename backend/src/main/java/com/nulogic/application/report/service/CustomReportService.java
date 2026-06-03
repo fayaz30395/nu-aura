@@ -142,7 +142,10 @@ public class CustomReportService {
     // ─── Row builders ─────────────────────────────────────────────────────────
 
     private List<Map<String, Object>> buildEmployeeRows(UUID tenantId, List<String> columns) {
-        return employeeRepository.findByTenantId(tenantId).stream().map(e -> {
+        // L-8: bound the load to match the other builders — the report is capped at 100
+        // rows downstream, so an unbounded employee scan was pure waste / a DoS vector.
+        return employeeRepository.findAllByTenantId(tenantId, PageRequest.of(0, 500))
+                .getContent().stream().map(e -> {
             Map<String, Object> row = new LinkedHashMap<>();
             for (String col : columns) {
                 row.put(col, switch (col) {

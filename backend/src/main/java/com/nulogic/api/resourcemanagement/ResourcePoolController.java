@@ -5,6 +5,8 @@ import com.nulogic.common.security.RequiresPermission;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
@@ -67,7 +69,7 @@ public class ResourcePoolController {
     public ResponseEntity<List<ResourcePoolSummary>> listPools(
             @RequestParam(required = false) String poolType,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size) {
+            @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size) {
         if (!enabled) {
             return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
         }
@@ -129,7 +131,7 @@ public class ResourcePoolController {
     public ResponseEntity<List<ResourcePoolMember>> getPoolMembers(
             @PathVariable UUID id,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size) {
+            @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size) {
         if (!enabled) {
             return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
         }

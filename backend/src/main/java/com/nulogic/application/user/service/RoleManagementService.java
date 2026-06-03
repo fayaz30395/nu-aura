@@ -45,6 +45,18 @@ public class RoleManagementService {
             RoleHierarchy.SUPER_ADMIN
     );
 
+    /**
+     * H-2: Privileged permission codes that can only be granted by a SuperAdmin.
+     * SYSTEM:ADMIN bypasses every {@code @RequiresPermission} check (SecurityContext.isSuperAdmin()
+     * returns true), so granting it to a custom role is a full RBAC bypass / privilege escalation.
+     * PERMISSION:MANAGE and PLATFORM:MANAGE are similarly system-level capabilities.
+     */
+    private static final Set<String> PRIVILEGED_PERMISSIONS = Set.of(
+            com.nulogic.common.security.Permission.SYSTEM_ADMIN,
+            com.nulogic.common.security.Permission.PERMISSION_MANAGE,
+            com.nulogic.common.security.Permission.PLATFORM_MANAGE
+    );
+
     private final RoleRepository roleRepository;
     private final PermissionRepository permissionRepository;
     private final CustomScopeTargetRepository customScopeTargetRepository;
@@ -69,6 +81,33 @@ public class RoleManagementService {
                     SecurityContext.getCurrentUserId(), privilegedRequested);
             throw new AccessDeniedException(
                     "Only SuperAdmin can assign or revoke privileged roles: " + privilegedRequested);
+        }
+    }
+
+    /**
+     * H-2: Privilege escalation prevention at the permission level.
+     * Only a SuperAdmin may grant system-level permissions (SYSTEM:ADMIN, PERMISSION:MANAGE,
+     * PLATFORM:MANAGE) to a role. Without this guard a TenantAdmin could assign SYSTEM:ADMIN
+     * to a custom role and escalate to SuperAdmin. Mirrors {@link #validateNoPrivilegeEscalation}.
+     * Throws AccessDeniedException if a non-SuperAdmin requests any privileged permission.
+     */
+    private void validateNoPrivilegedPermissionGrant(Collection<String> permissionCodesToAssign) {
+        if (permissionCodesToAssign == null || permissionCodesToAssign.isEmpty()) {
+            return;
+        }
+        Set<String> privilegedRequested = permissionCodesToAssign.stream()
+                .filter(PRIVILEGED_PERMISSIONS::contains)
+                .collect(Collectors.toSet());
+
+        if (!privilegedRequested.isEmpty() && !SecurityContext.isSuperAdmin()) {
+            log.warn("SECURITY: Privilege escalation attempt — user {} tried to grant privileged permissions {} but is not SuperAdmin",
+                    SecurityContext.getCurrentUserId(), privilegedRequested);
+            auditLogService.logSecurityEvent(
+                    com.nulogic.domain.audit.AuditLog.AuditAction.PERMISSION_CHANGE,
+                    SecurityContext.getCurrentUserId(),
+                    "Privilege escalation attempt — non-SuperAdmin tried to grant privileged permissions: " + privilegedRequested);
+            throw new AccessDeniedException(
+                    "Only SuperAdmin can grant system-level permissions: " + privilegedRequested);
         }
     }
 
@@ -234,6 +273,9 @@ public class RoleManagementService {
             throw new BusinessException(CANNOT_MODIFY_SYSTEM_ROLE);
         }
 
+        // H-2: Block non-SuperAdmin grants of system-level permissions (privilege escalation)
+        validateNoPrivilegedPermissionGrant(request.getPermissionCodes());
+
         // Get permissions from codes
         List<Permission> permissions = permissionRepository.findByCodeIn(request.getPermissionCodes());
 
@@ -292,6 +334,9 @@ public class RoleManagementService {
         Set<String> permissionCodes = request.getPermissions().stream()
                 .map(PermissionScopeRequest::getPermissionCode)
                 .collect(Collectors.toSet());
+
+        // H-2: Block non-SuperAdmin grants of system-level permissions (privilege escalation)
+        validateNoPrivilegedPermissionGrant(permissionCodes);
 
         // Fetch all permissions by code
         List<Permission> permissions = permissionRepository.findByCodeIn(permissionCodes);
@@ -427,6 +472,9 @@ public class RoleManagementService {
         if (role.getIsSystemRole()) {
             throw new BusinessException(CANNOT_MODIFY_SYSTEM_ROLE);
         }
+
+        // H-2: Block non-SuperAdmin grants of system-level permissions (privilege escalation)
+        validateNoPrivilegedPermissionGrant(request.getPermissionCodes());
 
         // Get permissions from codes
         List<Permission> permissions = permissionRepository.findByCodeIn(request.getPermissionCodes());

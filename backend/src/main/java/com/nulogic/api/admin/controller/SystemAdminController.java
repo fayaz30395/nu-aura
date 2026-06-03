@@ -171,6 +171,23 @@ public class SystemAdminController {
     }
 
     /**
+     * Revoke an outstanding impersonation session (H-3).
+     *
+     * <p>Blacklists the supplied impersonation token's dedicated {@code impersonationJti}
+     * so {@code validateToken} rejects it on the next request, without affecting the
+     * SuperAdmin's own home session.</p>
+     */
+    @PostMapping("/impersonate/revoke")
+    @Operation(summary = "Revoke impersonation token", description = "Immediately revoke a previously-issued impersonation session by blacklisting its impersonationJti")
+    @RequiresPermission(value = SYSTEM_ADMIN, revalidate = true)
+    public ResponseEntity<Void> revokeImpersonationToken(
+            @Valid @RequestBody RevokeImpersonationRequest request) {
+        log.info("SuperAdmin revoking impersonation token");
+        systemAdminService.revokeImpersonationToken(request.getToken());
+        return ResponseEntity.noContent().build();
+    }
+
+    /**
      * SuperAdmin-initiated password reset for a target user.
      *
      * <p>Generates a cryptographically-random 12-char temp password (URL-safe Base64),

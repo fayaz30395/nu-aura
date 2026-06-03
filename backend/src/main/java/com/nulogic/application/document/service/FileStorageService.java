@@ -71,12 +71,22 @@ public class FileStorageService {
             "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             "application/vnd.openxmlformats-officedocument.presentationml.presentation");
+    // L-4: allow-list of categories that may appear in the Drive path key. Any other
+    // value is rejected before it can shape the generated objectName / storage path.
+    private static final Set<String> ALLOWED_CATEGORIES = Set.of(
+            CATEGORY_PROFILE_PHOTO, CATEGORY_DOCUMENTS, CATEGORY_PAYSLIPS,
+            CATEGORY_LETTERS, CATEGORY_ATTACHMENTS, CATEGORY_REPORTS);
     private final StorageProvider storageProvider;
     private final JdbcTemplate jdbcTemplate;
     private final VirusScanService virusScanService;
     private final TenantTimeService tenantTimeService;
     @Value("${app.storage.url-expiry-hours:24}")
     private int urlExpiryHours;
+    // M-7: when false, an AV scan that errors out (e.g. clamd outage) rejects the upload
+    // instead of allowing it through. Defaults to true for back-compat (dev/demo have no
+    // AV coverage); application-prod.yml sets this to false to fail closed in production.
+    @Value("${app.security.virusscan.fail-open:true}")
+    private boolean virusScanFailOpen;
 
     /**
      * Upload a file to storage.
@@ -302,12 +312,13 @@ public class FileStorageService {
      * {@link VirusScanService.VirusInfectedFileException} which the global handler
      * maps to HTTP 422.</p>
      *
-     * <p>On {@link VirusScanService.Error} we log at WARN but allow the upload to
-     * proceed. Failing closed on a transient clamd outage would create an availability
-     * incident every time the AV daemon restarts; the {@link NoOpScanner} branch already
-     * documents that dev environments have no AV coverage. Operators wanting fail-closed
-     * semantics should monitor the {@code SECURITY clamd scan failed} log line and alert
-     * on rate; tightening this to throw is a one-line follow-up if policy changes.</p>
+     * <p>On {@link VirusScanService.Error} behaviour is governed by
+     * {@code app.security.virusscan.fail-open} (M-7). When fail-open is {@code true}
+     * (default; dev/demo) we log at WARN and allow the upload — failing closed on a
+     * transient clamd outage would create an availability incident every time the AV
+     * daemon restarts. When fail-open is {@code false} (production, set in
+     * application-prod.yml) we reject the upload so unscanned content never reaches
+     * storage.</p>
      */
     private void scanForMalware(MultipartFile file) {
         byte[] bytes;
@@ -332,9 +343,16 @@ public class FileStorageService {
                         infected.filename(), infected.signature());
             }
             case VirusScanService.Error error -> {
-                // Fail open — see method javadoc. Logged so dashboards can pick it up.
-                log.warn("SECURITY virus-scan error filename={} reason={} — upload allowed",
-                        file.getOriginalFilename(), error.reason());
+                if (virusScanFailOpen) {
+                    // Fail open — see method javadoc. Logged so dashboards can pick it up.
+                    log.warn("SECURITY virus-scan error filename={} reason={} — upload allowed (fail-open)",
+                            file.getOriginalFilename(), error.reason());
+                } else {
+                    // M-7: fail closed (production). Reject so unscanned content never persists.
+                    log.warn("SECURITY virus-scan error filename={} reason={} — upload rejected (fail-closed)",
+                            file.getOriginalFilename(), error.reason());
+                    throw new BusinessException("File could not be scanned for malware; upload rejected");
+                }
             }
         }
     }
@@ -477,6 +495,11 @@ public class FileStorageService {
     }
 
     private String generateObjectName(UUID tenantId, String category, UUID entityId, String originalFilename) {
+        // L-4: reject any category that isn't in the known allow-list before it shapes the
+        // storage path key. This is the single chokepoint for both upload overloads and copy.
+        if (category == null || !ALLOWED_CATEGORIES.contains(category)) {
+            throw new BusinessException("Invalid file category: " + category);
+        }
         // Intentionally JVM-local: this timestamp is part of the opaque internal
         // storage object key (logical path `tenantId/category/entityId/timestamp_uuid.ext`)
         // and is paired with a random UUID for uniqueness — it is never surfaced

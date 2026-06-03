@@ -5,6 +5,8 @@ import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.RequiresPermission;
 import com.nulogic.domain.shift.ShiftSwapRequest;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -25,6 +28,7 @@ import java.util.UUID;
 @RequestMapping("/api/v1/shift-swaps")
 @RequiredArgsConstructor
 @Slf4j
+@Validated
 public class ShiftSwapController {
 
     private final ShiftSwapService shiftSwapService;
@@ -77,7 +81,7 @@ public class ShiftSwapController {
     public ResponseEntity<Page<ShiftSwapRequest>> getMyRequests(
             @PathVariable UUID employeeId,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size) {
+            @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size) {
         return ResponseEntity.ok(shiftSwapService.getMyRequests(
                 employeeId, PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "requestedAt"))));
     }
@@ -100,7 +104,7 @@ public class ShiftSwapController {
     @RequiresPermission(Permission.ATTENDANCE_VIEW_ALL)
     public ResponseEntity<Page<ShiftSwapRequest>> getAllRequests(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size) {
+            @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size) {
         return ResponseEntity.ok(shiftSwapService.getAllRequests(
                 PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "requestedAt"))));
     }

@@ -65,6 +65,9 @@ public class AuthService {
      * brute-force window drives both the captcha gate and the lockout cap).
      */
     private static final String LOCKOUT_ATTEMPTS_KEY_PREFIX = "lockout:attempts:";
+    // M-2: short-lived pre-auth handle bound to a completed first-factor login.
+    private static final String MFA_PENDING_KEY_PREFIX = "mfa:pending:";
+    private static final java.time.Duration MFA_PENDING_TTL = java.time.Duration.ofMinutes(5);
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
@@ -272,6 +275,19 @@ public class AuthService {
 
             // Record successful login metric
             metricsService.recordLoginSuccess("password");
+
+            // M-2: enforce MFA server-side. If the user has MFA enabled, first-factor
+            // success alone must NOT issue full tokens. Instead, mint a short-lived
+            // opaque pre-auth handle bound to this user and require the client to
+            // complete the second factor at /mfa-login before any token is granted.
+            if (Boolean.TRUE.equals(user.getMfaEnabled())) {
+                String mfaToken = createMfaPendingToken(user.getId());
+                log.info("MFA required for user {} — issued pre-auth token", user.getId());
+                return AuthResponse.builder()
+                        .mfaRequired(true)
+                        .mfaToken(mfaToken)
+                        .build();
+            }
 
             // Build auth context (permissions, roles, employee linking) and generate response
             AuthContext ctx = buildAuthContext(user, tenantId);
@@ -1098,6 +1114,45 @@ public class AuthService {
 
             return Optional.empty();
         }
+    }
+
+    /**
+     * M-2: mint an opaque pre-auth handle for an MFA-enabled user that has just passed
+     * first-factor authentication. The handle is a random UUID stored in Redis
+     * ({@code mfa:pending:<uuid> -> userId}) with a 5-minute TTL. The client must present
+     * it to {@code /mfa-login}; it is single-use (deleted on resolution).
+     *
+     * @param userId the user that completed first-factor authentication
+     * @return the opaque pre-auth token
+     */
+    public String createMfaPendingToken(UUID userId) {
+        String token = UUID.randomUUID().toString();
+        stringRedisTemplate.opsForValue()
+                .set(MFA_PENDING_KEY_PREFIX + token, userId.toString(), MFA_PENDING_TTL);
+        return token;
+    }
+
+    /**
+     * M-2: resolve and consume (delete) a pre-auth MFA handle, returning the bound userId.
+     * This binds the second factor to the specific login attempt that produced the handle,
+     * so a caller cannot submit a TOTP code for an arbitrary userId.
+     *
+     * @param mfaToken the opaque pre-auth token issued by {@code /login}
+     * @return the userId the token was bound to
+     * @throws AuthenticationException if the token is missing, expired, or already used
+     */
+    public UUID consumeMfaPendingToken(String mfaToken) {
+        if (mfaToken == null || mfaToken.isBlank()) {
+            throw new AuthenticationException("Invalid or expired MFA session");
+        }
+        String key = MFA_PENDING_KEY_PREFIX + mfaToken;
+        String userId = stringRedisTemplate.opsForValue().get(key);
+        if (userId == null) {
+            throw new AuthenticationException("Invalid or expired MFA session");
+        }
+        // Single-use: delete immediately so the handle cannot be replayed.
+        stringRedisTemplate.delete(key);
+        return UUID.fromString(userId);
     }
 
     /**
