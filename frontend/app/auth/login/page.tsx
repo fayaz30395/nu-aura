@@ -38,7 +38,6 @@ const emailPasswordSchema = z.object({
 type EmailPasswordForm = z.infer<typeof emailPasswordSchema>;
 
 export const dynamic = 'force-dynamic';
-export const revalidate = 0;
 
 const IS_DEMO_MODE = process.env.NEXT_PUBLIC_DEMO_MODE === 'true';
 

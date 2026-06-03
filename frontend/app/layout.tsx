@@ -1,4 +1,5 @@
 import type {Metadata, Viewport} from 'next';
+import {headers} from 'next/headers';
 import {ColorSchemeScript} from '@mantine/core';
 import {Montserrat, Open_Sans, Roboto_Mono} from 'next/font/google';
 import {getThemeScript} from '@/lib/theme/theme-script';
@@ -50,17 +51,23 @@ export const viewport: Viewport = {
   themeColor: '#2563EB',
 };
 
-export default function RootLayout({
-                                     children,
-                                   }: {
+export default async function RootLayout({
+                                           children,
+                                         }: {
   children: React.ReactNode;
 }) {
+  // Per-request CSP nonce set by proxy.ts (middleware). In production this
+  // stamps the two app-owned inline scripts below so they pass the nonce-based
+  // CSP without 'unsafe-inline'. May be empty during static prerender, where
+  // no middleware runs and no dynamic inline scripts are emitted.
+  const nonce = (await headers()).get('x-nonce') ?? undefined;
+
   return (
     <html lang="en" suppressHydrationWarning>
     <head>
       {/* FOUC prevention — runs synchronously before paint */}
-      <script dangerouslySetInnerHTML={{__html: getThemeScript()}}/>
-      <ColorSchemeScript defaultColorScheme="dark"/>
+      <script nonce={nonce} dangerouslySetInnerHTML={{__html: getThemeScript()}}/>
+      <ColorSchemeScript nonce={nonce} defaultColorScheme="dark"/>
     </head>
     <body
       className={`${bodyTypeface.variable} ${displayTypeface.variable} ${monoTypeface.variable} font-sans overflow-x-hidden antialiased bg-[var(--bg-page)] text-[var(--text-primary)]`}>

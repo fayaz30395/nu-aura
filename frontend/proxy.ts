@@ -472,8 +472,7 @@ export function proxy(request: NextRequest) {
 
   // SUPER_ADMIN bypass: if JWT contains SUPER_ADMIN, skip all further route checks
   if (normalizedSingleRole === 'SUPER_ADMIN' || normalizedRoles.includes('SUPER_ADMIN')) {
-    const response = NextResponse.next();
-    return addSecurityHeaders(response, request);
+    return allowWithSecurity(request, nonce);
   }
 
   // RBAC-EDGE-001: Coarse role gate for admin-scoped routes.
@@ -511,7 +510,7 @@ export function proxy(request: NextRequest) {
       const denyUrl = new URL('/recruitment', request.url);
       denyUrl.searchParams.set('denied', '1');
       const response = NextResponse.redirect(denyUrl);
-      return addSecurityHeaders(response, request);
+      return addSecurityHeaders(response, request, nonce);
     }
   }
 
@@ -525,7 +524,7 @@ export function proxy(request: NextRequest) {
       const denyUrl = new URL('/me/dashboard', request.url);
       denyUrl.searchParams.set('denied', '1');
       const response = NextResponse.redirect(denyUrl);
-      return addSecurityHeaders(response, request);
+      return addSecurityHeaders(response, request, nonce);
     }
   }
 
@@ -538,14 +537,13 @@ export function proxy(request: NextRequest) {
       const denyUrl = new URL('/me/dashboard', request.url);
       denyUrl.searchParams.set('denied', '1');
       const response = NextResponse.redirect(denyUrl);
-      return addSecurityHeaders(response, request);
+      return addSecurityHeaders(response, request, nonce);
     }
   }
 
   // Token exists and is not expired - allow the request
   // Fine-grained permission checks happen client-side via AuthGuard
-  const response = NextResponse.next();
-  return addSecurityHeaders(response, request);
+  return allowWithSecurity(request, nonce);
 }
 
 /**

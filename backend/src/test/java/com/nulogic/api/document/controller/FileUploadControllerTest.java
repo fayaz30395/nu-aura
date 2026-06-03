@@ -152,10 +152,15 @@ class FileUploadControllerTest {
                     .thenReturn(result);
             when(fileStorageService.getDownloadUrl(objectName)).thenReturn("https://storage.example.com/" + objectName);
 
-            mockMvc.perform(multipart("/api/v1/files/upload/profile-photo/{employeeId}", employeeId)
-                            .file(photo))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.objectName").value(objectName));
+            // M-1: legacy upload endpoints now enforce employee scope; caller authorized as HR manager.
+            try (MockedStatic<SecurityContext> securityContextMock = mockStatic(SecurityContext.class)) {
+                securityContextMock.when(SecurityContext::isHRManager).thenReturn(true);
+
+                mockMvc.perform(multipart("/api/v1/files/upload/profile-photo/{employeeId}", employeeId)
+                                .file(photo))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.objectName").value(objectName));
+            }
 
             verify(fileStorageService).uploadFile(any(),
                     eq(FileStorageService.CATEGORY_PROFILE_PHOTO), eq(employeeId));
@@ -176,14 +181,45 @@ class FileUploadControllerTest {
                     .thenReturn(result);
             when(fileStorageService.getDownloadUrl(objectName)).thenReturn("https://storage.example.com/" + objectName);
 
-            mockMvc.perform(multipart("/api/v1/files/upload/document/{employeeId}", employeeId)
-                            .file(doc)
-                            .param("documentType", "IDENTITY"))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.category").value(FileStorageService.CATEGORY_DOCUMENTS));
+            // M-1: legacy upload endpoints now enforce employee scope; caller authorized as HR manager.
+            try (MockedStatic<SecurityContext> securityContextMock = mockStatic(SecurityContext.class)) {
+                securityContextMock.when(SecurityContext::isHRManager).thenReturn(true);
+
+                mockMvc.perform(multipart("/api/v1/files/upload/document/{employeeId}", employeeId)
+                                .file(doc)
+                                .param("documentType", "IDENTITY"))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.category").value(FileStorageService.CATEGORY_DOCUMENTS));
+            }
 
             verify(fileStorageService).uploadFile(any(),
                     eq(FileStorageService.CATEGORY_DOCUMENTS), eq(employeeId));
+        }
+
+        @Test
+        @DisplayName("POST /upload/document/{employeeId} — IDOR: rejects upload for another employee (M-1)")
+        void uploadDocument_ForeignEmployee_Forbidden() throws Exception {
+            UUID foreignEmployeeId = UUID.randomUUID();
+            MockMultipartFile doc = new MockMultipartFile(
+                    "file", "aadhar.pdf", MediaType.APPLICATION_PDF_VALUE, "doc bytes".getBytes());
+
+            // Caller is a plain employee, not the target and without elevated scope -> denied.
+            try (MockedStatic<SecurityContext> securityContextMock = mockStatic(SecurityContext.class)) {
+                securityContextMock.when(SecurityContext::isSuperAdmin).thenReturn(false);
+                securityContextMock.when(SecurityContext::isTenantAdmin).thenReturn(false);
+                securityContextMock.when(SecurityContext::isHRManager).thenReturn(false);
+                securityContextMock.when(SecurityContext::getCurrentEmployeeId).thenReturn(UUID.randomUUID());
+                securityContextMock.when(SecurityContext::getAllReporteeIds).thenReturn(java.util.Set.of());
+                securityContextMock.when(() -> SecurityContext.hasPermission(Permission.DOCUMENT_VIEW_ALL))
+                        .thenReturn(false);
+
+                mockMvc.perform(multipart("/api/v1/files/upload/document/{employeeId}", foreignEmployeeId)
+                                .file(doc)
+                                .param("documentType", "IDENTITY"))
+                        .andExpect(status().isForbidden());
+            }
+
+            verify(fileStorageService, never()).uploadFile(any(), any(), any());
         }
     }
 
