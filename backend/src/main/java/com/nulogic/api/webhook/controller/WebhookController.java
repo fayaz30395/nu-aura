@@ -12,7 +12,6 @@ import com.nulogic.common.security.*;
 import com.nulogic.domain.webhook.Webhook;
 import com.nulogic.domain.webhook.WebhookDelivery;
 import com.nulogic.domain.webhook.WebhookStatus;
-import com.nulogic.infrastructure.webhook.repository.WebhookDeliveryRepository;  // kept for getDeliveries query
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -60,7 +59,6 @@ public class WebhookController {
     );
 
     private final WebhookService webhookService;
-    private final WebhookDeliveryRepository deliveryRepository;
     private final ObjectMapper objectMapper;
 
     /**
@@ -218,10 +216,10 @@ public class WebhookController {
         webhookService.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Webhook", "id", id));
 
-        // BUG-016 FIX: Pass tenantId explicitly to the repository so the delivery
+        // BUG-016 FIX: Pass tenantId explicitly to the service so the delivery
         // query has its own tenant guard — not just the webhook ownership check above.
-        Page<WebhookDeliveryResponse> deliveries = deliveryRepository
-                .findByWebhookIdAndTenantIdOrderByCreatedAtDesc(id, tenantId, pageable)
+        Page<WebhookDeliveryResponse> deliveries = webhookService
+                .findDeliveries(id, tenantId, pageable)
                 .map(WebhookDeliveryResponse::fromEntity);
 
         return ResponseEntity.ok(deliveries);

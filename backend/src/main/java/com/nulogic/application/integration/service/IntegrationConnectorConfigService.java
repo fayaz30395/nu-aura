@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -124,6 +125,37 @@ public class IntegrationConnectorConfigService {
         ConnectorConfig config = new ConnectorConfig(tenantId, connectorId, settings, eventSubscriptions);
         entity.updateFromConnectorConfig(config, objectMapper);
 
+        return repository.save(entity);
+    }
+
+    /**
+     * Finds the (non-deleted) configuration entity for a connector instance.
+     *
+     * <p>Exposes the underlying entity lookup so controllers can read presentation
+     * fields (display name, health-check timestamps, error message) without injecting
+     * the repository directly. Returns an empty Optional when no active configuration
+     * exists for the tenant/connector pair.</p>
+     *
+     * @param tenantId    the tenant ID (required for isolation)
+     * @param connectorId the connector ID
+     * @return the configuration entity if present and not deleted
+     */
+    @Transactional(readOnly = true)
+    public Optional<IntegrationConnectorConfigEntity> findConfigEntity(UUID tenantId, String connectorId) {
+        return repository.findByTenantIdAndConnectorIdAndIsDeletedFalse(tenantId, connectorId);
+    }
+
+    /**
+     * Persists changes to a connector configuration entity.
+     *
+     * <p>Used by callers that mutate presentation-only fields (e.g. display name)
+     * on an entity already returned by {@link #saveConfig} and need to flush them.</p>
+     *
+     * @param entity the entity to save
+     * @return the saved entity
+     */
+    @Transactional
+    public IntegrationConnectorConfigEntity saveEntity(IntegrationConnectorConfigEntity entity) {
         return repository.save(entity);
     }
 

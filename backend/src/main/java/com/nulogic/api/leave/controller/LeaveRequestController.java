@@ -11,7 +11,6 @@ import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.leave.LeaveRequest;
-import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -45,7 +44,6 @@ public class LeaveRequestController {
 
     private final LeaveRequestService leaveRequestService;
     private final EmployeeService employeeService;
-    private final EmployeeRepository employeeRepository;
     private final com.nulogic.common.security.DataScopeService dataScopeService;
     private final LeaveRequestMapper leaveRequestMapper;
 
@@ -294,7 +292,7 @@ public class LeaveRequestController {
             // Batch query 1: get managerId for all employees in this page
             Map<UUID, UUID> managerMap = new HashMap<>();
             if (!employeeIds.isEmpty()) {
-                for (Object[] row : employeeRepository.findManagerIdsByIds(employeeIds)) {
+                for (Object[] row : leaveRequestService.findManagerIdsByEmployeeIds(employeeIds)) {
                     UUID empId = (UUID) row[0];
                     UUID mgrId = (UUID) row[1];
                     if (mgrId != null) {
@@ -307,7 +305,7 @@ public class LeaveRequestController {
             // Batch query 2: get full names for all IDs (employees + managers + approvers)
             Map<UUID, String> nameMap = new HashMap<>();
             if (!employeeIds.isEmpty()) {
-                for (Object[] row : employeeRepository.findFullNamesByIds(employeeIds)) {
+                for (Object[] row : leaveRequestService.findFullNamesByEmployeeIds(employeeIds)) {
                     nameMap.put((UUID) row[0], (String) row[1]);
                 }
             }
@@ -375,11 +373,11 @@ public class LeaveRequestController {
         if (request.getEmployeeId() != null) {
             try {
                 // Get managerId via lightweight projection (avoids EncryptedStringConverter)
-                Optional<UUID> managerIdOpt = employeeRepository.findManagerIdById(request.getEmployeeId());
+                Optional<UUID> managerIdOpt = leaveRequestService.findManagerIdByEmployeeId(request.getEmployeeId());
                 if (managerIdOpt.isPresent() && managerIdOpt.get() != null) {
                     response.setApproverId(managerIdOpt.get());
                     // Get manager name via projection (single-column JPQL, no entity load)
-                    employeeRepository.findFullNameById(managerIdOpt.get())
+                    leaveRequestService.findFullNameByEmployeeId(managerIdOpt.get())
                             .ifPresent(response::setPendingApproverName);
                 }
             } catch (Exception e) { // Intentional broad catch — controller error boundary
@@ -390,7 +388,7 @@ public class LeaveRequestController {
         // If already approved/rejected, get the approver's name via projection
         if (request.getApprovedBy() != null) {
             try {
-                employeeRepository.findFullNameById(request.getApprovedBy())
+                leaveRequestService.findFullNameByEmployeeId(request.getApprovedBy())
                         .ifPresent(response::setApproverName);
             } catch (Exception e) { // Intentional broad catch — controller error boundary
                 log.debug("Non-critical approver name enrichment failed for leave request {}: {}", request.getId(), e.getMessage());

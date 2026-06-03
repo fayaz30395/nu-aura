@@ -9,7 +9,6 @@ import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.knowledge.FluenceActivity;
-import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +32,6 @@ import java.util.stream.Collectors;
 public class FluenceActivityController {
 
     private final FluenceActivityService fluenceActivityService;
-    private final EmployeeRepository employeeRepository;
 
     /**
      * Batch-resolve actor names for a page of activities in a single query
@@ -52,7 +50,7 @@ public class FluenceActivityController {
         Map<UUID, String> nameMap = new HashMap<>();
         try {
             // Use findAllById for batch lookup — single query instead of N queries
-            List<Employee> employees = employeeRepository.findAllById(actorIds);
+            List<Employee> employees = fluenceActivityService.findActorsByIds(actorIds);
             for (Employee emp : employees) {
                 String name = emp.getFirstName() +
                         (emp.getLastName() != null ? " " + emp.getLastName() : "");
@@ -70,7 +68,7 @@ public class FluenceActivityController {
                     .collect(Collectors.toSet());
             for (UUID userId : unresolved) {
                 try {
-                    employeeRepository.findByUserIdWithUser(userId, tenantId).ifPresent(emp -> {
+                    fluenceActivityService.resolveActorByUserId(userId, tenantId).ifPresent(emp -> {
                         String name = emp.getFirstName() +
                                 (emp.getLastName() != null ? " " + emp.getLastName() : "");
                         nameMap.put(userId, name);

@@ -1,12 +1,18 @@
 package com.nulogic.application.workflow.service;
 
+import com.nulogic.api.workflow.dto.EscalationConfigRequest;
+import com.nulogic.common.exception.ResourceNotFoundException;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.employee.Employee;
+import com.nulogic.domain.user.Role;
 import com.nulogic.domain.workflow.ApprovalEscalationConfig;
 import com.nulogic.domain.workflow.StepExecution;
+import com.nulogic.domain.workflow.WorkflowDefinition;
 import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
+import com.nulogic.infrastructure.user.repository.RoleRepository;
 import com.nulogic.infrastructure.user.repository.UserRepository;
 import com.nulogic.infrastructure.workflow.repository.ApprovalEscalationConfigRepository;
+import com.nulogic.infrastructure.workflow.repository.WorkflowDefinitionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -37,6 +43,8 @@ public class ApprovalEscalationService {
     private final UserRepository userRepository;
     private final TenantTimeService tenantTimeService;
     private final ApprovalEscalationConfigRepository escalationConfigRepository;
+    private final WorkflowDefinitionRepository workflowDefinitionRepository;
+    private final RoleRepository roleRepository;
 
     /**
      * Resolve the escalation target user ID based on the escalation type.
@@ -271,5 +279,74 @@ public class ApprovalEscalationService {
     public int deleteEscalationConfig(UUID workflowId, UUID tenantId) {
         return escalationConfigRepository
                 .deleteByWorkflowDefinitionIdAndTenantId(workflowId, tenantId);
+    }
+
+    // ===================== Config CRUD (moved from controller) =====================
+
+    /**
+     * Find the escalation config for a workflow within a tenant.
+     *
+     * <p>Behaviour-preserving extraction of the controller's direct repository
+     * read. Returns {@link Optional#empty()} when no config exists; the caller
+     * decides how to surface a not-found condition.</p>
+     */
+    @Transactional(readOnly = true)
+    public Optional<ApprovalEscalationConfig> findConfigByWorkflow(UUID workflowId, UUID tenantId) {
+        return escalationConfigRepository.findByWorkflowDefinitionIdAndTenantId(workflowId, tenantId);
+    }
+
+    /**
+     * Create or update the escalation config for a workflow.
+     *
+     * <p>Behaviour-preserving extraction: verifies the workflow exists (throwing
+     * the same {@link ResourceNotFoundException} message as before), then
+     * find-or-creates the config, copies the request fields, and persists. The
+     * field-copy semantics and tenant-scoping are identical to the prior
+     * controller implementation.</p>
+     */
+    @Transactional
+    public ApprovalEscalationConfig upsertConfig(UUID workflowId, UUID tenantId, EscalationConfigRequest request) {
+        // Verify workflow exists
+        workflowDefinitionRepository.findByIdAndTenantId(workflowId, tenantId)
+                .orElseThrow(() -> new ResourceNotFoundException("Workflow definition not found"));
+
+        ApprovalEscalationConfig config = escalationConfigRepository
+                .findByWorkflowDefinitionIdAndTenantId(workflowId, tenantId)
+                .orElseGet(() -> {
+                    ApprovalEscalationConfig newConfig = new ApprovalEscalationConfig();
+                    newConfig.setTenantId(tenantId);
+                    newConfig.setWorkflowDefinitionId(workflowId);
+                    return newConfig;
+                });
+
+        config.setTimeoutHours(request.getTimeoutHours());
+        config.setEscalationType(request.getEscalationType());
+        config.setFallbackRoleId(request.getFallbackRoleId());
+        config.setFallbackUserId(request.getFallbackUserId());
+        config.setMaxEscalations(request.getMaxEscalations());
+        config.setNotifyOnEscalation(request.getNotifyOnEscalation());
+        config.setIsActive(request.getIsActive());
+
+        return escalationConfigRepository.save(config);
+    }
+
+    // ===================== Response-enrichment lookups (moved from controller) =====================
+
+    @Transactional(readOnly = true)
+    public Optional<String> findWorkflowName(UUID workflowDefinitionId, UUID tenantId) {
+        return workflowDefinitionRepository
+                .findByIdAndTenantId(workflowDefinitionId, tenantId)
+                .map(WorkflowDefinition::getName);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<String> findRoleName(UUID roleId) {
+        return roleRepository.findById(roleId).map(Role::getName);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<String> findUserFullName(UUID userId) {
+        return userRepository.findById(userId)
+                .map(u -> u.getFirstName() + " " + u.getLastName());
     }
 }

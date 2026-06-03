@@ -35,6 +35,9 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -629,5 +632,32 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
         }
         return leaveRequest.getStartDate().format(DATE_FORMATTER) + " - " +
                 leaveRequest.getEndDate().format(DATE_FORMATTER);
+    }
+
+    // ===================== Response-enrichment projections (moved from controller) =====================
+    // Behaviour-preserving extraction of the lightweight Employee projection
+    // queries the controller previously issued directly against
+    // EmployeeRepository for leave-request response enrichment. Each method is a
+    // faithful pass-through that returns the same projection shape as before
+    // (avoiding full Employee entity loads / EncryptedStringConverter).
+
+    @Transactional(readOnly = true)
+    public List<Object[]> findManagerIdsByEmployeeIds(Collection<UUID> ids) {
+        return employeeRepository.findManagerIdsByIds(ids);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Object[]> findFullNamesByEmployeeIds(Collection<UUID> ids) {
+        return employeeRepository.findFullNamesByIds(ids);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<UUID> findManagerIdByEmployeeId(UUID employeeId) {
+        return employeeRepository.findManagerIdById(employeeId);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<String> findFullNameByEmployeeId(UUID employeeId) {
+        return employeeRepository.findFullNameById(employeeId);
     }
 }

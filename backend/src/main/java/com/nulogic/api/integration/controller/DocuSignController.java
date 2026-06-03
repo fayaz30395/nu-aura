@@ -6,6 +6,7 @@ import com.nulogic.api.integration.dto.DocuSignEnvelopeResponse;
 import com.nulogic.api.integration.dto.DocuSignTemplateMappingRequest;
 import com.nulogic.api.integration.dto.DocuSignTemplateMappingResponse;
 import com.nulogic.application.document.service.FileStorageService;
+import com.nulogic.application.integration.service.DocuSignManagementService;
 import com.nulogic.application.integration.service.IntegrationConnectorConfigService;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.RequiresPermission;
@@ -15,8 +16,6 @@ import com.nulogic.domain.integration.ConnectorConfig;
 import com.nulogic.domain.integration.docusign.DocuSignEnvelope;
 import com.nulogic.domain.integration.docusign.DocuSignTemplateMapping;
 import com.nulogic.infrastructure.integration.docusign.DocuSignApiClient;
-import com.nulogic.infrastructure.integration.repository.DocuSignEnvelopeRepository;
-import com.nulogic.infrastructure.integration.repository.DocuSignTemplateMappingRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -58,8 +57,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class DocuSignController {
 
-    private final DocuSignEnvelopeRepository envelopeRepository;
-    private final DocuSignTemplateMappingRepository templateMappingRepository;
+    private final DocuSignManagementService docuSignManagementService;
     private final IntegrationConnectorConfigService configService;
     private final DocuSignApiClient apiClient;
     private final ObjectMapper objectMapper;
@@ -98,7 +96,7 @@ public class DocuSignController {
             String envelopeId = event.getEnvelopeId();
 
             // Resolve tenant from envelope ID (without tenant filter)
-            DocuSignEnvelope envelope = envelopeRepository.findByEnvelopeId(envelopeId)
+            DocuSignEnvelope envelope = docuSignManagementService.findEnvelopeByEnvelopeId(envelopeId)
                     .orElseThrow(() -> {
                         log.warn("Webhook for unknown envelope: {}", envelopeId);
                         return new IllegalArgumentException("Envelope not found: " + envelopeId);
@@ -173,10 +171,10 @@ public class DocuSignController {
 
         Page<DocuSignEnvelope> envelopes;
         if (status != null && !status.isEmpty()) {
-            envelopes = envelopeRepository.findByTenantIdAndStatusAndIsDeletedFalse(
+            envelopes = docuSignManagementService.findEnvelopesByStatus(
                     tenantId, status, pageable);
         } else {
-            envelopes = envelopeRepository.findByTenantIdAndIsDeletedFalse(
+            envelopes = docuSignManagementService.findEnvelopes(
                     tenantId, pageable);
         }
 
@@ -198,7 +196,7 @@ public class DocuSignController {
         log.debug("Getting details for envelope: {}", id);
         UUID tenantId = TenantContext.requireCurrentTenant();
 
-        DocuSignEnvelope envelope = envelopeRepository.findById(id)
+        DocuSignEnvelope envelope = docuSignManagementService.findEnvelopeById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Envelope not found: " + id));
 
         // Verify tenant isolation
@@ -227,7 +225,7 @@ public class DocuSignController {
         log.info("Voiding envelope: {}", id);
         UUID tenantId = TenantContext.requireCurrentTenant();
 
-        DocuSignEnvelope envelope = envelopeRepository.findById(id)
+        DocuSignEnvelope envelope = docuSignManagementService.findEnvelopeById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Envelope not found: " + id));
 
         // Verify tenant isolation
@@ -243,7 +241,7 @@ public class DocuSignController {
 
             // Update local status
             envelope.setStatus("VOIDED");
-            envelopeRepository.save(envelope);
+            docuSignManagementService.saveEnvelope(envelope);
 
             return ResponseEntity.ok(toEnvelopeResponse(envelope));
         } catch (Exception e) { // Intentional broad catch — DocuSign API integration
@@ -304,8 +302,8 @@ public class DocuSignController {
         log.debug("Listing DocuSign template mappings");
         UUID tenantId = TenantContext.requireCurrentTenant();
 
-        List<DocuSignTemplateMapping> mappings = templateMappingRepository
-                .findByTenantIdAndIsDeletedFalse(tenantId);
+        List<DocuSignTemplateMapping> mappings = docuSignManagementService
+                .findTemplateMappings(tenantId);
 
         List<DocuSignTemplateMappingResponse> responses = mappings.stream()
                 .map(mapping -> DocuSignTemplateMappingResponse.builder()
@@ -338,8 +336,8 @@ public class DocuSignController {
         log.info("Saving template mapping for document type: {}", request.getDocumentType());
         UUID tenantId = TenantContext.requireCurrentTenant();
 
-        DocuSignTemplateMapping mapping = templateMappingRepository
-                .findByTenantIdAndDocumentTypeAndIsActiveTrue(tenantId, request.getDocumentType())
+        DocuSignTemplateMapping mapping = docuSignManagementService
+                .findActiveTemplateMapping(tenantId, request.getDocumentType())
                 .orElse(null);
 
         if (mapping == null) {
@@ -359,7 +357,7 @@ public class DocuSignController {
             mapping.setUpdatedAt(tenantTimeService.now(tenantId));
         }
 
-        DocuSignTemplateMapping saved = templateMappingRepository.save(mapping);
+        DocuSignTemplateMapping saved = docuSignManagementService.saveTemplateMapping(mapping);
 
         DocuSignTemplateMappingResponse response = DocuSignTemplateMappingResponse.builder()
                 .id(saved.getId())
@@ -451,7 +449,7 @@ public class DocuSignController {
             }
         }
 
-        envelopeRepository.save(envelope);
+        docuSignManagementService.saveEnvelope(envelope);
     }
 
     /**

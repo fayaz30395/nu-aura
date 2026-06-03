@@ -11,6 +11,8 @@ import io.micrometer.core.instrument.Tag;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.Acknowledgment;
@@ -23,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -280,6 +283,55 @@ public class DeadLetterHandler {
         failedKafkaEventRepository.save(event);
 
         log.info("[DLT] Event {} ignored by admin={}", failedEventId, ignoredBy);
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Admin query / maintenance API (used by KafkaAdminController)
+    // ─────────────────────────────────────────────────────────────────────────
+
+    /**
+     * Returns a paginated list of failed events with the given status, newest-first.
+     *
+     * @param status   the status to filter by
+     * @param pageable pagination information
+     * @return a page of matching failed events
+     */
+    @Transactional(readOnly = true)
+    public Page<FailedKafkaEvent> listFailedEvents(FailedEventStatus status, Pageable pageable) {
+        return failedKafkaEventRepository.findByStatusOrderByCreatedAtDesc(status, pageable);
+    }
+
+    /**
+     * Returns a single failed event by its primary key, if present.
+     *
+     * @param failedEventId the failed-event record UUID
+     * @return the event if found
+     */
+    @Transactional(readOnly = true)
+    public Optional<FailedKafkaEvent> findFailedEvent(UUID failedEventId) {
+        return failedKafkaEventRepository.findById(failedEventId);
+    }
+
+    /**
+     * Returns events that have been replayed more than {@link #MAX_SAFE_REPLAY_COUNT}
+     * times and are still in {@code PENDING_REPLAY} status — suspected poison pills.
+     *
+     * @return the suspected poison-pill events
+     */
+    @Transactional(readOnly = true)
+    public List<FailedKafkaEvent> listSuspectedPoisonPills() {
+        return failedKafkaEventRepository.findSuspectedPoisonPills(MAX_SAFE_REPLAY_COUNT);
+    }
+
+    /**
+     * Bulk-marks all {@code PENDING_REPLAY} events for the given DLT topic as {@code IGNORED}.
+     *
+     * @param topic the DLT topic name
+     * @return the number of records updated
+     */
+    @Transactional
+    public int ignoreAllForTopic(String topic) {
+        return failedKafkaEventRepository.ignoreAllPendingForTopic(topic);
     }
 
     private Counter buildCounter(String topic) {

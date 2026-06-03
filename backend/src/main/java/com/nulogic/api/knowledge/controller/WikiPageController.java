@@ -9,7 +9,6 @@ import com.nulogic.common.security.RequiresPermission;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.knowledge.WikiPage;
-import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -23,7 +22,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @RestController
@@ -34,7 +32,6 @@ public class WikiPageController {
 
     private final WikiPageService wikiPageService;
     private final WikiExportService wikiExportService;
-    private final EmployeeRepository employeeRepository;
 
     /**
      * Convert WikiPage entity to DTO with author information (single page).
@@ -47,7 +44,7 @@ public class WikiPageController {
         }
 
         UUID tenantId = TenantContext.getCurrentTenant();
-        Employee author = employeeRepository.findByUserIdWithUser(page.getCreatedBy(), tenantId)
+        Employee author = wikiPageService.resolveAuthor(page.getCreatedBy(), tenantId)
                 .orElse(null);
 
         if (author == null) {
@@ -71,11 +68,7 @@ public class WikiPageController {
                 .collect(Collectors.toSet());
 
         // Single batch query for all authors
-        Map<UUID, Employee> authorsByUserId = authorUserIds.isEmpty()
-                ? Map.of()
-                : employeeRepository.findAllByUserIdIn(authorUserIds).stream()
-                  .filter(e -> e.getUser() != null)
-                  .collect(Collectors.toMap(e -> e.getUser().getId(), Function.identity(), (a, b) -> a));
+        Map<UUID, Employee> authorsByUserId = wikiPageService.resolveAuthorsByUserId(authorUserIds);
 
         return pages.map(page -> {
             if (page.getCreatedBy() == null) {

@@ -5,8 +5,10 @@ import com.nulogic.api.knowledge.dto.ReplyToInlineCommentRequest;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
+import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.knowledge.WikiInlineComment;
 import com.nulogic.domain.knowledge.WikiInlineComment.InlineCommentStatus;
+import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import com.nulogic.infrastructure.knowledge.repository.WikiInlineCommentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +16,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +31,30 @@ public class WikiInlineCommentService {
 
     private final WikiInlineCommentRepository wikiInlineCommentRepository;
     private final TenantTimeService tenantTimeService;
+    private final EmployeeRepository employeeRepository;
+
+    /**
+     * Resolve the author Employee (with associated User) for a given user id within a tenant.
+     * Used by the controller's DTO mapping to attach author name/avatar to a comment.
+     */
+    @Transactional(readOnly = true)
+    public Optional<Employee> resolveAuthor(UUID userId, UUID tenantId) {
+        return employeeRepository.findByUserIdWithUser(userId, tenantId);
+    }
+
+    /**
+     * Batch-resolve authors for a set of user ids, keyed by user id. Returns only employees
+     * that have an associated User. Used by the controller to avoid N+1 author lookups.
+     */
+    @Transactional(readOnly = true)
+    public Map<UUID, Employee> resolveAuthorsByUserId(Set<UUID> userIds) {
+        if (userIds == null || userIds.isEmpty()) {
+            return Map.of();
+        }
+        return employeeRepository.findAllByUserIdIn(userIds).stream()
+                .filter(e -> e.getUser() != null)
+                .collect(Collectors.toMap(e -> e.getUser().getId(), Function.identity(), (a, b) -> a));
+    }
 
     @Transactional(readOnly = true)
     public List<WikiInlineComment> getInlineComments(UUID pageId) {

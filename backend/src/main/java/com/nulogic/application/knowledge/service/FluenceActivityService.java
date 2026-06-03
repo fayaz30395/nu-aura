@@ -1,6 +1,8 @@
 package com.nulogic.application.knowledge.service;
 
+import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.knowledge.FluenceActivity;
+import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import com.nulogic.infrastructure.knowledge.repository.FluenceActivityRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,6 +11,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -18,6 +23,25 @@ import java.util.UUID;
 public class FluenceActivityService {
 
     private final FluenceActivityRepository fluenceActivityRepository;
+    private final EmployeeRepository employeeRepository;
+
+    /**
+     * Batch-fetch employees by their (employee) ids for actor-name resolution.
+     * Used by the controller to resolve activity actor display names in a single query.
+     */
+    @Transactional(readOnly = true)
+    public List<Employee> findActorsByIds(Collection<UUID> actorIds) {
+        return employeeRepository.findAllById(actorIds);
+    }
+
+    /**
+     * Resolve a single actor by user id (with associated User) within a tenant — used as the
+     * fallback path when an actorId turns out to be a user id rather than an employee id.
+     */
+    @Transactional(readOnly = true)
+    public Optional<Employee> resolveActorByUserId(UUID userId, UUID tenantId) {
+        return employeeRepository.findByUserIdWithUser(userId, tenantId);
+    }
 
     /**
      * Record a new activity event in the fluence activity feed.

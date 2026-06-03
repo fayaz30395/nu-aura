@@ -5,7 +5,6 @@ import com.nulogic.common.security.SecurityContext;
 import com.nulogic.infrastructure.kafka.FailedKafkaEvent;
 import com.nulogic.infrastructure.kafka.FailedKafkaEvent.FailedEventStatus;
 import com.nulogic.infrastructure.kafka.consumer.DeadLetterHandler;
-import com.nulogic.infrastructure.kafka.repository.FailedKafkaEventRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -46,7 +45,6 @@ import static com.nulogic.common.security.Permission.SYSTEM_ADMIN;
 public class KafkaAdminController {
 
     private final DeadLetterHandler deadLetterHandler;
-    private final FailedKafkaEventRepository failedKafkaEventRepository;
 
     // ─────────────────────────────────────────────────────────────────────────
     // Query endpoints
@@ -67,8 +65,8 @@ public class KafkaAdminController {
             @RequestParam(required = false, defaultValue = "PENDING_REPLAY") FailedEventStatus status,
             @PageableDefault(size = 25, sort = "createdAt") Pageable pageable) {
 
-        Page<FailedKafkaEvent> page = failedKafkaEventRepository
-                .findByStatusOrderByCreatedAtDesc(status, pageable);
+        Page<FailedKafkaEvent> page = deadLetterHandler
+                .listFailedEvents(status, pageable);
         return ResponseEntity.ok(page);
     }
 
@@ -83,7 +81,7 @@ public class KafkaAdminController {
             @Parameter(description = "UUID of the failed event record")
             @PathVariable UUID id) {
 
-        return failedKafkaEventRepository.findById(id)
+        return deadLetterHandler.findFailedEvent(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -146,8 +144,8 @@ public class KafkaAdminController {
                     "These should be investigated and then either ignored or manually fixed."
     )
     public ResponseEntity<List<FailedKafkaEvent>> listPoisonPills() {
-        // Mirror MAX_SAFE_REPLAY_COUNT from DeadLetterHandler
-        List<FailedKafkaEvent> poisonPills = failedKafkaEventRepository.findSuspectedPoisonPills(3);
+        // Threshold (MAX_SAFE_REPLAY_COUNT = 3) is owned by DeadLetterHandler.
+        List<FailedKafkaEvent> poisonPills = deadLetterHandler.listSuspectedPoisonPills();
         return ResponseEntity.ok(poisonPills);
     }
 
@@ -171,7 +169,7 @@ public class KafkaAdminController {
         UUID currentUserId = SecurityContext.getCurrentUserId();
         log.info("[KafkaAdmin] Bulk-ignore for topic={} by admin={}", topic, currentUserId);
 
-        int updated = failedKafkaEventRepository.ignoreAllPendingForTopic(topic);
+        int updated = deadLetterHandler.ignoreAllForTopic(topic);
         log.info("[KafkaAdmin] Bulk-ignored {} events for topic={}", updated, topic);
         return ResponseEntity.ok(Map.of("topic", topic, "updatedCount", updated));
     }

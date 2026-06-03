@@ -4,7 +4,9 @@ import com.nulogic.application.knowledge.util.TipTapTextExtractor;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
+import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.knowledge.BlogPost;
+import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import com.nulogic.infrastructure.kafka.events.FluenceContentEvent;
 import com.nulogic.infrastructure.kafka.producer.EventPublisher;
 import com.nulogic.infrastructure.knowledge.repository.BlogPostRepository;
@@ -19,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -31,9 +34,19 @@ public class BlogPostService {
     private final FluenceActivityService fluenceActivityService;
     private final TipTapTextExtractor tipTapTextExtractor;
     private final TenantTimeService tenantTimeService;
+    private final EmployeeRepository employeeRepository;
 
     @Autowired(required = false)
     private EventPublisher eventPublisher;
+
+    /**
+     * Resolve the author Employee (with associated User) for a given user id within a tenant.
+     * Used by the controller's DTO mapping to attach author name/avatar to a blog post.
+     */
+    @Transactional(readOnly = true)
+    public Optional<Employee> resolveAuthor(UUID userId, UUID tenantId) {
+        return employeeRepository.findByUserIdWithUser(userId, tenantId);
+    }
 
     @Transactional
     public BlogPost createPost(BlogPost post) {

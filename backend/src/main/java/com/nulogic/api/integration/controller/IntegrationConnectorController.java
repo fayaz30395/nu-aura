@@ -11,8 +11,6 @@ import com.nulogic.domain.integration.ConnectionTestResult;
 import com.nulogic.domain.integration.ConnectorConfig;
 import com.nulogic.domain.integration.IntegrationConnector;
 import com.nulogic.domain.integration.IntegrationEventLog;
-import com.nulogic.infrastructure.integration.repository.IntegrationConnectorConfigRepository;
-import com.nulogic.infrastructure.integration.repository.IntegrationEventLogRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -55,8 +53,6 @@ public class IntegrationConnectorController {
     private final ConnectorRegistry connectorRegistry;
     private final IntegrationConnectorConfigService configService;
     private final IntegrationEventLogService eventLogService;
-    private final IntegrationConnectorConfigRepository configRepository;
-    private final IntegrationEventLogRepository eventLogRepository;
 
     /**
      * Lists all available connectors with their metadata and status.
@@ -78,8 +74,8 @@ public class IntegrationConnectorController {
                 .map(connector -> {
                     String connectorId = connector.getConnectorId();
                     // Try to get the configuration for this connector, if it exists
-                    var configEntity = configRepository
-                            .findByTenantIdAndConnectorIdAndIsDeletedFalse(tenantId, connectorId);
+                    var configEntity = configService
+                            .findConfigEntity(tenantId, connectorId);
 
                     return ConnectorInfoResponse.builder()
                             .connectorId(connectorId)
@@ -116,8 +112,8 @@ public class IntegrationConnectorController {
 
         IntegrationConnector connector = connectorRegistry.getConnector(connectorId);
 
-        var configEntity = configRepository
-                .findByTenantIdAndConnectorIdAndIsDeletedFalse(tenantId, connectorId);
+        var configEntity = configService
+                .findConfigEntity(tenantId, connectorId);
 
         ConnectorInfoResponse response = ConnectorInfoResponse.builder()
                 .connectorId(connectorId)
@@ -163,7 +159,7 @@ public class IntegrationConnectorController {
                 request.getEventSubscriptions());
 
         entity.setDisplayName(request.getDisplayName());
-        configRepository.save(entity);
+        configService.saveEntity(entity);
 
         ConnectorConfigResponse response = ConnectorConfigResponse.builder()
                 .id(entity.getId())
@@ -245,8 +241,8 @@ public class IntegrationConnectorController {
 
         configService.activate(tenantId, connectorId);
 
-        var configEntity = configRepository
-                .findByTenantIdAndConnectorIdAndIsDeletedFalse(tenantId, connectorId)
+        var configEntity = configService
+                .findConfigEntity(tenantId, connectorId)
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Configuration not found after activation: " + connectorId));
 
@@ -283,8 +279,8 @@ public class IntegrationConnectorController {
 
         configService.deactivate(tenantId, connectorId);
 
-        var configEntity = configRepository
-                .findByTenantIdAndConnectorIdAndIsDeletedFalse(tenantId, connectorId)
+        var configEntity = configService
+                .findConfigEntity(tenantId, connectorId)
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Configuration not found after deactivation: " + connectorId));
 
@@ -336,14 +332,12 @@ public class IntegrationConnectorController {
         Sort.Direction direction = "ASC".equalsIgnoreCase(sortDir) ? Sort.Direction.ASC : Sort.Direction.DESC;
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, safeSortBy));
 
-        Page<IntegrationEventLog> eventPage;
-        if (status != null && !status.isEmpty()) {
-            eventPage = eventLogRepository.findByTenantIdAndStatusOrderByCreatedAtDesc(
-                    tenantId, status, pageable);
-        } else {
-            eventPage = eventLogRepository.findByTenantIdOrderByCreatedAtDesc(
-                    tenantId, pageable);
-        }
+        // Delegate to the service. Passing a null connectorId reproduces the original
+        // two-branch behaviour exactly: status set -> findByTenantIdAndStatus...,
+        // status null/blank -> findByTenantId... (newest-first in both cases).
+        String statusFilter = (status != null && !status.isEmpty()) ? status : null;
+        Page<IntegrationEventLog> eventPage = eventLogService.getEvents(
+                tenantId, null, statusFilter, pageable);
 
         Page<IntegrationEventLogResponse> responsePage = eventPage.map(event ->
                 IntegrationEventLogResponse.builder()

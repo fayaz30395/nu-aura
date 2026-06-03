@@ -7,13 +7,7 @@ import com.nulogic.common.exception.ResourceNotFoundException;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.RequiresPermission;
 import com.nulogic.common.security.SecurityContext;
-import com.nulogic.domain.user.Role;
 import com.nulogic.domain.workflow.ApprovalEscalationConfig;
-import com.nulogic.domain.workflow.WorkflowDefinition;
-import com.nulogic.infrastructure.user.repository.RoleRepository;
-import com.nulogic.infrastructure.user.repository.UserRepository;
-import com.nulogic.infrastructure.workflow.repository.ApprovalEscalationConfigRepository;
-import com.nulogic.infrastructure.workflow.repository.WorkflowDefinitionRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -31,10 +25,6 @@ import java.util.UUID;
 @Tag(name = "Escalation Configuration", description = "Manage auto-escalation settings for approval workflows")
 public class ApprovalEscalationController {
 
-    private final ApprovalEscalationConfigRepository escalationConfigRepository;
-    private final WorkflowDefinitionRepository workflowDefinitionRepository;
-    private final RoleRepository roleRepository;
-    private final UserRepository userRepository;
     private final ApprovalEscalationService approvalEscalationService;
 
     @Operation(summary = "Get escalation config for a workflow")
@@ -43,8 +33,8 @@ public class ApprovalEscalationController {
     public ResponseEntity<EscalationConfigResponse> getConfig(@PathVariable UUID workflowId) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
 
-        ApprovalEscalationConfig config = escalationConfigRepository
-                .findByWorkflowDefinitionIdAndTenantId(workflowId, tenantId)
+        ApprovalEscalationConfig config = approvalEscalationService
+                .findConfigByWorkflow(workflowId, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Escalation config not found for workflow"));
 
         return ResponseEntity.ok(mapToResponse(config, tenantId));
@@ -59,28 +49,7 @@ public class ApprovalEscalationController {
 
         UUID tenantId = SecurityContext.getCurrentTenantId();
 
-        // Verify workflow exists
-        workflowDefinitionRepository.findByIdAndTenantId(workflowId, tenantId)
-                .orElseThrow(() -> new ResourceNotFoundException("Workflow definition not found"));
-
-        ApprovalEscalationConfig config = escalationConfigRepository
-                .findByWorkflowDefinitionIdAndTenantId(workflowId, tenantId)
-                .orElseGet(() -> {
-                    ApprovalEscalationConfig newConfig = new ApprovalEscalationConfig();
-                    newConfig.setTenantId(tenantId);
-                    newConfig.setWorkflowDefinitionId(workflowId);
-                    return newConfig;
-                });
-
-        config.setTimeoutHours(request.getTimeoutHours());
-        config.setEscalationType(request.getEscalationType());
-        config.setFallbackRoleId(request.getFallbackRoleId());
-        config.setFallbackUserId(request.getFallbackUserId());
-        config.setMaxEscalations(request.getMaxEscalations());
-        config.setNotifyOnEscalation(request.getNotifyOnEscalation());
-        config.setIsActive(request.getIsActive());
-
-        ApprovalEscalationConfig saved = escalationConfigRepository.save(config);
+        ApprovalEscalationConfig saved = approvalEscalationService.upsertConfig(workflowId, tenantId, request);
         log.info("Upserted escalation config for workflow {} in tenant {}", workflowId, tenantId);
 
         return ResponseEntity.ok(mapToResponse(saved, tenantId));
@@ -103,20 +72,17 @@ public class ApprovalEscalationController {
     }
 
     private EscalationConfigResponse mapToResponse(ApprovalEscalationConfig config, UUID tenantId) {
-        String workflowName = workflowDefinitionRepository
-                .findByIdAndTenantId(config.getWorkflowDefinitionId(), tenantId)
-                .map(WorkflowDefinition::getName)
+        String workflowName = approvalEscalationService
+                .findWorkflowName(config.getWorkflowDefinitionId(), tenantId)
                 .orElse(null);
 
         String fallbackRoleName = config.getFallbackRoleId() != null
-                ? roleRepository.findById(config.getFallbackRoleId())
-                  .map(Role::getName)
+                ? approvalEscalationService.findRoleName(config.getFallbackRoleId())
                   .orElse(null)
                 : null;
 
         String fallbackUserName = config.getFallbackUserId() != null
-                ? userRepository.findById(config.getFallbackUserId())
-                  .map(u -> u.getFirstName() + " " + u.getLastName())
+                ? approvalEscalationService.findUserFullName(config.getFallbackUserId())
                   .orElse(null)
                 : null;
 

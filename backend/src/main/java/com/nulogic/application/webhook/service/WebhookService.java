@@ -18,6 +18,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -238,6 +240,24 @@ public class WebhookService {
     })
     public void evictCache(UUID tenantId) {
         log.debug("Evicted webhook cache for tenant {}", tenantId);
+    }
+
+    /**
+     * Find delivery history for a webhook with an explicit tenant guard.
+     *
+     * <p>BUG-016 FIX: the query carries its own tenantId filter
+     * ({@code findByWebhookIdAndTenantIdOrderByCreatedAtDesc}) so the delivery
+     * lookup is isolated independently of the parent webhook-existence check
+     * performed by the caller.</p>
+     *
+     * @param webhookId the webhook whose deliveries to load
+     * @param tenantId  the tenant ID (required for isolation)
+     * @param pageable  pagination information
+     * @return a page of deliveries, newest first
+     */
+    @Transactional(readOnly = true)
+    public Page<WebhookDelivery> findDeliveries(UUID webhookId, UUID tenantId, Pageable pageable) {
+        return deliveryRepository.findByWebhookIdAndTenantIdOrderByCreatedAtDesc(webhookId, tenantId, pageable);
     }
 
     /**

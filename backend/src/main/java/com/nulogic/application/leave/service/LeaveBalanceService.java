@@ -146,6 +146,39 @@ public class LeaveBalanceService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Year-scoped counterpart of {@link #getEmployeeBalancesEnriched(UUID)}.
+     *
+     * <p>Behaviour-preserving extraction of the controller's per-row
+     * {@code leaveTypeRepository.findById} enrichment in {@code toResponse}.
+     * Field-copy semantics and the leave-type-name enrichment match the
+     * controller exactly; the per-row point reads are collapsed into a single
+     * batched {@code findAllById} lookup over the distinct leave-type IDs.</p>
+     */
+    @Transactional(readOnly = true)
+    public List<LeaveBalanceResponse> getEmployeeBalancesForYearEnriched(UUID employeeId, Integer year) {
+        List<LeaveBalance> balances = getEmployeeBalancesForYear(employeeId, year);
+        if (balances.isEmpty()) {
+            return List.of();
+        }
+
+        Set<UUID> typeIds = balances.stream()
+                .map(LeaveBalance::getLeaveTypeId)
+                .filter(java.util.Objects::nonNull)
+                .collect(Collectors.toSet());
+
+        Map<UUID, String> typeNamesById = new HashMap<>();
+        if (!typeIds.isEmpty()) {
+            for (LeaveType type : leaveTypeRepository.findAllById(typeIds)) {
+                typeNamesById.put(type.getId(), type.getLeaveName());
+            }
+        }
+
+        return balances.stream()
+                .map(balance -> toResponse(balance, typeNamesById))
+                .collect(Collectors.toList());
+    }
+
     private LeaveBalanceResponse toResponse(LeaveBalance balance, Map<UUID, String> typeNamesById) {
         // T3-10 cleanup wave: delegate the entity-to-DTO copy to the shared
         // MapStruct mapper. Same SEC-FIX (F7) guarantee as before — audit

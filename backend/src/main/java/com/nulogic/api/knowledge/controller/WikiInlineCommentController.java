@@ -10,7 +10,6 @@ import com.nulogic.common.security.RequiresPermission;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.knowledge.WikiInlineComment;
-import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -20,7 +19,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @RestController
@@ -29,7 +27,6 @@ import java.util.stream.Collectors;
 public class WikiInlineCommentController {
 
     private final WikiInlineCommentService wikiInlineCommentService;
-    private final EmployeeRepository employeeRepository;
 
     // ==================== Page-Scoped Endpoints ====================
 
@@ -106,12 +103,7 @@ public class WikiInlineCommentController {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
 
-        UUID tenantId = TenantContext.getCurrentTenant();
-        Map<UUID, Employee> authorsByUserId = authorUserIds.isEmpty()
-                ? Map.of()
-                : employeeRepository.findAllByUserIdIn(authorUserIds).stream()
-                  .filter(e -> e.getUser() != null)
-                  .collect(Collectors.toMap(e -> e.getUser().getId(), Function.identity(), (a, b) -> a));
+        Map<UUID, Employee> authorsByUserId = wikiInlineCommentService.resolveAuthorsByUserId(authorUserIds);
 
         // Convert all entities to DTOs (flat, no replies yet)
         Map<UUID, WikiInlineCommentDto> dtoMap = new LinkedHashMap<>();
@@ -144,7 +136,7 @@ public class WikiInlineCommentController {
 
         if (comment.getCreatedBy() != null) {
             UUID tenantId = TenantContext.getCurrentTenant();
-            Employee author = employeeRepository.findByUserIdWithUser(comment.getCreatedBy(), tenantId)
+            Employee author = wikiInlineCommentService.resolveAuthor(comment.getCreatedBy(), tenantId)
                     .orElse(null);
             if (author != null) {
                 authorName = author.getFirstName() +

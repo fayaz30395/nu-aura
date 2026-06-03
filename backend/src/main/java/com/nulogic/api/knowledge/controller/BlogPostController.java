@@ -10,7 +10,6 @@ import com.nulogic.common.security.RequiresPermission;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.knowledge.BlogPost;
-import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -33,7 +32,6 @@ import java.util.stream.Collectors;
 public class BlogPostController {
 
     private final BlogPostService blogPostService;
-    private final EmployeeRepository employeeRepository;
 
     /**
      * Convert BlogPost entity to DTO with author information
@@ -46,7 +44,7 @@ public class BlogPostController {
         }
 
         UUID tenantId = TenantContext.requireCurrentTenant();
-        Employee author = employeeRepository.findByUserIdWithUser(post.getCreatedBy(), tenantId)
+        Employee author = blogPostService.resolveAuthor(post.getCreatedBy(), tenantId)
                 .orElse(null);
 
         if (author == null) {

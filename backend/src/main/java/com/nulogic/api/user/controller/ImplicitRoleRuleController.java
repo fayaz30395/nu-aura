@@ -2,6 +2,7 @@ package com.nulogic.api.user.controller;
 
 import com.nulogic.api.user.dto.*;
 import com.nulogic.application.user.service.ImplicitRoleEngine;
+import com.nulogic.application.user.service.ImplicitRoleRuleService;
 import com.nulogic.common.exception.ResourceNotFoundException;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.RequiresPermission;
@@ -9,9 +10,6 @@ import com.nulogic.common.security.SecurityContext;
 import com.nulogic.domain.user.ImplicitRoleRule;
 import com.nulogic.domain.user.ImplicitUserRole;
 import com.nulogic.domain.user.Role;
-import com.nulogic.infrastructure.user.repository.ImplicitRoleRuleRepository;
-import com.nulogic.infrastructure.user.repository.ImplicitUserRoleRepository;
-import com.nulogic.infrastructure.user.repository.RoleRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -38,9 +36,7 @@ import java.util.stream.Collectors;
 @Tag(name = "Implicit Role Rules", description = "Management of implicit role assignment rules based on org hierarchy")
 public class ImplicitRoleRuleController {
 
-    private final ImplicitRoleRuleRepository ruleRepository;
-    private final ImplicitUserRoleRepository implicitUserRoleRepository;
-    private final RoleRepository roleRepository;
+    private final ImplicitRoleRuleService implicitRoleRuleService;
     private final ImplicitRoleEngine implicitRoleEngine;
 
     // ===================== Read Operations =====================
@@ -66,9 +62,9 @@ public class ImplicitRoleRuleController {
 
         Page<ImplicitRoleRule> rules;
         if (active != null) {
-            rules = ruleRepository.findByTenantIdAndIsActive(tenantId, active, pageable);
+            rules = implicitRoleRuleService.findRulesByTenantAndActive(tenantId, active, pageable);
         } else {
-            rules = ruleRepository.findByTenantId(tenantId, pageable);
+            rules = implicitRoleRuleService.findRulesByTenant(tenantId, pageable);
         }
 
         Page<ImplicitRoleRuleResponse> response = rules.map(this::mapToResponse);
@@ -85,7 +81,7 @@ public class ImplicitRoleRuleController {
     @RequiresPermission(Permission.ROLE_MANAGE)
     public ResponseEntity<ImplicitRoleRuleResponse> getRuleById(@PathVariable UUID id) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
-        ImplicitRoleRule rule = ruleRepository.findByIdAndTenantId(id, tenantId)
+        ImplicitRoleRule rule = implicitRoleRuleService.findRuleByIdAndTenant(id, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Rule not found"));
         return ResponseEntity.ok(mapToResponse(rule));
     }
@@ -100,11 +96,11 @@ public class ImplicitRoleRuleController {
     @RequiresPermission(Permission.ROLE_MANAGE)
     public ResponseEntity<AffectedUsersResponse> getAffectedUsers(@PathVariable UUID id) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
-        ImplicitRoleRule rule = ruleRepository.findByIdAndTenantId(id, tenantId)
+        ImplicitRoleRule rule = implicitRoleRuleService.findRuleByIdAndTenant(id, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Rule not found"));
 
-        List<ImplicitUserRole> affectedRoles = implicitUserRoleRepository
-                .findByDerivedFromRuleIdAndTenantId(id, tenantId);
+        List<ImplicitUserRole> affectedRoles = implicitRoleRuleService
+                .findUserRolesByRuleAndTenant(id, tenantId);
 
         List<ImplicitUserRole> activeAffected = affectedRoles.stream()
                 .filter(ImplicitUserRole::getIsActive)
@@ -132,8 +128,8 @@ public class ImplicitRoleRuleController {
     @RequiresPermission(Permission.ROLE_MANAGE)
     public ResponseEntity<List<ImplicitUserRoleResponse>> getUserImplicitRoles(@PathVariable UUID userId) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
-        List<ImplicitUserRole> implicitRoles = implicitUserRoleRepository
-                .findByUserIdAndTenantIdAndIsActiveTrue(userId, tenantId);
+        List<ImplicitUserRole> implicitRoles = implicitRoleRuleService
+                .findActiveUserRolesByUserAndTenant(userId, tenantId);
 
         List<ImplicitUserRoleResponse> response = implicitRoles.stream()
                 .map(this::mapUserRoleToResponse)
@@ -157,7 +153,7 @@ public class ImplicitRoleRuleController {
         UUID tenantId = SecurityContext.getCurrentTenantId();
 
         // Verify target role exists
-        roleRepository.findById(request.getTargetRoleId()).filter(r -> r.getTenantId() == null || r.getTenantId().equals(tenantId))
+        implicitRoleRuleService.findRoleById(request.getTargetRoleId()).filter(r -> r.getTenantId() == null || r.getTenantId().equals(tenantId))
                 .orElseThrow(() -> new ResourceNotFoundException("Target role not found"));
 
         ImplicitRoleRule rule = new ImplicitRoleRule();
@@ -170,7 +166,7 @@ public class ImplicitRoleRuleController {
         rule.setPriority(request.getPriority());
         rule.setIsActive(true);
 
-        ImplicitRoleRule saved = ruleRepository.save(rule);
+        ImplicitRoleRule saved = implicitRoleRuleService.saveRule(rule);
         log.info("Created implicit role rule: {} for tenant: {}", saved.getId(), tenantId);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(mapToResponse(saved));
@@ -190,11 +186,11 @@ public class ImplicitRoleRuleController {
             @Valid @RequestBody ImplicitRoleRuleRequest request) {
 
         UUID tenantId = SecurityContext.getCurrentTenantId();
-        ImplicitRoleRule rule = ruleRepository.findByIdAndTenantId(id, tenantId)
+        ImplicitRoleRule rule = implicitRoleRuleService.findRuleByIdAndTenant(id, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Rule not found"));
 
         // Verify target role exists
-        roleRepository.findById(request.getTargetRoleId()).filter(r -> r.getTenantId() == null || r.getTenantId().equals(tenantId))
+        implicitRoleRuleService.findRoleById(request.getTargetRoleId()).filter(r -> r.getTenantId() == null || r.getTenantId().equals(tenantId))
                 .orElseThrow(() -> new ResourceNotFoundException("Target role not found"));
 
         rule.setRuleName(request.getRuleName());
@@ -204,7 +200,7 @@ public class ImplicitRoleRuleController {
         rule.setScope(request.getScope());
         rule.setPriority(request.getPriority());
 
-        ImplicitRoleRule updated = ruleRepository.save(rule);
+        ImplicitRoleRule updated = implicitRoleRuleService.saveRule(rule);
         log.info("Updated implicit role rule: {} for tenant: {}", updated.getId(), tenantId);
 
         return ResponseEntity.ok(mapToResponse(updated));
@@ -220,11 +216,11 @@ public class ImplicitRoleRuleController {
     @RequiresPermission(Permission.ROLE_MANAGE)
     public ResponseEntity<Void> deleteRule(@PathVariable UUID id) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
-        ImplicitRoleRule rule = ruleRepository.findByIdAndTenantId(id, tenantId)
+        ImplicitRoleRule rule = implicitRoleRuleService.findRuleByIdAndTenant(id, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Rule not found"));
 
         rule.setIsActive(false);
-        ruleRepository.save(rule);
+        implicitRoleRuleService.saveRule(rule);
         log.info("Deleted implicit role rule: {} for tenant: {}", id, tenantId);
 
         return ResponseEntity.noContent().build();
@@ -266,14 +262,14 @@ public class ImplicitRoleRuleController {
     public ResponseEntity<BulkOperationResponse> bulkActivate(@Valid @RequestBody BulkRuleIdsRequest request) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
 
-        List<ImplicitRoleRule> rules = ruleRepository.findByIdInAndTenantId(request.getRuleIds(), tenantId);
+        List<ImplicitRoleRule> rules = implicitRoleRuleService.findRulesByIdsAndTenant(request.getRuleIds(), tenantId);
         List<ImplicitRoleRule> rulesToActivate = rules.stream()
                 .filter(rule -> !rule.getIsActive())
                 .collect(Collectors.toList());
 
         rulesToActivate.forEach(rule -> {
             rule.setIsActive(true);
-            ruleRepository.save(rule);
+            implicitRoleRuleService.saveRule(rule);
         });
 
         int activatedCount = rulesToActivate.size();
@@ -300,14 +296,14 @@ public class ImplicitRoleRuleController {
     public ResponseEntity<BulkOperationResponse> bulkDeactivate(@Valid @RequestBody BulkRuleIdsRequest request) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
 
-        List<ImplicitRoleRule> rules = ruleRepository.findByIdInAndTenantId(request.getRuleIds(), tenantId);
+        List<ImplicitRoleRule> rules = implicitRoleRuleService.findRulesByIdsAndTenant(request.getRuleIds(), tenantId);
         List<ImplicitRoleRule> rulesToDeactivate = rules.stream()
                 .filter(ImplicitRoleRule::getIsActive)
                 .collect(Collectors.toList());
 
         rulesToDeactivate.forEach(rule -> {
             rule.setIsActive(false);
-            ruleRepository.save(rule);
+            implicitRoleRuleService.saveRule(rule);
         });
 
         int deactivatedCount = rulesToDeactivate.size();
@@ -326,10 +322,10 @@ public class ImplicitRoleRuleController {
     // ===================== Helpers =====================
 
     private ImplicitRoleRuleResponse mapToResponse(ImplicitRoleRule rule) {
-        Role targetRole = roleRepository.findById(rule.getTargetRoleId())
+        Role targetRole = implicitRoleRuleService.findRoleById(rule.getTargetRoleId())
                 .orElse(null);
 
-        long affectedUserCount = implicitUserRoleRepository
+        long affectedUserCount = implicitRoleRuleService
                 .countAffectedUsers(rule.getId(), rule.getTenantId());
 
         return ImplicitRoleRuleResponse.builder()
@@ -349,7 +345,7 @@ public class ImplicitRoleRuleController {
     }
 
     private ImplicitUserRoleResponse mapUserRoleToResponse(ImplicitUserRole implicitRole) {
-        Role role = roleRepository.findById(implicitRole.getRoleId())
+        Role role = implicitRoleRuleService.findRoleById(implicitRole.getRoleId())
                 .orElse(null);
 
         return ImplicitUserRoleResponse.builder()

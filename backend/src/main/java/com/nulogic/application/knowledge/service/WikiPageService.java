@@ -7,8 +7,10 @@ import com.nulogic.application.knowledge.util.TipTapTextExtractor;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
+import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.knowledge.WikiPage;
 import com.nulogic.domain.knowledge.WikiPageVersion;
+import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import com.nulogic.infrastructure.kafka.events.FluenceContentEvent;
 import com.nulogic.infrastructure.kafka.producer.EventPublisher;
 import com.nulogic.infrastructure.knowledge.repository.WikiPageRepository;
@@ -26,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,6 +43,30 @@ public class WikiPageService {
     private final FluenceActivityService fluenceActivityService;
     private final TipTapTextExtractor tipTapTextExtractor;
     private final TenantTimeService tenantTimeService;
+    private final EmployeeRepository employeeRepository;
+
+    /**
+     * Resolve the author Employee (with associated User) for a given user id within a tenant.
+     * Used by the controller's DTO mapping to attach author name/avatar to a wiki page.
+     */
+    @Transactional(readOnly = true)
+    public Optional<Employee> resolveAuthor(UUID userId, UUID tenantId) {
+        return employeeRepository.findByUserIdWithUser(userId, tenantId);
+    }
+
+    /**
+     * Batch-resolve authors for a set of user ids, keyed by user id. Returns only employees
+     * that have an associated User. Used by the controller to avoid N+1 author lookups.
+     */
+    @Transactional(readOnly = true)
+    public Map<UUID, Employee> resolveAuthorsByUserId(Set<UUID> userIds) {
+        if (userIds == null || userIds.isEmpty()) {
+            return Map.of();
+        }
+        return employeeRepository.findAllByUserIdIn(userIds).stream()
+                .filter(e -> e.getUser() != null)
+                .collect(Collectors.toMap(e -> e.getUser().getId(), Function.identity(), (a, b) -> a));
+    }
 
     @Autowired(required = false)
     private EventPublisher eventPublisher;
