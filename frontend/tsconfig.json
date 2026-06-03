@@ -54,6 +54,7 @@
     "lib/test-utils/**",
     "vitest.config.ts",
     "vitest.setup.ts",
-    "e2e/**"
+    "e2e/**",
+    "tmp"
   ]
 }

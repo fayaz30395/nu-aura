@@ -4,8 +4,8 @@
 
 ## Overview
 
-Modular monolith built with Spring Boot 3.4.1 on Java 17 (Docker images now Java 21 — see
-`fd1c677d`). Clean layered architecture: `api/` → `application/` → `domain/` → `infrastructure/`.
+Modular monolith built with Spring Boot 3.4.1 on Java 21 (`<java.version>21</java.version>` in
+`backend/pom.xml`; Docker images on Java 21 — see `fd1c677d`). Clean layered architecture: `api/` → `application/` → `domain/` → `infrastructure/`.
 **173+ controllers, 230+ services, 295+ entities, 144 Flyway migrations (V0–V154).**
 
 Sprints 1-7 (May 2026) closed 79 + 50 + critical-wave-3-to-5 + statutory + governance findings

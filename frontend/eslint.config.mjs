@@ -122,6 +122,7 @@ const config = [
       'coverage/**',
       'out/**',
       'dist/**',
+      'tmp/**',
       '**/*.test.ts',
       '**/*.test.tsx',
       '**/*.spec.ts',

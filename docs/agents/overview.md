@@ -80,7 +80,7 @@ PROJECT CONTEXT:
   - Services: frontend/lib/services/ (92 files)
   - App config: frontend/lib/config/apps.ts (route-to-app mapping)
   - Colors: Sky palette (sky-700 primary, NOT purple)
-- Backend: Spring Boot 3.4.1 (Java 17), package root: com.hrms
+- Backend: Spring Boot 3.4.1 (Java 21), package root: com.hrms
   - Controllers: backend/src/main/java/com/hrms/api/ (143 controllers)
   - Services: backend/src/main/java/com/hrms/application/ (209 services)
   - Entities: backend/src/main/java/com/hrms/domain/ (265 entities, 260 repositories)
@@ -131,7 +131,7 @@ PROJECT CONTEXT:
 - NU-AURA: Bundle app platform with 4 sub-apps (NU-HRMS, NU-Hire, NU-Grow, NU-Fluence)
 - Role hierarchy: Super Admin > Tenant Admin > HR Admin (85) > App Admin > HR Manager > Hiring Manager > Team Lead > Employee > Candidate > Viewer
 - Frontend: Next.js 14 + Mantine UI + Tailwind CSS + TypeScript
-- Backend: Spring Boot 3.4.1 (Java 17), package root: com.hrms
+- Backend: Spring Boot 3.4.1 (Java 21), package root: com.hrms
 - Database: PostgreSQL, multi-tenant (tenant_id UUID, RLS)
 - Auth: Google OAuth 2.0 + JWT (in cookies, roles only)
 - Permission format: module.action in DB, MODULE:ACTION in code
@@ -179,7 +179,7 @@ You are the NU-AURA Code Review Agent.
 
 PROJECT CONTEXT:
 - Frontend: Next.js 14 + Mantine UI + Tailwind CSS + TypeScript (strict)
-- Backend: Spring Boot 3.4.1 (Java 17), package root: com.hrms
+- Backend: Spring Boot 3.4.1 (Java 21), package root: com.hrms
 - Auth: Google OAuth 2.0, JWT in cookies, @RequiresPermission for RBAC
 - Conventions: Thin controllers, service-layer logic, JPA repositories, Flyway migrations
 - Forms: React Hook Form + Zod (frontend), @Valid + Jakarta constraints (backend)
@@ -233,7 +233,7 @@ You are the NU-AURA DevOps Agent.
 
 PROJECT CONTEXT:
 - Frontend: Next.js 14 (App Router), TypeScript
-- Backend: Spring Boot 3.4.1 (Java 17), package root: com.hrms
+- Backend: Spring Boot 3.4.1 (Java 21), package root: com.hrms
 - Database: PostgreSQL (Neon cloud dev, PG 16 prod — NO local postgres in docker-compose)
 - Cache: Redis 7
 - Messaging: Kafka (Confluent 7.6.0) + Zookeeper
@@ -274,7 +274,7 @@ You are the NU-AURA Documentation Agent.
 PROJECT CONTEXT:
 - NU-AURA: Bundle app platform by NULOGIC with 4 sub-apps
 - Frontend: Next.js 14 (App Router) + Mantine UI + Tailwind CSS + TypeScript
-- Backend: Spring Boot 3.4.1 (Java 17), package root: com.hrms
+- Backend: Spring Boot 3.4.1 (Java 21), package root: com.hrms
 - API: REST, versioned /api/v1/, SpringDoc OpenAPI 2.7.0
 - RBAC: Role hierarchy with @RequiresPermission, permission format module.action
 - Multi-tenancy: Shared DB, shared schema, PostgreSQL RLS

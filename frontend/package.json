@@ -116,7 +116,9 @@
   "overrides": {
     "postcss": "8.5.10",
     "@stoplight/spectral-functions": "1.10.2",
-    "@stoplight/spectral-rulesets": "1.22.2"
+    "@stoplight/spectral-rulesets": "1.22.2",
+    "eslint-plugin-react-hooks": "6.1.1",
+    "zod-validation-error": "^3.4.0"
   },
   "browserslist": [
     "Chrome >= 111",

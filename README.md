@@ -42,7 +42,7 @@ nu-aura/
 │   │   ├── infrastructure/      # Repos + Kafka + WebSocket
 │   │   └── common/              # Config, security, exceptions
 │   └── src/main/resources/
-│       └── db/migration/        # Flyway (V0–V171)
+│       └── db/migration/        # Flyway (V0–V269)
 ├── frontend/                    # Next.js 14 App Router
 │   ├── app/                     # 261 pages
 │   ├── components/              # TSX components
@@ -216,7 +216,7 @@ cd frontend && npm run lint && npx tsc --noEmit
 - **Events:** Kafka 5 topics (`approvals`, `notifications`, `audit`, `employee-lifecycle`, `fluence-content`) + 5 DLT topics.
 - **Payroll:** SpEL formula engine with DAG-ordered component evaluation, always transactional.
 - **Workflow:** Generic approval engine — `workflow_def` > `workflow_step` > `approval_instance` > `approval_task`.
-- **Migrations:** Flyway only (V0–V171, 162+ files). Legacy Liquibase deprecated.
+- **Migrations:** Flyway only (V0–V269). Legacy Liquibase deprecated.
 - **Security hardening (Sprints 1–3, May 2026):** 79 wave-1 findings, ~50 wave-2 findings, and wave-3 regression follow-ups closed across auth, IDOR, injection, SSRF, Drive tenant isolation, dependencies, mass-assignment, and field-level AES-GCM encryption for PII. See `CHANGELOG.md` and `SECURITY.md`.
 
 ### Accessibility (WCAG 2.1 AA, 2026-05-13/14)

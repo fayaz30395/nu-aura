@@ -8,7 +8,7 @@
 
 | Skill             | Level        | Tooling                                            |
 |-------------------|--------------|----------------------------------------------------|
-| Java 17           | Expert       | Google Style Guide, 4-space indent, 120 char lines |
+| Java 21           | Expert       | Google Style Guide, 4-space indent, 120 char lines |
 | Spring Boot 3.4   | Expert       | Auto-config, profiles, actuator, security          |
 | Spring Security 6 | Expert       | JWT, OAuth2, RBAC, CSRF, filter chains             |
 | Spring Data JPA   | Expert       | Specifications, custom queries, auditing           |
