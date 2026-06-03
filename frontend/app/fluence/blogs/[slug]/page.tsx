@@ -211,7 +211,8 @@ export default function BlogPostDetailPage() {
       {/* Reading Progress Bar */}
       <motion.div
         className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-[var(--accent-500)] to-[var(--accent-800)] origin-left z-50"
-        style={{scaleX: readingProgress / 100}}
+        animate={{scaleX: readingProgress / 100}}
+        initial={false}
       />
 
       <div className="space-y-6">

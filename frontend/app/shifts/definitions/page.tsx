@@ -13,7 +13,7 @@ import {
 import {ShiftDefinition, ShiftDefinitionRequest} from '@/lib/types/hrms/shift';
 import {SkeletonCard} from '@/components/ui/Skeleton';
 import {EmptyState} from '@/components/ui/EmptyState';
-import {CATEGORICAL_DEFAULT, CATEGORICAL_PALETTE, CATEGORICAL_UNSET} from '@/lib/utils/categoricalPalette';
+import {categoricalBgClass, CATEGORICAL_DEFAULT, CATEGORICAL_PALETTE} from '@/lib/utils/categoricalPalette';
 import {Controller, useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
@@ -253,8 +253,7 @@ export default function ShiftDefinitionsPage() {
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-2">
                       <div
-                        className="w-4 h-4 rounded-full flex-shrink-0"
-                        style={{backgroundColor: shift.colorCode || CATEGORICAL_UNSET}}
+                        className={`w-4 h-4 rounded-full flex-shrink-0 ${categoricalBgClass(shift.colorCode)}`}
                       />
                       <div>
                         <h2 className="font-semibold text-surface-900 dark:text-white text-sm">

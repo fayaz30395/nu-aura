@@ -178,9 +178,8 @@ export default function FloatingBar({editor}: FloatingBarProps) {
           <motion.div
             ref={barRef}
             className="fluence-floating-bar absolute z-50"
-            style={{top: position.top, left: position.left}}
             initial={{opacity: 0, y: 4, scale: 0.95}}
-            animate={{opacity: 1, y: 0, scale: 1}}
+            animate={{opacity: 1, y: 0, scale: 1, top: position.top, left: position.left}}
             exit={{opacity: 0, y: 4, scale: 0.95}}
             transition={{duration: 0.12, ease: 'easeOut'}}
           >

@@ -55,10 +55,11 @@ export function Ring({
     <svg
       id={`aura-ring-${gid}`}
       viewBox={`0 0 ${size} ${size}`}
+      width={size}
+      height={size}
       role="img"
       aria-label={ariaLabel ?? `${Math.round(pct)} percent`}
       className={className}
-      style={{width: size, height: size}}
     >
       {!prefersReduced && (
         <style>{`

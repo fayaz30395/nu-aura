@@ -264,12 +264,15 @@ const SlashMenu = forwardRef<SlashMenuHandle, SlashMenuProps>(
 
     if (filteredItems.length === 0) {
       return (
-        <div
+        <motion.div
           className="fluence-slash-menu"
-          style={{top: position.top, left: position.left}}
+          initial={{opacity: 0, y: -4, scale: 0.98}}
+          animate={{opacity: 1, y: 0, scale: 1, top: position.top, left: position.left}}
+          exit={{opacity: 0, y: -4, scale: 0.98}}
+          transition={{duration: 0.15, ease: 'easeOut'}}
         >
           <EmptyState {...EmptyStatePresets.noResults} size="compact"/>
-        </div>
+        </motion.div>
       );
     }
 
@@ -280,9 +283,8 @@ const SlashMenu = forwardRef<SlashMenuHandle, SlashMenuProps>(
         <motion.div
           ref={menuRef}
           className="fluence-slash-menu"
-          style={{top: position.top, left: position.left}}
           initial={{opacity: 0, y: -4, scale: 0.98}}
-          animate={{opacity: 1, y: 0, scale: 1}}
+          animate={{opacity: 1, y: 0, scale: 1, top: position.top, left: position.left}}
           exit={{opacity: 0, y: -4, scale: 0.98}}
           transition={{duration: 0.15, ease: 'easeOut'}}
         >

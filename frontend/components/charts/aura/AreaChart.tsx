@@ -102,10 +102,10 @@ export function AreaChart({
     <svg
       id={`aura-area-${gid}`}
       viewBox={`0 0 ${VIEW_W} ${height}`}
+      height={height}
       role="img"
       aria-label={ariaLabel ?? 'Area trend chart'}
-      className={className}
-      style={{width: '100%', height, display: 'block'}}
+      className={className ? `block w-full ${className}` : 'block w-full'}
       onMouseLeave={() => setHover(null)}
       onMouseMove={handleMove}
     >

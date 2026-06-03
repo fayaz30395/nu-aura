@@ -24,7 +24,7 @@ import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/compo
 import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
 import {StatusBadge} from '@/components/ui/StatusBadge';
 import {LEAVE_STATUS} from '@/lib/status/vocabulary';
-import {CATEGORICAL_UNSET} from '@/lib/utils/categoricalPalette';
+import {categoricalSoftBgClass, categoricalTextClass} from '@/lib/utils/categoricalPalette';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {
   useActiveLeaveTypes,
@@ -56,6 +56,17 @@ const cancelFormSchema = z.object({
 });
 
 type CancelFormData = z.infer<typeof cancelFormSchema>;
+
+function getUsageWidthClass(value: number): string {
+  const percent = Number.isFinite(value) ? value : 0;
+  if (percent <= 0) return 'w-0';
+  if (percent < 10) return 'w-[10%]';
+  if (percent < 25) return 'w-[25%]';
+  if (percent < 40) return 'w-[40%]';
+  if (percent < 60) return 'w-[60%]';
+  if (percent < 80) return 'w-[80%]';
+  return 'w-full';
+}
 
 export default function MyLeavesPage() {
   const router = useRouter();
@@ -354,12 +365,10 @@ export default function MyLeavesPage() {
                 <CardContent className="pt-6">
                   <div className="row-between mb-4">
                     <div
-                      className="w-12 h-12 rounded-full flex items-center justify-center"
-                      style={{backgroundColor: `${leaveType?.colorCode || CATEGORICAL_UNSET}20`}}
+                      className={`w-12 h-12 rounded-full flex items-center justify-center ${categoricalSoftBgClass(leaveType?.colorCode)}`}
                     >
                       <Calendar
-                        className="h-6 w-6"
-                        style={{color: leaveType?.colorCode || CATEGORICAL_UNSET}}
+                        className={`h-6 w-6 ${categoricalTextClass(leaveType?.colorCode)}`}
                       />
                     </div>
                     {isEncashable && (
@@ -413,10 +422,7 @@ export default function MyLeavesPage() {
                   <div className="mt-4">
                     <div className="h-2 bg-[var(--border-main)] rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-accent-600 dark:bg-accent-500 rounded-full transition-all"
-                        style={{
-                          width: `${Math.min((balance.used / (balance.used + balance.available)) * 100, 100)}%`,
-                        }}
+                        className={`h-full bg-accent-600 dark:bg-accent-500 rounded-full transition-all ${getUsageWidthClass(Math.min((balance.used / (balance.used + balance.available)) * 100, 100))}`}
                       />
                     </div>
                   </div>

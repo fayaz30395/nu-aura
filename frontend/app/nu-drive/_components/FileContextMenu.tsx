@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import {motion} from 'framer-motion';
 import {Download, Edit3, ExternalLink, File, Share2, Star, Trash2,} from 'lucide-react';
 import {DriveFile} from './types';
 
@@ -30,9 +31,12 @@ export function FileContextMenu({
                                   menuRef,
                                 }: FileContextMenuProps) {
   return (
-    <div
+    <motion.div
       ref={menuRef}
-      style={{left: position.x, top: position.y}}
+      initial={{opacity: 0, y: -4}}
+      animate={{opacity: 1, y: 0, left: position.x, top: position.y}}
+      exit={{opacity: 0, y: -4}}
+      transition={{duration: 0.12, ease: 'easeOut'}}
       className="fixed z-50 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg shadow-[var(--shadow-dropdown)] py-1 min-w-[180px]"
     >
       {file.mimeType !== 'application/vnd.google-apps.folder' && (
@@ -97,6 +101,6 @@ export function FileContextMenu({
           className="h-4 w-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
         Delete
       </button>
-    </div>
+    </motion.div>
   );
 }

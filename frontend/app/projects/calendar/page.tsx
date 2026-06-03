@@ -3,6 +3,7 @@
 import React, {useMemo, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {Checkbox as MantineCheckbox} from '@mantine/core';
+import {motion} from 'framer-motion';
 import {
   AlertCircle,
   ArrowLeft,
@@ -761,13 +762,14 @@ export default function ProjectCalendarPage() {
                       if (today >= timelineRange.start && today <= timelineRange.end) {
                         const position = calculatePosition(today, today);
                         return (
-                          <div
+                          <motion.div
                             className="absolute top-0 bottom-0 w-0.5 bg-accent-500 pointer-events-none z-20"
-                            style={{left: position.left}}
+                            animate={{left: position.left}}
+                            initial={false}
                           >
                             <div
                               className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-accent-500 rounded-full"/>
-                          </div>
+                          </motion.div>
                         );
                       }
                       return null;

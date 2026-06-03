@@ -9,7 +9,7 @@ import {ScheduleEntry} from '@/lib/types/hrms/shift';
 import {ArrowLeftRight, ChevronLeft, ChevronRight, Clock, Moon, Sun,} from 'lucide-react';
 import {motion} from 'framer-motion';
 import {useRouter} from 'next/navigation';
-import {CATEGORICAL_UNSET} from '@/lib/utils/categoricalPalette';
+import {categoricalBgClass} from '@/lib/utils/categoricalPalette';
 import {formatMonthYear, formatWeekdayDate} from '@/lib/utils/format/date';
 
 function getMonthDates(year: number, month: number) {
@@ -182,8 +182,7 @@ export default function MySchedulePage() {
                         </p>
                         {entry ? (
                           <div
-                            className="rounded px-1 py-0.5 text-white text-xs font-medium"
-                            style={{backgroundColor: entry.colorCode || CATEGORICAL_UNSET}}
+                            className={`rounded px-1 py-0.5 text-white text-xs font-medium ${categoricalBgClass(entry.colorCode)}`}
                           >
                             <div>{entry.shiftCode}</div>
                             <div className="opacity-80 text-2xs">
@@ -228,8 +227,7 @@ export default function MySchedulePage() {
                         }`}
                       >
                         <div
-                          className="w-1.5 h-10 rounded-full flex-shrink-0"
-                          style={{backgroundColor: entry.colorCode || CATEGORICAL_UNSET}}
+                          className={`w-1.5 h-10 rounded-full flex-shrink-0 ${categoricalBgClass(entry.colorCode)}`}
                         />
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium text-surface-900 dark:text-white">

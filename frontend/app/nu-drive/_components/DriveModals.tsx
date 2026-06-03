@@ -362,9 +362,8 @@ export const FilePreviewModal = React.memo(function FilePreviewModal({
         ) : (
           <iframe
             src={getPreviewUrl(file) || `https://drive.google.com/file/d/${file.id}/preview`}
-            className="w-full h-full"
+            className="w-full h-full border-0"
             allow="autoplay"
-            style={{border: 'none'}}
           />
         )}
       </div>

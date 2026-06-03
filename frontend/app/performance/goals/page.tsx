@@ -47,6 +47,16 @@ const goalFormSchema = z.object({
 
 type GoalFormData = z.infer<typeof goalFormSchema>;
 
+function getProgressWidthClass(progress: number): string {
+  if (progress <= 0) return 'w-0';
+  if (progress < 10) return 'w-[10%]';
+  if (progress < 25) return 'w-[25%]';
+  if (progress < 40) return 'w-[40%]';
+  if (progress < 60) return 'w-[60%]';
+  if (progress < 80) return 'w-[80%]';
+  return 'w-full';
+}
+
 export default function GoalsPage() {
   const {user} = useAuth();
   const goalsQuery = useEmployeeGoals(user?.employeeId || '');
@@ -341,8 +351,7 @@ export default function GoalsPage() {
                     </div>
                     <div className="w-full h-2 bg-[var(--border-main)] rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-accent-500 transition-all duration-300"
-                        style={{width: progress + '%'}}
+                        className={`h-full bg-accent-500 transition-all duration-300 ${getProgressWidthClass(progress)}`}
                       />
                     </div>
                     <div className="flex justify-between text-xs text-[var(--text-secondary)] mt-1">

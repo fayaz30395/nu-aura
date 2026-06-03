@@ -9,6 +9,7 @@ import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {useActiveLeaveTypes, useEmployeeLeaveRequests, useLeaveRequestsByStatus} from '@/lib/hooks/queries/useLeaves';
 import {LeaveRequest} from '@/lib/types/hrms/leave';
 import {Stat} from '@/components/ui/Stat';
+import {categoricalBgClass, categoricalBorderLeftClass, categoricalSoftBgClass} from '@/lib/utils/categoricalPalette';
 
 interface Holiday {
   id: string;
@@ -199,10 +200,7 @@ export default function LeaveCalendarPage() {
             <div className="text-body-secondary font-medium">Legend:</div>
             {leaveTypes.map(type => (
               <div key={type.id} className="flex items-center gap-2">
-                <div
-                  className="w-3 h-3 rounded-full"
-                  style={{backgroundColor: type.colorCode}}
-                />
+                <div className={`w-3 h-3 rounded-full ${categoricalBgClass(type.colorCode)}`}/>
                 <span className="text-sm text-[var(--text-primary)]">{type.leaveName}</span>
               </div>
             ))}
@@ -282,11 +280,7 @@ export default function LeaveCalendarPage() {
                       return (
                         <div
                           key={idx}
-                          className="text-xs p-1 rounded mb-1 truncate cursor-pointer hover:opacity-80"
-                          style={{
-                            backgroundColor: leaveType?.colorCode + '20',
-                            borderLeft: `3px solid ${leaveType?.colorCode}`,
-                          }}
+                          className={`text-xs p-1 rounded mb-1 truncate cursor-pointer hover:opacity-80 border-l-4 ${categoricalSoftBgClass(leaveType?.colorCode)} ${categoricalBorderLeftClass(leaveType?.colorCode)}`}
                           title={`${leaveType?.leaveName} - ${leave.reason || 'No reason'}`}
                         >
                           {viewMode === 'team' ? (

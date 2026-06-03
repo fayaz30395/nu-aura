@@ -22,6 +22,17 @@ interface DriveToolbarProps {
   onFileSelect: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
+function getUsageWidthClass(used: number, limit: number): string {
+  const percent = limit > 0 ? (used / limit) * 100 : 0;
+  if (percent <= 0) return 'w-0';
+  if (percent < 10) return 'w-[10%]';
+  if (percent < 25) return 'w-[25%]';
+  if (percent < 40) return 'w-[40%]';
+  if (percent < 60) return 'w-[60%]';
+  if (percent < 80) return 'w-[80%]';
+  return 'w-full';
+}
+
 export function DriveToolbar({
                                searchQuery,
                                viewMode,
@@ -49,8 +60,7 @@ export function DriveToolbar({
             </div>
             <div className="w-full h-2 bg-[var(--bg-secondary)] rounded-full overflow-hidden">
               <div
-                className="h-full bg-gradient-to-r from-accent-500 to-success-500 rounded-full transition-all duration-500"
-                style={{width: `${Math.min((driveStats.used / driveStats.limit) * 100, 100)}%`}}
+                className={`h-full bg-gradient-to-r from-accent-500 to-success-500 rounded-full transition-all duration-500 ${getUsageWidthClass(driveStats.used, driveStats.limit)}`}
               />
             </div>
           </CardContent>

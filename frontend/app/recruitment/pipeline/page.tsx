@@ -935,12 +935,11 @@ export default function ApplicantPipelinePage() {
                             <div
                               ref={provided.innerRef}
                               {...provided.droppableProps}
-                              className={`flex-shrink-0 w-60 flex flex-col rounded-xl border border-[var(--border-main)] border-t-2 ${colors.col} bg-[var(--bg-card)] overflow-hidden transition-shadow ${
+                              className={`flex-shrink-0 w-60 flex flex-col rounded-xl border border-[var(--border-main)] border-t-2 ${colors.col} bg-[var(--bg-card)] overflow-hidden transition-shadow max-h-[calc(100dvh-380px)] ${
                                 snapshot.isDraggingOver
                                   ? 'shadow-[var(--shadow-card-hover)] border-accent-300'
                                   : ''
                               }`}
-                              style={{maxHeight: 'calc(100dvh - 380px)'}}
                             >
                               {/* Column Header */}
                               <div className={`px-4 py-2.5 ${colors.header} row-between`}>

@@ -20,6 +20,13 @@ import type {SidebarItem, SidebarSection} from '@/components/ui';
 import type {AppCode} from '@/lib/config/apps';
 import {getShellProduct, SHELL_PRODUCT_HEADER_ICON} from './shellConfig';
 
+const PRODUCT_HEADER_BG_CLASS: Record<AppCode, string> = {
+  HRMS: 'bg-[var(--prod-hrms)]',
+  HIRE: 'bg-[var(--prod-hire)]',
+  GROW: 'bg-[var(--prod-grow)]',
+  FLUENCE: 'bg-[var(--prod-fluence)]',
+};
+
 export interface NavPanelProps {
   /** Active sub-app — drives the product header + accent. */
   activeApp: AppCode;
@@ -142,8 +149,7 @@ export function NavPanel({
       <div className="px-[18px] pb-[14px] pt-4">
         <div className="flex items-center gap-2.5">
           <div
-            className="grid h-[30px] w-[30px] place-items-center rounded-[9px] text-white [&_svg]:h-[17px] [&_svg]:w-[17px]"
-            style={{background: product.color}}
+            className={`grid h-[30px] w-[30px] place-items-center rounded-[9px] text-white [&_svg]:h-[17px] [&_svg]:w-[17px] ${PRODUCT_HEADER_BG_CLASS[activeApp]}`}
           >
             {SHELL_PRODUCT_HEADER_ICON[activeApp]}
           </div>
@@ -200,7 +206,7 @@ export function NavPanel({
 
       {/* Upsell footer */}
       <div className="border-t border-white/[0.05] px-3.5 py-2.5">
-        <div className="rounded-[11px] border border-white/[0.07] bg-[linear-gradient(150deg,rgba(104,132,220,0.16),rgba(139,92,246,0.10))] p-3">
+        <div className="rounded-[11px] border border-white/[0.07] bg-[linear-gradient(150deg,rgba(104,132,220,0.16),rgba(139,92,246,0.10))] p-4">
           <div className="flex items-center gap-1.5 text-[12.5px] font-bold text-white">
             <Sparkles className="h-3.5 w-3.5 text-[var(--accent-300)]"/>
             Unlock NU-Grow

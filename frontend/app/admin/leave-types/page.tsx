@@ -20,7 +20,7 @@ import {
   useLeaveTypes,
   useUpdateLeaveType,
 } from '@/lib/hooks/queries/useLeaves';
-import {CATEGORICAL_DEFAULT} from '@/lib/utils/categoricalPalette';
+import {categoricalBgClass, CATEGORICAL_DEFAULT} from '@/lib/utils/categoricalPalette';
 
 const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
 
@@ -340,10 +340,7 @@ export default function LeaveTypesManagementPage() {
                     className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
-                      <div
-                        className="h-8 w-8 rounded-full mr-4"
-                        style={{backgroundColor: leaveType.colorCode || CATEGORICAL_DEFAULT}}
-                      />
+                      <div className={`h-8 w-8 rounded-full mr-4 ${categoricalBgClass(leaveType.colorCode)}`}/>
                       <div>
                         <div className="text-sm font-medium text-[var(--text-primary)]">{leaveType.leaveName}</div>
                         <div className="text-body-muted">{leaveType.leaveCode}</div>

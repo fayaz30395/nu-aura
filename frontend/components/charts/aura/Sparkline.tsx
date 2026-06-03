@@ -67,11 +67,11 @@ export function Sparkline({
   return (
     <svg
       viewBox={`0 0 ${VIEW_W} ${height}`}
+      height={height}
       preserveAspectRatio="none"
       role="img"
       aria-label={ariaLabel ?? 'Trend sparkline'}
-      className={className}
-      style={{width: '100%', height, display: 'block'}}
+      className={className ? `block w-full ${className}` : 'block w-full'}
     >
       <defs>
         <linearGradient id={`spark-${gid}`} x1="0" y1="0" x2="0" y2="1">

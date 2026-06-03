@@ -18,6 +18,38 @@ import {cn, getInitials} from '@/lib/utils';
 import type {AppCode} from '@/lib/config/apps';
 import {SHELL_PRODUCTS} from './shellConfig';
 
+const PRODUCT_ACCENT_CLASSES: Record<AppCode, {
+  ring: string;
+  indicator: string;
+  chip: string;
+  glow: string;
+}> = {
+  HRMS: {
+    ring: 'focus-visible:ring-[var(--prod-hrms)]',
+    indicator: 'bg-[var(--prod-hrms)]',
+    chip: 'bg-[color-mix(in_srgb,var(--prod-hrms)_24%,transparent)] shadow-[inset_0_0_0_1px_color-mix(in_srgb,var(--prod-hrms)_45%,transparent)]',
+    glow: 'shadow-[0_0_12px_var(--prod-hrms)]',
+  },
+  HIRE: {
+    ring: 'focus-visible:ring-[var(--prod-hire)]',
+    indicator: 'bg-[var(--prod-hire)]',
+    chip: 'bg-[color-mix(in_srgb,var(--prod-hire)_24%,transparent)] shadow-[inset_0_0_0_1px_color-mix(in_srgb,var(--prod-hire)_45%,transparent)]',
+    glow: 'shadow-[0_0_12px_var(--prod-hire)]',
+  },
+  GROW: {
+    ring: 'focus-visible:ring-[var(--prod-grow)]',
+    indicator: 'bg-[var(--prod-grow)]',
+    chip: 'bg-[color-mix(in_srgb,var(--prod-grow)_24%,transparent)] shadow-[inset_0_0_0_1px_color-mix(in_srgb,var(--prod-grow)_45%,transparent)]',
+    glow: 'shadow-[0_0_12px_var(--prod-grow)]',
+  },
+  FLUENCE: {
+    ring: 'focus-visible:ring-[var(--prod-fluence)]',
+    indicator: 'bg-[var(--prod-fluence)]',
+    chip: 'bg-[color-mix(in_srgb,var(--prod-fluence)_24%,transparent)] shadow-[inset_0_0_0_1px_color-mix(in_srgb,var(--prod-fluence)_45%,transparent)]',
+    glow: 'shadow-[0_0_12px_var(--prod-fluence)]',
+  },
+};
+
 export interface ProductRailProps {
   /** Currently active sub-app (derived from the route). */
   activeApp: AppCode;
@@ -64,6 +96,7 @@ export function ProductRail({
       {SHELL_PRODUCTS.map((p) => {
         const isActive = activeApp === p.code;
         const disabled = canAccess ? !canAccess(p.code) : false;
+        const accent = PRODUCT_ACCENT_CLASSES[p.code];
         return (
           <button
             key={p.code}
@@ -73,11 +106,11 @@ export function ProductRail({
             aria-current={isActive ? 'true' : undefined}
             disabled={disabled}
             onClick={() => onSelectProduct(p.code)}
-            style={{['--prod' as string]: p.color}}
             className={cn(
               'group relative grid h-[46px] w-[46px] place-items-center rounded-[13px]',
               'transform-gpu transition-[color,background-color,transform] duration-[var(--t-base)] ease-[var(--ease)]',
-              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--prod)_60%,transparent)]',
+              'focus-visible:outline-none focus-visible:ring-2',
+              accent.ring,
               isActive ? 'text-white' : 'text-[var(--on-rail-dim)]',
               disabled
                 ? 'cursor-not-allowed opacity-40'
@@ -88,10 +121,10 @@ export function ProductRail({
             <span
               aria-hidden
               className={cn(
-                'pointer-events-none absolute -left-[14px] top-1/2 h-[22px] w-1 -translate-y-1/2 rounded-r-[4px] bg-[var(--prod)]',
+                `pointer-events-none absolute -left-[14px] top-1/2 h-[22px] w-1 -translate-y-1/2 rounded-r-[4px] ${accent.indicator}`,
                 'transform-gpu origin-center transition-[transform,opacity] duration-[var(--t-base)] ease-[var(--ease)]',
                 isActive
-                  ? 'scale-y-100 opacity-100 shadow-[0_0_12px_var(--prod)]'
+                  ? `scale-y-100 opacity-100 ${accent.glow}`
                   : 'scale-y-0 opacity-0'
               )}
             />
@@ -101,7 +134,7 @@ export function ProductRail({
               className={cn(
                 'absolute inset-0 rounded-[13px] transition-[background-color,box-shadow] duration-[var(--t-base)] ease-[var(--ease)]',
                 isActive
-                  ? 'bg-[color-mix(in_srgb,var(--prod)_24%,transparent)] shadow-[inset_0_0_0_1px_color-mix(in_srgb,var(--prod)_45%,transparent)]'
+                  ? accent.chip
                   : ''
               )}
             />

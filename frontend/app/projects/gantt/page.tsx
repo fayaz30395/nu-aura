@@ -2,6 +2,7 @@
 
 import React, {useEffect, useMemo, useState} from 'react';
 import {useRouter} from 'next/navigation';
+import {motion} from 'framer-motion';
 import {AppLayout} from '@/components/layout';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {
@@ -29,8 +30,19 @@ import {
   isTaskAtRisk,
   isTaskDelayed,
 } from '@/lib/types/hrms/project-calendar';
+import {categoricalBgClass} from '@/lib/utils/categoricalPalette';
 
 type ZoomLevel = 'day' | 'week' | 'month' | 'quarter';
+
+function getProgressWidthClass(progress: number): string {
+  if (progress <= 0) return 'w-0';
+  if (progress < 10) return 'w-[10%]';
+  if (progress < 25) return 'w-[25%]';
+  if (progress < 40) return 'w-[40%]';
+  if (progress < 60) return 'w-[60%]';
+  if (progress < 80) return 'w-[80%]';
+  return 'w-full';
+}
 
 // Helper function - defined before component to avoid hoisting issues
 const getWeekNumber = (date: Date): number => {
@@ -384,8 +396,7 @@ export default function GanttChartPage() {
                   }`}>
                     <div className="flex items-center gap-2">
                       <div
-                        className="w-3 h-3 rounded-full"
-                        style={{backgroundColor: task.color}}
+                        className={`w-3 h-3 rounded-full ${categoricalBgClass(task.color)}`}
                       />
                       <span className="truncate">{task.name}</span>
                     </div>
@@ -399,22 +410,19 @@ export default function GanttChartPage() {
                   {/* Timeline */}
                   <div className="flex-1 relative h-16">
                     {/* Task Bar */}
-                    <div
-                      className="absolute top-3 h-10 rounded-md flex items-center justify-center text-xs text-white font-medium"
-                      style={{
-                        ...getTaskPosition(task),
-                        backgroundColor: task.color,
-                      }}
+                    <motion.div
+                      className={`absolute top-3 h-10 rounded-md flex items-center justify-center text-xs text-white font-medium ${categoricalBgClass(task.color)}`}
+                      animate={getTaskPosition(task)}
+                      initial={false}
                     >
                       {/* Progress Bar */}
                       <div
-                        className="absolute left-0 top-0 bottom-0 bg-black/20 rounded-l-md"
-                        style={{width: `${task.progress}%`}}
+                        className={`absolute left-0 top-0 bottom-0 bg-black/20 rounded-l-md ${getProgressWidthClass(task.progress)}`}
                       />
                       <span className="relative z-10 px-2 truncate">
                       {task.type === 'project' ? task.name : `${task.progress}%`}
                     </span>
-                    </div>
+                    </motion.div>
 
                     {/* Delayed/At Risk Indicators */}
                     {isTaskDelayed(task) && (

@@ -75,6 +75,8 @@ export function Donut({
     <svg
       id={`aura-donut-${gid}`}
       viewBox={`0 0 ${size} ${size}`}
+      width={size}
+      height={size}
       role="img"
       aria-label={
         ariaLabel ??
@@ -83,7 +85,6 @@ export function Donut({
           : 'Donut chart')
       }
       className={className}
-      style={{width: size, height: size}}
     >
       {!prefersReduced && (
         <style>{`
