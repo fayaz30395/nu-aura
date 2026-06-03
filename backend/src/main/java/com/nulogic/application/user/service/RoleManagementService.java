@@ -155,6 +155,8 @@ public class RoleManagementService {
 
         // Assign permissions if provided
         if (request.getPermissionCodes() != null && !request.getPermissionCodes().isEmpty()) {
+            // H-2: block creating a role that grants system-level permissions unless caller is SuperAdmin
+            validateNoPrivilegedPermissionGrant(request.getPermissionCodes());
             List<Permission> permissions = permissionRepository.findByCodeIn(request.getPermissionCodes());
 
             // Validate all permission codes exist
