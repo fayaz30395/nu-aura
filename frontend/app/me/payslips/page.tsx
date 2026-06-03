@@ -111,41 +111,35 @@ export default function MyPayslipsPage() {
 
   if (isLoading) {
     return (
-      <AppLayout activeMenuItem="payslips">
-        <div className="space-y-6">
+      <AppLayout activeMenuItem="payslips" breadcrumbs={[{label: 'My Payslips', href: '/me/payslips'}]}>
+        <PageTransition className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             {Array.from({length: 3}).map((_, i) => (
               <SkeletonStatCard key={i}/>
             ))}
           </div>
           <SkeletonTable rows={6} columns={5}/>
-        </div>
+        </PageTransition>
       </AppLayout>
     );
   }
 
   if (!user?.employeeId && !isAdmin) {
     return (
-      <AppLayout activeMenuItem="payslips">
-        <div className="text-center py-12">
-          <DollarSign className="h-16 w-16 mx-auto text-[var(--text-muted)] mb-4"/>
-          <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">No Employee Profile Linked</h2>
-          <p className="text-[var(--text-muted)] max-w-md mx-auto">
-            Payslip access requires an employee profile. Use the admin panels to manage payroll.
-          </p>
-          <button
-            onClick={() => router.push('/payroll')}
-            className="mt-6 px-4 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-800 transition-colors"
-          >
-            Go to Payroll Management
-          </button>
-        </div>
+      <AppLayout activeMenuItem="payslips" breadcrumbs={[{label: 'My Payslips', href: '/me/payslips'}]}>
+        <PageTransition>
+          <EmptyState
+            icon={DollarSign}
+            title="No Employee Profile Linked"
+            description="Payslip access requires an employee profile. Use the admin panels to manage payroll."
+          />
+        </PageTransition>
       </AppLayout>
     );
   }
 
   return (
-    <AppLayout activeMenuItem="payslips">
+    <AppLayout activeMenuItem="payslips" breadcrumbs={[{label: 'My Payslips', href: '/me/payslips'}]}>
       <PageTransition className="space-y-6">
         {/* Header */}
         <Reveal className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">

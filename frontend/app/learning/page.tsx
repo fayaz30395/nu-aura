@@ -38,10 +38,6 @@ import {formatDate} from '@/lib/utils/format/date';
 
 // Motion on this page consolidates onto the shared foundation tokens
 // (lib/animation) so it is one system with the rest of Studio Slate v2.
-// Semantic / interactive elements (header, sections with aria-label, the
-// aria-live aside, and tiles wrapping <Link>) keep their motion.{element}
-// wrapper but are retimed to these tokens rather than swapped for the
-// Reveal/Stagger primitives, which render a plain div and cannot carry ARIA.
 const EASE = MOTION_EASE.outExpo;
 const RISE = MOTION_RISE_DISTANCE;
 
@@ -170,44 +166,42 @@ function StatsRow({totalEnrollments, averageProgress, certificatesEarned, comple
   ];
 
   return (
-    <motion.section
-      initial="hidden"
-      animate="visible"
-      variants={pick(containerVariants)}
+    <Stagger
+      variants={pick({visible: {transition: {staggerChildren: MOTION_STAGGER, delayChildren: 0.08}}})}
       aria-label="Learning at a glance"
-      className="grid grid-cols-2 sm:grid-cols-4 border-y border-[var(--border-subtle)] divide-x divide-[var(--border-subtle)]"
+      className="grid grid-cols-2 sm:grid-cols-4 border-y border-[var(--border)] divide-x divide-[var(--border-soft)]"
     >
       {items.map((item) => (
-        <motion.div
+        <StaggerItem
           key={item.label}
-          variants={itemVariants}
+          variants={pick({hidden: {opacity: 0, y: RISE}, visible: {opacity: 1, y: 0, transition: {duration: MOTION_DURATION.base, ease: EASE}}})}
           className="px-5 py-6 sm:px-7 sm:py-8 first:pl-0 last:pr-0"
         >
-          <div className="flex items-center gap-2 text-[var(--text-muted)]">
+          <div className="flex items-center gap-2 text-[var(--text-3)]">
             <item.icon className="h-3.5 w-3.5" aria-hidden="true" />
-            <span className="text-2xs font-medium uppercase tracking-wider">{item.label}</span>
+            <span className="text-aura-micro">{item.label}</span>
           </div>
           <p
-            className={`mt-3 font-mono text-3xl sm:text-4xl tabular-nums tracking-tight ${
-              item.tone === 'success' ? 'text-success-700 dark:text-success-300'
-                : 'text-[var(--text-heading)]'
+            className={`mt-3 num text-aura-stat ${
+              item.tone === 'success' ? 'text-[var(--ok-fg)]'
+                : 'text-[var(--text-1)]'
             }`}
           >
             {item.value}
           </p>
-        </motion.div>
+        </StaggerItem>
       ))}
-    </motion.section>
+    </Stagger>
   );
 }
 
 function StatsSkeleton() {
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-4 border-y border-[var(--border-subtle)] divide-x divide-[var(--border-subtle)]">
+    <div className="grid grid-cols-2 sm:grid-cols-4 border-y border-[var(--border)] divide-x divide-[var(--border-soft)]">
       {Array.from({length: 4}).map((_, i) => (
         <div key={i} className="px-5 py-6 sm:px-7 sm:py-8 first:pl-0 last:pr-0">
-          <Skeleton className="h-3 w-24 rounded" />
-          <Skeleton className="mt-3 h-9 w-20 rounded" />
+          <Skeleton className="h-3 w-24 rounded-aura-xs" />
+          <Skeleton className="mt-3 h-9 w-20 rounded-aura-xs" />
         </div>
       ))}
     </div>

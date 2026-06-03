@@ -35,11 +35,11 @@ export default function ApprovalsRedirectPage() {
           </div>
           <Link
             href="/approvals/inbox"
-            className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-accent-700 hover:text-accent-800 transition-colors"
+            className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-accent-700 hover:text-accent-800 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 rounded-aura-sm"
           >
-            <Loader2 className="h-4 w-4 animate-spin"/>
+            <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true"/>
             Continue to inbox
-            <ArrowRight className="h-4 w-4"/>
+            <ArrowRight className="h-4 w-4" aria-hidden="true"/>
           </Link>
         </CardContent>
       </Card>

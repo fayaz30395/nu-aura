@@ -2,6 +2,7 @@
 
 import React, {memo} from 'react';
 import {useRouter} from 'next/navigation';
+import {motion} from 'framer-motion';
 import {Candidate} from '@/lib/types/hire/recruitment';
 import {CandidateMatchResponse} from '@/lib/types/hire/ai-recruitment';
 import {
@@ -19,6 +20,7 @@ import {
   TrendingUp,
   XCircle,
 } from 'lucide-react';
+import {StatusBadge} from '@/components/ui/StatusBadge';
 import {getMatchScoreColor, getStageColor, getStatusColor} from './utils';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
@@ -63,41 +65,46 @@ export const CandidateTableRow = memo(function CandidateTableRow({
   const router = useRouter();
 
   return (
-    <tr
-      className="hover-lift h-11 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors cursor-pointer"
+    <motion.tr
+      whileHover={{backgroundColor: 'var(--surface-hover)'}}
+      transition={{duration: 0.16, ease: [0.16, 1, 0.3, 1]}}
+      className="group h-14 cursor-pointer border-b border-[var(--border-soft)] transition-colors"
       onClick={() => router.push(`/recruitment/candidates/${candidate.id}`)}
     >
       {/* Candidate Info */}
       <td className="px-6 py-4">
-        <div className="flex items-center">
-          <div
-            className="flex-shrink-0 h-10 w-10 bg-accent-100 dark:bg-accent-900/30 rounded-xl flex items-center justify-center">
-            <span className="text-sm font-medium text-accent-700 dark:text-accent-300">
-              {candidate.firstName.charAt(0)}{candidate.lastName.charAt(0)}
+        <div className="flex items-center gap-3">
+          <motion.div
+            className="h-10 w-10 shrink-0 rounded-lg bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center"
+          >
+            <span className="text-sm font-semibold text-accent-700 dark:text-accent-300">
+              {candidate.firstName.charAt(0).toUpperCase()}{candidate.lastName.charAt(0).toUpperCase()}
             </span>
-          </div>
-          <div className="ml-4">
-            <div className="text-sm font-medium text-[var(--text-primary)]">{candidate.fullName}</div>
-            <div className="text-body-muted">{candidate.email}</div>
+          </motion.div>
+          <div className="min-w-0">
+            <div className="text-sm font-medium text-[var(--text-1)]">{candidate.fullName}</div>
+            <div className="text-xs text-[var(--text-3)] truncate">{candidate.email}</div>
           </div>
         </div>
       </td>
 
       {/* Job */}
       <td className="px-6 py-4">
-        <div className="text-sm text-[var(--text-primary)]">{candidate.jobTitle || '-'}</div>
-        <div className="text-caption">{candidate.candidateCode}</div>
+        <div className="text-sm font-medium text-[var(--text-1)]">{candidate.jobTitle || '—'}</div>
+        <div className="text-xs text-[var(--text-3)] font-mono">{candidate.candidateCode || '—'}</div>
       </td>
 
       {/* Experience */}
-      <td className="px-6 py-4 text-body-secondary">
-        {candidate.totalExperience ? `${candidate.totalExperience} years` : '-'}
+      <td className="px-6 py-4">
+        <div className="text-sm text-[var(--text-2)]">
+          {candidate.totalExperience ? <span className="font-mono tabular-nums">{candidate.totalExperience}</span> : '—'}{candidate.totalExperience && ' yrs'}
+        </div>
       </td>
 
       {/* Stage */}
       <td className="px-6 py-4 text-center">
         {candidate.currentStage && (
-          <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${getStageColor(candidate.currentStage)}`}>
+          <span className={`inline-block px-2.5 py-1 text-xs font-semibold rounded-full ${getStageColor(candidate.currentStage)}`}>
             {candidate.currentStage.replace(/_/g, ' ')}
           </span>
         )}
@@ -105,24 +112,29 @@ export const CandidateTableRow = memo(function CandidateTableRow({
 
       {/* Status */}
       <td className="px-6 py-4 text-center">
-        <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${getStatusColor(candidate.status)}`}>
-          {candidate.status?.replace(/_/g, ' ') ?? '-'}
-        </span>
+        <StatusBadge value={candidate.status || ''} />
       </td>
 
       {/* Source */}
-      <td className="px-6 py-4 text-body-secondary">
-        {candidate.source?.replace(/_/g, ' ') || '-'}
+      <td className="px-6 py-4">
+        <span className="text-sm text-[var(--text-2)]">
+          {candidate.source?.replace(/_/g, ' ') || '—'}
+        </span>
       </td>
 
       {/* Actions */}
       <td className="px-6 py-4 text-right" onClick={(e) => e.stopPropagation()}>
-        <div className="flex items-center justify-end gap-1">
+        <motion.div
+          className="flex items-center justify-end gap-2 opacity-0 transition-opacity group-hover:opacity-100"
+          initial={{opacity: 0}}
+          animate={{opacity: 1}}
+          transition={{duration: 0.16}}
+        >
           {/* Primary: View */}
           <button
             onClick={() => onView(candidate)}
             aria-label={`View ${candidate.fullName}`}
-            className="p-1.5 text-[var(--text-muted)] hover:text-accent-700 dark:hover:text-accent-400 transition-colors rounded-md cursor-pointer"
+            className="p-1.5 text-[var(--text-3)] hover:text-[var(--accent)] hover:bg-[var(--accent-soft)] transition-all duration-150 rounded-md cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-1"
             title="View"
           >
             <Eye className="h-4 w-4"/>
@@ -132,7 +144,7 @@ export const CandidateTableRow = memo(function CandidateTableRow({
           <button
             onClick={() => onEdit(candidate)}
             aria-label={`Edit ${candidate.fullName}`}
-            className="p-1.5 text-[var(--text-muted)] hover:text-accent-700 dark:hover:text-accent-400 transition-colors rounded-md cursor-pointer"
+            className="p-1.5 text-[var(--text-3)] hover:text-[var(--accent)] hover:bg-[var(--accent-soft)] transition-all duration-150 rounded-md cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-1"
             title="Edit"
           >
             <Edit2 className="h-4 w-4"/>
@@ -140,17 +152,16 @@ export const CandidateTableRow = memo(function CandidateTableRow({
 
           {/* Match score badge (inline, no button needed) */}
           {matchScore && (
-            <div
-              className={`px-2 py-0.5 text-xs font-medium rounded-full ${getMatchScoreColor(matchScore.overallScore)}`}>
+            <div className={`px-2.5 py-1 text-xs font-semibold rounded-full tabular-nums ${getMatchScoreColor(matchScore.overallScore)}`}>
               {Math.round(matchScore.overallScore)}%
             </div>
           )}
 
           {/* More actions dropdown */}
-          <div className="relative group">
+          <div className="relative group/actions">
             <button
               aria-label={`More actions for ${candidate.fullName}`}
-              className="p-1.5 text-[var(--text-muted)] hover:text-accent-700 dark:hover:text-accent-400 transition-colors rounded-md cursor-pointer"
+              className="p-1.5 text-[var(--text-3)] hover:text-[var(--accent)] hover:bg-[var(--accent-soft)] transition-all duration-150 rounded-md cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-1"
             >
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <circle cx="12" cy="5" r="1"/>
@@ -158,112 +169,110 @@ export const CandidateTableRow = memo(function CandidateTableRow({
                 <circle cx="12" cy="19" r="1"/>
               </svg>
             </button>
-            <div
-              className="absolute right-0 top-full mt-1 w-48 bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg shadow-[var(--shadow-dropdown)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-20">
-              {/* AI Actions */}
-              <div className="px-2 py-1 text-2xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">AI
-                Actions
-              </div>
+            <motion.div
+              initial={{opacity: 0, y: -2}}
+              whileHover={{opacity: 1, y: 0}}
+              transition={{duration: 0.12}}
+              className="absolute right-0 top-full mt-2 w-56 bg-[var(--surface)] border border-[var(--border)] rounded-lg shadow-[var(--sh-pop)] opacity-0 invisible group-hover/actions:opacity-100 group-hover/actions:visible transition-all z-50"
+            >
+              <div className="px-3 py-2 text-2xs font-bold text-[var(--text-3)] uppercase tracking-[0.08em]">AI Actions</div>
               <button
                 onClick={() => onCalculateMatch(candidate)}
                 disabled={aiLoadingState === `match-${candidate.id}`}
-                className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] flex items-center gap-2 disabled:opacity-50 cursor-pointer"
+                className="w-full px-3 py-2 text-left text-sm text-[var(--text-2)] hover:bg-[var(--surface-hover)] flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] inset-ring"
               >
                 {aiLoadingState === `match-${candidate.id}` ? <Loader2 className="h-3.5 w-3.5 animate-spin"/> :
                   <Brain className="h-3.5 w-3.5"/>}
-                Match Score
+                <span>Match Score</span>
               </button>
               <button
                 onClick={() => onScreeningSummary(candidate)}
                 disabled={aiLoadingState === `screening-${candidate.id}`}
-                className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] flex items-center gap-2 disabled:opacity-50 cursor-pointer"
+                className="w-full px-3 py-2 text-left text-sm text-[var(--text-2)] hover:bg-[var(--surface-hover)] flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] inset-ring"
               >
                 {aiLoadingState === `screening-${candidate.id}` ? <Loader2 className="h-3.5 w-3.5 animate-spin"/> :
                   <FileText className="h-3.5 w-3.5"/>}
-                Screening Summary
+                <span>Screening Summary</span>
               </button>
               <button
                 onClick={() => onSynthesizeFeedback(candidate)}
                 disabled={aiLoadingState === `feedback-${candidate.id}`}
-                className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] flex items-center gap-2 disabled:opacity-50 cursor-pointer"
+                className="w-full px-3 py-2 text-left text-sm text-[var(--text-2)] hover:bg-[var(--surface-hover)] flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] inset-ring"
               >
                 {aiLoadingState === `feedback-${candidate.id}` ? <Loader2 className="h-3.5 w-3.5 animate-spin"/> :
                   <MessageSquare className="h-3.5 w-3.5"/>}
-                Synthesize Feedback
+                <span>Synthesize Feedback</span>
               </button>
 
-              {/* Interview */}
-              <div className="border-t border-[var(--border-subtle)] my-1"/>
+              <div className="my-1 border-t border-[var(--border-soft)]"/>
               <button
                 onClick={() => onViewScorecard(candidate)}
-                className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] flex items-center gap-2 cursor-pointer"
+                className="w-full px-3 py-2 text-left text-sm text-[var(--text-2)] hover:bg-[var(--surface-hover)] flex items-center gap-2 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] inset-ring"
               >
                 <TrendingUp className="h-3.5 w-3.5"/>
-                Interview Scorecards
+                <span>Interview Scorecards</span>
               </button>
               <button
                 onClick={() => router.push(`/recruitment/interviews?candidateId=${candidate.id}`)}
-                className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] flex items-center gap-2 cursor-pointer"
+                className="w-full px-3 py-2 text-left text-sm text-[var(--text-2)] hover:bg-[var(--surface-hover)] flex items-center gap-2 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] inset-ring"
               >
                 <Calendar className="h-3.5 w-3.5"/>
-                Schedule Interview
+                <span>Schedule Interview</span>
               </button>
 
-              {/* Offer actions (conditional) */}
               {candidate.status === 'SELECTED' && (
                 <>
-                  <div className="border-t border-[var(--border-subtle)] my-1"/>
+                  <div className="my-1 border-t border-[var(--border-soft)]"/>
                   <button
                     onClick={() => onOffer(candidate)}
-                    className="w-full px-4 py-2 text-left text-sm text-success-700 dark:text-success-400 hover:bg-[var(--bg-secondary)] flex items-center gap-2 cursor-pointer"
+                    className="w-full px-3 py-2 text-left text-sm text-[var(--ok-fg)] hover:bg-[var(--ok-bg)] flex items-center gap-2 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] inset-ring"
                   >
                     <Send className="h-3.5 w-3.5"/>
-                    Generate Offer
+                    <span>Generate Offer</span>
                   </button>
                 </>
               )}
               {candidate.status === 'OFFER_EXTENDED' && (
                 <>
-                  <div className="border-t border-[var(--border-subtle)] my-1"/>
+                  <div className="my-1 border-t border-[var(--border-soft)]"/>
                   <button
                     onClick={() => onESign(candidate)}
-                    className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] flex items-center gap-2 cursor-pointer"
+                    className="w-full px-3 py-2 text-left text-sm text-[var(--text-2)] hover:bg-[var(--surface-hover)] flex items-center gap-2 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] inset-ring"
                   >
                     <FileSignature className="h-3.5 w-3.5"/>
-                    Send for E-Sign
+                    <span>Send for E-Sign</span>
                   </button>
                   <button
                     onClick={() => onAccept(candidate)}
-                    className="w-full px-4 py-2 text-left text-sm text-success-700 dark:text-success-400 hover:bg-[var(--bg-secondary)] flex items-center gap-2 cursor-pointer"
+                    className="w-full px-3 py-2 text-left text-sm text-[var(--ok-fg)] hover:bg-[var(--ok-bg)] flex items-center gap-2 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] inset-ring"
                   >
                     <CheckCircle className="h-3.5 w-3.5"/>
-                    Accept Offer
+                    <span>Accept Offer</span>
                   </button>
                   <button
                     onClick={() => onDecline(candidate)}
-                    className="w-full px-4 py-2 text-left text-sm text-danger-700 dark:text-danger-400 hover:bg-[var(--bg-secondary)] flex items-center gap-2 cursor-pointer"
+                    className="w-full px-3 py-2 text-left text-sm text-[var(--err-fg)] hover:bg-[var(--err-bg)] flex items-center gap-2 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] inset-ring"
                   >
                     <XCircle className="h-3.5 w-3.5"/>
-                    Decline Offer
+                    <span>Decline Offer</span>
                   </button>
                 </>
               )}
 
-              {/* Destructive */}
               <PermissionGate permission={Permissions.CANDIDATE_EVALUATE}>
-                <div className="border-t border-[var(--border-subtle)] my-1"/>
+                <div className="my-1 border-t border-[var(--border-soft)]"/>
                 <button
                   onClick={() => onDelete(candidate)}
-                  className="w-full px-4 py-2 text-left text-sm text-danger-700 dark:text-danger-400 hover:bg-danger-50 dark:hover:bg-danger-950/20 flex items-center gap-2 cursor-pointer rounded-b-lg"
+                  className="w-full px-3 py-2 text-left text-sm text-[var(--err-fg)] hover:bg-[var(--err-bg)] flex items-center gap-2 transition-colors cursor-pointer rounded-b-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] inset-ring"
                 >
                   <Trash2 className="h-3.5 w-3.5"/>
-                  Delete
+                  <span>Delete</span>
                 </button>
               </PermissionGate>
-            </div>
+            </motion.div>
           </div>
-        </div>
+        </motion.div>
       </td>
-    </tr>
+    </motion.tr>
   );
 });

@@ -21,7 +21,7 @@ export default function HomePage() {
       <Card className="card-aura fade-slide-up auth-delay-40 float-subtle">
         <CardContent className="py-10">
           <div className="flex items-start gap-4">
-            <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-accent-100 text-accent-700 dark:bg-accent-900/30 dark:text-accent-300">
+            <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-accent-100 text-accent-700 dark:bg-accent-900/30 dark:text-accent-300" aria-hidden="true">
               <Home className="h-5 w-5"/>
             </span>
             <div className="space-y-1">
@@ -33,11 +33,11 @@ export default function HomePage() {
           </div>
           <Link
             href="/auth/login"
-            className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-accent-700 hover:text-accent-800 transition-colors"
+            className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-accent-700 hover:text-accent-800 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 rounded-aura-sm"
           >
-            <Loader2 className="h-4 w-4 animate-spin"/>
+            <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true"/>
             Continue to Sign In
-            <ArrowRight className="h-4 w-4"/>
+            <ArrowRight className="h-4 w-4" aria-hidden="true"/>
           </Link>
         </CardContent>
       </Card>

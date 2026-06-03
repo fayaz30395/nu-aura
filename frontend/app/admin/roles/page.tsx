@@ -19,7 +19,7 @@ import {ScopeSelector} from '@/components/admin/ScopeSelector';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
 import {AdminPageContent} from '@/components/layout';
-import {Reveal} from '@/components/motion';
+import {PageTransition, Reveal} from '@/components/motion';
 import {ConfirmDialog} from '@/components/ui';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {SkeletonTable} from '@/components/ui/Skeleton';
@@ -321,8 +321,9 @@ export default function RolesPage() {
   }
 
   return (
-    <AdminPageContent className="page-shell p-4 md:p-6 lg:p-8">
-      <ConfirmDialog
+    <PageTransition>
+      <AdminPageContent className="page-shell p-4 md:p-6 lg:p-8">
+        <ConfirmDialog
         isOpen={showDeleteConfirm}
         onClose={() => {
           setShowDeleteConfirm(false);
@@ -363,23 +364,23 @@ export default function RolesPage() {
           <table className="table-aura">
             <thead className="skeuo-table-header">
             <tr>
-              <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+              <th className="px-6 py-2 text-left text-aura-micro text-[var(--text-3)] uppercase">
                 Code
               </th>
-              <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+              <th className="px-6 py-2 text-left text-aura-micro text-[var(--text-3)] uppercase">
                 Name
               </th>
-              <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+              <th className="px-6 py-2 text-left text-aura-micro text-[var(--text-3)] uppercase">
                 Description
               </th>
-              <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+              <th className="px-6 py-2 text-left text-aura-micro text-[var(--text-3)] uppercase">
                 Permissions
               </th>
-              <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+              <th className="px-6 py-2 text-left text-aura-micro text-[var(--text-3)] uppercase">
                 Type
               </th>
               <th
-                className="px-6 py-2 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                className="px-6 py-2 text-right text-aura-micro text-[var(--text-3)] uppercase">
                 Actions
               </th>
             </tr>
@@ -397,18 +398,18 @@ export default function RolesPage() {
               </tr>
             )}
             {filteredRoles.map((role) => (
-              <tr key={role.id} className="hover:bg-[var(--bg-card-hover)] transition-colors">
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[var(--text-primary)]">
+              <tr key={role.id} className="hover:bg-[var(--surface-aura-2)] transition-colors duration-150">
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[var(--text-1)] font-mono tabular-nums">
                   {role.code}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-primary)]">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-1)] font-medium">
                   {role.name}
                 </td>
-                <td className="px-6 py-4 text-body-muted">
-                  {role.description || '-'}
+                <td className="px-6 py-4 text-[var(--text-2)]">
+                  {role.description || '—'}
                 </td>
-                <td className="px-6 py-4 text-body-muted">
-                  {role.permissions.length} permissions
+                <td className="px-6 py-4 text-[var(--text-2)] font-mono tabular-nums">
+                  {role.permissions.length} permission{role.permissions.length !== 1 ? 's' : ''}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm">
                   {role.isSystemRole ? (
@@ -424,7 +425,7 @@ export default function RolesPage() {
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                   <button
                     onClick={() => openPermissionsModal(role)}
-                    className="text-accent-700 hover:text-accent-700 mr-4"
+                    className="text-accent-700 hover:text-accent-600 mr-4 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-1 focus-visible:rounded"
                   >
                     Permissions
                   </button>
@@ -432,13 +433,13 @@ export default function RolesPage() {
                     <>
                       <button
                         onClick={() => openEditModal(role)}
-                        className="text-[var(--text-link)] hover:text-[var(--text-link-hover)] mr-4"
+                        className="text-accent-700 hover:text-accent-600 mr-4 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-1 focus-visible:rounded"
                       >
                         Edit
                       </button>
                       <button
                         onClick={() => handleDeleteRole(role)}
-                        className="text-danger-600 hover:text-danger-700"
+                        className="text-danger-600 hover:text-danger-700 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-1 focus-visible:rounded"
                       >
                         Delete
                       </button>
@@ -887,6 +888,7 @@ export default function RolesPage() {
           </div>
         )}
       </div>
-    </AdminPageContent>
+      </AdminPageContent>
+    </PageTransition>
   );
 }

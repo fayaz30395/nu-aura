@@ -23,6 +23,8 @@ import {AppLayout} from '@/components/layout';
 import {PageTransition, Reveal, Stagger, StaggerItem} from '@/components/motion';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
+import {Button} from '@/components/ui/Button';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {
   useAttendanceByDateRange,
@@ -328,7 +330,7 @@ export default function MyAttendancePage() {
   }
 
   return (
-    <AppLayout activeMenuItem="my-attendance">
+    <AppLayout activeMenuItem="my-attendance" breadcrumbs={[{label: 'My Attendance', href: '/me/attendance'}]}>
       <PageTransition className="space-y-6">
         <Reveal>
           <h1 className="text-xl font-bold">My Attendance</h1>

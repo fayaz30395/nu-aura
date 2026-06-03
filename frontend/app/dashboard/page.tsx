@@ -650,7 +650,9 @@ export default function DashboardPage() {
         ].map((action) => (
           <button
             key={action.href}
+            type="button"
             onClick={() => router.push(action.href)}
+            aria-label={`Navigate to ${action.label}`}
             className="group flex items-center gap-4 rounded-aura-lg border border-[var(--border-subtle)] bg-[var(--bg-card)] p-4 transition-all hover:border-[var(--border-main)] hover:shadow-[var(--sh-md)] hover:-translate-y-px active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 text-left"
           >
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[var(--bg-surface)] border border-[var(--border-subtle)] text-[var(--text-secondary)]">
@@ -1207,7 +1209,7 @@ export default function DashboardPage() {
             </div>
           </div>
           <div className="flex items-center gap-4 justify-end">
-            {clockError && <span className="text-sm text-danger-700 dark:text-danger-300">{clockError}</span>}
+            {clockError && <span role="alert" className="text-sm text-danger-700 dark:text-danger-300">{clockError}</span>}
             {canCheckIn && (
               <Button variant="primary" onClick={handleCheckIn} isLoading={checkInMutation.isPending}
                       leftIcon={<LogIn className="h-4 w-4"/>}>

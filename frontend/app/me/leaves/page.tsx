@@ -23,6 +23,9 @@ import {AppLayout} from '@/components/layout';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
 import {StatusBadge} from '@/components/ui/StatusBadge';
+import {PageTransition, Reveal, Stagger, StaggerItem} from '@/components/motion';
+import {Button} from '@/components/ui/Button';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {LEAVE_STATUS} from '@/lib/status/vocabulary';
 import {categoricalSoftBgClass, categoricalTextClass} from '@/lib/utils/categoricalPalette';
 import {useAuth} from '@/lib/hooks/useAuth';
@@ -297,39 +300,34 @@ export default function MyLeavesPage() {
 
   if (!user?.employeeId) {
     return (
-      <AppLayout activeMenuItem="leaves">
-        <div className="text-center py-12">
-          <Calendar className="h-16 w-16 mx-auto text-[var(--text-muted)] mb-4"/>
-          <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">No Employee Profile Linked</h2>
-          <p className="text-[var(--text-muted)] max-w-md mx-auto">
-            Leave management requires an employee profile. Use the admin panels to manage employee leaves.
-          </p>
-          <button
-            onClick={() => router.push('/leave')}
-            className="mt-6 px-4 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-700 transition-colors"
-          >
-            View Leave Management
-          </button>
-        </div>
+      <AppLayout activeMenuItem="leaves" breadcrumbs={[{label: 'My Leaves', href: '/me/leaves'}]}>
+        <PageTransition>
+          <EmptyState
+            icon={Calendar}
+            title="No Employee Profile Linked"
+            description="Leave management requires an employee profile. Use the admin panels to manage employee leaves."
+          />
+        </PageTransition>
       </AppLayout>
     );
   }
 
   return (
-    <AppLayout activeMenuItem="leaves">
-      <div className="space-y-6">
+    <AppLayout activeMenuItem="leaves" breadcrumbs={[{label: 'My Leaves', href: '/me/leaves'}]}>
+      <PageTransition className="space-y-6">
         {/* Header */}
-        <div className="row-between">
+        <Reveal className="row-between">
           <div>
             <h1 className="text-xl font-bold">My Leaves</h1>
             <p className="text-[var(--text-secondary)] mt-1">
               Manage your leave requests and balances
             </p>
           </div>
-          <button
-            onClick={() => setShowApplyModal(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-700 transition-colors skeuo-button"
-          >
+          <Button variant="primary" onClick={() => setShowApplyModal(true)}>
+            <Plus className="h-4 w-4"/>
+            Apply for Leave
+          </Button>
+        </Reveal>
             <Plus className="h-4 w-4"/>
             Apply for Leave
           </button>
@@ -922,7 +920,7 @@ export default function MyLeavesPage() {
             </ModalFooter>
           </Modal>
         )}
-      </div>
+      </PageTransition>
     </AppLayout>
   );
 }

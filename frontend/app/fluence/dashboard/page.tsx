@@ -68,20 +68,20 @@ function FluenceDashboardPageContent() {
       <PageTransition className={layout.sectionGap}>
         {/* Hero Section */}
         <Reveal
-          className="relative overflow-hidden rounded-xl bg-gradient-to-br from-[var(--accent-700)] via-[var(--accent-500)] to-[var(--accent-400)] dark:from-[var(--accent-950)] dark:via-[var(--accent-900)] dark:to-[var(--accent-800)] p-8 md:p-12"
+          className="relative overflow-hidden rounded-[var(--r-xl)] bg-gradient-to-br from-[var(--accent)] via-[var(--accent-hover)] to-[var(--accent-soft)] dark:from-[var(--accent-950)] dark:via-[var(--accent-900)] dark:to-[var(--accent-800)] p-8 md:p-12 shadow-[var(--sh-lg)]"
         >
           <div className="relative z-10">
             <div className="flex items-start justify-between gap-6 mb-6">
               <div className="flex-1">
                 <div className="flex items-center gap-4 mb-4">
-                  <div className="p-4 bg-white/20 rounded-lg backdrop-blur-sm">
+                  <div className="p-4 bg-white/15 rounded-[var(--r-md)] backdrop-blur-sm">
                     <BookOpen className="w-6 h-6 text-white"/>
                   </div>
-                  <h1 className={`${typography.pageTitle} text-white`}>
+                  <h1 className="text-white text-3xl md:text-4xl font-bold tracking-tight">
                     NU-Fluence Knowledge Hub
                   </h1>
                 </div>
-                <p className="text-white/80 max-w-2xl">
+                <p className="text-white/90 max-w-2xl text-sm leading-relaxed">
                   Discover, create, and share knowledge across your organization.
                   Find answers, collaborate, and build collective intelligence.
                 </p>
@@ -89,39 +89,42 @@ function FluenceDashboardPageContent() {
             </div>
 
             {/* CTA Buttons */}
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-wrap gap-3">
               <Button
                 onClick={() => router.push('/fluence/wiki/new')}
-                className="gap-2 bg-[var(--bg-card)] text-[var(--accent-700)] hover:bg-[var(--bg-card-hover)] font-medium shadow-[var(--shadow-dropdown)] hover:shadow-[var(--shadow-dropdown)] transition-all"
+                className="gap-2 bg-white text-[var(--accent)] hover:bg-white/95 font-medium shadow-[var(--sh-md)] hover:shadow-[var(--sh-lg)] transition-all"
+                size="sm"
               >
-                <Plus className={iconSize.button}/>
+                <Plus className="w-4 h-4"/>
                 New Wiki Page
               </Button>
               <Button
                 onClick={() => router.push('/fluence/blogs/new')}
                 variant="outline"
                 className="gap-2 border-white/30 bg-white/10 hover:bg-white/20 text-white font-medium backdrop-blur-sm"
+                size="sm"
               >
-                <Pen className={iconSize.button}/>
+                <Pen className="w-4 h-4"/>
                 Write Blog Post
               </Button>
               <Button
                 onClick={() => router.push('/fluence/search')}
                 variant="outline"
                 className="gap-2 border-white/30 bg-white/10 hover:bg-white/20 text-white font-medium backdrop-blur-sm"
+                size="sm"
               >
-                <Clock className={iconSize.button}/>
+                <Clock className="w-4 h-4"/>
                 Explore
               </Button>
             </div>
           </div>
 
           {/* Decorative background */}
-          <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0 opacity-5 dark:opacity-10">
             <div
-              className="absolute top-0 right-0 w-96 h-96 bg-accent-200 dark:bg-accent-400 rounded-full blur-3xl transform translate-x-1/3 -translate-y-1/4"/>
+              className="absolute top-0 right-0 w-96 h-96 bg-white dark:bg-accent-100 rounded-full blur-3xl transform translate-x-1/3 -translate-y-1/4"/>
             <div
-              className="absolute bottom-0 left-0 w-64 h-64 bg-accent-200 dark:bg-accent-400 rounded-full blur-3xl transform -translate-x-1/3 translate-y-1/4"/>
+              className="absolute bottom-0 left-0 w-64 h-64 bg-white dark:bg-accent-100 rounded-full blur-3xl transform -translate-x-1/3 translate-y-1/4"/>
           </div>
         </Reveal>
 

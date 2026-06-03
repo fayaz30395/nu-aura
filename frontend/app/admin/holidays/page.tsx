@@ -10,7 +10,7 @@ import {Calendar} from 'lucide-react';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
 import {ConfirmDialog} from '@/components/ui';
-import {Reveal} from '@/components/motion';
+import {PageTransition, Reveal} from '@/components/motion';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {formatWeekday} from '@/lib/utils/format/date';
 import {format} from 'date-fns';
@@ -219,8 +219,9 @@ export default function HolidayCalendarManagementPage() {
   });
 
   return (
-    <div className="page-shell-centered motion-rise p-6">
-      <div className="max-w-7xl mx-auto">
+    <PageTransition>
+      <div className="page-shell-centered motion-rise p-6">
+        <div className="max-w-7xl mx-auto">
         {/* Header */}
         <Reveal className="flex justify-between items-center mb-6">
           <div>
@@ -273,25 +274,25 @@ export default function HolidayCalendarManagementPage() {
 
         {/* Statistics */}
         <Reveal className="grid grid-cols-4 gap-4 mb-6">
-          <div className="skeuo-card p-4">
-            <div className="text-body-secondary">Total Holidays</div>
-            <div className="text-xl font-bold text-[var(--text-primary)]">{holidays.length}</div>
+          <div className="card-aura p-4 hover-lift">
+            <div className="text-body-secondary text-[var(--text-3)]">Total Holidays</div>
+            <div className="text-xl font-bold text-[var(--text-1)] font-mono tabular-nums">{holidays.length}</div>
           </div>
-          <div className="skeuo-card p-4">
-            <div className="text-body-secondary">National</div>
-            <div className="text-xl font-bold text-danger-600">
+          <div className="card-aura p-4 hover-lift">
+            <div className="text-body-secondary text-[var(--text-3)]">National</div>
+            <div className="text-xl font-bold text-danger-600 font-mono tabular-nums">
               {holidays.filter((h) => h.holidayType === 'NATIONAL').length}
             </div>
           </div>
-          <div className="skeuo-card p-4">
-            <div className="text-body-secondary">Optional</div>
-            <div className="text-xl font-bold text-warning-600">
+          <div className="card-aura p-4 hover-lift">
+            <div className="text-body-secondary text-[var(--text-3)]">Optional</div>
+            <div className="text-xl font-bold text-warning-600 font-mono tabular-nums">
               {holidays.filter((h) => h.isOptional).length}
             </div>
           </div>
-          <div className="skeuo-card p-4">
-            <div className="text-body-secondary">Restricted</div>
-            <div className="text-xl font-bold text-warning-600">
+          <div className="card-aura p-4 hover-lift">
+            <div className="text-body-secondary text-[var(--text-3)]">Restricted</div>
+            <div className="text-xl font-bold text-warning-600 font-mono tabular-nums">
               {holidays.filter((h) => h.isRestricted).length}
             </div>
           </div>
@@ -318,22 +319,22 @@ export default function HolidayCalendarManagementPage() {
                     {(holidaysByMonth[month] ?? []).map((holiday) => (
                       <div
                         key={holiday.id}
-                        className="row-between p-4 bg-[var(--bg-secondary)]/50 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors hover-lift"
+                        className="row-between p-4 bg-[var(--surface)] rounded-lg hover:bg-[var(--surface-aura-2)] transition-colors duration-150 hover-lift"
                       >
                         <div className="flex-1">
                           <div className="flex items-center space-x-4">
                             <div className="text-center min-w-16">
-                              <div className="text-xl font-bold text-[var(--text-primary)]">
+                              <div className="text-xl font-bold text-[var(--text-1)] font-mono tabular-nums">
                                 {new Date(holiday.holidayDate).getDate()}
                               </div>
-                              <div className="text-caption uppercase">
+                              <div className="text-caption uppercase text-[var(--text-3)]">
                                 {formatWeekday(holiday.holidayDate)}
                               </div>
                             </div>
                             <div className="flex-1">
-                              <div className="font-medium text-[var(--text-primary)]">{holiday.holidayName}</div>
+                              <div className="font-medium text-[var(--text-1)]">{holiday.holidayName}</div>
                               {holiday.description && (
-                                <div className="text-body-secondary mt-1">{holiday.description}</div>
+                                <div className="text-body-secondary text-[var(--text-2)] mt-1">{holiday.description}</div>
                               )}
                               <div className="flex flex-wrap gap-2 mt-2">
                                 <span
@@ -571,7 +572,8 @@ export default function HolidayCalendarManagementPage() {
             </div>
           </div>
         )}
+        </div>
       </div>
-    </div>
+    </PageTransition>
   );
 }

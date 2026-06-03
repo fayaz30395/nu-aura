@@ -709,33 +709,19 @@ function CandidatesPage() {
               </div>
             ) : (
               <div className="overflow-x-auto">
-                <table className="w-full table-aura">
-                  <thead className="skeuo-table-header">
+                <table className="w-full">
+                  <thead className="border-b border-[var(--border)] bg-[var(--surface-sunken)]">
                   <tr>
-                    <th
-                      className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Candidate
-                    </th>
-                    <th
-                      className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Job
-                    </th>
-                    <th
-                      className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Experience
-                    </th>
-                    <th
-                      className="px-6 py-2 text-center text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Stage
-                    </th>
-                    <th
-                      className="px-6 py-2 text-center text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Status
-                    </th>
-                    <th
-                      className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Source
-                    </th>
-                    <th
-                      className="px-6 py-2 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Actions
-                    </th>
+                    <th className="px-6 py-3 text-left text-2xs font-bold text-[var(--text-3)] uppercase tracking-[0.08em]">Candidate</th>
+                    <th className="px-6 py-3 text-left text-2xs font-bold text-[var(--text-3)] uppercase tracking-[0.08em]">Job</th>
+                    <th className="px-6 py-3 text-left text-2xs font-bold text-[var(--text-3)] uppercase tracking-[0.08em]">Experience</th>
+                    <th className="px-6 py-3 text-center text-2xs font-bold text-[var(--text-3)] uppercase tracking-[0.08em]">Stage</th>
+                    <th className="px-6 py-3 text-center text-2xs font-bold text-[var(--text-3)] uppercase tracking-[0.08em]">Status</th>
+                    <th className="px-6 py-3 text-left text-2xs font-bold text-[var(--text-3)] uppercase tracking-[0.08em]">Source</th>
+                    <th className="px-6 py-3 text-right text-2xs font-bold text-[var(--text-3)] uppercase tracking-[0.08em]">Actions</th>
                   </tr>
                   </thead>
-                  <tbody className="divide-y divide-surface-200 dark:divide-surface-700">
+                  <tbody className="divide-y divide-[var(--border-soft)]">
                   {filteredCandidates.map((candidate) => (
                     <CandidateTableRow
                       key={candidate.id}

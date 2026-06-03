@@ -105,10 +105,11 @@ const Header: React.FC<HeaderProps> = ({
           {/* Mobile hamburger */}
           {showMenuButton && (
             <button onClick={onMenuClick}
+                    type="button"
                     className={`inline-flex ${iconActionClass} md:hidden`}
                     aria-label="Toggle menu"
             >
-              <Menu className="h-5 w-5"/>
+              <Menu className="h-5 w-5" aria-hidden="true"/>
             </button>
           )}
 
@@ -147,11 +148,12 @@ const Header: React.FC<HeaderProps> = ({
 
           {/* Mobile Search Button */}
           <button
+            type="button"
             onClick={() => setIsMobileSearchOpen(true)}
             className={`inline-flex ${iconActionClass} lg:hidden`}
             aria-label="Search"
           >
-            <Search className="h-5 w-5"/>
+            <Search className="h-5 w-5" aria-hidden="true"/>
           </button>
         </div>
 
@@ -159,9 +161,10 @@ const Header: React.FC<HeaderProps> = ({
         <div className="flex items-center gap-1 sm:gap-2.5">
           {/* Help */}
           <button
+            type="button"
             className={`hidden sm:inline-flex ${iconActionClass}`}
             aria-label="Help">
-            <HelpCircle className="h-5 w-5"/>
+            <HelpCircle className="h-5 w-5" aria-hidden="true"/>
           </button>
 
           {/* Theme Toggle */}
@@ -171,6 +174,7 @@ const Header: React.FC<HeaderProps> = ({
           {/* Notifications */}
           <div className="relative">
             <button
+              type="button"
               onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
               className={`notification-btn relative inline-flex ${iconActionClass}`}
               data-testid="notification-bell"
@@ -179,7 +183,7 @@ const Header: React.FC<HeaderProps> = ({
               aria-expanded={isNotificationsOpen}
               aria-haspopup="true"
             >
-              <Bell className="h-5 w-5"/>
+              <Bell className="h-5 w-5" aria-hidden="true"/>
               {totalUnreadCount > 0 && (
                 <span
                   className="absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center"

@@ -272,38 +272,38 @@ function OfferPortalPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="flex items-center gap-4 p-4 bg-[var(--bg-secondary)] rounded-xl">
-                <Building className="h-5 w-5 text-[var(--text-muted)]"/>
-                <div>
-                  <p className="text-caption">Position</p>
-                  <p className="font-semibold text-[var(--text-primary)]">
-                    {offer?.offeredDesignation || offer?.jobTitle || '-'}
+              <div className="flex items-center gap-4 p-4 bg-[var(--surface-sunken)] rounded-lg border border-[var(--border-soft)]">
+                <Building className="h-5 w-5 shrink-0 text-[var(--text-3)]"/>
+                <div className="min-w-0">
+                  <p className="text-2xs font-bold uppercase text-[var(--text-3)] tracking-[0.08em]">Position</p>
+                  <p className="font-semibold text-[var(--text-1)] truncate">
+                    {offer?.offeredDesignation || offer?.jobTitle || '—'}
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-4 p-4 bg-[var(--bg-secondary)] rounded-xl">
-                <DollarSign className="h-5 w-5 text-[var(--text-muted)]"/>
-                <div>
-                  <p className="text-caption">Annual CTC</p>
-                  <p className="font-semibold text-[var(--text-primary)]">
+              <div className="flex items-center gap-4 p-4 bg-[var(--surface-sunken)] rounded-lg border border-[var(--border-soft)]">
+                <DollarSign className="h-5 w-5 shrink-0 text-[var(--text-3)]"/>
+                <div className="min-w-0">
+                  <p className="text-2xs font-bold uppercase text-[var(--text-3)] tracking-[0.08em]">Annual CTC</p>
+                  <p className="font-mono font-semibold text-[var(--text-1)] tabular-nums">
                     {formatCurrency(offer?.offeredCtc)}
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-4 p-4 bg-[var(--bg-secondary)] rounded-xl">
-                <Calendar className="h-5 w-5 text-[var(--text-muted)]"/>
-                <div>
-                  <p className="text-caption">Proposed Joining Date</p>
-                  <p className="font-semibold text-[var(--text-primary)]">
+              <div className="flex items-center gap-4 p-4 bg-[var(--surface-sunken)] rounded-lg border border-[var(--border-soft)]">
+                <Calendar className="h-5 w-5 shrink-0 text-[var(--text-3)]"/>
+                <div className="min-w-0">
+                  <p className="text-2xs font-bold uppercase text-[var(--text-3)] tracking-[0.08em]">Proposed Joining Date</p>
+                  <p className="font-mono font-semibold text-[var(--text-1)] tabular-nums">
                     {formatDate(offer?.proposedJoiningDate)}
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-4 p-4 bg-[var(--bg-secondary)] rounded-xl">
-                <Clock className="h-5 w-5 text-[var(--text-muted)]"/>
-                <div>
-                  <p className="text-caption">Offer Extended On</p>
-                  <p className="font-semibold text-[var(--text-primary)]">
+              <div className="flex items-center gap-4 p-4 bg-[var(--surface-sunken)] rounded-lg border border-[var(--border-soft)]">
+                <Clock className="h-5 w-5 shrink-0 text-[var(--text-3)]"/>
+                <div className="min-w-0">
+                  <p className="text-2xs font-bold uppercase text-[var(--text-3)] tracking-[0.08em]">Offer Extended On</p>
+                  <p className="font-mono font-semibold text-[var(--text-1)] tabular-nums">
                     {formatDate(offer?.offerExtendedDate)}
                   </p>
                 </div>
@@ -320,15 +320,11 @@ function OfferPortalPage() {
                 <FileText className="h-5 w-5 text-accent-500"/>
                 Offer Letter Document
               </h3>
-              <div className="row-between p-4 bg-[var(--bg-secondary)] rounded-xl">
+              <div className="flex items-center justify-between p-4 bg-[var(--surface-sunken)] rounded-lg border border-[var(--border-soft)]">
                 <div>
-                  <p className="font-medium text-[var(--text-primary)]">
-                    Offer Letter
-                  </p>
+                  <p className="font-semibold text-[var(--text-1)]">Offer Letter</p>
                   {offer.offerLetterReferenceNumber && (
-                    <p className="text-body-muted">
-                      Reference: {offer.offerLetterReferenceNumber}
-                    </p>
+                    <p className="text-sm text-[var(--text-3)] font-mono">Ref: {offer.offerLetterReferenceNumber}</p>
                   )}
                 </div>
                 {offer.offerLetterUrl && (
@@ -336,10 +332,10 @@ function OfferPortalPage() {
                     href={offer.offerLetterUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-4 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-700 transition-colors"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--accent)] text-white rounded-lg hover:brightness-110 transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2"
                   >
                     <Download className="h-4 w-4"/>
-                    Download PDF
+                    <span>Download PDF</span>
                   </a>
                 )}
               </div>

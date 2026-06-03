@@ -11,6 +11,7 @@ import {getErrorMessage} from '@/lib/utils/error-handler';
 import {AppLayout} from '@/components/layout';
 import {SkeletonDashboard} from '@/components/ui/Skeleton';
 import {Button} from '@/components/ui/Button';
+import {PageTransition, Reveal, Stagger, StaggerItem} from '@/components/motion';
 
 // Dashboard widget components (preserved)
 import {QuickAccessWidget} from '@/components/dashboard/WelcomeBanner';
@@ -179,7 +180,8 @@ export default function MyDashboardPage() {
       activeMenuItem="my-dashboard"
       breadcrumbs={[{label: 'My Dashboard', href: '/me/dashboard'}]}
     >
-      <div className="mx-auto w-full max-w-7xl px-6 py-8 space-y-10">
+      <PageTransition>
+        <div className="mx-auto w-full max-w-7xl px-6 py-8 space-y-10">
         <PageHeader
           firstName={firstName}
           designation={designation}
@@ -343,7 +345,8 @@ export default function MyDashboardPage() {
             <CompanyFeed employeeId={user?.employeeId} refreshKey={feedRefreshKey}/>
           </motion.div>
         </motion.section>
-      </div>
+        </div>
+      </PageTransition>
     </AppLayout>
   );
 }
@@ -361,12 +364,7 @@ function PageHeader({firstName, designation, department, hasInbox, inboxCount}: 
   const subtitle = [designation, department].filter(Boolean).join(' · ');
 
   return (
-    <motion.header
-      initial={{opacity: 0, y: 4}}
-      animate={{opacity: 1, y: 0}}
-      transition={{duration: 0.4, ease: EASE}}
-      className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-end"
-    >
+    <Reveal className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-end">
       <div className="space-y-2 max-w-2xl">
         <p className="text-2xs font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">
           {today}
@@ -391,7 +389,7 @@ function PageHeader({firstName, designation, department, hasInbox, inboxCount}: 
           )}
         </Button>
       </Link>
-    </motion.header>
+    </Reveal>
   );
 }
 
@@ -410,19 +408,9 @@ function StatsRow({attendancePercentage, presentDays, pendingActions, teamOnLeav
   ];
 
   return (
-    <motion.section
-      initial="hidden"
-      animate="visible"
-      variants={{visible: {transition: {staggerChildren: 0.06, delayChildren: 0.08}}}}
-      aria-label="Your month at a glance"
-      className="grid grid-cols-2 sm:grid-cols-4 border-y border-[var(--border-subtle)] divide-x divide-[var(--border-subtle)]"
-    >
+    <Stagger className="grid grid-cols-2 sm:grid-cols-4 border-y border-[var(--border-subtle)] divide-x divide-[var(--border-subtle)]" aria-label="Your month at a glance">
       {items.map((item) => (
-        <motion.div
-          key={item.label}
-          variants={{hidden: {opacity: 0, y: 6}, visible: {opacity: 1, y: 0, transition: {duration: 0.4, ease: EASE}}}}
-          className="px-5 py-6 sm:px-7 sm:py-8 first:pl-0 last:pr-0"
-        >
+        <StaggerItem key={item.label} className="px-5 py-6 sm:px-7 sm:py-8 first:pl-0 last:pr-0">
           <div className="flex items-center gap-2 text-[var(--text-muted)]">
             <item.icon className="h-3.5 w-3.5" aria-hidden="true"/>
             <span className="text-2xs font-medium uppercase tracking-wider">{item.label}</span>
@@ -436,9 +424,9 @@ function StatsRow({attendancePercentage, presentDays, pendingActions, teamOnLeav
           >
             {item.value}
           </p>
-        </motion.div>
+        </StaggerItem>
       ))}
-    </motion.section>
+    </Stagger>
   );
 }
 

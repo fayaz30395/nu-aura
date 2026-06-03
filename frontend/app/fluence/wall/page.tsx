@@ -66,10 +66,10 @@ function TrendingSidebar() {
   return (
     <div className="space-y-4">
       {/* Trending Content */}
-      <Reveal className="card-aura p-4" inView>
+      <Reveal className="rounded-[var(--r-lg)] bg-[var(--surface)] border border-[var(--border)] p-4 shadow-[var(--sh-sm)]" inView>
         <div className="flex items-center gap-2 mb-4">
-          <IconTrendingUp size={18} className="text-[var(--text-primary)]" aria-hidden="true"/>
-          <h2 className="text-sm font-semibold text-[var(--text-primary)]">
+          <IconTrendingUp size={18} className="text-[var(--text-1)]" aria-hidden="true"/>
+          <h2 className="text-sm font-semibold text-[var(--text-1)]">
             Trending Content
           </h2>
         </div>
@@ -85,34 +85,34 @@ function TrendingSidebar() {
               <li key={item.id}>
                 <a
                   href={item.href}
-                  className="flex items-start gap-2 p-2 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                  className="flex items-start gap-2 p-2 rounded-[var(--r-sm)] hover:bg-[var(--surface-hover)] transition-colors group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2"
                   aria-label={`${item.type === 'WIKI' ? 'Wiki' : 'Blog'} #${idx + 1}: ${item.title}, ${item.viewCount} views, ${item.likeCount} likes`}
                 >
-                  <span className="text-xs font-bold text-[var(--text-muted)] w-4 mt-0.5" aria-hidden="true">
+                  <span className="text-xs font-bold text-[var(--text-3)] w-4 mt-0.5" aria-hidden="true">
                     {idx + 1}
                   </span>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5 mb-0.5">
                       {item.type === 'WIKI' ? (
-                        <BookOpen className="h-3 w-3 text-accent-600 dark:text-accent-400 flex-shrink-0"
+                        <BookOpen className="h-3 w-3 text-[var(--accent)] flex-shrink-0"
                                   aria-hidden="true"/>
                       ) : (
-                        <Newspaper className="h-3 w-3 text-accent-600 dark:text-accent-400 flex-shrink-0"
+                        <Newspaper className="h-3 w-3 text-[var(--accent)] flex-shrink-0"
                                    aria-hidden="true"/>
                       )}
                       <span
-                        className="text-xs font-medium text-[var(--text-primary)] truncate group-hover:text-accent-700 dark:group-hover:text-accent-400">
+                        className="text-xs font-medium text-[var(--text-1)] truncate group-hover:text-[var(--accent)]">
                         {item.title}
                       </span>
                     </div>
-                    <div className="flex items-center gap-2 text-2xs text-[var(--text-muted)]">
+                    <div className="flex items-center gap-2 text-2xs text-[var(--text-3)]">
                       <span className="flex items-center gap-0.5">
                         <Eye className="h-2.5 w-2.5" aria-hidden="true"/>
-                        {item.viewCount}
+                        <span className="num">{item.viewCount}</span>
                       </span>
                       <span className="flex items-center gap-0.5">
                         <Heart className="h-2.5 w-2.5" aria-hidden="true"/>
-                        {item.likeCount}
+                        <span className="num">{item.likeCount}</span>
                       </span>
                     </div>
                   </div>
@@ -124,10 +124,10 @@ function TrendingSidebar() {
       </Reveal>
 
       {/* Recent Activity Summary */}
-      <Reveal className="card-aura p-4" inView delay={0.06}>
+      <Reveal className="rounded-[var(--r-lg)] bg-[var(--surface)] border border-[var(--border)] p-4 shadow-[var(--sh-sm)]" inView delay={0.06}>
         <div className="flex items-center gap-2 mb-4">
-          <IconActivity size={18} className="text-[var(--text-primary)]"/>
-          <span className="text-sm font-semibold text-[var(--text-primary)]">
+          <IconActivity size={18} className="text-[var(--text-1)]" aria-hidden="true"/>
+          <span className="text-sm font-semibold text-[var(--text-1)]">
             Recent Activity
           </span>
         </div>
@@ -142,21 +142,21 @@ function TrendingSidebar() {
             {recentActivity.map((act) => (
               <div
                 key={act.id}
-                className="flex items-start gap-2 py-1.5 border-b border-[var(--border-subtle)] last:border-0"
+                className="flex items-start gap-2 py-1.5 px-2 rounded-[var(--r-sm)] hover:bg-[var(--surface-hover)] transition-colors border-b border-[var(--border)] last:border-0"
               >
                 <div
-                  className="h-5 w-5 rounded-full bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <span className="text-3xs font-medium text-accent-700 dark:text-accent-400">
+                  className="h-5 w-5 rounded-full bg-[var(--accent-soft)] flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <span className="text-3xs font-medium text-[var(--accent)]">
                     {(act.actorName || 'U')[0].toUpperCase()}
                   </span>
                 </div>
                 <div className="min-w-0">
-                  <p className="text-2xs text-[var(--text-secondary)] truncate">
+                  <p className="text-2xs text-[var(--text-2)] truncate">
                     <span className="font-medium">{act.actorName}</span>{' '}
                     {act.action.toLowerCase()}{' '}
                     <span className="font-medium">{act.contentTitle}</span>
                   </p>
-                  <p className="text-3xs text-[var(--text-muted)]">
+                  <p className="text-3xs text-[var(--text-3)]">
                     {formatTimeAgo(act.createdAt)}
                   </p>
                 </div>
@@ -190,20 +190,20 @@ function WallPageContent() {
   return (
     <AppLayout>
       <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6">
-        <Reveal className="flex items-center gap-4 mb-6">
-          <IconActivity size={28} className="text-[var(--text-primary)]" aria-hidden="true"/>
-          <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)]">
+        <Reveal className="flex items-center gap-4 mb-6 flex-wrap sm:flex-nowrap">
+          <IconActivity size={28} className="text-[var(--text-1)]" aria-hidden="true"/>
+          <div className="flex-1">
+            <h1 className="text-2xl font-bold text-[var(--text-1)]">
               Activity Wall
             </h1>
-            <p className="text-body-muted">
+            <p className="text-sm text-[var(--text-2)]">
               See what is happening across your knowledge base
             </p>
           </div>
           <span
-            className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium bg-accent-100 text-accent-700 dark:bg-accent-900/30 dark:text-accent-400"
+            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-[var(--accent-soft)] text-[var(--accent)]"
             aria-label="Live updates">
-            <span className="h-1.5 w-1.5 rounded-full bg-accent-600 dark:bg-accent-400" aria-hidden="true"/>
+            <span className="h-1.5 w-1.5 rounded-full bg-[var(--ok-fg)] animate-pulse" aria-hidden="true"/>
             Live
           </span>
         </Reveal>

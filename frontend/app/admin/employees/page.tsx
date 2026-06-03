@@ -30,7 +30,7 @@ import {
   X,
 } from 'lucide-react';
 import {AdminPageContent} from '@/components/layout';
-import {Reveal, Stagger, StaggerItem} from '@/components/motion';
+import {PageTransition, Reveal, Stagger, StaggerItem} from '@/components/motion';
 import {Button} from '@/components/ui/Button';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
@@ -441,9 +441,10 @@ export default function AdminEmployeesPage() {
   };
 
   return (
-    <AdminPageContent className="page-shell p-4 md:p-6 lg:p-8 space-y-6">
-      {/* Header */}
-      <Reveal className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <PageTransition>
+      <AdminPageContent className="page-shell p-4 md:p-6 lg:p-8 space-y-6">
+        {/* Header */}
+        <Reveal className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-page-title text-[var(--text-primary)]">Employee Management</h1>
           <p className="text-body-secondary text-[var(--text-secondary)] mt-1">Create employees, assign roles, and
@@ -557,7 +558,7 @@ export default function AdminEmployeesPage() {
                       const isEditingRoles = editingRoleForEmployee?.id === emp.id;
                       return (
                         <React.Fragment key={emp.id}>
-                          <tr className="hover:bg-[var(--bg-card-hover)] transition-colors">
+                          <tr className="hover:bg-[var(--surface-aura-2)] transition-colors duration-150">
                             <td>
                               <div className="flex items-center gap-2">
                                 <div
@@ -566,19 +567,19 @@ export default function AdminEmployeesPage() {
                                 </div>
                                 <div>
                                   <p
-                                    className="font-medium text-[var(--text-primary)]">{emp.fullName || `${emp.firstName} ${emp.lastName}`}</p>
-                                  <p className="text-caption">{emp.workEmail}</p>
+                                    className="font-medium text-[var(--text-1)]">{emp.fullName || `${emp.firstName} ${emp.lastName}`}</p>
+                                  <p className="text-caption text-[var(--text-3)]">{emp.workEmail}</p>
                                 </div>
                               </div>
                             </td>
-                            <td className="text-caption text-[var(--text-secondary)] font-mono">{emp.employeeCode}</td>
-                            <td className="text-[var(--text-secondary)]">{emp.departmentName || '—'}</td>
-                            <td className="text-[var(--text-secondary)]">{emp.designation || '—'}</td>
+                            <td className="text-caption text-[var(--text-2)] font-mono tabular-nums">{emp.employeeCode}</td>
+                            <td className="text-[var(--text-2)]">{emp.departmentName || '—'}</td>
+                            <td className="text-[var(--text-2)]">{emp.designation || '—'}</td>
                             <td><span
-                              className="badge-status status-info">{emp.employmentType?.replace('_', ' ') || 'Full Time'}</span>
+                              className="badge-status status-info text-xs font-medium">{emp.employmentType?.replace('_', ' ') || 'Full Time'}</span>
                             </td>
                             <td>
-                              <StatusBadge status={emp.status || 'ACTIVE'} domain={EMPLOYEE_LIFECYCLE_STATUS}/>
+                              <StatusBadge value={emp.status || 'ACTIVE'} />
                             </td>
                             <td className="text-right">
                               <Button
@@ -588,6 +589,7 @@ export default function AdminEmployeesPage() {
                                 title={isEditingRoles ? 'Close role editor' : 'Edit roles'}
                                 aria-label={`${isEditingRoles ? 'Close role editor for' : 'Edit roles for'} ${emp.fullName || emp.firstName}`}
                                 aria-expanded={isEditingRoles}
+                                className="focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-1 focus-visible:rounded"
                               >
                                 {isEditingRoles ? <X className="h-3.5 w-3.5"/> : <Pencil className="h-3.5 w-3.5"/>}
                               </Button>
@@ -614,18 +616,20 @@ export default function AdminEmployeesPage() {
                 </div>
 
                 {totalPages > 1 && (
-                  <div className="row-between mt-4 pt-4 border-t border-[var(--border-main)]">
-                    <p className="text-caption text-[var(--text-muted)]">
+                  <div className="row-between mt-4 pt-4 border-t border-[var(--border-soft)]">
+                    <p className="text-caption text-[var(--text-3)] font-mono tabular-nums">
                       {page * PAGE_SIZE + 1}–{Math.min((page + 1) * PAGE_SIZE, totalElements)} of {totalElements}
                     </p>
                     <div className="flex items-center gap-2">
                       <Button variant="outline" size="sm" onClick={() => setPage(Math.max(0, page - 1))}
                               disabled={page === 0}
-                              leftIcon={<ChevronLeft className="h-4 w-4"/>}>Previous</Button>
-                      <span className="text-body-secondary">{page + 1} / {totalPages}</span>
+                              leftIcon={<ChevronLeft className="h-4 w-4"/>}
+                              className="focus-visible:ring-2 focus-visible:ring-[var(--ring)]">Previous</Button>
+                      <span className="text-body-secondary font-mono tabular-nums">{page + 1} / {totalPages}</span>
                       <Button variant="outline" size="sm" onClick={() => setPage(Math.min(totalPages - 1, page + 1))}
                               disabled={page >= totalPages - 1}
-                              rightIcon={<ChevronRight className="h-4 w-4"/>}>Next</Button>
+                              rightIcon={<ChevronRight className="h-4 w-4"/>}
+                              className="focus-visible:ring-2 focus-visible:ring-[var(--ring)]">Next</Button>
                     </div>
                   </div>
                 )}
@@ -890,6 +894,7 @@ export default function AdminEmployeesPage() {
           </ModalFooter>
         </form>
       </Modal>
-    </AdminPageContent>
+      </AdminPageContent>
+    </PageTransition>
   );
 }

@@ -26,6 +26,7 @@ import {
 import {AppLayout} from '@/components/layout';
 import {PageTransition, Reveal, Stagger, StaggerItem} from '@/components/motion';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {useMyEmployee, useUpdateMyProfile} from '@/lib/hooks/queries';
 import {getInitials} from '@/lib/utils';
@@ -176,32 +177,28 @@ export default function MyProfilePage() {
 
   if (isActuallyLoading) {
     return (
-      <AppLayout activeMenuItem="profile">
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="w-12 h-12 border-4 border-accent-200 border-t-accent-700 rounded-full animate-spin"/>
-        </div>
+      <AppLayout activeMenuItem="profile" breadcrumbs={[{label: 'My Profile', href: '/me/profile'}]}>
+        <PageTransition>
+          <div className="flex items-center justify-center min-h-[400px]">
+            <div className="w-12 h-12 border-4 border-accent-200 border-t-accent-700 rounded-full animate-spin"/>
+          </div>
+        </PageTransition>
       </AppLayout>
     );
   }
 
   if (!employee) {
     return (
-      <AppLayout activeMenuItem="profile">
-        <div className="flex items-center justify-center min-h-[400px]">
-          <Card className="max-w-md">
-            <CardHeader>
-              <div className="flex items-center gap-2 text-danger-600">
-                <AlertCircle className="h-5 w-5"/>
-                <CardTitle>Profile Not Found</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <p className="text-[var(--text-secondary)] mb-4">
-                {error || 'Unable to load your profile'}
-              </p>
-            </CardContent>
-          </Card>
-        </div>
+      <AppLayout activeMenuItem="profile" breadcrumbs={[{label: 'My Profile', href: '/me/profile'}]}>
+        <PageTransition>
+          <div className="mx-auto max-w-2xl">
+            <EmptyState
+              icon={AlertCircle}
+              title="Profile Not Found"
+              description={error || 'Unable to load your profile. Please try again or contact your administrator.'}
+            />
+          </div>
+        </PageTransition>
       </AppLayout>
     );
   }
@@ -228,10 +225,10 @@ export default function MyProfilePage() {
 
 
   return (
-    <AppLayout activeMenuItem="profile">
+    <AppLayout activeMenuItem="profile" breadcrumbs={[{label: 'My Profile', href: '/me/profile'}]}>
       <PageTransition className="space-y-6">
         {/* Header */}
-        <Reveal className="row-between">
+        <Reveal>
           <div>
             <h1 className="text-xl font-bold">My Profile</h1>
             <p className="text-[var(--text-secondary)] mt-1">
@@ -239,27 +236,23 @@ export default function MyProfilePage() {
             </p>
           </div>
           {!isEditing ? (
-            <button
-              onClick={() => setIsEditing(true)}
-              className="btn-primary flex items-center gap-2 px-4 py-2 rounded-lg"
-            >
+            <Button variant="primary" onClick={() => setIsEditing(true)}>
               <Edit2 className="h-4 w-4"/>
               Edit Profile
-            </button>
+            </Button>
           ) : (
             <div className="flex items-center gap-2">
-              <button
+              <Button
+                variant="secondary"
                 onClick={handleCancel}
                 disabled={updateMutation.isPending}
-                className="btn-secondary flex items-center gap-2 px-4 py-2 rounded-lg disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-              >
-                <X className="h-4 w-4"/>
-                Cancel
-              </button>
-              <button
+              <X className="h-4 w-4"/>
+              Cancel
+              </Button>
+              <Button
+                variant="primary"
                 onClick={profileForm.handleSubmit(handleSave)}
                 disabled={updateMutation.isPending}
-                className="btn-primary flex items-center gap-2 px-4 py-2 rounded-lg disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 {updateMutation.isPending ? (
                   <>
@@ -272,7 +265,7 @@ export default function MyProfilePage() {
                     Save Changes
                   </>
                 )}
-              </button>
+              </Button>
             </div>
           )}
         </Reveal>

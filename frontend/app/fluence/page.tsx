@@ -172,26 +172,26 @@ function PageHeader() {
       transition={{duration: 0.4, ease: EASE}}
       className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-end"
     >
-      <div className="space-y-2 max-w-2xl">
-        <p className="text-2xs font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">
+      <div className="space-y-3 max-w-2xl">
+        <p className="text-aura-micro text-[var(--text-3)]">
           NU-Fluence
         </p>
-        <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-[var(--text-heading)] leading-[1.05]">
+        <h1 className="text-aura-title text-[var(--text-1)] leading-[1.05]">
           The handbook the whole company actually opens.
         </h1>
-        <p className="text-body-secondary max-w-[55ch]">
+        <p className="text-sm text-[var(--text-2)] max-w-[55ch] leading-relaxed">
           Wikis, blogs, templates, and the wall — structured, searchable, never a blank page.
         </p>
       </div>
-      <div className="flex items-center gap-2 self-start sm:self-end">
+      <div className="flex items-center gap-2 self-start sm:self-end flex-wrap justify-end">
         <Link href="/fluence/search">
-          <Button variant="outline">
+          <Button variant="outline" size="sm">
             <Search className="mr-2 h-4 w-4" aria-hidden="true" />
             Search
           </Button>
         </Link>
         <Link href="/fluence/wiki">
-          <Button variant="primary">
+          <Button variant="primary" size="sm">
             Open Wiki
             <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
           </Button>
@@ -219,17 +219,17 @@ function StatsRow({activeSpaces, pagesThisWeek, contributions, blogsThisWeek}: {
     <section aria-label="Fluence at a glance">
       <Stagger
         delayChildren={0.08}
-        className="grid grid-cols-2 sm:grid-cols-4 border-y border-[var(--border-subtle)] divide-x divide-[var(--border-subtle)]"
+        className="grid grid-cols-2 sm:grid-cols-4 border-y border-[var(--border)] divide-x divide-[var(--border)]"
       >
         {items.map((item) => (
           <StaggerItem
             key={item.label}
-            className="px-5 py-6 sm:px-7 sm:py-8 first:pl-0 last:pr-0"
+            className="px-5 py-6 sm:px-7 sm:py-8 first:pl-0 last:pr-0 transition-colors hover:bg-[var(--surface-hover)]"
           >
-            <div className="flex items-center gap-2 text-[var(--text-muted)]">
-              <span className="text-2xs font-medium uppercase tracking-wider">{item.label}</span>
+            <div className="flex items-center gap-2 text-[var(--text-3)]">
+              <span className="text-aura-micro">{item.label}</span>
             </div>
-            <p className="mt-3 font-mono text-3xl sm:text-4xl tabular-nums tracking-tight text-[var(--text-heading)]">
+            <p className="mt-3 num text-3xl sm:text-4xl text-[var(--text-1)]">
               {item.value}
             </p>
           </StaggerItem>
@@ -313,36 +313,36 @@ function PinnedSpacesHero({spaces}: {
     <StaggerItem className="lg:col-span-7 lg:row-span-2">
       <Link
         href="/fluence/wiki"
-        className="group block h-full rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] p-7 sm:p-9 transition-all hover:border-[var(--border-main)] hover:shadow-[0_20px_40px_-15px_rgba(15,23,42,0.08)] active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
+        className="group block h-full rounded-[var(--r-lg)] bg-[var(--surface)] border border-[var(--border)] p-7 sm:p-9 transition-all hover:border-[var(--border-aura-strong)] hover:shadow-[var(--sh-md)] hover:-translate-y-0.5 active:translate-y-0 active:shadow-[var(--sh-sm)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2"
       >
         <div className="flex items-start justify-between">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-accent-50 text-accent-700 dark:bg-accent-900/30 dark:text-accent-300">
+          <div className="flex h-11 w-11 items-center justify-center rounded-[var(--r-md)] bg-[var(--accent-soft)] text-[var(--accent)]">
             <BookOpen className="h-5 w-5" aria-hidden="true" />
           </div>
-          <ArrowRight className="h-4 w-4 text-[var(--text-muted)] transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+          <ArrowRight className="h-4 w-4 text-[var(--text-3)] transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
         </div>
-        <h2 className="mt-8 text-2xl sm:text-3xl font-semibold tracking-tight text-[var(--text-heading)]">
+        <h2 className="mt-8 text-2xl sm:text-3xl font-semibold text-[var(--text-1)]">
           Pinned spaces
         </h2>
-        <p className="mt-3 text-body-secondary max-w-[48ch]">
+        <p className="mt-3 text-sm text-[var(--text-2)] max-w-[48ch]">
           The wikis the team comes back to. Start here, or hop to any space from the Wiki home.
         </p>
 
         {empty ? (
-          <p className="mt-10 text-sm text-[var(--text-muted)]">
+          <p className="mt-10 text-sm text-[var(--text-3)]">
             No spaces yet. Create your first wiki space to anchor the handbook.
           </p>
         ) : (
-          <ul className="mt-10 divide-y divide-[var(--border-subtle)] border-t border-[var(--border-subtle)]">
+          <ul className="mt-10 divide-y divide-[var(--border)] border-t border-[var(--border)]">
             {spaces.map((s) => (
-              <li key={s.id} className="grid grid-cols-[1fr_auto] items-center gap-4 py-4">
+              <li key={s.id} className="grid grid-cols-[1fr_auto] items-center gap-4 py-4 group/item hover:bg-[var(--surface-hover)] -mx-2 px-2 rounded transition-colors">
                 <div className="min-w-0">
-                  <p className="text-sm font-medium text-[var(--text-heading)] truncate">{s.name}</p>
+                  <p className="text-sm font-medium text-[var(--text-1)] truncate group-hover/item:text-[var(--accent)]">{s.name}</p>
                   {s.description && (
-                    <p className="text-xs text-[var(--text-secondary)] truncate">{s.description}</p>
+                    <p className="text-xs text-[var(--text-3)] truncate">{s.description}</p>
                   )}
                 </div>
-                <p className="font-mono text-xs tabular-nums text-[var(--text-muted)]">
+                <p className="num text-xs text-[var(--text-3)]">
                   {s.pageCount ?? 0} pages
                 </p>
               </li>
@@ -364,16 +364,16 @@ function BentoTile({title, description, icon: Icon, href}: {
     <StaggerItem className="lg:col-span-5">
       <Link
         href={href}
-        className="group flex h-full items-start gap-4 rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] p-5 sm:p-6 transition-all hover:border-[var(--border-main)] hover:shadow-[0_12px_30px_-12px_rgba(15,23,42,0.07)] active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
+        className="group flex h-full items-start gap-4 rounded-[var(--r-lg)] bg-[var(--surface)] border border-[var(--border)] p-5 sm:p-6 transition-all hover:border-[var(--border-aura-strong)] hover:shadow-[var(--sh-md)] hover:-translate-y-0.5 active:translate-y-0 active:shadow-[var(--sh-sm)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2"
       >
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[var(--bg-surface)] border border-[var(--border-subtle)] text-[var(--text-secondary)]">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[var(--r-md)] bg-[var(--surface-aura-2)] border border-[var(--border)] text-[var(--text-2)]">
           <Icon className="h-4 w-4" aria-hidden="true" />
         </div>
         <div className="flex-1 min-w-0">
-          <h3 className="text-base font-semibold text-[var(--text-heading)]">{title}</h3>
-          <p className="mt-1 text-sm text-[var(--text-secondary)] leading-relaxed">{description}</p>
+          <h3 className="text-base font-semibold text-[var(--text-1)]">{title}</h3>
+          <p className="mt-1 text-sm text-[var(--text-2)] leading-relaxed">{description}</p>
         </div>
-        <ArrowRight className="h-4 w-4 self-center text-[var(--text-muted)] transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+        <ArrowRight className="h-4 w-4 self-center text-[var(--text-3)] transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
       </Link>
     </StaggerItem>
   );
@@ -384,34 +384,34 @@ function RecentActivity({items}: {items: ActivityItem[]}) {
   return (
     <Reveal inView delay={0.1} className="space-y-4">
       <div className="flex items-end justify-between gap-4">
-        <h2 className="text-xl font-semibold tracking-tight text-[var(--text-heading)]">
+        <h2 className="text-xl font-semibold text-[var(--text-1)]">
           Recent activity
         </h2>
         <Link
           href="/fluence/search"
-          className="inline-flex items-center gap-1 text-sm font-medium text-accent-700 dark:text-accent-300 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded"
+          className="inline-flex items-center gap-1 text-sm font-medium text-[var(--accent)] hover:text-[var(--accent-hover)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 rounded-sm"
         >
           Search everything
           <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
         </Link>
       </div>
-      <ul className="divide-y divide-[var(--border-subtle)] border-y border-[var(--border-subtle)]">
+      <ul className="divide-y divide-[var(--border)] border-y border-[var(--border)]">
         {items.map((item) => {
           const Icon = item.kind === 'wiki' ? BookOpen : item.kind === 'blog' ? FileText : MessageSquare;
           return (
             <li key={item.id}>
               <Link
                 href={item.href}
-                className="grid grid-cols-[auto_1fr_auto] items-center gap-4 py-4 sm:gap-6 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] rounded"
+                className="grid grid-cols-[auto_1fr_auto] items-center gap-4 py-4 sm:gap-6 group hover:bg-[var(--surface-hover)] -mx-3 px-3 rounded-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2"
               >
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--bg-surface)] border border-[var(--border-subtle)] text-[var(--text-secondary)]">
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--surface-aura-2)] border border-[var(--border)] text-[var(--text-2)]">
                   <Icon className="h-4 w-4" aria-hidden="true" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-sm font-medium text-[var(--text-heading)] truncate">{item.title}</p>
-                  <p className="text-xs text-[var(--text-secondary)] truncate">{item.meta}</p>
+                  <p className="text-sm font-medium text-[var(--text-1)] truncate group-hover:text-[var(--accent)]">{item.title}</p>
+                  <p className="text-xs text-[var(--text-3)] truncate">{item.meta}</p>
                 </div>
-                <ArrowRight className="h-4 w-4 text-[var(--text-muted)] transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+                <ArrowRight className="h-4 w-4 text-[var(--text-3)] transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
               </Link>
             </li>
           );
@@ -430,11 +430,11 @@ function QuietWeekStrip() {
       transition={{duration: 0.45, ease: EASE, delay: 0.42}}
       role="status"
       aria-live="polite"
-      className="flex items-center justify-between gap-4 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] px-5 py-4"
+      className="flex items-center justify-between gap-4 rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface-aura-2)] px-5 py-4 shadow-[var(--sh-sm)]"
     >
       <div className="flex items-center gap-4 text-sm">
-        <Sparkles className="h-4 w-4 shrink-0 text-[var(--text-muted)]" aria-hidden="true" />
-        <p className="text-[var(--text-primary)]">
+        <Sparkles className="h-4 w-4 shrink-0 text-[var(--text-3)]" aria-hidden="true" />
+        <p className="text-[var(--text-2)]">
           Quiet week so far. A short post or a fresh wiki page keeps the team in sync.
         </p>
       </div>

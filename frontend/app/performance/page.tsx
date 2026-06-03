@@ -22,12 +22,13 @@ import {
 } from 'lucide-react';
 
 import {AppLayout} from '@/components/layout';
-import {PageTransition} from '@/components/motion';
+import {PageTransition, Reveal, Stagger, StaggerItem} from '@/components/motion';
 import {PageErrorFallback} from '@/components/errors/PageErrorFallback';
 import {Skeleton} from '@/components/ui/Skeleton';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {Button} from '@/components/ui/Button';
+import {MOTION_DURATION, MOTION_EASE, MOTION_RISE_DISTANCE, MOTION_STAGGER, useReducedMotionSafe} from '@/lib/animation';
 import {
   useAllGoals,
   useMyPending360Reviews,
@@ -35,7 +36,7 @@ import {
   usePerformanceActiveCycles,
 } from '@/lib/hooks/queries/usePerformance';
 
-const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
+const EASE = MOTION_EASE.outExpo;
 
 const PERFORMANCE_ALLOWED_ROLES = [
   'SUPER_ADMIN', 'TENANT_ADMIN', 'HR_ADMIN', 'HR_MANAGER',
@@ -97,14 +98,14 @@ export default function PerformancePage() {
     return (
       <AppLayout>
         <div className="mx-auto w-full max-w-3xl px-6 py-20 text-center space-y-6">
-          <div className="mx-auto inline-flex h-12 w-12 items-center justify-center rounded-xl bg-warning-50 text-warning-700 dark:bg-warning-900/40 dark:text-warning-300">
+          <div className="mx-auto inline-flex h-12 w-12 items-center justify-center rounded-aura-lg bg-[var(--warn-bg)] text-[var(--warn-fg)]">
             <TrendingUp className="h-5 w-5" aria-hidden="true" />
           </div>
           <div className="space-y-2">
-            <h1 className="text-2xl font-semibold tracking-tight text-[var(--text-heading)]">
+            <h1 className="text-aura-title text-[var(--text-1)]">
               Access restricted
             </h1>
-            <p className="text-body-secondary max-w-[60ch] mx-auto">
+            <p className="text-body-secondary max-w-[60ch] mx-auto text-[var(--text-2)]">
               You don&apos;t have permission to access the Performance hub. View your goals and reviews from My Dashboard.
             </p>
           </div>
@@ -150,31 +151,35 @@ export default function PerformancePage() {
 
 // ── Header ───────────────────────────────────────────────────────────────────
 function PageHeader() {
+  const {pick} = useReducedMotionSafe();
   return (
-    <header className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-end">
-      <div className="space-y-2 max-w-2xl">
-        <p className="text-2xs font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">
-          Performance Management
-        </p>
-        <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-[var(--text-heading)] leading-[1.05]">
-          Goals, reviews, and growth in one steady rhythm.
-        </h1>
-        <p className="text-body-secondary max-w-[55ch]">
-          Track progress, run cycles, and finalise ratings without losing the thread.
-        </p>
-      </div>
-      <Link href="/performance/goals" className="self-start sm:self-end">
-        <Button variant="primary">
-          Set a goal
-          <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
-        </Button>
-      </Link>
-    </header>
+    <Reveal variants={pick({hidden: {opacity: 0, y: MOTION_RISE_DISTANCE}, visible: {opacity: 1, y: 0, transition: {duration: MOTION_DURATION.base, ease: EASE}}})}>
+      <header className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-end">
+        <div className="space-y-2 max-w-2xl">
+          <p className="text-aura-micro text-[var(--text-3)]">
+            Performance Management
+          </p>
+          <h1 className="text-aura-title text-[var(--text-1)] leading-[1.05]">
+            Goals, reviews, and growth in one steady rhythm.
+          </h1>
+          <p className="text-body-secondary max-w-[55ch] text-[var(--text-2)]">
+            Track progress, run cycles, and finalise ratings without losing the thread.
+          </p>
+        </div>
+        <Link href="/performance/goals" className="self-start sm:self-end">
+          <Button variant="primary">
+            Set a goal
+            <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
+          </Button>
+        </Link>
+      </header>
+    </Reveal>
   );
 }
 
 // ── Stats row ────────────────────────────────────────────────────────────────
 function StatsRow({stats}: {stats: DashboardStats}) {
+  const {pick} = useReducedMotionSafe();
   const items = [
     {label: 'Active goals', value: stats.activeGoals, icon: Flag, tone: 'neutral' as const},
     {label: 'Goal progress', value: `${stats.averageProgress}%`, icon: TrendingUp, tone: 'neutral' as const},
@@ -188,45 +193,45 @@ function StatsRow({stats}: {stats: DashboardStats}) {
   ];
 
   return (
-    <motion.section
-      initial="hidden"
-      animate="visible"
-      variants={{visible: {transition: {staggerChildren: 0.06, delayChildren: 0.08}}}}
+    <Stagger
+      variants={pick({
+        visible: {transition: {staggerChildren: MOTION_STAGGER, delayChildren: 0.08}},
+      })}
       aria-label="Performance at a glance"
-      className="grid grid-cols-2 sm:grid-cols-4 border-y border-[var(--border-subtle)] divide-x divide-[var(--border-subtle)]"
+      className="grid grid-cols-2 sm:grid-cols-4 border-y border-[var(--border)] divide-x divide-[var(--border-soft)]"
     >
       {items.map((item) => (
-        <motion.div
+        <StaggerItem
           key={item.label}
-          variants={{hidden: {opacity: 0, y: 6}, visible: {opacity: 1, y: 0, transition: {duration: 0.4, ease: EASE}}}}
+          variants={pick({hidden: {opacity: 0, y: MOTION_RISE_DISTANCE}, visible: {opacity: 1, y: 0, transition: {duration: MOTION_DURATION.base, ease: EASE}}})}
           className="px-5 py-6 sm:px-7 sm:py-8 first:pl-0 last:pr-0"
         >
-          <div className="flex items-center gap-2 text-[var(--text-muted)]">
+          <div className="flex items-center gap-2 text-[var(--text-3)]">
             <item.icon className="h-3.5 w-3.5" aria-hidden="true" />
-            <span className="text-2xs font-medium uppercase tracking-wider">{item.label}</span>
+            <span className="text-aura-micro">{item.label}</span>
           </div>
           <p
-            className={`mt-3 font-mono text-3xl sm:text-4xl tabular-nums tracking-tight ${
+            className={`mt-3 num text-aura-stat ${
               item.tone === 'warning'
-                ? 'text-warning-700 dark:text-warning-300'
-                : 'text-[var(--text-heading)]'
+                ? 'text-[var(--warn-fg)]'
+                : 'text-[var(--text-1)]'
             }`}
           >
             {item.value}
           </p>
-        </motion.div>
+        </StaggerItem>
       ))}
-    </motion.section>
+    </Stagger>
   );
 }
 
 function StatsSkeleton() {
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-4 border-y border-[var(--border-subtle)] divide-x divide-[var(--border-subtle)]">
+    <div className="grid grid-cols-2 sm:grid-cols-4 border-y border-[var(--border)] divide-x divide-[var(--border-soft)]">
       {Array.from({length: 4}).map((_, i) => (
         <div key={i} className="px-5 py-6 sm:px-7 sm:py-8 first:pl-0 last:pr-0">
-          <Skeleton className="h-3 w-24 rounded" />
-          <Skeleton className="mt-3 h-9 w-20 rounded" />
+          <Skeleton className="h-3 w-24 rounded-aura-xs" />
+          <Skeleton className="mt-3 h-9 w-20 rounded-aura-xs" />
         </div>
       ))}
     </div>
@@ -244,6 +249,7 @@ interface NavTile {
 }
 
 function BentoNavigation({pending360, activeCycles}: {pending360: number; activeCycles: number}) {
+  const {pick} = useReducedMotionSafe();
   const hero: NavTile & {meta: string} = {
     title: 'Performance reviews',
     description: 'Run review cycles end-to-end. Track completion, nudge stragglers, and finalise outcomes.',
@@ -266,10 +272,8 @@ function BentoNavigation({pending360, activeCycles}: {pending360: number; active
   ];
 
   return (
-    <motion.section
-      initial="hidden"
-      animate="visible"
-      variants={{visible: {transition: {staggerChildren: 0.06, delayChildren: 0.18}}}}
+    <Stagger
+      variants={pick({visible: {transition: {staggerChildren: MOTION_STAGGER, delayChildren: 0.18}}})}
       className="grid gap-4 grid-cols-1 lg:grid-cols-12"
       aria-label="Explore performance"
     >
@@ -285,7 +289,7 @@ function BentoNavigation({pending360, activeCycles}: {pending360: number; active
           <BentoTile key={tile.href} {...tile} />
         )
       )}
-    </motion.section>
+    </Stagger>
   );
 }
 
@@ -301,33 +305,34 @@ function BentoHero({title, description, icon: Icon, href, meta}: {
   href: string;
   meta: string;
 }) {
+  const {pick} = useReducedMotionSafe();
   return (
-    <motion.div
-      variants={{hidden: {opacity: 0, y: 8}, visible: {opacity: 1, y: 0, transition: {duration: 0.5, ease: EASE}}}}
+    <StaggerItem
+      variants={pick({hidden: {opacity: 0, y: MOTION_RISE_DISTANCE}, visible: {opacity: 1, y: 0, transition: {duration: 0.5, ease: EASE}}})}
       className="lg:col-span-7 lg:row-span-2"
     >
       <Link
         href={href}
-        className="group block h-full rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] p-7 sm:p-9 transition-all hover:border-[var(--border-main)] hover:shadow-[0_20px_40px_-15px_rgba(15,23,42,0.08)] active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
+        className="group block h-full rounded-aura-lg bg-[var(--surface)] border border-[var(--border-soft)] p-7 sm:p-9 transition-all hover:border-[var(--border)] hover:shadow-[var(--sh-md)] active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2"
       >
         <div className="flex items-start justify-between">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-accent-50 text-accent-700 dark:bg-accent-900/30 dark:text-accent-300">
+          <div className="flex h-11 w-11 items-center justify-center rounded-aura-md bg-[var(--accent-soft)] text-[var(--accent)]">
             <Icon className="h-5 w-5" aria-hidden="true" />
           </div>
-          <ArrowRight className="h-4 w-4 text-[var(--text-muted)] transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+          <ArrowRight className="h-4 w-4 text-[var(--text-3)] transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
         </div>
-        <h2 className="mt-8 text-2xl sm:text-3xl font-semibold tracking-tight text-[var(--text-heading)]">
+        <h2 className="mt-8 text-2xl sm:text-3xl font-semibold tracking-tight text-[var(--text-1)]">
           {title}
         </h2>
-        <p className="mt-3 text-body-secondary max-w-[48ch]">{description}</p>
+        <p className="mt-3 text-body-secondary max-w-[48ch] text-[var(--text-2)]">{description}</p>
         <div className="mt-10 flex items-end justify-between gap-6">
           <BentoHeroBars />
-          <p className="text-2xs font-medium uppercase tracking-[0.18em] text-[var(--text-muted)]">
+          <p className="text-aura-micro text-[var(--text-3)]">
             {meta}
           </p>
         </div>
       </Link>
-    </motion.div>
+    </StaggerItem>
   );
 }
 
@@ -349,50 +354,53 @@ function BentoHeroBars() {
 }
 
 function BentoTile({title, description, icon: Icon, href, badge}: NavTile) {
+  const {pick} = useReducedMotionSafe();
   return (
-    <motion.div
-      variants={{hidden: {opacity: 0, y: 8}, visible: {opacity: 1, y: 0, transition: {duration: 0.4, ease: EASE}}}}
+    <StaggerItem
+      variants={pick({hidden: {opacity: 0, y: MOTION_RISE_DISTANCE}, visible: {opacity: 1, y: 0, transition: {duration: MOTION_DURATION.base, ease: EASE}}})}
       className="lg:col-span-5"
     >
       <Link
         href={href}
-        className="group flex h-full items-start gap-4 rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] p-5 sm:p-6 transition-all hover:border-[var(--border-main)] hover:shadow-[0_12px_30px_-12px_rgba(15,23,42,0.07)] active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
+        className="group flex h-full items-start gap-4 rounded-aura-lg bg-[var(--surface)] border border-[var(--border-soft)] p-5 sm:p-6 transition-all hover:border-[var(--border)] hover:shadow-[var(--sh-sm)] active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2"
       >
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[var(--bg-surface)] border border-[var(--border-subtle)] text-[var(--text-secondary)]">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-aura-md bg-[var(--surface-aura-2)] border border-[var(--border-soft)] text-[var(--text-2)]">
           <Icon className="h-[18px] w-[18px]" aria-hidden="true" />
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-4">
-            <h3 className="text-base font-semibold text-[var(--text-heading)]">{title}</h3>
+            <h3 className="text-base font-semibold text-[var(--text-1)]">{title}</h3>
             {badge !== undefined && (
-              <span className="inline-flex items-center justify-center min-w-6 px-2 h-5 text-2xs font-semibold rounded-full bg-warning-100 text-warning-700 dark:bg-warning-900/40 dark:text-warning-300">
+              <span className="inline-flex items-center justify-center min-w-6 px-2 h-5 text-2xs font-semibold rounded-aura-full bg-[var(--warn-bg)] text-[var(--warn-fg)] num">
                 {badge}
               </span>
             )}
           </div>
-          <p className="mt-1 text-sm text-[var(--text-secondary)] leading-relaxed">{description}</p>
+          <p className="mt-1 text-sm text-[var(--text-2)] leading-relaxed">{description}</p>
         </div>
-        <ArrowRight className="h-4 w-4 self-center text-[var(--text-muted)] transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+        <ArrowRight className="h-4 w-4 self-center text-[var(--text-3)] transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
       </Link>
-    </motion.div>
+    </StaggerItem>
   );
 }
 
 // ── Pending 360 alert ────────────────────────────────────────────────────────
 function Pending360Strip({count}: {count: number}) {
+  const {pick} = useReducedMotionSafe();
   return (
-    <motion.aside
-      initial={{opacity: 0, y: 6}}
-      animate={{opacity: 1, y: 0}}
-      transition={{duration: 0.45, ease: EASE, delay: 0.42}}
+    <Reveal
+      variants={pick({
+        hidden: {opacity: 0, y: MOTION_RISE_DISTANCE},
+        visible: {opacity: 1, y: 0, transition: {duration: MOTION_DURATION.base, ease: EASE, delay: 0.42}},
+      })}
       role="status"
       aria-live="polite"
-      className="flex items-center justify-between gap-4 rounded-xl border border-warning-200 bg-warning-50/40 dark:border-warning-700/40 dark:bg-warning-950/30 px-5 py-4"
+      className="flex items-center justify-between gap-4 rounded-aura-lg border border-[var(--warn-bd)] bg-[var(--warn-bg)]/40 px-5 py-4"
     >
       <div className="flex items-center gap-4 text-sm">
-        <AlertTriangle className="h-4 w-4 shrink-0 text-warning-600 dark:text-warning-400" aria-hidden="true" />
-        <p className="text-[var(--text-primary)]">
-          <span className="font-semibold">{count}</span>{' '}
+        <AlertTriangle className="h-4 w-4 shrink-0 text-[var(--warn-fg)]" aria-hidden="true" />
+        <p className="text-[var(--text-1)]">
+          <span className="font-semibold num">{count}</span>{' '}
           {count === 1 ? '360 feedback request is' : '360 feedback requests are'} waiting on you.
         </p>
       </div>
@@ -402,6 +410,6 @@ function Pending360Strip({count}: {count: number}) {
           <ArrowRight className="ml-1.5 h-3.5 w-3.5" aria-hidden="true" />
         </Button>
       </Link>
-    </motion.aside>
+    </Reveal>
   );
 }
