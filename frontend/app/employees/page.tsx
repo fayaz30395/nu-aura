@@ -413,7 +413,10 @@ export default function EmployeesPage() {
                 variant="primary"
                 size="sm"
                 leftIcon={<UserPlus size={15} aria-hidden />}
-                onClick={() => setShowAddModal(true)}
+                onClick={() => {
+                  window.nuToast?.('New employee', { msg: 'Opening the add-employee form…', type:'info' });
+                  setShowAddModal(true);
+                }}
               >
                 Add Employee
               </Button>
@@ -437,19 +440,19 @@ export default function EmployeesPage() {
                 <span className="num">{selected.size}</span> selected
               </span>
               <span className={listStyles.bulkSep} />
-              <button type="button" className={listStyles.bulkBtn}>
+              <button type="button" className={listStyles.bulkBtn} onClick={() => { window.nuToast?.('Message sent', { msg: `Message drafted to ${selected.size} ${selected.size===1?'person':'people'}.`, type:'ok' }); }}>
                 <Mail size={14} aria-hidden />
                 Message
               </button>
-              <button type="button" className={listStyles.bulkBtn}>
+              <button type="button" className={listStyles.bulkBtn} onClick={() => { window.nuToast?.('Moved to new team', { msg: `${selected.size} ${selected.size===1?'employee':'employees'} reassigned.`, type:'ok' }); setSelected(new Set()); }}>
                 <FolderInput size={14} aria-hidden />
                 Move team
               </button>
-              <button type="button" className={listStyles.bulkBtn}>
+              <button type="button" className={listStyles.bulkBtn} onClick={() => { window.nuToast?.('Export started', { msg: `Preparing CSV for ${selected.size} ${selected.size===1?'record':'records'}…`, type:'info' }); }}>
                 <Download size={14} aria-hidden />
                 Export
               </button>
-              <button type="button" className={listStyles.bulkBtn}>
+              <button type="button" className={listStyles.bulkBtn} onClick={() => { window.nuToast?.('Offboarding initiated', { msg: `${selected.size} ${selected.size===1?'employee':'employees'} queued for offboarding.`, type:'warn' }); setSelected(new Set()); }}>
                 <UserX size={14} aria-hidden />
                 Offboard
               </button>

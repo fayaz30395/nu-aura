@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {Download, FileText, MoreHorizontal, MessageSquare, Pencil, X, UserPlus, TrendingUp, Award, Palmtree} from 'lucide-react';
 import {Button} from '@/components/ui/Button';
 import {Badge} from '@/components/ui/Badge';
@@ -51,16 +51,14 @@ function joinedDisplay(iso?: string): string {
  */
 export function ProfileSheet({employee, onClose, onViewFull, onEdit}: ProfileSheetProps) {
   const [tab, setTab] = useState<SheetTab>('overview');
-  const tint = colorForName(employee.fullName);
 
-  // Close on Escape — keyboard parity for the overlay.
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
+  React.useEffect(() => {
+    function onKey(e: KeyboardEvent) { if (e.key === 'Escape') onClose(); }
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [onClose]);
+
+  const tint = colorForName(employee.fullName);
 
   const typeLabel = EMPLOYMENT_TYPE_LABEL[employee.employmentType] ?? employee.employmentType;
   const joined = joinedDisplay(employee.joiningDate);
@@ -112,11 +110,11 @@ export function ProfileSheet({employee, onClose, onViewFull, onEdit}: ProfileShe
               <span className="num ml-auto text-xs text-[var(--text-3)]">{employee.employeeCode}</span>
             </div>
             <div className="mt-[18px] flex gap-2">
-              <Button variant="primary" size="sm" leftIcon={<MessageSquare size={15} aria-hidden />}>
+              <Button variant="primary" size="sm" leftIcon={<MessageSquare size={15} aria-hidden />} onClick={() => window.nuToast?.('Message', { msg: `New message to ${employee.fullName}.`, type:'info' })}>
                 Message
               </Button>
               {onEdit ? (
-                <Button variant="ghost" size="sm" leftIcon={<Pencil size={15} aria-hidden />} onClick={onEdit}>
+                <Button variant="ghost" size="sm" leftIcon={<Pencil size={15} aria-hidden />} onClick={() => { window.nuToast?.('Edit profile', { msg: `Editing ${employee.fullName}'s profile.`, type:'info' }); onEdit(); }}>
                   Edit
                 </Button>
               ) : null}

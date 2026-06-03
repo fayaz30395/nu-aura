@@ -250,6 +250,13 @@ export default function ApprovalInboxPage() {
   const handleApprove = useCallback(async () => {
     if (!selectedItem) return;
     await approveMutation.mutateAsync({executionId: selectedItem.id, comments: comments || undefined});
+    mNotifications.show({
+      title: 'Request approved',
+      message: `${selectedItem.module} · ${selectedItem.requesterName} has been notified.`,
+      color: 'green',
+      icon: <CheckCircle className="h-4 w-4"/>,
+      autoClose: 5000,
+    });
     setComments('');
     setShowApproveModal(false);
     setSelectedId(null);
@@ -258,6 +265,13 @@ export default function ApprovalInboxPage() {
   const handleReject = useCallback(async () => {
     if (!selectedItem || !comments.trim()) return;
     await rejectMutation.mutateAsync({executionId: selectedItem.id, comments});
+    mNotifications.show({
+      title: 'Request declined',
+      message: `${selectedItem.module} · ${selectedItem.requesterName} has been notified.`,
+      color: 'red',
+      icon: <XCircle className="h-4 w-4"/>,
+      autoClose: 5000,
+    });
     setComments('');
     setShowRejectModal(false);
     setSelectedId(null);
@@ -266,10 +280,36 @@ export default function ApprovalInboxPage() {
   const handleReturn = useCallback(async () => {
     if (!selectedItem || !comments.trim()) return;
     await returnMutation.mutateAsync({executionId: selectedItem.id, comments});
+    mNotifications.show({
+      title: 'Request returned',
+      message: `${selectedItem.module} · ${selectedItem.requesterName} has been notified.`,
+      color: 'yellow',
+      icon: <RotateCcw className="h-4 w-4"/>,
+      autoClose: 5000,
+    });
     setComments('');
     setShowReturnModal(false);
     setSelectedId(null);
   }, [selectedItem, comments, returnMutation]);
+
+  const handleApproveAllLeave = useCallback(async () => {
+    const leaveRequests = items.filter((item) => item.module === 'Leave');
+    if (leaveRequests.length === 0) return;
+
+    for (const item of leaveRequests) {
+      await approveMutation.mutateAsync({executionId: item.id, comments: undefined});
+    }
+
+    mNotifications.show({
+      title: 'All leave approved',
+      message: `${leaveRequests.length} leave request${leaveRequests.length === 1 ? '' : 's'} approved.`,
+      color: 'green',
+      icon: <CheckCircle className="h-4 w-4"/>,
+      autoClose: 5000,
+    });
+
+    queryClient.invalidateQueries({queryKey: ['approvalInbox']});
+  }, [items, approveMutation, queryClient]);
 
   // Reset page when filters change
   const handleTabChange = useCallback((tabKey: string) => {
@@ -350,8 +390,8 @@ export default function ApprovalInboxPage() {
           </div>
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="md" leftIcon={<CheckCheck className="h-4 w-4"/>}
-                    onClick={() => setShowDelegationModal(true)}>
-              Delegate
+                    onClick={handleApproveAllLeave}>
+              Approve all leave
             </Button>
             <Button variant="ghost" size="md" leftIcon={<SlidersHorizontal className="h-4 w-4"/>}
                     onClick={() => handleStatusChange(statusFilter === 'PENDING' ? 'ALL' : 'PENDING')}>

@@ -634,7 +634,7 @@ function LoginPage() {
         </div>
         <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid gap-6 lg:grid-cols-[1.05fr_1fr] lg:items-center">
-            <BrandPanel/>
+            <BrandPanel showHighlights/>
             <div className="aura-auth-col">
               <div className="aura-auth-form motion-rise">
                 <MfaVerification
@@ -662,7 +662,7 @@ function LoginPage() {
       <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid gap-6 lg:grid-cols-[1.05fr_1fr] lg:items-center">
           {/* ─── Left — dark gradient brand panel ─────────────── */}
-          <BrandPanel/>
+          <BrandPanel showHighlights/>
 
           {/* ─── Right — sign-in form ─────────────────────────── */}
           <div className="aura-auth-col">

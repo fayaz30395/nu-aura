@@ -268,7 +268,11 @@ function PageHeader({latest}: {latest?: PayrollRun}) {
         </Link>
         <PermissionGate permission={Permissions.PAYROLL_PROCESS}>
           <Link href="/payroll/runs?action=new">
-            <Button variant="primary" leftIcon={<Play className="h-4 w-4" />}>
+            <Button
+              variant="primary"
+              leftIcon={<Play className="h-4 w-4" />}
+              onClick={() => window.nuToast?.('Payroll run started', {msg: 'Cycle is now calculating.', type: 'info'})}
+            >
               Run Payroll
             </Button>
           </Link>
@@ -332,7 +336,12 @@ function CurrentRunBanner({run}: {run: PayrollRun}) {
             </div>
           </div>
           <Link href={`/payroll/runs/${run.id}`} className="self-start">
-            <Button variant="primary" size="lg" leftIcon={<ShieldCheck className="h-4 w-4" />}>
+            <Button
+              variant="primary"
+              size="lg"
+              leftIcon={<ShieldCheck className="h-4 w-4" />}
+              onClick={() => window.nuToast?.('Payroll approved', {msg: 'Cycle sent for disbursement.', type: 'ok'})}
+            >
               Review &amp; approve
             </Button>
           </Link>

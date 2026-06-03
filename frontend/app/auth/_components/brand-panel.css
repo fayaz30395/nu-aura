@@ -158,3 +158,213 @@
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.45);
 }
+
+/* ── Aura v2 login highlights ──────────────────────────────────────────
+   These rows render only when BrandPanel is given showHighlights (login
+   surface). All colors are on-dark rgba / brand accents because the panel
+   is a fixed dark brand surface in both themes. */
+
+.aura-brand__orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.5;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.aura-brand__orb--1 {
+  width: 340px;
+  height: 340px;
+  top: -90px;
+  right: -60px;
+  background: radial-gradient(circle, rgba(237, 48, 39, 0.5), transparent 70%);
+}
+
+.aura-brand__orb--2 {
+  width: 380px;
+  height: 380px;
+  bottom: -120px;
+  left: -80px;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.5), transparent 70%);
+}
+
+.aura-brand__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 13px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.86);
+  margin-bottom: 20px;
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  white-space: nowrap;
+}
+
+.aura-brand__eyebrow-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #57d08c;
+  box-shadow: 0 0 0 3px rgba(87, 208, 140, 0.25);
+  flex-shrink: 0;
+}
+
+.aura-brand__grad {
+  background: linear-gradient(100deg, #ff8a5b, #d97bdc 55%, #9a8bff);
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .aura-brand__grad {
+    animation: auraBrandGradShift 7s ease-in-out infinite;
+  }
+}
+
+@keyframes auraBrandGradShift {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.aura-brand__metrics {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 30px;
+}
+
+.aura-brand__metric-n {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 22px;
+  letter-spacing: -0.02em;
+}
+
+.aura-brand__metric-l {
+  font-size: 11.5px;
+  color: rgba(255, 255, 255, 0.6);
+  margin-top: 2px;
+}
+
+.aura-brand__metric-sep {
+  width: 1px;
+  height: 30px;
+  background: rgba(255, 255, 255, 0.14);
+  flex-shrink: 0;
+}
+
+.aura-brand__trust {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  margin-bottom: 16px;
+}
+
+.aura-brand__avs {
+  display: flex;
+}
+
+.aura-brand__av,
+.aura-brand__avs-more {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 10px;
+  font-weight: 700;
+  color: #fff;
+  border: 2px solid #14193a;
+  margin-left: -9px;
+  flex-shrink: 0;
+}
+
+.aura-brand__av {
+  background: var(--nu-grad-brand);
+  font-family: var(--font-display);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.aura-brand__av:first-child {
+  margin-left: 0;
+}
+
+.aura-brand__avs-more {
+  background: rgba(255, 255, 255, 0.16);
+  font-family: var(--font-mono);
+}
+
+.aura-brand__trust-txt {
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.aura-brand__trust-txt b {
+  color: #fff;
+}
+
+.aura-brand__rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 14px;
+}
+
+.aura-brand__stars {
+  display: inline-flex;
+  gap: 1px;
+  color: #f5a623;
+}
+
+.aura-brand__stars svg {
+  width: 14px;
+  height: 14px;
+  fill: #f5a623;
+}
+
+.aura-brand__rating-txt {
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, 0.72);
+  white-space: nowrap;
+}
+
+.aura-brand__rating-txt b {
+  color: #fff;
+}
+
+.aura-brand__compliance {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.aura-brand__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 11.5px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.78);
+  white-space: nowrap;
+}
+
+.aura-brand__badge svg {
+  color: #57d08c;
+}

@@ -67,7 +67,7 @@ export function ToastProvider({children}: { children: ReactNode }) {
     <ToastContext.Provider value={value}>
       {children}
       <div role="status" aria-live="polite" aria-atomic="true"
-           className="fixed bottom-4 right-4 z-50 flex flex-col gap-2 max-w-sm">
+           className="fixed bottom-[22px] right-[22px] z-50 flex flex-col gap-[10px] pointer-events-none [&>*]:pointer-events-auto">
         <AnimatePresence initial={false}>
           {toasts.map((toast) => (
             <ToastItem key={toast.id} toast={toast} onClose={() => removeToast(toast.id)}/>
@@ -78,33 +78,41 @@ export function ToastProvider({children}: { children: ReactNode }) {
   );
 }
 
-function ToastItem({toast, onClose}: { toast: Toast; onClose: () => void }) {
-  const styles = {
-    success: 'bg-success-50 border-success-200 text-success-800',
-    error: 'bg-danger-50 border-danger-200 text-danger-800',
-    warning: 'bg-warning-50 border-warning-200 text-warning-800',
-    info: 'bg-accent-50 border-accent-200 text-accent-800',
-  };
+// Per-type icon chip backgrounds, sourced from status tokens (light + dark parity built in).
+const chipStyles: Record<ToastType, { background: string; color: string }> = {
+  success: {background: 'var(--ok-bg)', color: 'var(--ok-fg)'},
+  info: {background: 'var(--accent-soft)', color: 'var(--accent-text)'},
+  warning: {background: 'var(--warn-bg)', color: 'var(--warn-fg)'},
+  error: {background: 'var(--err-bg)', color: 'var(--err-fg)'},
+};
 
+const titles: Record<ToastType, string> = {
+  success: 'Success',
+  info: 'Notice',
+  warning: 'Warning',
+  error: 'Error',
+};
+
+function ToastItem({toast, onClose}: { toast: Toast; onClose: () => void }) {
   const icons = {
     success: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7"/>
       </svg>
     ),
     error: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"/>
       </svg>
     ),
     warning: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
               d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
       </svg>
     ),
     info: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
               d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
       </svg>
@@ -117,20 +125,28 @@ function ToastItem({toast, onClose}: { toast: Toast; onClose: () => void }) {
     <motion.div
       layout
       role="alert"
-      className={`${styles[toast.type]} border rounded-lg shadow-[var(--shadow-dropdown)] p-4 flex items-start gap-4`}
+      className="flex items-start gap-3 min-w-[300px] max-w-[380px] rounded-[13px] border border-[var(--border)] bg-[var(--surface)] p-[13px_14px] shadow-[var(--sh-pop)]"
       variants={pick(toastVariants)}
       initial="initial"
       animate="animate"
       exit="exit"
     >
-      <div className="flex-shrink-0">{icons[toast.type]}</div>
-      <p className="flex-1 text-sm font-medium">{toast.message}</p>
+      <div
+        className="flex-shrink-0 grid place-items-center w-[30px] h-[30px] rounded-[9px]"
+        style={chipStyles[toast.type]}
+      >
+        {icons[toast.type]}
+      </div>
+      <div className="flex-1 min-w-0 pt-px">
+        <div className="text-[13px] font-semibold text-[var(--text-1)]">{titles[toast.type]}</div>
+        <p className="mt-0.5 text-xs leading-[1.45] text-[var(--text-3)] break-words">{toast.message}</p>
+      </div>
       <button
         onClick={onClose}
         aria-label="Dismiss notification"
-        className="press-scale flex-shrink-0 hover:opacity-70 transition-[opacity,transform] duration-[var(--motion-fast)] ease-[var(--ease-standard)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] rounded"
+        className="press-scale flex-shrink-0 grid place-items-center w-6 h-6 rounded-[7px] text-[var(--text-3)] hover:bg-[var(--surface-hover)] hover:text-[var(--text-1)] transition-[background-color,color,transform] duration-[var(--motion-fast)] ease-[var(--ease-standard)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)]"
       >
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"/>
         </svg>
       </button>

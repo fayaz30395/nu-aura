@@ -293,7 +293,12 @@ function BalanceRings({
           <Button
             variant="primary"
             className="mt-5 w-full"
-            onClick={onRequest}
+            onClick={() => {
+              onRequest();
+              if (typeof window !== 'undefined' && window.nuToast) {
+                window.nuToast('Time-off request', { msg: 'Opening the request form…', type: 'info' });
+              }
+            }}
             leftIcon={<CalendarPlus className="h-4 w-4" aria-hidden="true" />}
           >
             Request time off
