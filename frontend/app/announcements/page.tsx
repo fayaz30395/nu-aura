@@ -290,7 +290,6 @@ export default function AnnouncementsPage() {
                       role="listitem"
                       className="bg-gradient-to-r from-warning-50 to-warning-50 dark:from-warning-950/20 dark:to-warning-950/20 border border-warning-200 dark:border-warning-800 rounded-xl p-6 cursor-pointer hover:shadow-[var(--sh-md)] transition-all group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2"
                       onClick={() => handleAnnouncementClick(announcement)}
-                      role="button"
                       tabIndex={0}
                       onKeyDown={(e) => {
                         if (e.key === 'Enter' || e.key === ' ') {
@@ -426,7 +425,6 @@ export default function AnnouncementsPage() {
                           : 'border-accent-200 bg-accent-50/30 dark:border-accent-700/40 dark:bg-accent-950/15'
                       }`}
                       onClick={() => handleAnnouncementClick(announcement)}
-                      role="button"
                       tabIndex={0}
                       onKeyDown={(e) => {
                         if (e.key === 'Enter' || e.key === ' ') {

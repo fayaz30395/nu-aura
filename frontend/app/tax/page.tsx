@@ -239,6 +239,7 @@ export default function TaxOverviewPage() {
             </Table.Tbody>
           </Table>
         </Card>
+        </motion.div>
       </Container>
     </AppLayout>
   );

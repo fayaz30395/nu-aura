@@ -452,7 +452,6 @@ export default function SurveysPage() {
                     </div>
                   </div>
                 </div>
-              </div>
               </StaggerItem>
             ))}
           </Stagger>

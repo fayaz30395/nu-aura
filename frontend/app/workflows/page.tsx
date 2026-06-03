@@ -499,7 +499,6 @@ export default function WorkflowListPage() {
               </div>
             )}
           </Reveal>
-          </>
         )}
       </div>
     </PageTransition>

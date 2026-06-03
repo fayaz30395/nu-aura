@@ -366,7 +366,7 @@ export default function LoansPage() {
             </button>
           </Reveal>
         </motion.div>
-      </div>
+      </PageTransition>
     </AppLayout>
   );
 }

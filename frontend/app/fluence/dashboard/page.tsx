@@ -174,7 +174,7 @@ function FluenceDashboardPageContent() {
           {isLoading ? (
             <Stagger className="space-y-4">
               {[1, 2, 3].map((i) => (
-                <StaggerItem key={i} className={`${card.base} ${card.paddingLarge} h-32 animate-pulse`}/>
+                <StaggerItem key={i} className={`${card.base} ${card.paddingLarge} h-32 animate-pulse`}><span className="sr-only">Loading…</span></StaggerItem>
               ))}
             </Stagger>
           ) : (
