@@ -150,11 +150,12 @@ const ChildrenFlyover: React.FC<{
             )}
           </div>
           <button
+            type="button"
             onClick={onClose}
             className="p-2.5 rounded-md text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--sidebar-hover-bg)] transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 active:scale-[0.985]"
             aria-label="Close"
           >
-            <X className="h-4 w-4"/>
+            <X className="h-4 w-4" aria-hidden="true"/>
           </button>
         </div>
 
@@ -367,6 +368,7 @@ const SidebarMenuItem: React.FC<{
                     ? 'translate-x-0.5 rotate-90 text-[var(--sidebar-text-active)]'
                     : 'text-[var(--sidebar-text-muted)] group-hover:translate-x-0.5'
                 )}
+                aria-hidden="true"
               />
             )}
           </div>
@@ -460,6 +462,7 @@ const SectionDivider: React.FC<{
           'h-3 w-3 text-[var(--sidebar-text-muted)] transform-gpu transition-transform duration-[var(--motion-slow)] ease-[var(--ease-out-expo)]',
           !isSectionExpanded && '-rotate-90'
         )}
+        aria-hidden="true"
       />
     </button>
   );
@@ -651,6 +654,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
               )}
             >
               <button
+                type="button"
                 onClick={() => handleCollapsedChange(!isCollapsed)}
                 className={cn(
                   'focus-ring group flex items-center gap-2 px-3 py-2 rounded-md text-[var(--sidebar-text)] hover:bg-[var(--sidebar-hover-bg)] hover:text-[var(--sidebar-text-active)] transform-gpu transition-[background-color,color,transform] duration-[var(--motion-base)] ease-[var(--ease-out-expo)] w-full cursor-pointer focus-visible:outline-none active:scale-[var(--motion-press-scale)]',
@@ -660,12 +664,12 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
                 title={isCollapsed ? 'Expand sidebar (Ctrl+B)' : 'Collapse sidebar (Ctrl+B)'}
               >
                 {isCollapsed ? (
-                  <PanelLeft className="h-5 w-5 transform-gpu transition-transform duration-[var(--motion-slow)] ease-[var(--ease-out-expo)] group-hover:scale-110"/>
+                  <PanelLeft className="h-5 w-5 transform-gpu transition-transform duration-[var(--motion-slow)] ease-[var(--ease-out-expo)] group-hover:scale-110" aria-hidden="true"/>
                 ) : (
                   <>
-                    <PanelLeftClose className="h-5 w-5 transform-gpu transition-transform duration-[var(--motion-slow)] ease-[var(--ease-out-expo)] group-hover:-translate-x-0.5"/>
+                    <PanelLeftClose className="h-5 w-5 transform-gpu transition-transform duration-[var(--motion-slow)] ease-[var(--ease-out-expo)] group-hover:-translate-x-0.5" aria-hidden="true"/>
                     <span className="text-xs font-medium transition-opacity duration-200">Collapse</span>
-                    <kbd className="ml-auto text-xs font-mono px-1.5 py-0.5 rounded border border-[var(--sidebar-border)] bg-[var(--sidebar-hover-bg)] text-[var(--sidebar-text-muted)] transition-colors duration-200">
+                    <kbd className="ml-auto text-xs font-mono px-1.5 py-0.5 rounded border border-[var(--sidebar-border)] bg-[var(--sidebar-hover-bg)] text-[var(--sidebar-text-muted)] transition-colors duration-200" aria-hidden="true">
                       ⌘B
                     </kbd>
                   </>

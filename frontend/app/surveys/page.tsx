@@ -42,6 +42,8 @@ import {
 } from '@/components/ui';
 import {SkeletonCard} from '@/components/ui/Skeleton';
 import {PageTransition, Reveal, Stagger, StaggerItem} from '@/components/motion';
+import {useReducedMotionSafe} from '@/hooks/useReducedMotionSafe';
+import {MOTION_DURATION, MOTION_EASE, MOTION_STAGGER, RISE} from '@/lib/constants/motion';
 import type {Survey, SurveyRequest} from '@/lib/types/grow/survey';
 import {SurveyStatus, SurveyType} from '@/lib/types/grow/survey';
 import {SURVEY_STATUS, SURVEY_TYPE} from '@/lib/status/vocabulary';
@@ -230,10 +232,10 @@ export default function SurveysPage() {
         {/* Header */}
         <Reveal className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)]">
+            <h1 className="text-aura-title">
               Employee Surveys
             </h1>
-            <p className="text-[var(--text-secondary)]">
+            <p className="text-[var(--text-2)]">
               Create and manage employee surveys and feedback collection
             </p>
           </div>

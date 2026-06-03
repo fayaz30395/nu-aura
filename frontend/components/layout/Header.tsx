@@ -163,7 +163,7 @@ const Header: React.FC<HeaderProps> = ({
           <button
             type="button"
             className={`hidden sm:inline-flex ${iconActionClass}`}
-            aria-label="Help">
+            aria-label="Open help">
             <HelpCircle className="h-5 w-5" aria-hidden="true"/>
           </button>
 
@@ -179,7 +179,7 @@ const Header: React.FC<HeaderProps> = ({
               className={`notification-btn relative inline-flex ${iconActionClass}`}
               data-testid="notification-bell"
               data-ws-connected={isWebSocketConnected ? 'true' : 'false'}
-              aria-label="Notifications"
+              aria-label={`Notifications${totalUnreadCount > 0 ? `: ${totalUnreadCount} unread` : ''}`}
               aria-expanded={isNotificationsOpen}
               aria-haspopup="true"
             >

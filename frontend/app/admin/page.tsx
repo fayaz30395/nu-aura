@@ -31,6 +31,8 @@ import {AdminPageContent} from '@/components/layout';
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
 import {Card, CardContent} from '@/components/ui/Card';
 import {Skeleton} from '@/components/ui/Skeleton';
+import {StatusBadge} from '@/components/ui/StatusBadge';
+import {PageTransition, Reveal} from '@/components/motion';
 import {MOTION_EASE} from '@/lib/animation';
 
 // Consolidated onto the shared motion foundation: every transition on this page
@@ -174,9 +176,10 @@ export default function AdminDashboardPage() {
   const degraded = healthStatus === 'DEGRADED';
 
   return (
-    <AdminPageContent className="page-shell">
-      <div className="w-full space-y-6">
-        <PageHeader />
+    <PageTransition>
+      <AdminPageContent className="page-shell">
+        <div className="w-full space-y-6">
+          <PageHeader />
 
         {statsLoading ? (
           <StatsSkeleton />

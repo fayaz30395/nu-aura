@@ -262,31 +262,31 @@ export default function DepartmentsPage() {
               <thead>
               <tr className="border-b border-[var(--border-subtle)]">
                 <th
-                  className="text-left px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)]">Code
+                  className="text-left px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-[var(--text-3)]">Code
                 </th>
                 <th
-                  className="text-left px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)]">Name
+                  className="text-left px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-[var(--text-3)]">Name
                 </th>
                 <th
-                  className="text-left px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)]">Type
+                  className="text-left px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-[var(--text-3)]">Type
                 </th>
                 <th
-                  className="text-left px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)]">Employees
+                  className="text-left px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-[var(--text-3)]">Employees
                 </th>
                 <th
-                  className="text-left px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)]">Status
+                  className="text-left px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-[var(--text-3)]">Status
                 </th>
                 <th
-                  className="text-right px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)]">Actions
+                  className="text-right px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-[var(--text-3)]">Actions
                 </th>
               </tr>
               </thead>
               <tbody className="divide-y divide-[var(--border-subtle)]">
               {filtered.map(dept => (
-                <tr key={dept.id} className="hover:bg-[var(--bg-elevated)] transition-colors">
-                  <td className="px-4 py-2.5 font-mono text-xs text-[var(--text-secondary)]">{dept.code}</td>
-                  <td className="px-4 py-2.5 font-medium">{dept.name}</td>
-                  <td className="px-4 py-2.5 text-[var(--text-secondary)]">
+                <tr key={dept.id} className="hover:bg-[var(--surface-aura-2)] transition-colors duration-150">
+                  <td className="px-4 py-2.5 font-mono text-xs text-[var(--text-1)] tabular-nums">{dept.code}</td>
+                  <td className="px-4 py-2.5 font-medium text-[var(--text-1)]">{dept.name}</td>
+                  <td className="px-4 py-2.5 text-[var(--text-2)]">
                     {dept.type ? (
                       <span
                         className="px-2 py-0.5 rounded-full bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300 text-xs font-medium">
@@ -294,12 +294,12 @@ export default function DepartmentsPage() {
                         </span>
                     ) : '—'}
                   </td>
-                  <td className="px-4 py-2.5 text-[var(--text-secondary)]">{dept.employeeCount ?? 0}</td>
+                  <td className="px-4 py-2.5 text-[var(--text-1)] font-mono tabular-nums">{dept.employeeCount ?? 0}</td>
                   <td className="px-4 py-2.5">
                       <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
                         dept.isActive
                           ? 'bg-success-100 dark:bg-success-900/30 text-success-700 dark:text-success-400'
-                          : 'bg-[var(--bg-elevated)] text-[var(--text-muted)]'
+                          : 'bg-[var(--surface-aura-2)] text-[var(--text-3)]'
                       }`}>
                         {dept.isActive ? 'Active' : 'Inactive'}
                       </span>
@@ -342,7 +342,7 @@ export default function DepartmentsPage() {
         {/* Pagination */}
         {totalPages > 1 && (
           <nav aria-label="Pagination" className="flex items-center justify-between mt-4">
-            <span className="text-xs text-[var(--text-muted)]" aria-current="page">
+            <span className="text-xs text-[var(--text-3)] font-mono tabular-nums" aria-current="page">
               Page {page + 1} of {totalPages}
             </span>
             <div className="flex items-center gap-2">

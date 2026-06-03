@@ -544,13 +544,13 @@ export default function AdminEmployeesPage() {
                   <table className="table-aura min-w-[800px]">
                     <thead>
                     <tr>
-                      <th>Employee</th>
-                      <th>Code</th>
-                      <th>Department</th>
-                      <th>Designation</th>
-                      <th>Type</th>
-                      <th>Status</th>
-                      <th className="text-right">Actions</th>
+                      <th className="text-aura-micro text-[var(--text-3)] uppercase">Employee</th>
+                      <th className="text-aura-micro text-[var(--text-3)] uppercase">Code</th>
+                      <th className="text-aura-micro text-[var(--text-3)] uppercase">Department</th>
+                      <th className="text-aura-micro text-[var(--text-3)] uppercase">Designation</th>
+                      <th className="text-aura-micro text-[var(--text-3)] uppercase">Type</th>
+                      <th className="text-aura-micro text-[var(--text-3)] uppercase">Status</th>
+                      <th className="text-aura-micro text-[var(--text-3)] uppercase text-right">Actions</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -558,7 +558,7 @@ export default function AdminEmployeesPage() {
                       const isEditingRoles = editingRoleForEmployee?.id === emp.id;
                       return (
                         <React.Fragment key={emp.id}>
-                          <tr className="hover:bg-[var(--surface-aura-2)] transition-colors duration-150">
+                          <tr className="hover:bg-[var(--surface-aura-2)] transition-colors duration-150 hover-lift">
                             <td>
                               <div className="flex items-center gap-2">
                                 <div

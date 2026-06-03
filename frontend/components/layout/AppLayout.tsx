@@ -358,8 +358,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
           />
           <aside
             ref={mobileDrawerRef}
-            role="dialog"
-            aria-modal="true"
+            role="navigation"
             aria-label="Sidebar navigation"
             className={cn(
               'fixed inset-y-0 left-0 z-40 w-72 md:hidden transform overflow-hidden border-r border-[var(--sidebar-border)]',

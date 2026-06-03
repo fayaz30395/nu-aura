@@ -21,6 +21,7 @@ import {z} from 'zod';
 import {Permission, RoleWithDetails} from '@/lib/types/core/roles';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
+import {PageTransition} from '@/components/motion';
 import {ConfirmDialog} from '@/components/ui';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {Button} from '@/components/ui/Button';
@@ -186,6 +187,7 @@ export default function PermissionsPage() {
   }, {} as Record<string, Permission[]>);
 
   return (
+    <PageTransition>
     <div className="page-shell-centered fade-slide-up auth-delay-20 p-6 space-y-6">
       <ConfirmDialog
         isOpen={showDeleteConfirm}
@@ -696,6 +698,7 @@ function EditRoleModal({
         </ModalFooter>
       </form>
     </Modal>
+    </PageTransition>
   );
 }
 
@@ -843,6 +846,7 @@ function CreateRoleModal({
         </ModalFooter>
       </form>
     </Modal>
+    </PageTransition>
   );
 }
 
@@ -949,5 +953,6 @@ function EditUserModal({
         </ModalFooter>
       </form>
     </Modal>
+    </PageTransition>
   );
 }
