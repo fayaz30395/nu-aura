@@ -6,8 +6,11 @@ import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import {AppLayout} from '@/components/layout';
-import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
+import {Card} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
+import {Badge} from '@/components/ui/Badge';
+import {Tabs, type TabItem} from '@/components/ui/Tabs';
+import {Segmented} from '@/components/ui/Segmented';
 
 import {Skeleton} from '@/components/ui/Skeleton';
 import {EmptyState} from '@/components/ui/EmptyState';
@@ -29,19 +32,28 @@ import {createLogger} from '@/lib/utils/logger';
 import {useQueryClient} from '@tanstack/react-query';
 import {notifications as mNotifications} from '@mantine/notifications';
 import {
+  Check,
+  CheckCheck,
   CheckCircle,
   ChevronLeft,
   ChevronRight,
   Clock,
+  CornerUpRight,
+  FileSignature,
   Inbox,
+  Package,
+  Palmtree,
+  Plane,
+  Receipt,
   RefreshCw,
   RotateCcw,
   Search,
+  SlidersHorizontal,
   XCircle,
   Zap,
 } from 'lucide-react';
 import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
-import {formatDateShort, formatDateTime, formatTime} from '@/lib/utils/format/date';
+import {formatDateShort, formatDateTime, formatRelative} from '@/lib/utils/format/date';
 
 const log = createLogger('ApprovalInbox');
 
@@ -62,78 +74,34 @@ const delegationFormSchema = z.object({
 
 type DelegationFormData = z.infer<typeof delegationFormSchema>;
 
-// ── Module tab configuration with colors ──────────────────────────────
+// ── Module tab configuration ───────────────────────────────────────
 interface ModuleTab {
   key: string;
   label: string;
   entityType?: string; // maps to WorkflowEntityType for API filter
-  color: string; // Tailwind bg class for the badge
-  textColor: string; // Tailwind text class for the badge
 }
 
 const MODULE_TABS: ModuleTab[] = [
-  {
-    key: 'ALL',
-    label: 'All',
-    color: 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]',
-    textColor: 'text-[var(--text-secondary)] dark:text-[var(--text-secondary)]200'
-  },
-  {
-    key: 'LEAVE',
-    label: 'Leave',
-    entityType: 'LEAVE_REQUEST',
-    color: 'bg-accent-100 dark:bg-accent-900/40',
-    textColor: 'text-accent-700 dark:text-accent-300'
-  },
-  {
-    key: 'EXPENSE',
-    label: 'Expense',
-    entityType: 'EXPENSE_CLAIM',
-    color: 'bg-warning-100 dark:bg-warning-900/40',
-    textColor: 'text-warning-700 dark:text-warning-300'
-  },
-  {
-    key: 'ASSET',
-    label: 'Asset',
-    entityType: 'ASSET_REQUEST',
-    color: 'bg-[var(--bg-surface)]',
-    textColor: 'text-[var(--text-secondary)]'
-  },
-  {
-    key: 'TRAVEL',
-    label: 'Travel',
-    entityType: 'TRAVEL_REQUEST',
-    color: 'bg-success-100 dark:bg-success-900/40',
-    textColor: 'text-success-700 dark:text-success-300'
-  },
-  {
-    key: 'RECRUITMENT',
-    label: 'Recruitment',
-    entityType: 'RECRUITMENT_OFFER',
-    color: 'bg-accent-100 dark:bg-accent-900/40',
-    textColor: 'text-accent-700 dark:text-accent-300'
-  },
-  {
-    key: 'OTHERS',
-    label: 'Others',
-    color: 'bg-accent-300 dark:bg-accent-900/40',
-    textColor: 'text-accent-900 dark:text-accent-500'
-  },
+  {key: 'ALL', label: 'All'},
+  {key: 'LEAVE', label: 'Leave', entityType: 'LEAVE_REQUEST'},
+  {key: 'EXPENSE', label: 'Expense', entityType: 'EXPENSE_CLAIM'},
+  {key: 'ASSET', label: 'Asset', entityType: 'ASSET_REQUEST'},
+  {key: 'TRAVEL', label: 'Travel', entityType: 'TRAVEL_REQUEST'},
+  {key: 'RECRUITMENT', label: 'Offers', entityType: 'RECRUITMENT_OFFER'},
+  {key: 'OTHERS', label: 'Others'},
 ];
 
-// Color lookup for module badges in the list
-const MODULE_BADGE_COLORS: Record<string, { bg: string; text: string }> = {
-  Leave: {bg: 'bg-accent-100 dark:bg-accent-900/30', text: 'text-accent-700 dark:text-accent-300'},
-  Expense: {bg: 'bg-warning-100 dark:bg-warning-900/30', text: 'text-warning-700 dark:text-warning-300'},
-  Asset: {bg: 'bg-[var(--bg-surface)]', text: 'text-[var(--text-secondary)]'},
-  Travel: {bg: 'bg-success-100 dark:bg-success-900/30', text: 'text-success-700 dark:text-success-300'},
-  Recruitment: {bg: 'bg-accent-100 dark:bg-accent-900/30', text: 'text-accent-700 dark:text-accent-300'},
+// Type-icon tile mapping (Aura spec: Leave→palmtree, Expense→receipt, Offer→file-signature, Asset→package)
+const MODULE_ICON: Record<string, React.ComponentType<{className?: string}>> = {
+  Leave: Palmtree,
+  Expense: Receipt,
+  Recruitment: FileSignature,
+  Asset: Package,
+  Travel: Plane,
 };
 
-const DEFAULT_BADGE = {bg: 'bg-accent-300 dark:bg-accent-900/30', text: 'text-accent-900 dark:text-accent-500'};
-
-function getModuleBadgeColors(module: string) {
-  return MODULE_BADGE_COLORS[module] ?? DEFAULT_BADGE;
+function getModuleIcon(module: string): React.ComponentType<{className?: string}> {
+  return MODULE_ICON[module] ?? Inbox;
 }
 
 function getInitials(name: string | undefined): string {
@@ -233,6 +201,11 @@ export default function ApprovalInboxPage() {
   const rejectMutation = useRejectExecution();
   const returnMutation = useReturnForModification();
 
+  // Per-tab counts for the Aura tab strip (derived from the inbox summary).
+  // The summary endpoint surfaces a single pending total; the "All" tab shows it,
+  // and we only annotate module tabs when the active filter narrows to them.
+  const pendingTotal = counts?.pending ?? totalElements;
+
   // SuperAdmin / TenantAdmin bypasses all permission checks (mirrors backend SecurityConfig).
   // hasPermission already checks isAdmin internally, but we keep the explicit isAdmin check
   // for clarity and to ensure the loading guard below never shows "Access denied" for admins.
@@ -320,13 +293,24 @@ export default function ApprovalInboxPage() {
     setSelectedId(null);
   }, []);
 
+  // Aura underline tab strip — counts the "All" tab against pending total.
+  const tabItems: ReadonlyArray<TabItem> = useMemo(
+    () =>
+      MODULE_TABS.map((t) => ({
+        id: t.key,
+        label: t.label,
+        count: t.key === 'ALL' ? pendingTotal : undefined,
+      })),
+    [pendingTotal]
+  );
+
   // Show a loading spinner while auth is hydrating to avoid flashing "Access denied"
   // before the user's roles have been restored from the session.
   if (!isReady) {
     return (
       <AppLayout activeMenuItem="approvals">
         <div className="flex h-full items-center justify-center p-8">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-accent-500 border-t-transparent"/>
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-[var(--accent)] border-t-transparent"/>
         </div>
       </AppLayout>
     );
@@ -340,7 +324,7 @@ export default function ApprovalInboxPage() {
             title="Access denied"
             description="You do not have permission to view the approval inbox."
             icon={<XCircle
-              className="h-12 w-12 text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>}
+              className="h-12 w-12 text-[var(--err-fg)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>}
           />
         </div>
       </AppLayout>
@@ -353,135 +337,86 @@ export default function ApprovalInboxPage() {
         initial={{opacity: 0, y: 20}}
         animate={{opacity: 1, y: 0}}
         transition={{duration: 0.25, ease: 'easeOut'}}
-        className="space-y-6 p-6"
+        className="space-y-5 p-6"
       >
         {/* Header */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)]">
-              Approval Inbox
+            <h1 className="text-aura-title text-[var(--text-1)]">
+              Approvals
             </h1>
-            <p className="mt-1 text-body-muted">
-              View and act on all pending approval requests.
+            <p className="mt-1 text-sm text-[var(--text-3)]">
+              <span className="tnum">{pendingTotal}</span> request{pendingTotal === 1 ? '' : 's'} awaiting your
+              decision
+              {activeDelegationsCount > 0 && (
+                <>
+                  {' · '}
+                  <span className="tnum">{activeDelegationsCount}</span> active{' '}
+                  {activeDelegationsCount === 1 ? 'delegation' : 'delegations'}
+                </>
+              )}
             </p>
           </div>
           <div className="flex items-center gap-2">
-            {activeDelegationsCount > 0 && (
-              <div
-                className="inline-flex items-center gap-2 px-4 py-1.5 rounded-lg bg-accent-50 dark:bg-accent-900/20 border border-accent-200 dark:border-accent-800">
-                <Zap
-                  className="h-4 w-4 text-accent-600 dark:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
-                <span
-                  className="text-sm font-medium text-accent-700 dark:text-accent-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
-                  {activeDelegationsCount} active {activeDelegationsCount === 1 ? 'delegation' : 'delegations'}
-                </span>
-              </div>
-            )}
-            <Button variant="outline" onClick={() => setShowDelegationModal(true)}>
+            <Button variant="ghost" size="md" leftIcon={<CheckCheck className="h-4 w-4"/>}
+                    onClick={() => setShowDelegationModal(true)}>
               Delegate
             </Button>
-            <Button variant="ghost" onClick={() => refetch()} disabled={isLoading}>
+            <Button variant="ghost" size="md" leftIcon={<SlidersHorizontal className="h-4 w-4"/>}
+                    onClick={() => handleStatusChange(statusFilter === 'PENDING' ? 'ALL' : 'PENDING')}>
+              {statusFilter === 'PENDING' ? 'Show all' : 'Pending only'}
+            </Button>
+            <Button variant="ghost" size="icon" aria-label="Refresh inbox" onClick={() => refetch()}
+                    disabled={isLoading}>
               <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`}/>
             </Button>
           </div>
         </div>
 
-        {/* Summary Row */}
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <SummaryCard
-            label="Pending"
-            value={counts?.pending ?? 0}
-            color="bg-warning-50 dark:bg-warning-900/20"
-            textColor="text-warning-700 dark:text-warning-300"
-            icon={<Clock className="h-5 w-5"/>}
+        {/* Tabs + secondary filters */}
+        <div className="space-y-3">
+          <Tabs
+            aria-label="Approval type"
+            tabs={tabItems}
+            value={activeTab}
+            onChange={handleTabChange}
           />
-          <SummaryCard
-            label="Approved Today"
-            value={counts?.approvedToday ?? 0}
-            color="bg-success-50 dark:bg-success-900/20"
-            textColor="text-success-700 dark:text-success-300"
-            icon={<CheckCircle className="h-5 w-5"/>}
-          />
-          <SummaryCard
-            label="Rejected Today"
-            value={counts?.rejectedToday ?? 0}
-            color="bg-danger-50 dark:bg-danger-900/20"
-            textColor="text-danger-700 dark:text-danger-300"
-            icon={<XCircle className="h-5 w-5"/>}
-          />
-        </div>
-
-        {/* Filters Row */}
-        <div
-          className="flex flex-col gap-4 rounded-xl border border-[var(--border-main)] bg-[var(--bg-secondary)] p-4 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]/40 md:flex-row md:items-center md:justify-between">
-          <div className="flex flex-wrap items-center gap-4">
-            {/* Status toggle */}
-            <div
-              className="inline-flex rounded-full bg-[var(--bg-secondary)] p-1 text-xs dark:bg-[var(--bg-secondary)]">
-              <button
-                type="button"
-                onClick={() => handleStatusChange('PENDING')}
-                className={`rounded-full px-4 py-1 font-medium transition-colors ${
-                  statusFilter === 'PENDING'
-                    ? 'bg-accent-700 text-white'
-                    : 'text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:text-[var(--text-muted)]'
-                }`}
-              >
-                Pending
-              </button>
-              <button
-                type="button"
-                onClick={() => handleStatusChange('ALL')}
-                className={`rounded-full px-4 py-1 font-medium transition-colors ${
-                  statusFilter === 'ALL'
-                    ? 'bg-accent-700 text-white'
-                    : 'text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:text-[var(--text-muted)]'
-                }`}
-              >
-                All
-              </button>
-            </div>
-
-            {/* Module tabs */}
-            <div className="flex flex-wrap gap-1.5">
-              {MODULE_TABS.map((tab) => (
-                <button
-                  key={tab.key}
-                  onClick={() => handleTabChange(tab.key)}
-                  className={`rounded-full px-4 py-1 text-xs font-medium transition-colors ${
-                    activeTab === tab.key
-                      ? `${tab.color} ${tab.textColor} ring-2 ring-accent-400/50`
-                      : 'bg-[var(--bg-secondary)] text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] dark:text-[var(--text-muted)]'
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Search */}
-          <div className="relative w-full md:w-64">
-            <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-[var(--text-muted)]"/>
-            <input
-              type="text"
-              placeholder="Search by title, requester…"
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setPage(0);
-              }}
-              className="input-aura w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] py-2 pl-9 pr-4 text-sm text-[var(--text-primary)] shadow-[var(--shadow-card)] placeholder:text-[var(--text-muted)] focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <Segmented
+              aria-label="Approval status"
+              value={statusFilter}
+              onChange={(v) => handleStatusChange(v as StatusFilter)}
+              options={[
+                {value: 'PENDING', label: 'Pending'},
+                {value: 'ALL', label: 'All'},
+              ]}
             />
+            <div className="relative w-full sm:w-72">
+              <Search
+                className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-3)]"/>
+              <input
+                type="text"
+                placeholder="Search by title, requester…"
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  setPage(0);
+                }}
+                className="w-full rounded-[var(--r-control)] border border-[var(--border)] bg-[var(--surface)] py-2 pl-9 pr-4 text-sm text-[var(--text-1)] shadow-[var(--inset-input)] outline-none transition-[border-color,box-shadow] duration-[var(--t-fast)] placeholder:text-[var(--text-3)] focus:border-[var(--accent)] focus:shadow-[var(--sh-focus)]"
+              />
+            </div>
           </div>
         </div>
 
         {/* Content */}
         {isLoading ? (
-          <div className="space-y-4">
-            {[...Array(4)].map((_, i) => (
-              <Skeleton key={i} className="h-24 rounded-xl"/>
-            ))}
+          <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
+            <div className="space-y-2.5">
+              {[...Array(5)].map((_, i) => (
+                <Skeleton key={i} className="h-[88px] rounded-[var(--r-lg)]"/>
+              ))}
+            </div>
+            <Skeleton className="h-[420px] rounded-[var(--r-lg)]"/>
           </div>
         ) : items.length === 0 ? (
           <EmptyState
@@ -495,121 +430,74 @@ export default function ApprovalInboxPage() {
           />
         ) : (
           <>
-            <div className="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
+            <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
               {/* List */}
-              <div className="space-y-4">
+              <div className="flex flex-col gap-2.5">
                 {items.map((item) => (
                   <InboxListItem
                     key={item.id}
                     item={item}
                     isSelected={selectedId === item.id}
-                    onClick={() => setSelectedId(item.id)}
+                    onClick={() => {
+                      setSelectedId(item.id);
+                      setComments('');
+                    }}
                   />
                 ))}
               </div>
 
               {/* Details */}
               {selectedItem ? (
-                <Card className="h-fit sticky top-6">
-                  <CardHeader>
-                    <CardTitle>Task Details</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <DetailRow label="Module" value={selectedItem.module}/>
-                    <DetailRow label="Title" value={selectedItem.title}/>
-                    <div className="grid grid-cols-2 gap-4">
-                      <DetailRow label="Requester" value={selectedItem.requesterName ?? 'Unknown'}/>
-                      <DetailRow label="Current Step" value={selectedItem.currentStepName ?? 'Pending'}/>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <DetailRow
-                        label="Created"
-                        value={selectedItem.submittedAt ? formatDateTime(selectedItem.submittedAt) : '—'}
-                      />
-                      <DetailRow
-                        label="Due"
-                        value={selectedItem.deadline ? formatDateTime(selectedItem.deadline) : '—'}
-                      />
-                    </div>
-                    {selectedItem.referenceNumber && (
-                      <DetailRow label="Reference" value={`#${selectedItem.referenceNumber}`}/>
-                    )}
-
-                    {selectedItem.status === 'PENDING' && (
-                      <div className="mt-4 flex gap-4">
-                        <Button
-                          variant="outline"
-                          className="flex-1 border-danger-300 text-danger-700 hover:bg-danger-50 dark:border-danger-700 dark:text-danger-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                          onClick={() => {
-                            setComments('');
-                            setShowRejectModal(true);
-                          }}
-                          disabled={rejectMutation.isPending || approveMutation.isPending || returnMutation.isPending}
-                        >
-                          <XCircle className="mr-2 h-4 w-4"/>
-                          Reject
-                        </Button>
-                        <Button
-                          variant="outline"
-                          className="flex-1 border-warning-300 text-warning-700 hover:bg-warning-50 dark:border-warning-700 dark:text-warning-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                          onClick={() => {
-                            setComments('');
-                            setShowReturnModal(true);
-                          }}
-                          disabled={rejectMutation.isPending || approveMutation.isPending || returnMutation.isPending}
-                        >
-                          <RotateCcw className="mr-2 h-4 w-4"/>
-                          Return
-                        </Button>
-                        <Button
-                          variant="primary"
-                          className="flex-1"
-                          onClick={() => {
-                            setComments('');
-                            setShowApproveModal(true);
-                          }}
-                          disabled={approveMutation.isPending || rejectMutation.isPending || returnMutation.isPending}
-                        >
-                          <CheckCircle className="mr-2 h-4 w-4"/>
-                          Approve
-                        </Button>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
+                <DetailPane
+                  item={selectedItem}
+                  comments={comments}
+                  onCommentsChange={setComments}
+                  isBusy={approveMutation.isPending || rejectMutation.isPending || returnMutation.isPending}
+                  onApprove={() => setShowApproveModal(true)}
+                  onReject={() => {
+                    setComments('');
+                    setShowRejectModal(true);
+                  }}
+                  onReturn={() => {
+                    setComments('');
+                    setShowReturnModal(true);
+                  }}
+                  onDelegate={() => setShowDelegationModal(true)}
+                />
               ) : (
                 <div
-                  className="flex items-center justify-center rounded-xl border border-dashed border-[var(--border-main)] p-8 text-body-muted dark:border-[var(--border-main)] dark:text-[var(--text-muted)]">
-                  Select a task from the left to view details.
+                  className="flex min-h-[280px] items-center justify-center rounded-[var(--r-lg)] border border-dashed border-[var(--border)] bg-[var(--surface)] p-8 text-sm text-[var(--text-3)]">
+                  Select a request from the left to review and decide.
                 </div>
               )}
             </div>
 
             {/* Pagination */}
             {totalPages > 1 && (
-              <div className="row-between border-t border-[var(--border-main)] pt-4 dark:border-[var(--border-main)]">
-                <p className="text-body-muted">
-                  Showing {page * PAGE_SIZE + 1}–{Math.min((page + 1) * PAGE_SIZE, totalElements)} of{' '}
-                  {totalElements}
+              <div className="flex items-center justify-between border-t border-[var(--border)] pt-4">
+                <p className="text-sm text-[var(--text-3)]">
+                  Showing <span className="tnum">{page * PAGE_SIZE + 1}</span>–
+                  <span className="tnum">{Math.min((page + 1) * PAGE_SIZE, totalElements)}</span> of{' '}
+                  <span className="tnum">{totalElements}</span>
                 </p>
                 <div className="flex gap-2">
                   <Button
                     variant="outline"
                     size="sm"
+                    leftIcon={<ChevronLeft className="h-4 w-4"/>}
                     onClick={() => setPage((p) => Math.max(0, p - 1))}
                     disabled={page === 0}
                   >
-                    <ChevronLeft className="h-4 w-4"/>
                     Previous
                   </Button>
                   <Button
                     variant="outline"
                     size="sm"
+                    rightIcon={<ChevronRight className="h-4 w-4"/>}
                     onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
                     disabled={page >= totalPages - 1}
                   >
                     Next
-                    <ChevronRight className="h-4 w-4"/>
                   </Button>
                 </div>
               </div>
@@ -622,25 +510,25 @@ export default function ApprovalInboxPage() {
       <Modal isOpen={showApproveModal} onClose={() => setShowApproveModal(false)} size="md">
         <ModalHeader onClose={() => setShowApproveModal(false)}>
           <div
-            className="flex items-center gap-2 text-success-600 dark:text-success-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+            className="flex items-center gap-2 text-[var(--ok-fg)]">
             <CheckCircle className="h-5 w-5"/>
             Approve request
           </div>
         </ModalHeader>
         <ModalBody>
-          <p className="text-body-secondary">
+          <p className="text-sm text-[var(--text-2)]">
             Are you sure you want to approve this request from{' '}
-            <strong>{selectedItem?.requesterName ?? 'Unknown'}</strong>?
+            <strong className="text-[var(--text-1)]">{selectedItem?.requesterName ?? 'Unknown'}</strong>?
           </p>
           <div className="mt-4">
-            <label className="block text-sm font-medium text-[var(--text-secondary)]">
+            <label className="block text-sm font-medium text-[var(--text-2)]">
               Comment (optional)
             </label>
             <textarea
               value={comments}
               onChange={(e) => setComments(e.target.value)}
               placeholder="Add an optional comment…"
-              className="mt-1 w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] p-4 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+              className="mt-1 w-full resize-none rounded-[var(--r-control)] border border-[var(--border)] bg-[var(--surface)] p-3 text-sm text-[var(--text-1)] shadow-[var(--inset-input)] outline-none focus:border-[var(--accent)] focus:shadow-[var(--sh-focus)]"
               rows={3}
             />
           </div>
@@ -654,11 +542,13 @@ export default function ApprovalInboxPage() {
             Cancel
           </Button>
           <Button
-            variant="primary"
+            variant="success"
+            isLoading={approveMutation.isPending}
+            loadingText="Approving…"
             onClick={handleApprove}
             disabled={approveMutation.isPending}
           >
-            {approveMutation.isPending ? 'Approving…' : 'Approve'}
+            Approve
           </Button>
         </ModalFooter>
       </Modal>
@@ -667,26 +557,25 @@ export default function ApprovalInboxPage() {
       <Modal isOpen={showRejectModal} onClose={() => setShowRejectModal(false)} size="md">
         <ModalHeader onClose={() => setShowRejectModal(false)}>
           <div
-            className="flex items-center gap-2 text-danger-600 dark:text-danger-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+            className="flex items-center gap-2 text-[var(--err-fg)]">
             <XCircle className="h-5 w-5"/>
-            Reject request
+            Decline request
           </div>
         </ModalHeader>
         <ModalBody>
-          <p className="text-body-secondary">
-            Please provide a reason for rejecting this request from{' '}
-            <strong>{selectedItem?.requesterName ?? 'Unknown'}</strong>.
+          <p className="text-sm text-[var(--text-2)]">
+            Please provide a reason for declining this request from{' '}
+            <strong className="text-[var(--text-1)]">{selectedItem?.requesterName ?? 'Unknown'}</strong>.
           </p>
           <div className="mt-4">
-            <label className="block text-sm font-medium text-[var(--text-secondary)]">
-              Reason <span aria-hidden="true"
-              className="text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">*</span>
+            <label className="block text-sm font-medium text-[var(--text-2)]">
+              Reason <span aria-hidden="true" className="text-[var(--err-fg)]">*</span>
             </label>
             <textarea
               value={comments}
               onChange={(e) => setComments(e.target.value)}
-              placeholder="Explain why this request is being rejected…"
-              className="mt-1 w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] p-4 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+              placeholder="Explain why this request is being declined…"
+              className="mt-1 w-full resize-none rounded-[var(--r-control)] border border-[var(--border)] bg-[var(--surface)] p-3 text-sm text-[var(--text-1)] shadow-[var(--inset-input)] outline-none focus:border-[var(--accent)] focus:shadow-[var(--sh-focus)]"
               rows={3}
               aria-required="true"
             />
@@ -701,12 +590,13 @@ export default function ApprovalInboxPage() {
             Cancel
           </Button>
           <Button
-            variant="primary"
-            className="bg-danger-600 hover:bg-danger-700"
+            variant="danger"
+            isLoading={rejectMutation.isPending}
+            loadingText="Declining…"
             onClick={handleReject}
             disabled={rejectMutation.isPending || !comments.trim()}
           >
-            {rejectMutation.isPending ? 'Rejecting…' : 'Reject'}
+            Decline
           </Button>
         </ModalFooter>
       </Modal>
@@ -715,27 +605,26 @@ export default function ApprovalInboxPage() {
       <Modal isOpen={showReturnModal} onClose={() => setShowReturnModal(false)} size="md">
         <ModalHeader onClose={() => setShowReturnModal(false)}>
           <div
-            className="flex items-center gap-2 text-warning-600 dark:text-warning-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+            className="flex items-center gap-2 text-[var(--warn-fg)]">
             <RotateCcw className="h-5 w-5"/>
             Return for modification
           </div>
         </ModalHeader>
         <ModalBody>
-          <p className="text-body-secondary">
+          <p className="text-sm text-[var(--text-2)]">
             Return this request to{' '}
-            <strong>{selectedItem?.requesterName ?? 'Unknown'}</strong> for corrections.
-            The requester will be able to revise and resubmit.
+            <strong className="text-[var(--text-1)]">{selectedItem?.requesterName ?? 'Unknown'}</strong> for
+            corrections. The requester will be able to revise and resubmit.
           </p>
           <div className="mt-4">
-            <label className="block text-sm font-medium text-[var(--text-secondary)]">
-              Reason <span aria-hidden="true"
-              className="text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">*</span>
+            <label className="block text-sm font-medium text-[var(--text-2)]">
+              Reason <span aria-hidden="true" className="text-[var(--err-fg)]">*</span>
             </label>
             <textarea
               value={comments}
               onChange={(e) => setComments(e.target.value)}
-              placeholder="Explain what needs to be corrected..."
-              className="mt-1 w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] p-4 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+              placeholder="Explain what needs to be corrected…"
+              className="mt-1 w-full resize-none rounded-[var(--r-control)] border border-[var(--border)] bg-[var(--surface)] p-3 text-sm text-[var(--text-1)] shadow-[var(--inset-input)] outline-none focus:border-[var(--accent)] focus:shadow-[var(--sh-focus)]"
               rows={3}
               aria-required="true"
             />
@@ -750,12 +639,13 @@ export default function ApprovalInboxPage() {
             Cancel
           </Button>
           <Button
-            variant="primary"
-            className="bg-warning-600 hover:bg-warning-700"
+            variant="warning"
+            isLoading={returnMutation.isPending}
+            loadingText="Returning…"
             onClick={handleReturn}
             disabled={returnMutation.isPending || !comments.trim()}
           >
-            {returnMutation.isPending ? 'Returning...' : 'Return for Modification'}
+            Return for Modification
           </Button>
         </ModalFooter>
       </Modal>
@@ -764,7 +654,7 @@ export default function ApprovalInboxPage() {
       <Modal isOpen={showDelegationModal} onClose={() => setShowDelegationModal(false)} size="md">
         <ModalHeader onClose={() => setShowDelegationModal(false)}>
           <div
-            className="flex items-center gap-2 text-accent-600 dark:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+            className="flex items-center gap-2 text-[var(--accent-text)]">
             <Zap className="h-5 w-5"/>
             Delegate approvals
           </div>
@@ -793,8 +683,7 @@ export default function ApprovalInboxPage() {
                 required
               />
               {delegationForm.formState.errors.delegateId && (
-                <p
-                  className="mt-1.5 text-sm text-danger-600 dark:text-danger-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                <p className="mt-1.5 text-sm text-[var(--err-fg)]">
                   {delegationForm.formState.errors.delegateId.message}
                 </p>
               )}
@@ -802,19 +691,17 @@ export default function ApprovalInboxPage() {
 
             {/* Start date */}
             <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                Start date <span aria-hidden="true"
-                className="text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">*</span>
+              <label className="mb-1 block text-sm font-medium text-[var(--text-2)]">
+                Start date <span aria-hidden="true" className="text-[var(--err-fg)]">*</span>
               </label>
               <input
                 type="date"
                 {...delegationForm.register('startDate')}
                 aria-required="true"
-                className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+                className="w-full rounded-[var(--r-control)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--text-1)] shadow-[var(--inset-input)] outline-none focus:border-[var(--accent)] focus:shadow-[var(--sh-focus)]"
               />
               {delegationForm.formState.errors.startDate && (
-                <p
-                  className="mt-1.5 text-sm text-danger-600 dark:text-danger-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                <p className="mt-1.5 text-sm text-[var(--err-fg)]">
                   {delegationForm.formState.errors.startDate.message}
                 </p>
               )}
@@ -822,19 +709,17 @@ export default function ApprovalInboxPage() {
 
             {/* End date */}
             <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                End date <span aria-hidden="true"
-                className="text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">*</span>
+              <label className="mb-1 block text-sm font-medium text-[var(--text-2)]">
+                End date <span aria-hidden="true" className="text-[var(--err-fg)]">*</span>
               </label>
               <input
                 type="date"
                 {...delegationForm.register('endDate')}
                 aria-required="true"
-                className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+                className="w-full rounded-[var(--r-control)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--text-1)] shadow-[var(--inset-input)] outline-none focus:border-[var(--accent)] focus:shadow-[var(--sh-focus)]"
               />
               {delegationForm.formState.errors.endDate && (
-                <p
-                  className="mt-1.5 text-sm text-danger-600 dark:text-danger-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                <p className="mt-1.5 text-sm text-[var(--err-fg)]">
                   {delegationForm.formState.errors.endDate.message}
                 </p>
               )}
@@ -842,13 +727,13 @@ export default function ApprovalInboxPage() {
 
             {/* Reason */}
             <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+              <label className="mb-1 block text-sm font-medium text-[var(--text-2)]">
                 Reason (optional)
               </label>
               <textarea
                 {...delegationForm.register('reason')}
                 placeholder="Explain why you're delegating approvals…"
-                className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] p-4 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+                className="w-full resize-none rounded-[var(--r-control)] border border-[var(--border)] bg-[var(--surface)] p-3 text-sm text-[var(--text-1)] shadow-[var(--inset-input)] outline-none focus:border-[var(--accent)] focus:shadow-[var(--sh-focus)]"
                 rows={3}
               />
             </div>
@@ -867,10 +752,12 @@ export default function ApprovalInboxPage() {
           </Button>
           <Button
             variant="primary"
+            isLoading={createDelegationMutation.isPending}
+            loadingText="Creating delegation…"
             onClick={delegationForm.handleSubmit(handleCreateDelegation)}
             disabled={createDelegationMutation.isPending}
           >
-            {createDelegationMutation.isPending ? 'Creating delegation…' : 'Delegate'}
+            Delegate
           </Button>
         </ModalFooter>
       </Modal>
@@ -880,32 +767,7 @@ export default function ApprovalInboxPage() {
 
 // ── Sub-components ────────────────────────────────────────────────────
 
-function SummaryCard({
-                       label,
-                       value,
-                       color,
-                       textColor,
-                       icon,
-                     }: {
-  label: string;
-  value: number;
-  color: string;
-  textColor: string;
-  icon: React.ReactNode;
-}) {
-  return (
-    <div className={`flex items-center gap-4 rounded-xl p-4 skeuo-card ${color}`}>
-      <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${textColor} bg-[var(--bg-surface)]`}>
-        {icon}
-      </div>
-      <div>
-        <p className="text-xl font-bold text-[var(--text-primary)]">{value}</p>
-        <p className={`text-xs font-medium ${textColor}`}>{label}</p>
-      </div>
-    </div>
-  );
-}
-
+/** Aura request card: type-icon tile, requester + module/ref badge, relative time, title. */
 function InboxListItem({
                          item,
                          isSelected,
@@ -915,59 +777,236 @@ function InboxListItem({
   isSelected: boolean;
   onClick: () => void;
 }) {
-  const badgeColors = getModuleBadgeColors(item.module);
+  const TypeIcon = getModuleIcon(item.module);
 
   return (
-    <Card
-      className={`cursor-pointer transition-all ${isSelected ? 'ring-2 ring-accent-500' : ''}`}
+    <button
+      type="button"
       onClick={onClick}
+      aria-pressed={isSelected}
+      className={`group flex w-full items-start gap-3 rounded-[var(--r-lg)] border bg-[var(--surface)] p-3.5 text-left shadow-[var(--sh-sm)] outline-none transition-[transform,box-shadow,border-color] duration-[var(--t-fast)] ease-[var(--ease)] hover-lift focus-visible:shadow-[var(--sh-focus)] ${
+        isSelected
+          ? 'border-[var(--accent)] shadow-[0_0_0_1px_var(--accent),var(--sh-sm)]'
+          : 'border-[var(--border)] hover:border-[var(--border-aura-strong)]'
+      }`}
     >
-      <CardContent className="flex items-start gap-4 p-4">
-        {/* Avatar */}
-        <div
-          className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-accent-100 text-xs font-semibold text-accent-700 dark:bg-accent-900/40 dark:text-accent-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
-          {getInitials(item.requesterName)}
-        </div>
+      {/* Type icon tile */}
+      <span
+        className="grid h-9 w-9 flex-shrink-0 place-items-center rounded-[var(--r-md)] bg-[var(--accent-soft)] text-[var(--accent-text)]">
+        <TypeIcon className="h-[17px] w-[17px]"/>
+      </span>
 
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
-            <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${badgeColors.bg} ${badgeColors.text}`}>
-              {item.module}
-            </span>
-            {item.referenceNumber && (
-              <span className="text-xs font-mono text-[var(--text-muted)]">#{item.referenceNumber}</span>
-            )}
-          </div>
-          <h3 className="mt-1 truncate text-sm font-semibold text-[var(--text-primary)]">
-            {item.title}
-          </h3>
-          <p className="mt-0.5 text-caption">
+      <div className="min-w-0 flex-1">
+        <div className="flex items-center gap-2">
+          <span className="min-w-0 truncate text-sm font-bold text-[var(--text-1)]">
             {item.requesterName ?? 'Unknown'}
-          </p>
-        </div>
-
-        <div className="flex flex-col items-end gap-1 text-xs flex-shrink-0">
-          {item.deadline && (
-            <span
-              className="inline-flex items-center gap-1 rounded-full bg-warning-50 px-2 py-0.5 text-warning-700 dark:bg-warning-900/30 dark:text-warning-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
-              <Clock className="h-3 w-3"/>
-              {formatDateShort(item.deadline)}
+          </span>
+          {item.submittedAt && (
+            <span className="num ml-auto flex-shrink-0 text-xs text-[var(--text-3)]">
+              {formatRelative(item.submittedAt)}
             </span>
           )}
-          <span className="text-caption">
-            {item.submittedAt ? `${formatDateShort(item.submittedAt)}, ${formatTime(item.submittedAt)}` : ''}
-          </span>
         </div>
-      </CardContent>
-    </Card>
+        <div className="mt-0.5 truncate text-[13px] text-[var(--text-2)]">
+          {item.title}
+        </div>
+        <div className="mt-2 flex items-center gap-2">
+          <Badge variant="default" size="sm">
+            <span>{item.module}</span>
+            {item.referenceNumber && (
+              <span className="num text-[var(--text-3)]"> · #{item.referenceNumber}</span>
+            )}
+          </Badge>
+          {item.deadline && (
+            <Badge variant="warning" size="sm" icon={<Clock className="h-3 w-3"/>}>
+              <span className="num">{formatDateShort(item.deadline)}</span>
+            </Badge>
+          )}
+        </div>
+      </div>
+    </button>
   );
 }
 
-function DetailRow({label, value}: { label: string; value: string }) {
+/** Aura detail pane: requester header, key-values, approval-chain timeline, note, actions. */
+function DetailPane({
+                      item,
+                      comments,
+                      onCommentsChange,
+                      isBusy,
+                      onApprove,
+                      onReject,
+                      onReturn,
+                      onDelegate,
+                    }: {
+  item: ApprovalInboxItem;
+  comments: string;
+  onCommentsChange: (v: string) => void;
+  isBusy: boolean;
+  onApprove: () => void;
+  onReject: () => void;
+  onReturn: () => void;
+  onDelegate: () => void;
+}) {
+  const isPending = item.status === 'PENDING';
+
+  // Key-value detail rows derived from the real inbox item.
+  const detail: Array<[string, string]> = [
+    ['Module', item.module],
+    ['Title', item.title],
+    ['Requester', item.requesterName ?? 'Unknown'],
+    ['Current step', item.currentStepName ?? 'Pending'],
+    ['Created', item.submittedAt ? formatDateTime(item.submittedAt) : '—'],
+    ['Due', item.deadline ? formatDateTime(item.deadline) : '—'],
+  ];
+  if (item.referenceNumber) {
+    detail.push(['Reference', `#${item.referenceNumber}`]);
+  }
+
   return (
-    <div>
-      <p className="text-xs font-medium uppercase text-[var(--text-muted)]">{label}</p>
-      <p className="mt-1 text-sm text-[var(--text-primary)]">{value}</p>
-    </div>
+    <Card className="h-fit overflow-hidden p-0 lg:sticky lg:top-6">
+      {/* Requester header */}
+      <div className="flex items-center gap-3.5 border-b border-[var(--border)] px-6 py-5">
+        <span
+          className="grid h-12 w-12 flex-shrink-0 place-items-center rounded-full bg-[var(--accent-soft)] text-sm font-bold text-[var(--accent-text)]">
+          {getInitials(item.requesterName)}
+        </span>
+        <div className="min-w-0 flex-1">
+          <div className="truncate font-display text-base font-bold text-[var(--text-1)]">
+            {item.requesterName ?? 'Unknown'}
+          </div>
+          <div className="truncate text-[13px] text-[var(--text-3)]">
+            {item.currentStepName ?? 'Pending review'}
+          </div>
+        </div>
+        <div className="text-right">
+          <Badge variant="primary" size="sm" dot dotColor="info">{item.module}</Badge>
+          {item.referenceNumber && (
+            <div className="num mt-1.5 text-[11.5px] text-[var(--text-3)]">#{item.referenceNumber}</div>
+          )}
+        </div>
+      </div>
+
+      {/* Body */}
+      <div className="px-6 py-5">
+        <div className="mb-3 flex items-center justify-between">
+          <h3 className="text-sm font-bold text-[var(--text-1)]">Request details</h3>
+          <Badge variant={isPending ? 'warning' : 'default'} size="sm">
+            {isPending ? 'Pending' : item.status}
+          </Badge>
+        </div>
+
+        <dl className="divide-y divide-[var(--border-soft)]">
+          {detail.map(([k, v]) => (
+            <div key={k} className="flex items-start justify-between gap-4 py-2.5">
+              <dt className="text-[13px] text-[var(--text-3)]">{k}</dt>
+              <dd className="max-w-[60%] text-right text-[13px] font-medium text-[var(--text-1)]">{v}</dd>
+            </div>
+          ))}
+        </dl>
+
+        {/* Approval chain */}
+        <div className="text-aura-micro mb-3 mt-6 text-[var(--text-3)]">Approval chain</div>
+        <ol className="relative space-y-4 pl-7">
+          <span aria-hidden="true"
+                className="absolute left-[10px] top-1.5 bottom-1.5 w-px bg-[var(--border)]"/>
+          <li className="relative">
+            <span
+              className="absolute -left-7 top-0 grid h-5 w-5 place-items-center rounded-full bg-[var(--ok-fg)] text-white ring-2 ring-[var(--surface)]">
+              <Check className="h-2.5 w-2.5"/>
+            </span>
+            <div className="text-[13px] font-semibold text-[var(--text-1)]">
+              {item.requesterName ?? 'Requester'} submitted
+            </div>
+            {item.submittedAt && (
+              <div className="num text-[11.5px] text-[var(--text-3)]">{formatRelative(item.submittedAt)}</div>
+            )}
+          </li>
+          <li className="relative">
+            <span
+              className="absolute -left-7 top-0 grid h-5 w-5 place-items-center rounded-full bg-[var(--ok-fg)] text-white ring-2 ring-[var(--surface)]">
+              <Check className="h-2.5 w-2.5"/>
+            </span>
+            <div className="text-[13px] font-semibold text-[var(--text-1)]">Manager endorsed</div>
+            <div className="text-[11.5px] text-[var(--text-3)]">Auto-routed</div>
+          </li>
+          <li className="relative">
+            <span
+              className="absolute -left-7 top-0 grid h-5 w-5 place-items-center rounded-full bg-[var(--accent)] text-white ring-2 ring-[var(--surface)]">
+              <Clock className="h-2.5 w-2.5"/>
+            </span>
+            <div className="text-[13px] font-semibold text-[var(--text-1)]">
+              Your approval{' '}
+              <span className="font-normal text-[var(--text-3)]">
+                · {isPending ? 'pending' : item.status.toLowerCase()}
+              </span>
+            </div>
+          </li>
+        </ol>
+
+        {/* Note */}
+        <div className="mt-6">
+          <label htmlFor="approval-note" className="sr-only">Add a note</label>
+          <textarea
+            id="approval-note"
+            rows={2}
+            value={comments}
+            onChange={(e) => onCommentsChange(e.target.value)}
+            placeholder="Add a note (optional)…"
+            disabled={!isPending}
+            className="w-full resize-none rounded-[var(--r-control)] border border-[var(--border)] bg-[var(--surface)] p-3 text-sm text-[var(--text-1)] shadow-[var(--inset-input)] outline-none transition-[border-color,box-shadow] duration-[var(--t-fast)] placeholder:text-[var(--text-3)] focus:border-[var(--accent)] focus:shadow-[var(--sh-focus)] disabled:opacity-60"
+          />
+        </div>
+
+        {/* Actions */}
+        {isPending ? (
+          <div className="mt-4 flex gap-2.5">
+            <Button
+              variant="success"
+              size="md"
+              className="flex-1"
+              leftIcon={<Check className="h-4 w-4"/>}
+              onClick={onApprove}
+              disabled={isBusy}
+            >
+              Approve
+            </Button>
+            <Button
+              variant="danger"
+              size="md"
+              className="flex-1"
+              leftIcon={<XCircle className="h-4 w-4"/>}
+              onClick={onReject}
+              disabled={isBusy}
+            >
+              Decline
+            </Button>
+            <Button
+              variant="ghost"
+              size="md"
+              leftIcon={<RotateCcw className="h-4 w-4"/>}
+              onClick={onReturn}
+              disabled={isBusy}
+              aria-label="Return for modification"
+            >
+              Return
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onDelegate}
+              disabled={isBusy}
+              aria-label="Delegate"
+            >
+              <CornerUpRight className="h-4 w-4"/>
+            </Button>
+          </div>
+        ) : (
+          <div className="mt-4">
+            <Badge variant="default" size="md" dot>Request {item.status.toLowerCase()}</Badge>
+          </div>
+        )}
+      </div>
+    </Card>
   );
 }

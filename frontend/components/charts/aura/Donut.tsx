@@ -132,7 +132,7 @@ export function Donut({
           fontWeight="700"
           fontFamily="var(--font-display)"
           fill="var(--text-1)"
-          style={{fontVariantNumeric: 'tabular-nums'}}
+          className="tabular-nums"
         >
           {center.value}
         </text>

@@ -28,7 +28,19 @@ import {AppLayout} from '@/components/layout/AppLayout';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {PermissionGate} from '@/components/auth/PermissionGate';
-import {Button, Card, CardContent, ConfirmDialog, EmptyState, Modal, ModalBody, ModalHeader,} from '@/components/ui';
+import {
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  ConfirmDialog,
+  EmptyState,
+  Modal,
+  ModalBody,
+  ModalHeader,
+  Stat,
+} from '@/components/ui';
+import {Ring} from '@/components/charts/aura';
 import {BenefitClaim, BenefitEnrollment, ClaimRequest, CoverageLevel,} from '@/lib/types/hrms/benefits';
 import {
   useActiveBenefitPlans,
@@ -118,23 +130,45 @@ const getBenefitIcon = (type: string) => {
   }
 };
 
+/**
+ * Token-driven icon-tile classes per benefit type (Aura).
+ * Mirrors the Stat icon-tile tones — soft background + matching foreground,
+ * resolved from CSS vars so light/dark parity comes for free.
+ */
 const getBenefitColor = (type: string) => {
   switch (type) {
     case 'HEALTH':
-      return 'bg-accent-100 text-accent-600 dark:bg-accent-900 dark:text-accent-400';
     case 'DENTAL':
-      return 'bg-accent-100 text-accent-600 dark:bg-accent-900 dark:text-accent-400';
+    case 'VISION':
+      return 'bg-[var(--accent-soft)] text-[var(--accent-text)]';
     case 'LIFE':
-      return 'bg-accent-300 text-accent-700 dark:bg-accent-900 dark:text-accent-600';
+      return 'bg-[var(--info-bg)] text-[var(--info-fg)]';
     case 'RETIREMENT':
-      return 'bg-success-100 text-success-600 dark:bg-success-900 dark:text-success-400';
+      return 'bg-[var(--ok-bg)] text-[var(--ok-fg)]';
     case 'FSA':
     case 'HSA':
-      return 'bg-warning-100 text-warning-600 dark:bg-warning-900 dark:text-warning-400';
-    case 'VISION':
-      return 'bg-accent-100 text-accent-600 dark:bg-accent-900 dark:text-accent-400';
+      return 'bg-[var(--warn-bg)] text-[var(--warn-fg)]';
     default:
-      return 'bg-[var(--bg-surface)] text-[var(--text-secondary)]';
+      return 'bg-[var(--neutral-bg)] text-[var(--neutral-fg)]';
+  }
+};
+
+/** Progress-bar fill color (CSS var) per benefit type — matches the icon tile. */
+const getBenefitBarColor = (type: string): string => {
+  switch (type) {
+    case 'HEALTH':
+    case 'DENTAL':
+    case 'VISION':
+      return 'var(--accent)';
+    case 'LIFE':
+      return 'var(--info-fg)';
+    case 'RETIREMENT':
+      return 'var(--ok-fg)';
+    case 'FSA':
+    case 'HSA':
+      return 'var(--warn-fg)';
+    default:
+      return 'var(--text-3)';
   }
 };
 
@@ -404,231 +438,189 @@ export default function BenefitsPage() {
         )}
 
         {/* Header */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)]">
-              Benefits Management
-            </h1>
-            <p className="text-[var(--text-secondary)]">
-              View and manage your employee benefits enrollment
+            <h1 className="text-aura-title text-[var(--text-1)]">Benefits</h1>
+            <p className="mt-1 text-sm text-[var(--text-2)]">
+              <span className="tnum">{stats.totalEnrolled}</span> of{' '}
+              <span className="tnum">{stats.availablePlans}</span> plans enrolled ·{' '}
+              <span className="tnum">{formatINR(stats.monthlyPremium)}</span>/mo your share
             </p>
           </div>
           <PermissionGate permission={Permissions.BENEFIT_CLAIM_SUBMIT}>
-            <Button onClick={handleOpenClaimModal}>
-              <Plus className="h-4 w-4 mr-1"/>
+            <Button onClick={handleOpenClaimModal} leftIcon={<Plus className="h-4 w-4"/>}>
               Submit Claim
             </Button>
           </PermissionGate>
         </div>
 
-        {/* Stats Cards */}
+        {/* KPI Stats — Aura icon-tile + value + footnote */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
-          <Card className="skeuo-card">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-success-100 p-4 dark:bg-success-900">
-                  <CheckCircle className="h-6 w-6 text-success-600 dark:text-success-400"/>
-                </div>
-                <div>
-                  <p className="text-body-secondary">Enrolled Plans</p>
-                  <p className="text-xl font-bold text-[var(--text-primary)]">{stats.totalEnrolled}</p>
-                </div>
-              </div>
-            </CardContent>
+          <Card padding="sm">
+            <Stat
+              iconTone="success"
+              icon={<CheckCircle className="h-5 w-5"/>}
+              label="Enrolled plans"
+              value={<span className="tnum">{stats.totalEnrolled}</span>}
+              foot={`of ${stats.availablePlans} available`}
+            />
           </Card>
-          <Card className="skeuo-card">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-accent-100 p-4 dark:bg-accent-900">
-                  <IndianRupee className="h-6 w-6 text-accent-600 dark:text-accent-400"/>
-                </div>
-                <div>
-                  <p className="text-body-secondary">Monthly Premium</p>
-                  <p
-                    className="text-xl font-bold text-[var(--text-primary)]">{formatINR(stats.monthlyPremium)}</p>
-                </div>
-              </div>
-            </CardContent>
+          <Card padding="sm">
+            <Stat
+              iconTone="accent"
+              icon={<IndianRupee className="h-5 w-5"/>}
+              label="Monthly premium"
+              value={<span className="tnum">{formatINR(stats.monthlyPremium)}</span>}
+              foot="Your share / mo"
+            />
           </Card>
-          <Card className="skeuo-card">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-accent-300 p-4 dark:bg-accent-900">
-                  <Gift className="h-6 w-6 text-accent-700 dark:text-accent-600"/>
-                </div>
-                <div>
-                  <p className="text-body-secondary">Available Plans</p>
-                  <p className="text-xl font-bold text-[var(--text-primary)]">{stats.availablePlans}</p>
-                </div>
-              </div>
-            </CardContent>
+          <Card padding="sm">
+            <Stat
+              iconTone="info"
+              icon={<Gift className="h-5 w-5"/>}
+              label="Available plans"
+              value={<span className="tnum">{stats.availablePlans}</span>}
+              foot="Open for enrollment"
+            />
           </Card>
-          <Card className="skeuo-card">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-warning-100 p-4 dark:bg-warning-900">
-                  <Shield className="h-6 w-6 text-warning-600 dark:text-warning-400"/>
-                </div>
-                <div>
-                  <p className="text-body-secondary">Total Coverage</p>
-                  <p className="text-xl font-bold text-[var(--text-primary)]">
-                    {formatINR(stats.totalCoverage)}
-                  </p>
-                </div>
-              </div>
-            </CardContent>
+          <Card padding="sm">
+            <Stat
+              iconTone="warning"
+              icon={<Shield className="h-5 w-5"/>}
+              label="Total coverage"
+              value={<span className="tnum">{formatINR(stats.totalCoverage)}</span>}
+              foot="Across enrolled plans"
+            />
           </Card>
-          <Card className="skeuo-card">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-accent-100 p-4 dark:bg-accent-900">
-                  <CreditCard className="h-6 w-6 text-accent-600 dark:text-accent-400"/>
-                </div>
-                <div>
-                  <p className="text-body-secondary">Flex Credits</p>
-                  <p className="text-xl font-bold text-[var(--text-primary)]">
-                    {formatINR(stats.flexCredits)}
-                  </p>
-                </div>
-              </div>
-            </CardContent>
+          <Card padding="sm">
+            <Stat
+              iconTone="neutral"
+              icon={<CreditCard className="h-5 w-5"/>}
+              label="Flex credits"
+              value={<span className="tnum">{formatINR(stats.flexCredits)}</span>}
+              foot="Available to apply"
+            />
           </Card>
         </div>
 
-        {/* Tabs */}
-        <div className="bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-card)]">
-          <div className="flex border-b border-[var(--border-main)]">
-            <button
-              onClick={() => setActiveTab('plans')}
-              className={`px-6 py-4 font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-t-md ${activeTab === 'plans'
-                ? 'text-accent-700 dark:text-accent-400 border-b-2 border-accent-500'
-                : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
-              }`}
-            >
-              <Gift className="h-4 w-4 inline-block mr-2"/>
-              Benefit Plans
-            </button>
-            <button
-              onClick={() => setActiveTab('enrollments')}
-              className={`px-6 py-4 font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-t-md ${activeTab === 'enrollments'
-                ? 'text-accent-700 dark:text-accent-400 border-b-2 border-accent-500'
-                : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
-              }`}
-            >
-              <CheckCircle className="h-4 w-4 inline-block mr-2"/>
-              My Enrollments
-            </button>
-            <button
-              onClick={() => setActiveTab('claims')}
-              className={`px-6 py-4 font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-t-md ${activeTab === 'claims'
-                ? 'text-accent-700 dark:text-accent-400 border-b-2 border-accent-500'
-                : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
-              }`}
-            >
-              <Receipt className="h-4 w-4 inline-block mr-2"/>
-              Claims
-            </button>
-          </div>
+        {/* Tabs — Aura underline tab strip */}
+        <div className="flex gap-1 border-b border-[var(--border)]" role="tablist" aria-label="Benefits views">
+          {([
+            {id: 'plans', label: 'Benefit Plans', icon: Gift},
+            {id: 'enrollments', label: 'My Enrollments', icon: CheckCircle},
+            {id: 'claims', label: 'Claims', icon: Receipt},
+          ] as const).map(({id, label, icon: TabIcon}) => {
+            const isActive = activeTab === id;
+            return (
+              <button
+                key={id}
+                type="button"
+                role="tab"
+                aria-selected={isActive}
+                onClick={() => setActiveTab(id)}
+                className={`-mb-px inline-flex items-center gap-2 rounded-t-aura-md px-4 py-2.5 text-sm font-semibold transition-colors duration-[var(--t-fast)] focus-ring ${
+                  isActive
+                    ? 'border-b-2 border-[var(--accent)] text-[var(--accent-text)]'
+                    : 'border-b-2 border-transparent text-[var(--text-3)] hover:text-[var(--text-1)]'
+                }`}
+              >
+                <TabIcon className="h-4 w-4"/>
+                {label}
+              </button>
+            );
+          })}
         </div>
 
         {/* Tab Content */}
         {activeTab === 'plans' && (
-          <div className="space-y-6">
-            {/* Enrolled Benefits */}
-            {benefits.filter((b) => b.isEnrolled).length > 0 && (
+          <div className="space-y-4">
+            {/* Section head — Aura */}
+            {benefits.length > 0 && (
               <div>
-                <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-4">
-                  My Enrolled Benefits
-                </h2>
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-                  {benefits.filter((b) => b.isEnrolled).map((benefit) => (
-                    <Card key={benefit.id} className="card-interactive">
-                      <CardContent className="p-4">
-                        <div className="flex items-start gap-4">
-                          <div className={`rounded-lg p-4 ${getBenefitColor(benefit.type)}`}>
-                            {getBenefitIcon(benefit.type)}
-                          </div>
-                          <div className="flex-1">
-                            <div className="flex items-start justify-between">
-                              <h3 className="font-semibold text-[var(--text-primary)]">
-                                {benefit.name}
-                              </h3>
-                              <span className="badge-status status-success">Enrolled</span>
-                            </div>
-                            <p className="text-body-secondary mt-1 line-clamp-2">
-                              {benefit.description}
-                            </p>
-                            <div className="flex items-center gap-4 mt-4 text-body-muted">
-                              <span className="flex items-center gap-1">
-                                <IndianRupee className="h-4 w-4"/>
-                                {formatINR(benefit.monthlyPremium)}/mo
-                              </span>
-                              {benefit.enrollment && (
-                                <span className="flex items-center gap-1">
-                                  <Users className="h-4 w-4"/>
-                                  {coverageLevelLabels[benefit.enrollment.coverageLevel]}
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
+                <h2 className="font-display text-[15px] font-bold text-[var(--text-1)]">Plans</h2>
+                <p className="text-xs text-[var(--text-3)]">Enrollment and coverage by program</p>
               </div>
             )}
 
-            {/* Available Benefits */}
-            {benefits.filter((b) => !b.isEnrolled).length > 0 && (
-              <div>
-                <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-4">
-                  Available Benefits
-                </h2>
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-                  {benefits.filter((b) => !b.isEnrolled).map((benefit) => (
-                    <Card key={benefit.id} className="card-interactive border-dashed">
-                      <CardContent className="p-4">
-                        <div className="flex items-start gap-4">
-                          <div className={`rounded-lg p-4 ${getBenefitColor(benefit.type)} opacity-60`}>
-                            {getBenefitIcon(benefit.type)}
+            {/* Plans grid — color icon tile · provider · enrolled bar · Tier/Cost footer */}
+            {benefits.length > 0 && (
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {benefits.map((benefit) => {
+                  const barColor = getBenefitBarColor(benefit.type);
+                  // Real-data adaptation: the prototype shows org-wide "enrolled n/total"
+                  // counts, which this route does not fetch. We bind the bar to the real
+                  // per-user enrollment signal instead — full when the employee is covered.
+                  const enrolledPct = benefit.isEnrolled ? 100 : 0;
+                  const tier = benefit.enrollment
+                    ? coverageLevelLabels[benefit.enrollment.coverageLevel]
+                    : 'Not enrolled';
+                  return (
+                    <Card key={benefit.id} hover className="flex flex-col p-4">
+                      {/* Header: icon tile + name + provider */}
+                      <div className="mb-4 flex items-center gap-4">
+                        <span
+                          className={`inline-grid h-11 w-11 place-items-center rounded-aura-lg ${getBenefitColor(benefit.type)}`}
+                        >
+                          {getBenefitIcon(benefit.type)}
+                        </span>
+                        <div className="min-w-0 flex-1">
+                          <div className="truncate font-display text-[15px] font-bold text-[var(--text-1)]">
+                            {benefit.name}
                           </div>
-                          <div className="flex-1">
-                            <div className="flex items-start justify-between">
-                              <h3 className="font-semibold text-[var(--text-primary)]">
-                                {benefit.name}
-                              </h3>
-                              <span className="badge-status status-info">Available</span>
-                            </div>
-                            <p className="text-body-secondary mt-1 line-clamp-2">
-                              {benefit.description}
-                            </p>
-                            <div className="flex items-center gap-4 mt-4 text-body-muted">
-                              <span className="flex items-center gap-1">
-                                <IndianRupee className="h-4 w-4"/>
-                                {formatINR(benefit.monthlyPremium)}/mo
-                              </span>
-                              <span className="flex items-center gap-1">
-                                <Building className="h-4 w-4"/>
-                                {benefit.provider}
-                              </span>
-                            </div>
-                            <PermissionGate permission={Permissions.BENEFIT_ENROLL}>
-                              <Button
-                                size="sm"
-                                className="mt-4"
-                                onClick={() => handleOpenEnrollModal(benefit)}
-                              >
-                                <Plus className="h-4 w-4 mr-1"/>
-                                Enroll
-                              </Button>
-                            </PermissionGate>
+                          <div className="truncate text-xs text-[var(--text-3)]">{benefit.provider}</div>
+                        </div>
+                        {benefit.isEnrolled ? (
+                          <Badge variant="success" size="sm">Enrolled</Badge>
+                        ) : (
+                          <Badge variant="info" size="sm">Available</Badge>
+                        )}
+                      </div>
+
+                      {/* Enrolled row + progress bar */}
+                      <div className="mb-1.5 flex items-center justify-between text-xs">
+                        <span className="text-[var(--text-3)]">Enrollment</span>
+                        <span className="tnum font-semibold text-[var(--text-1)]">
+                          {benefit.isEnrolled ? 'Active' : '—'}
+                        </span>
+                      </div>
+                      <div className="h-1.5 w-full overflow-hidden rounded-aura-full bg-[var(--surface-sunken)]">
+                        <div
+                          className="h-full rounded-aura-full transition-[width] duration-[var(--t-slow)] ease-[var(--ease)]"
+                          style={{width: `${enrolledPct}%`, background: barColor}}
+                        />
+                      </div>
+
+                      {/* Footer: Tier / Cost */}
+                      <div className="mt-4 flex items-end justify-between border-t border-[var(--border-soft)] pt-3.5">
+                        <div>
+                          <div className="text-aura-micro text-[var(--text-3)]">Tier</div>
+                          <div className="mt-0.5 text-[13px] font-semibold text-[var(--text-1)]">{tier}</div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-aura-micro text-[var(--text-3)]">Cost</div>
+                          <div className="tnum mt-0.5 text-[13px] font-semibold text-[var(--text-1)]">
+                            {formatINR(benefit.monthlyPremium)}/mo
                           </div>
                         </div>
-                      </CardContent>
+                      </div>
+
+                      {/* Enroll action for available plans */}
+                      {!benefit.isEnrolled && (
+                        <PermissionGate permission={Permissions.BENEFIT_ENROLL}>
+                          <Button
+                            size="sm"
+                            variant="soft"
+                            className="mt-3 w-full"
+                            leftIcon={<Plus className="h-4 w-4"/>}
+                            onClick={() => handleOpenEnrollModal(benefit)}
+                          >
+                            Enroll
+                          </Button>
+                        </PermissionGate>
+                      )}
                     </Card>
-                  ))}
-                </div>
+                  );
+                })}
               </div>
             )}
 
@@ -645,6 +637,64 @@ export default function BenefitsPage() {
                 </CardContent>
               </Card>
             )}
+
+            {/* Open enrollment progress — 92px Ring + status bars (presentation) */}
+            {benefits.length > 0 && (() => {
+              const enrolledCount = stats.totalEnrolled;
+              const availableCount = stats.availablePlans;
+              const notEnrolled = Math.max(0, availableCount - enrolledCount);
+              const ringPct = availableCount > 0 ? Math.round((enrolledCount / availableCount) * 100) : 0;
+              const pctOf = (n: number) => (availableCount > 0 ? Math.round((n / availableCount) * 100) : 0);
+              const rows: Array<[string, number, string]> = [
+                ['Enrolled', enrolledCount, 'var(--ok-fg)'],
+                ['Not enrolled', notEnrolled, 'var(--err-fg)'],
+              ];
+              return (
+                <Card className="p-5">
+                  <div className="mb-4 flex items-start justify-between gap-4">
+                    <div>
+                      <h2 className="font-display text-[15px] font-bold text-[var(--text-1)]">
+                        Your enrollment progress
+                      </h2>
+                      <p className="text-xs text-[var(--text-3)]">
+                        Coverage across available plans
+                      </p>
+                    </div>
+                    <Badge variant="success" size="sm">
+                      <span className="tnum">{ringPct}%</span> covered
+                    </Badge>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-6">
+                    <Ring
+                      value={ringPct}
+                      size={92}
+                      thickness={10}
+                      color="var(--ok-fg)"
+                      label={`${ringPct}%`}
+                      ariaLabel={`${ringPct} percent of available plans enrolled`}
+                    />
+                    <div className="flex min-w-[240px] flex-1 flex-col gap-4">
+                      {rows.map(([label, n, color]) => (
+                        <div key={label}>
+                          <div className="mb-1.5 flex items-center justify-between text-xs">
+                            <span className="font-semibold text-[var(--text-2)]">{label}</span>
+                            <span className="tnum text-[var(--text-3)]">
+                              {n} · {pctOf(n)}%
+                            </span>
+                          </div>
+                          <div className="h-1.5 w-full overflow-hidden rounded-aura-full bg-[var(--surface-sunken)]">
+                            <div
+                              className="h-full rounded-aura-full transition-[width] duration-[var(--t-slow)] ease-[var(--ease)]"
+                              style={{width: `${pctOf(n)}%`, background: color}}
+                            />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </Card>
+              );
+            })()}
           </div>
         )}
 
@@ -795,22 +845,24 @@ export default function BenefitsPage() {
           </div>
         )}
 
-        {/* Open Enrollment Banner */}
-        <Card className="bg-accent-100 dark:bg-accent-900/30 border-accent-200 dark:border-accent-800">
-          <CardContent className="p-4">
-            <div className="row-between">
-              <div className="text-accent-900 dark:text-accent-100">
-                <h3 className="text-base font-semibold">Open Enrollment Period</h3>
-                <p className="mt-1 opacity-90">
-                  March 1 - March
-                  31, {new Date().getMonth() < 2 ? new Date().getFullYear() : new Date().getFullYear() + 1}. Review and
-                  update your benefits selections.
-                </p>
-              </div>
-              <Button variant="secondary" onClick={() => setActiveTab('plans')}>
-                Review Benefits
-              </Button>
+        {/* Open Enrollment Banner — Aura accent-soft surface */}
+        <Card className="border-[var(--border)] bg-[var(--accent-soft)]">
+          <CardContent className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h3 className="font-display text-base font-bold text-[var(--accent-text)]">
+                Open Enrollment Period
+              </h3>
+              <p className="mt-1 text-sm text-[var(--text-2)]">
+                March 1 – March 31,{' '}
+                <span className="tnum">
+                  {new Date().getMonth() < 2 ? new Date().getFullYear() : new Date().getFullYear() + 1}
+                </span>
+                . Review and update your benefits selections.
+              </p>
             </div>
+            <Button variant="secondary" onClick={() => setActiveTab('plans')}>
+              Review Benefits
+            </Button>
           </CardContent>
         </Card>
 

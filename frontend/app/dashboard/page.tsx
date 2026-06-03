@@ -8,6 +8,7 @@ import {motion} from 'framer-motion';
 import {
   AlertCircle,
   ArrowRight,
+  Banknote,
   Bell,
   Briefcase,
   Calendar,
@@ -16,8 +17,10 @@ import {
   Clock,
   Coffee,
   CreditCard,
+  Download,
   ExternalLink,
   FileText,
+  Fingerprint,
   Gift,
   HardDrive,
   Loader2,
@@ -25,8 +28,10 @@ import {
   LogOut,
   Mail,
   MapPin,
+  Palmtree,
   RefreshCw,
   UserCheck,
+  UserPlus,
   Users,
   Users as UsersIcon,
   UserX,
@@ -37,6 +42,10 @@ import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {AppLayout} from '@/components/layout';
 import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
 import {Button} from '@/components/ui/Button';
+import {Card} from '@/components/ui/Card';
+import {Stat} from '@/components/ui/Stat';
+import {Segmented} from '@/components/ui/Segmented';
+import {AreaChart, Donut, Sparkline} from '@/components/charts/aura';
 import type {DashboardWidget} from '@/components/ui/DashboardGrid';
 // Code-split @hello-pangea/dnd (~30-40 KB gz) — only loaded on dashboard
 const DashboardGrid = dynamic(
@@ -116,6 +125,9 @@ export default function DashboardPage() {
   const {hasPermission, isReady: permissionsReady} = usePermissions();
   const [clockError, setClockError] = useState<string | null>(null);
   const [currentTime, setCurrentTime] = useState<Date | null>(null);
+  // Aura headcount-trend range selector (3M / 6M / 12M). Presentation-only —
+  // it just slices the real `headcount.trend` series returned by analytics.
+  const [headcountRange, setHeadcountRange] = useState<'3m' | '6m' | '12m'>('12m');
 
   // Google Notifications State
   const [notifications, setNotifications] = useState<GoogleNotification[]>([]);
@@ -537,13 +549,44 @@ export default function DashboardPage() {
     upcomingEvents: {birthdays: [], anniversaries: [], holidays: []},
   };
 
-  const viewToneClasses = safeAnalytics.viewType === 'ADMIN'
-    ? 'bg-accent-50 text-accent-700 dark:bg-accent-900/30 dark:text-accent-300'
-    : safeAnalytics.viewType === 'MANAGER'
-      ? 'bg-warning-50 text-warning-700 dark:bg-warning-900/30 dark:text-warning-300'
-      : 'bg-success-50 text-success-700 dark:bg-success-900/30 dark:text-success-300';
-
   const firstName = user?.firstName || user?.fullName?.split(' ')[0] || 'there';
+
+  // ── Aura greeting + KPI derivations (presentation-only over real analytics) ──
+  const greetHour = currentTime?.getHours() ?? 9;
+  const greeting = greetHour < 12 ? 'Good morning' : greetHour < 18 ? 'Good afternoon' : 'Good evening';
+  const greetingDate = currentTime ? format(currentTime, 'EEEE, MMMM d') : '';
+
+  // Headcount AreaChart series — slice the real trend by the selected range.
+  const headcountTrend = safeAnalytics.headcount.trend ?? [];
+  const rangeWindow = headcountRange === '3m' ? 3 : headcountRange === '6m' ? 6 : 12;
+  const slicedTrend = headcountTrend.slice(-rangeWindow);
+  const headcountValues = slicedTrend.map((t) => t.value);
+  const headcountLabels = slicedTrend.map((t) => t.label);
+
+  // Sparkline series for each KPI tile (fall back to a flat two-point line so the
+  // SVG primitive — which needs >= 2 points — always renders something sensible).
+  const flatSpark = (n: number): number[] => [n, n];
+  const headcountSpark = headcountValues.length >= 2 ? headcountValues : flatSpark(safeAnalytics.headcount.total);
+  const attendanceSpark = (safeAnalytics.attendance.trend ?? []).map((t) => t.value);
+  const presentSpark = attendanceSpark.length >= 2 ? attendanceSpark : flatSpark(safeAnalytics.attendance.present);
+  const leaveSpark = (safeAnalytics.leave.trend ?? []).map((t) => t.value);
+  const onLeaveSpark = leaveSpark.length >= 2 ? leaveSpark : flatSpark(safeAnalytics.attendance.onLeave);
+  const payrollSpark = (safeAnalytics.payroll?.costTrend ?? []).map((t) => t.amount);
+  const payrollSparkSeries = payrollSpark.length >= 2 ? payrollSpark : flatSpark(safeAnalytics.payroll?.currentMonth.total ?? 0);
+
+  // KPI delta direction from real growth/percentage figures.
+  const headcountDir: 'up' | 'down' | 'flat' = safeAnalytics.headcount.growthPercentage > 0 ? 'up' : safeAnalytics.headcount.growthPercentage < 0 ? 'down' : 'flat';
+
+  // Attendance donut — real present / on-leave / absent split, with on-time vs
+  // late surfaced as a secondary slice when present > 0.
+  const att = safeAnalytics.attendance;
+  const donutData = [
+    {label: 'Present', value: att.present, color: 'var(--chart-1)'},
+    {label: 'On leave', value: att.onLeave, color: 'var(--chart-4)'},
+    {label: 'Absent', value: att.absent, color: 'var(--chart-5)'},
+  ].filter((d) => d.value > 0);
+  const donutTotal = donutData.reduce((s, d) => s + d.value, 0) || 1;
+  const presentPct = att.attendancePercentage || Math.round((att.present / donutTotal) * 100);
 
   // Build dashboard widgets
   const dashboardWidgets: DashboardWidget[] = [];
@@ -888,97 +931,198 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {/* Asymmetric page header */}
+        {/* Aura greeting head — greeting + date + Export / New Hire actions */}
         <motion.header
           initial={{opacity: 0, y: 4}}
           animate={{opacity: 1, y: 0}}
           transition={{duration: 0.4, ease: EASE}}
-          className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-end"
+          className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between"
         >
-          <div className="space-y-2 max-w-2xl">
-            <p className="text-2xs font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">
-              {safeAnalytics.viewLabel}
-            </p>
-            <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-[var(--text-heading)] leading-[1.05]">
-              Welcome back, {firstName}.
+          <div className="min-w-0 space-y-1.5">
+            <h1 className="text-aura-title text-[var(--text-1)]">
+              {greeting}, {firstName}
             </h1>
-            <p className="text-body-secondary max-w-[55ch]">
-              {currentTime ? format(currentTime, 'EEEE, MMMM d') : ''}
-              {safeAnalytics.viewType !== 'EMPLOYEE' && (
-                <> · {safeAnalytics.teamSize} {safeAnalytics.viewType === 'ADMIN' ? 'employees' : 'team members'} in your view.</>
-              )}
+            <p className="text-sm text-[var(--text-3)]">
+              {greetingDate ? `${greetingDate} · ` : ''}Here&apos;s what&apos;s moving across your workspace today.
             </p>
           </div>
-          <div className="flex items-center gap-4 self-start sm:self-end">
-            <span className={`inline-flex items-center px-2.5 h-7 text-2xs font-semibold uppercase tracking-wider rounded-full ${viewToneClasses}`}>
-              {safeAnalytics.viewType}
-            </span>
-            <div className="hidden sm:flex items-baseline gap-2 px-4 h-10 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-card)]">
-              <p className="font-mono text-base font-semibold tabular-nums text-[var(--text-heading)]" suppressHydrationWarning>
-                {currentTime?.toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit'}) ?? '--:--'}
-              </p>
-              <p className="text-2xs uppercase tracking-wider text-[var(--text-muted)]">local</p>
-            </div>
+          <div className="flex shrink-0 items-center gap-2.5 self-start">
+            <Button variant="ghost" leftIcon={<Download className="h-4 w-4"/>}>
+              Export
+            </Button>
+            {hasPermission(Permissions.EMPLOYEE_CREATE) && (
+              <Button variant="primary" leftIcon={<UserPlus className="h-4 w-4"/>}
+                      onClick={() => router.push('/employees/new')}>
+                New Hire
+              </Button>
+            )}
           </div>
         </motion.header>
 
-        {/* Headline stats row — borders, not card boxes */}
+        {/* Aura KPI row — icon tile + mono value + delta pill + sparkline */}
         <motion.section
           initial="hidden"
           animate="visible"
           variants={{visible: {transition: {staggerChildren: 0.06, delayChildren: 0.08}}}}
           aria-label="Today at a glance"
-          className="grid grid-cols-2 sm:grid-cols-4 border-y border-[var(--border-subtle)] divide-x divide-[var(--border-subtle)]"
+          className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4"
         >
           {[
             {
-              label: safeAnalytics.viewType === 'ADMIN' ? 'Headcount' : safeAnalytics.viewType === 'MANAGER' ? 'Team' : 'Status',
-              value: safeAnalytics.viewType === 'EMPLOYEE' ? 'Active' : safeAnalytics.headcount.total,
-              icon: Users,
-              tone: 'neutral' as const,
+              key: 'headcount',
+              label: 'Headcount',
+              value: safeAnalytics.headcount.total.toLocaleString(),
+              icon: <Users className="h-[18px] w-[18px]"/>,
+              iconTone: 'accent' as const,
+              delta: `${Math.abs(safeAnalytics.headcount.growthPercentage)}%`,
+              deltaDir: headcountDir,
+              spark: headcountSpark,
+              sparkColor: 'var(--chart-1)',
+              foot: safeAnalytics.headcount.newJoinees > 0 ? `+${safeAnalytics.headcount.newJoinees} this month` : 'Stable this month',
             },
             {
+              key: 'present',
               label: 'Present today',
-              value: safeAnalytics.attendance.present,
-              suffix: `${safeAnalytics.attendance.attendancePercentage}%`,
-              icon: UserCheck,
-              tone: 'neutral' as const,
+              value: safeAnalytics.attendance.present.toLocaleString(),
+              icon: <Fingerprint className="h-[18px] w-[18px]"/>,
+              iconTone: 'success' as const,
+              delta: safeAnalytics.attendance.late > 0 ? `${safeAnalytics.attendance.late} late` : 'On time',
+              deltaDir: 'flat' as const,
+              spark: presentSpark,
+              sparkColor: 'var(--chart-3)',
+              foot: `${presentPct}% of workforce`,
             },
             {
+              key: 'onleave',
               label: 'On leave',
-              value: safeAnalytics.attendance.onLeave,
-              icon: Calendar,
-              tone: 'neutral' as const,
+              value: safeAnalytics.attendance.onLeave.toLocaleString(),
+              icon: <Palmtree className="h-[18px] w-[18px]"/>,
+              iconTone: 'warning' as const,
+              delta: `${Math.abs(safeAnalytics.leave.utilizationPercentage)}%`,
+              deltaDir: 'down' as const,
+              spark: onLeaveSpark,
+              sparkColor: 'var(--chart-4)',
+              foot: `${safeAnalytics.leave.pending} pending request${safeAnalytics.leave.pending === 1 ? '' : 's'}`,
             },
             {
-              label: 'Pending approvals',
-              value: safeAnalytics.leave.pending,
-              icon: Bell,
-              tone: safeAnalytics.leave.pending > 0 ? 'warning' as const : 'neutral' as const,
+              key: 'payroll',
+              label: 'Payroll',
+              value: safeAnalytics.payroll ? formatCurrency(safeAnalytics.payroll.currentMonth.total) : '—',
+              icon: <Banknote className="h-[18px] w-[18px]"/>,
+              iconTone: 'info' as const,
+              delta: safeAnalytics.payroll?.currentMonth.status === 'PROCESSED' ? 'Paid' : 'On track',
+              deltaDir: 'up' as const,
+              spark: payrollSparkSeries,
+              sparkColor: 'var(--chart-5)',
+              foot: safeAnalytics.payroll
+                ? `${safeAnalytics.payroll.currentMonth.processed} of ${safeAnalytics.headcount.total} processed`
+                : 'No payroll access',
             },
-          ].map((item, idx) => (
+          ].map((kpi) => (
             <motion.div
-              key={idx}
+              key={kpi.key}
               variants={{hidden: {opacity: 0, y: 6}, visible: {opacity: 1, y: 0, transition: {duration: 0.4, ease: EASE}}}}
-              className="px-5 py-6 sm:px-7 sm:py-8 first:pl-0 last:pr-0"
             >
-              <div className="flex items-center gap-2 text-[var(--text-muted)]">
-                <item.icon className="h-3.5 w-3.5" aria-hidden="true"/>
-                <span className="text-2xs font-medium uppercase tracking-wider">{item.label}</span>
-              </div>
-              <p
-                className={`mt-3 font-mono text-3xl sm:text-4xl tabular-nums tracking-tight ${
-                  item.tone === 'warning' ? 'text-warning-700 dark:text-warning-300'
-                    : 'text-[var(--text-heading)]'
-                }`}
-              >
-                {item.value}
-              </p>
-              {item.suffix && (
-                <p className="mt-1 font-mono text-2xs tabular-nums text-[var(--text-muted)]">{item.suffix}</p>
-              )}
+              <Card padding="md" className="h-full">
+                <Stat
+                  label={kpi.label}
+                  value={kpi.value}
+                  icon={kpi.icon}
+                  iconTone={kpi.iconTone}
+                  delta={kpi.delta}
+                  deltaDir={kpi.deltaDir}
+                  spark={<Sparkline data={kpi.spark} color={kpi.sparkColor} height={34} ariaLabel={`${kpi.label} trend`}/>}
+                  foot={kpi.foot}
+                />
+              </Card>
             </motion.div>
           ))}
+        </motion.section>
+
+        {/* Headcount growth (area + range) + Attendance donut */}
+        <motion.section
+          initial={{opacity: 0, y: 6}}
+          animate={{opacity: 1, y: 0}}
+          transition={{duration: 0.45, ease: EASE, delay: 0.16}}
+          className="grid gap-4 xl:grid-cols-[2fr_1fr]"
+        >
+          <Card padding="md" className="min-w-0">
+            <div className="mb-3 flex items-start justify-between gap-4">
+              <div className="min-w-0">
+                <h2 className="text-base font-semibold text-[var(--text-1)]">Headcount growth</h2>
+                <p className="text-xs text-[var(--text-3)]">Net employees over the selected window</p>
+              </div>
+              <Segmented
+                aria-label="Headcount trend range"
+                value={headcountRange}
+                onChange={setHeadcountRange}
+                options={[
+                  {value: '3m', label: '3M'},
+                  {value: '6m', label: '6M'},
+                  {value: '12m', label: '12M'},
+                ]}
+              />
+            </div>
+            {headcountValues.length >= 2 ? (
+              <AreaChart
+                data={headcountValues}
+                labels={headcountLabels}
+                height={252}
+                color="var(--chart-1)"
+                ariaLabel="Headcount growth trend"
+              />
+            ) : (
+              <div className="flex h-[252px] items-center justify-center text-sm text-[var(--text-3)]">
+                Not enough trend data to plot yet.
+              </div>
+            )}
+          </Card>
+
+          <Card padding="md" className="min-w-0">
+            <div className="mb-2 flex items-center justify-between gap-4">
+              <div>
+                <h2 className="text-base font-semibold text-[var(--text-1)]">Attendance</h2>
+                <p className="text-xs text-[var(--text-3)]">Today, live</p>
+              </div>
+              <span className="inline-flex items-center gap-1.5 rounded-aura-full bg-[var(--ok-bg)] px-2 py-0.5 text-xs font-semibold text-[var(--ok-fg)]">
+                <span className="h-1.5 w-1.5 rounded-full bg-[var(--ok-fg)]" aria-hidden="true"/>
+                Live
+              </span>
+            </div>
+            {donutData.length > 0 ? (
+              <>
+                <div className="grid place-items-center py-2">
+                  <Donut
+                    data={donutData}
+                    size={160}
+                    thickness={24}
+                    center={{value: `${presentPct}%`, label: 'present'}}
+                    ariaLabel={`${presentPct}% present today`}
+                  />
+                </div>
+                <ul className="mt-2 flex flex-col gap-2.5">
+                  {[
+                    {label: 'Present', value: att.present, colorClass: 'bg-[var(--chart-1)]'},
+                    {label: 'On leave', value: att.onLeave, colorClass: 'bg-[var(--chart-4)]'},
+                    {label: 'Absent', value: att.absent, colorClass: 'bg-[var(--chart-5)]'},
+                  ].map((row) => (
+                    <li key={row.label} className="flex items-center gap-2.5 text-[13px]">
+                      <span className={`h-2 w-2 shrink-0 rounded-full ${row.colorClass}`} aria-hidden="true"/>
+                      <span className="font-medium text-[var(--text-2)]">{row.label}</span>
+                      <span className="num ml-auto font-semibold text-[var(--text-1)]">{row.value.toLocaleString()}</span>
+                      <span className="num w-10 text-right text-[var(--text-3)]">
+                        {Math.round((row.value / donutTotal) * 100)}%
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            ) : (
+              <div className="flex h-[160px] items-center justify-center text-sm text-[var(--text-3)]">
+                No attendance recorded today.
+              </div>
+            )}
+          </Card>
         </motion.section>
 
         {/* Attendance strip — flattened from a card with side-stripe to a quiet row */}

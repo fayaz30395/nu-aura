@@ -3,6 +3,7 @@
 import React, {useState} from 'react';
 import {useParams, useRouter} from 'next/navigation';
 import {useForm} from 'react-hook-form';
+import {Checkbox as MantineCheckbox} from '@mantine/core';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {AppLayout} from '@/components/layout';
@@ -11,6 +12,8 @@ import {Badge} from '@/components/ui/Badge';
 import {Card} from '@/components/ui/Card';
 import {Skeleton} from '@/components/ui/Skeleton';
 import {StatusBadge} from '@/components/ui/StatusBadge';
+import {Select} from '@/components/ui/Select';
+import {Textarea} from '@/components/ui/Textarea';
 import {TICKET_STATUS} from '@/lib/status/vocabulary';
 import {ConfirmDialog} from '@/components/ui';
 import {PermissionGate} from '@/components/auth/PermissionGate';
@@ -278,15 +281,15 @@ export default function TicketDetailPage() {
               </Button>
             </PermissionGate>
             <PermissionGate permission={Permissions.HELPDESK_TICKET_RESOLVE}>
-              <select
-                className="text-sm bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg px-4 py-2 text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
+              <Select
+                selectSize="sm"
                 value={ticket.status}
                 onChange={(e) => handleStatusChange(e.target.value as TicketStatus)}
               >
                 {ALL_STATUSES.map((s) => (
                   <option key={s} value={s}>{STATUS_LABELS[s]}</option>
                 ))}
-              </select>
+              </Select>
             </PermissionGate>
             <PermissionGate permission={Permissions.SYSTEM_ADMIN}>
               <Button variant="soft-danger" size="sm" onClick={() => setShowDeleteConfirm(true)}
@@ -391,17 +394,17 @@ export default function TicketDetailPage() {
               <div className="mt-6 pt-4 border-t border-[var(--border-main)]">
                 <form onSubmit={handleSubmit(onCommentSubmit)}>
                   <div className="space-y-4">
-                    <textarea
-                      placeholder="Add a comment..."
+                    <Textarea
+                      placeholder="Add a comment"
                       rows={3}
-                      className="w-full px-4 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-700"
+                      error={Boolean(errors.comment)}
                       {...register('comment')}
                     />
                     {errors.comment && <p className="text-sm text-danger-500">{errors.comment.message}</p>}
                     <div className="row-between">
                       <PermissionGate permission={Permissions.HELPDESK_TICKET_ASSIGN}>
                         <label className="flex items-center gap-2 text-body-secondary">
-                          <input type="checkbox" {...register('isInternal')} className="rounded"/>
+                          <MantineCheckbox {...register('isInternal')}/>
                           <Lock className="h-3.5 w-3.5"/>
                           Internal note (not visible to requester)
                         </label>

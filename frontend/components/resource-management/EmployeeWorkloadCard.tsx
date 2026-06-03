@@ -6,7 +6,6 @@ import {
   ALLOCATION_THRESHOLDS,
   AllocationStatus,
   EmployeeWorkload,
-  getAllocationStatusColor,
 } from '@/lib/types/hrms/resource-management';
 
 interface EmployeeWorkloadCardProps {
@@ -51,8 +50,15 @@ export function EmployeeWorkloadCard({
     return {activeAllocation: activeTotal, activeAllocations: active, dynamicStatus: status};
   }, [workload.allocations]);
 
-  const statusColor = getAllocationStatusColor(dynamicStatus);
   const isOverAllocated = activeAllocation > ALLOCATION_THRESHOLDS.OVER_ALLOCATED;
+  const allocationTextClass =
+    dynamicStatus === 'OVER_ALLOCATED'
+      ? 'text-danger-600 dark:text-danger-300'
+      : dynamicStatus === 'OPTIMAL'
+        ? 'text-success-600 dark:text-success-300'
+        : dynamicStatus === 'UNDER_UTILIZED'
+          ? 'text-warning-600 dark:text-warning-300'
+          : 'text-surface-500 dark:text-surface-400';
 
   return (
     <div
@@ -117,10 +123,7 @@ export function EmployeeWorkloadCard({
         </div>
 
         {/* Percentage */}
-        <span
-          className="w-12 text-right text-sm font-semibold tabular-nums"
-          style={{color: statusColor}}
-        >
+        <span className={cn('w-12 text-right text-sm font-semibold tabular-nums', allocationTextClass)}>
           {Math.round(activeAllocation)}%
         </span>
       </div>

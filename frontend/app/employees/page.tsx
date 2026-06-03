@@ -1,6 +1,6 @@
 'use client';
 
-import {useEffect, useState} from 'react';
+import {useEffect, useMemo, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {Controller, useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
@@ -10,14 +10,54 @@ import {useActiveDepartments} from '@/lib/hooks/queries/useDepartments';
 import {CreateEmployeeRequest, Employee} from '@/lib/types/hrms/employee';
 import {AppLayout} from '@/components/layout';
 import {PageTransition, Reveal} from '@/components/motion';
-import {Users} from 'lucide-react';
+import {
+  ArrowUpDown,
+  ChevronLeft,
+  ChevronRight,
+  Download,
+  FolderInput,
+  Mail,
+  MoreHorizontal,
+  Search,
+  SlidersHorizontal,
+  UserPlus,
+  Users,
+  UserX,
+  X,
+} from 'lucide-react';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {Button} from '@/components/ui/Button';
 import {Modal, ModalBody, ModalHeader} from '@/components/ui/Modal';
 import {SkeletonTable} from '@/components/ui/Skeleton';
+import {StatusBadge} from '@/components/ui/StatusBadge';
+import {EMPLOYEE_LIFECYCLE_STATUS} from '@/lib/status/vocabulary';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {createLogger} from '@/lib/utils/logger';
+import {formatMonthYear} from '@/lib/utils/format/date';
+import {EmployeeAvatar} from './_components/EmployeeAvatar';
+import {ProfileSheet} from './_components/ProfileSheet';
+import listStyles from './_components/employees-list.module.css';
+
+/** Display "Month YYYY" from a YYYY-MM-DD string (mono-rendered in the Joined column). */
+function joinedShort(iso?: string): string {
+  if (!iso) return '—';
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso;
+  return formatMonthYear(d);
+}
+
+type SortKey = 'createdAt' | 'designation' | 'departmentName' | 'joiningDate';
+
+/** Compact page-number window (up to 3 buttons) centred on the current page. */
+function pageWindow(current: number, total: number): number[] {
+  if (total <= 1) return [0];
+  const start = Math.max(0, Math.min(current - 1, total - 3));
+  const end = Math.min(total, start + 3);
+  const out: number[] = [];
+  for (let p = start; p < end; p += 1) out.push(p);
+  return out;
+}
 
 const log = createLogger('EmployeesPage');
 
@@ -71,25 +111,59 @@ export default function EmployeesPage() {
   const canCreate = hasPermission(Permissions.EMPLOYEE_CREATE);
   const [showAddModal, setShowAddModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState('');
+  // Status is filtered via the Aura department chips + search; the query still
+  // accepts a status param (kept for the fetching contract — no status control in this design).
+  const statusFilter = '';
   const [currentTab, setCurrentTab] = useState('basic'); // basic, personal, employment, bank
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [employeeToDelete, setEmployeeToDelete] = useState<Employee | null>(null);
   const [currentPage, setCurrentPage] = useState(0);
   const PAGE_SIZE = 20;
 
+  // Aura directory UI state (visual layer — does not alter fetching/permissions)
+  const [deptFilter, setDeptFilter] = useState('All');
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [openEmployee, setOpenEmployee] = useState<Employee | null>(null);
+  const [sortBy, setSortBy] = useState<SortKey>('createdAt');
+  const [sortDirection, setSortDirection] = useState<'ASC' | 'DESC'>('DESC');
+
   // React Query - fetch employees, managers, and departments
   const {data: employeeResponse, isLoading: employeesLoading, error: employeesError} = useEmployees(
-    currentPage, PAGE_SIZE, 'createdAt', 'DESC',
+    currentPage, PAGE_SIZE, sortBy, sortDirection,
     searchQuery || undefined, statusFilter || undefined
   );
   const {data: managers = [], isLoading: managersLoading} = useManagers();
   const {data: departments = [], isLoading: departmentsLoading} = useActiveDepartments();
 
-  const employees = employeeResponse?.content ?? [];
+  const employees = useMemo(() => employeeResponse?.content ?? [], [employeeResponse]);
   const totalPages = employeeResponse?.totalPages ?? 1;
   const totalElements = employeeResponse?.totalElements ?? 0;
   const loading = employeesLoading || managersLoading || departmentsLoading;
+
+  // Department chips: client-side refinement over the currently-loaded page.
+  // Counts reflect the loaded page (server-side dept filtering is not part of the
+  // employees query contract — we do not change fetching).
+  const deptCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const e of employees) {
+      const name = e.departmentName ?? 'Unassigned';
+      counts[name] = (counts[name] ?? 0) + 1;
+    }
+    return counts;
+  }, [employees]);
+
+  const deptOptions = useMemo(() => {
+    const fromData = Array.from(new Set(employees.map((e) => e.departmentName).filter(Boolean) as string[])).sort();
+    return ['All', ...fromData];
+  }, [employees]);
+
+  const visibleEmployees = useMemo(
+    () => (deptFilter === 'All' ? employees : employees.filter((e) => e.departmentName === deptFilter)),
+    [employees, deptFilter],
+  );
+
+  const allVisibleSelected = visibleEmployees.length > 0 && visibleEmployees.every((e) => selected.has(e.id));
+  const someVisibleSelected = visibleEmployees.some((e) => selected.has(e.id));
   const error = employeesError
     ? employeesError instanceof Error
       ? employeesError.message.includes('403')
@@ -232,6 +306,44 @@ export default function EmployeesPage() {
     setCurrentPage(0);
   };
 
+  const toggleRow = (id: string) => {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  };
+
+  const toggleAllVisible = () => {
+    setSelected((prev) => {
+      if (allVisibleSelected) {
+        const next = new Set(prev);
+        visibleEmployees.forEach((e) => next.delete(e.id));
+        return next;
+      }
+      const next = new Set(prev);
+      visibleEmployees.forEach((e) => next.add(e.id));
+      return next;
+    });
+  };
+
+  const cycleSort = () => {
+    // Sort drives the server query (sortBy/sortDirection are in the query key).
+    const order: SortKey[] = ['createdAt', 'designation', 'departmentName', 'joiningDate'];
+    if (sortDirection === 'DESC') {
+      setSortDirection('ASC');
+    } else {
+      const idx = order.indexOf(sortBy);
+      setSortBy(order[(idx + 1) % order.length]);
+      setSortDirection('DESC');
+    }
+    setCurrentPage(0);
+  };
+
   const handleDelete = async () => {
     if (!employeeToDelete) return;
 
@@ -245,42 +357,35 @@ export default function EmployeesPage() {
     }
   };
 
-  const getStatusBadgeColor = (status: string) => {
-    switch (status) {
-      case 'ACTIVE':
-        return 'bg-success-100 dark:bg-success-900/30 text-success-800 dark:text-success-300';
-      case 'ON_LEAVE':
-        return 'bg-warning-100 dark:bg-warning-900/30 text-warning-800 dark:text-warning-300';
-      case 'TERMINATED':
-        return 'bg-danger-100 dark:bg-danger-900/30 text-danger-800 dark:text-danger-300';
-      default:
-        return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
-    }
-  };
-
   return (
-    <AppLayout activeMenuItem="employees">
+    <AppLayout
+      activeMenuItem="employees"
+      breadcrumbs={[{label: 'NU-HRMS'}, {label: 'Employees'}]}
+    >
       <PageTransition className="space-y-6">
         {/* Page Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <h1 className="text-xl sm:text-xl font-bold tracking-tight text-[var(--text-primary)]">Employee
-              Management</h1>
-            <p className="text-xs sm:text-sm text-body-secondary mt-1">Manage your organization&apos;s
-              employees</p>
+            <h1 className="text-aura-title text-[var(--text-1)]">Employees</h1>
+            <p className="mt-1 text-sm text-[var(--text-3)]">
+              <span className="num">{totalElements.toLocaleString()}</span> people
+              {' '}across <span className="num">{deptOptions.length - 1}</span> departments
+            </p>
           </div>
           <div className="flex items-center gap-2">
             <Button
-              variant="outline"
+              variant="ghost"
               size="sm"
+              leftIcon={<SlidersHorizontal size={15} aria-hidden />}
               onClick={() => router.push('/employees/change-requests')}
             >
               Change Requests
             </Button>
             <PermissionGate permission={Permissions.EMPLOYEE_CREATE}>
               <Button
-                variant="outline"
+                variant="ghost"
                 size="sm"
+                leftIcon={<Download size={15} aria-hidden />}
                 onClick={() => router.push('/employees/import')}
               >
                 Import
@@ -290,9 +395,10 @@ export default function EmployeesPage() {
               <Button
                 variant="primary"
                 size="sm"
+                leftIcon={<UserPlus size={15} aria-hidden />}
                 onClick={() => setShowAddModal(true)}
               >
-                + Add Employee
+                Add Employee
               </Button>
             </PermissionGate>
           </div>
@@ -305,202 +411,224 @@ export default function EmployeesPage() {
           </div>
         )}
 
-        {/* Search and Filters */}
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="flex-1 flex gap-2">
-            <label htmlFor="employee-search" className="sr-only">Search employees</label>
-            <input
-              id="employee-search"
-              type="text"
-              placeholder="Search employees..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-              aria-label="Search employees by name or email"
-              className="flex-1 min-w-0 h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all skeuo-input"
-            />
-            <Button variant="secondary" size="sm" onClick={handleSearch}>
-              Search
-            </Button>
-          </div>
-          <label htmlFor="employee-status-filter" className="sr-only">Filter by status</label>
-          <select
-            id="employee-status-filter"
-            value={statusFilter}
-            onChange={(e) => {
-              setStatusFilter(e.target.value);
-              setCurrentPage(0);
-            }}
-            aria-label="Filter employees by status"
-            className="h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all skeuo-input"
-          >
-            <option value="">All Status</option>
-            <option value="ACTIVE">Active</option>
-            <option value="ON_LEAVE">On Leave</option>
-            <option value="TERMINATED">Terminated</option>
-          </select>
-        </div>
-
-        {/* Employee Table */}
+        {/* Employee directory card */}
         <Reveal inView className="card-aura overflow-hidden">
+          {/* Toolbar OR bulk-select bar */}
+          {selected.size > 0 ? (
+            <div className={listStyles.bulkbar}>
+              <span className={listStyles.bulkCount}>
+                <span className="num">{selected.size}</span> selected
+              </span>
+              <span className={listStyles.bulkSep} />
+              <button type="button" className={listStyles.bulkBtn}>
+                <Mail size={14} aria-hidden />
+                Message
+              </button>
+              <button type="button" className={listStyles.bulkBtn}>
+                <FolderInput size={14} aria-hidden />
+                Move team
+              </button>
+              <button type="button" className={listStyles.bulkBtn}>
+                <Download size={14} aria-hidden />
+                Export
+              </button>
+              <button type="button" className={listStyles.bulkBtn}>
+                <UserX size={14} aria-hidden />
+                Offboard
+              </button>
+              <button
+                type="button"
+                className={listStyles.bulkX}
+                aria-label="Clear selection"
+                onClick={() => setSelected(new Set())}
+              >
+                <X size={16} aria-hidden />
+              </button>
+            </div>
+          ) : (
+            <div className={listStyles.toolbar}>
+              <div className={listStyles.search}>
+                <Search size={16} aria-hidden />
+                <label htmlFor="employee-search" className="sr-only">Search employees</label>
+                <input
+                  id="employee-search"
+                  type="text"
+                  placeholder="Search name, role, email…"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                  aria-label="Search employees by name, role or email"
+                />
+              </div>
+              <div className={listStyles.chips} role="group" aria-label="Filter by department">
+                {deptOptions.map((d) => (
+                  <button
+                    key={d}
+                    type="button"
+                    aria-pressed={deptFilter === d}
+                    className={`${listStyles.chip} ${deptFilter === d ? listStyles.chipActive : ''}`}
+                    onClick={() => setDeptFilter(d)}
+                  >
+                    {d}
+                    {d !== 'All' && <span className={listStyles.chipN}>{deptCounts[d] ?? 0}</span>}
+                  </button>
+                ))}
+              </div>
+              <div className="ml-auto flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  leftIcon={<ArrowUpDown size={15} aria-hidden />}
+                  onClick={cycleSort}
+                  aria-label={`Sort by ${sortBy} ${sortDirection}`}
+                >
+                  Sort
+                </Button>
+              </div>
+            </div>
+          )}
+
           {loading ? (
             <SkeletonTable rows={8} columns={7}/>
-          ) : employees.length === 0 ? (
+          ) : visibleEmployees.length === 0 ? (
             <EmptyState
               icon={<Users className="h-12 w-12"/>}
-              title={searchQuery.trim() ? 'No employees match your search' : 'No Employees Found'}
-              description={searchQuery.trim() ? 'Try adjusting your search terms' : 'Add your first employee to get started'}
+              title={searchQuery.trim() || deptFilter !== 'All' ? 'No employees match your filters' : 'No Employees Found'}
+              description={searchQuery.trim() || deptFilter !== 'All' ? 'Try adjusting your search or department filter' : 'Add your first employee to get started'}
               action={canCreate ? {label: 'Add employee', onClick: () => setShowAddModal(true)} : undefined}
             />
           ) : (
             <>
               <div className="overflow-x-auto">
-                <table className="table-aura">
-                  <thead className="skeuo-table-header">
+                <table className={listStyles.table}>
+                  <thead>
                   <tr>
-                    <th>
-                      Employee
+                    <th className={listStyles.checkCell}>
+                      <input
+                        type="checkbox"
+                        className={listStyles.check}
+                        checked={allVisibleSelected}
+                        ref={(el) => {
+                          if (el) el.indeterminate = !allVisibleSelected && someVisibleSelected;
+                        }}
+                        onChange={toggleAllVisible}
+                        aria-label="Select all employees on this page"
+                      />
                     </th>
-                    <th>
-                      Code
-                    </th>
-                    <th>
-                      Designation
-                    </th>
-                    <th>
-                      Department
-                    </th>
-                    <th className="text-center">
-                      Level
-                    </th>
-                    <th>
-                      Manager
-                    </th>
-                    <th className="text-center">
-                      Status
-                    </th>
-                    <th className="text-right">
-                      Actions
-                    </th>
+                    <th>Employee</th>
+                    <th>Role</th>
+                    <th>Department</th>
+                    <th>Location</th>
+                    <th>Joined</th>
+                    <th>Status</th>
+                    <th className={listStyles.kebabCell} aria-label="Actions" />
                   </tr>
                   </thead>
                   <tbody>
-                  {employees.map((employee) => (
-                    <tr key={employee.id} className="h-11 hover-lift">
-                      <td className="whitespace-nowrap">
-                        <div className="flex items-center gap-4">
-                          <div
-                            className="flex-shrink-0 h-10 w-10 bg-accent-100 dark:bg-accent-900/30 rounded-lg flex items-center justify-center">
-                          <span className="text-sm font-medium text-accent-700 dark:text-accent-300">
-                            {employee.firstName.charAt(0)}{employee.lastName?.charAt(0) || ''}
-                          </span>
+                  {visibleEmployees.map((employee) => {
+                    const isSelected = selected.has(employee.id);
+                    const location = [employee.city, employee.country].filter(Boolean).join(', ') || '—';
+                    return (
+                      <tr
+                        key={employee.id}
+                        className={`${listStyles.row} ${isSelected ? listStyles.rowSelected : ''}`}
+                        onClick={() => setOpenEmployee(employee)}
+                      >
+                        <td onClick={(e) => e.stopPropagation()}>
+                          <input
+                            type="checkbox"
+                            className={listStyles.check}
+                            checked={isSelected}
+                            onChange={() => toggleRow(employee.id)}
+                            aria-label={`Select ${employee.fullName}`}
+                          />
+                        </td>
+                        <td>
+                          <div className={listStyles.cellUser}>
+                            <EmployeeAvatar name={employee.fullName} size={38} src={employee.profilePhotoUrl} />
+                            <div>
+                              <div className={listStyles.cellName}>{employee.fullName}</div>
+                              <div className={listStyles.cellSub}>{employee.workEmail}</div>
+                            </div>
                           </div>
-                          <div>
-                            <div className="text-sm font-medium text-[var(--text-primary)]">{employee.fullName}</div>
-                            <div className="text-caption">{employee.workEmail}</div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="whitespace-nowrap">
-                        <span className="text-sm font-mono text-[var(--text-secondary)]">{employee.employeeCode}</span>
-                      </td>
-                      <td className="whitespace-nowrap">
-                        <span className="text-sm text-[var(--text-primary)]">{employee.designation}</span>
-                      </td>
-                      <td className="whitespace-nowrap">
-                        <span className="text-sm text-[var(--text-primary)]">{employee.departmentName || '-'}</span>
-                      </td>
-                      <td className="whitespace-nowrap text-center">
-                        {employee.level ? (
-                          <span
-                            className="px-2 py-0.5 inline-flex text-xs font-medium rounded-md bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300">
-                          {employee.level.replace('_', ' ')}
-                        </span>
-                        ) : (
-                          <span className="text-body-muted">-</span>
-                        )}
-                      </td>
-                      <td className="whitespace-nowrap">
-                        <span className="text-sm text-[var(--text-primary)]">{employee.managerName || '-'}</span>
-                      </td>
-                      <td className="whitespace-nowrap text-center">
-                      <span
-                        className={`px-2 py-0.5 inline-flex text-xs font-medium rounded-md ${getStatusBadgeColor(employee.status)}`}>
-                        {employee.status ? employee.status.replace('_', ' ') : '-'}
-                      </span>
-                      </td>
-                      <td className="whitespace-nowrap text-right">
-                        <div className="flex items-center justify-end gap-2">
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="xs"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              e.preventDefault();
-                              router.push(`/employees/${employee.id}`);
-                            }}
+                        </td>
+                        <td className="font-medium text-[var(--text-1)]">{employee.designation ?? '—'}</td>
+                        <td>{employee.departmentName ?? '—'}</td>
+                        <td>{location}</td>
+                        <td className="num text-[12.5px]">{joinedShort(employee.joiningDate)}</td>
+                        <td>
+                          <StatusBadge status={employee.status} domain={EMPLOYEE_LIFECYCLE_STATUS} compact />
+                        </td>
+                        <td className={listStyles.kebabCell} onClick={(e) => e.stopPropagation()}>
+                          <PermissionGate
+                            permission={Permissions.EMPLOYEE_DELETE}
+                            fallback={
+                              <button
+                                type="button"
+                                className={listStyles.kebab}
+                                aria-label={`View ${employee.fullName}`}
+                                onClick={() => router.push(`/employees/${employee.id}`)}
+                              >
+                                <MoreHorizontal size={16} aria-hidden />
+                              </button>
+                            }
                           >
-                            View
-                          </Button>
-                          <PermissionGate permission={Permissions.EMPLOYEE_DELETE}>
-                            <Button
+                            <button
                               type="button"
-                              variant="ghost"
-                              size="xs"
-                              className="text-danger-600 dark:text-danger-400 hover:text-danger-700 hover:bg-danger-50 dark:hover:bg-danger-950/30"
-                              onClick={(e) => {
-                                e.stopPropagation();
+                              className={listStyles.kebab}
+                              aria-label={`Delete ${employee.fullName}`}
+                              onClick={() => {
                                 setEmployeeToDelete(employee);
                                 setShowDeleteModal(true);
                               }}
                             >
-                              Delete
-                            </Button>
+                              <MoreHorizontal size={16} aria-hidden />
+                            </button>
                           </PermissionGate>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
+                        </td>
+                      </tr>
+                    );
+                  })}
                   </tbody>
                 </table>
               </div>
 
-              {totalPages > 1 && (
-                <div className="px-6 py-4 border-t border-[var(--border-subtle)] row-between">
-                  <p className="text-body-secondary">
-                    Showing{' '}
-                    <span className="font-medium text-[var(--text-primary)] tabular-nums">{currentPage * PAGE_SIZE + 1}</span>
-                    {' '}–{' '}
-                    <span className="font-medium text-[var(--text-primary)] tabular-nums">
-                    {Math.min((currentPage + 1) * PAGE_SIZE, totalElements)}
-                  </span>
-                    {' '}of{' '}
-                    <span className="font-medium text-[var(--text-primary)] tabular-nums">{totalElements}</span> employees
-                  </p>
-                  <div className="flex items-center gap-2">
-                    <Button
-                      variant="outline"
-                      size="xs"
-                      onClick={() => setCurrentPage(p => Math.max(0, p - 1))}
-                      disabled={currentPage === 0}
+              <div className={listStyles.foot}>
+                <span>
+                  Showing <b className="num text-[var(--text-1)]">{visibleEmployees.length}</b>
+                  {' '}of <span className="num">{totalElements.toLocaleString()}</span> employees
+                </span>
+                <div className={listStyles.pager} role="navigation" aria-label="Pagination">
+                  <button
+                    type="button"
+                    aria-label="Previous page"
+                    onClick={() => setCurrentPage((p) => Math.max(0, p - 1))}
+                    disabled={currentPage === 0}
+                  >
+                    <ChevronLeft size={15} aria-hidden />
+                  </button>
+                  {pageWindow(currentPage, totalPages).map((p) => (
+                    <button
+                      key={p}
+                      type="button"
+                      aria-label={`Page ${p + 1}`}
+                      aria-current={p === currentPage ? 'page' : undefined}
+                      className={p === currentPage ? listStyles.pagerActive : undefined}
+                      onClick={() => setCurrentPage(p)}
                     >
-                      Previous
-                    </Button>
-                    <span className="px-2 text-body-muted tabular-nums">
-                    {currentPage + 1} / {totalPages}
-                  </span>
-                    <Button
-                      variant="outline"
-                      size="xs"
-                      onClick={() => setCurrentPage(p => Math.min(totalPages - 1, p + 1))}
-                      disabled={currentPage >= totalPages - 1}
-                    >
-                      Next
-                    </Button>
-                  </div>
+                      {p + 1}
+                    </button>
+                  ))}
+                  <button
+                    type="button"
+                    aria-label="Next page"
+                    onClick={() => setCurrentPage((p) => Math.min(totalPages - 1, p + 1))}
+                    disabled={currentPage >= totalPages - 1}
+                  >
+                    <ChevronRight size={15} aria-hidden />
+                  </button>
                 </div>
-              )}
+              </div>
             </>
           )}
         </Reveal>
@@ -1240,6 +1368,20 @@ export default function EmployeesPage() {
             </div>
           </ModalBody>
         </Modal>
+
+        {/* Profile slide-over (Aura screen 05) */}
+        {openEmployee && (
+          <ProfileSheet
+            employee={openEmployee}
+            onClose={() => setOpenEmployee(null)}
+            onViewFull={() => router.push(`/employees/${openEmployee.id}`)}
+            onEdit={
+              hasPermission(Permissions.EMPLOYEE_UPDATE)
+                ? () => router.push(`/employees/${openEmployee.id}/edit`)
+                : undefined
+            }
+          />
+        )}
       </PageTransition>
     </AppLayout>
   );

@@ -2,6 +2,7 @@
 
 import React, {memo, useCallback, useEffect, useMemo, useState} from 'react';
 import Link from 'next/link';
+import {useRouter} from 'next/navigation';
 import {motion} from 'framer-motion';
 import {format as formatDateFns} from 'date-fns';
 import {Reveal, Stagger, StaggerItem} from '@/components/motion';
@@ -11,23 +12,31 @@ import {
   CalendarClock,
   CheckCircle,
   Clock,
+  Download,
+  Fingerprint,
   LogIn,
   LogOut,
+  Moon,
+  Palmtree,
   RefreshCw,
   Repeat,
   Timer,
+  UserCheck,
   Users,
 } from 'lucide-react';
 
 import {AppLayout} from '@/components/layout';
 import {Button} from '@/components/ui/Button';
 import {Skeleton} from '@/components/ui';
+import {Card} from '@/components/ui/Card';
+import {Stat} from '@/components/ui/Stat';
+import {Segmented} from '@/components/ui/Segmented';
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
 import {useToast} from '@/components/ui/Toast';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {useAuth} from '@/lib/hooks/useAuth';
-import {AttendanceRecord, Holiday} from '@/lib/types/hrms/attendance';
+import {AttendanceRecord} from '@/lib/types/hrms/attendance';
 import {
   getDateOffsetString,
   getLocalDateString,
@@ -44,7 +53,7 @@ import {
 import {
   calculateHours,
   computeMonthStats,
-  computeStreak,
+  computeWeekStats,
   formatDuration,
   formatTime,
   GRACE_PERIOD_MINS,
@@ -54,9 +63,54 @@ import {
 // Single ease curve, matching the resources blueprint.
 const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
+// ── Aura heatmap status model ────────────────────────────────────────────────
+// Maps the real AttendanceStatus enum onto the prototype's compact P/R/L/A codes.
+// Token-driven cell colors (no hardcoded hex) — chart-* vars per AURA_CONTRACT.
+type HeatCode = 'P' | 'R' | 'L' | 'A' | 'O';
+const HEAT_META: Record<HeatCode, {cellClass: string; color: string; label: string}> = {
+  P: {cellClass: 'bg-[var(--chart-1)]', color: 'var(--chart-1)', label: 'Present'},
+  R: {cellClass: 'bg-[var(--chart-3)]', color: 'var(--chart-3)', label: 'Remote'},
+  L: {cellClass: 'bg-[var(--chart-4)]', color: 'var(--chart-4)', label: 'Leave'},
+  A: {cellClass: 'bg-[var(--chart-5)]', color: 'var(--chart-5)', label: 'Absent'},
+  O: {cellClass: 'bg-[var(--border)]', color: 'var(--border)', label: 'Off'},
+};
+
+/** Reduce a real AttendanceRecord status into a heatmap code. */
+function statusToHeatCode(rec: AttendanceRecord | undefined): HeatCode {
+  if (!rec) return 'A';
+  switch (rec.status) {
+    case 'PRESENT':
+    case 'LATE':
+    case 'HALF_DAY':
+    case 'PENDING_REGULARIZATION':
+      // Remote vs on-site: WEB punches with no fixed location read as remote.
+      return rec.checkInSource === 'REMOTE' || rec.checkInLocation === 'Remote' ? 'R' : 'P';
+    case 'ON_LEAVE':
+    case 'LEAVE':
+      return 'L';
+    case 'WEEKLY_OFF':
+    case 'HOLIDAY':
+      return 'O';
+    case 'ABSENT':
+    default:
+      return 'A';
+  }
+}
+
+const HEAT_DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'] as const;
+
+/** A single heatmap row: one person's Mon–Fri codes + check-in + avg hours. */
+interface HeatRow {
+  name: string;
+  week: Array<{code: HeatCode; date: string}>;
+  checkIn: string;
+  avgHrs: string;
+}
+
 // ── Page ─────────────────────────────────────────────────────────────────────
 export default function AttendancePage() {
   const {user, isAuthenticated, hasHydrated} = useAuth();
+  const router = useRouter();
   const toast = useToast();
   const [error, setError] = useState<string | null>(null);
   const [showCheckOutConfirm, setShowCheckOutConfirm] = useState(false);
@@ -75,7 +129,8 @@ export default function AttendancePage() {
   const {data: monthlyData} = useAttendanceByDateRange(
     monthStartStr, todayStr, isAuthenticated && hasHydrated
   );
-  const {data: holidaysData} = useHolidaysByYear(now.getFullYear());
+  // Holidays kept fetched (warm cache for sub-routes); not surfaced on this view.
+  useHolidaysByYear(now.getFullYear());
 
   const checkInMutation = useCheckIn();
   const checkOutMutation = useCheckOut();
@@ -83,26 +138,46 @@ export default function AttendancePage() {
   const todayRecord: AttendanceRecord | null = todayData?.[0] ?? null;
   const weeklyRecords = useMemo<AttendanceRecord[]>(() => weeklyData ?? [], [weeklyData]);
   const monthlyRecords = useMemo<AttendanceRecord[]>(() => monthlyData ?? [], [monthlyData]);
-  const holidays = useMemo<Holiday[]>(() => holidaysData ?? [], [holidaysData]);
 
   // Derived stats
-  const streak = useMemo(() => computeStreak(monthlyRecords), [monthlyRecords]);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const monthStats = useMemo(() => computeMonthStats(monthlyRecords, now), [monthlyRecords]);
-  const weekHours = useMemo(
-    () => weeklyRecords.reduce(
-      (acc, r) => acc + calculateHours(r.checkInTime ?? undefined, r.checkOutTime ?? undefined),
-      0
-    ),
+
+  // Weekly aggregate stats for the KPI strip (Aura spec: avg check-in, avg hrs).
+  const weekStats = useMemo(() => computeWeekStats(weeklyRecords), [weeklyRecords]);
+  const weekOvertimeHours = useMemo(
+    () => weeklyRecords.reduce((acc, r) => acc + (r.overtimeMinutes ?? 0) / 60, 0),
     [weeklyRecords]
   );
-  const upcomingHolidays = useMemo(
-    () => holidays
-      .filter(h => new Date(h.holidayDate + 'T00:00:00') >= new Date(todayStr + 'T00:00:00'))
-      .sort((a, b) => a.holidayDate.localeCompare(b.holidayDate))
-      .slice(0, 3),
-    [holidays, todayStr]
-  );
+
+  // Heatmap row model from REAL weekly data — Mon–Fri of the current week.
+  // The self-service page owns one person's records, so the heatmap shows the
+  // signed-in employee's week (the spec's team grid maps to /attendance/team).
+  const heatRows = useMemo<HeatRow[]>(() => {
+    const now2 = new Date();
+    const monday = new Date(now2);
+    const dow = (monday.getDay() + 6) % 7; // 0 = Monday
+    monday.setDate(monday.getDate() - dow);
+
+    const byDate = new Map<string, AttendanceRecord>();
+    for (const r of weeklyRecords) byDate.set(r.attendanceDate, r);
+
+    const week = HEAT_DAYS.map((_, i) => {
+      const d = new Date(monday);
+      d.setDate(monday.getDate() + i);
+      const key = getLocalDateString(d);
+      const rec = byDate.get(key);
+      const isFuture = d > now2;
+      return {code: isFuture ? ('O' as HeatCode) : statusToHeatCode(rec), date: key};
+    });
+
+    return [{
+      name: [user?.firstName, user?.lastName].filter(Boolean).join(' ') || 'You',
+      week,
+      checkIn: weekStats.avgCheckIn,
+      avgHrs: weekStats.avgHours,
+    }];
+  }, [weeklyRecords, weekStats, user?.firstName, user?.lastName]);
 
   // Today's punches (single-record but kept as list to support multi-punch in future)
   const todayPunches = useMemo(() => {
@@ -175,24 +250,31 @@ export default function AttendancePage() {
 
   return (
     <AppLayout activeMenuItem="attendance">
-      <div className="mx-auto w-full max-w-7xl px-6 py-8 space-y-10">
-        <PageHeader userName={user?.firstName} streak={streak} now={now} />
+      <div className="mx-auto w-full max-w-7xl px-6 py-8 space-y-8">
+        <PageHeader
+          view="attendance"
+          onViewChange={(v) => router.push(v === 'leave' ? '/leave' : '/attendance')}
+        />
 
         {error && (
           <ErrorBanner message={error} onRetry={() => { setError(null); refetchToday(); }} />
         )}
 
-        {/* Stats row — borders divide instead of card boxes */}
+        {/* KPI row — Aura StatCards (Present/check-in/hours/overtime) */}
         {dataLoading ? (
           <StatsSkeleton />
         ) : (
           <StatsRow
-            weekHours={weekHours}
-            leavesTaken={monthStats.absent}
             presentThisMonth={monthStats.present}
-            upcomingHolidayCount={upcomingHolidays.length}
+            attendanceRate={monthStats.attendanceRate}
+            avgCheckIn={weekStats.avgCheckIn}
+            avgHours={weekStats.avgHours}
+            overtimeHours={weekOvertimeHours}
           />
         )}
+
+        {/* Weekly attendance heatmap — built from real weekly records */}
+        {!dataLoading && <WeeklyHeatmap rows={heatRows} now={now} />}
 
         {/* Bento — one wide hero (Today / check-in state) + smaller tiles */}
         <BentoNavigation
@@ -231,102 +313,220 @@ export default function AttendancePage() {
   );
 }
 
-// ── Header ───────────────────────────────────────────────────────────────────
-function PageHeader({userName, streak, now}: {userName: string | undefined; streak: number; now: Date}) {
-  const greeting = useMemo(() => {
-    const h = now.getHours();
-    if (h < 12) return 'Good morning';
-    if (h < 17) return 'Good afternoon';
-    return 'Good evening';
-  }, [now]);
-
+// ── Header (title + Attendance/Leave segmented + Export) ─────────────────────
+function PageHeader({
+  view,
+  onViewChange,
+}: {
+  view: 'attendance' | 'leave';
+  onViewChange: (next: 'attendance' | 'leave') => void;
+}) {
   return (
-    <header className="motion-rise grid gap-4 sm:grid-cols-[1fr_auto] sm:items-end">
-      <div className="space-y-2 max-w-2xl">
-        <p className="text-2xs font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">
-          Attendance
-        </p>
-        <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-[var(--text-heading)] leading-[1.05]">
-          {greeting}{userName ? `, ${userName}` : ''}. Let&apos;s get the day on the record.
-        </h1>
-        <p className="text-body-secondary max-w-[55ch]">
-          Punch in, manage regularizations, swap shifts, and see how the team is tracking — all from one place.
+    <header className="motion-rise grid gap-4 sm:grid-cols-[1fr_auto] sm:items-start">
+      <div className="space-y-1.5 max-w-2xl">
+        <h1 className="text-aura-title text-[var(--text-1)]">Attendance</h1>
+        <p className="text-sm text-[var(--text-3)]">
+          Live attendance, check-ins and weekly patterns.
         </p>
       </div>
-      <div className="flex items-center gap-4 self-start sm:self-end">
-        {streak > 0 && (
-          <div className="inline-flex items-center gap-2 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-card)] px-4 py-2">
-            <Timer className="h-4 w-4 text-warning-500" aria-hidden="true" />
-            <span className="font-mono text-sm font-semibold tabular-nums text-[var(--text-heading)]">{streak}</span>
-            <span className="text-2xs font-medium uppercase tracking-wider text-[var(--text-muted)]">day streak</span>
-          </div>
-        )}
-        <p className="text-xs text-[var(--text-secondary)] hidden sm:block">
-          {formatDateFns(now, 'EEEE, MMM d')}
-        </p>
+      <div className="flex items-center gap-4 self-start">
+        <Segmented
+          aria-label="Attendance or Leave"
+          value={view}
+          onChange={onViewChange}
+          options={[
+            {value: 'attendance', label: 'Attendance', icon: <Fingerprint className="h-[15px] w-[15px]" aria-hidden="true" />},
+            {value: 'leave', label: 'Leave', icon: <Palmtree className="h-[15px] w-[15px]" aria-hidden="true" />},
+          ]}
+        />
+        <Button variant="ghost" leftIcon={<Download className="h-4 w-4" aria-hidden="true" />}>
+          Export
+        </Button>
       </div>
     </header>
   );
 }
 
-// ── Stats row ────────────────────────────────────────────────────────────────
+// ── KPI row (Aura StatCards) ─────────────────────────────────────────────────
 function StatsRow({
-  weekHours,
-  leavesTaken,
   presentThisMonth,
-  upcomingHolidayCount,
+  attendanceRate,
+  avgCheckIn,
+  avgHours,
+  overtimeHours,
 }: {
-  weekHours: number;
-  leavesTaken: number;
   presentThisMonth: number;
-  upcomingHolidayCount: number;
+  attendanceRate: number;
+  avgCheckIn: string;
+  avgHours: string;
+  overtimeHours: number;
 }) {
-  const items = [
-    {label: 'Worked this week', value: `${weekHours.toFixed(1)}h`, icon: Clock, tone: 'neutral' as const},
-    {label: 'Leaves this month', value: leavesTaken, icon: CalendarClock, tone: leavesTaken > 0 ? 'warning' as const : 'neutral' as const},
-    {label: 'Present this month', value: presentThisMonth, icon: CheckCircle, tone: 'neutral' as const},
-    {label: 'Upcoming holidays', value: upcomingHolidayCount, icon: Users, tone: 'neutral' as const},
-  ];
-
+  const onTime = avgCheckIn !== '--:--' && avgCheckIn <= '09:15';
   return (
-    <section
-      aria-label="Attendance at a glance"
-      className="motion-rise grid grid-cols-2 sm:grid-cols-4 border-y border-[var(--border-subtle)] divide-x divide-[var(--border-subtle)]"
+    <Stagger
+      className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"
+      delayChildren={0.06}
     >
-      {items.map((item) => (
-        <div
-          key={item.label}
-          className="px-5 py-6 sm:px-7 sm:py-8 first:pl-0 last:pr-0"
-        >
-          <div className="flex items-center gap-2 text-[var(--text-muted)]">
-            <item.icon className="h-3.5 w-3.5" aria-hidden="true" />
-            <span className="text-2xs font-medium uppercase tracking-wider">{item.label}</span>
-          </div>
-          <p
-            className={`mt-3 font-mono text-3xl sm:text-4xl tabular-nums tracking-tight ${
-              item.tone === 'warning'
-                ? 'text-warning-700 dark:text-warning-300'
-                : 'text-[var(--text-heading)]'
-            }`}
-          >
-            {item.value}
-          </p>
-        </div>
-      ))}
-    </section>
+      <StaggerItem>
+        <Card className="p-5">
+          <Stat
+            icon={<UserCheck className="h-[18px] w-[18px]" aria-hidden="true" />}
+            iconTone="accent"
+            label="Present this month"
+            value={<span className="num">{presentThisMonth}</span>}
+            delta={<span className="num">{attendanceRate}%</span>}
+            deltaDir={attendanceRate >= 85 ? 'up' : 'down'}
+            foot="Days logged"
+          />
+        </Card>
+      </StaggerItem>
+      <StaggerItem>
+        <Card className="p-5">
+          <Stat
+            icon={<Clock className="h-[18px] w-[18px]" aria-hidden="true" />}
+            iconTone="info"
+            label="Avg check-in"
+            value={<span className="num">{avgCheckIn}</span>}
+            delta={onTime ? 'On time' : 'Late'}
+            deltaDir={onTime ? 'flat' : 'down'}
+            foot="Target 09:15"
+          />
+        </Card>
+      </StaggerItem>
+      <StaggerItem>
+        <Card className="p-5">
+          <Stat
+            icon={<Timer className="h-[18px] w-[18px]" aria-hidden="true" />}
+            iconTone="warning"
+            label="Avg hours / day"
+            value={<span className="num">{avgHours}h</span>}
+            foot="This week"
+          />
+        </Card>
+      </StaggerItem>
+      <StaggerItem>
+        <Card className="p-5">
+          <Stat
+            icon={<Moon className="h-[18px] w-[18px]" aria-hidden="true" />}
+            iconTone="neutral"
+            label="Overtime logged"
+            value={<span className="num">{overtimeHours.toFixed(0)}h</span>}
+            foot="This week"
+          />
+        </Card>
+      </StaggerItem>
+    </Stagger>
   );
 }
 
 function StatsSkeleton() {
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-4 border-y border-[var(--border-subtle)] divide-x divide-[var(--border-subtle)]">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {Array.from({length: 4}).map((_, i) => (
-        <div key={i} className="px-5 py-6 sm:px-7 sm:py-8 first:pl-0 last:pr-0">
-          <Skeleton className="h-3 w-24 rounded" />
-          <Skeleton className="mt-3 h-9 w-20 rounded" />
-        </div>
+        <Card key={i} className="p-5">
+          <Skeleton className="h-[38px] w-[38px] rounded-aura-lg" />
+          <Skeleton className="mt-3 h-3 w-28 rounded" />
+          <Skeleton className="mt-3 h-8 w-20 rounded" />
+        </Card>
       ))}
     </div>
+  );
+}
+
+// ── Page-local avatar (initials chip) — no shared Avatar primitive exists ─────
+function HeatAvatar({name}: {name: string}) {
+  const initials = name
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((p) => p[0]?.toUpperCase() ?? '')
+    .join('');
+  return (
+    <span
+      aria-hidden="true"
+      className="inline-grid h-8 w-8 shrink-0 place-items-center rounded-full bg-[var(--accent-soft)] text-[11.5px] font-semibold text-[var(--accent-text)]"
+    >
+      {initials}
+    </span>
+  );
+}
+
+// ── Weekly heatmap (real weekly records → P/R/L/A tinted cells) ───────────────
+function WeeklyHeatmap({rows, now}: {rows: HeatRow[]; now: Date}) {
+  const weekLabel = useMemo(() => {
+    const monday = new Date(now);
+    const dow = (monday.getDay() + 6) % 7;
+    monday.setDate(monday.getDate() - dow);
+    const friday = new Date(monday);
+    friday.setDate(monday.getDate() + 4);
+    return `This week · ${formatDateFns(monday, 'MMM d')} – ${formatDateFns(friday, 'MMM d')}`;
+  }, [now]);
+
+  return (
+    <Reveal delay={0.18}>
+      <Card className="overflow-hidden">
+        <div className="flex flex-wrap items-center justify-between gap-4 px-5 pt-5">
+          <div>
+            <h2 className="text-base font-semibold text-[var(--text-1)]">Team attendance</h2>
+            <p className="mt-0.5 text-xs text-[var(--text-3)]">{weekLabel}</p>
+          </div>
+          <div className="flex flex-wrap items-center gap-4">
+            {(['P', 'R', 'L', 'A'] as HeatCode[]).map((k) => (
+              <span key={k} className="inline-flex items-center gap-1.5 text-2xs text-[var(--text-3)]">
+                <span
+                  className={`inline-block h-2 w-2 rounded-full ${HEAT_META[k].cellClass}`}
+                />
+                {HEAT_META[k].label}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-4 overflow-x-auto px-2 pb-3">
+          <table className="w-full border-collapse text-sm">
+            <thead>
+              <tr className="text-2xs uppercase tracking-wider text-[var(--text-3)]">
+                <th className="px-3 py-2 text-left font-medium">Employee</th>
+                {HEAT_DAYS.map((d) => (
+                  <th key={d} className="px-2 py-2 text-center font-medium">{d}</th>
+                ))}
+                <th className="px-2 py-2 text-center font-medium">Check-in</th>
+                <th className="px-2 py-2 text-center font-medium">Avg hrs</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row) => (
+                <tr key={row.name} className="border-t border-[var(--border-soft)]">
+                  <td className="px-3 py-2.5">
+                    <div className="flex items-center gap-2.5">
+                      <HeatAvatar name={row.name} />
+                      <span className="text-sm font-medium text-[var(--text-1)]">{row.name}</span>
+                    </div>
+                  </td>
+                  {row.week.map((cell, i) => (
+                    <td key={`${row.name}-${i}`} className="px-2 py-2.5 text-center">
+                      <span
+                        title={HEAT_META[cell.code].label}
+                        className="num inline-grid h-[30px] w-[34px] place-items-center rounded-aura-sm border text-xs font-semibold"
+                        style={{
+                          background: `color-mix(in srgb, ${HEAT_META[cell.code].color} ${cell.code === 'O' ? 100 : 18}%, transparent)`,
+                          color: HEAT_META[cell.code].color,
+                          borderColor: `color-mix(in srgb, ${HEAT_META[cell.code].color} 36%, transparent)`,
+                        }}
+                      >
+                        {cell.code}
+                      </span>
+                    </td>
+                  ))}
+                  <td className="num px-2 py-2.5 text-center text-xs text-[var(--text-2)]">{row.checkIn}</td>
+                  <td className="num px-2 py-2.5 text-center text-xs font-semibold text-[var(--text-1)]">{row.avgHrs}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Card>
+    </Reveal>
   );
 }
 

@@ -1,0 +1,160 @@
+/* NU-AURA Aura — Auth brand panel (page-local).
+   The dark navy brand gradient + radial washes are brand assets that are not
+   tokenized in globals.css (only the pink --nu-grad-brand logo mark is). They are
+   kept here, colocated with the BrandPanel component, so globals.css stays frozen
+   and the brand hexes live in exactly one place. The panel is intentionally dark
+   in BOTH light and dark themes (it is a fixed brand surface), so its internal
+   text colors use on-dark rgba values rather than theme tokens. */
+
+.aura-brand {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  border-radius: var(--r-xl, 16px);
+  padding: clamp(2rem, 3.4vw, 3.5rem);
+  background: linear-gradient(150deg, #0c1120 0%, #14193a 48%, #2a1d49 100%);
+  color: #fff;
+  box-shadow: var(--sh-lg);
+  isolation: isolate;
+}
+
+.aura-brand::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(680px 460px at 18% 12%, rgba(237, 48, 39, 0.22), transparent 60%),
+    radial-gradient(620px 520px at 88% 92%, rgba(139, 92, 246, 0.26), transparent 60%);
+}
+
+.aura-brand::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.4;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 44px 44px;
+  -webkit-mask-image: radial-gradient(circle at 50% 40%, #000, transparent 75%);
+  mask-image: radial-gradient(circle at 50% 40%, #000, transparent 75%);
+}
+
+.aura-brand__inner {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 440px;
+}
+
+.aura-brand__logo {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  margin-bottom: clamp(2.25rem, 4.5vw, 4rem);
+}
+
+.aura-brand__mark {
+  width: 46px;
+  height: 46px;
+  border-radius: 13px;
+  background: var(--nu-grad-brand);
+  display: grid;
+  place-items: center;
+  box-shadow: 0 6px 20px rgba(180, 58, 134, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  flex-shrink: 0;
+}
+
+.aura-brand__mark span {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 21px;
+  color: #fff;
+  letter-spacing: -0.04em;
+}
+
+.aura-brand__name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 19px;
+  letter-spacing: -0.01em;
+}
+
+.aura-brand__by {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.6);
+  margin-top: 2px;
+}
+
+.aura-brand__head {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(2rem, 3vw, 2.5rem);
+  line-height: 1.12;
+  letter-spacing: -0.025em;
+  margin: 0 0 18px;
+}
+
+.aura-brand__lede {
+  font-size: 15px;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.74);
+  margin: 0 0 clamp(1.75rem, 3vw, 2.5rem);
+  max-width: 400px;
+}
+
+.aura-brand__apps {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: clamp(2rem, 3.6vw, 3.25rem);
+}
+
+.aura-brand__app {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 13px;
+  border-radius: 13px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+
+.aura-brand__app-ico {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  flex-shrink: 0;
+}
+
+.aura-brand__app-name {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 13.5px;
+}
+
+.aura-brand__app-tag {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.55);
+  margin-top: 1px;
+}
+
+.aura-brand__tagline {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 12.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+}

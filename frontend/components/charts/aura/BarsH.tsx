@@ -53,8 +53,7 @@ export function BarsH({
   return (
     <div
       id={`aura-bars-${gid}`}
-      className={className}
-      style={{display: 'flex', flexDirection: 'column', gap: 13}}
+      className={`flex flex-col gap-[13px] ${className ?? ''}`}
     >
       {!prefersReduced && (
         <style>{`
@@ -81,7 +80,7 @@ export function BarsH({
                 marginBottom: 5,
               }}
             >
-              <span style={{fontSize: 12.5, fontWeight: 600, color: 'var(--text-2)'}}>
+              <span className="text-[12.5px] font-semibold text-[var(--text-2)]">
                 {d.label}
               </span>
               <span

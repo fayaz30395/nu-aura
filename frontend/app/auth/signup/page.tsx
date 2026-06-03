@@ -2,7 +2,6 @@
 
 import {useState} from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
@@ -10,6 +9,9 @@ import {apiClient} from '@/lib/api/client';
 import {Button, buttonVariants} from '@/components/ui/Button';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Input} from '@/components/ui/Input';
+import {ThemeToggle} from '@/components/ui/ThemeToggle';
+import {BrandPanel} from '../_components/BrandPanel';
+import '../_components/auth-form.css';
 import {AlertCircle, Building2, CheckCircle2, Hash, Lock, Mail, User} from 'lucide-react';
 
 const signupSchema = z.object({
@@ -94,44 +96,17 @@ export default function SignupPage() {
 
   if (isSuccess) {
     return (
-      <div className="auth-shell motion-rise">
+      <div className="auth-shell relative overflow-hidden motion-rise">
+        <div className="aura-auth-theme">
+          <ThemeToggle compact/>
+        </div>
         <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_440px] lg:items-center">
-            <section className="hidden lg:flex">
-              <div
-                className="auth-side-panel p-10 w-full flex items-center motion-rise"
-              >
-                <div className="auth-side-panel-content space-y-6">
-                  <Image
-                    src="/images/nulogic-logo.svg"
-                    alt="NULogic"
-                    width={180}
-                    height={52}
-                    className="h-14 w-auto object-contain dark:hidden"
-                    priority
-                  />
-                  <Image
-                    src="/images/nulogic-logo-white.svg"
-                    alt="NULogic"
-                    width={180}
-                    height={52}
-                    className="h-14 w-auto object-contain hidden dark:block"
-                    priority
-                  />
-                  <div>
-                    <p className="auth-chip">Tenant onboarding</p>
-                    <h2 className="text-3xl font-bold mt-3 text-[var(--text-primary)]">
-                      Set up your workspace in minutes
-                    </h2>
-                    <p className="text-base text-[var(--text-secondary)] mt-3 leading-7 max-w-sm">
-                      Build your organisation, invite your first administrator, and launch your people platform from one clean
-                      setup flow.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </section>
-            <section className="w-full">
+          <div className="grid gap-6 lg:grid-cols-[1.05fr_1fr] lg:items-center">
+            <BrandPanel
+              headline={<>Set up your workspace<br/>in minutes.</>}
+              lede="Build your organisation, invite your first administrator, and launch your people platform from one clean setup flow."
+            />
+            <section className="w-full max-w-[480px] mx-auto">
               <Card className="auth-shell-card motion-rise">
                 <CardContent className="pt-8 pb-8 text-center space-y-4">
                   <div className="flex justify-center">
@@ -163,58 +138,18 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="auth-shell motion-rise">
+    <div className="auth-shell relative overflow-hidden motion-rise">
+      <div className="aura-auth-theme">
+        <ThemeToggle compact/>
+      </div>
       <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_560px] lg:items-start">
-          <section className="hidden lg:flex">
-            <div className="auth-side-panel p-10 w-full flex items-center motion-rise">
-              <div className="auth-side-panel-content space-y-6">
-                <div className="inline-flex items-center justify-center">
-                  <Image
-                    src="/images/nulogic-logo.svg"
-                    alt="NULogic"
-                    width={188}
-                    height={56}
-                    className="h-14 w-auto object-contain mx-auto dark:hidden"
-                    priority
-                  />
-                  <Image
-                    src="/images/nulogic-logo-white.svg"
-                    alt="NULogic"
-                    width={188}
-                    height={56}
-                    className="h-14 w-auto object-contain mx-auto hidden dark:block"
-                    priority
-                  />
-                </div>
-                <div className="space-y-2">
-                  <p className="auth-chip">Tenant onboarding</p>
-                  <h2 className="text-3xl font-bold leading-tight text-[var(--text-primary)]">
-                    Build your organisation.
-                  </h2>
-                  <p className="text-sm text-[var(--text-secondary)] leading-relaxed max-w-sm">
-                    Set up teams, roles, and admin access so your people operations can start on day one.
-                  </p>
-                </div>
-                <ul className="text-sm text-[var(--text-secondary)] space-y-2">
-                  <li className="flex items-center gap-2">
-                    <span className="h-1.5 w-1.5 rounded-full bg-accent-500"/>
-                    No credit card required.
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="h-1.5 w-1.5 rounded-full bg-accent-500"/>
-                    Preconfigured with secure defaults.
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="h-1.5 w-1.5 rounded-full bg-accent-500"/>
-                    Fast start for HR and payroll teams.
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </section>
+        <div className="grid gap-6 lg:grid-cols-[1.05fr_1fr] lg:items-center">
+          <BrandPanel
+            headline={<>Build your<br/>organisation.</>}
+            lede="Set up teams, roles, and admin access so your people operations can start on day one."
+          />
 
-          <section className="w-full">
+          <section className="w-full max-w-[520px] mx-auto">
             <Card className="auth-shell-card motion-rise">
               <CardHeader className="pb-4">
                 <CardTitle className="text-lg">Create your account</CardTitle>

@@ -149,7 +149,7 @@ export function AreaChart({
             fontSize="10.5"
             fontFamily="var(--font-mono)"
             fill="var(--chart-axis)"
-            style={{fontVariantNumeric: 'tabular-nums'}}
+            className="tabular-nums"
           >
             {formatValue(v)}
           </text>
@@ -224,7 +224,7 @@ export function AreaChart({
               fontWeight="700"
               fontFamily="var(--font-mono)"
               fill="var(--surface)"
-              style={{fontVariantNumeric: 'tabular-nums'}}
+              className="tabular-nums"
             >
               {formatValue(data[hover])}
             </text>

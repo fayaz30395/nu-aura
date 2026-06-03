@@ -7,13 +7,15 @@ import {
   ArrowRight,
   BarChart3,
   Calendar,
+  CalendarClock,
   Check,
   DollarSign,
   Download,
   FileSpreadsheet,
   FileText,
-  Filter,
   Loader2,
+  MoreHorizontal,
+  Plus,
   TrendingUp,
   Users,
 } from 'lucide-react';
@@ -22,6 +24,9 @@ import {DateInput} from '@mantine/dates';
 import {AppLayout} from '@/components/layout';
 import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
 import {Button} from '@/components/ui/Button';
+import {Card} from '@/components/ui/Card';
+import {Badge} from '@/components/ui/Badge';
+import {Sparkline} from '@/components/charts/aura';
 import {ReportRequest, ReportType} from '@/lib/services/core/report.service';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {useReportDownload} from '@/lib/hooks/queries/useReportDownload';
@@ -39,6 +44,11 @@ interface ReportConfig {
   endpoint: string;
   requiresDateRange: boolean;
   filters?: string[];
+  // Presentation-only: Aura saved-report card accent + trend preview. Bound to
+  // each real report config; not part of the download request payload.
+  color: string;
+  spark: number[];
+  updated: string;
 }
 
 const reports: ReportConfig[] = [
@@ -51,6 +61,9 @@ const reports: ReportConfig[] = [
     endpoint: 'employee-directory',
     requiresDateRange: false,
     filters: ['department', 'status'],
+    color: 'var(--chart-1)',
+    spark: [42, 44, 43, 47, 49, 48, 52, 55, 54, 58, 61, 64],
+    updated: '2h ago',
   },
   {
     id: 'attendance',
@@ -61,6 +74,9 @@ const reports: ReportConfig[] = [
     endpoint: 'attendance',
     requiresDateRange: true,
     filters: ['department', 'employee', 'status'],
+    color: 'var(--chart-4)',
+    spark: [88, 92, 90, 86, 91, 94, 89, 87, 93, 95, 90, 92],
+    updated: '1d ago',
   },
   {
     id: 'department',
@@ -70,6 +86,9 @@ const reports: ReportConfig[] = [
     category: 'Analytics',
     endpoint: 'department-headcount',
     requiresDateRange: false,
+    color: 'var(--chart-3)',
+    spark: [30, 33, 35, 34, 38, 41, 40, 44, 47, 49, 52, 55],
+    updated: '5h ago',
   },
   {
     id: 'leave',
@@ -80,6 +99,9 @@ const reports: ReportConfig[] = [
     endpoint: 'leave',
     requiresDateRange: true,
     filters: ['department', 'leaveType', 'status'],
+    color: 'var(--chart-5)',
+    spark: [18, 22, 26, 24, 29, 33, 37, 41, 44, 48, 53, 58],
+    updated: '3d ago',
   },
   {
     id: 'payroll',
@@ -90,6 +112,9 @@ const reports: ReportConfig[] = [
     endpoint: 'payroll',
     requiresDateRange: true,
     filters: ['department', 'payrollRun'],
+    color: 'var(--chart-2)',
+    spark: [60, 58, 62, 65, 64, 68, 71, 70, 74, 77, 80, 83],
+    updated: '4h ago',
   },
   {
     id: 'performance',
@@ -100,7 +125,27 @@ const reports: ReportConfig[] = [
     endpoint: 'performance',
     requiresDateRange: false,
     filters: ['department', 'reviewCycle'],
+    color: 'var(--chart-3)',
+    spark: [40, 42, 45, 44, 48, 51, 53, 56, 59, 62, 66, 70],
+    updated: '1w ago',
   },
+];
+
+// Scheduled deliveries — presentation-only (the real reports hub has no schedule
+// fetch yet). Mirrors the Aura spec table; owners shown with initials avatars.
+interface ScheduledDelivery {
+  name: string;
+  freq: string;
+  owner: string;
+  next: string;
+  fmt: 'PDF' | 'XLSX' | 'CSV';
+}
+
+const SCHEDULED: ScheduledDelivery[] = [
+  {name: 'Monthly headcount', freq: 'Monthly · 1st', owner: 'Fayaz Ahmed', next: 'Jun 1', fmt: 'PDF'},
+  {name: 'Payroll reconciliation', freq: 'Monthly · 28th', owner: 'Mei Lin', next: 'Jun 28', fmt: 'XLSX'},
+  {name: 'Attrition watch', freq: 'Weekly · Mon', owner: 'Aisha Bello', next: 'Jun 9', fmt: 'PDF'},
+  {name: 'Comp benchmarking', freq: 'Quarterly', owner: 'Robert Cole', next: 'Jul 1', fmt: 'XLSX'},
 ];
 
 // ── Page ─────────────────────────────────────────────────────────────────────
@@ -146,13 +191,10 @@ export default function ReportsPage() {
     );
   };
 
-  const dateRangeCount = reports.filter((r) => r.requiresDateRange).length;
-  const filterableCount = reports.filter((r) => (r.filters?.length ?? 0) > 0).length;
-
   return (
     <AppLayout activeMenuItem="reports">
-      <div className="mx-auto w-full max-w-7xl px-6 py-8 space-y-10">
-        <PageHeader />
+      <div className="mx-auto w-full max-w-7xl px-6 py-8 space-y-8">
+        <PageHeader savedCount={reports.length} scheduledCount={SCHEDULED.length} />
 
         <AnimatePresence>
           {successMessage && (
@@ -160,19 +202,11 @@ export default function ReportsPage() {
           )}
         </AnimatePresence>
 
-        {/* Stats row — borders, not card boxes, for breathable density */}
-        <StatsRow
-          total={reports.length}
-          dateRangeCount={dateRangeCount}
-          filterableCount={filterableCount}
-          categories={new Set(reports.map((r) => r.category)).size}
-        />
+        {/* Saved reports — 3-col grid of hoverable cards with sparkline preview */}
+        <SavedReports reports={reports} onSelect={setSelectedReport} />
 
-        {/* Bento — one wide hero + smaller tiles in 12-col asymmetric grid */}
-        <BentoReports reports={reports} onSelect={setSelectedReport} />
-
-        {/* Tips strip — single inline panel, not a nested card */}
-        <TipsStrip />
+        {/* Scheduled deliveries — auto-generated, emailed to owners */}
+        <ScheduledDeliveriesCard rows={SCHEDULED} />
 
         {/* Download Modal */}
         <AnimatePresence>
@@ -191,151 +225,63 @@ export default function ReportsPage() {
 }
 
 // ── Header ───────────────────────────────────────────────────────────────────
-function PageHeader() {
+function PageHeader({savedCount, scheduledCount}: {savedCount: number; scheduledCount: number}) {
   return (
     <motion.header
       initial={{opacity: 0, y: 4}}
       animate={{opacity: 1, y: 0}}
       transition={{duration: 0.4, ease: EASE}}
-      className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-end"
+      className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between"
     >
-      <div className="space-y-2 max-w-2xl">
-        <p className="text-2xs font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">
-          Reports
+      <div className="space-y-1.5">
+        <h1 className="text-aura-title text-[var(--text-1)]">Reports</h1>
+        <p className="text-sm text-[var(--text-2)]">
+          Analytics across people, payroll and operations ·{' '}
+          <span className="num tabular-nums">{savedCount}</span> saved ·{' '}
+          <span className="num tabular-nums">{scheduledCount}</span> scheduled
         </p>
-        <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-[var(--text-heading)] leading-[1.05]">
-          Generate, schedule, and share every HR report.
-        </h1>
-        <p className="text-body-secondary max-w-[55ch]">
-          Export to Excel, PDF, or CSV. Filter by date, department, or status — formatted for analysis or sharing.
-        </p>
+      </div>
+      <div className="flex shrink-0 items-center gap-2">
+        <Button variant="ghost" leftIcon={<CalendarClock className="h-4 w-4" aria-hidden="true" />}>
+          Schedule
+        </Button>
+        <Button variant="primary" leftIcon={<Plus className="h-4 w-4" aria-hidden="true" />}>
+          New Report
+        </Button>
       </div>
     </motion.header>
   );
 }
 
-// ── Stats row (borders, not boxes) ───────────────────────────────────────────
-function StatsRow({total, dateRangeCount, filterableCount, categories}: {
-  total: number;
-  dateRangeCount: number;
-  filterableCount: number;
-  categories: number;
-}) {
-  const items = [
-    {label: 'Reports available', value: total, icon: FileText},
-    {label: 'Categories', value: categories, icon: BarChart3},
-    {label: 'Date-ranged', value: dateRangeCount, icon: Calendar},
-    {label: 'Filterable', value: filterableCount, icon: Filter},
-  ];
-
-  return (
-    <motion.section
-      initial="hidden"
-      animate="visible"
-      variants={{visible: {transition: {staggerChildren: 0.06, delayChildren: 0.08}}}}
-      aria-label="Reports at a glance"
-      className="grid grid-cols-2 sm:grid-cols-4 border-y border-[var(--border-subtle)] divide-x divide-[var(--border-subtle)]"
-    >
-      {items.map((item) => (
-        <motion.div
-          key={item.label}
-          variants={{hidden: {opacity: 0, y: 6}, visible: {opacity: 1, y: 0, transition: {duration: 0.4, ease: EASE}}}}
-          className="px-5 py-6 sm:px-7 sm:py-8 first:pl-0 last:pr-0"
-        >
-          <div className="flex items-center gap-2 text-[var(--text-muted)]">
-            <item.icon className="h-3.5 w-3.5" aria-hidden="true" />
-            <span className="text-2xs font-medium uppercase tracking-wider">{item.label}</span>
-          </div>
-          <p className="mt-3 font-mono text-3xl sm:text-4xl tabular-nums tracking-tight text-[var(--text-heading)]">
-            {item.value}
-          </p>
-        </motion.div>
-      ))}
-    </motion.section>
-  );
-}
-
-// ── Bento navigation: hero + tiles in asymmetric 12-col grid ─────────────────
-function BentoReports({reports, onSelect}: {
+// ── Saved reports (3-col card grid) ──────────────────────────────────────────
+function SavedReports({reports, onSelect}: {
   reports: ReportConfig[];
   onSelect: (r: ReportConfig) => void;
 }) {
-  const [hero, ...tiles] = reports;
   return (
-    <motion.section
-      initial="hidden"
-      animate="visible"
-      variants={{visible: {transition: {staggerChildren: 0.07, delayChildren: 0.18}}}}
-      className="grid gap-4 grid-cols-1 lg:grid-cols-12"
-      aria-label="Available reports"
-    >
-      <BentoHero report={hero} onSelect={onSelect} />
-      {tiles.map((r) => (
-        <BentoTile key={r.id} report={r} onSelect={onSelect} />
-      ))}
-    </motion.section>
-  );
-}
-
-function BentoHero({report, onSelect}: {
-  report: ReportConfig;
-  onSelect: (r: ReportConfig) => void;
-}) {
-  const Icon = report.icon;
-  return (
-    <motion.div
-      variants={{hidden: {opacity: 0, y: 8}, visible: {opacity: 1, y: 0, transition: {duration: 0.5, ease: EASE}}}}
-      className="lg:col-span-7 lg:row-span-2"
-    >
-      <button
-        type="button"
-        onClick={() => onSelect(report)}
-        className="group block w-full h-full text-left rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] p-7 sm:p-9 transition-all hover:border-[var(--border-main)] hover:shadow-[0_20px_40px_-15px_rgba(15,23,42,0.08)] active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
-      >
-        <div className="flex items-start justify-between">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-accent-50 text-accent-700 dark:bg-accent-900/30 dark:text-accent-300">
-            <Icon className="h-5 w-5" aria-hidden="true" />
-          </div>
-          <span className="text-2xs font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">
-            {report.category}
-          </span>
-        </div>
-        <h2 className="mt-8 text-2xl sm:text-3xl font-semibold tracking-tight text-[var(--text-heading)]">
-          {report.title}
+    <section aria-label="Saved reports" className="space-y-4">
+      <div className="space-y-0.5">
+        <h2 className="font-display text-base font-bold tracking-tight text-[var(--text-1)]">
+          Saved reports
         </h2>
-        <p className="mt-3 text-body-secondary max-w-[52ch]">
-          {report.description}
-        </p>
-        <div className="mt-10 flex items-end justify-between gap-6">
-          <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-[var(--text-secondary)]">
-            {report.requiresDateRange && (
-              <span className="inline-flex items-center gap-1.5">
-                <Calendar className="h-3.5 w-3.5" aria-hidden="true" />
-                Date range
-              </span>
-            )}
-            {report.filters && report.filters.length > 0 && (
-              <span className="inline-flex items-center gap-1.5">
-                <Filter className="h-3.5 w-3.5" aria-hidden="true" />
-                {report.filters.length} filters
-              </span>
-            )}
-            <span className="inline-flex items-center gap-1.5">
-              <FileSpreadsheet className="h-3.5 w-3.5" aria-hidden="true" />
-              Excel · PDF · CSV
-            </span>
-          </div>
-          <span className="inline-flex items-center gap-1.5 text-sm font-medium text-accent-700 dark:text-accent-300 transition-transform group-hover:translate-x-0.5">
-            Download
-            <Download className="h-3.5 w-3.5" aria-hidden="true" />
-          </span>
-        </div>
-      </button>
-    </motion.div>
+        <p className="text-xs text-[var(--text-3)]">Click to open the full analysis</p>
+      </div>
+
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={{visible: {transition: {staggerChildren: 0.06, delayChildren: 0.08}}}}
+        className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+      >
+        {reports.map((r) => (
+          <SavedReportCard key={r.id} report={r} onSelect={onSelect} />
+        ))}
+      </motion.div>
+    </section>
   );
 }
 
-function BentoTile({report, onSelect}: {
+function SavedReportCard({report, onSelect}: {
   report: ReportConfig;
   onSelect: (r: ReportConfig) => void;
 }) {
@@ -343,80 +289,165 @@ function BentoTile({report, onSelect}: {
   return (
     <motion.div
       variants={{hidden: {opacity: 0, y: 8}, visible: {opacity: 1, y: 0, transition: {duration: 0.4, ease: EASE}}}}
-      className="lg:col-span-5"
     >
-      <button
-        type="button"
+      <Card
+        hover
         onClick={() => onSelect(report)}
-        className="group flex w-full h-full items-start gap-4 text-left rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] p-5 sm:p-6 transition-all hover:border-[var(--border-main)] hover:shadow-[0_12px_30px_-12px_rgba(15,23,42,0.07)] active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            onSelect(report);
+          }
+        }}
+        aria-label={`Open ${report.title}`}
+        className="group flex h-full flex-col p-5 focus-ring"
       >
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[var(--bg-surface)] border border-[var(--border-subtle)] text-[var(--text-secondary)]">
-          <Icon className="h-4 w-4" aria-hidden="true" />
-        </div>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center justify-between gap-4">
-            <h3 className="text-base font-semibold text-[var(--text-heading)] truncate">{report.title}</h3>
-            <span className="text-2xs font-medium uppercase tracking-wider text-[var(--text-muted)] shrink-0">
-              {report.category}
+        <div className="mb-3.5 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span
+              className="grid h-[38px] w-[38px] place-items-center rounded-[10px]"
+              style={{
+                background: `color-mix(in srgb, ${report.color} 14%, transparent)`,
+                color: report.color,
+              }}
+              aria-hidden="true"
+            >
+              <Icon className="h-[19px] w-[19px]" />
             </span>
+            <div className="min-w-0">
+              <p className="truncate font-display text-sm font-bold text-[var(--text-1)]">
+                {report.title}
+              </p>
+              <Badge variant="default" size="sm" className="mt-1">
+                {report.category}
+              </Badge>
+            </div>
           </div>
-          <p className="mt-1 text-sm text-[var(--text-secondary)] leading-relaxed line-clamp-2">{report.description}</p>
-          <div className="mt-3 flex items-center gap-x-4 gap-y-1 text-xs text-[var(--text-muted)]">
-            {report.requiresDateRange && (
-              <span className="inline-flex items-center gap-1">
-                <Calendar className="h-3 w-3" aria-hidden="true" />
-                Date range
-              </span>
-            )}
-            {report.filters && report.filters.length > 0 && (
-              <span className="inline-flex items-center gap-1">
-                <Filter className="h-3 w-3" aria-hidden="true" />
-                Filters
-              </span>
-            )}
-          </div>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            aria-label={`Actions for ${report.title}`}
+            onClick={(e) => {
+              // Kebab is presentation-only here; stop the card's open handler.
+              e.stopPropagation();
+            }}
+          >
+            <MoreHorizontal className="h-4 w-4" aria-hidden="true" />
+          </Button>
         </div>
-        <ArrowRight className="h-4 w-4 self-center text-[var(--text-muted)] transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
-      </button>
+
+        <div className="h-[52px]">
+          <Sparkline
+            data={report.spark}
+            color={report.color}
+            height={52}
+            ariaLabel={`${report.title} recent trend`}
+          />
+        </div>
+
+        <div className="mt-3 flex items-center justify-between border-t border-[var(--border-soft)] pt-3">
+          <span className="text-[11.5px] text-[var(--text-3)]">Updated {report.updated}</span>
+          <span className="inline-flex items-center gap-1 text-sm font-medium text-[var(--accent)] transition-transform group-hover:translate-x-0.5">
+            Open
+            <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+          </span>
+        </div>
+      </Card>
     </motion.div>
   );
 }
 
-// ── Tips strip (replaces former nested info card) ────────────────────────────
-function TipsStrip() {
-  const tips = [
-    'Excel is best for analysis and further processing.',
-    'PDF is ideal for printing and sharing official documents.',
-    'CSV pairs with every spreadsheet tool out there.',
-    'Use date filters to scope reports to a specific period.',
-  ];
+// ── Scheduled deliveries (table) ─────────────────────────────────────────────
+function ScheduledDeliveriesCard({rows}: {rows: ScheduledDelivery[]}) {
   return (
-    <motion.section
+    <motion.div
       initial={{opacity: 0, y: 6}}
       animate={{opacity: 1, y: 0}}
-      transition={{duration: 0.45, ease: EASE, delay: 0.32}}
-      aria-label="Report generation tips"
-      className="space-y-4"
+      transition={{duration: 0.45, ease: EASE, delay: 0.2}}
     >
-      <div className="flex items-end justify-between gap-4">
-        <h2 className="text-xl font-semibold tracking-tight text-[var(--text-heading)]">
-          Tips for cleaner exports
-        </h2>
-        <span className="text-2xs font-medium uppercase tracking-[0.18em] text-[var(--text-muted)]">
-          Quick reference
-        </span>
-      </div>
-      <ul className="divide-y divide-[var(--border-subtle)] border-y border-[var(--border-subtle)]">
-        {tips.map((tip, i) => (
-          <li key={i} className="grid grid-cols-[auto_1fr] items-center gap-4 py-4 sm:gap-6">
-            <span className="font-mono text-2xs font-semibold tabular-nums text-[var(--text-muted)] w-6">
-              {String(i + 1).padStart(2, '0')}
-            </span>
-            <p className="text-sm text-[var(--text-secondary)]">{tip}</p>
-          </li>
-        ))}
-      </ul>
-    </motion.section>
+      <Card padding="none" className="overflow-hidden">
+        <div className="flex flex-wrap items-end justify-between gap-4 px-5 pb-0 pt-[18px]">
+          <div className="space-y-0.5">
+            <h2 className="font-display text-base font-bold tracking-tight text-[var(--text-1)]">
+              Scheduled deliveries
+            </h2>
+            <p className="text-xs text-[var(--text-3)]">Auto-generated and emailed to owners</p>
+          </div>
+          <Button variant="ghost" size="sm" leftIcon={<Plus className="h-3.5 w-3.5" aria-hidden="true" />}>
+            Add schedule
+          </Button>
+        </div>
+
+        <div className="mt-3 overflow-x-auto">
+          <table className="w-full border-collapse text-sm">
+            <thead>
+              <tr className="border-y border-[var(--border-soft)]">
+                <ScheduleTh>Report</ScheduleTh>
+                <ScheduleTh>Frequency</ScheduleTh>
+                <ScheduleTh>Owner</ScheduleTh>
+                <ScheduleTh>Next run</ScheduleTh>
+                <ScheduleTh>Format</ScheduleTh>
+                <th className="w-12" aria-label="Actions" />
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((s) => (
+                <tr
+                  key={s.name}
+                  className="border-b border-[var(--border-soft)] transition-colors last:border-b-0 hover:bg-[var(--surface-hover)]"
+                >
+                  <td className="px-5 py-3.5 font-medium text-[var(--text-1)]">{s.name}</td>
+                  <td className="px-5 py-3.5 text-[var(--text-2)]">{s.freq}</td>
+                  <td className="px-5 py-3.5">
+                    <div className="flex items-center gap-2">
+                      <OwnerAvatar name={s.owner} />
+                      <span className="font-medium text-[var(--text-1)]">{s.owner}</span>
+                    </div>
+                  </td>
+                  <td className="num px-5 py-3.5 text-[12.5px] tabular-nums text-[var(--text-2)]">{s.next}</td>
+                  <td className="px-5 py-3.5">
+                    <Badge variant="primary" size="sm">{s.fmt}</Badge>
+                  </td>
+                  <td className="px-5 py-3.5">
+                    <Button variant="ghost" size="icon-sm" aria-label={`Actions for ${s.name}`}>
+                      <MoreHorizontal className="h-4 w-4" aria-hidden="true" />
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Card>
+    </motion.div>
+  );
+}
+
+function ScheduleTh({children}: {children: React.ReactNode}) {
+  return (
+    <th className="px-5 py-3 text-left text-[10.5px] font-bold uppercase tracking-[0.1em] text-[var(--text-3)]">
+      {children}
+    </th>
+  );
+}
+
+// Deterministic initials avatar (no shared Avatar primitive in this wave).
+function OwnerAvatar({name}: {name: string}) {
+  const initials = name
+    .trim()
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((p) => p[0]?.toUpperCase() ?? '')
+    .join('');
+  return (
+    <span
+      className="grid h-[26px] w-[26px] shrink-0 place-items-center rounded-full bg-[var(--accent-soft)] text-[10px] font-bold text-[var(--accent-text)]"
+      aria-hidden="true"
+    >
+      {initials}
+    </span>
   );
 }
 
@@ -430,10 +461,10 @@ function SuccessStrip({message}: {message: string}) {
       transition={{duration: 0.35, ease: EASE}}
       role="status"
       aria-live="polite"
-      className="flex items-center gap-4 rounded-xl border border-success-200 bg-success-50/40 dark:border-success-700/40 dark:bg-success-950/30 px-5 py-4"
+      className="flex items-center gap-4 rounded-[var(--r-lg)] border border-[var(--ok-bd)] bg-[var(--ok-bg)] px-5 py-4"
     >
-      <Check className="h-4 w-4 shrink-0 text-success-600 dark:text-success-400" aria-hidden="true" />
-      <p className="text-sm text-[var(--text-primary)]">{message}</p>
+      <Check className="h-4 w-4 shrink-0 text-[var(--ok-fg)]" aria-hidden="true" />
+      <p className="text-sm text-[var(--text-1)]">{message}</p>
     </motion.aside>
   );
 }
@@ -481,12 +512,18 @@ const DownloadModal: React.FC<DownloadModalProps> = ({report, onClose, onDownloa
     <Modal isOpen={true} onClose={onClose} size="sm">
       <ModalHeader onClose={onClose}>
         <div className="flex items-center gap-4">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent-50 text-accent-700 dark:bg-accent-900/30 dark:text-accent-300">
+          <div
+            className="grid h-10 w-10 place-items-center rounded-[10px]"
+            style={{
+              background: `color-mix(in srgb, ${report.color} 14%, transparent)`,
+              color: report.color,
+            }}
+          >
             <Icon className="h-5 w-5" aria-hidden="true" />
           </div>
           <div>
-            <h2 className="font-semibold text-[var(--text-primary)]">{report.title}</h2>
-            <p className="text-2xs font-medium uppercase tracking-[0.18em] text-[var(--text-muted)]">
+            <h2 className="font-semibold text-[var(--text-1)]">{report.title}</h2>
+            <p className="text-[10.5px] font-bold uppercase tracking-[0.1em] text-[var(--text-3)]">
               {report.category}
             </p>
           </div>
@@ -494,7 +531,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({report, onClose, onDownloa
       </ModalHeader>
       <ModalBody className="space-y-6">
         <div>
-          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-4">
+          <label className="mb-4 block text-sm font-medium text-[var(--text-2)]">
             Export Format
           </label>
           <div className="grid grid-cols-3 gap-4">
@@ -507,24 +544,24 @@ const DownloadModal: React.FC<DownloadModalProps> = ({report, onClose, onDownloa
                   type="button"
                   onClick={() => setFormat(f.value)}
                   aria-pressed={selected}
-                  className={`relative flex flex-col items-center justify-center gap-2 p-4 rounded-xl border transition-all active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 ${
+                  className={`relative flex flex-col items-center justify-center gap-2 rounded-[var(--r-control)] border p-4 transition-all active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 ${
                     selected
-                      ? 'border-accent-500 bg-accent-50/60 dark:bg-accent-950/30'
-                      : 'border-[var(--border-subtle)] hover:border-[var(--border-main)]'
+                      ? 'border-[var(--accent)] bg-[var(--accent-soft)]'
+                      : 'border-[var(--border)] hover:border-[var(--border-aura-strong)]'
                   }`}
                 >
                   <FIcon
-                    className={`h-5 w-5 ${selected ? 'text-accent-700 dark:text-accent-300' : 'text-[var(--text-muted)]'}`}
+                    className={`h-5 w-5 ${selected ? 'text-[var(--accent)]' : 'text-[var(--text-3)]'}`}
                     aria-hidden="true"
                   />
                   <div className="text-center">
-                    <p className={`font-medium text-sm ${selected ? 'text-[var(--text-heading)]' : 'text-[var(--text-secondary)]'}`}>
+                    <p className={`text-sm font-medium ${selected ? 'text-[var(--text-1)]' : 'text-[var(--text-2)]'}`}>
                       {f.label}
                     </p>
-                    <p className="text-caption">{f.ext}</p>
+                    <p className="num text-[11px] tabular-nums text-[var(--text-3)]">{f.ext}</p>
                   </div>
                   {selected && (
-                    <Check className="h-3.5 w-3.5 text-accent-700 dark:text-accent-300 absolute top-2 right-2" aria-hidden="true" />
+                    <Check className="absolute right-2 top-2 h-3.5 w-3.5 text-[var(--accent)]" aria-hidden="true" />
                   )}
                 </button>
               );
@@ -534,12 +571,12 @@ const DownloadModal: React.FC<DownloadModalProps> = ({report, onClose, onDownloa
 
         {report.requiresDateRange && (
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-4">
-              Date Range <span aria-hidden="true" className="text-danger-500">*</span>
+            <label className="mb-4 block text-sm font-medium text-[var(--text-2)]">
+              Date Range <span aria-hidden="true" className="text-[var(--err-fg)]">*</span>
             </label>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-caption mb-1">From</label>
+                <label className="mb-1 block text-[11px] text-[var(--text-3)]">From</label>
                 <DateInput
                   value={startDate || null}
                   onChange={(d) => setStartDate(d ?? '')}
@@ -551,7 +588,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({report, onClose, onDownloa
                 />
               </div>
               <div>
-                <label className="block text-caption mb-1">To</label>
+                <label className="mb-1 block text-[11px] text-[var(--text-3)]">To</label>
                 <DateInput
                   value={endDate || null}
                   onChange={(d) => setEndDate(d ?? '')}
@@ -569,7 +606,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({report, onClose, onDownloa
         {error && (
           <div
             role="alert"
-            className="flex items-center gap-4 rounded-xl border border-danger-200 bg-danger-50/40 dark:border-danger-700/40 dark:bg-danger-950/30 px-4 py-4 text-sm text-danger-700 dark:text-danger-300"
+            className="flex items-center gap-4 rounded-[var(--r-lg)] border border-[var(--err-bd)] bg-[var(--err-bg)] px-4 py-4 text-sm text-[var(--err-fg)]"
           >
             {error}
           </div>

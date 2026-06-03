@@ -13,10 +13,14 @@ import {GOOGLE_SSO_SCOPES, saveGoogleToken} from '@/lib/utils/googleToken';
 import {MfaVerification} from '@/components/auth/MfaVerification';
 import {GoogleGLogo} from '@/components/ui/GoogleGLogo';
 import {Button, Input} from '@/components/ui';
+import {ThemeToggle} from '@/components/ui/ThemeToggle';
+import {BrandPanel} from '../_components/BrandPanel';
+import '../_components/auth-form.css';
 import {safeSessionStorage, safeStorage} from '@/lib/utils/safeStorage';
 import {
   AlertCircle,
   ArrowRight,
+  Check,
   ChevronDown,
   ChevronUp,
   Lock,
@@ -207,13 +211,9 @@ function AnimatedBackground() {
 function LoginPageLoading() {
   return (
     <div className="auth-shell motion-rise">
-      <div className="auth-shell-grid auth-shell-narrow">
-        <div
-          className="auth-loading-card w-full flex flex-col items-center gap-4 motion-rise"
-        >
+      <div className="w-full max-w-xs flex flex-col items-center gap-4 motion-rise">
         <div className="w-12 h-12 border-2 border-accent-300/30 border-t-accent-500 rounded-full animate-spin"/>
         <p className="text-[var(--text-muted)] text-sm">Loading NU-AURA...</p>
-      </div>
       </div>
     </div>
   );
@@ -329,6 +329,9 @@ function LoginPage() {
   const [isEmailLoading, setIsEmailLoading] = useState(false);
   const [showEmailForm, setShowEmailForm] = useState(true);
   const [didFreshLogin, setDidFreshLogin] = useState(false);
+  // Presentation-only "Remember me" toggle (Aura spec). Auth session lifetime is
+  // governed server-side by httpOnly cookies; this is a UI affordance only.
+  const [remember, setRemember] = useState(true);
 
   // Wave-10 P2-3: CAPTCHA gate after 3 failed login attempts. The widget is
   // only rendered after the backend signals `captcha-required`, so the
@@ -624,15 +627,23 @@ function LoginPage() {
   // MFA screen
   if (mfaRequired && mfaUserId) {
     return (
-      <div className="auth-shell motion-rise">
+      <div className="auth-shell relative overflow-hidden motion-rise">
         <AnimatedBackground/>
-        <div className="relative z-10 w-full max-w-lg px-4">
-          <div className="auth-shell-grid auth-shell-narrow motion-rise">
-            <MfaVerification
-              userId={mfaUserId}
-              onSuccess={handleMfaSuccess}
-              onCancel={handleMfaCancel}
-            />
+        <div className="aura-auth-theme">
+          <ThemeToggle compact/>
+        </div>
+        <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid gap-6 lg:grid-cols-[1.05fr_1fr] lg:items-center">
+            <BrandPanel/>
+            <div className="aura-auth-col">
+              <div className="aura-auth-form motion-rise">
+                <MfaVerification
+                  userId={mfaUserId}
+                  onSuccess={handleMfaSuccess}
+                  onCancel={handleMfaCancel}
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -640,51 +651,24 @@ function LoginPage() {
   }
 
   return (
-    <>
-      <div className="auth-shell relative overflow-hidden motion-rise">
-        <AnimatedBackground/>
-        <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_460px] lg:items-center">
-            {/* ─── Left Panel: Product Context ──────────────────── */}
-            <section className="hidden lg:flex">
-              <div
-                className="auth-side-panel motion-rise w-full p-10 flex flex-col justify-center"
-              >
-                <div className="auth-side-panel-content space-y-6">
-                  <p className="auth-chip">
-                    Infinite Innovation
-                  </p>
-                  <h1 className="text-3xl font-bold text-[var(--text-primary)] leading-tight">
-                    People operations, unified.
-                  </h1>
-                  <p className="text-sm text-[var(--text-secondary)] leading-7 max-w-sm">
-                    One login for HR, recruitment, performance, learning, and finance.
-                  </p>
-                  <ul className="text-sm text-[var(--text-secondary)] space-y-2">
-                    <li className="flex items-center gap-2">
-                      <span className="h-1.5 w-1.5 rounded-full bg-accent-500"/>
-                      Role-aware access from the first screen.
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <span className="h-1.5 w-1.5 rounded-full bg-accent-500"/>
-                      Secure session handling with MFA support.
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <span className="h-1.5 w-1.5 rounded-full bg-accent-500"/>
-                      Built for daily employee and HR workflows.
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </section>
+    <div className="auth-shell relative overflow-hidden motion-rise">
+      <AnimatedBackground/>
 
-            {/* ─── Right Panel: Login Card ───────────────────────── */}
-            <section className="w-full flex items-center">
-              <div
-                className="w-full max-w-[420px] motion-rise px-1 py-12 mx-auto"
-              >
-              {/* Logo */}
-              <div className="flex justify-center mb-7">
+      {/* Floating theme toggle, top-right */}
+      <div className="aura-auth-theme">
+        <ThemeToggle compact/>
+      </div>
+
+      <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid gap-6 lg:grid-cols-[1.05fr_1fr] lg:items-center">
+          {/* ─── Left — dark gradient brand panel ─────────────── */}
+          <BrandPanel/>
+
+          {/* ─── Right — sign-in form ─────────────────────────── */}
+          <div className="aura-auth-col">
+            <div className="aura-auth-form motion-rise">
+              {/* Mobile-only logo */}
+              <div className="lg:hidden flex justify-center mb-7">
                 <Image
                   src="/images/nulogic-logo.svg"
                   alt="NULogic"
@@ -703,209 +687,197 @@ function LoginPage() {
                 />
               </div>
 
-              {/* Mobile-only tagline */}
-              <div className="lg:hidden text-center mb-5">
-                <h2 className="text-xl font-bold text-[var(--text-primary)] mb-1">
-                  Welcome to NU-AURA
-                </h2>
-                <p className="text-[var(--text-secondary)] text-sm">
-                  Your unified people platform
-                </p>
-              </div>
+              <h2 className="aura-auth-form__h">Welcome back</h2>
+              <p className="aura-auth-form__sub">
+                {isGoogleAuthEnabled
+                  ? 'Sign in to your NULogic workspace with Google SSO.'
+                  : 'Sign in to your NULogic workspace.'}
+              </p>
 
-              {/* Card */}
-              <div className="auth-shell-card p-6">
-                <div className="mb-5">
-                  <h2 className="text-xl font-bold text-[var(--text-primary)] mb-1">
-                    Welcome to NU-AURA
-                  </h2>
-                  <p className="text-sm text-[var(--text-secondary)] mb-4">
-                    Your unified people platform
-                  </p>
-                  <h3 className="text-lg font-semibold text-[var(--text-primary)] tracking-normal">
-                    Sign In
-                  </h3>
-                  <p className="text-[var(--text-secondary)] text-sm mt-2">
-                    {isGoogleAuthEnabled
-                      ? 'Access your workspace with Google SSO'
-                      : 'Access your workspace with your email and password'}
-                  </p>
-                </div>
-
-                {/* Error Alert */}
-                {error && (
-                  <div
-                    className="auth-error-banner flex items-start gap-2 p-4 mb-5 motion-rise"
-                  >
-                    <AlertCircle className="w-5 h-5 text-danger-600 dark:text-danger-400 flex-shrink-0 mt-0.5"/>
-                    <div>
-                      <p className="text-sm font-medium text-danger-700 dark:text-danger-300">
-                        Authentication Failed
-                      </p>
-                      <p className="text-sm text-danger-600 dark:text-danger-400 mt-0.5">
-                        {error}
-                      </p>
-                    </div>
-                  </div>
-                )}
-
-                {isGoogleAuthEnabled && (
-                  <>
-                    {/* Google SSO Button */}
-                    <button
-                      type="button"
-                      className="w-full relative group flex items-center justify-center gap-4 px-6 py-2.5 rounded-xl bg-[var(--bg-elevated)] hover:bg-[var(--bg-card-hover)] text-[var(--text-primary)] border border-[var(--border-main)] font-semibold text-sm transition-all duration-300 hover:shadow-card-hover active:scale-[0.98]"
-                      onClick={() => {
-                        handleGoogleSSO();
-                      }}
-                      disabled={isGoogleLoading}
-                    >
-                      {isGoogleLoading ? (
-                        <div
-                          className="w-5 h-5 border-2 border-[var(--border-main)] border-t-accent-700 rounded-full animate-spin"/>
-                      ) : (
-                        <GoogleGLogo className="w-5 h-5"/>
-                      )}
-                      <span>Continue with Google</span>
-                      <ArrowRight
-                        className="w-4 h-4 ml-auto opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300"/>
-                    </button>
-
-                    {/* Domain notice */}
-                    <p className="text-center text-[var(--text-secondary)] text-xs mt-3 leading-relaxed">
-                      Restricted to <span
-                      className="text-accent-700 dark:text-accent-400 font-semibold">@{ALLOWED_DOMAIN}</span> accounts.
+              {/* Error Alert */}
+              {error && (
+                <div className="auth-error-banner flex items-start gap-2 p-4 mt-6 motion-rise">
+                  <AlertCircle className="w-5 h-5 text-danger-600 dark:text-danger-400 flex-shrink-0 mt-0.5"/>
+                  <div>
+                    <p className="text-sm font-medium text-danger-700 dark:text-danger-300">
+                      Authentication Failed
                     </p>
-                  </>
-                )}
+                    <p className="text-sm text-danger-600 dark:text-danger-400 mt-0.5">
+                      {error}
+                    </p>
+                  </div>
+                </div>
+              )}
 
-                {/* Email / Password login (Bug #3 FIX) */}
-                <div className="mt-4">
+              {/* Email / Password login */}
+              <div className="mt-6">
+                {!showEmailForm && (
                   <button
                     type="button"
                     onClick={() => setShowEmailForm(true)}
                     aria-expanded={showEmailForm}
-                    className="w-full row-between px-4 py-2.5 rounded-xl bg-[var(--bg-elevated)] hover:bg-[var(--bg-card-hover)] border border-[var(--border-main)] text-[var(--text-secondary)] text-sm font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                    className="w-full row-between px-4 py-2.5 rounded-[var(--r-control)] bg-[var(--surface)] hover:bg-[var(--surface-hover)] border border-[var(--border)] text-[var(--text-2)] text-sm font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                   >
                     <div className="flex items-center gap-2">
                       <Mail className="w-4 h-4"/>
                       <span>Email and password</span>
                     </div>
-                    {showEmailForm ? <ChevronUp className="w-4 h-4"/> : <ChevronDown className="w-4 h-4"/>}
+                    <ChevronDown className="w-4 h-4"/>
                   </button>
-
-                  {showEmailForm && (
-                    <form
-                      onSubmit={handleSubmit(handleEmailLogin)}
-                      className="mt-3 space-y-4 motion-rise"
-                      aria-label="Email and password sign-in"
-                    >
-                      <Input
-                        id="login-email"
-                        {...register('email')}
-                        type="email"
-                        required
-                        placeholder="Email address"
-                        autoComplete="email"
-                        aria-label="Email address"
-                        aria-invalid={!!emailErrors.email}
-                        icon={<Mail className="w-4 h-4" aria-hidden="true"/>}
-                        error={emailErrors.email?.message}
-                      />
-
-                      <div>
-                        <Input
-                          id="login-password"
-                          {...register('password')}
-                          type="password"
-                          required
-                          placeholder="Password"
-                          autoComplete="current-password"
-                          aria-label="Password"
-                          aria-invalid={!!emailErrors.password}
-                          icon={<Lock className="w-4 h-4" aria-hidden="true"/>}
-                          error={emailErrors.password?.message}
-                        />
-                        <div className="flex justify-end mt-1">
-                          <Link
-                            href="/auth/forgot-password"
-                            className="text-xs text-accent-600 hover:text-accent-700 dark:text-accent-400 dark:hover:text-accent-300 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] rounded"
-                          >
-                            Forgot Password?
-                          </Link>
-                        </div>
-                      </div>
-
-                      {/* Wave-10 P2-3: CAPTCHA placeholder. Stays in the DOM (display:none)
-                          until the backend signals captcha-required so the script-injection
-                          useEffect always has a stable target to call grecaptcha.render()
-                          on without React tearing the node out from under it. */}
-                      <div
-                        id="nu-aura-recaptcha-container"
-                        role={captchaRequired ? 'region' : undefined}
-                        aria-label={captchaRequired ? 'CAPTCHA challenge' : undefined}
-                        className={captchaRequired ? 'flex justify-center pt-1' : 'hidden'}
-                      />
-                      {captchaRequired && !RECAPTCHA_SITE_KEY && (
-                        <p className="text-xs text-danger-500 -mt-2">
-                          CAPTCHA challenge required, but the site key is not configured. Contact your administrator.
-                        </p>
-                      )}
-
-                      <Button
-                        type="submit"
-                        disabled={isEmailLoading || (captchaRequired && !captchaToken)}
-                        variant="primary"
-                        isLoading={isEmailLoading}
-                        loadingText="Signing in..."
-                        aria-busy={isEmailLoading}
-                        className="w-full disabled:pointer-events-none disabled:opacity-50"
-                        leftIcon={<LogIn className="w-4 h-4"/>}
-                      >
-                        Sign In
-                      </Button>
-                      {isEmailLoading && (
-                        <p role="status" className="text-xs text-[var(--text-secondary)] text-center">
-                          Checking credentials...
-                        </p>
-                      )}
-                    </form>
-                  )}
-                </div>
-
-                {/* Demo Login Panel — only shown when NEXT_PUBLIC_DEMO_MODE=true */}
-                {IS_DEMO_MODE && (
-                  <DemoLoginPanel onLogin={handleDemoLogin} isLoading={isDemoLoading}/>
                 )}
 
-                <p className="mt-5 text-center text-xs text-[var(--text-muted)]">
-                  Secure session with httpOnly cookies and CSRF protection.
-                </p>
+                {showEmailForm && (
+                  <form
+                    onSubmit={handleSubmit(handleEmailLogin)}
+                    className="flex flex-col gap-4 motion-rise"
+                    aria-label="Email and password sign-in"
+                  >
+                    <Input
+                      id="login-email"
+                      label="Work email"
+                      {...register('email')}
+                      type="email"
+                      required
+                      placeholder="you@company.com"
+                      autoComplete="email"
+                      aria-invalid={!!emailErrors.email}
+                      icon={<Mail className="w-4 h-4" aria-hidden="true"/>}
+                      error={emailErrors.email?.message}
+                    />
+
+                    <Input
+                      id="login-password"
+                      label="Password"
+                      {...register('password')}
+                      type="password"
+                      required
+                      placeholder="Enter your password"
+                      autoComplete="current-password"
+                      aria-invalid={!!emailErrors.password}
+                      icon={<Lock className="w-4 h-4" aria-hidden="true"/>}
+                      error={emailErrors.password?.message}
+                    />
+
+                    {/* Remember me + forgot password */}
+                    <div className="aura-auth-row">
+                      <button
+                        type="button"
+                        onClick={() => setRemember((r) => !r)}
+                        aria-pressed={remember}
+                        className="aura-auth-check focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                      >
+                        <span className="aura-auth-check__box" data-on={remember}>
+                          <Check className="w-3 h-3" strokeWidth={3} aria-hidden="true"/>
+                        </span>
+                        Remember me
+                      </button>
+                      <Link
+                        href="/auth/forgot-password"
+                        className="text-xs font-medium text-accent-600 hover:text-accent-700 dark:text-accent-400 dark:hover:text-accent-300 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] rounded"
+                      >
+                        Forgot password?
+                      </Link>
+                    </div>
+
+                    {/* Wave-10 P2-3: CAPTCHA placeholder. Stays in the DOM (display:none)
+                        until the backend signals captcha-required so the script-injection
+                        useEffect always has a stable target to call grecaptcha.render()
+                        on without React tearing the node out from under it. */}
+                    <div
+                      id="nu-aura-recaptcha-container"
+                      role={captchaRequired ? 'region' : undefined}
+                      aria-label={captchaRequired ? 'CAPTCHA challenge' : undefined}
+                      className={captchaRequired ? 'flex justify-center pt-1' : 'hidden'}
+                    />
+                    {captchaRequired && !RECAPTCHA_SITE_KEY && (
+                      <p className="text-xs text-danger-500 -mt-2">
+                        CAPTCHA challenge required, but the site key is not configured. Contact your administrator.
+                      </p>
+                    )}
+
+                    <Button
+                      type="submit"
+                      disabled={isEmailLoading || (captchaRequired && !captchaToken)}
+                      variant="primary"
+                      size="lg"
+                      isLoading={isEmailLoading}
+                      loadingText="Signing in..."
+                      aria-busy={isEmailLoading}
+                      className="w-full disabled:pointer-events-none disabled:opacity-50"
+                      rightIcon={<ArrowRight className="w-4 h-4"/>}
+                    >
+                      Sign in
+                    </Button>
+                    {isEmailLoading && (
+                      <p role="status" className="text-xs text-[var(--text-secondary)] text-center">
+                        Checking credentials...
+                      </p>
+                    )}
+                  </form>
+                )}
               </div>
 
-              {/* Footer */}
-              <div className="text-center mt-8 space-y-2">
-                <p className="text-xs text-[var(--text-secondary)]">
+              {/* or continue with */}
+              <div className="aura-auth-or"><span>or continue with</span></div>
+
+              {/* SSO providers */}
+              <div className="aura-auth-sso">
+                {isGoogleAuthEnabled ? (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    className="w-full"
+                    onClick={() => handleGoogleSSO()}
+                    disabled={isGoogleLoading}
+                    isLoading={isGoogleLoading}
+                    leftIcon={!isGoogleLoading ? <GoogleGLogo className="w-4 h-4"/> : undefined}
+                  >
+                    Google
+                  </Button>
+                ) : (
+                  <Button type="button" variant="ghost" className="w-full" disabled>
+                    Google
+                  </Button>
+                )}
+                <Button type="button" variant="ghost" className="w-full" disabled>SSO</Button>
+                <Button type="button" variant="ghost" className="w-full" disabled>Microsoft</Button>
+              </div>
+
+              {isGoogleAuthEnabled && (
+                <p className="text-center text-[var(--text-3)] text-xs mt-3 leading-relaxed">
+                  Restricted to{' '}
+                  <span className="text-accent-700 dark:text-accent-400 font-semibold">@{ALLOWED_DOMAIN}</span>{' '}
+                  accounts.
+                </p>
+              )}
+
+              {/* Demo Login Panel — only shown when NEXT_PUBLIC_DEMO_MODE=true */}
+              {IS_DEMO_MODE && (
+                <DemoLoginPanel onLogin={handleDemoLogin} isLoading={isDemoLoading}/>
+              )}
+
+              <p className="aura-auth-foot">
+                New to NULogic? <span className="text-[var(--text-2)]">Contact your administrator</span>
+              </p>
+
+              <p className="mt-4 text-center text-xs text-[var(--text-muted)]">
+                Secure session with httpOnly cookies and CSRF protection.
+              </p>
+
+              {/* Legal / terms */}
+              <div className="aura-auth-legal space-y-1.5">
+                <p>
                   By signing in, you agree to our{' '}
-                  <Link href="/terms"
-                        className="text-accent-700 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 transition-colors font-medium">
-                    Terms
-                  </Link>{' '}
+                  <Link href="/terms" className="text-accent-700 dark:text-accent-400 hover:underline font-medium">Terms</Link>{' '}
                   and{' '}
-                  <Link href="/privacy"
-                        className="text-accent-700 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 transition-colors font-medium">
-                    Privacy Policy
-                  </Link>
+                  <Link href="/privacy" className="text-accent-700 dark:text-accent-400 hover:underline font-medium">Privacy Policy</Link>
                 </p>
-                <p className="text-caption">
-                  NULogic &copy; {new Date().getFullYear()} &middot; NU-AURA Platform
-                </p>
+                <p>© {new Date().getFullYear()} NULogic Technologies · Enterprise SSO secured</p>
               </div>
             </div>
-            </section>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }

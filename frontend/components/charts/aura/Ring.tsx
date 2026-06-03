@@ -100,7 +100,7 @@ export function Ring({
           fontWeight="700"
           fontFamily="var(--font-mono)"
           fill="var(--text-1)"
-          style={{fontVariantNumeric: 'tabular-nums'}}
+          className="tabular-nums"
         >
           {label}
         </text>

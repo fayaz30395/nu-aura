@@ -1,12 +1,14 @@
 'use client';
 
 import {useEffect, useState} from 'react';
-import {useForm} from 'react-hook-form';
+import {Controller, useForm} from 'react-hook-form';
+import {Switch} from '@mantine/core';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {useRouter} from 'next/navigation';
 import {ArrowLeft, Check, Copy, ExternalLink, Hash, Key, MessageSquare, RefreshCw, Shield, Zap,} from 'lucide-react';
 import {AppLayout} from '@/components/layout';
+import {Input} from '@/components/ui/Input';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {apiClient} from '@/lib/api/client';
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
@@ -90,6 +92,7 @@ export default function SlackIntegrationPage() {
 
   const {
     register,
+    control,
     handleSubmit,
     reset,
     watch,
@@ -285,11 +288,19 @@ export default function SlackIntegrationPage() {
                   <div className="font-medium text-[var(--text-primary)]">Enable Slack Integration</div>
                   <div className="text-body-muted">Send notifications and receive commands from Slack</div>
                 </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" {...register('isEnabled')} className="sr-only peer"/>
-                  <div
-                    className="w-11 h-6 bg-[var(--border-main)] peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-accent-700 peer-focus:ring-offset-2 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-[var(--bg-card)] after:border-surface-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-accent-700"></div>
-                </label>
+                <Controller
+                  control={control}
+                  name="isEnabled"
+                  render={({field}) => (
+                    <Switch
+                      checked={field.value}
+                      onChange={(event) => field.onChange(event.currentTarget.checked)}
+                      onBlur={field.onBlur}
+                      size="md"
+                      aria-label="Enable Slack Integration"
+                    />
+                  )}
+                />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -297,10 +308,9 @@ export default function SlackIntegrationPage() {
                   <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Workspace ID *
                   </label>
-                  <input
+                  <Input
                     type="text"
                     {...register('slackWorkspaceId')}
-                    className="input-aura"
                     placeholder="T0123456789"
                     disabled={!isEnabled}
                   />
@@ -316,10 +326,9 @@ export default function SlackIntegrationPage() {
                     <Hash className="h-3.5 w-3.5"/>
                     Default Channel *
                   </label>
-                  <input
+                  <Input
                     type="text"
                     {...register('slackDefaultChannel')}
-                    className="input-aura"
                     placeholder="#hrms-notifications"
                     disabled={!isEnabled}
                   />
@@ -333,10 +342,9 @@ export default function SlackIntegrationPage() {
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Bot Token
                 </label>
-                <input
+                <Input
                   type="password"
                   {...register('slackBotToken')}
-                  className="input-aura"
                   placeholder="xoxb-..."
                   disabled={!isEnabled}
                 />
@@ -349,10 +357,9 @@ export default function SlackIntegrationPage() {
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Signing Secret
                 </label>
-                <input
+                <Input
                   type="password"
                   {...register('slackSigningSecret')}
-                  className="input-aura"
                   placeholder="Enter signing secret..."
                   disabled={!isEnabled}
                 />
@@ -366,10 +373,9 @@ export default function SlackIntegrationPage() {
                   <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Rate Limit (per minute)
                   </label>
-                  <input
+                  <Input
                     type="number"
                     {...register('rateLimitPerMinute')}
-                    className="input-aura"
                     placeholder="60"
                     disabled={!isEnabled}
                   />
@@ -378,10 +384,9 @@ export default function SlackIntegrationPage() {
                   <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Rate Limit (per hour)
                   </label>
-                  <input
+                  <Input
                     type="number"
                     {...register('rateLimitPerHour')}
-                    className="input-aura"
                     placeholder="1000"
                     disabled={!isEnabled}
                   />

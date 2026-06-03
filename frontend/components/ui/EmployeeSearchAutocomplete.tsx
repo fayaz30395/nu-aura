@@ -223,8 +223,7 @@ export function EmployeeSearchAutocomplete({
               initial="hidden"
               animate="visible"
               exit="exit"
-              style={{transformOrigin: 'top'}}
-              className="absolute z-50 w-full mt-1 bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg shadow-[var(--shadow-dropdown)] max-h-60 overflow-auto"
+              className="absolute z-50 w-full mt-1 origin-top bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg shadow-[var(--shadow-dropdown)] max-h-60 overflow-auto"
             >
               <Stagger>
                 {results.map((employee, index) => {
@@ -269,8 +268,7 @@ export function EmployeeSearchAutocomplete({
               initial="hidden"
               animate="visible"
               exit="exit"
-              style={{transformOrigin: 'top'}}
-              className="absolute z-50 w-full mt-1 bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg shadow-[var(--shadow-dropdown)]"
+              className="absolute z-50 w-full mt-1 origin-top bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg shadow-[var(--shadow-dropdown)]"
             >
               <EmptyState
                 {...EmptyStatePresets.noEmployees}

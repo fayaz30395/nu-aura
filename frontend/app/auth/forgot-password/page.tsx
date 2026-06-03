@@ -2,7 +2,6 @@
 
 import {useState} from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
@@ -10,6 +9,9 @@ import {Button, buttonVariants} from '@/components/ui/Button';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Input} from '@/components/ui/Input';
 import {GoogleGLogo} from '@/components/ui/GoogleGLogo';
+import {ThemeToggle} from '@/components/ui/ThemeToggle';
+import {BrandPanel} from '../_components/BrandPanel';
+import '../_components/auth-form.css';
 import {AlertCircle, ArrowLeft, CheckCircle, ExternalLink, Mail, ShieldCheck} from 'lucide-react';
 import {apiClient} from '@/lib/api/client';
 
@@ -64,41 +66,18 @@ export default function ForgotPasswordPage() {
 
   if (isSubmitted) {
     return (
-      <div className="auth-shell motion-rise">
+      <div className="auth-shell relative overflow-hidden motion-rise">
+        <div className="aura-auth-theme">
+          <ThemeToggle compact/>
+        </div>
         <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_440px] lg:items-center">
-            <section className="hidden lg:flex">
-              <div
-                className="auth-side-panel p-10 w-full flex items-center motion-rise"
-              >
-                <div className="auth-side-panel-content space-y-6">
-                  <Image
-                    src="/images/nulogic-logo.svg"
-                    alt="NULogic"
-                    width={188}
-                    height={56}
-                    className="h-12 w-auto object-contain dark:hidden"
-                    priority
-                  />
-                  <Image
-                    src="/images/nulogic-logo-white.svg"
-                    alt="NULogic"
-                    width={188}
-                    height={56}
-                    className="h-12 w-auto object-contain hidden dark:block"
-                    priority
-                  />
-                  <p className="auth-chip">Password recovery</p>
-                  <h2 className="text-3xl font-bold text-[var(--text-primary)]">Secure reset flow</h2>
-                  <p className="text-sm text-[var(--text-secondary)] leading-7 max-w-sm">
-                    Confirm your account email and receive a one-time secure link. Use it to set a new password and return to
-                    work quickly.
-                  </p>
-                </div>
-              </div>
-            </section>
+          <div className="grid gap-6 lg:grid-cols-[1.05fr_1fr] lg:items-center">
+            <BrandPanel
+              headline={<>Secure reset<br/>flow.</>}
+              lede="Confirm your account email and receive a one-time secure link. Use it to set a new password and return to work quickly."
+            />
 
-            <section className="w-full">
+            <section className="w-full max-w-[460px] mx-auto">
               <Card className="auth-shell-card motion-rise">
                 <CardContent className="pt-8 pb-8 text-center">
                 {isSsoUser ? (
@@ -181,44 +160,19 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="auth-shell motion-rise">
+    <div className="auth-shell relative overflow-hidden motion-rise">
+      <div className="aura-auth-theme">
+        <ThemeToggle compact/>
+      </div>
       <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_460px] lg:items-start">
-          <section className="hidden lg:flex">
-            <div
-              className="auth-side-panel p-10 w-full flex items-center motion-rise"
-            >
-              <div className="auth-side-panel-content space-y-6">
-                <Image
-                  src="/images/nulogic-logo.svg"
-                  alt="NULogic"
-                  width={180}
-                  height={52}
-                  className="h-14 w-auto object-contain dark:hidden"
-                  priority
-                />
-                <Image
-                  src="/images/nulogic-logo-white.svg"
-                  alt="NULogic"
-                  width={180}
-                  height={52}
-                  className="h-14 w-auto object-contain hidden dark:block"
-                  priority
-                />
-                <p className="auth-chip">Password recovery</p>
-                <h2 className="text-3xl font-bold leading-tight text-[var(--text-primary)]">
-                  Get your account back
-                </h2>
-                <p className="text-sm text-[var(--text-secondary)] leading-relaxed max-w-sm">
-                  Submit your email and we&apos;ll send a secure reset link. The link expires quickly to protect your
-                  workspace.
-                </p>
-              </div>
-            </div>
-          </section>
+        <div className="grid gap-6 lg:grid-cols-[1.05fr_1fr] lg:items-center">
+          <BrandPanel
+            headline={<>Get your<br/>account back.</>}
+            lede="Submit your email and we'll send a secure reset link. The link expires quickly to protect your workspace."
+          />
 
           {/* Forgot Password Card */}
-          <section className="w-full">
+          <section className="w-full max-w-[460px] mx-auto">
             <Card className="auth-shell-card motion-rise">
               <CardHeader className="pb-4">
                 <CardTitle className="text-lg">Forgot Password</CardTitle>

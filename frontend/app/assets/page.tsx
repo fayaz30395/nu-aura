@@ -11,6 +11,7 @@ import {
   Calendar,
   Car,
   DollarSign,
+  Download,
   Edit,
   Eye,
   Key,
@@ -28,11 +29,15 @@ import {
   Tag,
   Trash2,
   User,
+  UserCheck,
   UserPlus,
+  Wrench,
 } from 'lucide-react';
 import {AppLayout} from '@/components/layout/AppLayout';
-import {Button, Card, CardContent, EmptyState, Modal, ModalBody, ModalFooter, ModalHeader,} from '@/components/ui';
+import {Button, Card, CardContent, EmptyState, Modal, ModalBody, ModalFooter, ModalHeader, Stat,} from '@/components/ui';
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
+import {Reveal} from '@/components/motion';
+import {BarsH} from '@/components/charts/aura';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {Asset, AssetCategory, AssetStatus, CreateAssetRequest, UpdateAssetRequest} from '@/lib/types/hrms/asset';
@@ -45,7 +50,7 @@ import {
   useUpdateAsset,
 } from '@/lib/hooks/queries';
 import {createLogger} from '@/lib/utils/logger';
-import {formatCurrency} from '@/lib/utils';
+import {cn, formatCurrency, getInitials} from '@/lib/utils';
 import {formatDate as formatDateCanonical} from '@/lib/utils/format/date';
 import {StatusBadge} from '@/components/ui/StatusBadge';
 import {ASSET_STATUS} from '@/lib/status/vocabulary';
@@ -126,11 +131,50 @@ const formatDate = (date: string | undefined) => {
   return formatDateCanonical(date);
 };
 
+/**
+ * Aura: uniform soft-accent icon tile for the asset row (matches the
+ * `AssetsPage` prototype, which renders every asset glyph in a single
+ * `--accent-soft / --accent-text` tile rather than per-category hues).
+ */
+const ASSET_TILE_CLASS =
+  'grid h-9 w-9 shrink-0 place-items-center rounded-aura-md bg-[var(--accent-soft)] text-[var(--accent-text)]';
+
+/** Category filter chips, mapped to the real {@link AssetCategory} enum. `''` = All. */
+const CATEGORY_CHIPS: ReadonlyArray<{ label: string; value: '' | AssetCategory }> = [
+  {label: 'All', value: ''},
+  {label: 'Laptop', value: AssetCategory.LAPTOP},
+  {label: 'Monitor', value: AssetCategory.MONITOR},
+  {label: 'Phone', value: AssetCategory.PHONE},
+  {label: 'Tablet', value: AssetCategory.TABLET},
+  {label: 'Peripheral', value: AssetCategory.OTHER},
+];
+
+/** Human label for an {@link AssetCategory} (used in the by-category breakdown). */
+const categoryLabel = (category: AssetCategory): string =>
+  category
+    .replace(/_/g, ' ')
+    .toLowerCase()
+    .replace(/\b\w/g, (c) => c.toUpperCase());
+
+/** Page-local assignee avatar — deterministic initials chip (no shared Avatar primitive). */
+function AssigneeAvatar({name}: { name: string }) {
+  return (
+    <span
+      className="grid h-[26px] w-[26px] shrink-0 place-items-center rounded-full bg-[var(--accent-soft)] text-[10px] font-semibold text-[var(--accent-text)]"
+      aria-hidden
+    >
+      {getInitials(name)}
+    </span>
+  );
+}
+
 
 export default function AssetManagementPage() {
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState('');
+  // statusFilter is retained (read by filteredAssets) but the Aura toolbar exposes
+  // only category chips + search; the setter is intentionally unused here.
+  const [statusFilter, _setStatusFilter] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
   const [currentPage, setCurrentPage] = useState(0);
 
@@ -336,6 +380,49 @@ export default function AssetManagementPage() {
     maintenance: filteredAssets.filter((a) => a.status === AssetStatus.IN_MAINTENANCE).length,
   };
 
+  const assignedPct = stats.total > 0 ? Math.round((stats.assigned / stats.total) * 100) : 0;
+
+  // Aura "By category" breakdown — derived from the loaded page (real data),
+  // ranked descending so the leading bar reads as the dominant category.
+  const categoryBreakdown = React.useMemo(() => {
+    const pageAssets = (assetsQuery.data?.content || []).filter(Boolean);
+    const counts = new Map<AssetCategory, number>();
+    for (const a of pageAssets) {
+      counts.set(a.category, (counts.get(a.category) || 0) + 1);
+    }
+    return Array.from(counts.entries())
+      .map(([category, value]) => ({label: categoryLabel(category), value}))
+      .sort((a, b) => b.value - a.value);
+  }, [assetsQuery.data?.content]);
+
+  // Aura "Lifecycle" bars — Healthy = not retired/lost, Aging = in maintenance,
+  // End of life = retired/lost. Computed from the loaded page so the figures
+  // track the real inventory rather than mock percentages.
+  const lifecycle = React.useMemo(() => {
+    const pageAssets = (assetsQuery.data?.content || []).filter(Boolean);
+    const denom = pageAssets.length || 1;
+    const endOfLife = pageAssets.filter(
+      (a) => a.status === AssetStatus.RETIRED || a.status === AssetStatus.LOST
+    ).length;
+    const aging = pageAssets.filter((a) => a.status === AssetStatus.IN_MAINTENANCE).length;
+    const healthy = pageAssets.length - endOfLife - aging;
+    const pct = (n: number) => Math.round((n / denom) * 100);
+    return [
+      {label: 'Healthy', pct: pct(healthy), barClass: '[&::-webkit-progress-value]:bg-[var(--ok-fg)] [&::-moz-progress-bar]:bg-[var(--ok-fg)]'},
+      {label: 'Aging', pct: pct(aging), barClass: '[&::-webkit-progress-value]:bg-[var(--warn-fg)] [&::-moz-progress-bar]:bg-[var(--warn-fg)]'},
+      {label: 'End of life', pct: pct(endOfLife), barClass: '[&::-webkit-progress-value]:bg-[var(--err-fg)] [&::-moz-progress-bar]:bg-[var(--err-fg)]'},
+    ];
+  }, [assetsQuery.data?.content]);
+
+  // Aggregate book value across the loaded page (real `currentValue` sums).
+  const bookValue = React.useMemo(
+    () =>
+      (assetsQuery.data?.content || [])
+        .filter(Boolean)
+        .reduce((sum, a) => sum + (a.currentValue || 0), 0),
+    [assetsQuery.data?.content]
+  );
+
   const breadcrumbs = [
     {label: 'Dashboard', href: '/dashboard'},
     {label: 'Asset Management'},
@@ -364,21 +451,29 @@ export default function AssetManagementPage() {
     <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="assets">
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)]">
+            <h1 className="text-aura-title text-[var(--text-1)]">
               Asset Management
             </h1>
-            <p className="text-[var(--text-secondary)]">
-              Manage and track company assets
+            <p className="mt-1 text-sm text-[var(--text-2)]">
+              <span className="tnum">{stats.total.toLocaleString()}</span> tracked assets
+              {' · '}
+              <span className="tnum">{assignedPct}%</span> assigned
+              {' · '}
+              <span className="tnum">{formatCurrency(bookValue, 'INR', {maximumFractionDigits: 0})}</span> book value
             </p>
           </div>
-          <PermissionGate permission={Permissions.ASSET_CREATE}>
-            <Button onClick={handleOpenAddModal}>
-              <Plus className="h-4 w-4 mr-2"/>
-              Add Asset
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" leftIcon={<Download className="h-4 w-4"/>}>
+              Export
             </Button>
-          </PermissionGate>
+            <PermissionGate permission={Permissions.ASSET_CREATE}>
+              <Button leftIcon={<Plus className="h-4 w-4"/>} onClick={handleOpenAddModal}>
+                Assign Asset
+              </Button>
+            </PermissionGate>
+          </div>
         </div>
 
         {/* Error Alert */}
@@ -396,108 +491,91 @@ export default function AssetManagementPage() {
           </Card>
         )}
 
-        {/* Stats Cards */}
+        {/* KPI Stats */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <Card className="skeuo-card">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-accent-100 p-4 dark:bg-accent-900">
-                  <Package className="h-6 w-6 text-accent-700 dark:text-accent-400"/>
-                </div>
-                <div>
-                  <p className="text-body-secondary">Total Assets</p>
-                  <p className="text-xl font-bold text-[var(--text-primary)]">{stats.total}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="skeuo-card">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-success-100 p-4 dark:bg-success-900">
-                  <Package className="h-6 w-6 text-success-600 dark:text-success-400"/>
-                </div>
-                <div>
-                  <p className="text-body-secondary">Available</p>
-                  <p className="text-xl font-bold text-[var(--text-primary)]">{stats.available}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="skeuo-card">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-accent-100 p-4 dark:bg-accent-900">
-                  <User className="h-6 w-6 text-accent-600 dark:text-accent-400"/>
-                </div>
-                <div>
-                  <p className="text-body-secondary">Assigned</p>
-                  <p className="text-xl font-bold text-[var(--text-primary)]">{stats.assigned}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="skeuo-card">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-warning-100 p-4 dark:bg-warning-900">
-                  <AlertCircle className="h-6 w-6 text-warning-600 dark:text-warning-400"/>
-                </div>
-                <div>
-                  <p className="text-body-secondary">In Maintenance</p>
-                  <p className="text-xl font-bold text-[var(--text-primary)]">{stats.maintenance}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Search and Filters */}
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]"/>
-            <input
-              type="text"
-              placeholder="Search assets..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="input-aura pl-10"
+          <Card padding="md">
+            <Stat
+              icon={<Package className="h-5 w-5"/>}
+              iconTone="accent"
+              label="Total assets"
+              value={stats.total.toLocaleString()}
+              foot="Across all locations"
             />
-          </div>
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="input-aura"
-          >
-            <option value="">All Status</option>
-            <option value={AssetStatus.AVAILABLE}>Available</option>
-            <option value={AssetStatus.ASSIGNED}>Assigned</option>
-            <option value={AssetStatus.IN_MAINTENANCE}>In Maintenance</option>
-            <option value={AssetStatus.RETIRED}>Retired</option>
-            <option value={AssetStatus.LOST}>Lost</option>
-          </select>
-          <select
-            value={categoryFilter}
-            onChange={(e) => setCategoryFilter(e.target.value)}
-            className="input-aura"
-          >
-            <option value="">All Categories</option>
-            <option value={AssetCategory.LAPTOP}>Laptop</option>
-            <option value={AssetCategory.DESKTOP}>Desktop</option>
-            <option value={AssetCategory.MONITOR}>Monitor</option>
-            <option value={AssetCategory.PHONE}>Phone</option>
-            <option value={AssetCategory.TABLET}>Tablet</option>
-            <option value={AssetCategory.FURNITURE}>Furniture</option>
-            <option value={AssetCategory.VEHICLE}>Vehicle</option>
-            <option value={AssetCategory.SOFTWARE_LICENSE}>Software License</option>
-            <option value={AssetCategory.OTHER}>Other</option>
-          </select>
+          </Card>
+          <Card padding="md">
+            <Stat
+              icon={<UserCheck className="h-5 w-5"/>}
+              iconTone="success"
+              label="Assigned"
+              value={stats.assigned.toLocaleString()}
+              delta={`${assignedPct}%`}
+              deltaDir="up"
+              foot="of all inventory"
+            />
+          </Card>
+          <Card padding="md">
+            <Stat
+              icon={<Box className="h-5 w-5"/>}
+              iconTone="warning"
+              label="Available"
+              value={stats.available.toLocaleString()}
+              foot="Ready to deploy"
+            />
+          </Card>
+          <Card padding="md">
+            <Stat
+              icon={<Wrench className="h-5 w-5"/>}
+              iconTone="info"
+              label="In repair"
+              value={stats.maintenance.toLocaleString()}
+              foot="In maintenance"
+            />
+          </Card>
         </div>
 
-        {/* Assets Table */}
-        {filteredAssets.length > 0 ? (
-          <Card>
-            <CardContent className="p-0">
+        {/* Split: asset table (left) + breakdowns (right) */}
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[3fr_1.3fr]">
+          {/* Left — inventory table */}
+          <Card padding="none" className="self-start overflow-hidden">
+            {/* Toolbar: category chips + search */}
+            <div className="flex flex-wrap items-center gap-2 border-b border-[var(--border-soft)] px-4 py-3">
+              <div className="flex flex-wrap gap-1.5" role="group" aria-label="Filter by category">
+                {CATEGORY_CHIPS.map((chip) => {
+                  const isActive = categoryFilter === chip.value;
+                  return (
+                    <button
+                      key={chip.label}
+                      type="button"
+                      aria-pressed={isActive}
+                      onClick={() => setCategoryFilter(chip.value)}
+                      className={cn(
+                        'rounded-aura-full px-3 py-1 text-xs font-semibold transition-colors',
+                        'focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--surface)]',
+                        isActive
+                          ? 'bg-[var(--accent)] text-white'
+                          : 'bg-[var(--surface-sunken)] text-[var(--text-2)] hover:bg-[var(--surface-hover)] hover:text-[var(--text-1)]'
+                      )}
+                    >
+                      {chip.label}
+                    </button>
+                  );
+                })}
+              </div>
+              <div className="relative ml-auto w-full sm:w-[220px]">
+                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-3)]"/>
+                <input
+                  type="text"
+                  placeholder="Search serial, name…"
+                  aria-label="Search assets"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="input-aura h-9 w-full pl-9 text-sm"
+                />
+              </div>
+            </div>
+
+            {/* Assets Table */}
+            {filteredAssets.length > 0 ? (
               <div className="overflow-x-auto">
                 <table className="table-aura">
                   <thead>
@@ -508,68 +586,73 @@ export default function AssetManagementPage() {
                     </th>
                     <th
                       className="skeuo-table-header px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                      Category
-                    </th>
-                    <th
-                      className="skeuo-table-header px-4 py-2 text-center text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                      Status
+                      Serial
                     </th>
                     <th
                       className="skeuo-table-header px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                      Assigned To
-                    </th>
-                    <th
-                      className="skeuo-table-header px-4 py-2 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                      Value
+                      Assigned to
                     </th>
                     <th
                       className="skeuo-table-header px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                       Location
                     </th>
                     <th
+                      className="skeuo-table-header px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                      Status
+                    </th>
+                    <th
+                      className="skeuo-table-header px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                      Purchased
+                    </th>
+                    <th
                       className="skeuo-table-header px-4 py-2 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                      Actions
+                      <span className="sr-only">Actions</span>
                     </th>
                   </tr>
                   </thead>
                   <tbody>
                   {filteredAssets.map((asset) => (
                     <tr key={asset.id} className="h-11">
-                      <td className="px-4 py-4 whitespace-nowrap">
-                        <div className="flex items-center gap-4">
-                          <div className={`rounded-lg p-2 ${getCategoryColor(asset.category)}`}>
+                      <td className="px-4 py-3 whitespace-nowrap">
+                        <div className="flex items-center gap-2">
+                          <div className={ASSET_TILE_CLASS}>
                             {getCategoryIcon(asset.category)}
                           </div>
-                          <div>
-                            <p className="font-medium text-[var(--text-primary)]">{asset.assetName}</p>
-                            <p className="text-caption">{asset.assetCode}</p>
+                          <div className="min-w-0">
+                            <p className="truncate font-medium text-[var(--text-1)]">{asset.assetName}</p>
+                            <p className="tnum text-xs text-[var(--text-3)]">{asset.assetCode}</p>
                           </div>
                         </div>
                       </td>
-                      <td className="px-4 py-4 whitespace-nowrap">
-                          <span className="text-body-secondary">
-                            {asset.category?.replace(/_/g, ' ') ?? '-'}
-                          </span>
+                      <td className="px-4 py-3 whitespace-nowrap">
+                        <span className="tnum text-[12.5px] text-[var(--text-2)]">
+                          {asset.serialNumber || '—'}
+                        </span>
                       </td>
-                      <td className="px-4 py-4 whitespace-nowrap text-center">
+                      <td className="px-4 py-3 whitespace-nowrap">
+                        {asset.assignedToName ? (
+                          <div className="flex items-center gap-2">
+                            <AssigneeAvatar name={asset.assignedToName}/>
+                            <span className="font-medium text-[var(--text-1)]">{asset.assignedToName}</span>
+                          </div>
+                        ) : (
+                          <span className="text-[var(--text-3)]">Unassigned</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3 whitespace-nowrap">
+                        <span className="text-[var(--text-2)]">
+                          {asset.location || '—'}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 whitespace-nowrap">
                         <StatusBadge status={asset.status} domain={ASSET_STATUS}/>
                       </td>
-                      <td className="px-4 py-4 whitespace-nowrap">
-                          <span className="text-body-secondary">
-                            {asset.assignedToName || '-'}
-                          </span>
+                      <td className="px-4 py-3 whitespace-nowrap">
+                        <span className="tnum text-[12.5px] text-[var(--text-2)]">
+                          {formatDate(asset.purchaseDate)}
+                        </span>
                       </td>
-                      <td className="px-4 py-4 whitespace-nowrap text-right">
-                          <span className="text-body-secondary">
-                            {formatCurrency(asset.currentValue)}
-                          </span>
-                      </td>
-                      <td className="px-4 py-4 whitespace-nowrap">
-                          <span className="text-body-secondary">
-                            {asset.location || '-'}
-                          </span>
-                      </td>
-                      <td className="px-4 py-4 whitespace-nowrap text-right">
+                      <td className="px-4 py-3 whitespace-nowrap text-right">
                         <div className="relative group inline-block">
                           <button
                             type="button"
@@ -652,44 +735,81 @@ export default function AssetManagementPage() {
                   </tbody>
                 </table>
               </div>
-            </CardContent>
-          </Card>
-        ) : (
-          !assetsQuery.isLoading && (
-            <EmptyState
-              icon={<Package className="h-12 w-12"/>}
-              title="No Assets Found"
-              description="Start tracking company assets by adding your first item. Manage laptops, monitors, furniture, and more."
-              actionLabel="Add Asset"
-              onAction={() => setShowAddModal(true)}
-            />
-          )
-        )}
+            ) : (
+              !assetsQuery.isLoading && (
+                <div className="p-6">
+                  <EmptyState
+                    icon={<Package className="h-12 w-12"/>}
+                    title="No Assets Found"
+                    description="Start tracking company assets by adding your first item. Manage laptops, monitors, furniture, and more."
+                    actionLabel="Add Asset"
+                    onAction={() => setShowAddModal(true)}
+                  />
+                </div>
+              )
+            )}
 
-        {/* Pagination */}
-        {(assetsQuery.data?.totalPages || 0) > 1 && (
-          <div className="flex items-center justify-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={currentPage === 0}
-              onClick={() => setCurrentPage((p) => p - 1)}
-            >
-              Previous
-            </Button>
-            <span className="text-body-secondary">
-              Page {currentPage + 1} of {assetsQuery.data?.totalPages || 0}
-            </span>
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={currentPage >= (assetsQuery.data?.totalPages || 1) - 1}
-              onClick={() => setCurrentPage((p) => p + 1)}
-            >
-              Next
-            </Button>
-          </div>
-        )}
+            {/* Pagination (inside the table card footer) */}
+            {(assetsQuery.data?.totalPages || 0) > 1 && (
+              <div className="flex items-center justify-center gap-2 border-t border-[var(--border-soft)] px-4 py-3">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={currentPage === 0}
+                  onClick={() => setCurrentPage((p) => p - 1)}
+                >
+                  Previous
+                </Button>
+                <span className="tnum text-sm text-[var(--text-2)]">
+                  Page {currentPage + 1} of {assetsQuery.data?.totalPages || 0}
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={currentPage >= (assetsQuery.data?.totalPages || 1) - 1}
+                  onClick={() => setCurrentPage((p) => p + 1)}
+                >
+                  Next
+                </Button>
+              </div>
+            )}
+          </Card>
+
+          {/* Right — By category + Lifecycle */}
+          <Reveal className="self-start">
+            <Card padding="lg">
+              <div className="mb-3">
+                <h2 className="text-base font-semibold text-[var(--text-1)]">By category</h2>
+                <p className="text-xs text-[var(--text-3)]">Inventory mix</p>
+              </div>
+              {categoryBreakdown.length > 0 ? (
+                <BarsH data={categoryBreakdown}/>
+              ) : (
+                <p className="text-sm text-[var(--text-3)]">No category data.</p>
+              )}
+
+              <hr className="my-5 border-[var(--border-soft)]"/>
+
+              <h2 className="mb-3 text-base font-semibold text-[var(--text-1)]">Lifecycle</h2>
+              <div className="flex flex-col gap-4">
+                {lifecycle.map((row) => (
+                  <div key={row.label}>
+                    <div className="mb-1.5 flex items-center justify-between text-[12.5px]">
+                      <span className="font-semibold text-[var(--text-2)]">{row.label}</span>
+                      <span className="tnum text-[var(--text-3)]">{row.pct}%</span>
+                    </div>
+                    <progress
+                      className={`block h-2 w-full appearance-none overflow-hidden rounded-aura-full bg-[var(--surface-sunken)] [&::-webkit-progress-bar]:bg-[var(--surface-sunken)] [&::-webkit-progress-value]:rounded-aura-full [&::-moz-progress-bar]:rounded-aura-full ${row.barClass}`}
+                      value={row.pct}
+                      max={100}
+                      aria-label={`${row.label} lifecycle percentage`}
+                    />
+                  </div>
+                ))}
+              </div>
+            </Card>
+          </Reveal>
+        </div>
 
         {/* Add/Edit Asset Modal */}
         <Modal isOpen={showAddModal} onClose={() => setShowAddModal(false)} size="lg">

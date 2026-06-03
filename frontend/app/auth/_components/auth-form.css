@@ -1,0 +1,121 @@
+/* NU-AURA Aura — Auth form (page-local).
+   Token-driven helpers for the right-hand form column. No raw palette: every
+   color resolves through the frozen Aura tokens. */
+
+.aura-auth-col {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  position: relative;
+  padding: clamp(1.5rem, 3vw, 2.5rem) 0;
+}
+
+.aura-auth-form {
+  width: 100%;
+  max-width: 384px;
+}
+
+.aura-auth-form__h {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 26px;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--text-1);
+  margin: 0 0 6px;
+}
+
+.aura-auth-form__sub {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-3);
+  margin: 0;
+}
+
+/* "or continue with" rule */
+.aura-auth-or {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 22px 0 16px;
+  color: var(--text-3);
+  font-size: 11.5px;
+}
+
+.aura-auth-or::before,
+.aura-auth-or::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* SSO 3-up grid */
+.aura-auth-sso {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 9px;
+}
+
+/* Remember-me checkbox row */
+.aura-auth-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 16px 0 22px;
+}
+
+.aura-auth-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 13px;
+  color: var(--text-2);
+  font-weight: 500;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  padding: 2px;
+  border-radius: var(--r-sm, 7px);
+}
+
+.aura-auth-check__box {
+  width: 18px;
+  height: 18px;
+  border-radius: var(--r-xs, 5px);
+  border: 1.5px solid var(--border-aura-strong, var(--border));
+  display: grid;
+  place-items: center;
+  color: transparent;
+  background: var(--surface);
+  transition: background var(--t-fast, 120ms) var(--ease), border-color var(--t-fast, 120ms) var(--ease), color var(--t-fast, 120ms) var(--ease);
+}
+
+.aura-auth-check__box[data-on='true'] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.aura-auth-foot {
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-3);
+  margin: 22px 0 0;
+}
+
+.aura-auth-legal {
+  margin-top: 18px;
+  text-align: center;
+  font-size: 11.5px;
+  color: var(--text-3);
+}
+
+/* Floating theme toggle, top-right of the auth surface */
+.aura-auth-theme {
+  position: absolute;
+  top: clamp(0.75rem, 2vw, 1.25rem);
+  right: clamp(0.75rem, 2vw, 1.4rem);
+  z-index: 20;
+}

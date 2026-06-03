@@ -1,0 +1,57 @@
+/* Page-local styles for the Employees profile slide-over (Aura screen 05).
+   Animations are transform/opacity only (compositor-friendly) and the sheet
+   never rests at opacity:0 — in a reduced-motion / no-animation environment the
+   content is fully visible. */
+
+.scrim {
+  position: absolute;
+  inset: 0;
+  background: rgba(12, 18, 40, 0.34);
+}
+
+.sheet {
+  position: absolute;
+  right: 0;
+  top: 0;
+  display: flex;
+  height: 100%;
+  width: 480px;
+  max-width: 92vw;
+  flex-direction: column;
+  border-left: 1px solid var(--border);
+  background: var(--surface);
+  box-shadow: var(--sh-pop);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .scrim {
+    animation: sheetScrimIn var(--t-base, 180ms) var(--ease, cubic-bezier(0.4, 0, 0.2, 1));
+  }
+  .sheet {
+    animation: sheetSlideIn var(--t-slow, 280ms) var(--ease, cubic-bezier(0.4, 0, 0.2, 1));
+  }
+}
+
+@keyframes sheetScrimIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes sheetSlideIn {
+  from { transform: translateX(24px); }
+  to { transform: translateX(0); }
+}
+
+/* Key/value row used in the Overview tab. */
+.kvRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--border-soft, var(--border));
+}
+
+.kvRow:last-of-type {
+  border-bottom: none;
+}
