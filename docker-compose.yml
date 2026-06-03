@@ -179,7 +179,9 @@ services:
     depends_on:
       - prometheus
     environment:
-      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
+      # L-5: fail closed — no literal 'admin' fallback. Set GRAFANA_ADMIN_PASSWORD
+      # in your .env (see .env.example) before bringing the monitoring stack up.
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:?GRAFANA_ADMIN_PASSWORD must be set}
       GF_AUTH_ANONYMOUS_ENABLED: "false"
       GF_USERS_ALLOW_SIGN_UP: "false"
     volumes:

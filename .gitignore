@@ -88,8 +88,15 @@ scripts/db/backups/
 COMPONENTS_CREATED.txt
 LAYOUT_FILES_CREATED.txt
 
-# Kubernetes secrets (use secrets.yaml.example as template)
-deployment/kubernetes/secrets.yaml
+# Kubernetes secrets.
+# I-1 FIX: the previous pattern `deployment/kubernetes/secrets.yaml` was anchored
+# to the repo root and did NOT match the real path
+# `infra/deployment/kubernetes/secrets.yaml`. Use a `**/` glob so any depth is
+# ignored. NOTE: infra/deployment/kubernetes/secrets.yaml is intentionally tracked
+# as a placeholder-only template (all values are base64 "CHANGEME"); .gitignore
+# does not affect already-tracked files. This rule prevents a *populated* copy
+# (real secrets) from ever being added at this path.
+**/deployment/kubernetes/secrets.yaml
 
 .fuse_hidden*
 
