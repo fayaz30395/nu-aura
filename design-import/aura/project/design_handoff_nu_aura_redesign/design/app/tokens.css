@@ -1,0 +1,158 @@
+/* ============================================================
+   NU-AURA · "Aura" Redesign — Design Tokens
+   Builds on the NU-AURA system. Anchor: #2952A3.
+   Light + Dark parity via :root[data-theme="dark"].
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Open+Sans:wght@400;500;600;700&family=Roboto+Mono:wght@400;500;600&display=swap');
+
+:root {
+  /* ── Fonts ── */
+  --font-sans: 'Open Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'Montserrat', 'Open Sans', system-ui, sans-serif;
+  --font-mono: 'Roboto Mono', 'SF Mono', Monaco, Consolas, monospace;
+
+  /* ── Accent scale (NU-AURA Blue) ── */
+  --accent-50:  #f0f3fc;
+  --accent-100: #dce3f8;
+  --accent-200: #bcc9f2;
+  --accent-300: #92a8e8;
+  --accent-400: #6884dc;
+  --accent-500: #4463cf;
+  --accent-600: #3350b8;
+  --accent-700: #2952A3;
+  --accent-800: #244288;
+  --accent-900: #1d356d;
+  --accent-950: #121f44;
+
+  /* ── Brand (NULogic) — brand moments only ── */
+  --nu-grad-brand: linear-gradient(120deg, #ED3027 0%, #b53a86 52%, #7B469B 100%);
+  --nu-grad-primary: linear-gradient(135deg, #3a63bd 0%, #244288 100%);
+  --nu-red-orange: #E62A32;
+  --nu-purple: #8939A1;
+
+  /* ── Product accents (bundle rail) ── */
+  --prod-hrms: #4463cf;
+  --prod-hire: #0ea5a3;
+  --prod-grow: #d97706;
+  --prod-fluence: #8b5cf6;
+
+  /* ── Semantic surfaces — LIGHT ── */
+  --accent: #2952A3;
+  --accent-hover: #244288;
+  --accent-soft: #eef2fc;
+  --accent-text: #2952A3;
+
+  --bg-app: #f4f6fb;
+  --bg-canvas: #f9fafd;
+  --surface: #ffffff;
+  --surface-2: #f4f6fb;
+  --surface-hover: #eef1f8;
+  --surface-sunken: #f0f3f9;
+  --rail: #0c1120;
+  --rail-2: #0a0e1a;
+  --nav: #0f1424;
+  --nav-soft: rgba(255,255,255,0.05);
+  --nav-active: rgba(88,121,224,0.18);
+
+  --text-1: #0e1225;
+  --text-2: #3a3f57;
+  --text-3: #6b7190;
+  --text-inverse: #ffffff;
+  --on-rail: #aeb4cc;
+  --on-rail-dim: #646b88;
+
+  --border: #e4e7f0;
+  --border-soft: #eef0f6;
+  --border-strong: #d4d8e6;
+  --border-focus: #2952A3;
+
+  /* ── Status ── */
+  --ok-bg: #effaf3;  --ok-fg: #167c45;  --ok-bd: #c9eed7;
+  --warn-bg: #fff7ec; --warn-fg: #b15a09; --warn-bd: #fbe2bd;
+  --err-bg: #fef1f1; --err-fg: #cf2f2f; --err-bd: #fbd5d5;
+  --info-bg: #eef2fc; --info-fg: #2952A3; --info-bd: #d3deF7;
+  --neutral-bg: #eef1f6; --neutral-fg: #4e5270; --neutral-bd: #e0e4ee;
+
+  /* ── Charts ── */
+  --chart-1: #2952A3;
+  --chart-2: #6884dc;
+  --chart-3: #0ea5a3;
+  --chart-4: #d97706;
+  --chart-5: #8b5cf6;
+  --chart-grid: #eaecf3;
+  --chart-axis: #9aa0b8;
+
+  /* ── Radii ── */
+  --r-xs: 5px; --r-sm: 7px; --r-md: 9px; --r-lg: 12px; --r-xl: 16px; --r-2xl: 22px; --r-full: 999px;
+
+  /* ── Spacing ── */
+  --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-5: 20px; --s-6: 24px; --s-8: 32px; --s-10: 40px; --s-12: 48px;
+
+  /* ── Shadows (in-between depth) ── */
+  --sh-xs: 0 1px 2px rgba(16,22,44,0.05);
+  --sh-sm: 0 1px 0 rgba(255,255,255,0.6) inset, 0 1px 2px rgba(16,22,44,0.05), 0 2px 6px rgba(16,22,44,0.04);
+  --sh-md: 0 1px 0 rgba(255,255,255,0.55) inset, 0 2px 6px rgba(16,22,44,0.06), 0 8px 22px rgba(16,22,44,0.07);
+  --sh-lg: 0 1px 0 rgba(255,255,255,0.5) inset, 0 12px 34px rgba(16,22,44,0.12), 0 4px 10px rgba(16,22,44,0.06);
+  --sh-pop: 0 18px 50px rgba(12,18,40,0.22), 0 6px 16px rgba(12,18,40,0.12);
+  --sh-focus: 0 0 0 3px var(--ring);
+  --ring: rgba(41,82,163,0.22);
+  --inset-input: inset 0 1px 2px rgba(16,22,44,0.05);
+
+  /* ── Motion ── */
+  --t-fast: 120ms; --t-base: 180ms; --t-slow: 280ms;
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-soft: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-spring: cubic-bezier(0.34, 1.3, 0.5, 1);
+}
+
+/* ============================================================
+   DARK THEME
+   ============================================================ */
+:root[data-theme="dark"] {
+  --accent: #6884dc;
+  --accent-hover: #7e96e4;
+  --accent-soft: rgba(104,132,220,0.14);
+  --accent-text: #92a8e8;
+
+  --bg-app: #070a14;
+  --bg-canvas: #0a0e1a;
+  --surface: #11162a;
+  --surface-2: #0d1322;
+  --surface-hover: #182040;
+  --surface-sunken: #0a0e1a;
+  --rail: #06080f;
+  --rail-2: #04060c;
+  --nav: #080b16;
+  --nav-soft: rgba(255,255,255,0.04);
+  --nav-active: rgba(104,132,220,0.20);
+
+  --text-1: #eef1f9;
+  --text-2: #b7bdd4;
+  --text-3: #7e85a3;
+  --text-inverse: #0e1225;
+  --on-rail: #aeb4cc;
+  --on-rail-dim: #5b6280;
+
+  --border: #1e2540;
+  --border-soft: #161c33;
+  --border-strong: #2b3358;
+  --border-focus: #6884dc;
+
+  --ok-bg: rgba(22,124,69,0.16);  --ok-fg: #57d08c;  --ok-bd: rgba(22,124,69,0.34);
+  --warn-bg: rgba(177,90,9,0.16); --warn-fg: #f0a955; --warn-bd: rgba(177,90,9,0.34);
+  --err-bg: rgba(207,47,47,0.16); --err-fg: #f08484; --err-bd: rgba(207,47,47,0.34);
+  --info-bg: rgba(104,132,220,0.14); --info-fg: #92a8e8; --info-bd: rgba(104,132,220,0.30);
+  --neutral-bg: rgba(255,255,255,0.06); --neutral-fg: #b7bdd4; --neutral-bd: rgba(255,255,255,0.10);
+
+  --chart-grid: #1a2138;
+  --chart-axis: #5b6280;
+
+  --sh-xs: 0 1px 2px rgba(0,0,0,0.4);
+  --sh-sm: 0 1px 0 rgba(255,255,255,0.03) inset, 0 1px 3px rgba(0,0,0,0.5);
+  --sh-md: 0 1px 0 rgba(255,255,255,0.03) inset, 0 8px 24px rgba(0,0,0,0.55);
+  --sh-lg: 0 1px 0 rgba(255,255,255,0.03) inset, 0 16px 40px rgba(0,0,0,0.6);
+  --sh-pop: 0 24px 60px rgba(0,0,0,0.7), 0 8px 18px rgba(0,0,0,0.5);
+  --ring: rgba(104,132,220,0.32);
+  --inset-input: inset 0 1px 2px rgba(0,0,0,0.35);
+}

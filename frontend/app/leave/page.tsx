@@ -180,7 +180,7 @@ function PageHeader({
           Balances, requests and the team time-off calendar.
         </p>
       </div>
-      <div className="flex items-center gap-3 self-start">
+      <div className="flex items-center gap-4 self-start">
         <Segmented
           aria-label="Attendance or Leave"
           value={view}
@@ -244,7 +244,7 @@ function BalanceRings({
         {loading ? (
           <div className="grid grid-cols-2 gap-4">
             {Array.from({length: 4}).map((_, i) => (
-              <div key={i} className="flex items-center gap-3">
+              <div key={i} className="flex items-center gap-4">
                 <Skeleton className="h-[52px] w-[52px] rounded-full" />
                 <div className="space-y-2">
                   <Skeleton className="h-3 w-20 rounded" />
@@ -263,7 +263,7 @@ function BalanceRings({
               const pct = total > 0 ? (remaining / total) * 100 : 0;
               const type = leaveTypes.find((t) => t.id === b.leaveTypeId);
               return (
-                <div key={b.id} className="flex items-center gap-3">
+                <div key={b.id} className="flex items-center gap-4">
                   <Ring
                     value={pct}
                     size={52}
@@ -319,7 +319,7 @@ function PendingRequests({
   return (
     <Reveal delay={0.18}>
       <Card className="p-5">
-        <div className="mb-1 flex items-center justify-between gap-3">
+        <div className="mb-1 flex items-center justify-between gap-4">
           <h2 className="text-base font-semibold text-[var(--text-1)]">Pending requests</h2>
           <span className="num inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-[var(--warn-bg)] px-1.5 text-2xs font-bold text-[var(--warn-fg)]">
             {pendingCount}
@@ -329,7 +329,7 @@ function PendingRequests({
         {loading ? (
           <div className="mt-2 flex flex-col">
             {Array.from({length: 2}).map((_, i) => (
-              <div key={i} className="flex items-center gap-3 border-t border-[var(--border-soft)] py-3 first:border-t-0">
+              <div key={i} className="flex items-center gap-4 border-t border-[var(--border-soft)] py-3 first:border-t-0">
                 <Skeleton className="h-8 w-8 rounded-full" />
                 <div className="flex-1 space-y-2">
                   <Skeleton className="h-3 w-28 rounded" />
@@ -431,7 +431,7 @@ function LeaveCalendar({
   return (
     <Reveal delay={0.16}>
       <Card className="p-5">
-        <div className="mb-4 flex items-center justify-between gap-3">
+        <div className="mb-4 flex items-center justify-between gap-4">
           <div>
             <h2 className="text-base font-semibold text-[var(--text-1)]">
               {formatDateFns(viewMonth, 'MMMM yyyy')}

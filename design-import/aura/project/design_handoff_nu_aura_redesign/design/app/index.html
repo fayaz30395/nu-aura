@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>NU-AURA · Aura</title>
+<link rel="icon" href="../assets/nulogic-icon.svg" />
+<link rel="stylesheet" href="tokens.css?v=8" />
+<link rel="stylesheet" href="app.css?v=8" />
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/lucide@0.561.0/dist/umd/lucide.min.js"></script>
+<script src="data.js?v=8"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel" src="Charts.jsx?v=8"></script>
+<script type="text/babel" src="Primitives.jsx?v=8"></script>
+<script type="text/babel" src="Shell.jsx?v=8"></script>
+<script type="text/babel" src="LoginPage.jsx?v=8"></script>
+<script type="text/babel" src="DashboardPage.jsx?v=8"></script>
+<script type="text/babel" src="EmployeesPage.jsx?v=8"></script>
+<script type="text/babel" src="ApprovalsPage.jsx?v=8"></script>
+<script type="text/babel" src="AttendancePage.jsx?v=8"></script>
+<script type="text/babel" src="PayrollPage.jsx?v=8"></script>
+<script type="text/babel" src="AssetsPage.jsx?v=8"></script>
+<script type="text/babel" src="BenefitsPage.jsx?v=8"></script>
+<script type="text/babel" src="ReportsPage.jsx?v=8"></script>
+<script type="text/babel" src="SettingsPage.jsx?v=8"></script>
+
+<script type="text/babel">
+const { useState, useEffect, useCallback } = React;
+
+function ComingSoon({ title }) {
+  return (
+    <div className="page">
+      <div className="empty">
+        <div className="empty__ico"><Icon name="hammer" size={28} /></div>
+        <h3 style={{ fontFamily:'var(--font-display)', fontSize:19, fontWeight:700, color:'var(--text-1)', margin:'0 0 6px' }}>{title}</h3>
+        <p style={{ fontSize:13.5, maxWidth:380, lineHeight:1.6 }}>This surface is part of the redesign system but not built out in this prototype. Dashboard, Employees, Approvals, Attendance &amp; Leave, and Payroll are the representative screens.</p>
+      </div>
+    </div>
+  );
+}
+
+const PAGE_META = {
+  dashboard: { title:'Dashboard', crumbs:['Workspace','Dashboard'] },
+  inbox: { title:'Approvals', crumbs:['Workspace','Approvals'] },
+  employees: { title:'Employees', crumbs:['NU-HRMS','Employees'] },
+  attendance: { title:'Attendance', crumbs:['NU-HRMS','Attendance'] },
+  leave: { title:'Leave', crumbs:['NU-HRMS','Leave'] },
+  payroll: { title:'Payroll', crumbs:['NU-HRMS','Payroll'] },
+  assets: { title:'Assets', crumbs:['NU-HRMS','Assets'] },
+  benefits: { title:'Benefits', crumbs:['NU-HRMS','Benefits'] },
+  reports: { title:'Reports', crumbs:['NU-HRMS','Reports'] },
+  settings: { title:'Settings', crumbs:['NU-HRMS','Settings'] },
+};
+
+function App() {
+  const [theme, setTheme] = useState(() => localStorage.getItem('nu2_theme') || 'light');
+  const [authed, setAuthed] = useState(() => localStorage.getItem('nu2_authed') === '1');
+  const [product, setProduct] = useState('hrms');
+  const [active, setActive] = useState(() => localStorage.getItem('nu2_active') || 'dashboard');
+  const [navCollapsed, setNavCollapsed] = useState(false);
+  const [cmdk, setCmdk] = useState(false);
+
+  useEffect(() => { document.documentElement.setAttribute('data-theme', theme); localStorage.setItem('nu2_theme', theme); }, [theme]);
+  useEffect(() => { localStorage.setItem('nu2_authed', authed ? '1' : '0'); }, [authed]);
+  useEffect(() => { localStorage.setItem('nu2_active', active); }, [active]);
+  useEffect(() => { if (window.lucide) window.lucide.createIcons(); });
+
+  useEffect(() => {
+    function onKey(e) {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); setCmdk(v => !v); }
+    }
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
+  const nav = useCallback((id) => { setActive(id); }, []);
+  const toggleTheme = () => setTheme(t => t === 'dark' ? 'light' : 'dark');
+
+  if (!authed) return <LoginPage onLogin={() => setAuthed(true)} theme={theme} onToggleTheme={toggleTheme} />;
+
+  const meta = PAGE_META[active] || { title:'NU-AURA', crumbs:['NU-AURA'] };
+  let Page;
+  if (active === 'dashboard') Page = <DashboardPage onNav={nav} />;
+  else if (active === 'employees') Page = <EmployeesPage />;
+  else if (active === 'inbox') Page = <ApprovalsPage />;
+  else if (active === 'attendance' || active === 'leave') Page = <AttendancePage tab={active} />;
+  else if (active === 'payroll') Page = <PayrollPage />;
+  else if (active === 'assets') Page = <AssetsPage />;
+  else if (active === 'benefits') Page = <BenefitsPage />;
+  else if (active === 'reports') Page = <ReportsPage />;
+  else if (active === 'settings') Page = <SettingsPage />;
+  else Page = <ComingSoon title={meta.title} />;
+
+  return (
+    <div className="app">
+      <ProductRail product={product} onProduct={setProduct} onAvatar={() => nav('settings')} theme={theme} />
+      <NavPanel product={product} active={active} onNav={nav} collapsed={navCollapsed} />
+      <div className="main">
+        <TopBar crumbs={meta.crumbs} onToggleNav={() => setNavCollapsed(v => !v)} onCmdK={() => setCmdk(true)}
+          theme={theme} onToggleTheme={toggleTheme} onNav={nav} />
+        <div className="scroll" key={active}>{Page}</div>
+      </div>
+      {cmdk && <CommandPalette onClose={() => setCmdk(false)} onNav={nav} />}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
