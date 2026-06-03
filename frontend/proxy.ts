@@ -17,6 +17,30 @@ import {NextResponse} from 'next/server';
 // Cookie name for the access token (must match backend CookieConfig)
 const ACCESS_TOKEN_COOKIE = 'access_token';
 
+// Request header used to forward the per-request CSP nonce to Server Components.
+// Read in app/layout.tsx via next/headers `headers()`.
+const NONCE_REQUEST_HEADER = 'x-nonce';
+
+/**
+ * Generate a cryptographically-strong per-request nonce, base64-encoded.
+ *
+ * Uses the Web Crypto API (`crypto.getRandomValues`) which is available in the
+ * Edge runtime where this proxy executes — Node's `crypto` module is NOT.
+ * The output character set (base64 with `+/=`) matches the token grammar
+ * Next.js expects when it parses the `Content-Security-Policy` header to
+ * propagate the nonce onto its own framework/hydration scripts
+ * (see CSP_NONCE_SOURCE_REGEX in next/dist/server/app-render).
+ */
+function generateNonce(): string {
+  const bytes = new Uint8Array(16);
+  crypto.getRandomValues(bytes);
+  let binary = '';
+  for (const byte of bytes) {
+    binary += String.fromCharCode(byte);
+  }
+  return btoa(binary);
+}
+
 // Public routes that don't require authentication
 const PUBLIC_ROUTES = [
   '/auth/login',
@@ -216,9 +240,17 @@ function isAuthenticatedRoute(path: string): boolean {
 }
 
 /**
- * Add OWASP-compliant security headers to response
+ * Add OWASP-compliant security headers to response.
+ *
+ * `nonce` is the per-request CSP nonce. It is embedded into the production
+ * `script-src` directive so the app's own inline scripts (and Next.js's
+ * framework/hydration scripts) are allowed without `'unsafe-inline'`.
  */
-function addSecurityHeaders(response: NextResponse, request: NextRequest): NextResponse {
+function addSecurityHeaders(
+  response: NextResponse,
+  request: NextRequest,
+  nonce: string,
+): NextResponse {
   // Prevent clickjacking attacks
   response.headers.set('X-Frame-Options', 'DENY');
 
@@ -239,60 +271,7 @@ function addSecurityHeaders(response: NextResponse, request: NextRequest): NextR
   }
 
   // Content Security Policy - restrictive but allows necessary resources including Google OAuth.
-  const apiConnectSources = getApiConnectSources();
-
-  const cspDirectives = [
-      "default-src 'self'",
-      process.env.NODE_ENV === 'development'
-        ? "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://accounts.google.com https://apis.google.com"
-        // SECURITY TODO (audit M-13, docs/audit/release-2026-06-04/security-audit-2026-06-04.md):
-        // 'unsafe-inline' is retained DELIBERATELY and must NOT be removed blindly.
-        // Do not use strict-dynamic until every Next.js hydration script is emitted
-        // with a nonce. Without nonces, production browsers block the app's own
-        // /_next/static chunks and every client page stays on its loading fallback.
-        //
-        // Nonce migration plan (do as one deliberate change, then verify a real
-        // prod build before merging):
-        //   1. Generate a per-request nonce here in proxy.ts
-        //      (crypto.randomUUID() or randomBytes -> base64).
-        //   2. Forward it to the app via a request header (e.g. set it on
-        //      `request.headers` / response so Server Components can read it via
-        //      next/headers `headers()`), the mechanism Next.js App Router uses to
-        //      propagate nonces onto its own injected framework/runtime scripts.
-        //   3. Replace 'unsafe-inline' with "'nonce-<NONCE>' 'strict-dynamic'".
-        //   4. Stamp the nonce onto the two app-owned inline scripts in
-        //      app/layout.tsx:
-        //        - the static theme/FOUC script at layout.tsx:62
-        //          (`<script dangerouslySetInnerHTML={{__html: getThemeScript()}}/>`)
-        //          — give it `nonce={nonce}` or pin it with a 'sha256-...' hash
-        //          since its content is static.
-        //        - Mantine's `<ColorSchemeScript>` at layout.tsx:63 — pass `nonce={nonce}`.
-        //   5. Verify in a production build that /_next/static chunks load and no
-        //      client page is stuck on its loading fallback before removing
-        //      'unsafe-inline'. Until all of the above ship together, leaving
-        //      'unsafe-inline' is the safe state (DOMPurify is the upstream XSS
-        //      backstop — see audit M-11/M-12 context).
-        : "script-src 'self' 'unsafe-inline' https://accounts.google.com https://apis.google.com https://www.google.com https://www.gstatic.com",
-      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://accounts.google.com",
-      // L-6: removed bare `wss:` wildcard (allowed WebSocket to any origin).
-      // getApiConnectSources() already emits the specific allowed origin(s),
-      // including the wss:// origin for the STOMP/SockJS backend.
-      `connect-src 'self'${apiConnectSources} https://accounts.google.com https://accounts.googleapis.com https://www.googleapis.com`,
-      // SEC: explicit img-src allowlist (was 'https:' wildcard — too permissive, allowed exfil to any HTTPS host)
-      "img-src 'self' data: blob: https://lh3.googleusercontent.com https://*.amazonaws.com https://*.cloudfront.net https://storage.googleapis.com https://media.licdn.com https://ui-avatars.com https://drive.google.com",
-      "font-src 'self' https://fonts.gstatic.com",
-      "frame-src 'self' https://docs.google.com https://accounts.google.com",
-      "object-src 'none'",
-      "base-uri 'self'",
-      "form-action 'self'",
-      "frame-ancestors 'none'",
-  ];
-
-  if (request.nextUrl.protocol === 'https:') {
-    cspDirectives.push('upgrade-insecure-requests');
-  }
-
-  response.headers.set('Content-Security-Policy', cspDirectives.join('; '));
+  response.headers.set('Content-Security-Policy', buildCsp(request, nonce));
 
   // Permissions Policy (formerly Feature Policy) - restrict sensitive features
   response.headers.set(
@@ -333,8 +312,83 @@ function getApiConnectSources(): string {
   }
 }
 
+/**
+ * Build the Content-Security-Policy header value for a request, embedding the
+ * per-request nonce into `script-src`. The exact same string is set on both the
+ * forwarded request headers (so Next.js can extract the nonce and stamp it onto
+ * its framework scripts) and the response headers (so the browser enforces it).
+ */
+function buildCsp(request: NextRequest, nonce: string): string {
+  const apiConnectSources = getApiConnectSources();
+
+  const cspDirectives = [
+      "default-src 'self'",
+      // M-13: Nonce-based script-src removes 'unsafe-inline' in production.
+      //
+      // Production uses a per-request nonce plus 'strict-dynamic'. Next.js reads
+      // this CSP off the (forwarded) request header and stamps the same nonce onto
+      // every framework/hydration script it injects, so /_next/static chunks load
+      // normally. The two app-owned inline scripts in app/layout.tsx
+      // (getThemeScript + Mantine ColorSchemeScript) carry the same nonce.
+      // With 'strict-dynamic', allowlisted hosts (Google) are loaded transitively
+      // by the nonce'd scripts, so explicit host sources become advisory for
+      // CSP3 browsers but are kept for older-browser fallback.
+      //
+      // Development keeps 'unsafe-inline' + 'unsafe-eval': Next's HMR/React-Refresh
+      // runtime injects eval'd and inline scripts that are not nonce-stamped, and
+      // dev is not a production-exposed surface.
+      process.env.NODE_ENV === 'development'
+        ? "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://accounts.google.com https://apis.google.com"
+        : `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https://accounts.google.com https://apis.google.com https://www.google.com https://www.gstatic.com`,
+      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://accounts.google.com",
+      // L-6: removed bare `wss:` wildcard (allowed WebSocket to any origin).
+      // getApiConnectSources() already emits the specific allowed origin(s),
+      // including the wss:// origin for the STOMP/SockJS backend.
+      `connect-src 'self'${apiConnectSources} https://accounts.google.com https://accounts.googleapis.com https://www.googleapis.com`,
+      // SEC: explicit img-src allowlist (was 'https:' wildcard — too permissive, allowed exfil to any HTTPS host)
+      "img-src 'self' data: blob: https://lh3.googleusercontent.com https://*.amazonaws.com https://*.cloudfront.net https://storage.googleapis.com https://media.licdn.com https://ui-avatars.com https://drive.google.com",
+      "font-src 'self' https://fonts.gstatic.com",
+      "frame-src 'self' https://docs.google.com https://accounts.google.com",
+      "object-src 'none'",
+      "base-uri 'self'",
+      "form-action 'self'",
+      "frame-ancestors 'none'",
+  ];
+
+  if (request.nextUrl.protocol === 'https:') {
+    cspDirectives.push('upgrade-insecure-requests');
+  }
+
+  return cspDirectives.join('; ');
+}
+
+/**
+ * Create a "continue to render" response that forwards the per-request nonce and
+ * CSP to the rendering layer via request headers.
+ *
+ * Next.js App Router reads the `Content-Security-Policy` request header during
+ * server rendering, extracts the `nonce-…` token, and applies it to every
+ * framework/hydration <script> it injects. We also expose the raw nonce via
+ * `x-nonce` so Server Components (app/layout.tsx) can read it with
+ * next/headers `headers()` and stamp it onto app-owned inline scripts.
+ *
+ * This MUST be used for every page-rendering pass-through (not redirects), or
+ * production browsers would block Next's own scripts under the nonce policy.
+ */
+function allowWithSecurity(request: NextRequest, nonce: string): NextResponse {
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set(NONCE_REQUEST_HEADER, nonce);
+  requestHeaders.set('Content-Security-Policy', buildCsp(request, nonce));
+
+  const response = NextResponse.next({request: {headers: requestHeaders}});
+  return addSecurityHeaders(response, request, nonce);
+}
+
 export function proxy(request: NextRequest) {
   const {pathname} = request.nextUrl;
+
+  // Per-request CSP nonce — generated once, threaded through every response.
+  const nonce = generateNonce();
 
   // Skip API routes and static assets
   if (matchesPattern(pathname, SKIP_PATTERNS)) {
@@ -371,8 +425,7 @@ export function proxy(request: NextRequest) {
     // is stale or empty — AuthGuard's restoreSession fails → redirects to login →
     // middleware redirects back to dashboard → loop forever.
     // The login page handles already-authenticated users client-side instead.
-    const response = NextResponse.next();
-    return addSecurityHeaders(response, request);
+    return allowWithSecurity(request, nonce);
   }
 
   // Check for authentication token
@@ -401,8 +454,7 @@ export function proxy(request: NextRequest) {
     if (hasRefreshToken) {
       // Refresh token exists — let the page load so client-side refresh can work.
       // AuthGuard will call restoreSession() which uses the httpOnly refresh cookie.
-      const response = NextResponse.next();
-      return addSecurityHeaders(response, request);
+      return allowWithSecurity(request, nonce);
     }
 
     // No refresh token — truly expired session, redirect to login
@@ -410,8 +462,7 @@ export function proxy(request: NextRequest) {
       const loginUrl = new URL('/auth/login', request.url);
       return NextResponse.redirect(loginUrl);
     }
-    const response = NextResponse.next();
-    return addSecurityHeaders(response, request);
+    return allowWithSecurity(request, nonce);
   }
 
   // Strip Spring's "ROLE_" prefix from JWT-issued role claims so plain comparisons work.
