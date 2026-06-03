@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useCallback, useEffect, useMemo, useRef} from 'react';
+import React, {lazy, Suspense, useCallback, useEffect, useMemo, useRef} from 'react';
 import {usePathname, useRouter} from 'next/navigation';
 import {AnimatePresence} from 'framer-motion';
 import {logger} from '@/lib/utils/logger';
@@ -26,9 +26,11 @@ import {buildMenuSections} from './menuSections';
 import {ProductRail} from './shell/ProductRail';
 import {NavPanel} from './shell/NavPanel';
 import {TopBar} from './shell/TopBar';
-import {CommandPalette} from './shell/CommandPalette';
 import {ErrorBoundary} from '@/components/errors';
-import {FluenceChatWidget} from '@/components/fluence/FluenceChatWidget';
+
+// Lazy-load heavy components to reduce initial bundle
+const CommandPalette = lazy(() => import('./shell/CommandPalette').then(mod => ({default: mod.CommandPalette})));
+const FluenceChatWidget = lazy(() => import('@/components/fluence/FluenceChatWidget').then(mod => ({default: mod.FluenceChatWidget})));
 import {
   BookOpen,
   Briefcase,
@@ -433,14 +435,22 @@ const AppLayout: React.FC<AppLayoutProps> = ({
       </div>
 
       {/* ⌘K Command Palette — global, navigates via the Next.js router */}
-      <CommandPalette
-        open={isCommandPaletteOpen}
-        onClose={() => setCommandPaletteOpen(false)}
-        sections={filteredSections}
-      />
+      {isCommandPaletteOpen && (
+        <Suspense fallback={null}>
+          <CommandPalette
+            open={isCommandPaletteOpen}
+            onClose={() => setCommandPaletteOpen(false)}
+            sections={filteredSections}
+          />
+        </Suspense>
+      )}
 
       {/* Fluence AI Chat Widget — only on Fluence routes */}
-      {appCode === 'FLUENCE' && <FluenceChatWidget/>}
+      {appCode === 'FLUENCE' && (
+        <Suspense fallback={null}>
+          <FluenceChatWidget/>
+        </Suspense>
+      )}
     </div>
   );
 };

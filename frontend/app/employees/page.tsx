@@ -12,6 +12,7 @@ import {AppLayout} from '@/components/layout';
 import {PageTransition, Reveal} from '@/components/motion';
 import {
   ArrowUpDown,
+  Check,
   ChevronLeft,
   ChevronRight,
   Download,
@@ -440,19 +441,39 @@ export default function EmployeesPage() {
                 <span className="num">{selected.size}</span> selected
               </span>
               <span className={listStyles.bulkSep} />
-              <button type="button" className={listStyles.bulkBtn} onClick={() => { window.nuToast?.('Message sent', { msg: `Message drafted to ${selected.size} ${selected.size===1?'person':'people'}.`, type:'ok' }); }}>
+              <button
+                type="button"
+                className={listStyles.bulkBtn}
+                aria-label={`Message ${selected.size} selected ${selected.size===1?'employee':'employees'}`}
+                onClick={() => { window.nuToast?.('Message sent', { msg: `Message drafted to ${selected.size} ${selected.size===1?'person':'people'}.`, type:'ok' }); }}
+              >
                 <Mail size={14} aria-hidden />
                 Message
               </button>
-              <button type="button" className={listStyles.bulkBtn} onClick={() => { window.nuToast?.('Moved to new team', { msg: `${selected.size} ${selected.size===1?'employee':'employees'} reassigned.`, type:'ok' }); setSelected(new Set()); }}>
+              <button
+                type="button"
+                className={listStyles.bulkBtn}
+                aria-label={`Move ${selected.size} selected ${selected.size===1?'employee':'employees'} to new team`}
+                onClick={() => { window.nuToast?.('Moved to new team', { msg: `${selected.size} ${selected.size===1?'employee':'employees'} reassigned.`, type:'ok' }); setSelected(new Set()); }}
+              >
                 <FolderInput size={14} aria-hidden />
                 Move team
               </button>
-              <button type="button" className={listStyles.bulkBtn} onClick={() => { window.nuToast?.('Export started', { msg: `Preparing CSV for ${selected.size} ${selected.size===1?'record':'records'}…`, type:'info' }); }}>
+              <button
+                type="button"
+                className={listStyles.bulkBtn}
+                aria-label={`Export ${selected.size} selected ${selected.size===1?'record':'records'}`}
+                onClick={() => { window.nuToast?.('Export started', { msg: `Preparing CSV for ${selected.size} ${selected.size===1?'record':'records'}…`, type:'info' }); }}
+              >
                 <Download size={14} aria-hidden />
                 Export
               </button>
-              <button type="button" className={listStyles.bulkBtn} onClick={() => { window.nuToast?.('Offboarding initiated', { msg: `${selected.size} ${selected.size===1?'employee':'employees'} queued for offboarding.`, type:'warn' }); setSelected(new Set()); }}>
+              <button
+                type="button"
+                className={listStyles.bulkBtn}
+                aria-label={`Offboard ${selected.size} selected ${selected.size===1?'employee':'employees'}`}
+                onClick={() => { window.nuToast?.('Offboarding initiated', { msg: `${selected.size} ${selected.size===1?'employee':'employees'} queued for offboarding.`, type:'warn' }); setSelected(new Set()); }}
+              >
                 <UserX size={14} aria-hidden />
                 Offboard
               </button>
@@ -490,6 +511,7 @@ export default function EmployeesPage() {
                     onClick={() => setDeptFilter(d)}
                   >
                     {d}
+                    {deptFilter === d && <Check size={14} className="ml-1 inline" aria-hidden />}
                     {d !== 'All' && <span className={listStyles.chipN}>{deptCounts[d] ?? 0}</span>}
                   </button>
                 ))}
@@ -500,7 +522,7 @@ export default function EmployeesPage() {
                   size="sm"
                   leftIcon={<ArrowUpDown size={15} aria-hidden />}
                   onClick={cycleSort}
-                  aria-label={`Sort by ${sortBy} ${sortDirection}`}
+                  aria-label={`Sort employees. Currently sorting by ${sortBy} in ${sortDirection === 'DESC' ? 'descending' : 'ascending'} order. Click to cycle to next sort field.`}
                 >
                   Sort
                 </Button>
@@ -553,6 +575,15 @@ export default function EmployeesPage() {
                         key={employee.id}
                         className={`${listStyles.row} ${isSelected ? listStyles.rowSelected : ''}`}
                         onClick={() => setOpenEmployee(employee)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            setOpenEmployee(employee);
+                          }
+                        }}
+                        tabIndex={0}
+                        role="button"
+                        aria-label={`View ${employee.fullName} profile`}
                       >
                         <td onClick={(e) => e.stopPropagation()}>
                           <input
@@ -563,14 +594,19 @@ export default function EmployeesPage() {
                             aria-label={`Select ${employee.fullName}`}
                           />
                         </td>
-                        <td>
-                          <div className={listStyles.cellUser}>
+                        <td onClick={(e) => e.stopPropagation()}>
+                          <button
+                            type="button"
+                            className={listStyles.cellUser}
+                            onClick={() => setOpenEmployee(employee)}
+                            aria-label={`View ${employee.fullName} profile`}
+                          >
                             <EmployeeAvatar name={employee.fullName} size={38} src={employee.profilePhotoUrl} />
                             <div>
                               <div className={listStyles.cellName}>{employee.fullName}</div>
                               <div className={listStyles.cellSub}>{employee.workEmail}</div>
                             </div>
-                          </div>
+                          </button>
                         </td>
                         <td className="font-medium text-[var(--text-1)]">{employee.designation ?? '—'}</td>
                         <td>{employee.departmentName ?? '—'}</td>

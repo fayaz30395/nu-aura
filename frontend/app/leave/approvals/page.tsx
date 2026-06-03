@@ -35,6 +35,17 @@ function LeaveApprovalsPageContent() {
     }
   }, [hasHydrated, isAuthenticated, router]);
 
+  // Call all hooks unconditionally at the top, before any conditional renders
+  const {
+    data: pendingData,
+    isError: isPendingError,
+    fetchStatus: pendingFetchStatus
+  } = useLeaveRequestsByStatus('PENDING', 0, 50);
+  const {data: leaveTypes = []} = useActiveLeaveTypes();
+  const {data: employeeData} = useEmployees(0, 500);
+  const approveLeaveRequest = useApproveLeaveRequest();
+  const rejectLeaveRequest = useRejectLeaveRequest();
+
   const authShell = (message: string) => (
     <div className="page-shell-centered fade-slide-up auth-delay-20">
       <Card className="card-aura fade-slide-up auth-delay-40 float-subtle">
@@ -67,15 +78,6 @@ function LeaveApprovalsPageContent() {
       </AppLayout>
     );
   }
-  const {
-    data: pendingData,
-    isError: isPendingError,
-    fetchStatus: pendingFetchStatus
-  } = useLeaveRequestsByStatus('PENDING', 0, 50);
-  const {data: leaveTypes = []} = useActiveLeaveTypes();
-  const {data: employeeData} = useEmployees(0, 500);
-  const approveLeaveRequest = useApproveLeaveRequest();
-  const rejectLeaveRequest = useRejectLeaveRequest();
   const [error, setError] = useState<string | null>(null);
   const [_processing, _setProcessing] = useState<string | null>(null);
   const [showApproveConfirm, setShowApproveConfirm] = useState(false);

@@ -30,6 +30,7 @@ const PAD = 3;
 /**
  * Aura Sparkline. Pure SVG, no animation (too small to benefit). Stroke uses
  * vectorEffect="non-scaling-stroke" so the line stays crisp at any width.
+ * Token-driven: color prop must be a valid CSS var (--chart-1 through --chart-5).
  */
 export function Sparkline({
   data,
@@ -40,6 +41,8 @@ export function Sparkline({
   className,
 }: SparklineProps) {
   const gid = useId().replace(/:/g, '');
+  // Validate color token is defined; fallback to --chart-1 if undefined.
+  const safeColor = color || 'var(--chart-1)';
 
   const {line, area} = useMemo(() => {
     if (data.length < 2) {
@@ -75,15 +78,15 @@ export function Sparkline({
     >
       <defs>
         <linearGradient id={`spark-${gid}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={color} stopOpacity="0.22" />
-          <stop offset="100%" stopColor={color} stopOpacity="0" />
+          <stop offset="0%" stopColor={safeColor} stopOpacity="0.22" />
+          <stop offset="100%" stopColor={safeColor} stopOpacity="0" />
         </linearGradient>
       </defs>
       {fill && <path d={area} fill={`url(#spark-${gid})`} />}
       <path
         d={line}
         fill="none"
-        stroke={color}
+        stroke={safeColor}
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"

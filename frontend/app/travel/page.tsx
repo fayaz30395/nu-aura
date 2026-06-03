@@ -45,6 +45,15 @@ export default function TravelPage() {
   const [typeFilter, setTypeFilter] = useState<TravelType | 'ALL'>('ALL');
   const [currentPage, setCurrentPage] = useState(0);
 
+  // Call hook unconditionally at the top, before any conditional renders
+  const filters = {
+    ...(statusFilter !== 'ALL' && {status: statusFilter}),
+    ...(typeFilter !== 'ALL' && {travelType: typeFilter}),
+    ...(searchTerm && {search: searchTerm}),
+  };
+
+  const {data, isLoading, error, refetch} = useTravelRequests(currentPage, 10, filters);
+
   useEffect(() => {
     if (!hasHydrated) return;
     if (!isAuthenticated) {
@@ -92,14 +101,6 @@ export default function TravelPage() {
       </AppLayout>
     );
   }
-
-  const filters = {
-    ...(statusFilter !== 'ALL' && {status: statusFilter}),
-    ...(typeFilter !== 'ALL' && {travelType: typeFilter}),
-    ...(searchTerm && {search: searchTerm}),
-  };
-
-  const {data, isLoading, error, refetch} = useTravelRequests(currentPage, 10, filters);
   const travelRequests = data?.content || [];
   const totalPages = data?.totalPages || 0;
   const totalElements = data?.totalElements || 0;

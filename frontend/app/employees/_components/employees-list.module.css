@@ -216,6 +216,22 @@
   align-items: center;
   gap: 11px;
   min-width: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  transition: color var(--t-fast, 120ms) var(--ease);
+}
+
+.cellUser:hover {
+  color: var(--accent);
+}
+
+.cellUser:focus-visible {
+  outline: none;
+  box-shadow: var(--sh-focus);
 }
 
 .cellName {

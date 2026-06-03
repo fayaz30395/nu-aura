@@ -421,15 +421,15 @@ export default function DashboardPage() {
     }
   };
 
-  // Subtle tone-tinted avatars per channel — no card boxes, just soft fills.
+  // Subtle tone-tinted avatars per channel — use semantic status tokens for light/dark sync
   const getNotificationToneClasses = (type: 'email' | 'drive' | 'calendar') => {
     switch (type) {
       case 'email':
-        return 'bg-danger-50 text-danger-700 dark:bg-danger-900/30 dark:text-danger-300';
+        return 'bg-[var(--err-bg)] text-[var(--err-fg)]';
       case 'drive':
-        return 'bg-warning-50 text-warning-700 dark:bg-warning-900/30 dark:text-warning-300';
+        return 'bg-[var(--warn-bg)] text-[var(--warn-fg)]';
       case 'calendar':
-        return 'bg-accent-50 text-accent-700 dark:bg-accent-900/30 dark:text-accent-300';
+        return 'bg-[var(--info-bg)] text-[var(--info-fg)]';
       default:
         return 'bg-[var(--bg-surface)] text-[var(--text-secondary)]';
     }
@@ -513,19 +513,19 @@ export default function DashboardPage() {
           {/* Header skeleton */}
           <div className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-end">
             <div className="space-y-2 max-w-2xl">
-              <Skeleton className="h-3 w-32 rounded"/>
-              <Skeleton className="h-9 w-3/4 rounded"/>
-              <Skeleton className="h-4 w-1/2 rounded"/>
+              <Skeleton className="h-3 w-32 rounded-aura-xs"/>
+              <Skeleton className="h-9 w-3/4 rounded-aura-sm"/>
+              <Skeleton className="h-4 w-1/2 rounded-aura-xs"/>
             </div>
-            <Skeleton className="h-10 w-32 rounded self-start sm:self-end"/>
+            <Skeleton className="h-10 w-32 rounded-aura-sm self-start sm:self-end"/>
           </div>
 
           {/* Stats skeleton — borderly, no cards */}
           <div className="grid grid-cols-2 sm:grid-cols-4 border-y border-[var(--border-subtle)] divide-x divide-[var(--border-subtle)]">
             {Array.from({length: 4}).map((_, i) => (
               <div key={i} className="px-5 py-6 sm:px-7 sm:py-8 first:pl-0 last:pr-0">
-                <Skeleton className="h-3 w-24 rounded"/>
-                <Skeleton className="mt-3 h-9 w-20 rounded"/>
+                <Skeleton className="h-3 w-24 rounded-aura-xs"/>
+                <Skeleton className="mt-3 h-9 w-20 rounded-aura-xs"/>
               </div>
             ))}
           </div>
@@ -620,9 +620,9 @@ export default function DashboardPage() {
                 <span className="text-2xs font-medium uppercase tracking-wider">{item.label}</span>
               </div>
               <p
-                className={`mt-3 font-mono text-3xl sm:text-4xl tabular-nums tracking-tight ${
-                  item.tone === 'danger' ? 'text-danger-700 dark:text-danger-300'
-                    : item.tone === 'warning' ? 'text-warning-700 dark:text-warning-300'
+                className={`mt-3 font-mono text-3xl sm:text-4xl tabular-nums tracking-tight num ${
+                  item.tone === 'danger' ? 'text-[var(--err-fg)]'
+                    : item.tone === 'warning' ? 'text-[var(--warn-fg)]'
                       : 'text-[var(--text-heading)]'
                 }`}
               >
@@ -651,7 +651,7 @@ export default function DashboardPage() {
           <button
             key={action.href}
             onClick={() => router.push(action.href)}
-            className="group flex items-center gap-4 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-4 transition-all hover:border-[var(--border-main)] hover:shadow-[0_12px_30px_-12px_rgba(15,23,42,0.07)] active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 text-left"
+            className="group flex items-center gap-4 rounded-aura-lg border border-[var(--border-subtle)] bg-[var(--bg-card)] p-4 transition-all hover:border-[var(--border-main)] hover:shadow-[var(--sh-md)] hover:-translate-y-px active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 text-left"
           >
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[var(--bg-surface)] border border-[var(--border-subtle)] text-[var(--text-secondary)]">
               <action.icon className="h-4 w-4" aria-hidden="true"/>
@@ -759,7 +759,7 @@ export default function DashboardPage() {
         <ul className="divide-y divide-[var(--border-subtle)] border-y border-[var(--border-subtle)]">
           {birthdays.map((event, idx) => (
             <li key={`b-${idx}`} className="grid grid-cols-[auto_1fr_auto] items-center gap-4 py-4">
-              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-warning-50 text-warning-700 dark:bg-warning-900/30 dark:text-warning-300">
+              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--warn-bg)] text-[var(--warn-fg)]">
                 <Gift className="h-4 w-4" aria-hidden="true"/>
               </div>
               <div className="min-w-0">
@@ -771,7 +771,7 @@ export default function DashboardPage() {
           ))}
           {holidays.map((event, idx) => (
             <li key={`h-${idx}`} className="grid grid-cols-[auto_1fr_auto] items-center gap-4 py-4">
-              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-accent-50 text-accent-700 dark:bg-accent-900/30 dark:text-accent-300">
+              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--info-bg)] text-[var(--info-fg)]">
                 <Calendar className="h-4 w-4" aria-hidden="true"/>
               </div>
               <div className="min-w-0">
@@ -824,7 +824,7 @@ export default function DashboardPage() {
                     type="button"
                     onClick={() => handleNotificationClick(notification)}
                     aria-label={`Open ${notification.type} notification: ${notification.title}`}
-                    className="w-full grid grid-cols-[auto_1fr_auto] items-center gap-4 py-4 text-left transition-colors hover:bg-[var(--bg-surface)]/40 active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded"
+                    className="w-full grid grid-cols-[auto_1fr_auto] items-center gap-4 py-4 px-2 text-left transition-colors hover:bg-[var(--bg-surface)]/40 active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 rounded-aura-sm"
                   >
                     <div className={`flex h-9 w-9 items-center justify-center rounded-full ${getNotificationToneClasses(notification.type)}`}>
                       {getNotificationIcon(notification.type)}
@@ -901,7 +901,7 @@ export default function DashboardPage() {
                       onClick={() => router.push('/onboarding')}>
                 <span>Manage onboarding</span>
                 {activeOnboardingCount > 0 && (
-                  <span className="inline-flex items-center justify-center min-w-6 px-2 h-5 text-2xs font-semibold rounded-full bg-accent-100 text-accent-700 dark:bg-accent-900/40 dark:text-accent-300 font-mono tabular-nums">
+                  <span className="inline-flex items-center justify-center min-w-6 px-2 h-5 text-2xs font-semibold rounded-full bg-[var(--info-bg)] text-[var(--info-fg)] font-mono tabular-nums">
                     {activeOnboardingCount}
                   </span>
                 )}
@@ -918,8 +918,8 @@ export default function DashboardPage() {
       <div className="mx-auto w-full max-w-7xl px-6 py-8 space-y-10">
         {/* Inline analytics error banner — flat strip, not a card */}
         {analyticsUnavailable && (
-          <div role="alert" className="flex items-center gap-4 rounded-xl border border-warning-200 bg-warning-50/40 dark:border-warning-700/40 dark:bg-warning-950/30 px-5 py-4">
-            <AlertCircle className="h-4 w-4 shrink-0 text-warning-700 dark:text-warning-300" aria-hidden="true"/>
+          <div role="alert" className="flex items-center gap-4 rounded-aura-lg border border-[var(--warn-bd)] bg-[var(--warn-bg)] px-5 py-4">
+            <AlertCircle className="h-4 w-4 shrink-0 text-[var(--warn-fg)]" aria-hidden="true"/>
             <p className="text-sm text-[var(--text-primary)] flex-1">
               {error ? `Analytics temporarily unavailable: ${error}` : 'Analytics data could not be loaded.'}
               {' '}Some metrics may show default values.
@@ -934,8 +934,8 @@ export default function DashboardPage() {
         {/* Aura greeting head — greeting + date + Export / New Hire actions */}
         <motion.header
           initial={{opacity: 0, y: 4}}
-          animate={{opacity: 1, y: 0}}
-          transition={{duration: 0.4, ease: EASE}}
+          animate="visible"
+          variants={{visible: {opacity: 1, y: 0, transition: {duration: 0.4, ease: EASE}}}}
           className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between"
         >
           <div className="min-w-0 space-y-1.5">
@@ -963,7 +963,12 @@ export default function DashboardPage() {
         <motion.section
           initial="hidden"
           animate="visible"
-          variants={{visible: {transition: {staggerChildren: 0.06, delayChildren: 0.08}}}}
+          variants={{
+            visible: {
+              transition: {staggerChildren: 0.06, delayChildren: 0.08}
+            },
+            hidden: {}
+          }}
           aria-label="Today at a glance"
           className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4"
         >
@@ -1021,7 +1026,10 @@ export default function DashboardPage() {
           ].map((kpi) => (
             <motion.div
               key={kpi.key}
-              variants={{hidden: {opacity: 0, y: 6}, visible: {opacity: 1, y: 0, transition: {duration: 0.4, ease: EASE}}}}
+              variants={{
+                hidden: {opacity: 0, y: 6},
+                visible: {opacity: 1, y: 0, transition: {duration: 0.4, ease: EASE}}
+              }}
             >
               <Card padding="md" className="h-full">
                 <Stat
@@ -1031,7 +1039,7 @@ export default function DashboardPage() {
                   iconTone={kpi.iconTone}
                   delta={kpi.delta}
                   deltaDir={kpi.deltaDir}
-                  spark={<Sparkline data={kpi.spark} color={kpi.sparkColor} height={34} ariaLabel={`${kpi.label} trend`}/>}
+                  spark={<Sparkline data={kpi.spark} color={kpi.sparkColor} height={34} ariaLabel={`${kpi.label} trend over time`}/>}
                   foot={kpi.foot}
                 />
               </Card>
@@ -1042,8 +1050,8 @@ export default function DashboardPage() {
         {/* Headcount growth (area + range) + Attendance donut */}
         <motion.section
           initial={{opacity: 0, y: 6}}
-          animate={{opacity: 1, y: 0}}
-          transition={{duration: 0.45, ease: EASE, delay: 0.16}}
+          animate="visible"
+          variants={{visible: {opacity: 1, y: 0, transition: {duration: 0.45, ease: EASE, delay: 0.16}}}}
           className="grid gap-4 xl:grid-cols-[2fr_1fr]"
         >
           <Card padding="md" className="min-w-0">
@@ -1071,7 +1079,7 @@ export default function DashboardPage() {
                 labels={headcountLabels}
                 height={252}
                 color="var(--chart-1)"
-                ariaLabel="Headcount growth trend"
+                ariaLabel={`Headcount growth trend: starting at ${headcountValues[0]}, ending at ${headcountValues[headcountValues.length - 1]}, over ${rangeWindow} months`}
               />
             ) : (
               <div className="flex h-[252px] items-center justify-center text-sm text-[var(--text-3)]">
@@ -1083,11 +1091,11 @@ export default function DashboardPage() {
           <Card padding="md" className="min-w-0">
             <div className="mb-2 flex items-center justify-between gap-4">
               <div>
-                <h2 className="text-[15px] font-bold text-[var(--text-1)]">Attendance</h2>
+                <h2 className="text-[15px] font-bold text-[var(--text-1)]" role="heading" aria-level={2}>Attendance</h2>
                 <p className="text-xs text-[var(--text-3)]">Today, live</p>
               </div>
               <span className="inline-flex items-center gap-1.5 rounded-aura-full bg-[var(--ok-bg)] px-2 py-0.5 text-xs font-semibold text-[var(--ok-fg)]">
-                <span className="h-1.5 w-1.5 rounded-full bg-[var(--ok-fg)]" aria-hidden="true"/>
+                <span className="h-2 w-2 rounded-full bg-[var(--ok-fg)]" aria-hidden="true"/>
                 Live
               </span>
             </div>
@@ -1099,7 +1107,7 @@ export default function DashboardPage() {
                     size={160}
                     thickness={24}
                     center={{value: `${presentPct}%`, label: 'present'}}
-                    ariaLabel={`${presentPct}% present today`}
+                    ariaLabel={`Attendance distribution today: ${presentPct}% present (${att.present}), ${Math.round((att.onLeave / donutTotal) * 100)}% on leave (${att.onLeave}), ${Math.round((att.absent / donutTotal) * 100)}% absent (${att.absent})`}
                   />
                 </div>
                 <ul className="mt-2 flex flex-col gap-2.5">
@@ -1130,13 +1138,13 @@ export default function DashboardPage() {
         {/* Attendance strip — flattened from a card with side-stripe to a quiet row */}
         <motion.section
           initial={{opacity: 0, y: 6}}
-          animate={{opacity: 1, y: 0}}
-          transition={{duration: 0.45, ease: EASE, delay: 0.2}}
+          animate="visible"
+          variants={{visible: {opacity: 1, y: 0, transition: {duration: 0.45, ease: EASE, delay: 0.2}}}}
           aria-label="Today's attendance"
-          className="grid gap-4 lg:grid-cols-[1fr_auto] lg:items-center rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-card)] px-5 py-5 sm:px-6"
+          className="grid gap-4 lg:grid-cols-[1fr_auto] lg:items-center rounded-aura-lg border border-[var(--border-subtle)] bg-[var(--bg-card)] px-5 py-5 sm:px-6"
         >
           <div className="flex items-start gap-4 min-w-0">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent-50 text-accent-700 dark:bg-accent-900/30 dark:text-accent-300">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-aura-lg bg-[var(--info-bg)] text-[var(--info-fg)]">
               <Clock className="h-5 w-5" aria-hidden="true"/>
             </div>
             <div className="min-w-0 flex-1">
@@ -1375,7 +1383,7 @@ export default function DashboardPage() {
           </ModalHeader>
           <ModalBody className="space-y-4">
             <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-danger-50 text-danger-700 dark:bg-danger-900/30 dark:text-danger-300">
+              <div className="w-10 h-10 rounded-aura-lg flex items-center justify-center bg-[var(--err-bg)] text-[var(--err-fg)]">
                 <Mail className="h-5 w-5"/>
               </div>
               <div>
@@ -1419,7 +1427,7 @@ export default function DashboardPage() {
         <Modal isOpen={!!(selectedFile && selectedFile.driveFile)} onClose={() => setSelectedFile(null)} size="xl">
           <ModalHeader onClose={() => setSelectedFile(null)}>
             <div className="flex items-center gap-4 min-w-0">
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 bg-warning-50 text-warning-700 dark:bg-warning-900/30 dark:text-warning-300">
+              <div className="w-10 h-10 rounded-aura-lg flex items-center justify-center flex-shrink-0 bg-[var(--warn-bg)] text-[var(--warn-fg)]">
                 <HardDrive className="h-5 w-5"/>
               </div>
               <div className="min-w-0">

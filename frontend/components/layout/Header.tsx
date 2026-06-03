@@ -181,15 +181,21 @@ const Header: React.FC<HeaderProps> = ({
             >
               <Bell className="h-5 w-5"/>
               {totalUnreadCount > 0 && (
-                <span className="absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center">
+                <span
+                  className="absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center"
+                  aria-label={`${totalUnreadCount} unread notifications`}
+                >
                   <span
                     data-testid="notification-count"
-                    className="relative inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-[var(--accent-primary)] px-1 text-2xs font-semibold text-white">
+                    className="relative inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-[var(--accent-primary)] px-1 text-2xs font-semibold text-white"
+                    aria-hidden="true"
+                  >
                     {totalUnreadCount > 9 ? '9+' : totalUnreadCount}
                   </span>
                 </span>
               )}
               <span
+                aria-label={`WebSocket status: ${isWebSocketConnected ? 'connected' : 'disconnected'}`}
                 className={cn(
                   'pointer-events-none absolute -bottom-1.5 -right-1.5 h-1.5 w-1.5 rounded-full transition-opacity duration-300',
                   isWebSocketConnected ? 'bg-emerald-400 opacity-90' : 'bg-transparent opacity-0'

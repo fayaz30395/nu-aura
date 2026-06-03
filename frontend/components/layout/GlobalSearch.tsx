@@ -654,11 +654,14 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({className, onSelect, 
         key={`nav-${item.id}`}
         onClick={() => handleSelectHref(item.href)}
         onMouseEnter={() => setSelectedIndex(globalIndex)}
+        role="option"
+        aria-selected={globalIndex === selectedIndex}
+        aria-label={`${item.title}, ${item.description}`}
         className={cn(
-          'w-full flex items-center gap-2 px-4 py-2.5 text-left transition-colors',
+          'w-full flex items-center gap-2 px-4 py-2.5 text-left transition-colors border-l-2',
           globalIndex === selectedIndex
-            ? 'bg-accent-50 dark:bg-accent-950/30'
-            : 'hover:bg-surface-50 dark:hover:bg-surface-800/50'
+            ? 'bg-accent-50 dark:bg-accent-950/30 border-accent-500 dark:border-accent-400'
+            : 'hover:bg-surface-50 dark:hover:bg-surface-800/50 border-transparent'
         )}
       >
         <div className={cn(
@@ -696,11 +699,14 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({className, onSelect, 
         key={`api-${result.type}-${result.id}`}
         onClick={() => handleSelectHref(result.href)}
         onMouseEnter={() => setSelectedIndex(globalIndex)}
+        role="option"
+        aria-selected={globalIndex === selectedIndex}
+        aria-label={`${result.title}, ${result.subtitle}`}
         className={cn(
-          'w-full flex items-center gap-2 px-4 py-2.5 text-left transition-colors',
+          'w-full flex items-center gap-2 px-4 py-2.5 text-left transition-colors border-l-2',
           globalIndex === selectedIndex
-            ? 'bg-accent-50 dark:bg-accent-950/30'
-            : 'hover:bg-surface-50 dark:hover:bg-surface-800/50'
+            ? 'bg-accent-50 dark:bg-accent-950/30 border-accent-500 dark:border-accent-400'
+            : 'hover:bg-surface-50 dark:hover:bg-surface-800/50 border-transparent'
         )}
       >
         <div className={cn(
@@ -793,7 +799,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({className, onSelect, 
           }}
           onFocus={() => setIsOpen(true)}
           onKeyDown={handleKeyDown}
-          className="w-full bg-transparent pl-10 pr-20 py-2.5 text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)]"
+          className="w-full bg-transparent pl-10 pr-20 py-2.5 text-sm text-[var(--text-primary)] placeholder-[var(--text-secondary)]"
         />
         <div className="absolute right-3 flex items-center gap-1 text-[var(--text-muted)]">
           {isSearching && <Loader2 className="h-3.5 w-3.5 animate-spin text-accent-500"/>}
@@ -808,6 +814,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({className, onSelect, 
       {/* Search Results Dropdown */}
       {isOpen && (
         <div
+          role="listbox"
           className="absolute top-full left-0 mt-2 w-full sm:w-96 lg:w-[28rem] max-w-[calc(100vw-2rem)] max-h-[60vh] sm:max-h-[70vh] overflow-y-auto bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-700 shadow-[var(--shadow-elevated)] shadow-surface-900/10 dark:shadow-surface-950/50 z-50">
           {/* Header */}
           <div className="row-between px-4 py-4 border-b border-surface-100 dark:border-surface-800">

@@ -100,11 +100,11 @@ export interface BulkActionBarProps {
 
 const variantStyles: Record<string, string> = {
   primary:
-    'bg-accent-700 hover:bg-accent-800 text-white focus-visible:ring-accent-700',
+    'bg-[var(--accent-primary)] hover:bg-[var(--accent-primary-hover)] text-white focus-visible:ring-[var(--accent-primary)]',
   danger:
-    'bg-danger-600 hover:bg-danger-700 text-white focus-visible:ring-danger-600',
+    'bg-[var(--err-bg)] hover:bg-[color-mix(in_srgb,var(--err-bg)_85%,var(--text-1))] text-[var(--err-fg)] focus-visible:ring-[var(--err-bg)]',
   secondary:
-    'border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] focus-visible:ring-accent-700',
+    'border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] focus-visible:ring-[var(--accent-primary)]',
 };
 
 export function BulkActionBar({
@@ -125,7 +125,12 @@ export function BulkActionBar({
       role="toolbar"
       aria-label="Bulk actions"
     >
-      <span className="text-sm font-medium text-accent-800 dark:text-accent-300">
+      <span
+        className="text-sm font-medium text-accent-800 dark:text-accent-300"
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+      >
         {selectedCount} of {totalCount} selected
       </span>
 
@@ -156,7 +161,7 @@ export function BulkActionBar({
             'min-h-[36px] min-w-[36px]',
             'press-scale',
             'text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-700 focus-visible:ring-offset-2'
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2'
           )}
           aria-label="Clear selection"
         >
@@ -211,7 +216,7 @@ function ColumnVisibilityToggle<T>({
           'press-scale',
           'border border-[var(--border-main)] bg-[var(--bg-surface)]',
           'text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]',
-          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-700 focus-visible:ring-offset-2'
+          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2'
         )}
         aria-haspopup="true"
         aria-expanded={open}
@@ -221,7 +226,7 @@ function ColumnVisibilityToggle<T>({
         Columns
         <ChevronDown
           className={cn(
-            'h-3.5 w-3.5 transition-transform duration-[var(--motion-base)] ease-[var(--ease-out-expo)]',
+            'h-3.5 w-3.5 transition-transform duration-[var(--t-base)] ease-[var(--ease)]',
             open && 'rotate-180'
           )}
         />
@@ -254,7 +259,7 @@ function ColumnVisibilityToggle<T>({
                   onClick={() => onToggle(col.key)}
                   className={cn(
                     'flex w-full items-center gap-2 px-4 py-2 text-sm transition-colors',
-                    'text-[var(--text-primary)] hover:bg-accent-50 dark:hover:bg-accent-900/20',
+                    'text-[var(--text-primary)] hover:bg-[var(--accent-50)]',
                     'min-h-[40px]'
                   )}
                 >
@@ -262,7 +267,7 @@ function ColumnVisibilityToggle<T>({
                     className={cn(
                       'flex h-4 w-4 shrink-0 items-center justify-center rounded border transition-colors',
                       isVisible
-                        ? 'border-accent-700 bg-accent-700 text-white'
+                        ? 'border-[var(--accent-primary)] bg-[var(--accent-primary)] text-white'
                         : 'border-[var(--border-main)]'
                     )}
                   >
@@ -452,9 +457,9 @@ function DataTable<T>({
       );
     }
     return sortDirection === 'asc' ? (
-      <ChevronUp key="asc" className="h-3.5 w-3.5 text-accent-700 motion-scale-in"/>
+      <ChevronUp key="asc" className="h-3.5 w-3.5 text-[var(--accent-primary)] motion-scale-in"/>
     ) : (
-      <ChevronDown key="desc" className="h-3.5 w-3.5 text-accent-700 motion-scale-in"/>
+      <ChevronDown key="desc" className="h-3.5 w-3.5 text-[var(--accent-primary)] motion-scale-in"/>
     );
   };
 
@@ -559,7 +564,7 @@ function DataTable<T>({
                       if (el) el.indeterminate = someSelected;
                     }}
                     onChange={handleSelectAll}
-                    className="h-4 w-4 rounded border-surface-300 text-accent-700 focus-visible:ring-accent-700"
+                    className="h-4 w-4 rounded border-surface-300 text-[var(--accent-primary)] focus-visible:ring-[var(--accent-primary)]"
                     aria-label="Select all rows"
                   />
                 </div>
@@ -616,7 +621,7 @@ function DataTable<T>({
                 className={cn(
                   'group/row border-b border-[var(--border-main)] transition-colors duration-[var(--motion-fast)]',
                   'hover:bg-[var(--bg-secondary)]',
-                  isSelected && 'bg-accent-50 dark:bg-accent-900/10'
+                  isSelected && 'bg-[var(--accent-50)]'
                 )}
               >
                 {/* Selection checkbox */}
@@ -627,7 +632,7 @@ function DataTable<T>({
                         type="checkbox"
                         checked={isSelected}
                         onChange={() => handleSelectRow(key)}
-                        className="h-4 w-4 rounded border-surface-300 text-accent-700 focus-visible:ring-accent-700"
+                        className="h-4 w-4 rounded border-surface-300 text-[var(--accent-primary)] focus-visible:ring-[var(--accent-primary)]"
                         aria-label={`Select row ${key}`}
                       />
                     </div>
@@ -691,7 +696,7 @@ function DataTable<T>({
                   className={cn(
                     'text-sm rounded-md px-2 py-1.5',
                     'border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)]',
-                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-700'
+                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]'
                   )}
                   aria-label="Rows per page"
                 >
@@ -716,7 +721,7 @@ function DataTable<T>({
                     'min-h-[44px] min-w-[44px] flex items-center justify-center',
                     'press-scale',
                     'hover:bg-[var(--bg-secondary)] disabled:opacity-40 disabled:cursor-not-allowed',
-                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-700 focus-visible:ring-offset-2'
+                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2'
                   )}
                   aria-label="First page"
                 >
@@ -731,7 +736,7 @@ function DataTable<T>({
                     'min-h-[44px] min-w-[44px] flex items-center justify-center',
                     'press-scale',
                     'hover:bg-[var(--bg-secondary)] disabled:opacity-40 disabled:cursor-not-allowed',
-                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-700 focus-visible:ring-offset-2'
+                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2'
                   )}
                   aria-label="Previous page"
                 >
@@ -751,7 +756,7 @@ function DataTable<T>({
                     'min-h-[44px] min-w-[44px] flex items-center justify-center',
                     'press-scale',
                     'hover:bg-[var(--bg-secondary)] disabled:opacity-40 disabled:cursor-not-allowed',
-                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-700 focus-visible:ring-offset-2'
+                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2'
                   )}
                   aria-label="Next page"
                 >
@@ -766,7 +771,7 @@ function DataTable<T>({
                     'min-h-[44px] min-w-[44px] flex items-center justify-center',
                     'press-scale',
                     'hover:bg-[var(--bg-secondary)] disabled:opacity-40 disabled:cursor-not-allowed',
-                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-700 focus-visible:ring-offset-2'
+                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2'
                   )}
                   aria-label="Last page"
                 >

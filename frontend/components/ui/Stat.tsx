@@ -47,10 +47,10 @@ export interface StatProps {
 /** Tailwind class applied to the value text per tone. */
 const toneToValueColor: Record<StatTone, string> = {
   default: 'text-[var(--text-primary)]',
-  accent: 'text-accent-700 dark:text-accent-400',
-  success: 'text-success-700 dark:text-success-400',
-  warning: 'text-warning-700 dark:text-warning-400',
-  danger: 'text-danger-700 dark:text-danger-400',
+  accent: 'text-[var(--accent-primary)]',
+  success: 'text-[var(--ok-fg)]',
+  warning: 'text-[var(--warn-fg)]',
+  danger: 'text-[var(--err-fg)]',
   muted: 'text-[var(--text-secondary)]',
 };
 
@@ -124,6 +124,7 @@ export function Stat({
                 'inline-grid h-[38px] w-[38px] place-items-center rounded-aura-lg',
                 iconToneClass[iconTone]
               )}
+              aria-hidden="true"
             >
               {icon}
             </span>
@@ -136,6 +137,7 @@ export function Stat({
                 'tnum inline-flex items-center gap-1 rounded-aura-sm px-1.5 py-0.5 text-xs font-bold',
                 deltaDirClass[deltaDir]
               )}
+              aria-label={`Delta: ${delta}`}
             >
               <Delta className="h-3 w-3" aria-hidden />
               {delta}

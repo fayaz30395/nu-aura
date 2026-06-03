@@ -9,7 +9,7 @@
  * gated by prefers-reduced-motion.
  */
 
-import React, {useId, useMemo, useState} from 'react';
+import React, {useCallback, useId, useMemo, useRef, useState} from 'react';
 import {useReducedMotionSafe} from '@/lib/animation';
 
 export interface AreaChartProps {
@@ -58,6 +58,7 @@ export function AreaChart({
   const [hover, setHover] = useState<number | null>(null);
   const gid = useId().replace(/:/g, '');
   const {prefersReduced} = useReducedMotionSafe();
+  const lastRender = useRef<number>(0);
 
   const iw = VIEW_W - PAD_L - PAD_R;
   const ih = height - PAD_T - PAD_B;
@@ -83,20 +84,30 @@ export function AreaChart({
     return {X, Y, line, area, gridVals};
   }, [data, ih, iw, ticks]);
 
+  const handleMove = useCallback(
+    (e: React.MouseEvent<SVGSVGElement>) => {
+      const now = performance.now();
+      // Throttle to 60 FPS (16ms) to prevent INP spikes on hover.
+      if (now - lastRender.current < 16) {
+        return;
+      }
+      lastRender.current = now;
+
+      const r = e.currentTarget.getBoundingClientRect();
+      const x = ((e.clientX - r.left) / r.width) * VIEW_W;
+      const i = Math.round(((x - PAD_L) / iw) * (data.length - 1));
+      if (i >= 0 && i < data.length) {
+        setHover(i);
+      }
+    },
+    [data.length, iw],
+  );
+
   if (!geom) {
     return null;
   }
 
   const {X, Y, line, area, gridVals} = geom;
-
-  const handleMove = (e: React.MouseEvent<SVGSVGElement>) => {
-    const r = e.currentTarget.getBoundingClientRect();
-    const x = ((e.clientX - r.left) / r.width) * VIEW_W;
-    const i = Math.round(((x - PAD_L) / iw) * (data.length - 1));
-    if (i >= 0 && i < data.length) {
-      setHover(i);
-    }
-  };
 
   return (
     <svg

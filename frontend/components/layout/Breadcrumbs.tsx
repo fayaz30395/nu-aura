@@ -35,7 +35,7 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
         'flex items-center gap-1.5 text-2xs font-medium uppercase tracking-[0.12em] text-[var(--text-muted)]',
         className,
       )}
-      aria-label="breadcrumb"
+      aria-label="Breadcrumbs"
     >
       {items.length > 0 && (
         <>

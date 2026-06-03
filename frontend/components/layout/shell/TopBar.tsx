@@ -12,7 +12,7 @@
  * token-driven. Marked client because it owns dropdown open state.
  */
 
-import React, {useEffect, useState} from 'react';
+import React, {memo, useCallback, useEffect, useMemo, useState} from 'react';
 import Link from 'next/link';
 import {Bell, ChevronRight, Menu, PanelLeft, Search} from 'lucide-react';
 import {cn} from '@/lib/utils';
@@ -41,7 +41,7 @@ export interface TopBarProps {
   onLogout?: () => void;
 }
 
-export function TopBar({
+function TopBarContent({
                          breadcrumbs = [],
                          onTogglePanel,
                          onMobileMenu,
@@ -60,7 +60,11 @@ export function TopBar({
   const {hasPermission, isReady} = usePermissions();
   const canReadNotifications = isReady && hasPermission(Permissions.NOTIFICATION_VIEW);
   const {data: persistedUnread = 0} = useUnreadNotificationCount(canReadNotifications);
-  const unreadCount = Math.max(wsUnread, persistedUnread);
+  const unreadCount = useMemo(() => Math.max(wsUnread, persistedUnread), [wsUnread, persistedUnread]);
+
+  // Memoize callbacks to prevent child re-renders
+  const handleNotificationClose = useCallback(() => setIsNotificationsOpen(false), []);
+  const handleUserMenuClose = useCallback(() => setIsUserMenuOpen(false), []);
 
   // Close popovers on outside click (mirrors the legacy Header behavior).
   useEffect(() => {
@@ -186,7 +190,7 @@ export function TopBar({
         </button>
         <NotificationDropdown
           isOpen={isNotificationsOpen}
-          onClose={() => setIsNotificationsOpen(false)}
+          onClose={handleNotificationClose}
         />
       </div>
 
@@ -197,7 +201,7 @@ export function TopBar({
       <UserMenu
         isOpen={isUserMenuOpen}
         onToggle={() => setIsUserMenuOpen((v) => !v)}
-        onClose={() => setIsUserMenuOpen(false)}
+        onClose={handleUserMenuClose}
         userName={userName}
         userAvatar={userAvatarUrl}
         userRole={userRole}
@@ -208,3 +212,8 @@ export function TopBar({
     </header>
   );
 }
+
+// Memoize TopBar to prevent re-renders from parent state changes
+// Export both the memoized component and the name for backward compatibility
+export const TopBar = memo(TopBarContent);
+TopBar.displayName = 'TopBar';

@@ -63,12 +63,16 @@ export function Donut({
   const circ = 2 * Math.PI * r;
 
   let acc = 0;
+  // Stagger animation delays: for large donuts (8+ segments), reduce delay to avoid
+  // long total animation time. For above-the-fold donuts, keeping animation brief
+  // helps FCP/LCP. Reduce from 90ms to 20ms per segment.
+  const delayPerSegment = data.length > 8 ? 20 : 90;
   const segments = data.map((d, i) => {
     const frac = d.value / total;
     const dash = frac * circ;
     const offset = -acc * circ;
     acc += frac;
-    return {key: i, color: d.color, dash, offset, delay: i * 90};
+    return {key: i, color: d.color, dash, offset, delay: i * delayPerSegment};
   });
 
   return (

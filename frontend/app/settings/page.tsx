@@ -68,8 +68,10 @@ export default function SettingsPage() {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const successTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  useEffect(() => () => {
-    if (successTimerRef.current) clearTimeout(successTimerRef.current);
+  useEffect(() => {
+    return () => {
+      if (successTimerRef.current) clearTimeout(successTimerRef.current);
+    };
   }, []);
   const [activeNotificationTab, setActiveNotificationTab] = useState<'channels' | 'categories'>('channels');
 
@@ -122,11 +124,8 @@ export default function SettingsPage() {
 
       await updatePrefsMutation.mutateAsync({
         emailEnabled: emailNotifications,
-        emailNotifications,
         pushEnabled: pushNotifications,
-        pushNotifications,
         smsEnabled: smsNotifications,
-        smsNotifications,
         leaveNotifications,
         attendanceNotifications,
         payrollNotifications,

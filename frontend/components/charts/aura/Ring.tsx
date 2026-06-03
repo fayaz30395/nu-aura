@@ -6,6 +6,8 @@
  * Token-driven: track uses --surface-sunken, progress uses caller color
  * (default --accent). Used for compact per-metric progress (attendance rates,
  * goal completion). Progress sweep animates on mount, reduced-motion safe.
+ * When 5+ rings are on the same page, delays are staggered to avoid animation
+ * batching overhead. Optional index prop for multi-ring pages.
  */
 
 import React, {useId} from 'react';
@@ -24,6 +26,8 @@ export interface RingProps {
   label?: React.ReactNode;
   /** Accessible label for the whole chart. */
   ariaLabel?: string;
+  /** Optional index for multi-ring pages: stagger animations to avoid batching overhead. */
+  ringIndex?: number;
   className?: string;
 }
 
@@ -40,6 +44,7 @@ export function Ring({
   color = 'var(--accent)',
   label,
   ariaLabel,
+  ringIndex = 0,
   className,
 }: RingProps) {
   const gid = useId().replace(/:/g, '');
@@ -50,6 +55,9 @@ export function Ring({
   const c = size / 2;
   const circ = 2 * Math.PI * r;
   const dash = (pct / 100) * circ;
+  // When 5+ rings appear on same page, stagger delays by ringIndex to reduce animation
+  // batching overhead. Apply delay only if ringIndex is provided.
+  const animationDelay = ringIndex ? `${ringIndex * 50}ms` : undefined;
 
   return (
     <svg
@@ -64,7 +72,7 @@ export function Ring({
       {!prefersReduced && (
         <style>{`
           #aura-ring-${gid} .aura-ring-fill {
-            animation: aura-ring-grow-${gid} var(--t-slow,280ms) var(--ease,cubic-bezier(.4,0,.2,1)) both;
+            animation: aura-ring-grow-${gid} var(--t-slow,280ms) var(--ease,cubic-bezier(.4,0,.2,1)) both ${animationDelay || '0ms'};
           }
           @keyframes aura-ring-grow-${gid} {
             from { stroke-dasharray: 0 ${circ.toFixed(2)}; }
