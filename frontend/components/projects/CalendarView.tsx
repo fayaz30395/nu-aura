@@ -547,19 +547,19 @@ export function CalendarView({
       {/* Legend */}
       <div className="flex flex-wrap gap-4 p-4 border-t border-[var(--border)] text-sm">
         <div className="flex items-center gap-2">
-          <div className="h-3 w-3 rounded" style={{backgroundColor: 'var(--accent)'}}/>
+          <div className="h-3 w-3 rounded bg-[var(--accent)]"/>
           <span className="text-[var(--text-2)]">Project</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="h-3 w-3 rounded" style={{backgroundColor: 'var(--accent-text)'}}/>
+          <div className="h-3 w-3 rounded bg-[var(--accent-text)]"/>
           <span className="text-[var(--text-2)]">Task</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="h-3 w-3 rounded" style={{backgroundColor: 'var(--warn-fg)'}}/>
+          <div className="h-3 w-3 rounded bg-[var(--warn-fg)]"/>
           <span className="text-[var(--text-2)]">Milestone</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="h-3 w-3 rounded" style={{backgroundColor: 'var(--err-fg)'}}/>
+          <div className="h-3 w-3 rounded bg-[var(--err-fg)]"/>
           <span className="text-[var(--text-2)]">Deadline</span>
         </div>
       </div>

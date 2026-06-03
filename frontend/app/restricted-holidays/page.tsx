@@ -24,6 +24,7 @@ import {
   XCircle,
 } from 'lucide-react';
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
+import {Input} from '@/components/ui/Input';
 import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
 import {StatusBadge} from '@/components/ui/StatusBadge';
 import {LEAVE_STATUS} from '@/lib/status/vocabulary';
@@ -868,7 +869,7 @@ function PolicyTab({policy, isLoading, year, onSave, isSaving}: PolicyTabProps) 
             </span>
           </div>
 
-          <input type="hidden" {...form.register('year', {valueAsNumber: true})} />
+          <Input type="hidden" {...form.register('year', {valueAsNumber: true})} />
 
           <button
             type="submit"

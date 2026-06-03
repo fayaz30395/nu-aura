@@ -29,7 +29,7 @@ export const hrmsProjectService = {
       const response = await apiClient.get<ProjectPage>('/projects', {params});
       return response.data;
     } catch (error) {
-      logger.error('Failed to list projects:', error);
+      logger.warn('Failed to list projects:', error);
       throw error;
     }
   },

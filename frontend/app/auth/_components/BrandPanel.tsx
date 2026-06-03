@@ -1,7 +1,7 @@
 'use client';
 
-import {BookOpen, Briefcase, ShieldCheck, Star, TrendingUp, Users} from 'lucide-react';
-import {Fragment, type ReactNode} from 'react';
+import {BookOpen, Briefcase, CheckCircle2, TrendingUp, Users} from 'lucide-react';
+import {type ReactNode} from 'react';
 import './brand-panel.css';
 
 interface AuthProduct {
@@ -29,26 +29,14 @@ const PRODUCTS: AuthProduct[] = [
   {id: 'fluence', name: 'NU-Fluence', tag: 'Knowledge', icon: <BookOpen size={18}/>, color: 'var(--prod-fluence)'},
 ];
 
-// Aura v2 login brand highlights — social-proof rows shown only on the login
-// surface (signup / reset keep the lean panel via showHighlights=false default).
-const BRAND_METRICS = [
-  {n: '1,248', l: 'employees managed'},
-  {n: '4-in-1', l: 'products, one login'},
-  {n: '99.98%', l: 'uptime SLA'},
+// Login-only cues. These are product affordances, not marketing proof claims.
+const ACCESS_STEPS = [
+  {title: 'Sign in once', detail: 'Use one identity for every people workflow.'},
+  {title: 'Open the right workspace', detail: 'HRMS, Hire, Grow, and Fluence stay grouped.'},
+  {title: 'Continue the task', detail: 'Navigation and permissions adapt after login.'},
 ];
 
-const TRUST_AVATARS = ['Priya Nair', 'Diego Santos', 'Mei Lin', 'Hana Kim'];
-
-const COMPLIANCE_BADGES = ['SOC 2 Type II', 'GDPR', 'ISO 27001'];
-
-function avatarInitials(name: string): string {
-  return name
-    .split(' ')
-    .map((part) => part[0])
-    .join('')
-    .slice(0, 2)
-    .toUpperCase();
-}
+const ACCESS_BADGES = ['Role-aware navigation', 'One workspace identity', 'Desktop and mobile ready'];
 
 interface BrandPanelProps {
   /** Headline rendered in the brand panel. Defaults to the login headline. */
@@ -56,9 +44,8 @@ interface BrandPanelProps {
   /** Supporting copy beneath the headline. */
   lede?: ReactNode;
   /**
-   * When true, render the Aura v2 login highlights (eyebrow, animated gradient
-   * headline accent, metrics, trust/rating/compliance rows, ambient orbs). Off
-   * by default so signup / reset keep the lean panel.
+   * When true, render login-specific product highlights. Off by default so
+   * signup / reset keep the lean panel.
    */
   showHighlights?: boolean;
 }
@@ -70,23 +57,17 @@ interface BrandPanelProps {
  */
 export function BrandPanel({headline, lede, showHighlights = false}: BrandPanelProps) {
   const defaultHeadline = showHighlights ? (
-    <>One login.<br/>Your whole <span className="aura-brand__grad">people stack.</span></>
+    <>One login.<br/>Four focused <span className="aura-brand__accent">workspaces.</span></>
   ) : (
     <>One login.<br/>Your whole people stack.</>
   );
   const defaultLede = showHighlights
-    ? 'HR, recruitment, performance and knowledge — unified in a single workspace. Less tab-switching, more shipping.'
+    ? 'HRMS, hiring, growth, and knowledge tools in one role-aware workspace.'
     : 'HRMS, recruitment, performance and knowledge — unified in a single workspace for your organisation.';
 
   return (
     <section className="hidden lg:flex w-full">
       <div className="aura-brand motion-rise w-full">
-        {showHighlights && (
-          <>
-            <div className="aura-brand__orb aura-brand__orb--1" aria-hidden="true"/>
-            <div className="aura-brand__orb aura-brand__orb--2" aria-hidden="true"/>
-          </>
-        )}
         <div className="aura-brand__inner">
           <div className="aura-brand__logo">
             <div className="aura-brand__mark"><span>N</span></div>
@@ -103,23 +84,25 @@ export function BrandPanel({headline, lede, showHighlights = false}: BrandPanelP
             </div>
           )}
 
-          <h1 className="aura-brand__head">
+          <p className="aura-brand__head">
             {headline ?? defaultHeadline}
-          </h1>
+          </p>
           <p className="aura-brand__lede">
             {lede ?? defaultLede}
           </p>
 
           {showHighlights && (
-            <div className="aura-brand__metrics">
-              {BRAND_METRICS.map((metric, index) => (
-                <Fragment key={metric.l}>
-                  {index > 0 && <div className="aura-brand__metric-sep" aria-hidden="true"/>}
-                  <div className="aura-brand__metric">
-                    <div className="aura-brand__metric-n tabular-nums">{metric.n}</div>
-                    <div className="aura-brand__metric-l">{metric.l}</div>
-                  </div>
-                </Fragment>
+            <div className="aura-brand__access" aria-label="Workspace access flow">
+              {ACCESS_STEPS.map((step, index) => (
+                <div className="aura-brand__access-row" key={step.title}>
+                  <span className="aura-brand__access-index tabular-nums">
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
+                  <span>
+                    <span className="aura-brand__access-title">{step.title}</span>
+                    <span className="aura-brand__access-detail">{step.detail}</span>
+                  </span>
+                </div>
               ))}
             </div>
           )}
@@ -139,41 +122,14 @@ export function BrandPanel({headline, lede, showHighlights = false}: BrandPanelP
           </div>
 
           {showHighlights ? (
-            <>
-              <div className="aura-brand__trust">
-                <div className="aura-brand__avs">
-                  {TRUST_AVATARS.map((name) => (
-                    <span className="aura-brand__av" key={name} aria-hidden="true">
-                      {avatarInitials(name)}
-                    </span>
-                  ))}
-                  <span className="aura-brand__avs-more tabular-nums" aria-hidden="true">1.2k+</span>
-                </div>
-                <span className="aura-brand__trust-txt">
-                  Trusted by <b className="tabular-nums">1,200+</b> people teams worldwide
+            <div className="aura-brand__assurance">
+              {ACCESS_BADGES.map((badge) => (
+                <span className="aura-brand__badge" key={badge}>
+                  <CheckCircle2 size={13} aria-hidden="true"/>
+                  {badge}
                 </span>
-              </div>
-
-              <div className="aura-brand__rating">
-                <span className="aura-brand__stars" aria-hidden="true">
-                  {[0, 1, 2, 3, 4].map((i) => (
-                    <Star key={i} size={14}/>
-                  ))}
-                </span>
-                <span className="aura-brand__rating-txt">
-                  <b className="tabular-nums">4.9 / 5</b> · <span className="tabular-nums">2,400+</span> reviews on G2
-                </span>
-              </div>
-
-              <div className="aura-brand__compliance">
-                {COMPLIANCE_BADGES.map((badge) => (
-                  <span className="aura-brand__badge" key={badge}>
-                    <ShieldCheck size={13} aria-hidden="true"/>
-                    {badge}
-                  </span>
-                ))}
-              </div>
-            </>
+              ))}
+            </div>
           ) : (
             <div className="aura-brand__tagline">Infinite Innovation</div>
           )}

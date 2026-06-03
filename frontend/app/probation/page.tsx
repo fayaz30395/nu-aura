@@ -23,6 +23,7 @@ import {z} from 'zod';
 import {AlertTriangle, ArrowRight, Calendar, CheckCircle, ClipboardList, Clock, Loader2, ShieldAlert, Star, UserCheck, Users,} from 'lucide-react';
 import Link from 'next/link';
 import {Card, CardContent} from '@/components/ui/Card';
+import {Input} from '@/components/ui/Input';
 import type {
   EvaluationType,
   ProbationPeriodResponse,
@@ -593,7 +594,7 @@ export default function ProbationPage() {
                     </p>
                   </div>
 
-                  <input type="hidden" {...register('probationPeriodId')} />
+                  <Input type="hidden" {...register('probationPeriodId')} />
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {/* Evaluation Type */}

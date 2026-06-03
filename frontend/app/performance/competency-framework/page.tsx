@@ -24,6 +24,7 @@ import {EmptyState} from '@/components/ui/EmptyState';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
+import {Input} from '@/components/ui/Input';
 import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
 import {useAllReviews, useDeleteCompetency, usePerformanceAllCycles,} from '@/lib/hooks/queries/usePerformance';
 import {useAddCompetency, useReviewCompetencies,} from '@/lib/hooks/useCompetency';
@@ -289,19 +290,18 @@ function AddCompetencyModal({
       <form onSubmit={handleSubmit(onSubmit)}>
         <ModalBody className="space-y-4">
           {/* Hidden reviewId */}
-          <input type="hidden" {...register('reviewId')} value={reviewId ?? ''}/>
+          <Input type="hidden" {...register('reviewId')} value={reviewId ?? ''}/>
 
           {/* Competency Name */}
           <div>
             <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
               Competency Name <span aria-hidden="true" className="text-danger-500">*</span>
             </label>
-            <input
+            <Input
               {...register('competencyName')}
               type="text"
               aria-required="true"
               placeholder="e.g. System Design, Communication"
-              className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
             />
             {errors.competencyName && (
               <p className="text-xs text-danger-500 mt-1">{errors.competencyName.message}</p>
@@ -334,14 +334,13 @@ function AddCompetencyModal({
             <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
               Rating (1–5) <span aria-hidden="true" className="text-danger-500">*</span>
             </label>
-            <input
+            <Input
               {...register('rating')}
               type="number"
               min={1}
               max={5}
               step={0.5}
               aria-required="true"
-              className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
             />
             {errors.rating && (
               <p className="text-xs text-danger-500 mt-1">{errors.rating.message}</p>
@@ -512,19 +511,13 @@ export default function CompetencyFrameworkPage() {
                     <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                       Search Employee
                     </label>
-                    <div className="relative">
-                      <Search
-                        size={14}
-                        className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]"
-                      />
-                      <input
-                        type="text"
-                        placeholder="Filter by name or department…"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full pl-9 pr-4 py-2.5 border border-[var(--border-main)] rounded-lg text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
-                      />
-                    </div>
+                    <Input
+                      type="text"
+                      placeholder="Filter by name or department..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      icon={<Search size={14}/>}
+                    />
                   </div>
                 )}
               </div>

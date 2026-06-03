@@ -27,6 +27,7 @@ import {Permissions} from '@/lib/hooks/usePermissions';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {Badge} from '@/components/ui/Badge';
+import {Input} from '@/components/ui/Input';
 import {
   useOnboardingProcess,
   useOnboardingProcessTasks,
@@ -380,7 +381,7 @@ export default function OnboardingDetailPage() {
                         <span className="text-xs font-bold text-success-600">Drive Connected</span>
                       </div>
                       <label className="block">
-                        <input type="file" className="hidden"
+                        <Input type="file" className="hidden"
                                onChange={(e) => e.target.files?.[0] && uploadFileToDrive(e.target.files[0])}
                                disabled={uploading}/>
                         <div

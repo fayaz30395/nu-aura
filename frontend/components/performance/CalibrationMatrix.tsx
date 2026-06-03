@@ -248,15 +248,15 @@ export default function CalibrationMatrix({
         <h3 className="text-sm font-semibold text-[var(--text-1)] mb-4">9-Box Grid Legend</h3>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-xs">
           <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded" style={{backgroundColor: 'var(--ok-bg)'}}></div>
+            <div className="w-4 h-4 rounded bg-[var(--ok-bg)]"></div>
             <span>Top Talent / Stars</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded" style={{backgroundColor: 'var(--warn-bg)'}}></div>
+            <div className="w-4 h-4 rounded bg-[var(--warn-bg)]"></div>
             <span>Development Needed</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded" style={{backgroundColor: 'var(--err-bg)'}}></div>
+            <div className="w-4 h-4 rounded bg-[var(--err-bg)]"></div>
             <span>Performance Concerns</span>
           </div>
         </div>
@@ -423,19 +423,19 @@ export default function CalibrationMatrix({
             <div className="text-caption">Total Employees</div>
           </div>
           <div>
-            <div className="text-2xl font-bold tabular-nums" style={{color: 'var(--ok-fg)'}}>
+            <div className="text-2xl font-bold tabular-nums text-[var(--ok-fg)]">
               {(distribution['3-3'] || 0) + (distribution['2-3'] || 0) + (distribution['3-2'] || 0)}
             </div>
             <div className="text-caption">Top Performers</div>
           </div>
           <div>
-            <div className="text-2xl font-bold tabular-nums" style={{color: 'var(--warn-fg)'}}>
+            <div className="text-2xl font-bold tabular-nums text-[var(--warn-fg)]">
               {(distribution['2-2'] || 0) + (distribution['2-1'] || 0) + (distribution['3-1'] || 0)}
             </div>
             <div className="text-caption">Solid Contributors</div>
           </div>
           <div>
-            <div className="text-2xl font-bold tabular-nums" style={{color: 'var(--err-fg)'}}>
+            <div className="text-2xl font-bold tabular-nums text-[var(--err-fg)]">
               {(distribution['1-1'] || 0) + (distribution['1-2'] || 0) + (distribution['1-3'] || 0)}
             </div>
             <div className="text-caption">Need Development</div>

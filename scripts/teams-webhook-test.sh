@@ -21,7 +21,7 @@ TEAMS_WEBHOOK_URL="${TEAMS_WEBHOOK_URL:-https://default7d1f4f5f8f6348d886e18b8f6
 RUN_ID="${1:-8464}"
 CAMPAIGN_ID="${2:-4QM0LEwHFbDqK2Taf9Rh8q}"
 DATE="${3:-2026-04-10 04:47:28}"
-APP_NAME="${4:-Million-Mind}"
+APP_NAME="${4:-Million-Mind}n"
 
 read -r -d '' PAYLOAD <<JSON || true
 {

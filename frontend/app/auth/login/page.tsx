@@ -687,7 +687,7 @@ function LoginPage() {
                 />
               </div>
 
-              <h2 className="aura-auth-form__h">Welcome back</h2>
+              <h2 className="aura-auth-form__h">Sign In to NU-AURA</h2>
               <p className="aura-auth-form__sub">
                 {isGoogleAuthEnabled
                   ? 'Sign in to your NULogic workspace with Google SSO.'
