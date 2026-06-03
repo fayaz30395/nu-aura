@@ -124,6 +124,11 @@ spring:
       time-to-live: 3600000
       cache-null-values: false
 
+  mail:
+    # SECURITY: MAIL_PASSWORD must be injected via K8s secret / env var in production.
+    # The application will refuse to start if this variable is absent or empty.
+    password: ${MAIL_PASSWORD:?MAIL_PASSWORD must be set in production}
+
 # Production health probes configuration
 management:
   endpoints:

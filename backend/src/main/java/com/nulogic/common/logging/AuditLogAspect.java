@@ -7,7 +7,6 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,11 +29,14 @@ import java.util.UUID;
 @Slf4j
 public class AuditLogAspect {
 
-    private AuditLogService auditLogService;
+    private final AuditLogService auditLogService;
 
-    @Autowired
-    @Lazy
-    public void setAuditLogService(AuditLogService auditLogService) {
+    /**
+     * Constructor injection. {@code @Lazy} defers resolution of {@link AuditLogService}
+     * until first use, breaking the Spring circular-dependency that arises because this
+     * aspect wraps every service-layer method (including those inside AuditLogService).
+     */
+    public AuditLogAspect(@Lazy AuditLogService auditLogService) {
         this.auditLogService = auditLogService;
     }
 

@@ -6,6 +6,7 @@ import com.nulogic.domain.workflow.ApprovalEscalationConfig;
 import com.nulogic.domain.workflow.StepExecution;
 import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import com.nulogic.infrastructure.user.repository.UserRepository;
+import com.nulogic.infrastructure.workflow.repository.ApprovalEscalationConfigRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -35,6 +36,7 @@ public class ApprovalEscalationService {
     private final EmployeeRepository employeeRepository;
     private final UserRepository userRepository;
     private final TenantTimeService tenantTimeService;
+    private final ApprovalEscalationConfigRepository escalationConfigRepository;
 
     /**
      * Resolve the escalation target user ID based on the escalation type.
@@ -255,5 +257,19 @@ public class ApprovalEscalationService {
         // Note: Both are saved together; the actual persistence is handled by the caller
         step.setStatus(StepExecution.StepStatus.ESCALATED);
         step.setAction(StepExecution.ApprovalAction.ESCALATE);
+    }
+
+    /**
+     * Delete the escalation configuration for a workflow.
+     * Transaction boundary lives here, not in the controller.
+     *
+     * @param workflowId The workflow whose escalation config should be deleted
+     * @param tenantId   The tenant owning the config
+     * @return number of rows deleted (0 if config did not exist)
+     */
+    @Transactional
+    public int deleteEscalationConfig(UUID workflowId, UUID tenantId) {
+        return escalationConfigRepository
+                .deleteByWorkflowDefinitionIdAndTenantId(workflowId, tenantId);
     }
 }

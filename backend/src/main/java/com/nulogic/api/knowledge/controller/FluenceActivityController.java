@@ -17,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -90,7 +89,6 @@ public class FluenceActivityController {
     @Operation(summary = "Get activity feed", description = "Paginated activity feed with optional content type filter")
     @ApiResponses.GetList
     @RequiresPermission(Permission.KNOWLEDGE_WIKI_READ)
-    @Transactional(readOnly = true, timeout = 10)
     public ResponseEntity<Page<FluenceActivityDto>> getActivityFeed(
             @RequestParam(required = false) String contentType,
             Pageable pageable) {
@@ -115,7 +113,6 @@ public class FluenceActivityController {
     @Operation(summary = "Get current user's activity")
     @ApiResponses.GetList
     @RequiresPermission(Permission.KNOWLEDGE_WIKI_READ)
-    @Transactional(readOnly = true, timeout = 10)
     public ResponseEntity<Page<FluenceActivityDto>> getMyActivity(Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID userId = SecurityContext.getCurrentUserId();

@@ -2,10 +2,13 @@ package com.nulogic.infrastructure.platform.repository;
 
 import com.nulogic.domain.platform.TenantApplication;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -17,6 +20,63 @@ public interface TenantApplicationRepository extends JpaRepository<TenantApplica
      * Find tenant's subscription to an application
      */
     Optional<TenantApplication> findByTenantIdAndApplicationId(UUID tenantId, UUID applicationId);
+
+    @Query(
+            value = "SELECT * FROM tenant_applications WHERE tenant_id = :tenantId AND application_id = :applicationId",
+            nativeQuery = true
+    )
+    Optional<TenantApplication> findByTenantIdAndApplicationIdUnscoped(
+            @Param("tenantId") UUID tenantId,
+            @Param("applicationId") UUID applicationId
+    );
+
+    @Modifying
+    @Transactional
+    @Query(
+            value = """
+            INSERT INTO tenant_applications (
+              tenant_id,
+              application_id,
+              status,
+              activated_at,
+              subscription_tier,
+              max_users,
+              is_deleted,
+              created_at,
+              updated_at,
+              version
+            ) VALUES (
+              :tenantId,
+              :applicationId,
+              :status,
+              :activatedAt,
+              :subscriptionTier,
+              :maxUsers,
+              false,
+              :now,
+              :now,
+              0
+            )
+            ON CONFLICT (tenant_id, application_id)
+            DO UPDATE SET
+              status = EXCLUDED.status,
+              activated_at = EXCLUDED.activated_at,
+              subscription_tier = EXCLUDED.subscription_tier,
+              max_users = EXCLUDED.max_users,
+              is_deleted = false,
+              updated_at = EXCLUDED.updated_at
+            """,
+            nativeQuery = true
+    )
+    int upsertTenantApplication(
+            @Param("tenantId") UUID tenantId,
+            @Param("applicationId") UUID applicationId,
+            @Param("status") String status,
+            @Param("activatedAt") LocalDateTime activatedAt,
+            @Param("subscriptionTier") String subscriptionTier,
+            @Param("maxUsers") Integer maxUsers,
+            @Param("now") LocalDateTime now
+    );
 
     /**
      * Find by tenant and app code

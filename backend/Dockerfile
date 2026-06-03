@@ -133,6 +133,10 @@ RUN printf '%s\n' \
       > /usr/local/bin/render-entrypoint && \
     chmod +x /usr/local/bin/render-starting-response /usr/local/bin/render-entrypoint
 
+# Ensure the secret mount target exists as a regular file so bind mounts to
+# GOOGLE_DRIVE_CREDENTIALS_PATH do not promote the path to a directory.
+RUN mkdir -p /etc/secrets/google-drive && touch /etc/secrets/google-drive/credentials.json
+
 COPY --from=build /app/backend/target/*.jar app.jar
 
 RUN chown -R hrms:hrms /app

@@ -40,6 +40,7 @@
         <openpdf.version>3.0.4</openpdf.version>
         <springdoc.version>2.8.0</springdoc.version>
         <lombok.version>1.18.46</lombok.version>
+        <shedlock.version>6.3.0</shedlock.version>
     </properties>
 
     <dependencies>
@@ -224,12 +225,12 @@
         <dependency>
             <groupId>net.javacrumbs.shedlock</groupId>
             <artifactId>shedlock-spring</artifactId>
-            <version>6.3.0</version>
+            <version>${shedlock.version}</version>
         </dependency>
         <dependency>
             <groupId>net.javacrumbs.shedlock</groupId>
             <artifactId>shedlock-provider-jdbc-template</artifactId>
-            <version>7.7.0</version>
+            <version>${shedlock.version}</version>
         </dependency>
 
         <!-- Bucket4j for Rate Limiting (Playbook Prompt 14) -->

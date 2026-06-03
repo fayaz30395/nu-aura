@@ -12,12 +12,17 @@ import com.nulogic.infrastructure.platform.repository.AppRoleRepository;
 import com.nulogic.infrastructure.platform.repository.NuApplicationRepository;
 import com.nulogic.infrastructure.platform.repository.TenantApplicationRepository;
 import jakarta.annotation.PostConstruct;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.support.TransactionTemplate;
 
+import org.hibernate.exception.ConstraintViolationException;
+
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -27,7 +32,6 @@ import java.util.stream.Collectors;
  * Runs after HrmsPermissionInitializer.
  */
 @Component
-@RequiredArgsConstructor
 @Slf4j
 @Order(2) // Run after HrmsPermissionInitializer
 public class HrmsRoleInitializer {
@@ -40,52 +44,101 @@ public class HrmsRoleInitializer {
     private final TenantApplicationRepository tenantApplicationRepository;
     private final TenantTimeService tenantTimeService;
     private final TenantRlsSessionSync tenantRlsSessionSync;
+    private final TransactionTemplate transactionTemplate;
+
+    public HrmsRoleInitializer(
+            NuApplicationRepository applicationRepository,
+            AppPermissionRepository permissionRepository,
+            AppRoleRepository roleRepository,
+            TenantApplicationRepository tenantApplicationRepository,
+            TenantTimeService tenantTimeService,
+            TenantRlsSessionSync tenantRlsSessionSync,
+            PlatformTransactionManager transactionManager) {
+        this.applicationRepository = applicationRepository;
+        this.permissionRepository = permissionRepository;
+        this.roleRepository = roleRepository;
+        this.tenantApplicationRepository = tenantApplicationRepository;
+        this.tenantTimeService = tenantTimeService;
+        this.tenantRlsSessionSync = tenantRlsSessionSync;
+        this.transactionTemplate = new TransactionTemplate(transactionManager);
+    }
 
     @PostConstruct
-    @Transactional
     public void initialize() {
-        TenantContext.setCurrentTenant(DEFAULT_TENANT_ID);
-        tenantRlsSessionSync.syncCurrentTenant(DEFAULT_TENANT_ID);
+        // Ensure startup initializer runs inside an explicit transaction so the
+        // TenantRlsTransactionManager sets app.current_tenant_id for all DB reads/writes.
+        transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+        transactionTemplate.executeWithoutResult(status -> {
+            TenantContext.setCurrentTenant(DEFAULT_TENANT_ID);
+            tenantRlsSessionSync.syncCurrentTenant(DEFAULT_TENANT_ID);
 
-        try {
-            log.info("Initializing default HRMS roles...");
+            try {
+                log.info("Initializing default HRMS roles...");
 
-            NuApplication hrmsApp = applicationRepository.findByCode(HrmsPermissionInitializer.APP_CODE)
-                    .orElse(null);
+                NuApplication hrmsApp = applicationRepository.findByCode(HrmsPermissionInitializer.APP_CODE)
+                        .orElse(null);
 
-            if (hrmsApp == null) {
-                log.warn("HRMS application not found. Skipping role initialization.");
-                return;
+                if (hrmsApp == null) {
+                    log.warn("HRMS application not found. Skipping role initialization.");
+                    return;
+                }
+
+                // Enable HRMS for default tenant if not already
+                enableHrmsForTenant(hrmsApp, DEFAULT_TENANT_ID);
+
+                // Create default roles for the default tenant
+                createDefaultRoles(hrmsApp, DEFAULT_TENANT_ID);
+
+                log.info("Default HRMS roles initialized successfully");
+            } finally {
+                TenantContext.clear();
             }
-
-            // Enable HRMS for default tenant if not already
-            enableHrmsForTenant(hrmsApp, DEFAULT_TENANT_ID);
-
-            // Create default roles for the default tenant
-            createDefaultRoles(hrmsApp, DEFAULT_TENANT_ID);
-
-            log.info("Default HRMS roles initialized successfully");
-        } finally {
-            TenantContext.clear();
-        }
+        });
     }
 
     private void enableHrmsForTenant(NuApplication app, UUID tenantId) {
-        Optional<TenantApplication> existing = tenantApplicationRepository
-                .findByTenantIdAndApplicationId(tenantId, app.getId());
-
-        if (existing.isEmpty()) {
-            TenantApplication ta = TenantApplication.builder()
-                    .application(app)
-                    .status(TenantApplication.SubscriptionStatus.ACTIVE)
-                    .activatedAt(tenantTimeService.now(tenantId))
-                    .subscriptionTier("ENTERPRISE")
-                    .maxUsers(1000)
-                    .build();
-            ta.setTenantId(tenantId);
-            tenantApplicationRepository.save(ta);
-            log.info("Enabled HRMS for tenant: {}", tenantId);
+        LocalDateTime now = tenantTimeService.now(tenantId);
+        try {
+            int rows = tenantApplicationRepository.upsertTenantApplication(
+                    tenantId,
+                    app.getId(),
+                    TenantApplication.SubscriptionStatus.ACTIVE.name(),
+                    now,
+                    "ENTERPRISE",
+                    1000,
+                    now
+            );
+            log.debug("Tenant-application upsert completed with {} affected rows for tenant {}", rows, tenantId);
+        } catch (DataIntegrityViolationException ex) {
+            if (isDuplicateTenantApplication(ex)) {
+                log.debug("Tenant-app subscription already exists for tenant {}, continuing startup", tenantId);
+            } else {
+                throw ex;
+            }
         }
+
+        log.info("Enabled HRMS for tenant: {}", tenantId);
+    }
+
+    private boolean isDuplicateTenantApplication(Throwable throwable) {
+        Throwable current = throwable;
+        while (current != null) {
+            if (current instanceof ConstraintViolationException cve) {
+                String sqlState = cve.getSQLException().getSQLState();
+                if ("23505".equals(sqlState)) {
+                    return true;
+                }
+            }
+            String message = current.getMessage();
+            if (message != null
+                    && (message.contains("uc_tenant_applications_tenantid_application_id")
+                    || message.contains("tenant_applications_tenant_id_application_id_key")
+                    || message.contains("tenant_applications_tenant_id_application_id_idx"))) {
+                return true;
+            }
+            current = current.getCause();
+        }
+        return false;
     }
 
     private void createDefaultRoles(NuApplication app, UUID tenantId) {

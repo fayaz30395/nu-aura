@@ -5,10 +5,10 @@ import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolationException;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.lang.Nullable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -48,14 +48,24 @@ import java.util.UUID;
  */
 @Slf4j
 @RestControllerAdvice
-@RequiredArgsConstructor
 public class GlobalExceptionHandler {
 
     private static final String URI_PREFIX = "uri=";
 
     private final MeterRegistry meterRegistry;
-    @org.springframework.beans.factory.annotation.Autowired(required = false)
-    private com.nulogic.common.util.TenantTimeService tenantTimeService;
+    private final com.nulogic.common.util.TenantTimeService tenantTimeService;
+
+    /**
+     * Constructor injection. {@code tenantTimeService} is optional: it may be
+     * {@code null} in auth / pre-context exceptions where no tenant is active,
+     * or during early startup before the bean graph is fully wired.
+     * Call sites already guard with {@code tenantTimeService != null}.
+     */
+    public GlobalExceptionHandler(MeterRegistry meterRegistry,
+                                   @Nullable com.nulogic.common.util.TenantTimeService tenantTimeService) {
+        this.meterRegistry = meterRegistry;
+        this.tenantTimeService = tenantTimeService;
+    }
 
     /**
      * Extract the request path from the WebRequest description.

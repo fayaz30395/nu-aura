@@ -2,6 +2,7 @@ package com.nulogic.api.workflow.controller;
 
 import com.nulogic.api.workflow.dto.EscalationConfigRequest;
 import com.nulogic.api.workflow.dto.EscalationConfigResponse;
+import com.nulogic.application.workflow.service.ApprovalEscalationService;
 import com.nulogic.common.exception.ResourceNotFoundException;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.RequiresPermission;
@@ -19,7 +20,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -35,6 +35,7 @@ public class ApprovalEscalationController {
     private final WorkflowDefinitionRepository workflowDefinitionRepository;
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
+    private final ApprovalEscalationService approvalEscalationService;
 
     @Operation(summary = "Get escalation config for a workflow")
     @GetMapping("/workflows/{workflowId}/config")
@@ -88,12 +89,10 @@ public class ApprovalEscalationController {
     @Operation(summary = "Delete escalation config for a workflow")
     @DeleteMapping("/workflows/{workflowId}/config")
     @RequiresPermission(Permission.WORKFLOW_MANAGE)
-    @Transactional
     public ResponseEntity<Void> deleteConfig(@PathVariable UUID workflowId) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
 
-        int deleted = escalationConfigRepository
-                .deleteByWorkflowDefinitionIdAndTenantId(workflowId, tenantId);
+        int deleted = approvalEscalationService.deleteEscalationConfig(workflowId, tenantId);
 
         if (deleted == 0) {
             throw new ResourceNotFoundException("Escalation config not found for workflow");
