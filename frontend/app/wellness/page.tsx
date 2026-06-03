@@ -292,7 +292,7 @@ export default function WellnessPage() {
           <Card className="hover-lift">
             <CardContent className="p-4">
               <h2 className="text-aura-title text-[var(--text-1)] mb-4">Quick Log</h2>
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-wrap gap-2">
                 {metricOptions.map((metric) => {
                   const Icon = metric.icon;
                   return (
@@ -433,12 +433,12 @@ export default function WellnessPage() {
                 </Card>
               ) : (
                 <Stagger>
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     {challenges.map((challenge) => (
                       <motion.div key={challenge.id}>
                         <Card className="overflow-hidden hover-lift border-[var(--border-soft)]">
                           <CardContent className="p-4">
-                            <div className="flex items-start justify-between gap-3">
+                            <div className="flex items-start justify-between gap-2">
                               <div className="flex-1 min-w-0">
                                 <h2 className="font-semibold text-[var(--text-1)]">
                                   {challenge.name}
@@ -452,7 +452,7 @@ export default function WellnessPage() {
                                 domain={WELLNESS_FLAG}
                               />
                             </div>
-                            <div className="flex flex-wrap items-center gap-3 mt-3 text-xs text-[var(--text-3)]">
+                            <div className="flex flex-wrap items-center gap-4 mt-3 text-xs text-[var(--text-3)]">
                               <span className="flex items-center gap-1">
                                 <Calendar className="h-3.5 w-3.5"/>
                                 {formatDate(challenge.startDate)} - {formatDate(challenge.endDate)}
@@ -509,11 +509,11 @@ export default function WellnessPage() {
                       />
                     ) : (
                       <Stagger>
-                        <div className="space-y-3">
+                        <div className="space-y-2">
                           {leaderboard.map((entry, index) => (
                             <motion.div
                               key={entry.employeeId}
-                              className="flex items-center gap-3 p-2 rounded-[var(--r-md)] bg-[var(--surface)]"
+                              className="flex items-center gap-2 p-2 rounded-[var(--r-md)] bg-[var(--surface)]"
                             >
                               <div
                                 className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold flex-shrink-0 ${index === 0 ? 'bg-[var(--warn-fg)] text-white' :

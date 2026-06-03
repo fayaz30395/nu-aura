@@ -43,9 +43,9 @@ export default function WellnessError({error, reset}: ErrorProps) {
                   {userMessage}
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-3">
+              <CardContent className="space-y-4">
                 {isDevelopment && (
-                  <div className="rounded-[var(--r-md)] bg-[var(--surface)] p-3 border border-[var(--border-soft)]">
+                  <div className="rounded-[var(--r-md)] bg-[var(--surface)] p-4 border border-[var(--border-soft)]">
                     <p className="text-xs font-mono text-[var(--text-2)] break-all">
                       {error.message}
                     </p>

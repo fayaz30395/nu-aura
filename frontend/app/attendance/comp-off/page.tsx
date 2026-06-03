@@ -7,7 +7,7 @@ import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
-import {AlertCircle, CheckCircle, Clock, PlusCircle, XCircle} from 'lucide-react';
+import {AlertCircle, CheckCircle, Clock, Loader2, PlusCircle, XCircle} from 'lucide-react';
 import {notifications} from '@mantine/notifications';
 import {Modal} from '@mantine/core';
 import {AppLayout} from '@/components/layout';
@@ -57,6 +57,19 @@ const statusConfig: Record<string, { color: string; icon: typeof Clock; label: s
   REJECTED: {color: 'text-danger-600 tint-danger', icon: XCircle, label: 'Rejected'},
   CREDITED: {color: 'text-success-600 tint-success', icon: CheckCircle, label: 'Credited'},
 };
+
+function CompOffGate({message}: { message: string }) {
+  return (
+    <AppLayout>
+      <div className="flex min-h-[280px] items-center justify-center">
+        <div className="card-aura flex items-center gap-2 p-4">
+          <Loader2 className="h-4 w-4 animate-spin text-[var(--accent-primary)] motion-reduce:animate-none"/>
+          <span className="text-body-secondary">{message}</span>
+        </div>
+      </div>
+    </AppLayout>
+  );
+}
 
 export default function CompOffPage() {
   const router = useRouter();
@@ -137,7 +150,17 @@ export default function CompOffPage() {
     },
   });
 
-  if (!isReady || !hasAccess || !employeeId) return null;
+  if (!isReady) {
+    return <CompOffGate message="Preparing comp-off workspace..."/>;
+  }
+
+  if (!hasAccess) {
+    return <CompOffGate message="Redirecting to your dashboard..."/>;
+  }
+
+  if (!employeeId) {
+    return <CompOffGate message="Loading your employee profile..."/>;
+  }
 
   const onSubmitForm = (data: CompOffFormData) => {
     requestMutation.mutate({employeeId, attendanceDate: data.attendanceDate, reason: data.reason});

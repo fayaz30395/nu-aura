@@ -248,7 +248,7 @@ export default function WorkflowListPage() {
         {/* Filters */}
         <Reveal>
           <div className="flex flex-col gap-4 rounded-[var(--r-lg)] border border-[var(--border-soft)] bg-[var(--surface)] p-4 md:flex-row md:items-center md:gap-6">
-            <div className="flex flex-wrap items-center gap-3">
+            <div className="flex flex-wrap items-center gap-2">
               {/* Status toggle */}
               <div className="inline-flex rounded-full bg-[var(--surface-hover)] p-1 text-xs">
                 {(['ALL', 'ACTIVE', 'INACTIVE'] as StatusFilter[]).map((s) => (
@@ -308,7 +308,7 @@ export default function WorkflowListPage() {
         {/* Content */}
         {isLoading ? (
           <Stagger>
-            <div className="space-y-3">
+            <div className="space-y-4">
               {[...Array(5)].map((_, i) => (
                 <motion.div key={i}>
                   <Skeleton className="h-16 rounded-[var(--r-lg)]"/>

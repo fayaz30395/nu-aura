@@ -144,7 +144,7 @@ for (const route of ROUTES) {
         if (monoInfo.tabular) flags.tabular = true;
 
         // Focus ring via real Tab key press
-        const focusInfo = await page.evaluate(() => {
+        await page.evaluate(() => {
           if (document.activeElement && document.activeElement !== document.body) {
             document.activeElement.blur();
           }
@@ -213,8 +213,10 @@ const report = {
 };
 fs.writeFileSync(`${OUT}/report.json`, JSON.stringify(report, null, 2));
 
+/* eslint-disable no-console -- dev-only CLI script: stdout is the intended report channel */
 console.log('COVERED:', [...covered].join(', ') || '(none)');
 console.log('NEEDS_AUTH:', [...needsAuth].join(', ') || '(none)');
 console.log('SHOTS:', shots.length);
 console.log('FAILURES:', failures.length);
 failures.forEach((f) => console.log('  - ' + f));
+/* eslint-enable no-console */

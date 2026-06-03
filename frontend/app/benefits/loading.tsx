@@ -38,7 +38,7 @@ export default function Loading() {
             key={index}
             className="rounded-aura-lg border border-[var(--border)] bg-[var(--surface)] p-4 space-y-4"
           >
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               <Skeleton height={44} width={44} radius={12}/>
               <div className="flex-1 space-y-2">
                 <Skeleton height={15} width="60%"/>

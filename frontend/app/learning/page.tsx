@@ -42,11 +42,6 @@ import {formatDate} from '@/lib/utils/format/date';
 const EASE = MOTION_EASE.outExpo;
 const RISE = MOTION_RISE_DISTANCE;
 
-const containerVariants = {
-  hidden: {opacity: 1},
-  visible: {transition: {staggerChildren: MOTION_STAGGER, delayChildren: 0.08}},
-};
-
 const itemVariants = {
   hidden: {opacity: 0, y: RISE},
   visible: {opacity: 1, y: 0, transition: {duration: MOTION_DURATION.base, ease: EASE}},

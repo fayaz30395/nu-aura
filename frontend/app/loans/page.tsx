@@ -135,7 +135,7 @@ export default function LoansPage() {
           <Reveal delay={0.08}>
             <Card className="p-5">
               <div className="flex items-start justify-between mb-4">
-                <div className="p-3 rounded-lg bg-[color-mix(in_srgb,var(--ok-fg)_12%,transparent)] text-[var(--ok-fg)] flex items-center justify-center">
+                <div className="p-2 rounded-lg bg-[color-mix(in_srgb,var(--ok-fg)_12%,transparent)] text-[var(--ok-fg)] flex items-center justify-center">
                   <CreditCard className="h-5 w-5" aria-hidden="true" />
                 </div>
               </div>
@@ -153,7 +153,7 @@ export default function LoansPage() {
           <Reveal delay={0.12}>
             <Card className="p-5">
               <div className="flex items-start justify-between mb-4">
-                <div className="p-3 rounded-lg bg-[color-mix(in_srgb,var(--err-fg)_12%,transparent)] text-[var(--err-fg)] flex items-center justify-center">
+                <div className="p-2 rounded-lg bg-[color-mix(in_srgb,var(--err-fg)_12%,transparent)] text-[var(--err-fg)] flex items-center justify-center">
                   <DollarSign className="h-5 w-5" aria-hidden="true" />
                 </div>
               </div>
@@ -171,7 +171,7 @@ export default function LoansPage() {
           <Reveal delay={0.14}>
             <Card className="p-5">
               <div className="flex items-start justify-between mb-4">
-                <div className="p-3 rounded-lg bg-[color-mix(in_srgb,var(--ok-fg)_12%,transparent)] text-[var(--ok-fg)] flex items-center justify-center">
+                <div className="p-2 rounded-lg bg-[color-mix(in_srgb,var(--ok-fg)_12%,transparent)] text-[var(--ok-fg)] flex items-center justify-center">
                   <TrendingUp className="h-5 w-5" aria-hidden="true" />
                 </div>
               </div>
@@ -189,7 +189,7 @@ export default function LoansPage() {
           <Reveal delay={0.16}>
             <Card className="p-5">
               <div className="flex items-start justify-between mb-4">
-                <div className="p-3 rounded-lg bg-[color-mix(in_srgb,var(--warn-fg)_12%,transparent)] text-[var(--warn-fg)] flex items-center justify-center">
+                <div className="p-2 rounded-lg bg-[color-mix(in_srgb,var(--warn-fg)_12%,transparent)] text-[var(--warn-fg)] flex items-center justify-center">
                   <Clock className="h-5 w-5" aria-hidden="true" />
                 </div>
               </div>
@@ -322,7 +322,7 @@ export default function LoansPage() {
               >
                 <Card className="p-5 text-left cursor-pointer">
                   <div className="row-between mb-4">
-                    <div className="p-3 rounded-lg bg-[color-mix(in_srgb,var(--accent-fg)_12%,transparent)] text-[var(--accent-fg)] flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <div className="p-2 rounded-lg bg-[color-mix(in_srgb,var(--accent-fg)_12%,transparent)] text-[var(--accent-fg)] flex items-center justify-center group-hover:scale-110 transition-transform">
                       <Plus className="h-5 w-5" aria-hidden="true" />
                     </div>
                     <ChevronRight
@@ -348,7 +348,7 @@ export default function LoansPage() {
             >
               <Card className="p-5 text-left cursor-pointer">
                 <div className="row-between mb-4">
-                  <div className="p-3 rounded-lg bg-[color-mix(in_srgb,var(--ok-fg)_12%,transparent)] text-[var(--ok-fg)] flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <div className="p-2 rounded-lg bg-[color-mix(in_srgb,var(--ok-fg)_12%,transparent)] text-[var(--ok-fg)] flex items-center justify-center group-hover:scale-110 transition-transform">
                     <FileText className="h-5 w-5" aria-hidden="true" />
                   </div>
                   <ChevronRight

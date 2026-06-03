@@ -50,7 +50,7 @@ export default function CalendarError({error, reset}: ErrorProps) {
                   )}
                 </div>
               )}
-              <div className="flex flex-col gap-3 pt-2">
+              <div className="flex flex-col gap-2 pt-2">
                 <Button
                   onClick={reset}
                   className="w-full bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"

@@ -6,7 +6,7 @@ export default function Loading() {
   return (
     <div className="mx-auto w-full max-w-7xl px-6 py-8 space-y-8">
       {/* Header skeleton */}
-      <div className="space-y-3">
+      <div className="space-y-2">
         <Skeleton height={28} width="35%"/>
         <Skeleton height={14} width="50%"/>
       </div>

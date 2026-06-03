@@ -470,7 +470,7 @@ function WeeklyHeatmap({rows, now}: {rows: HeatRow[]; now: Date}) {
             <h2 className="text-[15px] font-bold leading-tight text-[var(--text-1)]">Team attendance</h2>
             <p className="mt-1 text-xs text-[var(--text-3)]">{weekLabel}</p>
           </div>
-          <div className="flex flex-wrap items-center gap-3.5">
+          <div className="flex flex-wrap items-center gap-4">
             {(['P', 'R', 'L', 'A'] as HeatCode[]).map((k) => (
               <span key={k} className="inline-flex items-center gap-1.5 text-[11.5px] text-[var(--text-3)]">
                 <span

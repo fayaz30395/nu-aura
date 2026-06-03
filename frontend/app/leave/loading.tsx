@@ -7,7 +7,7 @@ export default function Loading() {
     <div className="mx-auto w-full max-w-7xl px-6 py-8 space-y-8">
       {/* Header skeleton */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div className="space-y-3">
+        <div className="space-y-2">
           <Skeleton height={28} width="45%"/>
           <Skeleton height={14} width="35%"/>
         </div>

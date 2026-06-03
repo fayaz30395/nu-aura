@@ -1,6 +1,5 @@
 'use client';
 
-import {Alert, Button} from '@mantine/core';
 import {Lock} from 'lucide-react';
 
 interface EditLockWarningProps {

@@ -32,7 +32,7 @@ export default function LoansError({error, reset}: ErrorProps) {
         <Card className="p-6">
           <div className="text-center space-y-4">
             <div className="flex justify-center">
-              <div className="p-3 rounded-lg bg-[color-mix(in_srgb,var(--err-fg)_12%,transparent)] text-[var(--err-fg)] flex items-center justify-center">
+              <div className="p-2 rounded-lg bg-[color-mix(in_srgb,var(--err-fg)_12%,transparent)] text-[var(--err-fg)] flex items-center justify-center">
                 <AlertCircle className="h-6 w-6" aria-hidden="true" />
               </div>
             </div>
@@ -46,7 +46,7 @@ export default function LoansError({error, reset}: ErrorProps) {
             </div>
 
             {isDevelopment && (
-              <div className="rounded-md bg-[color-mix(in_srgb,var(--surface)_50%,transparent)] p-3 text-left">
+              <div className="rounded-md bg-[color-mix(in_srgb,var(--surface)_50%,transparent)] p-4 text-left">
                 <p className="text-xs font-mono text-[var(--text-2)] break-all leading-relaxed">
                   {error.message}
                 </p>

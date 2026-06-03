@@ -85,7 +85,7 @@ function TopBarContent({
     <header
       role="banner"
       data-print-hide="true"
-      className="sticky top-0 z-20 flex h-[60px] flex-shrink-0 items-center gap-3.5 border-b border-[var(--border)] bg-[color-mix(in_srgb,var(--surface)_86%,transparent)] pl-4 pr-[22px] backdrop-blur-[14px]"
+      className="sticky top-0 z-20 flex h-[60px] flex-shrink-0 items-center gap-4 border-b border-[var(--border)] bg-[color-mix(in_srgb,var(--surface)_86%,transparent)] pl-4 pr-[22px] backdrop-blur-[14px]"
     >
       {/* Mobile hamburger (< md) */}
       <button

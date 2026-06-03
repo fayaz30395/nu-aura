@@ -196,7 +196,7 @@ export function ReceiptScanner({onConfirm, onCancel}: ReceiptScannerProps) {
           </div>
           {validationError && (
             <div
-              className="mt-2 flex items-center gap-2 p-3 bg-[var(--err-bg)] border border-[var(--err-bd)] rounded-[var(--r-md)]">
+              className="mt-2 flex items-center gap-2 p-2 bg-[var(--err-bg)] border border-[var(--err-bd)] rounded-[var(--r-md)]">
               <AlertTriangle className="w-4 h-4 text-[var(--err-fg)] flex-shrink-0"/>
               <p className="text-sm text-[var(--err-fg)]">{validationError}</p>
             </div>
@@ -259,7 +259,7 @@ export function ReceiptScanner({onConfirm, onCancel}: ReceiptScannerProps) {
       {stage === 'review' && ocrResult && (
         <div className="space-y-4">
           {/* Confidence indicator */}
-          <div className="flex items-center justify-between p-3 bg-[var(--surface)] rounded-[var(--r-md)] border border-[var(--border-soft)]">
+          <div className="flex items-center justify-between p-4 bg-[var(--surface)] rounded-[var(--r-md)] border border-[var(--border-soft)]">
             <div className="flex items-center gap-2">
               <CheckCircle className={`w-4 h-4 ${confidenceColor(ocrResult.confidence)}`}/>
               <span className={`text-sm font-medium ${confidenceColor(ocrResult.confidence)}`}>
@@ -287,7 +287,7 @@ export function ReceiptScanner({onConfirm, onCancel}: ReceiptScannerProps) {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-[var(--text-1)] mb-2">
                   Amount

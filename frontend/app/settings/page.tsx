@@ -164,7 +164,7 @@ export default function SettingsPage() {
     icon?: React.ElementType;
   }) => (
     <div className="flex items-center justify-between gap-4 py-3.5 border-b border-[var(--border-soft)] last:border-b-0">
-      <div className="flex items-center gap-3.5">
+      <div className="flex items-center gap-4">
         {Icon && (
           <div
             className="grid h-[38px] w-[38px] shrink-0 place-items-center rounded-[11px] border border-[var(--border)] bg-[var(--surface-2)] text-[var(--text-2)]">

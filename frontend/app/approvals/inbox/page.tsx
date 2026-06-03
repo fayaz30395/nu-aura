@@ -174,7 +174,7 @@ export default function ApprovalInboxPage() {
   const {data: inboxPage, isLoading, refetch} = useApprovalInbox(filterParams);
   const {data: counts} = useApprovalInboxCount();
 
-  const items = inboxPage?.content ?? [];
+  const items = useMemo(() => inboxPage?.content ?? [], [inboxPage?.content]);
   const totalPages = inboxPage?.totalPages ?? 0;
   const totalElements = inboxPage?.totalElements ?? 0;
 
@@ -405,14 +405,14 @@ export default function ApprovalInboxPage() {
         </div>
 
         {/* Tabs + secondary filters */}
-        <div className="space-y-3">
+        <div className="space-y-4">
           <Tabs
             aria-label="Approval type"
             tabs={tabItems}
             value={activeTab}
             onChange={handleTabChange}
           />
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <Segmented
               aria-label="Approval status"
               value={statusFilter}
@@ -559,7 +559,7 @@ export default function ApprovalInboxPage() {
               value={comments}
               onChange={(e) => setComments(e.target.value)}
               placeholder="Add an optional comment…"
-              className="mt-1 w-full resize-none rounded-[var(--r-control)] border border-[var(--border)] bg-[var(--surface)] p-3 text-sm text-[var(--text-1)] shadow-[var(--inset-input)] outline-none focus:border-[var(--accent)] focus:shadow-[var(--sh-focus)]"
+              className="mt-1 w-full resize-none rounded-[var(--r-control)] border border-[var(--border)] bg-[var(--surface)] p-4 text-sm text-[var(--text-1)] shadow-[var(--inset-input)] outline-none focus:border-[var(--accent)] focus:shadow-[var(--sh-focus)]"
               rows={3}
             />
           </div>
@@ -606,7 +606,7 @@ export default function ApprovalInboxPage() {
               value={comments}
               onChange={(e) => setComments(e.target.value)}
               placeholder="Explain why this request is being declined…"
-              className="mt-1 w-full resize-none rounded-[var(--r-control)] border border-[var(--border)] bg-[var(--surface)] p-3 text-sm text-[var(--text-1)] shadow-[var(--inset-input)] outline-none focus:border-[var(--accent)] focus:shadow-[var(--sh-focus)]"
+              className="mt-1 w-full resize-none rounded-[var(--r-control)] border border-[var(--border)] bg-[var(--surface)] p-4 text-sm text-[var(--text-1)] shadow-[var(--inset-input)] outline-none focus:border-[var(--accent)] focus:shadow-[var(--sh-focus)]"
               rows={3}
               aria-required="true"
             />
@@ -655,7 +655,7 @@ export default function ApprovalInboxPage() {
               value={comments}
               onChange={(e) => setComments(e.target.value)}
               placeholder="Explain what needs to be corrected…"
-              className="mt-1 w-full resize-none rounded-[var(--r-control)] border border-[var(--border)] bg-[var(--surface)] p-3 text-sm text-[var(--text-1)] shadow-[var(--inset-input)] outline-none focus:border-[var(--accent)] focus:shadow-[var(--sh-focus)]"
+              className="mt-1 w-full resize-none rounded-[var(--r-control)] border border-[var(--border)] bg-[var(--surface)] p-4 text-sm text-[var(--text-1)] shadow-[var(--inset-input)] outline-none focus:border-[var(--accent)] focus:shadow-[var(--sh-focus)]"
               rows={3}
               aria-required="true"
             />
@@ -764,7 +764,7 @@ export default function ApprovalInboxPage() {
               <textarea
                 {...delegationForm.register('reason')}
                 placeholder="Explain why you're delegating approvals…"
-                className="w-full resize-none rounded-[var(--r-control)] border border-[var(--border)] bg-[var(--surface)] p-3 text-sm text-[var(--text-1)] shadow-[var(--inset-input)] outline-none focus:border-[var(--accent)] focus:shadow-[var(--sh-focus)]"
+                className="w-full resize-none rounded-[var(--r-control)] border border-[var(--border)] bg-[var(--surface)] p-4 text-sm text-[var(--text-1)] shadow-[var(--inset-input)] outline-none focus:border-[var(--accent)] focus:shadow-[var(--sh-focus)]"
                 rows={3}
               />
             </div>
@@ -897,7 +897,7 @@ function DetailPane({
   return (
     <Card className="h-fit overflow-hidden p-0 lg:sticky lg:top-6">
       {/* Requester header */}
-      <div className="flex items-center gap-3.5 border-b border-[var(--border)] px-6 py-5">
+      <div className="flex items-center gap-4 border-b border-[var(--border)] px-6 py-5">
         <RequesterAvatar name={item.requesterName} size={48}/>
         <div className="min-w-0 flex-1">
           <div className="truncate font-display text-base font-bold text-[var(--text-1)]">
@@ -982,7 +982,7 @@ function DetailPane({
             onChange={(e) => onCommentsChange(e.target.value)}
             placeholder="Add a note (optional)…"
             disabled={!isPending}
-            className="w-full resize-none rounded-[var(--r-control)] border border-[var(--border)] bg-[var(--surface)] p-3 text-sm text-[var(--text-1)] shadow-[var(--inset-input)] outline-none transition-[border-color,box-shadow] duration-[var(--t-fast)] placeholder:text-[var(--text-3)] focus:border-[var(--accent)] focus:shadow-[var(--sh-focus)] disabled:opacity-60"
+            className="w-full resize-none rounded-[var(--r-control)] border border-[var(--border)] bg-[var(--surface)] p-4 text-sm text-[var(--text-1)] shadow-[var(--inset-input)] outline-none transition-[border-color,box-shadow] duration-[var(--t-fast)] placeholder:text-[var(--text-3)] focus:border-[var(--accent)] focus:shadow-[var(--sh-focus)] disabled:opacity-60"
           />
         </div>
 

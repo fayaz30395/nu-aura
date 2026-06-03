@@ -14,7 +14,7 @@ export default function MeLoading() {
           </div>
 
           {/* Profile info skeleton */}
-          <div className="flex-1 space-y-3">
+          <div className="flex-1 space-y-4">
             <Skeleton height={28} width="50%"/>
             <Skeleton height={14} width="40%"/>
             <Skeleton height={14} width="60%"/>
@@ -27,7 +27,7 @@ export default function MeLoading() {
       </div>
 
       {/* Tabs skeleton */}
-      <div className="flex gap-3 border-b border-[var(--border)]">
+      <div className="flex gap-4 border-b border-[var(--border)]">
         {Array.from({length: 4}).map((_, index) => (
           <Skeleton key={index} height={36} width={120}/>
         ))}

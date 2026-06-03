@@ -35,6 +35,7 @@ import {useAuth} from '@/lib/hooks/useAuth';
 import dynamic from 'next/dynamic';
 import {ChartLoadingFallback} from '@/lib/utils/lazy-components';
 import {formatDate, formatLongDate, formatWeekday, formatWeekdayDate} from '@/lib/utils/format/date';
+import {Loader2} from 'lucide-react';
 
 const TeamStatusChart = dynamic(
   () => import('./TeamStatusChart'),
@@ -55,10 +56,24 @@ interface SortConfig {
   direction: 'asc' | 'desc';
 }
 
+function TeamAttendanceGate({message}: {message: string}) {
+  return (
+    <AppLayout activeMenuItem="attendance">
+      <div className="flex min-h-[280px] items-center justify-center">
+        <div className="card-aura flex items-center gap-2 p-4">
+          <Loader2 className="h-4 w-4 animate-spin text-[var(--accent-primary)] motion-reduce:animate-none"/>
+          <span className="text-body-secondary">{message}</span>
+        </div>
+      </div>
+    </AppLayout>
+  );
+}
+
 export default function TeamAttendancePage() {
   const router = useRouter();
   const {isAuthenticated, hasHydrated} = useAuth();
   const {hasPermission, isReady: permissionsReady} = usePermissions();
+  const hasTeamAccess = hasPermission(Permissions.ATTENDANCE_VIEW_TEAM) || hasPermission(Permissions.ATTENDANCE_VIEW_ALL);
 
   // BUG-L6-007: Page-level permission gate for team attendance
   useEffect(() => {
@@ -211,8 +226,16 @@ export default function TeamAttendancePage() {
   };
 
   // Permission guard
-  if (!hasHydrated || !permissionsReady || (!hasPermission(Permissions.ATTENDANCE_VIEW_TEAM) && !hasPermission(Permissions.ATTENDANCE_VIEW_ALL))) {
-    return null;
+  if (!hasHydrated || !permissionsReady) {
+    return <TeamAttendanceGate message="Preparing team attendance..."/>;
+  }
+
+  if (!isAuthenticated) {
+    return <TeamAttendanceGate message="Redirecting to sign in..."/>;
+  }
+
+  if (!hasTeamAccess) {
+    return <TeamAttendanceGate message="Redirecting to your dashboard..."/>;
   }
 
   return (

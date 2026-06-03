@@ -31,8 +31,7 @@ import {AdminPageContent} from '@/components/layout';
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
 import {Card, CardContent} from '@/components/ui/Card';
 import {Skeleton} from '@/components/ui/Skeleton';
-import {StatusBadge} from '@/components/ui/StatusBadge';
-import {PageTransition, Reveal} from '@/components/motion';
+import {PageTransition} from '@/components/motion';
 import {MOTION_EASE} from '@/lib/animation';
 
 // Consolidated onto the shared motion foundation: every transition on this page

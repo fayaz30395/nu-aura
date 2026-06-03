@@ -2,7 +2,7 @@
 
 import React, {useEffect, useMemo, useState} from 'react';
 import {useRouter} from 'next/navigation';
-import {Download, XCircle} from 'lucide-react';
+import {Download, Loader2, XCircle} from 'lucide-react';
 import {AppLayout} from '@/components/layout/AppLayout';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {Badge, Button, Card, CardContent, Input, ResponsiveTable, TablePagination,} from '@/components/ui';
@@ -66,6 +66,19 @@ const buildEmployeeLabel = (employee: AllocationSummaryItem) => {
   if (email) return email;
   return employee.employeeCode || 'Employee';
 };
+
+function AllocationSummaryGate({message}: { message: string }) {
+  return (
+    <AppLayout breadcrumbs={[{label: 'Allocations', href: '/allocations/summary'}, {label: 'Summary'}]}>
+      <div className="flex min-h-[280px] items-center justify-center">
+        <div className="card-aura flex items-center gap-2 p-4">
+          <Loader2 className="h-4 w-4 animate-spin text-[var(--accent-primary)] motion-reduce:animate-none"/>
+          <span className="text-body-secondary">{message}</span>
+        </div>
+      </div>
+    </AppLayout>
+  );
+}
 
 export default function AllocationSummaryPage() {
   const router = useRouter();
@@ -220,7 +233,13 @@ export default function AllocationSummaryPage() {
     },
   ], []);
 
-  if (!permissionsReady || !hasAccess) return null;
+  if (!permissionsReady) {
+    return <AllocationSummaryGate message="Preparing allocation summary..."/>;
+  }
+
+  if (!hasAccess) {
+    return <AllocationSummaryGate message="Redirecting to your dashboard..."/>;
+  }
 
   return (
     <AppLayout breadcrumbs={[{label: 'Allocations', href: '/allocations/summary'}, {label: 'Summary'}]}>

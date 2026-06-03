@@ -54,7 +54,7 @@ export default function WorkflowDetailLoading() {
           transition={{duration: 0.3, delay: 0.2}}
           className="rounded-[var(--r-lg)] border border-[var(--border-soft)] bg-[var(--surface)] p-4"
         >
-          <div className="space-y-3">
+          <div className="space-y-4">
             {Array.from({length: 3}).map((_, i) => (
               <Skeleton key={i} height={60} radius="sm"/>
             ))}
@@ -68,7 +68,7 @@ export default function WorkflowDetailLoading() {
           transition={{duration: 0.3, delay: 0.25}}
           className="rounded-[var(--r-lg)] border border-[var(--border-soft)] bg-[var(--surface)] p-4"
         >
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {Array.from({length: 6}).map((_, i) => (
               <Skeleton key={i} height={48} radius="sm"/>
             ))}

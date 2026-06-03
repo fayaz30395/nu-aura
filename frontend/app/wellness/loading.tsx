@@ -32,7 +32,7 @@ export default function WellnessLoading() {
           {Array.from({length: 4}).map((_, index) => (
             <div
               key={index}
-              className="rounded-[var(--r-lg)] border border-[var(--border-soft)] bg-[var(--surface)] p-4 space-y-3"
+              className="rounded-[var(--r-lg)] border border-[var(--border-soft)] bg-[var(--surface)] p-4 space-y-4"
             >
               <Skeleton height={14} width="50%" radius="sm"/>
               <Skeleton height={28} width="40%" radius="sm"/>
@@ -63,7 +63,7 @@ export default function WellnessLoading() {
           transition={{duration: 0.3, delay: 0.2}}
           className="grid grid-cols-1 lg:grid-cols-3 gap-6"
         >
-          <div className="lg:col-span-2 space-y-3">
+          <div className="lg:col-span-2 space-y-4">
             <div className="flex gap-2 border-b border-[var(--border-soft)] pb-2">
               <Skeleton height={24} width={80} radius="sm"/>
               <Skeleton height={24} width={80} radius="sm"/>
@@ -72,7 +72,7 @@ export default function WellnessLoading() {
               {Array.from({length: 4}).map((_, i) => (
                 <div
                   key={i}
-                  className="rounded-[var(--r-lg)] border border-[var(--border-soft)] bg-[var(--surface)] p-4 space-y-3"
+                  className="rounded-[var(--r-lg)] border border-[var(--border-soft)] bg-[var(--surface)] p-4 space-y-4"
                 >
                   <Skeleton height={16} width="60%" radius="sm"/>
                   <Skeleton height={16} width="80%" radius="sm"/>
@@ -84,7 +84,7 @@ export default function WellnessLoading() {
 
           {/* Sidebar skeleton */}
           <div>
-            <div className="rounded-[var(--r-lg)] border border-[var(--border-soft)] bg-[var(--surface)] p-4 space-y-3">
+            <div className="rounded-[var(--r-lg)] border border-[var(--border-soft)] bg-[var(--surface)] p-4 space-y-4">
               <Skeleton height={20} width="60%" radius="md"/>
               {Array.from({length: 5}).map((_, i) => (
                 <Skeleton key={i} height={40} radius="md"/>

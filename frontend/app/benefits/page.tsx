@@ -544,7 +544,7 @@ export default function BenefitsPage() {
                   return (
                     <Card key={benefit.id} hover className="flex flex-col p-4">
                       {/* Header: icon tile + name + provider */}
-                      <div className="mb-4 flex items-center gap-3">
+                      <div className="mb-4 flex items-center gap-2">
                         <span
                           className="inline-grid h-11 w-11 place-items-center rounded-aura-lg"
                           style={{
@@ -702,7 +702,7 @@ export default function BenefitsPage() {
                 <Card key={enrollment.id} hover className="p-4">
                   <div className="flex items-start justify-between gap-4">
                     <div className="min-w-0">
-                      <div className="mb-3 flex items-center gap-3">
+                      <div className="mb-3 flex items-center gap-2">
                         <h3 className="font-display text-[15px] font-bold text-[var(--text-1)]">
                           {enrollment.benefitPlanName}
                         </h3>
@@ -788,7 +788,7 @@ export default function BenefitsPage() {
                   <Card key={claim.id} hover className="p-4">
                     <div className="flex items-start justify-between gap-4">
                       <div className="min-w-0">
-                        <div className="mb-2 flex items-center gap-3">
+                        <div className="mb-2 flex items-center gap-2">
                           <h3 className="tnum font-display text-[15px] font-bold text-[var(--text-1)]">
                             {claim.claimNumber}
                           </h3>
@@ -842,7 +842,7 @@ export default function BenefitsPage() {
 
         {/* Open Enrollment Banner — Aura accent-soft surface */}
         <Card className="border-[var(--border)] bg-[var(--accent-soft)]">
-          <CardContent className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
+          <CardContent className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h3 className="font-display text-base font-bold text-[var(--accent-text)]">
                 Open enrollment period

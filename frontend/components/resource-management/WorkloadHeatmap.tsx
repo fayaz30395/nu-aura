@@ -90,7 +90,7 @@ export function WorkloadHeatmap({
 
       {/* Legend */}
       <div className="mt-6 flex items-center justify-end gap-6">
-        <div className="flex items-center gap-3 text-xs text-[var(--text-2)]">
+        <div className="flex items-center gap-2 text-xs text-[var(--text-2)]">
           <span className="font-semibold">Allocation:</span>
           <div className="flex items-center gap-2">
             <div className="h-3 w-3 rounded-[var(--r-xs)] bg-[var(--surface-sunken)]"/>
@@ -141,7 +141,7 @@ function HeatmapRow({
         )}
         onClick={() => onEmployeeClick?.(row.employeeId)}
       >
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--accent-soft)] text-[var(--accent-text)]">
             <User className="h-4 w-4"/>
           </div>

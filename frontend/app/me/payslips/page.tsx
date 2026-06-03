@@ -1,7 +1,6 @@
 'use client';
 
 import React, {useState} from 'react';
-import {useRouter} from 'next/navigation';
 import {AlertCircle, Calendar, DollarSign, Download, FileText, Filter, Search, TrendingUp, Users,} from 'lucide-react';
 import {AppLayout} from '@/components/layout';
 import {PageTransition, Reveal, Stagger, StaggerItem} from '@/components/motion';
@@ -19,7 +18,6 @@ import {formatDate as formatDateCanonical, formatMonthYear as formatMonthYearCan
 const log = createLogger('PayslipsPage');
 
 export default function MyPayslipsPage() {
-  const router = useRouter();
   const {user, hasHydrated} = useAuth();
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [searchQuery, setSearchQuery] = useState('');

@@ -676,6 +676,7 @@ function LoginPage() {
                   height={46}
                   className="h-11 w-auto object-contain dark:hidden"
                   priority
+                  fetchPriority="high"
                 />
                 <Image
                   src="/images/nulogic-logo-white.svg"
@@ -684,6 +685,7 @@ function LoginPage() {
                   height={46}
                   className="h-11 w-auto object-contain hidden dark:block"
                   priority
+                  fetchPriority="high"
                 />
               </div>
 

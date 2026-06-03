@@ -778,7 +778,7 @@ function CalendarContent() {
                           setSelectedEvent(event);
                           setShowEventModal(true);
                         }}
-                        className="w-full text-left flex items-center gap-3 p-3 rounded-[var(--r-md)] hover:bg-[var(--surface-hover)] hover-lift cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
+                        className="w-full text-left flex items-center gap-2 p-2 rounded-[var(--r-md)] hover:bg-[var(--surface-hover)] hover-lift cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
                       >
                         <div className={`w-2 h-8 rounded-full flex-shrink-0 ${getEventColor(event)}`}/>
                         <div className="flex-1 min-w-0">

@@ -71,13 +71,6 @@ function LeaveApprovalsPageContent() {
     </div>
   );
 
-  if (!hasHydrated || !isAuthenticated) {
-    return (
-      <AppLayout activeMenuItem="leave">
-        {authShell('Redirecting to sign in.')}
-      </AppLayout>
-    );
-  }
   const [error, setError] = useState<string | null>(null);
   const [_processing, _setProcessing] = useState<string | null>(null);
   const [showApproveConfirm, setShowApproveConfirm] = useState(false);
@@ -98,6 +91,14 @@ function LeaveApprovalsPageContent() {
       return acc;
     }, {} as Record<string, string>);
   }, [employees]);
+
+  if (!hasHydrated || !isAuthenticated) {
+    return (
+      <AppLayout activeMenuItem="leave">
+        {authShell('Redirecting to sign in.')}
+      </AppLayout>
+    );
+  }
 
   const handleApproveClick = (id: string) => {
     setSelectedRequestId(id);

@@ -23,8 +23,6 @@ import {AppLayout} from '@/components/layout';
 import {PageTransition, Reveal, Stagger, StaggerItem} from '@/components/motion';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
-import {Button} from '@/components/ui/Button';
-import {EmptyState} from '@/components/ui/EmptyState';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {
   useAttendanceByDateRange,

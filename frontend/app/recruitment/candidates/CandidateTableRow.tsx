@@ -21,7 +21,7 @@ import {
   XCircle,
 } from 'lucide-react';
 import {StatusBadge} from '@/components/ui/StatusBadge';
-import {getMatchScoreColor, getStageColor, getStatusColor} from './utils';
+import {getMatchScoreColor, getStageColor} from './utils';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 
@@ -73,7 +73,7 @@ export const CandidateTableRow = memo(function CandidateTableRow({
     >
       {/* Candidate Info */}
       <td className="px-6 py-4">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <motion.div
             className="h-10 w-10 shrink-0 rounded-lg bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center"
           >

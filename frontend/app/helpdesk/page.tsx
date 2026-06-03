@@ -90,7 +90,7 @@ export default function HelpdeskPage() {
                     <div
                       className="bg-[--surface] border border-[--border-soft] rounded-[--r-lg] p-4 shadow-[--sh-sm] hover:shadow-[--sh-md] hover:translate-y-[-1px] transition-all duration-[--t-base]"
                     >
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-2">
                         <div className={`p-2 rounded-[--r-md] ${card.bg}`}>
                           <card.icon className="w-5 h-5 text-[--accent]"/>
                         </div>

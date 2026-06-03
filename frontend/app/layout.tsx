@@ -20,6 +20,9 @@ const displayTypeface = Montserrat({
   subsets: ['latin'],
   weight: ['400', '500', '600', '700', '800'],
   display: 'swap',
+  // Non-critical headings face — keep available, but stop eagerly preloading
+  // so only the body family (Open Sans) competes for the critical-path budget.
+  preload: false,
   variable: '--font-display',
 });
 
@@ -27,6 +30,8 @@ const monoTypeface = Roboto_Mono({
   subsets: ['latin'],
   weight: ['400', '500', '600'],
   display: 'swap',
+  // Numerics-only face — not above-the-fold critical; load without eager preload.
+  preload: false,
   variable: '--font-mono',
 });
 

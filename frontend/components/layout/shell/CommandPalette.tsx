@@ -162,7 +162,7 @@ export function CommandPalette({open, onClose, sections, extraItems = []}: Comma
         className="w-[600px] max-w-[92vw] overflow-hidden rounded-[var(--r-xl)] border border-[var(--border)] bg-[var(--surface)] shadow-[var(--sh-pop)]"
       >
         {/* Search input */}
-        <div className="flex items-center gap-3 border-b border-[var(--border)] px-[18px] py-4">
+        <div className="flex items-center gap-2 border-b border-[var(--border)] px-[18px] py-4">
           <Search className="h-[19px] w-[19px] text-[var(--text-3)]"/>
           <input
             ref={inputRef}
@@ -200,7 +200,7 @@ export function CommandPalette({open, onClose, sections, extraItems = []}: Comma
                     onMouseEnter={() => setSelected(idx)}
                     onClick={() => run(item)}
                     className={cn(
-                      'flex cursor-pointer items-center gap-3 rounded-[9px] px-3 py-[9px] transition-[background-color] duration-[var(--t-fast)] ease-[var(--ease)]',
+                      'flex cursor-pointer items-center gap-2 rounded-[9px] px-3 py-[9px] transition-[background-color] duration-[var(--t-fast)] ease-[var(--ease)]',
                       isActive && 'bg-[var(--accent-soft)]'
                     )}
                   >

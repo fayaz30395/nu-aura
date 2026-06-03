@@ -64,9 +64,25 @@ export default function OrganizationHealthPage() {
     }
   }, [permReady, hasPermission, router]);
 
-  // RBAC guard — block render for unauthorized users (DEF-52)
-  if (!permReady || !hasPermission(Permissions.REPORT_VIEW)) {
-    return null;
+  // RBAC guard — keep visible DOM mounted while auth/permission state resolves
+  // so users and route-smoke do not see a blank page during redirect timing.
+  if (!permReady) return <LoadingSkeleton/>;
+
+  if (!hasPermission(Permissions.REPORT_VIEW)) {
+    return (
+      <AppLayout activeMenuItem="analytics">
+        <div className="flex min-h-[320px] items-center justify-center">
+          <Card className="max-w-md">
+            <CardContent className="pt-6 text-center">
+              <h2 className="text-lg font-semibold text-[var(--text-primary)]">Redirecting to dashboard</h2>
+              <p className="mt-2 text-sm text-[var(--text-secondary)]">
+                Organization health requires report access.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      </AppLayout>
+    );
   }
 
   if (loading) return <LoadingSkeleton/>;

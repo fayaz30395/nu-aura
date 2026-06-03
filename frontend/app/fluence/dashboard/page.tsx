@@ -90,7 +90,7 @@ function FluenceDashboardPageContent() {
             </div>
 
             {/* CTA Buttons */}
-            <div className="flex flex-wrap gap-3">
+            <div className="flex flex-wrap gap-2">
               <Button
                 onClick={() => router.push('/fluence/wiki/new')}
                 className="gap-2 bg-white text-[var(--accent)] hover:bg-white/95 font-medium shadow-[var(--sh-md)] hover:shadow-[var(--sh-lg)] transition-all"

@@ -30,8 +30,10 @@ export const KNOWN_NOISE: RegExp[] = [
 
   // Chromium suspends in-flight requests under heavy parallel load — pure
   // test-environment artifact, not a real failure.
+  /Failed to load resource: net::ERR_CONNECTION_REFUSED/i,
   /Failed to load resource: net::ERR_NETWORK_IO_SUSPENDED/i,
   /Failed to load resource: net::ERR_ABORTED/i,
+  /Failed to load resource: net::ERR_NAME_NOT_RESOLVED/i,
 ];
 
 export const isNoise = (msg: string): boolean =>

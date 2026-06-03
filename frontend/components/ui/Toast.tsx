@@ -125,7 +125,7 @@ function ToastItem({toast, onClose}: { toast: Toast; onClose: () => void }) {
     <motion.div
       layout
       role="alert"
-      className="flex items-start gap-3 min-w-[300px] max-w-[380px] rounded-[13px] border border-[var(--border)] bg-[var(--surface)] p-[13px_14px] shadow-[var(--sh-pop)]"
+      className="flex items-start gap-2 min-w-[300px] max-w-[380px] rounded-[13px] border border-[var(--border)] bg-[var(--surface)] p-[13px_14px] shadow-[var(--sh-pop)]"
       variants={pick(toastVariants)}
       initial="initial"
       animate="animate"

@@ -19,14 +19,6 @@ const hexToRgb = (h) => {
   return [0, 2, 4].map((i) => parseInt(n.slice(i, i + 2), 16));
 };
 const ACCENT_RGB = hexToRgb(ACCENT);
-const closeTo = (a, b, tol = 6) => a.every((v, i) => Math.abs(v - b[i]) <= tol);
-
-function parseRgb(str) {
-  const m = str && str.match(/rgba?\(([^)]+)\)/);
-  if (!m) return null;
-  const parts = m[1].split(',').map((x) => parseFloat(x.trim()));
-  return parts.slice(0, 3);
-}
 
 async function setTheme(page, theme) {
   await page.evaluate((t) => {
@@ -72,7 +64,7 @@ for (const route of ROUTES) {
       });
       const page = await ctx.newPage();
       try {
-        const resp = await page.goto(BASE + route.path, {
+        await page.goto(BASE + route.path, {
           waitUntil: 'networkidle',
           timeout: 30000,
         });
@@ -158,11 +150,6 @@ for (const route of ROUTES) {
 
         // Focus ring on Tab
         const focusInfo = await page.evaluate(() => {
-          const parse = (str) => {
-            const m = str && str.match(/rgba?\(([^)]+)\)/);
-            if (!m) return null;
-            return m[1].split(',').map((x) => parseFloat(x.trim()));
-          };
           // focus first focusable
           const f = document.querySelector(
             'a[href], button, input, select, textarea, [tabindex]:not([tabindex="-1"])'
@@ -225,8 +212,10 @@ fs.writeFileSync(
   JSON.stringify({ covered, needsAuth, failures, results }, null, 2)
 );
 
+/* eslint-disable no-console -- dev-only CLI script: stdout is the intended report channel */
 console.log('COVERED:', covered.join(', ') || '(none)');
 console.log('NEEDS_AUTH:', needsAuth.join(', ') || '(none)');
 console.log('FAILURES:', failures.length);
 failures.forEach((f) => console.log('  - ' + f));
 console.log('SHOTS:', results.length);
+/* eslint-enable no-console */

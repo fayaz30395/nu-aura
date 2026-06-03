@@ -8,7 +8,7 @@ import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
-import {ArrowLeftRight, PlusCircle} from 'lucide-react';
+import {ArrowLeftRight, Loader2, PlusCircle} from 'lucide-react';
 import {notifications} from '@mantine/notifications';
 import {Modal} from '@mantine/core';
 import {AppLayout} from '@/components/layout';
@@ -73,15 +73,28 @@ const shiftSwapSchema = z.object({
 
 type ShiftSwapFormData = z.infer<typeof shiftSwapSchema>;
 
+function ShiftSwapGate({message}: {message: string}) {
+  return (
+    <AppLayout>
+      <div className="flex min-h-[280px] items-center justify-center">
+        <div className="card-aura flex items-center gap-2 p-4">
+          <Loader2 className="h-4 w-4 animate-spin text-[var(--accent-primary)] motion-reduce:animate-none"/>
+          <span className="text-body-secondary">{message}</span>
+        </div>
+      </div>
+    </AppLayout>
+  );
+}
+
 export default function ShiftSwapPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<'my' | 'incoming' | 'approval'>('my');
   const [myPage, setMyPage] = useState(0);
   const [myPageSize, setMyPageSize] = useState(20);
+  const {isAuthenticated, hasHydrated} = useAuth();
   const {hasAnyPermission, isReady} = usePermissions();
-
-  const hasAccess = hasAnyPermission(
+  const hasShiftSwapAccess = hasAnyPermission(
     Permissions.ATTENDANCE_VIEW_SELF,
     Permissions.ATTENDANCE_VIEW_ALL,
     Permissions.SHIFT_VIEW,
@@ -89,10 +102,15 @@ export default function ShiftSwapPage() {
   );
 
   useEffect(() => {
-    if (isReady && !hasAccess) {
+    if (!hasHydrated || !isReady) return;
+    if (!isAuthenticated) {
+      router.replace('/auth/login');
+      return;
+    }
+    if (!hasShiftSwapAccess) {
       router.replace('/me/dashboard');
     }
-  }, [isReady, hasAccess, router]);
+  }, [hasHydrated, isReady, isAuthenticated, hasShiftSwapAccess, router]);
 
   const [showModal, setShowModal] = useState(false);
   const [selectedTargetEmployee, setSelectedTargetEmployee] = useState<{ id: string; name: string } | null>(null);
@@ -196,7 +214,21 @@ export default function ShiftSwapPage() {
     },
   });
 
-  if (!isReady || !hasAccess || !employeeId) return null;
+  if (!hasHydrated || !isReady) {
+    return <ShiftSwapGate message="Preparing shift swap workspace..."/>;
+  }
+
+  if (!isAuthenticated) {
+    return <ShiftSwapGate message="Redirecting to sign in..."/>;
+  }
+
+  if (!hasShiftSwapAccess) {
+    return <ShiftSwapGate message="Redirecting to your dashboard..."/>;
+  }
+
+  if (!employeeId) {
+    return <ShiftSwapGate message="Loading your employee profile..."/>;
+  }
 
   const onSubmitForm = (data: ShiftSwapFormData) => {
     submitMutation.mutate(data);

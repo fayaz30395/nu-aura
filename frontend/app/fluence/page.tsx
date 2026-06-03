@@ -172,7 +172,7 @@ function PageHeader() {
       transition={{duration: 0.4, ease: EASE}}
       className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-end"
     >
-      <div className="space-y-3 max-w-2xl">
+      <div className="space-y-2 max-w-2xl">
         <p className="text-aura-micro text-[var(--text-3)]">
           NU-Fluence
         </p>

@@ -22,7 +22,7 @@ export function PageErrorFallback({
       <p className="text-sm text-[var(--text-2)] mb-8 max-w-md leading-relaxed">
         {error?.message || 'An unexpected error occurred. Please try refreshing the page.'}
       </p>
-      <div className="flex gap-3">
+      <div className="flex gap-2">
         {onReset && (
           <button
             onClick={onReset}
