@@ -39,7 +39,7 @@ describe('Button', () => {
     it('renders danger variant', () => {
       render(<Button variant="danger">Delete</Button>);
       const button = screen.getByRole('button');
-      expect(button.className).toContain('bg-danger-600');
+      expect(button.className).toContain('bg-[var(--err-bg)]');
       expect(button.className).not.toContain('bg-gradient-to-b');
     });
 

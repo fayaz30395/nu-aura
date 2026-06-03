@@ -42,20 +42,20 @@ describe('Stat', () => {
       expect(value.className).toContain('text-[var(--text-primary)]');
     });
 
-    it('accent tone applies text-accent-700 class', () => {
+    it('accent tone applies the accent-primary token color class', () => {
       render(<Stat label="L" value="V" tone="accent" />);
       const value = screen.getByText('V');
-      expect(value.className).toContain('text-accent-700');
+      expect(value.className).toContain('text-[var(--accent-primary)]');
     });
 
-    it('success tone applies text-success-700 class', () => {
+    it('success tone applies the ok-fg token color class', () => {
       render(<Stat label="L" value="V" tone="success" />);
-      expect(screen.getByText('V').className).toContain('text-success-700');
+      expect(screen.getByText('V').className).toContain('text-[var(--ok-fg)]');
     });
 
-    it('danger tone applies text-danger-700 class', () => {
+    it('danger tone applies the err-fg token color class', () => {
       render(<Stat label="L" value="V" tone="danger" />);
-      expect(screen.getByText('V').className).toContain('text-danger-700');
+      expect(screen.getByText('V').className).toContain('text-[var(--err-fg)]');
     });
   });
 
