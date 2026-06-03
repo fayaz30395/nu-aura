@@ -258,7 +258,7 @@ describe('AuthGuard', () => {
       );
 
       await waitFor(() => {
-        expect(screen.getByText(/Access Denied/)).toBeInTheDocument();
+        expect(screen.getByText(/Access Restricted/)).toBeInTheDocument();
       });
     });
 
@@ -384,7 +384,7 @@ describe('AuthGuard', () => {
       );
 
       await waitFor(() => {
-        expect(screen.getByText(/Access Denied/)).toBeInTheDocument();
+        expect(screen.getByText(/Access Restricted/)).toBeInTheDocument();
       });
     });
 
@@ -459,7 +459,7 @@ describe('AuthGuard', () => {
       );
 
       await waitFor(() => {
-        expect(screen.getByText(/Access Denied/)).toBeInTheDocument();
+        expect(screen.getByText(/Access Restricted/)).toBeInTheDocument();
       });
     });
 
@@ -534,7 +534,7 @@ describe('AuthGuard', () => {
       );
 
       await waitFor(() => {
-        expect(screen.getByText(/Access Denied/)).toBeInTheDocument();
+        expect(screen.getByText(/Access Restricted/)).toBeInTheDocument();
       });
     });
 
@@ -607,7 +607,7 @@ describe('AuthGuard', () => {
       );
 
       await waitFor(() => {
-        expect(screen.getByText(/Access Denied/)).toBeInTheDocument();
+        expect(screen.getByText(/Access Restricted/)).toBeInTheDocument();
       });
     });
 
@@ -714,7 +714,7 @@ describe('AuthGuard', () => {
       );
 
       await waitFor(() => {
-        expect(screen.getByText(/Access Denied/)).toBeInTheDocument();
+        expect(screen.getByText(/Access Restricted/)).toBeInTheDocument();
       });
     });
   });
@@ -786,7 +786,7 @@ describe('AuthGuard', () => {
       );
 
       await waitFor(() => {
-        expect(screen.getByText(/Access Denied/)).toBeInTheDocument();
+        expect(screen.getByText(/Access Restricted/)).toBeInTheDocument();
       });
     });
   });
@@ -859,7 +859,7 @@ describe('AuthGuard', () => {
       );
 
       await waitFor(() => {
-        expect(screen.getByText(/Access Denied/)).toBeInTheDocument();
+        expect(screen.getByText(/Access Restricted/)).toBeInTheDocument();
       });
     });
   });
@@ -932,7 +932,7 @@ describe('AuthGuard', () => {
       );
 
       await waitFor(() => {
-        expect(screen.getByText(/Access Denied/)).toBeInTheDocument();
+        expect(screen.getByText(/Access Restricted/)).toBeInTheDocument();
       });
     });
   });

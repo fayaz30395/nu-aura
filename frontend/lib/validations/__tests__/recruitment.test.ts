@@ -7,6 +7,7 @@ describe('Recruitment Validation Schemas', () => {
     const valid = {
       jobCode: 'JOB-001',
       jobTitle: 'Senior Engineer',
+      departmentId: '11111111-1111-1111-1111-111111111111',
     };
 
     it('accepts valid minimal job opening', () => {
