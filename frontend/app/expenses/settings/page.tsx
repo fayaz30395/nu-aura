@@ -33,11 +33,11 @@ import {
 const categorySchema = z.object({
   name: z.string().min(1, 'Name is required').max(100),
   description: z.string().max(500).optional(),
-  maxAmount: z.number({coerce: true}).positive().optional().or(z.literal(0)),
+  maxAmount: z.coerce.number().positive().optional().or(z.literal(0)),
   requiresReceipt: z.boolean(),
   glCode: z.string().max(50).optional(),
   iconName: z.string().max(50).optional(),
-  sortOrder: z.number({coerce: true}).int().min(0).optional(),
+  sortOrder: z.coerce.number().int().min(0).optional(),
 });
 type CategoryFormData = z.infer<typeof categorySchema>;
 
@@ -45,13 +45,13 @@ type CategoryFormData = z.infer<typeof categorySchema>;
 const policySchema = z.object({
   name: z.string().min(1, 'Name is required').max(150),
   description: z.string().max(500).optional(),
-  dailyLimit: z.number({coerce: true}).positive().optional().or(z.literal(0)),
-  monthlyLimit: z.number({coerce: true}).positive().optional().or(z.literal(0)),
-  yearlyLimit: z.number({coerce: true}).positive().optional().or(z.literal(0)),
-  singleClaimLimit: z.number({coerce: true}).positive().optional().or(z.literal(0)),
+  dailyLimit: z.coerce.number().positive().optional().or(z.literal(0)),
+  monthlyLimit: z.coerce.number().positive().optional().or(z.literal(0)),
+  yearlyLimit: z.coerce.number().positive().optional().or(z.literal(0)),
+  singleClaimLimit: z.coerce.number().positive().optional().or(z.literal(0)),
   requiresPreApproval: z.boolean(),
-  preApprovalThreshold: z.number({coerce: true}).positive().optional().or(z.literal(0)),
-  receiptRequiredAbove: z.number({coerce: true}).positive().optional().or(z.literal(0)),
+  preApprovalThreshold: z.coerce.number().positive().optional().or(z.literal(0)),
+  receiptRequiredAbove: z.coerce.number().positive().optional().or(z.literal(0)),
   currency: z.string().length(3).optional(),
 });
 type PolicyFormData = z.infer<typeof policySchema>;

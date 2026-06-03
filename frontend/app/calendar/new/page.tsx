@@ -30,7 +30,7 @@ const calendarEventSchema = z
     visibility: z.enum(['PUBLIC', 'PRIVATE', 'CONFIDENTIAL']),
     location: z.string().optional(),
     meetingLink: z.string().url('Please enter a valid URL').optional().or(z.literal('')),
-    reminderMinutes: z.number({coerce: true}).min(0).optional(),
+    reminderMinutes: z.coerce.number().min(0).optional(),
     description: z.string().optional(),
     notes: z.string().optional(),
     isRecurring: z.boolean().default(false),

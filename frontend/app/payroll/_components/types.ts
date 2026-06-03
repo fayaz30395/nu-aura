@@ -21,15 +21,15 @@ export const payslipFormSchema = z.object({
   paymentDate: z.string().min(1, 'Payment date is required'),
   payrollPeriodStart: z.string().min(1, 'Period start is required'),
   payrollPeriodEnd: z.string().min(1, 'Period end is required'),
-  baseSalary: z.number({coerce: true}).positive('Base salary must be positive'),
-  allowances: z.number({coerce: true}).min(0).optional(),
-  deductions: z.number({coerce: true}).min(0).optional(),
+  baseSalary: z.coerce.number().positive('Base salary must be positive'),
+  allowances: z.coerce.number().min(0).optional(),
+  deductions: z.coerce.number().min(0).optional(),
 });
 export type PayslipFormData = z.infer<typeof payslipFormSchema>;
 
 export const salaryComponentSchema = z.object({
   name: z.string().min(1, 'Name is required'),
-  amount: z.number({coerce: true}).min(0),
+  amount: z.coerce.number().min(0),
   type: z.enum(['FIXED', 'VARIABLE'] as const) as z.ZodType<'FIXED' | 'VARIABLE'>,
   description: z.string().optional().or(z.literal('')),
 });
@@ -37,7 +37,7 @@ export const salaryComponentSchema = z.object({
 export const salaryStructureSchema = z.object({
   employeeId: z.string().min(1, 'Employee ID is required'),
   effectiveDate: z.string().min(1, 'Effective date is required'),
-  baseSalary: z.number({coerce: true}).positive('Base salary must be positive'),
+  baseSalary: z.coerce.number().positive('Base salary must be positive'),
   allowances: z.array(salaryComponentSchema).default([]),
   deductions: z.array(salaryComponentSchema).default([]),
 });

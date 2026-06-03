@@ -29,9 +29,9 @@ const officeLocationSchema = z.object({
   state: z.string().min(1, 'State required'),
   country: z.string().min(1, 'Country required'),
   postalCode: z.string().optional().or(z.literal('')),
-  latitude: z.number({coerce: true}).finite('Valid latitude required'),
-  longitude: z.number({coerce: true}).finite('Valid longitude required'),
-  geofenceRadius: z.number({coerce: true}).int().min(10, 'Minimum 10 meters').max(10000, 'Maximum 10000 meters'),
+  latitude: z.coerce.number().finite('Valid latitude required'),
+  longitude: z.coerce.number().finite('Valid longitude required'),
+  geofenceRadius: z.coerce.number().int().min(10, 'Minimum 10 meters').max(10000, 'Maximum 10000 meters'),
   isDefault: z.boolean().default(false),
   timezone: z.string().optional().or(z.literal('')),
 });

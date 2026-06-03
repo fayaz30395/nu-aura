@@ -159,7 +159,7 @@ export default function StatutoryPage() {
             </Badge>
           </Group>
 
-          <Grid gutter="lg">
+          <Grid gap="lg">
             {/* Left: Input form */}
             <Grid.Col span={{base: 12, md: 5}}>
               <Card withBorder shadow="xs" radius="md" p="lg" className="skeuo-card">

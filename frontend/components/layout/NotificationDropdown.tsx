@@ -588,7 +588,7 @@ export function NotificationDropdown({isOpen, onClose}: NotificationDropdownProp
                         <p
                           className="text-sm text-surface-600 dark:text-surface-300 mt-0.5 line-clamp-2">{notification.message}</p>
                         <p className="text-xs text-surface-500 mt-1">
-                          {formatDistanceToNow(notification.timestamp, {addSuffix: true})}
+                          {formatDistanceToNow(notification.timestamp ?? Date.now(), {addSuffix: true})}
                         </p>
                       </div>
                     </div>

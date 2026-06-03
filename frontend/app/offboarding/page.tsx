@@ -56,7 +56,7 @@ const exitProcessFormSchema = z.object({
   exitType: z.string().min(1, 'Exit type required'),
   resignationDate: z.string().optional().or(z.literal('')),
   lastWorkingDate: z.string().optional().or(z.literal('')),
-  noticePeriodDays: z.number({coerce: true}).min(0, 'Notice period must be non-negative'),
+  noticePeriodDays: z.coerce.number().min(0, 'Notice period must be non-negative'),
   reasonForLeaving: z.string().optional().or(z.literal('')),
   newCompany: z.string().optional().or(z.literal('')),
   newDesignation: z.string().optional().or(z.literal('')),
@@ -237,12 +237,12 @@ export default function OffboardingPage() {
     setValue('exitType', process.exitType as unknown as string);
     setValue('resignationDate', process.resignationDate || '');
     setValue('lastWorkingDate', process.lastWorkingDate || '');
-    setValue('noticePeriodDays', process.noticePeriodDays);
+    setValue('noticePeriodDays', process.noticePeriodDays ?? 30);
     setValue('reasonForLeaving', process.reasonForLeaving || '');
     setValue('newCompany', process.newCompany || '');
     setValue('newDesignation', process.newDesignation || '');
     setValue('status', process.status as unknown as string);
-    setValue('rehireEligible', process.rehireEligible);
+    setValue('rehireEligible', process.rehireEligible ?? true);
     setValue('notes', process.notes || '');
     setShowAddModal(true);
   };

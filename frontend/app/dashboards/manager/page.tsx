@@ -33,7 +33,11 @@ import {EmptyState} from '@/components/ui/EmptyState';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {useManagerDashboard, useManagerTeamProjects} from '@/lib/hooks/queries';
-import type {TeamMemberProjectAllocation, TeamMemberWithProjects} from '@/lib/types/core/dashboard';
+import type {
+  ManagerTeamProjectsResponse,
+  TeamMemberProjectAllocation,
+  TeamMemberWithProjects,
+} from '@/lib/types/core/dashboard';
 import {formatDateShort} from '@/lib/utils/format/date';
 
 // Single ease curve — matches the resources page blueprint.
@@ -97,6 +101,7 @@ export default function ManagerDashboardPage() {
     isLoading: teamProjectsLoading,
     error: teamProjectsError,
   } = useManagerTeamProjects(hasHydrated && isAuthenticated && hasManagerAccess);
+  const teamProjects: ManagerTeamProjectsResponse | undefined = teamProjectsData ?? undefined;
 
   useEffect(() => {
     if (!hasHydrated || !permissionsReady) return;
@@ -224,7 +229,7 @@ export default function ManagerDashboardPage() {
         <TeamProjectsSection
           loading={teamProjectsLoading}
           error={!!teamProjectsError}
-          data={teamProjectsData}
+          data={teamProjects}
           onEmployee={(id) => router.push(`/employees/${id}`)}
           onProject={(id) => router.push(`/projects/${id}`)}
         />

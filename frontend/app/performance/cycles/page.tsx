@@ -357,7 +357,7 @@ export default function ReviewCyclesPage() {
                     <span className="text-[var(--text-secondary)]">Review Deadline:</span>
                     <div
                       className={'font-medium ' + (isDeadlinePassed(cycle.reviewDeadline) ? 'text-danger-600' : isDeadlineNear(cycle.reviewDeadline) ? 'text-warning-600' : '')}>
-                      {cycle.reviewDeadline || cycle.managerReviewDeadline ? formatDate(cycle.reviewDeadline ?? cycle.managerReviewDeadline) : 'N/A'}
+                      {cycle.reviewDeadline || cycle.managerReviewDeadline ? formatDate(cycle.reviewDeadline ?? cycle.managerReviewDeadline ?? '') : 'N/A'}
                       {isDeadlinePassed(cycle.reviewDeadline ?? cycle.managerReviewDeadline) && ' (Passed)'}
                       {isDeadlineNear(cycle.reviewDeadline ?? cycle.managerReviewDeadline) && !isDeadlinePassed(cycle.reviewDeadline ?? cycle.managerReviewDeadline) && ' (Soon)'}
                     </div>

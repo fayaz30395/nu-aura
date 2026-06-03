@@ -61,7 +61,7 @@ const expenseClaimSchema = z.object({
   claimDate: z.string().min(1, 'Claim date required'),
   category: z.string().min(1, 'Category required'),
   description: z.string().min(1, 'Description required'),
-  amount: z.number({coerce: true}).positive('Amount must be positive'),
+  amount: z.coerce.number().positive('Amount must be positive'),
   currency: z.string().length(3, 'Invalid currency code'),
   receiptUrl: z.string().url().optional().or(z.literal('')),
   notes: z.string().optional().or(z.literal('')),

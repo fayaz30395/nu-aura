@@ -54,7 +54,7 @@ const travelRequestSchema = z
     estimatedCost: z
       .number({coerce: true, invalid_type_error: 'Please enter a valid cost'})
       .positive('Estimated cost must be greater than 0'),
-    advanceRequired: z.number({coerce: true}).min(0).optional(),
+    advanceRequired: z.coerce.number().min(0).optional(),
     specialInstructions: z.string().optional(),
   })
   .superRefine((data, ctx) => {

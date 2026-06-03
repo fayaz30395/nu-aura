@@ -25,7 +25,7 @@ interface CommentThreadProps {
 
 // ==================== Avatar Component ====================
 
-function AuthorAvatar({author}: { author: AuthorInfo }): JSX.Element {
+function AuthorAvatar({author}: { author: AuthorInfo }): React.JSX.Element {
   const initials = author.fullName
     .split(' ')
     .map((name) => name[0])
@@ -57,7 +57,7 @@ function CommentItem({
                        isReply = false,
                        onReply,
                        onDelete,
-                     }: CommentItemProps): JSX.Element {
+                     }: CommentItemProps): React.JSX.Element {
   const isAuthor = currentUserId === comment.author.id;
 
   return (
@@ -149,7 +149,7 @@ export function CommentThread({
                                 onDeleteComment,
                                 onLoadMore,
                                 isSubmitting,
-                              }: CommentThreadProps): JSX.Element {
+                              }: CommentThreadProps): React.JSX.Element {
   const [newCommentContent, setNewCommentContent] = useState('');
   const [replyingTo, setReplyingTo] = useState<{ commentId: string; authorName: string } | null>(
     null

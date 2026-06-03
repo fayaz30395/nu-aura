@@ -114,7 +114,7 @@ class WallService {
   }
 
   async getPosts(page = 0, size = 10): Promise<PageResponse<WallPostResponse>> {
-    const empty = {content: [], totalElements: 0, totalPages: 0, size, number: page} as PageResponse<WallPostResponse>;
+    const empty: PageResponse<WallPostResponse> = {content: [], totalElements: 0, totalPages: 0, size, number: page, first: true, last: true, empty: true};
     try {
       const response = await apiClient.getPermissive<PageResponse<WallPostResponse>>('/wall/posts', {
         params: {page, size},

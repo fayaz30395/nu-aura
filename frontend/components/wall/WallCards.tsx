@@ -59,7 +59,7 @@ function CardHeader({
                       currentUserId,
                       onDelete,
                       onPin,
-                    }: CardHeaderProps): JSX.Element {
+                    }: CardHeaderProps): React.JSX.Element {
   const [showMenu, setShowMenu] = useState(false);
   const isAuthor = currentUserId === author.id;
 
@@ -182,7 +182,7 @@ export function PostCard({
                            onLoadMoreComments,
                            onDelete,
                            onPin,
-                         }: PostCardProps): JSX.Element {
+                         }: PostCardProps): React.JSX.Element {
   const totalReactions = Object.values(post.reactionCounts).reduce((a, b) => a + b, 0);
 
   return (
@@ -290,7 +290,7 @@ export function PollCard({
                            onDelete,
                            onPin,
                            onVote,
-                         }: PollCardProps): JSX.Element {
+                         }: PollCardProps): React.JSX.Element {
   const totalReactions = Object.values(post.reactionCounts).reduce((a, b) => a + b, 0);
   const totalVotes = (post.pollOptions || []).reduce((sum, opt) => sum + opt.voteCount, 0);
 
@@ -399,7 +399,7 @@ function PollOption({
                       userVotedOptionId,
                       totalVotes: _totalVotes,
                       onVote,
-                    }: PollOptionProps): JSX.Element {
+                    }: PollOptionProps): React.JSX.Element {
   const isSelected = userVotedOptionId === option.id;
 
   if (hasVoted) {
@@ -469,7 +469,7 @@ export function PraiseCard({
                              onLoadMoreComments,
                              onDelete,
                              onPin,
-                           }: PraiseCardProps): JSX.Element {
+                           }: PraiseCardProps): React.JSX.Element {
   const totalReactions = Object.values(post.reactionCounts).reduce((a, b) => a + b, 0);
   const recipient = post.praiseRecipient;
 
@@ -611,7 +611,7 @@ export function WallCard({
                            onDelete,
                            onPin,
                            onVote,
-                         }: WallCardProps): JSX.Element {
+                         }: WallCardProps): React.JSX.Element {
   const baseProps = {
     post,
     currentUserId,

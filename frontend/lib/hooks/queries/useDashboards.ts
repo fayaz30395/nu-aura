@@ -113,7 +113,7 @@ export function useManagerDashboardById(managerId: string, enabled: boolean = tr
  * Shows what each direct report is working on with project allocation percentages
  */
 export function useManagerTeamProjects(enabled: boolean = true) {
-  return useQuery<ManagerTeamProjectsResponse>({
+  return useQuery<ManagerTeamProjectsResponse | null>({
     queryKey: dashboardKeys.managerTeamProjects(),
     queryFn: async () => dashboardService.getManagerTeamProjects(),
     enabled,

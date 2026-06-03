@@ -28,7 +28,7 @@ const mileageLogSchema = z.object({
   travelDate: z.string().min(1, 'Travel date is required'),
   fromLocation: z.string().min(1, 'From location is required').max(500),
   toLocation: z.string().min(1, 'To location is required').max(500),
-  distanceKm: z.number({coerce: true}).positive('Distance must be positive'),
+  distanceKm: z.coerce.number().positive('Distance must be positive'),
   purpose: z.string().max(1000).optional().or(z.literal('')),
   vehicleType: z.enum(['CAR', 'MOTORCYCLE', 'BICYCLE', 'PUBLIC_TRANSPORT'] as const),
   notes: z.string().max(1000).optional().or(z.literal('')),

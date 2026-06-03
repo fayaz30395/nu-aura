@@ -75,7 +75,7 @@ const GenerateOfferLetterFormSchema = z.object({
   candidateId: z.string().min(1, 'Candidate is required'),
   letterTitle: z.string().optional().or(z.literal('')),
   offeredDesignation: z.string().min(1, 'Offered designation is required'),
-  offeredCtc: z.number({coerce: true}).positive('Offered CTC must be greater than 0'),
+  offeredCtc: z.coerce.number().positive('Offered CTC must be greater than 0'),
   proposedJoiningDate: z.string().min(1, 'Proposed joining date is required'),
   letterDate: z.string().min(1, 'Letter date is required'),
   expiryDate: z.string().optional().or(z.literal('')),

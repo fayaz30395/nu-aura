@@ -47,7 +47,7 @@ const customFieldSchema = z.object({
   entityType: z.string().min(1, 'Entity type required'),
   fieldType: z.string().min(1, 'Field type required'),
   fieldGroup: z.string().optional().or(z.literal('')),
-  displayOrder: z.number({coerce: true}).int().min(0).default(0),
+  displayOrder: z.coerce.number().int().min(0).default(0),
   isRequired: z.boolean().default(false),
   isSearchable: z.boolean().default(false),
   showInList: z.boolean().default(false),

@@ -100,6 +100,16 @@ export default function CreateWikiPage() {
     },
   });
 
+  // Merge RHF's ref with the local titleRef so both receive the node
+  const {ref: titleFieldRef, ...titleField} = register('title');
+  const setTitleRef = useCallback(
+    (node: HTMLTextAreaElement | null) => {
+      titleFieldRef(node);
+      titleRef.current = node;
+    },
+    [titleFieldRef]
+  );
+
   const visibility = watch('visibility');
   const title = watch('title');
   const spaces = spacesData?.content || [];
@@ -242,8 +252,8 @@ export default function CreateWikiPage() {
           {/* Inline page title — big, borderless, like Confluence */}
           <div className="fluence-title-block">
             <textarea
-              ref={titleRef}
-              {...register('title')}
+              ref={setTitleRef}
+              {...titleField}
               onChange={handleTitleInput}
               onKeyDown={handleTitleKeyDown}
               placeholder="Untitled"

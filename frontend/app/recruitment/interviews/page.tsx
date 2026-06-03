@@ -1192,7 +1192,7 @@ function InterviewsPage() {
                           }`}
                         >
                           <Star
-                            className={`h-6 w-6 ${watchFeedback('rating') && watchFeedback('rating') >= rating ? 'fill-current' : ''}`}/>
+                            className={`h-6 w-6 ${(watchFeedback('rating') ?? 0) >= rating ? 'fill-current' : ''}`}/>
                         </button>
                       ))}
                     </div>

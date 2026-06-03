@@ -366,7 +366,7 @@ export default function AdminIntegrationsPage() {
                 <CardDescription>Twilio SMS integration for notifications</CardDescription>
               </div>
             </div>
-            {renderStatusBadge(smsStatus)}
+            {renderStatusBadge(smsStatus ?? null)}
           </div>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -563,7 +563,7 @@ export default function AdminIntegrationsPage() {
                 <CardDescription>Stripe payment processing integration</CardDescription>
               </div>
             </div>
-            {renderStatusBadge(paymentStatus)}
+            {renderStatusBadge(paymentStatus ?? null)}
           </div>
         </CardHeader>
         <CardContent className="space-y-6">

@@ -135,6 +135,10 @@ export default function TemplateDetailPage() {
     notFound();
   }
 
+  if (!template) {
+    return null;
+  }
+
   return (
     <AppLayout>
       <div className="space-y-6">

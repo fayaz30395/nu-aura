@@ -48,7 +48,7 @@ export function EmployeeSearchAutocomplete({
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const inputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const debounceRef = useRef<NodeJS.Timeout>();
+  const debounceRef = useRef<NodeJS.Timeout>(undefined);
   const reactId = useId();
   const inputId = `${reactId}-employee-search-input`;
   const resultsId = `${reactId}-employee-search-results`;

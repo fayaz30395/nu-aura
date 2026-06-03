@@ -85,7 +85,7 @@ const documentRequestSchema = z.object({
   requiredByDate: z.string().min(1, 'Required by date is required'),
   deliveryMode: z.enum(['DIGITAL', 'PHYSICAL', 'BOTH']),
   deliveryAddress: z.string().optional(),
-  priority: z.number({coerce: true}).int().min(1).max(3),
+  priority: z.coerce.number().int().min(1).max(3),
 });
 
 type DocumentRequestFormData = z.infer<typeof documentRequestSchema>;

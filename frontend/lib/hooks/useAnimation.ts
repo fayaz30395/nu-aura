@@ -36,7 +36,7 @@ interface UseAnimationOptions {
  */
 export function useInView<T extends HTMLElement = HTMLDivElement>(
   options: UseAnimationOptions = {}
-): [RefObject<T>, boolean] {
+): [RefObject<T | null>, boolean] {
   const {
     triggerOnce = true,
     threshold = 0.1,
@@ -105,7 +105,7 @@ export function useInView<T extends HTMLElement = HTMLDivElement>(
  * Hook to get scroll progress (0-1) for an element
  */
 export function useScrollProgress<T extends HTMLElement = HTMLDivElement>(): [
-  RefObject<T>,
+  RefObject<T | null>,
   number
 ] {
   const ref = useRef<T>(null);
@@ -195,7 +195,7 @@ export function useStaggerAnimation<T extends HTMLElement = HTMLDivElement>(
     baseDelay?: number;
     triggerOnce?: boolean;
   } = {}
-): [RefObject<T>, boolean[]] {
+): [RefObject<T | null>, boolean[]] {
   const {baseDelay = 100, triggerOnce = true} = options;
   const [ref, isInView] = useInView<T>({triggerOnce});
   const [itemsInView, setItemsInView] = useState<boolean[]>(

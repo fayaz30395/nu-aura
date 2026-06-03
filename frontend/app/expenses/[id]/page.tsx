@@ -42,7 +42,7 @@ import {ConfirmedOcrData, ReceiptScanner} from '@/components/expenses';
 
 const itemSchema = z.object({
   description: z.string().min(1, 'Description required'),
-  amount: z.number({coerce: true}).positive('Amount must be positive'),
+  amount: z.coerce.number().positive('Amount must be positive'),
   expenseDate: z.string().min(1, 'Date required'),
   categoryId: z.string().optional(),
   merchantName: z.string().optional(),

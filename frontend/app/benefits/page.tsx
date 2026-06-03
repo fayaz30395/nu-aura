@@ -68,7 +68,7 @@ const enrollmentFormSchema = z.object({
 const claimFormSchema = z.object({
   enrollmentId: z.string().min(1, 'Enrollment required'),
   claimType: z.string().min(1, 'Claim type required'),
-  claimAmount: z.number({coerce: true}).positive('Amount must be positive'),
+  claimAmount: z.coerce.number().positive('Amount must be positive'),
   serviceDate: z.string().min(1, 'Service date required'),
   serviceProvider: z.string().min(1, 'Service provider required'),
   description: z.string().optional().or(z.literal('')),
@@ -353,7 +353,7 @@ export default function BenefitsPage() {
         claimAmount: data.claimAmount,
         serviceDate: data.serviceDate,
         serviceProvider: data.serviceProvider,
-        description: data.description,
+        description: data.description ?? '',
         receiptUrl: data.receiptUrl || undefined,
       };
 

@@ -133,7 +133,7 @@ export default function ActivityCard({activity}: ActivityCardProps) {
               >
                 {excerptOpen ? <IconChevronUp size={14}/> : <IconChevronDown size={14}/>}
               </ActionIcon>
-              <Collapse in={excerptOpen}>
+              <Collapse expanded={excerptOpen}>
                 <Text size="xs" c="dimmed" lineClamp={3} className="break-words">
                   {activity.contentExcerpt}
                 </Text>

@@ -1,6 +1,7 @@
 'use client';
 
 import {useMemo, useState} from 'react';
+import type {JSX} from 'react';
 import {BarChart2, Calendar, DollarSign, PieChart, TrendingDown, TrendingUp, Users,} from 'lucide-react';
 import {ExpenseCategory, ExpenseClaim} from '@/lib/types/hrms/expense';
 import {endOfMonth, format, isWithinInterval, parseISO, startOfMonth, subMonths} from 'date-fns';

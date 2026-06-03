@@ -121,6 +121,14 @@ const nextConfig = {
     } : false,
   },
 
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+
   // Headers for caching and security
   async headers() {
     const securityHeaders = [

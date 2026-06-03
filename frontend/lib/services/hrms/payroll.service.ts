@@ -92,7 +92,7 @@ function normalizePayrollRun(run: PayrollRunApiResponse): PayrollRun {
     approvedAt: run.approvedAt,
     lockedBy: run.lockedBy,
     lockedAt: run.lockedAt,
-    notes: run.notes ?? run.remarks,
+    notes: run.notes ?? run.remarks ?? undefined,
     createdBy: run.createdBy,
     createdAt: run.createdAt,
     updatedAt: run.updatedAt,

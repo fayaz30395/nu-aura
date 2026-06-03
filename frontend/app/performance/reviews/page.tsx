@@ -44,7 +44,7 @@ const reviewFormSchema = z.object({
   status: z.enum(['DRAFT', 'SUBMITTED', 'IN_REVIEW', 'COMPLETED', 'APPROVED', 'REJECTED'] as const) as z.ZodType<ReviewStatus>,
   reviewPeriodStart: z.string().min(1, 'Review period start is required'),
   reviewPeriodEnd: z.string().min(1, 'Review period end is required'),
-  overallRating: z.number({coerce: true}).min(1, 'Rating must be at least 1').max(5, 'Max 5'),
+  overallRating: z.coerce.number().min(1, 'Rating must be at least 1').max(5, 'Max 5'),
   strengths: z.string().optional().or(z.literal('')),
   areasForImprovement: z.string().optional().or(z.literal('')),
   goals: z.string().optional().or(z.literal('')),

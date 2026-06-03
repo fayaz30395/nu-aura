@@ -11,7 +11,7 @@ interface Heading {
 }
 
 interface TableOfContentsProps {
-  contentRef: React.RefObject<HTMLDivElement>;
+  contentRef: React.RefObject<HTMLDivElement | null>;
   className?: string;
 }
 

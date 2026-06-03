@@ -136,8 +136,8 @@ export default function CalibrationPage() {
 
   // Initialize selected cycle (moved to useEffect to avoid setState during render)
   useEffect(() => {
-    if (!selectedCycleId && cyclesQuery.data?.content?.length > 0) {
-      const cycles = cyclesQuery.data.content;
+    const cycles = cyclesQuery.data?.content;
+    if (!selectedCycleId && cycles && cycles.length > 0) {
       const active = cycles.find(c => c.status === 'ACTIVE' || c.status === 'CALIBRATION');
       if (active) {
         setSelectedCycleId(active.id);

@@ -54,8 +54,8 @@ export default function BlogsPage() {
   const categories = (
     Array.isArray(categoriesData)
       ? categoriesData
-      : Array.isArray((categoriesData as Record<string, unknown>)?.content)
-        ? (categoriesData as Record<string, unknown>).content as Category[]
+      : Array.isArray((categoriesData as Record<string, unknown> | undefined)?.content)
+        ? (categoriesData as Record<string, unknown> | undefined)?.content as Category[]
         : []
   ) as Category[];
 

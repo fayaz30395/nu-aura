@@ -42,7 +42,7 @@ export const MentionInput = forwardRef<MentionInputHandle, MentionInputProps>(
     const [mentionStartIndex, setMentionStartIndex] = useState(-1);
     const [selectedIdx, setSelectedIdx] = useState(0);
     const [filteredUsers, setFilteredUsers] = useState<MentionUser[]>([]);
-    const debounceRef = useRef<ReturnType<typeof setTimeout>>();
+    const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
     useImperativeHandle(ref, () => ({
       focus: () => textareaRef.current?.focus(),

@@ -46,6 +46,10 @@ export default function ContractDetailPage() {
     notFound();
   }
 
+  if (!contract) {
+    return null;
+  }
+
   const breadcrumbs = [
     {label: 'Dashboard', href: '/dashboard'},
     {label: 'Contracts', href: '/contracts'},

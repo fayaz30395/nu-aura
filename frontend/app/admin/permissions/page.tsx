@@ -122,10 +122,13 @@ export default function PermissionsPage() {
   }));
   const permissions = permissionsQuery.data || [];
   const usersRaw = usersQuery.data;
+  const usersContent = (usersRaw && !Array.isArray(usersRaw))
+    ? (usersRaw as { content?: User[] }).content
+    : undefined;
   const users: User[] = Array.isArray(usersRaw)
     ? usersRaw
-    : Array.isArray((usersRaw as { content?: User[] })?.content)
-      ? (usersRaw as { content: User[] }).content
+    : Array.isArray(usersContent)
+      ? usersContent
       : [];
   const isLoading = rolesQuery.isLoading || permissionsQuery.isLoading || usersQuery.isLoading;
 

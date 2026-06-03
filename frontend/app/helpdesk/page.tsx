@@ -33,37 +33,37 @@ export default function HelpdeskPage() {
     [slasResponse],
   );
 
-  const getStatValue = (formatter: () => string): string => {
+  const getStatValue = (formatter: (data: NonNullable<typeof dashboard>) => string): string => {
     if (dashboardLoading) return '...';
     if (dashboardError || !dashboard) return 'N/A';
-    return formatter();
+    return formatter(dashboard);
   };
 
   const statCards = [
     {
       label: 'SLA Compliance',
-      value: getStatValue(() => `${dashboard.slaComplianceRate.toFixed(1)}%`),
+      value: getStatValue((data) => `${data.slaComplianceRate.toFixed(1)}%`),
       icon: CheckCircle2,
       tone: 'ok',
       bg: 'bg-[--ok-bg]',
     },
     {
       label: 'Avg First Response',
-      value: getStatValue(() => `${dashboard.averageFirstResponseMinutes} min`),
+      value: getStatValue((data) => `${data.averageFirstResponseMinutes} min`),
       icon: Clock,
       tone: 'accent',
       bg: 'bg-[--accent-soft]',
     },
     {
       label: 'Avg Resolution',
-      value: getStatValue(() => `${dashboard.averageResolutionMinutes} min`),
+      value: getStatValue((data) => `${data.averageResolutionMinutes} min`),
       icon: BarChart3,
       tone: 'info',
       bg: 'bg-[--accent-soft]',
     },
     {
       label: 'Avg CSAT',
-      value: getStatValue(() => `${dashboard.averageCSAT.toFixed(1)} / 5`),
+      value: getStatValue((data) => `${data.averageCSAT.toFixed(1)} / 5`),
       icon: Headphones,
       tone: 'warn',
       bg: 'bg-[--warn-bg]',

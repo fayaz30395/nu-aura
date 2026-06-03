@@ -14,8 +14,8 @@ interface FileContextMenuProps {
   onShare: (file: DriveFile) => void;
   onToggleStar: (file: DriveFile) => void;
   onRename: (file: DriveFile) => void;
-  onDelete: (fileId: string) => void;
-  menuRef: React.RefObject<HTMLDivElement>;
+  onDelete?: (fileId: string) => void;
+  menuRef: React.RefObject<HTMLDivElement | null>;
 }
 
 export function FileContextMenu({
@@ -92,15 +92,19 @@ export function FileContextMenu({
           className="h-4 w-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
         Rename
       </button>
-      <div className="border-t border-[var(--border-main)] dark:border-[var(--border-main)] my-1"/>
-      <button
-        onClick={() => onDelete(file.id)}
-        className="w-full px-4 py-2 text-left text-sm text-danger-600 dark:text-danger-400 hover:bg-danger-50 dark:hover:bg-danger-950/30 flex items-center gap-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-      >
-        <Trash2
-          className="h-4 w-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
-        Delete
-      </button>
+      {onDelete && (
+        <>
+          <div className="border-t border-[var(--border-main)] dark:border-[var(--border-main)] my-1"/>
+          <button
+            onClick={() => onDelete(file.id)}
+            className="w-full px-4 py-2 text-left text-sm text-danger-600 dark:text-danger-400 hover:bg-danger-50 dark:hover:bg-danger-950/30 flex items-center gap-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+          >
+            <Trash2
+              className="h-4 w-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
+            Delete
+          </button>
+        </>
+      )}
     </motion.div>
   );
 }

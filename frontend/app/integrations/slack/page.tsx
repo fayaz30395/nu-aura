@@ -36,8 +36,8 @@ const slackConfigSchema = z.object({
   slackSigningSecret: z.string().optional().or(z.literal('')),
   slackDefaultChannel: z.string().min(1, 'Default channel is required').regex(/^#/, 'Channel must start with #'),
   isEnabled: z.boolean(),
-  rateLimitPerMinute: z.number({coerce: true}).min(0).nullable().optional(),
-  rateLimitPerHour: z.number({coerce: true}).min(0).nullable().optional(),
+  rateLimitPerMinute: z.coerce.number().min(0).nullable().optional(),
+  rateLimitPerHour: z.coerce.number().min(0).nullable().optional(),
 });
 
 type SlackConfigFormData = z.infer<typeof slackConfigSchema>;

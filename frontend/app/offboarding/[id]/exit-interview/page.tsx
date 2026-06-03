@@ -62,7 +62,7 @@ const feedbackSchema = z.object({
   wouldConsiderReturning: z.boolean().default(false),
   newEmployer: z.string().optional(),
   newRole: z.string().optional(),
-  newSalaryIncreasePercentage: z.number({coerce: true}).min(0).max(200).optional(),
+  newSalaryIncreasePercentage: z.coerce.number().min(0).max(200).optional(),
   interviewerNotes: z.string().optional(),
   isConfidential: z.boolean().default(true),
 });

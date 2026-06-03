@@ -24,9 +24,9 @@ const timeEntrySchema = z.object({
     .number({coerce: true, invalid_type_error: 'Please enter valid hours worked'})
     .positive('Please enter valid hours worked')
     .max(24, 'Hours worked cannot exceed 24 hours'),
-  billableHours: z.number({coerce: true}).min(0).optional(),
+  billableHours: z.coerce.number().min(0).optional(),
   isBillable: z.boolean().default(true),
-  hourlyRate: z.number({coerce: true}).min(0).optional(),
+  hourlyRate: z.coerce.number().min(0).optional(),
   entryType: z.enum(['REGULAR', 'OVERTIME', 'HOLIDAY', 'WEEKEND']),
   clientName: z.string().optional(),
   description: z.string().optional(),
