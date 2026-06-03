@@ -38,21 +38,22 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
           <select
             ref={ref}
             className={cn(
-              // Base styles — token-driven focus/border transition (compositor-safe)
-              'w-full appearance-none rounded-lg border bg-[var(--bg-card)] transition-[border-color,box-shadow] duration-[var(--motion-base)] ease-[var(--ease-standard)]',
+              // Aura: 10px control radius + inset top shadow, token-driven accent focus.
+              // Compositor-safe: only border-color + box-shadow transition.
+              'w-full appearance-none rounded-aura-control border bg-[var(--bg-input)] shadow-[var(--inset-input)] transition-[border-color,box-shadow] duration-[var(--motion-base)] ease-[var(--ease-standard)]',
               'text-[var(--text-primary)]',
               // Size
               sizeStyles[selectSize],
               // Default border
               !error && 'border-[var(--border-main)]',
               // Hover state
-              !error && !disabled && 'hover:border-accent-300 dark:hover:border-accent-700',
-              // Focus state
-              !error && 'focus:border-accent-500 focus:ring-2 focus:ring-accent-500/20 dark:focus:border-accent-400 dark:focus:ring-accent-400/20',
+              !error && !disabled && 'hover:border-[var(--border-strong)]',
+              // Focus state — Aura accent border + soft focus ring
+              !error && 'focus:border-[var(--accent)] focus:shadow-[var(--inset-input),var(--sh-focus)]',
               // Error state
-              error && 'border-danger-500 focus:border-danger-500 focus:ring-2 focus:ring-danger-500/20',
+              error && 'border-danger-500 focus:border-danger-500 focus:shadow-[var(--inset-input),0_0_0_3px_var(--ring-danger)]',
               // Disabled
-              disabled && 'bg-[var(--bg-secondary)] cursor-not-allowed opacity-60',
+              disabled && 'bg-[var(--surface-sunken)] cursor-not-allowed opacity-60',
               // Remove default outline
               'outline-none',
               className
@@ -67,7 +68,7 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
             'text-[var(--text-muted)]',
             // Animate rotation + accent on focus (transform/color only — compositor-safe)
             'transition-[transform,color] duration-[var(--motion-base)] ease-[var(--ease-out-expo)]',
-            'group-focus-within:-rotate-180 group-focus-within:text-accent-500 dark:group-focus-within:text-accent-400',
+            'group-focus-within:-rotate-180 group-focus-within:text-[var(--accent)]',
             error && 'group-focus-within:text-danger-500',
             disabled && 'opacity-60'
           )}/>

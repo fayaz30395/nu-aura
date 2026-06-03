@@ -48,6 +48,18 @@ export type {GoogleGLogoProps} from './GoogleGLogo';
 export {StatusBadge} from './StatusBadge';
 export type {StatusBadgeProps} from './StatusBadge';
 
+// Switch — Aura toggle switch (accent track, spring thumb)
+export {Switch} from './Switch';
+export type {SwitchProps} from './Switch';
+
+// Segmented — Aura segmented control (dashboard / attendance range pickers)
+export {Segmented} from './Segmented';
+export type {SegmentedProps, SegmentedOption} from './Segmented';
+
+// Tabs — Aura underline tab strip with optional count pills (distinct from Mantine Tabs)
+export {Tabs} from './Tabs';
+export type {TabsProps, TabItem} from './Tabs';
+
 // Sidebar Components
 export {Sidebar, SIDEBAR_WIDTH_EXPANDED, SIDEBAR_WIDTH_COLLAPSED, HEADER_HEIGHT} from './Sidebar';
 export type {SidebarProps, SidebarItem, SidebarSection} from './Sidebar';

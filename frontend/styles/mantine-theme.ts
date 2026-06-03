@@ -22,26 +22,27 @@
 
 import {createTheme, MantineColorsTuple} from '@mantine/core';
 
-// ── Studio Slate accent palette (10 steps, anchored on #2563EB) ──────
-// Tailwind blue scale. primaryShade picks step 6 in light, 4 in dark
-// to match --accent-primary token swap between modes.
+// ── Aura accent palette (10 steps, anchored on #2952A3) ──────────────
+// NU-AURA Blue (hue ~228). Mirrors --aura-accent-* in app/globals.css.
+// primaryShade picks step 7 (#2952A3) in light (= --accent), step 4
+// (#6884dc) in dark (= dark --accent), matching the token swap.
 const aura: MantineColorsTuple = [
-  '#eff6ff', // 0  — accent-50  (lightest, surface tint)
-  '#dbeafe', // 1  — accent-100
-  '#bfdbfe', // 2  — accent-200
-  '#93c5fd', // 3  — accent-300
-  '#60a5fa', // 4  — accent-400 (dark-mode primaryShade)
-  '#3b82f6', // 5  — accent-500
-  '#2563eb', // 6  — accent-600 (light-mode primaryShade = --accent-primary)
-  '#1d4ed8', // 7  — accent-700 (hover in light mode)
-  '#1e40af', // 8  — accent-800
-  '#172554', // 9  — accent-950 (darkest)
+  '#f0f3fc', // 0  — accent-50  (lightest, surface tint)
+  '#dce3f8', // 1  — accent-100
+  '#bcc9f2', // 2  — accent-200
+  '#92a8e8', // 3  — accent-300
+  '#6884dc', // 4  — accent-400 (dark-mode primaryShade = dark --accent)
+  '#4463cf', // 5  — accent-500
+  '#3350b8', // 6  — accent-600
+  '#2952A3', // 7  — accent-700 (light-mode primaryShade = --accent / anchor)
+  '#244288', // 8  — accent-800 (hover in light mode)
+  '#1d356d', // 9  — accent-900 (darkest used)
 ];
 
 export const mantineTheme = createTheme({
   // ── Color ───────────────────────────────────────────────────────────
   primaryColor: 'aura',
-  primaryShade: {light: 6, dark: 4},
+  primaryShade: {light: 7, dark: 4},
   colors: {
     aura,
     // Backward-compat aliases so any existing `color="accent"` props still resolve
@@ -50,29 +51,30 @@ export const mantineTheme = createTheme({
     primary: aura,
   },
 
-  // ── Radius ──────────────────────────────────────────────────────────
-  // `md` = 12px matches `.btn-primary` / `.input-aura` / `.card-aura`
-  // (`rounded-xl`). Mantine's default is 4px, which is the single
-  // biggest visual mismatch with Studio Slate.
+  // ── Radius (Aura) ───────────────────────────────────────────────────
+  // Aura: controls (buttons/inputs) 10px, cards 12px. `defaultRadius:'md'`
+  // (10px) applies to Button/TextInput/etc.; Card/Paper/Modal opt into
+  // `lg` (12px) via their component defaults below. Mirrors --r-* vars.
   defaultRadius: 'md',
   radius: {
-    xs: '0.25rem',   // 4px
-    sm: '0.375rem',  // 6px
-    md: '0.75rem',   // 12px — Studio Slate default surface radius
-    lg: '1rem',      // 16px
-    xl: '1.5rem',    // 24px
+    xs: '0.3125rem', // 5px  — --r-xs
+    sm: '0.4375rem', // 7px  — --r-sm
+    md: '0.625rem',  // 10px — --r-control (buttons / inputs)
+    lg: '0.75rem',   // 12px — --r-lg (cards)
+    xl: '1rem',      // 16px — --r-xl
   },
 
-  // ── Typography ──────────────────────────────────────────────────────
-  // Map to the same `next/font` CSS vars set in `app/layout.tsx`.
+  // ── Typography (Aura) ───────────────────────────────────────────────
+  // Map to the same `next/font` CSS vars set in `app/layout.tsx`:
+  //   --font-sans = Open Sans, --font-display = Montserrat, --font-mono = Roboto Mono.
   fontFamily:
-    'var(--font-sans), "Manrope", "Segoe UI", sans-serif',
+    'var(--font-sans), "Open Sans", "Segoe UI", sans-serif',
   fontFamilyMonospace:
-    'var(--font-mono), "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace',
+    'var(--font-mono), "Roboto Mono", ui-monospace, SFMono-Regular, Menlo, monospace',
   headings: {
     fontFamily:
-      'var(--font-sans), "Manrope", var(--font-sans), system-ui, sans-serif',
-    fontWeight: '600',
+      'var(--font-display), "Montserrat", var(--font-sans), system-ui, sans-serif',
+    fontWeight: '700',
   },
 
   cursorType: 'pointer',
@@ -115,7 +117,8 @@ export const mantineTheme = createTheme({
 
     // Surfaces — wire to CSS variables so light/dark swap automatically.
     Card: {
-      defaultProps: {radius: 'md', withBorder: true, shadow: 'sm'},
+      // Aura cards = 12px (`lg`).
+      defaultProps: {radius: 'lg', withBorder: true, shadow: 'sm'},
       styles: {
         root: {
           backgroundColor: 'var(--bg-card)',
@@ -124,7 +127,8 @@ export const mantineTheme = createTheme({
       },
     },
     Paper: {
-      defaultProps: {radius: 'md', withBorder: true, shadow: 'sm'},
+      // Aura cards/surfaces = 12px (`lg`).
+      defaultProps: {radius: 'lg', withBorder: true, shadow: 'sm'},
       styles: {
         root: {
           backgroundColor: 'var(--bg-card)',
@@ -134,7 +138,7 @@ export const mantineTheme = createTheme({
     },
     Modal: {
       defaultProps: {
-        radius: 'md',
+        radius: 'lg',
         overlayProps: {backgroundOpacity: 0.4, blur: 2},
       },
       styles: {

@@ -38,7 +38,7 @@ export const PremiumMetricCard: React.FC<PremiumMetricCardProps> = ({
         <span className="text-micro">{title}</span>
         {icon && (
           <div
-            className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--accent-primary-subtle)] border border-[var(--border-subtle)] text-[var(--accent-primary)]"
+            className="flex h-10 w-10 items-center justify-center rounded-aura-lg bg-[var(--accent-primary-subtle)] border border-[var(--border-subtle)] text-[var(--accent-primary)]"
             aria-hidden="true"
           >
             {icon}

@@ -15,12 +15,122 @@
 
 @layer base {
   :root {
-    /* ── Typography ───────────────────────────────────────────────── */
-    --font-sans: "Manrope", "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
-    --font-display: "Manrope", var(--font-sans);
-    --font-mono: "JetBrains Mono", "SF Mono", Monaco, Consolas, "Courier New", monospace;
+    /* ── Typography (Aura redesign) ────────────────────────────────
+       --font-sans / --font-display / --font-mono are the next/font
+       CSS variables set in app/layout.tsx (Open Sans / Montserrat /
+       Roboto Mono). They are declared here with a stack fallback so
+       the cascade resolves even before next/font hydrates. */
+    --font-sans: var(--font-sans), "Open Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-display: var(--font-display), "Montserrat", "Open Sans", system-ui, sans-serif;
+    --font-mono: var(--font-mono), "Roboto Mono", "SF Mono", Monaco, Consolas, monospace;
     --font-body: var(--font-sans);
     --font-head: var(--font-display);
+
+    /* ════════════════════════════════════════════════════════════════
+       AURA TOKEN LAYER (light) — design source of truth.
+       Ported verbatim from design-import/aura/project/app/tokens.css.
+       Existing Studio-Slate token names below are ALIASED to these so
+       all ~261 routes + 47 components recolor at once. Dark values are
+       mirrored under BOTH `.dark` and `:root[data-theme="dark"]`.
+       ════════════════════════════════════════════════════════════════ */
+
+    /* ── Aura accent scale (NU-AURA Blue, hue ~228) ── */
+    --aura-accent-50:  #f0f3fc;
+    --aura-accent-100: #dce3f8;
+    --aura-accent-200: #bcc9f2;
+    --aura-accent-300: #92a8e8;
+    --aura-accent-400: #6884dc;
+    --aura-accent-500: #4463cf;
+    --aura-accent-600: #3350b8;
+    --aura-accent-700: #2952A3;
+    --aura-accent-800: #244288;
+    --aura-accent-900: #1d356d;
+    --aura-accent-950: #121f44;
+
+    /* ── Aura brand (NULogic) — brand moments only ── */
+    --nu-grad-brand: linear-gradient(120deg, #ED3027 0%, #b53a86 52%, #7B469B 100%);
+    --nu-grad-primary: linear-gradient(135deg, #3a63bd 0%, #244288 100%);
+
+    /* ── Aura product accents (bundle rail) ── */
+    --prod-hrms: #4463cf;
+    --prod-hire: #0ea5a3;
+    --prod-grow: #d97706;
+    --prod-fluence: #8b5cf6;
+
+    /* ── Aura semantic surfaces (light) ── */
+    --accent: #2952A3;
+    --accent-hover: #244288;
+    --accent-soft: #eef2fc;
+    --accent-text: #2952A3;
+
+    --bg-app: #f4f6fb;
+    --bg-canvas: #f9fafd;
+    --surface: #ffffff;
+    --surface-aura-2: #f4f6fb;
+    --surface-hover: #eef1f8;
+    --surface-sunken: #f0f3f9;
+    --rail: #0c1120;
+    --rail-2: #0a0e1a;
+    --nav: #0f1424;
+    --nav-soft: rgba(255, 255, 255, 0.05);
+    --nav-active: rgba(88, 121, 224, 0.18);
+
+    --text-1: #0e1225;
+    --text-2: #3a3f57;
+    --text-3: #6b7190;
+    --on-rail: #aeb4cc;
+    --on-rail-dim: #646b88;
+
+    --border: #e4e7f0;
+    --border-soft: #eef0f6;
+    --border-aura-strong: #d4d8e6;
+
+    /* ── Aura status ── */
+    --ok-bg: #effaf3;   --ok-fg: #167c45;   --ok-bd: #c9eed7;
+    --warn-bg: #fff7ec; --warn-fg: #b15a09; --warn-bd: #fbe2bd;
+    --err-bg: #fef1f1;  --err-fg: #cf2f2f;  --err-bd: #fbd5d5;
+    --info-bg: #eef2fc; --info-fg: #2952A3; --info-bd: #d3def7;
+    --neutral-bg: #eef1f6; --neutral-fg: #4e5270; --neutral-bd: #e0e4ee;
+
+    /* ── Aura charts ── */
+    --chart-1: #2952A3;
+    --chart-2: #6884dc;
+    --chart-3: #0ea5a3;
+    --chart-4: #d97706;
+    --chart-5: #8b5cf6;
+    --chart-axis: #9aa0b8;
+
+    /* ── Aura radii ── */
+    --r-xs: 5px; --r-sm: 7px; --r-md: 9px; --r-lg: 12px; --r-xl: 16px; --r-2xl: 22px; --r-full: 999px;
+    --r-control: 10px;       /* buttons / inputs */
+
+    /* ── Aura spacing (4px base) ── */
+    --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-5: 20px; --s-6: 24px; --s-8: 32px; --s-10: 40px; --s-12: 48px;
+
+    /* ── Aura shadows (in-between depth — soft + 1px top highlight) ── */
+    --sh-xs: 0 1px 2px rgba(16, 22, 44, 0.05);
+    --sh-sm: 0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 1px 2px rgba(16, 22, 44, 0.05), 0 2px 6px rgba(16, 22, 44, 0.04);
+    --sh-md: 0 1px 0 rgba(255, 255, 255, 0.55) inset, 0 2px 6px rgba(16, 22, 44, 0.06), 0 8px 22px rgba(16, 22, 44, 0.07);
+    --sh-lg: 0 1px 0 rgba(255, 255, 255, 0.5) inset, 0 12px 34px rgba(16, 22, 44, 0.12), 0 4px 10px rgba(16, 22, 44, 0.06);
+    --sh-pop: 0 18px 50px rgba(12, 18, 40, 0.22), 0 6px 16px rgba(12, 18, 40, 0.12);
+    --ring: rgba(41, 82, 163, 0.22);
+    --sh-focus: 0 0 0 3px var(--ring);
+    --inset-input: inset 0 1px 2px rgba(16, 22, 44, 0.05);
+
+    /* ── Aura motion (matches the Wave-1 motion system below) ── */
+    --t-fast: 120ms; --t-base: 180ms; --t-slow: 280ms;
+    --ease: cubic-bezier(0.4, 0, 0.2, 1);
+    --ease-soft: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+    /* ── Aura type metrics (page title / stat value / micro-label) ── */
+    --aura-title-size: 28px;
+    --aura-title-weight: 700;
+    --aura-title-tracking: -0.02em;
+    --aura-stat-size: 29px;
+    --aura-stat-weight: 700;
+    --aura-micro-size: 10.5px;
+    --aura-micro-weight: 700;
+    --aura-micro-tracking: 0.1em;
 
     /* ── NULogic Brand Colors (preserved for logo/brand contexts) ── */
     --nu-lapis-blue: #050766;
@@ -34,122 +144,119 @@
     --nu-light-purple: #B17DC1;
     --nu-dusty-indigo: #61629D;
 
-    /* ── NULogic Gradients (preserved for brand contexts) ──────── */
-    --nu-gradient-logo: linear-gradient(to bottom, #F32820, #8539A6);
-    --nu-gradient-primary: linear-gradient(135deg, #2563EB, #1d4ed8);
-    --nu-gradient-dark: linear-gradient(135deg, #0e1528, #1a2340);
-    --nu-gradient-brand: linear-gradient(to right, #ED3027, #7B469B);
+    /* ── NULogic Gradients (Aura brand moments) ──────── */
+    --nu-gradient-logo: var(--nu-grad-brand);
+    --nu-gradient-primary: var(--nu-grad-primary);
+    --nu-gradient-dark: linear-gradient(150deg, #0c1120 0%, #14193a 55%, #2a1d49 100%);
+    --nu-gradient-brand: var(--nu-grad-brand);
 
-    /* ── Surface Hierarchy (cool-tinted neutrals, never pure #fff) ─ */
-    --bg-main: #F5F7FA;
-    --bg-surface: #fcfdff;
-    --bg-elevated: #fcfdff;
-    --bg-card: #fcfdff;
-    --bg-card-hover: #f0f2f7;
-    --bg-page: #F5F7FA;
-    --bg-input: #fcfdff;
-    --bg-sidebar: #0E111A;
-    --bg-overlay: rgba(14, 17, 26, 0.40);
-    --surface-2: #f0f2f7;
-    --skeleton-base: #eceef5;
+    /* ── Surface Hierarchy → ALIASED to Aura surfaces ──────────────
+       Existing names kept so the 261 routes inherit the new palette. */
+    --bg-main: var(--bg-app);            /* #f4f6fb */
+    --bg-surface: var(--surface);        /* #ffffff */
+    --bg-elevated: var(--surface);       /* #ffffff */
+    --bg-card: var(--surface);           /* #ffffff */
+    --bg-card-hover: var(--surface-hover); /* #eef1f8 */
+    --bg-page: var(--bg-app);            /* #f4f6fb */
+    --bg-input: var(--surface);          /* #ffffff */
+    --bg-sidebar: var(--nav);            /* #0f1424 — Aura nav panel */
+    --bg-overlay: rgba(12, 17, 32, 0.42);
+    --surface-2: var(--surface-aura-2);  /* #f4f6fb */
+    --skeleton-base: #e7eaf3;
 
-    /* ── Background Atmosphere ────────────────────────────────── */
-    --bg-pattern: radial-gradient(1000px 500px at 0% 0%, rgba(37, 99, 235, 0.03), transparent 60%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(245, 247, 250, 1) 50%);
+    /* ── Background Atmosphere (Aura accent wash) ─────────────── */
+    --bg-pattern: radial-gradient(1000px 500px at 0% 0%, rgba(41, 82, 163, 0.04), transparent 60%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), var(--bg-app) 50%);
     --bg-pattern-size: auto, auto;
 
-    /* ── Text Hierarchy ───────────────────────────────────────── */
-    --text-primary: #1c2033;
-    --text-heading: #0e1225;
-    --text-secondary: #363a5a;
-    --text-muted: #484c70;
+    /* ── Text Hierarchy → ALIASED to Aura text ramp ──────────── */
+    --text-primary: var(--text-1);      /* #0e1225 */
+    --text-heading: var(--text-1);      /* #0e1225 */
+    --text-secondary: var(--text-2);    /* #3a3f57 */
+    --text-muted: var(--text-3);        /* #6b7190 */
     --text-inverse: #ffffff;
 
-    /* ── Border & Divider ──────────────────────────────────────── */
-    --border-main: #dfe2ed;
-    --border-subtle: #eceef5;
-    --border-strong: #b8bccf;
-    --border-focus: #2563EB;
+    /* ── Border & Divider → ALIASED to Aura borders ──────────── */
+    --border-main: var(--border);          /* #e4e7f0 */
+    --border-subtle: var(--border-soft);   /* #eef0f6 */
+    --border-strong: var(--border-aura-strong); /* #d4d8e6 */
+    --border-focus: var(--accent);         /* #2952A3 */
 
-    /* ── Accent Scale (blue-600 anchor — more vivid/saturated) ── */
-    --accent-50: #eff6ff;
-    --accent-100: #dbeafe;
-    --accent-200: #bfdbfe;
-    --accent-300: #93c5fd;
-    --accent-400: #60a5fa;
-    --accent-500: #3b82f6;
-    --accent-600: #2563eb;
-    --accent-700: #1d4ed8;
-    --accent-800: #1e40af;
-    --accent-900: #1e3a8a;
-    --accent-950: #172554;
-    --accent-primary: #2563EB;
-    --accent-primary-hover: #1d4ed8;
-    --accent-primary-subtle: #eff6ff;
+    /* ── Accent Scale → ALIASED to Aura accent scale ─────────── */
+    --accent-50: var(--aura-accent-50);
+    --accent-100: var(--aura-accent-100);
+    --accent-200: var(--aura-accent-200);
+    --accent-300: var(--aura-accent-300);
+    --accent-400: var(--aura-accent-400);
+    --accent-500: var(--aura-accent-500);
+    --accent-600: var(--aura-accent-600);
+    --accent-700: var(--aura-accent-700);
+    --accent-800: var(--aura-accent-800);
+    --accent-900: var(--aura-accent-900);
+    --accent-950: var(--aura-accent-950);
+    --accent-primary: var(--accent);          /* #2952A3 */
+    --accent-primary-hover: var(--accent-hover); /* #244288 */
+    --accent-primary-subtle: var(--accent-soft); /* #eef2fc */
 
-    /* ── Sidebar (Warm dark) ──────────────────────────────────── */
-    --sidebar-active-bg: rgba(37, 99, 235, 0.16);
-    --sidebar-active-border: #3b82f6;
-    --sidebar-hover-bg: rgba(255, 255, 255, 0.06);
-    --sidebar-text: rgba(255, 255, 255, 0.72);
+    /* ── Sidebar → ALIASED to Aura nav rail ──────────────────── */
+    --sidebar-active-bg: var(--nav-active);
+    --sidebar-active-border: var(--accent-300);
+    --sidebar-hover-bg: var(--nav-soft);
+    --sidebar-text: var(--on-rail);
     --sidebar-text-active: #ffffff;
-    /* a11y: bumped from 0.38 → 0.62 to clear WCAG AA 4.5:1 on #0E111A
-       (axe-core color-contrast was firing on "Pro Plan" / kbd hints) */
     --sidebar-text-muted: rgba(255, 255, 255, 0.62);
     --sidebar-border: rgba(255, 255, 255, 0.08);
-    /* a11y: bumped from 0.42 → 0.58 to clear WCAG AA 4.5:1 on #0E111A
-       (axe-core color-contrast was firing on section labels Home/My Space/People) */
     --sidebar-section-text: rgba(255, 255, 255, 0.58);
     --sidebar-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(0, 0, 0, 0.20) 100%);
 
-    /* ── Shadows (Clean 3-tier system) ───────────────────────── */
-    --shadow-card: 0 1px 3px rgba(15, 20, 40, 0.07), 0 1px 2px rgba(15, 20, 40, 0.04);
-    --shadow-card-hover: 0 2px 8px rgba(15, 20, 40, 0.10), 0 1px 3px rgba(15, 20, 40, 0.06);
-    --shadow-elevated: 0 4px 16px rgba(15, 20, 40, 0.10), 0 1px 4px rgba(15, 20, 40, 0.06);
-    --shadow-dropdown: 0 8px 24px rgba(15, 20, 40, 0.14), 0 2px 6px rgba(15, 20, 40, 0.08);
+    /* ── Shadows → ALIASED to Aura soft-depth scale ──────────── */
+    --shadow-card: var(--sh-sm);
+    --shadow-card-hover: var(--sh-md);
+    --shadow-elevated: var(--sh-lg);
+    --shadow-dropdown: var(--sh-pop);
     --radius-shell: 1.35rem;
     --radius-panel: 1rem;
     --radius-pill: 999px;
-    --shell-gradient-start: #f6f8ff;
-    --shell-gradient-end: #f0f2ff;
+    --shell-gradient-start: #f0f3fc;
+    --shell-gradient-end: #eef2fc;
 
-    /* ── Ring / Focus ────────────────────────────────────────── */
-    --ring-primary: rgba(37, 99, 235, 0.30);
-    --ring-danger: rgba(220, 38, 38, 0.25);
-    --ring-success: rgba(21, 128, 61, 0.25);
+    /* ── Ring / Focus → ALIASED to Aura ring ─────────────────── */
+    --ring-primary: var(--ring);
+    --ring-danger: rgba(207, 47, 47, 0.25);
+    --ring-success: rgba(22, 124, 69, 0.25);
 
-    /* ── Semantic Colors ─────────────────────────────────────── */
-    --status-success-bg: #f0fdf4;
-    --status-success-text: #15803d;
-    --status-success-border: #dcfce7;
-    --status-danger-bg: #fef2f2;
-    --status-danger-text: #dc2626;
-    --status-danger-border: #fee2e2;
-    --status-warning-bg: #fffbeb;
-    --status-warning-text: #b45309;
-    --status-warning-border: #fef3c7;
-    --status-info-bg: #eff6ff;
-    --status-info-text: #2563EB;
-    --status-info-border: #dbeafe;
-    --status-neutral-bg: #f0f2f7;
-    --status-neutral-text: #4e5270;
-    --status-neutral-border: #dfe2ed;
+    /* ── Semantic Colors → ALIASED to Aura status ────────────── */
+    --status-success-bg: var(--ok-bg);
+    --status-success-text: var(--ok-fg);
+    --status-success-border: var(--ok-bd);
+    --status-danger-bg: var(--err-bg);
+    --status-danger-text: var(--err-fg);
+    --status-danger-border: var(--err-bd);
+    --status-warning-bg: var(--warn-bg);
+    --status-warning-text: var(--warn-fg);
+    --status-warning-border: var(--warn-bd);
+    --status-info-bg: var(--info-bg);
+    --status-info-text: var(--info-fg);
+    --status-info-border: var(--info-bd);
+    --status-neutral-bg: var(--neutral-bg);
+    --status-neutral-text: var(--neutral-fg);
+    --status-neutral-border: var(--neutral-bd);
 
-    /* ── Header ─────────────────────────────────────────────── */
-    --header-bg: rgba(255, 255, 255, 0.95);
-    --header-border: #eceef5;
-    --header-text: #1c2033;
-    --header-text-muted: #4e5270;
-    --header-hover-bg: rgba(37, 99, 235, 0.05);
-    --header-divider: #eceef5;
+    /* ── Header → ALIASED to translucent Aura surface ────────── */
+    --header-bg: rgba(255, 255, 255, 0.85);
+    --header-border: var(--border);
+    --header-text: var(--text-1);
+    --header-text-muted: var(--text-3);
+    --header-hover-bg: var(--accent-soft);
+    --header-divider: var(--border);
 
-    /* ── Dropdown ────────────────────────────────────────────── */
-    --dropdown-bg: #fcfdff;
-    --dropdown-border: #eceef5;
-    --dropdown-hover: #f0f2f7;
-    --dropdown-text: #1c2033;
-    --dropdown-text-secondary: #4e5270;
-    --dropdown-divider: #eceef5;
+    /* ── Dropdown → ALIASED to Aura surface ──────────────────── */
+    --dropdown-bg: var(--surface);
+    --dropdown-border: var(--border);
+    --dropdown-hover: var(--surface-hover);
+    --dropdown-text: var(--text-1);
+    --dropdown-text-secondary: var(--text-3);
+    --dropdown-divider: var(--border);
 
     /* ── Skeuomorphic tokens (FLATTENED — backward compatible) ── */
     --shadow-skeuo-card: var(--shadow-card);
@@ -164,23 +271,23 @@
     --gradient-skeuo-button: none;
     --gradient-skeuo-card: none;
     --glass-bg: rgba(255, 255, 255, 0.92);
-    --glass-border: rgba(37, 99, 235, 0.12);
+    --glass-border: rgba(41, 82, 163, 0.12);
     --glass-blur: 14px;
     --skeuo-noise: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.02'/%3E%3C/svg%3E");
 
-    /* ── Chart Colors ────────────────────────────────────────── */
-    --chart-primary: #2563EB;
-    --chart-secondary: #60a5fa;
-    --chart-success: #16a34a;
-    --chart-warning: #d97706;
-    --chart-danger: #dc2626;
-    --chart-info: #3b82f6;
-    --chart-accent: #93c5fd;
-    --chart-muted: #b8bccf;
-    --chart-grid: #eceef5;
-    --chart-tooltip-bg: #fcfdff;
-    --chart-tooltip-border: #dfe2ed;
-    --chart-tooltip-text: #1c2033;
+    /* ── Chart Colors → ALIASED to Aura chart palette ────────── */
+    --chart-primary: var(--chart-1);    /* #2952A3 */
+    --chart-secondary: var(--chart-2);  /* #6884dc */
+    --chart-success: var(--ok-fg);      /* #167c45 */
+    --chart-warning: var(--chart-4);    /* #d97706 */
+    --chart-danger: var(--err-fg);      /* #cf2f2f */
+    --chart-info: var(--chart-3);       /* #0ea5a3 */
+    --chart-accent: var(--chart-5);     /* #8b5cf6 */
+    --chart-muted: var(--border-aura-strong);
+    --chart-grid: #eaecf3;
+    --chart-tooltip-bg: var(--surface);
+    --chart-tooltip-border: var(--border);
+    --chart-tooltip-text: var(--text-1);
 
     /* ── Motion Layer (Studio Slate v2) ──────────────────────────
        Consumed by lib/animation.ts, components/motion, and the
@@ -214,110 +321,161 @@
     --focus-ring-color: var(--border-focus);
   }
 
-  .dark {
-    /* ── Surface Hierarchy (Warm dark — Studio Slate) ──────────── */
-    --bg-main: #0B0D13;
-    --bg-surface: #12151E;
-    --bg-elevated: #181C27;
-    --bg-card: #12151E;
-    --bg-card-hover: #181C27;
-    --bg-page: #0B0D13;
-    --bg-input: #12151E;
-    --bg-sidebar: #0E111A;
-    --bg-overlay: rgba(11, 13, 19, 0.80);
-    --surface-2: #181C27;
-    --skeleton-base: #1e2440;
+  /* ════════════════════════════════════════════════════════════════
+     AURA DARK THEME
+     Carried by BOTH `.dark` (the class DarkModeProvider/theme-script set
+     on <html>) AND `:root[data-theme="dark"]` (Aura's native selector),
+     so whichever the toggle sets, full Aura dark parity applies.
+     Selectors duplicated (not combined) to keep specificity uniform with
+     the `.dark` rules used elsewhere in this stylesheet.
+     ════════════════════════════════════════════════════════════════ */
+  .dark,
+  :root[data-theme="dark"] {
+    /* ── Aura dark base tokens ── */
+    --accent: #6884dc;
+    --accent-hover: #7e96e4;
+    --accent-soft: rgba(104, 132, 220, 0.14);
+    --accent-text: #92a8e8;
 
-    /* ── Background Atmosphere (Deep wash) ──────────────────── */
-    --bg-pattern: radial-gradient(800px 400px at 0% 0%, rgba(37, 99, 235, 0.07), transparent 60%),
-    linear-gradient(180deg, rgba(11, 13, 19, 0.95), rgba(11, 13, 19, 1) 50%);
+    --bg-app: #070a14;
+    --bg-canvas: #0a0e1a;
+    --surface: #11162a;
+    --surface-aura-2: #0d1322;
+    --surface-hover: #182040;
+    --surface-sunken: #0a0e1a;
+    --rail: #06080f;
+    --rail-2: #04060c;
+    --nav: #080b16;
+    --nav-soft: rgba(255, 255, 255, 0.04);
+    --nav-active: rgba(104, 132, 220, 0.20);
+
+    --text-1: #eef1f9;
+    --text-2: #b7bdd4;
+    --text-3: #7e85a3;
+    --on-rail: #aeb4cc;
+    --on-rail-dim: #5b6280;
+
+    --border: #1e2540;
+    --border-soft: #161c33;
+    --border-aura-strong: #2b3358;
+
+    --ok-bg: rgba(22, 124, 69, 0.16);  --ok-fg: #57d08c;  --ok-bd: rgba(22, 124, 69, 0.34);
+    --warn-bg: rgba(177, 90, 9, 0.16); --warn-fg: #f0a955; --warn-bd: rgba(177, 90, 9, 0.34);
+    --err-bg: rgba(207, 47, 47, 0.16); --err-fg: #f08484; --err-bd: rgba(207, 47, 47, 0.34);
+    --info-bg: rgba(104, 132, 220, 0.14); --info-fg: #92a8e8; --info-bd: rgba(104, 132, 220, 0.30);
+    --neutral-bg: rgba(255, 255, 255, 0.06); --neutral-fg: #b7bdd4; --neutral-bd: rgba(255, 255, 255, 0.10);
+
+    --chart-axis: #5b6280;
+
+    --sh-xs: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --sh-sm: 0 1px 0 rgba(255, 255, 255, 0.03) inset, 0 1px 3px rgba(0, 0, 0, 0.5);
+    --sh-md: 0 1px 0 rgba(255, 255, 255, 0.03) inset, 0 8px 24px rgba(0, 0, 0, 0.55);
+    --sh-lg: 0 1px 0 rgba(255, 255, 255, 0.03) inset, 0 16px 40px rgba(0, 0, 0, 0.6);
+    --sh-pop: 0 24px 60px rgba(0, 0, 0, 0.7), 0 8px 18px rgba(0, 0, 0, 0.5);
+    --ring: rgba(104, 132, 220, 0.32);
+    --inset-input: inset 0 1px 2px rgba(0, 0, 0, 0.35);
+
+    /* ── Surface Hierarchy → ALIASED to Aura dark surfaces ──── */
+    --bg-main: var(--bg-app);            /* #070a14 */
+    --bg-surface: var(--surface);        /* #11162a */
+    --bg-elevated: var(--surface-hover); /* #182040 — raised dark surface */
+    --bg-card: var(--surface);           /* #11162a */
+    --bg-card-hover: var(--surface-hover); /* #182040 */
+    --bg-page: var(--bg-app);            /* #070a14 */
+    --bg-input: var(--surface);          /* #11162a */
+    --bg-sidebar: var(--nav);            /* #080b16 */
+    --bg-overlay: rgba(4, 6, 12, 0.80);
+    --surface-2: var(--surface-aura-2);  /* #0d1322 */
+    --skeleton-base: #1a2138;
+
+    /* ── Background Atmosphere (Deep Aura wash) ──────────────── */
+    --bg-pattern: radial-gradient(800px 400px at 0% 0%, rgba(104, 132, 220, 0.08), transparent 60%),
+    linear-gradient(180deg, var(--bg-app), var(--bg-app) 50%);
     --bg-pattern-size: auto, auto;
 
-    /* ── Text Hierarchy ──────────────────────────────────────── */
-    --text-primary: #e8eaf0;
-    --text-heading: #f0f2f7;
-    --text-secondary: #8b90aa;
-    --text-muted: #5a5f78;
+    /* ── Text Hierarchy → ALIASED to Aura dark text ramp ────── */
+    --text-primary: var(--text-1);      /* #eef1f9 */
+    --text-heading: var(--text-1);      /* #eef1f9 */
+    --text-secondary: var(--text-2);    /* #b7bdd4 */
+    --text-muted: var(--text-3);        /* #7e85a3 */
     --text-inverse: #0e1225;
 
-    /* ── Border & Divider ─────────────────────────────────── */
-    --border-main: #1e2440;
-    --border-subtle: #161c30;
-    --border-strong: #2a3255;
-    --border-focus: #5B8CF5;
+    /* ── Border & Divider → ALIASED to Aura dark borders ────── */
+    --border-main: var(--border);          /* #1e2540 */
+    --border-subtle: var(--border-soft);   /* #161c33 */
+    --border-strong: var(--border-aura-strong); /* #2b3358 */
+    --border-focus: var(--accent);         /* #6884dc */
 
-    /* ── Accent Scale (Dark — vivid blues for visibility) ──── */
-    --accent-50: rgba(37, 99, 235, 0.10);
-    --accent-100: rgba(37, 99, 235, 0.18);
-    --accent-200: #1e3a8a;
-    --accent-300: #1e40af;
-    --accent-400: #2563eb;
-    --accent-500: #3b82f6;
-    --accent-600: #60a5fa;
-    --accent-700: #93c5fd;
-    --accent-800: #bfdbfe;
-    --accent-900: #dbeafe;
-    --accent-950: #eff6ff;
-    --accent-primary: #5B8CF5;
-    --accent-primary-hover: #7EAAF8;
-    --accent-primary-subtle: rgba(37, 99, 235, 0.18);
+    /* ── Accent Scale (Dark — Aura: lighter steps for visibility) ── */
+    --accent-50: rgba(104, 132, 220, 0.10);
+    --accent-100: rgba(104, 132, 220, 0.18);
+    --accent-200: #1d356d;
+    --accent-300: #244288;
+    --accent-400: #3350b8;
+    --accent-500: #4463cf;
+    --accent-600: #6884dc;
+    --accent-700: #92a8e8;
+    --accent-800: #bcc9f2;
+    --accent-900: #dce3f8;
+    --accent-950: #f0f3fc;
+    --accent-primary: var(--accent);          /* #6884dc */
+    --accent-primary-hover: var(--accent-hover); /* #7e96e4 */
+    --accent-primary-subtle: var(--accent-soft);
 
-    /* ── Sidebar (Deepest warm dark) ─────────────────────── */
-    --sidebar-active-bg: rgba(91, 140, 245, 0.15);
-    --sidebar-active-border: #5B8CF5;
-    --sidebar-hover-bg: rgba(255, 255, 255, 0.05);
-    --sidebar-text: rgba(255, 255, 255, 0.68);
+    /* ── Sidebar → ALIASED to Aura dark nav rail ───────────── */
+    --sidebar-active-bg: var(--nav-active);
+    --sidebar-active-border: var(--accent-300);
+    --sidebar-hover-bg: var(--nav-soft);
+    --sidebar-text: var(--on-rail);
     --sidebar-text-active: #ffffff;
-    /* a11y: bumped 0.55 → 0.65 for WCAG AA 4.5:1 on dark-mode sidebar surfaces */
     --sidebar-text-muted: rgba(255, 255, 255, 0.65);
     --sidebar-border: rgba(255, 255, 255, 0.06);
-    /* a11y: bumped 0.38 → 0.60 for WCAG AA 4.5:1 on dark-mode sidebar bg */
     --sidebar-section-text: rgba(255, 255, 255, 0.60);
     --sidebar-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, rgba(0, 0, 0, 0.30) 100%);
 
-    /* ── Shadows (Dark — clean 3-tier system) ────────────── */
-    --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.18);
-    --shadow-card-hover: 0 2px 8px rgba(0, 0, 0, 0.32), 0 1px 3px rgba(0, 0, 0, 0.22);
-    --shadow-elevated: 0 4px 16px rgba(0, 0, 0, 0.35), 0 1px 4px rgba(0, 0, 0, 0.25);
-    --shadow-dropdown: 0 8px 24px rgba(0, 0, 0, 0.45), 0 2px 6px rgba(0, 0, 0, 0.32);
+    /* ── Shadows → ALIASED to Aura dark soft-depth scale ───── */
+    --shadow-card: var(--sh-sm);
+    --shadow-card-hover: var(--sh-md);
+    --shadow-elevated: var(--sh-lg);
+    --shadow-dropdown: var(--sh-pop);
 
-    /* ── Ring / Focus ────────────────────────────────────── */
-    --ring-primary: rgba(91, 140, 245, 0.40);
-    --ring-danger: rgba(248, 113, 113, 0.35);
-    --ring-success: rgba(74, 222, 128, 0.35);
+    /* ── Ring / Focus → ALIASED to Aura dark ring ──────────── */
+    --ring-primary: var(--ring);
+    --ring-danger: rgba(240, 132, 132, 0.35);
+    --ring-success: rgba(87, 208, 140, 0.35);
 
-    /* ── Semantic Colors (Dark Mode) ──────────────────────── */
-    --status-success-bg: rgba(22, 163, 74, 0.15);
-    --status-success-text: #86efac;
-    --status-success-border: rgba(22, 163, 74, 0.30);
-    --status-danger-bg: rgba(220, 38, 38, 0.15);
-    --status-danger-text: #fca5a5;
-    --status-danger-border: rgba(220, 38, 38, 0.30);
-    --status-warning-bg: rgba(217, 119, 6, 0.15);
-    --status-warning-text: #fcd34d;
-    --status-warning-border: rgba(217, 119, 6, 0.30);
-    --status-info-bg: rgba(37, 99, 235, 0.15);
-    --status-info-text: #93c5fd;
-    --status-info-border: rgba(37, 99, 235, 0.30);
-    --status-neutral-bg: rgba(139, 144, 170, 0.10);
-    --status-neutral-text: #8b90aa;
-    --status-neutral-border: rgba(139, 144, 170, 0.20);
+    /* ── Semantic Colors → ALIASED to Aura dark status ─────── */
+    --status-success-bg: var(--ok-bg);
+    --status-success-text: var(--ok-fg);
+    --status-success-border: var(--ok-bd);
+    --status-danger-bg: var(--err-bg);
+    --status-danger-text: var(--err-fg);
+    --status-danger-border: var(--err-bd);
+    --status-warning-bg: var(--warn-bg);
+    --status-warning-text: var(--warn-fg);
+    --status-warning-border: var(--warn-bd);
+    --status-info-bg: var(--info-bg);
+    --status-info-text: var(--info-fg);
+    --status-info-border: var(--info-bd);
+    --status-neutral-bg: var(--neutral-bg);
+    --status-neutral-text: var(--neutral-fg);
+    --status-neutral-border: var(--neutral-bd);
 
-    /* ── Header ─────────────────────────────────────────── */
-    --header-bg: rgba(11, 13, 19, 0.95);
-    --header-border: #1e2440;
-    --header-text: #e8eaf0;
-    --header-text-muted: #8b90aa;
-    --header-hover-bg: rgba(91, 140, 245, 0.10);
-    --header-divider: #1e2440;
+    /* ── Header → ALIASED to translucent Aura dark surface ─── */
+    --header-bg: rgba(7, 10, 20, 0.85);
+    --header-border: var(--border);
+    --header-text: var(--text-1);
+    --header-text-muted: var(--text-3);
+    --header-hover-bg: var(--accent-soft);
+    --header-divider: var(--border);
 
-    /* ── Dropdown ────────────────────────────────────────── */
-    --dropdown-bg: #12151E;
-    --dropdown-border: #1e2440;
-    --dropdown-hover: #181C27;
-    --dropdown-text: #e8eaf0;
-    --dropdown-text-secondary: #8b90aa;
-    --dropdown-divider: #1e2440;
+    /* ── Dropdown → ALIASED to Aura dark surface ───────────── */
+    --dropdown-bg: var(--surface);
+    --dropdown-border: var(--border);
+    --dropdown-hover: var(--surface-hover);
+    --dropdown-text: var(--text-1);
+    --dropdown-text-secondary: var(--text-3);
+    --dropdown-divider: var(--border);
 
     /* ── Skeuomorphic tokens (FLATTENED — dark, backward compat) */
     --shadow-skeuo-card: var(--shadow-card);
@@ -331,29 +489,29 @@
     --gradient-skeuo-surface: none;
     --gradient-skeuo-button: none;
     --gradient-skeuo-card: none;
-    --glass-bg: rgba(18, 21, 30, 0.90);
-    --glass-border: rgba(91, 140, 245, 0.10);
+    --glass-bg: rgba(17, 22, 42, 0.90);
+    --glass-border: rgba(104, 132, 220, 0.12);
     --glass-blur: 14px;
     --skeuo-noise: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
 
-    /* ── Chart Colors (Dark) ──────────────────────────────── */
-    --chart-primary: #5B8CF5;
-    --chart-secondary: #93c5fd;
-    --chart-success: #4ade80;
-    --chart-warning: #fbbf24;
-    --chart-danger: #f87171;
-    --chart-info: #7EAAF8;
-    --chart-accent: #bfdbfe;
-    --chart-muted: #1e2440;
-    --chart-grid: #1e2440;
-    --chart-tooltip-bg: #12151E;
-    --chart-tooltip-border: #1e2440;
-    --chart-tooltip-text: #e8eaf0;
+    /* ── Chart Colors (Dark) → ALIASED to Aura dark chart palette ── */
+    --chart-primary: var(--chart-1);    /* #2952A3 */
+    --chart-secondary: var(--chart-2);  /* #6884dc */
+    --chart-success: var(--ok-fg);      /* #57d08c */
+    --chart-warning: var(--chart-4);    /* #d97706 */
+    --chart-danger: var(--err-fg);      /* #f08484 */
+    --chart-info: var(--chart-3);       /* #0ea5a3 */
+    --chart-accent: var(--chart-5);     /* #8b5cf6 */
+    --chart-muted: var(--border-aura-strong);
+    --chart-grid: #1a2138;
+    --chart-tooltip-bg: var(--surface);
+    --chart-tooltip-border: var(--border);
+    --chart-tooltip-text: var(--text-1);
     --radius-shell: 1.35rem;
     --radius-panel: 1rem;
     --radius-pill: 999px;
-    --shell-gradient-start: rgba(37, 99, 235, 0.07);
-    --shell-gradient-end: rgba(11, 13, 19, 0.95);
+    --shell-gradient-start: rgba(104, 132, 220, 0.08);
+    --shell-gradient-end: var(--bg-app);
   }
 
   /* ── Theme Transition (Crisp, Calm) ──────────────────────────── */
@@ -565,7 +723,7 @@
     inset: 0;
     border-radius: inherit;
     pointer-events: none;
-    background: linear-gradient(140deg, rgba(37, 99, 235, 0.10), transparent 45%);
+    background: linear-gradient(140deg, rgba(41, 82, 163, 0.10), transparent 45%);
     opacity: 0.7;
   }
 
@@ -595,15 +753,15 @@
 
   .auth-shell .shell-panel,
   .auth-shell .shell-panel:hover {
-    border-color: rgba(91, 140, 245, 0.26);
-    box-shadow: var(--shadow-card), 0 0 0 1px rgba(91, 140, 245, 0.14) inset;
+    border-color: rgba(41, 82, 163, 0.26);
+    box-shadow: var(--shadow-card), 0 0 0 1px rgba(41, 82, 163, 0.14) inset;
   }
 
   .auth-shell .shell-panel:hover {
-    border-color: rgba(91, 140, 245, 0.36);
+    border-color: rgba(41, 82, 163, 0.36);
     box-shadow:
       var(--shadow-card-hover),
-      0 0 0 1px rgba(91, 140, 245, 0.2) inset;
+      0 0 0 1px rgba(41, 82, 163, 0.2) inset;
   }
 
   .page-shell-centered {
@@ -720,7 +878,7 @@
   }
 
   .input-skeuo:focus {
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    box-shadow: 0 0 0 3px var(--ring);
   }
 
   /* ── Skeuomorphic Badge (Flattened) ────────────────────────── */
@@ -967,7 +1125,7 @@
 
   .input-aura:focus {
     border-color: var(--accent-primary);
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    box-shadow: 0 0 0 3px var(--ring);
     outline: none;
   }
 
@@ -981,7 +1139,7 @@
     background-color: var(--accent-primary);
     color: #ffffff;
     border: none;
-    box-shadow: 0 1px 2px rgba(37, 99, 235, 0.25), 0 2px 8px rgba(37, 99, 235, 0.18);
+    box-shadow: 0 1px 2px rgba(41, 82, 163, 0.25), 0 2px 8px rgba(41, 82, 163, 0.18);
     transition: transform 100ms ease-out, box-shadow 120ms ease-out, filter 180ms ease-out;
   }
 
@@ -1113,7 +1271,7 @@
 
   .skeuo-input:focus {
     border-color: var(--accent-primary);
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    box-shadow: 0 0 0 3px var(--ring);
     outline: none;
   }
 
@@ -1211,6 +1369,45 @@
   .text-3xs {
     font-size: 0.6875rem; /* 11px */
     line-height: 1rem; /* 16px */
+  }
+
+  /* ── Numeric utility (Aura) ──────────────────────────────────
+     Apply to ALL numeric contexts — money, IDs, stats, counts.
+     Roboto Mono + tabular-nums = aligned, non-jittering figures. */
+  .num,
+  .tabular-nums,
+  .tnum {
+    font-family: var(--font-mono), ui-monospace, "SF Mono", Menlo, monospace;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
+  }
+
+  /* ── Aura display type helpers ───────────────────────────────
+     Tokenized page-title / stat-value / micro-label metrics so the
+     page wave can opt-in without hardcoding sizes. */
+  .text-aura-title {
+    font-family: var(--font-display), system-ui, sans-serif;
+    font-size: var(--aura-title-size);
+    font-weight: var(--aura-title-weight);
+    letter-spacing: var(--aura-title-tracking);
+    line-height: 1.15;
+    color: var(--text-1);
+  }
+
+  .text-aura-stat {
+    font-family: var(--font-mono), ui-monospace, Menlo, monospace;
+    font-size: var(--aura-stat-size);
+    font-weight: var(--aura-stat-weight);
+    font-variant-numeric: tabular-nums;
+    color: var(--text-1);
+  }
+
+  .text-aura-micro {
+    font-size: var(--aura-micro-size);
+    font-weight: var(--aura-micro-weight);
+    letter-spacing: var(--aura-micro-tracking);
+    text-transform: uppercase;
+    color: var(--text-3);
   }
 
   /* ── Staggered Reveal (Purposeful Motion) ────────────────────── */
@@ -1789,7 +1986,7 @@ html, body {
 .fluence-editor-content .ProseMirror a {
   color: var(--accent-primary);
   text-decoration: underline;
-  text-decoration-color: rgba(37, 99, 235, 0.3);
+  text-decoration-color: rgba(41, 82, 163, 0.3);
   text-underline-offset: 2px;
   cursor: pointer;
   transition: color 150ms ease-out, text-decoration-color 150ms ease-out;

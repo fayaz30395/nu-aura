@@ -44,10 +44,11 @@ const badgeVariants = cva(
         'outline-danger':
           'bg-transparent border border-danger-300 text-danger-700 dark:border-danger-700 dark:text-danger-300',
       },
+      // Aura: pill-tag corners sit at 7px (--r-sm); lg nudges to 9px (--r-md).
       size: {
-        sm: 'text-xs px-2 py-0.5 rounded-md',
-        md: 'text-xs px-2.5 py-1 rounded-md',
-        lg: 'text-sm px-2.5 py-1 rounded-lg',
+        sm: 'text-xs px-2 py-0.5 rounded-aura-sm',
+        md: 'text-xs px-2.5 py-1 rounded-aura-sm',
+        lg: 'text-sm px-2.5 py-1 rounded-aura-md',
       },
     },
     defaultVariants: {

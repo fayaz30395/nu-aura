@@ -12,20 +12,21 @@ import {cn} from '@/lib/utils';
 import {
   MobileBottomNav,
   Sidebar,
-  SIDEBAR_WIDTH_COLLAPSED,
-  SIDEBAR_WIDTH_EXPANDED,
   SidebarItem,
   SidebarSection
 } from '@/components/ui';
 import type {HeaderProps} from './Header';
-import {Header} from './Header';
-import {type BreadcrumbItem, Breadcrumbs} from './Breadcrumbs';
+import {type BreadcrumbItem} from './Breadcrumbs';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {Permissions, Roles, usePermissions} from '@/lib/hooks/usePermissions';
 import {useApprovalInboxCount} from '@/lib/hooks/queries/useApprovals';
 import {useActiveApp} from '@/lib/hooks/useActiveApp';
-import {APP_SIDEBAR_SECTIONS} from '@/lib/config/apps';
+import {type AppCode, APP_SIDEBAR_SECTIONS} from '@/lib/config/apps';
 import {buildMenuSections} from './menuSections';
+import {ProductRail} from './shell/ProductRail';
+import {NavPanel} from './shell/NavPanel';
+import {TopBar} from './shell/TopBar';
+import {CommandPalette} from './shell/CommandPalette';
 import {ErrorBoundary} from '@/components/errors';
 import {FluenceChatWidget} from '@/components/fluence/FluenceChatWidget';
 import {
@@ -110,7 +111,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
     [isSuperAdmin, roles]
   );
 
-  const {appCode} = useActiveApp();
+  const {appCode, getAppEntryRoute, hasAppAccess} = useActiveApp();
 
   // Approval inbox count for sidebar badge (polls every 30s)
   const canReadApprovalInbox = isReady && hasPermission(Permissions.WORKFLOW_VIEW);
@@ -124,6 +125,10 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   const setStoreSidebarCollapsed = useUiStore((s) => s.setSidebarCollapsed);
   const isMobileMenuOpen = useUiStore((s) => s.mobileNavOpen);
   const setIsMobileMenuOpen = useUiStore((s) => s.setMobileNavOpen);
+
+  // ⌘K command palette open state (ephemeral cross-route UI state).
+  const isCommandPaletteOpen = useUiStore((s) => s.commandPaletteOpen);
+  const setCommandPaletteOpen = useUiStore((s) => s.setCommandPaletteOpen);
 
   // If a parent supplies `sidebarCollapsed`, it wins; otherwise use the store.
   const isCollapsed = initialCollapsed ?? storeSidebarCollapsed;
@@ -164,6 +169,27 @@ const AppLayout: React.FC<AppLayoutProps> = ({
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [onSidebarCollapsedChange, setStoreSidebarCollapsed]);
+
+  // Global ⌘K / Ctrl+K → toggle the command palette.
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && (e.key === 'k' || e.key === 'K')) {
+        e.preventDefault();
+        useUiStore.getState().toggleCommandPalette();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  // Switch products from the rail — navigate to the target app's entry route.
+  const handleSelectProduct = useCallback(
+    (code: AppCode) => {
+      if (code === appCode) return;
+      router.push(getAppEntryRoute(code));
+    },
+    [appCode, getAppEntryRoute, router]
+  );
 
   const handleSidebarCollapsedChange = useCallback((collapsed: boolean) => {
     setStoreSidebarCollapsed(collapsed);
@@ -300,26 +326,26 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         className
       )}
     >
-      {/* Sidebar — fixed width, never flexes, prevents content shift */}
-      <aside
-        data-print-hide="true"
-        className="hidden md:flex flex-shrink-0 transition-[width] duration-[var(--motion-slow)] ease-[var(--ease-standard)]"
-        style={{
-          width: isCollapsed ? SIDEBAR_WIDTH_COLLAPSED : SIDEBAR_WIDTH_EXPANDED,
-          minWidth: isCollapsed ? SIDEBAR_WIDTH_COLLAPSED : SIDEBAR_WIDTH_EXPANDED,
-        }}
-      >
-        <Sidebar
-          items={menuItems}
+      {/* Aura desktop shell — product rail (72px) + contextual nav panel (232px).
+          Hidden below md; mobile uses the drawer below. */}
+      <div className="hidden md:flex">
+        <ProductRail
+          activeApp={appCode}
+          onSelectProduct={handleSelectProduct}
+          canAccess={hasAppAccess}
+          onAvatar={handleProfile}
+          onHelp={handleProfile}
+          userName={user?.fullName || 'User'}
+          userAvatarUrl={user?.profilePictureUrl}
+        />
+        <NavPanel
+          activeApp={appCode}
           sections={filteredSections}
           activeId={activeMenuItem}
-          collapsed={isCollapsed}
-          onCollapsedChange={handleSidebarCollapsedChange}
           onItemClick={handleMenuItemClick}
-          collapsible
-          variant="default"
+          collapsed={isCollapsed}
         />
-      </aside>
+      </div>
 
       {/* Mobile Sidebar Overlay */}
       {isMobileMenuOpen && (
@@ -355,31 +381,21 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         </>
       )}
 
-      {/* Main Content — fills remaining space, never overflows sidebar */}
+      {/* Main Content — fills remaining space, never overflows the shell */}
       <div className="flex flex-1 flex-col overflow-hidden min-w-0">
-        {/* Header — fixed height */}
-        <Header
-          onMenuClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          showMenuButton={true}
-          onProfile={handleProfile}
-          onSettings={handleSettings}
-          onLogout={handleLogout}
-          userName={user?.fullName || 'User'}
-          userAvatar={user?.profilePictureUrl}
-          userRole={getBestRoleLabel(user?.roles) || 'Employee'}
-          {...headerProps}
+        {/* Aura sticky top bar (60px) — toggle · breadcrumbs · ⌘K · theme · bell · user */}
+        <TopBar
+          breadcrumbs={showBreadcrumbs ? breadcrumbs : []}
+          onTogglePanel={() => handleSidebarCollapsedChange(!isCollapsed)}
+          onMobileMenu={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          onOpenCommand={() => setCommandPaletteOpen(true)}
+          onProfile={headerProps.onProfile ?? handleProfile}
+          onSettings={headerProps.onSettings ?? handleSettings}
+          onLogout={headerProps.onLogout ?? handleLogout}
+          userName={headerProps.userName ?? user?.fullName ?? 'User'}
+          userAvatarUrl={headerProps.userAvatar ?? user?.profilePictureUrl}
+          userRole={headerProps.userRole ?? getBestRoleLabel(user?.roles) ?? 'Employee'}
         />
-
-        {/* Breadcrumbs */}
-        {showBreadcrumbs && breadcrumbs.length > 0 && (
-          <div
-            className="flex-shrink-0 border-b border-[var(--border-subtle)] bg-[var(--bg-surface)]/90 backdrop-blur supports-[backdrop-filter]:bg-[var(--bg-surface)]/75"
-          >
-            <div className="page-shell py-2">
-              <Breadcrumbs items={breadcrumbs}/>
-            </div>
-          </div>
-        )}
 
         {/* Content Area — scrollable, fills remaining vertical space */}
         <main
@@ -415,6 +431,13 @@ const AppLayout: React.FC<AppLayoutProps> = ({
           onMoreClick={() => setIsMobileMenuOpen(true)}
         />
       </div>
+
+      {/* ⌘K Command Palette — global, navigates via the Next.js router */}
+      <CommandPalette
+        open={isCommandPaletteOpen}
+        onClose={() => setCommandPaletteOpen(false)}
+        sections={filteredSections}
+      />
 
       {/* Fluence AI Chat Widget — only on Fluence routes */}
       {appCode === 'FLUENCE' && <FluenceChatWidget/>}

@@ -1,18 +1,29 @@
 import type {Metadata, Viewport} from 'next';
 import {ColorSchemeScript} from '@mantine/core';
-import {JetBrains_Mono, Manrope} from 'next/font/google';
+import {Montserrat, Open_Sans, Roboto_Mono} from 'next/font/google';
 import {getThemeScript} from '@/lib/theme/theme-script';
 import './globals.css';
 import {Providers} from './providers';
 
-const uiTypeface = Manrope({
+// Aura redesign typography (self-hosted via next/font — no external Google CDN call):
+//   --font-sans     Open Sans   (body)
+//   --font-display  Montserrat  (display / headings, 600–800)
+//   --font-mono     Roboto Mono (all numerics — money, IDs, stats, counts; tabular-nums)
+const bodyTypeface = Open_Sans({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700', '800'],
+  weight: ['400', '500', '600', '700'],
   display: 'swap',
   variable: '--font-sans',
 });
 
-const monoTypeface = JetBrains_Mono({
+const displayTypeface = Montserrat({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700', '800'],
+  display: 'swap',
+  variable: '--font-display',
+});
+
+const monoTypeface = Roboto_Mono({
   subsets: ['latin'],
   weight: ['400', '500', '600'],
   display: 'swap',
@@ -47,7 +58,7 @@ export default function RootLayout({
       <ColorSchemeScript defaultColorScheme="dark"/>
     </head>
     <body
-      className={`${uiTypeface.variable} ${monoTypeface.variable} font-sans overflow-x-hidden antialiased bg-[var(--bg-page)] text-[var(--text-primary)]`}>
+      className={`${bodyTypeface.variable} ${displayTypeface.variable} ${monoTypeface.variable} font-sans overflow-x-hidden antialiased bg-[var(--bg-page)] text-[var(--text-primary)]`}>
     <a
       href="#main-content"
       className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:px-3 focus:py-2 focus:bg-accent-600 focus:text-white focus:rounded"

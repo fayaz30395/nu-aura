@@ -26,18 +26,22 @@ const gray = {
   950: '#080c18',
 };
 
+// ── Aura accent scale (NU-AURA Blue, hue ~228) — anchor #2952A3 (step 700).
+// Mirrors the --aura-accent-* / --accent-* CSS vars in app/globals.css so
+// `bg-accent-700`, `text-accent-600`, `border-accent-300`, etc. match the
+// runtime token values exactly.
 const brand = {
-  50: '#eff6ff',
-  100: '#dbeafe',
-  200: '#bfdbfe',
-  300: '#93c5fd',
-  400: '#60a5fa',
-  500: '#3b82f6',
-  600: '#2563eb',
-  700: '#1d4ed8',
-  800: '#1e40af',
-  900: '#1e3a8a',
-  950: '#172554',
+  50: '#f0f3fc',
+  100: '#dce3f8',
+  200: '#bcc9f2',
+  300: '#92a8e8',
+  400: '#6884dc',
+  500: '#4463cf',
+  600: '#3350b8',
+  700: '#2952A3',
+  800: '#244288',
+  900: '#1d356d',
+  950: '#121f44',
 };
 
 const semanticColors = {
@@ -56,11 +60,29 @@ const semanticColors = {
     400: '#FBBF24', 500: '#F59E0B', 600: '#D97706', 700: '#B45309',
     800: '#92400E', 900: '#78350F', 950: '#451A03',
   },
+  // Aura: info === accent (single-hue blue). Mirrors the accent scale.
   info: {
-    50: '#EFF6FF', 100: '#DBEAFE', 200: '#BFDBFE', 300: '#93C5FD',
-    400: '#60A5FA', 500: '#3B82F6', 600: '#2563EB', 700: '#1D4ED8',
-    800: '#1E40AF', 900: '#1E3A8A', 950: '#172554',
+    50: '#f0f3fc', 100: '#dce3f8', 200: '#bcc9f2', 300: '#92a8e8',
+    400: '#6884dc', 500: '#4463cf', 600: '#3350b8', 700: '#2952A3',
+    800: '#244288', 900: '#1d356d', 950: '#121f44',
   },
+};
+
+// ── Aura product accents (bundle rail) — mirror --prod-* CSS vars ──
+const prod = {
+  hrms: '#4463cf',
+  hire: '#0ea5a3',
+  grow: '#d97706',
+  fluence: '#8b5cf6',
+};
+
+// ── Aura chart palette — mirror --chart-1..5 CSS vars ──
+const chart = {
+  1: '#2952A3',
+  2: '#6884dc',
+  3: '#0ea5a3',
+  4: '#d97706',
+  5: '#8b5cf6',
 };
 
 module.exports = {
@@ -73,14 +95,26 @@ module.exports = {
   ],
   theme: {
     extend: {
+      // Aura typography — Open Sans (body) / Montserrat (display) / Roboto Mono (numerics).
+      // CSS vars are set by next/font in app/layout.tsx.
       fontFamily: {
         sans: ['var(--font-sans)', '"Open Sans"', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
-        display: ['var(--font-display)', '"Montserrat"', 'var(--font-sans)', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
+        display: ['var(--font-display)', '"Montserrat"', '"Open Sans"', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
         mono: ['var(--font-mono)', '"Roboto Mono"', 'SF Mono', 'Monaco', 'Cascadia Code', 'Consolas', 'Courier New', 'monospace'],
       },
       fontSize: {
         '2xs': ['0.625rem', {lineHeight: '0.875rem'}],   // 10px / 14px
         '3xs': ['0.6875rem', {lineHeight: '1rem'}],       // 11px / 16px
+      },
+      // ── Aura radii — mirror --r-* CSS vars (cards 12px / controls 10px) ──
+      borderRadius: {
+        'aura-xs': 'var(--r-xs)',     // 5px
+        'aura-sm': 'var(--r-sm)',     // 7px
+        'aura-md': 'var(--r-md)',     // 9px
+        'aura-lg': 'var(--r-lg)',     // 12px — card default
+        'aura-xl': 'var(--r-xl)',     // 16px
+        'aura-2xl': 'var(--r-2xl)',   // 22px
+        'aura-control': 'var(--r-control)', // 10px — buttons / inputs
       },
       colors: {
         // ── Design Token Bridge (CSS Variables → Tailwind) ──────
@@ -135,17 +169,63 @@ module.exports = {
           divider: 'var(--dropdown-divider)',
         },
 
-        // ── Accent (NULogic Blue — aligned with CSS --accent-primary: #2563EB) ──
+        // ── Aura token bridge (CSS Variables → Tailwind, light/dark aware) ──
+        // Usage: bg-rail, bg-nav, text-text-1, border-aura, bg-surface-aura, etc.
+        rail: {
+          DEFAULT: 'var(--rail)',
+          2: 'var(--rail-2)',
+        },
+        nav: {
+          DEFAULT: 'var(--nav)',
+          soft: 'var(--nav-soft)',
+          active: 'var(--nav-active)',
+        },
+        'surface-aura': {
+          DEFAULT: 'var(--surface)',
+          2: 'var(--surface-aura-2)',
+          hover: 'var(--surface-hover)',
+          sunken: 'var(--surface-sunken)',
+          app: 'var(--bg-app)',
+          canvas: 'var(--bg-canvas)',
+        },
+        'text-1': 'var(--text-1)',
+        'text-2': 'var(--text-2)',
+        'text-3': 'var(--text-3)',
+        'on-rail': {
+          DEFAULT: 'var(--on-rail)',
+          dim: 'var(--on-rail-dim)',
+        },
+        'border-aura': {
+          DEFAULT: 'var(--border)',
+          soft: 'var(--border-soft)',
+          strong: 'var(--border-aura-strong)',
+          focus: 'var(--border-focus)',
+        },
+        // Product accents (bundle rail) — static hex, mirror --prod-* vars
+        prod,
+        // Chart palette — static hex, mirror --chart-1..5 vars
+        chart,
+        // Status — token-driven (light/dark aware) fg/bg/border
+        status: {
+          'ok-fg': 'var(--ok-fg)', 'ok-bg': 'var(--ok-bg)', 'ok-bd': 'var(--ok-bd)',
+          'warn-fg': 'var(--warn-fg)', 'warn-bg': 'var(--warn-bg)', 'warn-bd': 'var(--warn-bd)',
+          'err-fg': 'var(--err-fg)', 'err-bg': 'var(--err-bg)', 'err-bd': 'var(--err-bd)',
+          'info-fg': 'var(--info-fg)', 'info-bg': 'var(--info-bg)', 'info-bd': 'var(--info-bd)',
+          'neutral-fg': 'var(--neutral-fg)', 'neutral-bg': 'var(--neutral-bg)', 'neutral-bd': 'var(--neutral-bd)',
+        },
+
+        // ── Accent (NU-AURA Blue — anchor #2952A3 = brand[700]) ──
         accent: {
-          DEFAULT: brand[600],
-          hover: brand[700],
+          DEFAULT: brand[700],
+          hover: brand[800],
           subtle: brand[50],
+          soft: 'var(--accent-soft)',
           ...brand,
         },
 
         // ── Primary (Alias for accent for backward compatibility) ──
         primary: {
-          DEFAULT: brand[600],
+          DEFAULT: brand[700],
           ...brand,
         },
 
@@ -201,6 +281,13 @@ module.exports = {
         'card-hover': 'var(--shadow-card-hover)',
         'elevated': 'var(--shadow-elevated)',
         'dropdown': 'var(--shadow-dropdown)',
+        // Aura soft-depth scale (auto-adapt via CSS vars)
+        'sh-xs': 'var(--sh-xs)',
+        'sh-sm': 'var(--sh-sm)',
+        'sh-md': 'var(--sh-md)',
+        'sh-lg': 'var(--sh-lg)',
+        'sh-pop': 'var(--sh-pop)',
+        'sh-focus': 'var(--sh-focus)',
         // Skeuomorphic shadows (auto-adapt via CSS vars)
         'skeuo-card': 'var(--shadow-skeuo-card)',
         'skeuo-card-hover': 'var(--shadow-skeuo-card-hover)',

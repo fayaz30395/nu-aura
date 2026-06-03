@@ -8,14 +8,16 @@ import {cn} from '@/lib/utils';
 import {Loader2} from 'lucide-react';
 
 const buttonVariants = cva(
-  'press-scale inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-all duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 disabled:translate-y-0 motion-reduce:transition-none',
+  // Aura: display-font label, tracking-tight, token-driven motion (--t-base / --ease).
+  'press-scale inline-flex items-center justify-center gap-2 whitespace-nowrap font-display font-semibold tracking-[-0.005em] transition-all duration-[var(--t-base)] ease-[var(--ease)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 disabled:translate-y-0 motion-reduce:transition-none',
   {
     variants: {
       variant: {
+        // Aura primary: accent fill + 1px top highlight + soft accent glow (token-driven).
         primary:
-          'bg-[var(--accent-primary)] text-white shadow-[0_1px_2px_rgba(37,99,235,0.22)] hover:bg-[var(--accent-primary-hover)] hover:shadow-[0_2px_8px_rgba(37,99,235,0.18)] focus-visible:ring-[var(--ring-primary)] active:translate-y-px active:shadow-none',
+          'bg-[var(--accent-primary)] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.22),0_1px_2px_rgba(41,82,163,0.3),0_4px_12px_color-mix(in_srgb,var(--accent)_30%,transparent)] hover:bg-[var(--accent-primary-hover)] hover:-translate-y-px hover:brightness-[1.03] focus-visible:ring-[var(--ring-primary)] active:translate-y-0 active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)]',
         secondary:
-          'border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] hover:border-[var(--border-strong)] hover:bg-[var(--bg-card-hover)] focus-visible:ring-[var(--ring-primary)] active:translate-y-px',
+          'border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] shadow-[var(--sh-xs)] hover:border-[var(--border-strong)] hover:bg-[var(--bg-card-hover)] focus-visible:ring-[var(--ring-primary)] active:translate-y-px',
         outline:
           'border border-[var(--border-main)] bg-transparent text-[var(--text-primary)] hover:border-[var(--border-strong)] hover:bg-[var(--bg-card-hover)] focus-visible:ring-[var(--ring-primary)] active:translate-y-px',
         ghost:
@@ -37,18 +39,20 @@ const buttonVariants = cva(
         default:
           'bg-[var(--text-heading)] text-[var(--text-inverse)] hover:brightness-110 focus-visible:ring-[var(--ring-primary)] active:translate-y-px',
         cta:
-          'bg-[var(--accent-primary)] text-white shadow-[0_1px_2px_rgba(37,99,235,0.22)] hover:bg-[var(--accent-primary-hover)] hover:shadow-[0_2px_8px_rgba(37,99,235,0.18)] focus-visible:ring-[var(--ring-primary)] active:translate-y-px active:shadow-none',
+          'bg-[var(--accent-primary)] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.22),0_1px_2px_rgba(41,82,163,0.3),0_4px_12px_color-mix(in_srgb,var(--accent)_30%,transparent)] hover:bg-[var(--accent-primary-hover)] hover:-translate-y-px hover:brightness-[1.03] focus-visible:ring-[var(--ring-primary)] active:translate-y-0 active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)]',
       },
+      // Aura radii: control surfaces sit at 8–11px. Heights are unchanged (DESIGN
+      // contract: md=36 / lg=44 / xl=48) — only the corner softness is re-systemed.
       size: {
-        xs: 'h-7 px-2 text-xs rounded-md',
-        sm: 'h-8 px-3 text-sm rounded-lg',
-        md: 'h-9 px-3.5 text-sm rounded-xl',
-        lg: 'h-11 px-4 text-sm rounded-xl',
-        xl: 'h-12 px-6 text-base rounded-xl',
-        icon: 'h-9 w-9 rounded-xl',
-        'icon-sm': 'h-8 w-8 rounded-lg',
-        'icon-xs': 'h-7 w-7 rounded-md',
-        'icon-lg': 'h-11 w-11 rounded-xl',
+        xs: 'h-7 px-2 text-xs rounded-[8px]',
+        sm: 'h-8 px-3 text-sm rounded-[9px]',
+        md: 'h-9 px-3.5 text-sm rounded-aura-control',
+        lg: 'h-11 px-4 text-sm rounded-[11px]',
+        xl: 'h-12 px-6 text-base rounded-[11px]',
+        icon: 'h-9 w-9 rounded-aura-control',
+        'icon-sm': 'h-8 w-8 rounded-[9px]',
+        'icon-xs': 'h-7 w-7 rounded-[8px]',
+        'icon-lg': 'h-11 w-11 rounded-[11px]',
       },
     },
     defaultVariants: {

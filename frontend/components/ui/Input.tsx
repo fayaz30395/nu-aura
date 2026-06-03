@@ -63,7 +63,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
                 ? 'text-danger-600 dark:text-danger-400'
                 : success
                   ? 'text-success-600 dark:text-success-400'
-                  : 'text-surface-700 dark:text-surface-200'
+                  : 'text-[var(--text-secondary)]'
             )}
           >
             {label}
@@ -74,9 +74,9 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           {icon && (
             <span
               className={cn(
-                'absolute left-3 top-1/2 -translate-y-1/2 text-surface-400',
+                'absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-3)]',
                 'transition-colors duration-[var(--motion-fast)] ease-[var(--ease-standard)]',
-                isFocused && !error && !success && 'text-accent-500',
+                isFocused && !error && !success && 'text-[var(--accent)]',
                 error && 'text-danger-500',
                 success && 'text-success-500'
               )}
@@ -92,24 +92,26 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               borderColor: error ? undefined : success ? undefined : 'var(--border-main)',
             }}
             className={cn(
-              // Base styles — token-driven focus/border transition (compositor-safe: color + box-shadow only)
-              'w-full rounded-lg border transition-[border-color,box-shadow,color] duration-[var(--motion-base)] ease-[var(--ease-standard)]',
-              'placeholder:text-surface-400 dark:placeholder:text-surface-500',
+              // Aura: 10px control radius + inset top shadow (--inset-input). Focus
+              // and validation state layer on the token-driven accent/status ring.
+              // Compositor-safe: only color + box-shadow transition.
+              'w-full rounded-aura-control border shadow-[var(--inset-input)] transition-[border-color,box-shadow,color] duration-[var(--motion-base)] ease-[var(--ease-standard)]',
+              'placeholder:text-[var(--text-3)]',
               // Size
               sizeStyles[inputSize],
               // Icon padding
               icon && 'pl-10',
               (rightIcon || type === 'password' || error || success) && 'pr-10',
               // Hover state
-              !error && !success && !disabled && 'hover:border-surface-400 dark:hover:border-surface-500',
-              // Focus state
-              !error && !success && 'focus:border-accent-500 focus:ring-2 focus:ring-accent-500/20 dark:focus:border-accent-400 dark:focus:ring-accent-400/20',
+              !error && !success && !disabled && 'hover:border-[var(--border-strong)]',
+              // Focus state — Aura accent border + soft focus ring (--sh-focus)
+              !error && !success && 'focus:border-[var(--accent)] focus:shadow-[var(--inset-input),var(--sh-focus)]',
               // Error state
-              error && 'border-danger-500 focus:border-danger-500 focus:ring-2 focus:ring-danger-500/20',
+              error && 'border-danger-500 focus:border-danger-500 focus:shadow-[var(--inset-input),0_0_0_3px_var(--ring-danger)]',
               // Success state
-              success && 'border-success-500 focus:border-success-500 focus:ring-2 focus:ring-success-500/20',
+              success && 'border-success-500 focus:border-success-500 focus:shadow-[var(--inset-input),0_0_0_3px_var(--ring-success)]',
               // Disabled
-              disabled && 'bg-surface-100 dark:bg-surface-700 cursor-not-allowed opacity-60',
+              disabled && 'bg-[var(--surface-sunken)] cursor-not-allowed opacity-60',
               // Remove default outline
               'outline-none',
               className
