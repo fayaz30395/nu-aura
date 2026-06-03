@@ -16,7 +16,6 @@ import {
 } from '@/lib/hooks/queries/useSystemAdmin';
 import {MonthlyGrowth, TenantListItem} from '@/lib/types/core/admin-system';
 import {createLogger} from '@/lib/utils/logger';
-import {safeSessionStorage} from '@/lib/utils/safeStorage';
 import {formatDate} from '@/lib/utils/format/date';
 
 const GrowthChart = dynamic(
@@ -64,13 +63,17 @@ export default function SystemDashboard() {
     if (!selectedTenant) return;
 
     try {
-      const result = await impersonationMutation.mutateAsync(selectedTenant.tenantId);
-      // Store the impersonation token in sessionStorage (SEC-F05: sensitive auth data).
-      // safeSessionStorage handles private-mode / quota errors so impersonation
-      // degrades to a visible failure rather than an uncaught DOMException.
-      safeSessionStorage.set('impersonationToken', result.token);
-      safeSessionStorage.set('impersonatedTenantId', result.tenantId);
-      safeSessionStorage.set('impersonatedTenantName', result.tenantName);
+      // Audit M-12: the impersonation token (a 15-min cross-tenant-capable JWT)
+      // was previously persisted to JS-accessible sessionStorage along with the
+      // tenant id/name, but grep confirms nothing in the app ever read those keys
+      // — the redirect below uses the SuperAdmin's existing cookie session. The
+      // persisted token was therefore dead and risky (XSS-gated lateral movement),
+      // so it is no longer stored. The mutation is still awaited to surface
+      // backend failures; the redirect proceeds only on success.
+      // TODO(M-12): complete the impersonation flow so the token actually
+      // establishes tenant context (send as Authorization to the redirect target,
+      // used immediately and never persisted) — see security-audit-2026-06-04.md.
+      await impersonationMutation.mutateAsync(selectedTenant.tenantId);
       // Redirect to tenant's main dashboard
       router.push('/admin');
     } catch (error) {

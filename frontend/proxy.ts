@@ -245,12 +245,39 @@ function addSecurityHeaders(response: NextResponse, request: NextRequest): NextR
       "default-src 'self'",
       process.env.NODE_ENV === 'development'
         ? "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://accounts.google.com https://apis.google.com"
+        // SECURITY TODO (audit M-13, docs/audit/release-2026-06-04/security-audit-2026-06-04.md):
+        // 'unsafe-inline' is retained DELIBERATELY and must NOT be removed blindly.
         // Do not use strict-dynamic until every Next.js hydration script is emitted
         // with a nonce. Without nonces, production browsers block the app's own
         // /_next/static chunks and every client page stays on its loading fallback.
+        //
+        // Nonce migration plan (do as one deliberate change, then verify a real
+        // prod build before merging):
+        //   1. Generate a per-request nonce here in proxy.ts
+        //      (crypto.randomUUID() or randomBytes -> base64).
+        //   2. Forward it to the app via a request header (e.g. set it on
+        //      `request.headers` / response so Server Components can read it via
+        //      next/headers `headers()`), the mechanism Next.js App Router uses to
+        //      propagate nonces onto its own injected framework/runtime scripts.
+        //   3. Replace 'unsafe-inline' with "'nonce-<NONCE>' 'strict-dynamic'".
+        //   4. Stamp the nonce onto the two app-owned inline scripts in
+        //      app/layout.tsx:
+        //        - the static theme/FOUC script at layout.tsx:62
+        //          (`<script dangerouslySetInnerHTML={{__html: getThemeScript()}}/>`)
+        //          — give it `nonce={nonce}` or pin it with a 'sha256-...' hash
+        //          since its content is static.
+        //        - Mantine's `<ColorSchemeScript>` at layout.tsx:63 — pass `nonce={nonce}`.
+        //   5. Verify in a production build that /_next/static chunks load and no
+        //      client page is stuck on its loading fallback before removing
+        //      'unsafe-inline'. Until all of the above ship together, leaving
+        //      'unsafe-inline' is the safe state (DOMPurify is the upstream XSS
+        //      backstop — see audit M-11/M-12 context).
         : "script-src 'self' 'unsafe-inline' https://accounts.google.com https://apis.google.com https://www.google.com https://www.gstatic.com",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://accounts.google.com",
-      `connect-src 'self'${apiConnectSources} wss: https://accounts.google.com https://accounts.googleapis.com https://www.googleapis.com`,
+      // L-6: removed bare `wss:` wildcard (allowed WebSocket to any origin).
+      // getApiConnectSources() already emits the specific allowed origin(s),
+      // including the wss:// origin for the STOMP/SockJS backend.
+      `connect-src 'self'${apiConnectSources} https://accounts.google.com https://accounts.googleapis.com https://www.googleapis.com`,
       // SEC: explicit img-src allowlist (was 'https:' wildcard — too permissive, allowed exfil to any HTTPS host)
       "img-src 'self' data: blob: https://lh3.googleusercontent.com https://*.amazonaws.com https://*.cloudfront.net https://storage.googleapis.com https://media.licdn.com https://ui-avatars.com https://drive.google.com",
       "font-src 'self' https://fonts.gstatic.com",

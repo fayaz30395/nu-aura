@@ -8,6 +8,19 @@
 // graceful error handling for private mode, sandboxed iframes, and
 // quota-exceeded scenarios so the SSO flow degrades cleanly rather than
 // throwing uncaught DOMExceptions.
+//
+// SECURITY TODO (audit M-11, docs/audit/release-2026-06-04/security-audit-2026-06-04.md):
+// The unified Google token carries broad scopes (gmail.send/modify, drive.file,
+// calendar.events — see GOOGLE_SSO_SCOPES below) yet lives in JS-accessible
+// sessionStorage. The token is read synchronously by many surfaces
+// (nu-mail / nu-drive / nu-calendar / dashboard / recruitment interviews /
+// notifications) for the life of the session, so it cannot be cleared after a
+// single use without breaking those features. The correct fix is to migrate to a
+// backend-proxied httpOnly cookie session (Google API calls proxied server-side)
+// and to request gmail.* scopes lazily only when the Mail module opens rather than
+// at login. Until then, exposure is minimized by: (1) clearing on logout
+// (lib/hooks/useAuth.ts), and (2) clearing on tab close / page hide via
+// registerGoogleTokenCleanup() below. Pair with the CSP nonce fix (audit M-13).
 
 import {safeSessionStorage} from './safeStorage';
 
@@ -76,6 +89,25 @@ export const clearGoogleToken = (): void => {
 // Check if Google token exists and is valid
 export const hasValidGoogleToken = (): boolean => {
   return getGoogleToken() !== null;
+};
+
+// Minimize exposure window (audit M-11): proactively wipe the broad-scope Google
+// token from sessionStorage when the tab is closed or hidden, so it does not
+// linger in JS-accessible storage beyond the active page. Idempotent — safe to
+// call from multiple mount points; returns an unsubscribe function.
+export const registerGoogleTokenCleanup = (): (() => void) => {
+  if (typeof window === 'undefined') return () => {};
+
+  const handler = (): void => clearGoogleToken();
+  // `pagehide` covers tab close, navigation away, and bfcache; `beforeunload`
+  // is the broader-support fallback for full unloads.
+  window.addEventListener('pagehide', handler);
+  window.addEventListener('beforeunload', handler);
+
+  return () => {
+    window.removeEventListener('pagehide', handler);
+    window.removeEventListener('beforeunload', handler);
+  };
 };
 
 // Get token expiry time in milliseconds
