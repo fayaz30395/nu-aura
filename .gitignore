@@ -101,7 +101,7 @@ LAYOUT_FILES_CREATED.txt
 .fuse_hidden*
 
 # Ruflo / claude-flow runtime
-#.claude-flow/
+**/.claude-flow/
 #.swarm/
 ruvector.db
 agentdb.rvf
@@ -184,3 +184,6 @@ frontend/sessions/
 
 # Render deploy hook secret (never commit)
 scripts/deploy/.env
+
+# Next.js scratch build dir (security-audit workflow + ad-hoc builds)
+frontend/tmp/
