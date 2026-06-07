@@ -16,20 +16,21 @@ import static com.nulogic.common.security.Permission.SYSTEM_ADMIN;
 
 /**
  * SuperAdmin-only endpoints to drive the one-time re-encryption backfill that
- * complements Flyway V147. Each endpoint scans a single table and re-saves
+ * complements Flyway V147 and V271. Each endpoint scans a single table and re-saves
  * legacy plaintext rows through the JPA {@code @Convert} pipeline, producing
  * IV-prefixed ciphertext on the next write.
  *
  * <p>All endpoints are idempotent: re-running a backfill after every row has
  * been encrypted is a no-op because the candidate-id query filters on rows
- * lacking the {@code ":"} delimiter used by {@code EncryptedStringConverter}.
+ * lacking the {@code ":"} delimiter used by {@code EncryptedStringConverter},
+ * or on rows where the encrypted column is still NULL (for the DOB endpoint).
  */
 @RestController
 @RequestMapping("/api/v1/admin/encryption-backfill")
 @RequiredArgsConstructor
 @Slf4j
 @Tag(name = "Encryption Backfill",
-        description = "One-time re-encryption of legacy plaintext PII rows (post-V147)")
+        description = "One-time re-encryption of legacy plaintext PII rows (post-V147 / post-V271)")
 public class EncryptionBackfillController {
 
     private final EncryptionBackfillService service;
@@ -53,6 +54,18 @@ public class EncryptionBackfillController {
     public ResponseEntity<BackfillResult> backfillBenefitDependents() {
         log.info("SuperAdmin triggering backfill: benefit_dependents PII");
         return ResponseEntity.ok(service.backfillBenefitDependents());
+    }
+
+    @PostMapping("/benefit-dependents/dob")
+    @Operation(summary = "Backfill benefit_dependents.date_of_birth_enc (V271)",
+            description = "Copies the legacy plaintext date_of_birth DATE column into the new " +
+                    "AES-GCM encrypted date_of_birth_enc TEXT column for all un-migrated rows. " +
+                    "Idempotent: rows already having a non-null date_of_birth_enc are skipped. " +
+                    "PREREQUISITE: ENCRYPTION_KEY environment variable must be set.")
+    @RequiresPermission(value = SYSTEM_ADMIN, revalidate = true)
+    public ResponseEntity<BackfillResult> backfillBenefitDependentDob() {
+        log.info("SuperAdmin triggering backfill: benefit_dependents.date_of_birth_enc (V271)");
+        return ResponseEntity.ok(service.backfillBenefitDependentDob());
     }
 
     @PostMapping("/tax-declarations")

@@ -1,0 +1,120 @@
+-- =============================================================================
+-- V271 — Encrypt benefit_dependents.date_of_birth (P1 GDPR PII)
+-- =============================================================================
+-- Context
+-- -------
+-- The date_of_birth column has been a plain DATE column since table creation.
+-- Under GDPR Article 4 (and Article 9 when read alongside health-condition data
+-- on the same row) date-of-birth is high-sensitivity personal data and must be
+-- encrypted at rest in line with the rest of the identification PII encrypted by
+-- V147.
+--
+-- EncryptedLocalDateConverter (added alongside this migration) implements
+-- AttributeConverter<LocalDate, String> and reuses the existing AES-256-GCM
+-- infrastructure of EncryptedStringConverter.  It serialises the date to
+-- ISO-8601 (yyyy-MM-dd) before encrypting, and reverses the process on read.
+-- Because @Convert overrides Hibernate's native LocalDate → DATE mapping, the
+-- column type must be TEXT (not DATE).
+--
+-- Ciphertext format (same as all other PII columns, see V147 for reference):
+--   Base64(IV-12-bytes) ":" Base64(ciphertext + GCM-tag-16-bytes)
+-- For a 10-byte plaintext (yyyy-MM-dd) this produces ≈ 68 characters.
+-- TEXT is intentionally over-provisioned; VARCHAR(128) would also be sufficient.
+--
+-- Migration strategy (safe, zero-downtime)
+-- ----------------------------------------
+-- 1. ADD the new encrypted column (nullable — rows not yet backfilled are NULL).
+-- 2. Leave the old date_of_birth DATE column in place; it is mapped read-only
+--    via BenefitDependent.legacyDateOfBirth so the application can fall back to
+--    it during the backfill window.
+-- 3. Backfill: the operator must call POST /api/v1/admin/encryption-backfill/benefit-dependents-dob
+--    (new endpoint added to EncryptionBackfillService / EncryptionBackfillController)
+--    AFTER this migration has been applied and the application has been redeployed
+--    with the new converter in place.  The backfill reads date_of_birth, sets it on
+--    the entity (now writing to date_of_birth_enc via the converter), and saves.
+-- 4. V272 (follow-up, separate PR): once the backfill is confirmed 100% complete,
+--    NULL the old column and then drop it.
+--
+-- ROLLBACK considerations
+-- -----------------------
+-- This migration adds a nullable column and makes no destructive change to existing
+-- data.  Rolling back the application to the pre-V271 binary before running V272
+-- is safe: the application will use the old date_of_birth column.  No Flyway
+-- UNDO script is required — the column add is idempotent on re-run (IF NOT EXISTS).
+--
+-- Key-availability requirement
+-- ----------------------------
+-- The ENCRYPTION_KEY / APP_SECURITY_ENCRYPTION_KEY environment variable MUST be
+-- configured in the application runtime BEFORE the backfill step is triggered.
+-- The migration itself performs no encryption — only the backfill does.
+-- Applying this migration without the key set is safe.
+--
+-- DO NOT drop date_of_birth in this migration.
+-- =============================================================================
+
+-- Step 1: add the new encrypted TEXT column (nullable during backfill window).
+ALTER TABLE benefit_dependents
+    ADD COLUMN IF NOT EXISTS date_of_birth_enc TEXT;
+
+-- Step 2: drop the NOT NULL constraint on the legacy date_of_birth column.
+-- The entity now maps date_of_birth read-only (insertable=false, updatable=false)
+-- via BenefitDependent.legacyDateOfBirth and writes DOB exclusively through the
+-- converter into date_of_birth_enc. Without this, a fresh INSERT would leave the
+-- legacy NOT NULL column unset and violate the constraint. V272 drops the column.
+ALTER TABLE benefit_dependents
+    ALTER COLUMN date_of_birth DROP NOT NULL;
+
+-- No data movement here.  The application (EncryptedLocalDateConverter) will
+-- populate date_of_birth_enc on the next JPA save for each row.
+
+-- =============================================================================
+-- BACKFILL NOTE (must be executed by operator post-deploy, NOT here)
+-- =============================================================================
+-- After deploying the application with EncryptedLocalDateConverter in place,
+-- trigger the backfill via the admin API:
+--
+--   POST /api/v1/admin/encryption-backfill/benefit-dependents-dob
+--   Authorization: Bearer <SYSTEM_ADMIN token>
+--
+-- This endpoint (EncryptionBackfillController) calls
+-- EncryptionBackfillService.backfillBenefitDependentDob(), which:
+--   1. Selects all IDs where date_of_birth_enc IS NULL AND date_of_birth IS NOT NULL.
+--   2. Loads each BenefitDependent entity via JPA.
+--   3. Calls entity.setDateOfBirth(entity.getLegacyDateOfBirth()) to copy the
+--      value into the converter-managed field.
+--   4. Calls repository.save(entity) — Hibernate writes through
+--      EncryptedLocalDateConverter, encrypting the value into date_of_birth_enc.
+--
+-- The backfill is IDEMPOTENT: re-running it on rows already encrypted is a no-op
+-- because the WHERE clause filters on date_of_birth_enc IS NULL.
+--
+-- Monitor progress with:
+--   SELECT COUNT(*) FROM benefit_dependents
+--   WHERE date_of_birth IS NOT NULL AND date_of_birth_enc IS NULL;
+-- (Target: 0 rows before proceeding to V272.)
+-- =============================================================================
+
+-- =============================================================================
+-- FOLLOW-UP: V272 (separate migration, separate PR — lead approval required)
+-- =============================================================================
+-- After confirming the backfill is 100% complete and the application has been
+-- running against date_of_birth_enc exclusively for at least one release cycle:
+--
+--   1. Remove BenefitDependent.legacyDateOfBirth field and the V272 approval gate.
+--   2. In V272.sql:
+--        -- Verify no un-migrated rows remain (fail-safe)
+--        DO $$
+--        BEGIN
+--          IF EXISTS (
+--            SELECT 1 FROM benefit_dependents
+--            WHERE date_of_birth IS NOT NULL AND date_of_birth_enc IS NULL
+--          ) THEN
+--            RAISE EXCEPTION 'V272 blocked: un-migrated date_of_birth rows exist. '
+--                            'Run backfill before dropping the column.';
+--          END IF;
+--        END $$;
+--
+--        ALTER TABLE benefit_dependents DROP COLUMN date_of_birth;
+--
+-- DO NOT merge V272 until the production backfill count query above returns 0.
+-- =============================================================================

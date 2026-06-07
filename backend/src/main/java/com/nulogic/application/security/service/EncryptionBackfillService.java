@@ -100,6 +100,55 @@ public class EncryptionBackfillService {
     }
 
     /**
+     * Backfill for {@code benefit_dependents.date_of_birth_enc} (V271).
+     *
+     * <p>Copies the value from the legacy plaintext {@code date_of_birth DATE} column
+     * into the new encrypted {@code date_of_birth_enc TEXT} column by loading each
+     * un-migrated entity, writing through {@code EncryptedLocalDateConverter} via JPA
+     * {@code save()}.
+     *
+     * <p>Idempotent: only rows where {@code date_of_birth_enc IS NULL} and
+     * {@code date_of_birth IS NOT NULL} are targeted.  Rows already migrated are
+     * skipped.
+     *
+     * <p>PREREQUISITE: {@code ENCRYPTION_KEY} / {@code APP_SECURITY_ENCRYPTION_KEY}
+     * must be set in the environment before calling this method.  The migration SQL
+     * (V271) does not set the key — that is an application runtime responsibility.
+     */
+    @Transactional
+    public BackfillResult backfillBenefitDependentDob() {
+        // Target rows that have a legacy plaintext DOB but no encrypted DOB yet.
+        List<UUID> candidateIds = findLegacyIds(
+                "SELECT id FROM benefit_dependents " +
+                "WHERE date_of_birth IS NOT NULL AND date_of_birth_enc IS NULL");
+        int migrated = 0;
+        for (UUID id : candidateIds) {
+            try {
+                if (benefitDependentRepository.findById(id)
+                        .map(dep -> {
+                            // legacyDateOfBirth is loaded from the old column (insertable=false,
+                            // updatable=false). Copy it into the encrypted field so the JPA
+                            // save() round-trip writes through EncryptedLocalDateConverter.
+                            if (dep.getLegacyDateOfBirth() != null) {
+                                dep.setDateOfBirth(dep.getLegacyDateOfBirth());
+                                benefitDependentRepository.save(dep);
+                                return true;
+                            }
+                            return false;
+                        }).orElse(false)) {
+                    migrated++;
+                }
+            } catch (Exception e) {
+                log.warn("Failed to backfill date_of_birth_enc for benefit_dependents id={}: {}",
+                        id, e.getMessage());
+            }
+        }
+        log.info("Backfill benefit_dependents.date_of_birth_enc (V271): candidates={}, migrated={}",
+                candidateIds.size(), migrated);
+        return new BackfillResult(candidateIds.size(), migrated);
+    }
+
+    /**
      * Re-encrypt legacy {@code tax_declarations.previous_employer_pan} values.
      */
     @Transactional
