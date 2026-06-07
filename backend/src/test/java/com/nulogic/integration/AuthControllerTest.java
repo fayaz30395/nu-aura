@@ -410,19 +410,25 @@ class AuthControllerTest extends AbstractPostgresIntegrationTest {
         RateLimitingFilter filter = new RateLimitingFilter();
         ReflectionTestUtils.setField(filter, "rateLimitEnabled", true);
         ReflectionTestUtils.setField(filter, "useRedis", false);
-        ReflectionTestUtils.setField(filter, "requestsPerMinute", 2);
+        // requestsPerMinute is intentionally NOT set for AUTH endpoints: createBucket() bypasses
+        // it for RateLimitType.AUTH and uses the canonical AUTH limit (5/min) from the enum.
         ReflectionTestUtils.setField(filter, "jwtSecret", "test-secret-with-enough-length-for-hmac");
 
-        MockHttpServletResponse first = performRateLimitedAuthRequest(filter);
-        MockHttpServletResponse second = performRateLimitedAuthRequest(filter);
-        MockHttpServletResponse third = performRateLimitedAuthRequest(filter);
+        // AUTH bucket capacity is 5 (RateLimitType.AUTH.getLimit()). Send 5 allowed requests
+        // then assert the 6th is rejected with 429.
+        MockHttpServletResponse response = null;
+        for (int i = 0; i < 5; i++) {
+            response = performRateLimitedAuthRequest(filter);
+            org.assertj.core.api.Assertions.assertThat(response.getStatus())
+                    .as("request %d should be allowed", i + 1)
+                    .isEqualTo(200);
+        }
+        MockHttpServletResponse sixth = performRateLimitedAuthRequest(filter);
 
-        org.assertj.core.api.Assertions.assertThat(first.getStatus()).isEqualTo(200);
-        org.assertj.core.api.Assertions.assertThat(second.getStatus()).isEqualTo(200);
-        org.assertj.core.api.Assertions.assertThat(third.getStatus()).isEqualTo(429);
-        org.assertj.core.api.Assertions.assertThat(third.getHeader("X-Rate-Limit-Remaining")).isEqualTo("0");
-        org.assertj.core.api.Assertions.assertThat(third.getHeader("X-Rate-Limit-Mode")).isEqualTo("local");
-        org.assertj.core.api.Assertions.assertThat(third.getHeader("Retry-After")).isNotBlank();
+        org.assertj.core.api.Assertions.assertThat(sixth.getStatus()).isEqualTo(429);
+        org.assertj.core.api.Assertions.assertThat(sixth.getHeader("X-Rate-Limit-Remaining")).isEqualTo("0");
+        org.assertj.core.api.Assertions.assertThat(sixth.getHeader("X-Rate-Limit-Mode")).isEqualTo("local");
+        org.assertj.core.api.Assertions.assertThat(sixth.getHeader("Retry-After")).isNotBlank();
     }
 
     private MockHttpServletResponse performRateLimitedAuthRequest(RateLimitingFilter filter) throws Exception {

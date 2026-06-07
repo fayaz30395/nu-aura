@@ -6,6 +6,7 @@ import com.nulogic.application.performance.dto.CompetencyRequest;
 import com.nulogic.application.performance.dto.CompetencyResponse;
 import com.nulogic.application.performance.dto.ReviewRequest;
 import com.nulogic.application.performance.dto.ReviewResponse;
+import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.performance.PerformanceReview;
@@ -29,6 +30,7 @@ import org.springframework.data.domain.Pageable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -79,6 +81,11 @@ class PerformanceReviewServiceTest {
         tenantContextMock.close();
     }
 
+    @AfterEach
+    void tearDown() {
+        SecurityContext.clear();
+    }
+
     @BeforeEach
     void setUpTenantTimeServiceDefaults() {
         org.mockito.Mockito.lenient()
@@ -99,6 +106,10 @@ class PerformanceReviewServiceTest {
 
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
         tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
+
+        // Populate SecurityContext ThreadLocals so assertCanViewReview passes:
+        // set the current employee to the review subject so the IDOR guard allows access.
+        SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Collections.emptySet(), Collections.emptyMap());
 
         // Setup employee
         employee = new Employee();

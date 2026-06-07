@@ -72,7 +72,7 @@ class DocumentControllerTest extends AbstractPostgresIntegrationTest {
 
         mockMvc.perform(multipart(BASE_URL + "/upload")
                         .file(file)
-                        .param("category", "DOCUMENTS")
+                        .param("category", "documents")
                         .param("entityId", EMPLOYEE_ID.toString()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.objectName").isNotEmpty())

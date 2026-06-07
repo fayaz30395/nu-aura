@@ -187,7 +187,7 @@ class AuthServiceTest {
             when(tokenProvider.generateTokenWithAppPermissions(any(), any(), any(), any(), any(), any(),
                     any(), any(), any(), any()))
                     .thenReturn("access-token");
-            when(tokenProvider.generateRefreshToken(any(), any()))
+            when(tokenProvider.generateRefreshToken(any(), any(), any()))
                     .thenReturn("refresh-token");
             when(employeeRepository.findByUserIdAndTenantId(userId, tenantId))
                     .thenReturn(Optional.of(employee));
@@ -248,7 +248,7 @@ class AuthServiceTest {
             when(tokenProvider.generateTokenWithAppPermissions(any(), any(), any(), any(), any(), any(),
                     any(), any(), any(), any()))
                     .thenReturn("access-token");
-            when(tokenProvider.generateRefreshToken(any(), any()))
+            when(tokenProvider.generateRefreshToken(any(), any(), any()))
                     .thenReturn("refresh-token");
 
             AuthResponse response = authService.login(request);
@@ -301,7 +301,7 @@ class AuthServiceTest {
             when(tokenProvider.generateTokenWithAppPermissions(any(), any(), any(), any(), any(), any(),
                     any(), any(), any(), any()))
                     .thenReturn("access-token");
-            when(tokenProvider.generateRefreshToken(any(), any()))
+            when(tokenProvider.generateRefreshToken(any(), any(), any()))
                     .thenReturn("refresh-token");
             when(employeeRepository.findByUserIdAndTenantId(any(), any()))
                     .thenReturn(Optional.empty());
@@ -344,7 +344,7 @@ class AuthServiceTest {
             when(tokenProvider.generateTokenWithAppPermissions(any(), any(), any(), any(), any(), any(),
                     any(), any(), any(), any()))
                     .thenReturn("access-token");
-            when(tokenProvider.generateRefreshToken(any(), any()))
+            when(tokenProvider.generateRefreshToken(any(), any(), any()))
                     .thenReturn("refresh-token");
             when(employeeRepository.findByUserIdWithUser(userId, nulogicTenantId))
                     .thenReturn(Optional.empty());
@@ -378,7 +378,7 @@ class AuthServiceTest {
             when(tokenProvider.generateTokenWithAppPermissions(any(), any(), any(), any(), any(), any(),
                     any(), any(), any(), any()))
                     .thenReturn("new-access-token");
-            when(tokenProvider.generateRefreshToken(any(), any()))
+            when(tokenProvider.generateRefreshToken(any(), any(), any()))
                     .thenReturn("new-refresh-token");
             when(employeeRepository.findByUserIdAndTenantId(any(), any()))
                     .thenReturn(Optional.empty());
@@ -628,7 +628,7 @@ class AuthServiceTest {
             when(tokenProvider.generateTokenWithAppPermissions(any(), any(), any(), any(), any(), any(),
                     any(), any(), any(), any()))
                     .thenReturn("access-token");
-            when(tokenProvider.generateRefreshToken(any(), any()))
+            when(tokenProvider.generateRefreshToken(any(), any(), any()))
                     .thenReturn("refresh-token");
             when(employeeRepository.findByUserIdAndTenantId(userId, tenantId))
                     .thenReturn(Optional.of(employee));

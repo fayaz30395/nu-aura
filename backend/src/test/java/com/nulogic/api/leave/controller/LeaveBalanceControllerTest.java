@@ -122,8 +122,17 @@ class LeaveBalanceControllerTest {
         @Test
         @DisplayName("Should get leave balances for employee by year")
         void shouldGetLeaveBalancesForEmployeeByYear() throws Exception {
-            when(leaveBalanceService.getEmployeeBalancesForYear(employeeId, 2024))
-                    .thenReturn(List.of(leaveBalance));
+            LeaveBalanceResponse response = new LeaveBalanceResponse();
+            response.setId(leaveBalanceId);
+            response.setEmployeeId(employeeId);
+            response.setAccrued(BigDecimal.valueOf(21));
+            response.setUsed(BigDecimal.valueOf(5));
+            response.setAvailable(BigDecimal.valueOf(16));
+            response.setYear(2024);
+            // Controller delegates to the batched/enriched year-scoped method
+            // (wave-3 H4 perf change); stub that, not the pre-refactor variant.
+            when(leaveBalanceService.getEmployeeBalancesForYearEnriched(employeeId, 2024))
+                    .thenReturn(List.of(response));
 
             mockMvc.perform(get("/api/v1/leave-balances/employee/{employeeId}/year/{year}",
                             employeeId, 2024))
@@ -131,7 +140,7 @@ class LeaveBalanceControllerTest {
                     .andExpect(jsonPath("$.length()").value(1))
                     .andExpect(jsonPath("$[0].year").value(2024));
 
-            verify(leaveBalanceService).getEmployeeBalancesForYear(employeeId, 2024);
+            verify(leaveBalanceService).getEmployeeBalancesForYearEnriched(employeeId, 2024);
         }
     }
 

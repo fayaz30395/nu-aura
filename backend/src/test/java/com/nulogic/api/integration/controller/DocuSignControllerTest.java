@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nulogic.api.integration.dto.DocuSignEnvelopeResponse;
 import com.nulogic.api.integration.dto.DocuSignTemplateMappingRequest;
 import com.nulogic.application.document.service.FileStorageService;
+import com.nulogic.application.integration.service.DocuSignManagementService;
 import com.nulogic.application.integration.service.IntegrationConnectorConfigService;
 import com.nulogic.common.config.TestMeterRegistryConfig;
 import com.nulogic.common.exception.GlobalExceptionHandler;
@@ -13,8 +14,6 @@ import com.nulogic.domain.integration.ConnectorConfig;
 import com.nulogic.domain.integration.docusign.DocuSignEnvelope;
 import com.nulogic.domain.integration.docusign.DocuSignTemplateMapping;
 import com.nulogic.infrastructure.integration.docusign.DocuSignApiClient;
-import com.nulogic.infrastructure.integration.repository.DocuSignEnvelopeRepository;
-import com.nulogic.infrastructure.integration.repository.DocuSignTemplateMappingRepository;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockedStatic;
@@ -66,9 +65,7 @@ class DocuSignControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
     @MockitoBean
-    private DocuSignEnvelopeRepository envelopeRepository;
-    @MockitoBean
-    private DocuSignTemplateMappingRepository templateMappingRepository;
+    private DocuSignManagementService docuSignManagementService;
     @MockitoBean
     private IntegrationConnectorConfigService configService;
     @MockitoBean
@@ -183,10 +180,11 @@ class DocuSignControllerTest {
             // Compute real HMAC for the payload
             String hmacSignature = computeHmac(HMAC_SECRET, payload);
 
-            when(envelopeRepository.findByEnvelopeId(DOCUSIGN_ENVELOPE_ID))
+            when(docuSignManagementService.findEnvelopeByEnvelopeId(DOCUSIGN_ENVELOPE_ID))
                     .thenReturn(Optional.of(sampleEnvelope));
             when(configService.getConfig(TENANT_ID, "docusign")).thenReturn(config);
-            when(envelopeRepository.save(any(DocuSignEnvelope.class))).thenReturn(sampleEnvelope);
+            when(docuSignManagementService.saveEnvelope(any(DocuSignEnvelope.class)))
+                    .thenReturn(sampleEnvelope);
 
             mockMvc.perform(post("/api/v1/integrations/docusign/webhook")
                             .contentType(MediaType.APPLICATION_JSON)
@@ -194,8 +192,8 @@ class DocuSignControllerTest {
                             .content(payload))
                     .andExpect(status().isOk());
 
-            verify(envelopeRepository).findByEnvelopeId(DOCUSIGN_ENVELOPE_ID);
-            verify(envelopeRepository).save(any(DocuSignEnvelope.class));
+            verify(docuSignManagementService).findEnvelopeByEnvelopeId(DOCUSIGN_ENVELOPE_ID);
+            verify(docuSignManagementService).saveEnvelope(any(DocuSignEnvelope.class));
         }
 
         @Test
@@ -208,7 +206,7 @@ class DocuSignControllerTest {
                     Map.of("hmacSecret", HMAC_SECRET),
                     Set.of());
 
-            when(envelopeRepository.findByEnvelopeId(DOCUSIGN_ENVELOPE_ID))
+            when(docuSignManagementService.findEnvelopeByEnvelopeId(DOCUSIGN_ENVELOPE_ID))
                     .thenReturn(Optional.of(sampleEnvelope));
             when(configService.getConfig(TENANT_ID, "docusign")).thenReturn(config);
 
@@ -218,7 +216,7 @@ class DocuSignControllerTest {
                             .content(payload))
                     .andExpect(status().isUnauthorized());
 
-            verify(envelopeRepository, never()).save(any());
+            verify(docuSignManagementService, never()).saveEnvelope(any());
         }
 
         @Test
@@ -227,7 +225,8 @@ class DocuSignControllerTest {
             String unknownId = "DS-UNKNOWN-99999";
             String payload = "{\"envelopeId\": \"" + unknownId + "\", \"status\": \"COMPLETED\"}";
 
-            when(envelopeRepository.findByEnvelopeId(unknownId)).thenReturn(Optional.empty());
+            when(docuSignManagementService.findEnvelopeByEnvelopeId(unknownId))
+                    .thenReturn(Optional.empty());
 
             mockMvc.perform(post("/api/v1/integrations/docusign/webhook")
                             .contentType(MediaType.APPLICATION_JSON)
@@ -247,7 +246,7 @@ class DocuSignControllerTest {
                     Collections.emptyMap(),
                     Set.of());
 
-            when(envelopeRepository.findByEnvelopeId(DOCUSIGN_ENVELOPE_ID))
+            when(docuSignManagementService.findEnvelopeByEnvelopeId(DOCUSIGN_ENVELOPE_ID))
                     .thenReturn(Optional.of(sampleEnvelope));
             when(configService.getConfig(TENANT_ID, "docusign")).thenReturn(config);
 
@@ -282,7 +281,7 @@ class DocuSignControllerTest {
         void listEnvelopes_ReturnsPage() throws Exception {
             Page<DocuSignEnvelope> page = new PageImpl<>(
                     List.of(sampleEnvelope), PageRequest.of(0, 20), 1);
-            when(envelopeRepository.findByTenantIdAndIsDeletedFalse(eq(TENANT_ID), any(Pageable.class)))
+            when(docuSignManagementService.findEnvelopes(eq(TENANT_ID), any(Pageable.class)))
                     .thenReturn(page);
 
             mockMvc.perform(get("/api/v1/integrations/docusign/envelopes")
@@ -291,7 +290,7 @@ class DocuSignControllerTest {
                     .andExpect(jsonPath("$.content.length()").value(1))
                     .andExpect(jsonPath("$.totalElements").value(1));
 
-            verify(envelopeRepository).findByTenantIdAndIsDeletedFalse(eq(TENANT_ID), any(Pageable.class));
+            verify(docuSignManagementService).findEnvelopes(eq(TENANT_ID), any(Pageable.class));
         }
 
         @Test
@@ -299,7 +298,7 @@ class DocuSignControllerTest {
         void listEnvelopes_FilterByStatus_CallsStatusQuery() throws Exception {
             Page<DocuSignEnvelope> page = new PageImpl<>(
                     List.of(sampleEnvelope), PageRequest.of(0, 20), 1);
-            when(envelopeRepository.findByTenantIdAndStatusAndIsDeletedFalse(
+            when(docuSignManagementService.findEnvelopesByStatus(
                     eq(TENANT_ID), eq("SENT"), any(Pageable.class)))
                     .thenReturn(page);
 
@@ -307,7 +306,7 @@ class DocuSignControllerTest {
                             .param("status", "SENT"))
                     .andExpect(status().isOk());
 
-            verify(envelopeRepository).findByTenantIdAndStatusAndIsDeletedFalse(
+            verify(docuSignManagementService).findEnvelopesByStatus(
                     eq(TENANT_ID), eq("SENT"), any(Pageable.class));
         }
 
@@ -315,15 +314,15 @@ class DocuSignControllerTest {
         @DisplayName("GET /envelopes — caps page size at 100 when size > 100 requested")
         void listEnvelopes_ExcessivePageSize_CapsAt100() throws Exception {
             Page<DocuSignEnvelope> page = new PageImpl<>(Collections.emptyList());
-            when(envelopeRepository.findByTenantIdAndIsDeletedFalse(eq(TENANT_ID), any(Pageable.class)))
+            when(docuSignManagementService.findEnvelopes(eq(TENANT_ID), any(Pageable.class)))
                     .thenReturn(page);
 
             mockMvc.perform(get("/api/v1/integrations/docusign/envelopes")
                             .param("size", "500"))
                     .andExpect(status().isOk());
 
-            // Verify the pageable passed to repo has size capped at 100
-            verify(envelopeRepository).findByTenantIdAndIsDeletedFalse(
+            // Verify the pageable passed to the service has size capped at 100
+            verify(docuSignManagementService).findEnvelopes(
                     eq(TENANT_ID),
                     argThat(p -> p.getPageSize() <= 100));
         }
@@ -331,14 +330,15 @@ class DocuSignControllerTest {
         @Test
         @DisplayName("GET /envelopes/{id} — returns envelope details")
         void getEnvelopeDetails_Found_ReturnsEnvelope() throws Exception {
-            when(envelopeRepository.findById(ENVELOPE_DB_ID)).thenReturn(Optional.of(sampleEnvelope));
+            when(docuSignManagementService.findEnvelopeById(ENVELOPE_DB_ID))
+                    .thenReturn(Optional.of(sampleEnvelope));
 
             mockMvc.perform(get("/api/v1/integrations/docusign/envelopes/{id}", ENVELOPE_DB_ID))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.envelopeId").value(DOCUSIGN_ENVELOPE_ID))
                     .andExpect(jsonPath("$.status").value("SENT"));
 
-            verify(envelopeRepository).findById(ENVELOPE_DB_ID);
+            verify(docuSignManagementService).findEnvelopeById(ENVELOPE_DB_ID);
         }
 
         @Test
@@ -352,7 +352,7 @@ class DocuSignControllerTest {
             otherTenantEnvelope.setEntityType("OfferLetter");
             otherTenantEnvelope.setEntityId(UUID.randomUUID());
 
-            when(envelopeRepository.findById(ENVELOPE_DB_ID))
+            when(docuSignManagementService.findEnvelopeById(ENVELOPE_DB_ID))
                     .thenReturn(Optional.of(otherTenantEnvelope));
 
             mockMvc.perform(get("/api/v1/integrations/docusign/envelopes/{id}", ENVELOPE_DB_ID))
@@ -366,9 +366,10 @@ class DocuSignControllerTest {
                     TENANT_ID, "docusign", Map.of("apiKey", "test-key"), Set.of());
             doNothing().when(apiClient).voidEnvelope(any(), anyString(), anyString());
 
-            when(envelopeRepository.findById(ENVELOPE_DB_ID)).thenReturn(Optional.of(sampleEnvelope));
+            when(docuSignManagementService.findEnvelopeById(ENVELOPE_DB_ID))
+                    .thenReturn(Optional.of(sampleEnvelope));
             when(configService.getConfig(TENANT_ID, "docusign")).thenReturn(config);
-            when(envelopeRepository.save(any(DocuSignEnvelope.class))).thenAnswer(inv -> {
+            when(docuSignManagementService.saveEnvelope(any(DocuSignEnvelope.class))).thenAnswer(inv -> {
                 DocuSignEnvelope saved = inv.getArgument(0);
                 return saved;
             });
@@ -378,7 +379,7 @@ class DocuSignControllerTest {
                     .andExpect(jsonPath("$.status").value("VOIDED"));
 
             verify(apiClient).voidEnvelope(any(), eq(DOCUSIGN_ENVELOPE_ID), eq("Voided by admin"));
-            verify(envelopeRepository).save(argThat(e -> "VOIDED".equals(e.getStatus())));
+            verify(docuSignManagementService).saveEnvelope(argThat(e -> "VOIDED".equals(e.getStatus())));
         }
 
         @Test
@@ -392,7 +393,7 @@ class DocuSignControllerTest {
             otherTenantEnvelope.setEntityType("OfferLetter");
             otherTenantEnvelope.setEntityId(UUID.randomUUID());
 
-            when(envelopeRepository.findById(ENVELOPE_DB_ID))
+            when(docuSignManagementService.findEnvelopeById(ENVELOPE_DB_ID))
                     .thenReturn(Optional.of(otherTenantEnvelope));
 
             mockMvc.perform(post("/api/v1/integrations/docusign/envelopes/{id}/void", ENVELOPE_DB_ID))
@@ -461,7 +462,7 @@ class DocuSignControllerTest {
             mapping.setCreatedAt(LocalDateTime.now());
             mapping.setUpdatedAt(LocalDateTime.now());
 
-            when(templateMappingRepository.findByTenantIdAndIsDeletedFalse(TENANT_ID))
+            when(docuSignManagementService.findTemplateMappings(TENANT_ID))
                     .thenReturn(List.of(mapping));
 
             mockMvc.perform(get("/api/v1/integrations/docusign/template-mappings"))
@@ -470,13 +471,13 @@ class DocuSignControllerTest {
                     .andExpect(jsonPath("$[0].docusignTemplateId").value("TPL-001"))
                     .andExpect(jsonPath("$[0].active").value(true));
 
-            verify(templateMappingRepository).findByTenantIdAndIsDeletedFalse(TENANT_ID);
+            verify(docuSignManagementService).findTemplateMappings(TENANT_ID);
         }
 
         @Test
         @DisplayName("GET /template-mappings — returns empty list when no mappings configured")
         void listTemplateMappings_None_ReturnsEmptyList() throws Exception {
-            when(templateMappingRepository.findByTenantIdAndIsDeletedFalse(TENANT_ID))
+            when(docuSignManagementService.findTemplateMappings(TENANT_ID))
                     .thenReturn(Collections.emptyList());
 
             mockMvc.perform(get("/api/v1/integrations/docusign/template-mappings"))
@@ -503,9 +504,10 @@ class DocuSignControllerTest {
             saved.setCreatedAt(LocalDateTime.now());
             saved.setUpdatedAt(LocalDateTime.now());
 
-            when(templateMappingRepository.findByTenantIdAndDocumentTypeAndIsActiveTrue(
+            when(docuSignManagementService.findActiveTemplateMapping(
                     TENANT_ID, "TerminationLetter")).thenReturn(Optional.empty());
-            when(templateMappingRepository.save(any(DocuSignTemplateMapping.class))).thenReturn(saved);
+            when(docuSignManagementService.saveTemplateMapping(any(DocuSignTemplateMapping.class)))
+                    .thenReturn(saved);
 
             mockMvc.perform(put("/api/v1/integrations/docusign/template-mappings")
                             .contentType(MediaType.APPLICATION_JSON)
@@ -515,7 +517,7 @@ class DocuSignControllerTest {
                     .andExpect(jsonPath("$.docusignTemplateId").value("TPL-TERM-001"))
                     .andExpect(jsonPath("$.active").value(true));
 
-            verify(templateMappingRepository).save(any(DocuSignTemplateMapping.class));
+            verify(docuSignManagementService).saveTemplateMapping(any(DocuSignTemplateMapping.class));
         }
 
         @Test
@@ -545,9 +547,9 @@ class DocuSignControllerTest {
             updated.setCreatedAt(existing.getCreatedAt());
             updated.setUpdatedAt(LocalDateTime.now());
 
-            when(templateMappingRepository.findByTenantIdAndDocumentTypeAndIsActiveTrue(
+            when(docuSignManagementService.findActiveTemplateMapping(
                     TENANT_ID, "OfferLetter")).thenReturn(Optional.of(existing));
-            when(templateMappingRepository.save(any())).thenReturn(updated);
+            when(docuSignManagementService.saveTemplateMapping(any())).thenReturn(updated);
 
             mockMvc.perform(put("/api/v1/integrations/docusign/template-mappings")
                             .contentType(MediaType.APPLICATION_JSON)
@@ -555,7 +557,7 @@ class DocuSignControllerTest {
                     .andExpect(status().isCreated())
                     .andExpect(jsonPath("$.docusignTemplateId").value("TPL-NEW-VERSION"));
 
-            verify(templateMappingRepository).save(argThat(m ->
+            verify(docuSignManagementService).saveTemplateMapping(argThat(m ->
                     "TPL-NEW-VERSION".equals(m.getDocusignTemplateId())));
         }
     }

@@ -4,14 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nulogic.api.user.dto.BulkRuleIdsRequest;
 import com.nulogic.api.user.dto.ImplicitRoleRuleRequest;
 import com.nulogic.application.user.service.ImplicitRoleEngine;
+import com.nulogic.application.user.service.ImplicitRoleRuleService;
 import com.nulogic.common.config.TestMeterRegistryConfig;
 import com.nulogic.common.exception.GlobalExceptionHandler;
 import com.nulogic.common.security.*;
 import com.nulogic.common.security.Permission;
 import com.nulogic.domain.user.*;
-import com.nulogic.infrastructure.user.repository.ImplicitRoleRuleRepository;
-import com.nulogic.infrastructure.user.repository.ImplicitUserRoleRepository;
-import com.nulogic.infrastructure.user.repository.RoleRepository;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -44,8 +42,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Unit tests for ImplicitRoleRuleController.
  * Tests CRUD for implicit role rules, bulk operations, recompute, and @RequiresPermission annotations.
  * <p>
- * NOTE: This controller directly injects repositories (not a service layer),
- * so we mock the repositories with @MockitoBean.
+ * NOTE: This controller injects {@link ImplicitRoleRuleService} (data-access facade)
+ * and {@link ImplicitRoleEngine}, so we mock those two beans with @MockitoBean.
  */
 @WebMvcTest(ImplicitRoleRuleController.class)
 @ContextConfiguration(classes = {ImplicitRoleRuleController.class, GlobalExceptionHandler.class})
@@ -67,13 +65,7 @@ class ImplicitRoleRuleControllerTest {
     private JpaMetamodelMappingContext jpaMetamodelMappingContext;
 
     @MockitoBean
-    private ImplicitRoleRuleRepository ruleRepository;
-
-    @MockitoBean
-    private ImplicitUserRoleRepository implicitUserRoleRepository;
-
-    @MockitoBean
-    private RoleRepository roleRepository;
+    private ImplicitRoleRuleService implicitRoleRuleService;
 
     @MockitoBean
     private ImplicitRoleEngine implicitRoleEngine;
@@ -127,8 +119,8 @@ class ImplicitRoleRuleControllerTest {
 
     // Helper — stub the mapToResponse calls needed by most endpoints
     private void stubRuleMapping() {
-        when(roleRepository.findById(ROLE_ID)).thenReturn(Optional.of(sampleRole));
-        when(implicitUserRoleRepository.countAffectedUsers(eq(RULE_ID), eq(TENANT_ID))).thenReturn(3L);
+        when(implicitRoleRuleService.findRoleById(ROLE_ID)).thenReturn(Optional.of(sampleRole));
+        when(implicitRoleRuleService.countAffectedUsers(eq(RULE_ID), eq(TENANT_ID))).thenReturn(3L);
     }
 
     // ==================== @RequiresPermission Annotation Tests ====================
@@ -233,7 +225,7 @@ class ImplicitRoleRuleControllerTest {
         @DisplayName("Should return paginated rules with HTTP 200")
         void listRules_returnsPaginatedRules() throws Exception {
             Page<ImplicitRoleRule> page = new PageImpl<>(List.of(sampleRule), PageRequest.of(0, 20), 1);
-            when(ruleRepository.findByTenantId(eq(TENANT_ID), any(Pageable.class))).thenReturn(page);
+            when(implicitRoleRuleService.findRulesByTenant(eq(TENANT_ID), any(Pageable.class))).thenReturn(page);
             stubRuleMapping();
 
             mockMvc.perform(get(BASE_URL)
@@ -245,14 +237,14 @@ class ImplicitRoleRuleControllerTest {
                     .andExpect(jsonPath("$.content.length()").value(1))
                     .andExpect(jsonPath("$.totalElements").value(1));
 
-            verify(ruleRepository).findByTenantId(eq(TENANT_ID), any(Pageable.class));
+            verify(implicitRoleRuleService).findRulesByTenant(eq(TENANT_ID), any(Pageable.class));
         }
 
         @Test
         @DisplayName("Should filter by active status when active param provided")
         void listRules_filtersActiveRules() throws Exception {
             Page<ImplicitRoleRule> page = new PageImpl<>(List.of(sampleRule), PageRequest.of(0, 20), 1);
-            when(ruleRepository.findByTenantIdAndIsActive(eq(TENANT_ID), eq(true), any(Pageable.class)))
+            when(implicitRoleRuleService.findRulesByTenantAndActive(eq(TENANT_ID), eq(true), any(Pageable.class)))
                     .thenReturn(page);
             stubRuleMapping();
 
@@ -262,15 +254,15 @@ class ImplicitRoleRuleControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.content.length()").value(1));
 
-            verify(ruleRepository).findByTenantIdAndIsActive(eq(TENANT_ID), eq(true), any(Pageable.class));
-            verify(ruleRepository, never()).findByTenantId(any(), any());
+            verify(implicitRoleRuleService).findRulesByTenantAndActive(eq(TENANT_ID), eq(true), any(Pageable.class));
+            verify(implicitRoleRuleService, never()).findRulesByTenant(any(), any());
         }
 
         @Test
         @DisplayName("Should return empty page when no rules exist")
         void listRules_returnsEmptyPage() throws Exception {
             Page<ImplicitRoleRule> emptyPage = new PageImpl<>(List.of(), PageRequest.of(0, 20), 0);
-            when(ruleRepository.findByTenantId(eq(TENANT_ID), any(Pageable.class))).thenReturn(emptyPage);
+            when(implicitRoleRuleService.findRulesByTenant(eq(TENANT_ID), any(Pageable.class))).thenReturn(emptyPage);
 
             mockMvc.perform(get(BASE_URL).contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
@@ -287,7 +279,7 @@ class ImplicitRoleRuleControllerTest {
         @Test
         @DisplayName("Should return rule when found")
         void getRuleById_returnsRule() throws Exception {
-            when(ruleRepository.findByIdAndTenantId(RULE_ID, TENANT_ID)).thenReturn(Optional.of(sampleRule));
+            when(implicitRoleRuleService.findRuleByIdAndTenant(RULE_ID, TENANT_ID)).thenReturn(Optional.of(sampleRule));
             stubRuleMapping();
 
             mockMvc.perform(get(BASE_URL + "/" + RULE_ID).contentType(MediaType.APPLICATION_JSON))
@@ -295,14 +287,14 @@ class ImplicitRoleRuleControllerTest {
                     .andExpect(jsonPath("$.id").value(RULE_ID.toString()))
                     .andExpect(jsonPath("$.ruleName").value("Reporting Managers get Manager Role"));
 
-            verify(ruleRepository).findByIdAndTenantId(RULE_ID, TENANT_ID);
+            verify(implicitRoleRuleService).findRuleByIdAndTenant(RULE_ID, TENANT_ID);
         }
 
         @Test
         @DisplayName("Should return 404 when rule not found")
         void getRuleById_returns404_whenNotFound() throws Exception {
             UUID unknownId = UUID.randomUUID();
-            when(ruleRepository.findByIdAndTenantId(unknownId, TENANT_ID)).thenReturn(Optional.empty());
+            when(implicitRoleRuleService.findRuleByIdAndTenant(unknownId, TENANT_ID)).thenReturn(Optional.empty());
 
             mockMvc.perform(get(BASE_URL + "/" + unknownId).contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isNotFound());
@@ -332,23 +324,23 @@ class ImplicitRoleRuleControllerTest {
             ImplicitRoleRuleRequest request = buildCreateRequest();
 
             // Target role must exist for tenant
-            when(roleRepository.findById(ROLE_ID)).thenReturn(Optional.of(sampleRole));
-            when(ruleRepository.save(any(ImplicitRoleRule.class))).thenReturn(sampleRule);
-            when(implicitUserRoleRepository.countAffectedUsers(any(), any())).thenReturn(0L);
+            when(implicitRoleRuleService.findRoleById(ROLE_ID)).thenReturn(Optional.of(sampleRole));
+            when(implicitRoleRuleService.saveRule(any(ImplicitRoleRule.class))).thenReturn(sampleRule);
+            when(implicitRoleRuleService.countAffectedUsers(any(), any())).thenReturn(0L);
 
             mockMvc.perform(post(BASE_URL)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isCreated());
 
-            verify(ruleRepository).save(any(ImplicitRoleRule.class));
+            verify(implicitRoleRuleService).saveRule(any(ImplicitRoleRule.class));
         }
 
         @Test
         @DisplayName("Should return 404 when target role does not exist")
         void createRule_returns404_whenTargetRoleNotFound() throws Exception {
             ImplicitRoleRuleRequest request = buildCreateRequest();
-            when(roleRepository.findById(ROLE_ID)).thenReturn(Optional.empty());
+            when(implicitRoleRuleService.findRoleById(ROLE_ID)).thenReturn(Optional.empty());
 
             mockMvc.perform(post(BASE_URL)
                             .contentType(MediaType.APPLICATION_JSON)
@@ -403,24 +395,24 @@ class ImplicitRoleRuleControllerTest {
         void updateRule_returnsUpdatedRule() throws Exception {
             ImplicitRoleRuleRequest request = buildUpdateRequest();
 
-            when(ruleRepository.findByIdAndTenantId(RULE_ID, TENANT_ID)).thenReturn(Optional.of(sampleRule));
-            when(roleRepository.findById(ROLE_ID)).thenReturn(Optional.of(sampleRole));
-            when(ruleRepository.save(any(ImplicitRoleRule.class))).thenReturn(sampleRule);
-            when(implicitUserRoleRepository.countAffectedUsers(any(), any())).thenReturn(0L);
+            when(implicitRoleRuleService.findRuleByIdAndTenant(RULE_ID, TENANT_ID)).thenReturn(Optional.of(sampleRule));
+            when(implicitRoleRuleService.findRoleById(ROLE_ID)).thenReturn(Optional.of(sampleRole));
+            when(implicitRoleRuleService.saveRule(any(ImplicitRoleRule.class))).thenReturn(sampleRule);
+            when(implicitRoleRuleService.countAffectedUsers(any(), any())).thenReturn(0L);
 
             mockMvc.perform(put(BASE_URL + "/" + RULE_ID)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk());
 
-            verify(ruleRepository).save(any(ImplicitRoleRule.class));
+            verify(implicitRoleRuleService).saveRule(any(ImplicitRoleRule.class));
         }
 
         @Test
         @DisplayName("Should return 404 when rule not found")
         void updateRule_returns404_whenRuleNotFound() throws Exception {
             UUID unknownId = UUID.randomUUID();
-            when(ruleRepository.findByIdAndTenantId(unknownId, TENANT_ID)).thenReturn(Optional.empty());
+            when(implicitRoleRuleService.findRuleByIdAndTenant(unknownId, TENANT_ID)).thenReturn(Optional.empty());
 
             mockMvc.perform(put(BASE_URL + "/" + unknownId)
                             .contentType(MediaType.APPLICATION_JSON)
@@ -438,21 +430,21 @@ class ImplicitRoleRuleControllerTest {
         @Test
         @DisplayName("Should soft-delete rule (set isActive=false) and return HTTP 204")
         void deleteRule_returns204_andSetsInactive() throws Exception {
-            when(ruleRepository.findByIdAndTenantId(RULE_ID, TENANT_ID)).thenReturn(Optional.of(sampleRule));
-            when(ruleRepository.save(any(ImplicitRoleRule.class))).thenReturn(sampleRule);
+            when(implicitRoleRuleService.findRuleByIdAndTenant(RULE_ID, TENANT_ID)).thenReturn(Optional.of(sampleRule));
+            when(implicitRoleRuleService.saveRule(any(ImplicitRoleRule.class))).thenReturn(sampleRule);
 
             mockMvc.perform(delete(BASE_URL + "/" + RULE_ID))
                     .andExpect(status().isNoContent());
 
             // Verify soft delete: isActive must be set to false before saving
-            verify(ruleRepository).save(argThat(rule -> !rule.getIsActive()));
+            verify(implicitRoleRuleService).saveRule(argThat(rule -> !rule.getIsActive()));
         }
 
         @Test
         @DisplayName("Should return 404 when rule not found")
         void deleteRule_returns404_whenNotFound() throws Exception {
             UUID unknownId = UUID.randomUUID();
-            when(ruleRepository.findByIdAndTenantId(unknownId, TENANT_ID)).thenReturn(Optional.empty());
+            when(implicitRoleRuleService.findRuleByIdAndTenant(unknownId, TENANT_ID)).thenReturn(Optional.empty());
 
             mockMvc.perform(delete(BASE_URL + "/" + unknownId))
                     .andExpect(status().isNotFound());
@@ -497,9 +489,9 @@ class ImplicitRoleRuleControllerTest {
             BulkRuleIdsRequest request = new BulkRuleIdsRequest();
             request.setRuleIds(List.of(inactiveRule.getId()));
 
-            when(ruleRepository.findByIdInAndTenantId(anyList(), eq(TENANT_ID)))
+            when(implicitRoleRuleService.findRulesByIdsAndTenant(anyCollection(), eq(TENANT_ID)))
                     .thenReturn(List.of(inactiveRule));
-            when(ruleRepository.save(any(ImplicitRoleRule.class))).thenReturn(inactiveRule);
+            when(implicitRoleRuleService.saveRule(any(ImplicitRoleRule.class))).thenReturn(inactiveRule);
 
             mockMvc.perform(post(BASE_URL + "/bulk-activate")
                             .contentType(MediaType.APPLICATION_JSON)
@@ -509,7 +501,7 @@ class ImplicitRoleRuleControllerTest {
                     .andExpect(jsonPath("$.totalRequested").value(1))
                     .andExpect(jsonPath("$.totalProcessed").value(1));
 
-            verify(ruleRepository).save(argThat(ImplicitRoleRule::getIsActive));
+            verify(implicitRoleRuleService).saveRule(argThat(ImplicitRoleRule::getIsActive));
         }
 
         @Test
@@ -523,7 +515,7 @@ class ImplicitRoleRuleControllerTest {
             BulkRuleIdsRequest request = new BulkRuleIdsRequest();
             request.setRuleIds(List.of(RULE_ID));
 
-            when(ruleRepository.findByIdInAndTenantId(anyList(), eq(TENANT_ID)))
+            when(implicitRoleRuleService.findRulesByIdsAndTenant(anyCollection(), eq(TENANT_ID)))
                     .thenReturn(List.of(alreadyActive));
 
             mockMvc.perform(post(BASE_URL + "/bulk-activate")
@@ -532,7 +524,7 @@ class ImplicitRoleRuleControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.totalProcessed").value(0));
 
-            verify(ruleRepository, never()).save(any());
+            verify(implicitRoleRuleService, never()).saveRule(any());
         }
     }
 
@@ -553,9 +545,9 @@ class ImplicitRoleRuleControllerTest {
             BulkRuleIdsRequest request = new BulkRuleIdsRequest();
             request.setRuleIds(List.of(RULE_ID));
 
-            when(ruleRepository.findByIdInAndTenantId(anyList(), eq(TENANT_ID)))
+            when(implicitRoleRuleService.findRulesByIdsAndTenant(anyCollection(), eq(TENANT_ID)))
                     .thenReturn(List.of(activeRule));
-            when(ruleRepository.save(any(ImplicitRoleRule.class))).thenReturn(activeRule);
+            when(implicitRoleRuleService.saveRule(any(ImplicitRoleRule.class))).thenReturn(activeRule);
 
             mockMvc.perform(post(BASE_URL + "/bulk-deactivate")
                             .contentType(MediaType.APPLICATION_JSON)
@@ -565,7 +557,7 @@ class ImplicitRoleRuleControllerTest {
                     .andExpect(jsonPath("$.totalRequested").value(1))
                     .andExpect(jsonPath("$.totalProcessed").value(1));
 
-            verify(ruleRepository).save(argThat(rule -> !rule.getIsActive()));
+            verify(implicitRoleRuleService).saveRule(argThat(rule -> !rule.getIsActive()));
         }
 
         @Test
@@ -579,7 +571,7 @@ class ImplicitRoleRuleControllerTest {
             BulkRuleIdsRequest request = new BulkRuleIdsRequest();
             request.setRuleIds(List.of(RULE_ID));
 
-            when(ruleRepository.findByIdInAndTenantId(anyList(), eq(TENANT_ID)))
+            when(implicitRoleRuleService.findRulesByIdsAndTenant(anyCollection(), eq(TENANT_ID)))
                     .thenReturn(List.of(alreadyInactive));
 
             mockMvc.perform(post(BASE_URL + "/bulk-deactivate")
@@ -588,7 +580,7 @@ class ImplicitRoleRuleControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.totalProcessed").value(0));
 
-            verify(ruleRepository, never()).save(any());
+            verify(implicitRoleRuleService, never()).saveRule(any());
         }
     }
 
@@ -607,10 +599,10 @@ class ImplicitRoleRuleControllerTest {
             userRole.setRoleId(ROLE_ID);
             userRole.setIsActive(true);
 
-            when(ruleRepository.findByIdAndTenantId(RULE_ID, TENANT_ID)).thenReturn(Optional.of(sampleRule));
-            when(implicitUserRoleRepository.findByDerivedFromRuleIdAndTenantId(RULE_ID, TENANT_ID))
+            when(implicitRoleRuleService.findRuleByIdAndTenant(RULE_ID, TENANT_ID)).thenReturn(Optional.of(sampleRule));
+            when(implicitRoleRuleService.findUserRolesByRuleAndTenant(RULE_ID, TENANT_ID))
                     .thenReturn(List.of(userRole));
-            when(roleRepository.findById(ROLE_ID)).thenReturn(Optional.of(sampleRole));
+            when(implicitRoleRuleService.findRoleById(ROLE_ID)).thenReturn(Optional.of(sampleRole));
 
             mockMvc.perform(get(BASE_URL + "/" + RULE_ID + "/affected-users")
                             .contentType(MediaType.APPLICATION_JSON))
@@ -623,7 +615,7 @@ class ImplicitRoleRuleControllerTest {
         @DisplayName("Should return 404 when rule not found")
         void getAffectedUsers_returns404_whenRuleNotFound() throws Exception {
             UUID unknownId = UUID.randomUUID();
-            when(ruleRepository.findByIdAndTenantId(unknownId, TENANT_ID)).thenReturn(Optional.empty());
+            when(implicitRoleRuleService.findRuleByIdAndTenant(unknownId, TENANT_ID)).thenReturn(Optional.empty());
 
             mockMvc.perform(get(BASE_URL + "/" + unknownId + "/affected-users")
                             .contentType(MediaType.APPLICATION_JSON))
