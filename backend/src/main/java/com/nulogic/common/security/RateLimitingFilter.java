@@ -254,14 +254,19 @@ public class RateLimitingFilter extends OncePerRequestFilter {
         // Update last-access time unconditionally on every request
         lastAccess.put(bucketKey, System.currentTimeMillis());
 
-        return buckets.computeIfAbsent(bucketKey, id -> {
-            // Evict stale entries if the map is approaching the hard limit
-            if (buckets.size() >= MAX_BUCKETS) {
-                log.warn("RateLimitingFilter bucket map reached {} entries — triggering eviction sweep", MAX_BUCKETS);
-                evictStaleBuckets();
-            }
-            return createBucket(type, clientId);
-        });
+        // Evict stale entries if the map is approaching the hard limit. This MUST run
+        // outside computeIfAbsent: ConcurrentHashMap's computeIfAbsent contract forbids
+        // the mapping function from updating any other mappings of the same map, and
+        // evictStaleBuckets() calls buckets.remove(...). Running the sweep before the
+        // atomic get-or-create keeps the map structurally consistent under concurrency.
+        // The current key was just refreshed in lastAccess above, so it is never a
+        // candidate for eviction here.
+        if (buckets.size() >= MAX_BUCKETS) {
+            log.warn("RateLimitingFilter bucket map reached {} entries — triggering eviction sweep", MAX_BUCKETS);
+            evictStaleBuckets();
+        }
+
+        return buckets.computeIfAbsent(bucketKey, id -> createBucket(type, clientId));
     }
 
     // ─────────────────────────────────────────────────────────────────────────

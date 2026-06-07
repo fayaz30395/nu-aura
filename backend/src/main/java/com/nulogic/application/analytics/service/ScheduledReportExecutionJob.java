@@ -66,7 +66,7 @@ public class ScheduledReportExecutionJob {
      * Execute due scheduled reports every minute.
      */
     @Scheduled(cron = "0 * * * * *")
-    @SchedulerLock(name = "executeScheduledReports", lockAtLeastFor = "PT2M", lockAtMostFor = "PT30M")
+    @SchedulerLock(name = "executeScheduledReports", lockAtLeastFor = "PT2M", lockAtMostFor = "PT2H")
     @Transactional
     public void executeScheduledReports() {
         log.debug("Checking for scheduled reports due for execution...");

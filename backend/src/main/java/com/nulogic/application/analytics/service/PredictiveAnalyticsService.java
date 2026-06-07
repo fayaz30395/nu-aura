@@ -666,13 +666,12 @@ public class PredictiveAnalyticsService {
         LocalDate periodStart = LocalDate.of(year, month, 1);
         LocalDate periodEnd = periodStart.withDayOfMonth(periodStart.lengthOfMonth());
 
-        // Get employees for this tenant
-        List<Employee> allEmployees = employeeRepository.findByTenantId(tenantId);
-
-        // Filter by department if specified
+        // Get employees for this tenant. When a department is specified, push the
+        // WHERE clause to the database instead of loading every tenant employee and
+        // filtering in the JVM.
         List<Employee> scopedEmployees = departmentId != null
-                ? allEmployees.stream().filter(e -> departmentId.equals(e.getDepartmentId())).collect(Collectors.toList())
-                : allEmployees;
+                ? employeeRepository.findAllByTenantIdAndDepartmentId(tenantId, departmentId, PageRequest.of(0, 50_000)).getContent()
+                : employeeRepository.findByTenantId(tenantId);
 
         // Headcount: employees who joined on or before period end and are still active
         long headcount = scopedEmployees.stream()

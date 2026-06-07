@@ -1,6 +1,7 @@
 package com.nulogic.application.recruitment.service;
 
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.security.TenantRlsSessionSync;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.recruitment.JobBoardPosting;
 import com.nulogic.domain.recruitment.JobOpening;
@@ -45,6 +46,7 @@ public class JobBoardIntegrationService {
     private final RestTemplate restTemplate;
     private final org.springframework.jdbc.core.JdbcTemplate jdbcTemplate;
     private final TenantTimeService tenantTimeService;
+    private final TenantRlsSessionSync tenantRlsSessionSync;
     // ---- Naukri config ----
     @Value("${integration.naukri.api-url:https://www.naukri.com/api/v2}")
     private String naukriApiUrl;
@@ -152,6 +154,10 @@ public class JobBoardIntegrationService {
         List<UUID> tenantIds = fetchActiveTenantIds();
         for (UUID tenantId : tenantIds) {
             TenantContext.setCurrentTenant(tenantId);
+            // The enclosing @Transactional already opened the connection with RESET tenant
+            // (TenantContext was null at doBegin). Re-issue SET LOCAL app.current_tenant_id so
+            // per-tenant RLS-scoped queries below are visible under V254 fail-closed enforcement.
+            tenantRlsSessionSync.syncCurrentTenant(tenantId);
             try {
                 // Wave 13: tenant-local sentinel cutoff. plusYears(10) dwarfs any tenant zone delta,
                 // but routing through TenantTimeService keeps the call consistent with the rest of the sweep.
@@ -182,6 +188,10 @@ public class JobBoardIntegrationService {
         int totalExpired = 0;
         for (UUID tenantId : tenantIds) {
             TenantContext.setCurrentTenant(tenantId);
+            // The enclosing @Transactional already opened the connection with RESET tenant
+            // (TenantContext was null at doBegin). Re-issue SET LOCAL app.current_tenant_id so
+            // per-tenant RLS-scoped queries below are visible under V254 fail-closed enforcement.
+            tenantRlsSessionSync.syncCurrentTenant(tenantId);
             try {
                 // Wave 13: tenant-local expiry cutoff — resolved via TenantTimeService.
                 List<JobBoardPosting> expired = jobBoardPostingRepository

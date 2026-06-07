@@ -2,6 +2,7 @@ package com.nulogic.infrastructure.lms.repository;
 
 import com.nulogic.domain.lms.QuizQuestion;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -30,6 +31,7 @@ public interface QuizQuestionRepository extends JpaRepository<QuizQuestion, UUID
             @Param("quizId") UUID quizId,
             @Param("tenantId") UUID tenantId);
 
+    @Modifying
     @Query("DELETE FROM QuizQuestion q WHERE q.quizId = :quizId")
     void deleteAllByQuizId(@Param("quizId") UUID quizId);
 }

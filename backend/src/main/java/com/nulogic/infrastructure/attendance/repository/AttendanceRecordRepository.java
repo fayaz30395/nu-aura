@@ -39,6 +39,11 @@ public interface AttendanceRecordRepository
     List<AttendanceRecord> findAllByTenantIdAndAttendanceDateBetween(
             UUID tenantId, LocalDate startDate, LocalDate endDate);
 
+    // Status-scoped + date-range version — pushes the status filter into SQL
+    // so callers (e.g. nightly auto-regularization) hydrate only matching rows.
+    List<AttendanceRecord> findAllByTenantIdAndStatusAndAttendanceDateBetween(
+            UUID tenantId, AttendanceRecord.AttendanceStatus status, LocalDate startDate, LocalDate endDate);
+
     Page<AttendanceRecord> findAllByTenantIdAndStatus(
             UUID tenantId, AttendanceRecord.AttendanceStatus status, Pageable pageable);
 

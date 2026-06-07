@@ -5,6 +5,7 @@ import com.nulogic.domain.webhook.WebhookDelivery.DeliveryStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -100,6 +101,7 @@ public interface WebhookDeliveryRepository extends JpaRepository<WebhookDelivery
     /**
      * Clean up old delivered records.
      */
+    @Modifying
     @Query("DELETE FROM WebhookDelivery d WHERE d.status = 'DELIVERED' AND d.deliveredAt < :before")
     void deleteOldDeliveries(@Param("before") LocalDateTime before);
 

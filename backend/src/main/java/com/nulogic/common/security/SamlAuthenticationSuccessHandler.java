@@ -94,7 +94,7 @@ public class SamlAuthenticationSuccessHandler implements AuthenticationSuccessHa
 
             // Generate JWT
             String accessToken = samlAuthHandler.generateJwtFromSamlAuth(user);
-            String refreshToken = tokenProvider.generateRefreshToken(user.getEmail(), tenantId);
+            String refreshToken = tokenProvider.generateRefreshToken(user.getEmail(), tenantId, user.getId());
 
             // Set secure cookies
             setAuthCookies(response, accessToken, refreshToken);

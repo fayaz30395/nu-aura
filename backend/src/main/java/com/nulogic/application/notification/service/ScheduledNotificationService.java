@@ -55,7 +55,7 @@ public class ScheduledNotificationService {
     /**
      * Runs daily at 8:00 AM to send birthday wishes
      */
-    @Scheduled(cron = "0 0 8 * * *")
+    @Scheduled(cron = "0 0 8 * * *", zone = "UTC")
     @SchedulerLock(name = "sendBirthdayNotifications", lockAtLeastFor = "PT5M", lockAtMostFor = "PT30M")
     @Transactional
     public void sendBirthdayNotifications() {
@@ -174,7 +174,7 @@ public class ScheduledNotificationService {
     /**
      * Runs daily at 8:30 AM to send work anniversary wishes
      */
-    @Scheduled(cron = "0 30 8 * * *")
+    @Scheduled(cron = "0 30 8 * * *", zone = "UTC")
     @SchedulerLock(name = "sendAnniversaryNotifications", lockAtLeastFor = "PT5M", lockAtMostFor = "PT30M")
     @Transactional
     public void sendAnniversaryNotifications() {
@@ -304,7 +304,7 @@ public class ScheduledNotificationService {
     /**
      * Runs at 10:00 AM on weekdays to remind employees who haven't checked in
      */
-    @Scheduled(cron = "0 0 10 * * MON-FRI")
+    @Scheduled(cron = "0 0 10 * * MON-FRI", zone = "UTC")
     @SchedulerLock(name = "sendAttendanceReminders", lockAtLeastFor = "PT5M", lockAtMostFor = "PT30M")
     @Transactional
     public void sendAttendanceReminders() {
@@ -334,7 +334,7 @@ public class ScheduledNotificationService {
     /**
      * Runs at 5:00 PM on weekdays to remind employees who haven't checked out
      */
-    @Scheduled(cron = "0 0 17 * * MON-FRI")
+    @Scheduled(cron = "0 0 17 * * MON-FRI", zone = "UTC")
     @SchedulerLock(name = "sendCheckoutReminders", lockAtLeastFor = "PT5M", lockAtMostFor = "PT30M")
     @Transactional
     public void sendCheckoutReminders() {

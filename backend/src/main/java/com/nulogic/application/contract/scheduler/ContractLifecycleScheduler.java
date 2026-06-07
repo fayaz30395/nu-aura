@@ -443,6 +443,8 @@ public class ContractLifecycleScheduler {
                     "SELECT user_id FROM employees WHERE id = ? AND tenant_id = ?",
                     UUID.class, employeeId, tenantId);
         } catch (Exception e) { // Intentional broad catch — scheduled job error boundary
+            log.warn("Could not resolve user_id for employee {} (tenant {}): {}",
+                    employeeId, tenantId, e.getMessage());
             return null;
         }
     }

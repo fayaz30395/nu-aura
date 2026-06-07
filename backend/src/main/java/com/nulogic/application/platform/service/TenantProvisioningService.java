@@ -109,7 +109,7 @@ public class TenantProvisioningService {
         );
 
         String accessToken = jwtTokenProvider.generateToken(auth, tenantId, adminUser.getId());
-        String refreshToken = jwtTokenProvider.generateRefreshToken(adminUser.getEmail(), tenantId);
+        String refreshToken = jwtTokenProvider.generateRefreshToken(adminUser.getEmail(), tenantId, adminUser.getId());
 
         return AuthResponse.builder()
                 .accessToken(accessToken)

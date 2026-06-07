@@ -485,12 +485,18 @@ public class AuthService {
                     throw new AuthenticationException("Unable to verify Google token");
                 }
             } catch (IOException | InterruptedException e) {
+                if (e instanceof InterruptedException) {
+                    Thread.currentThread().interrupt();
+                }
                 log.warn("Failed to verify Google access token audience");
                 throw new AuthenticationException("Unable to verify Google token");
             }
 
             return userInfo;
         } catch (IOException | InterruptedException e) {
+            if (e instanceof InterruptedException) {
+                Thread.currentThread().interrupt();
+            }
             log.error("Error calling Google userinfo API", e);
             throw new AuthenticationException("Failed to verify Google access token: " + e.getMessage(), e);
         }
@@ -975,7 +981,7 @@ public class AuthService {
                 user, tenantId, HrmsPermissionInitializer.APP_CODE,
                 ctx.appPermissions(), ctx.appRoles(), ctx.accessibleApps(),
                 ctx.employeeId(), ctx.locationId(), ctx.departmentId(), ctx.teamId());
-        String refreshToken = tokenProvider.generateRefreshToken(user.getEmail(), tenantId);
+        String refreshToken = tokenProvider.generateRefreshToken(user.getEmail(), tenantId, user.getId());
 
         return AuthResponse.builder()
                 .accessToken(accessToken)
@@ -1056,15 +1062,16 @@ public class AuthService {
                 return Optional.empty();
             }
 
-            // Step 1: Try to find an existing employee with the same email
-            // Use a targeted query instead of loading all employees to prevent memory issues
-            List<Employee> matchingEmployees = employeeRepository.findByTenantId(tenantId).stream()
-                    .filter(e -> e.getUser() != null && e.getUser().getEmail().equals(user.getEmail()))
-                    .toList();
+            // Step 1: Try to find an existing employee already linked to this user.
+            // The unique (email, tenantId) index means at most one User per email per
+            // tenant, so an employee whose linked user shares this email is linked to
+            // this exact user. A targeted indexed lookup by userId avoids materializing
+            // every tenant employee into the JVM heap on each SuperAdmin login.
+            Optional<Employee> matchingEmployee = employeeRepository.findByUserIdAndTenantId(user.getId(), tenantId);
 
-            if (!matchingEmployees.isEmpty()) {
-                // Link the first matching employee to this user
-                Employee employee = matchingEmployees.get(0);
+            if (matchingEmployee.isPresent()) {
+                // Link the existing employee to this user
+                Employee employee = matchingEmployee.get();
                 employee.setUser(user);
                 employee = employeeRepository.save(employee);
                 log.info("Auto-linked existing employee {} to SuperAdmin user {}", employee.getId(), user.getId());

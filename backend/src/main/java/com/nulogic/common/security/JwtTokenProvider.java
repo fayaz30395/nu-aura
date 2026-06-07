@@ -150,7 +150,7 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public String generateRefreshToken(String email, UUID tenantId) {
+    public String generateRefreshToken(String email, UUID tenantId, UUID userId) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + refreshTokenExpiration);
 
@@ -160,6 +160,7 @@ public class JwtTokenProvider {
                 .audience().add("nu-aura-api").and()
                 .subject(email)
                 .claim("tenantId", tenantId.toString())
+                .claim("userId", userId.toString())
                 .claim("type", "refresh")
                 .issuedAt(now)
                 .expiration(expiryDate)

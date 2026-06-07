@@ -8,6 +8,7 @@ import com.nulogic.infrastructure.attendance.repository.AttendanceRecordReposito
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -55,6 +56,17 @@ public class AutoRegularizationScheduler {
     private final TenantTimeService tenantTimeService;
 
     /**
+     * Self-reference resolved through the Spring proxy so that the {@link Transactional}
+     * boundary on {@link #regularizeTenantAttendance} is honoured. A direct
+     * {@code this.regularizeTenantAttendance(...)} call bypasses the AOP proxy, so no
+     * transaction starts and {@code TenantRlsTransactionManager#doBegin} never re-reads
+     * the tenant — leaving the {@code findAll}/{@code saveAll} pair to run as separate
+     * implicit transactions with no atomic rollback boundary. {@link ObjectProvider} is
+     * used instead of {@code @Lazy} self-injection to avoid eager self-construction.
+     */
+    private final ObjectProvider<AutoRegularizationScheduler> selfProvider;
+
+    /**
      * Auto-regularize INCOMPLETE attendance.
      * Cron: 01:00 AM IST = 19:30 UTC (UTC+5:30).
      */
@@ -66,12 +78,19 @@ public class AutoRegularizationScheduler {
         List<UUID> tenants = fetchActiveTenants();
         int totalFixed = 0;
 
+        // Set TenantContext BEFORE the @Transactional boundary opens and invoke
+        // regularizeTenantAttendance through the Spring proxy (self), so the new
+        // transaction's doBegin reads the tenant and applies the RLS GUC, and the
+        // findAll/saveAll pair commit/rollback atomically as one transaction.
         for (UUID tenantId : tenants) {
             try {
-                int fixed = regularizeTenantAttendance(tenantId);
+                TenantContext.setCurrentTenant(tenantId);
+                int fixed = selfProvider.getObject().regularizeTenantAttendance(tenantId);
                 totalFixed += fixed;
             } catch (Exception e) { // Intentional broad catch — scheduled job error boundary
                 log.error("Failed to regularize attendance for tenant {}: {}", tenantId, e.getMessage(), e);
+            } finally {
+                TenantContext.clear();
             }
         }
 
@@ -109,10 +128,13 @@ public class AutoRegularizationScheduler {
 
     @Transactional
     public int regularizeTenantAttendance(UUID tenantId) {
+        // Tenant context is set by the caller before the @Transactional boundary so
+        // TenantRlsTransactionManager#doBegin applies app.current_tenant_id; the caller
+        // also owns clearing it in a finally. Re-affirm defensively in case this method
+        // is ever invoked directly.
         TenantContext.setCurrentTenant(tenantId);
-        try {
-            // Load the tenant-specific config (or use defaults)
-            int afterDays = getTenantRegularizeAfterDays(tenantId);
+        // Load the tenant-specific config (or use defaults)
+        int afterDays = getTenantRegularizeAfterDays(tenantId);
             // tenant-local now() via TenantTimeService
             LocalDate cutoffDate = tenantTimeService.today(tenantId).minusDays(afterDays);
 
@@ -138,12 +160,9 @@ public class AutoRegularizationScheduler {
             });
             attendanceRecordRepository.saveAll(incompleteRecords);
 
-            int count = incompleteRecords.size();
-            log.debug("Regularized {} INCOMPLETE records for tenant {}", count, tenantId);
-            return count;
-        } finally {
-            TenantContext.clear();
-        }
+        int count = incompleteRecords.size();
+        log.debug("Regularized {} INCOMPLETE records for tenant {}", count, tenantId);
+        return count;
     }
 
     private int getTenantRegularizeAfterDays(UUID tenantId) {
