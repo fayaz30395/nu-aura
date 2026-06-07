@@ -41,6 +41,10 @@
         <springdoc.version>2.8.0</springdoc.version>
         <lombok.version>1.18.46</lombok.version>
         <shedlock.version>6.3.0</shedlock.version>
+        <!-- Override Spring Boot BOM (1.20.6): 1.21.x ships a docker-java that
+             negotiates Docker API >= 1.44, required by Docker 25+/colima 29.x.
+             1.20.6's client advertised API 1.32 and was rejected by the daemon. -->
+        <testcontainers.version>1.21.4</testcontainers.version>
     </properties>
 
     <dependencies>
@@ -424,6 +428,15 @@
                     <forkCount>1</forkCount>
                     <reuseForks>true</reuseForks>
                     <perCoreThreadCount>false</perCoreThreadCount>
+
+                    <!-- Disable Testcontainers Ryuk reaper for the test fork. Under colima,
+                         Ryuk cannot bind-mount the host docker.sock path (the VM can't mkdir
+                         the macOS socket path), so it fails to launch and every container test
+                         errors. Ryuk only does post-run cleanup; the JVM shutdown hook handles
+                         that for a one-shot 'mvn verify'. Read from env var, not properties. -->
+                    <environmentVariables>
+                        <TESTCONTAINERS_RYUK_DISABLED>true</TESTCONTAINERS_RYUK_DISABLED>
+                    </environmentVariables>
 
                     <!-- Memory Configuration (JaCoCo argLine is automatically prepended).
                          Mockito is loaded as a javaagent so tests do not rely on JDK self-attach,
