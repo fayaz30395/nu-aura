@@ -61,7 +61,12 @@ public class EmployeeService {
      * and we allocate via atomic INSERT ... ON CONFLICT ... DO UPDATE ... RETURNING.
      * Format: {@code EMP-yyyyMM-NNNN}.
      */
-    private static final String SET_RLS_TENANT_SQL = "SELECT set_config('app.current_tenant_id', ?, false)";
+    // Third param MUST be `true` (transaction-local). The enclosing method is @Transactional, so
+    // TenantRlsTransactionManager has already SET LOCAL this GUC on the same transaction-bound
+    // connection; this transaction-local set is defense-in-depth and auto-resets at commit/rollback.
+    // Using `false` (session-scoped) would persist the tenant id on the pooled connection after the
+    // request returns — a cross-tenant RLS leak under connection reuse. Do NOT change back to false.
+    private static final String SET_RLS_TENANT_SQL = "SELECT set_config('app.current_tenant_id', ?, true)";
     private static final String NEXT_EMPLOYEE_CODE_SEQ_SQL =
             "INSERT INTO employee_code_sequence(tenant_id, year_month, current_value) " +
                     "VALUES (?::uuid, ?::varchar, 1) " +

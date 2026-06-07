@@ -62,7 +62,12 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
      * leap year (366) is the widest a single summary request may cover.
      */
     private static final long MAX_SUMMARY_RANGE_DAYS = 366L;
-    private static final String SET_RLS_TENANT_SQL = "SELECT set_config('app.current_tenant_id', ?, false)";
+    // Third param MUST be `true` (transaction-local). The enclosing method is @Transactional, so
+    // TenantRlsTransactionManager has already SET LOCAL this GUC on the same transaction-bound
+    // connection; this transaction-local set is defense-in-depth and auto-resets at commit/rollback.
+    // Using `false` (session-scoped) would persist the tenant id on the pooled connection after the
+    // request returns — a cross-tenant RLS leak under connection reuse. Do NOT change back to false.
+    private static final String SET_RLS_TENANT_SQL = "SELECT set_config('app.current_tenant_id', ?, true)";
     private static final String NEXT_EXPENSE_SEQ_SQL =
             "INSERT INTO expense_claim_sequence(tenant_id, year_month, current_value) " +
                     "VALUES (?::uuid, ?::varchar, 1) " +
