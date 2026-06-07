@@ -5,15 +5,19 @@ import com.nulogic.application.statutory.service.LWFService;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.employee.Employee;
+import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
+import com.nulogic.infrastructure.payroll.repository.PayslipRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -76,6 +80,15 @@ public class StatutoryDeductionService {
     // F1.8: §87A rebate threshold (New Regime FY 2024-25) and 4% health-and-education cess.
     private static final BigDecimal REBATE_87A_LIMIT = new BigDecimal("700000");
     private static final BigDecimal CESS_MULTIPLIER = new BigDecimal("1.04");
+    // F1.8 surcharge: annual income band boundaries (Finance Act 2023, New Regime).
+    // Note: The 37% surcharge slab (>5Cr) was removed for the New Regime by Finance Act 2023.
+    // Under the New Regime the maximum surcharge rate is 25% (for income > ₹2Cr).
+    private static final BigDecimal SURCHARGE_BAND_50L  = new BigDecimal("5000000");   // ₹50 L
+    private static final BigDecimal SURCHARGE_BAND_1CR  = new BigDecimal("10000000");  // ₹1 Cr
+    private static final BigDecimal SURCHARGE_BAND_2CR  = new BigDecimal("20000000");  // ₹2 Cr
+    private static final BigDecimal SURCHARGE_RATE_10   = new BigDecimal("0.10");      // 10%
+    private static final BigDecimal SURCHARGE_RATE_15   = new BigDecimal("0.15");      // 15%
+    private static final BigDecimal SURCHARGE_RATE_25   = new BigDecimal("0.25");      // 25% (max under New Regime)
     // ─── TDS rate constants ─────────────────────────────────────────────────
     private static final BigDecimal RATE_5_PCT = new BigDecimal("0.05");
     private static final BigDecimal RATE_10_PCT = new BigDecimal("0.10");
@@ -93,6 +106,8 @@ public class StatutoryDeductionService {
     private static final BigDecimal MH_PT_2 = new BigDecimal("200");
     private final LWFService lwfService;
     private final TenantTimeService tenantTimeService;
+    private final PayslipRepository payslipRepository;
+    private final EmployeeRepository employeeRepository;
 
     /**
      * F1.1: When true (default), employee PF is capped at the ₹15,000 wage ceiling
@@ -289,13 +304,25 @@ public class StatutoryDeductionService {
     }
 
     /**
-     * TODO(F1.2-wiring): Look up the employee's gross salary on/around the contribution
-     * period start, e.g. via {@code PayslipRepository.findLatestBeforeOrEqual(employeeId,
-     * periodStart)}. Returning {@code null} means "we don't know" → caller defaults to
-     * exempt-above-ceiling (safe pre-fix behavior). Owned by S5 payroll-history sweep.
+     * F1.2-wiring: Returns the employee's gross salary from the most-recent payslip whose
+     * pay period falls at or before the ESI contribution-period start date.
+     *
+     * <p>Delegates to {@link PayslipRepository#findGrossAtOrBeforePeriodStart} with a
+     * {@code LIMIT 1} via {@link PageRequest#of(int, int)} — the query orders by
+     * (year DESC, month DESC) so the first row is the immediately preceding payslip.</p>
+     *
+     * <p>Returns {@code null} when no prior payslip exists (new joiner or no history in
+     * the contribution period). Callers treat {@code null} as "unknown" and revert to the
+     * safe exempt-above-ceiling default per Reg.40 ESI Rules.</p>
      */
     private BigDecimal lookupGrossAtPeriodStart(UUID employeeId, LocalDate periodStart) {
-        return null;
+        List<BigDecimal> results = payslipRepository.findGrossAtOrBeforePeriodStart(
+                employeeId,
+                periodStart.getYear(),
+                periodStart.getMonthValue(),
+                PageRequest.of(0, 1)
+        );
+        return results.isEmpty() ? null : results.get(0);
     }
 
     // ─── Professional Tax ────────────────────────────────────────────────────
@@ -368,13 +395,19 @@ public class StatutoryDeductionService {
     }
 
     /**
-     * TODO(F1.13-wiring): Look up {@link Employee#getGender()} via EmployeeRepository.
-     * Returning {@code null} means "unknown" → caller defaults to the non-FEMALE slab
-     * (pre-fix behavior). Owned by S5 payroll-history sweep — needs EmployeeRepository
-     * injection without creating a payroll→employee circular dep.
+     * F1.13-wiring: Returns the employee's gender via a lightweight single-column JPQL
+     * projection on {@link EmployeeRepository#findGenderById}, avoiding full entity
+     * hydration and the {@code EncryptedStringConverter} hot-path on sensitive columns.
+     *
+     * <p>Returns {@code null} when the employee record does not exist or the gender field
+     * is not set — callers default to the non-FEMALE Maharashtra PT slab, preserving the
+     * pre-F1.13 safe behaviour.</p>
      */
     private Employee.Gender lookupGender(UUID employeeId) {
-        return null;
+        if (employeeId == null) {
+            return null;
+        }
+        return employeeRepository.findGenderById(employeeId).orElse(null);
     }
 
     // ─── TDS ─────────────────────────────────────────────────────────────────
@@ -394,11 +427,19 @@ public class StatutoryDeductionService {
      *   ₹12,00,001 – ₹15,00,000 — 20%
      *   Above ₹15,00,000         — 30%
      * </pre>
-     * <p>F1.8 fix: §87A rebate (taxable income ≤ ₹7L → tax = 0) and 4% health-and-
-     * education cess are now applied. TODO(F1.8-surcharge): surcharge bands
-     * (10% for 50L–1Cr, 15% for 1–2Cr, 25% for 2–5Cr, 37% for &gt;5Cr) — out of
-     * scope for this hotfix as they require marginal-relief logic per §2(3) of
-     * the Finance Act.
+     * <p>F1.8 fix: §87A rebate (taxable income ≤ ₹7L → tax = 0), 4% health-and-education
+     * cess, and surcharge bands are all applied:
+     * <pre>
+     *   Annual income ≤ ₹50L   — no surcharge
+     *   ₹50L – ₹1Cr            — 10% surcharge on tax
+     *   ₹1Cr – ₹2Cr            — 15% surcharge on tax
+     *   Above ₹2Cr             — 25% surcharge on tax (New Regime cap; Finance Act 2023
+     *                             removed the 37% slab for New Regime taxpayers)
+     * </pre>
+     * <p>Marginal relief (§2(3) Finance Act) is NOT applied — this is a conservative
+     * approximation appropriate for monthly TDS estimation. Marginal-relief logic requires
+     * computing tax at both the income ceiling and the actual income, which is deferred to
+     * a future DB-driven slab engine (BIZ-007).
      */
     private BigDecimal calculateMonthlyTds(BigDecimal grossSalary) {
         BigDecimal annualIncome = grossSalary.multiply(MONTHS_IN_YEAR);
@@ -452,7 +493,26 @@ public class StatutoryDeductionService {
             tax = BigDecimal.ZERO;
         }
 
-        // F1.8: 4% health-and-education cess on the tax payable (post-rebate).
+        // F1.8-surcharge: Apply surcharge on the post-rebate tax before adding cess.
+        // Finance Act 2023 capped New Regime surcharge at 25% (removed the 37% band).
+        // Marginal relief is NOT applied here (conservative approximation — see Javadoc).
+        if (tax.compareTo(BigDecimal.ZERO) > 0) {
+            BigDecimal surchargeRate;
+            if (annualIncome.compareTo(SURCHARGE_BAND_2CR) > 0) {
+                surchargeRate = SURCHARGE_RATE_25;
+            } else if (annualIncome.compareTo(SURCHARGE_BAND_1CR) > 0) {
+                surchargeRate = SURCHARGE_RATE_15;
+            } else if (annualIncome.compareTo(SURCHARGE_BAND_50L) > 0) {
+                surchargeRate = SURCHARGE_RATE_10;
+            } else {
+                surchargeRate = BigDecimal.ZERO;
+            }
+            if (surchargeRate.compareTo(BigDecimal.ZERO) > 0) {
+                tax = tax.add(tax.multiply(surchargeRate));
+            }
+        }
+
+        // F1.8: 4% health-and-education cess on the tax payable (post-rebate, post-surcharge).
         tax = tax.multiply(CESS_MULTIPLIER);
 
         return tax.setScale(2, RoundingMode.HALF_UP);

@@ -38,6 +38,22 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID>, JpaSp
     Optional<UUID> findManagerIdById(@Param("id") UUID id);
 
     /**
+     * F1.13-wiring: Lightweight gender-only lookup for statutory deduction calculations.
+     *
+     * <p>Fetches only the {@code gender} column to avoid loading the full {@link Employee}
+     * entity, which would trigger {@code EncryptedStringConverter} on columns such as
+     * {@code taxId}, {@code bankAccountNumber}, and {@code bankIfscCode}. Loading those
+     * columns in a payroll hot-path risks converter failures that roll back the enclosing
+     * transaction when the encryption key is temporarily unavailable.</p>
+     *
+     * <p>Returns {@link Optional#empty()} when the employee does not exist or has no
+     * recorded gender — callers must default to the non-FEMALE Maharashtra PT slab in
+     * that case (pre-F1.13 safe behaviour).</p>
+     */
+    @Query("SELECT e.gender FROM Employee e WHERE e.id = :id")
+    Optional<Employee.Gender> findGenderById(@Param("id") UUID id);
+
+    /**
      * Batch lookup: get employee ID to full name mapping for a collection of IDs.
      * Returns Object[] where [0] = UUID id, [1] = String fullName.
      * Single query replaces N individual findFullNameById calls.

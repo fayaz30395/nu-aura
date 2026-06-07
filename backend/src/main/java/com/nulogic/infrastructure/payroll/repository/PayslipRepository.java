@@ -177,4 +177,29 @@ public interface PayslipRepository extends JpaRepository<Payslip, UUID> {
             @Param("month") Integer month,
             @Param("year") Integer year
     );
+
+    /**
+     * F1.2-wiring: Returns the gross salary from the most recent payslip for an employee
+     * whose pay period falls at or before the given ESI contribution-period start date.
+     *
+     * <p>Used by {@code StatutoryDeductionService} to detect whether an employee crossed the
+     * ₹21,000 ESI ceiling mid-contribution-period (Reg.40, ESI Central Rules 1950).
+     * The result is the gross on the payslip whose (year, month) sorts latest among all
+     * payslips that are ≤ {@code periodStart}.</p>
+     *
+     * <p>Returns {@code null} (via {@link Optional#empty()}) when no prior payslip exists
+     * (new joiner) — caller must treat absence as "unknown" and default to the safe
+     * exempt-above-ceiling behaviour.</p>
+     */
+    @Query("SELECT p.grossSalary FROM Payslip p " +
+            "WHERE p.employeeId = :employeeId " +
+            "  AND (p.payPeriodYear < :periodYear " +
+            "       OR (p.payPeriodYear = :periodYear AND p.payPeriodMonth <= :periodMonth)) " +
+            "ORDER BY p.payPeriodYear DESC, p.payPeriodMonth DESC")
+    List<BigDecimal> findGrossAtOrBeforePeriodStart(
+            @Param("employeeId") UUID employeeId,
+            @Param("periodYear") Integer periodYear,
+            @Param("periodMonth") Integer periodMonth,
+            Pageable pageable
+    );
 }
