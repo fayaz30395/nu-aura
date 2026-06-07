@@ -791,6 +791,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({className, onSelect, 
         <input
           ref={inputRef}
           type="text"
+          aria-label="Search"
           placeholder={placeholderText}
           value={query}
           onChange={(e) => {

@@ -169,6 +169,10 @@ export function CommandPalette({open, onClose, sections, extraItems = []}: Comma
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search people, actions, pages…"
+            role="combobox"
+            aria-expanded={flatOrder.length > 0}
+            aria-controls="command-palette-results"
+            aria-autocomplete="list"
             className="flex-1 border-0 bg-transparent text-[16px] text-[var(--text-1)] outline-none placeholder:text-[var(--text-3)]"
           />
           <kbd className="num rounded-[6px] border border-[var(--border)] bg-[var(--surface-2)] px-[7px] py-[3px] text-[11px] text-[var(--text-3)]">
@@ -177,14 +181,14 @@ export function CommandPalette({open, onClose, sections, extraItems = []}: Comma
         </div>
 
         {/* Results */}
-        <div className="max-h-[380px] overflow-y-auto p-2">
+        <div id="command-palette-results" role="listbox" className="max-h-[380px] overflow-y-auto p-2">
           {flatOrder.length === 0 && (
             <div className="px-8 py-8 text-center text-[13.5px] text-[var(--text-3)]">
               No results for &ldquo;{query}&rdquo;
             </div>
           )}
           {grouped.map(({group, items}) => (
-            <div key={group} className="px-2.5 pb-1 pt-1.5">
+            <div key={group} role="presentation" className="px-2.5 pb-1 pt-1.5">
               <div className="px-2 py-1 text-[10.5px] font-bold uppercase tracking-[0.08em] text-[var(--text-3)]">
                 {group}
               </div>

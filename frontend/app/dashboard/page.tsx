@@ -201,6 +201,8 @@ export default function DashboardPage() {
 
     const allNotifications: GoogleNotification[] = [];
 
+    await Promise.all([
+      (async () => {
     try {
       // Load unread emails from Gmail
       const emailResponse = await fetch(
@@ -246,7 +248,8 @@ export default function DashboardPage() {
     } catch (err) {
       log.error('Error loading emails:', err);
     }
-
+      })(),
+      (async () => {
     try {
       // Load shared files from Drive (files shared with me, modified in last 7 days)
       const sevenDaysAgo = new Date();
@@ -286,7 +289,8 @@ export default function DashboardPage() {
     } catch (err) {
       log.error('Error loading drive files:', err);
     }
-
+      })(),
+      (async () => {
     try {
       // Load upcoming calendar events (next 24 hours)
       const now = new Date();
@@ -334,6 +338,8 @@ export default function DashboardPage() {
     } catch (err) {
       log.error('Error loading calendar events:', err);
     }
+      })(),
+    ]);
 
     // Sort by timestamp (most recent first)
     allNotifications.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());

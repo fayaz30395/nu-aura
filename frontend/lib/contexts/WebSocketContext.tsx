@@ -177,11 +177,41 @@ export const WebSocketProvider = ({children}: { children: React.ReactNode }) => 
 
   const handleIncomingMessage = (message: IMessage): Notification | null => {
     try {
-      const body = JSON.parse(message.body);
+      const body: unknown = JSON.parse(message.body);
+      if (typeof body !== 'object' || body === null) {
+        log.error('Discarding notification: payload is not an object');
+        return null;
+      }
+      const raw = body as Record<string, unknown>;
+
+      // Coerce/validate at this trust boundary: JSON.parse yields untyped data,
+      // so never spread it directly into the typed Notification struct.
+      const toStr = (value: unknown): string =>
+        typeof value === 'string' ? value : '';
+
+      const VALID_PRIORITIES = ['LOW', 'NORMAL', 'HIGH', 'URGENT'] as const;
+      const priority =
+        typeof raw.priority === 'string' &&
+        (VALID_PRIORITIES as readonly string[]).includes(raw.priority)
+          ? (raw.priority as Notification['priority'])
+          : undefined;
+
+      const parsedTimestamp =
+        raw.timestamp != null ? new Date(raw.timestamp as string | number).getTime() : NaN;
+
       const newNotification: Notification = {
-        ...body,
+        type: toStr(raw.type),
+        title: toStr(raw.title),
+        message: toStr(raw.message),
+        payload: raw.payload,
+        metadata:
+          typeof raw.metadata === 'object' && raw.metadata !== null
+            ? (raw.metadata as Record<string, unknown>)
+            : undefined,
+        actionUrl: typeof raw.actionUrl === 'string' ? raw.actionUrl : undefined,
+        priority,
         read: false,
-        timestamp: body.timestamp ? new Date(body.timestamp).getTime() : Date.now(),
+        timestamp: Number.isNaN(parsedTimestamp) ? Date.now() : parsedTimestamp,
       };
 
       setNotifications((prev) => [newNotification, ...prev]);

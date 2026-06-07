@@ -53,6 +53,7 @@ import {
 } from '@/lib/hooks/queries/useLetter';
 import {useCandidates} from '@/lib/hooks/queries/useRecruitment';
 import {createLogger} from '@/lib/utils/logger';
+import {safeUrl} from '@/lib/utils/safeUrl';
 import {formatDate as formatDateCanonical} from '@/lib/utils/format/date';
 
 const log = createLogger('LettersPage');
@@ -717,7 +718,7 @@ export default function LettersPage() {
                                 )}
                                 {letter.status === LetterStatus.ISSUED && letter.pdfUrl ? (
                                   <a
-                                    href={letter.pdfUrl}
+                                    href={safeUrl(letter.pdfUrl)}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="w-full px-4 py-2 text-left text-body-secondary hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2"
@@ -1134,7 +1135,7 @@ export default function LettersPage() {
             {selectedLetter?.status === LetterStatus.ISSUED && selectedLetter?.pdfUrl ? (
               <Button asChild>
                 <a
-                  href={selectedLetter.pdfUrl}
+                  href={safeUrl(selectedLetter.pdfUrl)}
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={(e) => {

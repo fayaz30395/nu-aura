@@ -44,6 +44,9 @@ export const UserMenu = React.memo(function UserMenu({
     <div className="relative user-dropdown">
       <button
         onClick={onToggle}
+        aria-label={`User menu for ${userName}`}
+        aria-haspopup="menu"
+        aria-expanded={isOpen}
         className={cn(
           'flex items-center gap-2 rounded-xl px-2 py-1.5 sm:px-4 sm:py-2 transition-all',
           'hover:bg-[var(--header-hover-bg)]',

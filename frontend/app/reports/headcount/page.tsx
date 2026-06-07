@@ -54,6 +54,11 @@ export default function HeadcountReportPage() {
         apiClient.get<HeadcountTrend[]>('/analytics/headcount-trend?months=12').catch((): null => null),
         apiClient.get<OrgHealth>('/analytics/org-health').catch((): null => null),
       ]);
+      // If every endpoint failed, surface the error to React Query so the UI
+      // can show a failure state instead of an empty chart with no indication.
+      if (!metricsRes && !trendRes && !healthRes) {
+        throw new Error('Failed to load headcount data.');
+      }
       return {
         metrics: metricsRes?.data ?? null,
         trend: trendRes?.data ?? [],

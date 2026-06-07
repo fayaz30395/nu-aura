@@ -97,19 +97,23 @@ export function CompanyFeed({employeeId, refreshKey = 0}: CompanyFeedProps) {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [olderLoaded, setOlderLoaded] = useState(false);
 
-  const loadFeed = async (showRefresh = false) => {
+  const loadFeed = async (showRefresh = false, isCancelled?: () => boolean) => {
     try {
       if (showRefresh) setIsRefreshing(true);
       else setIsLoading(true);
       const data = await feedService.getCompanyFeed(employeeId);
+      if (isCancelled?.()) return;
       setItems(data);
       setOlderLoaded(true);
     } catch {
+      if (isCancelled?.()) return;
       setItems(getDemoFeed());
       setOlderLoaded(true);
     } finally {
-      setIsLoading(false);
-      setIsRefreshing(false);
+      if (!isCancelled?.()) {
+        setIsLoading(false);
+        setIsRefreshing(false);
+      }
     }
   };
 
@@ -136,7 +140,11 @@ export function CompanyFeed({employeeId, refreshKey = 0}: CompanyFeedProps) {
   }, [employeeId, olderLoaded]);
 
   useEffect(() => {
-    loadFeed();
+    let cancelled = false;
+    loadFeed(false, () => cancelled);
+    return () => {
+      cancelled = true;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [employeeId, refreshKey]);
 

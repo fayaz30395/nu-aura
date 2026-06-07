@@ -909,9 +909,12 @@ export function useEditLock(contentType: string, contentId: string, enabled: boo
     // Start heartbeat interval
     heartbeatRef.current = setInterval(async () => {
       try {
-        await fluenceService.refreshEditLock(contentTypeRef.current, contentIdRef.current);
+        const response = await fluenceService.refreshEditLock(contentTypeRef.current, contentIdRef.current);
+        // Reflect current server-side lock state (e.g. another user may have force-acquired)
+        setLockInfo(response);
       } catch {
-        // Heartbeat failed — lock may have expired
+        // Heartbeat failed — lock may have expired server-side; clear stale ownership so the UI no longer claims the lock is held
+        setLockInfo(null);
       }
     }, HEARTBEAT_INTERVAL_MS);
 

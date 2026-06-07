@@ -497,14 +497,11 @@ export default function ApplicantPipelinePage() {
   const queryClient = useQueryClient();
   const jobOpeningsQuery = useJobOpenings(0, 200);
   const [selectedJobId, setSelectedJobId] = useState<string>('');
-  const pipelineQuery = usePipelineByJob(selectedJobId, !!selectedJobId);
-
-  // Initialize selectedJobId once on mount
-  useEffect(() => {
-    if (!selectedJobId && jobOpeningsQuery.data?.content && jobOpeningsQuery.data.content.length > 0) {
-      setSelectedJobId(jobOpeningsQuery.data.content[0].id);
-    }
-  }, [jobOpeningsQuery.data?.content, selectedJobId]);
+  // Default to the first job opening without an extra render cycle: derive the
+  // effective id directly so usePipelineByJob can fire as soon as the job list
+  // resolves, instead of waiting for a useEffect-driven setState round-trip.
+  const effectiveJobId = selectedJobId || jobOpeningsQuery.data?.content?.[0]?.id || '';
+  const pipelineQuery = usePipelineByJob(effectiveJobId, !!effectiveJobId);
 
   // Extract data from queries
   const jobOpenings = jobOpeningsQuery.data?.content ?? [];
@@ -567,7 +564,7 @@ export default function ApplicantPipelinePage() {
   };
 
   const openAddModal = () => {
-    setNewApplicant({...EMPTY_NEW_APPLICANT, jobOpeningId: selectedJobId});
+    setNewApplicant({...EMPTY_NEW_APPLICANT, jobOpeningId: effectiveJobId});
     setAddError(null);
     setShowAddModal(true);
   };
@@ -587,7 +584,7 @@ export default function ApplicantPipelinePage() {
       await applicantService.createApplicant(newApplicant);
       setShowAddModal(false);
       setNewApplicant({...EMPTY_NEW_APPLICANT});
-      await queryClient.invalidateQueries({queryKey: applicantKeys.pipeline(selectedJobId)});
+      await queryClient.invalidateQueries({queryKey: applicantKeys.pipeline(effectiveJobId)});
     } catch (err) {
       setAddError(getErrorMessage(err, 'Failed to add applicant'));
     } finally {
@@ -610,7 +607,7 @@ export default function ApplicantPipelinePage() {
         status: nextStage,
         notes: applicant.notes,
       });
-      await queryClient.invalidateQueries({queryKey: applicantKeys.pipeline(selectedJobId)});
+      await queryClient.invalidateQueries({queryKey: applicantKeys.pipeline(effectiveJobId)});
     } catch (err) {
       log.error('Failed to advance stage:', err);
     } finally {
@@ -625,7 +622,7 @@ export default function ApplicantPipelinePage() {
         status: ApplicationStatus.REJECTED,
         rejectionReason: 'Not selected',
       });
-      await queryClient.invalidateQueries({queryKey: applicantKeys.pipeline(selectedJobId)});
+      await queryClient.invalidateQueries({queryKey: applicantKeys.pipeline(effectiveJobId)});
     } catch (err) {
       log.error('Failed to reject:', err);
     } finally {
@@ -663,7 +660,7 @@ export default function ApplicantPipelinePage() {
       };
       await applicantService.updateStatus(draggableId, payload);
       // Refetch pipeline after status update
-      await queryClient.invalidateQueries({queryKey: applicantKeys.pipeline(selectedJobId)});
+      await queryClient.invalidateQueries({queryKey: applicantKeys.pipeline(effectiveJobId)});
     } catch (err) {
       setDragError(getErrorMessage(err, 'Failed to move applicant'));
     } finally {
@@ -680,7 +677,7 @@ export default function ApplicantPipelinePage() {
 
   // ── Derived data ──────────────────────────────────────────────────────────
 
-  const selectedJob = jobOpenings.find(j => j.id === selectedJobId);
+  const selectedJob = jobOpenings.find(j => j.id === effectiveJobId);
 
   const totalApplicants = PIPELINE_STAGES.reduce(
     (sum, s) => sum + (pipelineData?.[s]?.length || 0),
@@ -726,7 +723,7 @@ export default function ApplicantPipelinePage() {
                   </div>
                 ) : (
                   <Select
-                    value={selectedJobId}
+                    value={effectiveJobId}
                     onChange={handleJobChange}
                     disabled={jobOpenings.length === 0}
                   >
@@ -747,7 +744,7 @@ export default function ApplicantPipelinePage() {
                 variant="primary"
                 leftIcon={<Plus size={16}/>}
                 onClick={openAddModal}
-                disabled={!selectedJobId || jobsLoading}
+                disabled={!effectiveJobId || jobsLoading}
               >
                 Add Applicant
               </Button>
@@ -775,7 +772,7 @@ export default function ApplicantPipelinePage() {
           )}
 
           {/* ── Empty / Loading / Content ─────────────────────────────────── */}
-          {!selectedJobId && !jobsLoading ? (
+          {!effectiveJobId && !jobsLoading ? (
             <div className="flex flex-col items-center justify-center py-20 text-center">
               <div className="w-16 h-16 rounded-full bg-[var(--bg-secondary)] flex items-center justify-center mb-4">
                 <User size={28} className="text-[var(--text-muted)]"/>

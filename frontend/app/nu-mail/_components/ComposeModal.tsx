@@ -74,11 +74,12 @@ export const ComposeModal = React.memo(function ComposeModal({
 
           {/* To field with auto-complete */}
           <div className="relative">
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+            <label htmlFor="compose-to" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
               To
             </label>
             <div className="relative">
               <Input
+                id="compose-to"
                 ref={toInputRef}
                 value={composeEmail.to}
                 onChange={(e) => {
@@ -123,11 +124,12 @@ export const ComposeModal = React.memo(function ComposeModal({
 
           {/* Cc field with auto-complete */}
           <div className="relative">
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+            <label htmlFor="compose-cc" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
               Cc
             </label>
             <div className="relative">
               <Input
+                id="compose-cc"
                 ref={ccInputRef}
                 value={composeEmail.cc}
                 onChange={(e) => {
@@ -171,10 +173,11 @@ export const ComposeModal = React.memo(function ComposeModal({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+            <label htmlFor="compose-subject" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
               Subject
             </label>
             <Input
+              id="compose-subject"
               value={composeEmail.subject}
               onChange={(e) => onComposeChange({...composeEmail, subject: e.target.value})}
               placeholder="Email subject"

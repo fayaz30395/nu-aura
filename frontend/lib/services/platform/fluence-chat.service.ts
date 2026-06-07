@@ -110,20 +110,22 @@ export async function streamFluenceChat(options: StreamChatOptions): Promise<voi
         if (!jsonStr || jsonStr === '[DONE]') continue;
 
         try {
-          const event: ChatSSEEvent = JSON.parse(jsonStr);
+          const parsed: unknown = JSON.parse(jsonStr);
+          if (typeof parsed !== 'object' || parsed === null) continue;
+          const event = parsed as Partial<ChatSSEEvent>;
 
           switch (event.type) {
             case 'token':
-              onToken(event.content);
+              if (typeof event.content === 'string') onToken(event.content);
               break;
             case 'sources':
-              onSources(event);
+              if (Array.isArray(event.sources)) onSources(event as ChatSSEEvent & { type: 'sources' });
               break;
             case 'done':
-              onDone(event.conversationId);
+              if (typeof event.conversationId === 'string') onDone(event.conversationId);
               break;
             case 'error':
-              onError(event.message);
+              if (typeof event.message === 'string') onError(event.message);
               break;
           }
         } catch {

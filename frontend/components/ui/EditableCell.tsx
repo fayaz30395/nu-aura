@@ -61,10 +61,14 @@ function EditableCell<T = string | number>({
   // -----------------------------------------------------------------------
 
   useEffect(() => {
+    // Do not clobber the user's in-progress edit when the parent pushes a new
+    // value (e.g. a sibling cell save triggers a row refetch). Syncing while
+    // isEditing would silently wipe whatever is typed in the active input.
+    if (isEditing) return;
     setDisplayValue(initialValue);
     setEditValue(initialValue);
     setError(null);
-  }, [initialValue]);
+  }, [initialValue, isEditing]);
 
   // -----------------------------------------------------------------------
   // Auto-focus when entering edit mode

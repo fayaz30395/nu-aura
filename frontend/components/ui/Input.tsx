@@ -30,12 +30,22 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       helper,
       inputSize = 'md',
       disabled,
+      id,
       ...props
     },
     ref
   ) => {
+    const generatedId = React.useId();
+    const inputId = id ?? generatedId;
     const [showPassword, setShowPassword] = React.useState(false);
     const [isFocused, setIsFocused] = React.useState(false);
+
+    const messageId = `${generatedId}-message`;
+    const hasMessage = Boolean(error || helper);
+    const describedBy =
+      [props['aria-describedby'], hasMessage ? messageId : undefined]
+        .filter(Boolean)
+        .join(' ') || undefined;
 
     const handleRightIconClick = () => {
       if (type === 'password') {
@@ -57,6 +67,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       <div className="w-full">
         {label && (
           <label
+            htmlFor={inputId}
             className={cn(
               'block text-sm font-medium mb-1.5 transition-colors duration-[var(--motion-fast)] ease-[var(--ease-standard)]',
               error
@@ -86,6 +97,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           )}
 
           <input
+            id={inputId}
             type={inputType}
             style={{
               backgroundColor: disabled ? undefined : 'var(--bg-input)',
@@ -121,6 +133,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             onBlur={() => setIsFocused(false)}
             disabled={disabled}
             {...props}
+            aria-describedby={describedBy}
           />
 
           {/* Right side icons */}
@@ -164,8 +177,9 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           </div>
         </div>
 
-        {(error || helper) && (
+        {hasMessage && (
           <p
+            id={messageId}
             className={cn(
               'motion-fade text-sm mt-1.5',
               error

@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import {useCourseDetail, useMyEnrollments, useUpdateCourseProgress} from '@/lib/hooks/queries/useLearning';
 import {Modal, ModalBody, ModalFooter} from '@/components/ui';
+import {safeUrl} from '@/lib/utils/safeUrl';
 
 type ContentStatus = 'not_started' | 'in_progress' | 'completed';
 
@@ -189,7 +190,7 @@ export default function CoursePlayerPage() {
                 <video
                   ref={videoRef}
                   key={activeContent.id}
-                  src={activeContent.videoUrl}
+                  src={safeUrl(activeContent.videoUrl, '')}
                   controls
                   className="w-full h-full"
                   onTimeUpdate={handleVideoTimeUpdate}
@@ -253,7 +254,7 @@ export default function CoursePlayerPage() {
                 <div className="row-between p-4 border-b border-[var(--border-main)] bg-[var(--bg-surface)]">
                   <span className="text-sm font-medium text-[var(--text-primary)]">{activeContent.title}</span>
                   <a
-                    href={activeContent.documentUrl}
+                    href={safeUrl(activeContent.documentUrl)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-1 text-xs text-accent-600 hover:text-accent-800"
@@ -263,7 +264,7 @@ export default function CoursePlayerPage() {
                   </a>
                 </div>
                 <iframe
-                  src={`https://docs.google.com/viewer?url=${encodeURIComponent(activeContent.documentUrl)}&embedded=true`}
+                  src={`https://docs.google.com/viewer?url=${encodeURIComponent(safeUrl(activeContent.documentUrl, ''))}&embedded=true`}
                   className="w-full h-[600px]"
                   title={activeContent.title}
                 />
