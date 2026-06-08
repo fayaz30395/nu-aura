@@ -15,6 +15,9 @@ ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
 ENV NEXT_PUBLIC_ENABLE_WEBSOCKET=${NEXT_PUBLIC_ENABLE_WEBSOCKET}
 ENV ALLOW_INSECURE_RELEASE_API_URL=${ALLOW_INSECURE_RELEASE_API_URL}
 RUN rm -rf .next
+# lib/generated/api is gitignored — generate the typed Orval client from the
+# committed OpenAPI snapshot before building (matches the CI frontend job).
+RUN API_DOCS_URL=./openapi-snapshot.json npm run api:generate
 RUN npm run build
 
 FROM node:20-alpine AS runner

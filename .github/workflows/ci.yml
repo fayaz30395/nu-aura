@@ -105,6 +105,15 @@ jobs:
         working-directory: ./frontend
         run: npm ci
 
+      - name: Generate API client (Orval, from committed OpenAPI snapshot)
+        working-directory: ./frontend
+        run: npm run api:generate
+        env:
+          # lib/generated/api is gitignored; regenerate from the committed
+          # snapshot so tsc/build/Docker all see the typed client. Refresh the
+          # snapshot via backend OpenApiSpecExportIT when the API surface changes.
+          API_DOCS_URL: ./openapi-snapshot.json
+
       - name: Run ESLint
         working-directory: ./frontend
         run: npm run lint

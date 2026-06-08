@@ -1,5 +1,5 @@
 import {
-  generateImpersonationToken as generateImpersonationTokenGenerated,
+  generateImpersonationExchangeToken as generateImpersonationTokenGenerated,
   getGrowthMetrics as getGrowthMetricsGenerated,
   getSystemOverview as getSystemOverviewGenerated,
   getTenantList as getTenantListGenerated,
