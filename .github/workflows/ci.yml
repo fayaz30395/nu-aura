@@ -16,7 +16,19 @@ jobs:
     name: Backend (Spring Boot)
     runs-on: ubuntu-latest
     # Postgres is provided by Testcontainers per test session — no `services:` block
-    # needed. ubuntu-latest runners ship with Docker preinstalled.
+    # needed for it. Redis IS required at context init by
+    # tenantTimezoneInvalidateSubscriber (Redis pub/sub), so provide it as a
+    # service container on localhost:6379 (matches application-test defaults).
+    services:
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
       - name: Checkout code
