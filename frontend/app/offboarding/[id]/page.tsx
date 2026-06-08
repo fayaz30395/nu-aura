@@ -236,7 +236,7 @@ export default function SeparationDetailPage() {
           {/* Header */}
           <Group justify="space-between" align="flex-start">
             <Group>
-              <ActionIcon variant="subtle" size="lg" onClick={() => router.push('/offboarding')}>
+              <ActionIcon variant="subtle" size="lg" aria-label="Back to offboarding list" onClick={() => router.push('/offboarding')}>
                 <IconArrowLeft size={20}/>
               </ActionIcon>
               <div>
@@ -500,6 +500,7 @@ export default function SeparationDetailPage() {
                                       size="sm"
                                       color="green"
                                       variant="light"
+                                      aria-label="Approve clearance"
                                       onClick={() => handleClearanceAction(clearance, ClearanceStatus.APPROVED)}
                                     >
                                       <IconCheck size={14}/>
@@ -510,6 +511,7 @@ export default function SeparationDetailPage() {
                                       size="sm"
                                       color="red"
                                       variant="light"
+                                      aria-label="Reject clearance"
                                       onClick={() => handleClearanceAction(clearance, ClearanceStatus.REJECTED)}
                                     >
                                       <IconTrash size={14}/>

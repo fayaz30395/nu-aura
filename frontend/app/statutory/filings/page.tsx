@@ -280,6 +280,7 @@ export default function StatutoryFilingsPage() {
                             <ActionIcon
                               variant="subtle"
                               size="sm"
+                              aria-label={`Open ${ft.portalName}`}
                               component="a"
                               href={ft.portalUrl}
                               target="_blank"
@@ -374,6 +375,7 @@ export default function StatutoryFilingsPage() {
                                   <ActionIcon
                                     variant="subtle"
                                     color="sky"
+                                    aria-label="Download filing"
                                     onClick={() => handleDownload(run.id, run.fileName ?? 'filing')}
                                     loading={downloadMutation.isPending}
                                   >
@@ -386,6 +388,7 @@ export default function StatutoryFilingsPage() {
                                   <ActionIcon
                                     variant="subtle"
                                     color="teal"
+                                    aria-label="Validate filing"
                                     onClick={() => handleValidate(run.id)}
                                     loading={validateMutation.isPending}
                                   >
@@ -398,6 +401,7 @@ export default function StatutoryFilingsPage() {
                                   <ActionIcon
                                     variant="subtle"
                                     color="green"
+                                    aria-label="Mark as submitted"
                                     onClick={() => openSubmitModal(run.id)}
                                   >
                                     <IconUpload size={16}/>
@@ -409,6 +413,7 @@ export default function StatutoryFilingsPage() {
                                   <ActionIcon
                                     variant="subtle"
                                     color="orange"
+                                    aria-label="View validation errors"
                                     onClick={() => setValidationDetail(run.validationErrors)}
                                   >
                                     <IconEye size={16}/>

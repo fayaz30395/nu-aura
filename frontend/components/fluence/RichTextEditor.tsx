@@ -234,6 +234,7 @@ export default function RichTextEditor({
             <ActionIcon
               size="sm"
               variant={editor.isActive('bold') ? 'filled' : 'default'}
+              aria-label="Bold"
               onClick={() => editor.chain().focus().toggleBold().run()}
               disabled={!editor.can().chain().focus().toggleBold().run()}
             >
@@ -244,6 +245,7 @@ export default function RichTextEditor({
             <ActionIcon
               size="sm"
               variant={editor.isActive('italic') ? 'filled' : 'default'}
+              aria-label="Italic"
               onClick={() => editor.chain().focus().toggleItalic().run()}
               disabled={!editor.can().chain().focus().toggleItalic().run()}
             >
@@ -254,6 +256,7 @@ export default function RichTextEditor({
             <ActionIcon
               size="sm"
               variant={editor.isActive('underline') ? 'filled' : 'default'}
+              aria-label="Underline"
               onClick={() => editor.chain().focus().toggleUnderline().run()}
             >
               <IconUnderline size={16}/>
@@ -263,6 +266,7 @@ export default function RichTextEditor({
             <ActionIcon
               size="sm"
               variant={editor.isActive('strike') ? 'filled' : 'default'}
+              aria-label="Strikethrough"
               onClick={() => editor.chain().focus().toggleStrike().run()}
               disabled={!editor.can().chain().focus().toggleStrike().run()}
             >
@@ -273,6 +277,7 @@ export default function RichTextEditor({
             <ActionIcon
               size="sm"
               variant={editor.isActive('code') ? 'filled' : 'default'}
+              aria-label="Code"
               onClick={() => editor.chain().focus().toggleCode().run()}
               disabled={!editor.can().chain().focus().toggleCode().run()}
             >
@@ -291,6 +296,7 @@ export default function RichTextEditor({
               variant={
                 editor.isActive('heading', {level: 1}) ? 'filled' : 'default'
               }
+              aria-label="Heading 1"
               onClick={() =>
                 editor.chain().focus().toggleHeading({level: 1}).run()
               }
@@ -304,6 +310,7 @@ export default function RichTextEditor({
               variant={
                 editor.isActive('heading', {level: 2}) ? 'filled' : 'default'
               }
+              aria-label="Heading 2"
               onClick={() =>
                 editor.chain().focus().toggleHeading({level: 2}).run()
               }
@@ -317,6 +324,7 @@ export default function RichTextEditor({
               variant={
                 editor.isActive('heading', {level: 3}) ? 'filled' : 'default'
               }
+              aria-label="Heading 3"
               onClick={() =>
                 editor.chain().focus().toggleHeading({level: 3}).run()
               }
@@ -334,6 +342,7 @@ export default function RichTextEditor({
             <ActionIcon
               size="sm"
               variant={editor.isActive('bulletList') ? 'filled' : 'default'}
+              aria-label="Bullet List"
               onClick={() => editor.chain().focus().toggleBulletList().run()}
             >
               <IconList size={16}/>
@@ -343,6 +352,7 @@ export default function RichTextEditor({
             <ActionIcon
               size="sm"
               variant={editor.isActive('orderedList') ? 'filled' : 'default'}
+              aria-label="Ordered List"
               onClick={() => editor.chain().focus().toggleOrderedList().run()}
             >
               <IconListNumbers size={16}/>
@@ -352,6 +362,7 @@ export default function RichTextEditor({
             <ActionIcon
               size="sm"
               variant={editor.isActive('taskList') ? 'filled' : 'default'}
+              aria-label="Task List"
               onClick={() => editor.chain().focus().toggleTaskList().run()}
             >
               <IconChecks size={16}/>
@@ -367,6 +378,7 @@ export default function RichTextEditor({
             <ActionIcon
               size="sm"
               variant={editor.isActive('blockquote') ? 'filled' : 'default'}
+              aria-label="Blockquote"
               onClick={() => editor.chain().focus().toggleBlockquote().run()}
             >
               <IconBlockquote size={16}/>
@@ -376,6 +388,7 @@ export default function RichTextEditor({
             <ActionIcon
               size="sm"
               variant={editor.isActive('codeBlock') ? 'filled' : 'default'}
+              aria-label="Code Block"
               onClick={() => editor.chain().focus().toggleCodeBlock().run()}
             >
               <IconCode size={16}/>
@@ -384,6 +397,7 @@ export default function RichTextEditor({
           <Tooltip label="Horizontal Rule" position="bottom">
             <ActionIcon
               size="sm"
+              aria-label="Horizontal Rule"
               onClick={() => editor.chain().focus().setHorizontalRule().run()}
             >
               <IconRuler size={16}/>
@@ -399,13 +413,14 @@ export default function RichTextEditor({
             <ActionIcon
               size="sm"
               variant={editor.isActive('link') ? 'filled' : 'default'}
+              aria-label="Link"
               onClick={addLink}
             >
               <IconLink size={16}/>
             </ActionIcon>
           </Tooltip>
           <Tooltip label="Image" position="bottom">
-            <ActionIcon size="sm" onClick={addImage}>
+            <ActionIcon size="sm" aria-label="Image" onClick={addImage}>
               <IconPhoto size={16}/>
             </ActionIcon>
           </Tooltip>
@@ -420,6 +435,7 @@ export default function RichTextEditor({
               <ActionIcon
                 size="sm"
                 variant={editor.isActive('table') ? 'filled' : 'default'}
+              aria-label="Table"
               >
                 <div className="flex items-center gap-0.5">
                   <IconTable size={16}/>
@@ -462,6 +478,7 @@ export default function RichTextEditor({
               variant={
                 editor.isActive({textAlign: 'left'}) ? 'filled' : 'default'
               }
+              aria-label="Align Left"
               onClick={() =>
                 editor.chain().focus().setTextAlign('left').run()
               }
@@ -475,6 +492,7 @@ export default function RichTextEditor({
               variant={
                 editor.isActive({textAlign: 'center'}) ? 'filled' : 'default'
               }
+              aria-label="Align Center"
               onClick={() =>
                 editor.chain().focus().setTextAlign('center').run()
               }
@@ -488,6 +506,7 @@ export default function RichTextEditor({
               variant={
                 editor.isActive({textAlign: 'right'}) ? 'filled' : 'default'
               }
+              aria-label="Align Right"
               onClick={() =>
                 editor.chain().focus().setTextAlign('right').run()
               }
@@ -506,6 +525,7 @@ export default function RichTextEditor({
               <ActionIcon
                 size="sm"
                 variant={editor.isActive('highlight') ? 'filled' : 'default'}
+              aria-label="Highlight"
               >
                 <IconHighlight size={16}/>
               </ActionIcon>
@@ -543,7 +563,7 @@ export default function RichTextEditor({
         <Menu shadow="md" trigger="hover" openDelay={100} closeDelay={400}>
           <Menu.Target>
             <Tooltip label="Text Color" position="bottom">
-              <ActionIcon size="sm">
+              <ActionIcon size="sm" aria-label="Text Color">
                 <IconPalette size={16}/>
               </ActionIcon>
             </Tooltip>
@@ -578,6 +598,7 @@ export default function RichTextEditor({
           <Tooltip label="Undo" position="bottom">
             <ActionIcon
               size="sm"
+              aria-label="Undo"
               onClick={() => editor.chain().focus().undo().run()}
               disabled={!editor.can().undo()}
             >
@@ -587,6 +608,7 @@ export default function RichTextEditor({
           <Tooltip label="Redo" position="bottom">
             <ActionIcon
               size="sm"
+              aria-label="Redo"
               onClick={() => editor.chain().focus().redo().run()}
               disabled={!editor.can().redo()}
             >
@@ -601,6 +623,7 @@ export default function RichTextEditor({
         <Tooltip label="Clear Formatting" position="bottom">
           <ActionIcon
             size="sm"
+            aria-label="Clear Formatting"
             onClick={() => editor.chain().focus().clearNodes().run()}
           >
             <IconTrash size={16}/>
