@@ -513,6 +513,26 @@ function LoginPage() {
     return false;
   };
 
+  const getLoginErrorMessage = (err: unknown, fallback: string): string => {
+    const response = (err as {response?: {status?: number; data?: unknown}})?.response;
+    const status = response?.status;
+    const data = response?.data;
+    const message = typeof data === 'string'
+      ? data
+      : typeof data === 'object' && data !== null && 'message' in data
+        ? String((data as {message?: unknown}).message ?? '')
+        : '';
+
+    if (status === 503 && message) {
+      return message;
+    }
+    if (status === 503) {
+      return 'Service is currently unavailable. Please try again in a moment.';
+    }
+
+    return message ? message : fallback;
+  };
+
   // Local widening of the shared LoginRequest type to allow the optional
   // captchaToken field. The shared type stays unchanged (out of scope for
   // this Wave-10 P2-3 change) — axios serialises any object property and the
@@ -539,9 +559,7 @@ function LoginPage() {
       if (isCaptchaRequiredError(err)) {
         setError('Please complete the CAPTCHA challenge to continue.');
       } else {
-        const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message
-          || 'Service temporarily unavailable. Please try again in a moment.';
-        setError(message);
+        setError(getLoginErrorMessage(err, 'Service temporarily unavailable. Please try again in a moment.'));
       }
     } finally {
       setIsDemoLoading(false);
@@ -574,9 +592,7 @@ function LoginPage() {
       if (isCaptchaRequiredError(err)) {
         setError('Please complete the CAPTCHA challenge to continue.');
       } else {
-        const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message
-          || 'Invalid email or password';
-        setError(message);
+        setError(getLoginErrorMessage(err, 'Invalid email or password'));
       }
     } finally {
       setIsEmailLoading(false);
@@ -610,9 +626,7 @@ function LoginPage() {
         setDidFreshLogin(true);
         router.push(sanitizeReturnUrl(searchParams.get('returnUrl')));
       } catch (err: unknown) {
-        setError((err as {
-          response?: { data?: { message?: string } }
-        })?.response?.data?.message || 'Google sign-in failed. Please try again.');
+        setError(getLoginErrorMessage(err, 'Google sign-in failed. Please try again.'));
       } finally {
         setIsGoogleLoading(false);
       }
