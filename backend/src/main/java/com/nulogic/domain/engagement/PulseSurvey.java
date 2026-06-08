@@ -1,6 +1,7 @@
 package com.nulogic.domain.engagement;
 
 import com.nulogic.common.entity.TenantAware;
+import com.nulogic.common.util.TenantTimeProvider;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -112,10 +113,19 @@ public class PulseSurvey extends TenantAware {
     @Column(name = "closed_by")
     private UUID closedBy;
 
+    /**
+     * Returns {@code true} when the survey is in ACTIVE status and the tenant-zone
+     * current date falls within [startDate, endDate] (inclusive).
+     *
+     * <p>Uses {@link TenantTimeProvider#today(java.util.UUID)} so that tenants in
+     * timezones ahead of or behind the server do not see the window open or close
+     * one calendar day early or late.</p>
+     */
     public boolean isActive() {
-        return status == SurveyStatus.ACTIVE &&
-                LocalDate.now().compareTo(startDate) >= 0 && // JVM-local: entity-layer; push to service per docs/architecture/tenant-time-wave-13-summary.md if cross-region zone correctness is needed
-                LocalDate.now().compareTo(endDate) <= 0; // JVM-local: entity-layer; push to service per docs/architecture/tenant-time-wave-13-summary.md if cross-region zone correctness is needed
+        LocalDate today = TenantTimeProvider.today(getTenantId());
+        return status == SurveyStatus.ACTIVE
+                && today.compareTo(startDate) >= 0
+                && today.compareTo(endDate) <= 0;
     }
 
     public double getResponseRate() {

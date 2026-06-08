@@ -2,17 +2,21 @@ package com.nulogic.api.admin.controller;
 
 import com.nulogic.api.admin.dto.*;
 import com.nulogic.application.admin.service.SystemAdminService;
+import com.nulogic.common.config.CookieConfig;
 import com.nulogic.common.security.RequiresPermission;
 import com.nulogic.common.security.SecurityContext;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,6 +37,7 @@ import static com.nulogic.common.security.Permission.SYSTEM_ADMIN;
 public class SystemAdminController {
 
     private final SystemAdminService systemAdminService;
+    private final CookieConfig cookieConfig;
 
     /**
      * Get comprehensive system overview
@@ -155,19 +160,77 @@ public class SystemAdminController {
     }
 
     /**
-     * Generate an impersonation token for a specific tenant
-     * SuperAdmin can use this token to access a tenant's data
-     * Useful for troubleshooting and support
+     * Phase 1 of the two-phase impersonation flow (M-12).
+     *
+     * <p>Generates a short-lived (60s), single-use opaque exchange token stored in Redis.
+     * The impersonation JWT is NOT minted here — it is minted only when the client presents
+     * the exchange token to {@link #consumeImpersonationExchangeToken}, where it is placed
+     * directly into an httpOnly cookie. This design ensures the impersonation JWT is never
+     * exposed to JavaScript.</p>
+     *
+     * <p>Returns: {@code 200 OK} with exchange token + tenant info for UI confirmation.</p>
      */
     @PostMapping("/tenants/{tenantId}/impersonate")
-    @Operation(summary = "Generate impersonation token", description = "Generate a JWT token that allows SuperAdmin to access a specific tenant's data for troubleshooting or support purposes")
+    @Operation(summary = "Generate impersonation exchange token (phase 1 of 2)",
+            description = "Generates a short-lived (60s) single-use opaque exchange token. " +
+                    "Present the exchangeToken to POST /impersonate/consume to obtain the " +
+                    "impersonated session cookie. The JWT is never returned here.")
     @RequiresPermission(value = SYSTEM_ADMIN, revalidate = true)
-    public ResponseEntity<ImpersonationTokenDTO> generateImpersonationToken(
+    public ResponseEntity<ImpersonationExchangeResponse> generateImpersonationExchangeToken(
             @Parameter(description = "Target tenant ID for impersonation")
             @PathVariable UUID tenantId) {
-        log.info("SuperAdmin generating impersonation token for tenant: {}", tenantId);
-        ImpersonationTokenDTO token = systemAdminService.generateImpersonationToken(tenantId);
-        return ResponseEntity.ok(token);
+        log.info("SuperAdmin initiating impersonation exchange token for tenant: {}", tenantId);
+        ImpersonationExchangeResponse response =
+                systemAdminService.generateImpersonationExchangeToken(tenantId);
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * Phase 2 of the two-phase impersonation flow (M-12).
+     *
+     * <p>Atomically consumes the exchange token (Redis single-use enforcement), mints the
+     * impersonation JWT, and places it in an httpOnly access-token cookie identical to the
+     * normal login cookie. The impersonation JWT is never returned in the response body —
+     * it exists only in the cookie jar, inaccessible to JavaScript.</p>
+     *
+     * <p>Security controls applied here:
+     * <ul>
+     *   <li>{@code @RequiresPermission(revalidate=true)}: verifies SYSTEM_ADMIN from DB,
+     *       not from cached JWT claims, immediately before consumption.</li>
+     *   <li>Issuer binding: service verifies the consuming admin matches the token issuer.</li>
+     *   <li>Single-use: Redis GETDEL atomicity prevents replay.</li>
+     *   <li>Audit log: full impersonation event written asynchronously.</li>
+     * </ul></p>
+     *
+     * <p>Returns: {@code 204 No Content} on success (no body — the session is in the cookie).
+     * Returns {@code 403} if the exchange token is invalid, expired, or already used.</p>
+     */
+    @PostMapping("/impersonate/consume")
+    @Operation(summary = "Consume impersonation exchange token (phase 2 of 2)",
+            description = "Validates and consumes the exchange token from phase 1 (single-use, 60s TTL). " +
+                    "On success, sets the impersonation JWT as an httpOnly access-token cookie and returns 204. " +
+                    "The JWT is never present in the response body.")
+    @RequiresPermission(value = SYSTEM_ADMIN, revalidate = true)
+    public ResponseEntity<Void> consumeImpersonationExchangeToken(
+            @Valid @RequestBody ConsumeImpersonationRequest request,
+            HttpServletResponse response) {
+        log.info("SuperAdmin consuming impersonation exchange token");
+        String impersonationJwt = systemAdminService.consumeImpersonationExchangeToken(
+                request.getExchangeToken());
+
+        // Place the impersonation JWT in the same httpOnly cookie the normal login flow uses.
+        // The cookie is not readable by JavaScript (HttpOnly). The JwtAuthenticationFilter
+        // already understands impersonation tokens: it sets SecurityContext + TenantContext
+        // from the token's tenantId / impersonatorId claims.
+        response.addHeader(HttpHeaders.SET_COOKIE,
+                cookieConfig.createAccessTokenCookie(impersonationJwt).toString());
+        // Also emit the hardened __Host- variant for clients that accept it (S10-J rollover).
+        response.addHeader(HttpHeaders.SET_COOKIE,
+                cookieConfig.createHardenedAccessTokenCookie(impersonationJwt).toString());
+
+        log.info("Impersonation session established via httpOnly cookie for admin={}",
+                SecurityContext.getCurrentUserId());
+        return ResponseEntity.noContent().build();
     }
 
     /**

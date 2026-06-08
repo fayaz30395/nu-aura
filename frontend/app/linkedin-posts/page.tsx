@@ -464,10 +464,11 @@ function CreateLinkedInPostModal({post, onClose, onSuccess}: CreateLinkedInPostM
         <form id="linkedin-form" onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {/* Post URL */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+            <label htmlFor="li-post-url" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Post URL <span aria-hidden="true" className="text-danger-500">*</span>
             </label>
             <input
+              id="li-post-url"
               type="url"
               {...register('postUrl')}
               aria-required="true"
@@ -484,10 +485,11 @@ function CreateLinkedInPostModal({post, onClose, onSuccess}: CreateLinkedInPostM
           {/* Author Name and Title */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+              <label htmlFor="li-author-name" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 Author Name <span aria-hidden="true" className="text-danger-500">*</span>
               </label>
               <input
+                id="li-author-name"
                 type="text"
                 {...register('authorName')}
                 aria-required="true"
@@ -501,10 +503,11 @@ function CreateLinkedInPostModal({post, onClose, onSuccess}: CreateLinkedInPostM
               )}
             </div>
             <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+              <label htmlFor="li-author-title" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 Author Title
               </label>
               <input
+                id="li-author-title"
                 type="text"
                 {...register('authorTitle')}
                 className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent dark:bg-[var(--bg-secondary)] dark:text-white"
@@ -515,10 +518,11 @@ function CreateLinkedInPostModal({post, onClose, onSuccess}: CreateLinkedInPostM
 
           {/* Content Snippet */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+            <label htmlFor="li-content-snippet" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Content Snippet <span aria-hidden="true" className="text-danger-500">*</span>
             </label>
             <textarea
+              id="li-content-snippet"
               {...register('contentSnippet')}
               aria-required="true"
               rows={4}
@@ -534,10 +538,11 @@ function CreateLinkedInPostModal({post, onClose, onSuccess}: CreateLinkedInPostM
 
           {/* Image URL */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+            <label htmlFor="li-image-url" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Image URL
             </label>
             <input
+              id="li-image-url"
               type="url"
               {...register('imageUrl')}
               className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent dark:bg-[var(--bg-secondary)] dark:text-white ${
@@ -552,10 +557,11 @@ function CreateLinkedInPostModal({post, onClose, onSuccess}: CreateLinkedInPostM
 
           {/* Posted Date */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+            <label htmlFor="li-posted-at" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Posted Date <span aria-hidden="true" className="text-danger-500">*</span>
             </label>
             <input
+              id="li-posted-at"
               type="date"
               {...register('postedAt')}
               aria-required="true"
@@ -570,10 +576,11 @@ function CreateLinkedInPostModal({post, onClose, onSuccess}: CreateLinkedInPostM
 
           {/* Tags */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+            <label htmlFor="li-tags" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Tags
             </label>
             <input
+              id="li-tags"
               type="text"
               {...register('tags')}
               className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent dark:bg-[var(--bg-secondary)] dark:text-white"
@@ -591,7 +598,7 @@ function CreateLinkedInPostModal({post, onClose, onSuccess}: CreateLinkedInPostM
             </label>
             <div className="grid grid-cols-3 gap-4">
               <div>
-                <label className="block text-xs text-[var(--text-secondary)] mb-1">
+                <label htmlFor="li-likes" className="block text-xs text-[var(--text-secondary)] mb-1">
                   Likes
                 </label>
                 <Controller
@@ -600,6 +607,7 @@ function CreateLinkedInPostModal({post, onClose, onSuccess}: CreateLinkedInPostM
                   render={({field}) => (
                     <>
                       <input
+                        id="li-likes"
                         type="number"
                         min="0"
                         {...field}
@@ -616,7 +624,7 @@ function CreateLinkedInPostModal({post, onClose, onSuccess}: CreateLinkedInPostM
                 />
               </div>
               <div>
-                <label className="block text-xs text-[var(--text-secondary)] mb-1">
+                <label htmlFor="li-comments" className="block text-xs text-[var(--text-secondary)] mb-1">
                   Comments
                 </label>
                 <Controller
@@ -625,6 +633,7 @@ function CreateLinkedInPostModal({post, onClose, onSuccess}: CreateLinkedInPostM
                   render={({field}) => (
                     <>
                       <input
+                        id="li-comments"
                         type="number"
                         min="0"
                         {...field}
@@ -641,7 +650,7 @@ function CreateLinkedInPostModal({post, onClose, onSuccess}: CreateLinkedInPostM
                 />
               </div>
               <div>
-                <label className="block text-xs text-[var(--text-secondary)] mb-1">
+                <label htmlFor="li-shares" className="block text-xs text-[var(--text-secondary)] mb-1">
                   Shares
                 </label>
                 <Controller
@@ -650,6 +659,7 @@ function CreateLinkedInPostModal({post, onClose, onSuccess}: CreateLinkedInPostM
                   render={({field}) => (
                     <>
                       <input
+                        id="li-shares"
                         type="number"
                         min="0"
                         {...field}

@@ -1,6 +1,7 @@
 package com.nulogic.domain.letter;
 
 import com.nulogic.common.entity.TenantAware;
+import com.nulogic.common.util.TenantTimeProvider;
 import com.nulogic.common.util.TenantTimestamp;
 import com.nulogic.common.util.TimeAuditingEntityListener;
 import jakarta.persistence.*;
@@ -92,8 +93,10 @@ public class GeneratedLetter extends TenantAware {
     private UUID previousVersionId;
 
     public static String generateReferenceNumber(String prefix, int sequence) {
-        // JVM-local: year-prefix for human-readable reference. Year boundary in tenant zone differs from JVM by at most ~13 hours; not worth threading a tenantId through a static helper.
-        return String.format("%s/%d/%04d", prefix, LocalDate.now().getYear(), sequence); // JVM-local: entity-layer; push to service per docs/architecture/tenant-time-wave-13-summary.md if cross-region zone correctness is needed
+        // JVM-local: year-prefix for human-readable reference. Year boundary in tenant zone
+        // differs from JVM by at most ~13 hours; not worth threading a tenantId through a static
+        // helper that is called from service layer before the entity's tenantId is known.
+        return String.format("%s/%d/%04d", prefix, LocalDate.now().getYear(), sequence);
     }
 
     public void submitForApproval() {
@@ -127,10 +130,17 @@ public class GeneratedLetter extends TenantAware {
         this.downloadedAt = now;
     }
 
+    /**
+     * Returns {@code true} when this letter has been issued and has not yet passed its
+     * expiry date in the tenant's IANA timezone.
+     *
+     * <p>Uses {@link TenantTimeProvider#today(UUID)} so that a letter with
+     * {@code expiryDate = 2026-07-01} is not considered expired a day early for tenants
+     * whose server runs in a zone that has already crossed midnight into 2026-07-02.</p>
+     */
     public boolean isActive() {
         if (this.status != LetterStatus.ISSUED) return false;
-        // JVM-local: date-only comparison; tenant-zone risk is bounded to midnight rollover. Push to service layer if a tenant ever reports a same-day off-by-one.
-        if (this.expiryDate != null && this.expiryDate.isBefore(LocalDate.now())) { // JVM-local: entity-layer; push to service per docs/architecture/tenant-time-wave-13-summary.md if cross-region zone correctness is needed
+        if (this.expiryDate != null && this.expiryDate.isBefore(TenantTimeProvider.today(getTenantId()))) {
             return false;
         }
         return true;

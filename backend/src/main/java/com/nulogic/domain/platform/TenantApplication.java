@@ -1,6 +1,7 @@
 package com.nulogic.domain.platform;
 
 import com.nulogic.common.entity.TenantAware;
+import com.nulogic.common.util.TenantTimeProvider;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -75,13 +76,17 @@ public class TenantApplication extends TenantAware {
     private String configuration;
 
     /**
-     * Check if this subscription is currently valid
+     * Check if this subscription is currently valid.
+     *
+     * <p>Uses {@link TenantTimeProvider#today(java.util.UUID)} so that expiry is evaluated
+     * in the tenant's IANA timezone. A tenant whose subscription expires on 2026-07-01 in
+     * their local zone will not be cut off a day early because the server runs in UTC.</p>
      */
     public boolean isValid() {
         if (status != SubscriptionStatus.ACTIVE && status != SubscriptionStatus.TRIAL) {
             return false;
         }
-        if (expiresAt != null && expiresAt.isBefore(LocalDate.now())) { // JVM-local: entity-layer; push to service per docs/architecture/tenant-time-wave-13-summary.md if cross-region zone correctness is needed
+        if (expiresAt != null && expiresAt.isBefore(TenantTimeProvider.today(getTenantId()))) {
             return false;
         }
         return true;

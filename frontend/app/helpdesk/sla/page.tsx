@@ -296,8 +296,9 @@ export default function HelpdeskSLAPage() {
             <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium mb-1">Policy Name *</label>
+                  <label htmlFor="sla-name" className="block text-sm font-medium mb-1">Policy Name *</label>
                   <input
+                    id="sla-name"
                     type="text"
                     {...register('name')}
                     className="input-aura"
@@ -307,8 +308,9 @@ export default function HelpdeskSLAPage() {
                   )}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">Priority</label>
+                  <label htmlFor="sla-priority" className="block text-sm font-medium mb-1">Priority</label>
                   <select
+                    id="sla-priority"
                     {...register('priority')}
                     className="input-aura"
                   >
@@ -322,8 +324,9 @@ export default function HelpdeskSLAPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-1">Description</label>
+                <label htmlFor="sla-description" className="block text-sm font-medium mb-1">Description</label>
                 <textarea
+                  id="sla-description"
                   {...register('description')}
                   className="input-aura"
                   rows={2}
@@ -332,8 +335,9 @@ export default function HelpdeskSLAPage() {
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-medium mb-1">First Response (minutes) *</label>
+                  <label htmlFor="sla-first-response" className="block text-sm font-medium mb-1">First Response (minutes) *</label>
                   <input
+                    id="sla-first-response"
                     type="number"
                     {...register('firstResponseMinutes')}
                     className="input-aura"
@@ -344,8 +348,9 @@ export default function HelpdeskSLAPage() {
                   )}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">Resolution Time (minutes) *</label>
+                  <label htmlFor="sla-resolution" className="block text-sm font-medium mb-1">Resolution Time (minutes) *</label>
                   <input
+                    id="sla-resolution"
                     type="number"
                     {...register('resolutionMinutes')}
                     className="input-aura"
@@ -356,8 +361,9 @@ export default function HelpdeskSLAPage() {
                   )}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">Escalate After (minutes)</label>
+                  <label htmlFor="sla-escalation" className="block text-sm font-medium mb-1">Escalate After (minutes)</label>
                   <input
+                    id="sla-escalation"
                     type="number"
                     {...register('escalationAfterMinutes')}
                     className="input-aura"
@@ -368,8 +374,9 @@ export default function HelpdeskSLAPage() {
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-medium mb-1">Business Hours Start</label>
+                  <label htmlFor="sla-biz-start" className="block text-sm font-medium mb-1">Business Hours Start</label>
                   <select
+                    id="sla-biz-start"
                     {...register('businessStartHour')}
                     className="input-aura"
                   >
@@ -379,8 +386,9 @@ export default function HelpdeskSLAPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">Business Hours End</label>
+                  <label htmlFor="sla-biz-end" className="block text-sm font-medium mb-1">Business Hours End</label>
                   <select
+                    id="sla-biz-end"
                     {...register('businessEndHour')}
                     className="input-aura"
                   >
@@ -390,8 +398,9 @@ export default function HelpdeskSLAPage() {
                   </select>
                 </div>
                 <div className="flex items-end gap-4">
-                  <label className="flex items-center">
+                  <label htmlFor="sla-biz-hours-only" className="flex items-center">
                     <input
+                      id="sla-biz-hours-only"
                       type="checkbox"
                       {...register('isBusinessHoursOnly')}
                       className="mr-2"
@@ -402,16 +411,18 @@ export default function HelpdeskSLAPage() {
               </div>
 
               <div className="flex items-center gap-4">
-                <label className="flex items-center">
+                <label htmlFor="sla-is-active" className="flex items-center">
                   <input
+                    id="sla-is-active"
                     type="checkbox"
                     {...register('isActive')}
                     className="mr-2"
                   />
                   Active
                 </label>
-                <label className="flex items-center">
+                <label htmlFor="sla-all-categories" className="flex items-center">
                   <input
+                    id="sla-all-categories"
                     type="checkbox"
                     {...register('applyToAllCategories')}
                     className="mr-2"

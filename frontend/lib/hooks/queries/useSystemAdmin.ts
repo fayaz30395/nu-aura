@@ -4,7 +4,7 @@ import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import {systemAdminApi} from '@/lib/api/admin-system';
 import {
   GrowthMetrics,
-  ImpersonationToken,
+  ImpersonationExchangeResponse,
   PaginatedTenantList,
   SystemOverview,
   TenantMetrics,
@@ -72,16 +72,30 @@ export function useTenantMetrics(tenantId: string) {
 }
 
 /**
- * Mutation hook for generating impersonation token
+ * Phase-1 mutation (M-12): request a short-lived opaque exchange token from the server.
+ * The returned exchangeToken must be passed immediately to useConsumeImpersonationToken —
+ * it must never be stored in state, localStorage, or sessionStorage.
  */
 export function useImpersonationToken() {
-  const queryClient = useQueryClient();
-
-  return useMutation<ImpersonationToken, Error, string>({
+  return useMutation<ImpersonationExchangeResponse, Error, string>({
     mutationFn: (tenantId: string) =>
       systemAdminApi.generateImpersonationToken(tenantId),
+  });
+}
+
+/**
+ * Phase-2 mutation (M-12): consume the exchange token to establish the impersonated session.
+ * The server atomically validates the token (single-use, 60s TTL) and places the
+ * impersonation JWT in an httpOnly cookie. No token is ever returned to JS.
+ * On success, all system-admin queries are invalidated so the UI reflects the new context.
+ */
+export function useConsumeImpersonationToken() {
+  const queryClient = useQueryClient();
+
+  return useMutation<void, Error, string>({
+    mutationFn: (exchangeToken: string) =>
+      systemAdminApi.consumeImpersonationToken(exchangeToken),
     onSuccess: () => {
-      // Invalidate relevant caches after impersonation
       queryClient.invalidateQueries({queryKey: systemAdminKeys.overview()});
     },
   });

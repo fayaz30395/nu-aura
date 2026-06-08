@@ -5,9 +5,10 @@ import {
   getTenantList as getTenantListGenerated,
   getTenantMetrics as getTenantMetricsGenerated,
 } from '@/lib/generated/api/system-admin/system-admin';
+import {apiClient} from './client';
 import {
   GrowthMetrics,
-  ImpersonationToken,
+  ImpersonationExchangeResponse,
   PaginatedTenantList,
   SystemOverview,
   TenantMetrics,
@@ -65,10 +66,29 @@ export const systemAdminApi = {
   },
 
   /**
-   * Generate an impersonation token for a specific tenant
+   * Phase 1 (M-12): request a short-lived (60s) single-use opaque exchange token.
+   * The impersonation JWT is never returned here — only the opaque exchange token.
+   * Immediately pass the exchangeToken to consumeImpersonationToken() without storing it.
    */
-  generateImpersonationToken: async (tenantId: string): Promise<ImpersonationToken> => {
+  generateImpersonationToken: async (tenantId: string): Promise<ImpersonationExchangeResponse> => {
     const response = await generateImpersonationTokenGenerated(tenantId);
-    return response as unknown as ImpersonationToken;
+    return response as unknown as ImpersonationExchangeResponse;
+  },
+
+  /**
+   * Phase 2 (M-12): consume the exchange token. The server atomically validates and
+   * deletes it from Redis (single-use), then places the impersonation JWT in an httpOnly
+   * cookie. The JWT never enters JS memory. Returns void on 204 success.
+   *
+   * The token must NOT be stored before calling this — use it immediately.
+   */
+  consumeImpersonationToken: async (exchangeToken: string): Promise<void> => {
+    await apiClient.post(
+      '/api/v1/admin/system/impersonate/consume',
+      {exchangeToken},
+      // withCredentials ensures the Set-Cookie header from the response is accepted
+      // and stored by the browser cookie jar.
+      {withCredentials: true}
+    );
   },
 };

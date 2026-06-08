@@ -36,7 +36,7 @@
 - Multi-tenant scope by `tenant_id` and RBAC (`@RequiresPermission`) are non-negotiable for relevant flows
 
 ### 4. Engineering defaults (NU-AURA locked stack)
-- Backend: Java 21 + Spring Boot 3.4.1 monolith
+- Backend: Java 21 + Spring Boot 3.5.14 (BOM-managed) monolith
 - Frontend: Next.js 14 + TypeScript + Mantine UI + React Query + Zustand + Tailwind
 - Database: PostgreSQL 16 (shared schema + RLS)
 - Cache/Messaging/Storage: Redis 7, Kafka, MinIO
@@ -360,6 +360,42 @@ Updated frequently as the project evolves.
 
 ---
 
+## 2.0 State Reconciliation — 2026-06-07 (verified against repo)
+
+A 3-agent read-only sweep reconciled this file against the actual codebase. **Tier 2 had drifted
+~3 weeks; figures below are now corrected against disk.**
+
+| Metric | Was (stale) | Verified on disk |
+|--------|-------------|------------------|
+| Flyway latest / count | V169 / 88 files (V0–V91) | **V270 / 267 files (V0–V270)** |
+| Frontend pages (`page.tsx`) | 237 | **264** |
+| Frontend components | 143 | **174** |
+| DB tables (`CREATE TABLE`) | 270+ | **342** |
+| Backend stack | Spring Boot 3.4.1 / Java 17 | **3.5.14 (BOM) / Java 21** |
+| Timezone sweep "remaining" | ~253 (~32%) | **no in-repo progress tracker; Wave-10 baseline = 855 unzoned `*.now()` callsites** |
+| Sub-app completeness %s (95/92/90) | — | **self-assessed; no evidence-tracked source in repo. Treat as judgment, not measured.** |
+
+**Two findings the 2026-06-04 security audit MISSED (re-open them):**
+
+1. **Code-level RLS leak (CRITICAL).** `EmployeeService.java:64`, `ExpenseClaimService.java:65`,
+   `MileageService.java:47` set `app.current_tenant_id` via `set_config(..., false)` — **session-scoped,
+   never RESET** — bypassing the transaction-local `TenantRlsTransactionManager:76`. The tenant GUC
+   persists on the pooled connection after the request returns → cross-tenant read under connection
+   reuse (pgbouncer txn-pooling or bare HikariCP). The audit's "uniformly `SET LOCAL`" claim is
+   **contradicted** by these three. Direct-Neon masks it today.
+2. **Ops-level RLS dependency (CRITICAL).** The V254→V269 fail-closed design is only as strong as the
+   deployed `SPRING_DATASOURCE_USERNAME` being `nu_app_rls` (NOBYPASSRLS). Verify live; `RLS_PROBE_SKIP`
+   must be unset and `fail-on-bypass` not overridden.
+
+**Top open blockers (full deduped backlog in the 2026-06-07 sweep):** demo `Welcome@123` seeds
+(V49/V173) reaching prod incl. a SUPER_ADMIN; migration-chain checksum risk (161/266 migrations
+edited post-introduction); live runtime/E2E gate never executed (blocked by `ruflo` autopilot
+committing to `main` — freeze it, tag an RC, then run the gate on a frozen SHA); auth/RBAC cluster
+(TenantAdmin→SuperAdmin escalation, impersonation revoke no-op, MFA not enforced server-side);
+`LeaveAccrualScheduler` double-accrual window.
+
+---
+
 ## 2.1 Codebase Scale
 
 ### Backend (Spring Boot Monolith)
@@ -376,15 +412,15 @@ Updated frequently as the project evolves.
 | Scheduled jobs (`@Scheduled`) | 25    |
 | Kafka listeners               | 6     |
 
-**Spring Boot:** 3.4.1 / **Java:** 17 / **JaCoCo minimum:** 80% (excludes DTOs, entities, config)
+**Spring Boot:** 3.5.14 (BOM) / **Java:** 21 / **JaCoCo minimum:** 80% (excludes DTOs, entities, config)
 
 ### Frontend (Next.js 14)
 
 | Metric                          | Count         |
 |---------------------------------|---------------|
-| Page routes (`page.tsx`)        | 237           |
+| Page routes (`page.tsx`)        | 264           |
 | Layout files                    | 5             |
-| Components (in `/components`)   | 143           |
+| Components (in `/components`)   | 174           |
 | React Query hooks (in `/hooks`) | 105           |
 | Service files (in `/services`)  | 107           |
 | Type definition files           | 63            |
@@ -395,9 +431,9 @@ Updated frequently as the project evolves.
 
 | Metric                   | Count             |
 |--------------------------|-------------------|
-| Total tables             | 270+              |
+| Total tables             | 342               |
 | Business domains         | 16                |
-| Active Flyway migrations | 88 files (V0–V91) |
+| Active Flyway migrations | 267 files (V0–V270) |
 
 ---
 
@@ -405,8 +441,9 @@ Updated frequently as the project evolves.
 
 | Field             | Value                                         |
 |-------------------|-----------------------------------------------|
-| Active migrations | V0–V146 (138 files; sprint-3 added V147–V149) |
-| Next migration    | **V150** (after sprint-3 lands)               |
+| Active migrations | V0–V270 (267 files)                           |
+| Latest migration  | **V270** (`__neutralize_demo_credentials_outside_demo.sql`) |
+| Next migration    | **V271**                                      |
 | Legacy Liquibase  | `db/changelog/` — **DO NOT USE**              |
 
 **Security sprints (May 2026):**

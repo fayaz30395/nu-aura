@@ -700,10 +700,11 @@ export default function OffboardingPage() {
             <ModalBody>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                  <label htmlFor="exit-employee-id" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Employee ID *
                   </label>
                   <input
+                    id="exit-employee-id"
                     type="text"
                     disabled={isEditing}
                     className="input-aura disabled:opacity-50"
@@ -715,10 +716,11 @@ export default function OffboardingPage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="exit-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Exit Type *
                     </label>
                     <select
+                      id="exit-type"
                       className="input-aura"
                       {...register('exitType')}
                     >
@@ -731,10 +733,11 @@ export default function OffboardingPage() {
                     {errors.exitType && <span className="text-danger-500 text-sm">{errors.exitType.message}</span>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="exit-status" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Status
                     </label>
                     <select
+                      id="exit-status"
                       className="input-aura"
                       {...register('status')}
                     >
@@ -750,20 +753,22 @@ export default function OffboardingPage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="exit-resignation-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Resignation Date
                     </label>
                     <input
+                      id="exit-resignation-date"
                       type="date"
                       className="input-aura"
                       {...register('resignationDate')}
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="exit-last-working-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Last Working Day
                     </label>
                     <input
+                      id="exit-last-working-date"
                       type="date"
                       className="input-aura"
                       {...register('lastWorkingDate')}
@@ -772,10 +777,11 @@ export default function OffboardingPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                  <label htmlFor="exit-notice-period" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Notice Period (days)
                   </label>
                   <input
+                    id="exit-notice-period"
                     type="number"
                     className="input-aura"
                     placeholder="30"
@@ -786,10 +792,11 @@ export default function OffboardingPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                  <label htmlFor="exit-reason" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Reason for Leaving
                   </label>
                   <textarea
+                    id="exit-reason"
                     rows={3}
                     className="input-aura"
                     placeholder="Reason for leaving..."
@@ -799,10 +806,11 @@ export default function OffboardingPage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="exit-new-company" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       New Company
                     </label>
                     <input
+                      id="exit-new-company"
                       type="text"
                       className="input-aura"
                       placeholder="New company name"
@@ -810,10 +818,11 @@ export default function OffboardingPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="exit-new-designation" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       New Designation
                     </label>
                     <input
+                      id="exit-new-designation"
                       type="text"
                       className="input-aura"
                       placeholder="New designation"
@@ -835,10 +844,11 @@ export default function OffboardingPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                  <label htmlFor="exit-notes" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Notes
                   </label>
                   <textarea
+                    id="exit-notes"
                     rows={2}
                     className="input-aura"
                     placeholder="Additional notes..."

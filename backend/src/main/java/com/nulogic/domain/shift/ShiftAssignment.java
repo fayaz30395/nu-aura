@@ -1,5 +1,6 @@
 package com.nulogic.domain.shift;
 
+import com.nulogic.common.util.TenantTimeProvider;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -93,10 +94,21 @@ public class ShiftAssignment {
     private Long version;
 
     /**
-     * Check if assignment is currently active
+     * Check if this shift assignment is currently active.
+     *
+     * <p>Uses {@link TenantTimeProvider#today(UUID)} keyed on {@link #tenantId} so that
+     * the effective date window is evaluated in the tenant's IANA timezone. A shift
+     * assignment whose {@code effectiveTo} is midnight in Tokyo does not appear expired
+     * to an employee whose server runs in UTC+0.</p>
+     *
+     * <p>Note: {@code ShiftAssignment} does not extend {@link com.nulogic.common.entity.TenantAware}
+     * but carries an explicit {@code tenantId} column — we pass it directly to
+     * {@link TenantTimeProvider#today(UUID)}. If {@code tenantId} is {@code null}
+     * (should not occur in production due to the NOT NULL constraint), the provider
+     * falls back to {@link TenantTimeService#DEFAULT_ZONE}.</p>
      */
     public boolean isCurrentlyActive() {
-        LocalDate today = LocalDate.now(); // JVM-local: entity-layer; push to service per docs/architecture/tenant-time-wave-13-summary.md if cross-region zone correctness is needed
+        LocalDate today = TenantTimeProvider.today(tenantId);
         boolean afterStart = !today.isBefore(effectiveFrom);
         boolean beforeEnd = effectiveTo == null || !today.isAfter(effectiveTo);
         return status == AssignmentStatus.ACTIVE && afterStart && beforeEnd;

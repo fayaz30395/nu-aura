@@ -78,6 +78,8 @@ public class SystemAdminService {
     // Wave-10 follow-up: tenant-timezone update flow must invalidate the per-tenant ZoneId
     // cache so a new zone takes effect within the JVM without waiting for the 1-hour TTL.
     private final TenantTimeService tenantTimeService;
+    // M-12: two-phase impersonation — exchange-token store (Redis-backed, 60s TTL, single-use).
+    private final ImpersonationExchangeTokenService impersonationExchangeTokenService;
 
     /**
      * Get comprehensive system overview across all tenants
@@ -190,49 +192,129 @@ public class SystemAdminService {
     }
 
     /**
-     * Generate an impersonation token for accessing a specific tenant
-     * SuperAdmin can use this token to act as if they're part of that tenant
+     * Phase 1 of the two-phase impersonation flow (M-12).
+     *
+     * <p>Generates a short-lived (60s), single-use opaque exchange token stored in Redis.
+     * The impersonation JWT is NOT minted here and is NOT returned to the caller — it is
+     * minted only in {@link #consumeImpersonationExchangeToken} and placed directly in
+     * an httpOnly cookie. This eliminates the prior gap where a 15-min JWT was returned
+     * to the browser's JS context but never consumed.</p>
+     *
+     * @param tenantId the target tenant to impersonate
+     * @return exchange token metadata (opaque token + TTL + tenant info for UI display)
+     * @throws ResourceNotFoundException if the tenant does not exist
+     * @throws IllegalStateException     if the Redis token store is unavailable (fail-closed)
      */
     @Transactional
-    public ImpersonationTokenDTO generateImpersonationToken(UUID tenantId) {
-        log.info("SuperAdmin generating impersonation token for tenant: {}", tenantId);
+    public ImpersonationExchangeResponse generateImpersonationExchangeToken(UUID tenantId) {
+        log.info("SuperAdmin initiating impersonation exchange token generation for tenant: {}", tenantId);
 
         Tenant tenant = tenantRepository.findById(tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Tenant not found with ID: " + tenantId));
 
-        // Get current SuperAdmin user from security context
         UUID currentUserId = com.nulogic.common.security.SecurityContext.getCurrentUserId();
-        User currentUser = userRepository.findById(currentUserId)
-                .orElseThrow(() -> new ResourceNotFoundException("Current user not found"));
+        // Verify the calling user exists in our DB (defence-in-depth against stale JWT).
+        userRepository.findById(currentUserId)
+                .orElseThrow(() -> new ResourceNotFoundException("Issuing admin not found"));
 
-        // Generate impersonation token with target tenant context
-        // The token will carry the SuperAdmin's user ID but with the tenant context set to target tenant
-        String impersonationToken = jwtTokenProvider.generateImpersonationToken(
-                currentUser.getId(),
-                currentUser.getEmail(),
+        String exchangeToken = impersonationExchangeTokenService.generateExchangeToken(currentUserId, tenantId);
+
+        // Audit-log exchange token generation. Full impersonation audit emitted at consume time.
+        auditLogService.logAction(
+                "TENANT",
                 tenantId,
-                currentUser.getRoles().stream()
+                AuditLog.AuditAction.LOGIN,
+                Map.of("action", "impersonation_exchange_token_generated"),
+                Map.of("admin_user_id", currentUserId.toString()),
+                "SuperAdmin generated impersonation exchange token for tenant: " + tenant.getName()
+        );
+
+        return ImpersonationExchangeResponse.builder()
+                .exchangeToken(exchangeToken)
+                .tenantId(tenantId.toString())
+                .tenantName(tenant.getName())
+                .expiresInSeconds(ImpersonationExchangeTokenService.TTL_SECONDS)
+                .build();
+    }
+
+    /**
+     * Phase 2 of the two-phase impersonation flow (M-12).
+     *
+     * <p>Atomically consumes the exchange token from Redis (single-use enforcement),
+     * mints an impersonation JWT, and returns it so the caller (SystemAdminController)
+     * can place it in an httpOnly cookie. The JWT never enters a JS-readable context.</p>
+     *
+     * <p>Security properties enforced here:
+     * <ul>
+     *   <li><strong>Single-use:</strong> Redis GETDEL is atomic — a second call with the same token
+     *       returns null immediately.</li>
+     *   <li><strong>Expiry:</strong> Redis TTL (60s) enforced by the store; expired tokens also return
+     *       null.</li>
+     *   <li><strong>SuperAdmin-only issuance:</strong> the controller guard ({@code @RequiresPermission}
+     *       with {@code revalidate=true}) verifies SYSTEM_ADMIN permission from the database.</li>
+     *   <li><strong>Issuer binding:</strong> the exchange token embeds the admin's user ID; this
+     *       method verifies the current caller matches the issuer.</li>
+     *   <li><strong>Audit completeness:</strong> full impersonation event is written to the audit log.</li>
+     * </ul></p>
+     *
+     * @param exchangeToken the opaque token from phase 1
+     * @return a signed impersonation JWT to be set as an httpOnly cookie by the controller
+     * @throws BusinessException if the exchange token is invalid, expired, or already used
+     */
+    @Transactional
+    public String consumeImpersonationExchangeToken(String exchangeToken) {
+        Map<String, UUID> payload = impersonationExchangeTokenService.consumeExchangeToken(exchangeToken);
+        if (payload == null) {
+            log.warn("Impersonation consume failed — exchange token not found, expired, or replayed");
+            throw new BusinessException("Impersonation exchange token is invalid, expired, or already used");
+        }
+
+        UUID adminUserId = payload.get("adminId");
+        UUID targetTenantId = payload.get("targetTenantId");
+
+        Tenant tenant = tenantRepository.findById(targetTenantId)
+                .orElseThrow(() -> new ResourceNotFoundException("Target tenant not found: " + targetTenantId));
+
+        User adminUser = userRepository.findById(adminUserId)
+                .orElseThrow(() -> new ResourceNotFoundException("Issuing admin user not found: " + adminUserId));
+
+        // Issuer binding: verify the current caller is the same admin who generated the token.
+        // The @RequiresPermission guard already verified SYSTEM_ADMIN; this closes the race
+        // where Admin-A generates and Admin-B presents the same token.
+        UUID currentUserId = com.nulogic.common.security.SecurityContext.getCurrentUserId();
+        if (!adminUserId.equals(currentUserId)) {
+            log.error("SEC: Impersonation exchange token issuer {} does not match caller {}",
+                    adminUserId, currentUserId);
+            throw new BusinessException("Exchange token was not issued by the current user");
+        }
+
+        String impersonationJwt = jwtTokenProvider.generateImpersonationToken(
+                adminUser.getId(),
+                adminUser.getEmail(),
+                targetTenantId,
+                adminUser.getRoles().stream()
                         .map(r -> r.getCode())
                         .collect(Collectors.toSet())
         );
 
-        // Audit log the impersonation
+        // Full impersonation audit: who impersonated whom, when, from which IP.
         auditLogService.logAction(
                 "TENANT",
-                tenantId,
-                com.nulogic.domain.audit.AuditLog.AuditAction.LOGIN,
-                Map.of("action", "impersonation_token_generated"),
-                Map.of("admin_user_id", currentUser.getId()),
-                "SuperAdmin generated impersonation token for tenant: " + tenant.getName()
+                targetTenantId,
+                AuditLog.AuditAction.LOGIN,
+                Map.of("action", "impersonation_session_started"),
+                Map.of(
+                        "admin_user_id", adminUser.getId().toString(),
+                        "admin_email", adminUser.getEmail(),
+                        "target_tenant_id", targetTenantId.toString(),
+                        "target_tenant_name", tenant.getName()
+                ),
+                "SuperAdmin " + adminUser.getEmail() + " started impersonation session for tenant: " + tenant.getName()
         );
 
-        return ImpersonationTokenDTO.builder()
-                .token(impersonationToken)
-                .tokenType("Bearer")
-                .expiresIn(3600) // 1 hour expiry
-                .tenantId(tenantId.toString())
-                .tenantName(tenant.getName())
-                .build();
+        log.info("Impersonation JWT minted and session started: admin={} targetTenant={}",
+                adminUser.getId(), targetTenantId);
+        return impersonationJwt;
     }
 
     /**

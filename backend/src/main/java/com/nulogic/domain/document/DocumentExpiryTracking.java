@@ -1,6 +1,7 @@
 package com.nulogic.domain.document;
 
 import com.nulogic.common.entity.TenantAware;
+import com.nulogic.common.util.TenantTimeProvider;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Index;
@@ -53,15 +54,16 @@ public class DocumentExpiryTracking extends TenantAware {
         if (isNotified) {
             return false;
         }
+        LocalDate today = TenantTimeProvider.today(getTenantId());
         LocalDate reminderDate = expiryDate.minusDays(reminderDaysBefore != null ? reminderDaysBefore : 30);
-        return LocalDate.now().isEqual(reminderDate) || LocalDate.now().isAfter(reminderDate); // JVM-local: entity-layer; push to service per docs/architecture/tenant-time-wave-13-summary.md if cross-region zone correctness is needed
+        return today.isEqual(reminderDate) || today.isAfter(reminderDate);
     }
 
     public boolean isExpired() {
-        return LocalDate.now().isAfter(expiryDate); // JVM-local: entity-layer; push to service per docs/architecture/tenant-time-wave-13-summary.md if cross-region zone correctness is needed
+        return TenantTimeProvider.today(getTenantId()).isAfter(expiryDate);
     }
 
     public long daysUntilExpiry() {
-        return java.time.temporal.ChronoUnit.DAYS.between(LocalDate.now(), expiryDate); // JVM-local: entity-layer; push to service per docs/architecture/tenant-time-wave-13-summary.md if cross-region zone correctness is needed
+        return java.time.temporal.ChronoUnit.DAYS.between(TenantTimeProvider.today(getTenantId()), expiryDate);
     }
 }

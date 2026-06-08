@@ -58,23 +58,23 @@ class SystemAdminControllerAnnotationTest {
     // -----------------------------------------------------------------------
 
     @Nested
-    @DisplayName("generateImpersonationToken endpoint (CRIT-005)")
+    @DisplayName("generateImpersonationExchangeToken endpoint (CRIT-005)")
     class ImpersonateEndpointAnnotationTests {
 
         @Test
-        @DisplayName("generateImpersonationToken has @RequiresPermission annotation")
+        @DisplayName("generateImpersonationExchangeToken has @RequiresPermission annotation")
         void impersonateHasRequiresPermissionAnnotation() throws NoSuchMethodException {
-            RequiresPermission annotation = getAnnotation("generateImpersonationToken", UUID.class);
+            RequiresPermission annotation = getAnnotation("generateImpersonationExchangeToken", UUID.class);
 
             assertThat(annotation)
-                    .as("generateImpersonationToken must be annotated with @RequiresPermission")
+                    .as("generateImpersonationExchangeToken must be annotated with @RequiresPermission")
                     .isNotNull();
         }
 
         @Test
-        @DisplayName("generateImpersonationToken has revalidate = true")
+        @DisplayName("generateImpersonationExchangeToken has revalidate = true")
         void impersonateHasRevalidateTrue() throws NoSuchMethodException {
-            RequiresPermission annotation = getAnnotation("generateImpersonationToken", UUID.class);
+            RequiresPermission annotation = getAnnotation("generateImpersonationExchangeToken", UUID.class);
 
             assertThat(annotation).isNotNull();
             assertThat(annotation.revalidate())
@@ -84,9 +84,9 @@ class SystemAdminControllerAnnotationTest {
         }
 
         @Test
-        @DisplayName("generateImpersonationToken requires SYSTEM_ADMIN permission")
+        @DisplayName("generateImpersonationExchangeToken requires SYSTEM_ADMIN permission")
         void impersonateRequiresSystemAdminPermission() throws NoSuchMethodException {
-            RequiresPermission annotation = getAnnotation("generateImpersonationToken", UUID.class);
+            RequiresPermission annotation = getAnnotation("generateImpersonationExchangeToken", UUID.class);
 
             assertThat(annotation).isNotNull();
             // Either value() or allOf() must contain SYSTEM_ADMIN
@@ -95,7 +95,7 @@ class SystemAdminControllerAnnotationTest {
                             containsSystemAdmin(annotation.allOf());
 
             assertThat(hasSystemAdmin)
-                    .as("generateImpersonationToken must require SYSTEM_ADMIN permission")
+                    .as("generateImpersonationExchangeToken must require SYSTEM_ADMIN permission")
                     .isTrue();
         }
     }

@@ -9,6 +9,7 @@ import {ChartLoadingFallback} from '@/lib/utils/lazy-components';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
 import {
+  useConsumeImpersonationToken,
   useGrowthMetrics,
   useImpersonationToken,
   useSystemOverview,
@@ -44,6 +45,7 @@ export default function SystemDashboard() {
   const tenantListQuery = useTenantList(page, 20);
   const growthMetricsQuery = useGrowthMetrics(6);
   const impersonationMutation = useImpersonationToken();
+  const consumeMutation = useConsumeImpersonationToken();
 
   // Authorization check
   useEffect(() => {
@@ -63,21 +65,25 @@ export default function SystemDashboard() {
     if (!selectedTenant) return;
 
     try {
-      // Audit M-12: the impersonation token (a 15-min cross-tenant-capable JWT)
-      // was previously persisted to JS-accessible sessionStorage along with the
-      // tenant id/name, but grep confirms nothing in the app ever read those keys
-      // — the redirect below uses the SuperAdmin's existing cookie session. The
-      // persisted token was therefore dead and risky (XSS-gated lateral movement),
-      // so it is no longer stored. The mutation is still awaited to surface
-      // backend failures; the redirect proceeds only on success.
-      // TODO(M-12): complete the impersonation flow so the token actually
-      // establishes tenant context (send as Authorization to the redirect target,
-      // used immediately and never persisted) — see security-audit-2026-06-04.md.
-      await impersonationMutation.mutateAsync(selectedTenant.tenantId);
-      // Redirect to tenant's main dashboard
-      router.push('/admin');
+      // M-12: Two-phase impersonation flow.
+      //
+      // Phase 1: Request a short-lived (60s), single-use opaque exchange token from the
+      // server. The impersonation JWT is NOT returned here — only an opaque exchange token.
+      // We do NOT store the exchange token anywhere (no state, no sessionStorage, no ref).
+      const {exchangeToken} = await impersonationMutation.mutateAsync(selectedTenant.tenantId);
+
+      // Phase 2: Immediately consume the exchange token. The server atomically validates
+      // it (single-use Redis delete) and places the impersonation JWT in an httpOnly cookie.
+      // The JWT never enters JavaScript memory. exchangeToken is a local variable that
+      // goes out of scope after this await — it is not persisted.
+      await consumeMutation.mutateAsync(exchangeToken);
+
+      // Redirect to the tenant dashboard. The browser now holds an impersonation session
+      // cookie; the SuperAdmin's own session cookie has been replaced for this tab.
+      setImpersonationModalOpen(false);
+      router.push('/dashboard');
     } catch (error) {
-      log.error('Failed to generate impersonation token:', error);
+      log.error('Impersonation failed:', error);
     }
   };
 
@@ -457,7 +463,7 @@ export default function SystemDashboard() {
               <Button
                 fullWidth
                 onClick={handleImpersonate}
-                loading={impersonationMutation.isPending}
+                loading={impersonationMutation.isPending || consumeMutation.isPending}
               >
                 Generate Access Token & Enter Tenant
               </Button>

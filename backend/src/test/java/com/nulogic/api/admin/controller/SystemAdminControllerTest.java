@@ -35,9 +35,11 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -72,6 +74,9 @@ class SystemAdminControllerTest {
 
     @MockitoBean
     private TenantFilter tenantFilter;
+
+    @MockitoBean
+    private com.nulogic.common.config.CookieConfig cookieConfig;
 
 
     @Autowired
@@ -165,9 +170,9 @@ class SystemAdminControllerTest {
         }
 
         @Test
-        @DisplayName("generateImpersonationToken should require SYSTEM_ADMIN with revalidate=true")
-        void generateImpersonationToken_shouldRequireSystemAdminWithRevalidation() throws NoSuchMethodException {
-            Method method = SystemAdminController.class.getMethod("generateImpersonationToken", UUID.class);
+        @DisplayName("generateImpersonationExchangeToken should require SYSTEM_ADMIN with revalidate=true")
+        void generateImpersonationExchangeToken_shouldRequireSystemAdminWithRevalidation() throws NoSuchMethodException {
+            Method method = SystemAdminController.class.getMethod("generateImpersonationExchangeToken", UUID.class);
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
@@ -437,39 +442,39 @@ class SystemAdminControllerTest {
     // ==================== Helpers ====================
 
     @Nested
-    @DisplayName("POST /tenants/{tenantId}/impersonate — Generate Impersonation Token")
+    @DisplayName("POST /tenants/{tenantId}/impersonate — Generate Impersonation Exchange Token")
     class GenerateImpersonationTokenTests {
 
         @Test
-        @DisplayName("Should return impersonation token DTO with JWT and tenant info")
+        @DisplayName("Should return impersonation exchange response with token metadata and tenant info")
         void generateImpersonationToken_returnsTokenDTO() throws Exception {
-            ImpersonationTokenDTO tokenDTO = ImpersonationTokenDTO.builder()
-                    .token("eyJhbGciOiJIUzI1NiJ9.impersonation.token")
-                    .tokenType("Bearer")
-                    .expiresIn(3600)
+            ImpersonationExchangeResponse response = ImpersonationExchangeResponse.builder()
+                    .exchangeToken("r4nd0m-exchange-token")
                     .tenantId(TARGET_TENANT_ID.toString())
                     .tenantName("Acme Corp")
+                    .expiresInSeconds(60L)
                     .build();
 
-            when(systemAdminService.generateImpersonationToken(TARGET_TENANT_ID)).thenReturn(tokenDTO);
+            when(systemAdminService.generateImpersonationExchangeToken(TARGET_TENANT_ID)).thenReturn(response);
 
             mockMvc.perform(post(BASE_URL + "/tenants/" + TARGET_TENANT_ID + "/impersonate")
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.token").exists())
-                    .andExpect(jsonPath("$.tokenType").value("Bearer"))
-                    .andExpect(jsonPath("$.expiresIn").value(3600))
+                    .andExpect(jsonPath("$.exchangeToken").exists())
+                    .andExpect(jsonPath("$.tenantId").value(TARGET_TENANT_ID.toString()))
+                    .andExpect(jsonPath("$.tenantName").value("Acme Corp"))
+                    .andExpect(jsonPath("$.expiresInSeconds").value(60))
                     .andExpect(jsonPath("$.tenantId").value(TARGET_TENANT_ID.toString()))
                     .andExpect(jsonPath("$.tenantName").value("Acme Corp"));
 
-            verify(systemAdminService).generateImpersonationToken(TARGET_TENANT_ID);
+            verify(systemAdminService).generateImpersonationExchangeToken(TARGET_TENANT_ID);
         }
 
         @Test
         @DisplayName("Should return 404 when target tenant not found")
         void generateImpersonationToken_returns404_whenTenantNotFound() throws Exception {
             UUID unknownTenant = UUID.randomUUID();
-            when(systemAdminService.generateImpersonationToken(unknownTenant))
+            when(systemAdminService.generateImpersonationExchangeToken(unknownTenant))
                     .thenThrow(new ResourceNotFoundException("Tenant not found"));
 
             mockMvc.perform(post(BASE_URL + "/tenants/" + unknownTenant + "/impersonate")
@@ -480,7 +485,7 @@ class SystemAdminControllerTest {
         @Test
         @DisplayName("Impersonation endpoint must have revalidate=true — critical security guard")
         void impersonation_annotationMustHaveRevalidateTrue() throws NoSuchMethodException {
-            Method method = SystemAdminController.class.getMethod("generateImpersonationToken", UUID.class);
+            Method method = SystemAdminController.class.getMethod("generateImpersonationExchangeToken", UUID.class);
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             // CRITICAL: impersonation is the most sensitive endpoint in the platform.
@@ -490,23 +495,139 @@ class SystemAdminControllerTest {
         }
 
         @Test
-        @DisplayName("Response should include non-empty token string")
+        @DisplayName("Response should include non-empty exchangeToken and NOT include a JWT field")
         void generateImpersonationToken_responseContainsToken() throws Exception {
-            ImpersonationTokenDTO tokenDTO = ImpersonationTokenDTO.builder()
-                    .token("valid.jwt.token")
-                    .tokenType("Bearer")
-                    .expiresIn(1800)
+            ImpersonationExchangeResponse response = ImpersonationExchangeResponse.builder()
+                    .exchangeToken("another-exchange-token")
                     .tenantId(TARGET_TENANT_ID.toString())
                     .tenantName("Test Tenant")
+                    .expiresInSeconds(60L)
                     .build();
 
-            when(systemAdminService.generateImpersonationToken(TARGET_TENANT_ID)).thenReturn(tokenDTO);
+            when(systemAdminService.generateImpersonationExchangeToken(TARGET_TENANT_ID)).thenReturn(response);
 
             mockMvc.perform(post(BASE_URL + "/tenants/" + TARGET_TENANT_ID + "/impersonate")
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.token").isNotEmpty())
-                    .andExpect(jsonPath("$.expiresIn").isNumber());
+                    .andExpect(jsonPath("$.exchangeToken").isNotEmpty())
+                    .andExpect(jsonPath("$.expiresInSeconds").isNumber())
+                    // SEC: the impersonation JWT must never appear in the response body
+                    .andExpect(jsonPath("$.token").doesNotExist())
+                    .andExpect(jsonPath("$.tokenType").doesNotExist());
+        }
+    }
+
+    // ==================== POST /impersonate/consume (M-12 phase 2) ====================
+
+    @Nested
+    @DisplayName("POST /impersonate/consume — Phase 2: Consume Exchange Token")
+    class ConsumeImpersonationExchangeTokenTests {
+
+        private static final String VALID_EXCHANGE_TOKEN = "valid-opaque-exchange-token-xyz123";
+
+        @BeforeEach
+        void setUpCookieMock() {
+            // Return a minimal cookie stub so the controller's addHeader call doesn't NPE
+            org.springframework.http.ResponseCookie stubCookie =
+                    org.springframework.http.ResponseCookie.from("access_token", "stub-jwt").build();
+            when(cookieConfig.createAccessTokenCookie(any())).thenReturn(stubCookie);
+            when(cookieConfig.createHardenedAccessTokenCookie(any())).thenReturn(stubCookie);
+        }
+
+        @Test
+        @DisplayName("Returns 204 No Content on successful consumption")
+        void consumeExchangeToken_returns204OnSuccess() throws Exception {
+            when(systemAdminService.consumeImpersonationExchangeToken(VALID_EXCHANGE_TOKEN))
+                    .thenReturn("eyJhbGciOiJIUzI1NiJ9.impersonation.jwt");
+
+            mockMvc.perform(post(BASE_URL + "/impersonate/consume")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content("{\"exchangeToken\":\"" + VALID_EXCHANGE_TOKEN + "\"}"))
+                    .andExpect(status().isNoContent());
+
+            verify(systemAdminService).consumeImpersonationExchangeToken(VALID_EXCHANGE_TOKEN);
+        }
+
+        @Test
+        @DisplayName("Returns 204 and emits Set-Cookie header (JWT must be in cookie, not body)")
+        void consumeExchangeToken_setsCookieHeader() throws Exception {
+            when(systemAdminService.consumeImpersonationExchangeToken(VALID_EXCHANGE_TOKEN))
+                    .thenReturn("eyJhbGciOiJIUzI1NiJ9.impersonation.jwt");
+
+            mockMvc.perform(post(BASE_URL + "/impersonate/consume")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content("{\"exchangeToken\":\"" + VALID_EXCHANGE_TOKEN + "\"}"))
+                    .andExpect(status().isNoContent())
+                    .andExpect(header().exists("Set-Cookie"));
+        }
+
+        @Test
+        @DisplayName("Returns 400 when exchangeToken is blank (Bean Validation)")
+        void consumeExchangeToken_returns400_whenExchangeTokenBlank() throws Exception {
+            mockMvc.perform(post(BASE_URL + "/impersonate/consume")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content("{\"exchangeToken\":\"\"}"))
+                    .andExpect(status().isBadRequest());
+
+            verifyNoInteractions(systemAdminService);
+        }
+
+        @Test
+        @DisplayName("Returns 400 when request body is missing exchangeToken field")
+        void consumeExchangeToken_returns400_whenFieldMissing() throws Exception {
+            mockMvc.perform(post(BASE_URL + "/impersonate/consume")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content("{}"))
+                    .andExpect(status().isBadRequest());
+
+            verifyNoInteractions(systemAdminService);
+        }
+
+        @Test
+        @DisplayName("Returns 400 when service rejects expired / replayed exchange token")
+        void consumeExchangeToken_returns400_onInvalidToken() throws Exception {
+            when(systemAdminService.consumeImpersonationExchangeToken("expired-token"))
+                    .thenThrow(new com.nulogic.common.exception.BusinessException(
+                            "Impersonation exchange token is invalid, expired, or already used"));
+
+            mockMvc.perform(post(BASE_URL + "/impersonate/consume")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content("{\"exchangeToken\":\"expired-token\"}"))
+                    .andExpect(status().isBadRequest());
+        }
+
+        @Test
+        @DisplayName("Phase-2 endpoint must require SYSTEM_ADMIN with revalidate=true (SuperAdmin-only)")
+        void consumeExchangeToken_annotationMustHaveRevalidateTrue() throws NoSuchMethodException {
+            Method method = SystemAdminController.class.getMethod(
+                    "consumeImpersonationExchangeToken",
+                    ConsumeImpersonationRequest.class,
+                    jakarta.servlet.http.HttpServletResponse.class);
+            RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
+
+            assertThat(annotation).isNotNull();
+            assertThat(annotation.revalidate())
+                    .as("revalidate=true is required to prevent stale-JWT privilege escalation")
+                    .isTrue();
+            assertThat(annotation.value()[0]).contains(Permission.SYSTEM_ADMIN);
+        }
+
+        @Test
+        @DisplayName("Both phases must require SYSTEM_ADMIN with revalidate=true")
+        void bothPhases_requireSystemAdminWithRevalidation() throws NoSuchMethodException {
+            Method phase1 = SystemAdminController.class.getMethod(
+                    "generateImpersonationExchangeToken", UUID.class);
+            Method phase2 = SystemAdminController.class.getMethod(
+                    "consumeImpersonationExchangeToken",
+                    ConsumeImpersonationRequest.class,
+                    jakarta.servlet.http.HttpServletResponse.class);
+
+            assertThat(phase1.getAnnotation(RequiresPermission.class).revalidate()).isTrue();
+            assertThat(phase2.getAnnotation(RequiresPermission.class).revalidate()).isTrue();
+            assertThat(phase1.getAnnotation(RequiresPermission.class).value()[0])
+                    .contains(Permission.SYSTEM_ADMIN);
+            assertThat(phase2.getAnnotation(RequiresPermission.class).value()[0])
+                    .contains(Permission.SYSTEM_ADMIN);
         }
     }
 }

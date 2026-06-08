@@ -22,6 +22,34 @@ agent or engineer can pick up without context.
 
 ---
 
+## 🔒 MANDATORY pre-deploy security gate (backend)
+
+Verified 2026-06-07. The repo seeds demo users (incl. a SUPER_ADMIN) with the publicly-known
+password `Welcome@123` (migrations V49/V61/V76/V110/V121/V122/V173). This is **neutralized by
+`V270__neutralize_demo_credentials_outside_demo.sql`**, but that protection is **gated on
+configuration** — so a backend deploy is only safe if ALL of these hold. Check each before exposing
+the backend:
+
+- [ ] **Spring profile is `prod`** (`SPRING_PROFILES_ACTIVE=prod`) — otherwise `application-prod.yml`'s
+      `demoCredentialsEnabled:false` default does not apply.
+- [ ] **`DEMO_CREDENTIALS_ENABLED` is unset or `false`** in the prod environment (never `true`).
+- [ ] **Flyway ran through ≥ V270** on the prod DB (`SELECT MAX(version) FROM flyway_schema_history;`
+      → ≥ 270). V270 SUSPENDs + sentinel-hashes the known `Welcome@123` accounts when the flag is false.
+- [ ] **Post-migrate check:** `SELECT COUNT(*) FROM users WHERE status='SUSPENDED' AND password_hash LIKE 'LOCKED_DEMO_CREDENTIAL_%';`
+      should be > 0 in prod (confirms V270 fired). And confirm no enabled user still holds a
+      `Welcome@123` bcrypt digest.
+
+If any box is unchecked, **do not expose the backend** — the `Welcome@123` SUPER_ADMIN is an
+unauthenticated→admin path. (Note: `PasswordPolicyService` also blocklists `Welcome@123`, so users
+cannot re-set it.)
+
+> Separately verified 2026-06-07 and found NOT a defect: the audit-flagged "RLS `set_config(local=false)`
+> never RESET" in EmployeeService/ExpenseClaimService/MileageService — those use transaction-local
+> `set_config(..., true)`, and the one session-scoped (`false`) path in `TenantAwareDataSourceConfig`
+> RESETs on every connection checkout. No cross-tenant leak via these paths.
+
+---
+
 ## ⚠️ The one real gap: no public backend
 
 The frontend is live but **login/data won't work end-to-end until a backend is hosted.** This could

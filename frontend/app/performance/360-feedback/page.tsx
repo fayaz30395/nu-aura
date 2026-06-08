@@ -913,8 +913,9 @@ export default function Feedback360Page() {
                 <fieldset className="space-y-4 border-t border-[var(--border-main)] pt-4">
                   <legend className="text-sm font-medium text-[var(--text-primary)]">Review Types</legend>
                   <div className="grid grid-cols-2 gap-4">
-                    <label className="flex items-center">
+                    <label htmlFor="cycle-include-self-review" className="flex items-center">
                       <input
+                        id="cycle-include-self-review"
                         type="checkbox"
                         checked={cycleForm.includeSelfReview}
                         onChange={(e) =>
@@ -924,8 +925,9 @@ export default function Feedback360Page() {
                       />
                       <span className="ml-2 text-sm text-[var(--text-primary)]">Self Review</span>
                     </label>
-                    <label className="flex items-center">
+                    <label htmlFor="cycle-include-manager-review" className="flex items-center">
                       <input
+                        id="cycle-include-manager-review"
                         type="checkbox"
                         checked={cycleForm.includeManagerReview}
                         onChange={(e) =>
@@ -935,8 +937,9 @@ export default function Feedback360Page() {
                       />
                       <span className="ml-2 text-sm text-[var(--text-primary)]">Manager Review</span>
                     </label>
-                    <label className="flex items-center">
+                    <label htmlFor="cycle-include-peer-review" className="flex items-center">
                       <input
+                        id="cycle-include-peer-review"
                         type="checkbox"
                         checked={cycleForm.includePeerReview}
                         onChange={(e) =>
@@ -946,8 +949,9 @@ export default function Feedback360Page() {
                       />
                       <span className="ml-2 text-sm text-[var(--text-primary)]">Peer Review</span>
                     </label>
-                    <label className="flex items-center">
+                    <label htmlFor="cycle-include-upward-review" className="flex items-center">
                       <input
+                        id="cycle-include-upward-review"
                         type="checkbox"
                         checked={cycleForm.includeUpwardReview}
                         onChange={(e) =>
@@ -958,8 +962,9 @@ export default function Feedback360Page() {
                       <span className="ml-2 text-sm text-[var(--text-primary)]">Upward Review</span>
                     </label>
                   </div>
-                  <label className="flex items-center mt-2">
+                  <label htmlFor="cycle-is-anonymous" className="flex items-center mt-2">
                     <input
+                      id="cycle-is-anonymous"
                       type="checkbox"
                       checked={cycleForm.isAnonymous}
                       onChange={(e) =>

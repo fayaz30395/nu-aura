@@ -253,10 +253,11 @@ export default function GoalsPage() {
         <div className="card-aura p-4 mb-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+              <label htmlFor="filter-goal-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 Filter by Type
               </label>
               <select
+                id="filter-goal-type"
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value as GoalType | 'ALL')}
                 className="input-aura"
@@ -271,10 +272,11 @@ export default function GoalsPage() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+              <label htmlFor="filter-goal-status" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 Filter by Status
               </label>
               <select
+                id="filter-goal-status"
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value as GoalStatus | 'ALL')}
                 className="input-aura"
@@ -399,10 +401,11 @@ export default function GoalsPage() {
                 <form onSubmit={handleSubmit(handleFormSubmit)}>
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                      <label htmlFor="goal-title" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                         Title *
                       </label>
                       <input
+                        id="goal-title"
                         type="text"
                         {...register('title')}
                         className="input-aura"
@@ -413,10 +416,11 @@ export default function GoalsPage() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                      <label htmlFor="goal-description" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                         Description
                       </label>
                       <textarea
+                        id="goal-description"
                         rows={3}
                         {...register('description')}
                         className="input-aura"
@@ -428,10 +432,11 @@ export default function GoalsPage() {
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                        <label htmlFor="goal-goal-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Goal Type *
                         </label>
                         <select
+                          id="goal-goal-type"
                           {...register('goalType')}
                           className="input-aura"
                         >
@@ -448,10 +453,11 @@ export default function GoalsPage() {
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                        <label htmlFor="goal-status" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Status *
                         </label>
                         <select
+                          id="goal-status"
                           {...register('status')}
                           className="input-aura"
                         >
@@ -470,10 +476,11 @@ export default function GoalsPage() {
 
                     <div className="grid grid-cols-3 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                        <label htmlFor="goal-target-value" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Target Value *
                         </label>
                         <input
+                          id="goal-target-value"
                           type="number"
                           {...register('targetValue')}
                           className="input-aura"
@@ -484,10 +491,11 @@ export default function GoalsPage() {
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                        <label htmlFor="goal-current-value" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Current Value *
                         </label>
                         <input
+                          id="goal-current-value"
                           type="number"
                           {...register('currentValue')}
                           className="input-aura"
@@ -498,10 +506,11 @@ export default function GoalsPage() {
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                        <label htmlFor="goal-unit" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Unit *
                         </label>
                         <input
+                          id="goal-unit"
                           type="text"
                           placeholder="e.g., tasks, %"
                           {...register('unit')}
@@ -515,10 +524,11 @@ export default function GoalsPage() {
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                        <label htmlFor="goal-start-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Start Date *
                         </label>
                         <input
+                          id="goal-start-date"
                           type="date"
                           {...register('startDate')}
                           className="input-aura"
@@ -529,10 +539,11 @@ export default function GoalsPage() {
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                        <label htmlFor="goal-end-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           End Date *
                         </label>
                         <input
+                          id="goal-end-date"
                           type="date"
                           {...register('endDate')}
                           className="input-aura"
