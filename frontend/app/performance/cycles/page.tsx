@@ -269,10 +269,11 @@ export default function ReviewCyclesPage() {
         <div className="card-aura p-4 mb-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+              <label htmlFor="filterType" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 Filter by Type
               </label>
               <select
+                id="filterType"
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value as CycleType | 'ALL')}
                 className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
@@ -287,10 +288,11 @@ export default function ReviewCyclesPage() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+              <label htmlFor="filterStatus" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 Filter by Status
               </label>
               <select
+                id="filterStatus"
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value as CycleStatus | 'ALL')}
                 className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
@@ -421,10 +423,11 @@ export default function ReviewCyclesPage() {
                 <form onSubmit={handleSubmit(handleFormSubmit)}>
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                      <label htmlFor="name" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                         Cycle Name *
                       </label>
                       <input
+                        id="name"
                         type="text"
                         placeholder="e.g., Annual Review 2024"
                         {...register('name')}
@@ -436,10 +439,11 @@ export default function ReviewCyclesPage() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                      <label htmlFor="description" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                         Description
                       </label>
                       <textarea
+                        id="description"
                         rows={3}
                         {...register('description')}
                         className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"

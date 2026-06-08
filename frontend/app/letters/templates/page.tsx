@@ -689,10 +689,11 @@ export default function LetterTemplatesPage() {
               {/* Basic Info Row */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
+                  <label htmlFor="name" className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                     Template Name *
                   </label>
                   <input
+                    id="name"
                     {...form.register('name')}
                     className="w-full px-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                     placeholder="e.g., Standard Offer Letter"
@@ -702,10 +703,11 @@ export default function LetterTemplatesPage() {
                   )}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
+                  <label htmlFor="code" className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                     Template Code *
                   </label>
                   <input
+                    id="code"
                     {...form.register('code')}
                     disabled={!!editingTemplate}
                     className="w-full px-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 disabled:opacity-50 font-mono"
@@ -720,10 +722,11 @@ export default function LetterTemplatesPage() {
               {/* Category & Description */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
+                  <label htmlFor="category" className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                     Category *
                   </label>
                   <select
+                    id="category"
                     {...form.register('category')}
                     className="w-full px-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                   >
@@ -738,10 +741,11 @@ export default function LetterTemplatesPage() {
                   )}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
+                  <label htmlFor="description" className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                     Description
                   </label>
                   <input
+                    id="description"
                     {...form.register('description')}
                     className="w-full px-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                     placeholder="Brief description of this template"
@@ -763,7 +767,7 @@ export default function LetterTemplatesPage() {
 
                 {/* Main Editor */}
                 <div className="lg:col-span-3 order-1 lg:order-2">
-                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
+                  <label htmlFor="templateContent" className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                     Template Content (HTML) *
                   </label>
                   <p className="text-caption mb-2">
@@ -775,6 +779,7 @@ export default function LetterTemplatesPage() {
                     render={({field}) => (
                       <textarea
                         {...field}
+                        id="templateContent"
                         rows={18}
                         className="w-full px-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 font-mono text-sm resize-y"
                         placeholder={'<p>Dear {{employee.name}},</p>\n<p>This is to certify that...</p>'}
@@ -794,10 +799,11 @@ export default function LetterTemplatesPage() {
                   <div className="flex items-center gap-4">
                     <input
                       type="checkbox"
+                      id="includeSignature"
                       {...form.register('includeSignature')}
                       className="h-4 w-4 rounded border-surface-300 text-accent-600 focus:ring-accent-500"
                     />
-                    <label className="text-sm text-[var(--text-primary)]">Include Signature Block</label>
+                    <label htmlFor="includeSignature" className="text-sm text-[var(--text-primary)]">Include Signature Block</label>
                   </div>
                   <div className="flex items-center gap-4">
                     <input

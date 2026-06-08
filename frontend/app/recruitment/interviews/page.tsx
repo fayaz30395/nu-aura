@@ -944,9 +944,10 @@ function InterviewsPage() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Interview
+                      <label htmlFor="interviewRound" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Interview
                         Round</label>
                       <select
+                        id="interviewRound"
                         {...registerCreate('interviewRound')}
                         className="input-aura"
                       >
@@ -959,9 +960,10 @@ function InterviewsPage() {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Interview
+                      <label htmlFor="interviewType" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Interview
                         Type</label>
                       <select
+                        id="interviewType"
                         {...registerCreate('interviewType')}
                         className="input-aura"
                       >
@@ -974,9 +976,10 @@ function InterviewsPage() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Scheduled Date &
+                      <label htmlFor="scheduledAt" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Scheduled Date &
                         Time *</label>
                       <input
+                        id="scheduledAt"
                         type="datetime-local"
                         {...registerCreate('scheduledAt')}
                         className="input-aura"
@@ -985,9 +988,10 @@ function InterviewsPage() {
                         <p className="text-danger-500 text-xs mt-1">{errorsCreate.scheduledAt.message}</p>}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Duration
+                      <label htmlFor="durationMinutes" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Duration
                         (minutes)</label>
                       <input
+                        id="durationMinutes"
                         type="number"
                         min="15"
                         step="15"

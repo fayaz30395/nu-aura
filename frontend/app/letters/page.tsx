@@ -870,10 +870,11 @@ export default function LettersPage() {
             <ModalBody>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                  <label htmlFor="generate-templateId" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Template *
                   </label>
                   <select
+                    id="generate-templateId"
                     {...generateLetterForm.register('templateId')}
                     onChange={(e) => handleTemplateSelect(e.target.value)}
                     className="w-full px-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
@@ -895,11 +896,12 @@ export default function LettersPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                  <label htmlFor="generate-employeeId" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Employee ID *
                   </label>
                   <input
                     type="text"
+                    id="generate-employeeId"
                     {...generateLetterForm.register('employeeId')}
                     className="w-full px-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                     placeholder="Enter employee ID"
@@ -911,11 +913,12 @@ export default function LettersPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                  <label htmlFor="generate-letterTitle" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Letter Title
                   </label>
                   <input
                     type="text"
+                    id="generate-letterTitle"
                     {...generateLetterForm.register('letterTitle')}
                     className="w-full px-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                     placeholder="Letter title (optional)"
@@ -924,7 +927,7 @@ export default function LettersPage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="generate-letterDate" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Letter Date
                     </label>
                     <Controller
@@ -932,6 +935,7 @@ export default function LettersPage() {
                       control={generateLetterForm.control}
                       render={({field}) => (
                         <DateInput
+                          id="generate-letterDate"
                           value={field.value || null}
                           onChange={(d) => field.onChange(d ?? '')}
                           valueFormat="YYYY-MM-DD"

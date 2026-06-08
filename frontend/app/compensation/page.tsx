@@ -926,11 +926,13 @@ export default function CompensationPage() {
           <ModalFooter className="flex-col gap-4">
             {showRejectionReasonInput && selectedRevision && (selectedRevision.status === 'PENDING_REVIEW' || selectedRevision.status === 'PENDING_APPROVAL') && (
               <div className="w-full space-y-4 border-t border-[var(--border-main)] pt-4">
-                <label className="block text-sm font-medium text-[var(--text-secondary)]">
+                <label htmlFor="rejection-reason"
+                  className="block text-sm font-medium text-[var(--text-secondary)]">
                   Rejection Reason <span aria-hidden="true"
                   className="text-danger-600 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">*</span>
                 </label>
                 <Textarea
+                  id="rejection-reason"
                   placeholder="Please provide a reason for rejecting this revision..."
                   value={rejectionReason}
                   onChange={(e) => setRejectionReason(e.target.value)}
@@ -1003,10 +1005,10 @@ export default function CompensationPage() {
           <ModalBody>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                <label htmlFor="cycle-name" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Cycle Name
                 </label>
-                <Input placeholder="e.g., Annual Review 2025"/>
+                <Input id="cycle-name" placeholder="e.g., Annual Review 2025"/>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>

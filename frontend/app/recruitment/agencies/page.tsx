@@ -276,10 +276,11 @@ export default function AgenciesPage() {
               <ModalBody className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
+                        <label htmlFor="name" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
                           Agency Name *
                         </label>
                         <input
+                          id="name"
                           {...form.register('name')}
                           className="w-full px-4 py-2 text-sm bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg input-skeuo"
                           placeholder="Agency name"
@@ -291,20 +292,22 @@ export default function AgenciesPage() {
                         )}
                       </div>
                       <div>
-                        <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
+                        <label htmlFor="contactPerson" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
                           Contact Person
                         </label>
                         <input
+                          id="contactPerson"
                           {...form.register('contactPerson')}
                           className="w-full px-4 py-2 text-sm bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg input-skeuo"
                           placeholder="Primary contact"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
+                        <label htmlFor="email" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
                           Email
                         </label>
                         <input
+                          id="email"
                           {...form.register('email')}
                           type="email"
                           className="w-full px-4 py-2 text-sm bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg input-skeuo"
@@ -317,30 +320,33 @@ export default function AgenciesPage() {
                         )}
                       </div>
                       <div>
-                        <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
+                        <label htmlFor="phone" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
                           Phone
                         </label>
                         <input
+                          id="phone"
                           {...form.register('phone')}
                           className="w-full px-4 py-2 text-sm bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg input-skeuo"
                           placeholder="+91 XXXXX XXXXX"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
+                        <label htmlFor="website" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
                           Website
                         </label>
                         <input
+                          id="website"
                           {...form.register('website')}
                           className="w-full px-4 py-2 text-sm bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg input-skeuo"
                           placeholder="https://..."
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
+                        <label htmlFor="status" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
                           Status
                         </label>
                         <select
+                          id="status"
                           {...form.register('status')}
                           className="w-full px-4 py-2 text-sm bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg cursor-pointer input-skeuo"
                         >
@@ -351,10 +357,11 @@ export default function AgenciesPage() {
                         </select>
                       </div>
                       <div>
-                        <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
+                        <label htmlFor="feeType" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
                           Fee Type
                         </label>
                         <select
+                          id="feeType"
                           {...form.register('feeType')}
                           className="w-full px-4 py-2 text-sm bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg cursor-pointer input-skeuo"
                         >
@@ -365,10 +372,11 @@ export default function AgenciesPage() {
                         </select>
                       </div>
                       <div>
-                        <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
+                        <label htmlFor="feeAmount" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
                           Fee Amount
                         </label>
                         <input
+                          id="feeAmount"
                           {...form.register('feeAmount')}
                           type="number"
                           step="0.01"
@@ -377,10 +385,11 @@ export default function AgenciesPage() {
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
+                        <label htmlFor="contractStartDate" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
                           Contract Start
                         </label>
                         <input
+                          id="contractStartDate"
                           {...form.register('contractStartDate')}
                           type="date"
                           className="w-full px-4 py-2 text-sm bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg input-skeuo"
