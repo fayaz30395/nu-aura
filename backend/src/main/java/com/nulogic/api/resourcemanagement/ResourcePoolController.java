@@ -151,7 +151,7 @@ public class ResourcePoolController {
     @Operation(summary = "Add members to a resource pool")
     public ResponseEntity<Map<String, Object>> addMembers(
             @PathVariable UUID id,
-            @RequestBody @Size(min = 1, max = 500, message = "Provide 1-500 employee IDs") List<UUID> employeeIds) {
+            @Valid @RequestBody @Size(min = 1, max = 500, message = "Provide 1-500 employee IDs") List<UUID> employeeIds) {
         if (!enabled) {
             return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
         }
