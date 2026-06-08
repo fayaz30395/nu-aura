@@ -14,6 +14,7 @@ import com.nulogic.domain.leave.LeaveRequest;
 import com.nulogic.domain.notification.Notification;
 import com.nulogic.domain.payroll.PayrollRun;
 import com.nulogic.domain.user.RoleScope;
+import com.nulogic.infrastructure.kafka.producer.EventPublisher;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,6 +33,7 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -79,6 +81,8 @@ class PerformanceUseCaseBenchmarkTest extends AbstractPostgresIntegrationTest {
     private SelfServiceService selfServiceService;
     @MockitoBean
     private NotificationService notificationService;
+    @MockitoBean
+    private EventPublisher eventPublisher;
 
     @BeforeEach
     void setUpSuperAdminContext() {
@@ -161,6 +165,12 @@ class PerformanceUseCaseBenchmarkTest extends AbstractPostgresIntegrationTest {
 
         when(payrollRunService.initiateProcessing(any(UUID.class), any(UUID.class))).thenReturn(processing);
         when(payrollRunService.getPayrollRunById(any(UUID.class))).thenReturn(completed);
+        // No Kafka broker in CI: stub the publish so the controller's blocking
+        // .get() succeeds and returns 202 (the happy path this benchmark measures).
+        // The real Kafka-down rollback-to-DRAFT path is covered by integration tests.
+        when(eventPublisher.publishPayrollProcessingEvent(
+                any(UUID.class), any(UUID.class), any(UUID.class), any(Integer.class), any(Integer.class)))
+                .thenReturn(CompletableFuture.completedFuture(null));
 
         // 1. Submit payroll run (should be fast — just enqueues)
         long submitStart = System.nanoTime();

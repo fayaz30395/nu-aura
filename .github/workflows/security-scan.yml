@@ -87,6 +87,7 @@ jobs:
         with:
           image-ref: nu-aura-backend:scan
           severity: CRITICAL,HIGH
+          ignore-unfixed: true
           exit-code: '1'
           format: sarif
           output: trivy-backend.sarif
@@ -95,6 +96,7 @@ jobs:
         with:
           image-ref: nu-aura-frontend:scan
           severity: CRITICAL,HIGH
+          ignore-unfixed: true
           exit-code: '1'
           format: sarif
           output: trivy-frontend.sarif

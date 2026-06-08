@@ -206,10 +206,13 @@ class AttendanceE2ETest extends AbstractPostgresIntegrationTest {
     @WithMockUser(username = "employee@test.com", roles = {"EMPLOYEE"})
     @DisplayName("E2E: Get today's attendance after check-in")
     void getTodayAttendance_AfterCheckIn() throws Exception {
+        // The record's attendanceDate is in the tenant timezone, but LocalDate.now()
+        // here is the server timezone (UTC in CI) — they can differ by a day near
+        // midnight. Query a ±1-day window so the record is found regardless of offset.
         LocalDate today = LocalDate.now();
         mockMvc.perform(get(BASE_URL + "/my-attendance")
-                        .param("startDate", today.toString())
-                        .param("endDate", today.toString()))
+                        .param("startDate", today.minusDays(1).toString())
+                        .param("endDate", today.plusDays(1).toString()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").isArray())
                 .andExpect(jsonPath("$.content[0].employeeId").value(testEmployeeId.toString()))
@@ -247,10 +250,13 @@ class AttendanceE2ETest extends AbstractPostgresIntegrationTest {
         assertThat(attendanceRecordId).isNotNull();
 
         // Use my-attendance endpoint to get today's records
+        // The record's attendanceDate is in the tenant timezone, but LocalDate.now()
+        // here is the server timezone (UTC in CI) — they can differ by a day near
+        // midnight. Query a ±1-day window so the record is found regardless of offset.
         LocalDate today = LocalDate.now();
         mockMvc.perform(get(BASE_URL + "/my-attendance")
-                        .param("startDate", today.toString())
-                        .param("endDate", today.toString()))
+                        .param("startDate", today.minusDays(1).toString())
+                        .param("endDate", today.plusDays(1).toString()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].checkInTime").exists())
                 .andExpect(jsonPath("$.content[0].checkOutTime").exists())
