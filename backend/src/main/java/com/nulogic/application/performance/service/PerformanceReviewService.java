@@ -124,7 +124,7 @@ public class PerformanceReviewService {
         if (request.getReviewPeriodEnd() != null)
             review.setReviewPeriodEnd(request.getReviewPeriodEnd());
         if (request.getStatus() != null)
-            review.setStatus(request.getStatus());
+            review.transitionTo(request.getStatus());
         if (request.getOverallRating() != null)
             review.setOverallRating(request.getOverallRating());
         if (request.getStrengths() != null)
@@ -220,7 +220,7 @@ public class PerformanceReviewService {
         PerformanceReview review = reviewRepository.findByIdAndTenantId(reviewId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException(REVIEW_NOT_FOUND));
 
-        review.setStatus(PerformanceReview.ReviewStatus.SUBMITTED);
+        review.transitionTo(PerformanceReview.ReviewStatus.SUBMITTED);
         review.setSubmittedAt(tenantTimeService.now(tenantId));
 
         review = reviewRepository.save(review);
@@ -241,7 +241,7 @@ public class PerformanceReviewService {
         PerformanceReview review = reviewRepository.findByIdAndTenantId(reviewId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException(REVIEW_NOT_FOUND));
 
-        review.setStatus(PerformanceReview.ReviewStatus.COMPLETED);
+        review.transitionTo(PerformanceReview.ReviewStatus.COMPLETED);
         review.setCompletedAt(tenantTimeService.now(tenantId));
 
         review = reviewRepository.save(review);

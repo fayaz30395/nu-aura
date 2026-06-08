@@ -115,4 +115,39 @@ public class PerformanceReview extends TenantAware {
         COMPLETED,
         ACKNOWLEDGED
     }
+
+    /**
+     * Whether the review may move from its current status to {@code target}.
+     * Legal graph: DRAFT→SUBMITTED; SUBMITTED→{IN_REVIEW,COMPLETED,DRAFT (revert)};
+     * IN_REVIEW→{COMPLETED,SUBMITTED (revert)}; COMPLETED→ACKNOWLEDGED; ACKNOWLEDGED is terminal.
+     * A transition to the same status is treated as an idempotent no-op (allowed).
+     */
+    public boolean canTransitionTo(ReviewStatus target) {
+        if (target == null) return false;
+        if (target == this.status) return true;
+        return switch (this.status) {
+            case DRAFT -> target == ReviewStatus.SUBMITTED;
+            case SUBMITTED -> target == ReviewStatus.IN_REVIEW
+                    || target == ReviewStatus.COMPLETED
+                    || target == ReviewStatus.DRAFT;
+            case IN_REVIEW -> target == ReviewStatus.COMPLETED
+                    || target == ReviewStatus.SUBMITTED;
+            case COMPLETED -> target == ReviewStatus.ACKNOWLEDGED;
+            case ACKNOWLEDGED -> false;
+        };
+    }
+
+    /**
+     * Move to {@code target} after validating the transition is legal. The single mutation point
+     * for review status — call this instead of {@link #setStatus} from service code so the
+     * workflow state machine is enforced everywhere.
+     *
+     * @throws InvalidReviewStatusTransitionException if the transition is not permitted
+     */
+    public void transitionTo(ReviewStatus target) {
+        if (!canTransitionTo(target)) {
+            throw new InvalidReviewStatusTransitionException(this.status, target);
+        }
+        this.status = target;
+    }
 }

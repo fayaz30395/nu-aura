@@ -271,7 +271,7 @@ public class ReviewCycleService {
 
         review.setOverallComments(request.getOverallComments());
         review.setGoalAchievementPercent(request.getGoalAchievementPercent());
-        review.setStatus(PerformanceReview.ReviewStatus.SUBMITTED);
+        review.transitionTo(PerformanceReview.ReviewStatus.SUBMITTED);
         review.setSubmittedAt(tenantTimeService.now(tenantId));
 
         performanceReviewRepository.save(review);
@@ -291,7 +291,7 @@ public class ReviewCycleService {
         review.setIncrementRecommendation(request.getIncrementRecommendation());
         review.setPromotionRecommended(request.getPromotionRecommended());
         review.setManagerComments(request.getComments());
-        review.setStatus(PerformanceReview.ReviewStatus.IN_REVIEW);
+        review.transitionTo(PerformanceReview.ReviewStatus.IN_REVIEW);
 
         performanceReviewRepository.save(review);
     }
