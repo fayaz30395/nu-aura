@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "eslint . --max-warnings=0",
     "lint:design-system": "node scripts/check-styling-drift.mjs",
+    "check:routes": "node ../scripts/check-route-coverage.mjs",
     "analyze": "ANALYZE=true next build",
     "test": "vitest",
     "test:run": "vitest run",

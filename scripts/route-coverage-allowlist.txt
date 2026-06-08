@@ -1,0 +1,40 @@
+# Route-coverage allowlist — known dead/parentless nav targets as of 2220a55c.
+# Each line is a path with no Next.js page.tsx today. The check FAILS on any NEW dead link
+# not listed here. Remove a line once its page ships to lock that link against regression.
+# Triage: real 404s (e.g. /recruitment/scorecards, /fluence/chat — fixed by fix/dead-nav-pages)
+# vs intended prefix / error-boundary targets. This is existing nav debt, not new breakage.
+/admin/approvals
+/admin/compliance
+/admin/tenants
+/app
+/auth
+/contracts/templates/1
+/contracts/templates/new
+/dashboards
+/documents
+/exit-interview
+/fluence/chat
+/fluence/wiki/1/1
+/home
+/inbox
+/learning/catalog
+/learning/certificates/1/verify
+/learning/course/1
+/learning/my-courses
+/learning/paths/1
+/learning/programs
+/letter-templates
+/me
+/me/inbox
+/notifications
+/org-chart
+/payroll/runs/1
+/privacy
+/profile
+/recruitment/scorecards
+/sign
+/statutory-filings
+/tax/declarations/1
+/terms
+/travel/1/edit
+/travel/1/expenses/new
