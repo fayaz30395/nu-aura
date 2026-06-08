@@ -21,13 +21,18 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.7</version>
+        <version>3.5.14</version>
         <relativePath/>
     </parent>
 
     <properties>
         <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- CVE remediation: bump transitive versions the Spring Boot 3.5.14 BOM
+             still ships vulnerable (these CVEs post-date the BOM). Patch-level. -->
+        <tomcat.version>10.1.55</tomcat.version>         <!-- CVE-2026-41293 (CRITICAL) + tomcat HIGHs -->
+        <netty.version>4.1.133.Final</netty.version>     <!-- CVE-2026-42583 -->
+        <postgresql.version>42.7.11</postgresql.version> <!-- CVE-2026-42198 -->
     </properties>
 
     <dependencyManagement>
@@ -42,6 +47,22 @@
                 <groupId>com.nulogic</groupId>
                 <artifactId>pm-module</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+            <!-- CVE remediation: deps not version-managed by the Spring Boot BOM -->
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>2.18.0</version>              <!-- CVE-2024-47554 (HIGH) -->
+            </dependency>
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcprov-jdk18on</artifactId>
+                <version>1.84</version>                <!-- CVE-2026-5598 -->
+            </dependency>
+            <dependency>
+                <groupId>org.lz4</groupId>
+                <artifactId>lz4-java</artifactId>
+                <version>1.8.1</version>               <!-- CVE-2025-12183 -->
             </dependency>
         </dependencies>
     </dependencyManagement>
