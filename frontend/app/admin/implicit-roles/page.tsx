@@ -517,10 +517,11 @@ export default function ImplicitRolesPage() {
             <form onSubmit={createForm.handleSubmit(handleCreateRule)}>
               <div className="grid grid-cols-2 gap-4 mb-4">
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                  <label htmlFor="create-ruleName" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Rule Name *
                   </label>
                   <input
+                    id="create-ruleName"
                     type="text"
                     {...createForm.register('ruleName')}
                     className="input-aura"
@@ -532,10 +533,11 @@ export default function ImplicitRolesPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                  <label htmlFor="create-conditionType" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Condition Type *
                   </label>
                   <select
+                    id="create-conditionType"
                     {...createForm.register('conditionType')}
                     className="input-aura"
                   >
@@ -555,10 +557,11 @@ export default function ImplicitRolesPage() {
 
               <div className="grid grid-cols-2 gap-4 mb-4">
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                  <label htmlFor="create-targetRoleId" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Target Role *
                   </label>
                   <select
+                    id="create-targetRoleId"
                     {...createForm.register('targetRoleId')}
                     className="input-aura"
                   >
@@ -577,10 +580,11 @@ export default function ImplicitRolesPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                  <label htmlFor="create-scope" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Scope
                   </label>
                   <select
+                    id="create-scope"
                     {...createForm.register('scope')}
                     className="input-aura"
                   >
@@ -594,10 +598,11 @@ export default function ImplicitRolesPage() {
               </div>
 
               <div className="mb-4">
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                <label htmlFor="create-priority" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Priority (0-1000)
                 </label>
                 <input
+                  id="create-priority"
                   type="number"
                   {...createForm.register('priority', {valueAsNumber: true})}
                   className="input-aura"
@@ -606,10 +611,11 @@ export default function ImplicitRolesPage() {
               </div>
 
               <div className="mb-4">
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                <label htmlFor="create-description" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Description
                 </label>
                 <textarea
+                  id="create-description"
                   {...createForm.register('description')}
                   className="input-aura"
                   rows={3}
@@ -649,10 +655,11 @@ export default function ImplicitRolesPage() {
             <form onSubmit={editForm.handleSubmit(handleUpdateRule)}>
               <div className="grid grid-cols-2 gap-4 mb-4">
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                  <label htmlFor="edit-ruleName" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Rule Name *
                   </label>
                   <input
+                    id="edit-ruleName"
                     type="text"
                     {...editForm.register('ruleName')}
                     className="input-aura"
@@ -663,10 +670,11 @@ export default function ImplicitRolesPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                  <label htmlFor="edit-conditionType" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Condition Type *
                   </label>
                   <select
+                    id="edit-conditionType"
                     {...editForm.register('conditionType')}
                     className="input-aura"
                   >
@@ -681,10 +689,11 @@ export default function ImplicitRolesPage() {
 
               <div className="grid grid-cols-2 gap-4 mb-4">
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                  <label htmlFor="edit-targetRoleId" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Target Role *
                   </label>
                   <select
+                    id="edit-targetRoleId"
                     {...editForm.register('targetRoleId')}
                     className="input-aura"
                   >
@@ -697,10 +706,11 @@ export default function ImplicitRolesPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                  <label htmlFor="edit-scope" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Scope
                   </label>
                   <select
+                    id="edit-scope"
                     {...editForm.register('scope')}
                     className="input-aura"
                   >
@@ -714,10 +724,11 @@ export default function ImplicitRolesPage() {
               </div>
 
               <div className="mb-4">
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                <label htmlFor="edit-priority" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Priority (0-1000)
                 </label>
                 <input
+                  id="edit-priority"
                   type="number"
                   {...editForm.register('priority', {valueAsNumber: true})}
                   className="input-aura"
@@ -725,10 +736,11 @@ export default function ImplicitRolesPage() {
               </div>
 
               <div className="mb-4">
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                <label htmlFor="edit-description" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Description
                 </label>
                 <textarea
+                  id="edit-description"
                   {...editForm.register('description')}
                   className="input-aura"
                   rows={3}
