@@ -99,7 +99,8 @@ public class SamlAuthenticationSuccessHandler implements AuthenticationSuccessHa
             // Set secure cookies
             setAuthCookies(response, accessToken, refreshToken);
 
-            log.info("SAML authentication successful for user {} in tenant {}", user.getEmail(), tenantId);
+            // SEC L-1: log stable user id, not email (PII), to keep aggregated logs PII-free.
+            log.info("SAML authentication successful for user {} in tenant {}", user.getId(), tenantId);
 
             // Redirect to frontend dashboard
             response.sendRedirect(frontendUrl + "/dashboard?saml=success");
