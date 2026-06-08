@@ -489,7 +489,7 @@ class HomeServiceTest {
             LeaveType leaveType = createTestLeaveType(leaveTypeId, "Sick Leave");
             Department department = createTestDepartment(departmentId, "Sales");
 
-            when(leaveRequestRepository.findByTenantIdAndStartDateBetween(eq(tenantId), any(LocalDate.class), any(LocalDate.class)))
+            when(leaveRequestRepository.findActiveByTenantIdAndStatusOnDate(eq(tenantId), eq(LeaveRequest.LeaveRequestStatus.APPROVED), any(LocalDate.class)))
                     .thenReturn(List.of(leaveRequest));
             when(employeeRepository.findAllById(anySet())).thenReturn(List.of(employee));
             when(leaveTypeRepository.findAllById(anySet())).thenReturn(List.of(leaveType));
@@ -508,7 +508,7 @@ class HomeServiceTest {
         @DisplayName("should return empty list when no approved leaves")
         void getEmployeesOnLeaveToday_shouldReturnEmptyWhenNoLeaves() {
             // Given
-            when(leaveRequestRepository.findByTenantIdAndStartDateBetween(eq(tenantId), any(LocalDate.class), any(LocalDate.class)))
+            when(leaveRequestRepository.findActiveByTenantIdAndStatusOnDate(eq(tenantId), eq(LeaveRequest.LeaveRequestStatus.APPROVED), any(LocalDate.class)))
                     .thenReturn(Collections.emptyList());
 
             // When
@@ -523,11 +523,10 @@ class HomeServiceTest {
         void getEmployeesOnLeaveToday_shouldExcludePendingLeaves() {
             // Given
             UUID leaveTypeId = UUID.randomUUID();
-            LeaveRequest pendingLeave = createTestLeaveRequest(employeeId, leaveTypeId, LocalDate.now(), LocalDate.now().plusDays(2));
-            pendingLeave.setStatus(LeaveRequest.LeaveRequestStatus.PENDING);
-
-            when(leaveRequestRepository.findByTenantIdAndStartDateBetween(eq(tenantId), any(LocalDate.class), any(LocalDate.class)))
-                    .thenReturn(List.of(pendingLeave));
+            // The active-on-date query filters status=APPROVED in SQL, so a pending
+            // request is never returned — modelled here by an empty result.
+            when(leaveRequestRepository.findActiveByTenantIdAndStatusOnDate(eq(tenantId), eq(LeaveRequest.LeaveRequestStatus.APPROVED), any(LocalDate.class)))
+                    .thenReturn(Collections.emptyList());
 
             // When
             List<OnLeaveEmployeeResponse> result = homeService.getEmployeesOnLeaveToday();
@@ -541,11 +540,10 @@ class HomeServiceTest {
         void getEmployeesOnLeaveToday_shouldExcludeRejectedLeaves() {
             // Given
             UUID leaveTypeId = UUID.randomUUID();
-            LeaveRequest rejectedLeave = createTestLeaveRequest(employeeId, leaveTypeId, LocalDate.now(), LocalDate.now().plusDays(2));
-            rejectedLeave.setStatus(LeaveRequest.LeaveRequestStatus.REJECTED);
-
-            when(leaveRequestRepository.findByTenantIdAndStartDateBetween(eq(tenantId), any(LocalDate.class), any(LocalDate.class)))
-                    .thenReturn(List.of(rejectedLeave));
+            // The active-on-date query filters status=APPROVED in SQL, so a rejected
+            // request is never returned — modelled here by an empty result.
+            when(leaveRequestRepository.findActiveByTenantIdAndStatusOnDate(eq(tenantId), eq(LeaveRequest.LeaveRequestStatus.APPROVED), any(LocalDate.class)))
+                    .thenReturn(Collections.emptyList());
 
             // When
             List<OnLeaveEmployeeResponse> result = homeService.getEmployeesOnLeaveToday();
@@ -564,7 +562,7 @@ class HomeServiceTest {
             Employee employee = createTestEmployee(employeeId, "Ongoing", "Leave", LocalDate.of(1990, 1, 1));
             LeaveType leaveType = createTestLeaveType(leaveTypeId, "Annual Leave");
 
-            when(leaveRequestRepository.findByTenantIdAndStartDateBetween(eq(tenantId), any(LocalDate.class), any(LocalDate.class)))
+            when(leaveRequestRepository.findActiveByTenantIdAndStatusOnDate(eq(tenantId), eq(LeaveRequest.LeaveRequestStatus.APPROVED), any(LocalDate.class)))
                     .thenReturn(List.of(ongoingLeave));
             when(employeeRepository.findAllById(anySet())).thenReturn(List.of(employee));
             when(leaveTypeRepository.findAllById(anySet())).thenReturn(List.of(leaveType));
@@ -591,7 +589,7 @@ class HomeServiceTest {
             Employee emp2 = createTestEmployee(employee2Id, "Second", "OnLeave", LocalDate.of(1991, 2, 2));
             LeaveType leaveType = createTestLeaveType(leaveTypeId, "Casual Leave");
 
-            when(leaveRequestRepository.findByTenantIdAndStartDateBetween(eq(tenantId), any(LocalDate.class), any(LocalDate.class)))
+            when(leaveRequestRepository.findActiveByTenantIdAndStatusOnDate(eq(tenantId), eq(LeaveRequest.LeaveRequestStatus.APPROVED), any(LocalDate.class)))
                     .thenReturn(List.of(leave1, leave2));
             when(employeeRepository.findAllById(anySet())).thenReturn(List.of(emp1, emp2));
             when(leaveTypeRepository.findAllById(anySet())).thenReturn(List.of(leaveType));

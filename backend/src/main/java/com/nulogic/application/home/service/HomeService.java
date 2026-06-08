@@ -226,14 +226,12 @@ public class HomeService {
         UUID tenantId = TenantContext.requireCurrentTenant();
         LocalDate today = tenantTimeService.today(tenantId);
 
-        // Get leave requests where today falls between start and end date
-        List<LeaveRequest> leaves = leaveRequestRepository.findByTenantIdAndStartDateBetween(tenantId, today.minusMonths(1), today);
-
-        // Filter to only approved leaves that cover today
-        List<LeaveRequest> approvedLeavesToday = leaves.stream()
-                .filter(lr -> lr.getStatus() == LeaveRequest.LeaveRequestStatus.APPROVED)
-                .filter(lr -> !lr.getStartDate().isAfter(today) && !lr.getEndDate().isBefore(today))
-                .collect(Collectors.toList());
+        // Fetch approved leaves active on `today` (startDate <= today AND endDate >= today)
+        // directly in SQL. The predicate is pushed to the database so long-running leaves
+        // that started before any rolling window (e.g. multi-month parental leave) are still
+        // captured — the previous startDate-between-last-month-and-today query missed those.
+        List<LeaveRequest> approvedLeavesToday = leaveRequestRepository.findActiveByTenantIdAndStatusOnDate(
+                tenantId, LeaveRequest.LeaveRequestStatus.APPROVED, today);
 
         if (approvedLeavesToday.isEmpty()) {
             return Collections.emptyList();

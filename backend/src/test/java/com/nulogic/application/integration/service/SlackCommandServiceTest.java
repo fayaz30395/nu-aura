@@ -86,7 +86,8 @@ class SlackCommandServiceTest {
     @Test
     @DisplayName("handleBalanceCommand returns leave balances for mapped employee")
     void handleBalanceCommand_returnsBalances() {
-        when(channelConfigRepository.findAll()).thenReturn(List.of(slackConfig));
+        when(channelConfigRepository.findByChannelAndSlackWorkspaceIdOrderByCreatedAtAsc(
+                eq(NotificationChannel.SLACK), eq(TEAM_ID))).thenReturn(List.of(slackConfig));
         when(employeeRepository.findByTenantId(TENANT_ID)).thenReturn(List.of(employee));
 
         LeaveType casualLeave = LeaveType.builder().leaveName("Casual Leave").build();
@@ -115,8 +116,9 @@ class SlackCommandServiceTest {
     @Test
     @DisplayName("handleBalanceCommand returns error when workspace not connected")
     void handleBalanceCommand_unknownWorkspace() {
-        when(channelConfigRepository.findAll()).thenReturn(List.of());
-
+        // No channel config for the workspace → the repository returns an empty list
+        // (Mockito default for unstubbed List-returning methods), so
+        // resolveTenantFromTeam yields null → "not connected".
         String result = slackCommandService.handleBalanceCommand(SLACK_USER_ID, "UNKNOWN_TEAM");
 
         assertThat(result).contains("not connected");
@@ -125,7 +127,8 @@ class SlackCommandServiceTest {
     @Test
     @DisplayName("handleBalanceCommand returns error when employee not found")
     void handleBalanceCommand_employeeNotFound() {
-        when(channelConfigRepository.findAll()).thenReturn(List.of(slackConfig));
+        when(channelConfigRepository.findByChannelAndSlackWorkspaceIdOrderByCreatedAtAsc(
+                eq(NotificationChannel.SLACK), eq(TEAM_ID))).thenReturn(List.of(slackConfig));
         when(employeeRepository.findByTenantId(TENANT_ID)).thenReturn(List.of());
 
         String result = slackCommandService.handleBalanceCommand(SLACK_USER_ID, TEAM_ID);
@@ -136,7 +139,8 @@ class SlackCommandServiceTest {
     @Test
     @DisplayName("handleLeaveCommand with empty text shows usage")
     void handleLeaveCommand_emptyText_showsUsage() {
-        when(channelConfigRepository.findAll()).thenReturn(List.of(slackConfig));
+        when(channelConfigRepository.findByChannelAndSlackWorkspaceIdOrderByCreatedAtAsc(
+                eq(NotificationChannel.SLACK), eq(TEAM_ID))).thenReturn(List.of(slackConfig));
         when(employeeRepository.findByTenantId(TENANT_ID)).thenReturn(List.of(employee));
 
         String result = slackCommandService.handleLeaveCommand("", SLACK_USER_ID, TEAM_ID);
@@ -148,7 +152,8 @@ class SlackCommandServiceTest {
     @Test
     @DisplayName("handleLeaveCommand with valid input returns confirmation")
     void handleLeaveCommand_validInput_returnsConfirmation() {
-        when(channelConfigRepository.findAll()).thenReturn(List.of(slackConfig));
+        when(channelConfigRepository.findByChannelAndSlackWorkspaceIdOrderByCreatedAtAsc(
+                eq(NotificationChannel.SLACK), eq(TEAM_ID))).thenReturn(List.of(slackConfig));
         when(employeeRepository.findByTenantId(TENANT_ID)).thenReturn(List.of(employee));
 
         String result = slackCommandService.handleLeaveCommand("2 casual family event", SLACK_USER_ID, TEAM_ID);
@@ -161,7 +166,8 @@ class SlackCommandServiceTest {
     @Test
     @DisplayName("handleLeaveCommand with invalid days returns error")
     void handleLeaveCommand_invalidDays_returnsError() {
-        when(channelConfigRepository.findAll()).thenReturn(List.of(slackConfig));
+        when(channelConfigRepository.findByChannelAndSlackWorkspaceIdOrderByCreatedAtAsc(
+                eq(NotificationChannel.SLACK), eq(TEAM_ID))).thenReturn(List.of(slackConfig));
         when(employeeRepository.findByTenantId(TENANT_ID)).thenReturn(List.of(employee));
 
         String result = slackCommandService.handleLeaveCommand("abc casual", SLACK_USER_ID, TEAM_ID);
@@ -172,7 +178,8 @@ class SlackCommandServiceTest {
     @Test
     @DisplayName("handleLeaveCommand with excessive days returns error")
     void handleLeaveCommand_excessiveDays_returnsError() {
-        when(channelConfigRepository.findAll()).thenReturn(List.of(slackConfig));
+        when(channelConfigRepository.findByChannelAndSlackWorkspaceIdOrderByCreatedAtAsc(
+                eq(NotificationChannel.SLACK), eq(TEAM_ID))).thenReturn(List.of(slackConfig));
         when(employeeRepository.findByTenantId(TENANT_ID)).thenReturn(List.of(employee));
 
         String result = slackCommandService.handleLeaveCommand("50 casual", SLACK_USER_ID, TEAM_ID);

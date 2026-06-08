@@ -542,15 +542,11 @@ public class PredictiveAnalyticsService {
 
             BigDecimal basicSalary = latest.getBasicSalary();
             if (basicSalary != null && basicSalary.compareTo(BigDecimal.ZERO) > 0) {
-                // Get all active salary structures for the tenant to compute percentile
-                List<SalaryStructure> allSalaries = salaryStructureRepository
-                        .findAllByTenantId(tenantId, PageRequest.of(0, 50_000))
-                        .getContent();
-
-                long belowCount = allSalaries.stream()
-                        .filter(s -> s.getBasicSalary() != null && s.getBasicSalary().compareTo(basicSalary) < 0)
-                        .count();
-                long totalCount = allSalaries.size();
+                // Compute the percentile with SQL aggregates instead of loading the
+                // entire tenant salary table into heap just to count.
+                long belowCount = salaryStructureRepository
+                        .countByTenantIdAndBasicSalaryLessThan(tenantId, basicSalary);
+                long totalCount = salaryStructureRepository.countByTenantId(tenantId);
 
                 if (totalCount > 0) {
                     salaryPercentile = BigDecimal.valueOf(belowCount * 100.0 / totalCount)
@@ -703,21 +699,16 @@ public class PredictiveAnalyticsService {
                 ? BigDecimal.valueOf(newHires * 100.0 / headcount).setScale(2, RoundingMode.HALF_UP)
                 : BigDecimal.ZERO;
 
-        // Average salary from salary structures
+        // Average salary from active salary structures, computed with SQL
+        // aggregates instead of loading the entire tenant salary table into heap.
         BigDecimal avgSalary = BigDecimal.ZERO;
-        List<SalaryStructure> salaryStructures = salaryStructureRepository
-                .findAllByTenantId(tenantId, PageRequest.of(0, 50_000)).getContent();
-        if (!salaryStructures.isEmpty()) {
-            BigDecimal totalSalary = salaryStructures.stream()
-                    .filter(s -> Boolean.TRUE.equals(s.getIsActive()) && s.getBasicSalary() != null)
-                    .map(SalaryStructure::getBasicSalary)
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
-            long activeSalaryCount = salaryStructures.stream()
-                    .filter(s -> Boolean.TRUE.equals(s.getIsActive()) && s.getBasicSalary() != null)
-                    .count();
-            if (activeSalaryCount > 0) {
-                avgSalary = totalSalary.divide(BigDecimal.valueOf(activeSalaryCount), 2, RoundingMode.HALF_UP);
+        long activeSalaryCount = salaryStructureRepository.countActiveWithBasicSalaryByTenantId(tenantId);
+        if (activeSalaryCount > 0) {
+            BigDecimal totalSalary = salaryStructureRepository.sumActiveBasicSalaryByTenantId(tenantId);
+            if (totalSalary == null) {
+                totalSalary = BigDecimal.ZERO;
             }
+            avgSalary = totalSalary.divide(BigDecimal.valueOf(activeSalaryCount), 2, RoundingMode.HALF_UP);
         }
 
         // Average tenure in months

@@ -303,9 +303,8 @@ public class SlackCommandService {
 
     private UUID resolveTenantFromTeam(String teamId) {
         return channelConfigRepository
-                .findAll().stream()
-                .filter(c -> c.getChannel() == NotificationChannel.SLACK)
-                .filter(c -> teamId.equals(c.getSlackWorkspaceId()))
+                .findByChannelAndSlackWorkspaceIdOrderByCreatedAtAsc(NotificationChannel.SLACK, teamId)
+                .stream()
                 .map(NotificationChannelConfig::getTenantId)
                 .findFirst()
                 .orElse(null);

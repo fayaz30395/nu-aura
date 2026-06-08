@@ -38,6 +38,12 @@ public interface SurveyResponseRepository extends JpaRepository<SurveyResponse, 
             "AND r.status = 'COMPLETED'")
     long countCompletedResponses(@Param("surveyId") UUID surveyId);
 
+    @Query("SELECT COUNT(r) FROM SurveyResponse r WHERE r.survey.id = :surveyId " +
+            "AND r.status = :status")
+    long countBySurveyIdAndStatus(
+            @Param("surveyId") UUID surveyId,
+            @Param("status") SurveyResponse.ResponseStatus status);
+
     @Query("SELECT AVG(r.engagementScore) FROM SurveyResponse r " +
             "WHERE r.survey.id = :surveyId AND r.engagementScore IS NOT NULL")
     Double getAverageEngagementScore(@Param("surveyId") UUID surveyId);

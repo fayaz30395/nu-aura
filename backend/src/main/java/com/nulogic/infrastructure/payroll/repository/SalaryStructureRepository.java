@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -53,4 +54,42 @@ public interface SalaryStructureRepository extends JpaRepository<SalaryStructure
     @Query("SELECT COUNT(DISTINCT s.employeeId) FROM SalaryStructure s " +
             "WHERE s.tenantId = :tenantId AND s.isActive = true")
     long countDistinctEmployeesWithActiveSalaryStructure(@Param("tenantId") UUID tenantId);
+
+    /**
+     * Count all (non-deleted) salary structures for a tenant.
+     * Used as the denominator for salary-percentile calculations; mirrors the
+     * total size of {@code findAllByTenantId(...)} without loading rows into heap.
+     */
+    @Query("SELECT COUNT(s) FROM SalaryStructure s WHERE s.tenantId = :tenantId")
+    long countByTenantId(@Param("tenantId") UUID tenantId);
+
+    /**
+     * Count salary structures for a tenant whose basic salary is strictly below
+     * the given threshold. Rows with a null basic salary are excluded (JPQL
+     * comparison predicates are false for null operands).
+     * Used as the numerator for salary-percentile calculations.
+     */
+    @Query("SELECT COUNT(s) FROM SalaryStructure s " +
+            "WHERE s.tenantId = :tenantId AND s.basicSalary < :basicSalary")
+    long countByTenantIdAndBasicSalaryLessThan(
+            @Param("tenantId") UUID tenantId,
+            @Param("basicSalary") BigDecimal basicSalary
+    );
+
+    /**
+     * Count active salary structures with a non-null basic salary for a tenant.
+     * Used as the divisor when computing the average active salary.
+     */
+    @Query("SELECT COUNT(s) FROM SalaryStructure s " +
+            "WHERE s.tenantId = :tenantId AND s.isActive = true AND s.basicSalary IS NOT NULL")
+    long countActiveWithBasicSalaryByTenantId(@Param("tenantId") UUID tenantId);
+
+    /**
+     * Sum the basic salary of active salary structures (non-null) for a tenant.
+     * Returns null when no matching rows exist (SQL SUM over an empty set).
+     * Used as the dividend when computing the average active salary.
+     */
+    @Query("SELECT SUM(s.basicSalary) FROM SalaryStructure s " +
+            "WHERE s.tenantId = :tenantId AND s.isActive = true AND s.basicSalary IS NOT NULL")
+    BigDecimal sumActiveBasicSalaryByTenantId(@Param("tenantId") UUID tenantId);
 }

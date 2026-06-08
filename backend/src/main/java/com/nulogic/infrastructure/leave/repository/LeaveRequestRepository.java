@@ -26,6 +26,20 @@ public interface LeaveRequestRepository
 
     List<LeaveRequest> findByTenantIdAndStartDateBetween(UUID tenantId, LocalDate startDate, LocalDate endDate);
 
+    /**
+     * Returns all leave requests with the given status that are active on a specific date —
+     * i.e. startDate &lt;= date AND endDate &gt;= date. Pushes the date-coverage predicate into SQL
+     * so long-running leaves (e.g. multi-month parental leave that started outside any rolling
+     * window) are captured. Soft-deleted rows are excluded automatically by the entity's
+     * {@code @Where(is_deleted = false)} clause.
+     */
+    @Query("SELECT lr FROM LeaveRequest lr WHERE lr.tenantId = :tenantId " +
+            "AND lr.status = :status AND lr.startDate <= :date AND lr.endDate >= :date")
+    List<LeaveRequest> findActiveByTenantIdAndStatusOnDate(
+            @Param("tenantId") UUID tenantId,
+            @Param("status") LeaveRequest.LeaveRequestStatus status,
+            @Param("date") LocalDate date);
+
     @Query("SELECT lr FROM LeaveRequest lr WHERE lr.tenantId = :tenantId AND lr.employeeId = :employeeId " +
             "AND lr.status = 'APPROVED' AND " +
             "((lr.startDate <= :endDate AND lr.endDate >= :startDate))")

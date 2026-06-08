@@ -14,6 +14,8 @@ public interface NotificationChannelConfigRepository extends JpaRepository<Notif
 
     Optional<NotificationChannelConfig> findByChannelAndTenantId(NotificationChannel channel, UUID tenantId);
 
+    List<NotificationChannelConfig> findByChannelAndSlackWorkspaceIdOrderByCreatedAtAsc(NotificationChannel channel, String slackWorkspaceId);
+
     List<NotificationChannelConfig> findByTenantId(UUID tenantId);
 
     List<NotificationChannelConfig> findByIsEnabledAndTenantId(Boolean isEnabled, UUID tenantId);

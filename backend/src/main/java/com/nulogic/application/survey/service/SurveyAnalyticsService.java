@@ -516,7 +516,7 @@ public class SurveyAnalyticsService {
         // Response metrics
         summary.setTotalResponses(survey.getTotalResponses());
         summary.setCompletedResponses(responses.size());
-        summary.setPartialResponses((int) responseRepository.findBySurveyIdAndStatus(surveyId, ResponseStatus.PARTIAL).size());
+        summary.setPartialResponses((int) responseRepository.countBySurveyIdAndStatus(surveyId, ResponseStatus.PARTIAL));
         summary.setCompletionRate(survey.getTotalResponses() > 0 ?
                 (responses.size() * 100.0) / survey.getTotalResponses() : 0);
 
