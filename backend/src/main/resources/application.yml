@@ -417,6 +417,9 @@ app:
 
   # File storage via Google Drive (all environments)
   storage:
+    # 'google-drive' (default) or 'none'/'disabled' to boot with no-op storage (even in prod)
+    # when document upload/download is not yet needed — see GoogleDriveConfig.
+    provider: ${APP_STORAGE_PROVIDER:google-drive}
     url-expiry-hours: ${STORAGE_URL_EXPIRY_HOURS:24}
 
   google-drive:

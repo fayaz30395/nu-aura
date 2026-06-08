@@ -47,12 +47,28 @@ public class GoogleDriveConfig {
     @Value("${app.google-drive.application-name:NU-AURA-HRMS}")
     private String applicationName;
 
+    /**
+     * Storage backend selector. Defaults to {@code google-drive}. Set to {@code none}
+     * (or {@code disabled}) to boot with a no-op storage provider even under the prod
+     * profile — lets the backend run without Google credentials when document
+     * upload/download is not yet needed. Env var: {@code APP_STORAGE_PROVIDER}.
+     */
+    @Value("${app.storage.provider:google-drive}")
+    private String storageProvider;
+
     public GoogleDriveConfig(Environment environment) {
         this.environment = environment;
     }
 
     @Bean
     public StorageProvider storageProvider(JdbcTemplate jdbcTemplate) throws GeneralSecurityException, IOException {
+        if (isStorageDisabled()) {
+            log.warn("Storage provider DISABLED (app.storage.provider='{}') — booting with no-op storage. "
+                    + "Document upload/download will not work. Set app.storage.provider=google-drive with "
+                    + "credentials to enable file storage.", storageProvider);
+            return mockProvider();
+        }
+
         File credFile = new File(credentialsPath);
         if (!credFile.exists()) {
             if (isProductionProfile()) {
@@ -131,5 +147,12 @@ public class GoogleDriveConfig {
         return Arrays.stream(environment.getActiveProfiles())
                 .anyMatch(profile -> profile.equalsIgnoreCase("prod")
                         || profile.equalsIgnoreCase("production"));
+    }
+
+    private boolean isStorageDisabled() {
+        return storageProvider == null
+                || storageProvider.isBlank()
+                || storageProvider.equalsIgnoreCase("none")
+                || storageProvider.equalsIgnoreCase("disabled");
     }
 }

@@ -90,9 +90,13 @@ services:
         sync: false
       - key: JWT_SECRET
         sync: false
-      # Storage (Google Drive). Add credentials.json as a Render Secret File.
-      - key: STORAGE_PROVIDER
+      # Storage. Default 'google-drive' needs the credentials Secret File below.
+      # Set APP_STORAGE_PROVIDER=none to boot WITHOUT Google (document upload/download
+      # no-ops) — lets you go live first and wire Drive later. See GoogleDriveConfig.
+      - key: APP_STORAGE_PROVIDER
         value: google-drive
+      # Required only when APP_STORAGE_PROVIDER=google-drive: add credentials.json as a
+      # Render Secret File mounted at the path below, and set the root folder id.
       - key: GOOGLE_DRIVE_CREDENTIALS_PATH
         value: /etc/secrets/google-drive-credentials.json
       - key: GOOGLE_DRIVE_ROOT_FOLDER_ID
