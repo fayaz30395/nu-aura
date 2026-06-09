@@ -97,6 +97,7 @@ jobs:
           severity: CRITICAL,HIGH
           ignore-unfixed: true
           exit-code: '1'
+          trivyignores: '.trivyignore'
           format: sarif
           output: trivy-backend.sarif
       - name: Trivy frontend
@@ -106,6 +107,7 @@ jobs:
           severity: CRITICAL,HIGH
           ignore-unfixed: true
           exit-code: '1'
+          trivyignores: '.trivyignore'
           format: sarif
           output: trivy-frontend.sarif
       - name: Upload SARIF to security tab

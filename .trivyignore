@@ -1,0 +1,11 @@
+# Trivy CVE allow-list — each entry MUST carry a justification + owner.
+
+# CVE-2024-47554 — apache-commons-io DoS via XmlStreamReader.
+# False positive: the resolved/runtime commons-io is 2.18.0 (>= 2.14.0 fixed),
+# verified by `mvn dependency:tree -Dincludes=commons-io:commons-io` and by
+# BOOT-INF/lib/commons-io-2.18.0.jar in the built artifact. Trivy reports a
+# phantom 2.8.0 sourced from transitive Maven metadata inside a pre-built
+# internal module (modules/common, modules/pm — source not in this repo), not
+# from the active classpath. Risk-accepted; remove if a real commons-io < 2.14
+# ever appears in `mvn dependency:tree`.
+CVE-2024-47554
