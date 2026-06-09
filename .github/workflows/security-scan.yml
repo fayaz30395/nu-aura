@@ -18,7 +18,7 @@ jobs:
     name: CodeQL — Java
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Init CodeQL
         uses: github/codeql-action/init@v3
         with:
@@ -46,7 +46,7 @@ jobs:
     name: CodeQL — JavaScript/TypeScript
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Init CodeQL
         uses: github/codeql-action/init@v3
         with:
@@ -60,7 +60,7 @@ jobs:
     name: Secret scan (gitleaks)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - uses: gitleaks/gitleaks-action@v2
@@ -71,7 +71,7 @@ jobs:
     name: Container scan (Trivy)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Build backend image
         run: docker build -f backend/Dockerfile -t nu-aura-backend:scan .
       - name: Build frontend image

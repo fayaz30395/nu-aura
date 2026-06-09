@@ -47,7 +47,7 @@ jobs:
       image-registry: ${{ steps.images.outputs.registry }}
       image-tag: ${{ steps.images.outputs.tag }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           ref: ${{ github.event.inputs.ref || github.ref }}
 
@@ -112,7 +112,7 @@ jobs:
       name: staging
       url: https://staging.nu-aura.nulogic.com
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           ref: ${{ github.event.inputs.ref || github.ref }}
 
@@ -196,7 +196,7 @@ jobs:
       name: production
       url: https://nu-aura.nulogic.com
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           ref: ${{ github.event.inputs.ref || github.ref }}
 
