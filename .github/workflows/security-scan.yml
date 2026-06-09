@@ -82,44 +82,49 @@ jobs:
             -f frontend/Dockerfile \
             -t nu-aura-frontend:scan \
             ./frontend
-      - name: Trivy backend CVE table (debug, non-blocking)
+      # GATES (table format respects `severity`; sarif format does not — it
+      # always reports all severities, which would fail exit-code on HIGH).
+      # Block on CRITICAL vulns only — all CRITICALs are remediated. HIGH is
+      # reported via the SARIF steps below. Secrets are gated by gitleaks.
+      - name: Trivy backend (gate — CRITICAL vulns)
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: nu-aura-backend:scan
-          severity: CRITICAL,HIGH
-          ignore-unfixed: true
-          format: table
-          exit-code: '0'
-      - name: Trivy backend
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: nu-aura-backend:scan
-          # Gate blocks on CRITICAL only; HIGH is scanned + reported via the
-          # non-blocking table step above and the SARIF upload. All real HIGHs
-          # are remediated; the lone residual is a documented commons-io
-          # false-positive (see .trivyignore).
           severity: CRITICAL
           ignore-unfixed: true
-          exit-code: '1'
+          scanners: 'vuln'
           trivyignores: '.trivyignore'
-          scanners: 'vuln'  # secrets are gated by the dedicated gitleaks job
-          format: sarif
-          output: trivy-backend.sarif
-      - name: Trivy frontend
+          format: table
+          exit-code: '1'
+      - name: Trivy frontend (gate — CRITICAL vulns)
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: nu-aura-frontend:scan
-          # Gate blocks on CRITICAL only; HIGH is scanned + reported via the
-          # non-blocking table step above and the SARIF upload. All real HIGHs
-          # are remediated; the lone residual is a documented commons-io
-          # false-positive (see .trivyignore).
           severity: CRITICAL
           ignore-unfixed: true
-          exit-code: '1'
+          scanners: 'vuln'
           trivyignores: '.trivyignore'
-          scanners: 'vuln'  # secrets are gated by the dedicated gitleaks job
+          format: table
+          exit-code: '1'
+      # REPORTS (all severities -> Security tab; non-blocking).
+      - name: Trivy backend (SARIF report)
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: nu-aura-backend:scan
+          ignore-unfixed: true
+          scanners: 'vuln'
+          format: sarif
+          output: trivy-backend.sarif
+          exit-code: '0'
+      - name: Trivy frontend (SARIF report)
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: nu-aura-frontend:scan
+          ignore-unfixed: true
+          scanners: 'vuln'
           format: sarif
           output: trivy-frontend.sarif
+          exit-code: '0'
       - name: Upload SARIF to security tab
         uses: github/codeql-action/upload-sarif@v3
         with:
