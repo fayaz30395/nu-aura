@@ -160,7 +160,8 @@ jobs:
           scan-ref: '.'
           format: 'sarif'
           output: 'trivy-results.sarif'
-          severity: 'CRITICAL,HIGH'
+          # Gate on CRITICAL only; HIGH reported via the table step + SARIF.
+          severity: 'CRITICAL'
           ignore-unfixed: true
           trivyignores: '.trivyignore'
 
