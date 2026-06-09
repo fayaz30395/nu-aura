@@ -102,6 +102,7 @@ jobs:
           ignore-unfixed: true
           exit-code: '1'
           trivyignores: '.trivyignore'
+          scanners: 'vuln'  # secrets are gated by the dedicated gitleaks job
           format: sarif
           output: trivy-backend.sarif
       - name: Trivy frontend
@@ -116,6 +117,7 @@ jobs:
           ignore-unfixed: true
           exit-code: '1'
           trivyignores: '.trivyignore'
+          scanners: 'vuln'  # secrets are gated by the dedicated gitleaks job
           format: sarif
           output: trivy-frontend.sarif
       - name: Upload SARIF to security tab
