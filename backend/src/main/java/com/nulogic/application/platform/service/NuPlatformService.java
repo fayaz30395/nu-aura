@@ -26,6 +26,17 @@ import java.util.stream.Collectors;
 @Transactional
 public class NuPlatformService {
 
+    /**
+     * SEC (3a): privileged role codes that may only be granted through the platform
+     * app-access path by a SuperAdmin. App-access role codes flow directly into the
+     * session's role set (AuthService.loadAppRolesFromAccess), so granting
+     * SUPER_ADMIN here is equivalent to assigning the SUPER_ADMIN role itself —
+     * it must carry the same escalation guard as RoleManagementService/AdminService.
+     */
+    private static final Set<String> PRIVILEGED_ROLE_CODES = Set.of(
+            com.nulogic.common.security.RoleHierarchy.SUPER_ADMIN
+    );
+
     private final NuApplicationRepository applicationRepository;
     private final AppPermissionRepository permissionRepository;
     private final AppRoleRepository roleRepository;
@@ -33,6 +44,27 @@ public class NuPlatformService {
     private final TenantApplicationRepository tenantApplicationRepository;
     private final UserRepository userRepository;
     private final TenantTimeService tenantTimeService;
+
+    /**
+     * SEC (3a): privilege-escalation guard for app-access role grants.
+     * A non-SuperAdmin caller (e.g. a TenantAdmin holding USER:MANAGE) must not be
+     * able to grant SUPER_ADMIN — or any privileged role — via the platform
+     * access-grant endpoints. SuperAdmin bypasses all checks by design.
+     */
+    private void validateNoPrivilegedAppRoleGrant(Set<String> roleCodes) {
+        if (roleCodes == null || roleCodes.isEmpty() || SecurityContext.isSuperAdmin()) {
+            return;
+        }
+        Set<String> privilegedRequested = roleCodes.stream()
+                .filter(PRIVILEGED_ROLE_CODES::contains)
+                .collect(Collectors.toSet());
+        if (!privilegedRequested.isEmpty()) {
+            log.warn("SECURITY: Privilege escalation attempt — user {} tried to grant privileged app roles {} via app access",
+                    SecurityContext.getCurrentUserId(), privilegedRequested);
+            throw new AccessDeniedException(
+                    "Only SuperAdmin can grant privileged roles via app access: " + privilegedRequested);
+        }
+    }
 
     // ==================== Application Management ====================
 
@@ -249,6 +281,11 @@ public class NuPlatformService {
      */
     public UserAppAccess grantAccess(UUID userId, String appCode, Set<String> roleCodes, UUID grantedBy) {
         UUID tenantId = TenantContext.getCurrentTenant();
+
+        // SEC (3a): block non-SuperAdmin callers from granting SUPER_ADMIN (or any
+        // privileged role) through the app-access path — these role codes are loaded
+        // into the user's session roles at login and would be a full RBAC bypass.
+        validateNoPrivilegedAppRoleGrant(roleCodes);
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
