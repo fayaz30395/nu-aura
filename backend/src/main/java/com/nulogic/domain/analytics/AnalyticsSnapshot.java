@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.Where;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -81,7 +82,12 @@ public class AnalyticsSnapshot extends TenantAware {
     private Integer offersAccepted;
     private Double offerAcceptanceRate;
     private Double averageTimeToHire;
-    private Double costPerHire;
+
+    /**
+     * Monetary amount — stored as numeric(15,2); never use floating point for currency (P1-2).
+     */
+    @Column(precision = 15, scale = 2)
+    private BigDecimal costPerHire;
 
     // Attendance Metrics
     private Double averageAttendanceRate;
@@ -96,12 +102,17 @@ public class AnalyticsSnapshot extends TenantAware {
     private Integer highPerformersCount;
     private Integer lowPerformersCount;
 
-    // Compensation Metrics
-    private Double totalPayrollCost;
-    private Double averageSalary;
-    private Double medianSalary;
-    private Double salaryRangeMin;
-    private Double salaryRangeMax;
+    // Compensation Metrics — monetary amounts stored as numeric(15,2), not floating point (P1-2)
+    @Column(precision = 15, scale = 2)
+    private BigDecimal totalPayrollCost;
+    @Column(precision = 15, scale = 2)
+    private BigDecimal averageSalary;
+    @Column(precision = 15, scale = 2)
+    private BigDecimal medianSalary;
+    @Column(precision = 15, scale = 2)
+    private BigDecimal salaryRangeMin;
+    @Column(precision = 15, scale = 2)
+    private BigDecimal salaryRangeMax;
     @Column(columnDefinition = "TEXT")
     private String salaryBandDistribution;
 
@@ -109,7 +120,12 @@ public class AnalyticsSnapshot extends TenantAware {
     private Integer trainingSessionsConducted;
     private Integer employeesTrained;
     private Double averageTrainingHours;
-    private Double trainingCost;
+
+    /**
+     * Monetary amount — stored as numeric(15,2); never use floating point for currency (P1-2).
+     */
+    @Column(precision = 15, scale = 2)
+    private BigDecimal trainingCost;
 
     // Engagement Metrics
     private Double engagementScore;
