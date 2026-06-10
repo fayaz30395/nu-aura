@@ -425,7 +425,9 @@ public class WallService {
     public Page<WallPostResponse> getPraiseForEmployee(UUID employeeId, Pageable pageable, UUID currentUserId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         Page<WallPost> posts = wallPostRepository.findPraiseByRecipientId(tenantId, employeeId, pageable);
-        return posts.map(post -> mapToResponse(post, currentUserId));
+        // P1-6: use the batch mapper (same as the main feed) instead of per-post
+        // mapToResponse, which issued ~5 queries per praise card.
+        return mapPageToResponses(posts, tenantId, currentUserId);
     }
 
     // ==================== PRAISE ====================
