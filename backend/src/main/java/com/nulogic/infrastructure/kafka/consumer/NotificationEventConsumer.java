@@ -67,6 +67,7 @@ public class NotificationEventConsumer {
         if (tenantId != null) {
             TenantContext.setCurrentTenant(tenantId);
         }
+        boolean claimed = false;
         try {
             // Atomic idempotency check-and-claim via Redis SETNX
             if (!idempotencyService.tryProcess(eventId)) {
@@ -74,6 +75,7 @@ public class NotificationEventConsumer {
                 acknowledgment.acknowledge();
                 return;
             }
+            claimed = true;
 
             log.info("Processing notification event: channel={}, recipient={}, subject={}",
                     channel, event.getRecipientId(), event.getSubject());
@@ -96,6 +98,11 @@ public class NotificationEventConsumer {
 
         } catch (Exception e) { // Intentional broad catch — per-message error boundary
             log.error("Failed to process notification event: {}", eventId, e);
+            // Release the idempotency claim so the Kafka redelivery is actually
+            // reprocessed instead of being skipped-and-acked (which would lose the event).
+            if (claimed) {
+                idempotencyService.release(eventId);
+            }
             // Re-throw to let DefaultErrorHandler handle retry + DLT routing
             throw e;
         } finally {

@@ -70,6 +70,7 @@ public class EmployeeLifecycleConsumer {
         if (tenantId != null) {
             TenantContext.setCurrentTenant(tenantId);
         }
+        boolean claimed = false;
         try {
             // Atomic idempotency check-and-claim via Redis SETNX
             if (!idempotencyService.tryProcess(eventId)) {
@@ -77,6 +78,7 @@ public class EmployeeLifecycleConsumer {
                 acknowledgment.acknowledge();
                 return;
             }
+            claimed = true;
 
             log.info("Processing employee lifecycle event: type={}, employee={}, tenant={}, bulkOp={}",
                     eventTypeEnum, employeeId, tenantId, event.isBulkOperation());
@@ -101,6 +103,11 @@ public class EmployeeLifecycleConsumer {
 
         } catch (Exception e) { // Intentional broad catch — per-message error boundary
             log.error("Error processing employee lifecycle event {}: {}", eventId, e.getMessage(), e);
+            // Release the idempotency claim so the Kafka redelivery is actually
+            // reprocessed instead of being skipped-and-acked (which would lose the event).
+            if (claimed) {
+                idempotencyService.release(eventId);
+            }
             // Don't acknowledge; let Kafka retry
             throw e;
         } finally {
