@@ -133,6 +133,21 @@ const config = [
     rules: baseRules,
   },
   {
+    // Wave-10 P0-2: a stale closure over `tenant` / `currentUser` / `permissions` in these
+    // paths is an authorization bug (e.g. a pre-switch tenantId captured in a fetch URL),
+    // not a style nit — escalate exhaustive-deps from the repo-wide 'warn' to 'error'.
+    // Fix violations with useCallback/useRef or by narrowing deps; never eslint-disable.
+    files: [
+      'lib/hooks/**/*',
+      'lib/contexts/**/*',
+      'app/providers.tsx',
+      'components/notifications/WebSocketProvider.tsx',
+    ],
+    rules: {
+      'react-hooks/exhaustive-deps': 'error',
+    },
+  },
+  {
     files: ['*.config.js', '*.config.cjs', '*.config.mjs'],
     rules: {
       '@typescript-eslint/no-require-imports': 'off',
