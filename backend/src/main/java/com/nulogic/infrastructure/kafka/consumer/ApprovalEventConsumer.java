@@ -69,6 +69,7 @@ public class ApprovalEventConsumer {
         if (tenantId != null) {
             TenantContext.setCurrentTenant(tenantId);
         }
+        boolean claimed = false;
         try {
             // Atomic idempotency check-and-claim via Redis SETNX
             if (!idempotencyService.tryProcess(eventId)) {
@@ -76,6 +77,7 @@ public class ApprovalEventConsumer {
                 acknowledgment.acknowledge();
                 return;
             }
+            claimed = true;
 
             log.info("Processing {} event: approvalId={}, status={}, tenantId={}",
                     approvalType, event.getApprovalId(), status, tenantId);
@@ -96,6 +98,11 @@ public class ApprovalEventConsumer {
 
         } catch (Exception e) { // Intentional broad catch — per-message error boundary
             log.error("Error processing approval event {}: {}", eventId, e.getMessage(), e);
+            // Release the idempotency claim so the Kafka redelivery is actually
+            // reprocessed instead of being skipped-and-acked (which would lose the event).
+            if (claimed) {
+                idempotencyService.release(eventId);
+            }
             // Don't acknowledge; let Kafka retry or move to DLT based on config
             throw e;
         } finally {

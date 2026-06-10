@@ -46,9 +46,11 @@ public class AuditEventConsumer {
     private static final int BATCH_SIZE = 50;
 
     /**
-     * Batch accumulator for efficient bulk inserts.
+     * Batch accumulator for efficient bulk inserts. Each entry carries its
+     * Kafka {@link Acknowledgment} so offsets are committed ONLY after the
+     * batch has been durably persisted to PostgreSQL (P1-1).
      */
-    private final List<AuditEvent> eventBatch = new ArrayList<>(BATCH_SIZE);
+    private final List<PendingAuditEvent> eventBatch = new ArrayList<>(BATCH_SIZE);
 
     private final IdempotencyService idempotencyService;
     private final AuditLogRepository auditLogRepository;
@@ -56,6 +58,12 @@ public class AuditEventConsumer {
     /**
      * Handle a single audit event.
      * Events are accumulated and persisted in batches for performance.
+     *
+     * <p>Ordering guarantee (P1-1): the offset is acknowledged only AFTER the
+     * containing batch has been written to the database. The idempotency claim
+     * is also taken at persist time (not consume time), so a JVM crash before
+     * persist leaves neither a committed offset nor a Redis claim behind —
+     * Kafka redelivery fully reprocesses the lost events.</p>
      */
     @KafkaListener(
             topics = KafkaTopics.AUDIT,
@@ -66,58 +74,91 @@ public class AuditEventConsumer {
             @Payload AuditEvent event,
             Acknowledgment acknowledgment) {
 
-        String eventId = event.getEventId();
-
         // TODO(T1-02): aspect now sets context — manual call kept for safety; remove in follow-up
         if (event.getTenantId() != null) {
             TenantContext.setCurrentTenant(event.getTenantId());
         }
         try {
-            // Atomic idempotency check-and-claim via Redis SETNX
-            if (!idempotencyService.tryProcess(eventId)) {
-                log.debug("Audit event {} already processed, skipping", eventId);
-                acknowledgment.acknowledge();
-                return;
-            }
-
-            log.debug("Processing audit event: action={}, entity={}, user={}, tenant={}",
+            log.debug("Buffering audit event: action={}, entity={}, user={}, tenant={}",
                     event.getAction(), event.getEntityType(), event.getUserId(), event.getTenantId());
 
-            // Add to batch; persist and ACK only after successful DB write
+            // Buffer the event together with its acknowledgment.
+            // Persist + ACK happen together once the batch is full.
             synchronized (eventBatch) {
-                eventBatch.add(event);
+                eventBatch.add(new PendingAuditEvent(event, acknowledgment));
 
-                // Persist batch if size reached, then ACK all events in the batch
                 if (eventBatch.size() >= BATCH_SIZE) {
-                    persistAuditBatch(eventBatch);
-                    eventBatch.clear();
+                    flushBatchLocked();
                 }
             }
 
-            // ACK after persist — if JVM crashes before this line, Kafka will redeliver
-            acknowledgment.acknowledge();
-
         } catch (Exception e) { // Intentional broad catch — per-message error boundary
             // Log error but don't throw; audit events should never block business operations
-            log.error("Error processing audit event {}: {}", eventId, e.getMessage(), e);
+            log.error("Error buffering audit event {}: {}", event.getEventId(), e.getMessage(), e);
             // Do NOT acknowledge on failure — Kafka will redeliver after consumer restart
-            // This prevents data loss at the cost of potential reprocessing (idempotency handles dedup)
         } finally {
             TenantContext.clear();
         }
     }
 
     /**
+     * Persist the buffered batch and, on success, acknowledge all offsets.
+     * Must be called while holding the {@code eventBatch} monitor.
+     *
+     * <p>On persist failure the batch is retained (and any idempotency claims
+     * taken during the attempt are released) so the next event arrival or the
+     * shutdown flush retries — no offset is committed for unpersisted data.</p>
+     */
+    private void flushBatchLocked() {
+        if (eventBatch.isEmpty()) {
+            return;
+        }
+
+        // Claim idempotency at persist time; duplicates (Kafka at-least-once
+        // redelivery already persisted by another instance) are ACKed but not re-inserted.
+        List<PendingAuditEvent> toPersist = new ArrayList<>(eventBatch.size());
+        List<String> claimedEventIds = new ArrayList<>(eventBatch.size());
+        for (PendingAuditEvent pending : eventBatch) {
+            String eventId = pending.event().getEventId();
+            if (idempotencyService.tryProcess(eventId)) {
+                toPersist.add(pending);
+                claimedEventIds.add(eventId);
+            } else {
+                log.debug("Audit event {} already processed, skipping persist", eventId);
+            }
+        }
+
+        if (persistAuditBatch(toPersist)) {
+            // ACK after persist — if JVM crashes before this line, Kafka redelivers
+            // and the (released-on-failure / absent) idempotency claims allow reprocessing.
+            for (PendingAuditEvent pending : eventBatch) {
+                pending.acknowledgment().acknowledge();
+            }
+            eventBatch.clear();
+        } else {
+            // Persist failed: release claims so the retry is not silently swallowed,
+            // keep the batch for the next flush attempt, and commit no offsets.
+            claimedEventIds.forEach(idempotencyService::release);
+        }
+    }
+
+    /**
      * Persist a batch of audit events to the database.
      * This uses bulk insert for efficiency.
+     *
+     * @return true if the batch was persisted (or was empty); false on failure
      */
-    private void persistAuditBatch(List<AuditEvent> batch) {
+    private boolean persistAuditBatch(List<PendingAuditEvent> batch) {
+        if (batch.isEmpty()) {
+            return true;
+        }
         try {
             log.info("Persisting batch of {} audit events", batch.size());
 
             // Convert AuditEvent messages to AuditLog domain objects and persist
             List<AuditLog> auditLogs = new ArrayList<>();
-            for (AuditEvent event : batch) {
+            for (PendingAuditEvent pending : batch) {
+                AuditEvent event = pending.event();
                 AuditLog auditLog = AuditLog.builder()
                         .tenantId(event.getTenantId())
                         .entityType(event.getEntityType())
@@ -139,14 +180,12 @@ public class AuditEventConsumer {
             auditLogRepository.saveAll(auditLogs);
 
             log.debug("Successfully persisted {} audit events", batch.size());
+            return true;
 
         } catch (DataAccessException e) {
-            // Log error but don't throw
+            // Log error but don't throw; the caller retains the batch and offsets for retry
             log.error("Failed to persist audit batch (size={}): {}", batch.size(), e.getMessage(), e);
-            // In production, you might want to:
-            // - Send alert to monitoring system
-            // - Attempt to persist individually for partial recovery
-            // But never re-throw to avoid blocking the consumer
+            return false;
         }
     }
 
@@ -159,13 +198,15 @@ public class AuditEventConsumer {
         synchronized (eventBatch) {
             if (!eventBatch.isEmpty()) {
                 log.info("Flushing {} pending audit events on shutdown", eventBatch.size());
-                try {
-                    persistAuditBatch(eventBatch);
-                    eventBatch.clear();
-                } catch (DataAccessException e) {
-                    log.error("Failed to flush pending audit events: {}", e.getMessage(), e);
-                }
+                flushBatchLocked();
             }
         }
+    }
+
+    /**
+     * An audit event awaiting batch persistence, paired with the Kafka
+     * acknowledgment that must only be invoked after the DB write succeeds.
+     */
+    private record PendingAuditEvent(AuditEvent event, Acknowledgment acknowledgment) {
     }
 }
