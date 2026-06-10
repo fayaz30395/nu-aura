@@ -146,13 +146,20 @@ public class AuthController {
         log.debug("MFA login initiated");
 
         try {
-            // M-2: bind the second factor to the first-factor login attempt. When a
-            // pre-auth token is supplied (the new, enforced path), resolve+delete it to
-            // get the userId so a caller cannot submit a code for an arbitrary user.
-            // Fall back to the legacy caller-supplied userId only when no token is present.
-            UUID userId = StringUtils.hasText(request.getMfaToken())
-                    ? authService.consumeMfaPendingToken(request.getMfaToken())
-                    : request.getUserId();
+            // M-2 / SEC (3c): the second factor MUST be bound to a successful
+            // first-factor (password) login. The opaque pre-auth token minted by
+            // /login is resolved+deleted server-side to obtain the userId. The
+            // legacy caller-supplied userId fallback was removed: it allowed a
+            // direct API call to mint full tokens with only a TOTP code for an
+            // arbitrary userId, bypassing password verification entirely.
+            if (!StringUtils.hasText(request.getMfaToken())) {
+                log.warn("MFA login rejected — missing pre-auth token (legacy userId-only flow is no longer accepted)");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(AuthResponse.builder()
+                                .accessToken(null)
+                                .build());
+            }
+            UUID userId = authService.consumeMfaPendingToken(request.getMfaToken());
 
             if (userId == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)

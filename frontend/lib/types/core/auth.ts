@@ -24,6 +24,20 @@ export interface AuthResponse {
   // CRIT-001: permissions in response body (not JWT) to keep cookie under 4KB
   roles?: string[];
   permissions?: string[];
+  // M-2 / SEC (3c): when the account has MFA enabled, /login returns NO tokens —
+  // only mfaRequired=true plus a short-lived opaque pre-auth handle that must be
+  // presented to /mfa-login together with the TOTP/backup code.
+  mfaRequired?: boolean;
+  mfaToken?: string;
+}
+
+/**
+ * Signal returned by `useAuth.login` when the backend requires a second factor.
+ * No session exists yet — the caller must complete /mfa-login with this token.
+ */
+export interface MfaChallenge {
+  mfaRequired: true;
+  mfaToken: string;
 }
 
 export interface User {
