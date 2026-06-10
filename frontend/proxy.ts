@@ -14,8 +14,15 @@ import {NextResponse} from 'next/server';
  * Fine-grained permission checks still happen client-side via AuthGuard.
  */
 
-// Cookie name for the access token (must match backend CookieConfig)
+// Cookie names for the access token (must match backend CookieConfig).
+// P1-7: when the backend runs with app.cookie.use-host-prefix=true (prod),
+// the auth cookies are issued under hardened __Host- names. The proxy accepts
+// EITHER name, preferring the __Host- variant — a __Host- cookie cannot be
+// planted by a sibling subdomain, so it is the more trustworthy of the two.
 const ACCESS_TOKEN_COOKIE = 'access_token';
+const ACCESS_TOKEN_COOKIE_HOST = '__Host-hrms-access';
+const REFRESH_TOKEN_COOKIE = 'refresh_token';
+const REFRESH_TOKEN_COOKIE_HOST = '__Host-hrms-refresh';
 
 // Request header used to forward the per-request CSP nonce to Server Components.
 // Read in app/layout.tsx via next/headers `headers()`.
@@ -428,8 +435,9 @@ export function proxy(request: NextRequest) {
     return allowWithSecurity(request, nonce);
   }
 
-  // Check for authentication token
-  const accessTokenCookie = request.cookies.get(ACCESS_TOKEN_COOKIE);
+  // Check for authentication token — hardened __Host- name first, legacy fallback (P1-7)
+  const accessTokenCookie =
+    request.cookies.get(ACCESS_TOKEN_COOKIE_HOST) ?? request.cookies.get(ACCESS_TOKEN_COOKIE);
   const accessToken = accessTokenCookie?.value;
 
   if (!accessToken) {
@@ -448,7 +456,9 @@ export function proxy(request: NextRequest) {
   // Previously, middleware redirected to /auth/login immediately on access token
   // expiry, which prevented the refresh flow from ever running and caused session
   // loss during cross-sub-app navigation.
-  const hasRefreshToken = !!request.cookies.get('refresh_token')?.value;
+  const hasRefreshToken =
+    !!request.cookies.get(REFRESH_TOKEN_COOKIE_HOST)?.value ||
+    !!request.cookies.get(REFRESH_TOKEN_COOKIE)?.value;
 
   if (isExpired) {
     if (hasRefreshToken) {
