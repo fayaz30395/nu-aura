@@ -104,10 +104,12 @@ spring:
     clean-disabled: true
     mixed: true
     placeholders:
-      # H-1: gates V270 demo-credential neutralization. Defaults to true so dev/
-      # demo/test keep the seeded "Welcome@123" logins. Prod sets this to false
-      # (see application-prod.yml) so known-weak demo accounts are locked.
-      demoCredentialsEnabled: ${DEMO_CREDENTIALS_ENABLED:true}
+      # H-1: gates V270/V272 demo-credential neutralization.
+      # FAIL-CLOSED (security hardening): the base default is now FALSE so any
+      # deployment that does not explicitly opt in (DEMO_CREDENTIALS_ENABLED=true
+      # or the dev/demo profiles, which set true) ends up with the seeded
+      # "Welcome@123" accounts locked. Prod also pins false in application-prod.yml.
+      demoCredentialsEnabled: ${DEMO_CREDENTIALS_ENABLED:false}
     postgresql:
       # Required for migrations that use CREATE INDEX CONCURRENTLY.
       transactional-lock: false

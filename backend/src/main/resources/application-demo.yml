@@ -4,3 +4,7 @@
 spring:
   flyway:
     locations: classpath:db/migration,classpath:db/seed
+    placeholders:
+      # H-1: the live demo keeps the seeded "Welcome@123" logins. The base
+      # application.yml default is fail-closed (false); demo opts in explicitly.
+      demoCredentialsEnabled: ${DEMO_CREDENTIALS_ENABLED:true}
