@@ -56,6 +56,26 @@ flowchart LR
 - **Security:** JWT in httpOnly cookies, CSRF double-submit, BCrypt-12, AES-256-GCM field
   encryption, 9 canonical roles, 500+ `MODULE:ACTION` permissions, Postgres RLS
 
+## PNG diagram exports
+
+Every Mermaid diagram in this set is also rendered as a PNG (2× scale) in
+[`diagrams/`](diagrams/) for slide decks and tools that don't render Mermaid:
+
+| PNG | Source document |
+|-----|-----------------|
+| `platform-at-a-glance.png` | README.md |
+| `c4-context.png` · `c4-container.png` · `request-flow.png` | architecture/system-overview.md |
+| `backend-layering.png` · `security-filter-chain.png` | architecture/backend.md |
+| `frontend-structure.png` · `openapi-orval-data-flow.png` | architecture/frontend.md |
+| `tenant-isolation-layers.png` · `entity-hierarchy.png` · `core-er-sketch.png` | architecture/data.md |
+| `defense-in-depth-layers.png` · `authentication-flow.png` | architecture/security.md |
+| `kafka-eventing-map.png` · `websocket-redis-relay.png` | architecture/integrations.md |
+| `kubernetes-topology.png` · `cicd-pipelines.png` | architecture/infrastructure.md |
+| `observability-pipeline.png` | architecture/observability.md |
+
+The Mermaid source in the documents is canonical; regenerate PNGs after editing a diagram
+(`npx -p @mermaid-js/mermaid-cli mmdc -i <block>.mmd -o diagrams/<name>.png -b white -s 2`).
+
 ## Conventions used in this set
 
 - Diagrams are [Mermaid](https://mermaid.js.org/) and render natively on GitHub.
