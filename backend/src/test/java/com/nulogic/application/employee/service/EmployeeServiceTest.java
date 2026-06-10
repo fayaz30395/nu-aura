@@ -9,6 +9,7 @@ import com.nulogic.common.exception.DuplicateResourceException;
 import com.nulogic.common.exception.ResourceNotFoundException;
 import com.nulogic.common.security.DataScopeService;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.security.TokenBlacklistService;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.user.User;
 import com.nulogic.infrastructure.employee.repository.DepartmentRepository;
@@ -27,6 +28,7 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Optional;
 import java.util.UUID;
@@ -61,6 +63,9 @@ class EmployeeServiceTest {
 
     @Mock
     private DepartmentRepository departmentRepository;
+
+    @Mock
+    private TokenBlacklistService tokenBlacklistService;
 
     @InjectMocks
     private EmployeeService employeeService;
@@ -268,6 +273,30 @@ class EmployeeServiceTest {
                 // Then
                 verify(employeeRepository).save(any(Employee.class));
                 assertThat(employee.getStatus()).isEqualTo(Employee.EmployeeStatus.TERMINATED);
+            }
+        }
+
+        @Test
+        @DisplayName("DATA-2: termination must deactivate linked user and revoke all tokens")
+        void shouldDeactivateLinkedUserAndRevokeTokensOnTermination() {
+            try (MockedStatic<TenantContext> mockedTenantContext = mockStatic(TenantContext.class)) {
+                // Given
+                UUID userId = UUID.randomUUID();
+                user.setId(userId);
+                mockedTenantContext.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
+                mockedTenantContext.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
+                when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.of(employee));
+                when(employeeRepository.save(any(Employee.class))).thenReturn(employee);
+                when(userRepository.save(any(User.class))).thenReturn(user);
+
+                // When
+                employeeService.deleteEmployee(employeeId);
+
+                // Then — login account disabled in the same transaction
+                assertThat(user.getStatus()).isEqualTo(User.UserStatus.INACTIVE);
+                verify(userRepository).save(user);
+                // …and every outstanding JWT (access + refresh) revoked immediately
+                verify(tokenBlacklistService).revokeAllTokensBefore(eq(userId.toString()), any(Instant.class));
             }
         }
     }

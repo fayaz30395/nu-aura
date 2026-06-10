@@ -3,7 +3,10 @@
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import {ReportRequest, reportService} from '@/lib/services/core/report.service';
 import {scheduledReportService} from '@/lib/services/core/scheduled-report.service';
-import {utilizationService} from '@/lib/services/hrms/utilization.service';
+import {
+  UTILIZATION_DASHBOARD_API_AVAILABLE,
+  utilizationService,
+} from '@/lib/services/hrms/utilization.service';
 import {ScheduledReportRequest,} from '@/lib/types/core/analytics';
 import {UtilizationFilterOptions,} from '@/lib/types/hrms/utilization';
 
@@ -102,7 +105,8 @@ export function useUtilizationDashboard(
   return useQuery({
     queryKey: reportKeys.utilizationDashboard(filters),
     queryFn: () => utilizationService.getDashboardData(filters),
-    enabled,
+    // DEV-4: no /time-tracking/reports/dashboard backend route exists
+    enabled: enabled && UTILIZATION_DASHBOARD_API_AVAILABLE,
   });
 }
 
@@ -131,7 +135,8 @@ export function useAllEmployeesUtilization(
     queryKey: reportKeys.utilizationAllEmployees(startDate, endDate, page, size),
     queryFn: () =>
       utilizationService.getAllEmployeesUtilization(startDate, endDate, page, size),
-    enabled: enabled && !!startDate && !!endDate,
+    // DEV-4: no all-employees utilization backend route exists
+    enabled: enabled && UTILIZATION_DASHBOARD_API_AVAILABLE && !!startDate && !!endDate,
   });
 }
 

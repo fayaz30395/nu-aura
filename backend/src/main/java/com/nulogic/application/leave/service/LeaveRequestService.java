@@ -18,6 +18,8 @@ import com.nulogic.domain.event.leave.LeaveRequestedEvent;
 import com.nulogic.domain.leave.LeaveRequest;
 import com.nulogic.domain.leave.LeaveType;
 import com.nulogic.domain.workflow.WorkflowDefinition;
+import com.nulogic.domain.attendance.Holiday;
+import com.nulogic.infrastructure.attendance.repository.HolidayRepository;
 import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import com.nulogic.infrastructure.leave.repository.LeaveRequestRepository;
 import com.nulogic.infrastructure.leave.repository.LeaveTypeRepository;
@@ -34,11 +36,12 @@ import java.math.BigDecimal;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -55,6 +58,8 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
     private final WorkflowService workflowService;
     private final AuditLogService auditLogService;
     private final com.nulogic.common.util.TenantTimeService tenantTimeService;
+    // PROD-2 FIX: tenant holiday calendar lookup for computeLeaveDays.
+    private final HolidayRepository holidayRepository;
 
     public LeaveRequestService(LeaveRequestRepository leaveRequestRepository,
                                LeaveBalanceService leaveBalanceService,
@@ -64,7 +69,8 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
                                DomainEventPublisher domainEventPublisher,
                                @org.springframework.context.annotation.Lazy WorkflowService workflowService,
                                AuditLogService auditLogService,
-                               com.nulogic.common.util.TenantTimeService tenantTimeService) {
+                               com.nulogic.common.util.TenantTimeService tenantTimeService,
+                               HolidayRepository holidayRepository) {
         this.leaveRequestRepository = leaveRequestRepository;
         this.leaveBalanceService = leaveBalanceService;
         this.webSocketNotificationService = webSocketNotificationService;
@@ -74,6 +80,7 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
         this.domainEventPublisher = domainEventPublisher;
         this.workflowService = workflowService;
         this.auditLogService = auditLogService;
+        this.holidayRepository = holidayRepository;
     }
 
     @Transactional
@@ -90,13 +97,18 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
             leaveRequest.setEmployeeId(currentEmployeeId);
         }
 
-        // Check for overlapping leaves
+        // DATA-1 + BA-3 FIX: validate date range and half-day single-day invariant
+        // at the service level too (defence in depth — protects non-DTO callers).
+        validateDateRange(leaveRequest.getStartDate(), leaveRequest.getEndDate(),
+                Boolean.TRUE.equals(leaveRequest.getIsHalfDay()));
+
+        // Check for overlapping leaves (BA-6/DATA-3: query now covers PENDING + APPROVED)
         Iterable<LeaveRequest> overlapping = leaveRequestRepository.findOverlappingLeaves(
                 tenantId, leaveRequest.getEmployeeId(),
                 leaveRequest.getStartDate(), leaveRequest.getEndDate());
 
         if (overlapping.iterator().hasNext()) {
-            throw new IllegalArgumentException("Leave request overlaps with existing approved leave");
+            throw new IllegalArgumentException("Leave request overlaps with an existing pending or approved leave");
         }
 
         // HIGH-004 FIX: Use UUID suffix to guarantee uniqueness under concurrent requests.
@@ -106,9 +118,8 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
         leaveRequest.setRequestNumber(requestNumber);
         leaveRequest.setTenantId(tenantId);
 
-        // F2.1 (partial): Compute totalDays server-side — never trust the client-supplied
-        // value. Weekends are excluded. TODO: full sandwich-rule needs the tenant's
-        // holiday calendar (out of scope here; flagged for follow-up).
+        // F2.1: Compute totalDays server-side — never trust the client-supplied
+        // value. Weekends and tenant holidays are excluded (PROD-2).
         BigDecimal computedDays = computeLeaveDays(
                 leaveRequest.getStartDate(),
                 leaveRequest.getEndDate(),
@@ -171,6 +182,11 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
         // L1 Approval: Validate that approver is the employee's manager
         validateApproverIsManager(request.getEmployeeId(), approverId, tenantId);
 
+        // BA-6/DATA-3 FIX: re-run overlap validation at approval time — two overlapping
+        // PENDING requests may both predate the create-time check (legacy data or
+        // concurrent submits); only one of them may ever reach APPROVED.
+        assertNoConflictingApprovedLeave(tenantId, request);
+
         // BIZ-003: Validate sufficient balance before approving
         java.math.BigDecimal daysToDeduct = Boolean.TRUE.equals(request.getIsHalfDay())
                 ? new java.math.BigDecimal("0.5")
@@ -182,6 +198,13 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
             throw new com.nulogic.common.exception.BusinessException(
                     "Insufficient leave balance. Available: " + availableBalance + " days, Requested: " + daysToDeduct + " days");
         }
+
+        // BA-5: the direct path supersedes the workflow engine. Cancel any live
+        // WorkflowExecution atomically (same transaction) so no orphaned PENDING
+        // inbox task remains and the workflow callback can never fire later against
+        // an already-approved request.
+        workflowService.cancelActiveExecutionForEntity(
+                WorkflowDefinition.EntityType.LEAVE_REQUEST, id, "Superseded by direct approval");
 
         request.approve(approverId, tenantTimeService.now(request.getTenantId()));
         LeaveRequest saved = leaveRequestRepository.save(request);
@@ -222,6 +245,12 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
 
         // L1 Approval: Validate that approver is the employee's manager
         validateApproverIsManager(request.getEmployeeId(), approverId, tenantId);
+
+        // BA-5: cancel any live WorkflowExecution atomically — same reasoning as
+        // approveLeaveRequest. The direct rejection already releases the pending
+        // balance below; the workflow must not fire onRejected later.
+        workflowService.cancelActiveExecutionForEntity(
+                WorkflowDefinition.EntityType.LEAVE_REQUEST, id, "Superseded by direct rejection");
 
         request.reject(approverId, reason, tenantTimeService.now(request.getTenantId()));
         LeaveRequest saved = leaveRequestRepository.save(request);
@@ -276,6 +305,40 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
 
         if (!employee.getManagerId().equals(approverId)) {
             throw new IllegalArgumentException("Only the employee's direct manager can approve/reject leave requests");
+        }
+    }
+
+    /**
+     * BA-6/DATA-3: Approval-time overlap guard. Blocks approving a request whose date
+     * range overlaps an already-APPROVED leave for the same employee. Other PENDING
+     * overlaps intentionally do NOT block — the first of two overlapping pendings must
+     * still be approvable; the second then fails here against the newly approved one.
+     */
+    private void assertNoConflictingApprovedLeave(UUID tenantId, LeaveRequest request) {
+        Iterable<LeaveRequest> overlapping = leaveRequestRepository.findOverlappingLeaves(
+                tenantId, request.getEmployeeId(), request.getStartDate(), request.getEndDate());
+        for (LeaveRequest overlap : overlapping) {
+            if (!overlap.getId().equals(request.getId())
+                    && overlap.getStatus() == LeaveRequest.LeaveRequestStatus.APPROVED) {
+                throw new BusinessException(
+                        "Cannot approve: dates overlap already approved leave " + overlap.getRequestNumber());
+            }
+        }
+    }
+
+    /**
+     * DATA-1 + BA-3: Service-level date-range validation (defence in depth alongside
+     * the DTO's {@code @DateRangeValid} / {@code @AssertTrue} constraints).
+     */
+    private void validateDateRange(LocalDate startDate, LocalDate endDate, boolean isHalfDay) {
+        if (startDate == null || endDate == null) {
+            throw new BusinessException("Start date and end date are required");
+        }
+        if (endDate.isBefore(startDate)) {
+            throw new BusinessException("End date must be on or after start date");
+        }
+        if (isHalfDay && !startDate.equals(endDate)) {
+            throw new BusinessException("Half-day leave must start and end on the same day");
         }
     }
 
@@ -349,22 +412,45 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
             throw new IllegalArgumentException("Cannot edit leave request that is already " + request.getStatus());
         }
 
-        // Check for overlapping leaves (excluding this request)
+        boolean newIsHalfDay = Boolean.TRUE.equals(leaveRequestData.getIsHalfDay());
+
+        // DATA-1 + BA-3 FIX: same date-range / half-day invariants as create.
+        validateDateRange(leaveRequestData.getStartDate(), leaveRequestData.getEndDate(), newIsHalfDay);
+
+        // Check for overlapping leaves (excluding this request;
+        // BA-6/DATA-3: query now covers PENDING + APPROVED)
         Iterable<LeaveRequest> overlapping = leaveRequestRepository.findOverlappingLeaves(
                 tenantId, request.getEmployeeId(),
                 leaveRequestData.getStartDate(), leaveRequestData.getEndDate());
 
         for (LeaveRequest overlap : overlapping) {
             if (!overlap.getId().equals(id)) {
-                throw new IllegalArgumentException("Leave request overlaps with existing approved leave");
+                throw new IllegalArgumentException("Leave request overlaps with an existing pending or approved leave");
             }
         }
+
+        // BA-4/DATA-4 FIX: never trust the client-supplied totalDays — recompute
+        // server-side from the new dates (mirrors createLeaveRequest).
+        BigDecimal computedDays = computeLeaveDays(
+                leaveRequestData.getStartDate(), leaveRequestData.getEndDate(), newIsHalfDay, tenantId);
+
+        // BA-4/DATA-4 FIX: re-balance the pending reservation atomically. The amount
+        // reserved at create (0.5 for half-day, totalDays otherwise) must track the
+        // edited request, and must move to the new leave type when it changes.
+        // Both calls share this @Transactional — addPendingLeave re-validates the
+        // available balance and rolls the release back on failure.
+        BigDecimal oldReserved = Boolean.TRUE.equals(request.getIsHalfDay())
+                ? new BigDecimal("0.5")
+                : request.getTotalDays();
+        BigDecimal newReserve = newIsHalfDay ? new BigDecimal("0.5") : computedDays;
+        leaveBalanceService.releasePendingLeave(request.getEmployeeId(), request.getLeaveTypeId(), oldReserved);
+        leaveBalanceService.addPendingLeave(request.getEmployeeId(), leaveRequestData.getLeaveTypeId(), newReserve);
 
         // Update the editable fields
         request.setLeaveTypeId(leaveRequestData.getLeaveTypeId());
         request.setStartDate(leaveRequestData.getStartDate());
         request.setEndDate(leaveRequestData.getEndDate());
-        request.setTotalDays(leaveRequestData.getTotalDays());
+        request.setTotalDays(computedDays);
         request.setIsHalfDay(leaveRequestData.getIsHalfDay());
         request.setHalfDayPeriod(leaveRequestData.getHalfDayPeriod());
         request.setReason(leaveRequestData.getReason());
@@ -433,6 +519,10 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
                     + " is not pending approval. Current status: " + request.getStatus());
         }
 
+        // BA-6/DATA-3 FIX: re-run overlap validation at approval time, mirroring the
+        // direct approval path — only one of two overlapping requests may be approved.
+        assertNoConflictingApprovedLeave(tenantId, request);
+
         request.approve(approvedBy, tenantTimeService.now(request.getTenantId()));
         LeaveRequest saved = leaveRequestRepository.save(request);
 
@@ -467,6 +557,23 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
 
         request.reject(rejectedBy, reason, tenantTimeService.now(request.getTenantId()));
         leaveRequestRepository.save(request);
+
+        // BA-2 FIX (CRITICAL): release the pending reservation made at creation,
+        // exactly like the direct rejection path (rejectLeaveRequest). Without this,
+        // every leave rejected via the approvals inbox (the default workflow path)
+        // permanently leaked the reserved days from the employee's available balance.
+        BigDecimal daysToRelease = Boolean.TRUE.equals(request.getIsHalfDay())
+                ? new BigDecimal("0.5")
+                : request.getTotalDays();
+        try {
+            leaveBalanceService.releasePendingLeave(
+                    request.getEmployeeId(),
+                    request.getLeaveTypeId(),
+                    daysToRelease);
+        } catch (Exception e) {
+            log.warn("Failed to release pending leave on workflow rejection for request {}: {}",
+                    request.getId(), e.getMessage());
+        }
 
         notifyLeaveRejected(request, reason);
         publishLeaveRejectedEvent(request, tenantId, rejectedBy, reason);
@@ -600,30 +707,61 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
     }
 
     /**
-     * F2.1 (partial): Server-side computation of leave-day count between two dates.
-     * Weekends (Sat/Sun) are excluded.
+     * F2.1: Server-side computation of leave-day count between two dates.
+     * Weekends (Sat/Sun) and tenant holidays are excluded.
      *
-     * <p>Half-day requests are valid only when {@code start == end}; otherwise the
-     * half-day flag is ignored and the full weekday count is returned. Callers should
-     * separately enforce the half-day single-day invariant at the API boundary.</p>
+     * <p>DATA-1 FIX: throws on an inverted range — previously
+     * {@code ChronoUnit.DAYS.between + 1} produced a NEGATIVE day count for
+     * end &lt; start, which inflated leave balances downstream. Also throws when the
+     * range contains zero working days (weekend/holiday-only range).</p>
      *
-     * <p>TODO (F2.1 full sandwich rule): also subtract tenant-configured holidays
-     * between {@code start} and {@code end}. That requires a holiday-calendar lookup
-     * which is out of scope for this commit — wire in {@code HolidayService.getHolidays}
-     * here once it is available in this module.</p>
+     * <p>PROD-2 FIX (F2.1 full): tenant-configured holidays falling on weekdays are
+     * subtracted via {@link HolidayRepository}. Optional and restricted holidays are
+     * NOT subtracted — they are not guaranteed company-wide days off, so a leave
+     * covering them still consumes balance.</p>
+     *
+     * <p>Half-day requests are valid only when {@code start == end}; callers enforce
+     * the single-day invariant at the API boundary ({@code validateDateRange}).</p>
      */
     public BigDecimal computeLeaveDays(LocalDate start, LocalDate end, boolean isHalfDay, UUID tenantId) {
+        if (start == null || end == null) {
+            throw new IllegalArgumentException("Start date and end date are required");
+        }
+        if (end.isBefore(start)) {
+            throw new IllegalArgumentException("End date must be on or after start date");
+        }
+
+        Set<LocalDate> holidayDates = holidayRepository
+                .findAllByTenantIdAndHolidayDateBetween(tenantId, start, end)
+                .stream()
+                .filter(h -> !Boolean.TRUE.equals(h.getIsOptional()) && !Boolean.TRUE.equals(h.getIsRestricted()))
+                .map(Holiday::getHolidayDate)
+                .collect(Collectors.toSet());
+
         if (isHalfDay && start.equals(end)) {
+            if (isNonWorkingDay(start, holidayDates)) {
+                throw new IllegalArgumentException("Half-day leave falls on a weekend or holiday");
+            }
             return new BigDecimal("0.5");
         }
-        long total = ChronoUnit.DAYS.between(start, end) + 1;
-        long weekends = 0;
+
+        long workingDays = 0;
         for (LocalDate d = start; !d.isAfter(end); d = d.plusDays(1)) {
-            if (d.getDayOfWeek() == DayOfWeek.SATURDAY || d.getDayOfWeek() == DayOfWeek.SUNDAY) {
-                weekends++;
+            if (!isNonWorkingDay(d, holidayDates)) {
+                workingDays++;
             }
         }
-        return BigDecimal.valueOf(total - weekends);
+        if (workingDays <= 0) {
+            throw new IllegalArgumentException(
+                    "Leave range contains no working days (weekends/holidays only)");
+        }
+        return BigDecimal.valueOf(workingDays);
+    }
+
+    private boolean isNonWorkingDay(LocalDate date, Set<LocalDate> holidayDates) {
+        return date.getDayOfWeek() == DayOfWeek.SATURDAY
+                || date.getDayOfWeek() == DayOfWeek.SUNDAY
+                || holidayDates.contains(date);
     }
 
     private String formatDateRange(LeaveRequest leaveRequest) {

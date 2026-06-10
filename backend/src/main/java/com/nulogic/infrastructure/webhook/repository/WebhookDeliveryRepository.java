@@ -64,6 +64,36 @@ public interface WebhookDeliveryRepository extends JpaRepository<WebhookDelivery
     List<UUID> findDistinctTenantIdsWithRetrying();
 
     /**
+     * INT-4: tenants owning stale in-flight deliveries. A pod crash leaves rows stuck in
+     * PENDING (saved, crashed before the first attempt) or DELIVERING (crashed mid-attempt);
+     * those states match no retry query and would otherwise be invisible forever.
+     * Staleness is judged on {@code updatedAt} (auditing clock) — both states are normally
+     * exited within ~40s (10s connect + 30s read), so anything older than the sweep cutoff
+     * is orphaned.
+     */
+    @Query("SELECT DISTINCT d.tenantId FROM WebhookDelivery d " +
+            "WHERE d.tenantId IS NOT NULL " +
+            "AND d.status IN ('PENDING', 'DELIVERING') " +
+            "AND d.updatedAt < :cutoff")
+    List<UUID> findDistinctTenantIdsWithStaleInFlight(@Param("cutoff") LocalDateTime cutoff);
+
+    /**
+     * INT-4: reclaim a tenant's stale in-flight rows by resetting them to RETRYING due
+     * immediately ({@code nextRetryAt = :now}, tenant-local — matching how deliverWebhook
+     * stamps it). The normal retry path then re-attempts them with full HMAC signing,
+     * while {@code WebhookDelivery#recordAttempt} keeps enforcing the existing
+     * exponential backoff and 5-attempt FAILED cap.
+     */
+    @Modifying
+    @Query("UPDATE WebhookDelivery d SET d.status = 'RETRYING', d.nextRetryAt = :now " +
+            "WHERE d.tenantId = :tenantId " +
+            "AND d.status IN ('PENDING', 'DELIVERING') " +
+            "AND d.updatedAt < :cutoff")
+    int reclaimStaleInFlightDeliveries(@Param("tenantId") UUID tenantId,
+                                       @Param("cutoff") LocalDateTime cutoff,
+                                       @Param("now") LocalDateTime now);
+
+    /**
      * Find pending deliveries.
      */
     List<WebhookDelivery> findByStatusOrderByCreatedAtAsc(DeliveryStatus status);

@@ -429,12 +429,27 @@ public class EmployeeService {
             );
             // SEC: revoke all active tokens on termination so the ex-employee can't keep
             // using a JWT until its natural TTL expires.
+            User statusLinkedUser = employee.getUser();
             if (request.getStatus() == Employee.EmployeeStatus.TERMINATED
-                    && employee.getUser() != null && employee.getUser().getId() != null) {
-                tokenBlacklistService.revokeAllTokensBefore(
-                        employee.getUser().getId().toString(),
-                        Instant.now()
-                );
+                    && statusLinkedUser != null) {
+                // DATA-2 FIX: also disable the login account itself, in the same
+                // transaction — token revocation alone does not stop fresh logins.
+                statusLinkedUser.setStatus(User.UserStatus.INACTIVE);
+                userRepository.save(statusLinkedUser);
+                if (statusLinkedUser.getId() != null) {
+                    tokenBlacklistService.revokeAllTokensBefore(
+                            statusLinkedUser.getId().toString(),
+                            Instant.now()
+                    );
+                }
+            } else if (oldStatus == Employee.EmployeeStatus.TERMINATED
+                    && request.getStatus() == Employee.EmployeeStatus.ACTIVE
+                    && statusLinkedUser != null
+                    && statusLinkedUser.getStatus() == User.UserStatus.INACTIVE) {
+                // DATA-2 FIX (rehire path): restore login access that the termination
+                // flow disabled. Only INACTIVE→ACTIVE — LOCKED accounts stay locked.
+                statusLinkedUser.setStatus(User.UserStatus.ACTIVE);
+                userRepository.save(statusLinkedUser);
             }
         }
         if (request.getBankAccountNumber() != null && !Objects.equals(request.getBankAccountNumber(), employee.getBankAccountNumber())) {
@@ -690,6 +705,20 @@ public class EmployeeService {
         // Mark as terminated instead of deleting
         employee.terminate();
         employeeRepository.save(employee);
+
+        // DATA-2 FIX (CRITICAL): terminating the employee must also disable the linked
+        // login account in the SAME transaction, otherwise the User row stays ACTIVE and
+        // the ex-employee can keep logging in. Also revoke every outstanding JWT
+        // (access + refresh) so live sessions die immediately instead of at token expiry.
+        User linkedUser = employee.getUser();
+        if (linkedUser != null) {
+            linkedUser.setStatus(User.UserStatus.INACTIVE);
+            userRepository.save(linkedUser);
+            if (linkedUser.getId() != null) {
+                tokenBlacklistService.revokeAllTokensBefore(
+                        linkedUser.getId().toString(), Instant.now());
+            }
+        }
 
         // Publish termination event
         eventPublisher.publish(EmployeeTerminatedEvent.of(this, employee, terminationReason));

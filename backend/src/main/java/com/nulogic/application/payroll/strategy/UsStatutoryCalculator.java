@@ -37,6 +37,14 @@ public class UsStatutoryCalculator implements StatutoryCalculator {
         return COUNTRY_CODE;
     }
 
+    /**
+     * Skeleton only — payroll-run creation for US tenants is blocked (PROD-4).
+     */
+    @Override
+    public boolean isImplemented() {
+        return false;
+    }
+
     @Override
     public StatutoryResult calculate(StatutoryCalculationInput input) {
         log.warn("US statutory calculation requested but engine is not yet implemented: employeeId={}",

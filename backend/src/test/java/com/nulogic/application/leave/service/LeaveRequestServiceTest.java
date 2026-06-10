@@ -10,6 +10,7 @@ import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.leave.LeaveRequest;
+import com.nulogic.infrastructure.attendance.repository.HolidayRepository;
 import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import com.nulogic.infrastructure.leave.repository.LeaveRequestRepository;
 import com.nulogic.infrastructure.leave.repository.LeaveTypeRepository;
@@ -61,6 +62,8 @@ class LeaveRequestServiceTest {
     private WorkflowService workflowService;
     @Mock
     private com.nulogic.common.util.TenantTimeService tenantTimeService;
+    @Mock
+    private HolidayRepository holidayRepository;
     @InjectMocks
     private LeaveRequestService leaveRequestService;
     private UUID tenantId;
@@ -97,6 +100,14 @@ class LeaveRequestServiceTest {
         org.mockito.Mockito.lenient()
                 .when(tenantTimeService.now(org.mockito.ArgumentMatchers.nullable(java.util.UUID.class)))
                 .thenReturn(java.time.LocalDateTime.now());
+        // PROD-2: computeLeaveDays consults the tenant holiday calendar — default: none.
+        org.mockito.Mockito.lenient()
+                .when(holidayRepository.findAllByTenantIdAndHolidayDateBetween(any(), any(), any()))
+                .thenReturn(Collections.emptyList());
+        // BA-6: approve paths re-run the overlap check — default: no conflicts.
+        org.mockito.Mockito.lenient()
+                .when(leaveRequestRepository.findOverlappingLeaves(any(), any(), any(), any()))
+                .thenReturn(Collections.emptyList());
     }
 
     @BeforeEach
@@ -201,6 +212,35 @@ class LeaveRequestServiceTest {
             assertThatThrownBy(() -> leaveRequestService.createLeaveRequest(leaveRequest))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("Insufficient");
+        }
+
+        @Test
+        @DisplayName("DATA-1: Should reject inverted date range (endDate before startDate)")
+        void shouldRejectInvertedDateRange() {
+            leaveRequest.setStartDate(LocalDate.now().plusDays(5));
+            leaveRequest.setEndDate(LocalDate.now().plusDays(2));
+
+            assertThatThrownBy(() -> leaveRequestService.createLeaveRequest(leaveRequest))
+                    .isInstanceOf(BusinessException.class)
+                    .hasMessageContaining("on or after start date");
+
+            verify(leaveBalanceService, never()).addPendingLeave(any(), any(), any());
+            verify(leaveRequestRepository, never()).save(any(LeaveRequest.class));
+        }
+
+        @Test
+        @DisplayName("BA-3: Should reject half-day leave spanning multiple days")
+        void shouldRejectMultiDayHalfDayLeave() {
+            leaveRequest.setIsHalfDay(true);
+            leaveRequest.setStartDate(LocalDate.now().plusDays(1));
+            leaveRequest.setEndDate(LocalDate.now().plusDays(3));
+
+            assertThatThrownBy(() -> leaveRequestService.createLeaveRequest(leaveRequest))
+                    .isInstanceOf(BusinessException.class)
+                    .hasMessageContaining("Half-day");
+
+            verify(leaveBalanceService, never()).addPendingLeave(any(), any(), any());
+            verify(leaveRequestRepository, never()).save(any(LeaveRequest.class));
         }
     }
 
@@ -470,6 +510,38 @@ class LeaveRequestServiceTest {
         }
 
         @Test
+        @DisplayName("BA-4/DATA-4: Should ignore client totalDays, recompute server-side and re-reserve pending")
+        void shouldRecomputeTotalDaysAndRebalancePendingOnUpdate() {
+            UUID requestId = leaveRequest.getId();
+            UUID newLeaveTypeId = UUID.randomUUID();
+            // Deterministic Mon-Fri window: 5 working days
+            LocalDate monday = LocalDate.now().with(java.time.temporal.TemporalAdjusters.next(java.time.DayOfWeek.MONDAY));
+            LeaveRequest updateData = LeaveRequest.builder()
+                    .leaveTypeId(newLeaveTypeId)
+                    .startDate(monday)
+                    .endDate(monday.plusDays(4))
+                    .totalDays(BigDecimal.valueOf(1.0)) // bogus client value — must be ignored
+                    .isHalfDay(false)
+                    .reason("Updated reason")
+                    .build();
+
+            when(leaveRequestRepository.findById(requestId))
+                    .thenReturn(Optional.of(leaveRequest));
+            when(leaveRequestRepository.findOverlappingLeaves(any(), any(), any(), any()))
+                    .thenReturn(Collections.emptyList());
+            when(leaveRequestRepository.save(any(LeaveRequest.class)))
+                    .thenAnswer(invocation -> invocation.getArgument(0));
+
+            LeaveRequest result = leaveRequestService.updateLeaveRequest(requestId, updateData);
+
+            // Server-side recompute: 5 weekdays, not the client-sent 1.0
+            assertThat(result.getTotalDays()).isEqualByComparingTo(BigDecimal.valueOf(5));
+            // Old reservation (3.0 on old type) released, new reservation (5 on new type) taken
+            verify(leaveBalanceService).releasePendingLeave(employeeId, leaveTypeId, BigDecimal.valueOf(3.0));
+            verify(leaveBalanceService).addPendingLeave(employeeId, newLeaveTypeId, BigDecimal.valueOf(5));
+        }
+
+        @Test
         @DisplayName("Should throw exception when updating approved leave request")
         void shouldThrowExceptionWhenUpdatingApprovedLeaveRequest() {
             UUID requestId = leaveRequest.getId();
@@ -592,6 +664,119 @@ class LeaveRequestServiceTest {
                     .hasMessageContaining("Leave request not found for approval callback");
 
             verify(leaveRequestRepository, never()).save(any(LeaveRequest.class));
+        }
+
+        @Test
+        @DisplayName("BA-2: Workflow rejection callback should release the pending reservation")
+        void shouldReleasePendingLeaveOnWorkflowRejection() {
+            UUID requestId = leaveRequest.getId();
+            when(leaveRequestRepository.findById(requestId)).thenReturn(Optional.of(leaveRequest));
+
+            leaveRequestService.onRejected(tenantId, requestId, managerId, "Coverage needed");
+
+            assertThat(leaveRequest.getStatus()).isEqualTo(LeaveRequest.LeaveRequestStatus.REJECTED);
+            verify(leaveBalanceService).releasePendingLeave(employeeId, leaveTypeId, BigDecimal.valueOf(3.0));
+        }
+
+        @Test
+        @DisplayName("BA-2: Workflow rejection of half-day leave should release 0.5 days")
+        void shouldReleaseHalfDayPendingOnWorkflowRejection() {
+            leaveRequest.setIsHalfDay(true);
+            UUID requestId = leaveRequest.getId();
+            when(leaveRequestRepository.findById(requestId)).thenReturn(Optional.of(leaveRequest));
+
+            leaveRequestService.onRejected(tenantId, requestId, managerId, "Coverage needed");
+
+            verify(leaveBalanceService).releasePendingLeave(employeeId, leaveTypeId, new BigDecimal("0.5"));
+        }
+
+        @Test
+        @DisplayName("BA-6: Workflow approval callback should fail when overlapping approved leave exists")
+        void shouldFailWorkflowApprovalWhenApprovedOverlapExists() {
+            UUID requestId = leaveRequest.getId();
+            LeaveRequest approvedOverlap = LeaveRequest.builder()
+                    .employeeId(employeeId)
+                    .requestNumber("LR-EXISTING")
+                    .status(LeaveRequest.LeaveRequestStatus.APPROVED)
+                    .build();
+            approvedOverlap.setId(UUID.randomUUID());
+
+            when(leaveRequestRepository.findById(requestId)).thenReturn(Optional.of(leaveRequest));
+            when(leaveRequestRepository.findOverlappingLeaves(any(), any(), any(), any()))
+                    .thenReturn(List.of(approvedOverlap));
+
+            assertThatThrownBy(() -> leaveRequestService.onApproved(tenantId, requestId, managerId))
+                    .isInstanceOf(BusinessException.class)
+                    .hasMessageContaining("overlap");
+
+            verify(leaveBalanceService, never()).deductLeave(any(), any(), any(BigDecimal.class));
+        }
+    }
+
+    @Nested
+    @DisplayName("Compute Leave Days")
+    class ComputeLeaveDaysTests {
+
+        @Test
+        @DisplayName("PROD-2: Should exclude tenant holidays falling on workdays")
+        void shouldExcludeHolidaysFromLeaveDays() {
+            // Pick a deterministic Mon-Fri window
+            LocalDate monday = LocalDate.now().with(java.time.temporal.TemporalAdjusters.next(java.time.DayOfWeek.MONDAY));
+            LocalDate friday = monday.plusDays(4);
+
+            com.nulogic.domain.attendance.Holiday holiday = com.nulogic.domain.attendance.Holiday.builder()
+                    .holidayName("Festival")
+                    .holidayDate(monday.plusDays(2)) // Wednesday
+                    .holidayType(com.nulogic.domain.attendance.Holiday.HolidayType.NATIONAL)
+                    .year(monday.getYear())
+                    .build();
+            when(holidayRepository.findAllByTenantIdAndHolidayDateBetween(tenantId, monday, friday))
+                    .thenReturn(List.of(holiday));
+
+            BigDecimal days = leaveRequestService.computeLeaveDays(monday, friday, false, tenantId);
+
+            assertThat(days).isEqualByComparingTo(BigDecimal.valueOf(4)); // 5 weekdays - 1 holiday
+        }
+
+        @Test
+        @DisplayName("PROD-2: Optional/restricted holidays should NOT reduce leave days")
+        void shouldNotExcludeOptionalHolidays() {
+            LocalDate monday = LocalDate.now().with(java.time.temporal.TemporalAdjusters.next(java.time.DayOfWeek.MONDAY));
+            LocalDate friday = monday.plusDays(4);
+
+            com.nulogic.domain.attendance.Holiday optionalHoliday = com.nulogic.domain.attendance.Holiday.builder()
+                    .holidayName("Optional Festival")
+                    .holidayDate(monday.plusDays(1))
+                    .holidayType(com.nulogic.domain.attendance.Holiday.HolidayType.OPTIONAL)
+                    .isOptional(true)
+                    .year(monday.getYear())
+                    .build();
+            when(holidayRepository.findAllByTenantIdAndHolidayDateBetween(tenantId, monday, friday))
+                    .thenReturn(List.of(optionalHoliday));
+
+            BigDecimal days = leaveRequestService.computeLeaveDays(monday, friday, false, tenantId);
+
+            assertThat(days).isEqualByComparingTo(BigDecimal.valueOf(5));
+        }
+
+        @Test
+        @DisplayName("DATA-1: Should throw for inverted range instead of returning negative days")
+        void shouldThrowForInvertedRange() {
+            assertThatThrownBy(() -> leaveRequestService.computeLeaveDays(
+                    LocalDate.now().plusDays(5), LocalDate.now().plusDays(1), false, tenantId))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("on or after start date");
+        }
+
+        @Test
+        @DisplayName("DATA-1: Should throw when range contains no working days")
+        void shouldThrowForWeekendOnlyRange() {
+            LocalDate saturday = LocalDate.now().with(java.time.temporal.TemporalAdjusters.next(java.time.DayOfWeek.SATURDAY));
+
+            assertThatThrownBy(() -> leaveRequestService.computeLeaveDays(
+                    saturday, saturday.plusDays(1), false, tenantId))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("no working days");
         }
     }
 }

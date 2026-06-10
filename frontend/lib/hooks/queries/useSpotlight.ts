@@ -1,7 +1,7 @@
 'use client';
 
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
-import {spotlightService} from '@/lib/services/platform/spotlight.service';
+import {SPOTLIGHT_API_AVAILABLE, spotlightService} from '@/lib/services/platform/spotlight.service';
 import {CreateSpotlightRequest, UpdateSpotlightRequest,} from '@/lib/types/platform/spotlight';
 
 export const spotlightKeys = {
@@ -21,6 +21,8 @@ export function useActiveSpotlights() {
   return useQuery({
     queryKey: spotlightKeys.active(),
     queryFn: () => spotlightService.getActiveSpotlights(),
+    // DEV-3: disabled until a spotlight backend controller exists
+    enabled: SPOTLIGHT_API_AVAILABLE,
     staleTime: 5 * 60 * 1000,
   });
 }
@@ -32,6 +34,8 @@ export function useAllSpotlights(page: number = 0, size: number = 10) {
   return useQuery({
     queryKey: spotlightKeys.list(page, size),
     queryFn: () => spotlightService.getAllSpotlights(page, size),
+    // DEV-3: disabled until a spotlight backend controller exists
+    enabled: SPOTLIGHT_API_AVAILABLE,
     staleTime: 5 * 60 * 1000,
   });
 }

@@ -32,7 +32,10 @@ import {
   getUtilizationBgColor,
   getUtilizationColor,
 } from '@/lib/types/hrms/utilization';
-import {getDateRanges} from '@/lib/services/hrms/utilization.service';
+import {
+  getDateRanges,
+  UTILIZATION_DASHBOARD_API_AVAILABLE,
+} from '@/lib/services/hrms/utilization.service';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {useUtilizationDashboard} from '@/lib/hooks/queries/useReports';
 
@@ -100,6 +103,24 @@ export default function UtilizationReportsPage() {
   // RBAC guard — all hooks declared above; safe to return null after them
   if (!permReady || !hasPermission(Permissions.REPORT_VIEW)) {
     return null;
+  }
+
+  // DEV-4: the aggregated utilization dashboard endpoints have no backend
+  // mapping yet — show a clean "not available" guard instead of 404s.
+  if (!UTILIZATION_DASHBOARD_API_AVAILABLE) {
+    return (
+      <AppLayout activeMenuItem="reports">
+        <div className="p-6">
+          <div className="max-w-7xl mx-auto">
+            <EmptyState
+              icon={<AlertCircle className="h-12 w-12"/>}
+              title="Utilization reporting is not available yet"
+              description="The aggregated utilization reporting service is not enabled in this environment. This page will light up once it is rolled out."
+            />
+          </div>
+        </div>
+      </AppLayout>
+    );
   }
 
 

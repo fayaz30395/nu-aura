@@ -20,6 +20,13 @@ export interface KnowledgeBaseFilters {
   q?: string;
 }
 
+/**
+ * DEV-6 feature flag: HelpdeskController exposes tickets/comments/categories
+ * only — there are NO /helpdesk/knowledge-base endpoints in the backend.
+ * The KB page and queries are gated behind this flag until they ship.
+ */
+export const KNOWLEDGE_BASE_API_AVAILABLE = false;
+
 // Query keys for cache management
 export const knowledgeBaseKeys = {
   all: ['knowledge-base'] as const,
@@ -44,6 +51,8 @@ export function useKnowledgeBaseArticles(filters: KnowledgeBaseFilters = {}) {
       );
       return response.data.articles ?? [];
     },
+    // DEV-6: disabled until the backend knowledge-base endpoints exist
+    enabled: KNOWLEDGE_BASE_API_AVAILABLE,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 }

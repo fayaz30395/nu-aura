@@ -4,6 +4,7 @@ import com.nulogic.api.benefits.dto.*;
 import com.nulogic.application.benefits.service.BenefitEnhancedService;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.RequiresPermission;
+import com.nulogic.common.security.SecurityContext;
 import com.nulogic.domain.benefits.BenefitPlanEnhanced;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -15,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,6 +33,53 @@ import java.util.UUID;
 public class BenefitEnhancedController {
 
     private final BenefitEnhancedService benefitService;
+
+    /**
+     * RBAC-1 IDOR FIX: Enforces ownership scope on /employee/{employeeId} endpoints.
+     * Mirrors EmployeeController.enforceEmployeeViewScope. A caller holding only
+     * BENEFIT_VIEW_SELF may only access their own employee record; BENEFIT_VIEW
+     * (tenant-wide) and Admin roles may access anyone in the tenant.
+     * SuperAdmin is already bypassed at the @RequiresPermission aspect level.
+     */
+    private void enforceBenefitViewScope(UUID targetEmployeeId) {
+        // SuperAdmin and TenantAdmin bypass all scope checks
+        if (SecurityContext.isSuperAdmin() || SecurityContext.isTenantAdmin()) {
+            return;
+        }
+
+        // BENEFIT_VIEW: tenant-wide benefits administration view
+        if (SecurityContext.hasPermission(Permission.BENEFIT_VIEW)) {
+            return;
+        }
+
+        // BENEFIT_VIEW_SELF: caller may only access their own record
+        UUID currentEmployeeId = SecurityContext.getCurrentEmployeeId();
+        if (currentEmployeeId != null && currentEmployeeId.equals(targetEmployeeId)) {
+            return;
+        }
+
+        throw new AccessDeniedException(
+                "You are not authorized to view benefits data for this employee");
+    }
+
+    /**
+     * RBAC-4 IDOR FIX: Enforces ownership on write endpoints keyed by claimId that carry
+     * a self-scoped permission (BENEFIT_CLAIM_SUBMIT). Only the claim owner, benefits
+     * admins (BENEFIT_MANAGE), or tenant/super admins may act on the claim.
+     */
+    private void enforceClaimWriteScope(UUID claimOwnerEmployeeId) {
+        if (SecurityContext.isSuperAdmin() || SecurityContext.isTenantAdmin()) {
+            return;
+        }
+        if (SecurityContext.hasPermission(Permission.BENEFIT_MANAGE)) {
+            return;
+        }
+        UUID currentEmployeeId = SecurityContext.getCurrentEmployeeId();
+        if (currentEmployeeId != null && currentEmployeeId.equals(claimOwnerEmployeeId)) {
+            return;
+        }
+        throw new AccessDeniedException("You are not authorized to act on this claim");
+    }
 
     // ==================== BENEFIT PLANS ====================
 
@@ -146,6 +195,7 @@ public class BenefitEnhancedController {
     @Operation(summary = "Get all enrollments for an employee")
     public ResponseEntity<List<EnrollmentResponse>> getEmployeeEnrollments(
             @PathVariable UUID employeeId) {
+        enforceBenefitViewScope(employeeId);
         return ResponseEntity.ok(benefitService.getEmployeeEnrollments(employeeId));
     }
 
@@ -154,6 +204,7 @@ public class BenefitEnhancedController {
     @Operation(summary = "Get active enrollments for an employee")
     public ResponseEntity<List<EnrollmentResponse>> getActiveEnrollments(
             @PathVariable UUID employeeId) {
+        enforceBenefitViewScope(employeeId);
         return ResponseEntity.ok(benefitService.getActiveEnrollmentsForEmployee(employeeId));
     }
 
@@ -177,7 +228,11 @@ public class BenefitEnhancedController {
     @RequiresPermission({Permission.BENEFIT_VIEW, Permission.BENEFIT_VIEW_SELF})
     @Operation(summary = "Get claim details")
     public ResponseEntity<ClaimResponse> getClaim(@PathVariable UUID claimId) {
-        return ResponseEntity.ok(benefitService.getClaim(claimId));
+        // RBAC-4 IDOR FIX: resolve the claim first, then enforce ownership scope so a
+        // BENEFIT_VIEW_SELF caller cannot read another employee's claim by guessing claimId.
+        ClaimResponse claim = benefitService.getClaim(claimId);
+        enforceBenefitViewScope(claim.getEmployeeId());
+        return ResponseEntity.ok(claim);
     }
 
     @PostMapping("/claims/{claimId}/process")
@@ -221,6 +276,9 @@ public class BenefitEnhancedController {
     public ResponseEntity<ClaimResponse> appealClaim(
             @PathVariable UUID claimId,
             @NotBlank @Size(max = 1000) @RequestParam String reason) {
+        // RBAC-4 IDOR FIX: BENEFIT_CLAIM_SUBMIT is self-scoped — only the claim owner
+        // (or benefits admins) may appeal. Resolve ownership before mutating.
+        enforceClaimWriteScope(benefitService.getClaim(claimId).getEmployeeId());
         return ResponseEntity.ok(benefitService.appealClaim(claimId, reason));
     }
 
@@ -230,6 +288,7 @@ public class BenefitEnhancedController {
     public ResponseEntity<Page<ClaimResponse>> getEmployeeClaims(
             @PathVariable UUID employeeId,
             Pageable pageable) {
+        enforceBenefitViewScope(employeeId);
         return ResponseEntity.ok(benefitService.getEmployeeClaims(employeeId, pageable));
     }
 
@@ -255,6 +314,7 @@ public class BenefitEnhancedController {
     @Operation(summary = "Get active flex allocation for employee")
     public ResponseEntity<FlexAllocationResponse> getActiveFlexAllocation(
             @PathVariable UUID employeeId) {
+        enforceBenefitViewScope(employeeId);
         return ResponseEntity.ok(benefitService.getActiveFlexAllocation(employeeId));
     }
 
@@ -263,6 +323,7 @@ public class BenefitEnhancedController {
     @Operation(summary = "Get flex allocation history for employee")
     public ResponseEntity<List<FlexAllocationResponse>> getFlexAllocationHistory(
             @PathVariable UUID employeeId) {
+        enforceBenefitViewScope(employeeId);
         return ResponseEntity.ok(benefitService.getFlexAllocationHistory(employeeId));
     }
 
@@ -280,6 +341,7 @@ public class BenefitEnhancedController {
     @Operation(summary = "Get employee benefits summary")
     public ResponseEntity<Map<String, Object>> getEmployeeBenefitsSummary(
             @PathVariable UUID employeeId) {
+        enforceBenefitViewScope(employeeId);
         return ResponseEntity.ok(benefitService.getEmployeeBenefitsSummary(employeeId));
     }
 }

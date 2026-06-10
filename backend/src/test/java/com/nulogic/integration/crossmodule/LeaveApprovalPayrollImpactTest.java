@@ -1,15 +1,18 @@
 package com.nulogic.integration.crossmodule;
 
+import com.nulogic.application.audit.service.AuditLogService;
 import com.nulogic.application.event.DomainEventPublisher;
 import com.nulogic.application.leave.service.LeaveBalanceService;
 import com.nulogic.application.leave.service.LeaveRequestService;
 import com.nulogic.application.notification.service.WebSocketNotificationService;
+import com.nulogic.application.workflow.service.WorkflowService;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.event.leave.LeaveApprovedEvent;
 import com.nulogic.domain.leave.LeaveRequest;
+import com.nulogic.infrastructure.attendance.repository.HolidayRepository;
 import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import com.nulogic.infrastructure.leave.repository.LeaveRequestRepository;
 import com.nulogic.infrastructure.leave.repository.LeaveTypeRepository;
@@ -60,6 +63,16 @@ class LeaveApprovalPayrollImpactTest {
     private DomainEventPublisher domainEventPublisher;
     @Mock
     private TenantTimeService tenantTimeService;
+    // BA-5: approveLeaveRequest/rejectLeaveRequest now cancel any live workflow
+    // execution via WorkflowService — must be a mock (not null) under @InjectMocks.
+    @Mock
+    private WorkflowService workflowService;
+    // DEFENSIVE: LeaveRequestService also depends on AuditLogService and
+    // HolidayRepository — mock them so @InjectMocks never injects nulls.
+    @Mock
+    private AuditLogService auditLogService;
+    @Mock
+    private HolidayRepository holidayRepository;
     @InjectMocks
     private LeaveRequestService leaveRequestService;
     private UUID tenantId;
@@ -101,6 +114,9 @@ class LeaveApprovalPayrollImpactTest {
         tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
         lenient().when(tenantTimeService.now(tenantId)).thenReturn(LocalDateTime.of(2026, 1, 15, 9, 30));
         lenient().when(tenantTimeService.today(tenantId)).thenReturn(LocalDate.now());
+        // BA-6: approveLeaveRequest re-runs the overlap check — default: no conflicts.
+        lenient().when(leaveRequestRepository.findOverlappingLeaves(any(), any(), any(), any()))
+                .thenReturn(java.util.Collections.emptyList());
 
         employee = new Employee();
         employee.setId(employeeId);

@@ -9,6 +9,7 @@ import {
   PayrollRunRequest,
   Payslip,
   PayslipRequest,
+  RunPayslip,
   SalaryStructure,
   SalaryStructureRequest,
 } from '../../types/hrms/payroll';
@@ -207,6 +208,22 @@ class PayrollService {
       {
         params: {page, size},
       }
+    );
+    return response.data;
+  }
+
+  /**
+   * PROD-1: payslips for a run in the backend's real (entity) shape —
+   * used by the run detail page (/payroll/runs/[id]).
+   */
+  async getRunPayslipDetails(
+    payrollRunId: string,
+    page: number = 0,
+    size: number = 100
+  ): Promise<Page<RunPayslip>> {
+    const response = await apiClient.get<Page<RunPayslip>>(
+      `/payroll/payslips/run/${payrollRunId}/paged`,
+      {params: {page, size}}
     );
     return response.data;
   }

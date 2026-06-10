@@ -115,7 +115,8 @@ public class DeadLetterHandler {
                     KafkaTopics.NOTIFICATIONS_DLT,
                     KafkaTopics.AUDIT_DLT,
                     KafkaTopics.EMPLOYEE_LIFECYCLE_DLT,
-                    KafkaTopics.FLUENCE_CONTENT_DLT
+                    KafkaTopics.FLUENCE_CONTENT_DLT,
+                    KafkaTopics.PAYROLL_PROCESSING_DLT
             },
             groupId = KafkaTopics.GROUP_DLT_HANDLER,
             containerFactory = "dltListenerContainerFactory"

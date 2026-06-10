@@ -78,6 +78,33 @@ public class StatutoryCalculatorFactory {
     }
 
     /**
+     * PROD-4: validates up-front that payroll can actually run for the tenant's
+     * country. Throws a clear, actionable error when the country either has no
+     * registered calculator or only a skeleton placeholder (US/UK 501 stubs),
+     * instead of letting a payroll run fail mid-processing with HTTP 501.
+     *
+     * <p>Launch scope is IN-only; the stubs are intentionally kept (do not delete)
+     * so the strategy seam stays reserved for wave-4 implementations.
+     *
+     * @param tenantId the tenant a payroll run is being created for
+     * @throws BusinessException when no production-ready calculator exists
+     */
+    public void assertPayrollSupported(UUID tenantId) {
+        String countryCode = resolveCountry(tenantId);
+        StatutoryCalculator calculator = calculators.stream()
+                .filter(c -> countryCode.equals(c.countryCode()))
+                .findFirst()
+                .orElse(null);
+        if (calculator == null || !calculator.isImplemented()) {
+            throw new BusinessException(
+                    "Payroll runs are currently supported for India (IN) tenants only. "
+                            + "Tenant country '" + countryCode + "' has no production-ready statutory "
+                            + "engine yet — update the tenant country or contact support before "
+                            + "creating payroll runs.");
+        }
+    }
+
+    /**
      * Resolves the country for a tenant. Reads {@link Tenant#getCountry()} which is
      * NOT NULL after V155. Falls back to {@link #DEFAULT_COUNTRY} when the tenantId
      * is null (system callers) or the row is missing; logs WARN on the missing-row

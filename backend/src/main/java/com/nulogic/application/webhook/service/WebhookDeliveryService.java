@@ -94,6 +94,9 @@ public class WebhookDeliveryService {
     // Circuit breakers per webhook URL to prevent cascading failures
     private final Map<UUID, CircuitBreaker> circuitBreakers = new ConcurrentHashMap<>();
     private static final int RETRY_BATCH_SIZE = 100;
+    // INT-4: in-flight rows (PENDING/DELIVERING) untouched for this long are orphans from a
+    // pod crash — the longest legitimate attempt is ~40s (10s connect + 30s read).
+    private static final int STALE_IN_FLIGHT_MINUTES = 10;
     // Webhook-scoped RestTemplate with redirect-following disabled.
     private RestTemplate deliveryRestTemplate;
 
@@ -504,6 +507,24 @@ public class WebhookDeliveryService {
     @SchedulerLock(name = "webhookProcessRetries", lockAtLeastFor = "PT2M", lockAtMostFor = "PT15M")
     @Transactional
     public void processRetries() {
+        // INT-4: first reclaim deliveries orphaned by a pod crash. Rows stuck in PENDING
+        // (saved, crashed before the first attempt) or DELIVERING (crashed mid-attempt)
+        // match no retry query and would be invisible forever, violating ADR-004's
+        // at-least-once promise. Reset them to RETRYING due now; the loop below then
+        // re-attempts them through the normal path (HMAC signing in buildHeaders,
+        // backoff + 5-attempt FAILED cap in recordAttempt). The staleness cutoff uses
+        // the same clock as @LastModifiedDate auditing stamps; the bulk update is
+        // flushed in this transaction, so the tenant pivot below sees the reclaimed rows.
+        LocalDateTime staleCutoff = LocalDateTime.now().minusMinutes(STALE_IN_FLIGHT_MINUTES);
+        for (UUID tenantId : deliveryRepository.findDistinctTenantIdsWithStaleInFlight(staleCutoff)) {
+            int reclaimed = deliveryRepository.reclaimStaleInFlightDeliveries(
+                    tenantId, staleCutoff, tenantTimeService.now(tenantId));
+            if (reclaimed > 0) {
+                log.warn("Reclaimed {} webhook delivery(ies) stuck PENDING/DELIVERING > {}min for tenant {} (pod crash recovery)",
+                        reclaimed, STALE_IN_FLIGHT_MINUTES, tenantId);
+            }
+        }
+
         // Iterate per tenant so the "ready for retry" cutoff is the tenant's local now,
         // matching the zone in which nextRetryAt was originally stamped (see deliverWebhook).
         // Narrow the sweep to tenants with retryable work only, which reduces scans when

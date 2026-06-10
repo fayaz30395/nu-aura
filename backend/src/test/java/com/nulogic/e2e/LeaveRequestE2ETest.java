@@ -55,6 +55,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class LeaveRequestE2ETest extends AbstractPostgresIntegrationTest {
 
     private static final String BASE_URL = "/api/v1/leave-requests";
+    // DATA-1/PROD-2: computeLeaveDays now rejects ranges with zero working days and
+    // recomputes totalDays server-side — anchor all test windows on Mondays so the
+    // expected day counts are deterministic regardless of the day the suite runs.
+    private static final LocalDate BASE_MONDAY = LocalDate.now()
+            .with(java.time.temporal.TemporalAdjusters.next(java.time.DayOfWeek.MONDAY));
     private static final UUID TEST_USER_ID = UUID.fromString("660e8400-e29b-41d4-a716-446655440000");
     private static final UUID TEST_EMPLOYEE_ID = UUID.fromString("111e8400-e29b-41d4-a716-446655440099");
     private static final UUID TEST_MANAGER_ID = UUID.fromString("222e8400-e29b-41d4-a716-446655440099");
@@ -256,8 +261,8 @@ class LeaveRequestE2ETest extends AbstractPostgresIntegrationTest {
     @WithMockUser(username = "employee@test.com", roles = {"EMPLOYEE"})
     @DisplayName("E2E: Create leave request successfully")
     void createLeaveRequest_Success() throws Exception {
-        LocalDate startDate = LocalDate.now().plusDays(7);
-        LocalDate endDate = startDate.plusDays(2);
+        LocalDate startDate = BASE_MONDAY.plusWeeks(1); // Monday
+        LocalDate endDate = startDate.plusDays(2);      // Wednesday — 3 working days
 
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("employeeId", testEmployeeId.toString());
@@ -324,8 +329,8 @@ class LeaveRequestE2ETest extends AbstractPostgresIntegrationTest {
     void updateLeaveRequest_Success() throws Exception {
         assertThat(createdLeaveRequestId).isNotNull();
 
-        LocalDate newStartDate = LocalDate.now().plusDays(14);
-        LocalDate newEndDate = newStartDate.plusDays(1);
+        LocalDate newStartDate = BASE_MONDAY.plusWeeks(2); // Monday
+        LocalDate newEndDate = newStartDate.plusDays(1);   // Tuesday — 2 working days
 
         Map<String, Object> updateBody = new HashMap<>();
         updateBody.put("employeeId", testEmployeeId.toString());
@@ -376,8 +381,8 @@ class LeaveRequestE2ETest extends AbstractPostgresIntegrationTest {
     @DisplayName("E2E: Create and reject leave request")
     void createAndRejectLeaveRequest_Success() throws Exception {
         // Create a new leave request
-        LocalDate startDate = LocalDate.now().plusDays(21);
-        LocalDate endDate = startDate.plusDays(1);
+        LocalDate startDate = BASE_MONDAY.plusWeeks(3); // Monday
+        LocalDate endDate = startDate.plusDays(1);      // Tuesday — 2 working days
 
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("employeeId", testEmployeeId.toString());
@@ -415,7 +420,7 @@ class LeaveRequestE2ETest extends AbstractPostgresIntegrationTest {
     @DisplayName("E2E: Create and cancel leave request")
     void createAndCancelLeaveRequest_Success() throws Exception {
         // Create a new leave request
-        LocalDate startDate = LocalDate.now().plusDays(28);
+        LocalDate startDate = BASE_MONDAY.plusWeeks(4); // Monday — 1 working day
         LocalDate endDate = startDate;
 
         Map<String, Object> requestBody = new HashMap<>();
@@ -484,8 +489,8 @@ class LeaveRequestE2ETest extends AbstractPostgresIntegrationTest {
         LeaveRequest request = LeaveRequest.builder()
                 .employeeId(testEmployeeId)
                 .leaveTypeId(testLeaveTypeId)
-                .startDate(LocalDate.now().plusDays(35))
-                .endDate(LocalDate.now().plusDays(36))
+                .startDate(BASE_MONDAY.plusWeeks(5))            // Monday
+                .endDate(BASE_MONDAY.plusWeeks(5).plusDays(1))  // Tuesday — 2 working days
                 .totalDays(BigDecimal.valueOf(2))
                 .reason("Service layer test")
                 .status(LeaveRequest.LeaveRequestStatus.PENDING)

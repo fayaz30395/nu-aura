@@ -56,4 +56,27 @@ public class LeaveRequestRequest {
 
     @Size(max = 500, message = "Document path cannot exceed 500 characters")
     private String documentPath;
+
+    /**
+     * BA-3/DATA-5 FIX: half-day single-day invariant. A half-day request spanning
+     * multiple days would reserve/deduct 0.5 day while blocking the full range —
+     * a direct balance-bypass exploit. Enforced again in LeaveRequestService
+     * (defence in depth for non-DTO callers).
+     */
+    @AssertTrue(message = "Half-day leave must start and end on the same day")
+    public boolean isHalfDaySingleDay() {
+        if (!Boolean.TRUE.equals(isHalfDay) || startDate == null || endDate == null) {
+            return true;
+        }
+        return startDate.equals(endDate);
+    }
+
+    /**
+     * DATA-5 FIX: fail fast at the API boundary instead of bouncing off the entity's
+     * pre-persist {@code isHalfDayPeriodValid()} with an opaque 500/400 at save time.
+     */
+    @AssertTrue(message = "halfDayPeriod is required when isHalfDay is true")
+    public boolean isHalfDayPeriodProvided() {
+        return !Boolean.TRUE.equals(isHalfDay) || (halfDayPeriod != null && !halfDayPeriod.isBlank());
+    }
 }

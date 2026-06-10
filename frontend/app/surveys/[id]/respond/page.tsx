@@ -10,7 +10,7 @@ import {Permissions} from '@/lib/hooks/usePermissions';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {useSurveyDetail} from '@/lib/hooks/queries/useSurveys';
 import {useSubmitSurveyResponse, useSurveyQuestions,} from '@/lib/hooks/queries/useSurveyQuestions';
-import type {SurveyQuestion} from '@/lib/types/grow/survey';
+import type {SubmitAnswerRequest, SurveyQuestion} from '@/lib/types/grow/survey';
 import {QuestionType} from '@/lib/types/grow/survey';
 import {iconSize, motion as dsMotion, typography,} from '@/lib/theme/design-system';
 
@@ -250,13 +250,29 @@ export default function SurveyRespondPage() {
   };
 
   const handleSubmit = () => {
-    const formattedAnswers = sortedQuestions.map((q) => {
+    // DEV-2: backend expects option INDICES (selectedOption/selectedOptions),
+    // ratingAnswer for ratings/scales and npsScore for NPS questions.
+    const formattedAnswers: SubmitAnswerRequest[] = sortedQuestions.map((q) => {
       const a = answers[q.id] ?? {};
+      const options = q.options ?? [];
+      const selectedIndices = (a.selectedOptions ?? [])
+        .map((value) => options.indexOf(value))
+        .filter((index) => index >= 0);
+      const isNps = q.questionType === QuestionType.NPS;
+      const isSingleChoice =
+        q.questionType === QuestionType.SINGLE_CHOICE ||
+        q.questionType === QuestionType.YES_NO;
+
       return {
         questionId: q.id,
-        answerText: a.answerText,
-        selectedOptions: a.selectedOptions,
-        ratingValue: a.ratingValue,
+        textAnswer: a.answerText,
+        selectedOption: isSingleChoice ? selectedIndices[0] : undefined,
+        selectedOptions:
+          q.questionType === QuestionType.MULTIPLE_CHOICE && selectedIndices.length > 0
+            ? selectedIndices
+            : undefined,
+        ratingAnswer: !isNps ? a.ratingValue : undefined,
+        npsScore: isNps ? a.ratingValue : undefined,
       };
     });
 

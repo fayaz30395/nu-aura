@@ -6,6 +6,7 @@ import com.nulogic.api.leave.dto.LeaveEncashmentResponse;
 import com.nulogic.application.leave.service.LeaveBalanceService;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.RequiresPermission;
+import com.nulogic.common.security.SecurityContext;
 import com.nulogic.domain.leave.LeaveBalance;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -16,6 +17,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,6 +32,40 @@ public class LeaveBalanceController {
 
     private final LeaveBalanceService leaveBalanceService;
 
+    /**
+     * RBAC-2 IDOR FIX: Enforces data-scope on /employee/{employeeId} endpoints.
+     * Mirrors EmployeeController.enforceEmployeeViewScope.
+     * Scope hierarchy: LEAVE_VIEW_ALL > LEAVE_VIEW_TEAM (direct/indirect reportees)
+     * > LEAVE_VIEW_SELF (own record only).
+     * SuperAdmin is already bypassed at the @RequiresPermission aspect level.
+     */
+    private void enforceLeaveBalanceViewScope(UUID targetEmployeeId) {
+        // SuperAdmin and TenantAdmin bypass all scope checks
+        if (SecurityContext.isSuperAdmin() || SecurityContext.isTenantAdmin()) {
+            return;
+        }
+
+        // VIEW_ALL: can see any employee's balances within the tenant
+        if (SecurityContext.hasPermission(Permission.LEAVE_VIEW_ALL)) {
+            return;
+        }
+
+        // VIEW_SELF: can only see own balances
+        UUID currentEmployeeId = SecurityContext.getCurrentEmployeeId();
+        if (currentEmployeeId != null && currentEmployeeId.equals(targetEmployeeId)) {
+            return;
+        }
+
+        // VIEW_TEAM: can see direct/indirect reportees' balances
+        if (SecurityContext.hasPermission(Permission.LEAVE_VIEW_TEAM)
+                && SecurityContext.getAllReporteeIds().contains(targetEmployeeId)) {
+            return;
+        }
+
+        throw new AccessDeniedException(
+                "You are not authorized to view leave balances for this employee");
+    }
+
     @GetMapping("/employee/{employeeId}")
     @RequiresPermission({Permission.LEAVE_VIEW_ALL, Permission.LEAVE_VIEW_TEAM, Permission.LEAVE_VIEW_SELF})
     @Operation(summary = "Get leave balances for employee",
@@ -42,6 +78,7 @@ public class LeaveBalanceController {
     })
     public ResponseEntity<List<LeaveBalanceResponse>> getEmployeeBalances(
             @Parameter(description = "Employee UUID") @PathVariable UUID employeeId) {
+        enforceLeaveBalanceViewScope(employeeId);
         // PERF (wave-3 H4): delegate to the batched service method which
         // collapses the per-row LeaveType lookup into a single IN(...) query.
         return ResponseEntity.ok(leaveBalanceService.getEmployeeBalancesEnriched(employeeId));
@@ -59,6 +96,7 @@ public class LeaveBalanceController {
     public ResponseEntity<List<LeaveBalanceResponse>> getEmployeeBalancesForYear(
             @Parameter(description = "Employee UUID") @PathVariable UUID employeeId,
             @Parameter(description = "Calendar year", example = "2026") @PathVariable Integer year) {
+        enforceLeaveBalanceViewScope(employeeId);
         return ResponseEntity.ok(leaveBalanceService.getEmployeeBalancesForYearEnriched(employeeId, year));
     }
 

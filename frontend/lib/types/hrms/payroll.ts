@@ -69,6 +69,36 @@ export interface PayslipRequest {
   status?: 'DRAFT' | 'FINALIZED' | 'PAID' | 'PENDING';
 }
 
+/**
+ * Raw payslip row as returned by the backend payslip endpoints
+ * (mirrors the Payslip JPA entity — distinct from the legacy UI `Payslip` shape).
+ */
+export interface RunPayslip {
+  id: string;
+  payrollRunId: string;
+  employeeId: string;
+  payPeriodMonth: number;
+  payPeriodYear: number;
+  payDate: string;
+  basicSalary: number;
+  hra?: number | null;
+  conveyanceAllowance?: number | null;
+  medicalAllowance?: number | null;
+  specialAllowance?: number | null;
+  otherAllowances?: number | null;
+  grossSalary: number;
+  providentFund?: number | null;
+  professionalTax?: number | null;
+  incomeTax?: number | null;
+  otherDeductions?: number | null;
+  totalDeductions: number;
+  netSalary: number;
+  workingDays?: number | null;
+  presentDays?: number | null;
+  leaveDays?: number | null;
+  pdfFileId?: string | null;
+}
+
 export interface AllowanceDeduction {
   id?: string;
   name: string;

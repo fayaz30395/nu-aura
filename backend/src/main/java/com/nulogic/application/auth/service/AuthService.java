@@ -384,6 +384,15 @@ public class AuthService {
             com.nulogic.common.security.TenantContext.setCurrentTenant(tenantId);
             tenantRlsSessionSync.syncCurrentTenant(tenantId);
 
+            // DATA-2 FIX: SSO must honor account status. Google login bypasses the
+            // AuthenticationManager (and therefore UserPrincipal.isEnabled()), so a
+            // terminated/deactivated user could otherwise still sign in via Google.
+            if (user.getStatus() != User.UserStatus.ACTIVE) {
+                metricsService.recordLoginFailure("google", "account_disabled");
+                throw new AuthenticationException(
+                        "Account is disabled. Please contact your administrator.");
+            }
+
             // Update profile picture from Google if available
             if (profilePictureUrl != null && !profilePictureUrl.isEmpty()) {
                 user.setProfilePictureUrl(profilePictureUrl);
@@ -514,6 +523,13 @@ public class AuthService {
 
             User user = userRepository.findByEmailAndTenantId(email, tenantId)
                     .orElseThrow(() -> new ResourceNotFoundException("User", "email", email));
+
+            // DATA-2 FIX: a deactivated (e.g. terminated) user must not be able to mint
+            // fresh access tokens from a still-valid refresh token. Defense-in-depth on
+            // top of TokenBlacklistService.revokeAllTokensBefore() fired at termination.
+            if (user.getStatus() != User.UserStatus.ACTIVE) {
+                throw new AuthenticationException("Account is disabled");
+            }
 
             // Build auth context and generate response
             AuthContext ctx = buildAuthContext(user, tenantId);

@@ -40,8 +40,11 @@ public interface LeaveRequestRepository
             @Param("status") LeaveRequest.LeaveRequestStatus status,
             @Param("date") LocalDate date);
 
+    // BA-6/DATA-3 FIX: include PENDING so an employee cannot file N overlapping
+    // pending requests for the same dates (each reserving pending balance). Callers
+    // that operate on an existing request must exclude its own id from the results.
     @Query("SELECT lr FROM LeaveRequest lr WHERE lr.tenantId = :tenantId AND lr.employeeId = :employeeId " +
-            "AND lr.status = 'APPROVED' AND " +
+            "AND lr.status IN ('APPROVED', 'PENDING') AND " +
             "((lr.startDate <= :endDate AND lr.endDate >= :startDate))")
     Iterable<LeaveRequest> findOverlappingLeaves(
             @Param("tenantId") UUID tenantId,

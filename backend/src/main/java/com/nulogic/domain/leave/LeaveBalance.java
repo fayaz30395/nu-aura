@@ -86,7 +86,20 @@ public class LeaveBalance extends TenantAware {
                 .subtract(lapsed);
     }
 
+    /**
+     * DATA-1 FIX: sign guard for all balance mutations. A negative (or zero) day
+     * count must never reach the arithmetic below — e.g. an inverted date range
+     * producing negative totalDays would otherwise REDUCE pending/used and inflate
+     * the available balance (a self-service balance-inflation exploit).
+     */
+    private static void requirePositive(BigDecimal days) {
+        if (days == null || days.signum() <= 0) {
+            throw new IllegalArgumentException("Leave day amount must be a positive number, got: " + days);
+        }
+    }
+
     public void deduct(BigDecimal days) {
+        requirePositive(days);
         this.used = this.used.add(days);
         calculateAvailable();
         if (this.available.compareTo(BigDecimal.ZERO) < 0) {
@@ -95,6 +108,7 @@ public class LeaveBalance extends TenantAware {
     }
 
     public void credit(BigDecimal days) {
+        requirePositive(days);
         this.used = this.used.subtract(days);
         if (this.used.compareTo(BigDecimal.ZERO) < 0) {
             this.used = BigDecimal.ZERO;
@@ -103,11 +117,13 @@ public class LeaveBalance extends TenantAware {
     }
 
     public void addPending(BigDecimal days) {
+        requirePositive(days);
         this.pending = this.pending.add(days);
         calculateAvailable();
     }
 
     public void removePending(BigDecimal days) {
+        requirePositive(days);
         this.pending = this.pending.subtract(days);
         if (this.pending.compareTo(BigDecimal.ZERO) < 0) {
             this.pending = BigDecimal.ZERO;

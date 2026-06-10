@@ -8,9 +8,12 @@ import com.nulogic.common.security.TenantContext;
 import com.nulogic.domain.tenant.Tenant;
 import com.nulogic.domain.user.Role;
 import com.nulogic.domain.user.User;
+import com.nulogic.domain.workflow.ApprovalStep;
+import com.nulogic.domain.workflow.WorkflowDefinition;
 import com.nulogic.infrastructure.tenant.repository.TenantRepository;
 import com.nulogic.infrastructure.user.repository.RoleRepository;
 import com.nulogic.infrastructure.user.repository.UserRepository;
+import com.nulogic.infrastructure.workflow.repository.WorkflowDefinitionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -48,6 +51,7 @@ public class TenantProvisioningService {
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final WorkflowDefinitionRepository workflowDefinitionRepository;
 
     public AuthResponse register(TenantRegistrationRequest req) {
 
@@ -101,7 +105,10 @@ public class TenantProvisioningService {
         adminUser.setRoles(Set.of(adminRole));
         adminUser = userRepository.save(adminUser);
 
-        // ── 6. Generate JWT ──────────────────────────────────────────────────
+        // ── 6. Seed default approval workflows (BA-8) ────────────────────────
+        seedDefaultWorkflowDefinitions(tenantId);
+
+        // ── 7. Generate JWT ──────────────────────────────────────────────────
         Authentication auth = new UsernamePasswordAuthenticationToken(
                 adminUser.getEmail(),
                 null,
@@ -120,6 +127,77 @@ public class TenantProvisioningService {
                 .tenantId(tenantId)
                 .email(adminUser.getEmail())
                 .fullName(adminUser.getFullName())
+                .build();
+    }
+
+    /**
+     * BA-8: Seed the same 7 default approval workflows that {@code V54} ships for the
+     * demo tenant. Without these, {@code WorkflowService.startWorkflow} throws
+     * "No active workflow definition configured" for every leave/expense/asset/travel/
+     * loan/onboarding/timesheet submission on a newly provisioned tenant, rolling back
+     * the submit transaction. Runs inside the provisioning transaction.
+     */
+    private void seedDefaultWorkflowDefinitions(UUID tenantId) {
+        seedWorkflow(tenantId, "Default Leave Approval", WorkflowDefinition.EntityType.LEAVE_REQUEST,
+                step(1, "Manager Approval", ApprovalStep.ApproverType.REPORTING_MANAGER, null));
+        seedWorkflow(tenantId, "Default Expense Approval", WorkflowDefinition.EntityType.EXPENSE_CLAIM,
+                step(1, "Manager Approval", ApprovalStep.ApproverType.REPORTING_MANAGER, null),
+                step(2, "Finance Head Approval", ApprovalStep.ApproverType.FINANCE_MANAGER, null));
+        seedWorkflow(tenantId, "Default Asset Request Approval", WorkflowDefinition.EntityType.ASSET_REQUEST,
+                step(1, "Manager Approval", ApprovalStep.ApproverType.REPORTING_MANAGER, null),
+                step(2, "IT Admin Approval", ApprovalStep.ApproverType.ANY_OF_ROLE, "IT_ADMIN"));
+        seedWorkflow(tenantId, "Default Travel Approval", WorkflowDefinition.EntityType.TRAVEL_REQUEST,
+                step(1, "Manager Approval", ApprovalStep.ApproverType.REPORTING_MANAGER, null));
+        seedWorkflow(tenantId, "Default Loan Approval", WorkflowDefinition.EntityType.LOAN_REQUEST,
+                step(1, "Manager Approval", ApprovalStep.ApproverType.REPORTING_MANAGER, null),
+                step(2, "Finance Head Approval", ApprovalStep.ApproverType.FINANCE_MANAGER, null));
+        seedWorkflow(tenantId, "Default Onboarding Approval", WorkflowDefinition.EntityType.ONBOARDING,
+                step(1, "Department Head Approval", ApprovalStep.ApproverType.DEPARTMENT_HEAD, null));
+        seedWorkflow(tenantId, "Default Timesheet Approval", WorkflowDefinition.EntityType.TIMESHEET,
+                step(1, "Project Manager Approval", ApprovalStep.ApproverType.REPORTING_MANAGER, null));
+        log.info("Seeded 7 default workflow definitions for tenant {}", tenantId);
+    }
+
+    private void seedWorkflow(UUID tenantId, String name,
+                              WorkflowDefinition.EntityType entityType, ApprovalStep... steps) {
+        // Idempotency guard mirroring V285's NOT EXISTS: a provisioning retry for an
+        // already-seeded tenant must not create duplicate default definitions.
+        if (workflowDefinitionRepository.existsByTenantIdAndNameAndIsActiveTrue(tenantId, name)) {
+            log.debug("Workflow definition '{}' already exists for tenant {}, skipping seed", name, tenantId);
+            return;
+        }
+        WorkflowDefinition definition = WorkflowDefinition.builder()
+                .name(name)
+                .entityType(entityType)
+                .workflowType(WorkflowDefinition.WorkflowType.SEQUENTIAL)
+                .workflowVersion(1)
+                .isActive(true)
+                .isDefault(true)
+                .defaultSlaHours(48)
+                .escalationAfterHours(72)
+                .notifyOnSubmission(true)
+                .notifyOnApproval(true)
+                .notifyOnRejection(true)
+                .build();
+        definition.setTenantId(tenantId);
+        for (ApprovalStep step : steps) {
+            step.setTenantId(tenantId);
+            definition.addStep(step);
+        }
+        workflowDefinitionRepository.save(definition);
+    }
+
+    private ApprovalStep step(int order, String name, ApprovalStep.ApproverType approverType, String roleName) {
+        return ApprovalStep.builder()
+                .stepOrder(order)
+                .stepName(name)
+                .approverType(approverType)
+                .roleName(roleName)
+                .hierarchyLevel(1)
+                .minApprovals(1)
+                .slaHours(48)
+                .escalateAfterHours(72)
+                .delegationAllowed(true)
                 .build();
     }
 }

@@ -5,6 +5,7 @@ import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {
+  KNOWLEDGE_BASE_API_AVAILABLE,
   useArticleFeedback,
   useCreateArticle,
   useCreateTicketFromKB,
@@ -401,6 +402,37 @@ export default function KnowledgeBasePage() {
     role.code === 'ADMIN' ||
     role.permissions?.some(perm => perm.code === 'hr:manage_knowledge_base')
   ) ?? false;
+
+  // DEV-6: the backend exposes no /helpdesk/knowledge-base endpoints —
+  // show a clean "not available" guard instead of a dead page of 404s.
+  if (!KNOWLEDGE_BASE_API_AVAILABLE) {
+    return (
+      <AppLayout>
+        <div className="space-y-6">
+          <div>
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">
+              Knowledge Base
+            </h1>
+            <p className="text-[var(--text-secondary)] mt-2">
+              Find answers to common questions
+            </p>
+          </div>
+          <Card className="p-12">
+            <div className="flex flex-col items-center text-center gap-3">
+              <FileText className="h-12 w-12 text-[var(--text-muted)]"/>
+              <h2 className="text-lg font-semibold text-[var(--text-primary)]">
+                Knowledge Base is not available yet
+              </h2>
+              <p className="text-[var(--text-secondary)] max-w-md">
+                This feature is not enabled in this environment. In the meantime,
+                you can raise a ticket from the Helpdesk Tickets page.
+              </p>
+            </div>
+          </Card>
+        </div>
+      </AppLayout>
+    );
+  }
 
   return (
     <AppLayout>

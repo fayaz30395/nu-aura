@@ -19,6 +19,7 @@ import {
   useDeleteSpotlight,
   useUpdateSpotlight
 } from '@/lib/hooks/queries/useSpotlight';
+import {SPOTLIGHT_API_AVAILABLE} from '@/lib/services/platform/spotlight.service';
 import {createLogger} from '@/lib/utils/logger';
 import {formatDate as formatDateCanonical} from '@/lib/utils/format/date';
 import {PageTransition, Reveal, Stagger, StaggerItem} from '@/components/motion';
@@ -100,6 +101,24 @@ export default function CompanySpotlightPage() {
       toast.error('Delete Failed', 'Unable to delete the spotlight. Please try again.');
     }
   };
+
+  // DEV-3: no spotlight backend controller exists yet — show a clean
+  // "not available" guard instead of letting every action 404.
+  if (!SPOTLIGHT_API_AVAILABLE) {
+    return (
+      <AppLayout activeMenuItem="company-spotlight">
+        <div className="p-6">
+          <div className="max-w-7xl mx-auto">
+            <EmptyState
+              icon={<Lightbulb className="h-12 w-12"/>}
+              title="Company Spotlight is not available yet"
+              description="This feature is not enabled in this environment. It will appear here once the spotlight service is rolled out."
+            />
+          </div>
+        </div>
+      </AppLayout>
+    );
+  }
 
   // Only admins can access this page
   if (!isAdmin(user?.roles)) {

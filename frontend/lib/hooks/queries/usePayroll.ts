@@ -255,6 +255,26 @@ export function usePayslipsByPayrollRun(
 }
 
 /**
+ * PROD-1: payslips for a run in the backend's real (entity) shape —
+ * powers the run detail page (/payroll/runs/[id]).
+ */
+export function useRunPayslipDetails(
+  payrollRunId: string,
+  page: number = 0,
+  size: number = 100,
+  enabled: boolean = true
+) {
+  return useQuery({
+    queryKey: [...payrollKeys.payslipsByRun(payrollRunId, page, size), 'detail-rows'] as const,
+    queryFn: () => payrollService.getRunPayslipDetails(payrollRunId, page, size),
+    enabled: enabled && !!payrollRunId,
+    staleTime: 2 * 60 * 1000,
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
+  });
+}
+
+/**
  * Create payslip mutation
  */
 export function useCreatePayslip() {

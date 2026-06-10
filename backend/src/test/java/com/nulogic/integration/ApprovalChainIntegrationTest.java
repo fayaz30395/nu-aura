@@ -21,6 +21,7 @@ import com.nulogic.domain.workflow.ApprovalStep;
 import com.nulogic.domain.workflow.StepExecution;
 import com.nulogic.domain.workflow.WorkflowDefinition;
 import com.nulogic.domain.workflow.WorkflowExecution;
+import com.nulogic.infrastructure.attendance.repository.HolidayRepository;
 import com.nulogic.infrastructure.employee.repository.DepartmentRepository;
 import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import com.nulogic.infrastructure.expense.repository.ExpenseClaimRepository;
@@ -98,6 +99,8 @@ class ApprovalChainIntegrationTest {
     @Mock
     private LeaveTypeRepository leaveTypeRepository;
     @Mock
+    private HolidayRepository holidayRepository;
+    @Mock
     private ExpenseClaimRepository expenseClaimRepository;
     @Mock
     private TenantTimeService tenantTimeService;
@@ -142,7 +145,11 @@ class ApprovalChainIntegrationTest {
         LeaveRequestService leaveService = new LeaveRequestService(
                 leaveRequestRepository, leaveBalanceService, webSocketNotificationService,
                 employeeRepository, leaveTypeRepository, domainEventPublisher, null, auditLogService,
-                tenantTimeService);
+                tenantTimeService, holidayRepository);
+
+        // BA-6: onApproved re-runs the overlap check — no conflicts in this scenario
+        lenient().when(leaveRequestRepository.findOverlappingLeaves(any(), any(), any(), any()))
+                .thenReturn(Collections.emptyList());
 
         List<ApprovalCallbackHandler> handlers = List.of(leaveService);
 
@@ -224,7 +231,7 @@ class ApprovalChainIntegrationTest {
         when(leaveRequestRepository.save(any(LeaveRequest.class)))
                 .thenAnswer(inv -> inv.getArgument(0));
 
-        when(workflowExecutionRepository.findByIdAndTenantId(execution.getId(), TENANT_ID))
+        when(workflowExecutionRepository.findByIdAndTenantIdForUpdate(execution.getId(), TENANT_ID))
                 .thenReturn(Optional.of(execution));
 
         ApprovalActionRequest approveRequest = new ApprovalActionRequest();
@@ -334,7 +341,7 @@ class ApprovalChainIntegrationTest {
 
         // --- Step 2: Manager approves (step 1 of 2) ---
         securityContextMock.when(SecurityContext::getCurrentUserId).thenReturn(MANAGER_ID);
-        when(workflowExecutionRepository.findByIdAndTenantId(execution.getId(), TENANT_ID))
+        when(workflowExecutionRepository.findByIdAndTenantIdForUpdate(execution.getId(), TENANT_ID))
                 .thenReturn(Optional.of(execution));
 
         ApprovalActionRequest approveRequest = new ApprovalActionRequest();
@@ -452,7 +459,7 @@ class ApprovalChainIntegrationTest {
         LeaveRequestService leaveService = new LeaveRequestService(
                 leaveRequestRepository, leaveBalanceService, webSocketNotificationService,
                 employeeRepository, leaveTypeRepository, domainEventPublisher, null, auditLogService,
-                tenantTimeService);
+                tenantTimeService, holidayRepository);
 
         workflowService = new WorkflowService(
                 workflowDefinitionRepository, approvalStepRepository,
@@ -521,7 +528,7 @@ class ApprovalChainIntegrationTest {
 
         when(leaveRequestRepository.findById(leaveId)).thenReturn(Optional.of(leaveRequest));
         when(leaveRequestRepository.save(any(LeaveRequest.class))).thenAnswer(inv -> inv.getArgument(0));
-        when(workflowExecutionRepository.findByIdAndTenantId(execution.getId(), TENANT_ID))
+        when(workflowExecutionRepository.findByIdAndTenantIdForUpdate(execution.getId(), TENANT_ID))
                 .thenReturn(Optional.of(execution));
 
         ApprovalActionRequest rejectRequest = new ApprovalActionRequest();
@@ -614,7 +621,7 @@ class ApprovalChainIntegrationTest {
 
         // Manager approves step 1
         securityContextMock.when(SecurityContext::getCurrentUserId).thenReturn(MANAGER_ID);
-        when(workflowExecutionRepository.findByIdAndTenantId(execution.getId(), TENANT_ID))
+        when(workflowExecutionRepository.findByIdAndTenantIdForUpdate(execution.getId(), TENANT_ID))
                 .thenReturn(Optional.of(execution));
 
         ApprovalActionRequest approveRequest = new ApprovalActionRequest();
@@ -664,7 +671,7 @@ class ApprovalChainIntegrationTest {
         assignedStep.setTenantId(TENANT_ID);
         execution.addStepExecution(assignedStep);
 
-        when(workflowExecutionRepository.findByIdAndTenantId(executionId, TENANT_ID))
+        when(workflowExecutionRepository.findByIdAndTenantIdForUpdate(executionId, TENANT_ID))
                 .thenReturn(Optional.of(execution));
 
         ApprovalActionRequest approveRequest = new ApprovalActionRequest();

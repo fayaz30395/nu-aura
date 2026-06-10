@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -14,6 +15,13 @@ public interface PayrollAdjustmentRepository extends JpaRepository<PayrollAdjust
 
     List<PayrollAdjustment> findByTenantIdAndEmployeeIdAndStatus(
             UUID tenantId, UUID employeeId, PayrollAdjustment.AdjustmentStatus status);
+
+    /**
+     * BA-1: unconsumed adjustments effective in or before the payroll period being
+     * processed. Picked up by payslip generation and marked PROCESSED afterwards.
+     */
+    List<PayrollAdjustment> findByTenantIdAndEmployeeIdAndStatusAndEffectiveDateLessThanEqual(
+            UUID tenantId, UUID employeeId, PayrollAdjustment.AdjustmentStatus status, LocalDate effectiveDate);
 
     List<PayrollAdjustment> findByTenantIdAndStatus(
             UUID tenantId, PayrollAdjustment.AdjustmentStatus status);

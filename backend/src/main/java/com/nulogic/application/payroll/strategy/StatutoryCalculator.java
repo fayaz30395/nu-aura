@@ -36,6 +36,19 @@ public interface StatutoryCalculator {
     String countryCode();
 
     /**
+     * Whether this calculator has a production-ready implementation.
+     *
+     * <p>Skeleton placeholders (US, UK) override this to return {@code false} so
+     * payroll-run creation can be blocked up-front with a clear error instead of
+     * failing mid-run with an {@link UnsupportedOperationException} (PROD-4).
+     *
+     * @return {@code true} when {@link #calculate} is fully implemented
+     */
+    default boolean isImplemented() {
+        return true;
+    }
+
+    /**
      * Calculates statutory deductions and employer contributions for the given
      * payroll inputs under the calculator's country rules.
      *
