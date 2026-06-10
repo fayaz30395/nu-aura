@@ -101,8 +101,8 @@ export function useDisableMfa() {
  */
 export function useMfaLogin() {
   return useMutation({
-    mutationFn: (params: { userId: string; code: string }) =>
-      mfaApi.mfaLogin(params.userId, params.code),
+    mutationFn: (params: { mfaToken: string; code: string }) =>
+      mfaApi.mfaLogin(params.mfaToken, params.code),
     onError: (error) => {
       const message =
         (error as { response?: { data?: { message?: string } } })?.response?.data?.message ||

@@ -8,12 +8,17 @@ import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/compo
 import {logger} from '@/lib/utils/logger';
 
 interface MfaVerificationProps {
-  userId: string;
+  /**
+   * SEC (3c): opaque pre-auth handle returned by /login when MFA is required.
+   * The backend derives the user from it server-side; a caller-supplied userId
+   * is no longer accepted.
+   */
+  mfaToken: string;
   onSuccess: (token: string) => void;
   onCancel: () => void;
 }
 
-export const MfaVerification: React.FC<MfaVerificationProps> = ({userId, onSuccess, onCancel}) => {
+export const MfaVerification: React.FC<MfaVerificationProps> = ({mfaToken, onSuccess, onCancel}) => {
   const [code, setCode] = useState<string>('');
   const [isVerifying, setIsVerifying] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -61,7 +66,7 @@ export const MfaVerification: React.FC<MfaVerificationProps> = ({userId, onSucce
     try {
       setIsVerifying(true);
       setError(null);
-      const result = await mfaApi.mfaLogin(userId, verificationCode);
+      const result = await mfaApi.mfaLogin(mfaToken, verificationCode);
       onSuccess(result.accessToken);
     } catch (err: unknown) {
       logger.error('Failed to verify MFA code:', err);

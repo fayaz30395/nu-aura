@@ -51,14 +51,18 @@ export const mfaApi = {
 
   /**
    * Complete MFA login during authentication.
+   *
+   * SEC (3c): the backend now REQUIRES the opaque `mfaToken` pre-auth handle
+   * issued by /login (it binds the second factor to the first). The legacy
+   * userId-based call is rejected server-side with 401.
    */
-  mfaLogin: async (userId: string, code: string): Promise<{
+  mfaLogin: async (mfaToken: string, code: string): Promise<{
     accessToken: string;
     refreshToken: string;
     tokenType: string;
     expiresIn: number
   }> => {
-    const response = await mfaLoginGenerated({userId, code});
+    const response = await mfaLoginGenerated({mfaToken, code});
     return response as unknown as {
       accessToken: string;
       refreshToken: string;

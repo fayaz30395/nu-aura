@@ -4,7 +4,7 @@ import {create} from 'zustand';
 import {createJSONStorage, persist} from 'zustand/middleware';
 import {apiClient, getSharedRefreshPromise, setOnSessionRefreshed, setSharedRefreshPromise} from '../api/client';
 import {authApi} from '../api/auth';
-import {GoogleLoginRequest, LoginRequest, Role, User} from '../types/core/auth';
+import {GoogleLoginRequest, LoginRequest, MfaChallenge, Role, User} from '../types/core/auth';
 import {clearGoogleToken} from '../utils/googleToken';
 import {getQueryClient} from '../queryClient';
 
@@ -73,7 +73,11 @@ interface AuthState {
   isLoading: boolean;
   hasHydrated: boolean;
   setHasHydrated: (hasHydrated: boolean) => void;
-  login: (credentials: LoginRequest) => Promise<void>;
+  /**
+   * Password login. Resolves to an {@link MfaChallenge} when the backend requires
+   * a second factor (no session is established yet), or null on full login.
+   */
+  login: (credentials: LoginRequest) => Promise<MfaChallenge | null>;
   googleLogin: (credentials: GoogleLoginRequest) => Promise<void>;
   logout: () => Promise<void>;
   setUser: (user: User | null) => void;
@@ -101,6 +105,14 @@ export const useAuth = create<AuthState>()(
         set({isLoading: true});
         try {
           const response = await authApi.login(credentials);
+
+          // M-2 / SEC (3c): MFA-enabled accounts get NO tokens from /login —
+          // surface the pre-auth challenge so the UI can collect the TOTP code
+          // and complete the session via /mfa-login.
+          if (response.mfaRequired && response.mfaToken) {
+            set({isLoading: false});
+            return {mfaRequired: true, mfaToken: response.mfaToken};
+          }
 
           // Tokens are now set via httpOnly cookies by the backend
           // We only store non-sensitive data client-side
@@ -130,6 +142,7 @@ export const useAuth = create<AuthState>()(
 
           set({user, isAuthenticated: true, isLoading: false});
           persistUserToStorage(user);
+          return null;
         } catch (error) {
           set({isLoading: false});
           throw error;

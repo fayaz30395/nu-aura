@@ -20,18 +20,21 @@ public class MfaLoginRequest {
 
     /**
      * Opaque pre-auth token issued by {@code /login} when MFA is required (M-2).
-     * Preferred binding: it resolves server-side to the user that completed first-factor,
+     * REQUIRED: it resolves server-side to the user that completed first-factor,
      * so the second factor cannot be submitted for an arbitrary caller-supplied user.
-     * Optional only for backward compatibility with clients still sending {@link #userId}.
+     * Requests without it are rejected with 401 (SEC 3c — the legacy userId-only
+     * flow allowed minting tokens without password verification).
      */
     private String mfaToken;
 
     /**
      * User ID from the initial login response.
      *
-     * <p>M-2: now optional. When {@link #mfaToken} is supplied it takes precedence and this
-     * field is ignored. Retained for backward compatibility with older clients.</p>
+     * @deprecated SEC (3c): ignored by the server. The userId is always derived from
+     * {@link #mfaToken}. Field retained only so legacy clients' request payloads still
+     * deserialize (they receive 401 instead of 400).
      */
+    @Deprecated
     private UUID userId;
 
     /**

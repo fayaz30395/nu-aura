@@ -321,7 +321,8 @@ function LoginPage() {
 
   const [error, setError] = useState<string | null>(null);
   const [mfaRequired, setMfaRequired] = useState(false);
-  const [mfaUserId, setMfaUserId] = useState<string | null>(null);
+  // SEC (3c): opaque pre-auth handle from /login; required by /mfa-login.
+  const [mfaToken, setMfaToken] = useState<string | null>(null);
   // setLoginAttempts is called by the lockout timer and resetLoginAttempts;
   // the read value is intentionally unused (lockout state is persisted to localStorage).
   const [, setLoginAttempts] = useState(0);
@@ -481,13 +482,14 @@ function LoginPage() {
 
   const handleMfaSuccess = (_token: string) => {
     resetLoginAttempts();
+    setMfaToken(null);
     setDidFreshLogin(true);
     router.push(sanitizeReturnUrl(searchParams.get('returnUrl')));
   };
 
   const handleMfaCancel = () => {
     setMfaRequired(false);
-    setMfaUserId(null);
+    setMfaToken(null);
     setError(null);
   };
 
@@ -550,9 +552,15 @@ function LoginPage() {
         password: DEMO_PASSWORD,
         ...(captchaToken ? {captchaToken} : {}),
       };
-      await login(payload);
+      const challenge = await login(payload);
       setCaptchaRequired(false);
       setCaptchaToken(null);
+      if (challenge?.mfaRequired) {
+        // SEC (3c): no session yet — collect the second factor.
+        setMfaToken(challenge.mfaToken);
+        setMfaRequired(true);
+        return;
+      }
       setDidFreshLogin(true);
       router.push(sanitizeReturnUrl(searchParams.get('returnUrl')));
     } catch (err: unknown) {
@@ -583,9 +591,15 @@ function LoginPage() {
         password: data.password,
         ...(captchaToken ? {captchaToken} : {}),
       };
-      await login(payload);
+      const challenge = await login(payload);
       setCaptchaRequired(false);
       setCaptchaToken(null);
+      if (challenge?.mfaRequired) {
+        // SEC (3c): no session yet — collect the second factor.
+        setMfaToken(challenge.mfaToken);
+        setMfaRequired(true);
+        return;
+      }
       setDidFreshLogin(true);
       router.push(sanitizeReturnUrl(searchParams.get('returnUrl')));
     } catch (err: unknown) {
@@ -641,7 +655,7 @@ function LoginPage() {
   });
 
   // MFA screen
-  if (mfaRequired && mfaUserId) {
+  if (mfaRequired && mfaToken) {
     return (
       <div className="auth-shell relative overflow-hidden motion-rise">
         <AnimatedBackground/>
@@ -654,7 +668,7 @@ function LoginPage() {
             <div className="aura-auth-col">
               <div className="aura-auth-form motion-rise">
                 <MfaVerification
-                  userId={mfaUserId}
+                  mfaToken={mfaToken}
                   onSuccess={handleMfaSuccess}
                   onCancel={handleMfaCancel}
                 />
