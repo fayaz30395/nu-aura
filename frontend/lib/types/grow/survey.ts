@@ -97,15 +97,25 @@ export interface SurveyAnswer {
   ratingValue?: number;
 }
 
+/**
+ * Wire shape of SurveyAnalyticsController POST /survey-analytics/responses/submit
+ * (backend SubmitResponseRequest.AnswerRequest). Choice answers are option
+ * INDICES, ratings 1-10 go in ratingAnswer, NPS 0-10 goes in npsScore.
+ */
+export interface SubmitAnswerRequest {
+  questionId: string;
+  textAnswer?: string;
+  selectedOption?: number;
+  selectedOptions?: number[];
+  ratingAnswer?: number;
+  npsScore?: number;
+  numericAnswer?: number;
+}
+
 export interface SubmitResponseRequest {
   surveyId: string;
   employeeId?: string;
-  answers: {
-    questionId: string;
-    answerText?: string;
-    selectedOptions?: string[];
-    ratingValue?: number;
-  }[];
+  answers: SubmitAnswerRequest[];
 }
 
 export interface SurveyAnalyticsSummary {

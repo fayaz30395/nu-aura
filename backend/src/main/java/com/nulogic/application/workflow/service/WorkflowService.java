@@ -639,7 +639,11 @@ public class WorkflowService {
         UUID tenantId = TenantContext.requireCurrentTenant();
         UUID currentUser = SecurityContext.getCurrentUserId();
 
-        WorkflowExecution execution = workflowExecutionRepository.findByIdAndTenantId(executionId, tenantId)
+        // DEV-1: PESSIMISTIC_WRITE (SELECT ... FOR UPDATE) serializes concurrent approval
+        // actions on the same execution. Without it, two concurrent APPROVE requests both
+        // pass the PENDING checks below and invokeCallback fires twice (duplicate side
+        // effects). Mirrors the PayrollRunService locking pattern.
+        WorkflowExecution execution = workflowExecutionRepository.findByIdAndTenantIdForUpdate(executionId, tenantId)
                 .orElseThrow(() -> new BusinessException(WORKFLOW_EXEC_NOT_FOUND));
 
         // Idempotency: if the workflow is already in a terminal state, return 409 (CONFLICT)
@@ -1070,6 +1074,64 @@ public class WorkflowService {
         );
 
         log.info("Cancelled workflow execution: {} by user {}", executionId, currentUser);
+    }
+
+    /**
+     * Cancels any live (non-terminal) workflow execution attached to the given entity.
+     *
+     * <p>BA-5: direct approval endpoints (e.g. {@code POST /leave-requests/{id}/approve})
+     * bypass the workflow engine. Without this cancellation the open WorkflowExecution
+     * stays PENDING forever in approver inboxes, and a later action on it fails because
+     * the callback finds the entity in a non-PENDING state. Joins the caller's
+     * transaction (REQUIRED) so the cancellation is atomic with the direct action.</p>
+     *
+     * <p>The execution row is re-loaded under PESSIMISTIC_WRITE so a concurrent
+     * {@link #processApprovalAction} cannot interleave, and all PENDING steps are
+     * marked SKIPPED so they disappear from approval inboxes. No approval/rejection
+     * callbacks are invoked — the direct path already applied the domain mutation.</p>
+     */
+    @Transactional
+    public void cancelActiveExecutionForEntity(WorkflowDefinition.EntityType entityType, UUID entityId, String reason) {
+        UUID tenantId = TenantContext.requireCurrentTenant();
+
+        Optional<WorkflowExecution> existing = workflowExecutionRepository.findByEntity(tenantId, entityType, entityId);
+        if (existing.isEmpty() || existing.get().isCompleted()) {
+            return;
+        }
+
+        // Re-load under PESSIMISTIC_WRITE and re-check terminal state after acquiring the lock
+        WorkflowExecution execution = workflowExecutionRepository
+                .findByIdAndTenantIdForUpdate(existing.get().getId(), tenantId)
+                .orElse(null);
+        if (execution == null || execution.isCompleted()) {
+            return;
+        }
+
+        WorkflowExecution.ExecutionStatus oldStatus = execution.getStatus();
+        LocalDateTime now = tenantTimeService.now(tenantId);
+
+        execution.getStepExecutions().stream()
+                .filter(se -> se.getStatus() == StepExecution.StepStatus.PENDING)
+                .forEach(se -> {
+                    se.setStatus(StepExecution.StepStatus.SKIPPED);
+                    se.setExecutedAt(now);
+                });
+
+        execution.cancel(reason, now);
+        workflowExecutionRepository.save(execution);
+
+        auditLogService.logAction(
+                AUDIT_ENTITY_WORKFLOW_EXECUTION,
+                execution.getId(),
+                AuditAction.STATUS_CHANGE,
+                oldStatus.toString(),
+                WorkflowExecution.ExecutionStatus.CANCELLED.toString(),
+                "Workflow cancelled (superseded by direct action) for " + execution.getTitle() +
+                        (reason != null ? " - Reason: " + reason : "")
+        );
+
+        log.info("Cancelled active workflow execution {} for {} entity {} ({})",
+                execution.getId(), entityType, entityId, reason);
     }
 
     // ==================== Delegation Management ====================

@@ -19,7 +19,18 @@ interface PageResponse<T> {
   number: number;
 }
 
+/**
+ * DEV-4 feature flag: the aggregated utilization endpoints
+ * (`/reports/dashboard`, `/reports/utilization`, `/reports/export`) have NO
+ * backend mapping anywhere — only per-employee/per-project reports exist on
+ * ProjectTimesheetController (`/project-timesheets/reports/...`). The
+ * /reports/utilization page is hidden behind this flag until they ship.
+ */
+export const UTILIZATION_DASHBOARD_API_AVAILABLE = false;
+
 export const utilizationService = {
+  // DEV-4: real backend routes live on ProjectTimesheetController under
+  // /project-timesheets/reports/... — not /time-tracking/reports/...
   // Get utilization report for an employee
   async getEmployeeUtilization(
     employeeId: string,
@@ -27,7 +38,7 @@ export const utilizationService = {
     endDate: string
   ): Promise<UtilizationReport> {
     const response = await apiClient.get<UtilizationReport>(
-      `/time-tracking/reports/employee/${employeeId}/utilization`,
+      `/project-timesheets/reports/employee/${employeeId}/utilization`,
       {params: {startDate, endDate}}
     );
     return response.data;
@@ -40,7 +51,7 @@ export const utilizationService = {
     endDate: string
   ): Promise<TimeSummaryReport> {
     const response = await apiClient.get<TimeSummaryReport>(
-      `/time-tracking/reports/employee/${employeeId}/summary`,
+      `/project-timesheets/reports/employee/${employeeId}/summary`,
       {params: {startDate, endDate}}
     );
     return response.data;
@@ -52,7 +63,7 @@ export const utilizationService = {
     weekStartDate: string
   ): Promise<WeeklyTimeReport> {
     const response = await apiClient.get<WeeklyTimeReport>(
-      `/time-tracking/reports/employee/${employeeId}/weekly`,
+      `/project-timesheets/reports/employee/${employeeId}/weekly`,
       {params: {weekStartDate}}
     );
     return response.data;
@@ -65,7 +76,7 @@ export const utilizationService = {
     month: number
   ): Promise<MonthlyTimeReport> {
     const response = await apiClient.get<MonthlyTimeReport>(
-      `/time-tracking/reports/employee/${employeeId}/monthly`,
+      `/project-timesheets/reports/employee/${employeeId}/monthly`,
       {params: {year: year.toString(), month: month.toString()}}
     );
     return response.data;
@@ -78,12 +89,13 @@ export const utilizationService = {
     endDate: string
   ): Promise<ProjectTimeReport> {
     const response = await apiClient.get<ProjectTimeReport>(
-      `/time-tracking/reports/project/${projectId}`,
+      `/project-timesheets/reports/project/${projectId}`,
       {params: {startDate, endDate}}
     );
     return response.data;
   },
 
+  // STUB: no backend mapping — gated by UTILIZATION_DASHBOARD_API_AVAILABLE.
   // Get utilization dashboard data (aggregated)
   async getDashboardData(
     filters: UtilizationFilterOptions
@@ -101,6 +113,7 @@ export const utilizationService = {
     return response.data;
   },
 
+  // STUB: no backend mapping — gated by UTILIZATION_DASHBOARD_API_AVAILABLE.
   // Get all employees utilization for a period
   async getAllEmployeesUtilization(
     startDate: string,
@@ -144,6 +157,7 @@ export const utilizationService = {
     return response.data;
   },
 
+  // STUB: no backend mapping — gated by UTILIZATION_DASHBOARD_API_AVAILABLE.
   // Export utilization report
   async exportReport(
     format: 'csv' | 'excel' | 'pdf',

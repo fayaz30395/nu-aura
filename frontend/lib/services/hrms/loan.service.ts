@@ -1,6 +1,11 @@
 import {apiClient} from '../../api/client';
-import {CreateLoanRequest, EmployeeLoan, LoanFilters, LoanStatus, LoanSummary, Page,} from '../../types/hrms/loan';
+import {CreateLoanRequest, EmployeeLoan, LoanFilters, LoanStatus, Page,} from '../../types/hrms/loan';
 
+// DEV-5: LoanController exposes POST /, GET /{id}, approve, reject, disburse,
+// activate, repayment, cancel, my, pending, GET / and active ONLY.
+// PUT /{id}, DELETE /{id}, POST /{id}/submit and GET /summary do not exist on
+// the backend — those FE actions were removed (loans are created already
+// submitted/PENDING).
 class LoanService {
   // Loan Management
   async createLoan(data: CreateLoanRequest): Promise<EmployeeLoan> {
@@ -8,18 +13,9 @@ class LoanService {
     return response.data;
   }
 
-  async updateLoan(id: string, data: CreateLoanRequest): Promise<EmployeeLoan> {
-    const response = await apiClient.put<EmployeeLoan>(`/loans/${id}`, data);
-    return response.data;
-  }
-
   async getLoanById(id: string): Promise<EmployeeLoan> {
     const response = await apiClient.get<EmployeeLoan>(`/loans/${id}`);
     return response.data;
-  }
-
-  async deleteLoan(id: string): Promise<void> {
-    await apiClient.delete(`/loans/${id}`);
   }
 
   // Employee's Loans
@@ -57,11 +53,6 @@ class LoanService {
   }
 
   // Status Operations
-  async submitLoan(id: string): Promise<EmployeeLoan> {
-    const response = await apiClient.post<EmployeeLoan>(`/loans/${id}/submit`);
-    return response.data;
-  }
-
   // BUG-FIX: Backend expects @RequestBody ApproveLoanRequest, not query params.
   async approveLoan(id: string, approvedAmount?: number): Promise<EmployeeLoan> {
     const body: { approvedAmount?: number } = {};
@@ -82,23 +73,24 @@ class LoanService {
     return response.data;
   }
 
+  async activateLoan(id: string): Promise<EmployeeLoan> {
+    const response = await apiClient.post<EmployeeLoan>(`/loans/${id}/activate`);
+    return response.data;
+  }
+
+  // DEV-5: backend route is POST /loans/{id}/repayment with @RequestBody
+  // RecordRepaymentRequest { amount } — not /payment with query params.
   async recordPayment(id: string, amount: number): Promise<EmployeeLoan> {
     const response = await apiClient.post<EmployeeLoan>(
-      `/loans/${id}/payment`,
-      null,
-      {params: {amount}}
+      `/loans/${id}/repayment`,
+      {amount}
     );
     return response.data;
   }
 
+  // DEV-5: backend models "close" as POST /loans/{id}/cancel (no /close route).
   async closeLoan(id: string): Promise<EmployeeLoan> {
-    const response = await apiClient.post<EmployeeLoan>(`/loans/${id}/close`);
-    return response.data;
-  }
-
-  // Summary
-  async getLoanSummary(): Promise<LoanSummary> {
-    const response = await apiClient.get<LoanSummary>('/loans/summary');
+    const response = await apiClient.post<EmployeeLoan>(`/loans/${id}/cancel`);
     return response.data;
   }
 

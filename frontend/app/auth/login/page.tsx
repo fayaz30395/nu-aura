@@ -345,6 +345,16 @@ function LoginPage() {
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [captchaWidgetId, setCaptchaWidgetId] = useState<number | null>(null);
 
+  // SEC-2 follow-up: keep the submit button disabled until React has hydrated.
+  // Before hydration onSubmit is not attached, so a click would fire a native
+  // POST that reloads the page with cleared fields (and was the GET credential
+  // leak before method="post"). Disabled-at-SSR + enable-in-effect closes the
+  // gap deterministically.
+  const [isHydrated, setIsHydrated] = useState(false);
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
+
   const {
     register,
     handleSubmit,
@@ -760,6 +770,9 @@ function LoginPage() {
 
                 {showEmailForm && (
                   <form
+                    /* pre-hydration guard: a native submit before React attaches
+                       onSubmit must never GET credentials into the URL */
+                    method="post"
                     onSubmit={handleSubmit(handleEmailLogin)}
                     className="flex flex-col gap-4 motion-rise"
                     aria-label="Email and password sign-in"
@@ -829,7 +842,7 @@ function LoginPage() {
 
                     <Button
                       type="submit"
-                      disabled={isEmailLoading || (captchaRequired && !captchaToken)}
+                      disabled={!isHydrated || isEmailLoading || (captchaRequired && !captchaToken)}
                       variant="primary"
                       size="lg"
                       isLoading={isEmailLoading}

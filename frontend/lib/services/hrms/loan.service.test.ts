@@ -74,34 +74,6 @@ describe('LoanService', () => {
     });
   });
 
-  describe('updateLoan', () => {
-    it('should update a loan', async () => {
-      const loan = makeLoan({amount: 200000});
-      mock.put.mockResolvedValueOnce({data: loan});
-      const result = await loanService.updateLoan('l-1', {amount: 200000} as Parameters<typeof loanService.updateLoan>[1]);
-      expect(result.amount).toBe(200000);
-      expect(mock.put).toHaveBeenCalledWith('/loans/l-1', expect.any(Object));
-    });
-
-    it('should throw on error', async () => {
-      mock.put.mockRejectedValueOnce(new Error('Not Found'));
-      await expect(loanService.updateLoan('bad', {} as Parameters<typeof loanService.updateLoan>[1])).rejects.toThrow();
-    });
-  });
-
-  describe('deleteLoan', () => {
-    it('should delete a loan', async () => {
-      mock.delete.mockResolvedValueOnce({data: undefined});
-      await loanService.deleteLoan('l-1');
-      expect(mock.delete).toHaveBeenCalledWith('/loans/l-1');
-    });
-
-    it('should throw on error', async () => {
-      mock.delete.mockRejectedValueOnce(new Error('Forbidden'));
-      await expect(loanService.deleteLoan('l-1')).rejects.toThrow();
-    });
-  });
-
   describe('getMyLoans', () => {
     it('should return my loans with default pagination', async () => {
       mock.get.mockResolvedValueOnce({data: makePage([makeLoan()])});
@@ -150,20 +122,6 @@ describe('LoanService', () => {
     });
   });
 
-  describe('submitLoan', () => {
-    it('should submit a loan for approval', async () => {
-      mock.post.mockResolvedValueOnce({data: makeLoan({status: 'PENDING_APPROVAL'})});
-      const result = await loanService.submitLoan('l-1');
-      expect(result.status).toBe('PENDING_APPROVAL');
-      expect(mock.post).toHaveBeenCalledWith('/loans/l-1/submit');
-    });
-
-    it('should throw on error', async () => {
-      mock.post.mockRejectedValueOnce(new Error('Not Found'));
-      await expect(loanService.submitLoan('bad')).rejects.toThrow();
-    });
-  });
-
   describe('approveLoan', () => {
     it('should approve a loan', async () => {
       mock.post.mockResolvedValueOnce({data: makeLoan({status: 'APPROVED'})});
@@ -208,10 +166,10 @@ describe('LoanService', () => {
   });
 
   describe('recordPayment', () => {
-    it('should record a payment', async () => {
+    it('should record a repayment via the backend /repayment route', async () => {
       mock.post.mockResolvedValueOnce({data: makeLoan({status: 'ACTIVE'})});
       await loanService.recordPayment('l-1', 5000);
-      expect(mock.post).toHaveBeenCalledWith('/loans/l-1/payment', null, {params: {amount: 5000}});
+      expect(mock.post).toHaveBeenCalledWith('/loans/l-1/repayment', {amount: 5000});
     });
 
     it('should throw on error', async () => {
@@ -221,11 +179,11 @@ describe('LoanService', () => {
   });
 
   describe('closeLoan', () => {
-    it('should close a loan', async () => {
-      mock.post.mockResolvedValueOnce({data: makeLoan({status: 'CLOSED'})});
+    it('should close a loan via the backend /cancel route', async () => {
+      mock.post.mockResolvedValueOnce({data: makeLoan({status: 'CANCELLED'})});
       const result = await loanService.closeLoan('l-1');
-      expect(result.status).toBe('CLOSED');
-      expect(mock.post).toHaveBeenCalledWith('/loans/l-1/close');
+      expect(result.status).toBe('CANCELLED');
+      expect(mock.post).toHaveBeenCalledWith('/loans/l-1/cancel');
     });
 
     it('should throw on error', async () => {
@@ -234,18 +192,12 @@ describe('LoanService', () => {
     });
   });
 
-  describe('getLoanSummary', () => {
-    it('should return loan summary', async () => {
-      const summary = {totalLoans: 10, activeLoans: 5, totalDisbursed: 1000000};
-      mock.get.mockResolvedValueOnce({data: summary});
-      const result = await loanService.getLoanSummary();
-      expect(result).toEqual(summary);
-      expect(mock.get).toHaveBeenCalledWith('/loans/summary');
-    });
-
-    it('should throw on error', async () => {
-      mock.get.mockRejectedValueOnce(new Error('Server error'));
-      await expect(loanService.getLoanSummary()).rejects.toThrow();
+  describe('activateLoan', () => {
+    it('should activate a disbursed loan', async () => {
+      mock.post.mockResolvedValueOnce({data: makeLoan({status: 'ACTIVE'})});
+      const result = await loanService.activateLoan('l-1');
+      expect(result.status).toBe('ACTIVE');
+      expect(mock.post).toHaveBeenCalledWith('/loans/l-1/activate');
     });
   });
 

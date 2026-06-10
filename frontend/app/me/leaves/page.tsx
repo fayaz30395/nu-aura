@@ -37,17 +37,37 @@ import {
   useRequestLeaveEncashment,
   useUpdateLeaveRequest
 } from '@/lib/hooks/queries/useLeaves';
-import {LeaveBalance, LeaveRequest, LeaveRequestRequest, LeaveRequestStatus,} from '@/lib/types/hrms/leave';
+import {HalfDayPeriod, LeaveBalance, LeaveRequest, LeaveRequestRequest, LeaveRequestStatus,} from '@/lib/types/hrms/leave';
 import {createLogger} from '@/lib/utils/logger';
 import {formatDate as formatDateCanonical} from '@/lib/utils/format/date';
 
-const leaveFormSchema = z.object({
-  leaveTypeId: z.string().min(1, 'Please select a leave type'),
-  startDate: z.string().min(1, 'Start date is required'),
-  endDate: z.string().min(1, 'End date is required'),
-  isHalfDay: z.boolean().default(false),
-  reason: z.string().min(1, 'Reason is required').max(1000, 'Reason must not exceed 1000 characters'),
-});
+// DATA-5/BA-3 FIX: halfDayPeriod added (backend rejects isHalfDay=true without it),
+// reason min aligned with backend @Size(min=10), and date/half-day invariants
+// validated client-side so users get inline errors instead of server 400s.
+const leaveFormSchema = z
+  .object({
+    leaveTypeId: z.string().min(1, 'Please select a leave type'),
+    startDate: z.string().min(1, 'Start date is required'),
+    endDate: z.string().min(1, 'End date is required'),
+    isHalfDay: z.boolean().default(false),
+    halfDayPeriod: z.enum(['FIRST_HALF', 'SECOND_HALF']).optional(),
+    reason: z
+      .string()
+      .min(10, 'Reason must be at least 10 characters')
+      .max(1000, 'Reason must not exceed 1000 characters'),
+  })
+  .refine((d) => !d.startDate || !d.endDate || d.endDate >= d.startDate, {
+    message: 'End date must be on or after start date',
+    path: ['endDate'],
+  })
+  .refine((d) => !d.isHalfDay || d.startDate === d.endDate, {
+    message: 'Half-day leave must be a single day',
+    path: ['endDate'],
+  })
+  .refine((d) => !d.isHalfDay || !!d.halfDayPeriod, {
+    message: 'Please select first or second half',
+    path: ['halfDayPeriod'],
+  });
 
 type LeaveFormData = z.infer<typeof leaveFormSchema>;
 
@@ -98,6 +118,7 @@ export default function MyLeavesPage() {
       startDate: '',
       endDate: '',
       isHalfDay: false,
+      halfDayPeriod: undefined,
       reason: '',
     },
   });
@@ -168,6 +189,8 @@ export default function MyLeavesPage() {
         endDate: data.endDate,
         totalDays,
         isHalfDay: data.isHalfDay,
+        // DATA-5 FIX: backend rejects isHalfDay=true without a halfDayPeriod
+        halfDayPeriod: data.isHalfDay ? (data.halfDayPeriod as HalfDayPeriod) : undefined,
         reason: data.reason,
       };
 
@@ -202,6 +225,7 @@ export default function MyLeavesPage() {
       startDate: request.startDate,
       endDate: request.endDate,
       isHalfDay: request.isHalfDay,
+      halfDayPeriod: request.halfDayPeriod,
       reason: request.reason,
     });
     setShowApplyModal(true);
@@ -686,6 +710,37 @@ export default function MyLeavesPage() {
                     This is a half-day leave
                   </label>
                 </div>
+
+                {/* Half Day Period (DATA-5: required by backend when isHalfDay) */}
+                {isHalfDay && (
+                  <div>
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                      Which half? *
+                    </label>
+                    <div className="flex items-center gap-6">
+                      <label className="flex items-center gap-2">
+                        <input
+                          type="radio"
+                          value="FIRST_HALF"
+                          {...registerLeave('halfDayPeriod')}
+                          className="w-4 h-4 text-accent-700"
+                        />
+                        <span className="text-body-secondary">First Half (Morning)</span>
+                      </label>
+                      <label className="flex items-center gap-2">
+                        <input
+                          type="radio"
+                          value="SECOND_HALF"
+                          {...registerLeave('halfDayPeriod')}
+                          className="w-4 h-4 text-accent-700"
+                        />
+                        <span className="text-body-secondary">Second Half (Afternoon)</span>
+                      </label>
+                    </div>
+                    {leaveErrors.halfDayPeriod &&
+                      <p className="text-danger-500 text-sm mt-1">{leaveErrors.halfDayPeriod.message}</p>}
+                  </div>
+                )}
 
                 {/* Total Days */}
                 <div className="p-4 bg-accent-50 dark:bg-accent-950/30 rounded-lg">

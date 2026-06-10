@@ -4,7 +4,7 @@ import {useEffect, useState} from 'react';
 import Image from 'next/image';
 import {ChevronLeft, ChevronRight} from 'lucide-react';
 import {useQuery} from '@tanstack/react-query';
-import {spotlightService} from '@/lib/services/platform/spotlight.service';
+import {SPOTLIGHT_API_AVAILABLE, spotlightService} from '@/lib/services/platform/spotlight.service';
 import type {Spotlight} from '@/lib/types/platform/spotlight';
 
 function getDemoSpotlights(): Spotlight[] {
@@ -53,6 +53,8 @@ export function CompanySpotlight() {
       return data && data.length > 0 ? data : getDemoSpotlights();
     },
     placeholderData: getDemoSpotlights,
+    // DEV-3: no spotlight backend controller exists — widget is feature-flagged off
+    enabled: SPOTLIGHT_API_AVAILABLE,
     retry: false,
   });
 
@@ -63,6 +65,9 @@ export function CompanySpotlight() {
     }, 6000);
     return () => clearInterval(timer);
   }, [isAutoPlaying, spotlights.length, isLoading]);
+
+  // DEV-3: hide the widget entirely until the backend ships
+  if (!SPOTLIGHT_API_AVAILABLE) return null;
 
   if (isLoading) {
     return <div className="w-full h-28 rounded-xl bg-[var(--bg-surface)] animate-pulse"/>;

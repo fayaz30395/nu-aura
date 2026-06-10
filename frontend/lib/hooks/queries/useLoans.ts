@@ -14,7 +14,6 @@ export const loanKeys = {
   detail: (id: string) => [...loanKeys.all, 'detail', id] as const,
   pending: (page: number, size: number) =>
     [...loanKeys.all, 'pending', {page, size}] as const,
-  summary: () => [...loanKeys.all, 'summary'] as const,
 };
 
 // ========== Queries ==========
@@ -71,17 +70,9 @@ export function usePendingLoans(page: number = 0, size: number = 20) {
   });
 }
 
-/**
- * Fetch loan summary
- */
-export function useLoanSummary(enabled: boolean = true) {
-  return useQuery({
-    queryKey: loanKeys.summary(),
-    queryFn: () => loanService.getLoanSummary(),
-    enabled,
-    staleTime: 2 * 60 * 1000, // 2 minutes
-  });
-}
+// DEV-5: useLoanSummary, useUpdateLoan, useDeleteLoan and useSubmitLoan were
+// removed — LoanController has no GET /summary, PUT /{id}, DELETE /{id} or
+// POST /{id}/submit routes (loan applications are created already submitted).
 
 // ========== Mutations ==========
 
@@ -95,49 +86,6 @@ export function useCreateLoan() {
     mutationFn: (data: CreateLoanRequest) => loanService.createLoan(data),
     onSuccess: () => {
       // BUG-FIX: Use broader key prefix to invalidate all paginated loan lists
-      queryClient.invalidateQueries({queryKey: loanKeys.all});
-    },
-  });
-}
-
-/**
- * Update an existing loan
- */
-export function useUpdateLoan() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: ({id, data}: { id: string; data: CreateLoanRequest }) =>
-      loanService.updateLoan(id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({queryKey: loanKeys.all});
-    },
-  });
-}
-
-/**
- * Delete a loan
- */
-export function useDeleteLoan() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (id: string) => loanService.deleteLoan(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({queryKey: loanKeys.all});
-    },
-  });
-}
-
-/**
- * Submit a loan for approval
- */
-export function useSubmitLoan() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (id: string) => loanService.submitLoan(id),
-    onSuccess: () => {
       queryClient.invalidateQueries({queryKey: loanKeys.all});
     },
   });
@@ -203,7 +151,7 @@ export function useRecordLoanPayment() {
 }
 
 /**
- * Close a loan
+ * Close a loan (backend models this as POST /loans/{id}/cancel)
  */
 export function useCloseLoan() {
   const queryClient = useQueryClient();

@@ -2,9 +2,11 @@ package com.nulogic.infrastructure.workflow.repository;
 
 import com.nulogic.domain.workflow.WorkflowDefinition;
 import com.nulogic.domain.workflow.WorkflowExecution;
+import jakarta.persistence.LockModeType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -18,6 +20,19 @@ import java.util.UUID;
 public interface WorkflowExecutionRepository extends JpaRepository<WorkflowExecution, UUID> {
 
     Optional<WorkflowExecution> findByIdAndTenantId(UUID id, UUID tenantId);
+
+    /**
+     * Fetch a workflow execution with a pessimistic write lock (SELECT ... FOR UPDATE).
+     * Used for approval state transitions to prevent concurrent modifications
+     * (DEV-1: double-approve firing invokeCallback twice). Mirrors
+     * {@code PayrollRunRepository.findByIdAndTenantIdForUpdate}. The lock is held
+     * for the duration of the transaction, serializing concurrent approvers.
+     */
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT e FROM WorkflowExecution e WHERE e.id = :id AND e.tenantId = :tenantId")
+    Optional<WorkflowExecution> findByIdAndTenantIdForUpdate(
+            @Param("id") UUID id,
+            @Param("tenantId") UUID tenantId);
 
     Optional<WorkflowExecution> findByReferenceNumberAndTenantId(String referenceNumber, UUID tenantId);
 

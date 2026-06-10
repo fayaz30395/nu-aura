@@ -122,6 +122,9 @@ public class DocuSignApiClient {
                 urlAllowlistValidator.validate(url);
                 HttpRequest request = HttpRequest.newBuilder()
                         .uri(URI.create(url))
+                        // INT-2: bound the response wait — java.net.http has NO default request
+                        // timeout; connectTimeout only bounds connection establishment.
+                        .timeout(Duration.ofSeconds(30))
                         .header("Authorization", "Bearer " + accessToken)
                         .header("Content-Type", "application/json")
                         .POST(HttpRequest.BodyPublishers.ofString(requestBody))
@@ -175,6 +178,8 @@ public class DocuSignApiClient {
 
                 HttpRequest request = HttpRequest.newBuilder()
                         .uri(URI.create(url))
+                        // INT-2: bound the response wait (no default request timeout).
+                        .timeout(Duration.ofSeconds(30))
                         .header("Authorization", "Bearer " + accessToken)
                         .GET()
                         .build();
@@ -226,6 +231,8 @@ public class DocuSignApiClient {
 
                 HttpRequest request = HttpRequest.newBuilder()
                         .uri(URI.create(url))
+                        // INT-2: bound the response wait (no default request timeout).
+                        .timeout(Duration.ofSeconds(30))
                         .header("Authorization", "Bearer " + accessToken)
                         .header("Content-Type", "application/json")
                         .method("PUT", HttpRequest.BodyPublishers.ofString(requestBody))
@@ -275,6 +282,8 @@ public class DocuSignApiClient {
 
                 HttpRequest request = HttpRequest.newBuilder()
                         .uri(URI.create(url))
+                        // INT-2: bound the response wait (no default request timeout).
+                        .timeout(Duration.ofSeconds(30))
                         .header("Authorization", "Bearer " + accessToken)
                         .GET()
                         .build();
@@ -317,6 +326,8 @@ public class DocuSignApiClient {
 
                 HttpRequest request = HttpRequest.newBuilder()
                         .uri(URI.create(url))
+                        // INT-2: bound the response wait (no default request timeout).
+                        .timeout(Duration.ofSeconds(30))
                         .header("Authorization", "Bearer " + accessToken)
                         .GET()
                         .build();
@@ -391,6 +402,8 @@ public class DocuSignApiClient {
 
                 HttpRequest request = HttpRequest.newBuilder()
                         .uri(URI.create(url))
+                        // INT-2: bound the response wait (no default request timeout).
+                        .timeout(Duration.ofSeconds(30))
                         .header("Authorization", "Bearer " + accessToken)
                         .header("Content-Type", "application/json")
                         .POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(requestBody)))

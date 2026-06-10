@@ -6,9 +6,13 @@ import com.nulogic.api.leave.dto.LeaveEncashmentRequest;
 import com.nulogic.api.leave.mapper.LeaveBalanceMapperImpl;
 import com.nulogic.application.leave.service.LeaveBalanceService;
 import com.nulogic.common.security.JwtAuthenticationFilter;
+import com.nulogic.common.security.Permission;
+import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantFilter;
 import com.nulogic.domain.leave.LeaveBalance;
+import com.nulogic.domain.user.RoleScope;
 import com.nulogic.infrastructure.leave.repository.LeaveTypeRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -26,9 +30,13 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -69,10 +77,20 @@ class LeaveBalanceControllerTest {
     private UUID leaveBalanceId;
     private LeaveBalance leaveBalance;
 
+    @AfterEach
+    void tearDown() {
+        SecurityContext.clear();
+    }
+
     @BeforeEach
     void setUp() {
         employeeId = UUID.randomUUID();
         leaveBalanceId = UUID.randomUUID();
+
+        // RBAC-2: set up SecurityContext so enforceLeaveBalanceViewScope passes
+        Map<String, RoleScope> permissions = new HashMap<>();
+        permissions.put(Permission.LEAVE_VIEW_ALL, RoleScope.GLOBAL);
+        SecurityContext.setCurrentUser(UUID.randomUUID(), UUID.randomUUID(), Set.of("EMPLOYEE"), permissions);
 
         leaveBalance = new LeaveBalance();
         leaveBalance.setId(leaveBalanceId);
@@ -141,6 +159,61 @@ class LeaveBalanceControllerTest {
                     .andExpect(jsonPath("$[0].year").value(2024));
 
             verify(leaveBalanceService).getEmployeeBalancesForYearEnriched(employeeId, 2024);
+        }
+    }
+
+    @Nested
+    @DisplayName("View Scope Enforcement Tests (RBAC-2)")
+    class ViewScopeEnforcementTests {
+
+        @Test
+        @DisplayName("VIEW_SELF: should allow access to own balances")
+        void viewSelfShouldAllowOwnBalances() throws Exception {
+            Map<String, RoleScope> permissions = new HashMap<>();
+            permissions.put(Permission.LEAVE_VIEW_SELF, RoleScope.SELF);
+            SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("EMPLOYEE"), permissions);
+            when(leaveBalanceService.getEmployeeBalancesEnriched(employeeId))
+                    .thenReturn(List.of());
+
+            mockMvc.perform(get("/api/v1/leave-balances/employee/{employeeId}", employeeId))
+                    .andExpect(status().isOk());
+        }
+
+        @Test
+        @DisplayName("VIEW_SELF: should deny access to another employee's balances")
+        void viewSelfShouldDenyOtherEmployee() {
+            Map<String, RoleScope> permissions = new HashMap<>();
+            permissions.put(Permission.LEAVE_VIEW_SELF, RoleScope.SELF);
+            SecurityContext.setCurrentUser(UUID.randomUUID(), UUID.randomUUID(), Set.of("EMPLOYEE"), permissions);
+
+            assertThrows(Exception.class, () ->
+                    mockMvc.perform(get("/api/v1/leave-balances/employee/{employeeId}", employeeId)));
+        }
+
+        @Test
+        @DisplayName("VIEW_TEAM: should allow access to a direct reportee's balances")
+        void viewTeamShouldAllowReportee() throws Exception {
+            Map<String, RoleScope> permissions = new HashMap<>();
+            permissions.put(Permission.LEAVE_VIEW_TEAM, RoleScope.TEAM);
+            SecurityContext.setCurrentUser(UUID.randomUUID(), UUID.randomUUID(), Set.of("EMPLOYEE"), permissions);
+            SecurityContext.setAllReporteeIds(Set.of(employeeId));
+            when(leaveBalanceService.getEmployeeBalancesEnriched(employeeId))
+                    .thenReturn(List.of());
+
+            mockMvc.perform(get("/api/v1/leave-balances/employee/{employeeId}", employeeId))
+                    .andExpect(status().isOk());
+        }
+
+        @Test
+        @DisplayName("VIEW_TEAM: should deny access to a non-reportee's balances")
+        void viewTeamShouldDenyNonReportee() {
+            Map<String, RoleScope> permissions = new HashMap<>();
+            permissions.put(Permission.LEAVE_VIEW_TEAM, RoleScope.TEAM);
+            SecurityContext.setCurrentUser(UUID.randomUUID(), UUID.randomUUID(), Set.of("EMPLOYEE"), permissions);
+            SecurityContext.setAllReporteeIds(Set.of(UUID.randomUUID()));
+
+            assertThrows(Exception.class, () ->
+                    mockMvc.perform(get("/api/v1/leave-balances/employee/{employeeId}", employeeId)));
         }
     }
 

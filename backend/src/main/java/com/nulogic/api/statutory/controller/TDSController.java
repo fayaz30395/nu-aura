@@ -1,6 +1,7 @@
 package com.nulogic.api.statutory.controller;
 
 import com.nulogic.application.statutory.service.StatutoryService;
+import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.RequiresPermission;
 import com.nulogic.domain.statutory.EmployeeTDSDeclaration;
 import com.nulogic.domain.statutory.TDSSlab;
@@ -20,13 +21,13 @@ public class TDSController {
     private final StatutoryService statutoryService;
 
     @PostMapping("/slab")
-    @RequiresPermission("STATUTORY_MANAGE")
+    @RequiresPermission(Permission.STATUTORY_MANAGE)
     public ResponseEntity<TDSSlab> createSlab(@Valid @RequestBody TDSSlab slab) {
         return ResponseEntity.ok(statutoryService.createTDSSlab(slab));
     }
 
     @GetMapping("/slabs/{assessmentYear}/{regime}")
-    @RequiresPermission("STATUTORY_VIEW")
+    @RequiresPermission(Permission.STATUTORY_VIEW)
     public ResponseEntity<List<TDSSlab>> getSlabs(
             @PathVariable String assessmentYear,
             @PathVariable TDSSlab.TaxRegime regime) {
@@ -34,14 +35,14 @@ public class TDSController {
     }
 
     @PostMapping("/declaration")
-    @RequiresPermission("STATUTORY_MANAGE")
+    @RequiresPermission(Permission.STATUTORY_MANAGE)
     public ResponseEntity<EmployeeTDSDeclaration> submitDeclaration(
             @Valid @RequestBody EmployeeTDSDeclaration declaration) {
         return ResponseEntity.ok(statutoryService.submitTDSDeclaration(declaration));
     }
 
     @GetMapping("/declaration/{employeeId}/{financialYear}")
-    @RequiresPermission("STATUTORY_VIEW")
+    @RequiresPermission(Permission.STATUTORY_VIEW)
     public ResponseEntity<EmployeeTDSDeclaration> getDeclaration(
             @PathVariable UUID employeeId,
             @PathVariable String financialYear) {
@@ -51,7 +52,7 @@ public class TDSController {
     }
 
     @PutMapping("/declaration/{id}/approve")
-    @RequiresPermission("STATUTORY_MANAGE")
+    @RequiresPermission(Permission.STATUTORY_MANAGE)
     public ResponseEntity<EmployeeTDSDeclaration> approveDeclaration(
             @PathVariable UUID id,
             @Valid @RequestBody UUID approverId) {

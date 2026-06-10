@@ -2,6 +2,7 @@ package com.nulogic.application.benefits.service;
 
 import com.nulogic.api.benefits.dto.*;
 import com.nulogic.application.audit.service.AuditLogService;
+import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
@@ -13,6 +14,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -400,6 +402,17 @@ public class BenefitEnhancedService {
 
         BenefitEnrollment enrollment = enrollmentRepository.findByIdAndTenantId(request.getEnrollmentId(), tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("Enrollment not found"));
+
+        // RBAC-4 IDOR FIX: BENEFIT_CLAIM_SUBMIT is self-scoped — callers without
+        // tenant-wide benefit management may only claim against their own enrollment.
+        if (!SecurityContext.isSuperAdmin() && !SecurityContext.isTenantAdmin()
+                && !SecurityContext.hasPermission(Permission.BENEFIT_MANAGE)) {
+            UUID currentEmployeeId = SecurityContext.getCurrentEmployeeId();
+            if (currentEmployeeId == null || !currentEmployeeId.equals(enrollment.getEmployeeId())) {
+                throw new AccessDeniedException(
+                        "You are not authorized to submit claims for this enrollment");
+            }
+        }
 
         if (enrollment.getStatus() != BenefitEnrollment.EnrollmentStatus.ACTIVE &&
                 enrollment.getStatus() != BenefitEnrollment.EnrollmentStatus.COBRA_CONTINUATION) {

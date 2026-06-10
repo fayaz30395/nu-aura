@@ -175,6 +175,16 @@ public class User extends TenantAware {
         ACTIVE,
         INACTIVE,
         LOCKED,
-        PENDING_ACTIVATION
+        PENDING_ACTIVATION,
+        /**
+         * Permanently neutralized demo-credential account (written by migrations
+         * V270/V272 when {@code demoCredentialsEnabled != true}). Rows with this
+         * status exist in every non-demo database; without this constant any
+         * entity load of such a row throws {@code IllegalArgumentException}
+         * (e.g. /api/v1/admin/users returned 500). Not ACTIVE → treated as
+         * disabled by {@code UserPrincipal} and all AuthService status checks,
+         * and {@link #activate()} intentionally rejects it.
+         */
+        SUSPENDED
     }
 }

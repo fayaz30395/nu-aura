@@ -1,15 +1,26 @@
 package com.nulogic.application.payroll.service;
 
 import com.nulogic.application.audit.service.AuditLogService;
+import com.nulogic.application.payroll.strategy.StatutoryCalculatorFactory;
+import com.nulogic.common.exception.BusinessException;
 import com.nulogic.common.exception.ResourceNotFoundException;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.domain.attendance.Holiday;
 import com.nulogic.domain.employee.Employee;
+import com.nulogic.domain.payroll.PayrollAdjustment;
 import com.nulogic.domain.payroll.PayrollRun;
 import com.nulogic.domain.payroll.PayrollRun.PayrollStatus;
+import com.nulogic.domain.payroll.Payslip;
+import com.nulogic.domain.payroll.SalaryStructure;
+import com.nulogic.infrastructure.attendance.repository.AttendanceRecordRepository;
+import com.nulogic.infrastructure.attendance.repository.HolidayRepository;
 import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
+import com.nulogic.infrastructure.leave.repository.LeaveRequestRepository;
+import com.nulogic.infrastructure.payroll.repository.PayrollAdjustmentRepository;
 import com.nulogic.infrastructure.payroll.repository.PayrollRunRepository;
 import com.nulogic.infrastructure.payroll.repository.PayslipRepository;
 import com.nulogic.infrastructure.payroll.repository.SalaryStructureRepository;
+import org.mockito.ArgumentCaptor;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -53,6 +64,16 @@ class PayrollRunServiceTest {
     private PayrollPeriodLock payrollPeriodLock;
     @Mock
     private com.nulogic.common.util.TenantTimeService tenantTimeService;
+    @Mock
+    private PayrollAdjustmentRepository payrollAdjustmentRepository;
+    @Mock
+    private AttendanceRecordRepository attendanceRecordRepository;
+    @Mock
+    private HolidayRepository holidayRepository;
+    @Mock
+    private LeaveRequestRepository leaveRequestRepository;
+    @Mock
+    private StatutoryCalculatorFactory statutoryCalculatorFactory;
     @InjectMocks
     private PayrollRunService payrollRunService;
     private UUID tenantId;
@@ -128,6 +149,18 @@ class PayrollRunServiceTest {
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("already exists");
         }
+
+        @Test
+        @DisplayName("PROD-4: Should reject run creation when tenant country has no implemented statutory engine")
+        void shouldRejectCreationForUnsupportedCountry() {
+            doThrow(new BusinessException("Payroll runs are currently supported for India (IN) tenants only."))
+                    .when(statutoryCalculatorFactory).assertPayrollSupported(tenantId);
+
+            assertThatThrownBy(() -> payrollRunService.createPayrollRun(payrollRun))
+                    .isInstanceOf(BusinessException.class)
+                    .hasMessageContaining("India (IN) tenants only");
+            verify(payrollRunRepository, never()).save(any(PayrollRun.class));
+        }
     }
 
     @Nested
@@ -155,6 +188,34 @@ class PayrollRunServiceTest {
             assertThat(result).isNotNull();
             assertThat(result.getPayPeriodMonth()).isEqualTo(2);
             assertThat(result.getRemarks()).isEqualTo("Updated remarks");
+        }
+
+        @Test
+        @DisplayName("DATA-6: Should reject period change when another run already covers the new period")
+        void shouldRejectPeriodChangeWhenDuplicateExists() {
+            UUID runId = payrollRun.getId();
+            PayrollRun conflicting = PayrollRun.builder()
+                    .payPeriodYear(2025)
+                    .payPeriodMonth(2)
+                    .payrollDate(LocalDate.of(2025, 2, 28))
+                    .build();
+            conflicting.setId(UUID.randomUUID());
+            conflicting.setTenantId(tenantId);
+
+            PayrollRun updateData = PayrollRun.builder()
+                    .payPeriodYear(2025)
+                    .payPeriodMonth(2)
+                    .payrollDate(LocalDate.of(2025, 2, 28))
+                    .build();
+
+            when(payrollRunRepository.findById(runId)).thenReturn(Optional.of(payrollRun));
+            when(payrollRunRepository.findByTenantIdAndPeriodForUpdate(tenantId, 2025, 2))
+                    .thenReturn(Optional.of(conflicting));
+
+            assertThatThrownBy(() -> payrollRunService.updatePayrollRun(runId, updateData))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("already exists");
+            verify(payrollRunRepository, never()).save(any(PayrollRun.class));
         }
 
         @Test
@@ -205,6 +266,240 @@ class PayrollRunServiceTest {
             assertThat(result).isNotNull();
             assertThat(result.getStatus()).isEqualTo(PayrollStatus.PROCESSED);
             verify(payrollRunRepository).save(any(PayrollRun.class));
+        }
+
+        @Test
+        @DisplayName("BA-1: Payslip uses calendar working days and applies pending payroll adjustments")
+        void shouldGeneratePayslipWithComputedDaysAndAdjustments() {
+            UUID runId = payrollRun.getId();
+            UUID employeeId = UUID.randomUUID();
+
+            Employee employee = Employee.builder()
+                    .status(Employee.EmployeeStatus.ACTIVE)
+                    .build();
+            employee.setId(employeeId);
+            employee.setTenantId(tenantId);
+
+            SalaryStructure structure = SalaryStructure.builder()
+                    .employeeId(employeeId)
+                    .basicSalary(new java.math.BigDecimal("30000"))
+                    .build();
+
+            // LOP: 2 days (stored as days); expense reimbursement: flat ₹1000
+            PayrollAdjustment lop = PayrollAdjustment.builder()
+                    .tenantId(tenantId).employeeId(employeeId)
+                    .adjustmentType(PayrollAdjustment.AdjustmentType.LOP_DEDUCTION)
+                    .category(PayrollAdjustment.AdjustmentCategory.DEDUCTION)
+                    .amount(new java.math.BigDecimal("2"))
+                    .description("LOP").sourceModule("LEAVE")
+                    .effectiveDate(LocalDate.of(2025, 1, 10))
+                    .build();
+            PayrollAdjustment expense = PayrollAdjustment.builder()
+                    .tenantId(tenantId).employeeId(employeeId)
+                    .adjustmentType(PayrollAdjustment.AdjustmentType.EXPENSE_REIMBURSEMENT)
+                    .category(PayrollAdjustment.AdjustmentCategory.EARNING)
+                    .amount(new java.math.BigDecimal("1000"))
+                    .description("Expense").sourceModule("EXPENSE")
+                    .effectiveDate(LocalDate.of(2025, 1, 12))
+                    .build();
+
+            when(payrollRunRepository.findByIdAndTenantIdForUpdate(runId, tenantId))
+                    .thenReturn(Optional.of(payrollRun));
+            when(payrollRunRepository.save(any(PayrollRun.class)))
+                    .thenAnswer(inv -> inv.getArgument(0));
+            when(employeeRepository.findByTenantId(tenantId)).thenReturn(List.of(employee));
+            when(payslipRepository.existsByTenantIdAndEmployeeIdAndPayPeriodYearAndPayPeriodMonth(
+                    tenantId, employeeId, 2025, 1)).thenReturn(false, true);
+            when(salaryStructureRepository.findActiveByEmployeeIdAndDate(
+                    tenantId, employeeId, payrollRun.getPayrollDate()))
+                    .thenReturn(Optional.of(structure));
+            when(holidayRepository.findAllByTenantIdAndHolidayDateBetween(
+                    eq(tenantId), any(LocalDate.class), any(LocalDate.class)))
+                    .thenReturn(List.of());
+            when(leaveRequestRepository.findOverlappingLeaves(
+                    eq(tenantId), eq(employeeId), any(LocalDate.class), any(LocalDate.class)))
+                    .thenReturn(List.of());
+            // No attendance tracked → fall back to workingDays - leaveDays
+            when(attendanceRecordRepository.countByTenantIdAndEmployeeIdAndDateBetween(
+                    eq(tenantId), eq(employeeId), any(LocalDate.class), any(LocalDate.class)))
+                    .thenReturn(0L);
+            when(payrollAdjustmentRepository
+                    .findByTenantIdAndEmployeeIdAndStatusAndEffectiveDateLessThanEqual(
+                            eq(tenantId), eq(employeeId),
+                            eq(PayrollAdjustment.AdjustmentStatus.PENDING), any(LocalDate.class)))
+                    .thenReturn(List.of(lop, expense));
+
+            payrollRunService.processPayrollRun(runId, userId);
+
+            ArgumentCaptor<Payslip> payslipCaptor = ArgumentCaptor.forClass(Payslip.class);
+            verify(payslipRepository).save(payslipCaptor.capture());
+            Payslip payslip = payslipCaptor.getValue();
+
+            // January 2025 has 23 weekdays (8 weekend days)
+            assertThat(payslip.getWorkingDays()).isEqualTo(23);
+            assertThat(payslip.getPresentDays()).isEqualTo(23);
+            assertThat(payslip.getLeaveDays()).isZero();
+            // Expense reimbursement lands in otherAllowances
+            assertThat(payslip.getOtherAllowances())
+                    .isEqualByComparingTo(new java.math.BigDecimal("1000"));
+            // LOP: 2 days × (30000 / 23 = 1304.35) = 2608.70 into otherDeductions
+            assertThat(payslip.getOtherDeductions())
+                    .isEqualByComparingTo(new java.math.BigDecimal("2608.70"));
+            assertThat(payslip.getGrossSalary())
+                    .isEqualByComparingTo(new java.math.BigDecimal("31000"));
+            assertThat(payslip.getNetSalary())
+                    .isEqualByComparingTo(new java.math.BigDecimal("28391.30"));
+
+            // Adjustments are consumed and linked back to the run
+            assertThat(lop.getStatus()).isEqualTo(PayrollAdjustment.AdjustmentStatus.PROCESSED);
+            assertThat(expense.getStatus()).isEqualTo(PayrollAdjustment.AdjustmentStatus.PROCESSED);
+            assertThat(lop.getPayrollRunId()).isEqualTo(runId);
+            verify(payrollAdjustmentRepository).saveAll(List.of(lop, expense));
+        }
+
+        @Test
+        @DisplayName("BA-6 regression: Payslip leaveDays counts only APPROVED leaves, not PENDING ones returned by findOverlappingLeaves")
+        void shouldCountOnlyApprovedLeavesInPayslipLeaveDays() {
+            UUID runId = payrollRun.getId();
+            UUID employeeId = UUID.randomUUID();
+
+            Employee employee = Employee.builder()
+                    .status(Employee.EmployeeStatus.ACTIVE)
+                    .build();
+            employee.setId(employeeId);
+            employee.setTenantId(tenantId);
+
+            SalaryStructure structure = SalaryStructure.builder()
+                    .employeeId(employeeId)
+                    .basicSalary(new java.math.BigDecimal("30000"))
+                    .build();
+
+            // APPROVED leave: Mon Jan 6 – Tue Jan 7, 2025 → 2 working days
+            com.nulogic.domain.leave.LeaveRequest approvedLeave =
+                    com.nulogic.domain.leave.LeaveRequest.builder()
+                            .employeeId(employeeId)
+                            .startDate(LocalDate.of(2025, 1, 6))
+                            .endDate(LocalDate.of(2025, 1, 7))
+                            .status(com.nulogic.domain.leave.LeaveRequest.LeaveRequestStatus.APPROVED)
+                            .build();
+            // PENDING leave: Mon Jan 13 – Wed Jan 15, 2025 → 3 working days,
+            // returned by the widened findOverlappingLeaves but must NOT count
+            com.nulogic.domain.leave.LeaveRequest pendingLeave =
+                    com.nulogic.domain.leave.LeaveRequest.builder()
+                            .employeeId(employeeId)
+                            .startDate(LocalDate.of(2025, 1, 13))
+                            .endDate(LocalDate.of(2025, 1, 15))
+                            .status(com.nulogic.domain.leave.LeaveRequest.LeaveRequestStatus.PENDING)
+                            .build();
+
+            when(payrollRunRepository.findByIdAndTenantIdForUpdate(runId, tenantId))
+                    .thenReturn(Optional.of(payrollRun));
+            when(payrollRunRepository.save(any(PayrollRun.class)))
+                    .thenAnswer(inv -> inv.getArgument(0));
+            when(employeeRepository.findByTenantId(tenantId)).thenReturn(List.of(employee));
+            when(payslipRepository.existsByTenantIdAndEmployeeIdAndPayPeriodYearAndPayPeriodMonth(
+                    tenantId, employeeId, 2025, 1)).thenReturn(false, true);
+            when(salaryStructureRepository.findActiveByEmployeeIdAndDate(
+                    tenantId, employeeId, payrollRun.getPayrollDate()))
+                    .thenReturn(Optional.of(structure));
+            when(holidayRepository.findAllByTenantIdAndHolidayDateBetween(
+                    eq(tenantId), any(LocalDate.class), any(LocalDate.class)))
+                    .thenReturn(List.of());
+            when(leaveRequestRepository.findOverlappingLeaves(
+                    eq(tenantId), eq(employeeId), any(LocalDate.class), any(LocalDate.class)))
+                    .thenReturn(List.of(approvedLeave, pendingLeave));
+            // No attendance tracked → fall back to workingDays - leaveDays
+            when(attendanceRecordRepository.countByTenantIdAndEmployeeIdAndDateBetween(
+                    eq(tenantId), eq(employeeId), any(LocalDate.class), any(LocalDate.class)))
+                    .thenReturn(0L);
+            when(payrollAdjustmentRepository
+                    .findByTenantIdAndEmployeeIdAndStatusAndEffectiveDateLessThanEqual(
+                            eq(tenantId), eq(employeeId),
+                            eq(PayrollAdjustment.AdjustmentStatus.PENDING), any(LocalDate.class)))
+                    .thenReturn(List.of());
+
+            payrollRunService.processPayrollRun(runId, userId);
+
+            ArgumentCaptor<Payslip> payslipCaptor = ArgumentCaptor.forClass(Payslip.class);
+            verify(payslipRepository).save(payslipCaptor.capture());
+            Payslip payslip = payslipCaptor.getValue();
+
+            // January 2025 has 23 weekdays; only the 2 APPROVED days count.
+            // If the PENDING leave leaked in, leaveDays would be 5 and presentDays 18.
+            assertThat(payslip.getWorkingDays()).isEqualTo(23);
+            assertThat(payslip.getLeaveDays()).isEqualTo(2);
+            // presentDays fallback = workingDays - approved leaveDays = 23 - 2
+            assertThat(payslip.getPresentDays()).isEqualTo(21);
+        }
+
+        @Test
+        @DisplayName("Holiday consistency: only company-wide holidays reduce working days — optional AND restricted are excluded (same rule as leave LOP)")
+        void shouldExcludeOptionalAndRestrictedHolidaysFromWorkingDays() {
+            UUID runId = payrollRun.getId();
+            UUID employeeId = UUID.randomUUID();
+
+            Employee employee = Employee.builder()
+                    .status(Employee.EmployeeStatus.ACTIVE)
+                    .build();
+            employee.setId(employeeId);
+            employee.setTenantId(tenantId);
+
+            SalaryStructure structure = SalaryStructure.builder()
+                    .employeeId(employeeId)
+                    .basicSalary(new java.math.BigDecimal("30000"))
+                    .build();
+
+            // Wed Jan 1: company-wide holiday → reduces working days
+            Holiday companyWide = Holiday.builder()
+                    .holidayDate(LocalDate.of(2025, 1, 1))
+                    .build();
+            // Tue Jan 14: optional holiday → must NOT reduce working days
+            Holiday optionalHoliday = Holiday.builder()
+                    .holidayDate(LocalDate.of(2025, 1, 14))
+                    .isOptional(true)
+                    .build();
+            // Thu Jan 23: restricted holiday → must NOT reduce working days
+            // (aligns with LeaveRequestService LOP working-day rule)
+            Holiday restrictedHoliday = Holiday.builder()
+                    .holidayDate(LocalDate.of(2025, 1, 23))
+                    .isRestricted(true)
+                    .build();
+
+            when(payrollRunRepository.findByIdAndTenantIdForUpdate(runId, tenantId))
+                    .thenReturn(Optional.of(payrollRun));
+            when(payrollRunRepository.save(any(PayrollRun.class)))
+                    .thenAnswer(inv -> inv.getArgument(0));
+            when(employeeRepository.findByTenantId(tenantId)).thenReturn(List.of(employee));
+            when(payslipRepository.existsByTenantIdAndEmployeeIdAndPayPeriodYearAndPayPeriodMonth(
+                    tenantId, employeeId, 2025, 1)).thenReturn(false, true);
+            when(salaryStructureRepository.findActiveByEmployeeIdAndDate(
+                    tenantId, employeeId, payrollRun.getPayrollDate()))
+                    .thenReturn(Optional.of(structure));
+            when(holidayRepository.findAllByTenantIdAndHolidayDateBetween(
+                    eq(tenantId), any(LocalDate.class), any(LocalDate.class)))
+                    .thenReturn(List.of(companyWide, optionalHoliday, restrictedHoliday));
+            when(leaveRequestRepository.findOverlappingLeaves(
+                    eq(tenantId), eq(employeeId), any(LocalDate.class), any(LocalDate.class)))
+                    .thenReturn(List.of());
+            when(attendanceRecordRepository.countByTenantIdAndEmployeeIdAndDateBetween(
+                    eq(tenantId), eq(employeeId), any(LocalDate.class), any(LocalDate.class)))
+                    .thenReturn(0L);
+            when(payrollAdjustmentRepository
+                    .findByTenantIdAndEmployeeIdAndStatusAndEffectiveDateLessThanEqual(
+                            eq(tenantId), eq(employeeId),
+                            eq(PayrollAdjustment.AdjustmentStatus.PENDING), any(LocalDate.class)))
+                    .thenReturn(List.of());
+
+            payrollRunService.processPayrollRun(runId, userId);
+
+            ArgumentCaptor<Payslip> payslipCaptor = ArgumentCaptor.forClass(Payslip.class);
+            verify(payslipRepository).save(payslipCaptor.capture());
+            Payslip payslip = payslipCaptor.getValue();
+
+            // January 2025 has 23 weekdays; only the company-wide holiday (Jan 1)
+            // reduces the count. If optional/restricted leaked in, this would be 21.
+            assertThat(payslip.getWorkingDays()).isEqualTo(22);
+            assertThat(payslip.getPresentDays()).isEqualTo(22);
         }
     }
 

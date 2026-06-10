@@ -269,6 +269,9 @@ public class DocuSignAuthService {
 
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(tokenEndpoint))
+                    // INT-2: bound the response wait — java.net.http has NO default request
+                    // timeout; connectTimeout only bounds connection establishment.
+                    .timeout(Duration.ofSeconds(30))
                     .header("Content-Type", "application/x-www-form-urlencoded")
                     .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                     .build();

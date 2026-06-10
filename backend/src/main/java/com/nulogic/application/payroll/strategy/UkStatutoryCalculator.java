@@ -41,6 +41,14 @@ public class UkStatutoryCalculator implements StatutoryCalculator {
         return COUNTRY_CODE;
     }
 
+    /**
+     * Skeleton only — payroll-run creation for UK tenants is blocked (PROD-4).
+     */
+    @Override
+    public boolean isImplemented() {
+        return false;
+    }
+
     @Override
     public StatutoryResult calculate(StatutoryCalculationInput input) {
         log.warn("UK statutory calculation requested but engine is not yet implemented: employeeId={}",

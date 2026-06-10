@@ -2,6 +2,7 @@ package com.nulogic.api.statutory.controller;
 
 import com.nulogic.application.statutory.service.StatutoryService;
 import com.nulogic.common.api.response.WrapResponse;
+import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.RequiresPermission;
 import com.nulogic.domain.statutory.MonthlyStatutoryContribution;
 import lombok.RequiredArgsConstructor;
@@ -23,14 +24,14 @@ public class StatutoryContributionController {
     private final StatutoryService statutoryService;
 
     @GetMapping("/employee/{employeeId}")
-    @RequiresPermission("STATUTORY_VIEW")
+    @RequiresPermission(Permission.STATUTORY_VIEW)
     public ResponseEntity<List<MonthlyStatutoryContribution>> getEmployeeContributions(
             @PathVariable UUID employeeId) {
         return ResponseEntity.ok(statutoryService.getEmployeeContributions(employeeId));
     }
 
     @GetMapping("/month/{month}/year/{year}")
-    @RequiresPermission("STATUTORY_VIEW")
+    @RequiresPermission(Permission.STATUTORY_VIEW)
     public ResponseEntity<List<MonthlyStatutoryContribution>> getMonthlyContributions(
             @PathVariable Integer month,
             @PathVariable Integer year) {
@@ -38,7 +39,7 @@ public class StatutoryContributionController {
     }
 
     @GetMapping("/payslip/{payslipId}")
-    @RequiresPermission("STATUTORY_VIEW")
+    @RequiresPermission(Permission.STATUTORY_VIEW)
     public ResponseEntity<MonthlyStatutoryContribution> getByPayslip(@PathVariable UUID payslipId) {
         return statutoryService.getContributionByPayslip(payslipId)
                 .map(ResponseEntity::ok)

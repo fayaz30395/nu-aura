@@ -14,8 +14,17 @@ export interface PagedResponse<T> {
 
 // STUB: Backend endpoint not implemented — do not call.
 // No SpotlightController exists in the backend. These methods will return 404.
-// When the backend endpoint is implemented, remove this comment and the path
-// should be `/spotlights` (apiClient baseURL already includes /api/v1).
+// When the backend endpoint is implemented, flip SPOTLIGHT_API_AVAILABLE to
+// true and the path should be `/spotlights` (apiClient baseURL already
+// includes /api/v1).
+
+/**
+ * DEV-3 feature flag: gates the CompanySpotlight dashboard widget, the
+ * /company-spotlight admin page and all spotlight queries until the backend
+ * controller ships.
+ */
+export const SPOTLIGHT_API_AVAILABLE = false;
+
 class SpotlightService {
   /**
    * Get only active spotlights, sorted by displayOrder

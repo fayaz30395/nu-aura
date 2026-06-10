@@ -474,7 +474,7 @@ class WorkflowServiceTest {
             WorkflowExecution execution = createApprovableExecution(executionId);
             StepExecution currentStep = execution.getCurrentStepExecution();
 
-            when(workflowExecutionRepository.findByIdAndTenantId(executionId, TENANT_ID))
+            when(workflowExecutionRepository.findByIdAndTenantIdForUpdate(executionId, TENANT_ID))
                     .thenReturn(Optional.of(execution));
             lenient().when(employeeRepository.findByIdAndTenantId(USER_ID, TENANT_ID))
                     .thenReturn(Optional.empty());
@@ -501,7 +501,7 @@ class WorkflowServiceTest {
             UUID executionId = UUID.randomUUID();
             WorkflowExecution execution = createApprovableExecution(executionId);
 
-            when(workflowExecutionRepository.findByIdAndTenantId(executionId, TENANT_ID))
+            when(workflowExecutionRepository.findByIdAndTenantIdForUpdate(executionId, TENANT_ID))
                     .thenReturn(Optional.of(execution));
             lenient().when(employeeRepository.findByIdAndTenantId(USER_ID, TENANT_ID))
                     .thenReturn(Optional.empty());
@@ -533,7 +533,7 @@ class WorkflowServiceTest {
             when(execution.getStatus())
                     .thenReturn(WorkflowExecution.ExecutionStatus.PENDING,
                             WorkflowExecution.ExecutionStatus.APPROVED);
-            when(workflowExecutionRepository.findByIdAndTenantId(executionId, TENANT_ID))
+            when(workflowExecutionRepository.findByIdAndTenantIdForUpdate(executionId, TENANT_ID))
                     .thenReturn(Optional.of(execution));
 
             ApprovalCallbackHandler failingHandler = mock(ApprovalCallbackHandler.class);
@@ -578,7 +578,7 @@ class WorkflowServiceTest {
             when(execution.isCompleted()).thenReturn(true);
             when(execution.getStatus()).thenReturn(WorkflowExecution.ExecutionStatus.APPROVED);
 
-            when(workflowExecutionRepository.findByIdAndTenantId(executionId, TENANT_ID))
+            when(workflowExecutionRepository.findByIdAndTenantIdForUpdate(executionId, TENANT_ID))
                     .thenReturn(Optional.of(execution));
 
             ApprovalActionRequest request = new ApprovalActionRequest();
@@ -606,7 +606,7 @@ class WorkflowServiceTest {
             when(execution.getCurrentStepExecution()).thenReturn(step);
             when(step.getStatus()).thenReturn(StepExecution.StepStatus.APPROVED);
 
-            when(workflowExecutionRepository.findByIdAndTenantId(executionId, TENANT_ID))
+            when(workflowExecutionRepository.findByIdAndTenantIdForUpdate(executionId, TENANT_ID))
                     .thenReturn(Optional.of(execution));
 
             ApprovalActionRequest request = new ApprovalActionRequest();
@@ -634,7 +634,7 @@ class WorkflowServiceTest {
             when(step.getStatus()).thenReturn(StepExecution.StepStatus.PENDING);
             when(step.canBeActedUponBy(USER_ID)).thenReturn(false);
 
-            when(workflowExecutionRepository.findByIdAndTenantId(executionId, TENANT_ID))
+            when(workflowExecutionRepository.findByIdAndTenantIdForUpdate(executionId, TENANT_ID))
                     .thenReturn(Optional.of(execution));
 
             ApprovalActionRequest request = new ApprovalActionRequest();
@@ -657,7 +657,7 @@ class WorkflowServiceTest {
 
             securityContextMock.when(SecurityContext::isSuperAdmin).thenReturn(true);
             when(step.canBeActedUponBy(USER_ID)).thenReturn(false);
-            when(workflowExecutionRepository.findByIdAndTenantId(executionId, TENANT_ID))
+            when(workflowExecutionRepository.findByIdAndTenantIdForUpdate(executionId, TENANT_ID))
                     .thenReturn(Optional.of(execution));
             lenient().when(employeeRepository.findByIdAndTenantId(USER_ID, TENANT_ID))
                     .thenReturn(Optional.empty());
@@ -672,7 +672,7 @@ class WorkflowServiceTest {
 
             assertThat(response).isNotNull();
             verify(step).approve(eq(USER_ID), anyString(), eq("Break-glass approval"), any(LocalDateTime.class));
-            verify(workflowExecutionRepository).findByIdAndTenantId(executionId, TENANT_ID);
+            verify(workflowExecutionRepository).findByIdAndTenantIdForUpdate(executionId, TENANT_ID);
             verify(workflowExecutionRepository).save(any(WorkflowExecution.class));
         }
 
@@ -681,7 +681,7 @@ class WorkflowServiceTest {
         void shouldThrowWhenExecutionNotFound() {
             // Given
             UUID executionId = UUID.randomUUID();
-            when(workflowExecutionRepository.findByIdAndTenantId(executionId, TENANT_ID))
+            when(workflowExecutionRepository.findByIdAndTenantIdForUpdate(executionId, TENANT_ID))
                     .thenReturn(Optional.empty());
 
             ApprovalActionRequest request = new ApprovalActionRequest();
@@ -703,7 +703,7 @@ class WorkflowServiceTest {
             when(execution.canBeApproved()).thenReturn(false);
             when(execution.getStatus()).thenReturn(WorkflowExecution.ExecutionStatus.CANCELLED);
 
-            when(workflowExecutionRepository.findByIdAndTenantId(executionId, TENANT_ID))
+            when(workflowExecutionRepository.findByIdAndTenantIdForUpdate(executionId, TENANT_ID))
                     .thenReturn(Optional.of(execution));
 
             ApprovalActionRequest request = new ApprovalActionRequest();
@@ -722,7 +722,7 @@ class WorkflowServiceTest {
             UUID executionId = UUID.randomUUID();
             WorkflowExecution execution = createApprovableExecution(executionId);
 
-            when(workflowExecutionRepository.findByIdAndTenantId(executionId, TENANT_ID))
+            when(workflowExecutionRepository.findByIdAndTenantIdForUpdate(executionId, TENANT_ID))
                     .thenReturn(Optional.of(execution));
             lenient().when(employeeRepository.findByIdAndTenantId(USER_ID, TENANT_ID))
                     .thenReturn(Optional.empty());
@@ -737,6 +737,90 @@ class WorkflowServiceTest {
 
             // Then - no event should be published for HOLD
             verify(domainEventPublisher, never()).publish(any());
+        }
+    }
+
+    @Nested
+    @DisplayName("cancelActiveExecutionForEntity (BA-5)")
+    class CancelActiveExecutionForEntityTests {
+
+        @Test
+        @DisplayName("should cancel live execution under lock and skip pending steps")
+        void shouldCancelLiveExecutionAndSkipPendingSteps() {
+            // Given
+            UUID entityId = UUID.randomUUID();
+            UUID executionId = UUID.randomUUID();
+
+            StepExecution pendingStep = StepExecution.builder()
+                    .stepOrder(1)
+                    .stepName("Manager Approval")
+                    .status(StepExecution.StepStatus.PENDING)
+                    .build();
+            pendingStep.setTenantId(TENANT_ID);
+
+            WorkflowExecution execution = WorkflowExecution.builder()
+                    .entityType(WorkflowDefinition.EntityType.LEAVE_REQUEST)
+                    .entityId(entityId)
+                    .requesterId(OTHER_USER_ID)
+                    .status(WorkflowExecution.ExecutionStatus.PENDING)
+                    .title("Leave Approval")
+                    .build();
+            execution.setId(executionId);
+            execution.setTenantId(TENANT_ID);
+            execution.addStepExecution(pendingStep);
+
+            when(workflowExecutionRepository.findByEntity(TENANT_ID, WorkflowDefinition.EntityType.LEAVE_REQUEST, entityId))
+                    .thenReturn(Optional.of(execution));
+            when(workflowExecutionRepository.findByIdAndTenantIdForUpdate(executionId, TENANT_ID))
+                    .thenReturn(Optional.of(execution));
+            when(workflowExecutionRepository.save(any(WorkflowExecution.class)))
+                    .thenAnswer(inv -> inv.getArgument(0));
+
+            // When
+            workflowService.cancelActiveExecutionForEntity(
+                    WorkflowDefinition.EntityType.LEAVE_REQUEST, entityId, "Superseded by direct approval");
+
+            // Then - execution cancelled, pending step skipped (cleared from inboxes)
+            assertThat(execution.getStatus()).isEqualTo(WorkflowExecution.ExecutionStatus.CANCELLED);
+            assertThat(pendingStep.getStatus()).isEqualTo(StepExecution.StepStatus.SKIPPED);
+            verify(workflowExecutionRepository).findByIdAndTenantIdForUpdate(executionId, TENANT_ID);
+            verify(workflowExecutionRepository).save(execution);
+        }
+
+        @Test
+        @DisplayName("should no-op when no execution exists for the entity")
+        void shouldNoOpWhenNoActiveExecution() {
+            UUID entityId = UUID.randomUUID();
+            when(workflowExecutionRepository.findByEntity(TENANT_ID, WorkflowDefinition.EntityType.LEAVE_REQUEST, entityId))
+                    .thenReturn(Optional.empty());
+
+            workflowService.cancelActiveExecutionForEntity(
+                    WorkflowDefinition.EntityType.LEAVE_REQUEST, entityId, "reason");
+
+            verify(workflowExecutionRepository, never()).save(any());
+        }
+
+        @Test
+        @DisplayName("should no-op when execution is already terminal")
+        void shouldNoOpWhenExecutionAlreadyTerminal() {
+            UUID entityId = UUID.randomUUID();
+            WorkflowExecution execution = WorkflowExecution.builder()
+                    .entityType(WorkflowDefinition.EntityType.LEAVE_REQUEST)
+                    .entityId(entityId)
+                    .requesterId(OTHER_USER_ID)
+                    .status(WorkflowExecution.ExecutionStatus.APPROVED)
+                    .build();
+            execution.setId(UUID.randomUUID());
+            execution.setTenantId(TENANT_ID);
+
+            when(workflowExecutionRepository.findByEntity(TENANT_ID, WorkflowDefinition.EntityType.LEAVE_REQUEST, entityId))
+                    .thenReturn(Optional.of(execution));
+
+            workflowService.cancelActiveExecutionForEntity(
+                    WorkflowDefinition.EntityType.LEAVE_REQUEST, entityId, "reason");
+
+            verify(workflowExecutionRepository, never()).findByIdAndTenantIdForUpdate(any(), any());
+            verify(workflowExecutionRepository, never()).save(any());
         }
     }
 

@@ -244,10 +244,13 @@ class AuthControllerTest extends AbstractPostgresIntegrationTest {
     @Test
     @DisplayName("UC-AUTH-003: MFA login with valid TOTP returns 200")
     void ucAuth003_mfaLogin_validCode_returns200() throws Exception {
+        // SEC-3c: /mfa-login requires the opaque pre-auth token minted by /login;
+        // the legacy caller-supplied userId flow is rejected with 401.
         MfaLoginRequest req = new MfaLoginRequest();
-        req.setUserId(USER_ID);
+        req.setMfaToken("valid-pre-auth-token");
         req.setCode("654321");
 
+        when(authService.consumeMfaPendingToken("valid-pre-auth-token")).thenReturn(USER_ID);
         when(mfaService.verifyMfaCode(eq(USER_ID), eq("654321"))).thenReturn(true);
         AuthResponse authResp = AuthResponse.builder()
                 .userId(USER_ID)
@@ -265,10 +268,13 @@ class AuthControllerTest extends AbstractPostgresIntegrationTest {
     @Test
     @DisplayName("UC-AUTH-003: MFA login with wrong TOTP returns 401")
     void ucAuth003_mfaLogin_wrongCode_returns401() throws Exception {
+        // SEC-3c: present a valid pre-auth token so the request reaches the
+        // TOTP check — otherwise the 401 comes from the missing token instead.
         MfaLoginRequest req = new MfaLoginRequest();
-        req.setUserId(USER_ID);
+        req.setMfaToken("valid-pre-auth-token");
         req.setCode("000000");
 
+        when(authService.consumeMfaPendingToken("valid-pre-auth-token")).thenReturn(USER_ID);
         when(mfaService.verifyMfaCode(eq(USER_ID), eq("000000"))).thenReturn(false);
 
         mockMvc.perform(post(BASE_URL + "/mfa-login")

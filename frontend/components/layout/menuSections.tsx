@@ -1071,13 +1071,8 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
               icon: sm.dollarSign,
               requiredPermission: Permissions.REPORT_VIEW
             },
-            {
-              id: 'reports-utilization',
-              label: 'Utilization',
-              href: '/reports/utilization',
-              icon: sm.pieChart,
-              requiredPermission: Permissions.REPORT_VIEW
-            },
+            // DEV-4: Utilization entry hidden — the aggregated
+            // /time-tracking/reports/* backend endpoints do not exist yet.
             {
               id: 'reports-builder',
               label: 'Report Builder',
@@ -1272,13 +1267,8 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
               icon: sm.clock,
               requiredPermission: Permissions.HELPDESK_SLA_MANAGE
             },
-            {
-              id: 'helpdesk-kb',
-              label: 'Knowledge Base',
-              href: '/helpdesk/knowledge-base',
-              icon: sm.bookOpen,
-              requiredPermission: Permissions.HELPDESK_KB_VIEW
-            },
+            // DEV-6: Knowledge Base entry hidden — HelpdeskController exposes
+            // no /helpdesk/knowledge-base endpoints yet.
           ],
         },
         {
