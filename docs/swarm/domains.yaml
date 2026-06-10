@@ -5,8 +5,8 @@
 # Source of truth for sub-domain assignments: backend/src/main/java/com/nulogic/domain/*
 # Architecture scorecard reference: docs/architecture/architecture-scorecard.md
 
-version: "1.0.0"
-generated: "2026-05-14"
+version: "1.1.0"
+generated: "2026-06-10"
 target_count: 5
 
 contexts:
@@ -23,6 +23,7 @@ contexts:
       - ADR-001-multi-tenant-architecture
       - ADR-002-authentication-strategy
       - ADR-006-jwt-token-optimization
+      - ADR-010-row-level-security-tenancy
     owners: ["security-architect", "backend-dev"]
     risk_level: critical
 
@@ -42,7 +43,12 @@ contexts:
       - training
       - lms
       - selfservice
-    primary_adrs: []
+    primary_adrs:
+      # Employee lifecycle events flow over Kafka (nu-aura.employee-lifecycle);
+      # the idempotent-consumer pattern governs every consumer in this context.
+      - ADR-011-kafka-idempotent-consumers
+      # Employee records are the highest-volume PII; RLS is the isolation layer.
+      - ADR-010-row-level-security-tenancy
     owners: ["backend-dev", "system-architect"]
     risk_level: high
 
@@ -65,6 +71,7 @@ contexts:
       - expense
     primary_adrs:
       - ADR-007-payroll-saga-pattern
+      - ADR-012-timezone-handling
     owners: ["backend-dev", "system-architect"]
     risk_level: critical
     notes: "Highest data sensitivity, off-by-one and timezone bugs cause direct money impact"
@@ -115,10 +122,10 @@ contexts:
       - common
       - event
       - announcement
-      - compensation
     primary_adrs:
       - ADR-003-caching-strategy
       - ADR-004-webhook-delivery-system
       - ADR-009-database-connection-pool-sizing
+      - ADR-011-kafka-idempotent-consumers
     owners: ["system-architect", "perf-engineer"]
     risk_level: high
