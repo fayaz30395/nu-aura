@@ -82,6 +82,10 @@ spring:
     baseline-version: 18
     # Auto-repair failed migration checksums in dev (e.g. after fixing a broken migration)
     repair-on-migrate: true
+    placeholders:
+      # H-1: dev keeps the seeded "Welcome@123" demo logins working. The base
+      # application.yml default is fail-closed (false); dev opts in explicitly.
+      demoCredentialsEnabled: ${DEMO_CREDENTIALS_ENABLED:true}
 
 app:
   jwt:
