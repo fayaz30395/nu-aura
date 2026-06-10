@@ -5,8 +5,10 @@ import com.nulogic.api.leave.mapper.LeaveBalanceMapper;
 import com.nulogic.common.config.CacheConfig;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
+import com.nulogic.domain.leave.LeaveAccrualLedger;
 import com.nulogic.domain.leave.LeaveBalance;
 import com.nulogic.domain.leave.LeaveType;
+import com.nulogic.infrastructure.leave.repository.LeaveAccrualLedgerRepository;
 import com.nulogic.infrastructure.leave.repository.LeaveBalanceRepository;
 import com.nulogic.infrastructure.leave.repository.LeaveTypeRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +32,8 @@ public class LeaveBalanceService {
     private final LeaveBalanceRepository leaveBalanceRepository;
     // R2-007 FIX: Inject LeaveTypeRepository to seed openingBalance from annualQuota
     private final LeaveTypeRepository leaveTypeRepository;
+    // Wave-10 P0-4: idempotency ledger for periodic (scheduler-driven) accruals.
+    private final LeaveAccrualLedgerRepository leaveAccrualLedgerRepository;
     // S12-B: Tenant-local "now" / "today" for accrual, balance, pending and credit operations.
     private final TenantTimeService tenantTimeService;
     // T3-10 cleanup wave: reuse the controller's MapStruct mapper so the
@@ -203,6 +207,62 @@ public class LeaveBalanceService {
         LeaveBalance balance = getOrCreateBalanceForUpdate(employeeId, leaveTypeId, tenantTimeService.today(tenantId).getYear());
         balance.accrueLeave(days, tenantTimeService.today(tenantId));
         return leaveBalanceRepository.save(balance);
+    }
+
+    /**
+     * Idempotent variant of {@link #accrueLeave} for periodic, scheduler-driven accruals
+     * (Wave-10 P0-4).
+     *
+     * <p>Records the accrual in {@code leave_accrual_ledger} keyed by
+     * (tenant, employee, leave type, {@code accrualPeriod}) in the SAME transaction as
+     * the balance mutation. If a ledger row already exists for the period the method
+     * returns {@code false} without touching the balance. The exists-check is only the
+     * fast path — the unique constraint {@code uq_leave_accrual_ledger_period} (V277)
+     * closes the race window: a concurrent double-fire (ShedLock expiry mid-run, manual
+     * re-run) hits the constraint on flush, the transaction rolls back, and no double
+     * credit can occur.</p>
+     *
+     * <p>{@code saveAndFlush} forces the INSERT to the database <em>before</em> the
+     * pessimistic balance lock is taken, so a duplicate fails fast instead of blocking
+     * on the row lock first.</p>
+     *
+     * @param employeeId    employee to credit
+     * @param leaveTypeId   leave type to credit
+     * @param days          days to credit (post-proration)
+     * @param accrualPeriod the period being credited, e.g. {@code YearMonth.of(2026, 6)}
+     * @return {@code true} if the accrual was applied, {@code false} if this period was
+     *         already accrued for this employee/leave type
+     */
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @CacheEvict(value = CacheConfig.LEAVE_BALANCES, allEntries = true)
+    public boolean accrueLeavePeriodic(UUID employeeId, UUID leaveTypeId, BigDecimal days,
+                                       java.time.YearMonth accrualPeriod) {
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        String periodKey = accrualPeriod.toString(); // ISO YYYY-MM
+
+        if (leaveAccrualLedgerRepository.existsByTenantIdAndEmployeeIdAndLeaveTypeIdAndAccrualPeriod(
+                tenantId, employeeId, leaveTypeId, periodKey)) {
+            log.debug("Skipping duplicate accrual: employee {}, leaveType {}, period {} already credited",
+                    employeeId, leaveTypeId, periodKey);
+            return false;
+        }
+
+        LeaveAccrualLedger ledgerEntry = LeaveAccrualLedger.builder()
+                .employeeId(employeeId)
+                .leaveTypeId(leaveTypeId)
+                .accrualPeriod(periodKey)
+                .amount(days)
+                .build();
+        ledgerEntry.setTenantId(tenantId);
+        // Flush now so a concurrent duplicate violates uq_leave_accrual_ledger_period
+        // here (rolling back this tx) rather than after mutating the balance in memory.
+        leaveAccrualLedgerRepository.saveAndFlush(ledgerEntry);
+
+        LeaveBalance balance = getOrCreateBalanceForUpdate(
+                employeeId, leaveTypeId, tenantTimeService.today(tenantId).getYear());
+        balance.accrueLeave(days, tenantTimeService.today(tenantId));
+        leaveBalanceRepository.save(balance);
+        return true;
     }
 
     /**

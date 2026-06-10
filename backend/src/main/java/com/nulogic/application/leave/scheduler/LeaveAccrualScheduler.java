@@ -131,6 +131,10 @@ public class LeaveAccrualScheduler {
             LocalDate today = LocalDate.now(java.time.ZoneOffset.UTC);
             LocalDate firstOfMonth = today.withDayOfMonth(1);
             int daysInMonth = today.lengthOfMonth();
+            // Wave-10 P0-4: period key for the idempotency ledger — at most one accrual
+            // per (tenant, employee, leaveType, period) regardless of how many times the
+            // job fires (ShedLock expiry mid-run, manual re-run, pod clock skew).
+            java.time.YearMonth accrualPeriod = java.time.YearMonth.from(today);
 
             for (Employee employee : activeEmployees) {
                 try {
@@ -152,8 +156,17 @@ public class LeaveAccrualScheduler {
                                 accrualAmount, employeeAccrual);
                     }
 
-                    leaveBalanceService.accrueLeave(employee.getId(), leaveType.getId(), employeeAccrual);
-                    accrualCount++;
+                    // Wave-10 P0-4: idempotent accrual — returns false (no credit) when this
+                    // period was already accrued; the V277 unique constraint closes the
+                    // remaining race window by rolling back a concurrent duplicate insert.
+                    boolean applied = leaveBalanceService.accrueLeavePeriodic(
+                            employee.getId(), leaveType.getId(), employeeAccrual, accrualPeriod);
+                    if (applied) {
+                        accrualCount++;
+                    } else {
+                        log.debug("LeaveAccrualScheduler: period {} already accrued for employee {} / leaveType {} — skipped",
+                                accrualPeriod, employee.getId(), leaveType.getId());
+                    }
                 } catch (Exception e) { // Intentional broad catch — scheduled job error boundary
                     log.error("LeaveAccrualScheduler: failed to accrue leave for employee {} / leaveType {} in tenant {}: {}",
                             employee.getId(), leaveType.getId(), tenantId, e.getMessage(), e);
