@@ -1,0 +1,508 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>NU-AURA · Agent OS</title>
+<style>
+  /* ---- design tokens ---------------------------------------------------- */
+  :root {
+    --bg:            oklch(16% 0.02 260);
+    --bg-grid:       oklch(20% 0.02 260);
+    --surface:       oklch(22% 0.022 262);
+    --surface-2:     oklch(26% 0.025 262);
+    --surface-hi:    oklch(31% 0.03 262);
+    --line:          oklch(38% 0.03 262 / .55);
+    --text:          oklch(94% 0.01 250);
+    --text-dim:      oklch(70% 0.02 255);
+    --text-faint:    oklch(56% 0.02 258);
+
+    --accent:        oklch(78% 0.16 215);   /* electric cyan  */
+    --accent-deep:   oklch(60% 0.14 235);
+    --run:           oklch(82% 0.16 85);    /* amber, running */
+    --ok:            oklch(78% 0.17 152);   /* green, done    */
+    --err:           oklch(67% 0.21 22);    /* red, failed    */
+    --queue:         oklch(64% 0.04 262);   /* grey, queued   */
+
+    --radius:        14px;
+    --radius-sm:     9px;
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", "Cascadia Code", Menlo, monospace;
+    --sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+    --dur:   240ms;
+    --ease:  cubic-bezier(.16,1,.3,1);
+    --glow:  0 0 0 1px var(--line), 0 18px 40px -24px oklch(0% 0 0 / .9);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0; font-family: var(--sans); color: var(--text);
+    background:
+      radial-gradient(120% 90% at 88% -10%, oklch(28% 0.05 230 / .5), transparent 55%),
+      radial-gradient(90% 80% at -8% 110%, oklch(26% 0.06 300 / .35), transparent 50%),
+      linear-gradient(var(--bg-grid) 1px, transparent 1px) 0 0 / 100% 34px,
+      linear-gradient(90deg, var(--bg-grid) 1px, transparent 1px) 0 0 / 34px 100%,
+      var(--bg);
+    background-blend-mode: normal, normal, soft-light, soft-light, normal;
+    display: grid; grid-template-rows: auto 1fr auto; height: 100vh; overflow: hidden;
+  }
+
+  /* ---- system bar ------------------------------------------------------- */
+  .sysbar {
+    display: flex; align-items: center; gap: 18px;
+    padding: 12px 20px; border-bottom: 1px solid var(--line);
+    background: linear-gradient(180deg, var(--surface-2), var(--surface));
+    backdrop-filter: blur(6px);
+  }
+  .brand { display: flex; align-items: baseline; gap: 10px; }
+  .brand b { font-size: 16px; letter-spacing: .14em; }
+  .brand .v { font: 600 10px/1 var(--mono); color: var(--accent); letter-spacing: .18em;
+    border: 1px solid var(--accent); padding: 3px 6px; border-radius: 6px; }
+  .meta { display: flex; gap: 22px; margin-left: auto; font: 500 11px/1.4 var(--mono); color: var(--text-faint); }
+  .meta b { color: var(--text-dim); font-weight: 600; }
+  .meta .dot { color: var(--ok); }
+
+  /* ---- controls --------------------------------------------------------- */
+  .controls { display: flex; align-items: center; gap: 10px; }
+  button.btn {
+    font: 600 12px/1 var(--sans); color: var(--text); cursor: pointer;
+    background: var(--surface-hi); border: 1px solid var(--line);
+    padding: 9px 14px; border-radius: var(--radius-sm);
+    transition: transform var(--dur) var(--ease), background var(--dur), border-color var(--dur), box-shadow var(--dur);
+  }
+  button.btn:hover { background: var(--surface-2); border-color: var(--accent); transform: translateY(-1px); }
+  button.btn:active { transform: translateY(0) scale(.985); }
+  button.btn.primary { background: linear-gradient(180deg, var(--accent), var(--accent-deep));
+    color: oklch(18% 0.03 250); border-color: transparent;
+    box-shadow: 0 8px 22px -10px var(--accent); }
+  button.btn.primary:hover { filter: brightness(1.06); }
+  button.btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+  .speed { display: inline-flex; border: 1px solid var(--line); border-radius: var(--radius-sm); overflow: hidden; }
+  .speed button { font: 600 11px/1 var(--mono); background: transparent; color: var(--text-faint);
+    border: 0; padding: 8px 10px; cursor: pointer; transition: background var(--dur), color var(--dur); }
+  .speed button[aria-pressed="true"] { background: var(--accent); color: oklch(18% 0.03 250); }
+
+  /* ---- layout ----------------------------------------------------------- */
+  .os { display: grid; grid-template-columns: 252px 1fr 320px; min-height: 0; }
+  .rail, .inspector { padding: 14px; overflow-y: auto; }
+  .rail { border-right: 1px solid var(--line); }
+  .inspector { border-left: 1px solid var(--line); }
+  .stage { padding: 16px; overflow-y: auto; }
+
+  .h { font: 700 10px/1 var(--mono); letter-spacing: .2em; color: var(--text-faint);
+    text-transform: uppercase; margin: 4px 2px 12px; display: flex; gap: 8px; align-items: center; }
+  .h::after { content:""; flex:1; height:1px; background: var(--line); }
+
+  /* ---- spawnable agent chips (left rail) -------------------------------- */
+  .chip {
+    width: 100%; text-align: left; display: grid; grid-template-columns: auto 1fr auto; gap: 9px; align-items: center;
+    background: var(--surface); border: 1px solid var(--line); color: var(--text);
+    padding: 9px 11px; border-radius: var(--radius-sm); margin-bottom: 7px; cursor: pointer;
+    transition: transform var(--dur) var(--ease), border-color var(--dur), background var(--dur);
+  }
+  .chip:hover { transform: translateX(3px); border-color: var(--accent); background: var(--surface-2); }
+  .chip:disabled { opacity: .45; cursor: progress; transform: none; }
+  .chip .led { width: 9px; height: 9px; border-radius: 50%; background: var(--queue); box-shadow: 0 0 0 0 transparent; }
+  .chip .nm { font: 600 12px/1.2 var(--sans); }
+  .chip .nm small { display:block; font: 500 10px/1.3 var(--mono); color: var(--text-faint); margin-top:2px; }
+  .chip .tag { font: 700 9px/1 var(--mono); letter-spacing:.1em; color: var(--text-faint);
+    border:1px solid var(--line); border-radius: 5px; padding: 3px 5px; }
+  .chip[data-kind="role"] .tag { color: var(--accent); border-color: oklch(50% 0.1 215 / .5); }
+
+  /* ---- process tiles (stage) -------------------------------------------- */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(238px, 1fr)); gap: 13px; }
+  .tile {
+    position: relative; background: linear-gradient(180deg, var(--surface-2), var(--surface));
+    border: 1px solid var(--line); border-radius: var(--radius); padding: 14px;
+    box-shadow: var(--glow); opacity: .5; transform: translateY(6px);
+    transition: opacity var(--dur) var(--ease), transform var(--dur) var(--ease), border-color var(--dur);
+  }
+  .tile.live { opacity: 1; transform: none; }
+  .tile.s-running { border-color: oklch(60% 0.12 85 / .7); }
+  .tile.s-done    { border-color: oklch(56% 0.12 152 / .6); }
+  .tile.s-failed  { border-color: oklch(56% 0.16 22 / .7); }
+  .tile .top { display: flex; align-items: center; gap: 9px; margin-bottom: 12px; }
+  .tile .led { width: 10px; height: 10px; border-radius: 50%; background: var(--queue); flex: none; }
+  .tile .ttl { font: 600 13px/1.1 var(--sans); }
+  .tile .ttl small { display:block; font: 500 10px/1 var(--mono); color: var(--text-faint); margin-top:3px; }
+  .tile .ring { margin-left: auto; }
+  .tile .state {
+    font: 700 9px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase;
+    padding: 4px 7px; border-radius: 6px; color: var(--queue); border: 1px solid currentColor;
+  }
+  .tile.s-running .state { color: var(--run); }
+  .tile.s-done    .state { color: var(--ok); }
+  .tile.s-failed  .state { color: var(--err); }
+  .tile .now { font: 500 11px/1.45 var(--mono); color: var(--text-dim); min-height: 32px;
+    border-top: 1px solid var(--line); padding-top: 10px; margin-top: 4px; }
+  .tile .bars { display: flex; gap: 2px; height: 7px; border-radius: 4px; overflow: hidden; margin-top: 11px; }
+  .tile .bars i { display: block; height: 100%; }
+
+  /* status LED pulse */
+  .s-running .led { background: var(--run); animation: pulse 1.1s var(--ease) infinite; }
+  .s-done .led { background: var(--ok); }
+  .s-failed .led { background: var(--err); }
+  @keyframes pulse {
+    0%   { box-shadow: 0 0 0 0 oklch(82% 0.16 85 / .55); }
+    70%  { box-shadow: 0 0 0 7px oklch(82% 0.16 85 / 0); }
+    100% { box-shadow: 0 0 0 0 oklch(82% 0.16 85 / 0); }
+  }
+  .ring svg { display: block; transform: rotate(-90deg); }
+  .ring circle { fill: none; stroke-width: 3.2; }
+  .ring .trk { stroke: var(--line); }
+  .ring .val { stroke: var(--run); stroke-linecap: round; transition: stroke-dashoffset var(--dur) linear; }
+  .s-done .ring .val { stroke: var(--ok); }
+
+  /* ---- inspector -------------------------------------------------------- */
+  .inv { display: grid; gap: 9px; margin-bottom: 18px; }
+  .invcard { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-sm);
+    padding: 11px 12px; display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; align-items: center; }
+  .invcard .id { font: 700 13px/1 var(--mono); letter-spacing: .05em; }
+  .invcard .vd { font: 700 10px/1 var(--mono); letter-spacing: .12em; padding: 4px 7px; border-radius: 5px;
+    border: 1px solid currentColor; }
+  .invcard .vd.pending { color: var(--queue); }
+  .invcard .vd.pass { color: var(--ok); }
+  .invcard p { grid-column: 1/-1; margin: 2px 0 0; font: 500 11px/1.5 var(--sans); color: var(--text-faint); }
+
+  .fix { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; align-items: center;
+    padding: 8px 0; border-bottom: 1px solid var(--line); }
+  .fix:last-child { border-bottom: 0; }
+  .fix code { font: 500 10.5px/1.3 var(--mono); color: var(--text-dim); word-break: break-all; }
+  .fix .badge { font: 700 9px/1 var(--mono); padding: 3px 6px; border-radius: 5px; letter-spacing:.08em; }
+  .fix .b-was { color: var(--err); border: 1px solid oklch(56% 0.16 22 / .5); }
+  .fix .b-now { color: var(--queue); border: 1px solid var(--line); }
+  .fix.fixed .b-now { color: var(--ok); border-color: oklch(56% 0.12 152 / .6); }
+  .arrow { color: var(--text-faint); font: 600 11px/1 var(--mono); }
+
+  .stat { display:flex; justify-content: space-between; font: 500 11px/1.8 var(--mono); color: var(--text-faint); }
+  .stat b { color: var(--text); }
+
+  /* ---- console ---------------------------------------------------------- */
+  .console { border-top: 1px solid var(--line); background: oklch(13% 0.02 260);
+    height: 168px; display: grid; grid-template-rows: auto 1fr; }
+  .console .bar { display:flex; align-items:center; gap:10px; padding: 7px 16px; border-bottom: 1px solid var(--line); }
+  .console .bar .h { margin: 0; }
+  .console .bar .count { margin-left:auto; font: 600 10px/1 var(--mono); color: var(--text-faint); }
+  .log { overflow-y: auto; padding: 8px 16px; font: 500 11.5px/1.65 var(--mono); }
+  .log .ln { display: grid; grid-template-columns: 64px 96px 1fr; gap: 12px; opacity: 0; transform: translateY(3px);
+    animation: lnin var(--dur) var(--ease) forwards; }
+  @keyframes lnin { to { opacity: 1; transform: none; } }
+  .log .ts { color: var(--text-faint); }
+  .log .ag { color: var(--accent); font-weight: 600; }
+  .log .ln.ok  .msg { color: var(--ok); }
+  .log .ln.warn .msg { color: var(--run); }
+  .log .ln.err  .msg { color: var(--err); }
+  .log .ln.info .msg { color: var(--text-dim); }
+  .log .sys { color: var(--text-faint); font-style: italic; }
+
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-thumb { background: var(--surface-hi); border-radius: 8px; border: 2px solid transparent; background-clip: padding-box; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+    .tile { opacity: 1; transform: none; }
+  }
+  @media (max-width: 1080px) {
+    .os { grid-template-columns: 1fr; grid-auto-rows: min-content; overflow-y: auto; }
+    .rail, .inspector { border: 0; border-bottom: 1px solid var(--line); }
+  }
+</style>
+</head>
+<body>
+  <header class="sysbar">
+    <div class="brand"><b>AGENT&nbsp;OS</b><span class="v">NU-AURA</span></div>
+    <div class="controls">
+      <button class="btn primary" id="runAll">▶ Run full orchestration</button>
+      <button class="btn" id="reset">↺ Reset</button>
+      <div class="speed" role="group" aria-label="Playback speed">
+        <button data-speed="1" aria-pressed="false">1×</button>
+        <button data-speed="2" aria-pressed="true">2×</button>
+        <button data-speed="4" aria-pressed="false">4×</button>
+      </div>
+    </div>
+    <div class="meta">
+      <span><b id="mClock">00:00.0</b> elapsed</span>
+      <span>tenant <b>660e…001</b></span>
+      <span>DB <b>hrms</b></span>
+      <span class="dot">●</span><span id="mLive">idle</span>
+    </div>
+  </header>
+
+  <main class="os">
+    <aside class="rail" aria-label="Spawnable agents">
+      <div class="h">Test executors</div>
+      <div id="railRoles"></div>
+      <div class="h">Worker agents</div>
+      <div id="railWorkers"></div>
+    </aside>
+
+    <section class="stage" aria-label="Process monitor">
+      <div class="grid" id="grid"></div>
+    </section>
+
+    <aside class="inspector" aria-label="Live results">
+      <div class="h">Invariants</div>
+      <div class="inv" id="invariants"></div>
+      <div class="h">HIGH bug fixes</div>
+      <div id="fixes"></div>
+      <div class="h">Coverage</div>
+      <div id="tiers"></div>
+    </aside>
+  </main>
+
+  <footer class="console">
+    <div class="bar"><span class="h" style="margin:0">Console</span><span class="count" id="logCount">0 lines</span></div>
+    <div class="log" id="log" role="log" aria-live="polite"></div>
+  </footer>
+
+<script>
+/* ======================================================================
+   REAL run data — NU-AURA Test Orchestrator, 2026-06-11 (HEAD c64eb991)
+   Numbers from test-results/board.md, api-sweep.csv (3,255 calls),
+   FINAL_REPORT.md. Lifecycle is a deterministic replay of the real run.
+   ====================================================================== */
+const RUN = {
+  roles: [
+    { id:"SUPER_ADMIN", email:"sarankarthick.maran@…", dist:{200:394,403:0,400:54,404:5,500:4,501:3,503:2,429:2},
+      steps:[ ["POST /auth/login → 200 · session cookie set","ok"],
+              ["sweeping 466 read-only endpoints…","info"],
+              ["466/466 · 394×200 · 0×403","ok"],
+              ["I1: SUPER_ADMIN never 403 → 0 violations","ok"],
+              ["⚠ 4 endpoints returned 500 — flagged HIGH","warn"] ] },
+    { id:"HR_MANAGER", email:"jagadeesh@…", dist:{200:265,403:159,400:32,404:3,500:1,501:2,429:2},
+      steps:[ ["login → 200","ok"], ["sweeping 466…","info"],
+              ["265×200 · 159×403 (broadest non-super grant)","ok"],
+              ["1×500 on /audit/search — flagged","warn"] ] },
+    { id:"MANAGER", email:"sumit@…", dist:{200:203,403:229,400:25,404:3,501:2,429:2},
+      steps:[ ["login → 200","ok"], ["sweeping 466…","info"], ["203×200 · 229×403 · team scope","ok"] ] },
+    { id:"TEAM_LEAD", email:"gokul@…", dist:{200:183,403:255,400:20,404:3,501:1,429:2},
+      steps:[ ["login → 200","ok"], ["sweeping 466…","info"], ["183×200 · 255×403","ok"] ] },
+    { id:"EMPLOYEE", email:"saran@…", dist:{200:161,403:279,400:19,404:3,429:2},
+      steps:[ ["login → 200","ok"], ["sweeping 466…","info"], ["161×200 · 279×403 · own-data only","ok"] ] },
+    { id:"RECRUITMENT_ADMIN", email:"suresh@…", dist:{200:151,403:288,400:20,404:3,429:2},
+      steps:[ ["login → 200","ok"], ["sweeping 466…","info"], ["151×200 · 288×403 · Hire scope","ok"] ] },
+    { id:"FINANCE_ADMIN", email:"finance@…", dist:{200:44,403:406,400:8,404:3,500:1,501:1,429:2},
+      steps:[ ["login → 200","ok"], ["sweeping 466…","info"],
+              ["44×200 · 406×403 (tightest) · 1×500","ok"] ] },
+  ],
+  workers: [
+    { id:"coder", role:"fix-wave",
+      steps:[ ["reading backend-greenflag.log stack traces…","info"],
+              ["root cause: 42P18 untyped-null bind in audit JPQL","warn"],
+              ["patched AuditLogRepository → CAST(:startDate AS LocalDateTime) ×2","ok"],
+              ["root cause: Collectors.toMap NPE on null lastActivity","warn"],
+              ["patched SystemAdminService → null-tolerant HashMap","ok"],
+              ["added V287 idempotent tax-declarations guard","ok"],
+              ["rebuilt jar · relaunched :8090","ok"] ] },
+    { id:"tester", role:"verify + T1",
+      onStep:{ 1:"flipFixes" },
+      steps:[ ["re-testing 4 endpoints w/ SUPER_ADMIN cookie…","info"],
+              ["audit/search 200 · audit-logs/search 200 · tenants 200 · tax 200","ok"],
+              ["T1 leave create → 201 PENDING · balance 18→16","ok"],
+              ["approve gate → 409 no-mgr / 400 not-direct-mgr (correct RBAC)","ok"],
+              ["11 cross-module read journeys → all 200","ok"],
+              ["cleaned QA rows · balances restored to 18","ok"] ] },
+    { id:"security-auditor", role:"I2 probes",
+      onStep:{ 3:"passI2" },
+      steps:[ ["I2-a: non-super → cross-tenant admin → 403 ×8","ok"],
+              ["I2-b: inject X-Tenant-Id / ?tenantId → ignored · 18 NuLogic rows","ok"],
+              ["I2-c: SUPER_ADMIN tenantId scoping → correct","ok"],
+              ["I2: no cross-tenant leak → PASS","ok"] ] },
+    { id:"reviewer", role:"diff review",
+      steps:[ ["diff: 2 Java files (+11/-10) · 1 migration","info"],
+              ["audit CAST fix — sound, anchors bind type","ok"],
+              ["SystemAdminService NPE fix — minimal, correct","ok"],
+              ["V287 — safe idempotent no-op on clean DB","ok"],
+              ["recommend /code-review ultra before merge","warn"] ] },
+  ],
+  invariants: [
+    { id:"I1", pass:"SUPER_ADMIN 0×403 across 466 endpoints" },
+    { id:"I2", pass:"tenant-override injection closed · JWT-derived tenant" },
+  ],
+  fixes: [
+    { ep:"/api/v1/audit/search" },
+    { ep:"/api/v1/admin/system/audit-logs/search" },
+    { ep:"/api/v1/admin/system/tenants" },
+    { ep:"/api/v1/tax-declarations" },
+  ],
+  tiers: [
+    ["T0 smoke","8 / 8"], ["T1 lifecycle","14 / 14"],
+    ["T2 RBAC sweep","3,255 calls"], ["T3 render","10 / 10"],
+  ],
+};
+const STATUS_COLOR = {200:"var(--ok)",403:"var(--accent-deep)",400:"var(--run)",404:"var(--queue)",
+  500:"var(--err)",501:"var(--surface-hi)",503:"var(--text-faint)",429:"oklch(60% 0.1 300)"};
+
+/* ---- engine ----------------------------------------------------------- */
+let SPEED = 2, t0 = 0, clockTimer = null, running = 0, logN = 0, orchestrating = false;
+const $ = (s,r=document)=>r.querySelector(s);
+const el = (t,c,h)=>{const e=document.createElement(t); if(c)e.className=c; if(h!=null)e.innerHTML=h; return e;};
+const agents = {}; // id -> {tile, status}
+
+function ring(pct){
+  const r=12, c=2*Math.PI*r, off=c*(1-pct);
+  return `<span class="ring"><svg width="30" height="30" viewBox="0 0 30 30">
+    <circle class="trk" cx="15" cy="15" r="${r}"></circle>
+    <circle class="val" cx="15" cy="15" r="${r}" stroke-dasharray="${c}" stroke-dashoffset="${off}"></circle>
+  </svg></span>`;
+}
+function bars(dist){
+  const tot=Object.values(dist).reduce((a,b)=>a+b,0);
+  return Object.entries(dist).filter(([,v])=>v>0).map(([k,v])=>
+    `<i title="${k}: ${v}" style="flex:${v};background:${STATUS_COLOR[k]||'var(--line)'}"></i>`).join("");
+}
+
+function makeTile(a){
+  const sub = a.email || a.role || "";
+  const t = el("article","tile s-queued",`
+    <div class="top">
+      <span class="led"></span>
+      <span class="ttl">${a.id}<small>${sub}</small></span>
+      ${ring(0)}
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+      <span class="state">queued</span>
+    </div>
+    <div class="now">awaiting spawn…</div>
+    ${a.dist?`<div class="bars">${bars(a.dist)}</div>`:""}
+  `);
+  $("#grid").appendChild(t);
+  agents[a.id] = { tile:t, def:a, status:"queued" };
+  return t;
+}
+
+function setState(id, st){
+  const A = agents[id]; if(!A) return;
+  A.status = st;
+  A.tile.className = `tile live s-${st}`;
+  $(".state",A.tile).textContent = st;
+}
+function setRing(id, pct){
+  const v = $(".ring .val", agents[id].tile);
+  const c = 2*Math.PI*12; v.style.strokeDashoffset = c*(1-pct);
+}
+function setNow(id, txt){ $(".now", agents[id].tile).textContent = txt; }
+
+function fmt(ms){ const s=ms/1000; return `${String(Math.floor(s/60)).padStart(2,"0")}:${(s%60).toFixed(1).padStart(4,"0")}`; }
+function tick(){ $("#mClock").textContent = fmt(performance.now()-t0); }
+
+function logLine(agent, msg, level){
+  logN++;
+  const ln = el("div",`ln ${level||"info"}`,
+    `<span class="ts">${fmt(performance.now()-t0)}</span><span class="ag">${agent}</span><span class="msg">${msg}</span>`);
+  const box = $("#log"); box.appendChild(ln); box.scrollTop = box.scrollHeight;
+  $("#logCount").textContent = `${logN} lines`;
+}
+function logSys(msg){
+  logN++;
+  const ln = el("div","ln",`<span class="ts">${fmt(performance.now()-t0)}</span><span class="ag">os</span><span class="sys">${msg}</span>`);
+  $("#log").appendChild(ln); $("#log").scrollTop = 1e9; $("#logCount").textContent = `${logN} lines`;
+}
+const wait = ms => new Promise(r=>setTimeout(r, ms/SPEED));
+
+async function spawn(id){
+  const A = agents[id]; if(!A || A.status==="running" || A.status==="done") return;
+  const a = A.def, chip = $(`[data-spawn="${id}"]`);
+  if(chip){ chip.disabled = true; $(".led",chip).style.background="var(--run)"; }
+  running++; updateLive();
+  setState(id,"running"); setNow(id,"booting agent…");
+  logSys(`spawn ${id} → pid ${1000+Math.floor((performance.now())%9000)}`);
+  await wait(420);
+  const n = a.steps.length;
+  for(let i=0;i<n;i++){
+    const [text,level] = a.steps[i];
+    setNow(id, text); setRing(id,(i+1)/n);
+    logLine(id, text, level);
+    if(a.onStep && a.onStep[i]) HOOKS[a.onStep[i]]();
+    await wait(560 + (level==="warn"?260:0));
+  }
+  setState(id,"done"); setNow(id,"✓ complete");
+  if(chip){ $(".led",chip).style.background="var(--ok)"; }
+  running--; updateLive();
+  logSys(`${id} exited 0`);
+}
+function updateLive(){ $("#mLive").textContent = running>0 ? `${running} running` : "idle"; }
+
+/* hooks fired mid-trajectory to flip the live inspector panels */
+const HOOKS = {
+  flipFixes(){ document.querySelectorAll(".fix").forEach(f=>{
+      f.classList.add("fixed"); $(".b-now",f).textContent="200"; }); },
+  passI2(){ const v=$('[data-inv="I2"]'); if(v){ v.className="vd pass"; v.textContent="PASS"; } },
+  passI1(){ const v=$('[data-inv="I1"]'); if(v){ v.className="vd pass"; v.textContent="PASS"; } },
+};
+
+async function runAll(){
+  if(orchestrating) return;            // re-entrancy guard: ignore clicks mid-run
+  orchestrating = true;
+  const btn = $("#runAll"); btn.disabled = true;
+  reset(); t0 = performance.now(); clockTimer = setInterval(tick, 90);
+  logSys("orchestration start · tiers T0→T3 + invariants I1/I2");
+  // executors sweep in parallel (RBAC matrix), then I1 resolves
+  await Promise.all(RUN.roles.map((r,i)=> wait(i*180).then(()=>spawn(r.id)) ));
+  HOOKS.passI1();
+  logSys("T2 sweep complete · 3,255 calls · I1 PASS");
+  // fix wave → verify → security → review, pipelined
+  await spawn("coder");
+  await spawn("tester");
+  await spawn("security-auditor");
+  await spawn("reviewer");
+  clearInterval(clockTimer); tick();
+  logSys("orchestration complete · verdict 🟢 GREEN on audited scope · run /code-review ultra to merge");
+  orchestrating = false; btn.disabled = false;
+}
+
+function reset(){
+  clearInterval(clockTimer); t0 = performance.now(); running = 0; logN = 0;
+  $("#log").innerHTML = ""; $("#logCount").textContent = "0 lines"; $("#mClock").textContent="00:00.0"; updateLive();
+  Object.values(agents).forEach(A=>{
+    A.status="queued"; A.tile.className="tile s-queued"; $(".state",A.tile).textContent="queued";
+    setNow(A.def.id,"awaiting spawn…"); setRing(A.def.id,0);
+  });
+  document.querySelectorAll("[data-spawn]").forEach(c=>{ c.disabled=false; $(".led",c).style.background="var(--queue)"; });
+  document.querySelectorAll(".fix").forEach(f=>{ f.classList.remove("fixed"); $(".b-now",f).textContent="500"; });
+  document.querySelectorAll(".invcard .vd").forEach(v=>{ v.className="vd pending"; v.textContent="PENDING"; });
+}
+
+/* ---- build UI --------------------------------------------------------- */
+function chip(a, kind){
+  const sub = a.email || a.role || "";
+  const c = el("button","chip",`
+    <span class="led"></span>
+    <span class="nm">${a.id}<small>${sub}</small></span>
+    <span class="tag">${kind==="role"?"RBAC":"WORK"}</span>`);
+  c.dataset.spawn = a.id; c.dataset.kind = kind;
+  c.addEventListener("click", ()=>{ if(!clockTimer){t0=performance.now(); clockTimer=setInterval(tick,90);} spawn(a.id); });
+  return c;
+}
+function build(){
+  RUN.roles.forEach(r=>{ $("#railRoles").appendChild(chip(r,"role")); makeTile(r); });
+  RUN.workers.forEach(w=>{ $("#railWorkers").appendChild(chip(w,"work")); makeTile(w); });
+
+  $("#invariants").innerHTML = RUN.invariants.map(i=>`
+    <div class="invcard">
+      <span class="id">${i.id}</span><span class="vd pending" data-inv="${i.id}">PENDING</span>
+      <p>${i.pass}</p>
+    </div>`).join("");
+
+  $("#fixes").innerHTML = RUN.fixes.map(f=>`
+    <div class="fix">
+      <code>${f.ep}</code>
+      <span class="badge b-was">500</span>
+      <span class="badge b-now">500</span>
+    </div>`).join("");
+
+  $("#tiers").innerHTML = RUN.tiers.map(([k,v])=>`<div class="stat"><span>${k}</span><b>${v}</b></div>`).join("");
+
+  $("#runAll").addEventListener("click", runAll);
+  $("#reset").addEventListener("click", reset);
+  document.querySelectorAll(".speed button").forEach(b=>b.addEventListener("click",()=>{
+    SPEED = +b.dataset.speed;
+    document.querySelectorAll(".speed button").forEach(x=>x.setAttribute("aria-pressed", x===b));
+  }));
+  logSys("agent-os ready · 7 executors + 4 workers · click a chip or ▶ Run full orchestration");
+}
+build();
+</script>
+</body>
+</html>

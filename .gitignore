@@ -187,3 +187,6 @@ scripts/deploy/.env
 
 # Next.js scratch build dir (security-audit workflow + ad-hoc builds)
 frontend/tmp/
+
+# Serena MCP local index/cache (machine-local, never commit)
+.serena/
