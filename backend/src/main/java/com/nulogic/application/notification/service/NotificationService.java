@@ -13,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -33,7 +34,10 @@ public class NotificationService {
     private final NotificationRepository notificationRepository;
     private final TenantTimeService tenantTimeService;
 
-    @Transactional
+    // REQUIRES_NEW so persistence still commits when invoked from
+    // @TransactionalEventListener(AFTER_COMMIT) handlers, where no ambient
+    // transaction is active and a plain @Transactional would silently no-op.
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Notification createNotification(
             UUID userId,
             Notification.NotificationType type,
