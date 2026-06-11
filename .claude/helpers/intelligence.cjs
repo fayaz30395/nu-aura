@@ -28,6 +28,7 @@ const SESSION_FILE = path.join(SESSION_DIR, 'current.json');
 // ── Safety limits (fixes #1530, #1531) ─────────────────────────────────────
 const MAX_DATA_FILE_SIZE = 10 * 1024 * 1024; // 10 MB — skip files larger than this
 const MAX_GRAPH_NODES = 5000;                 // skip PageRank if graph exceeds this
+const MAX_SIMILAR_EDGES_PER_NODE = 10;        // degree cap for similarity edges (prevents O(n²) graph bloat)
 
 // ── Stop words for trigram matching ──────────────────────────────────────────
 
@@ -68,7 +69,11 @@ function readJSON(filePath) {
 
 function writeJSON(filePath, data) {
   ensureDataDir();
-  fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf-8');
+  // Atomic write — concurrent hook processes share these files; plain
+  // writeFileSync interleaves and produces torn/corrupt JSON.
+  const tmp = `${filePath}.${process.pid}.tmp`;
+  fs.writeFileSync(tmp, JSON.stringify(data, null, 2), 'utf-8');
+  fs.renameSync(tmp, filePath);
 }
 
 function tokenize(text) {
@@ -177,7 +182,10 @@ function sessionSet(key, value) {
     if (!session.context) session.context = {};
     session.context[key] = value;
     session.updatedAt = new Date().toISOString();
-    fs.writeFileSync(SESSION_FILE, JSON.stringify(session, null, 2), 'utf-8');
+    // Atomic write to avoid torn JSON when hooks run concurrently
+    const tmp = `${SESSION_FILE}.${process.pid}.tmp`;
+    fs.writeFileSync(tmp, JSON.stringify(session, null, 2), 'utf-8');
+    fs.renameSync(tmp, SESSION_FILE);
   } catch { /* best effort */
   }
 }
@@ -284,12 +292,13 @@ function buildEdges(entries) {
       triCache[i] = trigrams(tokenize(group[i].content || group[i].summary || ''));
     }
 
+    const simCandidates = [];
     for (let i = 0; i < group.length; i++) {
       const triA = triCache[i];
       for (let j = i + 1; j < group.length; j++) {
         const sim = jaccardSimilarity(triA, triCache[j]);
         if (sim > 0.3) {
-          edges.push({
+          simCandidates.push({
             sourceId: group[i].id,
             targetId: group[j].id,
             type: 'similar',
@@ -297,6 +306,22 @@ function buildEdges(entries) {
           });
         }
       }
+    }
+
+    // Degree-capped sparsification: without a cap, a category of N
+    // near-similar entries produces O(N²) edges (measured: 474 nodes ->
+    // 84k edges -> 14MB graph-state.json, which blows the 10MB readJSON
+    // limit and forces a full rebuild every session start). Keep only the
+    // strongest MAX_SIMILAR_EDGES_PER_NODE edges per endpoint.
+    simCandidates.sort((a, b) => b.weight - a.weight);
+    const degree = {};
+    for (const edge of simCandidates) {
+      const dSource = degree[edge.sourceId] || 0;
+      const dTarget = degree[edge.targetId] || 0;
+      if (dSource >= MAX_SIMILAR_EDGES_PER_NODE || dTarget >= MAX_SIMILAR_EDGES_PER_NODE) continue;
+      degree[edge.sourceId] = dSource + 1;
+      degree[edge.targetId] = dTarget + 1;
+      edges.push(edge);
     }
   }
 

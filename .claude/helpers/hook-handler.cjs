@@ -11,6 +11,15 @@
  *   post-edit      - Record edit outcome for learning
  *   session-restore - Restore previous session state
  *   session-end    - End session and persist state
+ *
+ * Output contract (Claude Code hook JSON schema):
+ *   - stdout carries ONLY a single JSON object per the official hook output
+ *     schema (systemMessage / continue / suppressOutput / decision / reason /
+ *     hookSpecificOutput.{hookEventName, additionalContext,
+ *     permissionDecision, permissionDecisionReason, updatedInput}) — or
+ *     nothing at all.
+ *   - All diagnostics go to stderr.
+ *   - Exit code is always 0; errors must never block Claude Code.
  */
 
 const path = require('path');
@@ -18,25 +27,71 @@ const fs = require('fs');
 
 const helpersDir = __dirname;
 
+// Context-budget cap for additionalContext injected per event.
+const MAX_CONTEXT_CHARS = 420;
+const DRY_RUN = process.env.CLAUDE_HOOK_DRY_RUN === '1';
+
+function emitJSON(payload) {
+  process.stdout.write(`${JSON.stringify(payload)}\n`);
+}
+
+// Emit context back to Claude Code as schema-valid hook JSON.
+// Only `hookEventName` + `additionalContext` are allowed here — no custom fields.
+function emitAdditionalContext(hookEventName, context) {
+  if (!context) return;
+  const trimmed = String(context).trim();
+  if (!trimmed) return;
+  // Keep hook context small to prevent context-window overflows.
+  const trimmedLines = trimmed.split('\n').filter(Boolean).slice(0, 5);
+  const compacted = trimmedLines.join('\n');
+  const capped = compacted.length > MAX_CONTEXT_CHARS
+    ? `${compacted.slice(0, MAX_CONTEXT_CHARS)}…`
+    : compacted;
+  emitJSON({continue: true, hookSpecificOutput: {hookEventName, additionalContext: capped}});
+}
+
+function warn(message) {
+  process.stderr.write(`[WARN] ${message}\n`);
+}
+
+function withMutedConsole(fn) {
+  const origStdoutWrite = process.stdout.write;
+  const origStderrWrite = process.stderr.write;
+  const orig = {
+    log: console.log,
+    error: console.error,
+    warn: console.warn,
+    info: console.info,
+    debug: console.debug,
+  };
+  const noop = () => {};
+  console.log = noop;
+  console.error = noop;
+  console.warn = noop;
+  console.info = noop;
+  console.debug = noop;
+  process.stdout.write = noop;
+  process.stderr.write = noop;
+  try {
+    return fn();
+  } finally {
+    console.log = orig.log;
+    console.error = orig.error;
+    console.warn = orig.warn;
+    console.info = orig.info;
+    console.debug = orig.debug;
+    process.stdout.write = origStdoutWrite;
+    process.stderr.write = origStderrWrite;
+  }
+}
+
 // Safe require with stdout suppression - the helper modules have CLI
 // sections that run unconditionally on require(), so we mute console
 // during the require to prevent noisy output.
 function safeRequire(modulePath) {
   try {
     if (fs.existsSync(modulePath)) {
-      const origLog = console.log;
-      const origError = console.error;
-      console.log = () => {
-      };
-      console.error = () => {
-      };
-      try {
-        const mod = require(modulePath);
-        return mod;
-      } finally {
-        console.log = origLog;
-        console.error = origError;
-      }
+      return withMutedConsole(() => require(modulePath));
     }
   } catch (e) {
     // silently fail
@@ -61,7 +116,7 @@ function emitPreToolUseDecision(permissionDecision, details = {}) {
   if (details.reason) {
     hookSpecificOutput.permissionDecisionReason = details.reason;
   }
-  process.stdout.write(`${JSON.stringify({ hookSpecificOutput })}\n`);
+  emitJSON({hookSpecificOutput});
 }
 
 function readToolCommand(hookInput, toolInput, args) {
@@ -118,7 +173,7 @@ function runWithTimeout(fn, label) {
   // is an additional safety net.
   return new Promise((resolve) => {
     const timer = setTimeout(() => {
-      process.stderr.write("[WARN] " + label + " timed out after " + INTELLIGENCE_TIMEOUT_MS + "ms, skipping\n");
+      warn(`${label} timed out after ${INTELLIGENCE_TIMEOUT_MS}ms, skipping`);
       resolve(null);
     }, INTELLIGENCE_TIMEOUT_MS);
     try {
@@ -166,7 +221,7 @@ async function readStdin() {
 async function main() {
   // Global safety timeout: hooks must NEVER hang (#1530, #1531)
   const safetyTimer = setTimeout(() => {
-    process.stderr.write("[WARN] Hook handler global timeout (5s), forcing exit\n");
+    warn('Hook handler global timeout (5s), forcing exit');
     process.exit(0);
   }, 5000);
   safetyTimer.unref(); // don't keep process alive just for this timer
@@ -194,31 +249,39 @@ async function main() {
 
   const handlers = {
     'route': () => {
-      if (!prompt) return;
+      if (DRY_RUN) {
+        emitJSON({continue: true});
+        return;
+      }
+      if (!prompt) {
+        emitJSON({continue: true});
+        return;
+      } // nothing to route, nothing to inject
 
-      // Inject ranked intelligence context before routing
+      // Ranked intelligence context (multi-line text) — inject as
+      // schema-valid additionalContext, capped for context budget.
+      let intelligenceContext = '';
       if (intelligence && intelligence.getContext) {
         try {
-          const ctx = intelligence.getContext(prompt);
-          if (ctx) console.log(ctx);
+          intelligenceContext = withMutedConsole(() => intelligence.getContext(prompt)) || '';
         } catch (e) { /* non-fatal */
         }
       }
+
+      let routingLine = '';
       if (router && router.routeTask) {
-        const result = router.routeTask(prompt);
-        // Format output for Claude Code hook consumption — real data only
-        const output = [
-          `[INFO] Routing task: ${prompt.substring(0, 80) || '(no prompt)'}`,
-          '',
-          '+------------------- Primary Recommendation -------------------+',
-          `| Agent: ${result.agent.padEnd(53)}|`,
-          `| Confidence: ${(result.confidence * 100).toFixed(1)}%${' '.repeat(44)}|`,
-          `| Reason: ${(result.reason || '').substring(0, 53).padEnd(53)}|`,
-          '+--------------------------------------------------------------+',
-        ];
-        console.log(output.join('\n'));
+        try {
+          const result = withMutedConsole(() => router.routeTask(prompt));
+          routingLine = `Suggested agent: ${result.agent} (confidence ${(result.confidence * 100).toFixed(0)}%, ${result.reason})`;
+        } catch (e) { /* non-fatal */
+        }
+      }
+
+      const context = [intelligenceContext, routingLine].filter(Boolean).join('\n');
+      if (context) {
+        emitAdditionalContext('UserPromptSubmit', context);
       } else {
-        console.log('[INFO] Router not available, using default routing');
+        emitJSON({continue: true});
       }
     },
 
@@ -242,10 +305,11 @@ async function main() {
     },
 
     'post-edit': () => {
+      if (DRY_RUN) return;
       // Record edit for session metrics
       if (session && session.metric) {
         try {
-          session.metric('edits');
+          withMutedConsole(() => session.metric('edits'));
         } catch (e) { /* no active session */
         }
       }
@@ -254,94 +318,133 @@ async function main() {
         try {
           const file = hookInput.file_path || toolInput.file_path
             || process.env.TOOL_INPUT_file_path || args[0] || '';
-          intelligence.recordEdit(file);
+          withMutedConsole(() => intelligence.recordEdit(file));
         } catch (e) { /* non-fatal */
         }
       }
-      console.log('[OK] Edit recorded');
+      // No stdout: bookkeeping only.
     },
 
     'session-restore': async () => {
-      if (session) {
-        // Try restore first, fall back to start
-        const existing = session.restore && session.restore();
-        if (!existing) {
-          session.start && session.start();
-        }
-      } else {
-        // Minimal session restore output
-        const sessionId = `session-${Date.now()}`;
-        console.log(`[INFO] Restoring session: %SESSION_ID%`);
-        console.log('');
-        console.log(`[OK] Session restored from %SESSION_ID%`);
-        console.log(`New session ID: ${sessionId}`);
-        console.log('');
-        console.log('Restored State');
-        console.log('+----------------+-------+');
-        console.log('| Item           | Count |');
-        console.log('+----------------+-------+');
-        console.log('| Tasks          |     0 |');
-        console.log('| Agents         |     0 |');
-        console.log('| Memory Entries |     0 |');
-        console.log('+----------------+-------+');
+      if (DRY_RUN) {
+        emitJSON({
+          continue: true,
+          hookSpecificOutput: {
+            hookEventName: 'SessionStart',
+            additionalContext: 'SessionStart: dry-run (session restore skipped)',
+          },
+        });
+        return;
       }
+
+      let sessionStatus = 'started';
+      let sessionId;
+      // session.js / intelligence print human-readable logs; hook stdout
+      // must stay clean, so everything runs with console muted.
+      withMutedConsole(() => {
+        if (session) {
+          // Try restore first, fall back to start.
+          const existing = session.restore && session.restore();
+          if (existing) {
+            sessionStatus = 'restored';
+            sessionId = existing.id;
+            return;
+          }
+          const started = session.start && session.start();
+          sessionStatus = 'started';
+          sessionId = started?.id;
+        }
+      });
+
       // Initialize intelligence graph after session restore (with timeout — #1530)
       if (intelligence && intelligence.init) {
-        const initResult = await runWithTimeout(() => intelligence.init(), 'intelligence.init()');
-        if (initResult && initResult.nodes > 0) {
-          console.log(`[INTELLIGENCE] Loaded ${initResult.nodes} patterns, ${initResult.edges} edges`);
-        }
+        await runWithTimeout(() => withMutedConsole(() => intelligence.init()), 'intelligence.init()');
       }
+      emitJSON({
+        continue: true,
+        hookSpecificOutput: {
+          hookEventName: 'SessionStart',
+          additionalContext: `SessionStart: ${sessionStatus}${sessionId ? ` ${sessionId}` : ''}`,
+        },
+      });
     },
 
     'session-end': async () => {
+      if (DRY_RUN) {
+        emitJSON({
+          continue: true,
+          hookSpecificOutput: {
+            hookEventName: 'SessionEnd',
+            additionalContext: 'SessionEnd: dry-run (session finalization skipped)',
+          },
+        });
+        return;
+      }
       // Consolidate intelligence before ending session (with timeout — #1530)
       if (intelligence && intelligence.consolidate) {
-        const consResult = await runWithTimeout(() => intelligence.consolidate(), 'intelligence.consolidate()');
-        if (consResult && consResult.entries > 0) {
-          console.log(`[INTELLIGENCE] Consolidated: ${consResult.entries} entries, ${consResult.edges} edges${consResult.newEntries > 0 ? `, ${consResult.newEntries} new` : ''}, PageRank recomputed`);
-        }
+        await runWithTimeout(() => withMutedConsole(() => intelligence.consolidate()), 'intelligence.consolidate()');
       }
       if (session && session.end) {
-        session.end();
-      } else {
-        console.log('[OK] Session ended');
-      }
-    },
-
-    'pre-task': () => {
-      if (session && session.metric) {
         try {
-          session.metric('tasks');
+          withMutedConsole(() => session.end());
         } catch (e) { /* no active session */
         }
       }
-      // Route the task if router is available
-      if (router && router.routeTask && prompt) {
-        const result = router.routeTask(prompt);
-        console.log(`[INFO] Task routed to: ${result.agent} (confidence: ${result.confidence})`);
-      } else {
-        console.log('[OK] Task started');
+      // No stdout: bookkeeping only.
+    },
+
+    'pre-task': () => {
+      if (DRY_RUN) return;
+      if (session && session.metric) {
+        try {
+          withMutedConsole(() => session.metric('tasks'));
+        } catch (e) { /* no active session */
+        }
       }
+      // No stdout: bookkeeping only.
+    },
+
+    'post-bash': () => {
+      if (DRY_RUN) return;
+      // Record command for session metrics (PostToolUse:Bash)
+      if (session && session.metric) {
+        try {
+          withMutedConsole(() => session.metric('commands'));
+        } catch (e) { /* no active session */
+        }
+      }
+      // No stdout: bookkeeping only.
     },
 
     'post-task': () => {
+      if (DRY_RUN) return;
       // Implicit success feedback for intelligence
       if (intelligence && intelligence.feedback) {
         try {
-          intelligence.feedback(true);
+          withMutedConsole(() => intelligence.feedback(true));
         } catch (e) { /* non-fatal */
         }
       }
-      console.log('[OK] Task completed');
+      // No stdout: bookkeeping only.
     },
 
+    // Manual CLI command (not wired to any hook event) — human output is fine here.
     'stats': () => {
       if (intelligence && intelligence.stats) {
         intelligence.stats(args.includes('--json'));
       } else {
-        console.log('[WARN] Intelligence module not available. Run session-restore first.');
+        warn('Intelligence module not available. Run session-restore first.');
       }
+    },
+
+    // Aliases used by settings.json for events that are bookkeeping-only.
+    'status': () => { /* no-op heartbeat for SubagentStart */
+    },
+    'notify': () => { /* no-op for Notification */
+    },
+    'compact-manual': () => { /* no-op for PreCompact(manual) */
+    },
+    'compact-auto': () => { /* no-op for PreCompact(auto) */
     },
   };
 
@@ -350,14 +453,14 @@ async function main() {
     try {
       await Promise.resolve(handlers[command]());
     } catch (e) {
-      // Hooks should never crash Claude Code - fail silently
-      console.log(`[WARN] Hook ${command} encountered an error: ${e.message}`);
+      // Hooks must never crash or block Claude Code: report on stderr only.
+      warn(`Hook ${command} encountered an error: ${e.message}`);
     }
   } else if (command) {
-    // Unknown command - pass through without error
-    console.log(`[OK] Hook: ${command}`);
+    // Unknown command — pass through silently (stderr note for debugging).
+    warn(`Unknown hook command: ${command}`);
   } else {
-    console.log('Usage: hook-handler.cjs <route|pre-bash|post-edit|session-restore|session-end|pre-task|post-task|stats>');
+    process.stderr.write('Usage: hook-handler.cjs <route|pre-bash|pre-edit|post-edit|session-restore|session-end|pre-task|post-task|stats>\n');
   }
 }
 
@@ -366,7 +469,7 @@ async function main() {
 process.exitCode = 0;
 main().catch((e) => {
   try {
-    console.log(`[WARN] Hook handler error: ${e.message}`);
+    warn(`Hook handler error: ${e.message}`);
   } catch (_) {
   }
 }).finally(() => {
