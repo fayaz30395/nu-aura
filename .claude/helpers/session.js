@@ -10,6 +10,31 @@ const path = require('path');
 const SESSION_DIR = path.join(process.cwd(), '.claude-flow', 'sessions');
 const SESSION_FILE = path.join(SESSION_DIR, 'current.json');
 
+// Atomic write: concurrent hook processes write this file; a plain
+// writeFileSync interleaves and produces torn/corrupt JSON. Write to a
+// pid-unique temp file and rename (rename is atomic on POSIX).
+function atomicWriteSession(data) {
+  fs.mkdirSync(SESSION_DIR, {recursive: true});
+  const tmp = `${SESSION_FILE}.${process.pid}.tmp`;
+  fs.writeFileSync(tmp, JSON.stringify(data, null, 2));
+  fs.renameSync(tmp, SESSION_FILE);
+}
+
+// Safe read: a corrupt session file must never crash a hook. Quarantine
+// the corrupt file (for diagnosis) and return null so callers start fresh.
+function readSession() {
+  if (!fs.existsSync(SESSION_FILE)) return null;
+  try {
+    return JSON.parse(fs.readFileSync(SESSION_FILE, 'utf-8'));
+  } catch {
+    try {
+      fs.renameSync(SESSION_FILE, `${SESSION_FILE}.corrupt-${Date.now()}`);
+    } catch { /* best effort */
+    }
+    return null;
+  }
+}
+
 const commands = {
   start: () => {
     const sessionId = `session-${Date.now()}`;
@@ -26,34 +51,33 @@ const commands = {
       },
     };
 
-    fs.mkdirSync(SESSION_DIR, {recursive: true});
-    fs.writeFileSync(SESSION_FILE, JSON.stringify(session, null, 2));
+    atomicWriteSession(session);
 
     console.log(`Session started: ${sessionId}`);
     return session;
   },
 
   restore: () => {
-    if (!fs.existsSync(SESSION_FILE)) {
+    const session = readSession();
+    if (!session) {
       console.log('No session to restore');
       return null;
     }
 
-    const session = JSON.parse(fs.readFileSync(SESSION_FILE, 'utf-8'));
     session.restoredAt = new Date().toISOString();
-    fs.writeFileSync(SESSION_FILE, JSON.stringify(session, null, 2));
+    atomicWriteSession(session);
 
     console.log(`Session restored: ${session.id}`);
     return session;
   },
 
   end: () => {
-    if (!fs.existsSync(SESSION_FILE)) {
+    const session = readSession();
+    if (!session) {
       console.log('No active session');
       return null;
     }
 
-    const session = JSON.parse(fs.readFileSync(SESSION_FILE, 'utf-8'));
     session.endedAt = new Date().toISOString();
     session.duration = Date.now() - new Date(session.startedAt).getTime();
 
@@ -70,12 +94,12 @@ const commands = {
   },
 
   status: () => {
-    if (!fs.existsSync(SESSION_FILE)) {
+    const session = readSession();
+    if (!session) {
       console.log('No active session');
       return null;
     }
 
-    const session = JSON.parse(fs.readFileSync(SESSION_FILE, 'utf-8'));
     const duration = Date.now() - new Date(session.startedAt).getTime();
 
     console.log(`Session: ${session.id}`);
@@ -87,38 +111,33 @@ const commands = {
   },
 
   update: (key, value) => {
-    if (!fs.existsSync(SESSION_FILE)) {
+    const session = readSession();
+    if (!session) {
       console.log('No active session');
       return null;
     }
 
-    const session = JSON.parse(fs.readFileSync(SESSION_FILE, 'utf-8'));
+    if (!session.context) session.context = {};
     session.context[key] = value;
     session.updatedAt = new Date().toISOString();
-    fs.writeFileSync(SESSION_FILE, JSON.stringify(session, null, 2));
+    atomicWriteSession(session);
 
     return session;
   },
 
   get: (key) => {
-    if (!fs.existsSync(SESSION_FILE)) return null;
-    try {
-      const session = JSON.parse(fs.readFileSync(SESSION_FILE, 'utf-8'));
-      return key ? (session.context || {})[key] : session.context;
-    } catch {
-      return null;
-    }
+    const session = readSession();
+    if (!session) return null;
+    return key ? (session.context || {})[key] : session.context;
   },
 
   metric: (name) => {
-    if (!fs.existsSync(SESSION_FILE)) {
-      return null;
-    }
+    const session = readSession();
+    if (!session) return null;
 
-    const session = JSON.parse(fs.readFileSync(SESSION_FILE, 'utf-8'));
-    if (session.metrics[name] !== undefined) {
+    if (session.metrics && session.metrics[name] !== undefined) {
       session.metrics[name]++;
-      fs.writeFileSync(SESSION_FILE, JSON.stringify(session, null, 2));
+      atomicWriteSession(session);
     }
 
     return session;

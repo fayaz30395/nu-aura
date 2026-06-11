@@ -20,6 +20,8 @@ const __dirname = dirname(__filename);
 const PROJECT_ROOT = join(__dirname, '../..');
 const DATA_DIR = join(PROJECT_ROOT, '.claude-flow', 'data');
 const STORE_PATH = join(DATA_DIR, 'auto-memory-store.json');
+const isHookJSON = process.env.CLAUDE_HOOK_JSON === '1';
+const DRY_RUN = process.env.CLAUDE_HOOK_DRY_RUN === '1';
 
 // Colors
 const GREEN = '\x1b[0;32m';
@@ -27,9 +29,10 @@ const CYAN = '\x1b[0;36m';
 const DIM = '\x1b[2m';
 const RESET = '\x1b[0m';
 
-const log = (msg) => console.log(`${CYAN}[AutoMemory] ${msg}${RESET}`);
-const success = (msg) => console.log(`${GREEN}[AutoMemory] ✓ ${msg}${RESET}`);
-const dim = (msg) => console.log(`  ${DIM}${msg}${RESET}`);
+const noop = () => {};
+const log = isHookJSON ? noop : (msg) => console.log(`${CYAN}[AutoMemory] ${msg}${RESET}`);
+const success = isHookJSON ? noop : (msg) => console.log(`${GREEN}[AutoMemory] ✓ ${msg}${RESET}`);
+const dim = isHookJSON ? noop : (msg) => console.log(`  ${DIM}${msg}${RESET}`);
 const debug = (msg) => {
   if (process.env.AUTO_MEMORY_DEBUG === 'true') dim(msg);
 };
@@ -264,9 +267,30 @@ function readConfig() {
 // ============================================================================
 
 async function doImport() {
+  if (DRY_RUN) {
+    const payload = {
+      continue: true,
+      hookSpecificOutput: {
+        hookEventName: 'SessionStart',
+        additionalContext: 'SessionStart: dry-run import skipped',
+      },
+    };
+    console.log(JSON.stringify(payload));
+    return;
+  }
+
   const memPkg = await loadMemoryPackage();
   if (!memPkg || !memPkg.AutoMemoryBridge) {
     debug('Memory package not available; skipping auto memory import');
+    if (isHookJSON) {
+      console.log(JSON.stringify({
+        continue: true,
+        hookSpecificOutput: {
+          hookEventName: 'SessionStart',
+          additionalContext: 'SessionStart auto-memory import skipped: package unavailable',
+        },
+      }));
+    }
     return;
   }
 
@@ -304,22 +328,63 @@ async function doImport() {
 
   try {
     const result = await bridge.importFromAutoMemory();
-    success(`Imported ${result.imported} entries (${result.skipped} skipped)`);
-    dim(`├─ Backend entries: ${await backend.count()}`);
-    dim(`├─ Learning: ${config.learningBridge.enabled ? 'active' : 'disabled'}`);
-    dim(`├─ Graph: ${config.memoryGraph.enabled ? 'active' : 'disabled'}`);
-    dim(`└─ Agent scopes: ${config.agentScopes.enabled ? 'active' : 'disabled'}`);
+    if (isHookJSON) {
+      const entryCount = await backend.count();
+      console.log(JSON.stringify({
+        continue: true,
+        hookSpecificOutput: {
+          hookEventName: 'SessionStart',
+          additionalContext: `Imported ${result.imported} entries (${result.skipped} skipped); backend entries=${entryCount}; learning=${config.learningBridge.enabled ? 'active' : 'disabled'}; graph=${config.memoryGraph.enabled ? 'active' : 'disabled'}; agentScopes=${config.agentScopes.enabled ? 'active' : 'disabled'}`,
+        },
+      }));
+    } else {
+      success(`Imported ${result.imported} entries (${result.skipped} skipped)`);
+      dim(`├─ Backend entries: ${await backend.count()}`);
+      dim(`├─ Learning: ${config.learningBridge.enabled ? 'active' : 'disabled'}`);
+      dim(`├─ Graph: ${config.memoryGraph.enabled ? 'active' : 'disabled'}`);
+      dim(`└─ Agent scopes: ${config.agentScopes.enabled ? 'active' : 'disabled'}`);
+    }
   } catch (err) {
     dim(`Import failed (non-critical): ${err.message}`);
+    if (isHookJSON) {
+      console.log(JSON.stringify({
+        continue: true,
+        hookSpecificOutput: {
+          hookEventName: 'SessionStart',
+          additionalContext: `SessionStart auto-memory import failed: ${err.message}`,
+        },
+      }));
+    }
   }
 
   await backend.shutdown();
 }
 
 async function doSync() {
+  if (DRY_RUN) {
+    const payload = {
+      continue: true,
+      hookSpecificOutput: {
+        hookEventName: 'SessionEnd',
+        additionalContext: 'SessionEnd: dry-run sync skipped',
+      },
+    };
+    console.log(JSON.stringify(payload));
+    return;
+  }
+
   const memPkg = await loadMemoryPackage();
   if (!memPkg || !memPkg.AutoMemoryBridge) {
     debug('Memory package not available; skipping sync');
+    if (isHookJSON) {
+      console.log(JSON.stringify({
+        continue: true,
+        hookSpecificOutput: {
+          hookEventName: 'SessionEnd',
+          additionalContext: 'SessionEnd auto-memory sync skipped: package unavailable',
+        },
+      }));
+    }
     return;
   }
 
@@ -331,7 +396,17 @@ async function doSync() {
 
   const entryCount = await backend.count();
   if (entryCount === 0) {
-    dim('No entries to sync');
+    if (isHookJSON) {
+      console.log(JSON.stringify({
+        continue: true,
+        hookSpecificOutput: {
+          hookEventName: 'SessionEnd',
+          additionalContext: 'SessionEnd auto-memory sync skipped: no entries',
+        },
+      }));
+    } else {
+      dim('No entries to sync');
+    }
     await backend.shutdown();
     return;
   }
@@ -360,15 +435,36 @@ async function doSync() {
 
   try {
     const syncResult = await bridge.syncToAutoMemory();
-    success(`Synced ${syncResult.synced} entries to auto memory`);
-    dim(`├─ Categories updated: ${syncResult.categories?.join(', ') || 'none'}`);
-    dim(`└─ Backend entries: ${entryCount}`);
+    if (isHookJSON) {
+      console.log(JSON.stringify({
+        continue: true,
+        hookSpecificOutput: {
+          hookEventName: 'SessionEnd',
+          additionalContext: `Synced ${syncResult.synced} entries to auto memory; categories=${syncResult.categories?.join(', ') || 'none'}; backend entries=${entryCount}`,
+        },
+      }));
+    } else {
+      success(`Synced ${syncResult.synced} entries to auto memory`);
+      dim(`├─ Categories updated: ${syncResult.categories?.join(', ') || 'none'}`);
+      dim(`└─ Backend entries: ${entryCount}`);
+    }
 
     // Curate MEMORY.md index with graph-aware ordering
     await bridge.curateIndex();
-    success('Curated MEMORY.md index');
+    if (!isHookJSON) {
+      success('Curated MEMORY.md index');
+    }
   } catch (err) {
     dim(`Sync failed (non-critical): ${err.message}`);
+    if (isHookJSON) {
+      console.log(JSON.stringify({
+        continue: true,
+        hookSpecificOutput: {
+          hookEventName: 'SessionEnd',
+          additionalContext: `SessionEnd auto-memory sync failed: ${err.message}`,
+        },
+      }));
+    }
   }
 
   if (bridge.destroy) bridge.destroy();
@@ -378,6 +474,17 @@ async function doSync() {
 async function doStatus() {
   const memPkg = await loadMemoryPackage();
   const config = readConfig();
+
+  if (isHookJSON) {
+    console.log(JSON.stringify({
+      continue: true,
+      hookSpecificOutput: {
+        hookEventName: 'SessionLifecycle',
+        additionalContext: `Status requested for auto-memory hook (${memPkg ? 'available' : 'missing package'})`,
+      },
+    }));
+    return;
+  }
 
   console.log('\n=== Auto Memory Bridge Status ===\n');
   console.log(`  Package:        ${memPkg ? '✅ Available' : '❌ Not found'}`);
@@ -426,6 +533,15 @@ try {
   // Hooks must never crash Claude Code - fail silently
   try {
     dim(`Error (non-critical): ${err.message}`);
+    if (isHookJSON) {
+      console.log(JSON.stringify({
+        continue: true,
+        hookSpecificOutput: {
+          hookEventName: 'SessionLifecycle',
+          additionalContext: `Auto-memory hook error: ${err.message}`,
+        },
+      }));
+    }
   } catch (_) {
   }
 }
