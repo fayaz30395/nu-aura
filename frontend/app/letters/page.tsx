@@ -925,7 +925,7 @@ export default function LettersPage() {
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label htmlFor="generate-letterDate" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Letter Date
@@ -1048,7 +1048,7 @@ export default function LettersPage() {
                   </span>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
                     <p className="text-body-muted flex items-center gap-2">
                       <User className="h-4 w-4"/>
@@ -1070,7 +1070,7 @@ export default function LettersPage() {
                 </div>
 
                 {(selectedLetter.effectiveDate || selectedLetter.expiryDate) && (
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {selectedLetter.effectiveDate && (
                       <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
                         <p className="text-body-muted">Effective Date</p>
@@ -1236,7 +1236,7 @@ export default function LettersPage() {
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Offered Designation *
@@ -1270,7 +1270,7 @@ export default function LettersPage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Proposed Joining Date *

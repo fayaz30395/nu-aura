@@ -758,7 +758,7 @@ export default function EmployeesPage() {
                 <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
                   {/* Basic Info Tab */}
                   <div className={currentTab === 'basic' ? 'space-y-4' : 'hidden'}>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label htmlFor="emp-code"
                                className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
@@ -793,7 +793,7 @@ export default function EmployeesPage() {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                       <div>
                         <label htmlFor="emp-first-name"
                                className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
@@ -859,7 +859,7 @@ export default function EmployeesPage() {
 
                   {/* Personal Details Tab */}
                   <div className={currentTab === 'personal' ? 'space-y-4' : 'hidden'}>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label htmlFor="emp-personal-email" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Personal Email
@@ -890,7 +890,7 @@ export default function EmployeesPage() {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label htmlFor="emp-emergency-contact" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Emergency Contact
@@ -961,7 +961,7 @@ export default function EmployeesPage() {
                         <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.address.message}</p>}
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label htmlFor="emp-city" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           City
@@ -990,7 +990,7 @@ export default function EmployeesPage() {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label htmlFor="emp-postal-code" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Postal Code
@@ -1022,7 +1022,7 @@ export default function EmployeesPage() {
 
                   {/* Employment Tab */}
                   <div className={currentTab === 'employment' ? 'space-y-4' : 'hidden'}>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label htmlFor="emp-designation" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Designation *
@@ -1088,7 +1088,7 @@ export default function EmployeesPage() {
                         className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.departmentId.message}</p>}
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label htmlFor="emp-level" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Employee Level
@@ -1154,7 +1154,7 @@ export default function EmployeesPage() {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label htmlFor="emp-joining-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Joining Date *
@@ -1214,7 +1214,7 @@ export default function EmployeesPage() {
                     </div>
 
                     {/* Dotted-Line Managers (Optional, Matrix Reporting) */}
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label htmlFor="emp-dotted-manager-1" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Dotted-Line Manager 1 <span className="text-[var(--text-muted)]">(Optional)</span>
@@ -1270,7 +1270,7 @@ export default function EmployeesPage() {
 
                   {/* Banking & Tax Tab */}
                   <div className={currentTab === 'bank' ? 'space-y-4' : 'hidden'}>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label htmlFor="emp-bank-account" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Bank Account Number
@@ -1301,7 +1301,7 @@ export default function EmployeesPage() {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label htmlFor="emp-bank-ifsc" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           IFSC Code / Routing Number

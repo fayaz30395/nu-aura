@@ -34,7 +34,7 @@ export default function SettingsProfilePage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">Name</label>
                   <p className="text-foreground">{user?.fullName || 'N/A'}</p>

@@ -275,6 +275,7 @@ export function PostComposer({onPostCreated}: PostComposerProps) {
       {activeTab === 'post' && (
         <div className="p-4 space-y-2">
           <textarea
+            aria-label="Write a new post"
             value={postContent}
             onChange={(e) => setPostContent(e.target.value)}
             onFocus={() => setIsFocused(true)}

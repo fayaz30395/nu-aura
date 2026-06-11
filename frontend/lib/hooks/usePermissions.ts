@@ -18,7 +18,11 @@ export const Permissions = {
   EMPLOYEE_VIEW_TEAM: 'EMPLOYEE:VIEW_TEAM',
   EMPLOYEE_VIEW_SELF: 'EMPLOYEE:VIEW_SELF',
   EMPLOYEE_MANAGE: 'EMPLOYEE:MANAGE',
-  EMPLOYEE_BANK_READ: 'EMPLOYEE_BANK:READ',
+  // Must match backend FieldPermission.EMPLOYEE_BANK_VIEW ('FIELD:EMPLOYEE:BANK:VIEW').
+  // The prior 'EMPLOYEE_BANK:READ' matched no backend permission, so the bank-details
+  // PermissionGate (employees/[id]) was permanently hidden for everyone, including
+  // SuperAdmins who hold FIELD:EMPLOYEE:BANK:VIEW.
+  EMPLOYEE_BANK_READ: 'FIELD:EMPLOYEE:BANK:VIEW',
 
   // Employment Change Requests
   EMPLOYMENT_CHANGE_VIEW: 'EMPLOYMENT_CHANGE:VIEW',

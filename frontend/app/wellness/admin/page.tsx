@@ -299,7 +299,7 @@ function CreateProgramModal({
               <Textarea id="wellness-program-description" {...register('description')} placeholder="Describe the program…" rows={2}/>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label htmlFor="wellness-program-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Type <span aria-hidden="true" className="text-danger-500">*</span>
@@ -322,7 +322,7 @@ function CreateProgramModal({
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label htmlFor="wellness-program-start-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Start Date
@@ -337,7 +337,7 @@ function CreateProgramModal({
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label htmlFor="wellness-program-points-reward" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Points Reward
@@ -476,7 +476,7 @@ function CreateChallengeModal({
               <Textarea id="wellness-challenge-description" {...register('description')} placeholder="What is this challenge about?" rows={2}/>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label htmlFor="wellness-challenge-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Challenge Type <span aria-hidden="true" className="text-danger-500">*</span>
@@ -502,7 +502,7 @@ function CreateChallengeModal({
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label htmlFor="wellness-challenge-start-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Start Date <span aria-hidden="true" className="text-danger-500">*</span>
@@ -523,7 +523,7 @@ function CreateChallengeModal({
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label htmlFor="wellness-challenge-target-value" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Target Value

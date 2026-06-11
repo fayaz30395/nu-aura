@@ -163,7 +163,7 @@ export default function PayrollRunDetailPage() {
                 {/* Header */}
                 <div className="flex flex-wrap items-start justify-between gap-4 mb-6">
                   <div>
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-4">
                       <h1 className="text-xl font-bold">{run.runName}</h1>
                       <span
                         className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(run.status)}`}>

@@ -60,7 +60,14 @@ export default async function RootLayout({
   // stamps the two app-owned inline scripts below so they pass the nonce-based
   // CSP without 'unsafe-inline'. May be empty during static prerender, where
   // no middleware runs and no dynamic inline scripts are emitted.
-  const nonce = (await headers()).get('x-nonce') ?? undefined;
+  //
+  // Only stamp the nonce in production. The dev CSP uses 'unsafe-inline'
+  // (proxy.ts), so dev scripts don't need it — and stamping a per-request nonce
+  // in dev triggers a React hydration mismatch when HMR keeps the stale document
+  // (nonce A) while a re-render reads a freshly generated per-request nonce
+  // (nonce B). Prod renders a single request with a stable nonce, so it matches.
+  const requestNonce = (await headers()).get('x-nonce') ?? undefined;
+  const nonce = process.env.NODE_ENV === 'production' ? requestNonce : undefined;
 
   return (
     <html lang="en" suppressHydrationWarning>
