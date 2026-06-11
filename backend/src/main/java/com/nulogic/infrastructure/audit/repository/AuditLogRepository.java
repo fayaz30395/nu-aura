@@ -42,8 +42,8 @@ public interface AuditLogRepository extends JpaRepository<AuditLog, UUID>, JpaSp
             "AND (:entityType IS NULL OR a.entityType = :entityType) " +
             "AND (:action IS NULL OR a.action = :action) " +
             "AND (:actorId IS NULL OR a.actorId = :actorId) " +
-            "AND (:startDate IS NULL OR a.createdAt >= :startDate) " +
-            "AND (:endDate IS NULL OR a.createdAt <= :endDate) " +
+            "AND (CAST(:startDate AS LocalDateTime) IS NULL OR a.createdAt >= :startDate) " +
+            "AND (CAST(:endDate AS LocalDateTime) IS NULL OR a.createdAt <= :endDate) " +
             "ORDER BY a.createdAt DESC")
     Page<AuditLog> searchAuditLogs(
             @Param("tenantId") UUID tenantId,
@@ -140,8 +140,8 @@ public interface AuditLogRepository extends JpaRepository<AuditLog, UUID>, JpaSp
             "AND (:entityType IS NULL OR a.entityType = :entityType) " +
             "AND (:action IS NULL OR a.action = :action) " +
             "AND (:actorId IS NULL OR a.actorId = :actorId) " +
-            "AND (:startDate IS NULL OR a.createdAt >= :startDate) " +
-            "AND (:endDate IS NULL OR a.createdAt <= :endDate) " +
+            "AND (CAST(:startDate AS LocalDateTime) IS NULL OR a.createdAt >= :startDate) " +
+            "AND (CAST(:endDate AS LocalDateTime) IS NULL OR a.createdAt <= :endDate) " +
             "ORDER BY a.createdAt DESC")
     Page<AuditLog> searchCrossTenant(
             @Param("tenantId") UUID tenantId,
