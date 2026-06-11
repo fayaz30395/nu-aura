@@ -51,8 +51,7 @@ public class WebSocketNotificationService {
                     .type(mapType(message.getType()))
                     .title(message.getTitle())
                     .message(message.getMessage())
-                    .actionUrl(message.getActionUrl())
-                    .priority(mapPriority(message.getPriority()))
+                    .priority(Notification.Priority.NORMAL)
                     .isRead(false)
                     .build();
             notification.setTenantId(TenantContext.requireCurrentTenant());
@@ -62,25 +61,15 @@ public class WebSocketNotificationService {
         }
     }
 
-    private Notification.NotificationType mapType(NotificationMessage.NotificationType type) {
-        if (type == null) {
+    /** Map the free-form WS message type string to the persisted enum, defaulting to GENERAL. */
+    private Notification.NotificationType mapType(String type) {
+        if (type == null || type.isBlank()) {
             return Notification.NotificationType.GENERAL;
         }
         try {
-            return Notification.NotificationType.valueOf(type.name());
+            return Notification.NotificationType.valueOf(type.trim().toUpperCase());
         } catch (IllegalArgumentException ex) {
             return Notification.NotificationType.GENERAL;
-        }
-    }
-
-    private Notification.Priority mapPriority(NotificationMessage.Priority priority) {
-        if (priority == null) {
-            return Notification.Priority.NORMAL;
-        }
-        try {
-            return Notification.Priority.valueOf(priority.name());
-        } catch (IllegalArgumentException ex) {
-            return Notification.Priority.NORMAL;
         }
     }
 }
