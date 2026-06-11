@@ -428,7 +428,7 @@ export default function ShiftSwapPage() {
               <p className="mt-1 text-xs text-danger-500">{errors.swapType.message}</p>
             )}
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">My Shift Date *</label>
               <Controller

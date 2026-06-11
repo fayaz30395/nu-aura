@@ -261,8 +261,9 @@ export default function MyDashboardPage() {
         {/* Secondary grid — supplementary widgets stay grouped */}
         <motion.section
           initial="hidden"
-          animate="visible"
-          variants={{visible: {transition: {staggerChildren: 0.06, delayChildren: 0.28}}}}
+          whileInView="visible"
+          viewport={{once: true, amount: 0.15}}
+          variants={{visible: {transition: {staggerChildren: 0.06}}}}
           className="grid gap-4 grid-cols-1 lg:grid-cols-12"
           aria-label="Your team and time off"
         >
@@ -321,8 +322,9 @@ export default function MyDashboardPage() {
         {/* Social section */}
         <motion.section
           initial="hidden"
-          animate="visible"
-          variants={{visible: {transition: {staggerChildren: 0.06, delayChildren: 0.38}}}}
+          whileInView="visible"
+          viewport={{once: true, amount: 0.1}}
+          variants={{visible: {transition: {staggerChildren: 0.06}}}}
           className="space-y-6"
           aria-label="Company feed"
         >
@@ -378,7 +380,7 @@ function PageHeader({firstName, designation, department, hasInbox, inboxCount}: 
             : "Here's what's on your plate today — attendance, approvals, and your team at a glance."}
         </p>
       </div>
-      <Link href="/me/inbox" className="self-start sm:self-end">
+      <Link href="/approvals/inbox" className="self-start sm:self-end">
         <Button variant={hasInbox ? 'primary' : 'outline'} size="md">
           <Inbox className="mr-2 h-4 w-4" aria-hidden="true"/>
           Inbox
@@ -448,7 +450,7 @@ function AttentionStrip({count}: {count: number}) {
           {count === 1 ? 'item is' : 'items are'} waiting on your action.
         </p>
       </div>
-      <Link href="/me/inbox">
+      <Link href="/approvals/inbox">
         <Button variant="outline" size="sm">
           Review
           <ArrowRight className="ml-1.5 h-3.5 w-3.5" aria-hidden="true"/>

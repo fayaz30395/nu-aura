@@ -145,7 +145,7 @@ export function RequestTimeline({request}: RequestTimelineProps) {
       </div>
 
       {/* Request Details Section */}
-      <div className="grid grid-cols-2 gap-4 pt-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
         <div className="card-aura p-4 bg-[var(--bg-secondary)]/30">
           <p className="text-caption uppercase font-semibold tracking-wide mb-2">Reason</p>
           <p className="text-body-secondary line-clamp-3">{request.reason}</p>

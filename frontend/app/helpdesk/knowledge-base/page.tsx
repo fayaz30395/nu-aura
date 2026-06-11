@@ -418,7 +418,7 @@ export default function KnowledgeBasePage() {
             </p>
           </div>
           <Card className="p-12">
-            <div className="flex flex-col items-center text-center gap-3">
+            <div className="flex flex-col items-center text-center gap-4">
               <FileText className="h-12 w-12 text-[var(--text-muted)]"/>
               <h2 className="text-lg font-semibold text-[var(--text-primary)]">
                 Knowledge Base is not available yet

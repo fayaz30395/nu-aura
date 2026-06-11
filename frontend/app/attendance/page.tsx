@@ -669,7 +669,7 @@ const BentoHero = memo(function BentoHero({
           </div>
         </div>
 
-        <div className="mt-8 grid grid-cols-3 gap-6">
+        <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           <div>
             <p className="text-2xs font-medium uppercase tracking-wider text-[var(--text-muted)]">Check-in</p>
             <p className="mt-1 font-mono text-lg font-semibold tabular-nums text-[var(--text-heading)]">
@@ -702,10 +702,11 @@ const BentoHero = memo(function BentoHero({
           </div>
           <div className="h-1.5 w-full rounded-full bg-[var(--border-subtle)] overflow-hidden">
             <motion.div
-              initial={{width: 0}}
-              animate={{width: `${workProgress}%`}}
+              initial={{scaleX: 0}}
+              animate={{scaleX: Math.min(workProgress, 100) / 100}}
               transition={{duration: 0.7, ease: EASE}}
-              className={`h-full ${workProgress >= 100 ? 'bg-success-500' : 'bg-accent-500'}`}
+              style={{originX: 0}}
+              className={`h-full w-full origin-left ${workProgress >= 100 ? 'bg-success-500' : 'bg-accent-500'}`}
             />
           </div>
         </div>

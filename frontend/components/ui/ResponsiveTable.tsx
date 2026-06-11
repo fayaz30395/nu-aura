@@ -147,6 +147,7 @@ function ResponsiveTable<T>({
               <th className="w-12 px-4 py-2 text-left">
                 <input
                   type="checkbox"
+                  aria-label="Select all rows"
                   checked={selectedKeys.size === data.length && data.length > 0}
                   onChange={handleSelectAll}
                   className="rounded border-surface-300 text-accent-700 focus:ring-accent-500"
