@@ -1,0 +1,2264 @@
+{
+  "base": "https://hrms-frontend-vert.vercel.app",
+  "runAt": "2026-06-11T21:22:56.411Z",
+  "accounts": [
+    {
+      "account": "fayaz.m@nulogic.io",
+      "role": "SUPER_ADMIN",
+      "login": {
+        "emptySubmit": {
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/auth/login",
+          "onLoginPage": true,
+          "consoleErrors": 0,
+          "requestFailures": 0
+        },
+        "invalidSubmit": {
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/auth/login",
+          "onLoginPage": true,
+          "consoleErrors": 0,
+          "requestFailures": 0
+        },
+        "validLogin": {
+          "success": true,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/me/dashboard",
+          "onLoginPage": false,
+          "consoleErrors": 0,
+          "requestFailures": 6,
+          "cookieDelta": 5
+        }
+      },
+      "routes": [
+        {
+          "route": "/",
+          "phase": "authenticated",
+          "status": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "dom": {
+            "visibleLinks": 4,
+            "visibleButtons": 16,
+            "visibleFields": 2
+          },
+          "consoleErrorsAtRoute": 1,
+          "requestFailedAtRoute": 6,
+          "error": null,
+          "checks": [
+            {
+              "type": "formFieldPresence",
+              "tag": "input",
+              "count": 2
+            }
+          ]
+        },
+        {
+          "route": "/auth/login",
+          "phase": "authenticated",
+          "status": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/auth/login",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "dom": {
+            "visibleLinks": 4,
+            "visibleButtons": 16,
+            "visibleFields": 2
+          },
+          "consoleErrorsAtRoute": 2,
+          "requestFailedAtRoute": 2,
+          "error": null,
+          "checks": [
+            {
+              "type": "formFieldPresence",
+              "tag": "input",
+              "count": 2
+            }
+          ]
+        },
+        {
+          "route": "/about",
+          "phase": "authenticated",
+          "status": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/about",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "dom": {
+            "visibleLinks": 6,
+            "visibleButtons": 4,
+            "visibleFields": 0
+          },
+          "consoleErrorsAtRoute": 2,
+          "requestFailedAtRoute": 2,
+          "error": null,
+          "checks": []
+        },
+        {
+          "route": "/dashboard",
+          "phase": "authenticated",
+          "status": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/dashboard",
+          "title": "Dashboard | NU-AURA",
+          "dom": {
+            "visibleLinks": 4,
+            "visibleButtons": 16,
+            "visibleFields": 2
+          },
+          "consoleErrorsAtRoute": 0,
+          "requestFailedAtRoute": 0,
+          "error": null,
+          "checks": [
+            {
+              "type": "formFieldPresence",
+              "tag": "input",
+              "count": 2
+            }
+          ]
+        },
+        {
+          "route": "/me/dashboard",
+          "phase": "authenticated",
+          "status": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/me/dashboard",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "dom": {
+            "visibleLinks": 56,
+            "visibleButtons": 29,
+            "visibleFields": 1
+          },
+          "consoleErrorsAtRoute": 3,
+          "requestFailedAtRoute": 5,
+          "error": null,
+          "checks": [
+            {
+              "type": "formFieldPresence",
+              "tag": "textarea",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "route": "/analytics",
+          "phase": "authenticated",
+          "status": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/analytics",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "dom": {
+            "visibleLinks": 50,
+            "visibleButtons": 18,
+            "visibleFields": 0
+          },
+          "consoleErrorsAtRoute": 0,
+          "requestFailedAtRoute": 20,
+          "error": null,
+          "checks": []
+        },
+        {
+          "route": "/admin",
+          "phase": "authenticated",
+          "status": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/admin",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "dom": {
+            "visibleLinks": 12,
+            "visibleButtons": 17,
+            "visibleFields": 4
+          },
+          "consoleErrorsAtRoute": 3,
+          "requestFailedAtRoute": 4,
+          "error": null,
+          "checks": [
+            {
+              "type": "formFieldPresence",
+              "tag": "input",
+              "count": 4
+            }
+          ]
+        },
+        {
+          "route": "/admin/employees",
+          "phase": "authenticated",
+          "status": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/admin/employees",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "dom": {
+            "visibleLinks": 7,
+            "visibleButtons": 13,
+            "visibleFields": 2
+          },
+          "consoleErrorsAtRoute": 1,
+          "requestFailedAtRoute": 11,
+          "error": null,
+          "checks": [
+            {
+              "type": "formFieldPresence",
+              "tag": "input",
+              "count": 2
+            }
+          ]
+        },
+        {
+          "route": "/employees",
+          "phase": "authenticated",
+          "status": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/employees",
+          "title": "Employees | NU-AURA",
+          "dom": {
+            "visibleLinks": 50,
+            "visibleButtons": 18,
+            "visibleFields": 1
+          },
+          "consoleErrorsAtRoute": 0,
+          "requestFailedAtRoute": 3,
+          "error": null,
+          "checks": [
+            {
+              "type": "formFieldPresence",
+              "tag": "input",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "route": "/attendance",
+          "phase": "authenticated",
+          "status": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/attendance",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "dom": {
+            "visibleLinks": 54,
+            "visibleButtons": 17,
+            "visibleFields": 0
+          },
+          "consoleErrorsAtRoute": 0,
+          "requestFailedAtRoute": 5,
+          "error": null,
+          "checks": []
+        },
+        {
+          "route": "/leave",
+          "phase": "authenticated",
+          "status": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/leave",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "dom": {
+            "visibleLinks": 55,
+            "visibleButtons": 20,
+            "visibleFields": 0
+          },
+          "consoleErrorsAtRoute": 0,
+          "requestFailedAtRoute": 10,
+          "error": null,
+          "checks": []
+        },
+        {
+          "route": "/approvals/inbox",
+          "phase": "authenticated",
+          "status": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/approvals/inbox",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "dom": {
+            "visibleLinks": 50,
+            "visibleButtons": 25,
+            "visibleFields": 1
+          },
+          "consoleErrorsAtRoute": 1,
+          "requestFailedAtRoute": 11,
+          "error": null,
+          "checks": [
+            {
+              "type": "formFieldPresence",
+              "tag": "input",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "route": "/documents",
+          "phase": "authenticated",
+          "status": 404,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/documents",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "dom": {
+            "visibleLinks": 2,
+            "visibleButtons": 1,
+            "visibleFields": 0
+          },
+          "consoleErrorsAtRoute": 2,
+          "requestFailedAtRoute": 3,
+          "error": null,
+          "checks": []
+        },
+        {
+          "route": "/helpdesk",
+          "phase": "authenticated",
+          "status": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/helpdesk",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "dom": {
+            "visibleLinks": 50,
+            "visibleButtons": 18,
+            "visibleFields": 0
+          },
+          "consoleErrorsAtRoute": 0,
+          "requestFailedAtRoute": 1,
+          "error": null,
+          "checks": []
+        }
+      ],
+      "summary": {
+        "consoleErrorsTotal": 15,
+        "requestFailuresTotal": 89
+      },
+      "consoleErrors": [
+        {
+          "type": "error",
+          "text": "WebSocket connection to 'wss://hrms-frontend-vert.vercel.app/ws/341/qwnqwa05/websocket' failed: Error during WebSocket handshake: Unexpected response code: 400"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 ()"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 ()"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 ()"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 ()"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 ()"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 ()"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 ()"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 ()"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 ()"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 ()"
+        },
+        {
+          "type": "error",
+          "text": "WebSocket connection to 'wss://hrms-frontend-vert.vercel.app/ws/381/bdtnke2k/websocket' failed: Error during WebSocket handshake: Unexpected response code: 400"
+        },
+        {
+          "type": "error",
+          "text": "WebSocket connection to 'wss://hrms-frontend-vert.vercel.app/ws/761/mjhkgdre/websocket' failed: Error during WebSocket handshake: Unexpected response code: 400"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 ()"
+        },
+        {
+          "type": "error",
+          "text": "WebSocket connection to 'wss://hrms-frontend-vert.vercel.app/ws/877/ytru0jdt/websocket' failed: Error during WebSocket handshake: Unexpected response code: 400"
+        }
+      ],
+      "requestFailed": [
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/payslips?_rsc=XfpNYzep9ZVrVaNd",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/dashboards/executive?_rsc=XfpNYzep9ZVrVaNd",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/dashboard?_rsc=XfpNYzep9ZVrVaNd",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/departments?_rsc=RQ1_bBe45_ndZtv7",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/documents?_rsc=1r26H32xwrUTwQWY",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/leaves?_rsc=sbAVmhaoWUoaxVj1",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/dashboards/executive?_rsc=7IjW7L0eFlMzE28F",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/dashboard?_rsc=0gAPKWmxobRiiEB9",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/workflow/inbox/count",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/self-service/dashboard?employeeId=550e8400-e29b-41d4-a716-446655440041",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/auth/login?_rsc=AuIN5InvkbCy_sLU",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/ws/341/1jga5oqe/xhr_streaming?t=1781212984585",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/terms?_rsc=n5hqsW7r31npIJSZ",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/privacy?_rsc=n5hqsW7r31npIJSZ",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/terms?_rsc=n5hqsW7r31npIJSZ",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/privacy?_rsc=n5hqsW7r31npIJSZ",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/terms?_rsc=n5hqsW7r31npIJSZ",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/onboarding/processes/status/IN_PROGRESS",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/privacy?_rsc=n5hqsW7r31npIJSZ",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/auth/me",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/leaves?_rsc=XfpNYzep9ZVrVaNd",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/dashboard?_rsc=0gAPKWmxobRiiEB9",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/documents?_rsc=1r26H32xwrUTwQWY",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/home/birthdays?days=14",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/notifications/unread/count",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/profile?_rsc=WAZ2EodQA4b7w40A",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/home/new-joinees?days=30",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/recognition/feed?page=0&size=10",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/leaves?_rsc=sbAVmhaoWUoaxVj1",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/announcements/active?employeeId=550e8400-e29b-41d4-a716-446655440041&page=0&size=10",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/inbox?_rsc=XfpNYzep9ZVrVaNd",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/home/birthdays?days=1",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/ws/info?t=1781212990935",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/home/anniversaries?days=14",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/attendance?_rsc=90ichTI3i4f3qBbf",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/workflow/inbox/count",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/home/holidays?days=90",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/home/new-joinees?days=30",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/home/remote-workers",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/home/anniversaries?days=14",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/payslips?_rsc=_DNok5yDDVKxuaQu",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/dashboard?_rsc=9aI_f72_Plstu6Vw",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/dashboards/executive?_rsc=qIQ1lf8jIJPkGJW2",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/dashboard?_rsc=aDCq81LFeijv--F4",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/analytics/dashboard",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/admin/integrations?_rsc=Fbvgmv8ZUT6VyeUY",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/admin/reports?_rsc=0grT9FogrHi22fJ9",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/admin/payroll?_rsc=y6DQwYwYBPJz_TG5",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/ws/info?t=1781212993871",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/notifications/unread/count",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/admin/tenants?_rsc=xFVjKFL12UrVWmwy",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/admin/users?page=0&size=10",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/admin/approvals?_rsc=xFVjKFL12UrVWmwy",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/_next/static/chunks/app/admin/payroll/page-4f70bc290e025320.js",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/admin/health",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/admin/compliance?_rsc=xFVjKFL12UrVWmwy",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/employees?page=0&size=10&sortBy=createdAt&sortDirection=DESC",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/ws/381/kt34ocf4/xhr_streaming?t=1781212996318",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/notifications/unread/count",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/departments/active",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/notifications/unread/count",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/employees/managers",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/employees?page=0&size=20&sortBy=createdAt&sortDirection=DESC",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/employees?_rsc=94Ek3nTfQ7-l7cFQ",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/leaves?_rsc=ophge2AHEY6T_8_g",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/payslips?_rsc=ncMf2fESbkq4yhm0",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/holidays/year/2026",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/attendance/my-attendance?startDate=2026-06-06&endDate=2026-06-12",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/attendance?_rsc=XaVgP-kHCFguxper",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/dashboard?_rsc=5pWi4FI--zNeVyv5",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/attendance/my-attendance?startDate=2026-06-01&endDate=2026-06-12",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/ws/info?t=1781212999636",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/notifications/unread/count",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/profile?_rsc=cItC1fvcnqJHb7_c",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/payslips?_rsc=LX-3PXi-aIFtiw6K",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/workflow/inbox/count",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/leaves?_rsc=7Qe_NwWeQknqwImH",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/ws/info?t=1781213001267",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/notifications/unread/count",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/attendance?_rsc=5zWyQk9cLE9W3pJK",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/leave-types/active",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/leave-requests/employee/550e8400-e29b-41d4-a716-446655440041?page=0&size=5",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/documents?_rsc=WuSlLcxFu7AHt3H6",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/employees?_rsc=IIm7rXVfJs81tEJr",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/leaves?_rsc=IIm7rXVfJs81tEJr",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/payslips?_rsc=PzRlfZmu9iGMaT9I",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/ws/761/si51jdgs/xhr_streaming?t=1781213004007",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/dashboard?_rsc=fX3--moqce2N54BO",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/ws/877/lvj2x4tx/xhr_streaming?t=1781213005524",
+          "failure": "net::ERR_ABORTED"
+        }
+      ]
+    },
+    {
+      "account": "sumit@nulogic.io",
+      "role": "MANAGER",
+      "login": {
+        "emptySubmit": {
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/auth/login",
+          "onLoginPage": true,
+          "consoleErrors": 0,
+          "requestFailures": 0
+        },
+        "invalidSubmit": {
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/auth/login",
+          "onLoginPage": true,
+          "consoleErrors": 0,
+          "requestFailures": 0
+        },
+        "validLogin": {
+          "success": true,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/me/dashboard",
+          "onLoginPage": false,
+          "consoleErrors": 2,
+          "requestFailures": 10,
+          "cookieDelta": 5
+        }
+      },
+      "routes": [
+        {
+          "route": "/",
+          "phase": "authenticated",
+          "status": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "dom": {
+            "visibleLinks": 4,
+            "visibleButtons": 16,
+            "visibleFields": 2
+          },
+          "consoleErrorsAtRoute": 1,
+          "requestFailedAtRoute": 18,
+          "error": null,
+          "checks": [
+            {
+              "type": "formFieldPresence",
+              "tag": "input",
+              "count": 2
+            }
+          ]
+        },
+        {
+          "route": "/auth/login",
+          "phase": "authenticated",
+          "status": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/auth/login",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "dom": {
+            "visibleLinks": 4,
+            "visibleButtons": 16,
+            "visibleFields": 2
+          },
+          "consoleErrorsAtRoute": 0,
+          "requestFailedAtRoute": 2,
+          "error": null,
+          "checks": [
+            {
+              "type": "formFieldPresence",
+              "tag": "input",
+              "count": 2
+            }
+          ]
+        },
+        {
+          "route": "/about",
+          "phase": "authenticated",
+          "status": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/about",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "dom": {
+            "visibleLinks": 6,
+            "visibleButtons": 4,
+            "visibleFields": 0
+          },
+          "consoleErrorsAtRoute": 2,
+          "requestFailedAtRoute": 2,
+          "error": null,
+          "checks": []
+        },
+        {
+          "route": "/dashboard",
+          "phase": "authenticated",
+          "status": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/dashboard",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "dom": {
+            "visibleLinks": 4,
+            "visibleButtons": 16,
+            "visibleFields": 2
+          },
+          "consoleErrorsAtRoute": 0,
+          "requestFailedAtRoute": 3,
+          "error": null,
+          "checks": [
+            {
+              "type": "formFieldPresence",
+              "tag": "input",
+              "count": 2
+            }
+          ]
+        },
+        {
+          "route": "/me/dashboard",
+          "phase": "authenticated",
+          "status": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/me/dashboard",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "dom": {
+            "visibleLinks": 30,
+            "visibleButtons": 33,
+            "visibleFields": 1
+          },
+          "consoleErrorsAtRoute": 3,
+          "requestFailedAtRoute": 5,
+          "error": null,
+          "checks": [
+            {
+              "type": "formFieldPresence",
+              "tag": "textarea",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "route": "/analytics",
+          "phase": "authenticated",
+          "status": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/analytics",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "dom": {
+            "visibleLinks": 24,
+            "visibleButtons": 14,
+            "visibleFields": 0
+          },
+          "consoleErrorsAtRoute": 1,
+          "requestFailedAtRoute": 17,
+          "error": null,
+          "checks": []
+        },
+        {
+          "route": "/admin",
+          "phase": "authenticated",
+          "status": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/me/dashboard?denied=1",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "dom": {
+            "visibleLinks": 24,
+            "visibleButtons": 13,
+            "visibleFields": 0
+          },
+          "consoleErrorsAtRoute": 0,
+          "requestFailedAtRoute": 11,
+          "error": null,
+          "checks": []
+        },
+        {
+          "route": "/admin/employees",
+          "phase": "authenticated",
+          "status": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/me/dashboard?denied=1",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "dom": {
+            "visibleLinks": 24,
+            "visibleButtons": 13,
+            "visibleFields": 0
+          },
+          "consoleErrorsAtRoute": 0,
+          "requestFailedAtRoute": 4,
+          "error": null,
+          "checks": []
+        },
+        {
+          "route": "/employees",
+          "phase": "authenticated",
+          "status": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/employees",
+          "title": "Employees | NU-AURA",
+          "dom": {
+            "visibleLinks": 24,
+            "visibleButtons": 13,
+            "visibleFields": 0
+          },
+          "consoleErrorsAtRoute": 0,
+          "requestFailedAtRoute": 5,
+          "error": null,
+          "checks": []
+        },
+        {
+          "route": "/attendance",
+          "phase": "authenticated",
+          "status": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/attendance",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "dom": {
+            "visibleLinks": 28,
+            "visibleButtons": 17,
+            "visibleFields": 0
+          },
+          "consoleErrorsAtRoute": 1,
+          "requestFailedAtRoute": 11,
+          "error": null,
+          "checks": []
+        },
+        {
+          "route": "/leave",
+          "phase": "authenticated",
+          "status": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/leave",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "dom": {
+            "visibleLinks": 29,
+            "visibleButtons": 20,
+            "visibleFields": 0
+          },
+          "consoleErrorsAtRoute": 1,
+          "requestFailedAtRoute": 11,
+          "error": null,
+          "checks": []
+        },
+        {
+          "route": "/approvals/inbox",
+          "phase": "authenticated",
+          "status": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/approvals/inbox",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "dom": {
+            "visibleLinks": 24,
+            "visibleButtons": 25,
+            "visibleFields": 1
+          },
+          "consoleErrorsAtRoute": 0,
+          "requestFailedAtRoute": 10,
+          "error": null,
+          "checks": [
+            {
+              "type": "formFieldPresence",
+              "tag": "input",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "route": "/documents",
+          "phase": "authenticated",
+          "status": 404,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/documents",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "dom": {
+            "visibleLinks": 2,
+            "visibleButtons": 1,
+            "visibleFields": 0
+          },
+          "consoleErrorsAtRoute": 1,
+          "requestFailedAtRoute": 7,
+          "error": null,
+          "checks": []
+        },
+        {
+          "route": "/helpdesk",
+          "phase": "authenticated",
+          "status": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/helpdesk",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "dom": {
+            "visibleLinks": 24,
+            "visibleButtons": 14,
+            "visibleFields": 0
+          },
+          "consoleErrorsAtRoute": 0,
+          "requestFailedAtRoute": 1,
+          "error": null,
+          "checks": []
+        }
+      ],
+      "summary": {
+        "consoleErrorsTotal": 12,
+        "requestFailuresTotal": 117
+      },
+      "consoleErrors": [
+        {
+          "type": "error",
+          "text": "WebSocket connection to 'wss://hrms-frontend-vert.vercel.app/ws/805/0z5dp3o0/websocket' failed: Error during WebSocket handshake: Unexpected response code: 400"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 ()"
+        },
+        {
+          "type": "error",
+          "text": "WebSocket connection to 'wss://hrms-frontend-vert.vercel.app/ws/905/5dwpj3rq/websocket' failed: Error during WebSocket handshake: Unexpected response code: 400"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 ()"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 ()"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 ()"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 ()"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 ()"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 403 ()"
+        },
+        {
+          "type": "error",
+          "text": "WebSocket connection to 'wss://hrms-frontend-vert.vercel.app/ws/621/bfbqu32y/websocket' failed: Error during WebSocket handshake: Unexpected response code: 400"
+        },
+        {
+          "type": "error",
+          "text": "WebSocket connection to 'wss://hrms-frontend-vert.vercel.app/ws/810/goiaxyf1/websocket' failed: Error during WebSocket handshake: Unexpected response code: 400"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 ()"
+        }
+      ],
+      "requestFailed": [
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/dashboard?_rsc=RGBbkgBlOc0LxCbX",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/departments?_rsc=XfpNYzep9ZVrVaNd",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/attendance?_rsc=XfpNYzep9ZVrVaNd",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/profile?_rsc=XfpNYzep9ZVrVaNd",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/payslips?_rsc=XfpNYzep9ZVrVaNd",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/leave?_rsc=XfpNYzep9ZVrVaNd",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/dashboard?_rsc=XfpNYzep9ZVrVaNd",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/announcements?_rsc=IuJoPzPYF3EhhzCI",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/leave?_rsc=ddF_7znddQzo2Amo",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/employees?_rsc=rxz-sHL2sugXObsP",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/leaves?_rsc=sbAVmhaoWUoaxVj1",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/documents?_rsc=1r26H32xwrUTwQWY",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/home/remote-workers",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/announcements/active?employeeId=48000000-e001-0000-0000-000000000001&page=0&size=10",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/home/on-leave",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/wall/posts?page=0&size=10",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/notifications/unread/count",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/home/new-joinees?days=30",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/profile?_rsc=WAZ2EodQA4b7w40A",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/ws/805/d1my43x2/xhr_streaming?t=1781213017249",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/inbox?_rsc=XfpNYzep9ZVrVaNd",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/recognition/feed?page=0&size=10",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/dashboard?_rsc=0gAPKWmxobRiiEB9",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/home/holidays?days=90",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/home/birthdays?days=1",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/auth/login?_rsc=5CB68i4pnAekjehf",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/auth/login?_rsc=AuIN5InvkbCy_sLU",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/ws/905/pkbhgrte/xhr_streaming?t=1781213019447",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/auth/forgot-password?_rsc=n5hqsW7r31npIJSZ",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/auth/forgot-password?_rsc=ukzxSPd9CcYzIDSF",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/terms?_rsc=n5hqsW7r31npIJSZ",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/privacy?_rsc=n5hqsW7r31npIJSZ",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/contact?_rsc=La37PhNi5DSpvt7R",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/auth/login?_rsc=7Za2Kxy7yiDEn0uH",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/profile?_rsc=j79Vj4yH5aoiafxS",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/privacy?_rsc=n5hqsW7r31npIJSZ",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/terms?_rsc=n5hqsW7r31npIJSZ",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/analytics/dashboard",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/onboarding/processes/status/IN_PROGRESS",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/auth/me",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/profile?_rsc=WAZ2EodQA4b7w40A",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/payslips?_rsc=_DNok5yDDVKxuaQu",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/home/new-joinees?days=30",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/inbox?_rsc=XfpNYzep9ZVrVaNd",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/announcements/active?employeeId=48000000-e001-0000-0000-000000000001&page=0&size=10",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/home/birthdays?days=1",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/home/anniversaries?days=14",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/attendance?_rsc=90ichTI3i4f3qBbf",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/dashboard?_rsc=JBrWMU4CMR5v-2W5",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/workflow/inbox/count",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/recognition/feed?page=0&size=10",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/wall/posts?page=0&size=10",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/notifications/unread/count",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/home/anniversaries?days=14",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/home/new-joinees?days=30",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/home/birthdays?days=14",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/employees?_rsc=ix5_aAief6TvBg04",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/dashboard?_rsc=ix5_aAief6TvBg04",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/announcements?_rsc=DoQ-y0QJpRbBvH7X",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/documents?_rsc=9e7UvsvKOdQ9werV",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/leaves?_rsc=us-OpnU530kjF2_d",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/employees?_rsc=rr9ubG4duDqb0hQa",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/attendance?_rsc=jmILt-shIsUPSud2",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/ws/info?t=1781213027011",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/dashboard?_rsc=9aI_f72_Plstu6Vw",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/payslips?_rsc=5eKszbDuowt7-rSx",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/profile?_rsc=eZjl-U8Tv_w1NExh",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/dashboard?_rsc=aDCq81LFeijv--F4",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/dashboard?_rsc=TpGzcIYem_wX6_T2",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/notifications/unread/count",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/ws/info?t=1781213028802",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/self-service/dashboard?employeeId=48000000-e001-0000-0000-000000000001",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/workflow/inbox/count",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/dashboard?_rsc=TpGzcIYem_wX6_T2",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/notifications/unread/count",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/ws/info?t=1781213030584",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/self-service/dashboard?employeeId=48000000-e001-0000-0000-000000000001",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/onboarding/processes/status/IN_PROGRESS",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/analytics/dashboard",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/attendance?_rsc=_feUgNuCE-ep0czW",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/attendance/my-attendance?startDate=2026-06-12&endDate=2026-06-12",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/payslips?_rsc=pq3_fajdkSflKBVD",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/profile?_rsc=kAGaqZIiol1IUCnp",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/employees?page=0&size=20&sortBy=createdAt&sortDirection=DESC",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/leaves?_rsc=sCOK-mVmlo_lmeem",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/departments/active",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/attendance/my-time-entries?date=2026-06-12",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/attendance/regularization?_rsc=94Ek3nTfQ7-l7cFQ",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/leaves?_rsc=ophge2AHEY6T_8_g",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/ws/621/tuu5yiui/xhr_streaming?t=1781213034979",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/notifications/unread/count",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/documents?_rsc=-cn65TS9Vh7-Pwsm",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/attendance?_rsc=XaVgP-kHCFguxper",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/attendance/my-attendance?startDate=2026-06-06&endDate=2026-06-12",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/attendance/my-attendance?startDate=2026-06-01&endDate=2026-06-12",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/payslips?_rsc=ncMf2fESbkq4yhm0",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/workflow/inbox/count",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/departments?_rsc=8-oDIEubOct9xMSE",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/documents?_rsc=8-oDIEubOct9xMSE",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/leave-balances/employee/48000000-e001-0000-0000-000000000001/year/2026",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/ws/810/hu0i2l3o/xhr_streaming?t=1781213036705",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/employees?_rsc=2bkHhJv0pLTjOJlV",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/documents?_rsc=WuSlLcxFu7AHt3H6",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/departments?_rsc=RaaLm9BE7HsRov5e",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/leave-requests/employee/48000000-e001-0000-0000-000000000001?page=0&size=5",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/leaves?_rsc=7Qe_NwWeQknqwImH",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/notifications/unread/count",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/leave-types/active",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/documents?_rsc=IIm7rXVfJs81tEJr",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/attendance?_rsc=GGZi-R3jW2mbkhlD",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/profile?_rsc=DnzSenotFEnF0iVY",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/workflow/delegations/my",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/ws/info?t=1781213037427",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/dashboard?_rsc=fX3--moqce2N54BO",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/notifications/unread/count",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/workflow/inbox?status=PENDING&page=0&size=20",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/ws/info?t=1781213039105",
+          "failure": "net::ERR_ABORTED"
+        }
+      ]
+    },
+    {
+      "account": "saran@nulogic.io",
+      "role": "EMPLOYEE",
+      "login": {
+        "emptySubmit": {
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/auth/login",
+          "onLoginPage": true,
+          "consoleErrors": 0,
+          "requestFailures": 0
+        },
+        "invalidSubmit": {
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/auth/login",
+          "onLoginPage": true,
+          "consoleErrors": 0,
+          "requestFailures": 0
+        },
+        "validLogin": {
+          "success": true,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/me/dashboard",
+          "onLoginPage": false,
+          "consoleErrors": 0,
+          "requestFailures": 8,
+          "cookieDelta": 5
+        }
+      },
+      "routes": [
+        {
+          "route": "/",
+          "phase": "authenticated",
+          "status": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "dom": {
+            "visibleLinks": 4,
+            "visibleButtons": 16,
+            "visibleFields": 2
+          },
+          "consoleErrorsAtRoute": 0,
+          "requestFailedAtRoute": 7,
+          "error": null,
+          "checks": [
+            {
+              "type": "formFieldPresence",
+              "tag": "input",
+              "count": 2
+            }
+          ]
+        },
+        {
+          "route": "/auth/login",
+          "phase": "authenticated",
+          "status": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/auth/login",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "dom": {
+            "visibleLinks": 4,
+            "visibleButtons": 16,
+            "visibleFields": 2
+          },
+          "consoleErrorsAtRoute": 2,
+          "requestFailedAtRoute": 2,
+          "error": null,
+          "checks": [
+            {
+              "type": "formFieldPresence",
+              "tag": "input",
+              "count": 2
+            }
+          ]
+        },
+        {
+          "route": "/about",
+          "phase": "authenticated",
+          "status": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/about",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "dom": {
+            "visibleLinks": 6,
+            "visibleButtons": 4,
+            "visibleFields": 0
+          },
+          "consoleErrorsAtRoute": 2,
+          "requestFailedAtRoute": 2,
+          "error": null,
+          "checks": []
+        },
+        {
+          "route": "/dashboard",
+          "phase": "authenticated",
+          "status": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/dashboard",
+          "title": "Dashboard | NU-AURA",
+          "dom": {
+            "visibleLinks": 4,
+            "visibleButtons": 16,
+            "visibleFields": 2
+          },
+          "consoleErrorsAtRoute": 0,
+          "requestFailedAtRoute": 3,
+          "error": null,
+          "checks": [
+            {
+              "type": "formFieldPresence",
+              "tag": "input",
+              "count": 2
+            }
+          ]
+        },
+        {
+          "route": "/me/dashboard",
+          "phase": "authenticated",
+          "status": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/me/dashboard",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "dom": {
+            "visibleLinks": 33,
+            "visibleButtons": 13,
+            "visibleFields": 0
+          },
+          "consoleErrorsAtRoute": 2,
+          "requestFailedAtRoute": 3,
+          "error": null,
+          "checks": []
+        },
+        {
+          "route": "/analytics",
+          "phase": "authenticated",
+          "status": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/analytics",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "dom": {
+            "visibleLinks": 33,
+            "visibleButtons": 18,
+            "visibleFields": 0
+          },
+          "consoleErrorsAtRoute": 0,
+          "requestFailedAtRoute": 3,
+          "error": null,
+          "checks": []
+        },
+        {
+          "route": "/admin",
+          "phase": "authenticated",
+          "status": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/admin",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "dom": {
+            "visibleLinks": 33,
+            "visibleButtons": 13,
+            "visibleFields": 0
+          },
+          "consoleErrorsAtRoute": 0,
+          "requestFailedAtRoute": 11,
+          "error": null,
+          "checks": []
+        },
+        {
+          "route": "/admin/employees",
+          "phase": "authenticated",
+          "status": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/admin/employees",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "dom": {
+            "visibleLinks": 39,
+            "visibleButtons": 33,
+            "visibleFields": 1
+          },
+          "consoleErrorsAtRoute": 2,
+          "requestFailedAtRoute": 6,
+          "error": null,
+          "checks": [
+            {
+              "type": "formFieldPresence",
+              "tag": "textarea",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "route": "/employees",
+          "phase": "authenticated",
+          "status": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/employees",
+          "title": "Employees | NU-AURA",
+          "dom": {
+            "visibleLinks": 33,
+            "visibleButtons": 21,
+            "visibleFields": 1
+          },
+          "consoleErrorsAtRoute": 0,
+          "requestFailedAtRoute": 13,
+          "error": null,
+          "checks": [
+            {
+              "type": "formFieldPresence",
+              "tag": "input",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "route": "/attendance",
+          "phase": "authenticated",
+          "status": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/attendance",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "dom": {
+            "visibleLinks": 37,
+            "visibleButtons": 17,
+            "visibleFields": 0
+          },
+          "consoleErrorsAtRoute": 0,
+          "requestFailedAtRoute": 5,
+          "error": null,
+          "checks": []
+        },
+        {
+          "route": "/leave",
+          "phase": "authenticated",
+          "status": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/leave",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "dom": {
+            "visibleLinks": 38,
+            "visibleButtons": 20,
+            "visibleFields": 0
+          },
+          "consoleErrorsAtRoute": 1,
+          "requestFailedAtRoute": 11,
+          "error": null,
+          "checks": []
+        },
+        {
+          "route": "/approvals/inbox",
+          "phase": "authenticated",
+          "status": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/approvals/inbox",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "dom": {
+            "visibleLinks": 33,
+            "visibleButtons": 25,
+            "visibleFields": 1
+          },
+          "consoleErrorsAtRoute": 0,
+          "requestFailedAtRoute": 8,
+          "error": null,
+          "checks": [
+            {
+              "type": "formFieldPresence",
+              "tag": "input",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "route": "/documents",
+          "phase": "authenticated",
+          "status": 404,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/documents",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "dom": {
+            "visibleLinks": 2,
+            "visibleButtons": 1,
+            "visibleFields": 0
+          },
+          "consoleErrorsAtRoute": 1,
+          "requestFailedAtRoute": 12,
+          "error": null,
+          "checks": []
+        },
+        {
+          "route": "/helpdesk",
+          "phase": "authenticated",
+          "status": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/helpdesk",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "dom": {
+            "visibleLinks": 33,
+            "visibleButtons": 18,
+            "visibleFields": 0
+          },
+          "consoleErrorsAtRoute": 3,
+          "requestFailedAtRoute": 1,
+          "error": null,
+          "checks": []
+        }
+      ],
+      "summary": {
+        "consoleErrorsTotal": 13,
+        "requestFailuresTotal": 95
+      },
+      "consoleErrors": [
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 ()"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 ()"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 ()"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 ()"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 ()"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 ()"
+        },
+        {
+          "type": "error",
+          "text": "WebSocket connection to 'wss://hrms-frontend-vert.vercel.app/ws/135/0wsufuol/websocket' failed: Error during WebSocket handshake: Unexpected response code: 400"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 ()"
+        },
+        {
+          "type": "error",
+          "text": "WebSocket connection to 'wss://hrms-frontend-vert.vercel.app/ws/720/pxgfpxcy/websocket' failed: Error during WebSocket handshake: Unexpected response code: 400"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 ()"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 403 ()"
+        },
+        {
+          "type": "error",
+          "text": "[ApiClient] Error: GET /helpdesk/sla/dashboard 403 Request failed with status code 403"
+        },
+        {
+          "type": "error",
+          "text": "WebSocket connection to 'wss://hrms-frontend-vert.vercel.app/ws/580/d2xzioan/websocket' failed: Error during WebSocket handshake: Unexpected response code: 400"
+        }
+      ],
+      "requestFailed": [
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/dashboard?_rsc=RGBbkgBlOc0LxCbX",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/documents?_rsc=XfpNYzep9ZVrVaNd",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/profile?_rsc=XfpNYzep9ZVrVaNd",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/employees/directory?_rsc=Q2oYtSicUh_bu6lF",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/departments?_rsc=RQ1_bBe45_ndZtv7",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/documents?_rsc=1r26H32xwrUTwQWY",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/leaves?_rsc=sbAVmhaoWUoaxVj1",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/attendance?_rsc=90ichTI3i4f3qBbf",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/payslips?_rsc=_DNok5yDDVKxuaQu",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/profile?_rsc=WAZ2EodQA4b7w40A",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/dashboard?_rsc=0gAPKWmxobRiiEB9",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/notifications/unread/count",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/self-service/dashboard?employeeId=48000000-e001-0000-0000-000000000002",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/auth/login?_rsc=AuIN5InvkbCy_sLU",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/ws/info?t=1781213054027",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/privacy?_rsc=n5hqsW7r31npIJSZ",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/terms?_rsc=n5hqsW7r31npIJSZ",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/privacy?_rsc=n5hqsW7r31npIJSZ",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/terms?_rsc=n5hqsW7r31npIJSZ",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/contact?_rsc=La37PhNi5DSpvt7R",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/shifts?_rsc=zWwEzVb-rc5aAbod",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/profile?_rsc=j79Vj4yH5aoiafxS",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/auth/forgot-password?_rsc=ukzxSPd9CcYzIDSF",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/terms?_rsc=n5hqsW7r31npIJSZ",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/privacy?_rsc=n5hqsW7r31npIJSZ",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/self-service/dashboard?employeeId=48000000-e001-0000-0000-000000000002",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/dashboard?_rsc=JBrWMU4CMR5v-2W5",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/workflow/inbox/count",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/dashboard?_rsc=aDCq81LFeijv--F4",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/dashboard?_rsc=9aI_f72_Plstu6Vw",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/profile?_rsc=eZjl-U8Tv_w1NExh",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/notifications/unread/count",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/workflow/inbox/count",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/payslips?_rsc=5eKszbDuowt7-rSx",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/admin/employees?_rsc=xFVjKFL12UrVWmwy",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/admin/payroll?_rsc=xFVjKFL12UrVWmwy",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/admin/reports?_rsc=0grT9FogrHi22fJ9",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/admin/payroll?_rsc=y6DQwYwYBPJz_TG5",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/admin/employees?_rsc=NHsTGd7qLnm5tkzS",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/payslips?_rsc=XfpNYzep9ZVrVaNd",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/attendance?_rsc=XfpNYzep9ZVrVaNd",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/workflow/inbox/count",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/dashboard?_rsc=XfpNYzep9ZVrVaNd",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/profile?_rsc=XfpNYzep9ZVrVaNd",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/self-service/dashboard?employeeId=48000000-e001-0000-0000-000000000002",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/documents?_rsc=1r26H32xwrUTwQWY",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/notifications/unread/count",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/payslips?_rsc=_DNok5yDDVKxuaQu",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/home/new-joinees?days=30",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/attendance?_rsc=90ichTI3i4f3qBbf",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/profile?_rsc=WAZ2EodQA4b7w40A",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/home/birthdays?days=1",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/workflow/inbox/count",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/home/remote-workers",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/leaves?_rsc=sbAVmhaoWUoaxVj1",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/ws/135/t2q4z350/xhr_streaming?t=1781213066319",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/home/new-joinees?days=30",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/inbox?_rsc=XfpNYzep9ZVrVaNd",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/workflow/inbox/count",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/departments/active",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/employees/managers",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/ws/info?t=1781213067575",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/dashboard?_rsc=94Ek3nTfQ7-l7cFQ",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/documents?_rsc=-cn65TS9Vh7-Pwsm",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/attendance/my-attendance?startDate=2026-06-01&endDate=2026-06-12",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/workflow/inbox/count",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/leaves?_rsc=ophge2AHEY6T_8_g",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/attendance/my-attendance?startDate=2026-06-12&endDate=2026-06-12",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/employees?_rsc=T84X52YuC6LYY3R1",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/_next/static/chunks/app/attendance/regularization/error-0b758419741d0660.js",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/attendance?_rsc=XaVgP-kHCFguxper",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/_next/static/chunks/app/attendance/regularization/loading-a4574583329dd8bf.js",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/ws/720/35dlngw2/xhr_streaming?t=1781213071341",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/notifications/unread/count",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/leaves?_rsc=7Qe_NwWeQknqwImH",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/employees?_rsc=mVfqx8AsPi_dL19o",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/leave-balances/employee/48000000-e001-0000-0000-000000000002/year/2026",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/documents?_rsc=WuSlLcxFu7AHt3H6",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/workflow/inbox/count",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/attendance?_rsc=5zWyQk9cLE9W3pJK",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/ws/info?t=1781213071585",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/leave-types/active",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/attendance?_rsc=GGZi-R3jW2mbkhlD",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/payslips?_rsc=PzRlfZmu9iGMaT9I",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/profile?_rsc=DnzSenotFEnF0iVY",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/notifications/unread/count",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/workflow/inbox?status=PENDING&page=0&size=20",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/dashboard?_rsc=EdXWzp-raLjBxNBG",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/workflow/inbox/count",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/leaves?_rsc=8gQYsqttIq9EeGS3",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/ws/info?t=1781213073340",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/api/v1/workflow/delegations/my",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/dashboard?_rsc=fX3--moqce2N54BO",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/me/dashboard?_rsc=m7E2gdEyL-STfex6",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://hrms-frontend-vert.vercel.app/ws/info?t=1781213075046",
+          "failure": "net::ERR_ABORTED"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,750 @@
+{
+  "startedAt": "2026-06-11T21:28:28.699Z",
+  "base": "https://hrms-frontend-vert.vercel.app",
+  "accounts": [
+    {
+      "account": "fayaz.m@nulogic.io",
+      "role": "SUPER_ADMIN",
+      "loginChecks": {
+        "emptySubmit": {
+          "onLoginPage": true,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/auth/login"
+        },
+        "invalidSubmit": {
+          "onLoginPage": true,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/auth/login"
+        },
+        "validLogin": {
+          "success": true,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/me/dashboard",
+          "hasCookieToken": true
+        }
+      },
+      "routeChecks": [
+        {
+          "route": "/",
+          "navStatus": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "has404": false,
+          "hasAccessDenied": true,
+          "hasInboxLink": false,
+          "consoleErrors": 2,
+          "requestFailures": 11,
+          "error": null,
+          "dom": {
+            "links": 1,
+            "buttons": 0,
+            "fields": 0
+          }
+        },
+        {
+          "route": "/auth/login",
+          "navStatus": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/auth/login",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "has404": false,
+          "hasAccessDenied": true,
+          "hasInboxLink": false,
+          "consoleErrors": 0,
+          "requestFailures": 2,
+          "error": null,
+          "dom": {
+            "links": 4,
+            "buttons": 16,
+            "fields": 2
+          }
+        },
+        {
+          "route": "/about",
+          "navStatus": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/about",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "has404": false,
+          "hasAccessDenied": true,
+          "hasInboxLink": false,
+          "consoleErrors": 0,
+          "requestFailures": 0,
+          "error": null,
+          "dom": {
+            "links": 6,
+            "buttons": 4,
+            "fields": 0
+          }
+        },
+        {
+          "route": "/me/dashboard",
+          "navStatus": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/me/dashboard",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "has404": false,
+          "hasAccessDenied": true,
+          "hasInboxLink": true,
+          "consoleErrors": 0,
+          "requestFailures": 0,
+          "error": null,
+          "dom": {
+            "links": 61,
+            "buttons": 31,
+            "fields": 1
+          }
+        },
+        {
+          "route": "/me/documents",
+          "navStatus": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/me/documents",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "has404": false,
+          "hasAccessDenied": true,
+          "hasInboxLink": true,
+          "consoleErrors": 1,
+          "requestFailures": 17,
+          "error": null,
+          "dom": {
+            "links": 56,
+            "buttons": 16,
+            "fields": 0
+          }
+        },
+        {
+          "route": "/documents",
+          "navStatus": 404,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/documents",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "has404": true,
+          "hasAccessDenied": true,
+          "hasInboxLink": false,
+          "consoleErrors": 2,
+          "requestFailures": 6,
+          "error": null,
+          "dom": {
+            "links": 2,
+            "buttons": 1,
+            "fields": 0
+          }
+        },
+        {
+          "route": "/admin",
+          "navStatus": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/admin",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "has404": false,
+          "hasAccessDenied": true,
+          "hasInboxLink": false,
+          "consoleErrors": 4,
+          "requestFailures": 1,
+          "error": null,
+          "dom": {
+            "links": 12,
+            "buttons": 20,
+            "fields": 4
+          }
+        },
+        {
+          "route": "/admin/settings",
+          "navStatus": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/admin/settings",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "has404": false,
+          "hasAccessDenied": true,
+          "hasInboxLink": false,
+          "consoleErrors": 1,
+          "requestFailures": 14,
+          "error": null,
+          "dom": {
+            "links": 7,
+            "buttons": 18,
+            "fields": 1
+          }
+        },
+        {
+          "route": "/approvals/inbox",
+          "navStatus": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/approvals/inbox",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "has404": false,
+          "hasAccessDenied": true,
+          "hasInboxLink": true,
+          "consoleErrors": 1,
+          "requestFailures": 5,
+          "error": null,
+          "dom": {
+            "links": 55,
+            "buttons": 27,
+            "fields": 1
+          }
+        },
+        {
+          "route": "/leave",
+          "navStatus": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/leave",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "has404": false,
+          "hasAccessDenied": true,
+          "hasInboxLink": true,
+          "consoleErrors": 1,
+          "requestFailures": 5,
+          "error": null,
+          "dom": {
+            "links": 60,
+            "buttons": 22,
+            "fields": 0
+          }
+        },
+        {
+          "route": "/leave/approvals",
+          "navStatus": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/leave/approvals",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "has404": false,
+          "hasAccessDenied": true,
+          "hasInboxLink": true,
+          "consoleErrors": 1,
+          "requestFailures": 13,
+          "error": null,
+          "dom": {
+            "links": 55,
+            "buttons": 16,
+            "fields": 0
+          }
+        },
+        {
+          "route": "/attendance",
+          "navStatus": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/attendance",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "has404": false,
+          "hasAccessDenied": true,
+          "hasInboxLink": true,
+          "consoleErrors": 0,
+          "requestFailures": 7,
+          "error": null,
+          "dom": {
+            "links": 59,
+            "buttons": 19,
+            "fields": 0
+          }
+        },
+        {
+          "route": "/helpdesk",
+          "navStatus": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/helpdesk",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "has404": false,
+          "hasAccessDenied": true,
+          "hasInboxLink": true,
+          "consoleErrors": 0,
+          "requestFailures": 11,
+          "error": null,
+          "dom": {
+            "links": 55,
+            "buttons": 20,
+            "fields": 0
+          }
+        }
+      ],
+      "summary": {
+        "consoleErrors": 16,
+        "requestFailures": 104
+      },
+      "dashboardHasInboxLink": true,
+      "meDocumentsH1": "Document Requests"
+    },
+    {
+      "account": "sumit@nulogic.io",
+      "role": "MANAGER",
+      "loginChecks": {
+        "emptySubmit": {
+          "onLoginPage": true,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/auth/login"
+        },
+        "invalidSubmit": {
+          "onLoginPage": true,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/auth/login"
+        },
+        "validLogin": {
+          "success": true,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/me/dashboard",
+          "hasCookieToken": true
+        }
+      },
+      "routeChecks": [
+        {
+          "route": "/",
+          "navStatus": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "has404": false,
+          "hasAccessDenied": true,
+          "hasInboxLink": false,
+          "consoleErrors": 0,
+          "requestFailures": 9,
+          "error": null,
+          "dom": {
+            "links": 1,
+            "buttons": 0,
+            "fields": 0
+          }
+        },
+        {
+          "route": "/auth/login",
+          "navStatus": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/auth/login",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "has404": false,
+          "hasAccessDenied": true,
+          "hasInboxLink": false,
+          "consoleErrors": 0,
+          "requestFailures": 2,
+          "error": null,
+          "dom": {
+            "links": 4,
+            "buttons": 16,
+            "fields": 2
+          }
+        },
+        {
+          "route": "/about",
+          "navStatus": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/about",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "has404": false,
+          "hasAccessDenied": true,
+          "hasInboxLink": false,
+          "consoleErrors": 0,
+          "requestFailures": 0,
+          "error": null,
+          "dom": {
+            "links": 6,
+            "buttons": 4,
+            "fields": 0
+          }
+        },
+        {
+          "route": "/me/dashboard",
+          "navStatus": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/me/dashboard",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "has404": false,
+          "hasAccessDenied": true,
+          "hasInboxLink": true,
+          "consoleErrors": 0,
+          "requestFailures": 0,
+          "error": null,
+          "dom": {
+            "links": 35,
+            "buttons": 35,
+            "fields": 1
+          }
+        },
+        {
+          "route": "/me/documents",
+          "navStatus": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/me/documents",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "has404": false,
+          "hasAccessDenied": true,
+          "hasInboxLink": true,
+          "consoleErrors": 0,
+          "requestFailures": 15,
+          "error": null,
+          "dom": {
+            "links": 30,
+            "buttons": 16,
+            "fields": 0
+          }
+        },
+        {
+          "route": "/documents",
+          "navStatus": 404,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/documents",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "has404": true,
+          "hasAccessDenied": true,
+          "hasInboxLink": false,
+          "consoleErrors": 1,
+          "requestFailures": 6,
+          "error": null,
+          "dom": {
+            "links": 2,
+            "buttons": 1,
+            "fields": 0
+          }
+        },
+        {
+          "route": "/admin",
+          "navStatus": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/me/dashboard?denied=1",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "has404": false,
+          "hasAccessDenied": true,
+          "hasInboxLink": true,
+          "consoleErrors": 2,
+          "requestFailures": 1,
+          "error": null,
+          "dom": {
+            "links": 35,
+            "buttons": 35,
+            "fields": 1
+          }
+        },
+        {
+          "route": "/admin/settings",
+          "navStatus": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/me/dashboard?denied=1",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "has404": false,
+          "hasAccessDenied": true,
+          "hasInboxLink": true,
+          "consoleErrors": 1,
+          "requestFailures": 17,
+          "error": null,
+          "dom": {
+            "links": 35,
+            "buttons": 35,
+            "fields": 1
+          }
+        },
+        {
+          "route": "/approvals/inbox",
+          "navStatus": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/approvals/inbox",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "has404": false,
+          "hasAccessDenied": true,
+          "hasInboxLink": true,
+          "consoleErrors": 2,
+          "requestFailures": 18,
+          "error": null,
+          "dom": {
+            "links": 29,
+            "buttons": 27,
+            "fields": 1
+          }
+        },
+        {
+          "route": "/leave",
+          "navStatus": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/leave",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "has404": false,
+          "hasAccessDenied": true,
+          "hasInboxLink": true,
+          "consoleErrors": 0,
+          "requestFailures": 7,
+          "error": null,
+          "dom": {
+            "links": 34,
+            "buttons": 22,
+            "fields": 0
+          }
+        },
+        {
+          "route": "/leave/approvals",
+          "navStatus": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/leave/approvals",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "has404": false,
+          "hasAccessDenied": true,
+          "hasInboxLink": true,
+          "consoleErrors": 0,
+          "requestFailures": 7,
+          "error": null,
+          "dom": {
+            "links": 29,
+            "buttons": 16,
+            "fields": 0
+          }
+        },
+        {
+          "route": "/attendance",
+          "navStatus": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/attendance",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "has404": false,
+          "hasAccessDenied": true,
+          "hasInboxLink": true,
+          "consoleErrors": 0,
+          "requestFailures": 7,
+          "error": null,
+          "dom": {
+            "links": 33,
+            "buttons": 19,
+            "fields": 0
+          }
+        },
+        {
+          "route": "/helpdesk",
+          "navStatus": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/helpdesk",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "has404": false,
+          "hasAccessDenied": true,
+          "hasInboxLink": true,
+          "consoleErrors": 3,
+          "requestFailures": 8,
+          "error": null,
+          "dom": {
+            "links": 29,
+            "buttons": 16,
+            "fields": 0
+          }
+        }
+      ],
+      "summary": {
+        "consoleErrors": 11,
+        "requestFailures": 106
+      },
+      "dashboardHasInboxLink": true,
+      "meDocumentsH1": "Document Requests"
+    },
+    {
+      "account": "saran@nulogic.io",
+      "role": "EMPLOYEE",
+      "loginChecks": {
+        "emptySubmit": {
+          "onLoginPage": true,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/auth/login"
+        },
+        "invalidSubmit": {
+          "onLoginPage": true,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/auth/login"
+        },
+        "validLogin": {
+          "success": true,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/me/dashboard",
+          "hasCookieToken": true
+        }
+      },
+      "routeChecks": [
+        {
+          "route": "/",
+          "navStatus": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "has404": false,
+          "hasAccessDenied": true,
+          "hasInboxLink": false,
+          "consoleErrors": 0,
+          "requestFailures": 13,
+          "error": null,
+          "dom": {
+            "links": 1,
+            "buttons": 0,
+            "fields": 0
+          }
+        },
+        {
+          "route": "/auth/login",
+          "navStatus": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/auth/login",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "has404": false,
+          "hasAccessDenied": true,
+          "hasInboxLink": false,
+          "consoleErrors": 0,
+          "requestFailures": 2,
+          "error": null,
+          "dom": {
+            "links": 4,
+            "buttons": 16,
+            "fields": 2
+          }
+        },
+        {
+          "route": "/about",
+          "navStatus": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/about",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "has404": false,
+          "hasAccessDenied": true,
+          "hasInboxLink": false,
+          "consoleErrors": 0,
+          "requestFailures": 0,
+          "error": null,
+          "dom": {
+            "links": 6,
+            "buttons": 4,
+            "fields": 0
+          }
+        },
+        {
+          "route": "/me/dashboard",
+          "navStatus": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/me/dashboard",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "has404": false,
+          "hasAccessDenied": true,
+          "hasInboxLink": false,
+          "consoleErrors": 0,
+          "requestFailures": 0,
+          "error": null,
+          "dom": {
+            "links": 14,
+            "buttons": 15,
+            "fields": 0
+          }
+        },
+        {
+          "route": "/me/documents",
+          "navStatus": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/me/documents",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "has404": false,
+          "hasAccessDenied": true,
+          "hasInboxLink": false,
+          "consoleErrors": 0,
+          "requestFailures": 5,
+          "error": null,
+          "dom": {
+            "links": 4,
+            "buttons": 16,
+            "fields": 2
+          }
+        },
+        {
+          "route": "/documents",
+          "navStatus": 404,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/documents",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "has404": true,
+          "hasAccessDenied": true,
+          "hasInboxLink": false,
+          "consoleErrors": 1,
+          "requestFailures": 2,
+          "error": null,
+          "dom": {
+            "links": 2,
+            "buttons": 1,
+            "fields": 0
+          }
+        },
+        {
+          "route": "/admin",
+          "navStatus": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/admin",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "has404": false,
+          "hasAccessDenied": true,
+          "hasInboxLink": false,
+          "consoleErrors": 0,
+          "requestFailures": 0,
+          "error": null,
+          "dom": {
+            "links": 14,
+            "buttons": 15,
+            "fields": 0
+          }
+        },
+        {
+          "route": "/admin/settings",
+          "navStatus": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/admin/settings",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "has404": false,
+          "hasAccessDenied": true,
+          "hasInboxLink": true,
+          "consoleErrors": 0,
+          "requestFailures": 7,
+          "error": null,
+          "dom": {
+            "links": 38,
+            "buttons": 15,
+            "fields": 0
+          }
+        },
+        {
+          "route": "/approvals/inbox",
+          "navStatus": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/approvals/inbox",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "has404": false,
+          "hasAccessDenied": true,
+          "hasInboxLink": true,
+          "consoleErrors": 1,
+          "requestFailures": 5,
+          "error": null,
+          "dom": {
+            "links": 38,
+            "buttons": 27,
+            "fields": 1
+          }
+        },
+        {
+          "route": "/leave",
+          "navStatus": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/leave",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "has404": false,
+          "hasAccessDenied": true,
+          "hasInboxLink": true,
+          "consoleErrors": 0,
+          "requestFailures": 7,
+          "error": null,
+          "dom": {
+            "links": 43,
+            "buttons": 22,
+            "fields": 0
+          }
+        },
+        {
+          "route": "/leave/approvals",
+          "navStatus": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/leave/approvals",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "has404": false,
+          "hasAccessDenied": true,
+          "hasInboxLink": true,
+          "consoleErrors": 0,
+          "requestFailures": 8,
+          "error": null,
+          "dom": {
+            "links": 38,
+            "buttons": 16,
+            "fields": 0
+          }
+        },
+        {
+          "route": "/attendance",
+          "navStatus": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/attendance",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "has404": false,
+          "hasAccessDenied": true,
+          "hasInboxLink": true,
+          "consoleErrors": 1,
+          "requestFailures": 6,
+          "error": null,
+          "dom": {
+            "links": 42,
+            "buttons": 19,
+            "fields": 0
+          }
+        },
+        {
+          "route": "/helpdesk",
+          "navStatus": 200,
+          "finalUrl": "https://hrms-frontend-vert.vercel.app/helpdesk",
+          "title": "NU-AURA by NULogic: Infinite Innovation",
+          "has404": false,
+          "hasAccessDenied": true,
+          "hasInboxLink": true,
+          "consoleErrors": 2,
+          "requestFailures": 9,
+          "error": null,
+          "dom": {
+            "links": 38,
+            "buttons": 20,
+            "fields": 0
+          }
+        }
+      ],
+      "summary": {
+        "consoleErrors": 7,
+        "requestFailures": 74
+      },
+      "dashboardHasInboxLink": false,
+      "meDocumentsH1": "Document Requests"
+    }
+  ]
+}

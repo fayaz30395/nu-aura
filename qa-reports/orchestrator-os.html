@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>NU-AURA · Orchestrator OS</title>
+<style>
+  :root{
+    --bg:oklch(15% 0.02 265); --bg2:oklch(19% 0.02 265);
+    --surface:oklch(22% 0.022 265); --surface2:oklch(26% 0.026 266); --surfaceHi:oklch(31% 0.03 266);
+    --line:oklch(40% 0.03 266 / .5); --line2:oklch(46% 0.04 266 / .6);
+    --text:oklch(95% 0.01 250); --dim:oklch(72% 0.02 256); --faint:oklch(56% 0.02 260);
+    --principal:oklch(82% 0.15 200); --orch:oklch(74% 0.15 300); --agent:oklch(70% 0.03 262);
+    --directive:oklch(80% 0.15 205); --spawn:oklch(74% 0.16 300); --report:oklch(80% 0.16 152);
+    --handoff:oklch(83% 0.16 80); --query:oklch(78% 0.14 250); --verdict:oklch(82% 0.18 150);
+    --run:oklch(82% 0.16 85); --ok:oklch(80% 0.17 152); --err:oklch(68% 0.21 22);
+    --mono:ui-monospace,"SF Mono","JetBrains Mono",Menlo,monospace;
+    --sans:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+    --r:14px; --r2:9px; --ease:cubic-bezier(.16,1,.3,1);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0;font-family:var(--sans);color:var(--text);overflow:hidden;
+    background:
+      radial-gradient(120% 80% at 85% -10%,oklch(28% 0.06 250 /.45),transparent 55%),
+      radial-gradient(90% 80% at -5% 110%,oklch(26% 0.07 310 /.35),transparent 50%),
+      linear-gradient(var(--bg2) 1px,transparent 1px) 0 0/100% 36px,
+      linear-gradient(90deg,var(--bg2) 1px,transparent 1px) 0 0/36px 100%,
+      var(--bg);
+    background-blend-mode:normal,normal,soft-light,soft-light,normal;
+    display:grid;grid-template-rows:auto 1fr auto;height:100vh}
+
+  /* command bar */
+  .cmd{display:flex;align-items:center;gap:14px;padding:11px 18px;border-bottom:1px solid var(--line);
+    background:linear-gradient(180deg,var(--surface2),var(--surface));backdrop-filter:blur(6px)}
+  .brand{display:flex;align-items:baseline;gap:9px}
+  .brand b{font-size:15px;letter-spacing:.14em}
+  .brand .v{font:700 9px/1 var(--mono);color:var(--principal);letter-spacing:.16em;border:1px solid var(--principal);padding:3px 6px;border-radius:6px}
+  .chan{display:flex;align-items:center;gap:8px;flex:1;max-width:680px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r2);padding:7px 10px}
+  .chan .you{font:700 10px/1 var(--mono);color:var(--principal);letter-spacing:.1em;white-space:nowrap}
+  .chan .arr{color:var(--faint)}
+  .chan input{flex:1;background:transparent;border:0;color:var(--text);font:500 12px/1.4 var(--sans);outline:none}
+  .ctl{display:flex;gap:8px;margin-left:auto}
+  button.btn{font:600 12px/1 var(--sans);color:var(--text);cursor:pointer;background:var(--surfaceHi);border:1px solid var(--line);padding:9px 13px;border-radius:var(--r2);
+    transition:transform .2s var(--ease),background .2s,border-color .2s}
+  button.btn:hover{background:var(--surface2);border-color:var(--line2);transform:translateY(-1px)}
+  button.btn:active{transform:translateY(0) scale(.98)}
+  button.btn.primary{background:linear-gradient(180deg,var(--principal),oklch(62% 0.13 220));color:oklch(16% 0.03 250);border-color:transparent;box-shadow:0 8px 20px -10px var(--principal)}
+  button.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+
+  /* layout */
+  .stage{display:grid;grid-template-columns:1fr 360px;min-height:0}
+  .canvas{position:relative;overflow:hidden}
+  svg.net{width:100%;height:100%;display:block}
+  .inspect{border-left:1px solid var(--line);overflow-y:auto;padding:15px;background:linear-gradient(180deg,var(--surface) ,transparent 40%)}
+
+  .h{font:700 10px/1 var(--mono);letter-spacing:.2em;color:var(--faint);text-transform:uppercase;margin:2px 2px 12px;display:flex;gap:8px;align-items:center}
+  .h::after{content:"";flex:1;height:1px;background:var(--line)}
+
+  /* node cards (HTML inside foreignObject) */
+  .node{height:100%;border:1px solid var(--line2);border-radius:11px;padding:7px 10px;cursor:pointer;overflow:hidden;
+    background:linear-gradient(180deg,var(--surface2),var(--surface));box-shadow:0 14px 30px -22px #000;
+    transition:border-color .2s,box-shadow .2s,transform .2s var(--ease)}
+  .node:hover{border-color:var(--line2);transform:translateY(-1px)}
+  .node .nt{font:700 8px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
+  .node .nl{font:600 12px/1.15 var(--sans);margin-top:3px;display:flex;align-items:center;gap:6px}
+  .node .nr{font:500 9px/1.2 var(--mono);color:var(--faint);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .node .led{width:7px;height:7px;border-radius:50%;background:var(--faint);flex:none}
+  .node.t-principal{border-color:oklch(55% 0.12 205 /.7)} .node.t-principal .nt{color:var(--principal)}
+  .node.t-orchestrator{border-color:oklch(52% 0.12 300 /.6)} .node.t-orchestrator .nt{color:var(--orch)}
+  .node.active{border-color:var(--run);box-shadow:0 0 0 1px var(--run),0 0 26px -6px var(--run)}
+  .node.active .led{background:var(--run);animation:pulse 1.1s var(--ease) infinite}
+  .node.sel{border-color:var(--principal);box-shadow:0 0 0 1px var(--principal)}
+  .node .badge{margin-left:auto;font:700 8px/1 var(--mono);color:var(--faint)}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 oklch(82% 0.16 85/.5)}70%{box-shadow:0 0 0 6px oklch(82% 0.16 85/0)}100%{box-shadow:0 0 0 0 oklch(82% 0.16 85/0)}}
+
+  edge{}
+  .edge{stroke:var(--line2);stroke-width:1.4;fill:none;opacity:.5;transition:opacity .25s,stroke .25s}
+  .edge.hot{stroke:var(--run);opacity:.95;stroke-width:2;stroke-dasharray:5 6;animation:flow 1s linear infinite}
+  .edge.dim{opacity:.18}
+  @keyframes flow{to{stroke-dashoffset:-22}}
+  .packet{filter:drop-shadow(0 0 6px currentColor)}
+
+  /* inspector */
+  .insMeta{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;font:500 11px/1.5 var(--mono);color:var(--dim);margin-bottom:12px}
+  .insMeta .k{color:var(--faint)}
+  .kind{display:inline-flex;align-items:center;gap:5px;font:700 9px/1 var(--mono);letter-spacing:.08em;padding:4px 7px;border-radius:5px;border:1px solid currentColor;text-transform:uppercase}
+  .insBody{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r2);padding:12px;font:500 12px/1.6 var(--sans);color:var(--text);white-space:pre-wrap}
+  .insHint{color:var(--faint);font:500 12px/1.6 var(--sans)}
+  .miniList{display:grid;gap:6px;margin-top:6px}
+  .miniMsg{text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 9px;cursor:pointer;display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:center;transition:border-color .2s,background .2s}
+  .miniMsg:hover{border-color:var(--line2);background:var(--surface2)}
+  .miniMsg .dot{width:7px;height:7px;border-radius:50%}
+  .miniMsg .mm{font:500 11px/1.3 var(--sans);color:var(--dim);overflow:hidden}
+  .miniMsg .mm small{display:block;font:600 9px/1.2 var(--mono);color:var(--faint);margin-top:2px}
+
+  /* message bus */
+  .bus{border-top:1px solid var(--line);background:oklch(13% 0.02 265);height:188px;display:grid;grid-template-rows:auto 1fr}
+  .bus .bar{display:flex;align-items:center;gap:12px;padding:7px 16px;border-bottom:1px solid var(--line)}
+  .bus .bar .h{margin:0}
+  .legend{display:flex;gap:12px;margin-left:auto;flex-wrap:wrap}
+  .legend span{font:600 9px/1 var(--mono);color:var(--faint);display:flex;align-items:center;gap:5px;letter-spacing:.06em;text-transform:uppercase}
+  .legend i{width:8px;height:8px;border-radius:2px;display:inline-block}
+  .feed{overflow-y:auto;padding:6px 10px}
+  .row{display:grid;grid-template-columns:58px 188px auto;gap:12px;align-items:center;padding:6px 8px;border-radius:8px;cursor:pointer;
+    opacity:0;transform:translateY(4px);animation:rin .26s var(--ease) forwards;transition:background .15s}
+  .row:hover{background:var(--surface)}
+  .row.sel{background:var(--surface2);box-shadow:inset 0 0 0 1px var(--line2)}
+  @keyframes rin{to{opacity:1;transform:none}}
+  .row .ts{font:500 10px/1 var(--mono);color:var(--faint)}
+  .row .route{font:600 11px/1.2 var(--mono);display:flex;align-items:center;gap:6px;color:var(--dim)}
+  .row .route .a{color:var(--text)}
+  .row .sum{font:500 11.5px/1.3 var(--sans);color:var(--dim);display:flex;align-items:center;gap:9px}
+  .pill{font:700 8px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;padding:3px 6px;border-radius:5px;border:1px solid currentColor;flex:none}
+
+  ::-webkit-scrollbar{width:10px;height:10px}
+  ::-webkit-scrollbar-thumb{background:var(--surfaceHi);border-radius:8px;border:2px solid transparent;background-clip:padding-box}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+  <header class="cmd">
+    <div class="brand"><b>ORCHESTRATOR&nbsp;OS</b><span class="v">NU-AURA</span></div>
+    <div class="chan" title="You only ever talk to the Lead Orchestrator">
+      <span class="you">YOU ▸ LEAD</span><span class="arr">›</span>
+      <input id="directive" value="Audit NU-AURA for production readiness." spellcheck="false"/>
+    </div>
+    <div class="ctl">
+      <button class="btn primary" id="run">▶ Issue directive</button>
+      <button class="btn" id="step">⏭ Step</button>
+      <button class="btn" id="reset">↺ Reset</button>
+    </div>
+  </header>
+
+  <section class="stage">
+    <div class="canvas" id="canvas">
+      <svg class="net" id="net" preserveAspectRatio="xMidYMid meet" viewBox="0 0 1000 620"></svg>
+    </div>
+    <aside class="inspect" id="inspect">
+      <div class="h">Inspector</div>
+      <div id="insBody"><p class="insHint">Click a <b>node</b> to see its communication log, or a <b>message</b> in the bus to read exactly what was sent. Press <b>▶ Issue directive</b> to watch the orchestrator delegate in real time.</p></div>
+    </aside>
+  </section>
+
+  <footer class="bus">
+    <div class="bar">
+      <span class="h">Message bus</span>
+      <span id="busCount" style="font:600 10px/1 var(--mono);color:var(--faint)">0 messages</span>
+      <div class="legend">
+        <span><i style="background:var(--directive)"></i>directive</span>
+        <span><i style="background:var(--spawn)"></i>spawn</span>
+        <span><i style="background:var(--handoff)"></i>handoff</span>
+        <span><i style="background:var(--query)"></i>query</span>
+        <span><i style="background:var(--report)"></i>report</span>
+        <span><i style="background:var(--verdict)"></i>verdict</span>
+      </div>
+    </div>
+    <div class="feed" id="feed"></div>
+  </footer>
+
+<script>
+/* ====================================================================
+   Orchestrator OS — hierarchical multi-agent communication view.
+   You talk ONLY to the Lead Orchestrator. It spawns & coordinates
+   sub-orchestrators (QA / Backend / Security), each running an agent
+   team. Every message below is the REAL content of our 2026-06-11 run.
+   ==================================================================== */
+const KIND = {
+  directive:{c:'var(--directive)',label:'directive'}, spawn:{c:'var(--spawn)',label:'spawn'},
+  handoff:{c:'var(--handoff)',label:'handoff'}, query:{c:'var(--query)',label:'query'},
+  report:{c:'var(--report)',label:'report'}, result:{c:'var(--report)',label:'result'},
+  verdict:{c:'var(--verdict)',label:'verdict'},
+};
+const NODES = {
+  you:   {type:'principal',   label:'You',                  role:'Principal'},
+  lead:  {type:'orchestrator',label:'Lead Orchestrator',    role:'Principal Architect', parent:'you'},
+  qa:    {type:'orchestrator',label:'QA Orchestrator',      role:'test strategy + tiers', parent:'lead'},
+  be:    {type:'orchestrator',label:'Backend Orchestrator', role:'fix wave', parent:'lead'},
+  sec:   {type:'orchestrator',label:'Security Orchestrator',role:'invariants I1/I2', parent:'lead'},
+  sweeper:{type:'agent',label:'rbac-sweeper',     role:'466 GET × 7 roles', parent:'qa'},
+  verifier:{type:'agent',label:'endpoint-verifier',role:'re-test fixes', parent:'qa'},
+  lifecycle:{type:'agent',label:'lifecycle-runner',role:'leave create→approve', parent:'qa'},
+  coder:{type:'agent',label:'coder',              role:'java + sql fixes', parent:'be'},
+  migrator:{type:'agent',label:'migrator',        role:'flyway V287', parent:'be'},
+  prober:{type:'agent',label:'i2-prober',         role:'tenant injection', parent:'sec'},
+  rls:{type:'agent',label:'rls-auditor',          role:'RLS scope', parent:'sec'},
+};
+const MSGS = [
+  {f:'you',t:'lead',k:'directive',s:'Audit NU-AURA for production readiness',
+   b:'Run a full production-readiness audit of NU-AURA HRMS. Cover RBAC across all roles, cross-tenant isolation, and core lifecycle flows. Fix any HIGH blockers you find, verify the fixes, and report back a single GO / NO-GO verdict. Do not push — main is release-frozen.'},
+  {f:'lead',t:'qa',k:'spawn',s:'Stand up the QA tier',
+   b:'You own the QA tier. Spawn a team: an RBAC sweeper, an endpoint verifier (hold until I signal), and a lifecycle runner. Enforce invariant I1 — SUPER_ADMIN must NEVER receive 403/5xx. Report every blocker up to me; do not attempt fixes yourself.'},
+  {f:'lead',t:'be',k:'spawn',s:'Stand by for fixes',
+   b:'Backend tier on standby. When QA surfaces HIGH defects I will hand them to you with root-cause hints. Keep diffs minimal and surgical; rebuild + relaunch the jar after each batch.'},
+  {f:'lead',t:'sec',k:'spawn',s:'Prepare I2 cross-tenant probes',
+   b:'Security tier: prepare cross-tenant (I2) probes — tenant-override injection via header and query param, plus admin-endpoint role-gating. Hold until QA + Backend close the functional blockers.'},
+  {f:'qa',t:'sweeper',k:'spawn',s:'Sweep 466 endpoints × 7 roles',
+   b:'Pre-harvest a session cookie per role (7 roles with logins). Sweep all 466 read-only GET endpoints for each role. Record the status distribution. Flag any SUPER_ADMIN 403 (I1 violation) and any 500 as a candidate blocker.'},
+  {f:'qa',t:'lifecycle',k:'spawn',s:'Run leave create→approve',
+   b:'Drive the canonical stateful flow: create a leave request, read it back, attempt approval. Verify balance reservation and that the approval workflow enforces the manager chain. Clean up any test rows afterwards.'},
+  {f:'sweeper',t:'qa',k:'report',s:'3,255 calls · I1 holds · 4×500 found',
+   b:'Sweep complete: 3,255 calls. I1 HOLDS — SUPER_ADMIN returned 0×403 across all 466 endpoints. RBAC gradient sensible (FINANCE_ADMIN tightest at 406×403, HR_MANAGER broadest). FOUR endpoints return 500 for SUPER_ADMIN:\n  • /api/v1/audit/search\n  • /api/v1/admin/system/audit-logs/search\n  • /api/v1/admin/system/tenants\n  • /api/v1/tax-declarations\nAll other non-200s triaged as correct (503 feature-flag, 501 stubs, 400 needs-params, 429 sweep artifacts).'},
+  {f:'qa',t:'lead',k:'report',s:'RBAC PASS w/ caveat — 4 HIGH 500s',
+   b:'QA tier verdict: I1 PASS. RBAC matrix healthy. BLOCKERS: 4 HIGH 500s (audit/search, audit-logs/search, tenants, tax-declarations). Lifecycle tier is gated until these are fixed — recommend handing them to Backend now.'},
+  {f:'lead',t:'be',k:'handoff',s:'Fix these 4 500s — root-cause first',
+   b:'Handoff: 4 HIGH 500s from QA. Pull the stack traces from backend-greenflag.log, root-cause each, and apply minimal fixes. Then rebuild + relaunch and tell me when ready for re-verification.'},
+  {f:'be',t:'coder',k:'spawn',s:'Patch the Java/SQL roots',
+   b:'Read the stack traces and patch: (1) the audit search 500s, (2) the tenants 500. Keep the diff minimal — no architectural changes. Coordinate with migrator if a schema fix is needed.'},
+  {f:'be',t:'migrator',k:'spawn',s:'Author tax-declarations guard',
+   b:'If the tax-declarations 500 is a schema-drift (column name) issue, author an idempotent, self-guarding Flyway migration that repairs it without breaking clean databases.'},
+  {f:'coder',t:'be',k:'report',s:'3 roots fixed — CAST ×2, NPE, rebuilt',
+   b:'Root causes & fixes:\n  • audit/search + audit-logs/search → PSQLException 42P18 (untyped null bind). Fixed with CAST(:startDate AS LocalDateTime) on both params, in searchAuditLogs AND searchCrossTenant.\n  • /admin/system/tenants → NPE from Collectors.toMap with a null value (getLastActivityForTenant returns null). Fixed with a null-tolerant HashMap loop.\nRebuilt jar, relaunched :8090.'},
+  {f:'migrator',t:'be',k:'report',s:'V287 idempotent guard added',
+   b:'Added V287 — a guarded DO block: if sec_80d_parents exists → no-op; if the corrupted "sec d_parents" exists → rename; else add column. Safe no-op on clean DBs; repairs the restore-snapshot corruption.'},
+  {f:'be',t:'lead',k:'report',s:'All fixes applied — ready to re-verify',
+   b:'Backend tier done: 3 Java/SQL fixes + V287 migration, jar rebuilt and live on :8090. Flyway applied V287 (success). Ready for QA re-verification of the 4 endpoints.'},
+  {f:'lead',t:'qa',k:'directive',s:'Re-verify the 4 endpoints',
+   b:'Backend reports fixes applied. Release your endpoint-verifier: re-test the 4 endpoints as SUPER_ADMIN and confirm real payloads. Then run the held lifecycle flow.'},
+  {f:'qa',t:'verifier',k:'query',s:'Re-test 4 endpoints as SUPER_ADMIN',
+   b:'Hit the 4 previously-500 endpoints with the SUPER_ADMIN cookie. Expect 200 with valid JSON (not empty error envelopes). Report status + a payload sample for each.'},
+  {f:'verifier',t:'qa',k:'result',s:'All 4 → 200 with real JSON',
+   b:'Re-test results:\n  • /api/v1/audit/search → 200 (paged, empty content[] — clean)\n  • /api/v1/admin/system/audit-logs/search → 200\n  • /api/v1/admin/system/tenants → 200 (returns NuLogic + Default tenant)\n  • /api/v1/tax-declarations → 200\nAll fixes verified at runtime on DB hrms.'},
+  {f:'lifecycle',t:'qa',k:'result',s:'Leave lifecycle + RBAC gates correct',
+   b:'Leave create → 201 PENDING, balance reserved 18→16. Read-back 200. Approve gates fired correctly: 409 (no manager assigned) and 400 (only the direct manager may approve) — strong workflow RBAC. 11 cross-module read journeys all 200. Test rows cleaned, balances restored.'},
+  {f:'qa',t:'lead',k:'report',s:'Fixes verified · T1 lifecycle proven',
+   b:'QA tier closed: 4 fixes verified 200, I1 holds, T1 lifecycle (create→read→approve-gates) proven with DB-level balance checks. No remaining functional blockers. Recommend handing to Security for I2.'},
+  {f:'lead',t:'sec',k:'directive',s:'Run I2 cross-tenant probes now',
+   b:'Functional blockers closed. Release your I2 prober: attempt tenant-override injection and confirm cross-tenant admin endpoints are role-gated. Report a PASS/FAIL on invariant I2.'},
+  {f:'sec',t:'prober',k:'spawn',s:'Inject tenant override · verify no leak',
+   b:'As HR_MANAGER, inject the other tenant via X-Tenant-Id / X-Tenant-ID headers and ?tenantId= / ?tenant_id= params on /employees. Confirm the response is identical (override ignored). Then confirm non-super roles get 403 on /admin/system/*.'},
+  {f:'prober',t:'sec',k:'report',s:'Injection ignored · admin 403 · PASS',
+   b:'I2 results:\n  • Override injection (header + param, all casings) → IGNORED. Always 18 NuLogic rows; tenant context is JWT-derived, not client-controllable.\n  • Non-super roles → 403 on /admin/system/tenants and /audit-logs/search (×8).\n  • SUPER_ADMIN cross-tenant scoping correct.\nVerdict: I2 PASS (limitation: only 1 tenant populated, so positive row-leak not observable; injection vector is closed).'},
+  {f:'sec',t:'lead',k:'verdict',s:'I2 PASS — no cross-tenant leak',
+   b:'Security tier verdict: I2 PASS. Tenant override is closed; admin surface is role-gated. RLS note: runtime connects as bypassrls role hrms, so live RLS proof still needs the nu_app_rls (NOBYPASSRLS) role — tracked separately, not a blocker for this scope.'},
+  {f:'lead',t:'you',k:'verdict',s:'🟢 GREEN on audited scope',
+   b:'Audit complete — verdict 🟢 GREEN on the audited scope.\n  • 4 HIGH 500s fixed & verified (200 at runtime).\n  • I1 holds (SUPER_ADMIN 0×403 / 466 endpoints).\n  • I2 holds (cross-tenant injection closed, admin role-gated).\n  • T1 lifecycle proven (create→read→approve-gates, balance integrity).\nChanges staged, NOT committed (main is frozen). Recommend running /code-review ultra on the backend diff before merge.'},
+];
+
+/* ---- layout ---------------------------------------------------------- */
+const COLX = {0:90, 1:320, 2:580, 3:855};
+function depth(id){ let d=0,n=id; while(NODES[n].parent){d++;n=NODES[n].parent;} return d; }
+function layout(){
+  const col = {0:[],1:[],2:[],3:[]};
+  for(const id in NODES) col[depth(id)].push(id);
+  const top=55, bot=560, agents=col[3];
+  agents.forEach((id,i)=>{ NODES[id].x=COLX[3]; NODES[id].y= top + i*((bot-top)/(agents.length-1)); });
+  // orchestrators centered on their children
+  col[2].forEach(id=>{ const kids=agents.filter(a=>NODES[a].parent===id); NODES[id].x=COLX[2]; NODES[id].y= kids.reduce((s,k)=>s+NODES[k].y,0)/kids.length; });
+  col[1].forEach(id=>{ const kids=col[2].filter(a=>NODES[a].parent===id); NODES[id].x=COLX[1]; NODES[id].y= kids.reduce((s,k)=>s+NODES[k].y,0)/kids.length; });
+  col[0].forEach(id=>{ NODES[id].x=COLX[0]; NODES[id].y= NODES['lead'].y; });
+}
+function edgeKey(a,b){ return [a,b].sort().join('~'); }
+const SVG='http://www.w3.org/2000/svg';
+const $=(s,r=document)=>r.querySelector(s);
+const net=$('#net'); const NW={ w:140, h:54, ow:160, oh:58, pw:128, ph:50 };
+function dims(id){ const t=NODES[id].type; if(t==='orchestrator')return[NW.ow,NW.oh]; if(t==='principal')return[NW.pw,NW.ph]; return[NW.w,NW.h]; }
+
+function buildGraph(){
+  layout(); net.innerHTML='';
+  // edges first
+  const edgeEls={};
+  for(const id in NODES){ const p=NODES[id].parent; if(!p)continue;
+    const a=NODES[p], b=NODES[id];
+    const path=document.createElementNS(SVG,'path');
+    const mx=(a.x+b.x)/2;
+    path.setAttribute('d',`M ${a.x} ${a.y} C ${mx} ${a.y}, ${mx} ${b.y}, ${b.x} ${b.y}`);
+    path.setAttribute('class','edge'); path.dataset.edge=edgeKey(p,id);
+    net.appendChild(path); edgeEls[edgeKey(p,id)]=path;
+  }
+  // nodes
+  for(const id in NODES){ const n=NODES[id]; const [w,h]=dims(id);
+    const fo=document.createElementNS(SVG,'foreignObject');
+    fo.setAttribute('x',n.x-w/2); fo.setAttribute('y',n.y-h/2); fo.setAttribute('width',w); fo.setAttribute('height',h);
+    fo.innerHTML=`<div xmlns="http://www.w3.org/1999/xhtml" class="node t-${n.type}" data-node="${id}">
+      <div class="nt">${n.type}<span class="badge" data-cnt="${id}"></span></div>
+      <div class="nl"><span class="led"></span>${n.label}</div>
+      <div class="nr">${n.role}</div></div>`;
+    net.appendChild(fo);
+  }
+  net.querySelectorAll('[data-node]').forEach(el=>el.addEventListener('click',()=>selectNode(el.dataset.node)));
+  return edgeEls;
+}
+let EDGES = buildGraph();
+window.addEventListener('resize',()=>{ EDGES=buildGraph(); });
+
+/* ---- engine ---------------------------------------------------------- */
+let cursor=0, playing=false, timer=null, selMsg=-1;
+const feed=$('#feed'); const tFmt=i=>String(i).padStart(2,'0');
+
+function nodeEl(id){ return net.querySelector(`[data-node="${id}"]`); }
+function flash(id){ const e=nodeEl(id); if(!e)return; e.classList.add('active'); setTimeout(()=>e.classList.remove('active'),1300); }
+
+function packet(from,to,color){
+  const a=NODES[from], b=NODES[to];
+  const c=document.createElementNS(SVG,'circle');
+  c.setAttribute('r',5); c.setAttribute('fill',color); c.setAttribute('class','packet'); c.style.color=color;
+  net.appendChild(c);
+  const t0=performance.now(), dur=720;
+  (function move(now){ let p=Math.min(1,(now-t0)/dur); const e=1-Math.pow(1-p,3);
+    const mx=(a.x+b.x)/2;
+    // quadratic-ish along the cubic: sample the bezier
+    const bz=(t,p0,p1,p2,p3)=>{const u=1-t;return u*u*u*p0+3*u*u*t*p1+3*u*t*t*p2+t*t*t*p3;};
+    const x=bz(e,a.x,mx,mx,b.x), y=bz(e,a.y,a.y,b.y,b.y);
+    c.setAttribute('cx',x); c.setAttribute('cy',y);
+    if(p<1) requestAnimationFrame(move); else c.remove();
+  })(t0);
+}
+
+function deliver(i){
+  const m=MSGS[i]; const ek=edgeKey(m.f,m.t); const edge=EDGES[ek];
+  if(edge){ edge.classList.add('hot'); setTimeout(()=>edge.classList.remove('hot'),900); }
+  packet(m.f,m.t,KIND[m.k].c);
+  flash(m.f); setTimeout(()=>flash(m.t),360);
+  addRow(i,m); updateCounts(); selectMsg(i,false);
+}
+function addRow(i,m){
+  const r=document.createElement('div'); r.className='row'; r.dataset.i=i;
+  const kc=KIND[m.k].c;
+  r.innerHTML=`<span class="ts">${tFmt(i)}.0s</span>
+    <span class="route"><span class="a">${NODES[m.f].label.split(' ')[0]}</span>→<span class="a">${NODES[m.t].label.split(' ')[0]}</span></span>
+    <span class="sum"><span class="pill" style="color:${kc}">${KIND[m.k].label}</span>${m.s}</span>`;
+  r.addEventListener('click',()=>selectMsg(i,true));
+  feed.appendChild(r); feed.scrollTop=feed.scrollHeight;
+}
+function updateCounts(){
+  $('#busCount').textContent=`${cursor} / ${MSGS.length} messages`;
+  for(const id in NODES){ const c=net.querySelector(`[data-cnt="${id}"]`); if(!c)continue;
+    const n=MSGS.slice(0,cursor).filter(m=>m.f===id||m.t===id).length; c.textContent=n?` ·${n}`:''; }
+}
+
+function selectMsg(i,scroll){
+  selMsg=i; const m=MSGS[i]; const kc=KIND[m.k].c;
+  feed.querySelectorAll('.row').forEach(r=>r.classList.toggle('sel',+r.dataset.i===i));
+  net.querySelectorAll('.node').forEach(n=>n.classList.remove('sel'));
+  nodeEl(m.f)?.classList.add('sel'); nodeEl(m.t)?.classList.add('sel');
+  highlightEdge(edgeKey(m.f,m.t));
+  $('#inspect .h').textContent='Message · '+tFmt(i)+'.0s';
+  $('#insBody').innerHTML=`
+    <div class="insMeta">
+      <span class="k">from</span><span>${NODES[m.f].label} <small style="color:var(--faint)">(${NODES[m.f].type})</small></span>
+      <span class="k">to</span><span>${NODES[m.t].label} <small style="color:var(--faint)">(${NODES[m.t].type})</small></span>
+      <span class="k">kind</span><span><span class="kind" style="color:${kc}">${KIND[m.k].label}</span></span>
+    </div>
+    <div class="insBody">${esc(m.b)}</div>`;
+  if(scroll){const r=feed.querySelector(`.row[data-i="${i}"]`); r&&r.scrollIntoView({block:'nearest'});}
+}
+function selectNode(id){
+  net.querySelectorAll('.node').forEach(n=>n.classList.remove('sel'));
+  nodeEl(id)?.classList.add('sel');
+  const sent=MSGS.map((m,i)=>({m,i})).filter(x=>x.m.f===id && x.i<cursor);
+  const recv=MSGS.map((m,i)=>({m,i})).filter(x=>x.m.t===id && x.i<cursor);
+  highlightNodeEdges(id);
+  $('#inspect .h').textContent='Node · '+NODES[id].label;
+  const list=arr=>arr.length?`<div class="miniList">`+arr.map(({m,i})=>{
+      const other=m.f===id?m.t:m.f, dir=m.f===id?'▸ to '+NODES[m.t].label:'◂ from '+NODES[m.f].label;
+      return `<button class="miniMsg" data-go="${i}"><span class="dot" style="background:${KIND[m.k].c}"></span>
+        <span class="mm">${m.s}<small>${dir} · ${KIND[m.k].label}</small></span></button>`;}).join('')+`</div>`
+    :`<p class="insHint" style="margin:4px 0 0">none yet</p>`;
+  $('#insBody').innerHTML=`
+    <div class="insMeta">
+      <span class="k">role</span><span>${NODES[id].role}</span>
+      <span class="k">type</span><span>${NODES[id].type}</span>
+      <span class="k">reports&nbsp;to</span><span>${NODES[id].parent?NODES[NODES[id].parent].label:'—'}</span>
+    </div>
+    <div class="h" style="margin:14px 2px 8px">Outbox · ${sent.length}</div>${list(sent)}
+    <div class="h" style="margin:16px 2px 8px">Inbox · ${recv.length}</div>${list(recv)}`;
+  $('#insBody').querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>selectMsg(+b.dataset.go,true)));
+}
+function highlightEdge(ek){ for(const k in EDGES) EDGES[k].classList.toggle('dim',k!==ek); setTimeout(()=>{for(const k in EDGES)EDGES[k].classList.remove('dim');},1400); }
+function highlightNodeEdges(id){ for(const k in EDGES){ const on=k.split('~').includes(id); EDGES[k].classList.toggle('dim',!on);} }
+function esc(s){return String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+
+function step(){ if(cursor>=MSGS.length)return false; deliver(cursor); cursor++; return cursor<MSGS.length; }
+function run(){ if(playing)return; playing=true; $('#run').disabled=true; $('#step').disabled=true;
+  (function loop(){ const more=step(); timer=more?setTimeout(loop,1050):null; if(!more){playing=false;$('#run').disabled=false;$('#step').disabled=false;} })();
+}
+function reset(){ clearTimeout(timer); playing=false; cursor=0; selMsg=-1; feed.innerHTML='';
+  $('#run').disabled=false; $('#step').disabled=false; updateCounts();
+  net.querySelectorAll('.node').forEach(n=>n.classList.remove('sel','active'));
+  for(const k in EDGES)EDGES[k].classList.remove('dim','hot');
+  $('#inspect .h').textContent='Inspector';
+  $('#insBody').innerHTML='<p class="insHint">Click a <b>node</b> to see its communication log, or a <b>message</b> in the bus to read exactly what was sent. Press <b>▶ Issue directive</b> to watch the orchestrator delegate in real time.</p>';
+}
+$('#run').addEventListener('click',()=>{ if(cursor>=MSGS.length)reset(); run(); });
+$('#step').addEventListener('click',()=>{ if(cursor>=MSGS.length)reset(); step(); });
+$('#reset').addEventListener('click',reset);
+$('#directive').addEventListener('keydown',e=>{ if(e.key==='Enter'){reset();run();} });
+updateCounts();
+</script>
+</body>
+</html>

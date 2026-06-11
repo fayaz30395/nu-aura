@@ -1,0 +1,28 @@
+name: agent-os
+
+on:
+  push:
+    paths:
+      - 'scripts/**'
+      - '.github/workflows/agent-os.yml'
+  pull_request:
+    paths:
+      - 'scripts/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0          # the flow test creates a git worktree from HEAD
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Configure git identity (worktree ops)
+        run: |
+          git config user.email "ci@local"
+          git config user.name "ci"
+      - name: Run Agent OS tests (no tokens — claude is mocked)
+        working-directory: scripts
+        run: npm test

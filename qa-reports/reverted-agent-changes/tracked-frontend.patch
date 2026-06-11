@@ -1,0 +1,107 @@
+diff --git a/frontend/components/auth/AuthGuard.tsx b/frontend/components/auth/AuthGuard.tsx
+index 25339587..a6cbf411 100644
+--- a/frontend/components/auth/AuthGuard.tsx
++++ b/frontend/components/auth/AuthGuard.tsx
+@@ -134,6 +134,27 @@ export function AuthGuard({
+             setIsAuthorized(false);
+           }
+           // If restored, the isAuthenticated state change will re-trigger this effect
++        }).catch(() => {
++          // restoreSession() rejected — e.g. the backend is unreachable and the
++          // /auth/me call threw a network error. Without this catch the promise
++          // never settles, isRestoringSession stays true, and the page hangs
++          // forever in the "Session restoring" skeleton with no recovery. Treat a
++          // failed restore the same as an expired session: send the user to login.
++          isRestoringRef.current = false;
++          setIsRestoringSession(false);
++          const returnUrl = encodeURIComponent(pathname);
++          const loginUrl = `/auth/login?returnUrl=${returnUrl}`;
++          try {
++            router.replace(loginUrl);
++            redirectTimeoutRef.current = setTimeout(() => {
++              if (window.location.pathname !== '/auth/login') {
++                window.location.href = loginUrl;
++              }
++            }, 3000);
++          } catch {
++            window.location.href = loginUrl;
++          }
++          setIsAuthorized(false);
+         });
+       } else if (restoreAttemptedRef.current && !isRestoringRef.current) {
+         // Restore was already attempted and failed — redirect to login
+diff --git a/frontend/components/dashboard/HolidayCarousel.tsx b/frontend/components/dashboard/HolidayCarousel.tsx
+index 277c86c0..d3b9ea4d 100644
+--- a/frontend/components/dashboard/HolidayCarousel.tsx
++++ b/frontend/components/dashboard/HolidayCarousel.tsx
+@@ -79,7 +79,7 @@ export function HolidayCarousel({
+   if (isLoading) {
+     return (
+       <div
+-        className="relative overflow-hidden rounded-lg bg-accent-50 dark:bg-accent-900/30 p-4 text-accent-900 dark:text-accent-100">
++        className="relative overflow-hidden rounded-lg bg-[var(--accent-soft)] p-4 text-[var(--text-1)]">
+         <div className="row-between mb-2">
+           <span className="text-xs font-semibold uppercase tracking-wider opacity-80">Holidays</span>
+           <span className="text-xs opacity-60">View All</span>
+@@ -96,7 +96,7 @@ export function HolidayCarousel({
+   if (displayedHolidays.length === 0) {
+     return (
+       <div
+-        className="relative overflow-hidden rounded-lg bg-accent-50 dark:bg-accent-900/30 p-4 text-accent-900 dark:text-accent-100">
++        className="relative overflow-hidden rounded-lg bg-[var(--accent-soft)] p-4 text-[var(--text-1)]">
+         <div className="row-between mb-2">
+           <span className="text-xs font-semibold uppercase tracking-wider opacity-80">Holidays</span>
+           <a href="/holidays" className="text-xs opacity-60 hover:opacity-100 transition-opacity">View All</a>
+@@ -113,7 +113,7 @@ export function HolidayCarousel({
+ 
+   return (
+     <div
+-      className="relative overflow-hidden rounded-lg bg-accent-50 dark:bg-accent-900/30 p-4 text-accent-900 dark:text-accent-100"
++      className="relative overflow-hidden rounded-lg bg-[var(--accent-soft)] p-4 text-[var(--text-1)]"
+       onMouseEnter={() => setIsHovering(true)}
+       onMouseLeave={() => setIsHovering(false)}
+     >
+diff --git a/frontend/components/layout/AppLayout.tsx b/frontend/components/layout/AppLayout.tsx
+index 4b387646..a2d33e8c 100644
+--- a/frontend/components/layout/AppLayout.tsx
++++ b/frontend/components/layout/AppLayout.tsx
+@@ -26,6 +26,7 @@ import {buildMenuSections} from './menuSections';
+ import {ProductRail} from './shell/ProductRail';
+ import {NavPanel} from './shell/NavPanel';
+ import {TopBar} from './shell/TopBar';
++import {OfflineBanner} from './shell/OfflineBanner';
+ import {ErrorBoundary} from '@/components/errors';
+ 
+ // Lazy-load heavy components to reduce initial bundle
+@@ -323,11 +324,12 @@ const AppLayout: React.FC<AppLayoutProps> = ({
+   return (
+     <div
+       className={cn(
+-        'relative isolate flex min-h-[100dvh] overflow-hidden bg-main text-primary transition-colors duration-300',
++        'relative isolate flex h-[100dvh] overflow-hidden bg-main text-primary transition-colors duration-300',
+         'page-reveal',
+         className
+       )}
+     >
++      <OfflineBanner />
+       {/* Aura desktop shell — product rail (72px) + contextual nav panel (232px).
+           Hidden below md; mobile uses the drawer below. */}
+       <div className="hidden md:flex">
+diff --git a/frontend/lib/queryClient.ts b/frontend/lib/queryClient.ts
+index cf769541..dfeba8da 100644
+--- a/frontend/lib/queryClient.ts
++++ b/frontend/lib/queryClient.ts
+@@ -25,7 +25,12 @@ export function getQueryClient(): QueryClient {
+         queries: {
+           staleTime: 5 * 60 * 1000,  // 5 minutes — overridden per-hook where needed
+           gcTime: 10 * 60 * 1000,    // 10 minutes garbage collection
+-          retry: 1,
++          // Retry reads up to 2× with capped exponential backoff. A cold backend
++          // (e.g. a just-woken host) can drop or stall the first request after
++          // login; one immediate retry was not always enough, leaving lists
++          // painted as empty. Backoff gives the server time to warm.
++          retry: 2,
++          retryDelay: (attempt) => Math.min(1000 * 2 ** attempt, 4000),
+           refetchOnWindowFocus: false,
+         },
+         mutations: {

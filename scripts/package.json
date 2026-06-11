@@ -1,0 +1,17 @@
+{
+  "name": "nu-aura-agent-os",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Local control plane for orchestrating real Claude agents over the NU-AURA repo.",
+  "bin": {
+    "agent-os": "orchestrator-os-server.js"
+  },
+  "scripts": {
+    "start": "node orchestrator-os-server.js",
+    "test": "node --test orchestrator-core.test.js orchestrator-client-core.test.js orchestrator-server.smoke.test.js orchestrator-flow.test.js",
+    "test:e2e": "ln -sfn ../frontend/node_modules node_modules && PLAYWRIGHT_BROWSERS_PATH=\"$HOME/Library/Caches/ms-playwright\" npx playwright test --config playwright.config.ts"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
