@@ -1,9 +1,10 @@
 package com.nulogic.domain.notification;
 
-import com.nulogic.application.notification.service.NotificationService;
+import com.nulogic.common.security.TenantContext;
+import com.nulogic.infrastructure.notification.repository.NotificationRepository;
 import com.nulogic.infrastructure.websocket.RedisWebSocketRelay;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,18 +12,13 @@ import java.util.UUID;
 
 @Slf4j
 @Service("domainWebSocketNotificationService")
+@RequiredArgsConstructor
 public class WebSocketNotificationService {
 
     private final RedisWebSocketRelay redisWebSocketRelay;
-    private final NotificationService notificationService;
-
-    // @Lazy on the persistence service avoids any chance of a circular bean
-    // graph at startup; it is only resolved on first notification dispatch.
-    public WebSocketNotificationService(RedisWebSocketRelay redisWebSocketRelay,
-                                        @Lazy NotificationService notificationService) {
-        this.redisWebSocketRelay = redisWebSocketRelay;
-        this.notificationService = notificationService;
-    }
+    // Persist directly through the repository (a leaf bean) rather than the
+    // application NotificationService, to avoid any cross-layer startup cycle.
+    private final NotificationRepository notificationRepository;
 
     /**
      * Send a notification to a specific user via user-destination (private queue),
@@ -50,16 +46,17 @@ public class WebSocketNotificationService {
 
     private void persistQuietly(String userId, NotificationMessage message) {
         try {
-            notificationService.createNotification(
-                    UUID.fromString(userId),
-                    mapType(message.getType()),
-                    message.getTitle(),
-                    message.getMessage(),
-                    null,
-                    null,
-                    message.getActionUrl(),
-                    mapPriority(message.getPriority())
-            );
+            Notification notification = Notification.builder()
+                    .userId(UUID.fromString(userId))
+                    .type(mapType(message.getType()))
+                    .title(message.getTitle())
+                    .message(message.getMessage())
+                    .actionUrl(message.getActionUrl())
+                    .priority(mapPriority(message.getPriority()))
+                    .isRead(false)
+                    .build();
+            notification.setTenantId(TenantContext.requireCurrentTenant());
+            notificationRepository.save(notification);
         } catch (Exception e) {
             log.warn("Failed to persist in-app notification for user {}: {}", userId, e.getMessage());
         }
