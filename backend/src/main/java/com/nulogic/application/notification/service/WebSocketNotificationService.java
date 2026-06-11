@@ -3,6 +3,8 @@ package com.nulogic.application.notification.service;
 import com.nulogic.application.notification.dto.NotificationMessage;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
+import com.nulogic.domain.notification.Notification;
+import com.nulogic.infrastructure.notification.repository.NotificationRepository;
 import com.nulogic.infrastructure.websocket.RedisWebSocketRelay;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +32,7 @@ public class WebSocketNotificationService {
     // always invoked from a request/scheduler frame that has TenantContext set; if it's missing
     // the resolver falls back to DEFAULT_ZONE rather than the JVM zone.
     private final TenantTimeService tenantTimeService;
+    private final NotificationRepository notificationRepository;
 
     /**
      * Send notification to a specific user.
@@ -46,7 +49,55 @@ public class WebSocketNotificationService {
                 notification
         );
 
+        // Persist a durable in-app notification so it survives when the user is
+        // offline — the real-time push above only reaches connected sessions.
+        persistQuietly(userId, notification);
+
         log.debug("Sent WebSocket notification to user {}: {}", userId, notification.getTitle());
+    }
+
+    /**
+     * Persist the notification for the bell / unread-count. Guarded: a persistence
+     * failure must never break real-time delivery or the triggering operation.
+     */
+    private void persistQuietly(UUID userId, NotificationMessage message) {
+        try {
+            Notification entity = Notification.builder()
+                    .userId(userId)
+                    .type(mapType(message.getType()))
+                    .title(message.getTitle())
+                    .message(message.getMessage())
+                    .actionUrl(message.getActionUrl())
+                    .priority(mapPriority(message.getPriority()))
+                    .isRead(false)
+                    .build();
+            entity.setTenantId(TenantContext.requireCurrentTenant());
+            notificationRepository.save(entity);
+        } catch (Exception e) {
+            log.warn("Failed to persist in-app notification for user {}: {}", userId, e.getMessage());
+        }
+    }
+
+    private Notification.NotificationType mapType(NotificationMessage.NotificationType type) {
+        if (type == null) {
+            return Notification.NotificationType.GENERAL;
+        }
+        try {
+            return Notification.NotificationType.valueOf(type.name());
+        } catch (IllegalArgumentException ex) {
+            return Notification.NotificationType.GENERAL;
+        }
+    }
+
+    private Notification.Priority mapPriority(NotificationMessage.Priority priority) {
+        if (priority == null) {
+            return Notification.Priority.NORMAL;
+        }
+        try {
+            return Notification.Priority.valueOf(priority.name());
+        } catch (IllegalArgumentException ex) {
+            return Notification.Priority.NORMAL;
+        }
     }
 
     /**
