@@ -146,12 +146,13 @@ public class SystemAdminService {
                         r -> (Long) r[1]
                 ));
 
-        // Last-activity lookup: still per-tenant but only for the page slice
-        Map<UUID, LocalDateTime> lastActivityByTenant = tenantIds.stream()
-                .collect(Collectors.toMap(
-                        id -> id,
-                        id -> getLastActivityForTenant(id)
-                ));
+        // Last-activity lookup: still per-tenant but only for the page slice.
+        // A tenant with no login history yields a null timestamp; Collectors.toMap
+        // rejects null values (NPE), so build a null-tolerant map instead.
+        Map<UUID, LocalDateTime> lastActivityByTenant = new HashMap<>();
+        for (UUID id : tenantIds) {
+            lastActivityByTenant.put(id, getLastActivityForTenant(id));
+        }
 
         return tenantsPage.map(tenant -> mapToTenantListItem(
                 tenant,
