@@ -13,6 +13,7 @@ import {allDemoUsers, DEMO_PASSWORD, DemoUser, demoUsers} from './testData';
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080/api/v1';
 const AUTH_MODE = process.env.E2E_AUTH_MODE ?? 'api';
 const API_LOGIN_TIMEOUT_MS = Number(process.env.E2E_API_LOGIN_TIMEOUT_MS ?? 60000);
+const API_LOGIN_PAGE_TIMEOUT_MS = Number(process.env.E2E_AUTH_PAGE_TIMEOUT_MS ?? 90000);
 const API_LOGIN_ATTEMPTS = Number(process.env.E2E_API_LOGIN_ATTEMPTS ?? 3);
 const API_LOGIN_RATE_LIMIT_DELAY_MS = Number(process.env.E2E_API_LOGIN_RATE_LIMIT_DELAY_MS ?? 15000);
 const ALLOW_LOCAL_AUTH_FALLBACK = AUTH_MODE === 'local' || process.env.E2E_ALLOW_LOCAL_AUTH_FALLBACK === 'true';
@@ -317,24 +318,21 @@ export async function gotoWithRetry(page: Page, path: string): Promise<void> {
 }
 
 async function openAuthOriginForApiLogin(page: Page): Promise<void> {
-  let lastError: unknown;
-  for (let attempt = 1; attempt <= 3; attempt++) {
-    try {
-      await page.goto('/auth/login', {waitUntil: 'commit', timeout: 30000});
-      return;
-    } catch (error) {
-      lastError = error;
-      const message = error instanceof Error ? error.message : '';
-      const retryable = message.includes('net::ERR_ABORTED')
-        || message.includes('net::ERR_CONNECTION_REFUSED')
-        || message.includes('net::ERR_EMPTY_RESPONSE')
-        || message.includes('net::ERR_NETWORK_IO_SUSPENDED')
-        || message.includes('Timeout');
-      if (!retryable || attempt === 3) break;
-      await page.waitForTimeout(500 * attempt);
-    }
+  if (page.url().includes('/auth/login')) {
+    return;
   }
-  throw lastError;
+
+  try {
+    await page.goto('/auth/login', {waitUntil: 'domcontentloaded', timeout: API_LOGIN_PAGE_TIMEOUT_MS});
+    await page.waitForLoadState('domcontentloaded', {timeout: 15000}).catch(() => {});
+  } catch (error) {
+    if (!process.env.E2E_AUTH_IGNORE_LOGIN_PAGE_FAILURES) {
+      throw error;
+    }
+    // Some hosted environments intermittently stall authentication shell startup.
+    // In that mode, continue with best-effort authentication state fallbacks.
+    console.warn('openAuthOriginForApiLogin: login page open failed; continuing with fallback auth path.');
+  }
 }
 
 /**

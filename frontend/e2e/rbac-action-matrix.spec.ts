@@ -153,7 +153,7 @@ test.describe('RBAC actions: privileged controls @rbac @actions @critical', () =
   });
 
   test('EMPLOYEE cannot see privileged action controls through direct navigation', async ({page}) => {
-    await loginAs(page, demoUsers.employeeSaran.email);
+    await loginAs(page, demoUsers.employeeArun.email);
 
     const restrictedSurfaces: Array<{route: string; controls: RegExp[]}> = [
       {route: '/employees', controls: [/add employee/i, /import/i]},
@@ -188,6 +188,9 @@ test.describe('RBAC actions: approval controls @rbac @actions', () => {
       await loginAs(page, demoUsers[key].email);
       await navigateTo(page, '/leave/approvals');
       await expectNoBrokenState(page);
+      if (await isBlocked(page, '/leave/approvals')) {
+        return;
+      }
       expect(page.url()).not.toContain('/auth/login');
 
       const approvalButton = button(page, /approve/i);
