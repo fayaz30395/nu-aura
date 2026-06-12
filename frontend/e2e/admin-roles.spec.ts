@@ -169,7 +169,7 @@ test.describe('Admin Role Management', () => {
 
 test.describe('Role-Based Access — Employee vs SuperAdmin', () => {
   test('employee login hides admin menu items', async ({page}) => {
-    await loginAs(page, testUsers.employee.email);
+    await loginAs(page, demoUsers.employeeArun.email);
 
     // Admin menu links should NOT be visible to an employee
     const adminLink = page.locator('a[href*="/admin"], button:has-text("Admin")').first();
@@ -184,7 +184,7 @@ test.describe('Role-Based Access — Employee vs SuperAdmin', () => {
   });
 
   test('employee cannot access admin routes directly', async ({page}) => {
-    await loginAs(page, testUsers.employee.email);
+    await loginAs(page, demoUsers.employeeArun.email);
 
     // Try to access admin roles page directly
     await page.goto('/admin/roles', {waitUntil: 'domcontentloaded', timeout: 30000}).catch(() => undefined);
@@ -276,7 +276,7 @@ test.describe('Permission Change — SuperAdmin updates role, Employee sees upda
 
   test('employee sidebar updates when navigating after permission change', async ({page}) => {
     // This test verifies that the employee UI reflects role-appropriate content
-    await loginAs(page, testUsers.employee.email);
+    await loginAs(page, demoUsers.employeeArun.email);
 
     // Employee should see limited sidebar items
     const sidebarLinks = page.locator('nav a, nav button').filter({has: page.locator('span, text')});

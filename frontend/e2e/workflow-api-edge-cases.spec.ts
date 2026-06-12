@@ -154,8 +154,8 @@ test.describe('Workflow API edge cases @rbac @critical', () => {
   });
 
   test('payroll and payslip APIs enforce self-service and process permissions', async () => {
-    const target = await apiUser(demoUsers.employeeSaran.email, demoUsers.employeeSaran.password);
-    const other = await apiUser(demoUsers.employeeRaj.email, demoUsers.employeeRaj.password);
+    const target = await apiUser(demoUsers.employeeArun.email, demoUsers.employeeArun.password);
+    const other = await apiUser(demoUsers.employeeBharath.email, demoUsers.employeeBharath.password);
 
     const otherPayslips = await other.api.get(
       `payroll/payslips/employee/${target.employee.id}`,
