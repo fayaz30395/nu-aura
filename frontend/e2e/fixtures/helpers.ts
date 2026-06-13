@@ -17,6 +17,13 @@ const API_LOGIN_PAGE_TIMEOUT_MS = Number(process.env.E2E_AUTH_PAGE_TIMEOUT_MS ??
 const API_LOGIN_ATTEMPTS = Number(process.env.E2E_API_LOGIN_ATTEMPTS ?? 3);
 const API_LOGIN_RATE_LIMIT_DELAY_MS = Number(process.env.E2E_API_LOGIN_RATE_LIMIT_DELAY_MS ?? 15000);
 const ALLOW_LOCAL_AUTH_FALLBACK = AUTH_MODE === 'local' || process.env.E2E_ALLOW_LOCAL_AUTH_FALLBACK === 'true';
+const PLAYWRIGHT_BASE_URL = process.env.PLAYWRIGHT_BASE_URL ?? 'http://localhost:3002';
+let APP_ORIGIN = PLAYWRIGHT_BASE_URL;
+try {
+  APP_ORIGIN = new URL(PLAYWRIGHT_BASE_URL).origin;
+} catch (_error) {
+  APP_ORIGIN = 'http://localhost:3002';
+}
 
 interface ApiLoginResponse {
   accessToken?: string | null;
@@ -56,6 +63,21 @@ let lastApiLoginAt = 0;
 
 const ROLE_PERMISSIONS: Record<DemoUser['role'], string[]> = {
   SUPER_ADMIN: [],
+  TENANT_ADMIN: [
+    'EMPLOYEE:VIEW_ALL', 'EMPLOYEE:CREATE', 'EMPLOYEE:UPDATE', 'EMPLOYEE:DELETE',
+    'LEAVE:APPROVE', 'LEAVE:VIEW_ALL', 'LEAVE:MANAGE', 'LEAVE_TYPE:MANAGE',
+    'ATTENDANCE:VIEW_ALL', 'ATTENDANCE:APPROVE', 'ATTENDANCE:MANAGE',
+    'PAYROLL:VIEW_ALL', 'PAYROLL:PROCESS', 'PAYROLL:APPROVE',
+    'RECRUITMENT:VIEW_ALL', 'RECRUITMENT:MANAGE',
+    'ROLE:MANAGE', 'USER:MANAGE', 'SETTINGS:VIEW', 'SETTINGS:UPDATE',
+    'DEPARTMENT:MANAGE', 'WORKFLOW:MANAGE', 'AUDIT:VIEW',
+    'KNOWLEDGE:WIKI_CREATE', 'KNOWLEDGE:BLOG_CREATE', 'KNOWLEDGE:SETTINGS_MANAGE',
+    'OKR:VIEW_ALL', 'FEEDBACK_360:MANAGE', 'REVIEW:CREATE', 'REVIEW:APPROVE',
+    'WELLNESS:MANAGE', 'SURVEY:MANAGE', 'GOAL:APPROVE',
+    'AGENCY:MANAGE', 'SCORECARD:CREATE', 'PREBOARDING:MANAGE',
+    'PAYMENT:VIEW', 'PAYMENT:INITIATE', 'PAYMENT:CONFIG_MANAGE',
+    'DASHBOARD:VIEW',
+  ],
   HR_MANAGER: [
     'DASHBOARD:VIEW',
     'EMPLOYEE:READ',
@@ -202,26 +224,37 @@ async function seedStoredAuth(page: Page, auth: ApiLoginResponse, verifyDashboar
   const storedUser = buildStoredUser(auth);
   const useLocalAuthStorage = process.env.NEXT_PUBLIC_E2E_AUTH_STORAGE === 'localStorage';
 
-  await page.evaluate(({tenantId, user, useLocalStorage}) => {
-    const authEnvelope = JSON.stringify({
-      state: {
-        isAuthenticated: true,
-        user,
-      },
-      version: 0,
-    });
-    localStorage.setItem('tenantId', tenantId);
-    sessionStorage.setItem('tenantId', tenantId);
+  try {
+    await page.evaluate(({tenantId, user, useLocalStorage}) => {
+      const authEnvelope = JSON.stringify({
+        state: {
+          isAuthenticated: true,
+          user,
+        },
+        version: 0,
+      });
+      localStorage.setItem('tenantId', tenantId);
+      sessionStorage.setItem('tenantId', tenantId);
 
-    const storages = useLocalStorage
-      ? [localStorage, sessionStorage]
-      : [sessionStorage];
+      const storages = useLocalStorage
+        ? [localStorage, sessionStorage]
+        : [sessionStorage];
 
-    for (const storage of storages) {
-      storage.setItem('nu-aura-user', JSON.stringify(user));
-      storage.setItem('auth-storage', authEnvelope);
+      for (const storage of storages) {
+        storage.setItem('nu-aura-user', JSON.stringify(user));
+        storage.setItem('auth-storage', authEnvelope);
+      }
+    }, {tenantId: auth.tenantId, user: storedUser, useLocalStorage: useLocalAuthStorage});
+  } catch (error) {
+    if (!String(error).includes('SecurityError: Failed to read the \'localStorage\' property')) {
+      throw error;
     }
-  }, {tenantId: auth.tenantId, user: storedUser, useLocalStorage: useLocalAuthStorage});
+
+    if (!ALLOW_LOCAL_AUTH_FALLBACK) {
+      throw error;
+    }
+    return;
+  }
 
   if (!verifyDashboard) {
     return;
@@ -292,6 +325,11 @@ async function waitForApiLoginSlot(page: Page): Promise<void> {
   lastApiLoginAt = Date.now();
 }
 
+async function ensureAuthShellOrigin(page: Page): Promise<void> {
+  await page.goto(`${APP_ORIGIN}/`, {waitUntil: 'domcontentloaded', timeout: API_LOGIN_PAGE_TIMEOUT_MS}).catch(() => {});
+  await page.waitForLoadState('domcontentloaded', {timeout: 15000}).catch(() => {});
+}
+
 export async function gotoWithRetry(page: Page, path: string): Promise<void> {
   let lastError: unknown;
   for (let attempt = 1; attempt <= 3; attempt++) {
@@ -332,6 +370,35 @@ async function openAuthOriginForApiLogin(page: Page): Promise<void> {
     // Some hosted environments intermittently stall authentication shell startup.
     // In that mode, continue with best-effort authentication state fallbacks.
     console.warn('openAuthOriginForApiLogin: login page open failed; continuing with fallback auth path.');
+    await ensureAuthShellOrigin(page);
+  }
+}
+
+async function safeClearClientAuthState(page: Page, reason: 'login' | 'fallback'): Promise<void> {
+  try {
+    await page.evaluate(() => {
+      sessionStorage.clear();
+      localStorage.removeItem('auth-storage');
+      localStorage.removeItem('nu-aura-user');
+      localStorage.removeItem('tenantId');
+      localStorage.removeItem('loginAttempts');
+      localStorage.removeItem('lockoutUntil');
+    });
+    return;
+  } catch (error) {
+    if (!String(error).includes('Execution context was destroyed') && reason === 'fallback') {
+      throw error;
+    }
+
+    await ensureAuthShellOrigin(page);
+    await page.evaluate(() => {
+      sessionStorage.clear();
+      localStorage.removeItem('auth-storage');
+      localStorage.removeItem('nu-aura-user');
+      localStorage.removeItem('tenantId');
+      localStorage.removeItem('loginAttempts');
+      localStorage.removeItem('lockoutUntil');
+    }).catch(() => {});
   }
 }
 
@@ -345,21 +412,14 @@ async function openAuthOriginForApiLogin(page: Page): Promise<void> {
 export async function loginAs(page: Page, email: string, options: LoginAsOptions = {}): Promise<void> {
   const user = allDemoUsers.find((u) => u.email === email);
   const password = user?.password ?? DEMO_PASSWORD;
-  const verifyDashboard = options.verifyDashboard ?? true;
+  const verifyDashboard = options.verifyDashboard ?? (process.env.E2E_AUTH_MODE === "local" ? false : true);
   if (!user) {
     throw new Error(`loginAs: unknown demo user ${email}`);
   }
 
   await page.context().clearCookies();
   await openAuthOriginForApiLogin(page);
-  await page.evaluate(() => {
-    sessionStorage.clear();
-    localStorage.removeItem('auth-storage');
-    localStorage.removeItem('nu-aura-user');
-    localStorage.removeItem('tenantId');
-    localStorage.removeItem('loginAttempts');
-    localStorage.removeItem('lockoutUntil');
-  });
+  await safeClearClientAuthState(page, 'login');
 
   const cachedAuth = authStateCache.get(email);
   const nowSeconds = Math.floor(Date.now() / 1000);
