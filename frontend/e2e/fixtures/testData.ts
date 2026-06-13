@@ -11,6 +11,7 @@ export const DEMO_PASSWORD = 'Welcome@123';
  */
 export type DemoRole =
   | 'SUPER_ADMIN'
+  | 'TENANT_ADMIN'
   | 'MANAGER'
   | 'TEAM_LEAD'
   | 'HR_MANAGER'
@@ -67,6 +68,19 @@ export const demoUsers = {
     role: 'SUPER_ADMIN' as DemoRole,
     name: 'Sarankarthick Maran',
     department: 'Executive',
+    reportsTo: null,
+  },
+
+  // ── TENANT_ADMIN ───────────────────────────────────────────
+  // NOTE: No demo DB row yet — seed V291 must create tenant.admin@nulogic.io
+  // before Playwright can log in as this account. Until then, this fixture
+  // documents the expected account and prevents TypeScript gaps in RBAC tests.
+  tenantAdmin: {
+    email: 'tenant.admin@nulogic.io',
+    password: DEMO_PASSWORD,
+    role: 'TENANT_ADMIN' as DemoRole,
+    name: 'Tenant Admin',
+    department: 'Administration',
     reportsTo: null,
   },
 
