@@ -40,7 +40,7 @@
         <openpdf.version>3.0.4</openpdf.version>
         <springdoc.version>2.8.0</springdoc.version>
         <lombok.version>1.18.46</lombok.version>
-        <shedlock.version>6.3.0</shedlock.version>
+        <shedlock.version>7.7.0</shedlock.version>
         <!-- Override Spring Boot BOM (1.20.6): 1.21.x ships a docker-java that
              negotiates Docker API >= 1.44, required by Docker 25+/colima 29.x.
              1.20.6's client advertised API 1.32 and was rejected by the daemon. -->
