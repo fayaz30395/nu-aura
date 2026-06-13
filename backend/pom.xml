@@ -34,13 +34,13 @@
 
     <properties>
         <java.version>21</java.version>
-        <jjwt.version>0.12.6</jjwt.version>
+        <jjwt.version>0.13.0</jjwt.version>
         <mapstruct.version>1.6.3</mapstruct.version>
         <poi.version>5.4.1</poi.version>
         <openpdf.version>3.0.4</openpdf.version>
         <springdoc.version>2.8.0</springdoc.version>
         <lombok.version>1.18.46</lombok.version>
-        <shedlock.version>6.3.0</shedlock.version>
+        <shedlock.version>7.7.0</shedlock.version>
         <!-- Override Spring Boot BOM (1.20.6): 1.21.x ships a docker-java that
              negotiates Docker API >= 1.44, required by Docker 25+/colima 29.x.
              1.20.6's client advertised API 1.32 and was rejected by the daemon. -->
@@ -277,7 +277,7 @@
         <dependency>
             <groupId>net.logstash.logback</groupId>
             <artifactId>logstash-logback-encoder</artifactId>
-            <version>7.4</version>
+            <version>9.0</version>
         </dependency>
 
         <!-- MapStruct for DTO mapping -->
@@ -358,7 +358,7 @@
         <dependency>
             <groupId>com.twilio.sdk</groupId>
             <artifactId>twilio</artifactId>
-            <version>10.1.0</version>
+            <version>12.1.1</version>
         </dependency>
 
         <!-- Apache Tika for document text extraction -->
@@ -366,19 +366,19 @@
         <dependency>
             <groupId>net.sourceforge.tess4j</groupId>
             <artifactId>tess4j</artifactId>
-            <version>5.18.0</version>
+            <version>5.19.0</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.tika</groupId>
             <artifactId>tika-core</artifactId>
-            <version>3.3.0</version>
+            <version>3.3.1</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.tika</groupId>
             <artifactId>tika-parsers-standard-package</artifactId>
-            <version>3.3.0</version>
+            <version>3.3.1</version>
         </dependency>
     </dependencies>
 
@@ -400,7 +400,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.11.0</version>
+                <version>3.15.0</version>
                 <configuration>
                     <source>21</source>
                     <target>21</target>
@@ -427,7 +427,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.5.2</version>
+                <version>3.5.6</version>
                 <configuration>
                     <!-- Release-stable execution: Spring/Testcontainers and ArchUnit
                          suites mutate/read shared target output and are not safe under
