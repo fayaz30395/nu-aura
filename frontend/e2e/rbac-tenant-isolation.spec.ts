@@ -79,8 +79,16 @@ test.describe('Tenant Isolation — API Response Scoping @rbac', () => {
       expect([401, 403]).toContain(payrollStatus);
     }
 
-    // Either API was blocked or page redirected (both are correct behavior)
-    expect(payrollApiCalled === false || [401, 403].includes(payrollStatus) || true).toBe(true);
+    const currentUrl = page.url();
+    const redirectedAway = !currentUrl.includes('/payroll/runs');
+    const hasAccessDenied = await page.locator('text=/access denied|unauthorized|permission|forbidden|403/i').first().isVisible({timeout: 5000}).catch(() => false);
+
+    // Either the privileged payroll API was not called because the route guard
+    // blocked navigation, the API denied the request, or the UI showed a denial.
+    expect(
+      payrollApiCalled === false || [401, 403].includes(payrollStatus) || redirectedAway || hasAccessDenied,
+      `Expected EMPLOYEE payroll admin access to be denied; current URL=${currentUrl}, payrollStatus=${payrollStatus}, payrollApiCalled=${payrollApiCalled}`
+    ).toBe(true);
   });
 });
 
@@ -118,10 +126,16 @@ test.describe('Tenant Isolation — UI Data Scoping @rbac', () => {
     if (isAccessible && !hasAccessDenied) {
       // Employee list should be present
       const hasEmployees = await page.locator('table tbody tr, [class*="employee-card"]').first().isVisible({timeout: 5000}).catch(() => false);
-      expect(hasEmployees || true).toBe(true);
+      expect(
+        hasEmployees,
+        `Expected HR manager employee view to render rows/cards, or an explicit denial; current URL=${page.url()}`
+      ).toBe(true);
     }
 
-    expect(isAccessible || hasAccessDenied || true).toBe(true);
+    expect(
+      isAccessible || hasAccessDenied,
+      `Expected HR manager employee route to be accessible or explicitly denied; current URL=${page.url()}`
+    ).toBe(true);
   });
 
   test('Audit log only shows current tenant events @rbac @smoke', async ({page}) => {
@@ -133,7 +147,10 @@ test.describe('Tenant Isolation — UI Data Scoping @rbac', () => {
     const hasEmptyState = await page.locator('text=/no audit|no logs|no events/i').first().isVisible({timeout: 3000}).catch(() => false);
     const hasAccessDenied = await page.locator('text=/access denied|unauthorized/i').first().isVisible({timeout: 3000}).catch(() => false);
 
-    expect(hasAuditLog || hasEmptyState || hasAccessDenied || true).toBe(true);
+    expect(
+      hasAuditLog || hasEmptyState || hasAccessDenied,
+      `Expected audit route to render logs, an empty state, or an access denial; current URL=${page.url()}`
+    ).toBe(true);
     await expect(page.locator('text=/something went wrong/i').first()).not.toBeVisible();
   });
 });
@@ -162,8 +179,14 @@ test.describe('Tenant Isolation — Session Boundaries @rbac', () => {
     const isOnLogin = page.url().includes('/auth/login');
     const isOnProtected = page.url().includes('/employees') && !page.url().includes('/auth/login');
 
-    // Should redirect to login (httpOnly cookie cleared)
-    expect(isOnLogin || !isOnProtected || true).toBe(true);
+    const hasUnauthorized = await page.locator('text=/access denied|unauthorized|sign in|login|required/i').first().isVisible({timeout: 5000}).catch(() => false);
+
+    // Should redirect to login or show explicit unauthorized state after all
+    // cookies/storage are cleared.
+    expect(
+      isOnLogin || !isOnProtected || hasUnauthorized,
+      `Expected cleared session to be denied from /employees; current URL=${page.url()}`
+    ).toBe(true);
   });
 
   test('Two different users see different scoped data @rbac @critical', async ({browser}) => {

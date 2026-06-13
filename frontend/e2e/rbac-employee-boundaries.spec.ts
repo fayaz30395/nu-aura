@@ -1,4 +1,4 @@
-import {expect, test} from '@playwright/test';
+import {expect, Page, test} from '@playwright/test';
 import {loginAs, navigateTo} from './fixtures/helpers';
 import {demoUsers} from './fixtures/testData';
 
@@ -42,7 +42,7 @@ const RECRUITMENT_ADMIN_ROUTES = [
   '/recruitment/offers',
 ];
 
-async function verifyAccessDenied(page: Parameters<typeof navigateTo>[0], route: string): Promise<void> {
+async function verifyAccessDenied(page: Page, route: string): Promise<void> {
   await navigateTo(page, route);
   await page.waitForTimeout(2000);
 
@@ -51,9 +51,15 @@ async function verifyAccessDenied(page: Parameters<typeof navigateTo>[0], route:
   const hasAccessDenied = await page.locator('text=/access denied|unauthorized|permission|forbidden|403/i').first().isVisible({timeout: 5000}).catch(() => false);
   const redirectedToLogin = currentUrl.includes('/auth/login');
   const redirectedToDashboard = currentUrl.includes('/dashboard') && !currentUrl.includes(route);
+  const redirectedAway = !isStillOnRoute && !currentUrl.includes(route);
 
-  // Either access denied message, redirect, or route itself shows access control UI
-  expect(redirectedToLogin || redirectedToDashboard || hasAccessDenied || !isStillOnRoute || true).toBe(true);
+  // Either access denied message, redirect, or route itself shows access control UI.
+  // Do not soft-pass RBAC assertions: these tests prove employees cannot render
+  // privileged routes via direct URL access.
+  expect(
+    redirectedToLogin || redirectedToDashboard || redirectedAway || hasAccessDenied,
+    `Expected EMPLOYEE to be denied at ${route}; current URL=${currentUrl}`
+  ).toBe(true);
 }
 
 test.describe('RBAC — Employee Cannot Access Admin Pages @rbac', () => {
@@ -126,7 +132,10 @@ test.describe('RBAC — Employee Cannot Access Other Employees Data @rbac', () =
 
     // Employee should not see the full employee admin list
     // (they may see /me/profile but not the HR admin /employees list)
-    expect(redirectedAway || hasAccessDenied || true).toBe(true);
+    expect(
+      redirectedAway || hasAccessDenied,
+      `Expected EMPLOYEE to be denied from /employees; current URL=${page.url()}`
+    ).toBe(true);
   });
 
   test('Employee cannot view another employee private profile data @rbac @critical', async ({page}) => {
@@ -138,7 +147,10 @@ test.describe('RBAC — Employee Cannot Access Other Employees Data @rbac', () =
     const hasAccessDenied = await page.locator('text=/access denied|unauthorized|permission|forbidden/i').first().isVisible({timeout: 5000}).catch(() => false);
     const redirectedAway = !page.url().includes('/employees/profile');
 
-    expect(hasAccessDenied || redirectedAway || true).toBe(true);
+    expect(
+      hasAccessDenied || redirectedAway,
+      `Expected EMPLOYEE to be denied from another employee profile; current URL=${page.url()}`
+    ).toBe(true);
   });
 
   test('Recruitment admin pages not accessible to employee @rbac @critical', async ({page}) => {
