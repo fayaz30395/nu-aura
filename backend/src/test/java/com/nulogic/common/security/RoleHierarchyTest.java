@@ -125,6 +125,132 @@ class RoleHierarchyTest {
     }
 
     @Nested
+    @DisplayName("TENANT_ADMIN permissions")
+    class TenantAdminPermissionsTests {
+
+        @Test
+        @DisplayName("TENANT_ADMIN contains all HR_ADMIN permissions (strict superset)")
+        void shouldContainAllHrAdminPermissions() {
+            Set<String> tenantAdmin = RoleHierarchy.getDefaultPermissions(RoleHierarchy.TENANT_ADMIN);
+            Set<String> hrAdmin = RoleHierarchy.getDefaultPermissions(RoleHierarchy.HR_ADMIN);
+
+            assertThat(tenantAdmin).containsAll(hrAdmin);
+        }
+
+        @Test
+        @DisplayName("TENANT_ADMIN has exclusive permissions not granted to HR_ADMIN")
+        void shouldHaveExclusivePermissionsOverHrAdmin() {
+            Set<String> tenantAdmin = RoleHierarchy.getDefaultPermissions(RoleHierarchy.TENANT_ADMIN);
+            Set<String> hrAdmin = RoleHierarchy.getDefaultPermissions(RoleHierarchy.HR_ADMIN);
+
+            assertThat(tenantAdmin).contains(
+                    Permission.EMPLOYEE_DELETE,
+                    Permission.PAYROLL_APPROVE
+            );
+            assertThat(hrAdmin).doesNotContain(
+                    Permission.EMPLOYEE_DELETE,
+                    Permission.PAYROLL_APPROVE
+            );
+        }
+
+        @Test
+        @DisplayName("TENANT_ADMIN has full Nu-Grow permissions")
+        void shouldHaveNuGrowPermissions() {
+            Set<String> permissions = RoleHierarchy.getDefaultPermissions(RoleHierarchy.TENANT_ADMIN);
+
+            assertThat(permissions).contains(
+                    Permission.WELLNESS_VIEW, Permission.WELLNESS_CREATE, Permission.WELLNESS_MANAGE,
+                    Permission.MEETING_VIEW, Permission.MEETING_CREATE, Permission.MEETING_MANAGE,
+                    Permission.SURVEY_VIEW, Permission.SURVEY_CREATE, Permission.SURVEY_MANAGE,
+                    Permission.GOAL_VIEW, Permission.GOAL_CREATE, Permission.GOAL_APPROVE,
+                    Permission.OKR_VIEW, Permission.OKR_CREATE, Permission.OKR_APPROVE, Permission.OKR_VIEW_ALL,
+                    Permission.FEEDBACK_360_VIEW, Permission.FEEDBACK_360_CREATE, Permission.FEEDBACK_360_MANAGE,
+                    Permission.REVIEW_CREATE, Permission.REVIEW_UPDATE, Permission.REVIEW_SUBMIT
+            );
+        }
+
+        @Test
+        @DisplayName("TENANT_ADMIN has full Nu-Fluence permissions")
+        void shouldHaveNuFluencePermissions() {
+            Set<String> permissions = RoleHierarchy.getDefaultPermissions(RoleHierarchy.TENANT_ADMIN);
+
+            assertThat(permissions).contains(
+                    Permission.ESIGNATURE_VIEW, Permission.ESIGNATURE_REQUEST,
+                    Permission.ESIGNATURE_SIGN, Permission.ESIGNATURE_MANAGE,
+                    Permission.KNOWLEDGE_WIKI_CREATE, Permission.KNOWLEDGE_WIKI_READ,
+                    Permission.KNOWLEDGE_WIKI_UPDATE, Permission.KNOWLEDGE_WIKI_PUBLISH,
+                    Permission.KNOWLEDGE_BLOG_CREATE, Permission.KNOWLEDGE_BLOG_READ,
+                    Permission.KNOWLEDGE_BLOG_PUBLISH,
+                    Permission.KNOWLEDGE_TEMPLATE_CREATE, Permission.KNOWLEDGE_TEMPLATE_READ,
+                    Permission.KNOWLEDGE_SEARCH, Permission.KNOWLEDGE_SETTINGS_MANAGE
+            );
+        }
+
+        @Test
+        @DisplayName("TENANT_ADMIN has Nu-Hire module permissions")
+        void shouldHaveNuHirePermissions() {
+            Set<String> permissions = RoleHierarchy.getDefaultPermissions(RoleHierarchy.TENANT_ADMIN);
+
+            assertThat(permissions).contains(
+                    Permission.PREBOARDING_VIEW, Permission.PREBOARDING_CREATE, Permission.PREBOARDING_MANAGE,
+                    Permission.AGENCY_VIEW, Permission.AGENCY_CREATE, Permission.AGENCY_MANAGE,
+                    Permission.SCORECARD_VIEW, Permission.SCORECARD_CREATE, Permission.SCORECARD_TEMPLATE_MANAGE
+            );
+        }
+
+        @Test
+        @DisplayName("TENANT_ADMIN has contract, employment-change, loan, calendar permissions")
+        void shouldHaveOperationalAdminPermissions() {
+            Set<String> permissions = RoleHierarchy.getDefaultPermissions(RoleHierarchy.TENANT_ADMIN);
+
+            assertThat(permissions).contains(
+                    Permission.CONTRACT_VIEW, Permission.CONTRACT_CREATE, Permission.CONTRACT_APPROVE,
+                    Permission.EMPLOYMENT_CHANGE_VIEW, Permission.EMPLOYMENT_CHANGE_VIEW_ALL,
+                    Permission.EMPLOYMENT_CHANGE_CREATE, Permission.EMPLOYMENT_CHANGE_APPROVE,
+                    Permission.LOAN_VIEW_ALL, Permission.LOAN_APPROVE, Permission.LOAN_MANAGE,
+                    Permission.CALENDAR_VIEW, Permission.CALENDAR_CREATE, Permission.CALENDAR_MANAGE,
+                    Permission.CALENDAR_SYNC
+            );
+        }
+
+        @Test
+        @DisplayName("TENANT_ADMIN has workforce-planning permissions")
+        void shouldHaveWorkforcePlanningPermissions() {
+            Set<String> permissions = RoleHierarchy.getDefaultPermissions(RoleHierarchy.TENANT_ADMIN);
+
+            assertThat(permissions).contains(
+                    Permission.COMPENSATION_VIEW, Permission.COMPENSATION_VIEW_ALL, Permission.COMPENSATION_MANAGE,
+                    Permission.BUDGET_VIEW, Permission.BUDGET_MANAGE, Permission.BUDGET_APPROVE,
+                    Permission.HEADCOUNT_VIEW, Permission.HEADCOUNT_MANAGE,
+                    Permission.PROBATION_VIEW, Permission.PROBATION_VIEW_ALL, Permission.PROBATION_MANAGE,
+                    Permission.SUCCESSION_VIEW, Permission.SUCCESSION_MANAGE,
+                    Permission.TALENT_POOL_VIEW, Permission.TALENT_POOL_MANAGE
+            );
+        }
+
+        @Test
+        @DisplayName("TENANT_ADMIN has payment permissions")
+        void shouldHavePaymentPermissions() {
+            Set<String> permissions = RoleHierarchy.getDefaultPermissions(RoleHierarchy.TENANT_ADMIN);
+
+            assertThat(permissions).contains(
+                    Permission.PAYMENT_VIEW, Permission.PAYMENT_INITIATE,
+                    Permission.PAYMENT_REFUND, Permission.PAYMENT_CONFIG_MANAGE
+            );
+        }
+
+        @Test
+        @DisplayName("TENANT_ADMIN has a large permission set (>100 permissions)")
+        void shouldHaveComprehensivePermissionCount() {
+            Set<String> permissions = RoleHierarchy.getDefaultPermissions(RoleHierarchy.TENANT_ADMIN);
+
+            assertThat(permissions.size())
+                    .as("TENANT_ADMIN should have >100 permissions (currently has %d)", permissions.size())
+                    .isGreaterThan(100);
+        }
+    }
+
+    @Nested
     @DisplayName("All roles have at least one permission")
     class AllRolesHavePermissionsTests {
 

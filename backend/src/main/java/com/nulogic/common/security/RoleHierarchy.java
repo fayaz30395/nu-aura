@@ -120,52 +120,147 @@ public final class RoleHierarchy {
     }
 
     private static Set<String> getTenantAdminPermissions() {
-        return new HashSet<>(Arrays.asList(
-                Permission.EMPLOYEE_VIEW_ALL,
-                Permission.EMPLOYEE_CREATE,
-                Permission.EMPLOYEE_UPDATE,
+        // TENANT_ADMIN is a superset of HR_ADMIN: gets all HR operational permissions
+        // plus exclusive permissions (EMPLOYEE_DELETE, PAYROLL_APPROVE) and full
+        // access to Nu-Grow and Nu-Fluence modules which HR_ADMIN does not cover.
+        Set<String> perms = new HashSet<>(getHRAdminPermissions());
+        perms.addAll(Arrays.asList(
+                // Tenant Admin exclusive — not granted to HR_ADMIN
                 Permission.EMPLOYEE_DELETE,
-                Permission.ROLE_MANAGE,
-                Permission.USER_MANAGE,
-                Permission.PAYROLL_VIEW_ALL,
-                Permission.PAYROLL_PROCESS,
                 Permission.PAYROLL_APPROVE,
-                Permission.TIME_TRACKING_VIEW,
-                Permission.TIME_TRACKING_CREATE,
-                Permission.TIME_TRACKING_UPDATE,
-                Permission.TIME_TRACKING_APPROVE,
-                Permission.TIME_TRACKING_VIEW_ALL,
-                Permission.TIME_TRACKING_MANAGE,
-                Permission.REPORT_VIEW,
-                Permission.REPORT_CREATE,
-                Permission.ANALYTICS_VIEW,
-                Permission.ANALYTICS_EXPORT,
-                Permission.SETTINGS_VIEW,
-                Permission.SETTINGS_UPDATE,
-                Permission.AUDIT_VIEW,
-                Permission.STATUTORY_MANAGE,
-                Permission.CUSTOM_FIELD_MANAGE,
-                Permission.WORKFLOW_MANAGE,
-                Permission.LEAVE_TYPE_MANAGE,
-                Permission.DEPARTMENT_MANAGE,
-                // PIP, Calibration, Offboarding, Career - Tenant Admin has full access
-                Permission.PIP_VIEW,
-                Permission.PIP_CREATE,
-                Permission.PIP_MANAGE,
-                Permission.PIP_CLOSE,
-                Permission.CALIBRATION_VIEW,
-                Permission.CALIBRATION_MANAGE,
-                Permission.OFFBOARDING_VIEW,
-                Permission.OFFBOARDING_MANAGE,
-                Permission.OFFBOARDING_FNF_CALCULATE,
-                Permission.CAREER_VIEW,
-                Permission.CAREER_MANAGE,
-                FieldPermission.EMPLOYEE_SALARY_VIEW,
-                FieldPermission.EMPLOYEE_SALARY_EDIT,
-                FieldPermission.EMPLOYEE_BANK_VIEW,
-                FieldPermission.EMPLOYEE_TAX_ID_VIEW,
-                FieldPermission.EMPLOYEE_ID_DOCS_VIEW
+                // Nu-Grow: Wellness
+                Permission.WELLNESS_VIEW,
+                Permission.WELLNESS_CREATE,
+                Permission.WELLNESS_MANAGE,
+                // Nu-Grow: 1-on-1 Meetings
+                Permission.MEETING_VIEW,
+                Permission.MEETING_CREATE,
+                Permission.MEETING_MANAGE,
+                // Nu-Grow: Surveys
+                Permission.SURVEY_VIEW,
+                Permission.SURVEY_CREATE,
+                Permission.SURVEY_UPDATE,
+                Permission.SURVEY_DELETE,
+                Permission.SURVEY_SUBMIT,
+                Permission.SURVEY_MANAGE,
+                // Nu-Grow: Goals
+                Permission.GOAL_CREATE,
+                Permission.GOAL_VIEW,
+                Permission.GOAL_UPDATE,
+                Permission.GOAL_DELETE,
+                Permission.GOAL_APPROVE,
+                // Nu-Grow: OKRs
+                Permission.OKR_VIEW,
+                Permission.OKR_CREATE,
+                Permission.OKR_UPDATE,
+                Permission.OKR_DELETE,
+                Permission.OKR_APPROVE,
+                Permission.OKR_VIEW_ALL,
+                // Nu-Grow: 360 Feedback
+                Permission.FEEDBACK_360_VIEW,
+                Permission.FEEDBACK_360_CREATE,
+                Permission.FEEDBACK_360_SUBMIT,
+                Permission.FEEDBACK_360_MANAGE,
+                // Nu-Grow: Performance Review lifecycle (HR_ADMIN only has VIEW/APPROVE)
+                Permission.REVIEW_CREATE,
+                Permission.REVIEW_UPDATE,
+                Permission.REVIEW_SUBMIT,
+                Permission.REVIEW_DELETE,
+                // Nu-Fluence: E-Signature
+                Permission.ESIGNATURE_VIEW,
+                Permission.ESIGNATURE_REQUEST,
+                Permission.ESIGNATURE_SIGN,
+                Permission.ESIGNATURE_MANAGE,
+                // Nu-Fluence: Knowledge Base — Wiki
+                Permission.KNOWLEDGE_WIKI_CREATE,
+                Permission.KNOWLEDGE_WIKI_READ,
+                Permission.KNOWLEDGE_WIKI_UPDATE,
+                Permission.KNOWLEDGE_WIKI_DELETE,
+                Permission.KNOWLEDGE_WIKI_PUBLISH,
+                Permission.KNOWLEDGE_WIKI_APPROVE,
+                // Nu-Fluence: Knowledge Base — Blog
+                Permission.KNOWLEDGE_BLOG_CREATE,
+                Permission.KNOWLEDGE_BLOG_READ,
+                Permission.KNOWLEDGE_BLOG_UPDATE,
+                Permission.KNOWLEDGE_BLOG_DELETE,
+                Permission.KNOWLEDGE_BLOG_PUBLISH,
+                // Nu-Fluence: Knowledge Base — Templates
+                Permission.KNOWLEDGE_TEMPLATE_CREATE,
+                Permission.KNOWLEDGE_TEMPLATE_READ,
+                Permission.KNOWLEDGE_TEMPLATE_UPDATE,
+                Permission.KNOWLEDGE_TEMPLATE_DELETE,
+                // Nu-Fluence: Knowledge Base — Search & Settings
+                Permission.KNOWLEDGE_SEARCH,
+                Permission.KNOWLEDGE_SETTINGS_MANAGE,
+                // Nu-Hire: Pre-Boarding
+                Permission.PREBOARDING_VIEW,
+                Permission.PREBOARDING_CREATE,
+                Permission.PREBOARDING_MANAGE,
+                // Nu-Hire: Recruitment Agencies
+                Permission.AGENCY_VIEW,
+                Permission.AGENCY_CREATE,
+                Permission.AGENCY_UPDATE,
+                Permission.AGENCY_DELETE,
+                Permission.AGENCY_MANAGE,
+                // Nu-Hire: Interview Scorecards
+                Permission.SCORECARD_VIEW,
+                Permission.SCORECARD_CREATE,
+                Permission.SCORECARD_DELETE,
+                Permission.SCORECARD_TEMPLATE_MANAGE,
+                // Employment Contracts
+                Permission.CONTRACT_VIEW,
+                Permission.CONTRACT_CREATE,
+                Permission.CONTRACT_UPDATE,
+                Permission.CONTRACT_DELETE,
+                Permission.CONTRACT_APPROVE,
+                Permission.CONTRACT_SIGN,
+                Permission.CONTRACT_TEMPLATE_MANAGE,
+                // Employment Changes (promotions, salary revisions)
+                Permission.EMPLOYMENT_CHANGE_VIEW,
+                Permission.EMPLOYMENT_CHANGE_VIEW_ALL,
+                Permission.EMPLOYMENT_CHANGE_CREATE,
+                Permission.EMPLOYMENT_CHANGE_APPROVE,
+                Permission.EMPLOYMENT_CHANGE_CANCEL,
+                // Loans & Advances
+                Permission.LOAN_VIEW_ALL,
+                Permission.LOAN_APPROVE,
+                Permission.LOAN_MANAGE,
+                Permission.LOAN_UPDATE,
+                // Calendar
+                Permission.CALENDAR_VIEW,
+                Permission.CALENDAR_CREATE,
+                Permission.CALENDAR_UPDATE,
+                Permission.CALENDAR_DELETE,
+                Permission.CALENDAR_MANAGE,
+                Permission.CALENDAR_SYNC,
+                // Compensation Management
+                Permission.COMPENSATION_VIEW,
+                Permission.COMPENSATION_VIEW_ALL,
+                Permission.COMPENSATION_MANAGE,
+                Permission.COMPENSATION_APPROVE,
+                // Budget Planning
+                Permission.BUDGET_VIEW,
+                Permission.BUDGET_MANAGE,
+                Permission.BUDGET_APPROVE,
+                // Headcount
+                Permission.HEADCOUNT_VIEW,
+                Permission.HEADCOUNT_MANAGE,
+                // Probation
+                Permission.PROBATION_VIEW,
+                Permission.PROBATION_VIEW_ALL,
+                Permission.PROBATION_MANAGE,
+                // Succession & Talent Pool
+                Permission.SUCCESSION_VIEW,
+                Permission.SUCCESSION_MANAGE,
+                Permission.TALENT_POOL_VIEW,
+                Permission.TALENT_POOL_MANAGE,
+                // Payments (gated by feature flag at service layer)
+                Permission.PAYMENT_VIEW,
+                Permission.PAYMENT_INITIATE,
+                Permission.PAYMENT_REFUND,
+                Permission.PAYMENT_CONFIG_MANAGE
         ));
+        return perms;
     }
 
     private static Set<String> getHRAdminPermissions() {
