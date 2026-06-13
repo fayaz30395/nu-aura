@@ -4,6 +4,7 @@ import com.nulogic.api.auth.dto.AuthResponse;
 import com.nulogic.api.platform.dto.TenantRegistrationRequest;
 import com.nulogic.common.exception.ValidationException;
 import com.nulogic.common.security.JwtTokenProvider;
+import com.nulogic.common.security.RoleHierarchy;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.domain.tenant.Tenant;
 import com.nulogic.domain.user.Role;
@@ -89,14 +90,16 @@ public class TenantProvisioningService {
         adminUser = userRepository.save(adminUser);
         log.info("Created admin user {} for tenant {}", adminUser.getEmail(), tenantId);
 
-        // ── 4. Create default ADMIN role for this tenant ─────────────────────
-        Role adminRole = roleRepository.findByCodeAndTenantId("ADMIN", tenantId)
+        // ── 4. Create default TENANT_ADMIN role for this tenant ──────────────
+        // Try TENANT_ADMIN first; fall back to legacy ADMIN code for existing tenants.
+        Role adminRole = roleRepository.findByCodeAndTenantId(RoleHierarchy.TENANT_ADMIN, tenantId)
+                .or(() -> roleRepository.findByCodeAndTenantId("ADMIN", tenantId))
                 .orElseGet(() -> {
                     Role r = new Role();
                     r.setTenantId(tenantId);
-                    r.setCode("ADMIN");
-                    r.setName("Administrator");
-                    r.setDescription("Full access to all HRMS features");
+                    r.setCode(RoleHierarchy.TENANT_ADMIN);
+                    r.setName("Tenant Administrator");
+                    r.setDescription("Full intra-tenant administration — manages all HRMS modules");
                     r.setIsSystemRole(true);
                     return roleRepository.save(r);
                 });

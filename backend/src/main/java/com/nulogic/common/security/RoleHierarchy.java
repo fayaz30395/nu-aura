@@ -69,7 +69,7 @@ public final class RoleHierarchy {
         return switch (roleName) {
             // Core Roles
             case SUPER_ADMIN -> getSuperAdminPermissions();
-            case TENANT_ADMIN -> getTenantAdminPermissions();
+            case TENANT_ADMIN, "ADMIN" -> getTenantAdminPermissions();
             case HR_ADMIN -> getHRAdminPermissions();
             case HR_MANAGER -> getHRManagerPermissions();
             case HR_EXECUTIVE -> getHRExecutivePermissions();
