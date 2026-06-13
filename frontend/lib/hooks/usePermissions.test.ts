@@ -380,10 +380,12 @@ describe('usePermissions', () => {
       });
     });
 
-    it('should be identified as admin', () => {
+    it('should not be identified as global admin', () => {
       const {result} = renderHook(() => usePermissions());
 
-      expect(result.current.isAdmin).toBe(true);
+      expect(result.current.isAdmin).toBe(false);
+      expect(result.current.hasPermission(Permissions.PAYROLL_PROCESS)).toBe(false);
+      expect(result.current.hasRole(Roles.SUPER_ADMIN)).toBe(false);
     });
 
     it('should be identified as HR', () => {

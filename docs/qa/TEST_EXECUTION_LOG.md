@@ -36,3 +36,20 @@ cd backend && mvn -q -DskipTests compile
 | `cd frontend && npx playwright test --config=playwright.production.config.ts --project=production-chromium` | WARN | Browser executable missing; `npx playwright install chromium` is blocked by CDN 403 in this environment. |
 | `cd backend && mvn -q -DskipTests compile` | WARN | Maven dependency resolution blocked by repository 403 for Spring Boot parent POM. |
 | `vercel --version || true; railway --version || true; env | rg "VERCEL|RAILWAY" || true` | WARN | Vercel/Railway CLIs are not installed and no deployment auth env was present. |
+
+
+## Redo validation pass
+
+| Command | Result | Notes |
+|---|---:|---|
+| `cd frontend && API_DOCS_URL=./openapi-snapshot.json npm run api:generate` | PASS | Local OpenAPI client regenerated from snapshot before typecheck/build. |
+| `cd frontend && PLAYWRIGHT_BASE_URL=https://hrms-frontend-vert.vercel.app npx playwright test --config playwright.production.config.ts --list` | PASS | Production config loads only with explicit target URL and lists smoke specs without starting a dev server. |
+| `cd frontend && npm run test:run -- lib/hooks/__tests__/usePermissions.test.ts lib/hooks/usePermissions.test.ts` | PASS | 2 files / 87 TenantAdmin and permission-hook tests passed. |
+| `cd frontend && timeout 300 npx tsc --noEmit` | PASS | Strict frontend typecheck passed after removing build-error bypass. |
+| `cd frontend && npm run lint` | PASS | ESLint completed with no errors. |
+| `cd frontend && NEXT_PUBLIC_API_URL=https://hrms-backend-production.up.railway.app/api/v1 npm run build` | PASS | Production build completed with TypeScript checking enabled. |
+| `cd frontend && PLAYWRIGHT_BASE_URL=https://hrms-frontend-vert.vercel.app npx playwright test --config=playwright.production.config.ts --project=production-chromium` | WARN | Browser runtime still blocked because Chromium is not installed and browser download is blocked by CDN/network policy. |
+| `curl -I -L --max-time 15 https://hrms-frontend-vert.vercel.app` | WARN | CONNECT tunnel 403 from this environment. |
+| `curl -i --max-time 20 https://nu-aura-backend.onrender.com/actuator/health/readiness` | WARN | CONNECT tunnel 403 from this environment. |
+| `docker --version` | WARN | Docker CLI is unavailable in this environment. |
+| `vercel --version; railway --version` | WARN | Deployment CLIs/auth context are unavailable, so deploy verification remains blocked. |

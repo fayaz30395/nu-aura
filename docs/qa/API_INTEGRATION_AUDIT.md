@@ -9,6 +9,7 @@ Date: 2026-06-13
 - Release env validation correctly blocks production builds when `NEXT_PUBLIC_API_URL` is missing or unsafe.
 - Next.js rewrites can proxy `/api/v1/*` only when `BACKEND_ORIGIN` is set.
 - Deployed smoke evidence from the repo (`frontend/e2e/remote-deployed-route-smoke.json`) shows prior API 404/error symptoms for deployed environment and should be re-run after this change.
+- Production smoke now requires explicit `PLAYWRIGHT_BASE_URL` plus production-only smoke credentials and refuses the demo password sentinel.
 
 ## Required live checks
 

@@ -251,6 +251,9 @@ test.describe('Tenant Isolation — Session Boundaries @rbac', () => {
     const isOnLogin = page.url().includes('/auth/login');
     const hasAuthError = await page.locator('text=/session expired|please log in|unauthorized/i').first().isVisible({timeout: 5000}).catch(() => false);
 
-    expect(isOnLogin || hasAuthError || true).toBe(true);
+    expect(
+      isOnLogin || hasAuthError,
+      `Expected invalid token to force login or auth error; current URL=${page.url()}`
+    ).toBe(true);
   });
 });

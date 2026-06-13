@@ -584,7 +584,7 @@ interface UsePermissionsReturn {
   hasAnyRole: (...roles: string[]) => boolean;
   /** Check if user has ALL of the specified roles (AND logic) */
   hasAllRoles: (...roles: string[]) => boolean;
-  /** Check if user is a system admin (SUPER_ADMIN or TENANT_ADMIN) */
+  /** Check if user has global admin bypass (SUPER_ADMIN role or SYSTEM:ADMIN permission) */
   isAdmin: boolean;
   /** Check if user has HR privileges */
   isHR: boolean;
@@ -668,19 +668,19 @@ export function usePermissions(): UsePermissionsReturn {
     [permissions]
   );
 
-  // Check if user has admin role (SUPER_ADMIN or TENANT_ADMIN) — bypasses all permission checks
+  // Global frontend bypass must mirror backend SecurityContext.isSuperAdmin():
+  // SUPER_ADMIN role or SYSTEM:ADMIN permission. TENANT_ADMIN is intentionally
+  // scoped/additive and must rely on its explicit permissions.
   const isAdmin = useMemo(
-    () => roles.includes(Roles.SUPER_ADMIN) || roles.includes(Roles.TENANT_ADMIN),
-    [roles]
+    () => roles.includes(Roles.SUPER_ADMIN) || isSystemAdmin,
+    [roles, isSystemAdmin]
   );
 
   // Permission check functions
   const hasPermission = useCallback(
     (permission: string): boolean => {
-      // SUPER_ADMIN / TENANT_ADMIN bypasses all permission checks (mirrors backend SecurityConfig filter chain)
+      // SUPER_ADMIN / SYSTEM:ADMIN bypasses all permission checks.
       if (isAdmin) return true;
-      // SYSTEM_ADMIN permission also bypasses all checks (mirrors backend SecurityContext.hasPermission)
-      if (isSystemAdmin) return true;
       if (permissions.includes(permission)) return true;
       // Check permission hierarchy: MODULE:MANAGE implies all actions in that module
       const parts = permission.split(':');
@@ -690,26 +690,26 @@ export function usePermissions(): UsePermissionsReturn {
       }
       return false;
     },
-    [permissions, isSystemAdmin, isAdmin]
+    [permissions, isAdmin]
   );
 
   const hasAnyPermission = useCallback(
     (...perms: string[]): boolean => {
-      if (isAdmin || isSystemAdmin) return true;
+      if (isAdmin) return true;
       return perms.some((p) => hasPermission(p));
     },
-    [hasPermission, isSystemAdmin, isAdmin]
+    [hasPermission, isAdmin]
   );
 
   const hasAllPermissions = useCallback(
     (...perms: string[]): boolean => {
-      if (isAdmin || isSystemAdmin) return true;
+      if (isAdmin) return true;
       return perms.every((p) => hasPermission(p));
     },
-    [hasPermission, isSystemAdmin, isAdmin]
+    [hasPermission, isAdmin]
   );
 
-  // Role check functions — SuperAdmin/TenantAdmin bypass all role gates (mirrors permission bypass)
+  // Role check functions — global admins bypass role gates; tenant admins do not.
   const hasRole = useCallback(
     (role: string): boolean => {
       if (isAdmin) return true;

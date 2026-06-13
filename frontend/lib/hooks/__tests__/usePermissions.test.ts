@@ -121,13 +121,14 @@ describe('usePermissions', () => {
       expect(result.current.hasPermission('ANYTHING:HERE')).toBe(true);
     });
 
-    it('TENANT_ADMIN bypasses all permission checks', () => {
+    it('TENANT_ADMIN does not bypass arbitrary permission checks', () => {
       mockAuthWith([
         {code: 'TENANT_ADMIN', permissions: []},
       ]);
       const {result} = renderHook(() => usePermissions());
-      expect(result.current.isAdmin).toBe(true);
-      expect(result.current.hasPermission('EMPLOYEE:DELETE')).toBe(true);
+      expect(result.current.isAdmin).toBe(false);
+      expect(result.current.hasPermission('EMPLOYEE:DELETE')).toBe(false);
+      expect(result.current.hasRole('SUPER_ADMIN')).toBe(false);
     });
 
     it('SYSTEM_ADMIN permission bypasses all checks', () => {
@@ -242,10 +243,12 @@ describe('usePermissions', () => {
       expect(result.current.isAdmin).toBe(true);
     });
 
-    it('isAdmin is true for TENANT_ADMIN', () => {
+    it('isAdmin is false for TENANT_ADMIN without SYSTEM:ADMIN', () => {
       mockAuthWith([{code: 'TENANT_ADMIN', permissions: []}]);
       const {result} = renderHook(() => usePermissions());
-      expect(result.current.isAdmin).toBe(true);
+      expect(result.current.isAdmin).toBe(false);
+      expect(result.current.hasPermission('PAYROLL:PROCESS')).toBe(false);
+      expect(result.current.hasRole('SUPER_ADMIN')).toBe(false);
     });
 
     it('isAdmin is false for regular employee', () => {
