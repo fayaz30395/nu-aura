@@ -16,13 +16,11 @@
 @layer base {
   :root {
     /* ── Typography (Aura redesign) ────────────────────────────────
-       --font-sans / --font-display / --font-mono are the next/font
-       CSS variables set in app/layout.tsx (Open Sans / Montserrat /
-       Roboto Mono). They are declared here with a stack fallback so
-       the cascade resolves even before next/font hydrates. */
-    --font-sans: var(--font-sans), "Open Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
-    --font-display: var(--font-display), "Montserrat", "Open Sans", system-ui, sans-serif;
-    --font-mono: var(--font-mono), "Roboto Mono", "SF Mono", Monaco, Consolas, monospace;
+       Offline-safe stacks: keep the Aura type hierarchy without making
+       production builds depend on runtime Google Fonts downloads. */
+    --font-sans: "Open Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-display: "Montserrat", "Open Sans", system-ui, sans-serif;
+    --font-mono: "Roboto Mono", "SF Mono", Monaco, Consolas, monospace;
     --font-body: var(--font-sans);
     --font-head: var(--font-display);
 

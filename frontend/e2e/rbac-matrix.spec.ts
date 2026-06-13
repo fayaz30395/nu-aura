@@ -168,6 +168,29 @@ test.describe('RBAC-02: Admin Routes @rbac @critical', () => {
     ).toBe(false);
   });
 
+  const scopedAdminDeniedRoutes = [
+    '/admin/audit',
+    '/admin/system',
+    '/admin/feature-flags',
+    '/admin/roles',
+    '/admin/permissions',
+    '/admin/implicit-roles',
+    '/admin/import-keka',
+  ];
+
+  for (const route of scopedAdminDeniedRoutes) {
+    test(`HR_MANAGER is denied from sensitive admin route ${route} @rbac @critical`, async ({page}) => {
+      await loginAs(page, demoUsers.hrManager.email);
+      await goAndWait(page, route);
+
+      const blocked = await isBlocked(page, route);
+      expect(
+        blocked,
+        `HR_MANAGER must be denied from sensitive admin route ${route}; current URL=${page.url()}`,
+      ).toBe(true);
+    });
+  }
+
   test('EMPLOYEE (ESS) is blocked or redirected from /admin @rbac @critical', async ({page}) => {
     await loginAs(page, demoUsers.employeeSaran.email);
     await goAndWait(page, '/admin');
