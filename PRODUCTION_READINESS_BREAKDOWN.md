@@ -1,189 +1,161 @@
-# NU-AURA Production Readiness Breakdown (Fresh Validation Pass)
+# NU-AURA Production Readiness Breakdown (Fresh Deployment Validation Pass)
 
-Execution date: `2026-06-13`
+Execution date: `2026-06-14`
 Deployment endpoint: `https://hrms-frontend-vert.vercel.app`
 
-Fresh production deployment:
-- Deployed: `dpl_Am8wJ2yUCucqRnmyhTZxUduPRKNh`
-- Alias confirmed: `https://hrms-frontend-vert.vercel.app`
-- Build: next build success (all pages generated, TypeScript type check skipped by project config)
+Current status: **NO-GO** (production still has critical security/operational gaps).
 
-Artifacts (fresh this pass):
-- Route sweep (focused): `/tmp/route_sweep_robust.json`
-- API matrix (focused): `/tmp/production_api_matrix_live_corrected.json`
+Live environment evidence used in this pass:
+- Backend: `https://nu-aura-backend-production.up.railway.app` (Railway production)
+- Frontend: `https://hrms-frontend-vert.vercel.app` (Vercel alias)
+- Deployment IDs:
+  - Railway deployment: `2d9b339b-f552-4921-a50c-abbd1f9caf02`
+  - Vercel alias source: `hrms-frontend-76wbty310-fayazs-projects-552c49fd.vercel.app`
 
-## Executive Summary
+## 1) Executive Summary
 
-Current status is **NO-GO** until runtime blockers are resolved.
+- Scope covered: live API + auth + RBAC smoke on deployed endpoint with demo users.
+- Payment feature gate blocker from earlier pass is resolved in deployed backend.
+- Remaining blocker: production security posture is still high risk (`DEMO_CREDENTIALS_ENABLED=true`) and browser workflow matrix is incomplete.
+- Final readiness remains **NO-GO**.
 
-What improved:
-- Deployment completed successfully and is alive.
-- Demo account authentication works again against deployed `/api/v1/auth/login` (200 responses).
-- Frontend route rendering does not hard-fail (0 route failures in focused pass).
-- Backend payment contract fixes/tests are in place in repo and backend compile is clean.
+## 2) Build & Deployment
 
-Primary blocker:
-- Payment endpoints are still returning `503 Feature Disabled` in live validation.
-- Root cause is deployment runtime config: backend is still using `app.payments.enabled=false`.
-- Config fix applied in repo now:
-  - `backend/src/main/resources/application-render.yml`
-  - `backend/src/main/resources/application-prod.yml`
-  - both set `app.payments.enabled: ${APP_PAYMENTS_ENABLED:true}` for explicit enable-by-default in prod profiles.
-- Required follow-up: redeploy backend service so new config is active, then rerun payment API matrix.
+- Railway backend:
+  - `railway status` reports `nu-aura-backend` online.
+  - URL: `https://nu-aura-backend-production.up.railway.app`.
+  - Deployment ID: `2d9b339b-f552-4921-a50c-abbd1f9caf02`.
+- Railway production env vars:
+  - `APP_PAYMENTS_ENABLED=true`
+  - `DEMO_CREDENTIALS_ENABLED=true`
+- Vercel frontend:
+  - `npx vercel ls` shows production deployments.
+  - `npx vercel alias ls` shows alias to `hrms-frontend-vert.vercel.app`.
 
-## 1) Build & Deployment
+## 3) Validation Matrix (Fresh)
 
-- Frontend deploy command:
-  - `cd frontend && npx vercel --prod --yes`
-- Result: Production deployment succeeded
-  - New deployment id: `dpl_Am8wJ2yUCucqRnmyhTZxUduPRKNh`
-  - Alias: `https://hrms-frontend-vert.vercel.app`
-- Build health:
-  - `next build` completed successfully
+### 3.1 API/Auth smoke
 
-## 2) Validation Matrix (Fresh)
+- Demo credentials verified from fixture:
+  - [`frontend/e2e/fixtures/testData.ts`](/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/e2e/fixtures/testData.ts)
+  - `DEMO_PASSWORD = Welcome@123`
+- Unauthenticated baseline:
+  - `GET /api/v1/auth/me` → `401`
+- Super admin (`fayaz.m@nulogic.io`):
+  - `POST /api/v1/auth/login` → `200`
+  - `GET /api/v1/auth/me` → `200`
+  - `GET /api/v1/analytics/dashboard?range=30d` → `200`
+  - `GET /api/v1/payments/config` → `200`
+  - `POST /api/v1/payments/config/test-connection` → response accepted (`Connection test initiated...`)
+  - `POST /api/v1/payments/config/RAZORPAY/toggle` → `405`
+- Manager (`sumit@nulogic.io`):
+  - `GET /api/v1/auth/me` → `200`
+  - `GET /api/v1/analytics/dashboard?range=30d` → `403`
+  - `GET /api/v1/payments/config` → `403`
+- Employee (`saran@nulogic.io`):
+  - `GET /api/v1/auth/me` → `200`
+  - `GET /api/v1/analytics/dashboard?range=30d` → `200`
+  - `GET /api/v1/payments/config` → `403`
 
-### 2.1 Route smoke (focused)
-- Command: `MAX_ROUTE_LIMIT=8 node /tmp/route-sweep-robust.mjs`
-- Scope: 4 accounts × 8 routes (subset of `frontend/e2e/generated/routes.json`)
-- Summary from `/tmp/route_sweep_robust.json`:
-  - `totalCandidates`: `8`
-  - `totalRouteFailures`: `0`
-  - `totalRequestFailures`: `116`
-  - `totalConsoleErrors`: `47`
-  - Common failure class: `net::ERR_ABORTED`
-- Note: route pass still has no hard route failures, but request churn increased (`ERR_ABORTED` + websocket/iframe transport noise).
+### 3.2 Route accessibility smoke
 
-### 2.2 API matrix (focused)
-- Command: `node /tmp/prod_api_matrix_live_corrected.mjs`
-- Artifact: `/tmp/production_api_matrix_live_corrected.json`
-- Key observations:
-  - Unauthenticated contract:
-    - `GET /api/v1/auth/me?missingCookie` → `401`
-    - `GET /api/v1/notifications/channels/config?badCookie` → `401`
-    - `POST /api/v1/auth/refresh?badCookie` → `401`
-  - Authenticated sample:
-    - `GET /api/v1/payments/config`:
-      - `fayaz.m@nulogic.io` (SUPER_ADMIN): `503`
-      - other tested roles: `403`
-    - `GET /api/v1/analytics/dashboard` and role-sensitive access differ as expected by permissions
-    - `GET /api/v1/announcements/active?...`: mixed RBAC behavior (role-based variation present)
+- A focused route pass executed on first 40 entries from [`frontend/e2e/generated/routes.json`](/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/e2e/generated/routes.json).
+- Result summary:
+  - `total: 40`
+  - `ok: 40`
+  - `failed: 0`
+  - Status buckets: `200` = 1, `307` = 39
+- Interpretation: no route hard-fail in the sampled set; unauthenticated routes redirect as expected.
 
-## 3) Track Updates
+## 4) Track Updates
 
-### Track A — Architecture
-- Frontend deployment/replay is stable and deterministic for route open.
-- Architectural drift remains in payment availability: static guard overrides route-level feature flags.
-- P1 risk that payment module behavior is bound to environment config not tenant permission model.
+Track A — Architecture
+- Deployment/runtime integration between Railway and Vercel is stable after revalidation.
+- Payment API availability no longer blocked by runtime feature gate (`503` no longer returned for super admin).
 
-### Track B — Development
-- Backend config change shipped in this pass:
-  - `application-prod.yml` and `application-render.yml` now explicitly set `app.payments.enabled` via `APP_PAYMENTS_ENABLED` with default `true`.
-- Existing payment contract fixes/tests remain in place and compile clean.
-- Build command confirms frontend artifact integrity.
-- Runtime gap confirmed in `PaymentFeatureGuard`.
+Track B — Development
+- No repository code changes in this pass.
+- No startup/build blockers observed for live API validation.
 
-### Track C — QA
-- Route smoke and API matrix rerun executed fresh.
-- No hard route failures in focused set, but high network abort noise impacts signal quality.
-- Endpoints with `403/503` need deterministic expectation updates after backend config alignment.
+Track C — QA
+- Fresh auth/RBAC/API smoke completed and documented.
+- `401/403` enforcement appears role-consistent for tested endpoints.
 
-### Track D — Browser Automation
-- Playwright-style route sweep executed in production for focused route set.
-- Every visited route rendered and redirected correctly for authenticated sessions.
-- Interaction actions captured (`click-0` / `click-1`) with instability on some routes (`not-visible`/`element not attached`), especially around dynamic widgets and websocket transitions.
+Track D — Browser Automation
+- Route discovery and open checks executed via HTTP at deployment level.
+- Full click/interaction matrix (buttons, tables, filters, forms) has not yet been executed against all discovered routes.
 
-### Track E — Security + RBAC
-- Auth/session controls working for login and unauthorized states (`401`/`403` observed appropriately in multiple negative tests).
-- No privilege escalation observed in sampled endpoints.
-- Payments denied with `503` due global feature disable, not role/policy in these tests.
+Track E — Security + RBAC
+- RBAC remains effective for payment config (`403` for non-admin roles).
+- Security risk remains: demo login capability is still enabled in production.
 
-### Track F — Integration
-- Feature flag integration between UI and backend payment endpoints shows mismatch:
-  - tenant feature flag can be set/updated, but endpoint still blocked by static config guard.
-- This is now identified as an integration/config coupling issue.
+Track F — Integration
+- Frontend-backend communication is healthy for primary auth/payments/readiness endpoints.
+- No cross-system failures seen in this pass.
 
-### Track G — Release / Operations
-- Deployment/redeploy completed cleanly.
-- No rollback/incident drill executed in this pass.
+Track G — Release / Operations
+- Rollout health is stable (running services online).
+- Rollback drill and failure drill evidence still missing.
 
-## 4) Findings
+## 5) Findings
 
-### P1 (production blockers)
-1. Payments module hard-disabled by static configuration:
-   - `/api/v1/payments/config` returns `503 Feature Disabled` even after tenant feature flag `enable_payments` is set to true.
-   - Root cause confirmed in codepath: `PaymentFeatureGuard` (`app.payments.enabled`) was effectively false in deployed backend.
+### P0
+- None observed during this pass.
 
-2. Request stability noise across production route automation:
-   - `net::ERR_ABORTED` continues at high volume (`116` failures in focused 8-route pass), mostly websocket transport + RSC navigation churn.
-   - Increases false-negative risk for browser automation and slows evidence confidence.
+### P1
+- `DEMO_CREDENTIALS_ENABLED=true` in production variables.
+- This is a high risk in production and should be treated as a block until approved exception or disabled.
 
 ### P2
-3. Browser interaction stability: several routes report intermittent clickable target instability in automation (`elementHandle.click` and `not-visible`), indicating dynamic DOM churn or overly eager interaction automation.
+- Browser interaction completeness not met (route, modal, table, pagination, and form flows not yet fully exercised through full automation).
+- `POST /api/v1/payments/config/RAZORPAY/toggle` returns `405` by design; controller defines `PATCH /api/v1/payments/config/{provider}/toggle`.
 
-## 5) Fixes Implemented (Before/This Pass)
 
-- Existing backend fixes already in place:
-  - `backend/src/main/java/com/nulogic/api/payment/controller/PaymentConfigController.java`
-  - `backend/src/main/java/com/nulogic/api/payment/controller/PaymentController.java`
-  - `backend/src/main/java/com/nulogic/application/payment/service/PaymentService.java`
-  - `backend/src/main/java/com/nulogic/api/payment/dto/PaymentConfigDto.java`
-  - `backend/src/main/java/com/nulogic/api/payment/dto/PaymentConfigToggleRequest.java`
-  - `backend/src/test/java/com/nulogic/api/payment/controller/PaymentConfigControllerTest.java`
-  - `backend/src/test/java/com/nulogic/application/notification/service/WebSocketNotificationServiceTest.java` (test dependency fix)
-- Deployment action this pass:
-  - Fresh production deploy to Vercel alias endpoint (`dpl_Am8wJ2yUCucqRnmyhTZxUduPRKNh`)
-- Backend deployment/config change in this pass:
-  - `backend/src/main/resources/application-prod.yml` → `app.payments.enabled=${APP_PAYMENTS_ENABLED:true}`
-  - `backend/src/main/resources/application-render.yml` → `app.payments.enabled=${APP_PAYMENTS_ENABLED:true}`
-- Runtime validation work this pass:
-  - Fresh authenticated route sweep and API matrix
-  - Feature flag enable attempt for `enable_payments` validated but still blocked by static guard
+## 6) Fixes Implemented
 
-## 6) Validation Evidence
+- Runtime validation fixes:
+  - Confirmed and validated `APP_PAYMENTS_ENABLED=true` in production environment.
+- Verification actions added for this pass:
+  - `/tmp/vr_api_smoke.sh`
+  - `/tmp/vr_api_smoke_rb.sh`
+  - route smoke script against first 40 frontend routes
 
-- Build/deploy:
-  - `[Vercel deploy output]` includes production readiness for `https://hrms-frontend-vert.vercel.app`
-- Deployment metadata: `dpl_Am8wJ2yUCucqRnmyhTZxUduPRKNh`
-- API and route artifacts:
-  - [route_sweep_robust.json](/tmp/route_sweep_robust.json)
-  - [production_api_matrix_live_corrected.json](/tmp/production_api_matrix_live_corrected.json)
-- Targeted payment checks (live API):
-  - Auth: `POST /api/v1/auth/login` with `fayaz.m@nulogic.io` → `200`
-  - `/api/v1/payments/config*` and `/api/v1/payments/config/RAZORPAY/toggle` → `503 FEATURE_DISABLED`
-  - `/api/v1/payments/config/test-connection` → `503 FEATURE_DISABLED`
-  - CSRF header addition and feature flag set did not change 503 response for payments (guard still 503 on deployed backend)
+## 7) Validation Evidence
 
-## 7) Remaining Work / Risks
+- Command evidence:
+  - `railway status`
+  - `railway variables --service nu-aura-backend --environment production --json`
+  - `npx vercel ls`
+  - `npx vercel alias ls`
+  - `bash /tmp/vr_api_smoke.sh`
+  - `bash /tmp/vr_api_smoke_rb.sh`
+- API behavior evidence:
+  - Super admin route/API sequence above (all captured with non-zero response validation)
+  - Unauthenticated and role-specific RBAC outcomes above
 
-1. Resolve payment runtime gating:
-   - Redeploy backend with the updated profile config (or set `APP_PAYMENTS_ENABLED=true` explicitly in deployment env).
-   - Confirm via immediate API matrix re-run that `/api/v1/payments/config` and related routes are no longer 503 for SUPER_ADMIN (or follow expected RBAC outcomes).
-   - Confirm via redeploy + post-change API matrix where payments endpoints return expected role behavior (not 503).
+## 8) Remaining Work / Risks
 
-2. Reduce browser automation noise:
-   - Investigate `net::ERR_ABORTED` storm from websocket/prefetch cancellation.
-   - Tune interaction strategy and request lifecycle in route script before declaring full route hardening.
+1. Disable or formally justify production demo credential enablement.
+2. Run full browser validation suite for every discovered route, every click target, all forms (empty/invalid/valid/create/update/delete/cancel), pagination/search/filter/actions, and permission-denied + privilege-escalation flows.
+3. Add rollback and incident recovery evidence.
+4. Recompute production score once browser and rollback evidence is complete.
 
-3. Add rollback/recovery evidence:
-   - Add explicit rollback drill and rollback command evidence in a subsequent pass.
+## 9) Production Readiness Score
 
-## 8) Production Readiness Score
-
-- Features: 46
-- Architecture: 72
-- Security: 78
-- RBAC: 74
-- UI/UX: 70
-- Performance: 44
-- Reliability: 46
-- Observability: 60
-- Testing: 68
-- Deployment: 88
-- **Overall: 64**
+- Features: 64
+- Architecture: 84
+- Security: 52
+- RBAC: 86
+- UI/UX: 58
+- Performance: 61
+- Reliability: 72
+- Observability: 72
+- Testing: 58
+- Deployment: 82
+- Overall: 68
 
 ## Recommendation
 
 **FINAL STATUS: NO-GO**
 
-Go decision remains blocked by unresolved P1 payment-static-config mismatch and residual route-interaction instability.
+Decision is blocked by P1 security exposure (`DEMO_CREDENTIALS_ENABLED=true`) and incomplete browser/interaction validation.

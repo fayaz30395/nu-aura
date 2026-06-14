@@ -190,3 +190,4 @@ frontend/tmp/
 
 # Serena MCP local index/cache (machine-local, never commit)
 .serena/
+.vercel
