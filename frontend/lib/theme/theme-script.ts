@@ -10,6 +10,7 @@
  */
 
 const STORAGE_KEY = 'nu-aura-theme';
+const MANTINE_STORAGE_KEY = 'mantine-color-scheme';
 
 /**
  * Returns a minified inline script string to inject into <head>.
@@ -19,16 +20,22 @@ export function getThemeScript(): string {
   return `
 (function(){
   try {
-    var s = localStorage.getItem('${STORAGE_KEY}');
+    var mode = localStorage.getItem('${STORAGE_KEY}');
     var d = document.documentElement;
     var isDark = false;
 
-    if (s === 'dark') {
+    if (mode === 'dark') {
       isDark = true;
-    } else if (s === 'system' || s === null) {
+    } else if (mode === 'light') {
+      isDark = false;
+    } else {
+      // system or missing value: follow OS preference
       isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     }
-    // s === 'light' → isDark stays false
+
+    d.style.colorScheme = isDark ? 'dark' : 'light';
+    d.setAttribute('data-mantine-color-scheme', isDark ? 'dark' : 'light');
+    localStorage.setItem('${MANTINE_STORAGE_KEY}', isDark ? 'dark' : 'light');
 
     if (isDark) {
       d.classList.add('dark');

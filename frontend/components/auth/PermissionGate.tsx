@@ -70,8 +70,9 @@ export function PageDeniedFallback({
     <div
       role="status"
       aria-live="polite"
-      className="p-6 text-sm text-[var(--text-muted)]"
+      className="mx-auto mt-8 flex max-w-xl flex-col gap-2 rounded-lg border border-[var(--status-warning-border)] bg-[var(--status-warning-bg)] px-6 py-5 text-sm text-[var(--status-warning-text)]"
     >
+      <span className="font-semibold">Access denied</span>
       {message}
     </div>
   );
@@ -108,7 +109,7 @@ export function PermissionGate({
       <div
         role="status"
         aria-live="polite"
-        className="p-6 text-sm text-[var(--text-muted)]"
+        className="loading-state rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-surface)] px-6 py-5"
       >
         Loading...
       </div>

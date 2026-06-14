@@ -136,7 +136,7 @@ function PageHeader() {
           Courses, quizzes, certificates, and programs — everything you need to grow on the job.
         </p>
       </div>
-      <Link href="/learning/catalog" className="self-start sm:self-end">
+      <Link href="/training/catalog" className="self-start sm:self-end">
         <Button variant="primary">
           <BookOpen className="mr-2 h-4 w-4" aria-hidden="true" />
           Browse catalog
@@ -222,8 +222,8 @@ function BentoNavigation({featuredEnrollment, featuredCourseTitle, certificatesC
     : 'Hand-picked courses, quizzes, and programs. Filter by skill, role, or duration.';
 
   const heroHref = featuredEnrollment
-    ? `/learning/course/${featuredEnrollment.courseId}`
-    : '/learning/catalog';
+    ? `/learning/courses/${featuredEnrollment.courseId}`
+    : '/training/catalog';
 
   const heroProgress = featuredEnrollment?.progressPercentage ?? 0;
 
@@ -232,19 +232,19 @@ function BentoNavigation({featuredEnrollment, featuredCourseTitle, certificatesC
       title: 'Course catalog',
       description: 'Every published course, filtered by difficulty and duration.',
       icon: BookOpen,
-      href: '/learning/catalog',
+      href: '/training/catalog',
     },
     {
       title: 'My courses',
       description: 'Track progress across active and completed enrollments.',
       icon: GraduationCap,
-      href: '/learning/my-courses',
+      href: '/training/my-learning',
     },
     {
       title: 'Programs',
       description: 'Structured learning paths that bundle courses by competency.',
       icon: Layers,
-      href: '/learning/programs',
+      href: '/learning/paths',
     },
     {
       title: 'Certificates',
@@ -401,7 +401,7 @@ function InProgressList({items}: {items: CourseEnrollment[]}) {
           In progress
         </h2>
         <Link
-          href="/learning/my-courses"
+          href="/training/my-learning"
           className="inline-flex items-center gap-1 text-sm font-medium text-accent-700 dark:text-accent-300 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded"
         >
           View all
@@ -428,7 +428,7 @@ function InProgressList({items}: {items: CourseEnrollment[]}) {
               <p className="font-mono text-sm font-semibold tabular-nums text-[var(--text-heading)]">
                 {pct}%
               </p>
-              <Link href={`/learning/course/${e.courseId}`}>
+              <Link href={`/learning/courses/${e.courseId}`}>
                 <Button variant="outline" size="sm">
                   {e.status === 'COMPLETED' ? 'Review' : 'Continue'}
                   <ArrowRight className="ml-1.5 h-3.5 w-3.5" aria-hidden="true" />
@@ -484,7 +484,7 @@ function AttentionStrip({count}: {count: number}) {
           {count === 1 ? 'course is' : 'courses are'} still in progress with low completion. Spend 15 minutes today to keep momentum.
         </p>
       </div>
-      <Link href="/learning/my-courses">
+      <Link href="/training/my-learning">
         <Button variant="outline" size="sm">
           Resume
           <ArrowRight className="ml-1.5 h-3.5 w-3.5" aria-hidden="true" />

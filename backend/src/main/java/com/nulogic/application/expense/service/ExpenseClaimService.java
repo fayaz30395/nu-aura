@@ -210,6 +210,12 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
         // Validate approver has access to this employee's expense claims
         validateEmployeeAccess(claim.getEmployeeId(), Permission.EXPENSE_APPROVE);
 
+        // BA-5b: the direct path supersedes the workflow engine. Cancel any live
+        // WorkflowExecution atomically (same transaction) so no orphaned PENDING
+        // workflow tasks fire callbacks after the claim is already approved.
+        workflowService.cancelActiveExecutionForEntity(
+                WorkflowDefinition.EntityType.EXPENSE_CLAIM, claimId, "Superseded by direct approval");
+
         claim.approve(approverUserId, tenantTimeService.now(claim.getTenantId()));
         ExpenseClaim saved = expenseClaimRepository.save(claim);
         log.info("Approved expense claim: {} by {}", saved.getClaimNumber(), approverUserId);

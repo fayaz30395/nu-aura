@@ -133,6 +133,8 @@ public class SlackNotificationService {
 
                 HttpRequest request = HttpRequest.newBuilder()
                         .uri(URI.create(webhookUrl))
+                        // INT-5: bound the response wait (no default request timeout).
+                        .timeout(Duration.ofSeconds(30))
                         .header("Content-Type", "application/json")
                         .POST(HttpRequest.BodyPublishers.ofString(jsonPayload))
                         .build();
@@ -176,6 +178,8 @@ public class SlackNotificationService {
 
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(SLACK_POST_MESSAGE_URL))
+                    // INT-5: bound the response wait (no default request timeout).
+                    .timeout(Duration.ofSeconds(30))
                     .header("Content-Type", "application/json; charset=utf-8")
                     .header("Authorization", "Bearer " + botToken)
                     .POST(HttpRequest.BodyPublishers.ofString(jsonPayload))
@@ -231,6 +235,8 @@ public class SlackNotificationService {
         try {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create("https://slack.com/api/users.lookupByEmail?email=" + email))
+                    // INT-5: bound the response wait (no default request timeout).
+                    .timeout(Duration.ofSeconds(30))
                     .header("Authorization", "Bearer " + botToken)
                     .GET()
                     .build();

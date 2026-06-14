@@ -3,11 +3,13 @@ package com.nulogic.application.loan.service;
 import com.nulogic.api.loan.dto.CreateLoanRequest;
 import com.nulogic.api.loan.dto.EmployeeLoanDto;
 import com.nulogic.api.workflow.dto.WorkflowExecutionRequest;
+import com.nulogic.application.audit.service.AuditLogService;
 import com.nulogic.application.workflow.callback.ApprovalCallbackHandler;
 import com.nulogic.application.workflow.service.WorkflowService;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
+import com.nulogic.domain.audit.AuditLog.AuditAction;
 import com.nulogic.domain.loan.EmployeeLoan;
 import com.nulogic.domain.loan.EmployeeLoan.LoanStatus;
 import com.nulogic.domain.workflow.WorkflowDefinition;
@@ -33,13 +35,16 @@ public class LoanService implements ApprovalCallbackHandler {
     private final EmployeeLoanRepository loanRepository;
     private final WorkflowService workflowService;
     private final TenantTimeService tenantTimeService;
+    private final AuditLogService auditLogService;
 
     public LoanService(EmployeeLoanRepository loanRepository,
                        @Lazy WorkflowService workflowService,
-                       TenantTimeService tenantTimeService) {
+                       TenantTimeService tenantTimeService,
+                       AuditLogService auditLogService) {
         this.loanRepository = loanRepository;
         this.workflowService = workflowService;
         this.tenantTimeService = tenantTimeService;
+        this.auditLogService = auditLogService;
     }
 
     @Transactional
@@ -72,6 +77,12 @@ public class LoanService implements ApprovalCallbackHandler {
         EmployeeLoan saved = loanRepository.save(loan);
         log.info("Loan application created: {}", saved.getLoanNumber());
 
+        try {
+            auditLogService.logAction("EMPLOYEE_LOAN", saved.getId(), AuditAction.CREATE, null, null, "Loan application created: " + saved.getLoanNumber() + ", principal: " + saved.getPrincipalAmount());
+        } catch (Exception e) {
+            log.warn("Audit log failed for loan create: {}", e.getMessage());
+        }
+
         // Start approval workflow (Manager -> Finance Head)
         startLoanApprovalWorkflow(saved, tenantId);
 
@@ -90,6 +101,12 @@ public class LoanService implements ApprovalCallbackHandler {
             throw new IllegalStateException("Cannot approve loan in status: " + loan.getStatus());
         }
 
+        // BA-5b: the direct path supersedes the workflow engine. Cancel any live
+        // WorkflowExecution atomically (same transaction) so no orphaned PENDING
+        // workflow tasks fire callbacks after the loan is already approved.
+        workflowService.cancelActiveExecutionForEntity(
+                WorkflowDefinition.EntityType.LOAN_REQUEST, loanId, "Superseded by direct approval");
+
         if (approvedAmount != null && approvedAmount.compareTo(java.math.BigDecimal.ZERO) > 0) {
             loan.setPrincipalAmount(approvedAmount);
             loan.calculateEmi();
@@ -101,6 +118,13 @@ public class LoanService implements ApprovalCallbackHandler {
 
         EmployeeLoan saved = loanRepository.save(loan);
         log.info("Loan approved: {} by {}", saved.getLoanNumber(), approverId);
+
+        try {
+            auditLogService.logAction("EMPLOYEE_LOAN", saved.getId(), AuditAction.APPROVE, null, null, "Loan approved: " + saved.getLoanNumber() + ", principal: " + saved.getPrincipalAmount());
+        } catch (Exception e) {
+            log.warn("Audit log failed for loan approve: {}", e.getMessage());
+        }
+
         return EmployeeLoanDto.fromEntity(saved);
     }
 
@@ -123,6 +147,13 @@ public class LoanService implements ApprovalCallbackHandler {
 
         EmployeeLoan saved = loanRepository.save(loan);
         log.info("Loan rejected: {} by {}", saved.getLoanNumber(), approverId);
+
+        try {
+            auditLogService.logAction("EMPLOYEE_LOAN", saved.getId(), AuditAction.REJECT, null, null, "Loan rejected: " + saved.getLoanNumber() + ", reason: " + reason);
+        } catch (Exception e) {
+            log.warn("Audit log failed for loan reject: {}", e.getMessage());
+        }
+
         return EmployeeLoanDto.fromEntity(saved);
     }
 
@@ -144,6 +175,13 @@ public class LoanService implements ApprovalCallbackHandler {
 
         EmployeeLoan saved = loanRepository.save(loan);
         log.info("Loan disbursed: {}", saved.getLoanNumber());
+
+        try {
+            auditLogService.logAction("EMPLOYEE_LOAN", saved.getId(), AuditAction.STATUS_CHANGE, null, null, "Loan disbursed: " + saved.getLoanNumber() + ", principal: " + saved.getPrincipalAmount());
+        } catch (Exception e) {
+            log.warn("Audit log failed for loan disburse: {}", e.getMessage());
+        }
+
         return EmployeeLoanDto.fromEntity(saved);
     }
 
@@ -189,6 +227,13 @@ public class LoanService implements ApprovalCallbackHandler {
         }
 
         EmployeeLoan saved = loanRepository.save(loan);
+
+        try {
+            auditLogService.logAction("EMPLOYEE_LOAN", saved.getId(), AuditAction.STATUS_CHANGE, null, null, "Loan repayment recorded: " + saved.getLoanNumber() + ", amount: " + amount + ", outstanding: " + saved.getOutstandingAmount());
+        } catch (Exception e) {
+            log.warn("Audit log failed for loan repayment: {}", e.getMessage());
+        }
+
         return EmployeeLoanDto.fromEntity(saved);
     }
 
@@ -209,6 +254,13 @@ public class LoanService implements ApprovalCallbackHandler {
 
         EmployeeLoan saved = loanRepository.save(loan);
         log.info("Loan cancelled: {}", saved.getLoanNumber());
+
+        try {
+            auditLogService.logAction("EMPLOYEE_LOAN", saved.getId(), AuditAction.STATUS_CHANGE, null, null, "Loan cancelled: " + saved.getLoanNumber());
+        } catch (Exception e) {
+            log.warn("Audit log failed for loan cancel: {}", e.getMessage());
+        }
+
         return EmployeeLoanDto.fromEntity(saved);
     }
 

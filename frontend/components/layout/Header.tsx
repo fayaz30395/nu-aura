@@ -81,7 +81,7 @@ const Header: React.FC<HeaderProps> = ({
   }, [isDropdownOpen, isNotificationsOpen]);
 
   const iconActionClass =
-    'group relative inline-flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl border border-transparent ' +
+    'group relative inline-flex items-center justify-center overflow-hidden rounded-xl border border-transparent aura-touch-target ' +
     'text-[var(--header-text-muted)] cursor-pointer transition-all duration-250 ease-[cubic-bezier(0.16,1,0.3,1)] ' +
     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 ' +
     'before:absolute before:inset-0 before:rounded-xl before:bg-[var(--header-hover-bg)] before:opacity-0 before:scale-95 ' +

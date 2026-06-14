@@ -109,7 +109,10 @@ function TopBarContent({
 
       {/* Breadcrumbs */}
       {breadcrumbs.length > 0 && (
-        <nav aria-label="Breadcrumb" className="flex items-center gap-[7px] whitespace-nowrap text-[13px]">
+        <nav
+          aria-label="Breadcrumb"
+          className="mr-2 flex min-w-0 flex-1 items-center gap-[7px] overflow-hidden whitespace-nowrap text-[13px]"
+        >
           {breadcrumbs.map((c, i) => {
             const isLast = i === breadcrumbs.length - 1;
             return (
@@ -122,7 +125,7 @@ function TopBarContent({
                 {c.href && !isLast ? (
                   <Link
                     href={c.href}
-                    className="font-medium text-[var(--text-3)] transition-colors hover:text-[var(--text-2)]"
+                    className="max-w-[18ch] truncate font-medium text-[var(--text-3)] transition-colors hover:text-[var(--text-2)]"
                   >
                     {c.label}
                   </Link>
@@ -130,7 +133,9 @@ function TopBarContent({
                   <span
                     aria-current={isLast ? 'page' : undefined}
                     className={cn(
-                      isLast ? 'font-semibold text-[var(--text-1)]' : 'font-medium text-[var(--text-3)]'
+                      isLast
+                        ? 'font-semibold text-[var(--text-1)]'
+                        : 'max-w-[18ch] truncate font-medium text-[var(--text-3)]'
                     )}
                   >
                     {c.label}

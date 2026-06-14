@@ -686,8 +686,16 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
             String leaveTypeName = leaveType != null ? leaveType.getLeaveName() : "Leave";
             String dates = formatDateRange(leaveRequest);
 
+            // NOTIF-1 FIX: notifications are keyed/queried by USER id (SecurityContext.getCurrentUserId),
+            // but a LeaveRequest carries an EMPLOYEE id. Resolve employee -> user so the persisted
+            // in-app notification (written by WebSocketNotificationService.sendToUser) lands under the
+            // recipient's user id and is actually visible in their inbox/bell.
+            UUID recipientUserId = resolveRecipientUserId(leaveRequest.getEmployeeId(), tenantId);
+            if (recipientUserId == null) {
+                return;
+            }
             webSocketNotificationService.notifyLeaveApproved(
-                    leaveRequest.getEmployeeId(), leaveTypeName, dates);
+                    recipientUserId, leaveTypeName, dates);
         } catch (RuntimeException e) {
             log.warn("Failed to send leave approval notification: {}", e.getMessage());
         }
@@ -699,11 +707,31 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
             LeaveType leaveType = leaveTypeRepository.findByIdAndTenantId(leaveRequest.getLeaveTypeId(), tenantId).orElse(null);
             String leaveTypeName = leaveType != null ? leaveType.getLeaveName() : "Leave";
 
+            // NOTIF-1 FIX: map employee -> user id so the persisted notification is visible (see above).
+            UUID recipientUserId = resolveRecipientUserId(leaveRequest.getEmployeeId(), tenantId);
+            if (recipientUserId == null) {
+                return;
+            }
             webSocketNotificationService.notifyLeaveRejected(
-                    leaveRequest.getEmployeeId(), leaveTypeName, reason != null ? reason : "No reason provided");
+                    recipientUserId, leaveTypeName, reason != null ? reason : "No reason provided");
         } catch (RuntimeException e) {
             log.warn("Failed to send leave rejection notification: {}", e.getMessage());
         }
+    }
+
+    /**
+     * Resolves the login {@code User} id for a given employee so notifications are addressed to the
+     * key the notification inbox queries by ({@code SecurityContext.getCurrentUserId()}). Returns
+     * {@code null} (and logs) if the employee or its linked user cannot be resolved, so the caller
+     * can skip delivery rather than persist an unreachable notification.
+     */
+    private UUID resolveRecipientUserId(UUID employeeId, UUID tenantId) {
+        Employee employee = employeeRepository.findByIdAndTenantId(employeeId, tenantId).orElse(null);
+        if (employee == null || employee.getUser() == null) {
+            log.warn("Cannot resolve recipient user for employee {} — skipping in-app notification", employeeId);
+            return null;
+        }
+        return employee.getUser().getId();
     }
 
     /**

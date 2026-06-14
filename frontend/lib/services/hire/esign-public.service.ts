@@ -22,10 +22,7 @@ export const esignPublicService = {
   async decline(token: string, signerEmail: string, reason?: string) {
     const res = await publicApiClient.post(
       `/esignature/external/${token}/decline`,
-      null,
-      {
-        params: {signerEmail, reason: reason || ''},
-      }
+      {signerEmail, reason: reason || ''},
     );
     return res.data;
   },

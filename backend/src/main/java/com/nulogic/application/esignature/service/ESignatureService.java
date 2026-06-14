@@ -618,7 +618,7 @@ public class ESignatureService {
      * Validates token and email before signing.
      */
     public SignatureApprovalResponse signDocumentExternal(String token, ExternalSignRequest request) {
-        log.info("External signing with token for email: {}", request.getSignerEmail());
+        log.debug("External signing with token");
 
         SignatureApproval approval = signatureApprovalRepository.findByAuthenticationToken(token)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid or expired signing link"));

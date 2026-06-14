@@ -78,6 +78,8 @@ export interface DataTableProps<T> {
   actions?: (row: T) => React.ReactNode;
   /** Extra class name on the wrapper. */
   className?: string;
+  /** Accessible table label. */
+  ariaLabel?: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -308,6 +310,7 @@ function DataTable<T>({
                         rowKey,
                         actions,
                         className,
+                        ariaLabel = 'Data table',
                       }: DataTableProps<T>) {
   // -----------------------------------------------------------------------
   // Column visibility with localStorage persistence
@@ -478,14 +481,19 @@ function DataTable<T>({
 
   if (isLoading) {
     return (
-      <div className={cn('space-y-2', className)}>
+      <section
+        className={cn('aura-data-table space-y-2', className)}
+        role="region"
+        aria-label={ariaLabel}
+        aria-live="polite"
+      >
         {/* Column toggle placeholder */}
         <div className="flex justify-end">
           <Skeleton width={120} height={40} className="rounded-lg"/>
         </div>
         {/* Table skeleton */}
-        <div className="overflow-hidden rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)]">
-          <table className="w-full">
+        <div className="table-shell">
+          <table className="table-aura w-full">
             <thead>
             <tr className="border-b border-[var(--border-main)] bg-[var(--bg-secondary)]">
               {visibleColumns.map((col) => (
@@ -508,7 +516,7 @@ function DataTable<T>({
             </tbody>
           </table>
         </div>
-      </div>
+      </section>
     );
   }
 
@@ -518,7 +526,12 @@ function DataTable<T>({
 
   if (data.length === 0 && !isLoading) {
     return (
-      <div className={cn('space-y-2', className)}>
+      <section
+        className={cn('aura-data-table space-y-2', className)}
+        role="region"
+        aria-label={ariaLabel}
+        aria-live="polite"
+      >
         <div className="flex justify-end">
           <ColumnVisibilityToggle
             columns={columns}
@@ -529,7 +542,7 @@ function DataTable<T>({
         <div className="rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)]">
           <EmptyState title={emptyMessage}/>
         </div>
-      </div>
+      </section>
     );
   }
 
@@ -538,7 +551,7 @@ function DataTable<T>({
   // -----------------------------------------------------------------------
 
   return (
-    <div className={cn('space-y-2', className)}>
+    <section className={cn('aura-data-table space-y-2', className)} role="region" aria-label={ariaLabel}>
       {/* Toolbar: column toggle */}
       <div className="flex justify-end">
         <ColumnVisibilityToggle
@@ -549,8 +562,8 @@ function DataTable<T>({
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)]">
-        <table className="w-full border-collapse">
+      <div className="table-shell">
+        <table className="table-aura w-full border-collapse text-sm" role="table" aria-label={ariaLabel}>
           <thead className="sticky top-0 z-20">
           <tr className="border-b border-[var(--border-main)] bg-[var(--bg-secondary)] shadow-[var(--shadow-sm)]">
             {/* Selection checkbox header */}
@@ -782,7 +795,7 @@ function DataTable<T>({
           </div>
         </div>
       )}
-    </div>
+    </section>
   );
 }
 

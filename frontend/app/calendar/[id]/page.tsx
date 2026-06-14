@@ -1,6 +1,6 @@
 'use client';
 
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {notFound, useParams, useRouter} from 'next/navigation';
 import {AppLayout} from '@/components/layout/AppLayout';
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
@@ -38,12 +38,21 @@ export default function EventDetailPage() {
   const deleteEventMutation = useDeleteCalendarEvent();
   const syncToGoogleMutation = useSyncEventToGoogle();
 
+  useEffect(() => {
+    if (!hasHydrated) {
+      return;
+    }
+
+    if (!isAuthenticated) {
+      router.replace('/auth/login');
+    }
+  }, [hasHydrated, isAuthenticated, router]);
+
   if (!hasHydrated) {
     return null;
   }
 
   if (!isAuthenticated) {
-    router.replace('/auth/login');
     return null;
   }
 

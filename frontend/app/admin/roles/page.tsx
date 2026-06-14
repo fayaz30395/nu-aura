@@ -116,7 +116,7 @@ export default function RolesPage() {
     }
 
     if (!hasAnyRole(...ADMIN_ACCESS_ROLES)) {
-      router.push('/home');
+      router.push('/me/dashboard');
       return;
     }
   }, [hasHydrated, isReady, isAuthenticated, router, hasAnyRole]);

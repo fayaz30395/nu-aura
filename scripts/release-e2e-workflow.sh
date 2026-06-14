@@ -82,7 +82,7 @@ run_smoke() {
   echo "  ℹ login form + route-guard render confirmed separately via headless browser (docs/audit/release-2026-06-04/live-login.png)"
   # Optional deterministic Playwright smoke if present
   if [ -f "$FE/playwright.config.ts" ] && [ "${RUN_PLAYWRIGHT:-0}" = "1" ]; then
-    cd "$FE"; PLAYWRIGHT_BASE_URL="$LIVE_URL" npm run test:e2e:chromium && pass "playwright smoke" || fail "playwright smoke failed"
+    cd "$FE"; PLAYWRIGHT_BASE_URL="$LIVE_URL" npm run test:e2e:production && pass "production playwright smoke" || fail "production playwright smoke failed"
   fi
 }
 

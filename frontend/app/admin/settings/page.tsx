@@ -120,7 +120,7 @@ export default function AdminSettingsPage() {
     }
 
     if (!hasAnyRole(...ADMIN_ACCESS_ROLES)) {
-      router.push('/home');
+      router.push('/me/dashboard');
     }
   }, [hasHydrated, isReady, isAuthenticated, router, hasAnyRole]);
 

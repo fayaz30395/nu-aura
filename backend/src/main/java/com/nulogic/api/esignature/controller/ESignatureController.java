@@ -6,7 +6,6 @@ import com.nulogic.common.security.RequiresPermission;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.domain.esignature.SignatureRequest;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
@@ -179,12 +178,12 @@ public class ESignatureController {
     /**
      * Decline document as external signer.
      * Public endpoint - no authentication required.
+     * signerEmail is in the request body (NOT a query param) to prevent PII leaking into logs.
      */
     @PostMapping("/external/{token}/decline")
     public ResponseEntity<SignatureApprovalResponse> declineDocumentExternal(
             @PathVariable String token,
-            @NotBlank @Email @RequestParam String signerEmail,
-            @Size(max = 1000) @RequestParam(required = false) String reason) {
-        return ResponseEntity.ok(eSignatureService.declineDocumentExternal(token, signerEmail, reason));
+            @Valid @RequestBody ExternalDeclineRequest request) {
+        return ResponseEntity.ok(eSignatureService.declineDocumentExternal(token, request.getSignerEmail(), request.getReason()));
     }
 }

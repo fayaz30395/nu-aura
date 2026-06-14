@@ -3,6 +3,7 @@ package com.nulogic.application.notification.service;
 import com.nulogic.application.notification.dto.NotificationMessage;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
+import com.nulogic.infrastructure.notification.repository.NotificationRepository;
 import com.nulogic.infrastructure.websocket.RedisWebSocketRelay;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -29,7 +30,8 @@ class WebSocketNotificationServiceTest {
     void sendToDepartmentPublishesTenantScopedDestination() {
         RedisWebSocketRelay redisWebSocketRelay = mock(RedisWebSocketRelay.class);
         TenantTimeService tenantTimeService = mock(TenantTimeService.class);
-        WebSocketNotificationService service = new WebSocketNotificationService(redisWebSocketRelay, tenantTimeService);
+        NotificationRepository notificationRepository = mock(NotificationRepository.class);
+        WebSocketNotificationService service = new WebSocketNotificationService(redisWebSocketRelay, tenantTimeService, notificationRepository);
         LocalDateTime now = LocalDateTime.of(2026, 5, 27, 1, 30);
         NotificationMessage notification = NotificationMessage.builder()
                 .type(NotificationMessage.NotificationType.SYSTEM_ALERT)
@@ -57,7 +59,8 @@ class WebSocketNotificationServiceTest {
     void sendToDepartmentFailsClosedWithoutTenantContext() {
         RedisWebSocketRelay redisWebSocketRelay = mock(RedisWebSocketRelay.class);
         TenantTimeService tenantTimeService = mock(TenantTimeService.class);
-        WebSocketNotificationService service = new WebSocketNotificationService(redisWebSocketRelay, tenantTimeService);
+        NotificationRepository notificationRepository = mock(NotificationRepository.class);
+        WebSocketNotificationService service = new WebSocketNotificationService(redisWebSocketRelay, tenantTimeService, notificationRepository);
         NotificationMessage notification = NotificationMessage.builder()
                 .type(NotificationMessage.NotificationType.SYSTEM_ALERT)
                 .title("Department Update")

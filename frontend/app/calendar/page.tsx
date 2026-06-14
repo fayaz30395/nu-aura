@@ -1,6 +1,6 @@
 'use client';
 
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {AppLayout} from '@/components/layout/AppLayout';
 import {PermissionGate} from '@/components/auth/PermissionGate';
@@ -46,12 +46,21 @@ export default function CalendarPage() {
     dateRange.end
   );
 
+  useEffect(() => {
+    if (!hasHydrated) {
+      return;
+    }
+
+    if (!isAuthenticated) {
+      router.replace('/auth/login');
+    }
+  }, [hasHydrated, isAuthenticated, router]);
+
   if (!hasHydrated) {
     return null;
   }
 
   if (!isAuthenticated) {
-    router.replace('/auth/login');
     return null;
   }
 

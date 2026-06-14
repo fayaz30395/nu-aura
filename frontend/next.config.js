@@ -8,7 +8,6 @@ const backendOrigin = process.env.BACKEND_ORIGIN?.replace(/\/$/, '');
 const nextConfig = {
   distDir: process.env.NEXT_DIST_DIR || '.next',
   output: 'standalone',
-  outputFileTracingRoot: __dirname,
   reactStrictMode: true,
 
   // Performance optimizations
@@ -124,11 +123,6 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-
   // Headers for caching and security
   async headers() {
     const securityHeaders = [

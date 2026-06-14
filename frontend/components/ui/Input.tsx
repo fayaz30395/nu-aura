@@ -39,6 +39,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     const inputId = id ?? generatedId;
     const [showPassword, setShowPassword] = React.useState(false);
     const [isFocused, setIsFocused] = React.useState(false);
+    const hasError = Boolean(error);
+    const hasSuccess = Boolean(success);
 
     const messageId = `${generatedId}-message`;
     const hasMessage = Boolean(error || helper);
@@ -58,9 +60,9 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     const inputType = type === 'password' && showPassword ? 'text' : type;
 
     const sizeStyles = {
-      sm: 'h-9 text-sm px-4',
-      md: 'h-10 text-sm px-4',
-      lg: 'h-12 text-base px-4',
+      sm: 'h-[calc(var(--control-height)-10px)] min-h-[calc(var(--control-height)-10px)] text-sm px-4',
+      md: 'h-[var(--control-height)] min-h-[var(--control-height)] text-sm px-4',
+      lg: 'h-[calc(var(--control-height)+8px)] min-h-[calc(var(--control-height)+8px)] text-base px-4',
     };
 
     return (
@@ -115,13 +117,13 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               icon && 'pl-10',
               (rightIcon || type === 'password' || error || success) && 'pr-10',
               // Hover state
-              !error && !success && !disabled && 'hover:border-[var(--border-strong)]',
-              // Focus state — Aura accent border + soft focus ring (--sh-focus)
-              !error && !success && 'focus:border-[var(--accent)] focus:shadow-[var(--inset-input),var(--sh-focus)]',
-              // Error state
-              error && 'border-danger-500 focus:border-danger-500 focus:shadow-[var(--inset-input),0_0_0_3px_var(--ring-danger)]',
-              // Success state
-              success && 'border-success-500 focus:border-success-500 focus:shadow-[var(--inset-input),0_0_0_3px_var(--ring-success)]',
+              !hasError && !hasSuccess && !disabled && 'hover:border-[var(--border-strong)]',
+                // Focus state — Aura accent border + soft focus ring (--sh-focus)
+              !hasError && !hasSuccess && 'focus:border-[var(--accent)] focus:shadow-[var(--inset-input),var(--sh-focus)]',
+                // Error state
+              hasError && 'border-danger-500 focus:border-danger-500 focus:shadow-[var(--inset-input),0_0_0_3px_var(--ring-danger)]',
+                // Success state
+              hasSuccess && 'border-success-500 focus:border-success-500 focus:shadow-[var(--inset-input),0_0_0_3px_var(--ring-success)]',
               // Disabled
               disabled && 'bg-[var(--surface-sunken)] cursor-not-allowed opacity-60',
               // Remove default outline
@@ -132,6 +134,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
             disabled={disabled}
+            aria-invalid={hasError}
+            aria-required={props.required ? 'true' : undefined}
             {...props}
             aria-describedby={describedBy}
           />

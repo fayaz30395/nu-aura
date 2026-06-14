@@ -14,10 +14,11 @@ export interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElemen
 const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
   ({className, children, label, error, helper, selectSize = 'md', disabled, ...props}, ref) => {
     const sizeStyles = {
-      sm: 'h-9 text-sm pl-4 pr-9',
-      md: 'h-10 text-sm pl-4 pr-9',
-      lg: 'h-12 text-base pl-4 pr-10',
+      sm: 'h-[calc(var(--control-height)-10px)] min-h-[calc(var(--control-height)-10px)] text-sm pl-4 pr-9',
+      md: 'h-[var(--control-height)] min-h-[var(--control-height)] text-sm pl-4 pr-9',
+      lg: 'h-[calc(var(--control-height)+8px)] min-h-[calc(var(--control-height)+8px)] text-base pl-4 pr-10',
     };
+    const hasError = Boolean(error);
 
     return (
       <div className="w-full">
@@ -45,13 +46,13 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
               // Size
               sizeStyles[selectSize],
               // Default border
-              !error && 'border-[var(--border-main)]',
+              !hasError && 'border-[var(--border-main)]',
               // Hover state
-              !error && !disabled && 'hover:border-[var(--border-strong)]',
+              !hasError && !disabled && 'hover:border-[var(--border-strong)]',
               // Focus state — Aura accent border + soft focus ring
-              !error && 'focus:border-[var(--accent)] focus:shadow-[var(--inset-input),var(--sh-focus)]',
+              !hasError && 'focus:border-[var(--accent)] focus:shadow-[var(--inset-input),var(--sh-focus)]',
               // Error state
-              error && 'border-danger-500 focus:border-danger-500 focus:shadow-[var(--inset-input),0_0_0_3px_var(--ring-danger)]',
+              hasError && 'border-danger-500 focus:border-danger-500 focus:shadow-[var(--inset-input),0_0_0_3px_var(--ring-danger)]',
               // Disabled
               disabled && 'bg-[var(--surface-sunken)] cursor-not-allowed opacity-60',
               // Remove default outline
@@ -59,6 +60,7 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
               className
             )}
             disabled={disabled}
+            aria-invalid={hasError}
             {...props}
           >
             {children}
@@ -69,7 +71,7 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
             // Animate rotation + accent on focus (transform/color only — compositor-safe)
             'transition-[transform,color] duration-[var(--motion-base)] ease-[var(--ease-out-expo)]',
             'group-focus-within:-rotate-180 group-focus-within:text-[var(--accent)]',
-            error && 'group-focus-within:text-danger-500',
+            hasError && 'group-focus-within:text-danger-500',
             disabled && 'opacity-60'
           )}/>
         </div>

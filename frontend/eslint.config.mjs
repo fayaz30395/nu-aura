@@ -88,7 +88,10 @@ const baseRules = {
   'react-hooks/component-hook-factories': 'off',
   'react-hooks/config': 'off',
   'react-hooks/error-boundaries': 'off',
-  'react-hooks/exhaustive-deps': 'warn',
+  // P0-2: Stale closures over tenant/currentUser/permissions are authorization bugs,
+  // not style nits. Escalated from 'warn' to 'error' globally (was only 'error' in
+  // lib/hooks + lib/contexts). Fix violations with useCallback/useRef or narrowing deps.
+  'react-hooks/exhaustive-deps': 'error',
   'react-hooks/gating': 'off',
   'react-hooks/globals': 'off',
   'react-hooks/immutability': 'off',

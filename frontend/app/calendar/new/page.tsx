@@ -93,7 +93,6 @@ export default function NewEventPage() {
     handleSubmit,
     watch,
     setValue,
-    getValues,
     formState: {errors, isSubmitting},
   } = useForm<CalendarEventFormData>({
     resolver: zodResolver(calendarEventSchema),
@@ -109,24 +108,40 @@ export default function NewEventPage() {
   });
 
   const watchedAllDay = watch('allDay');
+  const watchedStartTime = watch('startTime');
+  const watchedEndTime = watch('endTime');
 
-  // Normalize datetime values when allDay changes
   useEffect(() => {
-    const startTime = getValues('startTime');
-    const endTime = getValues('endTime');
     if (watchedAllDay) {
-      setValue('startTime', startTime.slice(0, 10));
-      setValue('endTime', endTime.slice(0, 10));
+      if (watchedStartTime && watchedStartTime.length > 10) {
+        setValue('startTime', watchedStartTime.slice(0, 10));
+      }
+      if (watchedEndTime && watchedEndTime.length > 10) {
+        setValue('endTime', watchedEndTime.slice(0, 10));
+      }
     } else {
-      if (startTime.length === 10) setValue('startTime', startTime + 'T09:00');
-      if (endTime.length === 10) setValue('endTime', endTime + 'T10:00');
+      if (watchedStartTime && watchedStartTime.length === 10) {
+        setValue('startTime', `${watchedStartTime}T09:00`);
+      }
+      if (watchedEndTime && watchedEndTime.length === 10) {
+        setValue('endTime', `${watchedEndTime}T10:00`);
+      }
     }
-  }, [watchedAllDay, setValue, getValues]);
+  }, [watchedAllDay, watchedStartTime, watchedEndTime, setValue]);
+
+  useEffect(() => {
+    if (!hasHydrated) {
+      return;
+    }
+
+    if (!isAuthenticated) {
+      router.replace('/auth/login');
+    }
+  }, [hasHydrated, isAuthenticated, router]);
 
   if (!hasHydrated) return null;
 
   if (!isAuthenticated) {
-    router.replace('/auth/login');
     return null;
   }
 

@@ -181,13 +181,16 @@ class PaymentConfigControllerTest {
         @DisplayName("Should return 200 with success message when payments are enabled")
         void shouldReturn200WhenPaymentsEnabled() throws Exception {
             doNothing().when(paymentFeatureGuard).requirePaymentsEnabled();
+            when(paymentService.testPaymentGatewayConnection(any(PaymentConfig.class))).thenReturn(true);
 
             mockMvc.perform(post(BASE_URL + "/test-connection")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(validConfigRequest)))
                     .andExpect(status().isOk())
                     .andExpect(content().string(
-                            org.hamcrest.Matchers.containsString("Connection test initiated")));
+                            org.hamcrest.Matchers.containsString("Connection test succeeded.")));
+
+            verify(paymentService).testPaymentGatewayConnection(any(PaymentConfig.class));
 
             verify(paymentFeatureGuard).requirePaymentsEnabled();
         }
@@ -196,6 +199,7 @@ class PaymentConfigControllerTest {
         @DisplayName("Should call feature guard before test-connection")
         void shouldCallFeatureGuardBeforeTestConnection() throws Exception {
             doNothing().when(paymentFeatureGuard).requirePaymentsEnabled();
+            when(paymentService.testPaymentGatewayConnection(any(PaymentConfig.class))).thenReturn(true);
 
             mockMvc.perform(post(BASE_URL + "/test-connection")
                             .contentType(MediaType.APPLICATION_JSON)
@@ -220,14 +224,14 @@ class PaymentConfigControllerTest {
         @DisplayName("Should not invoke paymentService for connection test (no persistence)")
         void shouldNotInvokePaymentServiceOnConnectionTest() throws Exception {
             doNothing().when(paymentFeatureGuard).requirePaymentsEnabled();
+            when(paymentService.testPaymentGatewayConnection(any(PaymentConfig.class))).thenReturn(true);
 
             mockMvc.perform(post(BASE_URL + "/test-connection")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(validConfigRequest)))
                     .andExpect(status().isOk());
 
-            // Connection test is a no-op in this impl — service should not be called
-            verifyNoInteractions(paymentService);
+            verify(paymentService).testPaymentGatewayConnection(any(PaymentConfig.class));
         }
     }
 

@@ -1,9 +1,41 @@
 {
-  "id": "swarm-1779745775833-w2wc7s",
-  "topology": "hierarchical",
-  "maxAgents": 20,
-  "strategy": "specialized",
-  "initializedAt": "2026-05-25T21:49:35.833Z",
-  "status": "stopped",
-  "stoppedAt": "2026-05-25T22:33:47.896Z"
+  "swarmId": "swarm-mqcv09t9",
+  "objective": "Validate NU-Hire and NU-Grow end-to-end access with multi-role RBAC matrix and fix any boundary regressions",
+  "strategy": "development",
+  "status": "initialized",
+  "agents": 8,
+  "agentPlan": [
+    {
+      "role": "Coordinator",
+      "type": "coordinator",
+      "count": 1,
+      "purpose": "Orchestrate workflow"
+    },
+    {
+      "role": "Architect",
+      "type": "architect",
+      "count": 1,
+      "purpose": "System design"
+    },
+    {
+      "role": "Coder",
+      "type": "coder",
+      "count": 3,
+      "purpose": "Implementation"
+    },
+    {
+      "role": "Tester",
+      "type": "tester",
+      "count": 2,
+      "purpose": "Quality assurance"
+    },
+    {
+      "role": "Reviewer",
+      "type": "reviewer",
+      "count": 1,
+      "purpose": "Code review"
+    }
+  ],
+  "startedAt": "2026-06-13T21:20:25.775Z",
+  "parallel": true
 }

@@ -205,6 +205,11 @@ springdoc:
 
 # Production security settings
 app:
+  payments:
+    # Enable payments module by default in production.
+    # Set APP_PAYMENTS_ENABLED=false to keep the module disabled.
+    enabled: ${APP_PAYMENTS_ENABLED:true}
+
   monitoring:
     prometheus-token: ${PROMETHEUS_SCRAPE_TOKEN:}
 

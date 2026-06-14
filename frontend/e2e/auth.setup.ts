@@ -30,6 +30,8 @@ setup('authenticate', async ({page}) => {
     {path: '/announcements', marker: /Announcements/i},
     {path: '/employees', marker: /Employees/i},
     {path: '/recruitment', marker: /Recruitment/i},
+    {path: '/calendar', marker: /Calendar|Today/i},
+    {path: '/calendar/new', marker: /Calendar|Schedule|Event|Today/i},
     {path: '/performance', marker: /Performance/i},
     {path: '/admin/roles', marker: /Role Management/i},
     {path: '/admin/permissions', marker: /Permission/i},

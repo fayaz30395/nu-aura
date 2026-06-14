@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rm -f /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/.git/index.lock)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(cp /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/.claude/iissues /tmp/test_failures.log)",
+      "Read(//tmp/**)",
+      "Bash(rm -f .git/index.lock)",
+      "Bash(git reset *)",
+      "Bash(git checkout *)",
+      "Bash(rm -f .claude/scheduled_tasks.lock)",
+      "Bash(touch .git/test-write)",
+      "Bash(rm -f .git/test-write)",
+      "Bash(xattr -l .git/index)",
+      "Bash(xattr -d com.apple.quarantine .git/index)",
+      "Bash(cp .git/index /tmp/idx-test)",
+      "Bash(mv /tmp/idx-test /tmp/idx-test-bak)",
+      "Bash(ulimit -n)",
+      "Bash(git -c core.editor=true cherry-pick --continue)",
+      "Bash(mkdir -p /tmp/aura-skill-backup)",
+      "Bash(cp -R .claude/skills/autonomous-fix-loop .claude/skills/qa-dev-loop .claude/skills/playwright-autonomous /tmp/aura-skill-backup/)",
+      "Bash(cp .claude/commands/autonomous-fix.md .claude/commands/qa-dev-loop.md .claude/commands/playwright-autonomous.md /tmp/aura-skill-backup/)",
+      "Bash(cp .claude/settings.json /tmp/aura-skill-backup/settings.json.before)",
+      "Bash(rm -f NU-AURA-QA-Report-2026-04-01.xlsx)",
+      "Bash(rm -rf qa-reports docs/validation)",
+      "Bash(rm -rf docs/qa/*)",
+      "Bash(rm -f docs/architecture/NU_AURA_PLATFORM_ARCHITECTURE.docx)",
+      "Bash(rm -rf docs/screenshots/qa-sweep-2026-05-02)"
+    ]
+  }
+}

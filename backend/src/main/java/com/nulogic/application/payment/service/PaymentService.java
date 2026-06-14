@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -309,12 +310,96 @@ public class PaymentService {
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public PaymentConfig savePaymentConfig(PaymentConfig config) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
-        config.setTenantId(tenantId);
+        UUID userId = SecurityContext.getCurrentUserId();
 
-        // Encrypt API key
-        config.setApiKeyEncrypted(encryptionService.encrypt(config.getApiKeyEncrypted()));
+        if (config.getProvider() == null) {
+            throw new BusinessException("Provider is required");
+        }
+
+        config.setTenantId(tenantId);
+        config.setLastModifiedBy(userId);
+
+        if (config.getApiKeyEncrypted() != null) {
+            config.setApiKeyEncrypted(encryptionService.encrypt(config.getApiKeyEncrypted()));
+        }
+
+        Optional<PaymentConfig> existingConfig = paymentConfigRepository.findByTenantIdAndProvider(
+                tenantId, config.getProvider());
+        if (existingConfig.isPresent()) {
+            PaymentConfig existing = existingConfig.get();
+            config.setId(existing.getId());
+            config.setCreatedBy(existing.getCreatedBy());
+            config.setCreatedAt(existing.getCreatedAt());
+            config.setConfigKey(existing.getConfigKey());
+            config.setIsActive(Objects.requireNonNullElse(config.getIsActive(), existing.getIsActive()));
+            config.setWebhookSecret(Objects.requireNonNullElse(config.getWebhookSecret(), existing.getWebhookSecret()));
+            config.setMetadata(Objects.requireNonNullElse(config.getMetadata(), existing.getMetadata()));
+            config.setMerchantId(Objects.requireNonNullElse(config.getMerchantId(), existing.getMerchantId()));
+            config.setApiKeyEncrypted(Objects.requireNonNullElse(config.getApiKeyEncrypted(), existing.getApiKeyEncrypted()));
+        }
+
+        if (config.getConfigKey() == null || config.getConfigKey().isBlank()) {
+            config.setConfigKey(tenantId + ":" + config.getProvider().name());
+        }
 
         return paymentConfigRepository.save(config);
+    }
+
+    /**
+     * List payment configurations for the current tenant
+     */
+    @Transactional(readOnly = true)
+    public List<PaymentConfig> listPaymentConfigs() {
+        UUID tenantId = SecurityContext.getCurrentTenantId();
+        return paymentConfigRepository.findByTenantId(tenantId);
+    }
+
+    /**
+     * Get payment configuration for a provider
+     */
+    @Transactional(readOnly = true)
+    public PaymentConfig getPaymentConfigByProvider(String provider) {
+        UUID tenantId = SecurityContext.getCurrentTenantId();
+        PaymentConfig.PaymentProvider configProvider = parseProvider(provider);
+        return paymentConfigRepository.findByTenantIdAndProvider(tenantId, configProvider)
+                .orElseThrow(() -> new ResourceNotFoundException("Payment config not found"));
+    }
+
+    /**
+     * Toggle active status for a provider config
+     */
+    @Transactional
+    public PaymentConfig togglePaymentConfigActive(String provider, Boolean isActive) {
+        if (isActive == null) {
+            throw new BusinessException("isActive is required");
+        }
+
+        UUID tenantId = SecurityContext.getCurrentTenantId();
+        PaymentConfig.PaymentProvider configProvider = parseProvider(provider);
+        PaymentConfig config = paymentConfigRepository.findByTenantIdAndProvider(tenantId, configProvider)
+                .orElseThrow(() -> new ResourceNotFoundException("Payment config not found"));
+
+        config.setIsActive(isActive);
+        return paymentConfigRepository.save(config);
+    }
+
+    /**
+     * Test payment gateway connection using a transient configuration
+     */
+    @Transactional(readOnly = true)
+    public boolean testPaymentGatewayConnection(PaymentConfig config) {
+        if (config == null || config.getProvider() == null) {
+            return false;
+        }
+
+        PaymentGatewayAdapter adapter = getAdapterForProvider(config.getProvider());
+        try {
+            adapter.initialize(config);
+            return adapter.testConnection(config);
+        } catch (RuntimeException e) {
+            log.error("Payment connection test failed for {}", config.getProvider(), e);
+            return false;
+        }
     }
 
     /**
@@ -368,6 +453,14 @@ public class PaymentService {
      */
     private PaymentConfig.PaymentProvider toConfigProvider(PaymentTransaction.PaymentProvider provider) {
         return PaymentConfig.PaymentProvider.valueOf(provider.name());
+    }
+
+    private PaymentConfig.PaymentProvider parseProvider(String provider) {
+        try {
+            return PaymentConfig.PaymentProvider.valueOf(provider.toUpperCase());
+        } catch (IllegalArgumentException | NullPointerException e) {
+            throw new BusinessException("Unsupported payment provider: " + provider);
+        }
     }
 
     /**

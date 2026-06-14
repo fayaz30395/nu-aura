@@ -1,5 +1,7 @@
 package com.nulogic.api.employee;
 
+import com.nulogic.api.employee.dto.EmployeeResponse;
+import com.nulogic.application.employee.service.EmployeeService;
 import com.nulogic.application.employee.service.SkillService;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.RequiresPermission;
@@ -19,9 +21,11 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -39,6 +43,7 @@ import java.util.UUID;
 public class EmployeeSkillController {
 
     private final SkillService skillService;
+    private final EmployeeService employeeService;
 
     @GetMapping("/{employeeId}/skills")
     @RequiresPermission(Permission.EMPLOYEE_VIEW_SELF)
@@ -47,6 +52,10 @@ public class EmployeeSkillController {
     @ApiResponse(responseCode = "200", description = "Skills retrieved successfully")
     public ResponseEntity<List<EmployeeSkill>> getEmployeeSkills(
             @Parameter(description = "Employee UUID") @PathVariable UUID employeeId) {
+        // RBAC-5 FIX: Enforce data-scope to prevent IDOR — EMPLOYEE_VIEW_SELF alone
+        // would otherwise let any employee read a colleague's skills. SuperAdmin bypass
+        // is already handled by PermissionAspect before this code runs.
+        enforceEmployeeViewScope(employeeId);
         UUID tenantId = SecurityContext.getCurrentTenantId();
         List<EmployeeSkill> skills = skillService.getEmployeeSkills(tenantId, employeeId);
         return ResponseEntity.ok(skills);
@@ -63,6 +72,8 @@ public class EmployeeSkillController {
     public ResponseEntity<EmployeeSkill> addOrUpdateSkill(
             @Parameter(description = "Employee UUID") @PathVariable UUID employeeId,
             @Valid @RequestBody AddSkillRequest request) {
+        // RBAC-5 FIX: Enforce data-scope to prevent IDOR on cross-employee writes.
+        enforceEmployeeUpdateScope(employeeId);
         UUID tenantId = SecurityContext.getCurrentTenantId();
         EmployeeSkill skill = skillService.addOrUpdateSkill(
                 tenantId, employeeId,
@@ -103,6 +114,77 @@ public class EmployeeSkillController {
         UUID tenantId = SecurityContext.getCurrentTenantId();
         skillService.removeSkill(tenantId, skillId);
         return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * Enforces data-scope rules for viewing a single employee's data.
+     * Replicated from EmployeeController.enforceEmployeeViewScope to keep IDOR
+     * protection behavior identical across both controllers.
+     * Scope hierarchy: VIEW_ALL > VIEW_DEPARTMENT > VIEW_TEAM > VIEW_SELF.
+     * SuperAdmin is already bypassed at the @RequiresPermission aspect level.
+     */
+    private void enforceEmployeeViewScope(UUID targetEmployeeId) {
+        // SuperAdmin and TenantAdmin bypass all scope checks
+        if (SecurityContext.isSuperAdmin() || SecurityContext.isTenantAdmin()) {
+            return;
+        }
+
+        // VIEW_ALL: can see any employee within the tenant
+        if (SecurityContext.hasPermission(Permission.EMPLOYEE_VIEW_ALL)) {
+            return;
+        }
+
+        UUID currentEmployeeId = SecurityContext.getCurrentEmployeeId();
+
+        // VIEW_SELF: can only see own record
+        if (currentEmployeeId != null && currentEmployeeId.equals(targetEmployeeId)) {
+            return;
+        }
+
+        // VIEW_DEPARTMENT: can see employees in the same department
+        if (SecurityContext.hasPermission(Permission.EMPLOYEE_VIEW_DEPARTMENT)) {
+            EmployeeResponse target = employeeService.getEmployee(targetEmployeeId);
+            UUID currentDeptId = SecurityContext.getCurrentDepartmentId();
+            if (currentDeptId != null && target.getDepartmentId() != null
+                    && currentDeptId.equals(target.getDepartmentId())) {
+                return;
+            }
+        }
+
+        // VIEW_TEAM: can see direct/indirect reportees
+        if (SecurityContext.hasPermission(Permission.EMPLOYEE_VIEW_TEAM)) {
+            Set<UUID> reporteeIds = SecurityContext.getAllReporteeIds();
+            if (reporteeIds.contains(targetEmployeeId)) {
+                return;
+            }
+        }
+
+        throw new AccessDeniedException(
+                "You are not authorized to view this employee record");
+    }
+
+    /**
+     * Enforces data-scope rules for mutating a single employee's data.
+     * Replicated from EmployeeController.enforceEmployeeUpdateScope to keep IDOR
+     * protection behavior identical across both controllers.
+     * SuperAdmin / TenantAdmin / HR Manager bypass automatically.
+     */
+    private void enforceEmployeeUpdateScope(UUID targetEmployeeId) {
+        if (SecurityContext.isSuperAdmin() || SecurityContext.isTenantAdmin() || SecurityContext.isHRManager()) {
+            return;
+        }
+
+        UUID currentEmployeeId = SecurityContext.getCurrentEmployeeId();
+        if (currentEmployeeId != null && currentEmployeeId.equals(targetEmployeeId)) {
+            return;
+        }
+
+        if (SecurityContext.hasPermission(Permission.EMPLOYEE_VIEW_ALL)) {
+            return;
+        }
+
+        throw new AccessDeniedException(
+                "You are not authorized to update this employee record");
     }
 
     // ─── Request DTO ────────────────────────────────────────────────────────

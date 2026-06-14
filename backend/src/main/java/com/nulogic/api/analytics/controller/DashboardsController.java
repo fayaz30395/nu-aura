@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -148,15 +149,50 @@ public class DashboardsController {
     }
 
     /**
+     * RBAC-6 BOLA FIX: Enforces data-scope on /employee/{employeeId} dashboard endpoint.
+     * Mirrors LeaveBalanceController.enforceLeaveBalanceViewScope.
+     * Scope hierarchy: EMPLOYEE_VIEW_ALL > EMPLOYEE_VIEW_TEAM (direct/indirect reportees)
+     * > EMPLOYEE_VIEW_SELF (own record only).
+     * SuperAdmin is already bypassed at the @RequiresPermission aspect level.
+     */
+    private void enforceEmployeeDashboardViewScope(UUID targetEmployeeId) {
+        // SuperAdmin and TenantAdmin bypass all scope checks
+        if (SecurityContext.isSuperAdmin() || SecurityContext.isTenantAdmin()) {
+            return;
+        }
+
+        // VIEW_ALL: can see any employee's dashboard within the tenant
+        if (SecurityContext.hasPermission(Permission.EMPLOYEE_VIEW_ALL)) {
+            return;
+        }
+
+        // VIEW_SELF: can only see own dashboard
+        UUID currentEmployeeId = SecurityContext.getCurrentEmployeeId();
+        if (currentEmployeeId != null && currentEmployeeId.equals(targetEmployeeId)) {
+            return;
+        }
+
+        // VIEW_TEAM: can see direct/indirect reportees' dashboards
+        if (SecurityContext.hasPermission(Permission.EMPLOYEE_VIEW_TEAM)
+                && SecurityContext.getAllReporteeIds().contains(targetEmployeeId)) {
+            return;
+        }
+
+        throw new AccessDeniedException(
+                "You are not authorized to view the dashboard for this employee");
+    }
+
+    /**
      * Get Employee Dashboard for a specific employee
      * For managers/HR to view their reportee's dashboard
      */
     @GetMapping("/employee/{employeeId}")
-    @RequiresPermission(Permission.EMPLOYEE_VIEW_TEAM)
+    @RequiresPermission({Permission.EMPLOYEE_VIEW_ALL, Permission.EMPLOYEE_VIEW_TEAM, Permission.EMPLOYEE_VIEW_SELF})
     @Operation(summary = "Get employee dashboard for specific employee",
-            description = "Returns employee dashboard for a specific employee (requires manager or HR access)")
+            description = "Returns employee dashboard for a specific employee (self, the employee's manager/team-lead, or HR/admin)")
     public ResponseEntity<EmployeeDashboardResponse> getEmployeeDashboardById(@PathVariable UUID employeeId) {
         log.info("Fetching employee dashboard for employee: {}", employeeId);
+        enforceEmployeeDashboardViewScope(employeeId);
         EmployeeDashboardResponse dashboard = employeeDashboardService.getEmployeeDashboard(employeeId);
         return ResponseEntity.ok(dashboard);
     }

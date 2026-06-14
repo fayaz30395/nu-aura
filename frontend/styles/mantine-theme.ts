@@ -85,34 +85,125 @@ export const mantineTheme = createTheme({
     // Form controls — h-9 (36px) compact desktop default.
     Button: {
       defaultProps: {radius: 'md', size: 'sm'},
-      styles: {root: {height: '2.25rem' /* h-9 = 36px */, fontWeight: 600}},
+      styles: {
+        root: {
+          height: '2.25rem',
+          fontWeight: 600,
+          borderRadius: 'var(--r-control)',
+          paddingInline: '1rem',
+        },
+      },
+    },
+    ActionIcon: {
+      styles: {
+        root: {
+          border: '1px solid var(--border-subtle)',
+          borderRadius: 'var(--r-control)',
+        },
+      },
     },
     TextInput: {
       defaultProps: {radius: 'md', size: 'sm'},
-      styles: {input: {height: '2.25rem'}},
+      styles: {
+        input: {
+          height: '2.25rem',
+          borderRadius: 'var(--r-control)',
+        },
+      },
     },
     NumberInput: {
       defaultProps: {radius: 'md', size: 'sm'},
-      styles: {input: {height: '2.25rem'}},
+      styles: {
+        input: {
+          height: '2.25rem',
+          borderRadius: 'var(--r-control)',
+        },
+      },
     },
     PasswordInput: {
       defaultProps: {radius: 'md', size: 'sm'},
-      styles: {input: {height: '2.25rem'}},
+      styles: {
+        input: {
+          height: '2.25rem',
+          borderRadius: 'var(--r-control)',
+        },
+      },
     },
     Select: {
       defaultProps: {radius: 'md', size: 'sm'},
-      styles: {input: {height: '2.25rem'}},
+      styles: {
+        input: {
+          height: '2.25rem',
+          borderRadius: 'var(--r-control)',
+        },
+      },
     },
     MultiSelect: {
       defaultProps: {radius: 'md', size: 'sm'},
-      styles: {input: {minHeight: '2.25rem'}},
+      styles: {
+        input: {
+          minHeight: '2.25rem',
+          borderRadius: 'var(--r-control)',
+        },
+      },
     },
     Autocomplete: {
       defaultProps: {radius: 'md', size: 'sm'},
-      styles: {input: {height: '2.25rem'}},
+      styles: {
+        input: {
+          height: '2.25rem',
+          borderRadius: 'var(--r-control)',
+        },
+      },
     },
     Textarea: {
       defaultProps: {radius: 'md', size: 'sm'},
+      styles: {
+        input: {
+          borderRadius: 'var(--r-control)',
+        },
+      },
+    },
+    FileInput: {
+      defaultProps: {radius: 'md', size: 'sm'},
+      styles: {
+        input: {
+          minHeight: '2.25rem',
+          borderRadius: 'var(--r-control)',
+        },
+      },
+    },
+    TagsInput: {
+      defaultProps: {radius: 'md', size: 'sm'},
+      styles: {
+        input: {borderRadius: 'var(--r-control)'},
+      },
+    },
+    LoadingOverlay: {
+      defaultProps: {overlayProps: {radius: 'md', backgroundOpacity: 0.45, blur: 1}},
+    },
+    Loader: {
+      styles: {
+        root: {color: 'var(--accent-primary)'},
+      },
+    },
+    Pagination: {
+      styles: {
+        control: {
+          borderRadius: 'var(--r-control)',
+          minWidth: '2rem',
+          height: '2rem',
+        },
+      },
+    },
+    SegmentedControl: {
+      styles: {
+        root: {
+          backgroundColor: 'var(--bg-card)',
+          border: '1px solid var(--border-subtle)',
+          borderRadius: 'var(--r-control)',
+        },
+      },
     },
 
     // Surfaces — wire to CSS variables so light/dark swap automatically.
@@ -206,6 +297,68 @@ export const mantineTheme = createTheme({
     },
     Divider: {
       styles: {root: {borderColor: 'var(--border-subtle)'}},
+    },
+    Alert: {
+      styles: {
+        root: {
+          borderColor: 'var(--border-subtle)',
+          backgroundColor: 'var(--bg-card)',
+          color: 'var(--text-primary)',
+        },
+      },
+    },
+    Badge: {
+      defaultProps: {radius: 'sm'},
+      styles: {
+        root: {
+          border: '1px solid var(--border-subtle)',
+          fontWeight: 600,
+          lineHeight: 1.25,
+        },
+      },
+    },
+    Table: {
+      defaultProps: {
+        striped: false,
+        highlightOnHover: true,
+        withColumnBorders: false,
+        withTableBorder: true,
+        verticalSpacing: 'sm',
+      },
+      styles: {
+        table: {
+          tableLayout: 'fixed',
+          width: '100%',
+        },
+        th: {
+          color: 'var(--text-muted)',
+          fontWeight: 600,
+        },
+        tbody: {
+          backgroundColor: 'var(--bg-card)',
+        },
+      },
+    },
+    AppShell: {
+      styles: {
+        main: {
+          paddingInline: 'var(--s-4)',
+        },
+      },
+    },
+    Tabs: {
+      styles: {
+        list: {
+          borderBottomColor: 'var(--border-subtle)',
+        },
+        tab: {
+          color: 'var(--text-secondary)',
+          '&[data-active]': {
+            color: 'var(--text-primary)',
+            fontWeight: 600,
+          },
+        },
+      },
     },
   },
 });

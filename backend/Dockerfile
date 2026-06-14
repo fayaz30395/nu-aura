@@ -150,6 +150,9 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
 
 ENV SPRING_PROFILES_ACTIVE=render
 ENV RLS_PROBE_FAIL_ON_BYPASS=true
-ENV JAVA_OPTS="-XX:+UseContainerSupport -Xms96m -Xmx320m -XX:MaxDirectMemorySize=32m -XX:+UseSerialGC -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Djava.security.egd=file:/dev/./urandom"
+# P0-1: Timezone hardening — pin JVM timezone to Asia/Kolkata.
+# This ensures LocalDate.now(), LocalDateTime.now(), Instant.now()
+# resolve consistently regardless of container/pod base image TZ.
+ENV JAVA_OPTS="-XX:+UseContainerSupport -Xms96m -Xmx320m -XX:MaxDirectMemorySize=32m -XX:+UseSerialGC -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Djava.security.egd=file:/dev/./urandom -Duser.timezone=Asia/Kolkata"
 
 ENTRYPOINT ["/usr/local/bin/render-entrypoint"]

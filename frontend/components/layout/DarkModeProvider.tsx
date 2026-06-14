@@ -44,6 +44,15 @@ function applyToDOM(resolved: ResolvedTheme): void {
   } else {
     html.classList.remove('dark');
   }
+
+  html.setAttribute('data-mantine-color-scheme', resolved);
+  html.style.colorScheme = resolved;
+
+  try {
+    localStorage.setItem('mantine-color-scheme', resolved);
+  } catch {
+    // ignore persistence failures in restricted environments
+  }
 }
 
 // ── Provider ─────────────────────────────────────────────────────────
@@ -65,10 +74,7 @@ export const DarkModeProvider: React.FC<{ children: React.ReactNode }> = ({child
   const theme = useThemeStore((s) => s.mode);
   const setMode = useThemeStore((s) => s.setMode);
 
-  // Default to 'dark' to match the app's enforced dark theme and prevent
-  // a Mantine SSR hydration mismatch (server renders dark CSS vars via
-  // ColorSchemeScript defaultColorScheme="dark", client must match on first render).
-  const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>('dark');
+  const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>(() => resolveTheme(theme));
 
   // Apply DOM class whenever the chosen theme changes (and on mount, when
   // the persist middleware finishes rehydrating from localStorage).

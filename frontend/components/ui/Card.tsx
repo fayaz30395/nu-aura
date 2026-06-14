@@ -42,7 +42,7 @@ const Card = React.forwardRef<
     <div
       ref={ref}
       className={cn(
-        'rounded-lg bg-[var(--bg-card)] border-[var(--border-main)] transition-all duration-200',
+        'rounded-[var(--r-lg)] shadow-[var(--shadow-card)] bg-[var(--bg-card)] border-[var(--border-main)] transition-all duration-200 overflow-hidden',
         variantStyles[variant],
         paddingStyles[padding],
         isHoverable && 'hover-lift press-scale cursor-pointer hover:border-[var(--border-strong)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--ring-primary)]',

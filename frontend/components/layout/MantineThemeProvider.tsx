@@ -28,11 +28,8 @@ export function MantineThemeProvider({children}: MantineThemeProviderProps) {
   return (
     // suppressHydrationWarning isolates Mantine's CSS-variable <style> injection from
     // React's hydration diff. MantineProvider renders a <style dangerouslySetInnerHTML>
-    // whose content depends on the resolved colour scheme; on the very first render the
-    // server and client may disagree by one frame (DarkModeProvider reads localStorage
-    // only in useEffect), so we suppress the warning here rather than force a full
-    // rehydration. The visual result is always correct because DarkModeProvider defaults
-    // to 'dark' matching ColorSchemeScript defaultColorScheme="dark" in layout.tsx.
+    // whose content depends on the resolved colour scheme. We set both values in
+    // the pre-hydration script, so first paint should already match resolved theme.
     <div suppressHydrationWarning>
       <MantineProvider
         theme={mantineTheme}
@@ -53,5 +50,5 @@ export function MantineThemeProvider({children}: MantineThemeProviderProps) {
  * This Mantine script is kept for Mantine's internal SSR hydration.
  */
 export function MantineColorSchemeScript() {
-  return <ColorSchemeScript defaultColorScheme="dark"/>;
+  return <ColorSchemeScript defaultColorScheme="light"/>;
 }

@@ -328,6 +328,13 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         className
       )}
     >
+      <a
+        href="#app-main-content"
+        className="skip-link"
+      >
+        Skip to main content
+      </a>
+
       {/* Aura desktop shell — product rail (72px) + contextual nav panel (232px).
           Hidden below md; mobile uses the drawer below. */}
       <div className="hidden md:flex">
@@ -383,8 +390,8 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         </>
       )}
 
-      {/* Main Content — fills remaining space, never overflows the shell */}
-      <div className="flex flex-1 flex-col overflow-hidden min-w-0" role="main">
+        {/* Main Content — fills remaining space, never overflows the shell */}
+      <div className="flex flex-1 flex-col overflow-hidden min-w-0">
         {/* Aura sticky top bar (60px) — toggle · breadcrumbs · ⌘K · theme · bell · user */}
         <TopBar
           breadcrumbs={showBreadcrumbs ? breadcrumbs : []}
@@ -401,8 +408,9 @@ const AppLayout: React.FC<AppLayoutProps> = ({
 
         {/* Content Area — scrollable, fills remaining vertical space */}
         <main
-          className="flex-1 overflow-y-auto overflow-x-hidden transition-colors duration-300 bg-transparent"
-          role="main"
+          id="app-main-content"
+          tabIndex={-1}
+          className="flex-1 overflow-y-auto overflow-x-hidden transition-colors duration-300 bg-transparent px-2 sm:px-0"
         >
           <AuthGuard>
             <ErrorBoundary resetKeys={[pathname]}>

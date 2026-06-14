@@ -71,7 +71,7 @@ public class PaymentController {
     /**
      * Get payment details
      */
-    @GetMapping("/{paymentId}")
+    @GetMapping("/{paymentId:[0-9a-fA-F\\-]{36}}")
     @RequiresPermission(Permission.PAYMENT_VIEW)
     public ResponseEntity<PaymentTransactionDto> getPaymentDetails(@PathVariable UUID paymentId) {
         paymentFeatureGuard.requirePaymentsEnabled();

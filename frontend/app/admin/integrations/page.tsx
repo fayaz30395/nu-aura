@@ -94,7 +94,7 @@ export default function AdminIntegrationsPage() {
   // R2-008 FIX: return null immediately after router.push() so the component
   // stops rendering and doesn't briefly expose privileged UI before navigation.
   if (hasHydrated && isReady && isAuthenticated && !hasAnyRole(...ADMIN_ACCESS_ROLES)) {
-    router.push('/home');
+    router.push('/me/dashboard');
     return null;
   }
 

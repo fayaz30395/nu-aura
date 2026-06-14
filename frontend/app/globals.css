@@ -16,13 +16,11 @@
 @layer base {
   :root {
     /* ── Typography (Aura redesign) ────────────────────────────────
-       --font-sans / --font-display / --font-mono are the next/font
-       CSS variables set in app/layout.tsx (Open Sans / Montserrat /
-       Roboto Mono). They are declared here with a stack fallback so
-       the cascade resolves even before next/font hydrates. */
-    --font-sans: var(--font-sans), "Open Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
-    --font-display: var(--font-display), "Montserrat", "Open Sans", system-ui, sans-serif;
-    --font-mono: var(--font-mono), "Roboto Mono", "SF Mono", Monaco, Consolas, monospace;
+       Offline-safe stacks: keep the Aura type hierarchy without making
+       production builds depend on runtime Google Fonts downloads. */
+    --font-sans: "Open Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-display: "Montserrat", "Open Sans", system-ui, sans-serif;
+    --font-mono: "Roboto Mono", "SF Mono", Monaco, Consolas, monospace;
     --font-body: var(--font-sans);
     --font-head: var(--font-display);
 
@@ -141,6 +139,10 @@
     --aura-micro-size: 10.5px;
     --aura-micro-weight: 700;
     --aura-micro-tracking: 0.1em;
+    --layout-max-width: 94rem;
+    --layout-gutter-x: clamp(0.85rem, 2.1vw, 1.5rem);
+    --control-height: 44px;
+    --table-min-width: 680px;
 
     /* ── NULogic Brand Colors (preserved for logo/brand contexts) ── */
     --nu-lapis-blue: #050766;
@@ -978,10 +980,29 @@
   }
 
   .page-shell {
-    width: min(100% - 0.9rem, 90rem);
+    width: min(100% - calc(2 * var(--layout-gutter-x)), var(--layout-max-width));
     margin-inline: auto;
-    padding-left: clamp(0.85rem, 1.4vw, 1.25rem);
-    padding-right: clamp(0.85rem, 1.4vw, 1.25rem);
+    padding-left: var(--layout-gutter-x);
+    padding-right: var(--layout-gutter-x);
+  }
+
+  .skip-link {
+    @apply fixed top-3 left-3 z-50 rounded-md px-3 py-2 text-sm font-medium text-white;
+    background-color: var(--accent-primary);
+    box-shadow: var(--shadow-card);
+    transform: translateY(-0.5rem);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .skip-link:focus-visible {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .page-shell.tight {
+    width: min(100% - 0.9rem, 72rem);
   }
 
   .page-shell-card {
@@ -1139,6 +1160,14 @@
     @apply w-full text-sm;
   }
 
+  .table-shell {
+    @apply overflow-x-auto rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-card)] shadow-[var(--shadow-card)];
+  }
+
+  .table-shell .table-aura {
+    min-width: 720px;
+  }
+
   .table-aura thead {
     position: sticky;
     top: 0;
@@ -1186,7 +1215,12 @@
   /* ── Empty State ─────────────────────────────────────────────── */
   .empty-state {
     @apply flex flex-col items-center justify-center py-20 px-4 text-center;
+    min-height: 220px;
     color: var(--text-muted);
+    border-radius: var(--r-lg);
+    border: 1px dashed var(--border-subtle);
+    background-color: var(--bg-card);
+    box-shadow: var(--shadow-card);
   }
 
   .empty-state-icon {
@@ -1395,6 +1429,27 @@
     transform: translateY(0.5px);
   }
 
+  .loading-state {
+    @apply rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-card)] shadow-[var(--shadow-card)] p-6 text-center;
+    color: var(--text-secondary);
+  }
+
+  .loading-state__icon {
+    @apply inline-flex h-10 w-10 items-center justify-center rounded-full border border-[var(--border-subtle)] text-[var(--text-muted)];
+  }
+
+  .error-state {
+    @apply rounded-xl border border-[var(--status-danger-border)] bg-[var(--status-danger-bg)] text-[var(--status-danger-text)] shadow-[var(--shadow-card)] p-6;
+  }
+
+  .error-state__title {
+    @apply text-sm font-semibold;
+  }
+
+  .error-state__copy {
+    @apply text-sm mt-1;
+  }
+
   /* ── Skeleton (Clean) ────────────────────────────────────────── */
   .skeleton-aura {
     @apply rounded-lg;
@@ -1412,6 +1467,14 @@
   .section-header {
     @apply mb-2;
     color: var(--text-primary);
+  }
+
+  .page-section {
+    @apply rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-4 sm:p-6 shadow-[var(--shadow-card)];
+  }
+
+  .page-section + .page-section {
+    margin-top: var(--s-5);
   }
 
   .section-description {
@@ -1870,13 +1933,46 @@ html, body {
 
 @media (max-width: 767px) {
   /* Ensure tables scroll horizontally on mobile */
+  .table-shell,
   .table-aura {
-    min-width: 640px;
+    min-width: var(--table-min-width);
+  }
+
+  .aura-data-table {
+    @apply overflow-auto;
+    width: 100%;
+    border-radius: var(--r-lg);
+  }
+
+  .aura-data-table table {
+    min-width: var(--table-min-width);
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+
+  .aura-data-table thead th,
+  .aura-data-table td {
+    white-space: nowrap;
+  }
+
+  .aura-data-table thead th {
+    height: var(--control-height);
+  }
+
+  .page-shell {
+    width: min(100% - 0.65rem, var(--layout-max-width));
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
   }
 
   /* Tighter card padding on mobile */
   .skeuo-card {
     padding: 0.75rem;
+  }
+
+  .aura-touch-target {
+    min-height: var(--control-height);
+    min-width: var(--control-height);
   }
 }
 

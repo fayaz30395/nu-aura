@@ -51,6 +51,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
+import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -449,9 +450,14 @@ public class AuthService {
      */
     private GoogleUserInfo getUserInfoFromAccessToken(String accessToken) {
         try {
-            HttpClient client = HttpClient.newHttpClient();
+            HttpClient client = HttpClient.newBuilder()
+                    .connectTimeout(Duration.ofSeconds(30))
+                    .build();
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create("https://www.googleapis.com/oauth2/v3/userinfo"))
+                    // INT-5: bound the response wait — java.net.http has NO default request
+                    // timeout; connectTimeout only bounds connection establishment.
+                    .timeout(Duration.ofSeconds(30))
                     .header("Authorization", "Bearer " + accessToken)
                     .GET()
                     .build();
@@ -478,6 +484,8 @@ public class AuthService {
             // Verify token audience matches our client ID to prevent token substitution attacks
             HttpRequest tokenInfoRequest = HttpRequest.newBuilder()
                     .uri(URI.create("https://oauth2.googleapis.com/tokeninfo?access_token=" + accessToken))
+                    // INT-5: bound the response wait (no default request timeout).
+                    .timeout(Duration.ofSeconds(30))
                     .GET()
                     .build();
             try {

@@ -2,6 +2,13 @@ spring:
   application:
     name: hrms-platform
 
+  # P0-1: Timezone hardening — pin JVM timezone to Asia/Kolkata by default.
+  # This ensures LocalDate.now(), LocalDateTime.now(), and Instant.now()
+  # resolve consistently across all pods regardless of container base image TZ.
+  # Override via SPRING_JACKSON_TIME_ZONE for non-IN tenants.
+  jackson:
+    time-zone: ${SPRING_JACKSON_TIME_ZONE:Asia/Kolkata}
+
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:dev}
 

@@ -6,10 +6,10 @@ import {cva, type VariantProps} from 'class-variance-authority';
 import {cn} from '@/lib/utils';
 import {Loader2} from 'lucide-react';
 
-const buttonVariants = cva(
+  const buttonVariants = cva(
   // Aura: display-font label, tracking-tight, token-driven motion (--t-base / --ease).
   // A11y: focus-visible ring with offset for keyboard nav; disabled state accessible.
-  'press-scale inline-flex items-center justify-center gap-2 whitespace-nowrap font-display font-semibold tracking-[-0.005em] transition-all duration-[var(--t-base)] ease-[var(--ease)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--ring-primary)] disabled:pointer-events-none disabled:opacity-50 disabled:translate-y-0 motion-reduce:transition-none',
+  'press-scale inline-flex items-center justify-center gap-2 whitespace-nowrap font-display font-semibold tracking-[-0.005em] transition-all duration-[var(--t-base)] ease-[var(--ease)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--ring-primary)] min-h-[var(--control-height)] disabled:pointer-events-none disabled:opacity-50 disabled:translate-y-0 motion-reduce:transition-none',
   {
     variants: {
       variant: {
@@ -43,7 +43,7 @@ const buttonVariants = cva(
       },
       // Aura radii: control surfaces sit at 8–11px. Heights are unchanged (DESIGN
       // contract: md=36 / lg=44 / xl=48) — only the corner softness is re-systemed.
-      size: {
+    size: {
         xs: 'h-7 px-2 text-xs rounded-aura-xs',
         sm: 'h-8 px-3 text-sm rounded-aura-sm',
         md: 'h-9 px-3.5 text-sm rounded-aura-control',

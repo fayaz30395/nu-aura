@@ -124,7 +124,7 @@ export default function ImplicitRolesPage() {
     }
 
     if (!hasAnyRole(...ADMIN_ACCESS_ROLES)) {
-      router.push('/home');
+      router.push('/me/dashboard');
       return;
     }
   }, [hasHydrated, isReady, isAuthenticated, router, hasAnyRole]);
