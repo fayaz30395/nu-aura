@@ -6,11 +6,7 @@ Status: RED / BLOCKED, not production GREEN
 
 ## Executive verdict
 
-<<<<<<< ours
-Production cannot be declared GREEN from this environment. The repo now has safer RBAC/a11y fixes and a deployed-environment Playwright profile, but direct deployed verification is blocked by network policy and browser binary installation is blocked by CDN policy.
-=======
 Production cannot be declared GREEN from this environment. The repo now has safer RBAC/a11y fixes, stricter production-smoke safeguards, backend-aligned TenantAdmin permission semantics, and a deployed-environment Playwright profile, but direct deployed verification is blocked by network policy and browser binary installation is blocked by CDN policy.
->>>>>>> theirs
 
 ## Scope covered
 
@@ -27,11 +23,7 @@ Production cannot be declared GREEN from this environment. The repo now has safe
 | Static discovery | PASS | build-kit, ADR, patterns, security baseline, frontend/backend inventories inspected. |
 | Browser validation against deployed URL | BLOCKED | `curl -I -L https://hrms-frontend-vert.vercel.app/auth/login` failed with CONNECT tunnel 403. |
 | Playwright browser runtime | BLOCKED | `npx playwright install chromium` failed with Playwright CDN 403. |
-<<<<<<< ours
-| Frontend typecheck | PASS | Passed with `timeout 300 npx tsc --noEmit` after local OpenAPI generation and stale `.next` cleanup. |
-=======
 | Frontend typecheck | PASS | Passed with `timeout 300 npx tsc --noEmit` after local OpenAPI generation. |
->>>>>>> theirs
 | Frontend lint | PASS | `npm run lint` completed successfully. |
 | Frontend production build | PASS | Passed with explicit production API URL after removing Google Fonts build-time network dependency and standalone tracing override. |
 | Deployment | BLOCKED | Vercel/Railway CLIs are not installed, no usable auth context is exposed, and deployed smoke is network-blocked. |
@@ -43,14 +35,11 @@ Production cannot be declared GREEN from this environment. The repo now has safe
 3. Hardened tenant-isolation Playwright assertions for payroll admin denial, HR employee view, audit rendering, and cleared-session access.
 4. Added a production/deployed Playwright config that does not start local `npm run dev`.
 5. Added production readiness smoke tests for public routes, SuperAdmin protected routes, and employee direct-URL denial.
-<<<<<<< ours
-=======
 6. Removed the frontend TypeScript build-error bypass so production builds must pass type checking.
 7. Required `PLAYWRIGHT_BASE_URL` for production smoke runs so tests cannot silently target a stale default deployment.
 8. Required explicit production smoke credentials and blocked the demo password sentinel for production authentication checks.
 9. Aligned frontend TenantAdmin permissions with backend break-glass semantics: only `SUPER_ADMIN` or `SYSTEM:ADMIN` bypass arbitrary checks.
 10. Switched the release smoke workflow to the production Playwright profile when a live URL is available.
->>>>>>> theirs
 
 ## Remaining blockers
 

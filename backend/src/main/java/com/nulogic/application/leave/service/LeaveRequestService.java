@@ -720,21 +720,6 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
     }
 
     /**
-     * Resolves the login {@code User} id for a given employee so notifications are addressed to the
-     * key the notification inbox queries by ({@code SecurityContext.getCurrentUserId()}). Returns
-     * {@code null} (and logs) if the employee or its linked user cannot be resolved, so the caller
-     * can skip delivery rather than persist an unreachable notification.
-     */
-    private UUID resolveRecipientUserId(UUID employeeId, UUID tenantId) {
-        Employee employee = employeeRepository.findByIdAndTenantId(employeeId, tenantId).orElse(null);
-        if (employee == null || employee.getUser() == null) {
-            log.warn("Cannot resolve recipient user for employee {} — skipping in-app notification", employeeId);
-            return null;
-        }
-        return employee.getUser().getId();
-    }
-
-    /**
      * F2.1: Server-side computation of leave-day count between two dates.
      * Weekends (Sat/Sun) and tenant holidays are excluded.
      *

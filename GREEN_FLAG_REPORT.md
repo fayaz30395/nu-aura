@@ -1,67 +1,78 @@
 # NU-AURA Production Green-Flag Report
 
-**Run 2 — 2026-06-14** · Orchestrator: Bridge Agent · Scope: **Full audit, no deadline**
-**Target:** the **DEPLOYED** stack — Vercel frontend (https://hrms-frontend-vert.vercel.app/) + Railway backend (`nu-aura-backend-production.up.railway.app`).
-**Method:** 6 code-audit agents + 6 fix coders (parallel) + reconciliation against same-day live QA evidence (`qa-reports/2026-06-11*`) and a live backend health probe. Evidence: `docs/audit/green-flag/*-2026-06-14.md`, `ISSUE_BOARD.md` → "Run 2".
+**Run:** 2026-06-10 · **Orchestrator:** Bridge Agent · **Scope:** compressed (deadline 2026-06-11) — P0 paths, CRITICAL/HIGH blocking
+**Agents dispatched:** 8 audit (parallel) + 8 fix (parallel) + retest reviewer + release readiness; external verification fleet (Playwright UI run, full regression, V285 live-test) merged into the board.
 
 ---
 
-## Decision
+## Go/No-Go Decision: **NO-GO — conditional, 3 items from GO**
 
-- **DEMO / STAGING deployment (as configured today): CONDITIONAL GO.** The deployed stack is functional and was independently validated on 2026-06-11 by an 18-agent live audit — **overall PASS, no Critical/High/Medium security issues**, RBAC correct across all 8 roles (0 privilege escalations in 144 checks), tenant isolation intact, and a full leave approval journey proven end-to-end. Backend health is UP. The only thing standing in the way of calling this demo "clean" is the notification recipient-id fix + committing this session's work.
+The codebase moved from 6 CRITICAL / ~22 HIGH open findings to **zero open code-level CRITICALs**, with 27 issues fixed and retest-passed today. Three items stand between the app and a green flag:
 
-- **TRUE PRODUCTION: NO-GO.** Gated by deliberate-but-unacceptable-for-prod config (demo credentials live) and unrotated secrets — not by application-code quality.
+1. **SEC-1 (blocker, USER action):** live Neon DB password, JWT signing secret, and encryption key are recoverable from git history (commit `d5961fef`). Anyone with repo-history access can forge any user's token — including SuperAdmin — or connect to the database directly. Rotate all three, purge history (filter-repo/BFG), add gitleaks to CI. No deployment is safe before this.
+2. **REG-2 / REG-3 (HIGH, in progress):** the full regression run surfaced two suspected side effects of the DATA-2 fix — MFA login returning 401 (`AuthControllerTest.ucAuth003`) and `GET /api/v1/admin/users` returning 500. Under investigation by the fix-auth-regressions agent; DATA-2 is held at Retest until both close.
+3. **REL-9 (HIGH, deploy config):** ingress hostnames are still `hrms.example.com` in `infra/deployment/helm/hrms/values.yaml:134-135` and `infra/deployment/kubernetes/ingress.yaml:51-56,113`.
 
-### Production Readiness Score: **80 / 100** (demo/staging: ~90)
+Two decisions also need an explicit owner call (non-blocking if documented): **PROD-3** — LWF statutory calculation is unimplemented (descope formally or implement before the first IN payroll run that needs LWF remittance), and **QA-2** — no FINANCE_ADMIN role/user is seeded, so the intended payroll permission boundary has never been positively tested.
 
-Up from 72 after the live evidence reconciled DEV-7 (the "deployed app is broken" smoke was a stale test-harness artifact, not a real outage). Remaining deductions are the production gates below.
-
----
-
-## Must-clear gates for a PRODUCTION go-live
-
-| # | Gate | Owner | Action |
-|---|------|-------|--------|
-| 1 | **SEC-3** demo creds live (`DEMO_CREDENTIALS_ENABLED=true` → seeded SUPER_ADMINs reachable with public `Welcome@123`). *Intentional for demo, fatal for prod.* | USER | Unset/false the flag in Railway, re-run Flyway ≥V270 so the lockdown fires, confirm no enabled user holds a `Welcome@123` hash. |
-| 2 | **SEC-1** DB/JWT/enc secrets recoverable from git history & unrotated | USER | Rotate all three, purge history (BFG/filter-repo), add gitleaks to CI. |
-| 3 | **SEC-4** live Groq AI key in `backend/.env:36` | USER | Rotate; confirm never committed. |
-| 4 | **NOTIF-1** in-app notifications invisible (systemic employee-id vs user-id mismatch) | release | Apply ONE cross-cutting employee→user-id resolution at dispatch (this session fixed the leave-approved/rejected path; manager-on-submit + ApprovalNotificationListener remain) and **live-verify**: persist → log in as recipient → unread increments. |
-| 5 | **COMMIT-GATE** all Run-2 fixes are uncommitted; a freeze daemon reverts uncommitted edits | USER | `git add -A && git commit` the Run-2 fixes now (the sandbox shell here cannot run git). |
-| 6 | **BUILD-GATE** fixes not compile/test-verified this session | USER/CI | `cd frontend && npx tsc --noEmit` and `./mvnw -q verify`. |
-| 7 | **PROD-3** LWF remittance unimplemented (India statutory) | release | Implement or formally descope + hide. |
-| 8 | **INT-3** no Kafka transactional outbox (events lost if broker down post-commit) | release | Documented accepted risk; outbox post-GA. |
+When 1–3 are closed: **GO**.
 
 ---
 
-## What this run did
+## Executive Summary
 
-**Net-new HIGH code defects — fixed** (mirroring proven in-repo patterns; status Retest, pending build verification):
+A parallel 8-agent audit of code, contracts, RBAC, security, data integrity, and integrations found that NU-AURA's foundations are genuinely strong — tenant isolation (RLS fail-closed), payroll state machine and locking, rate limiting, CSRF, token lifecycle, and the workflow engine were all verified production-grade. The risk was concentrated in the leave module's balance math, the payroll run's hardcoded day counts, a terminated-employee login hole, and a cluster of FE→BE contract breaks on secondary pages. All of these were fixed in a single parallel fix wave and independently re-reviewed (25/25 PASS, plus 2 residual findings fixed in a follow-up pass). The remaining exposure is operational, not code: leaked secrets in git history, two auth regressions under investigation, and deploy-config placeholders.
 
-| ID | Fix |
-|----|-----|
-| RBAC-5 | Skills IDOR closed — `EmployeeSkillController` now enforces the `EmployeeController` view/update scope guard on `{employeeId}`. |
-| RBAC-6 | Dashboard BOLA closed — `DashboardsController` adds reportee/self/VIEW_ALL boundary mirroring `LeaveBalanceController`. |
-| DATA-14 | Loan audit trail added across all 6 financial transitions (mirrors `ExpenseClaimService`). |
-| NOTIF-1 (partial) | Leave-approved/rejected notifications now resolve employee→user id so they land on the readable key. |
-| INT-5 | HTTP timeouts on the Google-OAuth login path + 3 Slack calls. |
-| BA-9 / BA-10 | Learning CTAs and 9 admin `/home` dead-ends repointed to verified real routes. |
+## Critical Blockers Fixed Today (was → is)
 
-**Re-verified intact:** all Run-1 fixes (payroll math, leave balances, auth/termination, RBAC-1–4, INT-1/2/4, contract mismatches DEV-2–6, Flyway → V288). **BA-5b** now fixed in code (recommend close).
+| ID | Was | Fix |
+|----|-----|-----|
+| BA-1 | Every payslip hardcoded 30/30/0 days; adjustments never read | Days computed from calendar/attendance/approved leave; PayrollAdjustment applied and marked PROCESSED |
+| DATA-2 | Terminated employees could log in indefinitely | User deactivated in-transaction; honest `isEnabled()`; tokens revoked; SSO + refresh guarded (pending REG-2/3) |
+| DATA-1 | Inverted date range inflated own leave balance (exploit) | Range validation DTO+service; sign guards on all 4 balance mutators |
+| BA-2 | Inbox-rejected leave permanently leaked reserved balance | `onRejected` releases pending, mirroring direct path |
+| PROD-1 | Payroll run detail 404 dead-end | `/payroll/runs/[id]` page built against real endpoint |
+| REG-1 | (introduced by BA-6 fix, caught same day) PENDING leaves counted in payslip money math | APPROVED-only filter + regression test, 26/26 green |
 
-**Reconciled DEV-7:** the deployed-smoke login failures were the SEC-2 pre-hydration native-POST flake (fixed later 2026-06-11) plus transient cold-start — same-day live runs show `/auth/me` 200, correct RBAC matrix, and clean journeys. Recommend re-running the updated smoke to refresh the stale artifact.
+## Agent-by-Agent Findings
 
-## RBAC & Security status
-**Strong.** Live 18-agent audit PASS; code audit found zero new CRITICALs and the two net-new HIGH IDOR/BOLA holes are now closed. SuperAdmin bypass centralized + audited (by design). Injection/XSS/CORS/CSRF/rate-limit/headers verified safe in code and live. Every open CRITICAL/HIGH security item is a credential/deploy-config action, not a code defect.
+Full detail in `docs/audit/green-flag/*.md`; live status in `ISSUE_BOARD.md`.
 
-## Post-release backlog (documented, non-blocking)
-RBAC-7/8, DATA-15/16/17, RBAC-5b, DATA-18/19/20, F1 (employees first-load race), SRCH-1 (`/employees` search ignored), PII-1 (me bank/tax masking), OFFLINE-1 (global offline banner), CSP-1 (add base-uri/form-action/object-src), TEST-1 (e2e suite rewrite), MIG-RLS, PERF-1, RACE-1.
+- **ba** — 20 use cases audited: 11 OK, 5 partial, 4 broken. Core theme: leave↔payroll integration was severed (now reconnected for adjustments/LOP; SpEL component engine in the run path and encashment/cancellation compensation remain post-release scope, BA-10/11/12).
+- **product** — all ~100 sidebar links resolve; one true 404 (fixed); LWF/US/UK statutory gaps surfaced (US/UK now blocked at run creation; LWF needs the PROD-3 decision); ~25 orphan pages to BA triage post-release.
+- **dev** — 1,747 backend routes diffed against 961 frontend calls: 78 mismatches, 6 page-breaking (all repointed or feature-gated); wave-10 backlog confirmed ~90% closed; approval double-approve race fixed with pessimistic lock + @Version (V284).
+- **qa** — 89-case test matrix with expected results; backend coverage strong (308 test files incl. tenant-isolation and RBAC-boundary suites); seeded credentials documented for 6 roles; QA-2 (FINANCE_ADMIN) open.
+- **rbac** — 180 controllers scanned: zero unguarded mutating endpoints; 3 HIGHs (2 IDOR + statutory permission literal mismatch) fixed; retest found and fixed 3 more claim/enrollment IDORs (RBAC-4). Privilege-escalation guards and SuperAdmin bypass verified intact.
+- **security** — all prior audit findings confirmed still fixed; OWASP sweep clean (no injection, no data-exposure DTOs, fail-closed rate limits, CSRF, rotation). One new HIGH: SEC-1 secrets in git history (open, USER).
+- **data** — tenant isolation strongest area (no leaks); leave-module corruption vectors closed; payroll period uniqueness enforced at DB (V283 with safe dedup); FK/audit-trail gaps on child tables logged as post-release.
+- **integration** — payroll DLT now consumed; DocuSign timeouts bounded (7/7); webhook stale-delivery reclaim added; Redis degradation verified well-engineered; known accepted risks: no transactional outbox (INT-3), auth rate-limit fails closed on Redis outage (INT-6) — both documented.
+- **release** — migration chain V283/V284/V285 verified safe and collision-free; prod profile sane (demo creds fail-closed, swagger off, no wildcard CORS); rollback plan written (`docs/audit/green-flag/rollback-plan.md`); monitoring alerts cover the new DLT topic. Verdict: CONDITIONAL-GO.
+- **retest** — independent review of all concurrent fixes: 25/25 PASS, zero merge conflicts in the doubly-edited `LeaveRequestService`; 2 residual findings fixed same-day (RBAC-4, CONS-1).
+- **ui** — Playwright suite ran externally against the fixed build (frontend :3001 → backend :8090); ENV-1 closed on the board. *Gap: no `ui.md` evidence file with pass/fail per journey was recorded — attach the Playwright report to close the UI criterion cleanly.*
 
----
+## Test Coverage Summary
 
-## Immediate next actions (in order)
-1. **Commit the Run-2 fixes** before the freeze daemon reverts them.
-2. Run `tsc --noEmit` + `mvnw verify`; re-run the deployed smoke.
-3. Complete the NOTIF-1 cross-cutting fix and live-verify unread increments.
-4. For prod: flip SEC-3 off + Flyway re-run, rotate SEC-1/SEC-4 secrets, decide PROD-3.
+89 manual test cases designed (all with expected results) across role-access, auth, CRUD, invalid input, duplicates, sessions, boundaries, tenant isolation, and audit. Automated: 308 backend test files spanning every P0 domain incl. dedicated security suites; ~140 Playwright specs on P0 frontend flows; 15+ new regression tests added by today's fix wave (leave validation, payroll days/adjustments, workflow locking, scope enforcement). Full regression executed externally — caught REG-1 (fixed) and REG-2/3 (open).
 
-I can re-run the full live UI/RBAC sweep against the deployed URL once the Claude-in-Chrome extension is connected (it was unreachable this session); the 2026-06-11 live evidence stood in for it here.
+## RBAC / Security Status
+
+RBAC: clean. No unguarded endpoints, escalation paths blocked, 5 IDORs found and fixed, permission-literal mismatch fixed, SuperAdmin bypass verified working by design. Security: one open item (SEC-1, secrets rotation — operational, not code). All other findings MEDIUM/LOW defense-in-depth, documented on the board.
+
+## Production Readiness Score: **84 / 100**
+
+Deductions: secrets in git history unrotated (−8), two open auth regressions (−4), UI evidence file missing (−2), deploy-config placeholders (−1), open decision items PROD-3/QA-2 (−1).
+
+## Final Green-Flag Checklist
+
+- [x] Zero open code-level CRITICALs (6 fixed + REG-1 fixed, retest-passed)
+- [x] Zero open CRITICAL RBAC gaps; SuperAdmin bypass intact and verified
+- [x] Creation flows validated (tenant isolation + audit trail) — data agent + retest
+- [x] Builds: tsc + backend compile + PayrollRunServiceTest green on native run (per verification fleet); Flyway chain V283–V285 verified
+- [x] Rollback plan written; monitoring/alerts cover new paths (DLT)
+- [x] All known issues documented with severity in ISSUE_BOARD.md
+- [ ] **SEC-1: rotate Neon password + JWT secret + encryption key; purge git history; gitleaks in CI** ← blocker
+- [ ] **REG-2/REG-3 closed (MFA login 401; admin users 500)** ← blocker
+- [ ] **REL-9: real ingress hostnames in helm values + k8s manifests** ← blocker (deploy-time)
+- [ ] UI evidence: attach Playwright report as docs/audit/green-flag/ui.md
+- [ ] Decisions recorded: PROD-3 (LWF descope/implement), QA-2 (seed FINANCE_ADMIN)
+- [ ] Prod deploy checklist: confirm DEMO_CREDENTIALS_ENABLED unset/false (control exists, manual)

@@ -65,7 +65,6 @@ class TenantProvisioningServiceTest {
             u.setId(UUID.randomUUID());
             return u;
         });
-        when(roleRepository.findByCodeAndTenantId(eq("TENANT_ADMIN"), any())).thenReturn(Optional.empty());
         when(roleRepository.findByCodeAndTenantId(eq("ADMIN"), any())).thenReturn(Optional.empty());
         when(roleRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
         when(passwordEncoder.encode(anyString())).thenReturn("hashed");

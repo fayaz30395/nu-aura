@@ -390,7 +390,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         </>
       )}
 
-        {/* Main Content — fills remaining space, never overflows the shell */}
+      {/* Main Content — fills remaining space, never overflows the shell */}
       <div className="flex flex-1 flex-col overflow-hidden min-w-0">
         {/* Aura sticky top bar (60px) — toggle · breadcrumbs · ⌘K · theme · bell · user */}
         <TopBar
@@ -408,9 +408,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
 
         {/* Content Area — scrollable, fills remaining vertical space */}
         <main
-          id="app-main-content"
-          tabIndex={-1}
-          className="flex-1 overflow-y-auto overflow-x-hidden transition-colors duration-300 bg-transparent px-2 sm:px-0"
+          className="flex-1 overflow-y-auto overflow-x-hidden transition-colors duration-300 bg-transparent"
         >
           <AuthGuard>
             <ErrorBoundary resetKeys={[pathname]}>

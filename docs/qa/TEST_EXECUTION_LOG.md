@@ -36,8 +36,6 @@ cd backend && mvn -q -DskipTests compile
 | `cd frontend && npx playwright test --config=playwright.production.config.ts --project=production-chromium` | WARN | Browser executable missing; `npx playwright install chromium` is blocked by CDN 403 in this environment. |
 | `cd backend && mvn -q -DskipTests compile` | WARN | Maven dependency resolution blocked by repository 403 for Spring Boot parent POM. |
 | `vercel --version || true; railway --version || true; env | rg "VERCEL|RAILWAY" || true` | WARN | Vercel/Railway CLIs are not installed and no deployment auth env was present. |
-<<<<<<< ours
-=======
 
 
 ## Redo validation pass
@@ -55,4 +53,3 @@ cd backend && mvn -q -DskipTests compile
 | `curl -i --max-time 20 https://nu-aura-backend.onrender.com/actuator/health/readiness` | WARN | CONNECT tunnel 403 from this environment. |
 | `docker --version` | WARN | Docker CLI is unavailable in this environment. |
 | `vercel --version; railway --version` | WARN | Deployment CLIs/auth context are unavailable, so deploy verification remains blocked. |
->>>>>>> theirs

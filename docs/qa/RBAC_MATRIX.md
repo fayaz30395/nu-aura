@@ -7,11 +7,8 @@ Date: 2026-06-13
 | Role | Expected coverage |
 |---|---|
 | SUPER_ADMIN | Full bypass for route, menu, page action, and API. |
-<<<<<<< ours
-| TENANT_ADMIN | Must be explicitly decided: frontend currently treats as admin-like in inline checks; validate backend parity. |
-=======
 | TENANT_ADMIN | Tenant-scoped administration only; no arbitrary permission/role bypass unless explicitly granted `SYSTEM:ADMIN`. |
->>>>>>> theirs
+| TENANT_ADMIN | Must be explicitly decided: frontend currently treats as admin-like in inline checks; validate backend parity. |
 | HR_ADMIN / HR_MANAGER | Employee, recruitment, onboarding, approvals, documents, reports; no unrestricted system/security bypass. |
 | MANAGER / TEAM_LEAD | Team-scoped views and approvals; no payroll/admin/security mutation. |
 | EMPLOYEE | Self-service only; no admin lists, payroll runs, recruitment admin, role/user APIs. |
@@ -31,11 +28,8 @@ Date: 2026-06-13
 | EMPLOYEE | another employee profile/payslip/document | 403/404, never data leakage. |
 | MANAGER | payroll config and role/permission admin | 403/redirect/denial UI. |
 | HR_MANAGER | SuperAdmin role assignment | 403. |
-<<<<<<< ours
-| TENANT_ADMIN | SuperAdmin/global/system actions | Product decision required; do not assume full break-glass. |
-=======
 | TENANT_ADMIN | SuperAdmin/global/system actions | 403/redirect/denial unless explicitly granted a matching permission or `SYSTEM:ADMIN`. |
->>>>>>> theirs
+
 
 ## Mandatory allow checks
 
@@ -49,10 +43,7 @@ Date: 2026-06-13
 ## Known RBAC risks tracked
 
 - Missing frontend route map coverage can allow any authenticated user through unknown routes; API must still protect data.
-<<<<<<< ours
-- TENANT_ADMIN inline frontend bypass may exceed route/backend semantics.
-=======
 - TenantAdmin inline frontend bypass was removed from the shared permission hook; browser/API regression must still verify route-level coverage.
->>>>>>> theirs
+- TENANT_ADMIN inline frontend bypass may exceed route/backend semantics.
 - Existing E2E RBAC soft-pass assertions were hardened in this change for employee boundaries and tenant isolation.
 - User role assignment endpoint should be tested for stale permission revalidation behavior.

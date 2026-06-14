@@ -1,8 +1,14 @@
-import {defineConfig, devices} from '@playwright/test';
 import baseConfig from './playwright.config';
+import {defineConfig, devices} from '@playwright/test';
 
 const chromiumExecutablePath = process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH;
-const productionBaseUrl = process.env.PLAYWRIGHT_BASE_URL ?? 'https://hrms-frontend-vert.vercel.app';
+const productionBaseUrl = process.env.PLAYWRIGHT_BASE_URL;
+
+if (!productionBaseUrl) {
+  throw new Error(
+    'PLAYWRIGHT_BASE_URL is required for production smoke. Refusing to default to a live/stale deployment.'
+  );
+}
 
 /**
  * Production/deployed-environment Playwright profile.

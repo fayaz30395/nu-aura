@@ -120,9 +120,6 @@ const nextConfig = {
     } : false,
   },
 
-  typescript: {
-    ignoreBuildErrors: true,
-  },
   // Headers for caching and security
   async headers() {
     const securityHeaders = [

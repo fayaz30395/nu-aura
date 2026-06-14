@@ -370,35 +370,6 @@ async function openAuthOriginForApiLogin(page: Page): Promise<void> {
     // Some hosted environments intermittently stall authentication shell startup.
     // In that mode, continue with best-effort authentication state fallbacks.
     console.warn('openAuthOriginForApiLogin: login page open failed; continuing with fallback auth path.');
-    await ensureAuthShellOrigin(page);
-  }
-}
-
-async function safeClearClientAuthState(page: Page, reason: 'login' | 'fallback'): Promise<void> {
-  try {
-    await page.evaluate(() => {
-      sessionStorage.clear();
-      localStorage.removeItem('auth-storage');
-      localStorage.removeItem('nu-aura-user');
-      localStorage.removeItem('tenantId');
-      localStorage.removeItem('loginAttempts');
-      localStorage.removeItem('lockoutUntil');
-    });
-    return;
-  } catch (error) {
-    if (!String(error).includes('Execution context was destroyed') && reason === 'fallback') {
-      throw error;
-    }
-
-    await ensureAuthShellOrigin(page);
-    await page.evaluate(() => {
-      sessionStorage.clear();
-      localStorage.removeItem('auth-storage');
-      localStorage.removeItem('nu-aura-user');
-      localStorage.removeItem('tenantId');
-      localStorage.removeItem('loginAttempts');
-      localStorage.removeItem('lockoutUntil');
-    }).catch(() => {});
   }
 }
 
