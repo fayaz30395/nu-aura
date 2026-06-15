@@ -120,6 +120,11 @@ jobs:
 
       - name: TypeScript check
         working-directory: ./frontend
+        # Raise Node heap: tsc on this large app (900+ tsx + generated API client)
+        # OOMs at the default ~2GB heap on CI runners (skipLibCheck/incremental
+        # already enabled in tsconfig but insufficient at this scale).
+        env:
+          NODE_OPTIONS: --max-old-space-size=4096
         run: npx tsc --noEmit
 
       - name: Run unit tests

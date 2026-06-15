@@ -61,6 +61,10 @@ jobs:
 
       - name: Typecheck
         working-directory: frontend
+        # Raise Node heap: tsc OOMs at the default ~2GB on CI runners for this
+        # large app (900+ tsx + generated API client).
+        env:
+          NODE_OPTIONS: --max-old-space-size=4096
         run: npx tsc --noEmit
 
       - name: Build
