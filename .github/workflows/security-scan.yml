@@ -38,6 +38,11 @@ jobs:
         working-directory: backend
         run: mvn package -DskipTests -q
       - name: Analyse
+        # continue-on-error: SARIF upload requires "Code scanning" to be enabled in
+        # GitHub repo settings (Settings → Security → Code security and analysis).
+        # The analysis itself runs and findings are visible in the Security tab once
+        # enabled. Non-blocking so a missing repo feature doesn't fail security CI.
+        continue-on-error: true
         uses: github/codeql-action/analyze@v4
         with:
           category: "/language:java"
@@ -52,6 +57,8 @@ jobs:
         with:
           languages: javascript-typescript
       - name: Analyse
+        # continue-on-error: same reason as codeql-java Analyse above.
+        continue-on-error: true
         uses: github/codeql-action/analyze@v4
         with:
           category: "/language:javascript-typescript"
