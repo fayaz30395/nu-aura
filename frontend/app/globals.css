@@ -88,7 +88,7 @@
     --text-2: #3a3f57;
     --text-3: #6b7190;
     --on-rail: #aeb4cc;
-    --on-rail-dim: #646b88;
+    --on-rail-dim: #787f9e; /* a11y: WCAG AA (>=4.5:1) on the warm-dark rail */
 
     --border: #e4e7f0;
     --border-soft: #eef0f6;
@@ -383,7 +383,7 @@
     --text-2: #b7bdd4;
     --text-3: #7e85a3;
     --on-rail: #aeb4cc;
-    --on-rail-dim: #5b6280;
+    --on-rail-dim: #787f9e; /* a11y: WCAG AA (>=4.5:1) on the warm-dark rail */
 
     --border: #1e2540;
     --border-soft: #161c33;
@@ -813,7 +813,9 @@
 
   .skip-link {
     @apply fixed top-3 left-3 z-50 rounded-md px-3 py-2 text-sm font-medium text-white;
-    background-color: var(--accent-primary);
+    /* a11y: deep brand accent (theme-invariant) keeps white text >=4.5:1 in
+       dark mode, where --accent-primary lightens and drops to ~3.5:1. */
+    background-color: var(--aura-accent-700);
     box-shadow: var(--shadow-card);
     transform: translateY(-0.5rem);
     opacity: 0;
