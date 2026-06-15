@@ -263,19 +263,19 @@ export const testEmployee = {
 
 export const testLeave = {
   annual: {
-    leaveType: 'ANNUAL',
+    leaveType: 'Earned Leave',   // V72 seeds leave_code='EL', leave_name='Earned Leave'
     startDate: getDateString(7),
     endDate: getDateString(9),
     reason: 'Family vacation - E2E Test',
   },
   sick: {
-    leaveType: 'SICK',
+    leaveType: 'Sick Leave',     // V72 seeds leave_code='SL', leave_name='Sick Leave'
     startDate: getDateString(3),
     endDate: getDateString(3),
     reason: 'Medical appointment - E2E Test',
   },
   casual: {
-    leaveType: 'CASUAL',
+    leaveType: 'Casual Leave',   // V72 seeds leave_code='CL', leave_name='Casual Leave'
     startDate: getDateString(1),
     endDate: getDateString(1),
     halfDay: true,

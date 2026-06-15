@@ -48,8 +48,8 @@ export class LeavePage extends BasePage {
     this.leaveTable = page.locator('table');
     this.tableRows = page.locator('tbody tr');
 
-    // Leave balances
-    this.annualLeaveBalance = page.locator('text=/Annual Leave/i').locator('..');
+    // Leave balances — names match V72 seeds (EL=Earned Leave, SL=Sick Leave, CL=Casual Leave)
+    this.annualLeaveBalance = page.locator('text=/Earned Leave/i').locator('..');
     this.sickLeaveBalance = page.locator('text=/Sick Leave/i').locator('..');
     this.casualLeaveBalance = page.locator('text=/Casual Leave/i').locator('..');
 
