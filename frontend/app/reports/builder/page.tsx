@@ -339,6 +339,7 @@ export default function ReportBuilderPage() {
               <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-4">Sort</h2>
               <div className="flex gap-2">
                 <select
+                  aria-label="Sort by"
                   value={sortBy}
                   onChange={e => setSortBy(e.target.value)}
                   className="flex-1 text-sm border border-[var(--border-strong)] rounded px-2 py-1.5"
@@ -351,6 +352,7 @@ export default function ReportBuilderPage() {
                     ))}
                 </select>
                 <select
+                  aria-label="Sort direction"
                   value={sortDir}
                   onChange={e => setSortDir(e.target.value)}
                   className="text-sm border border-[var(--border-strong)] rounded px-2 py-1.5"

@@ -279,6 +279,7 @@ export default function CustomFieldsPage() {
               className="input-aura"
             />
             <select
+              aria-label="Filter by entity type"
               value={filterEntityType}
               onChange={(e) => setFilterEntityType(e.target.value as EntityType | 'ALL')}
               className="input-aura"

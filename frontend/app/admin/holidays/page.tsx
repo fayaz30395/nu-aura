@@ -233,6 +233,7 @@ export default function HolidayCalendarManagementPage() {
           <div className="flex items-center space-x-4">
             {/* Year Selector */}
             <select
+              aria-label="Year"
               value={selectedYear}
               onChange={(e) => setSelectedYear(parseInt(e.target.value))}
               className="input-aura"

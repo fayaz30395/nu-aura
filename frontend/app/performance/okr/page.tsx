@@ -366,6 +366,7 @@ export default function OKRPage() {
         {/* Filters */}
         <div className="flex gap-4 mb-6">
           <select
+            aria-label="Filter by level"
             value={filterLevel}
             onChange={(e) => setFilterLevel(e.target.value)}
             className="px-4 py-2 border border-[var(--border-strong)] rounded-md text-sm"
@@ -378,6 +379,7 @@ export default function OKRPage() {
             ))}
           </select>
           <select
+            aria-label="Filter by status"
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
             className="px-4 py-2 border border-[var(--border-strong)] rounded-md text-sm"

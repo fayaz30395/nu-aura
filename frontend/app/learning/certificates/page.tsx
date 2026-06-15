@@ -182,6 +182,7 @@ export default function CertificateGalleryPage() {
             <div className="flex items-center gap-2">
               <Filter className="h-5 w-5 text-[var(--text-secondary)]"/>
               <select
+                aria-label="Filter by date"
                 value={dateFilter}
                 onChange={(e) => setDateFilter(e.target.value)}
                 className="flex-1 px-4 py-2 border border-[var(--border-main)] rounded-lg focus:border-accent-600 dark:bg-[var(--bg-secondary)] dark:text-white"

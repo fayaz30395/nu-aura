@@ -466,6 +466,7 @@ export default function OffboardingPage() {
             />
           </div>
           <select
+            aria-label="Filter by status"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
             className="input-aura"
@@ -478,6 +479,7 @@ export default function OffboardingPage() {
             <option value={ExitStatus.CANCELLED}>Cancelled</option>
           </select>
           <select
+            aria-label="Filter by type"
             value={typeFilter}
             onChange={(e) => setTypeFilter(e.target.value)}
             className="input-aura"

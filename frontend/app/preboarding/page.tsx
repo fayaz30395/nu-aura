@@ -267,6 +267,7 @@ export default function PreboardingPage() {
             />
           </div>
           <select
+            aria-label="Filter by status"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
             className="px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-input)]"

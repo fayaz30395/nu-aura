@@ -281,6 +281,7 @@ export default function UtilizationReportsPage() {
             {/* Date Range Selector */}
             <div className="relative">
               <select
+                aria-label="Date range"
                 value={selectedDateRange}
                 onChange={(e) => setSelectedDateRange(e.target.value as DateRangeKey)}
                 className="appearance-none pl-4 pr-10 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent-500"

@@ -316,6 +316,7 @@ export default function WorkloadDashboardPage() {
         <div className="flex items-center gap-4">
           {/* Date range */}
           <select
+            aria-label="Date range"
             value={selectedDateRange}
             onChange={(e) => setSelectedDateRange(e.target.value as DateRangeKey)}
             className="input-aura rounded-md border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-1.5 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]"

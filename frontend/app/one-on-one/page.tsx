@@ -1656,6 +1656,7 @@ export default function OneOnOnePage() {
               <div className="flex items-center gap-2">
                 <Filter className="h-4 w-4 text-[var(--text-muted)]"/>
                 <select
+                  aria-label="Filter by status"
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value as MeetingStatus | 'ALL')}
                   className="px-4 py-1.5 text-sm border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"

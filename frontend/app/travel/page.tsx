@@ -190,6 +190,7 @@ export default function TravelPage() {
             <div className="relative">
               <Filter className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]"/>
               <select
+                aria-label="Filter by status"
                 value={statusFilter}
                 onChange={(e) => {
                   setStatusFilter(e.target.value as TravelStatus | 'ALL');
@@ -214,6 +215,7 @@ export default function TravelPage() {
             <div className="relative">
               <Filter className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]"/>
               <select
+                aria-label="Filter by type"
                 value={typeFilter}
                 onChange={(e) => {
                   setTypeFilter(e.target.value as TravelType | 'ALL');

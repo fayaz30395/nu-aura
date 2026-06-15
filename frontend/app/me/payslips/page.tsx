@@ -253,6 +253,7 @@ export default function MyPayslipsPage() {
               <div className="flex items-center gap-2">
                 <Filter className="h-4 w-4 text-[var(--text-muted)]"/>
                 <select
+                  aria-label="Year"
                   value={selectedYear}
                   onChange={(e) => setSelectedYear(Number(e.target.value))}
                   className="input-aura px-4 py-2 rounded-lg"

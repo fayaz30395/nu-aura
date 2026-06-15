@@ -372,6 +372,7 @@ export default function ShiftPatternsPage() {
                           <div key={idx} className="space-y-1">
                             <p className="text-xs text-center text-surface-400">Day {idx + 1}</p>
                             <select
+                              aria-label="Slot"
                               value={slot}
                               onChange={(e) => {
                                 const next = [...patternSlots];

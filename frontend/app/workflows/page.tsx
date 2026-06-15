@@ -272,6 +272,7 @@ export default function WorkflowListPage() {
 
               {/* Entity type filter */}
               <select
+                aria-label="Filter by entity type"
                 value={entityTypeFilter}
                 onChange={(e) => {
                   setEntityTypeFilter(e.target.value as WorkflowEntityType | 'ALL');

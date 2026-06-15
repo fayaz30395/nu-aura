@@ -254,6 +254,7 @@ export default function AgenciesPage() {
             <div className="flex items-center gap-2">
               <Filter className="h-4 w-4 text-[var(--text-muted)]"/>
               <select
+                aria-label="Filter by status"
                 value={statusFilter || ''}
                 onChange={(e) => setStatusFilter((e.target.value || undefined) as AgencyStatus | undefined)}
                 className="px-4 py-2 text-sm bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg cursor-pointer input-skeuo"

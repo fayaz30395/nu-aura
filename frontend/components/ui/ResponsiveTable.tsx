@@ -358,6 +358,7 @@ export function TablePagination({
           <div className="hidden sm:flex items-center gap-2">
             <span className="text-sm text-surface-500 dark:text-surface-400">Show:</span>
             <select
+              aria-label="Page size"
               value={pageSize}
               onChange={(e) => onPageSizeChange(Number(e.target.value))}
               className="text-sm border border-surface-300 dark:border-surface-600 rounded px-2 py-1 bg-[var(--bg-input)]"

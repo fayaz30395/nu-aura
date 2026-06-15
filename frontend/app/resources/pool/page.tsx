@@ -249,6 +249,7 @@ export default function ResourcePoolPage() {
           </div>
 
           <select
+            aria-label="Filter by department"
             value={deptFilter}
             onChange={e => setDeptFilter(e.target.value)}
             className="px-4 py-2 border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-card)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"

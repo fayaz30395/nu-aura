@@ -149,6 +149,7 @@ export default function LearningPathsPage() {
             <div className="flex items-center gap-2">
               <Filter className="h-5 w-5 text-[var(--text-secondary)]"/>
               <select
+                aria-label="Difficulty"
                 value={selectedDifficulty}
                 onChange={(e) => setSelectedDifficulty(e.target.value)}
                 className="flex-1 px-4 py-2 border border-[var(--border-main)] rounded-lg focus:border-accent-600 bg-[var(--bg-secondary)] text-[var(--text-primary)]"

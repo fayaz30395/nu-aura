@@ -361,6 +361,7 @@ export default function AnnouncementsPage() {
               {/* Line 2: Filters */}
               <div className="flex gap-4">
                 <select
+                  aria-label="Filter by category"
                   value={categoryFilter}
                   onChange={(e) => setCategoryFilter(e.target.value)}
                   className="input-aura flex-1 cursor-pointer"
@@ -373,6 +374,7 @@ export default function AnnouncementsPage() {
                   ))}
                 </select>
                 <select
+                  aria-label="Filter by priority"
                   value={priorityFilter}
                   onChange={(e) => setPriorityFilter(e.target.value)}
                   className="input-aura flex-1 cursor-pointer"

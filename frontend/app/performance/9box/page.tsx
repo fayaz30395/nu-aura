@@ -406,6 +406,7 @@ export default function NineBoxPage() {
                       className="h-10 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-lg animate-pulse"/>
                   ) : (
                     <select
+                      aria-label="Cycle"
                       value={selectedCycleId}
                       onChange={e => setSelectedCycleId(e.target.value)}
                       className="w-full px-4 py-2.5 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-surface)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"

@@ -471,6 +471,7 @@ export default function MyLeavesPage() {
                 <div className="flex items-center gap-2">
                   <Filter className="h-4 w-4 text-[var(--text-muted)]"/>
                   <select
+                    aria-label="Filter by status"
                     value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value as LeaveRequestStatus | 'ALL')}
                     className="input-aura px-4 py-1.5 text-sm rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500"
@@ -483,6 +484,7 @@ export default function MyLeavesPage() {
                   </select>
                 </div>
                 <select
+                  aria-label="Filter by leave type"
                   value={leaveTypeFilter}
                   onChange={(e) => setLeaveTypeFilter(e.target.value)}
                   className="input-aura px-4 py-1.5 text-sm rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500"
