@@ -670,9 +670,14 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
             String dates = formatDateRange(leaveRequest);
 
             // Notify manager if exists
+            // NOTIF-1 FIX: employee.getManagerId() is an EMPLOYEE id; resolve to the
+            // manager's USER id before dispatch (same pattern as notifyLeaveApproved).
             if (employee.getManagerId() != null) {
-                webSocketNotificationService.notifyLeaveRequestSubmitted(
-                        employee.getManagerId(), employeeName, leaveTypeName, dates);
+                UUID managerUserId = resolveRecipientUserId(employee.getManagerId(), tenantId);
+                if (managerUserId != null) {
+                    webSocketNotificationService.notifyLeaveRequestSubmitted(
+                            managerUserId, employeeName, leaveTypeName, dates);
+                }
             }
         } catch (RuntimeException e) {
             log.warn("Failed to send leave request notification: {}", e.getMessage());
@@ -810,5 +815,20 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
     @Transactional(readOnly = true)
     public Optional<String> findFullNameByEmployeeId(UUID employeeId) {
         return employeeRepository.findFullNameById(employeeId);
+    }
+
+    /**
+     * NOTIF-1: Resolves an employee id to its linked user id so that the persisted
+     * in-app notification (keyed/queried by user_id) is visible in the recipient's
+     * inbox. Returns {@code null} when the employee or their user link is absent —
+     * callers should silently skip the notification in that case.
+     */
+    private UUID resolveRecipientUserId(UUID employeeId, UUID tenantId) {
+        if (employeeId == null) {
+            return null;
+        }
+        return employeeRepository.findByIdAndTenantId(employeeId, tenantId)
+                .map(emp -> emp.getUser() != null ? emp.getUser().getId() : null)
+                .orElse(null);
     }
 }

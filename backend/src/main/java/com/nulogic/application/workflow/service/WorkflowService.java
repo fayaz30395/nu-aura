@@ -503,8 +503,18 @@ public class WorkflowService {
     }
 
     private UUID findReportingManager(UUID employeeUserId, UUID tenantId) {
-        return employeeRepository.findByUserIdAndTenantId(employeeUserId, tenantId)
+        // employeeUserId here is the requester's USER id (stored as execution.requesterId).
+        // getManagerId() returns the manager's EMPLOYEE id — resolve it to the manager's
+        // USER id so that ApprovalTaskAssignedEvent.assignedToUserId carries a user id
+        // (NOTIF-1: notifications are keyed/queried by user_id).
+        UUID managerEmployeeId = employeeRepository.findByUserIdAndTenantId(employeeUserId, tenantId)
                 .map(com.nulogic.domain.employee.Employee::getManagerId)
+                .orElse(null);
+        if (managerEmployeeId == null) {
+            return null;
+        }
+        return employeeRepository.findByIdAndTenantId(managerEmployeeId, tenantId)
+                .map(mgr -> mgr.getUser() != null ? mgr.getUser().getId() : null)
                 .orElse(null);
     }
 
@@ -516,15 +526,23 @@ public class WorkflowService {
      *
      * @param departmentId the department to look up
      * @param tenantId     current tenant for isolation
-     * @return the employee UUID of the department head, or {@code null} if the
-     * department doesn't exist or has no manager assigned
+     * @return the user UUID of the department head, or {@code null} if the
+     * department doesn't exist, has no manager assigned, or the manager has no user link
      */
     private UUID findDepartmentHead(UUID departmentId, UUID tenantId) {
         if (departmentId == null) {
             return null;
         }
-        return departmentRepository.findByIdAndTenantId(departmentId, tenantId)
+        // Department.managerId stores the department head's EMPLOYEE id — resolve to
+        // USER id so ApprovalTaskAssignedEvent.assignedToUserId is a user id (NOTIF-1).
+        UUID headEmployeeId = departmentRepository.findByIdAndTenantId(departmentId, tenantId)
                 .map(com.nulogic.domain.employee.Department::getManagerId)
+                .orElse(null);
+        if (headEmployeeId == null) {
+            return null;
+        }
+        return employeeRepository.findByIdAndTenantId(headEmployeeId, tenantId)
+                .map(emp -> emp.getUser() != null ? emp.getUser().getId() : null)
                 .orElse(null);
     }
 
