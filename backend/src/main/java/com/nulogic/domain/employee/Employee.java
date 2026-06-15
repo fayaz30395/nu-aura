@@ -283,6 +283,7 @@ public class Employee extends TenantAware {
         FINANCE, // Legacy value from seed data
 
         // Admin & Support
+        ADMIN, // Legacy value from seed data (V291)
         ADMIN_ASSISTANT,
         OFFICE_MANAGER,
         CUSTOMER_SUPPORT,
