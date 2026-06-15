@@ -213,8 +213,7 @@ public class ResourceManagementService {
     @Transactional(readOnly = true)
     public EmployeeCapacity getEmployeeCapacity(UUID employeeId, LocalDate asOfDate) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
-        Employee employee = employeeRepository.findById(employeeId)
-                .filter(e -> e.getTenantId().equals(tenantId))
+        Employee employee = employeeRepository.findByIdAndTenantId(employeeId, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
 
         List<ProjectEmployee> assignments = projectEmployeeRepository
@@ -320,8 +319,7 @@ public class ResourceManagementService {
     public EmployeeAvailability getEmployeeAvailability(UUID employeeId, LocalDate startDate,
                                                         LocalDate endDate) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
-        Employee employee = employeeRepository.findById(employeeId)
-                .filter(e -> e.getTenantId().equals(tenantId))
+        Employee employee = employeeRepository.findByIdAndTenantId(employeeId, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
 
         List<ProjectEmployee> projectAssignments = projectEmployeeRepository

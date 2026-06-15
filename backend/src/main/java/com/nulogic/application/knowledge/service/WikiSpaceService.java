@@ -41,8 +41,7 @@ public class WikiSpaceService {
     public WikiSpace updateSpace(UUID spaceId, WikiSpace spaceData) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
-        WikiSpace space = wikiSpaceRepository.findById(spaceId)
-                .filter(s -> s.getTenantId().equals(tenantId))
+        WikiSpace space = wikiSpaceRepository.findByIdAndTenantId(spaceId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Wiki space not found"));
 
         space.setName(spaceData.getName());
@@ -63,8 +62,7 @@ public class WikiSpaceService {
     @Transactional(readOnly = true)
     public WikiSpace getSpaceById(UUID spaceId) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return wikiSpaceRepository.findById(spaceId)
-                .filter(s -> s.getTenantId().equals(tenantId))
+        return wikiSpaceRepository.findByIdAndTenantId(spaceId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Wiki space not found"));
     }
 
@@ -91,8 +89,7 @@ public class WikiSpaceService {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID userId = SecurityContext.getCurrentUserId();
 
-        WikiSpace space = wikiSpaceRepository.findById(spaceId)
-                .filter(s -> s.getTenantId().equals(tenantId))
+        WikiSpace space = wikiSpaceRepository.findByIdAndTenantId(spaceId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Wiki space not found"));
 
         space.setIsArchived(true);
@@ -108,8 +105,7 @@ public class WikiSpaceService {
     public void deleteSpace(UUID spaceId) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
-        WikiSpace space = wikiSpaceRepository.findById(spaceId)
-                .filter(s -> s.getTenantId().equals(tenantId))
+        WikiSpace space = wikiSpaceRepository.findByIdAndTenantId(spaceId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Wiki space not found"));
 
         wikiSpaceRepository.delete(space);

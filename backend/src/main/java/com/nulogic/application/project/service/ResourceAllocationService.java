@@ -124,8 +124,7 @@ public class ResourceAllocationService {
     public ProjectEmployeeResponse reallocate(UUID projectEmployeeId, ReallocateRequest request) {
         UUID tenantId = TenantContext.requireCurrentTenant();
 
-        ProjectEmployee pe = projectEmployeeRepository.findById(projectEmployeeId)
-                .filter(e -> e.getTenantId().equals(tenantId))
+        ProjectEmployee pe = projectEmployeeRepository.findByIdAndTenantId(projectEmployeeId, tenantId)
                 .orElseThrow(() -> new RuntimeException("Allocation not found"));
 
         if (request.getAllocationPercentage() > 0) {

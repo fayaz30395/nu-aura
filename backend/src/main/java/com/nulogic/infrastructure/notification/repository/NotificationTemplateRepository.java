@@ -15,6 +15,8 @@ import java.util.UUID;
 @Repository
 public interface NotificationTemplateRepository extends JpaRepository<NotificationTemplate, UUID> {
 
+    Optional<NotificationTemplate> findByIdAndTenantId(UUID id, UUID tenantId);
+
     Optional<NotificationTemplate> findByCodeAndTenantId(String code, UUID tenantId);
 
     Optional<NotificationTemplate> findByEventTypeAndTenantId(String eventType, UUID tenantId);

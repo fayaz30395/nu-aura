@@ -14,6 +14,8 @@ import java.util.UUID;
 @Repository
 public interface AppRoleRepository extends JpaRepository<AppRole, UUID> {
 
+    Optional<AppRole> findByIdAndTenantId(UUID id, UUID tenantId);
+
     /**
      * Find role by code, tenant, and application.
      * Fetches permissions eagerly via @EntityGraph to prevent LazyInitializationException

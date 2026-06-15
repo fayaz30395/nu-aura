@@ -220,9 +220,7 @@ public class PSAService {
         UUID tenantId = TenantContext.requireCurrentTenant();
         log.debug("Retrieving timesheet {} for tenant {}", id, tenantId);
 
-        // Note: Using findById here for simplicity, but in production should use tenant-scoped query
-        return timesheetRepository.findById(id)
-                .filter(ts -> tenantId.equals(ts.getTenantId()));
+        return timesheetRepository.findByIdAndTenantId(id, tenantId);
     }
 
     /**
@@ -236,8 +234,7 @@ public class PSAService {
         UUID tenantId = TenantContext.requireCurrentTenant();
         log.info("Submitting timesheet {} for tenant {}", id, tenantId);
 
-        return timesheetRepository.findById(id)
-                .filter(ts -> tenantId.equals(ts.getTenantId()))
+        return timesheetRepository.findByIdAndTenantId(id, tenantId)
                 .map(ts -> {
                     ts.setStatus(PSATimesheet.TimesheetStatus.SUBMITTED);
                     ts.setSubmittedAt(tenantTimeService.now(tenantId));
@@ -257,8 +254,7 @@ public class PSAService {
         UUID tenantId = TenantContext.requireCurrentTenant();
         log.info("Approving timesheet {} by approver {} for tenant {}", id, approverId, tenantId);
 
-        return timesheetRepository.findById(id)
-                .filter(ts -> tenantId.equals(ts.getTenantId()))
+        return timesheetRepository.findByIdAndTenantId(id, tenantId)
                 .map(ts -> {
                     ts.setStatus(PSATimesheet.TimesheetStatus.APPROVED);
                     ts.setApprovedAt(tenantTimeService.now(tenantId));
@@ -279,8 +275,7 @@ public class PSAService {
         UUID tenantId = TenantContext.requireCurrentTenant();
         log.info("Rejecting timesheet {} with reason for tenant {}", id, tenantId);
 
-        return timesheetRepository.findById(id)
-                .filter(ts -> tenantId.equals(ts.getTenantId()))
+        return timesheetRepository.findByIdAndTenantId(id, tenantId)
                 .map(ts -> {
                     ts.setStatus(PSATimesheet.TimesheetStatus.REJECTED);
                     ts.setRejectionReason(reason);
@@ -393,9 +388,7 @@ public class PSAService {
         UUID tenantId = TenantContext.requireCurrentTenant();
         log.debug("Retrieving invoice {} for tenant {}", id, tenantId);
 
-        // Note: Using findById here for simplicity, but filtering by tenant
-        return invoiceRepository.findById(id)
-                .filter(inv -> tenantId.equals(inv.getTenantId()));
+        return invoiceRepository.findByIdAndTenantId(id, tenantId);
     }
 
     /**
@@ -410,8 +403,7 @@ public class PSAService {
         UUID tenantId = TenantContext.requireCurrentTenant();
         log.info("Updating invoice {} for tenant {}", id, tenantId);
 
-        return invoiceRepository.findById(id)
-                .filter(existing -> tenantId.equals(existing.getTenantId()))
+        return invoiceRepository.findByIdAndTenantId(id, tenantId)
                 .map(existing -> {
                     invoice.setId(id);
                     invoice.setTenantId(existing.getTenantId());
@@ -430,8 +422,7 @@ public class PSAService {
         UUID tenantId = TenantContext.requireCurrentTenant();
         log.info("Approving invoice {} for tenant {}", id, tenantId);
 
-        return invoiceRepository.findById(id)
-                .filter(inv -> tenantId.equals(inv.getTenantId()))
+        return invoiceRepository.findByIdAndTenantId(id, tenantId)
                 .map(inv -> {
                     inv.setStatus(PSAInvoice.InvoiceStatus.SENT);
                     return invoiceRepository.save(inv);

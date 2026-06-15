@@ -175,8 +175,7 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
     public LeaveRequest approveLeaveRequest(UUID id, UUID approverId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
 
-        LeaveRequest request = leaveRequestRepository.findById(id)
-                .filter(lr -> lr.getTenantId().equals(tenantId))
+        LeaveRequest request = leaveRequestRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException(LEAVE_REQUEST_NOT_FOUND));
 
         // L1 Approval: Validate that approver is the employee's manager
@@ -239,8 +238,7 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
     public LeaveRequest rejectLeaveRequest(UUID id, UUID approverId, String reason) {
         UUID tenantId = TenantContext.requireCurrentTenant();
 
-        LeaveRequest request = leaveRequestRepository.findById(id)
-                .filter(lr -> lr.getTenantId().equals(tenantId))
+        LeaveRequest request = leaveRequestRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException(LEAVE_REQUEST_NOT_FOUND));
 
         // L1 Approval: Validate that approver is the employee's manager
@@ -346,8 +344,7 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
     public LeaveRequest cancelLeaveRequest(UUID id, String reason) {
         UUID tenantId = TenantContext.requireCurrentTenant();
 
-        LeaveRequest request = leaveRequestRepository.findById(id)
-                .filter(lr -> lr.getTenantId().equals(tenantId))
+        LeaveRequest request = leaveRequestRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException(LEAVE_REQUEST_NOT_FOUND));
 
         // BUG-NEW-009: Enforce ownership — only the owner, or someone with LEAVE:MANAGE /
@@ -398,8 +395,7 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
     public LeaveRequest updateLeaveRequest(UUID id, LeaveRequest leaveRequestData) {
         UUID tenantId = TenantContext.requireCurrentTenant();
 
-        LeaveRequest request = leaveRequestRepository.findById(id)
-                .filter(lr -> lr.getTenantId().equals(tenantId))
+        LeaveRequest request = leaveRequestRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException(LEAVE_REQUEST_NOT_FOUND));
         UUID currentEmployeeId = SecurityContext.getCurrentEmployeeId();
         if (!SecurityContext.hasPermission(com.nulogic.common.security.Permission.LEAVE_MANAGE)
@@ -461,8 +457,7 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
     @Transactional(readOnly = true)
     public LeaveRequest getLeaveRequestById(UUID id) {
         UUID tenantId = TenantContext.requireCurrentTenant();
-        return leaveRequestRepository.findById(id)
-                .filter(lr -> lr.getTenantId().equals(tenantId))
+        return leaveRequestRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException(LEAVE_REQUEST_NOT_FOUND));
     }
 
@@ -506,8 +501,7 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
     public void onApproved(UUID tenantId, UUID entityId, UUID approvedBy) {
         log.info("Leave request {} approved via workflow by {}", entityId, approvedBy);
 
-        LeaveRequest request = leaveRequestRepository.findById(entityId)
-                .filter(lr -> lr.getTenantId().equals(tenantId))
+        LeaveRequest request = leaveRequestRepository.findByIdAndTenantId(entityId, tenantId)
                 .orElse(null);
 
         if (request == null) {
@@ -542,8 +536,7 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
     public void onRejected(UUID tenantId, UUID entityId, UUID rejectedBy, String reason) {
         log.info("Leave request {} rejected via workflow by {}", entityId, rejectedBy);
 
-        LeaveRequest request = leaveRequestRepository.findById(entityId)
-                .filter(lr -> lr.getTenantId().equals(tenantId))
+        LeaveRequest request = leaveRequestRepository.findByIdAndTenantId(entityId, tenantId)
                 .orElse(null);
 
         if (request == null) {

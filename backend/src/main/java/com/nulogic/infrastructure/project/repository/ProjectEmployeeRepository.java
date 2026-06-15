@@ -15,6 +15,10 @@ import java.util.UUID;
 @Repository
 public interface ProjectEmployeeRepository extends JpaRepository<ProjectEmployee, UUID> {
 
+    Optional<ProjectEmployee> findByIdAndTenantId(UUID id, UUID tenantId);
+
+    Optional<ProjectEmployee> findByIdAndProjectIdAndTenantId(UUID id, UUID projectId, UUID tenantId);
+
     List<ProjectEmployee> findAllByProjectIdAndTenantId(UUID projectId, UUID tenantId);
 
     List<ProjectEmployee> findAllByEmployeeIdAndTenantId(UUID employeeId, UUID tenantId);

@@ -107,8 +107,7 @@ public class PayrollComponentService {
     public PayrollComponent updateComponent(UUID id, PayrollComponent componentData) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
-        PayrollComponent component = payrollComponentRepository.findById(id)
-                .filter(c -> c.getTenantId().equals(tenantId))
+        PayrollComponent component = payrollComponentRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Payroll component not found"));
 
         String previousFormula = component.getFormula();
@@ -150,8 +149,7 @@ public class PayrollComponentService {
     @Transactional(readOnly = true)
     public PayrollComponent getComponentById(UUID id) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return payrollComponentRepository.findById(id)
-                .filter(c -> c.getTenantId().equals(tenantId))
+        return payrollComponentRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Payroll component not found"));
     }
 

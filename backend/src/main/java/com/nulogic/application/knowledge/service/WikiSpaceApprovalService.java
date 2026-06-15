@@ -22,8 +22,7 @@ public class WikiSpaceApprovalService {
     public boolean isApprovalRequired(UUID spaceId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
 
-        WikiSpace space = wikiSpaceRepository.findById(spaceId)
-                .filter(s -> s.getTenantId().equals(tenantId))
+        WikiSpace space = wikiSpaceRepository.findByIdAndTenantId(spaceId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Wiki space not found"));
 
         return Boolean.TRUE.equals(space.getApprovalEnabled());
@@ -34,8 +33,7 @@ public class WikiSpaceApprovalService {
     public UUID getApprover(UUID spaceId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
 
-        WikiSpace space = wikiSpaceRepository.findById(spaceId)
-                .filter(s -> s.getTenantId().equals(tenantId))
+        WikiSpace space = wikiSpaceRepository.findByIdAndTenantId(spaceId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Wiki space not found"));
 
         if (!Boolean.TRUE.equals(space.getApprovalEnabled())) {
@@ -49,8 +47,7 @@ public class WikiSpaceApprovalService {
     public WikiSpace configureApproval(UUID spaceId, boolean enabled, UUID approverEmployeeId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
 
-        WikiSpace space = wikiSpaceRepository.findById(spaceId)
-                .filter(s -> s.getTenantId().equals(tenantId))
+        WikiSpace space = wikiSpaceRepository.findByIdAndTenantId(spaceId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Wiki space not found"));
 
         space.setApprovalEnabled(enabled);

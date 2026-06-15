@@ -53,8 +53,7 @@ public class PayslipPdfService {
     public byte[] generatePayslipPdf(UUID payslipId) throws DocumentException {
         UUID tenantId = TenantContext.requireCurrentTenant();
 
-        Payslip payslip = payslipRepository.findById(payslipId)
-                .filter(p -> p.getTenantId().equals(tenantId))
+        Payslip payslip = payslipRepository.findByIdAndTenantId(payslipId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Payslip not found"));
 
         Employee employee = employeeRepository.findByIdAndTenantId(payslip.getEmployeeId(), tenantId)

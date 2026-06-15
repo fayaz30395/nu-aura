@@ -85,8 +85,7 @@ public class MultiChannelNotificationService {
     @Transactional
     public NotificationTemplateDto updateTemplate(UUID templateId, NotificationTemplateDto request) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        NotificationTemplate template = templateRepository.findById(templateId)
-                .filter(t -> t.getTenantId().equals(tenantId))
+        NotificationTemplate template = templateRepository.findByIdAndTenantId(templateId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Template not found"));
 
         if (template.getIsSystemTemplate()) {

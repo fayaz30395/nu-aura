@@ -242,8 +242,7 @@ public class NuPlatformService {
     @Transactional(readOnly = true)
     public Optional<AppRole> getRoleById(UUID roleId) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return roleRepository.findById(roleId)
-                .filter(r -> r.getTenantId().equals(tenantId));
+        return roleRepository.findByIdAndTenantId(roleId, tenantId);
     }
 
     /**

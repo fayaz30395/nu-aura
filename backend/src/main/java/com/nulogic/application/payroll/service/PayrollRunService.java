@@ -104,8 +104,7 @@ public class PayrollRunService {
     public PayrollRun updatePayrollRun(UUID id, PayrollRun payrollRunData) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
-        PayrollRun payrollRun = payrollRunRepository.findById(id)
-                .filter(pr -> pr.getTenantId().equals(tenantId))
+        PayrollRun payrollRun = payrollRunRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Payroll run not found"));
 
         if (payrollRun.getStatus() == PayrollStatus.LOCKED) {
@@ -143,8 +142,7 @@ public class PayrollRunService {
     @Transactional(readOnly = true)
     public PayrollRun getPayrollRunById(UUID id) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return payrollRunRepository.findById(id)
-                .filter(pr -> pr.getTenantId().equals(tenantId))
+        return payrollRunRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Payroll run not found"));
     }
 

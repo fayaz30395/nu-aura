@@ -16,6 +16,8 @@ import java.util.UUID;
 @Repository
 public interface PayslipRepository extends JpaRepository<Payslip, UUID> {
 
+    Optional<Payslip> findByIdAndTenantId(UUID id, UUID tenantId);
+
     Page<Payslip> findAllByTenantId(UUID tenantId, Pageable pageable);
 
     Page<Payslip> findAllByTenantIdAndEmployeeId(UUID tenantId, UUID employeeId, Pageable pageable);

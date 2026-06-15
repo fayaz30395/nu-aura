@@ -16,6 +16,8 @@ import java.util.UUID;
 @Repository
 public interface PayrollComponentRepository extends JpaRepository<PayrollComponent, UUID> {
 
+    Optional<PayrollComponent> findByIdAndTenantId(UUID id, UUID tenantId);
+
     Page<PayrollComponent> findAllByTenantId(UUID tenantId, Pageable pageable);
 
     List<PayrollComponent> findAllByTenantIdAndIsActiveTrueOrderByEvaluationOrderAsc(UUID tenantId);

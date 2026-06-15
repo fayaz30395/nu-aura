@@ -299,8 +299,7 @@ public class OnboardingManagementService implements ApprovalCallbackHandler {
     public OnboardingTemplateTaskResponse updateTemplateTask(UUID templateId, UUID taskId,
                                                              OnboardingTemplateTaskRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        OnboardingTemplateTask task = templateTaskRepository.findById(taskId)
-                .filter(t -> t.getTemplateId().equals(templateId) && t.getTenantId().equals(tenantId))
+        OnboardingTemplateTask task = templateTaskRepository.findByIdAndTemplateIdAndTenantId(taskId, templateId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Template task not found"));
 
         task.setTaskName(request.getTaskName());
@@ -319,8 +318,7 @@ public class OnboardingManagementService implements ApprovalCallbackHandler {
     @Transactional
     public void deleteTemplateTask(UUID templateId, UUID taskId) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        OnboardingTemplateTask task = templateTaskRepository.findById(taskId)
-                .filter(t -> t.getTemplateId().equals(templateId) && t.getTenantId().equals(tenantId))
+        OnboardingTemplateTask task = templateTaskRepository.findByIdAndTemplateIdAndTenantId(taskId, templateId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Template task not found"));
         templateTaskRepository.delete(task);
     }

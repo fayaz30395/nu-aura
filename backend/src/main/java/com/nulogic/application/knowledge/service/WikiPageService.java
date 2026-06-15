@@ -102,8 +102,7 @@ public class WikiPageService {
     public WikiPage updatePage(UUID pageId, WikiPage pageData) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
-        WikiPage page = wikiPageRepository.findById(pageId)
-                .filter(p -> p.getTenantId().equals(tenantId))
+        WikiPage page = wikiPageRepository.findByIdAndTenantId(pageId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Wiki page not found"));
 
         // Store old version before update
@@ -133,8 +132,7 @@ public class WikiPageService {
     @Transactional
     public WikiPage getPageById(UUID pageId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
-        WikiPage page = wikiPageRepository.findById(pageId)
-                .filter(p -> p.getTenantId().equals(tenantId))
+        WikiPage page = wikiPageRepository.findByIdAndTenantId(pageId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Wiki page not found"));
 
         // Track view (tenant-local timestamp via TenantTimeService — see ContractService pattern).
@@ -207,8 +205,7 @@ public class WikiPageService {
         UUID tenantId = TenantContext.requireCurrentTenant();
         UUID userId = SecurityContext.getCurrentUserId();
 
-        WikiPage page = wikiPageRepository.findById(pageId)
-                .filter(p -> p.getTenantId().equals(tenantId))
+        WikiPage page = wikiPageRepository.findByIdAndTenantId(pageId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Wiki page not found"));
 
         page.setStatus(WikiPage.PageStatus.PUBLISHED);
@@ -231,8 +228,7 @@ public class WikiPageService {
     public WikiPage archivePage(UUID pageId) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
-        WikiPage page = wikiPageRepository.findById(pageId)
-                .filter(p -> p.getTenantId().equals(tenantId))
+        WikiPage page = wikiPageRepository.findByIdAndTenantId(pageId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Wiki page not found"));
 
         page.setStatus(WikiPage.PageStatus.ARCHIVED);
@@ -245,8 +241,7 @@ public class WikiPageService {
         UUID tenantId = TenantContext.requireCurrentTenant();
         UUID userId = SecurityContext.getCurrentUserId();
 
-        WikiPage page = wikiPageRepository.findById(pageId)
-                .filter(p -> p.getTenantId().equals(tenantId))
+        WikiPage page = wikiPageRepository.findByIdAndTenantId(pageId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Wiki page not found"));
 
         page.setIsPinned(!page.getIsPinned());
@@ -268,8 +263,7 @@ public class WikiPageService {
     public void deletePage(UUID pageId) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
-        WikiPage page = wikiPageRepository.findById(pageId)
-                .filter(p -> p.getTenantId().equals(tenantId))
+        WikiPage page = wikiPageRepository.findByIdAndTenantId(pageId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Wiki page not found"));
 
         wikiPageRepository.delete(page);
@@ -336,8 +330,7 @@ public class WikiPageService {
     public WikiPage movePage(UUID pageId, UUID newParentPageId) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
-        WikiPage page = wikiPageRepository.findById(pageId)
-                .filter(p -> p.getTenantId().equals(tenantId))
+        WikiPage page = wikiPageRepository.findByIdAndTenantId(pageId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Wiki page not found"));
 
         if (newParentPageId != null) {
@@ -346,8 +339,7 @@ public class WikiPageService {
                 throw new IllegalArgumentException("Cannot move a page under itself");
             }
 
-            WikiPage newParent = wikiPageRepository.findById(newParentPageId)
-                    .filter(p -> p.getTenantId().equals(tenantId))
+            WikiPage newParent = wikiPageRepository.findByIdAndTenantId(newParentPageId, tenantId)
                     .orElseThrow(() -> new IllegalArgumentException("Target parent page not found"));
 
             // Check that the new parent is in the same space
@@ -386,8 +378,7 @@ public class WikiPageService {
     public List<WikiPageBreadcrumb> getBreadcrumbs(UUID pageId) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
-        WikiPage page = wikiPageRepository.findById(pageId)
-                .filter(p -> p.getTenantId().equals(tenantId))
+        WikiPage page = wikiPageRepository.findByIdAndTenantId(pageId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Wiki page not found"));
 
         List<WikiPageBreadcrumb> breadcrumbs = new ArrayList<>();
@@ -396,8 +387,7 @@ public class WikiPageService {
         WikiPage current = page;
         int depth = 0;
         while (current.getParentPage() != null && depth < 10) {
-            current = wikiPageRepository.findById(current.getParentPage().getId())
-                    .filter(p -> p.getTenantId().equals(tenantId))
+            current = wikiPageRepository.findByIdAndTenantId(current.getParentPage().getId(), tenantId)
                     .orElse(null);
             if (current == null) break;
             breadcrumbs.add(new WikiPageBreadcrumb(current.getId(), current.getTitle(), current.getSlug()));

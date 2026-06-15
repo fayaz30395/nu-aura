@@ -10,6 +10,8 @@ import java.util.UUID;
 
 @Repository
 public interface PSAInvoiceRepository extends JpaRepository<PSAInvoice, UUID> {
+    Optional<PSAInvoice> findByIdAndTenantId(UUID id, UUID tenantId);
+
     List<PSAInvoice> findByTenantIdAndProjectId(UUID tenantId, UUID projectId);
 
     List<PSAInvoice> findByTenantIdAndClientId(UUID tenantId, UUID clientId);

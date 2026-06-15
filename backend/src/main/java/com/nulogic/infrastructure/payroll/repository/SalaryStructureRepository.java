@@ -17,6 +17,8 @@ import java.util.UUID;
 @Repository
 public interface SalaryStructureRepository extends JpaRepository<SalaryStructure, UUID> {
 
+    Optional<SalaryStructure> findByIdAndTenantId(UUID id, UUID tenantId);
+
     Page<SalaryStructure> findAllByTenantId(UUID tenantId, Pageable pageable);
 
     List<SalaryStructure> findAllByTenantIdAndEmployeeId(UUID tenantId, UUID employeeId);

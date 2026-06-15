@@ -309,9 +309,7 @@ public class ProjectService {
     public ProjectEmployeeResponse endAllocation(UUID projectId, UUID memberId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
 
-        ProjectEmployee projectEmployee = projectEmployeeRepository.findById(memberId)
-                .filter(pe -> pe.getTenantId().equals(tenantId)
-                        && pe.getProjectId().equals(projectId))
+        ProjectEmployee projectEmployee = projectEmployeeRepository.findByIdAndProjectIdAndTenantId(memberId, projectId, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Allocation not found"));
 
         projectEmployee.deactivate();

@@ -81,8 +81,7 @@ public class AllocationApprovalService {
     @Transactional(readOnly = true)
     public AllocationApprovalResponse getAllocationRequest(UUID requestId) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
-        AllocationApprovalRequest request = approvalRepository.findById(requestId)
-                .filter(r -> r.getTenantId().equals(tenantId))
+        AllocationApprovalRequest request = approvalRepository.findByIdAndTenantId(requestId, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Request not found"));
         return mapToApprovalResponse(request);
     }
@@ -117,8 +116,7 @@ public class AllocationApprovalService {
 
         validateApprovalPermission();
 
-        AllocationApprovalRequest request = approvalRepository.findById(requestId)
-                .filter(r -> r.getTenantId().equals(tenantId))
+        AllocationApprovalRequest request = approvalRepository.findByIdAndTenantId(requestId, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Request not found"));
 
         if (request.getStatus() != AllocationApprovalRequest.ApprovalStatus.PENDING) {
@@ -155,8 +153,7 @@ public class AllocationApprovalService {
 
         validateApprovalPermission();
 
-        AllocationApprovalRequest request = approvalRepository.findById(requestId)
-                .filter(r -> r.getTenantId().equals(tenantId))
+        AllocationApprovalRequest request = approvalRepository.findByIdAndTenantId(requestId, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Request not found"));
 
         if (request.getStatus() != AllocationApprovalRequest.ApprovalStatus.PENDING) {

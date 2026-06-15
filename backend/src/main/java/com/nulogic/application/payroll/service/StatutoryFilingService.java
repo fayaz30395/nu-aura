@@ -252,8 +252,7 @@ public class StatutoryFilingService {
     @Transactional(readOnly = true)
     public StatutoryFilingRun getFilingRun(UUID filingRunId) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return filingRunRepository.findById(filingRunId)
-                .filter(r -> r.getTenantId().equals(tenantId))
+        return filingRunRepository.findByIdAndTenantId(filingRunId, tenantId)
                 .orElseThrow(() -> new BusinessException("Filing run not found: " + filingRunId));
     }
 

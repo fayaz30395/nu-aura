@@ -11,6 +11,8 @@ import java.util.UUID;
 
 @Repository
 public interface PSATimesheetRepository extends JpaRepository<PSATimesheet, UUID> {
+    Optional<PSATimesheet> findByIdAndTenantId(UUID id, UUID tenantId);
+
     List<PSATimesheet> findByTenantIdAndEmployeeIdOrderByWeekStartDateDesc(UUID tenantId, UUID employeeId);
 
     Optional<PSATimesheet> findByTenantIdAndEmployeeIdAndWeekStartDate(UUID tenantId, UUID employeeId, LocalDate weekStartDate);

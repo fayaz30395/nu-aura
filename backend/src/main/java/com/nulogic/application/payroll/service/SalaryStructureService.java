@@ -60,8 +60,7 @@ public class SalaryStructureService {
     public SalaryStructure updateSalaryStructure(UUID id, SalaryStructure salaryStructureData) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
-        SalaryStructure salaryStructure = salaryStructureRepository.findById(id)
-                .filter(s -> s.getTenantId().equals(tenantId))
+        SalaryStructure salaryStructure = salaryStructureRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Salary structure not found"));
 
         // Capture previous values for audit trail
@@ -110,8 +109,7 @@ public class SalaryStructureService {
     @Transactional(readOnly = true)
     public SalaryStructure getSalaryStructureById(UUID id) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return salaryStructureRepository.findById(id)
-                .filter(s -> s.getTenantId().equals(tenantId))
+        return salaryStructureRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Salary structure not found"));
     }
 

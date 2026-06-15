@@ -61,8 +61,7 @@ public class PayslipService {
     public Payslip updatePayslip(UUID id, Payslip payslipData) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
-        Payslip payslip = payslipRepository.findById(id)
-                .filter(p -> p.getTenantId().equals(tenantId))
+        Payslip payslip = payslipRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Payslip not found"));
 
         payslip.setPayrollRunId(payslipData.getPayrollRunId());
@@ -91,8 +90,7 @@ public class PayslipService {
     @Transactional(readOnly = true)
     public Payslip getPayslipById(UUID id) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return payslipRepository.findById(id)
-                .filter(p -> p.getTenantId().equals(tenantId))
+        return payslipRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Payslip not found"));
     }
 
@@ -167,8 +165,7 @@ public class PayslipService {
     public StatutoryDeductions applyStatutoryDeductions(UUID payslipId, String state) {
         UUID tenantId = TenantContext.requireCurrentTenant();
 
-        Payslip payslip = payslipRepository.findById(payslipId)
-                .filter(p -> p.getTenantId().equals(tenantId))
+        Payslip payslip = payslipRepository.findByIdAndTenantId(payslipId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Payslip not found: " + payslipId));
 
         // S10-B: route via the strategy factory so non-IN tenants can plug in their own
