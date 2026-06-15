@@ -81,7 +81,7 @@ class StatutoryDeductionServiceTest {
 
         // Default: no prior payslip (new joiner)
         lenient().when(payslipRepository.findGrossAtOrBeforePeriodStart(
-                any(UUID.class), any(Integer.class), any(Integer.class), any(Pageable.class)))
+                any(UUID.class), any(UUID.class), any(Integer.class), any(Integer.class), any(Pageable.class)))
                 .thenReturn(List.of());
 
         // Default: no gender on record
@@ -128,7 +128,7 @@ class StatutoryDeductionServiceTest {
         @DisplayName("gross > ESI ceiling, no prior payslip → ESI = 0 (safe default)")
         void grossAboveCeiling_noPriorPayslip_esiZero() {
             when(payslipRepository.findGrossAtOrBeforePeriodStart(
-                    eq(EMPLOYEE_ID), any(Integer.class), any(Integer.class), any(Pageable.class)))
+                    eq(EMPLOYEE_ID), any(UUID.class), any(Integer.class), any(Integer.class), any(Pageable.class)))
                     .thenReturn(List.of());
 
             StatutoryDeductions result = service.calculate(EMPLOYEE_ID, new BigDecimal("15000"),
@@ -152,7 +152,7 @@ class StatutoryDeductionServiceTest {
         void grossAboveCeilingMidPeriod_wasInsideCeilingAtStart_esiContinues() {
             // Payslip from April (period start = April 1) shows ₹19,500 — inside ceiling
             when(payslipRepository.findGrossAtOrBeforePeriodStart(
-                    eq(EMPLOYEE_ID), any(Integer.class), any(Integer.class), any(Pageable.class)))
+                    eq(EMPLOYEE_ID), any(UUID.class), any(Integer.class), any(Integer.class), any(Pageable.class)))
                     .thenReturn(List.of(new BigDecimal("19500")));
 
             StatutoryDeductions result = service.calculate(EMPLOYEE_ID, new BigDecimal("15000"),
@@ -170,7 +170,7 @@ class StatutoryDeductionServiceTest {
         @DisplayName("gross > ceiling, was already above ceiling at period-start → ESI = 0")
         void grossAboveCeiling_alsoAboveCeilingAtPeriodStart_esiZero() {
             when(payslipRepository.findGrossAtOrBeforePeriodStart(
-                    eq(EMPLOYEE_ID), any(Integer.class), any(Integer.class), any(Pageable.class)))
+                    eq(EMPLOYEE_ID), any(UUID.class), any(Integer.class), any(Integer.class), any(Pageable.class)))
                     .thenReturn(List.of(new BigDecimal("21500")));
 
             StatutoryDeductions result = service.calculate(EMPLOYEE_ID, new BigDecimal("15000"),

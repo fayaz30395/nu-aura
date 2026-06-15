@@ -316,8 +316,10 @@ public class StatutoryDeductionService {
      * safe exempt-above-ceiling default per Reg.40 ESI Rules.</p>
      */
     private BigDecimal lookupGrossAtPeriodStart(UUID employeeId, LocalDate periodStart) {
+        UUID tenantId = TenantContext.requireCurrentTenant();
         List<BigDecimal> results = payslipRepository.findGrossAtOrBeforePeriodStart(
                 employeeId,
+                tenantId,
                 periodStart.getYear(),
                 periodStart.getMonthValue(),
                 PageRequest.of(0, 1)
