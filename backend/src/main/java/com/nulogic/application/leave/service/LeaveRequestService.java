@@ -151,7 +151,12 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
             log.warn("Audit log failed for leave request create: {}", e.getMessage());
         }
 
-        startLeaveApprovalWorkflow(saved, tenantId);
+        // Load once — used by both startLeaveApprovalWorkflow and the afterCommit callbacks.
+        // Avoids 4 redundant round-trips (3× employee + 3× leaveType) per leave creation.
+        Employee leaveEmployee = employeeRepository.findByIdAndTenantId(saved.getEmployeeId(), tenantId).orElse(null);
+        LeaveType leaveType = leaveTypeRepository.findByIdAndTenantId(saved.getLeaveTypeId(), tenantId).orElse(null);
+
+        startLeaveApprovalWorkflow(saved, tenantId, leaveEmployee, leaveType);
 
         // FIX: Defer non-critical operations to AFTER_COMMIT to prevent
         // "Transaction silently rolled back because it has been marked as rollback-only".
@@ -161,10 +166,10 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
             @Override
             public void afterCommit() {
                 // Send WebSocket notification to approver/manager
-                notifyLeaveRequestCreated(saved);
+                notifyLeaveRequestCreated(saved, leaveEmployee, leaveType);
 
                 // Publish domain event for downstream consumers (notifications, analytics, audit)
-                publishLeaveRequestedEvent(saved, tenantId);
+                publishLeaveRequestedEvent(saved, tenantId, leaveEmployee, leaveType);
             }
         });
 
@@ -574,10 +579,8 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
 
     // ======================== Workflow Start Helper ========================
 
-    private void startLeaveApprovalWorkflow(LeaveRequest leaveRequest, UUID tenantId) {
-        Employee employee = employeeRepository.findByIdAndTenantId(leaveRequest.getEmployeeId(), tenantId).orElse(null);
-        LeaveType leaveType = leaveTypeRepository.findByIdAndTenantId(leaveRequest.getLeaveTypeId(), tenantId).orElse(null);
-
+    private void startLeaveApprovalWorkflow(LeaveRequest leaveRequest, UUID tenantId,
+                                             Employee employee, LeaveType leaveType) {
         String employeeName = employee != null ? employee.getFirstName() + " " + employee.getLastName() : "Employee";
         String leaveTypeName = leaveType != null ? leaveType.getLeaveName() : "Leave";
 
@@ -595,10 +598,9 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
 
     // ======================== Domain Event Publishing Helpers ========================
 
-    private void publishLeaveRequestedEvent(LeaveRequest saved, UUID tenantId) {
+    private void publishLeaveRequestedEvent(LeaveRequest saved, UUID tenantId,
+                                             Employee employee, LeaveType leaveType) {
         try {
-            Employee employee = employeeRepository.findByIdAndTenantId(saved.getEmployeeId(), tenantId).orElse(null);
-            LeaveType leaveType = leaveTypeRepository.findByIdAndTenantId(saved.getLeaveTypeId(), tenantId).orElse(null);
             if (employee == null) return;
 
             String requesterName = employee.getFirstName() + " " + employee.getLastName();
@@ -648,12 +650,9 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
 
     // ======================== WebSocket Notification Helpers ========================
 
-    private void notifyLeaveRequestCreated(LeaveRequest leaveRequest) {
+    private void notifyLeaveRequestCreated(LeaveRequest leaveRequest, Employee employee, LeaveType leaveType) {
         try {
             UUID tenantId = TenantContext.requireCurrentTenant();
-            Employee employee = employeeRepository.findByIdAndTenantId(leaveRequest.getEmployeeId(), tenantId)
-                    .orElse(null);
-            LeaveType leaveType = leaveTypeRepository.findByIdAndTenantId(leaveRequest.getLeaveTypeId(), tenantId).orElse(null);
 
             if (employee == null)
                 return;
