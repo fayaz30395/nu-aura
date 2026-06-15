@@ -105,3 +105,12 @@ Severity: CRITICAL | HIGH | MEDIUM | LOW · Status: Open → In Progress → Fix
 | UI-05 | MEDIUM | WebSocket | WebSocket connection fails attempt 1/5 on cold start ("Session closed") | Real-time notifications unavailable until reconnect | SockJS fallback reconnects automatically (1/5 observed). Monitor post-warm-up. If persistent, check STOMP broker config on Railway | release | In Progress |
 | UI-07 | MEDIUM | seed data | Demo user "Saran V" labelled EMPLOYEE in demo panel but in-app shows HR_ADMIN role | RBAC testing against wrong role; false positives in UI audit | Correct Flyway seed or demo-panel label; already reconfirmed UI-01/UI-02 CRITICAL = false positive (separate EMPLOYEE recheck passed all routes) | release | Open |
 | DEV-8 | HIGH | payroll/statutory | LWF `calculateForPayrollRun` not implemented (returns emptyList, flag=false) — re-confirmed 2026-06-14 | IN statutory LWF remittance gap | Formally descoped for this release (PROD-3 decision) — keep `app.features.lwf=false`; documented known risk | release | Open (descoped) |
+| UX-01 | LOW | payroll | Payroll Run History table headers scroll out of view on long run lists | Poor UX for tenants with many payroll runs | `<thead className="sticky top-0 z-10 bg-[var(--surface)]">` added — payroll/page.tsx:534 — commit 74c61449 | fix-gflag3 | Fixed |
+| UX-03 | LOW | leave | Leave balance Ring indicators have no hover tooltip; balance breakdown only readable via aria-label | Accessibility + discoverability gap | Mantine Tooltip wrapping Ring at leave/page.tsx:270 — shows `${leaveName}: ${remaining} of ${total} · ${used} used` — commit 74c61449 | fix-gflag3 | Fixed |
+
+## Run-3 Test Evidence (2026-06-15)
+
+- **Backend unit tests:** 3,931 tests · 0 failures · 0 errors · 0 skips (unit suite; Testcontainers integration tests excluded) — RBAC-7 + RBAC-8 fixes clean — see `docs/audit/green-flag/test-run-2026-06-15.md`
+- **Frontend TypeScript:** `tsc --noEmit` exit 0 · zero type errors across all modified files
+- **Browser validator agent:** still running (warm-path login, RBAC boundaries, leave flow on deployed Vercel app)
+- **Commits:** fca3178b (RBAC-7 + RBAC-8 + issue board), 74c61449 (QW1 + QW4 + Mockito fix + audit docs)
