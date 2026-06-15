@@ -76,8 +76,12 @@ for (const route of ROUTES) {
     });
     const page = await ctx.newPage();
     try {
-      await page.goto(BASE + route.path, {waitUntil: 'networkidle', timeout: 45000});
-      await page.waitForTimeout(600);
+      // 'domcontentloaded' (not 'networkidle') — this app has live polling /
+      // websocket traffic, so the network never goes idle and networkidle stalls.
+      await page.goto(BASE + route.path, {waitUntil: 'domcontentloaded', timeout: 45000});
+      // Wait for real page content (client-fetched), not just the shell skeleton.
+      await page.waitForSelector('main h1, h1, [data-page-title]', {timeout: 25000}).catch(() => {});
+      await page.waitForTimeout(1500);
 
       const finalUrl = page.url();
       if (/\/auth\/login/.test(finalUrl)) {
