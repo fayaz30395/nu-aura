@@ -838,7 +838,7 @@ export const PROTECTED_ROUTES: RouteConfig[] = [
   },
   {
     path: '/payroll/runs',
-    anyPermission: [Permissions.PAYROLL_VIEW, Permissions.PAYROLL_PROCESS],
+    anyPermission: [Permissions.PAYROLL_VIEW_ALL, Permissions.PAYROLL_PROCESS, Permissions.PAYROLL_APPROVE],
   },
   {
     path: '/payroll/structures',
@@ -1007,10 +1007,16 @@ export function findRouteConfig(path: string): RouteConfig | null {
   // Remove query strings and hash
   const cleanPath = path.split('?')[0].split('#')[0];
 
-  for (const route of PROTECTED_ROUTES) {
-    if (matchRoute(cleanPath, route.path)) {
-      return route;
-    }
+  const matches = PROTECTED_ROUTES.filter((route) => matchRoute(cleanPath, route.path));
+  if (matches.length > 0) {
+    return matches.sort((a, b) => {
+      const aStaticSegments = a.path.split('/').filter((segment) => segment && !segment.startsWith('[')).length;
+      const bStaticSegments = b.path.split('/').filter((segment) => segment && !segment.startsWith('[')).length;
+      if (bStaticSegments !== aStaticSegments) {
+        return bStaticSegments - aStaticSegments;
+      }
+      return b.path.length - a.path.length;
+    })[0];
   }
 
   return null;

@@ -17,13 +17,6 @@ const API_LOGIN_PAGE_TIMEOUT_MS = Number(process.env.E2E_AUTH_PAGE_TIMEOUT_MS ??
 const API_LOGIN_ATTEMPTS = Number(process.env.E2E_API_LOGIN_ATTEMPTS ?? 3);
 const API_LOGIN_RATE_LIMIT_DELAY_MS = Number(process.env.E2E_API_LOGIN_RATE_LIMIT_DELAY_MS ?? 15000);
 const ALLOW_LOCAL_AUTH_FALLBACK = AUTH_MODE === 'local' || process.env.E2E_ALLOW_LOCAL_AUTH_FALLBACK === 'true';
-const PLAYWRIGHT_BASE_URL = process.env.PLAYWRIGHT_BASE_URL ?? 'http://localhost:3002';
-let APP_ORIGIN = PLAYWRIGHT_BASE_URL;
-try {
-  APP_ORIGIN = new URL(PLAYWRIGHT_BASE_URL).origin;
-} catch (_error) {
-  APP_ORIGIN = 'http://localhost:3002';
-}
 
 interface ApiLoginResponse {
   accessToken?: string | null;
@@ -325,11 +318,6 @@ async function waitForApiLoginSlot(page: Page): Promise<void> {
   lastApiLoginAt = Date.now();
 }
 
-async function ensureAuthShellOrigin(page: Page): Promise<void> {
-  await page.goto(`${APP_ORIGIN}/`, {waitUntil: 'domcontentloaded', timeout: API_LOGIN_PAGE_TIMEOUT_MS}).catch(() => {});
-  await page.waitForLoadState('domcontentloaded', {timeout: 15000}).catch(() => {});
-}
-
 export async function gotoWithRetry(page: Page, path: string): Promise<void> {
   let lastError: unknown;
   for (let attempt = 1; attempt <= 3; attempt++) {
@@ -370,6 +358,32 @@ async function openAuthOriginForApiLogin(page: Page): Promise<void> {
     // Some hosted environments intermittently stall authentication shell startup.
     // In that mode, continue with best-effort authentication state fallbacks.
     console.warn('openAuthOriginForApiLogin: login page open failed; continuing with fallback auth path.');
+  }
+}
+
+async function safeClearClientAuthState(page: Page, reason: string): Promise<void> {
+  try {
+    await page.evaluate(({authCookieNames}) => {
+      for (const storage of [localStorage, sessionStorage]) {
+        storage.removeItem('auth-storage');
+        storage.removeItem('nu-aura-user');
+        storage.removeItem('user');
+        storage.removeItem('tenantId');
+        storage.removeItem('loginAttempts');
+        storage.removeItem('lockoutUntil');
+      }
+
+      document.cookie.split(';').forEach((cookie) => {
+        const name = cookie.split('=')[0]?.trim();
+        if (!name || !authCookieNames.includes(name)) return;
+        document.cookie = `${name}=; Max-Age=0; path=/`;
+      });
+    }, {authCookieNames: Array.from(AUTH_COOKIE_NAMES)});
+  } catch (error) {
+    if (!ALLOW_LOCAL_AUTH_FALLBACK) {
+      throw error;
+    }
+    console.warn(`safeClearClientAuthState(${reason}) failed; continuing with fallback auth path.`);
   }
 }
 

@@ -23,7 +23,16 @@ const useE2ELocalAuthStorage = process.env.NEXT_PUBLIC_E2E_AUTH_STORAGE === 'loc
 let restoreSessionPromise: Promise<boolean> | null = null;
 
 function getAuthStorage(): Storage {
-  if (typeof window === 'undefined') return;
+  if (typeof window === 'undefined') {
+    return {
+      length: 0,
+      clear: () => undefined,
+      getItem: () => null,
+      key: () => null,
+      removeItem: () => undefined,
+      setItem: () => undefined,
+    };
+  }
   // SessionStorage is the default runtime store, but if the persisted auth
   // payload exists in localStorage (for Playwright/.auth state restoration),
   // fall back to it to avoid  blank pages when sessionStorage is intentionally

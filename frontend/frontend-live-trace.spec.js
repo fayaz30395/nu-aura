@@ -1,16 +1,16 @@
-const { test } = require('@playwright/test');
+import {test} from '@playwright/test';
 
 test('trace api base', async ({ page }) => {
   page.on('request', (req) => {
     const url = req.url();
     if (url.includes('/api/v1') || url.includes('/api/')) {
-      console.log('REQ', req.method(), url);
+      console.warn('REQ', req.method(), url);
     }
   });
   page.on('response', (res) => {
     const url = res.url();
     if (url.includes('/api/v1') || url.includes('/api/')) {
-      console.log('RESP', res.status(), url);
+      console.warn('RESP', res.status(), url);
     }
   });
 

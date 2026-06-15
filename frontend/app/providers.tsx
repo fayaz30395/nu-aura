@@ -9,6 +9,7 @@ import {ErrorBoundary} from '@/components/ui/ErrorBoundary';
 import {ToastProvider} from '@/components/ui/Toast';
 import {ToastProvider as NotificationsToastProvider} from '@/components/notifications/ToastProvider';
 import {WebSocketProvider} from '@/lib/contexts/WebSocketContext';
+import {AuthGuard} from '@/components/auth/AuthGuard';
 import {useTokenRefresh} from '@/lib/hooks/useTokenRefresh';
 import {useSessionTimeout} from '@/lib/hooks/useSessionTimeout';
 import {useAuth} from '@/lib/hooks/useAuth';
@@ -55,7 +56,9 @@ export function Providers({children}: { children: React.ReactNode }) {
               <Notifications position="top-right" autoClose={5000}/>
               <WebSocketProvider>
                 <TokenRefreshManager>
-                  {children}
+                  <AuthGuard>
+                    {children}
+                  </AuthGuard>
                 </TokenRefreshManager>
               </WebSocketProvider>
             </MantineThemeProvider>

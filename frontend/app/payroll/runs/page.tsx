@@ -39,14 +39,19 @@ const DeleteConfirmModal = dynamic(
 
 export default function PayrollRunsPage() {
   const router = useRouter();
-  const {hasPermission, isReady: permReady} = usePermissions();
+  const {hasAnyPermission, isReady: permReady} = usePermissions();
+  const canAccessPayrollRuns = hasAnyPermission(
+    Permissions.PAYROLL_VIEW_ALL,
+    Permissions.PAYROLL_PROCESS,
+    Permissions.PAYROLL_APPROVE
+  );
 
   useEffect(() => {
     if (!permReady) return;
-    if (!hasPermission(Permissions.PAYROLL_VIEW)) {
+    if (!canAccessPayrollRuns) {
       router.replace('/me/dashboard');
     }
-  }, [permReady, hasPermission, router]);
+  }, [permReady, canAccessPayrollRuns, router]);
 
   const [error, setError] = useState<string | null>(null);
   const [payrollRunFilter, setPayrollRunFilter] = useState<PayrollRunStatus | 'ALL'>('ALL');
@@ -68,7 +73,7 @@ export default function PayrollRunsPage() {
   const processRunMutation = useProcessPayrollRun();
   const approveRunMutation = useApprovePayrollRun();
 
-  if (!permReady || !hasPermission(Permissions.PAYROLL_VIEW)) {
+  if (!permReady || !canAccessPayrollRuns) {
     return null;
   }
 
@@ -164,7 +169,7 @@ export default function PayrollRunsPage() {
 
   return (
     <AppLayout activeMenuItem="payroll">
-      <PermissionGate permission={Permissions.PAYROLL_VIEW}
+      <PermissionGate anyOf={[Permissions.PAYROLL_VIEW_ALL, Permissions.PAYROLL_PROCESS, Permissions.PAYROLL_APPROVE]}
                       fallback={<div className="p-6"><p className="text-danger-600">You do not have permission to view
                         payroll runs.</p></div>}>
         <PageTransition className="p-6">
