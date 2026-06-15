@@ -92,7 +92,7 @@ function NavRow({
             'num rounded-full px-[7px] py-px text-[11px] font-bold leading-tight text-white',
             // Approvals (or any flagged) badge = red; others = neutral chip.
             item.id === 'approvals'
-              ? 'bg-[var(--nu-red-orange)]'
+              ? 'bg-[var(--err-fg)]'
               : 'bg-white/10'
           )}
         >

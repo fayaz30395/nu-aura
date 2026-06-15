@@ -115,10 +115,6 @@ export type {ResponsiveTableProps, Column, TablePaginationProps} from './Respons
 export {MobileBottomNav, useMobileNavHeight} from './MobileBottomNav';
 export type {MobileBottomNavProps, NavItem} from './MobileBottomNav';
 
-// DataTable Component
-export {DataTable, BulkActionBar} from './DataTable';
-export type {DataTableProps, DataTableColumn, BulkActionBarProps, BulkAction} from './DataTable';
-
 // ExportMenu Component
 export {ExportMenu} from './ExportMenu';
 export type {ExportMenuProps, ExportColumn} from './ExportMenu';
@@ -134,10 +130,6 @@ export type {TableFilterBarProps, FilterField} from './TableFilterBar';
 // AdvancedFilterPanel Component
 export {AdvancedFilterPanel} from './AdvancedFilterPanel';
 export type {AdvancedFilterPanelProps, FilterCondition, SavedFilterPreset} from './AdvancedFilterPanel';
-
-// SimpleNotificationDropdown Component
-export {SimpleNotificationDropdown} from './NotificationDropdown';
-export type {SimpleNotificationDropdownProps} from './NotificationDropdown';
 
 // EditableCell Component
 export {EditableCell} from './EditableCell';

@@ -71,7 +71,7 @@ const HEAT_META: Record<HeatCode, {cellClass: string; color: string; label: stri
   P: {cellClass: 'bg-[var(--chart-1)]', color: 'var(--chart-1)', label: 'Present'},
   R: {cellClass: 'bg-[var(--chart-3)]', color: 'var(--chart-3)', label: 'Remote'},
   L: {cellClass: 'bg-[var(--chart-4)]', color: 'var(--chart-4)', label: 'Leave'},
-  A: {cellClass: 'bg-[var(--chart-5)]', color: 'var(--chart-5)', label: 'Absent'},
+  A: {cellClass: 'bg-[var(--chart-danger)]', color: 'var(--chart-danger)', label: 'Absent'},
   O: {cellClass: 'bg-[var(--border)]', color: 'var(--border)', label: 'Off'},
 };
 

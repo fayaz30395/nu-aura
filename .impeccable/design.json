@@ -1,0 +1,159 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-06-15T00:00:00Z",
+  "title": "Design System: NU-AURA — Studio Slate",
+  "extensions": {
+    "colorMeta": {
+      "accent-primary": { "role": "primary", "displayName": "Aura Navy", "canonical": "#2952A3", "tonalRamp": ["#0c1733", "#13234d", "#1b3168", "#244288", "#2952A3", "#4463cf", "#6884dc", "#a9bbee"] },
+      "accent-dark": { "role": "primary", "displayName": "Aura Navy Lifted (dark mode)", "canonical": "#6884dc", "tonalRamp": ["#1d356d", "#244288", "#3350b8", "#4463cf", "#6884dc", "#92a8e8", "#bcc9f2", "#dce3f8"] },
+      "bg-app": { "role": "neutral", "displayName": "Canvas", "canonical": "#f4f6fb", "tonalRamp": ["#11162a", "#1e2540", "#3a3f57", "#6b7190", "#9aa0b8", "#d4d8e6", "#eef1f8", "#f9fafd"] },
+      "surface": { "role": "neutral", "displayName": "Surface", "canonical": "#ffffff", "tonalRamp": ["#070a14", "#11162a", "#182040", "#3a3f57", "#6b7190", "#d4d8e6", "#eef1f8", "#ffffff"] },
+      "sidebar": { "role": "neutral", "displayName": "Warm-Dark Rail", "canonical": "#0f1424", "tonalRamp": ["#070a14", "#0a0e1a", "#0c1120", "#0f1424", "#14193a", "#1e2540", "#2b3358", "#3a3f57"] },
+      "prod-hrms": { "role": "secondary", "displayName": "HRMS Indigo", "canonical": "#4463cf", "tonalRamp": ["#161f44", "#1f2d63", "#2a3d8a", "#3650b0", "#4463cf", "#6f88e0", "#9caeec", "#cdd7f6"] },
+      "prod-hire": { "role": "secondary", "displayName": "Hire Teal", "canonical": "#0ea5a3", "tonalRamp": ["#04302f", "#064544", "#0a6b69", "#0c8a88", "#0ea5a3", "#3ec4c2", "#7adcda", "#b8efee"] },
+      "prod-grow": { "role": "secondary", "displayName": "Grow Amber", "canonical": "#d97706", "tonalRamp": ["#3d2202", "#5c3303", "#8a4d05", "#b56306", "#d97706", "#f0982f", "#f7bd72", "#fce0b8"] },
+      "prod-fluence": { "role": "secondary", "displayName": "Fluence Violet", "canonical": "#8b5cf6", "tonalRamp": ["#2c1a5c", "#3d2480", "#5736ad", "#7249d4", "#8b5cf6", "#a883f9", "#c5aefb", "#e3d7fd"] },
+      "success": { "role": "tertiary", "displayName": "Success Green", "canonical": "#167c45", "tonalRamp": ["#07301b", "#0a4527", "#0e6135", "#127040", "#167c45", "#2fa066", "#6ec795", "#c9eed7"] },
+      "warning": { "role": "tertiary", "displayName": "Warning Amber", "canonical": "#b15a09", "tonalRamp": ["#3d2002", "#5c3003", "#7e4406", "#965109", "#b15a09", "#d97706", "#f0a94a", "#fbe2bd"] },
+      "danger": { "role": "tertiary", "displayName": "Danger Red", "canonical": "#cf2f2f", "tonalRamp": ["#3d0d0d", "#5c1414", "#8a1d1d", "#b02626", "#cf2f2f", "#e06363", "#ec9a9a", "#fbd5d5"] },
+      "text-primary": { "role": "neutral", "displayName": "Ink", "canonical": "#0e1225", "tonalRamp": ["#0e1225", "#1c2033", "#3a3f57", "#4e5270", "#6b7190", "#8186a0", "#aeb4cc", "#d4d8e6"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display / Page Title", "purpose": "The one page H1; Montserrat. Compact 28px/700 variant for dense headers." },
+      "headline": { "displayName": "Headline", "purpose": "h1/h2, major section breaks." },
+      "title": { "displayName": "Section Title", "purpose": "Panel and group headers." },
+      "body": { "displayName": "Body", "purpose": "All running text, table cells, labels; Open Sans at lh 1.6. Prose caps 65-75ch." },
+      "label": { "displayName": "Label / Micro", "purpose": "Table headers, eyebrow labels; uppercase, tracked." },
+      "stat": { "displayName": "Stat", "purpose": "Numeric KPI values; Roboto Mono, tabular-nums." }
+    },
+    "shadows": [
+      { "name": "resting", "value": "0 1px 0 rgba(255,255,255,0.6) inset, 0 1px 2px rgba(16,22,44,0.05), 0 2px 6px rgba(16,22,44,0.04)", "purpose": "Default card/panel at rest. The 1px inset highlight is the signature." },
+      { "name": "hover", "value": "0 1px 0 rgba(255,255,255,0.55) inset, 0 2px 6px rgba(16,22,44,0.06), 0 8px 22px rgba(16,22,44,0.07)", "purpose": "Card lift on hover, paired with a border step." },
+      { "name": "elevated", "value": "0 1px 0 rgba(255,255,255,0.5) inset, 0 12px 34px rgba(16,22,44,0.12), 0 4px 10px rgba(16,22,44,0.06)", "purpose": "Drawers and floating panels." },
+      { "name": "popover", "value": "0 18px 50px rgba(12,18,40,0.22), 0 6px 16px rgba(12,18,40,0.12)", "purpose": "Dropdowns and menus, the deepest tier." },
+      { "name": "accent", "value": "0 1px 2px rgba(41,82,163,0.25), 0 2px 8px rgba(41,82,163,0.18)", "purpose": "Primary button navy-tinted glow, the only colored shadow." },
+      { "name": "focus-ring", "value": "0 0 0 2px var(--bg-main), 0 0 0 4px var(--border-focus)", "purpose": "Two-layer focus ring with a canvas-colored gap, auto-applied to all focusables." }
+    ],
+    "motion": [
+      { "name": "fast", "value": "120ms", "purpose": "Press feedback, transform." },
+      { "name": "base", "value": "180ms", "purpose": "Default UI transition: hover, color, border." },
+      { "name": "slow", "value": "280ms", "purpose": "Page enter, expansion." },
+      { "name": "ease", "value": "cubic-bezier(0.4, 0, 0.2, 1)", "purpose": "Standard ease-out for state transitions." },
+      { "name": "ease-soft", "value": "cubic-bezier(0.25, 0.46, 0.45, 0.94)", "purpose": "Softer ease for surface lifts." },
+      { "name": "shimmer", "value": "1.5s ease-in-out infinite", "purpose": "Skeleton loading shimmer; collapses under prefers-reduced-motion." }
+    ],
+    "breakpoints": [
+      { "name": "layout-max", "value": "94rem" },
+      { "name": "table-min", "value": "720px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The single primary action on a surface. Solid Aura Navy with a navy-tinted shadow.",
+      "html": "<button class=\"ds-btn-primary\">Save changes</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; height: 36px; padding: 0 14px; font-family: 'Open Sans', system-ui, sans-serif; font-size: 14px; font-weight: 600; color: #ffffff; background-color: #2952A3; border: none; border-radius: 12px; box-shadow: 0 1px 2px rgba(41,82,163,0.25), 0 2px 8px rgba(41,82,163,0.18); cursor: pointer; transition: transform 100ms ease-out, box-shadow 120ms ease-out, filter 180ms ease-out; } .ds-btn-primary:hover { filter: brightness(1.06); transform: translateY(-0.5px); } .ds-btn-primary:active { transform: translateY(1px); filter: brightness(0.96); } .ds-btn-primary:focus-visible { outline: none; box-shadow: 0 0 0 2px #f4f6fb, 0 0 0 4px #2952A3; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Bordered neutral action sitting beside the primary.",
+      "html": "<button class=\"ds-btn-secondary\">Cancel</button>",
+      "css": ".ds-btn-secondary { display: inline-flex; align-items: center; justify-content: center; height: 36px; padding: 0 14px; font-family: 'Open Sans', system-ui, sans-serif; font-size: 14px; font-weight: 600; color: #0e1225; background-color: #ffffff; border: 1px solid #e4e7f0; border-radius: 12px; cursor: pointer; transition: background-color 180ms ease-out, border-color 180ms ease-out, transform 100ms ease-out; } .ds-btn-secondary:hover { background-color: #eef1f8; border-color: #d4d8e6; transform: translateY(-0.5px); } .ds-btn-secondary:active { transform: translateY(0.5px); } .ds-btn-secondary:focus-visible { outline: none; box-shadow: 0 0 0 2px #f4f6fb, 0 0 0 4px #2952A3; }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Borderless tertiary action; fills only on hover.",
+      "html": "<button class=\"ds-btn-ghost\">Skip</button>",
+      "css": ".ds-btn-ghost { display: inline-flex; align-items: center; justify-content: center; height: 36px; padding: 0 14px; font-family: 'Open Sans', system-ui, sans-serif; font-size: 14px; font-weight: 600; color: #3a3f57; background-color: transparent; border: none; border-radius: 12px; cursor: pointer; transition: background-color 180ms ease-out, color 180ms ease-out; } .ds-btn-ghost:hover { background-color: #eef1f8; color: #0e1225; } .ds-btn-ghost:focus-visible { outline: none; box-shadow: 0 0 0 2px #f4f6fb, 0 0 0 4px #2952A3; }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Standard text field. Border shifts to accent with a 3px ring on focus.",
+      "html": "<input class=\"ds-input\" type=\"text\" placeholder=\"Search employees\" />",
+      "css": ".ds-input { width: 100%; height: 36px; padding: 0 14px; font-family: 'Open Sans', system-ui, sans-serif; font-size: 14px; color: #0e1225; background-color: #ffffff; border: 1px solid #e4e7f0; border-radius: 12px; transition: border-color 180ms ease-out, box-shadow 180ms ease-out; } .ds-input:hover { border-color: #d4d8e6; } .ds-input::placeholder { color: #6b7190; } .ds-input:focus { outline: none; border-color: #2952A3; box-shadow: 0 0 0 3px rgba(41,82,163,0.22); }"
+    },
+    {
+      "name": "Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Default content surface with soft layered depth and the signature 1px top highlight.",
+      "html": "<div class=\"ds-card\"><div class=\"ds-card-title\">Pending approvals</div><p class=\"ds-card-body\">3 leave requests awaiting your review.</p></div>",
+      "css": ".ds-card { background-color: #ffffff; border: 1px solid #eef0f6; border-radius: 12px; padding: 16px; box-shadow: 0 1px 0 rgba(255,255,255,0.6) inset, 0 1px 2px rgba(16,22,44,0.05), 0 2px 6px rgba(16,22,44,0.04); backdrop-filter: blur(6px); transition: border-color 180ms ease-out, box-shadow 180ms ease-out; } .ds-card:hover { border-color: #e4e7f0; box-shadow: 0 1px 0 rgba(255,255,255,0.55) inset, 0 2px 6px rgba(16,22,44,0.06), 0 8px 22px rgba(16,22,44,0.07); } .ds-card-title { font-family: 'Open Sans', system-ui, sans-serif; font-size: 16px; font-weight: 600; color: #0e1225; margin: 0 0 4px; } .ds-card-body { font-family: 'Open Sans', system-ui, sans-serif; font-size: 14px; line-height: 1.6; color: #3a3f57; margin: 0; }"
+    },
+    {
+      "name": "Status Badge",
+      "kind": "chip",
+      "refersTo": "badge-status",
+      "description": "Semantic status pill. Color plus icon plus word, never color alone.",
+      "html": "<span class=\"ds-badge ds-badge-success\"><svg width=\"12\" height=\"12\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points=\"20 6 9 17 4 12\"></polyline></svg>Approved</span>",
+      "css": ".ds-badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; font-family: 'Open Sans', system-ui, sans-serif; font-size: 12px; font-weight: 500; border-radius: 6px; border: 1px solid transparent; } .ds-badge-success { background-color: #effaf3; color: #167c45; border-color: #c9eed7; }"
+    },
+    {
+      "name": "Data Table",
+      "kind": "custom",
+      "refersTo": "table-header",
+      "description": "Dense table with sticky uppercase header, 44px rows, hover fill.",
+      "html": "<div class=\"ds-table-shell\"><table class=\"ds-table\"><thead><tr><th>Name</th><th>Department</th><th>Status</th></tr></thead><tbody><tr><td>Priya Nair</td><td>Engineering</td><td>Active</td></tr><tr><td>Sam Okoro</td><td>People Ops</td><td>Active</td></tr></tbody></table></div>",
+      "css": ".ds-table-shell { overflow-x: auto; border: 1px solid #eef0f6; border-radius: 12px; background: #ffffff; box-shadow: 0 1px 0 rgba(255,255,255,0.6) inset, 0 1px 2px rgba(16,22,44,0.05), 0 2px 6px rgba(16,22,44,0.04); } .ds-table { width: 100%; min-width: 720px; border-collapse: collapse; font-family: 'Open Sans', system-ui, sans-serif; } .ds-table thead th { position: sticky; top: 0; height: 44px; padding: 8px 16px; text-align: left; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #3a3f57; background: #ffffff; border-bottom: 1px solid #eef0f6; white-space: nowrap; } .ds-table tbody td { height: 44px; padding: 8px 16px; font-size: 14px; color: #0e1225; border-bottom: 1px solid #eef0f6; } .ds-table tbody tr { transition: background-color 100ms ease-out; } .ds-table tbody tr:hover { background-color: #eef1f8; } .ds-table tbody tr:last-child td { border-bottom: none; }"
+    },
+    {
+      "name": "Sidebar Item",
+      "kind": "nav",
+      "refersTo": "button-ghost",
+      "description": "Navigation rail item on the warm-dark rail; accent-alpha fill plus left marker when active.",
+      "html": "<nav class=\"ds-rail\"><a class=\"ds-rail-item ds-rail-item-active\" href=\"#\">Dashboard</a><a class=\"ds-rail-item\" href=\"#\">People</a></nav>",
+      "css": ".ds-rail { display: flex; flex-direction: column; gap: 2px; padding: 8px; background: #0f1424; border-radius: 12px; } .ds-rail-item { position: relative; display: flex; align-items: center; height: 36px; padding: 0 12px; font-family: 'Open Sans', system-ui, sans-serif; font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.62); text-decoration: none; border-radius: 8px; transition: background-color 150ms ease-out, color 150ms ease-out; } .ds-rail-item:hover { background-color: rgba(255,255,255,0.06); color: #ffffff; } .ds-rail-item-active { background-color: rgba(88,121,224,0.18); color: #ffffff; } .ds-rail-item-active::before { content: ''; position: absolute; left: 0; top: 8px; bottom: 8px; width: 3px; border-radius: 999px; background: #6884dc; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Quiet Operator",
+    "overview": "Studio Slate is the interface of an expert who already knows the answer and isn't excited about it. It earns trust by being predictable, fast, and right, never by announcing itself. The working surface is near-white and calm; a single deep navy accent carries every primary action and signal; a warm-dark navigation rail anchors the left edge in both light and dark mode so the task always reads as the foreground. One login spans four sub-apps (HRMS, Hire, Grow, Fluence) and the visual vocabulary never drifts between them. The density target is Linear, not Workday: reveal only what the current task needs. Surfaces carry a soft, low, in-between depth (a 1px top highlight plus a diffuse ambient shadow) so a card feels like a physical pane resting on the canvas without ever tipping into skeuomorphic emboss. Color is rationed, motion is short, type is tuned for dense tables and long admin sessions.",
+    "keyCharacteristics": [
+      "Single deep-navy accent (#2952A3) rationed to action, focus, selection, and signal.",
+      "Warm-dark nav rail (#0f1424) in both modes; near-white working surface.",
+      "Soft layered depth with a 1px top highlight, never flat board, never heavy emboss.",
+      "Four sub-app bundle accents used only on rail/identity, never bleeding into product chrome.",
+      "Light mode is canonical for desk work; dark mode has full token coverage for low-light reading.",
+      "Color + label on every status, never color alone. WCAG 2.1 AA baseline."
+    ],
+    "rules": [
+      { "name": "The One Voice Rule", "body": "Aura Navy appears on no more than ~10% of any screen. Its rarity is the signal. If two things are blue, neither reads as the action.", "section": "colors" },
+      { "name": "The Walled Bundle Rule", "body": "The four sub-app accents (Indigo, Teal, Amber, Violet) live on the rail and bundle switcher only. Inside a sub-app, the accent is always Aura Navy. A teal button inside Hire is a bug.", "section": "colors" },
+      { "name": "The NULogic Brand Lockout", "body": "The corporate logo colors (Lapis #050766, Red-orange #E62A32, Purple #8939A1, Dark teal #133E49) are for the logo and brand-adjacent marketing only. They are forbidden in product UI. The product is single-hue.", "section": "colors" },
+      { "name": "The Tabular Figure Rule", "body": "Any number that sits in a column, KPI, or stat block is set in Roboto Mono with tabular-nums. Proportional figures in a data column are a bug.", "section": "typography" },
+      { "name": "The No Display-In-Chrome Rule", "body": "Montserrat is for titles and stat values only. Buttons, inputs, labels, and table cells are Open Sans. A display font on a button is forbidden.", "section": "typography" },
+      { "name": "The 1px Highlight Rule", "body": "Every resting surface gets the inset top highlight. It is what separates Studio Slate's soft depth from both flatness and from heavy material drop-shadows. Remove it and cards die.", "section": "elevation" },
+      { "name": "The Depth-Follows-Stack Rule", "body": "Shadow strength is a function of z-order and state, never of importance. A resting card and a resting card are equal; a hovered or popped surface earns more.", "section": "elevation" },
+      { "name": "The No Emboss Rule", "body": "Inner shadows beyond the 1px highlight, debossed fields, and heavy bevels are forbidden. The legacy --shadow-skeuo-* tokens are intentionally flattened to no-ops; do not reintroduce them.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do ration Aura Navy (#2952A3) to <=10% of any screen: primary action, focus, active nav, links, key data. Emphasis elsewhere comes from weight and scale.",
+      "Do give every resting surface the 1px top highlight plus soft ambient shadow. Soft layered depth is the house style.",
+      "Do set every figure in a column, stat, or KPI in Roboto Mono with tabular-nums.",
+      "Do pair every status with an icon and a word, never color alone (WCAG 2.1 AA).",
+      "Do keep the four bundle accents (Indigo / Teal / Amber / Violet) on the rail and switcher only; inside a sub-app the accent is always navy.",
+      "Do reach for inline edit or a drawer before a modal; reserve modals for blocking confirmation.",
+      "Do use .panel-inset for nested grouping. Use text-sm Open Sans for body, labels, buttons, and cells."
+    ],
+    "donts": [
+      "Don't echo KEKA / Zoho clutter: every field visible at once, dense forms with no progressive disclosure, pastel chips, emoji-status.",
+      "Don't drift into Workday / SuccessFactors enterprise gray: gray-on-gray density, modal-soup workflows, accessibility-by-checkbox, dated type.",
+      "Don't import the generic SaaS purple-gradient hero deck: gradient text, hero-metric vanity numbers, identical icon-grid feature cards.",
+      "Don't build Notion-style blank-canvas freedom: drag-everywhere, drop-anywhere, blank-page-by-default. Fluence is structured wiki with taxonomy and ownership.",
+      "Don't use border-left / border-right greater than 1px as a colored accent stripe. Use a full subtle border + tinted bg instead.",
+      "Don't use gradient text (background-clip: text). Use solid Aura Navy; emphasize with weight or size.",
+      "Don't use glassmorphism decoratively. The faint card blur(6px) is structural; glass panels over flat white surfaces are forbidden.",
+      "Don't nest a card inside a card. Always wrong; restructure with .panel-inset.",
+      "Don't reintroduce embossed / debossed / heavy inner-shadow surfaces. The --shadow-skeuo-* tokens are flattened on purpose.",
+      "Don't put NULogic brand colors or any sub-app accent into general product chrome. The product is single-hue navy."
+    ]
+  }
+}

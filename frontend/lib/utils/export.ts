@@ -1,7 +1,7 @@
 'use client';
 
 /**
- * Export utilities for DataTable — CSV and Excel export.
+ * Export utilities (used by ExportMenu) — CSV and Excel export.
  * Uses ExcelJS (already in package.json) for Excel export with fallback to CSV.
  */
 

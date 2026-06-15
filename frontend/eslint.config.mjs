@@ -54,6 +54,14 @@ const restrictedSyntaxRules = [
     selector: String.raw`TemplateElement[value.raw=/\bstatus-(purple|orange|pink|brown|gray|black|white)\b/]`,
     message: 'Design system: undefined .status-* class. Use one of status-success / status-danger / status-warning / status-info / status-neutral.',
   },
+  {
+    selector: String.raw`Literal[value=/\bnu-(purple|red-orange)\b/]`,
+    message: 'Design system: NULogic brand colors (nu-purple / nu-red-orange) are banned in product UI per DESIGN.md — they exist for the logo/brand only. Use accent or a semantic status token (--err-fg, --status-*). The logo gradient (--nu-grad-brand) is exempt.',
+  },
+  {
+    selector: String.raw`TemplateElement[value.raw=/\bnu-(purple|red-orange)\b/]`,
+    message: 'Design system: NULogic brand colors (nu-purple / nu-red-orange) are banned in product UI per DESIGN.md — they exist for the logo/brand only. Use accent or a semantic status token (--err-fg, --status-*). The logo gradient (--nu-grad-brand) is exempt.',
+  },
 ];
 
 const baseRules = {

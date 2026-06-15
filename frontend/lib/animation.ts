@@ -33,7 +33,9 @@ export const MOTION_DURATION = {
 export const MOTION_EASE = {
   standard: [0.4, 0, 0.2, 1],
   outExpo: [0.16, 1, 0.3, 1],
-  spring: [0.34, 1.56, 0.64, 1],
+  // De-bounced: was [0.34, 1.56, 0.64, 1] (overshoot). Bounce/elastic is banned —
+  // the brand is calm/quietly-confident. Now mirrors ease-out-expo (no overshoot).
+  spring: [0.16, 1, 0.3, 1],
 } as const;
 
 /** Rise distance (px) for fade+rise entrances — matches --motion-rise-distance. */

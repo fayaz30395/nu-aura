@@ -190,7 +190,7 @@ function TopBarContent({
         >
           <Bell className="h-[18px] w-[18px]"/>
           {unreadCount > 0 && (
-            <span className="absolute right-2 top-[7px] h-2 w-2 rounded-full border-2 border-[var(--surface)] bg-[var(--nu-red-orange)]"/>
+            <span className="absolute right-2 top-[7px] h-2 w-2 rounded-full border-2 border-[var(--surface)] bg-[var(--err-fg)]"/>
           )}
         </button>
         <NotificationDropdown

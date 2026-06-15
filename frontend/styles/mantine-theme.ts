@@ -10,7 +10,7 @@
  * radii, fonts, and surfaces as native `.card-aura` / `.btn-primary`
  * / `.input-aura` components.
  *
- * Anchor: --accent-primary = #2563EB (Tailwind blue-600).
+ * Anchor: --accent-primary = #2952A3 (NU-AURA Blue, hue ~228).
  * Primary shade swaps to a lighter step in dark mode for visibility
  * on warm-dark surfaces.
  *
