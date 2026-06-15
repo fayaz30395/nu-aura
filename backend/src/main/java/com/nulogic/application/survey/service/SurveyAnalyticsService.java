@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nulogic.api.survey.dto.*;
+import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.survey.*;
@@ -95,10 +96,17 @@ public class SurveyAnalyticsService {
         Survey survey = surveyRepository.findByIdAndTenantId(request.getSurveyId(), tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Survey not found"));
 
+        // RBAC-8 FIX: for non-anonymous surveys always resolve employee from the security
+        // context so a caller cannot spoof a response on behalf of another employee.
+        // Anonymous surveys leave employeeId null (anonymousId is used instead).
+        UUID resolvedEmployeeId = survey.getIsAnonymous()
+                ? null
+                : SecurityContext.getCurrentEmployeeId();
+
         // Check if already submitted (for non-anonymous)
-        if (request.getEmployeeId() != null) {
+        if (resolvedEmployeeId != null) {
             Optional<SurveyResponse> existing = responseRepository.findByEmployeeAndSurvey(
-                    tenantId, request.getEmployeeId(), request.getSurveyId());
+                    tenantId, resolvedEmployeeId, request.getSurveyId());
             if (existing.isPresent() && existing.get().getStatus() == ResponseStatus.COMPLETED) {
                 throw new IllegalStateException("Response already submitted for this survey");
             }
@@ -112,7 +120,7 @@ public class SurveyAnalyticsService {
         SurveyResponse response = SurveyResponse.builder()
                 .survey(survey)
                 .tenantId(tenantId)
-                .employeeId(request.getEmployeeId())
+                .employeeId(resolvedEmployeeId)
                 .anonymousId(survey.getIsAnonymous() ? generateAnonymousId() : null)
                 .status(ResponseStatus.COMPLETED)
                 .startedAt(submittedAt)

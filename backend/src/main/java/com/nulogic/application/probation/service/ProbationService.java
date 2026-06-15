@@ -5,6 +5,7 @@ import com.nulogic.common.exception.BusinessException;
 import com.nulogic.common.exception.ResourceNotFoundException;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import org.springframework.security.access.AccessDeniedException;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.probation.ProbationEvaluation;
 import com.nulogic.domain.probation.ProbationPeriod;
@@ -334,6 +335,15 @@ public class ProbationService {
 
         ProbationEvaluation evaluation = probationEvaluationRepository.findByIdAndTenantId(evaluationId, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Evaluation not found"));
+
+        // RBAC-7 FIX: only the employee under evaluation (or admin/HR) may acknowledge.
+        if (!SecurityContext.isSuperAdmin() && !SecurityContext.isTenantAdmin() && !SecurityContext.isHRManager()) {
+            UUID ownerEmployeeId = evaluation.getProbationPeriod().getEmployeeId();
+            UUID currentEmployeeId = SecurityContext.getCurrentEmployeeId();
+            if (!ownerEmployeeId.equals(currentEmployeeId)) {
+                throw new AccessDeniedException("You are not authorized to acknowledge this evaluation");
+            }
+        }
 
         if (evaluation.getEmployeeAcknowledged()) {
             throw new BusinessException("Evaluation has already been acknowledged");
