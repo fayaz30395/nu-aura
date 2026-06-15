@@ -1,7 +1,8 @@
 # NU-AURA Production Green-Flag Report
 
-**Run:** 2026-06-10 · **Orchestrator:** Bridge Agent · **Scope:** compressed (deadline 2026-06-11) — P0 paths, CRITICAL/HIGH blocking
+**Run:** 2026-06-10 · **Run-3:** 2026-06-15 (current) · **Orchestrator:** Bridge Agent · **Scope:** compressed (deadline 2026-06-11) — P0 paths, CRITICAL/HIGH blocking
 **Agents dispatched:** 8 audit (parallel) + 8 fix (parallel) + retest reviewer + release readiness; external verification fleet (Playwright UI run, full regression, V285 live-test) merged into the board.
+**Run-3 additions:** rbac-2026-06-14, security-2026-06-14, dev-2026-06-14, ui-live-2026-06-14, ux-auditor-2026-06-15, test-runner-2026-06-15, browser-validator-2026-06-15 (in progress).
 
 ---
 
@@ -58,21 +59,40 @@ Full detail in `docs/audit/green-flag/*.md`; live status in `ISSUE_BOARD.md`.
 
 RBAC: clean. No unguarded endpoints, escalation paths blocked, 5 IDORs found and fixed, permission-literal mismatch fixed, SuperAdmin bypass verified working by design. Security: one open item (SEC-1, secrets rotation — operational, not code). All other findings MEDIUM/LOW defense-in-depth, documented on the board.
 
-## Production Readiness Score: **84 / 100**
+## Production Readiness Score: **84 / 100** (Run-1/2) → **86 / 100** (Run-3 updated)
 
-Deductions: secrets in git history unrotated (−8), two open auth regressions (−4), UI evidence file missing (−2), deploy-config placeholders (−1), open decision items PROD-3/QA-2 (−1).
+Run-3 additions: RBAC-7 (probation ownership) + RBAC-8 (survey spoofing) fixed (+0 score, MEDIUM); SEC-3b (CRITICAL deploy issue, user-action); UX QW1+QW4 applied; 3,931 backend tests green; UI-01/02 false-positives confirmed closed.
+
+Deductions updated: secrets unrotated SEC-1 (−8), SEC-3b Railway env not yet fixed (−2), UI cold-start DEV-7/UI-04/05 (−2), seed data UI-07 (−1), open decision INT-3 outbox (−1).
+
+## Run-3 Summary (2026-06-15)
+
+| Area | Finding | Status |
+|------|---------|--------|
+| RBAC-7 | Probation evaluate acknowledgement — no ownership check | Fixed (fca3178b) |
+| RBAC-8 | Survey response spoofing via client-supplied employeeId | Fixed (fca3178b) |
+| SEC-3b | DEMO_CREDENTIALS_ENABLED=true on Railway — Welcome@123 SUPER_ADMINs live | **USER ACTION REQUIRED** |
+| SEC-4 | Groq API key in backend/.env | **USER ACTION REQUIRED** |
+| UX QW1 | Payroll Run History sticky thead | Fixed (74c61449) |
+| UX QW3 | Breadcrumb auto-hide | Already implemented (TopBar line 111) |
+| UX QW4 | Leave balance ring hover tooltips | Fixed (74c61449) |
+| Backend tests | 3,931 pass / 0 fail (unit-only, Testcontainers excluded) | Green |
+| Frontend tsc | Exit 0, zero type errors | Green |
+| UI-01/02 | "CRITICAL" RBAC fails = false positive (Saran V is HR_ADMIN, not EMPLOYEE) | Closed |
 
 ## Final Green-Flag Checklist
 
-- [x] Zero open code-level CRITICALs (6 fixed + REG-1 fixed, retest-passed)
+- [x] Zero open code-level CRITICALs (6 fixed + REG-1 fixed, retest-passed; RBAC-7/8 fixed 2026-06-15)
 - [x] Zero open CRITICAL RBAC gaps; SuperAdmin bypass intact and verified
 - [x] Creation flows validated (tenant isolation + audit trail) — data agent + retest
-- [x] Builds: tsc + backend compile + PayrollRunServiceTest green on native run (per verification fleet); Flyway chain V283–V285 verified
+- [x] Builds: tsc + backend compile + 3,931 unit tests green (2026-06-15); Flyway chain V283–V294 verified
 - [x] Rollback plan written; monitoring/alerts cover new paths (DLT)
 - [x] All known issues documented with severity in ISSUE_BOARD.md
-- [ ] **SEC-1: rotate Neon password + JWT secret + encryption key; purge git history; gitleaks in CI** ← blocker
-- [ ] **REG-2/REG-3 closed (MFA login 401; admin users 500)** ← blocker
+- [ ] **SEC-3b: Set `DEMO_CREDENTIALS_ENABLED=false` (or unset) in Railway dashboard** ← CRITICAL, user-action
+- [ ] **SEC-1: rotate Neon password + JWT secret + encryption key; purge git history; gitleaks in CI** ← HIGH, user-action
+- [ ] **SEC-4: rotate Groq API key at console.groq.com** ← HIGH, user-action
+- [ ] **REG-2/REG-3 closed (MFA login 401; admin users 500)** ← blocker (from Run-1; verify still open)
 - [ ] **REL-9: real ingress hostnames in helm values + k8s manifests** ← blocker (deploy-time)
-- [ ] UI evidence: attach Playwright report as docs/audit/green-flag/ui.md
+- [ ] UI evidence: browser-validator-2026-06-15 agent in progress (results pending)
 - [ ] Decisions recorded: PROD-3 (LWF descope/implement), QA-2 (seed FINANCE_ADMIN)
-- [ ] Prod deploy checklist: confirm DEMO_CREDENTIALS_ENABLED unset/false (control exists, manual)
+- [ ] Prod deploy checklist: confirm DEMO_CREDENTIALS_ENABLED unset/false
