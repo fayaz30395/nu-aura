@@ -16,6 +16,8 @@ import java.util.UUID;
 @Repository
 public interface JobBoardPostingRepository extends JpaRepository<JobBoardPosting, UUID> {
 
+    Optional<JobBoardPosting> findByIdAndTenantId(UUID id, UUID tenantId);
+
     Optional<JobBoardPosting> findByTenantIdAndJobOpeningIdAndBoardName(
             UUID tenantId, UUID jobOpeningId, JobBoardPosting.JobBoard boardName);
 

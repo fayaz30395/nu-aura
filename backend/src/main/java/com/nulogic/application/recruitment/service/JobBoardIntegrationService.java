@@ -82,8 +82,7 @@ public class JobBoardIntegrationService {
     public List<JobBoardPosting> postJob(UUID jobOpeningId, List<JobBoardPosting.JobBoard> boards) {
         UUID tenantId = TenantContext.requireCurrentTenant();
 
-        JobOpening job = jobOpeningRepository.findById(jobOpeningId)
-                .filter(j -> j.getTenantId().equals(tenantId))
+        JobOpening job = jobOpeningRepository.findByIdAndTenantId(jobOpeningId, tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("Job opening not found: " + jobOpeningId));
 
         List<JobBoardPosting> results = new ArrayList<>();
@@ -124,8 +123,7 @@ public class JobBoardIntegrationService {
     @Transactional
     public JobBoardPosting pausePosting(UUID postingId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
-        JobBoardPosting posting = jobBoardPostingRepository.findById(postingId)
-                .filter(p -> p.getTenantId().equals(tenantId))
+        JobBoardPosting posting = jobBoardPostingRepository.findByIdAndTenantId(postingId, tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("Posting not found: " + postingId));
 
         try {

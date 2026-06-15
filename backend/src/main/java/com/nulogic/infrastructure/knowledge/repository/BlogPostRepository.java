@@ -16,6 +16,8 @@ import java.util.UUID;
 @Repository
 public interface BlogPostRepository extends JpaRepository<BlogPost, UUID>, JpaSpecificationExecutor<BlogPost> {
 
+    Optional<BlogPost> findByIdAndTenantId(UUID id, UUID tenantId);
+
     Optional<BlogPost> findByTenantIdAndSlug(UUID tenantId, String slug);
 
     Page<BlogPost> findByTenantIdAndStatus(UUID tenantId, BlogPost.BlogPostStatus status, Pageable pageable);
