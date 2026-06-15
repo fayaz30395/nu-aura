@@ -171,7 +171,11 @@ public class AutoRegularizationScheduler {
                     "SELECT auto_regularize_after_days FROM attendance_regularization_config WHERE tenant_id = ?",
                     Integer.class, tenantId);
             return days != null ? days : DEFAULT_REGULARIZE_AFTER_DAYS;
-        } catch (Exception e) { // Intentional broad catch — scheduled job error boundary
+        } catch (Exception e) {
+            // Config table missing / query error — fall back to default but log at WARN
+            // so operators can tell that the tenant-specific window was silently ignored.
+            log.warn("AutoRegularizationScheduler: could not read regularization config for tenant {} — " +
+                    "falling back to {} days: {}", tenantId, DEFAULT_REGULARIZE_AFTER_DAYS, e.getMessage());
             return DEFAULT_REGULARIZE_AFTER_DAYS;
         }
     }
@@ -180,9 +184,12 @@ public class AutoRegularizationScheduler {
         try {
             return jdbcTemplate.queryForList(
                     "SELECT id FROM tenants WHERE is_active = true", UUID.class);
-        } catch (Exception e) { // Intentional broad catch — scheduled job error boundary
-            log.warn("Could not fetch active tenants: {}", e.getMessage());
-            return List.of();
+        } catch (Exception e) {
+            // Rethrow so ShedLock records a FAILED execution. A silent List.of() would
+            // mark the job as successful with 0 tenants processed with no alertable signal.
+            log.error("AutoRegularizationScheduler: cannot fetch active tenants — aborting run: {}",
+                    e.getMessage(), e);
+            throw new RuntimeException("AutoRegularizationScheduler: tenant fetch failed", e);
         }
     }
 }

@@ -215,8 +215,12 @@ public class PayrollRunService {
         } catch (ValidationException e) {
             throw e;
         } catch (Exception e) {
-            log.warn("Payroll pre-flight salary structure check could not be completed for run {}: {}. " +
-                    "Proceeding with processing.", payrollRun.getId(), e.getMessage());
+            // Surface as ERROR — a DB failure here means we cannot verify coverage.
+            // Fail-fast so payroll does not silently run with 0 payslips generated.
+            log.error("Payroll pre-flight salary structure check FAILED for run {}: {}",
+                    payrollRun.getId(), e.getMessage(), e);
+            throw new RuntimeException(
+                    "Payroll pre-flight check could not complete: " + e.getMessage(), e);
         }
     }
 
@@ -368,6 +372,12 @@ public class PayrollRunService {
 
             Optional<SalaryStructure> structureOpt = salaryStructureRepository.findActiveByEmployeeIdAndDate(
                     tenantId, employee.getId(), payrollRun.getPayrollDate());
+            if (structureOpt.isEmpty()) {
+                log.error("Payroll run {}: employee {} (tenant {}) has no active salary structure for {}. " +
+                                "Payslip SKIPPED — assign a salary structure and reprocess.",
+                        payrollRun.getId(), employee.getId(), tenantId, payrollRun.getPayrollDate());
+                continue;
+            }
             if (structureOpt.isPresent()) {
                 SalaryStructure structure = structureOpt.get();
 

@@ -218,9 +218,13 @@ public class LeaveAccrualScheduler {
         try {
             return jdbcTemplate.queryForList(
                     "SELECT id FROM tenants WHERE is_active = true", UUID.class);
-        } catch (Exception e) { // Intentional broad catch — scheduled job error boundary
-            log.warn("LeaveAccrualScheduler: could not fetch active tenants: {}", e.getMessage());
-            return List.of();
+        } catch (Exception e) {
+            // Rethrow so ShedLock records a FAILED execution and the job is NOT marked
+            // as completed. A silent List.of() return would cause the job to succeed with
+            // 0 tenants processed — leave accrual would silently skip an entire month.
+            log.error("LeaveAccrualScheduler: cannot fetch active tenants — aborting accrual run: {}",
+                    e.getMessage(), e);
+            throw new RuntimeException("LeaveAccrualScheduler: tenant fetch failed", e);
         }
     }
 }

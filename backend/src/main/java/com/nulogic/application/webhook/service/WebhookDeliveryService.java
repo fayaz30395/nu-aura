@@ -351,8 +351,11 @@ public class WebhookDeliveryService {
             byte[] hmacBytes = mac.doFinal(payload.getBytes(StandardCharsets.UTF_8));
             return bytesToHex(hmacBytes);
         } catch (java.security.GeneralSecurityException e) {
-            log.error("Failed to compute HMAC signature: {}", e.getMessage());
-            return "";
+            // Throw rather than returning an empty signature — delivering a webhook
+            // with signature="" causes all consumers to reject the payload as tampered,
+            // yet the delivery is marked SUCCESS because we get a 2xx response back.
+            // Throwing causes the delivery to be recorded as FAILED and retried.
+            throw new IllegalStateException("HMAC-SHA256 computation failed: " + e.getMessage(), e);
         }
     }
 
