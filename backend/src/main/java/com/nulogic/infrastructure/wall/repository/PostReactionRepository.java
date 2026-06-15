@@ -91,8 +91,10 @@ public interface PostReactionRepository extends JpaRepository<PostReaction, UUID
     @Query(value = "SELECT r FROM PostReaction r " +
             "JOIN FETCH r.employee e " +
             "LEFT JOIN FETCH e.user u " +
-            "WHERE r.post.id = :postId " +
+            "WHERE r.post.id = :postId AND r.tenantId = :tenantId " +
             "ORDER BY r.createdAt DESC",
-            countQuery = "SELECT COUNT(r) FROM PostReaction r WHERE r.post.id = :postId")
-    Page<PostReaction> findAllByPostIdWithDetails(@Param("postId") UUID postId, Pageable pageable);
+            countQuery = "SELECT COUNT(r) FROM PostReaction r WHERE r.post.id = :postId AND r.tenantId = :tenantId")
+    Page<PostReaction> findAllByPostIdAndTenantIdWithDetails(@Param("postId") UUID postId,
+                                                             @Param("tenantId") UUID tenantId,
+                                                             Pageable pageable);
 }

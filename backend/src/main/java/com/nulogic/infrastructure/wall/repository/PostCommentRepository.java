@@ -15,8 +15,10 @@ import java.util.UUID;
 @Repository
 public interface PostCommentRepository extends JpaRepository<PostComment, UUID> {
 
-    @Query("SELECT c FROM PostComment c WHERE c.post.id = :postId AND c.parentComment IS NULL AND c.isDeleted = false ORDER BY c.createdAt ASC")
-    Page<PostComment> findTopLevelCommentsByPostId(@Param("postId") UUID postId, Pageable pageable);
+    @Query("SELECT c FROM PostComment c WHERE c.post.id = :postId AND c.tenantId = :tenantId AND c.parentComment IS NULL AND c.isDeleted = false ORDER BY c.createdAt ASC")
+    Page<PostComment> findTopLevelCommentsByPostIdAndTenantId(@Param("postId") UUID postId,
+                                                               @Param("tenantId") UUID tenantId,
+                                                               Pageable pageable);
 
     @Query("SELECT c FROM PostComment c WHERE c.parentComment.id = :parentId AND c.isDeleted = false ORDER BY c.createdAt ASC")
     Page<PostComment> findRepliesByParentCommentId(@Param("parentId") UUID parentId, Pageable pageable);

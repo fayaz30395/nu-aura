@@ -311,8 +311,8 @@ public class WallService {
      */
     @Transactional(readOnly = true)
     public Page<WallPostResponse.ReactorInfo> getPostReactions(UUID postId, Pageable pageable) {
-        TenantContext.requireCurrentTenant();
-        Page<PostReaction> reactions = postReactionRepository.findAllByPostIdWithDetails(postId, pageable);
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        Page<PostReaction> reactions = postReactionRepository.findAllByPostIdAndTenantIdWithDetails(postId, tenantId, pageable);
         return reactions.map(this::mapToReactorInfo);
     }
 
@@ -346,7 +346,8 @@ public class WallService {
 
     @Transactional(readOnly = true)
     public Page<CommentResponse> getComments(UUID postId, Pageable pageable) {
-        Page<PostComment> comments = postCommentRepository.findTopLevelCommentsByPostId(postId, pageable);
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        Page<PostComment> comments = postCommentRepository.findTopLevelCommentsByPostIdAndTenantId(postId, tenantId, pageable);
         return comments.map(this::mapCommentToResponse);
     }
 
