@@ -25,7 +25,7 @@ describe('Button', () => {
     it('renders primary variant by default', () => {
       render(<Button>Primary</Button>);
       const button = screen.getByRole('button');
-      expect(button.className).toContain('bg-[var(--accent-primary)]');
+      expect(button.className).toContain('bg-[var(--btn-primary-bg)]');
       expect(button.className).not.toContain('bg-gradient-to-b');
     });
 

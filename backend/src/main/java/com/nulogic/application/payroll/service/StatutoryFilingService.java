@@ -191,12 +191,8 @@ public class StatutoryFilingService {
     @Transactional
     public ValidationResult validateFiling(UUID filingRunId) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        StatutoryFilingRun run = filingRunRepository.findById(filingRunId)
+        StatutoryFilingRun run = filingRunRepository.findByIdAndTenantId(filingRunId, tenantId)
                 .orElseThrow(() -> new BusinessException("Filing run not found: " + filingRunId));
-
-        if (!run.getTenantId().equals(tenantId)) {
-            throw new BusinessException("Filing run not found: " + filingRunId);
-        }
 
         FilingFormatGenerator generator = generators.get(run.getFilingType());
         if (generator == null) {
@@ -232,12 +228,8 @@ public class StatutoryFilingService {
     @Transactional(readOnly = true)
     public InputStream downloadFiling(UUID filingRunId) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        StatutoryFilingRun run = filingRunRepository.findById(filingRunId)
+        StatutoryFilingRun run = filingRunRepository.findByIdAndTenantId(filingRunId, tenantId)
                 .orElseThrow(() -> new BusinessException("Filing run not found: " + filingRunId));
-
-        if (!run.getTenantId().equals(tenantId)) {
-            throw new BusinessException("Filing run not found: " + filingRunId);
-        }
 
         if (run.getFileStoragePath() == null) {
             throw new BusinessException("Filing has not been generated yet");

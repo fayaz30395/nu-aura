@@ -146,7 +146,7 @@ class PayslipServiceTest {
         @DisplayName("Should update payslip successfully")
         void shouldUpdatePayslipSuccessfully() {
             UUID payslipId = payslip.getId();
-            when(payslipRepository.findById(payslipId)).thenReturn(Optional.of(payslip));
+            when(payslipRepository.findByIdAndTenantId(payslipId, tenantId)).thenReturn(Optional.of(payslip));
             when(payslipRepository.save(any(Payslip.class)))
                     .thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -182,7 +182,7 @@ class PayslipServiceTest {
         @DisplayName("Should throw exception when payslip not found")
         void shouldThrowExceptionWhenPayslipNotFound() {
             UUID invalidId = UUID.randomUUID();
-            when(payslipRepository.findById(invalidId)).thenReturn(Optional.empty());
+            when(payslipRepository.findByIdAndTenantId(invalidId, tenantId)).thenReturn(Optional.empty());
 
             assertThatThrownBy(() -> payslipService.updatePayslip(invalidId, payslip))
                     .isInstanceOf(IllegalArgumentException.class)
@@ -193,8 +193,7 @@ class PayslipServiceTest {
         @DisplayName("Should throw exception when tenant mismatch")
         void shouldThrowExceptionWhenTenantMismatch() {
             UUID payslipId = payslip.getId();
-            payslip.setTenantId(UUID.randomUUID()); // Different tenant
-            when(payslipRepository.findById(payslipId)).thenReturn(Optional.of(payslip));
+            when(payslipRepository.findByIdAndTenantId(payslipId, tenantId)).thenReturn(Optional.empty());
 
             assertThatThrownBy(() -> payslipService.updatePayslip(payslipId, payslip))
                     .isInstanceOf(IllegalArgumentException.class);
@@ -209,7 +208,7 @@ class PayslipServiceTest {
         @DisplayName("Should get payslip by ID")
         void shouldGetPayslipById() {
             UUID payslipId = payslip.getId();
-            when(payslipRepository.findById(payslipId)).thenReturn(Optional.of(payslip));
+            when(payslipRepository.findByIdAndTenantId(payslipId, tenantId)).thenReturn(Optional.of(payslip));
 
             Payslip result = payslipService.getPayslipById(payslipId);
 
@@ -221,7 +220,7 @@ class PayslipServiceTest {
         @DisplayName("Should throw exception when payslip not found by ID")
         void shouldThrowExceptionWhenNotFoundById() {
             UUID invalidId = UUID.randomUUID();
-            when(payslipRepository.findById(invalidId)).thenReturn(Optional.empty());
+            when(payslipRepository.findByIdAndTenantId(invalidId, tenantId)).thenReturn(Optional.empty());
 
             assertThatThrownBy(() -> payslipService.getPayslipById(invalidId))
                     .isInstanceOf(IllegalArgumentException.class)
@@ -327,7 +326,7 @@ class PayslipServiceTest {
         @DisplayName("Should delete payslip successfully")
         void shouldDeletePayslipSuccessfully() {
             UUID payslipId = payslip.getId();
-            when(payslipRepository.findById(payslipId)).thenReturn(Optional.of(payslip));
+            when(payslipRepository.findByIdAndTenantId(payslipId, tenantId)).thenReturn(Optional.of(payslip));
             when(payslipRepository.save(any(Payslip.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
             payslipService.deletePayslip(payslipId);
@@ -339,7 +338,7 @@ class PayslipServiceTest {
         @DisplayName("Should throw exception when deleting non-existent payslip")
         void shouldThrowExceptionWhenDeletingNonExistent() {
             UUID invalidId = UUID.randomUUID();
-            when(payslipRepository.findById(invalidId)).thenReturn(Optional.empty());
+            when(payslipRepository.findByIdAndTenantId(invalidId, tenantId)).thenReturn(Optional.empty());
 
             assertThatThrownBy(() -> payslipService.deletePayslip(invalidId))
                     .isInstanceOf(IllegalArgumentException.class);

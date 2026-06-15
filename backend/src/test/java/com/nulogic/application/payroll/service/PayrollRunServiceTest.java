@@ -178,7 +178,7 @@ class PayrollRunServiceTest {
                     .remarks("Updated remarks")
                     .build();
 
-            when(payrollRunRepository.findById(runId))
+            when(payrollRunRepository.findByIdAndTenantId(runId, tenantId))
                     .thenReturn(Optional.of(payrollRun));
             when(payrollRunRepository.save(any(PayrollRun.class)))
                     .thenAnswer(invocation -> invocation.getArgument(0));
@@ -208,7 +208,7 @@ class PayrollRunServiceTest {
                     .payrollDate(LocalDate.of(2025, 2, 28))
                     .build();
 
-            when(payrollRunRepository.findById(runId)).thenReturn(Optional.of(payrollRun));
+            when(payrollRunRepository.findByIdAndTenantId(runId, tenantId)).thenReturn(Optional.of(payrollRun));
             when(payrollRunRepository.findByTenantIdAndPeriodForUpdate(tenantId, 2025, 2))
                     .thenReturn(Optional.of(conflicting));
 
@@ -225,7 +225,7 @@ class PayrollRunServiceTest {
             payrollRun.setStatus(PayrollStatus.LOCKED);
             PayrollRun updateData = PayrollRun.builder().build();
 
-            when(payrollRunRepository.findById(runId))
+            when(payrollRunRepository.findByIdAndTenantId(runId, tenantId))
                     .thenReturn(Optional.of(payrollRun));
 
             assertThatThrownBy(() -> payrollRunService.updatePayrollRun(runId, updateData))
@@ -239,7 +239,7 @@ class PayrollRunServiceTest {
             UUID runId = UUID.randomUUID();
             PayrollRun updateData = PayrollRun.builder().build();
 
-            when(payrollRunRepository.findById(runId))
+            when(payrollRunRepository.findByIdAndTenantId(runId, tenantId))
                     .thenReturn(Optional.empty());
 
             assertThatThrownBy(() -> payrollRunService.updatePayrollRun(runId, updateData))
@@ -533,7 +533,7 @@ class PayrollRunServiceTest {
         @DisplayName("Should get payroll run by ID")
         void shouldGetPayrollRunById() {
             UUID runId = payrollRun.getId();
-            when(payrollRunRepository.findById(runId))
+            when(payrollRunRepository.findByIdAndTenantId(runId, tenantId))
                     .thenReturn(Optional.of(payrollRun));
 
             PayrollRun result = payrollRunService.getPayrollRunById(runId);
@@ -668,7 +668,7 @@ class PayrollRunServiceTest {
         void shouldSoftDeleteDraftPayrollRun() {
             // Given
             UUID runId = payrollRun.getId();
-            when(payrollRunRepository.findById(runId)).thenReturn(Optional.of(payrollRun));
+            when(payrollRunRepository.findByIdAndTenantId(runId, tenantId)).thenReturn(Optional.of(payrollRun));
             when(payrollRunRepository.save(any(PayrollRun.class))).thenAnswer(inv -> inv.getArgument(0));
 
             // When
@@ -687,7 +687,7 @@ class PayrollRunServiceTest {
             // Given — locked run cannot be deleted
             payrollRun.setStatus(PayrollStatus.LOCKED);
             UUID runId = payrollRun.getId();
-            when(payrollRunRepository.findById(runId)).thenReturn(Optional.of(payrollRun));
+            when(payrollRunRepository.findByIdAndTenantId(runId, tenantId)).thenReturn(Optional.of(payrollRun));
 
             assertThatThrownBy(() -> payrollRunService.deletePayrollRun(runId))
                     .isInstanceOf(IllegalStateException.class)
@@ -698,7 +698,7 @@ class PayrollRunServiceTest {
         @DisplayName("Should throw ResourceNotFoundException when run does not exist")
         void shouldThrowWhenRunNotFoundForDelete() {
             UUID missingId = UUID.randomUUID();
-            when(payrollRunRepository.findById(missingId)).thenReturn(Optional.empty());
+            when(payrollRunRepository.findByIdAndTenantId(missingId, tenantId)).thenReturn(Optional.empty());
 
             assertThatThrownBy(() -> payrollRunService.deletePayrollRun(missingId))
                     .isInstanceOf(ResourceNotFoundException.class);

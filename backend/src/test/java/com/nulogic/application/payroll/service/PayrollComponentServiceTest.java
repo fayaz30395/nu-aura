@@ -316,7 +316,7 @@ class PayrollComponentServiceTest {
         hra.setId(UUID.randomUUID());
         hra.setTenantId(tenantId);
 
-        when(payrollComponentRepository.findById(basic.getId())).thenReturn(Optional.of(basic));
+        when(payrollComponentRepository.findByIdAndTenantId(basic.getId(), tenantId)).thenReturn(Optional.of(basic));
         when(payrollComponentRepository.findAllByTenantIdOrderByEvaluationOrderAsc(tenantId))
                 .thenReturn(List.of(basic, hra));
 

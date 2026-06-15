@@ -235,7 +235,7 @@ class ApprovalChainIntegrationTest {
         leaveRequest.setId(leaveId);
         leaveRequest.setTenantId(TENANT_ID);
 
-        when(leaveRequestRepository.findById(leaveId))
+        when(leaveRequestRepository.findByIdAndTenantId(leaveId, TENANT_ID))
                 .thenReturn(Optional.of(leaveRequest));
         when(leaveRequestRepository.save(any(LeaveRequest.class)))
                 .thenAnswer(inv -> inv.getArgument(0));
@@ -547,7 +547,7 @@ class ApprovalChainIntegrationTest {
         leaveRequest.setId(leaveId);
         leaveRequest.setTenantId(TENANT_ID);
 
-        when(leaveRequestRepository.findById(leaveId)).thenReturn(Optional.of(leaveRequest));
+        when(leaveRequestRepository.findByIdAndTenantId(leaveId, TENANT_ID)).thenReturn(Optional.of(leaveRequest));
         when(leaveRequestRepository.save(any(LeaveRequest.class))).thenAnswer(inv -> inv.getArgument(0));
         when(workflowExecutionRepository.findByIdAndTenantIdForUpdate(execution.getId(), TENANT_ID))
                 .thenReturn(Optional.of(execution));

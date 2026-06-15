@@ -182,7 +182,7 @@ class HolidayServiceTest {
                     .isRestricted(true)
                     .build();
 
-            when(holidayRepository.findById(holidayId))
+            when(holidayRepository.findByIdAndTenantId(holidayId, tenantId))
                     .thenReturn(Optional.of(testHoliday));
             when(holidayRepository.save(any(Holiday.class)))
                     .thenAnswer(invocation -> invocation.getArgument(0));
@@ -205,7 +205,7 @@ class HolidayServiceTest {
                             true
                     );
 
-            verify(holidayRepository, times(1)).findById(holidayId);
+            verify(holidayRepository, times(1)).findByIdAndTenantId(holidayId, tenantId);
             verify(holidayRepository, times(1)).save(any(Holiday.class));
         }
 
@@ -215,7 +215,7 @@ class HolidayServiceTest {
             // Arrange
             Holiday updateData = Holiday.builder().holidayName("Updated").build();
 
-            when(holidayRepository.findById(holidayId))
+            when(holidayRepository.findByIdAndTenantId(holidayId, tenantId))
                     .thenReturn(Optional.empty());
 
             // Act & Assert
@@ -229,14 +229,11 @@ class HolidayServiceTest {
         @Test
         @DisplayName("Should throw exception when tenant ID doesn't match")
         void shouldThrowExceptionWhenTenantIdMismatch() {
-            // Arrange
-            UUID wrongTenantId = UUID.randomUUID();
-            testHoliday.setTenantId(wrongTenantId);
-
+            // Arrange — DB-level isolation: cross-tenant records not returned
             Holiday updateData = Holiday.builder().holidayName("Updated").build();
 
-            when(holidayRepository.findById(holidayId))
-                    .thenReturn(Optional.of(testHoliday));
+            when(holidayRepository.findByIdAndTenantId(holidayId, tenantId))
+                    .thenReturn(Optional.empty());
 
             // Act & Assert
             assertThatThrownBy(() -> holidayService.updateHoliday(holidayId, updateData))
@@ -261,7 +258,7 @@ class HolidayServiceTest {
                     .applicableDepartments("Engineering,Sales")
                     .build();
 
-            when(holidayRepository.findById(holidayId))
+            when(holidayRepository.findByIdAndTenantId(holidayId, tenantId))
                     .thenReturn(Optional.of(testHoliday));
             when(holidayRepository.save(any(Holiday.class)))
                     .thenAnswer(invocation -> invocation.getArgument(0));
@@ -302,7 +299,7 @@ class HolidayServiceTest {
         @DisplayName("Should get holiday by ID")
         void shouldGetHolidayById() {
             // Arrange
-            when(holidayRepository.findById(holidayId))
+            when(holidayRepository.findByIdAndTenantId(holidayId, tenantId))
                     .thenReturn(Optional.of(testHoliday));
 
             // Act
@@ -314,14 +311,14 @@ class HolidayServiceTest {
                     .extracting(Holiday::getId, Holiday::getHolidayName)
                     .containsExactly(holidayId, "Republic Day");
 
-            verify(holidayRepository, times(1)).findById(holidayId);
+            verify(holidayRepository, times(1)).findByIdAndTenantId(holidayId, tenantId);
         }
 
         @Test
         @DisplayName("Should throw exception when holiday not found")
         void shouldThrowExceptionWhenNotFound() {
             // Arrange
-            when(holidayRepository.findById(holidayId))
+            when(holidayRepository.findByIdAndTenantId(holidayId, tenantId))
                     .thenReturn(Optional.empty());
 
             // Act & Assert
@@ -333,12 +330,9 @@ class HolidayServiceTest {
         @Test
         @DisplayName("Should throw exception when tenant ID doesn't match")
         void shouldThrowExceptionWhenTenantIdMismatch() {
-            // Arrange
-            UUID wrongTenantId = UUID.randomUUID();
-            testHoliday.setTenantId(wrongTenantId);
-
-            when(holidayRepository.findById(holidayId))
-                    .thenReturn(Optional.of(testHoliday));
+            // Arrange — DB-level isolation: cross-tenant records not returned
+            when(holidayRepository.findByIdAndTenantId(holidayId, tenantId))
+                    .thenReturn(Optional.empty());
 
             // Act & Assert
             assertThatThrownBy(() -> holidayService.getHolidayById(holidayId))
@@ -504,7 +498,7 @@ class HolidayServiceTest {
         @DisplayName("Should delete holiday successfully")
         void shouldDeleteHolidaySuccessfully() {
             // Arrange
-            when(holidayRepository.findById(holidayId))
+            when(holidayRepository.findByIdAndTenantId(holidayId, tenantId))
                     .thenReturn(Optional.of(testHoliday));
             when(holidayRepository.save(any(Holiday.class)))
                     .thenAnswer(invocation -> invocation.getArgument(0));
@@ -513,7 +507,7 @@ class HolidayServiceTest {
             holidayService.deleteHoliday(holidayId);
 
             // Assert - soft delete uses save(), not delete()
-            verify(holidayRepository, times(1)).findById(holidayId);
+            verify(holidayRepository, times(1)).findByIdAndTenantId(holidayId, tenantId);
             verify(holidayRepository, times(1)).save(testHoliday);
         }
 
@@ -521,7 +515,7 @@ class HolidayServiceTest {
         @DisplayName("Should throw exception when holiday not found")
         void shouldThrowExceptionWhenNotFound() {
             // Arrange
-            when(holidayRepository.findById(holidayId))
+            when(holidayRepository.findByIdAndTenantId(holidayId, tenantId))
                     .thenReturn(Optional.empty());
 
             // Act & Assert

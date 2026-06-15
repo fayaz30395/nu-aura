@@ -122,7 +122,7 @@ class SalaryStructureServiceTest {
         @DisplayName("Should update salary structure successfully")
         void shouldUpdateSalaryStructureSuccessfully() {
             UUID structureId = salaryStructure.getId();
-            when(salaryStructureRepository.findById(structureId)).thenReturn(Optional.of(salaryStructure));
+            when(salaryStructureRepository.findByIdAndTenantId(structureId, tenantId)).thenReturn(Optional.of(salaryStructure));
             when(salaryStructureRepository.save(any(SalaryStructure.class)))
                     .thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -153,7 +153,7 @@ class SalaryStructureServiceTest {
         @DisplayName("Should throw exception when salary structure not found")
         void shouldThrowExceptionWhenNotFound() {
             UUID invalidId = UUID.randomUUID();
-            when(salaryStructureRepository.findById(invalidId)).thenReturn(Optional.empty());
+            when(salaryStructureRepository.findByIdAndTenantId(invalidId, tenantId)).thenReturn(Optional.empty());
 
             assertThatThrownBy(() -> salaryStructureService.updateSalaryStructure(invalidId, salaryStructure))
                     .isInstanceOf(IllegalArgumentException.class)
@@ -164,8 +164,8 @@ class SalaryStructureServiceTest {
         @DisplayName("Should throw exception when tenant mismatch")
         void shouldThrowExceptionWhenTenantMismatch() {
             UUID structureId = salaryStructure.getId();
-            salaryStructure.setTenantId(UUID.randomUUID()); // Different tenant
-            when(salaryStructureRepository.findById(structureId)).thenReturn(Optional.of(salaryStructure));
+            // DB-level isolation: cross-tenant records are invisible via findByIdAndTenantId
+            when(salaryStructureRepository.findByIdAndTenantId(structureId, tenantId)).thenReturn(Optional.empty());
 
             assertThatThrownBy(() -> salaryStructureService.updateSalaryStructure(structureId, salaryStructure))
                     .isInstanceOf(IllegalArgumentException.class);
@@ -180,7 +180,7 @@ class SalaryStructureServiceTest {
         @DisplayName("Should get salary structure by ID")
         void shouldGetSalaryStructureById() {
             UUID structureId = salaryStructure.getId();
-            when(salaryStructureRepository.findById(structureId)).thenReturn(Optional.of(salaryStructure));
+            when(salaryStructureRepository.findByIdAndTenantId(structureId, tenantId)).thenReturn(Optional.of(salaryStructure));
 
             SalaryStructure result = salaryStructureService.getSalaryStructureById(structureId);
 
@@ -192,7 +192,7 @@ class SalaryStructureServiceTest {
         @DisplayName("Should throw exception when not found by ID")
         void shouldThrowExceptionWhenNotFoundById() {
             UUID invalidId = UUID.randomUUID();
-            when(salaryStructureRepository.findById(invalidId)).thenReturn(Optional.empty());
+            when(salaryStructureRepository.findByIdAndTenantId(invalidId, tenantId)).thenReturn(Optional.empty());
 
             assertThatThrownBy(() -> salaryStructureService.getSalaryStructureById(invalidId))
                     .isInstanceOf(IllegalArgumentException.class)
@@ -273,7 +273,7 @@ class SalaryStructureServiceTest {
         @DisplayName("Should delete salary structure successfully")
         void shouldDeleteSalaryStructureSuccessfully() {
             UUID structureId = salaryStructure.getId();
-            when(salaryStructureRepository.findById(structureId)).thenReturn(Optional.of(salaryStructure));
+            when(salaryStructureRepository.findByIdAndTenantId(structureId, tenantId)).thenReturn(Optional.of(salaryStructure));
             when(salaryStructureRepository.save(any(SalaryStructure.class)))
                     .thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -286,7 +286,7 @@ class SalaryStructureServiceTest {
         @DisplayName("Should throw exception when deleting non-existent structure")
         void shouldThrowExceptionWhenDeletingNonExistent() {
             UUID invalidId = UUID.randomUUID();
-            when(salaryStructureRepository.findById(invalidId)).thenReturn(Optional.empty());
+            when(salaryStructureRepository.findByIdAndTenantId(invalidId, tenantId)).thenReturn(Optional.empty());
 
             assertThatThrownBy(() -> salaryStructureService.deleteSalaryStructure(invalidId))
                     .isInstanceOf(IllegalArgumentException.class);
@@ -301,7 +301,7 @@ class SalaryStructureServiceTest {
         @DisplayName("Should deactivate salary structure successfully")
         void shouldDeactivateSalaryStructureSuccessfully() {
             UUID structureId = salaryStructure.getId();
-            when(salaryStructureRepository.findById(structureId)).thenReturn(Optional.of(salaryStructure));
+            when(salaryStructureRepository.findByIdAndTenantId(structureId, tenantId)).thenReturn(Optional.of(salaryStructure));
             when(salaryStructureRepository.save(any(SalaryStructure.class)))
                     .thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -316,7 +316,7 @@ class SalaryStructureServiceTest {
         @DisplayName("Should throw exception when deactivating non-existent structure")
         void shouldThrowExceptionWhenDeactivatingNonExistent() {
             UUID invalidId = UUID.randomUUID();
-            when(salaryStructureRepository.findById(invalidId)).thenReturn(Optional.empty());
+            when(salaryStructureRepository.findByIdAndTenantId(invalidId, tenantId)).thenReturn(Optional.empty());
 
             assertThatThrownBy(() -> salaryStructureService.deactivateSalaryStructure(invalidId))
                     .isInstanceOf(IllegalArgumentException.class);

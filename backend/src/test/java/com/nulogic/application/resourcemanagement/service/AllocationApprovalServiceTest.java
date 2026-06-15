@@ -160,7 +160,7 @@ class AllocationApprovalServiceTest {
 
             try (MockedStatic<SecurityContext> sc = mockStatic(SecurityContext.class)) {
                 sc.when(SecurityContext::getCurrentTenantId).thenReturn(tenantId);
-                when(approvalRepository.findById(requestId)).thenReturn(Optional.of(request));
+                when(approvalRepository.findByIdAndTenantId(requestId, tenantId)).thenReturn(Optional.of(request));
                 when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
                 when(projectRepository.findById(projectId)).thenReturn(Optional.of(project));
                 when(employeeRepository.findById(requesterId)).thenReturn(Optional.empty());
@@ -180,7 +180,7 @@ class AllocationApprovalServiceTest {
 
             try (MockedStatic<SecurityContext> sc = mockStatic(SecurityContext.class)) {
                 sc.when(SecurityContext::getCurrentTenantId).thenReturn(tenantId);
-                when(approvalRepository.findById(requestId)).thenReturn(Optional.empty());
+                when(approvalRepository.findByIdAndTenantId(requestId, tenantId)).thenReturn(Optional.empty());
 
                 assertThatThrownBy(() -> allocationApprovalService.getAllocationRequest(requestId))
                         .isInstanceOf(ResourceNotFoundException.class);
@@ -197,7 +197,7 @@ class AllocationApprovalServiceTest {
 
             try (MockedStatic<SecurityContext> sc = mockStatic(SecurityContext.class)) {
                 sc.when(SecurityContext::getCurrentTenantId).thenReturn(tenantId);
-                when(approvalRepository.findById(requestId)).thenReturn(Optional.of(request));
+                when(approvalRepository.findByIdAndTenantId(requestId, tenantId)).thenReturn(Optional.empty());
 
                 assertThatThrownBy(() -> allocationApprovalService.getAllocationRequest(requestId))
                         .isInstanceOf(ResourceNotFoundException.class);
@@ -243,7 +243,7 @@ class AllocationApprovalServiceTest {
                 sc.when(SecurityContext::getCurrentEmployeeId).thenReturn(managerId);
                 sc.when(() -> SecurityContext.hasAnyPermission(any())).thenReturn(true);
                 sc.when(SecurityContext::isManager).thenReturn(true);
-                when(approvalRepository.findById(requestId)).thenReturn(Optional.of(request));
+                when(approvalRepository.findByIdAndTenantId(requestId, tenantId)).thenReturn(Optional.of(request));
 
                 assertThatThrownBy(() ->
                         allocationApprovalService.approveAllocationRequest(requestId, "OK"))
@@ -264,7 +264,7 @@ class AllocationApprovalServiceTest {
                 sc.when(SecurityContext::getCurrentEmployeeId).thenReturn(managerId);
                 sc.when(() -> SecurityContext.hasAnyPermission(any())).thenReturn(true);
                 sc.when(SecurityContext::isManager).thenReturn(true);
-                when(approvalRepository.findById(requestId)).thenReturn(Optional.of(request));
+                when(approvalRepository.findByIdAndTenantId(requestId, tenantId)).thenReturn(Optional.of(request));
 
                 assertThatThrownBy(() ->
                         allocationApprovalService.approveAllocationRequest(requestId, "OK"))
@@ -289,7 +289,7 @@ class AllocationApprovalServiceTest {
                         Permission.PROJECT_MANAGE,
                         Permission.SYSTEM_ADMIN)).thenReturn(true);
                 sc.when(SecurityContext::isManager).thenReturn(true);
-                when(approvalRepository.findById(requestId)).thenReturn(Optional.of(request));
+                when(approvalRepository.findByIdAndTenantId(requestId, tenantId)).thenReturn(Optional.of(request));
                 when(approvalRepository.save(any())).thenReturn(request);
                 when(projectEmployeeRepository.save(any())).thenReturn(null);
 
@@ -325,7 +325,7 @@ class AllocationApprovalServiceTest {
                 sc.when(SecurityContext::getCurrentEmployeeId).thenReturn(managerId);
                 sc.when(() -> SecurityContext.hasAnyPermission(any())).thenReturn(true);
                 sc.when(SecurityContext::isManager).thenReturn(true);
-                when(approvalRepository.findById(requestId)).thenReturn(Optional.of(request));
+                when(approvalRepository.findByIdAndTenantId(requestId, tenantId)).thenReturn(Optional.of(request));
                 when(approvalRepository.save(any())).thenReturn(request);
 
                 assertThatCode(() ->
@@ -351,7 +351,7 @@ class AllocationApprovalServiceTest {
                 sc.when(SecurityContext::getCurrentEmployeeId).thenReturn(managerId);
                 sc.when(() -> SecurityContext.hasAnyPermission(any())).thenReturn(true);
                 sc.when(SecurityContext::isManager).thenReturn(true);
-                when(approvalRepository.findById(requestId)).thenReturn(Optional.of(request));
+                when(approvalRepository.findByIdAndTenantId(requestId, tenantId)).thenReturn(Optional.of(request));
 
                 assertThatThrownBy(() ->
                         allocationApprovalService.rejectAllocationRequest(requestId, "Reason"))

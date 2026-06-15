@@ -362,7 +362,7 @@ public class QuizAssessmentService {
     /**
      * Generate certificate after successful completion
      */
-    @Transactional(readOnly = true)
+    @Transactional
     public Certificate generateCertificate(UUID enrollmentId, UUID employeeId, UUID tenantId) {
         CourseEnrollment enrollment = enrollmentRepository.findByIdAndTenantId(enrollmentId, tenantId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Enrollment not found"));

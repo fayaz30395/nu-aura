@@ -152,7 +152,7 @@ class LeaveApprovalPayrollImpactTest {
     void fullDayLeaveApprovalShouldDeductTotalDays() {
         // Given
         UUID requestId = leaveRequest.getId();
-        when(leaveRequestRepository.findById(requestId)).thenReturn(Optional.of(leaveRequest));
+        when(leaveRequestRepository.findByIdAndTenantId(requestId, tenantId)).thenReturn(Optional.of(leaveRequest));
         when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.of(employee));
         when(leaveRequestRepository.save(any(LeaveRequest.class))).thenAnswer(inv -> inv.getArgument(0));
 
@@ -176,7 +176,7 @@ class LeaveApprovalPayrollImpactTest {
         leaveRequest.setTotalDays(BigDecimal.valueOf(1.0));
         UUID requestId = leaveRequest.getId();
 
-        when(leaveRequestRepository.findById(requestId)).thenReturn(Optional.of(leaveRequest));
+        when(leaveRequestRepository.findByIdAndTenantId(requestId, tenantId)).thenReturn(Optional.of(leaveRequest));
         when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.of(employee));
         when(leaveRequestRepository.save(any(LeaveRequest.class))).thenAnswer(inv -> inv.getArgument(0));
 
@@ -199,7 +199,7 @@ class LeaveApprovalPayrollImpactTest {
         UUID requestId = leaveRequest.getId();
         String cancellationReason = "Manager approved time off instead";
 
-        when(leaveRequestRepository.findById(requestId)).thenReturn(Optional.of(leaveRequest));
+        when(leaveRequestRepository.findByIdAndTenantId(requestId, tenantId)).thenReturn(Optional.of(leaveRequest));
         when(leaveRequestRepository.save(any(LeaveRequest.class))).thenAnswer(inv -> inv.getArgument(0));
 
         // When
@@ -221,7 +221,7 @@ class LeaveApprovalPayrollImpactTest {
         leaveRequest.setStatus(LeaveRequest.LeaveRequestStatus.PENDING);
         UUID requestId = leaveRequest.getId();
 
-        when(leaveRequestRepository.findById(requestId)).thenReturn(Optional.of(leaveRequest));
+        when(leaveRequestRepository.findByIdAndTenantId(requestId, tenantId)).thenReturn(Optional.of(leaveRequest));
         when(leaveRequestRepository.save(any(LeaveRequest.class))).thenAnswer(inv -> inv.getArgument(0));
 
         // When

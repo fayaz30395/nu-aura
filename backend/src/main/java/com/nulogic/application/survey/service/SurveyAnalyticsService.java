@@ -222,7 +222,7 @@ public class SurveyAnalyticsService {
 
     // ==================== Engagement Scoring ====================
 
-    @Transactional(readOnly = true)
+    @Transactional
     public EngagementScoreDto calculateEngagementScore(UUID surveyId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         log.info("Calculating engagement score for survey {} tenant {}", surveyId, tenantId);
@@ -347,7 +347,7 @@ public class SurveyAnalyticsService {
 
     // ==================== Insight Generation ====================
 
-    @Transactional(readOnly = true)
+    @Transactional
     public List<SurveyInsightDto> generateInsights(UUID surveyId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Generating insights for survey {} tenant {}", surveyId, tenantId);

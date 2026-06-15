@@ -143,7 +143,7 @@ class SoftDeleteServiceTest {
             payslip.setId(ENTITY_ID);
             payslip.setTenantId(TENANT_ID);
 
-            when(payslipRepository.findById(ENTITY_ID)).thenReturn(Optional.of(payslip));
+            when(payslipRepository.findByIdAndTenantId(ENTITY_ID, TENANT_ID)).thenReturn(Optional.of(payslip));
             when(payslipRepository.save(any(Payslip.class))).thenAnswer(inv -> inv.getArgument(0));
             // logAction returns void — Mockito defaults to no-op for void methods; no stub needed.
 
@@ -184,7 +184,7 @@ class SoftDeleteServiceTest {
             structure.setId(ENTITY_ID);
             structure.setTenantId(TENANT_ID);
 
-            when(salaryStructureRepository.findById(ENTITY_ID)).thenReturn(Optional.of(structure));
+            when(salaryStructureRepository.findByIdAndTenantId(ENTITY_ID, TENANT_ID)).thenReturn(Optional.of(structure));
             when(salaryStructureRepository.save(any(SalaryStructure.class))).thenAnswer(inv -> inv.getArgument(0));
             // logAction returns void — Mockito defaults to no-op for void methods; no stub needed.
 
@@ -225,7 +225,7 @@ class SoftDeleteServiceTest {
             run.setId(ENTITY_ID);
             run.setTenantId(TENANT_ID);
 
-            when(payrollRunRepository.findById(ENTITY_ID)).thenReturn(Optional.of(run));
+            when(payrollRunRepository.findByIdAndTenantId(ENTITY_ID, TENANT_ID)).thenReturn(Optional.of(run));
             when(payrollRunRepository.save(any(PayrollRun.class))).thenAnswer(inv -> inv.getArgument(0));
             // logAction returns void — Mockito defaults to no-op for void methods; no stub needed.
 
@@ -305,7 +305,7 @@ class SoftDeleteServiceTest {
             holiday.setId(ENTITY_ID);
             holiday.setTenantId(TENANT_ID);
 
-            when(holidayRepository.findById(ENTITY_ID)).thenReturn(Optional.of(holiday));
+            when(holidayRepository.findByIdAndTenantId(ENTITY_ID, TENANT_ID)).thenReturn(Optional.of(holiday));
             when(holidayRepository.save(any(Holiday.class))).thenAnswer(inv -> inv.getArgument(0));
             // logAction returns void — Mockito defaults to no-op for void methods; no stub needed.
 

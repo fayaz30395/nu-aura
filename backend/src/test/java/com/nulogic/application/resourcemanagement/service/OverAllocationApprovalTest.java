@@ -135,7 +135,7 @@ class OverAllocationApprovalTest {
                     .build();
             existingAllocation.setTenantId(tenantId);
 
-            when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
+            when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.of(employee));
             when(projectEmployeeRepository.findAllByEmployeeIdAndTenantIdAndIsActive(
                     employeeId, tenantId, true)).thenReturn(List.of(existingAllocation));
             when(approvalRepository.findAllByTenantIdAndStatus(
@@ -208,7 +208,7 @@ class OverAllocationApprovalTest {
                     .build();
             existingAllocation.setTenantId(tenantId);
 
-            when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
+            when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.of(employee));
             when(projectEmployeeRepository.findAllByEmployeeIdAndTenantIdAndIsActive(
                     employeeId, tenantId, true)).thenReturn(List.of(existingAllocation));
             when(approvalRepository.findAllByTenantIdAndStatus(
@@ -240,7 +240,7 @@ class OverAllocationApprovalTest {
                     .build();
             existingAllocation.setTenantId(tenantId);
 
-            when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
+            when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.of(employee));
             when(projectEmployeeRepository.findAllByEmployeeIdAndTenantIdAndIsActive(
                     employeeId, tenantId, true)).thenReturn(List.of(existingAllocation));
             when(approvalRepository.findAllByTenantIdAndStatus(

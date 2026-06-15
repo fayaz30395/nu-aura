@@ -537,7 +537,7 @@ public class ESignatureService {
      * Get signature information for external signer by token.
      * This is a public endpoint that doesn't require authentication.
      */
-    @Transactional(readOnly = true)
+    @Transactional
     public ExternalSignatureInfoResponse getExternalSignatureInfo(String token) {
         log.info("Getting external signature info for token");
 

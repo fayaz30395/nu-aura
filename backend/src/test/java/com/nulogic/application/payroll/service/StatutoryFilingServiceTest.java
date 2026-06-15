@@ -178,7 +178,7 @@ class StatutoryFilingServiceTest {
         run.setTenantId(TENANT_ID);
         run.setId(runId);
 
-        when(filingRunRepository.findById(runId)).thenReturn(Optional.of(run));
+        when(filingRunRepository.findByIdAndTenantId(runId, TENANT_ID)).thenReturn(Optional.of(run));
         when(pfEcrGenerator.validate(TENANT_ID, 3, 2026))
                 .thenReturn("[{\"type\":\"WARNING\",\"message\":\"UAN placeholder\"}]");
         when(filingRunRepository.save(any(StatutoryFilingRun.class)))
@@ -209,7 +209,7 @@ class StatutoryFilingServiceTest {
         run.setId(runId);
         run.setCreatedAt(LocalDateTime.now());
 
-        when(filingRunRepository.findById(runId)).thenReturn(Optional.of(run));
+        when(filingRunRepository.findByIdAndTenantId(runId, TENANT_ID)).thenReturn(Optional.of(run));
         when(filingRunRepository.save(any(StatutoryFilingRun.class)))
                 .thenAnswer(inv -> inv.getArgument(0));
 
@@ -225,7 +225,7 @@ class StatutoryFilingServiceTest {
     void downloadFiling_notFound_throws() {
         TenantContext.setCurrentTenant(TENANT_ID);
         UUID randomId = UUID.randomUUID();
-        when(filingRunRepository.findById(randomId)).thenReturn(Optional.empty());
+        when(filingRunRepository.findByIdAndTenantId(randomId, TENANT_ID)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.downloadFiling(randomId))
                 .isInstanceOf(BusinessException.class)
@@ -238,16 +238,16 @@ class StatutoryFilingServiceTest {
         TenantContext.setCurrentTenant(TENANT_ID);
 
         UUID runId = UUID.randomUUID();
-        StatutoryFilingRun run = StatutoryFilingRun.builder()
+        StatutoryFilingRun wrongTenantRun = StatutoryFilingRun.builder()
                 .filingType(FilingType.PF_ECR)
                 .periodMonth(3)
                 .periodYear(2026)
                 .generatedBy(USER_ID)
+                .status(FilingStatus.GENERATED)
                 .build();
-        run.setTenantId(UUID.randomUUID()); // different tenant
-        run.setId(runId);
-
-        when(filingRunRepository.findById(runId)).thenReturn(Optional.of(run));
+        wrongTenantRun.setTenantId(UUID.randomUUID()); // different tenant
+        wrongTenantRun.setId(runId);
+        when(filingRunRepository.findByIdAndTenantId(runId, TENANT_ID)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.downloadFiling(runId))
                 .isInstanceOf(BusinessException.class)

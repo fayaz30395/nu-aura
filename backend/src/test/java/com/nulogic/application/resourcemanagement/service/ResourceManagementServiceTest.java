@@ -128,7 +128,7 @@ class ResourceManagementServiceTest {
             try (MockedStatic<SecurityContext> securityContext = mockStatic(SecurityContext.class)) {
                 securityContext.when(SecurityContext::getCurrentTenantId).thenReturn(tenantId);
 
-                when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
+                when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.of(employee));
                 when(projectEmployeeRepository.findAllByEmployeeIdAndTenantIdAndIsActive(
                         employeeId, tenantId, true)).thenReturn(Collections.emptyList());
                 when(approvalRepository.findAllByTenantIdAndStatus(
@@ -157,7 +157,7 @@ class ResourceManagementServiceTest {
                         .isActive(true)
                         .build();
 
-                when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
+                when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.of(employee));
                 when(projectEmployeeRepository.findAllByEmployeeIdAndTenantIdAndIsActive(
                         employeeId, tenantId, true)).thenReturn(List.of(existingAllocation));
                 when(approvalRepository.findAllByTenantIdAndStatus(
@@ -178,7 +178,7 @@ class ResourceManagementServiceTest {
             try (MockedStatic<SecurityContext> securityContext = mockStatic(SecurityContext.class)) {
                 securityContext.when(SecurityContext::getCurrentTenantId).thenReturn(tenantId);
 
-                when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
+                when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.of(employee));
                 when(projectEmployeeRepository.findAllByEmployeeIdAndTenantIdAndIsActive(
                         employeeId, tenantId, true)).thenReturn(Collections.emptyList());
                 when(approvalRepository.findAllByTenantIdAndStatus(

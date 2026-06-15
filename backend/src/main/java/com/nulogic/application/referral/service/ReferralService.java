@@ -240,7 +240,7 @@ public class ReferralService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public void checkAndUpdateBonusEligibility() {
         UUID tenantId = TenantContext.requireCurrentTenant();
         LocalDate today = tenantTimeService.today(tenantId);

@@ -197,7 +197,7 @@ public class PredictiveAnalyticsService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public WorkforceTrendDto generateTrend(Integer year, Integer month, UUID departmentId) {
         UUID tenantId = TenantContext.getCurrentTenant();
 

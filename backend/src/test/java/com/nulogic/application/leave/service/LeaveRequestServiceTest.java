@@ -252,7 +252,7 @@ class LeaveRequestServiceTest {
         @DisplayName("Should approve leave request successfully when approver is manager")
         void shouldApproveLeaveRequestSuccessfully() {
             UUID requestId = leaveRequest.getId();
-            when(leaveRequestRepository.findById(requestId))
+            when(leaveRequestRepository.findByIdAndTenantId(requestId, tenantId))
                     .thenReturn(Optional.of(leaveRequest));
             when(employeeRepository.findByIdAndTenantId(employeeId, tenantId))
                     .thenReturn(Optional.of(employee));
@@ -271,7 +271,7 @@ class LeaveRequestServiceTest {
         @DisplayName("Should throw exception when leave request not found")
         void shouldThrowExceptionWhenLeaveRequestNotFound() {
             UUID requestId = UUID.randomUUID();
-            when(leaveRequestRepository.findById(requestId))
+            when(leaveRequestRepository.findByIdAndTenantId(requestId, tenantId))
                     .thenReturn(Optional.empty());
 
             assertThatThrownBy(() -> leaveRequestService.approveLeaveRequest(requestId, managerId))
@@ -284,7 +284,7 @@ class LeaveRequestServiceTest {
         void shouldThrowExceptionWhenApproverIsNotManager() {
             UUID requestId = leaveRequest.getId();
             UUID nonManagerId = UUID.randomUUID();
-            when(leaveRequestRepository.findById(requestId))
+            when(leaveRequestRepository.findByIdAndTenantId(requestId, tenantId))
                     .thenReturn(Optional.of(leaveRequest));
             when(employeeRepository.findByIdAndTenantId(employeeId, tenantId))
                     .thenReturn(Optional.of(employee));
@@ -303,7 +303,7 @@ class LeaveRequestServiceTest {
             employeeWithoutManager.setTenantId(tenantId);
             employeeWithoutManager.setManagerId(null);
 
-            when(leaveRequestRepository.findById(requestId))
+            when(leaveRequestRepository.findByIdAndTenantId(requestId, tenantId))
                     .thenReturn(Optional.of(leaveRequest));
             when(employeeRepository.findByIdAndTenantId(employeeId, tenantId))
                     .thenReturn(Optional.of(employeeWithoutManager));
@@ -323,7 +323,7 @@ class LeaveRequestServiceTest {
         void shouldRejectLeaveRequestSuccessfully() {
             UUID requestId = leaveRequest.getId();
             String rejectionReason = "Insufficient staff coverage";
-            when(leaveRequestRepository.findById(requestId))
+            when(leaveRequestRepository.findByIdAndTenantId(requestId, tenantId))
                     .thenReturn(Optional.of(leaveRequest));
             when(employeeRepository.findByIdAndTenantId(employeeId, tenantId))
                     .thenReturn(Optional.of(employee));
@@ -344,7 +344,7 @@ class LeaveRequestServiceTest {
             UUID requestId = leaveRequest.getId();
             UUID nonManagerId = UUID.randomUUID();
             String rejectionReason = "Insufficient staff coverage";
-            when(leaveRequestRepository.findById(requestId))
+            when(leaveRequestRepository.findByIdAndTenantId(requestId, tenantId))
                     .thenReturn(Optional.of(leaveRequest));
             when(employeeRepository.findByIdAndTenantId(employeeId, tenantId))
                     .thenReturn(Optional.of(employee));
@@ -360,7 +360,7 @@ class LeaveRequestServiceTest {
             UUID requestId = leaveRequest.getId();
             leaveRequest.setStatus(LeaveRequest.LeaveRequestStatus.APPROVED);
 
-            when(leaveRequestRepository.findById(requestId))
+            when(leaveRequestRepository.findByIdAndTenantId(requestId, tenantId))
                     .thenReturn(Optional.of(leaveRequest));
             when(employeeRepository.findByIdAndTenantId(employeeId, tenantId))
                     .thenReturn(Optional.of(employee));
@@ -380,7 +380,7 @@ class LeaveRequestServiceTest {
         void shouldCancelPendingLeaveRequestWithoutBalanceCredit() {
             UUID requestId = leaveRequest.getId();
             String cancellationReason = "Plans changed";
-            when(leaveRequestRepository.findById(requestId))
+            when(leaveRequestRepository.findByIdAndTenantId(requestId, tenantId))
                     .thenReturn(Optional.of(leaveRequest));
             when(leaveRequestRepository.save(any(LeaveRequest.class)))
                     .thenAnswer(invocation -> invocation.getArgument(0));
@@ -398,7 +398,7 @@ class LeaveRequestServiceTest {
             UUID requestId = leaveRequest.getId();
             leaveRequest.setStatus(LeaveRequest.LeaveRequestStatus.APPROVED);
             String cancellationReason = "Emergency";
-            when(leaveRequestRepository.findById(requestId))
+            when(leaveRequestRepository.findByIdAndTenantId(requestId, tenantId))
                     .thenReturn(Optional.of(leaveRequest));
             when(leaveRequestRepository.save(any(LeaveRequest.class)))
                     .thenAnswer(invocation -> invocation.getArgument(0));
@@ -413,9 +413,9 @@ class LeaveRequestServiceTest {
         @DisplayName("Should throw exception when cancelling leave request from another tenant")
         void shouldThrowExceptionWhenCancellingOtherTenantRequest() {
             UUID requestId = leaveRequest.getId();
-            leaveRequest.setTenantId(UUID.randomUUID());
-            when(leaveRequestRepository.findById(requestId))
-                    .thenReturn(Optional.of(leaveRequest));
+            // DB-level tenant isolation: cross-tenant records are invisible via findByIdAndTenantId
+            when(leaveRequestRepository.findByIdAndTenantId(requestId, tenantId))
+                    .thenReturn(Optional.empty());
 
             assertThatThrownBy(() -> leaveRequestService.cancelLeaveRequest(requestId, "Not authorized"))
                     .isInstanceOf(IllegalArgumentException.class)
@@ -435,7 +435,7 @@ class LeaveRequestServiceTest {
             leaveRequest.setTotalDays(BigDecimal.valueOf(1.0)); // totalDays may store 1.0 for UI purposes
             UUID requestId = leaveRequest.getId();
 
-            when(leaveRequestRepository.findById(requestId))
+            when(leaveRequestRepository.findByIdAndTenantId(requestId, tenantId))
                     .thenReturn(Optional.of(leaveRequest));
             when(employeeRepository.findByIdAndTenantId(employeeId, tenantId))
                     .thenReturn(Optional.of(employee));
@@ -460,7 +460,7 @@ class LeaveRequestServiceTest {
             leaveRequest.setTotalDays(BigDecimal.valueOf(3.0));
             UUID requestId = leaveRequest.getId();
 
-            when(leaveRequestRepository.findById(requestId))
+            when(leaveRequestRepository.findByIdAndTenantId(requestId, tenantId))
                     .thenReturn(Optional.of(leaveRequest));
             when(employeeRepository.findByIdAndTenantId(employeeId, tenantId))
                     .thenReturn(Optional.of(employee));
@@ -495,7 +495,7 @@ class LeaveRequestServiceTest {
                     .reason("Updated reason")
                     .build();
 
-            when(leaveRequestRepository.findById(requestId))
+            when(leaveRequestRepository.findByIdAndTenantId(requestId, tenantId))
                     .thenReturn(Optional.of(leaveRequest));
             when(leaveRequestRepository.findOverlappingLeaves(any(), any(), any(), any()))
                     .thenReturn(Collections.emptyList());
@@ -525,7 +525,7 @@ class LeaveRequestServiceTest {
                     .reason("Updated reason")
                     .build();
 
-            when(leaveRequestRepository.findById(requestId))
+            when(leaveRequestRepository.findByIdAndTenantId(requestId, tenantId))
                     .thenReturn(Optional.of(leaveRequest));
             when(leaveRequestRepository.findOverlappingLeaves(any(), any(), any(), any()))
                     .thenReturn(Collections.emptyList());
@@ -552,7 +552,7 @@ class LeaveRequestServiceTest {
                     .endDate(LocalDate.now().plusDays(7))
                     .build();
 
-            when(leaveRequestRepository.findById(requestId))
+            when(leaveRequestRepository.findByIdAndTenantId(requestId, tenantId))
                     .thenReturn(Optional.of(leaveRequest));
 
             assertThatThrownBy(() -> leaveRequestService.updateLeaveRequest(requestId, updateData))
@@ -578,7 +578,7 @@ class LeaveRequestServiceTest {
                     .build();
             overlappingLeave.setId(UUID.randomUUID()); // Different ID
 
-            when(leaveRequestRepository.findById(requestId))
+            when(leaveRequestRepository.findByIdAndTenantId(requestId, tenantId))
                     .thenReturn(Optional.of(leaveRequest));
             when(leaveRequestRepository.findOverlappingLeaves(any(), any(), any(), any()))
                     .thenReturn(List.of(overlappingLeave));
@@ -597,7 +597,7 @@ class LeaveRequestServiceTest {
         @DisplayName("Should get leave request by ID")
         void shouldGetLeaveRequestById() {
             UUID requestId = leaveRequest.getId();
-            when(leaveRequestRepository.findById(requestId))
+            when(leaveRequestRepository.findByIdAndTenantId(requestId, tenantId))
                     .thenReturn(Optional.of(leaveRequest));
 
             LeaveRequest result = leaveRequestService.getLeaveRequestById(requestId);
@@ -657,7 +657,7 @@ class LeaveRequestServiceTest {
         @DisplayName("Should fail approval callback when leave request is missing")
         void shouldFailApprovalCallbackWhenLeaveRequestMissing() {
             UUID requestId = UUID.randomUUID();
-            when(leaveRequestRepository.findById(requestId)).thenReturn(Optional.empty());
+            when(leaveRequestRepository.findByIdAndTenantId(requestId, tenantId)).thenReturn(Optional.empty());
 
             assertThatThrownBy(() -> leaveRequestService.onApproved(tenantId, requestId, managerId))
                     .isInstanceOf(BusinessException.class)
@@ -670,7 +670,7 @@ class LeaveRequestServiceTest {
         @DisplayName("BA-2: Workflow rejection callback should release the pending reservation")
         void shouldReleasePendingLeaveOnWorkflowRejection() {
             UUID requestId = leaveRequest.getId();
-            when(leaveRequestRepository.findById(requestId)).thenReturn(Optional.of(leaveRequest));
+            when(leaveRequestRepository.findByIdAndTenantId(requestId, tenantId)).thenReturn(Optional.of(leaveRequest));
 
             leaveRequestService.onRejected(tenantId, requestId, managerId, "Coverage needed");
 
@@ -683,7 +683,7 @@ class LeaveRequestServiceTest {
         void shouldReleaseHalfDayPendingOnWorkflowRejection() {
             leaveRequest.setIsHalfDay(true);
             UUID requestId = leaveRequest.getId();
-            when(leaveRequestRepository.findById(requestId)).thenReturn(Optional.of(leaveRequest));
+            when(leaveRequestRepository.findByIdAndTenantId(requestId, tenantId)).thenReturn(Optional.of(leaveRequest));
 
             leaveRequestService.onRejected(tenantId, requestId, managerId, "Coverage needed");
 
@@ -701,7 +701,7 @@ class LeaveRequestServiceTest {
                     .build();
             approvedOverlap.setId(UUID.randomUUID());
 
-            when(leaveRequestRepository.findById(requestId)).thenReturn(Optional.of(leaveRequest));
+            when(leaveRequestRepository.findByIdAndTenantId(requestId, tenantId)).thenReturn(Optional.of(leaveRequest));
             when(leaveRequestRepository.findOverlappingLeaves(any(), any(), any(), any()))
                     .thenReturn(List.of(approvedOverlap));
 
