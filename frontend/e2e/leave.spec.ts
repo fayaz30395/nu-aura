@@ -77,76 +77,59 @@ test.describe('Leave Management', () => {
   });
 
   test.describe('Apply Leave', () => {
-    test('should open apply leave modal', async ({page}) => {
+    test('should navigate to apply leave page', async ({page}) => {
       await leavePage.clickApplyLeave();
 
-      // Verify modal is visible
-      const isModalVisible = await leavePage.isLeaveModalVisible();
-      expect(isModalVisible).toBe(true);
+      expect(page.url()).toContain('/leave/apply');
+      await expect(page.locator('h1:has-text("Apply for Leave")')).toBeVisible();
 
-      // Verify form fields
+      // Verify form fields are present
       await expect(leavePage.leaveTypeSelect).toBeVisible();
-      await expect(leavePage.startDateInput).toBeVisible();
-      await expect(leavePage.endDateInput).toBeVisible();
       await expect(leavePage.reasonTextarea).toBeVisible();
     });
 
     test('should apply for annual leave', async ({page}) => {
       await leavePage.applyLeave(testLeave.annual);
 
-      // Wait for submission
-      await page.waitForTimeout(1500);
-
-      // Modal should be closed
-      const isModalVisible = await leavePage.isLeaveModalVisible().catch(() => false);
-      expect(isModalVisible).toBe(false);
+      // After successful submission the app redirects back to /leave
+      await page.waitForTimeout(2000);
+      expect(page.url()).not.toContain('/leave/apply');
     });
 
     test('should apply for sick leave', async ({page}) => {
       await leavePage.applyLeave(testLeave.sick);
 
-      // Wait for submission
-      await page.waitForTimeout(1500);
-
-      // Verify success
-      const isModalVisible = await leavePage.isLeaveModalVisible().catch(() => false);
-      expect(isModalVisible).toBe(false);
+      await page.waitForTimeout(2000);
+      expect(page.url()).not.toContain('/leave/apply');
     });
 
     test('should apply for half day leave', async ({page}) => {
       await leavePage.applyLeave(testLeave.casual);
 
-      // Wait for submission
-      await page.waitForTimeout(1500);
-
-      // Verify success
-      const isModalVisible = await leavePage.isLeaveModalVisible().catch(() => false);
-      expect(isModalVisible).toBe(false);
+      await page.waitForTimeout(2000);
+      expect(page.url()).not.toContain('/leave/apply');
     });
 
     test('should validate required fields', async ({page}) => {
       await leavePage.clickApplyLeave();
 
-      // Try to submit without filling fields
+      // Try to submit without filling required fields
       await leavePage.submitLeaveButton.click();
 
-      // Modal should still be visible (validation failed)
-      const isModalVisible = await leavePage.isLeaveModalVisible();
-      expect(isModalVisible).toBe(true);
+      // Should remain on the apply page (validation prevented navigation)
+      expect(page.url()).toContain('/leave/apply');
     });
 
-    test('should close leave modal on cancel', async ({page}) => {
+    test('should return to leave list on cancel', async ({page}) => {
       await leavePage.clickApplyLeave();
 
-      // Fill some data
       await leavePage.reasonTextarea.fill('Test reason');
 
-      // Close modal
       await leavePage.closeModal();
 
-      // Verify modal is closed
-      const isModalVisible = await leavePage.isLeaveModalVisible().catch(() => false);
-      expect(isModalVisible).toBe(false);
+      // Should navigate away from apply page
+      await page.waitForTimeout(1000);
+      expect(page.url()).not.toContain('/leave/apply');
     });
   });
 
@@ -309,12 +292,12 @@ test.describe('Leave Management', () => {
       });
     });
 
-    test('should match apply leave modal snapshot', async ({page}) => {
+    test('should match apply leave page snapshot', async ({page}) => {
       await leavePage.clickApplyLeave();
       await page.waitForTimeout(500);
 
-      await expect(leavePage.leaveModal).toHaveScreenshot('apply-leave-modal.png', {
-        maxDiffPixels: 100,
+      await expect(page).toHaveScreenshot('apply-leave-page.png', {
+        maxDiffPixels: 200,
       });
     });
   });

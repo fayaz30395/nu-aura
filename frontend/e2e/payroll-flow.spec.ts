@@ -188,15 +188,10 @@ test.describe('Payroll Flow', () => {
       const errorBoundary = page.locator('text=Something went wrong|Error');
       const isError = await errorBoundary.isVisible({timeout: 2000}).catch(() => false);
 
-      if (isError) {
-        // Error boundary shown but that's acceptable (graceful degradation)
-        expect(isError || true).toBeTruthy();
-      } else {
-        // Page loaded successfully
-        const content = page.locator('main, [role="main"], .content');
-        const isVisible = await content.isVisible({timeout: 3000}).catch(() => false);
-        expect(isVisible || true).toBeTruthy();
-      }
+      expect(isError, `Fatal error boundary shown on ${route}`).toBe(false);
+      const content = page.locator('main, [role="main"]');
+      const isVisible = await content.isVisible({timeout: 5000}).catch(() => false);
+      expect(isVisible, `No main content rendered on ${route}`).toBe(true);
     }
   });
 

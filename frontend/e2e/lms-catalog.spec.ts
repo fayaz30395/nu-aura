@@ -40,7 +40,7 @@ test.describe('LMS - Learning Management', () => {
     const hasEmpty = await page.getByText(/no courses|empty|no results/i)
       .isVisible({timeout: 3000}).catch(() => false);
     // At minimum, the page should have loaded without error
-    expect(hasContent || hasEmpty || true).toBeTruthy(); // page loaded
+    expect(hasContent || hasEmpty).toBeTruthy();
   });
 
   test('my learning page loads', async ({page}) => {

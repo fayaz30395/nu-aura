@@ -106,50 +106,35 @@ test.describe('Smoke Tests — Critical Path', () => {
       testUsers.employee.password
     );
 
-    await page.goto('/leave');
-    await page.waitForLoadState('domcontentloaded');
-
-    // "Apply Leave" button must be visible
-    const applyBtn = page.locator('button:has-text("Apply Leave")');
-    await expect(applyBtn).toBeVisible({timeout: 10_000});
-    await applyBtn.click();
-
-    // Modal / drawer opens
-    const modal = page
-      .locator('div[role="dialog"], div.fixed.inset-0')
-      .last();
-    await expect(modal).toBeVisible({timeout: 8_000});
+    // Navigate to /leave/apply (dedicated page, not a modal)
+    await page.goto('/leave/apply');
+    await expect(page.locator('h1:has-text("Apply for Leave")')).toBeVisible({timeout: 10_000});
 
     // --- Fill leave form ---
 
     // Leave type
-    const leaveTypeSelect = page
-      .locator('label:has-text("Leave Type")')
-      .locator('..')
-      .locator('select');
+    const leaveTypeSelect = page.locator('select[name="leaveTypeId"]');
     await leaveTypeSelect.selectOption({index: 1}); // pick first non-blank option
 
     // Dates: start = 10 days from now, end = same day (single-day request)
     const dateStr = futureDate(10);
-    const dateInputs = page.locator('input[type="date"]');
-    await dateInputs.first().fill(dateStr);
-    await dateInputs.nth(1).fill(dateStr);
+    await page.locator('label:has-text("Start Date")').locator('..').locator('input').fill(dateStr);
+    await page.locator('label:has-text("End Date")').locator('..').locator('input').fill(dateStr);
 
-    // Reason (textarea – may be optional but fill it for clarity)
-    const textarea = page.locator('textarea').first();
+    // Reason
+    const textarea = page.locator('textarea[placeholder*="reason"]');
     if (await textarea.isVisible()) {
       await textarea.fill('Smoke test leave request – automated (SM-03)');
     }
 
     // Submit
-    const submitBtn = page.locator(
-      'button:has-text("Submit"), button:has-text("Submit Request"), button[type="submit"]'
-    ).last();
+    const submitBtn = page.locator('button:has-text("Submit Leave Request")');
     await expect(submitBtn).toBeEnabled({timeout: 5_000});
     await submitBtn.click();
 
-    // Modal should close after successful submit
-    await expect(modal).not.toBeVisible({timeout: 15_000});
+    // On success, redirected back to /leave
+    await page.waitForURL(/\/leave(?!\/apply)/, {timeout: 15_000}).catch(() => {});
+    expect(page.url()).not.toContain('/leave/apply');
 
     // Leave list / table should reload and show at least one row
     await page.waitForLoadState('domcontentloaded');

@@ -37,25 +37,22 @@ test.describe('Leave Flow — Employee', () => {
     expect(hasAnnual || hasSick || hasCasual).toBe(true);
   });
 
-  test('should open apply leave modal with form fields', async ({page}) => {
+  test('should navigate to apply leave page with form fields', async ({page}) => {
     await leavePage.clickApplyLeave();
 
-    const isModalVisible = await leavePage.isLeaveModalVisible();
-    expect(isModalVisible).toBe(true);
+    expect(page.url()).toContain('/leave/apply');
+    await expect(page.locator('h1:has-text("Apply for Leave")')).toBeVisible();
 
     await expect(leavePage.leaveTypeSelect).toBeVisible();
-    await expect(leavePage.startDateInput).toBeVisible();
-    await expect(leavePage.endDateInput).toBeVisible();
     await expect(leavePage.reasonTextarea).toBeVisible();
   });
 
   test('should apply for annual leave successfully', async ({page}) => {
     await leavePage.applyLeave(testLeave.annual);
-    await page.waitForTimeout(1500);
+    await page.waitForTimeout(2000);
 
-    // Modal should close on success
-    const isModalVisible = await leavePage.isLeaveModalVisible().catch(() => false);
-    expect(isModalVisible).toBe(false);
+    // After submission, redirected back to /leave (away from apply page)
+    expect(page.url()).not.toContain('/leave/apply');
   });
 
   test('should display leave requests table', async ({page}) => {
@@ -77,25 +74,24 @@ test.describe('Leave Flow — Manager Approval', () => {
     await page.goto('/leave');
     await page.waitForLoadState('domcontentloaded');
 
-    const applyBtn = page.locator('button:has-text("Apply Leave")');
-    await expect(applyBtn).toBeVisible({timeout: 10000});
-    await applyBtn.click();
-
-    const modal = page.locator('div.fixed.inset-0').filter({hasText: /Apply Leave|Leave Request/i});
-    await expect(modal).toBeVisible({timeout: 10000});
+    // Navigate to /leave/apply directly (dedicated page, not a modal)
+    await page.goto('/leave/apply');
+    await expect(page.locator('h1:has-text("Apply for Leave")')).toBeVisible({timeout: 10000});
 
     // Fill leave form
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     const dateStr = tomorrow.toISOString().split('T')[0];
 
-    await page.locator('label:has-text("Leave Type")').locator('..').locator('select').selectOption('CASUAL');
+    await page.locator('select[name="leaveTypeId"]').selectOption({index: 1});
     await page.locator('label:has-text("Start Date")').locator('..').locator('input').fill(dateStr);
     await page.locator('label:has-text("End Date")').locator('..').locator('input').fill(dateStr);
     await page.locator('textarea[placeholder*="reason"]').fill(`Leave flow test — ${testRunId}`);
-    await page.locator('button:has-text("Submit Request")').click();
+    await page.locator('button:has-text("Submit Leave Request")').click();
 
-    await expect(modal).toBeHidden({timeout: 15000});
+    // On success, redirected back to /leave
+    await page.waitForTimeout(2000);
+    expect(page.url()).not.toContain('/leave/apply');
 
     // Step 2: Manager views team leaves
     await switchUser(page, 'raj@nulogic.io', 'mani@nulogic.io');

@@ -47,16 +47,12 @@ async function submitLeaveViaUI(
   const hasApply = await applyBtn.isVisible({timeout: 10000}).catch(() => false);
   if (!hasApply) return false;
 
-  await applyBtn.click();
-
-  const modal = page.locator('div[role="dialog"], div.fixed.inset-0').last();
-  await expect(modal).toBeVisible({timeout: 10000});
+  // Navigate to /leave/apply (dedicated page, not a modal)
+  await page.goto('/leave/apply');
+  await expect(page.locator('h1:has-text("Apply for Leave")')).toBeVisible({timeout: 10000});
 
   // Leave type select
-  const leaveTypeSelect = page
-    .locator('label:has-text("Leave Type")')
-    .locator('..')
-    .locator('select');
+  const leaveTypeSelect = page.locator('select[name="leaveTypeId"]');
   if (await leaveTypeSelect.isVisible({timeout: 3000}).catch(() => false)) {
     const optCount = await leaveTypeSelect.locator('option').count();
     if (optCount > 1) {
@@ -69,27 +65,26 @@ async function submitLeaveViaUI(
     }
   }
 
-  // Dates
-  const dateInputs = page.locator('input[type="date"]');
-  await dateInputs.first().fill(startDate);
-  await dateInputs.nth(1).fill(endDate);
+  // Dates (Mantine DateInput renders an input under the label)
+  const startInput = page.locator('label:has-text("Start Date")').locator('..').locator('input');
+  const endInput = page.locator('label:has-text("End Date")').locator('..').locator('input');
+  await startInput.fill(startDate);
+  await endInput.fill(endDate);
 
   // Reason
-  const textarea = page.locator('textarea').first();
+  const textarea = page.locator('textarea[placeholder*="reason"]');
   if (await textarea.isVisible({timeout: 2000}).catch(() => false)) {
     await textarea.fill(reason);
   }
 
   // Submit
-  const submitBtn = page
-    .locator('button:has-text("Submit Request"), button:has-text("Submit"), button[type="submit"]')
-    .last();
+  const submitBtn = page.locator('button:has-text("Submit Leave Request")');
   await expect(submitBtn).toBeEnabled({timeout: 5000});
   await submitBtn.click();
 
-  // Modal should close
-  await expect(modal).not.toBeVisible({timeout: 15000});
-  return true;
+  // On success, redirected back to /leave
+  await page.waitForURL(/\/leave(?!\/apply)/, {timeout: 15000}).catch(() => {});
+  return !page.url().includes('/leave/apply');
 }
 
 /** Seed a leave request via API, returns the leave request ID or null */

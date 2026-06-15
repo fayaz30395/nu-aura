@@ -44,6 +44,6 @@ test.describe('Public Exit Interview', () => {
     // Should have stepper or step indicators
     const hasStepper = await page.getByRole('list').count() > 0;
     const hasStep = await page.getByText(/step|question|feedback/i).count() > 0;
-    expect(hasStepper || hasStep || true).toBeTruthy(); // graceful failure
+    expect(hasStepper || hasStep).toBeTruthy();
   });
 });

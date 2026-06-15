@@ -438,77 +438,57 @@ test.describe('MY SPACE - My Leaves', () => {
     });
   });
 
-  test.describe('Apply Leave Modal', () => {
-    test('should show "Apply Leave" or "Request Leave" button', async ({page}) => {
+  test.describe('Apply Leave Page', () => {
+    test('should show "Apply Leave" button', async ({page}) => {
       await page.waitForTimeout(2000);
       const applyBtn = applyLeaveButton(page);
       await expect(applyBtn).toBeVisible({timeout: 10000});
     });
 
-    test('should open apply leave modal on button click', async ({page}) => {
+    test('should navigate to /leave/apply on button click', async ({page}) => {
       await page.waitForTimeout(2000);
       const applyBtn = applyLeaveButton(page);
       await applyBtn.click();
-      // Modal heading or form should appear
+      await page.waitForURL(/leave\/apply/, {timeout: 10000});
+      expect(page.url()).toContain('/leave/apply');
+    });
+
+    test('apply leave page should contain leave type select', async ({page}) => {
+      await page.goto('/leave/apply');
+      await expect(page.locator('select[name="leaveTypeId"]')).toBeVisible({timeout: 5000});
+    });
+
+    test('apply leave page should contain date inputs', async ({page}) => {
+      await page.goto('/leave/apply');
       await expect(
-        page.locator('text=/Apply Leave|Request Leave|Leave Request/i').last()
+        page.locator('label:has-text("Start Date")').locator('..').locator('input')
       ).toBeVisible({timeout: 5000});
     });
 
-    test('modal should contain leave type select', async ({page}) => {
-      await page.waitForTimeout(2000);
-      const applyBtn = applyLeaveButton(page);
-      await applyBtn.click();
-      await expect(page.locator('select').first()).toBeVisible({timeout: 5000});
+    test('apply leave page should contain reason textarea', async ({page}) => {
+      await page.goto('/leave/apply');
+      await expect(page.locator('textarea[placeholder*="reason"]')).toBeVisible({timeout: 5000});
     });
 
-    test('modal should contain start date and end date inputs', async ({page}) => {
-      await page.waitForTimeout(2000);
-      const applyBtn = applyLeaveButton(page);
-      await applyBtn.click();
-      const dateInputs = page.locator('input[type="date"]');
-      await expect(dateInputs.first()).toBeVisible({timeout: 5000});
-    });
-
-    test('modal should contain reason textarea', async ({page}) => {
-      await page.waitForTimeout(2000);
-      const applyBtn = applyLeaveButton(page);
-      await applyBtn.click();
-      await expect(page.locator('textarea').first()).toBeVisible({timeout: 5000});
-    });
-
-    test('modal should validate and show error when reason is empty', async ({page}) => {
-      await page.waitForTimeout(2000);
-      const applyBtn = applyLeaveButton(page);
-      await applyBtn.click();
-
-      // Submit without filling required fields
-      const submitBtn = page
-        .locator('button')
-        .filter({hasText: /Submit|Apply|Send/i})
-        .last();
-      await submitBtn.click();
-
+    test('apply leave page should validate and show error when reason is empty', async ({page}) => {
+      await page.goto('/leave/apply');
+      await page.locator('button:has-text("Submit Leave Request")').click();
       await expect(
         page.locator('text=/required|Reason is required/i').first()
       ).toBeVisible({timeout: 5000});
     });
 
-    test('modal Cancel button should close the modal', async ({page}) => {
-      await page.waitForTimeout(2000);
-      const applyBtn = applyLeaveButton(page);
-      await applyBtn.click();
-      await page.getByRole('dialog').getByRole('button', {name: /^Cancel$/}).click();
-      // Modal should be dismissed
-      await expect(applyBtn).toBeVisible({timeout: 5000});
+    test('Cancel button should navigate away from apply page', async ({page}) => {
+      await page.goto('/leave/apply');
+      await page.locator('button:has-text("Cancel")').click();
+      await page.waitForTimeout(1000);
+      expect(page.url()).not.toContain('/leave/apply');
     });
 
-    test('modal should have half-day checkbox', async ({page}) => {
-      await page.waitForTimeout(2000);
-      const applyBtn = applyLeaveButton(page);
-      await applyBtn.click();
+    test('apply leave page should have half-day checkbox', async ({page}) => {
+      await page.goto('/leave/apply');
       await expect(
-        page.locator('input[type="checkbox"]').first()
+        page.locator('input[name="isHalfDay"]')
       ).toBeVisible({timeout: 5000});
     });
   });
