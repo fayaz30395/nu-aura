@@ -1,0 +1,462 @@
+# Nu-Aura RBAC Use Case Catalog
+# Consumed by frontend/e2e/nu-rbac.spec.ts
+# category: RBAC items are tested; others are ignored by the spec.
+#
+# expect values:
+#   render         - page should load and show content (200)
+#   redirect       - page should redirect away (RBAC blocked)
+#   render_scoped  - page loads but shows only role-scoped data
+#
+# severity_on_miss: P0 = security breach, P1 = functional break, P2 = UX issue, P3 = cosmetic
+
+use_cases:
+
+  # ── SUPER_ADMIN access ────────────────────────────────────────────────────
+
+  - id: UC-SA-001
+    category: RBAC
+    route: /admin/roles
+    role: SUPER_ADMIN
+    expect: render
+    redirect_target: null
+    severity_on_miss: P0
+
+  - id: UC-SA-002
+    category: RBAC
+    route: /admin/tenants
+    role: SUPER_ADMIN
+    expect: render
+    redirect_target: null
+    severity_on_miss: P0
+
+  - id: UC-SA-003
+    category: RBAC
+    route: /admin/settings
+    role: SUPER_ADMIN
+    expect: render
+    redirect_target: null
+    severity_on_miss: P1
+
+  - id: UC-SA-004
+    category: RBAC
+    route: /payroll/runs
+    role: SUPER_ADMIN
+    expect: render
+    redirect_target: null
+    severity_on_miss: P1
+
+  - id: UC-SA-005
+    category: RBAC
+    route: /employees
+    role: SUPER_ADMIN
+    expect: render
+    redirect_target: null
+    severity_on_miss: P1
+
+  - id: UC-SA-006
+    category: RBAC
+    route: /me/dashboard
+    role: SUPER_ADMIN
+    expect: render
+    redirect_target: null
+    severity_on_miss: P0
+
+  # ── TENANT_ADMIN access ────────────────────────────────────────────────────
+
+  - id: UC-TA-001
+    category: RBAC
+    route: /admin/settings
+    role: TENANT_ADMIN
+    expect: render
+    redirect_target: null
+    severity_on_miss: P1
+
+  - id: UC-TA-002
+    category: RBAC
+    route: /admin/roles
+    role: TENANT_ADMIN
+    expect: render
+    redirect_target: null
+    severity_on_miss: P1
+
+  - id: UC-TA-003
+    category: RBAC
+    route: /payroll/runs
+    role: TENANT_ADMIN
+    expect: render
+    redirect_target: null
+    severity_on_miss: P1
+
+  - id: UC-TA-004
+    category: RBAC
+    route: /employees
+    role: TENANT_ADMIN
+    expect: render
+    redirect_target: null
+    severity_on_miss: P1
+
+  - id: UC-TA-005
+    category: RBAC
+    route: /me/dashboard
+    role: TENANT_ADMIN
+    expect: render
+    redirect_target: null
+    severity_on_miss: P0
+
+  - id: UC-TA-006
+    category: RBAC
+    route: /recruitment/jobs
+    role: TENANT_ADMIN
+    expect: render
+    redirect_target: null
+    severity_on_miss: P2
+
+  # ── HR_MANAGER access ─────────────────────────────────────────────────────
+
+  - id: UC-HR-001
+    category: RBAC
+    route: /employees
+    role: HR_MANAGER
+    expect: render
+    redirect_target: null
+    severity_on_miss: P1
+
+  - id: UC-HR-002
+    category: RBAC
+    route: /leave/team
+    role: HR_MANAGER
+    expect: render
+    redirect_target: null
+    severity_on_miss: P1
+
+  - id: UC-HR-003
+    category: RBAC
+    route: /payroll/runs
+    role: HR_MANAGER
+    expect: render
+    redirect_target: null
+    severity_on_miss: P1
+
+  - id: UC-HR-004
+    category: RBAC
+    route: /me/dashboard
+    role: HR_MANAGER
+    expect: render
+    redirect_target: null
+    severity_on_miss: P0
+
+  - id: UC-HR-005
+    category: RBAC
+    route: /admin/tenants
+    role: HR_MANAGER
+    expect: redirect
+    redirect_target: null
+    severity_on_miss: P0
+
+  - id: UC-HR-006
+    category: RBAC
+    route: /attendance
+    role: HR_MANAGER
+    expect: render
+    redirect_target: null
+    severity_on_miss: P1
+
+  # ── MANAGER access ────────────────────────────────────────────────────────
+
+  - id: UC-MGR-001
+    category: RBAC
+    route: /leave/team
+    role: MANAGER
+    expect: render
+    redirect_target: null
+    severity_on_miss: P1
+
+  - id: UC-MGR-002
+    category: RBAC
+    route: /leave/approvals
+    role: MANAGER
+    expect: render
+    redirect_target: null
+    severity_on_miss: P1
+
+  - id: UC-MGR-003
+    category: RBAC
+    route: /me/dashboard
+    role: MANAGER
+    expect: render
+    redirect_target: null
+    severity_on_miss: P0
+
+  - id: UC-MGR-004
+    category: RBAC
+    route: /admin/roles
+    role: MANAGER
+    expect: redirect
+    redirect_target: null
+    severity_on_miss: P0
+
+  - id: UC-MGR-005
+    category: RBAC
+    route: /payroll/salary-structures
+    role: MANAGER
+    expect: redirect
+    redirect_target: null
+    severity_on_miss: P0
+
+  - id: UC-MGR-006
+    category: RBAC
+    route: /me/leaves
+    role: MANAGER
+    expect: render
+    redirect_target: null
+    severity_on_miss: P1
+
+  # ── EMPLOYEE access ───────────────────────────────────────────────────────
+
+  - id: UC-EMP-001
+    category: RBAC
+    route: /me/dashboard
+    role: EMPLOYEE
+    expect: render
+    redirect_target: null
+    severity_on_miss: P0
+
+  - id: UC-EMP-002
+    category: RBAC
+    route: /me/leaves
+    role: EMPLOYEE
+    expect: render
+    redirect_target: null
+    severity_on_miss: P1
+
+  - id: UC-EMP-003
+    category: RBAC
+    route: /me/payslips
+    role: EMPLOYEE
+    expect: render
+    redirect_target: null
+    severity_on_miss: P1
+
+  - id: UC-EMP-004
+    category: RBAC
+    route: /me/attendance
+    role: EMPLOYEE
+    expect: render
+    redirect_target: null
+    severity_on_miss: P1
+
+  - id: UC-EMP-005
+    category: RBAC
+    route: /admin/roles
+    role: EMPLOYEE
+    expect: redirect
+    redirect_target: null
+    severity_on_miss: P0
+
+  - id: UC-EMP-006
+    category: RBAC
+    route: /admin/tenants
+    role: EMPLOYEE
+    expect: redirect
+    redirect_target: null
+    severity_on_miss: P0
+
+  - id: UC-EMP-007
+    category: RBAC
+    route: /payroll/runs
+    role: EMPLOYEE
+    expect: redirect
+    redirect_target: null
+    severity_on_miss: P0
+
+  - id: UC-EMP-008
+    category: RBAC
+    route: /payroll/salary-structures
+    role: EMPLOYEE
+    expect: redirect
+    redirect_target: null
+    severity_on_miss: P0
+
+  - id: UC-EMP-009
+    category: RBAC
+    route: /employees
+    role: EMPLOYEE
+    expect: redirect
+    redirect_target: null
+    severity_on_miss: P0
+
+  - id: UC-EMP-010
+    category: RBAC
+    route: /recruitment/jobs
+    role: EMPLOYEE
+    expect: redirect
+    redirect_target: null
+    severity_on_miss: P1
+
+  - id: UC-EMP-011
+    category: RBAC
+    route: /leave/apply
+    role: EMPLOYEE
+    expect: render
+    redirect_target: null
+    severity_on_miss: P0
+
+  - id: UC-EMP-012
+    category: RBAC
+    route: /me/profile
+    role: EMPLOYEE
+    expect: render
+    redirect_target: null
+    severity_on_miss: P1
+
+  # ── RECRUITMENT_ADMIN access ──────────────────────────────────────────────
+
+  - id: UC-RA-001
+    category: RBAC
+    route: /recruitment/jobs
+    role: RECRUITMENT_ADMIN
+    expect: render
+    redirect_target: null
+    severity_on_miss: P1
+
+  - id: UC-RA-002
+    category: RBAC
+    route: /recruitment/candidates
+    role: RECRUITMENT_ADMIN
+    expect: render
+    redirect_target: null
+    severity_on_miss: P1
+
+  - id: UC-RA-003
+    category: RBAC
+    route: /me/dashboard
+    role: RECRUITMENT_ADMIN
+    expect: render
+    redirect_target: null
+    severity_on_miss: P0
+
+  - id: UC-RA-004
+    category: RBAC
+    route: /payroll/runs
+    role: RECRUITMENT_ADMIN
+    expect: redirect
+    redirect_target: null
+    severity_on_miss: P0
+
+  - id: UC-RA-005
+    category: RBAC
+    route: /admin/roles
+    role: RECRUITMENT_ADMIN
+    expect: redirect
+    redirect_target: null
+    severity_on_miss: P0
+
+  # ── FINANCE_ADMIN access ──────────────────────────────────────────────────
+
+  - id: UC-FA-001
+    category: RBAC
+    route: /payroll/runs
+    role: FINANCE_ADMIN
+    expect: render
+    redirect_target: null
+    severity_on_miss: P0
+
+  - id: UC-FA-002
+    category: RBAC
+    route: /payroll/salary-structures
+    role: FINANCE_ADMIN
+    expect: render
+    redirect_target: null
+    severity_on_miss: P1
+
+  - id: UC-FA-003
+    category: RBAC
+    route: /me/dashboard
+    role: FINANCE_ADMIN
+    expect: render
+    redirect_target: null
+    severity_on_miss: P0
+
+  - id: UC-FA-004
+    category: RBAC
+    route: /admin/roles
+    role: FINANCE_ADMIN
+    expect: redirect
+    redirect_target: null
+    severity_on_miss: P0
+
+  - id: UC-FA-005
+    category: RBAC
+    route: /recruitment/jobs
+    role: FINANCE_ADMIN
+    expect: redirect
+    redirect_target: null
+    severity_on_miss: P1
+
+  # ── TEAM_LEAD access ──────────────────────────────────────────────────────
+
+  - id: UC-TL-001
+    category: RBAC
+    route: /me/dashboard
+    role: TEAM_LEAD
+    expect: render
+    redirect_target: null
+    severity_on_miss: P0
+
+  - id: UC-TL-002
+    category: RBAC
+    route: /leave/team
+    role: TEAM_LEAD
+    expect: render
+    redirect_target: null
+    severity_on_miss: P1
+
+  - id: UC-TL-003
+    category: RBAC
+    route: /admin/roles
+    role: TEAM_LEAD
+    expect: redirect
+    redirect_target: null
+    severity_on_miss: P0
+
+  - id: UC-TL-004
+    category: RBAC
+    route: /payroll/runs
+    role: TEAM_LEAD
+    expect: redirect
+    redirect_target: null
+    severity_on_miss: P0
+
+  # ── HR_ADMIN access ───────────────────────────────────────────────────────
+
+  - id: UC-HA-001
+    category: RBAC
+    route: /employees
+    role: HR_ADMIN
+    expect: render
+    redirect_target: null
+    severity_on_miss: P1
+
+  - id: UC-HA-002
+    category: RBAC
+    route: /payroll/runs
+    role: HR_ADMIN
+    expect: render
+    redirect_target: null
+    severity_on_miss: P1
+
+  - id: UC-HA-003
+    category: RBAC
+    route: /me/dashboard
+    role: HR_ADMIN
+    expect: render
+    redirect_target: null
+    severity_on_miss: P0
+
+  - id: UC-HA-004
+    category: RBAC
+    route: /admin/tenants
+    role: HR_ADMIN
+    expect: redirect
+    redirect_target: null
+    severity_on_miss: P0
