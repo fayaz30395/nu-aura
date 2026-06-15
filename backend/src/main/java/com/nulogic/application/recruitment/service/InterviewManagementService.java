@@ -50,6 +50,17 @@ public class InterviewManagementService {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Scheduling interview for candidate {} for tenant {}", request.getCandidateId(), tenantId);
 
+        // IDOR fix: validate that candidateId and jobOpeningId belong to the current tenant
+        // before writing them into the interview record.
+        if (request.getCandidateId() != null) {
+            candidateRepository.findByIdAndTenantId(request.getCandidateId(), tenantId)
+                    .orElseThrow(() -> new IllegalArgumentException("Candidate not found"));
+        }
+        if (request.getJobOpeningId() != null) {
+            jobOpeningRepository.findByIdAndTenantId(request.getJobOpeningId(), tenantId)
+                    .orElseThrow(() -> new IllegalArgumentException("Job opening not found"));
+        }
+
         Interview interview = new Interview();
         interview.setId(UUID.randomUUID());
         interview.setTenantId(tenantId);

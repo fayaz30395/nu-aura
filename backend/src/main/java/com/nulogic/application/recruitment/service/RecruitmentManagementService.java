@@ -107,6 +107,12 @@ public class RecruitmentManagementService implements ApprovalCallbackHandler {
             }
         }
 
+        // IDOR fix: validate jobOpeningId belongs to the current tenant before linking.
+        if (request.getJobOpeningId() != null) {
+            jobOpeningRepository.findByIdAndTenantId(request.getJobOpeningId(), tenantId)
+                    .orElseThrow(() -> new IllegalArgumentException("Job opening not found"));
+        }
+
         Candidate candidate = new Candidate();
         candidate.setId(UUID.randomUUID());
         candidate.setTenantId(tenantId);
