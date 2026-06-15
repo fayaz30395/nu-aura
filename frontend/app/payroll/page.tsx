@@ -531,7 +531,7 @@ function RunHistoryCard({runs}: {runs: PayrollRun[]}) {
       </div>
       <div className="mt-1 overflow-x-auto">
         <table className="w-full min-w-[760px] text-sm">
-          <thead>
+          <thead className="sticky top-0 z-10 bg-[var(--surface)]">
             <tr className="text-aura-micro text-[var(--text-3)] border-b border-[var(--border-soft)]">
               <th className="px-5 py-3 text-left font-bold">Run</th>
               <th className="px-3 py-3 text-left font-bold">Period</th>

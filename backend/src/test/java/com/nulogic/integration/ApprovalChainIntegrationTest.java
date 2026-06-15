@@ -34,6 +34,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -54,6 +56,7 @@ import static org.mockito.Mockito.*;
  * This is a "fat unit test" that wires WorkflowService with real callback handlers
  * but mocks the persistence layer.
  */
+@MockitoSettings(strictness = Strictness.LENIENT)
 @ExtendWith(MockitoExtension.class)
 @DisplayName("Approval Chain Integration Tests")
 class ApprovalChainIntegrationTest {

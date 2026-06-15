@@ -22,6 +22,8 @@ import {
   Wallet,
 } from 'lucide-react';
 
+import {Tooltip} from '@mantine/core';
+
 import {AppLayout} from '@/components/layout/AppLayout';
 import {PageTransition, Reveal} from '@/components/motion';
 import {Button} from '@/components/ui/Button';
@@ -267,14 +269,23 @@ function BalanceRings({
               const type = leaveTypes.find((t) => t.id === b.leaveTypeId);
               return (
                 <div key={b.id} className="flex items-center gap-4">
-                  <Ring
-                    value={pct}
-                    size={52}
-                    thickness={6}
-                    color={RING_COLORS[i % RING_COLORS.length]}
-                    label={<>{Number.isInteger(remaining) ? remaining : remaining.toFixed(1)}</>}
-                    ariaLabel={`${type?.leaveName ?? 'Leave'}: ${remaining} of ${total} remaining`}
-                  />
+                  <Tooltip
+                    label={`${type?.leaveName ?? 'Leave'}: ${Number.isInteger(remaining) ? remaining : remaining.toFixed(1)} remaining of ${total.toFixed(0)} total · ${(b.used ?? 0).toFixed(0)} used`}
+                    withArrow
+                    position="top"
+                    withinPortal
+                  >
+                    <div>
+                      <Ring
+                        value={pct}
+                        size={52}
+                        thickness={6}
+                        color={RING_COLORS[i % RING_COLORS.length]}
+                        label={<>{Number.isInteger(remaining) ? remaining : remaining.toFixed(1)}</>}
+                        ariaLabel={`${type?.leaveName ?? 'Leave'}: ${remaining} of ${total} remaining`}
+                      />
+                    </div>
+                  </Tooltip>
                   <div className="min-w-0">
                     <div className="truncate text-xs font-semibold text-[var(--text-1)]">
                       {type?.leaveName ?? 'Leave'}
