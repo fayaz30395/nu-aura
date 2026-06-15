@@ -161,9 +161,10 @@ public class PaymentService {
     }
 
     /**
-     * Check payment status
+     * Check payment status — updates transaction status from provider response.
+     * Must be read-write: calls save() when status changes.
      */
-    @Transactional(readOnly = true)
+    @Transactional
     public PaymentTransaction checkPaymentStatus(UUID paymentId) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
 
