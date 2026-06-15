@@ -69,6 +69,7 @@ public class MetricsConfig {
     public Timer apiRequestDuration(MeterRegistry registry) {
         return Timer.builder("api_request_duration")
                 .description("API request duration")
+                .publishPercentileHistogram(true)   // server-side histogram for histogram_quantile() in Prometheus
                 .publishPercentiles(0.5, 0.95, 0.99)
                 .register(registry);
     }

@@ -47,6 +47,22 @@ groups:
           summary: "HRMS Backend is down"
           description: "HRMS Backend instance {{ $labels.instance }} is down"
 
+      # Redis down alert — rate limiting, token blacklisting, and WS relay degrade to local fallbacks
+      - alert: RedisDown
+        expr: up{job="redis"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          component: redis
+        annotations:
+          summary: "Redis is unreachable"
+          description: >-
+            Redis exporter reports Redis is down on {{ $labels.instance }}.
+            Impact: distributed rate limiting falls back to per-pod Bucket4j (no cross-pod enforcement),
+            token blacklisting falls back to in-memory map (tokens survive pod restart),
+            idempotency keys and distributed edit locks are unavailable.
+            Resolve immediately to restore multi-pod consistency.
+
       # High memory usage
       - alert: HighMemoryUsage
         expr: (jvm_memory_used_bytes{area="heap"} / jvm_memory_max_bytes{area="heap"}) > 0.85
