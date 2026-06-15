@@ -34,8 +34,7 @@ public class WikiCommentService {
         UUID tenantId = TenantContext.requireCurrentTenant();
         UUID userId = SecurityContext.getCurrentUserId();
 
-        WikiPage page = wikiPageRepository.findById(pageId)
-                .filter(p -> p.getTenantId().equals(tenantId))
+        WikiPage page = wikiPageRepository.findByIdAndTenantId(pageId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Wiki page not found"));
 
         WikiPageComment.WikiPageCommentBuilder<?, ?> builder = WikiPageComment.builder()
@@ -46,8 +45,7 @@ public class WikiCommentService {
                 .isPinned(false);
 
         if (request.getParentCommentId() != null) {
-            WikiPageComment parent = commentRepository.findById(request.getParentCommentId())
-                    .filter(c -> c.getTenantId().equals(tenantId))
+            WikiPageComment parent = commentRepository.findByIdAndTenantId(request.getParentCommentId(), tenantId)
                     .orElseThrow(() -> new IllegalArgumentException("Parent comment not found"));
             builder.parentComment(parent);
         }
@@ -96,8 +94,7 @@ public class WikiCommentService {
         UUID tenantId = TenantContext.requireCurrentTenant();
         UUID userId = SecurityContext.getCurrentUserId();
 
-        WikiPageComment comment = commentRepository.findById(commentId)
-                .filter(c -> c.getTenantId().equals(tenantId))
+        WikiPageComment comment = commentRepository.findByIdAndTenantId(commentId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Comment not found"));
 
         if (!comment.getCreatedBy().equals(userId)) {
@@ -118,16 +115,14 @@ public class WikiCommentService {
     public void deleteComment(UUID pageId, UUID commentId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
 
-        WikiPageComment comment = commentRepository.findById(commentId)
-                .filter(c -> c.getTenantId().equals(tenantId))
+        WikiPageComment comment = commentRepository.findByIdAndTenantId(commentId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Comment not found"));
 
         comment.softDelete();
         commentRepository.save(comment);
 
         // Decrement comment count
-        WikiPage page = wikiPageRepository.findById(pageId)
-                .filter(p -> p.getTenantId().equals(tenantId))
+        WikiPage page = wikiPageRepository.findByIdAndTenantId(pageId, tenantId)
                 .orElse(null);
         if (page != null && page.getCommentCount() > 0) {
             page.setCommentCount(page.getCommentCount() - 1);
@@ -141,8 +136,7 @@ public class WikiCommentService {
     public WikiCommentDto getCommentById(UUID commentId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
 
-        WikiPageComment comment = commentRepository.findById(commentId)
-                .filter(c -> c.getTenantId().equals(tenantId))
+        WikiPageComment comment = commentRepository.findByIdAndTenantId(commentId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Comment not found"));
 
         WikiCommentDto dto = WikiCommentDto.fromEntity(comment);

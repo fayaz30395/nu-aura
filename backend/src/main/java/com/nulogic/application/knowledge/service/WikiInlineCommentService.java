@@ -89,8 +89,7 @@ public class WikiInlineCommentService {
     public WikiInlineComment replyToInlineComment(UUID commentId, ReplyToInlineCommentRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
-        WikiInlineComment parent = wikiInlineCommentRepository.findById(commentId)
-                .filter(c -> c.getTenantId().equals(tenantId))
+        WikiInlineComment parent = wikiInlineCommentRepository.findByIdAndTenantId(commentId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Inline comment not found"));
 
         WikiInlineComment reply = WikiInlineComment.builder()
@@ -113,8 +112,7 @@ public class WikiInlineCommentService {
         UUID tenantId = TenantContext.requireCurrentTenant();
         UUID userId = SecurityContext.getCurrentUserId();
 
-        WikiInlineComment comment = wikiInlineCommentRepository.findById(commentId)
-                .filter(c -> c.getTenantId().equals(tenantId))
+        WikiInlineComment comment = wikiInlineCommentRepository.findByIdAndTenantId(commentId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Inline comment not found"));
 
         comment.setStatus(InlineCommentStatus.RESOLVED);
@@ -129,8 +127,7 @@ public class WikiInlineCommentService {
     public void deleteInlineComment(UUID commentId) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
-        WikiInlineComment comment = wikiInlineCommentRepository.findById(commentId)
-                .filter(c -> c.getTenantId().equals(tenantId))
+        WikiInlineComment comment = wikiInlineCommentRepository.findByIdAndTenantId(commentId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Inline comment not found"));
 
         comment.softDelete();

@@ -11,6 +11,8 @@ import java.util.UUID;
 @Repository
 public interface WikiInlineCommentRepository extends JpaRepository<WikiInlineComment, UUID> {
 
+    Optional<WikiInlineComment> findByIdAndTenantId(UUID id, UUID tenantId);
+
     List<WikiInlineComment> findByTenantIdAndPageId(UUID tenantId, UUID pageId);
 
     List<WikiInlineComment> findByTenantIdAndPageIdAndStatus(UUID tenantId, UUID pageId, InlineCommentStatus status);

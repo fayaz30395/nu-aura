@@ -110,8 +110,7 @@ public class CompOffService {
     public CompOffRequest approveCompOff(UUID requestId, UUID approverId, String note) {
         UUID tenantId = TenantContext.requireCurrentTenant();
 
-        CompOffRequest request = compOffRequestRepository.findById(requestId)
-                .filter(r -> r.getTenantId().equals(tenantId))
+        CompOffRequest request = compOffRequestRepository.findByIdAndTenantId(requestId, tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("CompOff request not found: " + requestId));
 
         if (request.getStatus() != CompOffRequest.CompOffStatus.PENDING) {
@@ -141,8 +140,7 @@ public class CompOffService {
     public CompOffRequest rejectCompOff(UUID requestId, UUID approverId, String note) {
         UUID tenantId = TenantContext.requireCurrentTenant();
 
-        CompOffRequest request = compOffRequestRepository.findById(requestId)
-                .filter(r -> r.getTenantId().equals(tenantId))
+        CompOffRequest request = compOffRequestRepository.findByIdAndTenantId(requestId, tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("CompOff request not found: " + requestId));
 
         if (request.getStatus() != CompOffRequest.CompOffStatus.PENDING) {

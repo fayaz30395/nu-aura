@@ -16,6 +16,8 @@ import java.util.UUID;
 @Repository
 public interface WikiSpaceRepository extends JpaRepository<WikiSpace, UUID>, JpaSpecificationExecutor<WikiSpace> {
 
+    Optional<WikiSpace> findByIdAndTenantId(UUID id, UUID tenantId);
+
     Optional<WikiSpace> findByTenantIdAndSlug(UUID tenantId, String slug);
 
     Page<WikiSpace> findByTenantIdAndIsArchivedFalse(UUID tenantId, Pageable pageable);

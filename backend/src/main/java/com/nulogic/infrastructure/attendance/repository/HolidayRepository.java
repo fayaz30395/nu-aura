@@ -16,6 +16,8 @@ import java.util.UUID;
 @Repository
 public interface HolidayRepository extends JpaRepository<Holiday, UUID> {
 
+    Optional<Holiday> findByIdAndTenantId(UUID id, UUID tenantId);
+
     Page<Holiday> findAllByTenantId(UUID tenantId, Pageable pageable);
 
     Page<Holiday> findAllByTenantIdAndYear(UUID tenantId, Integer year, Pageable pageable);

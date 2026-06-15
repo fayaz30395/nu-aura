@@ -430,8 +430,7 @@ public class AssetManagementService implements ApprovalCallbackHandler {
         UUID tenantId = TenantContext.requireCurrentTenant();
         log.info("Updating maintenance request {} to status {} (tenant {})", requestId, status, tenantId);
 
-        AssetMaintenanceRequest request = maintenanceRequestRepository.findById(requestId)
-                .filter(r -> r.getTenantId().equals(tenantId))
+        AssetMaintenanceRequest request = maintenanceRequestRepository.findByIdAndTenantId(requestId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Maintenance request not found"));
 
         request.setStatus(status);

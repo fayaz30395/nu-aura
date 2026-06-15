@@ -465,8 +465,7 @@ public class AttendanceRecordService {
     public AttendanceRecord requestRegularization(UUID id, String reason) {
         UUID tenantId = TenantContext.requireCurrentTenant();
 
-        AttendanceRecord record = attendanceRecordRepository.findById(id)
-                .filter(a -> a.getTenantId().equals(tenantId))
+        AttendanceRecord record = attendanceRecordRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException(ATTENDANCE_RECORD_NOT_FOUND));
 
         record.requestRegularization(reason);
@@ -477,8 +476,7 @@ public class AttendanceRecordService {
     public AttendanceRecord approveRegularization(UUID id, UUID approverId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
 
-        AttendanceRecord record = attendanceRecordRepository.findById(id)
-                .filter(a -> a.getTenantId().equals(tenantId))
+        AttendanceRecord record = attendanceRecordRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException(ATTENDANCE_RECORD_NOT_FOUND));
 
         record.approveRegularization(approverId, tenantTimeService.now(record.getTenantId()));
@@ -494,8 +492,7 @@ public class AttendanceRecordService {
     @Transactional(readOnly = true)
     public AttendanceRecord getAttendanceRecordById(UUID id) {
         UUID tenantId = TenantContext.requireCurrentTenant();
-        return attendanceRecordRepository.findById(id)
-                .filter(a -> a.getTenantId().equals(tenantId))
+        return attendanceRecordRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException(ATTENDANCE_RECORD_NOT_FOUND));
     }
 
@@ -703,8 +700,7 @@ public class AttendanceRecordService {
     public AttendanceRecord rejectRegularization(UUID id, UUID rejectorId, String reason) {
         UUID tenantId = validateAndGetTenantId();
 
-        AttendanceRecord record = attendanceRecordRepository.findById(id)
-                .filter(a -> a.getTenantId().equals(tenantId))
+        AttendanceRecord record = attendanceRecordRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException(ATTENDANCE_RECORD_NOT_FOUND));
 
         record.rejectRegularization(rejectorId, reason, tenantTimeService.now(record.getTenantId()));

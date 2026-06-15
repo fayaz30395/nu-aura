@@ -28,8 +28,7 @@ public class SpacePermissionService {
     @Transactional(readOnly = true)
     public boolean canAccessSpace(UUID userId, UUID spaceId) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        WikiSpace space = wikiSpaceRepository.findById(spaceId)
-                .filter(s -> s.getTenantId().equals(tenantId))
+        WikiSpace space = wikiSpaceRepository.findByIdAndTenantId(spaceId, tenantId)
                 .orElse(null);
         if (space == null) return false;
         if (space.getVisibility() == WikiSpace.VisibilityLevel.PUBLIC
@@ -50,8 +49,7 @@ public class SpacePermissionService {
     @Transactional(readOnly = true)
     public boolean canEditInSpace(UUID userId, UUID spaceId) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        WikiSpace space = wikiSpaceRepository.findById(spaceId)
-                .filter(s -> s.getTenantId().equals(tenantId))
+        WikiSpace space = wikiSpaceRepository.findByIdAndTenantId(spaceId, tenantId)
                 .orElse(null);
         if (space == null) return false;
         if (space.getVisibility() == WikiSpace.VisibilityLevel.PUBLIC

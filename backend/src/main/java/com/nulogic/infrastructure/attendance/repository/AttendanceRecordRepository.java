@@ -18,6 +18,8 @@ import java.util.UUID;
 public interface AttendanceRecordRepository
         extends JpaRepository<AttendanceRecord, UUID>, JpaSpecificationExecutor<AttendanceRecord> {
 
+    Optional<AttendanceRecord> findByIdAndTenantId(UUID id, UUID tenantId);
+
     Optional<AttendanceRecord> findByEmployeeIdAndAttendanceDateAndTenantId(
             UUID employeeId, LocalDate attendanceDate, UUID tenantId);
 

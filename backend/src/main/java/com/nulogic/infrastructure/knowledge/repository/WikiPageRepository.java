@@ -17,6 +17,8 @@ import java.util.UUID;
 @Repository
 public interface WikiPageRepository extends JpaRepository<WikiPage, UUID>, JpaSpecificationExecutor<WikiPage> {
 
+    Optional<WikiPage> findByIdAndTenantId(UUID id, UUID tenantId);
+
     Optional<WikiPage> findByTenantIdAndSlug(UUID tenantId, String slug);
 
     Optional<WikiPage> findByTenantIdAndSpaceIdAndSlug(UUID tenantId, UUID spaceId, String slug);

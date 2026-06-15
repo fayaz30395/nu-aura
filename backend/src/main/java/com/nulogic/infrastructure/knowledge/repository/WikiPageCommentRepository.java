@@ -14,6 +14,8 @@ import java.util.UUID;
 @Repository
 public interface WikiPageCommentRepository extends JpaRepository<WikiPageComment, UUID> {
 
+    Optional<WikiPageComment> findByIdAndTenantId(UUID id, UUID tenantId);
+
     Page<WikiPageComment> findByTenantIdAndPageId(UUID tenantId, UUID pageId, Pageable pageable);
 
     Page<WikiPageComment> findByTenantIdAndPageIdAndParentCommentIsNull(UUID tenantId, UUID pageId, Pageable pageable);

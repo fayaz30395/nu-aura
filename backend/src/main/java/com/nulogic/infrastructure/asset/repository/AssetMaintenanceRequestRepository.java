@@ -8,12 +8,15 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface AssetMaintenanceRequestRepository
         extends JpaRepository<AssetMaintenanceRequest, UUID>,
         JpaSpecificationExecutor<AssetMaintenanceRequest> {
+
+    Optional<AssetMaintenanceRequest> findByIdAndTenantId(UUID id, UUID tenantId);
 
     Page<AssetMaintenanceRequest> findByTenantId(UUID tenantId, Pageable pageable);
 

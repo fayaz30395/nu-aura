@@ -14,6 +14,8 @@ import java.util.UUID;
 @Repository
 public interface BlogCommentRepository extends JpaRepository<BlogComment, UUID> {
 
+    Optional<BlogComment> findByIdAndTenantId(UUID id, UUID tenantId);
+
     Page<BlogComment> findByTenantIdAndPostId(UUID tenantId, UUID postId, Pageable pageable);
 
     Page<BlogComment> findByTenantIdAndPostIdAndIsApprovedTrue(UUID tenantId, UUID postId, Pageable pageable);

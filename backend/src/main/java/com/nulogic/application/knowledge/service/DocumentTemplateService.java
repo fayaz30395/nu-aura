@@ -49,8 +49,7 @@ public class DocumentTemplateService {
     public DocumentTemplate updateTemplate(UUID templateId, DocumentTemplate templateData) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
-        DocumentTemplate template = documentTemplateRepository.findById(templateId)
-                .filter(t -> t.getTenantId().equals(tenantId))
+        DocumentTemplate template = documentTemplateRepository.findByIdAndTenantId(templateId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Template not found"));
 
         template.setName(templateData.getName());
@@ -73,8 +72,7 @@ public class DocumentTemplateService {
     @Transactional(readOnly = true)
     public DocumentTemplate getTemplateById(UUID templateId) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return documentTemplateRepository.findById(templateId)
-                .filter(t -> t.getTenantId().equals(tenantId))
+        return documentTemplateRepository.findByIdAndTenantId(templateId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Template not found"));
     }
 
@@ -112,8 +110,7 @@ public class DocumentTemplateService {
     public DocumentTemplate toggleActive(UUID templateId) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
-        DocumentTemplate template = documentTemplateRepository.findById(templateId)
-                .filter(t -> t.getTenantId().equals(tenantId))
+        DocumentTemplate template = documentTemplateRepository.findByIdAndTenantId(templateId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Template not found"));
 
         template.setIsActive(!template.getIsActive());
@@ -125,8 +122,7 @@ public class DocumentTemplateService {
     public DocumentTemplate toggleFeatured(UUID templateId) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
-        DocumentTemplate template = documentTemplateRepository.findById(templateId)
-                .filter(t -> t.getTenantId().equals(tenantId))
+        DocumentTemplate template = documentTemplateRepository.findByIdAndTenantId(templateId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Template not found"));
 
         template.setIsFeatured(!template.getIsFeatured());
@@ -138,8 +134,7 @@ public class DocumentTemplateService {
     public DocumentTemplate incrementUsageCount(UUID templateId) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
-        DocumentTemplate template = documentTemplateRepository.findById(templateId)
-                .filter(t -> t.getTenantId().equals(tenantId))
+        DocumentTemplate template = documentTemplateRepository.findByIdAndTenantId(templateId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Template not found"));
 
         template.setUsageCount(template.getUsageCount() + 1);
@@ -150,8 +145,7 @@ public class DocumentTemplateService {
     public void deleteTemplate(UUID templateId) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
-        DocumentTemplate template = documentTemplateRepository.findById(templateId)
-                .filter(t -> t.getTenantId().equals(tenantId))
+        DocumentTemplate template = documentTemplateRepository.findByIdAndTenantId(templateId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Template not found"));
 
         documentTemplateRepository.delete(template);

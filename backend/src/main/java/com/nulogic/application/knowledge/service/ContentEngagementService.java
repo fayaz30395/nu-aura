@@ -37,8 +37,7 @@ public class ContentEngagementService {
         Optional<WikiPageLike> existing = wikiPageLikeRepository
                 .findByTenantIdAndWikiPageIdAndLikedBy(tenantId, pageId, userId);
 
-        WikiPage page = wikiPageRepository.findById(pageId)
-                .filter(p -> p.getTenantId().equals(tenantId))
+        WikiPage page = wikiPageRepository.findByIdAndTenantId(pageId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Wiki page not found"));
 
         if (existing.isPresent()) {
@@ -78,8 +77,7 @@ public class ContentEngagementService {
         Optional<BlogLike> existing = blogLikeRepository
                 .findByTenantIdAndPostIdAndUserId(tenantId, postId, userId);
 
-        BlogPost post = blogPostRepository.findById(postId)
-                .filter(p -> p.getTenantId().equals(tenantId))
+        BlogPost post = blogPostRepository.findByIdAndTenantId(postId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Blog post not found"));
 
         if (existing.isPresent()) {
@@ -204,8 +202,7 @@ public class ContentEngagementService {
             log.info("User {} unwatched wiki page {}", userId, pageId);
             return false;
         } else {
-            WikiPage page = wikiPageRepository.findById(pageId)
-                    .filter(p -> p.getTenantId().equals(tenantId))
+            WikiPage page = wikiPageRepository.findByIdAndTenantId(pageId, tenantId)
                     .orElseThrow(() -> new IllegalArgumentException("Wiki page not found"));
 
             WikiPageWatch watch = WikiPageWatch.builder()

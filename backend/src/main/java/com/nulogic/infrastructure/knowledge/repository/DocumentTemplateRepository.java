@@ -16,6 +16,8 @@ import java.util.UUID;
 @Repository
 public interface DocumentTemplateRepository extends JpaRepository<DocumentTemplate, UUID>, JpaSpecificationExecutor<DocumentTemplate> {
 
+    Optional<DocumentTemplate> findByIdAndTenantId(UUID id, UUID tenantId);
+
     Optional<DocumentTemplate> findByTenantIdAndSlug(UUID tenantId, String slug);
 
     Page<DocumentTemplate> findByTenantIdAndIsActiveTrue(UUID tenantId, Pageable pageable);

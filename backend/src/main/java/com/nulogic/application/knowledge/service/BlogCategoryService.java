@@ -37,8 +37,7 @@ public class BlogCategoryService {
     public BlogCategory updateCategory(UUID categoryId, BlogCategory categoryData) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
-        BlogCategory category = blogCategoryRepository.findById(categoryId)
-                .filter(c -> c.getTenantId().equals(tenantId))
+        BlogCategory category = blogCategoryRepository.findByIdAndTenantId(categoryId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Category not found"));
 
         category.setName(categoryData.getName());
@@ -56,8 +55,7 @@ public class BlogCategoryService {
     @Transactional(readOnly = true)
     public BlogCategory getCategoryById(UUID categoryId) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return blogCategoryRepository.findById(categoryId)
-                .filter(c -> c.getTenantId().equals(tenantId))
+        return blogCategoryRepository.findByIdAndTenantId(categoryId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Category not found"));
     }
 
@@ -84,8 +82,7 @@ public class BlogCategoryService {
     public void deleteCategory(UUID categoryId) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
-        BlogCategory category = blogCategoryRepository.findById(categoryId)
-                .filter(c -> c.getTenantId().equals(tenantId))
+        BlogCategory category = blogCategoryRepository.findByIdAndTenantId(categoryId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Category not found"));
 
         blogCategoryRepository.delete(category);

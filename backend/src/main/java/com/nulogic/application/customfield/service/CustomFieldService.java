@@ -393,8 +393,7 @@ public class CustomFieldService {
     @Transactional(readOnly = true)
     public CustomFieldValueResponse getFieldValue(UUID fieldDefinitionId, UUID entityId) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return valueRepository.findByFieldDefinitionIdAndEntityId(fieldDefinitionId, entityId)
-                .filter(v -> v.getTenantId().equals(tenantId))
+        return valueRepository.findByFieldDefinitionIdAndEntityIdAndTenantId(fieldDefinitionId, entityId, tenantId)
                 .map(CustomFieldValueResponse::fromEntity)
                 .orElse(null);
     }
@@ -435,8 +434,7 @@ public class CustomFieldService {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.debug("Deleting field value for definition: {} entity: {}", fieldDefinitionId, entityId);
 
-        valueRepository.findByFieldDefinitionIdAndEntityId(fieldDefinitionId, entityId)
-                .filter(v -> v.getTenantId().equals(tenantId))
+        valueRepository.findByFieldDefinitionIdAndEntityIdAndTenantId(fieldDefinitionId, entityId, tenantId)
                 .ifPresent(valueRepository::delete);
     }
 

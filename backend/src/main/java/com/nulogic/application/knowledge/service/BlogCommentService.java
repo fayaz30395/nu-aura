@@ -35,8 +35,7 @@ public class BlogCommentService {
         UUID tenantId = TenantContext.requireCurrentTenant();
         UUID userId = SecurityContext.getCurrentUserId();
 
-        BlogPost post = blogPostRepository.findById(postId)
-                .filter(p -> p.getTenantId().equals(tenantId))
+        BlogPost post = blogPostRepository.findByIdAndTenantId(postId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Blog post not found"));
 
         BlogComment.BlogCommentBuilder<?, ?> builder = BlogComment.builder()
@@ -47,8 +46,7 @@ public class BlogCommentService {
                 .isApproved(false);
 
         if (request.getParentCommentId() != null) {
-            BlogComment parent = commentRepository.findById(request.getParentCommentId())
-                    .filter(c -> c.getTenantId().equals(tenantId))
+            BlogComment parent = commentRepository.findByIdAndTenantId(request.getParentCommentId(), tenantId)
                     .orElseThrow(() -> new IllegalArgumentException("Parent comment not found"));
             builder.parentComment(parent);
         }
@@ -95,8 +93,7 @@ public class BlogCommentService {
         UUID tenantId = TenantContext.requireCurrentTenant();
         UUID userId = SecurityContext.getCurrentUserId();
 
-        BlogComment comment = commentRepository.findById(commentId)
-                .filter(c -> c.getTenantId().equals(tenantId))
+        BlogComment comment = commentRepository.findByIdAndTenantId(commentId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Comment not found"));
 
         if (!comment.getCreatedBy().equals(userId)) {
@@ -117,16 +114,14 @@ public class BlogCommentService {
     public void deleteComment(UUID postId, UUID commentId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
 
-        BlogComment comment = commentRepository.findById(commentId)
-                .filter(c -> c.getTenantId().equals(tenantId))
+        BlogComment comment = commentRepository.findByIdAndTenantId(commentId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Comment not found"));
 
         comment.softDelete();
         commentRepository.save(comment);
 
         // Decrement comment count
-        BlogPost post = blogPostRepository.findById(postId)
-                .filter(p -> p.getTenantId().equals(tenantId))
+        BlogPost post = blogPostRepository.findByIdAndTenantId(postId, tenantId)
                 .orElse(null);
         if (post != null && post.getCommentCount() > 0) {
             post.setCommentCount(post.getCommentCount() - 1);
@@ -140,8 +135,7 @@ public class BlogCommentService {
     public WikiCommentDto getCommentById(UUID commentId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
 
-        BlogComment comment = commentRepository.findById(commentId)
-                .filter(c -> c.getTenantId().equals(tenantId))
+        BlogComment comment = commentRepository.findByIdAndTenantId(commentId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Comment not found"));
 
         WikiCommentDto dto = toBlogCommentDto(comment);

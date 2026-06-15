@@ -16,6 +16,8 @@ import java.util.UUID;
 @Repository
 public interface CompOffRequestRepository extends JpaRepository<CompOffRequest, UUID> {
 
+    Optional<CompOffRequest> findByIdAndTenantId(UUID id, UUID tenantId);
+
     Optional<CompOffRequest> findByTenantIdAndEmployeeIdAndAttendanceDate(
             UUID tenantId, UUID employeeId, LocalDate attendanceDate);
 

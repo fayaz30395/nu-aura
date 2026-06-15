@@ -28,6 +28,11 @@ public interface CustomFieldValueRepository extends JpaRepository<CustomFieldVal
     Optional<CustomFieldValue> findByFieldDefinitionIdAndEntityId(UUID fieldDefinitionId, UUID entityId);
 
     /**
+     * Find value by field definition, entity, and tenant (atomic tenant-scoped lookup)
+     */
+    Optional<CustomFieldValue> findByFieldDefinitionIdAndEntityIdAndTenantId(UUID fieldDefinitionId, UUID entityId, UUID tenantId);
+
+    /**
      * Find value by field code and entity
      */
     @Query("SELECT v FROM CustomFieldValue v JOIN v.fieldDefinition d " +

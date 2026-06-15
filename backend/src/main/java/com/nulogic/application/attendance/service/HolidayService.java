@@ -44,8 +44,7 @@ public class HolidayService {
     public Holiday updateHoliday(UUID id, Holiday holidayData) {
         UUID tenantId = TenantContext.requireCurrentTenant();
 
-        Holiday holiday = holidayRepository.findById(id)
-                .filter(h -> h.getTenantId().equals(tenantId))
+        Holiday holiday = holidayRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Holiday not found"));
 
         holiday.setHolidayName(holidayData.getHolidayName());
@@ -63,8 +62,7 @@ public class HolidayService {
     @Transactional(readOnly = true)
     public Holiday getHolidayById(UUID id) {
         UUID tenantId = TenantContext.requireCurrentTenant();
-        return holidayRepository.findById(id)
-                .filter(h -> h.getTenantId().equals(tenantId))
+        return holidayRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Holiday not found"));
     }
 
