@@ -113,7 +113,7 @@ public class StatutoryService {
     public Optional<EmployeeTDSDeclaration> approveTDSDeclaration(UUID declarationId, UUID approverId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         log.info("Approving TDS declaration {} by approver {}", declarationId, approverId);
-        return tdsDeclarationRepository.findById(declarationId)
+        return tdsDeclarationRepository.findByIdAndTenantId(declarationId, tenantId)
                 .map(decl -> {
                     decl.setStatus(EmployeeTDSDeclaration.DeclarationStatus.APPROVED);
                     decl.setApprovedAt(tenantTimeService.now(tenantId));

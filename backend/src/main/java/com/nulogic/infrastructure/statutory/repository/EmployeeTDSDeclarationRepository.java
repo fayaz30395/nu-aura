@@ -10,6 +10,8 @@ import java.util.UUID;
 
 @Repository
 public interface EmployeeTDSDeclarationRepository extends JpaRepository<EmployeeTDSDeclaration, UUID> {
+    Optional<EmployeeTDSDeclaration> findByIdAndTenantId(UUID id, UUID tenantId);
+
     Optional<EmployeeTDSDeclaration> findByTenantIdAndEmployeeIdAndFinancialYear(
             UUID tenantId, UUID employeeId, String financialYear);
 
