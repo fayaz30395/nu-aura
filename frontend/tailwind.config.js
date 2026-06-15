@@ -114,7 +114,7 @@ module.exports = {
         'aura-lg': 'var(--r-lg)',     // 12px — card default
         'aura-xl': 'var(--r-xl)',     // 16px
         'aura-2xl': 'var(--r-2xl)',   // 22px
-        'aura-control': 'var(--r-control)', // 10px — buttons / inputs
+        'aura-control': 'var(--r-control)', // 12px — buttons / inputs
       },
       colors: {
         // ── Design Token Bridge (CSS Variables → Tailwind) ──────

@@ -168,12 +168,8 @@ public class PaymentService {
     public PaymentTransaction checkPaymentStatus(UUID paymentId) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
 
-        PaymentTransaction transaction = paymentTransactionRepository.findById(paymentId)
+        PaymentTransaction transaction = paymentTransactionRepository.findByIdAndTenantId(paymentId, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Payment not found"));
-
-        if (!transaction.getTenantId().equals(tenantId)) {
-            throw new BusinessException("Unauthorized access to payment");
-        }
 
         // Check status with provider
         PaymentGatewayAdapter adapter = getAdapterForProvider(toConfigProvider(transaction.getProvider()));
@@ -203,12 +199,8 @@ public class PaymentService {
         UUID tenantId = SecurityContext.getCurrentTenantId();
         UUID userId = SecurityContext.getCurrentUserId();
 
-        PaymentTransaction transaction = paymentTransactionRepository.findById(paymentId)
+        PaymentTransaction transaction = paymentTransactionRepository.findByIdAndTenantId(paymentId, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Payment not found"));
-
-        if (!transaction.getTenantId().equals(tenantId)) {
-            throw new BusinessException("Unauthorized access to payment");
-        }
 
         if (!PaymentTransaction.PaymentStatus.COMPLETED.equals(transaction.getStatus())) {
             throw new BusinessException("Only completed payments can be refunded");
@@ -428,12 +420,8 @@ public class PaymentService {
     public PaymentTransaction getPaymentTransaction(UUID paymentId) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
 
-        PaymentTransaction transaction = paymentTransactionRepository.findById(paymentId)
+        PaymentTransaction transaction = paymentTransactionRepository.findByIdAndTenantId(paymentId, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Payment not found"));
-
-        if (!transaction.getTenantId().equals(tenantId)) {
-            throw new BusinessException("Unauthorized access to payment");
-        }
 
         return transaction;
     }

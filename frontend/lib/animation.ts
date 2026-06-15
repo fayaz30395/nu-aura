@@ -33,7 +33,10 @@ export const MOTION_DURATION = {
 export const MOTION_EASE = {
   standard: [0.4, 0, 0.2, 1],
   outExpo: [0.16, 1, 0.3, 1],
-  spring: [0.34, 1.56, 0.64, 1],
+  // De-bounced to ease-out-expo (no overshoot). Bounce/elastic easing is banned
+  // per DESIGN.md; the brand is calm and quietly confident. Name kept for its
+  // Framer call sites (Sidebar, MobileBottomNav, scaleIn).
+  spring: [0.16, 1, 0.3, 1],
 } as const;
 
 /** Rise distance (px) for fade+rise entrances — matches --motion-rise-distance. */

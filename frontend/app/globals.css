@@ -9,7 +9,7 @@
    with a vivid blue accent. Color is a functional signal, not
    decoration. No skeuomorphic depth — clean, purposeful, fast.
 
-   Anchor: #2563EB (Tailwind blue-600 — vivid, accessible)
+   Anchor: #2952A3 (NU-AURA Blue, hue ~228 — vivid, accessible)
    Principle: Flat, modern, vibrant. Studio-grade precision.
    ================================================================ */
 
@@ -25,13 +25,14 @@
     --font-head: var(--font-display);
 
     /* ════════════════════════════════════════════════════════════════
-       PREFERS-COLOR-SCHEME OPTIMIZATION (Performance)
+       LIGHT TOKENS (canonical default)
        ════════════════════════════════════════════════════════════════
-       Define light tokens here unconditionally. When a browser's
-       prefers-color-scheme is dark, the @media (prefers-color-scheme: dark)
-       rule below will override these BEFORE hydration, preventing a
-       forced repaint on mount. This ensures the initial CSS paint uses the
-       user's system theme preference.
+       Light is the canonical theme. These tokens load unconditionally on
+       :root. Dark mode is applied by adding the `.dark` class to <html>
+       (the pre-hydration FOUC script + DarkModeProvider handle this for
+       light / dark / system before first paint). There is intentionally NO
+       `@media (prefers-color-scheme: dark)` token override — see the
+       class-driven dark-theme note below for why it caused a light-mode bug.
        ════════════════════════════════════════════════════════════════ */
 
     /* ════════════════════════════════════════════════════════════════
@@ -110,7 +111,7 @@
 
     /* ── Aura radii ── */
     --r-xs: 5px; --r-sm: 7px; --r-md: 9px; --r-lg: 12px; --r-xl: 16px; --r-2xl: 22px; --r-full: 999px;
-    --r-control: 10px;       /* buttons / inputs */
+    --r-control: 12px;       /* buttons / inputs — matches DESIGN.md control radius + the .btn-* (rounded-xl) classes */
 
     /* ── Aura spacing (4px base) ── */
     --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-5: 20px; --s-6: 24px; --s-8: 32px; --s-10: 40px; --s-12: 48px;
@@ -125,10 +126,16 @@
     --sh-focus: 0 0 0 3px var(--ring);
     --inset-input: inset 0 1px 2px rgba(16, 22, 44, 0.05);
 
-    /* ── Aura motion (matches the Wave-1 motion system below) ── */
-    --t-fast: 120ms; --t-base: 180ms; --t-slow: 280ms;
-    --ease: cubic-bezier(0.4, 0, 0.2, 1);
-    --ease-soft: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    /* ── Aura motion → aliased to the canonical Motion Layer below
+       (the single source of truth, mirrored in lib/animation.ts). These
+       previously diverged (--t-base 180ms / --t-slow 280ms) while claiming
+       to "match"; unified so one timing scale governs every surface. The
+       legacy --ease-soft (ease-out-quad) was dropped — it had no consumers
+       and predated the brand's ease-out-expo standard. */
+    --t-fast: var(--motion-fast);
+    --t-base: var(--motion-base);
+    --t-slow: var(--motion-slow);
+    --ease: var(--ease-standard);
 
     /* ── Aura type metrics (page title / stat value / micro-label) ── */
     --aura-title-size: 28px;
@@ -313,7 +320,11 @@
     --motion-slow: 320ms;
     --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
     --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
-    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    /* De-bounced to ease-out-expo. The brand is calm and quietly confident, so
+       bounce/elastic easing is banned (DESIGN.md). The name is kept for its call
+       sites (Sidebar, MobileBottomNav, .motion-scale-in); the curve no longer
+       overshoots. */
+    --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
 
     /* Elevation tokens (flat Studio Slate — alias the 3-tier system
        so downstream agents can use a stable, intent-named scale). */
@@ -334,207 +345,19 @@
   }
 
   /* ════════════════════════════════════════════════════════════════
-     AURA DARK THEME — PREFERS-COLOR-SCHEME MEDIA QUERY
+     AURA DARK THEME — class-driven (single source of truth)
      ════════════════════════════════════════════════════════════════
-     When the browser's OS preference is dark mode, load these dark tokens
-     BEFORE JavaScript hydration. This prevents an initial light-mode paint
-     followed by a forced repaint when the theme toggle script runs. Keep
-     specificity uniform with `.dark` selector rules (duplicated, not
-     combined).
-     ════════════════════════════════════════════════════════════════ */
-  @media (prefers-color-scheme: dark) {
-    :root {
-      /* ── Aura dark base tokens ── */
-      --accent: #6884dc;
-      --accent-hover: #7e96e4;
-      --accent-soft: rgba(104, 132, 220, 0.14);
-      --accent-text: #92a8e8;
+     Dark tokens are carried ONLY by `.dark` / `:root[data-theme="dark"]`,
+     the class DarkModeProvider + the pre-hydration FOUC script
+     (lib/theme/theme-script.ts, injected in <head>) set on <html> for all
+     three modes — including `system`, which the script resolves against the
+     OS preference and applies BEFORE first paint (no flash).
 
-      --bg-app: #070a14;
-      --bg-canvas: #0a0e1a;
-      --surface: #11162a;
-      --surface-aura-2: #0d1322;
-      --surface-hover: #182040;
-      --surface-sunken: #0a0e1a;
-      --rail: #06080f;
-      --rail-2: #04060c;
-      --nav: #080b16;
-      --nav-soft: rgba(255, 255, 255, 0.04);
-      --nav-active: rgba(104, 132, 220, 0.20);
-
-      --text-1: #eef1f9;
-      --text-2: #b7bdd4;
-      --text-3: #7e85a3;
-      --on-rail: #aeb4cc;
-      --on-rail-dim: #5b6280;
-
-      --border: #1e2540;
-      --border-soft: #161c33;
-      --border-aura-strong: #2b3358;
-
-      --ok-bg: rgba(22, 124, 69, 0.16);  --ok-fg: #57d08c;  --ok-bd: rgba(22, 124, 69, 0.34);
-      --warn-bg: rgba(177, 90, 9, 0.16); --warn-fg: #f0a955; --warn-bd: rgba(177, 90, 9, 0.34);
-      --err-bg: rgba(207, 47, 47, 0.16); --err-fg: #f08484; --err-bd: rgba(207, 47, 47, 0.34);
-      --info-bg: rgba(104, 132, 220, 0.14); --info-fg: #92a8e8; --info-bd: rgba(104, 132, 220, 0.30);
-      --neutral-bg: rgba(255, 255, 255, 0.06); --neutral-fg: #b7bdd4; --neutral-bd: rgba(255, 255, 255, 0.10);
-
-      --chart-axis: #5b6280;
-
-      --sh-xs: 0 1px 2px rgba(0, 0, 0, 0.4);
-      --sh-sm: 0 1px 0 rgba(255, 255, 255, 0.03) inset, 0 1px 3px rgba(0, 0, 0, 0.5);
-      --sh-md: 0 1px 0 rgba(255, 255, 255, 0.03) inset, 0 8px 24px rgba(0, 0, 0, 0.55);
-      --sh-lg: 0 1px 0 rgba(255, 255, 255, 0.03) inset, 0 16px 40px rgba(0, 0, 0, 0.6);
-      --sh-pop: 0 24px 60px rgba(0, 0, 0, 0.7), 0 8px 18px rgba(0, 0, 0, 0.5);
-      --ring: rgba(104, 132, 220, 0.32);
-      --inset-input: inset 0 1px 2px rgba(0, 0, 0, 0.35);
-
-      /* ── Surface Hierarchy → ALIASED to Aura dark surfaces ──── */
-      --bg-main: var(--bg-app);            /* #070a14 */
-      --bg-surface: var(--surface);        /* #11162a */
-      --bg-elevated: var(--surface-hover); /* #182040 — raised dark surface */
-      --bg-card: var(--surface);           /* #11162a */
-      --bg-card-hover: var(--surface-hover); /* #182040 */
-      --bg-page: var(--bg-app);            /* #070a14 */
-      --bg-input: var(--surface);          /* #11162a */
-      --bg-sidebar: var(--nav);            /* #080b16 */
-      --bg-overlay: rgba(4, 6, 12, 0.80);
-      --surface-2: var(--surface-aura-2);  /* #0d1322 */
-      --skeleton-base: #1a2138;
-
-      /* ── Background Atmosphere (Deep Aura wash) ──────────────── */
-      --bg-pattern: radial-gradient(800px 400px at 0% 0%, rgba(104, 132, 220, 0.08), transparent 60%),
-      linear-gradient(180deg, var(--bg-app), var(--bg-app) 50%);
-      --bg-pattern-size: auto, auto;
-
-      /* ── Text Hierarchy → ALIASED to Aura dark text ramp ────── */
-      --text-primary: var(--text-1);      /* #eef1f9 */
-      --text-heading: var(--text-1);      /* #eef1f9 */
-      --text-secondary: var(--text-2);    /* #b7bdd4 */
-      --text-muted: var(--text-3);        /* #7e85a3 */
-      --text-inverse: #0e1225;
-
-      /* ── Border & Divider → ALIASED to Aura dark borders ────── */
-      --border-main: var(--border);          /* #1e2540 */
-      --border-subtle: var(--border-soft);   /* #161c33 */
-      --border-strong: var(--border-aura-strong); /* #2b3358 */
-      --border-focus: var(--accent);         /* #6884dc */
-
-      /* ── Accent Scale (Dark — Aura: lighter steps for visibility) ── */
-      --accent-50: rgba(104, 132, 220, 0.10);
-      --accent-100: rgba(104, 132, 220, 0.18);
-      --accent-200: #1d356d;
-      --accent-300: #244288;
-      --accent-400: #3350b8;
-      --accent-500: #4463cf;
-      --accent-600: #6884dc;
-      --accent-700: #92a8e8;
-      --accent-800: #bcc9f2;
-      --accent-900: #dce3f8;
-      --accent-950: #f0f3fc;
-      --accent-primary: var(--accent);          /* #6884dc */
-      --accent-primary-hover: var(--accent-hover); /* #7e96e4 */
-      --accent-primary-subtle: var(--accent-soft);
-
-      /* ── Sidebar → ALIASED to Aura dark nav rail ───────────── */
-      --sidebar-active-bg: var(--nav-active);
-      --sidebar-active-border: var(--accent-300);
-      --sidebar-hover-bg: var(--nav-soft);
-      --sidebar-text: var(--on-rail);
-      --sidebar-text-active: #ffffff;
-      --sidebar-text-muted: rgba(255, 255, 255, 0.65);
-      --sidebar-border: rgba(255, 255, 255, 0.06);
-      --sidebar-section-text: rgba(255, 255, 255, 0.60);
-      --sidebar-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, rgba(0, 0, 0, 0.30) 100%);
-
-      /* ── Shadows → ALIASED to Aura dark soft-depth scale ───── */
-      --shadow-card: var(--sh-sm);
-      --shadow-card-hover: var(--sh-md);
-      --shadow-elevated: var(--sh-lg);
-      --shadow-dropdown: var(--sh-pop);
-
-      /* ── Ring / Focus → ALIASED to Aura dark ring ──────────── */
-      --ring-primary: var(--ring);
-      --ring-danger: rgba(240, 132, 132, 0.35);
-      --ring-success: rgba(87, 208, 140, 0.35);
-
-      /* ── Semantic Colors → ALIASED to Aura dark status ─────── */
-      --status-success-bg: var(--ok-bg);
-      --status-success-text: var(--ok-fg);
-      --status-success-border: var(--ok-bd);
-      --status-danger-bg: var(--err-bg);
-      --status-danger-text: var(--err-fg);
-      --status-danger-border: var(--err-bd);
-      --status-warning-bg: var(--warn-bg);
-      --status-warning-text: var(--warn-fg);
-      --status-warning-border: var(--warn-bd);
-      --status-info-bg: var(--info-bg);
-      --status-info-text: var(--info-fg);
-      --status-info-border: var(--info-bd);
-      --status-neutral-bg: var(--neutral-bg);
-      --status-neutral-text: var(--neutral-fg);
-      --status-neutral-border: var(--neutral-bd);
-
-      /* ── Header → ALIASED to translucent Aura dark surface ─── */
-      --header-bg: rgba(7, 10, 20, 0.85);
-      --header-border: var(--border);
-      --header-text: var(--text-1);
-      --header-text-muted: var(--text-3);
-      --header-hover-bg: var(--accent-soft);
-      --header-divider: var(--border);
-
-      /* ── Dropdown → ALIASED to Aura dark surface ───────────── */
-      --dropdown-bg: var(--surface);
-      --dropdown-border: var(--border);
-      --dropdown-hover: var(--surface-hover);
-      --dropdown-text: var(--text-1);
-      --dropdown-text-secondary: var(--text-3);
-      --dropdown-divider: var(--border);
-
-      /* ── Skeuomorphic tokens (FLATTENED — dark, backward compat) */
-      --shadow-skeuo-card: var(--shadow-card);
-      --shadow-skeuo-card-hover: var(--shadow-elevated);
-      --shadow-skeuo-pressed: inset 0 1px 3px rgba(0, 0, 0, 0.28);
-      --shadow-skeuo-button: none;
-      --shadow-skeuo-button-hover: var(--shadow-card);
-      --shadow-skeuo-input: none;
-      --shadow-skeuo-emboss: none;
-      --shadow-skeuo-table-header: inset 0 -1px 0 var(--border-subtle);
-      --gradient-skeuo-surface: none;
-      --gradient-skeuo-button: none;
-      --gradient-skeuo-card: none;
-      --glass-bg: rgba(17, 22, 42, 0.90);
-      --glass-border: rgba(104, 132, 220, 0.12);
-      --glass-blur: 14px;
-      --skeuo-noise: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-
-      /* ── Chart Colors (Dark) → ALIASED to Aura dark chart palette ── */
-      --chart-primary: var(--chart-1);    /* #2952A3 */
-      --chart-secondary: var(--chart-2);  /* #6884dc */
-      --chart-success: var(--ok-fg);      /* #57d08c */
-      --chart-warning: var(--chart-4);    /* #d97706 */
-      --chart-danger: var(--err-fg);      /* #f08484 */
-      --chart-info: var(--chart-3);       /* #0ea5a3 */
-      --chart-accent: var(--chart-5);     /* #8b5cf6 */
-      --chart-muted: var(--border-aura-strong);
-      --chart-grid: #1a2138;
-      --chart-tooltip-bg: var(--surface);
-      --chart-tooltip-border: var(--border);
-      --chart-tooltip-text: var(--text-1);
-      --radius-shell: 1.35rem;
-      --radius-panel: 1rem;
-      --radius-pill: 999px;
-      --shell-gradient-start: rgba(104, 132, 220, 0.08);
-      --shell-gradient-end: var(--bg-app);
-    }
-  }
-
-  /* ════════════════════════════════════════════════════════════════
-     AURA DARK THEME — JAVASCRIPT OVERRIDE
-     Carried by BOTH `.dark` (the class DarkModeProvider/theme-script set
-     on <html>) AND `:root[data-theme="dark"]` (Aura's native selector),
-     so whichever the toggle sets, full Aura dark parity applies.
-     This rule runs AFTER @media (prefers-color-scheme: dark), allowing
-     the user's JavaScript theme toggle to override the system preference.
+     We deliberately do NOT mirror these under `@media (prefers-color-scheme:
+     dark)`. An unconditional media-query override on :root cannot be beaten
+     by removing the `.dark` class (equal specificity, later source order),
+     so it trapped users on dark whenever their OS was dark even after they
+     explicitly chose Light. The FOUC script makes the media query redundant.
      ════════════════════════════════════════════════════════════════ */
   .dark,
   :root[data-theme="dark"] {
@@ -824,7 +647,9 @@
     background-color: var(--bg-card);
     border-color: var(--border-subtle);
     box-shadow: var(--shadow-card);
-    backdrop-filter: blur(6px);
+    /* No backdrop-filter: --bg-card is opaque, so the blur was invisible but
+       still forced per-frame GPU compositing on every card (scroll jank on
+       long tables/dashboards). Glass blur is reserved for translucent overlays. */
   }
 
   .card-aura:hover {
@@ -835,7 +660,7 @@
   .shell-panel {
     @apply rounded-[var(--radius-panel)] border border-[var(--border-subtle)] shadow-[var(--shadow-card)];
     background-color: var(--bg-card);
-    backdrop-filter: blur(6px);
+    /* No backdrop-filter — opaque surface, see .card-aura note above. */
     transition: transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1),
     box-shadow 180ms ease-out,
     border-color 180ms ease-out;
@@ -1750,7 +1575,7 @@
   /* ── Modal / Overlay Backdrop ───────────────────────────────── */
   .modal-backdrop {
     @apply fixed inset-0 flex items-center justify-center p-4 z-50;
-    background-color: rgba(0, 0, 0, 0.50);
+    background-color: var(--bg-overlay);
   }
 
   /* ── Card Sub-elements ──────────────────────────────────────── */
@@ -2162,7 +1987,7 @@ html, body {
 
 /* ── Subtle Card Lift on Hover ─────────────────────────────────────── */
 .card-lift {
-  transition: transform 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
+  transition: transform 200ms var(--ease-out-expo),
   box-shadow 200ms ease-out,
   border-color 200ms ease-out;
 }

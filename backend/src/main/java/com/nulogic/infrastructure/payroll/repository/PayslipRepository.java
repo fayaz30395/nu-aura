@@ -193,11 +193,13 @@ public interface PayslipRepository extends JpaRepository<Payslip, UUID> {
      */
     @Query("SELECT p.grossSalary FROM Payslip p " +
             "WHERE p.employeeId = :employeeId " +
+            "  AND p.tenantId = :tenantId " +
             "  AND (p.payPeriodYear < :periodYear " +
             "       OR (p.payPeriodYear = :periodYear AND p.payPeriodMonth <= :periodMonth)) " +
             "ORDER BY p.payPeriodYear DESC, p.payPeriodMonth DESC")
     List<BigDecimal> findGrossAtOrBeforePeriodStart(
             @Param("employeeId") UUID employeeId,
+            @Param("tenantId") UUID tenantId,
             @Param("periodYear") Integer periodYear,
             @Param("periodMonth") Integer periodMonth,
             Pageable pageable

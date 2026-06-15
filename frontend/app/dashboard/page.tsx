@@ -589,7 +589,7 @@ export default function DashboardPage() {
   const donutData = [
     {label: 'Present', value: att.present, color: 'var(--chart-1)'},
     {label: 'On leave', value: att.onLeave, color: 'var(--chart-4)'},
-    {label: 'Absent', value: att.absent, color: 'var(--chart-5)'},
+    {label: 'Absent', value: att.absent, color: 'var(--chart-danger)'},
   ].filter((d) => d.value > 0);
   const donutTotal = donutData.reduce((s, d) => s + d.value, 0) || 1;
   const presentPct = att.attendancePercentage || Math.round((att.present / donutTotal) * 100);
@@ -1002,7 +1002,7 @@ export default function DashboardPage() {
               delta: safeAnalytics.attendance.late > 0 ? `${safeAnalytics.attendance.late} late` : 'On time',
               deltaDir: 'flat' as const,
               spark: presentSpark,
-              sparkColor: 'var(--chart-3)',
+              sparkColor: 'var(--chart-success)',
               foot: `${presentPct}% of workforce`,
             },
             {
@@ -1026,7 +1026,7 @@ export default function DashboardPage() {
               delta: safeAnalytics.payroll?.currentMonth.status === 'PROCESSED' ? 'Paid' : 'On track',
               deltaDir: 'up' as const,
               spark: payrollSparkSeries,
-              sparkColor: 'var(--chart-5)',
+              sparkColor: 'var(--chart-1)',
               foot: safeAnalytics.payroll
                 ? `${safeAnalytics.payroll.currentMonth.processed} of ${safeAnalytics.headcount.total} processed`
                 : 'No payroll access',
@@ -1122,7 +1122,7 @@ export default function DashboardPage() {
                   {[
                     {label: 'Present', value: att.present, colorClass: 'bg-[var(--chart-1)]'},
                     {label: 'On leave', value: att.onLeave, colorClass: 'bg-[var(--chart-4)]'},
-                    {label: 'Absent', value: att.absent, colorClass: 'bg-[var(--chart-5)]'},
+                    {label: 'Absent', value: att.absent, colorClass: 'bg-[var(--chart-danger)]'},
                   ].map((row) => (
                     <li key={row.label} className="flex items-center gap-2.5 text-[13px]">
                       <span className={`h-2 w-2 shrink-0 rounded-full ${row.colorClass}`} aria-hidden="true"/>

@@ -159,7 +159,7 @@ const PARTICLES: Array<{ size: number; x: string; y: string; anim: string; color
     anim: 'nuaura-float-1 4s ease-in-out infinite',
     color: 'bg-accent-600 dark:bg-accent-400'
   },
-  {size: 4, x: '78%', y: '8%', anim: 'nuaura-float-2 5s ease-in-out infinite', color: 'bg-[var(--nu-purple)]'},
+  {size: 4, x: '78%', y: '8%', anim: 'nuaura-float-2 5s ease-in-out infinite', color: 'bg-accent-500 dark:bg-accent-400'},
   {
     size: 5,
     x: '8%',
@@ -181,7 +181,7 @@ const PARTICLES: Array<{ size: number; x: string; y: string; anim: string; color
     anim: 'nuaura-float-2 5.5s ease-in-out 1s infinite',
     color: 'bg-accent-500 dark:bg-accent-400'
   },
-  {size: 5, x: '88%', y: '38%', anim: 'nuaura-float-3 4s ease-in-out 0.8s infinite', color: 'bg-[var(--nu-purple)]'},
+  {size: 5, x: '88%', y: '38%', anim: 'nuaura-float-3 4s ease-in-out 0.8s infinite', color: 'bg-accent-300 dark:bg-accent-200'},
   {
     size: 3,
     x: '28%',
