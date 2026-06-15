@@ -16,5 +16,5 @@ public interface MonthlyStatutoryContributionRepository extends JpaRepository<Mo
     List<MonthlyStatutoryContribution> findByTenantIdAndMonthAndYear(
             UUID tenantId, Integer month, Integer year);
 
-    Optional<MonthlyStatutoryContribution> findByPayslipId(UUID payslipId);
+    Optional<MonthlyStatutoryContribution> findByPayslipIdAndTenantId(UUID payslipId, UUID tenantId);
 }

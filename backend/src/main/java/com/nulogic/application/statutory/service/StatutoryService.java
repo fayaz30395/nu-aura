@@ -303,7 +303,8 @@ public class StatutoryService {
      */
     @Transactional(readOnly = true)
     public Optional<MonthlyStatutoryContribution> getContributionByPayslip(UUID payslipId) {
-        log.debug("Fetching contribution for payslip {}", payslipId);
-        return contributionRepository.findByPayslipId(payslipId);
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        log.debug("Fetching contribution for payslip {} tenant {}", payslipId, tenantId);
+        return contributionRepository.findByPayslipIdAndTenantId(payslipId, tenantId);
     }
 }
