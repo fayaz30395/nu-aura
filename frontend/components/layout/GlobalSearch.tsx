@@ -658,10 +658,10 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({className, onSelect, 
         aria-selected={globalIndex === selectedIndex}
         aria-label={`${item.title}, ${item.description}`}
         className={cn(
-          'w-full flex items-center gap-2 px-4 py-2.5 text-left transition-colors border-l-2',
+          'w-full flex items-center gap-2 px-4 py-2.5 text-left transition-colors',
           globalIndex === selectedIndex
-            ? 'bg-accent-50 dark:bg-accent-950/30 border-accent-500 dark:border-accent-400'
-            : 'hover:bg-surface-50 dark:hover:bg-surface-800/50 border-transparent'
+            ? 'bg-accent-50 dark:bg-accent-950/30'
+            : 'hover:bg-surface-50 dark:hover:bg-surface-800/50'
         )}
       >
         <div className={cn(
@@ -703,10 +703,10 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({className, onSelect, 
         aria-selected={globalIndex === selectedIndex}
         aria-label={`${result.title}, ${result.subtitle}`}
         className={cn(
-          'w-full flex items-center gap-2 px-4 py-2.5 text-left transition-colors border-l-2',
+          'w-full flex items-center gap-2 px-4 py-2.5 text-left transition-colors',
           globalIndex === selectedIndex
-            ? 'bg-accent-50 dark:bg-accent-950/30 border-accent-500 dark:border-accent-400'
-            : 'hover:bg-surface-50 dark:hover:bg-surface-800/50 border-transparent'
+            ? 'bg-accent-50 dark:bg-accent-950/30'
+            : 'hover:bg-surface-50 dark:hover:bg-surface-800/50'
         )}
       >
         <div className={cn(

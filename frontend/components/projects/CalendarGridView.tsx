@@ -96,7 +96,7 @@ export function CalendarGridView({
                   style={{
                     backgroundColor: event.color + '20',
                     color: event.color,
-                    borderLeft: `3px solid ${event.color}`,
+                    border: `1px solid ${event.color}33`,
                   }}
                 >
                   {event.type === 'milestone' && (

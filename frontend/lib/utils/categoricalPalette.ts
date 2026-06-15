@@ -33,83 +33,72 @@ export const CATEGORICAL_UNSET = '#6B7280'; // tailwind gray-500 — readable on
 /** Indicator for "no activity" cells (off days, blocked slots). */
 export const CATEGORICAL_OFF = '#9CA3AF'; // tailwind gray-400
 
-const CATEGORICAL_CLASS_MAP: Record<string, {bg: string; text: string; softBg: string; border: string; borderLeft: string}> = {
+const CATEGORICAL_CLASS_MAP: Record<string, {bg: string; text: string; softBg: string; border: string}> = {
   '#2563EB': {
     bg: 'bg-[var(--accent)]',
     text: 'text-[var(--accent)]',
     softBg: 'bg-[var(--accent-soft)]',
     border: 'border-[var(--accent)]',
-    borderLeft: 'border-l-[var(--accent)]',
   },
   '#16A34A': {
     bg: 'bg-[var(--success-600)]',
     text: 'text-[var(--success-700)]',
     softBg: 'bg-[var(--success-100)]',
     border: 'border-[var(--success-600)]',
-    borderLeft: 'border-l-[var(--success-600)]',
   },
   '#D97706': {
     bg: 'bg-[var(--warning-600)]',
     text: 'text-[var(--warning-700)]',
     softBg: 'bg-[var(--warning-100)]',
     border: 'border-[var(--warning-600)]',
-    borderLeft: 'border-l-[var(--warning-600)]',
   },
   '#DC2626': {
     bg: 'bg-[var(--danger-600)]',
     text: 'text-[var(--danger-700)]',
     softBg: 'bg-[var(--danger-100)]',
     border: 'border-[var(--danger-600)]',
-    borderLeft: 'border-l-[var(--danger-600)]',
   },
   '#9333EA': {
     bg: 'bg-[var(--chart-4)]',
     text: 'text-[var(--chart-4)]',
     softBg: 'bg-[var(--chart-4)]',
     border: 'border-[var(--chart-4)]',
-    borderLeft: 'border-l-[var(--chart-4)]',
   },
   '#0891B2': {
     bg: 'bg-[var(--chart-1)]',
     text: 'text-[var(--chart-1)]',
     softBg: 'bg-[var(--chart-1)]',
     border: 'border-[var(--chart-1)]',
-    borderLeft: 'border-l-[var(--chart-1)]',
   },
   '#DB2777': {
     bg: 'bg-[var(--chart-5)]',
     text: 'text-[var(--chart-5)]',
     softBg: 'bg-[var(--chart-5)]',
     border: 'border-[var(--chart-5)]',
-    borderLeft: 'border-l-[var(--chart-5)]',
   },
   '#EA580C': {
     bg: 'bg-[var(--chart-3)]',
     text: 'text-[var(--chart-3)]',
     softBg: 'bg-[var(--chart-3)]',
     border: 'border-[var(--chart-3)]',
-    borderLeft: 'border-l-[var(--chart-3)]',
   },
   '#65A30D': {
     bg: 'bg-[var(--success-700)]',
     text: 'text-[var(--success-700)]',
     softBg: 'bg-[var(--success-100)]',
     border: 'border-[var(--success-700)]',
-    borderLeft: 'border-l-[var(--success-700)]',
   },
   '#475569': {
     bg: 'bg-[var(--text-3)]',
     text: 'text-[var(--text-3)]',
     softBg: 'bg-[var(--surface-200)]',
     border: 'border-[var(--text-3)]',
-    borderLeft: 'border-l-[var(--text-3)]',
   },
   '#6B7280': {
     bg: 'bg-[var(--text-3)]',
     text: 'text-[var(--text-3)]',
     softBg: 'bg-[var(--surface-200)]',
     border: 'border-[var(--text-3)]',
-    borderLeft: 'border-l-[var(--text-3)]',
   },
 };
 
@@ -131,10 +120,6 @@ export function categoricalSoftBgClass(color: string | null | undefined): string
 
 export function categoricalBorderClass(color: string | null | undefined): string {
   return resolveCategoricalClass(color).border;
-}
-
-export function categoricalBorderLeftClass(color: string | null | undefined): string {
-  return resolveCategoricalClass(color).borderLeft;
 }
 
 /**

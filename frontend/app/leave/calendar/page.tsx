@@ -9,7 +9,7 @@ import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {useActiveLeaveTypes, useEmployeeLeaveRequests, useLeaveRequestsByStatus} from '@/lib/hooks/queries/useLeaves';
 import {LeaveRequest} from '@/lib/types/hrms/leave';
 import {Stat} from '@/components/ui/Stat';
-import {categoricalBgClass, categoricalBorderLeftClass, categoricalSoftBgClass} from '@/lib/utils/categoricalPalette';
+import {categoricalBgClass, categoricalSoftBgClass, categoricalTextClass} from '@/lib/utils/categoricalPalette';
 
 interface Holiday {
   id: string;
@@ -280,7 +280,7 @@ export default function LeaveCalendarPage() {
                       return (
                         <div
                           key={idx}
-                          className={`text-xs p-1 rounded mb-1 truncate cursor-pointer hover:opacity-80 border-l-4 ${categoricalSoftBgClass(leaveType?.colorCode)} ${categoricalBorderLeftClass(leaveType?.colorCode)}`}
+                          className={`text-xs px-1.5 py-1 rounded mb-1 truncate cursor-pointer hover:opacity-80 ${categoricalSoftBgClass(leaveType?.colorCode)} ${categoricalTextClass(leaveType?.colorCode)}`}
                           title={`${leaveType?.leaveName} - ${leave.reason || 'No reason'}`}
                         >
                           {viewMode === 'team' ? (
