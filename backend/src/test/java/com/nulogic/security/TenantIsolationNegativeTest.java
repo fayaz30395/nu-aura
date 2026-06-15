@@ -278,24 +278,14 @@ class TenantIsolationNegativeTest {
         void shouldRejectCrossTenantPaymentStatusCheck() {
             // Given - payment belongs to Tenant B
             UUID paymentId = UUID.randomUUID();
-            PaymentTransaction tenantBPayment = PaymentTransaction.builder()
-                    .transactionRef("TXN-B-001")
-                    .type(PaymentTransaction.PaymentType.PAYROLL)
-                    .amount(new BigDecimal("10000"))
-                    .currency("INR")
-                    .provider(PaymentTransaction.PaymentProvider.RAZORPAY)
-                    .status(PaymentTransaction.PaymentStatus.COMPLETED)
-                    .build();
-            tenantBPayment.setId(paymentId);
-            tenantBPayment.setTenantId(TENANT_B); // Different tenant!
+            // Tenant B's payment is invisible to the atomic tenant-scoped query under Tenant A's context.
+            when(paymentTransactionRepository.findByIdAndTenantId(paymentId, TENANT_A))
+                    .thenReturn(Optional.empty());
 
-            when(paymentTransactionRepository.findById(paymentId))
-                    .thenReturn(Optional.of(tenantBPayment));
-
-            // When/Then - Tenant A context should be rejected
+            // When/Then - cross-tenant access rejected (not-found, no existence leak)
             assertThatThrownBy(() -> paymentService.checkPaymentStatus(paymentId))
-                    .isInstanceOf(BusinessException.class)
-                    .hasMessageContaining("Unauthorized access to payment");
+                    .isInstanceOf(ResourceNotFoundException.class)
+                    .hasMessage("Payment not found");
         }
 
         @Test
@@ -303,23 +293,14 @@ class TenantIsolationNegativeTest {
         void shouldRejectCrossTenantPaymentDetailsAccess() {
             // Given
             UUID paymentId = UUID.randomUUID();
-            PaymentTransaction tenantBPayment = PaymentTransaction.builder()
-                    .transactionRef("TXN-B-002")
-                    .type(PaymentTransaction.PaymentType.EXPENSE_REIMBURSEMENT)
-                    .amount(new BigDecimal("5000"))
-                    .currency("INR")
-                    .provider(PaymentTransaction.PaymentProvider.STRIPE)
-                    .build();
-            tenantBPayment.setId(paymentId);
-            tenantBPayment.setTenantId(TENANT_B);
+            // Tenant B's payment is invisible to the atomic tenant-scoped query under Tenant A's context.
+            when(paymentTransactionRepository.findByIdAndTenantId(paymentId, TENANT_A))
+                    .thenReturn(Optional.empty());
 
-            when(paymentTransactionRepository.findById(paymentId))
-                    .thenReturn(Optional.of(tenantBPayment));
-
-            // When/Then
+            // When/Then - cross-tenant access rejected (not-found, no existence leak)
             assertThatThrownBy(() -> paymentService.getPaymentTransaction(paymentId))
-                    .isInstanceOf(BusinessException.class)
-                    .hasMessageContaining("Unauthorized access to payment");
+                    .isInstanceOf(ResourceNotFoundException.class)
+                    .hasMessage("Payment not found");
         }
 
         @Test
@@ -327,24 +308,14 @@ class TenantIsolationNegativeTest {
         void shouldRejectCrossTenantRefund() {
             // Given
             UUID paymentId = UUID.randomUUID();
-            PaymentTransaction tenantBPayment = PaymentTransaction.builder()
-                    .transactionRef("TXN-B-003")
-                    .type(PaymentTransaction.PaymentType.PAYROLL)
-                    .amount(new BigDecimal("25000"))
-                    .currency("INR")
-                    .provider(PaymentTransaction.PaymentProvider.RAZORPAY)
-                    .status(PaymentTransaction.PaymentStatus.COMPLETED)
-                    .build();
-            tenantBPayment.setId(paymentId);
-            tenantBPayment.setTenantId(TENANT_B);
+            // Tenant B's payment is invisible to the atomic tenant-scoped query under Tenant A's context.
+            when(paymentTransactionRepository.findByIdAndTenantId(paymentId, TENANT_A))
+                    .thenReturn(Optional.empty());
 
-            when(paymentTransactionRepository.findById(paymentId))
-                    .thenReturn(Optional.of(tenantBPayment));
-
-            // When/Then
+            // When/Then - cross-tenant refund rejected (not-found, no existence leak)
             assertThatThrownBy(() -> paymentService.processRefund(paymentId, "Cross-tenant attack"))
-                    .isInstanceOf(BusinessException.class)
-                    .hasMessageContaining("Unauthorized access to payment");
+                    .isInstanceOf(ResourceNotFoundException.class)
+                    .hasMessage("Payment not found");
 
             // Verify no refund was processed
             verify(paymentRefundRepository, never()).save(any(PaymentRefund.class));

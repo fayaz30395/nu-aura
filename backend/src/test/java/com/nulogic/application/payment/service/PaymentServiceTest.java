@@ -38,6 +38,11 @@ import static org.mockito.Mockito.*;
 class PaymentServiceTest {
 
     private static final UUID TENANT_ID = UUID.randomUUID();
+    // NOTE: PaymentService now uses the atomic tenant-scoped query
+    // paymentTransactionRepository.findByIdAndTenantId(id, SecurityContext.getCurrentTenantId()).
+    // Cross-tenant access therefore returns Optional.empty() -> ResourceNotFoundException
+    // ("Payment not found"), an anti-enumeration improvement over the old
+    // fetch-then-verify -> BusinessException("Unauthorized access") pattern.
     private static final UUID USER_ID = UUID.randomUUID();
 
     @Mock
@@ -217,7 +222,7 @@ class PaymentServiceTest {
 
             PaymentConfig config = buildConfig(PaymentConfig.PaymentProvider.RAZORPAY);
 
-            when(paymentTransactionRepository.findById(paymentId)).thenReturn(Optional.of(transaction));
+            when(paymentTransactionRepository.findByIdAndTenantId(paymentId, TENANT_ID)).thenReturn(Optional.of(transaction));
             when(paymentConfigRepository.findByTenantIdAndProviderAndIsActiveTrueAndIsDeletedFalse(
                     TENANT_ID, PaymentConfig.PaymentProvider.RAZORPAY))
                     .thenReturn(Optional.of(config));
@@ -243,7 +248,7 @@ class PaymentServiceTest {
         void shouldThrowWhenPaymentNotFound() {
             // Given
             UUID paymentId = UUID.randomUUID();
-            when(paymentTransactionRepository.findById(paymentId)).thenReturn(Optional.empty());
+            when(paymentTransactionRepository.findByIdAndTenantId(paymentId, TENANT_ID)).thenReturn(Optional.empty());
 
             // When/Then
             assertThatThrownBy(() -> paymentService.checkPaymentStatus(paymentId))
@@ -256,16 +261,14 @@ class PaymentServiceTest {
         void shouldThrowWhenAccessingOtherTenantPayment() {
             // Given
             UUID paymentId = UUID.randomUUID();
-            PaymentTransaction transaction = buildTransaction(PaymentTransaction.PaymentProvider.RAZORPAY);
-            transaction.setId(paymentId);
-            transaction.setTenantId(UUID.randomUUID()); // different tenant
+            // A payment owned by another tenant is invisible to the atomic
+            // tenant-scoped query, so the repository returns empty.
+            when(paymentTransactionRepository.findByIdAndTenantId(paymentId, TENANT_ID)).thenReturn(Optional.empty());
 
-            when(paymentTransactionRepository.findById(paymentId)).thenReturn(Optional.of(transaction));
-
-            // When/Then
+            // When/Then — atomic lookup returns not-found rather than leaking existence
             assertThatThrownBy(() -> paymentService.checkPaymentStatus(paymentId))
-                    .isInstanceOf(BusinessException.class)
-                    .hasMessageContaining("Unauthorized access");
+                    .isInstanceOf(ResourceNotFoundException.class)
+                    .hasMessage("Payment not found");
         }
     }
 
@@ -288,7 +291,7 @@ class PaymentServiceTest {
 
             PaymentConfig config = buildConfig(PaymentConfig.PaymentProvider.RAZORPAY);
 
-            when(paymentTransactionRepository.findById(paymentId)).thenReturn(Optional.of(transaction));
+            when(paymentTransactionRepository.findByIdAndTenantId(paymentId, TENANT_ID)).thenReturn(Optional.of(transaction));
             when(paymentConfigRepository.findByTenantIdAndProviderAndIsActiveTrueAndIsDeletedFalse(
                     TENANT_ID, PaymentConfig.PaymentProvider.RAZORPAY))
                     .thenReturn(Optional.of(config));
@@ -326,7 +329,7 @@ class PaymentServiceTest {
             transaction.setTenantId(TENANT_ID);
             transaction.setStatus(PaymentTransaction.PaymentStatus.PROCESSING);
 
-            when(paymentTransactionRepository.findById(paymentId)).thenReturn(Optional.of(transaction));
+            when(paymentTransactionRepository.findByIdAndTenantId(paymentId, TENANT_ID)).thenReturn(Optional.of(transaction));
 
             // When/Then
             assertThatThrownBy(() -> paymentService.processRefund(paymentId, "Reason"))
@@ -347,7 +350,7 @@ class PaymentServiceTest {
 
             PaymentConfig config = buildConfig(PaymentConfig.PaymentProvider.RAZORPAY);
 
-            when(paymentTransactionRepository.findById(paymentId)).thenReturn(Optional.of(transaction));
+            when(paymentTransactionRepository.findByIdAndTenantId(paymentId, TENANT_ID)).thenReturn(Optional.of(transaction));
             when(paymentConfigRepository.findByTenantIdAndProviderAndIsActiveTrueAndIsDeletedFalse(
                     TENANT_ID, PaymentConfig.PaymentProvider.RAZORPAY))
                     .thenReturn(Optional.of(config));
@@ -511,7 +514,7 @@ class PaymentServiceTest {
             txn.setId(paymentId);
             txn.setTenantId(TENANT_ID);
 
-            when(paymentTransactionRepository.findById(paymentId)).thenReturn(Optional.of(txn));
+            when(paymentTransactionRepository.findByIdAndTenantId(paymentId, TENANT_ID)).thenReturn(Optional.of(txn));
 
             // When
             PaymentTransaction result = paymentService.getPaymentTransaction(paymentId);
@@ -526,16 +529,14 @@ class PaymentServiceTest {
         void shouldThrowWhenGettingPaymentFromDifferentTenant() {
             // Given
             UUID paymentId = UUID.randomUUID();
-            PaymentTransaction txn = buildTransaction(PaymentTransaction.PaymentProvider.RAZORPAY);
-            txn.setId(paymentId);
-            txn.setTenantId(UUID.randomUUID()); // different tenant
+            // A payment owned by another tenant is invisible to the atomic
+            // tenant-scoped query, so the repository returns empty.
+            when(paymentTransactionRepository.findByIdAndTenantId(paymentId, TENANT_ID)).thenReturn(Optional.empty());
 
-            when(paymentTransactionRepository.findById(paymentId)).thenReturn(Optional.of(txn));
-
-            // When/Then
+            // When/Then — atomic lookup returns not-found rather than leaking existence
             assertThatThrownBy(() -> paymentService.getPaymentTransaction(paymentId))
-                    .isInstanceOf(BusinessException.class)
-                    .hasMessageContaining("Unauthorized access");
+                    .isInstanceOf(ResourceNotFoundException.class)
+                    .hasMessage("Payment not found");
         }
     }
 }
