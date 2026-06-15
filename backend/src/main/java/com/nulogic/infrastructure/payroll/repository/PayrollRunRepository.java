@@ -20,6 +20,8 @@ public interface PayrollRunRepository extends JpaRepository<PayrollRun, UUID> {
 
     Page<PayrollRun> findAllByTenantId(UUID tenantId, Pageable pageable);
 
+    Optional<PayrollRun> findByIdAndTenantId(UUID id, UUID tenantId);
+
     Optional<PayrollRun> findByTenantIdAndPayPeriodYearAndPayPeriodMonth(
             UUID tenantId,
             Integer year,

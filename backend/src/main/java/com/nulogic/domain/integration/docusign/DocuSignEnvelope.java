@@ -44,7 +44,6 @@ import java.util.UUID;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@SQLRestriction("is_deleted = false")
 @Entity
 @SQLRestriction("is_deleted = false")
 @Table(name = "docusign_envelopes", indexes = {

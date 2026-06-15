@@ -30,7 +30,6 @@ import java.util.Set;
  * <p><strong>Multi-Tenancy:</strong> Extends {@link TenantAware} which automatically
  * handles tenant isolation via Spring Data JPA queries and PostgreSQL RLS.</p>
  */
-@SQLRestriction("is_deleted = false")
 @Entity
 @SQLRestriction("is_deleted = false")
 @Table(name = "integration_connector_configs", indexes = {

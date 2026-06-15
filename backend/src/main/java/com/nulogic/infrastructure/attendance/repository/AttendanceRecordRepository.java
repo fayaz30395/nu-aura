@@ -23,6 +23,9 @@ public interface AttendanceRecordRepository
     Optional<AttendanceRecord> findByEmployeeIdAndAttendanceDateAndTenantId(
             UUID employeeId, LocalDate attendanceDate, UUID tenantId);
 
+    List<AttendanceRecord> findByEmployeeIdInAndAttendanceDateAndTenantId(
+            java.util.Collection<UUID> employeeIds, LocalDate attendanceDate, UUID tenantId);
+
     Page<AttendanceRecord> findAllByTenantId(UUID tenantId, Pageable pageable);
 
     Page<AttendanceRecord> findAllByTenantIdAndEmployeeId(UUID tenantId, UUID employeeId, Pageable pageable);

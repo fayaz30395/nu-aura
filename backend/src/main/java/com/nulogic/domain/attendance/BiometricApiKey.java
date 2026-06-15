@@ -14,7 +14,6 @@ import java.util.UUID;
  * API keys for biometric device authentication.
  * Devices use API key auth (not JWT) since they cannot perform OAuth flows.
  */
-@SQLRestriction("is_deleted = false")
 @Entity
 @SQLRestriction("is_deleted = false")
 @Table(name = "biometric_api_keys", indexes = {

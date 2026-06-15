@@ -6,8 +6,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @Repository
@@ -20,6 +22,9 @@ public interface AttendanceTimeEntryRepository extends JpaRepository<AttendanceT
 
     @Query("SELECT e FROM AttendanceTimeEntry e WHERE e.attendanceRecordId = :recordId AND e.checkOutTime IS NULL")
     List<AttendanceTimeEntry> findAllOpenEntriesByAttendanceRecordId(@Param("recordId") UUID attendanceRecordId);
+
+    @Query("SELECT e FROM AttendanceTimeEntry e WHERE e.attendanceRecordId IN :recordIds AND e.checkOutTime IS NULL")
+    List<AttendanceTimeEntry> findOpenEntriesByAttendanceRecordIdIn(@Param("recordIds") Collection<UUID> recordIds);
 
     @Query("SELECT COALESCE(MAX(e.sequenceNumber), 0) FROM AttendanceTimeEntry e WHERE e.attendanceRecordId = :recordId")
     int getMaxSequenceNumber(@Param("recordId") UUID attendanceRecordId);

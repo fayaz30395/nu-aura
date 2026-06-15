@@ -33,7 +33,6 @@ import org.hibernate.annotations.SQLRestriction;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@SQLRestriction("is_deleted = false")
 @Entity
 @SQLRestriction("is_deleted = false")
 @Table(name = "docusign_template_mappings", indexes = {
