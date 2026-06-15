@@ -575,10 +575,12 @@ export default function CareersPage() {
 
               {/* Department Filter */}
               <div className="mb-6">
-                <label className="block text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide mb-2">
+                <label htmlFor="careers-filter-department" className="block text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide mb-2">
                   Department
                 </label>
                 <select
+                  id="careers-filter-department"
+                  aria-label="Filter by department"
                   value={selectedDepartment}
                   onChange={(e) => {
                     setSelectedDepartment(e.target.value);
@@ -597,10 +599,12 @@ export default function CareersPage() {
 
               {/* Location Filter */}
               <div className="mb-6">
-                <label className="block text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide mb-2">
+                <label htmlFor="careers-filter-location" className="block text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide mb-2">
                   Location
                 </label>
                 <select
+                  id="careers-filter-location"
+                  aria-label="Filter by location"
                   value={selectedLocation}
                   onChange={(e) => {
                     setSelectedLocation(e.target.value);
@@ -619,10 +623,12 @@ export default function CareersPage() {
 
               {/* Employment Type Filter */}
               <div className="mb-6">
-                <label className="block text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide mb-2">
+                <label htmlFor="careers-filter-type" className="block text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide mb-2">
                   Employment Type
                 </label>
                 <select
+                  id="careers-filter-type"
+                  aria-label="Filter by employment type"
                   value={selectedType}
                   onChange={(e) => {
                     setSelectedType(e.target.value);

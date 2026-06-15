@@ -260,11 +260,11 @@ export default function SignupPage() {
 
                   <p className="text-xs text-center text-[var(--text-muted)]">
                     By creating an account, you agree to our{' '}
-                    <Link href="/terms" className="text-accent-700 dark:text-accent-400 hover:underline">
+                    <Link href="/terms" className="text-accent-700 dark:text-accent-400 underline underline-offset-2">
                       Terms of Service
                     </Link>{' '}
                     and{' '}
-                    <Link href="/privacy" className="text-accent-700 dark:text-accent-400 hover:underline">
+                    <Link href="/privacy" className="text-accent-700 dark:text-accent-400 underline underline-offset-2">
                       Privacy Policy
                     </Link>
                   </p>
