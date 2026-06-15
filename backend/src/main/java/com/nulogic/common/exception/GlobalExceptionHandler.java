@@ -420,9 +420,9 @@ public class GlobalExceptionHandler {
                 requestId, path, tenantId, ex.getMessage());
         recordErrorMetric("feature", "not_implemented", status);
 
-        String message = ex.getMessage() != null && !ex.getMessage().isBlank()
-                ? ex.getMessage()
-                : "This feature is not yet available.";
+        // SEC: never expose UnsupportedOperationException message — it may contain internal
+        // implementation notes (e.g. "pending Kafka integration") visible to any authenticated user.
+        String message = "This feature is not yet available.";
         ErrorResponse errorResponse = buildErrorResponse(status, "Not Implemented", message, path);
         errorResponse.setErrorCode("FEATURE_NOT_AVAILABLE");
 
@@ -719,7 +719,8 @@ public class GlobalExceptionHandler {
                 message = String.format("Invalid value '%s' for field", ife.getValue());
             }
         } else if (cause instanceof com.fasterxml.jackson.core.JsonParseException) {
-            message = "Malformed JSON: " + ((com.fasterxml.jackson.core.JsonParseException) cause).getOriginalMessage();
+            // SEC: never expose getOriginalMessage() — it leaks byte offsets and parser internals
+            message = "Malformed JSON in request body";
         }
 
         logError("validation", "message_not_readable", ex, status, path);
