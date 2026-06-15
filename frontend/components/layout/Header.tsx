@@ -192,7 +192,7 @@ const Header: React.FC<HeaderProps> = ({
                 >
                   <span
                     data-testid="notification-count"
-                    className="relative inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-[var(--accent-primary)] px-1 text-2xs font-semibold text-white"
+                    className="relative inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-[var(--btn-primary-bg)] px-1 text-2xs font-semibold text-white"
                     aria-hidden="true"
                   >
                     {totalUnreadCount > 9 ? '9+' : totalUnreadCount}

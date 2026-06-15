@@ -46,7 +46,7 @@ export default function NotFound() {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <Link
             href="/me/dashboard"
-            className="inline-flex items-center justify-center gap-2 h-11 px-6 rounded-xl font-medium text-sm text-white bg-[var(--accent-primary)] hover:bg-[var(--accent-primary-hover)] transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+            className="inline-flex items-center justify-center gap-2 h-11 px-6 rounded-xl font-medium text-sm text-white bg-[var(--btn-primary-bg)] hover:bg-[var(--btn-primary-bg-hover)] transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
             <IconHome size={18}/>
             Go to Dashboard

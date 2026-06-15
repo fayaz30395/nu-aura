@@ -365,7 +365,7 @@ export function ScorecardForm({
           type="button"
           onClick={handleSubmitScorecard}
           disabled={isSaving}
-          className="skeuo-button flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg bg-[var(--accent-primary)] text-white cursor-pointer hover:bg-[var(--accent-primary-hover)] active:translate-y-px disabled:opacity-50 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)]"
+          className="skeuo-button flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg bg-[var(--btn-primary-bg)] text-white cursor-pointer hover:bg-[var(--btn-primary-bg-hover)] active:translate-y-px disabled:opacity-50 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)]"
         >
           <Send size={14}/>
           Submit

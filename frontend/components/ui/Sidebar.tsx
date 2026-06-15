@@ -145,7 +145,7 @@ const ChildrenFlyover: React.FC<{
             </span>
             {item.badge && (
               <span
-                className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-xs font-medium bg-[var(--accent-primary)] text-white">
+                className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-xs font-medium bg-[var(--btn-primary-bg)] text-white">
                 {item.badge}
               </span>
             )}
@@ -356,7 +356,7 @@ const SidebarMenuItem: React.FC<{
               <span className={cn(
                 'flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-xs font-medium transform-gpu transition-[background-color,color,transform] duration-[var(--motion-base)] ease-[var(--ease-spring)]',
                 isActiveState
-                  ? 'bg-[var(--accent-primary)] text-white scale-105'
+                  ? 'bg-[var(--btn-primary-bg)] text-white scale-105'
                   : 'bg-[var(--sidebar-hover-bg)] text-[var(--sidebar-text)]'
               )}>
                 {item.badge}
@@ -383,7 +383,7 @@ const SidebarMenuItem: React.FC<{
           className="absolute left-full ml-2 px-2.5 py-1.5 bg-[var(--bg-elevated)] border border-[var(--border-main)] text-[var(--text-primary)] text-sm rounded-md opacity-0 invisible -translate-x-1 group-hover:opacity-100 group-hover:visible group-hover:translate-x-0 group-focus-within:opacity-100 group-focus-within:visible group-focus-within:translate-x-0 whitespace-nowrap z-50 shadow-[var(--shadow-dropdown)] pointer-events-none transform-gpu transition-[transform,opacity] duration-[var(--motion-base)] ease-[var(--ease-out-expo)]">
           {item.label}
           {item.badge && (
-            <span className="ml-2 px-1.5 py-0.5 bg-[var(--accent-primary)] rounded-full text-xs text-white">
+            <span className="ml-2 px-1.5 py-0.5 bg-[var(--btn-primary-bg)] rounded-full text-xs text-white">
               {item.badge}
             </span>
           )}

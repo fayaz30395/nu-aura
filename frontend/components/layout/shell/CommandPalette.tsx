@@ -212,7 +212,7 @@ export function CommandPalette({open, onClose, sections, extraItems = []}: Comma
                       className={cn(
                         'grid h-[30px] w-[30px] flex-shrink-0 place-items-center rounded-[8px] transition-[background-color,color] duration-[var(--t-fast)] [&_svg]:h-4 [&_svg]:w-4',
                         isActive
-                          ? 'bg-[var(--accent)] text-white'
+                          ? 'bg-[var(--btn-primary-bg)] text-white'
                           : 'bg-[var(--surface-2)] text-[var(--text-2)]'
                       )}
                     >
