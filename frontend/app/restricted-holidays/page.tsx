@@ -982,6 +982,7 @@ function HolidayFormModal({isOpen, holiday, onClose, onSubmit, isSubmitting}: Ho
               Category
             </label>
             <select
+              aria-label="Category"
               {...form.register('category')}
               className="w-full rounded-lg border border-surface-300 dark:border-surface-600 px-4 py-2
                 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:border-accent-700

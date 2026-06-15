@@ -205,6 +205,7 @@ export default function FeedbackPage() {
                 Filter by Type
               </label>
               <select
+                aria-label="Filter by Type"
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value as FeedbackType | 'ALL')}
                 className="w-full md:w-1/2 px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
@@ -336,6 +337,7 @@ export default function FeedbackPage() {
                         Feedback Type *
                       </label>
                       <select
+                        aria-label="Feedback Type"
                         {...register('feedbackType')}
                         className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                       >

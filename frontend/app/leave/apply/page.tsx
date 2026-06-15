@@ -129,6 +129,7 @@ export default function ApplyLeavePage() {
                 Leave Type *
               </label>
               <select
+                aria-label="Leave Type"
                 {...register('leaveTypeId')}
                 className="input-aura"
               >

@@ -253,6 +253,7 @@ function CreatePIPModal({open, onClose, onSuccess}: { open: boolean; onClose: ()
               Reason
             </label>
             <select
+              aria-label="Reason"
               {...register('reason')}
               className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
             >
@@ -333,6 +334,7 @@ function CreatePIPModal({open, onClose, onSuccess}: { open: boolean; onClose: ()
               Check-in Frequency
             </label>
             <select
+              aria-label="Check-in Frequency"
               {...register('checkInFrequency')}
               className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
             >

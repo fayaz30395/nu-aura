@@ -462,6 +462,7 @@ export default function HolidayCalendarManagementPage() {
                             Holiday Type *
                           </label>
                           <select
+                            aria-label="Holiday Type"
                             {...form.register('holidayType')}
                             className="input-aura"
                           >

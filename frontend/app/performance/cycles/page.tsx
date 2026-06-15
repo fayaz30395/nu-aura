@@ -459,6 +459,7 @@ export default function ReviewCyclesPage() {
                           Cycle Type *
                         </label>
                         <select
+                          aria-label="Cycle Type"
                           {...register('cycleType')}
                           className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                         >
@@ -479,6 +480,7 @@ export default function ReviewCyclesPage() {
                           Status *
                         </label>
                         <select
+                          aria-label="Status"
                           {...register('status')}
                           className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                         >

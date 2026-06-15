@@ -82,6 +82,7 @@ export default function LeaveCarryForwardPage() {
                 Carry Forward From Year
               </label>
               <select
+                aria-label="Carry Forward From Year"
                 value={fromYear}
                 onChange={(e) => setFromYear(Number(e.target.value))}
                 className="input-aura"

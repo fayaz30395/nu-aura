@@ -335,6 +335,7 @@ export default function ShiftPatternsPage() {
                           Rotation Type
                         </label>
                         <select
+                          aria-label="Rotation Type"
                           {...form.register('rotationType')}
                           className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
                         >

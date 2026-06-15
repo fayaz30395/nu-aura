@@ -125,6 +125,7 @@ export default function MyLeavesPage() {
           <div className="flex gap-4 items-center">
             <label className="text-sm font-medium text-[var(--text-secondary)]">Filter by Status:</label>
             <select
+              aria-label="Filter by Status"
               value={filterStatus}
               onChange={(e) => {
                 setFilterStatus(e.target.value as LeaveRequestStatus | '');

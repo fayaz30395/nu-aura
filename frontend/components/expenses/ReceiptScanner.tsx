@@ -307,6 +307,7 @@ export function ReceiptScanner({onConfirm, onCancel}: ReceiptScannerProps) {
                   Currency
                 </label>
                 <select
+                  aria-label="Currency"
                   value={editCurrency}
                   onChange={(e) => setEditCurrency(e.target.value)}
                   className="w-full px-4 py-2 border border-[var(--border-soft)] rounded-[var(--r-control)] bg-[var(--surface)] text-[var(--text-1)] focus:outline-none focus:ring-2 focus:ring-[var(--ring)] focus:ring-offset-2"

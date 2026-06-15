@@ -515,6 +515,7 @@ function CreateSpotlightModal({isOpen, spotlight, onClose, onSuccess}: CreateSpo
                   Background Gradient
                 </label>
                 <select
+                  aria-label="Background Gradient"
                   {...register('bgGradient')}
                   className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-warning-500 focus:border-transparent dark:bg-[var(--bg-secondary)] dark:text-white"
                 >

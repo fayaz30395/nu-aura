@@ -320,6 +320,7 @@ const FilterRow: React.FC<FilterRowProps> = ({
           Field
         </label>
         <select
+          aria-label="Field"
           value={condition.field}
           onChange={(e) => handleFieldChange(e.target.value)}
           className={cn(
@@ -347,6 +348,7 @@ const FilterRow: React.FC<FilterRowProps> = ({
             Operator
           </label>
           <select
+            aria-label="Operator"
             value={condition.operator}
             onChange={(e) => handleOperatorChange(e.target.value)}
             className={cn(

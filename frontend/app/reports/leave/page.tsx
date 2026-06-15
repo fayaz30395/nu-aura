@@ -139,6 +139,7 @@ export default function LeaveReportsPage() {
                   <div>
                     <label className="block text-caption mb-1">Leave Status</label>
                     <select
+                      aria-label="Leave Status"
                       value={leaveStatus}
                       onChange={(e) => setLeaveStatus(e.target.value)}
                       className="input-aura"

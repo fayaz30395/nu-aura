@@ -288,6 +288,7 @@ export default function JobBoardsPage() {
                   <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Select Job Opening
                     *</label>
                   <select
+                    aria-label="Select Job Opening"
                     {...register('jobId')}
                     className="input-aura"
                   >

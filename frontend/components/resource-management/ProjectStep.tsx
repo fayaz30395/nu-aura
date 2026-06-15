@@ -89,6 +89,7 @@ export function ProjectStep({
               Select Project
             </label>
             <select
+              aria-label="Select Project"
               value={selectedProjectId}
               onChange={(e) => onSelectedProjectIdChange(e.target.value)}
               className="w-full rounded-[var(--r-md)] border border-[var(--border)] bg-[var(--bg-input)] px-4 py-2.5 text-[var(--text-1)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
@@ -205,6 +206,7 @@ export function ProjectStep({
                 Project Manager
               </label>
               <select
+                aria-label="Project Manager"
                 value={projectData.projectManagerId}
                 onChange={(e) => onProjectDataChange({...projectData, projectManagerId: e.target.value})}
                 className="w-full rounded-[var(--r-md)] border border-[var(--border)] bg-[var(--bg-input)] px-4 py-2.5 text-[var(--text-1)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]"

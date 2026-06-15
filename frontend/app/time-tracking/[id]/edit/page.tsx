@@ -300,6 +300,7 @@ export default function EditTimeEntryPage() {
               Entry Type
             </label>
             <select
+              aria-label="Entry Type"
               {...register('entryType')}
               className="w-full px-4 py-4 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500"
             >

@@ -173,6 +173,7 @@ function PayslipsPageContent() {
                   Month
                 </label>
                 <select
+                  aria-label="Month"
                   value={selectedMonth}
                   onChange={(e) => setSelectedMonth(e.target.value)}
                   className="input-aura w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
@@ -192,6 +193,7 @@ function PayslipsPageContent() {
                   Year
                 </label>
                 <select
+                  aria-label="Year"
                   value={selectedYear}
                   onChange={(e) => setSelectedYear(e.target.value)}
                   className="input-aura w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
@@ -211,6 +213,7 @@ function PayslipsPageContent() {
                   Status
                 </label>
                 <select
+                  aria-label="Status"
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value as PayslipStatus)}
                   className="input-aura w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"

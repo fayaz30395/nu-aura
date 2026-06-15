@@ -1176,6 +1176,7 @@ export default function LettersPage() {
                     Template *
                   </label>
                   <select
+                    aria-label="Template"
                     {...offerLetterForm.register('templateId')}
                     onChange={(e) => handleOfferTemplateSelect(e.target.value)}
                     className="w-full px-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
@@ -1203,6 +1204,7 @@ export default function LettersPage() {
                     Candidate *
                   </label>
                   <select
+                    aria-label="Candidate"
                     {...offerLetterForm.register('candidateId')}
                     onChange={(e) => handleCandidateSelect(e.target.value)}
                     className="w-full px-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"

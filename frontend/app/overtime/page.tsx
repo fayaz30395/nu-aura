@@ -479,6 +479,7 @@ export default function OvertimePage() {
                       Overtime Type *
                     </label>
                     <select
+                      aria-label="Overtime Type"
                       {...register('overtimeType')}
                       className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                     >

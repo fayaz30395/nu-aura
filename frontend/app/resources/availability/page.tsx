@@ -162,6 +162,7 @@ export default function AvailabilityCalendarPage() {
                   Department
                 </label>
                 <select
+                  aria-label="Department"
                   value={selectedDepartment || ''}
                   onChange={(e) => setSelectedDepartment(e.target.value || undefined)}
                   className="rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2 text-sm focus:border-accent-500 dark:border-[var(--border-main)] dark:bg-[var(--bg-card)]"

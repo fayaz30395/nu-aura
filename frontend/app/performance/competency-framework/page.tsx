@@ -314,6 +314,7 @@ function AddCompetencyModal({
               Category <span aria-hidden="true" className="text-danger-500">*</span>
             </label>
             <select
+              aria-label="Category"
               {...register('category')}
               aria-required="true"
               className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"

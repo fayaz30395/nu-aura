@@ -464,6 +464,7 @@ export default function ScheduledReportsPage() {
                         Report Type *
                       </label>
                       <select
+                        aria-label="Report Type"
                         {...register('reportType')}
                         className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 bg-[var(--bg-input)]"
                       >
@@ -481,6 +482,7 @@ export default function ScheduledReportsPage() {
                           Frequency *
                         </label>
                         <select
+                          aria-label="Frequency"
                           {...register('frequency')}
                           className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 bg-[var(--bg-input)]"
                         >
@@ -498,6 +500,7 @@ export default function ScheduledReportsPage() {
                             Day of Week *
                           </label>
                           <select
+                            aria-label="Day of Week"
                             {...register('dayOfWeek', {valueAsNumber: true})}
                             className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 bg-[var(--bg-input)]"
                           >
@@ -516,6 +519,7 @@ export default function ScheduledReportsPage() {
                             Day of Month *
                           </label>
                           <select
+                            aria-label="Day of Month"
                             {...register('dayOfMonth', {valueAsNumber: true})}
                             className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 bg-[var(--bg-input)]"
                           >
@@ -549,6 +553,7 @@ export default function ScheduledReportsPage() {
                           Export Format *
                         </label>
                         <select
+                          aria-label="Export Format"
                           {...register('exportFormat')}
                           className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 bg-[var(--bg-input)]"
                         >
@@ -567,6 +572,7 @@ export default function ScheduledReportsPage() {
                         Filter by Department (optional)
                       </label>
                       <select
+                        aria-label="Filter by Department (optional)"
                         {...register('departmentId')}
                         className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 bg-[var(--bg-input)]"
                       >

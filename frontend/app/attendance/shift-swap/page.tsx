@@ -417,6 +417,7 @@ export default function ShiftSwapPage() {
           <div>
             <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Type *</label>
             <select
+              aria-label="Type"
               {...register('swapType')}
               className="input-aura"
             >
@@ -473,6 +474,7 @@ export default function ShiftSwapPage() {
           <div>
             <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">My Shift Assignment *</label>
             <select
+              aria-label="My Shift Assignment"
               {...register('requesterAssignmentId')}
               className={`input-aura ${errors.requesterAssignmentId ? 'border-danger-500' : ''}`}
             >
