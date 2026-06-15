@@ -108,10 +108,13 @@ public class MobileLeaveService {
      */
     @Transactional
     public void cancelLeaveRequest(UUID leaveRequestId, MobileLeaveDto.CancelLeaveRequest request) {
-        LeaveRequest leaveRequest = leaveRequestRepository.findById(leaveRequestId)
+        // IDOR fix: scope lookup to current tenant so a user cannot cancel a leave
+        // request belonging to another tenant by guessing the UUID.
+        LeaveRequest leaveRequest = leaveRequestRepository
+                .findByIdAndTenantId(leaveRequestId, TenantContext.getCurrentTenant())
                 .orElseThrow(() -> new IllegalStateException("Leave request not found"));
 
-        // Verify ownership
+        // Verify ownership within the tenant
         UUID currentUserId = SecurityContext.getCurrentUserId();
         if (!leaveRequest.getEmployeeId().equals(currentUserId)) {
             throw new IllegalStateException("Cannot cancel another user's leave request");

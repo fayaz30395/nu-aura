@@ -297,8 +297,15 @@ public class OneOnOneMeetingService {
     }
 
     @Transactional
-    public MeetingAgendaItem markAgendaItemDiscussed(UUID itemId, String discussionNotes) {
-        MeetingAgendaItem item = agendaRepository.findById(itemId)
+    public MeetingAgendaItem markAgendaItemDiscussed(UUID meetingId, UUID itemId, String discussionNotes) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        // IDOR fix: verify the parent meeting belongs to the current tenant before
+        // touching any of its agenda items. Without this check any authenticated user
+        // could mark an agenda item in a different tenant as discussed by guessing the UUID.
+        meetingRepository.findByIdAndTenantId(meetingId, tenantId)
+                .orElseThrow(() -> new RuntimeException("Meeting not found"));
+
+        MeetingAgendaItem item = agendaRepository.findByIdAndMeetingId(itemId, meetingId)
                 .orElseThrow(() -> new RuntimeException("Agenda item not found"));
 
         item.setIsDiscussed(true);

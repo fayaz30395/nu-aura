@@ -203,7 +203,7 @@ public class OneOnOneMeetingController {
             @PathVariable UUID itemId,
             @Valid @RequestBody(required = false) Map<String, String> body) {
         String notes = body != null ? body.get("notes") : null;
-        MeetingAgendaItem item = meetingService.markAgendaItemDiscussed(itemId, notes);
+        MeetingAgendaItem item = meetingService.markAgendaItemDiscussed(meetingId, itemId, notes);
         return ResponseEntity.ok(toAgendaResponse(item));
     }
 
