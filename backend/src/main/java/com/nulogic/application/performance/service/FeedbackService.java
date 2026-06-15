@@ -31,6 +31,16 @@ public class FeedbackService {
     public FeedbackResponse giveFeedback(FeedbackRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
+        // IDOR fix: validate employee IDs belong to the current tenant before linking.
+        if (request.getRecipientId() != null) {
+            employeeRepository.findByIdAndTenantId(request.getRecipientId(), tenantId)
+                    .orElseThrow(() -> new IllegalArgumentException("Recipient employee not found"));
+        }
+        if (request.getGiverId() != null) {
+            employeeRepository.findByIdAndTenantId(request.getGiverId(), tenantId)
+                    .orElseThrow(() -> new IllegalArgumentException("Giver employee not found"));
+        }
+
         Feedback feedback = Feedback.builder()
                 .recipientId(request.getRecipientId())
                 .giverId(request.getGiverId())
@@ -85,8 +95,17 @@ public class FeedbackService {
         Feedback feedback = feedbackRepository.findByIdAndTenantId(feedbackId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException(FEEDBACK_NOT_FOUND));
 
-        if (request.getRecipientId() != null) feedback.setRecipientId(request.getRecipientId());
-        if (request.getGiverId() != null) feedback.setGiverId(request.getGiverId());
+        // IDOR fix: validate employee IDs belong to the current tenant before updating.
+        if (request.getRecipientId() != null) {
+            employeeRepository.findByIdAndTenantId(request.getRecipientId(), tenantId)
+                    .orElseThrow(() -> new IllegalArgumentException("Recipient employee not found"));
+            feedback.setRecipientId(request.getRecipientId());
+        }
+        if (request.getGiverId() != null) {
+            employeeRepository.findByIdAndTenantId(request.getGiverId(), tenantId)
+                    .orElseThrow(() -> new IllegalArgumentException("Giver employee not found"));
+            feedback.setGiverId(request.getGiverId());
+        }
         if (request.getFeedbackType() != null) feedback.setFeedbackType(request.getFeedbackType());
         if (request.getCategory() != null) feedback.setCategory(request.getCategory());
         if (request.getFeedbackText() != null) feedback.setFeedbackText(request.getFeedbackText());
@@ -110,6 +129,8 @@ public class FeedbackService {
     }
 
     private FeedbackResponse mapToResponse(Feedback feedback) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+
         FeedbackResponse response = FeedbackResponse.builder()
                 .id(feedback.getId())
                 .recipientId(feedback.getRecipientId())
@@ -124,15 +145,13 @@ public class FeedbackService {
                 .updatedAt(feedback.getUpdatedAt())
                 .build();
 
-        // Enrich with recipient name
         if (feedback.getRecipientId() != null) {
-            employeeRepository.findById(feedback.getRecipientId())
+            employeeRepository.findByIdAndTenantId(feedback.getRecipientId(), tenantId)
                     .ifPresent(employee -> response.setRecipientName(employee.getFullName()));
         }
 
-        // Enrich with giver name (unless anonymous)
         if (feedback.getGiverId() != null && !feedback.getIsAnonymous()) {
-            employeeRepository.findById(feedback.getGiverId())
+            employeeRepository.findByIdAndTenantId(feedback.getGiverId(), tenantId)
                     .ifPresent(employee -> response.setGiverName(employee.getFullName()));
         } else if (feedback.getIsAnonymous()) {
             response.setGiverName("Anonymous");

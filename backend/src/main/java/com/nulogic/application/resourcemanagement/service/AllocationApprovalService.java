@@ -48,6 +48,14 @@ public class AllocationApprovalService {
         UUID tenantId = SecurityContext.getCurrentTenantId();
         UUID requestedById = SecurityContext.getCurrentEmployeeId();
 
+        // IDOR fix: validate employee and project belong to the current tenant before linking.
+        Employee employee = employeeRepository.findByIdAndTenantId(request.getEmployeeId(), tenantId)
+                .orElseThrow(() -> new IllegalArgumentException("Employee not found"));
+        Project project = request.getProjectId() != null
+                ? projectRepository.findByIdAndTenantId(request.getProjectId(), tenantId)
+                        .orElseThrow(() -> new IllegalArgumentException("Project not found"))
+                : null;
+
         AllocationApprovalRequest entity = AllocationApprovalRequest.builder()
                 .employeeId(request.getEmployeeId())
                 .projectId(request.getProjectId())
@@ -64,13 +72,11 @@ public class AllocationApprovalService {
 
         AllocationApprovalRequest saved = approvalRepository.save(entity);
 
-        Employee employee = employeeRepository.findById(request.getEmployeeId()).orElse(null);
-        Project project = projectRepository.findById(request.getProjectId()).orElse(null);
-        Employee requester = employeeRepository.findById(requestedById).orElse(null);
+        Employee requester = employeeRepository.findByIdAndTenantId(requestedById, tenantId).orElse(null);
 
         return AllocationApprovalResponse.fromEntity(saved,
-                employee != null ? employee.getFullName() : "N/A",
-                employee != null ? employee.getEmployeeCode() : "N/A",
+                employee.getFullName(),
+                employee.getEmployeeCode(),
                 project != null ? project.getName() : "N/A",
                 project != null ? project.getProjectCode() : "N/A",
                 requester != null ? requester.getFullName() : "System",
@@ -209,11 +215,14 @@ public class AllocationApprovalService {
     }
 
     AllocationApprovalResponse mapToApprovalResponse(AllocationApprovalRequest request) {
-        Employee employee = employeeRepository.findById(request.getEmployeeId()).orElse(null);
-        Project project = projectRepository.findById(request.getProjectId()).orElse(null);
-        Employee requester = employeeRepository.findById(request.getRequestedById()).orElse(null);
+        UUID tenantId = SecurityContext.getCurrentTenantId();
+        Employee employee = employeeRepository.findByIdAndTenantId(request.getEmployeeId(), tenantId).orElse(null);
+        Project project = request.getProjectId() != null
+                ? projectRepository.findByIdAndTenantId(request.getProjectId(), tenantId).orElse(null)
+                : null;
+        Employee requester = employeeRepository.findByIdAndTenantId(request.getRequestedById(), tenantId).orElse(null);
         Employee approver = request.getApproverId() != null
-                ? employeeRepository.findById(request.getApproverId()).orElse(null)
+                ? employeeRepository.findByIdAndTenantId(request.getApproverId(), tenantId).orElse(null)
                 : null;
 
         return AllocationApprovalResponse.fromEntity(request,

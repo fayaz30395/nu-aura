@@ -49,6 +49,18 @@ public class PerformanceReviewService {
     public ReviewResponse createReview(ReviewRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
+        // IDOR fix: validate cross-entity IDs belong to the current tenant before writing.
+        employeeRepository.findByIdAndTenantId(request.getEmployeeId(), tenantId)
+                .orElseThrow(() -> new IllegalArgumentException("Employee not found"));
+        if (request.getReviewerId() != null) {
+            employeeRepository.findByIdAndTenantId(request.getReviewerId(), tenantId)
+                    .orElseThrow(() -> new IllegalArgumentException("Reviewer not found"));
+        }
+        if (request.getReviewCycleId() != null) {
+            reviewCycleRepository.findByIdAndTenantId(request.getReviewCycleId(), tenantId)
+                    .orElseThrow(() -> new IllegalArgumentException("Review cycle not found"));
+        }
+
         PerformanceReview review = PerformanceReview.builder()
                 .employeeId(request.getEmployeeId())
                 .reviewerId(request.getReviewerId())
@@ -85,12 +97,22 @@ public class PerformanceReviewService {
         PerformanceReview review = reviewRepository.findByIdAndTenantId(reviewId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException(REVIEW_NOT_FOUND));
 
-        if (request.getEmployeeId() != null)
+        // IDOR fix: validate incoming foreign-key IDs belong to the current tenant.
+        if (request.getEmployeeId() != null) {
+            employeeRepository.findByIdAndTenantId(request.getEmployeeId(), tenantId)
+                    .orElseThrow(() -> new IllegalArgumentException("Employee not found"));
             review.setEmployeeId(request.getEmployeeId());
-        if (request.getReviewerId() != null)
+        }
+        if (request.getReviewerId() != null) {
+            employeeRepository.findByIdAndTenantId(request.getReviewerId(), tenantId)
+                    .orElseThrow(() -> new IllegalArgumentException("Reviewer not found"));
             review.setReviewerId(request.getReviewerId());
-        if (request.getReviewCycleId() != null)
+        }
+        if (request.getReviewCycleId() != null) {
+            reviewCycleRepository.findByIdAndTenantId(request.getReviewCycleId(), tenantId)
+                    .orElseThrow(() -> new IllegalArgumentException("Review cycle not found"));
             review.setReviewCycleId(request.getReviewCycleId());
+        }
         if (request.getReviewType() != null)
             review.setReviewType(request.getReviewType());
         if (request.getReviewPeriodStart() != null)
