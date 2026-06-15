@@ -16,15 +16,10 @@ export const reportKeys = {
   scheduled: () => [...reportKeys.all, 'scheduled'] as const,
   scheduledList: (page: number, size: number) =>
     [...reportKeys.scheduled(), {page, size}] as const,
-  scheduledById: (id: string) => [...reportKeys.scheduled(), id] as const,
   scheduledActive: () => [...reportKeys.scheduled(), 'active'] as const,
   utilization: () => [...reportKeys.all, 'utilization'] as const,
   utilizationDashboard: (filters: UtilizationFilterOptions) =>
     [...reportKeys.utilization(), 'dashboard', filters] as const,
-  utilizationEmployee: (employeeId: string, startDate: string, endDate: string) =>
-    [...reportKeys.utilization(), 'employee', {employeeId, startDate, endDate}] as const,
-  utilizationAllEmployees: (startDate: string, endDate: string, page: number, size: number) =>
-    [...reportKeys.utilization(), 'all-employees', {startDate, endDate, page, size}] as const,
 };
 
 // Scheduled Report Queries
@@ -32,14 +27,6 @@ export function useScheduledReports(page: number = 0, size: number = 20) {
   return useQuery({
     queryKey: reportKeys.scheduledList(page, size),
     queryFn: () => scheduledReportService.getAll(page, size),
-  });
-}
-
-export function useScheduledReportById(id: string, enabled: boolean = true) {
-  return useQuery({
-    queryKey: reportKeys.scheduledById(id),
-    queryFn: () => scheduledReportService.getById(id),
-    enabled,
   });
 }
 
@@ -110,36 +97,6 @@ export function useUtilizationDashboard(
   });
 }
 
-export function useEmployeeUtilization(
-  employeeId: string,
-  startDate: string,
-  endDate: string,
-  enabled: boolean = true
-) {
-  return useQuery({
-    queryKey: reportKeys.utilizationEmployee(employeeId, startDate, endDate),
-    queryFn: () =>
-      utilizationService.getEmployeeUtilization(employeeId, startDate, endDate),
-    enabled: enabled && !!employeeId && !!startDate && !!endDate,
-  });
-}
-
-export function useAllEmployeesUtilization(
-  startDate: string,
-  endDate: string,
-  page: number = 0,
-  size: number = 20,
-  enabled: boolean = true
-) {
-  return useQuery({
-    queryKey: reportKeys.utilizationAllEmployees(startDate, endDate, page, size),
-    queryFn: () =>
-      utilizationService.getAllEmployeesUtilization(startDate, endDate, page, size),
-    // DEV-4: no all-employees utilization backend route exists
-    enabled: enabled && UTILIZATION_DASHBOARD_API_AVAILABLE && !!startDate && !!endDate,
-  });
-}
-
 // Report Download Mutations (no caching, immediate download)
 export function useDownloadPayrollReport() {
   return useMutation({
@@ -183,14 +140,3 @@ export function useDownloadPerformanceReport() {
   });
 }
 
-export function useExportUtilizationReport() {
-  return useMutation({
-    mutationFn: ({
-                   format,
-                   filters,
-                 }: {
-      format: 'csv' | 'excel' | 'pdf';
-      filters: UtilizationFilterOptions;
-    }) => utilizationService.exportReport(format, filters),
-  });
-}

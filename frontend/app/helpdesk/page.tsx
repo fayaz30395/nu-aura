@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {formatDate} from '@/lib/utils/format/date';
+import {KNOWLEDGE_BASE_API_AVAILABLE} from '@/lib/hooks/queries/useKnowledgeBase';
 
 export default function HelpdeskPage() {
   const router = useRouter();
@@ -146,13 +147,21 @@ export default function HelpdeskPage() {
           {/* Quick Actions */}
           <Stagger>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {[
-                {route: '/helpdesk/tickets', icon: Ticket, label: 'Tickets', desc: 'View and manage support tickets'},
-                {route: '/helpdesk/sla', icon: Settings, label: 'SLA Policies', desc: `${activeSlaCount} active policies`},
-                {route: '/helpdesk/sla', icon: Bell, label: 'Escalations', desc: `${escalations.length} pending`},
-                {route: '/helpdesk/knowledge-base', icon: BookOpen, label: 'Knowledge Base', desc: 'Find answers to common questions'},
-                {route: '/helpdesk/sla', icon: BarChart3, label: 'SLA Dashboard', desc: 'View detailed metrics'},
-              ].map(({route, icon: Icon, label, desc}) => (
+              {(KNOWLEDGE_BASE_API_AVAILABLE
+                ? [
+                    {route: '/helpdesk/tickets', icon: Ticket, label: 'Tickets', desc: 'View and manage support tickets'},
+                    {route: '/helpdesk/sla', icon: Settings, label: 'SLA Policies', desc: `${activeSlaCount} active policies`},
+                    {route: '/helpdesk/sla', icon: Bell, label: 'Escalations', desc: `${escalations.length} pending`},
+                    {route: '/helpdesk/knowledge-base', icon: BookOpen, label: 'Knowledge Base', desc: 'Find answers to common questions'},
+                    {route: '/helpdesk/sla', icon: BarChart3, label: 'SLA Dashboard', desc: 'View detailed metrics'},
+                  ]
+                : [
+                    {route: '/helpdesk/tickets', icon: Ticket, label: 'Tickets', desc: 'View and manage support tickets'},
+                    {route: '/helpdesk/sla', icon: Settings, label: 'SLA Policies', desc: `${activeSlaCount} active policies`},
+                    {route: '/helpdesk/sla', icon: Bell, label: 'Escalations', desc: `${escalations.length} pending`},
+                    {route: '/helpdesk/sla', icon: BarChart3, label: 'SLA Dashboard', desc: 'View detailed metrics'},
+                  ]
+              ).map(({route, icon: Icon, label, desc}) => (
                 <Reveal key={label}>
                   <button
                     onClick={() => router.push(route)}
