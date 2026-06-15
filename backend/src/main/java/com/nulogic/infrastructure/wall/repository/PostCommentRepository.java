@@ -51,9 +51,11 @@ public interface PostCommentRepository extends JpaRepository<PostComment, UUID> 
      */
     @Query("SELECT DISTINCT c FROM PostComment c " +
             "LEFT JOIN FETCH c.author " +
-            "WHERE c.parentComment.id = :parentId AND c.isDeleted = false " +
+            "WHERE c.parentComment.id = :parentId AND c.tenantId = :tenantId AND c.isDeleted = false " +
             "ORDER BY c.createdAt ASC")
-    Page<PostComment> findRepliesWithAuthors(@Param("parentId") UUID parentId, Pageable pageable);
+    Page<PostComment> findRepliesWithAuthorsByTenantId(@Param("parentId") UUID parentId,
+                                                        @Param("tenantId") UUID tenantId,
+                                                        Pageable pageable);
 
     /**
      * Batch fetch comment counts for multiple posts in one query.

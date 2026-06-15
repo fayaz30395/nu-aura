@@ -353,7 +353,8 @@ public class WallService {
 
     @Transactional(readOnly = true)
     public Page<CommentResponse> getReplies(UUID parentCommentId, Pageable pageable) {
-        Page<PostComment> replies = postCommentRepository.findRepliesWithAuthors(parentCommentId, pageable);
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        Page<PostComment> replies = postCommentRepository.findRepliesWithAuthorsByTenantId(parentCommentId, tenantId, pageable);
         return replies.map(this::mapCommentToResponse);
     }
 
