@@ -133,10 +133,13 @@ jobs:
 
       - name: Build Frontend
         working-directory: ./frontend
-        run: npm run build
+        # Raise Node heap: Next.js build on this large app OOMs at the default
+        # ~2GB heap on CI runners (same constraint as the tsc step above).
         env:
           NEXT_PUBLIC_API_URL: https://api.ci.nu-aura.local/api/v1
           NEXT_PUBLIC_ENABLE_WEBSOCKET: 'true'
+          NODE_OPTIONS: --max-old-space-size=4096
+        run: npm run build
 
   # Security Scan
   security:
