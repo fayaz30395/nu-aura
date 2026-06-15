@@ -133,7 +133,7 @@ const nextConfig = {
       {key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload'},
       // Disable sensitive browser features the app does not use
       {key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), payment=(), usb=(), serial=()'},
-      // NOTE: Content-Security-Policy is set in middleware.ts (single source of truth).
+      // NOTE: Content-Security-Policy is set in proxy.ts (via middleware.ts shim).
       // Previously it was duplicated here, causing two CSP headers to be emitted; browsers
       // then intersect the policies and the most-restrictive wins, which is fragile.
     ];
