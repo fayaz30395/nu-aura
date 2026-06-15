@@ -676,6 +676,7 @@ export default function RolesPage() {
                     Parent Role
                   </label>
                   <select
+                    aria-label="Parent role"
                     {...editForm.register('parentRoleId')}
                     value={selectedParentRoleId || ''}
                     onChange={(e) => {

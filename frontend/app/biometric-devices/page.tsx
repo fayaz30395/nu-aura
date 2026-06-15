@@ -459,6 +459,7 @@ function RegisterDeviceModal({onClose}: { onClose: () => void }) {
               Device Type *
             </label>
             <select
+              aria-label="Device type"
               {...register('deviceType')}
               className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
             >

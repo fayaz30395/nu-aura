@@ -268,6 +268,7 @@ export default function TeamDirectoryPage() {
               <Skeleton className="h-10 rounded-lg"/>
             ) : (
               <select
+                aria-label="Filter by department"
                 value={selectedDepartment}
                 onChange={(e) => {
                   setSelectedDepartment(e.target.value);

@@ -594,6 +594,7 @@ export default function MileagePage() {
                       Vehicle Type *
                     </label>
                     <select
+                      aria-label="Vehicle type"
                       {...register('vehicleType')}
                       className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-white focus:ring-2 focus:ring-accent-700 focus:border-transparent"
                     >

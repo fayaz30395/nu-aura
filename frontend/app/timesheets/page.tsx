@@ -759,6 +759,7 @@ export default function TimesheetsPage() {
                   Project *
                 </label>
                 <select
+                  aria-label="Project"
                   required
                   value={entryForm.projectId}
                   onChange={(e) => setEntryForm({...entryForm, projectId: e.target.value})}
@@ -813,6 +814,7 @@ export default function TimesheetsPage() {
                   Activity Type
                 </label>
                 <select
+                  aria-label="Activity type"
                   value={entryForm.activityType}
                   onChange={(e) => setEntryForm({...entryForm, activityType: e.target.value as ActivityType})}
                   className="input-aura"

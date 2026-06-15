@@ -883,6 +883,7 @@ export default function ApplicantPipelinePage() {
                   <div className="min-w-[160px]">
                     <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Source</label>
                     <select
+                      aria-label="Filter by source"
                       value={sourceFilter}
                       onChange={e => setSourceFilter(e.target.value as ApplicationSource | '')}
                       className="w-full px-4 py-2 text-sm border border-[var(--border-main)] rounded-lg bg-[var(--bg-input)] text-[var(--text-secondary)] focus:outline-none focus:ring-2 focus:ring-accent-500/20"

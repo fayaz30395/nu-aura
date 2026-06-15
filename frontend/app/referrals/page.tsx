@@ -470,6 +470,7 @@ export default function ReferralsPage() {
                       Relationship *
                     </label>
                     <select
+                      aria-label="Relationship to referral"
                       {...register('relationship')}
                       className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                     >

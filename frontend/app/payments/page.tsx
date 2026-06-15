@@ -243,10 +243,11 @@ function PaymentsPageContent() {
             <div
               className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4 pt-4 border-t border-[var(--border-main)]">
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                <label htmlFor="payment-filter-status" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Status
                 </label>
                 <select
+                  id="payment-filter-status"
                   value={filters.status}
                   onChange={(e) => setFilters({...filters, status: e.target.value as PaymentStatus | 'ALL'})}
                   className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
@@ -263,10 +264,11 @@ function PaymentsPageContent() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                <label htmlFor="payment-filter-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Type
                 </label>
                 <select
+                  id="payment-filter-type"
                   value={filters.type}
                   onChange={(e) => setFilters({...filters, type: e.target.value as PaymentType | 'ALL'})}
                   className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
@@ -280,10 +282,11 @@ function PaymentsPageContent() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                <label htmlFor="payment-filter-provider" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Provider
                 </label>
                 <select
+                  id="payment-filter-provider"
                   value={filters.provider}
                   onChange={(e) => setFilters({...filters, provider: e.target.value as PaymentProvider | 'ALL'})}
                   className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"

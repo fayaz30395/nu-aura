@@ -168,6 +168,7 @@ export default function NewLoanPage() {
               Loan Type *
             </label>
             <select
+              aria-label="Loan type"
               {...register('loanType')}
               className="w-full px-4 py-4 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500"
             >
@@ -249,6 +250,7 @@ export default function NewLoanPage() {
               Repayment Frequency
             </label>
             <select
+              aria-label="Repayment frequency"
               {...register('repaymentFrequency')}
               className="w-full px-4 py-4 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500"
             >
