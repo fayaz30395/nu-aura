@@ -129,8 +129,8 @@ const nextConfig = {
       {key: 'X-Content-Type-Options', value: 'nosniff'},
       // Control referrer information
       {key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin'},
-      // HSTS (only active over HTTPS; browsers ignore over HTTP)
-      {key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload'},
+      // NOTE: Strict-Transport-Security is set in proxy.ts (via middleware.ts shim).
+      // Removed here to avoid two HSTS headers with conflicting max-age values.
       // Disable sensitive browser features the app does not use
       {key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), payment=(), usb=(), serial=()'},
       // NOTE: Content-Security-Policy is set in proxy.ts (via middleware.ts shim).
