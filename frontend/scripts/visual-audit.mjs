@@ -79,7 +79,7 @@ for (const route of ROUTES) {
     // Force the app's persisted theme before any page script runs so the
     // FOUC theme-script applies .dark synchronously (matches real users).
     await ctx.addInitScript((t) => {
-      try { localStorage.setItem('nu-aura-theme', t); } catch (e) { /* noop */ }
+      try { localStorage.setItem('nu-aura-theme', t); } catch (_e) { /* noop */ }
     }, THEME);
     const page = await ctx.newPage();
     try {
