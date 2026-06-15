@@ -176,6 +176,13 @@ const nextConfig = {
   // cache groups caused CSS assets to land in rootMainFiles under Next 16,
   // which made production pages emit CSS as <script> tags and fail smoke tests.
   webpack: (config) => config,
+
+  // Next.js 16 enables Turbopack as the default bundler for `next build`.
+  // If `webpack` is configured without a `turbopack` counterpart the build
+  // aborts with "This build is using Turbopack, with a webpack config and no
+  // turbopack config." Adding an empty object acknowledges Turbopack and
+  // allows the build to proceed with Turbopack's defaults.
+  turbopack: {},
 }
 
 module.exports = withBundleAnalyzer(nextConfig)

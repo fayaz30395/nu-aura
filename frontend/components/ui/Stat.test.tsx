@@ -60,9 +60,9 @@ describe('Stat', () => {
   });
 
   describe('sizes', () => {
-    // The value div composes `text-stat-*` + `text-[var(--text-*)]` via cn() —
-    // twMerge collapses competing `text-*` utilities, so we assert the
-    // observable label-class contract instead. Compact == smaller label.
+    // The value div composes font-size utilities via cn(). twMerge collapses
+    // competing text-* utilities, so we assert the observable label-class
+    // contract instead. Compact == smaller label.
     it('default size applies text-xs label class', () => {
       render(<Stat label="L" value="V" />);
       const label = screen.getByText('L').parentElement!;
