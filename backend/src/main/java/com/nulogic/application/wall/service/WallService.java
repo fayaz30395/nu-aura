@@ -328,7 +328,7 @@ public class WallService {
         PostComment comment = new PostComment(post, author, request.getContent());
 
         if (request.getParentCommentId() != null) {
-            PostComment parentComment = postCommentRepository.findByIdAndActiveTrue(request.getParentCommentId())
+            PostComment parentComment = postCommentRepository.findByIdAndTenantIdAndActiveTrue(request.getParentCommentId(), tenantId)
                     .orElseThrow(() -> new IllegalArgumentException("Parent comment not found"));
             comment.setParentComment(parentComment);
         }
@@ -360,7 +360,8 @@ public class WallService {
 
     @Transactional
     public void deleteComment(UUID commentId, UUID userId) {
-        PostComment comment = postCommentRepository.findByIdAndActiveTrue(commentId)
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        PostComment comment = postCommentRepository.findByIdAndTenantIdAndActiveTrue(commentId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Comment not found"));
 
         boolean isAuthor = comment.getAuthor().getId().equals(userId);

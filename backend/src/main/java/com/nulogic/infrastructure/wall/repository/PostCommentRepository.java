@@ -29,6 +29,9 @@ public interface PostCommentRepository extends JpaRepository<PostComment, UUID> 
     @Query("SELECT c FROM PostComment c WHERE c.id = :id AND c.isDeleted = false")
     Optional<PostComment> findByIdAndActiveTrue(@Param("id") UUID id);
 
+    @Query("SELECT c FROM PostComment c WHERE c.id = :id AND c.tenantId = :tenantId AND c.isDeleted = false")
+    Optional<PostComment> findByIdAndTenantIdAndActiveTrue(@Param("id") UUID id, @Param("tenantId") UUID tenantId);
+
     @Query("SELECT COUNT(c) FROM PostComment c WHERE c.author.id = :authorId AND c.isDeleted = false")
     long countByAuthorId(@Param("authorId") UUID authorId);
 
