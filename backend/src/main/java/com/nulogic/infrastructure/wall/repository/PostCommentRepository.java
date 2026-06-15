@@ -20,14 +20,8 @@ public interface PostCommentRepository extends JpaRepository<PostComment, UUID> 
                                                                @Param("tenantId") UUID tenantId,
                                                                Pageable pageable);
 
-    @Query("SELECT c FROM PostComment c WHERE c.parentComment.id = :parentId AND c.isDeleted = false ORDER BY c.createdAt ASC")
-    Page<PostComment> findRepliesByParentCommentId(@Param("parentId") UUID parentId, Pageable pageable);
-
     @Query("SELECT COUNT(c) FROM PostComment c WHERE c.post.id = :postId AND c.isDeleted = false")
     long countByPostId(@Param("postId") UUID postId);
-
-    @Query("SELECT c FROM PostComment c WHERE c.id = :id AND c.isDeleted = false")
-    Optional<PostComment> findByIdAndActiveTrue(@Param("id") UUID id);
 
     @Query("SELECT c FROM PostComment c WHERE c.id = :id AND c.tenantId = :tenantId AND c.isDeleted = false")
     Optional<PostComment> findByIdAndTenantIdAndActiveTrue(@Param("id") UUID id, @Param("tenantId") UUID tenantId);
@@ -39,15 +33,6 @@ public interface PostCommentRepository extends JpaRepository<PostComment, UUID> 
     int countByParentCommentIdAndActiveTrue(@Param("parentCommentId") UUID parentCommentId);
 
     // ==================== N+1 OPTIMIZED FETCH QUERIES ====================
-
-    /**
-     * Fetch comments with author eagerly loaded to avoid N+1 on author access.
-     */
-    @Query("SELECT DISTINCT c FROM PostComment c " +
-            "LEFT JOIN FETCH c.author " +
-            "WHERE c.post.id = :postId AND c.parentComment IS NULL AND c.isDeleted = false " +
-            "ORDER BY c.createdAt ASC")
-    Page<PostComment> findTopLevelCommentsWithAuthors(@Param("postId") UUID postId, Pageable pageable);
 
     /**
      * Fetch comment replies with authors eagerly loaded.
