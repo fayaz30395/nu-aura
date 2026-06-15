@@ -140,7 +140,9 @@ public class SurveyAnalyticsService {
         Integer npsValue = null;
 
         for (SubmitResponseRequest.AnswerRequest answerReq : request.getAnswers()) {
-            SurveyQuestion question = questionRepository.findById(answerReq.getQuestionId())
+            // IDOR fix: scope to current tenant so a user cannot submit answers referencing
+            // question IDs from a different tenant's survey by guessing UUIDs.
+            SurveyQuestion question = questionRepository.findByIdAndTenantId(answerReq.getQuestionId(), tenantId)
                     .orElseThrow(() -> new IllegalArgumentException("Question not found: " + answerReq.getQuestionId()));
 
             SurveyAnswer answer = new SurveyAnswer();
