@@ -86,6 +86,13 @@ class ApiClient {
           config.headers['X-XSRF-TOKEN'] = csrfToken;
         }
 
+        // GET requests use a shorter timeout so React Query's retry (configured in
+        // queryClient.ts) kicks in within 30s instead of waiting 2 minutes on a
+        // Railway cold start. Writes keep 120s for bcrypt/Neon/audit write latency.
+        if (config.method === 'get' && config.timeout === 120000) {
+          config.timeout = 30000;
+        }
+
         return config;
       },
       (error) => {
