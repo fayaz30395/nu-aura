@@ -30,8 +30,17 @@ spring:
       maximum-pool-size: 3
       minimum-idle: 1
       connection-timeout: 30000
-      idle-timeout: 300000
-      max-lifetime: 600000
+      # idle-timeout: applies only to connections above minimum-idle (i.e. connections 2-3).
+      # Set to 2 min so surplus connections are released quickly in low-traffic periods.
+      idle-timeout: 120000
+      # max-lifetime must be < Neon's idle-connection timeout (5 min / 300 s).
+      # 270 s gives HikariCP time to recycle the connection before Neon kills it.
+      max-lifetime: 270000
+      # keepalive-time: HikariCP sends a lightweight keepalive query (SELECT 1) to
+      # idle connections every 2 min. Without this, the minimum-idle connection is
+      # exempt from idle-timeout eviction and will become stale when Neon closes it
+      # after 5 min of server-side inactivity.
+      keepalive-time: 120000
       # initialization-fail-timeout=0: HikariCP creates the pool without blocking on
       # an initial connection. The default (1ms) calls checkFailFast() which tries to
       # open a JDBC connection at pool creation time — blocking for 5-7 min while Neon
