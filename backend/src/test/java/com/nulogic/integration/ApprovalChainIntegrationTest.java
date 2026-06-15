@@ -175,6 +175,12 @@ class ApprovalChainIntegrationTest {
         when(employee.getManagerId()).thenReturn(MANAGER_ID);
         when(employeeRepository.findByUserIdAndTenantId(EMPLOYEE_USER_ID, TENANT_ID))
                 .thenReturn(Optional.of(employee));
+        com.nulogic.domain.user.User managerUser = mock(com.nulogic.domain.user.User.class);
+        when(managerUser.getId()).thenReturn(MANAGER_ID);
+        Employee managerEmp = mock(Employee.class);
+        when(managerEmp.getUser()).thenReturn(managerUser);
+        when(employeeRepository.findByIdAndTenantId(MANAGER_ID, TENANT_ID))
+                .thenReturn(Optional.of(managerEmp));
 
         // No delegation, not on leave
         when(approvalDelegateRepository.findActiveDelegations(eq(TENANT_ID), eq(MANAGER_ID), any(LocalDate.class)))
@@ -304,6 +310,12 @@ class ApprovalChainIntegrationTest {
         when(employee.getManagerId()).thenReturn(MANAGER_ID);
         when(employeeRepository.findByUserIdAndTenantId(EMPLOYEE_USER_ID, TENANT_ID))
                 .thenReturn(Optional.of(employee));
+        com.nulogic.domain.user.User managerUser = mock(com.nulogic.domain.user.User.class);
+        when(managerUser.getId()).thenReturn(MANAGER_ID);
+        Employee managerEmp = mock(Employee.class);
+        when(managerEmp.getUser()).thenReturn(managerUser);
+        when(employeeRepository.findByIdAndTenantId(MANAGER_ID, TENANT_ID))
+                .thenReturn(Optional.of(managerEmp));
 
         // Finance Head resolved by role code
         when(userRepository.findUserIdsByRoleCode(TENANT_ID, "FINANCE_MANAGER"))
@@ -481,6 +493,12 @@ class ApprovalChainIntegrationTest {
         when(employee.getManagerId()).thenReturn(MANAGER_ID);
         when(employeeRepository.findByUserIdAndTenantId(EMPLOYEE_USER_ID, TENANT_ID))
                 .thenReturn(Optional.of(employee));
+        com.nulogic.domain.user.User managerUser2 = mock(com.nulogic.domain.user.User.class);
+        when(managerUser2.getId()).thenReturn(MANAGER_ID);
+        Employee managerEmp2 = mock(Employee.class);
+        when(managerEmp2.getUser()).thenReturn(managerUser2);
+        when(employeeRepository.findByIdAndTenantId(MANAGER_ID, TENANT_ID))
+                .thenReturn(Optional.of(managerEmp2));
 
         when(approvalDelegateRepository.findActiveDelegations(eq(TENANT_ID), eq(MANAGER_ID), any(LocalDate.class)))
                 .thenReturn(Collections.emptyList());
@@ -588,6 +606,12 @@ class ApprovalChainIntegrationTest {
         when(employee.getManagerId()).thenReturn(MANAGER_ID);
         when(employeeRepository.findByUserIdAndTenantId(EMPLOYEE_USER_ID, TENANT_ID))
                 .thenReturn(Optional.of(employee));
+        com.nulogic.domain.user.User managerUser3 = mock(com.nulogic.domain.user.User.class);
+        when(managerUser3.getId()).thenReturn(MANAGER_ID);
+        Employee managerEmp3 = mock(Employee.class);
+        when(managerEmp3.getUser()).thenReturn(managerUser3);
+        when(employeeRepository.findByIdAndTenantId(MANAGER_ID, TENANT_ID))
+                .thenReturn(Optional.of(managerEmp3));
         when(userRepository.findUserIdsByRoleCode(TENANT_ID, "FINANCE_MANAGER"))
                 .thenReturn(List.of(FINANCE_HEAD_ID));
 

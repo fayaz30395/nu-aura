@@ -849,6 +849,12 @@ class WorkflowServiceTest {
             when(employee.getManagerId()).thenReturn(MANAGER_ID);
             when(employeeRepository.findByUserIdAndTenantId(USER_ID, TENANT_ID))
                     .thenReturn(Optional.of(employee));
+            com.nulogic.domain.user.User managerUser = mock(com.nulogic.domain.user.User.class);
+            when(managerUser.getId()).thenReturn(MANAGER_ID);
+            Employee managerEmp = mock(Employee.class);
+            when(managerEmp.getUser()).thenReturn(managerUser);
+            when(employeeRepository.findByIdAndTenantId(MANAGER_ID, TENANT_ID))
+                    .thenReturn(Optional.of(managerEmp));
 
             // Manager is NOT on leave
             when(leaveRequestRepository.isEmployeeOnLeave(eq(TENANT_ID), eq(MANAGER_ID), any(LocalDate.class)))
@@ -890,6 +896,12 @@ class WorkflowServiceTest {
             when(employee.getManagerId()).thenReturn(MANAGER_ID);
             when(employeeRepository.findByUserIdAndTenantId(USER_ID, TENANT_ID))
                     .thenReturn(Optional.of(employee));
+            com.nulogic.domain.user.User managerUser1 = mock(com.nulogic.domain.user.User.class);
+            when(managerUser1.getId()).thenReturn(MANAGER_ID);
+            Employee managerEmp1 = mock(Employee.class);
+            when(managerEmp1.getUser()).thenReturn(managerUser1);
+            when(employeeRepository.findByIdAndTenantId(MANAGER_ID, TENANT_ID))
+                    .thenReturn(Optional.of(managerEmp1));
 
             // Manager IS on leave
             when(leaveRequestRepository.isEmployeeOnLeave(eq(TENANT_ID), eq(MANAGER_ID), any(LocalDate.class)))
@@ -903,6 +915,12 @@ class WorkflowServiceTest {
             when(managerEmployee.getManagerId()).thenReturn(SKIP_MANAGER_ID);
             when(employeeRepository.findByUserIdAndTenantId(MANAGER_ID, TENANT_ID))
                     .thenReturn(Optional.of(managerEmployee));
+            com.nulogic.domain.user.User skipManagerUser = mock(com.nulogic.domain.user.User.class);
+            when(skipManagerUser.getId()).thenReturn(SKIP_MANAGER_ID);
+            Employee skipManagerEmp = mock(Employee.class);
+            when(skipManagerEmp.getUser()).thenReturn(skipManagerUser);
+            when(employeeRepository.findByIdAndTenantId(SKIP_MANAGER_ID, TENANT_ID))
+                    .thenReturn(Optional.of(skipManagerEmp));
 
             // Skip-level manager is NOT on leave
             when(leaveRequestRepository.isEmployeeOnLeave(eq(TENANT_ID), eq(SKIP_MANAGER_ID), any(LocalDate.class)))
@@ -945,6 +963,12 @@ class WorkflowServiceTest {
             when(employee.getManagerId()).thenReturn(MANAGER_ID);
             when(employeeRepository.findByUserIdAndTenantId(USER_ID, TENANT_ID))
                     .thenReturn(Optional.of(employee));
+            com.nulogic.domain.user.User managerUser = mock(com.nulogic.domain.user.User.class);
+            when(managerUser.getId()).thenReturn(MANAGER_ID);
+            Employee managerEmp = mock(Employee.class);
+            when(managerEmp.getUser()).thenReturn(managerUser);
+            when(employeeRepository.findByIdAndTenantId(MANAGER_ID, TENANT_ID))
+                    .thenReturn(Optional.of(managerEmp));
 
             // Manager IS on leave, no explicit delegation
             when(leaveRequestRepository.isEmployeeOnLeave(eq(TENANT_ID), eq(MANAGER_ID), any(LocalDate.class)))

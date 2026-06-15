@@ -325,6 +325,14 @@ class WorkflowServiceAutoDelegationTest {
         when(employee.getManagerId()).thenReturn(managerId);
         when(employeeRepository.findByUserIdAndTenantId(employeeId, TENANT_ID))
                 .thenReturn(Optional.of(employee));
+        if (managerId != null) {
+            com.nulogic.domain.user.User managerUser = mock(com.nulogic.domain.user.User.class);
+            when(managerUser.getId()).thenReturn(managerId);
+            Employee managerEmp = mock(Employee.class);
+            when(managerEmp.getUser()).thenReturn(managerUser);
+            lenient().when(employeeRepository.findByIdAndTenantId(managerId, TENANT_ID))
+                    .thenReturn(Optional.of(managerEmp));
+        }
     }
 
     private WorkflowExecutionResponse startLeaveWorkflow() {
