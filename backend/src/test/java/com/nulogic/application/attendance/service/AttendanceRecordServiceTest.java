@@ -489,17 +489,19 @@ class AttendanceRecordServiceTest {
             List<UUID> employeeIds = List.of(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID());
             LocalDate checkInDate = checkInTime.toLocalDate();
 
-            when(attendanceRecordRepository.findByEmployeeIdAndAttendanceDateAndTenantId(
-                    any(), eq(checkInDate), eq(tenantId)))
-                    .thenReturn(Optional.empty());
-            when(attendanceRecordRepository.save(any(AttendanceRecord.class)))
+            // Batch path: no existing records for any employee
+            when(attendanceRecordRepository.findByEmployeeIdInAndAttendanceDateAndTenantId(
+                    anyList(), eq(checkInDate), eq(tenantId)))
+                    .thenReturn(List.of());
+            when(timeEntryRepository.findOpenEntriesByAttendanceRecordIdIn(anyList()))
+                    .thenReturn(List.of());
+            when(attendanceRecordRepository.saveAll(anyList()))
                     .thenAnswer(invocation -> {
-                        AttendanceRecord saved = invocation.getArgument(0);
-                        saved.setId(UUID.randomUUID());
+                        List<AttendanceRecord> saved = invocation.getArgument(0);
+                        saved.forEach(r -> r.setId(UUID.randomUUID()));
                         return saved;
                     });
-            when(timeEntryRepository.getMaxSequenceNumber(any())).thenReturn(0);
-            when(timeEntryRepository.save(any(AttendanceTimeEntry.class)))
+            when(timeEntryRepository.saveAll(anyList()))
                     .thenAnswer(invocation -> invocation.getArgument(0));
 
             AttendanceRecordService.BulkResult result = attendanceRecordService.bulkCheckIn(
@@ -521,20 +523,29 @@ class AttendanceRecordServiceTest {
             List<UUID> employeeIds = List.of(successId, failId);
             LocalDate checkInDate = checkInTime.toLocalDate();
 
-            when(attendanceRecordRepository.findByEmployeeIdAndAttendanceDateAndTenantId(
-                    eq(successId), eq(checkInDate), eq(tenantId)))
-                    .thenReturn(Optional.empty());
-            when(attendanceRecordRepository.findByEmployeeIdAndAttendanceDateAndTenantId(
-                    eq(failId), eq(checkInDate), eq(tenantId)))
-                    .thenThrow(new RuntimeException("Database error"));
-            when(attendanceRecordRepository.save(any(AttendanceRecord.class)))
+            // failId has an existing record that's already fully processed (checkIn + checkOut).
+            // The batch loop will reject it with "Attendance already recorded for today".
+            AttendanceRecord alreadyDone = AttendanceRecord.builder()
+                    .employeeId(failId)
+                    .attendanceDate(checkInDate)
+                    .build();
+            alreadyDone.setId(UUID.randomUUID());
+            alreadyDone.setTenantId(tenantId);
+            alreadyDone.checkIn(checkInTime.minusHours(8), "BIOMETRIC", "Office", "1.1.1.1");
+            alreadyDone.checkOut(checkInTime.minusHours(1), "BIOMETRIC", "Office", "1.1.1.1");
+
+            when(attendanceRecordRepository.findByEmployeeIdInAndAttendanceDateAndTenantId(
+                    anyList(), eq(checkInDate), eq(tenantId)))
+                    .thenReturn(List.of(alreadyDone));
+            when(timeEntryRepository.findOpenEntriesByAttendanceRecordIdIn(anyList()))
+                    .thenReturn(List.of());
+            when(attendanceRecordRepository.saveAll(anyList()))
                     .thenAnswer(invocation -> {
-                        AttendanceRecord saved = invocation.getArgument(0);
-                        saved.setId(UUID.randomUUID());
+                        List<AttendanceRecord> saved = invocation.getArgument(0);
+                        saved.forEach(r -> r.setId(UUID.randomUUID()));
                         return saved;
                     });
-            when(timeEntryRepository.getMaxSequenceNumber(any())).thenReturn(0);
-            when(timeEntryRepository.save(any(AttendanceTimeEntry.class)))
+            when(timeEntryRepository.saveAll(anyList()))
                     .thenAnswer(invocation -> invocation.getArgument(0));
 
             AttendanceRecordService.BulkResult result = attendanceRecordService.bulkCheckIn(
@@ -598,7 +609,7 @@ class AttendanceRecordServiceTest {
         @Test
         @DisplayName("Should request regularization successfully")
         void shouldRequestRegularizationSuccessfully() {
-            when(attendanceRecordRepository.findById(attendanceRecord.getId()))
+            when(attendanceRecordRepository.findByIdAndTenantId(attendanceRecord.getId(), tenantId))
                     .thenReturn(Optional.of(attendanceRecord));
             when(attendanceRecordRepository.save(any(AttendanceRecord.class)))
                     .thenAnswer(invocation -> invocation.getArgument(0));
@@ -617,7 +628,7 @@ class AttendanceRecordServiceTest {
             UUID approverId = UUID.randomUUID();
             attendanceRecord.requestRegularization("Forgot to check out");
 
-            when(attendanceRecordRepository.findById(attendanceRecord.getId()))
+            when(attendanceRecordRepository.findByIdAndTenantId(attendanceRecord.getId(), tenantId))
                     .thenReturn(Optional.of(attendanceRecord));
             when(attendanceRecordRepository.save(any(AttendanceRecord.class)))
                     .thenAnswer(invocation -> invocation.getArgument(0));
@@ -637,7 +648,7 @@ class AttendanceRecordServiceTest {
             UUID rejectorId = UUID.randomUUID();
             attendanceRecord.requestRegularization("Forgot to check out");
 
-            when(attendanceRecordRepository.findById(attendanceRecord.getId()))
+            when(attendanceRecordRepository.findByIdAndTenantId(attendanceRecord.getId(), tenantId))
                     .thenReturn(Optional.of(attendanceRecord));
             when(attendanceRecordRepository.save(any(AttendanceRecord.class)))
                     .thenAnswer(invocation -> invocation.getArgument(0));
@@ -656,7 +667,7 @@ class AttendanceRecordServiceTest {
         @DisplayName("Should throw exception when record not found for regularization")
         void shouldThrowExceptionWhenRecordNotFound() {
             UUID nonExistentId = UUID.randomUUID();
-            when(attendanceRecordRepository.findById(nonExistentId))
+            when(attendanceRecordRepository.findByIdAndTenantId(nonExistentId, tenantId))
                     .thenReturn(Optional.empty());
 
             assertThatThrownBy(() -> attendanceRecordService.requestRegularization(
