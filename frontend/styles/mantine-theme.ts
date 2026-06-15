@@ -20,7 +20,7 @@
  * toggle from `DarkModeProvider`.
  */
 
-import {createTheme, MantineColorsTuple} from '@mantine/core';
+import {ButtonProps, createTheme, MantineColorsTuple, MantineTheme} from '@mantine/core';
 
 // ── Aura accent palette (10 steps, anchored on #2952A3) ──────────────
 // NU-AURA Blue (hue ~228). Mirrors --aura-accent-* in app/globals.css.
@@ -85,6 +85,25 @@ export const mantineTheme = createTheme({
     // Form controls — h-9 (36px) compact desktop default.
     Button: {
       defaultProps: {radius: 'md', size: 'sm'},
+      // a11y: filled primary buttons carry a white label. The dark-mode primary
+      // shade (#6884dc) only reaches ~3.5:1 with white — below WCAG AA. Deepen
+      // ONLY the filled-primary fill to the shared --btn-primary-bg token
+      // (#4463cf → 5.3:1 in dark, #2952A3 → 7.4:1 in light, unchanged). Other
+      // colors (red/green) and variants (light/outline/subtle) are left intact,
+      // and accent *text* keeps the brighter shade it needs against dark bg.
+      vars: (_theme: MantineTheme, props: ButtonProps) => {
+        const isPrimaryColor =
+          !props.color || props.color === 'aura' || props.color === 'primary';
+        if (props.variant === 'filled' && isPrimaryColor) {
+          return {
+            root: {
+              '--button-bg': 'var(--btn-primary-bg)',
+              '--button-hover': 'var(--btn-primary-bg-hover)',
+            },
+          };
+        }
+        return {root: {}};
+      },
       styles: {
         root: {
           height: '2.25rem',

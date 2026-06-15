@@ -216,6 +216,11 @@
     --accent-primary: var(--accent);          /* #2952A3 */
     --accent-primary-hover: var(--accent-hover); /* #244288 */
     --accent-primary-subtle: var(--accent-soft); /* #eef2fc */
+    /* Filled primary/CTA buttons (white label). Light accent is dark enough
+       for AA (#2952A3 → 7.4:1); kept on a dedicated token so dark mode can
+       deepen the fill WITHOUT darkening accent text/borders/rings. */
+    --btn-primary-bg: var(--accent-primary);
+    --btn-primary-bg-hover: var(--accent-primary-hover);
 
     /* ── Sidebar → ALIASED to Aura nav rail ──────────────────── */
     --sidebar-active-bg: var(--nav-active);
@@ -451,6 +456,12 @@
     --accent-primary: var(--accent);          /* #6884dc */
     --accent-primary-hover: var(--accent-hover); /* #7e96e4 */
     --accent-primary-subtle: var(--accent-soft);
+    /* a11y: the light dark-mode accent (#6884dc) only hits ~3.5:1 with white,
+       failing WCAG AA on filled buttons. Deepen the *button fill* to a still-
+       saturated blue (#4463cf → 5.3:1) while leaving accent text/borders/rings
+       on the brighter #6884dc, which need to stay light against dark surfaces. */
+    --btn-primary-bg: var(--aura-accent-500);   /* #4463cf — white label 5.3:1 */
+    --btn-primary-bg-hover: var(--aura-accent-600); /* #3350b8 — white label 7.0:1 */
 
     /* ── Sidebar → ALIASED to Aura dark nav rail ───────────── */
     --sidebar-active-bg: var(--nav-active);
@@ -1202,15 +1213,15 @@
   /* ── Button System (Flat, solid, clean states) ───────────────── */
   .btn-primary {
     @apply inline-flex items-center justify-center px-3.5 h-9 text-sm font-semibold rounded-xl;
-    background-color: var(--accent-primary);
+    background-color: var(--btn-primary-bg);
     color: #ffffff;
     border: none;
     box-shadow: 0 1px 2px rgba(41, 82, 163, 0.25), 0 2px 8px rgba(41, 82, 163, 0.18);
-    transition: transform 100ms ease-out, box-shadow 120ms ease-out, filter 180ms ease-out;
+    transition: background-color 180ms ease-out, transform 100ms ease-out, box-shadow 120ms ease-out, filter 180ms ease-out;
   }
 
   .btn-primary:hover {
-    filter: brightness(1.06);
+    background-color: var(--btn-primary-bg-hover);
     transform: translateY(-0.5px);
   }
 

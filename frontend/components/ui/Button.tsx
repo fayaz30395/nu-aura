@@ -15,7 +15,7 @@ import {Loader2} from 'lucide-react';
       variant: {
         // Aura primary: accent fill + 1px top highlight + soft accent glow (token-driven).
         primary:
-          'bg-[var(--accent-primary)] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.22),0_1px_2px_color-mix(in_srgb,var(--accent-primary)_50%,transparent),0_4px_12px_color-mix(in_srgb,var(--accent-primary)_30%,transparent)] hover:bg-[var(--accent-primary-hover)] hover:-translate-y-px hover:brightness-[1.03] focus-visible:ring-[var(--ring-primary)] active:translate-y-0 active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)]',
+          'bg-[var(--btn-primary-bg)] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.22),0_1px_2px_color-mix(in_srgb,var(--accent-primary)_50%,transparent),0_4px_12px_color-mix(in_srgb,var(--accent-primary)_30%,transparent)] hover:bg-[var(--btn-primary-bg-hover)] hover:-translate-y-px hover:brightness-[1.03] focus-visible:ring-[var(--ring-primary)] active:translate-y-0 active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)]',
         secondary:
           'border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] shadow-[var(--sh-xs)] hover:border-[var(--border-strong)] hover:bg-[var(--bg-card-hover)] focus-visible:ring-[var(--ring-primary)] active:translate-y-px',
         outline:
@@ -39,7 +39,7 @@ import {Loader2} from 'lucide-react';
         default:
           'bg-[var(--text-heading)] text-[var(--text-inverse)] hover:brightness-110 focus-visible:ring-[var(--ring-primary)] active:translate-y-px',
         cta:
-          'bg-[var(--accent-primary)] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.22),0_1px_2px_color-mix(in_srgb,var(--accent-primary)_50%,transparent),0_4px_12px_color-mix(in_srgb,var(--accent-primary)_30%,transparent)] hover:bg-[var(--accent-primary-hover)] hover:-translate-y-px hover:brightness-[1.03] focus-visible:ring-[var(--ring-primary)] active:translate-y-0 active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)]',
+          'bg-[var(--btn-primary-bg)] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.22),0_1px_2px_color-mix(in_srgb,var(--accent-primary)_50%,transparent),0_4px_12px_color-mix(in_srgb,var(--accent-primary)_30%,transparent)] hover:bg-[var(--btn-primary-bg-hover)] hover:-translate-y-px hover:brightness-[1.03] focus-visible:ring-[var(--ring-primary)] active:translate-y-0 active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)]',
       },
       // Aura radii: control surfaces sit at 8–11px. Heights are unchanged (DESIGN
       // contract: md=36 / lg=44 / xl=48) — only the corner softness is re-systemed.
