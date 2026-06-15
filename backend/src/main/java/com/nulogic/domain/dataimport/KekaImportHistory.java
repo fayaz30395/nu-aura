@@ -7,14 +7,14 @@ import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDateTime;
 
 /**
  * Track history of KEKA imports
  */
-@Where(clause = "is_deleted = false")
+@SQLRestriction("is_deleted = false")
 @Entity
 @Table(name = "keka_import_history", indexes = {
         @Index(name = "idx_keka_import_tenant", columnList = "tenant_id"),

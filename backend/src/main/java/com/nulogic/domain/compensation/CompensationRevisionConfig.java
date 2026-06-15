@@ -4,11 +4,11 @@ import com.nulogic.common.entity.TenantAware;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.math.BigDecimal;
 
-@Where(clause = "is_deleted = false")
+@SQLRestriction("is_deleted = false")
 @Entity
 @Table(name = "compensation_revision_configs", indexes = {
         @Index(name = "idx_comp_rev_config_tenant", columnList = "tenant_id"),

@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.util.UUID;
 
@@ -16,7 +16,7 @@ import java.util.UUID;
  * When a permission has CUSTOM scope, this entity stores the specific
  * employees, departments, or locations that the permission grants access to.
  */
-@Where(clause = "is_deleted = false")
+@SQLRestriction("is_deleted = false")
 @Entity
 @Table(name = "custom_scope_targets", indexes = {
         @Index(name = "idx_custom_scope_target_role_permission", columnList = "role_permission_id"),

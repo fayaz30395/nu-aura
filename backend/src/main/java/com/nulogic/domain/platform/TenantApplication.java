@@ -5,7 +5,7 @@ import com.nulogic.common.util.TenantTimeProvider;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
  * Represents a tenant's subscription/access to an NU application.
  * Controls which applications are enabled for each tenant.
  */
-@Where(clause = "is_deleted = false")
+@SQLRestriction("is_deleted = false")
 @Entity
 @Table(name = "tenant_applications", indexes = {
         @Index(name = "idx_tenant_app_tenant", columnList = "tenantId"),

@@ -4,7 +4,7 @@ import com.nulogic.common.entity.TenantAware;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -15,7 +15,7 @@ import java.util.UUID;
  * When Admin/Super Admin edits employment details, a change request is created
  * and must be approved by HR Manager before the changes are applied.
  */
-@Where(clause = "is_deleted = false")
+@SQLRestriction("is_deleted = false")
 @Entity
 @Table(name = "employment_change_requests")
 @Getter

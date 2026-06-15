@@ -4,7 +4,7 @@ import com.nulogic.common.entity.TenantAware;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 import org.springframework.lang.Nullable;
 
 import java.util.ArrayList;
@@ -15,7 +15,7 @@ import java.util.UUID;
  * Workflow Definition - Defines a reusable workflow template for approvals.
  * Supports various entity types (Leave, Expense, Travel, Loan, etc.)
  */
-@Where(clause = "is_deleted = false")
+@SQLRestriction("is_deleted = false")
 @Entity
 @Table(name = "workflow_definitions")
 @Getter

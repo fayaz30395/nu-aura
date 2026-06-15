@@ -8,7 +8,7 @@ import com.nulogic.common.util.TimeAuditingEntityListener;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -38,7 +38,7 @@ import java.time.LocalDateTime;
  * so the service layer can fall back to it during the migration window.  Both
  * the field and the old column must be removed in V272.
  */
-@Where(clause = "is_deleted = false")
+@SQLRestriction("is_deleted = false")
 @Entity
 @Table(name = "benefit_dependents")
 @EntityListeners(TimeAuditingEntityListener.class)

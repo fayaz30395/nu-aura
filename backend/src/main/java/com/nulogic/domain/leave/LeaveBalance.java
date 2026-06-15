@@ -7,7 +7,7 @@ import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -18,7 +18,7 @@ import java.util.UUID;
 // now cause an ObjectOptimisticLockingFailureException instead of a silent
 // last-write-wins race that can over-spend leave balances.
 
-@Where(clause = "is_deleted = false")
+@SQLRestriction("is_deleted = false")
 @Entity
 @Table(name = "leave_balances", indexes = {
         @Index(name = "idx_leave_balances_tenant_id", columnList = "tenantId"),

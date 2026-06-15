@@ -6,7 +6,7 @@ import com.nulogic.common.util.TimeAuditingEntityListener;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 import org.springframework.lang.Nullable;
 
 import java.time.LocalDateTime;
@@ -23,7 +23,7 @@ import java.util.UUID;
  * number generation are preserved in {@link #onCreate()} — see
  * {@code backend/docs/audit/prepersist-now-audit.md} row 22.</p>
  */
-@Where(clause = "is_deleted = false")
+@SQLRestriction("is_deleted = false")
 @Entity
 @Table(name = "workflow_executions")
 @EntityListeners(TimeAuditingEntityListener.class)

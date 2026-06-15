@@ -4,7 +4,7 @@ import com.nulogic.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -15,7 +15,7 @@ import java.util.Set;
  * <p>
  * Each application has its own set of permissions and can be enabled/disabled per tenant.
  */
-@Where(clause = "is_deleted = false")
+@SQLRestriction("is_deleted = false")
 @Entity
 @Table(name = "nu_applications", indexes = {
         @Index(name = "idx_nu_app_code", columnList = "code", unique = true),

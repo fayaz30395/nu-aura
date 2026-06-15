@@ -4,14 +4,14 @@ import com.nulogic.common.entity.TenantAware;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 
 /**
  * Defines a statutory filing format template (e.g., PF ECR, ESI Return, Form 16).
  * Each template describes the filing type, output format, and version.
  * Templates are seeded via Flyway migration and configurable per tenant.
  */
-@Where(clause = "is_deleted = false")
+@SQLRestriction("is_deleted = false")
 @Entity
 @Table(name = "statutory_filing_templates", indexes = {
         @Index(name = "idx_sft_tenant", columnList = "tenantId"),

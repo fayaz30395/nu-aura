@@ -9,7 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -21,7 +21,7 @@ import java.util.UUID;
  * stamped from the tenant's zone via {@link TenantTimestamp} rather than the JVM default
  * zone {@code LocalDateTime.now()}.
  */
-@Where(clause = "is_deleted = false")
+@SQLRestriction("is_deleted = false")
 @Entity
 @Table(name = "multi_channel_notifications", indexes = {
         @Index(name = "idx_mcn_recipient", columnList = "recipient_id"),

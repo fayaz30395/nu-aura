@@ -4,7 +4,7 @@ import com.nulogic.common.entity.TenantAware;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +13,7 @@ import java.util.List;
  * Defines the schema for a custom field.
  * Custom fields allow organizations to extend entity data with their own attributes.
  */
-@Where(clause = "is_deleted = false")
+@SQLRestriction("is_deleted = false")
 @Entity
 @Table(name = "custom_field_definitions", indexes = {
         @Index(name = "idx_cfd_tenant", columnList = "tenantId"),

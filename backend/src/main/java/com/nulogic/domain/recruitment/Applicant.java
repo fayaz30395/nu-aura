@@ -3,14 +3,14 @@ package com.nulogic.domain.recruitment;
 import com.nulogic.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Where(clause = "is_deleted = false")
+@SQLRestriction("is_deleted = false")
 @Entity
 @Table(name = "applicants", indexes = {
         @Index(name = "idx_applicants_tenant_job", columnList = "tenant_id,job_opening_id"),

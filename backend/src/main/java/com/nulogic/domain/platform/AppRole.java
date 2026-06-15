@@ -4,7 +4,7 @@ import com.nulogic.common.entity.TenantAware;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -16,7 +16,7 @@ import java.util.Set;
  * A user can have different roles in different applications.
  * Example: Admin in HRMS, Viewer in CRM
  */
-@Where(clause = "is_deleted = false")
+@SQLRestriction("is_deleted = false")
 @Entity
 @Table(name = "app_roles", indexes = {
         @Index(name = "idx_app_role_tenant", columnList = "tenant_id"),

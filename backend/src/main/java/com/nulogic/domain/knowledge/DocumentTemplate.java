@@ -7,9 +7,9 @@ import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 
-@Where(clause = "is_deleted = false")
+@SQLRestriction("is_deleted = false")
 @Entity(name = "KnowledgeDocumentTemplate")
 @Table(name = "knowledge_templates", indexes = {
         @Index(name = "idx_knowledge_templates_tenant", columnList = "tenantId"),

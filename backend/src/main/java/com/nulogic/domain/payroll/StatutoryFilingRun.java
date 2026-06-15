@@ -4,7 +4,7 @@ import com.nulogic.common.entity.TenantAware;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -14,7 +14,7 @@ import java.util.UUID;
  * Records the filing type, period, generation status, file location in storage,
  * validation results, and submission tracking.
  */
-@Where(clause = "is_deleted = false")
+@SQLRestriction("is_deleted = false")
 @Entity
 @Table(name = "statutory_filing_runs", indexes = {
         @Index(name = "idx_sfr_tenant", columnList = "tenantId"),

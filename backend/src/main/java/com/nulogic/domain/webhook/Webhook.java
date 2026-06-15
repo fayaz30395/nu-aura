@@ -5,7 +5,7 @@ import com.nulogic.common.entity.TenantAware;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -18,7 +18,7 @@ import java.util.UUID;
  * <p>Allows external systems to receive real-time notifications
  * for events occurring within the HRMS platform.</p>
  */
-@Where(clause = "is_deleted = false")
+@SQLRestriction("is_deleted = false")
 @Entity
 @Table(name = "webhooks", indexes = {
         @Index(name = "idx_webhook_tenant", columnList = "tenantId"),

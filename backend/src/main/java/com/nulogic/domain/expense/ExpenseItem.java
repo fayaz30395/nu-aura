@@ -4,7 +4,7 @@ import com.nulogic.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -15,7 +15,7 @@ import java.util.UUID;
  * Each claim can have multiple items (e.g., hotel + meals + taxi).
  * Receipt is stored via Google Drive and referenced by storagePath.
  */
-@Where(clause = "is_deleted = false")
+@SQLRestriction("is_deleted = false")
 @Entity
 @Table(name = "expense_items", indexes = {
         @Index(name = "idx_expense_item_claim", columnList = "expense_claim_id"),

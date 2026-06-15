@@ -4,9 +4,9 @@ import com.nulogic.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 
-@Where(clause = "is_deleted = false")
+@SQLRestriction("is_deleted = false")
 @Entity
 @Table(name = "tenants", indexes = {
         @Index(name = "idx_tenant_code", columnList = "code", unique = true),

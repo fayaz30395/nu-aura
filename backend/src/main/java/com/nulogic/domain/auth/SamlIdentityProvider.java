@@ -7,7 +7,7 @@ import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.util.UUID;
 
@@ -18,7 +18,7 @@ import java.util.UUID;
  * The certificate is stored encrypted at rest via {@link com.nulogic.common.security.EncryptionService}.
  * Attribute mapping is stored as JSON to allow flexible IdP-specific SAML attribute names.</p>
  */
-@Where(clause = "is_deleted = false")
+@SQLRestriction("is_deleted = false")
 @Entity
 @Table(name = "saml_identity_providers", indexes = {
         @Index(name = "idx_saml_idp_tenant", columnList = "tenantId"),

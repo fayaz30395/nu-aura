@@ -5,7 +5,7 @@ import com.nulogic.domain.user.EscalationType;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.util.UUID;
 
@@ -26,7 +26,7 @@ import java.util.UUID;
  *
  * <p>The system tracks escalation count per approval instance to prevent infinite loops.
  */
-@Where(clause = "is_deleted = false")
+@SQLRestriction("is_deleted = false")
 @Entity
 @Table(name = "approval_escalation_config")
 @Getter

@@ -6,7 +6,7 @@ import com.nulogic.common.util.TimeAuditingEntityListener;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -21,7 +21,7 @@ import java.util.UUID;
  * {@link TenantAware} mapped superclass (JPA spec §3.5.4), so {@code tenantId} is
  * populated when the time-auditing listener reads it.
  */
-@Where(clause = "is_deleted = false")
+@SQLRestriction("is_deleted = false")
 @Entity
 @Table(name = "employee_skills", indexes = {
         @Index(name = "idx_emp_skill_tenant", columnList = "tenantId"),

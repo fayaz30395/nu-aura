@@ -4,13 +4,13 @@ import com.nulogic.common.entity.TenantAware;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 
 /**
  * Tenant-level policy governing restricted holiday selections.
  * One policy per tenant per year.
  */
-@Where(clause = "is_deleted = false")
+@SQLRestriction("is_deleted = false")
 @Entity
 @Table(name = "restricted_holiday_policies", indexes = {
         @Index(name = "idx_rhp_tenant_id", columnList = "tenantId"),

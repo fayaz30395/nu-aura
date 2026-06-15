@@ -9,7 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -25,7 +25,7 @@ import java.util.UUID;
  * tenant's IANA zone through {@code TenantTimeService}. The remaining {@code @PrePersist}
  * exists solely to default {@code status} (non-time invariant).</p>
  */
-@Where(clause = "is_deleted = false")
+@SQLRestriction("is_deleted = false")
 @Entity
 @Table(name = "talent_pool_members",
         uniqueConstraints = @UniqueConstraint(columnNames = {"talent_pool_id", "employee_id"}))

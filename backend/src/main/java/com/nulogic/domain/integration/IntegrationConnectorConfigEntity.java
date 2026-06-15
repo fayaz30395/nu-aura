@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.SQLRestriction;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -30,7 +30,7 @@ import java.util.Set;
  * <p><strong>Multi-Tenancy:</strong> Extends {@link TenantAware} which automatically
  * handles tenant isolation via Spring Data JPA queries and PostgreSQL RLS.</p>
  */
-@Where(clause = "is_deleted = false")
+@SQLRestriction("is_deleted = false")
 @Entity
 @SQLRestriction("is_deleted = false")
 @Table(name = "integration_connector_configs", indexes = {

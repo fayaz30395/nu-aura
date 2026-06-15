@@ -6,7 +6,7 @@ import com.nulogic.common.util.TimeAuditingEntityListener;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -21,7 +21,7 @@ import java.util.UUID;
  * {@code updatedAt} are now stamped from the tenant's zone via {@link TenantTimestamp}
  * rather than the JVM default zone {@code LocalDateTime.now()}.
  */
-@Where(clause = "is_deleted = false")
+@SQLRestriction("is_deleted = false")
 @Entity
 @Table(name = "user_notification_preferences", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"userId", "category"})
