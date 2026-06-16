@@ -13,6 +13,7 @@ import {useCreateLoan} from '@/lib/hooks/queries/useLoans';
 import {loanService} from '@/lib/services/hrms/loan.service';
 import {AlertCircle, ArrowLeft, Calendar, DollarSign, FileText, Loader2, Wallet,} from 'lucide-react';
 import {Stat} from '@/components/ui/Stat';
+import {useToast} from '@/components/notifications/ToastProvider';
 
 // ─── Zod Schema ────────────────────────────────────────────────────────────────
 
@@ -71,6 +72,7 @@ const REPAYMENT_FREQUENCIES: { value: RepaymentFrequency; label: string }[] = [
 
 export default function NewLoanPage() {
   const router = useRouter();
+  const toast = useToast();
   const createLoanMutation = useCreateLoan();
 
   const {
@@ -117,9 +119,11 @@ export default function NewLoanPage() {
         purpose: data.purpose as string,
         remarks: data.notes || undefined,
       });
+      toast.success('Loan application submitted successfully');
       router.push('/loans');
     } catch (err) {
       logger.error('Error creating loan:', err);
+      toast.error((err as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Failed to submit loan application');
     }
   };
 
