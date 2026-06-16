@@ -274,7 +274,7 @@ function TimesheetRow({
         )}
         {canAdminAct && (
           <>
-            <Button size="sm" onClick={() => approveMut.mutate({id: ts.id!}, {onSuccess: invalidate})}
+            <Button size="sm" onClick={() => approveMut.mutate({id: ts.id!, data: 'Approved'}, {onSuccess: invalidate})}
               disabled={approveMut.isPending}
               className="h-6 text-[10px] px-2 bg-green-600 hover:bg-green-700 text-white">✓</Button>
             <Button size="sm" variant="outline" onClick={() => rejectMut.mutate({id: ts.id!, data: 'Rejected'}, {onSuccess: invalidate})}
