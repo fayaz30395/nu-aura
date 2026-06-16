@@ -416,12 +416,6 @@ public class PayrollRunService {
 
                 payslip.calculateTotals();
                 payslipRepository.save(payslip);
-            }
-            if (payslipRepository.existsByTenantIdAndEmployeeIdAndPayPeriodYearAndPayPeriodMonth(
-                    tenantId,
-                    employee.getId(),
-                    payrollRun.getPayPeriodYear(),
-                    payrollRun.getPayPeriodMonth())) {
                 generated++;
             }
         }

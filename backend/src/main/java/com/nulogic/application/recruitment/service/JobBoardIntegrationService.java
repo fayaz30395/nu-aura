@@ -164,7 +164,7 @@ public class JobBoardIntegrationService {
                 for (JobBoardPosting posting : activePostings) {
                     try {
                         syncPostingStats(posting);
-                        jobBoardPostingRepository.save(posting);
+                        // managed entity — dirty-check flushes stat mutations at commit
                     } catch (Exception e) { // Intentional broad catch — external job board API integration
                         log.warn("Failed to sync stats for posting {}: {}", posting.getId(), e.getMessage());
                     }
@@ -194,10 +194,8 @@ public class JobBoardIntegrationService {
                 // Wave 13: tenant-local expiry cutoff — resolved via TenantTimeService.
                 List<JobBoardPosting> expired = jobBoardPostingRepository
                         .findAllExpiredPostings(tenantTimeService.now(tenantId));
-                expired.forEach(p -> {
-                    p.setStatus(JobBoardPosting.PostingStatus.EXPIRED);
-                    jobBoardPostingRepository.save(p);
-                });
+                // managed entities — dirty-check flushes EXPIRED status at commit
+                expired.forEach(p -> p.setStatus(JobBoardPosting.PostingStatus.EXPIRED));
                 totalExpired += expired.size();
             } finally {
                 TenantContext.clear();
