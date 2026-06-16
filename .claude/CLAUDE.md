@@ -10,13 +10,13 @@ decisions are defined in the root `CLAUDE.md` — this file adds supplementary i
 
 ### Frontend
 
-Next.js 14 (App Router), TypeScript (strict), Mantine UI, Tailwind CSS, React Query, Zustand, Axios,
-React Hook Form + Zod, Framer Motion, Recharts, Tiptap, ExcelJS, Lucide React + Tabler Icons,
+Next.js 16 (App Router), React 19, TypeScript (strict), Mantine UI 9, Tailwind CSS, React Query (TanStack v5),
+Zustand, Axios, React Hook Form + Zod, Framer Motion, Recharts, Tiptap, ExcelJS, Lucide React + Tabler Icons,
 `@hello-pangea/dnd`, `@react-oauth/google`, STOMP + SockJS
 
 ### Backend
 
-Java 17, Spring Boot 3.4.1, PostgreSQL (Neon dev / PG 16 prod), Redis 7 (Bucket4j 8.7.0), Kafka (
+Java 21, Spring Boot 3.5.14, PostgreSQL (Neon dev / PG 16 prod), Redis 7 (Bucket4j 8.7.0), Kafka (
 Confluent 7.6.0), Elasticsearch 8.11.0, Google Drive (file storage), MapStruct 1.6.3, JJWT 0.12.6,
 OpenPDF 2.0.3, Apache POI 5.3.0, SpringDoc OpenAPI 2.7.0
 

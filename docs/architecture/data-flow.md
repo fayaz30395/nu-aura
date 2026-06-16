@@ -15,7 +15,7 @@ to the repo root `/Users/fayaz.m/IdeaProjects/nulogic/nu-aura`.
 ```mermaid
 flowchart LR
     Browser["Browser<br/>(Next.js SPA)"]
-    Next["Next.js 14<br/>(App Router + proxy)"]
+    Next["Next.js 16<br/>(App Router + proxy)"]
     Spring["Spring Boot 3.x<br/>(filter chain → controller → service)"]
     PG[("PostgreSQL 16<br/>RLS policies")]
     Redis[("Redis 7<br/>cache / idempotency")]

@@ -40,7 +40,7 @@ The app icon entry point is `/me/dashboard` — the personal self-service home.
 
 ## 2. Frontend Routes & Pages
 
-All routes live under `frontend/app/` (Next.js 14 App Router). The table groups the
+All routes live under `frontend/app/` (Next.js 16 App Router). The table groups the
 HRMS-owned `page.tsx` routes by functional area. Routes were enumerated directly from
 the filesystem; the app→route mapping is authoritative per `HRMS.routePrefixes`.
 
@@ -201,7 +201,7 @@ surfaced to employees at `/me/payslips`.
 
 ```mermaid
 flowchart LR
-    subgraph FE["Frontend (Next.js 14)"]
+    subgraph FE["Frontend (Next.js 16)"]
       ME["/me/* self-service"]
       ATT["/attendance, /shifts, /time-tracking"]
       LV["/leave"]

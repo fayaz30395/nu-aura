@@ -37,7 +37,7 @@
 
 ### 4. Engineering defaults (NU-AURA locked stack)
 - Backend: Java 21 + Spring Boot 3.5.14 (BOM-managed) monolith
-- Frontend: Next.js 14 + TypeScript + Mantine UI + React Query + Zustand + Tailwind
+- Frontend: Next.js 16 + React 19 + TypeScript + Mantine UI 9 + React Query + Zustand + Tailwind
 - Database: PostgreSQL 16 (shared schema + RLS)
 - Cache/Messaging/Storage: Redis 7, Kafka, MinIO
 - Startup: `docker-compose up -d` → `cd backend && ./start-backend.sh` → `cd frontend && npm run dev`
@@ -414,7 +414,7 @@ committing to `main` — freeze it, tag an RC, then run the gate on a frozen SHA
 
 **Spring Boot:** 3.5.14 (BOM) / **Java:** 21 / **JaCoCo minimum:** 80% (excludes DTOs, entities, config)
 
-### Frontend (Next.js 14)
+### Frontend (Next.js 16)
 
 | Metric                          | Count         |
 |---------------------------------|---------------|
@@ -632,19 +632,19 @@ All enabled by default for `tenant_id = 660e8400-e29b-41d4-a716-446655440001`:
 
 | Dependency         | Version   |
 |--------------------|-----------|
-| Next.js            | ^14.2.35  |
-| React              | 18.2.0    |
-| TypeScript         | ^5.9.3    |
-| Mantine            | ^8.3.14   |
-| Tailwind CSS       | ^3.4.0    |
-| React Query        | ^5.17.0   |
-| Zustand            | ^4.4.7    |
-| Axios              | ^1.7.8    |
+| Next.js            | ^16.2.7   |
+| React              | 19.2.7    |
+| TypeScript         | ^6.0.3    |
+| Mantine            | ^9.3.0    |
+| Tailwind CSS       | 3.4.19    |
+| React Query        | ^5.100.14 |
+| Zustand            | ^5.0.14   |
+| Axios              | ^1.15.2   |
 | React Hook Form    | ^7.49.2   |
-| Zod                | ^3.22.4   |
-| Framer Motion      | ^12.23.24 |
-| Recharts           | ^3.5.0    |
-| Tiptap (Rich Text) | ^3.20.1   |
+| Zod                | 3.23.8    |
+| Framer Motion      | ^12.40.0  |
+| Recharts           | ^3.8.1    |
+| Tiptap (Rich Text) | ^3.24.0   |
 | ExcelJS            | ^4.4.0    |
 | Lucide React       | ^0.561.0  |
 | Tabler Icons       | ^3.36.1   |

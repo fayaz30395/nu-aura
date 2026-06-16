@@ -2,7 +2,7 @@
 
 Index of the NU-AURA documentation set. NU-AURA is a multi-tenant bundle-app HR platform
 with four sub-applications (NU-HRMS, NU-Hire, NU-Grow, NU-Fluence), built on a Spring Boot
-(Java 21) backend and a Next.js 14 (App Router) frontend.
+(Java 21) backend and a Next.js 16 (App Router) frontend.
 
 > Using Obsidian? Start from [Home.md](./Home.md) for the wikilink-based map of content.
 

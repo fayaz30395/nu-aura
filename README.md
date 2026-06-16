@@ -43,7 +43,7 @@ nu-aura/
 │   │   └── common/              # Config, security, exceptions
 │   └── src/main/resources/
 │       └── db/migration/        # Flyway (V0–V269)
-├── frontend/                    # Next.js 14 App Router
+├── frontend/                    # Next.js 16 App Router
 │   ├── app/                     # 261 pages
 │   ├── components/              # TSX components
 │   ├── lib/                     # Hooks, services, types, validations

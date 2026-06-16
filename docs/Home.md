@@ -3,7 +3,7 @@
 > **Map of Content (MoC).** This is the Obsidian entry point for the NU-AURA documentation
 > vault. NU-AURA is a multi-tenant bundle-app HR platform with four sub-applications
 > (NU-HRMS, NU-Hire, NU-Grow, NU-Fluence) built on a Spring Boot (Java 21) backend and a
-> Next.js 14 (App Router) frontend.
+> Next.js 16 (App Router) frontend.
 
 Mirror of the routing discipline in the repo `CLAUDE.md`: **consult these maps at task
 start, not after mistakes.** Find your need in the left column, follow the wikilink.
