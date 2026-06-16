@@ -1,4 +1,5 @@
 import type {BirthdayResponse, NewJoineeResponse, WorkAnniversaryResponse,} from './home.service';
+import {logger} from '../../utils/logger';
 import {homeService} from './home.service';
 import type {Announcement} from '../platform/announcement.service';
 import {announcementService} from '../platform/announcement.service';
@@ -49,7 +50,7 @@ class FeedService {
       if (result.status === 'fulfilled') {
         items.push(...result.value);
       } else {
-        console.warn('[FeedService] One feed source failed:', result.reason);
+        logger.warn('[FeedService] One feed source failed:', result.reason);
       }
     }
 
@@ -82,7 +83,7 @@ class FeedService {
       if (result.status === 'fulfilled') {
         items.push(...result.value);
       } else {
-        console.warn('[FeedService] Older feed source failed:', result.reason);
+        logger.warn('[FeedService] Older feed source failed:', result.reason);
       }
     }
 
@@ -122,7 +123,7 @@ class FeedService {
         hasReacted: a.hasReacted,
       }));
     } catch (error) {
-      console.error('[FeedService] fetchAnnouncements failed:', error);
+      logger.error('[FeedService] fetchAnnouncements failed:', error);
       return [];
     }
   }
@@ -145,7 +146,7 @@ class FeedService {
         daysUntil: b.daysUntil,
       }));
     } catch (error) {
-      console.error('[FeedService] fetchBirthdays failed:', error);
+      logger.error('[FeedService] fetchBirthdays failed:', error);
       return [];
     }
   }
@@ -170,7 +171,7 @@ class FeedService {
         daysUntil: a.daysUntil,
       }));
     } catch (error) {
-      console.error('[FeedService] fetchAnniversaries failed:', error);
+      logger.error('[FeedService] fetchAnniversaries failed:', error);
       return [];
     }
   }
@@ -194,7 +195,7 @@ class FeedService {
         daysSinceJoining: j.daysSinceJoining,
       }));
     } catch (error) {
-      console.error('[FeedService] fetchNewJoiners failed:', error);
+      logger.error('[FeedService] fetchNewJoiners failed:', error);
       return [];
     }
   }
@@ -220,7 +221,7 @@ class FeedService {
         hasReacted: r.hasReacted, // User's reaction status
       }));
     } catch (error) {
-      console.error('[FeedService] fetchRecognitions failed:', error);
+      logger.error('[FeedService] fetchRecognitions failed:', error);
       return [];
     }
   }
@@ -267,7 +268,7 @@ class FeedService {
         totalReactorCount: post.totalReactorCount,
       }));
     } catch (error) {
-      console.error('[FeedService] fetchWallPosts failed:', error);
+      logger.error('[FeedService] fetchWallPosts failed:', error);
       return [];
     }
   }
@@ -288,7 +289,7 @@ class FeedService {
         linkedinEngagement: post.engagement,
       }));
     } catch (error) {
-      console.error('[FeedService] fetchLinkedInPosts failed:', error);
+      logger.error('[FeedService] fetchLinkedInPosts failed:', error);
       return [];
     }
   }

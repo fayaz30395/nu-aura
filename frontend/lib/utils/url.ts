@@ -1,3 +1,5 @@
+import {logger} from './logger';
+
 /**
  * URL Validation & Safe Navigation Utilities
  *
@@ -50,7 +52,7 @@ export function safeWindowOpen(
 
   if (!isValidHttpUrl(url)) {
     if (process.env.NODE_ENV === 'development') {
-      console.warn('[safeWindowOpen] Blocked unsafe URL:', url);
+      logger.warn('[safeWindowOpen] Blocked unsafe URL:', url);
     }
     return null;
   }

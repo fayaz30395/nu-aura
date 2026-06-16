@@ -1,4 +1,5 @@
 import {apiClient} from '../../api/client';
+import {logger} from '../../utils/logger';
 import {Department, Employee, Page} from '../../types/hrms/employee';
 import {Project} from '../../types/hrms/project';
 import {FluenceSearchResponse, FluenceSearchResult} from '../../types/platform/fluence';
@@ -76,7 +77,7 @@ class SearchService {
         },
       }));
     } catch (error) {
-      console.error('Employee search failed:', error);
+      logger.error('Employee search failed:', error);
       return [];
     }
   }
@@ -102,7 +103,7 @@ class SearchService {
         },
       }));
     } catch (error) {
-      console.error('Project search failed:', error);
+      logger.error('Project search failed:', error);
       return [];
     }
   }
@@ -128,7 +129,7 @@ class SearchService {
         },
       }));
     } catch (error) {
-      console.error('Department search failed:', error);
+      logger.error('Department search failed:', error);
       return [];
     }
   }
@@ -180,7 +181,7 @@ class SearchService {
         total: wikiPages.length + blogPosts.length + templates.length,
       };
     } catch (error) {
-      console.error('Fluence search failed:', error);
+      logger.error('Fluence search failed:', error);
       return {wikiPages: [], blogPosts: [], templates: [], total: 0};
     }
   }

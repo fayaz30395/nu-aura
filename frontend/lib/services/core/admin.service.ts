@@ -1,4 +1,5 @@
 import {apiClient} from '../../api/client';
+import {logger} from '../../utils/logger';
 import {AdminStats, AdminUserSummary, HealthResponse, Page} from '../../types/core/admin';
 
 class AdminService {
@@ -33,7 +34,7 @@ class AdminService {
       const response = await apiClient.get<HealthResponse>('/admin/health');
       return response.data;
     } catch (error) {
-      console.error('Failed to fetch system health:', error);
+      logger.error('Failed to fetch system health:', error);
       return {
         status: 'DEGRADED',
         components: {

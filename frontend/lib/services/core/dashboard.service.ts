@@ -1,4 +1,5 @@
 import {apiClient} from '../../api/client';
+import {logger} from '../../utils/logger';
 import {
   EmployeeDashboardData,
   ExecutiveDashboardData,
@@ -16,7 +17,7 @@ class DashboardService {
       const response = await apiClient.get<ExecutiveDashboardData>('/dashboards/executive');
       return response.data;
     } catch (error) {
-      console.error('[DashboardService] getExecutiveDashboard failed:', error);
+      logger.error('[DashboardService] getExecutiveDashboard failed:', error);
       return null;
     }
   }
@@ -43,7 +44,7 @@ class DashboardService {
       const response = await apiClient.get<EmployeeDashboardData>('/dashboards/employee');
       return response.data;
     } catch (error) {
-      console.error('[DashboardService] getEmployeeDashboard failed:', error);
+      logger.error('[DashboardService] getEmployeeDashboard failed:', error);
       return null;
     }
   }
@@ -65,7 +66,7 @@ class DashboardService {
       const response = await apiClient.get<ManagerDashboardResponse>('/dashboards/manager');
       return response.data;
     } catch (error) {
-      console.error('[DashboardService] getManagerDashboard failed:', error);
+      logger.error('[DashboardService] getManagerDashboard failed:', error);
       return null;
     }
   }
@@ -88,7 +89,7 @@ class DashboardService {
       const response = await apiClient.get<ManagerTeamProjectsResponse>('/dashboards/manager/team-projects');
       return response.data;
     } catch (error) {
-      console.error('[DashboardService] getManagerTeamProjects failed:', error);
+      logger.error('[DashboardService] getManagerTeamProjects failed:', error);
       return null;
     }
   }

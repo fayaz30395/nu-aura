@@ -1,4 +1,5 @@
 import {apiClient} from '@/lib/api/client';
+import {logger} from '../../utils/logger';
 // LinkedIn service - uses /api/v1/linkedin-posts endpoints for stub implementation
 import type {CreateLinkedInPostRequest, LinkedInPost, UpdateLinkedInPostRequest,} from '@/lib/types/platform/linkedin';
 
@@ -44,7 +45,7 @@ class LinkedInService {
       );
       return response.data;
     } catch (error) {
-      console.error('[LinkedInService] getAllLinkedInPosts failed:', error);
+      logger.error('[LinkedInService] getAllLinkedInPosts failed:', error);
       throw error;
     }
   }
@@ -59,7 +60,7 @@ class LinkedInService {
       const response = await apiClient.post<LinkedInPost>(BASE_URL, data);
       return response.data;
     } catch (error) {
-      console.error('[LinkedInService] createLinkedInPost failed:', error);
+      logger.error('[LinkedInService] createLinkedInPost failed:', error);
       throw error;
     }
   }
@@ -78,7 +79,7 @@ class LinkedInService {
       );
       return response.data;
     } catch (error) {
-      console.error('[LinkedInService] updateLinkedInPost failed:', error);
+      logger.error('[LinkedInService] updateLinkedInPost failed:', error);
       throw error;
     }
   }
@@ -90,7 +91,7 @@ class LinkedInService {
     try {
       await apiClient.delete(`${BASE_URL}/${id}`);
     } catch (error) {
-      console.error('[LinkedInService] deleteLinkedInPost failed:', error);
+      logger.error('[LinkedInService] deleteLinkedInPost failed:', error);
       throw error;
     }
   }

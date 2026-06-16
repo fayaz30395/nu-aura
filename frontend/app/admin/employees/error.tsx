@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { AlertCircle, RefreshCw } from 'lucide-react';
 import { AppLayout } from '@/components/layout/AppLayout';
+import {logger} from '@/lib/utils/logger';
 
 export default function ErrorBoundary({
   error,
@@ -12,7 +13,7 @@ export default function ErrorBoundary({
   reset: () => void;
 }) {
   useEffect(() => {
-    console.error('[Route Error]', error);
+    logger.error('[Route Error]', error);
   }, [error]);
 
   return (

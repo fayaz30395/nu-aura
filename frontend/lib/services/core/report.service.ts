@@ -1,4 +1,5 @@
 import {apiClient} from '@/lib/api/client';
+import {logger} from '../../utils/logger';
 
 export interface ReportRequest {
   startDate?: string;
@@ -73,7 +74,7 @@ class ReportService {
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      console.error('Error downloading report:', error);
+      logger.error('Error downloading report:', error);
       throw error;
     }
   }
