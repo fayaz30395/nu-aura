@@ -161,8 +161,16 @@ public class ApplicantService {
                 .and(scopeSpec())
                 .and(jobOpeningSpec(jobOpeningId));
 
-        List<ApplicantResponse> applicants = applicantRepository.findAll(spec).stream()
-                .map(this::mapToApplicantResponse)
+        List<Applicant> rawApplicants = applicantRepository.findAll(spec);
+        // Pre-fetch candidates and the single shared job opening in bulk — avoids N+1
+        Set<UUID> candidateIds = new HashSet<>();
+        rawApplicants.forEach(a -> { if (a.getCandidateId() != null) candidateIds.add(a.getCandidateId()); });
+        Map<UUID, Candidate> candidateMap = candidateRepository.findByTenantIdAndIdIn(tenantId, candidateIds).stream()
+                .collect(java.util.stream.Collectors.toMap(Candidate::getId, c -> c));
+        JobOpening sharedJobOpening = jobOpeningRepository.findByIdAndTenantId(jobOpeningId, tenantId).orElse(null);
+
+        List<ApplicantResponse> applicants = rawApplicants.stream()
+                .map(a -> mapToApplicantResponse(a, candidateMap.get(a.getCandidateId()), sharedJobOpening))
                 .toList();
 
         Map<ApplicationStatus, List<ApplicantResponse>> pipeline = new EnumMap<>(ApplicationStatus.class);
@@ -199,8 +207,16 @@ public class ApplicantService {
                 .and(scopeSpec())
                 .and(candidateSpec(candidateId));
 
-        return applicantRepository.findAll(spec).stream()
-                .map(this::mapToApplicantResponse)
+        List<Applicant> rawApplicants = applicantRepository.findAll(spec);
+        // Pre-fetch the single shared candidate and all distinct job openings in bulk — avoids N+1
+        Candidate sharedCandidate = candidateRepository.findByIdAndTenantId(candidateId, tenantId).orElse(null);
+        Set<UUID> jobIds = new HashSet<>();
+        rawApplicants.forEach(a -> { if (a.getJobOpeningId() != null) jobIds.add(a.getJobOpeningId()); });
+        Map<UUID, JobOpening> jobMap = jobOpeningRepository.findByTenantIdAndIdIn(tenantId, jobIds).stream()
+                .collect(java.util.stream.Collectors.toMap(JobOpening::getId, j -> j));
+
+        return rawApplicants.stream()
+                .map(a -> mapToApplicantResponse(a, sharedCandidate, jobMap.get(a.getJobOpeningId())))
                 .toList();
     }
 

@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -13,6 +14,8 @@ import java.util.UUID;
 public interface JobOpeningRepository extends JpaRepository<JobOpening, UUID>, JpaSpecificationExecutor<JobOpening> {
 
     Optional<JobOpening> findByIdAndTenantId(UUID id, UUID tenantId);
+
+    List<JobOpening> findByTenantIdAndIdIn(UUID tenantId, Collection<UUID> ids);
 
     List<JobOpening> findByTenantIdAndStatus(UUID tenantId, JobOpening.JobStatus status);
 
