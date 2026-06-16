@@ -156,6 +156,7 @@ public class EmployeeService {
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName() != null ? request.getLastName() : "")
                 .status(User.UserStatus.ACTIVE)
+                .passwordChangeRequired(true)
                 .build();
 
         user.setTenantId(tenantId);

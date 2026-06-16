@@ -492,33 +492,44 @@ public class AttendanceRecordService {
                         .stream()
                         .collect(Collectors.groupingBy(AttendanceTimeEntry::getAttendanceRecordId));
 
-        List<AttendanceRecord> successful = new ArrayList<>();
+        List<AttendanceRecord> recordsToSave = new ArrayList<>();
+        List<AttendanceTimeEntry> entriesToSave = new ArrayList<>();
+        List<AttendanceRecord> overnightSuccessful = new ArrayList<>();
         List<BulkResult.FailedEntry> failed = new ArrayList<>();
 
         for (UUID employeeId : employeeIds) {
             try {
                 AttendanceRecord todayRecord = todayRecordsByEmployee.get(employeeId);
                 if (todayRecord != null && todayRecord.hasOpenCheckIn()) {
-                    // Common path: same-day check-out — handle in-memory and batch-save below
+                    // Common path: same-day check-out — mutate in-memory, batch-save after loop
                     validateCheckoutTime(todayRecord, actualCheckOutTime);
                     todayRecord.checkOut(actualCheckOutTime, source, location, ip);
                     List<AttendanceTimeEntry> openEntries = openEntriesByRecord.getOrDefault(todayRecord.getId(), List.of());
                     openEntries.forEach(e -> e.checkOut(actualCheckOutTime, source, location, ip));
-                    timeEntryRepository.saveAll(openEntries);
-                    updateRecordDurations(todayRecord);
-                    successful.add(attendanceRecordRepository.save(todayRecord));
-                    attendanceAuditPublisher.publish(employeeId, "CHECK_OUT", "AttendanceRecord",
-                            todayRecord.getId(), tenantId, "Employee checked out via " + source + " (bulk)");
+                    // In-memory duration computation avoids 2 DB calls per employee (M-17b pattern)
+                    updateRecordDurationsInMemory(todayRecord, openEntries);
+                    entriesToSave.addAll(openEntries);
+                    recordsToSave.add(todayRecord);
                 } else {
                     // Overnight shift or missing today's record — fall back to single-employee path
-                    AttendanceRecord record = checkOut(employeeId, checkOutTime, source, location, ip);
-                    successful.add(record);
+                    overnightSuccessful.add(checkOut(employeeId, checkOutTime, source, location, ip));
                 }
             } catch (Exception e) {
                 log.error("Failed to check out employee {}: {}", employeeId, e.getMessage());
                 failed.add(new BulkResult.FailedEntry(employeeId, e.getMessage()));
             }
         }
+
+        // 2 batch writes replace N individual saves (one for entries, one for records)
+        if (!entriesToSave.isEmpty()) timeEntryRepository.saveAll(entriesToSave);
+        List<AttendanceRecord> savedRecords = recordsToSave.isEmpty()
+                ? List.of() : attendanceRecordRepository.saveAll(recordsToSave);
+
+        savedRecords.forEach(r -> attendanceAuditPublisher.publish(r.getEmployeeId(), "CHECK_OUT",
+                "AttendanceRecord", r.getId(), tenantId, "Employee checked out via " + source + " (bulk)"));
+
+        List<AttendanceRecord> successful = new ArrayList<>(savedRecords);
+        successful.addAll(overnightSuccessful);
 
         log.info("Bulk check-out: {} successful, {} failed (date={}, source={})",
                 successful.size(), failed.size(), checkOutDate, source);
@@ -727,6 +738,30 @@ public class AttendanceRecordService {
                     record.getWorkDurationMinutes(), tenantConfig.fullDayMinutes(),
                     record.getDeficitMinutes());
         }
+    }
+
+    private void updateRecordDurationsInMemory(AttendanceRecord record, List<AttendanceTimeEntry> entries) {
+        int totalWork = entries.stream()
+                .filter(e -> e.getEntryType() == AttendanceTimeEntry.EntryType.REGULAR
+                        && e.getDurationMinutes() != null)
+                .mapToInt(AttendanceTimeEntry::getDurationMinutes)
+                .sum();
+        int totalBreak = entries.stream()
+                .filter(e -> (e.getEntryType() == AttendanceTimeEntry.EntryType.BREAK
+                        || e.getEntryType() == AttendanceTimeEntry.EntryType.LUNCH)
+                        && e.getDurationMinutes() != null)
+                .mapToInt(AttendanceTimeEntry::getDurationMinutes)
+                .sum();
+        if (totalWork > 0) record.setWorkDurationMinutes(totalWork);
+        if (totalBreak > 0) record.setBreakDurationMinutes(totalBreak);
+
+        TenantAttendanceConfigService.TenantAttendanceConfig tenantConfig =
+                tenantAttendanceConfigService.getConfig(record.getTenantId());
+        record.updateStatusBasedOnWorkDuration(
+                tenantConfig.fullDayMinutes(),
+                tenantConfig.halfDayMinutes(),
+                tenantConfig.overtimeThresholdMinutes());
+        shiftAttendanceService.calculateOvertimeForRecord(record);
     }
 
     private AttendanceTimeEntry.EntryType parseEntryType(String type) {

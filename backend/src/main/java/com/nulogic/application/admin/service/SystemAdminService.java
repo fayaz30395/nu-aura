@@ -651,6 +651,7 @@ public class SystemAdminService {
         String tempPassword = generateSecureTempPassword();
         user.setPasswordHash(passwordEncoder.encode(tempPassword));
         user.setPasswordChangedAt(tenantTimeService.now(currentTenant));
+        user.setPasswordChangeRequired(true);
         userRepository.save(user);
 
         // Revoke all outstanding JWTs for this user so the old password can't be used post-reset.
