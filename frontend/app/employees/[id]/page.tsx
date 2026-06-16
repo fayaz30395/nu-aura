@@ -42,7 +42,8 @@ import {useAssetsByEmployee} from '@/lib/hooks/queries/useAssets';
 import {useToast} from '@/components/notifications/ToastProvider';
 import {createLogger} from '@/lib/utils/logger';
 import {PermissionGate} from '@/components/auth/PermissionGate';
-import {Permissions} from '@/lib/hooks/usePermissions';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {useAuth} from '@/lib/hooks/useAuth';
 import {Card, CardContent} from '@/components/ui/Card';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {Asset} from '@/lib/types/hrms/asset';
@@ -194,6 +195,18 @@ export default function EmployeeDetailPage() {
   const searchParams = useSearchParams();
   const toast = useToast();
   const employeeId = params.id as string;
+
+  // Scope guard: EMPLOYEE_VIEW_SELF holders may only view their own profile
+  const {user} = useAuth();
+  const {hasPermission, isReady: permReady} = usePermissions();
+  const canViewAny =
+    hasPermission(Permissions.EMPLOYEE_VIEW_ALL) ||
+    hasPermission(Permissions.EMPLOYEE_VIEW_DEPARTMENT) ||
+    hasPermission(Permissions.EMPLOYEE_VIEW_TEAM);
+  const isSelf = user?.employeeId === employeeId;
+  if (permReady && !canViewAny && !isSelf) {
+    notFound();
+  }
 
   // URL-addressable tabs
   const initialTab = (searchParams.get('tab') as MainTab) || 'about';
