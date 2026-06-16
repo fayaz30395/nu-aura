@@ -569,10 +569,12 @@ function RunHistoryCard({runs}: {runs: PayrollRun[]}) {
                   <StatusBadge status={r.status} domain={PAYROLL_RUN_STATUS} compact />
                 </td>
                 <td className="px-3 py-3">
-                  <Link href={`/payroll/runs/${r.id}`} aria-label={`Open ${r.runName}`}>
-                    <Button variant="ghost" size="icon-sm">
-                      <MoreHorizontal className="h-4 w-4" aria-hidden="true" />
-                    </Button>
+                  <Link
+                    href={`/payroll/runs/${r.id}`}
+                    aria-label={`Open ${r.runName}`}
+                    className="inline-flex items-center justify-center h-7 w-7 rounded-md hover:bg-[var(--bg-card-hover)] transition-colors"
+                  >
+                    <MoreHorizontal className="h-4 w-4" aria-hidden="true" />
                   </Link>
                 </td>
               </tr>

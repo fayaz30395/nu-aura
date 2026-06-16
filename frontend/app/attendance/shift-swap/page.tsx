@@ -415,9 +415,9 @@ export default function ShiftSwapPage() {
       <Modal opened={showModal} onClose={handleModalClose} title="New Shift Swap Request" size="lg" centered>
         <form onSubmit={handleSubmit(onSubmitForm)} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Type *</label>
+            <label htmlFor="swap-type" className="block text-sm font-medium text-[var(--text-primary)] mb-1">Type *</label>
             <select
-              aria-label="Type"
+              id="swap-type"
               {...register('swapType')}
               className="input-aura"
             >
@@ -472,9 +472,9 @@ export default function ShiftSwapPage() {
             )}
           </div>
           <div>
-            <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">My Shift Assignment *</label>
+            <label htmlFor="requester-assignment" className="block text-sm font-medium text-[var(--text-primary)] mb-1">My Shift Assignment *</label>
             <select
-              aria-label="My Shift Assignment"
+              id="requester-assignment"
               {...register('requesterAssignmentId')}
               className={`input-aura ${errors.requesterAssignmentId ? 'border-danger-500' : ''}`}
             >

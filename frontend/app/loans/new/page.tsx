@@ -171,11 +171,11 @@ export default function NewLoanPage() {
         >
           {/* Loan Type */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+            <label htmlFor="loan-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Loan Type *
             </label>
             <select
-              aria-label="Loan type"
+              id="loan-type"
               {...register('loanType')}
               className="w-full px-4 py-4 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500"
             >
@@ -253,11 +253,11 @@ export default function NewLoanPage() {
 
           {/* Repayment Frequency */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+            <label htmlFor="repayment-frequency" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Repayment Frequency
             </label>
             <select
-              aria-label="Repayment frequency"
+              id="repayment-frequency"
               {...register('repaymentFrequency')}
               className="w-full px-4 py-4 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500"
             >

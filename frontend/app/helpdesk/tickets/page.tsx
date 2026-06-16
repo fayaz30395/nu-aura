@@ -212,6 +212,7 @@ export default function TicketListPage() {
           <div className="flex-1">
             <Input
               type="text"
+              aria-label="Search tickets"
               placeholder="Search by subject, ticket number, or requester"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}

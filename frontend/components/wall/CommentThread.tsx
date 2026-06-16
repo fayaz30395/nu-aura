@@ -260,8 +260,9 @@ export function CommentThread({
             isLoading={isSubmitting}
             loadingText=""
             className="mt-auto"
+            aria-label="Post comment"
           >
-            <Send className="h-4 w-4"/>
+            <Send className="h-4 w-4" aria-hidden="true"/>
           </Button>
         </div>
 
