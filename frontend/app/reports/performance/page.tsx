@@ -2,6 +2,7 @@
 
 import React, {useEffect, useState} from 'react';
 import {motion} from 'framer-motion';
+import {Reveal} from '@/components/motion';
 import {AppLayout} from '@/components/layout';
 import {Download, Loader2, TrendingUp, X,} from 'lucide-react';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
@@ -185,7 +186,7 @@ export default function PerformanceReportsPage() {
         </motion.div>
 
         {/* Info Card */}
-        <motion.div initial={{opacity: 0}} animate={{opacity: 1}} transition={{delay: 0.2}}>
+        <Reveal inView delay={0.2}>
           <Card className="bg-accent-50 dark:bg-accent-950/20 border-accent-200 dark:border-accent-900">
             <CardContent className="pt-6">
               <div className="flex items-start gap-4">
@@ -203,7 +204,7 @@ export default function PerformanceReportsPage() {
               </div>
             </CardContent>
           </Card>
-        </motion.div>
+        </Reveal>
       </div>
     </AppLayout>
   );

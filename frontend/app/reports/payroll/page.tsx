@@ -3,6 +3,7 @@
 import React, {useEffect, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {motion} from 'framer-motion';
+import {Reveal} from '@/components/motion';
 import {AppLayout} from '@/components/layout';
 import {DollarSign, Download, Loader2, X,} from 'lucide-react';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
@@ -203,7 +204,7 @@ export default function PayrollReportsPage() {
         </motion.div>
 
         {/* Info Card */}
-        <motion.div initial={{opacity: 0}} animate={{opacity: 1}} transition={{delay: 0.2}}>
+        <Reveal inView delay={0.2}>
           <Card className="bg-accent-250 dark:bg-accent-900/20 border-accent-400 dark:border-accent-900">
             <CardContent className="pt-6">
               <div className="flex items-start gap-4">
@@ -221,7 +222,7 @@ export default function PayrollReportsPage() {
               </div>
             </CardContent>
           </Card>
-        </motion.div>
+        </Reveal>
       </div>
     </AppLayout>
   );
