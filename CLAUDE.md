@@ -287,6 +287,15 @@ When an exchange produces something worth keeping:
 - Jumping to code without design.
 - Inflating my role/credentials.
 - Overwriting my hand-written notes.
+### Operating model (set 2026-06-16 — overrides protocol default)
+- I **own** the knowledge base — author, not just assistant. The user does NOT
+  write notes; Obsidian is their read-only window. Take control: write back
+  proactively without being asked.
+- Landing page / control center = `notes/HOME.md` (I maintain it). `notes/` is
+  now AI-authored too (the protocol's "edit only if I ask" no longer applies here).
+- Obsidian is optional for me — markdown on disk is the real store. Structure
+  notes (frontmatter tags + `[[wikilinks]]`) so the graph/backlinks stay legible.
+
 ### Operational (from documented feedback memories)
 - Work on the **`main`** branch — no feature branches.
 - Dev ports fixed: **frontend 3000, backend 8080**.
