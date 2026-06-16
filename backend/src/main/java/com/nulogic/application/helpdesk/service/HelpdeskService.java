@@ -19,9 +19,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -193,42 +193,47 @@ public class HelpdeskService {
     @Transactional(readOnly = true)
     public Page<TicketResponse> getAllTickets(Pageable pageable) {
         UUID tenantId = TenantContext.requireCurrentTenant();
-        return ticketRepository.findAll(
-                (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId),
-                pageable
-        ).map(this::mapToTicketResponse);
+        Page<Ticket> page = ticketRepository.findAll(
+                (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId), pageable);
+        Map<UUID, String> nameMap = buildEmployeeNameMap(ticketEmployeeIds(page.getContent()), tenantId);
+        Map<UUID, String> categoryNameMap = buildCategoryNameMap(tenantId);
+        return page.map(t -> mapToTicketResponse(t, nameMap, categoryNameMap));
     }
 
     @Transactional(readOnly = true)
     public List<TicketResponse> getTicketsByEmployee(UUID employeeId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
-        return ticketRepository.findByTenantIdAndEmployeeId(tenantId, employeeId).stream()
-                .map(this::mapToTicketResponse)
-                .collect(Collectors.toList());
+        List<Ticket> tickets = ticketRepository.findByTenantIdAndEmployeeId(tenantId, employeeId);
+        Map<UUID, String> nameMap = buildEmployeeNameMap(ticketEmployeeIds(tickets), tenantId);
+        Map<UUID, String> categoryNameMap = buildCategoryNameMap(tenantId);
+        return tickets.stream().map(t -> mapToTicketResponse(t, nameMap, categoryNameMap)).collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
     public List<TicketResponse> getTicketsByAssignee(UUID assigneeId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
-        return ticketRepository.findByTenantIdAndAssignedTo(tenantId, assigneeId).stream()
-                .map(this::mapToTicketResponse)
-                .collect(Collectors.toList());
+        List<Ticket> tickets = ticketRepository.findByTenantIdAndAssignedTo(tenantId, assigneeId);
+        Map<UUID, String> nameMap = buildEmployeeNameMap(ticketEmployeeIds(tickets), tenantId);
+        Map<UUID, String> categoryNameMap = buildCategoryNameMap(tenantId);
+        return tickets.stream().map(t -> mapToTicketResponse(t, nameMap, categoryNameMap)).collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
     public List<TicketResponse> getTicketsByStatus(Ticket.TicketStatus status) {
         UUID tenantId = TenantContext.requireCurrentTenant();
-        return ticketRepository.findByTenantIdAndStatus(tenantId, status).stream()
-                .map(this::mapToTicketResponse)
-                .collect(Collectors.toList());
+        List<Ticket> tickets = ticketRepository.findByTenantIdAndStatus(tenantId, status);
+        Map<UUID, String> nameMap = buildEmployeeNameMap(ticketEmployeeIds(tickets), tenantId);
+        Map<UUID, String> categoryNameMap = buildCategoryNameMap(tenantId);
+        return tickets.stream().map(t -> mapToTicketResponse(t, nameMap, categoryNameMap)).collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
     public List<TicketResponse> getTicketsByCategory(UUID categoryId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
-        return ticketRepository.findByTenantIdAndCategoryId(tenantId, categoryId).stream()
-                .map(this::mapToTicketResponse)
-                .collect(Collectors.toList());
+        List<Ticket> tickets = ticketRepository.findByTenantIdAndCategoryId(tenantId, categoryId);
+        Map<UUID, String> nameMap = buildEmployeeNameMap(ticketEmployeeIds(tickets), tenantId);
+        Map<UUID, String> categoryNameMap = buildCategoryNameMap(tenantId);
+        return tickets.stream().map(t -> mapToTicketResponse(t, nameMap, categoryNameMap)).collect(Collectors.toList());
     }
 
     @Transactional
@@ -288,8 +293,14 @@ public class HelpdeskService {
     @Transactional(readOnly = true)
     public List<TicketCommentResponse> getCommentsByTicket(UUID ticketId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
-        return ticketCommentRepository.findByTenantIdAndTicketId(tenantId, ticketId).stream()
-                .map(this::mapToTicketCommentResponse)
+        List<TicketComment> comments = ticketCommentRepository.findByTenantIdAndTicketId(tenantId, ticketId);
+        String ticketNumber = ticketRepository.findByIdAndTenantId(ticketId, tenantId)
+                .map(Ticket::getTicketNumber).orElse(null);
+        Set<UUID> commenterIds = comments.stream().map(TicketComment::getCommenterId)
+                .filter(Objects::nonNull).collect(Collectors.toSet());
+        Map<UUID, String> nameMap = buildEmployeeNameMap(commenterIds, tenantId);
+        return comments.stream()
+                .map(c -> mapToTicketCommentResponse(c, ticketNumber, nameMap))
                 .collect(Collectors.toList());
     }
 
@@ -388,20 +399,23 @@ public class HelpdeskService {
      * rollback-only, causing HTTP 500 on ticket creation and listing.
      */
     private TicketResponse mapToTicketResponse(Ticket ticket) {
+        UUID tenantId = ticket.getTenantId();
         String employeeName = safeGetEmployeeName(ticket.getEmployeeId());
+        String assignedToName = ticket.getAssignedTo() != null ? safeGetEmployeeName(ticket.getAssignedTo()) : null;
+        String categoryName = ticket.getCategoryId() != null
+                ? ticketCategoryRepository.findById(ticket.getCategoryId()).map(TicketCategory::getName).orElse(null)
+                : null;
+        return buildTicketResponse(ticket, employeeName, assignedToName, categoryName);
+    }
 
-        String assignedToName = null;
-        if (ticket.getAssignedTo() != null) {
-            assignedToName = safeGetEmployeeName(ticket.getAssignedTo());
-        }
+    private TicketResponse mapToTicketResponse(Ticket ticket, Map<UUID, String> nameMap, Map<UUID, String> categoryNameMap) {
+        String employeeName = ticket.getEmployeeId() != null ? nameMap.get(ticket.getEmployeeId()) : null;
+        String assignedToName = ticket.getAssignedTo() != null ? nameMap.get(ticket.getAssignedTo()) : null;
+        String categoryName = ticket.getCategoryId() != null ? categoryNameMap.get(ticket.getCategoryId()) : null;
+        return buildTicketResponse(ticket, employeeName, assignedToName, categoryName);
+    }
 
-        String categoryName = null;
-        if (ticket.getCategoryId() != null) {
-            categoryName = ticketCategoryRepository.findById(ticket.getCategoryId())
-                    .map(TicketCategory::getName)
-                    .orElse(null);
-        }
-
+    private TicketResponse buildTicketResponse(Ticket ticket, String employeeName, String assignedToName, String categoryName) {
         return TicketResponse.builder()
                 .id(ticket.getId())
                 .tenantId(ticket.getTenantId())
@@ -429,12 +443,19 @@ public class HelpdeskService {
     }
 
     private TicketCommentResponse mapToTicketCommentResponse(TicketComment comment) {
-        String ticketNumber = ticketRepository.findById(comment.getTicketId())
-                .map(Ticket::getTicketNumber)
-                .orElse(null);
-
+        String ticketNumber = ticketRepository.findByIdAndTenantId(comment.getTicketId(), comment.getTenantId())
+                .map(Ticket::getTicketNumber).orElse(null);
         String commenterName = safeGetEmployeeName(comment.getCommenterId());
+        return TicketCommentResponse.builder()
+                .id(comment.getId()).tenantId(comment.getTenantId()).ticketId(comment.getTicketId())
+                .ticketNumber(ticketNumber).commenterId(comment.getCommenterId()).commenterName(commenterName)
+                .comment(comment.getComment()).isInternal(comment.getIsInternal())
+                .attachmentUrls(comment.getAttachmentUrls()).createdAt(comment.getCreatedAt())
+                .updatedAt(comment.getUpdatedAt()).build();
+    }
 
+    private TicketCommentResponse mapToTicketCommentResponse(TicketComment comment, String ticketNumber, Map<UUID, String> nameMap) {
+        String commenterName = comment.getCommenterId() != null ? nameMap.get(comment.getCommenterId()) : null;
         return TicketCommentResponse.builder()
                 .id(comment.getId())
                 .tenantId(comment.getTenantId())
@@ -448,6 +469,24 @@ public class HelpdeskService {
                 .createdAt(comment.getCreatedAt())
                 .updatedAt(comment.getUpdatedAt())
                 .build();
+    }
+
+    private Set<UUID> ticketEmployeeIds(List<Ticket> tickets) {
+        return tickets.stream()
+                .flatMap(t -> Stream.of(t.getEmployeeId(), t.getAssignedTo()))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+    }
+
+    private Map<UUID, String> buildEmployeeNameMap(Set<UUID> ids, UUID tenantId) {
+        if (ids.isEmpty()) return Collections.emptyMap();
+        return employeeRepository.findFullNamesByIdsAndTenantId(ids, tenantId).stream()
+                .collect(Collectors.toMap(row -> (UUID) row[0], row -> (String) row[1]));
+    }
+
+    private Map<UUID, String> buildCategoryNameMap(UUID tenantId) {
+        return ticketCategoryRepository.findByTenantIdOrderByDisplayOrder(tenantId).stream()
+                .collect(Collectors.toMap(TicketCategory::getId, TicketCategory::getName));
     }
 
     /**
