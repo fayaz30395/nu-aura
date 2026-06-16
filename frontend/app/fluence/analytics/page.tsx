@@ -2,6 +2,7 @@
 
 import {useMemo} from 'react';
 import {motion} from 'framer-motion';
+import {Reveal} from '@/components/motion';
 import dynamic from 'next/dynamic';
 import {useRouter} from 'next/navigation';
 import {Permissions} from '@/lib/hooks/usePermissions';
@@ -239,7 +240,7 @@ function FluenceAnalyticsPageContent() {
           transition={{delay: 0.2, duration: 0.3}}
         >
           {/* Activity Trend */}
-          <motion.div className="lg:col-span-2" initial={{opacity: 0, x: -8}} animate={{opacity: 1, x: 0}}>
+          <Reveal inView className="lg:col-span-2">
             <Card className={card.base}>
               <CardHeader className="pb-4 border-b border-[var(--border-main)]">
                 <div className="flex items-center gap-2">
@@ -255,10 +256,10 @@ function FluenceAnalyticsPageContent() {
                 )}
               </CardContent>
             </Card>
-          </motion.div>
+          </Reveal>
 
           {/* Content Distribution */}
-          <motion.div initial={{opacity: 0, x: 8}} animate={{opacity: 1, x: 0}}>
+          <Reveal inView>
             <Card className={card.base}>
               <CardHeader className="pb-4 border-b border-[var(--border-main)]">
                 <div className="flex items-center gap-2">
@@ -274,7 +275,7 @@ function FluenceAnalyticsPageContent() {
                 )}
               </CardContent>
             </Card>
-          </motion.div>
+          </Reveal>
         </motion.div>
 
         {/* Top Content Table */}
