@@ -755,11 +755,11 @@ export default function TimesheetsPage() {
           <ModalBody>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                <label htmlFor="ts-project" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Project *
                 </label>
                 <select
-                  aria-label="Project"
+                  id="ts-project"
                   required
                   value={entryForm.projectId}
                   onChange={(e) => setEntryForm({...entryForm, projectId: e.target.value})}
@@ -810,11 +810,11 @@ export default function TimesheetsPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                <label htmlFor="ts-activity-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Activity Type
                 </label>
                 <select
-                  aria-label="Activity type"
+                  id="ts-activity-type"
                   value={entryForm.activityType}
                   onChange={(e) => setEntryForm({...entryForm, activityType: e.target.value as ActivityType})}
                   className="input-aura"
