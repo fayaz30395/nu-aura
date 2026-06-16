@@ -58,6 +58,9 @@ public class KnowledgeAttachment extends TenantAware {
     @Column(name = "content_type_enum", length = 20)
     private String contentTypeEnum;
 
+    @Column(name = "extracted_text", columnDefinition = "TEXT")
+    private String extractedText;
+
     public enum ContentType {
         WIKI_PAGE, BLOG_POST, TEMPLATE
     }

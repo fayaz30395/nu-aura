@@ -73,13 +73,11 @@ public class FluenceAttachmentService {
                 .storagePath(result.getObjectName())
                 .objectName(result.getObjectName())
                 .contentTypeEnum(contentType.name())
+                .extractedText(extractedText)
                 .build();
 
-        // TODO(W5-B follow-up): persist `extractedText` once KnowledgeAttachment grows
-        // an `extractedText TEXT` column (Flyway migration to be added in next sprint).
-        // For now we surface the extracted length so the call site is exercised end-to-end.
         if (extractedText != null) {
-            log.debug("Extracted {} chars of text from attachment {} ({})",
+            log.debug("Persisting {} chars of extracted text for attachment {} ({})",
                     extractedText.length(), file.getOriginalFilename(), contentType);
         }
 
