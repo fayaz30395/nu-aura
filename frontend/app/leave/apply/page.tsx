@@ -141,11 +141,73 @@ export default function ApplyLeavePage() {
                 ))}
               </select>
               {errors.leaveTypeId && <p className="text-danger-500 text-sm mt-1">{errors.leaveTypeId.message}</p>}
-              {balance && (
-                <div className="mt-2 text-body-secondary">
-                  Available Balance: <span className="font-semibold">{balance.available} days</span>
-                </div>
-              )}
+              {balance && (() => {
+                const total = balance.available + balance.used + balance.pending;
+                const circ = 2 * Math.PI * 18;
+                const avail = total > 0 ? (balance.available / total) * circ : 0;
+                const pend = total > 0 ? (balance.pending / total) * circ : 0;
+                const used = total > 0 ? (balance.used / total) * circ : 0;
+                return (
+                  <div className="mt-3 flex items-center gap-4 p-3 rounded-[var(--r-md)] bg-[var(--surface-sunken)] border border-[var(--border-soft)]">
+                    <svg width="44" height="44" viewBox="0 0 44 44" aria-hidden="true">
+                      {/* Background */}
+                      <circle cx="22" cy="22" r="18" fill="none"
+                        stroke="var(--border)" strokeWidth="6"/>
+                      {/* Used (red) — starts at top */}
+                      {used > 0 && (
+                        <circle cx="22" cy="22" r="18" fill="none"
+                          stroke="var(--danger-500,#ef4444)" strokeWidth="6"
+                          strokeDasharray={`${used} ${circ - used}`}
+                          strokeDashoffset={circ * 0.25}
+                          strokeLinecap="butt"/>
+                      )}
+                      {/* Pending (amber) — after used */}
+                      {pend > 0 && (
+                        <circle cx="22" cy="22" r="18" fill="none"
+                          stroke="var(--warning-500,#f59e0b)" strokeWidth="6"
+                          strokeDasharray={`${pend} ${circ - pend}`}
+                          strokeDashoffset={circ * 0.25 - used}
+                          strokeLinecap="butt"/>
+                      )}
+                      {/* Available (green) — remaining */}
+                      {avail > 0 && (
+                        <circle cx="22" cy="22" r="18" fill="none"
+                          stroke="var(--success-500,#22c55e)" strokeWidth="6"
+                          strokeDasharray={`${avail} ${circ - avail}`}
+                          strokeDashoffset={circ * 0.25 - used - pend}
+                          strokeLinecap="butt"/>
+                      )}
+                    </svg>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs">
+                        <span className="flex items-center gap-1.5 text-[var(--success-600,#16a34a)] font-semibold">
+                          <span className="inline-block w-2 h-2 rounded-full bg-[var(--success-500,#22c55e)]"/>
+                          {balance.available}d available
+                        </span>
+                        {balance.pending > 0 && (
+                          <span className="flex items-center gap-1.5 text-[var(--warning-600,#d97706)]">
+                            <span className="inline-block w-2 h-2 rounded-full bg-[var(--warning-500,#f59e0b)]"/>
+                            {balance.pending}d pending
+                          </span>
+                        )}
+                        {balance.used > 0 && (
+                          <span className="flex items-center gap-1.5 text-[var(--text-3)]">
+                            <span className="inline-block w-2 h-2 rounded-full bg-[var(--danger-500,#ef4444)]"/>
+                            {balance.used}d used
+                          </span>
+                        )}
+                      </div>
+                      {totalDays > 0 && (
+                        <p className={`text-xs mt-1 font-medium ${totalDays > balance.available ? 'text-[var(--danger-500,#ef4444)]' : 'text-[var(--text-2)]'}`}>
+                          {totalDays > balance.available
+                            ? `⚠ Requesting ${totalDays}d exceeds ${balance.available}d available`
+                            : `${balance.available - totalDays}d remaining after this request`}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
 
             {/* Start Date */}
