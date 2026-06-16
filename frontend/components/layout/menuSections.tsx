@@ -1306,6 +1306,7 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
             {id: 'settings-profile', label: 'Profile', href: '/settings/profile', icon: sm.user},
             {id: 'settings-security', label: 'Security', href: '/settings/security', icon: sm.shield},
             {id: 'settings-api-keys', label: 'API Keys', href: '/settings/security/api-keys', icon: sm.key},
+            {id: 'settings-privacy', label: 'Privacy & Data', href: '/settings/privacy', icon: sm.shield},
             {id: 'settings-notifications', label: 'Notifications', href: '/settings/notifications', icon: sm.bell},
           ],
         },
