@@ -2,6 +2,7 @@
 
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import {notifications} from '@mantine/notifications';
+import {logger} from '@/lib/utils/logger';
 import {customFieldsApi} from '@/lib/api/custom-fields';
 import {CustomFieldDefinitionRequest, EntityType,} from '@/lib/types/core/custom-fields';
 
@@ -161,7 +162,7 @@ export function useCreateCustomFieldDefinition() {
       });
     },
     onError: (error) => {
-      console.error('Failed to create custom field:', error);
+      logger.error('Failed to create custom field:', error);
       notifications.show({
         title: 'Error',
         message: 'Failed to create custom field',
@@ -191,7 +192,7 @@ export function useUpdateCustomFieldDefinition(definitionId: string) {
       });
     },
     onError: (error) => {
-      console.error('Failed to update custom field:', error);
+      logger.error('Failed to update custom field:', error);
       notifications.show({
         title: 'Error',
         message: 'Failed to update custom field',
@@ -218,7 +219,7 @@ export function useDeleteCustomFieldDefinition() {
       });
     },
     onError: (error) => {
-      console.error('Failed to delete custom field:', error);
+      logger.error('Failed to delete custom field:', error);
       notifications.show({
         title: 'Error',
         message: 'Failed to delete custom field',
@@ -245,7 +246,7 @@ export function useActivateCustomFieldDefinition() {
       });
     },
     onError: (error) => {
-      console.error('Failed to activate custom field:', error);
+      logger.error('Failed to activate custom field:', error);
       notifications.show({
         title: 'Error',
         message: 'Failed to activate custom field',
@@ -272,7 +273,7 @@ export function useDeactivateCustomFieldDefinition() {
       });
     },
     onError: (error) => {
-      console.error('Failed to deactivate custom field:', error);
+      logger.error('Failed to deactivate custom field:', error);
       notifications.show({
         title: 'Error',
         message: 'Failed to deactivate custom field',

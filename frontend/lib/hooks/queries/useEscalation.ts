@@ -2,6 +2,7 @@
 
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import {notifications} from '@mantine/notifications';
+import {logger} from '@/lib/utils/logger';
 import {escalationApi} from '@/lib/api/escalation';
 import {EscalationConfigRequest} from '@/lib/types/core/escalation';
 
@@ -47,7 +48,7 @@ export function useUpsertEscalationConfig(workflowId: string) {
       });
     },
     onError: (error) => {
-      console.error('Failed to save escalation config:', error);
+      logger.error('Failed to save escalation config:', error);
       notifications.show({
         title: 'Error',
         message: 'Failed to save escalation config',
@@ -75,7 +76,7 @@ export function useDeleteEscalationConfig(workflowId: string) {
       });
     },
     onError: (error) => {
-      console.error('Failed to delete escalation config:', error);
+      logger.error('Failed to delete escalation config:', error);
       notifications.show({
         title: 'Error',
         message: 'Failed to delete escalation config',

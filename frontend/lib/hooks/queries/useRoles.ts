@@ -2,6 +2,7 @@
 
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import {notifications} from '@mantine/notifications';
+import {logger} from '@/lib/utils/logger';
 import {permissionsApi, rolesApi} from '@/lib/api/roles';
 import {usersApi} from '@/lib/api/users';
 import {
@@ -114,7 +115,7 @@ export function useCreateRole() {
       });
     },
     onError: (error) => {
-      console.error('Failed to create role:', error);
+      logger.error('Failed to create role:', error);
       notifications.show({
         title: 'Error',
         message: 'Failed to create role',
@@ -141,7 +142,7 @@ export function useUpdateRole(roleId: string) {
       });
     },
     onError: (error) => {
-      console.error('Failed to update role:', error);
+      logger.error('Failed to update role:', error);
       notifications.show({
         title: 'Error',
         message: 'Failed to update role',
@@ -167,7 +168,7 @@ export function useDeleteRole() {
       });
     },
     onError: (error) => {
-      console.error('Failed to delete role:', error);
+      logger.error('Failed to delete role:', error);
       notifications.show({
         title: 'Error',
         message: 'Failed to delete role. It might be assigned to users.',
@@ -195,7 +196,7 @@ export function useAssignPermissions(roleId: string) {
       });
     },
     onError: (error) => {
-      console.error('Failed to assign permissions:', error);
+      logger.error('Failed to assign permissions:', error);
       notifications.show({
         title: 'Error',
         message: 'Failed to assign permissions',
@@ -223,7 +224,7 @@ export function useAddPermissions(roleId: string) {
       });
     },
     onError: (error) => {
-      console.error('Failed to add permissions:', error);
+      logger.error('Failed to add permissions:', error);
       notifications.show({
         title: 'Error',
         message: 'Failed to add permissions',
@@ -251,7 +252,7 @@ export function useRemovePermissions(roleId: string) {
       });
     },
     onError: (error) => {
-      console.error('Failed to remove permissions:', error);
+      logger.error('Failed to remove permissions:', error);
       notifications.show({
         title: 'Error',
         message: 'Failed to remove permissions',
@@ -279,7 +280,7 @@ export function useAssignPermissionsWithScope(roleId: string) {
       });
     },
     onError: (error) => {
-      console.error('Failed to assign permissions with scope:', error);
+      logger.error('Failed to assign permissions with scope:', error);
       notifications.show({
         title: 'Error',
         message: 'Failed to assign permissions with scope',
@@ -307,7 +308,7 @@ export function useUpdatePermissionScope(roleId: string) {
       });
     },
     onError: (error) => {
-      console.error('Failed to update permission scope:', error);
+      logger.error('Failed to update permission scope:', error);
       notifications.show({
         title: 'Error',
         message: 'Failed to update permission scope',
@@ -334,7 +335,7 @@ export function useAssignRolesToUser(userId: string) {
       });
     },
     onError: (error) => {
-      console.error('Failed to assign roles:', error);
+      logger.error('Failed to assign roles:', error);
       notifications.show({
         title: 'Error',
         message: 'Failed to assign roles',

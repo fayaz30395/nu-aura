@@ -2,6 +2,7 @@
 
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import {notifications} from '@mantine/notifications';
+import {logger} from '@/lib/utils/logger';
 import {implicitRolesApi} from '@/lib/api/implicitRoles';
 import {BulkRuleIdsRequest, ImplicitRoleRuleRequest,} from '@/lib/types/core/implicitRoles';
 
@@ -82,7 +83,7 @@ export function useCreateImplicitRoleRule() {
       });
     },
     onError: (error) => {
-      console.error('Failed to create implicit role rule:', error);
+      logger.error('Failed to create implicit role rule:', error);
       notifications.show({
         title: 'Error',
         message: 'Failed to create implicit role rule',
@@ -111,7 +112,7 @@ export function useUpdateImplicitRoleRule(ruleId: string) {
       });
     },
     onError: (error) => {
-      console.error('Failed to update implicit role rule:', error);
+      logger.error('Failed to update implicit role rule:', error);
       notifications.show({
         title: 'Error',
         message: 'Failed to update implicit role rule',
@@ -138,7 +139,7 @@ export function useDeleteImplicitRoleRule() {
       });
     },
     onError: (error) => {
-      console.error('Failed to delete implicit role rule:', error);
+      logger.error('Failed to delete implicit role rule:', error);
       notifications.show({
         title: 'Error',
         message: 'Failed to delete implicit role rule',
@@ -166,7 +167,7 @@ export function useRecomputeAll() {
       });
     },
     onError: (error) => {
-      console.error('Failed to recompute implicit roles:', error);
+      logger.error('Failed to recompute implicit roles:', error);
       notifications.show({
         title: 'Error',
         message: 'Failed to recompute implicit roles',
@@ -194,7 +195,7 @@ export function useBulkActivateRules() {
       });
     },
     onError: (error) => {
-      console.error('Failed to activate rules:', error);
+      logger.error('Failed to activate rules:', error);
       notifications.show({
         title: 'Error',
         message: 'Failed to activate rules',
@@ -222,7 +223,7 @@ export function useBulkDeactivateRules() {
       });
     },
     onError: (error) => {
-      console.error('Failed to deactivate rules:', error);
+      logger.error('Failed to deactivate rules:', error);
       notifications.show({
         title: 'Error',
         message: 'Failed to deactivate rules',
