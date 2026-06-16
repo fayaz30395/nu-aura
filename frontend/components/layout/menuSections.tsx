@@ -917,6 +917,13 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
               icon: sm.plane,
               requiredPermission: Permissions.TRAVEL_CREATE
             },
+            {
+              id: 'travel-expenses',
+              label: 'My Expenses',
+              href: '/travel/expenses',
+              icon: sm.receipt,
+              requiredPermission: Permissions.TRAVEL_VIEW
+            },
           ],
         },
         {
