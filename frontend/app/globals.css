@@ -106,7 +106,7 @@
     --chart-2: #6884dc;
     --chart-3: #0ea5a3;
     --chart-4: #d97706;
-    --chart-5: #8b5cf6;
+    --chart-5: var(--prod-fluence);
     --chart-axis: #9aa0b8;
 
     /* ── Aura radii ── */

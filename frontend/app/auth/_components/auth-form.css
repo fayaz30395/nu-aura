@@ -95,7 +95,7 @@
 .aura-auth-check__box[data-on='true'] {
   background: var(--accent);
   border-color: var(--accent);
-  color: #fff;
+  color: var(--text-inverse);
 }
 
 .aura-auth-foot {

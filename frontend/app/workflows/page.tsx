@@ -117,8 +117,8 @@ const ENTITY_TYPE_CONFIG: Record<
   },
   OVERTIME: {
     label: 'Overtime',
-    bg: 'bg-[var(--status-neutral-bg)]',
-    text: 'text-[var(--status-neutral-text)]'
+    bg: 'bg-[var(--accent-soft)]',
+    text: 'text-[var(--accent-text)]'
   },
   SHIFT_CHANGE: {
     label: 'Shift Change',
