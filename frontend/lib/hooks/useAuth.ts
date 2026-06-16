@@ -168,6 +168,7 @@ export const useAuth = create<AuthState>()(
             status: 'ACTIVE',
             roles: roles,
             profilePictureUrl: response.profilePictureUrl,
+            mustChangePassword: response.mustChangePassword ?? false,
           };
 
           set({user, isAuthenticated: true, isLoading: false});
@@ -207,6 +208,7 @@ export const useAuth = create<AuthState>()(
             status: 'ACTIVE',
             roles: roles,
             profilePictureUrl: response.profilePictureUrl,
+            mustChangePassword: response.mustChangePassword ?? false,
           };
 
           set({user, isAuthenticated: true, isLoading: false});
@@ -289,6 +291,7 @@ export const useAuth = create<AuthState>()(
                 status: 'ACTIVE',
                 roles: roles,
                 profilePictureUrl: meResponse.profilePictureUrl,
+                mustChangePassword: meResponse.mustChangePassword ?? false,
               };
               set({user, isAuthenticated: true, isLoading: false});
               persistUserToStorage(user);
@@ -344,6 +347,7 @@ export const useAuth = create<AuthState>()(
                   status: 'ACTIVE',
                   roles: roles,
                   profilePictureUrl: response.profilePictureUrl,
+                  mustChangePassword: response.mustChangePassword ?? false,
                 };
 
                 set({user, isAuthenticated: true, isLoading: false});

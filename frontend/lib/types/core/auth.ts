@@ -29,6 +29,8 @@ export interface AuthResponse {
   // presented to /mfa-login together with the TOTP/backup code.
   mfaRequired?: boolean;
   mfaToken?: string;
+  // SEC: admin-reset or newly-created accounts must change their temp password on first login.
+  mustChangePassword?: boolean;
 }
 
 /**
@@ -51,6 +53,7 @@ export interface User {
   status: string;
   roles: Role[];
   profilePictureUrl?: string;
+  mustChangePassword?: boolean;
 }
 
 export interface Role {

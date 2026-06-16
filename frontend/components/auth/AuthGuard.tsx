@@ -157,6 +157,12 @@ export function AuthGuard({
     // Reset restore flag on successful auth (for future navigations)
     restoreAttemptedRef.current = false;
 
+    // Force password change: block ALL navigation until the user sets a new password.
+    if (user?.mustChangePassword && pathname !== '/auth/change-password') {
+      router.replace('/auth/change-password');
+      return;
+    }
+
     // Wait for permissions to be ready before running authorization checks.
     // At this point we know the user object is loaded (the !user branch above
     // would have returned), so isReady should be true. This guard is a safety
