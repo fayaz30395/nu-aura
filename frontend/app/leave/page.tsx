@@ -141,7 +141,7 @@ export default function LeavePage() {
               />
             </div>
             <div className="lg:col-span-2">
-              <LeaveCalendar requests={recentRequests} leaveTypes={leaveTypes} />
+              {!loading && <LeaveCalendar requests={recentRequests} leaveTypes={leaveTypes} />}
             </div>
           </div>
         )}

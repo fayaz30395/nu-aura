@@ -88,7 +88,7 @@ export default function MyContentPage() {
             icon={FileText}
             label="Wiki Pages"
             value={myWikiPages.length}
-            variant="accent"
+            variant="primary"
           />
           <StatCard
             icon={Pen}
@@ -209,12 +209,12 @@ interface StatCardProps {
   icon: React.ComponentType<{ className?: string }>;
   label: string;
   value: number;
-  variant: 'accent' | 'warning';
+  variant: 'primary' | 'warning';
 }
 
 function StatCard({icon: Icon, label, value, variant}: StatCardProps) {
   const variantStyles = {
-    accent: 'bg-accent-100 dark:bg-accent-950 text-accent-600 dark:text-accent-400',
+    primary: 'bg-accent-100 dark:bg-accent-950 text-accent-600 dark:text-accent-400',
     warning: 'bg-warning-100 dark:bg-warning-950 text-warning-600 dark:text-warning-400',
   };
 
@@ -228,7 +228,7 @@ function StatCard({icon: Icon, label, value, variant}: StatCardProps) {
         <Icon className={iconSize.statCard}/>
       </div>
       <div className="flex-1 min-w-0">
-        <Stat label={label} value={value} tone={variant}/>
+        <Stat label={label} value={value} tone={variant === 'primary' ? 'accent' : variant}/>
       </div>
     </motion.div>
   );

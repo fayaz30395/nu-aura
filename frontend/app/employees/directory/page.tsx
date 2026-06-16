@@ -4,6 +4,7 @@ import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {useQuery} from '@tanstack/react-query';
 import {AnimatePresence, motion} from 'framer-motion';
+import {MOTION_DURATION, MOTION_EASE} from '@/lib/animation';
 import {
   Building2,
   Calendar,
@@ -480,7 +481,7 @@ export default function TeamDirectory() {
                     key={employee.id}
                     initial={{opacity: 0, y: 20}}
                     animate={{opacity: 1, y: 0}}
-                    transition={{delay: index * 0.05}}
+                    transition={{delay: index * 0.05, duration: MOTION_DURATION.base, ease: MOTION_EASE.outExpo}}
                     onClick={() => setSelectedEmployee(employee)}
                   >
                     <Card
