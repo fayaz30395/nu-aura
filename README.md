@@ -248,6 +248,7 @@ Comprehensive a11y polish across the frontend (Phase 7, waves 1–6 + 11 rolling
 | Document                                       | Description                                |
 |------------------------------------------------|--------------------------------------------|
 | [docs/Home.md](docs/Home.md)                   | Obsidian Map of Content — vault entry point |
+| [docs/obsidian/00-Home.md](docs/obsidian/00-Home.md) | **Knowledge Graph** — interlinked Obsidian vault (architecture, modules, RBAC, DB, DevOps, security, runbooks, ADRs, flows) with Mermaid diagrams |
 | [CONTRIBUTING.md](CONTRIBUTING.md)             | Development workflow and code standards    |
 | [DESIGN.md](DESIGN.md)                         | Frontend design system, primitives, banned patterns (Studio Slate v2) |
 | [PRODUCT.md](PRODUCT.md)                       | Product surface map and sub-app conventions |

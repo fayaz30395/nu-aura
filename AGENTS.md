@@ -24,20 +24,20 @@ mistakes:
 
 | Need                                              | Source of truth                                       |
 |---------------------------------------------------|-------------------------------------------------------|
-| Architectural decisions (12 ADRs)                 | `docs/adr/README.md` → index                          |
+| **Navigable knowledge graph (start here)**        | `docs/obsidian/00-Home.md` — interlinked vault; coverage in `docs/obsidian/Documentation-Coverage-Report.md` |
+| Architectural decisions (ADRs)                    | `docs/obsidian/11-Decisions/` (ADR-001…ADR-005)       |
 | Reusable code patterns (Redis, RLS, Kafka, etc.)  | `docs/patterns/README.md`                             |
-| Security baseline, threat model, scan cadence     | `docs/security/baseline.md`                           |
-| Swarm pipelines (feature, bug, security, refactor, perf, opus4.8) | `docs/runbooks/swarm-pipelines.md` (copy-paste templates) |
-| Active hardening backlog                          | `docs/audit/wave-10-deep-audit-report.md`             |
-| DDD bounded contexts                              | `docs/swarm/domains.yaml`                             |
-| Artifact registry (RuFlo machine-readable)        | `docs/swarm/registry.yaml`                            |
-| Operational runbooks (incident, DR, rollback)     | `docs/runbooks/`                                      |
-| Architecture deep dives                           | `docs/architecture/` (system, modules, RBAC, payroll, etc.) |
+| Security baseline + audit                         | `docs/obsidian/08-Security/Security-Audit.md`         |
+| RBAC roles / permissions / matrix                 | `docs/obsidian/05-RBAC/` (26 roles; `@RequiresPermission` enforcement) |
+| Operational runbooks (incident, support)          | `docs/obsidian/10-Runbooks/` (templated — verify before relying) |
+| Architecture deep dives                           | `docs/obsidian/01-Architecture/` + `docs/architecture/` |
+| API / DB / migration reference (exhaustive)       | `docs/reference/`                                     |
 | Evolving project state                            | `MEMORY.md`                                           |
 
-**Routing rule:** before designing anything, search `docs/adr/` for prior decisions on the
-topic. Before implementing anything, search `docs/patterns/` for an existing pattern.
-Before touching a security-sensitive path, read `docs/security/baseline.md`.
+**Routing rule:** before designing anything, read `docs/obsidian/01-Architecture/` and
+`docs/obsidian/11-Decisions/` for prior decisions on the topic. Before implementing anything,
+search `docs/patterns/` for an existing pattern. Before touching a security-sensitive path,
+read `docs/obsidian/08-Security/Security-Audit.md` and `docs/architecture/data-flow.md` (auth + RLS).
 
 **Sync RuFlo runtime configs:** the swarm YAMLs in `.claude-flow/` are gitignored. Run
 `./scripts/ruflo-sync.sh` after pulling new commits to refresh them from `docs/swarm/`.
