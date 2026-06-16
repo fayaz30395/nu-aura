@@ -21,9 +21,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * Scheduled job for contract lifecycle automation.
@@ -129,29 +133,26 @@ public class ContractLifecycleScheduler {
 
         List<Contract> pastDue = contractRepository.findActiveContractsPastEndDate(tenantId);
 
-        int expiredCount = 0;
+        List<Contract> toExpire = new ArrayList<>();
         for (Contract contract : pastDue) {
             // Skip auto-renewable contracts — they will be handled by autoRenewContracts()
             if (Boolean.TRUE.equals(contract.getAutoRenew())) {
                 continue;
             }
-
             ContractStatus previousStatus = contract.getStatus();
             contract.markAsExpired();
-            contractRepository.save(contract);
-
             metricsService.recordContractStatusChange(tenantId, previousStatus.name(), ContractStatus.EXPIRED.name());
             metricsService.recordContractLifecycle(tenantId, "auto_expire", contract.getType().name());
-
             log.info("Auto-expired contract {} (tenant={})", contract.getId(), tenantId);
-            expiredCount++;
+            toExpire.add(contract);
         }
 
-        if (expiredCount > 0) {
-            log.debug("Auto-expired {} contracts for tenant {}", expiredCount, tenantId);
+        if (!toExpire.isEmpty()) {
+            contractRepository.saveAll(toExpire);
+            log.debug("Auto-expired {} contracts for tenant {}", toExpire.size(), tenantId);
         }
 
-        return expiredCount;
+        return toExpire.size();
     }
 
     // ========== Step 2: Auto-Renew Contracts ==========
@@ -170,32 +171,28 @@ public class ContractLifecycleScheduler {
 
         List<Contract> eligible = contractRepository.findAutoRenewalEligibleContracts(tenantId);
 
-        int renewedCount = 0;
+        List<Contract> toRenew = new ArrayList<>();
         for (Contract contract : eligible) {
             if (contract.getEndDate() == null || contract.getRenewalPeriodDays() == null) {
                 log.warn("Auto-renewable contract {} missing endDate or renewalPeriodDays, skipping", contract.getId());
                 continue;
             }
-
             LocalDate newEndDate = contract.getEndDate().plusDays(contract.getRenewalPeriodDays());
             ContractStatus previousStatus = contract.getStatus();
-
             contract.setEndDate(newEndDate);
             contract.markAsRenewed();
-            contractRepository.save(contract);
-
             metricsService.recordContractStatusChange(tenantId, previousStatus.name(), ContractStatus.RENEWED.name());
             metricsService.recordContractLifecycle(tenantId, "auto_renew", contract.getType().name());
-
             log.info("Auto-renewed contract {} (tenant={}, new end date={})", contract.getId(), tenantId, newEndDate);
-            renewedCount++;
+            toRenew.add(contract);
         }
 
-        if (renewedCount > 0) {
-            log.debug("Auto-renewed {} contracts for tenant {}", renewedCount, tenantId);
+        if (!toRenew.isEmpty()) {
+            contractRepository.saveAll(toRenew);
+            log.debug("Auto-renewed {} contracts for tenant {}", toRenew.size(), tenantId);
         }
 
-        return renewedCount;
+        return toRenew.size();
     }
 
     // ========== Step 3: Create Expiry Reminders ==========
@@ -217,7 +214,7 @@ public class ContractLifecycleScheduler {
         LocalDate windowEnd = todayLocal.plusDays(maxWindow);
         List<Contract> approachingExpiry = contractRepository.findActiveContractsExpiringBefore(tenantId, windowEnd);
 
-        int remindersCreated = 0;
+        List<ContractReminder> remindersToSave = new ArrayList<>();
         for (Contract contract : approachingExpiry) {
             for (int daysBefore : reminderDays) {
                 LocalDate reminderDate = contract.getEndDate().minusDays(daysBefore);
@@ -233,18 +230,15 @@ public class ContractLifecycleScheduler {
                     continue;
                 }
 
-                ContractReminder reminder = ContractReminder.builder()
+                remindersToSave.add(ContractReminder.builder()
                         .tenantId(tenantId)
                         .contractId(contract.getId())
                         .reminderDate(reminderDate)
                         .reminderType(ReminderType.EXPIRY)
                         .isCompleted(false)
-                        .build();
+                        .build());
 
-                reminderRepository.save(reminder);
-                remindersCreated++;
-
-                log.debug("Created expiry reminder for contract {} on {} ({}d before)",
+                log.debug("Queued expiry reminder for contract {} on {} ({}d before)",
                         contract.getId(), reminderDate, daysBefore);
             }
 
@@ -258,28 +252,26 @@ public class ContractLifecycleScheduler {
                         && !reminderRepository.existsPendingReminder(
                         contract.getId(), ReminderType.RENEWAL, renewalReminderDate)) {
 
-                    ContractReminder renewalReminder = ContractReminder.builder()
+                    remindersToSave.add(ContractReminder.builder()
                             .tenantId(tenantId)
                             .contractId(contract.getId())
                             .reminderDate(renewalReminderDate)
                             .reminderType(ReminderType.RENEWAL)
                             .isCompleted(false)
-                            .build();
+                            .build());
 
-                    reminderRepository.save(renewalReminder);
-                    remindersCreated++;
-
-                    log.debug("Created renewal reminder for auto-renewable contract {} on {}",
+                    log.debug("Queued renewal reminder for auto-renewable contract {} on {}",
                             contract.getId(), renewalReminderDate);
                 }
             }
         }
 
-        if (remindersCreated > 0) {
-            log.debug("Created {} reminders for tenant {}", remindersCreated, tenantId);
+        if (!remindersToSave.isEmpty()) {
+            reminderRepository.saveAll(remindersToSave);
+            log.debug("Created {} reminders for tenant {}", remindersToSave.size(), tenantId);
         }
 
-        return remindersCreated;
+        return remindersToSave.size();
     }
 
     // ========== Step 4: Dispatch Due Reminders as Notifications ==========
@@ -293,18 +285,28 @@ public class ContractLifecycleScheduler {
     @Transactional
     public int dispatchDueReminders(UUID tenantId) {
         List<ContractReminder> dueReminders = reminderRepository.findUnnotifiedDueReminders(tenantId);
+        if (dueReminders.isEmpty()) return 0;
+
+        // Pre-fetch all referenced contracts in one query to eliminate N+1 reads
+        Set<UUID> contractIds = dueReminders.stream()
+                .map(ContractReminder::getContractId)
+                .collect(Collectors.toSet());
+        Map<UUID, Contract> contractMap = contractRepository.findAllByIdInAndTenantId(contractIds, tenantId)
+                .stream()
+                .collect(Collectors.toMap(Contract::getId, c -> c));
 
         int notificationsSent = 0;
+        List<ContractReminder> remindersToSave = new ArrayList<>();
+
         for (ContractReminder reminder : dueReminders) {
             try {
-                Contract contract = contractRepository.findByIdAndTenantId(reminder.getContractId(), tenantId)
-                        .orElse(null);
+                Contract contract = contractMap.get(reminder.getContractId());
 
                 if (contract == null) {
                     log.warn("Contract {} not found for reminder {}, marking as completed",
                             reminder.getContractId(), reminder.getId());
                     reminder.markAsCompleted(tenantTimeService.now(tenantId));
-                    reminderRepository.save(reminder);
+                    remindersToSave.add(reminder);
                     continue;
                 }
 
@@ -319,7 +321,7 @@ public class ContractLifecycleScheduler {
                     // Still mark as notified to avoid infinite retries
                     // S12-B: tenant-local "now" for notifiedAt timestamp — resolved via TenantTimeService.
                     reminder.setNotifiedAt(tenantTimeService.now(tenantId));
-                    reminderRepository.save(reminder);
+                    remindersToSave.add(reminder);
                     continue;
                 }
 
@@ -342,8 +344,7 @@ public class ContractLifecycleScheduler {
                 // Mark as notified (not completed — user may still need to take action)
                 // S12-B: tenant-local "now" for notifiedAt timestamp — resolved via TenantTimeService.
                 reminder.setNotifiedAt(tenantTimeService.now(tenantId));
-                reminderRepository.save(reminder);
-
+                remindersToSave.add(reminder);
                 notificationsSent++;
             } catch (Exception e) { // Intentional broad catch — scheduled job error boundary
                 log.error("Failed to dispatch reminder {} for contract {}: {}",
@@ -351,6 +352,9 @@ public class ContractLifecycleScheduler {
             }
         }
 
+        if (!remindersToSave.isEmpty()) {
+            reminderRepository.saveAll(remindersToSave);
+        }
         if (notificationsSent > 0) {
             log.debug("Dispatched {} notifications for tenant {}", notificationsSent, tenantId);
         }

@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -23,6 +24,8 @@ public interface ContractRepository extends JpaRepository<Contract, UUID> {
 
     // Basic queries
     Optional<Contract> findByIdAndTenantId(UUID id, UUID tenantId);
+
+    List<Contract> findAllByIdInAndTenantId(Collection<UUID> ids, UUID tenantId);
 
     Page<Contract> findByTenantId(UUID tenantId, Pageable pageable);
 
