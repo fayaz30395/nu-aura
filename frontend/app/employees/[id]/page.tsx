@@ -1,6 +1,12 @@
 'use client';
 
 import {useMemo, useState} from 'react';
+import {useQueryClient} from '@tanstack/react-query';
+import {
+  useGetEmployeeSkills,
+  useVerifySkill,
+  getGetEmployeeSkillsQueryKey,
+} from '@/lib/generated/api/employee-skills/employee-skills';
 import Image from 'next/image';
 import {notFound, useParams, useRouter, useSearchParams} from 'next/navigation';
 import {
@@ -211,6 +217,17 @@ export default function EmployeeDetailPage() {
   const {data: subordinates = []} = useSubordinates(employeeId);
   const {data: employeeAssets = []} = useAssetsByEmployee(employeeId);
   const deleteEmployeeMutation = useDeleteEmployee();
+
+  // Skills
+  const queryClient = useQueryClient();
+  const {data: employeeSkills = [], isLoading: skillsLoading} = useGetEmployeeSkills(employeeId, {
+    query: {enabled: !!employeeId},
+  });
+  const verifySkillMut = useVerifySkill({
+    mutation: {
+      onSuccess: () => queryClient.invalidateQueries({queryKey: getGetEmployeeSkillsQueryKey(employeeId)}),
+    },
+  });
 
   const error = queryError
     ? (queryError as { response?: { data?: { message?: string } } })?.response?.data?.message ||
@@ -590,6 +607,60 @@ export default function EmployeeDetailPage() {
 
                   {/* Right column — Skills, Reporting Team, Recognition */}
                   <aside className="space-y-6" aria-label="Employee summary details">
+                    {/* Skills */}
+                    <SectionCard title="Skills">
+                      {skillsLoading ? (
+                        <div className="space-y-2">
+                          {[1, 2, 3].map((n) => (
+                            <Skeleton key={n} height={24} radius="sm"/>
+                          ))}
+                        </div>
+                      ) : employeeSkills.length === 0 ? (
+                        <p className="text-body-muted text-sm">No skills on record</p>
+                      ) : (
+                        <div className="space-y-3">
+                          {employeeSkills.map((skill) => (
+                            <div key={skill.id} className="flex items-center justify-between gap-2">
+                              <div className="min-w-0 flex-1">
+                                <div className="flex items-center gap-1.5 flex-wrap">
+                                  <span className="text-sm font-medium text-[var(--text-primary)] truncate">
+                                    {skill.skillName}
+                                  </span>
+                                  {skill.isVerified && (
+                                    <CheckCircle2 className="h-3.5 w-3.5 text-success-600 flex-shrink-0" aria-label="Verified"/>
+                                  )}
+                                </div>
+                                <div className="flex items-center gap-1.5 mt-0.5">
+                                  <div className="flex gap-0.5" aria-label={`Proficiency ${skill.proficiencyLevel ?? 1} of 5`}>
+                                    {[1, 2, 3, 4, 5].map((n) => (
+                                      <Star
+                                        key={n}
+                                        className={`h-3 w-3 ${n <= (skill.proficiencyLevel ?? 1) ? 'fill-warning-500 text-warning-500' : 'text-[var(--border)]'}`}
+                                        aria-hidden="true"
+                                      />
+                                    ))}
+                                  </div>
+                                  <span className="text-xs text-[var(--text-secondary)]">{skill.category}</span>
+                                </div>
+                              </div>
+                              {!skill.isVerified && (
+                                <PermissionGate permission={Permissions.EMPLOYEE_UPDATE}>
+                                  <button
+                                    type="button"
+                                    onClick={() => skill.id && verifySkillMut.mutate({skillId: skill.id})}
+                                    disabled={verifySkillMut.isPending}
+                                    className="text-xs text-accent-700 dark:text-accent-400 hover:underline disabled:opacity-50 whitespace-nowrap"
+                                  >
+                                    Verify
+                                  </button>
+                                </PermissionGate>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </SectionCard>
+
                     {/* Reporting Team */}
                     <SectionCard title="Reporting Team">
                       {subordinates.length > 0 ? (
