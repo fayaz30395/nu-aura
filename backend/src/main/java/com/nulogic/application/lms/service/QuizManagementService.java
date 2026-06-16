@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -211,18 +211,21 @@ public class QuizManagementService {
      * Reorder questions in a quiz
      */
     public void reorderQuestions(UUID quizId, List<UUID> questionIds, UUID tenantId) {
-        for (int i = 0; i < questionIds.size(); i++) {
-            final int orderIndex = i;
-            QuizQuestion question = questionRepository.findByIdAndTenantId(questionIds.get(orderIndex), tenantId)
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                            "Question not found: " + questionIds.get(orderIndex)));
+        Map<UUID, QuizQuestion> questionMap = questionRepository
+                .findByQuizIdAndTenantIdOrderByOrderIndexAsc(quizId, tenantId).stream()
+                .collect(Collectors.toMap(QuizQuestion::getId, q -> q));
 
+        for (int i = 0; i < questionIds.size(); i++) {
+            UUID questionId = questionIds.get(i);
+            QuizQuestion question = questionMap.get(questionId);
+            if (question == null) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Question not found: " + questionId);
+            }
             if (!question.getQuizId().equals(quizId)) {
                 throw new ResponseStatusException(HttpStatus.CONFLICT, "Question does not belong to this quiz");
             }
-
-            question.setOrderIndex(orderIndex + 1);
-            questionRepository.save(question);
+            question.setOrderIndex(i + 1);
         }
+        // managed entities — JPA dirty-check flushes orderIndex updates at commit
     }
 }

@@ -26,9 +26,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Year;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
@@ -163,6 +161,11 @@ public class SlackCommandService {
             return ephemeral("No leave balances found for " + currentYear + ". Contact HR if this seems wrong.");
         }
 
+        Set<UUID> leaveTypeIds = balances.stream().map(LeaveBalance::getLeaveTypeId).collect(Collectors.toSet());
+        Map<UUID, String> leaveTypeNames = leaveTypeRepository.findAllByTenantId(tenantId).stream()
+                .filter(lt -> leaveTypeIds.contains(lt.getId()))
+                .collect(Collectors.toMap(LeaveType::getId, LeaveType::getLeaveName));
+
         StringBuilder blocks = new StringBuilder();
         blocks.append("{\"response_type\":\"ephemeral\",\"blocks\":[");
         blocks.append("{\"type\":\"header\",\"text\":{\"type\":\"plain_text\",\"text\":\"Leave Balances — ")
@@ -171,9 +174,7 @@ public class SlackCommandService {
 
         for (int i = 0; i < balances.size(); i++) {
             LeaveBalance bal = balances.get(i);
-            String typeName = leaveTypeRepository.findById(bal.getLeaveTypeId())
-                    .map(LeaveType::getLeaveName)
-                    .orElse("Unknown");
+            String typeName = leaveTypeNames.getOrDefault(bal.getLeaveTypeId(), "Unknown");
 
             double available = bal.getAvailable() != null ? bal.getAvailable().doubleValue() : 0.0;
 
