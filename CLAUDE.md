@@ -16,25 +16,33 @@
 Project knowledge is indexed in three places. **Consult them at task start**, not after
 mistakes:
 
+`docs/` was regenerated from the codebase (evidence-based, current-state). Start at
+`docs/README.md` (GitHub index) or `docs/Home.md` (Obsidian map of content).
+
 | Need                                              | Source of truth                                       |
 |---------------------------------------------------|-------------------------------------------------------|
-| Architectural decisions (12 ADRs)                 | `docs/adr/README.md` → index                          |
+| Doc map / entry point                             | `docs/README.md` · `docs/Home.md`                     |
+| System architecture overview                      | `docs/architecture/README.md`                         |
+| Backend architecture (DDD layers, modules, infra) | `docs/architecture/backend.md`                        |
+| Frontend architecture (App Router, state, RBAC)   | `docs/architecture/frontend.md`                       |
+| Request lifecycle, auth flow, multi-tenancy/RLS   | `docs/architecture/data-flow.md`                      |
+| REST API reference (endpoints by domain)          | `docs/reference/api.md`                               |
+| Database schema, tables, RLS model                | `docs/reference/database.md`                          |
+| Flyway migration index                            | `docs/reference/migrations.md`                        |
 | Reusable code patterns (Redis, RLS, Kafka, etc.)  | `docs/patterns/README.md`                             |
-| Security baseline, threat model, scan cadence     | `docs/security/baseline.md`                           |
-| Swarm pipelines (feature, bug, security, refactor, perf, opus4.8) | `docs/runbooks/swarm-pipelines.md` (copy-paste templates) |
-| Active hardening backlog                          | `docs/audit/wave-10-deep-audit-report.md`             |
-| DDD bounded contexts                              | `docs/swarm/domains.yaml`                             |
-| Artifact registry (RuFlo machine-readable)        | `docs/swarm/registry.yaml`                            |
-| Operational runbooks (incident, DR, rollback)     | `docs/runbooks/`                                      |
-| Architecture deep dives                           | `docs/architecture/` (system, modules, RBAC, payroll, etc.) |
+| Local dev setup, build, test, env, ports          | `docs/setup/README.md`                                |
+| Per-sub-app deep dives (HRMS/Hire/Grow/Fluence)   | `docs/apps/`                                          |
 | Evolving project state                            | `MEMORY.md`                                           |
 
-**Routing rule:** before designing anything, search `docs/adr/` for prior decisions on the
-topic. Before implementing anything, search `docs/patterns/` for an existing pattern.
-Before touching a security-sensitive path, read `docs/security/baseline.md`.
+**Routing rule:** before designing anything, read the relevant `docs/architecture/` doc for
+how the area works today. Before implementing anything, search `docs/patterns/README.md` for
+an existing pattern. Before touching a security-sensitive path, read
+`docs/architecture/data-flow.md` (auth + RLS tenancy model) and the RLS migrations.
 
-**Sync RuFlo runtime configs:** the swarm YAMLs in `.claude-flow/` are gitignored. Run
-`./scripts/ruflo-sync.sh` after pulling new commits to refresh them from `docs/swarm/`.
+> **Note:** prior ADRs, security baseline, audit reports, runbooks, and `docs/swarm/` YAMLs
+> were removed in the docs reset and live only in git history. The RuFlo `docs/swarm/` →
+> `.claude-flow/` sync (`./scripts/ruflo-sync.sh`) no longer has a source until those YAMLs
+> are restored.
 
 ## Agent Comms (SendMessage-First Coordination)
 
