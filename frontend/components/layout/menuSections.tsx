@@ -538,6 +538,13 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
               requiredPermission: Permissions.RECRUITMENT_VIEW
             },
             {
+              id: 'scorecards',
+              label: 'Scorecards',
+              href: '/recruitment/scorecards',
+              icon: sm.clipboardCheck,
+              requiredPermission: Permissions.RECRUITMENT_VIEW
+            },
+            {
               id: 'job-boards',
               label: 'Job Boards',
               href: '/recruitment/job-boards',
