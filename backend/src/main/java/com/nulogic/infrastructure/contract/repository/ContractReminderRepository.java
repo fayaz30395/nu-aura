@@ -18,6 +18,8 @@ import java.util.UUID;
 @Repository
 public interface ContractReminderRepository extends JpaRepository<ContractReminder, UUID> {
 
+    Optional<ContractReminder> findByIdAndTenantId(UUID id, UUID tenantId);
+
     List<ContractReminder> findByContractId(UUID contractId);
 
     List<ContractReminder> findByContractIdAndReminderType(UUID contractId, ReminderType reminderType);
@@ -29,15 +31,18 @@ public interface ContractReminderRepository extends JpaRepository<ContractRemind
             @Param("reminderType") ReminderType reminderType
     );
 
-    @Query("SELECT cr FROM ContractReminder cr WHERE cr.reminderDate <= CURRENT_DATE AND cr.isCompleted = false")
-    List<ContractReminder> findOverdueReminders();
+    @Query("SELECT cr FROM ContractReminder cr WHERE cr.tenantId = :tenantId " +
+            "AND cr.reminderDate <= CURRENT_DATE AND cr.isCompleted = false")
+    List<ContractReminder> findOverdueReminders(@Param("tenantId") UUID tenantId);
 
-    @Query("SELECT cr FROM ContractReminder cr WHERE cr.reminderDate = CURRENT_DATE AND cr.isCompleted = false")
-    List<ContractReminder> findRemindersForToday();
+    @Query("SELECT cr FROM ContractReminder cr WHERE cr.tenantId = :tenantId " +
+            "AND cr.reminderDate = CURRENT_DATE AND cr.isCompleted = false")
+    List<ContractReminder> findRemindersForToday(@Param("tenantId") UUID tenantId);
 
-    @Query("SELECT cr FROM ContractReminder cr WHERE cr.reminderDate BETWEEN :startDate AND :endDate " +
-            "AND cr.isCompleted = false")
+    @Query("SELECT cr FROM ContractReminder cr WHERE cr.tenantId = :tenantId " +
+            "AND cr.reminderDate BETWEEN :startDate AND :endDate AND cr.isCompleted = false")
     List<ContractReminder> findRemindersInDateRange(
+            @Param("tenantId") UUID tenantId,
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate
     );

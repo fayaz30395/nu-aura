@@ -114,9 +114,10 @@ public class ContractReminderService {
      */
     @Transactional
     public void markReminderAsCompleted(UUID reminderId) {
-        Optional<ContractReminder> reminder = reminderRepository.findById(reminderId);
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        Optional<ContractReminder> reminder = reminderRepository.findByIdAndTenantId(reminderId, tenantId);
         reminder.ifPresent(r -> {
-            r.markAsCompleted(tenantTimeService.now(r.getTenantId()));
+            r.markAsCompleted(tenantTimeService.now(tenantId));
             reminderRepository.save(r);
             log.debug("Marked reminder as completed: {}", reminderId);
         });
@@ -127,7 +128,8 @@ public class ContractReminderService {
      */
     @Transactional(readOnly = true)
     public List<ContractReminder> getRemindersForToday() {
-        return reminderRepository.findRemindersForToday();
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        return reminderRepository.findRemindersForToday(tenantId);
     }
 
     /**
@@ -135,7 +137,8 @@ public class ContractReminderService {
      */
     @Transactional(readOnly = true)
     public List<ContractReminder> getOverdueReminders() {
-        return reminderRepository.findOverdueReminders();
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        return reminderRepository.findOverdueReminders(tenantId);
     }
 
     /**
@@ -143,7 +146,8 @@ public class ContractReminderService {
      */
     @Transactional(readOnly = true)
     public List<ContractReminder> getRemindersInDateRange(LocalDate startDate, LocalDate endDate) {
-        return reminderRepository.findRemindersInDateRange(startDate, endDate);
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        return reminderRepository.findRemindersInDateRange(tenantId, startDate, endDate);
     }
 
     // NOTE: Scheduled reminder creation and expiry detection have been moved to
