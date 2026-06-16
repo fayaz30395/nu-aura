@@ -227,8 +227,8 @@ function AdminView() {
   const [notes, setNotes] = useState<Record<string, string>>({});
   const [processing, setProcessing] = useState<string | null>(null);
 
-  const {data: allRequests, isLoading} = useListForAdmin({status: DsrRequestResponseStatus.PENDING});
-  const requests: DsrRequestResponse[] = Array.isArray(allRequests) ? allRequests : [];
+  const {data: allRequests, isLoading} = useListForAdmin({pageable: {page: 0, size: 50}, status: DsrRequestResponseStatus.PENDING});
+  const requests: DsrRequestResponse[] = (allRequests as {content?: DsrRequestResponse[]})?.content ?? (Array.isArray(allRequests) ? allRequests : []);
 
   const invalidate = () => queryClient.invalidateQueries({queryKey: getListForAdminQueryKey()});
 

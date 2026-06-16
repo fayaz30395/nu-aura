@@ -1112,6 +1112,13 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
           href: '/predictive-analytics',
           requiredPermission: Permissions.PREDICTIVE_ANALYTICS_VIEW
         },
+        {
+          id: 'budget-planning',
+          label: 'Budget Planning',
+          icon: icon.dollarSign,
+          href: '/admin/budget',
+          requiredPermission: Permissions.REPORT_VIEW
+        },
       ],
     },
     // ─── 9. ADMIN & SETTINGS ────────────────────────────────────────
