@@ -190,3 +190,10 @@ frontend/tmp/
 
 # Serena MCP local index/cache (machine-local, never commit)
 .serena/
+
+# Obsidian — project-wide vault (root .obsidian/) is tracked & synced via GitHub.
+# Only per-machine UI state and the retired docs/ vault are kept local.
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.obsidian/cache
+docs/.obsidian/
