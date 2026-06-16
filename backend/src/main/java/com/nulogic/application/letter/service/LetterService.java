@@ -40,6 +40,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -816,11 +817,15 @@ public class LetterService {
             throw new BusinessException(TEMPLATE_NOT_ACTIVE);
         }
 
+        Map<UUID, Employee> employeeMap = employeeRepository
+                .findAllByIdInAndTenantId(new HashSet<>(employeeIds), tenantId).stream()
+                .collect(Collectors.toMap(Employee::getId, e -> e));
+
         List<GeneratedLetterResponse> results = new ArrayList<>();
 
         for (UUID employeeId : employeeIds) {
             try {
-                Employee employee = employeeRepository.findByIdAndTenantId(employeeId, tenantId)
+                Employee employee = Optional.ofNullable(employeeMap.get(employeeId))
                         .orElseThrow(() -> new ResourceNotFoundException("Employee not found: " + employeeId));
 
                 String referenceNumber = generateReferenceNumber(template.getCategory(), tenantId);
