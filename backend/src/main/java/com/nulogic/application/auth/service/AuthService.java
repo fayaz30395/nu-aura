@@ -620,6 +620,7 @@ public class AuthService {
         // Hash and update new password
         user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
         user.setPasswordChangedAt(tenantTimeService.now(user.getTenantId()));
+        user.setPasswordChangeRequired(false);
 
         userRepository.save(user);
 
@@ -1021,6 +1022,7 @@ public class AuthService {
                 .tenantTimezone(resolveTenantTimezone(tenantId))
                 .roles(new ArrayList<>(ctx.appRoles()))
                 .permissions(new ArrayList<>(ctx.appPermissions().keySet()))
+                .mustChangePassword(Boolean.TRUE.equals(user.getPasswordChangeRequired()))
                 .build();
     }
 

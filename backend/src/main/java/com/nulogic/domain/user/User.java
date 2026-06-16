@@ -107,6 +107,15 @@ public class User extends TenantAware {
     private LocalDateTime anonymizedAt;
 
     /**
+     * When {@code true}, the user must change their password on next login.
+     * Set by the Keka migration importer and the admin-forced reset flow.
+     * Cleared by AuthService after a successful self-service password change.
+     */
+    @Column(name = "password_change_required", nullable = false)
+    @Builder.Default
+    private Boolean passwordChangeRequired = false;
+
+    /**
      * User roles - loaded LAZILY to avoid N+1 and unnecessary data loading.
      *
      * <p><strong>IMPORTANT:</strong> Do NOT access this collection directly in service code.

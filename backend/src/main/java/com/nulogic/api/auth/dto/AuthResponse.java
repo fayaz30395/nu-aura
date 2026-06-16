@@ -43,4 +43,9 @@ public class AuthResponse {
     @Builder.Default
     private boolean mfaRequired = false;
     private String mfaToken;
+
+    // When true, the frontend must redirect the user to the change-password screen
+    // before allowing navigation to any other route.
+    @Builder.Default
+    private boolean mustChangePassword = false;
 }
