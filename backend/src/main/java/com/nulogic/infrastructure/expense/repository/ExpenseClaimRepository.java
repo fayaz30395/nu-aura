@@ -95,4 +95,25 @@ public interface ExpenseClaimRepository extends JpaRepository<ExpenseClaim, UUID
                                                @Param("employeeId") UUID employeeId,
                                                @Param("startDate") LocalDate startDate,
                                                @Param("endDate") LocalDate endDate);
+
+    @Query("SELECT e.status, COUNT(e), COALESCE(SUM(e.amount), 0) FROM ExpenseClaim e " +
+            "WHERE e.tenantId = :tenantId AND e.employeeId = :employeeId " +
+            "GROUP BY e.status")
+    List<Object[]> getStatusStatsForEmployee(@Param("tenantId") UUID tenantId,
+                                             @Param("employeeId") UUID employeeId);
+
+    @Query("SELECT e.category, COUNT(e), COALESCE(SUM(e.amount), 0) FROM ExpenseClaim e " +
+            "WHERE e.tenantId = :tenantId AND e.employeeId = :employeeId " +
+            "AND e.claimDate BETWEEN :startDate AND :endDate " +
+            "GROUP BY e.category")
+    List<Object[]> getCategoryStatsForEmployee(@Param("tenantId") UUID tenantId,
+                                               @Param("employeeId") UUID employeeId,
+                                               @Param("startDate") LocalDate startDate,
+                                               @Param("endDate") LocalDate endDate);
+
+    @Query("SELECT e.category, COUNT(e), COALESCE(SUM(e.amount), 0) FROM ExpenseClaim e " +
+            "WHERE e.tenantId = :tenantId AND e.employeeId = :employeeId " +
+            "GROUP BY e.category")
+    List<Object[]> getCategoryStatsForEmployeeAllTime(@Param("tenantId") UUID tenantId,
+                                                      @Param("employeeId") UUID employeeId);
 }

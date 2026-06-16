@@ -315,67 +315,59 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
     public Map<String, Object> getEmployeeStatistics(UUID employeeId, Integer year) {
         UUID tenantId = TenantContext.requireCurrentTenant();
 
-        List<ExpenseClaim> claims = expenseClaimRepository.findAllByEmployeeIdAndTenantId(employeeId, tenantId);
-
-        // Filter by year if provided
+        List<Object[]> statusRows;
+        List<Object[]> categoryRows;
         if (year != null) {
-            claims = claims.stream()
-                    .filter(c -> c.getClaimDate() != null && c.getClaimDate().getYear() == year)
-                    .collect(java.util.stream.Collectors.toList());
+            LocalDate start = LocalDate.of(year, 1, 1);
+            LocalDate end = LocalDate.of(year, 12, 31);
+            statusRows = expenseClaimRepository.getStatusSummaryForEmployee(tenantId, employeeId, start, end);
+            categoryRows = expenseClaimRepository.getCategoryStatsForEmployee(tenantId, employeeId, start, end);
+        } else {
+            statusRows = expenseClaimRepository.getStatusStatsForEmployee(tenantId, employeeId);
+            categoryRows = expenseClaimRepository.getCategoryStatsForEmployeeAllTime(tenantId, employeeId);
+        }
+
+        long totalClaims = 0;
+        BigDecimal totalAmount = BigDecimal.ZERO;
+        BigDecimal pendingAmount = BigDecimal.ZERO;
+        BigDecimal approvedAmount = BigDecimal.ZERO;
+        BigDecimal rejectedAmount = BigDecimal.ZERO;
+        BigDecimal paidAmount = BigDecimal.ZERO;
+
+        for (Object[] row : statusRows) {
+            ExpenseClaim.ExpenseStatus status = (ExpenseClaim.ExpenseStatus) row[0];
+            long count = ((Number) row[1]).longValue();
+            BigDecimal amount = row[2] != null ? (BigDecimal) row[2] : BigDecimal.ZERO;
+            totalClaims += count;
+            totalAmount = totalAmount.add(amount);
+            if (status == ExpenseClaim.ExpenseStatus.SUBMITTED
+                    || status == ExpenseClaim.ExpenseStatus.PENDING_APPROVAL) {
+                pendingAmount = pendingAmount.add(amount);
+            } else if (status == ExpenseClaim.ExpenseStatus.APPROVED) {
+                approvedAmount = approvedAmount.add(amount);
+            } else if (status == ExpenseClaim.ExpenseStatus.REJECTED) {
+                rejectedAmount = rejectedAmount.add(amount);
+            } else if (status == ExpenseClaim.ExpenseStatus.PAID) {
+                paidAmount = paidAmount.add(amount);
+            }
+        }
+
+        Map<String, BigDecimal> byCategory = new HashMap<>();
+        for (Object[] row : categoryRows) {
+            BigDecimal catAmount = row[2] != null ? (BigDecimal) row[2] : BigDecimal.ZERO;
+            if (catAmount.compareTo(BigDecimal.ZERO) > 0) {
+                byCategory.put(((ExpenseClaim.ExpenseCategory) row[0]).name(), catAmount);
+            }
         }
 
         Map<String, Object> statistics = new HashMap<>();
-
-        statistics.put("totalClaims", (long) claims.size());
-
-        BigDecimal totalAmount = claims.stream()
-                .map(ExpenseClaim::getAmount)
-                .filter(Objects::nonNull)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        statistics.put("totalClaims", totalClaims);
         statistics.put("totalAmount", totalAmount);
-
-        BigDecimal pendingAmount = claims.stream()
-                .filter(c -> c.getStatus() == ExpenseClaim.ExpenseStatus.SUBMITTED
-                        || c.getStatus() == ExpenseClaim.ExpenseStatus.PENDING_APPROVAL)
-                .map(ExpenseClaim::getAmount)
-                .filter(Objects::nonNull)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
         statistics.put("pendingAmount", pendingAmount);
-
-        BigDecimal approvedAmount = claims.stream()
-                .filter(c -> c.getStatus() == ExpenseClaim.ExpenseStatus.APPROVED)
-                .map(ExpenseClaim::getAmount)
-                .filter(Objects::nonNull)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
         statistics.put("approvedAmount", approvedAmount);
-
-        BigDecimal rejectedAmount = claims.stream()
-                .filter(c -> c.getStatus() == ExpenseClaim.ExpenseStatus.REJECTED)
-                .map(ExpenseClaim::getAmount)
-                .filter(Objects::nonNull)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
         statistics.put("rejectedAmount", rejectedAmount);
-
-        BigDecimal paidAmount = claims.stream()
-                .filter(c -> c.getStatus() == ExpenseClaim.ExpenseStatus.PAID)
-                .map(ExpenseClaim::getAmount)
-                .filter(Objects::nonNull)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
         statistics.put("paidAmount", paidAmount);
-
-        Map<String, BigDecimal> byCategory = new HashMap<>();
-        for (ExpenseClaim.ExpenseCategory cat : ExpenseClaim.ExpenseCategory.values()) {
-            BigDecimal catAmount = claims.stream()
-                    .filter(c -> c.getCategory() == cat)
-                    .map(ExpenseClaim::getAmount)
-                    .filter(Objects::nonNull)
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
-            if (catAmount.compareTo(BigDecimal.ZERO) > 0) {
-                byCategory.put(cat.name(), catAmount);
-            }
-        }
         statistics.put("byCategory", byCategory);
-
         return Collections.unmodifiableMap(statistics);
     }
 
