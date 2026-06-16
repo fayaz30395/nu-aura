@@ -1,1 +1,18 @@
-{}
+{
+  "userIgnoreFilters": [
+    "node_modules",
+    "modules/",
+    "test-results/",
+    "backend/target/",
+    "build/",
+    "frontend/",
+    "backend/",
+    "infra/",
+    "scripts/",
+    "tools/",
+    "qa-reports/",
+    "docs-v2/",
+    "design-import/",
+    "design-import-2/"
+  ]
+}
