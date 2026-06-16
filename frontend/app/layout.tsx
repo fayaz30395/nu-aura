@@ -16,6 +16,7 @@ import {Providers} from './providers';
 //   --font-mono     Roboto Mono (all numerics — money, IDs, stats, counts; tabular-nums)
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? 'https://hrms-frontend-vert.vercel.app'),
   title: {
     template: '%s | NU-AURA',
     default: 'NU-AURA — Unified People Platform',
@@ -24,6 +25,15 @@ export const metadata: Metadata = {
   icons: {
     icon: '/images/nulogic-icon.svg',
     apple: '/images/nulogic-icon.svg',
+  },
+  openGraph: {
+    siteName: 'NU-AURA',
+    type: 'website',
+    locale: 'en_US',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: '@nulogic',
   },
 };
 
