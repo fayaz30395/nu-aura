@@ -965,6 +965,22 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
           icon: icon.receipt,
           href: '/projects/psa',
           requiredPermission: Permissions.PROJECT_VIEW,
+          children: [
+            {
+              id: 'psa-projects-list',
+              label: 'Projects',
+              href: '/projects/psa',
+              icon: sm.briefcase,
+              requiredPermission: Permissions.PROJECT_VIEW,
+            },
+            {
+              id: 'psa-invoices',
+              label: 'Invoices',
+              href: '/projects/psa/invoices',
+              icon: sm.fileText,
+              requiredPermission: Permissions.PROJECT_VIEW,
+            },
+          ],
         },
         {
           id: 'resources',
