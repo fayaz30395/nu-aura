@@ -235,17 +235,33 @@ public class AnalyticsService {
     @Transactional(readOnly = true)
     public List<HeadcountTrend> getHeadcountTrend(int months) {
         UUID tenantId = TenantContext.requireCurrentTenant();
-        List<HeadcountTrend> trend = new ArrayList<>();
         long currentCount = employeeRepository.countByTenantId(tenantId);
         LocalDate today = tenantTimeService.today(tenantId);
 
+        // Fetch all hire counts for the window in ONE query instead of N individual ones
+        LocalDate windowStart = today.minusMonths(months).withDayOfMonth(1);
+        Map<String, Long> hiresByYearMonth = new HashMap<>();
+        for (Object[] row : employeeRepository.countHiresByTenantIdAndJoiningDateRange(
+                tenantId, windowStart, today)) {
+            String key = row[0] + "-" + row[1];
+            hiresByYearMonth.put(key, ((Number) row[2]).longValue());
+        }
+
+        List<HeadcountTrend> trend = new ArrayList<>(months);
         for (int i = months - 1; i >= 0; i--) {
             LocalDate point = today.minusMonths(i);
-            // Count new hires up to this month boundary as an approximation of headcount at that time
-            long hiredUpTo = employeeRepository.countNewHiresAfterDate(
-                    tenantId, point.withDayOfMonth(1).minusMonths(1));
-            long count = Math.max(0, currentCount - hiredUpTo);
-            trend.add(new HeadcountTrend(point.getYear(), point.getMonthValue(), count));
+            LocalDate afterDate = point.withDayOfMonth(1).minusMonths(1);
+
+            // Suffix-sum: count hires from afterDate through today using the pre-fetched map
+            long hiredUpTo = 0;
+            LocalDate cursor = afterDate.withDayOfMonth(1);
+            while (!cursor.isAfter(today)) {
+                hiredUpTo += hiresByYearMonth.getOrDefault(cursor.getYear() + "-" + cursor.getMonthValue(), 0L);
+                cursor = cursor.plusMonths(1);
+            }
+
+            trend.add(new HeadcountTrend(point.getYear(), point.getMonthValue(),
+                    Math.max(0, currentCount - hiredUpTo)));
         }
 
         return trend;

@@ -29,9 +29,16 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -209,7 +216,8 @@ public class MileageService {
     public Page<MileageLogResponse> getEmployeeMileageLogs(UUID employeeId, Pageable pageable) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         Page<MileageLog> page = mileageLogRepository.findByTenantIdAndEmployeeId(tenantId, employeeId, pageable);
-        return page.map(log -> enrichResponse(MileageLogResponse.fromEntity(log)));
+        Map<UUID, String> nameMap = buildMileageNameMap(page.getContent(), tenantId);
+        return page.map(log -> enrichResponseFromCache(MileageLogResponse.fromEntity(log), nameMap));
     }
 
     @Transactional(readOnly = true)
@@ -217,7 +225,8 @@ public class MileageService {
         UUID tenantId = TenantContext.requireCurrentTenant();
         Page<MileageLog> page = mileageLogRepository.findByTenantIdAndStatus(
                 tenantId, MileageLog.MileageStatus.SUBMITTED, pageable);
-        return page.map(log -> enrichResponse(MileageLogResponse.fromEntity(log)));
+        Map<UUID, String> nameMap = buildMileageNameMap(page.getContent(), tenantId);
+        return page.map(log -> enrichResponseFromCache(MileageLogResponse.fromEntity(log), nameMap));
     }
 
     @Transactional(readOnly = true)
@@ -359,6 +368,26 @@ public class MileageService {
             employeeRepository.findById(response.getApprovedBy())
                     .ifPresent(emp -> response.setApprovedByName(emp.getFirstName() + " " + emp.getLastName()));
         }
+        return response;
+    }
+
+    private Map<UUID, String> buildMileageNameMap(List<MileageLog> logs, UUID tenantId) {
+        if (logs.isEmpty()) return Collections.emptyMap();
+        Set<UUID> ids = new HashSet<>();
+        for (MileageLog log : logs) {
+            if (log.getEmployeeId() != null) ids.add(log.getEmployeeId());
+            if (log.getApprovedBy() != null) ids.add(log.getApprovedBy());
+        }
+        if (ids.isEmpty()) return Collections.emptyMap();
+        return employeeRepository.findFullNamesByIdsAndTenantId(ids, tenantId).stream()
+                .collect(Collectors.toMap(row -> (UUID) row[0], row -> (String) row[1]));
+    }
+
+    private MileageLogResponse enrichResponseFromCache(MileageLogResponse response, Map<UUID, String> nameMap) {
+        if (response.getEmployeeId() != null)
+            response.setEmployeeName(nameMap.get(response.getEmployeeId()));
+        if (response.getApprovedBy() != null)
+            response.setApprovedByName(nameMap.get(response.getApprovedBy()));
         return response;
     }
 }

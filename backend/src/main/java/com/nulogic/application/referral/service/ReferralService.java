@@ -111,24 +111,25 @@ public class ReferralService {
     @Transactional(readOnly = true)
     public List<ReferralResponse> getMyReferrals(UUID referrerId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
-        return referralRepository.findByReferrerIdAndTenantId(referrerId, tenantId).stream()
-                .map(this::mapToResponse)
-                .collect(Collectors.toList());
+        List<EmployeeReferral> referrals = referralRepository.findByReferrerIdAndTenantId(referrerId, tenantId);
+        Map<UUID, String> nameMap = buildReferrerNameMap(referrals);
+        return referrals.stream().map(r -> mapToResponse(r, nameMap)).collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
     public Page<ReferralResponse> getAllReferrals(Pageable pageable) {
         UUID tenantId = TenantContext.requireCurrentTenant();
-        return referralRepository.findByTenantId(tenantId, pageable)
-                .map(this::mapToResponse);
+        Page<EmployeeReferral> page = referralRepository.findByTenantId(tenantId, pageable);
+        Map<UUID, String> nameMap = buildReferrerNameMap(page.getContent());
+        return page.map(r -> mapToResponse(r, nameMap));
     }
 
     @Transactional(readOnly = true)
     public List<ReferralResponse> getReferralsByStatus(ReferralStatus status) {
         UUID tenantId = TenantContext.requireCurrentTenant();
-        return referralRepository.findByTenantIdAndStatus(tenantId, status).stream()
-                .map(this::mapToResponse)
-                .collect(Collectors.toList());
+        List<EmployeeReferral> referrals = referralRepository.findByTenantIdAndStatus(tenantId, status);
+        Map<UUID, String> nameMap = buildReferrerNameMap(referrals);
+        return referrals.stream().map(r -> mapToResponse(r, nameMap)).collect(Collectors.toList());
     }
 
     // ==================== Status Management ====================
@@ -449,13 +450,31 @@ public class ReferralService {
         return "REF-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
     }
 
+    private Map<UUID, String> buildReferrerNameMap(List<EmployeeReferral> referrals) {
+        Set<UUID> ids = referrals.stream()
+                .map(EmployeeReferral::getReferrerId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+        if (ids.isEmpty()) return Collections.emptyMap();
+        return userRepository.findAllById(ids).stream()
+                .collect(Collectors.toMap(User::getId, User::getFullName));
+    }
+
+    private ReferralResponse mapToResponse(EmployeeReferral referral, Map<UUID, String> nameMap) {
+        String referrerName = referral.getReferrerId() != null ? nameMap.get(referral.getReferrerId()) : null;
+        return buildReferralResponse(referral, referrerName);
+    }
+
     private ReferralResponse mapToResponse(EmployeeReferral referral) {
         String referrerName = null;
         if (referral.getReferrerId() != null) {
             referrerName = userRepository.findById(referral.getReferrerId())
                     .map(User::getFullName).orElse(null);
         }
+        return buildReferralResponse(referral, referrerName);
+    }
 
+    private ReferralResponse buildReferralResponse(EmployeeReferral referral, String referrerName) {
         return ReferralResponse.builder()
                 .id(referral.getId())
                 .referrerId(referral.getReferrerId())
