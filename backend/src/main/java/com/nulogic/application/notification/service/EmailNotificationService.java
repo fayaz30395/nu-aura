@@ -207,6 +207,22 @@ public class EmailNotificationService {
     }
 
     /**
+     * Send admin-initiated password reset email with a temporary credential.
+     * Distinct from the self-service reset flow — the user receives a pre-set
+     * temporary password and is directed to log in and change it immediately.
+     */
+    @Async
+    @Transactional
+    public void sendAdminPasswordReset(String email, String name, String tempPassword) {
+        Map<String, Object> variables = Map.of(
+                "name", name,
+                "tempPassword", tempPassword,
+                "loginUrl", frontendUrl + "/login"
+        );
+        sendHtmlEmail(email, "Your Password Has Been Reset by an Administrator", "email/admin-password-reset", variables);
+    }
+
+    /**
      * Send password changed confirmation.
      */
     @Async

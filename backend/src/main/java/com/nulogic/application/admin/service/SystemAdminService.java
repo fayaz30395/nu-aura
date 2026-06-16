@@ -669,13 +669,7 @@ public class SystemAdminService {
                 "Admin reset by " + adminUserId + ": " + request.getReason()
         );
 
-        // TODO(S6-B-followup): add EmailNotificationService#sendAdminPasswordReset(User, String)
-        //   that uses a dedicated "admin-initiated reset" template explaining the rotation cause.
-        //   Method signature:
-        //     public void sendAdminPasswordReset(User user, String tempPassword)
-        //   For now we reuse the generic password-reset template — the user receives the temp
-        //   credential in the token slot so they can sign in once and immediately rotate.
-        emailNotificationService.sendPasswordResetEmail(
+        emailNotificationService.sendAdminPasswordReset(
                 user.getEmail(),
                 user.getFirstName() != null ? user.getFirstName() : user.getEmail(),
                 tempPassword
