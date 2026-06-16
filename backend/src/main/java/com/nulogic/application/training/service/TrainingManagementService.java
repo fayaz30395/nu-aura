@@ -23,7 +23,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -115,18 +120,18 @@ public class TrainingManagementService {
     @Transactional(readOnly = true)
     public Page<TrainingProgramResponse> getAllPrograms(Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return programRepository.findAll(
-                (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId),
-                pageable
-        ).map(this::mapToProgramResponse);
+        Page<TrainingProgram> page = programRepository.findAll(
+                (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId), pageable);
+        ProgramNameCaches caches = buildProgramCaches(page.getContent(), tenantId);
+        return page.map(p -> mapToProgramResponse(p, caches));
     }
 
     @Transactional(readOnly = true)
     public List<TrainingProgramResponse> getProgramsByStatus(TrainingProgram.ProgramStatus status) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return programRepository.findByTenantIdAndStatus(tenantId, status).stream()
-                .map(this::mapToProgramResponse)
-                .collect(Collectors.toList());
+        List<TrainingProgram> programs = programRepository.findByTenantIdAndStatus(tenantId, status);
+        ProgramNameCaches caches = buildProgramCaches(programs, tenantId);
+        return programs.stream().map(p -> mapToProgramResponse(p, caches)).collect(Collectors.toList());
     }
 
     @Transactional
@@ -242,17 +247,17 @@ public class TrainingManagementService {
     @Transactional(readOnly = true)
     public List<TrainingEnrollmentResponse> getEnrollmentsByProgram(UUID programId) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return enrollmentRepository.findByTenantIdAndProgramId(tenantId, programId).stream()
-                .map(this::mapToEnrollmentResponse)
-                .collect(Collectors.toList());
+        List<TrainingEnrollment> enrollments = enrollmentRepository.findByTenantIdAndProgramId(tenantId, programId);
+        EnrollmentNameCaches caches = buildEnrollmentCaches(enrollments, tenantId);
+        return enrollments.stream().map(e -> mapToEnrollmentResponse(e, caches)).collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
     public List<TrainingEnrollmentResponse> getEnrollmentsByEmployee(UUID employeeId) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return enrollmentRepository.findByTenantIdAndEmployeeId(tenantId, employeeId).stream()
-                .map(this::mapToEnrollmentResponse)
-                .collect(Collectors.toList());
+        List<TrainingEnrollment> enrollments = enrollmentRepository.findByTenantIdAndEmployeeId(tenantId, employeeId);
+        EnrollmentNameCaches caches = buildEnrollmentCaches(enrollments, tenantId);
+        return enrollments.stream().map(e -> mapToEnrollmentResponse(e, caches)).collect(Collectors.toList());
     }
 
     @Transactional
@@ -332,24 +337,72 @@ public class TrainingManagementService {
         return mapToEnrollmentResponse(savedEnrollment);
     }
 
+    // ==================== Mapper Helpers ====================
+
+    private record ProgramNameCaches(Map<UUID, String> instructorNames, Map<UUID, Integer> enrollmentCounts) {}
+
+    private record EnrollmentNameCaches(Map<UUID, String> programNames, Map<UUID, String> employeeNames) {}
+
+    private ProgramNameCaches buildProgramCaches(List<TrainingProgram> programs, UUID tenantId) {
+        if (programs.isEmpty()) return new ProgramNameCaches(Collections.emptyMap(), Collections.emptyMap());
+        Set<UUID> instructorIds = programs.stream()
+                .map(TrainingProgram::getInstructorId).filter(Objects::nonNull).collect(Collectors.toSet());
+        Map<UUID, String> instructorNames = instructorIds.isEmpty() ? Collections.emptyMap() :
+                employeeRepository.findAllById(instructorIds).stream()
+                        .collect(Collectors.toMap(Employee::getId, Employee::getFullName));
+        List<UUID> programIds = programs.stream().map(TrainingProgram::getId).collect(Collectors.toList());
+        Map<UUID, Integer> enrollmentCounts = new HashMap<>();
+        enrollmentRepository.countActiveByTenantIdAndProgramIds(tenantId, programIds,
+                        TrainingEnrollment.EnrollmentStatus.CANCELLED)
+                .forEach(row -> enrollmentCounts.put((UUID) row[0], ((Number) row[1]).intValue()));
+        return new ProgramNameCaches(instructorNames, enrollmentCounts);
+    }
+
+    private EnrollmentNameCaches buildEnrollmentCaches(List<TrainingEnrollment> enrollments, UUID tenantId) {
+        if (enrollments.isEmpty()) return new EnrollmentNameCaches(Collections.emptyMap(), Collections.emptyMap());
+        Set<UUID> programIds = enrollments.stream()
+                .map(TrainingEnrollment::getProgramId).filter(Objects::nonNull).collect(Collectors.toSet());
+        Set<UUID> employeeIds = enrollments.stream()
+                .map(TrainingEnrollment::getEmployeeId).filter(Objects::nonNull).collect(Collectors.toSet());
+        Map<UUID, String> programNames = programIds.isEmpty() ? Collections.emptyMap() :
+                programRepository.findAllById(programIds).stream()
+                        .collect(Collectors.toMap(TrainingProgram::getId, TrainingProgram::getProgramName));
+        Map<UUID, String> employeeNames = employeeIds.isEmpty() ? Collections.emptyMap() :
+                employeeRepository.findAllById(employeeIds).stream()
+                        .collect(Collectors.toMap(Employee::getId, Employee::getFullName));
+        return new EnrollmentNameCaches(programNames, employeeNames);
+    }
+
+    private TrainingProgramResponse mapToProgramResponse(TrainingProgram program, ProgramNameCaches caches) {
+        return buildProgramResponse(program,
+                program.getInstructorId() != null ? caches.instructorNames().get(program.getInstructorId()) : null,
+                caches.enrollmentCounts().getOrDefault(program.getId(), 0));
+    }
+
+    private TrainingEnrollmentResponse mapToEnrollmentResponse(TrainingEnrollment enrollment, EnrollmentNameCaches caches) {
+        return buildEnrollmentResponse(enrollment,
+                caches.programNames().get(enrollment.getProgramId()),
+                caches.employeeNames().get(enrollment.getEmployeeId()));
+    }
+
     // ==================== Mapper Methods ====================
 
     private TrainingProgramResponse mapToProgramResponse(TrainingProgram program) {
-        String instructorName = null;
-        if (program.getInstructorId() != null) {
-            instructorName = employeeRepository.findByIdAndTenantId(program.getInstructorId(), program.getTenantId())
-                    .map(Employee::getFullName)
-                    .orElse(null);
-        }
-
-        Integer currentEnrollments = Math.toIntExact(enrollmentRepository.count(
+        String instructorName = program.getInstructorId() != null
+                ? employeeRepository.findByIdAndTenantId(program.getInstructorId(), program.getTenantId())
+                        .map(Employee::getFullName).orElse(null)
+                : null;
+        int currentEnrollments = Math.toIntExact(enrollmentRepository.count(
                 (root, query, cb) -> cb.and(
                         cb.equal(root.get("tenantId"), program.getTenantId()),
                         cb.equal(root.get("programId"), program.getId()),
                         cb.notEqual(root.get("status"), TrainingEnrollment.EnrollmentStatus.CANCELLED)
                 )
         ));
+        return buildProgramResponse(program, instructorName, currentEnrollments);
+    }
 
+    private TrainingProgramResponse buildProgramResponse(TrainingProgram program, String instructorName, int currentEnrollments) {
         return TrainingProgramResponse.builder()
                 .id(program.getId())
                 .tenantId(program.getTenantId())
@@ -377,13 +430,13 @@ public class TrainingManagementService {
 
     private TrainingEnrollmentResponse mapToEnrollmentResponse(TrainingEnrollment enrollment) {
         String programName = programRepository.findByIdAndTenantId(enrollment.getProgramId(), enrollment.getTenantId())
-                .map(TrainingProgram::getProgramName)
-                .orElse(null);
-
+                .map(TrainingProgram::getProgramName).orElse(null);
         String employeeName = employeeRepository.findByIdAndTenantId(enrollment.getEmployeeId(), enrollment.getTenantId())
-                .map(Employee::getFullName)
-                .orElse(null);
+                .map(Employee::getFullName).orElse(null);
+        return buildEnrollmentResponse(enrollment, programName, employeeName);
+    }
 
+    private TrainingEnrollmentResponse buildEnrollmentResponse(TrainingEnrollment enrollment, String programName, String employeeName) {
         return TrainingEnrollmentResponse.builder()
                 .id(enrollment.getId())
                 .tenantId(enrollment.getTenantId())

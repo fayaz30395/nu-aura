@@ -37,6 +37,14 @@ public interface TrainingEnrollmentRepository extends JpaRepository<TrainingEnro
             TrainingEnrollment.EnrollmentStatus status
     );
 
+    /** Bulk enrollment count per program — avoids N+1 when listing programs. */
+    @Query("SELECT e.programId, COUNT(e) FROM TrainingEnrollment e WHERE e.tenantId = :tenantId " +
+            "AND e.programId IN :programIds AND e.status <> :excludedStatus " +
+            "GROUP BY e.programId")
+    List<Object[]> countActiveByTenantIdAndProgramIds(@Param("tenantId") UUID tenantId,
+                                                       @Param("programIds") Collection<UUID> programIds,
+                                                       @Param("excludedStatus") TrainingEnrollment.EnrollmentStatus excludedStatus);
+
     @Query("SELECT e.programId FROM TrainingEnrollment e WHERE e.tenantId = :tenantId " +
             "AND e.employeeId = :employeeId AND e.programId IN :programIds AND e.status = :status")
     Set<UUID> findProgramIdsByEmployeeAndStatusIn(@Param("tenantId") UUID tenantId,
