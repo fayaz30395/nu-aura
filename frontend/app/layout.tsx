@@ -16,7 +16,10 @@ import {Providers} from './providers';
 //   --font-mono     Roboto Mono (all numerics — money, IDs, stats, counts; tabular-nums)
 
 export const metadata: Metadata = {
-  title: 'NU-AURA by NULogic: Infinite Innovation',
+  title: {
+    template: '%s | NU-AURA',
+    default: 'NU-AURA — Unified People Platform',
+  },
   description: 'Unified People Platform by NULogic: HR, Recruitment, Performance & Knowledge Management',
   icons: {
     icon: '/images/nulogic-icon.svg',
