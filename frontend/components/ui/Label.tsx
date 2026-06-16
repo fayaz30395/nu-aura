@@ -16,7 +16,7 @@ export const Label: React.FC<LabelProps> = ({
       {...props}
     >
       {children}
-      {required && <span className="text-danger-500 ml-1" aria-label="required">*</span>}
+      {required && <span className="text-danger-500 ml-1" aria-hidden="true">*</span>}
     </label>
   );
 };

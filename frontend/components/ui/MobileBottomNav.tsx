@@ -82,6 +82,9 @@ export function MobileBottomNav({
               )}
                 style={{animationDelay: `${index * 45}ms`}}
               aria-current={active ? 'page' : undefined}
+              aria-label={item.badge !== undefined && item.badge > 0
+                ? `${item.label}, ${item.badge > 99 ? '99 plus' : item.badge} notification${item.badge === 1 ? '' : 's'}`
+                : item.label}
             >
               {/* Shared sliding indicator — animates between items via layoutId.
                   Transform/opacity only; honors reduced motion (no layout tween). */}
@@ -106,6 +109,7 @@ export function MobileBottomNav({
                 />
                 {item.badge !== undefined && item.badge > 0 && (
                   <span
+                    aria-hidden="true"
                     className="absolute -top-1.5 -right-1.5 flex items-center justify-center min-w-[18px] h-[18px] px-1 text-xs font-semibold text-white bg-[var(--status-danger-text)] rounded-full">
                     {item.badge > 99 ? '99+' : item.badge}
                   </span>

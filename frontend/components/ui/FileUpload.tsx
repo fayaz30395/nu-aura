@@ -182,16 +182,30 @@ export const FileUpload: React.FC<FileUploadProps> = ({
   return (
     <div className={className}>
       <div
+        role="button"
+        tabIndex={disabled || uploading ? -1 : 0}
+        aria-label={uploading
+          ? 'File upload in progress'
+          : disabled
+            ? 'File upload disabled'
+            : `Upload file${multiple ? 's' : ''}. Press Enter or Space to browse files, or drag and drop.`}
+        aria-disabled={disabled || uploading}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
         onClick={() => !disabled && !uploading && inputRef.current?.click()}
+        onKeyDown={(e) => {
+          if ((e.key === 'Enter' || e.key === ' ') && !disabled && !uploading) {
+            e.preventDefault();
+            inputRef.current?.click();
+          }
+        }}
         className={`
           relative border-2 border-dashed rounded-lg p-8
           flex flex-col items-center justify-center cursor-pointer
           transition-[border-color,background-color,box-shadow,transform] duration-200 ease-[cubic-bezier(0.4,0,0.2,1)]
           motion-reduce:transition-none
-          focus-within:outline-none focus-within:ring-2 focus-within:ring-[var(--ring-primary)] focus-within:ring-offset-2
+          focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2
           ${isDragging
           ? 'border-accent-500 bg-accent-50 dark:bg-accent-900/20 scale-[1.01] shadow-[var(--shadow-hover)] motion-reduce:scale-100'
           : 'border-[var(--border-main)] dark:border-surface-600 hover:border-accent-400 dark:hover:border-accent-500 hover:shadow-[var(--shadow-card)]'
@@ -208,6 +222,8 @@ export const FileUpload: React.FC<FileUploadProps> = ({
           onChange={handleFileSelect}
           className="hidden"
           disabled={disabled || uploading}
+          aria-hidden="true"
+          tabIndex={-1}
         />
 
         {uploading && selectedFile ? (

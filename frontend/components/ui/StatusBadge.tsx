@@ -83,7 +83,7 @@ export function StatusBadge({
       aria-label={label}
     >
       {!iconHidden && Icon ? (
-        <Icon className={cn('h-3 w-3 flex-shrink-0', pulse && 'animate-pulse')} aria-hidden="true" />
+        <Icon className={cn('h-3 w-3 flex-shrink-0', pulse && 'animate-pulse motion-reduce:animate-none')} aria-hidden="true" />
       ) : null}
       <span>{label}</span>
     </span>

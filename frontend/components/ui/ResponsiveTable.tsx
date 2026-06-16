@@ -200,6 +200,7 @@ function ResponsiveTable<T>({
                       type="checkbox"
                       checked={isSelected}
                       onChange={() => handleSelectRow(key)}
+                      aria-label={`Select row ${key}`}
                       className="rounded border-surface-300 text-accent-700 focus:ring-accent-500"
                     />
                   </td>
@@ -255,6 +256,9 @@ function ResponsiveTable<T>({
           return (
             <div
               key={key}
+              role={onRowClick ? 'button' : undefined}
+              tabIndex={onRowClick ? 0 : undefined}
+              aria-label={onRowClick ? 'View row details' : undefined}
               className={cn(
                 'bg-[var(--bg-input)] rounded-lg border border-surface-200 dark:border-surface-700 p-4',
                 'transition-colors duration-[var(--motion-base)]',
@@ -262,6 +266,12 @@ function ResponsiveTable<T>({
                 isSelected && 'ring-2 ring-accent-500 border-accent-500'
               )}
               onClick={() => onRowClick?.(row)}
+              onKeyDown={(e) => {
+                if ((e.key === 'Enter' || e.key === ' ') && onRowClick) {
+                  e.preventDefault();
+                  onRowClick(row);
+                }
+              }}
             >
               <div className="flex items-start justify-between">
                 <div className="flex-1 min-w-0">
@@ -304,6 +314,7 @@ function ResponsiveTable<T>({
                         handleSelectRow(key);
                       }}
                       onClick={(e) => e.stopPropagation()}
+                      aria-label={`Select row ${key}`}
                       className="rounded border-surface-300 text-accent-700 focus:ring-accent-500 mt-1"
                     />
                   )}
