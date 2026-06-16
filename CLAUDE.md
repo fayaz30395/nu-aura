@@ -212,3 +212,80 @@ npx @claude-flow/cli@latest doctor --fix
 
 **Agent tool** handles execution (agents, files, code, git). **MCP tools** handle coordination (
 swarm, memory, hooks). **CLI** is the same via Bash.
+
+---
+
+# Second Brain — Claude Code + Obsidian vault
+This folder is my Obsidian vault and single source of truth.
+
+## Start of every session
+1. Read this file.
+2. List memory/ and read the 3 most recent files.
+3. Treat both as authoritative context about me, my projects, decisions.
+
+## Answering
+- Before anything non-trivial, grep/glob the vault for relevant notes, then
+  read the hits. Cite filenames used. If nothing relevant exists, say so.
+  Never invent.
+
+## Write-back — do this WITHOUT being asked
+When an exchange produces something worth keeping:
+- Durable fact about me/a project -> append under the right heading in CLAUDE.md.
+- Session note / summary / decision -> create memory/YYYY-MM-DD-<slug>.md with
+  `tags:` frontmatter and a one-line summary at top, and add a line to
+  memory/INDEX.md "## Log".
+- Only append or create. NEVER overwrite or delete my hand-written notes.
+- After writing, state exactly which file you changed.
+
+## Folder map
+- memory/ -> your written context & session notes
+- notes/  -> my PKM (read freely; edit only if I ask)
+- refs/   -> docs/code to retrieve over
+
+## Discipline
+- Direct, no preamble. Reference notes as `folder/file.md`.
+- Search before answering; one file edit at a time; confirm each write.
+- If a request needs a note I don't have, name what's missing.
+
+## About Me
+- Email: fayaz30395@gmail.com
+- **Tech Lead** with 10+ years in backend & platform engineering — Java, Spring
+  Boot, microservices, cloud-native architectures, composable commerce.
+  (Title is Tech Lead — do not inflate to Principal/Staff.)
+- Currently **Tech Lead at Sephora** (commerce personalization / platform
+  engagements) and runs the **NULOGIC** product ecosystem.
+- Also operates **food businesses in Madurai** — Crispy Kitchen; involvement with
+  Arabian Grills and Hotel Buhari.
+- This second brain holds context across **three threads** so nothing is lost on
+  context-switch: (1) Sephora / consulting work, (2) NU-AURA platform dev,
+  (3) the food business.
+
+## Projects
+- **Sephora** — Tech Lead on commerce platform / personalization: Routine Builder
+  P13N, banner variant / NBC ranking; commercetools / MuleSoft / MACH stack;
+  Avalara / Vertex (tax); Algolia / Bloomreach / Nosto (search & personalization).
+- **NU-AURA platform ecosystem** — NU-HRMS, NU-Hire, NU-Grow, NU-Fluence.
+  Stack (per owner): React 18 + MUI, Spring Boot 3.x, MySQL/HeatWave, Redis,
+  Google OAuth, 9-role RBAC.
+- **NULOGIC brand / Nulogic Solution Team** — consulting proposals & deliverables.
+- **Local-first PII detection agent** — Python, Microsoft Presidio, India-specific
+  recognizers (Aadhaar, PAN, IFSC, UPI), detect-and-confirm flow.
+- **Food businesses** — Crispy Kitchen, Arabian Grills design/menu collateral.
+- **Trading automation experiments** — Zerodha Kite Connect, F&O / Bank Nifty.
+
+## Working-Style Preferences
+### Always
+- Direct, minimal back-and-forth.
+- Structured outputs; **design-before-code** discipline.
+- Structured docs: requirements → design → tasks.
+- Reference files as `path/file:line`.
+### Never
+- Unnecessary preamble.
+- Jumping to code without design.
+- Inflating my role/credentials.
+- Overwriting my hand-written notes.
+### Operational (from documented feedback memories)
+- Work on the **`main`** branch — no feature branches.
+- Dev ports fixed: **frontend 3000, backend 8080**.
+- UI sizing **compact / desktop-first**: 36px buttons, `text-xs` labels, `w-8` icons.
+- Multi-agent runs leave stale locks — always `rm -f` the git `index.lock`.
