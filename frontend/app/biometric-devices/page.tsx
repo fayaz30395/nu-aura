@@ -42,6 +42,7 @@ import {
 } from '@/lib/hooks/useBiometric';
 import type {BiometricDevice, BiometricDeviceRequest, BiometricPunchLog,} from '@/lib/services/hrms/biometricService';
 import {formatDate, formatDateTime} from '@/lib/utils/format/date';
+import {useToast} from '@/components/notifications/ToastProvider';
 
 // ─── Zod Schemas ────────────────────────────────────────────────────────────
 
@@ -411,6 +412,7 @@ function DeviceCard({
 
 function RegisterDeviceModal({onClose}: { onClose: () => void }) {
   const registerMutation = useRegisterDevice();
+  const toast = useToast();
 
   const {
     register,
@@ -425,10 +427,15 @@ function RegisterDeviceModal({onClose}: { onClose: () => void }) {
 
   const onSubmit = useCallback(
     async (data: DeviceFormData) => {
-      await registerMutation.mutateAsync(data as BiometricDeviceRequest);
-      onClose();
+      try {
+        await registerMutation.mutateAsync(data as BiometricDeviceRequest);
+        toast.success('Device registered successfully');
+        onClose();
+      } catch (err) {
+        toast.error((err as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Failed to register device');
+      }
     },
-    [registerMutation, onClose]
+    [registerMutation, onClose, toast]
   );
 
   return (
@@ -928,6 +935,7 @@ function GenerateApiKeyModal({
   onKeyGenerated: (key: string) => void;
 }) {
   const generateMutation = useGenerateApiKey();
+  const toast = useToast();
 
   const {
     register,
@@ -939,13 +947,18 @@ function GenerateApiKeyModal({
 
   const onSubmit = useCallback(
     async (data: ApiKeyFormData) => {
-      const result = await generateMutation.mutateAsync({keyName: data.keyName});
-      if (result.plaintextKey) {
-        onKeyGenerated(result.plaintextKey);
+      try {
+        const result = await generateMutation.mutateAsync({keyName: data.keyName});
+        if (result.plaintextKey) {
+          onKeyGenerated(result.plaintextKey);
+        }
+        toast.success('API key generated successfully');
+        onClose();
+      } catch (err) {
+        toast.error((err as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Failed to generate API key');
       }
-      onClose();
     },
-    [generateMutation, onClose, onKeyGenerated]
+    [generateMutation, onClose, onKeyGenerated, toast]
   );
 
   return (
