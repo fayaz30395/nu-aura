@@ -62,6 +62,12 @@ export default function MyDashboardPage() {
   );
 
   const isLoading = !hasHydrated || (!!user?.employeeId && queryLoading);
+  const [loadingTimedOut, setLoadingTimedOut] = useState(false);
+  useEffect(() => {
+    if (!isLoading) { setLoadingTimedOut(false); return; }
+    const id = setTimeout(() => setLoadingTimedOut(true), 30_000);
+    return () => clearTimeout(id);
+  }, [isLoading]);
 
   useEffect(() => {
     if (dashboard) {
@@ -132,7 +138,21 @@ export default function MyDashboardPage() {
       <AppLayout activeMenuItem="my-dashboard" breadcrumbs={[{label: 'My Dashboard', href: '/me/dashboard'}]}>
         <div className="p-6">
           <h1 className="sr-only">My Dashboard</h1>
-          <SkeletonDashboard/>
+          {loadingTimedOut ? (
+            <div className="flex flex-col items-center gap-4 py-16 text-center">
+              <p className="text-sm text-[var(--text-secondary)]">
+                Dashboard is taking longer than expected.
+              </p>
+              <Button
+                variant="secondary"
+                onClick={() => { setLoadingTimedOut(false); queryClient.invalidateQueries({queryKey: ['selfServiceDashboard']}); }}
+              >
+                Retry
+              </Button>
+            </div>
+          ) : (
+            <SkeletonDashboard/>
+          )}
         </div>
       </AppLayout>
     );
