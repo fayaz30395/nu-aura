@@ -976,6 +976,13 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
       label: 'Projects & Work',
       items: [
         {
+          id: 'my-tasks',
+          label: 'My Tasks',
+          icon: icon.clipboardCheck,
+          href: '/tasks',
+          requiredPermission: Permissions.PROJECT_VIEW
+        },
+        {
           id: 'projects',
           label: 'Projects',
           icon: icon.folderKanban,
