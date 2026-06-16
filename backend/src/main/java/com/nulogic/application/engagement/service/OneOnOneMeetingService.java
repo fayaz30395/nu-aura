@@ -461,6 +461,7 @@ public class OneOnOneMeetingService {
         LocalDate nextDate = getNextOccurrenceDate(parent.getMeetingDate(), parent.getRecurrencePattern());
         UUID tenantId = parent.getTenantId();
 
+        List<OneOnOneMeeting> instances = new ArrayList<>();
         while (nextDate.isBefore(parent.getRecurrenceEndDate()) || nextDate.isEqual(parent.getRecurrenceEndDate())) {
             OneOnOneMeeting instance = OneOnOneMeeting.builder()
                     .managerId(parent.getManagerId())
@@ -483,10 +484,11 @@ public class OneOnOneMeetingService {
 
             instance.setId(UUID.randomUUID());
             instance.setTenantId(tenantId);
-            meetingRepository.save(instance);
+            instances.add(instance);
 
             nextDate = getNextOccurrenceDate(nextDate, parent.getRecurrencePattern());
         }
+        if (!instances.isEmpty()) meetingRepository.saveAll(instances);
     }
 
     private LocalDate getNextOccurrenceDate(LocalDate current, OneOnOneMeeting.RecurrencePattern pattern) {

@@ -54,18 +54,19 @@ public class ScorecardService {
         ScorecardTemplate saved = templateRepository.save(template);
 
         if (request.getCriteria() != null) {
+            List<ScorecardTemplateCriterion> criteria = new ArrayList<>();
             for (int i = 0; i < request.getCriteria().size(); i++) {
                 ScorecardTemplateRequest.CriterionRequest cr = request.getCriteria().get(i);
-                ScorecardTemplateCriterion criterion = ScorecardTemplateCriterion.builder()
+                criteria.add(ScorecardTemplateCriterion.builder()
                         .tenantId(tenantId)
                         .templateId(saved.getId())
                         .name(cr.getName())
                         .category(cr.getCategory())
                         .weight(cr.getWeight() != null ? cr.getWeight() : 1.0)
                         .orderIndex(cr.getOrderIndex() != null ? cr.getOrderIndex() : i)
-                        .build();
-                criterionRepository.save(criterion);
+                        .build());
             }
+            criterionRepository.saveAll(criteria);
         }
 
         return getTemplateById(saved.getId());
@@ -107,18 +108,19 @@ public class ScorecardService {
                     .findByTemplateIdOrderByOrderIndexAsc(templateId);
             criterionRepository.deleteAll(existing);
 
+            List<ScorecardTemplateCriterion> updatedCriteria = new ArrayList<>();
             for (int i = 0; i < request.getCriteria().size(); i++) {
                 ScorecardTemplateRequest.CriterionRequest cr = request.getCriteria().get(i);
-                ScorecardTemplateCriterion criterion = ScorecardTemplateCriterion.builder()
+                updatedCriteria.add(ScorecardTemplateCriterion.builder()
                         .tenantId(tenantId)
                         .templateId(templateId)
                         .name(cr.getName())
                         .category(cr.getCategory())
                         .weight(cr.getWeight() != null ? cr.getWeight() : 1.0)
                         .orderIndex(cr.getOrderIndex() != null ? cr.getOrderIndex() : i)
-                        .build();
-                criterionRepository.save(criterion);
+                        .build());
             }
+            criterionRepository.saveAll(updatedCriteria);
         }
 
         return getTemplateById(templateId);
