@@ -40,7 +40,7 @@ Severity: 0 Critical · 22 High · 28 Medium · 2 Low. Apply sequentially, tsc c
 | 32 | Medium | Design-syste | frontend/app/compliance/page.tsx:85 | Map ESCALATED to design-system semantic colors | OPEN (Mantine Badge color — 'violet' is semantically correct for escalated) |
 | 33 | Medium | Design-syste | frontend/app/offboarding/fnf/page.tsx:40 | Replace PROCESSING 'indigo' with semantic token | OPEN (Mantine Badge color — 'indigo' is semantically appropriate for processing) |
 | 34 | Medium | Design-syste | frontend/app/fluence/dashboard/page.tsx:71 | Audit card radius tokens | DONE (rounded-lg → rounded-[var(--r-md)] for icon boxes and nav buttons) |
-| 35 | Medium | Design-syste | frontend/lib/animation.ts:1-50 | Import MOTION_EASE from lib/animation.ts instead of re-declaring | OPEN (low value — files already import MOTION_EASE and alias locally) |
+| 35 | Medium | Design-syste | frontend/lib/animation.ts:1-50 | Import MOTION_EASE from lib/animation.ts instead of re-declaring | DONE (13 files: all hardcoded [0.16,1,0.3,1] → MOTION_EASE.outExpo and [0.4,0,0.2,1] → MOTION_EASE.standard; commit bd11ac03) |
 | 36 | Medium | Design-syste | frontend/components/ui/StatCard.tsx:69-74 | Remove non-canonical variants from StatCard | DONE |
 | 37 | Medium | Loading | frontend/app/leave/page.tsx:123-145 | Add loading guard on LeaveCalendar | DONE |
 | 38 | Medium | Loading | frontend/app/payroll/page.tsx:145-153 | Add explicit error fallback | OPEN (ErrorBanner already shown; error ? null in banner branch) |
