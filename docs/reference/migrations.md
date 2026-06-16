@@ -1,3 +1,9 @@
+---
+title: "Database Migrations — Flyway Reference"
+tags: ["area/database","type/reference","area/devops","layer/backend"]
+summary: "Reference index for all 283 Flyway versioned SQL migrations (V0–V294): versioning scheme, naming conventions, per-environment config, and a curated index of structurally significant migrations."
+---
+
 # Database Migrations — Flyway Reference
 
 NU-AURA uses [Flyway](https://flywaydb.org/) for versioned, forward-only PostgreSQL
@@ -215,3 +221,13 @@ A curated index of structurally or operationally significant migrations. (The fu
    checksum drift. Add a follow-up `fix_*` migration instead.
 6. Verify locally before pushing (Testcontainers applies V0→latest on a clean
    `postgres:16`).
+
+---
+
+## Related
+
+- [[docs/reference/database|Database Reference]] — schema architecture built by these migrations
+- [[docs/architecture/backend|Backend Architecture]] — Flyway configuration and Spring Boot integration
+- [[docs/architecture/data-flow|Data Flow & Request Lifecycle]] — RLS migrations (V24, V177, V254)
+- [[docs/setup/README|Local Dev Setup]] — running Flyway locally
+- [[docs/Home|Home MoC]] — vault entry point

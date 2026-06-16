@@ -1,3 +1,13 @@
+---
+title: "NU-AURA Platform — Architecture Memory"
+tags:
+  - "type/moc"
+  - "type/reference"
+  - "area/architecture"
+  - "area/engineering"
+summary: "Living architecture wiki and evolving project state log capturing stable decisions (RBAC, multi-tenancy, security, Kafka) and current metrics (codebase scale, Flyway status, module completion, known gotchas)."
+---
+
 # NU-AURA Platform — Architecture Memory
 
 > **Purpose:** Comprehensive living wiki for the NU-AURA platform. Captures architecture decisions,
@@ -967,3 +977,15 @@ migrations (V67–V91), 3 new feature pages, P0 security fixes, code quality imp
 ## Previous Rounds
 
 *(Add earlier QA rounds and feature builds here as needed)*
+
+---
+
+## Related
+
+- [[docs/Home|Home MoC]] — vault entry point
+- [[docs/architecture/README|Architecture Overview]] — system-context map
+- [[docs/architecture/backend|Backend Architecture]] — backend decisions documented here
+- [[docs/architecture/data-flow|Data Flow & Request Lifecycle]] — auth and RLS decisions
+- [[docs/reference/database|Database Reference]] — schema details
+- [[docs/reference/migrations|Migrations Reference]] — Flyway state
+- [[AGENTS|Agent Config]] — orchestration config reading this memory

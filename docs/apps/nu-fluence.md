@@ -1,3 +1,13 @@
+---
+title: "NU-Fluence — Knowledge & Social Sub-App"
+tags:
+  - "app/nu-fluence"
+  - "type/reference"
+  - "layer/fullstack"
+  - "domain/knowledge"
+summary: "Evidence-based deep dive into NU-Fluence: wiki authoring, blog, templates, drive, activity wall, unified Elasticsearch search, and SSE-streamed RAG AI chat."
+---
+
 # NU-Fluence — Knowledge & Social Sub-App
 
 > Deep dive into NU-Fluence, the knowledge-management and internal-social
@@ -292,6 +302,20 @@ redirects unauthorized users to `/me/dashboard`.
 - **Engagement analytics**: `KnowledgeView` / `ContentEngagementController` feed
   the `/fluence/analytics` dashboard (top content by `viewCount`, activity-trend
   and distribution charts, lazy-loaded from `FluenceAnalyticsCharts.tsx`).
+
+---
+
+## Related
+
+- [[docs/Home|Home MoC]] — vault entry point
+- [[docs/architecture/README|Architecture Overview]] — platform-level context
+- [[docs/architecture/backend|Backend Architecture]] — Elasticsearch config and AI chat integration
+- [[docs/architecture/frontend|Frontend Architecture]] — App Router and RBAC wiring
+- [[docs/reference/api|API Reference]] — knowledge and wall endpoint catalog
+- [[docs/reference/database|Database Reference]] — schema for fluence domain tables
+- [[docs/apps/nu-hrms|NU-HRMS]] — adjacent sub-app
+- [[docs/apps/nu-hire|NU-Hire]] — adjacent sub-app
+- [[docs/apps/nu-grow|NU-Grow]] — adjacent sub-app
 
 ---
 

@@ -1,3 +1,9 @@
+---
+title: "NU-AURA — System Architecture Overview"
+tags: ["area/architecture","type/moc","layer/platform","type/reference"]
+summary: "System-context map of the entire platform: sub-app components, technology stack, request-flow sequence, multi-tenancy/security summary, and deployment topology."
+---
+
 # NU-AURA — System Architecture Overview
 
 > System-context view of the NU-AURA platform: what it is, the top-level
@@ -254,3 +260,15 @@ See `docs/architecture/data-flow.md` (tenancy/RLS flow) and the RLS migrations f
 
 For local setup and build/test detail see `docs/setup/README.md` and the
 Kubernetes manifests under `infra/deployment/kubernetes/`.
+
+---
+
+## Related
+
+- [[docs/Home|Home MoC]] — vault entry point
+- [[docs/architecture/backend|Backend Architecture]] — DDD layers, modules, Redis, Kafka, security
+- [[docs/architecture/frontend|Frontend Architecture]] — App Router, RBAC, state, Orval codegen
+- [[docs/architecture/data-flow|Data Flow & Request Lifecycle]] — end-to-end request path and RLS
+- [[docs/reference/api|API Reference]] — endpoint catalog
+- [[docs/reference/database|Database Reference]] — schema and RLS model
+- [[docs/setup/README|Local Dev Setup]] — running the stack locally

@@ -1,3 +1,9 @@
+---
+title: "Database Reference"
+tags: ["area/database","type/reference","layer/backend","topic/rls"]
+summary: "Documents the PostgreSQL schema architecture: BaseEntity and TenantAware superclasses, two-layer multi-tenancy, RLS policy evolution, domain table clusters with ER diagrams, and key integrity patterns."
+---
+
 # Database Reference
 
 NU-AURA runs on **PostgreSQL** (Neon for dev, PostgreSQL 16 for prod) with a
@@ -288,3 +294,14 @@ submissions.
 | Schema baseline | `backend/src/main/resources/db/migration/V0__init.sql` |
 | RLS hardening | `backend/src/main/resources/db/migration/{V24,V177,V254}__*.sql` |
 | Leave overlap constraint | `backend/src/main/resources/db/migration/V294__leave_overlap_exclusion_constraint.sql` |
+
+---
+
+## Related
+
+- [[docs/architecture/backend|Backend Architecture]] — JPA configuration and RLS filter context
+- [[docs/architecture/data-flow|Data Flow & Request Lifecycle]] — RLS SET LOCAL mechanics
+- [[docs/reference/migrations|Migrations Reference]] — Flyway migration index for all schema changes
+- [[docs/reference/api|API Reference]] — endpoints operating on these tables
+- [[docs/patterns/README|Code Patterns]] — RLS and caching patterns
+- [[docs/Home|Home MoC]] — vault entry point

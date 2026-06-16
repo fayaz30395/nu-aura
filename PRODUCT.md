@@ -1,3 +1,9 @@
+---
+title: "NU-AURA Product Vision"
+tags: ["area/product","type/reference","layer/platform"]
+summary: "Defines product vision, target users, brand personality (calm, capable, quietly confident), anti-references, design principles, and accessibility baseline."
+---
+
 # Product
 
 ## Register
@@ -53,3 +59,10 @@ This product should explicitly NOT look or feel like:
 - Tinted neutrals throughout — no pure `#000` / `#fff`, gray text never on saturated backgrounds.
 - Status uses color + label, never color alone (icon + text on every badge).
 - Mobile-friendly tap targets (44×44 min) on touch breakpoints; desktop-first compact sizing (h-9 / 36px) on pointer breakpoints.
+
+## Related
+
+- [[DESIGN|Design System]] — canonical Studio Slate v2 design tokens and component rules
+- [[README|Project README]] — top-level project overview
+- [[docs/Home|Home MoC]] — vault entry point
+- [[docs/architecture/README|Architecture Overview]] — system context

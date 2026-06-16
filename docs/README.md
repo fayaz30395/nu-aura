@@ -1,3 +1,9 @@
+---
+title: "NU-AURA Documentation Index"
+tags: ["type/moc","area/documentation","app/nu-aura","layer/platform"]
+summary: "GitHub-style top-level index linking every section of the documentation set."
+---
+
 # NU-AURA Documentation
 
 Index of the NU-AURA documentation set. NU-AURA is a multi-tenant bundle-app HR platform
@@ -59,3 +65,11 @@ The four sub-applications.
 Before designing anything, check **Architecture** for prior structure. Before implementing
 anything, check **Patterns** for an existing approach. Before touching the schema, read the
 **Reference** maps (`database`, `migrations`). Before running locally, read **Setup**.
+
+## Related
+
+- [[docs/Home|Home MoC]] — Obsidian entry point and Map of Content
+- [[docs/architecture/README|Architecture Overview]] — system-context map
+- [[docs/setup/README|Local Dev Setup]] — developer environment guide
+- [[docs/patterns/README|Code Patterns]] — reusable backend patterns
+- [[README|Project README]] — top-level project overview

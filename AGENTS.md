@@ -1,3 +1,9 @@
+---
+title: "NU-AURA Agent Orchestration Config"
+tags: ["area/agents","type/config","area/devops","layer/platform"]
+summary: "AI agent orchestration configuration: RuFlo swarm topology, agent routing tables, memory/learning workflows, and the knowledge-base routing rule for Claude Code agents."
+---
+
 # Ruflo — Codex Configuration
 
 ## Rules
@@ -204,6 +210,13 @@ npx ruflo@latest doctor --fix
 
 **Agent tool** handles execution (agents, files, code, git). **MCP tools** handle coordination (
 swarm, memory, hooks). **CLI** is the same via Bash.
+
+## Related
+
+- [[MEMORY|Architecture Memory]] — living project state consulted by agents at task start
+- [[docs/patterns/README|Code Patterns]] — patterns agents reference during implementation
+- [[docs/architecture/README|Architecture Overview]] — system context for agent routing decisions
+- [[docs/Home|Home MoC]] — vault entry point
 
 ## Imported Claude Cowork project instructions
 

@@ -1,3 +1,9 @@
+---
+title: "NU-AURA Frontend Architecture"
+tags: ["area/architecture","type/reference","layer/frontend","topic/rbac"]
+summary: "Evidence-based reference for the Next.js App Router frontend: route layout, provider stack, React Query, Orval codegen, Axios client, Zustand stores, and RBAC wiring (AuthGuard, PermissionGate)."
+---
+
 # NU-AURA Frontend Architecture
 
 > Evidence-based reference for the Next.js frontend at `frontend/`. Every claim
@@ -374,3 +380,12 @@ placeholder URL detection helpers). `frontend/proxy.ts` (middleware) rewrites
 | Realtime context | `frontend/lib/contexts/WebSocketContext.tsx` |
 | Proxy / CSP middleware | `frontend/proxy.ts` |
 | RBAC sweep config | `frontend/nu-rbac.config.ts` (spec: `frontend/e2e/nu-rbac.spec.ts`) |
+
+## Related
+
+- [[docs/architecture/README|Architecture Overview]] — system-context map
+- [[docs/architecture/data-flow|Data Flow & Request Lifecycle]] — auth cookie flow and silent refresh
+- [[docs/reference/api|API Reference]] — endpoint catalog consumed by the frontend
+- [[docs/setup/README|Local Dev Setup]] — running the frontend locally
+- [[docs/patterns/README|Code Patterns]] — backend patterns the frontend coordinates with
+- [[docs/Home|Home MoC]] — vault entry point

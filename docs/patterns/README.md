@@ -1,3 +1,9 @@
+---
+title: "NU-AURA Reusable Code Patterns"
+tags: ["area/architecture","type/reference","layer/backend","topic/redis"]
+summary: "Comprehensive reference for seven cross-cutting backend coordination patterns: Redis caching, RLS tenant scoping, Kafka idempotency, distributed rate limiting, token blacklist, distributed locks, and ShedLock job locks."
+---
+
 # NU-AURA Reusable Code Patterns
 
 Cross-cutting backend patterns that recur across the platform. Each section gives the
@@ -452,3 +458,13 @@ removes reliance on synchronized pod clocks.
 | Token blacklist | Redis → in-memory | `token:blacklist:{jti}` etc. | = token lifetime | per-pod fallback |
 | Edit lock | Redis | `fluence:edit-lock:{tenant}:{type}:{id}` | 5m | lock not held |
 | Job lock | PostgreSQL (`shedlock`) | job name | ≤ `lockAtMostFor` (30m default) | job skipped |
+
+---
+
+## Related
+
+- [[docs/Home|Home MoC]] — vault entry point
+- [[docs/architecture/backend|Backend Architecture]] — module and component context for these patterns
+- [[docs/architecture/data-flow|Data Flow & Request Lifecycle]] — where RLS and Kafka patterns are exercised
+- [[docs/reference/database|Database Reference]] — schema underlying the RLS patterns
+- [[docs/reference/migrations|Migrations Reference]] — RLS migration history referenced by the patterns

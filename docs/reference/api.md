@@ -1,3 +1,9 @@
+---
+title: "REST API Reference"
+tags: ["area/api", "type/reference", "layer/backend", "app/nu-aura"]
+summary: "Catalogs all ~150 Spring RestController endpoints grouped by domain module, documenting base paths, authentication rules, and rate-limit buckets."
+---
+
 # REST API Reference
 
 NU-AURA's backend exposes a versioned REST API under the `/api/v1` prefix, served by
@@ -489,3 +495,13 @@ flowchart LR
 - Security & public allow-list: `backend/src/main/java/com/nulogic/common/config/SecurityConfig.java`
 - Rate limiting: `RateLimitingFilter` and `DistributedRateLimiter` (`backend/src/main/java/com/nulogic/common/config/`)
 - Permission enforcement: `@RequiresPermission` (e.g. `backend/src/main/java/com/nulogic/api/employee/EmployeeController.java`)
+
+---
+
+## Related
+
+- [[docs/architecture/backend|Backend Architecture]] — module and controller context
+- [[docs/architecture/data-flow|Data Flow & Request Lifecycle]] — rate-limit and auth filter details
+- [[docs/reference/database|Database Reference]] — schema backing these endpoints
+- [[docs/patterns/README|Code Patterns]] — rate-limiting and idempotency patterns
+- [[docs/Home|Home MoC]] — vault entry point

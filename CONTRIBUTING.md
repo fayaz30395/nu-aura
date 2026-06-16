@@ -1,3 +1,9 @@
+---
+title: "Contributing to NU-AURA"
+tags: ["area/engineering","type/guide","layer/platform","type/process"]
+summary: "Developer workflow guide: branching strategy, commit format, TypeScript/Java code standards, testing requirements, sensitive file list, and the pre-push checklist."
+---
+
 # Contributing to NU-AURA
 
 ## Workflow
@@ -84,3 +90,11 @@ These files affect security and must be reviewed carefully before changes:
 - [ ] No hardcoded colors or spacing violations
 - [ ] No secrets or credentials in code
 - [ ] Flyway migration version doesn't conflict (current: V0–V146, next: V147)
+
+## Related
+
+- [[README|Project README]] — top-level project overview and repo layout
+- [[DESIGN|Design System]] — design tokens and component rules referenced in frontend standards
+- [[SECURITY|Security Policy]] — security standards for sensitive file handling
+- [[docs/setup/README|Local Dev Setup]] — environment setup prerequisite
+- [[docs/Home|Home MoC]] — vault entry point

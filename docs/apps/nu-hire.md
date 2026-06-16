@@ -1,3 +1,13 @@
+---
+title: "NU-Hire — Recruitment Sub-App"
+tags:
+  - "app/nu-hire"
+  - "type/reference"
+  - "layer/fullstack"
+  - "domain/recruitment"
+summary: "Evidence-based deep dive into NU-Hire: full talent funnel from public job posting through ATS, scorecards, offer, e-signature, preboarding, and onboarding into employee conversion."
+---
+
 # NU-Hire — Recruitment Sub-App
 
 > Deep dive into the NU-Hire bundle app: applicant tracking (ATS), public careers,
@@ -285,3 +295,15 @@ feedback. These are surfaced via the AI hooks in `useRecruitment.ts`.
 | E-signature controller | `backend/src/main/java/com/nulogic/api/esignature/controller/ESignatureController.java` |
 | Referral controller | `backend/src/main/java/com/nulogic/api/referral/controller/ReferralController.java` |
 | Domain entities | `backend/src/main/java/com/nulogic/domain/{recruitment,onboarding,preboarding,esignature,referral,probation,bgv}/` |
+
+## Related
+
+- [[docs/Home|Home MoC]] — vault entry point
+- [[docs/architecture/README|Architecture Overview]] — platform-level context
+- [[docs/architecture/backend|Backend Architecture]] — shared backend layers and modules
+- [[docs/architecture/frontend|Frontend Architecture]] — App Router and RBAC wiring
+- [[docs/reference/api|API Reference]] — recruitment endpoint catalog
+- [[docs/reference/database|Database Reference]] — schema for hire/recruitment tables
+- [[docs/apps/nu-hrms|NU-HRMS]] — employee conversion destination
+- [[docs/apps/nu-grow|NU-Grow]] — adjacent sub-app
+- [[docs/apps/nu-fluence|NU-Fluence]] — adjacent sub-app

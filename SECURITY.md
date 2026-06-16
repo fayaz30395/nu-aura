@@ -1,3 +1,9 @@
+---
+title: "Security Policy"
+tags: ["area/security","type/policy","layer/platform"]
+summary: "Vulnerability disclosure policy: how to report issues, what to include, triage/disclosure timeline, and which versions receive security updates."
+---
+
 # Security Policy
 
 ## Reporting a Vulnerability
@@ -41,3 +47,11 @@ discussions, or pull requests.
 
 Only the current `main` branch and the most recent tagged release receive
 security updates.
+
+## Related
+
+- [[docs/architecture/data-flow|Data Flow & Request Lifecycle]] — auth and RLS tenancy model
+- [[docs/architecture/backend|Backend Architecture]] — security filter chain and tenant isolation
+- [[CONTRIBUTING|Contributing Guide]] — pre-push security checklist
+- [[README|Project README]] — project overview
+- [[docs/Home|Home MoC]] — vault entry point

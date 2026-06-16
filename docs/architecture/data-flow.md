@@ -1,3 +1,9 @@
+---
+title: "NU-AURA — Data Flow & Request Lifecycle"
+tags: ["area/architecture","type/reference","topic/auth","topic/rls"]
+summary: "Traces end-to-end data paths critical to correctness and security: authenticated API request through the Spring filter chain, JWT-cookie auth, multi-tenant RLS isolation, and async Kafka event flow."
+---
+
 # NU-AURA — Data Flow & Request Lifecycle
 
 This document traces how data moves through NU-AURA for the flows that matter most
@@ -362,3 +368,15 @@ sequenceDiagram
 - `backend/.../infrastructure/kafka/producer/EventPublisher.java` — typed event producer
 - `backend/.../infrastructure/kafka/TenantContextRecordInterceptor.java` — consumer tenant propagation
 - `backend/.../infrastructure/kafka/consumer/PayrollProcessingConsumer.java` — idempotent async consumer
+
+---
+
+## Related
+
+- [[docs/architecture/README|Architecture Overview]] — system-context map
+- [[docs/architecture/backend|Backend Architecture]] — security filter chain and tenant configuration detail
+- [[docs/architecture/frontend|Frontend Architecture]] — Axios client and auth-store detail
+- [[docs/reference/database|Database Reference]] — RLS policy schema
+- [[docs/reference/migrations|Migrations Reference]] — RLS migration history (V24, V177, V254)
+- [[docs/patterns/README|Code Patterns]] — RLS and Kafka idempotency patterns
+- [[docs/Home|Home MoC]] — vault entry point

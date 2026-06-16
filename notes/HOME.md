@@ -20,9 +20,9 @@ maintained-by: claude
 
 ## Where to look
 - **Who I am + how this brain operates** → [[CLAUDE]] (About Me + Second Brain protocol)
-- **Session log** (everything I've written back) → [[INDEX]]
-- **NU-AURA project knowledge** → [[MEMORY]] + `docs/`
-- **Latest setup decisions** → [[2026-06-16-second-brain-setup]]
+- **Session log** (everything I've written back) → [[memory/INDEX|Session log]]
+- **NU-AURA project knowledge** → [[MEMORY]] + `docs/` — full map at [[docs/Home|nu-aura Docs Map]]
+- **Latest setup decisions** → [[memory/2026-06-16-second-brain-setup|Setup decisions]]
 
 ## How this stays current
 I update this page and `memory/` automatically whenever an exchange produces

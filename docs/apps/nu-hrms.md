@@ -1,3 +1,13 @@
+---
+title: "NU-HRMS — Core HR Sub-App"
+tags:
+  - "app/nu-hrms"
+  - "type/reference"
+  - "layer/fullstack"
+  - "domain/hr"
+summary: "Evidence-based deep dive into NU-HRMS: frontend routes, backend domains, key user flows (attendance, leave, expense, payroll), and multi-tenant architecture."
+---
+
 # NU-HRMS — Core HR Sub-App Deep Dive
 
 > Evidence-based documentation. Every route, controller, and endpoint cited below
@@ -244,3 +254,15 @@ flowchart LR
 - `backend/.../api/payroll/controller/PayrollController.java`
 - `backend/.../api/expense/controller/ExpenseClaimController.java`
 - `backend/.../api/selfservice/controller/SelfServiceController.java`
+
+## Related
+
+- [[docs/Home|Home MoC]] — vault entry point
+- [[docs/architecture/README|Architecture Overview]] — platform-level context
+- [[docs/architecture/backend|Backend Architecture]] — shared backend layers and modules
+- [[docs/architecture/frontend|Frontend Architecture]] — App Router and RBAC wiring
+- [[docs/reference/api|API Reference]] — HRMS endpoint catalog
+- [[docs/reference/database|Database Reference]] — schema for HRMS tables
+- [[docs/apps/nu-hire|NU-Hire]] — adjacent sub-app (employee conversion)
+- [[docs/apps/nu-grow|NU-Grow]] — adjacent sub-app (performance)
+- [[docs/apps/nu-fluence|NU-Fluence]] — adjacent sub-app (knowledge)

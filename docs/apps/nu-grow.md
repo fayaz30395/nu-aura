@@ -1,3 +1,9 @@
+---
+title: "NU-Grow — Performance, Learning & Engagement"
+tags: ["app/nu-grow","type/reference","layer/fullstack","domain/performance"]
+summary: "Evidence-based deep dive into NU-Grow: goals/OKRs, performance review cycles, 360 feedback, LMS/training, recognition, surveys, wellness, and 1-on-1s."
+---
+
 # NU-Grow — Performance, Learning & Engagement
 
 > Sub-app deep dive. One of the four NU-AURA bundle apps (HRMS, Hire, **Grow**, Fluence).
@@ -254,3 +260,15 @@ Two survey surfaces exist: full-lifecycle org surveys via
 - Permissions: `frontend/lib/hooks/usePermissions.ts`
 - Backend contexts: `com.nulogic.{performance, lms, training, recognition, survey, engagement, meeting, wellness}`
 - Tenancy/RLS baseline applies to all Grow tables (see platform DB docs).
+
+## Related
+
+- [[docs/Home|Home MoC]] — vault entry point
+- [[docs/architecture/README|Architecture Overview]] — platform-level context
+- [[docs/architecture/backend|Backend Architecture]] — shared backend layers and modules
+- [[docs/architecture/frontend|Frontend Architecture]] — App Router and RBAC wiring
+- [[docs/reference/api|API Reference]] — performance and learning endpoint catalog
+- [[docs/reference/database|Database Reference]] — schema for grow domain tables
+- [[docs/apps/nu-hrms|NU-HRMS]] — adjacent sub-app (core HR)
+- [[docs/apps/nu-hire|NU-Hire]] — adjacent sub-app (recruitment)
+- [[docs/apps/nu-fluence|NU-Fluence]] — adjacent sub-app (knowledge)

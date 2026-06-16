@@ -1,3 +1,9 @@
+---
+title: "Local Development Setup"
+tags: ["type/guide","area/devops","topic/local-dev","topic/docker"]
+summary: "Step-by-step guide from fresh clone to running NU-AURA stack: prerequisites, environment variables, Docker services, start scripts, and build/test commands."
+---
+
 # Local Development Setup
 
 This guide gets a developer from a fresh clone to a running NU-AURA stack:
@@ -310,3 +316,13 @@ cd frontend && npm install && npm run dev   # http://localhost:3000
 
 Verify: `curl http://localhost:8080/actuator/health/liveness` returns `UP`, and
 the frontend loads at `http://localhost:3000`.
+
+---
+
+## Related
+
+- [[docs/Home|Home MoC]] — vault entry point
+- [[docs/README|Docs Index]] — documentation index
+- [[docs/architecture/README|Architecture Overview]] — system overview before local setup
+- [[docs/reference/migrations|Migrations Reference]] — Flyway migrations applied at startup
+- [[CONTRIBUTING|Contributing Guide]] — developer workflow standards

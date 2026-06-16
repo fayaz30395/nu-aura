@@ -1,3 +1,9 @@
+---
+title: "NU-AURA Backend Architecture"
+tags: ["area/architecture","type/reference","layer/backend","topic/security"]
+summary: "Deep-dive reference for the Spring Boot modular-monolith: DDD layer responsibilities, bounded-context catalog, Redis caching, Kafka topics, Elasticsearch, security filter chain, multi-tenant RLS mechanics, and scheduled jobs."
+---
+
 # NU-AURA Backend Architecture
 
 Spring Boot 3.x application on Java 21, package root `com.nulogic`, organized around
@@ -280,3 +286,15 @@ jobs while API pods do not. Verified job-bearing classes:
 | ShedLock | `backend/src/main/java/com/nulogic/common/config/ShedLockConfig.java` |
 | Base entities | `backend/src/main/java/com/nulogic/common/entity/{BaseEntity,TenantAware}.java` |
 | Global errors | `backend/src/main/java/com/nulogic/common/exception/GlobalExceptionHandler.java` |
+
+---
+
+## Related
+
+- [[docs/architecture/README|Architecture Overview]] — system-context map
+- [[docs/architecture/data-flow|Data Flow & Request Lifecycle]] — auth filter chain and RLS flow
+- [[docs/patterns/README|Code Patterns]] — Redis, RLS, Kafka, lock, and rate-limit patterns
+- [[docs/reference/database|Database Reference]] — schema and RLS model
+- [[docs/reference/migrations|Migrations Reference]] — Flyway migration index
+- [[docs/reference/api|API Reference]] — endpoint catalog
+- [[docs/Home|Home MoC]] — vault entry point

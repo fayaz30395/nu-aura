@@ -1,3 +1,13 @@
+---
+title: "NU-AURA Platform"
+tags:
+  - "type/moc"
+  - "type/reference"
+  - "layer/platform"
+  - "area/architecture"
+summary: "Top-level project overview covering platform architecture, technology stack, repo layout, local dev setup, and links to all major documentation areas."
+---
+
 # NU-AURA Platform
 
 Enterprise-grade, multi-tenant SaaS platform for HR operations, recruitment, performance management,
@@ -18,7 +28,7 @@ NU-AURA is a **bundle app platform** — 4 sub-applications behind a single logi
 
 | Layer           | Technology                                      | Version |
 |-----------------|-------------------------------------------------|---------|
-| Backend         | Spring Boot                                     | 3.4.1   |
+| Backend         | Spring Boot                                     | 3.5.14  |
 | Language        | Java                                            | 21      |
 | Frontend        | Next.js (App Router)                            | 14      |
 | UI Library      | Mantine                                         | 7.x     |
@@ -64,7 +74,7 @@ nu-aura/
 └── docker-compose.override.yml  # Local override
 ```
 
-The repo follows the layout in [`docs/superpowers/specs/2026-05-13-repo-layout-cleanup-design.md`](docs/superpowers/specs/2026-05-13-repo-layout-cleanup-design.md).
+See [docs/Home.md](docs/Home.md) for the full documentation map and [docs/architecture/](docs/architecture/) for the system design.
 
 ---
 
@@ -237,16 +247,25 @@ Comprehensive a11y polish across the frontend (Phase 7, waves 1–6 + 11 rolling
 
 | Document                                       | Description                                |
 |------------------------------------------------|--------------------------------------------|
+| [docs/Home.md](docs/Home.md)                   | Obsidian Map of Content — vault entry point |
 | [CONTRIBUTING.md](CONTRIBUTING.md)             | Development workflow and code standards    |
 | [DESIGN.md](DESIGN.md)                         | Frontend design system, primitives, banned patterns (Studio Slate v2) |
 | [PRODUCT.md](PRODUCT.md)                       | Product surface map and sub-app conventions |
-| [docs/agents/](docs/agents/)                   | Agent documentation and team prompts       |
-| [docs/adr/](docs/adr/)                         | Architecture Decision Records              |
-| [docs/architecture/](docs/architecture/)       | Technical architecture analysis            |
-| [docs/runbooks/](docs/runbooks/)               | Operational runbooks                       |
-| [docs/design-system/](docs/design-system/)     | Design system, themes                      |
-| [docs/team/roles/](docs/team/roles/)           | Engineering team role definitions          |
+| [docs/architecture/](docs/architecture/)       | Technical architecture (backend, frontend, data-flow) |
+| [docs/reference/](docs/reference/)             | API, database schema, and migration reference |
+| [docs/apps/](docs/apps/)                       | Per-sub-app deep dives (HRMS, Hire, Grow, Fluence) |
+| [docs/patterns/README.md](docs/patterns/README.md) | Reusable code patterns                |
+| [docs/setup/README.md](docs/setup/README.md)   | Local dev setup, build, test               |
 | [infra/README.md](infra/README.md)             | Operational config layout                  |
+
+## Related
+
+- [[docs/Home|Home MoC]] — Obsidian vault entry point
+- [[docs/README|Docs Index]] — documentation section index
+- [[docs/architecture/README|Architecture Overview]] — detailed system-context map
+- [[docs/setup/README|Local Dev Setup]] — developer environment guide
+- [[CONTRIBUTING|Contributing Guide]] — branching, commits, standards
+- [[MEMORY|Architecture Memory]] — living project state log
 
 ## License
 

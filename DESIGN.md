@@ -1,4 +1,7 @@
 ---
+title: "Design System: NU-AURA — Studio Slate"
+tags: ["area/design","type/reference","layer/frontend","type/guide"]
+summary: "Canonical Studio Slate v2 design system: color tokens, typography hierarchy, elevation/shadow vocabulary, component patterns, and do/don't rules for all frontend surfaces."
 name: NU-AURA — Studio Slate
 description: The quiet operating system for NULogic. One login, four sub-apps, one restrained design language.
 colors:
@@ -286,3 +289,10 @@ Two-layer ring auto-applied to every focusable element: `0 0 0 2px var(--bg-main
 - **Don't** nest a card inside a card. Always wrong; restructure with `.panel-inset`.
 - **Don't** reintroduce embossed / debossed / heavy inner-shadow surfaces. The `--shadow-skeuo-*` tokens are flattened on purpose.
 - **Don't** put NULogic brand colors (Lapis, Red-orange, Purple, Dark teal) or any sub-app accent into general product chrome. The product is single-hue navy.
+
+## Related
+
+- [[PRODUCT|Product Vision]] — brand personality and accessibility baseline this design system implements
+- [[CONTRIBUTING|Contributing Guide]] — frontend coding standards referencing these design tokens
+- [[docs/architecture/frontend|Frontend Architecture]] — component and styling conventions
+- [[docs/Home|Home MoC]] — vault entry point
