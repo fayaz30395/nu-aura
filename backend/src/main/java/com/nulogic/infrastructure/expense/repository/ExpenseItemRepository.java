@@ -1,5 +1,6 @@
 package com.nulogic.infrastructure.expense.repository;
 
+import com.nulogic.domain.expense.ExpenseClaim;
 import com.nulogic.domain.expense.ExpenseItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -8,12 +9,17 @@ import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface ExpenseItemRepository extends JpaRepository<ExpenseItem, UUID> {
 
     List<ExpenseItem> findAllByExpenseClaimId(UUID expenseClaimId);
+
+    @Query("SELECT i FROM ExpenseItem i JOIN ExpenseClaim c ON i.expenseClaimId = c.id " +
+            "WHERE i.id = :itemId AND c.tenantId = :tenantId")
+    Optional<ExpenseItem> findByIdAndTenantId(@Param("itemId") UUID itemId, @Param("tenantId") UUID tenantId);
 
     @Query("SELECT SUM(i.amount) FROM ExpenseItem i WHERE i.expenseClaimId = :claimId")
     BigDecimal sumAmountByClaimId(@Param("claimId") UUID claimId);

@@ -65,7 +65,7 @@ public class ExpenseItemService {
     public ExpenseItemResponse updateItem(UUID itemId, ExpenseItemRequest request) {
         UUID tenantId = TenantContext.requireCurrentTenant();
 
-        ExpenseItem item = itemRepository.findById(itemId)
+        ExpenseItem item = itemRepository.findByIdAndTenantId(itemId, tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("Expense item not found: " + itemId));
 
         ExpenseClaim claim = claimRepository.findByIdAndTenantId(item.getExpenseClaimId(), tenantId)
@@ -100,7 +100,7 @@ public class ExpenseItemService {
     public void deleteItem(UUID itemId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
 
-        ExpenseItem item = itemRepository.findById(itemId)
+        ExpenseItem item = itemRepository.findByIdAndTenantId(itemId, tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("Expense item not found: " + itemId));
 
         ExpenseClaim claim = claimRepository.findByIdAndTenantId(item.getExpenseClaimId(), tenantId)
@@ -135,9 +135,7 @@ public class ExpenseItemService {
     @Transactional
     public ExpenseItemResponse setItemReceipt(UUID itemId, String storagePath, String fileName) {
         UUID tenantId = TenantContext.requireCurrentTenant();
-        ExpenseItem item = itemRepository.findById(itemId)
-                .orElseThrow(() -> new EntityNotFoundException("Expense item not found: " + itemId));
-        claimRepository.findByIdAndTenantId(item.getExpenseClaimId(), tenantId)
+        ExpenseItem item = itemRepository.findByIdAndTenantId(itemId, tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("Expense item not found: " + itemId));
         item.setReceiptStoragePath(storagePath);
         item.setReceiptFileName(fileName);
