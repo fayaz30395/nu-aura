@@ -7,10 +7,13 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface PollOptionRepository extends JpaRepository<PollOption, UUID> {
+
+    Optional<PollOption> findByIdAndTenantId(UUID id, UUID tenantId);
 
     @Query("SELECT o FROM PollOption o WHERE o.post.id = :postId ORDER BY o.displayOrder")
     List<PollOption> findByPostIdOrderByDisplayOrder(@Param("postId") UUID postId);

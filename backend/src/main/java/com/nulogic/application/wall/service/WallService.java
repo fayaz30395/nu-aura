@@ -390,7 +390,7 @@ public class WallService {
             throw new IllegalArgumentException("This post is not a poll");
         }
 
-        PollOption option = pollOptionRepository.findById(optionId)
+        PollOption option = pollOptionRepository.findByIdAndTenantId(optionId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Poll option not found"));
 
         if (!option.getPost().getId().equals(postId)) {
