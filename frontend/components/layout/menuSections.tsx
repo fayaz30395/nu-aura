@@ -1152,6 +1152,13 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
               icon: sm.settings,
               requiredPermission: Permissions.SETTINGS_VIEW
             },
+            {
+              id: 'admin-audit',
+              label: 'Audit Logs',
+              href: '/admin/audit',
+              icon: sm.shield,
+              requiredPermission: Permissions.SYSTEM_ADMIN
+            },
           ],
         },
         {
