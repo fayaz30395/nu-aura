@@ -199,20 +199,27 @@ public class LmsService {
         CourseEnrollment enrollment = enrollmentRepository.findByIdAndTenantId(enrollmentId, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Enrollment not found: " + enrollmentId));
 
-        // Calculate progress based on content completions
+        // Calculate progress based on content completions — pre-fetch to avoid N*M+N DB round-trips
         List<CourseModule> modules = moduleRepository.findByCourseOrdered(tenantId, enrollment.getCourseId());
         long totalContent = 0;
         long completedContent = 0;
 
-        for (CourseModule module : modules) {
-            List<ModuleContent> contents = contentRepository.findByModuleOrdered(tenantId, module.getId());
-            totalContent += contents.stream().filter(ModuleContent::getIsMandatory).count();
+        if (!modules.isEmpty()) {
+            Set<UUID> moduleIds = modules.stream().map(CourseModule::getId).collect(Collectors.toSet());
 
-            for (ModuleContent content : contents) {
+            // One query for all content across all modules
+            List<ModuleContent> allContents = contentRepository.findAllByModuleIdInAndTenantId(moduleIds, tenantId);
+
+            // One query for all progress records for this enrollment
+            Set<UUID> completedContentIds = progressRepository.findByEnrollment(tenantId, enrollmentId).stream()
+                    .filter(p -> p.getStatus() == ProgressStatus.COMPLETED)
+                    .map(ContentProgress::getContentId)
+                    .collect(Collectors.toSet());
+
+            for (ModuleContent content : allContents) {
                 if (content.getIsMandatory()) {
-                    Optional<ContentProgress> progress = progressRepository
-                            .findByEnrollmentIdAndContentIdAndTenantId(enrollmentId, content.getId(), tenantId);
-                    if (progress.isPresent() && progress.get().getStatus() == ProgressStatus.COMPLETED) {
+                    totalContent++;
+                    if (completedContentIds.contains(content.getId())) {
                         completedContent++;
                     }
                 }

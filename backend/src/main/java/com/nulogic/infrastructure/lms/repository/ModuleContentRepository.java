@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -17,6 +18,10 @@ public interface ModuleContentRepository extends JpaRepository<ModuleContent, UU
 
     @Query("SELECT c FROM ModuleContent c WHERE c.tenantId = :tenantId AND c.moduleId = :moduleId ORDER BY c.orderIndex")
     List<ModuleContent> findByModuleOrdered(@Param("tenantId") UUID tenantId, @Param("moduleId") UUID moduleId);
+
+    @Query("SELECT c FROM ModuleContent c WHERE c.tenantId = :tenantId AND c.moduleId IN :moduleIds ORDER BY c.orderIndex")
+    List<ModuleContent> findAllByModuleIdInAndTenantId(@Param("moduleIds") Collection<UUID> moduleIds,
+                                                       @Param("tenantId") UUID tenantId);
 
     void deleteAllByModuleId(UUID moduleId);
 
