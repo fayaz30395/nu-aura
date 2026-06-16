@@ -191,9 +191,8 @@ public class InterviewManagementService {
             }
             return cb.equal(root.get("tenantId"), tenantId);
         };
-        return interviewRepository.findAll(
-                        Specification.allOf(tenantSpec).and(scopeSpec), pageable)
-                .map(this::mapToInterviewResponse);
+        return mapInterviewPage(interviewRepository.findAll(
+                        Specification.allOf(tenantSpec).and(scopeSpec), pageable));
     }
 
     @Transactional(readOnly = true)
@@ -227,9 +226,9 @@ public class InterviewManagementService {
         };
         Specification<Interview> candidateSpec = (root, query, cb) -> cb.equal(root.get("candidateId"), candidateId);
 
-        return interviewRepository.findAll(
+        return mapInterviewPage(interviewRepository.findAll(
                 Specification.allOf(tenantSpec).and(candidateSpec).and(scopeSpec),
-                pageable).map(this::mapToInterviewResponse);
+                pageable));
     }
 
     @Transactional
@@ -252,27 +251,76 @@ public class InterviewManagementService {
 
     // ==================== Mapper ====================
 
+    /**
+     * P1: Batch-maps a page of interviews to responses. Candidate names, job
+     * titles, and interviewer names are resolved in three bulk findAllById
+     * queries instead of three findById calls per interview row.
+     */
+    private Page<InterviewResponse> mapInterviewPage(Page<Interview> page) {
+        List<Interview> interviews = page.getContent();
+        if (interviews.isEmpty()) {
+            return page.map(this::mapToInterviewResponse);
+        }
+
+        Set<UUID> candidateIds = new HashSet<>();
+        Set<UUID> jobOpeningIds = new HashSet<>();
+        Set<UUID> interviewerIds = new HashSet<>();
+        for (Interview interview : interviews) {
+            if (interview.getCandidateId() != null) candidateIds.add(interview.getCandidateId());
+            if (interview.getJobOpeningId() != null) jobOpeningIds.add(interview.getJobOpeningId());
+            if (interview.getInterviewerId() != null) interviewerIds.add(interview.getInterviewerId());
+        }
+
+        Map<UUID, String> candidateNames = new HashMap<>();
+        if (!candidateIds.isEmpty()) {
+            candidateRepository.findAllById(candidateIds)
+                    .forEach(c -> candidateNames.put(c.getId(), c.getFullName()));
+        }
+        Map<UUID, String> jobTitles = new HashMap<>();
+        if (!jobOpeningIds.isEmpty()) {
+            jobOpeningRepository.findAllById(jobOpeningIds)
+                    .forEach(j -> jobTitles.put(j.getId(), j.getJobTitle()));
+        }
+        Map<UUID, String> interviewerNames = new HashMap<>();
+        if (!interviewerIds.isEmpty()) {
+            employeeRepository.findAllById(interviewerIds)
+                    .forEach(e -> interviewerNames.put(e.getId(), e.getFullName()));
+        }
+
+        return page.map(interview -> mapToInterviewResponse(interview, candidateNames, jobTitles, interviewerNames));
+    }
+
     InterviewResponse mapToInterviewResponse(Interview interview) {
-        String candidateName = null;
+        // Single-item path: resolve each name with a dedicated lookup, then
+        // reuse the shared builder via single-entry caches.
+        Map<UUID, String> candidateNames = new HashMap<>();
         if (interview.getCandidateId() != null) {
-            candidateName = candidateRepository.findById(interview.getCandidateId())
-                    .map(Candidate::getFullName)
-                    .orElse(null);
+            candidateRepository.findById(interview.getCandidateId())
+                    .ifPresent(c -> candidateNames.put(c.getId(), c.getFullName()));
         }
-
-        String jobTitle = null;
+        Map<UUID, String> jobTitles = new HashMap<>();
         if (interview.getJobOpeningId() != null) {
-            jobTitle = jobOpeningRepository.findById(interview.getJobOpeningId())
-                    .map(JobOpening::getJobTitle)
-                    .orElse(null);
+            jobOpeningRepository.findById(interview.getJobOpeningId())
+                    .ifPresent(j -> jobTitles.put(j.getId(), j.getJobTitle()));
         }
-
-        String interviewerName = null;
+        Map<UUID, String> interviewerNames = new HashMap<>();
         if (interview.getInterviewerId() != null) {
-            interviewerName = employeeRepository.findById(interview.getInterviewerId())
-                    .map(Employee::getFullName)
-                    .orElse(null);
+            employeeRepository.findById(interview.getInterviewerId())
+                    .ifPresent(e -> interviewerNames.put(e.getId(), e.getFullName()));
         }
+        return mapToInterviewResponse(interview, candidateNames, jobTitles, interviewerNames);
+    }
+
+    private InterviewResponse mapToInterviewResponse(Interview interview,
+                                                     Map<UUID, String> candidateNames,
+                                                     Map<UUID, String> jobTitles,
+                                                     Map<UUID, String> interviewerNames) {
+        String candidateName = interview.getCandidateId() != null
+                ? candidateNames.get(interview.getCandidateId()) : null;
+        String jobTitle = interview.getJobOpeningId() != null
+                ? jobTitles.get(interview.getJobOpeningId()) : null;
+        String interviewerName = interview.getInterviewerId() != null
+                ? interviewerNames.get(interview.getInterviewerId()) : null;
 
         return InterviewResponse.builder()
                 .id(interview.getId())

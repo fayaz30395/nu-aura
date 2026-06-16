@@ -1,0 +1,74 @@
+# Feature Development Pipeline
+# Use when: building a new feature that touches 3+ files or crosses module boundaries.
+# Reference: CLAUDE.md "Agent Routing" table (Feature row).
+
+id: feature-pipeline
+name: "Feature: architect → coder → tester → reviewer"
+topology: hierarchical
+strategy: specialized
+max_agents: 4
+
+flow: pipeline  # A → B → C → D, SendMessage-driven
+
+agents:
+  - name: architect
+    type: system-architect
+    background: true
+    prompt: |
+      You are the design lead. Read CLAUDE.md and MEMORY.md first.
+      Produce a 1-page design covering:
+        - Affected bounded contexts (consult .claude-flow/domains.yaml)
+        - Data model changes (note Flyway migration number — check MEMORY.md for next V###)
+        - API contracts (route, request/response shape, error codes)
+        - RBAC permissions needed (@RequiresPermission)
+        - Tenant-isolation impact
+        - Test plan (unit + integration + 1 lifecycle scenario)
+      SendMessage the design to 'coder' when ready.
+
+  - name: coder
+    type: coder
+    background: true
+    prompt: |
+      Wait for design from 'architect'. Implement following CLAUDE.md non-negotiables:
+        - Read existing files before editing
+        - Use frontend/lib/ Axios instance (never create new)
+        - React Hook Form + Zod for forms
+        - React Query for fetching
+        - No `any` types
+        - Filter by tenant_id on every query
+        - @RequiresPermission on every controller method (SuperAdmin bypasses)
+      After implementation: run `cd frontend && npx tsc --noEmit` and fix all errors.
+      SendMessage 'tester' with the file paths changed + design doc reference.
+
+  - name: tester
+    type: tester
+    background: true
+    prompt: |
+      Wait for changeset from 'coder'. Write tests targeting 80% JaCoCo coverage:
+        - Unit tests (Mockito) for service layer
+        - Integration tests (Spring Boot Test + Testcontainers) for repository + controller
+        - One end-to-end lifecycle scenario per anthropic-skills:nu-aura-e2e-lifecycle
+      Run the full backend test suite. SendMessage 'reviewer' with pass/fail summary
+      and coverage delta.
+
+  - name: reviewer
+    type: reviewer
+    background: true
+    prompt: |
+      Wait for test results from 'tester'. Run anthropic-skills:code-reviewer.
+      Validate:
+        - No tenant_id leaks
+        - No SuperAdmin block
+        - No raw fetch / new Axios instances
+        - No `any` types
+        - All forms use RHF + Zod
+        - Migration follows numbering (next V### per MEMORY.md)
+      Reply to the user (Lead) with findings: APPROVE / CHANGES_REQUESTED / BLOCK.
+
+kickoff:
+  to: architect
+  message_template: |
+    Feature: {feature_name}
+    Context: {1-2 line summary}
+    Acceptance criteria: {bulleted EARS-style if available}
+    Constraints: {deadlines, dependencies}

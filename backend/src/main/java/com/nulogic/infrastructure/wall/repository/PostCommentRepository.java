@@ -15,7 +15,12 @@ import java.util.UUID;
 @Repository
 public interface PostCommentRepository extends JpaRepository<PostComment, UUID> {
 
-    @Query("SELECT c FROM PostComment c WHERE c.post.id = :postId AND c.tenantId = :tenantId AND c.parentComment IS NULL AND c.isDeleted = false ORDER BY c.createdAt ASC")
+    @Query(value = "SELECT c FROM PostComment c " +
+            "LEFT JOIN FETCH c.author a " +
+            "LEFT JOIN FETCH a.user " +
+            "WHERE c.post.id = :postId AND c.tenantId = :tenantId AND c.parentComment IS NULL AND c.isDeleted = false " +
+            "ORDER BY c.createdAt ASC",
+            countQuery = "SELECT COUNT(c) FROM PostComment c WHERE c.post.id = :postId AND c.tenantId = :tenantId AND c.parentComment IS NULL AND c.isDeleted = false")
     Page<PostComment> findTopLevelCommentsByPostIdAndTenantId(@Param("postId") UUID postId,
                                                                @Param("tenantId") UUID tenantId,
                                                                Pageable pageable);
@@ -37,10 +42,12 @@ public interface PostCommentRepository extends JpaRepository<PostComment, UUID> 
     /**
      * Fetch comment replies with authors eagerly loaded.
      */
-    @Query("SELECT DISTINCT c FROM PostComment c " +
-            "LEFT JOIN FETCH c.author " +
+    @Query(value = "SELECT c FROM PostComment c " +
+            "LEFT JOIN FETCH c.author a " +
+            "LEFT JOIN FETCH a.user " +
             "WHERE c.parentComment.id = :parentId AND c.tenantId = :tenantId AND c.isDeleted = false " +
-            "ORDER BY c.createdAt ASC")
+            "ORDER BY c.createdAt ASC",
+            countQuery = "SELECT COUNT(c) FROM PostComment c WHERE c.parentComment.id = :parentId AND c.tenantId = :tenantId AND c.isDeleted = false")
     Page<PostComment> findRepliesWithAuthorsByTenantId(@Param("parentId") UUID parentId,
                                                         @Param("tenantId") UUID tenantId,
                                                         Pageable pageable);
@@ -53,4 +60,14 @@ public interface PostCommentRepository extends JpaRepository<PostComment, UUID> 
             "WHERE c.post.id IN :postIds AND c.isDeleted = false " +
             "GROUP BY c.post.id")
     List<Object[]> countByPostIds(@Param("postIds") List<UUID> postIds);
+
+    /**
+     * Batch fetch reply counts for multiple parent comments in one query,
+     * eliminating the per-comment countByParentCommentIdAndActiveTrue N+1.
+     * Returns: [parentCommentId, count]
+     */
+    @Query("SELECT c.parentComment.id, COUNT(c) FROM PostComment c " +
+            "WHERE c.parentComment.id IN :parentIds AND c.isDeleted = false " +
+            "GROUP BY c.parentComment.id")
+    List<Object[]> countRepliesByParentCommentIds(@Param("parentIds") List<UUID> parentIds);
 }

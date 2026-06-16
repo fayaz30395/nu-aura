@@ -348,14 +348,34 @@ public class WallService {
     public Page<CommentResponse> getComments(UUID postId, Pageable pageable) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         Page<PostComment> comments = postCommentRepository.findTopLevelCommentsByPostIdAndTenantId(postId, tenantId, pageable);
-        return comments.map(this::mapCommentToResponse);
+        return mapCommentPageToResponses(comments);
     }
 
     @Transactional(readOnly = true)
     public Page<CommentResponse> getReplies(UUID parentCommentId, Pageable pageable) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         Page<PostComment> replies = postCommentRepository.findRepliesWithAuthorsByTenantId(parentCommentId, tenantId, pageable);
-        return replies.map(this::mapCommentToResponse);
+        return mapCommentPageToResponses(replies);
+    }
+
+    /**
+     * P1: Batch-maps a page of PostComment entities to CommentResponse DTOs.
+     * Authors + their linked users are eagerly fetched by the repository queries,
+     * and reply counts are resolved in a single batch query instead of one
+     * countByParentCommentIdAndActiveTrue call per comment.
+     */
+    private Page<CommentResponse> mapCommentPageToResponses(Page<PostComment> commentsPage) {
+        List<PostComment> comments = commentsPage.getContent();
+        if (comments.isEmpty()) {
+            return commentsPage.map(comment -> mapCommentToResponse(comment, Collections.emptyMap()));
+        }
+
+        List<UUID> commentIds = comments.stream().map(PostComment::getId).collect(Collectors.toList());
+        Map<UUID, Integer> replyCountMap = new HashMap<>();
+        postCommentRepository.countRepliesByParentCommentIds(commentIds)
+                .forEach(row -> replyCountMap.put((UUID) row[0], ((Long) row[1]).intValue()));
+
+        return commentsPage.map(comment -> mapCommentToResponse(comment, replyCountMap));
     }
 
     @Transactional
@@ -712,6 +732,16 @@ public class WallService {
     }
 
     private CommentResponse mapCommentToResponse(PostComment comment) {
+        // Single-item path: resolve reply count with a dedicated query.
+        int replyCount = postCommentRepository.countByParentCommentIdAndActiveTrue(comment.getId());
+        return mapCommentToResponse(comment, Map.of(comment.getId(), replyCount));
+    }
+
+    /**
+     * Batch-aware variant: reply counts come from a pre-fetched cache keyed by
+     * comment id, so list paths avoid the per-comment count N+1.
+     */
+    private CommentResponse mapCommentToResponse(PostComment comment, Map<UUID, Integer> replyCountCache) {
         CommentResponse response = new CommentResponse();
         response.setId(comment.getId());
         response.setPostId(comment.getPost().getId());
@@ -719,9 +749,7 @@ public class WallService {
         response.setContent(comment.getContent());
         response.setParentCommentId(comment.getParentComment() != null ? comment.getParentComment().getId() : null);
 
-        // Count replies from database instead of using lazy-loaded collection
-        int replyCount = postCommentRepository.countByParentCommentIdAndActiveTrue(comment.getId());
-        response.setReplyCount(replyCount);
+        response.setReplyCount(replyCountCache.getOrDefault(comment.getId(), 0));
         response.setLikesCount(comment.getLikesCount());
 
         response.setCreatedAt(comment.getCreatedAt());
