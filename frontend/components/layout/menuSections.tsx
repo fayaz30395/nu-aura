@@ -73,6 +73,7 @@ import {
   UserPlus,
   Users,
   UsersRound,
+  Key,
   Zap,
 } from 'lucide-react';
 import type {SidebarSection} from '@/components/ui';
@@ -175,6 +176,7 @@ const sm = {
   bookOpen: <BookOpen className="h-4 w-4"/>,
   bell: <Bell className="h-4 w-4"/>,
   ticket: <Ticket className="h-4 w-4"/>,
+  key: <Key className="h-4 w-4"/>,
 } as const;
 
 /**
@@ -1303,6 +1305,7 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
           children: [
             {id: 'settings-profile', label: 'Profile', href: '/settings/profile', icon: sm.user},
             {id: 'settings-security', label: 'Security', href: '/settings/security', icon: sm.shield},
+            {id: 'settings-api-keys', label: 'API Keys', href: '/settings/security/api-keys', icon: sm.key},
             {id: 'settings-notifications', label: 'Notifications', href: '/settings/notifications', icon: sm.bell},
           ],
         },
