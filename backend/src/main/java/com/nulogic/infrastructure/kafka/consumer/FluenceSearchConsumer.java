@@ -58,11 +58,6 @@ public class FluenceSearchConsumer {
         UUID tenantId = event.getTenantId();
         String eventId = event.getEventId();
 
-        // TODO(T1-02): aspect now sets context — manual call kept for safety; remove in follow-up
-        if (tenantId != null) {
-            TenantContext.setCurrentTenant(tenantId);
-        }
-
         boolean claimed = false;
         try {
             // Atomic idempotency check-and-claim via Redis SETNX.

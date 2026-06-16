@@ -74,10 +74,6 @@ public class AuditEventConsumer {
             @Payload AuditEvent event,
             Acknowledgment acknowledgment) {
 
-        // TODO(T1-02): aspect now sets context — manual call kept for safety; remove in follow-up
-        if (event.getTenantId() != null) {
-            TenantContext.setCurrentTenant(event.getTenantId());
-        }
         try {
             log.debug("Buffering audit event: action={}, entity={}, user={}, tenant={}",
                     event.getAction(), event.getEntityType(), event.getUserId(), event.getTenantId());
