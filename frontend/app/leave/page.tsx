@@ -85,16 +85,14 @@ export default function LeavePage() {
   const leaveTypes = leaveTypesData;
   const recentRequests = requestsData?.content ?? [];
 
+  const balancesErrorMsg = balancesError instanceof Error ? balancesError.message : null;
+  const requestsErrorMsg = requestsError instanceof Error ? requestsError.message : null;
   const error =
-    balancesError instanceof Error
-      ? balancesError.message
-      : requestsError instanceof Error
-        ? requestsError.message
-        : typesError instanceof Error
-          ? typesError.message
-          : !employeeId && hasHydrated
-            ? 'Employee ID not found'
-            : null;
+    typesError instanceof Error
+      ? typesError.message
+      : !employeeId && hasHydrated
+        ? 'Employee ID not found'
+        : null;
 
   const isAnyFetching =
     balancesFetchStatus === 'fetching' ||
@@ -127,6 +125,7 @@ export default function LeavePage() {
             <div className="flex flex-col gap-6 lg:col-span-1">
               <BalanceRings
                 loading={loading}
+                error={balancesErrorMsg}
                 balances={balances}
                 leaveTypes={leaveTypes}
                 canRequest={canRequest}
@@ -134,6 +133,7 @@ export default function LeavePage() {
               />
               <PendingRequests
                 loading={loading}
+                error={requestsErrorMsg}
                 requests={recentRequests}
                 leaveTypes={leaveTypes}
                 pendingCount={pendingRequestCount}
@@ -226,12 +226,14 @@ const RESET_LABEL = `Jan ${new Date().getFullYear() + 1}`;
 
 function BalanceRings({
   loading,
+  error,
   balances,
   leaveTypes,
   canRequest,
   onRequest,
 }: {
   loading: boolean;
+  error: string | null;
   balances: Array<{id: string | number; leaveTypeId: string; openingBalance: number; accrued: number; used: number; available: number}>;
   leaveTypes: Array<{id: string; leaveName: string; leaveCode: string}>;
   canRequest: boolean;
@@ -246,7 +248,9 @@ function BalanceRings({
           <p className="mt-1 text-xs text-[var(--text-3)]">Resets {RESET_LABEL}</p>
         </div>
 
-        {loading ? (
+        {error ? (
+          <p className="py-4 text-sm text-[var(--err-fg)]">{error}</p>
+        ) : loading ? (
           <div className="grid grid-cols-2 gap-4">
             {Array.from({length: 4}).map((_, i) => (
               <div key={i} className="flex items-center gap-4">
@@ -323,12 +327,14 @@ function BalanceRings({
 // ── Pending requests (real recent requests, filtered to pending) ─────────────
 function PendingRequests({
   loading,
+  error,
   requests,
   leaveTypes,
   pendingCount,
   onViewAll,
 }: {
   loading: boolean;
+  error: string | null;
   requests: Array<{id: string | number; requestNumber: string; leaveTypeId: string; totalDays: number; status: string}>;
   leaveTypes: Array<{id: string; leaveName: string; leaveCode: string}>;
   pendingCount: number;
@@ -345,7 +351,9 @@ function PendingRequests({
           </span>
         </div>
 
-        {loading ? (
+        {error ? (
+          <p className="py-4 text-sm text-[var(--err-fg)]">{error}</p>
+        ) : loading ? (
           <div className="mt-2 flex flex-col">
             {Array.from({length: 2}).map((_, i) => (
               <div key={i} className="flex items-center gap-4 border-t border-[var(--border-soft)] py-3 first:border-t-0">

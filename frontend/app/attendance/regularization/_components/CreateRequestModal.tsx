@@ -21,6 +21,24 @@ interface TimelineStep {
   active: boolean;
 }
 
+function StepDot({completed, active, stepNumber}: {completed: boolean; active: boolean; stepNumber: number}) {
+  return (
+    <motion.div
+      className={`relative z-10 w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
+        completed
+          ? 'bg-[var(--status-success-bg)] text-[var(--status-success-text)] ring-2 ring-[var(--status-success-border)]'
+          : active
+            ? 'bg-accent-500 text-white ring-4 ring-accent-500/30'
+            : 'bg-[var(--bg-secondary)] text-[var(--text-muted)]'
+      }`}
+      animate={active ? {scale: [1, 1.08, 1]} : {}}
+      transition={{duration: 1.5, repeat: Infinity}}
+    >
+      {completed ? <Check className="h-3.5 w-3.5"/> : stepNumber}
+    </motion.div>
+  );
+}
+
 function getTimelineSteps(step: number): TimelineStep[] {
   return [
     {step: 1, label: 'Select Date', completed: step > 1, active: step === 1},
@@ -113,19 +131,7 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
                 <div className="relative flex items-center gap-4">
                   {getTimelineSteps(formStep).map((step, index) => (
                     <div key={step.step} className="flex items-center flex-1">
-                      <motion.div
-                        className={`relative z-10 w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
-                          step.completed
-                            ? 'bg-[var(--status-success-bg)] text-[var(--status-success-text)] ring-2 ring-[var(--status-success-border)]'
-                            : step.active
-                              ? 'bg-accent-500 text-white ring-4 ring-accent-500/30'
-                              : 'bg-[var(--bg-secondary)] text-[var(--text-muted)]'
-                        }`}
-                        animate={step.active ? {scale: [1, 1.08, 1]} : {}}
-                        transition={{duration: 1.5, repeat: Infinity}}
-                      >
-                        {step.completed ? <Check className="h-3.5 w-3.5"/> : step.step}
-                      </motion.div>
+                      <StepDot completed={step.completed} active={step.active} stepNumber={step.step} />
                       <div className="hidden sm:block ml-4">
                         <p
                           className={`text-xs font-semibold ${

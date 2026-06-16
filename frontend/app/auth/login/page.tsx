@@ -845,9 +845,9 @@ function LoginPage() {
                       disabled={!isHydrated || isEmailLoading || (captchaRequired && !captchaToken)}
                       variant="primary"
                       size="lg"
-                      isLoading={isEmailLoading}
-                      loadingText="Signing in..."
-                      aria-busy={isEmailLoading}
+                      isLoading={!isHydrated || isEmailLoading}
+                      loadingText={isHydrated ? 'Signing in...' : 'Loading...'}
+                      aria-busy={!isHydrated || isEmailLoading}
                       className="w-full disabled:pointer-events-none disabled:opacity-50"
                       rightIcon={<ArrowRight className="w-4 h-4"/>}
                     >
