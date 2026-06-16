@@ -52,16 +52,8 @@ public class Form16Generator implements FilingFormatGenerator {
     @Override
     public FilingGenerationResult generate(UUID tenantId, int month, int year) {
         // Form 16 is annual — month parameter is ignored; year = financial year start
-        // Fetch all payslips for the financial year (April of year to March of year+1)
-        List<Payslip> allPayslips = new ArrayList<>();
-        for (int m = 4; m <= 12; m++) {
-            allPayslips.addAll(payslipRepository.findByTenantIdAndPayPeriodMonthAndPayPeriodYear(
-                    tenantId, m, year));
-        }
-        for (int m = 1; m <= 3; m++) {
-            allPayslips.addAll(payslipRepository.findByTenantIdAndPayPeriodMonthAndPayPeriodYear(
-                    tenantId, m, year + 1));
-        }
+        // Fetch all payslips for the financial year (April of year to March of year+1) in one query
+        List<Payslip> allPayslips = payslipRepository.findByTenantIdAndFinancialYear(tenantId, year, year + 1);
 
         // Group by employee
         Map<UUID, List<Payslip>> byEmployee = new LinkedHashMap<>();
@@ -235,15 +227,7 @@ public class Form16Generator implements FilingFormatGenerator {
 
     @Override
     public String validate(UUID tenantId, int month, int year) {
-        List<Payslip> allPayslips = new ArrayList<>();
-        for (int m = 4; m <= 12; m++) {
-            allPayslips.addAll(payslipRepository.findByTenantIdAndPayPeriodMonthAndPayPeriodYear(
-                    tenantId, m, year));
-        }
-        for (int m = 1; m <= 3; m++) {
-            allPayslips.addAll(payslipRepository.findByTenantIdAndPayPeriodMonthAndPayPeriodYear(
-                    tenantId, m, year + 1));
-        }
+        List<Payslip> allPayslips = payslipRepository.findByTenantIdAndFinancialYear(tenantId, year, year + 1);
 
         List<Map<String, Object>> errors = new ArrayList<>();
 

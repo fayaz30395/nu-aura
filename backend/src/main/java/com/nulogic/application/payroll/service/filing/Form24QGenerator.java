@@ -44,11 +44,10 @@ public class Form24QGenerator implements FilingFormatGenerator {
         int quarter = getQuarter(month);
         int[][] monthsInQuarter = getMonthsForQuarter(quarter, year);
 
-        List<Payslip> quarterPayslips = new ArrayList<>();
-        for (int[] my : monthsInQuarter) {
-            quarterPayslips.addAll(payslipRepository.findByTenantIdAndPayPeriodMonthAndPayPeriodYear(
-                    tenantId, my[0], my[1]));
-        }
+        int quarterYear = monthsInQuarter[0][1];
+        List<Integer> quarterMonths = Arrays.asList(monthsInQuarter[0][0], monthsInQuarter[1][0], monthsInQuarter[2][0]);
+        List<Payslip> quarterPayslips = payslipRepository
+                .findByTenantIdAndPayPeriodYearAndPayPeriodMonthIn(tenantId, quarterYear, quarterMonths);
 
         // Group by employee
         Map<UUID, List<Payslip>> byEmployee = new LinkedHashMap<>();
@@ -136,11 +135,10 @@ public class Form24QGenerator implements FilingFormatGenerator {
         int quarter = getQuarter(month);
         int[][] monthsInQuarter = getMonthsForQuarter(quarter, year);
 
-        List<Payslip> quarterPayslips = new ArrayList<>();
-        for (int[] my : monthsInQuarter) {
-            quarterPayslips.addAll(payslipRepository.findByTenantIdAndPayPeriodMonthAndPayPeriodYear(
-                    tenantId, my[0], my[1]));
-        }
+        int quarterYear = monthsInQuarter[0][1];
+        List<Integer> quarterMonths = Arrays.asList(monthsInQuarter[0][0], monthsInQuarter[1][0], monthsInQuarter[2][0]);
+        List<Payslip> quarterPayslips = payslipRepository
+                .findByTenantIdAndPayPeriodYearAndPayPeriodMonthIn(tenantId, quarterYear, quarterMonths);
 
         List<Map<String, Object>> errors = new ArrayList<>();
 

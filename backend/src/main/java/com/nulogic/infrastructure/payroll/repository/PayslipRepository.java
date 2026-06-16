@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -77,6 +78,23 @@ public interface PayslipRepository extends JpaRepository<Payslip, UUID> {
      */
     List<Payslip> findByTenantIdAndPayPeriodMonthAndPayPeriodYear(
             UUID tenantId, Integer payPeriodMonth, Integer payPeriodYear);
+
+    /**
+     * Fetch all payslips for an Indian financial year (April year → March year+1) in one query.
+     */
+    @Query("SELECT p FROM Payslip p WHERE p.tenantId = :tenantId AND " +
+            "((p.payPeriodYear = :year1 AND p.payPeriodMonth >= 4) OR " +
+            "(p.payPeriodYear = :year2 AND p.payPeriodMonth <= 3))")
+    List<Payslip> findByTenantIdAndFinancialYear(
+            @Param("tenantId") UUID tenantId,
+            @Param("year1") int year1,
+            @Param("year2") int year2);
+
+    /**
+     * Fetch payslips for a set of months within a single year (used by Form 24Q quarterly filing).
+     */
+    List<Payslip> findByTenantIdAndPayPeriodYearAndPayPeriodMonthIn(
+            UUID tenantId, int payPeriodYear, Collection<Integer> payPeriodMonths);
 
     // Analytics methods
     @Query("SELECT COUNT(p) FROM Payslip p WHERE p.tenantId = :tenantId AND p.payPeriodYear = :year AND p.payPeriodMonth = :month")
