@@ -987,6 +987,13 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
               icon: sm.fileText,
               requiredPermission: Permissions.PROJECT_VIEW,
             },
+            {
+              id: 'psa-timesheets',
+              label: 'Timesheets',
+              href: '/projects/psa/timesheets',
+              icon: sm.clock,
+              requiredPermission: Permissions.PROJECT_VIEW,
+            },
           ],
         },
         {
