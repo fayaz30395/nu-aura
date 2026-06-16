@@ -485,7 +485,24 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
 
     @Transactional(readOnly = true)
     public Map<String, Object> getExpenseSummary(LocalDate startDate, LocalDate endDate) {
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        validateSummaryRange(startDate, endDate);
+
         String permission = determineViewPermission();
+        RoleScope scope = SecurityContext.getPermissionScope(permission);
+
+        // DB-side GROUP BY for the two common scopes (M-17 follow-up).
+        if (SecurityContext.isSuperAdmin() || SecurityContext.isSystemAdmin() || scope == RoleScope.ALL) {
+            List<Object[]> rows = expenseClaimRepository.getStatusSummary(tenantId, startDate, endDate);
+            return buildSummaryFromStatusRows(rows);
+        }
+        if (scope == RoleScope.SELF) {
+            UUID employeeId = SecurityContext.getCurrentEmployeeId();
+            List<Object[]> rows = expenseClaimRepository.getStatusSummaryForEmployee(tenantId, employeeId, startDate, endDate);
+            return buildSummaryFromStatusRows(rows);
+        }
+
+        // DEPARTMENT / LOCATION / TEAM / CUSTOM — fall back to spec-based in-memory path.
         Specification<ExpenseClaim> scopeSpec = dataScopeService.getScopeSpecification(permission);
         return getExpenseSummary(startDate, endDate, scopeSpec);
     }
@@ -494,9 +511,34 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
     public Map<String, Object> getExpenseSummary(LocalDate startDate, LocalDate endDate,
                                                  Specification<ExpenseClaim> spec) {
         UUID tenantId = TenantContext.requireCurrentTenant();
+        validateSummaryRange(startDate, endDate);
 
-        // SEC-FIX (M-17): cap the queried span before loading rows. The aggregation below
-        // pulls every matching claim into memory, so an unbounded range is a DoS vector.
+        Specification<ExpenseClaim> tenantSpec = (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId);
+        Specification<ExpenseClaim> dateSpec = (root, query, cb) -> cb.between(root.get("claimDate"), startDate, endDate);
+
+        List<ExpenseClaim> claims = expenseClaimRepository.findAll(tenantSpec.and(dateSpec).and(spec));
+
+        Map<String, Long> statusCounts = new HashMap<>();
+        Map<String, BigDecimal> amountByStatus = new HashMap<>();
+        for (ExpenseClaim.ExpenseStatus status : ExpenseClaim.ExpenseStatus.values()) {
+            statusCounts.put(status.name(),
+                    claims.stream().filter(c -> c.getStatus() == status).count());
+            amountByStatus.put(status.name(),
+                    claims.stream().filter(c -> c.getStatus() == status)
+                            .map(ExpenseClaim::getAmount).filter(Objects::nonNull)
+                            .reduce(BigDecimal.ZERO, BigDecimal::add));
+        }
+
+        Map<String, Object> summary = new HashMap<>();
+        summary.put("statusCounts", statusCounts);
+        summary.put("amountByStatus", amountByStatus);
+        summary.put("totalAmount", claims.stream().map(ExpenseClaim::getAmount)
+                .filter(Objects::nonNull).reduce(BigDecimal.ZERO, BigDecimal::add));
+        summary.put("totalClaims", claims.size());
+        return Collections.unmodifiableMap(summary);
+    }
+
+    private void validateSummaryRange(LocalDate startDate, LocalDate endDate) {
         if (startDate == null || endDate == null) {
             throw new ValidationException("startDate and endDate are required for expense summary");
         }
@@ -508,41 +550,31 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
             throw new ValidationException(
                     "Expense summary range exceeds the maximum of " + MAX_SUMMARY_RANGE_DAYS + " days");
         }
-        // TODO (M-17 follow-up): replace this findAll->in-memory aggregation with a
-        // database-side GROUP BY (count + SUM per status) so the range cap is no longer
-        // load-bearing for memory safety.
+    }
 
-        Specification<ExpenseClaim> tenantSpec = (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId);
-        Specification<ExpenseClaim> dateSpec = (root, query, cb) -> cb.between(root.get("claimDate"), startDate, endDate);
-
-        List<ExpenseClaim> claims = expenseClaimRepository.findAll(tenantSpec.and(dateSpec).and(spec));
-
-        Map<String, Object> summary = new HashMap<>();
-
+    private Map<String, Object> buildSummaryFromStatusRows(List<Object[]> rows) {
         Map<String, Long> statusCounts = new HashMap<>();
         Map<String, BigDecimal> amountByStatus = new HashMap<>();
-        for (ExpenseClaim.ExpenseStatus status : ExpenseClaim.ExpenseStatus.values()) {
-            long count = claims.stream().filter(c -> c.getStatus() == status).count();
-            statusCounts.put(status.name(), count);
-
-            BigDecimal amount = claims.stream()
-                    .filter(c -> c.getStatus() == status)
-                    .map(ExpenseClaim::getAmount)
-                    .filter(Objects::nonNull)
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
-            amountByStatus.put(status.name(), amount);
+        for (ExpenseClaim.ExpenseStatus s : ExpenseClaim.ExpenseStatus.values()) {
+            statusCounts.put(s.name(), 0L);
+            amountByStatus.put(s.name(), BigDecimal.ZERO);
         }
-
+        BigDecimal totalAmount = BigDecimal.ZERO;
+        long totalClaims = 0;
+        for (Object[] row : rows) {
+            ExpenseClaim.ExpenseStatus status = (ExpenseClaim.ExpenseStatus) row[0];
+            long count = ((Number) row[1]).longValue();
+            BigDecimal amount = row[2] != null ? (BigDecimal) row[2] : BigDecimal.ZERO;
+            statusCounts.put(status.name(), count);
+            amountByStatus.put(status.name(), amount);
+            totalAmount = totalAmount.add(amount);
+            totalClaims += count;
+        }
+        Map<String, Object> summary = new HashMap<>();
         summary.put("statusCounts", statusCounts);
         summary.put("amountByStatus", amountByStatus);
-
-        BigDecimal totalAmount = claims.stream()
-                .map(ExpenseClaim::getAmount)
-                .filter(Objects::nonNull)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
         summary.put("totalAmount", totalAmount);
-        summary.put("totalClaims", claims.size());
-
+        summary.put("totalClaims", totalClaims);
         return Collections.unmodifiableMap(summary);
     }
 

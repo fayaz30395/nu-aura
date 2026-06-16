@@ -79,4 +79,20 @@ public interface ExpenseClaimRepository extends JpaRepository<ExpenseClaim, UUID
 
     @Query("SELECT MAX(e.claimNumber) FROM ExpenseClaim e WHERE e.tenantId = :tenantId")
     String findMaxClaimNumber(@Param("tenantId") UUID tenantId);
+
+    @Query("SELECT e.status, COUNT(e), COALESCE(SUM(e.amount), 0) FROM ExpenseClaim e " +
+            "WHERE e.tenantId = :tenantId AND e.claimDate BETWEEN :startDate AND :endDate " +
+            "GROUP BY e.status")
+    List<Object[]> getStatusSummary(@Param("tenantId") UUID tenantId,
+                                    @Param("startDate") LocalDate startDate,
+                                    @Param("endDate") LocalDate endDate);
+
+    @Query("SELECT e.status, COUNT(e), COALESCE(SUM(e.amount), 0) FROM ExpenseClaim e " +
+            "WHERE e.tenantId = :tenantId AND e.employeeId = :employeeId " +
+            "AND e.claimDate BETWEEN :startDate AND :endDate " +
+            "GROUP BY e.status")
+    List<Object[]> getStatusSummaryForEmployee(@Param("tenantId") UUID tenantId,
+                                               @Param("employeeId") UUID employeeId,
+                                               @Param("startDate") LocalDate startDate,
+                                               @Param("endDate") LocalDate endDate);
 }
