@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -102,6 +103,7 @@ public class WorkflowEscalationScheduler {
         List<StepExecution> overdueSteps = stepExecutionRepository.findOverdueStepsWithExecution(tenantId, now);
 
         int escalatedCount = 0;
+        List<StepExecution> toEscalate = new ArrayList<>();
 
         for (StepExecution step : overdueSteps) {
             // Skip if already escalated
@@ -138,16 +140,19 @@ public class WorkflowEscalationScheduler {
                 continue;
             }
 
+            // Capture original assignee BEFORE mutation so notification check is correct
+            UUID originalAssigneeId = step.getAssignedToUserId();
+
             // Perform escalation
             step.escalate(escalateToUserId, tenantTimeService.now(step.getTenantId()));
             step.setAssignedToUserId(escalateToUserId);
-            stepExecutionRepository.save(step);
+            toEscalate.add(step);
 
             // Send notification to escalation target
             sendEscalationNotification(step, escalateToUserId);
 
-            // Send notification to original assignee
-            if (step.getAssignedToUserId() != null && !step.getAssignedToUserId().equals(escalateToUserId)) {
+            // Send notification to original assignee (only when different from escalation target)
+            if (originalAssigneeId != null && !originalAssigneeId.equals(escalateToUserId)) {
                 sendEscalationOriginatorNotification(step);
             }
 
@@ -155,6 +160,8 @@ public class WorkflowEscalationScheduler {
             log.info("Escalated step {} to user {} for workflow {}",
                     step.getId(), escalateToUserId, step.getWorkflowExecution().getId());
         }
+
+        if (!toEscalate.isEmpty()) stepExecutionRepository.saveAll(toEscalate);
 
         return escalatedCount;
     }
@@ -169,6 +176,7 @@ public class WorkflowEscalationScheduler {
         List<StepExecution> overdueSteps = stepExecutionRepository.findOverdueStepsWithExecution(tenantId, now);
 
         int autoActionedCount = 0;
+        List<StepExecution> toSave = new ArrayList<>();
 
         for (StepExecution step : overdueSteps) {
             ApprovalStep approvalStepDef = step.getApprovalStep();
@@ -182,7 +190,7 @@ public class WorkflowEscalationScheduler {
                 step.setAction(StepExecution.ApprovalAction.APPROVE);
                 step.setComments("Auto-approved due to SLA timeout");
                 step.setExecutedAt(tenantTimeService.now(tenantId));
-                stepExecutionRepository.save(step);
+                toSave.add(step);
 
                 sendAutoActionNotification(step, "approved");
                 autoActionedCount++;
@@ -195,7 +203,7 @@ public class WorkflowEscalationScheduler {
                 step.setAction(StepExecution.ApprovalAction.REJECT);
                 step.setComments("Auto-rejected due to SLA timeout - no action taken within deadline");
                 step.setExecutedAt(tenantTimeService.now(tenantId));
-                stepExecutionRepository.save(step);
+                toSave.add(step);
 
                 sendAutoActionNotification(step, "rejected");
                 autoActionedCount++;
@@ -203,6 +211,8 @@ public class WorkflowEscalationScheduler {
                 log.info("Auto-rejected step {} due to SLA timeout", step.getId());
             }
         }
+
+        if (!toSave.isEmpty()) stepExecutionRepository.saveAll(toSave);
 
         return autoActionedCount;
     }
@@ -220,6 +230,7 @@ public class WorkflowEscalationScheduler {
         List<StepExecution> pendingSteps = stepExecutionRepository.findPendingForUserWithExecution(tenantId, null);
 
         int remindersSent = 0;
+        List<StepExecution> toSave = new ArrayList<>();
 
         for (StepExecution step : pendingSteps) {
             // Check if deadline is within reminder threshold
@@ -245,16 +256,16 @@ public class WorkflowEscalationScheduler {
                 }
             }
 
-            // Send reminder
+            // Send reminder then track — only add to batch if notification dispatched
             sendReminderNotification(step);
-
-            // Update reminder tracking
             step.setReminderCount(step.getReminderCount() + 1);
             step.setLastReminderSentAt(now);
-            stepExecutionRepository.save(step);
+            toSave.add(step);
 
             remindersSent++;
         }
+
+        if (!toSave.isEmpty()) stepExecutionRepository.saveAll(toSave);
 
         return remindersSent;
     }
