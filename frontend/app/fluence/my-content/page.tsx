@@ -88,19 +88,19 @@ export default function MyContentPage() {
             icon={FileText}
             label="Wiki Pages"
             value={myWikiPages.length}
-            iconColor="violet"
+            variant="accent"
           />
           <StatCard
             icon={Pen}
             label="Blog Posts"
             value={myBlogPosts.length}
-            iconColor="amber"
+            variant="warning"
           />
           <StatCard
             icon={Star}
             label="Favorites"
             value={myFavorites.length}
-            iconColor="yellow"
+            variant="warning"
           />
         </motion.div>
 
@@ -209,17 +209,14 @@ interface StatCardProps {
   icon: React.ComponentType<{ className?: string }>;
   label: string;
   value: number;
-  iconColor: 'violet' | 'amber' | 'yellow';
+  variant: 'accent' | 'warning';
 }
 
-function StatCard({icon: Icon, label, value, iconColor}: StatCardProps) {
-  const iconBoxColor = {
-    violet: 'bg-accent-100 dark:bg-accent-950 text-accent-600 dark:text-accent-400',
-    amber: 'bg-warning-100 dark:bg-warning-950 text-warning-600 dark:text-warning-400',
-    yellow: 'bg-warning-100 dark:bg-warning-950 text-warning-600 dark:text-warning-400',
+function StatCard({icon: Icon, label, value, variant}: StatCardProps) {
+  const variantStyles = {
+    accent: 'bg-accent-100 dark:bg-accent-950 text-accent-600 dark:text-accent-400',
+    warning: 'bg-warning-100 dark:bg-warning-950 text-warning-600 dark:text-warning-400',
   };
-
-  const tone: 'accent' | 'warning' = iconColor === 'violet' ? 'accent' : 'warning';
 
   return (
     <motion.div
@@ -227,11 +224,11 @@ function StatCard({icon: Icon, label, value, iconColor}: StatCardProps) {
       whileHover={{y: -2}}
       transition={{duration: 0.2}}
     >
-      <div className={`${iconBoxColor[iconColor]} rounded-lg p-4 flex-shrink-0`}>
+      <div className={`${variantStyles[variant]} rounded-lg p-4 flex-shrink-0`}>
         <Icon className={iconSize.statCard}/>
       </div>
       <div className="flex-1 min-w-0">
-        <Stat label={label} value={value} tone={tone}/>
+        <Stat label={label} value={value} tone={variant}/>
       </div>
     </motion.div>
   );

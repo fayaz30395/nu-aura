@@ -3,6 +3,7 @@
 import React, {memo} from 'react';
 import {useRouter} from 'next/navigation';
 import {motion} from 'framer-motion';
+import {MOTION_EASE} from '@/lib/animation';
 import {Candidate} from '@/lib/types/hire/recruitment';
 import {CandidateMatchResponse} from '@/lib/types/hire/ai-recruitment';
 import {
@@ -67,7 +68,7 @@ export const CandidateTableRow = memo(function CandidateTableRow({
   return (
     <motion.tr
       whileHover={{backgroundColor: 'var(--surface-hover)'}}
-      transition={{duration: 0.16, ease: [0.16, 1, 0.3, 1]}}
+      transition={{duration: 0.16, ease: MOTION_EASE.outExpo}}
       className="group h-14 cursor-pointer border-b border-[var(--border-soft)] transition-colors"
       onClick={() => router.push(`/recruitment/candidates/${candidate.id}`)}
     >

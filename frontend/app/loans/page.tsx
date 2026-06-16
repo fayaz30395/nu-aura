@@ -3,6 +3,7 @@
 import {useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {motion} from 'framer-motion';
+import {MOTION_EASE} from '@/lib/animation';
 import {AppLayout} from '@/components/layout/AppLayout';
 import {PageTransition, Reveal} from '@/components/motion';
 import {loanService} from '@/lib/services/hrms/loan.service';
@@ -103,7 +104,7 @@ export default function LoansPage() {
         <motion.header
           initial={{opacity: 0, y: 4}}
           animate={{opacity: 1, y: 0}}
-          transition={{duration: 0.4, ease: [0.16, 1, 0.3, 1]}}
+          transition={{duration: 0.4, ease: MOTION_EASE.outExpo}}
           className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-start"
         >
           <div className="space-y-1.5 max-w-2xl">
