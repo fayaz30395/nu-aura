@@ -172,6 +172,9 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID>, JpaSp
     @Query("SELECT e FROM Employee e WHERE e.user.id IN :userIds")
     List<Employee> findAllByUserIdIn(@Param("userIds") Collection<UUID> userIds);
 
+    @EntityGraph(attributePaths = {"user"})
+    List<Employee> findAllByIdInAndTenantId(Collection<UUID> ids, UUID tenantId);
+
     // Analytics methods
     long countByTenantId(UUID tenantId);
 

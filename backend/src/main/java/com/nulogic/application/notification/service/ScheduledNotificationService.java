@@ -433,9 +433,16 @@ public class ScheduledNotificationService {
 
         log.info("Found {} employees who haven't checked out for tenant {}", recordsWithoutCheckout.size(), tenantId);
 
+        // Pre-fetch all relevant employees in one query to avoid N per-record DB lookups
+        Set<UUID> employeeIds = recordsWithoutCheckout.stream()
+                .map(AttendanceRecord::getEmployeeId)
+                .collect(Collectors.toSet());
+        Map<UUID, Employee> employeeMap = employeeRepository.findAllByIdInAndTenantId(employeeIds, tenantId)
+                .stream()
+                .collect(Collectors.toMap(Employee::getId, e -> e));
+
         for (AttendanceRecord record : recordsWithoutCheckout) {
-            Employee employee = employeeRepository.findByIdAndTenantId(record.getEmployeeId(), tenantId)
-                    .orElse(null);
+            Employee employee = employeeMap.get(record.getEmployeeId());
 
             if (employee == null || employee.getUser() == null)
                 continue;
