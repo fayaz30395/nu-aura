@@ -265,8 +265,11 @@ When an exchange produces something worth keeping:
   P13N, banner variant / NBC ranking; commercetools / MuleSoft / MACH stack;
   Avalara / Vertex (tax); Algolia / Bloomreach / Nosto (search & personalization).
 - **NU-AURA platform ecosystem** — NU-HRMS, NU-Hire, NU-Grow, NU-Fluence.
-  Stack (per owner): React 18 + MUI, Spring Boot 3.x, MySQL/HeatWave, Redis,
-  Google OAuth, 9-role RBAC.
+  **Authoritative stack: React 18 + MUI, Spring Boot 3.x, MySQL/HeatWave, Redis,
+  Google OAuth, 9-role RBAC.**
+  Caveat: THIS checkout (`nu-aura/frontend`) currently ships Next.js 16 +
+  Mantine 9 + React 19 — a different impl from the canonical stack. When advising
+  on code in this repo, follow the repo's actual deps, not the canonical line.
 - **NULOGIC brand / Nulogic Solution Team** — consulting proposals & deliverables.
 - **Local-first PII detection agent** — Python, Microsoft Presidio, India-specific
   recognizers (Aadhaar, PAN, IFSC, UPI), detect-and-confirm flow.

@@ -28,9 +28,12 @@ Stood up the Second Brain protocol inside the nu-aura repo (which doubles as an 
 - Corrected inferred title: Tech Lead, NOT Principal/Staff — do not inflate.
 - Full project list + always/never tone prefs now seeded in CLAUDE.md.
 
-## Flag to verify later (do not silently "fix")
-- Owner describes NU-AURA stack as **React 18 + MUI, MySQL/HeatWave**, but this
-  repo's `MEMORY.md` / `.claude/CLAUDE.md` document **Next.js 14 + Mantine +
-  Postgres (Neon/PG16)**. Likely: owner's mental/canonical model vs this specific
-  repo's current impl, OR two NU-AURA codebases. Recorded owner's words as-is in
-  CLAUDE.md ("per owner"); reconcile when it matters.
+## Stack — RESOLVED (owner ruled authoritative)
+- **Canonical NU-AURA stack = React 18 + MUI, Spring Boot 3.x, MySQL/HeatWave**
+  (owner-declared authoritative 2026-06-16).
+- BUT verified `frontend/package.json` in this checkout: **Next.js 16 + Mantine 9
+  + React 19** — this repo is a different impl from the canonical stack.
+- Rule going forward: canonical line = how owner describes NU-AURA; for code edits
+  in THIS repo, follow the repo's real deps (Next/Mantine/React19), not canonical.
+- Repo docs (`MEMORY.md`, `.claude/CLAUDE.md` "Locked-In Stack" = Next 14/Mantine)
+  are also stale vs the actual Next 16/React 19 — flag if asked to touch them.
