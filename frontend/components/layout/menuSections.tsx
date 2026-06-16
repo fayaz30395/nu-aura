@@ -1244,7 +1244,23 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
           label: 'Integrations',
           icon: icon.cloud,
           href: '/admin/integrations',
-          requiredPermission: Permissions.INTEGRATION_VIEW
+          requiredPermission: Permissions.INTEGRATION_VIEW,
+          children: [
+            {
+              id: 'integrations-overview',
+              label: 'Overview',
+              href: '/admin/integrations',
+              icon: icon.cloud,
+              requiredPermission: Permissions.INTEGRATION_VIEW,
+            },
+            {
+              id: 'integrations-webhooks',
+              label: 'Webhooks',
+              href: '/admin/integrations/webhooks',
+              icon: icon.zap,
+              requiredPermission: Permissions.SYSTEM_ADMIN,
+            },
+          ],
         },
         {
           id: 'helpdesk-setup',
