@@ -715,7 +715,23 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
           label: 'Surveys',
           icon: icon.clipboardList,
           href: '/surveys',
-          requiredPermission: Permissions.SURVEY_VIEW
+          requiredPermission: Permissions.SURVEY_VIEW,
+          children: [
+            {
+              id: 'surveys-list',
+              label: 'My Surveys',
+              href: '/surveys',
+              icon: sm.clipboardCheck,
+              requiredPermission: Permissions.SURVEY_VIEW,
+            },
+            {
+              id: 'pulse-surveys',
+              label: 'Pulse Surveys',
+              href: '/surveys/pulse',
+              icon: sm.barChart2,
+              requiredPermission: Permissions.SURVEY_VIEW,
+            },
+          ],
         },
         {
           id: 'competency-matrix-grow',
