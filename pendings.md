@@ -123,6 +123,50 @@ pages (login/signup/forgot-password/careers) axe WCAG 2.1 A/AA + responsive clea
 
 ---
 
+## 9. Backend N+1 Eliminations — remaining targets
+
+Services fixed this session (commits `3a4f9e35`, `4459924d`, `840b8318`):
+`AnalyticsService` (headcount trend), `MileageService`, `ReferralService`,
+`ScheduledReportService`, `OvertimeManagementService`, `TrainingManagementService`
++ `TrainingEnrollmentRepository`.
+
+All items below still fire per-item `repository.findById()` / name-lookup calls inside
+`page.map()` or list `stream().map()` — each page load issues N extra SQL queries.
+
+Fix pattern for every item:
+1. Extract `page.getContent()` (or list) before mapping.
+2. Collect all needed foreign-key IDs into a `Set<UUID>`.
+3. Bulk-fetch via `findAllById(ids)` → build `Map<UUID, String>` name caches.
+4. Add overloaded `mapToResponse(entity, caches)` that reads from the map.
+5. Keep the original 1-arg mapper for single-item create/update/approve paths.
+
+| Priority | Service | What fires N+1 |
+|----------|---------|----------------|
+| ✅ P1 | `WallService` | DONE (`b…`): comment paths fetch-join author+user; reply counts via `countRepliesByParentCommentIds` batch. (Reaction paths were already `JOIN FETCH`.) |
+| ✅ P1 | `InterviewManagementService` | DONE: `mapToInterviewResponse` batch-resolves candidate/jobOpening/interviewer names via 3 `findAllById` per page |
+| ✅ P1 | `PerformanceReviewService` | DONE: employee/reviewer + cycle names from per-page caches (2 `findAllById`), shared across Page+List paths |
+| ✅ P1 | `ReviewCycleService` | DONE: `getCalibration` batch-resolves employee names (1 `findAllById`). `mapToResponse(cycle)` had no per-cycle lookups — original description was inaccurate. |
+| P2 | `FeedbackService` | Per feedback item: giver + receiver employee name lookup |
+| P2 | `GoalService` | Per goal: employee name + optional assignee name |
+| P2 | `ProbationService` | Per probation record: employee name + manager name |
+| P2 | `ExitManagementService` | Per exit record: employee name + manager name |
+| P2 | `OnboardingManagementService` | Per onboarding task: employee + buddy name lookups |
+| P2 | `ContractService` | Per contract: employee name + department name |
+| P2 | `CompensationService` | Per compensation record: employee name lookup |
+| P2 | `BenefitManagementService` | Per benefit record: employee name lookup |
+| P3 | `SurveyManagementService` | Per survey response: respondent employee name |
+| P3 | `SurveyAnalyticsService` | Per result bucket: department/team name lookups |
+| P3 | `TimeTrackingService` | Per time entry: employee name + project name |
+| P3 | `ProjectTimesheetService` | Per timesheet row: employee + project name |
+| P3 | `ShiftScheduleService` | Per schedule entry: employee + shift name |
+| P3 | `TravelExpenseService` | Per expense: employee name + approver name |
+| P3 | `PIPService` | Per PIP record: employee + reviewer name lookups |
+| P3 | `ContractSignatureService` | Per signature record: employee name + contract title |
+
+Owner: **agent** · No user decision needed · Each service is a 1–3 hour self-contained fix.
+
+---
+
 ## Done this engagement (for reference)
 - ✅ Theme dark-mode override bug fixed (Light now applies over a dark OS).
 - ✅ Brand-color leaks purged (donut/attendance/notification-dots/workflow-chip/Loading) → semantic/accent tokens.
@@ -131,3 +175,5 @@ pages (login/signup/forgot-password/careers) axe WCAG 2.1 A/AA + responsive clea
 - ✅ RBAC matrix (8 roles) + module health validated.
 - ✅ Consolidated audit report committed (`docs/audit/production-readiness-2026-06-16.md`).
 - ✅ Stopped 2 rogue agents + cleared scheduler lock (others respawn — see #0).
+- ✅ N+1 fixes: AnalyticsService, MileageService, ReferralService, ScheduledReportService, OvertimeManagementService, TrainingManagementService (commits 3a4f9e35, 4459924d, 840b8318).
+- ✅ N+1 fixes (P1 batch): WallService comments + InterviewManagementService; PerformanceReviewService + ReviewCycleService (2 commits this session).
