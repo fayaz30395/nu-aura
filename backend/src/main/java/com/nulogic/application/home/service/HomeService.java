@@ -54,10 +54,6 @@ public class HomeService {
      * tenant-aware, but the explicit key is defense-in-depth and unambiguous at
      * the call site.</p>
      *
-     * <p>TODO(s2-a): EmployeeService.save / update / delete should call
-     * {@code @CacheEvict(value = {UPCOMING_BIRTHDAYS, UPCOMING_ANNIVERSARIES},
-     * allEntries = true)} (scoped per tenant). EmployeeService is out of scope
-     * for S2-A — file an issue for S2-B to add the evictions.</p>
      */
     @Cacheable(value = CacheConfig.UPCOMING_BIRTHDAYS,
             key = "T(com.nulogic.common.security.TenantContext).getCurrentTenant() + ':' + #days")

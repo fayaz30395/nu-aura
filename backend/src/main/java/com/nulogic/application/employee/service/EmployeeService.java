@@ -128,7 +128,8 @@ public class EmployeeService {
     @Caching(evict = {
             @CacheEvict(value = {CacheConfig.EMPLOYEES, CacheConfig.EMPLOYEE_WITH_DETAILS}, allEntries = true),
             @CacheEvict(value = CacheConfig.ANALYTICS_SUMMARY, allEntries = true),
-            @CacheEvict(value = CacheConfig.DASHBOARD_METRICS, allEntries = true)
+            @CacheEvict(value = CacheConfig.DASHBOARD_METRICS, allEntries = true),
+            @CacheEvict(value = {CacheConfig.UPCOMING_BIRTHDAYS, CacheConfig.UPCOMING_ANNIVERSARIES}, allEntries = true)
     })
     public EmployeeResponse createEmployee(CreateEmployeeRequest request) {
         UUID tenantId = TenantContext.requireCurrentTenant();
@@ -221,7 +222,8 @@ public class EmployeeService {
     @Caching(evict = {
             @CacheEvict(value = {CacheConfig.EMPLOYEES, CacheConfig.EMPLOYEE_WITH_DETAILS}, allEntries = true),
             @CacheEvict(value = CacheConfig.ANALYTICS_SUMMARY, allEntries = true),
-            @CacheEvict(value = CacheConfig.DASHBOARD_METRICS, allEntries = true)
+            @CacheEvict(value = CacheConfig.DASHBOARD_METRICS, allEntries = true),
+            @CacheEvict(value = {CacheConfig.UPCOMING_BIRTHDAYS, CacheConfig.UPCOMING_ANNIVERSARIES}, allEntries = true)
     })
     public EmployeeResponse updateEmployee(UUID employeeId, UpdateEmployeeRequest request) {
         UUID tenantId = TenantContext.requireCurrentTenant();
@@ -330,7 +332,8 @@ public class EmployeeService {
     @Caching(evict = {
             @CacheEvict(value = {CacheConfig.EMPLOYEES, CacheConfig.EMPLOYEE_WITH_DETAILS}, allEntries = true),
             @CacheEvict(value = CacheConfig.ANALYTICS_SUMMARY, allEntries = true),
-            @CacheEvict(value = CacheConfig.DASHBOARD_METRICS, allEntries = true)
+            @CacheEvict(value = CacheConfig.DASHBOARD_METRICS, allEntries = true),
+            @CacheEvict(value = {CacheConfig.UPCOMING_BIRTHDAYS, CacheConfig.UPCOMING_ANNIVERSARIES}, allEntries = true)
     })
     public EmployeeResponse updateEmployeeAdminFields(UUID employeeId, AdminEmployeeUpdateRequest request) {
         UUID tenantId = TenantContext.requireCurrentTenant();
@@ -696,6 +699,12 @@ public class EmployeeService {
     }
 
     @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = {CacheConfig.EMPLOYEES, CacheConfig.EMPLOYEE_WITH_DETAILS}, allEntries = true),
+            @CacheEvict(value = CacheConfig.ANALYTICS_SUMMARY, allEntries = true),
+            @CacheEvict(value = CacheConfig.DASHBOARD_METRICS, allEntries = true),
+            @CacheEvict(value = {CacheConfig.UPCOMING_BIRTHDAYS, CacheConfig.UPCOMING_ANNIVERSARIES}, allEntries = true)
+    })
     public void deleteEmployee(UUID employeeId, String terminationReason) {
         UUID tenantId = TenantContext.requireCurrentTenant();
 
