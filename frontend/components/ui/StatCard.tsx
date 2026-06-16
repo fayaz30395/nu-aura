@@ -45,7 +45,7 @@ export interface StatCardProps extends React.HTMLAttributes<HTMLDivElement> {
     isPositive: boolean;
     label?: string;
   };
-  variant?: 'default' | 'primary' | 'success' | 'warning' | 'destructive' | 'purple' | 'teal' | 'orange' | 'blue';
+  variant?: 'default' | 'primary' | 'success' | 'warning' | 'destructive';
   size?: 'default' | 'compact';
   animated?: boolean;
   href?: string;
@@ -66,31 +66,13 @@ const variantConfig = {
     iconBg: 'bg-accent-500/10 dark:bg-accent-500/20',
     iconColor: 'text-accent-700 dark:text-accent-400',
   },
-  purple: {
-    bg: 'bg-[var(--accent-primary-subtle)]',
-    border: 'border-accent-200/50 dark:border-accent-800/50',
-    iconBg: 'bg-accent-500/10 dark:bg-accent-500/20',
-    iconColor: 'text-accent-700 dark:text-accent-400',
-  },
   success: {
     bg: 'bg-[var(--status-success-bg)]',
     border: 'border-success-200/50 dark:border-success-800/50',
     iconBg: 'bg-success-500/10 dark:bg-success-500/20',
     iconColor: 'text-success-600 dark:text-success-400',
   },
-  teal: {
-    bg: 'bg-[var(--accent-primary-subtle)]',
-    border: 'border-accent-200/50 dark:border-accent-800/50',
-    iconBg: 'bg-accent-500/10 dark:bg-accent-500/20',
-    iconColor: 'text-accent-700 dark:text-accent-400',
-  },
   warning: {
-    bg: 'bg-[var(--status-warning-bg)]',
-    border: 'border-warning-200/50 dark:border-warning-800/50',
-    iconBg: 'bg-warning-500/10 dark:bg-warning-500/20',
-    iconColor: 'text-warning-600 dark:text-warning-400',
-  },
-  orange: {
     bg: 'bg-[var(--status-warning-bg)]',
     border: 'border-warning-200/50 dark:border-warning-800/50',
     iconBg: 'bg-warning-500/10 dark:bg-warning-500/20',
@@ -101,12 +83,6 @@ const variantConfig = {
     border: 'border-danger-200/50 dark:border-danger-800/50',
     iconBg: 'bg-danger-500/10 dark:bg-danger-500/20',
     iconColor: 'text-danger-600 dark:text-danger-400',
-  },
-  blue: {
-    bg: 'bg-[var(--accent-primary-subtle)]',
-    border: 'border-accent-200/50 dark:border-accent-800/50',
-    iconBg: 'bg-accent-500/10 dark:bg-accent-500/20',
-    iconColor: 'text-accent-600 dark:text-accent-400',
   },
 };
 

@@ -366,7 +366,7 @@ function PendingRequests({
               return (
                 <div
                   key={r.id}
-                  className={`flex items-center gap-3 py-3 ${i ? 'border-t border-[var(--border-soft)]' : ''}`}
+                  className={`flex items-center gap-4 py-3 ${i ? 'border-t border-[var(--border-soft)]' : ''}`}
                 >
                   <LeaveAvatar name={type?.leaveName ?? 'Leave'} />
                   <div className="min-w-0 flex-1">

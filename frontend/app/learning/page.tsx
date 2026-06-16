@@ -258,7 +258,8 @@ function BentoNavigation({featuredEnrollment, featuredCourseTitle, certificatesC
   return (
     <motion.section
       initial="hidden"
-      animate="visible"
+      whileInView="visible"
+      viewport={{ once: true }}
       variants={pick({
         hidden: {opacity: 1},
         visible: {transition: {staggerChildren: 0.07, delayChildren: 0.18}},
