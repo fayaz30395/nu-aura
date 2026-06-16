@@ -6,9 +6,9 @@ tags: [knowledge-graph, modules, dependencies]
 # Module Relationships
 
 > How the four sub-apps and the shared platform depend on each other and on
-> platform services. Grounded in `docs/architecture/backend.md` (bounded-context
-> catalog), `docs/architecture/frontend.md` (sub-app route/permission mapping),
-> and `docs/patterns/README.md`.
+> platform services. Grounded in [[Services]] (bounded-context
+> catalog), [[Routes]] (sub-app route/permission mapping),
+> and [[Code-Patterns]].
 > See [[System-Overview]] · [[C4-Container]] · [[C4-Component]] · [[Data-Flows]] · [[System-Flows]].
 
 ## Purpose
@@ -25,7 +25,7 @@ bounded contexts per DDD layer, four logical sub-apps served by the same JVM and
 same Next.js App Router frontend. Sub-apps are **logical groupings of contexts**, not
 separate services — `frontend/lib/config/apps.ts` maps pathname/permission prefixes to
 `AppCode = 'HRMS' | 'HIRE' | 'GROW' | 'FLUENCE'`, and the backend groups contexts per
-sub-app in `docs/architecture/backend.md` §2.
+sub-app in [[Services]] §2.
 
 All four sub-apps depend on the same shared-platform spine: every request passes the
 security filter chain (auth + tenancy, [[ADR-002]], [[ADR-005]]), every read may hit
@@ -114,13 +114,13 @@ Every edge below is grounded in the cited source.
   same Spring Security filter chain; `JwtAuthenticationFilter` sets the security
   context and re-asserts `TenantContext`, then `TenantRlsTransactionManager` pushes
   the tenant into the DB session ([[ADR-002]], [[ADR-005]]).
-  Evidence: `docs/architecture/data-flow.md` §2–4.
+  Evidence: [[Data-Flows]] §2–4.
 - **All sub-apps → Redis cache.** Reads use `@Cacheable` with tenant-scoped keys;
   auth itself caches `PERMISSIONS`/`ROLE_PERMISSIONS` ([[ADR-003]]).
-  Evidence: `docs/patterns/README.md` §1; `CacheConfig.java`.
+  Evidence: [[Code-Patterns]] §1; `CacheConfig.java`.
 - **All sub-apps → Kafka.** Write paths publish domain events through the single
   `EventPublisher`; consumers run with restored tenant context.
-  Evidence: `docs/architecture/backend.md` §3.2; `infrastructure/kafka/`.
+  Evidence: [[Services]] §3.2; `infrastructure/kafka/`.
 - **All sub-apps → Notification fan-out.** Approval, lifecycle, and content events
   drive `MultiChannelNotificationService` (email / Slack / SMS / WebSocket).
   Evidence: `application/notification/service/` (`MultiChannelNotificationService`,
@@ -132,28 +132,28 @@ Every edge below is grounded in the cited source.
   candidate; onboarding/preboarding contexts hand off into the `employee` context,
   creating the employee record that the rest of HRMS operates on.
   Evidence: backend `recruitment`/`onboarding`/`preboarding`/`employee` contexts
-  (`docs/architecture/backend.md` §2); see [[System-Flows]].
+  ([[Services]] §2); see [[System-Flows]].
 - **[[Nu-Grow]] → [[Nu-HRMS]].** Performance reviews, OKRs, and 360 feedback are keyed
   to employees and org structure owned by HRMS (`employee`, `organization`).
-  Evidence: `docs/architecture/frontend.md` §2 (GROW permission prefixes reference
+  Evidence: [[Routes]] §2 (GROW permission prefixes reference
   employee/org); backend `performance`/`employee` contexts.
 - **HRMS-internal (leave/attendance → payroll).** Leave and attendance contexts feed
   payroll/compensation within HRMS; the async payroll run is event-driven.
-  Evidence: `docs/architecture/data-flow.md` §5 (payroll-processing topic).
+  Evidence: [[Data-Flows]] §5 (payroll-processing topic).
 
 ### Sub-app → specialized services
 
 - **[[Nu-Fluence]] → Elasticsearch.** Wiki/blog content indexing is driven
   asynchronously by `FluenceSearchConsumer` off `nu-aura.fluence-content`; ES is
   opt-in and degrades gracefully when disabled.
-  Evidence: `docs/architecture/backend.md` §3.3.
+  Evidence: [[Services]] §3.3.
 - **[[Nu-HRMS]] / [[Nu-Hire]] → Google Drive.** Contracts, receipts, and employee
   documents go to Drive behind a `StorageProvider` abstraction (mock fallback in dev).
-  Evidence: `docs/architecture/README.md` §3; `infrastructure/storage/`.
+  Evidence: [[System-Overview]] §3; `infrastructure/storage/`.
 - **Scheduled jobs → HRMS / Hire / Notifications.** `@Scheduled` workers
   (attendance regularization, leave accrual, contract lifecycle, email/notification
   digests, webhook retry) mutate sub-app data; ShedLock makes them multi-pod-safe.
-  Evidence: `docs/architecture/backend.md` §3.6; `docs/patterns/README.md` §6b.
+  Evidence: [[Services]] §3.6; [[Code-Patterns]] §6b.
 
 ### Platform → stateful backends
 
@@ -167,7 +167,7 @@ Every edge below is grounded in the cited source.
 - [[Nu-HRMS]] · [[Nu-Hire]] · [[Nu-Grow]] · [[Nu-Fluence]] · [[Shared-Platform]]
 - [[Data-Flows]] · [[System-Flows]] · [[Services]] · [[APIs]] · [[Schema]]
 - [[ADR-001]] · [[ADR-002]] · [[ADR-003]] · [[ADR-004]] · [[ADR-005]] · [[Architecture-Decisions]]
-- Source of truth: `docs/architecture/backend.md` §2, `docs/architecture/frontend.md` §2
+- Source of truth: [[Services]] §2, [[Routes]] §2
 
 ## Risks
 

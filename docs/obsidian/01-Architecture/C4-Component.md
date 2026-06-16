@@ -29,9 +29,9 @@ into five top-level packages. Each bounded context (e.g. `employee`, `payroll`,
 | Infrastructure | `com.nulogic.infrastructure.<ctx>` | Spring Data repositories, Kafka, Elasticsearch, WebSocket, Drive, SAML/API-key adapters | domain |
 | Common | `com.nulogic.common.*` | Config, security filters, base entities, exceptions, health, metrics | — |
 
-Counts verified 2026-06-16: `grep -rl @RestController .../api` → 179; `@Service` (application) → 225;
-`@Entity` (domain) → 304; `@Scheduled` sites → 17. Dependency direction enforced by ArchUnit
-tests under `backend/src/test/java/com/nulogic/architecture/`.
+Counts verified 2026-06-16: `grep -rl @RestController .../api` → 184; `@Service` (application) → 225;
+`@Entity` (domain) → 304; `@Scheduled` methods → 25 (15 components, 24 `@SchedulerLock`-guarded).
+Dependency direction enforced by ArchUnit tests under `backend/src/test/java/com/nulogic/architecture/`.
 
 ## Dependencies
 
@@ -44,7 +44,7 @@ every module. See [[Shared-Platform]] for the cross-cutting catalog and [[Servic
 ```mermaid
 flowchart TD
     subgraph api["com.nulogic.api — Inbound Adapters"]
-        CTRL["@RestController + DTOs<br/>(179 controllers)"]
+        CTRL["@RestController + DTOs<br/>(184 controllers)"]
     end
     subgraph application["com.nulogic.application — Use Cases"]
         SVC["@Service orchestration<br/>tx boundaries · cache (in)validation<br/>(225 services)"]

@@ -93,10 +93,10 @@ K8s startup probe tolerates a **300 s** cold JVM; graceful shutdown is 60 s.
 
 ## Scheduled jobs to watch
 
-- **25 `@Scheduled` jobs**, all **ShedLock-guarded**; global kill switch
-  **`APP_SCHEDULING_ENABLED`**. Domains: attendance/biometric, contracts, email,
-  notifications, recruitment, workflows, reports, webhooks, rate limiting, leave accrual,
-  tenant operations.
+- **25 `@Scheduled` jobs** (24 **ShedLock-guarded** + 1 intentional per-pod Redis probe);
+  global kill switch **`APP_SCHEDULING_ENABLED`**. Domains: attendance/biometric, contracts,
+  email, notifications, recruitment, workflows, reports, webhooks, rate limiting, leave
+  accrual, tenant operations. Full catalog: [[Scheduled-Jobs]].
 - **Multi-env hazard:** when beta + local share one database, enable scheduling in **exactly
   one** environment, or you get duplicate emails/accruals/webhooks.
 - **First diagnostic for "job didn't run":** payroll, accrual, and biometric jobs log lock

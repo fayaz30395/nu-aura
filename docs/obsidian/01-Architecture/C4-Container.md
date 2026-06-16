@@ -23,8 +23,8 @@ proxies REST and WebSocket to the backend.
 | Container | Tech | Talks to | Protocol |
 |-----------|------|----------|----------|
 | Frontend | Next.js 16 / React 19, Mantine, React Query, Zustand | Backend (proxy) | HTTP rewrite `/api/v1/*`, `/ws/*` |
-| Backend | Spring Boot 3.5.14 / Java 21, 179 controllers | PG, Redis, Kafka, ES, Drive | JDBC, RESP, Kafka protocol, HTTP |
-| PostgreSQL 16 | RLS, ~342 tables, Flyway V0→V294+ | Backend only | JDBC (`SET LOCAL` tenant GUC) |
+| Backend | Spring Boot 3.5.14 / Java 21, 184 controllers | PG, Redis, Kafka, ES, Drive | JDBC, RESP, Kafka protocol, HTTP |
+| PostgreSQL 16 | RLS, ~331 distinct tables, Flyway V0→V294+ | Backend only | JDBC (`SET LOCAL` tenant GUC) |
 | Redis 7 | 25 named caches, Bucket4j, ShedLock | Backend only | RESP + Lua |
 | Kafka (Confluent) | 6 topics + `.dlt` | Backend (produce + consume) | Kafka protocol |
 | Elasticsearch 8.11 | `fluence-documents` index (opt-in) | Backend only | HTTP REST |
@@ -41,7 +41,7 @@ flowchart TD
 
         BE["Backend Container<br/>Spring Boot 3.5.14 / Java 21<br/>DDD modular monolith<br/>REST /api/v1 · WebSocket /ws (STOMP)<br/>filter chain · RLS tx manager · schedulers"]
 
-        PG[("PostgreSQL 16<br/>shared schema · RLS per tenant_id<br/>Flyway-managed · ~342 tables")]
+        PG[("PostgreSQL 16<br/>shared schema · RLS per tenant_id<br/>Flyway-managed · ~331 distinct tables")]
         RD[("Redis 7<br/>tiered caches · token blacklist<br/>rate-limit buckets · edit locks · WS pub/sub")]
         KF["Kafka<br/>6 domain topics + per-topic DLT<br/>idempotent producers"]
         ES[("Elasticsearch 8.11<br/>fluence-documents index · opt-in")]

@@ -8,8 +8,8 @@ tags: [knowledge-graph, business-flow, sequence]
 > End-to-end business flows that span multiple modules. These sit one level above
 > [[Data-Flows]] (technical plumbing) and trace how work moves across the four
 > sub-apps and the shared platform. Grounded in the bounded-context catalog
-> (`docs/architecture/backend.md` §2), the request lifecycle
-> (`docs/architecture/data-flow.md`), and notification services
+> ([[Services]] §2), the request lifecycle
+> ([[Data-Flows]]), and notification services
 > (`application/notification/service/`).
 > See [[System-Overview]] · [[Module-Relationships]] · [[Data-Flows]].
 
@@ -48,7 +48,7 @@ flowchart TD
 
 Cross-module edge: this is the primary [[Nu-Hire]] → [[Nu-HRMS]] hand-off
 ([[Module-Relationships]]). Evidence: `recruitment`, `preboarding`, `onboarding`,
-`employee`, `organization`, `exit` contexts (`docs/architecture/backend.md` §2);
+`employee`, `organization`, `exit` contexts ([[Services]] §2);
 `EmployeeLifecycleEvent` / `EmployeeLifecycleConsumer` (§3.2); e-sign via `esignature`
 context; document storage via Google Drive ([[Data-Flows]] §5).
 
@@ -82,8 +82,8 @@ sequenceDiagram
 Cross-module edges: leave → workflow → attendance/payroll, all within HRMS; approval
 events fan out to notifications. Evidence: `leave`, `workflow`, `attendance`,
 `payroll` contexts; `ApprovalEvent`/`ApprovalEventConsumer` and `LeaveAccrualScheduler`
-(`docs/architecture/backend.md` §3.2, §3.6); `LEAVE_BALANCES` 5m cache
-(`docs/patterns/README.md` §1); escalation via `ApprovalEscalationJob` /
+([[Services]] §3.2, §3.6); `LEAVE_BALANCES` 5m cache
+([[Code-Patterns]] §1); escalation via `ApprovalEscalationJob` /
 `WorkflowEscalationScheduler`.
 
 ### Flow C — Performance review cycle ([[Nu-Grow]] → [[Nu-HRMS]])
@@ -102,9 +102,9 @@ flowchart TD
 
 Cross-module edge: [[Nu-Grow]] reads employee/org from [[Nu-HRMS]] and writes outcomes
 back ([[Module-Relationships]]). Evidence: `performance`, `okr`, `survey` (used for
-360), `recognition`, `engagement` contexts (`docs/architecture/backend.md` §2);
+360), `recognition`, `engagement` contexts ([[Services]] §2);
 frontend GROW permission prefixes reference `review`, `okr`, `feedback_360`
-(`docs/architecture/frontend.md` §2).
+([[Routes]] §2).
 
 ### Flow D — Notification fan-out (platform-wide)
 
@@ -128,8 +128,8 @@ Cross-module edge: every sub-app feeds the same notification spine
 `EmailNotificationService`, `SlackNotificationService`, `SmsNotificationService`,
 `WebSocketNotificationService`, `EmailSchedulerService`, `ScheduledNotificationService`
 (`application/notification/service/`); `NotificationEvent`/`NotificationEventConsumer`
-and `RedisWebSocketRelay` (`docs/architecture/backend.md` §3.2, §3.7);
-`UNREAD_COUNT_BY_USER` 30s cache (`docs/patterns/README.md` §1).
+and `RedisWebSocketRelay` ([[Services]] §3.2, §3.7);
+`UNREAD_COUNT_BY_USER` 30s cache ([[Code-Patterns]] §1).
 
 ## Related Links
 
@@ -138,7 +138,7 @@ and `RedisWebSocketRelay` (`docs/architecture/backend.md` §3.2, §3.7);
 - [[Module-Relationships]] · [[Data-Flows]] · [[Services]] · [[APIs]] · [[Pages]] · [[Routes]]
 - [[Roles]] · [[Permissions]] · [[RBAC-Matrix]]
 - [[ADR-001]] · [[ADR-002]] · [[ADR-003]] · [[ADR-005]] · [[Architecture-Decisions]]
-- Source of truth: `docs/architecture/backend.md` §2–3, `docs/architecture/data-flow.md`
+- Source of truth: [[Services]] §2–3, [[Data-Flows]]
 
 ## Risks
 

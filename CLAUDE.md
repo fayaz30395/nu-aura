@@ -16,33 +16,38 @@
 Project knowledge is indexed in three places. **Consult them at task start**, not after
 mistakes:
 
-`docs/` was regenerated from the codebase (evidence-based, current-state). Start at
-`docs/README.md` (GitHub index) or `docs/Home.md` (Obsidian map of content).
+All project docs live in ONE evidence-based Obsidian knowledge vault at `docs/obsidian/`
+(numbered sections 00–12). Start at `docs/obsidian/00-Home.md` (vault map of content) or
+`docs/README.md` (GitHub-readable index). Open the repo root in Obsidian to navigate.
 
 | Need                                              | Source of truth                                       |
 |---------------------------------------------------|-------------------------------------------------------|
-| Doc map / entry point                             | `docs/README.md` · `docs/Home.md`                     |
-| System architecture overview                      | `docs/architecture/README.md`                         |
-| Backend architecture (DDD layers, modules, infra) | `docs/architecture/backend.md`                        |
-| Frontend architecture (App Router, state, RBAC)   | `docs/architecture/frontend.md`                       |
-| Request lifecycle, auth flow, multi-tenancy/RLS   | `docs/architecture/data-flow.md`                      |
-| REST API reference (endpoints by domain)          | `docs/reference/api.md`                               |
-| Database schema, tables, RLS model                | `docs/reference/database.md`                          |
-| Flyway migration index                            | `docs/reference/migrations.md`                        |
-| Reusable code patterns (Redis, RLS, Kafka, etc.)  | `docs/patterns/README.md`                             |
-| Local dev setup, build, test, env, ports          | `docs/setup/README.md`                                |
-| Per-sub-app deep dives (HRMS/Hire/Grow/Fluence)   | `docs/apps/`                                          |
+| Doc map / entry point                             | `docs/obsidian/00-Home.md` · `docs/README.md`         |
+| System architecture + C4 diagrams                 | `docs/obsidian/01-Architecture/`                      |
+| Reusable code patterns (Redis, RLS, Kafka, etc.)  | `docs/obsidian/01-Architecture/Code-Patterns.md`      |
+| Architecture decisions (ADRs)                     | `docs/obsidian/11-Decisions/` · `01-Architecture/Architecture-Decisions.md` |
+| Per-sub-app deep dives (HRMS/Hire/Grow/Fluence)   | `docs/obsidian/02-Modules/`                           |
+| Frontend (App Router, components, pages, routes)  | `docs/obsidian/03-Frontend/`                          |
+| Backend (REST APIs, services, middleware)         | `docs/obsidian/04-Backend/`                           |
+| RBAC (roles, permissions, matrix)                 | `docs/obsidian/05-RBAC/`                              |
+| Database schema, ERD, Flyway migrations           | `docs/obsidian/06-Database/`                          |
+| DevOps (CI/CD, deployment, local setup)           | `docs/obsidian/07-DevOps/`                            |
+| Security baseline / audit                         | `docs/obsidian/08-Security/`                          |
+| Testing (QA strategy, coverage)                   | `docs/obsidian/09-Testing/`                           |
+| Operational runbooks (incident, prod support)     | `docs/obsidian/10-Runbooks/`                          |
+| Request/data flows, module relationships          | `docs/obsidian/12-Knowledge-Graph/`                   |
 | Evolving project state                            | `MEMORY.md`                                           |
+| Open docs/KB tasks                                | `docs/pendings.md`                                    |
 
-**Routing rule:** before designing anything, read the relevant `docs/architecture/` doc for
-how the area works today. Before implementing anything, search `docs/patterns/README.md` for
-an existing pattern. Before touching a security-sensitive path, read
-`docs/architecture/data-flow.md` (auth + RLS tenancy model) and the RLS migrations.
+**Routing rule:** before designing anything, read the relevant `docs/obsidian/01-Architecture/`
+note (and `11-Decisions/` for prior ADRs) for how the area works today. Before implementing,
+check `docs/obsidian/01-Architecture/Code-Patterns.md` for an existing pattern. Before touching
+a security-sensitive path, read `docs/obsidian/08-Security/` and the RLS flow in
+`docs/obsidian/12-Knowledge-Graph/`.
 
-> **Note:** prior ADRs, security baseline, audit reports, runbooks, and `docs/swarm/` YAMLs
-> were removed in the docs reset and live only in git history. The RuFlo `docs/swarm/` →
-> `.claude-flow/` sync (`./scripts/ruflo-sync.sh`) no longer has a source until those YAMLs
-> are restored.
+> **Note:** the legacy `docs/swarm/` YAMLs (DDD domains + RuFlo registry) were removed in the
+> docs reset, so `./scripts/ruflo-sync.sh` (`docs/swarm/` → `.claude-flow/`) currently has no
+> source. Restore them from git history if you use the RuFlo swarm runtime, or retire the sync.
 
 ## Agent Comms (SendMessage-First Coordination)
 

@@ -7,8 +7,8 @@ tags: [database, schema, postgresql, rls, multi-tenancy, flyway, nu-aura]
 
 > Evidence-based, current-state. Verified against
 > `backend/src/main/resources/db/migration/` (Flyway `V0`–`V294`),
-> `docs/reference/database.md`, `docs/reference/migrations.md`, and
-> `docs/architecture/data-flow.md`. Sampled real `CREATE TABLE` statements from
+> [[Schema]], [[Migrations]], and
+> [[Data-Flows]]. Sampled real `CREATE TABLE` statements from
 > `V0__init.sql`. See [[ERD]] for the core entity-relationship diagram.
 
 ## Purpose
@@ -43,8 +43,11 @@ governed by the controls in [[Security-Audit]].
 ## Dependencies
 
 - **Spring Data JPA / Hibernate 6.x** — entity mapping; `BaseEntity` and
-  `TenantAware` superclasses inject the common audit + tenancy columns.
-- **Flyway** — applies `V0`–`V294` in order at boot; see [[migrations]].
+  `TenantAware` superclasses inject the common audit + tenancy columns. **304
+  `@Entity` classes** across 65 domain packages, **204 of them tenant-scoped**
+  (extend `TenantAware`); the rest (e.g. `tenants`, lookup/join tables) extend
+  `BaseEntity` directly.
+- **Flyway** — applies `V0`–`V294` in order at boot; see [[Migrations]].
 - **`pgcrypto`** extension — `gen_random_uuid()` (from `V0`).
 - **`btree_gist`** extension — required by the leave-overlap `EXCLUDE` constraint
   (`V294`).
@@ -89,6 +92,44 @@ Note: `tenants` itself carries a **nullable** `tenant_id`, and `permissions`
 holds global catalog rows (nullable `tenant_id`) — RLS allows global rows via
 `V263`.
 
+### Mapped superclasses (`BaseEntity` / `TenantAware`)
+
+These columns are not hand-written per table; they descend from two
+`@MappedSuperclass` types in
+`backend/src/main/java/com/nulogic/common/entity/`.
+
+**`BaseEntity`** (`BaseEntity.java`) — identity, auditing, optimistic locking,
+soft delete for **every** persistent type:
+
+| Column | Java field | Notes |
+|--------|-----------|-------|
+| `id` | `UUID id` | `@GeneratedValue(strategy = UUID)`, `updatable=false` |
+| `created_at` | `createdAt` | `@CreatedDate`, `updatable=false` |
+| `updated_at` | `updatedAt` | `@LastModifiedDate` |
+| `created_by` | `createdBy` | `@CreatedBy` (UUID), `updatable=false` |
+| `updated_by` | `lastModifiedBy` | `@LastModifiedBy` (UUID) |
+| `version` | `version` (Long) | `@Version` optimistic lock |
+| `is_deleted` | `isDeleted` | `NOT NULL DEFAULT FALSE`; soft-delete flag |
+| `deleted_at` | `deletedAt` | timestamp set by `softDelete()` |
+
+Auditing is wired via `@EntityListeners(AuditingEntityListener.class)`.
+
+**`TenantAware`** (`TenantAware.java`) — extends `BaseEntity` and adds the
+tenancy discriminator:
+
+```java
+@Column(nullable = false, updatable = false)
+private UUID tenantId;
+```
+
+`@EntityListeners(TenantEntityListener.class)` stamps `tenant_id` on insert. The
+204 entities that extend `TenantAware` are the tenant-scoped tables.
+
+**Soft delete** is enforced with Hibernate 6's `@SQLRestriction("is_deleted =
+false")` (replacing the deprecated `@Where`), so every `SELECT` is silently
+filtered to non-deleted rows. Verified on `Employee`, `Department`, `PayrollRun`,
+`EmployeePayrollRecord`, `LeaveRequest`.
+
 ## Schema by domain
 
 The ~65 domain packages under `com/nulogic/domain/` map to table clusters.
@@ -131,22 +172,39 @@ Representative groups (counts are table-name approximations, not exhaustive):
 
 ## Multi-tenant RLS model
 
-RLS is the engine-enforced isolation boundary. Evolution (see [[migrations]]):
+RLS is the engine-enforced isolation boundary. Evolution (see [[Migrations]]):
 
 | Migration | What it did |
 |-----------|-------------|
-| `V0__init.sql` | Baseline; some tables had RLS enabled with **no** policies |
-| `V24`, `V37`, `V38` | Early RLS policies across core HR tables |
-| `V81` | Enabled RLS on tables missed earlier |
+| `V0__init.sql` | Baseline; some tables had RLS enabled with **no** policies (deny-by-default lockout) |
+| `V24__fix_rls_policies.sql` | Fixed two defects: (A) 15 Fluence/Knowledge tables had `ENABLE ROW LEVEL SECURITY` with zero policies → locked out; (B) contract policies referenced a GUC the app never set. Both replaced with **permissive** `USING(true)` policies, deferring isolation to the app layer |
+| `V36`–`V41`, `V65`, `V81`, `V90` | Per-domain RESTRICTIVE `<table>_tenant_rls` policies with a **graceful `OR NULL` fallback** (passed all rows when the GUC was unset) |
 | `V177__strict_tenant_rls_policies.sql` | Dropped the leaky `OR NULL`/empty escape → strict `tenant_id = current_setting('app.current_tenant_id', true)::uuid`; unset GUC yields `NULL` → zero rows. Introduced **`nu_migration`** role (`BYPASSRLS`) so Flyway/operators run DDL across tenants; runtime role must **not** bypass RLS |
-| `V254__enforce_runtime_rls_fail_closed.sql` | Reasserts **`NOBYPASSRLS`** on runtime role **`nu_app_rls`**; overlays a universal restrictive `rls_ctx_required_<hash>` policy on **every** public table with a UUID `tenant_id` (PostgreSQL ANDs all restrictive policies). SuperAdmin bypass stays application-layer only — **no DB role exception** |
+| `V254__enforce_runtime_rls_fail_closed.sql` | Reasserts **`NOBYPASSRLS`** on runtime role **`nu_app_rls`**; overlays a universal restrictive `rls_ctx_required_<hash>` policy on **every** public table with a UUID `tenant_id` (PostgreSQL ANDs all restrictive policies, so this overlays older leaky ones); applies `SECURITY INVOKER` on views. SuperAdmin bypass stays application-layer only — **no DB role exception** |
 | `V255`, `V262` | Re-enforce RLS on late-added tenant tables |
 | `V263` | Allow global catalog rows (nullable `tenant_id`) under RLS |
 | `V269` | Allow tenant sequence allocators under RLS |
 
+Policy expression patterns now in force:
+
+```sql
+-- Strict tenant match (V177)
+USING (tenant_id = current_setting('app.current_tenant_id', true)::uuid)
+
+-- Restrictive context-required overlay (V254): GUC must be non-empty AND match
+USING (
+  NULLIF(current_setting('app.current_tenant_id', true), '') IS NOT NULL
+  AND tenant_id = current_setting('app.current_tenant_id', true)::uuid
+)
+```
+
 The **`nu_app_rls`** runtime role is the keystone: it is `NOBYPASSRLS`, so an
 unset/empty `app.current_tenant_id` GUC produces a `NULL` comparison and zero
-visible rows — fail-closed by construction. See [[Roles]], [[Permissions]], and
+visible rows — fail-closed by construction. The application layer is the
+*primary* guard: `TenantContext` (a ThreadLocal `UUID`) is populated by
+`TenantFilter` from the `X-Tenant-ID` header / JWT claim, every repository filters
+by `tenant_id`, and `DataScopeService` adds per-user data-scope rules. RLS is
+defence-in-depth beneath that. See [[Roles]], [[Permissions]], and
 [[RBAC-Matrix]] for the *application-layer* authorization model that sits above
 this DB-level tenant boundary.
 
@@ -154,7 +212,7 @@ this DB-level tenant boundary.
 
 - **Versioning:** `V<n>__<slug>.sql`, applied in order from `V0__init.sql`
   (~12,742-line baseline) through `V294`. Numeric gaps are expected
-  (skipped/rolled-back versions). The migration index lives in [[migrations]].
+  (skipped/rolled-back versions). The migration index lives in [[Migrations]].
 - **Roles:** Flyway/DDL runs as **`nu_migration`** (`BYPASSRLS`); the runtime
   application connects as **`nu_app_rls`** (`NOBYPASSRLS`). These must remain
   separate — granting the runtime role `BYPASSRLS` would dissolve tenant
@@ -163,10 +221,24 @@ this DB-level tenant boundary.
 - **Checksum risk:** a large fraction of migrations were edited after
   introduction; treat the chain as append-only going forward.
 
+## Key source files
+
+| Concern | Path |
+|---------|------|
+| Audit/identity base | `backend/src/main/java/com/nulogic/common/entity/BaseEntity.java` |
+| Tenant base | `backend/src/main/java/com/nulogic/common/entity/TenantAware.java` |
+| Employee / Department | `backend/src/main/java/com/nulogic/domain/employee/{Employee,Department}.java` |
+| Payroll | `backend/src/main/java/com/nulogic/domain/payroll/{PayrollRun,EmployeePayrollRecord}.java` |
+| Leave | `backend/src/main/java/com/nulogic/domain/leave/LeaveRequest.java` |
+| RLS startup canary | `backend/src/main/java/com/nulogic/common/security/RlsStartupProbe.java` |
+| Schema baseline | `backend/src/main/resources/db/migration/V0__init.sql` |
+| RLS hardening | `backend/src/main/resources/db/migration/{V24,V177,V254}__*.sql` |
+| Leave overlap constraint | `backend/src/main/resources/db/migration/V294__leave_overlap_exclusion_constraint.sql` |
+
 ## Related Links
 
 - [[ERD]] — core entity-relationship diagram + relationship narrative
-- [[migrations]] — Flyway migration index (`V0`–`V294`)
+- [[Migrations]] — Flyway migration index (`V0`–`V294`)
 - [[Data-Flows]] — request lifecycle, auth flow, RLS tenant-context propagation
 - [[Services]] · [[APIs]] · [[Middleware]] — layers that read/write this schema
 - [[Roles]] · [[Permissions]] · [[RBAC-Matrix]] — application-layer authz

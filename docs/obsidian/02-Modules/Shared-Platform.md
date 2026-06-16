@@ -8,7 +8,7 @@ tags: [module, shared-platform]
 > The cross-cutting layer every sub-app stands on: auth, RBAC, multi-tenancy/RLS,
 > notifications, integrations, feature flags, file storage, audit, and admin. Consumed by
 > [[Nu-HRMS]], [[Nu-Hire]], [[Nu-Grow]], [[Nu-Fluence]]. Grounding:
-> `docs/architecture/README.md`, `docs/architecture/backend.md`.
+> [[System-Overview]], [[Services]].
 
 ## Purpose
 
@@ -111,7 +111,7 @@ regression here (auth, RLS, rate limiting) affects all four sub-apps simultaneou
 - [[System-Overview]] · [[C4-Container]] · [[Module-Relationships]] · [[Data-Flows]] · [[System-Flows]]
 - Consumers: [[Nu-HRMS]] · [[Nu-Hire]] · [[Nu-Grow]] · [[Nu-Fluence]]
 - Detail: [[Middleware]] · [[Roles]] · [[Permissions]] · [[RBAC-Matrix]] · [[Schema]] · [[ERD]] · [[APIs]] · [[Services]] · [[Pages]] · [[Routes]] · [[Components]] · [[Security-Audit]]
-- Grounding: `docs/architecture/README.md`, `docs/architecture/backend.md`
+- Grounding: [[System-Overview]], [[Services]]
 
 ## Risks
 
@@ -134,7 +134,8 @@ regression here (auth, RLS, rate limiting) affects all four sub-apps simultaneou
 - Dev ports: frontend `:3000`, backend `:8080`. Single origin — Next proxies `/api/v1/*` and
   `/ws/*` to `BACKEND_ORIGIN` (`frontend/next.config.js`).
 - 25 `@Scheduled` jobs (attendance, contracts, email, notifications, recruitment, leave
-  accrual, rate-limit cleanup) guarded by ShedLock for multi-pod safety.
+  accrual, rate-limit cleanup) — 24 ShedLock-guarded for multi-pod safety + 1 intentional
+  per-pod Redis probe. See [[Scheduled-Jobs]].
 - Frontend API hooks are Orval-generated from the backend SpringDoc OpenAPI spec — keep the
   committed spec snapshot in sync.
 - Tenant registration via `POST /api/v1/tenants/register`; feature flags toggled at

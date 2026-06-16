@@ -68,7 +68,7 @@ code** (`SecurityConfig` lines 263–270, plus the constructor comment):
 > against the same anchor inserts the first, then pushes the second closer to the anchor,
 > the **net order is ApiKey → JWT** (per the `SecurityConfig` comment, lines 260–269).
 > This page follows the code; note the prose mermaid in
-> `docs/architecture/backend.md` shows JWT before ApiKey — the code ordering above is
+> [[Services]] shows JWT before ApiKey — the code ordering above is
 > authoritative.
 
 ### Method-level authorization (after the chain, in the controller/service)
@@ -85,11 +85,33 @@ code** (`SecurityConfig` lines 263–270, plus the constructor comment):
 
 ### RLS / tenancy (post-tenant-filter, at the transaction)
 
-- `TenantRlsTransactionManager` (`common/config/`) issues `SET LOCAL
-  app.current_tenant_id = '<uuid>'` per transaction (auto-resets on commit/rollback — no
-  leak across pooled connections); `TenantAwareDataSourceConfig`, `TenantRlsSessionSync`
-  for non-JPA paths; `RlsStartupProbe` fails boot if RLS regresses. See [[Data-Flows]],
-  [[Security-Audit]].
+Two-layer isolation. **Layer 1 (application):** `TenantFilter` extracts the tenant and
+binds it to `security/TenantContext.java` (ThreadLocal); repository queries and the cache
+key generator are tenant-scoped. **Layer 2 (PostgreSQL RLS, defence-in-depth):**
+`TenantRlsTransactionManager` (`common/config/`, a `JpaTransactionManager` registered as
+primary in `JpaConfig`) issues `SET LOCAL app.current_tenant_id = '<uuid>'` after each
+transaction begins; `SET LOCAL` auto-resets on commit/rollback so no value leaks across
+pooled connections. When no tenant is bound, the setting is explicitly reset.
+`TenantAwareDataSourceConfig` covers non-JPA paths, `TenantRlsSessionSync` keeps the GUC in
+sync, and `security/RlsStartupProbe.java` boots a canary that fails startup if RLS
+regresses. Read-replica routing is handled by `RoutingDataSourceConfig` /
+`ReplicaAwareTransactionManager` when a replica URL is configured. See [[Data-Flows]],
+[[Schema]], [[Security-Audit]].
+
+### Authentication mechanisms (cited classes)
+
+- **JWT:** `security/JwtAuthenticationFilter.java` + `JwtTokenProvider.java`; secret
+  strength enforced at startup by `JwtSecretValidator.java`. The token carries **roles
+  only** — permissions are loaded from DB/Redis (see [[Permissions]], [[Services]]).
+- **Passwords:** `BCryptPasswordEncoder(12)` (M-8); the cost is read from each stored hash
+  so older cost-10 hashes still verify. Policy in `common/config/PasswordPolicyConfig.java`
+  + `security/AccountLockoutService.java`.
+- **API key:** `security/ApiKeyAuthenticationFilter.java` (+ `ApiKeyService`, encrypted via
+  `CryptoConverter`/`EncryptionService`) for `/api/v1/external/**`.
+- **SAML 2.0 SSO:** `SamlSecurityConfig`, `DynamicSamlRelyingPartyRegistrationRepository`,
+  `SamlAuthenticationSuccessHandler`; runtime flows at `/saml2/**`, `/login/saml2/**`.
+- **Token revocation:** `TokenBlacklistService` (Redis + in-memory fallback — see
+  [[Services]]).
 
 ### Exception handling (terminal)
 

@@ -1,18 +1,21 @@
 {
   "userIgnoreFilters": [
     "node_modules",
-    "modules/",
-    "test-results/",
-    "backend/target/",
-    "build/",
-    "frontend/",
-    "backend/",
-    "infra/",
-    "scripts/",
-    "tools/",
-    "qa-reports/",
-    "docs-v2/",
-    "design-import/",
-    "design-import-2/"
+    "frontend",
+    "backend",
+    "build",
+    "target",
+    "infra",
+    "modules",
+    "scripts",
+    "tools",
+    "test-results",
+    "qa-reports",
+    "design-import",
+    "design-import-2",
+    "docs-v2",
+    ".github",
+    ".claude",
+    ".claude-flow"
   ]
 }

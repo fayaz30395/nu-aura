@@ -51,6 +51,12 @@ counts, run for this doc):
 
 ## Dependencies
 
+Versions from `frontend/package.json`: Next.js (App Router) `^16.2.7`, React
+`19.2.7`, TypeScript strict, Mantine `@mantine/core ^9.3.0`, Tailwind `3.4.19`,
+TanStack React Query `^5.100.14`, Zustand `^5.0.14`, Axios `^1.15.2`, Orval
+`^7.21.0`, React Hook Form `^7.49.2` + Zod `3.23.8`, Framer Motion `^12.40.0`,
+`@react-oauth/google ^0.12.2`, STOMP over SockJS.
+
 - **UI**: Mantine 9 (`@mantine/core`, `@mantine/notifications`) + Tailwind 3.4.
 - **Server state**: TanStack Query v5 (`lib/queryClient.ts` singleton).
 - **Client state**: Zustand 5 (`lib/hooks/useAuth.ts`, `lib/stores/*`).
@@ -101,7 +107,9 @@ graph LR
   Queries --> RQ["TanStack Query (singleton)"]
   RQ --> Orval["lib/generated/api/*"]
   Orval --> Mutator["orval-mutator → apiClient (Axios)"]
-  Mutator --> Backend["/api/v1 (proxy → backend)"]
+  Mutator -->|"withCredentials · X-Tenant-ID · X-XSRF-TOKEN"| Backend["/api/v1 (proxy → backend)"]
+  Mutator -.->|"401 refresh mutex → /auth/refresh"| Backend
+  Backend -.->|httpOnly cookies| Mutator
   WS["WebSocketContext (STOMP/SockJS)"] --> NotificationDropdown
   Stores["Zustand: useAuth · useUiStore · useThemeStore · useNotificationStore"] --> Shell
 ```
@@ -126,11 +134,65 @@ graph LR
 (**226**) are thin domain wrappers, not a separate data layer. `queryClient.clear()`
 on logout wipes cached server state. See [[APIs]] · [[Services]] · [[Data-Flows]].
 
+Defaults (from `lib/queryClient.ts`): `staleTime` 5 min, `gcTime` 10 min,
+`retry: 1`, `refetchOnWindowFocus: false` for queries; **`retry: false` for
+mutations** (writes are not safely repeatable — a timed-out POST may still commit
+server-side). A `MutationCache.onError` routes all mutation errors through
+`createQueryErrorHandler()`.
+
+### Data layer — Orval + Axios
+
+The three-layer data path (`lib/hooks/queries/*` → Orval-generated hooks →
+`apiClient`) is the single contract surface against the backend:
+
+- **Orval codegen** (`orval.config.ts`, Orval `^7.21.0`): input is
+  `API_DOCS_URL` env or `http://localhost:8080/v3/api-docs` (CI uses the
+  committed `frontend/openapi-snapshot.json`); output `lib/generated/api/`
+  (**gitignored**, regenerated via `npm run api:generate`), `mode: 'tags-split'`
+  (one file per OpenAPI tag), `client: 'react-query'`, `httpClient: 'axios'`.
+- **Custom mutator** (`lib/api/orval-mutator.ts → orvalMutator()`): every
+  generated call delegates to the hand-rolled `apiClient`, so cookie auth, CSRF,
+  the 401 refresh mutex, tenant headers, and `/api/v1` normalization are
+  preserved while generated code stays thin and type-safe.
+- **Axios singleton** (`lib/api/client.ts`, an `ApiClient` class):
+  `withCredentials: true` (httpOnly cookie auth — **no tokens in localStorage**).
+  Request interceptor injects `X-Tenant-ID` (from `safeStorage`) and, for
+  non-GET, `X-XSRF-TOKEN` read from the `XSRF-TOKEN` cookie (double-submit CSRF);
+  GET timeout 30 s, writes 120 s. Response 401 interceptor uses a **shared
+  refresh mutex** (`refreshPromise` via `getSharedRefreshPromise` /
+  `setSharedRefreshPromise`) so concurrent 401s and `useAuth.restoreSession()`
+  share one `/auth/refresh` call (SEC-F06 / P0-SESSION-FIX), then retries the
+  original request; on refresh failure a debounced hard redirect to
+  `/auth/login?reason=expired` fires (auto-resets after 5 s).
+  `getPermissive<T>()` treats 403/404 as non-errors (`validateStatus: s < 500`)
+  for endpoints a role may legitimately lack.
+
 ### Realtime — context
 
 `lib/contexts/WebSocketContext.tsx`: STOMP-over-SockJS keyed on
 `isAuthenticated`/`user`; exposes `notifications`, `unreadCount`, `markAsRead`,
 and approval-task callbacks consumed by `NotificationDropdown`.
+
+## `lib/` layout
+
+| Dir | Role |
+|-----|------|
+| `lib/api/` | Axios `client.ts`, `orval-mutator.ts`, `public-client.ts`, hand-written endpoint modules (`auth.ts`, `mfa.ts`, `roles.ts`, `users.ts`) |
+| `lib/generated/api/` | Orval output (gitignored) |
+| `lib/hooks/` + `lib/hooks/queries/` | auth/permission/UI hooks + per-domain query hooks (93) |
+| `lib/stores/` | Zustand UI/theme/notification stores |
+| `lib/services/` | thin domain service wrappers |
+| `lib/config/` | `env.ts` (Zod-validated), `routes.ts`, `apps.ts`, `index.ts` |
+| `lib/contexts/` | `WebSocketContext.tsx` |
+| `lib/theme/` | `theme-script.ts` FOUC prevention; CSS-var fonts |
+| `lib/types/` | hand-written domain types |
+| `lib/utils/` | `error-handler.ts`, `logger.ts`, `safeStorage.ts`, `googleToken.ts`, formatters |
+| `queryClient.ts` | React Query singleton |
+
+`lib/config/env.ts` validates env vars with Zod (`NEXT_PUBLIC_API_URL` required
+and URL-shaped; `NEXT_PUBLIC_GOOGLE_CLIENT_ID` optional; loopback/placeholder URL
+detection helpers). The `/api/v1` rewrite + CSP nonce are emitted by
+`frontend/proxy.ts` ([[Routes]], [[Pages]]).
 
 ## Provider stack
 

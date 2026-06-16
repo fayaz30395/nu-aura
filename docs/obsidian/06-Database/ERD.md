@@ -31,7 +31,7 @@ hub of the HR domain; `user` is the auth/identity hub linked 1:1 to `employee`;
 ## Dependencies
 
 - [[Schema]] — DB technology, multi-tenant RLS, indexing, migration strategy.
-- [[migrations]] — Flyway index; baseline `V0__init.sql` defines all core tables.
+- [[Migrations]] — Flyway index; baseline `V0__init.sql` defines all core tables.
 - [[Roles]] · [[Permissions]] · [[RBAC-Matrix]] — the authz model built on
   `roles`, `permissions`, `role_permissions`, `user_roles`.
 - [[Data-Flows]] — how `tenant_id` GUC is set per request to make RLS bind.
@@ -160,6 +160,48 @@ erDiagram
     }
 ```
 
+### Payroll cluster
+
+A second hub worth modelling explicitly: payroll runs and per-employee records.
+Verified against `PayrollRun.java` and `EmployeePayrollRecord.java`.
+`EmployeePayrollRecord` has a real `@ManyToOne` (LAZY) to `GlobalPayrollRun`
+(`payroll_run_id`, NOT NULL); employee/department links are **denormalized**
+(UUID + name columns) for run-time immutability. Amounts are stored in both local
+and base currency with the captured `exchange_rate`.
+
+```mermaid
+erDiagram
+    TENANT ||--o{ PAYROLL_RUN : "tenant_id"
+    TENANT ||--o{ GLOBAL_PAYROLL_RUN : "tenant_id"
+    GLOBAL_PAYROLL_RUN ||--o{ EMPLOYEE_PAYROLL_RECORD : "payroll_run_id (ManyToOne)"
+    EMPLOYEE ..o{ EMPLOYEE_PAYROLL_RECORD : "employee_id (denormalized)"
+
+    PAYROLL_RUN {
+        uuid id PK
+        uuid tenant_id FK
+        int payPeriodMonth "unique w/ year+tenant"
+        int payPeriodYear
+        date payrollDate
+        enum status "DRAFT->PROCESSING->PROCESSED->APPROVED->LOCKED"
+    }
+    EMPLOYEE_PAYROLL_RECORD {
+        uuid id PK
+        uuid tenant_id FK
+        uuid payroll_run_id FK
+        uuid employee_id
+        string local_currency
+        decimal gross_pay_local
+        decimal net_pay_local
+        decimal exchange_rate
+        decimal net_pay_base
+        enum status "PENDING..PAID"
+    }
+```
+
+`PayrollRun` enforces a state machine in the entity (`markProcessing` →
+`process` → `approve` → `lock`, with `markFailed` rollback), guarding against
+duplicate submissions. See [[Schema]] for the payroll domain table cluster.
+
 ## Relationship / data-flow narrative
 
 - **`tenant` is the root of every scope.** Each of the other eight entities
@@ -178,8 +220,12 @@ erDiagram
   [[Permissions]], and [[RBAC-Matrix]] — distinct from the DB-level tenant
   boundary enforced by RLS.
 - **`department` and `employee` are self-referential.** `department.parent_department_id`
-  builds the org tree; `employee.manager_id` builds the reporting line. Both are
-  soft FK `UUID` columns rather than mapped associations.
+  builds the org tree; `employee.manager_id` builds the reporting line;
+  `organization_unit.parent_id` builds a separate org-unit hierarchy. All are
+  soft FK `UUID` columns rather than mapped associations. `employee` additionally
+  carries **matrix-reporting** dotted-line managers
+  (`dotted_line_manager1_id` / `dotted_line_manager2_id`, each with its own
+  index) for informational secondary reporting lines.
 - **`employee` is the HR hub.** Attendance, leave, and expenses all hang off
   `employee_id`. `attendance_record` is keyed `(employee_id, attendance_date)`;
   `leave_request` references both `employee_id` and `leave_type_id` and carries a
@@ -195,7 +241,7 @@ erDiagram
 ## Related Links
 
 - [[Schema]] — full schema, RLS model, domain table groups, indexes
-- [[migrations]] — Flyway migration index (`V0`–`V294`)
+- [[Migrations]] — Flyway migration index (`V0`–`V294`)
 - [[Data-Flows]] — request lifecycle, auth flow, tenant-context → RLS binding
 - [[Roles]] · [[Permissions]] · [[RBAC-Matrix]] — authorization model
 - [[Services]] · [[APIs]] · [[Middleware]] — layers consuming this schema
@@ -224,7 +270,7 @@ erDiagram
 - To verify a relationship before coding, grep the baseline:
   `grep -A40 "CREATE TABLE <name>" backend/src/main/resources/db/migration/V0__init.sql`.
   Tables added after `V0` live in their own `V<n>__*.sql` file — find them via
-  [[migrations]].
+  [[Migrations]].
 - Composite uniqueness is always tenant-scoped (e.g. `employee_code` is unique
   *per tenant*, not globally) — never assume a natural key is globally unique.
 - `currency`/`amount` on `expense_claim` (and payroll records) are stored in both

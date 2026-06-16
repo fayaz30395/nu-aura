@@ -148,7 +148,7 @@ flowchart TD
   gotcha (`MEMORY.md`); CI provides the authoritative run.
 - **RLS NOBYPASSRLS-live test is CI-only / static.** `RlsTenantGucScopeTest` is a source
   scan; a live NOBYPASSRLS run still needs the `nu_app_rls` role ([[Security-Audit]],
-  [[DEPLOY_READINESS]]).
+  [DEPLOY_READINESS_REPORT](../../DEPLOY_READINESS_REPORT.md)).
 - **Unguarded permission boundaries:** FINANCE_ADMIN (QA-2) seeding gap leaves a payroll
   permission boundary untested.
 

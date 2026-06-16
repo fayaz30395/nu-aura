@@ -133,14 +133,41 @@ assistive tech see a mounted page); `isAdmin` bypasses; `PageDeniedFallback`
 gives a visible page-level denial (inline gates default to `null` to hide
 silently). `FeatureGate` gates by feature flag (`useFeatureFlag`).
 
-`usePermissions()` (`lib/hooks/usePermissions.ts`):
+`usePermissions()` (`lib/hooks/usePermissions.ts`) — permissions and roles
+originate from the login / `/auth/me` response (stored as `Role[]` with nested
+permissions on the Zustand `user`), mirroring the backend permission model:
+
+- `Permissions` constant holds `MODULE:ACTION` codes (e.g. `EMPLOYEE:READ`,
+  `PAYROLL:APPROVE`) plus field-level codes (e.g. `FIELD:EMPLOYEE:BANK:VIEW`)
+  matching backend `Permission.java` / `FieldPermission`. `Roles` includes
+  `SUPER_ADMIN`, `TENANT_ADMIN`, and HR/finance/manager roles.
 - Normalizes three permission shapes: canonical `MODULE:ACTION`, legacy dot
-  `employee.read`, and app-prefixed `APP:MODULE:ACTION`.
+  `employee.read` (→ `EMPLOYEE:READ`), and app-prefixed `APP:MODULE:ACTION`
+  (→ `MODULE:ACTION`).
 - `MODULE:MANAGE` implies all actions in that module.
 - `isAdmin` bypass **only** for `SUPER_ADMIN` / `SYSTEM:ADMIN`-equivalent —
   **`TENANT_ADMIN` is additive** (mirrors backend `SecurityContext.isSuperAdmin()`).
 - `isReady` stays `false` during the post-refresh window (`isAuthenticated &&
   !user`) so gates show loading instead of false-denying.
+
+### Sub-app gating
+
+`useActiveApp()` (`lib/hooks/useActiveApp.ts`) derives the active sub-app from
+`usePathname()` and exposes `hasAppAccess(code)` — matching the user's permission
+module prefixes against each app's `permissionPrefixes` (`SUPER_ADMIN`
+short-circuits) — plus `getAppEntryRoute(code)`. `AppLayout`
+(`components/layout/AppLayout.tsx`) builds the sidebar from `buildMenuSections`
+filtered by `APP_SIDEBAR_SECTIONS[appCode]`. See [[Routes]] for the
+`PLATFORM_APPS` prefix tables.
+
+### RBAC verification harness
+
+`frontend/nu-rbac.config.ts` is a standalone Playwright config that runs only
+`e2e/nu-rbac.spec.ts` against the dev server on `:3000` (no auth-setup project,
+single chromium). The spec drives a role × route catalog (`SUPER_ADMIN`,
+`TENANT_ADMIN`, `HR_ADMIN`, … `EMPLOYEE`) asserting `render` / `redirect` /
+`render_scoped` per use case, failing soft if the optional `nu-chrome-e2e`
+catalog is absent ([[Test-Coverage]]).
 
 ## Data-fetching pattern (per page)
 

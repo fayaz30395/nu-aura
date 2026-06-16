@@ -1,10 +1,10 @@
 ---
-title: "NU-AURA Reusable Code Patterns"
-tags: ["area/architecture","type/reference","layer/backend","topic/redis"]
-summary: "Comprehensive reference for seven cross-cutting backend coordination patterns: Redis caching, RLS tenant scoping, Kafka idempotency, distributed rate limiting, token blacklist, distributed locks, and ShedLock job locks."
+title: Reusable Code Patterns
+tags: [architecture, patterns, redis, multi-tenant, backend, reference]
+summary: "Reference for seven cross-cutting backend coordination patterns: Redis caching, RLS tenant scoping, Kafka idempotency, distributed rate limiting, token blacklist, distributed locks (Redis edit-lock + ShedLock job-lock)."
 ---
 
-# NU-AURA Reusable Code Patterns
+# Reusable Code Patterns
 
 Cross-cutting backend patterns that recur across the platform. Each section gives the
 **problem** it solves, the **solution** as implemented, short verified code excerpts, and
@@ -32,6 +32,10 @@ flowchart TD
     SCHED[Scheduled jobs] --> SHED[ShedLock<br/>shedlock DB table]
     SHED -.-> PG
 ```
+
+See [[Services]] for where these patterns are wired into the service layer, [[Middleware]]
+for the request-filter consumers (rate limiting, tenant context, JWT/token-blacklist), and
+[[Schema]] for the database structures the RLS and ShedLock patterns rely on.
 
 ---
 
@@ -99,7 +103,7 @@ public void invalidateLeaveTypes(UUID tenantId) { ... }
   long-lived caches per tenant on startup.
 - `backend/src/main/java/com/nulogic/common/security/SecurityService.java` and
   `application/user/service/RoleManagementService.java` — cache role/permission lookups
-  (`ROLE_PERMISSIONS`, `PERMISSIONS`).
+  (`ROLE_PERMISSIONS`, `PERMISSIONS`). See [[Permissions]] and [[Roles]].
 - `TENANT_STATUS` / `UNREAD_COUNT_BY_USER` notes in `CacheConfig` document the JWT-filter
   and notification bell-icon consumers that drove the 30s TTLs.
 
@@ -191,6 +195,10 @@ if (!visibleTables.isEmpty()) {
   guard against null-tenant operations.
 - `RlsStartupProbe` runs on every non-`test` boot (skippable only via `RLS_PROBE_SKIP` for
   local Flyway bootstrap).
+
+> The tenant-scoping request filter that populates `TenantContext` lives in [[Middleware]];
+> the RLS policies and `shedlock`/tenant tables they guard are documented in [[Schema]] and
+> [[ERD]]. Cross-tenant leak findings are tracked in [[Security-Audit]].
 
 ---
 
@@ -313,7 +321,8 @@ Configured limits (`RateLimitType` enum):
 ### Where used
 - `RateLimitingFilter` (`OncePerRequestFilter`) is the request-hot-path consumer; it uses
   `DistributedRateLimiter` as primary and its own Bucket4j map as fallback, with a scheduled
-  sweep (every 5 min) and a hard cap (`MAX_BUCKETS = 50_000`) to bound memory.
+  sweep (every 5 min) and a hard cap (`MAX_BUCKETS = 50_000`) to bound memory. See
+  [[Middleware]].
 - Per-tenant buckets via `tryConsumePerTenant(...)` for resource-scoped throttling
   (exports, webhooks, etc.).
 
@@ -375,8 +384,9 @@ only the impersonation session by its own JTI, so revoking an impersonation does
 SuperAdmin's home session (Sprint-4 M-C4).
 
 ### Where used
-Authentication / logout flow and `JwtAuthenticationFilter` (token-status checks); password
-change and account-compromise paths; SuperAdmin impersonation revocation.
+Authentication / logout flow and `JwtAuthenticationFilter` (token-status checks, see
+[[Middleware]]); password change and account-compromise paths; SuperAdmin impersonation
+revocation.
 
 ---
 
@@ -439,7 +449,7 @@ public void runAutoRegularization() { ... }
 
 **Where used:** the platform's `@Scheduled` jobs (attendance, contract lifecycle, scheduled
 notifications, webhook delivery, report execution, leave accrual). Note `usingDbTime()`
-removes reliance on synchronized pod clocks.
+removes reliance on synchronized pod clocks. The `shedlock` table is documented in [[Schema]].
 
 > **Why two mechanisms?** Edit locks are short-lived, user-facing, and tenant-scoped — Redis
 > TTL fits. Job locks must be correct even if Redis is down (they gate data-mutating cron
@@ -463,8 +473,10 @@ removes reliance on synchronized pod clocks.
 
 ## Related
 
-- [[docs/Home|Home MoC]] — vault entry point
-- [[docs/architecture/backend|Backend Architecture]] — module and component context for these patterns
-- [[docs/architecture/data-flow|Data Flow & Request Lifecycle]] — where RLS and Kafka patterns are exercised
-- [[docs/reference/database|Database Reference]] — schema underlying the RLS patterns
-- [[docs/reference/migrations|Migrations Reference]] — RLS migration history referenced by the patterns
+- [[System-Overview]] — platform-wide context for these patterns
+- [[Services]] — service layer that consumes caching, idempotency, and edit-lock patterns
+- [[Middleware]] — request filters (rate limiting, tenant context, JWT/token blacklist)
+- [[APIs]] — endpoints fronted by rate limiting and tenant scoping
+- [[Schema]] — schema underlying the RLS policies and `shedlock` table
+- [[ERD]] — tenant-owned tables guarded by RLS
+- [[Security-Audit]] — cross-tenant leak findings and RLS hardening history

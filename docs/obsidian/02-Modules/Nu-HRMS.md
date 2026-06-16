@@ -8,7 +8,8 @@ tags: [module, nu-hrms]
 > Core HR sub-app of [[System-Overview|NU-AURA]]. The default landing experience and the
 > record-of-truth for the employee lifecycle. See [[Nu-Hire]], [[Nu-Grow]], [[Nu-Fluence]]
 > for the sibling apps and [[Shared-Platform]] for the cross-cutting services every module
-> leans on. Grounding doc: `docs/apps/nu-hrms.md`.
+> leans on. Every route, controller, and endpoint cited below was read from source; paths are
+> relative to the repo root `/Users/fayaz.m/IdeaProjects/nulogic/nu-aura`.
 
 ## Purpose
 
@@ -19,7 +20,24 @@ largest of the four bundle apps and the one all employees touch daily.
 
 The sub-app boundary is **declared**, not inferred, in `frontend/lib/config/apps.ts`
 (`PLATFORM_APPS.HRMS`): flat routes (`/leave`, `/payroll`, ...) are mapped to HRMS at
-runtime by `routePrefixes`, gated by `permissionPrefixes`. Entry route is `/me/dashboard`.
+runtime by `routePrefixes`, gated by `permissionPrefixes`. Entry route is `/me/dashboard` —
+the personal self-service home.
+
+```ts
+// frontend/lib/config/apps.ts — PLATFORM_APPS.HRMS
+HRMS: {
+  code: 'HRMS', name: 'NU-HRMS', shortName: 'HRMS',
+  description: 'Core HR management',
+  entryRoute: '/me/dashboard',
+  permissionPrefixes: [ 'employee','department','leave','attendance','payroll',
+    'compensation','benefit','expense','loan','travel','asset','letter',
+    'statutory','lwf','tax','helpdesk','overtime','probation','dashboard',
+    'self_service','document','calendar','announcement','workflow',
+    'org_structure','report','analytics','settings','role','permission',
+    'integration','timesheet','project','resource','email','shift' ],
+  available: true, order: 1,
+}
+```
 
 ## Business Capability
 
@@ -37,31 +55,50 @@ runtime by `routePrefixes`, gated by `permissionPrefixes`. Entry route is `/me/d
 
 ### Key frontend routes (`frontend/app/...`)
 
+Routes were enumerated directly from the filesystem; the app→route mapping is authoritative
+per `HRMS.routePrefixes`.
+
 | Area | Routes |
 |------|--------|
-| Self-service | `/me/dashboard`, `/me/profile`, `/me/leaves`, `/me/attendance`, `/me/payslips`, `/me/documents`, `/me/assets`, `/me/skills` |
-| Attendance / shifts | `/attendance`, `/attendance/regularization`, `/attendance/comp-off`, `/attendance/shift-swap`, `/shifts`, `/time-tracking`, `/timesheets`, `/overtime` |
-| Leave | `/leave`, `/leave/apply`, `/leave/approvals`, `/leave/encashment`, `/leave/admin/carry-forward` |
-| Employees / org | `/employees`, `/employees/[id]`, `/employees/import`, `/departments` |
-| Payroll / comp | `/payroll`, `/payroll/runs/[id]`, `/payroll/salary-structures`, `/compensation`, `/benefits` |
-| Expense / loans / assets | `/expenses`, `/expenses/mileage`, `/loans`, `/assets` |
-| Statutory / tax | `/statutory`, `/statutory/filings`, `/tax/declarations`, `/lwf` |
-| Servicing | `/letters`, `/helpdesk/tickets/[id]`, `/announcements`, `/reports`, `/analytics` |
+| Self-service (`/me`) | `/me/dashboard`, `/me/profile`, `/me/leaves`, `/me/attendance`, `/me/payslips`, `/me/documents`, `/me/assets`, `/me/skills` |
+| Attendance | `/attendance`, `/attendance/my-attendance`, `/attendance/team`, `/attendance/regularization`, `/attendance/comp-off`, `/attendance/shift-swap` |
+| Shifts | `/shifts`, `/shifts/definitions`, `/shifts/patterns`, `/shifts/my-schedule`, `/shifts/swaps` |
+| Time tracking | `/time-tracking`, `/time-tracking/new`, `/time-tracking/[id]`, `/time-tracking/[id]/edit`, `/timesheets` |
+| Overtime | `/overtime` |
+| Leave | `/leave`, `/leave/apply`, `/leave/my-leaves`, `/leave/team`, `/leave/approvals`, `/leave/calendar`, `/leave/encashment`, `/leave/admin/carry-forward` |
+| Employees / org | `/employees`, `/employees/directory`, `/employees/[id]`, `/employees/[id]/edit`, `/employees/[id]/compensation`, `/employees/change-requests`, `/employees/import`, `/departments` |
+| Payroll / comp | `/payroll`, `/payroll/runs`, `/payroll/runs/[id]`, `/payroll/bulk-processing`, `/payroll/payslips`, `/payroll/components`, `/payroll/salary-structures`, `/payroll/salary-structures/create`, `/payroll/structures`, `/payroll/statutory`, `/compensation`, `/benefits` |
+| Expense / loans / assets | `/expenses`, `/expenses/[id]`, `/expenses/approvals`, `/expenses/reports`, `/expenses/mileage`, `/expenses/settings`, `/loans`, `/loans/new`, `/loans/[id]`, `/assets` |
+| Statutory / tax | `/statutory`, `/statutory/filings`, `/tax`, `/tax/declarations`, `/lwf` |
+| Servicing | `/letters`, `/letters/templates`, `/helpdesk`, `/helpdesk/tickets`, `/helpdesk/tickets/[id]`, `/helpdesk/sla`, `/helpdesk/knowledge-base`, `/announcements`, `/calendar` |
+| Cross-cutting | `/dashboard`, `/dashboards`, `/approvals`, `/reports`, `/analytics`, `/settings`, `/admin`, `/workflows`, `/import-export` |
+
+> **Excluded by design:** `app/recruitment`, `app/fluence`, `app/performance`, `app/okr`,
+> `app/training`, `app/learning`, `app/recognition`, `app/surveys`, `app/wellness`,
+> `app/onboarding`, `app/offboarding`, `app/careers`, `app/referrals` belong to the
+> **sibling** sub-apps [[Nu-Hire]] / [[Nu-Grow]] per their own `routePrefixes`.
 
 Frontend wiring is React Query hooks + `PermissionGate`; see [[Pages]], [[Routes]],
-[[Components]]. Example: `app/leave/apply/page.tsx` uses RHF+Zod (`leaveFormSchema`),
-`useActiveLeaveTypes`, `useEmployeeBalancesForYear`, `useCreateLeaveRequest`.
+[[Components]]. Representative wiring:
+
+- `app/me/dashboard/page.tsx` — composes self-service widgets (`TimeClockWidget`,
+  `LeaveBalanceWidget`, `HolidayCarousel`, presence cards) via `useSelfServiceDashboard(employeeId)`
+  plus `attendanceService`.
+- `app/leave/apply/page.tsx` — RHF + Zod (`leaveFormSchema`), gated by `PermissionGate`,
+  using `useActiveLeaveTypes`, `useEmployeeBalancesForYear`, `useCreateLeaveRequest`.
 
 ### Backend controllers / packages (`backend/src/main/java/com/nulogic/api/...`)
 
+Controllers read from `backend/src/main/java/com/nulogic/api/<domain>/controller/`.
+
 | Domain | Controllers |
 |--------|-------------|
-| `attendance` | `AttendanceController`, `MobileAttendanceController`, `CompOffController`, `BiometricDeviceController`, `HolidayController`, `OfficeLocationController` |
+| `attendance` | `AttendanceController`, `MobileAttendanceController`, `CompOffController`, `BiometricDeviceController`, `HolidayController`, `RestrictedHolidayController`, `OfficeLocationController` |
 | `timetracking` / `shift` / `overtime` | `TimeTrackingController`, `ShiftManagementController`, `ShiftSwapController`, `OverTimeManagementController` |
 | `leave` | `LeaveRequestController`, `LeaveBalanceController`, `LeaveTypeController` |
 | `payroll` | `PayrollController`, `GlobalPayrollController`, `BonusController`, `PayrollStatutoryController`, `StatutoryFilingController` |
 | `compensation` / `benefits` | `CompensationController`, `BenefitManagementController`, `BenefitEnhancedController` |
-| `expense` | `ExpenseClaimController`, `ExpenseItemController`, `ExpensePolicyController`, `MileageController`, `OcrReceiptController`, `ExpenseAdvanceController` |
+| `expense` | `ExpenseClaimController`, `ExpenseItemController`, `ExpenseCategoryController`, `ExpensePolicyController`, `ExpenseReportController`, `ExpenseAdvanceController`, `MileageController`, `MileagePolicyController`, `OcrReceiptController` |
 | `loan` / `asset` | `LoanController`, `AssetController` |
 | `employee` / `selfservice` | `EmployeeController`, `EmployeeDirectoryController`, `EmployeeImportController`, `EmployeeDocumentController`, `EmployeeSkillController`, `TalentProfileController`, `SelfServiceController` |
 | `organization` | `OrganizationController`, `DepartmentController`, `DesignationController` |
@@ -80,13 +117,48 @@ NU-HRMS consumes [[Shared-Platform]] services end to end:
 - **Multi-tenancy / RLS** — `TenantFilter` → `TenantContext` ThreadLocal → PostgreSQL RLS
   via `TenantRlsTransactionManager` (`SET LOCAL app.current_tenant_id`). See [[Middleware]],
   [[Schema]], [[Security-Audit]].
-- **Redis cache** — `leaveTypes`, `departments`, `designations`, `employees`,
-  `leaveBalances` with tiered TTLs (`CacheConfig`).
+- **Redis cache** — hot reference data `leaveTypes`, `departments`, `designations`,
+  `employees`, `leaveBalances` with tiered TTLs (`CacheConfig`).
 - **Kafka** — employee-lifecycle, approval, payroll, notification domain events.
 - **Notifications** — leave/expense/payroll approvals route through the notification service.
 - **File storage** — Google Drive for documents, receipts, generated letters.
 
-## Technical Flow — leave apply → approve → balance update
+## Key User Flows
+
+### Attendance — check-in / check-out / regularization
+
+Endpoints from `attendance/controller/AttendanceController.java`
+(`@RequestMapping("/api/v1/attendance")`): `POST /check-in`, `POST /check-out`, `GET /today`,
+`GET /my-attendance`, `POST /{id}/request-regularization`, `POST /{id}/approve-regularization`,
+`POST /{id}/reject-regularization`.
+
+```mermaid
+sequenceDiagram
+    actor Emp as Employee
+    participant FE as /me/dashboard (TimeClockWidget)
+    participant API as AttendanceController
+    participant DB as attendance_records (RLS)
+    Emp->>FE: Click "Check in"
+    FE->>API: POST /api/v1/attendance/check-in
+    API->>DB: persist time entry (tenant-scoped)
+    DB-->>API: record
+    API-->>FE: 200 + today's status
+    Note over Emp,FE: Later — missed punch
+    Emp->>FE: /attendance/regularization
+    FE->>API: POST /attendance/{id}/request-regularization
+    API-->>FE: pending approval
+    participant Mgr as Manager
+    Mgr->>API: POST /attendance/{id}/approve-regularization
+    API->>DB: update record status
+```
+
+### Leave — apply → approve → balance update
+
+Endpoints from `leave/controller/LeaveRequestController.java`
+(`@RequestMapping("/api/v1/leave-requests")`): `POST` (create), `POST /{id}/approve`,
+`POST /{id}/reject`, `POST /{id}/cancel`, `GET /employee/{employeeId}`. Balances from
+`LeaveBalanceController` (`/api/v1/leave-balances`):
+`GET /employee/{employeeId}/year/{year}`, `POST /encash`, `POST /admin/carry-forward`.
 
 ```mermaid
 sequenceDiagram
@@ -107,17 +179,79 @@ sequenceDiagram
     LR-->>Mgr: APPROVED (notification emitted)
 ```
 
+### Expense claim — submit → approve → reimburse
+
+Endpoints from `expense/controller/ExpenseClaimController.java`
+(`@RequestMapping("/api/v1/expenses")`): `POST` (create), `POST /{claimId}/submit`,
+`POST /{claimId}/approve`, `POST /{claimId}/reject`, `POST /{claimId}/reimburse`,
+`POST /{claimId}/pay`, `GET /pending-approvals`, `GET /validate-policy`. Receipts can be
+parsed via `OcrReceiptController`; mileage via `MileageController`.
+
+```mermaid
+sequenceDiagram
+    actor Emp as Employee
+    participant FE as /expenses
+    participant EC as ExpenseClaimController
+    participant OCR as OcrReceiptController
+    participant Mgr as Approver (/expenses/approvals)
+    Emp->>OCR: upload receipt (optional OCR extract)
+    Emp->>FE: build claim items
+    FE->>EC: POST /expenses  then  POST /expenses/{id}/submit
+    EC->>EC: GET /validate-policy (policy check)
+    EC-->>Mgr: appears in GET /pending-approvals
+    Mgr->>EC: POST /expenses/{id}/approve
+    EC->>EC: POST /expenses/{id}/reimburse → /pay
+    EC-->>Emp: REIMBURSED
+```
+
+### Payroll run (admin) — supporting flow
+
+From `payroll/controller/PayrollController.java` (`/api/v1/payroll`): `POST /runs` →
+`POST /runs/{id}/process` → `POST /runs/{id}/approve` → `POST /runs/{id}/lock`; payslips
+via `GET /payslips/employee/{employeeId}/year/{year}`, surfaced to employees at `/me/payslips`.
+
+## Architecture at a Glance
+
+```mermaid
+flowchart LR
+    subgraph FE["Frontend (Next.js App Router)"]
+      ME["/me/* self-service"]
+      ATT["/attendance, /shifts, /time-tracking"]
+      LV["/leave"]
+      PAY["/payroll, /compensation, /benefits"]
+      EXP["/expenses, /loans, /assets"]
+      EMP["/employees, /departments"]
+    end
+    subgraph BE["Backend (Spring Boot, com.nulogic.api)"]
+      AC[AttendanceController]
+      LC[LeaveRequest/BalanceController]
+      PC[PayrollController]
+      ECx[ExpenseClaimController]
+      EMC[Employee/SelfServiceController]
+    end
+    subgraph INFRA["Cross-cutting"]
+      RLS[(PostgreSQL + RLS\napp.current_tenant_id)]
+      REDIS[(Redis cache\nleaveTypes/employees/...)]
+    end
+    ME --> EMC
+    ATT --> AC
+    LV --> LC
+    PAY --> PC
+    EXP --> ECx
+    EMP --> EMC
+    AC --> RLS
+    LC --> RLS
+    PC --> RLS
+    ECx --> RLS
+    EMC --> RLS
+    LC -.cache.-> REDIS
+    EMC -.cache.-> REDIS
+```
+
 ## Ownership
 
 Self-assessed — there are no formal `CODEOWNERS`/owner records in the repo. Treat as the
 largest and most cross-cutting module; touching it ripples across [[Shared-Platform]].
-
-## Related Links
-
-- [[System-Overview]] · [[C4-Container]] · [[Module-Relationships]] · [[Data-Flows]] · [[System-Flows]]
-- Siblings: [[Nu-Hire]] (hire-to-onboard source) · [[Nu-Grow]] (performance on the same employee) · [[Nu-Fluence]]
-- Platform: [[Shared-Platform]] · [[Middleware]] · [[Roles]] · [[Permissions]] · [[RBAC-Matrix]] · [[Schema]] · [[ERD]] · [[APIs]] · [[Services]] · [[Pages]] · [[Routes]] · [[Components]] · [[Security-Audit]]
-- Grounding: `docs/apps/nu-hrms.md`
 
 ## Risks
 
@@ -137,3 +271,19 @@ largest and most cross-cutting module; touching it ripples across [[Shared-Platf
 - Bulk imports (`/employees/import`, KEKA migration) are batched — watch for N+1 saves
   (recently remediated for onboarding/budget/biometric paths).
 - Letters and documents depend on the Google Drive `StorageProvider`; mock provider in dev.
+
+## Source References
+
+- `frontend/lib/config/apps.ts` — `PLATFORM_APPS.HRMS` (route & permission mapping)
+- `frontend/app/me/dashboard/page.tsx`, `frontend/app/leave/apply/page.tsx`
+- `backend/.../api/attendance/controller/AttendanceController.java`
+- `backend/.../api/leave/controller/{LeaveRequestController,LeaveBalanceController}.java`
+- `backend/.../api/payroll/controller/PayrollController.java`
+- `backend/.../api/expense/controller/ExpenseClaimController.java`
+- `backend/.../api/selfservice/controller/SelfServiceController.java`
+
+## Related Links
+
+- [[System-Overview]] · [[C4-Container]] · [[Module-Relationships]] · [[Data-Flows]] · [[System-Flows]]
+- Siblings: [[Nu-Hire]] (hire-to-onboard source) · [[Nu-Grow]] (performance on the same employee) · [[Nu-Fluence]]
+- Platform: [[Shared-Platform]] · [[Middleware]] · [[Roles]] · [[Permissions]] · [[RBAC-Matrix]] · [[Schema]] · [[ERD]] · [[APIs]] · [[Services]] · [[Pages]] · [[Routes]] · [[Components]] · [[Security-Audit]]

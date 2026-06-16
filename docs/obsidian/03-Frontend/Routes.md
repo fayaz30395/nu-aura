@@ -38,6 +38,11 @@ and guard logic, and [[Components]] for the UI inventory.
 
 - **Sub-app + prefix mapping** — `frontend/lib/config/apps.ts`
   (`PLATFORM_APPS`, `getAppForRoute(pathname)`, `APP_SIDEBAR_SECTIONS`).
+  `AppCode = 'HRMS' | 'HIRE' | 'GROW' | 'FLUENCE'`; each app carries both
+  `routePrefixes` (pathname → app) and `permissionPrefixes` (RBAC access via
+  `useActiveApp().hasAppAccess`). `APP_SIDEBAR_SECTIONS` maps each `AppCode` to
+  the sidebar section IDs to render (e.g.
+  `HRMS → ['home','my-space','people','hr-ops','finance', …]`).
 - **Public / protected route config** — `frontend/lib/config/routes.ts`
   (`PUBLIC_ROUTES`, `PROTECTED_ROUTES`, `isPublicRoute`, `findRouteConfig`).
 - **Route guard** — `frontend/components/auth/AuthGuard.tsx` ([[Pages]], [[RBAC-Matrix]]).
@@ -83,8 +88,9 @@ other three apps.
 
 ### [[Nu-Hire]] (HIRE — recruitment & onboarding)
 
-Prefixes: `/recruitment`, `/onboarding`, `/preboarding`, `/offboarding`,
-`/offer-portal`, `/careers`, `/referrals`.
+Route prefixes: `/recruitment`, `/onboarding`, `/preboarding`, `/offboarding`,
+`/offer-portal`, `/careers`, `/referrals`. Permission prefixes (`apps.ts`):
+`recruitment`, `candidate`, `onboarding`, `preboarding`, `referral`, `agency`.
 
 | Area | Route dir (count) | Examples |
 |------|-------------------|----------|
@@ -96,8 +102,10 @@ Prefixes: `/recruitment`, `/onboarding`, `/preboarding`, `/offboarding`,
 
 ### [[Nu-Grow]] (GROW — performance, learning, engagement)
 
-Prefixes: `/performance`, `/okr`, `/feedback360`, `/training`, `/learning`,
-`/recognition`, `/surveys`, `/wellness`, `/one-on-one`.
+Route prefixes: `/performance`, `/okr`, `/feedback360`, `/training`, `/learning`,
+`/recognition`, `/surveys`, `/wellness`, `/one-on-one`. Permission prefixes
+(`apps.ts`): `review`, `okr`, `feedback_360`, `training`, `lms`, `recognition`,
+`survey`, `wellness`.
 
 | Area | Route dir (count) | Examples |
 |------|-------------------|----------|
