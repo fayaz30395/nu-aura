@@ -145,11 +145,11 @@ public class ESignatureService {
 
         // Update approval statuses to SENT
         LocalDateTime now = tenantTimeService.now(tenantId);
-        for (SignatureApproval approval : approvals) {
+        approvals.forEach(approval -> {
             approval.setStatus(SignatureApproval.ApprovalStatus.SENT);
             approval.setSentAt(now);
-            signatureApprovalRepository.save(approval);
-        }
+        });
+        signatureApprovalRepository.saveAll(approvals);
 
         SignatureRequest updatedRequest = signatureRequestRepository.save(signatureRequest);
         return mapToSignatureRequestResponse(updatedRequest);

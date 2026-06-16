@@ -382,11 +382,10 @@ public class OneOnOneMeetingService {
     public void carryOverActionItems(UUID fromMeetingId, UUID toMeetingId) {
         List<MeetingActionItem> pendingItems = actionRepository.findItemsToCarryOver(fromMeetingId);
 
+        List<MeetingActionItem> newItems = new ArrayList<>();
         for (MeetingActionItem item : pendingItems) {
             item.setStatus(ActionStatus.CARRIED_OVER);
-            actionRepository.save(item);
 
-            // Create new item in next meeting
             MeetingActionItem newItem = MeetingActionItem.builder()
                     .meetingId(toMeetingId)
                     .title(item.getTitle())
@@ -399,11 +398,12 @@ public class OneOnOneMeetingService {
                     .isCarriedOver(true)
                     .carriedFromMeetingId(fromMeetingId)
                     .build();
-
             newItem.setId(UUID.randomUUID());
             newItem.setTenantId(item.getTenantId());
-            actionRepository.save(newItem);
+            newItems.add(newItem);
         }
+        if (!pendingItems.isEmpty()) actionRepository.saveAll(pendingItems);
+        if (!newItems.isEmpty()) actionRepository.saveAll(newItems);
 
         log.info("Carried over {} action items from meeting {} to {}", pendingItems.size(), fromMeetingId, toMeetingId);
     }
